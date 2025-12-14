@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Akibwa by Daniel Atkinson</title>
+  <meta name="description" content="Akibwa by Daniel Atkinson — essays, experiments, and ideas in progress." />
+  <style>
+    :root { --bg:#0b0b0c; --fg:#f3f3f4; --muted:#b7b7bb; --line:#232326; --link:#d6d6ff; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 64px 20px; }
+    header { padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+    h1 { margin: 0; font-size: 48px; letter-spacing: -0.02em; }
+    .byline { margin-top: 6px; color: var(--muted); font-size: 16px; }
+    .tag { margin-top: 18px; color: var(--muted); font-size: 18px; max-width: 52ch; }
+    section { padding: 22px 0; border-bottom: 1px solid var(--line); }
+    h2 { margin: 0 0 10px; font-size: 18px; letter-spacing: 0.01em; text-transform: uppercase; color: var(--muted); }
+    p { margin: 0 0 10px; max-width: 70ch; }
+    ul { margin: 0; padding-left: 18px; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer { padding-top: 22px; color: var(--muted); }
+    .quote { margin-top: 10px; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Akibwa</h1>
+      <div class="byline">by Daniel Atkinson</div>
+      <div class="tag">A home for essays, experiments, and whatever I’m thinking through.</div>
+    </header>
+
+    <section>
+      <h2>About</h2>
+      <p>I’m Daniel Atkinson. This is where I gather the work—notes, projects, and ideas in progress.</p>
+      <p>Consider it my injection into the universe: a living index of what I’m building and believing.</p>
+    </section>
+
+    <section>
+      <h2>Links</h2>
+      <ul>
+        <li><a href="https://x.com/Dakibwa" target="_blank" rel="noopener noreferrer">X: @Dakibwa</a></li>
+        <!-- Add later: <li><a href="https://github.com/YOURNAME">GitHub</a></li> -->
+      </ul>
+    </section>
+
+    <section>
+      <h2>Now</h2>
+      <p><strong>Currently focused on:</strong> Internalising a philosophy.</p>
+    </section>
+
+    <section>
+      <h2>Projects</h2>
+      <ul>
+        <li>Coherently documenting my philosophy <em>(in progress)</em></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:you@example.com">you@example.com</a></p>
+      <div class="quote">“Build a library, not a feed.”</div>
+    </section>
+
+    <footer>
+      <p>© <span id="y"></span> Akibwa</p>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
