@@ -140,43 +140,6 @@ ul li::before {
   color: var(--text-muted);
 }
 
-/* Link List */
-ul.link-list {
-  padding-left: 0;
-}
-
-ul.link-list li {
-  padding-left: 0;
-  margin-bottom: 0.5rem;
-}
-
-ul.link-list li::before {
-  content: none;
-}
-
-.link-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0;
-  border-bottom: none;
-}
-
-.link-item:hover {
-  border-bottom: none;
-}
-
-.link-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--text-muted);
-  transition: color 0.2s ease;
-  flex-shrink: 0;
-}
-
-.link-item:hover .link-icon {
-  color: var(--link-hover);
-}
 
 /* Utilities */
 .muted {
