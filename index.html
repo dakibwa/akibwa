@@ -4,72 +4,267 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Akibwa by Daniel Atkinson</title>
-  <meta name="description" content="Akibwa by Daniel Atkinson — essays, experiments, and ideas in progress." />
+  <meta name="description" content="Akibwa by Daniel Atkinson — a hub for essays, experiments, and ideas in progress." />
+
   <style>
-    :root { --bg:#0b0b0c; --fg:#f3f3f4; --muted:#b7b7bb; --line:#232326; --link:#d6d6ff; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--fg);
-      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    :root{
+      --bg: #0b0c10;
+      --bg2:#0f1220;
+      --card:#11152a;
+      --card2:#0f1326;
+      --line: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --faint: rgba(255,255,255,.52);
+      --accent: #b8a7ff;
+      --accent2:#7ee7ff;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+      --max: 980px;
     }
-    .wrap { max-width: 860px; margin: 0 auto; padding: 64px 20px; }
-    header { padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
-    h1 { margin: 0; font-size: 48px; letter-spacing: -0.02em; }
-    .byline { margin-top: 6px; color: var(--muted); font-size: 16px; }
-    .tag { margin-top: 18px; color: var(--muted); font-size: 18px; max-width: 52ch; }
-    section { padding: 22px 0; border-bottom: 1px solid var(--line); }
-    h2 { margin: 0 0 10px; font-size: 18px; letter-spacing: 0.01em; text-transform: uppercase; color: var(--muted); }
-    p { margin: 0 0 10px; max-width: 70ch; }
-    ul { margin: 0; padding-left: 18px; }
-    a { color: var(--link); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    footer { padding-top: 22px; color: var(--muted); }
-    .quote { margin-top: 10px; font-style: italic; }
+
+    @media (prefers-color-scheme: light) {
+      :root{
+        --bg:#f7f7fb;
+        --bg2:#ffffff;
+        --card:#ffffff;
+        --card2:#ffffff;
+        --line: rgba(10,10,10,.10);
+        --text: rgba(10,10,10,.92);
+        --muted: rgba(10,10,10,.70);
+        --faint: rgba(10,10,10,.55);
+        --shadow: 0 18px 50px rgba(10,10,10,.08);
+      }
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(184,167,255,.22), transparent 60%),
+        radial-gradient(1000px 520px at 85% 0%, rgba(126,231,255,.16), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      letter-spacing: .1px;
+    }
+
+    a{ color:var(--text); text-decoration:none; }
+    a:hover{ color:var(--accent); }
+    .wrap{ max-width:var(--max); margin:0 auto; padding: 56px 20px 72px; }
+
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      margin-bottom: 28px;
+    }
+
+    .mark{
+      display:flex; align-items:center; gap:12px;
+    }
+    .dot{
+      width:12px; height:12px; border-radius:999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(184,167,255,.10);
+    }
+    .brand{
+      display:flex; flex-direction:column; line-height:1.2;
+    }
+    .brand strong{ font-size: 15px; letter-spacing:.3px; }
+    .brand span{ color:var(--muted); font-size: 13px; }
+
+    nav{
+      display:flex; flex-wrap:wrap; gap:10px;
+      justify-content:flex-end;
+    }
+    .pill{
+      padding:8px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(8px);
+      font-size: 13px;
+      color:var(--muted);
+    }
+    .pill:hover{ border-color: rgba(184,167,255,.45); color:var(--text); }
+
+    header.hero{
+      padding: 34px 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(38px, 5vw, 64px);
+      line-height:1.05;
+      letter-spacing: -0.03em;
+    }
+    .sub{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .lead{
+      margin-top: 18px;
+      max-width: 70ch;
+      font-size: 18px;
+      color: var(--text);
+    }
+    .lead em{
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+      margin-top: 18px;
+    }
+    @media (max-width: 900px){
+      .top{ flex-direction:column; align-items:flex-start; }
+      nav{ justify-content:flex-start; }
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      padding: 20px 20px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size: 13px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card p{ margin:0 0 10px; max-width: 75ch; color: var(--text); }
+    .card p.small{ color: var(--muted); font-size: 14px; }
+
+    ul.clean{ margin:0; padding-left: 18px; color: var(--text); }
+    ul.clean li{ margin: 6px 0; color: var(--text); }
+    .muted{ color:var(--muted); }
+    .faint{ color:var(--faint); }
+
+    .kicker{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 14px;
+    }
+    .tag{
+      border:1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--muted);
+      background: rgba(0,0,0,.08);
+    }
+
+    footer{
+      margin-top: 26px;
+      padding-top: 18px;
+      color: var(--faint);
+      font-size: 13px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .quote{
+      color: var(--muted);
+      font-style: italic;
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <header>
+
+    <div class="top">
+      <div class="mark">
+        <div class="dot" aria-hidden="true"></div>
+        <div class="brand">
+          <strong>Akibwa</strong>
+          <span>by Daniel Atkinson</span>
+        </div>
+      </div>
+
+      <nav>
+        <a class="pill" href="#about">About</a>
+        <a class="pill" href="#now">Now</a>
+        <a class="pill" href="#projects">Projects</a>
+        <a class="pill" href="#links">Links</a>
+        <a class="pill" href="#contact">Contact</a>
+      </nav>
+    </div>
+
+    <header class="hero">
       <h1>Akibwa</h1>
-      <div class="byline">by Daniel Atkinson</div>
-      <div class="tag">A home for essays, experiments, and whatever I’m thinking through.</div>
+      <div class="sub">by Daniel Atkinson</div>
+      <p class="lead">
+        This is a place to gather my thoughts—whatever is circulating my interests.
+        Consider it my <em>injection into the universe</em>: a living index of what I’m building and believing.
+      </p>
+
+      <div class="kicker">
+        <span class="tag">Essays</span>
+        <span class="tag">Notes</span>
+        <span class="tag">Projects</span>
+        <span class="tag">Experiments</span>
+      </div>
     </header>
 
-    <section>
-      <h2>About</h2>
-      <p>I’m Daniel Atkinson. This is where I gather the work—notes, projects, and ideas in progress.</p>
-      <p>Consider it my injection into the universe: a living index of what I’m building and believing.</p>
-    </section>
+    <div class="grid">
+      <section class="card" id="about">
+        <h2>About</h2>
+        <p>I’m Daniel Atkinson. This site is deliberately simple: no feed, no noise—just accumulated work.</p>
+        <p class="small">If you’re here early, expect rough edges. That’s the point.</p>
+      </section>
 
-    <section>
-      <h2>Links</h2>
-      <ul>
-        <li><a href="https://x.com/Dakibwa" target="_blank" rel="noopener noreferrer">X: @Dakibwa</a></li>
-        <!-- Add later: <li><a href="https://github.com/YOURNAME">GitHub</a></li> -->
-      </ul>
-    </section>
+      <section class="card" id="now">
+        <h2>Now</h2>
+        <p><strong>Currently focused on:</strong> internalising a philosophy.</p>
+        <p class="small muted">A version of my life I can actually live.</p>
+      </section>
 
-    <section>
-      <h2>Now</h2>
-      <p><strong>Currently focused on:</strong> Internalising a philosophy.</p>
-    </section>
+      <section class="card" id="projects" style="grid-column: 1 / -1;">
+        <h2>Projects</h2>
+        <ul class="clean">
+          <li><strong>Coherently documenting my philosophy</strong> <span class="muted">(in progress)</span></li>
+        </ul>
+        <p class="small faint">Next: add the first published note and link it here.</p>
+      </section>
 
-    <section>
-      <h2>Projects</h2>
-      <ul>
-        <li>Coherently documenting my philosophy <em>(in progress)</em></li>
-      </ul>
-    </section>
+      <section class="card" id="links">
+        <h2>Links</h2>
+        <ul class="clean">
+          <li><a href="https://x.com/Dakibwa" target="_blank" rel="noopener noreferrer">X: @Dakibwa</a></li>
+          <!-- Optional: <li><a href="https://github.com/dakibwa" target="_blank" rel="noopener noreferrer">GitHub</a></li> -->
+        </ul>
+      </section>
 
-    <section>
-      <h2>Contact</h2>
-      <p>Email: <a href="mailto:you@example.com">you@example.com</a></p>
-      <div class="quote">“Build a library, not a feed.”</div>
-    </section>
+      <section class="card" id="contact">
+        <h2>Contact</h2>
+        <p>
+          Email:
+          <a href="mailto:dakibwa@gmail.com">dakibwa@gmail.com</a>
+          <span class="muted">(update this)</span>
+        </p>
+        <p class="quote">“Build a library, not a feed.”</p>
+      </section>
+    </div>
 
     <footer>
-      <p>© <span id="y"></span> Akibwa</p>
+      <div>© <span id="y"></span> Akibwa</div>
+      <div class="faint">akibwa.com</div>
     </footer>
+
   </div>
 
   <script>
