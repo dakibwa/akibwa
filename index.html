@@ -3,59 +3,44 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Akibwa by Daniel Atkinson</title>
-  <meta name="description" content="Daniel Atkinson — a hub for essays, experiments, and ideas in progress." />
+  <title>Akibwa</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="container">
-    <header>
-      <div class="title-wrapper">
+
+  <div class="scene-wrapper" id="scene">
+    
+    <div class="hero-layer">
+      <div class="title-box">
         <h1>Akibwa</h1>
-        <div class="subtitle">Daniel Atkinson</div>
       </div>
-      <p class="tagline">Essays, experiments, and ideas in progress</p>
-    </header>
+    </div>
 
-    <main>
-      <section id="purpose">
-        <h2>Purpose</h2>
-        <p>Akibwa is a public notebook: thoughts made legible.</p>
-        <p>A place for experiments, essays, and ideas in motion—context for future minds, human and machine.</p>
-        <p>A conscious move from consuming to creating.</p>
-      </section>
+    <div class="mars-panel">
+      </div>
 
-      <section id="now">
-        <h2>Now</h2>
-        <p><strong>Currently focused on:</strong> internalising a philosophy.</p>
-        <p class="muted">A version of my life I can actually live.</p>
-      </section>
-
-      <section id="projects">
-        <h2>Projects</h2>
-        <ul>
-          <li><strong>Build website and design what I want this to be.</strong> Documenting my philosophy, getting some of the stuff rattling around my head verbalised.</li>
-          <li><strong>Livestream Your Life</strong></li>
-        </ul>
-      </section>
-
-      <section id="links">
-        <h2>Links</h2>
-        <ul>
-          <li><a href="https://x.com/Dakibwa" target="_blank" rel="noopener noreferrer">X: @Dakibwa</a></li>
-          <li><a href="mailto:dakibwa@gmail.com">Email</a></li>
-        </ul>
-      </section>
-    </main>
-
-    <footer>
-      <p>© <span id="y"></span> Akibwa</p>
-    </footer>
   </div>
 
+  <button class="settings-btn" id="toggleBtn" onclick="toggleView()">
+    Settings +
+  </button>
+
   <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
+    function toggleView() {
+      const scene = document.getElementById('scene');
+      const btn = document.getElementById('toggleBtn');
+      
+      // Toggle the slide class
+      scene.classList.toggle('slide-active');
+      
+      // Toggle button text logic
+      if (scene.classList.contains('slide-active')) {
+        btn.textContent = "Close -";
+      } else {
+        btn.textContent = "Settings +";
+      }
+    }
   </script>
 </body>
 </html>
