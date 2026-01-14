@@ -12,7 +12,10 @@ const Contact: React.FC = () => {
       {/* Background Stars to maintain the vibe */}
       <Stars />
       
-      <div className="relative z-10 flex flex-col gap-12 items-start pl-8 md:pl-0">
+      <div 
+        className="relative z-10 flex flex-col gap-12 items-start pl-8 md:pl-0"
+        onClick={(e) => e.stopPropagation()} 
+      >
         {/* Twitter / X */}
         <a 
           href="https://twitter.com/dakibwa" 

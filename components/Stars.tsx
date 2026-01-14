@@ -7,7 +7,7 @@ interface EnhancedStar extends Star {
   isSpectral: boolean;
 }
 
-const Stars: React.FC = () => {
+const Stars: React.FC = React.memo(() => {
   const stars = useMemo(() => {
     const count = 120; // Increased density for a richer sky
     const generated: EnhancedStar[] = [];
@@ -40,7 +40,8 @@ const Stars: React.FC = () => {
             opacity: star.opacity,
             boxShadow: star.isSpectral ? '0 0 4px #8EE3F4' : 'none',
             animation: `twinkle ${star.duration}s infinite ease-in-out`,
-            animationDelay: `${star.delay}s`
+            animationDelay: `${star.delay}s`,
+            willChange: 'transform, opacity'
           }}
         />
       ))}
@@ -58,6 +59,6 @@ const Stars: React.FC = () => {
       `}</style>
     </div>
   );
-};
+});
 
 export default Stars;

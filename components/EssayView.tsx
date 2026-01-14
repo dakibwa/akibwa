@@ -1,17 +1,39 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface EssayViewProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const EssayView: React.FC<EssayViewProps> = ({ onClose }) => {
+const EssayView: React.FC<EssayViewProps> = ({ isOpen, onClose }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+  }, [isOpen]);
+
   return (
-    <div className="fixed inset-0 z-[100] bg-black/98 backdrop-blur-3xl overflow-y-auto pt-32 pb-32 px-6 md:px-0 scroll-smooth">
+    <div 
+      ref={containerRef}
+      onClick={onClose}
+      className={`
+        fixed inset-0 z-[100] bg-black/98 backdrop-blur-3xl overflow-y-auto pt-32 pb-32 px-6 md:px-0 scroll-smooth cursor-pointer
+        transition-all duration-[1200ms] cubic-bezier(0.23, 1, 0.32, 1)
+        ${isOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-12 pointer-events-none'}
+      `}
+    >
       {/* Navigation / Close */}
-      <div className="fixed top-12 left-12 z-[110]">
+      <div 
+        className={`fixed top-12 left-12 z-[110] transition-all duration-700 delay-300 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
+      >
         <button 
-          onClick={onClose}
-          className="group flex items-center gap-4 border border-white/20 px-8 py-4 bg-black/60 hover:bg-white hover:text-black transition-all duration-500 backdrop-blur-md"
+          onClick={(e) => {
+             e.stopPropagation();
+             onClose();
+          }}
+          className="group flex items-center gap-4 border border-white/20 px-8 py-4 bg-black/60 hover:bg-white hover:text-black transition-all duration-500 backdrop-blur-md cursor-pointer"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -21,7 +43,13 @@ const EssayView: React.FC<EssayViewProps> = ({ onClose }) => {
         </button>
       </div>
 
-      <article className="max-w-3xl mx-auto space-y-16 animate-in fade-in slide-in-from-bottom-12 duration-[1200ms] cubic-bezier(0.23, 1, 0.32, 1)">
+      <article 
+        onClick={(e) => e.stopPropagation()}
+        className={`
+          max-w-3xl mx-auto space-y-16 transition-all duration-1000 delay-100 cursor-auto
+          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
+        `}
+      >
         <header className="space-y-8">
           <div className="flex items-center gap-6">
             <span className="text-[#D1FAFF] text-[11px] tracking-[0.6em] uppercase font-bold">Essay / 4th Jan 2026</span>
@@ -81,12 +109,6 @@ const EssayView: React.FC<EssayViewProps> = ({ onClose }) => {
           Document End • Akibwa • 2026
         </footer>
       </article>
-
-      <style>{`
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slide-in-from-bottom { from { transform: translateY(3rem); } to { transform: translateY(0); } }
-        .animate-in { animation: fade-in 1.2s ease-out, slide-in-from-bottom 1.2s cubic-bezier(0.23, 1, 0.32, 1); }
-      `}</style>
     </div>
   );
 };
