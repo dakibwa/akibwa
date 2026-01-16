@@ -48,10 +48,6 @@ const EssayView: React.FC<EssayViewProps> = ({ isOpen, onClose }) => {
               This essay is currently being written.
             </p>
         </section>
-
-          <footer className="pt-12 mt-12 border-t border-[#e0e0e0] dark:border-[#333] text-sm text-[#999] dark:text-[#666] text-center">
-            Dakibwa • 2026
-        </footer>
       </article>
       </div>
     </div>
