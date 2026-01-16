@@ -125,17 +125,9 @@ const Consumption: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      <header className="space-y-4">
-        <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Consumption</h1>
-        <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
-        <p className="text-lg text-[#666] dark:text-[#999] max-w-2xl leading-relaxed italic">
-          We all collect something.
-        </p>
-      </header>
-
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-6">
+      {/* Filters - aligned right */}
+      <div className="flex justify-end flex-wrap gap-2">
         {filters.map(({ key, label }) => (
           <button
             key={key}
@@ -158,7 +150,7 @@ const Consumption: React.FC = () => {
             className="group relative cursor-pointer"
           >
             {/* Stamp-style card with color-coded border */}
-            <div className={`relative border border-dashed ${getStampColor(item.type)} p-1.5`}>
+            <div className={`relative border border-dashed ${getStampColor(item.type)} p-1.5 ${item.masterpiece ? 'shadow-[0_0_12px_rgba(249,115,22,0.3)]' : ''}`}>
                   {/* Colored placeholder with initial */}
                   <div className="aspect-square mb-1.5 overflow-hidden flex items-center justify-center">
                     <span className="text-2xl font-light opacity-40">

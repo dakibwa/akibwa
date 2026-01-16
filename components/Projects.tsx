@@ -28,12 +28,7 @@ const Creation: React.FC<CreationProps> = ({ isActive, onSelectEssay, onLaunchAp
 
   return (
     <div className="space-y-12">
-      <header className="space-y-4">
-        <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Creation</h1>
-        <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
-      </header>
-
-      <div className="space-y-16 pt-8">
+      <div className="space-y-16">
         {PROJECTS_DATA.map((project) => (
           <article 
             key={project.id}

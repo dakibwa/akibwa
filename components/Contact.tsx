@@ -2,10 +2,8 @@ import React from 'react';
 
 const Contact: React.FC = () => {
   return (
-    <div className="space-y-12">
-      <header>
-        <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Daniel</h1>
-      </header>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-normal tracking-tight">Daniel</h1>
 
       <div className="space-y-4">
         <a 
