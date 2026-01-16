@@ -8,4 +8,4 @@ export const MENU_ITEMS: MenuItem[] = [
 
 export const ANIMATION_DURATION = 1000; // ms for initial fade in
 
-export const BACKGROUND_IMAGE_URL = "https://raw.githubusercontent.com/dakibwa/akibwa/main/hero-bg.jpg";
+export const BACKGROUND_IMAGE_URL = "/hero-bg.jpg";
