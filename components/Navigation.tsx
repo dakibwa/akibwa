@@ -1,53 +1,39 @@
-import React, { useState } from 'react';
-import { MENU_ITEMS } from '../constants';
+import React from 'react';
 
 interface NavigationProps {
   onSelect?: (label: string) => void;
+  activeSection?: string;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ onSelect }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
+const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
   return (
-    <nav 
-      className="fixed top-12 left-12 z-50 flex flex-col items-start"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Main Label - Click to reset to Landing Page */}
-      <div 
-        onClick={() => onSelect?.('')}
-        className={`
-          border-2 border-white px-6 py-3 bg-black/50 backdrop-blur-sm cursor-pointer transition-colors duration-300
-          ${isHovered ? 'bg-black' : ''}
-        `}
-      >
-        <h1 className="text-white text-2xl tracking-[0.2em] font-light uppercase select-none">
-          Akibwa
-        </h1>
-      </div>
-
-      {/* Dropdown Menu */}
-      <div 
-        className={`
-          overflow-hidden transition-all duration-500 ease-in-out origin-top
-          ${isHovered ? 'max-h-64 opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'}
-        `}
-      >
-        <div className="bg-white px-6 py-4 flex flex-col gap-3 min-w-[200px] shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-          {MENU_ITEMS.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault();
-                onSelect?.(item.label);
-              }}
-              className="text-black text-sm font-bold tracking-widest hover:text-pink-600 transition-colors uppercase block w-full text-left cursor-pointer"
+    <nav className="sticky top-0 bg-[#fafafa] dark:bg-[#1a1a1a] border-b border-[#e0e0e0] dark:border-[#333] z-50 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          <button
+            onClick={() => onSelect?.('')}
+            className="text-lg font-normal hover:opacity-70 transition-opacity"
+          >
+            akibwa
+          </button>
+          <div className="flex items-center gap-6 text-sm">
+            <button
+              onClick={() => onSelect?.('PROJECTS')}
+              className={`hover:opacity-70 transition-opacity ${
+                activeSection === 'PROJECTS' ? 'opacity-100 font-medium' : 'opacity-60'
+              }`}
             >
-              {item.label}
-            </a>
-          ))}
+              Projects
+            </button>
+            <button
+              onClick={() => onSelect?.('CONTACT')}
+              className={`hover:opacity-70 transition-opacity ${
+                activeSection === 'CONTACT' ? 'opacity-100 font-medium' : 'opacity-60'
+              }`}
+            >
+              Contact
+            </button>
+          </div>
         </div>
       </div>
     </nav>

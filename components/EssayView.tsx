@@ -14,56 +14,39 @@ const EssayView: React.FC<EssayViewProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  if (!isOpen) return null;
+
   return (
     <div 
       ref={containerRef}
-      onClick={onClose}
-      className={`
-        fixed inset-0 z-[100] bg-black/98 backdrop-blur-3xl overflow-y-auto pt-32 pb-32 px-6 md:px-0 scroll-smooth cursor-pointer
-        transition-all duration-[1200ms] cubic-bezier(0.23, 1, 0.32, 1)
-        ${isOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-12 pointer-events-none'}
-      `}
+      className="fixed inset-0 z-[100] bg-[#fafafa] dark:bg-[#1a1a1a] overflow-y-auto"
     >
-      {/* Navigation / Close */}
-      <div 
-        className={`fixed top-12 left-12 z-[110] transition-all duration-700 delay-300 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
-      >
+      <div className="max-w-3xl mx-auto px-6 py-16 md:py-24">
         <button 
-          onClick={(e) => {
-             e.stopPropagation();
-             onClose();
-          }}
-          className="group flex items-center gap-4 border border-white/20 px-8 py-4 bg-black/60 hover:bg-white hover:text-black transition-all duration-500 backdrop-blur-md cursor-pointer"
+          onClick={onClose}
+          className="mb-12 text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors flex items-center gap-2"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span className="text-[11px] tracking-[0.4em] uppercase font-bold">Exit Document</span>
+          <span>←</span>
+          <span>Back</span>
         </button>
-      </div>
 
-      <article 
-        onClick={(e) => e.stopPropagation()}
-        className={`
-          max-w-3xl mx-auto space-y-16 transition-all duration-1000 delay-100 cursor-auto
-          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}
-        `}
-      >
-        <header className="space-y-8">
-          <div className="flex items-center gap-6">
-            <span className="text-[#D1FAFF] text-[11px] tracking-[0.6em] uppercase font-bold">Essay / 4th Jan 2026</span>
-            <div className="h-px w-16 bg-[#D1FAFF]/30"></div>
-          </div>
-          <h1 className="text-white text-5xl md:text-7xl font-extralight tracking-tight leading-[1.1]">
-            Livestream Your Life: <br/><span className="italic opacity-80">The Performance of Being.</span>
-          </h1>
-          <p className="text-gray-400 text-xl md:text-2xl font-light italic leading-relaxed border-l border-white/10 pl-8">
-            "The next device won’t just record your life—it will teach you how to live one you’re willing to replay."
-          </p>
-        </header>
+        <article className="space-y-12">
+          <header className="space-y-6">
+            <div className="flex items-center gap-3 text-sm text-[#666] dark:text-[#999]">
+              <span>Essay</span>
+              <span>·</span>
+              <time>4th Jan 2026</time>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-normal tracking-tight leading-tight">
+              Livestream Your Life: The Performance of Being
+            </h1>
+            <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
+            <p className="text-xl text-[#666] dark:text-[#999] italic leading-relaxed">
+              "The next device won't just record your life—it will teach you how to live one you're willing to replay."
+            </p>
+          </header>
 
-        <section className="space-y-10 text-gray-200 text-lg md:text-xl leading-[1.8] font-light tracking-wide">
+          <section className="space-y-6 text-lg leading-relaxed">
           <p>
             We’ve already rehearsed the first act. The phone didn’t turn everyone into a photographer; it turned everyone photographable. That sounds trivial until you notice what it did to behaviour. A lens in every pocket didn’t merely capture reality, it leaned on it. It introduced a new background pressure: be ready to be seen. You learned your angles without meaning to. You learned caution in public, curation in private, a soft self-editing that begins before the camera even appears. Even when no one is filming, part of you anticipates the observer. Not through vanity, but because you’re human: we shape ourselves around what can be witnessed.
           </p>
@@ -103,12 +86,13 @@ const EssayView: React.FC<EssayViewProps> = ({ isOpen, onClose }) => {
           <p>
             And still, we will adopt it, because it offers a new kind of comfort: the promise that you don’t have to trust your own memory, your own narration, your own messy human sense of self. Here’s the file, it will say. Here’s the timeline. Here’s the evidence. And for a species addicted to certainty—terrified of ambiguity, allergic to the quiet work of becoming—that will feel like a revelation. But a life that survives playback is not necessarily a life that was lived; it may simply be a life that was edited. The question isn’t whether the device will make us good. The question is what kind of “good” becomes possible when goodness is measured, and what parts of the soul go silent when the only safe self is the one that can be quoted.
           </p>
-        </section>
+          </section>
 
-        <footer className="pt-24 border-t border-white/10 opacity-30 text-[11px] tracking-[0.6em] uppercase text-center font-light">
-          Document End • Akibwa • 2026
-        </footer>
-      </article>
+          <footer className="pt-12 mt-12 border-t border-[#e0e0e0] dark:border-[#333] text-sm text-[#999] dark:text-[#666] text-center">
+            Akibwa • 2026
+          </footer>
+        </article>
+      </div>
     </div>
   );
 };
