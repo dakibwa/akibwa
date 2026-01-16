@@ -128,8 +128,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       try {
         const parsed = JSON.parse(savedData);
         if (parsed && Array.isArray(parsed.nodes) && Array.isArray(parsed.links)) {
-          setGraphData(parsed);
-          setStatus('visualizing');
+            setGraphData(parsed);
+            setStatus('visualizing');
           return;
         }
       } catch (e) {
@@ -191,20 +191,71 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     if (!spotifyToken) return;
     
     try {
-      // Fetch top artists
-      const topArtistsRes = await fetch('https://api.spotify.com/v1/me/top/artists?limit=30&time_range=medium_term', {
-        headers: { Authorization: `Bearer ${spotifyToken}` }
-      });
-      const topArtists = await topArtistsRes.json();
+      setAnalysisProgress('Fetching your top artists...');
       
-      if (topArtists.items) {
-        const artists: ArtistData[] = topArtists.items.map((artist: any) => ({
-          name: artist.name,
-          genres: artist.genres,
-          playcount: artist.popularity,
-        }));
-        setArtistsData(artists);
+      // Fetch top artists from multiple time ranges for comprehensive data
+      const timeRanges = ['long_term', 'medium_term', 'short_term'];
+      const artistMap = new Map<string, ArtistData>();
+      
+      for (const range of timeRanges) {
+        const res = await fetch(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${range}`, {
+          headers: { Authorization: `Bearer ${spotifyToken}` }
+        });
+        const data = await res.json();
+        
+        if (data.items) {
+          // Weight by time range (long_term = most listens historically)
+          const weight = range === 'long_term' ? 3 : range === 'medium_term' ? 2 : 1;
+          
+          data.items.forEach((artist: any, index: number) => {
+            const existing = artistMap.get(artist.name);
+            // Score based on position and weight (top positions = more listens)
+            const score = (50 - index) * weight * 20;
+            
+            if (existing) {
+              existing.playcount = (existing.playcount || 0) + score;
+            } else {
+              artistMap.set(artist.name, {
+                name: artist.name,
+                genres: artist.genres,
+                playcount: score,
+              });
+            }
+          });
+        }
       }
+      
+      // Also fetch recently played for additional context
+      setAnalysisProgress('Fetching recent listening...');
+      try {
+        const recentRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=50', {
+          headers: { Authorization: `Bearer ${spotifyToken}` }
+        });
+        const recentData = await recentRes.json();
+        
+        if (recentData.items) {
+          for (const item of recentData.items) {
+            const artistName = item.track?.artists?.[0]?.name;
+            if (artistName) {
+              const existing = artistMap.get(artistName);
+              if (existing) {
+                existing.playcount = (existing.playcount || 0) + 10;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.log('Recent plays fetch failed, continuing with top artists');
+      }
+      
+      const artists = Array.from(artistMap.values())
+        .sort((a, b) => (b.playcount || 0) - (a.playcount || 0))
+        .slice(0, 50);
+      
+      console.log('[Spotify] Fetched artists with playcounts:', artists);
+      saveToDatabase('spotify_artists', artists);
+      setArtistsData(artists);
+      
     } catch (e) {
       console.error('Spotify fetch failed:', e);
       setProvider('demo');
@@ -221,7 +272,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
     
     try {
-      const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=${lastFmUsername}&api_key=${LASTFM_API_KEY}&format=json&limit=30&period=12month`;
+      setAnalysisProgress('Fetching your listening history...');
+      
+      // Fetch overall top artists (all time) with higher limit
+      const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=${lastFmUsername}&api_key=${LASTFM_API_KEY}&format=json&limit=100&period=overall`;
       const res = await fetch(url);
       const data = await res.json();
       
@@ -230,12 +284,20 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       if (data.topartists?.artist) {
         localStorage.setItem('dakibwa_lastfm_user', lastFmUsername);
         
+        // Last.fm gives us actual scrobble counts!
         const artists: ArtistData[] = data.topartists.artist.map((a: any) => ({
           name: a.name,
           playcount: parseInt(a.playcount),
         }));
-        setArtistsData(artists);
-      } else {
+        
+        // Take top 50 for analysis
+        const topArtists = artists.slice(0, 50);
+        
+        console.log('[Last.fm] Fetched artists with playcounts:', topArtists);
+        console.log('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
+        saveToDatabase('lastfm_artists', topArtists);
+        setArtistsData(topArtists);
+        } else {
         throw new Error('No artists found');
       }
     } catch (e) {
@@ -270,10 +332,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           type: 'artist' as const,
           playcount: a.playcount,
         })),
-        links: [
+         links: [
           { source: artistNames[0], target: artistNames[1], reason: "Similar sound", type: 'similar' as const },
           { source: artistNames[1], target: artistNames[2], reason: "Genre overlap", type: 'genre' as const },
-        ]
+         ]
       };
       setGraphData(fallbackData);
       localStorage.setItem('dakibwa_music_graph', JSON.stringify(fallbackData));
@@ -285,9 +347,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       console.log('[Gemini] Using API key:', GEMINI_API_KEY.substring(0, 10) + '...');
       const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
       
-      setAnalysisProgress('Analyzing artist relationships...');
+      setAnalysisProgress('Analysing artist relationships...');
       
-      const prompt = `You are a music expert. Analyze these artists and create a JSON network graph showing their connections.
+      const prompt = `You are a music expert. Analyse these artists and create a JSON network graph showing their connections.
 
 Artists: ${artistNames.join(", ")}
 
@@ -303,16 +365,39 @@ Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other
 Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs at least 2 connections.`;
 
       console.log('[Gemini] Sending prompt:', prompt);
+      console.log('[Gemini] Waiting for response from Gemini 3 Flash...');
+      setAnalysisProgress('Waiting for Gemini 3 Flash...');
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: prompt
       });
 
-      setAnalysisProgress('Building your musical universe...');
+      console.log('[Gemini] Response object:', response);
+      setAnalysisProgress('Processing response...');
 
-      const jsonText = response.text;
+      // Handle response - the SDK returns text as a property
+      let jsonText: string | undefined;
+      try {
+        jsonText = response.text;
+        console.log('[Gemini] Got text from response.text');
+      } catch (e) {
+        // Try alternative access methods
+        const anyResponse = response as any;
+        if (anyResponse.candidates?.[0]?.content?.parts?.[0]?.text) {
+          jsonText = anyResponse.candidates[0].content.parts[0].text;
+          console.log('[Gemini] Got text from candidates');
+        }
+      }
+      
+      if (!jsonText) {
+        console.log('[Gemini] Unexpected response format:', JSON.stringify(response));
+        throw new Error('Unexpected response format - no text found');
+      }
+      
+      console.log('[Gemini] Response received!');
       console.log('[Gemini] Raw response:', jsonText);
+      setAnalysisProgress('Mapping your musical universe...');
       
       // Save raw response to database
       saveToDatabase('gemini_raw_response', jsonText);
@@ -320,11 +405,11 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       if (jsonText) {
         let data: any;
         try {
-          data = JSON.parse(jsonText);
+            data = JSON.parse(jsonText);
         } catch (e) {
           console.log('[Gemini] Parsing failed, trying to clean JSON...');
-          const cleanJson = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
-          data = JSON.parse(cleanJson);
+            const cleanJson = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+            data = JSON.parse(cleanJson);
         }
 
         console.log('[Gemini] Parsed data:', data);
@@ -335,7 +420,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         saveToDatabase('gemini_parsed_response', data);
 
         if (!data || typeof data !== 'object') {
-          throw new Error("Invalid response format");
+           throw new Error("Invalid response format");
         }
 
         // Add playcount data to nodes
@@ -363,7 +448,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         localStorage.setItem('dakibwa_music_graph', JSON.stringify(safeGraphData));
         setStatus('visualizing');
       } else {
-        throw new Error("No data returned");
+         throw new Error("No data returned");
       }
 
     } catch (error: any) {
@@ -425,33 +510,33 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
 
         // Repulsion
         nodesRef.current.forEach((otherNode, j) => {
-          if (i === j) return;
-          const dx = node.x! - otherNode.x!;
-          const dy = node.y! - otherNode.y!;
-          const distSq = dx * dx + dy * dy + 0.1;
-          const dist = Math.sqrt(distSq);
-          const force = repulsion / distSq;
-          
-          node.vx! += (dx / dist) * force;
-          node.vy! += (dy / dist) * force;
+           if (i === j) return;
+           const dx = node.x! - otherNode.x!;
+           const dy = node.y! - otherNode.y!;
+           const distSq = dx * dx + dy * dy + 0.1;
+           const dist = Math.sqrt(distSq);
+           const force = repulsion / distSq;
+           
+           node.vx! += (dx / dist) * force;
+           node.vy! += (dy / dist) * force;
         });
 
         // Springs
         dataLinks.forEach(link => {
-          const sourceNode = nodesRef.current.find(n => n.id === link.source);
-          const targetNode = nodesRef.current.find(n => n.id === link.target);
-          
-          if (sourceNode && targetNode) {
+            const sourceNode = nodesRef.current.find(n => n.id === link.source);
+            const targetNode = nodesRef.current.find(n => n.id === link.target);
+            
+            if (sourceNode && targetNode) {
             if (node.id === sourceNode.id || node.id === targetNode.id) {
               const other = node.id === sourceNode.id ? targetNode : sourceNode;
               const dx = other.x! - node.x!;
               const dy = other.y! - node.y!;
               const dist = Math.sqrt(dx * dx + dy * dy);
-              const force = (dist - springLength) * springStrength;
-              node.vx! += (dx / dist) * force;
-              node.vy! += (dy / dist) * force;
+                    const force = (dist - springLength) * springStrength;
+                    node.vx! += (dx / dist) * force;
+                    node.vy! += (dy / dist) * force;
+                }
             }
-          }
         });
 
         // Center gravity
@@ -484,40 +569,48 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
           const isHovered = hoveredLink?.source === link.source && hoveredLink?.target === link.target;
           const color = CONNECTION_COLORS[link.type] || CONNECTION_COLORS.similar;
           
-          ctx.beginPath();
-          ctx.moveTo(s.x!, s.y!);
-          ctx.lineTo(t.x!, t.y!);
+            ctx.beginPath();
+            ctx.moveTo(s.x!, s.y!);
+            ctx.lineTo(t.x!, t.y!);
           ctx.strokeStyle = isHovered ? color : `${color}33`;
           ctx.lineWidth = isHovered ? 2 : 1;
-          ctx.stroke();
+            ctx.stroke();
         }
       });
+
+      // Calculate min/max playcounts for scaling
+      const playcounts = nodesRef.current.map(n => n.playcount || 0).filter(p => p > 0);
+      const maxPlaycount = Math.max(...playcounts, 1);
+      const minPlaycount = Math.min(...playcounts, 0);
+      const playcountRange = maxPlaycount - minPlaycount || 1;
 
       // Draw nodes
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNode === node.id;
-        const nodeSize = Math.max(3, Math.min(8, (node.playcount || 500) / 200));
-        
-        if (isHovered) {
+        // Scale node size from 4 to 20 based on relative playcount
+        const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
+        const nodeSize = 4 + (normalised * 16); // 4px min, 20px max
+         
+         if (isHovered) {
           const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 30);
           gradient.addColorStop(0, isDark ? 'rgba(224, 224, 224, 0.3)' : 'rgba(26, 26, 26, 0.2)');
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
+             ctx.fillStyle = gradient;
+             ctx.beginPath();
           ctx.arc(node.x!, node.y!, 30, 0, Math.PI * 2);
-          ctx.fill();
-        }
+             ctx.fill();
+         }
 
         ctx.fillStyle = nodeColor;
-        ctx.beginPath();
+         ctx.beginPath();
         ctx.arc(node.x!, node.y!, isHovered ? nodeSize + 2 : nodeSize, 0, Math.PI * 2);
-        ctx.fill();
+         ctx.fill();
 
-        if (isHovered) {
+         if (isHovered) {
           ctx.fillStyle = labelColor;
           ctx.font = '14px system-ui, -apple-system, sans-serif';
           ctx.fillText(node.id, node.x! + 15, node.y! + 5);
-        }
+         }
       });
 
       simulationRef.current = requestAnimationFrame(animate);
@@ -531,51 +624,51 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
   // Mouse handling
   const handleMouseMove = (e: React.MouseEvent) => {
     if (status !== 'visualizing' || !graphData) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
 
-    let foundNode = null;
+      let foundNode = null;
     let foundLink: Link | null = null;
 
-    for (const node of nodesRef.current) {
-      const dx = mx - node.x!;
-      const dy = my - node.y!;
+      for (const node of nodesRef.current) {
+          const dx = mx - node.x!;
+          const dy = my - node.y!;
       if (Math.sqrt(dx * dx + dy * dy) < 30) {
-        foundNode = node.id;
-        break;
+              foundNode = node.id;
+              break;
+          }
       }
-    }
 
     if (!foundNode && graphData.links) {
       for (const link of graphData.links) {
-        const s = nodesRef.current.find(n => n.id === link.source);
-        const t = nodesRef.current.find(n => n.id === link.target);
-        if (s && t) {
-          const A = mx - s.x!;
-          const B = my - s.y!;
-          const C = t.x! - s.x!;
-          const D = t.y! - s.y!;
-          const dot = A * C + B * D;
-          const lenSq = C * C + D * D;
+              const s = nodesRef.current.find(n => n.id === link.source);
+              const t = nodesRef.current.find(n => n.id === link.target);
+              if (s && t) {
+                  const A = mx - s.x!;
+                  const B = my - s.y!;
+                  const C = t.x! - s.x!;
+                  const D = t.y! - s.y!;
+                  const dot = A * C + B * D;
+                  const lenSq = C * C + D * D;
           let param = lenSq !== 0 ? dot / lenSq : -1;
-          
-          let xx, yy;
-          if (param < 0) { xx = s.x!; yy = s.y!; }
-          else if (param > 1) { xx = t.x!; yy = t.y!; }
-          else { xx = s.x! + param * C; yy = s.y! + param * D; }
-          
+                  
+                  let xx, yy;
+                  if (param < 0) { xx = s.x!; yy = s.y!; }
+                  else if (param > 1) { xx = t.x!; yy = t.y!; }
+                  else { xx = s.x! + param * C; yy = s.y! + param * D; }
+                  
           if (Math.sqrt((mx - xx) ** 2 + (my - yy) ** 2) < 12) {
             foundLink = link;
-            break;
+                      break;
+                  }
+              }
           }
-        }
       }
-    }
 
-    setHoveredNode(foundNode);
-    setHoveredLink(foundLink);
+      setHoveredNode(foundNode);
+      setHoveredLink(foundLink);
   };
 
   const clearData = () => {
@@ -658,22 +751,22 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
                   </div>
                 </div>
                 <form onSubmit={handleLastFmSubmit} className="flex gap-3 items-end">
-                  <input 
-                    type="text" 
+                        <input 
+                            type="text" 
                     value={lastFmUsername}
                     onChange={(e) => setLastFmUsername(e.target.value)}
                     placeholder="Your Last.fm username"
                     className="flex-1 bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-[#1a1a1a] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#666] outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0] transition-colors"
                   />
-                  <button 
-                    type="submit"
+                    <button 
+                        type="submit" 
                     disabled={!lastFmUsername}
                     className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30 pb-2"
-                  >
+                    >
                     Connect →
-                  </button>
+                    </button>
                 </form>
-              </div>
+             </div>
 
               {/* Demo Mode */}
               <button
@@ -683,12 +776,12 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
                 <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">Try Demo</div>
                 <div className="text-sm text-[#666] dark:text-[#999]">Explore with sample artist data</div>
               </button>
-            </div>
+                  </div>
+              </div>
           </div>
-        </div>
       )}
 
-      {/* Fetching/Analyzing View */}
+      {/* Fetching/Analysing View */}
       {(status === 'fetching' || status === 'analyzing') && (
         <div className="min-h-screen flex flex-col items-center justify-center">
           <div className="space-y-6 text-center max-w-md">
@@ -703,11 +796,11 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       {/* Visualization View */}
       {status === 'visualizing' && (
         <div className="absolute inset-0">
-          <canvas 
+         <canvas 
             ref={canvasRef}
             className="w-full h-full cursor-crosshair"
             onMouseMove={handleMouseMove}
-          />
+         />
 
           {/* Reset button */}
           <div className="absolute top-6 right-6">
@@ -734,7 +827,9 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
             {hoveredNode && (
               <div className="bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e0e0e0] dark:border-[#333] p-4">
                 <h3 className="text-xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">{hoveredNode}</h3>
-                <p className="text-sm text-[#666] dark:text-[#999] mt-1">Artist</p>
+                <p className="text-sm text-[#666] dark:text-[#999] mt-1">
+                  {nodesRef.current.find(n => n.id === hoveredNode)?.playcount?.toLocaleString() || 0} plays
+                </p>
               </div>
             )}
             {hoveredLink && !hoveredNode && (
@@ -747,17 +842,17 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
                   {hoveredLink.source} ↔ {hoveredLink.target}
                 </p>
                 <p className="text-sm text-[#666] dark:text-[#999] mt-1">{hoveredLink.reason}</p>
-              </div>
+                </div>
             )}
-          </div>
+         </div>
 
           {/* Title */}
           <div className="absolute bottom-6 left-6 pointer-events-none hidden md:block">
             <h1 className="text-4xl font-normal text-[#1a1a1a]/10 dark:text-[#e0e0e0]/10 tracking-tight">
               We have the right to music
             </h1>
-          </div>
-        </div>
+         </div>
+      </div>
       )}
     </div>
   );
