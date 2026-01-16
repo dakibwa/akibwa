@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface MediaItem {
   id: string;
@@ -8,8 +8,7 @@ interface MediaItem {
   author?: string;
   director?: string;
   year?: number;
-  coverUrl?: string;
-  notes?: string;
+  masterpiece?: boolean;
 }
 
 const MEDIA_ITEMS: MediaItem[] = [
@@ -19,7 +18,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Person Pitch',
     artist: 'Panda Bear',
     year: 2007,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/4/40/Panda_Bear_-_Person_Pitch.png',
+    masterpiece: true,
   },
   {
     id: '2',
@@ -27,7 +26,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Graceland',
     artist: 'Paul Simon',
     year: 1986,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/0/01/Graceland_cover_-_Paul_Simon.jpg',
+    masterpiece: true,
   },
   {
     id: '3',
@@ -35,7 +34,6 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Ghosteen',
     artist: 'Nick Cave & The Bad Seeds',
     year: 2019,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/5/5b/Nick_Cave_and_the_Bad_Seeds_-_Ghosteen.png',
   },
   {
     id: '4',
@@ -43,7 +41,6 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Past Lives',
     director: 'Celine Song',
     year: 2023,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/4/4c/Past_Lives_film_poster.png',
   },
   {
     id: '5',
@@ -51,7 +48,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Magnolia',
     director: 'Paul Thomas Anderson',
     year: 1999,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/9/93/Magnolia_poster.png',
+    masterpiece: true,
   },
   {
     id: '6',
@@ -59,7 +56,6 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Atomic Habits',
     author: 'James Clear',
     year: 2018,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/2/23/Atomic_habits_book_cover.jpg',
   },
   {
     id: '7',
@@ -67,7 +63,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Brave New World',
     author: 'Aldous Huxley',
     year: 1932,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/6/62/BraveNewWorld_FirstEdition.jpg',
+    masterpiece: true,
   },
   {
     id: '8',
@@ -75,7 +71,6 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'The Doors of Perception',
     author: 'Aldous Huxley',
     year: 1954,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/0/05/DoorsofPerception.jpg',
   },
   {
     id: '9',
@@ -83,7 +78,6 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Boogie Nights',
     director: 'Paul Thomas Anderson',
     year: 1997,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Boogie_nights_ver1.jpg',
   },
   {
     id: '10',
@@ -91,11 +85,14 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Adaptation',
     director: 'Spike Jonze',
     year: 2002,
-    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/1/15/Adaptation._film.jpg',
   },
 ];
 
+type FilterType = 'all' | 'album' | 'book' | 'film' | 'masterpiece';
+
 const Consumption: React.FC = () => {
+  const [filter, setFilter] = useState<FilterType>('all');
+
   const getCreator = (item: MediaItem) => {
     return item.artist || item.author || item.director || '';
   };
@@ -103,49 +100,70 @@ const Consumption: React.FC = () => {
   const getStampColor = (type: string) => {
     switch (type) {
       case 'album':
-        return 'border-[#3b82f6] dark:border-[#60a5fa]'; // Blue for albums
+        return 'border-[#3b82f6] dark:border-[#60a5fa] bg-[#3b82f6]/10'; // Blue for albums
       case 'book':
-        return 'border-[#10b981] dark:border-[#34d399]'; // Green for books
+        return 'border-[#10b981] dark:border-[#34d399] bg-[#10b981]/10'; // Green for books
       case 'film':
-        return 'border-[#f59e0b] dark:border-[#fbbf24]'; // Amber for films
+        return 'border-[#f59e0b] dark:border-[#fbbf24] bg-[#f59e0b]/10'; // Amber for films
       default:
         return 'border-[#1a1a1a] dark:border-[#e0e0e0]';
     }
   };
 
+  const filteredItems = MEDIA_ITEMS.filter(item => {
+    if (filter === 'all') return true;
+    if (filter === 'masterpiece') return item.masterpiece;
+    return item.type === filter;
+  });
+
+  const filters: { key: FilterType; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'masterpiece', label: 'Masterpieces' },
+    { key: 'album', label: 'Music' },
+    { key: 'film', label: 'Film' },
+    { key: 'book', label: 'Book' },
+  ];
+
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <header className="space-y-4">
         <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Consumption</h1>
         <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
-        <p className="text-lg text-[#666] dark:text-[#999] max-w-2xl leading-relaxed">
-          A collection of media consumed, documented like stamps in a book.
+        <p className="text-lg text-[#666] dark:text-[#999] max-w-2xl leading-relaxed italic">
+          We all collect something.
         </p>
       </header>
 
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2">
+        {filters.map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={`px-3 py-1 text-sm transition-colors ${
+              filter === key
+                ? 'bg-[#1a1a1a] dark:bg-[#e0e0e0] text-white dark:text-[#1a1a1a]'
+                : 'bg-transparent border border-[#e0e0e0] dark:border-[#333] text-[#666] dark:text-[#999] hover:border-[#1a1a1a] dark:hover:border-[#e0e0e0]'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-        {MEDIA_ITEMS.map((item) => (
+        {filteredItems.map((item) => (
           <div
             key={item.id}
             className="group relative cursor-pointer"
           >
             {/* Stamp-style card with color-coded border */}
-            <div className={`relative bg-white dark:bg-[#2a2a2a] border border-dashed ${getStampColor(item.type)} p-1.5`}>
-                  {/* Cover image */}
-                  <div className="aspect-square bg-[#f0f0f0] dark:bg-[#1a1a1a] mb-1.5 overflow-hidden">
-                    {item.coverUrl ? (
-                      <img
-                        src={item.coverUrl}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#999] dark:text-[#666] text-[8px]">
-                        {item.type}
-                      </div>
-                    )}
+            <div className={`relative border border-dashed ${getStampColor(item.type)} p-1.5`}>
+                  {/* Colored placeholder with initial */}
+                  <div className="aspect-square mb-1.5 overflow-hidden flex items-center justify-center">
+                    <span className="text-2xl font-light opacity-40">
+                      {item.title.charAt(0)}
+                    </span>
                   </div>
 
                   {/* Title and creator */}
@@ -162,9 +180,9 @@ const Consumption: React.FC = () => {
             ))}
       </div>
 
-      {MEDIA_ITEMS.length === 0 && (
+      {filteredItems.length === 0 && (
         <div className="text-center py-16 text-[#666] dark:text-[#999]">
-          <p>No items yet. Start documenting your consumption.</p>
+          <p>No items match this filter.</p>
         </div>
       )}
     </div>
