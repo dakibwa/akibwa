@@ -12,33 +12,87 @@ interface MediaItem {
   notes?: string;
 }
 
-// Sample data - you can expand this with your actual media
 const MEDIA_ITEMS: MediaItem[] = [
   {
     id: '1',
     type: 'album',
-    title: 'Kid A',
-    artist: 'Radiohead',
-    year: 2000,
-    coverUrl: 'https://via.placeholder.com/300x300?text=Kid+A',
+    title: 'Person Pitch',
+    artist: 'Panda Bear',
+    year: 2007,
+    coverUrl: 'https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647',
   },
   {
     id: '2',
-    type: 'book',
-    title: 'The Stranger',
-    author: 'Albert Camus',
-    year: 1942,
-    coverUrl: 'https://via.placeholder.com/300x300?text=The+Stranger',
+    type: 'album',
+    title: 'Graceland',
+    artist: 'Paul Simon',
+    year: 1986,
+    coverUrl: 'https://i.scdn.co/image/ab67616d0000b2737da22ba88dfc26e6ec6b3387',
   },
   {
     id: '3',
-    type: 'film',
-    title: 'Blade Runner 2049',
-    director: 'Denis Villeneuve',
-    year: 2017,
-    coverUrl: 'https://via.placeholder.com/300x300?text=Blade+Runner',
+    type: 'album',
+    title: 'Ghosteen',
+    artist: 'Nick Cave & The Bad Seeds',
+    year: 2019,
+    coverUrl: 'https://i.scdn.co/image/ab67616d0000b2734a544783ba41c372e4f1b24c',
   },
-  // Add more items as needed
+  {
+    id: '4',
+    type: 'film',
+    title: 'Past Lives',
+    director: 'Celine Song',
+    year: 2023,
+    coverUrl: 'https://image.tmdb.org/t/p/w500/k3waqVXSnvCZW8AynlhVnKCyyC9.jpg',
+  },
+  {
+    id: '5',
+    type: 'film',
+    title: 'Magnolia',
+    director: 'Paul Thomas Anderson',
+    year: 1999,
+    coverUrl: 'https://image.tmdb.org/t/p/w500/5M0j0k8bGxSRbHhR7DrBz0etlg.jpg',
+  },
+  {
+    id: '6',
+    type: 'book',
+    title: 'Atomic Habits',
+    author: 'James Clear',
+    year: 2018,
+    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg',
+  },
+  {
+    id: '7',
+    type: 'book',
+    title: 'Brave New World',
+    author: 'Aldous Huxley',
+    year: 1932,
+    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780060850524-L.jpg',
+  },
+  {
+    id: '8',
+    type: 'book',
+    title: 'The Doors of Perception',
+    author: 'Aldous Huxley',
+    year: 1954,
+    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780060850531-L.jpg',
+  },
+  {
+    id: '9',
+    type: 'film',
+    title: 'Boogie Nights',
+    director: 'Paul Thomas Anderson',
+    year: 1997,
+    coverUrl: 'https://image.tmdb.org/t/p/w500/4g3gNfwPvDd2Vv7g6sU3orZqBEM.jpg',
+  },
+  {
+    id: '10',
+    type: 'film',
+    title: 'Adaptation',
+    director: 'Spike Jonze',
+    year: 2002,
+    coverUrl: 'https://image.tmdb.org/t/p/w500/5M0j0k8bGxSRbHhR7DrBz0etlg.jpg',
+  },
 ];
 
 const Consumption: React.FC = () => {
@@ -76,7 +130,7 @@ const Consumption: React.FC = () => {
             className="group relative cursor-pointer"
           >
             {/* Stamp-style card with color-coded border */}
-            <div className={`relative bg-white dark:bg-[#2a2a2a] border-2 border-dashed ${getStampColor(item.type)} p-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:-rotate-1`}>
+            <div className={`relative bg-white dark:bg-[#2a2a2a] border-2 border-dashed ${getStampColor(item.type)} p-2`}>
                   {/* Perforated edge effect - subtle dots */}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     {/* Top edge */}
