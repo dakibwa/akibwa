@@ -42,29 +42,25 @@ const MEDIA_ITEMS: MediaItem[] = [
 ];
 
 const Consumption: React.FC = () => {
-  const groupedByType = MEDIA_ITEMS.reduce((acc, item) => {
-    if (!acc[item.type]) {
-      acc[item.type] = [];
-    }
-    acc[item.type].push(item);
-    return acc;
-  }, {} as Record<string, MediaItem[]>);
-
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'album': return 'Albums';
-      case 'book': return 'Books';
-      case 'film': return 'Films';
-      default: return type;
-    }
-  };
-
   const getCreator = (item: MediaItem) => {
     return item.artist || item.author || item.director || '';
   };
 
+  const getStampColor = (type: string) => {
+    switch (type) {
+      case 'album':
+        return 'border-[#3b82f6] dark:border-[#60a5fa]'; // Blue for albums
+      case 'book':
+        return 'border-[#10b981] dark:border-[#34d399]'; // Green for books
+      case 'film':
+        return 'border-[#f59e0b] dark:border-[#fbbf24]'; // Amber for films
+      default:
+        return 'border-[#1a1a1a] dark:border-[#e0e0e0]';
+    }
+  };
+
   return (
-    <div className="space-y-16">
+    <div className="space-y-12">
       <header className="space-y-4">
         <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Consumption</h1>
         <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
@@ -73,20 +69,14 @@ const Consumption: React.FC = () => {
         </p>
       </header>
 
-      {Object.entries(groupedByType).map(([type, items]) => (
-        <section key={type} className="space-y-6">
-          <h2 className="text-2xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">
-            {getTypeLabel(type)}
-          </h2>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="group relative cursor-pointer"
-              >
-                {/* Stamp-style card with perforated edges effect */}
-                <div className="relative bg-white dark:bg-[#2a2a2a] border-2 border-dashed border-[#1a1a1a] dark:border-[#e0e0e0] p-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:-rotate-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+        {MEDIA_ITEMS.map((item) => (
+          <div
+            key={item.id}
+            className="group relative cursor-pointer"
+          >
+            {/* Stamp-style card with color-coded border */}
+            <div className={`relative bg-white dark:bg-[#2a2a2a] border-2 border-dashed ${getStampColor(item.type)} p-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:-rotate-1`}>
                   {/* Perforated edge effect - subtle dots */}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     {/* Top edge */}
@@ -147,9 +137,7 @@ const Consumption: React.FC = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </section>
-      ))}
+      </div>
 
       {MEDIA_ITEMS.length === 0 && (
         <div className="text-center py-16 text-[#666] dark:text-[#999]">

@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface ProjectsProps {
+interface CreationProps {
   isActive: boolean;
   onSelectEssay: (id: string) => void;
   onLaunchApp: (id: string) => void;
@@ -23,13 +23,13 @@ const PROJECTS_DATA = [
   }
 ];
 
-const Projects: React.FC<ProjectsProps> = ({ isActive, onSelectEssay, onLaunchApp }) => {
+const Creation: React.FC<CreationProps> = ({ isActive, onSelectEssay, onLaunchApp }) => {
   if (!isActive) return null;
 
   return (
     <div className="space-y-12">
       <header className="space-y-4">
-        <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Projects</h1>
+        <h1 className="text-4xl md:text-5xl font-normal tracking-tight">Creation</h1>
         <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
       </header>
 
@@ -80,4 +80,4 @@ const Projects: React.FC<ProjectsProps> = ({ isActive, onSelectEssay, onLaunchAp
   );
 };
 
-export default Projects;
+export default Creation;

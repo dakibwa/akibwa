@@ -18,12 +18,12 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
           </button>
           <div className="flex items-center gap-6 text-sm">
             <button
-              onClick={() => onSelect?.('PROJECTS')}
+              onClick={() => onSelect?.('CREATION')}
               className={`hover:opacity-70 transition-opacity ${
-                activeSection === 'PROJECTS' ? 'opacity-100 font-medium' : 'opacity-60'
+                activeSection === 'CREATION' ? 'opacity-100 font-medium' : 'opacity-60'
               }`}
             >
-              Projects
+              Creation
             </button>
             <button
               onClick={() => onSelect?.('CONSUMPTION')}
