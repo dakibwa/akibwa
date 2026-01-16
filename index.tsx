@@ -17,12 +17,12 @@ if (!rootElement) {
 }
 
 try {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 } catch (error) {
   console.error('Error rendering app:', error);
   rootElement.innerHTML = '<div style="color: white; padding: 20px;">Error loading application. Please check the console.</div>';

@@ -36,15 +36,15 @@ const EssayView: React.FC<EssayViewProps> = ({ isOpen, onClose }) => {
               <span>Essay</span>
               <span>·</span>
               <time>4th Jan 2026</time>
-            </div>
+          </div>
             <h1 className="text-4xl md:text-5xl font-normal tracking-tight leading-tight">
               Livestream Your Life: The Performance of Being
-            </h1>
+          </h1>
             <div className="w-16 h-px bg-[#1a1a1a] dark:bg-[#e0e0e0]"></div>
             <p className="text-xl text-[#666] dark:text-[#999] italic leading-relaxed">
               "The next device won't just record your life—it will teach you how to live one you're willing to replay."
-            </p>
-          </header>
+          </p>
+        </header>
 
           <section className="space-y-6 text-lg leading-relaxed">
           <p>
@@ -86,12 +86,12 @@ const EssayView: React.FC<EssayViewProps> = ({ isOpen, onClose }) => {
           <p>
             And still, we will adopt it, because it offers a new kind of comfort: the promise that you don’t have to trust your own memory, your own narration, your own messy human sense of self. Here’s the file, it will say. Here’s the timeline. Here’s the evidence. And for a species addicted to certainty—terrified of ambiguity, allergic to the quiet work of becoming—that will feel like a revelation. But a life that survives playback is not necessarily a life that was lived; it may simply be a life that was edited. The question isn’t whether the device will make us good. The question is what kind of “good” becomes possible when goodness is measured, and what parts of the soul go silent when the only safe self is the one that can be quoted.
           </p>
-          </section>
+        </section>
 
           <footer className="pt-12 mt-12 border-t border-[#e0e0e0] dark:border-[#333] text-sm text-[#999] dark:text-[#666] text-center">
             Akibwa • 2026
-          </footer>
-        </article>
+        </footer>
+      </article>
       </div>
     </div>
   );
