@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 interface SoundMindProps {
   isOpen: boolean;
@@ -287,66 +287,26 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       
       setAnalysisProgress('Analyzing artist relationships...');
       
-      const prompt = `You are a music expert analyzing someone's listening history to create a knowledge graph of their musical universe.
+      const prompt = `You are a music expert. Analyze these artists and create a JSON network graph showing their connections.
 
-Artists in their library: ${artistInfo}
+Artists: ${artistNames.join(", ")}
 
-Create a detailed network graph showing how these artists connect. Think deeply about:
-1. **Collaborations** - Artists who have worked together on tracks, albums, or remixes
-2. **Influences** - Artists who have clearly influenced others' sound or style  
-3. **Genre connections** - Artists sharing subgenres or sonic aesthetics
-4. **Label connections** - Artists on the same record labels
-5. **Features** - Guest appearances and featured artists
-6. **Similar sound** - Artists with comparable production or vocal styles
-
-For each connection, identify the specific type and give a brief reason (max 5 words).
-
-Create a rich, interconnected graph with many meaningful connections. Every artist should have at least 2 connections.
-
-Output JSON with this exact schema:
+Return ONLY valid JSON with this exact structure:
 {
   "nodes": [{"id": "Artist Name", "group": 1, "type": "artist"}],
-  "links": [{"source": "Artist A", "target": "Artist B", "reason": "Brief reason", "type": "collaboration|influence|genre|label|feature|similar"}]
+  "links": [{"source": "Artist A", "target": "Artist B", "reason": "Brief reason", "type": "collaboration"}]
 }
 
-Groups should cluster similar artists (1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B/Soul, 5=Jazz, 6=Pop, 7=Other).
-Create at least ${Math.min(artistNames.length * 2, 40)} meaningful links.`;
+Connection types: collaboration, influence, genre, label, feature, similar
+Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other
+
+Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs at least 2 connections.`;
+
+      console.log('[Gemini] Sending prompt:', prompt);
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-thinking-exp',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingBudget: 8192 },
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              nodes: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    id: { type: Type.STRING },
-                    group: { type: Type.INTEGER },
-                    type: { type: Type.STRING }
-                  }
-                }
-              },
-              links: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    source: { type: Type.STRING },
-                    target: { type: Type.STRING },
-                    reason: { type: Type.STRING },
-                    type: { type: Type.STRING }
-                  }
-                }
-              }
-            }
-          }
-        }
+        model: 'gemini-3.0-flash-preview',
+        contents: prompt
       });
 
       setAnalysisProgress('Building your musical universe...');
@@ -406,10 +366,17 @@ Create at least ${Math.min(artistNames.length * 2, 40)} meaningful links.`;
         throw new Error("No data returned");
       }
 
-    } catch (error) {
-      console.error("Gemini Analysis Failed", error);
+    } catch (error: any) {
+      console.error("[Gemini] Analysis Failed:", error);
+      console.error("[Gemini] Error message:", error?.message);
+      console.error("[Gemini] Error details:", JSON.stringify(error, null, 2));
+      saveToDatabase('gemini_error', { 
+        message: error?.message, 
+        stack: error?.stack,
+        full: String(error)
+      });
       setStatus('connect');
-      alert("Analysis failed. Please try again.");
+      alert(`Analysis failed: ${error?.message || 'Unknown error'}. Check console for details.`);
     }
   };
 
