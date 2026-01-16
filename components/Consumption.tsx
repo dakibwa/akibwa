@@ -19,7 +19,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Person Pitch',
     artist: 'Panda Bear',
     year: 2007,
-    coverUrl: 'https://i.scdn.co/image/ab67616d0000b273e787cffec20aa2a396a61647',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/4/40/Panda_Bear_-_Person_Pitch.png',
   },
   {
     id: '2',
@@ -27,7 +27,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Graceland',
     artist: 'Paul Simon',
     year: 1986,
-    coverUrl: 'https://i.scdn.co/image/ab67616d0000b2737da22ba88dfc26e6ec6b3387',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/0/01/Graceland_cover_-_Paul_Simon.jpg',
   },
   {
     id: '3',
@@ -35,7 +35,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Ghosteen',
     artist: 'Nick Cave & The Bad Seeds',
     year: 2019,
-    coverUrl: 'https://i.scdn.co/image/ab67616d0000b2734a544783ba41c372e4f1b24c',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/5/5b/Nick_Cave_and_the_Bad_Seeds_-_Ghosteen.png',
   },
   {
     id: '4',
@@ -43,7 +43,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Past Lives',
     director: 'Celine Song',
     year: 2023,
-    coverUrl: 'https://image.tmdb.org/t/p/w500/k3waqVXSnvCZW8AynlhVnKCyyC9.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/4/4c/Past_Lives_film_poster.png',
   },
   {
     id: '5',
@@ -51,7 +51,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Magnolia',
     director: 'Paul Thomas Anderson',
     year: 1999,
-    coverUrl: 'https://image.tmdb.org/t/p/w500/5M0j0k8bGxSRbHhR7DrBz0etlg.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/9/93/Magnolia_poster.png',
   },
   {
     id: '6',
@@ -59,7 +59,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Atomic Habits',
     author: 'James Clear',
     year: 2018,
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/2/23/Atomic_habits_book_cover.jpg',
   },
   {
     id: '7',
@@ -67,7 +67,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Brave New World',
     author: 'Aldous Huxley',
     year: 1932,
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780060850524-L.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/6/62/BraveNewWorld_FirstEdition.jpg',
   },
   {
     id: '8',
@@ -75,7 +75,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'The Doors of Perception',
     author: 'Aldous Huxley',
     year: 1954,
-    coverUrl: 'https://covers.openlibrary.org/b/isbn/9780060850531-L.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/0/05/DoorsofPerception.jpg',
   },
   {
     id: '9',
@@ -83,7 +83,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Boogie Nights',
     director: 'Paul Thomas Anderson',
     year: 1997,
-    coverUrl: 'https://image.tmdb.org/t/p/w500/4g3gNfwPvDd2Vv7g6sU3orZqBEM.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Boogie_nights_ver1.jpg',
   },
   {
     id: '10',
@@ -91,7 +91,7 @@ const MEDIA_ITEMS: MediaItem[] = [
     title: 'Adaptation',
     director: 'Spike Jonze',
     year: 2002,
-    coverUrl: 'https://image.tmdb.org/t/p/w500/5M0j0k8bGxSRbHhR7DrBz0etlg.jpg',
+    coverUrl: 'https://upload.wikimedia.org/wikipedia/en/1/15/Adaptation._film.jpg',
   },
 ];
 
