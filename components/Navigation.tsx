@@ -26,6 +26,14 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
               Projects
             </button>
             <button
+              onClick={() => onSelect?.('CONSUMPTION')}
+              className={`hover:opacity-70 transition-opacity ${
+                activeSection === 'CONSUMPTION' ? 'opacity-100 font-medium' : 'opacity-60'
+              }`}
+            >
+              Consumption
+            </button>
+            <button
               onClick={() => onSelect?.('CONTACT')}
               className={`hover:opacity-70 transition-opacity ${
                 activeSection === 'CONTACT' ? 'opacity-100 font-medium' : 'opacity-60'
