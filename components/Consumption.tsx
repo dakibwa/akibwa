@@ -123,70 +123,39 @@ const Consumption: React.FC = () => {
         </p>
       </header>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
         {MEDIA_ITEMS.map((item) => (
           <div
             key={item.id}
             className="group relative cursor-pointer"
           >
             {/* Stamp-style card with color-coded border */}
-            <div className={`relative bg-white dark:bg-[#2a2a2a] border-2 border-dashed ${getStampColor(item.type)} p-2`}>
-                  {/* Perforated edge effect - subtle dots */}
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {/* Top edge */}
-                    <div className="absolute top-0 left-0 right-0 h-1 flex justify-evenly">
-                      {[...Array(12)].map((_, i) => (
-                        <div key={i} className="w-0.5 h-0.5 rounded-full bg-[#1a1a1a] dark:bg-[#e0e0e0] opacity-40 mt-0.5"></div>
-                      ))}
-                    </div>
-                    {/* Bottom edge */}
-                    <div className="absolute bottom-0 left-0 right-0 h-1 flex justify-evenly">
-                      {[...Array(12)].map((_, i) => (
-                        <div key={i} className="w-0.5 h-0.5 rounded-full bg-[#1a1a1a] dark:bg-[#e0e0e0] opacity-40 mb-0.5"></div>
-                      ))}
-                    </div>
-                    {/* Left edge */}
-                    <div className="absolute top-0 bottom-0 left-0 w-1 flex flex-col justify-evenly">
-                      {[...Array(10)].map((_, i) => (
-                        <div key={i} className="w-0.5 h-0.5 rounded-full bg-[#1a1a1a] dark:bg-[#e0e0e0] opacity-40 ml-0.5"></div>
-                      ))}
-                    </div>
-                    {/* Right edge */}
-                    <div className="absolute top-0 bottom-0 right-0 w-1 flex flex-col justify-evenly">
-                      {[...Array(10)].map((_, i) => (
-                        <div key={i} className="w-0.5 h-0.5 rounded-full bg-[#1a1a1a] dark:bg-[#e0e0e0] opacity-40 mr-0.5"></div>
-                      ))}
-                    </div>
-                  </div>
-
+            <div className={`relative bg-white dark:bg-[#2a2a2a] border border-dashed ${getStampColor(item.type)} p-1.5`}>
                   {/* Cover image */}
-                  <div className="aspect-square bg-[#f0f0f0] dark:bg-[#1a1a1a] mb-2 overflow-hidden">
+                  <div className="aspect-square bg-[#f0f0f0] dark:bg-[#1a1a1a] mb-1.5 overflow-hidden">
                     {item.coverUrl ? (
                       <img
                         src={item.coverUrl}
                         alt={item.title}
                         className="w-full h-full object-cover"
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#999] dark:text-[#666] text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-[#999] dark:text-[#666] text-[8px]">
                         {item.type}
                       </div>
                     )}
                   </div>
 
                   {/* Title and creator */}
-                  <div className="space-y-1 px-1 pb-1">
-                    <div className="text-xs font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-2">
+                  <div className="space-y-0.5 px-0.5">
+                    <div className="text-[10px] font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-2">
                       {item.title}
                     </div>
-                    <div className="text-[10px] text-[#666] dark:text-[#999] leading-tight line-clamp-1">
+                    <div className="text-[8px] text-[#666] dark:text-[#999] leading-tight line-clamp-1">
                       {getCreator(item)}
                     </div>
-                    {item.year && (
-                      <div className="text-[9px] text-[#999] dark:text-[#666]">
-                        {item.year}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
