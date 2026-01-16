@@ -53,6 +53,22 @@ const SPOTIFY_SCOPES = 'user-top-read user-read-recently-played';
 // Last.fm API - set your API key in environment variable VITE_LASTFM_API_KEY  
 const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
 
+// Gemini API Key
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+
+// Simple database using localStorage
+const saveToDatabase = (key: string, data: any) => {
+  const db = JSON.parse(localStorage.getItem('dakibwa_music_db') || '{}');
+  db[key] = { data, timestamp: new Date().toISOString() };
+  localStorage.setItem('dakibwa_music_db', JSON.stringify(db));
+  console.log(`[DB] Saved to ${key}:`, data);
+};
+
+const getFromDatabase = (key: string) => {
+  const db = JSON.parse(localStorage.getItem('dakibwa_music_db') || '{}');
+  return db[key]?.data || null;
+};
+
 // Demo data for when no API is connected
 const DEMO_ARTISTS: ArtistData[] = [
   { name: "Radiohead", playcount: 1500, genres: ["alternative rock", "art rock"] },
@@ -239,7 +255,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       `${a.name}${a.genres ? ` (${a.genres.slice(0, 3).join(', ')})` : ''}`
     ).join(', ');
 
-    if (!process.env.API_KEY) {
+    // Save artists to database
+    saveToDatabase('artists_input', { artists: artistNames, artistInfo });
+    console.log('[Gemini] Input artists:', artistNames);
+
+    if (!GEMINI_API_KEY) {
+      console.warn('[Gemini] No API key found, using fallback');
       // Fallback without Gemini
       setAnalysisProgress('Creating connections...');
       const fallbackData: GraphData = {
@@ -261,7 +282,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      console.log('[Gemini] Using API key:', GEMINI_API_KEY.substring(0, 10) + '...');
+      const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
       
       setAnalysisProgress('Analyzing artist relationships...');
       
@@ -330,14 +352,27 @@ Create at least ${Math.min(artistNames.length * 2, 40)} meaningful links.`;
       setAnalysisProgress('Building your musical universe...');
 
       const jsonText = response.text;
+      console.log('[Gemini] Raw response:', jsonText);
+      
+      // Save raw response to database
+      saveToDatabase('gemini_raw_response', jsonText);
+      
       if (jsonText) {
         let data: any;
         try {
           data = JSON.parse(jsonText);
         } catch (e) {
+          console.log('[Gemini] Parsing failed, trying to clean JSON...');
           const cleanJson = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
           data = JSON.parse(cleanJson);
         }
+
+        console.log('[Gemini] Parsed data:', data);
+        console.log('[Gemini] Nodes count:', data.nodes?.length || 0);
+        console.log('[Gemini] Links count:', data.links?.length || 0);
+        
+        // Save parsed response to database
+        saveToDatabase('gemini_parsed_response', data);
 
         if (!data || typeof data !== 'object') {
           throw new Error("Invalid response format");
@@ -360,6 +395,9 @@ Create at least ${Math.min(artistNames.length * 2, 40)} meaningful links.`;
             type: link.type || 'similar',
           }))
         };
+        
+        console.log('[Gemini] Final graph data:', safeGraphData);
+        saveToDatabase('final_graph', safeGraphData);
 
         setGraphData(safeGraphData);
         localStorage.setItem('dakibwa_music_graph', JSON.stringify(safeGraphData));
