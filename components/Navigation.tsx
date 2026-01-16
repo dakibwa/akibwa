@@ -38,7 +38,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-6 text-sm">
+          <div className="flex items-center gap-6 text-base">
             <button
               onClick={() => onSelect?.('CREATION')}
               className={`hover:opacity-70 transition-opacity ${
