@@ -260,20 +260,23 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       }));
     }
 
+    // Detect theme
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const nodeColor = isDark ? '#e0e0e0' : '#1a1a1a';
+    const linkColor = isDark ? 'rgba(224, 224, 224, 0.15)' : 'rgba(26, 26, 26, 0.15)';
+    const glowColor = isDark ? 'rgba(224, 224, 224, 0.4)' : 'rgba(26, 26, 26, 0.3)';
+
     const animate = () => {
-      // Physics Constants
       const repulsion = 800;
       const springLength = 180;
       const springStrength = 0.04;
       const damping = 0.93;
       const centerForce = 0.0003;
 
-      // 1. Calculate Forces
       nodesRef.current.forEach((node, i) => {
         if (!node.vx) node.vx = 0;
         if (!node.vy) node.vy = 0;
 
-        // Repulsion (Coulomb)
         nodesRef.current.forEach((otherNode, j) => {
            if (i === j) return;
            const dx = node.x! - otherNode.x!;
@@ -286,7 +289,6 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
            node.vy! += (dy / dist) * force;
         });
 
-        // Attraction (Springs) along links
         dataLinks.forEach(link => {
             const sourceNode = nodesRef.current.find(n => n.id === link.source);
             const targetNode = nodesRef.current.find(n => n.id === link.target);
@@ -310,19 +312,16 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
             }
         });
 
-        // Center Gravity
         const dx = (width / 2) - node.x!;
         const dy = (height / 2) - node.y!;
         node.vx! += dx * centerForce;
         node.vy! += dy * centerForce;
 
-        // Apply Velocity
         node.vx! *= damping;
         node.vy! *= damping;
         node.x! += node.vx!;
         node.y! += node.vy!;
 
-        // Boundary bounce (soft)
         const padding = 50;
         if (node.x! < padding) node.vx! += 0.5;
         if (node.x! > width - padding) node.vx! -= 0.5;
@@ -330,10 +329,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         if (node.y! > height - padding) node.vy! -= 0.5;
       });
 
-      // 2. Render
       ctx.clearRect(0, 0, width, height);
       
-      // Draw Links
       dataLinks.forEach(link => {
         const s = nodesRef.current.find(n => n.id === link.source);
         const t = nodesRef.current.find(n => n.id === link.target);
@@ -341,37 +338,33 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
             ctx.beginPath();
             ctx.moveTo(s.x!, s.y!);
             ctx.lineTo(t.x!, t.y!);
-            ctx.strokeStyle = 'rgba(209, 250, 255, 0.15)'; // #D1FAFF low opacity
+            ctx.strokeStyle = linkColor;
             ctx.lineWidth = 1;
             ctx.stroke();
         }
       });
 
-      // Draw Nodes
       nodesRef.current.forEach(node => {
          const isHovered = hoveredNode === node.id;
          
-         // Star Glow
          if (isHovered) {
              const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 25);
-             gradient.addColorStop(0, 'rgba(209, 250, 255, 0.6)');
-             gradient.addColorStop(1, 'rgba(209, 250, 255, 0)');
+             gradient.addColorStop(0, glowColor);
+             gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
              ctx.fillStyle = gradient;
              ctx.beginPath();
              ctx.arc(node.x!, node.y!, 25, 0, Math.PI * 2);
              ctx.fill();
          }
 
-         // Star Core
-         ctx.fillStyle = isHovered ? '#FFFFFF' : '#D1FAFF';
+         ctx.fillStyle = nodeColor;
          ctx.beginPath();
          ctx.arc(node.x!, node.y!, isHovered ? 4 : 2, 0, Math.PI * 2);
          ctx.fill();
 
-         // Label (only if hovered or close neighbors)
          if (isHovered) {
-             ctx.fillStyle = '#FFF';
-             ctx.font = '14px Space Grotesk';
+             ctx.fillStyle = nodeColor;
+             ctx.font = '14px system-ui, -apple-system, sans-serif';
              ctx.fillText(node.id, node.x! + 12, node.y! + 4);
          }
       });
@@ -449,71 +442,68 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     setStatus('input');
   }
 
+  if (!isOpen) return null;
+
   return (
-    <div 
-      className={`
-        fixed inset-0 z-[100] bg-black transition-all duration-700
-        ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none delay-500'}
-      `}
-    >
-      {/* HEADER / NAV */}
-      <div className="absolute top-12 left-12 z-[110] flex gap-4">
+    <div className="fixed inset-0 z-[100] bg-[#fafafa] dark:bg-[#1a1a1a] overflow-y-auto">
+      {/* HEADER */}
+      <div className="absolute top-6 left-6 z-[110]">
         <button 
           onClick={onClose}
-          className="border border-white/20 px-6 py-3 bg-black/80 hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-md uppercase text-xs tracking-[0.3em] cursor-pointer"
+          className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors flex items-center gap-2"
         >
-          Exit System
+          <span>←</span>
+          <span>Back</span>
         </button>
-        {status === 'visualizing' && (
-             <button 
-             onClick={clearData}
-             className="border border-[#D1FAFF]/20 text-[#D1FAFF] px-6 py-3 bg-black/80 hover:bg-[#D1FAFF] hover:text-black transition-all duration-300 backdrop-blur-md uppercase text-xs tracking-[0.3em] cursor-pointer"
-           >
-             Reset Data
-           </button>
-        )}
       </div>
 
       {/* VIEW: INPUT */}
       {status === 'input' && (
-         <div className="absolute inset-0 flex flex-col items-center justify-center p-6 z-[105]">
-             <div className="max-w-md w-full space-y-8 animate-in fade-in zoom-in duration-700">
-                <div className="text-center space-y-4">
-                    <h1 className="text-4xl md:text-6xl font-thin tracking-tighter text-white">SoundMind<span className="text-[#D1FAFF] text-2xl align-top">©</span></h1>
-                    <p className="text-gray-400 font-mono text-xs uppercase tracking-widest">
-                        Cartography for your audio interface
+         <div className="min-h-screen flex flex-col items-center justify-center p-6">
+             <div className="max-w-md w-full space-y-8">
+                <div className="space-y-4">
+                    <h1 className="text-3xl md:text-4xl font-normal tracking-tight text-[#1a1a1a] dark:text-[#e0e0e0]">
+                      We have the right to music
+                    </h1>
+                    <p className="text-[#666] dark:text-[#999]">
+                        Understand yourself through music more.
                     </p>
                 </div>
                 
-                <form onSubmit={handleSubmit} className="space-y-6 pt-8">
+                <form onSubmit={handleSubmit} className="space-y-6 pt-4">
                     <div className="space-y-4">
-                        <input 
-                            type="text" 
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="ENTER LAST.FM USERNAME"
-                            className="w-full bg-transparent border-b border-white/30 py-4 text-center text-xl text-[#D1FAFF] placeholder-gray-700 outline-none focus:border-[#D1FAFF] transition-colors font-light tracking-widest uppercase"
-                        />
-                        <div className="relative group">
-                            <input 
-                                type="password" 
-                                value={lastFmKey}
-                                onChange={(e) => setLastFmKey(e.target.value)}
-                                placeholder="LAST.FM API KEY (OPTIONAL)"
-                                className="w-full bg-transparent border-b border-white/10 py-2 text-center text-xs text-gray-400 placeholder-gray-800 outline-none focus:border-[#D1FAFF]/50 focus:text-[#D1FAFF] transition-colors font-mono tracking-widest"
-                            />
-                            <div className="text-[9px] text-gray-700 text-center pt-2 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                                Leave blank for simulated data
-                            </div>
+                        <div>
+                          <label className="block text-sm text-[#666] dark:text-[#999] mb-2">
+                            Last.fm Username
+                          </label>
+                          <input 
+                              type="text" 
+                              value={username}
+                              onChange={(e) => setUsername(e.target.value)}
+                              placeholder="Enter your username"
+                              className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-3 text-[#1a1a1a] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#666] outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0] transition-colors"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-[#666] dark:text-[#999] mb-2">
+                            API Key <span className="text-[#999] dark:text-[#666]">(optional)</span>
+                          </label>
+                          <input 
+                              type="password" 
+                              value={lastFmKey}
+                              onChange={(e) => setLastFmKey(e.target.value)}
+                              placeholder="Leave blank for demo data"
+                              className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-3 text-[#1a1a1a] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#666] outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0] transition-colors text-sm"
+                          />
                         </div>
                     </div>
                     
                     <button 
                         type="submit" 
                         disabled={!username}
-                        className="w-full bg-white/5 border border-white/10 py-4 text-xs font-bold tracking-[0.4em] uppercase hover:bg-[#D1FAFF] hover:text-black transition-all disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white cursor-pointer"
+                        className="py-3 text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30 cursor-pointer"
                     >
-                        Initialize Analysis
+                        Generate →
                     </button>
                 </form>
              </div>
@@ -522,51 +512,58 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
 
       {/* VIEW: ANALYZING */}
       {status === 'analyzing' && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-[105]">
+          <div className="min-h-screen flex flex-col items-center justify-center">
               <div className="space-y-6 text-center">
-                  <div className="w-16 h-16 border-2 border-[#D1FAFF] border-t-transparent rounded-full animate-spin mx-auto"></div>
-                  <h2 className="text-[#D1FAFF] text-xl font-light tracking-[0.3em] uppercase animate-pulse">
-                      Gemini 3 Processing
-                  </h2>
-                  <div className="font-mono text-xs text-gray-500 space-y-1">
-                      <p>Accessing Neural Pathways...</p>
-                      <p className="delay-75">Reasoning about Genre Topology...</p>
-                      <p className="delay-150">Constructing Constellation...</p>
-                  </div>
+                  <div className="w-8 h-8 border border-[#1a1a1a] dark:border-[#e0e0e0] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <p className="text-[#666] dark:text-[#999]">
+                      Analyzing your music...
+                  </p>
               </div>
           </div>
       )}
 
       {/* VIEW: VISUALIZATION */}
-      <div 
-        className={`absolute inset-0 transition-opacity duration-1000 ${status === 'visualizing' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-      >
-         <canvas 
-            ref={canvasRef}
-            className="w-full h-full"
-            onMouseMove={handleMouseMove}
-         />
+      {status === 'visualizing' && (
+        <div className="absolute inset-0">
+           <canvas 
+              ref={canvasRef}
+              className="w-full h-full"
+              onMouseMove={handleMouseMove}
+           />
 
-         {/* Floating Info Overlay */}
-         <div className="absolute bottom-12 left-12 md:left-auto md:right-12 pointer-events-none">
-            {hoveredNode && (
-                <div className="bg-black/80 border border-[#D1FAFF] p-6 backdrop-blur-md max-w-sm animate-in fade-in slide-in-from-bottom-4">
-                    <h3 className="text-3xl font-light text-white">{hoveredNode}</h3>
-                    <p className="text-[#D1FAFF] text-xs uppercase tracking-widest mt-2">Artist Node</p>
-                </div>
-            )}
-            {hoveredLink && !hoveredNode && (
-                <div className="bg-black/80 border border-white/20 p-4 backdrop-blur-md max-w-sm animate-in fade-in slide-in-from-bottom-2">
-                    <p className="text-gray-300 text-sm font-mono">{hoveredLink}</p>
-                </div>
-            )}
-         </div>
+           {/* Reset button */}
+           <div className="absolute top-6 right-6">
+             <button 
+               onClick={clearData}
+               className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors"
+             >
+               Reset
+             </button>
+           </div>
 
-         {/* Legend / Title */}
-         <div className="absolute bottom-12 left-12 pointer-events-none hidden md:block opacity-50">
-             <h1 className="text-6xl font-extralight text-white/10 tracking-tighter">SoundMind</h1>
-         </div>
-      </div>
+           {/* Floating Info */}
+           <div className="absolute bottom-6 left-6 md:left-auto md:right-6 pointer-events-none">
+              {hoveredNode && (
+                  <div className="bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e0e0e0] dark:border-[#333] p-4 max-w-sm">
+                      <h3 className="text-xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">{hoveredNode}</h3>
+                      <p className="text-sm text-[#666] dark:text-[#999] mt-1">Artist</p>
+                  </div>
+              )}
+              {hoveredLink && !hoveredNode && (
+                  <div className="bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e0e0e0] dark:border-[#333] p-4 max-w-sm">
+                      <p className="text-sm text-[#666] dark:text-[#999]">{hoveredLink}</p>
+                  </div>
+              )}
+           </div>
+
+           {/* Title */}
+           <div className="absolute bottom-6 left-6 pointer-events-none hidden md:block">
+               <h1 className="text-4xl font-normal text-[#1a1a1a]/10 dark:text-[#e0e0e0]/10 tracking-tight">
+                 We have the right to music
+               </h1>
+           </div>
+        </div>
+      )}
     </div>
   );
 };
