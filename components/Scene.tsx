@@ -26,21 +26,27 @@ const Scene: React.FC = React.memo(() => {
       {/* Stars behind the transparency of the scene if any, or layered carefully */}
       <Stars />
       
-      <img 
-        ref={imgRef}
-        src={BACKGROUND_IMAGE_URL}
-        alt="Background Scene" 
-        className="w-full h-full object-cover relative z-10 opacity-90 transition-transform duration-100 ease-out"
-        style={{ transform: 'scale(1.05)' }} // Slight scale up to prevent edges showing during movement
-        loading="eager"
-        decoding="sync"
-      />
-      
-      {/* 
-        Optional: Subtle overlay to ensure the white text and navigation remain legible 
-        against bright parts of the image. 
-      */}
-      <div className="absolute inset-0 bg-black/10 pointer-events-none z-20" />
+      {/* Background image with heavy overlay and blur for subtle atmospheric effect */}
+      <div className="absolute inset-0 z-10">
+        <img 
+          ref={imgRef}
+          src={BACKGROUND_IMAGE_URL}
+          alt="Background Scene" 
+          className="w-full h-full object-cover opacity-20 blur-[3px] transition-transform duration-100 ease-out"
+          style={{ transform: 'scale(1.1)' }} // Slight scale up to prevent edges showing during movement
+          loading="eager"
+          decoding="sync"
+        />
+        {/* Heavy dark overlay to make image more atmospheric and less focal */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
+        {/* Vignette effect for more focus on center content */}
+        <div 
+          className="absolute inset-0 pointer-events-none" 
+          style={{ 
+            background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 0%, transparent 30%, rgba(0,0,0,0.6) 100%)' 
+          }} 
+        />
+      </div>
     </div>
   );
 });
