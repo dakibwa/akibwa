@@ -32,11 +32,9 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
             >
               akibwa
             </button>
-            {quote && (
-              <span className="text-lg text-[#999] dark:text-[#666] font-light">
-                — {quote}
-              </span>
-            )}
+            <span className="text-lg text-[#999] dark:text-[#666] font-light">
+              — {quote || 'by daniel atkinson'}
+            </span>
           </div>
           <div className="flex items-center gap-6 text-base">
             <button
