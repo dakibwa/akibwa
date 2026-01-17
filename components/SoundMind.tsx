@@ -510,85 +510,111 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
 
+    // Handle window resize
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Initialize nodes spread across the canvas
     if (nodesRef.current.length === 0 || nodesRef.current.length !== dataNodes.length) {
-      nodesRef.current = dataNodes.map(n => ({
-        ...n,
-        x: width / 2 + (Math.random() - 0.5) * 100,
-        y: height / 2 + (Math.random() - 0.5) * 100,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2
-      }));
+      const padding = 120;
+      nodesRef.current = dataNodes.map((n, i) => {
+        // Spread nodes in a grid-like pattern initially
+        const cols = Math.ceil(Math.sqrt(dataNodes.length));
+        const row = Math.floor(i / cols);
+        const col = i % cols;
+        const cellWidth = (width - padding * 2) / cols;
+        const cellHeight = (height - padding * 2) / Math.ceil(dataNodes.length / cols);
+        
+        return {
+          ...n,
+          x: padding + col * cellWidth + cellWidth / 2 + (Math.random() - 0.5) * cellWidth * 0.5,
+          y: padding + row * cellHeight + cellHeight / 2 + (Math.random() - 0.5) * cellHeight * 0.5,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5
+        };
+      });
     }
 
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const nodeColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const labelColor = isDark ? '#e0e0e0' : '#1a1a1a';
+    const labelOutlineColor = isDark ? '#1a1a1a' : '#fafafa';
 
     const animate = () => {
-      const repulsion = 1200;
-      const springLength = 150;
-      const springStrength = 0.03;
-      const damping = 0.92;
-      const centerForce = 0.0002;
+      // Dynamic physics based on canvas size
+      const area = width * height;
+      const nodeCount = nodesRef.current.length;
+      const idealSpacing = Math.sqrt(area / nodeCount) * 0.8;
+      
+      const repulsion = 3000; // Increased repulsion
+      const springLength = Math.max(idealSpacing, 200); // Dynamic spring length
+      const springStrength = 0.015; // Reduced spring strength
+      const damping = 0.9;
+      const centerForce = 0.00005; // Much weaker center gravity
 
       nodesRef.current.forEach((node, i) => {
         if (!node.vx) node.vx = 0;
         if (!node.vy) node.vy = 0;
 
-        // Repulsion
+        // Repulsion from other nodes
         nodesRef.current.forEach((otherNode, j) => {
-           if (i === j) return;
-           const dx = node.x! - otherNode.x!;
-           const dy = node.y! - otherNode.y!;
-           const distSq = dx * dx + dy * dy + 0.1;
-           const dist = Math.sqrt(distSq);
-           const force = repulsion / distSq;
-           
-           node.vx! += (dx / dist) * force;
-           node.vy! += (dy / dist) * force;
+          if (i === j) return;
+          const dx = node.x! - otherNode.x!;
+          const dy = node.y! - otherNode.y!;
+          const distSq = dx * dx + dy * dy + 0.1;
+          const dist = Math.sqrt(distSq);
+          const force = repulsion / distSq;
+          
+          node.vx! += (dx / dist) * force;
+          node.vy! += (dy / dist) * force;
         });
 
-        // Springs
+        // Springs for connected nodes
         dataLinks.forEach(link => {
-            const sourceNode = nodesRef.current.find(n => n.id === link.source);
-            const targetNode = nodesRef.current.find(n => n.id === link.target);
-            
-            if (sourceNode && targetNode) {
+          const sourceNode = nodesRef.current.find(n => n.id === link.source);
+          const targetNode = nodesRef.current.find(n => n.id === link.target);
+          
+          if (sourceNode && targetNode) {
             if (node.id === sourceNode.id || node.id === targetNode.id) {
               const other = node.id === sourceNode.id ? targetNode : sourceNode;
               const dx = other.x! - node.x!;
               const dy = other.y! - node.y!;
               const dist = Math.sqrt(dx * dx + dy * dy);
-                    const force = (dist - springLength) * springStrength;
-                    node.vx! += (dx / dist) * force;
-                    node.vy! += (dy / dist) * force;
-                }
+              const force = (dist - springLength) * springStrength;
+              node.vx! += (dx / dist) * force;
+              node.vy! += (dy / dist) * force;
             }
+          }
         });
 
-        // Center gravity
+        // Very weak center gravity
         const dx = (width / 2) - node.x!;
         const dy = (height / 2) - node.y!;
         node.vx! += dx * centerForce;
         node.vy! += dy * centerForce;
 
-        // Apply
+        // Apply velocity
         node.vx! *= damping;
         node.vy! *= damping;
         node.x! += node.vx!;
         node.y! += node.vy!;
 
-        // Bounds
-        const padding = 80;
-        if (node.x! < padding) node.vx! += 0.5;
-        if (node.x! > width - padding) node.vx! -= 0.5;
-        if (node.y! < padding) node.vy! += 0.5;
-        if (node.y! > height - padding) node.vy! -= 0.5;
+        // Keep within bounds with soft bounce
+        const padding = 100;
+        if (node.x! < padding) { node.x! = padding; node.vx! *= -0.5; }
+        if (node.x! > width - padding) { node.x! = width - padding; node.vx! *= -0.5; }
+        if (node.y! < padding) { node.y! = padding; node.vy! *= -0.5; }
+        if (node.y! > height - padding) { node.y! = height - padding; node.vy! *= -0.5; }
       });
 
       ctx.clearRect(0, 0, width, height);
@@ -601,12 +627,12 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
           const isHovered = hoveredLink?.source === link.source && hoveredLink?.target === link.target;
           const color = CONNECTION_COLORS[link.type] || CONNECTION_COLORS.similar;
           
-            ctx.beginPath();
-            ctx.moveTo(s.x!, s.y!);
-            ctx.lineTo(t.x!, t.y!);
+          ctx.beginPath();
+          ctx.moveTo(s.x!, s.y!);
+          ctx.lineTo(t.x!, t.y!);
           ctx.strokeStyle = isHovered ? color : `${color}77`;
           ctx.lineWidth = isHovered ? 3 : 1.5;
-            ctx.stroke();
+          ctx.stroke();
         }
       });
 
@@ -616,39 +642,47 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       const minPlaycount = Math.min(...playcounts, 0);
       const playcountRange = maxPlaycount - minPlaycount || 1;
 
-      // Draw nodes
+      // Draw nodes (circles first)
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNode === node.id;
-        // Scale node size from 5 to 35 based on relative playcount
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
-        const nodeSize = 5 + (normalised * 30); // 5px min, 35px max
-         
-         if (isHovered) {
-          const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 30);
+        const nodeSize = 6 + (normalised * 28); // 6px min, 34px max
+        
+        if (isHovered) {
+          const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 35);
           gradient.addColorStop(0, isDark ? 'rgba(224, 224, 224, 0.3)' : 'rgba(26, 26, 26, 0.2)');
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-             ctx.fillStyle = gradient;
-             ctx.beginPath();
-          ctx.arc(node.x!, node.y!, 30, 0, Math.PI * 2);
-             ctx.fill();
-         }
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(node.x!, node.y!, 35, 0, Math.PI * 2);
+          ctx.fill();
+        }
 
         ctx.fillStyle = nodeColor;
-         ctx.beginPath();
+        ctx.beginPath();
         ctx.arc(node.x!, node.y!, isHovered ? nodeSize + 2 : nodeSize, 0, Math.PI * 2);
-         ctx.fill();
+        ctx.fill();
+      });
 
-         if (isHovered) {
-          ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
-          // Draw text outline/shadow for visibility
-          ctx.strokeStyle = isDark ? '#1a1a1a' : '#fafafa';
-          ctx.lineWidth = 4;
-          ctx.lineJoin = 'round';
-          ctx.strokeText(node.id, node.x! + 15, node.y! + 5);
-          // Draw text
-          ctx.fillStyle = labelColor;
-          ctx.fillText(node.id, node.x! + 15, node.y! + 5);
-         }
+      // Draw all labels AFTER all nodes (so they appear on top)
+      nodesRef.current.forEach(node => {
+        const isHovered = hoveredNode === node.id;
+        const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
+        const nodeSize = 6 + (normalised * 28);
+        
+        ctx.font = isHovered ? 'bold 14px system-ui, -apple-system, sans-serif' : '12px system-ui, -apple-system, sans-serif';
+        const labelX = node.x! + nodeSize + 8;
+        const labelY = node.y! + 4;
+        
+        // Draw text outline for visibility
+        ctx.strokeStyle = labelOutlineColor;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.strokeText(node.id, labelX, labelY);
+        
+        // Draw text
+        ctx.fillStyle = labelColor;
+        ctx.fillText(node.id, labelX, labelY);
       });
 
       simulationRef.current = requestAnimationFrame(animate);
@@ -656,7 +690,10 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
 
     simulationRef.current = requestAnimationFrame(animate);
 
-    return () => cancelAnimationFrame(simulationRef.current);
+    return () => {
+      cancelAnimationFrame(simulationRef.current);
+      window.removeEventListener('resize', handleResize);
+    };
   }, [status, graphData, hoveredNode, hoveredLink]);
 
   // Mouse handling
