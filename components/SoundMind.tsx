@@ -311,16 +311,30 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   // --- GEMINI ANALYSIS ---
   const analyzeWithGemini = async () => {
     setStatus('analyzing');
-    setAnalysisProgress('Thinking about your music taste...');
     setProgressPercent(0);
     
-    // Animated progress bar that fills slowly
+    // Cycling loading messages
+    const loadingMessages = [
+      'Analysing music...',
+      'Forming links...',
+      'Drawing up cartography...',
+      'Creating the constellation...'
+    ];
+    let messageIndex = 0;
+    setAnalysisProgress(loadingMessages[0]);
+    
+    const messageInterval = setInterval(() => {
+      messageIndex = (messageIndex + 1) % loadingMessages.length;
+      setAnalysisProgress(loadingMessages[messageIndex]);
+    }, 2500);
+    
+    // Smooth animated progress bar
     const progressInterval = setInterval(() => {
       setProgressPercent(prev => {
-        if (prev >= 85) return prev; // Cap at 85% until actually done
-        return prev + Math.random() * 3;
+        if (prev >= 90) return prev; // Cap at 90% until actually done
+        return prev + 0.5;
       });
-    }, 500);
+    }, 100);
 
     const artistNames = artistsData.map(a => a.name);
     const artistInfo = artistsData.map(a => 
@@ -457,15 +471,19 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         setGraphData(safeGraphData);
         localStorage.setItem('dakibwa_music_graph', JSON.stringify(safeGraphData));
         clearInterval(progressInterval);
+        clearInterval(messageInterval);
         setProgressPercent(100);
-        setTimeout(() => setStatus('visualizing'), 300);
+        setAnalysisProgress('Complete!');
+        setTimeout(() => setStatus('visualizing'), 500);
       } else {
         clearInterval(progressInterval);
+        clearInterval(messageInterval);
         throw new Error("No data returned");
       }
 
     } catch (error: any) {
       clearInterval(progressInterval);
+      clearInterval(messageInterval);
       console.error("[Gemini] Analysis Failed:", error);
       console.error("[Gemini] Error message:", error?.message);
       console.error("[Gemini] Error details:", JSON.stringify(error, null, 2));
@@ -621,8 +639,14 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
          ctx.fill();
 
          if (isHovered) {
+          ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
+          // Draw text outline/shadow for visibility
+          ctx.strokeStyle = isDark ? '#1a1a1a' : '#fafafa';
+          ctx.lineWidth = 4;
+          ctx.lineJoin = 'round';
+          ctx.strokeText(node.id, node.x! + 15, node.y! + 5);
+          // Draw text
           ctx.fillStyle = labelColor;
-          ctx.font = '14px system-ui, -apple-system, sans-serif';
           ctx.fillText(node.id, node.x! + 15, node.y! + 5);
          }
       });
@@ -799,26 +823,19 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       {(status === 'fetching' || status === 'analyzing') && (
         <div className="min-h-screen flex flex-col items-center justify-center p-6">
           <div className="space-y-8 text-center max-w-md w-full">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">
-                Analysing your music
-              </h2>
-              <p className="text-[#666] dark:text-[#999]">
+            <div className="space-y-4">
+              <p className="text-xl text-[#1a1a1a] dark:text-[#e0e0e0] transition-opacity duration-500">
                 {analysisProgress}
               </p>
             </div>
             
             {/* Progress bar */}
-            <div className="w-full h-1 bg-[#e0e0e0] dark:bg-[#333] overflow-hidden">
+            <div className="w-full h-px bg-[#e0e0e0] dark:bg-[#333] overflow-hidden">
               <div 
-                className="h-full bg-[#1a1a1a] dark:bg-[#e0e0e0] transition-all duration-500 ease-out"
+                className="h-full bg-[#1a1a1a] dark:bg-[#e0e0e0] transition-all duration-100 ease-linear"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            
-            <p className="text-xs text-[#999] dark:text-[#666]">
-              Gemini 3 Flash is thinking...
-            </p>
           </div>
         </div>
       )}
