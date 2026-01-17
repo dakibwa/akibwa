@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+// Last.fm API key from env
+const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
 
 interface MediaItem {
   id: string;
@@ -7,110 +10,178 @@ interface MediaItem {
   artist?: string;
   author?: string;
   director?: string;
-  year?: number;
+  year?: string;
   masterpiece?: boolean;
+  imageUrl?: string;
+  link?: string;
+  rating?: number;
+  playcount?: number;
 }
-
-const MEDIA_ITEMS: MediaItem[] = [
-  {
-    id: '1',
-    type: 'album',
-    title: 'Person Pitch',
-    artist: 'Panda Bear',
-    year: 2007,
-    masterpiece: true,
-  },
-  {
-    id: '2',
-    type: 'album',
-    title: 'Graceland',
-    artist: 'Paul Simon',
-    year: 1986,
-    masterpiece: true,
-  },
-  {
-    id: '3',
-    type: 'album',
-    title: 'Ghosteen',
-    artist: 'Nick Cave & The Bad Seeds',
-    year: 2019,
-  },
-  {
-    id: '4',
-    type: 'film',
-    title: 'Past Lives',
-    director: 'Celine Song',
-    year: 2023,
-  },
-  {
-    id: '5',
-    type: 'film',
-    title: 'Magnolia',
-    director: 'Paul Thomas Anderson',
-    year: 1999,
-    masterpiece: true,
-  },
-  {
-    id: '6',
-    type: 'book',
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    year: 2018,
-  },
-  {
-    id: '7',
-    type: 'book',
-    title: 'Brave New World',
-    author: 'Aldous Huxley',
-    year: 1932,
-    masterpiece: true,
-  },
-  {
-    id: '8',
-    type: 'book',
-    title: 'The Doors of Perception',
-    author: 'Aldous Huxley',
-    year: 1954,
-  },
-  {
-    id: '9',
-    type: 'film',
-    title: 'Boogie Nights',
-    director: 'Paul Thomas Anderson',
-    year: 1997,
-  },
-  {
-    id: '10',
-    type: 'film',
-    title: 'Adaptation',
-    director: 'Spike Jonze',
-    year: 2002,
-  },
-];
 
 type FilterType = 'all' | 'album' | 'book' | 'film' | 'masterpiece';
 
+// Your usernames - edit these!
+const USERNAMES = {
+  letterboxd: '', // e.g., 'dakibwa'
+  goodreads: '',  // e.g., '12345678' (user ID from profile URL)
+  lastfm: '',     // e.g., 'dakibwa'
+};
+
 const Consumption: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [items, setItems] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [connected, setConnected] = useState({
+    letterboxd: false,
+    goodreads: false,
+    lastfm: false,
+  });
+  
+  // Settings modal
+  const [showSettings, setShowSettings] = useState(false);
+  const [letterboxdUser, setLetterboxdUser] = useState('');
+  const [goodreadsUser, setGoodreadsUser] = useState('');
+  const [lastfmUser, setLastfmUser] = useState('');
+
+  // Load saved usernames on mount
+  useEffect(() => {
+    const savedLetterboxd = localStorage.getItem('dakibwa_letterboxd_user');
+    const savedGoodreads = localStorage.getItem('dakibwa_goodreads_user');
+    const savedLastfm = localStorage.getItem('dakibwa_lastfm_user');
+    
+    if (savedLetterboxd) setLetterboxdUser(savedLetterboxd);
+    if (savedGoodreads) setGoodreadsUser(savedGoodreads);
+    if (savedLastfm) setLastfmUser(savedLastfm);
+    
+    // Load cached items
+    const cachedItems = localStorage.getItem('dakibwa_consumption_items');
+    if (cachedItems) {
+      try {
+        setItems(JSON.parse(cachedItems));
+      } catch (e) {
+        console.error('Failed to load cached items');
+      }
+    }
+  }, []);
+
+  // Fetch all data
+  const fetchAllData = async () => {
+    setLoading(true);
+    const allItems: MediaItem[] = [];
+
+    // Fetch Last.fm albums
+    if (lastfmUser && LASTFM_API_KEY) {
+      try {
+        const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastfmUser}&api_key=${LASTFM_API_KEY}&format=json&limit=50&period=overall`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.topalbums?.album) {
+          localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
+          setConnected(prev => ({ ...prev, lastfm: true }));
+          
+          data.topalbums.album.forEach((album: any, index: number) => {
+            allItems.push({
+              id: `lastfm-${index}`,
+              type: 'album',
+              title: album.name,
+              artist: album.artist?.name,
+              playcount: parseInt(album.playcount),
+              imageUrl: album.image?.[2]?.['#text'],
+              link: album.url,
+              masterpiece: parseInt(album.playcount) > 100, // Mark high-play albums
+            });
+          });
+        }
+      } catch (e) {
+        console.error('Last.fm fetch failed:', e);
+      }
+    }
+
+    // Fetch Letterboxd films via RSS
+    if (letterboxdUser) {
+      try {
+        // Using a CORS proxy for RSS
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/rss/`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        
+        if (data.items) {
+          localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
+          setConnected(prev => ({ ...prev, letterboxd: true }));
+          
+          data.items.slice(0, 50).forEach((item: any, index: number) => {
+            // Parse rating from title if present (e.g., "Film Title - ★★★★")
+            const ratingMatch = item.title?.match(/★+/);
+            const rating = ratingMatch ? ratingMatch[0].length : undefined;
+            const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '');
+            
+            allItems.push({
+              id: `letterboxd-${index}`,
+              type: 'film',
+              title: cleanTitle || item.title,
+              link: item.link,
+              rating,
+              masterpiece: rating && rating >= 5,
+            });
+          });
+        }
+      } catch (e) {
+        console.error('Letterboxd fetch failed:', e);
+      }
+    }
+
+    // Fetch Goodreads books via RSS
+    if (goodreadsUser) {
+      try {
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${goodreadsUser}?shelf=read`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        
+        if (data.items) {
+          localStorage.setItem('dakibwa_goodreads_user', goodreadsUser);
+          setConnected(prev => ({ ...prev, goodreads: true }));
+          
+          data.items.slice(0, 50).forEach((item: any, index: number) => {
+            // Extract author from description if possible
+            const authorMatch = item.description?.match(/author: ([^<]+)/i);
+            const ratingMatch = item.description?.match(/rating: (\d)/);
+            
+            allItems.push({
+              id: `goodreads-${index}`,
+              type: 'book',
+              title: item.title,
+              author: authorMatch?.[1]?.trim(),
+              link: item.link,
+              rating: ratingMatch ? parseInt(ratingMatch[1]) : undefined,
+              masterpiece: ratingMatch && parseInt(ratingMatch[1]) >= 5,
+            });
+          });
+        }
+      } catch (e) {
+        console.error('Goodreads fetch failed:', e);
+      }
+    }
+
+    setItems(allItems);
+    localStorage.setItem('dakibwa_consumption_items', JSON.stringify(allItems));
+    setLoading(false);
+  };
 
   const getCreator = (item: MediaItem) => {
     return item.artist || item.author || item.director || '';
   };
 
-  const getStampColor = (type: string) => {
+  const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'album':
-        return 'border-[#3b82f6] dark:border-[#60a5fa] bg-[#3b82f6]/10'; // Blue for albums
-      case 'book':
-        return 'border-[#10b981] dark:border-[#34d399] bg-[#10b981]/10'; // Green for books
-      case 'film':
-        return 'border-[#f59e0b] dark:border-[#fbbf24] bg-[#f59e0b]/10'; // Amber for films
-      default:
-        return 'border-[#1a1a1a] dark:border-[#e0e0e0]';
+      case 'album': return 'Album';
+      case 'book': return 'Book';
+      case 'film': return 'Film';
+      default: return type;
     }
   };
 
-  const filteredItems = MEDIA_ITEMS.filter(item => {
+  const filteredItems = items.filter(item => {
     if (filter === 'all') return true;
     if (filter === 'masterpiece') return item.masterpiece;
     return item.type === filter;
@@ -124,9 +195,93 @@ const Consumption: React.FC = () => {
     { key: 'masterpiece', label: 'Masterpieces' },
   ];
 
+  const hasAnyConnection = letterboxdUser || goodreadsUser || lastfmUser;
+
   return (
     <div className="space-y-6">
-      {/* Filters - aligned right */}
+      {/* Header with settings */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          {connected.lastfm && (
+            <span className="text-xs text-[#999] dark:text-[#666]">Last.fm ✓</span>
+          )}
+          {connected.letterboxd && (
+            <span className="text-xs text-[#999] dark:text-[#666]">Letterboxd ✓</span>
+          )}
+          {connected.goodreads && (
+            <span className="text-xs text-[#999] dark:text-[#666]">Goodreads ✓</span>
+          )}
+        </div>
+        <button
+          onClick={() => setShowSettings(!showSettings)}
+          className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors"
+        >
+          {showSettings ? 'Close' : 'Connect Services'}
+        </button>
+      </div>
+
+      {/* Settings panel */}
+      {showSettings && (
+        <div className="border border-[#e0e0e0] dark:border-[#333] p-6 space-y-4">
+          <p className="text-sm text-[#666] dark:text-[#999]">
+            Connect your accounts to automatically import your consumption history.
+          </p>
+          
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="block text-sm text-[#666] dark:text-[#999] mb-1">
+                Last.fm Username
+              </label>
+              <input
+                type="text"
+                value={lastfmUser}
+                onChange={(e) => setLastfmUser(e.target.value)}
+                placeholder="e.g., dakibwa"
+                className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-sm outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0]"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm text-[#666] dark:text-[#999] mb-1">
+                Letterboxd Username
+              </label>
+              <input
+                type="text"
+                value={letterboxdUser}
+                onChange={(e) => setLetterboxdUser(e.target.value)}
+                placeholder="e.g., dakibwa"
+                className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-sm outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0]"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm text-[#666] dark:text-[#999] mb-1">
+                Goodreads User ID
+              </label>
+              <input
+                type="text"
+                value={goodreadsUser}
+                onChange={(e) => setGoodreadsUser(e.target.value)}
+                placeholder="e.g., 12345678"
+                className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-sm outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0]"
+              />
+              <p className="text-xs text-[#999] dark:text-[#666] mt-1">
+                Find in your profile URL
+              </p>
+            </div>
+          </div>
+          
+          <button
+            onClick={fetchAllData}
+            disabled={loading || !hasAnyConnection}
+            className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30"
+          >
+            {loading ? 'Fetching...' : 'Sync Now →'}
+          </button>
+        </div>
+      )}
+
+      {/* Filters */}
       <div className="flex justify-end flex-wrap gap-2">
         {filters.map(({ key, label }) => (
           <button
@@ -143,38 +298,80 @@ const Consumption: React.FC = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className="group relative cursor-pointer"
-          >
-            {/* Stamp-style card with color-coded border */}
-            <div className={`relative border border-dashed ${getStampColor(item.type)} p-1.5 ${item.masterpiece ? 'shadow-[0_0_8px_rgba(255,255,255,0.15)]' : ''}`}>
-                  {/* Colored placeholder with initial */}
-                  <div className="aspect-square mb-1.5 overflow-hidden flex items-center justify-center">
-                    <span className="text-2xl font-light opacity-40">
+      {/* Items grid */}
+      {filteredItems.length > 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {filteredItems.map((item) => (
+            <a
+              key={item.id}
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block"
+            >
+              <div className={`border border-[#e0e0e0] dark:border-[#333] p-3 hover:border-[#1a1a1a] dark:hover:border-[#e0e0e0] transition-colors ${item.masterpiece ? 'bg-[#1a1a1a]/5 dark:bg-white/5' : ''}`}>
+                {/* Image or placeholder */}
+                <div className="aspect-square mb-3 overflow-hidden bg-[#f0f0f0] dark:bg-[#222] flex items-center justify-center">
+                  {item.imageUrl ? (
+                    <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-3xl font-light opacity-30">
                       {item.title.charAt(0)}
                     </span>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Title and creator */}
-                  <div className="space-y-0.5 px-0.5">
-                    <div className="text-[10px] font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-2">
-                      {item.title}
-                    </div>
-                    <div className="text-[8px] text-[#666] dark:text-[#999] leading-tight line-clamp-1">
-                      {getCreator(item)}
-                    </div>
+                {/* Title and creator */}
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-2">
+                    {item.title}
+                  </div>
+                  <div className="text-xs text-[#666] dark:text-[#999] leading-tight line-clamp-1">
+                    {getCreator(item)}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-[#999] dark:text-[#666] uppercase">
+                      {getTypeLabel(item.type)}
+                    </span>
+                    {item.rating && (
+                      <span className="text-[10px] text-[#999] dark:text-[#666]">
+                        {'★'.repeat(item.rating)}
+                      </span>
+                    )}
+                    {item.playcount && (
+                      <span className="text-[10px] text-[#999] dark:text-[#666]">
+                        {item.playcount.toLocaleString()} plays
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
-            ))}
-      </div>
-
-      {filteredItems.length === 0 && (
+            </a>
+          ))}
+        </div>
+      ) : (
         <div className="text-center py-16 text-[#666] dark:text-[#999]">
-          <p>No items match this filter.</p>
+          {hasAnyConnection ? (
+            <div className="space-y-4">
+              <p>No items yet.</p>
+              <button
+                onClick={fetchAllData}
+                className="text-sm hover:opacity-60 transition-opacity"
+              >
+                Sync your data →
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p>Connect your accounts to see your consumption history.</p>
+              <button
+                onClick={() => setShowSettings(true)}
+                className="text-sm hover:opacity-60 transition-opacity"
+              >
+                Connect Services →
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -182,4 +379,3 @@ const Consumption: React.FC = () => {
 };
 
 export default Consumption;
-
