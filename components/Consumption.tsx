@@ -191,6 +191,26 @@ const Consumption: React.FC = () => {
     }
   };
 
+  const getStampColor = (type: string, isMasterpiece?: boolean) => {
+    if (isMasterpiece) return 'border-[#f0d890] dark:border-[#d4b85c]'; // Pastel yellow
+    switch (type) {
+      case 'album': return 'border-[#7eb8da] dark:border-[#5a9fc7]'; // Blue
+      case 'film': return 'border-[#8bc99b] dark:border-[#6bb37e]'; // Green
+      case 'book': return 'border-[#e8a5a5] dark:border-[#d48888]'; // Pastel red
+      default: return 'border-[#e0e0e0] dark:border-[#333]';
+    }
+  };
+
+  const getFilterColor = (key: FilterType) => {
+    switch (key) {
+      case 'album': return 'border-[#7eb8da] dark:border-[#5a9fc7]'; // Blue
+      case 'film': return 'border-[#8bc99b] dark:border-[#6bb37e]'; // Green
+      case 'book': return 'border-[#e8a5a5] dark:border-[#d48888]'; // Pastel red
+      case 'masterpiece': return 'border-[#f0d890] dark:border-[#d4b85c]'; // Pastel yellow
+      default: return 'border-[#e0e0e0] dark:border-[#333]';
+    }
+  };
+
   const filteredItems = items.filter(item => {
     if (filter === 'all') return true;
     if (filter === 'masterpiece') return item.masterpiece;
@@ -286,10 +306,10 @@ const Consumption: React.FC = () => {
           <button
             key={key}
             onClick={() => setFilter(key)}
-            className={`px-3 py-1 text-sm transition-colors ${
+            className={`px-3 py-1 text-sm transition-colors border-2 ${
               filter === key
-                ? 'bg-[#1a1a1a] dark:bg-[#e0e0e0] text-white dark:text-[#1a1a1a]'
-                : 'bg-transparent border border-[#e0e0e0] dark:border-[#333] text-[#666] dark:text-[#999] hover:border-[#1a1a1a] dark:hover:border-[#e0e0e0]'
+                ? `${getFilterColor(key)} bg-[#1a1a1a]/10 dark:bg-white/10 text-[#1a1a1a] dark:text-[#e0e0e0]`
+                : `${getFilterColor(key)} bg-transparent text-[#666] dark:text-[#999] hover:bg-[#1a1a1a]/5 dark:hover:bg-white/5`
             }`}
           >
             {label}
@@ -308,7 +328,7 @@ const Consumption: React.FC = () => {
               rel="noopener noreferrer"
               className="group block"
             >
-              <div className={`border border-[#e0e0e0] dark:border-[#333] p-3 hover:border-[#1a1a1a] dark:hover:border-[#e0e0e0] transition-colors ${item.masterpiece ? 'bg-[#1a1a1a]/5 dark:bg-white/5' : ''}`}>
+              <div className={`border-2 ${getStampColor(item.type, item.masterpiece)} p-3 hover:opacity-80 transition-all ${item.masterpiece ? 'bg-[#1a1a1a]/5 dark:bg-white/5 shadow-[0_0_8px_rgba(240,216,144,0.3)]' : ''}`}>
                 {/* Image or placeholder */}
                 <div className="aspect-square mb-3 overflow-hidden bg-[#f0f0f0] dark:bg-[#222] flex items-center justify-center">
                   {item.imageUrl ? (
@@ -322,13 +342,13 @@ const Consumption: React.FC = () => {
 
                 {/* Title and creator */}
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-2">
+                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight h-[2.5rem] line-clamp-2 overflow-hidden">
                     {item.title}
                   </div>
-                  <div className="text-xs text-[#666] dark:text-[#999] leading-tight line-clamp-1">
+                  <div className="text-xs text-[#666] dark:text-[#999] leading-tight h-[1rem] line-clamp-1 overflow-hidden">
                     {getCreator(item)}
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pt-1">
                     <span className="text-[10px] text-[#999] dark:text-[#666] uppercase">
                       {getTypeLabel(item.type)}
                     </span>
