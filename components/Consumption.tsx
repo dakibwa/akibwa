@@ -28,7 +28,7 @@ const DEFAULT_USERNAMES = {
 };
 
 // Cache version - increment to clear old cached data
-const CACHE_VERSION = '2';
+const CACHE_VERSION = '3';
 
 const Consumption: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
@@ -124,29 +124,28 @@ const Consumption: React.FC = () => {
       }
     }
 
-    // Fetch Letterboxd films via RSS - using /films/rss/ for all watched films
+    // Fetch Letterboxd films via RSS
     if (letterboxdUser) {
       try {
-        // Fetch from films feed (all watched) instead of diary
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/films/rss/&count=500`;
+        // Using diary RSS which includes ratings and poster images
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/rss/&count=100`;
         const res = await fetch(proxyUrl);
         const data = await res.json();
         
-        if (data.items) {
+        console.log('Letterboxd response:', data);
+        
+        if (data.status === 'ok' && data.items) {
           localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
           setConnected(prev => ({ ...prev, letterboxd: true }));
           
           data.items.forEach((item: any, index: number) => {
-            // Parse rating from description if present (films feed format)
-            // Description may contain: "★★★★★" or similar
-            const descRatingMatch = item.description?.match(/★+/);
-            const titleRatingMatch = item.title?.match(/★+/);
-            const ratingMatch = descRatingMatch || titleRatingMatch;
+            // Parse rating from title if present (e.g., "Film Title, 2024 - ★★★★")
+            const ratingMatch = item.title?.match(/★+/);
             const rating = ratingMatch ? ratingMatch[0].length : undefined;
             // Check for half star
-            const hasHalf = item.description?.includes('½') || item.title?.includes('½');
+            const hasHalf = item.title?.includes('½');
             // Clean title - remove rating stars and year
-            const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').trim();
+            const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').replace(/ - ½$/, '').trim();
             
             // Extract film poster from description (Letterboxd includes img tag)
             const posterMatch = item.description?.match(/<img[^>]+src="([^"]+)"/);
@@ -162,6 +161,8 @@ const Consumption: React.FC = () => {
               masterpiece: rating === 5, // Exactly 5 stars
             });
           });
+        } else {
+          console.error('Letterboxd RSS error:', data);
         }
       } catch (e) {
         console.error('Letterboxd fetch failed:', e);
@@ -377,24 +378,24 @@ const Consumption: React.FC = () => {
                 </div>
 
                 {/* Title and creator */}
-                <div className="space-y-1">
-                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight h-[2.5rem] line-clamp-2 overflow-hidden">
+                <div className="space-y-1.5">
+                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-1 overflow-hidden">
                     {item.title}
                   </div>
-                  <div className="text-xs text-[#666] dark:text-[#999] leading-tight h-[1rem] line-clamp-1 overflow-hidden">
+                  <div className="text-sm text-[#666] dark:text-[#999] leading-tight line-clamp-1 overflow-hidden">
                     {getCreator(item)}
                   </div>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[10px] text-[#999] dark:text-[#666] uppercase">
+                    <span className="text-xs text-[#999] dark:text-[#666] uppercase">
                       {getTypeLabel(item.type)}
                     </span>
                     {item.rating && (
-                      <span className="text-[10px] text-[#999] dark:text-[#666]">
+                      <span className="text-xs text-[#999] dark:text-[#666]">
                         {'★'.repeat(Math.floor(item.rating))}{item.rating % 1 !== 0 ? '½' : ''}
                       </span>
                     )}
                     {item.playcount && (
-                      <span className="text-[10px] text-[#999] dark:text-[#666]">
+                      <span className="text-xs text-[#999] dark:text-[#666]">
                         {item.playcount.toLocaleString()} plays
                       </span>
                     )}
