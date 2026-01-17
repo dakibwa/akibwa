@@ -118,10 +118,10 @@ const Consumption: React.FC = () => {
 
   const filters: { key: FilterType; label: string }[] = [
     { key: 'all', label: 'All' },
+    { key: 'album', label: 'Albums' },
+    { key: 'film', label: 'Films' },
+    { key: 'book', label: 'Books' },
     { key: 'masterpiece', label: 'Masterpieces' },
-    { key: 'album', label: 'Music' },
-    { key: 'film', label: 'Film' },
-    { key: 'book', label: 'Book' },
   ];
 
   return (
