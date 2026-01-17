@@ -28,7 +28,7 @@ const DEFAULT_USERNAMES = {
 };
 
 // Cache version - increment to clear old cached data
-const CACHE_VERSION = '4';
+const CACHE_VERSION = '5';
 
 const Consumption: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
@@ -124,99 +124,97 @@ const Consumption: React.FC = () => {
       }
     }
 
-    // Fetch Letterboxd films via RSS
+    // Fetch Letterboxd films - scrape the films page for all watched
     if (letterboxdUser) {
       try {
-        // Try multiple CORS proxy approaches
-        const letterboxdRssUrl = `https://letterboxd.com/${letterboxdUser}/rss/`;
+        console.log('Fetching Letterboxd films for:', letterboxdUser);
+        localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
         
-        // Try corsproxy.io first
-        let data = null;
-        let response = null;
+        // Scrape multiple pages of the films list
+        let page = 1;
+        let hasMore = true;
+        let totalFilms = 0;
         
-        try {
-          console.log('Trying corsproxy.io for Letterboxd...');
-          response = await fetch(`https://corsproxy.io/?${encodeURIComponent(letterboxdRssUrl)}`);
-          const xmlText = await response.text();
-          console.log('Letterboxd XML response:', xmlText.substring(0, 500));
+        while (hasMore && page <= 10) { // Max 10 pages (~720 films)
+          const filmsUrl = `https://letterboxd.com/${letterboxdUser}/films/page/${page}/`;
+          console.log(`Fetching Letterboxd page ${page}...`);
           
-          // Parse XML manually
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-          const items = xmlDoc.querySelectorAll('item');
-          
-          if (items.length > 0) {
-            localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
-            setConnected(prev => ({ ...prev, letterboxd: true }));
+          try {
+            const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(filmsUrl)}`);
+            const html = await response.text();
             
-            items.forEach((item, index) => {
-              const title = item.querySelector('title')?.textContent || '';
-              const link = item.querySelector('link')?.textContent || '';
-              const description = item.querySelector('description')?.textContent || '';
+            // Parse the HTML to extract film data
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Films are in li.poster-container elements
+            const filmElements = doc.querySelectorAll('li.poster-container');
+            
+            if (filmElements.length === 0) {
+              hasMore = false;
+              break;
+            }
+            
+            filmElements.forEach((el, index) => {
+              const posterDiv = el.querySelector('div.film-poster');
+              const img = el.querySelector('img');
               
-              // Parse rating from title if present (e.g., "Film Title, 2024 - ★★★★")
-              const ratingMatch = title.match(/★+/);
-              const rating = ratingMatch ? ratingMatch[0].length : undefined;
-              // Check for half star
-              const hasHalf = title.includes('½');
-              // Clean title - remove rating stars and year
-              const cleanTitle = title.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').replace(/ - ½$/, '').trim();
+              // Get film data from data attributes
+              const filmSlug = posterDiv?.getAttribute('data-film-slug') || '';
+              const filmName = posterDiv?.getAttribute('data-film-name') || img?.getAttribute('alt') || '';
+              const filmId = posterDiv?.getAttribute('data-film-id') || '';
               
-              // Extract film poster from description (Letterboxd includes img tag)
-              const posterMatch = description.match(/<img[^>]+src="([^"]+)"/);
-              const posterUrl = posterMatch?.[1];
+              // Get poster image
+              let posterUrl = img?.getAttribute('src') || '';
+              // Convert to larger image size if it's a Letterboxd CDN URL
+              if (posterUrl.includes('ltrbxd.com')) {
+                posterUrl = posterUrl.replace('-0-70-0-105', '-0-230-0-345');
+              }
+              
+              // Get rating if present (shown as rated-X class)
+              const ratingSpan = el.querySelector('span.rating');
+              let rating: number | undefined;
+              if (ratingSpan) {
+                const ratingClass = Array.from(ratingSpan.classList).find(c => c.startsWith('rated-'));
+                if (ratingClass) {
+                  rating = parseInt(ratingClass.replace('rated-', '')) / 2; // Letterboxd uses 1-10, we want 1-5
+                }
+              }
+              
+              const globalIndex = totalFilms + index;
               
               allItems.push({
-                id: `letterboxd-${index}`,
+                id: `letterboxd-${globalIndex}`,
                 type: 'film',
-                title: cleanTitle || title,
-                link: link,
-                imageUrl: posterUrl,
-                rating: hasHalf && rating ? rating + 0.5 : rating,
-                masterpiece: rating === 5, // Exactly 5 stars
+                title: filmName,
+                link: `https://letterboxd.com/film/${filmSlug}/`,
+                imageUrl: posterUrl || undefined,
+                rating: rating,
+                masterpiece: rating === 5, // 5 stars
               });
             });
             
-            console.log(`Letterboxd: Found ${items.length} films`);
-          }
-        } catch (proxyError) {
-          console.log('corsproxy.io failed, trying rss2json...', proxyError);
-          
-          // Fallback to rss2json
-          const rss2jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(letterboxdRssUrl)}`;
-          response = await fetch(rss2jsonUrl);
-          data = await response.json();
-          
-          console.log('Letterboxd rss2json response:', data);
-          
-          if (data.status === 'ok' && data.items) {
-            localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
-            setConnected(prev => ({ ...prev, letterboxd: true }));
+            totalFilms += filmElements.length;
+            console.log(`Letterboxd page ${page}: Found ${filmElements.length} films (total: ${totalFilms})`);
             
-            data.items.forEach((item: any, index: number) => {
-              const ratingMatch = item.title?.match(/★+/);
-              const rating = ratingMatch ? ratingMatch[0].length : undefined;
-              const hasHalf = item.title?.includes('½');
-              const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').replace(/ - ½$/, '').trim();
-              const posterMatch = item.description?.match(/<img[^>]+src="([^"]+)"/);
-              const posterUrl = posterMatch?.[1];
-              
-              allItems.push({
-                id: `letterboxd-${index}`,
-                type: 'film',
-                title: cleanTitle || item.title,
-                link: item.link,
-                imageUrl: posterUrl,
-                rating: hasHalf && rating ? rating + 0.5 : rating,
-                masterpiece: rating === 5,
-              });
-            });
+            // Check if there's a next page
+            const nextLink = doc.querySelector('a.next');
+            hasMore = !!nextLink && filmElements.length >= 72; // Letterboxd shows ~72 per page
+            page++;
             
-            console.log(`Letterboxd via rss2json: Found ${data.items.length} films`);
-          } else {
-            console.error('Letterboxd RSS error:', data);
+          } catch (pageError) {
+            console.error(`Letterboxd page ${page} failed:`, pageError);
+            hasMore = false;
           }
         }
+        
+        if (totalFilms > 0) {
+          setConnected(prev => ({ ...prev, letterboxd: true }));
+          console.log(`Letterboxd: Total ${totalFilms} films fetched`);
+        } else {
+          console.log('Letterboxd: No films found, user may not exist or have no watched films');
+        }
+        
       } catch (e) {
         console.error('Letterboxd fetch failed:', e);
       }
