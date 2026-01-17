@@ -77,40 +77,49 @@ const Consumption: React.FC = () => {
     setLoading(true);
     const allItems: MediaItem[] = [];
 
-    // Fetch Last.fm albums
+    // Fetch Last.fm albums - paginate to get more data
     if (lastfmUser && LASTFM_API_KEY) {
       try {
-        const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastfmUser}&api_key=${LASTFM_API_KEY}&format=json&limit=200&period=overall`;
-        const res = await fetch(url);
-        const data = await res.json();
+        localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
+        setConnected(prev => ({ ...prev, lastfm: true }));
         
-        if (data.topalbums?.album) {
-          localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
-          setConnected(prev => ({ ...prev, lastfm: true }));
+        // Fetch multiple pages to get more albums (500 per page, up to 3 pages = 1500 albums)
+        for (let page = 1; page <= 3; page++) {
+          const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastfmUser}&api_key=${LASTFM_API_KEY}&format=json&limit=500&period=overall&page=${page}`;
+          const res = await fetch(url);
+          const data = await res.json();
           
-          data.topalbums.album.forEach((album: any, index: number) => {
-            allItems.push({
-              id: `lastfm-${index}`,
-              type: 'album',
-              title: album.name,
-              artist: album.artist?.name,
-              playcount: parseInt(album.playcount),
-              imageUrl: album.image?.[2]?.['#text'],
-              link: album.url,
-              masterpiece: parseInt(album.playcount) > 500, // Mark high-play albums
+          if (data.topalbums?.album) {
+            data.topalbums.album.forEach((album: any, index: number) => {
+              const playcount = parseInt(album.playcount);
+              allItems.push({
+                id: `lastfm-${page}-${index}`,
+                type: 'album',
+                title: album.name,
+                artist: album.artist?.name,
+                playcount: playcount,
+                imageUrl: album.image?.[3]?.['#text'] || album.image?.[2]?.['#text'], // Get larger image
+                link: album.url,
+                masterpiece: playcount >= 500, // 500+ plays = masterpiece
+              });
             });
-          });
+            
+            // If we got fewer than 500, we've reached the end
+            if (data.topalbums.album.length < 500) break;
+          } else {
+            break;
+          }
         }
       } catch (e) {
         console.error('Last.fm fetch failed:', e);
       }
     }
 
-    // Fetch Letterboxd films via RSS
+    // Fetch Letterboxd films via RSS - using /films/rss/ for all watched films
     if (letterboxdUser) {
       try {
-        // Using a CORS proxy for RSS - try to get as many items as possible
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/rss/&count=200`;
+        // Fetch from films feed (all watched) instead of diary
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/films/rss/&count=500`;
         const res = await fetch(proxyUrl);
         const data = await res.json();
         
@@ -119,11 +128,15 @@ const Consumption: React.FC = () => {
           setConnected(prev => ({ ...prev, letterboxd: true }));
           
           data.items.forEach((item: any, index: number) => {
-            // Parse rating from title if present (e.g., "Film Title - ★★★★")
-            const ratingMatch = item.title?.match(/★+/);
+            // Parse rating from description if present (films feed format)
+            // Description may contain: "★★★★★" or similar
+            const descRatingMatch = item.description?.match(/★+/);
+            const titleRatingMatch = item.title?.match(/★+/);
+            const ratingMatch = descRatingMatch || titleRatingMatch;
             const rating = ratingMatch ? ratingMatch[0].length : undefined;
             // Check for half star
-            const hasHalf = item.title?.includes('½');
+            const hasHalf = item.description?.includes('½') || item.title?.includes('½');
+            // Clean title - remove rating stars and year
             const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').trim();
             
             allItems.push({
@@ -132,7 +145,7 @@ const Consumption: React.FC = () => {
               title: cleanTitle || item.title,
               link: item.link,
               rating: hasHalf && rating ? rating + 0.5 : rating,
-              masterpiece: rating && rating >= 5,
+              masterpiece: rating === 5, // Exactly 5 stars
             });
           });
         }
@@ -144,7 +157,8 @@ const Consumption: React.FC = () => {
     // Fetch Goodreads books via RSS
     if (goodreadsUser) {
       try {
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${goodreadsUser}?shelf=read&count=200`;
+        // Try to get as many books as possible
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${goodreadsUser}?shelf=read&count=500`;
         const res = await fetch(proxyUrl);
         const data = await res.json();
         
@@ -153,9 +167,16 @@ const Consumption: React.FC = () => {
           setConnected(prev => ({ ...prev, goodreads: true }));
           
           data.items.forEach((item: any, index: number) => {
-            // Extract author from description if possible
-            const authorMatch = item.description?.match(/author: ([^<]+)/i);
-            const ratingMatch = item.description?.match(/rating: (\d)/);
+            // Extract author from description - try multiple patterns
+            const authorMatch = item.description?.match(/author: ([^<]+)/i) || 
+                               item.description?.match(/by ([^<]+)/i);
+            // Extract rating - try multiple patterns
+            const ratingMatch = item.description?.match(/rating: (\d)/i) ||
+                               item.description?.match(/(\d) of 5 stars/i);
+            const rating = ratingMatch ? parseInt(ratingMatch[1]) : undefined;
+            
+            // Extract book cover image if available
+            const imageMatch = item.description?.match(/src="([^"]+)"/);
             
             allItems.push({
               id: `goodreads-${index}`,
@@ -163,8 +184,9 @@ const Consumption: React.FC = () => {
               title: item.title,
               author: authorMatch?.[1]?.trim(),
               link: item.link,
-              rating: ratingMatch ? parseInt(ratingMatch[1]) : undefined,
-              masterpiece: ratingMatch && parseInt(ratingMatch[1]) >= 5,
+              imageUrl: imageMatch?.[1],
+              rating: rating,
+              masterpiece: rating === 5, // Exactly 5 stars
             });
           });
         }
