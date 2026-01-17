@@ -20,11 +20,11 @@ interface MediaItem {
 
 type FilterType = 'all' | 'album' | 'book' | 'film' | 'masterpiece';
 
-// Your usernames - edit these!
-const USERNAMES = {
-  letterboxd: '', // e.g., 'dakibwa'
-  goodreads: '',  // e.g., '12345678' (user ID from profile URL)
-  lastfm: '',     // e.g., 'dakibwa'
+// Default usernames
+const DEFAULT_USERNAMES = {
+  letterboxd: 'Akibwa',
+  goodreads: 'Akibwa',
+  lastfm: 'akibwa',
 };
 
 const Consumption: React.FC = () => {
@@ -39,9 +39,9 @@ const Consumption: React.FC = () => {
   
   // Settings modal
   const [showSettings, setShowSettings] = useState(false);
-  const [letterboxdUser, setLetterboxdUser] = useState('');
-  const [goodreadsUser, setGoodreadsUser] = useState('');
-  const [lastfmUser, setLastfmUser] = useState('');
+  const [letterboxdUser, setLetterboxdUser] = useState(DEFAULT_USERNAMES.letterboxd);
+  const [goodreadsUser, setGoodreadsUser] = useState(DEFAULT_USERNAMES.goodreads);
+  const [lastfmUser, setLastfmUser] = useState(DEFAULT_USERNAMES.lastfm);
 
   // Load saved usernames on mount
   useEffect(() => {
@@ -64,6 +64,14 @@ const Consumption: React.FC = () => {
     }
   }, []);
 
+  // Auto-fetch on mount if we have default usernames and no cached items
+  useEffect(() => {
+    const cachedItems = localStorage.getItem('dakibwa_consumption_items');
+    if (!cachedItems && (letterboxdUser || lastfmUser || goodreadsUser)) {
+      fetchAllData();
+    }
+  }, []);
+
   // Fetch all data
   const fetchAllData = async () => {
     setLoading(true);
@@ -72,7 +80,7 @@ const Consumption: React.FC = () => {
     // Fetch Last.fm albums
     if (lastfmUser && LASTFM_API_KEY) {
       try {
-        const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastfmUser}&api_key=${LASTFM_API_KEY}&format=json&limit=50&period=overall`;
+        const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastfmUser}&api_key=${LASTFM_API_KEY}&format=json&limit=200&period=overall`;
         const res = await fetch(url);
         const data = await res.json();
         
@@ -89,7 +97,7 @@ const Consumption: React.FC = () => {
               playcount: parseInt(album.playcount),
               imageUrl: album.image?.[2]?.['#text'],
               link: album.url,
-              masterpiece: parseInt(album.playcount) > 100, // Mark high-play albums
+              masterpiece: parseInt(album.playcount) > 500, // Mark high-play albums
             });
           });
         }
@@ -101,8 +109,8 @@ const Consumption: React.FC = () => {
     // Fetch Letterboxd films via RSS
     if (letterboxdUser) {
       try {
-        // Using a CORS proxy for RSS
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/rss/`;
+        // Using a CORS proxy for RSS - try to get as many items as possible
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://letterboxd.com/${letterboxdUser}/rss/&count=200`;
         const res = await fetch(proxyUrl);
         const data = await res.json();
         
@@ -110,18 +118,20 @@ const Consumption: React.FC = () => {
           localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
           setConnected(prev => ({ ...prev, letterboxd: true }));
           
-          data.items.slice(0, 50).forEach((item: any, index: number) => {
+          data.items.forEach((item: any, index: number) => {
             // Parse rating from title if present (e.g., "Film Title - ★★★★")
             const ratingMatch = item.title?.match(/★+/);
             const rating = ratingMatch ? ratingMatch[0].length : undefined;
-            const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '');
+            // Check for half star
+            const hasHalf = item.title?.includes('½');
+            const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').trim();
             
             allItems.push({
               id: `letterboxd-${index}`,
               type: 'film',
               title: cleanTitle || item.title,
               link: item.link,
-              rating,
+              rating: hasHalf && rating ? rating + 0.5 : rating,
               masterpiece: rating && rating >= 5,
             });
           });
@@ -134,7 +144,7 @@ const Consumption: React.FC = () => {
     // Fetch Goodreads books via RSS
     if (goodreadsUser) {
       try {
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${goodreadsUser}?shelf=read`;
+        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${goodreadsUser}?shelf=read&count=200`;
         const res = await fetch(proxyUrl);
         const data = await res.json();
         
@@ -142,7 +152,7 @@ const Consumption: React.FC = () => {
           localStorage.setItem('dakibwa_goodreads_user', goodreadsUser);
           setConnected(prev => ({ ...prev, goodreads: true }));
           
-          data.items.slice(0, 50).forEach((item: any, index: number) => {
+          data.items.forEach((item: any, index: number) => {
             // Extract author from description if possible
             const authorMatch = item.description?.match(/author: ([^<]+)/i);
             const ratingMatch = item.description?.match(/rating: (\d)/);
@@ -200,23 +210,12 @@ const Consumption: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header with settings */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          {connected.lastfm && (
-            <span className="text-xs text-[#999] dark:text-[#666]">Last.fm ✓</span>
-          )}
-          {connected.letterboxd && (
-            <span className="text-xs text-[#999] dark:text-[#666]">Letterboxd ✓</span>
-          )}
-          {connected.goodreads && (
-            <span className="text-xs text-[#999] dark:text-[#666]">Goodreads ✓</span>
-          )}
-        </div>
+      <div className="flex items-center justify-end">
         <button
           onClick={() => setShowSettings(!showSettings)}
           className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors"
         >
-          {showSettings ? 'Close' : 'Connect Services'}
+          {showSettings ? 'Close' : 'Connect your Services'}
         </button>
       </div>
 
@@ -335,7 +334,7 @@ const Consumption: React.FC = () => {
                     </span>
                     {item.rating && (
                       <span className="text-[10px] text-[#999] dark:text-[#666]">
-                        {'★'.repeat(item.rating)}
+                        {'★'.repeat(Math.floor(item.rating))}{item.rating % 1 !== 0 ? '½' : ''}
                       </span>
                     )}
                     {item.playcount && (
@@ -368,7 +367,7 @@ const Consumption: React.FC = () => {
                 onClick={() => setShowSettings(true)}
                 className="text-sm hover:opacity-60 transition-opacity"
               >
-                Connect Services →
+                Connect your Services →
               </button>
             </div>
           )}
