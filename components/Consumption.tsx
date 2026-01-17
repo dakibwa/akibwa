@@ -27,6 +27,9 @@ const DEFAULT_USERNAMES = {
   lastfm: 'akibwa',
 };
 
+// Cache version - increment to clear old cached data
+const CACHE_VERSION = '2';
+
 const Consumption: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -43,7 +46,7 @@ const Consumption: React.FC = () => {
   const [goodreadsUser, setGoodreadsUser] = useState(DEFAULT_USERNAMES.goodreads);
   const [lastfmUser, setLastfmUser] = useState(DEFAULT_USERNAMES.lastfm);
 
-  // Load saved usernames on mount
+  // Load saved usernames on mount and check cache version
   useEffect(() => {
     const savedLetterboxd = localStorage.getItem('dakibwa_letterboxd_user');
     const savedGoodreads = localStorage.getItem('dakibwa_goodreads_user');
@@ -53,24 +56,30 @@ const Consumption: React.FC = () => {
     if (savedGoodreads) setGoodreadsUser(savedGoodreads);
     if (savedLastfm) setLastfmUser(savedLastfm);
     
-    // Load cached items
-    const cachedItems = localStorage.getItem('dakibwa_consumption_items');
-    if (cachedItems) {
-      try {
-        setItems(JSON.parse(cachedItems));
-      } catch (e) {
-        console.error('Failed to load cached items');
+    // Check cache version - clear if outdated
+    const savedVersion = localStorage.getItem('dakibwa_consumption_version');
+    if (savedVersion !== CACHE_VERSION) {
+      localStorage.removeItem('dakibwa_consumption_items');
+      localStorage.setItem('dakibwa_consumption_version', CACHE_VERSION);
+    } else {
+      // Load cached items
+      const cachedItems = localStorage.getItem('dakibwa_consumption_items');
+      if (cachedItems) {
+        try {
+          setItems(JSON.parse(cachedItems));
+        } catch (e) {
+          console.error('Failed to load cached items');
+        }
       }
     }
   }, []);
 
-  // Auto-fetch on mount if we have default usernames and no cached items
+  // Auto-fetch on mount if we have usernames and no items
   useEffect(() => {
-    const cachedItems = localStorage.getItem('dakibwa_consumption_items');
-    if (!cachedItems && (letterboxdUser || lastfmUser || goodreadsUser)) {
+    if (items.length === 0 && (letterboxdUser || lastfmUser || goodreadsUser)) {
       fetchAllData();
     }
-  }, []);
+  }, [items.length]);
 
   // Fetch all data
   const fetchAllData = async () => {
@@ -139,11 +148,16 @@ const Consumption: React.FC = () => {
             // Clean title - remove rating stars and year
             const cleanTitle = item.title?.replace(/ - ★+½?$/, '').replace(/, \d{4}$/, '').trim();
             
+            // Extract film poster from description (Letterboxd includes img tag)
+            const posterMatch = item.description?.match(/<img[^>]+src="([^"]+)"/);
+            const posterUrl = posterMatch?.[1];
+            
             allItems.push({
               id: `letterboxd-${index}`,
               type: 'film',
               title: cleanTitle || item.title,
               link: item.link,
+              imageUrl: posterUrl,
               rating: hasHalf && rating ? rating + 0.5 : rating,
               masterpiece: rating === 5, // Exactly 5 stars
             });
