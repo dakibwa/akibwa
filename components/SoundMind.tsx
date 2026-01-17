@@ -96,6 +96,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [hoveredLink, setHoveredLink] = useState<Link | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
+  const [progressPercent, setProgressPercent] = useState<number>(0);
   
   // Last.fm state
   const [lastFmUsername, setLastFmUsername] = useState('');
@@ -311,6 +312,15 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const analyzeWithGemini = async () => {
     setStatus('analyzing');
     setAnalysisProgress('Thinking about your music taste...');
+    setProgressPercent(0);
+    
+    // Animated progress bar that fills slowly
+    const progressInterval = setInterval(() => {
+      setProgressPercent(prev => {
+        if (prev >= 85) return prev; // Cap at 85% until actually done
+        return prev + Math.random() * 3;
+      });
+    }, 500);
 
     const artistNames = artistsData.map(a => a.name);
     const artistInfo = artistsData.map(a => 
@@ -446,12 +456,16 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
 
         setGraphData(safeGraphData);
         localStorage.setItem('dakibwa_music_graph', JSON.stringify(safeGraphData));
-        setStatus('visualizing');
+        clearInterval(progressInterval);
+        setProgressPercent(100);
+        setTimeout(() => setStatus('visualizing'), 300);
       } else {
-         throw new Error("No data returned");
+        clearInterval(progressInterval);
+        throw new Error("No data returned");
       }
 
     } catch (error: any) {
+      clearInterval(progressInterval);
       console.error("[Gemini] Analysis Failed:", error);
       console.error("[Gemini] Error message:", error?.message);
       console.error("[Gemini] Error details:", JSON.stringify(error, null, 2));
@@ -572,8 +586,8 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
             ctx.beginPath();
             ctx.moveTo(s.x!, s.y!);
             ctx.lineTo(t.x!, t.y!);
-          ctx.strokeStyle = isHovered ? color : `${color}33`;
-          ctx.lineWidth = isHovered ? 2 : 1;
+          ctx.strokeStyle = isHovered ? color : `${color}77`;
+          ctx.lineWidth = isHovered ? 3 : 1.5;
             ctx.stroke();
         }
       });
@@ -587,9 +601,9 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       // Draw nodes
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNode === node.id;
-        // Scale node size from 4 to 20 based on relative playcount
+        // Scale node size from 5 to 35 based on relative playcount
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
-        const nodeSize = 4 + (normalised * 16); // 4px min, 20px max
+        const nodeSize = 5 + (normalised * 30); // 5px min, 35px max
          
          if (isHovered) {
           const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 30);
@@ -783,11 +797,27 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
 
       {/* Fetching/Analysing View */}
       {(status === 'fetching' || status === 'analyzing') && (
-        <div className="min-h-screen flex flex-col items-center justify-center">
-          <div className="space-y-6 text-center max-w-md">
-            <div className="w-8 h-8 border border-[#1a1a1a] dark:border-[#e0e0e0] border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-[#666] dark:text-[#999]">
-              {analysisProgress}
+        <div className="min-h-screen flex flex-col items-center justify-center p-6">
+          <div className="space-y-8 text-center max-w-md w-full">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">
+                Analysing your music
+              </h2>
+              <p className="text-[#666] dark:text-[#999]">
+                {analysisProgress}
+              </p>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="w-full h-1 bg-[#e0e0e0] dark:bg-[#333] overflow-hidden">
+              <div 
+                className="h-full bg-[#1a1a1a] dark:bg-[#e0e0e0] transition-all duration-500 ease-out"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            
+            <p className="text-xs text-[#999] dark:text-[#666]">
+              Gemini 3 Flash is thinking...
             </p>
           </div>
         </div>

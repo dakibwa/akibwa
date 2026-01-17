@@ -14,6 +14,8 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
         return 'trying to materialise something';
       case 'CONTACT':
         return 'come converse with me';
+      case 'CONSCIOUSNESS':
+        return 'sharing my inner world';
       default:
         return null;
     }
@@ -30,13 +32,13 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
               onClick={() => onSelect?.('')}
               className="text-lg font-normal hover:opacity-70 transition-opacity"
             >
-              akibwa
+              dakibwa
             </button>
             <span className="text-lg text-[#999] dark:text-[#666] font-light">
               — {quote || 'by daniel atkinson'}
             </span>
           </div>
-          <div className="flex items-center gap-6 text-base">
+          <div className="flex items-center gap-4 md:gap-6 text-sm md:text-base">
             <button
               onClick={() => onSelect?.('CREATION')}
               className={`hover:opacity-70 transition-opacity ${
@@ -52,6 +54,14 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
               }`}
             >
               Consumption
+            </button>
+            <button
+              onClick={() => onSelect?.('CONSCIOUSNESS')}
+              className={`hover:opacity-70 transition-opacity ${
+                activeSection === 'CONSCIOUSNESS' ? 'opacity-100 font-medium' : 'opacity-60'
+              }`}
+            >
+              Consciousness
             </button>
             <button
               onClick={() => onSelect?.('CONTACT')}
