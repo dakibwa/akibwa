@@ -75,6 +75,48 @@ const toCountryShape = (geoJson: any): CountryShape | null => {
   return { rings, bbox: { minLon, maxLon, minLat, maxLat } };
 };
 
+const resolveIso3Code = async (countryCode: string): Promise<string | null> => {
+  const code = countryCode.trim().toUpperCase();
+  if (code.length === 3) return code;
+  if (code.length !== 2) return null;
+
+  try {
+    const response = await fetch(`https://restcountries.com/v3.1/alpha/${code}`, { cache: 'force-cache' });
+    if (!response.ok) return null;
+    const data = await response.json();
+    const entry = Array.isArray(data) ? data[0] : data;
+    const iso3 = entry?.cca3;
+    if (!iso3 || typeof iso3 !== 'string') return null;
+    return iso3.toUpperCase();
+  } catch {
+    return null;
+  }
+};
+
+const fetchCountryOutline = async (countryCode: string): Promise<CountryShape | null> => {
+  const code = countryCode.trim().toUpperCase();
+  const iso3 = await resolveIso3Code(code);
+  const candidates = Array.from(new Set([iso3, code].filter(Boolean)));
+
+  for (const candidate of candidates) {
+    try {
+      const countryRes = await fetch(
+        `https://raw.githubusercontent.com/johan/world.geo.json/master/countries/${candidate}.geo.json`,
+        { cache: 'force-cache' }
+      );
+
+      if (!countryRes.ok) continue;
+      const countryGeoJson = await countryRes.json();
+      const parsedShape = toCountryShape(countryGeoJson);
+      if (parsedShape) return parsedShape;
+    } catch {
+      // Try next candidate
+    }
+  }
+
+  return null;
+};
+
 const LocationCard: React.FC = () => {
   const [location, setLocation] = useState<LocationState>({ status: 'loading' });
   const [shape, setShape] = useState<CountryShape | null>(null);
@@ -97,16 +139,26 @@ const LocationCard: React.FC = () => {
 
         setLocation({ status: 'ready', data });
 
-        const countryRes = await fetch(
-          `https://raw.githubusercontent.com/johan/world.geo.json/master/countries/${data.countryCode}.geo.json`,
+        const parsedShape = await fetchCountryOutline(data.countryCode);
+        if (parsedShape) {
+          setShape(parsedShape);
+          return;
+        }
+
+        // Fallback: try country boundary by country name
+        const fallbackRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?country=${encodeURIComponent(
+            data.country
+          )}&format=jsonv2&polygon_geojson=1&limit=1`,
           { cache: 'force-cache' }
         );
 
-        if (!countryRes.ok) return;
-
-        const countryGeoJson = await countryRes.json();
-        const parsedShape = toCountryShape(countryGeoJson);
-        setShape(parsedShape);
+        if (!fallbackRes.ok) return;
+        const fallbackJson = await fallbackRes.json();
+        const fallbackGeometry = fallbackJson?.[0]?.geojson;
+        if (!fallbackGeometry) return;
+        const fallbackShape = toCountryShape({ features: [{ geometry: fallbackGeometry }] });
+        setShape(fallbackShape);
       } catch {
         setLocation({ status: 'error' });
       }
@@ -159,6 +211,29 @@ const LocationCard: React.FC = () => {
     return { path, cityX, cityY };
   }, [location, shape]);
 
+  const mapFallbackUrl = useMemo(() => {
+    if (location.status !== 'ready') return '';
+    const { latitude, longitude } = location.data;
+    const west = longitude - 0.5;
+    const east = longitude + 0.5;
+    const south = latitude - 0.35;
+    const north = latitude + 0.35;
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${west}%2C${south}%2C${east}%2C${north}&layer=mapnik&marker=${latitude}%2C${longitude}`;
+  }, [location]);
+
+  const updatedLabel = useMemo(() => {
+    if (location.status !== 'ready' || !location.data.updatedAt) return null;
+    const date = new Date(location.data.updatedAt);
+    if (Number.isNaN(date.getTime())) return location.data.updatedAt;
+    return date.toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }, [location]);
+
   return (
     <div className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
       <div>
@@ -195,13 +270,18 @@ const LocationCard: React.FC = () => {
               </svg>
             </div>
           ) : (
-            <p className="text-sm text-[#696257] dark:text-[#a89d88]">Country outline unavailable for this location source.</p>
+            <div className="overflow-hidden rounded-xl border border-[#d8cfbe] dark:border-[#342f25]">
+              <iframe
+                title="Current city map"
+                src={mapFallbackUrl}
+                className="w-full h-48"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           )}
 
-          {location.data.updatedAt ? (
-            <p className="text-xs text-[#8a8378] dark:text-[#8f8575]">Updated: {location.data.updatedAt}</p>
-          ) : null}
-          <p className="text-xs text-[#8a8378] dark:text-[#8f8575]">Owner-updated city-level location (not visitor location).</p>
+          {updatedLabel ? <p className="text-xs text-[#8a8378] dark:text-[#8f8575]">Last updated: {updatedLabel}</p> : null}
         </div>
       )}
     </div>
