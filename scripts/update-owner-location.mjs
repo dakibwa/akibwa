@@ -1,10 +1,12 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const LOCATION_FILE = path.resolve(process.cwd(), 'public/location.json');
+const ART_FILE = path.resolve(process.cwd(), 'public/location-art.png');
 const shouldCommit = process.argv.includes('--commit');
 const shouldPush = process.argv.includes('--push');
+const openAiApiKey = process.env.OPENAI_API_KEY;
 
 const roundToCityLevel = (value) => Math.round(value * 10) / 10;
 
@@ -116,6 +118,49 @@ const fetchCurrentCity = async () => {
   throw new Error(`All location providers failed. ${errors.join(' | ')}`);
 };
 
+const createLocationPrompt = (location) =>
+  [
+    `Create a minimalist, elegant, modern artwork that represents ${location.city}, ${location.country}.`,
+    'Use geometric forms, subtle texture, soft contrast, and a clean composition.',
+    'No text, no labels, no logos, no people, no flags.',
+    'Style: refined editorial poster, calm and tasteful, highly minimal.',
+  ].join(' ');
+
+const generateCityArtwork = async (location) => {
+  if (!openAiApiKey) {
+    console.log('OPENAI_API_KEY missing, skipping artwork generation.');
+    return false;
+  }
+
+  const response = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${openAiApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-image-1',
+      prompt: createLocationPrompt(location),
+      size: '1024x1024',
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Image generation failed: ${response.status}`);
+  }
+
+  const result = await response.json();
+  const b64 = result?.data?.[0]?.b64_json;
+  if (!b64) {
+    throw new Error('Image generation returned no image data');
+  }
+
+  const buffer = Buffer.from(b64, 'base64');
+  writeFileSync(ART_FILE, buffer);
+  console.log(`Generated artwork for ${location.city}, ${location.country}`);
+  return true;
+};
+
 const run = (args) => {
   const result = spawnSync(args[0], args.slice(1), { stdio: 'inherit' });
   if (result.status !== 0) {
@@ -148,10 +193,22 @@ const main = async () => {
 
   writeFileSync(LOCATION_FILE, `${JSON.stringify(nextLocation, null, 2)}\n`, 'utf8');
   console.log(`Updated location: ${nextLocation.city}, ${nextLocation.country}`);
+  let artChanged = false;
+
+  try {
+    artChanged = await generateCityArtwork(nextLocation);
+  } catch (error) {
+    console.error(error.message);
+  }
 
   if (!shouldCommit) return;
 
-  run(['git', 'add', 'public/location.json']);
+  const filesToAdd = ['public/location.json'];
+  if (artChanged || existsSync(ART_FILE)) {
+    filesToAdd.push('public/location-art.png');
+  }
+
+  run(['git', 'add', ...filesToAdd]);
   run(['git', 'commit', '-m', `Update location: ${nextLocation.city}, ${nextLocation.country}`]);
 
   if (shouldPush) {
