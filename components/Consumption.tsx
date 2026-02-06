@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-// Last.fm API key from env
 const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
 
 interface MediaItem {
@@ -20,15 +19,151 @@ interface MediaItem {
 
 type FilterType = 'all' | 'album' | 'book' | 'film' | 'masterpiece';
 
-// Default usernames
 const DEFAULT_USERNAMES = {
   letterboxd: 'Akibwa',
   goodreads: 'Akibwa',
   lastfm: 'akibwa',
 };
 
-// Cache version - increment to clear old cached data
-const CACHE_VERSION = '6';
+const CACHE_VERSION = '7';
+
+const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
+  if (!username || !LASTFM_API_KEY) return [];
+
+  const albums: MediaItem[] = [];
+
+  for (let page = 1; page <= 3; page++) {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${username}&api_key=${LASTFM_API_KEY}&format=json&limit=500&period=overall&page=${page}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.topalbums?.album?.length) break;
+
+    data.topalbums.album.forEach((album: any, index: number) => {
+      const playcount = Number.parseInt(album.playcount, 10) || 0;
+      albums.push({
+        id: `lastfm-${page}-${index}`,
+        type: 'album',
+        title: album.name,
+        artist: album.artist?.name,
+        playcount,
+        imageUrl: album.image?.[3]?.['#text'] || album.image?.[2]?.['#text'] || '',
+        link: album.url,
+        masterpiece: playcount >= 500,
+      });
+    });
+
+    if (data.topalbums.album.length < 500) break;
+  }
+
+  return albums;
+};
+
+const fetchLetterboxdFilms = async (username: string): Promise<MediaItem[]> => {
+  if (!username) return [];
+
+  const letterboxdRssUrl = `https://letterboxd.com/${username}/rss/`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(letterboxdRssUrl)}`;
+  const response = await fetch(proxyUrl);
+
+  if (!response.ok) {
+    throw new Error(`Letterboxd request failed (${response.status})`);
+  }
+
+  const xmlText = await response.text();
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+  const xmlItems = xmlDoc.querySelectorAll('item');
+
+  return Array.from(xmlItems).map((item, index) => {
+    const title = item.querySelector('title')?.textContent || '';
+    const link = item.querySelector('link')?.textContent || '';
+    const description = item.querySelector('description')?.textContent || '';
+
+    const ratingMatch = title.match(/★+/);
+    const rating = ratingMatch ? ratingMatch[0].length : undefined;
+    const hasHalf = title.includes('½');
+
+    const cleanTitle = title
+      .replace(/ - ★+½?$/, '')
+      .replace(/ - ½$/, '')
+      .replace(/, \d{4}$/, '')
+      .trim();
+
+    const posterMatch = description.match(/<img[^>]+src="([^"]+)"/);
+    let posterUrl = posterMatch?.[1] || '';
+
+    if (posterUrl.includes('ltrbxd.com')) {
+      posterUrl = posterUrl.replace(/-0-\d+-0-\d+/, '-0-230-0-345');
+    }
+
+    return {
+      id: `letterboxd-${index}`,
+      type: 'film' as const,
+      title: cleanTitle || title,
+      link,
+      imageUrl: posterUrl,
+      rating: hasHalf && rating ? rating + 0.5 : rating,
+      masterpiece: rating === 5,
+    };
+  });
+};
+
+const fetchGoodreadsBooks = async (userId: string): Promise<MediaItem[]> => {
+  if (!userId) return [];
+
+  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${userId}?shelf=read&count=500`;
+  const res = await fetch(proxyUrl);
+  const data = await res.json();
+
+  if (!Array.isArray(data.items)) return [];
+
+  return data.items.map((item: any, index: number) => {
+    const authorMatch = item.description?.match(/author: ([^<]+)/i) || item.description?.match(/by ([^<]+)/i);
+    const ratingMatch = item.description?.match(/rating: (\d)/i) || item.description?.match(/(\d) of 5 stars/i);
+    const imageMatch = item.description?.match(/src="([^"]+)"/);
+    const rating = ratingMatch ? Number.parseInt(ratingMatch[1], 10) : undefined;
+
+    return {
+      id: `goodreads-${index}`,
+      type: 'book' as const,
+      title: item.title,
+      author: authorMatch?.[1]?.trim(),
+      link: item.link,
+      imageUrl: imageMatch?.[1],
+      rating,
+      masterpiece: rating === 5,
+    };
+  });
+};
+
+const dedupeAndRankItems = (items: MediaItem[]): MediaItem[] => {
+  const map = new Map<string, MediaItem>();
+
+  items.forEach((item) => {
+    const creator = item.artist || item.author || item.director || '';
+    const key = `${item.type}:${item.title.toLowerCase().trim()}:${creator.toLowerCase().trim()}`;
+    const existing = map.get(key);
+
+    if (!existing) {
+      map.set(key, item);
+      return;
+    }
+
+    const existingScore = (existing.playcount || 0) + (existing.rating || 0);
+    const incomingScore = (item.playcount || 0) + (item.rating || 0);
+
+    if (incomingScore > existingScore) {
+      map.set(key, item);
+    }
+  });
+
+  return Array.from(map.values()).sort((a, b) => {
+    const aScore = (a.masterpiece ? 100000 : 0) + (a.playcount || 0) + (a.rating || 0) * 100;
+    const bScore = (b.masterpiece ? 100000 : 0) + (b.playcount || 0) + (b.rating || 0) * 100;
+    return bScore - aScore;
+  });
+};
 
 const Consumption: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
@@ -39,251 +174,141 @@ const Consumption: React.FC = () => {
     goodreads: false,
     lastfm: false,
   });
-  
-  // Settings modal
+
   const [showSettings, setShowSettings] = useState(false);
   const [letterboxdUser, setLetterboxdUser] = useState(DEFAULT_USERNAMES.letterboxd);
   const [goodreadsUser, setGoodreadsUser] = useState(DEFAULT_USERNAMES.goodreads);
   const [lastfmUser, setLastfmUser] = useState(DEFAULT_USERNAMES.lastfm);
 
-  // Load saved usernames on mount and check cache version
   useEffect(() => {
     const savedLetterboxd = localStorage.getItem('dakibwa_letterboxd_user');
     const savedGoodreads = localStorage.getItem('dakibwa_goodreads_user');
     const savedLastfm = localStorage.getItem('dakibwa_lastfm_user');
-    
+
     if (savedLetterboxd) setLetterboxdUser(savedLetterboxd);
     if (savedGoodreads) setGoodreadsUser(savedGoodreads);
     if (savedLastfm) setLastfmUser(savedLastfm);
-    
-    // Check cache version - clear if outdated
+
     const savedVersion = localStorage.getItem('dakibwa_consumption_version');
     if (savedVersion !== CACHE_VERSION) {
       localStorage.removeItem('dakibwa_consumption_items');
       localStorage.setItem('dakibwa_consumption_version', CACHE_VERSION);
-    } else {
-      // Load cached items
-      const cachedItems = localStorage.getItem('dakibwa_consumption_items');
-      if (cachedItems) {
-        try {
-          setItems(JSON.parse(cachedItems));
-        } catch (e) {
-          console.error('Failed to load cached items');
-        }
-      }
+      return;
+    }
+
+    const cachedItems = localStorage.getItem('dakibwa_consumption_items');
+    if (!cachedItems) return;
+
+    try {
+      const parsed = JSON.parse(cachedItems);
+      if (Array.isArray(parsed)) setItems(parsed);
+    } catch {
+      localStorage.removeItem('dakibwa_consumption_items');
     }
   }, []);
 
-  // Auto-fetch on mount if we have usernames and no items
-  useEffect(() => {
-    if (items.length === 0 && (letterboxdUser || lastfmUser || goodreadsUser)) {
-      fetchAllData();
-    }
-  }, [items.length]);
+  const hasAnyConnection = Boolean(letterboxdUser || goodreadsUser || lastfmUser);
 
-  // Fetch all data
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
+    if (!hasAnyConnection) return;
+
     setLoading(true);
+
+    const jobs: Array<Promise<{ source: 'lastfm' | 'letterboxd' | 'goodreads'; items: MediaItem[] }>> = [];
+
+    if (lastfmUser && LASTFM_API_KEY) {
+      jobs.push(fetchLastFmAlbums(lastfmUser).then((data) => ({ source: 'lastfm' as const, items: data })));
+    }
+
+    if (letterboxdUser) {
+      jobs.push(fetchLetterboxdFilms(letterboxdUser).then((data) => ({ source: 'letterboxd' as const, items: data })));
+    }
+
+    if (goodreadsUser) {
+      jobs.push(fetchGoodreadsBooks(goodreadsUser).then((data) => ({ source: 'goodreads' as const, items: data })));
+    }
+
+    const settled = await Promise.allSettled(jobs);
+    const nextConnected = { letterboxd: false, goodreads: false, lastfm: false };
     const allItems: MediaItem[] = [];
 
-    // Fetch Last.fm albums - paginate to get more data
-    if (lastfmUser && LASTFM_API_KEY) {
-      try {
-        localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
-        setConnected(prev => ({ ...prev, lastfm: true }));
-        
-        // Fetch multiple pages to get more albums (500 per page, up to 3 pages = 1500 albums)
-        for (let page = 1; page <= 3; page++) {
-          const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastfmUser}&api_key=${LASTFM_API_KEY}&format=json&limit=500&period=overall&page=${page}`;
-          const res = await fetch(url);
-          const data = await res.json();
-          
-          if (data.topalbums?.album) {
-            data.topalbums.album.forEach((album: any, index: number) => {
-              const playcount = parseInt(album.playcount);
-              allItems.push({
-                id: `lastfm-${page}-${index}`,
-                type: 'album',
-                title: album.name,
-                artist: album.artist?.name,
-                playcount: playcount,
-                imageUrl: album.image?.[3]?.['#text'] || album.image?.[2]?.['#text'], // Get larger image
-                link: album.url,
-                masterpiece: playcount >= 500, // 500+ plays = masterpiece
-              });
-            });
-            
-            // If we got fewer than 500, we've reached the end
-            if (data.topalbums.album.length < 500) break;
-          } else {
-            break;
-          }
-        }
-      } catch (e) {
-        console.error('Last.fm fetch failed:', e);
-      }
-    }
+    settled.forEach((result) => {
+      if (result.status !== 'fulfilled') return;
+      const { source, items: sourceItems } = result.value;
 
-    // Fetch Letterboxd films via RSS (diary entries)
-    if (letterboxdUser) {
-      try {
-        console.log('Fetching Letterboxd diary for:', letterboxdUser);
-        
-        // Use allorigins.win as CORS proxy - more reliable
-        const letterboxdRssUrl = `https://letterboxd.com/${letterboxdUser}/rss/`;
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(letterboxdRssUrl)}`;
-        
-        const response = await fetch(proxyUrl);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        
-        const xmlText = await response.text();
-        console.log('Letterboxd RSS received, length:', xmlText.length);
-        
-        // Parse XML
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
-        
-        console.log('Letterboxd items found:', items.length);
-        
-        if (items.length > 0) {
-          localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
-          setConnected(prev => ({ ...prev, letterboxd: true }));
-          
-          items.forEach((item, index) => {
-            const title = item.querySelector('title')?.textContent || '';
-            const link = item.querySelector('link')?.textContent || '';
-            const description = item.querySelector('description')?.textContent || '';
-            
-            // Parse rating from title (e.g., "Film Title, 2024 - ★★★★")
-            const ratingMatch = title.match(/★+/);
-            const rating = ratingMatch ? ratingMatch[0].length : undefined;
-            const hasHalf = title.includes('½');
-            
-            // Clean title - remove rating stars and year at end
-            let cleanTitle = title
-              .replace(/ - ★+½?$/, '')
-              .replace(/ - ½$/, '')
-              .replace(/, \d{4}$/, '')
-              .trim();
-            
-            // Extract film poster from description
-            const posterMatch = description.match(/<img[^>]+src="([^"]+)"/);
-            let posterUrl = posterMatch?.[1];
-            
-            // Upgrade to larger poster if possible
-            if (posterUrl && posterUrl.includes('ltrbxd.com')) {
-              posterUrl = posterUrl.replace(/-0-\d+-0-\d+/, '-0-230-0-345');
-            }
-            
-            allItems.push({
-              id: `letterboxd-${index}`,
-              type: 'film',
-              title: cleanTitle || title,
-              link: link,
-              imageUrl: posterUrl,
-              rating: hasHalf && rating ? rating + 0.5 : rating,
-              masterpiece: rating === 5,
-            });
-          });
-          
-          console.log(`Letterboxd: Loaded ${items.length} diary entries`);
-        } else {
-          console.log('Letterboxd: No diary entries found. Make sure you have films logged in your diary.');
-        }
-        
-      } catch (e) {
-        console.error('Letterboxd fetch failed:', e);
+      if (sourceItems.length > 0) {
+        nextConnected[source] = true;
       }
-    }
 
-    // Fetch Goodreads books via RSS
-    if (goodreadsUser) {
-      try {
-        // Try to get as many books as possible
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${goodreadsUser}?shelf=read&count=500`;
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
-        
-        if (data.items) {
-          localStorage.setItem('dakibwa_goodreads_user', goodreadsUser);
-          setConnected(prev => ({ ...prev, goodreads: true }));
-          
-          data.items.forEach((item: any, index: number) => {
-            // Extract author from description - try multiple patterns
-            const authorMatch = item.description?.match(/author: ([^<]+)/i) || 
-                               item.description?.match(/by ([^<]+)/i);
-            // Extract rating - try multiple patterns
-            const ratingMatch = item.description?.match(/rating: (\d)/i) ||
-                               item.description?.match(/(\d) of 5 stars/i);
-            const rating = ratingMatch ? parseInt(ratingMatch[1]) : undefined;
-            
-            // Extract book cover image if available
-            const imageMatch = item.description?.match(/src="([^"]+)"/);
-            
-            allItems.push({
-              id: `goodreads-${index}`,
-              type: 'book',
-              title: item.title,
-              author: authorMatch?.[1]?.trim(),
-              link: item.link,
-              imageUrl: imageMatch?.[1],
-              rating: rating,
-              masterpiece: rating === 5, // Exactly 5 stars
-            });
-          });
-        }
-      } catch (e) {
-        console.error('Goodreads fetch failed:', e);
-      }
-    }
+      allItems.push(...sourceItems);
+    });
 
-    setItems(allItems);
-    localStorage.setItem('dakibwa_consumption_items', JSON.stringify(allItems));
+    if (nextConnected.lastfm) localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
+    if (nextConnected.letterboxd) localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
+    if (nextConnected.goodreads) localStorage.setItem('dakibwa_goodreads_user', goodreadsUser);
+
+    const normalizedItems = dedupeAndRankItems(allItems);
+    setConnected(nextConnected);
+    setItems(normalizedItems);
+    localStorage.setItem('dakibwa_consumption_items', JSON.stringify(normalizedItems));
     setLoading(false);
-  };
+  }, [goodreadsUser, hasAnyConnection, lastfmUser, letterboxdUser]);
 
-  const getCreator = (item: MediaItem) => {
-    return item.artist || item.author || item.director || '';
-  };
+  useEffect(() => {
+    if (items.length === 0 && hasAnyConnection) {
+      fetchAllData();
+    }
+  }, [fetchAllData, hasAnyConnection, items.length]);
+
+  const filteredItems = useMemo(() => {
+    if (filter === 'all') return items;
+    if (filter === 'masterpiece') return items.filter((item) => item.masterpiece);
+    return items.filter((item) => item.type === filter);
+  }, [filter, items]);
+
+  const getCreator = (item: MediaItem) => item.artist || item.author || item.director || '';
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'album': return 'Album';
-      case 'book': return 'Book';
-      case 'film': return 'Film';
-      default: return type;
+      case 'album':
+        return 'Album';
+      case 'book':
+        return 'Book';
+      case 'film':
+        return 'Film';
+      default:
+        return type;
     }
   };
 
   const getStampColor = (type: string, isMasterpiece?: boolean) => {
-    if (isMasterpiece) return 'border-[#f0d890] dark:border-[#d4b85c]'; // Pastel yellow
+    if (isMasterpiece) return 'border-[#d6b970] dark:border-[#b79a56]';
     switch (type) {
-      case 'album': return 'border-[#7eb8da] dark:border-[#5a9fc7]'; // Blue
-      case 'film': return 'border-[#8bc99b] dark:border-[#6bb37e]'; // Green
-      case 'book': return 'border-[#e8a5a5] dark:border-[#d48888]'; // Pastel red
-      default: return 'border-[#e0e0e0] dark:border-[#333]';
+      case 'album':
+        return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
+      case 'film':
+        return 'border-[#7aaf89] dark:border-[#6f9f7d]';
+      case 'book':
+        return 'border-[#c49383] dark:border-[#a97e70]';
+      default:
+        return 'border-[#d8d3c8] dark:border-[#35312a]';
     }
   };
 
   const getFilterColor = (key: FilterType) => {
     switch (key) {
-      case 'album': return 'border-[#7eb8da] dark:border-[#5a9fc7]'; // Blue
-      case 'film': return 'border-[#8bc99b] dark:border-[#6bb37e]'; // Green
-      case 'book': return 'border-[#e8a5a5] dark:border-[#d48888]'; // Pastel red
-      case 'masterpiece': return 'border-[#f0d890] dark:border-[#d4b85c]'; // Pastel yellow
-      default: return 'border-[#e0e0e0] dark:border-[#333]';
+      case 'album':
+        return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
+      case 'film':
+        return 'border-[#7aaf89] dark:border-[#6f9f7d]';
+      case 'book':
+        return 'border-[#c49383] dark:border-[#a97e70]';
+      case 'masterpiece':
+        return 'border-[#d6b970] dark:border-[#b79a56]';
+      default:
+        return 'border-[#d8d3c8] dark:border-[#35312a]';
     }
   };
-
-  const filteredItems = items.filter(item => {
-    if (filter === 'all') return true;
-    if (filter === 'masterpiece') return item.masterpiece;
-    return item.type === filter;
-  });
 
   const filters: { key: FilterType; label: string }[] = [
     { key: 'all', label: 'All' },
@@ -293,91 +318,90 @@ const Consumption: React.FC = () => {
     { key: 'masterpiece', label: 'Masterpieces' },
   ];
 
-  const hasAnyConnection = letterboxdUser || goodreadsUser || lastfmUser;
-
   return (
     <div className="space-y-6">
-      {/* Header with settings */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between gap-4">
+        <div className="text-sm text-[#6a655d] dark:text-[#a49a88]">
+          {loading ? 'Syncing your libraries...' : `${filteredItems.length} items`}
+        </div>
         <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors"
+          onClick={() => setShowSettings((prev) => !prev)}
+          className="text-sm text-[#6a655d] dark:text-[#a49a88] hover:text-[#1c1a17] dark:hover:text-[#e8e2d6] transition-colors"
         >
-          {showSettings ? 'Close' : 'Connect your Services'}
+          {showSettings ? 'Close' : 'Connect your services'}
         </button>
       </div>
 
-      {/* Settings panel */}
       {showSettings && (
-        <div className="border border-[#e0e0e0] dark:border-[#333] p-6 space-y-4">
-          <p className="text-sm text-[#666] dark:text-[#999]">
+        <div className="border border-[#d8d3c8] dark:border-[#35312a] bg-[#f6f4ef]/40 dark:bg-[#1b1916]/40 p-6 space-y-4">
+          <p className="text-sm text-[#6a655d] dark:text-[#a49a88]">
             Connect your accounts to automatically import your consumption history.
           </p>
-          
+
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <label className="block text-sm text-[#666] dark:text-[#999] mb-1">
-                Last.fm Username
-              </label>
+              <label className="block text-sm text-[#6a655d] dark:text-[#a49a88] mb-1">Last.fm Username</label>
               <input
                 type="text"
                 value={lastfmUser}
-                onChange={(e) => setLastfmUser(e.target.value)}
+                onChange={(e) => setLastfmUser(e.target.value.trim())}
                 placeholder="e.g., dakibwa"
-                className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-sm outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0]"
+                className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm text-[#666] dark:text-[#999] mb-1">
-                Letterboxd Username
-              </label>
+              <label className="block text-sm text-[#6a655d] dark:text-[#a49a88] mb-1">Letterboxd Username</label>
               <input
                 type="text"
                 value={letterboxdUser}
-                onChange={(e) => setLetterboxdUser(e.target.value)}
+                onChange={(e) => setLetterboxdUser(e.target.value.trim())}
                 placeholder="e.g., dakibwa"
-                className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-sm outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0]"
+                className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm text-[#666] dark:text-[#999] mb-1">
-                Goodreads User ID
-              </label>
+              <label className="block text-sm text-[#6a655d] dark:text-[#a49a88] mb-1">Goodreads User ID</label>
               <input
                 type="text"
                 value={goodreadsUser}
-                onChange={(e) => setGoodreadsUser(e.target.value)}
+                onChange={(e) => setGoodreadsUser(e.target.value.trim())}
                 placeholder="e.g., 12345678"
-                className="w-full bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-sm outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0]"
+                className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
               />
-              <p className="text-xs text-[#999] dark:text-[#666] mt-1">
-                Find in your profile URL
-              </p>
+              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Find this in your profile URL</p>
             </div>
           </div>
-          
-          <button
-            onClick={fetchAllData}
-            disabled={loading || !hasAnyConnection}
-            className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30"
-          >
-            {loading ? 'Fetching...' : 'Sync Now →'}
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={fetchAllData}
+              disabled={loading || !hasAnyConnection}
+              className="text-sm text-[#1c1a17] dark:text-[#e8e2d6] hover:opacity-70 transition-opacity disabled:opacity-30"
+            >
+              {loading ? 'Fetching...' : 'Sync now'}
+            </button>
+            <div className="flex items-center gap-2 text-xs text-[#8a8378] dark:text-[#8f8575]">
+              <span className={connected.lastfm ? 'text-[#2a5b53] dark:text-[#7ab2a8]' : ''}>Last.fm</span>
+              <span>•</span>
+              <span className={connected.letterboxd ? 'text-[#2a5b53] dark:text-[#7ab2a8]' : ''}>Letterboxd</span>
+              <span>•</span>
+              <span className={connected.goodreads ? 'text-[#2a5b53] dark:text-[#7ab2a8]' : ''}>Goodreads</span>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex justify-end flex-wrap gap-2">
         {filters.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setFilter(key)}
-            className={`px-3 py-1 text-sm transition-colors border-2 ${
+            className={`px-3 py-1 text-sm transition-all border ${
               filter === key
-                ? `${getFilterColor(key)} bg-[#1a1a1a]/10 dark:bg-white/10 text-[#1a1a1a] dark:text-[#e0e0e0]`
-                : `${getFilterColor(key)} bg-transparent text-[#666] dark:text-[#999] hover:bg-[#1a1a1a]/5 dark:hover:bg-white/5`
+                ? `${getFilterColor(key)} bg-[#1c1a17]/5 dark:bg-white/10 text-[#1c1a17] dark:text-[#e8e2d6]`
+                : `${getFilterColor(key)} bg-transparent text-[#6a655d] dark:text-[#a49a88] hover:bg-[#1c1a17]/5 dark:hover:bg-white/5`
             }`}
           >
             {label}
@@ -385,8 +409,17 @@ const Consumption: React.FC = () => {
         ))}
       </div>
 
-      {/* Items grid */}
-      {filteredItems.length > 0 ? (
+      {loading && filteredItems.length === 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {Array.from({ length: 12 }).map((_, idx) => (
+            <div key={idx} className="border border-[#d8d3c8] dark:border-[#35312a] p-3 animate-pulse">
+              <div className="aspect-square mb-3 bg-[#ece8de] dark:bg-[#22201b]" />
+              <div className="h-3 w-4/5 bg-[#ece8de] dark:bg-[#22201b] mb-2" />
+              <div className="h-3 w-2/3 bg-[#ece8de] dark:bg-[#22201b]" />
+            </div>
+          ))}
+        </div>
+      ) : filteredItems.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {filteredItems.map((item) => (
             <a
@@ -396,40 +429,40 @@ const Consumption: React.FC = () => {
               rel="noopener noreferrer"
               className="group block"
             >
-              <div className={`border-2 ${getStampColor(item.type, item.masterpiece)} p-3 hover:opacity-80 transition-all ${item.masterpiece ? 'bg-[#1a1a1a]/5 dark:bg-white/5 shadow-[0_0_8px_rgba(240,216,144,0.3)]' : ''}`}>
-                {/* Image or placeholder */}
-                <div className="aspect-square mb-3 overflow-hidden bg-[#f0f0f0] dark:bg-[#222] flex items-center justify-center">
+              <div
+                className={`border ${getStampColor(item.type, item.masterpiece)} p-3 h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-sm ${
+                  item.masterpiece ? 'bg-[#1c1a17]/5 dark:bg-white/5' : ''
+                }`}
+              >
+                <div className="aspect-square mb-3 overflow-hidden bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center">
                   {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
+                    />
                   ) : (
-                    <span className="text-3xl font-light opacity-30">
-                      {item.title.charAt(0)}
-                    </span>
+                    <span className="text-3xl font-light opacity-30">{item.title.charAt(0)}</span>
                   )}
                 </div>
 
-                {/* Title and creator */}
                 <div className="space-y-1.5">
-                  <div className="text-sm font-medium text-[#1a1a1a] dark:text-[#e0e0e0] leading-tight line-clamp-1 overflow-hidden">
-                    {item.title}
-                  </div>
-                  <div className="text-sm text-[#666] dark:text-[#999] leading-tight line-clamp-1 overflow-hidden">
-                    {getCreator(item)}
-                  </div>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs text-[#999] dark:text-[#666] uppercase">
-                      {getTypeLabel(item.type)}
-                    </span>
-                    {item.rating && (
-                      <span className="text-xs text-[#999] dark:text-[#666]">
-                        {'★'.repeat(Math.floor(item.rating))}{item.rating % 1 !== 0 ? '½' : ''}
+                  <div className="text-sm font-medium text-[#1c1a17] dark:text-[#e8e2d6] leading-tight truncate">{item.title}</div>
+                  <div className="text-sm text-[#6a655d] dark:text-[#a49a88] leading-tight truncate">{getCreator(item)}</div>
+                  <div className="flex items-center justify-between pt-1 gap-2">
+                    <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575] uppercase tracking-wide">{getTypeLabel(item.type)}</span>
+                    {item.rating ? (
+                      <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">
+                        {'★'.repeat(Math.floor(item.rating))}
+                        {item.rating % 1 !== 0 ? '½' : ''}
                       </span>
-                    )}
-                    {item.playcount && (
-                      <span className="text-xs text-[#999] dark:text-[#666]">
-                        {item.playcount.toLocaleString()} plays
-                      </span>
-                    )}
+                    ) : null}
+                    {!item.rating && item.playcount ? (
+                      <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">{item.playcount.toLocaleString()}</span>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -437,25 +470,19 @@ const Consumption: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-[#666] dark:text-[#999]">
+        <div className="text-center py-16 text-[#6a655d] dark:text-[#a49a88]">
           {hasAnyConnection ? (
             <div className="space-y-4">
               <p>No items yet.</p>
-              <button
-                onClick={fetchAllData}
-                className="text-sm hover:opacity-60 transition-opacity"
-              >
-                Sync your data →
+              <button onClick={fetchAllData} className="text-sm hover:opacity-70 transition-opacity">
+                Sync your data
               </button>
             </div>
           ) : (
             <div className="space-y-4">
               <p>Connect your accounts to see your consumption history.</p>
-              <button
-                onClick={() => setShowSettings(true)}
-                className="text-sm hover:opacity-60 transition-opacity"
-              >
-                Connect your Services →
+              <button onClick={() => setShowSettings(true)} className="text-sm hover:opacity-70 transition-opacity">
+                Connect your services
               </button>
             </div>
           )}

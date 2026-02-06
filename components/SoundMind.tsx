@@ -55,18 +55,13 @@ const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
 
 // Gemini API Key
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+const IS_DEV = import.meta.env.DEV;
 
 // Simple database using localStorage
 const saveToDatabase = (key: string, data: any) => {
   const db = JSON.parse(localStorage.getItem('dakibwa_music_db') || '{}');
   db[key] = { data, timestamp: new Date().toISOString() };
   localStorage.setItem('dakibwa_music_db', JSON.stringify(db));
-  console.log(`[DB] Saved to ${key}:`, data);
-};
-
-const getFromDatabase = (key: string) => {
-  const db = JSON.parse(localStorage.getItem('dakibwa_music_db') || '{}');
-  return db[key]?.data || null;
 };
 
 // Demo data for when no API is connected
@@ -107,6 +102,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const simulationRef = useRef<number>(0);
   const nodesRef = useRef<Node[]>([]);
+  const hoveredNodeRef = useRef<string | null>(null);
+  const hoveredLinkRef = useRef<Link | null>(null);
+
+  useEffect(() => {
+    hoveredNodeRef.current = hoveredNode;
+    hoveredLinkRef.current = hoveredLink;
+  }, [hoveredLink, hoveredNode]);
 
   // Check for saved data and Spotify callback on mount
   useEffect(() => {
@@ -246,14 +248,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           }
         }
       } catch (e) {
-        console.log('Recent plays fetch failed, continuing with top artists');
+        if (IS_DEV) console.warn('Recent plays fetch failed, continuing with top artists');
       }
       
       const artists = Array.from(artistMap.values())
         .sort((a, b) => (b.playcount || 0) - (a.playcount || 0))
         .slice(0, 50);
       
-      console.log('[Spotify] Fetched artists with playcounts:', artists);
       saveToDatabase('spotify_artists', artists);
       setArtistsData(artists);
       
@@ -294,8 +295,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         // Take top 50 for analysis
         const topArtists = artists.slice(0, 50);
         
-        console.log('[Last.fm] Fetched artists with playcounts:', topArtists);
-        console.log('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
+        if (IS_DEV) {
+          console.info('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
+        }
         saveToDatabase('lastfm_artists', topArtists);
         setArtistsData(topArtists);
         } else {
@@ -343,10 +345,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
 
     // Save artists to database
     saveToDatabase('artists_input', { artists: artistNames, artistInfo });
-    console.log('[Gemini] Input artists:', artistNames);
-
     if (!GEMINI_API_KEY) {
-      console.warn('[Gemini] No API key found, using fallback');
+      if (IS_DEV) console.warn('[Gemini] No API key found, using fallback');
       // Fallback without Gemini
       setAnalysisProgress('Creating connections...');
       const fallbackData: GraphData = {
@@ -368,7 +368,6 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
 
     try {
-      console.log('[Gemini] Using API key:', GEMINI_API_KEY.substring(0, 10) + '...');
       const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
       
       setAnalysisProgress('Analysing artist relationships...');
@@ -388,8 +387,6 @@ Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other
 
 Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs at least 2 connections.`;
 
-      console.log('[Gemini] Sending prompt:', prompt);
-      console.log('[Gemini] Waiting for response from Gemini 3 Flash...');
       setAnalysisProgress('Waiting for Gemini 3 Flash...');
 
       const response = await ai.models.generateContent({
@@ -397,30 +394,24 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         contents: prompt
       });
 
-      console.log('[Gemini] Response object:', response);
       setAnalysisProgress('Processing response...');
 
       // Handle response - the SDK returns text as a property
       let jsonText: string | undefined;
       try {
         jsonText = response.text;
-        console.log('[Gemini] Got text from response.text');
       } catch (e) {
         // Try alternative access methods
         const anyResponse = response as any;
         if (anyResponse.candidates?.[0]?.content?.parts?.[0]?.text) {
           jsonText = anyResponse.candidates[0].content.parts[0].text;
-          console.log('[Gemini] Got text from candidates');
         }
       }
       
       if (!jsonText) {
-        console.log('[Gemini] Unexpected response format:', JSON.stringify(response));
         throw new Error('Unexpected response format - no text found');
       }
       
-      console.log('[Gemini] Response received!');
-      console.log('[Gemini] Raw response:', jsonText);
       setAnalysisProgress('Mapping your musical universe...');
       
       // Save raw response to database
@@ -431,14 +422,9 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         try {
             data = JSON.parse(jsonText);
         } catch (e) {
-          console.log('[Gemini] Parsing failed, trying to clean JSON...');
             const cleanJson = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
             data = JSON.parse(cleanJson);
         }
-
-        console.log('[Gemini] Parsed data:', data);
-        console.log('[Gemini] Nodes count:', data.nodes?.length || 0);
-        console.log('[Gemini] Links count:', data.links?.length || 0);
         
         // Save parsed response to database
         saveToDatabase('gemini_parsed_response', data);
@@ -465,7 +451,6 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
           }))
         };
         
-        console.log('[Gemini] Final graph data:', safeGraphData);
         saveToDatabase('final_graph', safeGraphData);
 
         setGraphData(safeGraphData);
@@ -484,9 +469,10 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
     } catch (error: any) {
       clearInterval(progressInterval);
       clearInterval(messageInterval);
-      console.error("[Gemini] Analysis Failed:", error);
-      console.error("[Gemini] Error message:", error?.message);
-      console.error("[Gemini] Error details:", JSON.stringify(error, null, 2));
+      if (IS_DEV) {
+        console.error("[Gemini] Analysis Failed:", error);
+        console.error("[Gemini] Error details:", JSON.stringify(error, null, 2));
+      }
       saveToDatabase('gemini_error', { 
         message: error?.message, 
         stack: error?.stack,
@@ -549,6 +535,22 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
     const nodeColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const labelColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const labelOutlineColor = isDark ? '#1a1a1a' : '#fafafa';
+    const nodeById = new Map<string, Node>();
+    nodesRef.current.forEach((node) => nodeById.set(node.id, node));
+    const neighbors = new Map<string, Node[]>();
+    dataLinks.forEach((link) => {
+      const sourceNode = nodeById.get(link.source);
+      const targetNode = nodeById.get(link.target);
+      if (!sourceNode || !targetNode) return;
+
+      const sourceNeighbors = neighbors.get(sourceNode.id) || [];
+      sourceNeighbors.push(targetNode);
+      neighbors.set(sourceNode.id, sourceNeighbors);
+
+      const targetNeighbors = neighbors.get(targetNode.id) || [];
+      targetNeighbors.push(sourceNode);
+      neighbors.set(targetNode.id, targetNeighbors);
+    });
 
     const animate = () => {
       // Dynamic physics based on canvas size
@@ -580,21 +582,14 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         });
 
         // Springs for connected nodes
-        dataLinks.forEach(link => {
-          const sourceNode = nodesRef.current.find(n => n.id === link.source);
-          const targetNode = nodesRef.current.find(n => n.id === link.target);
-          
-          if (sourceNode && targetNode) {
-            if (node.id === sourceNode.id || node.id === targetNode.id) {
-              const other = node.id === sourceNode.id ? targetNode : sourceNode;
-              const dx = other.x! - node.x!;
-              const dy = other.y! - node.y!;
-              const dist = Math.sqrt(dx * dx + dy * dy);
-              const force = (dist - springLength) * springStrength;
-              node.vx! += (dx / dist) * force;
-              node.vy! += (dy / dist) * force;
-            }
-          }
+        const linkedNodes = neighbors.get(node.id) || [];
+        linkedNodes.forEach((other) => {
+          const dx = other.x! - node.x!;
+          const dy = other.y! - node.y!;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const force = (dist - springLength) * springStrength;
+          node.vx! += (dx / dist) * force;
+          node.vy! += (dy / dist) * force;
         });
 
         // Very weak center gravity
@@ -621,10 +616,11 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       
       // Draw links with type colors
       dataLinks.forEach(link => {
-        const s = nodesRef.current.find(n => n.id === link.source);
-        const t = nodesRef.current.find(n => n.id === link.target);
+        const s = nodeById.get(link.source);
+        const t = nodeById.get(link.target);
         if (s && t) {
-          const isHovered = hoveredLink?.source === link.source && hoveredLink?.target === link.target;
+          const hoveredCurrent = hoveredLinkRef.current;
+          const isHovered = hoveredCurrent?.source === link.source && hoveredCurrent?.target === link.target;
           const color = CONNECTION_COLORS[link.type] || CONNECTION_COLORS.similar;
           
           ctx.beginPath();
@@ -644,7 +640,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
 
       // Draw nodes (circles first)
       nodesRef.current.forEach(node => {
-        const isHovered = hoveredNode === node.id;
+        const isHovered = hoveredNodeRef.current === node.id;
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
         const nodeSize = 6 + (normalised * 28); // 6px min, 34px max
         
@@ -666,7 +662,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
 
       // Draw all labels AFTER all nodes (so they appear on top)
       nodesRef.current.forEach(node => {
-        const isHovered = hoveredNode === node.id;
+        const isHovered = hoveredNodeRef.current === node.id;
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
         const nodeSize = 6 + (normalised * 28);
         
@@ -694,7 +690,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       cancelAnimationFrame(simulationRef.current);
       window.removeEventListener('resize', handleResize);
     };
-  }, [status, graphData, hoveredNode, hoveredLink]);
+  }, [status, graphData]);
 
   // Mouse handling
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -742,8 +738,17 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
           }
       }
 
-      setHoveredNode(foundNode);
-      setHoveredLink(foundLink);
+      setHoveredNode((prev) => (prev === foundNode ? prev : foundNode));
+      setHoveredLink((prev) => {
+        if (
+          prev?.source === foundLink?.source &&
+          prev?.target === foundLink?.target &&
+          prev?.type === foundLink?.type
+        ) {
+          return prev;
+        }
+        return foundLink;
+      });
   };
 
   const clearData = () => {

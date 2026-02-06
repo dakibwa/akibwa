@@ -24,49 +24,49 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection }) => {
   const quote = getQuote();
 
   return (
-    <nav className="sticky top-0 bg-[#fafafa] dark:bg-[#1a1a1a] border-b border-[#e0e0e0] dark:border-[#333] z-50 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+    <nav className="sticky top-0 bg-[#f6f4ef]/90 dark:bg-[#171613]/90 border-b border-[#d8d3c8] dark:border-[#35312a] z-50 backdrop-blur-md">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           <div className="flex items-center gap-2">
             <button
               onClick={() => onSelect?.('')}
-              className="text-lg font-normal hover:opacity-70 transition-opacity"
+              className="text-lg font-medium tracking-tight hover:opacity-70 transition-opacity"
             >
               dakibwa
             </button>
-            <span className="text-lg text-[#999] dark:text-[#666] font-light">
+            <span className="hidden md:block text-base text-[#8a8378] dark:text-[#8f8575] font-light">
               — {quote || 'by daniel atkinson'}
             </span>
           </div>
-          <div className="flex items-center gap-4 md:gap-6 text-sm md:text-base">
+          <div className="flex items-center gap-3 md:gap-5 text-sm md:text-base">
             <button
               onClick={() => onSelect?.('CREATION')}
-              className={`hover:opacity-70 transition-opacity ${
-                activeSection === 'CREATION' ? 'opacity-100 font-medium' : 'opacity-60'
+              className={`hover:opacity-80 transition-all ${
+                activeSection === 'CREATION' ? 'opacity-100 font-medium text-[#1c1a17] dark:text-[#f0eadf]' : 'opacity-60'
               }`}
             >
               Creation
             </button>
             <button
               onClick={() => onSelect?.('CONSUMPTION')}
-              className={`hover:opacity-70 transition-opacity ${
-                activeSection === 'CONSUMPTION' ? 'opacity-100 font-medium' : 'opacity-60'
+              className={`hover:opacity-80 transition-all ${
+                activeSection === 'CONSUMPTION' ? 'opacity-100 font-medium text-[#1c1a17] dark:text-[#f0eadf]' : 'opacity-60'
               }`}
             >
               Consumption
             </button>
             <button
               onClick={() => onSelect?.('CONSCIOUSNESS')}
-              className={`hover:opacity-70 transition-opacity ${
-                activeSection === 'CONSCIOUSNESS' ? 'opacity-100 font-medium' : 'opacity-60'
+              className={`hover:opacity-80 transition-all ${
+                activeSection === 'CONSCIOUSNESS' ? 'opacity-100 font-medium text-[#1c1a17] dark:text-[#f0eadf]' : 'opacity-60'
               }`}
             >
               Consciousness
             </button>
             <button
               onClick={() => onSelect?.('CONTACT')}
-              className={`hover:opacity-70 transition-opacity ${
-                activeSection === 'CONTACT' ? 'opacity-100 font-medium' : 'opacity-60'
+              className={`hover:opacity-80 transition-all ${
+                activeSection === 'CONTACT' ? 'opacity-100 font-medium text-[#1c1a17] dark:text-[#f0eadf]' : 'opacity-60'
               }`}
             >
               Contact
