@@ -185,23 +185,30 @@ const main = async () => {
     current.countryCode !== nextLocation.countryCode ||
     current.latitude !== nextLocation.latitude ||
     current.longitude !== nextLocation.longitude;
+  const hasArt = existsSync(ART_FILE);
 
-  if (!hasChange) {
+  if (hasChange) {
+    writeFileSync(LOCATION_FILE, `${JSON.stringify(nextLocation, null, 2)}\n`, 'utf8');
+    console.log(`Updated location: ${nextLocation.city}, ${nextLocation.country}`);
+  } else {
     console.log('No location change.');
-    return;
   }
-
-  writeFileSync(LOCATION_FILE, `${JSON.stringify(nextLocation, null, 2)}\n`, 'utf8');
-  console.log(`Updated location: ${nextLocation.city}, ${nextLocation.country}`);
   let artChanged = false;
 
-  try {
-    artChanged = await generateCityArtwork(nextLocation);
-  } catch (error) {
-    console.error(error.message);
+  if (hasChange || !hasArt) {
+    try {
+      artChanged = await generateCityArtwork(nextLocation);
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   if (!shouldCommit) return;
+
+  if (!hasChange && !artChanged) {
+    console.log('No files changed, skipping commit.');
+    return;
+  }
 
   const filesToAdd = ['public/location.json'];
   if (artChanged || existsSync(ART_FILE)) {
