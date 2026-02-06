@@ -27,9 +27,12 @@ const Creation: React.FC<CreationProps> = ({ isActive, onSelectEssay, onLaunchAp
   if (!isActive) return null;
 
   return (
-    <div className="space-y-6">
+    <div className="grid gap-4 md:gap-5">
       {PROJECTS_DATA.map((project) => (
-        <div key={project.id} className="space-y-2 border-b border-[#d8d3c8] dark:border-[#35312a] pb-6">
+        <div
+          key={project.id}
+          className="surface-panel rounded-xl p-5 md:p-6 space-y-2 transition-transform duration-300 hover:-translate-y-0.5"
+        >
           <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
             {project.type} · {project.status}
           </div>
@@ -41,11 +44,11 @@ const Creation: React.FC<CreationProps> = ({ isActive, onSelectEssay, onLaunchAp
                 onLaunchApp(project.id);
               }
             }}
-            className="text-xl md:text-2xl font-normal tracking-tight hover:text-[#2a5b53] dark:hover:text-[#7ab2a8] transition-colors text-left"
+            className="font-display text-2xl md:text-3xl tracking-tight hover:text-[#205c5a] dark:hover:text-[#79b7ab] transition-colors text-left"
           >
             {project.title}
           </button>
-          <p className="text-base text-[#6a655d] dark:text-[#a49a88]">
+          <p className="text-base text-[#696257] dark:text-[#a89d88] max-w-2xl">
             {project.description}
           </p>
         </div>

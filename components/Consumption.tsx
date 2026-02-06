@@ -320,27 +320,27 @@ const Consumption: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <div className="text-sm text-[#6a655d] dark:text-[#a49a88]">
+      <div className="surface-panel rounded-xl px-4 py-3 flex items-center justify-between gap-4">
+        <div className="text-sm text-[#696257] dark:text-[#a89d88]">
           {loading ? 'Syncing your libraries...' : `${filteredItems.length} items`}
         </div>
         <button
           onClick={() => setShowSettings((prev) => !prev)}
-          className="text-sm text-[#6a655d] dark:text-[#a49a88] hover:text-[#1c1a17] dark:hover:text-[#e8e2d6] transition-colors"
+          className="text-xs uppercase tracking-[0.12em] text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab] transition-colors"
         >
           {showSettings ? 'Close' : 'Connect your services'}
         </button>
       </div>
 
       {showSettings && (
-        <div className="border border-[#d8d3c8] dark:border-[#35312a] bg-[#f6f4ef]/40 dark:bg-[#1b1916]/40 p-6 space-y-4">
-          <p className="text-sm text-[#6a655d] dark:text-[#a49a88]">
+        <div className="surface-panel rounded-xl p-6 space-y-4">
+          <p className="text-sm text-[#696257] dark:text-[#a89d88]">
             Connect your accounts to automatically import your consumption history.
           </p>
 
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <label className="block text-sm text-[#6a655d] dark:text-[#a49a88] mb-1">Last.fm Username</label>
+              <label className="block text-sm text-[#696257] dark:text-[#a89d88] mb-1">Last.fm Username</label>
               <input
                 type="text"
                 value={lastfmUser}
@@ -351,7 +351,7 @@ const Consumption: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-[#6a655d] dark:text-[#a49a88] mb-1">Letterboxd Username</label>
+              <label className="block text-sm text-[#696257] dark:text-[#a89d88] mb-1">Letterboxd Username</label>
               <input
                 type="text"
                 value={letterboxdUser}
@@ -362,7 +362,7 @@ const Consumption: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-[#6a655d] dark:text-[#a49a88] mb-1">Goodreads User ID</label>
+              <label className="block text-sm text-[#696257] dark:text-[#a89d88] mb-1">Goodreads User ID</label>
               <input
                 type="text"
                 value={goodreadsUser}
@@ -398,7 +398,7 @@ const Consumption: React.FC = () => {
           <button
             key={key}
             onClick={() => setFilter(key)}
-            className={`px-3 py-1 text-sm transition-all border ${
+            className={`px-3 py-1 text-sm rounded-full transition-all border ${
               filter === key
                 ? `${getFilterColor(key)} bg-[#1c1a17]/5 dark:bg-white/10 text-[#1c1a17] dark:text-[#e8e2d6]`
                 : `${getFilterColor(key)} bg-transparent text-[#6a655d] dark:text-[#a49a88] hover:bg-[#1c1a17]/5 dark:hover:bg-white/5`
@@ -430,7 +430,7 @@ const Consumption: React.FC = () => {
               className="group block"
             >
               <div
-                className={`border ${getStampColor(item.type, item.masterpiece)} p-3 h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-sm ${
+                className={`surface-panel ${getStampColor(item.type, item.masterpiece)} p-3 h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-sm ${
                   item.masterpiece ? 'bg-[#1c1a17]/5 dark:bg-white/5' : ''
                 }`}
               >
