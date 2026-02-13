@@ -595,6 +595,8 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
   const [records, setRecords] = useState<IngestionRecord[]>([]);
   const [activeUploadSource, setActiveUploadSource] = useState<DataSource | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<'ingestion' | 'command'>('ingestion');
+  const [metricQuery, setMetricQuery] = useState('');
 
   useEffect(() => {
     try {
@@ -616,10 +618,80 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
     }
   }, [records]);
 
-  const stats = useMemo(() => {
-    const totalEntries = records.reduce((sum, record) => sum + record.entryCount, 0);
-    const sourceCount = new Set(records.map((record) => record.source)).size;
-    return { totalEntries, sourceCount };
+  const sourceSummaries = useMemo(() => {
+    return (Object.keys(SOURCE_CONFIG) as DataSource[]).map((source) => {
+      const sourceRecords = records.filter((record) => record.source === source);
+      const parsedEntries = sourceRecords.reduce((sum, record) => sum + record.entryCount, 0);
+      const latestRecord = sourceRecords.reduce<IngestionRecord | null>((latest, current) => {
+        if (!latest) return current;
+        return new Date(current.importedAt).getTime() > new Date(latest.importedAt).getTime()
+          ? current
+          : latest;
+      }, null);
+
+      return {
+        source,
+        datasetCount: sourceRecords.length,
+        parsedEntries,
+        latestImportedAt: latestRecord?.importedAt ?? null,
+        hasWarnings: sourceRecords.some((record) => record.warnings.length > 0),
+      };
+    });
+  }, [records]);
+
+  const dashboard = useMemo(() => {
+    const metricFrequency: Record<string, number> = {};
+    const categoryCounts: Record<EntryCategory, number> = {
+      genomics: 0,
+      nutrition: 0,
+      biometric: 0,
+      lab: 0,
+    };
+    let storedEntries = 0;
+    let warnings = 0;
+
+    records.forEach((record) => {
+      storedEntries += record.storedEntryCount;
+      warnings += record.warnings.length;
+      record.entries.forEach((entry) => {
+        categoryCounts[entry.category] += 1;
+        metricFrequency[entry.metric] = (metricFrequency[entry.metric] ?? 0) + 1;
+      });
+    });
+
+    const totalParsedEntries = records.reduce((sum, record) => sum + record.entryCount, 0);
+    const latestImportedAt = records.reduce<string | null>((latest, record) => {
+      if (!latest) return record.importedAt;
+      return new Date(record.importedAt).getTime() > new Date(latest).getTime() ? record.importedAt : latest;
+    }, null);
+    const metricsByFrequency = Object.entries(metricFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .map(([metric, count]) => ({ metric, count }));
+
+    return {
+      totalParsedEntries,
+      storedEntries,
+      sourceCoverage: sourceSummaries.filter((summary) => summary.datasetCount > 0).length,
+      latestImportedAt,
+      warnings,
+      categoryCounts,
+      uniqueMetrics: metricsByFrequency.length,
+      metricsByFrequency,
+    };
+  }, [records, sourceSummaries]);
+
+  const filteredMetrics = useMemo(() => {
+    const query = metricQuery.trim().toLowerCase();
+    if (!query) return dashboard.metricsByFrequency.slice(0, 18);
+    return dashboard.metricsByFrequency
+      .filter((item) => item.metric.toLowerCase().includes(query))
+      .slice(0, 24);
+  }, [dashboard.metricsByFrequency, metricQuery]);
+
+  const recentRecords = useMemo(() => {
+    return [...records]
+      .sort((a, b) => new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime())
+      .slice(0, 10);
   }, [records]);
 
   const handleUpload = async (source: DataSource, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -657,6 +729,7 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
       };
 
       setRecords((previous) => [record, ...previous]);
+      setActiveView('command');
       if (!result.entries.length) {
         setError('Upload complete, but no parsable records were found.');
       }
@@ -699,55 +772,65 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-[100] bg-[#f7f4ed] dark:bg-[#15120d] text-[#1d1b17] dark:text-[#ece5d8] overflow-y-auto">
       <div className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-10 space-y-8">
-        <div className="flex items-center justify-between gap-4">
-          <button
-            onClick={onClose}
-            className="text-sm uppercase tracking-[0.12em] text-[#6e6658] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab] transition-colors"
-          >
-            ← Back
-          </button>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleExport}
-              disabled={records.length === 0}
-              className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
-            >
-              Export JSON
-            </button>
-            <button
-              onClick={handleClear}
-              disabled={records.length === 0}
-              className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#9e4230] hover:text-[#9e4230] transition-colors"
-            >
-              Clear
-            </button>
+        <header className="surface-panel rounded-2xl p-6 md:p-8 space-y-5">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="space-y-2">
+              <div className="text-xs uppercase tracking-[0.14em] text-[#8a8378] dark:text-[#8f8575]">
+                Health Data Hub
+              </div>
+              <h1 className="font-display text-3xl md:text-5xl tracking-tight leading-[1.06]">
+                Ingestion + Command Centre
+              </h1>
+              <p className="text-sm md:text-base text-[#696257] dark:text-[#a89d88] max-w-3xl">
+                Use one view to ingest data, and another to monitor source health, dataset quality, and metric
+                coverage across Circle, Cronometer, Whoop, and Randox.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onClose}
+                className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleExport}
+                disabled={records.length === 0}
+                className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
+              >
+                Export JSON
+              </button>
+              <button
+                onClick={handleClear}
+                disabled={records.length === 0}
+                className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#9e4230] hover:text-[#9e4230] transition-colors"
+              >
+                Clear
+              </button>
+            </div>
           </div>
-        </div>
 
-        <header className="surface-panel rounded-2xl p-6 md:p-8 space-y-4">
-          <div className="text-xs uppercase tracking-[0.14em] text-[#8a8378] dark:text-[#8f8575]">
-            Health Data Hub
-          </div>
-          <h1 className="font-display text-3xl md:text-5xl tracking-tight leading-[1.06]">
-            Ingest your personal biology stack in one place.
-          </h1>
-          <p className="text-base md:text-lg text-[#696257] dark:text-[#a89d88] max-w-3xl">
-            Upload exports from Circle DNA, Cronometer, Whoop, and Randox. Data is parsed into a shared schema
-            directly in your browser, so you can validate and iterate before adding a backend pipeline.
-          </p>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
-            <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-              <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Datasets</div>
-              <div className="text-2xl font-display mt-1">{records.length}</div>
-            </div>
-            <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-              <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Sources Connected</div>
-              <div className="text-2xl font-display mt-1">{stats.sourceCount}</div>
-            </div>
-            <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-              <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Parsed Records</div>
-              <div className="text-2xl font-display mt-1">{stats.totalEntries.toLocaleString()}</div>
-            </div>
+          <div className="inline-flex rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-1">
+            <button
+              onClick={() => setActiveView('ingestion')}
+              className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                activeView === 'ingestion'
+                  ? 'bg-[#205c5a] text-[#f2f0e8] dark:bg-[#79b7ab] dark:text-[#1c1a16]'
+                  : 'text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
+              }`}
+            >
+              Ingestion
+            </button>
+            <button
+              onClick={() => setActiveView('command')}
+              className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                activeView === 'command'
+                  ? 'bg-[#205c5a] text-[#f2f0e8] dark:bg-[#79b7ab] dark:text-[#1c1a16]'
+                  : 'text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
+              }`}
+            >
+              Command Centre
+            </button>
           </div>
         </header>
 
@@ -757,118 +840,299 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        <section className="grid md:grid-cols-2 gap-4 md:gap-5">
-          {(Object.keys(SOURCE_CONFIG) as DataSource[]).map((source) => {
-            const config = SOURCE_CONFIG[source];
-            const isUploading = activeUploadSource === source;
-            return (
-              <article key={source} className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
-                <div className="space-y-1">
-                  <h2 className="font-display text-2xl tracking-tight">{config.label}</h2>
-                  <p className="text-sm text-[#696257] dark:text-[#a89d88]">{config.description}</p>
-                  <p className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                    Accepted: {config.formats}
-                  </p>
+        {activeView === 'ingestion' && (
+          <div className="space-y-5 pb-8">
+            <section className="surface-panel rounded-2xl p-5 md:p-6">
+              <h2 className="font-display text-2xl md:text-3xl tracking-tight">Ingestion Method</h2>
+              <div className="grid md:grid-cols-3 gap-3 mt-4">
+                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
+                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Step 1</div>
+                  <p className="mt-2 text-sm text-[#696257] dark:text-[#a89d88]">Choose one source and upload its latest export file.</p>
                 </div>
+                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
+                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Step 2</div>
+                  <p className="mt-2 text-sm text-[#696257] dark:text-[#a89d88]">Data is normalized in-browser and quality warnings are attached to each dataset.</p>
+                </div>
+                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
+                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Step 3</div>
+                  <p className="mt-2 text-sm text-[#696257] dark:text-[#a89d88]">Switch to Command Centre to inspect coverage and trend-ready metrics.</p>
+                </div>
+              </div>
+            </section>
 
-                <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] cursor-pointer hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors">
-                  <span className="text-sm">{isUploading ? 'Parsing...' : 'Upload Export'}</span>
-                  <input
-                    type="file"
-                    accept=".txt,.csv,.tsv,.json"
-                    className="hidden"
-                    disabled={!!activeUploadSource}
-                    onChange={(event) => handleUpload(source, event)}
-                  />
-                </label>
+            <section className="grid md:grid-cols-2 gap-4 md:gap-5">
+              {sourceSummaries.map((summary) => {
+                const config = SOURCE_CONFIG[summary.source];
+                const isUploading = activeUploadSource === summary.source;
+                const statusLabel =
+                  summary.datasetCount === 0
+                    ? 'Not Connected'
+                    : summary.hasWarnings
+                      ? 'Needs Review'
+                      : 'Healthy';
+                const statusTone =
+                  summary.datasetCount === 0
+                    ? 'text-[#8a8378] dark:text-[#8f8575]'
+                    : summary.hasWarnings
+                      ? 'text-[#8f5e14] dark:text-[#f4deb0]'
+                      : 'text-[#205c5a] dark:text-[#79b7ab]';
+
+                return (
+                  <article key={summary.source} className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-display text-2xl tracking-tight">{config.label}</h3>
+                        <p className="text-sm text-[#696257] dark:text-[#a89d88]">{config.description}</p>
+                      </div>
+                      <div className={`text-xs uppercase tracking-[0.12em] ${statusTone}`}>{statusLabel}</div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Datasets</div>
+                        <div className="font-display text-xl mt-1">{summary.datasetCount}</div>
+                      </div>
+                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Parsed</div>
+                        <div className="font-display text-xl mt-1">{summary.parsedEntries.toLocaleString()}</div>
+                      </div>
+                    </div>
+
+                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
+                      Accepted: {config.formats}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-sm text-[#696257] dark:text-[#a89d88]">
+                        {summary.latestImportedAt
+                          ? `Last import: ${new Date(summary.latestImportedAt).toLocaleString()}`
+                          : 'No import yet'}
+                      </div>
+                      <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] cursor-pointer hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors">
+                        <span className="text-sm">{isUploading ? 'Parsing...' : 'Upload'}</span>
+                        <input
+                          type="file"
+                          accept=".txt,.csv,.tsv,.json"
+                          className="hidden"
+                          disabled={!!activeUploadSource}
+                          onChange={(event) => handleUpload(summary.source, event)}
+                        />
+                      </label>
+                    </div>
+                  </article>
+                );
+              })}
+            </section>
+
+            <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-3">
+              <h3 className="font-display text-2xl tracking-tight">Latest Datasets</h3>
+              {recentRecords.length === 0 && (
+                <p className="text-sm text-[#696257] dark:text-[#a89d88]">No datasets uploaded yet.</p>
+              )}
+              {recentRecords.slice(0, 4).map((record) => (
+                <div
+                  key={record.id}
+                  className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                >
+                  <div>
+                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
+                      {SOURCE_CONFIG[record.source].label}
+                    </div>
+                    <div className="text-sm">{record.fileName}</div>
+                  </div>
+                  <div className="text-sm text-[#696257] dark:text-[#a89d88]">
+                    {record.entryCount.toLocaleString()} parsed · {new Date(record.importedAt).toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </section>
+          </div>
+        )}
+
+        {activeView === 'command' && (
+          <div className="space-y-5 pb-8">
+            <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="surface-panel rounded-xl p-4">
+                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Datasets</div>
+                <div className="text-2xl font-display mt-1">{records.length}</div>
+              </div>
+              <div className="surface-panel rounded-xl p-4">
+                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Source Coverage</div>
+                <div className="text-2xl font-display mt-1">{dashboard.sourceCoverage}/4</div>
+              </div>
+              <div className="surface-panel rounded-xl p-4">
+                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Parsed Records</div>
+                <div className="text-2xl font-display mt-1">{dashboard.totalParsedEntries.toLocaleString()}</div>
+              </div>
+              <div className="surface-panel rounded-xl p-4">
+                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Unique Metrics</div>
+                <div className="text-2xl font-display mt-1">{dashboard.uniqueMetrics.toLocaleString()}</div>
+              </div>
+            </section>
+
+            <section className="grid lg:grid-cols-2 gap-4">
+              <article className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
+                <h3 className="font-display text-2xl tracking-tight">Source Health</h3>
+                <div className="space-y-2">
+                  {sourceSummaries.map((summary) => (
+                    <div
+                      key={summary.source}
+                      className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 flex items-center justify-between gap-3"
+                    >
+                      <div>
+                        <div className="text-sm">{SOURCE_CONFIG[summary.source].label}</div>
+                        <div className="text-xs text-[#696257] dark:text-[#a89d88]">
+                          {summary.datasetCount} dataset{summary.datasetCount === 1 ? '' : 's'} ·{' '}
+                          {summary.parsedEntries.toLocaleString()} parsed
+                        </div>
+                      </div>
+                      <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575] text-right">
+                        {summary.latestImportedAt
+                          ? new Date(summary.latestImportedAt).toLocaleDateString()
+                          : 'No data'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </article>
-            );
-          })}
-        </section>
 
-        <section className="space-y-4 pb-8">
-          <h2 className="font-display text-2xl md:text-3xl tracking-tight">Ingestion History</h2>
-          {records.length === 0 && (
-            <div className="surface-panel rounded-2xl p-6 text-[#696257] dark:text-[#a89d88]">
-              No datasets uploaded yet.
-            </div>
-          )}
-
-          {records.map((record) => (
-            <article key={record.id} className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
-                <div>
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                    {SOURCE_CONFIG[record.source].label}
-                  </div>
-                  <h3 className="font-display text-2xl tracking-tight">{record.fileName}</h3>
+              <article className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <h3 className="font-display text-2xl tracking-tight">Metric Catalogue</h3>
+                  <input
+                    type="text"
+                    value={metricQuery}
+                    onChange={(event) => setMetricQuery(event.target.value)}
+                    placeholder="Search metrics"
+                    className="px-3 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] bg-transparent text-sm outline-none focus:border-[#205c5a] dark:focus:border-[#79b7ab]"
+                  />
                 </div>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Genomics</div>
+                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.genomics.toLocaleString()}</div>
+                  </div>
+                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Nutrition</div>
+                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.nutrition.toLocaleString()}</div>
+                  </div>
+                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Biometric</div>
+                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.biometric.toLocaleString()}</div>
+                  </div>
+                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Lab</div>
+                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.lab.toLocaleString()}</div>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 max-h-72 overflow-y-auto">
+                  {filteredMetrics.length === 0 && (
+                    <div className="text-sm text-[#696257] dark:text-[#a89d88]">No matching metrics.</div>
+                  )}
+                  {filteredMetrics.map((item) => (
+                    <div key={item.metric} className="py-2 border-b border-[#d8cfbe]/60 dark:border-[#342f25]/60 last:border-b-0 flex items-center justify-between gap-3">
+                      <div className="text-sm">{item.metric}</div>
+                      <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
+                        {item.count}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </section>
+
+            <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <h3 className="font-display text-2xl tracking-tight">Recent Datasets</h3>
                 <div className="text-sm text-[#696257] dark:text-[#a89d88]">
-                  Imported {new Date(record.importedAt).toLocaleString()}
+                  {dashboard.latestImportedAt
+                    ? `Last import: ${new Date(dashboard.latestImportedAt).toLocaleString()}`
+                    : 'No imports yet'}
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Parsed</div>
-                  <div className="text-xl font-display">{record.entryCount.toLocaleString()}</div>
-                </div>
-                <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Stored</div>
-                  <div className="text-xl font-display">{record.storedEntryCount.toLocaleString()}</div>
-                </div>
-                <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Metrics</div>
-                  <div className="text-xl font-display">{record.uniqueMetricCount.toLocaleString()}</div>
-                </div>
-                <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Date Range</div>
-                  <div className="text-sm">
-                    {record.dateRange
-                      ? `${new Date(record.dateRange.start).toLocaleDateString()} - ${new Date(record.dateRange.end).toLocaleDateString()}`
-                      : 'n/a'}
-                  </div>
-                </div>
-              </div>
-
-              {record.warnings.length > 0 && (
-                <div className="rounded-lg border border-[#bca067] bg-[#bca067]/10 p-3 text-sm text-[#6b5529] dark:text-[#f4deb0]">
-                  {record.warnings.join(' ')}
+              {recentRecords.length === 0 && (
+                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4 text-sm text-[#696257] dark:text-[#a89d88]">
+                  Upload at least one dataset to populate the command centre.
                 </div>
               )}
 
-              {record.entries.length > 0 && (
-                <details className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                  <summary className="cursor-pointer text-sm uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                    Preview First {Math.min(record.entries.length, 12)} Records
+              {recentRecords.map((record) => (
+                <details key={record.id} className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
+                  <summary className="cursor-pointer">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                      <div>
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
+                          {SOURCE_CONFIG[record.source].label}
+                        </div>
+                        <div className="text-sm">{record.fileName}</div>
+                      </div>
+                      <div className="text-sm text-[#696257] dark:text-[#a89d88]">
+                        {record.entryCount.toLocaleString()} parsed · {new Date(record.importedAt).toLocaleString()}
+                      </div>
+                    </div>
                   </summary>
-                  <div className="pt-3 overflow-x-auto">
-                    <table className="w-full text-sm border-collapse">
-                      <thead>
-                        <tr className="text-left border-b border-[#d8cfbe] dark:border-[#342f25]">
-                          <th className="py-2 pr-3">Metric</th>
-                          <th className="py-2 pr-3">Value</th>
-                          <th className="py-2 pr-3">Unit</th>
-                          <th className="py-2 pr-3">Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {record.entries.slice(0, 12).map((entry) => (
-                          <tr key={entry.id} className="border-b border-[#d8cfbe]/50 dark:border-[#342f25]/60">
-                            <td className="py-2 pr-3">{entry.metric}</td>
-                            <td className="py-2 pr-3">{entry.value === null ? 'n/a' : String(entry.value)}</td>
-                            <td className="py-2 pr-3">{entry.unit || 'n/a'}</td>
-                            <td className="py-2 pr-3">{entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'n/a'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+
+                  <div className="pt-4 space-y-3">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Stored</div>
+                        <div className="font-display text-xl mt-1">{record.storedEntryCount.toLocaleString()}</div>
+                      </div>
+                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Metrics</div>
+                        <div className="font-display text-xl mt-1">{record.uniqueMetricCount.toLocaleString()}</div>
+                      </div>
+                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Warnings</div>
+                        <div className="font-display text-xl mt-1">{record.warnings.length}</div>
+                      </div>
+                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
+                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Range</div>
+                        <div className="text-xs mt-1 text-[#696257] dark:text-[#a89d88]">
+                          {record.dateRange
+                            ? `${new Date(record.dateRange.start).toLocaleDateString()} - ${new Date(record.dateRange.end).toLocaleDateString()}`
+                            : 'n/a'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {record.warnings.length > 0 && (
+                      <div className="rounded-lg border border-[#bca067] bg-[#bca067]/10 p-3 text-sm text-[#6b5529] dark:text-[#f4deb0]">
+                        {record.warnings.join(' ')}
+                      </div>
+                    )}
+
+                    {record.entries.length > 0 && (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                          <thead>
+                            <tr className="text-left border-b border-[#d8cfbe] dark:border-[#342f25]">
+                              <th className="py-2 pr-3">Metric</th>
+                              <th className="py-2 pr-3">Value</th>
+                              <th className="py-2 pr-3">Unit</th>
+                              <th className="py-2 pr-3">Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {record.entries.slice(0, 8).map((entry) => (
+                              <tr key={entry.id} className="border-b border-[#d8cfbe]/50 dark:border-[#342f25]/60">
+                                <td className="py-2 pr-3">{entry.metric}</td>
+                                <td className="py-2 pr-3">{entry.value === null ? 'n/a' : String(entry.value)}</td>
+                                <td className="py-2 pr-3">{entry.unit || 'n/a'}</td>
+                                <td className="py-2 pr-3">{entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'n/a'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </details>
-              )}
-            </article>
-          ))}
-        </section>
+              ))}
+            </section>
+          </div>
+        )}
       </div>
     </div>
   );

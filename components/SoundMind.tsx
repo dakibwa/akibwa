@@ -65,7 +65,10 @@ const IS_DEV = import.meta.env.DEV;
 const SPOTIFY_TOKEN_STORAGE_KEY = 'dakibwa_spotify_token';
 const SPOTIFY_TOKEN_EXP_STORAGE_KEY = 'dakibwa_spotify_token_exp';
 const SPOTIFY_STATE_STORAGE_KEY = 'dakibwa_spotify_state';
-const GRAPH_CACHE_VERSION = '2';
+const GRAPH_CACHE_VERSION = '3';
+const MAX_GRAPH_ARTISTS = 100;
+const MIN_LASTFM_PLAYCOUNT = 5;
+const MIN_SPOTIFY_SCORE = 40;
 
 // Simple database using localStorage
 const saveToDatabase = (key: string, data: any) => {
@@ -179,7 +182,7 @@ const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
     });
   });
 
-  const minimumLinks = Math.max(artists.length - 1, Math.min(artists.length * 2, 160));
+  const minimumLinks = Math.max(artists.length - 1, Math.min(Math.floor(artists.length * 1.2), 110));
   if (links.length < minimumLinks) {
     buildDeterministicLinks(artists).forEach((link) => {
       const key = [link.source, link.target].sort().join('::');
@@ -465,6 +468,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       
       const artists = Array.from(artistMap.values())
         .sort((a, b) => (b.playcount || 0) - (a.playcount || 0))
+        .filter((artist) => (artist.playcount || 0) >= MIN_SPOTIFY_SCORE)
+        .slice(0, MAX_GRAPH_ARTISTS)
         .map((artist) => ({
           ...artist,
           favoriteTrack: artistTrackScore.get(artist.name)?.favoriteTrack,
@@ -530,7 +535,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           playcount: parseInt(a.playcount, 10),
           favoriteTrack: favoriteTrackByArtist.get(a.name),
           favoriteAlbum: favoriteAlbumByArtist.get(a.name),
-        }));
+        }))
+        .filter((artist) => (artist.playcount || 0) >= MIN_LASTFM_PLAYCOUNT)
+        .slice(0, MAX_GRAPH_ARTISTS);
         
         if (IS_DEV) {
           console.info('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
@@ -606,7 +613,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         '{"nodes":[{"id":"Artist Name","group":1,"type":"artist"}],"links":[{"source":"Artist A","target":"Artist B","reason":"Brief reason","type":"collaboration"}]}',
         'Connection types: collaboration, influence, genre, label, feature, similar',
         'Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other',
-        `Create at least ${Math.min(artistNames.length * 2, 120)} links.`,
+        `Create at least ${Math.min(Math.floor(artistNames.length * 1.2), 110)} links.`,
         'Every artist needs at least 2 connections.',
       ].join('\n');
 
