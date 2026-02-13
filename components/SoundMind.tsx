@@ -66,9 +66,19 @@ const SPOTIFY_TOKEN_STORAGE_KEY = 'dakibwa_spotify_token';
 const SPOTIFY_TOKEN_EXP_STORAGE_KEY = 'dakibwa_spotify_token_exp';
 const SPOTIFY_STATE_STORAGE_KEY = 'dakibwa_spotify_state';
 const GRAPH_CACHE_VERSION = '3';
-const MAX_GRAPH_ARTISTS = 100;
+const MAX_GRAPH_ARTISTS = 50;
 const MIN_LASTFM_PLAYCOUNT = 5;
 const MIN_SPOTIFY_SCORE = 40;
+
+const NODE_GROUP_COLORS: Record<number, string> = {
+  1: '#8dd3c7', // electronic
+  2: '#80b1d3', // hip hop
+  3: '#bebada', // rock
+  4: '#fdb462', // r&b
+  5: '#b3de69', // jazz
+  6: '#fb8072', // pop
+  7: '#d9d9d9', // other
+};
 
 // Simple database using localStorage
 const saveToDatabase = (key: string, data: any) => {
@@ -217,6 +227,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const simulationRef = useRef<number>(0);
   const nodesRef = useRef<Node[]>([]);
+  const starfieldRef = useRef<Array<{ x: number; y: number; size: number; alpha: number; phase: number }>>([]);
   const hoveredNodeRef = useRef<string | null>(null);
   const hoveredLinkRef = useRef<Link | null>(null);
 
@@ -728,6 +739,15 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     let height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
+    if (starfieldRef.current.length === 0) {
+      starfieldRef.current = Array.from({ length: 130 }).map(() => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 1.8 + 0.3,
+        alpha: Math.random() * 0.4 + 0.15,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    }
 
     // Handle window resize
     const handleResize = () => {
@@ -735,6 +755,11 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       height = window.innerHeight;
       canvas.width = width;
       canvas.height = height;
+      starfieldRef.current = starfieldRef.current.map((star) => ({
+        ...star,
+        x: Math.min(width, star.x),
+        y: Math.min(height, star.y),
+      }));
     };
     window.addEventListener('resize', handleResize);
 
@@ -760,7 +785,6 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
 
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const nodeColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const labelColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const labelOutlineColor = isDark ? '#1a1a1a' : '#fafafa';
     const nodeById = new Map<string, Node>();
@@ -781,16 +805,42 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     });
 
     const animate = () => {
+      const now = performance.now() * 0.001;
       // Dynamic physics based on canvas size
       const area = width * height;
       const nodeCount = nodesRef.current.length;
       const idealSpacing = Math.sqrt(area / nodeCount) * 0.8;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const constellationRadius = Math.min(width, height) * 0.24;
+      const clusterForce = 0.00042;
+
+      const playcounts = nodesRef.current.map(n => n.playcount || 0).filter(p => p > 0);
+      const maxPlaycount = Math.max(...playcounts, 1);
+      const minPlaycount = Math.min(...playcounts, 0);
+      const playcountRange = maxPlaycount - minPlaycount || 1;
+      const getNodeRadius = (node: Node) => {
+        const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
+        return 4 + normalised * 16;
+      };
+
+      const groupIds = [1, 2, 3, 4, 5, 6, 7];
+      const clusterAnchors = new Map<number, { x: number; y: number }>();
+      groupIds.forEach((groupId, idx) => {
+        const angle = -Math.PI / 2 + (idx / groupIds.length) * Math.PI * 2;
+        clusterAnchors.set(groupId, {
+          x: centerX + Math.cos(angle) * constellationRadius,
+          y: centerY + Math.sin(angle) * constellationRadius,
+        });
+      });
       
-      const repulsion = 3000; // Increased repulsion
-      const springLength = Math.max(idealSpacing, 200); // Dynamic spring length
-      const springStrength = 0.015; // Reduced spring strength
-      const damping = 0.9;
-      const centerForce = 0.00005; // Much weaker center gravity
+      const repulsion = 1800;
+      const springLength = Math.max(idealSpacing * 0.7, 130);
+      const springStrength = 0.011;
+      const damping = 0.92;
+      const centerForce = 0.00028;
+      const edgeBuffer = 170;
+      const edgeForce = 0.03;
 
       nodesRef.current.forEach((node, i) => {
         if (!node.vx) node.vx = 0;
@@ -821,10 +871,22 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         });
 
         // Very weak center gravity
-        const dx = (width / 2) - node.x!;
-        const dy = (height / 2) - node.y!;
+        const dx = centerX - node.x!;
+        const dy = centerY - node.y!;
         node.vx! += dx * centerForce;
         node.vy! += dy * centerForce;
+
+        const anchor = clusterAnchors.get(node.group);
+        if (anchor) {
+          node.vx! += (anchor.x - node.x!) * clusterForce;
+          node.vy! += (anchor.y - node.y!) * clusterForce;
+        }
+
+        // Soft edge push keeps the constellation away from hard screen edges.
+        if (node.x! < edgeBuffer) node.vx! += (edgeBuffer - node.x!) * edgeForce * 0.02;
+        if (node.x! > width - edgeBuffer) node.vx! -= (node.x! - (width - edgeBuffer)) * edgeForce * 0.02;
+        if (node.y! < edgeBuffer) node.vy! += (edgeBuffer - node.y!) * edgeForce * 0.02;
+        if (node.y! > height - edgeBuffer) node.vy! -= (node.y! - (height - edgeBuffer)) * edgeForce * 0.02;
 
         // Apply velocity
         node.vx! *= damping;
@@ -832,15 +894,46 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         node.x! += node.vx!;
         node.y! += node.vy!;
 
-        // Keep within bounds with soft bounce
-        const padding = 100;
-        if (node.x! < padding) { node.x! = padding; node.vx! *= -0.5; }
-        if (node.x! > width - padding) { node.x! = width - padding; node.vx! *= -0.5; }
-        if (node.y! < padding) { node.y! = padding; node.vy! *= -0.5; }
-        if (node.y! > height - padding) { node.y! = height - padding; node.vy! *= -0.5; }
+        // Keep within bounds with minimal correction.
+        const hardPadding = 32;
+        node.x! = Math.min(width - hardPadding, Math.max(hardPadding, node.x!));
+        node.y! = Math.min(height - hardPadding, Math.max(hardPadding, node.y!));
       });
 
+      // Collision pass to prevent heavy overlap and keep nodes legible.
+      for (let i = 0; i < nodesRef.current.length; i++) {
+        for (let j = i + 1; j < nodesRef.current.length; j++) {
+          const a = nodesRef.current[i];
+          const b = nodesRef.current[j];
+          const dx = b.x! - a.x!;
+          const dy = b.y! - a.y!;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const minDist = getNodeRadius(a) + getNodeRadius(b) + 10;
+          if (dist >= minDist) continue;
+
+          const overlap = (minDist - dist) * 0.5;
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          a.x! -= nx * overlap;
+          a.y! -= ny * overlap;
+          b.x! += nx * overlap;
+          b.y! += ny * overlap;
+        }
+      }
+
       ctx.clearRect(0, 0, width, height);
+
+      // Subtle starfield backdrop.
+      starfieldRef.current.forEach((star) => {
+        const twinkle = 0.7 + 0.3 * Math.sin(now * 0.8 + star.phase);
+        ctx.globalAlpha = star.alpha * twinkle;
+        ctx.fillStyle = isDark ? '#e0e0e0' : '#1a1a1a';
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
       
       // Draw links with type colors
       dataLinks.forEach(link => {
@@ -860,21 +953,17 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         }
       });
 
-      // Calculate min/max playcounts for scaling
-      const playcounts = nodesRef.current.map(n => n.playcount || 0).filter(p => p > 0);
-      const maxPlaycount = Math.max(...playcounts, 1);
-      const minPlaycount = Math.min(...playcounts, 0);
-      const playcountRange = maxPlaycount - minPlaycount || 1;
-
       // Draw nodes (circles first)
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNodeRef.current === node.id;
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
-        const nodeSize = 6 + (normalised * 28); // 6px min, 34px max
+        const pulse = Math.sin(now * 1.2 + node.id.length) * 0.5 + 0.5;
+        const nodeSize = 4 + (normalised * 16) + pulse * 0.7;
+        const nodeColor = NODE_GROUP_COLORS[node.group] || NODE_GROUP_COLORS[7];
         
         if (isHovered) {
           const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 35);
-          gradient.addColorStop(0, isDark ? 'rgba(224, 224, 224, 0.3)' : 'rgba(26, 26, 26, 0.2)');
+          gradient.addColorStop(0, `${nodeColor}66`);
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = gradient;
           ctx.beginPath();
@@ -888,15 +977,38 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         ctx.fill();
       });
 
-      // Draw all labels AFTER all nodes (so they appear on top)
+      // Draw labels AFTER nodes with lightweight collision culling.
+      const placedLabels: Array<{ x: number; y: number; w: number; h: number }> = [];
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNodeRef.current === node.id;
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
-        const nodeSize = 6 + (normalised * 28);
+        const nodeSize = 4 + (normalised * 16);
+        if (!isHovered && normalised < 0.58) return;
         
         ctx.font = isHovered ? 'bold 14px system-ui, -apple-system, sans-serif' : '12px system-ui, -apple-system, sans-serif';
         const labelX = node.x! + nodeSize + 8;
         const labelY = node.y! + 4;
+        const labelWidth = ctx.measureText(node.id).width;
+        const labelHeight = isHovered ? 16 : 13;
+        const labelRect = {
+          x: labelX - 3,
+          y: labelY - labelHeight,
+          w: labelWidth + 6,
+          h: labelHeight + 4,
+        };
+
+        if (!isHovered) {
+          const intersects = placedLabels.some((existing) => {
+            return !(
+              labelRect.x + labelRect.w < existing.x ||
+              existing.x + existing.w < labelRect.x ||
+              labelRect.y + labelRect.h < existing.y ||
+              existing.y + existing.h < labelRect.y
+            );
+          });
+          if (intersects) return;
+        }
+        placedLabels.push(labelRect);
         
         // Draw text outline for visibility
         ctx.strokeStyle = labelOutlineColor;
@@ -905,7 +1017,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         ctx.strokeText(node.id, labelX, labelY);
         
         // Draw text
-        ctx.fillStyle = labelColor;
+        ctx.fillStyle = isHovered ? labelColor : `${labelColor}cc`;
         ctx.fillText(node.id, labelX, labelY);
       });
 
@@ -1185,10 +1297,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                         {artist?.playcount?.toLocaleString() || 0} plays
                       </p>
                       <p className="text-sm text-[#666] dark:text-[#999] mt-2">
-                        Fav album: {artist?.favoriteAlbum || 'Not available'}
+                        Favourite Album: {artist?.favoriteAlbum || 'Not available'}
                       </p>
                       <p className="text-sm text-[#666] dark:text-[#999]">
-                        Fav track: {artist?.favoriteTrack || 'Not available'}
+                        Favourite Track: {artist?.favoriteTrack || 'Not available'}
                       </p>
                     </>
                   );

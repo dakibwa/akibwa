@@ -46,9 +46,16 @@ interface ParseResult {
   warnings: string[];
 }
 
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 const STORAGE_KEY = 'dakibwa_bio_data_hub_v1';
 const MAX_PARSED_ENTRIES = 25_000;
 const MAX_STORED_ENTRIES = 2_500;
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
+const OPENAI_MODEL = import.meta.env.VITE_OPENAI_MODEL || 'gpt-5';
 
 const SOURCE_CONFIG: Record<DataSource, { label: string; description: string; formats: string }> = {
   circle: {
@@ -591,12 +598,192 @@ const getDateRange = (entries: NormalizedEntry[]): { start: string; end: string 
   return { start: timestamps[0], end: timestamps[timestamps.length - 1] };
 };
 
+const CATEGORY_LABELS: Record<EntryCategory, string> = {
+  genomics: 'Genomics',
+  nutrition: 'Nutrition',
+  biometric: 'Biometric',
+  lab: 'Lab',
+};
+
+const sortByImportedAt = (records: IngestionRecord[]) =>
+  [...records].sort((a, b) => new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime());
+
+const getRecordTags = (record: IngestionRecord): string[] => {
+  const tags = new Set<string>();
+  const categories = new Set(record.entries.map((entry) => entry.category));
+  categories.forEach((category) => tags.add(CATEGORY_LABELS[category]));
+
+  const metricCount: Record<string, number> = {};
+  record.entries.forEach((entry) => {
+    metricCount[entry.metric] = (metricCount[entry.metric] ?? 0) + 1;
+  });
+
+  Object.entries(metricCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .forEach(([metric]) => tags.add(metric));
+
+  if (record.warnings.length > 0) tags.add('Needs review');
+  return Array.from(tags).slice(0, 6);
+};
+
+const extractOpenAIText = (payload: any): string => {
+  if (typeof payload?.output_text === 'string' && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  const outputs = Array.isArray(payload?.output) ? payload.output : [];
+  for (const item of outputs) {
+    const content = Array.isArray(item?.content) ? item.content : [];
+    for (const part of content) {
+      if (part?.type === 'output_text' && typeof part?.text === 'string' && part.text.trim()) {
+        return part.text.trim();
+      }
+      if (part?.type === 'text' && typeof part?.text === 'string' && part.text.trim()) {
+        return part.text.trim();
+      }
+    }
+  }
+
+  return '';
+};
+
+const requestOpenAI = async (systemPrompt: string, messages: ChatMessage[], maxOutputTokens = 1600) => {
+  const response = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: OPENAI_MODEL,
+      temperature: 0.2,
+      max_output_tokens: maxOutputTokens,
+      input: [
+        { role: 'system', content: [{ type: 'text', text: systemPrompt }] },
+        ...messages.map((message) => ({
+          role: message.role,
+          content: [{ type: 'text', text: message.content }],
+        })),
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `OpenAI request failed (${response.status})`);
+  }
+
+  const payload = await response.json();
+  const text = extractOpenAIText(payload);
+  if (!text) throw new Error('OpenAI returned an empty response.');
+  return text;
+};
+
+const buildDataDigest = (records: IngestionRecord[]) => {
+  const sortedRecords = sortByImportedAt(records);
+  const sourceOverview = (Object.keys(SOURCE_CONFIG) as DataSource[]).map((source) => {
+    const sourceRecords = sortedRecords.filter((record) => record.source === source);
+    return {
+      source,
+      datasets: sourceRecords.length,
+      latestImport: sourceRecords[0]?.importedAt ?? null,
+      parsedEntries: sourceRecords.reduce((sum, record) => sum + record.entryCount, 0),
+    };
+  });
+
+  const metricStats = new Map<
+    string,
+    { count: number; min: number; max: number; sum: number; sources: Set<DataSource>; units: Set<string> }
+  >();
+  sortedRecords.forEach((record) => {
+    record.entries.forEach((entry) => {
+      if (typeof entry.value !== 'number' || !Number.isFinite(entry.value)) return;
+      const existing =
+        metricStats.get(entry.metric) ??
+        {
+          count: 0,
+          min: entry.value,
+          max: entry.value,
+          sum: 0,
+          sources: new Set<DataSource>(),
+          units: new Set<string>(),
+        };
+      existing.count += 1;
+      existing.min = Math.min(existing.min, entry.value);
+      existing.max = Math.max(existing.max, entry.value);
+      existing.sum += entry.value;
+      existing.sources.add(entry.source);
+      if (entry.unit) existing.units.add(entry.unit);
+      metricStats.set(entry.metric, existing);
+    });
+  });
+
+  const numericMetrics = Array.from(metricStats.entries())
+    .sort((a, b) => b[1].count - a[1].count)
+    .slice(0, 80)
+    .map(([metric, stats]) => ({
+      metric,
+      count: stats.count,
+      avg: Number((stats.sum / stats.count).toFixed(3)),
+      min: Number(stats.min.toFixed(3)),
+      max: Number(stats.max.toFixed(3)),
+      sources: Array.from(stats.sources),
+      units: Array.from(stats.units),
+    }));
+
+  const files = sortedRecords.slice(0, 50).map((record) => ({
+    source: record.source,
+    fileName: record.fileName,
+    importedAt: record.importedAt,
+    parsedEntries: record.entryCount,
+    uniqueMetrics: record.uniqueMetricCount,
+    tags: getRecordTags(record),
+    dateRange: record.dateRange,
+    warnings: record.warnings,
+  }));
+
+  const sampleEntries = sortedRecords
+    .flatMap((record) =>
+      record.entries.slice(0, 20).map((entry) => ({
+        source: entry.source,
+        category: entry.category,
+        metric: entry.metric,
+        value: entry.value,
+        unit: entry.unit,
+        timestamp: entry.timestamp,
+        fileName: record.fileName,
+      }))
+    )
+    .slice(0, 120);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    totals: {
+      datasets: sortedRecords.length,
+      parsedEntries: sortedRecords.reduce((sum, record) => sum + record.entryCount, 0),
+      storedEntries: sortedRecords.reduce((sum, record) => sum + record.storedEntryCount, 0),
+    },
+    sources: sourceOverview,
+    files,
+    numericMetrics,
+    sampleEntries,
+  };
+};
+
 const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
   const [records, setRecords] = useState<IngestionRecord[]>([]);
   const [activeUploadSource, setActiveUploadSource] = useState<DataSource | null>(null);
+  const [expandedSource, setExpandedSource] = useState<DataSource | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<'ingestion' | 'command'>('ingestion');
-  const [metricQuery, setMetricQuery] = useState('');
+  const [analysisStatus, setAnalysisStatus] = useState<'idle' | 'running' | 'ready' | 'error'>('idle');
+  const [analysisText, setAnalysisText] = useState('');
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [analysisDirty, setAnalysisDirty] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -614,85 +801,92 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
     } catch {
-      setError('Could not persist all records locally. Try exporting and clearing old data.');
+      setError('Could not persist all records locally. Try exporting then clearing old data.');
     }
   }, [records]);
 
-  const sourceSummaries = useMemo(() => {
-    return (Object.keys(SOURCE_CONFIG) as DataSource[]).map((source) => {
-      const sourceRecords = records.filter((record) => record.source === source);
-      const parsedEntries = sourceRecords.reduce((sum, record) => sum + record.entryCount, 0);
-      const latestRecord = sourceRecords.reduce<IngestionRecord | null>((latest, current) => {
-        if (!latest) return current;
-        return new Date(current.importedAt).getTime() > new Date(latest.importedAt).getTime()
-          ? current
-          : latest;
-      }, null);
+  const sortedRecords = useMemo(() => sortByImportedAt(records), [records]);
 
-      return {
-        source,
-        datasetCount: sourceRecords.length,
-        parsedEntries,
-        latestImportedAt: latestRecord?.importedAt ?? null,
-        hasWarnings: sourceRecords.some((record) => record.warnings.length > 0),
-      };
-    });
-  }, [records]);
-
-  const dashboard = useMemo(() => {
-    const metricFrequency: Record<string, number> = {};
-    const categoryCounts: Record<EntryCategory, number> = {
-      genomics: 0,
-      nutrition: 0,
-      biometric: 0,
-      lab: 0,
+  const recordsBySource = useMemo(() => {
+    const grouped: Record<DataSource, IngestionRecord[]> = {
+      circle: [],
+      cronometer: [],
+      whoop: [],
+      randox: [],
     };
-    let storedEntries = 0;
-    let warnings = 0;
-
-    records.forEach((record) => {
-      storedEntries += record.storedEntryCount;
-      warnings += record.warnings.length;
-      record.entries.forEach((entry) => {
-        categoryCounts[entry.category] += 1;
-        metricFrequency[entry.metric] = (metricFrequency[entry.metric] ?? 0) + 1;
-      });
+    sortedRecords.forEach((record) => {
+      grouped[record.source].push(record);
     });
+    return grouped;
+  }, [sortedRecords]);
 
-    const totalParsedEntries = records.reduce((sum, record) => sum + record.entryCount, 0);
-    const latestImportedAt = records.reduce<string | null>((latest, record) => {
-      if (!latest) return record.importedAt;
-      return new Date(record.importedAt).getTime() > new Date(latest).getTime() ? record.importedAt : latest;
-    }, null);
-    const metricsByFrequency = Object.entries(metricFrequency)
-      .sort((a, b) => b[1] - a[1])
-      .map(([metric, count]) => ({ metric, count }));
+  const dataDigest = useMemo(() => buildDataDigest(sortedRecords), [sortedRecords]);
+  const digestJson = useMemo(() => JSON.stringify(dataDigest), [dataDigest]);
 
-    return {
-      totalParsedEntries,
-      storedEntries,
-      sourceCoverage: sourceSummaries.filter((summary) => summary.datasetCount > 0).length,
-      latestImportedAt,
-      warnings,
-      categoryCounts,
-      uniqueMetrics: metricsByFrequency.length,
-      metricsByFrequency,
+  useEffect(() => {
+    if (!analysisDirty) return;
+    let cancelled = false;
+
+    const run = async () => {
+      if (!records.length) {
+        if (!cancelled) {
+          setAnalysisStatus('error');
+          setAnalysisError('Upload at least one file before running analysis.');
+          setAnalysisDirty(false);
+        }
+        return;
+      }
+
+      if (!OPENAI_API_KEY) {
+        if (!cancelled) {
+          setAnalysisStatus('error');
+          setAnalysisError('Set VITE_OPENAI_API_KEY to run GPT analysis.');
+          setAnalysisDirty(false);
+        }
+        return;
+      }
+
+      setAnalysisStatus('running');
+      setAnalysisError(null);
+
+      try {
+        const systemPrompt = [
+          'You are an expert quantitative health analyst.',
+          'You receive merged personal data from DNA, nutrition, biometrics, and blood tests.',
+          'Find plausible cross-domain correlations and patterns.',
+          'State confidence level (high/medium/low) for each point.',
+          'Do not diagnose or prescribe.',
+          'Give concise bullet points under: Signals, Correlations, Follow-up tests.',
+        ].join('\n');
+
+        const text = await requestOpenAI(systemPrompt, [
+          {
+            role: 'user',
+            content: `Analyse this dataset and find interesting correlations:\n${digestJson}`,
+          },
+        ]);
+
+        if (cancelled) return;
+        setAnalysisText(text);
+        setAnalysisStatus('ready');
+      } catch (analysisRequestError) {
+        if (cancelled) return;
+        setAnalysisStatus('error');
+        setAnalysisError(
+          analysisRequestError instanceof Error
+            ? analysisRequestError.message
+            : 'Analysis failed for an unknown reason.'
+        );
+      } finally {
+        if (!cancelled) setAnalysisDirty(false);
+      }
     };
-  }, [records, sourceSummaries]);
 
-  const filteredMetrics = useMemo(() => {
-    const query = metricQuery.trim().toLowerCase();
-    if (!query) return dashboard.metricsByFrequency.slice(0, 18);
-    return dashboard.metricsByFrequency
-      .filter((item) => item.metric.toLowerCase().includes(query))
-      .slice(0, 24);
-  }, [dashboard.metricsByFrequency, metricQuery]);
-
-  const recentRecords = useMemo(() => {
-    return [...records]
-      .sort((a, b) => new Date(b.importedAt).getTime() - new Date(a.importedAt).getTime())
-      .slice(0, 10);
-  }, [records]);
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [analysisDirty, digestJson, records.length]);
 
   const handleUpload = async (source: DataSource, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -711,7 +905,7 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
       const warnings = [...result.warnings];
       if (result.entries.length > MAX_STORED_ENTRIES) {
         warnings.push(
-          `Stored only the first ${MAX_STORED_ENTRIES.toLocaleString()} records in local browser storage.`
+          `Stored only the first ${MAX_STORED_ENTRIES.toLocaleString()} records in browser storage.`
         );
       }
 
@@ -729,9 +923,10 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
       };
 
       setRecords((previous) => [record, ...previous]);
-      setActiveView('command');
+      setExpandedSource(source);
+      setAnalysisDirty(true);
       if (!result.entries.length) {
-        setError('Upload complete, but no parsable records were found.');
+        setError('Upload finished, but this file had no parsable records.');
       }
     } catch (uploadError) {
       setError(
@@ -750,9 +945,7 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
       recordCount: records.length,
       records,
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-      type: 'application/json',
-    });
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -762,74 +955,91 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
   };
 
   const handleClear = () => {
-    if (!window.confirm('Delete all ingestion history from this browser?')) return;
+    if (!window.confirm('Delete all uploaded data from this browser?')) return;
     setRecords([]);
+    setExpandedSource(null);
     setError(null);
+    setAnalysisText('');
+    setAnalysisStatus('idle');
+    setAnalysisError(null);
+    setChatMessages([]);
+    setChatError(null);
+  };
+
+  const handleChatSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const question = chatInput.trim();
+    if (!question) return;
+
+    if (!records.length) {
+      setChatError('Upload data first so chat can reference your files.');
+      return;
+    }
+    if (!OPENAI_API_KEY) {
+      setChatError('Set VITE_OPENAI_API_KEY to use chat.');
+      return;
+    }
+
+    const nextMessages = [...chatMessages, { role: 'user', content: question } as ChatMessage];
+    setChatMessages(nextMessages);
+    setChatInput('');
+    setChatLoading(true);
+    setChatError(null);
+
+    try {
+      const systemPrompt = [
+        'You are a data assistant for personal health data.',
+        'Only use the provided dataset context.',
+        'If data is missing, say what is missing.',
+        'Be concise and cite which source the insight came from.',
+        `Dataset context JSON: ${digestJson}`,
+      ].join('\n');
+
+      const assistantText = await requestOpenAI(systemPrompt, nextMessages.slice(-10), 1200);
+      setChatMessages([...nextMessages, { role: 'assistant', content: assistantText }]);
+    } catch (chatRequestError) {
+      setChatError(
+        chatRequestError instanceof Error ? chatRequestError.message : 'Chat request failed unexpectedly.'
+      );
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#f7f4ed] dark:bg-[#15120d] text-[#1d1b17] dark:text-[#ece5d8] overflow-y-auto">
-      <div className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-10 space-y-8">
-        <header className="surface-panel rounded-2xl p-6 md:p-8 space-y-5">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div className="space-y-2">
-              <div className="text-xs uppercase tracking-[0.14em] text-[#8a8378] dark:text-[#8f8575]">
-                Health Data Hub
-              </div>
-              <h1 className="font-display text-3xl md:text-5xl tracking-tight leading-[1.06]">
-                Ingestion + Command Centre
-              </h1>
-              <p className="text-sm md:text-base text-[#696257] dark:text-[#a89d88] max-w-3xl">
-                Use one view to ingest data, and another to monitor source health, dataset quality, and metric
-                coverage across Circle, Cronometer, Whoop, and Randox.
+      <div className="max-w-4xl mx-auto px-5 md:px-8 py-8 space-y-5">
+        <header className="surface-panel rounded-2xl p-5 md:p-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <button
+              onClick={onClose}
+              className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
+            >
+              Back
+            </button>
+            <div className="text-right">
+              <h1 className="font-display text-2xl md:text-3xl tracking-tight">Data Upload + Analysis</h1>
+              <p className="text-xs md:text-sm text-[#696257] dark:text-[#a89d88]">
+                Model: {OPENAI_MODEL}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onClose}
-                className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleExport}
-                disabled={records.length === 0}
-                className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
-              >
-                Export JSON
-              </button>
-              <button
-                onClick={handleClear}
-                disabled={records.length === 0}
-                className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#9e4230] hover:text-[#9e4230] transition-colors"
-              >
-                Clear
-              </button>
-            </div>
           </div>
-
-          <div className="inline-flex rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-1">
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setActiveView('ingestion')}
-              className={`px-4 py-2 rounded-lg text-sm transition-colors ${
-                activeView === 'ingestion'
-                  ? 'bg-[#205c5a] text-[#f2f0e8] dark:bg-[#79b7ab] dark:text-[#1c1a16]'
-                  : 'text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
-              }`}
+              onClick={handleExport}
+              disabled={records.length === 0}
+              className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
             >
-              Ingestion
+              Export
             </button>
             <button
-              onClick={() => setActiveView('command')}
-              className={`px-4 py-2 rounded-lg text-sm transition-colors ${
-                activeView === 'command'
-                  ? 'bg-[#205c5a] text-[#f2f0e8] dark:bg-[#79b7ab] dark:text-[#1c1a16]'
-                  : 'text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
-              }`}
+              onClick={handleClear}
+              disabled={records.length === 0}
+              className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#9e4230] hover:text-[#9e4230] transition-colors"
             >
-              Command Centre
+              Clear
             </button>
           </div>
         </header>
@@ -840,299 +1050,179 @@ const BioDataHub: React.FC<BioDataHubProps> = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {activeView === 'ingestion' && (
-          <div className="space-y-5 pb-8">
-            <section className="surface-panel rounded-2xl p-5 md:p-6">
-              <h2 className="font-display text-2xl md:text-3xl tracking-tight">Ingestion Method</h2>
-              <div className="grid md:grid-cols-3 gap-3 mt-4">
-                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Step 1</div>
-                  <p className="mt-2 text-sm text-[#696257] dark:text-[#a89d88]">Choose one source and upload its latest export file.</p>
-                </div>
-                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Step 2</div>
-                  <p className="mt-2 text-sm text-[#696257] dark:text-[#a89d88]">Data is normalized in-browser and quality warnings are attached to each dataset.</p>
-                </div>
-                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-                  <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Step 3</div>
-                  <p className="mt-2 text-sm text-[#696257] dark:text-[#a89d88]">Switch to Command Centre to inspect coverage and trend-ready metrics.</p>
-                </div>
-              </div>
-            </section>
+        <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-3">
+          <h2 className="font-display text-2xl tracking-tight">Upload Sources</h2>
+          <p className="text-sm text-[#696257] dark:text-[#a89d88]">
+            Grey circle means no upload yet. Green circle with a tick means uploaded.
+          </p>
 
-            <section className="grid md:grid-cols-2 gap-4 md:gap-5">
-              {sourceSummaries.map((summary) => {
-                const config = SOURCE_CONFIG[summary.source];
-                const isUploading = activeUploadSource === summary.source;
-                const statusLabel =
-                  summary.datasetCount === 0
-                    ? 'Not Connected'
-                    : summary.hasWarnings
-                      ? 'Needs Review'
-                      : 'Healthy';
-                const statusTone =
-                  summary.datasetCount === 0
-                    ? 'text-[#8a8378] dark:text-[#8f8575]'
-                    : summary.hasWarnings
-                      ? 'text-[#8f5e14] dark:text-[#f4deb0]'
-                      : 'text-[#205c5a] dark:text-[#79b7ab]';
+          <div className="space-y-3">
+            {(Object.keys(SOURCE_CONFIG) as DataSource[]).map((source) => {
+              const config = SOURCE_CONFIG[source];
+              const sourceRecords = recordsBySource[source];
+              const isComplete = sourceRecords.length > 0;
+              const isUploading = activeUploadSource === source;
 
-                return (
-                  <article key={summary.source} className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h3 className="font-display text-2xl tracking-tight">{config.label}</h3>
-                        <p className="text-sm text-[#696257] dark:text-[#a89d88]">{config.description}</p>
-                      </div>
-                      <div className={`text-xs uppercase tracking-[0.12em] ${statusTone}`}>{statusLabel}</div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Datasets</div>
-                        <div className="font-display text-xl mt-1">{summary.datasetCount}</div>
-                      </div>
-                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Parsed</div>
-                        <div className="font-display text-xl mt-1">{summary.parsedEntries.toLocaleString()}</div>
-                      </div>
-                    </div>
-
-                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                      Accepted: {config.formats}
-                    </div>
-
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm text-[#696257] dark:text-[#a89d88]">
-                        {summary.latestImportedAt
-                          ? `Last import: ${new Date(summary.latestImportedAt).toLocaleString()}`
-                          : 'No import yet'}
-                      </div>
-                      <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] cursor-pointer hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors">
-                        <span className="text-sm">{isUploading ? 'Parsing...' : 'Upload'}</span>
-                        <input
-                          type="file"
-                          accept=".txt,.csv,.tsv,.json"
-                          className="hidden"
-                          disabled={!!activeUploadSource}
-                          onChange={(event) => handleUpload(summary.source, event)}
-                        />
-                      </label>
-                    </div>
-                  </article>
-                );
-              })}
-            </section>
-
-            <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-3">
-              <h3 className="font-display text-2xl tracking-tight">Latest Datasets</h3>
-              {recentRecords.length === 0 && (
-                <p className="text-sm text-[#696257] dark:text-[#a89d88]">No datasets uploaded yet.</p>
-              )}
-              {recentRecords.slice(0, 4).map((record) => (
+              return (
                 <div
-                  key={record.id}
-                  className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+                  key={source}
+                  className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
                 >
-                  <div>
-                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                      {SOURCE_CONFIG[record.source].label}
-                    </div>
-                    <div className="text-sm">{record.fileName}</div>
-                  </div>
-                  <div className="text-sm text-[#696257] dark:text-[#a89d88]">
-                    {record.entryCount.toLocaleString()} parsed · {new Date(record.importedAt).toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </section>
-          </div>
-        )}
-
-        {activeView === 'command' && (
-          <div className="space-y-5 pb-8">
-            <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="surface-panel rounded-xl p-4">
-                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Datasets</div>
-                <div className="text-2xl font-display mt-1">{records.length}</div>
-              </div>
-              <div className="surface-panel rounded-xl p-4">
-                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Source Coverage</div>
-                <div className="text-2xl font-display mt-1">{dashboard.sourceCoverage}/4</div>
-              </div>
-              <div className="surface-panel rounded-xl p-4">
-                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Parsed Records</div>
-                <div className="text-2xl font-display mt-1">{dashboard.totalParsedEntries.toLocaleString()}</div>
-              </div>
-              <div className="surface-panel rounded-xl p-4">
-                <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Unique Metrics</div>
-                <div className="text-2xl font-display mt-1">{dashboard.uniqueMetrics.toLocaleString()}</div>
-              </div>
-            </section>
-
-            <section className="grid lg:grid-cols-2 gap-4">
-              <article className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
-                <h3 className="font-display text-2xl tracking-tight">Source Health</h3>
-                <div className="space-y-2">
-                  {sourceSummaries.map((summary) => (
-                    <div
-                      key={summary.source}
-                      className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 flex items-center justify-between gap-3"
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full border text-xs font-semibold ${
+                        isComplete
+                          ? 'bg-[#99c4a8] border-[#99c4a8] text-[#193b2a]'
+                          : 'bg-transparent border-[#bcb5a8] text-transparent'
+                      }`}
                     >
-                      <div>
-                        <div className="text-sm">{SOURCE_CONFIG[summary.source].label}</div>
-                        <div className="text-xs text-[#696257] dark:text-[#a89d88]">
-                          {summary.datasetCount} dataset{summary.datasetCount === 1 ? '' : 's'} ·{' '}
-                          {summary.parsedEntries.toLocaleString()} parsed
-                        </div>
-                      </div>
-                      <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575] text-right">
-                        {summary.latestImportedAt
-                          ? new Date(summary.latestImportedAt).toLocaleDateString()
-                          : 'No data'}
-                      </div>
+                      ✓
+                    </span>
+                    <div>
+                      <div className="text-sm md:text-base">{config.label}</div>
+                      <div className="text-xs text-[#8a8378] dark:text-[#8f8575]">Accepted: {config.formats}</div>
                     </div>
-                  ))}
-                </div>
-              </article>
+                  </div>
 
-              <article className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <h3 className="font-display text-2xl tracking-tight">Metric Catalogue</h3>
-                  <input
-                    type="text"
-                    value={metricQuery}
-                    onChange={(event) => setMetricQuery(event.target.value)}
-                    placeholder="Search metrics"
-                    className="px-3 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] bg-transparent text-sm outline-none focus:border-[#205c5a] dark:focus:border-[#79b7ab]"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Genomics</div>
-                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.genomics.toLocaleString()}</div>
-                  </div>
-                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Nutrition</div>
-                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.nutrition.toLocaleString()}</div>
-                  </div>
-                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Biometric</div>
-                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.biometric.toLocaleString()}</div>
-                  </div>
-                  <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                    <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Lab</div>
-                    <div className="font-display text-xl mt-1">{dashboard.categoryCounts.lab.toLocaleString()}</div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setExpandedSource(expandedSource === source ? null : source)}
+                      disabled={!isComplete}
+                      className="px-3 py-2 text-xs rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
+                    >
+                      View files ({sourceRecords.length})
+                    </button>
+                    <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] cursor-pointer hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors">
+                      <span className="text-xs">{isUploading ? 'Uploading...' : 'Upload'}</span>
+                      <input
+                        type="file"
+                        accept=".txt,.csv,.tsv,.json"
+                        className="hidden"
+                        disabled={!!activeUploadSource}
+                        onChange={(event) => handleUpload(source, event)}
+                      />
+                    </label>
                   </div>
                 </div>
-                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 max-h-72 overflow-y-auto">
-                  {filteredMetrics.length === 0 && (
-                    <div className="text-sm text-[#696257] dark:text-[#a89d88]">No matching metrics.</div>
-                  )}
-                  {filteredMetrics.map((item) => (
-                    <div key={item.metric} className="py-2 border-b border-[#d8cfbe]/60 dark:border-[#342f25]/60 last:border-b-0 flex items-center justify-between gap-3">
-                      <div className="text-sm">{item.metric}</div>
-                      <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                        {item.count}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </article>
-            </section>
+              );
+            })}
+          </div>
+        </section>
 
-            <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-4">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                <h3 className="font-display text-2xl tracking-tight">Recent Datasets</h3>
-                <div className="text-sm text-[#696257] dark:text-[#a89d88]">
-                  {dashboard.latestImportedAt
-                    ? `Last import: ${new Date(dashboard.latestImportedAt).toLocaleString()}`
-                    : 'No imports yet'}
+        {expandedSource && (
+          <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-3">
+            <h3 className="font-display text-2xl tracking-tight">
+              Uploaded Files: {SOURCE_CONFIG[expandedSource].label}
+            </h3>
+            {recordsBySource[expandedSource].length === 0 && (
+              <p className="text-sm text-[#696257] dark:text-[#a89d88]">No files uploaded yet.</p>
+            )}
+            {recordsBySource[expandedSource].map((record) => (
+              <div key={record.id} className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4 space-y-2">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1">
+                  <div className="text-sm md:text-base">{record.fileName}</div>
+                  <div className="text-xs text-[#8a8378] dark:text-[#8f8575]">
+                    {new Date(record.importedAt).toLocaleString()}
+                  </div>
+                </div>
+                <div className="text-xs text-[#696257] dark:text-[#a89d88]">
+                  {record.entryCount.toLocaleString()} parsed · {record.uniqueMetricCount.toLocaleString()} metrics
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {getRecordTags(record).map((tag) => (
+                    <span
+                      key={`${record.id}-${tag}`}
+                      className="text-xs px-2 py-1 rounded-full border border-[#d8cfbe] dark:border-[#342f25]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
-
-              {recentRecords.length === 0 && (
-                <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4 text-sm text-[#696257] dark:text-[#a89d88]">
-                  Upload at least one dataset to populate the command centre.
-                </div>
-              )}
-
-              {recentRecords.map((record) => (
-                <details key={record.id} className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4">
-                  <summary className="cursor-pointer">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                      <div>
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">
-                          {SOURCE_CONFIG[record.source].label}
-                        </div>
-                        <div className="text-sm">{record.fileName}</div>
-                      </div>
-                      <div className="text-sm text-[#696257] dark:text-[#a89d88]">
-                        {record.entryCount.toLocaleString()} parsed · {new Date(record.importedAt).toLocaleString()}
-                      </div>
-                    </div>
-                  </summary>
-
-                  <div className="pt-4 space-y-3">
-                    <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Stored</div>
-                        <div className="font-display text-xl mt-1">{record.storedEntryCount.toLocaleString()}</div>
-                      </div>
-                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Metrics</div>
-                        <div className="font-display text-xl mt-1">{record.uniqueMetricCount.toLocaleString()}</div>
-                      </div>
-                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Warnings</div>
-                        <div className="font-display text-xl mt-1">{record.warnings.length}</div>
-                      </div>
-                      <div className="rounded-lg border border-[#d8cfbe] dark:border-[#342f25] p-3">
-                        <div className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575]">Range</div>
-                        <div className="text-xs mt-1 text-[#696257] dark:text-[#a89d88]">
-                          {record.dateRange
-                            ? `${new Date(record.dateRange.start).toLocaleDateString()} - ${new Date(record.dateRange.end).toLocaleDateString()}`
-                            : 'n/a'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {record.warnings.length > 0 && (
-                      <div className="rounded-lg border border-[#bca067] bg-[#bca067]/10 p-3 text-sm text-[#6b5529] dark:text-[#f4deb0]">
-                        {record.warnings.join(' ')}
-                      </div>
-                    )}
-
-                    {record.entries.length > 0 && (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm border-collapse">
-                          <thead>
-                            <tr className="text-left border-b border-[#d8cfbe] dark:border-[#342f25]">
-                              <th className="py-2 pr-3">Metric</th>
-                              <th className="py-2 pr-3">Value</th>
-                              <th className="py-2 pr-3">Unit</th>
-                              <th className="py-2 pr-3">Time</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {record.entries.slice(0, 8).map((entry) => (
-                              <tr key={entry.id} className="border-b border-[#d8cfbe]/50 dark:border-[#342f25]/60">
-                                <td className="py-2 pr-3">{entry.metric}</td>
-                                <td className="py-2 pr-3">{entry.value === null ? 'n/a' : String(entry.value)}</td>
-                                <td className="py-2 pr-3">{entry.unit || 'n/a'}</td>
-                                <td className="py-2 pr-3">{entry.timestamp ? new Date(entry.timestamp).toLocaleString() : 'n/a'}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                </details>
-              ))}
-            </section>
-          </div>
+            ))}
+          </section>
         )}
+
+        <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="font-display text-2xl tracking-tight">GPT Correlation Scan</h3>
+            <button
+              onClick={() => setAnalysisDirty(true)}
+              disabled={analysisStatus === 'running' || records.length === 0}
+              className="px-3 py-2 text-xs rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
+            >
+              {analysisStatus === 'running' ? 'Running...' : 'Run Analysis'}
+            </button>
+          </div>
+          {analysisError && (
+            <div className="rounded-lg border border-[#c45946] bg-[#c45946]/10 p-3 text-sm text-[#8f2e22] dark:text-[#ffc7bf]">
+              {analysisError}
+            </div>
+          )}
+          {!analysisText && analysisStatus !== 'running' && (
+            <p className="text-sm text-[#696257] dark:text-[#a89d88]">
+              Upload files to trigger analysis, or run it manually.
+            </p>
+          )}
+          {analysisStatus === 'running' && (
+            <p className="text-sm text-[#696257] dark:text-[#a89d88]">Scanning cross-source correlations...</p>
+          )}
+          {analysisText && (
+            <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-4 text-sm whitespace-pre-wrap">
+              {analysisText}
+            </div>
+          )}
+        </section>
+
+        <section className="surface-panel rounded-2xl p-5 md:p-6 space-y-3 pb-10">
+          <h3 className="font-display text-2xl tracking-tight">Chat With Your Data</h3>
+          {chatError && (
+            <div className="rounded-lg border border-[#c45946] bg-[#c45946]/10 p-3 text-sm text-[#8f2e22] dark:text-[#ffc7bf]">
+              {chatError}
+            </div>
+          )}
+
+          <div className="rounded-xl border border-[#d8cfbe] dark:border-[#342f25] p-3 space-y-3 max-h-72 overflow-y-auto">
+            {chatMessages.length === 0 && (
+              <p className="text-sm text-[#696257] dark:text-[#a89d88]">
+                Ask a question like: "Which patterns between biometrics and blood markers look unusual?"
+              </p>
+            )}
+            {chatMessages.map((message, index) => (
+              <div
+                key={`${message.role}-${index}`}
+                className={`text-sm ${
+                  message.role === 'assistant'
+                    ? 'text-[#1d1b17] dark:text-[#ece5d8]'
+                    : 'text-[#205c5a] dark:text-[#79b7ab]'
+                }`}
+              >
+                <span className="uppercase tracking-[0.1em] text-xs mr-2">
+                  {message.role === 'assistant' ? 'Assistant' : 'You'}
+                </span>
+                <span className="whitespace-pre-wrap">{message.content}</span>
+              </div>
+            ))}
+            {chatLoading && <div className="text-sm text-[#696257] dark:text-[#a89d88]">Thinking...</div>}
+          </div>
+
+          <form onSubmit={handleChatSubmit} className="flex items-center gap-2">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(event) => setChatInput(event.target.value)}
+              placeholder="Ask about your uploaded files"
+              className="flex-1 px-3 py-2 rounded-lg border border-[#d8cfbe] dark:border-[#342f25] bg-transparent text-sm outline-none focus:border-[#205c5a] dark:focus:border-[#79b7ab]"
+            />
+            <button
+              type="submit"
+              disabled={chatLoading || !chatInput.trim()}
+              className="px-3 py-2 text-sm rounded-lg border border-[#d8cfbe] dark:border-[#342f25] disabled:opacity-40 hover:border-[#205c5a] dark:hover:border-[#79b7ab] transition-colors"
+            >
+              Send
+            </button>
+          </form>
+        </section>
       </div>
     </div>
   );
