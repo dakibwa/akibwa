@@ -20,6 +20,13 @@ const PROJECTS_DATA = [
     type: "Application",
     status: "Available",
     description: "Understand yourself through music more."
+  },
+  {
+    id: "bio-data-hub",
+    title: "Bio Data Hub",
+    type: "Application",
+    status: "Available",
+    description: "Ingest Circle DNA, Cronometer, Whoop, and Randox exports."
   }
 ];
 

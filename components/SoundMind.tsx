@@ -10,6 +10,8 @@ interface Node {
   group: number;
   type: 'artist' | 'album' | 'genre';
   playcount?: number;
+  favoriteAlbum?: string;
+  favoriteTrack?: string;
   x?: number;
   y?: number;
   vx?: number;
@@ -32,6 +34,8 @@ interface ArtistData {
   name: string;
   playcount?: number;
   genres?: string[];
+  favoriteAlbum?: string;
+  favoriteTrack?: string;
 }
 
 // Connection type colors
@@ -61,6 +65,7 @@ const IS_DEV = import.meta.env.DEV;
 const SPOTIFY_TOKEN_STORAGE_KEY = 'dakibwa_spotify_token';
 const SPOTIFY_TOKEN_EXP_STORAGE_KEY = 'dakibwa_spotify_token_exp';
 const SPOTIFY_STATE_STORAGE_KEY = 'dakibwa_spotify_state';
+const GRAPH_CACHE_VERSION = '2';
 
 // Simple database using localStorage
 const saveToDatabase = (key: string, data: any) => {
@@ -101,6 +106,97 @@ const normalizeRedirectUri = (uri: string) => {
   } catch {
     return uri.replace(/\/$/, '');
   }
+};
+
+const normaliseName = (name: string) => name.trim().toLowerCase();
+
+const inferArtistGroup = (artist: ArtistData): number => {
+  const genres = (artist.genres || []).map((g) => g.toLowerCase()).join(' ');
+  if (genres.includes('electronic') || genres.includes('house') || genres.includes('idm')) return 1;
+  if (genres.includes('hip hop') || genres.includes('rap') || genres.includes('trap')) return 2;
+  if (genres.includes('rock') || genres.includes('metal') || genres.includes('punk')) return 3;
+  if (genres.includes('r&b') || genres.includes('soul') || genres.includes('neo soul')) return 4;
+  if (genres.includes('jazz') || genres.includes('fusion')) return 5;
+  if (genres.includes('pop')) return 6;
+  return 7;
+};
+
+const buildDeterministicLinks = (artists: ArtistData[]): Link[] => {
+  if (artists.length < 2) return [];
+  const sorted = [...artists].sort((a, b) => (b.playcount || 0) - (a.playcount || 0));
+  const links: Link[] = [];
+
+  for (let i = 0; i < sorted.length - 1; i++) {
+    links.push({
+      source: sorted[i].name,
+      target: sorted[i + 1].name,
+      reason: 'Adjacency in listening profile',
+      type: 'similar',
+    });
+  }
+
+  const stride = 5;
+  for (let i = 0; i < sorted.length; i++) {
+    const target = sorted[(i + stride) % sorted.length];
+    if (target.name === sorted[i].name) continue;
+    links.push({
+      source: sorted[i].name,
+      target: target.name,
+      reason: 'Cross-cluster listening bridge',
+      type: 'genre',
+    });
+  }
+
+  return links;
+};
+
+const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
+  const byName = new Map<string, ArtistData>();
+  artists.forEach((artist) => byName.set(normaliseName(artist.name), artist));
+
+  const nodes: Node[] = artists.map((artist) => ({
+    id: artist.name,
+    group: inferArtistGroup(artist),
+    type: 'artist',
+    playcount: artist.playcount,
+    favoriteAlbum: artist.favoriteAlbum,
+    favoriteTrack: artist.favoriteTrack,
+  }));
+
+  const deduped = new Set<string>();
+  const links: Link[] = [];
+  const rawLinks = Array.isArray(rawData?.links) ? rawData.links : [];
+
+  rawLinks.forEach((link: any) => {
+    const sourceArtist = byName.get(normaliseName(String(link?.source || '')));
+    const targetArtist = byName.get(normaliseName(String(link?.target || '')));
+    if (!sourceArtist || !targetArtist || sourceArtist.name === targetArtist.name) return;
+
+    const key = [sourceArtist.name, targetArtist.name].sort().join('::');
+    if (deduped.has(key)) return;
+    deduped.add(key);
+
+    links.push({
+      source: sourceArtist.name,
+      target: targetArtist.name,
+      reason: String(link?.reason || 'Related in listening profile'),
+      type: ['collaboration', 'influence', 'genre', 'label', 'feature', 'similar'].includes(link?.type)
+        ? link.type
+        : 'similar',
+    });
+  });
+
+  const minimumLinks = Math.max(artists.length - 1, Math.min(artists.length * 2, 160));
+  if (links.length < minimumLinks) {
+    buildDeterministicLinks(artists).forEach((link) => {
+      const key = [link.source, link.target].sort().join('::');
+      if (deduped.has(key)) return;
+      deduped.add(key);
+      links.push(link);
+    });
+  }
+
+  return { nodes, links };
 };
 
 const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
@@ -189,14 +285,16 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        if (parsed && Array.isArray(parsed.nodes) && Array.isArray(parsed.links)) {
-            setGraphData(parsed);
-            setStatus('visualizing');
+        const cachedGraph = parsed?.version === GRAPH_CACHE_VERSION ? parsed?.data : null;
+        if (cachedGraph && Array.isArray(cachedGraph.nodes) && Array.isArray(cachedGraph.links)) {
+          setGraphData(cachedGraph);
+          setStatus('visualizing');
           return;
         }
       } catch (e) {
-        localStorage.removeItem('dakibwa_music_graph');
+        // Ignore malformed cache
       }
+      localStorage.removeItem('dakibwa_music_graph');
     }
     
     // 4) Load saved Last.fm username
@@ -269,6 +367,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       // Fetch top artists from multiple time ranges for comprehensive data
       const timeRanges = ['long_term', 'medium_term', 'short_term'];
       const artistMap = new Map<string, ArtistData>();
+      const artistTrackScore = new Map<string, { score: number; favoriteTrack?: string; favoriteAlbum?: string }>();
       
       for (const range of timeRanges) {
         const res = await fetch(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${range}`, {
@@ -302,6 +401,38 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
             }
           });
         }
+
+        const topTracksRes = await fetch(`https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${range}`, {
+          headers: { Authorization: `Bearer ${spotifyToken}` }
+        });
+        if (topTracksRes.ok) {
+          const topTracksData = await topTracksRes.json();
+          if (Array.isArray(topTracksData.items)) {
+            const weight = range === 'long_term' ? 3 : range === 'medium_term' ? 2 : 1;
+            topTracksData.items.forEach((track: any, index: number) => {
+              const score = (50 - index) * weight * 20;
+              const albumName = track?.album?.name;
+              const trackName = track?.name;
+              const artists = Array.isArray(track?.artists) ? track.artists : [];
+              artists.forEach((artistRef: any) => {
+                const name = artistRef?.name;
+                if (!name) return;
+                const existingArtist = artistMap.get(name) || { name, playcount: 0, genres: [] };
+                existingArtist.playcount = (existingArtist.playcount || 0) + Math.round(score * 0.12);
+                artistMap.set(name, existingArtist);
+
+                const current = artistTrackScore.get(name);
+                if (!current || score > current.score) {
+                  artistTrackScore.set(name, {
+                    score,
+                    favoriteTrack: trackName,
+                    favoriteAlbum: albumName,
+                  });
+                }
+              });
+            });
+          }
+        }
       }
       
       // Also fetch recently played for additional context
@@ -325,6 +456,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
               if (existing) {
                 existing.playcount = (existing.playcount || 0) + 10;
               }
+              if (!artistTrackScore.get(artistName) && item.track?.name) {
+                artistTrackScore.set(artistName, {
+                  score: 1,
+                  favoriteTrack: item.track.name,
+                  favoriteAlbum: item.track?.album?.name,
+                });
+              }
             }
           }
         }
@@ -334,7 +472,11 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       
       const artists = Array.from(artistMap.values())
         .sort((a, b) => (b.playcount || 0) - (a.playcount || 0))
-        .slice(0, 50);
+        .map((artist) => ({
+          ...artist,
+          favoriteTrack: artistTrackScore.get(artist.name)?.favoriteTrack,
+          favoriteAlbum: artistTrackScore.get(artist.name)?.favoriteAlbum,
+        }));
       
       saveToDatabase('spotify_artists', artists);
       setArtistsData(artists);
@@ -357,24 +499,45 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     try {
       setAnalysisProgress('Fetching your listening history...');
       
-      // Fetch overall top artists (all time) with higher limit
-      const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=${lastFmUsername}&api_key=${LASTFM_API_KEY}&format=json&limit=100&period=overall`;
-      const res = await fetch(url);
-      const data = await res.json();
+      const [artistsRes, tracksRes, albumsRes] = await Promise.all([
+        fetch(`https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=${lastFmUsername}&api_key=${LASTFM_API_KEY}&format=json&limit=200&period=overall`),
+        fetch(`https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=${lastFmUsername}&api_key=${LASTFM_API_KEY}&format=json&limit=500&period=overall`),
+        fetch(`https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${lastFmUsername}&api_key=${LASTFM_API_KEY}&format=json&limit=500&period=overall`),
+      ]);
+      const data = await artistsRes.json();
+      const tracksData = tracksRes.ok ? await tracksRes.json() : {};
+      const albumsData = albumsRes.ok ? await albumsRes.json() : {};
       
       if (data.error) throw new Error(data.message);
       
       if (data.topartists?.artist) {
         localStorage.setItem('dakibwa_lastfm_user', lastFmUsername);
         
-        // Last.fm gives us actual scrobble counts!
-        const artists: ArtistData[] = data.topartists.artist.map((a: any) => ({
+        const favoriteTrackByArtist = new Map<string, string>();
+        const favoriteAlbumByArtist = new Map<string, string>();
+
+        if (Array.isArray(tracksData?.toptracks?.track)) {
+          tracksData.toptracks.track.forEach((track: any) => {
+            const artistName = track?.artist?.name;
+            if (!artistName || favoriteTrackByArtist.has(artistName)) return;
+            favoriteTrackByArtist.set(artistName, track?.name || '');
+          });
+        }
+
+        if (Array.isArray(albumsData?.topalbums?.album)) {
+          albumsData.topalbums.album.forEach((album: any) => {
+            const artistName = album?.artist?.name;
+            if (!artistName || favoriteAlbumByArtist.has(artistName)) return;
+            favoriteAlbumByArtist.set(artistName, album?.name || '');
+          });
+        }
+
+        const topArtists: ArtistData[] = data.topartists.artist.map((a: any) => ({
           name: a.name,
-          playcount: parseInt(a.playcount),
+          playcount: parseInt(a.playcount, 10),
+          favoriteTrack: favoriteTrackByArtist.get(a.name),
+          favoriteAlbum: favoriteAlbumByArtist.get(a.name),
         }));
-        
-        // Take top 50 for analysis
-        const topArtists = artists.slice(0, 50);
         
         if (IS_DEV) {
           console.info('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
@@ -430,22 +593,11 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     saveToDatabase('artists_input', { artists: artistNames, artistInfo });
     if (!OPENAI_API_KEY) {
       if (IS_DEV) console.warn('[OpenAI] No API key found, using fallback');
-      // Fallback without Gemini
+      // Fallback without OpenAI
       setAnalysisProgress('Creating connections...');
-      const fallbackData: GraphData = {
-        nodes: artistsData.slice(0, 15).map((a, i) => ({
-          id: a.name,
-          group: i % 5,
-          type: 'artist' as const,
-          playcount: a.playcount,
-        })),
-         links: [
-          { source: artistNames[0], target: artistNames[1], reason: "Similar sound", type: 'similar' as const },
-          { source: artistNames[1], target: artistNames[2], reason: "Genre overlap", type: 'genre' as const },
-         ]
-      };
+      const fallbackData: GraphData = buildSafeGraphData({}, artistsData);
       setGraphData(fallbackData);
-      localStorage.setItem('dakibwa_music_graph', JSON.stringify(fallbackData));
+      localStorage.setItem('dakibwa_music_graph', JSON.stringify({ version: GRAPH_CACHE_VERSION, data: fallbackData }));
       setStatus('visualizing');
       return;
     }
@@ -456,11 +608,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const systemPrompt = [
         'You are a music expert.',
         'Generate only JSON for a network graph.',
+        'Use only the artists provided by the user. Do not invent, rename, or add artists.',
         'Use this exact schema:',
         '{"nodes":[{"id":"Artist Name","group":1,"type":"artist"}],"links":[{"source":"Artist A","target":"Artist B","reason":"Brief reason","type":"collaboration"}]}',
         'Connection types: collaboration, influence, genre, label, feature, similar',
         'Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other',
-        `Create at least ${Math.min(artistNames.length * 2, 30)} links.`,
+        `Create at least ${Math.min(artistNames.length * 2, 120)} links.`,
         'Every artist needs at least 2 connections.',
       ].join('\n');
 
@@ -524,28 +677,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
            throw new Error("Invalid response format");
         }
 
-        // Add playcount data to nodes
-        const nodesWithPlaycount = (data.nodes || []).map((node: any) => {
-          const artistData = artistsData.find(a => a.name === node.id);
-          return {
-            ...node,
-            type: node.type || 'artist',
-            playcount: artistData?.playcount,
-          };
-        });
-
-        const safeGraphData: GraphData = {
-          nodes: nodesWithPlaycount,
-          links: (data.links || []).map((link: any) => ({
-            ...link,
-            type: link.type || 'similar',
-          }))
-        };
+        const safeGraphData: GraphData = buildSafeGraphData(data, artistsData);
         
         saveToDatabase('final_graph', safeGraphData);
 
         setGraphData(safeGraphData);
-        localStorage.setItem('dakibwa_music_graph', JSON.stringify(safeGraphData));
+        localStorage.setItem('dakibwa_music_graph', JSON.stringify({ version: GRAPH_CACHE_VERSION, data: safeGraphData }));
         clearInterval(progressInterval);
         clearInterval(messageInterval);
         setProgressPercent(100);
@@ -1036,10 +1173,23 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           <div className="absolute bottom-6 right-6 pointer-events-none max-w-sm">
             {hoveredNode && (
               <div className="bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e0e0e0] dark:border-[#333] p-4">
-                <h3 className="text-xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">{hoveredNode}</h3>
-                <p className="text-sm text-[#666] dark:text-[#999] mt-1">
-                  {nodesRef.current.find(n => n.id === hoveredNode)?.playcount?.toLocaleString() || 0} plays
-                </p>
+                {(() => {
+                  const artist = nodesRef.current.find(n => n.id === hoveredNode);
+                  return (
+                    <>
+                      <h3 className="text-xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">{hoveredNode}</h3>
+                      <p className="text-sm text-[#666] dark:text-[#999] mt-1">
+                        {artist?.playcount?.toLocaleString() || 0} plays
+                      </p>
+                      <p className="text-sm text-[#666] dark:text-[#999] mt-2">
+                        Fav album: {artist?.favoriteAlbum || 'Not available'}
+                      </p>
+                      <p className="text-sm text-[#666] dark:text-[#999]">
+                        Fav track: {artist?.favoriteTrack || 'Not available'}
+                      </p>
+                    </>
+                  );
+                })()}
               </div>
             )}
             {hoveredLink && !hoveredNode && (
