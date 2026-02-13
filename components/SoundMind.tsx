@@ -98,14 +98,7 @@ const createSpotifyState = () => {
 };
 
 const normalizeRedirectUri = (uri: string) => {
-  if (!uri) return uri;
-  try {
-    const parsed = new URL(uri);
-    parsed.hash = '';
-    return parsed.toString().replace(/\/$/, '');
-  } catch {
-    return uri.replace(/\/$/, '');
-  }
+  return uri;
 };
 
 const normaliseName = (name: string) => name.trim().toLowerCase();
@@ -1056,6 +1049,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                   </div>
                   <div className="text-sm text-[#666] dark:text-[#999]">
                     {spotifyConnected ? 'Spotify session found on this browser' : 'Use your top artists and listening history'}
+                  </div>
+                  <div className="text-xs text-[#999] dark:text-[#666] mt-1 break-all">
+                    Redirect URI: {SPOTIFY_REDIRECT_URI}
                   </div>
                 </div>
               </button>
