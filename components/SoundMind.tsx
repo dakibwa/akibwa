@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GoogleGenAI } from "@google/genai";
 
 interface SoundMindProps {
   isOpen: boolean;
@@ -47,14 +46,17 @@ const CONNECTION_COLORS: Record<string, string> = {
 
 // Spotify OAuth - set your Client ID in environment variable VITE_SPOTIFY_CLIENT_ID
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || '';
-const SPOTIFY_REDIRECT_URI = typeof window !== 'undefined' ? window.location.origin : '';
+const SPOTIFY_REDIRECT_URI =
+  import.meta.env.VITE_SPOTIFY_REDIRECT_URI ||
+  (typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : '');
 const SPOTIFY_SCOPES = 'user-top-read user-read-recently-played';
 
 // Last.fm API - set your API key in environment variable VITE_LASTFM_API_KEY  
 const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
 
-// Gemini API Key
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+// OpenAI API configuration
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
+const OPENAI_MODEL = import.meta.env.VITE_OPENAI_MODEL || 'gpt-5-mini';
 const IS_DEV = import.meta.env.DEV;
 const SPOTIFY_TOKEN_STORAGE_KEY = 'dakibwa_spotify_token';
 const SPOTIFY_TOKEN_EXP_STORAGE_KEY = 'dakibwa_spotify_token_exp';
@@ -88,6 +90,17 @@ const DEMO_ARTISTS: ArtistData[] = [
 
 const createSpotifyState = () => {
   return `${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+};
+
+const normalizeRedirectUri = (uri: string) => {
+  if (!uri) return uri;
+  try {
+    const parsed = new URL(uri);
+    parsed.hash = '';
+    return parsed.toString().replace(/\/$/, '');
+  } catch {
+    return uri.replace(/\/$/, '');
+  }
 };
 
 const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
@@ -206,7 +219,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   // Run analysis when artists data is loaded
   useEffect(() => {
     if (artistsData.length > 0 && status === 'fetching') {
-      analyzeWithGemini();
+      analyzeWithOpenAI();
     }
   }, [artistsData]);
 
@@ -216,12 +229,17 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       alert('Spotify is not configured yet. Try Demo mode or Last.fm!');
       return;
     }
+    const redirectUri = normalizeRedirectUri(SPOTIFY_REDIRECT_URI);
+    if (!redirectUri) {
+      alert('Spotify redirect URI is missing. Set VITE_SPOTIFY_REDIRECT_URI.');
+      return;
+    }
     const state = createSpotifyState();
     localStorage.setItem(SPOTIFY_STATE_STORAGE_KEY, state);
     const params = new URLSearchParams({
       client_id: SPOTIFY_CLIENT_ID,
       response_type: 'token',
-      redirect_uri: `${window.location.origin}${window.location.pathname}`,
+      redirect_uri: redirectUri,
       scope: SPOTIFY_SCOPES,
       show_dialog: 'true',
       state,
@@ -375,8 +393,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // --- GEMINI ANALYSIS ---
-  const analyzeWithGemini = async () => {
+  // --- OPENAI ANALYSIS ---
+  const analyzeWithOpenAI = async () => {
     setStatus('analyzing');
     setProgressPercent(0);
     
@@ -410,8 +428,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
 
     // Save artists to database
     saveToDatabase('artists_input', { artists: artistNames, artistInfo });
-    if (!GEMINI_API_KEY) {
-      if (IS_DEV) console.warn('[Gemini] No API key found, using fallback');
+    if (!OPENAI_API_KEY) {
+      if (IS_DEV) console.warn('[OpenAI] No API key found, using fallback');
       // Fallback without Gemini
       setAnalysisProgress('Creating connections...');
       const fallbackData: GraphData = {
@@ -433,45 +451,53 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
 
     try {
-      const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-      
       setAnalysisProgress('Analysing artist relationships...');
-      
-      const prompt = `You are a music expert. Analyse these artists and create a JSON network graph showing their connections.
 
-Artists: ${artistNames.join(", ")}
+      const systemPrompt = [
+        'You are a music expert.',
+        'Generate only JSON for a network graph.',
+        'Use this exact schema:',
+        '{"nodes":[{"id":"Artist Name","group":1,"type":"artist"}],"links":[{"source":"Artist A","target":"Artist B","reason":"Brief reason","type":"collaboration"}]}',
+        'Connection types: collaboration, influence, genre, label, feature, similar',
+        'Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other',
+        `Create at least ${Math.min(artistNames.length * 2, 30)} links.`,
+        'Every artist needs at least 2 connections.',
+      ].join('\n');
 
-Return ONLY valid JSON with this exact structure:
-{
-  "nodes": [{"id": "Artist Name", "group": 1, "type": "artist"}],
-  "links": [{"source": "Artist A", "target": "Artist B", "reason": "Brief reason", "type": "collaboration"}]
-}
+      const userPrompt = `Artists: ${artistNames.join(', ')}`;
 
-Connection types: collaboration, influence, genre, label, feature, similar
-Groups: 1=Electronic, 2=Hip Hop, 3=Rock, 4=R&B, 5=Jazz, 6=Pop, 7=Other
+      setAnalysisProgress(`Waiting for OpenAI (${OPENAI_MODEL})...`);
 
-Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs at least 2 connections.`;
-
-      setAnalysisProgress('Waiting for Gemini 3 Flash...');
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt
+      const response = await fetch('https://api.openai.com/v1/responses', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: OPENAI_MODEL,
+          temperature: 0.4,
+          max_output_tokens: 2400,
+          input: [
+            { role: 'system', content: [{ type: 'text', text: systemPrompt }] },
+            { role: 'user', content: [{ type: 'text', text: userPrompt }] },
+          ],
+        }),
       });
 
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `OpenAI request failed (${response.status})`);
+      }
+
+      const payload = await response.json();
       setAnalysisProgress('Processing response...');
 
-      // Handle response - the SDK returns text as a property
-      let jsonText: string | undefined;
-      try {
-        jsonText = response.text;
-      } catch (e) {
-        // Try alternative access methods
-        const anyResponse = response as any;
-        if (anyResponse.candidates?.[0]?.content?.parts?.[0]?.text) {
-          jsonText = anyResponse.candidates[0].content.parts[0].text;
-        }
-      }
+      const outputText: string =
+        payload?.output_text ||
+        payload?.output?.flatMap((item: any) => item?.content || []).find((c: any) => c?.type === 'output_text')?.text ||
+        '';
+      let jsonText: string | undefined = outputText;
       
       if (!jsonText) {
         throw new Error('Unexpected response format - no text found');
@@ -480,7 +506,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       setAnalysisProgress('Mapping your musical universe...');
       
       // Save raw response to database
-      saveToDatabase('gemini_raw_response', jsonText);
+      saveToDatabase('openai_raw_response', jsonText);
       
       if (jsonText) {
         let data: any;
@@ -492,7 +518,7 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
         }
         
         // Save parsed response to database
-        saveToDatabase('gemini_parsed_response', data);
+        saveToDatabase('openai_parsed_response', data);
 
         if (!data || typeof data !== 'object') {
            throw new Error("Invalid response format");
@@ -535,10 +561,10 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
       clearInterval(progressInterval);
       clearInterval(messageInterval);
       if (IS_DEV) {
-        console.error("[Gemini] Analysis Failed:", error);
-        console.error("[Gemini] Error details:", JSON.stringify(error, null, 2));
+        console.error("[OpenAI] Analysis Failed:", error);
+        console.error("[OpenAI] Error details:", JSON.stringify(error, null, 2));
       }
-      saveToDatabase('gemini_error', { 
+      saveToDatabase('openai_error', { 
         message: error?.message, 
         stack: error?.stack,
         full: String(error)
