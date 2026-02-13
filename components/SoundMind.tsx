@@ -56,6 +56,9 @@ const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
 // Gemini API Key
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 const IS_DEV = import.meta.env.DEV;
+const SPOTIFY_TOKEN_STORAGE_KEY = 'dakibwa_spotify_token';
+const SPOTIFY_TOKEN_EXP_STORAGE_KEY = 'dakibwa_spotify_token_exp';
+const SPOTIFY_STATE_STORAGE_KEY = 'dakibwa_spotify_state';
 
 // Simple database using localStorage
 const saveToDatabase = (key: string, data: any) => {
@@ -83,6 +86,10 @@ const DEMO_ARTISTS: ArtistData[] = [
   { name: "Bon Iver", playcount: 850, genres: ["indie folk", "alternative"] },
 ];
 
+const createSpotifyState = () => {
+  return `${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+};
+
 const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const [status, setStatus] = useState<'idle' | 'connect' | 'fetching' | 'analyzing' | 'visualizing'>('idle');
   const [provider, setProvider] = useState<'spotify' | 'lastfm' | 'demo' | null>(null);
@@ -95,9 +102,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   
   // Last.fm state
   const [lastFmUsername, setLastFmUsername] = useState('');
+  const [lastFmDraftUsername, setLastFmDraftUsername] = useState('');
   
   // Spotify state
   const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
+  const [spotifyConnected, setSpotifyConnected] = useState(false);
+  const [lastFmEditMode, setLastFmEditMode] = useState(false);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const simulationRef = useRef<number>(0);
@@ -105,27 +115,63 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const hoveredNodeRef = useRef<string | null>(null);
   const hoveredLinkRef = useRef<Link | null>(null);
 
+  const clearSpotifySession = () => {
+    localStorage.removeItem(SPOTIFY_TOKEN_STORAGE_KEY);
+    localStorage.removeItem(SPOTIFY_TOKEN_EXP_STORAGE_KEY);
+    localStorage.removeItem(SPOTIFY_STATE_STORAGE_KEY);
+    setSpotifyToken(null);
+    setSpotifyConnected(false);
+  };
+
+  const saveSpotifySession = (token: string, expiresInSeconds = 3600) => {
+    const expiration = Date.now() + expiresInSeconds * 1000;
+    localStorage.setItem(SPOTIFY_TOKEN_STORAGE_KEY, token);
+    localStorage.setItem(SPOTIFY_TOKEN_EXP_STORAGE_KEY, String(expiration));
+    setSpotifyToken(token);
+    setSpotifyConnected(true);
+  };
+
   useEffect(() => {
     hoveredNodeRef.current = hoveredNode;
     hoveredLinkRef.current = hoveredLink;
   }, [hoveredLink, hoveredNode]);
 
-  // Check for saved data and Spotify callback on mount
+  // Check for saved auth/data and Spotify callback on mount
   useEffect(() => {
-    // Check for Spotify OAuth callback
+    // 1) Spotify callback should take priority over any cached graph state
     const hash = window.location.hash;
     if (hash.includes('access_token')) {
       const params = new URLSearchParams(hash.substring(1));
       const token = params.get('access_token');
+      const expiresIn = Number(params.get('expires_in') || '3600');
+      const returnedState = params.get('state');
+      const expectedState = localStorage.getItem(SPOTIFY_STATE_STORAGE_KEY);
       if (token) {
-        setSpotifyToken(token);
+        if (expectedState && returnedState && expectedState !== returnedState) {
+          alert('Spotify sign-in failed security check. Please try again.');
+          clearSpotifySession();
+          window.history.replaceState(null, '', window.location.pathname);
+          return;
+        }
+        saveSpotifySession(token, expiresIn);
         setProvider('spotify');
         window.history.replaceState(null, '', window.location.pathname);
         setStatus('fetching');
+        return;
       }
     }
+
+    // 2) Restore valid Spotify session
+    const savedToken = localStorage.getItem(SPOTIFY_TOKEN_STORAGE_KEY);
+    const savedExp = Number(localStorage.getItem(SPOTIFY_TOKEN_EXP_STORAGE_KEY) || '0');
+    if (savedToken && savedExp > Date.now()) {
+      setSpotifyToken(savedToken);
+      setSpotifyConnected(true);
+    } else if (savedToken) {
+      clearSpotifySession();
+    }
     
-    // Check for saved graph
+    // 3) Check for saved graph
     const savedData = localStorage.getItem('dakibwa_music_graph');
     if (savedData) {
       try {
@@ -140,9 +186,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       }
     }
     
-    // Load saved Last.fm username
+    // 4) Load saved Last.fm username
     const savedUser = localStorage.getItem('dakibwa_lastfm_user');
-    if (savedUser) setLastFmUsername(savedUser);
+    if (savedUser) {
+      setLastFmUsername(savedUser);
+      setLastFmDraftUsername(savedUser);
+    }
     
     if (status === 'idle') setStatus('connect');
   }, []);
@@ -167,12 +216,15 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       alert('Spotify is not configured yet. Try Demo mode or Last.fm!');
       return;
     }
+    const state = createSpotifyState();
+    localStorage.setItem(SPOTIFY_STATE_STORAGE_KEY, state);
     const params = new URLSearchParams({
       client_id: SPOTIFY_CLIENT_ID,
       response_type: 'token',
-      redirect_uri: SPOTIFY_REDIRECT_URI,
+      redirect_uri: `${window.location.origin}${window.location.pathname}`,
       scope: SPOTIFY_SCOPES,
       show_dialog: 'true',
+      state,
     });
     window.location.href = `https://accounts.spotify.com/authorize?${params}`;
   };
@@ -204,6 +256,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         const res = await fetch(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${range}`, {
           headers: { Authorization: `Bearer ${spotifyToken}` }
         });
+        if (res.status === 401) {
+          clearSpotifySession();
+          alert('Spotify session expired. Please reconnect Spotify.');
+          setStatus('connect');
+          return;
+        }
         const data = await res.json();
         
         if (data.items) {
@@ -234,6 +292,11 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         const recentRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=50', {
           headers: { Authorization: `Bearer ${spotifyToken}` }
         });
+        if (recentRes.status === 401) {
+          clearSpotifySession();
+          setStatus('connect');
+          return;
+        }
         const recentData = await recentRes.json();
         
         if (recentData.items) {
@@ -299,6 +362,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           console.info('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
         }
         saveToDatabase('lastfm_artists', topArtists);
+        setLastFmEditMode(false);
         setArtistsData(topArtists);
         } else {
         throw new Error('No artists found');
@@ -306,6 +370,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     } catch (e) {
       console.error('Last.fm fetch failed:', e);
       alert('Could not find that Last.fm user. Please check the username.');
+      setLastFmEditMode(true);
       setStatus('connect');
     }
   };
@@ -760,15 +825,24 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
     setStatus('connect');
   };
 
-  const handleLastFmSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!lastFmUsername) return;
+  const connectLastFm = (username: string) => {
+    const cleaned = username.trim();
+    if (!cleaned) return;
     if (!LASTFM_API_KEY) {
       alert('Last.fm is not configured yet. Try Demo mode!');
       return;
     }
+    localStorage.setItem('dakibwa_lastfm_user', cleaned);
+    setLastFmUsername(cleaned);
+    setLastFmDraftUsername(cleaned);
+    setLastFmEditMode(false);
     setProvider('lastfm');
     setStatus('fetching');
+  };
+
+  const handleLastFmSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    connectLastFm(lastFmDraftUsername || lastFmUsername);
   };
 
   const handleDemoMode = () => {
@@ -814,8 +888,12 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
                   <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
                 </svg>
                 <div>
-                  <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">Connect Spotify</div>
-                  <div className="text-sm text-[#666] dark:text-[#999]">Use your top artists and listening history</div>
+                  <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">
+                    {spotifyConnected ? 'Reconnect Spotify' : 'Connect Spotify'}
+                  </div>
+                  <div className="text-sm text-[#666] dark:text-[#999]">
+                    {spotifyConnected ? 'Spotify session found on this browser' : 'Use your top artists and listening history'}
+                  </div>
                 </div>
               </button>
 
@@ -827,25 +905,42 @@ Create ${Math.min(artistNames.length * 2, 30)} links minimum. Every artist needs
                   </svg>
                   <div>
                     <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">Connect Last.fm</div>
-                    <div className="text-sm text-[#666] dark:text-[#999]">Enter your Last.fm username</div>
+                    <div className="text-sm text-[#666] dark:text-[#999]">Sign in once, then continue in one click</div>
                   </div>
                 </div>
-                <form onSubmit={handleLastFmSubmit} className="flex gap-3 items-end">
-                        <input 
-                            type="text" 
-                    value={lastFmUsername}
-                    onChange={(e) => setLastFmUsername(e.target.value)}
-                    placeholder="Your Last.fm username"
-                    className="flex-1 bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-[#1a1a1a] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#666] outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0] transition-colors"
-                  />
-                    <button 
-                        type="submit" 
-                    disabled={!lastFmUsername}
-                    className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30 pb-2"
+                {!lastFmEditMode && lastFmUsername ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      onClick={() => connectLastFm(lastFmUsername)}
+                      className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-70 transition-opacity"
                     >
-                    Connect →
+                      Continue as {lastFmUsername} →
                     </button>
-                </form>
+                    <button
+                      onClick={() => setLastFmEditMode(true)}
+                      className="text-xs text-[#666] dark:text-[#999] hover:opacity-70 transition-opacity"
+                    >
+                      Use another account
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleLastFmSubmit} className="flex gap-3 items-end">
+                    <input
+                      type="text"
+                      value={lastFmDraftUsername}
+                      onChange={(e) => setLastFmDraftUsername(e.target.value)}
+                      placeholder="Your Last.fm username"
+                      className="flex-1 bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-[#1a1a1a] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#666] outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0] transition-colors"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!lastFmDraftUsername.trim()}
+                      className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30 pb-2"
+                    >
+                      Connect →
+                    </button>
+                  </form>
+                )}
              </div>
 
               {/* Demo Mode */}
