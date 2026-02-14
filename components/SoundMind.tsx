@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 interface SoundMindProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ interface Node {
   playcount?: number;
   favoriteAlbum?: string;
   favoriteTrack?: string;
+  primaryGenre?: string;
   x?: number;
   y?: number;
   vx?: number;
@@ -36,6 +37,16 @@ interface ArtistData {
   genres?: string[];
   favoriteAlbum?: string;
   favoriteTrack?: string;
+  collaborators?: string[];
+}
+
+interface ListeningInsights {
+  totalArtists: number;
+  totalLinks: number;
+  dominantCluster: string;
+  dominantClusterCount: number;
+  bridgeArtist: string;
+  collaborationShare: number;
 }
 
 // Connection type colors
@@ -51,8 +62,7 @@ const CONNECTION_COLORS: Record<string, string> = {
 // Spotify OAuth - set your Client ID in environment variable VITE_SPOTIFY_CLIENT_ID
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || '';
 const SPOTIFY_REDIRECT_URI =
-  import.meta.env.VITE_SPOTIFY_REDIRECT_URI ||
-  (typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : '');
+  (typeof window !== 'undefined' ? `${window.location.origin}/` : import.meta.env.VITE_SPOTIFY_REDIRECT_URI || '');
 const SPOTIFY_SCOPES = 'user-top-read user-read-recently-played';
 
 // Last.fm API - set your API key in environment variable VITE_LASTFM_API_KEY  
@@ -78,6 +88,16 @@ const NODE_GROUP_COLORS: Record<number, string> = {
   5: '#b3de69', // jazz
   6: '#fb8072', // pop
   7: '#d9d9d9', // other
+};
+
+const GROUP_LABELS: Record<number, string> = {
+  1: 'Electronic',
+  2: 'Hip Hop',
+  3: 'Rock',
+  4: 'R&B',
+  5: 'Jazz',
+  6: 'Pop',
+  7: 'Eclectic',
 };
 
 // Simple database using localStorage
@@ -111,10 +131,29 @@ const createSpotifyState = () => {
 };
 
 const normalizeRedirectUri = (uri: string) => {
-  return uri;
+  try {
+    const parsed = new URL(uri);
+    parsed.hash = '';
+    parsed.search = '';
+    return parsed.toString();
+  } catch {
+    return '';
+  }
 };
 
 const normaliseName = (name: string) => name.trim().toLowerCase();
+
+const hexToRgba = (hex: string, alpha: number) => {
+  const cleanHex = hex.replace('#', '');
+  const value = cleanHex.length === 3
+    ? cleanHex.split('').map((c) => c + c).join('')
+    : cleanHex;
+  const num = Number.parseInt(value, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 const inferArtistGroup = (artist: ArtistData): number => {
   const genres = (artist.genres || []).map((g) => g.toLowerCase()).join(' ');
@@ -127,11 +166,15 @@ const inferArtistGroup = (artist: ArtistData): number => {
   return 7;
 };
 
+const inferPrimaryGenre = (artist: ArtistData) => GROUP_LABELS[inferArtistGroup(artist)];
+
 const buildDeterministicLinks = (artists: ArtistData[]): Link[] => {
   if (artists.length < 2) return [];
   const sorted = [...artists].sort((a, b) => (b.playcount || 0) - (a.playcount || 0));
   const links: Link[] = [];
+  const grouped = new Map<number, ArtistData[]>();
 
+  // Global backbone keeps the whole constellation connected.
   for (let i = 0; i < sorted.length - 1; i++) {
     links.push({
       source: sorted[i].name,
@@ -141,7 +184,26 @@ const buildDeterministicLinks = (artists: ArtistData[]): Link[] => {
     });
   }
 
-  const stride = 5;
+  // Intra-genre links encourage cluster clumping.
+  sorted.forEach((artist) => {
+    const group = inferArtistGroup(artist);
+    const existing = grouped.get(group) || [];
+    existing.push(artist);
+    grouped.set(group, existing);
+  });
+
+  grouped.forEach((artistsInGroup) => {
+    for (let i = 0; i < artistsInGroup.length - 1; i++) {
+      links.push({
+        source: artistsInGroup[i].name,
+        target: artistsInGroup[i + 1].name,
+        reason: `Shared ${GROUP_LABELS[inferArtistGroup(artistsInGroup[i])]} listening cluster`,
+        type: 'genre',
+      });
+    }
+  });
+
+  const stride = 7;
   for (let i = 0; i < sorted.length; i++) {
     const target = sorted[(i + stride) % sorted.length];
     if (target.name === sorted[i].name) continue;
@@ -149,7 +211,7 @@ const buildDeterministicLinks = (artists: ArtistData[]): Link[] => {
       source: sorted[i].name,
       target: target.name,
       reason: 'Cross-cluster listening bridge',
-      type: 'genre',
+      type: 'similar',
     });
   }
 
@@ -167,6 +229,7 @@ const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
     playcount: artist.playcount,
     favoriteAlbum: artist.favoriteAlbum,
     favoriteTrack: artist.favoriteTrack,
+    primaryGenre: inferPrimaryGenre(artist),
   }));
 
   const deduped = new Set<string>();
@@ -192,6 +255,26 @@ const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
     });
   });
 
+  // Derived collaboration links from actual multi-artist listening events.
+  artists.forEach((artist) => {
+    const collaborators = artist.collaborators || [];
+    collaborators.forEach((collaboratorName) => {
+      const target = byName.get(normaliseName(collaboratorName));
+      if (!target || target.name === artist.name) return;
+
+      const key = [artist.name, target.name].sort().join('::');
+      if (deduped.has(key)) return;
+      deduped.add(key);
+
+      links.push({
+        source: artist.name,
+        target: target.name,
+        reason: 'Co-appears in your top tracks',
+        type: 'collaboration',
+      });
+    });
+  });
+
   const minimumLinks = Math.max(artists.length - 1, Math.min(Math.floor(artists.length * 1.2), 110));
   if (links.length < minimumLinks) {
     buildDeterministicLinks(artists).forEach((link) => {
@@ -203,6 +286,74 @@ const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
   }
 
   return { nodes, links };
+};
+
+const computeListeningInsights = (graphData: GraphData | null): ListeningInsights | null => {
+  if (!graphData || !Array.isArray(graphData.nodes) || graphData.nodes.length === 0) return null;
+
+  const groupCounts = new Map<number, number>();
+  graphData.nodes.forEach((node) => {
+    groupCounts.set(node.group, (groupCounts.get(node.group) || 0) + 1);
+  });
+
+  let dominantGroup = 7;
+  let dominantCount = 0;
+  groupCounts.forEach((count, group) => {
+    if (count > dominantCount) {
+      dominantCount = count;
+      dominantGroup = group;
+    }
+  });
+
+  const nodeById = new Map<string, Node>();
+  graphData.nodes.forEach((node) => nodeById.set(node.id, node));
+
+  const degree = new Map<string, number>();
+  const crossGroupNeighbors = new Map<string, Set<number>>();
+
+  graphData.links.forEach((link) => {
+    const source = nodeById.get(link.source);
+    const target = nodeById.get(link.target);
+    if (!source || !target) return;
+
+    degree.set(source.id, (degree.get(source.id) || 0) + 1);
+    degree.set(target.id, (degree.get(target.id) || 0) + 1);
+
+    if (source.group !== target.group) {
+      const sourceSet = crossGroupNeighbors.get(source.id) || new Set<number>();
+      sourceSet.add(target.group);
+      crossGroupNeighbors.set(source.id, sourceSet);
+
+      const targetSet = crossGroupNeighbors.get(target.id) || new Set<number>();
+      targetSet.add(source.group);
+      crossGroupNeighbors.set(target.id, targetSet);
+    }
+  });
+
+  let bridgeArtist = graphData.nodes[0].id;
+  let bestBridgeScore = -1;
+  graphData.nodes.forEach((node) => {
+    const nodeDegree = degree.get(node.id) || 0;
+    const crossGroupCount = crossGroupNeighbors.get(node.id)?.size || 0;
+    const score = nodeDegree * (1 + crossGroupCount * 1.4);
+    if (score > bestBridgeScore) {
+      bestBridgeScore = score;
+      bridgeArtist = node.id;
+    }
+  });
+
+  const collaborationCount = graphData.links.filter((link) => link.type === 'collaboration').length;
+
+  return {
+    totalArtists: graphData.nodes.length,
+    totalLinks: graphData.links.length,
+    dominantCluster: GROUP_LABELS[dominantGroup] || GROUP_LABELS[7],
+    dominantClusterCount: dominantCount,
+    bridgeArtist,
+    collaborationShare: graphData.links.length
+      ? Math.round((collaborationCount / graphData.links.length) * 100)
+      : 0,
+  };
 };
 
 const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
@@ -230,6 +381,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const starfieldRef = useRef<Array<{ x: number; y: number; size: number; alpha: number; phase: number }>>([]);
   const hoveredNodeRef = useRef<string | null>(null);
   const hoveredLinkRef = useRef<Link | null>(null);
+  const insights = useMemo(() => computeListeningInsights(graphData), [graphData]);
 
   const clearSpotifySession = () => {
     localStorage.removeItem(SPOTIFY_TOKEN_STORAGE_KEY);
@@ -375,6 +527,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const timeRanges = ['long_term', 'medium_term', 'short_term'];
       const artistMap = new Map<string, ArtistData>();
       const artistTrackScore = new Map<string, { score: number; favoriteTrack?: string; favoriteAlbum?: string }>();
+      const collaborationWeights = new Map<string, number>();
+
+      const addCollaboration = (left: string, right: string, weight: number) => {
+        if (!left || !right || left === right) return;
+        const key = [left, right].sort().join('::');
+        collaborationWeights.set(key, (collaborationWeights.get(key) || 0) + weight);
+      };
       
       for (const range of timeRanges) {
         const res = await fetch(`https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${range}`, {
@@ -421,6 +580,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
               const albumName = track?.album?.name;
               const trackName = track?.name;
               const artists = Array.isArray(track?.artists) ? track.artists : [];
+              const artistNamesOnTrack = artists
+                .map((artistRef: any) => artistRef?.name)
+                .filter((name: any) => typeof name === 'string' && name.trim().length > 0) as string[];
+
               artists.forEach((artistRef: any) => {
                 const name = artistRef?.name;
                 if (!name) return;
@@ -437,6 +600,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                   });
                 }
               });
+
+              for (let i = 0; i < artistNamesOnTrack.length; i++) {
+                for (let j = i + 1; j < artistNamesOnTrack.length; j++) {
+                  addCollaboration(artistNamesOnTrack[i], artistNamesOnTrack[j], score);
+                }
+              }
             });
           }
         }
@@ -480,15 +649,37 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const artists = Array.from(artistMap.values())
         .sort((a, b) => (b.playcount || 0) - (a.playcount || 0))
         .filter((artist) => (artist.playcount || 0) >= MIN_SPOTIFY_SCORE)
-        .slice(0, MAX_GRAPH_ARTISTS)
-        .map((artist) => ({
-          ...artist,
-          favoriteTrack: artistTrackScore.get(artist.name)?.favoriteTrack,
-          favoriteAlbum: artistTrackScore.get(artist.name)?.favoriteAlbum,
-        }));
+        .slice(0, MAX_GRAPH_ARTISTS);
+
+      const includedNames = new Set(artists.map((artist) => artist.name));
+      const collaboratorMap = new Map<string, Array<{ name: string; score: number }>>();
+
+      collaborationWeights.forEach((score, pair) => {
+        if (score < 120) return;
+        const [left, right] = pair.split('::');
+        if (!includedNames.has(left) || !includedNames.has(right)) return;
+
+        const leftList = collaboratorMap.get(left) || [];
+        leftList.push({ name: right, score });
+        collaboratorMap.set(left, leftList);
+
+        const rightList = collaboratorMap.get(right) || [];
+        rightList.push({ name: left, score });
+        collaboratorMap.set(right, rightList);
+      });
+
+      const enrichedArtists = artists.map((artist) => ({
+        ...artist,
+        favoriteTrack: artistTrackScore.get(artist.name)?.favoriteTrack,
+        favoriteAlbum: artistTrackScore.get(artist.name)?.favoriteAlbum,
+        collaborators: (collaboratorMap.get(artist.name) || [])
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 8)
+          .map((entry) => entry.name),
+      }));
       
-      saveToDatabase('spotify_artists', artists);
-      setArtistsData(artists);
+      saveToDatabase('spotify_artists', enrichedArtists);
+      setArtistsData(enrichedArtists);
       
     } catch (e) {
       console.error('Spotify fetch failed:', e);
@@ -609,6 +800,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const fallbackData: GraphData = buildSafeGraphData({}, artistsData);
       setGraphData(fallbackData);
       localStorage.setItem('dakibwa_music_graph', JSON.stringify({ version: GRAPH_CACHE_VERSION, data: fallbackData }));
+      clearInterval(progressInterval);
+      clearInterval(messageInterval);
+      setProgressPercent(100);
       setStatus('visualizing');
       return;
     }
@@ -765,23 +959,43 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
 
     // Initialize nodes spread across the canvas
     if (nodesRef.current.length === 0 || nodesRef.current.length !== dataNodes.length) {
-      const padding = 120;
-      nodesRef.current = dataNodes.map((n, i) => {
-        // Spread nodes in a grid-like pattern initially
-        const cols = Math.ceil(Math.sqrt(dataNodes.length));
-        const row = Math.floor(i / cols);
-        const col = i % cols;
-        const cellWidth = (width - padding * 2) / cols;
-        const cellHeight = (height - padding * 2) / Math.ceil(dataNodes.length / cols);
-        
-        return {
-          ...n,
-          x: padding + col * cellWidth + cellWidth / 2 + (Math.random() - 0.5) * cellWidth * 0.5,
-          y: padding + row * cellHeight + cellHeight / 2 + (Math.random() - 0.5) * cellHeight * 0.5,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5
-        };
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const baseRadius = Math.min(width, height) * 0.17;
+      const groupIds = [1, 2, 3, 4, 5, 6, 7];
+      const clusterAnchors = new Map<number, { x: number; y: number }>();
+      groupIds.forEach((groupId, idx) => {
+        const angle = -Math.PI / 2 + (idx / groupIds.length) * Math.PI * 2;
+        clusterAnchors.set(groupId, {
+          x: centerX + Math.cos(angle) * baseRadius,
+          y: centerY + Math.sin(angle) * baseRadius,
+        });
       });
+
+      const groupedNodes = new Map<number, Node[]>();
+      dataNodes.forEach((node) => {
+        const existing = groupedNodes.get(node.group) || [];
+        existing.push(node);
+        groupedNodes.set(node.group, existing);
+      });
+
+      const seededNodes: Node[] = [];
+      groupedNodes.forEach((groupNodes, groupId) => {
+        const anchor = clusterAnchors.get(groupId) || { x: centerX, y: centerY };
+        groupNodes.forEach((node, index) => {
+          const armAngle = (index / Math.max(1, groupNodes.length)) * Math.PI * 2;
+          const armRadius = 16 + index * 1.6 + Math.random() * 10;
+          seededNodes.push({
+            ...node,
+            x: anchor.x + Math.cos(armAngle) * armRadius,
+            y: anchor.y + Math.sin(armAngle) * armRadius,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35,
+          });
+        });
+      });
+
+      nodesRef.current = seededNodes;
     }
 
     const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -812,8 +1026,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const idealSpacing = Math.sqrt(area / nodeCount) * 0.8;
       const centerX = width / 2;
       const centerY = height / 2;
-      const constellationRadius = Math.min(width, height) * 0.24;
-      const clusterForce = 0.00042;
+      const constellationRadius = Math.min(width, height) * 0.18;
+      const clusterForce = 0.00075;
 
       const playcounts = nodesRef.current.map(n => n.playcount || 0).filter(p => p > 0);
       const maxPlaycount = Math.max(...playcounts, 1);
@@ -834,13 +1048,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         });
       });
       
-      const repulsion = 1800;
-      const springLength = Math.max(idealSpacing * 0.7, 130);
-      const springStrength = 0.011;
-      const damping = 0.92;
-      const centerForce = 0.00028;
-      const edgeBuffer = 170;
-      const edgeForce = 0.03;
+      const repulsion = 1450;
+      const springLength = Math.max(idealSpacing * 0.62, 118);
+      const springStrength = 0.014;
+      const damping = 0.915;
+      const centerForce = 0.00055;
+      const edgeBuffer = 220;
+      const edgeForce = 0.045;
 
       nodesRef.current.forEach((node, i) => {
         if (!node.vx) node.vx = 0;
@@ -895,7 +1109,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         node.y! += node.vy!;
 
         // Keep within bounds with minimal correction.
-        const hardPadding = 32;
+        const hardPadding = 80;
         node.x! = Math.min(width - hardPadding, Math.max(hardPadding, node.x!));
         node.y! = Math.min(height - hardPadding, Math.max(hardPadding, node.y!));
       });
@@ -934,6 +1148,54 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         ctx.fill();
       });
       ctx.globalAlpha = 1;
+
+      // Cluster halos create a constellation-like grouping by genre.
+      const nodesByGroup = new Map<number, Node[]>();
+      nodesRef.current.forEach((node) => {
+        const existing = nodesByGroup.get(node.group) || [];
+        existing.push(node);
+        nodesByGroup.set(node.group, existing);
+      });
+
+      nodesByGroup.forEach((groupNodes, groupId) => {
+        if (groupNodes.length < 3) return;
+        const centroid = groupNodes.reduce(
+          (acc, node) => ({ x: acc.x + (node.x || 0), y: acc.y + (node.y || 0) }),
+          { x: 0, y: 0 }
+        );
+        centroid.x /= groupNodes.length;
+        centroid.y /= groupNodes.length;
+
+        let maxDistance = 0;
+        groupNodes.forEach((node) => {
+          const dx = (node.x || 0) - centroid.x;
+          const dy = (node.y || 0) - centroid.y;
+          maxDistance = Math.max(maxDistance, Math.sqrt(dx * dx + dy * dy));
+        });
+
+        const haloRadius = Math.min(Math.max(maxDistance + 40, 95), 260);
+        const pulse = 0.96 + Math.sin(now * 0.55 + groupId) * 0.04;
+        const haloColor = NODE_GROUP_COLORS[groupId] || NODE_GROUP_COLORS[7];
+
+        ctx.fillStyle = hexToRgba(haloColor, 0.06);
+        ctx.beginPath();
+        ctx.arc(centroid.x, centroid.y, haloRadius * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = hexToRgba(haloColor, 0.2);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(centroid.x, centroid.y, haloRadius * 0.98, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.font = '500 11px system-ui, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = hexToRgba(haloColor, isDark ? 0.58 : 0.5);
+        ctx.fillText(GROUP_LABELS[groupId] || GROUP_LABELS[7], centroid.x, centroid.y);
+        ctx.textAlign = 'start';
+        ctx.textBaseline = 'alphabetic';
+      });
       
       // Draw links with type colors
       dataLinks.forEach(link => {
@@ -943,12 +1205,18 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           const hoveredCurrent = hoveredLinkRef.current;
           const isHovered = hoveredCurrent?.source === link.source && hoveredCurrent?.target === link.target;
           const color = CONNECTION_COLORS[link.type] || CONNECTION_COLORS.similar;
+          const shimmer = 0.76 + 0.24 * Math.sin(now * 0.9 + s.id.length + t.id.length);
+          const baseAlpha = link.type === 'collaboration'
+            ? 0.5
+            : link.type === 'genre'
+            ? 0.38
+            : 0.24;
           
           ctx.beginPath();
           ctx.moveTo(s.x!, s.y!);
           ctx.lineTo(t.x!, t.y!);
-          ctx.strokeStyle = isHovered ? color : `${color}77`;
-          ctx.lineWidth = isHovered ? 3 : 1.5;
+          ctx.strokeStyle = isHovered ? color : hexToRgba(color, Math.max(0.16, baseAlpha * shimmer));
+          ctx.lineWidth = isHovered ? 3 : link.type === 'collaboration' ? 1.9 : 1.35;
           ctx.stroke();
         }
       });
@@ -1274,6 +1542,25 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
             </button>
           </div>
 
+          {/* Listening insights */}
+          {insights && (
+            <div className="absolute top-20 left-6 w-[300px] bg-[#fafafa]/80 dark:bg-[#1a1a1a]/80 backdrop-blur border border-[#e0e0e0] dark:border-[#333] p-4 hidden lg:block">
+              <p className="text-xs uppercase tracking-[0.12em] text-[#666] dark:text-[#999]">Listening learnings</p>
+              <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] mt-3">
+                Dominant cluster: {insights.dominantCluster} ({insights.dominantClusterCount}/{insights.totalArtists} artists)
+              </p>
+              <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] mt-1">
+                Bridge artist: {insights.bridgeArtist}
+              </p>
+              <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] mt-1">
+                Collaboration links: {insights.collaborationShare}% of network
+              </p>
+              <p className="text-xs text-[#666] dark:text-[#999] mt-3">
+                {insights.totalArtists} artists connected by {insights.totalLinks} relationship lines.
+              </p>
+            </div>
+          )}
+
           {/* Legend */}
           <div className="absolute top-6 left-1/2 -translate-x-1/2 hidden md:flex gap-4 text-xs text-[#666] dark:text-[#999]">
             {Object.entries(CONNECTION_COLORS).map(([type, color]) => (
@@ -1295,6 +1582,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                       <h3 className="text-xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">{hoveredNode}</h3>
                       <p className="text-sm text-[#666] dark:text-[#999] mt-1">
                         {artist?.playcount?.toLocaleString() || 0} plays
+                      </p>
+                      <p className="text-sm text-[#666] dark:text-[#999] mt-2">
+                        Cluster: {artist?.primaryGenre || 'Eclectic'}
                       </p>
                       <p className="text-sm text-[#666] dark:text-[#999] mt-2">
                         Favourite Album: {artist?.favoriteAlbum || 'Not available'}
