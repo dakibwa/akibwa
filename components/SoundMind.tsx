@@ -17,6 +17,9 @@ interface Node {
   y?: number;
   vx?: number;
   vy?: number;
+  driftPhase?: number;
+  driftSpeed?: number;
+  driftAmplitude?: number;
 }
 
 interface Link {
@@ -38,6 +41,7 @@ interface ArtistData {
   favoriteAlbum?: string;
   favoriteTrack?: string;
   collaborators?: string[];
+  similarArtists?: string[];
 }
 
 interface ListeningInsights {
@@ -81,13 +85,23 @@ const MIN_LASTFM_PLAYCOUNT = 5;
 const MIN_SPOTIFY_SCORE = 40;
 
 const NODE_GROUP_COLORS: Record<number, string> = {
-  1: '#8dd3c7', // electronic
-  2: '#80b1d3', // hip hop
-  3: '#bebada', // rock
-  4: '#fdb462', // r&b
-  5: '#b3de69', // jazz
-  6: '#fb8072', // pop
-  7: '#d9d9d9', // other
+  1: '#3dd6b7', // electronic
+  2: '#59a6ff', // hip hop
+  3: '#a78bfa', // rock
+  4: '#ff8a65', // r&b
+  5: '#f6c65b', // jazz
+  6: '#ff6f91', // pop
+  7: '#c7ced9', // other
+};
+
+const NODE_GROUP_SHAPES: Record<number, 'circle' | 'diamond' | 'square' | 'triangle' | 'hexagon'> = {
+  1: 'circle',
+  2: 'diamond',
+  3: 'square',
+  4: 'triangle',
+  5: 'hexagon',
+  6: 'circle',
+  7: 'circle',
 };
 
 const GROUP_LABELS: Record<number, string> = {
@@ -155,15 +169,103 @@ const hexToRgba = (hex: string, alpha: number) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
+const drawNodeShape = (
+  ctx: CanvasRenderingContext2D,
+  shape: 'circle' | 'diamond' | 'square' | 'triangle' | 'hexagon',
+  x: number,
+  y: number,
+  radius: number
+) => {
+  ctx.beginPath();
+  if (shape === 'circle') {
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    return;
+  }
+  if (shape === 'diamond') {
+    ctx.moveTo(x, y - radius);
+    ctx.lineTo(x + radius, y);
+    ctx.lineTo(x, y + radius);
+    ctx.lineTo(x - radius, y);
+    ctx.closePath();
+    return;
+  }
+  if (shape === 'square') {
+    ctx.rect(x - radius, y - radius, radius * 2, radius * 2);
+    return;
+  }
+  if (shape === 'triangle') {
+    ctx.moveTo(x, y - radius * 1.12);
+    ctx.lineTo(x + radius, y + radius * 0.9);
+    ctx.lineTo(x - radius, y + radius * 0.9);
+    ctx.closePath();
+    return;
+  }
+
+  // hexagon
+  for (let i = 0; i < 6; i++) {
+    const angle = (Math.PI / 3) * i - Math.PI / 6;
+    const px = x + Math.cos(angle) * radius;
+    const py = y + Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+};
+
+const GROUP_KEYWORDS: Record<number, string[]> = {
+  1: [
+    'electronic', 'electronica', 'house', 'techno', 'idm', 'ambient', 'dance',
+    'drum and bass', 'dnb', 'dubstep', 'garage', 'uk garage', 'trip hop', 'downtempo',
+    'breakbeat', 'synthwave', 'electro', 'leftfield',
+  ],
+  2: [
+    'hip hop', 'hip-hop', 'rap', 'trap', 'drill', 'grime', 'boom bap', 'boom-bap',
+    'cloud rap', 'abstract hip hop', 'conscious hip hop',
+  ],
+  3: [
+    'rock', 'indie', 'alternative', 'post-punk', 'punk', 'shoegaze', 'grunge',
+    'metal', 'new wave', 'britpop', 'hardcore', 'garage rock', 'psychedelic rock',
+  ],
+  4: [
+    'r&b', 'rnb', 'soul', 'neo soul', 'neosoul', 'funk',
+  ],
+  5: [
+    'jazz', 'fusion', 'bebop', 'swing', 'bossa', 'blues',
+  ],
+  6: [
+    'pop', 'art pop', 'synthpop', 'electropop', 'hyperpop', 'k-pop', 'indie pop',
+  ],
+};
+
 const inferArtistGroup = (artist: ArtistData): number => {
-  const genres = (artist.genres || []).map((g) => g.toLowerCase()).join(' ');
-  if (genres.includes('electronic') || genres.includes('house') || genres.includes('idm')) return 1;
-  if (genres.includes('hip hop') || genres.includes('rap') || genres.includes('trap')) return 2;
-  if (genres.includes('rock') || genres.includes('metal') || genres.includes('punk')) return 3;
-  if (genres.includes('r&b') || genres.includes('soul') || genres.includes('neo soul')) return 4;
-  if (genres.includes('jazz') || genres.includes('fusion')) return 5;
-  if (genres.includes('pop')) return 6;
-  return 7;
+  const tags = (artist.genres || []).map((genre) => genre.toLowerCase());
+  if (tags.length === 0) return 7;
+
+  const scores: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
+
+  tags.forEach((tag) => {
+    Object.entries(GROUP_KEYWORDS).forEach(([groupId, keywords]) => {
+      keywords.forEach((keyword) => {
+        if (!tag.includes(keyword)) return;
+        const boost = tag === keyword ? 2 : 1;
+        scores[Number(groupId)] += boost;
+      });
+    });
+  });
+
+  // Prioritize clearer identities when score ties happen.
+  const tieBreakOrder = [2, 4, 1, 5, 3, 6, 7];
+  let bestGroup = 7;
+  let bestScore = 0;
+
+  tieBreakOrder.forEach((groupId) => {
+    if (scores[groupId] > bestScore) {
+      bestGroup = groupId;
+      bestScore = scores[groupId];
+    }
+  });
+
+  return bestScore > 0 ? bestGroup : 7;
 };
 
 const inferPrimaryGenre = (artist: ArtistData) => GROUP_LABELS[inferArtistGroup(artist)];
@@ -222,15 +324,31 @@ const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
   const byName = new Map<string, ArtistData>();
   artists.forEach((artist) => byName.set(normaliseName(artist.name), artist));
 
-  const nodes: Node[] = artists.map((artist) => ({
-    id: artist.name,
-    group: inferArtistGroup(artist),
-    type: 'artist',
-    playcount: artist.playcount,
-    favoriteAlbum: artist.favoriteAlbum,
-    favoriteTrack: artist.favoriteTrack,
-    primaryGenre: inferPrimaryGenre(artist),
-  }));
+  const rawNodeGroupByName = new Map<string, number>();
+  if (Array.isArray(rawData?.nodes)) {
+    rawData.nodes.forEach((node: any) => {
+      const name = String(node?.id || '').trim();
+      const group = Number(node?.group);
+      if (!name || !Number.isFinite(group) || group < 1 || group > 7) return;
+      rawNodeGroupByName.set(normaliseName(name), group);
+    });
+  }
+
+  const nodes: Node[] = artists.map((artist) => {
+    const inferredGroup = inferArtistGroup(artist);
+    const aiSuggestedGroup = rawNodeGroupByName.get(normaliseName(artist.name));
+    const group = inferredGroup === 7 && aiSuggestedGroup ? aiSuggestedGroup : inferredGroup;
+
+    return {
+      id: artist.name,
+      group,
+      type: 'artist',
+      playcount: artist.playcount,
+      favoriteAlbum: artist.favoriteAlbum,
+      favoriteTrack: artist.favoriteTrack,
+      primaryGenre: GROUP_LABELS[group] || inferPrimaryGenre(artist),
+    };
+  });
 
   const deduped = new Set<string>();
   const links: Link[] = [];
@@ -271,6 +389,26 @@ const buildSafeGraphData = (rawData: any, artists: ArtistData[]): GraphData => {
         target: target.name,
         reason: 'Co-appears in your top tracks',
         type: 'collaboration',
+      });
+    });
+  });
+
+  // Derived influence links from Last.fm similar-artist graph.
+  artists.forEach((artist) => {
+    const similarArtists = artist.similarArtists || [];
+    similarArtists.forEach((similarName) => {
+      const target = byName.get(normaliseName(similarName));
+      if (!target || target.name === artist.name) return;
+
+      const key = [artist.name, target.name].sort().join('::');
+      if (deduped.has(key)) return;
+      deduped.add(key);
+
+      links.push({
+        source: artist.name,
+        target: target.name,
+        reason: 'Strong Last.fm similarity profile',
+        type: 'influence',
       });
     });
   });
@@ -740,13 +878,97 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         }))
         .filter((artist) => (artist.playcount || 0) >= MIN_LASTFM_PLAYCOUNT)
         .slice(0, MAX_GRAPH_ARTISTS);
+
+        setAnalysisProgress('Mining Last.fm artist profiles...');
+        const artistMeta = new Map<string, { genres: string[]; similarArtists: string[] }>();
+        const batchSize = 6;
+
+        for (let index = 0; index < topArtists.length; index += batchSize) {
+          const batch = topArtists.slice(index, index + batchSize);
+          setAnalysisProgress(
+            `Mining Last.fm artist profiles (${Math.min(index + batch.length, topArtists.length)}/${topArtists.length})...`
+          );
+
+          const batchResults = await Promise.all(
+            batch.map(async (artist) => {
+              try {
+                const artistInfoRes = await fetch(
+                  `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(artist.name)}&api_key=${LASTFM_API_KEY}&format=json&autocorrect=1`
+                );
+                if (!artistInfoRes.ok) {
+                  return { name: artist.name, genres: [], similarArtists: [] };
+                }
+
+                const artistInfoData = await artistInfoRes.json();
+                let tags = Array.isArray(artistInfoData?.artist?.tags?.tag)
+                  ? artistInfoData.artist.tags.tag
+                      .map((tag: any) => String(tag?.name || '').trim().toLowerCase())
+                      .filter((name: string) => name.length > 0)
+                      .slice(0, 10)
+                  : [];
+
+                if (tags.length === 0) {
+                  const topTagsRes = await fetch(
+                    `https://ws.audioscrobbler.com/2.0/?method=artist.gettoptags&artist=${encodeURIComponent(artist.name)}&api_key=${LASTFM_API_KEY}&format=json&autocorrect=1`
+                  );
+                  if (topTagsRes.ok) {
+                    const topTagsData = await topTagsRes.json();
+                    tags = Array.isArray(topTagsData?.toptags?.tag)
+                      ? topTagsData.toptags.tag
+                          .map((tag: any) => String(tag?.name || '').trim().toLowerCase())
+                          .filter((name: string) => name.length > 0)
+                          .slice(0, 10)
+                      : [];
+                  }
+                }
+
+                const similarArtists = Array.isArray(artistInfoData?.artist?.similar?.artist)
+                  ? artistInfoData.artist.similar.artist
+                      .map((similar: any) => String(similar?.name || '').trim())
+                      .filter((name: string) => name.length > 0)
+                      .slice(0, 10)
+                  : [];
+
+                return { name: artist.name, genres: tags, similarArtists };
+              } catch {
+                return { name: artist.name, genres: [], similarArtists: [] };
+              }
+            })
+          );
+
+          batchResults.forEach((result) => {
+            artistMeta.set(normaliseName(result.name), {
+              genres: result.genres,
+              similarArtists: result.similarArtists,
+            });
+          });
+
+          if (index + batchSize < topArtists.length) {
+            await new Promise((resolve) => setTimeout(resolve, 120));
+          }
+        }
+
+        const includedArtistNames = new Set(topArtists.map((artist) => normaliseName(artist.name)));
+        const enrichedArtists = topArtists.map((artist) => {
+          const meta = artistMeta.get(normaliseName(artist.name));
+          const genres = (meta?.genres || []).slice(0, 8);
+          const similarArtists = (meta?.similarArtists || [])
+            .filter((name) => includedArtistNames.has(normaliseName(name)))
+            .slice(0, 8);
+
+          return {
+            ...artist,
+            genres,
+            similarArtists,
+          };
+        });
         
         if (IS_DEV) {
-          console.info('[Last.fm] Top artist:', topArtists[0]?.name, 'with', topArtists[0]?.playcount, 'scrobbles');
+          console.info('[Last.fm] Top artist:', enrichedArtists[0]?.name, 'with', enrichedArtists[0]?.playcount, 'scrobbles');
         }
-        saveToDatabase('lastfm_artists', topArtists);
+        saveToDatabase('lastfm_artists', enrichedArtists);
         setLastFmEditMode(false);
-        setArtistsData(topArtists);
+        setArtistsData(enrichedArtists);
         } else {
         throw new Error('No artists found');
       }
@@ -991,6 +1213,9 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
             y: anchor.y + Math.sin(armAngle) * armRadius,
             vx: (Math.random() - 0.5) * 0.35,
             vy: (Math.random() - 0.5) * 0.35,
+            driftPhase: Math.random() * Math.PI * 2,
+            driftSpeed: 0.28 + Math.random() * 0.32,
+            driftAmplitude: 0.35 + Math.random() * 0.65,
           });
         });
       });
@@ -1096,6 +1321,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           node.vy! += (anchor.y - node.y!) * clusterForce;
         }
 
+        // Subtle perpetual drift keeps the graph alive without jitter.
+        const driftSpeed = node.driftSpeed || 0.36;
+        const driftAmplitude = node.driftAmplitude || 0.5;
+        const driftPhase = node.driftPhase || 0;
+        node.vx! += Math.sin(now * driftSpeed + driftPhase) * driftAmplitude * 0.0024;
+        node.vy! += Math.cos(now * (driftSpeed * 0.93) + driftPhase) * driftAmplitude * 0.0024;
+
         // Soft edge push keeps the constellation away from hard screen edges.
         if (node.x! < edgeBuffer) node.vx! += (edgeBuffer - node.x!) * edgeForce * 0.02;
         if (node.x! > width - edgeBuffer) node.vx! -= (node.x! - (width - edgeBuffer)) * edgeForce * 0.02;
@@ -1137,6 +1369,19 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       }
 
       ctx.clearRect(0, 0, width, height);
+
+      const backdrop = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        Math.min(width, height) * 0.06,
+        centerX,
+        centerY,
+        Math.max(width, height) * 0.72
+      );
+      backdrop.addColorStop(0, isDark ? '#131824' : '#f5f7fb');
+      backdrop.addColorStop(1, isDark ? '#0b0d12' : '#eceff5');
+      ctx.fillStyle = backdrop;
+      ctx.fillRect(0, 0, width, height);
 
       // Subtle starfield backdrop.
       starfieldRef.current.forEach((star) => {
@@ -1221,13 +1466,14 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         }
       });
 
-      // Draw nodes (circles first)
+      // Draw nodes with genre-coded color + shape.
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNodeRef.current === node.id;
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
         const pulse = Math.sin(now * 1.2 + node.id.length) * 0.5 + 0.5;
         const nodeSize = 4 + (normalised * 16) + pulse * 0.7;
         const nodeColor = NODE_GROUP_COLORS[node.group] || NODE_GROUP_COLORS[7];
+        const nodeShape = NODE_GROUP_SHAPES[node.group] || 'circle';
         
         if (isHovered) {
           const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 35);
@@ -1239,10 +1485,20 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           ctx.fill();
         }
 
-        ctx.fillStyle = nodeColor;
+        const glow = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, nodeSize * 1.9);
+        glow.addColorStop(0, hexToRgba(nodeColor, 0.18));
+        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = glow;
         ctx.beginPath();
-        ctx.arc(node.x!, node.y!, isHovered ? nodeSize + 2 : nodeSize, 0, Math.PI * 2);
+        ctx.arc(node.x!, node.y!, nodeSize * 1.9, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.fillStyle = nodeColor;
+        drawNodeShape(ctx, nodeShape, node.x!, node.y!, isHovered ? nodeSize + 2 : nodeSize);
+        ctx.fill();
+        ctx.strokeStyle = isDark ? hexToRgba('#f4f6fb', 0.38) : hexToRgba('#101114', 0.32);
+        ctx.lineWidth = isHovered ? 1.6 : 1;
+        ctx.stroke();
       });
 
       // Draw labels AFTER nodes with lightweight collision culling.
@@ -1567,6 +1823,18 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
               <div key={type} className="flex items-center gap-1.5">
                 <div className="w-3 h-0.5" style={{ backgroundColor: color }}></div>
                 <span className="capitalize">{type}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="absolute top-12 left-1/2 -translate-x-1/2 hidden lg:flex gap-3 text-[11px] text-[#666] dark:text-[#999]">
+            {Object.entries(GROUP_LABELS).map(([groupId, label]) => (
+              <div key={groupId} className="flex items-center gap-1.5">
+                <div
+                  className="w-2.5 h-2.5 rounded-sm"
+                  style={{ backgroundColor: NODE_GROUP_COLORS[Number(groupId)] || NODE_GROUP_COLORS[7] }}
+                />
+                <span>{label}</span>
               </div>
             ))}
           </div>

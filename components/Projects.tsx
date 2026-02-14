@@ -27,6 +27,13 @@ const PROJECTS_DATA = [
     type: "Application",
     status: "Available",
     description: "Ingest Circle DNA, Cronometer, Whoop, and Randox exports."
+  },
+  {
+    id: "singularity-tracker",
+    title: "Singularity Tracker",
+    type: "Application",
+    status: "Available",
+    description: "Track key benchmarks for white-collar labor automation with weighted scoring."
   }
 ];
 
