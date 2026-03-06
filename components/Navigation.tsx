@@ -30,11 +30,11 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
     }
   };
 
-  const getButtonClassName = (sectionId: string, isActive: boolean) =>
-    `rounded-full border px-3.5 py-2 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] ${
+  const getButtonClassName = (isActive: boolean) =>
+    `text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] ${
       isActive
-        ? 'border-[#205c5a] dark:border-[#79b7ab] text-[#205c5a] dark:text-[#79b7ab] bg-[#205c5a]/8 dark:bg-[#79b7ab]/10'
-        : 'border-[#d8cfbe] dark:border-[#342f25] text-[#696257] dark:text-[#a89d88] hover:border-[#205c5a]/45 dark:hover:border-[#79b7ab]/45 hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
+        ? 'text-[#205c5a] dark:text-[#79b7ab]'
+        : 'text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
     }`;
 
   return (
@@ -46,7 +46,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
         Skip to content
       </a>
 
-      <div className="max-w-6xl mx-auto px-5 md:px-7 py-3">
+      <div className="max-w-5xl mx-auto px-5 md:px-7 py-4">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <button
@@ -60,11 +60,11 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
             </p>
           </div>
 
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-5">
             <button
               onClick={onOpenMusic}
               aria-pressed={isMusicOpen}
-              className={getButtonClassName('MUSIC', !!isMusicOpen)}
+              className={getButtonClassName(!!isMusicOpen)}
             >
               Music
             </button>
@@ -73,7 +73,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
                 key={item.id}
                 onClick={() => onSelect?.(item.id)}
                 aria-pressed={activeSection === item.id}
-                className={getButtonClassName(item.id, activeSection === item.id)}
+                className={getButtonClassName(activeSection === item.id)}
               >
                 {item.label}
               </button>
@@ -81,11 +81,11 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
           </div>
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar md:hidden">
+        <div className="mt-3 flex gap-4 overflow-x-auto no-scrollbar md:hidden">
           <button
             onClick={onOpenMusic}
             aria-pressed={isMusicOpen}
-            className={`${getButtonClassName('MUSIC', !!isMusicOpen)} shrink-0`}
+            className={`${getButtonClassName(!!isMusicOpen)} shrink-0`}
           >
             Music
           </button>
@@ -95,7 +95,7 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
               key={item.id}
               onClick={() => onSelect?.(item.id)}
               aria-pressed={activeSection === item.id}
-              className={`${getButtonClassName(item.id, activeSection === item.id)} shrink-0`}
+              className={`${getButtonClassName(activeSection === item.id)} shrink-0`}
             >
               {item.label}
             </button>
