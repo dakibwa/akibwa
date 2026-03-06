@@ -18,21 +18,21 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
   const getQuote = () => {
     switch (activeSection) {
       case 'CONSUMPTION':
-        return 'the things that keep shaping me';
+        return 'we all collect something';
       case 'CREATION':
-        return 'music and writing that are actually ready to open';
+        return 'trying to materialise something';
       case 'CONTACT':
-        return 'the shortest path to a conversation';
+        return 'come converse with me';
       case 'CONSCIOUSNESS':
-        return 'questions before they harden into essays';
+        return 'sharing my inner world';
       default:
-        return 'music, consumption, and consciousness';
+        return 'by daniel atkinson';
     }
   };
 
-  const getButtonClassName = (sectionId: string) =>
+  const getButtonClassName = (sectionId: string, isActive: boolean) =>
     `rounded-full border px-3.5 py-2 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] ${
-      activeSection === sectionId
+      isActive
         ? 'border-[#205c5a] dark:border-[#79b7ab] text-[#205c5a] dark:text-[#79b7ab] bg-[#205c5a]/8 dark:bg-[#79b7ab]/10'
         : 'border-[#d8cfbe] dark:border-[#342f25] text-[#696257] dark:text-[#a89d88] hover:border-[#205c5a]/45 dark:hover:border-[#79b7ab]/45 hover:text-[#205c5a] dark:hover:text-[#79b7ab]'
     }`;
@@ -64,20 +64,16 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
             <button
               onClick={onOpenMusic}
               aria-pressed={isMusicOpen}
-              className={`rounded-full border px-3.5 py-2 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] ${
-                isMusicOpen
-                  ? 'border-[#205c5a] dark:border-[#79b7ab] bg-[#205c5a] text-[#f8f4ed] dark:bg-[#79b7ab] dark:text-[#102624]'
-                  : 'border-[#205c5a]/25 dark:border-[#79b7ab]/30 bg-[#205c5a] text-[#f8f4ed] hover:bg-[#184947] dark:bg-[#79b7ab] dark:text-[#102624] dark:hover:bg-[#8cc4b9]'
-              }`}
+              className={getButtonClassName('MUSIC', !!isMusicOpen)}
             >
-              Music Map
+              Music
             </button>
             {NAV_ITEMS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onSelect?.(item.id)}
                 aria-pressed={activeSection === item.id}
-                className={getButtonClassName(item.id)}
+                className={getButtonClassName(item.id, activeSection === item.id)}
               >
                 {item.label}
               </button>
@@ -85,31 +81,25 @@ const Navigation: React.FC<NavigationProps> = ({ onSelect, activeSection, onOpen
           </div>
         </div>
 
-        <div className="mt-4 space-y-2 md:hidden">
+        <div className="mt-4 flex gap-2 overflow-x-auto no-scrollbar md:hidden">
           <button
             onClick={onOpenMusic}
             aria-pressed={isMusicOpen}
-            className={`w-full rounded-full border px-3.5 py-2 text-left text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] ${
-              isMusicOpen
-                ? 'border-[#205c5a] dark:border-[#79b7ab] bg-[#205c5a] text-[#f8f4ed] dark:bg-[#79b7ab] dark:text-[#102624]'
-                : 'border-[#205c5a]/25 dark:border-[#79b7ab]/30 bg-[#205c5a] text-[#f8f4ed] hover:bg-[#184947] dark:bg-[#79b7ab] dark:text-[#102624] dark:hover:bg-[#8cc4b9]'
-            }`}
+            className={`${getButtonClassName('MUSIC', !!isMusicOpen)} shrink-0`}
           >
-            Music Map
+            Music
           </button>
 
-          <div className="grid grid-cols-2 gap-2">
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
               onClick={() => onSelect?.(item.id)}
               aria-pressed={activeSection === item.id}
-              className={`${getButtonClassName(item.id)} text-left`}
+              className={`${getButtonClassName(item.id, activeSection === item.id)} shrink-0`}
             >
               {item.label}
             </button>
           ))}
-          </div>
         </div>
       </div>
     </nav>
