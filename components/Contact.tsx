@@ -4,6 +4,8 @@ const LINKS = [
   {
     href: 'mailto:***REMOVED***',
     label: '***REMOVED***',
+    detail: 'Best route for collaboration, projects, and direct conversation.',
+    action: 'Email',
     icon: (
       <svg className="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -12,7 +14,9 @@ const LINKS = [
   },
   {
     href: 'https://x.com/dakibwa',
-    label: '@ dakibwa',
+    label: '@dakibwa',
+    detail: 'Short-form thoughts, links, and public fragments.',
+    action: 'Visit profile',
     external: true,
     icon: (
       <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 24 24">
@@ -23,6 +27,8 @@ const LINKS = [
   {
     href: 'https://www.linkedin.com/in/daniel-atkinson-7439711b3/',
     label: '/daniel-atkinson',
+    detail: 'Professional background, experience, and longer-form context.',
+    action: 'Open LinkedIn',
     external: true,
     icon: (
       <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 24 24">
@@ -32,7 +38,9 @@ const LINKS = [
   },
   {
     href: 'https://www.instagram.com/dakibwa/',
-    label: '@ dakibwa',
+    label: '@dakibwa',
+    detail: 'Visual notes, images, and a lighter public layer.',
+    action: 'Open Instagram',
     external: true,
     icon: (
       <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 24 24">
@@ -45,10 +53,58 @@ const LINKS = [
 const Contact: React.FC = () => {
   return (
     <div className="space-y-5">
-      <div className="surface-panel rounded-xl p-5 md:p-6">
-        <p className="text-xs uppercase tracking-[0.12em] text-[#8a8378] dark:text-[#8f8575] mb-2">Identity</p>
-        <h3 className="font-display text-3xl md:text-4xl tracking-tight">Daniel</h3>
-        <p className="mt-2 text-[#696257] dark:text-[#a89d88]">Open to collaboration, projects, and thoughtful conversation.</p>
+      <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="surface-panel rounded-[1.5rem] p-5 md:p-6">
+          <p className="text-xs uppercase tracking-[0.16em] text-[#8a8378] dark:text-[#8f8575]">
+            Direct line
+          </p>
+          <h3 className="mt-2 font-display text-3xl md:text-4xl tracking-tight">Daniel</h3>
+          <p className="mt-3 max-w-2xl text-base leading-7 text-[#696257] dark:text-[#a89d88]">
+            Open to thoughtful collaboration, product work, writing, and conversations that have some weight to them.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <a
+              href="mailto:***REMOVED***"
+              className="rounded-full bg-[#205c5a] px-4 py-2.5 text-sm font-medium text-[#f8f4ed] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[#184947] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] dark:bg-[#79b7ab] dark:text-[#102624] dark:hover:bg-[#8cc4b9]"
+            >
+              Email directly
+            </a>
+            <a
+              href="https://www.linkedin.com/in/daniel-atkinson-7439711b3/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-[#d8cfbe] px-4 py-2.5 text-sm font-medium text-[#696257] transition-colors hover:border-[#205c5a] hover:text-[#205c5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] dark:border-[#342f25] dark:text-[#a89d88] dark:hover:border-[#79b7ab] dark:hover:text-[#79b7ab]"
+            >
+              View background
+            </a>
+          </div>
+        </div>
+
+        <div className="surface-panel rounded-[1.5rem] p-5 md:p-6 space-y-4">
+          <p className="text-xs uppercase tracking-[0.16em] text-[#8a8378] dark:text-[#8f8575]">
+            Best used for
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            <div className="rounded-2xl border border-[#d8cfbe] bg-[#faf7ef]/72 p-4 dark:border-[#342f25] dark:bg-[#1d1a15]/72">
+              <p className="font-medium">Building</p>
+              <p className="mt-1 text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
+                Software, tools, systems, and ambitious product ideas.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#d8cfbe] bg-[#faf7ef]/72 p-4 dark:border-[#342f25] dark:bg-[#1d1a15]/72">
+              <p className="font-medium">Writing</p>
+              <p className="mt-1 text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
+                Essays, concepts, and work that needs sharper framing.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-[#d8cfbe] bg-[#faf7ef]/72 p-4 dark:border-[#342f25] dark:bg-[#1d1a15]/72">
+              <p className="font-medium">Conversation</p>
+              <p className="mt-1 text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
+                Ideas worth testing, questions worth debating, people worth meeting.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-3">
@@ -58,13 +114,18 @@ const Contact: React.FC = () => {
             href={link.href}
             target={link.external ? '_blank' : undefined}
             rel={link.external ? 'noopener noreferrer' : undefined}
-            className="surface-panel rounded-xl px-4 py-3.5 flex items-center justify-between gap-3 hover:border-[#205c5a] dark:hover:border-[#79b7ab] hover:text-[#205c5a] dark:hover:text-[#79b7ab] transition-colors"
+            className="surface-panel rounded-[1.3rem] px-4 py-4 flex items-center justify-between gap-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#205c5a] hover:text-[#205c5a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#205c5a] dark:hover:border-[#79b7ab] dark:hover:text-[#79b7ab]"
           >
-            <div className="flex items-center gap-3">
-              {link.icon}
-              <span>{link.label}</span>
+            <div className="flex items-start gap-3">
+              <span className="mt-1">{link.icon}</span>
+              <div>
+                <p className="font-medium">{link.label}</p>
+                <p className="mt-1 text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
+                  {link.detail}
+                </p>
+              </div>
             </div>
-            <span className="text-xs uppercase tracking-[0.12em] opacity-60">Open</span>
+            <span className="shrink-0 text-xs uppercase tracking-[0.14em] opacity-60">{link.action}</span>
           </a>
         ))}
       </div>

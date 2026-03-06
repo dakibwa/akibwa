@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 const LASTFM_API_KEY = import.meta.env.VITE_LASTFM_API_KEY || '';
+const LETTERBOXD_BASE_URL = 'https://letterboxd.com';
+const LETTERBOXD_PROXY_URL = 'https://api.allorigins.win/raw?url=';
+const MIN_LASTFM_ALBUM_PLAYCOUNT = 5;
+const MAX_LETTERBOXD_PAGES = 80;
 
 interface MediaItem {
   id: string;
@@ -15,6 +19,7 @@ interface MediaItem {
   link?: string;
   rating?: number;
   playcount?: number;
+  liked?: boolean;
 }
 
 type FilterType = 'all' | 'album' | 'book' | 'film' | 'masterpiece';
@@ -25,7 +30,109 @@ const DEFAULT_USERNAMES = {
   lastfm: 'akibwa',
 };
 
-const CACHE_VERSION = '7';
+const CACHE_VERSION = '8';
+
+const normaliseText = (value: string) => value.trim().replace(/\s+/g, ' ').toLowerCase();
+
+const getCreatorValue = (item: Pick<MediaItem, 'artist' | 'author' | 'director'>) =>
+  item.artist || item.author || item.director || '';
+
+const createMediaId = (
+  item: Pick<MediaItem, 'type' | 'title' | 'artist' | 'author' | 'director' | 'year' | 'link'>
+) => {
+  const linkKey =
+    item.type === 'film' && item.link
+      ? new URL(item.link, LETTERBOXD_BASE_URL).pathname.replace(/\/$/, '')
+      : '';
+
+  return [
+    item.type,
+    normaliseText(item.title),
+    normaliseText(getCreatorValue(item)),
+    normaliseText(item.year || ''),
+    normaliseText(linkKey),
+  ].join(':');
+};
+
+const parseSrcSet = (value: string | null) => {
+  if (!value) return '';
+
+  const candidates = value
+    .split(',')
+    .map((part) => part.trim().split(/\s+/)[0])
+    .filter(Boolean);
+
+  return candidates[candidates.length - 1] || '';
+};
+
+const normaliseImageUrl = (value: string) => {
+  if (!value) return '';
+
+  const resolved = value.startsWith('//') ? `https:${value}` : value;
+  if (resolved.includes('empty-poster')) return '';
+
+  return resolved.replace(/-0-\d+-0-\d+/, '-0-230-0-345');
+};
+
+const parseStarRating = (value: string) => {
+  const compact = value.replace(/\s+/g, '');
+  const fullStars = (compact.match(/★/g) || []).length;
+  const hasHalf = compact.includes('½');
+
+  if (!fullStars && !hasHalf) return undefined;
+  return fullStars + (hasHalf ? 0.5 : 0);
+};
+
+const parseTenPointRating = (value: string | null) => {
+  if (!value) return undefined;
+
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) return undefined;
+
+  return Math.max(0.5, Math.min(5, parsed / 2));
+};
+
+const mergeMediaItems = (existing: MediaItem, incoming: MediaItem): MediaItem => {
+  const rating = incoming.rating ?? existing.rating;
+
+  return {
+    ...existing,
+    ...incoming,
+    id: createMediaId(existing),
+    artist: incoming.artist || existing.artist,
+    author: incoming.author || existing.author,
+    director: incoming.director || existing.director,
+    year: incoming.year || existing.year,
+    imageUrl: incoming.imageUrl || existing.imageUrl,
+    link: incoming.link || existing.link,
+    rating,
+    playcount: Math.max(existing.playcount || 0, incoming.playcount || 0) || undefined,
+    liked: Boolean(existing.liked || incoming.liked),
+    masterpiece: Boolean(existing.masterpiece || incoming.masterpiece || rating === 5),
+  };
+};
+
+const dedupeAndRankItems = (items: MediaItem[]): MediaItem[] => {
+  const map = new Map<string, MediaItem>();
+
+  items.forEach((item) => {
+    const key = createMediaId(item);
+    const existing = map.get(key);
+
+    if (!existing) {
+      map.set(key, { ...item, id: key });
+      return;
+    }
+
+    map.set(key, mergeMediaItems(existing, item));
+  });
+
+  return Array.from(map.values()).sort((left, right) => {
+    const leftScore = (left.masterpiece ? 100000 : 0) + (left.playcount || 0) + (left.rating || 0) * 100 + (left.liked ? 25 : 0);
+    const rightScore = (right.masterpiece ? 100000 : 0) + (right.playcount || 0) + (right.rating || 0) * 100 + (right.liked ? 25 : 0);
+    return rightScore - leftScore;
+  });
+};
 
 const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
   if (!username || !LASTFM_API_KEY) return [];
@@ -39,10 +146,16 @@ const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
 
     if (!data.topalbums?.album?.length) break;
 
-    data.topalbums.album.forEach((album: any, index: number) => {
+    data.topalbums.album.forEach((album: any) => {
       const playcount = Number.parseInt(album.playcount, 10) || 0;
+      if (playcount < MIN_LASTFM_ALBUM_PLAYCOUNT) return;
+
       albums.push({
-        id: `lastfm-${page}-${index}`,
+        id: createMediaId({
+          type: 'album',
+          title: album.name,
+          artist: album.artist?.name,
+        }),
         type: 'album',
         title: album.name,
         artist: album.artist?.name,
@@ -59,54 +172,139 @@ const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
   return albums;
 };
 
+const fetchTextThroughProxy = async (url: string) => {
+  const response = await fetch(`${LETTERBOXD_PROXY_URL}${encodeURIComponent(url)}`);
+  if (!response.ok) {
+    throw new Error(`Request failed (${response.status})`);
+  }
+
+  return response.text();
+};
+
+const extractLetterboxdItemsFromDocument = (document: Document, liked: boolean) => {
+  const posters = Array.from(
+    document.querySelectorAll<HTMLElement>('li.poster-container, .poster-container')
+  );
+
+  const results: MediaItem[] = [];
+  const seen = new Set<string>();
+
+  posters.forEach((poster, index) => {
+    const posterNode =
+      poster.querySelector<HTMLElement>('.really-lazy-load, .film-poster, [data-target-link]') || poster;
+    const anchor = poster.querySelector<HTMLAnchorElement>('a[href*="/film/"]');
+    const image = poster.querySelector<HTMLImageElement>('img');
+
+    const href =
+      posterNode.getAttribute('data-target-link') ||
+      anchor?.getAttribute('href') ||
+      '';
+    const title =
+      image?.getAttribute('alt')?.trim() ||
+      anchor?.getAttribute('title')?.trim() ||
+      posterNode.getAttribute('data-film-name')?.trim() ||
+      '';
+
+    if (!href || !title) return;
+
+    const rating =
+      parseTenPointRating(poster.getAttribute('data-owner-rating')) ||
+      parseTenPointRating(posterNode.getAttribute('data-owner-rating')) ||
+      parseStarRating(poster.querySelector('.poster-viewingdata')?.textContent || '') ||
+      parseStarRating(anchor?.getAttribute('aria-label') || '');
+
+    const imageUrl = normaliseImageUrl(
+      image?.getAttribute('data-src') ||
+        parseSrcSet(image?.getAttribute('data-srcset')) ||
+        parseSrcSet(image?.getAttribute('srcset')) ||
+        image?.getAttribute('src') ||
+        posterNode.getAttribute('data-poster-url') ||
+        ''
+    );
+
+    const item: MediaItem = {
+      id: createMediaId({ type: 'film', title }),
+      type: 'film',
+      title,
+      imageUrl,
+      link: new URL(href, LETTERBOXD_BASE_URL).toString(),
+      rating,
+      liked,
+      masterpiece: rating === 5,
+    };
+
+    if (seen.has(item.id)) return;
+    seen.add(item.id);
+
+    results.push(item);
+  });
+
+  if (results.length > 0) return results;
+
+  const fallbackAnchors = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href*="/film/"]'));
+  fallbackAnchors.forEach((anchor, index) => {
+    const href = anchor.getAttribute('href') || '';
+    const title = anchor.getAttribute('title')?.trim() || anchor.textContent?.trim() || '';
+    if (!href || !title || title.length > 120 || !href.startsWith('/film/')) return;
+
+    const key = createMediaId({ type: 'film', title });
+    if (seen.has(key)) return;
+    seen.add(key);
+
+    results.push({
+      id: `${key}:${index}`,
+      type: 'film',
+      title,
+      link: new URL(href, LETTERBOXD_BASE_URL).toString(),
+      liked,
+    });
+  });
+
+  return results;
+};
+
+const getNextLetterboxdPageUrl = (document: Document, currentUrl: string) => {
+  const href =
+    document.querySelector<HTMLAnchorElement>('.paginate-nextprev .next')?.getAttribute('href') ||
+    document.querySelector<HTMLAnchorElement>('a.next')?.getAttribute('href');
+
+  if (!href) return null;
+  return new URL(href, currentUrl).toString();
+};
+
+const fetchLetterboxdCollection = async (username: string, collectionPath: string, liked: boolean) => {
+  const parser = new DOMParser();
+  const collected: MediaItem[] = [];
+  const visited = new Set<string>();
+
+  let nextUrl = new URL(`/${username}/${collectionPath.replace(/^\/|\/$/g, '')}/`, LETTERBOXD_BASE_URL).toString();
+  let pageCount = 0;
+
+  while (nextUrl && pageCount < MAX_LETTERBOXD_PAGES && !visited.has(nextUrl)) {
+    visited.add(nextUrl);
+    const html = await fetchTextThroughProxy(nextUrl);
+    const document = parser.parseFromString(html, 'text/html');
+    const items = extractLetterboxdItemsFromDocument(document, liked);
+
+    if (items.length === 0 && pageCount > 0) break;
+
+    collected.push(...items);
+    nextUrl = getNextLetterboxdPageUrl(document, nextUrl) || '';
+    pageCount += 1;
+  }
+
+  return collected;
+};
+
 const fetchLetterboxdFilms = async (username: string): Promise<MediaItem[]> => {
   if (!username) return [];
 
-  const letterboxdRssUrl = `https://letterboxd.com/${username}/rss/`;
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(letterboxdRssUrl)}`;
-  const response = await fetch(proxyUrl);
+  const [watchedFilms, likedFilms] = await Promise.all([
+    fetchLetterboxdCollection(username, 'films', false),
+    fetchLetterboxdCollection(username, 'likes/films', true),
+  ]);
 
-  if (!response.ok) {
-    throw new Error(`Letterboxd request failed (${response.status})`);
-  }
-
-  const xmlText = await response.text();
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-  const xmlItems = xmlDoc.querySelectorAll('item');
-
-  return Array.from(xmlItems).map((item, index) => {
-    const title = item.querySelector('title')?.textContent || '';
-    const link = item.querySelector('link')?.textContent || '';
-    const description = item.querySelector('description')?.textContent || '';
-
-    const ratingMatch = title.match(/★+/);
-    const rating = ratingMatch ? ratingMatch[0].length : undefined;
-    const hasHalf = title.includes('½');
-
-    const cleanTitle = title
-      .replace(/ - ★+½?$/, '')
-      .replace(/ - ½$/, '')
-      .replace(/, \d{4}$/, '')
-      .trim();
-
-    const posterMatch = description.match(/<img[^>]+src="([^"]+)"/);
-    let posterUrl = posterMatch?.[1] || '';
-
-    if (posterUrl.includes('ltrbxd.com')) {
-      posterUrl = posterUrl.replace(/-0-\d+-0-\d+/, '-0-230-0-345');
-    }
-
-    return {
-      id: `letterboxd-${index}`,
-      type: 'film' as const,
-      title: cleanTitle || title,
-      link,
-      imageUrl: posterUrl,
-      rating: hasHalf && rating ? rating + 0.5 : rating,
-      masterpiece: rating === 5,
-    };
-  });
+  return dedupeAndRankItems([...watchedFilms, ...likedFilms]);
 };
 
 const fetchGoodreadsBooks = async (userId: string): Promise<MediaItem[]> => {
@@ -118,14 +316,18 @@ const fetchGoodreadsBooks = async (userId: string): Promise<MediaItem[]> => {
 
   if (!Array.isArray(data.items)) return [];
 
-  return data.items.map((item: any, index: number) => {
+  return data.items.map((item: any) => {
     const authorMatch = item.description?.match(/author: ([^<]+)/i) || item.description?.match(/by ([^<]+)/i);
     const ratingMatch = item.description?.match(/rating: (\d)/i) || item.description?.match(/(\d) of 5 stars/i);
     const imageMatch = item.description?.match(/src="([^"]+)"/);
     const rating = ratingMatch ? Number.parseInt(ratingMatch[1], 10) : undefined;
 
     return {
-      id: `goodreads-${index}`,
+      id: createMediaId({
+        type: 'book',
+        title: item.title,
+        author: authorMatch?.[1]?.trim(),
+      }),
       type: 'book' as const,
       title: item.title,
       author: authorMatch?.[1]?.trim(),
@@ -137,32 +339,43 @@ const fetchGoodreadsBooks = async (userId: string): Promise<MediaItem[]> => {
   });
 };
 
-const dedupeAndRankItems = (items: MediaItem[]): MediaItem[] => {
-  const map = new Map<string, MediaItem>();
+const MediaArtwork: React.FC<{ item: MediaItem }> = ({ item }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  items.forEach((item) => {
-    const creator = item.artist || item.author || item.director || '';
-    const key = `${item.type}:${item.title.toLowerCase().trim()}:${creator.toLowerCase().trim()}`;
-    const existing = map.get(key);
+  useEffect(() => {
+    setLoaded(false);
+    setFailed(false);
+  }, [item.imageUrl]);
 
-    if (!existing) {
-      map.set(key, item);
-      return;
-    }
+  const showImage = Boolean(item.imageUrl) && !failed;
 
-    const existingScore = (existing.playcount || 0) + (existing.rating || 0);
-    const incomingScore = (item.playcount || 0) + (item.rating || 0);
+  return (
+    <div className="aspect-square mb-3 overflow-hidden bg-[#ece8de] dark:bg-[#22201b] relative flex items-center justify-center">
+      {showImage ? (
+        <img
+          key={item.imageUrl}
+          src={item.imageUrl}
+          alt={item.title}
+          className={`absolute inset-0 w-full h-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
+            loaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onLoad={() => setLoaded(true)}
+          onError={() => {
+            setFailed(true);
+            setLoaded(false);
+          }}
+        />
+      ) : null}
 
-    if (incomingScore > existingScore) {
-      map.set(key, item);
-    }
-  });
-
-  return Array.from(map.values()).sort((a, b) => {
-    const aScore = (a.masterpiece ? 100000 : 0) + (a.playcount || 0) + (a.rating || 0) * 100;
-    const bScore = (b.masterpiece ? 100000 : 0) + (b.playcount || 0) + (b.rating || 0) * 100;
-    return bScore - aScore;
-  });
+      {(!showImage || !loaded) && (
+        <span className="text-3xl font-light opacity-30">{item.title.charAt(0)}</span>
+      )}
+    </div>
+  );
 };
 
 const Consumption: React.FC = () => {
@@ -266,7 +479,7 @@ const Consumption: React.FC = () => {
     return items.filter((item) => item.type === filter);
   }, [filter, items]);
 
-  const getCreator = (item: MediaItem) => item.artist || item.author || item.director || '';
+  const getCreator = (item: MediaItem) => getCreatorValue(item);
 
   const getTypeLabel = (type: string) => {
     switch (type) {
@@ -310,6 +523,22 @@ const Consumption: React.FC = () => {
     }
   };
 
+  const getSignalLabel = (item: MediaItem) => {
+    if (item.rating) {
+      return `${'★'.repeat(Math.floor(item.rating))}${item.rating % 1 !== 0 ? '½' : ''}`;
+    }
+
+    if (item.liked) {
+      return 'Liked';
+    }
+
+    if (item.playcount) {
+      return `${item.playcount.toLocaleString()} listens`;
+    }
+
+    return null;
+  };
+
   const filters: { key: FilterType; label: string }[] = [
     { key: 'all', label: 'All' },
     { key: 'album', label: 'Albums' },
@@ -335,7 +564,7 @@ const Consumption: React.FC = () => {
       {showSettings && (
         <div className="surface-panel rounded-xl p-6 space-y-4">
           <p className="text-sm text-[#696257] dark:text-[#a89d88]">
-            Connect your accounts to automatically import your consumption history.
+            Pull in your music, books, and films. Letterboxd now tries to walk every watched and liked film page, then keeps your rating when one exists.
           </p>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -348,6 +577,7 @@ const Consumption: React.FC = () => {
                 placeholder="e.g., dakibwa"
                 className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
               />
+              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Albums with fewer than 5 listens are excluded.</p>
             </div>
 
             <div>
@@ -359,6 +589,7 @@ const Consumption: React.FC = () => {
                 placeholder="e.g., dakibwa"
                 className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
               />
+              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Imports watched films plus liked films, not just the RSS feed.</p>
             </div>
 
             <div>
@@ -370,11 +601,11 @@ const Consumption: React.FC = () => {
                 placeholder="e.g., 12345678"
                 className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
               />
-              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Find this in your profile URL</p>
+              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Find this in your profile URL.</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={fetchAllData}
               disabled={loading || !hasAnyConnection}
@@ -434,34 +665,15 @@ const Consumption: React.FC = () => {
                   item.masterpiece ? 'bg-[#1c1a17]/5 dark:bg-white/5' : ''
                 }`}
               >
-                <div className="aspect-square mb-3 overflow-hidden bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center">
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      loading="lazy"
-                      decoding="async"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <span className="text-3xl font-light opacity-30">{item.title.charAt(0)}</span>
-                  )}
-                </div>
+                <MediaArtwork item={item} />
 
                 <div className="space-y-1.5">
                   <div className="text-sm font-medium text-[#1c1a17] dark:text-[#e8e2d6] leading-tight truncate">{item.title}</div>
                   <div className="text-sm text-[#6a655d] dark:text-[#a49a88] leading-tight truncate">{getCreator(item)}</div>
                   <div className="flex items-center justify-between pt-1 gap-2">
                     <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575] uppercase tracking-wide">{getTypeLabel(item.type)}</span>
-                    {item.rating ? (
-                      <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">
-                        {'★'.repeat(Math.floor(item.rating))}
-                        {item.rating % 1 !== 0 ? '½' : ''}
-                      </span>
-                    ) : null}
-                    {!item.rating && item.playcount ? (
-                      <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">{item.playcount.toLocaleString()}</span>
+                    {getSignalLabel(item) ? (
+                      <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</span>
                     ) : null}
                   </div>
                 </div>

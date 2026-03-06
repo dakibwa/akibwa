@@ -114,6 +114,10 @@ const GROUP_LABELS: Record<number, string> = {
   7: 'Eclectic',
 };
 
+const MUSIC_PANEL_CLASS =
+  'rounded-[1.4rem] border border-white/10 bg-[#07111f]/72 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.35)]';
+const MUSIC_SUBPANEL_CLASS = 'rounded-[1.05rem] border border-white/10 bg-white/5';
+
 // Simple database using localStorage
 const saveToDatabase = (key: string, data: any) => {
   const db = JSON.parse(localStorage.getItem('dakibwa_music_db') || '{}');
@@ -503,6 +507,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const [hoveredLink, setHoveredLink] = useState<Link | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState<string>('');
   const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeGroupFilter, setActiveGroupFilter] = useState<number | 'all'>('all');
+  const [showGuide, setShowGuide] = useState(true);
   
   // Last.fm state
   const [lastFmUsername, setLastFmUsername] = useState('');
@@ -519,7 +527,71 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const starfieldRef = useRef<Array<{ x: number; y: number; size: number; alpha: number; phase: number }>>([]);
   const hoveredNodeRef = useRef<string | null>(null);
   const hoveredLinkRef = useRef<Link | null>(null);
+  const selectedNodeRef = useRef<string | null>(null);
+  const searchQueryRef = useRef('');
+  const activeGroupFilterRef = useRef<number | 'all'>('all');
   const insights = useMemo(() => computeListeningInsights(graphData), [graphData]);
+  const sortedNodes = useMemo(() => {
+    if (!graphData?.nodes) return [];
+    return [...graphData.nodes].sort((left, right) => (right.playcount || 0) - (left.playcount || 0));
+  }, [graphData]);
+  const searchResults = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    if (!normalizedQuery) return sortedNodes.slice(0, 8);
+
+    return sortedNodes
+      .filter((node) => node.id.toLowerCase().includes(normalizedQuery))
+      .slice(0, 8);
+  }, [searchQuery, sortedNodes]);
+  const visibleQuickPicks = useMemo(() => {
+    return sortedNodes
+      .filter((node) => activeGroupFilter === 'all' || node.group === activeGroupFilter)
+      .slice(0, 10);
+  }, [activeGroupFilter, sortedNodes]);
+  const groupCounts = useMemo(() => {
+    const counts = new Map<number, number>();
+    graphData?.nodes.forEach((node) => {
+      counts.set(node.group, (counts.get(node.group) || 0) + 1);
+    });
+    return counts;
+  }, [graphData]);
+  const activeArtistId = selectedNode || hoveredNode;
+  const activeArtist = useMemo(() => {
+    if (!activeArtistId || !graphData?.nodes) return null;
+    return graphData.nodes.find((node) => node.id === activeArtistId) || null;
+  }, [activeArtistId, graphData]);
+  const activeArtistConnections = useMemo(() => {
+    if (!graphData?.links || !activeArtistId) return [];
+
+    const nodeById = new Map<string, Node>();
+    graphData.nodes.forEach((node) => nodeById.set(node.id, node));
+
+    const connectionWeight: Record<Link['type'], number> = {
+      collaboration: 6,
+      influence: 5,
+      genre: 4,
+      label: 3,
+      feature: 5,
+      similar: 2,
+    };
+
+    return graphData.links
+      .filter((link) => link.source === activeArtistId || link.target === activeArtistId)
+      .map((link) => {
+        const counterpart = link.source === activeArtistId ? link.target : link.source;
+        return {
+          ...link,
+          counterpart,
+          counterpartNode: nodeById.get(counterpart) || null,
+        };
+      })
+      .sort((left, right) => {
+        const weightDelta = connectionWeight[right.type] - connectionWeight[left.type];
+        if (weightDelta !== 0) return weightDelta;
+        return (right.counterpartNode?.playcount || 0) - (left.counterpartNode?.playcount || 0);
+      })
+      .slice(0, 8);
+  }, [activeArtistId, graphData]);
 
   const clearSpotifySession = () => {
     localStorage.removeItem(SPOTIFY_TOKEN_STORAGE_KEY);
@@ -540,7 +612,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     hoveredNodeRef.current = hoveredNode;
     hoveredLinkRef.current = hoveredLink;
-  }, [hoveredLink, hoveredNode]);
+    selectedNodeRef.current = selectedNode;
+    searchQueryRef.current = searchQuery;
+    activeGroupFilterRef.current = activeGroupFilter;
+  }, [activeGroupFilter, hoveredLink, hoveredNode, searchQuery, selectedNode]);
 
   // Check for saved auth/data and Spotify callback on mount
   useEffect(() => {
@@ -1138,6 +1213,61 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const focusNode = (nodeId: string) => {
+    const targetNode = nodesRef.current.find((node) => node.id === nodeId);
+    if (!targetNode) return;
+
+    const centerX = window.innerWidth >= 1280 ? window.innerWidth * 0.46 : window.innerWidth * 0.5;
+    const centerY = window.innerWidth >= 1024 ? window.innerHeight * 0.52 : window.innerHeight * 0.42;
+
+    targetNode.x = centerX;
+    targetNode.y = centerY;
+    targetNode.vx = 0;
+    targetNode.vy = 0;
+
+    if (!graphData?.links) return;
+
+    const relatedIds = graphData.links
+      .filter((link) => link.source === nodeId || link.target === nodeId)
+      .map((link) => (link.source === nodeId ? link.target : link.source))
+      .slice(0, 8);
+
+    relatedIds.forEach((relatedId, index) => {
+      const relatedNode = nodesRef.current.find((node) => node.id === relatedId);
+      if (!relatedNode) return;
+
+      const angle = (index / Math.max(relatedIds.length, 1)) * Math.PI * 2;
+      const radius = Math.min(window.innerWidth, window.innerHeight) * 0.17;
+      relatedNode.x = centerX + Math.cos(angle) * radius;
+      relatedNode.y = centerY + Math.sin(angle) * radius;
+      relatedNode.vx = 0;
+      relatedNode.vy = 0;
+    });
+  };
+
+  const handleNodeSelection = (nodeId: string, options?: { preserveGroup?: boolean }) => {
+    setSelectedNode(nodeId);
+    setHoveredNode(nodeId);
+    setHoveredLink(null);
+    setShowGuide(false);
+    if (!options?.preserveGroup) {
+      setActiveGroupFilter('all');
+    }
+    focusNode(nodeId);
+  };
+
+  const handleSearchSubmit = (event?: React.FormEvent) => {
+    event?.preventDefault();
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    if (!normalizedQuery) return;
+
+    const exactMatch = sortedNodes.find((node) => node.id.toLowerCase() === normalizedQuery);
+    const partialMatch = exactMatch || sortedNodes.find((node) => node.id.toLowerCase().includes(normalizedQuery));
+    if (!partialMatch) return;
+
+    handleNodeSelection(partialMatch.id);
+  };
+
   // --- CANVAS VISUALIZATION ---
   useEffect(() => {
     if (status !== 'visualizing' || !graphData || !canvasRef.current) return;
@@ -1223,7 +1353,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       nodesRef.current = seededNodes;
     }
 
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = true;
     const labelColor = isDark ? '#e0e0e0' : '#1a1a1a';
     const labelOutlineColor = isDark ? '#1a1a1a' : '#fafafa';
     const nodeById = new Map<string, Node>();
@@ -1261,6 +1391,30 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const getNodeRadius = (node: Node) => {
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
         return 4 + normalised * 16;
+      };
+      const normalizedQuery = searchQueryRef.current.trim().toLowerCase();
+      const selectedNodeId = selectedNodeRef.current;
+      const filteredGroup = activeGroupFilterRef.current;
+      const selectedNeighbors = new Set<string>();
+
+      if (selectedNodeId) {
+        dataLinks.forEach((link) => {
+          if (link.source === selectedNodeId) selectedNeighbors.add(link.target);
+          if (link.target === selectedNodeId) selectedNeighbors.add(link.source);
+        });
+      }
+
+      const nodeMatchesQuery = (node: Node) => !normalizedQuery || node.id.toLowerCase().includes(normalizedQuery);
+      const nodeMatchesGroup = (node: Node) => filteredGroup === 'all' || node.group === filteredGroup;
+      const nodeIsFocused = (node: Node) =>
+        !selectedNodeId || node.id === selectedNodeId || selectedNeighbors.has(node.id);
+      const nodeIsDimmed = (node: Node) => {
+        if (!nodeMatchesGroup(node)) return true;
+        if (selectedNodeId && !nodeIsFocused(node)) return true;
+        if (normalizedQuery && !nodeMatchesQuery(node) && node.id !== selectedNodeId && !selectedNeighbors.has(node.id)) {
+          return true;
+        }
+        return false;
       };
 
       const groupIds = [1, 2, 3, 4, 5, 6, 7];
@@ -1421,13 +1575,14 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         const haloRadius = Math.min(Math.max(maxDistance + 40, 95), 260);
         const pulse = 0.96 + Math.sin(now * 0.55 + groupId) * 0.04;
         const haloColor = NODE_GROUP_COLORS[groupId] || NODE_GROUP_COLORS[7];
+        const haloFade = filteredGroup === 'all' || filteredGroup === groupId ? 1 : 0.22;
 
-        ctx.fillStyle = hexToRgba(haloColor, 0.06);
+        ctx.fillStyle = hexToRgba(haloColor, 0.06 * haloFade);
         ctx.beginPath();
         ctx.arc(centroid.x, centroid.y, haloRadius * pulse, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = hexToRgba(haloColor, 0.2);
+        ctx.strokeStyle = hexToRgba(haloColor, 0.2 * haloFade);
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(centroid.x, centroid.y, haloRadius * 0.98, 0, Math.PI * 2);
@@ -1436,7 +1591,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         ctx.font = '500 11px system-ui, -apple-system, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = hexToRgba(haloColor, isDark ? 0.58 : 0.5);
+        ctx.fillStyle = hexToRgba(haloColor, (isDark ? 0.58 : 0.5) * haloFade);
         ctx.fillText(GROUP_LABELS[groupId] || GROUP_LABELS[7], centroid.x, centroid.y);
         ctx.textAlign = 'start';
         ctx.textBaseline = 'alphabetic';
@@ -1449,6 +1604,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         if (s && t) {
           const hoveredCurrent = hoveredLinkRef.current;
           const isHovered = hoveredCurrent?.source === link.source && hoveredCurrent?.target === link.target;
+          const touchesSelected = selectedNodeId && (link.source === selectedNodeId || link.target === selectedNodeId);
+          const linkMatchesGroup = filteredGroup === 'all' || s.group === filteredGroup || t.group === filteredGroup;
+          const linkMatchesQuery =
+            !normalizedQuery ||
+            s.id.toLowerCase().includes(normalizedQuery) ||
+            t.id.toLowerCase().includes(normalizedQuery);
+          const isMuted = nodeIsDimmed(s) || nodeIsDimmed(t) || !linkMatchesGroup || !linkMatchesQuery;
           const color = CONNECTION_COLORS[link.type] || CONNECTION_COLORS.similar;
           const shimmer = 0.76 + 0.24 * Math.sin(now * 0.9 + s.id.length + t.id.length);
           const baseAlpha = link.type === 'collaboration'
@@ -1460,8 +1622,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
           ctx.beginPath();
           ctx.moveTo(s.x!, s.y!);
           ctx.lineTo(t.x!, t.y!);
-          ctx.strokeStyle = isHovered ? color : hexToRgba(color, Math.max(0.16, baseAlpha * shimmer));
-          ctx.lineWidth = isHovered ? 3 : link.type === 'collaboration' ? 1.9 : 1.35;
+          ctx.strokeStyle = isHovered
+            ? color
+            : hexToRgba(color, touchesSelected ? Math.max(0.42, baseAlpha * shimmer) : isMuted ? 0.07 : Math.max(0.16, baseAlpha * shimmer));
+          ctx.lineWidth = isHovered ? 3 : touchesSelected ? 2.4 : link.type === 'collaboration' ? 1.9 : 1.35;
           ctx.stroke();
         }
       });
@@ -1469,15 +1633,18 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       // Draw nodes with genre-coded color + shape.
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNodeRef.current === node.id;
+        const isSelected = selectedNodeId === node.id;
+        const isRelated = selectedNeighbors.has(node.id);
+        const isDimmed = nodeIsDimmed(node);
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
         const pulse = Math.sin(now * 1.2 + node.id.length) * 0.5 + 0.5;
-        const nodeSize = 4 + (normalised * 16) + pulse * 0.7;
+        const nodeSize = 4 + (normalised * 16) + pulse * 0.7 + (isSelected ? 3 : isRelated ? 1.2 : 0);
         const nodeColor = NODE_GROUP_COLORS[node.group] || NODE_GROUP_COLORS[7];
         const nodeShape = NODE_GROUP_SHAPES[node.group] || 'circle';
         
-        if (isHovered) {
+        if (isHovered || isSelected) {
           const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 35);
-          gradient.addColorStop(0, `${nodeColor}66`);
+          gradient.addColorStop(0, `${nodeColor}${isSelected ? '88' : '66'}`);
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = gradient;
           ctx.beginPath();
@@ -1493,27 +1660,38 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         ctx.arc(node.x!, node.y!, nodeSize * 1.9, 0, Math.PI * 2);
         ctx.fill();
 
+        ctx.globalAlpha = isDimmed ? 0.24 : isRelated ? 0.9 : 1;
         ctx.fillStyle = nodeColor;
-        drawNodeShape(ctx, nodeShape, node.x!, node.y!, isHovered ? nodeSize + 2 : nodeSize);
+        drawNodeShape(ctx, nodeShape, node.x!, node.y!, isHovered || isSelected ? nodeSize + 2 : nodeSize);
         ctx.fill();
-        ctx.strokeStyle = isDark ? hexToRgba('#f4f6fb', 0.38) : hexToRgba('#101114', 0.32);
-        ctx.lineWidth = isHovered ? 1.6 : 1;
+        ctx.strokeStyle = isDark ? hexToRgba('#f4f6fb', isDimmed ? 0.18 : 0.38) : hexToRgba('#101114', isDimmed ? 0.18 : 0.32);
+        ctx.lineWidth = isHovered || isSelected ? 1.8 : 1;
         ctx.stroke();
+        ctx.globalAlpha = 1;
       });
 
       // Draw labels AFTER nodes with lightweight collision culling.
       const placedLabels: Array<{ x: number; y: number; w: number; h: number }> = [];
       nodesRef.current.forEach(node => {
         const isHovered = hoveredNodeRef.current === node.id;
+        const isSelected = selectedNodeId === node.id;
+        const isRelated = selectedNeighbors.has(node.id);
+        const isSearchMatch = nodeMatchesQuery(node);
+        const isDimmed = nodeIsDimmed(node);
         const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
         const nodeSize = 4 + (normalised * 16);
-        if (!isHovered && normalised < 0.58) return;
+        if (!isHovered && !isSelected && !isRelated && !isSearchMatch && normalised < 0.58) return;
+        if (isDimmed && !isSelected && !isHovered) return;
         
-        ctx.font = isHovered ? 'bold 14px system-ui, -apple-system, sans-serif' : '12px system-ui, -apple-system, sans-serif';
+        ctx.font = isHovered || isSelected
+          ? '600 14px system-ui, -apple-system, sans-serif'
+          : isRelated || isSearchMatch
+          ? '500 13px system-ui, -apple-system, sans-serif'
+          : '12px system-ui, -apple-system, sans-serif';
         const labelX = node.x! + nodeSize + 8;
         const labelY = node.y! + 4;
         const labelWidth = ctx.measureText(node.id).width;
-        const labelHeight = isHovered ? 16 : 13;
+        const labelHeight = isHovered || isSelected ? 16 : 13;
         const labelRect = {
           x: labelX - 3,
           y: labelY - labelHeight,
@@ -1541,7 +1719,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         ctx.strokeText(node.id, labelX, labelY);
         
         // Draw text
-        ctx.fillStyle = isHovered ? labelColor : `${labelColor}cc`;
+        ctx.fillStyle = isSelected ? '#f5f8ff' : isHovered ? labelColor : `${labelColor}cc`;
         ctx.fillText(node.id, labelX, labelY);
       });
 
@@ -1557,6 +1735,25 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   }, [status, graphData]);
 
   // Mouse handling
+  const findNodeAtPosition = (mx: number, my: number) => {
+    const playcounts = nodesRef.current.map((node) => node.playcount || 0).filter((playcount) => playcount > 0);
+    const maxPlaycount = Math.max(...playcounts, 1);
+    const minPlaycount = Math.min(...playcounts, 0);
+    const playcountRange = maxPlaycount - minPlaycount || 1;
+
+    for (const node of nodesRef.current) {
+      const normalised = ((node.playcount || minPlaycount) - minPlaycount) / playcountRange;
+      const hitRadius = 14 + normalised * 18;
+      const dx = mx - node.x!;
+      const dy = my - node.y!;
+      if (Math.sqrt(dx * dx + dy * dy) < hitRadius) {
+        return node.id;
+      }
+    }
+
+    return null;
+  };
+
   const handleMouseMove = (e: React.MouseEvent) => {
     if (status !== 'visualizing' || !graphData) return;
       const rect = canvasRef.current?.getBoundingClientRect();
@@ -1564,17 +1761,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
 
-      let foundNode = null;
+      const foundNode = findNodeAtPosition(mx, my);
     let foundLink: Link | null = null;
-
-      for (const node of nodesRef.current) {
-          const dx = mx - node.x!;
-          const dy = my - node.y!;
-      if (Math.sqrt(dx * dx + dy * dy) < 30) {
-              foundNode = node.id;
-              break;
-          }
-      }
 
     if (!foundNode && graphData.links) {
       for (const link of graphData.links) {
@@ -1615,12 +1803,35 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       });
   };
 
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    if (status !== 'visualizing') return;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const foundNode = findNodeAtPosition(mx, my);
+
+    if (foundNode) {
+      handleNodeSelection(foundNode, { preserveGroup: true });
+      return;
+    }
+
+    setSelectedNode(null);
+    setHoveredNode(null);
+    setHoveredLink(null);
+  };
+
   const clearData = () => {
     localStorage.removeItem('dakibwa_music_graph');
     setGraphData(null);
     setArtistsData([]);
     nodesRef.current = [];
     setProvider(null);
+    setSelectedNode(null);
+    setSearchQuery('');
+    setActiveGroupFilter('all');
+    setShowGuide(true);
     setStatus('connect');
   };
 
@@ -1649,244 +1860,524 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
     setStatus('fetching');
   };
 
+  const handleGroupFilterSelect = (nextGroup: number | 'all') => {
+    setActiveGroupFilter(nextGroup);
+    setShowGuide(false);
+
+    if (nextGroup === 'all' || !selectedNode || !graphData?.nodes) return;
+    const currentSelected = graphData.nodes.find((node) => node.id === selectedNode);
+    if (currentSelected?.group !== nextGroup) {
+      setSelectedNode(null);
+    }
+  };
+
+  const providerLabel = provider === 'spotify'
+    ? 'Spotify listening history'
+    : provider === 'lastfm'
+    ? lastFmUsername
+      ? `Last.fm · ${lastFmUsername}`
+      : 'Last.fm listening history'
+    : provider === 'demo'
+    ? 'Demo constellation'
+    : graphData
+    ? 'Saved constellation'
+    : 'Music constellation';
+
+  const activeGroupLabel = activeGroupFilter === 'all' ? 'All clusters' : GROUP_LABELS[activeGroupFilter];
+  const activeGroupCount = activeGroupFilter === 'all'
+    ? graphData?.nodes.length || 0
+    : groupCounts.get(activeGroupFilter) || 0;
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#fafafa] dark:bg-[#1a1a1a] overflow-y-auto">
-      {/* Header */}
-      <div className="absolute top-6 left-6 z-[110]">
-        <button 
-          onClick={onClose}
-          className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors flex items-center gap-2"
-        >
-          <span>←</span>
-          <span>Back</span>
-        </button>
-      </div>
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#030712] text-[#e8eefc]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_32%),linear-gradient(180deg,#030712_0%,#050b17_55%,#030712_100%)]" />
+      <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:36px_36px]" />
 
-      {/* Connect View */}
-      {status === 'connect' && (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6">
-          <div className="max-w-md w-full space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-3xl md:text-4xl font-normal tracking-tight text-[#1a1a1a] dark:text-[#e0e0e0]">
-                We have the right to music
-              </h1>
-              <p className="text-[#666] dark:text-[#999]">
-                Connect your music to discover the hidden relationships between your favorite artists.
-              </p>
-            </div>
+      <div className="relative min-h-screen">
+        <div className="absolute left-4 top-4 z-[140] md:left-6 md:top-6">
+          <button
+            onClick={onClose}
+            className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#07111f]/75 px-4 py-2 text-sm text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-[#0b1627]"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Back</span>
+          </button>
+        </div>
 
-            <div className="space-y-6 pt-4">
-              {/* Spotify Option */}
-              <button
-                onClick={connectSpotify}
-                className="w-full flex items-center gap-4 p-4 border border-[#e0e0e0] dark:border-[#333] hover:border-[#1a1a1a] dark:hover:border-[#e0e0e0] transition-colors text-left"
-              >
-                <svg className="w-6 h-6 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                </svg>
-                <div>
-                  <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">
-                    {spotifyConnected ? 'Reconnect Spotify' : 'Connect Spotify'}
+        {status === 'connect' && (
+          <div className="min-h-screen px-6 py-20 md:py-24">
+            <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+              <div className={`${MUSIC_PANEL_CLASS} p-6 md:p-8 lg:p-10`}>
+                <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Constellation view</p>
+                <h1 className="mt-4 text-4xl md:text-5xl font-display tracking-tight text-white">
+                  We Have the Right to Music
+                </h1>
+                <p className="mt-4 max-w-2xl text-base md:text-lg leading-7 text-[#a6b2cf]">
+                  This map is built to answer what people actually want to know from listening data: who dominates your taste, what clusters together, and which artists bridge the distance between scenes.
+                </p>
+
+                <div className="mt-8 grid gap-3 md:grid-cols-3">
+                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                    <p className="text-xs uppercase tracking-[0.16em] text-[#8fa1c9]">Clustered</p>
+                    <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
+                      Colors mark genre gravity so the map reads quickly instead of feeling decorative.
+                    </p>
                   </div>
-                  <div className="text-sm text-[#666] dark:text-[#999]">
-                    {spotifyConnected ? 'Spotify session found on this browser' : 'Use your top artists and listening history'}
+                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                    <p className="text-xs uppercase tracking-[0.16em] text-[#8fa1c9]">Weighted</p>
+                    <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
+                      Larger stars mean deeper listening, which makes the center of your taste obvious at a glance.
+                    </p>
                   </div>
-                  <div className="text-xs text-[#999] dark:text-[#666] mt-1 break-all">
-                    Redirect URI: {SPOTIFY_REDIRECT_URI}
+                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                    <p className="text-xs uppercase tracking-[0.16em] text-[#8fa1c9]">Actionable</p>
+                    <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
+                      Search, filter, and click any artist to lock details and jump through direct connections.
+                    </p>
                   </div>
                 </div>
-              </button>
-
-              {/* Last.fm Option */}
-              <div className="border border-[#e0e0e0] dark:border-[#333] p-4">
-                <div className="flex items-center gap-4 mb-4">
-                  <svg className="w-6 h-6 text-[#d51007]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.382 1.704-4.591 3.381-4.591 2.42 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.285 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.63-3.931l-1.758-.385c-1.21-.275-1.567-.77-1.567-1.595 0-.934.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.907 1.869 1.704 0 1.017-.99 1.43-2.86 1.43-2.776 0-3.93-1.457-4.59-3.464l-.907-2.749c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.18 2.144 6.434 5.993 6.434 3.106 0 4.591-1.457 4.591-1.457z"/>
-                  </svg>
-                  <div>
-                    <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">Connect Last.fm</div>
-                    <div className="text-sm text-[#666] dark:text-[#999]">Sign in once, then continue in one click</div>
-                  </div>
-                </div>
-                {!lastFmEditMode && lastFmUsername ? (
-                  <div className="flex items-center justify-between gap-3">
-                    <button
-                      onClick={() => connectLastFm(lastFmUsername)}
-                      className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-70 transition-opacity"
-                    >
-                      Continue as {lastFmUsername} →
-                    </button>
-                    <button
-                      onClick={() => setLastFmEditMode(true)}
-                      className="text-xs text-[#666] dark:text-[#999] hover:opacity-70 transition-opacity"
-                    >
-                      Use another account
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleLastFmSubmit} className="flex gap-3 items-end">
-                    <input
-                      type="text"
-                      value={lastFmDraftUsername}
-                      onChange={(e) => setLastFmDraftUsername(e.target.value)}
-                      placeholder="Your Last.fm username"
-                      className="flex-1 bg-transparent border-b border-[#e0e0e0] dark:border-[#333] py-2 text-[#1a1a1a] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#666] outline-none focus:border-[#1a1a1a] dark:focus:border-[#e0e0e0] transition-colors"
-                    />
-                    <button
-                      type="submit"
-                      disabled={!lastFmDraftUsername.trim()}
-                      className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] hover:opacity-60 transition-opacity disabled:opacity-30 pb-2"
-                    >
-                      Connect →
-                    </button>
-                  </form>
-                )}
-             </div>
-
-              {/* Demo Mode */}
-              <button
-                onClick={handleDemoMode}
-                className="w-full p-4 border border-dashed border-[#e0e0e0] dark:border-[#333] hover:border-[#1a1a1a] dark:hover:border-[#e0e0e0] transition-colors text-left"
-              >
-                <div className="font-medium text-[#1a1a1a] dark:text-[#e0e0e0]">Try Demo</div>
-                <div className="text-sm text-[#666] dark:text-[#999]">Explore with sample artist data</div>
-              </button>
-                  </div>
               </div>
-          </div>
-      )}
 
-      {/* Fetching/Analysing View */}
-      {(status === 'fetching' || status === 'analyzing') && (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6">
-          <div className="space-y-8 text-center max-w-md w-full">
-            <div className="space-y-4">
-              <p className="text-xl text-[#1a1a1a] dark:text-[#e0e0e0] transition-opacity duration-500">
+              <div className={`${MUSIC_PANEL_CLASS} p-6 md:p-8`}>
+                <div className="space-y-2">
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Choose a source</p>
+                  <h2 className="text-2xl font-medium tracking-tight text-white">Bring in your listening history</h2>
+                  <p className="text-sm leading-6 text-[#a6b2cf]">
+                    Spotify gives the richest recent behavior. Last.fm is fast and reliable if you already scrobble. Demo mode lets you inspect the interaction model immediately.
+                  </p>
+                </div>
+
+                <div className="mt-6 space-y-4">
+                  <button
+                    onClick={connectSpotify}
+                    className={`${MUSIC_SUBPANEL_CLASS} w-full p-4 text-left transition-colors hover:border-white/20 hover:bg-white/[0.07]`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <svg className="mt-0.5 w-6 h-6 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                      </svg>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-medium text-white">
+                            {spotifyConnected ? 'Reconnect Spotify' : 'Connect Spotify'}
+                          </span>
+                          {spotifyConnected && (
+                            <span className="rounded-full border border-[#1DB954]/30 bg-[#1DB954]/10 px-2 py-0.5 text-[11px] uppercase tracking-[0.14em] text-[#8fe7b0]">
+                              Session found
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-2 text-sm leading-6 text-[#a6b2cf]">
+                          Pull top artists, top tracks, and recent listening so the constellation reflects both long-term identity and current drift.
+                        </p>
+                        <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-[#7382a4] break-all">
+                          Redirect URI: {SPOTIFY_REDIRECT_URI}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                    <div className="flex items-start gap-4">
+                      <svg className="mt-0.5 w-6 h-6 text-[#d51007]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.382 1.704-4.591 3.381-4.591 2.42 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.285 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.63-3.931l-1.758-.385c-1.21-.275-1.567-.77-1.567-1.595 0-.934.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.907 1.869 1.704 0 1.017-.99 1.43-2.86 1.43-2.776 0-3.93-1.457-4.59-3.464l-.907-2.749c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.18 2.144 6.434 5.993 6.434 3.106 0 4.591-1.457 4.591-1.457z"/>
+                      </svg>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium text-white">Connect Last.fm</div>
+                        <p className="mt-2 text-sm leading-6 text-[#a6b2cf]">
+                          Best if you already scrobble. It produces a strong long-term taste map with very little setup.
+                        </p>
+
+                        {!lastFmEditMode && lastFmUsername ? (
+                          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                            <button
+                              onClick={() => connectLastFm(lastFmUsername)}
+                              className="rounded-full bg-[#dbe5ff] px-4 py-2 text-sm font-medium text-[#07111f] transition-colors hover:bg-white"
+                            >
+                              Continue as {lastFmUsername}
+                            </button>
+                            <button
+                              onClick={() => setLastFmEditMode(true)}
+                              className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9] transition-colors hover:text-white"
+                            >
+                              Use another account
+                            </button>
+                          </div>
+                        ) : (
+                          <form onSubmit={handleLastFmSubmit} className="mt-4 flex flex-col gap-3 sm:flex-row">
+                            <input
+                              type="text"
+                              value={lastFmDraftUsername}
+                              onChange={(e) => setLastFmDraftUsername(e.target.value)}
+                              placeholder="Your Last.fm username"
+                              className="min-w-0 flex-1 rounded-full border border-white/10 bg-[#050d19] px-4 py-3 text-sm text-white placeholder:text-[#7382a4] outline-none transition-colors focus:border-[#7dd3fc]"
+                            />
+                            <button
+                              type="submit"
+                              disabled={!lastFmDraftUsername.trim()}
+                              className="rounded-full bg-[#dbe5ff] px-4 py-3 text-sm font-medium text-[#07111f] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              Connect
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleDemoMode}
+                    className="w-full rounded-[1.05rem] border border-dashed border-white/15 bg-white/[0.03] p-4 text-left transition-colors hover:border-white/25 hover:bg-white/[0.06]"
+                  >
+                    <div className="font-medium text-white">Try Demo</div>
+                    <p className="mt-2 text-sm leading-6 text-[#a6b2cf]">
+                      Use curated sample data to explore the interface before connecting your own history.
+                    </p>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {(status === 'fetching' || status === 'analyzing') && (
+          <div className="min-h-screen flex items-center justify-center px-6 py-20">
+            <div className={`${MUSIC_PANEL_CLASS} w-full max-w-xl p-8 md:p-10 text-center`}>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Building constellation</p>
+              <h2 className="mt-4 text-3xl md:text-4xl font-display tracking-tight text-white">
+                Mapping your listening universe
+              </h2>
+              <p className="mt-4 text-lg leading-7 text-[#dbe5ff] transition-opacity duration-500">
                 {analysisProgress}
               </p>
-            </div>
-            
-            {/* Progress bar */}
-            <div className="w-full h-px bg-[#e0e0e0] dark:bg-[#333] overflow-hidden">
-              <div 
-                className="h-full bg-[#1a1a1a] dark:bg-[#e0e0e0] transition-all duration-100 ease-linear"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Visualization View */}
-      {status === 'visualizing' && (
-        <div className="absolute inset-0">
-         <canvas 
-            ref={canvasRef}
-            className="w-full h-full cursor-crosshair"
-            onMouseMove={handleMouseMove}
-         />
-
-          {/* Reset button */}
-          <div className="absolute top-6 right-6">
-            <button 
-              onClick={clearData}
-              className="text-sm text-[#666] dark:text-[#999] hover:text-[#1a1a1a] dark:hover:text-[#e0e0e0] transition-colors"
-            >
-              Reset
-            </button>
-          </div>
-
-          {/* Listening insights */}
-          {insights && (
-            <div className="absolute top-20 left-6 w-[300px] bg-[#fafafa]/80 dark:bg-[#1a1a1a]/80 backdrop-blur border border-[#e0e0e0] dark:border-[#333] p-4 hidden lg:block">
-              <p className="text-xs uppercase tracking-[0.12em] text-[#666] dark:text-[#999]">Listening learnings</p>
-              <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] mt-3">
-                Dominant cluster: {insights.dominantCluster} ({insights.dominantClusterCount}/{insights.totalArtists} artists)
-              </p>
-              <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] mt-1">
-                Bridge artist: {insights.bridgeArtist}
-              </p>
-              <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0] mt-1">
-                Collaboration links: {insights.collaborationShare}% of network
-              </p>
-              <p className="text-xs text-[#666] dark:text-[#999] mt-3">
-                {insights.totalArtists} artists connected by {insights.totalLinks} relationship lines.
-              </p>
-            </div>
-          )}
-
-          {/* Legend */}
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 hidden md:flex gap-4 text-xs text-[#666] dark:text-[#999]">
-            {Object.entries(CONNECTION_COLORS).map(([type, color]) => (
-              <div key={type} className="flex items-center gap-1.5">
-                <div className="w-3 h-0.5" style={{ backgroundColor: color }}></div>
-                <span className="capitalize">{type}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="absolute top-12 left-1/2 -translate-x-1/2 hidden lg:flex gap-3 text-[11px] text-[#666] dark:text-[#999]">
-            {Object.entries(GROUP_LABELS).map(([groupId, label]) => (
-              <div key={groupId} className="flex items-center gap-1.5">
+              <div className="mt-8 h-2 overflow-hidden rounded-full bg-white/10">
                 <div
-                  className="w-2.5 h-2.5 rounded-sm"
-                  style={{ backgroundColor: NODE_GROUP_COLORS[Number(groupId)] || NODE_GROUP_COLORS[7] }}
+                  className="h-full rounded-full bg-[linear-gradient(90deg,#7dd3fc_0%,#38bdf8_45%,#c084fc_100%)] transition-all duration-100 ease-linear"
+                  style={{ width: `${progressPercent}%` }}
                 />
-                <span>{label}</span>
               </div>
-            ))}
+
+              <p className="mt-5 text-sm leading-6 text-[#8fa1c9]">
+                Pulling artists, finding clusters, then building the interaction layer so the graph stays readable once it appears.
+              </p>
+            </div>
           </div>
+        )}
 
-          {/* Hover Info */}
-          <div className="absolute bottom-6 right-6 pointer-events-none max-w-sm">
-            {hoveredNode && (
-              <div className="bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e0e0e0] dark:border-[#333] p-4">
-                {(() => {
-                  const artist = nodesRef.current.find(n => n.id === hoveredNode);
-                  return (
-                    <>
-                      <h3 className="text-xl font-normal text-[#1a1a1a] dark:text-[#e0e0e0]">{hoveredNode}</h3>
-                      <p className="text-sm text-[#666] dark:text-[#999] mt-1">
-                        {artist?.playcount?.toLocaleString() || 0} plays
-                      </p>
-                      <p className="text-sm text-[#666] dark:text-[#999] mt-2">
-                        Cluster: {artist?.primaryGenre || 'Eclectic'}
-                      </p>
-                      <p className="text-sm text-[#666] dark:text-[#999] mt-2">
-                        Favourite Album: {artist?.favoriteAlbum || 'Not available'}
-                      </p>
-                      <p className="text-sm text-[#666] dark:text-[#999]">
-                        Favourite Track: {artist?.favoriteTrack || 'Not available'}
-                      </p>
-                    </>
-                  );
-                })()}
-              </div>
-            )}
-            {hoveredLink && !hoveredNode && (
-              <div className="bg-[#fafafa] dark:bg-[#1a1a1a] border border-[#e0e0e0] dark:border-[#333] p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-3 h-0.5" style={{ backgroundColor: CONNECTION_COLORS[hoveredLink.type] }}></div>
-                  <span className="text-xs text-[#666] dark:text-[#999] capitalize">{hoveredLink.type}</span>
-                </div>
-                <p className="text-sm text-[#1a1a1a] dark:text-[#e0e0e0]">
-                  {hoveredLink.source} ↔ {hoveredLink.target}
+        {status === 'visualizing' && (
+          <div className="absolute inset-0">
+            <canvas
+              ref={canvasRef}
+              className="w-full h-full cursor-crosshair"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={() => {
+                setHoveredNode(null);
+                setHoveredLink(null);
+              }}
+              onClick={handleCanvasClick}
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,transparent_50%,rgba(3,7,18,0.28)_100%)]" />
+
+            <div className="absolute inset-x-4 top-16 z-[120] flex flex-col gap-3 lg:inset-x-6 lg:top-6 xl:flex-row xl:items-start xl:justify-between">
+              <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto max-w-[30rem] p-4 md:p-5`}>
+                <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">{providerLabel}</p>
+                <h1 className="mt-2 text-2xl md:text-3xl font-display tracking-tight text-white">
+                  We Have the Right to Music
+                </h1>
+                <p className="mt-3 text-sm md:text-base leading-6 text-[#a6b2cf]">
+                  Larger stars mean more listening. Color marks the cluster. Click any artist to lock it, then follow the strongest links outward.
                 </p>
-                <p className="text-sm text-[#666] dark:text-[#999] mt-1">{hoveredLink.reason}</p>
-                </div>
-            )}
-         </div>
+              </div>
 
-          {/* Title */}
-          <div className="absolute bottom-6 left-6 pointer-events-none hidden md:block">
-            <h1 className="text-4xl font-normal text-[#1a1a1a]/10 dark:text-[#e0e0e0]/10 tracking-tight">
-              We have the right to music
-            </h1>
-         </div>
+              <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto w-full xl:max-w-[32rem] p-4 md:p-5`}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">Explore</p>
+                    <p className="mt-1 text-sm text-[#dbe5ff]">Search for an artist or narrow the map by cluster.</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowGuide((current) => !current)}
+                      className="rounded-full border border-white/10 px-3 py-2 text-xs uppercase tracking-[0.14em] text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                    >
+                      {showGuide ? 'Hide guide' : 'Show guide'}
+                    </button>
+                    <button
+                      onClick={clearData}
+                      className="rounded-full border border-white/10 px-3 py-2 text-xs uppercase tracking-[0.14em] text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSearchSubmit} className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <input
+                    type="text"
+                    list="soundmind-artist-search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search an artist"
+                    className="min-w-0 flex-1 rounded-full border border-white/10 bg-[#050d19] px-4 py-3 text-sm text-white placeholder:text-[#7382a4] outline-none transition-colors focus:border-[#7dd3fc]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!searchQuery.trim()}
+                    className="rounded-full bg-[#dbe5ff] px-4 py-3 text-sm font-medium text-[#07111f] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Focus artist
+                  </button>
+                  <datalist id="soundmind-artist-search">
+                    {sortedNodes.map((node) => (
+                      <option key={node.id} value={node.id} />
+                    ))}
+                  </datalist>
+                </form>
+
+                {searchQuery.trim() && searchResults.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {searchResults.slice(0, 5).map((node) => (
+                      <button
+                        key={node.id}
+                        onClick={() => handleNodeSelection(node.id)}
+                        className="rounded-full border border-white/10 px-3 py-1.5 text-sm text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                      >
+                        {node.id}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleGroupFilterSelect('all')}
+                    className={`rounded-full border px-3 py-2 text-sm transition-colors ${
+                      activeGroupFilter === 'all'
+                        ? 'border-[#7dd3fc] bg-[#0d1b30] text-white'
+                        : 'border-white/10 text-[#a6b2cf] hover:border-white/20 hover:bg-white/[0.05]'
+                    }`}
+                  >
+                    All clusters ({graphData?.nodes.length || 0})
+                  </button>
+                  {Object.entries(GROUP_LABELS).map(([groupId, label]) => {
+                    const numericGroupId = Number(groupId);
+                    return (
+                      <button
+                        key={groupId}
+                        onClick={() => handleGroupFilterSelect(numericGroupId)}
+                        className={`rounded-full border px-3 py-2 text-sm transition-colors ${
+                          activeGroupFilter === numericGroupId
+                            ? 'border-[#7dd3fc] bg-[#0d1b30] text-white'
+                            : 'border-white/10 text-[#a6b2cf] hover:border-white/20 hover:bg-white/[0.05]'
+                        }`}
+                      >
+                        {label} ({groupCounts.get(numericGroupId) || 0})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute inset-x-4 bottom-4 z-[120] grid gap-3 lg:inset-x-6 lg:grid-cols-[1.05fr_0.95fr]">
+              <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto p-4 md:p-5`}>
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">{activeGroupLabel}</p>
+                    <h2 className="mt-1 text-xl font-medium tracking-tight text-white">
+                      {activeGroupCount} artist{activeGroupCount === 1 ? '' : 's'} in view
+                    </h2>
+                  </div>
+                  <p className="max-w-xs text-sm leading-6 text-[#a6b2cf]">
+                    Click empty space to clear focus. Hover links to see why two artists are connected.
+                  </p>
+                </div>
+
+                {showGuide && (
+                  <div className="mt-4 grid gap-3 md:grid-cols-3">
+                    <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Size</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Bigger stars represent heavier listening weight.</p>
+                    </div>
+                    <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Color</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Each color is a taste cluster, not a strict genre box.</p>
+                    </div>
+                    <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Lines</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Stronger direct links surface once you focus an artist.</p>
+                    </div>
+                  </div>
+                )}
+
+                {insights && (
+                  <div className="mt-4 grid gap-3 md:grid-cols-3">
+                    <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Dominant cluster</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
+                        {insights.dominantCluster} ({insights.dominantClusterCount}/{insights.totalArtists})
+                      </p>
+                    </div>
+                    <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Bridge artist</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">{insights.bridgeArtist}</p>
+                    </div>
+                    <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
+                      <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Collaboration share</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">{insights.collaborationShare}% of links</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">Quick picks</p>
+                  <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                    {visibleQuickPicks.map((node) => (
+                      <button
+                        key={node.id}
+                        onClick={() => handleNodeSelection(node.id, { preserveGroup: true })}
+                        className={`shrink-0 rounded-full border px-3 py-2 text-sm transition-colors ${
+                          selectedNode === node.id
+                            ? 'border-[#7dd3fc] bg-[#0d1b30] text-white'
+                            : 'border-white/10 text-[#dbe5ff] hover:border-white/20 hover:bg-white/[0.05]'
+                        }`}
+                      >
+                        {node.id}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {hoveredLink && !activeArtist && (
+                  <div className={`${MUSIC_SUBPANEL_CLASS} mt-4 p-4`}>
+                    <div className="flex items-center gap-2">
+                      <div className="h-0.5 w-4" style={{ backgroundColor: CONNECTION_COLORS[hoveredLink.type] }} />
+                      <span className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">{hoveredLink.type}</span>
+                    </div>
+                    <p className="mt-3 text-sm text-white">
+                      {hoveredLink.source} ↔ {hoveredLink.target}
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-[#a6b2cf]">{hoveredLink.reason}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto p-4 md:p-5`}>
+                {activeArtist ? (
+                  <>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">
+                          {selectedNode ? 'Selected artist' : 'Hovered artist'}
+                        </p>
+                        <h2 className="mt-2 text-2xl md:text-3xl font-display tracking-tight text-white">
+                          {activeArtist.id}
+                        </h2>
+                      </div>
+                      {selectedNode && (
+                        <button
+                          onClick={() => {
+                            setSelectedNode(null);
+                            setHoveredNode(null);
+                          }}
+                          className="rounded-full border border-white/10 px-3 py-2 text-xs uppercase tracking-[0.14em] text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                        >
+                          Clear selection
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                        <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Listening weight</p>
+                        <p className="mt-2 text-lg text-white">
+                          {(activeArtist.playcount || 0).toLocaleString()} plays
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-[#a6b2cf]">Cluster: {activeArtist.primaryGenre || 'Eclectic'}</p>
+                      </div>
+                      <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                        <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Most associated with</p>
+                        <p className="mt-2 text-sm leading-6 text-white">
+                          Album: {activeArtist.favoriteAlbum || 'Not available'}
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-white">
+                          Track: {activeArtist.favoriteTrack || 'Not available'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className={`${MUSIC_SUBPANEL_CLASS} mt-4 p-4`}>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">Closest connections</p>
+                        <p className="text-xs uppercase tracking-[0.14em] text-[#7382a4]">
+                          {activeArtistConnections.length} shown
+                        </p>
+                      </div>
+
+                      <div className="mt-3 space-y-2">
+                        {activeArtistConnections.length > 0 ? (
+                          activeArtistConnections.map((connection) => (
+                            <button
+                              key={`${connection.source}-${connection.target}-${connection.type}`}
+                              onClick={() => handleNodeSelection(connection.counterpart)}
+                              className="w-full rounded-[0.95rem] border border-white/10 bg-white/[0.03] p-3 text-left transition-colors hover:border-white/20 hover:bg-white/[0.06]"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <p className="font-medium text-white">{connection.counterpart}</p>
+                                  <p className="mt-1 text-sm leading-6 text-[#a6b2cf]">{connection.reason}</p>
+                                </div>
+                                <span
+                                  className="shrink-0 rounded-full px-2 py-1 text-[11px] uppercase tracking-[0.14em] text-white"
+                                  style={{ backgroundColor: hexToRgba(CONNECTION_COLORS[connection.type], 0.22) }}
+                                >
+                                  {connection.type}
+                                </span>
+                              </div>
+                            </button>
+                          ))
+                        ) : (
+                          <p className="text-sm leading-6 text-[#a6b2cf]">
+                            Direct connection details are not available for this artist yet.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">Detail panel</p>
+                    <h2 className="mt-2 text-2xl font-display tracking-tight text-white">
+                      Pick an artist to make the map legible.
+                    </h2>
+                    <p className="mt-3 text-sm md:text-base leading-6 text-[#a6b2cf]">
+                      Search by name, click a star, or start from a quick pick. Once selected, this panel shows listening weight, cluster, favorite album or track, and the strongest direct connections.
+                    </p>
+
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                        <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Best first move</p>
+                        <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
+                          Start with one of the large stars or use search if you already have someone in mind.
+                        </p>
+                      </div>
+                      <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
+                        <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">When filtering helps</p>
+                        <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
+                          Use cluster filters when the full network is interesting but too broad to read in one pass.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      )}
     </div>
   );
 };
