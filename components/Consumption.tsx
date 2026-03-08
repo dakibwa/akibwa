@@ -8,10 +8,9 @@ const MAX_LETTERBOXD_PAGES = 80;
 
 interface MediaItem {
   id: string;
-  type: 'album' | 'book' | 'film';
+  type: 'album' | 'film';
   title: string;
   artist?: string;
-  author?: string;
   director?: string;
   year?: string;
   masterpiece?: boolean;
@@ -22,28 +21,29 @@ interface MediaItem {
   liked?: boolean;
 }
 
-type FilterType = 'all' | 'album' | 'book' | 'film' | 'masterpiece';
+type FilterType = 'all' | 'album' | 'film' | 'masterpiece';
 
 const DEFAULT_USERNAMES = {
   letterboxd: 'Akibwa',
-  goodreads: 'Akibwa',
   lastfm: 'akibwa',
 };
 
-const CACHE_VERSION = '8';
+const CACHE_VERSION = '9';
 
 const normaliseText = (value: string) => value.trim().replace(/\s+/g, ' ').toLowerCase();
 
-const getCreatorValue = (item: Pick<MediaItem, 'artist' | 'author' | 'director'>) =>
-  item.artist || item.author || item.director || '';
+const getCreatorValue = (item: Pick<MediaItem, 'artist' | 'director'>) => item.artist || item.director || '';
 
-const createMediaId = (
-  item: Pick<MediaItem, 'type' | 'title' | 'artist' | 'author' | 'director' | 'year' | 'link'>
-) => {
-  const linkKey =
-    item.type === 'film' && item.link
-      ? new URL(item.link, LETTERBOXD_BASE_URL).pathname.replace(/\/$/, '')
-      : '';
+const createMediaId = (item: Pick<MediaItem, 'type' | 'title' | 'artist' | 'director' | 'year' | 'link'>) => {
+  let linkKey = '';
+
+  if (item.type === 'film' && item.link) {
+    try {
+      linkKey = new URL(item.link, LETTERBOXD_BASE_URL).pathname.replace(/\/$/, '');
+    } catch {
+      linkKey = item.link;
+    }
+  }
 
   return [
     item.type,
@@ -71,7 +71,7 @@ const normaliseImageUrl = (value: string) => {
   const resolved = value.startsWith('//') ? `https:${value}` : value;
   if (resolved.includes('empty-poster')) return '';
 
-  return resolved.replace(/-0-\d+-0-\d+/, '-0-230-0-345');
+  return resolved.replace(/-0-\d+-0-\d+/, '-0-460-0-460');
 };
 
 const parseStarRating = (value: string) => {
@@ -92,27 +92,29 @@ const parseTenPointRating = (value: string | null) => {
   return Math.max(0.5, Math.min(5, parsed / 2));
 };
 
-const mergeMediaItems = (existing: MediaItem, incoming: MediaItem): MediaItem => {
-  const rating = incoming.rating ?? existing.rating;
+const rankItem = (item: MediaItem) =>
+  (item.masterpiece ? 100000 : 0) + (item.playcount || 0) + (item.rating || 0) * 90 + (item.liked ? 20 : 0);
 
-  return {
+const mergeMediaItems = (existing: MediaItem, incoming: MediaItem): MediaItem => {
+  const merged: MediaItem = {
     ...existing,
     ...incoming,
-    id: createMediaId(existing),
     artist: incoming.artist || existing.artist,
-    author: incoming.author || existing.author,
     director: incoming.director || existing.director,
     year: incoming.year || existing.year,
     imageUrl: incoming.imageUrl || existing.imageUrl,
     link: incoming.link || existing.link,
-    rating,
+    rating: incoming.rating ?? existing.rating,
     playcount: Math.max(existing.playcount || 0, incoming.playcount || 0) || undefined,
     liked: Boolean(existing.liked || incoming.liked),
-    masterpiece: Boolean(existing.masterpiece || incoming.masterpiece || rating === 5),
+    masterpiece: Boolean(existing.masterpiece || incoming.masterpiece || incoming.rating === 5 || existing.rating === 5),
   };
+
+  merged.id = createMediaId(merged);
+  return merged;
 };
 
-const dedupeAndRankItems = (items: MediaItem[]): MediaItem[] => {
+const dedupeAndRankItems = (items: MediaItem[]) => {
   const map = new Map<string, MediaItem>();
 
   items.forEach((item) => {
@@ -127,11 +129,7 @@ const dedupeAndRankItems = (items: MediaItem[]): MediaItem[] => {
     map.set(key, mergeMediaItems(existing, item));
   });
 
-  return Array.from(map.values()).sort((left, right) => {
-    const leftScore = (left.masterpiece ? 100000 : 0) + (left.playcount || 0) + (left.rating || 0) * 100 + (left.liked ? 25 : 0);
-    const rightScore = (right.masterpiece ? 100000 : 0) + (right.playcount || 0) + (right.rating || 0) * 100 + (right.liked ? 25 : 0);
-    return rightScore - leftScore;
-  });
+  return Array.from(map.values()).sort((left, right) => rankItem(right) - rankItem(left));
 };
 
 const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
@@ -139,10 +137,10 @@ const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
 
   const albums: MediaItem[] = [];
 
-  for (let page = 1; page <= 3; page++) {
+  for (let page = 1; page <= 3; page += 1) {
     const url = `https://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user=${username}&api_key=${LASTFM_API_KEY}&format=json&limit=500&period=overall&page=${page}`;
-    const res = await fetch(url);
-    const data = await res.json();
+    const response = await fetch(url);
+    const data = await response.json();
 
     if (!data.topalbums?.album?.length) break;
 
@@ -160,7 +158,7 @@ const fetchLastFmAlbums = async (username: string): Promise<MediaItem[]> => {
         title: album.name,
         artist: album.artist?.name,
         playcount,
-        imageUrl: album.image?.[3]?.['#text'] || album.image?.[2]?.['#text'] || '',
+        imageUrl: album.image?.[4]?.['#text'] || album.image?.[3]?.['#text'] || album.image?.[2]?.['#text'] || '',
         link: album.url,
         masterpiece: playcount >= 500,
       });
@@ -182,23 +180,17 @@ const fetchTextThroughProxy = async (url: string) => {
 };
 
 const extractLetterboxdItemsFromDocument = (document: Document, liked: boolean) => {
-  const posters = Array.from(
-    document.querySelectorAll<HTMLElement>('li.poster-container, .poster-container')
-  );
-
+  const posters = Array.from(document.querySelectorAll<HTMLElement>('li.poster-container, .poster-container'));
   const results: MediaItem[] = [];
   const seen = new Set<string>();
 
-  posters.forEach((poster, index) => {
+  posters.forEach((poster) => {
     const posterNode =
       poster.querySelector<HTMLElement>('.really-lazy-load, .film-poster, [data-target-link]') || poster;
     const anchor = poster.querySelector<HTMLAnchorElement>('a[href*="/film/"]');
     const image = poster.querySelector<HTMLImageElement>('img');
 
-    const href =
-      posterNode.getAttribute('data-target-link') ||
-      anchor?.getAttribute('href') ||
-      '';
+    const href = posterNode.getAttribute('data-target-link') || anchor?.getAttribute('href') || '';
     const title =
       image?.getAttribute('alt')?.trim() ||
       anchor?.getAttribute('title')?.trim() ||
@@ -207,6 +199,7 @@ const extractLetterboxdItemsFromDocument = (document: Document, liked: boolean) 
 
     if (!href || !title) return;
 
+    const resolvedLink = new URL(href, LETTERBOXD_BASE_URL).toString();
     const rating =
       parseTenPointRating(poster.getAttribute('data-owner-rating')) ||
       parseTenPointRating(posterNode.getAttribute('data-owner-rating')) ||
@@ -223,11 +216,11 @@ const extractLetterboxdItemsFromDocument = (document: Document, liked: boolean) 
     );
 
     const item: MediaItem = {
-      id: createMediaId({ type: 'film', title }),
+      id: createMediaId({ type: 'film', title, link: resolvedLink }),
       type: 'film',
       title,
       imageUrl,
-      link: new URL(href, LETTERBOXD_BASE_URL).toString(),
+      link: resolvedLink,
       rating,
       liked,
       masterpiece: rating === 5,
@@ -235,27 +228,28 @@ const extractLetterboxdItemsFromDocument = (document: Document, liked: boolean) 
 
     if (seen.has(item.id)) return;
     seen.add(item.id);
-
     results.push(item);
   });
 
   if (results.length > 0) return results;
 
   const fallbackAnchors = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href*="/film/"]'));
-  fallbackAnchors.forEach((anchor, index) => {
+  fallbackAnchors.forEach((anchor) => {
     const href = anchor.getAttribute('href') || '';
     const title = anchor.getAttribute('title')?.trim() || anchor.textContent?.trim() || '';
+
     if (!href || !title || title.length > 120 || !href.startsWith('/film/')) return;
 
-    const key = createMediaId({ type: 'film', title });
+    const resolvedLink = new URL(href, LETTERBOXD_BASE_URL).toString();
+    const key = createMediaId({ type: 'film', title, link: resolvedLink });
     if (seen.has(key)) return;
-    seen.add(key);
 
+    seen.add(key);
     results.push({
-      id: `${key}:${index}`,
+      id: key,
       type: 'film',
       title,
-      link: new URL(href, LETTERBOXD_BASE_URL).toString(),
+      link: resolvedLink,
       liked,
     });
   });
@@ -307,39 +301,17 @@ const fetchLetterboxdFilms = async (username: string): Promise<MediaItem[]> => {
   return dedupeAndRankItems([...watchedFilms, ...likedFilms]);
 };
 
-const fetchGoodreadsBooks = async (userId: string): Promise<MediaItem[]> => {
-  if (!userId) return [];
-
-  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/review/list_rss/${userId}?shelf=read&count=500`;
-  const res = await fetch(proxyUrl);
-  const data = await res.json();
-
-  if (!Array.isArray(data.items)) return [];
-
-  return data.items.map((item: any) => {
-    const authorMatch = item.description?.match(/author: ([^<]+)/i) || item.description?.match(/by ([^<]+)/i);
-    const ratingMatch = item.description?.match(/rating: (\d)/i) || item.description?.match(/(\d) of 5 stars/i);
-    const imageMatch = item.description?.match(/src="([^"]+)"/);
-    const rating = ratingMatch ? Number.parseInt(ratingMatch[1], 10) : undefined;
-
-    return {
-      id: createMediaId({
-        type: 'book',
-        title: item.title,
-        author: authorMatch?.[1]?.trim(),
-      }),
-      type: 'book' as const,
-      title: item.title,
-      author: authorMatch?.[1]?.trim(),
-      link: item.link,
-      imageUrl: imageMatch?.[1],
-      rating,
-      masterpiece: rating === 5,
-    };
-  });
-};
-
-const MediaArtwork: React.FC<{ item: MediaItem }> = ({ item }) => {
+const MediaArtwork: React.FC<{
+  item: MediaItem;
+  className?: string;
+  imageClassName?: string;
+  fallbackClassName?: string;
+}> = ({
+  item,
+  className = 'relative aspect-square overflow-hidden bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center',
+  imageClassName = 'absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03]',
+  fallbackClassName = 'text-3xl font-light opacity-30',
+}) => {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -351,15 +323,13 @@ const MediaArtwork: React.FC<{ item: MediaItem }> = ({ item }) => {
   const showImage = Boolean(item.imageUrl) && !failed;
 
   return (
-    <div className="aspect-square mb-3 overflow-hidden bg-[#ece8de] dark:bg-[#22201b] relative flex items-center justify-center">
+    <div className={className}>
       {showImage ? (
         <img
           key={item.imageUrl}
           src={item.imageUrl}
           alt={item.title}
-          className={`absolute inset-0 w-full h-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
-            loaded ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`${imageClassName} ${loaded ? 'opacity-100' : 'opacity-0'}`}
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
@@ -371,11 +341,38 @@ const MediaArtwork: React.FC<{ item: MediaItem }> = ({ item }) => {
         />
       ) : null}
 
-      {(!showImage || !loaded) && (
-        <span className="text-3xl font-light opacity-30">{item.title.charAt(0)}</span>
-      )}
+      {(!showImage || !loaded) && <span className={fallbackClassName}>{item.title.charAt(0)}</span>}
     </div>
   );
+};
+
+const getTypeLabel = (type: MediaItem['type']) => (type === 'album' ? 'Album' : 'Film');
+
+const getSignalLabel = (item: MediaItem) => {
+  if (item.playcount) return `${item.playcount.toLocaleString()} listens`;
+  if (item.rating) return `${'★'.repeat(Math.floor(item.rating))}${item.rating % 1 !== 0 ? '½' : ''}`;
+  if (item.liked) return 'Liked';
+  return null;
+};
+
+const getStampColor = (item: MediaItem) => {
+  if (item.masterpiece) return 'border-[#d6b970] dark:border-[#b79a56]';
+  return item.type === 'album'
+    ? 'border-[#7aa2b8] dark:border-[#6f9ab1]'
+    : 'border-[#7aaf89] dark:border-[#6f9f7d]';
+};
+
+const getFilterColor = (filter: FilterType) => {
+  switch (filter) {
+    case 'album':
+      return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
+    case 'film':
+      return 'border-[#7aaf89] dark:border-[#6f9f7d]';
+    case 'masterpiece':
+      return 'border-[#d6b970] dark:border-[#b79a56]';
+    default:
+      return 'border-[#d8d3c8] dark:border-[#35312a]';
+  }
 };
 
 const Consumption: React.FC = () => {
@@ -384,27 +381,23 @@ const Consumption: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState({
     letterboxd: false,
-    goodreads: false,
     lastfm: false,
   });
-
   const [showSettings, setShowSettings] = useState(false);
   const [letterboxdUser, setLetterboxdUser] = useState(DEFAULT_USERNAMES.letterboxd);
-  const [goodreadsUser, setGoodreadsUser] = useState(DEFAULT_USERNAMES.goodreads);
   const [lastfmUser, setLastfmUser] = useState(DEFAULT_USERNAMES.lastfm);
 
   useEffect(() => {
     const savedLetterboxd = localStorage.getItem('dakibwa_letterboxd_user');
-    const savedGoodreads = localStorage.getItem('dakibwa_goodreads_user');
     const savedLastfm = localStorage.getItem('dakibwa_lastfm_user');
 
     if (savedLetterboxd) setLetterboxdUser(savedLetterboxd);
-    if (savedGoodreads) setGoodreadsUser(savedGoodreads);
     if (savedLastfm) setLastfmUser(savedLastfm);
 
     const savedVersion = localStorage.getItem('dakibwa_consumption_version');
     if (savedVersion !== CACHE_VERSION) {
       localStorage.removeItem('dakibwa_consumption_items');
+      localStorage.removeItem('dakibwa_goodreads_user');
       localStorage.setItem('dakibwa_consumption_version', CACHE_VERSION);
       return;
     }
@@ -420,52 +413,49 @@ const Consumption: React.FC = () => {
     }
   }, []);
 
-  const hasAnyConnection = Boolean(letterboxdUser || goodreadsUser || lastfmUser);
+  const hasAnyConnection = Boolean(letterboxdUser || lastfmUser);
 
   const fetchAllData = useCallback(async () => {
     if (!hasAnyConnection) return;
 
     setLoading(true);
 
-    const jobs: Array<Promise<{ source: 'lastfm' | 'letterboxd' | 'goodreads'; items: MediaItem[] }>> = [];
+    try {
+      const jobs: Array<Promise<{ source: 'lastfm' | 'letterboxd'; items: MediaItem[] }>> = [];
 
-    if (lastfmUser && LASTFM_API_KEY) {
-      jobs.push(fetchLastFmAlbums(lastfmUser).then((data) => ({ source: 'lastfm' as const, items: data })));
-    }
-
-    if (letterboxdUser) {
-      jobs.push(fetchLetterboxdFilms(letterboxdUser).then((data) => ({ source: 'letterboxd' as const, items: data })));
-    }
-
-    if (goodreadsUser) {
-      jobs.push(fetchGoodreadsBooks(goodreadsUser).then((data) => ({ source: 'goodreads' as const, items: data })));
-    }
-
-    const settled = await Promise.allSettled(jobs);
-    const nextConnected = { letterboxd: false, goodreads: false, lastfm: false };
-    const allItems: MediaItem[] = [];
-
-    settled.forEach((result) => {
-      if (result.status !== 'fulfilled') return;
-      const { source, items: sourceItems } = result.value;
-
-      if (sourceItems.length > 0) {
-        nextConnected[source] = true;
+      if (lastfmUser && LASTFM_API_KEY) {
+        jobs.push(fetchLastFmAlbums(lastfmUser).then((data) => ({ source: 'lastfm' as const, items: data })));
       }
 
-      allItems.push(...sourceItems);
-    });
+      if (letterboxdUser) {
+        jobs.push(
+          fetchLetterboxdFilms(letterboxdUser).then((data) => ({ source: 'letterboxd' as const, items: data }))
+        );
+      }
 
-    if (nextConnected.lastfm) localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
-    if (nextConnected.letterboxd) localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
-    if (nextConnected.goodreads) localStorage.setItem('dakibwa_goodreads_user', goodreadsUser);
+      const settled = await Promise.allSettled(jobs);
+      const nextConnected = { letterboxd: false, lastfm: false };
+      const allItems: MediaItem[] = [];
 
-    const normalizedItems = dedupeAndRankItems(allItems);
-    setConnected(nextConnected);
-    setItems(normalizedItems);
-    localStorage.setItem('dakibwa_consumption_items', JSON.stringify(normalizedItems));
-    setLoading(false);
-  }, [goodreadsUser, hasAnyConnection, lastfmUser, letterboxdUser]);
+      settled.forEach((result) => {
+        if (result.status !== 'fulfilled') return;
+
+        const { source, items: sourceItems } = result.value;
+        if (sourceItems.length > 0) nextConnected[source] = true;
+        allItems.push(...sourceItems);
+      });
+
+      const normalizedItems = dedupeAndRankItems(allItems);
+      setConnected(nextConnected);
+      setItems(normalizedItems);
+
+      localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
+      localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
+      localStorage.setItem('dakibwa_consumption_items', JSON.stringify(normalizedItems));
+    } finally {
+      setLoading(false);
+    }
+  }, [hasAnyConnection, lastfmUser, letterboxdUser]);
 
   useEffect(() => {
     if (items.length === 0 && hasAnyConnection) {
@@ -473,228 +463,304 @@ const Consumption: React.FC = () => {
     }
   }, [fetchAllData, hasAnyConnection, items.length]);
 
+  const albumItems = useMemo(
+    () => [...items.filter((item) => item.type === 'album')].sort((left, right) => (right.playcount || 0) - (left.playcount || 0)),
+    [items]
+  );
+  const filmItems = useMemo(() => items.filter((item) => item.type === 'film'), [items]);
+  const topAlbums = useMemo(() => albumItems.slice(0, 6), [albumItems]);
+  const leadAlbum = topAlbums[0] || null;
+  const supportingAlbums = topAlbums.slice(1);
+
   const filteredItems = useMemo(() => {
     if (filter === 'all') return items;
     if (filter === 'masterpiece') return items.filter((item) => item.masterpiece);
     return items.filter((item) => item.type === filter);
   }, [filter, items]);
 
-  const getCreator = (item: MediaItem) => getCreatorValue(item);
-
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'album':
-        return 'Album';
-      case 'book':
-        return 'Book';
-      case 'film':
-        return 'Film';
-      default:
-        return type;
-    }
-  };
-
-  const getStampColor = (type: string, isMasterpiece?: boolean) => {
-    if (isMasterpiece) return 'border-[#d6b970] dark:border-[#b79a56]';
-    switch (type) {
-      case 'album':
-        return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
-      case 'film':
-        return 'border-[#7aaf89] dark:border-[#6f9f7d]';
-      case 'book':
-        return 'border-[#c49383] dark:border-[#a97e70]';
-      default:
-        return 'border-[#d8d3c8] dark:border-[#35312a]';
-    }
-  };
-
-  const getFilterColor = (key: FilterType) => {
-    switch (key) {
-      case 'album':
-        return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
-      case 'film':
-        return 'border-[#7aaf89] dark:border-[#6f9f7d]';
-      case 'book':
-        return 'border-[#c49383] dark:border-[#a97e70]';
-      case 'masterpiece':
-        return 'border-[#d6b970] dark:border-[#b79a56]';
-      default:
-        return 'border-[#d8d3c8] dark:border-[#35312a]';
-    }
-  };
-
-  const getSignalLabel = (item: MediaItem) => {
-    if (item.rating) {
-      return `${'★'.repeat(Math.floor(item.rating))}${item.rating % 1 !== 0 ? '½' : ''}`;
+  const featuredAlbumIds = useMemo(() => new Set(topAlbums.map((album) => album.id)), [topAlbums]);
+  const galleryItems = useMemo(() => {
+    if (filter === 'all' || filter === 'album') {
+      return filteredItems.filter((item) => !featuredAlbumIds.has(item.id));
     }
 
-    if (item.liked) {
-      return 'Liked';
-    }
+    return filteredItems;
+  }, [featuredAlbumIds, filter, filteredItems]);
 
-    if (item.playcount) {
-      return `${item.playcount.toLocaleString()} listens`;
-    }
+  const totalAlbumListens = useMemo(
+    () => albumItems.reduce((sum, item) => sum + (item.playcount || 0), 0),
+    [albumItems]
+  );
+  const masterpieceCount = useMemo(() => items.filter((item) => item.masterpiece).length, [items]);
 
-    return null;
-  };
-
-  const filters: { key: FilterType; label: string }[] = [
+  const filters: Array<{ key: FilterType; label: string }> = [
     { key: 'all', label: 'All' },
     { key: 'album', label: 'Albums' },
     { key: 'film', label: 'Films' },
-    { key: 'book', label: 'Books' },
     { key: 'masterpiece', label: 'Masterpieces' },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="surface-panel rounded-xl px-4 py-3 flex items-center justify-between gap-4">
-        <div className="text-sm text-[#696257] dark:text-[#a89d88]">
-          {loading ? 'Syncing your libraries...' : `${filteredItems.length} items`}
+    <div className="space-y-8">
+      <div className="surface-panel flex flex-wrap items-center justify-between gap-4 rounded-[1.4rem] px-5 py-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Library</p>
+          <p className="mt-1 text-sm text-[#696257] dark:text-[#a89d88]">
+            {loading ? 'Syncing your listening and watching...' : `${items.length} pieces in view`}
+          </p>
         </div>
+
         <button
-          onClick={() => setShowSettings((prev) => !prev)}
-          className="text-xs uppercase tracking-[0.12em] text-[#696257] dark:text-[#a89d88] hover:text-[#205c5a] dark:hover:text-[#79b7ab] transition-colors"
+          onClick={() => setShowSettings((current) => !current)}
+          className="text-xs uppercase tracking-[0.14em] text-[#696257] transition-colors hover:text-[#205c5a] dark:text-[#a89d88] dark:hover:text-[#79b7ab]"
         >
-          {showSettings ? 'Close' : 'Connect your services'}
+          {showSettings ? 'Close sources' : 'Edit sources'}
         </button>
       </div>
 
       {showSettings && (
-        <div className="surface-panel rounded-xl p-6 space-y-4">
-          <p className="text-sm text-[#696257] dark:text-[#a89d88]">
-            Pull in your music, books, and films. Letterboxd now tries to walk every watched and liked film page, then keeps your rating when one exists.
-          </p>
+        <div className="surface-panel rounded-[1.6rem] p-6">
+          <div className="max-w-2xl">
+            <p className="text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
+              Pull albums from Last.fm and films from Letterboxd. The film import walks watched pages and liked pages, then
+              keeps your rating when Letterboxd exposes one.
+            </p>
+          </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="mt-6 grid gap-5 md:grid-cols-2">
             <div>
-              <label className="block text-sm text-[#696257] dark:text-[#a89d88] mb-1">Last.fm Username</label>
+              <label className="mb-1 block text-sm text-[#696257] dark:text-[#a89d88]">Last.fm username</label>
               <input
                 type="text"
                 value={lastfmUser}
-                onChange={(e) => setLastfmUser(e.target.value.trim())}
-                placeholder="e.g., dakibwa"
-                className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
+                onChange={(event) => setLastfmUser(event.target.value.trim())}
+                placeholder="e.g. akibwa"
+                className="w-full border-b border-[#d8d3c8] bg-transparent py-2 text-sm outline-none transition-colors focus:border-[#205c5a] dark:border-[#35312a] dark:focus:border-[#79b7ab]"
               />
-              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Albums with fewer than 5 listens are excluded.</p>
+              <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Albums with fewer than 5 listens stay out of the gallery.</p>
             </div>
 
             <div>
-              <label className="block text-sm text-[#696257] dark:text-[#a89d88] mb-1">Letterboxd Username</label>
+              <label className="mb-1 block text-sm text-[#696257] dark:text-[#a89d88]">Letterboxd username</label>
               <input
                 type="text"
                 value={letterboxdUser}
-                onChange={(e) => setLetterboxdUser(e.target.value.trim())}
-                placeholder="e.g., dakibwa"
-                className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
+                onChange={(event) => setLetterboxdUser(event.target.value.trim())}
+                placeholder="e.g. Akibwa"
+                className="w-full border-b border-[#d8d3c8] bg-transparent py-2 text-sm outline-none transition-colors focus:border-[#205c5a] dark:border-[#35312a] dark:focus:border-[#79b7ab]"
               />
-              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Imports watched films plus liked films, not just the RSS feed.</p>
-            </div>
-
-            <div>
-              <label className="block text-sm text-[#696257] dark:text-[#a89d88] mb-1">Goodreads User ID</label>
-              <input
-                type="text"
-                value={goodreadsUser}
-                onChange={(e) => setGoodreadsUser(e.target.value.trim())}
-                placeholder="e.g., 12345678"
-                className="w-full bg-transparent border-b border-[#d8d3c8] dark:border-[#35312a] py-2 text-sm outline-none focus:border-[#2a5b53] dark:focus:border-[#7ab2a8]"
-              />
-              <p className="text-xs text-[#8a8378] dark:text-[#8f8575] mt-1">Find this in your profile URL.</p>
+              <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Imports watched films and liked films, not just the short feed.</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <button
               onClick={fetchAllData}
               disabled={loading || !hasAnyConnection}
-              className="text-sm text-[#1c1a17] dark:text-[#e8e2d6] hover:opacity-70 transition-opacity disabled:opacity-30"
+              className="text-sm text-[#1c1a17] transition-opacity hover:opacity-70 disabled:opacity-30 dark:text-[#e8e2d6]"
             >
-              {loading ? 'Fetching...' : 'Sync now'}
+              {loading ? 'Syncing...' : 'Sync now'}
             </button>
             <div className="flex items-center gap-2 text-xs text-[#8a8378] dark:text-[#8f8575]">
-              <span className={connected.lastfm ? 'text-[#2a5b53] dark:text-[#7ab2a8]' : ''}>Last.fm</span>
+              <span className={connected.lastfm ? 'text-[#205c5a] dark:text-[#79b7ab]' : ''}>Last.fm</span>
               <span>•</span>
-              <span className={connected.letterboxd ? 'text-[#2a5b53] dark:text-[#7ab2a8]' : ''}>Letterboxd</span>
-              <span>•</span>
-              <span className={connected.goodreads ? 'text-[#2a5b53] dark:text-[#7ab2a8]' : ''}>Goodreads</span>
+              <span className={connected.letterboxd ? 'text-[#205c5a] dark:text-[#79b7ab]' : ''}>Letterboxd</span>
             </div>
           </div>
         </div>
       )}
 
-      <div className="flex justify-end flex-wrap gap-2">
-        {filters.map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setFilter(key)}
-            className={`px-3 py-1 text-sm rounded-full transition-all border ${
-              filter === key
-                ? `${getFilterColor(key)} bg-[#1c1a17]/5 dark:bg-white/10 text-[#1c1a17] dark:text-[#e8e2d6]`
-                : `${getFilterColor(key)} bg-transparent text-[#6a655d] dark:text-[#a49a88] hover:bg-[#1c1a17]/5 dark:hover:bg-white/5`
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {loading && filteredItems.length === 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {Array.from({ length: 12 }).map((_, idx) => (
-            <div key={idx} className="border border-[#d8d3c8] dark:border-[#35312a] p-3 animate-pulse">
-              <div className="aspect-square mb-3 bg-[#ece8de] dark:bg-[#22201b]" />
-              <div className="h-3 w-4/5 bg-[#ece8de] dark:bg-[#22201b] mb-2" />
-              <div className="h-3 w-2/3 bg-[#ece8de] dark:bg-[#22201b]" />
+      {loading && items.length === 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="surface-panel animate-pulse rounded-[1.4rem] p-4">
+              <div className="aspect-square rounded-[1rem] bg-[#ece8de] dark:bg-[#22201b]" />
+              <div className="mt-4 h-3 w-3/4 bg-[#ece8de] dark:bg-[#22201b]" />
+              <div className="mt-2 h-3 w-1/2 bg-[#ece8de] dark:bg-[#22201b]" />
             </div>
           ))}
         </div>
-      ) : filteredItems.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {filteredItems.map((item) => (
-            <a
-              key={item.id}
-              href={item.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block"
-            >
-              <div
-                className={`surface-panel ${getStampColor(item.type, item.masterpiece)} p-3 h-full transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-sm ${
-                  item.masterpiece ? 'bg-[#1c1a17]/5 dark:bg-white/5' : ''
-                }`}
-              >
-                <MediaArtwork item={item} />
+      ) : items.length > 0 ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="surface-panel rounded-[1.4rem] px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Albums</p>
+              <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">{albumItems.length}</p>
+            </div>
+            <div className="surface-panel rounded-[1.4rem] px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Listens represented</p>
+              <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
+                {totalAlbumListens.toLocaleString()}
+              </p>
+            </div>
+            <div className="surface-panel rounded-[1.4rem] px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Films / masterpieces</p>
+              <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
+                {filmItems.length} / {masterpieceCount}
+              </p>
+            </div>
+          </div>
 
-                <div className="space-y-1.5">
-                  <div className="text-sm font-medium text-[#1c1a17] dark:text-[#e8e2d6] leading-tight truncate">{item.title}</div>
-                  <div className="text-sm text-[#6a655d] dark:text-[#a49a88] leading-tight truncate">{getCreator(item)}</div>
-                  <div className="flex items-center justify-between pt-1 gap-2">
-                    <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575] uppercase tracking-wide">{getTypeLabel(item.type)}</span>
-                    {getSignalLabel(item) ? (
-                      <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</span>
-                    ) : null}
+          {leadAlbum && (
+            <section className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+              <a
+                href={leadAlbum.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group block overflow-hidden rounded-[2rem]"
+              >
+                <div className="surface-panel h-full overflow-hidden rounded-[2rem]">
+                  <div className="grid h-full md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+                    <MediaArtwork
+                      item={leadAlbum}
+                      className="relative h-full min-h-[19rem] overflow-hidden bg-[#ece8de] dark:bg-[#22201b] md:min-h-[24rem]"
+                      imageClassName="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 group-hover:scale-[1.04]"
+                      fallbackClassName="text-6xl font-light opacity-20"
+                    />
+                    <div className="flex flex-col justify-between p-6 md:p-8">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Most listened</p>
+                        <h2 className="mt-3 font-display text-4xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
+                          {leadAlbum.title}
+                        </h2>
+                        <p className="mt-2 text-lg text-[#696257] dark:text-[#a89d88]">{leadAlbum.artist}</p>
+                      </div>
+
+                      <div className="mt-8">
+                        <p className="font-display text-5xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
+                          {(leadAlbum.playcount || 0).toLocaleString()}
+                        </p>
+                        <p className="mt-2 text-sm uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">
+                          listens
+                        </p>
+                        <p className="mt-5 max-w-md text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
+                          The gallery starts with the records that have actually stayed in rotation, not just appeared once.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </a>
+
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                {supportingAlbums.map((album, index) => (
+                  <a
+                    key={album.id}
+                    href={album.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block"
+                  >
+                    <div className="surface-panel flex h-full items-center gap-4 rounded-[1.5rem] p-3 transition-transform duration-300 group-hover:-translate-y-0.5">
+                      <MediaArtwork
+                        item={album}
+                        className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[1rem] bg-[#ece8de] dark:bg-[#22201b]"
+                        imageClassName="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03]"
+                        fallbackClassName="text-2xl font-light opacity-30"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">
+                          #{index + 2}
+                        </p>
+                        <h3 className="mt-1 truncate text-base font-medium text-[#1c1a16] dark:text-[#ece3d0]">
+                          {album.title}
+                        </h3>
+                        <p className="truncate text-sm text-[#696257] dark:text-[#a89d88]">{album.artist}</p>
+                        <p className="mt-2 text-sm text-[#205c5a] dark:text-[#79b7ab]">
+                          {(album.playcount || 0).toLocaleString()} listens
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                ))}
               </div>
-            </a>
-          ))}
-        </div>
+            </section>
+          )}
+
+          <section>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Gallery</p>
+                <h2 className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
+                  Albums and films
+                </h2>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {filters.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setFilter(key)}
+                    className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
+                      filter === key
+                        ? `${getFilterColor(key)} bg-[#1c1a17]/5 text-[#1c1a17] dark:bg-white/10 dark:text-[#e8e2d6]`
+                        : `${getFilterColor(key)} bg-transparent text-[#6a655d] hover:bg-[#1c1a17]/5 dark:text-[#a49a88] dark:hover:bg-white/5`
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {galleryItems.length > 0 ? (
+              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {galleryItems.map((item) => (
+                  <a
+                    key={item.id}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block"
+                  >
+                    <div
+                      className={`surface-panel h-full rounded-[1.5rem] border p-3 transition-all duration-300 group-hover:-translate-y-0.5 ${getStampColor(item)}`}
+                    >
+                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[1rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" />
+
+                      <div className="mt-3 space-y-1.5">
+                        <h3 className="truncate text-sm font-medium leading-tight text-[#1c1a16] dark:text-[#e8e2d6]">
+                          {item.title}
+                        </h3>
+                        <p className="truncate text-sm leading-tight text-[#6a655d] dark:text-[#a49a88]">
+                          {getCreatorValue(item)}
+                        </p>
+                        <div className="flex items-center justify-between gap-2 pt-1">
+                          <span className="text-[11px] uppercase tracking-[0.14em] text-[#8a8378] dark:text-[#8f8575]">
+                            {getTypeLabel(item.type)}
+                          </span>
+                          {getSignalLabel(item) ? (
+                            <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</span>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="surface-panel mt-6 rounded-[1.5rem] px-6 py-10 text-center text-[#6a655d] dark:text-[#a49a88]">
+                {filter === 'all' || filter === 'album'
+                  ? 'The strongest albums are already surfaced above.'
+                  : 'Nothing matches this filter yet.'}
+              </div>
+            )}
+          </section>
+        </>
       ) : (
-        <div className="text-center py-16 text-[#6a655d] dark:text-[#a49a88]">
+        <div className="surface-panel rounded-[1.6rem] px-6 py-16 text-center text-[#6a655d] dark:text-[#a49a88]">
           {hasAnyConnection ? (
             <div className="space-y-4">
-              <p>No items yet.</p>
-              <button onClick={fetchAllData} className="text-sm hover:opacity-70 transition-opacity">
+              <p>No albums or films are showing yet.</p>
+              <button onClick={fetchAllData} className="text-sm transition-opacity hover:opacity-70">
                 Sync your data
               </button>
             </div>
           ) : (
             <div className="space-y-4">
-              <p>Connect your accounts to see your consumption history.</p>
-              <button onClick={() => setShowSettings(true)} className="text-sm hover:opacity-70 transition-opacity">
-                Connect your services
+              <p>Connect Last.fm and Letterboxd to build the gallery.</p>
+              <button onClick={() => setShowSettings(true)} className="text-sm transition-opacity hover:opacity-70">
+                Edit sources
               </button>
             </div>
           )}

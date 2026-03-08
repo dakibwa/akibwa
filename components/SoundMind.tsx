@@ -96,10 +96,10 @@ const NODE_GROUP_COLORS: Record<number, string> = {
 
 const NODE_GROUP_SHAPES: Record<number, 'circle' | 'diamond' | 'square' | 'triangle' | 'hexagon'> = {
   1: 'circle',
-  2: 'diamond',
-  3: 'square',
-  4: 'triangle',
-  5: 'hexagon',
+  2: 'circle',
+  3: 'circle',
+  4: 'circle',
+  5: 'circle',
   6: 'circle',
   7: 'circle',
 };
@@ -510,7 +510,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeGroupFilter, setActiveGroupFilter] = useState<number | 'all'>('all');
-  const [showGuide, setShowGuide] = useState(true);
+  const [showGuide, setShowGuide] = useState(false);
   
   // Last.fm state
   const [lastFmUsername, setLastFmUsername] = useState('');
@@ -2088,7 +2088,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                   We Have the Right to Music
                 </h1>
                 <p className="mt-3 text-sm md:text-base leading-6 text-[#a6b2cf]">
-                  Larger stars mean more listening. Color marks the cluster. Click any artist to lock it, then follow the strongest links outward.
+                  Stars scale with listening weight. Color marks a cluster. Click one to lock the constellation and trace its nearest lines.
                 </p>
               </div>
 
@@ -2096,7 +2096,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">Explore</p>
-                    <p className="mt-1 text-sm text-[#dbe5ff]">Search for an artist or narrow the map by cluster.</p>
+                    <p className="mt-1 text-sm text-[#dbe5ff]">Search an artist or narrow the sky by cluster.</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -2192,7 +2192,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                     </h2>
                   </div>
                   <p className="max-w-xs text-sm leading-6 text-[#a6b2cf]">
-                    Click empty space to clear focus. Hover links to see why two artists are connected.
+                    Click empty space to clear focus. Hover a line to see why two artists belong in the same constellation.
                   </p>
                 </div>
 
@@ -2200,15 +2200,15 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
                   <div className="mt-4 grid gap-3 md:grid-cols-3">
                     <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
                       <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Size</p>
-                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Bigger stars represent heavier listening weight.</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Bigger stars carry more listening weight.</p>
                     </div>
                     <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
                       <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Color</p>
-                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Each color is a taste cluster, not a strict genre box.</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Each color marks a taste cluster, not a rigid genre box.</p>
                     </div>
                     <div className={`${MUSIC_SUBPANEL_CLASS} p-3`}>
                       <p className="text-xs uppercase tracking-[0.14em] text-[#8fa1c9]">Lines</p>
-                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">Stronger direct links surface once you focus an artist.</p>
+                      <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">The clearest lines surface once you focus a single artist.</p>
                     </div>
                   </div>
                 )}
