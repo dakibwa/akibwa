@@ -43,14 +43,14 @@ const Navigation: React.FC<NavigationProps> = ({ onShowGallery, onOpenMusic, isM
               aria-pressed={!isMusicOpen}
               className={getButtonClassName(!isMusicOpen)}
             >
-              Gallery
+              Library
             </button>
             <button
               onClick={onOpenMusic}
               aria-pressed={isMusicOpen}
               className={getButtonClassName(isMusicOpen)}
             >
-              Music Map
+              Constellation
             </button>
           </div>
         </div>
