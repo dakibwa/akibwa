@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 interface SoundMindProps {
   isOpen: boolean;
   onClose: () => void;
+  embedded?: boolean;
 }
 
 interface Node {
@@ -498,7 +499,7 @@ const computeListeningInsights = (graphData: GraphData | null): ListeningInsight
   };
 };
 
-const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
+const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false }) => {
   const [status, setStatus] = useState<'idle' | 'connect' | 'fetching' | 'analyzing' | 'visualizing'>('idle');
   const [provider, setProvider] = useState<'spotify' | 'lastfm' | 'demo' | null>(null);
   const [artistsData, setArtistsData] = useState<ArtistData[]>([]);
@@ -616,7 +617,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
   }, [activeGroupFilter, hoveredLink, hoveredNode, searchQuery, selectedNode]);
 
   useEffect(() => {
-    if (!isOpen) return undefined;
+    if (!isOpen || embedded) return undefined;
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -627,7 +628,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
     };
-  }, [isOpen]);
+  }, [embedded, isOpen]);
 
   // Check for saved auth/data and Spotify callback on mount
   useEffect(() => {
@@ -1897,26 +1898,28 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-[#030712] text-[#e8eefc] ${
+      className={`${embedded ? 'relative overflow-hidden rounded-[2rem] border border-[#223149] shadow-[0_30px_100px_rgba(3,7,18,0.45)]' : 'fixed inset-0 z-[100]'} bg-[#030712] text-[#e8eefc] ${
         status === 'visualizing' ? 'overflow-hidden' : 'overflow-y-auto'
       }`}
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_32%),linear-gradient(180deg,#030712_0%,#050b17_55%,#030712_100%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-12 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:36px_36px]" />
 
-      <div className="relative min-h-screen">
-        <div className="absolute left-4 top-4 z-[140] md:left-6 md:top-6">
-          <button
-            onClick={onClose}
-            className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#07111f]/75 px-4 py-2 text-sm text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-[#0b1627]"
-          >
-            <span aria-hidden="true">←</span>
-            <span>Back</span>
-          </button>
-        </div>
+      <div className={`relative ${embedded ? 'min-h-[42rem]' : 'min-h-screen'}`}>
+        {!embedded && (
+          <div className="absolute left-4 top-4 z-[140] md:left-6 md:top-6">
+            <button
+              onClick={onClose}
+              className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#07111f]/75 px-4 py-2 text-sm text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-[#0b1627]"
+            >
+              <span aria-hidden="true">←</span>
+              <span>Back</span>
+            </button>
+          </div>
+        )}
 
         {status === 'connect' && (
-          <div className="min-h-screen px-6 py-20 md:py-24">
+          <div className={`${embedded ? 'min-h-[42rem] px-6 py-10 md:py-12' : 'min-h-screen px-6 py-20 md:py-24'}`}>
             <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
               <div className={`${MUSIC_PANEL_CLASS} p-6 md:p-8 lg:p-10`}>
                 <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Constellation view</p>
@@ -2052,7 +2055,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
         )}
 
         {(status === 'fetching' || status === 'analyzing') && (
-          <div className="min-h-screen flex items-center justify-center px-6 py-20">
+          <div className={`${embedded ? 'min-h-[42rem]' : 'min-h-screen'} flex items-center justify-center px-6 py-20`}>
             <div className={`${MUSIC_PANEL_CLASS} w-full max-w-xl p-8 md:p-10 text-center`}>
               <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Building constellation</p>
               <h2 className="mt-4 text-3xl md:text-4xl font-display tracking-tight text-white">
@@ -2090,7 +2093,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose }) => {
             />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,transparent_50%,rgba(3,7,18,0.28)_100%)]" />
 
-            <div className="absolute inset-x-4 top-16 z-[120] md:inset-x-6 md:top-6">
+            <div className={`absolute inset-x-4 z-[120] md:inset-x-6 ${embedded ? 'top-4 md:top-4' : 'top-16 md:top-6'}`}>
               <div className="mx-auto max-w-4xl">
                 <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto p-3 md:p-4`}>
                   <div className="flex flex-wrap items-center justify-between gap-3">
