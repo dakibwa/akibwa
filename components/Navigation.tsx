@@ -33,7 +33,7 @@ const Navigation: React.FC<NavigationProps> = ({ onShowGallery, onOpenMusic, isM
               dakibwa
             </button>
             <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#8a8378] dark:text-[#8f8575]">
-              listening, watching, mapping taste
+              listening history, clusters, constellations
             </p>
           </div>
 

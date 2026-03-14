@@ -506,7 +506,7 @@ const Consumption: React.FC = () => {
         <div>
           <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Library</p>
           <p className="mt-1 text-sm text-[#696257] dark:text-[#a89d88]">
-            {loading ? 'Syncing your listening and watching...' : `${items.length} pieces in view`}
+            {loading ? 'Gathering listening history and shaping the map...' : `${items.length} records in view`}
           </p>
         </div>
 
@@ -522,8 +522,8 @@ const Consumption: React.FC = () => {
         <div className="surface-panel rounded-[1.6rem] p-6">
           <div className="max-w-2xl">
             <p className="text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
-              Pull albums from Last.fm and films from Letterboxd. The film import walks watched pages and liked pages, then
-              keeps your rating when Letterboxd exposes one.
+              Last.fm is the core signal for the constellation. Letterboxd can still add extra cultural texture here for now,
+              but the product is being refocused around music-first listening history.
             </p>
           </div>
 
@@ -549,7 +549,7 @@ const Consumption: React.FC = () => {
                 placeholder="e.g. Akibwa"
                 className="w-full border-b border-[#d8d3c8] bg-transparent py-2 text-sm outline-none transition-colors focus:border-[#205c5a] dark:border-[#35312a] dark:focus:border-[#79b7ab]"
               />
-              <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Imports watched films and liked films, not just the short feed.</p>
+              <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Optional for now. Useful as a secondary layer, but no longer the center of the site.</p>
             </div>
           </div>
 
@@ -584,17 +584,17 @@ const Consumption: React.FC = () => {
         <>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="surface-panel rounded-[1.4rem] px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Albums</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Albums in orbit</p>
               <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">{albumItems.length}</p>
             </div>
             <div className="surface-panel rounded-[1.4rem] px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Listens represented</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Signals gathered</p>
               <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
                 {totalAlbumListens.toLocaleString()}
               </p>
             </div>
             <div className="surface-panel rounded-[1.4rem] px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Films / masterpieces</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Films / anchor works</p>
               <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
                 {filmItems.length} / {masterpieceCount}
               </p>
@@ -619,7 +619,7 @@ const Consumption: React.FC = () => {
                     />
                     <div className="flex flex-col justify-between p-6 md:p-8">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Most listened</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Brightest star</p>
                         <h2 className="mt-3 font-display text-4xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
                           {leadAlbum.title}
                         </h2>
@@ -634,7 +634,7 @@ const Consumption: React.FC = () => {
                           listens
                         </p>
                         <p className="mt-5 max-w-md text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
-                          The gallery starts with the records that have actually stayed in rotation, not just appeared once.
+                          The constellation starts with the records that keep returning — the ones that actually hold gravity over time.
                         </p>
                       </div>
                     </div>
@@ -680,9 +680,9 @@ const Consumption: React.FC = () => {
           <section>
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Gallery</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Listening library</p>
                 <h2 className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
-                  Albums and films
+                  Records behind the map
                 </h2>
               </div>
 
@@ -741,7 +741,7 @@ const Consumption: React.FC = () => {
             ) : (
               <div className="surface-panel mt-6 rounded-[1.5rem] px-6 py-10 text-center text-[#6a655d] dark:text-[#a49a88]">
                 {filter === 'all' || filter === 'album'
-                  ? 'The strongest albums are already surfaced above.'
+                  ? 'The heaviest musical signals are already surfaced above.'
                   : 'Nothing matches this filter yet.'}
               </div>
             )}
@@ -750,15 +750,21 @@ const Consumption: React.FC = () => {
       ) : (
         <div className="surface-panel rounded-[1.6rem] px-6 py-16 text-center text-[#6a655d] dark:text-[#a49a88]">
           {hasAnyConnection ? (
-            <div className="space-y-4">
-              <p>No albums or films are showing yet.</p>
+            <div className="mx-auto max-w-2xl space-y-4">
+              <p className="font-display text-2xl text-[#1c1a16] dark:text-[#ece3d0]">The constellation is still dark.</p>
+              <p>
+                There is enough structure here to become a map of taste, but the listening signals have not landed yet.
+              </p>
               <button onClick={fetchAllData} className="text-sm transition-opacity hover:opacity-70">
-                Sync your data
+                Sync listening data
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <p>Connect Last.fm and Letterboxd to build the gallery.</p>
+            <div className="mx-auto max-w-2xl space-y-4">
+              <p className="font-display text-2xl text-[#1c1a16] dark:text-[#ece3d0]">Start with Last.fm.</p>
+              <p>
+                The music constellation begins with real listening history. Connect Last.fm first; everything else is secondary.
+              </p>
               <button onClick={() => setShowSettings(true)} className="text-sm transition-opacity hover:opacity-70">
                 Edit sources
               </button>
