@@ -1905,7 +1905,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_32%),linear-gradient(180deg,#030712_0%,#050b17_55%,#030712_100%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-12 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:36px_36px]" />
 
-      <div className={`relative ${embedded ? 'min-h-[42rem]' : 'min-h-screen'}`}>
+      <div className={`relative ${embedded ? 'min-h-[56rem] md:min-h-[62rem]' : 'min-h-screen'}`}>
         {!embedded && (
           <div className="absolute left-4 top-4 z-[140] md:left-6 md:top-6">
             <button
@@ -1919,7 +1919,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
         )}
 
         {status === 'connect' && (
-          <div className={`${embedded ? 'min-h-[42rem] px-6 py-10 md:py-12' : 'min-h-screen px-6 py-20 md:py-24'}`}>
+          <div className={`${embedded ? 'min-h-[56rem] px-6 py-10 md:min-h-[62rem] md:py-12' : 'min-h-screen px-6 py-20 md:py-24'}`}>
             <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
               <div className={`${MUSIC_PANEL_CLASS} p-6 md:p-8 lg:p-10`}>
                 <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Constellation view</p>
@@ -2055,7 +2055,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
         )}
 
         {(status === 'fetching' || status === 'analyzing') && (
-          <div className={`${embedded ? 'min-h-[42rem]' : 'min-h-screen'} flex items-center justify-center px-6 py-20`}>
+          <div className={`${embedded ? 'min-h-[56rem] md:min-h-[62rem]' : 'min-h-screen'} flex items-center justify-center px-6 py-20`}>
             <div className={`${MUSIC_PANEL_CLASS} w-full max-w-xl p-8 md:p-10 text-center`}>
               <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Building constellation</p>
               <h2 className="mt-4 text-3xl md:text-4xl font-display tracking-tight text-white">

@@ -8,7 +8,7 @@ const MAX_LETTERBOXD_PAGES = 80;
 
 interface MediaItem {
   id: string;
-  type: 'album' | 'film';
+  type: 'album';
   title: string;
   artist?: string;
   director?: string;
@@ -21,10 +21,9 @@ interface MediaItem {
   liked?: boolean;
 }
 
-type FilterType = 'all' | 'album' | 'film' | 'masterpiece';
+type FilterType = 'all';
 
 const DEFAULT_USERNAMES = {
-  letterboxd: 'Akibwa',
   lastfm: 'akibwa',
 };
 
@@ -346,8 +345,6 @@ const MediaArtwork: React.FC<{
   );
 };
 
-const getTypeLabel = (type: MediaItem['type']) => (type === 'album' ? 'Album' : 'Film');
-
 const getSignalLabel = (item: MediaItem) => {
   if (item.playcount) return `${item.playcount.toLocaleString()} listens`;
   if (item.rating) return `${'★'.repeat(Math.floor(item.rating))}${item.rating % 1 !== 0 ? '½' : ''}`;
@@ -357,22 +354,7 @@ const getSignalLabel = (item: MediaItem) => {
 
 const getStampColor = (item: MediaItem) => {
   if (item.masterpiece) return 'border-[#d6b970] dark:border-[#b79a56]';
-  return item.type === 'album'
-    ? 'border-[#7aa2b8] dark:border-[#6f9ab1]'
-    : 'border-[#7aaf89] dark:border-[#6f9f7d]';
-};
-
-const getFilterColor = (filter: FilterType) => {
-  switch (filter) {
-    case 'album':
-      return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
-    case 'film':
-      return 'border-[#7aaf89] dark:border-[#6f9f7d]';
-    case 'masterpiece':
-      return 'border-[#d6b970] dark:border-[#b79a56]';
-    default:
-      return 'border-[#d8d3c8] dark:border-[#35312a]';
-  }
+  return 'border-[#7aa2b8] dark:border-[#6f9ab1]';
 };
 
 const Consumption: React.FC = () => {
@@ -380,18 +362,14 @@ const Consumption: React.FC = () => {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState({
-    letterboxd: false,
     lastfm: false,
   });
   const [showSettings, setShowSettings] = useState(false);
-  const [letterboxdUser, setLetterboxdUser] = useState(DEFAULT_USERNAMES.letterboxd);
   const [lastfmUser, setLastfmUser] = useState(DEFAULT_USERNAMES.lastfm);
 
   useEffect(() => {
-    const savedLetterboxd = localStorage.getItem('dakibwa_letterboxd_user');
     const savedLastfm = localStorage.getItem('dakibwa_lastfm_user');
 
-    if (savedLetterboxd) setLetterboxdUser(savedLetterboxd);
     if (savedLastfm) setLastfmUser(savedLastfm);
 
     const savedVersion = localStorage.getItem('dakibwa_consumption_version');
@@ -413,7 +391,7 @@ const Consumption: React.FC = () => {
     }
   }, []);
 
-  const hasAnyConnection = Boolean(letterboxdUser || lastfmUser);
+  const hasAnyConnection = Boolean(lastfmUser);
 
   const fetchAllData = useCallback(async () => {
     if (!hasAnyConnection) return;
@@ -421,20 +399,14 @@ const Consumption: React.FC = () => {
     setLoading(true);
 
     try {
-      const jobs: Array<Promise<{ source: 'lastfm' | 'letterboxd'; items: MediaItem[] }>> = [];
+      const jobs: Array<Promise<{ source: 'lastfm'; items: MediaItem[] }>> = [];
 
       if (lastfmUser && LASTFM_API_KEY) {
         jobs.push(fetchLastFmAlbums(lastfmUser).then((data) => ({ source: 'lastfm' as const, items: data })));
       }
 
-      if (letterboxdUser) {
-        jobs.push(
-          fetchLetterboxdFilms(letterboxdUser).then((data) => ({ source: 'letterboxd' as const, items: data }))
-        );
-      }
-
       const settled = await Promise.allSettled(jobs);
-      const nextConnected = { letterboxd: false, lastfm: false };
+      const nextConnected = { lastfm: false };
       const allItems: MediaItem[] = [];
 
       settled.forEach((result) => {
@@ -449,13 +421,12 @@ const Consumption: React.FC = () => {
       setConnected(nextConnected);
       setItems(normalizedItems);
 
-      localStorage.setItem('dakibwa_letterboxd_user', letterboxdUser);
       localStorage.setItem('dakibwa_lastfm_user', lastfmUser);
       localStorage.setItem('dakibwa_consumption_items', JSON.stringify(normalizedItems));
     } finally {
       setLoading(false);
     }
-  }, [hasAnyConnection, lastfmUser, letterboxdUser]);
+  }, [hasAnyConnection, lastfmUser]);
 
   useEffect(() => {
     if (items.length === 0 && hasAnyConnection) {
@@ -464,19 +435,14 @@ const Consumption: React.FC = () => {
   }, [fetchAllData, hasAnyConnection, items.length]);
 
   const albumItems = useMemo(
-    () => [...items.filter((item) => item.type === 'album')].sort((left, right) => (right.playcount || 0) - (left.playcount || 0)),
+    () => [...items].sort((left, right) => (right.playcount || 0) - (left.playcount || 0)),
     [items]
   );
-  const filmItems = useMemo(() => items.filter((item) => item.type === 'film'), [items]);
   const topAlbums = useMemo(() => albumItems.slice(0, 6), [albumItems]);
   const leadAlbum = topAlbums[0] || null;
   const supportingAlbums = topAlbums.slice(1);
 
-  const filteredItems = useMemo(() => {
-    if (filter === 'all') return items;
-    if (filter === 'masterpiece') return items.filter((item) => item.masterpiece);
-    return items.filter((item) => item.type === filter);
-  }, [filter, items]);
+  const filteredItems = useMemo(() => items, [items]);
 
   const featuredAlbumIds = useMemo(() => new Set(topAlbums.map((album) => album.id)), [topAlbums]);
   const galleryItems = useMemo(() => {
@@ -491,14 +457,6 @@ const Consumption: React.FC = () => {
     () => albumItems.reduce((sum, item) => sum + (item.playcount || 0), 0),
     [albumItems]
   );
-  const masterpieceCount = useMemo(() => items.filter((item) => item.masterpiece).length, [items]);
-
-  const filters: Array<{ key: FilterType; label: string }> = [
-    { key: 'all', label: 'All' },
-    { key: 'album', label: 'Albums' },
-    { key: 'film', label: 'Films' },
-    { key: 'masterpiece', label: 'Masterpieces' },
-  ];
 
   return (
     <div className="space-y-8">
@@ -522,35 +480,20 @@ const Consumption: React.FC = () => {
         <div className="surface-panel rounded-[1.6rem] p-6">
           <div className="max-w-2xl">
             <p className="text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
-              Last.fm is the core signal for the constellation. Letterboxd can still add extra cultural texture here for now,
-              but the product is being refocused around music-first listening history.
+              This section is now just the listening record underneath the map. Last.fm is the only source that matters here.
             </p>
           </div>
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-[#696257] dark:text-[#a89d88]">Last.fm username</label>
-              <input
-                type="text"
-                value={lastfmUser}
-                onChange={(event) => setLastfmUser(event.target.value.trim())}
-                placeholder="e.g. akibwa"
-                className="w-full border-b border-[#d8d3c8] bg-transparent py-2 text-sm outline-none transition-colors focus:border-[#205c5a] dark:border-[#35312a] dark:focus:border-[#79b7ab]"
-              />
-              <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Albums with fewer than 5 listens stay out of the gallery.</p>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm text-[#696257] dark:text-[#a89d88]">Letterboxd username</label>
-              <input
-                type="text"
-                value={letterboxdUser}
-                onChange={(event) => setLetterboxdUser(event.target.value.trim())}
-                placeholder="e.g. Akibwa"
-                className="w-full border-b border-[#d8d3c8] bg-transparent py-2 text-sm outline-none transition-colors focus:border-[#205c5a] dark:border-[#35312a] dark:focus:border-[#79b7ab]"
-              />
-              <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Optional for now. Useful as a secondary layer, but no longer the center of the site.</p>
-            </div>
+          <div className="mt-6 max-w-md">
+            <label className="mb-1 block text-sm text-[#696257] dark:text-[#a89d88]">Last.fm username</label>
+            <input
+              type="text"
+              value={lastfmUser}
+              onChange={(event) => setLastfmUser(event.target.value.trim())}
+              placeholder="e.g. akibwa"
+              className="w-full border-b border-[#d8d3c8] bg-transparent py-2 text-sm outline-none transition-colors focus:border-[#205c5a] dark:border-[#35312a] dark:focus:border-[#79b7ab]"
+            />
+            <p className="mt-1 text-xs text-[#8a8378] dark:text-[#8f8575]">Albums with fewer than 5 listens stay out of the view.</p>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -563,8 +506,6 @@ const Consumption: React.FC = () => {
             </button>
             <div className="flex items-center gap-2 text-xs text-[#8a8378] dark:text-[#8f8575]">
               <span className={connected.lastfm ? 'text-[#205c5a] dark:text-[#79b7ab]' : ''}>Last.fm</span>
-              <span>•</span>
-              <span className={connected.letterboxd ? 'text-[#205c5a] dark:text-[#79b7ab]' : ''}>Letterboxd</span>
             </div>
           </div>
         </div>
@@ -582,7 +523,7 @@ const Consumption: React.FC = () => {
         </div>
       ) : items.length > 0 ? (
         <>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="surface-panel rounded-[1.4rem] px-5 py-4">
               <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Albums in orbit</p>
               <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">{albumItems.length}</p>
@@ -591,12 +532,6 @@ const Consumption: React.FC = () => {
               <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Signals gathered</p>
               <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
                 {totalAlbumListens.toLocaleString()}
-              </p>
-            </div>
-            <div className="surface-panel rounded-[1.4rem] px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Films / anchor works</p>
-              <p className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
-                {filmItems.length} / {masterpieceCount}
               </p>
             </div>
           </div>
@@ -678,33 +613,15 @@ const Consumption: React.FC = () => {
           )}
 
           <section>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Listening library</p>
-                <h2 className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
-                  Records behind the map
-                </h2>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {filters.map(({ key, label }) => (
-                  <button
-                    key={key}
-                    onClick={() => setFilter(key)}
-                    className={`rounded-full border px-3 py-1.5 text-sm transition-all ${
-                      filter === key
-                        ? `${getFilterColor(key)} bg-[#1c1a17]/5 text-[#1c1a17] dark:bg-white/10 dark:text-[#e8e2d6]`
-                        : `${getFilterColor(key)} bg-transparent text-[#6a655d] hover:bg-[#1c1a17]/5 dark:text-[#a49a88] dark:hover:bg-white/5`
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Listening library</p>
+              <h2 className="mt-2 font-display text-3xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
+                Records behind the map
+              </h2>
             </div>
 
             {galleryItems.length > 0 ? (
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                 {galleryItems.map((item) => (
                   <a
                     key={item.id}
@@ -714,25 +631,20 @@ const Consumption: React.FC = () => {
                     className="group block"
                   >
                     <div
-                      className={`surface-panel h-full rounded-[1.5rem] border p-3 transition-all duration-300 group-hover:-translate-y-0.5 ${getStampColor(item)}`}
+                      className={`surface-panel h-full rounded-[1.3rem] border p-2.5 transition-all duration-300 group-hover:-translate-y-0.5 ${getStampColor(item)}`}
                     >
-                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[1rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" />
+                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[0.9rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" />
 
-                      <div className="mt-3 space-y-1.5">
-                        <h3 className="truncate text-sm font-medium leading-tight text-[#1c1a16] dark:text-[#e8e2d6]">
+                      <div className="mt-2.5 space-y-1">
+                        <h3 className="truncate text-[13px] font-medium leading-tight text-[#1c1a16] dark:text-[#e8e2d6]">
                           {item.title}
                         </h3>
-                        <p className="truncate text-sm leading-tight text-[#6a655d] dark:text-[#a49a88]">
+                        <p className="truncate text-[13px] leading-tight text-[#6a655d] dark:text-[#a49a88]">
                           {getCreatorValue(item)}
                         </p>
-                        <div className="flex items-center justify-between gap-2 pt-1">
-                          <span className="text-[11px] uppercase tracking-[0.14em] text-[#8a8378] dark:text-[#8f8575]">
-                            {getTypeLabel(item.type)}
-                          </span>
-                          {getSignalLabel(item) ? (
-                            <span className="text-[11px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</span>
-                          ) : null}
-                        </div>
+                        {getSignalLabel(item) ? (
+                          <div className="pt-1 text-[11px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</div>
+                        ) : null}
                       </div>
                     </div>
                   </a>
