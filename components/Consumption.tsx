@@ -445,13 +445,7 @@ const Consumption: React.FC = () => {
   const filteredItems = useMemo(() => items, [items]);
 
   const featuredAlbumIds = useMemo(() => new Set(topAlbums.map((album) => album.id)), [topAlbums]);
-  const galleryItems = useMemo(() => {
-    if (filter === 'all' || filter === 'album') {
-      return filteredItems.filter((item) => !featuredAlbumIds.has(item.id));
-    }
-
-    return filteredItems;
-  }, [featuredAlbumIds, filter, filteredItems]);
+  const galleryItems = useMemo(() => filteredItems, [filteredItems]);
 
   const totalAlbumListens = useMemo(
     () => albumItems.reduce((sum, item) => sum + (item.playcount || 0), 0),
@@ -536,25 +530,6 @@ const Consumption: React.FC = () => {
             </div>
           </div>
 
-          {topAlbums.length > 0 && (
-            <section>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-[#696257] dark:text-[#a89d88]">
-                <span className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Top 5</span>
-                {topAlbums.slice(0, 5).map((album, index) => (
-                  <a
-                    key={album.id}
-                    href={album.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="truncate rounded-full border border-[#d8d3c8] px-3 py-1.5 text-[13px] transition-colors hover:border-[#7aa2b8] hover:text-[#1c1a16] dark:border-[#35312a] dark:hover:border-[#6f9ab1] dark:hover:text-[#ece3d0]"
-                  >
-                    {index + 1}. {album.title}
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-
           <section>
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Listening library</p>
@@ -564,8 +539,10 @@ const Consumption: React.FC = () => {
             </div>
 
             {galleryItems.length > 0 ? (
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                {galleryItems.map((item) => (
+              <div className="mt-6 grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                {galleryItems.map((item) => {
+                  const isTopFive = featuredAlbumIds.has(item.id);
+                  return (
                   <a
                     key={item.id}
                     href={item.link}
@@ -574,24 +551,34 @@ const Consumption: React.FC = () => {
                     className="group block"
                   >
                     <div
-                      className={`surface-panel h-full rounded-[1.3rem] border p-2.5 transition-all duration-300 group-hover:-translate-y-0.5 ${getStampColor(item)}`}
+                      className={`surface-panel relative h-full rounded-[1.15rem] border p-2 transition-all duration-300 group-hover:-translate-y-0.5 ${getStampColor(item)} ${
+                        isTopFive
+                          ? 'shadow-[0_0_0_1px_rgba(214,185,112,0.45),0_0_24px_rgba(214,185,112,0.18)] dark:shadow-[0_0_0_1px_rgba(183,154,86,0.55),0_0_28px_rgba(183,154,86,0.2)]'
+                          : ''
+                      }`}
                     >
-                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[0.8rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" fallbackClassName="text-xl font-light opacity-30" />
+                      {isTopFive ? (
+                        <span className="absolute right-2 top-2 z-10 rounded-full bg-[#f3e3aa] px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#5a4720] dark:bg-[#b79a56] dark:text-[#140f07]">
+                          Top 5
+                        </span>
+                      ) : null}
 
-                      <div className="mt-2.5 space-y-1">
-                        <h3 className="truncate text-[13px] font-medium leading-tight text-[#1c1a16] dark:text-[#e8e2d6]">
+                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[0.75rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" fallbackClassName="text-lg font-light opacity-30" />
+
+                      <div className="mt-2 space-y-0.5">
+                        <h3 className="truncate text-[12px] font-medium leading-tight text-[#1c1a16] dark:text-[#e8e2d6]">
                           {item.title}
                         </h3>
-                        <p className="truncate text-[13px] leading-tight text-[#6a655d] dark:text-[#a49a88]">
+                        <p className="truncate text-[12px] leading-tight text-[#6a655d] dark:text-[#a49a88]">
                           {getCreatorValue(item)}
                         </p>
                         {getSignalLabel(item) ? (
-                          <div className="pt-1 text-[11px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</div>
+                          <div className="pt-0.5 text-[10px] text-[#8a8378] dark:text-[#8f8575]">{getSignalLabel(item)}</div>
                         ) : null}
                       </div>
                     </div>
                   </a>
-                ))}
+                )})}
               </div>
             ) : (
               <div className="surface-panel mt-6 rounded-[1.5rem] px-6 py-10 text-center text-[#6a655d] dark:text-[#a49a88]">

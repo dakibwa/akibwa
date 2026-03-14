@@ -2063,19 +2063,17 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,transparent_50%,rgba(3,7,18,0.28)_100%)]" />
 
             <div className={`absolute inset-x-4 z-[120] md:inset-x-6 ${embedded ? 'top-4 md:top-4' : 'top-16 md:top-6'}`}>
-              <div className="mx-auto max-w-4xl">
+              <div className="mx-auto max-w-3xl">
                 <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto p-3 md:p-4`}>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex min-w-0 flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-[#8fa1c9]">
-                      <span>Music Map</span>
-                      <span className="h-1 w-1 rounded-full bg-[#7dd3fc]/80" />
-                      <span className="truncate normal-case tracking-normal text-[#dbe5ff]">{providerLabel}</span>
+                      <span>{providerLabel}</span>
                     </div>
                     <button
                       onClick={clearData}
                       className="rounded-full border border-white/10 px-3 py-2 text-xs uppercase tracking-[0.14em] text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
                     >
-                      Reset map
+                      Reset
                     </button>
                   </div>
 
@@ -2116,16 +2114,16 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
                     </div>
                   )}
 
-                  <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                  <div className="mt-3 flex gap-2 overflow-x-auto pb-1 text-xs">
                     <button
                       onClick={() => handleGroupFilterSelect('all')}
-                      className={`shrink-0 rounded-full border px-3 py-2 text-sm transition-colors ${
+                      className={`shrink-0 rounded-full border px-3 py-1.5 transition-colors ${
                         activeGroupFilter === 'all'
                           ? 'border-[#7dd3fc] bg-[#0d1b30] text-white'
                           : 'border-white/10 text-[#a6b2cf] hover:border-white/20 hover:bg-white/[0.05]'
                       }`}
                     >
-                      All ({graphData?.nodes.length || 0})
+                      All
                     </button>
                     {Object.entries(GROUP_LABELS).map(([groupId, label]) => {
                       const numericGroupId = Number(groupId);
@@ -2133,13 +2131,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
                         <button
                           key={groupId}
                           onClick={() => handleGroupFilterSelect(numericGroupId)}
-                          className={`shrink-0 rounded-full border px-3 py-2 text-sm transition-colors ${
+                          className={`shrink-0 rounded-full border px-3 py-1.5 transition-colors ${
                             activeGroupFilter === numericGroupId
                               ? 'border-[#7dd3fc] bg-[#0d1b30] text-white'
                               : 'border-white/10 text-[#a6b2cf] hover:border-white/20 hover:bg-white/[0.05]'
                           }`}
                         >
-                          {label} ({groupCounts.get(numericGroupId) || 0})
+                          {label}
                         </button>
                       );
                     })}
@@ -2175,40 +2173,16 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
               </div>
             </div>
 
-            <div className="absolute bottom-4 left-4 z-[120] max-w-xl md:bottom-6 md:left-6">
-              <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto p-3 md:p-4`}>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="flex items-center gap-2 text-xs text-[#dbe5ff]">
-                    <span className="inline-flex items-center gap-1">
-                      <span className="h-2 w-2 rounded-full bg-white/80" />
-                      <span className="h-3.5 w-3.5 rounded-full bg-white/80" />
-                    </span>
-                    <span>Size = listens</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-[#dbe5ff]">
-                    <span className="inline-flex items-center gap-1">
-                      <span className="h-3 w-3 rounded-full bg-[#59a6ff]" />
-                      <span className="h-3 w-3 rounded-full bg-[#3dd6b7]" />
-                      <span className="h-3 w-3 rounded-full bg-[#ff8a65]" />
-                    </span>
-                    <span>Color = cluster</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-[#dbe5ff]">
-                    <span className="h-px w-6 bg-[#dbe5ff]" />
-                    <span>Line = connection</span>
-                  </div>
+            {hoveredLink && (
+              <div className="absolute bottom-4 left-4 z-[120] max-w-md md:bottom-6 md:left-6">
+                <div className={`${MUSIC_PANEL_CLASS} pointer-events-auto px-4 py-3 text-xs leading-5 text-[#a6b2cf]`}>
+                  <span className="text-[#f5f8ff]">
+                    {hoveredLink.source} ↔ {hoveredLink.target}
+                  </span>{' '}
+                  · {hoveredLink.reason}
                 </div>
-
-                {hoveredLink && (
-                  <div className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-[#a6b2cf]">
-                    <span className="text-[#f5f8ff]">
-                      {hoveredLink.source} ↔ {hoveredLink.target}
-                    </span>{' '}
-                    · {hoveredLink.reason}
-                  </div>
-                )}
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
