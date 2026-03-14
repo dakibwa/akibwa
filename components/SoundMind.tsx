@@ -2077,42 +2077,47 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
                     </button>
                   </div>
 
-                  <form onSubmit={handleSearchSubmit} className="mt-3 flex flex-col gap-3 sm:flex-row">
-                    <input
-                      type="text"
-                      list="soundmind-artist-search"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search an artist"
-                      className="min-w-0 flex-1 rounded-full border border-white/10 bg-[#050d19] px-4 py-3 text-sm text-white placeholder:text-[#7382a4] outline-none transition-colors focus:border-[#7dd3fc]"
-                    />
-                    <button
-                      type="submit"
-                      disabled={!searchQuery.trim()}
-                      className="rounded-full bg-[#dbe5ff] px-4 py-3 text-sm font-medium text-[#07111f] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      Focus
-                    </button>
-                    <datalist id="soundmind-artist-search">
-                      {sortedNodes.map((node) => (
-                        <option key={node.id} value={node.id} />
-                      ))}
-                    </datalist>
-                  </form>
+                  <div className="mt-3 rounded-[1.2rem] border border-white/10 bg-[#07111d]/92 px-4 py-4 shadow-[0_12px_40px_rgba(0,0,0,0.18)] backdrop-blur">
+                    <form onSubmit={handleSearchSubmit} className="flex items-center gap-3">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
+                        <span className="text-[#8fa1c9]" aria-hidden="true">⌕</span>
+                        <input
+                          type="text"
+                          list="soundmind-artist-search"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search the constellation — artist, genre, song, feeling"
+                          className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-[#7382a4] outline-none"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={!searchQuery.trim()}
+                        className="rounded-full bg-[#dbe5ff] px-3.5 py-2 text-sm font-medium text-[#07111f] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Focus
+                      </button>
+                      <datalist id="soundmind-artist-search">
+                        {sortedNodes.map((node) => (
+                          <option key={node.id} value={node.id} />
+                        ))}
+                      </datalist>
+                    </form>
 
-                  {searchQuery.trim() && searchResults.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {searchResults.slice(0, 5).map((node) => (
-                        <button
-                          key={node.id}
-                          onClick={() => handleNodeSelection(node.id)}
-                          className="rounded-full border border-white/10 px-3 py-1.5 text-sm text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
-                        >
-                          {node.id}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                    {searchQuery.trim() && searchResults.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2 border-t border-white/8 pt-3">
+                        {searchResults.slice(0, 5).map((node) => (
+                          <button
+                            key={node.id}
+                            onClick={() => handleNodeSelection(node.id)}
+                            className="rounded-full border border-white/10 px-3 py-1.5 text-sm text-[#dbe5ff] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                          >
+                            {node.id}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   <div className="mt-3 flex gap-2 overflow-x-auto pb-1 text-xs">
                     <button
