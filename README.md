@@ -1,20 +1,32 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Dakibwa
 
-# Run and deploy your AI Studio app
+Dakibwa is evolving into a **music constellation**: a visual map of listening taste built from real listening data.
 
-This contains everything you need to run your app locally.
+## Direction
+The core idea is:
+- connect to Last.fm
+- build a graph of artists / albums / listening clusters
+- render it as a beautiful star-map / constellation
+- use LLMs sparingly to enrich the map with labels and relationship explanations
 
-View your app in AI Studio: https://ai.studio/apps/drive/1hjpNoEAAYIZaN_ig8syVlbGm-Z33bVDm
+This project is intentionally moving away from a vague general "consumption dashboard" toward a clearer music-first identity.
 
-## Run Locally
+## Current stack
+- Vite
+- React
+- TypeScript
 
-**Prerequisites:**  Node.js
+## Local development
+```bash
+npm install
+npm run dev
+```
 
+## Build
+```bash
+npm run build
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Notes
+- The long-term product direction is documented in `docs/constellation-plan.md`.
+- The current implementation still contains older experiments and mixed provider references; cleanup/refocus is in progress.
