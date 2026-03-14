@@ -80,7 +80,7 @@ const IS_DEV = import.meta.env.DEV;
 const SPOTIFY_TOKEN_STORAGE_KEY = 'dakibwa_spotify_token';
 const SPOTIFY_TOKEN_EXP_STORAGE_KEY = 'dakibwa_spotify_token_exp';
 const SPOTIFY_STATE_STORAGE_KEY = 'dakibwa_spotify_state';
-const GRAPH_CACHE_VERSION = '3';
+const GRAPH_CACHE_VERSION = '4';
 const MAX_GRAPH_ARTISTS = 50;
 const MIN_LASTFM_PLAYCOUNT = 5;
 const MIN_SPOTIFY_SCORE = 40;
@@ -1920,44 +1920,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
 
         {status === 'connect' && (
           <div className={`${embedded ? 'min-h-[56rem] px-6 py-10 md:min-h-[62rem] md:py-12' : 'min-h-screen px-6 py-20 md:py-24'}`}>
-            <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className={`${MUSIC_PANEL_CLASS} p-6 md:p-8 lg:p-10`}>
-                <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Constellation view</p>
-                <h1 className="mt-4 text-4xl md:text-5xl font-display tracking-tight text-white">
-                  Music Map
-                </h1>
-                <p className="mt-4 max-w-2xl text-base md:text-lg leading-7 text-[#a6b2cf]">
-                  This map is built to answer what people actually want to know from listening data: who dominates your taste, what clusters together, and which artists bridge the distance between scenes.
-                </p>
-
-                <div className="mt-8 grid gap-3 md:grid-cols-3">
-                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
-                    <p className="text-xs uppercase tracking-[0.16em] text-[#8fa1c9]">Clustered</p>
-                    <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
-                      Colors mark genre gravity so the map reads quickly instead of feeling decorative.
-                    </p>
-                  </div>
-                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
-                    <p className="text-xs uppercase tracking-[0.16em] text-[#8fa1c9]">Weighted</p>
-                    <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
-                      Larger stars mean deeper listening, which makes the center of your taste obvious at a glance.
-                    </p>
-                  </div>
-                  <div className={`${MUSIC_SUBPANEL_CLASS} p-4`}>
-                    <p className="text-xs uppercase tracking-[0.16em] text-[#8fa1c9]">Actionable</p>
-                    <p className="mt-2 text-sm leading-6 text-[#dbe5ff]">
-                      Search, filter, and click any artist to lock details and jump through direct connections.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
+            <div className="mx-auto max-w-4xl">
               <div className={`${MUSIC_PANEL_CLASS} p-6 md:p-8`}>
                 <div className="space-y-2">
-                  <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Choose a source</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-[#8fa1c9]">Source</p>
                   <h2 className="text-2xl font-medium tracking-tight text-white">Bring in your listening history</h2>
                   <p className="text-sm leading-6 text-[#a6b2cf]">
-                    Spotify gives the richest recent behavior. Last.fm is fast and reliable if you already scrobble. Demo mode lets you inspect the interaction model immediately.
+                    Last.fm is the cleanest source for the constellation. Spotify is there if you want a richer recency layer. Demo mode is just for previewing the interaction.
                   </p>
                 </div>
 

@@ -536,76 +536,19 @@ const Consumption: React.FC = () => {
             </div>
           </div>
 
-          {leadAlbum && (
-            <section className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-              <a
-                href={leadAlbum.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block overflow-hidden rounded-[2rem]"
-              >
-                <div className="surface-panel h-full overflow-hidden rounded-[2rem]">
-                  <div className="grid h-full md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-                    <MediaArtwork
-                      item={leadAlbum}
-                      className="relative h-full min-h-[19rem] overflow-hidden bg-[#ece8de] dark:bg-[#22201b] md:min-h-[24rem]"
-                      imageClassName="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 group-hover:scale-[1.04]"
-                      fallbackClassName="text-6xl font-light opacity-20"
-                    />
-                    <div className="flex flex-col justify-between p-6 md:p-8">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Brightest star</p>
-                        <h2 className="mt-3 font-display text-4xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
-                          {leadAlbum.title}
-                        </h2>
-                        <p className="mt-2 text-lg text-[#696257] dark:text-[#a89d88]">{leadAlbum.artist}</p>
-                      </div>
-
-                      <div className="mt-8">
-                        <p className="font-display text-5xl tracking-tight text-[#1c1a16] dark:text-[#ece3d0]">
-                          {(leadAlbum.playcount || 0).toLocaleString()}
-                        </p>
-                        <p className="mt-2 text-sm uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">
-                          listens
-                        </p>
-                        <p className="mt-5 max-w-md text-sm leading-6 text-[#696257] dark:text-[#a89d88]">
-                          The constellation starts with the records that keep returning — the ones that actually hold gravity over time.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                {supportingAlbums.map((album, index) => (
+          {topAlbums.length > 0 && (
+            <section>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[#696257] dark:text-[#a89d88]">
+                <span className="text-xs uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">Top 5</span>
+                {topAlbums.slice(0, 5).map((album, index) => (
                   <a
                     key={album.id}
                     href={album.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group block"
+                    className="truncate rounded-full border border-[#d8d3c8] px-3 py-1.5 text-[13px] transition-colors hover:border-[#7aa2b8] hover:text-[#1c1a16] dark:border-[#35312a] dark:hover:border-[#6f9ab1] dark:hover:text-[#ece3d0]"
                   >
-                    <div className="surface-panel flex h-full items-center gap-4 rounded-[1.5rem] p-3 transition-transform duration-300 group-hover:-translate-y-0.5">
-                      <MediaArtwork
-                        item={album}
-                        className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[1rem] bg-[#ece8de] dark:bg-[#22201b]"
-                        imageClassName="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03]"
-                        fallbackClassName="text-2xl font-light opacity-30"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-[11px] uppercase tracking-[0.18em] text-[#8a8378] dark:text-[#8f8575]">
-                          #{index + 2}
-                        </p>
-                        <h3 className="mt-1 truncate text-base font-medium text-[#1c1a16] dark:text-[#ece3d0]">
-                          {album.title}
-                        </h3>
-                        <p className="truncate text-sm text-[#696257] dark:text-[#a89d88]">{album.artist}</p>
-                        <p className="mt-2 text-sm text-[#205c5a] dark:text-[#79b7ab]">
-                          {(album.playcount || 0).toLocaleString()} listens
-                        </p>
-                      </div>
-                    </div>
+                    {index + 1}. {album.title}
                   </a>
                 ))}
               </div>
@@ -633,7 +576,7 @@ const Consumption: React.FC = () => {
                     <div
                       className={`surface-panel h-full rounded-[1.3rem] border p-2.5 transition-all duration-300 group-hover:-translate-y-0.5 ${getStampColor(item)}`}
                     >
-                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[0.9rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" />
+                      <MediaArtwork item={item} className="relative aspect-square overflow-hidden rounded-[0.8rem] bg-[#ece8de] dark:bg-[#22201b] flex items-center justify-center" fallbackClassName="text-xl font-light opacity-30" />
 
                       <div className="mt-2.5 space-y-1">
                         <h3 className="truncate text-[13px] font-medium leading-tight text-[#1c1a16] dark:text-[#e8e2d6]">
