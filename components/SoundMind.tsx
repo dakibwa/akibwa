@@ -1326,7 +1326,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
     if (nodesRef.current.length === 0 || nodesRef.current.length !== dataNodes.length) {
       const centerX = width / 2;
       const centerY = height / 2;
-      const baseRadius = Math.min(width, height) * 0.17;
+      const baseRadius = Math.min(width, height) * 0.22;
       const groupIds = [1, 2, 3, 4, 5, 6, 7];
       const clusterAnchors = new Map<number, { x: number; y: number }>();
       groupIds.forEach((groupId, idx) => {
@@ -1394,8 +1394,8 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
       const idealSpacing = Math.sqrt(area / nodeCount) * 0.8;
       const centerX = width / 2;
       const centerY = height / 2;
-      const constellationRadius = Math.min(width, height) * 0.18;
-      const clusterForce = 0.00075;
+      const constellationRadius = Math.min(width, height) * 0.24;
+      const clusterForce = 0.00095;
 
       const playcounts = nodesRef.current.map(n => n.playcount || 0).filter(p => p > 0);
       const maxPlaycount = Math.max(...playcounts, 1);
@@ -1440,13 +1440,13 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
         });
       });
       
-      const repulsion = 1450;
-      const springLength = Math.max(idealSpacing * 0.62, 118);
-      const springStrength = 0.014;
-      const damping = 0.915;
-      const centerForce = 0.00055;
-      const edgeBuffer = 220;
-      const edgeForce = 0.045;
+      const repulsion = 1650;
+      const springLength = Math.max(idealSpacing * 0.7, 132);
+      const springStrength = 0.012;
+      const damping = 0.92;
+      const centerForce = 0.00042;
+      const edgeBuffer = 180;
+      const edgeForce = 0.038;
 
       nodesRef.current.forEach((node, i) => {
         if (!node.vx) node.vx = 0;
@@ -1585,17 +1585,17 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
           maxDistance = Math.max(maxDistance, Math.sqrt(dx * dx + dy * dy));
         });
 
-        const haloRadius = Math.min(Math.max(maxDistance + 40, 95), 260);
+        const haloRadius = Math.min(Math.max(maxDistance + 28, 90), 220);
         const pulse = 0.96 + Math.sin(now * 0.55 + groupId) * 0.04;
         const haloColor = NODE_GROUP_COLORS[groupId] || NODE_GROUP_COLORS[7];
         const haloFade = filteredGroup === 'all' || filteredGroup === groupId ? 1 : 0.22;
 
-        ctx.fillStyle = hexToRgba(haloColor, 0.06 * haloFade);
+        ctx.fillStyle = hexToRgba(haloColor, 0.04 * haloFade);
         ctx.beginPath();
         ctx.arc(centroid.x, centroid.y, haloRadius * pulse, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = hexToRgba(haloColor, 0.2 * haloFade);
+        ctx.strokeStyle = hexToRgba(haloColor, 0.12 * haloFade);
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(centroid.x, centroid.y, haloRadius * 0.98, 0, Math.PI * 2);
@@ -1627,10 +1627,10 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
           const color = CONNECTION_COLORS[link.type] || CONNECTION_COLORS.similar;
           const shimmer = 0.76 + 0.24 * Math.sin(now * 0.9 + s.id.length + t.id.length);
           const baseAlpha = link.type === 'collaboration'
-            ? 0.5
+            ? 0.34
             : link.type === 'genre'
-            ? 0.38
-            : 0.24;
+            ? 0.26
+            : 0.16;
           
           ctx.beginPath();
           ctx.moveTo(s.x!, s.y!);
@@ -1638,7 +1638,7 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
           ctx.strokeStyle = isHovered
             ? color
             : hexToRgba(color, touchesSelected ? Math.max(0.42, baseAlpha * shimmer) : isMuted ? 0.07 : Math.max(0.16, baseAlpha * shimmer));
-          ctx.lineWidth = isHovered ? 3 : touchesSelected ? 2.4 : link.type === 'collaboration' ? 1.9 : 1.35;
+          ctx.lineWidth = isHovered ? 2.4 : touchesSelected ? 1.9 : link.type === 'collaboration' ? 1.4 : 0.95;
           ctx.stroke();
         }
       });
@@ -1656,12 +1656,12 @@ const SoundMind: React.FC<SoundMindProps> = ({ isOpen, onClose, embedded = false
         const nodeShape = NODE_GROUP_SHAPES[node.group] || 'circle';
         
         if (isHovered || isSelected) {
-          const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 35);
+          const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, 28);
           gradient.addColorStop(0, `${nodeColor}${isSelected ? '88' : '66'}`);
           gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
           ctx.fillStyle = gradient;
           ctx.beginPath();
-          ctx.arc(node.x!, node.y!, 35, 0, Math.PI * 2);
+          ctx.arc(node.x!, node.y!, 28, 0, Math.PI * 2);
           ctx.fill();
         }
 
