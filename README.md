@@ -1,23 +1,19 @@
 # Dakibwa
 
-Dakibwa is a **music constellation** built around Daniel's listening history.
+Dakibwa is now a **public family-tree site for akibwa.com**.
 
-The site is intentionally narrow in scope now: one beautiful, music-first experience instead of a generic consumption dashboard. It uses **Last.fm as the primary source** and arranges favourite artists into a small interactive cosmos — part portrait, part listening map.
+V1 replaces the old constellation homepage with a polished, static family-tree experience centred on:
 
-## What changed in this rebuild
-
-- removed the mixed Spotify / OpenAI / Gemini drift from the main experience
-- rebuilt the homepage around a single constellation interaction
-- split the app into smaller modules for data fetching, graph shaping, and rendering
-- added a taste-aware fallback snapshot so the site still feels specific when Last.fm data is unavailable
-- updated the copy and visual language to feel calmer, stranger, and more intentional
+- a clickable tree spanning both main family branches
+- a sticky person detail panel on the homepage
+- lightweight shareable person-record pages without bringing in a routing dependency
+- a first-pass data model that can be expanded later when private editing and verified records are ready
 
 ## Stack
 
 - Vite
 - React
 - TypeScript
-- Last.fm API
 
 ## Local development
 
@@ -31,13 +27,3 @@ npm run dev
 ```bash
 npm run build
 ```
-
-## Environment
-
-Create a `.env` file with:
-
-```bash
-VITE_LASTFM_API_KEY=your_lastfm_api_key
-```
-
-If the key is missing, Dakibwa falls back to an embedded taste snapshot based on the current project direction and known listening profile.
