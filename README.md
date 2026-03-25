@@ -1,6 +1,13 @@
 # Dakibwa
 
-Dakibwa is now a **public family-tree site for akibwa.com**.
+Dakibwa is the canonical `akibwa.com` repo in `Projects/Dakibwa`.
+
+It now contains:
+
+- the React family archive homepage
+- the published running dashboard at `public/dashboard.html`
+- the Cloudflare Worker used for dashboard OAuth and token refresh in `worker/`
+- the local dashboard launcher in `local-dashboard/`
 
 V1 replaces the old constellation homepage with a polished, static family-tree experience centred on:
 
@@ -14,6 +21,7 @@ V1 replaces the old constellation homepage with a polished, static family-tree e
 - Vite
 - React
 - TypeScript
+- Cloudflare Worker (dashboard auth/data proxy)
 
 ## Local development
 
@@ -21,6 +29,12 @@ V1 replaces the old constellation homepage with a polished, static family-tree e
 npm install
 npm run dev
 ```
+
+## Dashboard
+
+- Published page: `public/dashboard.html`
+- Worker source: `worker/`
+- Local launcher: `local-dashboard/Start Dashboard.command`
 
 ## Build
 
