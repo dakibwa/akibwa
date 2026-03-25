@@ -23,6 +23,12 @@ export default defineConfig(({ mode }) => {
       build: {
         outDir: 'dist',
         assetsDir: 'assets',
+        rollupOptions: {
+          input: {
+            index: path.resolve(__dirname, 'index.html'),
+            family: path.resolve(__dirname, 'family.html'),
+          },
+        },
       }
     };
 });
