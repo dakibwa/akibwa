@@ -7,6 +7,8 @@
     "dev": "node scripts/run-vite.mjs",
     "build": "node scripts/run-vite.mjs build",
     "preview": "node scripts/run-vite.mjs preview",
+    "cloudflare:build": "python3 local-dashboard/launch.py --export-cloudflare ./cloudflare-dist",
+    "cloudflare:deploy": "npm run cloudflare:build && npx wrangler pages deploy ./cloudflare-dist --project-name akibwa-life-private",
     "location:update": "node scripts/update-owner-location.mjs",
     "location:publish": "node scripts/update-owner-location.mjs --commit --push"
   },
