@@ -6,7 +6,7 @@ import { PageFooter } from "@/components/page-footer";
 const contactNotes = [
   ["Small teams", "We work with focused teams and lean organisations."],
   ["Practical systems", "Clear, useful systems you can run and evolve."],
-  ["UK-based", "London, UK. Local time, global perspective."],
+  ["UK-based", "Manchester, UK. Local time, global perspective."],
   ["Remote-friendly", "Async by default, aligned when it matters."]
 ];
 

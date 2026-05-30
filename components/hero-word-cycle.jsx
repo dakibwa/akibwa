@@ -69,7 +69,7 @@ export function HeroDynamicPhrase() {
       <span>that turn </span>
       <HeroWordCycle phrases={heroSourcePhrases} label="Cycle source material" />
       <span className="hero-outcome">
-        <span>into </span>
+        <span> into </span>
         <HeroWordCycle phrases={heroOutcomePhrases} label="Cycle output type" />
         <span>.</span>
       </span>
