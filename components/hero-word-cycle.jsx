@@ -12,7 +12,7 @@ const heroSourcePhrases = [
 ];
 
 const heroOutcomePhrases = [
-  { label: "useful tools", accent: "47, 136, 255" },
+  { label: "useful tools", accent: "255, 111, 26" },
   { label: "clear dashboards", accent: "255, 111, 26" },
   { label: "calm review surfaces", accent: "125, 154, 146" },
   { label: "taste reports", accent: "47, 136, 255" },
