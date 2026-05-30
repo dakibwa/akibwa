@@ -99,33 +99,43 @@ export const workProjects = [
 ];
 
 export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL ?? "";
+export const sonicFmEmbedUrl = process.env.NEXT_PUBLIC_SONIC_FM_URL ?? "";
+export const vitalsEmbedUrl = process.env.NEXT_PUBLIC_VITALS_URL ?? "";
 
 export const personalProjects = [
   {
     number: "01",
-    slug: "health-dashboard",
-    title: "Health Dashboard",
-    type: workProjects[1].type,
-    image: workProjects[1].image,
-    alt: workProjects[1].alt,
-    summary:
-      "A private local dashboard for health signals, source freshness, trends, and review prompts.",
-    tags: ["Private data", "Local sources", "Review prompts"],
-    href: "/work#health-dashboard",
-    cta: "View case study"
-  },
-  {
-    number: "02",
     slug: "sonic-fm",
-    title: "Last.fm / Sonic FM",
+    title: "Sonic FM",
     type: workProjects[0].type,
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
     summary:
       "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and taste reports.",
     tags: ["Last.fm API", "Charts", "Taste reports"],
-    href: "/work#sonic-fm",
-    cta: "View case study"
+    mode: "embed",
+    embedUrl: sonicFmEmbedUrl,
+    localUrl: "http://localhost:3010",
+    fallbackHref: "/work#sonic-fm",
+    cta: "Load project"
+  },
+  {
+    number: "02",
+    slug: "vitals",
+    aliases: ["health-dashboard"],
+    title: "Vitals",
+    type: "Local health data dashboard",
+    image: workProjects[1].image,
+    alt: "Native Akibwa-style Vitals dashboard preview with private health signals and review prompts",
+    visual: "vitals",
+    summary:
+      "A private local dashboard for health signals, source freshness, trends, and review prompts.",
+    tags: ["Private data", "Local sources", "Review prompts"],
+    mode: "embed",
+    embedUrl: vitalsEmbedUrl,
+    localUrl: "http://127.0.0.1:5173",
+    fallbackHref: "/health",
+    cta: "Load project"
   },
   {
     number: "03",
