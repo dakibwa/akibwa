@@ -131,7 +131,7 @@ function SonicShowcase({ project, frameUrl }) {
               <Database size={15} />
               Product shape
             </dt>
-            <dd>A music-data surface that stays here on Personal instead of bouncing into an old work page.</dd>
+            <dd>A music-data surface that keeps the listening story beside the rest of the personal systems.</dd>
           </div>
         </dl>
         <div className="vitals-showcase-actions">
