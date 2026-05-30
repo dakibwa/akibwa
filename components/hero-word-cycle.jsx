@@ -1,44 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-const heroWordSets = [
-  {
-    original: "messy workflows",
-    words: ["manual handoffs", "client handoffs", "admin workflows", "repeatable work"]
-  },
-  {
-    original: "data",
-    words: ["KPIs", "risk", "cost", "docs", "flow"]
-  },
-  {
-    original: "music",
-    words: ["taste", "audio", "demos", "ideas", "loops"]
-  },
-  {
-    original: "private knowledge",
-    words: ["personal archives", "evidence archives", "document archives", "research archives"]
-  }
+const heroPhrases = [
+  "messy workflows",
+  "listening history",
+  "health signals",
+  "private context",
+  "scattered sources",
+  "rough ideas"
 ];
 
-function letterCount(value) {
-  return value.replace(/[^a-z]/gi, "").length;
-}
-
-heroWordSets.forEach(({ original, words }) => {
-  const expected = letterCount(original);
-  const mismatched = words.find((word) => letterCount(word) !== expected);
-
-  if (mismatched) {
-    throw new Error(`Hero word cycle mismatch: "${mismatched}" does not match "${original}" length.`);
-  }
-});
-
-function HeroWordCycle({ original, words }) {
+function HeroWordCycle() {
   const [isActive, setIsActive] = useState(false);
   const [index, setIndex] = useState(0);
-  const labels = useMemo(() => [original, ...words], [original, words]);
-  const currentLabel = isActive ? labels[index] : original;
+  const labels = heroPhrases;
+  const currentLabel = labels[index];
 
   useEffect(() => {
     if (!isActive) {
@@ -57,15 +34,17 @@ function HeroWordCycle({ original, words }) {
     <button
       type="button"
       className={`hero-word-cycle ${isActive ? "is-cycling" : ""}`}
-      aria-label={`${original}: ${words.join(", ")}`}
+      aria-label={`Cycle focus: ${labels.join(", ")}`}
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => setIsActive(false)}
       onPointerEnter={() => setIsActive(true)}
       onPointerLeave={() => setIsActive(false)}
-      onClick={() => setIsActive(true)}
+      onClick={() => {
+        setIsActive(true);
+        setIndex((current) => (current + 1) % labels.length);
+      }}
       onFocus={() => setIsActive(true)}
       onBlur={() => setIsActive(false)}
-      style={{ "--cycle-width": `${original.length}ch` }}
     >
       <span key={currentLabel} className="hero-word-cycle-value">
         {currentLabel}
@@ -77,14 +56,9 @@ function HeroWordCycle({ original, words }) {
 export function HeroDynamicPhrase() {
   return (
     <span className="hero-dynamic-phrase">
-      <HeroWordCycle {...heroWordSets[0]} />
-      <span>, </span>
-      <HeroWordCycle {...heroWordSets[1]} />
-      <span>, </span>
-      <HeroWordCycle {...heroWordSets[2]} />
-      <span>, and </span>
-      <HeroWordCycle {...heroWordSets[3]} />
-      <span>.</span>
+      <span>that turn </span>
+      <HeroWordCycle />
+      <span className="hero-outcome">into useful tools.</span>
     </span>
   );
 }

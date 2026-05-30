@@ -10,7 +10,7 @@ export function HomePage() {
     <section className="akibwa-home">
       <div className="page-grid akibwa-hero">
         <h1>
-          I’m Daniel — I build small AI‑assisted systems for{" "}
+          I’m Daniel — I build small AI‑assisted systems{" "}
           <HeroDynamicPhrase />
         </h1>
       </div>

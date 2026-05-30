@@ -209,7 +209,6 @@ button {
 .hero-word-cycle {
   appearance: none;
   display: inline-block;
-  width: var(--cycle-width);
   border: 0;
   border-radius: 0;
   background:
@@ -228,6 +227,10 @@ button {
     text-shadow 160ms ease;
 }
 
+.hero-outcome {
+  display: block;
+}
+
 .hero-word-cycle:hover,
 .hero-word-cycle:focus-visible,
 .hero-word-cycle.is-cycling {
@@ -242,7 +245,7 @@ button {
 }
 
 .hero-word-cycle-value {
-  display: inline;
+  display: inline-block;
   white-space: nowrap;
 }
 
