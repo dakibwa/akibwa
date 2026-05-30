@@ -7,6 +7,7 @@ const workplaces = [
     dates: "Apr 2024 - Present",
     accent: "#17324d",
     mark: "nwf",
+    logo: "/brand-logos/national-wealth-fund.webp",
     body:
       "Leading the Microsoft Fabric implementation across ingestion, lakehouse modelling, semantic models, Power BI, governance, and business training."
   },
@@ -16,6 +17,7 @@ const workplaces = [
     dates: "Jul 2023 - Apr 2024",
     accent: "#2f88ff",
     mark: "leeds",
+    logo: "/brand-logos/leeds-building-society.svg",
     body:
       "Promoted quickly into team leadership, guiding reporting delivery, analyst development, and clearer BI practices across the team."
   },
@@ -25,6 +27,7 @@ const workplaces = [
     dates: "Nov 2020 - Jul 2022",
     accent: "#d01fcb",
     mark: "sky",
+    logo: "/brand-logos/sky-bet.svg",
     body:
       "Rebuilt Power BI reporting and used SQL analysis to make safer-gambling, customer, and product signals easier to understand."
   },
@@ -34,6 +37,7 @@ const workplaces = [
     dates: "Aug 2018 - Aug 2019",
     accent: "#f15a24",
     mark: "vanquis",
+    logo: "/brand-logos/vanquis.svg",
     body:
       "Built Excel and Power BI models for commercial analysis, cost views, NPV thinking, and early SQL/data structure work."
   },
@@ -43,6 +47,7 @@ const workplaces = [
     dates: "Jun 2016 - Jul 2017",
     accent: "#006747",
     mark: "lloyds",
+    logo: "/brand-logos/lloyds-banking-group.svg",
     body:
       "Started in credit risk, working with structured analysis, financial judgement, and the discipline of evidence-led decisions."
   }
@@ -71,13 +76,15 @@ const tools = [
     name: "Claude Code",
     detail: "AI-assisted building and refactoring",
     accent: "#c96f3c",
-    glyph: "claude"
+    glyph: "claude",
+    logo: "/brand-logos/claude.svg"
   },
   {
     name: "OpenAI Codex",
     detail: "Repo work, local agents, implementation",
     accent: "#12b981",
-    glyph: "codex"
+    glyph: "codex",
+    logo: "/brand-logos/openai-codex.svg"
   },
   {
     name: "Copilot",
@@ -129,16 +136,24 @@ const domains = [
 
 function CompanyMark({ workplace }) {
   return (
-    <div className={`company-mark mark-${workplace.mark}`} aria-hidden="true">
-      <span />
+    <div className={`company-mark mark-${workplace.mark}`}>
+      {workplace.logo ? <img src={workplace.logo} alt={`${workplace.name} logo`} /> : <span aria-hidden="true" />}
       <strong>{workplace.name}</strong>
     </div>
   );
 }
 
-function ToolGlyph({ glyph }) {
+function ToolGlyph({ tool }) {
+  if (tool.logo) {
+    return (
+      <div className={`tool-glyph tool-logo-wrap logo-${tool.glyph}`} aria-hidden="true">
+        <img src={tool.logo} alt="" />
+      </div>
+    );
+  }
+
   return (
-    <div className={`tool-glyph glyph-${glyph}`} aria-hidden="true">
+    <div className={`tool-glyph glyph-${tool.glyph}`} aria-hidden="true">
       <span />
       <span />
       <span />
@@ -217,7 +232,7 @@ export function AboutPage() {
         <div className="tool-grid">
           {tools.map((tool) => (
             <article className="tool-card" key={tool.name} style={{ "--tool-accent": tool.accent }}>
-              <ToolGlyph glyph={tool.glyph} />
+              <ToolGlyph tool={tool} />
               <div>
                 <h3>{tool.name}</h3>
                 <p>{tool.detail}</p>
