@@ -1,28 +1,6 @@
-# Dakibwa
+# Akibwa Core Site
 
-Dakibwa is the canonical `akibwa.com` repo in `Projects/Dakibwa`.
+Public portfolio site for `akibwa.com`.
 
-It now contains:
-
-- the local dashboard launcher in `local-dashboard/`
-- the private Life dashboard in `public/life.html`
-- the document-backed local server in `local-dashboard/launch.py`
-
-## Stack
-
-- Vite
-- local HTML/CSS/JS for the Life surface
-- Python for the local private-data server
-
-## Local development
-
-```bash
-npm install
-npm run dev
-```
-
-## Build
-
-```bash
-npm run build
-```
+The site is a static Next.js export deployed by GitHub Pages from `main`.
+Sensitive project data, including the private health dashboard data, should stay out of this repository.

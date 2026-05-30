@@ -1,25 +1,16 @@
 {
-  "name": "dakibwa",
-  "private": true,
+  "name": "daniel-atkinson-consultancy-site",
   "version": "0.1.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "node scripts/run-vite.mjs",
-    "build": "node scripts/run-vite.mjs build",
-    "preview": "node scripts/run-vite.mjs preview",
-    "cloudflare:build": "python3 local-dashboard/launch.py --export-cloudflare ./cloudflare-dist",
-    "cloudflare:deploy": "npm run cloudflare:build && npx wrangler pages deploy ./cloudflare-dist --project-name akibwa-life-private",
-    "location:update": "node scripts/update-owner-location.mjs",
-    "location:publish": "node scripts/update-owner-location.mjs --commit --push"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "lucide-react": "^0.511.0",
+    "next": "^15.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   }
 }
