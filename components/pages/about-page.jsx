@@ -17,7 +17,7 @@ const workplaces = [
     dates: "2023 - 2024",
     accent: "#2f88ff",
     mark: "leeds",
-    logo: "/brand-logos/leeds-building-society-icon.png",
+    logo: "/brand-logos/leeds-building-society-icon.svg",
     body:
       "Promoted quickly into team leadership, guiding reporting delivery, analyst development, and clearer BI practices across the team."
   },
@@ -36,7 +36,7 @@ const workplaces = [
     dates: "2018 - 2019",
     accent: "#f15a24",
     mark: "vanquis",
-    logo: "/brand-logos/vanquis-icon.png",
+    logo: "/brand-logos/vanquis-icon.svg",
     body:
       "Built Excel and Power BI models for commercial analysis, cost views, NPV thinking, and early SQL/data structure work."
   },
