@@ -6,10 +6,13 @@ import {
   ArrowRight,
   CheckCircle2,
   Database,
+  Disc3,
   HeartPulse,
+  Headphones,
   LockKeyhole,
   Maximize2,
   Minimize2,
+  Radio,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -68,7 +71,7 @@ function PersonalProjectVisual({ project, priority }) {
 }
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
-  const isLive = project.mode === "embed";
+  const isLive = project.mode === "embed" || project.mode === "preview";
 
   return (
     <button
@@ -99,6 +102,85 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
         {isLive ? <ArrowRight size={18} strokeWidth={1.8} /> : <LockKeyhole size={17} strokeWidth={1.7} />}
       </footer>
     </button>
+  );
+}
+
+function SonicShowcase({ project, frameUrl }) {
+  const metrics = [
+    ["Source", "Last.fm", Radio],
+    ["Library", "Taste", Disc3],
+    ["Reports", "Charts", Sparkles],
+  ];
+
+  return (
+    <section className="page-grid vitals-showcase" id={`${project.slug}-preview`} aria-live="polite">
+      <div className="vitals-showcase-copy">
+        <span>Selected project</span>
+        <h2>{project.title}</h2>
+        <p>{project.summary}</p>
+        <dl>
+          <div>
+            <dt>
+              <Headphones size={15} />
+              Listening archive
+            </dt>
+            <dd>Last.fm history becomes artists, albums, tracks, timelines, and taste reports.</dd>
+          </div>
+          <div>
+            <dt>
+              <Database size={15} />
+              Product shape
+            </dt>
+            <dd>A music-data surface that stays here on Personal instead of bouncing into an old work page.</dd>
+          </div>
+        </dl>
+        <div className="vitals-showcase-actions">
+          {frameUrl ? (
+            <a href={frameUrl} target="_blank" rel="noreferrer">
+              Open dashboard
+              <ArrowRight size={17} strokeWidth={1.8} />
+            </a>
+          ) : (
+            <span>
+              <Headphones size={15} strokeWidth={1.7} />
+              Native project preview
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="vitals-dashboard-preview" aria-label="Sonic FM dashboard preview">
+        <header>
+          <div>
+            <span>Sonic FM</span>
+            <strong>Listening intelligence</strong>
+          </div>
+          <em>Music system</em>
+        </header>
+        <div className="vitals-preview-grid">
+          {metrics.map(([label, value, Icon]) => (
+            <article key={label}>
+              <Icon size={17} strokeWidth={1.8} />
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </article>
+          ))}
+        </div>
+        <div className="vitals-preview-chart">
+          <span />
+          <i style={{ height: "62%" }} />
+          <i style={{ height: "74%" }} />
+          <i style={{ height: "48%" }} />
+          <i style={{ height: "82%" }} />
+          <i style={{ height: "56%" }} />
+          <i style={{ height: "69%" }} />
+        </div>
+        <footer>
+          <CheckCircle2 size={16} />
+          <span>Built to turn listening history into something readable and useful.</span>
+        </footer>
+      </div>
+    </section>
   );
 }
 
@@ -175,6 +257,10 @@ function VitalsShowcase({ project }) {
 }
 
 function PersonalPreview({ project, isMaximized, setIsMaximized, frameUrl }) {
+  if (project.visual === "sonic") {
+    return <SonicShowcase project={project} frameUrl={frameUrl} />;
+  }
+
   if (project.visual === "vitals") {
     return <VitalsShowcase project={project} />;
   }

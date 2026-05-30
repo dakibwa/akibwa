@@ -114,11 +114,11 @@ export const personalProjects = [
     summary:
       "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and taste reports.",
     tags: ["Last.fm API", "Charts", "Taste reports"],
-    mode: "embed",
+    visual: "sonic",
+    mode: "preview",
     embedUrl: sonicFmEmbedUrl,
     localUrl: "http://localhost:3010",
-    fallbackHref: "/work#sonic-fm",
-    cta: "Load project"
+    cta: "View preview"
   },
   {
     number: "02",
