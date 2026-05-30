@@ -4,50 +4,49 @@ const workplaces = [
   {
     name: "National Wealth Fund",
     role: "Senior BI Developer",
-    dates: "Apr 2024 - Present",
+    dates: "2024 - Present",
     accent: "#17324d",
     mark: "nwf",
-    logo: "/brand-logos/national-wealth-fund.webp",
+    logo: "/brand-logos/national-wealth-fund-icon.png",
     body:
       "Leading the Microsoft Fabric implementation across ingestion, lakehouse modelling, semantic models, Power BI, governance, and business training."
   },
   {
     name: "Leeds Building Society",
     role: "BI Team Lead / BI Analyst",
-    dates: "Jul 2023 - Apr 2024",
+    dates: "2023 - 2024",
     accent: "#2f88ff",
     mark: "leeds",
-    logo: "/brand-logos/leeds-building-society.svg",
+    logo: "/brand-logos/leeds-building-society-icon.png",
     body:
       "Promoted quickly into team leadership, guiding reporting delivery, analyst development, and clearer BI practices across the team."
   },
   {
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
-    dates: "Nov 2020 - Jul 2022",
+    dates: "2020 - 2022",
     accent: "#d01fcb",
     mark: "sky",
-    logo: "/brand-logos/sky-bet.svg",
     body:
       "Rebuilt Power BI reporting and used SQL analysis to make safer-gambling, customer, and product signals easier to understand."
   },
   {
     name: "Vanquis Bank",
     role: "Strategic Insight Analyst",
-    dates: "Aug 2018 - Aug 2019",
+    dates: "2018 - 2019",
     accent: "#f15a24",
     mark: "vanquis",
-    logo: "/brand-logos/vanquis.svg",
+    logo: "/brand-logos/vanquis-icon.png",
     body:
       "Built Excel and Power BI models for commercial analysis, cost views, NPV thinking, and early SQL/data structure work."
   },
   {
     name: "Lloyds Banking Group",
     role: "Credit Risk Analyst",
-    dates: "Jun 2016 - Jul 2017",
+    dates: "2016 - 2017",
     accent: "#006747",
     mark: "lloyds",
-    logo: "/brand-logos/lloyds-banking-group.svg",
+    logo: "/brand-logos/lloyds-horse-icon.png",
     body:
       "Started in credit risk, working with structured analysis, financial judgement, and the discipline of evidence-led decisions."
   }
