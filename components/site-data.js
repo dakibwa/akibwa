@@ -35,8 +35,8 @@ export const featuredProjects = [
   {
     title: "Sonic FM",
     type: "Data product",
-    image: "/project-images/lastfm-dashboard-desktop.png",
-    alt: "Sonic FM interface showing listening history and charts",
+    image: "/area-art/signals.png",
+    alt: "Native Akibwa-style Sonic FM preview showing music library signals and charts",
     summary:
       "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and taste reports.",
     problem:
@@ -117,7 +117,6 @@ export const personalProjects = [
     visual: "sonic",
     mode: "preview",
     embedUrl: sonicFmEmbedUrl,
-    localUrl: "http://localhost:3010",
     cta: "View preview"
   },
   {

@@ -32,6 +32,38 @@ function getProjectFrameUrl(project, isLocalHost) {
 }
 
 function PersonalProjectVisual({ project, priority }) {
+  if (project.visual === "sonic") {
+    return (
+      <div className="sonic-dashboard-thumb" role="img" aria-label={project.alt}>
+        <div className="sonic-thumb-top">
+          <span>Sonic FM</span>
+          <i />
+          <i />
+          <i />
+        </div>
+        <div className="sonic-thumb-focus">
+          <div>
+            <strong>Listening intelligence</strong>
+            <em>artists / albums / tracks</em>
+          </div>
+          <div className="sonic-thumb-disc">
+            <span />
+            <span />
+          </div>
+        </div>
+        <div className="sonic-thumb-wave">
+          <span />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+        </div>
+      </div>
+    );
+  }
+
   if (project.visual === "vitals") {
     return (
       <div className="personal-dashboard-thumb" role="img" aria-label={project.alt}>
@@ -76,7 +108,6 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   return (
     <button
       type="button"
-      id={project.slug}
       className={`studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`}
       aria-pressed={isSelected}
       onClick={onSelect}
@@ -108,12 +139,17 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
 function SonicShowcase({ project, frameUrl }) {
   const metrics = [
     ["Source", "Last.fm", Radio],
-    ["Library", "Taste", Disc3],
-    ["Reports", "Charts", Sparkles],
+    ["Library", "Mapped", Disc3],
+    ["Reports", "Taste", Sparkles],
+  ];
+  const rows = [
+    ["Top signal", "Artists, albums, tracks"],
+    ["Time view", "Week, month, all-time"],
+    ["Output", "Readable taste reports"],
   ];
 
   return (
-    <section className="page-grid vitals-showcase" id={`${project.slug}-preview`} aria-live="polite">
+    <section className="page-grid vitals-showcase sonic-showcase" id={`${project.slug}-preview`} aria-live="polite">
       <div className="vitals-showcase-copy">
         <span>Selected project</span>
         <h2>{project.title}</h2>
@@ -149,15 +185,29 @@ function SonicShowcase({ project, frameUrl }) {
         </div>
       </div>
 
-      <div className="vitals-dashboard-preview" aria-label="Sonic FM dashboard preview">
+      <div className="sonic-dashboard-preview" aria-label="Sonic FM dashboard preview">
         <header>
           <div>
             <span>Sonic FM</span>
             <strong>Listening intelligence</strong>
           </div>
-          <em>Music system</em>
+          <em>Last.fm archive</em>
         </header>
-        <div className="vitals-preview-grid">
+
+        <div className="sonic-preview-stage">
+          <div>
+            <span>Library pulse</span>
+            <strong>Listening history, made legible.</strong>
+            <p>Artists, albums, tracks, timelines, and taste notes in one calm surface.</p>
+          </div>
+          <div className="sonic-preview-record" aria-hidden="true">
+            <i />
+            <i />
+            <span>FM</span>
+          </div>
+        </div>
+
+        <div className="sonic-preview-grid">
           {metrics.map(([label, value, Icon]) => (
             <article key={label}>
               <Icon size={17} strokeWidth={1.8} />
@@ -166,15 +216,25 @@ function SonicShowcase({ project, frameUrl }) {
             </article>
           ))}
         </div>
-        <div className="vitals-preview-chart">
+        <div className="sonic-preview-chart" aria-hidden="true">
           <span />
-          <i style={{ height: "62%" }} />
-          <i style={{ height: "74%" }} />
-          <i style={{ height: "48%" }} />
-          <i style={{ height: "82%" }} />
-          <i style={{ height: "56%" }} />
-          <i style={{ height: "69%" }} />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
         </div>
+
+        <div className="sonic-preview-rows">
+          {rows.map(([label, value]) => (
+            <div key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </div>
+
         <footer>
           <CheckCircle2 size={16} />
           <span>Built to turn listening history into something readable and useful.</span>
