@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRight, LockKeyhole } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
@@ -9,6 +11,28 @@ const contactNotes = [
 ];
 
 export function ContactPage() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const fields = [
+      ["What are you trying to fix?", formData.get("problem")],
+      ["What does it currently involve?", formData.get("current")],
+      ["What would make it useful?", formData.get("outcome")],
+      ["Email", formData.get("email")],
+      ["Preferred timing", formData.get("timing")]
+    ];
+    const body = fields
+      .map(([label, value]) => [label, value?.toString().trim()])
+      .filter(([, value]) => value)
+      .map(([label, value]) => `${label}\n${value}`)
+      .join("\n\n");
+
+    const subject = encodeURIComponent("Akibwa enquiry");
+    const message = encodeURIComponent(body || "Hi Daniel,");
+    window.location.href = `mailto:hello@akibwa.com?subject=${subject}&body=${message}`;
+  };
+
   return (
     <section className="studio-page contact-page-new">
       <section className="page-grid contact-layout">
@@ -27,9 +51,7 @@ export function ContactPage() {
 
           <form
             className="contact-form"
-            action="mailto:hello@akibwa.com"
-            method="post"
-            encType="text/plain"
+            onSubmit={handleSubmit}
           >
             <label>
               What are you trying to fix?
