@@ -92,16 +92,15 @@ button {
   min-width: 118px;
   background:
     linear-gradient(
-      112deg,
+      105deg,
       var(--ink) 0%,
-      var(--ink) 22%,
-      var(--blue) 38%,
-      #12b981 49%,
-      var(--orange) 61%,
-      var(--blue) 74%,
+      var(--ink) 36%,
+      var(--blue) 47%,
+      var(--orange) 53%,
+      var(--ink) 64%,
       var(--ink) 100%
     );
-  background-size: 180% 100%;
+  background-size: 260% 100%;
   background-position: 100% 50%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -123,28 +122,28 @@ button {
   bottom: -3px;
   left: 0;
   z-index: -1;
-  height: 6px;
+  height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(47, 136, 255, 0.2), rgba(255, 111, 26, 0.18), transparent);
+  background: linear-gradient(90deg, transparent, rgba(47, 136, 255, 0.26), rgba(255, 111, 26, 0.22), transparent);
   opacity: 0;
-  transform: translateX(-42%) scaleX(0.35);
+  transform: translateX(0) scaleX(0.22);
   transform-origin: left center;
   transition: opacity 180ms ease;
 }
 
 .brand:hover,
 .brand:focus-visible {
-  animation: brand-color-run 1700ms cubic-bezier(0.34, 0.78, 0.25, 1) infinite alternate;
+  animation: brand-color-run 2400ms cubic-bezier(0.34, 0.78, 0.25, 1) both;
   color: transparent;
-  filter: saturate(1.08);
+  filter: none;
   outline: 0;
-  text-shadow: 0 0 20px rgba(47, 136, 255, 0.16);
+  text-shadow: 0 0 10px rgba(47, 136, 255, 0.08);
 }
 
 .brand:hover::after,
 .brand:focus-visible::after {
-  animation: brand-underline-run 1700ms cubic-bezier(0.34, 0.78, 0.25, 1) infinite alternate;
-  opacity: 1;
+  animation: brand-underline-run 2400ms cubic-bezier(0.34, 0.78, 0.25, 1) both;
+  opacity: 0.72;
 }
 
 .nav-desktop {
@@ -333,30 +332,27 @@ button {
 }
 
 @keyframes brand-color-run {
-  0% {
+  0%,
+  100% {
     background-position: 100% 50%;
   }
 
-  45% {
-    background-position: 38% 50%;
-  }
-
-  100% {
+  52% {
     background-position: 0% 50%;
   }
 }
 
 @keyframes brand-underline-run {
   0% {
-    transform: translateX(-42%) scaleX(0.35);
+    transform: translateX(-18%) scaleX(0.18);
   }
 
-  55% {
-    transform: translateX(0) scaleX(1);
+  52% {
+    transform: translateX(0) scaleX(0.72);
   }
 
   100% {
-    transform: translateX(42%) scaleX(0.35);
+    transform: translateX(18%) scaleX(0.18);
   }
 }
 
