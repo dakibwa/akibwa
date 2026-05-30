@@ -668,6 +668,7 @@ button {
 }
 
 .personal-project-card {
+  scroll-margin-top: 92px;
   color: var(--black);
   cursor: pointer;
   transition:
