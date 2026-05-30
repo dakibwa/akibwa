@@ -153,9 +153,6 @@ function DashboardShowcase({ project, frameUrl }) {
 }
 
 function CoverCollisionShowcase({ project }) {
-  const featurePosts = coverCollisionPosts.slice(0, 3);
-  const instagramHandle = new URL(project.externalHref).pathname.replaceAll("/", "");
-
   return (
     <section
       className="page-grid cover-collision-showcase"
@@ -190,40 +187,16 @@ function CoverCollisionShowcase({ project }) {
         </div>
       </div>
 
-      <div className="cover-collision-panel" aria-label="Cover Collision Instagram preview">
+      <div className="cover-collision-panel" aria-label="Cover Collision Instagram posts">
         <header>
           <div>
             <span>Cover Collision</span>
-            <strong>Album art, recombined into a running visual series.</strong>
+            <strong>Album art, recombined into a visual series.</strong>
           </div>
           <em>{coverCollisionPosts.length} posts</em>
         </header>
 
-        <div className="cover-collision-stage">
-          <div className="cover-collision-stack" aria-hidden="true">
-            {featurePosts.map((post, index) => (
-              <Image
-                src={post.image}
-                alt=""
-                width={320}
-                height={320}
-                sizes="(max-width: 760px) 42vw, 180px"
-                className={`cover-stack-image cover-stack-image-${index + 1}`}
-                key={post.href}
-              />
-            ))}
-          </div>
-          <div className="cover-collision-stage-copy">
-            <span>Current thread</span>
-            <strong>{featurePosts[0]?.title}</strong>
-            <p>
-              Latest pulled from @{instagramHandle}: the bottom bar keeps the full public sequence visible without
-              leaving the Personal page.
-            </p>
-          </div>
-        </div>
-
-        <div className="cover-collision-bar" aria-label="Cover Collision posts from Instagram">
+        <div className="cover-collision-grid" aria-label="Cover Collision posts from Instagram">
           {coverCollisionPosts.map((post) => (
             <a
               className="cover-collision-post"
@@ -237,7 +210,7 @@ function CoverCollisionShowcase({ project }) {
                 alt={post.alt}
                 width={180}
                 height={180}
-                sizes="(max-width: 760px) 38vw, 132px"
+                sizes="(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
               />
               <span>No. {post.number}</span>
               <strong>{post.title}</strong>
