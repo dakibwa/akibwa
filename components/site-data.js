@@ -77,30 +77,31 @@ export const workProjects = [
   },
   {
     number: "02",
-    slug: "health-dashboard",
-    title: "Health Dashboard",
-    type: "Local health data dashboard",
+    slug: "vitals",
+    aliases: ["health-dashboard"],
+    title: "Vitals",
+    type: "Private health signal system",
     image: "/area-art/systems.png",
     alt: "Abstract system artwork with translucent sheets, grid coordinates, and node paths",
-    score: "HD",
+    visual: "vitals",
+    score: "VT",
     metrics: [
-      ["Data", "Private"],
+      ["Signals", "Local"],
       ["Sources", "Local"],
       ["Review", "Clinician"],
-      ["Output", "Case study"]
+      ["Output", "Private"]
     ],
     rows: [
-      ["The state", "Built and usable locally: a private dashboard for health signals, source freshness, trends, and review prompts."],
+      ["The state", "A private Vitals system for health signals, source freshness, trends, and review prompts."],
       ["The data", "Sensitive health data stays out of the public site and public repository."],
       ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
-      ["Why it matters", "It shows the same pattern applied to sensitive data: keep it local, preserve provenance, and publish only the non-sensitive case study."]
+      ["Why it matters", "It shows the same pattern applied to sensitive data: keep the sources private, preserve provenance, and publish only the product shape."]
     ]
   }
 ];
 
 export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL ?? "";
 export const sonicFmEmbedUrl = process.env.NEXT_PUBLIC_SONIC_FM_URL ?? "";
-export const vitalsEmbedUrl = process.env.NEXT_PUBLIC_VITALS_URL ?? "";
 
 export const personalProjects = [
   {
@@ -124,18 +125,16 @@ export const personalProjects = [
     slug: "vitals",
     aliases: ["health-dashboard"],
     title: "Vitals",
-    type: "Local health data dashboard",
+    type: "Private health signal system",
     image: workProjects[1].image,
     alt: "Native Akibwa-style Vitals dashboard preview with private health signals and review prompts",
     visual: "vitals",
     summary:
-      "A private local dashboard for health signals, source freshness, trends, and review prompts.",
+      "A private Vitals system for health signals, source freshness, trends, and review prompts.",
     tags: ["Private data", "Local sources", "Review prompts"],
-    mode: "embed",
-    embedUrl: vitalsEmbedUrl,
-    localUrl: "http://127.0.0.1:5173",
+    mode: "private",
     fallbackHref: "/health",
-    cta: "Load project"
+    cta: "View preview"
   },
   {
     number: "03",

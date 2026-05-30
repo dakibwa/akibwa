@@ -102,7 +102,7 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   );
 }
 
-function VitalsShowcase({ project, frameUrl }) {
+function VitalsShowcase({ project }) {
   const metrics = [
     ["Signals", "Local", Activity],
     ["Sources", "Private", Database],
@@ -132,17 +132,10 @@ function VitalsShowcase({ project, frameUrl }) {
           </div>
         </dl>
         <div className="vitals-showcase-actions">
-          {frameUrl ? (
-            <a href={frameUrl} target="_blank" rel="noreferrer">
-              Open local dashboard
-              <ArrowRight size={17} strokeWidth={1.8} />
-            </a>
-          ) : (
-            <span>
-              <LockKeyhole size={15} strokeWidth={1.7} />
-              Private local app
-            </span>
-          )}
+          <span>
+            <LockKeyhole size={15} strokeWidth={1.7} />
+            Private native preview
+          </span>
         </div>
       </div>
 
@@ -183,7 +176,7 @@ function VitalsShowcase({ project, frameUrl }) {
 
 function PersonalPreview({ project, isMaximized, setIsMaximized, frameUrl }) {
   if (project.visual === "vitals") {
-    return <VitalsShowcase project={project} frameUrl={frameUrl} />;
+    return <VitalsShowcase project={project} />;
   }
 
   if (project.mode !== "embed") {
