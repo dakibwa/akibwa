@@ -25,13 +25,13 @@ export function HomePage() {
 
       <div className="page-grid area-grid" aria-label="Featured areas">
         {areaTiles.map((tile, index) => (
-          <Link href={tile.href} className="area-card" key={tile.title}>
+          <Link href={tile.href} prefetch className="area-card" key={tile.title}>
             <div className="area-art">
               <Image
                 src={tile.image}
                 alt={tile.alt}
                 fill
-                priority={index < 3}
+                priority={index === 0}
                 sizes="(max-width: 760px) 100vw, 31vw"
               />
             </div>

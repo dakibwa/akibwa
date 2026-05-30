@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 const navItems = [
-  { href: "/work", label: "Work", match: ["/work", "/projects"] },
-  { href: "/systems", label: "Systems", match: ["/systems", "/about"] },
-  { href: "/offer", label: "Offer", match: ["/offer", "/services"] },
+  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health"] },
+  { href: "/offer", label: "Professional", match: ["/offer", "/systems", "/services"] },
+  { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
 
@@ -26,23 +26,38 @@ function isActive(pathname, match) {
 
 export function SiteShell({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const nav = useMemo(() => navItems, []);
+
+  const primeRoute = (href) => {
+    router.prefetch(href);
+  };
 
   return (
     <div className="site-shell">
       <header className="site-header">
         <div className="site-frame nav-row">
-          <Link href="/" className="brand" onClick={() => setIsMenuOpen(false)}>
+          <Link
+            href="/"
+            prefetch
+            className="brand"
+            onClick={() => setIsMenuOpen(false)}
+            onPointerEnter={() => primeRoute("/")}
+            onFocus={() => primeRoute("/")}
+          >
             AKIBWA
           </Link>
 
           <nav className="nav-desktop" aria-label="Main navigation">
-            {nav.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch
                 className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
+                aria-current={isActive(pathname, item.match) ? "page" : undefined}
+                onPointerEnter={() => primeRoute(item.href)}
+                onFocus={() => primeRoute(item.href)}
               >
                 {item.label}
               </Link>
@@ -63,12 +78,16 @@ export function SiteShell({ children }) {
 
         <div className={`nav-mobile ${isMenuOpen ? "is-open" : ""}`} aria-hidden={!isMenuOpen}>
           <div className="site-frame nav-mobile-inner">
-            {nav.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch
                 className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
+                aria-current={isActive(pathname, item.match) ? "page" : undefined}
                 onClick={() => setIsMenuOpen(false)}
+                onPointerEnter={() => primeRoute(item.href)}
+                onFocus={() => primeRoute(item.href)}
               >
                 {item.label}
               </Link>
@@ -77,7 +96,7 @@ export function SiteShell({ children }) {
         </div>
       </header>
 
-      <main key={pathname} className="page-transition">
+      <main className="page-transition">
         {children}
       </main>
     </div>

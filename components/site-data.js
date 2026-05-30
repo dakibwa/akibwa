@@ -2,37 +2,23 @@ export const contactEmail = "***REMOVED***";
 
 export const areaTiles = [
   {
-    title: "Work",
-    descriptor: "Projects",
-    href: "/work",
+    title: "Personal",
+    descriptor: "Self-built projects",
+    href: "/personal",
     image: "/area-art/work.png",
     alt: "Abstract collage of interface fragments, paper proofs, and data marks"
   },
   {
-    title: "Systems",
-    descriptor: "Operating models",
-    href: "/systems",
-    image: "/area-art/systems.png",
-    alt: "Abstract system artwork with translucent sheets, grid coordinates, and node paths"
-  },
-  {
-    title: "Offer",
-    descriptor: "Commission a useful system",
+    title: "Professional",
+    descriptor: "Systems for companies",
     href: "/offer",
     image: "/area-art/offer.png",
     alt: "Abstract artwork showing a path from messy marks into a precise output"
   },
   {
-    title: "Signals",
-    descriptor: "Music and data",
-    href: "/work",
-    image: "/area-art/signals.png",
-    alt: "Abstract waveform and circular listening signal artwork"
-  },
-  {
-    title: "Knowledge",
-    descriptor: "Evidence systems",
-    href: "/work#internal-systems",
+    title: "About",
+    descriptor: "How I think and build",
+    href: "/about",
     image: "/area-art/knowledge.png",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations"
   },
@@ -109,6 +95,62 @@ export const workProjects = [
       ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
       ["Why it matters", "It shows the same pattern applied to sensitive data: keep it local, preserve provenance, and publish only the non-sensitive case study."]
     ]
+  }
+];
+
+export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL ?? "";
+
+export const personalProjects = [
+  {
+    number: "01",
+    slug: "health-dashboard",
+    title: "Health Dashboard",
+    type: workProjects[1].type,
+    image: workProjects[1].image,
+    alt: workProjects[1].alt,
+    summary:
+      "A private local dashboard for health signals, source freshness, trends, and review prompts.",
+    tags: ["Private data", "Local sources", "Review prompts"],
+    href: "/work#health-dashboard",
+    cta: "View case study"
+  },
+  {
+    number: "02",
+    slug: "sonic-fm",
+    title: "Last.fm / Sonic FM",
+    type: workProjects[0].type,
+    image: featuredProjects[0].image,
+    alt: featuredProjects[0].alt,
+    summary:
+      "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and taste reports.",
+    tags: ["Last.fm API", "Charts", "Taste reports"],
+    href: "/work#sonic-fm",
+    cta: "View case study"
+  },
+  {
+    number: "03",
+    slug: "cover-collision",
+    title: "Cover Collision",
+    type: "Instagram album-art experiment",
+    image: "/area-art/work.png",
+    alt: "Abstract collage of interface fragments, paper proofs, and data marks",
+    summary:
+      "An Instagram-based experiment in cover mismatches, collage, recombination, and visual taste.",
+    tags: ["Cover mismatches", "Collage", "Recombination"],
+    externalHref: coverCollisionUrl || undefined,
+    cta: coverCollisionUrl ? "Open Instagram" : "Instagram link pending"
+  },
+  {
+    number: "04",
+    slug: "personal-knowledge-base",
+    title: "Personal Knowledge Base",
+    type: "Private local-first AI memory system",
+    image: "/area-art/knowledge.png",
+    alt: "Abstract evidence artwork with document layers, source lines, and annotations",
+    summary:
+      "A private, local-first AI memory and source system for keeping useful context structured without exposing raw sources.",
+    tags: ["Local-first", "Source discipline", "Private system"],
+    cta: "Private system"
   }
 ];
 
