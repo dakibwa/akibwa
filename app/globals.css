@@ -207,13 +207,18 @@ button {
 }
 
 .hero-word-cycle {
+  --cycle-accent-rgb: 47, 136, 255;
   appearance: none;
   display: inline-block;
   border: 0;
   border-radius: 0;
   background:
-    linear-gradient(rgba(168, 216, 255, 0), rgba(168, 216, 255, 0))
-    0 93% / 100% 0.12em no-repeat;
+    linear-gradient(
+      90deg,
+      rgba(var(--cycle-accent-rgb), 0.2),
+      rgba(var(--cycle-accent-rgb), 0.08)
+    )
+    0 93% / 100% 0.09em no-repeat;
   padding: 0;
   color: inherit;
   cursor: pointer;
@@ -222,6 +227,7 @@ button {
   text-align: left;
   vertical-align: baseline;
   transition:
+    background-size 160ms ease,
     border-color 160ms ease,
     color 160ms ease,
     text-shadow 160ms ease;
@@ -234,14 +240,20 @@ button {
 .hero-word-cycle:hover,
 .hero-word-cycle:focus-visible,
 .hero-word-cycle.is-cycling {
-  background-image: linear-gradient(rgba(168, 216, 255, 0.46), rgba(168, 216, 255, 0.46));
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(var(--cycle-accent-rgb), 0.42),
+      rgba(var(--cycle-accent-rgb), 0.2)
+    );
+  background-size: 100% 0.13em;
   color: var(--black);
   outline: 0;
-  text-shadow: 0 0 16px rgba(255, 111, 26, 0.14);
+  text-shadow: 0 0 16px rgba(var(--cycle-accent-rgb), 0.14);
 }
 
 .hero-word-cycle:focus-visible {
-  box-shadow: 0 0 0 3px rgba(168, 216, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(var(--cycle-accent-rgb), 0.22);
 }
 
 .hero-word-cycle-value {
