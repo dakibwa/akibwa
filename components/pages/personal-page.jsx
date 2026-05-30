@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
+import { PersonalProjectArt } from "@/components/personal-project-art";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
 function canUseLocalFrame() {
@@ -29,18 +30,8 @@ function getProjectFrameUrl(project, isLocalHost) {
   return "";
 }
 
-function PersonalProjectVisual({ project, priority }) {
-  return (
-    <Image
-      className={project.dashboardImage ? "personal-dashboard-image-thumb" : undefined}
-      src={project.dashboardImage ?? project.image}
-      alt={project.alt}
-      width={620}
-      height={380}
-      priority={priority}
-      sizes="(max-width: 760px) 100vw, (max-width: 1060px) 50vw, 25vw"
-    />
-  );
+function PersonalProjectVisual({ project }) {
+  return <PersonalProjectArt project={project} />;
 }
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
