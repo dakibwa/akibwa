@@ -35,8 +35,8 @@ export const featuredProjects = [
   {
     title: "Sonic FM",
     type: "Data product",
-    image: "/area-art/signals.png",
-    alt: "Native Akibwa-style Sonic FM preview showing music library signals and charts",
+    image: "/project-images/sonic-fm-dashboard-desktop.png",
+    alt: "Taste Studio dashboard screenshot from the Last.fm music dashboard project",
     summary:
       "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and taste reports.",
     problem:
@@ -100,8 +100,83 @@ export const workProjects = [
   }
 ];
 
-export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL ?? "";
+export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL || "https://www.instagram.com/dakibwa/";
 export const sonicFmEmbedUrl = process.env.NEXT_PUBLIC_SONIC_FM_URL ?? "";
+
+export const coverCollisionPosts = [
+  {
+    number: "08",
+    title: "Debonair × Turtleneck & Chain",
+    date: "2026-05-08",
+    href: "https://www.instagram.com/p/DYFYB5XiEIM/",
+    image: "/project-images/cover-collision/cover-collision-01.jpg",
+    alt: "Cover Collision no. 08 combining Debonair and Turtleneck & Chain album artwork"
+  },
+  {
+    number: "07",
+    title: "Bright Green Field × The Car",
+    date: "2026-05-07",
+    href: "https://www.instagram.com/p/DYCshR1COSH/",
+    image: "/project-images/cover-collision/cover-collision-02.jpg",
+    alt: "Cover Collision no. 07 combining Bright Green Field and The Car album artwork"
+  },
+  {
+    number: "07",
+    title: "Honeybloom × Prospect Hummer",
+    date: "2026-05-01",
+    href: "https://www.instagram.com/p/DXzgTu2CGAi/",
+    image: "/project-images/cover-collision/cover-collision-03.jpg",
+    alt: "Cover Collision no. 07 combining Honeybloom and Prospect Hummer album artwork"
+  },
+  {
+    number: "06",
+    title: "Blonde × Tomboy",
+    date: "2026-04-28",
+    href: "https://www.instagram.com/p/DXrq7fmiDDV/",
+    image: "/project-images/cover-collision/cover-collision-04.jpg",
+    alt: "Cover Collision no. 06 combining Blonde and Tomboy album artwork"
+  },
+  {
+    number: "05",
+    title: "Recurring × Today",
+    date: "2026-04-25",
+    href: "https://www.instagram.com/p/DXjSKD5COsc/",
+    image: "/project-images/cover-collision/cover-collision-05.jpg",
+    alt: "Cover Collision no. 05 combining Recurring and Today album artwork"
+  },
+  {
+    number: "04",
+    title: "Under the Lilac Sky × DSU",
+    date: "2026-04-24",
+    href: "https://www.instagram.com/p/DXhS92AiDF0/",
+    image: "/project-images/cover-collision/cover-collision-06.jpg",
+    alt: "Cover Collision no. 04 combining Under the Lilac Sky and DSU album artwork"
+  },
+  {
+    number: "03",
+    title: "Jeffery × Teens of Denial",
+    date: "2026-04-23",
+    href: "https://www.instagram.com/p/DXeBILIiNv_/",
+    image: "/project-images/cover-collision/cover-collision-07.jpg",
+    alt: "Cover Collision no. 03 combining Jeffery and Teens of Denial album artwork"
+  },
+  {
+    number: "02",
+    title: "Graceland × Person Pitch",
+    date: "2026-04-22",
+    href: "https://www.instagram.com/p/DXbLYtYCCf8/",
+    image: "/project-images/cover-collision/cover-collision-08.jpg",
+    alt: "Cover Collision no. 02 combining Graceland and Person Pitch album artwork"
+  },
+  {
+    number: "01",
+    title: "Paranoid × How Strange, Innocence",
+    date: "2026-04-21",
+    href: "https://www.instagram.com/p/DXYp4MACABm/",
+    image: "/project-images/cover-collision/cover-collision-09.jpg",
+    alt: "Cover Collision no. 01 combining Paranoid and How Strange, Innocence album artwork"
+  }
+];
 
 export const personalProjects = [
   {
@@ -111,6 +186,12 @@ export const personalProjects = [
     type: workProjects[0].type,
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
+    dashboardImage: "/project-images/sonic-fm-dashboard-desktop.png",
+    dashboardImageAlt: "Full Taste Studio dashboard screenshot from the Last.fm music dashboard project",
+    dashboardImageWidth: 1440,
+    dashboardImageHeight: 900,
+    dashboardLabel: "Taste Studio dashboard",
+    dashboardStatus: "Project screenshot",
     summary:
       "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and taste reports.",
     tags: ["Last.fm API", "Charts", "Taste reports"],
@@ -125,8 +206,14 @@ export const personalProjects = [
     aliases: ["health-dashboard"],
     title: "Vitals",
     type: "Private health signal system",
-    image: workProjects[1].image,
-    alt: "Native Akibwa-style Vitals dashboard preview with private health signals and review prompts",
+    image: "/project-images/vitals-dashboard-redacted-desktop.png",
+    alt: "Public-safe redacted screenshot of the Akibwa Health Dashboard",
+    dashboardImage: "/project-images/vitals-dashboard-redacted-desktop.png",
+    dashboardImageAlt: "Full Akibwa Health Dashboard screenshot with private values redacted",
+    dashboardImageWidth: 1280,
+    dashboardImageHeight: 720,
+    dashboardLabel: "Akibwa Health Dashboard",
+    dashboardStatus: "Private data redacted",
     visual: "vitals",
     summary:
       "A private Vitals system for health signals, source freshness, trends, and review prompts.",
@@ -140,13 +227,15 @@ export const personalProjects = [
     slug: "cover-collision",
     title: "Cover Collision",
     type: "Instagram album-art experiment",
-    image: "/area-art/work.png",
-    alt: "Abstract collage of interface fragments, paper proofs, and data marks",
+    image: coverCollisionPosts[0].image,
+    alt: coverCollisionPosts[0].alt,
+    visual: "cover-collision",
     summary:
       "An Instagram-based experiment in cover mismatches, collage, recombination, and visual taste.",
     tags: ["Cover mismatches", "Collage", "Recombination"],
-    externalHref: coverCollisionUrl || undefined,
-    cta: coverCollisionUrl ? "Open Instagram" : "Instagram link pending"
+    mode: "preview",
+    externalHref: coverCollisionUrl,
+    cta: "View posts"
   },
   {
     number: "04",

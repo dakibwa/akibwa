@@ -2,23 +2,21 @@
 
 import Image from "next/image";
 import {
-  Activity,
   ArrowRight,
-  CheckCircle2,
   Database,
   Disc3,
   HeartPulse,
   Headphones,
+  Instagram,
   LockKeyhole,
   Maximize2,
   Minimize2,
-  Radio,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
-import { personalProjects } from "@/components/site-data";
+import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
 function canUseLocalFrame() {
   if (typeof window === "undefined") return false;
@@ -32,67 +30,10 @@ function getProjectFrameUrl(project, isLocalHost) {
 }
 
 function PersonalProjectVisual({ project, priority }) {
-  if (project.visual === "sonic") {
-    return (
-      <div className="sonic-dashboard-thumb" role="img" aria-label={project.alt}>
-        <div className="sonic-thumb-top">
-          <span>Sonic FM</span>
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className="sonic-thumb-focus">
-          <div>
-            <strong>Listening intelligence</strong>
-            <em>artists / albums / tracks</em>
-          </div>
-          <div className="sonic-thumb-disc">
-            <span />
-            <span />
-          </div>
-        </div>
-        <div className="sonic-thumb-wave">
-          <span />
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
-      </div>
-    );
-  }
-
-  if (project.visual === "vitals") {
-    return (
-      <div className="personal-dashboard-thumb" role="img" aria-label={project.alt}>
-        <div className="personal-dashboard-thumb-top">
-          <span />
-          <i />
-          <i />
-        </div>
-        <div className="personal-dashboard-thumb-main">
-          <strong>Vitals</strong>
-          <em>source-backed review</em>
-          <div>
-            <span />
-            <span />
-            <span />
-          </div>
-        </div>
-        <div className="personal-dashboard-thumb-grid">
-          <span />
-          <span />
-          <span />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Image
-      src={project.image}
+      className={project.dashboardImage ? "personal-dashboard-image-thumb" : undefined}
+      src={project.dashboardImage ?? project.image}
       alt={project.alt}
       width={620}
       height={380}
@@ -136,39 +77,38 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   );
 }
 
-function SonicShowcase({ project, frameUrl }) {
-  const metrics = [
-    ["Source", "Last.fm", Radio],
-    ["Library", "Mapped", Disc3],
-    ["Reports", "Taste", Sparkles],
-  ];
-  const rows = [
-    ["Top signal", "Artists, albums, tracks"],
-    ["Time view", "Week, month, all-time"],
-    ["Output", "Readable taste reports"],
-  ];
+function DashboardShowcase({ project, frameUrl }) {
+  const isVitals = project.visual === "vitals";
+  const details = isVitals
+    ? [
+        [ShieldCheck, "Data boundary", "The health dashboard is surfaced from the real project, with private values redacted on the public site."],
+        [HeartPulse, "Product shape", "Source freshness, health signals, trends, and prompts for review conversations."],
+      ]
+    : [
+        [Headphones, "Listening archive", "Last.fm history feeds a complete music workspace for taste, sessions, and listening ideas."],
+        [Database, "Product shape", "The surface holds profile lanes, feedback, provider state, branches, and export-ready sketches."],
+      ];
 
   return (
-    <section className="page-grid vitals-showcase sonic-showcase" id={`${project.slug}-preview`} aria-live="polite">
+    <section
+      className={`page-grid source-dashboard-showcase ${isVitals ? "is-private" : "is-music"}`}
+      id={`${project.slug}-preview`}
+      aria-live="polite"
+    >
       <div className="vitals-showcase-copy">
         <span>Selected project</span>
         <h2>{project.title}</h2>
         <p>{project.summary}</p>
         <dl>
-          <div>
-            <dt>
-              <Headphones size={15} />
-              Listening archive
-            </dt>
-            <dd>Last.fm history becomes artists, albums, tracks, timelines, and taste reports.</dd>
-          </div>
-          <div>
-            <dt>
-              <Database size={15} />
-              Product shape
-            </dt>
-            <dd>A music-data surface that keeps the listening story beside the rest of the personal systems.</dd>
-          </div>
+          {details.map(([Icon, label, body]) => (
+            <div key={label}>
+              <dt>
+                <Icon size={15} />
+                {label}
+              </dt>
+              <dd>{body}</dd>
+            </div>
+          ))}
         </dl>
         <div className="vitals-showcase-actions">
           {frameUrl ? (
@@ -178,151 +118,145 @@ function SonicShowcase({ project, frameUrl }) {
             </a>
           ) : (
             <span>
-              <Headphones size={15} strokeWidth={1.7} />
-              Native project preview
+              {isVitals ? <LockKeyhole size={15} strokeWidth={1.7} /> : <Headphones size={15} strokeWidth={1.7} />}
+              {project.dashboardStatus}
             </span>
           )}
         </div>
       </div>
 
-      <div className="sonic-dashboard-preview" aria-label="Sonic FM dashboard preview">
-        <header>
-          <div>
-            <span>Sonic FM</span>
-            <strong>Listening intelligence</strong>
-          </div>
-          <em>Last.fm archive</em>
-        </header>
-
-        <div className="sonic-preview-stage">
-          <div>
-            <span>Library pulse</span>
-            <strong>Listening history, made legible.</strong>
-            <p>Artists, albums, tracks, timelines, and taste notes in one calm surface.</p>
-          </div>
-          <div className="sonic-preview-record" aria-hidden="true">
-            <i />
-            <i />
-            <span>FM</span>
-          </div>
-        </div>
-
-        <div className="sonic-preview-grid">
-          {metrics.map(([label, value, Icon]) => (
-            <article key={label}>
-              <Icon size={17} strokeWidth={1.8} />
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </article>
-          ))}
-        </div>
-        <div className="sonic-preview-chart" aria-hidden="true">
-          <span />
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
-
-        <div className="sonic-preview-rows">
-          {rows.map(([label, value]) => (
-            <div key={label}>
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </div>
-          ))}
-        </div>
-
+      <div className="source-dashboard-art">
+        {frameUrl ? (
+          <iframe
+            src={frameUrl}
+            title={`${project.title} dashboard`}
+            className="source-dashboard-frame"
+            loading="lazy"
+          />
+        ) : (
+          <Image
+            src={project.dashboardImage}
+            alt={project.dashboardImageAlt ?? project.alt}
+            width={project.dashboardImageWidth ?? 1440}
+            height={project.dashboardImageHeight ?? 900}
+            sizes="(max-width: 760px) 100vw, (max-width: 1060px) 100vw, 64vw"
+            priority
+          />
+        )}
         <footer>
-          <CheckCircle2 size={16} />
-          <span>Built to turn listening history into something readable and useful.</span>
+          <span>{project.dashboardLabel}</span>
+          <em>{project.dashboardStatus}</em>
         </footer>
       </div>
     </section>
   );
 }
 
-function VitalsShowcase({ project }) {
-  const metrics = [
-    ["Signals", "Local", Activity],
-    ["Sources", "Private", Database],
-    ["Review", "Calm", Sparkles],
-  ];
+function CoverCollisionShowcase({ project }) {
+  const featurePosts = coverCollisionPosts.slice(0, 3);
+  const instagramHandle = new URL(project.externalHref).pathname.replaceAll("/", "");
 
   return (
-    <section className="page-grid vitals-showcase" id={`${project.slug}-preview`} aria-live="polite">
-      <div className="vitals-showcase-copy">
+    <section
+      className="page-grid cover-collision-showcase"
+      id={`${project.slug}-preview`}
+      aria-live="polite"
+    >
+      <div className="vitals-showcase-copy cover-collision-copy">
         <span>Selected project</span>
         <h2>{project.title}</h2>
         <p>{project.summary}</p>
         <dl>
           <div>
             <dt>
-              <ShieldCheck size={15} />
-              Data boundary
+              <Disc3 size={15} />
+              Source material
             </dt>
-            <dd>Private health sources stay local; the public surface shows the product pattern, not raw records.</dd>
+            <dd>Album covers are treated as taste objects: familiar references pulled slightly out of place.</dd>
           </div>
           <div>
             <dt>
-              <HeartPulse size={15} />
-              Product shape
+              <Sparkles size={15} />
+              Project shape
             </dt>
-            <dd>Source freshness, health signals, trends, and prompts for review conversations.</dd>
+            <dd>A public Instagram series of cover mismatches, collage moves, and visual recombination.</dd>
           </div>
         </dl>
         <div className="vitals-showcase-actions">
-          <span>
-            <LockKeyhole size={15} strokeWidth={1.7} />
-            Private native preview
-          </span>
+          <a href={project.externalHref} target="_blank" rel="noreferrer">
+            <Instagram size={15} strokeWidth={1.7} />
+            Open Instagram
+          </a>
         </div>
       </div>
 
-      <div className="vitals-dashboard-preview" aria-label="Vitals dashboard preview">
+      <div className="cover-collision-panel" aria-label="Cover Collision Instagram preview">
         <header>
           <div>
-            <span>Vitals</span>
-            <strong>Private health picture</strong>
+            <span>Cover Collision</span>
+            <strong>Album art, recombined into a running visual series.</strong>
           </div>
-          <em>Local only</em>
+          <em>{coverCollisionPosts.length} posts</em>
         </header>
-        <div className="vitals-preview-grid">
-          {metrics.map(([label, value, Icon]) => (
-            <article key={label}>
-              <Icon size={17} strokeWidth={1.8} />
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </article>
+
+        <div className="cover-collision-stage">
+          <div className="cover-collision-stack" aria-hidden="true">
+            {featurePosts.map((post, index) => (
+              <Image
+                src={post.image}
+                alt=""
+                width={320}
+                height={320}
+                sizes="(max-width: 760px) 42vw, 180px"
+                className={`cover-stack-image cover-stack-image-${index + 1}`}
+                key={post.href}
+              />
+            ))}
+          </div>
+          <div className="cover-collision-stage-copy">
+            <span>Current thread</span>
+            <strong>{featurePosts[0]?.title}</strong>
+            <p>
+              Latest pulled from @{instagramHandle}: the bottom bar keeps the full public sequence visible without
+              leaving the Personal page.
+            </p>
+          </div>
+        </div>
+
+        <div className="cover-collision-bar" aria-label="Cover Collision posts from Instagram">
+          {coverCollisionPosts.map((post) => (
+            <a
+              className="cover-collision-post"
+              href={post.href}
+              target="_blank"
+              rel="noreferrer"
+              key={post.href}
+            >
+              <Image
+                src={post.image}
+                alt={post.alt}
+                width={180}
+                height={180}
+                sizes="(max-width: 760px) 38vw, 132px"
+              />
+              <span>No. {post.number}</span>
+              <strong>{post.title}</strong>
+              <em>{post.date}</em>
+            </a>
           ))}
         </div>
-        <div className="vitals-preview-chart">
-          <span />
-          <i style={{ height: "46%" }} />
-          <i style={{ height: "58%" }} />
-          <i style={{ height: "42%" }} />
-          <i style={{ height: "68%" }} />
-          <i style={{ height: "54%" }} />
-          <i style={{ height: "76%" }} />
-        </div>
-        <footer>
-          <CheckCircle2 size={16} />
-          <span>Built for tracking and clinician conversations, not diagnosis.</span>
-        </footer>
       </div>
     </section>
   );
 }
 
 function PersonalPreview({ project, isMaximized, setIsMaximized, frameUrl }) {
-  if (project.visual === "sonic") {
-    return <SonicShowcase project={project} frameUrl={frameUrl} />;
+  if (project.visual === "sonic" || project.visual === "vitals") {
+    return <DashboardShowcase project={project} frameUrl={frameUrl} />;
   }
 
-  if (project.visual === "vitals") {
-    return <VitalsShowcase project={project} />;
+  if (project.visual === "cover-collision") {
+    return <CoverCollisionShowcase project={project} />;
   }
 
   if (project.mode !== "embed") {
