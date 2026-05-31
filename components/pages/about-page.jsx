@@ -89,8 +89,9 @@ const tools = [
   {
     name: "Copilot",
     detail: "Fabric, workflow, and knowledge assistance",
-    accent: "#6f5cff",
-    glyph: "copilot"
+    accent: "#557f8d",
+    glyph: "copilot",
+    logo: "/brand-logos/microsoft-copilot.svg"
   },
   {
     name: "Python",
