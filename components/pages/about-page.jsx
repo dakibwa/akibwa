@@ -200,7 +200,6 @@ export function AboutPage() {
           <div>
             <h2 id="workplaces-heading">Where I have worked</h2>
           </div>
-          <p>Public CV-level history, shaped into the kind of systems work I want Akibwa to stand for.</p>
         </div>
 
         <div className="company-grid">
