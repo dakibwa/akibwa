@@ -1,0 +1,17 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">Data modelling</title>
+  <defs>
+    <linearGradient id="modelAccent" x1="18" x2="111" y1="19" y2="109" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff8a3d" />
+      <stop offset="1" stop-color="#ff5a1f" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#modelAccent)" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="8" d="M34 42h60M34 64h60M34 86h60" />
+    <rect width="92" height="26" x="18" y="29" rx="8" stroke-width="6" />
+    <rect width="92" height="26" x="18" y="73" rx="8" stroke-width="6" />
+    <path stroke-width="6" d="M34 55v18M94 55v18" />
+  </g>
+  <circle cx="34" cy="42" r="4" fill="#ff6f1a" />
+  <circle cx="94" cy="86" r="4" fill="#ff6f1a" />
+</svg>

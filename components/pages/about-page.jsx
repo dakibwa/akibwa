@@ -61,7 +61,8 @@ const tools = [
     name: "SQL",
     detail: "Analysis, modelling, source interrogation",
     accent: "#7d9a92",
-    glyph: "sql"
+    glyph: "sql",
+    logo: "/brand-logos/microsoft-sql-server.svg"
   },
   {
     name: "Claude Code",
@@ -88,13 +89,15 @@ const tools = [
     name: "Python",
     detail: "Source processing and automation",
     accent: "#3776ab",
-    glyph: "python"
+    glyph: "python",
+    logo: "/brand-logos/python.svg"
   },
   {
     name: "Data Modelling",
     detail: "Definitions, lineage, reliable meaning",
     accent: "#ff6f1a",
-    glyph: "model"
+    glyph: "model",
+    logo: "/brand-logos/data-modeling.svg"
   }
 ];
 
