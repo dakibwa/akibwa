@@ -57,7 +57,8 @@ const tools = [
     name: "Microsoft Fabric",
     detail: "Lakehouse, pipelines, semantic models",
     accent: "#2f88ff",
-    glyph: "fabric"
+    glyph: "fabric",
+    logo: "/brand-logos/microsoft-fabric.svg"
   },
   {
     name: "Power BI",
