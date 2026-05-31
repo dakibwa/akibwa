@@ -186,7 +186,7 @@ export const personalProjects = [
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
     dashboardImage: "/area-art/signals.png",
-    dashboardImageAlt: "Chorus public listening dashboard preview",
+    dashboardImageAlt: "Abstract Chorus listening signal artwork",
     dashboardImageWidth: 1440,
     dashboardImageHeight: 900,
     dashboardLabel: "Chorus",

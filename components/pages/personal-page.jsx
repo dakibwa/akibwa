@@ -17,7 +17,6 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { PersonalProjectArt } from "@/components/personal-project-art";
-import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
@@ -130,9 +129,7 @@ function DashboardShowcase({ project, frameUrl }) {
       </div>
 
       <div className="source-dashboard-art">
-        {isSonic ? (
-          <SonicFmDashboardPreview compact />
-        ) : isVitals ? (
+        {isVitals ? (
           <VitalsDashboardPreview compact />
         ) : frameUrl ? (
           <iframe
