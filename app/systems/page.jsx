@@ -1,7 +1,7 @@
 import { SystemsPage } from "@/components/pages/systems-page";
 
 export const metadata = {
-  title: "Systems | Daniel",
+  title: "Systems",
   description:
     "Capabilities across workflow design, dashboards, internal tools, automation, prototypes, and knowledge systems."
 };

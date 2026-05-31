@@ -1,7 +1,7 @@
 import { OfferPage } from "@/components/pages/offer-page";
 
 export const metadata = {
-  title: "Offer | Daniel",
+  title: "Professional",
   description:
     "Commission a small AI-assisted system for one messy workflow."
 };

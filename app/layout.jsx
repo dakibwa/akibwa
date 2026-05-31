@@ -2,7 +2,10 @@ import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
 
 export const metadata = {
-  title: "Daniel | Small AI-assisted systems",
+  title: {
+    default: "Akibwa | Daniel",
+    template: "Akibwa | %s"
+  },
   description:
     "Small AI-assisted systems that turn messy workflows, listening history, health signals, and private context into useful tools."
 };
