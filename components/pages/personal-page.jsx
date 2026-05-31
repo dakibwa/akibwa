@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { PersonalProjectArt } from "@/components/personal-project-art";
 import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
+import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
 function canUseLocalFrame() {
@@ -79,7 +80,7 @@ function DashboardShowcase({ project, frameUrl }) {
   const isSonic = project.visual === "sonic";
   const details = isVitals
     ? [
-        [ShieldCheck, "Data boundary", "Vitals is a private local system; the public site shows the shape without publishing health figures."],
+        [ShieldCheck, "Health dashboard", "Vitals is the health dashboard product; the public preview hides personal values and source rows."],
         [HeartPulse, "Product shape", "Source freshness, health signals, trends, and review prompts for clinician conversations."],
       ]
     : [
@@ -131,6 +132,8 @@ function DashboardShowcase({ project, frameUrl }) {
       <div className="source-dashboard-art">
         {isSonic ? (
           <SonicFmDashboardPreview compact />
+        ) : isVitals ? (
+          <VitalsDashboardPreview compact />
         ) : frameUrl ? (
           <iframe
             src={frameUrl}
