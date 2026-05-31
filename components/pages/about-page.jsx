@@ -129,7 +129,9 @@ const domains = [
 function CompanyMark({ workplace }) {
   return (
     <div className={`company-mark mark-${workplace.mark}`}>
-      {workplace.logo ? <img src={workplace.logo} alt={`${workplace.name} logo`} /> : <span aria-hidden="true" />}
+      <div className="company-logo-cell" aria-hidden="true">
+        {workplace.logo ? <img src={workplace.logo} alt="" /> : <span />}
+      </div>
       <strong>{workplace.name}</strong>
     </div>
   );

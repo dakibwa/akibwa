@@ -845,32 +845,39 @@ button {
   gap: 12px;
 }
 
-.company-mark span {
+.company-logo-cell {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+}
+
+.company-logo-cell > span {
   position: relative;
   display: block;
-  width: 42px;
-  height: 34px;
+  width: 48px;
+  height: 40px;
   background: var(--company-accent);
 }
 
-.company-mark img {
+.company-logo-cell img {
   display: block;
-  width: 54px;
-  max-height: 58px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
   filter: saturate(0.96) contrast(1.04);
 }
 
 .company-mark.mark-nwf img {
-  width: 55px;
-  max-height: 66px;
+  width: 48px;
+  height: 48px;
   filter: saturate(0.9) contrast(1.05) drop-shadow(0 8px 12px rgba(76, 31, 50, 0.14));
 }
 
 .company-mark.mark-leeds img {
-  width: 58px;
-  max-height: 36px;
+  width: 48px;
+  height: 30px;
   border-radius: 5px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
@@ -880,14 +887,14 @@ button {
 }
 
 .company-mark.mark-vanquis img {
-  width: 42px;
-  max-height: 38px;
+  width: 48px;
+  height: 48px;
   filter: saturate(0.92) contrast(1.08) drop-shadow(0 7px 10px rgba(32, 31, 104, 0.12));
 }
 
 .company-mark.mark-lloyds img {
-  width: 54px;
-  max-height: 50px;
+  width: 48px;
+  height: 48px;
   filter: saturate(0.92) contrast(1.08) drop-shadow(0 7px 10px rgba(0, 103, 71, 0.1));
 }
 
@@ -910,8 +917,8 @@ button {
 }
 
 .mark-sky span {
-  width: 58px;
-  height: 22px;
+  width: 50px;
+  height: 20px;
   border-radius: 999px;
   background: linear-gradient(90deg, #ff5a36, #d01fcb 56%, #2f88ff);
   box-shadow: 0 7px 14px rgba(208, 31, 203, 0.12);
@@ -989,8 +996,10 @@ button {
 
 .tool-glyph {
   position: relative;
-  width: 48px;
+  display: grid;
+  width: 42px;
   height: 42px;
+  place-items: center;
 }
 
 .tool-glyph span {
@@ -1000,20 +1009,20 @@ button {
 }
 
 .tool-logo-wrap {
-  display: grid;
-  width: 76px;
-  place-items: center;
+  width: 42px;
 }
 
 .tool-logo-wrap img {
   display: block;
-  max-width: 76px;
+  width: 42px;
+  height: 42px;
+  max-width: 42px;
   max-height: 42px;
   object-fit: contain;
 }
 
 .tool-logo-wrap.logo-codex {
-  width: 48px;
+  width: 42px;
 }
 
 .tool-logo-wrap.logo-codex img {
@@ -1069,14 +1078,14 @@ button {
 }
 
 .glyph-sql span {
-  left: 6px;
-  width: 36px;
-  height: 13px;
+  left: 1px;
+  width: 40px;
+  height: 14px;
   border-radius: 50%;
 }
 
 .glyph-sql span:nth-child(1) {
-  top: 4px;
+  top: 3px;
 }
 
 .glyph-sql span:nth-child(2) {
@@ -1085,7 +1094,7 @@ button {
 }
 
 .glyph-sql span:nth-child(3) {
-  top: 24px;
+  top: 25px;
   opacity: 0.52;
 }
 
@@ -1148,26 +1157,26 @@ button {
 }
 
 .glyph-python span {
-  width: 26px;
-  height: 21px;
+  width: 28px;
+  height: 23px;
   border-radius: 8px 8px 4px 8px;
 }
 
 .glyph-python span:nth-child(1) {
-  top: 5px;
-  left: 7px;
+  top: 4px;
+  left: 5px;
   background: #3776ab;
 }
 
 .glyph-python span:nth-child(2) {
   top: 18px;
-  left: 16px;
+  left: 14px;
   background: #ffd43b;
 }
 
 .glyph-python span:nth-child(3) {
-  top: 11px;
-  left: 19px;
+  top: 10px;
+  left: 18px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
@@ -1175,26 +1184,26 @@ button {
 }
 
 .glyph-model span {
-  width: 9px;
-  height: 9px;
+  width: 11px;
+  height: 11px;
   border: 2px solid var(--tool-accent);
   border-radius: 50%;
   background: #ffffff;
 }
 
 .glyph-model span:nth-child(1) {
-  top: 5px;
-  left: 20px;
+  top: 2px;
+  left: 13px;
 }
 
 .glyph-model span:nth-child(2) {
-  top: 26px;
-  left: 8px;
+  top: 25px;
+  left: 2px;
 }
 
 .glyph-model span:nth-child(3) {
-  top: 26px;
-  right: 8px;
+  top: 25px;
+  right: 2px;
 }
 
 .glyph-model::before,
@@ -1202,18 +1211,18 @@ button {
   content: "";
   position: absolute;
   top: 20px;
-  width: 24px;
+  width: 31px;
   height: 2px;
   background: var(--tool-accent);
 }
 
 .glyph-model::before {
-  left: 12px;
+  left: 6px;
   transform: rotate(-44deg);
 }
 
 .glyph-model::after {
-  right: 12px;
+  right: 6px;
   transform: rotate(44deg);
 }
 
