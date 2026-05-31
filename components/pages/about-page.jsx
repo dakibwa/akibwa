@@ -64,7 +64,8 @@ const tools = [
     name: "Power BI",
     detail: "DAX, reporting estates, Power BI Service",
     accent: "#f2c811",
-    glyph: "powerbi"
+    glyph: "powerbi",
+    logo: "/brand-logos/power-bi.svg"
   },
   {
     name: "SQL",
