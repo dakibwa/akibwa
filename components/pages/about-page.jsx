@@ -84,7 +84,7 @@ const tools = [
     detail: "Repo work, local agents, implementation",
     accent: "#12b981",
     glyph: "codex",
-    logo: "/brand-logos/openai-codex.svg"
+    logo: "/brand-logos/openai-codex-app.png"
   },
   {
     name: "Copilot",
