@@ -7,9 +7,7 @@ const workplaces = [
     dates: "2024 - Present",
     accent: "#17324d",
     mark: "nwf",
-    logo: "/brand-logos/national-wealth-fund-icon.png",
-    body:
-      "Leading the Microsoft Fabric implementation across ingestion, lakehouse modelling, semantic models, Power BI, governance, and business training."
+    logo: "/brand-logos/national-wealth-fund-icon.png"
   },
   {
     name: "Leeds Building Society",
@@ -17,18 +15,14 @@ const workplaces = [
     dates: "2023 - 2024",
     accent: "#2f88ff",
     mark: "leeds",
-    logo: "/brand-logos/leeds-building-society-icon.svg",
-    body:
-      "Promoted quickly into team leadership, guiding reporting delivery, analyst development, and clearer BI practices across the team."
+    logo: "/brand-logos/leeds-building-society-icon.svg"
   },
   {
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
     dates: "2020 - 2022",
     accent: "#d01fcb",
-    mark: "sky",
-    body:
-      "Rebuilt Power BI reporting and used SQL analysis to make safer-gambling, customer, and product signals easier to understand."
+    mark: "sky"
   },
   {
     name: "Vanquis Bank",
@@ -36,9 +30,7 @@ const workplaces = [
     dates: "2018 - 2019",
     accent: "#f15a24",
     mark: "vanquis",
-    logo: "/brand-logos/vanquis-icon.svg",
-    body:
-      "Built Excel and Power BI models for commercial analysis, cost views, NPV thinking, and early SQL/data structure work."
+    logo: "/brand-logos/vanquis-icon.svg"
   },
   {
     name: "Lloyds Banking Group",
@@ -46,9 +38,7 @@ const workplaces = [
     dates: "2016 - 2017",
     accent: "#006747",
     mark: "lloyds",
-    logo: "/brand-logos/lloyds-horse-icon.png",
-    body:
-      "Started in credit risk, working with structured analysis, financial judgement, and the discipline of evidence-led decisions."
+    logo: "/brand-logos/lloyds-horse-icon.png"
   }
 ];
 
@@ -216,7 +206,6 @@ export function AboutPage() {
                 <h3>{workplace.role}</h3>
                 <p>{workplace.dates}</p>
               </div>
-              <p>{workplace.body}</p>
             </article>
           ))}
         </div>

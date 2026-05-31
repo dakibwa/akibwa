@@ -821,7 +821,7 @@ button {
 
 .company-card {
   display: grid;
-  min-height: 270px;
+  min-height: 190px;
   align-content: start;
   gap: 18px;
   padding: 22px 22px 24px;
