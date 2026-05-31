@@ -761,6 +761,91 @@ button {
   font-size: 1.08rem;
 }
 
+.about-profile-side {
+  display: grid;
+  gap: 16px;
+}
+
+.about-portrait {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  min-height: 420px;
+  margin: 0;
+  border: 1px solid rgba(16, 18, 23, 0.1);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 247, 245, 0.72)),
+    #ffffff;
+  box-shadow: 0 22px 58px rgba(16, 18, 23, 0.06);
+  isolation: isolate;
+}
+
+.about-portrait img {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: cover;
+  object-position: center 50%;
+  filter: saturate(0.8) contrast(1.06) brightness(0.98);
+  transform: scale(1.01);
+}
+
+.about-portrait::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(135deg, rgba(255, 111, 26, 0.18), transparent 34%),
+    radial-gradient(circle at 78% 18%, rgba(47, 136, 255, 0.18), transparent 26%),
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    24px 24px,
+    24px 24px;
+  content: "";
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.about-portrait::after {
+  position: absolute;
+  inset: 12px;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: calc(var(--radius) - 2px);
+  content: "";
+  pointer-events: none;
+}
+
+.about-portrait-orbit {
+  position: absolute;
+  right: -34px;
+  bottom: 42px;
+  z-index: 2;
+  width: 190px;
+  height: 58px;
+  border: 1px solid rgba(255, 111, 26, 0.62);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: rotate(-13deg);
+}
+
+.about-portrait-point {
+  position: absolute;
+  top: 23px;
+  right: 24px;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2f88ff;
+  box-shadow: 0 0 0 8px rgba(47, 136, 255, 0.12);
+  pointer-events: none;
+}
+
 .about-profile-notes {
   overflow: hidden;
   display: grid;
@@ -3431,6 +3516,16 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .about-profile-side {
+    grid-template-columns: minmax(0, 0.82fr) minmax(260px, 0.44fr);
+    align-items: start;
+  }
+
+  .about-portrait,
+  .about-portrait img {
+    min-height: 360px;
+  }
+
   .tool-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -3632,6 +3727,15 @@ button {
 
   .about-section-head p {
     text-align: left;
+  }
+
+  .about-profile-side {
+    grid-template-columns: 1fr;
+  }
+
+  .about-portrait,
+  .about-portrait img {
+    min-height: 390px;
   }
 
   .company-card {

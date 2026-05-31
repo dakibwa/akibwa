@@ -184,12 +184,20 @@ export function AboutPage() {
           </p>
         </div>
 
-        <aside className="about-profile-notes" aria-label="Current focus">
-          <span>Microsoft Fabric implementation and adoption</span>
-          <span>Power BI estates, DAX, governance, and semantic models</span>
-          <span>AI-assisted local tools with Codex, Claude Code, and Copilot</span>
-          <span>Evidence-led dashboards for teams that need clarity</span>
-        </aside>
+        <div className="about-profile-side">
+          <figure className="about-portrait" aria-label="Stylised portrait of Daniel">
+            <img src="/about-portrait.jpg" alt="Stylised portrait of Daniel in a surreal illustrated landscape" />
+            <span className="about-portrait-orbit" aria-hidden="true" />
+            <span className="about-portrait-point" aria-hidden="true" />
+          </figure>
+
+          <aside className="about-profile-notes" aria-label="Current focus">
+            <span>Microsoft Fabric implementation and adoption</span>
+            <span>Power BI estates, DAX, governance, and semantic models</span>
+            <span>AI-assisted local tools with Codex, Claude Code, and Copilot</span>
+            <span>Evidence-led dashboards for teams that need clarity</span>
+          </aside>
+        </div>
       </section>
 
       <section className="page-grid about-section" aria-labelledby="workplaces-heading">
