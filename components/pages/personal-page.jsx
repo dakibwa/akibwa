@@ -17,6 +17,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { PersonalProjectArt } from "@/components/personal-project-art";
+import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
 function canUseLocalFrame() {
@@ -25,6 +26,7 @@ function canUseLocalFrame() {
 }
 
 function getProjectFrameUrl(project, isLocalHost) {
+  if (project.visual === "sonic") return "";
   if (project.embedUrl) return project.embedUrl;
   if (isLocalHost && project.localUrl) return project.localUrl;
   return "";
@@ -36,12 +38,14 @@ function PersonalProjectVisual({ project }) {
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   const isLive = project.mode === "embed" || project.mode === "preview";
+  const summaryId = `${project.slug}-summary`;
 
   return (
     <button
       type="button"
       className={`studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`}
       aria-pressed={isSelected}
+      aria-describedby={summaryId}
       onClick={onSelect}
     >
       <header>
@@ -52,8 +56,10 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
         </div>
       </header>
       <PersonalProjectVisual project={project} priority={priority} />
+      <span className="personal-card-summary-tooltip" id={summaryId} role="tooltip">
+        {project.summary}
+      </span>
       <div className="personal-card-body">
-        <p>{project.summary}</p>
         <div className="personal-card-tags" aria-label={`${project.title} tags`}>
           {project.tags.map((tag) => (
             <span key={tag}>{tag}</span>
@@ -70,14 +76,15 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
 
 function DashboardShowcase({ project, frameUrl }) {
   const isVitals = project.visual === "vitals";
+  const isSonic = project.visual === "sonic";
   const details = isVitals
     ? [
-        [ShieldCheck, "Data boundary", "The health dashboard is surfaced from the real project, with private values redacted on the public site."],
-        [HeartPulse, "Product shape", "Source freshness, health signals, trends, and prompts for review conversations."],
+        [ShieldCheck, "Data boundary", "Vitals is a private local system; the public site shows the shape without publishing health figures."],
+        [HeartPulse, "Product shape", "Source freshness, health signals, trends, and review prompts for clinician conversations."],
       ]
     : [
-        [Headphones, "Listening archive", "Last.fm history feeds a complete music workspace for taste, sessions, and listening ideas."],
-        [Database, "Product shape", "The surface holds profile lanes, feedback, provider state, branches, and export-ready sketches."],
+        [Headphones, "Listening archive", "Last.fm history feeds a dashboard of scrobbles, artists, albums, tracks, timelines, and reports."],
+        [Database, "Product shape", "The surface is the real Chorus listening archive preview, drawn from the Last.fm dashboard data."],
       ];
 
   return (
@@ -102,9 +109,14 @@ function DashboardShowcase({ project, frameUrl }) {
           ))}
         </dl>
         <div className="vitals-showcase-actions">
-          {frameUrl ? (
+          {!isSonic && frameUrl ? (
             <a href={frameUrl} target="_blank" rel="noreferrer">
               Open dashboard
+              <ArrowRight size={17} strokeWidth={1.8} />
+            </a>
+          ) : project.fallbackHref ? (
+            <a href={project.fallbackHref}>
+              Open preview
               <ArrowRight size={17} strokeWidth={1.8} />
             </a>
           ) : (
@@ -117,7 +129,9 @@ function DashboardShowcase({ project, frameUrl }) {
       </div>
 
       <div className="source-dashboard-art">
-        {frameUrl ? (
+        {isSonic ? (
+          <SonicFmDashboardPreview compact />
+        ) : frameUrl ? (
           <iframe
             src={frameUrl}
             title={`${project.title} dashboard`}
@@ -160,7 +174,7 @@ function CoverCollisionShowcase({ project }) {
               <Disc3 size={15} />
               Source material
             </dt>
-            <dd>Album covers are treated as taste objects: familiar references pulled slightly out of place.</dd>
+            <dd>Album covers are treated as source material: familiar references pulled slightly out of place.</dd>
           </div>
           <div>
             <dt>
@@ -364,7 +378,7 @@ export function PersonalPage() {
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
         <h1>Personal</h1>
-        <p>Projects I build for myself, from live dashboards to taste experiments and private memory.</p>
+        <p>Projects that interested me to build them.</p>
       </section>
 
       <section className="page-grid work-board personal-board" aria-labelledby="personal-projects-title">

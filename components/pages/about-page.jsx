@@ -61,8 +61,7 @@ const tools = [
     name: "SQL",
     detail: "Analysis, modelling, source interrogation",
     accent: "#7d9a92",
-    glyph: "sql",
-    logo: "/brand-logos/microsoft-sql-server.svg"
+    glyph: "sql"
   },
   {
     name: "Claude Code",
@@ -185,8 +184,8 @@ export function AboutPage() {
         </div>
 
         <div className="about-profile-side">
-          <figure className="about-portrait" aria-label="Stylised portrait of Daniel">
-            <img src="/about-portrait.jpg" alt="Stylised portrait of Daniel in a surreal illustrated landscape" />
+          <figure className="about-portrait" aria-label="Portrait of Daniel smiling">
+            <img src="/about-portrait-smiling.png" alt="Portrait of Daniel smiling" />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
           </figure>

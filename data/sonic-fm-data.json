@@ -1,0 +1,271 @@
+{
+  "snapshotDate": "2026-05-31",
+  "source": "Last.fm",
+  "username": "akibwa",
+  "summary": {
+    "totalScrobbles": 21636,
+    "artistCount": 1974,
+    "albumCount": 2859,
+    "trackCount": 6194,
+    "accountAgeLabel": "1 year"
+  },
+  "nowPlaying": {
+    "title": "Arriving",
+    "artist": "Jon Hopkins",
+    "album": "Music for Psychedelic Therapy",
+    "timeLabel": "Now",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+  },
+  "recentTracks": [
+    {
+      "title": "Arriving",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "Now",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Flimsier",
+      "artist": "King Krule",
+      "album": "Space Heavy",
+      "timeLabel": "Today",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/f01256f02989c3ff607a9f42543fa7bf.png"
+    },
+    {
+      "title": "Seagirl",
+      "artist": "King Krule",
+      "album": "Space Heavy",
+      "timeLabel": "Today",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/f01256f02989c3ff607a9f42543fa7bf.png"
+    },
+    {
+      "title": "Deep in the Glowing Heart",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "Today",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    }
+  ],
+  "topArtists": [
+    {
+      "name": "Jon Hopkins",
+      "plays": 2585,
+      "initials": "JH",
+      "imageUrl": null
+    },
+    {
+      "name": "Cameron Winter",
+      "plays": 1234,
+      "initials": "CW",
+      "imageUrl": null
+    },
+    {
+      "name": "Geese",
+      "plays": 752,
+      "initials": "G",
+      "imageUrl": null
+    },
+    {
+      "name": "Jim Legxacy",
+      "plays": 591,
+      "initials": "JL",
+      "imageUrl": null
+    },
+    {
+      "name": "DJ Koze",
+      "plays": 501,
+      "initials": "DK",
+      "imageUrl": null
+    },
+    {
+      "name": "Panda Bear",
+      "plays": 463,
+      "initials": "PB",
+      "imageUrl": null
+    },
+    {
+      "name": "Ariel Pink",
+      "plays": 347,
+      "initials": "AP",
+      "imageUrl": null
+    },
+    {
+      "name": "Alex Cameron",
+      "plays": 303,
+      "initials": "AC",
+      "imageUrl": null
+    },
+    {
+      "name": "Nala Sinephro",
+      "plays": 302,
+      "initials": "NS",
+      "imageUrl": null
+    },
+    {
+      "name": "King Krule",
+      "plays": 280,
+      "initials": "KK",
+      "imageUrl": null
+    },
+    {
+      "name": "Tyler, The Creator",
+      "plays": 259,
+      "initials": "TT",
+      "imageUrl": null
+    },
+    {
+      "name": "Freddie Gibbs",
+      "plays": 258,
+      "initials": "FG",
+      "imageUrl": null
+    }
+  ],
+  "topAlbums": [
+    {
+      "title": "Music for Psychedelic Therapy",
+      "artist": "Jon Hopkins",
+      "plays": 2573,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Heavy Metal",
+      "artist": "Cameron Winter",
+      "plays": 1215,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+    },
+    {
+      "title": "Black British Music (2025)",
+      "artist": "Jim Legxacy",
+      "plays": 565,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/d7175e4af789a0772752462f1d2893c8.jpg"
+    },
+    {
+      "title": "Getting Killed",
+      "artist": "Geese",
+      "plays": 526,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/75695cd196406316f055a757728c6ee7.jpg"
+    },
+    {
+      "title": "Skepta .. Fred",
+      "artist": "Skepta",
+      "plays": 213,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/86cbffebe19ee593e8758c1cbda2cc36.jpg"
+    },
+    {
+      "title": "The Smashing Machine (Original Motion Picture Soundtrack)",
+      "artist": "Nala Sinephro",
+      "plays": 196,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/fa3e79bd4c120cc87128b125bd9c5177.png"
+    },
+    {
+      "title": "Sinister Grift",
+      "artist": "Panda Bear",
+      "plays": 191,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/280d27a67a2b13a3c89fc956efabcec3.jpg"
+    },
+    {
+      "title": "Amygdala (Bonus Track Version)",
+      "artist": "DJ Koze",
+      "plays": 175,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/9d0115c63901067d458da0f6e3e8afff.jpg"
+    },
+    {
+      "title": "Taxes",
+      "artist": "Geese",
+      "plays": 175,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/8a775ccfcb393cbf39c0133af1a8f692.jpg"
+    },
+    {
+      "title": "Labour Of Love",
+      "artist": "UB40",
+      "plays": 175,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/90f7e7ac2cd746f98afecf681a637ded.jpg"
+    },
+    {
+      "title": "With You Every Night",
+      "artist": "Ariel Pink",
+      "plays": 167,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/90f8a050e20ce29ce62054bb30c82bb4.jpg"
+    },
+    {
+      "title": "Knock Knock",
+      "artist": "DJ Koze",
+      "plays": 165,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/882af81f164e7b6b437b2ae0b90d50e8.jpg"
+    }
+  ],
+  "topTracks": [
+    {
+      "title": "Tayos Caves, Ecuador I",
+      "artist": "Jon Hopkins",
+      "plays": 347,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Welcome",
+      "artist": "Jon Hopkins",
+      "plays": 330,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Tayos Caves, Ecuador II",
+      "artist": "Jon Hopkins",
+      "plays": 322,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Love Flows over Us in Prismatic Waves",
+      "artist": "Jon Hopkins",
+      "plays": 320,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Tayos Caves, Ecuador III",
+      "artist": "Jon Hopkins",
+      "plays": 310,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Ascending, Dawn Sky",
+      "artist": "Jon Hopkins",
+      "plays": 307,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Deep in the Glowing Heart",
+      "artist": "Jon Hopkins",
+      "plays": 306,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Arriving",
+      "artist": "Jon Hopkins",
+      "plays": 290,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "The Rolling Stones",
+      "artist": "Cameron Winter",
+      "plays": 285,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+    },
+    {
+      "title": "Taxes",
+      "artist": "Geese",
+      "plays": 234,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/75695cd196406316f055a757728c6ee7.jpg"
+    },
+    {
+      "title": "Love Takes Miles",
+      "artist": "Cameron Winter",
+      "plays": 199,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+    },
+    {
+      "title": "Nausicaä (Love Will Be Revealed)",
+      "artist": "Cameron Winter",
+      "plays": 173,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+    }
+  ]
+}

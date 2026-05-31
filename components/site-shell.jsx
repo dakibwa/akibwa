@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
-  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health"] },
+  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health", "/chorus", "/sonic-fm"] },
   { href: "/offer", label: "Professional", match: ["/offer", "/systems", "/services"] },
   { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }

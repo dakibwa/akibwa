@@ -33,12 +33,12 @@ export const areaTiles = [
 
 export const featuredProjects = [
   {
-    title: "Sonic FM",
+    title: "Chorus",
     type: "Data product",
-    image: "/project-images/sonic-fm-dashboard-desktop.png",
-    alt: "Taste Studio dashboard screenshot from the Last.fm music dashboard project",
+    image: "/area-art/signals.png",
+    alt: "Abstract waveform and circular listening signal artwork",
     summary:
-      "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and taste reports.",
+      "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and listening reports.",
     problem:
       "Music history is rich, but the raw API is inconsistent, incomplete, and hard to interpret over time.",
     built:
@@ -55,9 +55,9 @@ export const featuredProjects = [
 export const workProjects = [
   {
     number: "01",
-    slug: "sonic-fm",
-    aliases: ["lastfm-dashboard", "signals-dashboard"],
-    title: "Sonic FM",
+    slug: "chorus",
+    aliases: ["sonic-fm", "lastfm-dashboard", "signals-dashboard"],
+    title: "Chorus",
     type: "Music intelligence dashboard",
     image: "/area-art/signals.png",
     alt: "Abstract waveform and circular listening signal artwork",
@@ -69,7 +69,7 @@ export const workProjects = [
       ["Reports", "Live"]
     ],
     rows: [
-      ["The state", "Built and usable locally: a real dashboard surface from the Last.fm music-data work."],
+      ["The state", "Built and usable locally: a real Chorus dashboard surface from the Last.fm music-data work."],
       ["What it does", featuredProjects[0].summary],
       ["The problem", featuredProjects[0].problem],
       ["Public note", "The live dashboard remains a separate project environment; this public site shows the case study without depending on a local dev server."]
@@ -80,7 +80,7 @@ export const workProjects = [
     slug: "vitals",
     aliases: ["health-dashboard"],
     title: "Vitals",
-    type: "Private health signal system",
+    type: "Personal health signal dashboard",
     image: "/area-art/systems.png",
     alt: "Abstract system artwork with translucent sheets, grid coordinates, and node paths",
     visual: "vitals",
@@ -92,17 +92,15 @@ export const workProjects = [
       ["Output", "Private"]
     ],
     rows: [
-      ["The state", "A private Vitals system for health signals, source freshness, trends, and review prompts."],
-      ["The data", "Sensitive health data stays out of the public site and public repository."],
+      ["The state", "A personal Vitals system for health signals, source freshness, trends, and review prompts."],
+      ["The data", "Private local health sources stay out of the public website and repository."],
       ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
-      ["Why it matters", "It shows the same pattern applied to sensitive data: keep the sources private, preserve provenance, and publish only the product shape."]
+      ["Why it matters", "It shows the same pattern applied to personal data: preserve provenance, make the useful signals readable, and keep raw source files separate."]
     ]
   }
 ];
 
 export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL || "https://www.instagram.com/dakibwa/";
-export const sonicFmEmbedUrl = process.env.NEXT_PUBLIC_SONIC_FM_URL ?? "";
-
 export const coverCollisionPosts = [
   {
     number: "08",
@@ -181,23 +179,24 @@ export const coverCollisionPosts = [
 export const personalProjects = [
   {
     number: "01",
-    slug: "sonic-fm",
-    title: "Sonic FM",
+    slug: "chorus",
+    aliases: ["sonic-fm", "lastfm-dashboard"],
+    title: "Chorus",
     type: workProjects[0].type,
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
-    dashboardImage: "/project-images/sonic-fm-dashboard-desktop.png",
-    dashboardImageAlt: "Full Taste Studio dashboard screenshot from the Last.fm music dashboard project",
+    dashboardImage: "/area-art/signals.png",
+    dashboardImageAlt: "Chorus public listening dashboard preview",
     dashboardImageWidth: 1440,
     dashboardImageHeight: 900,
-    dashboardLabel: "Taste Studio dashboard",
-    dashboardStatus: "Project screenshot",
+    dashboardLabel: "Chorus",
+    dashboardStatus: "Public preview",
     summary:
-      "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and taste reports.",
-    tags: ["Last.fm API", "Charts", "Taste reports"],
+      "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and listening reports.",
+    tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "sonic",
     mode: "preview",
-    embedUrl: sonicFmEmbedUrl,
+    fallbackHref: "/chorus",
     cta: "View preview"
   },
   {
@@ -205,22 +204,21 @@ export const personalProjects = [
     slug: "vitals",
     aliases: ["health-dashboard"],
     title: "Vitals",
-    type: "Private health signal system",
-    image: "/project-images/vitals-dashboard-redacted-desktop.png",
-    alt: "Public-safe redacted screenshot of the Akibwa Health Dashboard",
-    dashboardImage: "/project-images/vitals-dashboard-redacted-desktop.png",
-    dashboardImageAlt: "Full Akibwa Health Dashboard screenshot with private values redacted",
+    type: "Personal health signal dashboard",
+    image: "/area-art/systems.png",
+    alt: "Abstract personal health signal system artwork",
+    dashboardImage: "/area-art/systems.png",
+    dashboardImageAlt: "Abstract Vitals personal health signal system artwork",
     dashboardImageWidth: 1280,
     dashboardImageHeight: 720,
-    dashboardLabel: "Akibwa Health Dashboard",
-    dashboardStatus: "Private data redacted",
+    dashboardLabel: "Vitals",
+    dashboardStatus: "Private system",
     visual: "vitals",
     summary:
       "A private Vitals system for health signals, source freshness, trends, and review prompts.",
     tags: ["Private data", "Local sources", "Review prompts"],
     mode: "private",
-    fallbackHref: "/health",
-    cta: "View preview"
+    cta: "Private system"
   },
   {
     number: "03",
@@ -231,7 +229,7 @@ export const personalProjects = [
     alt: coverCollisionPosts[0].alt,
     visual: "cover-collision",
     summary:
-      "An Instagram-based experiment in cover mismatches, collage, recombination, and visual taste.",
+      "An Instagram-based experiment in cover mismatches, collage, recombination, and visual rhythm.",
     tags: ["Cover mismatches", "Collage", "Recombination"],
     mode: "preview",
     externalHref: coverCollisionUrl,
@@ -241,7 +239,7 @@ export const personalProjects = [
     number: "04",
     slug: "personal-knowledge-base",
     title: "Personal Knowledge Base",
-    type: "Private local-first AI memory system",
+    type: "Private AI memory system",
     image: "/area-art/knowledge.png",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations",
     summary:

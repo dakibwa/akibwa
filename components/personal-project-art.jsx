@@ -1,6 +1,8 @@
 import styles from "./personal-project-art.module.css";
+import sonicData from "@/data/sonic-fm-data.json";
 
 const variantBySlug = {
+  chorus: "sonic",
   "sonic-fm": "sonic",
   vitals: "vitals",
   "cover-collision": "cover",
@@ -8,6 +10,30 @@ const variantBySlug = {
 };
 
 function SonicArt() {
+  const covers = sonicData.topAlbums
+    .filter((album) => album.imageUrl)
+    .slice(0, 6);
+
+  if (covers.length) {
+    return (
+      <div className={styles.chorusCoverArt}>
+        <div className={styles.chorusCoverLead}>
+          <img src={covers[0].imageUrl} alt="" loading="lazy" />
+        </div>
+        <div className={styles.chorusCoverStack} aria-hidden="true">
+          {covers.slice(1).map((album) => (
+            <img src={album.imageUrl} alt="" loading="lazy" key={`${album.artist}-${album.title}`} />
+          ))}
+        </div>
+        <div className={styles.chorusSignal} aria-hidden="true">
+          {[28, 54, 36, 68, 42, 61, 34, 73, 39, 58, 46, 66].map((height, index) => (
+            <i key={`${height}-${index}`} style={{ "--height": `${height}px` }} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <path className={styles.paperWarm} d="M32 154L188 118L298 139L266 220L73 226Z" />
@@ -71,12 +97,19 @@ function KnowledgeArt() {
 export function PersonalProjectArt({ project }) {
   const variant = variantBySlug[project.slug] ?? "knowledge";
 
+  if (variant === "sonic") {
+    return (
+      <div className={`${styles.art} ${styles.sonic}`} aria-hidden="true">
+        <SonicArt />
+      </div>
+    );
+  }
+
   return (
     <div className={`${styles.art} ${styles[variant]}`} aria-hidden="true">
       <svg viewBox="0 0 620 270" focusable="false">
         <rect className={styles.ground} width="620" height="270" />
         <path className={styles.grid} d="M46 0V270M92 0V270M138 0V270M184 0V270M230 0V270M276 0V270M322 0V270M368 0V270M414 0V270M460 0V270M506 0V270M552 0V270M598 0V270M0 45H620M0 90H620M0 135H620M0 180H620M0 225H620" />
-        {variant === "sonic" ? <SonicArt /> : null}
         {variant === "vitals" ? <VitalsArt /> : null}
         {variant === "cover" ? <CoverArt /> : null}
         {variant === "knowledge" ? <KnowledgeArt /> : null}
