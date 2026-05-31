@@ -785,7 +785,7 @@ button {
 }
 
 .about-section {
-  margin-top: 54px;
+  margin-top: 48px;
 }
 
 .about-section-head {
@@ -793,7 +793,7 @@ button {
   align-items: flex-end;
   justify-content: space-between;
   gap: 28px;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .about-section-head p {
@@ -804,7 +804,7 @@ button {
 .company-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .company-card,
@@ -821,10 +821,11 @@ button {
 
 .company-card {
   display: grid;
-  min-height: 190px;
+  min-height: 168px;
+  grid-template-rows: 82px 44px;
   align-content: start;
-  gap: 18px;
-  padding: 22px 22px 24px;
+  gap: 14px;
+  padding: 20px 20px 22px;
 }
 
 .company-card::after,
@@ -840,9 +841,9 @@ button {
 
 .company-mark {
   display: grid;
-  min-height: 86px;
-  align-content: center;
-  gap: 12px;
+  grid-template-rows: 54px 18px;
+  align-content: start;
+  gap: 10px;
 }
 
 .company-logo-cell {
@@ -966,6 +967,11 @@ button {
   white-space: nowrap;
 }
 
+.company-card > div:last-child {
+  display: grid;
+  align-content: start;
+}
+
 .company-card div p,
 .tool-card p {
   margin: 6px 0 0;
@@ -986,12 +992,22 @@ button {
 
 .tool-card {
   display: grid;
-  min-height: 154px;
+  min-height: 148px;
+  grid-template-rows: 42px 72px;
   justify-items: center;
-  align-content: center;
-  gap: 10px;
-  padding: 18px 12px 20px;
+  align-content: start;
+  gap: 12px;
+  padding: 18px 12px 16px;
   text-align: center;
+}
+
+.tool-card > div {
+  display: grid;
+  width: 100%;
+  min-height: 72px;
+  grid-template-rows: 20px minmax(42px, auto);
+  justify-items: center;
+  align-content: start;
 }
 
 .tool-glyph {
