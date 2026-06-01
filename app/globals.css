@@ -4437,13 +4437,14 @@ button {
 
 .sonic-run-list {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
   padding: 0 14px 14px;
 }
 
 .sonic-run-row {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto;
+  grid-template-columns: 52px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   border: 1px solid var(--sonic-line-soft);
@@ -4560,6 +4561,7 @@ button {
 
 .sonic-run-badge {
   display: inline-flex;
+  grid-column: 2;
   min-height: 28px;
   align-items: center;
   justify-content: center;
@@ -4569,6 +4571,7 @@ button {
   background: rgba(255, 111, 26, 0.08);
   color: var(--sonic-ink);
   padding: 0 9px;
+  justify-self: start;
   font-weight: 650;
   white-space: nowrap;
 }
@@ -6894,6 +6897,10 @@ button {
 
   .sonic-metric-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sonic-run-list {
+    grid-template-columns: 1fr;
   }
 
   .sonic-run-row {
