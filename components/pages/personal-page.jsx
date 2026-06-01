@@ -3,18 +3,13 @@
 import Image from "next/image";
 import {
   ArrowRight,
-  Database,
   Disc3,
-  HeartPulse,
-  Headphones,
   Instagram,
   LockKeyhole,
-  Maximize2,
-  Minimize2,
-  ShieldCheck,
   Sparkles,
+  X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { PersonalProjectArt } from "@/components/personal-project-art";
 import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
@@ -69,244 +64,164 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
         </div>
       </div>
       <footer>
-        <span>{isSelected ? "Selected" : project.cta}</span>
+        <span>{project.cta}</span>
         {isLive ? <ArrowRight size={18} strokeWidth={1.8} /> : <LockKeyhole size={17} strokeWidth={1.7} />}
       </footer>
     </button>
   );
 }
 
-function DashboardShowcase({ project, frameUrl }) {
+function DashboardShowcase({ project, immersive = false }) {
   const isVitals = project.visual === "vitals";
   const isSonic = project.visual === "sonic";
-  const details = isVitals
-    ? [
-        [ShieldCheck, "Health dashboard", "Vitals is the health dashboard product; the public preview hides personal values and source rows."],
-        [HeartPulse, "Product shape", "Source freshness, health signals, trends, and review prompts for clinician conversations."],
-      ]
-    : [
-        [Headphones, "Listening archive", "Last.fm history feeds a dashboard of scrobbles, artists, albums, tracks, timelines, and reports."],
-        [Database, "Product shape", "The surface is the real Chorus listening archive preview, drawn from the Last.fm dashboard data."],
-      ];
 
   return (
     <section
-      className={`page-grid source-dashboard-showcase ${isVitals ? "is-private" : "is-music"}`}
+      className={`${immersive ? "" : "page-grid"} personal-full-app-showcase ${
+        isVitals ? "is-vitals" : "is-chorus"
+      } ${immersive ? "is-expanded" : ""}`}
       id={`${project.slug}-preview`}
+      aria-label={`${project.title} app preview`}
       aria-live="polite"
     >
-      <div className="vitals-showcase-copy">
-        <span>Selected project</span>
-        <h2>{project.title}</h2>
-        <p>{project.summary}</p>
-        <dl>
-          {details.map(([Icon, label, body]) => (
-            <div key={label}>
-              <dt>
-                <Icon size={15} />
-                {label}
-              </dt>
-              <dd>{body}</dd>
-            </div>
-          ))}
-        </dl>
-        <div className="vitals-showcase-actions">
-          {!isSonic && frameUrl ? (
-            <a href={frameUrl} target="_blank" rel="noreferrer">
-              Open dashboard
-              <ArrowRight size={17} strokeWidth={1.8} />
-            </a>
-          ) : project.fallbackHref ? (
-            <a href={project.fallbackHref}>
-              Open preview
-              <ArrowRight size={17} strokeWidth={1.8} />
-            </a>
-          ) : (
-            <span>
-              {isVitals ? <LockKeyhole size={15} strokeWidth={1.7} /> : <Headphones size={15} strokeWidth={1.7} />}
-              {project.dashboardStatus}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="source-dashboard-art">
-        {isSonic ? (
-          <SonicFmDashboardPreview compact />
-        ) : isVitals ? (
-          <VitalsDashboardPreview compact />
-        ) : frameUrl ? (
-          <iframe
-            src={frameUrl}
-            title={`${project.title} dashboard`}
-            className="source-dashboard-frame"
-            loading="lazy"
-          />
-        ) : (
-          <Image
-            src={project.dashboardImage}
-            alt={project.dashboardImageAlt ?? project.alt}
-            width={project.dashboardImageWidth ?? 1440}
-            height={project.dashboardImageHeight ?? 900}
-            sizes="(max-width: 760px) 100vw, (max-width: 1060px) 100vw, 64vw"
-            priority
-          />
-        )}
-        <footer>
-          <span>{project.dashboardLabel}</span>
-          <em>{project.dashboardStatus}</em>
-        </footer>
-      </div>
+      {isSonic ? <SonicFmDashboardPreview /> : <VitalsDashboardPreview />}
     </section>
   );
 }
 
-function CoverCollisionShowcase({ project }) {
+function CoverCollisionPanel({ project }) {
   return (
-    <section
-      className="page-grid cover-collision-showcase"
-      id={`${project.slug}-preview`}
-      aria-live="polite"
-    >
-      <div className="vitals-showcase-copy cover-collision-copy">
-        <span>Selected project</span>
-        <h2>{project.title}</h2>
-        <p>{project.summary}</p>
-        <dl>
-          <div>
-            <dt>
-              <Disc3 size={15} />
-              Source material
-            </dt>
-            <dd>Album covers are treated as source material: familiar references pulled slightly out of place.</dd>
-          </div>
-          <div>
-            <dt>
-              <Sparkles size={15} />
-              Project shape
-            </dt>
-            <dd>A public Instagram series of cover mismatches, collage moves, and visual recombination.</dd>
-          </div>
-        </dl>
-        <div className="vitals-showcase-actions">
-          <a href={project.externalHref} target="_blank" rel="noreferrer">
-            <Instagram size={15} strokeWidth={1.7} />
-            Open Instagram
+    <div className="cover-collision-panel" aria-label={`${project.title} Instagram posts`}>
+      <header>
+        <div>
+          <span>{project.title}</span>
+          <strong>Album art, recombined into a visual series.</strong>
+        </div>
+        <em>{coverCollisionPosts.length} posts</em>
+      </header>
+
+      <div className="cover-collision-grid" aria-label={`${project.title} posts from Instagram`}>
+        {coverCollisionPosts.map((post) => (
+          <a
+            className="cover-collision-post"
+            href={post.href}
+            target="_blank"
+            rel="noreferrer"
+            key={post.href}
+          >
+            <Image
+              src={post.image}
+              alt={post.alt}
+              width={180}
+              height={180}
+              sizes="(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
+            />
+            <span>No. {post.number}</span>
+            <strong>{post.title}</strong>
+            <em>{post.date}</em>
           </a>
-        </div>
+        ))}
       </div>
-
-      <div className="cover-collision-panel" aria-label={`${project.title} Instagram posts`}>
-        <header>
-          <div>
-            <span>{project.title}</span>
-            <strong>Album art, recombined into a visual series.</strong>
-          </div>
-          <em>{coverCollisionPosts.length} posts</em>
-        </header>
-
-        <div className="cover-collision-grid" aria-label={`${project.title} posts from Instagram`}>
-          {coverCollisionPosts.map((post) => (
-            <a
-              className="cover-collision-post"
-              href={post.href}
-              target="_blank"
-              rel="noreferrer"
-              key={post.href}
-            >
-              <Image
-                src={post.image}
-                alt={post.alt}
-                width={180}
-                height={180}
-                sizes="(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
-              />
-              <span>No. {post.number}</span>
-              <strong>{post.title}</strong>
-              <em>{post.date}</em>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
+    </div>
   );
 }
 
-function PersonalPreview({ project, isMaximized, setIsMaximized, frameUrl }) {
-  if (project.visual === "sonic" || project.visual === "vitals") {
-    return <DashboardShowcase project={project} frameUrl={frameUrl} />;
-  }
-
-  if (project.visual === "cover-collision") {
-    return <CoverCollisionShowcase project={project} />;
-  }
-
-  if (project.mode !== "embed") {
-    return (
-      <section className="page-grid featured-case personal-static-case" id={`${project.slug}-preview`} aria-live="polite">
-        <div className="case-copy">
-          <span>Selected project</span>
+function CoverCollisionShowcase({ project, immersive = false }) {
+  return (
+    <section
+      className={`${immersive ? "" : "page-grid"} cover-collision-showcase ${immersive ? "is-expanded" : ""}`}
+      id={`${project.slug}-preview`}
+      aria-live="polite"
+    >
+      {!immersive && (
+        <div className="vitals-showcase-copy cover-collision-copy">
+          <span>Project</span>
           <h2>{project.title}</h2>
-          <p>{project.type}</p>
+          <p>{project.summary}</p>
           <dl>
             <div>
               <dt>
-                <i />
-                Status
+                <Disc3 size={15} />
+                Source material
               </dt>
-              <dd>{project.cta}</dd>
+              <dd>Album covers are treated as source material: familiar references pulled slightly out of place.</dd>
             </div>
             <div>
               <dt>
-                <i />
-                Summary
+                <Sparkles size={15} />
+                Project shape
               </dt>
-              <dd>{project.summary}</dd>
+              <dd>A public Instagram series of cover mismatches, collage moves, and visual recombination.</dd>
             </div>
           </dl>
-        </div>
-        <div className="case-art" aria-hidden="true">
-          <Image src={project.image} alt="" width={760} height={360} />
-          <div className="case-score">
-            <strong>{project.number}</strong>
+          <div className="vitals-showcase-actions">
+            <a href={project.externalHref} target="_blank" rel="noreferrer">
+              <Instagram size={15} strokeWidth={1.7} />
+              Open Instagram
+            </a>
           </div>
-          <ul>
-            {project.tags.map((tag) => (
-              <li key={tag}>
-                Tag <span>{tag}</span>
-              </li>
-            ))}
-          </ul>
         </div>
-      </section>
-    );
+      )}
+
+      <CoverCollisionPanel project={project} />
+    </section>
+  );
+}
+
+function StaticProjectSurface({ project }) {
+  const href = project.externalHref ?? project.fallbackHref;
+
+  return (
+    <section className="project-static-surface" id={`${project.slug}-preview`} aria-live="polite">
+      <div className="project-static-copy">
+        <span>{project.number}</span>
+        <h2>{project.title}</h2>
+        <p>{project.summary}</p>
+        <div className="project-static-tags" aria-label={`${project.title} tags`}>
+          {project.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+        {href ? (
+          <a
+            href={href}
+            target={project.externalHref ? "_blank" : undefined}
+            rel={project.externalHref ? "noreferrer" : undefined}
+          >
+            {project.cta}
+            <ArrowRight size={17} strokeWidth={1.8} />
+          </a>
+        ) : (
+          <span className="project-static-private">
+            <LockKeyhole size={16} strokeWidth={1.7} />
+            {project.cta}
+          </span>
+        )}
+      </div>
+      <div className="project-static-art">
+        <PersonalProjectArt project={project} className="project-static-artwork" />
+      </div>
+    </section>
+  );
+}
+
+function ProjectExpandedContent({ project, frameUrl }) {
+  if (project.visual === "sonic" || project.visual === "vitals") {
+    return <DashboardShowcase project={project} frameUrl={frameUrl} immersive />;
+  }
+
+  if (project.visual === "cover-collision") {
+    return <CoverCollisionShowcase project={project} immersive />;
+  }
+
+  if (project.mode !== "embed") {
+    return <StaticProjectSurface project={project} />;
   }
 
   return (
-    <section
-      className={`page-grid featured-case live-case personal-live-case ${isMaximized ? "is-maximized" : ""}`}
-      id={`${project.slug}-preview`}
-      aria-live="polite"
-    >
-      <header className="live-case-header">
-        <div>
-          <span>Selected project</span>
-          <h2>{project.title}</h2>
-          <p>{project.type}</p>
-        </div>
-        <button
-          type="button"
-          className="live-case-toggle"
-          aria-pressed={isMaximized}
-          onClick={() => setIsMaximized((current) => !current)}
-        >
-          {isMaximized ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
-          <span>{isMaximized ? "Minimise" : "Maximise"}</span>
-        </button>
-      </header>
-
+    <section className="project-expanded-frame" id={`${project.slug}-preview`} aria-live="polite">
       {frameUrl ? (
-        <div className="live-frame-shell personal-frame-shell">
+        <div className="project-expanded-frame-shell">
           <iframe
             src={frameUrl}
             title={`${project.title} live project`}
@@ -333,9 +248,43 @@ function PersonalPreview({ project, isMaximized, setIsMaximized, frameUrl }) {
   );
 }
 
+function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
+  return (
+    <div
+      className={`project-expanded-layer is-${project.visual ?? "static"}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`${project.slug}-expanded-title`}
+    >
+      <div className="project-expanded-backdrop" onClick={onClose} aria-hidden="true" />
+      <article className="project-expanded-shell">
+        <header className="project-expanded-toolbar">
+          <div className="project-expanded-title">
+            <span>{project.number}</span>
+            <div>
+              <h2 id={`${project.slug}-expanded-title`}>{project.title}</h2>
+              <p>{project.type}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="project-expanded-close"
+            aria-label={`Close ${project.title}`}
+            onClick={onClose}
+          >
+            <X size={18} strokeWidth={1.9} />
+          </button>
+        </header>
+        <div className="project-expanded-body">
+          <ProjectExpandedContent project={project} frameUrl={frameUrl} />
+        </div>
+      </article>
+    </div>
+  );
+}
+
 export function PersonalPage() {
-  const [selectedSlug, setSelectedSlug] = useState(personalProjects[0]?.slug);
-  const [isPreviewMaximized, setIsPreviewMaximized] = useState(false);
+  const [expandedSlug, setExpandedSlug] = useState(null);
   const [isLocalHost, setIsLocalHost] = useState(false);
 
   useEffect(() => {
@@ -343,12 +292,19 @@ export function PersonalPage() {
 
     const syncFromHash = () => {
       const hash = window.location.hash.replace("#", "");
-      if (!hash) return;
+      if (!hash) {
+        setExpandedSlug(null);
+        return;
+      }
 
       const project = personalProjects.find(
         (item) => item.slug === hash || item.aliases?.includes(hash)
       );
-      if (project) setSelectedSlug(project.slug);
+      if (project) {
+        setExpandedSlug(project.slug);
+      } else {
+        setExpandedSlug(null);
+      }
     };
 
     syncFromHash();
@@ -356,27 +312,39 @@ export function PersonalPage() {
     return () => window.removeEventListener("hashchange", syncFromHash);
   }, []);
 
-  useEffect(() => {
-    if (!isPreviewMaximized) return undefined;
+  const expandedProject = useMemo(
+    () => personalProjects.find((project) => project.slug === expandedSlug) ?? null,
+    [expandedSlug]
+  );
 
+  const closeExpandedProject = useCallback(() => {
+    setExpandedSlug(null);
+    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+  }, []);
+
+  useEffect(() => {
+    if (!expandedProject) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        closeExpandedProject();
+      }
+    };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+
     return () => {
       document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [isPreviewMaximized]);
-
-  const selectedProject = useMemo(
-    () => personalProjects.find((project) => project.slug === selectedSlug) ?? personalProjects[0],
-    [selectedSlug]
-  );
-  const frameUrl = getProjectFrameUrl(selectedProject, isLocalHost);
+  }, [closeExpandedProject, expandedProject]);
 
   const selectProject = (project) => {
-    setSelectedSlug(project.slug);
-    setIsPreviewMaximized(false);
+    setExpandedSlug(project.slug);
     window.history.replaceState(null, "", `#${project.slug}`);
   };
+  const frameUrl = expandedProject ? getProjectFrameUrl(expandedProject, isLocalHost) : "";
 
   return (
     <section className="studio-page personal-page">
@@ -391,7 +359,7 @@ export function PersonalPage() {
             <PersonalProjectCard
               project={project}
               priority={index < 2}
-              isSelected={project.slug === selectedProject.slug}
+              isSelected={project.slug === expandedProject?.slug}
               onSelect={() => selectProject(project)}
               key={project.slug}
             />
@@ -399,12 +367,9 @@ export function PersonalPage() {
         </div>
       </section>
 
-      <PersonalPreview
-        project={selectedProject}
-        isMaximized={isPreviewMaximized}
-        setIsMaximized={setIsPreviewMaximized}
-        frameUrl={frameUrl}
-      />
+      {expandedProject && (
+        <ProjectExpandedOverlay project={expandedProject} frameUrl={frameUrl} onClose={closeExpandedProject} />
+      )}
 
       <PageFooter />
     </section>

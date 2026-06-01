@@ -1,19 +1,36 @@
 "use client";
 
 import {
+  Activity,
   ArrowRight,
   Clock3,
   ExternalLink,
+  Music2,
   Radio,
   Signal,
   Sparkles,
   UserRound
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import sonicData from "@/data/sonic-fm-data.json";
 
 const periods = ["7D", "1M", "3M", "6M", "12M", "All"];
-const navItems = ["Overview", "Artists", "Albums", "Tracks"];
+const periodLimits = {
+  "7D": 6,
+  "1M": 8,
+  "3M": 10,
+  "6M": 12,
+  "12M": 16,
+  All: Number.POSITIVE_INFINITY
+};
+const periodDescriptions = {
+  "7D": "A tight week-long lens for the most recent listening run.",
+  "1M": "A one-month cut across the strongest recent repeats.",
+  "3M": "A seasonal view of artists, albums, and tracks with staying power.",
+  "6M": "A half-year view for the bigger listening arc.",
+  "12M": "A year-long view across the active archive.",
+  All: "Overall lens. Totals stay all-time; rankings and identity follow the selected period."
+};
 
 function formatNumber(value) {
   return new Intl.NumberFormat("en").format(value);
@@ -23,17 +40,6 @@ function detailLine(primary, secondary) {
   return secondary ? `${primary} - ${secondary}` : primary;
 }
 
-const metrics = [
-  ["Scrobbles", formatNumber(sonicData.summary.totalScrobbles), "All-time total", Signal],
-  ["Artists", formatNumber(sonicData.summary.artistCount), "Known by Last.fm", UserRound],
-  ["Albums", formatNumber(sonicData.summary.albumCount), "Known by Last.fm", Radio],
-  ["Tracks", formatNumber(sonicData.summary.trackCount), "Known by Last.fm", Sparkles],
-  ["Top artist", sonicData.topArtists[0]?.name ?? "Unavailable", `${formatNumber(sonicData.topArtists[0]?.plays ?? 0)} scrobbles`, null],
-  ["Account age", sonicData.summary.accountAgeLabel, "Since registration", Clock3]
-];
-
-const topArtistMax = sonicData.topArtists[0]?.plays ?? 1;
-const topTrackMax = sonicData.topTracks[0]?.plays ?? 1;
 const nowPlaying = sonicData.nowPlaying ?? {
   title: "No recent track",
   artist: "Last.fm",
@@ -41,16 +47,6 @@ const nowPlaying = sonicData.nowPlaying ?? {
   timeLabel: "Recent",
   imageUrl: null
 };
-
-function ChorusLogo() {
-  return (
-    <span className="sonic-logo" aria-hidden="true">
-      <i />
-      <i />
-      <i />
-    </span>
-  );
-}
 
 function SonicAvatar({ label, index = 0, imageUrl }) {
   return (
@@ -92,20 +88,22 @@ function AlbumTile({ album, index }) {
   );
 }
 
-function TopArtists() {
+function TopArtists({ artists }) {
+  const topArtistMax = artists[0]?.plays ?? 1;
+
   return (
     <article className="sonic-panel sonic-list-panel" id="artists">
       <header className="sonic-panel-head">
         <div>
           <h2>Top artists</h2>
-          <p>24 ranked</p>
+          <p>{artists.length} ranked</p>
         </div>
         <a href="#albums">
           Open <ArrowRight size={14} strokeWidth={2} />
         </a>
       </header>
       <div className="sonic-artist-list">
-        {sonicData.topArtists.map((artist, index) => (
+        {artists.map((artist, index) => (
           <div className="sonic-artist-row" key={artist.name}>
             <span className="sonic-rank">{index + 1}</span>
             <SonicAvatar label={artist.initials} index={index} imageUrl={artist.imageUrl} />
@@ -121,20 +119,20 @@ function TopArtists() {
   );
 }
 
-function AlbumsWall() {
+function AlbumsWall({ albums }) {
   return (
     <article className="sonic-panel sonic-album-panel" id="albums">
       <header className="sonic-panel-head">
         <div>
           <h2>Albums wall</h2>
-          <p>120 albums</p>
+          <p>{albums.length} albums</p>
         </div>
         <a href="#tracks">
           Open <ArrowRight size={14} strokeWidth={2} />
         </a>
       </header>
       <div className="sonic-album-grid">
-        {sonicData.topAlbums.map((album, index) => (
+        {albums.map((album, index) => (
           <AlbumTile album={album} index={index} key={album.title} />
         ))}
       </div>
@@ -142,20 +140,22 @@ function AlbumsWall() {
   );
 }
 
-function TopTracks() {
+function TopTracks({ tracks }) {
+  const topTrackMax = tracks[0]?.plays ?? 1;
+
   return (
     <article className="sonic-panel sonic-track-panel" id="tracks">
       <header className="sonic-panel-head">
         <div>
           <h2>Top tracks</h2>
-          <p>40 tracks</p>
+          <p>{tracks.length} tracks</p>
         </div>
         <a href="#overview">
           Open <ArrowRight size={14} strokeWidth={2} />
         </a>
       </header>
       <div className="sonic-track-list">
-        {sonicData.topTracks.map((track, index) => (
+        {tracks.map((track, index) => (
           <div className="sonic-track-row" key={track.title}>
             <span>{index + 1}</span>
             <SonicAvatar label="" index={index + 2} imageUrl={track.imageUrl} />
@@ -169,60 +169,98 @@ function TopTracks() {
   );
 }
 
-export function SonicFmDashboardPreview({ compact = false }) {
-  const [activeSection, setActiveSection] = useState("overview");
+function RunSoundtrackWidget() {
+  const pairedRuns = (sonicData.recentRuns ?? []).filter((run) => run.tracks?.length);
 
-  useEffect(() => {
-    function syncHash() {
-      const section = window.location.hash.replace("#", "") || "overview";
-      if (navItems.some((item) => item.toLowerCase() === section)) {
-        setActiveSection(section);
-      }
-    }
-
-    syncHash();
-    window.addEventListener("hashchange", syncHash);
-    return () => window.removeEventListener("hashchange", syncHash);
-  }, []);
+  if (!pairedRuns.length) return null;
 
   return (
-    <section className={`sonic-preview ${compact ? "is-compact" : ""}`} aria-label="Chorus dashboard preview">
-      <header className="sonic-topbar">
-        <a className="sonic-brand" href="#overview">
-          <ChorusLogo />
-          Chorus
-        </a>
-        <nav aria-label="Chorus preview navigation">
-          {navItems.map((item) => {
-            const section = item.toLowerCase();
-            return (
-              <a
-                className={activeSection === section ? "active" : ""}
-                href={`#${section}`}
-                key={item}
-                onClick={() => setActiveSection(section)}
-              >
-                {item}
-              </a>
-            );
-          })}
-        </nav>
-        <a className="sonic-lastfm-link" href="https://www.last.fm/" target="_blank" rel="noreferrer">
-          View on Last.fm
-          <ExternalLink size={14} strokeWidth={2} />
-        </a>
+    <article className="sonic-run-card" aria-label="Recent Strava run soundtracks">
+      <header className="sonic-panel-head sonic-run-head">
+        <div>
+          <h2>Recent Strava runs</h2>
+          <p>{pairedRuns.length} paired with Last.fm</p>
+        </div>
+        <span>
+          <Activity size={15} strokeWidth={2} />
+          Strava + Last.fm
+        </span>
       </header>
+      <div className="sonic-run-list">
+        {pairedRuns.map((run) => (
+          <article className="sonic-run-row" key={`${run.dateLabel}-${run.name}`}>
+            <time>
+              <strong>{run.dateLabel}</strong>
+              <span>{run.timeLabel}</span>
+            </time>
+            <div className="sonic-run-main">
+              <header>
+                <div>
+                  <strong>{run.name}</strong>
+                  <span>
+                    {run.distance} / {run.duration} / {run.pace} / {run.elevation}
+                  </span>
+                </div>
+                <em>{run.soundtrack}</em>
+              </header>
+              <div className="sonic-run-track-strip">
+                {run.tracks.slice(0, 2).map((track) => (
+                  <span className="sonic-run-track" key={`${run.name}-${track.artist}-${track.title}`}>
+                    <span className="sonic-mini-cover" aria-hidden="true">
+                      {track.imageUrl ? <img src={track.imageUrl} alt="" loading="lazy" /> : <i />}
+                    </span>
+                    <span>
+                      <strong>{track.title}</strong>
+                      <small>{track.artist}</small>
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <span className="sonic-run-badge">
+              <Music2 size={14} strokeWidth={2} />
+              {run.tracks.length} tracks
+            </span>
+          </article>
+        ))}
+      </div>
+    </article>
+  );
+}
 
+export function SonicFmDashboardPreview({ compact = false }) {
+  const [activePeriod, setActivePeriod] = useState("All");
+  const visibleLimit = periodLimits[activePeriod] ?? periodLimits.All;
+  const visibleArtists = sonicData.topArtists.slice(0, visibleLimit);
+  const visibleAlbums = sonicData.topAlbums.slice(0, visibleLimit);
+  const visibleTracks = sonicData.topTracks.slice(0, visibleLimit);
+  const metrics = [
+    ["Scrobbles", formatNumber(sonicData.summary.totalScrobbles), activePeriod === "All" ? "All-time total" : `${activePeriod} view selected`, Signal],
+    ["Artists", formatNumber(visibleArtists.length), activePeriod === "All" ? "Known by Last.fm" : "Visible in this cut", UserRound],
+    ["Albums", formatNumber(visibleAlbums.length), activePeriod === "All" ? "Known by Last.fm" : "Visible in this cut", Radio],
+    ["Tracks", formatNumber(visibleTracks.length), activePeriod === "All" ? "Known by Last.fm" : "Visible in this cut", Sparkles],
+    ["Top artist", visibleArtists[0]?.name ?? "Unavailable", `${formatNumber(visibleArtists[0]?.plays ?? 0)} scrobbles`, null],
+    ["Account age", sonicData.summary.accountAgeLabel, "Since registration", Clock3]
+  ];
+
+  return (
+    <section className={`sonic-preview ${compact ? "is-compact" : ""}`} aria-label="Chorus dashboard">
       <section className="sonic-dashboard" id="overview">
         <section className="sonic-archive-card">
           <div>
-            <span>Listening archive</span>
+            <span>Chorus / Listening archive</span>
             <h1>{formatNumber(sonicData.summary.totalScrobbles)} scrobbles across the full archive.</h1>
-            <p>Overall lens. Totals stay all-time; rankings and identity follow the selected period.</p>
+            <p>{periodDescriptions[activePeriod]}</p>
           </div>
           <div className="sonic-periods" aria-label="Time period">
             {periods.map((period) => (
-              <button className={period === "All" ? "active" : ""} type="button" key={period}>
+              <button
+                className={period === activePeriod ? "active" : ""}
+                type="button"
+                aria-pressed={period === activePeriod}
+                onClick={() => setActivePeriod(period)}
+                key={period}
+              >
                 {period}
               </button>
             ))}
@@ -274,6 +312,8 @@ export function SonicFmDashboardPreview({ compact = false }) {
           </article>
         </section>
 
+        <RunSoundtrackWidget />
+
         <section className="sonic-metric-grid" aria-label="Chorus metrics">
           {metrics.map(([label, value, detail, Icon], index) => (
             <article className="sonic-metric-card" key={label}>
@@ -288,9 +328,9 @@ export function SonicFmDashboardPreview({ compact = false }) {
         </section>
 
         <section className="sonic-main-grid">
-          <TopArtists />
-          <AlbumsWall />
-          <TopTracks />
+          <TopArtists artists={visibleArtists} />
+          <AlbumsWall albums={visibleAlbums} />
+          <TopTracks tracks={visibleTracks} />
         </section>
 
         <footer className="sonic-preview-footer">

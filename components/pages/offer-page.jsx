@@ -55,7 +55,7 @@ export function OfferPage() {
     <section className="studio-page offer-page">
       <section className="page-grid offer-studio-hero">
         <div>
-          <h1>Offer</h1>
+          <h1>Professional</h1>
           <p>
             Commission a useful system
             <br />

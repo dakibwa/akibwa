@@ -69,11 +69,11 @@ function KnowledgeArt() {
   );
 }
 
-export function PersonalProjectArt({ project }) {
+export function PersonalProjectArt({ project, className = "" }) {
   const variant = variantBySlug[project.slug] ?? "knowledge";
 
   return (
-    <div className={`${styles.art} ${styles[variant]}`} aria-hidden="true">
+    <div className={`${styles.art} ${styles[variant]} ${className}`} aria-hidden="true">
       <svg viewBox="0 0 620 270" focusable="false">
         <rect className={styles.ground} width="620" height="270" />
         <path className={styles.grid} d="M46 0V270M92 0V270M138 0V270M184 0V270M230 0V270M276 0V270M322 0V270M368 0V270M414 0V270M460 0V270M506 0V270M552 0V270M598 0V270M0 45H620M0 90H620M0 135H620M0 180H620M0 225H620" />

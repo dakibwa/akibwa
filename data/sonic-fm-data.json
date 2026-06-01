@@ -46,6 +46,152 @@
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     }
   ],
+  "recentRuns": [
+    {
+      "name": "Morning Run",
+      "dateLabel": "19 Apr",
+      "timeLabel": "10:28",
+      "distance": "4.22 km",
+      "duration": "22 min",
+      "pace": "5:11/km",
+      "elevation": "19 m",
+      "soundtrack": "Elbow",
+      "tracks": [
+        {
+          "title": "Red Sky Radio (Baby Baby Baby)",
+          "artist": "Elbow",
+          "album": "Flying Dream 1",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01b06102d31d2efc11a1806750fc3b2a.jpg"
+        },
+        {
+          "title": "The Seldom Seen Kid",
+          "artist": "Elbow",
+          "album": "Flying Dream 1",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01b06102d31d2efc11a1806750fc3b2a.jpg"
+        },
+        {
+          "title": "What Am I Without You",
+          "artist": "Elbow",
+          "album": "Flying Dream 1",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01b06102d31d2efc11a1806750fc3b2a.jpg"
+        },
+        {
+          "title": "Things I've Been Telling Myself for Years",
+          "artist": "Elbow",
+          "album": "AUDIO VERTIGO",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12be9f7803a94ec3f2c7b9396f92a570.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Commute to Gym",
+      "dateLabel": "18 Apr",
+      "timeLabel": "14:24",
+      "distance": "4.19 km",
+      "duration": "20 min",
+      "pace": "4:50/km",
+      "elevation": "14 m",
+      "soundtrack": "Kendrick Lamar",
+      "tracks": [
+        {
+          "title": "1985",
+          "artist": "Freddie Gibbs",
+          "album": "Alfredo",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/df8bf63dd6640d93dff01ba6133064f5.jpg"
+        },
+        {
+          "title": "Love Story",
+          "artist": "My New Band Believe",
+          "album": "My New Band Believe",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/aff0bc4c1b7aa0abcfd516ad06834b03.png"
+        },
+        {
+          "title": "reincarnated",
+          "artist": "Kendrick Lamar",
+          "album": "GNX",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/a79564a9768d05272682b252deb02079.png"
+        },
+        {
+          "title": "tv off (feat. Lefty Gunplay)",
+          "artist": "Kendrick Lamar",
+          "album": "GNX",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/a79564a9768d05272682b252deb02079.png"
+        }
+      ]
+    },
+    {
+      "name": "Lunch Run",
+      "dateLabel": "12 Apr",
+      "timeLabel": "12:26",
+      "distance": "6.50 km",
+      "duration": "30 min",
+      "pace": "4:40/km",
+      "elevation": "7 m",
+      "soundtrack": "Juana Molina",
+      "tracks": [
+        {
+          "title": "uno es árbol",
+          "artist": "Juana Molina",
+          "album": "Doga",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ba9fc103f3fce3a2b71cbc691ce8c930.jpg"
+        },
+        {
+          "title": "La Paradoja",
+          "artist": "Juana Molina",
+          "album": "Doga",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ba9fc103f3fce3a2b71cbc691ce8c930.jpg"
+        },
+        {
+          "title": "Desinhumano",
+          "artist": "Juana Molina",
+          "album": "Doga",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ba9fc103f3fce3a2b71cbc691ce8c930.jpg"
+        },
+        {
+          "title": "Caravanas",
+          "artist": "Juana Molina",
+          "album": "Doga",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ba9fc103f3fce3a2b71cbc691ce8c930.jpg"
+        }
+      ]
+    },
+    {
+      "name": "5km",
+      "dateLabel": "10 Apr",
+      "timeLabel": "08:15",
+      "distance": "5.01 km",
+      "duration": "19 min",
+      "pace": "3:46/km",
+      "elevation": "8 m",
+      "soundtrack": "Jim Legxacy",
+      "tracks": [
+        {
+          "title": "Context",
+          "artist": "Jim Legxacy",
+          "album": "Black British Music (2025)",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/d7175e4af789a0772752462f1d2893c8.jpg"
+        },
+        {
+          "title": "Daydreaming",
+          "artist": "Radiohead",
+          "album": "A Moon Shaped Pool",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/28db3fdca036fb53c62754694a89d3fd.jpg"
+        },
+        {
+          "title": "Stick",
+          "artist": "Jim Legxacy",
+          "album": "Black British Music (2025)",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/d7175e4af789a0772752462f1d2893c8.jpg"
+        },
+        {
+          "title": "new david bowie",
+          "artist": "Jim Legxacy",
+          "album": "Black British Music (2025)",
+          "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/d7175e4af789a0772752462f1d2893c8.jpg"
+        }
+      ]
+    }
+  ],
   "topArtists": [
     {
       "name": "Jon Hopkins",

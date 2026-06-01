@@ -11,7 +11,7 @@ export const areaTiles = [
   {
     title: "Professional",
     descriptor: "Systems for companies",
-    href: "/offer",
+    href: "/professional",
     image: "/area-art/offer.png",
     alt: "Abstract artwork showing a path from messy marks into a precise output"
   },
@@ -189,13 +189,13 @@ export const personalProjects = [
     dashboardImageWidth: 1440,
     dashboardImageHeight: 900,
     dashboardLabel: "Chorus",
-    dashboardStatus: "Public preview",
+    dashboardStatus: "Working app",
     summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "sonic",
     mode: "preview",
     fallbackHref: "/chorus",
-    cta: "View preview"
+    cta: "Open app"
   },
   {
     number: "02",
@@ -215,7 +215,7 @@ export const personalProjects = [
     tags: ["Health dashboard", "Local sources", "Review prompts"],
     mode: "preview",
     fallbackHref: "/health",
-    cta: "View dashboard"
+    cta: "Open dashboard"
   },
   {
     number: "03",
