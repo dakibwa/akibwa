@@ -2,27 +2,40 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const accentBlue = "47, 136, 255";
-const accentGreen = "125, 154, 146";
-const accentOrange = "255, 111, 26";
-const accents = [accentBlue, accentGreen, accentOrange];
+const sourceAccents = [
+  "47, 136, 255",
+  "32, 164, 139",
+  "115, 112, 255",
+  "0, 154, 205",
+  "94, 142, 103",
+  "101, 118, 139"
+];
+
+const outcomeAccents = [
+  "255, 111, 26",
+  "224, 154, 42",
+  "226, 82, 118",
+  "197, 92, 61",
+  "164, 104, 217",
+  "186, 124, 40"
+];
 
 const heroSourcePhrases = [
-  { label: "messy workflows", accent: accentBlue },
-  { label: "listening history", accent: accentOrange },
-  { label: "health signals", accent: accentGreen },
-  { label: "private context", accent: accentBlue },
-  { label: "scattered sources", accent: accentOrange },
-  { label: "rough ideas", accent: accentGreen }
+  { label: "messy workflows", accent: sourceAccents[0] },
+  { label: "listening history", accent: sourceAccents[1] },
+  { label: "health signals", accent: sourceAccents[2] },
+  { label: "private context", accent: sourceAccents[3] },
+  { label: "scattered sources", accent: sourceAccents[4] },
+  { label: "rough ideas", accent: sourceAccents[5] }
 ];
 
 const heroOutcomePhrases = [
-  { label: "useful tools", accent: accentOrange },
-  { label: "clear dashboards", accent: accentBlue },
-  { label: "calm review surfaces", accent: accentGreen },
-  { label: "listening reports", accent: accentBlue },
-  { label: "source-backed briefs", accent: accentOrange },
-  { label: "working prototypes", accent: accentGreen }
+  { label: "useful tools", accent: outcomeAccents[0] },
+  { label: "clear dashboards", accent: outcomeAccents[1] },
+  { label: "calm review surfaces", accent: outcomeAccents[2] },
+  { label: "listening reports", accent: outcomeAccents[3] },
+  { label: "source-backed briefs", accent: outcomeAccents[4] },
+  { label: "working prototypes", accent: outcomeAccents[5] }
 ];
 
 function nextDifferentAccentIndex(phrases, currentIndex) {
@@ -36,21 +49,7 @@ function nextDifferentAccentIndex(phrases, currentIndex) {
   return (currentIndex + 1) % phrases.length;
 }
 
-function alternateAccent(accent) {
-  return accents.find((candidate) => candidate !== accent) ?? accentBlue;
-}
-
-function HeroWordCycle({
-  phrases,
-  label,
-  index,
-  isActive,
-  isPeerFlick,
-  underlineAccent,
-  onActivate,
-  onAdvance,
-  onReset
-}) {
+function HeroWordCycle({ phrases, label, index, isActive, onActivate, onAdvance, onReset }) {
   const currentPhrase = phrases[index];
   const currentLabel = currentPhrase.label;
 
@@ -67,7 +66,7 @@ function HeroWordCycle({
   return (
     <button
       type="button"
-      className={`hero-word-cycle ${isActive ? "is-cycling" : ""} ${isPeerFlick ? "is-peer-flick" : ""}`}
+      className={`hero-word-cycle ${isActive ? "is-cycling" : ""}`}
       aria-label={`${label}: ${phrases.map((phrase) => phrase.label).join(", ")}`}
       onMouseEnter={onActivate}
       onMouseLeave={onReset}
@@ -81,7 +80,7 @@ function HeroWordCycle({
       onBlur={onReset}
       style={{
         "--cycle-accent-rgb": currentPhrase.accent,
-        "--cycle-underline-rgb": underlineAccent ?? currentPhrase.accent
+        "--cycle-underline-rgb": currentPhrase.accent
       }}
     >
       <span key={currentLabel} className="hero-word-cycle-value">
@@ -96,58 +95,30 @@ export function HeroDynamicPhrase() {
   const [outcomeIndex, setOutcomeIndex] = useState(0);
   const [sourceActive, setSourceActive] = useState(false);
   const [outcomeActive, setOutcomeActive] = useState(false);
-  const [sourceUnderlineAccent, setSourceUnderlineAccent] = useState(null);
-  const [outcomeUnderlineAccent, setOutcomeUnderlineAccent] = useState(null);
   const sourceIndexRef = useRef(0);
   const outcomeIndexRef = useRef(0);
-  const sourceFlickTimer = useRef(null);
-  const outcomeFlickTimer = useRef(null);
 
-  useEffect(() => {
-    return () => {
-      window.clearTimeout(sourceFlickTimer.current);
-      window.clearTimeout(outcomeFlickTimer.current);
-    };
+  const activateSource = useCallback(() => {
+    setSourceActive(true);
   }, []);
 
-  const flickPeerUnderline = useCallback((peer, matchingAccent) => {
-    const flickAccent = alternateAccent(matchingAccent);
-
-    if (peer === "source") {
-      window.clearTimeout(sourceFlickTimer.current);
-      setSourceUnderlineAccent(flickAccent);
-      sourceFlickTimer.current = window.setTimeout(() => setSourceUnderlineAccent(null), 520);
-      return;
-    }
-
-    window.clearTimeout(outcomeFlickTimer.current);
-    setOutcomeUnderlineAccent(flickAccent);
-    outcomeFlickTimer.current = window.setTimeout(() => setOutcomeUnderlineAccent(null), 520);
+  const activateOutcome = useCallback(() => {
+    setOutcomeActive(true);
   }, []);
 
   const advanceSource = useCallback(() => {
     const nextIndex = nextDifferentAccentIndex(heroSourcePhrases, sourceIndexRef.current);
-    const nextAccent = heroSourcePhrases[nextIndex].accent;
 
     sourceIndexRef.current = nextIndex;
     setSourceIndex(nextIndex);
-
-    if (nextAccent === heroOutcomePhrases[outcomeIndexRef.current].accent) {
-      flickPeerUnderline("outcome", nextAccent);
-    }
-  }, [flickPeerUnderline]);
+  }, []);
 
   const advanceOutcome = useCallback(() => {
     const nextIndex = nextDifferentAccentIndex(heroOutcomePhrases, outcomeIndexRef.current);
-    const nextAccent = heroOutcomePhrases[nextIndex].accent;
 
     outcomeIndexRef.current = nextIndex;
     setOutcomeIndex(nextIndex);
-
-    if (nextAccent === heroSourcePhrases[sourceIndexRef.current].accent) {
-      flickPeerUnderline("source", nextAccent);
-    }
-  }, [flickPeerUnderline]);
+  }, []);
 
   const resetSource = useCallback(() => {
     sourceIndexRef.current = 0;
@@ -169,9 +140,7 @@ export function HeroDynamicPhrase() {
         label="Cycle source material"
         index={sourceIndex}
         isActive={sourceActive}
-        isPeerFlick={Boolean(sourceUnderlineAccent)}
-        underlineAccent={sourceUnderlineAccent}
-        onActivate={() => setSourceActive(true)}
+        onActivate={activateSource}
         onAdvance={advanceSource}
         onReset={resetSource}
       />
@@ -182,9 +151,7 @@ export function HeroDynamicPhrase() {
           label="Cycle output type"
           index={outcomeIndex}
           isActive={outcomeActive}
-          isPeerFlick={Boolean(outcomeUnderlineAccent)}
-          underlineAccent={outcomeUnderlineAccent}
-          onActivate={() => setOutcomeActive(true)}
+          onActivate={activateOutcome}
           onAdvance={advanceOutcome}
           onReset={resetOutcome}
         />

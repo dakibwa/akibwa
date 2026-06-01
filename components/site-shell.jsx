@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const navItems = [
   { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health", "/chorus", "/sonic-fm"] },
@@ -28,9 +28,30 @@ export function SiteShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const brandRef = useRef(null);
 
   const primeRoute = (href) => {
     router.prefetch(href);
+  };
+
+  const syncBrandPointer = (event) => {
+    const brand = brandRef.current;
+    if (!brand) return;
+
+    const rect = brand.getBoundingClientRect();
+    const x = Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100));
+    const y = Math.min(100, Math.max(0, ((event.clientY - rect.top) / rect.height) * 100));
+
+    brand.style.setProperty("--brand-x", `${x.toFixed(2)}%`);
+    brand.style.setProperty("--brand-y", `${y.toFixed(2)}%`);
+  };
+
+  const resetBrandPointer = () => {
+    const brand = brandRef.current;
+    if (!brand) return;
+
+    brand.style.setProperty("--brand-x", "50%");
+    brand.style.setProperty("--brand-y", "50%");
   };
 
   return (
@@ -38,12 +59,24 @@ export function SiteShell({ children }) {
       <header className="site-header">
         <div className="site-frame nav-row">
           <Link
+            ref={brandRef}
             href="/"
             prefetch
             className="brand"
             onClick={() => setIsMenuOpen(false)}
-            onPointerEnter={() => primeRoute("/")}
-            onFocus={() => primeRoute("/")}
+            onPointerEnter={(event) => {
+              primeRoute("/");
+              syncBrandPointer(event);
+            }}
+            onPointerMove={syncBrandPointer}
+            onPointerLeave={resetBrandPointer}
+            onMouseMove={syncBrandPointer}
+            onMouseLeave={resetBrandPointer}
+            onFocus={() => {
+              primeRoute("/");
+              resetBrandPointer();
+            }}
+            onBlur={resetBrandPointer}
           >
             AKIBWA
           </Link>

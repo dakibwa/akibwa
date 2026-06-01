@@ -40,6 +40,7 @@ function PersonalProjectVisual({ project }) {
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   const isLive = project.mode === "embed" || project.mode === "preview";
   const summaryId = `${project.slug}-summary`;
+  const visibleTags = project.tags.slice(0, 2);
 
   return (
     <button
@@ -62,7 +63,7 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       </span>
       <div className="personal-card-body">
         <div className="personal-card-tags" aria-label={`${project.title} tags`}>
-          {project.tags.map((tag) => (
+          {visibleTags.map((tag) => (
             <span key={tag}>{tag}</span>
           ))}
         </div>
@@ -195,16 +196,16 @@ function CoverCollisionShowcase({ project }) {
         </div>
       </div>
 
-      <div className="cover-collision-panel" aria-label="Cover Collision Instagram posts">
+      <div className="cover-collision-panel" aria-label={`${project.title} Instagram posts`}>
         <header>
           <div>
-            <span>Cover Collision</span>
+            <span>{project.title}</span>
             <strong>Album art, recombined into a visual series.</strong>
           </div>
           <em>{coverCollisionPosts.length} posts</em>
         </header>
 
-        <div className="cover-collision-grid" aria-label="Cover Collision posts from Instagram">
+        <div className="cover-collision-grid" aria-label={`${project.title} posts from Instagram`}>
           {coverCollisionPosts.map((post) => (
             <a
               className="cover-collision-post"
@@ -384,8 +385,7 @@ export function PersonalPage() {
         <p>Projects that interested me to build them.</p>
       </section>
 
-      <section className="page-grid work-board personal-board" aria-labelledby="personal-projects-title">
-        <h2 id="personal-projects-title">Personal projects</h2>
+      <section className="page-grid work-board personal-board" aria-label="Personal projects">
         <div className="work-card-grid personal-project-grid">
           {personalProjects.map((project, index) => (
             <PersonalProjectCard

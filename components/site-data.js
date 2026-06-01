@@ -78,7 +78,6 @@ export const workProjects = [
   {
     number: "02",
     slug: "vitals",
-    aliases: ["health-dashboard"],
     title: "Vitals",
     type: "Personal health signal dashboard",
     image: "/area-art/systems.png",
@@ -182,7 +181,7 @@ export const personalProjects = [
     slug: "chorus",
     aliases: ["sonic-fm", "lastfm-dashboard"],
     title: "Chorus",
-    type: workProjects[0].type,
+    type: "Music Intelligence",
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
     dashboardImage: "/area-art/signals.png",
@@ -191,8 +190,7 @@ export const personalProjects = [
     dashboardImageHeight: 900,
     dashboardLabel: "Chorus",
     dashboardStatus: "Public preview",
-    summary:
-      "A listening archive that turns Last.fm history into artists, albums, tracks, timelines, and listening reports.",
+    summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "sonic",
     mode: "preview",
@@ -202,9 +200,8 @@ export const personalProjects = [
   {
     number: "02",
     slug: "vitals",
-    aliases: ["health-dashboard"],
     title: "Vitals",
-    type: "Health dashboard",
+    type: "Health Visualisation",
     image: "/area-art/systems.png",
     alt: "Abstract personal health signal system artwork",
     dashboardImage: "/area-art/systems.png",
@@ -214,8 +211,7 @@ export const personalProjects = [
     dashboardLabel: "Health Dashboard",
     dashboardStatus: "Private values hidden",
     visual: "vitals",
-    summary:
-      "A private Health Dashboard for health signals, source freshness, trends, and review prompts.",
+    summary: "Tracks private health signals for clearer review conversations.",
     tags: ["Health dashboard", "Local sources", "Review prompts"],
     mode: "preview",
     fallbackHref: "/health",
@@ -225,12 +221,11 @@ export const personalProjects = [
     number: "03",
     slug: "cover-collision",
     title: "Cover Collision",
-    type: "Instagram album-art experiment",
+    type: "Album Art Mergers",
     image: coverCollisionPosts[0].image,
     alt: coverCollisionPosts[0].alt,
     visual: "cover-collision",
-    summary:
-      "An Instagram-based experiment in cover mismatches, collage, recombination, and visual rhythm.",
+    summary: "Merges album covers into playful visual recombinations.",
     tags: ["Cover mismatches", "Collage", "Recombination"],
     mode: "preview",
     externalHref: coverCollisionUrl,
@@ -243,8 +238,7 @@ export const personalProjects = [
     type: "Private AI memory system",
     image: "/area-art/knowledge.png",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations",
-    summary:
-      "A private, local-first AI memory and source system for keeping useful context structured without exposing raw sources.",
+    summary: "Keeps useful personal context structured without exposing raw sources.",
     tags: ["Local-first", "Source discipline", "Private system"],
     cta: "Private system"
   }

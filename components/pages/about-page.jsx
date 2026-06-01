@@ -160,16 +160,16 @@ function ToolGlyph({ tool }) {
 export function AboutPage() {
   return (
     <section className="studio-page about-page">
-      <section className="page-grid studio-hero">
-        <h1>About</h1>
-        <p>
-          Senior BI and analytics operator turning messy data, reporting estates, and AI-assisted workflows into useful
-          systems.
-        </p>
-      </section>
+      <section className="page-grid about-overview" aria-label="Profile">
+        <div className="about-hero-copy">
+          <h1>About</h1>
+          <p>
+            Senior BI and analytics operator turning messy data, reporting estates, and AI-assisted workflows into
+            useful systems.
+          </p>
+        </div>
 
-      <section className="page-grid about-profile" aria-label="Profile">
-        <div>
+        <div className="about-profile-copy">
           <h2>What I do</h2>
           <p>
             I am Daniel, a Business Intelligence specialist with experience across finance, infrastructure, and
@@ -204,6 +204,7 @@ export function AboutPage() {
           <div>
             <h2 id="workplaces-heading">Where I have worked</h2>
           </div>
+          <p>Years of building my context window</p>
         </div>
 
         <div className="company-grid">
@@ -228,7 +229,7 @@ export function AboutPage() {
           <div>
             <h2 id="tools-heading">Tools I work with</h2>
           </div>
-          <p>Modern BI foundations, careful modelling, and AI coding tools used as part of real delivery.</p>
+          <p>Modern tooling for the future of workflows</p>
         </div>
 
         <div className="tool-grid">
