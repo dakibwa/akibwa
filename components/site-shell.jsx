@@ -36,11 +36,22 @@ export function SiteShell({ children }) {
     router.prefetch(href);
   };
 
-  const syncBrandPointer = (event) => {
+  const getBrandEntryDirection = (event, rect) => {
+    const sideDistances = [
+      ["top", Math.abs(event.clientY - rect.top)],
+      ["right", Math.abs(event.clientX - rect.right)],
+      ["bottom", Math.abs(event.clientY - rect.bottom)],
+      ["left", Math.abs(event.clientX - rect.left)]
+    ];
+
+    return sideDistances.reduce((closest, current) => (current[1] < closest[1] ? current : closest))[0];
+  };
+
+  const syncBrandPointer = (event, currentRect) => {
     const brand = brandRef.current;
     if (!brand) return;
 
-    const rect = brand.getBoundingClientRect();
+    const rect = currentRect || brand.getBoundingClientRect();
     const x = Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100));
     const y = Math.min(100, Math.max(0, ((event.clientY - rect.top) / rect.height) * 100));
 
@@ -48,10 +59,20 @@ export function SiteShell({ children }) {
     brand.style.setProperty("--brand-y", `${y.toFixed(2)}%`);
   };
 
+  const startBrandPointer = (event) => {
+    const brand = brandRef.current;
+    if (!brand) return;
+
+    const rect = brand.getBoundingClientRect();
+    brand.dataset.entry = getBrandEntryDirection(event, rect);
+    syncBrandPointer(event, rect);
+  };
+
   const resetBrandPointer = () => {
     const brand = brandRef.current;
     if (!brand) return;
 
+    delete brand.dataset.entry;
     brand.style.setProperty("--brand-x", "50%");
     brand.style.setProperty("--brand-y", "50%");
   };
@@ -69,10 +90,14 @@ export function SiteShell({ children }) {
               onClick={() => setIsMenuOpen(false)}
               onPointerEnter={(event) => {
                 primeRoute("/");
-                syncBrandPointer(event);
+                startBrandPointer(event);
               }}
               onPointerMove={syncBrandPointer}
               onPointerLeave={resetBrandPointer}
+              onMouseEnter={(event) => {
+                primeRoute("/");
+                startBrandPointer(event);
+              }}
               onMouseMove={syncBrandPointer}
               onMouseLeave={resetBrandPointer}
               onFocus={() => {

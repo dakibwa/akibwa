@@ -117,7 +117,8 @@ button {
   transition:
     color 180ms ease,
     filter 180ms ease,
-    text-shadow 180ms ease;
+    text-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 .brand::after {
@@ -157,6 +158,58 @@ button {
 .brand:focus-visible::after {
   opacity: 0.74;
   transform: scaleX(0.76);
+}
+
+.brand[data-entry="bottom"]:hover {
+  animation: brand-bottom-entry 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.brand[data-entry="bottom"]:hover::after {
+  animation: brand-bottom-underline 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: center bottom;
+}
+
+@keyframes brand-bottom-entry {
+  0% {
+    background-size: 100% 245%;
+    background-position: 50% 122%;
+    filter: saturate(0.9);
+    text-shadow: 0 8px 18px rgba(47, 136, 255, 0.02);
+    transform: translateY(2px);
+  }
+
+  52% {
+    background-size: 132% 186%;
+    background-position: 50% 72%;
+    filter: saturate(1.18);
+    text-shadow: 0 0 14px rgba(255, 111, 26, 0.08);
+    transform: translateY(-1px);
+  }
+
+  100% {
+    background-size: 155% 155%;
+    background-position: center;
+    filter: saturate(1.04);
+    text-shadow: 0 0 10px rgba(47, 136, 255, 0.055);
+    transform: translateY(0);
+  }
+}
+
+@keyframes brand-bottom-underline {
+  0% {
+    opacity: 0;
+    transform: translateY(7px) scaleX(0.08);
+  }
+
+  54% {
+    opacity: 0.9;
+    transform: translateY(-1px) scaleX(0.92);
+  }
+
+  100% {
+    opacity: 0.74;
+    transform: translateY(0) scaleX(0.76);
+  }
 }
 
 .nav-desktop {
