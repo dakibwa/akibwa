@@ -5389,16 +5389,17 @@ button {
   grid-auto-flow: dense;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: 14px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .vitals-card {
   min-width: 0;
+  height: 100%;
   overflow: hidden;
   border: 1px solid var(--vitals-line);
   border-radius: 8px;
   background: var(--vitals-surface);
-  box-shadow: 0 14px 38px rgba(8, 18, 22, 0.045);
+  box-shadow: 0 12px 30px rgba(8, 18, 22, 0.035);
 }
 
 .vitals-card.is-focus-muted {
@@ -5413,9 +5414,9 @@ button {
 .vitals-stat-card {
   display: grid;
   align-content: start;
-  align-self: start;
   grid-column: span 2;
-  min-height: 150px;
+  grid-template-rows: auto minmax(72px, 1fr) auto;
+  min-height: 176px;
   gap: 12px;
   padding: 16px;
 }
@@ -5521,6 +5522,7 @@ button {
 .vitals-mini-card .vitals-sparkline {
   width: 100%;
   height: 42px;
+  align-self: end;
   margin-top: 8px;
 }
 
@@ -5591,11 +5593,13 @@ button {
 .vitals-readiness-card {
   display: grid;
   grid-column: span 4;
-  min-height: 150px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 324px;
 }
 
 .vitals-heatmap {
   display: grid;
+  align-content: center;
   gap: 9px;
   padding: 16px 16px 8px;
 }
@@ -5682,10 +5686,9 @@ button {
 
 .vitals-mini-card {
   display: grid;
-  align-self: start;
   grid-column: span 2;
-  align-content: start;
-  min-height: 144px;
+  grid-template-rows: auto auto auto 1fr;
+  min-height: 150px;
   padding: 16px;
 }
 
@@ -5707,11 +5710,13 @@ button {
 
 .vitals-review-card {
   display: grid;
+  grid-template-rows: auto 1fr auto;
   grid-column: span 4;
 }
 
 .vitals-review-list {
   display: grid;
+  align-content: center;
   padding: 12px 16px 4px;
 }
 
@@ -5761,8 +5766,10 @@ button {
 }
 
 .vitals-line-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
   grid-column: span 5;
-  min-height: 284px;
+  min-height: 306px;
 }
 
 .vitals-chart-legend {
@@ -5795,7 +5802,8 @@ button {
 
 .vitals-trend-chart {
   width: 100%;
-  min-height: 204px;
+  height: 100%;
+  min-height: 210px;
   padding: 4px 18px 12px;
 }
 
@@ -5820,6 +5828,8 @@ button {
 }
 
 .vitals-source-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
   grid-column: span 3;
 }
 
@@ -5828,6 +5838,7 @@ button {
   grid-template-columns: minmax(98px, 0.42fr) minmax(0, 1fr);
   gap: 18px;
   align-items: center;
+  align-content: center;
   padding: 18px 16px 20px;
 }
 
@@ -5911,8 +5922,8 @@ button {
 .vitals-nutrition-card {
   display: grid;
   grid-column: span 4;
-  min-height: 284px;
-  align-content: start;
+  grid-template-rows: auto auto auto 1fr;
+  min-height: 288px;
 }
 
 .vitals-nutrition-card > strong {
@@ -5940,13 +5951,14 @@ button {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 14px;
   align-items: end;
+  align-self: end;
   min-height: 112px;
   padding: 18px 18px 18px;
 }
 
 .vitals-bars span {
   display: grid;
-  height: 104px;
+  height: 112px;
   align-items: end;
   justify-items: center;
   gap: 9px;
@@ -5971,12 +5983,16 @@ button {
 }
 
 .vitals-labs-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   grid-column: span 5;
+  min-height: 288px;
 }
 
 .vitals-lab-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-content: center;
   gap: 16px;
   padding: 22px 16px 18px;
 }
@@ -6032,6 +6048,7 @@ button {
 
 .vitals-recent-card {
   display: grid;
+  grid-template-rows: auto 1fr auto;
   grid-column: span 4;
 }
 
@@ -6091,19 +6108,23 @@ button {
 }
 
 .vitals-actions-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
   grid-column: span 3;
+  min-height: 288px;
 }
 
 .vitals-actions-card > div {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(84px, 1fr));
   gap: 12px;
   padding: 16px;
 }
 
 .vitals-actions-card button {
   display: grid;
-  min-height: 76px;
+  min-height: 84px;
   place-items: center;
   gap: 8px;
   border: 1px solid var(--vitals-line);
@@ -6271,8 +6292,14 @@ button {
   }
 
   .vitals-recent-card {
-    grid-column: 1 / span 5;
+    grid-column: 1 / -1;
     grid-row: 5;
+    min-height: 220px;
+  }
+
+  .vitals-recent-card .vitals-event-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: center;
   }
 }
 
