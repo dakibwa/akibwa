@@ -5195,9 +5195,16 @@ button {
   margin: 0;
   color: var(--vitals-ink);
   font-size: 1.35rem;
-  font-weight: 620;
+  font-weight: 560;
   line-height: 1.1;
   letter-spacing: 0;
+}
+
+.vitals-topbar p {
+  margin: 6px 0 0;
+  color: var(--vitals-muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
 }
 
 .vitals-header-actions {
@@ -5209,6 +5216,7 @@ button {
 }
 
 .vitals-date-control,
+.vitals-range-control,
 .vitals-week-control,
 .vitals-icon-button {
   display: inline-flex;
@@ -5222,16 +5230,61 @@ button {
 }
 
 .vitals-date-control {
-  gap: 18px;
+  gap: 12px;
   min-width: 300px;
   min-height: 42px;
-  padding: 0 14px;
+  padding: 0 8px;
   font-size: 0.88rem;
   font-weight: 520;
 }
 
+.vitals-date-control button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--vitals-ink);
+  cursor: pointer;
+}
+
+.vitals-date-control button:hover {
+  background: rgba(8, 18, 22, 0.055);
+}
+
 .vitals-date-control span {
+  min-width: 0;
+  flex: 1;
+  text-align: center;
   white-space: nowrap;
+}
+
+.vitals-range-control {
+  gap: 3px;
+  min-height: 42px;
+  padding: 4px;
+}
+
+.vitals-range-control button,
+.vitals-focus-tabs button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--vitals-muted);
+  cursor: pointer;
+  padding: 0 10px;
+  font-size: 0.74rem;
+  font-weight: 520;
+}
+
+.vitals-range-control button.is-active,
+.vitals-focus-tabs button.is-active {
+  background: #081216;
+  color: #fff;
 }
 
 .vitals-week-control {
@@ -5277,6 +5330,60 @@ button {
   font-weight: 660;
 }
 
+.vitals-source-strip,
+.vitals-focus-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.vitals-source-strip::-webkit-scrollbar,
+.vitals-focus-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.vitals-source-strip button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  flex: 0 0 auto;
+  border: 1px solid var(--vitals-line);
+  border-radius: 8px;
+  background: var(--vitals-surface);
+  color: var(--vitals-muted);
+  cursor: pointer;
+  padding: 0 11px;
+  font-size: 0.72rem;
+}
+
+.vitals-source-strip i {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.vitals-source-strip strong {
+  color: var(--vitals-ink);
+  font-size: 0.68rem;
+  font-weight: 560;
+}
+
+.vitals-focus-tabs {
+  justify-content: flex-start;
+  border-bottom: 1px solid var(--vitals-line);
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+}
+
+.vitals-focus-tabs button {
+  border: 1px solid transparent;
+}
+
 .vitals-dashboard-grid {
   display: grid;
   grid-auto-flow: dense;
@@ -5292,6 +5399,15 @@ button {
   border-radius: 8px;
   background: var(--vitals-surface);
   box-shadow: 0 14px 38px rgba(8, 18, 22, 0.045);
+}
+
+.vitals-card.is-focus-muted {
+  opacity: 0.42;
+}
+
+.vitals-card.is-focus-match {
+  border-color: rgba(11, 104, 116, 0.34);
+  box-shadow: 0 16px 42px rgba(11, 104, 116, 0.09);
 }
 
 .vitals-stat-card {
@@ -5312,7 +5428,7 @@ button {
   gap: 10px;
   color: var(--vitals-ink);
   font-size: 0.8rem;
-  font-weight: 620;
+  font-weight: 560;
 }
 
 .vitals-stat-body {
@@ -5421,7 +5537,7 @@ button {
   margin: 0 0 6px;
   color: var(--vitals-ink);
   font-size: 0.96rem;
-  font-weight: 620;
+  font-weight: 560;
   line-height: 1.1;
   letter-spacing: 0;
 }
@@ -5442,14 +5558,18 @@ button {
 }
 
 .vitals-card-heading a,
+.vitals-text-link,
 .vitals-review-card > a,
 .vitals-recent-card > a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  border: 0;
+  background: transparent;
   color: #044e59;
+  cursor: pointer;
   font-size: 0.76rem;
-  font-weight: 620;
+  font-weight: 560;
   white-space: nowrap;
 }
 
@@ -5633,6 +5753,8 @@ button {
 }
 
 .vitals-review-card > a,
+.vitals-review-card > .vitals-text-link,
+.vitals-recent-card > .vitals-text-link,
 .vitals-recent-card > a {
   justify-self: end;
   padding: 10px 16px 14px;
@@ -5739,7 +5861,7 @@ button {
   align-self: end;
   color: var(--vitals-ink);
   font-size: 1rem;
-  font-weight: 620;
+  font-weight: 560;
 }
 
 .vitals-source-ring span {
@@ -5782,7 +5904,7 @@ button {
 .vitals-source-list strong {
   color: var(--vitals-ink);
   font-size: 0.68rem;
-  font-weight: 620;
+  font-weight: 560;
   white-space: nowrap;
 }
 
@@ -5947,7 +6069,7 @@ button {
 .vitals-event-list strong {
   color: #044e70;
   font-size: 0.8rem;
-  font-weight: 620;
+  font-weight: 560;
 }
 
 .vitals-event-list small {
@@ -5994,6 +6116,9 @@ button {
 }
 
 .vitals-actions-card button:hover,
+.vitals-source-strip button:hover,
+.vitals-range-control button:hover,
+.vitals-focus-tabs button:hover,
 .vitals-week-control:hover,
 .vitals-icon-button:hover,
 .vitals-event-list button:hover,
@@ -6004,6 +6129,69 @@ button {
 
 .vitals-privacy-note {
   margin-top: 14px;
+}
+
+.vitals-detail-panel {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+  border: 1px solid rgba(11, 104, 116, 0.18);
+  border-radius: 8px;
+  background: #f7fbfb;
+  margin-top: 14px;
+  padding: 16px;
+  box-shadow: 0 16px 42px rgba(8, 18, 22, 0.055);
+}
+
+.vitals-detail-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.vitals-detail-panel header span {
+  color: var(--vitals-teal);
+  font-size: 0.72rem;
+  font-weight: 560;
+}
+
+.vitals-detail-panel header button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--vitals-line);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--vitals-ink);
+  cursor: pointer;
+}
+
+.vitals-detail-panel h2 {
+  margin: 0;
+  color: var(--vitals-ink);
+  font-size: 1.05rem;
+  font-weight: 560;
+  letter-spacing: 0;
+}
+
+.vitals-detail-panel p,
+.vitals-detail-panel li {
+  color: var(--vitals-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.vitals-detail-panel p,
+.vitals-detail-panel ul {
+  margin: 0;
+}
+
+.vitals-detail-panel ul {
+  display: grid;
+  gap: 7px;
+  padding-left: 18px;
 }
 
 @media (min-width: 1061px) {

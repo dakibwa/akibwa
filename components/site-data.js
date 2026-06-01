@@ -2,6 +2,13 @@ export const contactEmail = "***REMOVED***";
 
 export const areaTiles = [
   {
+    title: "About",
+    descriptor: "How I think and build",
+    href: "/about",
+    image: "/area-art/knowledge.png",
+    alt: "Abstract evidence artwork with document layers, source lines, and annotations"
+  },
+  {
     title: "Personal",
     descriptor: "Self-built projects",
     href: "/personal",
@@ -14,13 +21,6 @@ export const areaTiles = [
     href: "/professional",
     image: "/area-art/offer.png",
     alt: "Abstract artwork showing a path from messy marks into a precise output"
-  },
-  {
-    title: "About",
-    descriptor: "How I think and build",
-    href: "/about",
-    image: "/area-art/knowledge.png",
-    alt: "Abstract evidence artwork with document layers, source lines, and annotations"
   },
   {
     title: "Contact",
