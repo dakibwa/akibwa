@@ -1,64 +1,64 @@
 {
   "snapshotDate": "2026-06-02",
-  "generatedAt": "2026-06-02T15:21:07.423Z",
+  "generatedAt": "2026-06-02T18:56:31.573Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21730,
-    "artistCount": 1977,
-    "albumCount": 2865,
-    "trackCount": 6215,
+    "totalScrobbles": 21745,
+    "artistCount": 1978,
+    "albumCount": 2867,
+    "trackCount": 6228,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Walkabout (w/ Noah Lennox)",
-    "artist": "Atlas Sound",
-    "album": "Logos",
-    "timeLabel": "42 min ago",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/747f953fa366499b9f5d89b41f21991a.png"
+    "title": "Madres",
+    "artist": "Sofia Kourtesis",
+    "album": "Madres",
+    "timeLabel": "2 hr ago",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/fd9133435d19f9acaf797a07af4cbb3c.png"
   },
   "recentTracks": [
     {
-      "title": "Walkabout (w/ Noah Lennox)",
-      "artist": "Atlas Sound",
-      "album": "Logos",
-      "timeLabel": "42 min ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/747f953fa366499b9f5d89b41f21991a.png"
+      "title": "Madres",
+      "artist": "Sofia Kourtesis",
+      "album": "Madres",
+      "timeLabel": "2 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/fd9133435d19f9acaf797a07af4cbb3c.png"
     },
     {
-      "title": "Diamond Jubilee (2024) Full Album HQ",
-      "artist": "Cindy Lee",
-      "album": "Album unavailable",
-      "timeLabel": "5 hr ago",
-      "imageUrl": null
+      "title": "By Your Side",
+      "artist": "Sofia Kourtesis",
+      "album": "By Your Side",
+      "timeLabel": "2 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/4fbe971005b75445052c216faa7f0097.jpg"
     },
     {
-      "title": "Back, Baby",
-      "artist": "Jessica Pratt",
-      "album": "Album unavailable",
-      "timeLabel": "5 hr ago",
-      "imageUrl": null
+      "title": "The Anxious Battle for Sanity",
+      "artist": "Antonio Sánchez",
+      "album": "Birdman (Original Motion Picture Soundtrack)",
+      "timeLabel": "2 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
     },
     {
-      "title": "Arriving",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "16 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "title": "Schizo",
+      "artist": "Antonio Sánchez",
+      "album": "Birdman (Original Motion Picture Soundtrack)",
+      "timeLabel": "2 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
     },
     {
-      "title": "Ascending, Dawn Sky",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "16 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "title": "Almost Human",
+      "artist": "Antonio Sánchez",
+      "album": "Birdman (Original Motion Picture Soundtrack)",
+      "timeLabel": "2 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
     },
     {
-      "title": "Love Flows over Us in Prismatic Waves",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "16 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "title": "Night Chatter",
+      "artist": "Antonio Sánchez",
+      "album": "Birdman (Original Motion Picture Soundtrack)",
+      "timeLabel": "2 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
     }
   ],
   "recentRuns": [
