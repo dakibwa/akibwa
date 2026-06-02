@@ -136,13 +136,14 @@ function getCoverCollisionGalleryLayout(postCount) {
 
 function CoverCollisionPanel({ project, galleryOnly = false }) {
   const galleryLayout = getCoverCollisionGalleryLayout(coverCollisionPosts.length);
-  const fittedRows = Math.min(galleryLayout.rows, 5);
+  const fittedRows = Math.min(galleryLayout.rows, 4);
   const panelAspect = galleryLayout.columns / fittedRows;
+  const verticalReserve = 174 + fittedRows * 32 + Math.max(0, fittedRows - 1) * 22;
   const galleryStyle = galleryOnly
     ? {
         "--cover-collision-columns": String(galleryLayout.columns),
         "--cover-collision-rows": String(fittedRows),
-        "--cover-collision-panel-width": `min(100%, ${galleryLayout.columns * 240}px, calc((100dvh - 156px) * ${panelAspect.toFixed(4)}))`,
+        "--cover-collision-panel-width": `min(100%, ${galleryLayout.columns * 240}px, max(320px, calc((100dvh - ${verticalReserve}px) * ${panelAspect.toFixed(4)})))`,
       }
     : undefined;
 
