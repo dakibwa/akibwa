@@ -3,14 +3,20 @@
 import Image from "next/image";
 import {
   ArrowRight,
+  CalendarDays,
   Database,
   Disc3,
+  FolderOpen,
   GitBranch,
+  HardDrive,
+  HeartPulse,
   Instagram,
   LockKeyhole,
+  Mail,
   Route,
   ShieldCheck,
   Sparkles,
+  Wallet,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -21,12 +27,12 @@ import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
 const knowledgeSources = [
-  ["Gmail", "backfill next"],
-  ["Drive", "mapped"],
-  ["Calendar", "history pass"],
-  ["Finance", "aggregate-only"],
-  ["Health", "local only"],
-  ["Projects", "active"]
+  { name: "Gmail", status: "backfill next", Icon: Mail },
+  { name: "Drive", status: "mapped", Icon: HardDrive },
+  { name: "Calendar", status: "history pass", Icon: CalendarDays },
+  { name: "Finance", status: "aggregate-only", Icon: Wallet },
+  { name: "Health", status: "local only", Icon: HeartPulse },
+  { name: "Projects", status: "active", Icon: FolderOpen }
 ];
 
 const knowledgeRoutes = [
@@ -241,20 +247,32 @@ function CoverCollisionShowcase({ project, immersive = false }) {
 }
 
 function KnowledgeBaseShowcase({ project }) {
+  const artwork = getPersonalProjectArt(project);
+
   return (
     <section className="knowledge-system-showcase" id={`${project.slug}-preview`} aria-live="polite">
-      <div className="knowledge-system-copy">
-        <span>{project.number}</span>
-        <h2>{project.title}</h2>
-        <p>
-          A local, source-backed context system that helps Codex use personal records without exposing the records
-          themselves.
-        </p>
-        <div className="knowledge-system-tags" aria-label={`${project.title} tags`}>
-          {project.tags.map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
+      <div className="knowledge-system-hero">
+        <div className="knowledge-system-copy">
+          <span>{project.number}</span>
+          <h2>{project.title}</h2>
+          <p>
+            A local, source-backed context system that helps Codex use personal records without exposing the records
+            themselves.
+          </p>
+          <div className="knowledge-system-tags" aria-label={`${project.title} tags`}>
+            {project.tags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
         </div>
+
+        <figure className="knowledge-system-art">
+          <img src={artwork.src} alt="" draggable="false" />
+          <figcaption>
+            <span>Local memory</span>
+            <strong>Public-safe project view</strong>
+          </figcaption>
+        </figure>
       </div>
 
       <div className="knowledge-system-console" aria-label="Private knowledge system preview">
@@ -264,9 +282,12 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Source map</h3>
           </header>
           <div className="knowledge-source-list">
-            {knowledgeSources.map(([source, status]) => (
-              <div key={source}>
-                <strong>{source}</strong>
+            {knowledgeSources.map(({ name, status, Icon }, index) => (
+              <div key={name} className="knowledge-source-row" style={{ "--row-delay": `${index * 65}ms` }}>
+                <span className="knowledge-row-icon" aria-hidden="true">
+                  <Icon size={16} strokeWidth={1.8} />
+                </span>
+                <strong>{name}</strong>
                 <span>{status}</span>
               </div>
             ))}
@@ -279,9 +300,11 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Codex retrieval routes</h3>
           </header>
           <ol>
-            {knowledgeRoutes.map((route) => (
-              <li key={route}>
-                <GitBranch size={14} strokeWidth={1.7} />
+            {knowledgeRoutes.map((route, index) => (
+              <li key={route} style={{ "--row-delay": `${index * 65}ms` }}>
+                <span className="knowledge-row-icon" aria-hidden="true">
+                  <GitBranch size={15} strokeWidth={1.8} />
+                </span>
                 <span>{route}</span>
               </li>
             ))}
@@ -294,9 +317,11 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Guardrails</h3>
           </header>
           <ul>
-            {knowledgeGuardrails.map((rule) => (
-              <li key={rule}>
-                <LockKeyhole size={14} strokeWidth={1.7} />
+            {knowledgeGuardrails.map((rule, index) => (
+              <li key={rule} style={{ "--row-delay": `${index * 65}ms` }}>
+                <span className="knowledge-row-icon" aria-hidden="true">
+                  <LockKeyhole size={15} strokeWidth={1.8} />
+                </span>
                 <span>{rule}</span>
               </li>
             ))}
