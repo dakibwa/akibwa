@@ -10,7 +10,7 @@ const apiKey = process.env.LASTFM_API_KEY;
 const username = process.env.LASTFM_USERNAME ?? "akibwa";
 
 if (!apiKey) {
-  throw new Error("LASTFM_API_KEY is required to refresh Sonic FM data.");
+  throw new Error("LASTFM_API_KEY is required to refresh Chorus data.");
 }
 
 function lastfmUrl(method, params = {}) {
@@ -138,7 +138,7 @@ function mapTopTrack(track) {
   };
 }
 
-const existing = JSON.parse(await readFile("data/sonic-fm-data.json", "utf8"));
+const existing = JSON.parse(await readFile("data/chorus-data.json", "utf8"));
 const generatedAt = new Date();
 
 const [profilePayload, recentPayload, artistsPayload, albumsPayload, tracksPayload] = await Promise.all([
@@ -182,7 +182,7 @@ const payload = {
   topTracks
 };
 
-await writeFile("data/sonic-fm-data.json", `${JSON.stringify(payload, null, 2)}\n`);
+await writeFile("data/chorus-data.json", `${JSON.stringify(payload, null, 2)}\n`);
 
 console.log(
   JSON.stringify(

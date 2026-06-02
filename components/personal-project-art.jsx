@@ -6,11 +6,6 @@ const artworkBySlug = {
     bannerSrc: "/project-art/personal/chorus-collective-banner.jpg",
     variant: "music"
   },
-  "sonic-fm": {
-    src: "/project-art/personal/chorus-collective.jpg",
-    bannerSrc: "/project-art/personal/chorus-collective-banner.jpg",
-    variant: "music"
-  },
   vitals: {
     src: "/project-art/personal/vitals-signal.jpg",
     bannerSrc: "/project-art/personal/vitals-signal-banner.jpg",

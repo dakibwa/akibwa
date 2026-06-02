@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { AkibwapediaPreview } from "@/components/akibwapedia-preview";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
-import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
+import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
@@ -23,7 +23,7 @@ function canUseLocalFrame() {
 }
 
 function getProjectFrameUrl(project, isLocalHost) {
-  if (project.visual === "sonic") return "";
+  if (project.visual === "chorus") return "";
   if (project.embedUrl) return project.embedUrl;
   if (isLocalHost && project.localUrl) return project.localUrl;
   return "";
@@ -82,7 +82,7 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
 
 function DashboardShowcase({ project, immersive = false }) {
   const isVitals = project.visual === "vitals";
-  const isSonic = project.visual === "sonic";
+  const isChorus = project.visual === "chorus";
 
   return (
     <section
@@ -93,7 +93,7 @@ function DashboardShowcase({ project, immersive = false }) {
       aria-label={`${project.title} app preview`}
       aria-live="polite"
     >
-      {isSonic ? <SonicFmDashboardPreview /> : <VitalsDashboardPreview />}
+      {isChorus ? <ChorusDashboardPreview /> : <VitalsDashboardPreview />}
     </section>
   );
 }
@@ -284,7 +284,7 @@ function StaticProjectSurface({ project }) {
 }
 
 function ProjectExpandedContent({ project, frameUrl }) {
-  if (project.visual === "sonic" || project.visual === "vitals") {
+  if (project.visual === "chorus" || project.visual === "vitals") {
     return <DashboardShowcase project={project} frameUrl={frameUrl} immersive />;
   }
 

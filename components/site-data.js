@@ -56,7 +56,7 @@ export const workProjects = [
   {
     number: "01",
     slug: "chorus",
-    aliases: ["sonic-fm", "lastfm-dashboard", "signals-dashboard"],
+    aliases: ["lastfm-dashboard", "signals-dashboard"],
     title: "Chorus",
     type: "Music intelligence dashboard",
     image: "/project-art/personal/chorus-collective.jpg",
@@ -179,9 +179,9 @@ export const personalProjects = [
   {
     number: "01",
     slug: "chorus",
-    aliases: ["sonic-fm", "lastfm-dashboard"],
+    aliases: ["lastfm-dashboard"],
     title: "Chorus",
-    type: "Music Intelligence",
+    type: "Chorus",
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
     dashboardImage: "/project-art/personal/chorus-collective.jpg",
@@ -192,7 +192,7 @@ export const personalProjects = [
     dashboardStatus: "Working app",
     summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
-    visual: "sonic",
+    visual: "chorus",
     mode: "preview",
     fallbackHref: "/chorus",
     cta: "Open app"

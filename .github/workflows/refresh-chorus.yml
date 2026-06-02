@@ -1,4 +1,4 @@
-name: Refresh Sonic FM
+name: Refresh Chorus
 
 on:
   schedule:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: sonic-fm-pages
+  group: chorus-pages
   cancel-in-progress: false
 
 jobs:
@@ -35,23 +35,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Refresh Sonic FM data
-        run: npm run refresh:sonic-fm
+      - name: Refresh Chorus data
+        run: npm run refresh:chorus
         env:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_USERNAME: ${{ secrets.LASTFM_USERNAME || 'akibwa' }}
 
       - name: Commit refreshed data
         run: |
-          if git diff --quiet -- data/sonic-fm-data.json; then
-            echo "Sonic FM data is already current."
+          if git diff --quiet -- data/chorus-data.json; then
+            echo "Chorus data is already current."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/sonic-fm-data.json
-          git commit -m "Refresh Sonic FM data"
+          git add data/chorus-data.json
+          git commit -m "Refresh Chorus data"
           git push
 
       - name: Build static site

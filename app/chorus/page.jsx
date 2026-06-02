@@ -1,5 +1,5 @@
 import { PageFooter } from "@/components/page-footer";
-import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
+import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 
 export const metadata = {
   title: "Chorus",
@@ -9,8 +9,8 @@ export const metadata = {
 
 export default function ChorusPage() {
   return (
-    <section className="sonic-page">
-      <SonicFmDashboardPreview />
+    <section className="chorus-page">
+      <ChorusDashboardPreview />
       <PageFooter />
     </section>
   );
