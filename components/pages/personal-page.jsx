@@ -52,7 +52,6 @@ function canUseLocalFrame() {
 }
 
 function getProjectFrameUrl(project, isLocalHost) {
-  if (project.visual === "chorus") return "";
   if (project.embedUrl) return project.embedUrl;
   if (isLocalHost && project.localUrl) return project.localUrl;
   return "";
@@ -137,7 +136,7 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
     ? {
         "--cover-collision-columns": String(galleryLayout.columns),
         "--cover-collision-rows": String(fittedRows),
-        "--cover-collision-panel-width": `min(100%, ${galleryLayout.columns * 290}px, calc((100dvh - 156px) * ${panelAspect.toFixed(4)}))`,
+        "--cover-collision-panel-width": `min(100%, ${galleryLayout.columns * 240}px, calc((100dvh - 156px) * ${panelAspect.toFixed(4)}))`,
       }
     : undefined;
 
@@ -169,18 +168,20 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
             aria-label={`Open ${post.title} on Instagram`}
             key={post.href}
           >
-            <Image
-              src={post.image}
-              alt={post.alt}
-              width={180}
-              height={180}
-              priority={galleryOnly && index < galleryLayout.columns}
-              sizes={
-                galleryOnly
-                  ? `(max-width: 760px) ${Math.ceil(100 / Math.min(galleryLayout.columns, 3))}vw, ${Math.ceil(100 / galleryLayout.columns)}vw`
-                  : "(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
-              }
-            />
+            <span className="cover-collision-post-image">
+              <Image
+                src={post.image}
+                alt={post.alt}
+                width={180}
+                height={180}
+                priority={galleryOnly && index < galleryLayout.columns}
+                sizes={
+                  galleryOnly
+                    ? `(max-width: 760px) ${Math.ceil(100 / Math.min(galleryLayout.columns, 3))}vw, ${Math.ceil(100 / galleryLayout.columns)}vw`
+                    : "(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
+                }
+              />
+            </span>
             {galleryOnly ? (
               <strong className="cover-collision-post-caption">{post.title}</strong>
             ) : (
@@ -344,6 +345,10 @@ function StaticProjectSurface({ project }) {
 }
 
 function ProjectExpandedContent({ project, frameUrl }) {
+  if ((project.visual === "chorus" || project.visual === "vitals") && frameUrl) {
+    return <LiveProjectFrame project={project} frameUrl={frameUrl} />;
+  }
+
   if (project.visual === "chorus" || project.visual === "vitals") {
     return <DashboardShowcase project={project} frameUrl={frameUrl} immersive />;
   }
@@ -360,6 +365,10 @@ function ProjectExpandedContent({ project, frameUrl }) {
     return <StaticProjectSurface project={project} />;
   }
 
+  return <LiveProjectFrame project={project} frameUrl={frameUrl} />;
+}
+
+function LiveProjectFrame({ project, frameUrl }) {
   return (
     <section className="project-expanded-frame" id={`${project.slug}-preview`} aria-live="polite">
       {frameUrl ? (

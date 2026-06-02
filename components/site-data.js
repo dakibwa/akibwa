@@ -1,4 +1,8 @@
 export const contactEmail = "***REMOVED***";
+export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || "").trim();
+export const vitalsAppUrl = (process.env.NEXT_PUBLIC_VITALS_APP_URL || "").trim();
+const chorusAppIsConfigured = Boolean(chorusAppUrl);
+const vitalsAppIsConfigured = Boolean(vitalsAppUrl);
 
 export const areaTiles = [
   {
@@ -69,10 +73,15 @@ export const workProjects = [
       ["Reports", "Live"]
     ],
     rows: [
-      ["The state", "Built and usable locally: a real Chorus dashboard surface from the Last.fm music-data work."],
+      [
+        "The state",
+        chorusAppIsConfigured
+          ? "Live as a separate Chorus app; the public site links through to that app rather than duplicating it."
+          : "Built as a separate Chorus app; the public site keeps a preview until the live app URL is configured."
+      ],
       ["What it does", featuredProjects[0].summary],
       ["The problem", featuredProjects[0].problem],
-      ["Public note", "The live dashboard remains a separate project environment; this public site shows the case study without depending on a local dev server."]
+      ["Public note", "The live dashboard remains a separate project environment, so the website should hand off to it instead of becoming a second copy."]
     ]
   },
   {
@@ -91,10 +100,15 @@ export const workProjects = [
       ["Output", "Website"]
     ],
     rows: [
-      ["The state", "A personal Vitals system for health signals, source freshness, trends, and review prompts."],
-      ["The data", "Aggregate health values surface on the website; raw source exports and identifiers stay out of the repository."],
+      [
+        "The state",
+        vitalsAppIsConfigured
+          ? "Live as a separate Vitals app; the public site links through to that app rather than duplicating it."
+          : "Prepared as a separate Vitals app handoff; the public site keeps a preview until the live app URL is configured."
+      ],
+      ["The data", "Aggregate health values can surface on the website; raw source exports and identifiers stay out of the repository."],
       ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
-      ["Why it matters", "It shows the same pattern applied to personal data: preserve provenance, make the useful signals readable, and keep raw source files separate."]
+      ["Public note", "The live dashboard should remain a separate project environment, so the website should hand off to it instead of becoming a second copy."]
     ]
   }
 ];
@@ -189,13 +203,15 @@ export const personalProjects = [
     dashboardImageWidth: 1672,
     dashboardImageHeight: 941,
     dashboardLabel: "Chorus",
-    dashboardStatus: "Working app",
+    dashboardStatus: chorusAppIsConfigured ? "Live app" : "Preview",
     summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "chorus",
-    mode: "preview",
+    mode: chorusAppIsConfigured ? "embed" : "preview",
+    embedUrl: chorusAppIsConfigured ? chorusAppUrl : undefined,
+    externalHref: chorusAppIsConfigured ? chorusAppUrl : undefined,
     fallbackHref: "/chorus",
-    cta: "Open app"
+    cta: chorusAppIsConfigured ? "Open live app" : "Open preview"
   },
   {
     number: "02",
@@ -209,13 +225,15 @@ export const personalProjects = [
     dashboardImageWidth: 1672,
     dashboardImageHeight: 941,
     dashboardLabel: "Health Dashboard",
-    dashboardStatus: "Live aggregate values",
+    dashboardStatus: vitalsAppIsConfigured ? "Live app" : "Preview",
     visual: "vitals",
     summary: "Surfaces aggregate health signals for clearer review conversations.",
     tags: ["Health dashboard", "Source freshness", "Review prompts"],
-    mode: "preview",
+    mode: vitalsAppIsConfigured ? "embed" : "preview",
+    embedUrl: vitalsAppIsConfigured ? vitalsAppUrl : undefined,
+    externalHref: vitalsAppIsConfigured ? vitalsAppUrl : undefined,
     fallbackHref: "/health",
-    cta: "Open dashboard"
+    cta: vitalsAppIsConfigured ? "Open live app" : "Open preview"
   },
   {
     number: "03",
