@@ -1,23 +1,30 @@
 {
   "snapshotDate": "2026-06-02",
-  "generatedAt": "2026-06-02T14:39:05.008Z",
+  "generatedAt": "2026-06-02T14:43:29.825Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21724,
+    "totalScrobbles": 21729,
     "artistCount": 1977,
     "albumCount": 2865,
     "trackCount": 6214,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Diamond Jubilee (2024) Full Album HQ",
-    "artist": "Cindy Lee",
-    "album": "Album unavailable",
-    "timeLabel": "4 hr ago",
-    "imageUrl": null
+    "title": "Walkabout (w/ Noah Lennox)",
+    "artist": "Atlas Sound",
+    "album": "Logos",
+    "timeLabel": "Now",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/747f953fa366499b9f5d89b41f21991a.png"
   },
   "recentTracks": [
+    {
+      "title": "Walkabout (w/ Noah Lennox)",
+      "artist": "Atlas Sound",
+      "album": "Logos",
+      "timeLabel": "Now",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/747f953fa366499b9f5d89b41f21991a.png"
+    },
     {
       "title": "Diamond Jubilee (2024) Full Album HQ",
       "artist": "Cindy Lee",
@@ -47,18 +54,18 @@
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Skeleton Tree",
-      "artist": "Nick Cave & the Bad Seeds",
-      "album": "Skeleton Tree",
-      "timeLabel": "17 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/b1c4c6f52bdb558eb31ae5d05d8687b1.jpg"
+      "title": "Love Flows over Us in Prismatic Waves",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "15 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Distant Sky",
-      "artist": "Nick Cave & the Bad Seeds",
-      "album": "Skeleton Tree",
-      "timeLabel": "17 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/b1c4c6f52bdb558eb31ae5d05d8687b1.jpg"
+      "title": "Tayos Caves, Ecuador III",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "15 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     }
   ],
   "recentRuns": [
@@ -210,7 +217,7 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2598,
+      "plays": 2603,
       "initials": "JH",
       "imageUrl": null
     },
@@ -357,7 +364,7 @@
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2586,
+      "plays": 2591,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
@@ -503,31 +510,31 @@
     {
       "title": "Tayos Caves, Ecuador I",
       "artist": "Jon Hopkins",
-      "plays": 349,
+      "plays": 350,
       "imageUrl": null
     },
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 332,
+      "plays": 333,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
-      "plays": 323,
+      "plays": 324,
       "imageUrl": null
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
-      "plays": 321,
+      "plays": 322,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
-      "plays": 311,
+      "plays": 312,
       "imageUrl": null
     },
     {
