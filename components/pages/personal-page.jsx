@@ -140,7 +140,7 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
       )}
 
       <div className="cover-collision-grid" aria-label={`${project.title} posts from Instagram`}>
-        {coverCollisionPosts.map((post) => (
+        {coverCollisionPosts.map((post, index) => (
           <a
             className="cover-collision-post"
             href={post.href}
@@ -154,6 +154,7 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
               alt={post.alt}
               width={180}
               height={180}
+              priority={galleryOnly && index < galleryLayout.columns}
               sizes={
                 galleryOnly
                   ? `(max-width: 760px) ${Math.ceil(100 / Math.min(galleryLayout.columns, 3))}vw, ${Math.ceil(100 / galleryLayout.columns)}vw`
