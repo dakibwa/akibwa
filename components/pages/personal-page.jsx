@@ -45,14 +45,10 @@ function ProjectExpandedBanner({ project }) {
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   const isLive = project.mode === "embed" || project.mode === "preview";
-
-  return (
-    <button
-      type="button"
-      className={`studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`}
-      aria-pressed={isSelected}
-      onClick={onSelect}
-    >
+  const isDirectRoute = project.visual === "akibwapedia" && project.fallbackHref;
+  const cardClass = `studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`;
+  const cardContent = (
+    <>
       <PersonalProjectVisual project={project} priority={priority} />
       <header>
         <div>
@@ -61,6 +57,25 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
         </div>
         {isLive ? <ArrowRight size={19} strokeWidth={1.8} /> : <LockKeyhole size={17} strokeWidth={1.7} />}
       </header>
+    </>
+  );
+
+  if (isDirectRoute) {
+    return (
+      <a className={cardClass} href={project.fallbackHref}>
+        {cardContent}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className={cardClass}
+      aria-pressed={isSelected}
+      onClick={onSelect}
+    >
+      {cardContent}
     </button>
   );
 }

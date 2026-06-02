@@ -8162,3 +8162,749 @@ button {
     transform: none;
   }
 }
+/* Akibwapedia wiki skin */
+.akibwapedia-page {
+  --wiki-blue: #3366cc;
+  --wiki-blue-soft: #eef7ff;
+  --wiki-blue-border: #b8d8eb;
+  --wiki-green-soft: #f1fff0;
+  --wiki-green-border: #bfdcc4;
+  --wiki-gray-soft: #f5f6f7;
+  --wiki-gray-border: #c8ccd1;
+  --wiki-text: #202122;
+  --wiki-muted: #54595d;
+  --wiki-shadow: 0 18px 48px rgba(32, 33, 34, 0.08);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 78% 8%, rgba(255, 255, 255, 0.95), transparent 18rem),
+    linear-gradient(180deg, #ffffff 0%, #fbfcfd 62%, #ffffff 100%);
+  color: var(--wiki-text);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  padding-bottom: 40px;
+}
+
+.akibwapedia-page a {
+  color: var(--wiki-blue);
+}
+
+.akibwapedia-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: 24px;
+  align-items: start;
+  padding: 28px 34px 18px;
+}
+
+.akibwapedia-wordmark {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  color: var(--wiki-text);
+}
+
+.akibwapedia-page .akibwapedia-wordmark,
+.akibwapedia-page .akibwapedia-wordmark strong {
+  color: var(--wiki-text);
+}
+
+.akibwapedia-wordmark strong {
+  font-size: 2.2rem;
+  font-weight: 520;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+
+.akibwapedia-wordmark span {
+  color: #777d83;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.akibwapedia-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  justify-self: end;
+  width: min(100%, 350px);
+  border: 1px solid var(--wiki-gray-border);
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(32, 33, 34, 0.08);
+}
+
+.akibwapedia-search input,
+.akibwapedia-search button {
+  height: 38px;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+}
+
+.akibwapedia-search input {
+  min-width: 0;
+  padding: 0 12px;
+  color: var(--wiki-text);
+}
+
+.akibwapedia-search button {
+  border-left: 1px solid var(--wiki-gray-border);
+  padding: 0 13px;
+  color: var(--wiki-text);
+  font-weight: 650;
+}
+
+.akibwapedia-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  border-bottom: 1px solid var(--wiki-gray-border);
+  padding: 0 34px;
+  font-family: var(--font-sans);
+}
+
+.akibwapedia-tabs a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  padding: 0 16px;
+  color: var(--wiki-blue);
+  font-size: 0.95rem;
+  font-weight: 550;
+}
+
+.akibwapedia-tabs a.is-active {
+  position: relative;
+  top: 1px;
+  border-color: var(--wiki-gray-border);
+  background: #fff;
+  color: var(--wiki-text);
+  font-weight: 750;
+}
+
+.akibwapedia-shell {
+  display: grid;
+  grid-template-columns: 218px minmax(0, 1fr) 292px;
+  gap: 26px;
+  align-items: start;
+  padding: 0 34px 34px 0;
+}
+
+.akibwapedia-nav {
+  position: sticky;
+  top: 0;
+  display: grid;
+  gap: 8px;
+  min-height: calc(100vh - 45px);
+  border-right: 1px solid #c6e3ee;
+  background:
+    linear-gradient(90deg, rgba(51, 102, 204, 0.035), transparent 42%),
+    #f8f9fa;
+  padding: 28px 18px 24px;
+  font-family: var(--font-sans);
+}
+
+.akibwapedia-seal {
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  margin-bottom: 8px;
+  border: 1px solid rgba(32, 33, 34, 0.14);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.95), transparent 34%),
+    linear-gradient(145deg, #f8f9fa, #d5d8db);
+  box-shadow:
+    inset 0 0 24px rgba(255, 255, 255, 0.78),
+    inset 0 -12px 26px rgba(32, 33, 34, 0.1),
+    0 12px 30px rgba(32, 33, 34, 0.08);
+  color: #5b6066;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 4.4rem;
+  line-height: 1;
+}
+
+.akibwapedia-nav > strong {
+  justify-self: center;
+  color: var(--wiki-text);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 1.12rem;
+  font-weight: 520;
+  letter-spacing: 0;
+}
+
+.akibwapedia-nav > span {
+  justify-self: center;
+  margin-bottom: 12px;
+  color: #777d83;
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-align: center;
+}
+
+.akibwapedia-nav nav {
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid rgba(32, 33, 34, 0.12);
+  padding-top: 9px;
+}
+
+.akibwapedia-nav h2 {
+  margin: 0 0 3px;
+  background: linear-gradient(180deg, #ececec, #d7d7d7);
+  color: #3c4043;
+  padding: 4px 6px;
+  font-size: 0.78rem;
+  font-weight: 680;
+}
+
+.akibwapedia-nav a {
+  display: block;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.akibwapedia-main {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding-top: 34px;
+}
+
+.akibwapedia-welcome {
+  display: grid;
+  justify-items: center;
+  gap: 11px;
+  min-width: 0;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.akibwapedia-welcome h1 {
+  margin: 0;
+  color: #1f2024;
+  font-size: 2.75rem;
+  font-weight: 520;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.akibwapedia-welcome h1 span {
+  font-size: 0.48em;
+  letter-spacing: 0;
+}
+
+.akibwapedia-welcome p {
+  max-width: 860px;
+  margin: 0;
+  color: #3d4147;
+  font-size: 1.42rem;
+  line-height: 1.32;
+}
+
+.akibwapedia-welcome div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 10px;
+  color: #54595d;
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+}
+
+.akibwapedia-welcome div span::before {
+  content: "\00B7";
+  margin-right: 10px;
+  color: #777d83;
+}
+
+.akibwapedia-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
+  gap: 12px 14px;
+  min-width: 0;
+}
+
+.akibwapedia-panel,
+.akibwapedia-wide-panel,
+.akibwapedia-infobox-card {
+  border: 1px solid var(--wiki-blue-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), transparent 34px),
+    var(--wiki-blue-soft);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.akibwapedia-panel > h2,
+.akibwapedia-wide-panel > h2,
+.akibwapedia-infobox-card > h2 {
+  margin: 0;
+  border-bottom: 1px solid rgba(32, 33, 34, 0.14);
+  background: linear-gradient(180deg, #dceeff, #cfe5f6);
+  color: #111318;
+  padding: 9px 14px;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 790;
+  line-height: 1.1;
+}
+
+.akibwapedia-panel.is-featured,
+.akibwapedia-panel.is-category {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), transparent 42px),
+    var(--wiki-blue-soft);
+}
+
+.akibwapedia-panel.is-category {
+  grid-column: 1;
+  border-color: var(--wiki-green-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent 42px),
+    var(--wiki-green-soft);
+}
+
+.akibwapedia-panel.is-category > h2 {
+  background: linear-gradient(180deg, #dcebdd, #cfe4d1);
+}
+
+.akibwapedia-panel.is-about {
+  border-color: var(--wiki-gray-border);
+  background: #fff;
+}
+
+.akibwapedia-panel.is-about > h2 {
+  background: linear-gradient(180deg, #f0f0f0, #dedede);
+}
+
+.akibwapedia-featured {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px;
+}
+
+.akibwapedia-thumb {
+  min-height: 118px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(32, 33, 34, 0.16);
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.92), transparent 30%),
+    linear-gradient(135deg, #e8edf2, #cfd8e2 52%, #f5f9fc);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 10px 26px rgba(32, 33, 34, 0.08);
+}
+
+.akibwapedia-thumb span {
+  color: #4c535d;
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.akibwapedia-featured h3,
+.akibwapedia-category-block h3,
+.akibwapedia-layer-list h3,
+.akibwapedia-route-table h3,
+.akibwapedia-source-grid h3 {
+  margin: 0;
+  color: var(--wiki-blue);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.akibwapedia-featured p,
+.akibwapedia-panel.is-about p,
+.akibwapedia-layer-list p,
+.akibwapedia-route-table p,
+.akibwapedia-source-grid p {
+  margin: 7px 0 0;
+  color: var(--wiki-text);
+  font-size: 1.02rem;
+  line-height: 1.52;
+}
+
+.akibwapedia-featured a {
+  display: inline-flex;
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+.akibwapedia-panel ul,
+.akibwapedia-wide-panel ul,
+.akibwapedia-infobox-card ul {
+  margin: 0;
+  padding: 14px 22px 16px 34px;
+}
+
+.akibwapedia-panel li,
+.akibwapedia-wide-panel li {
+  margin: 6px 0;
+  color: var(--wiki-text);
+  font-size: 1.02rem;
+  line-height: 1.38;
+}
+
+.akibwapedia-panel li a,
+.akibwapedia-category-block li a {
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.akibwapedia-panel li span,
+.akibwapedia-category-block li span,
+.akibwapedia-layer-list article > span,
+.akibwapedia-route-table article > span,
+.akibwapedia-source-grid article > span {
+  color: #6a7078;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.akibwapedia-layer-list article > span,
+.akibwapedia-route-table article > span,
+.akibwapedia-source-grid article > span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  border: 1px solid rgba(32, 33, 34, 0.12);
+  background: rgba(255, 255, 255, 0.76);
+  line-height: 1.1;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.akibwapedia-panel li span::before,
+.akibwapedia-category-block li span::before {
+  content: " - ";
+  color: #777d83;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-weight: 400;
+}
+
+.akibwapedia-category-block {
+  padding: 14px 18px 2px;
+}
+
+.akibwapedia-category-block + .akibwapedia-category-block {
+  padding-top: 4px;
+}
+
+.akibwapedia-category-block h3 {
+  color: var(--wiki-text);
+  font-size: 1.22rem;
+}
+
+.akibwapedia-category-block ul {
+  padding-top: 6px;
+}
+
+.akibwapedia-panel.is-about p {
+  padding: 14px 16px 18px;
+}
+
+.akibwapedia-wide-panel {
+  display: grid;
+  min-width: 0;
+}
+
+.akibwapedia-layer-list,
+.akibwapedia-route-table,
+.akibwapedia-source-grid,
+.akibwapedia-search-results {
+  display: grid;
+  gap: 1px;
+  padding: 14px;
+  background: rgba(32, 33, 34, 0.08);
+}
+
+.akibwapedia-layer-list article,
+.akibwapedia-route-table article,
+.akibwapedia-source-grid article,
+.akibwapedia-search-results article {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 13px 14px;
+}
+
+.akibwapedia-search-results a {
+  color: var(--wiki-blue);
+  font-size: 1.14rem;
+  font-weight: 700;
+}
+
+.akibwapedia-search-results p,
+.akibwapedia-empty-search {
+  margin: 0;
+  color: var(--wiki-text);
+  font-size: 0.98rem;
+  line-height: 1.48;
+}
+
+.akibwapedia-search-results span {
+  color: #6a7078;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
+.akibwapedia-empty-search {
+  padding: 14px;
+}
+
+.akibwapedia-route-table,
+.akibwapedia-source-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.akibwapedia-layer-list article > span,
+.akibwapedia-route-table article > span,
+.akibwapedia-source-grid article > span {
+  grid-column: auto;
+  justify-self: start;
+}
+
+.akibwapedia-wide-panel.is-boundary {
+  border-color: var(--wiki-gray-border);
+  background: #fff;
+}
+
+.akibwapedia-wide-panel.is-boundary > h2 {
+  background: linear-gradient(180deg, #f0f0f0, #dedede);
+}
+
+.akibwapedia-wide-panel.is-boundary li {
+  font-size: 0.96rem;
+}
+
+.akibwapedia-infobox-column {
+  position: sticky;
+  top: 22px;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding-top: 34px;
+}
+
+.akibwapedia-infobox-card {
+  border-color: var(--wiki-gray-border);
+  background: #fff;
+  box-shadow: var(--wiki-shadow);
+}
+
+.akibwapedia-infobox-card > h2 {
+  background: linear-gradient(180deg, #f2f2f2, #dedede);
+}
+
+.akibwapedia-infobox-card dl {
+  display: grid;
+  margin: 0;
+}
+
+.akibwapedia-infobox-card dl div {
+  display: grid;
+  gap: 3px;
+  border-bottom: 1px solid rgba(32, 33, 34, 0.1);
+  padding: 10px 13px;
+}
+
+.akibwapedia-infobox-card dt {
+  color: #5f666f;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+}
+
+.akibwapedia-infobox-card dd {
+  margin: 0;
+  color: var(--wiki-text);
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  font-weight: 820;
+}
+
+.akibwapedia-infobox-card dl span,
+.akibwapedia-infobox-card li {
+  color: #67717c;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.akibwapedia-infobox-card ul {
+  display: grid;
+  gap: 7px;
+  padding: 12px 14px 14px;
+  list-style: none;
+}
+
+.akibwapedia-preview {
+  border: 1px solid var(--wiki-blue-border, #b8d8eb);
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), transparent 46px),
+    #eef7ff;
+  box-shadow: 0 18px 42px rgba(32, 33, 34, 0.07);
+  color: var(--wiki-text, #202122);
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.akibwapedia-preview-top {
+  border-bottom: 1px solid rgba(32, 33, 34, 0.12);
+  padding-bottom: 10px;
+}
+
+.akibwapedia-preview-top h2 {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-weight: 520;
+  letter-spacing: 0;
+}
+
+.akibwapedia-preview-top > span,
+.akibwapedia-layer-list article > span,
+.akibwapedia-route-strip article span {
+  border-radius: 0;
+}
+
+.akibwapedia-preview-article,
+.akibwapedia-infobox {
+  border-radius: 0;
+}
+
+@media (max-width: 1180px) {
+  .akibwapedia-shell {
+    grid-template-columns: 200px minmax(0, 1fr);
+    padding-right: 24px;
+  }
+
+  .akibwapedia-infobox-column {
+    position: static;
+    grid-column: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .akibwapedia-topbar {
+    grid-template-columns: 1fr;
+    padding: 22px 18px 16px;
+  }
+
+  .akibwapedia-search {
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .akibwapedia-tabs {
+    overflow-x: auto;
+    padding: 0 18px;
+  }
+
+  .akibwapedia-shell {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 0 18px 28px;
+  }
+
+  .akibwapedia-nav {
+    order: 2;
+    position: static;
+    min-height: auto;
+    border: 1px solid #d6e6ef;
+    padding: 18px;
+  }
+
+  .akibwapedia-seal {
+    width: 92px;
+    height: 92px;
+    font-size: 3.4rem;
+  }
+
+  .akibwapedia-nav nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .akibwapedia-nav h2 {
+    grid-column: 1 / -1;
+  }
+
+  .akibwapedia-main {
+    order: 1;
+    padding-top: 0;
+  }
+
+  .akibwapedia-board,
+  .akibwapedia-route-table,
+  .akibwapedia-source-grid,
+  .akibwapedia-infobox-column {
+    grid-template-columns: 1fr;
+  }
+
+  .akibwapedia-infobox-column {
+    order: 3;
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .akibwapedia-wordmark strong {
+    font-size: 1.95rem;
+  }
+
+  .akibwapedia-tabs a {
+    min-height: 38px;
+    padding: 0 11px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+
+  .akibwapedia-welcome h1 {
+    font-size: 1.8rem;
+  }
+
+  .akibwapedia-welcome p {
+    font-size: 1.05rem;
+  }
+
+  .akibwapedia-featured {
+    grid-template-columns: 1fr;
+  }
+
+  .akibwapedia-thumb {
+    min-height: 90px;
+  }
+
+  .akibwapedia-nav nav {
+    grid-template-columns: 1fr;
+  }
+
+  .akibwapedia-panel > h2,
+  .akibwapedia-wide-panel > h2,
+  .akibwapedia-infobox-card > h2 {
+    padding: 8px 11px;
+    font-size: 0.98rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-expanded-layer,
+  .project-expanded-shell {
+    animation: none;
+  }
+}

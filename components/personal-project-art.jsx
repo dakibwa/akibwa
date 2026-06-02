@@ -25,6 +25,11 @@ const artworkBySlug = {
     src: "/project-art/personal/personal-knowledge-base.jpg",
     bannerSrc: "/project-art/personal/personal-knowledge-base-banner.jpg",
     variant: "knowledge"
+  },
+  akibwapedia: {
+    src: "/project-art/personal/personal-knowledge-base.jpg",
+    bannerSrc: "/project-art/personal/personal-knowledge-base-banner.jpg",
+    variant: "knowledge"
   }
 };
 
