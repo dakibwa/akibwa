@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
-import { PersonalProjectArt } from "@/components/personal-project-art";
+import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { SonicFmDashboardPreview } from "@/components/sonic-fm-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
@@ -29,44 +29,38 @@ function getProjectFrameUrl(project, isLocalHost) {
 }
 
 function PersonalProjectVisual({ project }) {
-  return <PersonalProjectArt project={project} />;
+  return <PersonalProjectArt project={project} className="personal-project-card-art" />;
+}
+
+function ProjectExpandedBanner({ project }) {
+  const artwork = getPersonalProjectArt(project);
+
+  return (
+    <div className={`project-expanded-banner is-${artwork.variant}`} aria-hidden="true">
+      <img src={artwork.bannerSrc} alt="" draggable="false" />
+      <span>{project.title}</span>
+    </div>
+  );
 }
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   const isLive = project.mode === "embed" || project.mode === "preview";
-  const summaryId = `${project.slug}-summary`;
-  const visibleTags = project.tags.slice(0, 2);
 
   return (
     <button
       type="button"
       className={`studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`}
       aria-pressed={isSelected}
-      aria-describedby={summaryId}
       onClick={onSelect}
     >
+      <PersonalProjectVisual project={project} priority={priority} />
       <header>
-        <span>{project.number}</span>
         <div>
           <h3>{project.title}</h3>
           <p>{project.type}</p>
         </div>
+        {isLive ? <ArrowRight size={19} strokeWidth={1.8} /> : <LockKeyhole size={17} strokeWidth={1.7} />}
       </header>
-      <PersonalProjectVisual project={project} priority={priority} />
-      <span className="personal-card-summary-tooltip" id={summaryId} role="tooltip">
-        {project.summary}
-      </span>
-      <div className="personal-card-body">
-        <div className="personal-card-tags" aria-label={`${project.title} tags`}>
-          {visibleTags.map((tag) => (
-            <span key={tag}>{tag}</span>
-          ))}
-        </div>
-      </div>
-      <footer>
-        <span>{project.cta}</span>
-        {isLive ? <ArrowRight size={18} strokeWidth={1.8} /> : <LockKeyhole size={17} strokeWidth={1.7} />}
-      </footer>
     </button>
   );
 }
@@ -259,13 +253,10 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
       <div className="project-expanded-backdrop" onClick={onClose} aria-hidden="true" />
       <article className="project-expanded-shell">
         <header className="project-expanded-toolbar">
-          <div className="project-expanded-title">
-            <span>{project.number}</span>
-            <div>
-              <h2 id={`${project.slug}-expanded-title`}>{project.title}</h2>
-              <p>{project.type}</p>
-            </div>
-          </div>
+          <ProjectExpandedBanner project={project} />
+          <h2 id={`${project.slug}-expanded-title`} className="project-expanded-accessible-title">
+            {project.title}
+          </h2>
           <button
             type="button"
             className="project-expanded-close"
