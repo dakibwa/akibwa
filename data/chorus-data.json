@@ -1,64 +1,64 @@
 {
   "snapshotDate": "2026-06-02",
-  "generatedAt": "2026-06-02T18:56:31.573Z",
+  "generatedAt": "2026-06-02T22:05:02.160Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21745,
+    "totalScrobbles": 21758,
     "artistCount": 1978,
     "albumCount": 2867,
     "trackCount": 6228,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Madres",
-    "artist": "Sofia Kourtesis",
-    "album": "Madres",
-    "timeLabel": "2 hr ago",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/fd9133435d19f9acaf797a07af4cbb3c.png"
+    "title": "Arriving",
+    "artist": "Jon Hopkins",
+    "album": "Music for Psychedelic Therapy",
+    "timeLabel": "38 min ago",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
   },
   "recentTracks": [
     {
-      "title": "Madres",
-      "artist": "Sofia Kourtesis",
-      "album": "Madres",
-      "timeLabel": "2 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/fd9133435d19f9acaf797a07af4cbb3c.png"
+      "title": "Arriving",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "38 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "By Your Side",
-      "artist": "Sofia Kourtesis",
-      "album": "By Your Side",
-      "timeLabel": "2 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/4fbe971005b75445052c216faa7f0097.jpg"
+      "title": "Ascending, Dawn Sky",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "47 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "The Anxious Battle for Sanity",
-      "artist": "Antonio Sánchez",
-      "album": "Birdman (Original Motion Picture Soundtrack)",
-      "timeLabel": "2 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
+      "title": "Deep in the Glowing Heart",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "56 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Schizo",
-      "artist": "Antonio Sánchez",
-      "album": "Birdman (Original Motion Picture Soundtrack)",
-      "timeLabel": "2 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
+      "title": "Love Flows over Us in Prismatic Waves",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "1 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Almost Human",
-      "artist": "Antonio Sánchez",
-      "album": "Birdman (Original Motion Picture Soundtrack)",
-      "timeLabel": "2 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
+      "title": "Tayos Caves, Ecuador III",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "1 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Night Chatter",
-      "artist": "Antonio Sánchez",
-      "album": "Birdman (Original Motion Picture Soundtrack)",
-      "timeLabel": "2 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/12876aa3b132ee2b9555b1babeab93d3.jpg"
+      "title": "Tayos Caves, Ecuador II",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "1 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     }
   ],
   "recentRuns": [
@@ -210,7 +210,7 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2603,
+      "plays": 2611,
       "initials": "JH",
       "imageUrl": null
     },
@@ -357,7 +357,7 @@
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2591,
+      "plays": 2599,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
@@ -466,7 +466,7 @@
       "title": "SCARING THE HOES",
       "artist": "JPEGMAFIA",
       "plays": 136,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/4935528e65b4d73e9acb069794b12eb5.jpg"
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/bf81cd536efbe76e3b8bd540a651d5b5.jpg"
     },
     {
       "title": "Manning Fireworks",
@@ -503,49 +503,49 @@
     {
       "title": "Tayos Caves, Ecuador I",
       "artist": "Jon Hopkins",
-      "plays": 350,
+      "plays": 351,
       "imageUrl": null
     },
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 333,
+      "plays": 334,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
-      "plays": 324,
+      "plays": 325,
       "imageUrl": null
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
-      "plays": 322,
+      "plays": 323,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
-      "plays": 312,
+      "plays": 313,
       "imageUrl": null
     },
     {
       "title": "Ascending, Dawn Sky",
       "artist": "Jon Hopkins",
-      "plays": 309,
+      "plays": 310,
       "imageUrl": null
     },
     {
       "title": "Deep in the Glowing Heart",
       "artist": "Jon Hopkins",
-      "plays": 307,
+      "plays": 308,
       "imageUrl": null
     },
     {
       "title": "Arriving",
       "artist": "Jon Hopkins",
-      "plays": 293,
+      "plays": 294,
       "imageUrl": null
     },
     {
