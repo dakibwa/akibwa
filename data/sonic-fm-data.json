@@ -1,49 +1,64 @@
 {
-  "snapshotDate": "2026-05-31",
+  "snapshotDate": "2026-06-02",
+  "generatedAt": "2026-06-02T14:24:10.576Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21636,
-    "artistCount": 1974,
-    "albumCount": 2859,
-    "trackCount": 6194,
+    "totalScrobbles": 21724,
+    "artistCount": 1977,
+    "albumCount": 2865,
+    "trackCount": 6214,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Arriving",
-    "artist": "Jon Hopkins",
-    "album": "Music for Psychedelic Therapy",
-    "timeLabel": "Now",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    "title": "Diamond Jubilee (2024) Full Album HQ",
+    "artist": "Cindy Lee",
+    "album": "Album unavailable",
+    "timeLabel": "4 hr ago",
+    "imageUrl": null
   },
   "recentTracks": [
+    {
+      "title": "Diamond Jubilee (2024) Full Album HQ",
+      "artist": "Cindy Lee",
+      "album": "Album unavailable",
+      "timeLabel": "4 hr ago",
+      "imageUrl": null
+    },
+    {
+      "title": "Back, Baby",
+      "artist": "Jessica Pratt",
+      "album": "Album unavailable",
+      "timeLabel": "4 hr ago",
+      "imageUrl": null
+    },
     {
       "title": "Arriving",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "Now",
+      "timeLabel": "15 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Flimsier",
-      "artist": "King Krule",
-      "album": "Space Heavy",
-      "timeLabel": "Today",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/f01256f02989c3ff607a9f42543fa7bf.png"
-    },
-    {
-      "title": "Seagirl",
-      "artist": "King Krule",
-      "album": "Space Heavy",
-      "timeLabel": "Today",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/f01256f02989c3ff607a9f42543fa7bf.png"
-    },
-    {
-      "title": "Deep in the Glowing Heart",
+      "title": "Ascending, Dawn Sky",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "Today",
+      "timeLabel": "15 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Skeleton Tree",
+      "artist": "Nick Cave & the Bad Seeds",
+      "album": "Skeleton Tree",
+      "timeLabel": "16 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/b1c4c6f52bdb558eb31ae5d05d8687b1.jpg"
+    },
+    {
+      "title": "Distant Sky",
+      "artist": "Nick Cave & the Bad Seeds",
+      "album": "Skeleton Tree",
+      "timeLabel": "16 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/b1c4c6f52bdb558eb31ae5d05d8687b1.jpg"
     }
   ],
   "recentRuns": [
@@ -195,7 +210,7 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2585,
+      "plays": 2598,
       "initials": "JH",
       "imageUrl": null
     },
@@ -225,7 +240,7 @@
     },
     {
       "name": "Panda Bear",
-      "plays": 463,
+      "plays": 468,
       "initials": "PB",
       "imageUrl": null
     },
@@ -249,7 +264,7 @@
     },
     {
       "name": "King Krule",
-      "plays": 280,
+      "plays": 298,
       "initials": "KK",
       "imageUrl": null
     },
@@ -264,13 +279,85 @@
       "plays": 258,
       "initials": "FG",
       "imageUrl": null
+    },
+    {
+      "name": "Fred again..",
+      "plays": 241,
+      "initials": "FA",
+      "imageUrl": null
+    },
+    {
+      "name": "John Maus",
+      "plays": 231,
+      "initials": "JM",
+      "imageUrl": null
+    },
+    {
+      "name": "JPEGMAFIA",
+      "plays": 211,
+      "initials": "J",
+      "imageUrl": null
+    },
+    {
+      "name": "ROSALÍA",
+      "plays": 181,
+      "initials": "R",
+      "imageUrl": null
+    },
+    {
+      "name": "UB40",
+      "plays": 178,
+      "initials": "U",
+      "imageUrl": null
+    },
+    {
+      "name": "Pys Melyn",
+      "plays": 177,
+      "initials": "PM",
+      "imageUrl": null
+    },
+    {
+      "name": "Skepta",
+      "plays": 174,
+      "initials": "S",
+      "imageUrl": null
+    },
+    {
+      "name": "Kendrick Lamar",
+      "plays": 172,
+      "initials": "KL",
+      "imageUrl": null
+    },
+    {
+      "name": "Earl Sweatshirt",
+      "plays": 163,
+      "initials": "ES",
+      "imageUrl": null
+    },
+    {
+      "name": "Nick Cave & the Bad Seeds",
+      "plays": 154,
+      "initials": "NC",
+      "imageUrl": null
+    },
+    {
+      "name": "MJ Lenderman",
+      "plays": 146,
+      "initials": "ML",
+      "imageUrl": null
+    },
+    {
+      "name": "Alex G",
+      "plays": 142,
+      "initials": "AG",
+      "imageUrl": null
     }
   ],
   "topAlbums": [
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2573,
+      "plays": 2586,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
@@ -306,7 +393,7 @@
     {
       "title": "Sinister Grift",
       "artist": "Panda Bear",
-      "plays": 191,
+      "plays": 194,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/280d27a67a2b13a3c89fc956efabcec3.jpg"
     },
     {
@@ -338,80 +425,224 @@
       "artist": "DJ Koze",
       "plays": 165,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/882af81f164e7b6b437b2ae0b90d50e8.jpg"
+    },
+    {
+      "title": "DON'T TAP THE GLASS",
+      "artist": "Tyler, The Creator",
+      "plays": 163,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/c5088cf3be54a851bd7beb239f56ef91.jpg"
+    },
+    {
+      "title": "Fel Efeilliaid",
+      "artist": "Pys Melyn",
+      "plays": 152,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/079e967f9fcdb950d37f6f76091fe7e1.png"
+    },
+    {
+      "title": "Space Heavy",
+      "artist": "King Krule",
+      "plays": 151,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/f01256f02989c3ff607a9f42543fa7bf.png"
+    },
+    {
+      "title": "Alfredo 2",
+      "artist": "Freddie Gibbs",
+      "plays": 149,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ed761cf8d955113bb775ac38613b4c8f.jpg"
+    },
+    {
+      "title": "Miami Memory",
+      "artist": "Alex Cameron",
+      "plays": 145,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/5c7cba518675fb9dfbf263fd94b6190f.jpg"
+    },
+    {
+      "title": "Music Can Hear Us",
+      "artist": "DJ Koze",
+      "plays": 136,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/4b8ee23bbe293e31c0f45d8d525617f9.png"
+    },
+    {
+      "title": "SCARING THE HOES",
+      "artist": "JPEGMAFIA",
+      "plays": 136,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/4935528e65b4d73e9acb069794b12eb5.jpg"
+    },
+    {
+      "title": "Manning Fireworks",
+      "artist": "MJ Lenderman",
+      "plays": 132,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/a2c44050058fb5260a113b962dec2bc2.png"
+    },
+    {
+      "title": "Later Than You Think",
+      "artist": "John Maus",
+      "plays": 123,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/cce90be35fd836618086a5419eb5cd9e.gif"
+    },
+    {
+      "title": "Reset",
+      "artist": "Panda Bear",
+      "plays": 116,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/d6405cdd4f694d35af6ced1a9a5ad1fc.jpg"
+    },
+    {
+      "title": "Live Laugh Love",
+      "artist": "Earl Sweatshirt",
+      "plays": 103,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/da98825b8cf4881de432852ab9e11b36.jpg"
+    },
+    {
+      "title": "Essex Honey",
+      "artist": "Blood Orange",
+      "plays": 102,
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/5bb90bb6c12dbb45b7217a4c59f4b385.png"
     }
   ],
   "topTracks": [
     {
       "title": "Tayos Caves, Ecuador I",
       "artist": "Jon Hopkins",
-      "plays": 347,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 349,
+      "imageUrl": null
     },
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 330,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 332,
+      "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
-      "plays": 322,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 323,
+      "imageUrl": null
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
-      "plays": 320,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 321,
+      "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
-      "plays": 310,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 311,
+      "imageUrl": null
     },
     {
       "title": "Ascending, Dawn Sky",
       "artist": "Jon Hopkins",
-      "plays": 307,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 309,
+      "imageUrl": null
     },
     {
       "title": "Deep in the Glowing Heart",
       "artist": "Jon Hopkins",
-      "plays": 306,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 307,
+      "imageUrl": null
     },
     {
       "title": "Arriving",
       "artist": "Jon Hopkins",
-      "plays": 290,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "plays": 293,
+      "imageUrl": null
     },
     {
       "title": "The Rolling Stones",
       "artist": "Cameron Winter",
       "plays": 285,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+      "imageUrl": null
     },
     {
       "title": "Taxes",
       "artist": "Geese",
       "plays": 234,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/75695cd196406316f055a757728c6ee7.jpg"
+      "imageUrl": null
     },
     {
       "title": "Love Takes Miles",
       "artist": "Cameron Winter",
       "plays": 199,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+      "imageUrl": null
     },
     {
       "title": "Nausicaä (Love Will Be Revealed)",
       "artist": "Cameron Winter",
       "plays": 173,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+      "imageUrl": null
+    },
+    {
+      "title": "Cancer of the Skull",
+      "artist": "Cameron Winter",
+      "plays": 136,
+      "imageUrl": null
+    },
+    {
+      "title": "Guilty",
+      "artist": "UB40",
+      "plays": 119,
+      "imageUrl": null
+    },
+    {
+      "title": "$0",
+      "artist": "Cameron Winter",
+      "plays": 116,
+      "imageUrl": null
+    },
+    {
+      "title": "Au Pays du Cocaine",
+      "artist": "Geese",
+      "plays": 107,
+      "imageUrl": null
+    },
+    {
+      "title": "Drinking Age",
+      "artist": "Cameron Winter",
+      "plays": 89,
+      "imageUrl": null
+    },
+    {
+      "title": "Cobra",
+      "artist": "Geese",
+      "plays": 84,
+      "imageUrl": null
+    },
+    {
+      "title": "Try as I May",
+      "artist": "Cameron Winter",
+      "plays": 80,
+      "imageUrl": null
+    },
+    {
+      "title": "Husbands",
+      "artist": "Geese",
+      "plays": 74,
+      "imageUrl": null
+    },
+    {
+      "title": "You Don't Know The Shape I'm In",
+      "artist": "MJ Lenderman",
+      "plays": 74,
+      "imageUrl": null
+    },
+    {
+      "title": "Far From Born Again",
+      "artist": "Alex Cameron",
+      "plays": 69,
+      "imageUrl": null
+    },
+    {
+      "title": "21 Years",
+      "artist": "Skepta",
+      "plays": 62,
+      "imageUrl": null
+    },
+    {
+      "title": "Victory Lap",
+      "artist": "Fred again..",
+      "plays": 59,
+      "imageUrl": null
     }
   ]
 }

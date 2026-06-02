@@ -35,8 +35,8 @@ export const featuredProjects = [
   {
     title: "Chorus",
     type: "Data product",
-    image: "/area-art/signals.png",
-    alt: "Abstract waveform and circular listening signal artwork",
+    image: "/project-art/personal/chorus-collective.jpg",
+    alt: "Abstract paper collage of listeners gathered in a turquoise pool with constellations and a wavy listening path",
     summary:
       "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and listening reports.",
     problem:
@@ -59,8 +59,8 @@ export const workProjects = [
     aliases: ["sonic-fm", "lastfm-dashboard", "signals-dashboard"],
     title: "Chorus",
     type: "Music intelligence dashboard",
-    image: "/area-art/signals.png",
-    alt: "Abstract waveform and circular listening signal artwork",
+    image: "/project-art/personal/chorus-collective.jpg",
+    alt: "Abstract paper collage of listeners gathered in a turquoise pool with constellations and a wavy listening path",
     score: "FM",
     metrics: [
       ["Listening", "API"],
@@ -80,19 +80,19 @@ export const workProjects = [
     slug: "vitals",
     title: "Vitals",
     type: "Personal health signal dashboard",
-    image: "/area-art/systems.png",
-    alt: "Abstract system artwork with translucent sheets, grid coordinates, and node paths",
+    image: "/project-art/personal/vitals-signal.jpg",
+    alt: "Abstract green paper collage of a health dashboard, profile silhouette, ECG heart, activity, hydration, sleep, and plant signals",
     visual: "vitals",
     score: "VT",
     metrics: [
-      ["Signals", "Local"],
-      ["Sources", "Local"],
+      ["Signals", "Live"],
+      ["Sources", "Mapped"],
       ["Review", "Clinician"],
-      ["Output", "Private"]
+      ["Output", "Website"]
     ],
     rows: [
       ["The state", "A personal Vitals system for health signals, source freshness, trends, and review prompts."],
-      ["The data", "Private local health sources stay out of the public website and repository."],
+      ["The data", "Aggregate health values surface on the website; raw source exports and identifiers stay out of the repository."],
       ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
       ["Why it matters", "It shows the same pattern applied to personal data: preserve provenance, make the useful signals readable, and keep raw source files separate."]
     ]
@@ -184,10 +184,10 @@ export const personalProjects = [
     type: "Music Intelligence",
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
-    dashboardImage: "/area-art/signals.png",
-    dashboardImageAlt: "Abstract Chorus listening signal artwork",
-    dashboardImageWidth: 1440,
-    dashboardImageHeight: 900,
+    dashboardImage: "/project-art/personal/chorus-collective.jpg",
+    dashboardImageAlt: "Abstract Chorus collage showing listeners gathered in water, constellation marks, and a wavy listening path",
+    dashboardImageWidth: 1672,
+    dashboardImageHeight: 941,
     dashboardLabel: "Chorus",
     dashboardStatus: "Working app",
     summary: "Turns listening history into a clear music dashboard.",
@@ -202,17 +202,17 @@ export const personalProjects = [
     slug: "vitals",
     title: "Vitals",
     type: "Health Visualisation",
-    image: "/area-art/systems.png",
-    alt: "Abstract personal health signal system artwork",
-    dashboardImage: "/area-art/systems.png",
-    dashboardImageAlt: "Abstract Vitals personal health signal system artwork",
-    dashboardImageWidth: 1280,
-    dashboardImageHeight: 720,
+    image: "/project-art/personal/vitals-signal.jpg",
+    alt: "Abstract green paper collage of a health dashboard, profile silhouette, ECG heart, activity, hydration, sleep, and plant signals",
+    dashboardImage: "/project-art/personal/vitals-signal.jpg",
+    dashboardImageAlt: "Abstract Vitals collage showing a profile silhouette, ECG heart, dashboard cards, activity, hydration, sleep, and plant signals",
+    dashboardImageWidth: 1672,
+    dashboardImageHeight: 941,
     dashboardLabel: "Health Dashboard",
-    dashboardStatus: "Private values hidden",
+    dashboardStatus: "Live aggregate values",
     visual: "vitals",
-    summary: "Tracks private health signals for clearer review conversations.",
-    tags: ["Health dashboard", "Local sources", "Review prompts"],
+    summary: "Surfaces aggregate health signals for clearer review conversations.",
+    tags: ["Health dashboard", "Source freshness", "Review prompts"],
     mode: "preview",
     fallbackHref: "/health",
     cta: "Open dashboard"
@@ -233,14 +233,18 @@ export const personalProjects = [
   },
   {
     number: "04",
-    slug: "personal-knowledge-base",
-    title: "Personal Knowledge Base",
-    type: "Private AI memory system",
+    slug: "akibwapedia",
+    aliases: ["personal-knowledge-base", "llm-wiki", "knowledge-base"],
+    title: "Akibwapedia",
+    type: "Personal Knowledge System",
     image: "/area-art/knowledge.png",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations",
-    summary: "Keeps useful personal context structured without exposing raw sources.",
-    tags: ["Local-first", "Source discipline", "Private system"],
-    cta: "Private system"
+    visual: "akibwapedia",
+    summary: "A Wikipedia-style window onto a private source-backed memory system.",
+    tags: ["LLM wiki", "Source maps", "Codex routes"],
+    mode: "preview",
+    fallbackHref: "/akibwapedia",
+    cta: "Open Akibwapedia"
   }
 ];
 

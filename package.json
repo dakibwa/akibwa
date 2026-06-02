@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --experimental-app-only",
+    "refresh:sonic-fm": "node scripts/update-sonic-fm-data.mjs",
     "start": "next start"
   },
   "dependencies": {

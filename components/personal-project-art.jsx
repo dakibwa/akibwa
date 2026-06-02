@@ -2,18 +2,18 @@ import styles from "./personal-project-art.module.css";
 
 const artworkBySlug = {
   chorus: {
-    src: "/project-art/personal/music-intelligence.jpg",
-    bannerSrc: "/project-art/personal/music-intelligence-banner.jpg",
+    src: "/project-art/personal/chorus-collective.jpg",
+    bannerSrc: "/project-art/personal/chorus-collective-banner.jpg",
     variant: "music"
   },
   "sonic-fm": {
-    src: "/project-art/personal/music-intelligence.jpg",
-    bannerSrc: "/project-art/personal/music-intelligence-banner.jpg",
+    src: "/project-art/personal/chorus-collective.jpg",
+    bannerSrc: "/project-art/personal/chorus-collective-banner.jpg",
     variant: "music"
   },
   vitals: {
-    src: "/project-art/personal/health-visualisation.jpg",
-    bannerSrc: "/project-art/personal/health-visualisation-banner.jpg",
+    src: "/project-art/personal/vitals-signal.jpg",
+    bannerSrc: "/project-art/personal/vitals-signal-banner.jpg",
     variant: "health"
   },
   "cover-collision": {
@@ -22,6 +22,11 @@ const artworkBySlug = {
     variant: "cover"
   },
   "personal-knowledge-base": {
+    src: "/project-art/personal/personal-knowledge-base.jpg",
+    bannerSrc: "/project-art/personal/personal-knowledge-base-banner.jpg",
+    variant: "knowledge"
+  },
+  akibwapedia: {
     src: "/project-art/personal/personal-knowledge-base.jpg",
     bannerSrc: "/project-art/personal/personal-knowledge-base-banner.jpg",
     variant: "knowledge"

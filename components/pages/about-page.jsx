@@ -179,7 +179,7 @@ export function AboutPage() {
           </p>
           <p>
             The through-line is simple: make complicated systems understandable without flattening the detail that makes
-            them true.
+            them true, then shape the work into dashboards, models, and adoption paths that teams can trust.
           </p>
         </div>
 
@@ -189,13 +189,6 @@ export function AboutPage() {
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
           </figure>
-
-          <aside className="about-profile-notes" aria-label="Current focus">
-            <span>Microsoft Fabric implementation and adoption</span>
-            <span>Power BI estates, DAX, governance, and semantic models</span>
-            <span>AI-assisted local tools with Codex, Claude Code, and Copilot</span>
-            <span>Evidence-led dashboards for teams that need clarity</span>
-          </aside>
         </div>
       </section>
 
