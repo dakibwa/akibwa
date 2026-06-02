@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 
 const navItems = [
   { href: "/about", label: "About", match: ["/about"] },
-  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health", "/chorus", "/akibwapedia"] },
+  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health", "/chorus"] },
   { href: "/professional", label: "Professional", match: ["/professional", "/offer", "/systems", "/services"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
@@ -29,7 +29,7 @@ export function SiteShell({ children }) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const brandRef = useRef(null);
-  const immersiveRoutes = ["/health", "/chorus", "/akibwapedia"];
+  const immersiveRoutes = ["/health", "/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
 
   const primeRoute = (href) => {

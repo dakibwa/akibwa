@@ -3,19 +3,48 @@
 import Image from "next/image";
 import {
   ArrowRight,
+  Database,
   Disc3,
+  GitBranch,
   Instagram,
   LockKeyhole,
+  Route,
+  ShieldCheck,
   Sparkles,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
-import { AkibwapediaPreview } from "@/components/akibwapedia-preview";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
+
+const knowledgeSources = [
+  ["Gmail", "backfill next"],
+  ["Drive", "mapped"],
+  ["Calendar", "history pass"],
+  ["Finance", "aggregate-only"],
+  ["Health", "local only"],
+  ["Projects", "active"]
+];
+
+const knowledgeRoutes = [
+  "Today's priorities",
+  "Evidence check",
+  "Project obligations",
+  "Health context",
+  "Finance synthesis",
+  "Source mining"
+];
+
+const knowledgeGuardrails = [
+  "Raw records stay local",
+  "Claims need source pointers",
+  "Health is for clinician conversations",
+  "Finance stays aggregate-only",
+  "Generated claims are leads"
+];
 
 function canUseLocalFrame() {
   if (typeof window === "undefined") return false;
@@ -45,7 +74,6 @@ function ProjectExpandedBanner({ project }) {
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   const isLive = project.mode === "embed" || project.mode === "preview";
-  const isDirectRoute = project.visual === "akibwapedia" && project.fallbackHref;
   const cardClass = `studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`;
   const cardContent = (
     <>
@@ -59,14 +87,6 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       </header>
     </>
   );
-
-  if (isDirectRoute) {
-    return (
-      <a className={cardClass} href={project.fallbackHref}>
-        {cardContent}
-      </a>
-    );
-  }
 
   return (
     <button
@@ -219,29 +239,69 @@ function CoverCollisionShowcase({ project, immersive = false }) {
   );
 }
 
-function AkibwapediaShowcase({ project, immersive = false }) {
+function KnowledgeBaseShowcase({ project }) {
   return (
-    <section
-      className={`${immersive ? "" : "page-grid"} akibwapedia-project-showcase ${
-        immersive ? "is-expanded" : ""
-      }`}
-      id={`${project.slug}-preview`}
-      aria-live="polite"
-    >
-      {!immersive && (
-        <div className="vitals-showcase-copy akibwapedia-project-copy">
-          <span>Project</span>
-          <h2>{project.title}</h2>
-          <p>{project.summary}</p>
-          <div className="vitals-showcase-actions">
-            <a href={project.fallbackHref}>
-              Open Akibwapedia
-              <ArrowRight size={16} strokeWidth={1.8} />
-            </a>
-          </div>
+    <section className="knowledge-system-showcase" id={`${project.slug}-preview`} aria-live="polite">
+      <div className="knowledge-system-copy">
+        <span>{project.number}</span>
+        <h2>{project.title}</h2>
+        <p>
+          A local, source-backed context system that helps Codex use personal records without exposing the records
+          themselves.
+        </p>
+        <div className="knowledge-system-tags" aria-label={`${project.title} tags`}>
+          {project.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
         </div>
-      )}
-      <AkibwapediaPreview compact={!immersive} />
+      </div>
+
+      <div className="knowledge-system-console" aria-label="Private knowledge system preview">
+        <section className="knowledge-console-panel is-source-map">
+          <header>
+            <Database size={18} strokeWidth={1.7} />
+            <h3>Source map</h3>
+          </header>
+          <div className="knowledge-source-list">
+            {knowledgeSources.map(([source, status]) => (
+              <div key={source}>
+                <strong>{source}</strong>
+                <span>{status}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="knowledge-console-panel is-routes">
+          <header>
+            <Route size={18} strokeWidth={1.7} />
+            <h3>Codex retrieval routes</h3>
+          </header>
+          <ol>
+            {knowledgeRoutes.map((route) => (
+              <li key={route}>
+                <GitBranch size={14} strokeWidth={1.7} />
+                <span>{route}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="knowledge-console-panel is-guardrails">
+          <header>
+            <ShieldCheck size={18} strokeWidth={1.7} />
+            <h3>Guardrails</h3>
+          </header>
+          <ul>
+            {knowledgeGuardrails.map((rule) => (
+              <li key={rule}>
+                <LockKeyhole size={14} strokeWidth={1.7} />
+                <span>{rule}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </section>
   );
 }
@@ -292,8 +352,8 @@ function ProjectExpandedContent({ project, frameUrl }) {
     return <CoverCollisionShowcase project={project} immersive />;
   }
 
-  if (project.visual === "akibwapedia") {
-    return <AkibwapediaShowcase project={project} immersive />;
+  if (project.slug === "personal-knowledge-base") {
+    return <KnowledgeBaseShowcase project={project} />;
   }
 
   if (project.mode !== "embed") {

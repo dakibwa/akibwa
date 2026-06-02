@@ -233,18 +233,14 @@ export const personalProjects = [
   },
   {
     number: "04",
-    slug: "akibwapedia",
-    aliases: ["personal-knowledge-base", "llm-wiki", "knowledge-base"],
-    title: "Akibwapedia",
-    type: "Personal Knowledge System",
+    slug: "personal-knowledge-base",
+    title: "Personal Knowledge Base",
+    type: "Private AI memory system",
     image: "/area-art/knowledge.png",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations",
-    visual: "akibwapedia",
-    summary: "A Wikipedia-style window onto a private source-backed memory system.",
-    tags: ["LLM wiki", "Source maps", "Codex routes"],
-    mode: "preview",
-    fallbackHref: "/akibwapedia",
-    cta: "Open Akibwapedia"
+    summary: "Helps Codex use local, source-backed context without exposing raw records.",
+    tags: ["Local-first", "Source discipline", "Private system"],
+    cta: "Private system"
   }
 ];
 
