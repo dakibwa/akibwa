@@ -1,63 +1,63 @@
 {
   "snapshotDate": "2026-06-03",
-  "generatedAt": "2026-06-03T17:19:53.000Z",
+  "generatedAt": "2026-06-03T19:26:26.000Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21784,
+    "totalScrobbles": 21786,
     "artistCount": 1978,
     "albumCount": 2869,
     "trackCount": 6236,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Kid A",
-    "artist": "Radiohead",
-    "album": "KID A MNESIA",
-    "timeLabel": "3 hr ago",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
+    "title": "Blackbox Life Recorder 20 [Ambient 760]",
+    "artist": "Aphex Twin",
+    "album": "Blackbox Life Recorder 21f / in a room7 F760",
+    "timeLabel": "26 min ago",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01f671c572df4a0d351f219e4b06b03d.jpg"
   },
   "recentTracks": [
+    {
+      "title": "Blackbox Life Recorder 20 [Ambient 760]",
+      "artist": "Aphex Twin",
+      "album": "Blackbox Life Recorder 21f / in a room7 F760",
+      "timeLabel": "26 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01f671c572df4a0d351f219e4b06b03d.jpg"
+    },
+    {
+      "title": "Archangel",
+      "artist": "Burial",
+      "album": "Untrue",
+      "timeLabel": "31 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/2c7332bc861d406a80c13f0e69d4ba7f.png"
+    },
     {
       "title": "Kid A",
       "artist": "Radiohead",
       "album": "KID A MNESIA",
-      "timeLabel": "3 hr ago",
+      "timeLabel": "6 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
     },
     {
       "title": "Everything in Its Right Place",
       "artist": "Radiohead",
       "album": "KID A MNESIA",
-      "timeLabel": "3 hr ago",
+      "timeLabel": "6 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
     },
     {
       "title": "Sweet Spot",
       "artist": "Ed O'Brien",
       "album": "Blue Morpho",
-      "timeLabel": "4 hr ago",
+      "timeLabel": "6 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
     },
     {
       "title": "Teachers",
       "artist": "Ed O'Brien",
       "album": "Blue Morpho",
-      "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
-    },
-    {
-      "title": "Welcome",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
-    },
-    {
-      "title": "Incantations",
-      "artist": "Ed O'Brien",
-      "album": "Blue Morpho",
-      "timeLabel": "4 hr ago",
+      "timeLabel": "6 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
     }
   ],
