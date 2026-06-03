@@ -2321,6 +2321,34 @@ button {
   align-items: center;
 }
 
+.knowledge-source-logo {
+  display: block;
+  width: 28px;
+  height: 28px;
+  overflow: visible;
+  border: 1px solid rgba(16, 18, 23, 0.09);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(16, 18, 23, 0.045);
+}
+
+.knowledge-source-logo.is-drive {
+  border-color: rgba(16, 18, 23, 0.06);
+  background: #fff;
+}
+
+.knowledge-source-logo.is-finance {
+  border-color: rgba(19, 32, 38, 0.12);
+}
+
+.knowledge-source-logo.is-health {
+  border-color: rgba(226, 85, 107, 0.16);
+}
+
+.knowledge-source-logo.is-projects {
+  border-color: rgba(47, 136, 255, 0.14);
+}
+
 .knowledge-source-list strong,
 .knowledge-console-panel li span {
   color: var(--black);
@@ -2350,10 +2378,10 @@ button {
   width: 28px;
   height: 28px;
   place-items: center;
-  border: 1px solid rgba(16, 18, 23, 0.09);
+  border: 1px solid var(--icon-border, rgba(16, 18, 23, 0.09));
   border-radius: var(--radius);
-  background: #f7f6f2;
-  color: var(--blue);
+  background: var(--icon-bg, #f7f6f2);
+  color: var(--icon-accent, var(--blue));
 }
 
 .knowledge-console-panel li > svg {
@@ -2361,7 +2389,15 @@ button {
 }
 
 .knowledge-console-panel.is-guardrails .knowledge-row-icon {
-  color: #2c8068;
+  color: var(--icon-accent, #2c8068);
+}
+
+.knowledge-route-row .knowledge-row-icon {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.58);
+}
+
+.knowledge-rule-row .knowledge-row-icon {
+  background: var(--icon-bg, rgba(44, 128, 104, 0.1));
 }
 
 @keyframes knowledgeSurfaceIn {

@@ -3,19 +3,23 @@
 import Image from "next/image";
 import {
   ArrowRight,
-  CalendarDays,
+  BadgeCheck,
+  BriefcaseBusiness,
+  CalendarCheck,
+  ChartNoAxesCombined,
   Database,
   Disc3,
-  FolderOpen,
-  GitBranch,
-  HardDrive,
+  FileLock2,
+  Flag,
   HeartPulse,
   Instagram,
   LockKeyhole,
-  Mail,
+  Pickaxe,
   Route,
+  SearchCheck,
   ShieldCheck,
   Sparkles,
+  Stethoscope,
   Wallet,
   X,
 } from "lucide-react";
@@ -27,30 +31,136 @@ import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
 const knowledgeSources = [
-  { name: "Gmail", status: "backfill next", Icon: Mail },
-  { name: "Drive", status: "mapped", Icon: HardDrive },
-  { name: "Calendar", status: "history pass", Icon: CalendarDays },
-  { name: "Finance", status: "aggregate-only", Icon: Wallet },
-  { name: "Health", status: "local only", Icon: HeartPulse },
-  { name: "Projects", status: "active", Icon: FolderOpen }
+  { name: "Gmail", status: "backfill next", logo: "gmail" },
+  { name: "Drive", status: "mapped", logo: "drive" },
+  { name: "Calendar", status: "history pass", logo: "calendar" },
+  { name: "Finance", status: "aggregate-only", logo: "finance" },
+  { name: "Health", status: "local only", logo: "health" },
+  { name: "Projects", status: "active", logo: "projects" }
 ];
 
 const knowledgeRoutes = [
-  "Today's priorities",
-  "Evidence check",
-  "Project obligations",
-  "Health context",
-  "Finance synthesis",
-  "Source mining"
+  { label: "Today's priorities", Icon: CalendarCheck, tone: "blue" },
+  { label: "Evidence check", Icon: SearchCheck, tone: "teal" },
+  { label: "Project obligations", Icon: BriefcaseBusiness, tone: "orange" },
+  { label: "Health context", Icon: HeartPulse, tone: "rose" },
+  { label: "Finance synthesis", Icon: Wallet, tone: "green" },
+  { label: "Source mining", Icon: Pickaxe, tone: "slate" }
 ];
 
 const knowledgeGuardrails = [
-  "Raw records stay local",
-  "Claims need source pointers",
-  "Health is for clinician conversations",
-  "Finance stays aggregate-only",
-  "Generated claims are leads"
+  { label: "Raw records stay local", Icon: FileLock2, tone: "slate" },
+  { label: "Claims need source pointers", Icon: BadgeCheck, tone: "blue" },
+  { label: "Health is for clinician conversations", Icon: Stethoscope, tone: "rose" },
+  { label: "Finance stays aggregate-only", Icon: ChartNoAxesCombined, tone: "green" },
+  { label: "Generated claims are leads", Icon: Flag, tone: "orange" }
 ];
+
+const iconToneStyles = {
+  blue: {
+    "--icon-accent": "#2f88ff",
+    "--icon-bg": "rgba(47, 136, 255, 0.09)",
+    "--icon-border": "rgba(47, 136, 255, 0.18)"
+  },
+  teal: {
+    "--icon-accent": "#2c8068",
+    "--icon-bg": "rgba(44, 128, 104, 0.1)",
+    "--icon-border": "rgba(44, 128, 104, 0.18)"
+  },
+  orange: {
+    "--icon-accent": "#ff6f1a",
+    "--icon-bg": "rgba(255, 111, 26, 0.1)",
+    "--icon-border": "rgba(255, 111, 26, 0.18)"
+  },
+  rose: {
+    "--icon-accent": "#e2556b",
+    "--icon-bg": "rgba(226, 85, 107, 0.1)",
+    "--icon-border": "rgba(226, 85, 107, 0.18)"
+  },
+  green: {
+    "--icon-accent": "#218a4f",
+    "--icon-bg": "rgba(33, 138, 79, 0.1)",
+    "--icon-border": "rgba(33, 138, 79, 0.18)"
+  },
+  slate: {
+    "--icon-accent": "#53606a",
+    "--icon-bg": "rgba(83, 96, 106, 0.1)",
+    "--icon-border": "rgba(83, 96, 106, 0.16)"
+  }
+};
+
+function getIconToneStyle(tone, index) {
+  return {
+    ...(iconToneStyles[tone] ?? iconToneStyles.slate),
+    "--row-delay": `${index * 65}ms`
+  };
+}
+
+function SourceLogo({ type }) {
+  if (type === "gmail") {
+    return (
+      <svg className="knowledge-source-logo is-gmail" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="4" y="7" width="24" height="18" rx="4" fill="#fff" />
+        <path d="M7.5 11.2v11.1" stroke="#4285f4" strokeWidth="3" strokeLinecap="round" />
+        <path d="M24.5 11.2v11.1" stroke="#34a853" strokeWidth="3" strokeLinecap="round" />
+        <path d="M8 10.7 16 16.9l8-6.2" fill="none" stroke="#ea4335" strokeWidth="3.1" strokeLinejoin="round" />
+        <path d="M6.4 12.8 16 20.1l9.6-7.3" fill="none" stroke="#fbbc04" strokeWidth="1.8" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  if (type === "drive") {
+    return (
+      <svg className="knowledge-source-logo is-drive" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M12.2 5.5h7.6l8.2 14.2h-7.7z" fill="#0f9d58" />
+        <path d="M12.2 5.5 4 19.7l3.9 6.8 8.2-14.2z" fill="#f4b400" />
+        <path d="M7.9 26.5h16.2l3.9-6.8H11.8z" fill="#4285f4" />
+        <path d="M12.2 5.5 16.1 12.3 11.8 19.7H4z" fill="#ffd45c" opacity="0.65" />
+      </svg>
+    );
+  }
+
+  if (type === "calendar") {
+    return (
+      <svg className="knowledge-source-logo is-calendar" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="5" y="5" width="22" height="22" rx="5" fill="#fff" />
+        <path d="M5 11h22V10a5 5 0 0 0-5-5H10a5 5 0 0 0-5 5z" fill="#4285f4" />
+        <path d="M9 14h14" stroke="#e8eaed" strokeWidth="1.5" />
+        <text x="16" y="23" textAnchor="middle" fontSize="9" fontWeight="700" fill="#3c4043">31</text>
+      </svg>
+    );
+  }
+
+  if (type === "finance") {
+    return (
+      <svg className="knowledge-source-logo is-finance" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="5" y="7" width="22" height="18" rx="5" fill="#132026" />
+        <path d="M9 12h14" stroke="#8fd6c0" strokeWidth="2" strokeLinecap="round" />
+        <path d="M10 18h4m4 0h4" stroke="#ff8b4a" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (type === "health") {
+    return (
+      <svg className="knowledge-source-logo is-health" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="5" y="5" width="22" height="22" rx="6" fill="#fff" />
+        <path
+          d="M16 24.2s-7-4.5-7-9.6c0-2.7 1.8-4.6 4.2-4.6 1.4 0 2.4.7 2.8 1.6.4-.9 1.4-1.6 2.8-1.6 2.4 0 4.2 1.9 4.2 4.6 0 5.1-7 9.6-7 9.6z"
+          fill="#e2556b"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg className="knowledge-source-logo is-projects" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="5" y="7" width="22" height="18" rx="5" fill="#fff" />
+      <path d="M10 13h4l2 2h6" fill="none" stroke="#2f88ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10 19h12" stroke="#59616b" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function canUseLocalFrame() {
   if (typeof window === "undefined") return false;
@@ -283,11 +393,9 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Source map</h3>
           </header>
           <div className="knowledge-source-list">
-            {knowledgeSources.map(({ name, status, Icon }, index) => (
+            {knowledgeSources.map(({ name, status, logo }, index) => (
               <div key={name} className="knowledge-source-row" style={{ "--row-delay": `${index * 65}ms` }}>
-                <span className="knowledge-row-icon" aria-hidden="true">
-                  <Icon size={16} strokeWidth={1.8} />
-                </span>
+                <SourceLogo type={logo} />
                 <strong>{name}</strong>
                 <span>{status}</span>
               </div>
@@ -301,12 +409,12 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Codex retrieval routes</h3>
           </header>
           <ol>
-            {knowledgeRoutes.map((route, index) => (
-              <li key={route} style={{ "--row-delay": `${index * 65}ms` }}>
-                <span className="knowledge-row-icon" aria-hidden="true">
-                  <GitBranch size={15} strokeWidth={1.8} />
+            {knowledgeRoutes.map(({ label, Icon, tone }, index) => (
+              <li key={label} className="knowledge-route-row" style={getIconToneStyle(tone, index)}>
+                <span className="knowledge-row-icon is-route" aria-hidden="true">
+                  <Icon size={15} strokeWidth={1.8} />
                 </span>
-                <span>{route}</span>
+                <span>{label}</span>
               </li>
             ))}
           </ol>
@@ -318,12 +426,12 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Guardrails</h3>
           </header>
           <ul>
-            {knowledgeGuardrails.map((rule, index) => (
-              <li key={rule} style={{ "--row-delay": `${index * 65}ms` }}>
-                <span className="knowledge-row-icon" aria-hidden="true">
-                  <LockKeyhole size={15} strokeWidth={1.8} />
+            {knowledgeGuardrails.map(({ label, Icon, tone }, index) => (
+              <li key={label} className="knowledge-rule-row" style={getIconToneStyle(tone, index)}>
+                <span className="knowledge-row-icon is-rule" aria-hidden="true">
+                  <Icon size={15} strokeWidth={1.8} />
                 </span>
-                <span>{rule}</span>
+                <span>{label}</span>
               </li>
             ))}
           </ul>
