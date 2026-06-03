@@ -4421,7 +4421,7 @@ button {
   gap: 14px;
   color: var(--chorus-ink);
   font-size: 1.12rem;
-  font-weight: 690;
+  font-weight: 560;
 }
 
 .chorus-logo {
@@ -4465,7 +4465,7 @@ button {
   gap: 6px;
   color: var(--chorus-ink);
   font-size: 0.88rem;
-  font-weight: 620;
+  font-weight: 520;
   line-height: 1;
   white-space: nowrap;
 }
@@ -4531,7 +4531,7 @@ button {
   margin-bottom: 8px;
   color: #1e252d;
   font-size: 0.68rem;
-  font-weight: 650;
+  font-weight: 540;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -4540,7 +4540,7 @@ button {
   margin: 0;
   color: var(--chorus-ink);
   font-size: clamp(1.75rem, 2.8vw, 2.45rem);
-  font-weight: 560;
+  font-weight: 520;
   letter-spacing: 0;
   line-height: 1.02;
 }
@@ -4572,7 +4572,7 @@ button {
   color: var(--chorus-muted);
   cursor: pointer;
   font-size: 0.78rem;
-  font-weight: 560;
+  font-weight: 520;
 }
 
 .chorus-periods button.active {
@@ -4631,6 +4631,7 @@ button {
 
 .chorus-now-copy {
   display: grid;
+  min-width: 0;
   justify-items: start;
   gap: 10px;
 }
@@ -4641,7 +4642,7 @@ button {
   gap: 9px;
   color: var(--chorus-orange);
   font-size: 0.68rem;
-  font-weight: 650;
+  font-weight: 540;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -4659,21 +4660,26 @@ button {
   max-width: 760px;
   color: var(--chorus-ink);
   font-size: clamp(2rem, 4vw, 3.25rem);
-  font-weight: 560;
+  font-weight: 520;
   letter-spacing: 0;
   line-height: 0.98;
+  overflow-wrap: anywhere;
 }
 
 .chorus-now-copy strong {
+  max-width: 100%;
   color: var(--chorus-ink);
   font-size: 1rem;
-  font-weight: 650;
+  font-weight: 540;
+  overflow-wrap: anywhere;
 }
 
 .chorus-now-copy p {
+  max-width: 100%;
   margin: 0;
   color: var(--chorus-muted);
   font-size: 0.9rem;
+  overflow-wrap: anywhere;
 }
 
 .chorus-now-copy footer {
@@ -4696,14 +4702,16 @@ button {
   padding: 0 12px;
   background: #fff;
   color: var(--chorus-ink);
-  font-weight: 650;
+  font-weight: 540;
 }
 
 .chorus-wave {
   display: flex;
+  max-width: 100%;
   height: 46px;
   align-items: center;
   gap: 3px;
+  overflow: hidden;
   color: var(--chorus-orange);
 }
 
@@ -4731,7 +4739,7 @@ button {
   margin: 0;
   color: var(--chorus-ink);
   font-size: 1.06rem;
-  font-weight: 650;
+  font-weight: 560;
   letter-spacing: 0;
 }
 
@@ -4746,7 +4754,7 @@ button {
   margin: 14px 0 8px;
   color: #1e252d;
   font-size: 0.68rem;
-  font-weight: 650;
+  font-weight: 540;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -4800,7 +4808,7 @@ button {
   display: block;
   color: var(--chorus-ink);
   font-size: 0.82rem;
-  font-weight: 650;
+  font-weight: 560;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -4845,7 +4853,7 @@ button {
   color: var(--chorus-ink);
   padding: 0 10px;
   font-size: 0.72rem;
-  font-weight: 650;
+  font-weight: 540;
   white-space: nowrap;
 }
 
@@ -4881,7 +4889,7 @@ button {
 
 .chorus-run-row > time strong {
   font-size: 0.78rem;
-  font-weight: 690;
+  font-weight: 560;
   line-height: 1;
 }
 
@@ -4915,7 +4923,7 @@ button {
   display: block;
   color: var(--chorus-ink);
   font-size: 0.82rem;
-  font-weight: 690;
+  font-weight: 560;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -4930,7 +4938,7 @@ button {
   color: var(--chorus-green);
   font-size: 0.72rem;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 560;
   white-space: nowrap;
 }
 
@@ -4963,7 +4971,7 @@ button {
   display: block;
   color: var(--chorus-ink);
   font-size: 0.7rem;
-  font-weight: 690;
+  font-weight: 560;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -4990,7 +4998,7 @@ button {
   color: var(--chorus-ink);
   padding: 0 9px;
   justify-self: start;
-  font-weight: 650;
+  font-weight: 540;
   white-space: nowrap;
 }
 
@@ -5022,7 +5030,7 @@ button {
 .chorus-metric-card header span {
   color: #1e252d;
   font-size: 0.68rem;
-  font-weight: 650;
+  font-weight: 540;
   letter-spacing: 0;
 }
 
@@ -5074,7 +5082,7 @@ button {
   gap: 4px;
   color: var(--chorus-ink);
   font-size: 0.8rem;
-  font-weight: 650;
+  font-weight: 540;
   white-space: nowrap;
 }
 
@@ -5134,7 +5142,7 @@ button {
   box-shadow: inset 0 0 0 3px #fff;
   color: var(--chorus-ink);
   font-size: 0.76rem;
-  font-weight: 650;
+  font-weight: 560;
   text-shadow: none;
 }
 
@@ -5283,7 +5291,7 @@ button {
   margin-top: 8px;
   color: var(--chorus-ink);
   font-size: 0.74rem;
-  font-weight: 690;
+  font-weight: 560;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -5303,7 +5311,7 @@ button {
   color: var(--chorus-ink);
   font-size: 0.86rem;
   font-style: normal;
-  font-weight: 650;
+  font-weight: 540;
 }
 
 .chorus-track-row i {
@@ -5321,7 +5329,7 @@ button {
 
 .chorus-preview-footer strong {
   color: var(--chorus-orange);
-  font-weight: 720;
+  font-weight: 560;
 }
 
 .chorus-preview.is-compact {
