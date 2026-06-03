@@ -5,32 +5,12 @@ import {
   ArrowRight,
   Clock3,
   ExternalLink,
-  Music2,
   Radio,
   Signal,
   Sparkles,
   UserRound
 } from "lucide-react";
-import { useState } from "react";
 import chorusData from "@/data/chorus-data.json";
-
-const periods = ["7D", "1M", "3M", "6M", "12M", "All"];
-const periodLimits = {
-  "7D": 6,
-  "1M": 8,
-  "3M": 10,
-  "6M": 12,
-  "12M": 16,
-  All: Number.POSITIVE_INFINITY
-};
-const periodDescriptions = {
-  "7D": "A tight week-long lens for the most recent listening run.",
-  "1M": "A one-month cut across the strongest recent repeats.",
-  "3M": "A seasonal view of artists, albums, and tracks with staying power.",
-  "6M": "A half-year view for the bigger listening arc.",
-  "12M": "A year-long view across the active archive.",
-  All: "Overall lens. Totals stay all-time; rankings and identity follow the selected period."
-};
 
 function formatNumber(value) {
   return new Intl.NumberFormat("en").format(value);
@@ -189,38 +169,32 @@ function RunSoundtrackWidget() {
       <div className="chorus-run-list">
         {pairedRuns.map((run) => (
           <article className="chorus-run-row" key={`${run.dateLabel}-${run.name}`}>
-            <time>
-              <strong>{run.dateLabel}</strong>
-              <span>{run.timeLabel}</span>
-            </time>
-            <div className="chorus-run-main">
-              <header>
-                <div>
-                  <strong>{run.name}</strong>
-                  <span>
-                    {run.distance} / {run.duration} / {run.pace} / {run.elevation}
-                  </span>
-                </div>
-                <em>{run.soundtrack}</em>
-              </header>
-              <div className="chorus-run-track-strip">
-                {run.tracks.slice(0, 2).map((track) => (
-                  <span className="chorus-run-track" key={`${run.name}-${track.artist}-${track.title}`}>
-                    <span className="chorus-mini-cover" aria-hidden="true">
-                      {track.imageUrl ? <img src={track.imageUrl} alt="" loading="lazy" /> : <i />}
-                    </span>
-                    <span>
-                      <strong>{track.title}</strong>
-                      <small>{track.artist}</small>
-                    </span>
-                  </span>
-                ))}
+            <header className="chorus-run-main">
+              <time>
+                <strong>{run.dateLabel}</strong>
+                <span>{run.timeLabel}</span>
+              </time>
+              <div>
+                <strong>{run.name}</strong>
+                <span>
+                  {run.distance} / {run.duration} / {run.pace} / {run.elevation}
+                </span>
               </div>
+              <em>{run.soundtrack}</em>
+            </header>
+            <div className="chorus-run-track-strip">
+              {run.tracks.slice(0, 2).map((track) => (
+                <span className="chorus-run-track" key={`${run.name}-${track.artist}-${track.title}`}>
+                  <span className="chorus-mini-cover" aria-hidden="true">
+                    {track.imageUrl ? <img src={track.imageUrl} alt="" loading="lazy" /> : <i />}
+                  </span>
+                  <span>
+                    <strong>{track.title}</strong>
+                    <small>{track.artist}</small>
+                  </span>
+                </span>
+              ))}
             </div>
-            <span className="chorus-run-badge">
-              <Music2 size={14} strokeWidth={2} />
-              {run.tracks.length} tracks
-            </span>
           </article>
         ))}
       </div>
@@ -229,16 +203,14 @@ function RunSoundtrackWidget() {
 }
 
 export function ChorusDashboardPreview({ compact = false }) {
-  const [activePeriod, setActivePeriod] = useState("All");
-  const visibleLimit = periodLimits[activePeriod] ?? periodLimits.All;
-  const visibleArtists = chorusData.topArtists.slice(0, visibleLimit);
-  const visibleAlbums = chorusData.topAlbums.slice(0, visibleLimit);
-  const visibleTracks = chorusData.topTracks.slice(0, visibleLimit);
+  const visibleArtists = chorusData.topArtists;
+  const visibleAlbums = chorusData.topAlbums;
+  const visibleTracks = chorusData.topTracks;
   const metrics = [
-    ["Scrobbles", formatNumber(chorusData.summary.totalScrobbles), activePeriod === "All" ? "All-time total" : `${activePeriod} view selected`, Signal],
-    ["Artists", formatNumber(visibleArtists.length), activePeriod === "All" ? "Known by Last.fm" : "Visible in this cut", UserRound],
-    ["Albums", formatNumber(visibleAlbums.length), activePeriod === "All" ? "Known by Last.fm" : "Visible in this cut", Radio],
-    ["Tracks", formatNumber(visibleTracks.length), activePeriod === "All" ? "Known by Last.fm" : "Visible in this cut", Sparkles],
+    ["Scrobbles", formatNumber(chorusData.summary.totalScrobbles), "All-time total", Signal],
+    ["Artists", formatNumber(visibleArtists.length), "Known by Last.fm", UserRound],
+    ["Albums", formatNumber(visibleAlbums.length), "Known by Last.fm", Radio],
+    ["Tracks", formatNumber(visibleTracks.length), "Known by Last.fm", Sparkles],
     ["Top artist", visibleArtists[0]?.name ?? "Unavailable", `${formatNumber(visibleArtists[0]?.plays ?? 0)} scrobbles`, null],
     ["Account age", chorusData.summary.accountAgeLabel, "Since registration", Clock3]
   ];
@@ -249,22 +221,13 @@ export function ChorusDashboardPreview({ compact = false }) {
         <section className="chorus-archive-card">
           <div>
             <span>Chorus / Listening archive</span>
-            <h1>{formatNumber(chorusData.summary.totalScrobbles)} scrobbles across the full archive.</h1>
-            <p>{periodDescriptions[activePeriod]}</p>
+            <h1>Listening archive</h1>
+            <p>Live Last.fm snapshot with recent plays, top music, and run pairings.</p>
           </div>
-          <div className="chorus-periods" aria-label="Time period">
-            {periods.map((period) => (
-              <button
-                className={period === activePeriod ? "active" : ""}
-                type="button"
-                aria-pressed={period === activePeriod}
-                onClick={() => setActivePeriod(period)}
-                key={period}
-              >
-                {period}
-              </button>
-            ))}
-          </div>
+          <p className="chorus-archive-stat">
+            <strong>{formatNumber(chorusData.summary.totalScrobbles)}</strong>
+            <span>total scrobbles</span>
+          </p>
         </section>
 
         <section className="chorus-hero-row">
