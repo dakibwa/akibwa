@@ -1,63 +1,63 @@
 {
   "snapshotDate": "2026-06-03",
-  "generatedAt": "2026-06-03T05:19:22.393Z",
+  "generatedAt": "2026-06-03T11:24:17.182Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21758,
+    "totalScrobbles": 21774,
     "artistCount": 1978,
     "albumCount": 2867,
-    "trackCount": 6228,
+    "trackCount": 6230,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Arriving",
-    "artist": "Jon Hopkins",
-    "album": "Music for Psychedelic Therapy",
-    "timeLabel": "8 hr ago",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    "title": "The Rolling Stones",
+    "artist": "Cameron Winter",
+    "album": "Heavy Metal",
+    "timeLabel": "4 hr ago",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
   },
   "recentTracks": [
     {
-      "title": "Arriving",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "title": "The Rolling Stones",
+      "artist": "Cameron Winter",
+      "album": "Heavy Metal",
+      "timeLabel": "4 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
     },
     {
-      "title": "Ascending, Dawn Sky",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+      "title": "Interstellar Love",
+      "artist": "The Avalanches",
+      "album": "We Will Always Love You",
+      "timeLabel": "4 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/dc2b33577c4135d50649f7a0ce570211.jpg"
+    },
+    {
+      "title": "Venezuela Riddim",
+      "artist": "Hak Baker",
+      "album": "Babylon",
+      "timeLabel": "4 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/2786f70d9dba2acee2a3511c5f0c0712.jpg"
+    },
+    {
+      "title": "Dig A Pony - Remastered 2009",
+      "artist": "The Beatles",
+      "album": "Let It Be (Remastered)",
+      "timeLabel": "4 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/724148c518ac36565baec48fa333cc31.png"
+    },
+    {
+      "title": "Two Of Us - Remastered 2009",
+      "artist": "The Beatles",
+      "album": "Let It Be (Remastered)",
+      "timeLabel": "4 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/724148c518ac36565baec48fa333cc31.png"
     },
     {
       "title": "Deep in the Glowing Heart",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
-    },
-    {
-      "title": "Love Flows over Us in Prismatic Waves",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
-    },
-    {
-      "title": "Tayos Caves, Ecuador III",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
-    },
-    {
-      "title": "Tayos Caves, Ecuador II",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "9 hr ago",
+      "timeLabel": "4 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     }
   ],
@@ -210,13 +210,13 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2611,
+      "plays": 2622,
       "initials": "JH",
       "imageUrl": null
     },
     {
       "name": "Cameron Winter",
-      "plays": 1234,
+      "plays": 1235,
       "initials": "CW",
       "imageUrl": null
     },
@@ -357,13 +357,13 @@
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2599,
+      "plays": 2610,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
       "title": "Heavy Metal",
       "artist": "Cameron Winter",
-      "plays": 1215,
+      "plays": 1216,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
     },
     {
@@ -466,7 +466,7 @@
       "title": "SCARING THE HOES",
       "artist": "JPEGMAFIA",
       "plays": 136,
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/4935528e65b4d73e9acb069794b12eb5.jpg"
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/bf81cd536efbe76e3b8bd540a651d5b5.jpg"
     },
     {
       "title": "Manning Fireworks",
@@ -503,55 +503,55 @@
     {
       "title": "Tayos Caves, Ecuador I",
       "artist": "Jon Hopkins",
-      "plays": 351,
+      "plays": 352,
       "imageUrl": null
     },
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 334,
+      "plays": 335,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
-      "plays": 325,
+      "plays": 326,
       "imageUrl": null
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
-      "plays": 323,
+      "plays": 325,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
-      "plays": 313,
+      "plays": 315,
       "imageUrl": null
     },
     {
       "title": "Ascending, Dawn Sky",
       "artist": "Jon Hopkins",
-      "plays": 310,
+      "plays": 311,
       "imageUrl": null
     },
     {
       "title": "Deep in the Glowing Heart",
       "artist": "Jon Hopkins",
-      "plays": 308,
+      "plays": 310,
       "imageUrl": null
     },
     {
       "title": "Arriving",
       "artist": "Jon Hopkins",
-      "plays": 294,
+      "plays": 295,
       "imageUrl": null
     },
     {
       "title": "The Rolling Stones",
       "artist": "Cameron Winter",
-      "plays": 285,
+      "plays": 286,
       "imageUrl": null
     },
     {
