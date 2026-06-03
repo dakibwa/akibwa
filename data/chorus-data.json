@@ -1,64 +1,64 @@
 {
   "snapshotDate": "2026-06-03",
-  "generatedAt": "2026-06-03T11:24:17.182Z",
+  "generatedAt": "2026-06-03T17:19:53.000Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21774,
+    "totalScrobbles": 21784,
     "artistCount": 1978,
-    "albumCount": 2867,
-    "trackCount": 6230,
+    "albumCount": 2869,
+    "trackCount": 6236,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "The Rolling Stones",
-    "artist": "Cameron Winter",
-    "album": "Heavy Metal",
-    "timeLabel": "4 hr ago",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+    "title": "Kid A",
+    "artist": "Radiohead",
+    "album": "KID A MNESIA",
+    "timeLabel": "3 hr ago",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
   },
   "recentTracks": [
     {
-      "title": "The Rolling Stones",
-      "artist": "Cameron Winter",
-      "album": "Heavy Metal",
-      "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/ab895f0cb006d2741e7be50a5960f1f7.jpg"
+      "title": "Kid A",
+      "artist": "Radiohead",
+      "album": "KID A MNESIA",
+      "timeLabel": "3 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
     },
     {
-      "title": "Interstellar Love",
-      "artist": "The Avalanches",
-      "album": "We Will Always Love You",
-      "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/dc2b33577c4135d50649f7a0ce570211.jpg"
+      "title": "Everything in Its Right Place",
+      "artist": "Radiohead",
+      "album": "KID A MNESIA",
+      "timeLabel": "3 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
     },
     {
-      "title": "Venezuela Riddim",
-      "artist": "Hak Baker",
-      "album": "Babylon",
+      "title": "Sweet Spot",
+      "artist": "Ed O'Brien",
+      "album": "Blue Morpho",
       "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/2786f70d9dba2acee2a3511c5f0c0712.jpg"
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
     },
     {
-      "title": "Dig A Pony - Remastered 2009",
-      "artist": "The Beatles",
-      "album": "Let It Be (Remastered)",
+      "title": "Teachers",
+      "artist": "Ed O'Brien",
+      "album": "Blue Morpho",
       "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/724148c518ac36565baec48fa333cc31.png"
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
     },
     {
-      "title": "Two Of Us - Remastered 2009",
-      "artist": "The Beatles",
-      "album": "Let It Be (Remastered)",
-      "timeLabel": "4 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/724148c518ac36565baec48fa333cc31.png"
-    },
-    {
-      "title": "Deep in the Glowing Heart",
+      "title": "Welcome",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
       "timeLabel": "4 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Incantations",
+      "artist": "Ed O'Brien",
+      "album": "Blue Morpho",
+      "timeLabel": "4 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
     }
   ],
   "recentRuns": [
@@ -210,7 +210,7 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2622,
+      "plays": 2623,
       "initials": "JH",
       "imageUrl": null
     },
@@ -357,7 +357,7 @@
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2610,
+      "plays": 2611,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
@@ -509,7 +509,7 @@
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 335,
+      "plays": 336,
       "imageUrl": null
     },
     {
