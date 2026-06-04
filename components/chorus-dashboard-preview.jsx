@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   ArrowRight,
@@ -10,17 +11,22 @@ import {
   Sparkles,
   UserRound
 } from "lucide-react";
-import chorusData from "@/data/chorus-data.json";
+import fallbackChorusData from "@/data/chorus-data.json";
+
+const remoteChorusDataUrl = (
+  process.env.NEXT_PUBLIC_CHORUS_DATA_URL || "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus"
+).trim();
 
 function formatNumber(value) {
-  return new Intl.NumberFormat("en").format(value);
+  const numeric = Number(value);
+  return new Intl.NumberFormat("en").format(Number.isFinite(numeric) ? numeric : 0);
 }
 
 function detailLine(primary, secondary) {
   return secondary ? `${primary} - ${secondary}` : primary;
 }
 
-const nowPlaying = chorusData.nowPlaying ?? {
+const fallbackNowPlaying = {
   title: "No recent track",
   artist: "Last.fm",
   album: "Listening archive",
@@ -149,8 +155,8 @@ function TopTracks({ tracks }) {
   );
 }
 
-function RunSoundtrackWidget() {
-  const pairedRuns = (chorusData.recentRuns ?? []).filter((run) => run.tracks?.length);
+function RunSoundtrackWidget({ recentRuns }) {
+  const pairedRuns = (recentRuns ?? []).filter((run) => run.tracks?.length);
 
   if (!pairedRuns.length) return null;
 
@@ -202,12 +208,41 @@ function RunSoundtrackWidget() {
   );
 }
 
-export function ChorusDashboardPreview({ compact = false }) {
-  const visibleArtists = chorusData.topArtists;
-  const visibleAlbums = chorusData.topAlbums;
-  const visibleTracks = chorusData.topTracks;
+function isChorusData(data) {
+  return data?.summary && Array.isArray(data?.recentTracks) && Array.isArray(data?.topArtists);
+}
+
+export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorusDataUrl }) {
+  const [runtimeChorusData, setRuntimeChorusData] = useState(fallbackChorusData);
+
+  useEffect(() => {
+    const url = String(dataUrl || "").trim();
+    if (!url) return undefined;
+
+    let cancelled = false;
+
+    fetch(url, { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && isChorusData(data)) {
+          setRuntimeChorusData(data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dataUrl]);
+
+  const chorusData = runtimeChorusData;
+  const nowPlaying = chorusData.nowPlaying ?? fallbackNowPlaying;
+  const visibleArtists = useMemo(() => chorusData.topArtists ?? [], [chorusData.topArtists]);
+  const visibleAlbums = useMemo(() => chorusData.topAlbums ?? [], [chorusData.topAlbums]);
+  const visibleTracks = useMemo(() => chorusData.topTracks ?? [], [chorusData.topTracks]);
+  const recentTracks = chorusData.recentTracks ?? [];
   const metrics = [
-    ["Scrobbles", formatNumber(chorusData.summary.totalScrobbles), "All-time total", Signal],
+    ["Scrobbles", formatNumber(chorusData.summary?.totalScrobbles), "All-time total", Signal],
     ["Artists", formatNumber(visibleArtists.length), "Known by Last.fm", UserRound],
     ["Albums", formatNumber(visibleAlbums.length), "Known by Last.fm", Radio],
     ["Tracks", formatNumber(visibleTracks.length), "Known by Last.fm", Sparkles],
@@ -225,7 +260,7 @@ export function ChorusDashboardPreview({ compact = false }) {
             <p>Live Last.fm snapshot with recent plays, top music, and run pairings.</p>
           </div>
           <p className="chorus-archive-stat">
-            <strong>{formatNumber(chorusData.summary.totalScrobbles)}</strong>
+            <strong>{formatNumber(chorusData.summary?.totalScrobbles)}</strong>
             <span>total scrobbles</span>
           </p>
         </section>
@@ -259,7 +294,7 @@ export function ChorusDashboardPreview({ compact = false }) {
             <p>Newest plays</p>
             <span>Today</span>
             <div>
-              {chorusData.recentTracks.map((track, index) => (
+              {recentTracks.map((track, index) => (
                 <article key={`${track.title}-${index}`}>
                   <span className="chorus-mini-cover" aria-hidden="true">
                     {track.imageUrl ? <img src={track.imageUrl} alt="" loading="lazy" /> : <i />}
@@ -275,7 +310,7 @@ export function ChorusDashboardPreview({ compact = false }) {
           </article>
         </section>
 
-        <RunSoundtrackWidget />
+        <RunSoundtrackWidget recentRuns={chorusData.recentRuns} />
 
         <section className="chorus-metric-grid" aria-label="Chorus metrics">
           {metrics.map(([label, value, detail, Icon], index) => (
@@ -297,9 +332,9 @@ export function ChorusDashboardPreview({ compact = false }) {
         </section>
 
         <footer className="chorus-preview-footer">
-          <span>Snapshot from @{chorusData.username} on Last.fm</span>
+          <span>Snapshot from @{chorusData.username ?? "akibwa"} on Last.fm</span>
           <span>
-            Data from <strong>{chorusData.source}</strong>
+            Data from <strong>{chorusData.source ?? "Last.fm"}</strong>
           </span>
         </footer>
       </section>
