@@ -7,7 +7,11 @@ export const metadata = {
     template: "Akibwa | %s"
   },
   description:
-    "Small AI-assisted systems that turn messy workflows, listening history, health signals, and private context into useful tools."
+    "Small AI-assisted systems that turn messy workflows, listening history, health signals, and private context into useful tools.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: [{ url: "/favicon.svg", type: "image/svg+xml" }]
+  }
 };
 
 export const viewport = {
