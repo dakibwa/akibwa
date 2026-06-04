@@ -2296,8 +2296,9 @@ button {
 .knowledge-console-panel ol,
 .knowledge-console-panel ul {
   display: grid;
+  grid-template-rows: repeat(6, minmax(64px, 1fr));
   align-content: start;
-  gap: 8px;
+  gap: 0;
   margin: 0;
   padding: 0;
   background: transparent;
@@ -2307,17 +2308,19 @@ button {
 .knowledge-source-row,
 .knowledge-console-panel li {
   display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
   min-width: 0;
   gap: 10px;
+  min-height: 64px;
   border-top: 1px solid rgba(16, 18, 23, 0.08);
   background: #fff;
-  padding: 12px 15px;
+  padding: 10px 15px;
   animation: knowledgeRowIn 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--row-delay, 0ms);
 }
 
 .knowledge-source-row {
-  grid-template-columns: 28px minmax(0, 1fr) auto;
   align-items: center;
 }
 
@@ -2349,28 +2352,30 @@ button {
   border-color: rgba(47, 136, 255, 0.14);
 }
 
-.knowledge-source-list strong,
-.knowledge-console-panel li span {
+.knowledge-row-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.knowledge-row-title {
   color: var(--black);
-  font-size: 0.88rem;
-  font-weight: 560;
-  line-height: 1.35;
+  font-size: 0.89rem;
+  font-weight: 620;
+  line-height: 1.08;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.knowledge-source-list span {
-  color: #51616b;
-  font-size: 0.74rem;
-  font-weight: 560;
-  text-align: right;
-}
-
-.knowledge-console-panel li {
-  grid-template-columns: 28px minmax(0, 1fr);
-  align-items: center;
-}
-
-.knowledge-console-panel.is-guardrails li {
-  grid-template-columns: 28px minmax(0, 1fr);
+.knowledge-row-meta {
+  color: #68727a;
+  font-size: 0.73rem;
+  font-weight: 520;
+  line-height: 1.16;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .knowledge-row-icon {
@@ -7801,7 +7806,7 @@ button {
   }
 
   .knowledge-source-row {
-    grid-template-columns: 28px minmax(0, 1fr) auto;
+    grid-template-columns: 28px minmax(0, 1fr);
   }
 
   .project-expanded-layer.is-static .project-expanded-banner span {

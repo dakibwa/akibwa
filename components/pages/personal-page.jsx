@@ -36,29 +36,30 @@ const remoteCoverCollisionDataUrl = (
 ).trim();
 
 const knowledgeSources = [
-  { name: "Gmail", status: "backfill next", logo: "gmail" },
-  { name: "Drive", status: "mapped", logo: "drive" },
-  { name: "Calendar", status: "history pass", logo: "calendar" },
-  { name: "Finance", status: "aggregate-only", logo: "finance" },
-  { name: "Health", status: "local only", logo: "health" },
-  { name: "Projects", status: "active", logo: "projects" }
+  { name: "Gmail", detail: "Body-level backfill next", logo: "gmail" },
+  { name: "Drive", detail: "Content map ready", logo: "drive" },
+  { name: "Calendar", detail: "History pass queued", logo: "calendar" },
+  { name: "Finance", detail: "Monthly aggregate only", logo: "finance" },
+  { name: "Health", detail: "Local-only evidence", logo: "health" },
+  { name: "Projects", detail: "Active obligations", logo: "projects" }
 ];
 
 const knowledgeRoutes = [
-  { label: "Today's priorities", Icon: CalendarCheck, tone: "blue" },
-  { label: "Evidence check", Icon: SearchCheck, tone: "teal" },
-  { label: "Project obligations", Icon: BriefcaseBusiness, tone: "orange" },
-  { label: "Health context", Icon: HeartPulse, tone: "rose" },
-  { label: "Finance synthesis", Icon: Wallet, tone: "green" },
-  { label: "Source mining", Icon: Pickaxe, tone: "slate" }
+  { label: "Today's priorities", detail: "Calendar and inbox first", Icon: CalendarCheck, tone: "blue" },
+  { label: "Evidence check", detail: "Source pointers before claims", Icon: SearchCheck, tone: "teal" },
+  { label: "Project obligations", detail: "GitHub, Drive, and inbox", Icon: BriefcaseBusiness, tone: "orange" },
+  { label: "Health context", detail: "Logs for clinician prep", Icon: HeartPulse, tone: "rose" },
+  { label: "Finance synthesis", detail: "Monthly totals only", Icon: Wallet, tone: "green" },
+  { label: "Source mining", detail: "Backfill by priority", Icon: Pickaxe, tone: "slate" }
 ];
 
 const knowledgeGuardrails = [
-  { label: "Raw records stay local", Icon: FileLock2, tone: "slate" },
-  { label: "Claims need source pointers", Icon: BadgeCheck, tone: "blue" },
-  { label: "Health is for clinician conversations", Icon: Stethoscope, tone: "rose" },
-  { label: "Finance stays aggregate-only", Icon: ChartNoAxesCombined, tone: "green" },
-  { label: "Generated claims are leads", Icon: Flag, tone: "orange" }
+  { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" },
+  { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" },
+  { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" },
+  { label: "Finance is aggregate", detail: "No transaction rows", Icon: ChartNoAxesCombined, tone: "green" },
+  { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" },
+  { label: "Secrets stay out", detail: "No tokens or identifiers", Icon: LockKeyhole, tone: "slate" }
 ];
 
 const iconToneStyles = {
@@ -450,11 +451,13 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Source map</h3>
           </header>
           <div className="knowledge-source-list">
-            {knowledgeSources.map(({ name, status, logo }, index) => (
+            {knowledgeSources.map(({ name, detail, logo }, index) => (
               <div key={name} className="knowledge-source-row" style={{ "--row-delay": `${index * 65}ms` }}>
                 <SourceLogo type={logo} />
-                <strong>{name}</strong>
-                <span>{status}</span>
+                <span className="knowledge-row-copy">
+                  <strong className="knowledge-row-title">{name}</strong>
+                  <span className="knowledge-row-meta">{detail}</span>
+                </span>
               </div>
             ))}
           </div>
@@ -466,12 +469,15 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Codex retrieval routes</h3>
           </header>
           <ol>
-            {knowledgeRoutes.map(({ label, Icon, tone }, index) => (
+            {knowledgeRoutes.map(({ label, detail, Icon, tone }, index) => (
               <li key={label} className="knowledge-route-row" style={getIconToneStyle(tone, index)}>
                 <span className="knowledge-row-icon is-route" aria-hidden="true">
                   <Icon size={15} strokeWidth={1.8} />
                 </span>
-                <span>{label}</span>
+                <span className="knowledge-row-copy">
+                  <strong className="knowledge-row-title">{label}</strong>
+                  <span className="knowledge-row-meta">{detail}</span>
+                </span>
               </li>
             ))}
           </ol>
@@ -483,12 +489,15 @@ function KnowledgeBaseShowcase({ project }) {
             <h3>Guardrails</h3>
           </header>
           <ul>
-            {knowledgeGuardrails.map(({ label, Icon, tone }, index) => (
+            {knowledgeGuardrails.map(({ label, detail, Icon, tone }, index) => (
               <li key={label} className="knowledge-rule-row" style={getIconToneStyle(tone, index)}>
                 <span className="knowledge-row-icon is-rule" aria-hidden="true">
                   <Icon size={15} strokeWidth={1.8} />
                 </span>
-                <span>{label}</span>
+                <span className="knowledge-row-copy">
+                  <strong className="knowledge-row-title">{label}</strong>
+                  <span className="knowledge-row-meta">{detail}</span>
+                </span>
               </li>
             ))}
           </ul>
