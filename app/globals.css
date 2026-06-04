@@ -4360,9 +4360,32 @@ button {
 
 /* Chorus case-study preview */
 .chorus-page {
-  min-height: calc(100vh - 68px);
+  min-height: 100vh;
   background: #fff;
-  padding-bottom: 34px;
+}
+
+.chorus-app-shell {
+  overflow: hidden;
+  min-height: 100vh;
+  height: 100vh;
+  background: #fff;
+}
+
+.chorus-app-frame {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  border: 0;
+  background: #fff;
+}
+
+@supports (height: 100dvh) {
+  .chorus-page,
+  .chorus-app-shell,
+  .chorus-app-frame {
+    min-height: 100dvh;
+    height: 100dvh;
+  }
 }
 
 .project-app-gate {

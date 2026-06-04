@@ -4,6 +4,8 @@ Akibwa public data refreshes should run in Cloudflare by default.
 
 The website remains a static GitHub Pages export. GitHub Actions should build and deploy the site, not wake up hourly to mutate data files. Data refreshes that can run from API credentials or public seeds belong in Cloudflare Workers with KV storage, public JSON endpoints, status endpoints, and checked-in fallback seeds.
 
+Dynamic project apps can still feel native to the website. Chorus is embedded at `https://akibwa.com/chorus`, while the dynamic runtime stays in the Cloudflare Worker app at `https://akibwa-chorus.dakibwa.workers.dev`.
+
 ## Current Cloudflare Refreshes
 
 | Surface | Worker | Schedule | Public data | Status | Notes |

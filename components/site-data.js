@@ -1,7 +1,7 @@
 import coverCollisionData from "@/data/cover-collision-data.json";
 
 export const contactEmail = "***REMOVED***";
-export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || "").trim();
+export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || "https://akibwa-chorus.dakibwa.workers.dev").trim();
 export const vitalsAppUrl = (process.env.NEXT_PUBLIC_VITALS_APP_URL || "").trim();
 const chorusAppIsConfigured = Boolean(chorusAppUrl);
 const vitalsAppIsConfigured = Boolean(vitalsAppUrl);

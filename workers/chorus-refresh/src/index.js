@@ -42,6 +42,12 @@ export default {
       return jsonResponse((await env.CHORUS_KV.get(STATUS_KEY, "json")) || { ok: false, status: "not refreshed yet" });
     }
 
+    if (url.pathname === "/strava-runs") {
+      return jsonResponse(await readStravaRunSoundtracks(env), 200, {
+        "Cache-Control": "private, no-store"
+      });
+    }
+
     if (url.pathname === "/refresh") {
       if (request.method !== "POST") {
         return jsonResponse({ ok: false, error: "Use POST." }, 405);
@@ -132,7 +138,7 @@ async function refreshChorus(env, trigger) {
   const topArtists = asArray(artistsPayload.topartists?.artist).map(mapArtist);
   const topAlbums = asArray(albumsPayload.topalbums?.album).map(mapAlbum);
   const topTracks = asArray(tracksPayload.toptracks?.track).map(mapTopTrack);
-  const strava = await readStravaRunSoundtracks(env, existing.recentRuns || []);
+  const strava = await readStravaRunSoundtracks(env);
 
   const payload = {
     snapshotDate: generatedAt.toISOString().slice(0, 10),
@@ -312,7 +318,7 @@ function mapRecentTrack(track, generatedAt) {
   };
 }
 
-async function readStravaRunSoundtracks(env, fallbackRuns) {
+async function readStravaRunSoundtracks(env) {
   const generatedAt = new Date().toISOString();
 
   try {
@@ -324,7 +330,7 @@ async function readStravaRunSoundtracks(env, fallbackRuns) {
       .slice(0, RUN_DISPLAY_LIMIT);
 
     if (!paired.length) {
-      return fallbackStravaPayload(fallbackRuns, generatedAt, "No recent Strava runs had Last.fm scrobbles in their run window.");
+      return fallbackStravaPayload(generatedAt, "No recent Strava runs had Last.fm scrobbles in their run window.");
     }
 
     return {
@@ -340,7 +346,7 @@ async function readStravaRunSoundtracks(env, fallbackRuns) {
       }
     };
   } catch (error) {
-    return fallbackStravaPayload(fallbackRuns, generatedAt, safeError(error), error?.missingConfig);
+    return fallbackStravaPayload(generatedAt, safeError(error), error?.missingConfig);
   }
 }
 
@@ -506,22 +512,15 @@ function mapRunTrack(track) {
   };
 }
 
-function fallbackStravaPayload(fallbackRuns, generatedAt, error, missingConfig) {
-  const runs = asArray(fallbackRuns).filter((run) => run?.tracks?.length);
-  const latestFallback = runs
-    .map((run) => run.startedAt)
-    .filter(Boolean)
-    .sort()
-    .at(-1) || null;
-
+function fallbackStravaPayload(generatedAt, error, missingConfig) {
   return {
-    runs,
+    runs: [],
     status: {
-      source: "static-fallback",
+      source: "unavailable",
       generatedAt,
-      latestActivityAt: latestFallback,
-      latestRunAt: latestFallback,
-      pairedCount: runs.length,
+      latestActivityAt: null,
+      latestRunAt: null,
+      pairedCount: 0,
       activityCount: 0,
       error,
       missingConfig
