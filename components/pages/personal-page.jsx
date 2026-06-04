@@ -30,6 +30,11 @@ import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
 import { coverCollisionPosts, personalProjects } from "@/components/site-data";
 
+const remoteCoverCollisionDataUrl = (
+  process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
+  "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision"
+).trim();
+
 const knowledgeSources = [
   { name: "Gmail", status: "backfill next", logo: "gmail" },
   { name: "Drive", status: "mapped", logo: "drive" },
@@ -244,8 +249,61 @@ function getCoverCollisionGalleryLayout(postCount) {
   return { columns, rows: Math.ceil(postCount / columns) };
 }
 
-function CoverCollisionPanel({ project, galleryOnly = false }) {
-  const galleryLayout = getCoverCollisionGalleryLayout(coverCollisionPosts.length);
+function isCoverCollisionData(data) {
+  return data?.profileUrl && Array.isArray(data?.posts);
+}
+
+function useCoverCollisionData(dataUrl = remoteCoverCollisionDataUrl) {
+  const [runtimeData, setRuntimeData] = useState({
+    profileUrl: "https://www.instagram.com/dakibwa/",
+    posts: coverCollisionPosts
+  });
+
+  useEffect(() => {
+    const url = String(dataUrl || "").trim();
+    if (!url) return undefined;
+
+    let cancelled = false;
+
+    fetch(url, { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && isCoverCollisionData(data)) {
+          setRuntimeData({
+            profileUrl: data.profileUrl,
+            posts: data.posts.length ? data.posts : coverCollisionPosts
+          });
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dataUrl]);
+
+  return runtimeData;
+}
+
+function CoverCollisionImage({ post, priority, sizes }) {
+  if (/^https?:\/\//.test(post.image || "")) {
+    return <img src={post.image} alt={post.alt} loading={priority ? "eager" : "lazy"} />;
+  }
+
+  return (
+    <Image
+      src={post.image}
+      alt={post.alt}
+      width={180}
+      height={180}
+      priority={priority}
+      sizes={sizes}
+    />
+  );
+}
+
+function CoverCollisionPanel({ project, posts, galleryOnly = false }) {
+  const galleryLayout = getCoverCollisionGalleryLayout(posts.length);
   const fittedRows = Math.min(galleryLayout.rows, 4);
   const panelAspect = galleryLayout.columns / fittedRows;
   const verticalReserve = 174 + fittedRows * 32 + Math.max(0, fittedRows - 1) * 22;
@@ -261,7 +319,7 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
     <div
       className={`cover-collision-panel ${galleryOnly ? "is-gallery-only" : ""}`}
       aria-label={`${project.title} Instagram posts`}
-      data-gallery-count={galleryOnly ? coverCollisionPosts.length : undefined}
+      data-gallery-count={galleryOnly ? posts.length : undefined}
       data-gallery-scrollable={galleryOnly && galleryLayout.rows > fittedRows ? "true" : undefined}
       style={galleryStyle}
     >
@@ -271,12 +329,12 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
             <span>{project.title}</span>
             <strong>Album art, recombined into a visual series.</strong>
           </div>
-          <em>{coverCollisionPosts.length} posts</em>
+          <em>{posts.length} posts</em>
         </header>
       )}
 
       <div className="cover-collision-grid" aria-label={`${project.title} posts from Instagram`}>
-        {coverCollisionPosts.map((post, index) => (
+        {posts.map((post, index) => (
           <a
             className="cover-collision-post"
             href={post.href}
@@ -286,11 +344,8 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
             key={post.href}
           >
             <span className="cover-collision-post-image">
-              <Image
-                src={post.image}
-                alt={post.alt}
-                width={180}
-                height={180}
+              <CoverCollisionImage
+                post={post}
                 priority={galleryOnly && index < galleryLayout.columns}
                 sizes={
                   galleryOnly
@@ -316,6 +371,8 @@ function CoverCollisionPanel({ project, galleryOnly = false }) {
 }
 
 function CoverCollisionShowcase({ project, immersive = false }) {
+  const { posts, profileUrl } = useCoverCollisionData();
+
   return (
     <section
       className={`${immersive ? "" : "page-grid"} cover-collision-showcase ${immersive ? "is-expanded" : ""}`}
@@ -344,7 +401,7 @@ function CoverCollisionShowcase({ project, immersive = false }) {
             </div>
           </dl>
           <div className="vitals-showcase-actions">
-            <a href={project.externalHref} target="_blank" rel="noreferrer">
+            <a href={profileUrl || project.externalHref} target="_blank" rel="noreferrer">
               <Instagram size={15} strokeWidth={1.7} />
               Open Instagram
             </a>
@@ -352,7 +409,7 @@ function CoverCollisionShowcase({ project, immersive = false }) {
         </div>
       )}
 
-      <CoverCollisionPanel project={project} galleryOnly={immersive} />
+      <CoverCollisionPanel project={project} posts={posts} galleryOnly={immersive} />
     </section>
   );
 }

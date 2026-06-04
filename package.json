@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --experimental-app-only",
-    "refresh:chorus": "node scripts/update-chorus-data.mjs",
-    "refresh:vitals": "node scripts/update-vitals-data.mjs",
+    "refresh:status": "node scripts/check-cloud-refreshes.mjs",
+    "refresh:chorus:local": "node scripts/update-chorus-data.mjs",
+    "refresh:vitals:local": "node scripts/update-vitals-data.mjs",
     "start": "next start"
   },
   "dependencies": {

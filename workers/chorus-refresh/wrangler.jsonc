@@ -15,6 +15,10 @@
     {
       "binding": "CHORUS_KV",
       "id": "8bafd1b2d9754abc9b024245d3366ae4"
+    },
+    {
+      "binding": "CHORUS_STRAVA_TOKENS",
+      "id": "de4246cb982e455fb746d05e721ef47c"
     }
   ],
   "observability": {

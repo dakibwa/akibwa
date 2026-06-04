@@ -1,8 +1,16 @@
 const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/";
+const STRAVA_API_BASE = "https://www.strava.com/api/v3";
+const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";
 const USER_AGENT = "akibwa-chorus-cloudflare/1";
 
 const PUBLIC_DATA_KEY = "chorus-data";
 const STATUS_KEY = "refresh-status";
+const STRAVA_TOKEN_STATE_KEY = "strava:oauth";
+const TOKEN_REFRESH_GRACE_SECONDS = 300;
+const RUN_LOOKBACK_LIMIT = 14;
+const RUN_DISPLAY_LIMIT = 4;
+const LASTFM_BEFORE_RUN_SECONDS = 15 * 60;
+const LASTFM_AFTER_RUN_SECONDS = 30 * 60;
 const PLACEHOLDER_IMAGE_HASHES = [
   "2a96cbd8b46e442fc41c2b86b821562f",
   "c6f59c1e5e7240a4c0d427abd71f3dbb"
@@ -124,6 +132,7 @@ async function refreshChorus(env, trigger) {
   const topArtists = asArray(artistsPayload.topartists?.artist).map(mapArtist);
   const topAlbums = asArray(albumsPayload.topalbums?.album).map(mapAlbum);
   const topTracks = asArray(tracksPayload.toptracks?.track).map(mapTopTrack);
+  const strava = await readStravaRunSoundtracks(env, existing.recentRuns || []);
 
   const payload = {
     snapshotDate: generatedAt.toISOString().slice(0, 10),
@@ -145,7 +154,7 @@ async function refreshChorus(env, trigger) {
       imageUrl: null
     },
     recentTracks,
-    recentRuns: existing.recentRuns || [],
+    recentRuns: strava.runs,
     topArtists,
     topAlbums,
     topTracks
@@ -167,6 +176,7 @@ async function refreshChorus(env, trigger) {
     topArtists: payload.topArtists.length,
     topAlbums: payload.topAlbums.length,
     topTracks: payload.topTracks.length,
+    strava: strava.status,
     error: null
   };
   await env.CHORUS_KV.put(STATUS_KEY, JSON.stringify(status));
@@ -300,6 +310,319 @@ function mapRecentTrack(track, generatedAt) {
     timeLabel: formatTrackTime(track, generatedAt),
     imageUrl: pickImage(track.image)
   };
+}
+
+async function readStravaRunSoundtracks(env, fallbackRuns) {
+  const generatedAt = new Date().toISOString();
+
+  try {
+    const token = await getStravaAccessToken(env);
+    const activities = await fetchStravaActivities(token);
+    const runs = activities.filter(isRun).slice(0, RUN_LOOKBACK_LIMIT);
+    const paired = (await Promise.all(runs.map((activity) => pairRunWithLastFm(env, activity))))
+      .filter(Boolean)
+      .slice(0, RUN_DISPLAY_LIMIT);
+
+    if (!paired.length) {
+      return fallbackStravaPayload(fallbackRuns, generatedAt, "No recent Strava runs had Last.fm scrobbles in their run window.");
+    }
+
+    return {
+      runs: paired,
+      status: {
+        source: "strava-api",
+        generatedAt,
+        latestActivityAt: getActivityStart(activities[0])?.toISOString() || null,
+        latestRunAt: getActivityStart(runs[0])?.toISOString() || null,
+        pairedCount: paired.length,
+        activityCount: activities.length,
+        error: null
+      }
+    };
+  } catch (error) {
+    return fallbackStravaPayload(fallbackRuns, generatedAt, safeError(error), error?.missingConfig);
+  }
+}
+
+async function getStravaAccessToken(env) {
+  const storedState = await readStravaTokenState(env);
+  const refreshToken = storedState.refreshToken || env.STRAVA_REFRESH_TOKEN || null;
+  const missingConfig = [
+    ["STRAVA_CLIENT_ID", env.STRAVA_CLIENT_ID],
+    ["STRAVA_CLIENT_SECRET", env.STRAVA_CLIENT_SECRET],
+    ["STRAVA_REFRESH_TOKEN or CHORUS_STRAVA_TOKENS", refreshToken]
+  ]
+    .filter(([, value]) => !value)
+    .map(([name]) => name);
+
+  if (missingConfig.length) {
+    const error = new Error("Strava API credentials are not configured yet.");
+    error.missingConfig = missingConfig;
+    throw error;
+  }
+
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  if (
+    storedState.accessToken &&
+    storedState.expiresAt &&
+    storedState.expiresAt > nowSeconds + TOKEN_REFRESH_GRACE_SECONDS
+  ) {
+    return storedState.accessToken;
+  }
+
+  const body = new URLSearchParams({
+    client_id: env.STRAVA_CLIENT_ID,
+    client_secret: env.STRAVA_CLIENT_SECRET,
+    grant_type: "refresh_token",
+    refresh_token: refreshToken
+  });
+
+  const response = await fetch(STRAVA_TOKEN_URL, {
+    method: "POST",
+    headers: { "User-Agent": USER_AGENT },
+    body
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(readApiMessage(payload, "Strava token refresh failed."));
+  }
+
+  const accessToken = stringFrom(payload.access_token);
+  const nextRefreshToken = stringFrom(payload.refresh_token) || refreshToken;
+  const expiresAt = numberFrom(payload.expires_at);
+
+  if (!accessToken || !nextRefreshToken || !expiresAt) {
+    throw new Error("Strava did not return a usable access token.");
+  }
+
+  await writeStravaTokenState(env, {
+    accessToken,
+    refreshToken: nextRefreshToken,
+    expiresAt,
+    updatedAt: new Date().toISOString()
+  });
+
+  return accessToken;
+}
+
+async function readStravaTokenState(env) {
+  if (!env.CHORUS_STRAVA_TOKENS) return emptyStravaTokenState();
+
+  try {
+    const raw = await env.CHORUS_STRAVA_TOKENS.get(STRAVA_TOKEN_STATE_KEY);
+    if (!raw) return emptyStravaTokenState();
+    const parsed = JSON.parse(raw);
+    return {
+      accessToken: stringFrom(parsed.accessToken),
+      refreshToken: stringFrom(parsed.refreshToken),
+      expiresAt: numberFrom(parsed.expiresAt),
+      updatedAt: stringFrom(parsed.updatedAt)
+    };
+  } catch {
+    return emptyStravaTokenState();
+  }
+}
+
+async function writeStravaTokenState(env, state) {
+  if (!env.CHORUS_STRAVA_TOKENS) return;
+  await env.CHORUS_STRAVA_TOKENS.put(STRAVA_TOKEN_STATE_KEY, JSON.stringify(state));
+}
+
+function emptyStravaTokenState() {
+  return {
+    accessToken: null,
+    refreshToken: null,
+    expiresAt: null,
+    updatedAt: null
+  };
+}
+
+async function fetchStravaActivities(accessToken) {
+  const url = new URL(`${STRAVA_API_BASE}/athlete/activities`);
+  url.searchParams.set("page", "1");
+  url.searchParams.set("per_page", "30");
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "User-Agent": USER_AGENT
+    }
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(readApiMessage(payload, "Strava activity refresh failed."));
+  }
+
+  return Array.isArray(payload) ? payload : [];
+}
+
+async function pairRunWithLastFm(env, activity) {
+  const start = getActivityStart(activity);
+  if (!start) return null;
+
+  const movingTime = Math.max(0, numberFrom(activity.moving_time) || 0);
+  const elapsedTime = Math.max(movingTime, numberFrom(activity.elapsed_time) || movingTime);
+  const from = Math.floor(start.getTime() / 1000) - LASTFM_BEFORE_RUN_SECONDS;
+  const to = Math.floor((start.getTime() + elapsedTime * 1000) / 1000) + LASTFM_AFTER_RUN_SECONDS;
+  const tracks = await getLastFmRunTracks(env, from, to);
+  if (!tracks.length) return null;
+
+  return {
+    name: stringFrom(activity.name) || "Run",
+    dateLabel: formatRunDate(activity.start_date_local, start),
+    timeLabel: formatRunTime(activity.start_date_local, start),
+    startedAt: start.toISOString(),
+    distance: formatDistance(numberFrom(activity.distance) || 0),
+    duration: formatDuration(movingTime),
+    pace: formatPace(numberFrom(activity.distance) || 0, movingTime),
+    elevation: formatElevation(numberFrom(activity.total_elevation_gain)),
+    soundtrack: dominantArtist(tracks),
+    tracks: tracks.map((track) => ({
+      title: track.title,
+      artist: track.artist,
+      album: track.album || "Unknown album",
+      imageUrl: track.imageUrl
+    }))
+  };
+}
+
+async function getLastFmRunTracks(env, from, to) {
+  const payload = await fetchLastfm(env, "user.getrecenttracks", { from, to, limit: 100, extended: 1 });
+
+  return asArray(payload.recenttracks?.track)
+    .filter((track) => track?.["@attr"]?.nowplaying !== "true")
+    .map(mapRunTrack)
+    .filter((track) => track.title && track.artist);
+}
+
+function mapRunTrack(track) {
+  return {
+    title: track.name || "",
+    artist: textValue(track.artist),
+    album: textValue(track.album) || "Unknown album",
+    imageUrl: pickImage(track.image)
+  };
+}
+
+function fallbackStravaPayload(fallbackRuns, generatedAt, error, missingConfig) {
+  const runs = asArray(fallbackRuns).filter((run) => run?.tracks?.length);
+  const latestFallback = runs
+    .map((run) => run.startedAt)
+    .filter(Boolean)
+    .sort()
+    .at(-1) || null;
+
+  return {
+    runs,
+    status: {
+      source: "static-fallback",
+      generatedAt,
+      latestActivityAt: latestFallback,
+      latestRunAt: latestFallback,
+      pairedCount: runs.length,
+      activityCount: 0,
+      error,
+      missingConfig
+    }
+  };
+}
+
+function isRun(activity) {
+  const type = stringFrom(activity.type);
+  const sportType = stringFrom(activity.sport_type);
+  return ["Run", "TrailRun", "VirtualRun"].includes(sportType || type || "");
+}
+
+function getActivityStart(activity) {
+  const raw = stringFrom(activity?.start_date);
+  if (!raw) return null;
+  const date = new Date(raw);
+  return Number.isFinite(date.getTime()) ? date : null;
+}
+
+function formatRunDate(localValue, fallback) {
+  const date = parseStravaLocalDate(localValue) || fallback;
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC"
+  }).format(date);
+}
+
+function formatRunTime(localValue, fallback) {
+  const date = parseStravaLocalDate(localValue) || fallback;
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC"
+  }).format(date);
+}
+
+function parseStravaLocalDate(value) {
+  const raw = stringFrom(value);
+  if (!raw) return null;
+  const date = new Date(raw.endsWith("Z") ? raw : `${raw}Z`);
+  return Number.isFinite(date.getTime()) ? date : null;
+}
+
+function formatDistance(meters) {
+  if (!meters) return "0 km";
+  const kilometers = meters / 1000;
+  return `${kilometers < 10 ? kilometers.toFixed(2) : kilometers.toFixed(1)} km`;
+}
+
+function formatDuration(seconds) {
+  if (!seconds) return "0 min";
+  const minutes = Math.max(1, Math.round(seconds / 60));
+  return `${minutes} min`;
+}
+
+function formatPace(meters, seconds) {
+  if (!meters || !seconds) return "Pace n/a";
+  const secondsPerKm = seconds / (meters / 1000);
+  const minutes = Math.floor(secondsPerKm / 60);
+  const remainingSeconds = Math.round(secondsPerKm % 60).toString().padStart(2, "0");
+  return `${minutes}:${remainingSeconds}/km`;
+}
+
+function formatElevation(value) {
+  if (value === null || value === undefined) return "0 m";
+  return `${Math.round(value)} m`;
+}
+
+function dominantArtist(tracks) {
+  const counts = new Map();
+  for (const track of tracks) counts.set(track.artist, (counts.get(track.artist) || 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || tracks[0]?.artist || "Last.fm";
+}
+
+function readApiMessage(payload, fallback) {
+  if (payload && typeof payload === "object") {
+    const message = stringFrom(payload.message);
+    if (message) return message;
+    const errors = Array.isArray(payload.errors) ? payload.errors : [];
+    const firstMessage = errors
+      .map((error) => error && typeof error === "object" ? stringFrom(error.message) : null)
+      .find(Boolean);
+    if (firstMessage) return firstMessage;
+  }
+  return fallback;
+}
+
+function stringFrom(value) {
+  if (typeof value === "string" || typeof value === "number") {
+    const text = String(value).trim();
+    return text ? text : null;
+  }
+  return null;
+}
+
+function numberFrom(value) {
+  const number = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(number) ? number : null;
 }
 
 function mapArtist(artist) {

@@ -4,6 +4,7 @@ This Worker refreshes the public Chorus / Last.fm dashboard data without hourly 
 
 - Scheduled hourly by Cloudflare cron.
 - Reads Last.fm with an API key stored as a Cloudflare secret.
+- Optionally refreshes recent Strava run soundtracks and stores rotated Strava tokens in KV.
 - Keeps only public dashboard summary JSON in KV.
 - Serves the public JSON at `/chorus`.
 
@@ -11,6 +12,9 @@ Secrets are set with Wrangler and must never be committed:
 
 ```bash
 npx wrangler secret put LASTFM_API_KEY --config workers/chorus-refresh/wrangler.jsonc
+npx wrangler secret put STRAVA_CLIENT_ID --config workers/chorus-refresh/wrangler.jsonc
+npx wrangler secret put STRAVA_CLIENT_SECRET --config workers/chorus-refresh/wrangler.jsonc
+npx wrangler secret put STRAVA_REFRESH_TOKEN --config workers/chorus-refresh/wrangler.jsonc
 npx wrangler secret put ADMIN_TOKEN --config workers/chorus-refresh/wrangler.jsonc
 ```
 
