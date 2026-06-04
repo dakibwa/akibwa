@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build --experimental-app-only",
     "refresh:chorus": "node scripts/update-chorus-data.mjs",
+    "refresh:vitals": "node scripts/update-vitals-data.mjs",
     "start": "next start"
   },
   "dependencies": {
