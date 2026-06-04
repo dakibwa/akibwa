@@ -15,6 +15,8 @@ import {
   HeartPulse,
   Instagram,
   LockKeyhole,
+  Maximize2,
+  Minimize2,
   Pickaxe,
   Route,
   SearchCheck,
@@ -22,14 +24,13 @@ import {
   Sparkles,
   Stethoscope,
   Wallet,
-  X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
-import { coverCollisionPosts, personalProjects } from "@/components/site-data";
+import { chorusAppUrl, coverCollisionPosts, personalProjects, vitalsAppUrl } from "@/components/site-data";
 
 const remoteCoverCollisionDataUrl = (
   process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
@@ -177,6 +178,8 @@ function canUseLocalFrame() {
 function getProjectFrameUrl(project, isLocalHost) {
   if (project.embedUrl) return project.embedUrl;
   if (isLocalHost && project.localUrl) return project.localUrl;
+  if (project.visual === "chorus") return chorusAppUrl;
+  if (project.visual === "vitals") return vitalsAppUrl;
   return "";
 }
 
@@ -209,14 +212,6 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       </header>
     </>
   );
-
-  if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals")) {
-    return (
-      <Link href={project.fallbackHref} className={cardClass} prefetch>
-        {cardContent}
-      </Link>
-    );
-  }
 
   return (
     <button
@@ -586,6 +581,7 @@ function LiveProjectFrame({ project, frameUrl }) {
             src={frameUrl}
             title={`${project.title} live project`}
             className="live-frame"
+            allow="clipboard-read; clipboard-write"
             loading="lazy"
           />
         </div>
@@ -623,14 +619,30 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
           <h2 id={`${project.slug}-expanded-title`} className="project-expanded-accessible-title">
             {project.title}
           </h2>
-          <button
-            type="button"
-            className="project-expanded-close"
-            aria-label={`Close ${project.title}`}
-            onClick={onClose}
-          >
-            <X size={18} strokeWidth={1.9} />
-          </button>
+          <div className="project-expanded-actions" aria-label={`${project.title} view controls`}>
+            {project.fallbackHref && (
+              <Link
+                href={project.fallbackHref}
+                className="project-expanded-action project-expanded-extend"
+                aria-label={`Open ${project.title} full screen`}
+                title="Full screen"
+                prefetch
+              >
+                <Maximize2 size={17} strokeWidth={1.9} />
+                <span>Full screen</span>
+              </Link>
+            )}
+            <button
+              type="button"
+              className="project-expanded-action project-expanded-minimise"
+              aria-label={`Minimise ${project.title}`}
+              title="Minimise"
+              onClick={onClose}
+            >
+              <Minimize2 size={17} strokeWidth={1.9} />
+              <span>Minimise</span>
+            </button>
+          </div>
         </header>
         <div className="project-expanded-body">
           <ProjectExpandedContent project={project} frameUrl={frameUrl} />
@@ -658,11 +670,6 @@ export function PersonalPage() {
         (item) => item.slug === hash || item.aliases?.includes(hash)
       );
       if (project) {
-        if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals")) {
-          window.location.assign(project.fallbackHref);
-          return;
-        }
-
         setExpandedSlug(project.slug);
       } else {
         setExpandedSlug(null);

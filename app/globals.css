@@ -1801,21 +1801,37 @@ button {
   clip-path: inset(50%);
 }
 
-.project-expanded-close {
+.project-expanded-actions {
   position: absolute;
   top: 14px;
   right: 12px;
   z-index: 3;
-  display: inline-grid;
-  width: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-expanded-action {
+  display: inline-flex;
+  min-width: 40px;
   height: 40px;
-  place-items: center;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgba(7, 10, 14, 0.46);
+  padding: 0 12px;
   color: #fff;
   cursor: pointer;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
   transition:
     background 140ms ease,
     border-color 140ms ease,
@@ -1824,7 +1840,7 @@ button {
     box-shadow 140ms ease;
 }
 
-.project-expanded-close:hover {
+.project-expanded-action:hover {
   border-color: rgba(255, 255, 255, 0.58);
   background: rgba(255, 255, 255, 0.18);
   color: #fff;
@@ -1854,14 +1870,14 @@ button {
   font-size: 1.22rem;
 }
 
-.project-expanded-layer.is-static .project-expanded-close {
+.project-expanded-layer.is-static .project-expanded-action {
   border-color: rgba(16, 18, 23, 0.14);
   background: rgba(255, 255, 255, 0.72);
   color: var(--black);
   box-shadow: 0 12px 26px rgba(16, 18, 23, 0.12);
 }
 
-.project-expanded-layer.is-static .project-expanded-close:hover {
+.project-expanded-layer.is-static .project-expanded-action:hover {
   border-color: rgba(16, 18, 23, 0.26);
   background: #fff;
   color: var(--blue);
@@ -7781,14 +7797,24 @@ button {
 
   .project-expanded-toolbar {
     min-height: 62px;
-    padding: 0 48px 0 12px;
+    padding: 0 96px 0 12px;
   }
 
-  .project-expanded-close {
+  .project-expanded-actions {
     top: 10px;
     right: 10px;
+    gap: 8px;
+  }
+
+  .project-expanded-action {
     width: 36px;
+    min-width: 36px;
     height: 36px;
+    padding: 0;
+  }
+
+  .project-expanded-action span {
+    display: none;
   }
 
   .cover-collision-showcase.is-expanded {
