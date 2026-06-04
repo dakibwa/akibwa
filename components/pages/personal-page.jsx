@@ -589,7 +589,7 @@ function LiveProjectFrame({ project, frameUrl }) {
           </p>
           {project.fallbackHref && (
             <a href={project.fallbackHref}>
-              View public summary
+              Open on Akibwa
               <ArrowRight size={17} strokeWidth={1.8} />
             </a>
           )}

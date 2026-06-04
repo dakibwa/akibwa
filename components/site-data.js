@@ -3,8 +3,6 @@ import coverCollisionData from "@/data/cover-collision-data.json";
 export const contactEmail = "***REMOVED***";
 export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || "https://akibwa-chorus.dakibwa.workers.dev").trim();
 export const vitalsAppUrl = (process.env.NEXT_PUBLIC_VITALS_APP_URL || "").trim();
-const chorusAppIsConfigured = Boolean(chorusAppUrl);
-const vitalsAppIsConfigured = Boolean(vitalsAppUrl);
 
 export const areaTiles = [
   {
@@ -75,15 +73,10 @@ export const workProjects = [
       ["Reports", "Live"]
     ],
     rows: [
-      [
-        "The state",
-        chorusAppIsConfigured
-          ? "Live as a separate Chorus app; the public site links through to that app rather than duplicating it."
-          : "Built as a separate Chorus app; the public site keeps a preview until the live app URL is configured."
-      ],
+      ["The state", "Live at /chorus on akibwa.com, with Cloudflare running the dynamic app and refresh logic behind it."],
       ["What it does", featuredProjects[0].summary],
       ["The problem", featuredProjects[0].problem],
-      ["Public note", "The live dashboard remains a separate project environment, so the website should hand off to it instead of becoming a second copy."]
+      ["Public note", "Akibwa.com is the surface; Cloudflare handles credentials, scheduled refreshes, and API-backed runtime work."]
     ]
   },
   {
@@ -102,15 +95,10 @@ export const workProjects = [
       ["Output", "Website"]
     ],
     rows: [
-      [
-        "The state",
-        vitalsAppIsConfigured
-          ? "Live as a separate Vitals app; the public site links through to that app rather than duplicating it."
-          : "Prepared as a separate Vitals app handoff; the public site keeps a preview until the live app URL is configured."
-      ],
+      ["The state", "Live at /health on akibwa.com, with Cloudflare refreshing public aggregate health data in the background."],
       ["The data", "Aggregate health values can surface on the website; raw source exports and identifiers stay out of the repository."],
       ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
-      ["Public note", "The live dashboard should remain a separate project environment, so the website should hand off to it instead of becoming a second copy."]
+      ["Public note", "Akibwa.com is the review surface; Cloudflare can do the private refresh and API work without exposing raw records."]
     ]
   }
 ];
@@ -132,15 +120,13 @@ export const personalProjects = [
     dashboardImageWidth: 1672,
     dashboardImageHeight: 941,
     dashboardLabel: "Chorus",
-    dashboardStatus: chorusAppIsConfigured ? "Live app" : "Preview",
+    dashboardStatus: "Live on Akibwa",
     summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "chorus",
-    mode: chorusAppIsConfigured ? "embed" : "preview",
-    embedUrl: chorusAppIsConfigured ? chorusAppUrl : undefined,
-    externalHref: chorusAppIsConfigured ? chorusAppUrl : undefined,
+    mode: "preview",
     fallbackHref: "/chorus",
-    cta: chorusAppIsConfigured ? "Open live app" : "Open preview"
+    cta: "Open on Akibwa"
   },
   {
     number: "02",
@@ -154,15 +140,13 @@ export const personalProjects = [
     dashboardImageWidth: 1672,
     dashboardImageHeight: 941,
     dashboardLabel: "Health Dashboard",
-    dashboardStatus: vitalsAppIsConfigured ? "Live app" : "Preview",
+    dashboardStatus: "Live on Akibwa",
     visual: "vitals",
     summary: "Surfaces aggregate health signals for clearer review conversations.",
     tags: ["Health dashboard", "Source freshness", "Review prompts"],
-    mode: vitalsAppIsConfigured ? "embed" : "preview",
-    embedUrl: vitalsAppIsConfigured ? vitalsAppUrl : undefined,
-    externalHref: vitalsAppIsConfigured ? vitalsAppUrl : undefined,
+    mode: "preview",
     fallbackHref: "/health",
-    cta: vitalsAppIsConfigured ? "Open live app" : "Open preview"
+    cta: "Open on Akibwa"
   },
   {
     number: "03",
