@@ -629,7 +629,7 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
                 prefetch
               >
                 <Maximize2 size={17} strokeWidth={1.9} />
-                <span>Full screen</span>
+                <span className="project-expanded-action-label">Full screen</span>
               </Link>
             )}
             <button
@@ -640,7 +640,7 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
               onClick={onClose}
             >
               <Minimize2 size={17} strokeWidth={1.9} />
-              <span>Minimise</span>
+              <span className="project-expanded-action-label">Minimise</span>
             </button>
           </div>
         </header>

@@ -1699,7 +1699,7 @@ button {
   background:
     radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 42%),
     rgba(3, 4, 5, 0.68);
-  animation: projectOverlayIn 260ms ease both;
+  animation: projectOverlayIn 150ms ease-out both;
 }
 
 @supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
@@ -1733,18 +1733,18 @@ button {
     0 34px 110px rgba(0, 0, 0, 0.46),
     0 0 0 1px rgba(16, 18, 23, 0.04);
   transform-origin: 50% 48%;
-  animation: projectShellIn 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: projectShellIn 220ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
 }
 
 .project-expanded-toolbar {
   position: relative;
   display: grid;
-  min-height: 68px;
+  min-height: 60px;
   place-items: center;
   overflow: hidden;
   border-bottom: 1px solid rgba(16, 18, 23, 0.11);
   background: #080b12;
-  padding: 0 62px;
+  padding: 0 56px;
 }
 
 .project-expanded-toolbar::before,
@@ -1763,6 +1763,7 @@ button {
 }
 
 .project-expanded-toolbar::after {
+  background: linear-gradient(90deg, transparent 48%, rgba(3, 5, 8, 0.42));
   border-top: 1px solid rgba(255, 255, 255, 0.11);
   box-shadow:
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
@@ -1803,49 +1804,67 @@ button {
 
 .project-expanded-actions {
   position: absolute;
-  top: 14px;
+  top: 12px;
   right: 12px;
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(6, 8, 11, 0.48);
+  padding: 3px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  -webkit-backdrop-filter: blur(14px) saturate(0.94);
+  backdrop-filter: blur(14px) saturate(0.94);
 }
 
 .project-expanded-action {
   display: inline-flex;
-  min-width: 40px;
-  height: 40px;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: 8px;
-  background: rgba(7, 10, 14, 0.46);
-  padding: 0 12px;
-  color: #fff;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.86);
   cursor: pointer;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
   font: inherit;
-  font-size: 0.78rem;
-  font-weight: 650;
-  letter-spacing: 0;
-  line-height: 1;
   text-decoration: none;
-  white-space: nowrap;
   transition:
     background 140ms ease,
-    border-color 140ms ease,
     color 140ms ease,
-    transform 140ms ease,
-    box-shadow 140ms ease;
+    transform 140ms ease;
 }
 
 .project-expanded-action:hover {
-  border-color: rgba(255, 255, 255, 0.58);
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
-  transform: translateY(-1px);
+  transform: translateY(-0.5px);
+}
+
+.project-expanded-action:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.84);
+  outline-offset: 2px;
+}
+
+.project-expanded-action-label {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.project-expanded-action-label:not(:focus):not(:active) {
+  clip-path: inset(50%);
 }
 
 .project-expanded-body {
@@ -1865,21 +1884,27 @@ button {
     linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(16, 18, 23, 0.02));
 }
 
+.project-expanded-layer.is-static .project-expanded-toolbar::after {
+  background: linear-gradient(90deg, transparent 48%, rgba(255, 255, 255, 0.5));
+}
+
 .project-expanded-layer.is-static .project-expanded-banner span {
   max-width: calc(100% - 110px);
   font-size: 1.22rem;
 }
 
+.project-expanded-layer.is-static .project-expanded-actions {
+  border-color: rgba(16, 18, 23, 0.12);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 10px 24px rgba(16, 18, 23, 0.1);
+}
+
 .project-expanded-layer.is-static .project-expanded-action {
-  border-color: rgba(16, 18, 23, 0.14);
-  background: rgba(255, 255, 255, 0.72);
   color: var(--black);
-  box-shadow: 0 12px 26px rgba(16, 18, 23, 0.12);
 }
 
 .project-expanded-layer.is-static .project-expanded-action:hover {
-  border-color: rgba(16, 18, 23, 0.26);
-  background: #fff;
+  background: rgba(16, 18, 23, 0.08);
   color: var(--blue);
 }
 
@@ -2455,7 +2480,7 @@ button {
 @keyframes projectShellIn {
   from {
     opacity: 0;
-    transform: translateY(22px) scale(0.965);
+    transform: translateY(8px) scale(0.992);
   }
   to {
     opacity: 1;
@@ -7796,25 +7821,21 @@ button {
   }
 
   .project-expanded-toolbar {
-    min-height: 62px;
-    padding: 0 96px 0 12px;
+    min-height: 56px;
+    padding: 0 86px 0 12px;
   }
 
   .project-expanded-actions {
     top: 10px;
     right: 10px;
-    gap: 8px;
+    gap: 2px;
   }
 
   .project-expanded-action {
-    width: 36px;
-    min-width: 36px;
-    height: 36px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
     padding: 0;
-  }
-
-  .project-expanded-action span {
-    display: none;
   }
 
   .cover-collision-showcase.is-expanded {
