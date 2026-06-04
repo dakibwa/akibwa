@@ -1,64 +1,64 @@
 {
-  "snapshotDate": "2026-06-03",
-  "generatedAt": "2026-06-03T21:31:24.640Z",
+  "snapshotDate": "2026-06-04",
+  "generatedAt": "2026-06-04T00:03:26.509Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21786,
+    "totalScrobbles": 21796,
     "artistCount": 1978,
     "albumCount": 2869,
-    "trackCount": 6236,
+    "trackCount": 6237,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Blackbox Life Recorder 20 [Ambient 760]",
-    "artist": "Aphex Twin",
-    "album": "Blackbox Life Recorder 21f / in a room7 F760",
-    "timeLabel": "3 hr ago",
-    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01f671c572df4a0d351f219e4b06b03d.jpg"
+    "title": "Arriving",
+    "artist": "Jon Hopkins",
+    "album": "Music for Psychedelic Therapy",
+    "timeLabel": "24 min ago",
+    "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
   },
   "recentTracks": [
     {
-      "title": "Blackbox Life Recorder 20 [Ambient 760]",
-      "artist": "Aphex Twin",
-      "album": "Blackbox Life Recorder 21f / in a room7 F760",
-      "timeLabel": "3 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/01f671c572df4a0d351f219e4b06b03d.jpg"
+      "title": "Arriving",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "24 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Archangel",
-      "artist": "Burial",
-      "album": "Untrue",
-      "timeLabel": "3 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/2c7332bc861d406a80c13f0e69d4ba7f.png"
+      "title": "Ascending, Dawn Sky",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "34 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Kid A",
-      "artist": "Radiohead",
-      "album": "KID A MNESIA",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
+      "title": "Deep in the Glowing Heart",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "42 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Everything in Its Right Place",
-      "artist": "Radiohead",
-      "album": "KID A MNESIA",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/16773328226042fbcf74dc8815f57aa3.jpg"
+      "title": "Love Flows over Us in Prismatic Waves",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "49 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Sweet Spot",
-      "artist": "Ed O'Brien",
-      "album": "Blue Morpho",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
+      "title": "Tayos Caves, Ecuador III",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "57 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
-      "title": "Teachers",
-      "artist": "Ed O'Brien",
-      "album": "Blue Morpho",
-      "timeLabel": "8 hr ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/6ec6416de6ce5fb1832cba7d2ec2df6d.jpg"
+      "title": "Tayos Caves, Ecuador II",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "1 hr ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     }
   ],
   "recentRuns": [
@@ -210,7 +210,7 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2623,
+      "plays": 2631,
       "initials": "JH",
       "imageUrl": null
     },
@@ -357,7 +357,7 @@
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2611,
+      "plays": 2619,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
@@ -503,49 +503,49 @@
     {
       "title": "Tayos Caves, Ecuador I",
       "artist": "Jon Hopkins",
-      "plays": 352,
+      "plays": 353,
       "imageUrl": null
     },
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 336,
+      "plays": 337,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
-      "plays": 326,
+      "plays": 327,
       "imageUrl": null
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
-      "plays": 325,
+      "plays": 326,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
-      "plays": 315,
+      "plays": 316,
       "imageUrl": null
     },
     {
       "title": "Ascending, Dawn Sky",
       "artist": "Jon Hopkins",
-      "plays": 311,
+      "plays": 312,
       "imageUrl": null
     },
     {
       "title": "Deep in the Glowing Heart",
       "artist": "Jon Hopkins",
-      "plays": 310,
+      "plays": 311,
       "imageUrl": null
     },
     {
       "title": "Arriving",
       "artist": "Jon Hopkins",
-      "plays": 295,
+      "plays": 296,
       "imageUrl": null
     },
     {
