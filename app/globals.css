@@ -1734,6 +1734,12 @@ button {
     0 0 0 1px rgba(16, 18, 23, 0.04);
   transform-origin: 50% 48%;
   animation: projectShellIn 220ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  transition:
+    width 130ms cubic-bezier(0.2, 0.85, 0.25, 1),
+    height 130ms cubic-bezier(0.2, 0.85, 0.25, 1),
+    border-color 130ms ease,
+    border-radius 130ms ease,
+    box-shadow 130ms ease;
 }
 
 .project-expanded-toolbar {
@@ -1872,6 +1878,40 @@ button {
   overflow: auto;
   overscroll-behavior: contain;
   background: #fff;
+}
+
+.project-expanded-layer.is-fullscreen {
+  place-items: stretch;
+  padding: 0;
+  background: #fff;
+}
+
+@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+  .project-expanded-layer.is-fullscreen {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.project-expanded-layer.is-fullscreen .project-expanded-backdrop {
+  display: none;
+}
+
+.project-expanded-layer.is-fullscreen .project-expanded-shell {
+  width: 100vw;
+  height: 100dvh;
+  border-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.project-expanded-layer.is-fullscreen .project-expanded-toolbar {
+  min-height: 54px;
+}
+
+.project-expanded-layer.is-fullscreen .project-expanded-actions {
+  top: 8px;
+  right: 10px;
 }
 
 .project-expanded-layer.is-static .project-expanded-toolbar {
@@ -7836,6 +7876,17 @@ button {
     min-width: 32px;
     height: 32px;
     padding: 0;
+  }
+
+  .project-expanded-layer.is-fullscreen .project-expanded-shell {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .project-expanded-layer.is-fullscreen .project-expanded-toolbar {
+    min-height: 54px;
+    padding-right: 54px;
   }
 
   .cover-collision-showcase.is-expanded {

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowRight,
   BadgeCheck,
@@ -605,9 +604,11 @@ function LiveProjectFrame({ project, frameUrl }) {
 }
 
 function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
   return (
     <div
-      className={`project-expanded-layer is-${project.visual ?? "static"}`}
+      className={`project-expanded-layer is-${project.visual ?? "static"} ${isFullScreen ? "is-fullscreen" : ""}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby={`${project.slug}-expanded-title`}
@@ -620,17 +621,17 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
             {project.title}
           </h2>
           <div className="project-expanded-actions" aria-label={`${project.title} view controls`}>
-            {project.fallbackHref && (
-              <Link
-                href={project.fallbackHref}
+            {!isFullScreen && (
+              <button
+                type="button"
                 className="project-expanded-action project-expanded-extend"
-                aria-label={`Open ${project.title} full screen`}
+                aria-label={`Expand ${project.title} to full screen`}
                 title="Full screen"
-                prefetch
+                onClick={() => setIsFullScreen(true)}
               >
                 <Maximize2 size={17} strokeWidth={1.9} />
                 <span className="project-expanded-action-label">Full screen</span>
-              </Link>
+              </button>
             )}
             <button
               type="button"
