@@ -1,63 +1,70 @@
 {
   "snapshotDate": "2026-06-04",
-  "generatedAt": "2026-06-04T00:03:26.509Z",
+  "generatedAt": "2026-06-04T05:09:41.286Z",
   "source": "Last.fm",
   "username": "akibwa",
   "summary": {
-    "totalScrobbles": 21796,
+    "totalScrobbles": 21801,
     "artistCount": 1978,
     "albumCount": 2869,
     "trackCount": 6237,
     "accountAgeLabel": "1 year"
   },
   "nowPlaying": {
-    "title": "Arriving",
+    "title": "Deep in the Glowing Heart",
     "artist": "Jon Hopkins",
     "album": "Music for Psychedelic Therapy",
-    "timeLabel": "24 min ago",
+    "timeLabel": "Now",
     "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
   },
   "recentTracks": [
     {
-      "title": "Arriving",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "24 min ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
-    },
-    {
-      "title": "Ascending, Dawn Sky",
-      "artist": "Jon Hopkins",
-      "album": "Music for Psychedelic Therapy",
-      "timeLabel": "34 min ago",
-      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
-    },
-    {
       "title": "Deep in the Glowing Heart",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "42 min ago",
+      "timeLabel": "Now",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "49 min ago",
+      "timeLabel": "12 min ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "57 min ago",
+      "timeLabel": "20 min ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
       "album": "Music for Psychedelic Therapy",
-      "timeLabel": "1 hr ago",
+      "timeLabel": "25 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Tayos Caves, Ecuador I",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "31 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Welcome",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "38 min ago",
+      "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
+    },
+    {
+      "title": "Arriving",
+      "artist": "Jon Hopkins",
+      "album": "Music for Psychedelic Therapy",
+      "timeLabel": "6 hr ago",
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     }
   ],
@@ -210,7 +217,7 @@
   "topArtists": [
     {
       "name": "Jon Hopkins",
-      "plays": 2631,
+      "plays": 2636,
       "initials": "JH",
       "imageUrl": null
     },
@@ -357,7 +364,7 @@
     {
       "title": "Music for Psychedelic Therapy",
       "artist": "Jon Hopkins",
-      "plays": 2619,
+      "plays": 2624,
       "imageUrl": "https://lastfm.freetls.fastly.net/i/u/300x300/554a9bd7aada535645c5b7574b197ecc.jpg"
     },
     {
@@ -503,31 +510,31 @@
     {
       "title": "Tayos Caves, Ecuador I",
       "artist": "Jon Hopkins",
-      "plays": 353,
+      "plays": 354,
       "imageUrl": null
     },
     {
       "title": "Welcome",
       "artist": "Jon Hopkins",
-      "plays": 337,
+      "plays": 338,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador II",
       "artist": "Jon Hopkins",
-      "plays": 327,
+      "plays": 328,
       "imageUrl": null
     },
     {
       "title": "Love Flows over Us in Prismatic Waves",
       "artist": "Jon Hopkins",
-      "plays": 326,
+      "plays": 327,
       "imageUrl": null
     },
     {
       "title": "Tayos Caves, Ecuador III",
       "artist": "Jon Hopkins",
-      "plays": 316,
+      "plays": 317,
       "imageUrl": null
     },
     {
