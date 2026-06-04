@@ -3,7 +3,7 @@ import { SiteShell } from "@/components/site-shell";
 
 export const metadata = {
   title: {
-    default: "Akibwa | Daniel",
+    default: "Akibwa",
     template: "Akibwa | %s"
   },
   description:
