@@ -23,6 +23,7 @@ import {
   Sparkles,
   Stethoscope,
   Wallet,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
@@ -605,6 +606,10 @@ function LiveProjectFrame({ project, frameUrl }) {
 
 function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const secondaryLabel = isFullScreen ? "Minimise" : "Close";
+  const secondaryTitle = isFullScreen ? "Minimise" : "Close";
+  const SecondaryIcon = isFullScreen ? Minimize2 : X;
+  const handleSecondaryAction = isFullScreen ? () => setIsFullScreen(false) : onClose;
 
   return (
     <div
@@ -635,13 +640,13 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
             )}
             <button
               type="button"
-              className="project-expanded-action project-expanded-minimise"
-              aria-label={`Minimise ${project.title}`}
-              title="Minimise"
-              onClick={onClose}
+              className={`project-expanded-action project-expanded-minimise ${isFullScreen ? "is-minimise" : "is-close"}`}
+              aria-label={`${secondaryLabel} ${project.title}`}
+              title={secondaryTitle}
+              onClick={handleSecondaryAction}
             >
-              <Minimize2 size={17} strokeWidth={1.9} />
-              <span className="project-expanded-action-label">Minimise</span>
+              <SecondaryIcon size={17} strokeWidth={1.9} />
+              <span className="project-expanded-action-label">{secondaryLabel}</span>
             </button>
           </div>
         </header>
