@@ -4358,33 +4358,97 @@ button {
   margin: 0;
 }
 
-/* Chorus case-study preview */
-.chorus-page {
+.project-surface-page {
   min-height: 100vh;
   background: #fff;
 }
 
+.project-surface-nav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: minmax(92px, 1fr) auto minmax(92px, 1fr);
+  min-height: 58px;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid rgba(16, 18, 23, 0.09);
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0 20px;
+  backdrop-filter: blur(18px);
+}
+
+.project-surface-back,
+.project-surface-brand {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  border-radius: var(--radius);
+  color: var(--black);
+  font-size: 0.86rem;
+  font-weight: 620;
+}
+
+.project-surface-back {
+  justify-self: start;
+  gap: 7px;
+}
+
+.project-surface-back:hover,
+.project-surface-brand:hover {
+  color: var(--blue);
+}
+
+.project-surface-brand {
+  justify-self: center;
+  letter-spacing: 0.12em;
+}
+
+.project-surface-title {
+  justify-self: end;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 620;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .project-surface-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 0 14px;
+  }
+
+  .project-surface-brand {
+    display: none;
+  }
+
+  .project-surface-title {
+    font-size: 0.72rem;
+  }
+}
+
+/* Chorus case-study preview */
 .chorus-app-shell {
   overflow: hidden;
-  min-height: 100vh;
-  height: 100vh;
+  min-height: calc(100vh - 58px);
+  height: calc(100vh - 58px);
   background: #fff;
 }
 
 .chorus-app-frame {
   display: block;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 58px);
   border: 0;
   background: #fff;
 }
 
 @supports (height: 100dvh) {
-  .chorus-page,
   .chorus-app-shell,
   .chorus-app-frame {
-    min-height: 100dvh;
-    height: 100dvh;
+    min-height: calc(100dvh - 58px);
+    height: calc(100dvh - 58px);
   }
 }
 
@@ -5546,24 +5610,17 @@ button {
   zoom: 0.72;
 }
 
-/* Health dashboard case-study preview */
-.health-page {
-  min-height: calc(100vh - 68px);
-  background: #fff;
-  padding-bottom: 34px;
-}
-
 .vitals-app-shell {
   overflow: hidden;
-  min-height: 100vh;
-  height: 100vh;
+  min-height: calc(100vh - 58px);
+  height: calc(100vh - 58px);
   background: #fff;
 }
 
 .vitals-app-frame {
   display: block;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 58px);
   border: 0;
   background: #fff;
 }
@@ -5571,8 +5628,8 @@ button {
 @supports (height: 100dvh) {
   .vitals-app-shell,
   .vitals-app-frame {
-    min-height: 100dvh;
-    height: 100dvh;
+    min-height: calc(100dvh - 58px);
+    height: calc(100dvh - 58px);
   }
 }
 

@@ -1,3 +1,4 @@
+import { ProjectSurfaceNav } from "@/components/project-surface-nav";
 import { chorusAppUrl } from "@/components/site-data";
 
 export const metadata = {
@@ -7,7 +8,8 @@ export const metadata = {
 
 export default function ChorusPage() {
   return (
-    <section className="chorus-page" aria-label="Chorus">
+    <section className="project-surface-page chorus-page" aria-label="Chorus">
+      <ProjectSurfaceNav title="Chorus" />
       <div className="chorus-app-shell">
         <iframe
           src={chorusAppUrl}

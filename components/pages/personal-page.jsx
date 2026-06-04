@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowRight,
   BadgeCheck,
@@ -208,6 +209,14 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       </header>
     </>
   );
+
+  if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals")) {
+    return (
+      <Link href={project.fallbackHref} className={cardClass} prefetch>
+        {cardContent}
+      </Link>
+    );
+  }
 
   return (
     <button
@@ -649,6 +658,11 @@ export function PersonalPage() {
         (item) => item.slug === hash || item.aliases?.includes(hash)
       );
       if (project) {
+        if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals")) {
+          window.location.assign(project.fallbackHref);
+          return;
+        }
+
         setExpandedSlug(project.slug);
       } else {
         setExpandedSlug(null);
