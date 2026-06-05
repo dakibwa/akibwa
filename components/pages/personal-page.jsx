@@ -376,10 +376,13 @@ function CoverCollisionPanel({ project, posts, galleryOnly = false }) {
                     : "(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
                 }
               />
+              {galleryOnly && (
+                <span className="cover-collision-post-caption" aria-hidden="true">
+                  <strong>{post.title}</strong>
+                </span>
+              )}
             </span>
-            {galleryOnly ? (
-              <strong className="cover-collision-post-caption">{post.title}</strong>
-            ) : (
+            {!galleryOnly && (
               <>
                 <span>No. {post.number}</span>
                 <strong>{post.title}</strong>
