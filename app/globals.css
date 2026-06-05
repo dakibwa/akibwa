@@ -7236,24 +7236,19 @@ button {
 
 .vitals-ai-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 450px;
-  gap: 0;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 226px;
   margin-bottom: 10px;
 }
 
-.vitals-hero-landscape,
-.vitals-quote-card {
+.vitals-hero-landscape {
   position: relative;
   overflow: hidden;
   background-position: center;
   background-size: cover;
-}
-
-.vitals-hero-landscape {
   display: grid;
   align-content: start;
-  border-radius: 16px 0 0 16px;
+  border-radius: 16px;
   padding: 17px 32px;
 }
 
@@ -7360,53 +7355,6 @@ button {
 
 .vitals-hero-metrics svg {
   color: #255f54;
-}
-
-.vitals-quote-card {
-  display: grid;
-  align-content: center;
-  min-height: 226px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 16px;
-  background-position: right center;
-  margin-left: -1px;
-  padding: 24px 30px;
-  color: #fff;
-}
-
-.vitals-quote-card::before {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 78% 70%, rgba(238, 220, 174, 0.26), transparent 24%),
-    linear-gradient(120deg, rgba(0, 64, 54, 0.98), rgba(0, 74, 63, 0.86));
-  content: "";
-}
-
-.vitals-quote-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.vitals-quote-card > span {
-  color: rgba(255, 255, 255, 0.44);
-  font-size: 3.4rem;
-  font-weight: 800;
-  line-height: 0.65;
-}
-
-.vitals-quote-card p {
-  margin: 10px 0 12px;
-  font-size: 1.12rem;
-  font-weight: 660;
-  line-height: 1.52;
-}
-
-.vitals-quote-card em {
-  color: rgba(250, 243, 220, 0.86);
-  font-family: Georgia, serif;
-  font-size: 1.34rem;
-  font-style: italic;
 }
 
 .vitals-ai-grid {
@@ -8483,15 +8431,6 @@ button {
 
   .vitals-ai-hero {
     grid-template-columns: 1fr;
-  }
-
-  .vitals-hero-landscape,
-  .vitals-quote-card {
-    border-radius: 16px;
-  }
-
-  .vitals-quote-card {
-    display: none;
   }
 
   .vitals-score-card,
