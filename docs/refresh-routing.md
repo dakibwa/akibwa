@@ -12,7 +12,7 @@ Dynamic project apps should be framed, rendered, or progressively rebuilt inside
 | --- | --- | --- | --- | --- | --- |
 | Vitals | `akibwa-vitals-refresh` | `30 7 * * *` | `https://akibwa-vitals-refresh.dakibwa.workers.dev/vitals` | `https://akibwa-vitals-refresh.dakibwa.workers.dev/status` | WHOOP credentials live in Cloudflare secrets; only aggregate public health data is served. |
 | Chorus | `akibwa-chorus-refresh` | `17 * * * *` | `https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus` | `https://akibwa-chorus-refresh.dakibwa.workers.dev/status` | Last.fm credentials live in Cloudflare secrets. Strava run pairing is supported when Strava secrets are present; otherwise it keeps the public seed pairings. |
-| Cover Collision | `akibwa-cover-collision-refresh` | `42 6 * * *` | `https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision` | `https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status` | Uses `data/cover-collision-data.json` until Instagram API credentials are configured. |
+| Cover Collision | `akibwa-cover-collision-refresh` | `42 6 * * *` | `https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision` | `https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status` | Uses Instagram API credentials when present, the public Instagram profile endpoint when absent, and `data/cover-collision-data.json` only as the final public seed fallback. |
 
 ## Pattern For New Refreshes
 

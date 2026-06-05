@@ -258,11 +258,32 @@ function isCoverCollisionData(data) {
   return data?.profileUrl && Array.isArray(data?.posts);
 }
 
+function latestCoverCollisionDate(data) {
+  return data?.posts?.[0]?.date || data?.snapshotDate || "";
+}
+
+function preferredCoverCollisionData(remoteData, fallbackData) {
+  if (!isCoverCollisionData(remoteData)) return fallbackData;
+
+  const remoteDate = latestCoverCollisionDate(remoteData);
+  const fallbackDate = latestCoverCollisionDate(fallbackData);
+  if (remoteDate && fallbackDate && remoteDate < fallbackDate) return fallbackData;
+
+  const remotePosts = remoteData.posts.length ? remoteData.posts : fallbackData.posts;
+  if (remoteDate === fallbackDate && remotePosts.length < fallbackData.posts.length) return fallbackData;
+
+  return {
+    profileUrl: remoteData.profileUrl || fallbackData.profileUrl,
+    posts: remotePosts
+  };
+}
+
 function useCoverCollisionData(dataUrl = remoteCoverCollisionDataUrl) {
-  const [runtimeData, setRuntimeData] = useState({
+  const fallbackData = {
     profileUrl: "https://www.instagram.com/dakibwa/",
     posts: coverCollisionPosts
-  });
+  };
+  const [runtimeData, setRuntimeData] = useState(fallbackData);
 
   useEffect(() => {
     const url = String(dataUrl || "").trim();
@@ -274,10 +295,7 @@ function useCoverCollisionData(dataUrl = remoteCoverCollisionDataUrl) {
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
         if (!cancelled && isCoverCollisionData(data)) {
-          setRuntimeData({
-            profileUrl: data.profileUrl,
-            posts: data.posts.length ? data.posts : coverCollisionPosts
-          });
+          setRuntimeData(preferredCoverCollisionData(data, fallbackData));
         }
       })
       .catch(() => {});

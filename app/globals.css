@@ -2096,8 +2096,9 @@ button {
   font-size: clamp(0.64rem, 0.78vw, 0.76rem);
   font-weight: 560;
   line-height: 1.18;
+  min-height: calc(3 * 1.18em);
   text-align: center;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
 }
 
 .project-expanded-frame,

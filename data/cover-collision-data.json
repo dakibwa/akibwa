@@ -1,24 +1,32 @@
 {
-  "generatedAt": "2026-06-04T00:00:00.000Z",
-  "snapshotDate": "2026-06-04",
+  "generatedAt": "2026-06-05T09:38:00.000Z",
+  "snapshotDate": "2026-06-05",
   "source": "static-seed",
   "profileUrl": "https://www.instagram.com/dakibwa/",
   "posts": [
     {
-      "number": "08",
+      "number": "10",
+      "title": "Ants from Up There × Man Alive",
+      "date": "2026-06-04",
+      "href": "https://www.instagram.com/p/DZKzch9CCpO/",
+      "image": "/project-images/cover-collision/cover-collision-10.jpg",
+      "alt": "Cover Collision no. 10 combining Ants from Up There and Man Alive album artwork"
+    },
+    {
+      "number": "09",
       "title": "Debonair × Turtleneck & Chain",
       "date": "2026-05-08",
       "href": "https://www.instagram.com/p/DYFYB5XiEIM/",
       "image": "/project-images/cover-collision/cover-collision-01.jpg",
-      "alt": "Cover Collision no. 08 combining Debonair and Turtleneck & Chain album artwork"
+      "alt": "Cover Collision no. 09 combining Debonair and Turtleneck & Chain album artwork"
     },
     {
-      "number": "07",
+      "number": "08",
       "title": "Bright Green Field × The Car",
       "date": "2026-05-07",
       "href": "https://www.instagram.com/p/DYCshR1COSH/",
       "image": "/project-images/cover-collision/cover-collision-02.jpg",
-      "alt": "Cover Collision no. 07 combining Bright Green Field and The Car album artwork"
+      "alt": "Cover Collision no. 08 combining Bright Green Field and The Car album artwork"
     },
     {
       "number": "07",

@@ -9,14 +9,16 @@ const rows = await Promise.all(
     try {
       const response = await fetch(url, { cache: "no-store" });
       const data = await response.json();
+      const degraded = isDegradedRefresh(name, data);
 
       return {
         name,
-        ok: Boolean(response.ok && data.ok),
+        ok: Boolean(response.ok && data.ok && !degraded),
         refreshedAt: data.refreshedAt || null,
         source: data.source || data.mode || null,
+        degraded,
         summary: summarize(name, data),
-        error: data.error || null
+        error: data.error || (degraded ? "Refresh is serving fallback seed data instead of live source data." : null)
       };
     } catch (error) {
       return {
@@ -32,6 +34,10 @@ const rows = await Promise.all(
 );
 
 console.log(JSON.stringify(rows, null, 2));
+
+if (rows.some((row) => !row.ok)) {
+  process.exitCode = 1;
+}
 
 function summarize(name, data) {
   if (name === "Vitals") {
@@ -56,4 +62,11 @@ function summarize(name, data) {
     latestPost: data.latestPost || null,
     credentialsConfigured: Boolean(data.credentialsConfigured)
   };
+}
+
+function isDegradedRefresh(name, data) {
+  if (name !== "Cover Collision") return false;
+
+  const source = String(data.source || "").toLowerCase();
+  return source.includes("seed") || (source.includes("fallback") && !source.includes("public-profile"));
 }
