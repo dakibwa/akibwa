@@ -7149,6 +7149,77 @@ button {
   background: #e63832;
 }
 
+.vitals-hero-topbar {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.vitals-hero-topbar .vitals-ai-title {
+  min-width: 134px;
+}
+
+.vitals-hero-topbar .vitals-ai-title h1 {
+  font-size: 1.5rem;
+}
+
+.vitals-hero-topbar .vitals-ai-title p {
+  margin-top: 6px;
+  color: #3f5550;
+  font-size: 0.82rem;
+  font-weight: 640;
+}
+
+.vitals-hero-topbar .vitals-ai-sources,
+.vitals-hero-topbar .vitals-ai-controls {
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.vitals-hero-topbar .vitals-ai-sources::-webkit-scrollbar,
+.vitals-hero-topbar .vitals-ai-controls::-webkit-scrollbar {
+  display: none;
+}
+
+.vitals-hero-topbar .vitals-ai-sources {
+  justify-content: flex-start;
+  gap: 6px;
+  padding-top: 0;
+}
+
+.vitals-hero-topbar .vitals-ai-controls {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.vitals-hero-topbar .vitals-ai-source-pill,
+.vitals-hero-topbar .vitals-ai-source-more {
+  padding: 0 11px;
+  font-size: 0.78rem;
+}
+
+.vitals-hero-topbar .vitals-ai-date {
+  min-width: 244px;
+}
+
+.vitals-hero-topbar .vitals-ai-date span {
+  min-width: 108px;
+  font-size: 0.84rem;
+}
+
+.vitals-hero-topbar .vitals-ai-ranges button {
+  min-width: 52px;
+}
+
+.vitals-hero-topbar .vitals-ai-bell {
+  width: 40px;
+}
+
 .vitals-ai-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 450px;
@@ -7217,7 +7288,7 @@ button {
   border: 1px solid rgba(38, 55, 49, 0.12);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.82);
-  margin-top: 12px;
+  margin-top: 18px;
   box-shadow: 0 16px 38px rgba(31, 42, 36, 0.15);
   backdrop-filter: blur(10px);
 }
@@ -8448,6 +8519,21 @@ button {
 
   .vitals-ai-title h1 {
     font-size: 1.54rem;
+  }
+
+  .vitals-hero-topbar {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .vitals-hero-topbar .vitals-ai-title {
+    min-width: 0;
+  }
+
+  .vitals-hero-topbar .vitals-ai-controls {
+    width: 100%;
+    justify-content: stretch;
   }
 
   .vitals-ai-source-pill,
