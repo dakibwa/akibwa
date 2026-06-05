@@ -186,6 +186,10 @@ function getProjectFrameUrl(project, isLocalHost) {
   return "";
 }
 
+function shouldOpenProjectRoute(project) {
+  return project.visual === "vitals" && Boolean(project.fallbackHref);
+}
+
 function PersonalProjectVisual({ project }) {
   return <PersonalProjectArt project={project} className="personal-project-card-art" />;
 }
@@ -813,6 +817,11 @@ export function PersonalPage() {
         (item) => item.slug === hash || item.aliases?.includes(hash)
       );
       if (project) {
+        if (shouldOpenProjectRoute(project)) {
+          window.location.assign(project.fallbackHref);
+          return;
+        }
+
         const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
         if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals") && !hasInlineFrame) {
           window.location.assign(project.fallbackHref);
@@ -885,6 +894,11 @@ export function PersonalPage() {
   }, [closeExpandedProject, overlayProject]);
 
   const selectProject = (project) => {
+    if (shouldOpenProjectRoute(project)) {
+      window.location.assign(project.fallbackHref);
+      return;
+    }
+
     setIsOverlayMaximized(false);
     setExpandedSlug(project.slug);
     window.history.replaceState(null, "", `#${project.slug}`);
