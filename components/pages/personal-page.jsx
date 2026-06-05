@@ -25,7 +25,7 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
@@ -643,6 +643,9 @@ function LiveProjectFrame({ project, frameUrl }) {
 
 function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onClose, onToggleMaximized }) {
   const [contentReady, setContentReady] = useState(false);
+  const shellRef = useRef(null);
+  const shellResizeAnimationRef = useRef(null);
+  const shellResizeStartRef = useRef(null);
 
   useEffect(() => {
     if (!isVisible) return undefined;
@@ -663,6 +666,84 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
     };
   }, [isVisible, project.slug]);
 
+  useLayoutEffect(() => {
+    const shell = shellRef.current;
+    const startRect = shellResizeStartRef.current;
+    shellResizeStartRef.current = null;
+
+    if (!shell || !startRect || !isVisible) return undefined;
+
+    const endRect = shell.getBoundingClientRect();
+    const deltaX = startRect.left + startRect.width / 2 - (endRect.left + endRect.width / 2);
+    const deltaY = startRect.top + startRect.height / 2 - (endRect.top + endRect.height / 2);
+    const scaleX = startRect.width / endRect.width;
+    const scaleY = startRect.height / endRect.height;
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const hasMeaningfulChange =
+      Math.abs(deltaX) > 1 ||
+      Math.abs(deltaY) > 1 ||
+      Math.abs(1 - scaleX) > 0.01 ||
+      Math.abs(1 - scaleY) > 0.01;
+
+    shellResizeAnimationRef.current?.();
+    shellResizeAnimationRef.current = null;
+
+    if (prefersReducedMotion || !hasMeaningfulChange) return undefined;
+
+    const previousTransition = shell.style.transition;
+    const previousTransform = shell.style.transform;
+    const previousBorderRadius = shell.style.borderRadius;
+    const previousWillChange = shell.style.willChange;
+    let frameId;
+    let timerId;
+
+    const cleanup = () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(timerId);
+      shell.style.transition = previousTransition;
+      shell.style.transform = previousTransform;
+      shell.style.borderRadius = previousBorderRadius;
+      shell.style.willChange = previousWillChange;
+      if (shellResizeAnimationRef.current === cleanup) {
+        shellResizeAnimationRef.current = null;
+      }
+    };
+
+    shellResizeAnimationRef.current = cleanup;
+    shell.style.transition = "none";
+    shell.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scaleX}, ${scaleY})`;
+    shell.style.borderRadius = isMaximized ? "12px" : "10px";
+    shell.style.willChange = "transform, border-radius";
+    shell.getBoundingClientRect();
+
+    frameId = window.requestAnimationFrame(() => {
+      shell.style.transition =
+        "transform 520ms cubic-bezier(0.4, 0, 0.2, 1), border-radius 520ms cubic-bezier(0.4, 0, 0.2, 1)";
+      shell.style.transform = "translate3d(0, 0, 0) scale(1, 1)";
+      shell.style.borderRadius = isMaximized ? "10px" : "12px";
+      timerId = window.setTimeout(cleanup, 560);
+    });
+
+    return () => {
+      cleanup();
+    };
+  }, [isMaximized, isVisible]);
+
+  useEffect(() => {
+    return () => {
+      shellResizeAnimationRef.current?.();
+    };
+  }, []);
+
+  const toggleMaximized = useCallback(() => {
+    if (shellRef.current) {
+      shellResizeStartRef.current = shellRef.current.getBoundingClientRect();
+      shellResizeAnimationRef.current?.();
+      shellResizeAnimationRef.current = null;
+    }
+    onToggleMaximized();
+  }, [onToggleMaximized]);
+
   return (
     <div
       className={`project-expanded-layer is-${project.visual ?? "static"} ${isVisible ? "is-open" : "is-closing"} ${
@@ -673,7 +754,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
       aria-labelledby={`${project.slug}-expanded-title`}
     >
       <div className="project-expanded-backdrop" onClick={onClose} aria-hidden="true" />
-      <article className="project-expanded-shell">
+      <article className="project-expanded-shell" ref={shellRef}>
         <header className="project-expanded-toolbar">
           <ProjectExpandedBanner project={project} />
           <h2 id={`${project.slug}-expanded-title`} className="project-expanded-accessible-title">
@@ -685,7 +766,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
               className="project-expanded-maximize"
               aria-label={`${isMaximized ? "Minimize" : "Maximize"} ${project.title}`}
               aria-pressed={isMaximized}
-              onClick={onToggleMaximized}
+              onClick={toggleMaximized}
             >
               {isMaximized ? <Minimize2 size={17} strokeWidth={1.9} /> : <Maximize2 size={17} strokeWidth={1.9} />}
             </button>
