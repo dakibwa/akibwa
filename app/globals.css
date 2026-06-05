@@ -7415,51 +7415,103 @@ button {
 }
 
 .vitals-ai-ring {
+  --ring-accent: #168872;
+  --ring-accent-strong: #04715f;
+  --ring-accent-soft: #73d1bf;
+  --ring-track: rgba(17, 33, 29, 0.09);
+  --ring-stroke: clamp(8px, calc(var(--ring-size) * 0.105), 12px);
+  isolation: isolate;
   position: relative;
   display: grid;
   width: var(--ring-size);
   height: var(--ring-size);
+  align-self: center;
+  justify-self: center;
   place-items: center;
+  border-radius: 999px;
 }
 
-.vitals-ai-ring svg {
+.vitals-ai-ring.blue {
+  --ring-accent: #2097d7;
+  --ring-accent-strong: #0e78b9;
+  --ring-accent-soft: #8ed8f4;
+  --ring-track: rgba(18, 92, 130, 0.1);
+}
+
+.vitals-ai-ring-orbit,
+.vitals-ai-ring-orbit::before,
+.vitals-ai-ring-orbit::after {
+  position: absolute;
+  border-radius: 999px;
+  content: "";
+}
+
+.vitals-ai-ring-orbit {
+  inset: 0;
+  overflow: hidden;
+  background:
+    conic-gradient(
+      from var(--ring-start),
+      var(--ring-accent-soft) 0deg,
+      var(--ring-accent) var(--ring-progress-mid),
+      var(--ring-accent-strong) var(--ring-progress),
+      var(--ring-track) var(--ring-progress) 360deg
+    );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -8px 16px rgba(16, 42, 35, 0.08),
+    0 9px 24px rgba(18, 81, 69, 0.12);
+}
+
+.vitals-ai-ring-orbit::before {
+  inset: var(--ring-stroke);
+  z-index: 1;
+  border: 1px solid rgba(25, 47, 40, 0.06);
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.98) 0 18%, rgba(255, 255, 255, 0.93) 38%, rgba(248, 250, 247, 0.98) 72%, #eef3ee 100%),
+    #f8faf6;
+  box-shadow:
+    inset 0 1px 7px rgba(255, 255, 255, 0.92),
+    inset 0 -8px 18px rgba(20, 47, 40, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.62);
+}
+
+.vitals-ai-ring-orbit::after {
+  inset: 0;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.64), transparent 17%),
+    conic-gradient(from -35deg, transparent 0deg 24deg, rgba(255, 255, 255, 0.5) 42deg, transparent 66deg 360deg);
+  opacity: 0.52;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--ring-stroke) - 1px), #000 calc(100% - var(--ring-stroke)));
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--ring-stroke) - 1px), #000 calc(100% - var(--ring-stroke)));
+  mix-blend-mode: screen;
+}
+
+.vitals-ai-ring-copy {
   position: absolute;
   inset: 0;
-  transform: rotate(-90deg);
-}
-
-.vitals-ai-ring .track {
-  fill: none;
-  stroke: rgba(24, 42, 36, 0.1);
-  stroke-width: 10;
-}
-
-.vitals-ai-ring .value {
-  fill: none;
-  stroke: #17866f;
-  stroke-linecap: round;
-  stroke-width: 10;
-}
-
-.vitals-ai-ring.blue .value {
-  stroke: #2096d3;
+  z-index: 3;
+  display: grid;
+  align-content: center;
+  place-items: center;
+  gap: 3px;
+  text-align: center;
 }
 
 .vitals-ai-ring strong {
-  position: relative;
-  z-index: 1;
   color: #17211f;
-  font-size: 1.2rem;
+  font-size: clamp(0.76rem, calc(var(--ring-size) * 0.17), 1.2rem);
   font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.95;
 }
 
-.vitals-ai-ring span {
-  position: relative;
-  z-index: 1;
-  margin-top: -30px;
+.vitals-ai-ring-label {
   color: #51615d;
-  font-size: 0.64rem;
+  font-size: clamp(0.54rem, calc(var(--ring-size) * 0.058), 0.64rem);
   font-weight: 760;
+  line-height: 1.05;
 }
 
 .vitals-ai-spark {
