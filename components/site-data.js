@@ -124,7 +124,8 @@ export const personalProjects = [
     summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "chorus",
-    mode: "preview",
+    mode: "embed",
+    embedUrl: chorusAppUrl,
     fallbackHref: "/chorus",
     cta: "Open on Akibwa"
   },

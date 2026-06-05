@@ -1690,8 +1690,6 @@ button {
 }
 
 .project-expanded-layer {
-  --project-viewer-duration: 520ms;
-  --project-viewer-ease: cubic-bezier(0.22, 1, 0.36, 1);
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -1701,19 +1699,32 @@ button {
   background:
     radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 42%),
     rgba(3, 4, 5, 0.68);
-  animation: projectOverlayIn 150ms ease-out both;
-  transition:
-    padding var(--project-viewer-duration) var(--project-viewer-ease),
-    background var(--project-viewer-duration) ease;
+  contain: layout paint style;
+  isolation: isolate;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+  will-change: opacity;
+}
+
+.project-expanded-layer.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.project-expanded-layer.is-closing {
+  opacity: 0;
+}
+
+.project-expanded-layer.is-maximized {
+  padding: 8px;
 }
 
 @supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
   .project-expanded-layer {
     background:
-      radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.12), transparent 42%),
-      rgba(3, 4, 5, 0.58);
-    -webkit-backdrop-filter: blur(10px) saturate(0.88);
-    backdrop-filter: blur(10px) saturate(0.88);
+      radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 42%),
+      rgba(3, 4, 5, 0.64);
   }
 }
 
@@ -1737,15 +1748,31 @@ button {
   box-shadow:
     0 34px 110px rgba(0, 0, 0, 0.46),
     0 0 0 1px rgba(16, 18, 23, 0.04);
+  backface-visibility: hidden;
+  contain: layout paint style;
+  opacity: 0;
+  transform: translate3d(0, 14px, 0) scale(0.982);
   transform-origin: 50% 48%;
-  animation: projectShellIn 220ms cubic-bezier(0.2, 0.85, 0.25, 1) both;
   transition:
-    width var(--project-viewer-duration) var(--project-viewer-ease),
-    height var(--project-viewer-duration) var(--project-viewer-ease),
-    border-color 360ms ease,
-    border-radius var(--project-viewer-duration) var(--project-viewer-ease),
-    box-shadow var(--project-viewer-duration) var(--project-viewer-ease);
-  will-change: width, height, border-radius, box-shadow;
+    opacity 190ms ease,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.project-expanded-layer.is-open .project-expanded-shell {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.project-expanded-layer.is-closing .project-expanded-shell {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0) scale(0.988);
+}
+
+.project-expanded-layer.is-maximized .project-expanded-shell {
+  width: calc(100vw - 16px);
+  height: calc(100dvh - 16px);
+  border-radius: 10px;
 }
 
 .project-expanded-toolbar {
@@ -1756,10 +1783,7 @@ button {
   overflow: hidden;
   border-bottom: 1px solid rgba(16, 18, 23, 0.11);
   background: #080b12;
-  padding: 0 56px;
-  transition:
-    min-height var(--project-viewer-duration) var(--project-viewer-ease),
-    padding var(--project-viewer-duration) var(--project-viewer-ease);
+  padding: 0 62px;
 }
 
 .project-expanded-toolbar::before,
@@ -1778,7 +1802,6 @@ button {
 }
 
 .project-expanded-toolbar::after {
-  background: linear-gradient(90deg, transparent 48%, rgba(3, 5, 8, 0.42));
   border-top: 1px solid rgba(255, 255, 255, 0.11);
   box-shadow:
     inset 0 -1px 0 rgba(255, 255, 255, 0.1),
@@ -1819,73 +1842,42 @@ button {
 
 .project-expanded-actions {
   position: absolute;
-  top: 12px;
+  top: 14px;
   right: 12px;
   z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 10px;
-  background: rgba(6, 8, 11, 0.48);
-  padding: 3px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
-  -webkit-backdrop-filter: blur(14px) saturate(0.94);
-  backdrop-filter: blur(14px) saturate(0.94);
-  transition:
-    top var(--project-viewer-duration) var(--project-viewer-ease),
-    right var(--project-viewer-duration) var(--project-viewer-ease),
-    background 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+  background: rgba(7, 10, 14, 0.54);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
 }
 
-.project-expanded-action {
-  display: inline-flex;
-  width: 32px;
-  min-width: 32px;
-  height: 32px;
-  align-items: center;
-  justify-content: center;
+.project-expanded-close,
+.project-expanded-maximize {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
   border: 0;
-  border-radius: 7px;
   background: transparent;
-  padding: 0;
-  color: rgba(255, 255, 255, 0.86);
+  color: #fff;
   cursor: pointer;
-  font: inherit;
-  text-decoration: none;
   transition:
     background 140ms ease,
     color 140ms ease,
     transform 140ms ease;
 }
 
-.project-expanded-action:hover {
-  background: rgba(255, 255, 255, 0.14);
+.project-expanded-close + .project-expanded-maximize,
+.project-expanded-maximize + .project-expanded-close {
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.project-expanded-close:hover,
+.project-expanded-maximize:hover {
+  background: rgba(255, 255, 255, 0.18);
   color: #fff;
-  transform: translateY(-0.5px);
-}
-
-.project-expanded-action:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.84);
-  outline-offset: 2px;
-}
-
-.project-expanded-action-label {
-  position: absolute;
-  overflow: hidden;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  border: 0;
-  margin: 0;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.project-expanded-action-label:not(:focus):not(:active) {
-  clip-path: inset(50%);
 }
 
 .project-expanded-body {
@@ -1893,39 +1885,6 @@ button {
   overflow: auto;
   overscroll-behavior: contain;
   background: #fff;
-}
-
-.project-expanded-layer.is-fullscreen {
-  padding: 0;
-  background: #fff;
-}
-
-@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
-  .project-expanded-layer.is-fullscreen {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
-
-.project-expanded-layer.is-fullscreen .project-expanded-backdrop {
-  cursor: default;
-}
-
-.project-expanded-layer.is-fullscreen .project-expanded-shell {
-  width: 100vw;
-  height: 100dvh;
-  border-color: transparent;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.project-expanded-layer.is-fullscreen .project-expanded-toolbar {
-  min-height: 54px;
-}
-
-.project-expanded-layer.is-fullscreen .project-expanded-actions {
-  top: 8px;
-  right: 10px;
 }
 
 .project-expanded-layer.is-static .project-expanded-toolbar {
@@ -1936,10 +1895,6 @@ button {
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.58), transparent 28%, transparent 70%, rgba(255, 255, 255, 0.48)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(16, 18, 23, 0.02));
-}
-
-.project-expanded-layer.is-static .project-expanded-toolbar::after {
-  background: linear-gradient(90deg, transparent 48%, rgba(255, 255, 255, 0.5));
 }
 
 .project-expanded-layer.is-static .project-expanded-banner span {
@@ -1953,13 +1908,24 @@ button {
   box-shadow: 0 10px 24px rgba(16, 18, 23, 0.1);
 }
 
-.project-expanded-layer.is-static .project-expanded-action {
+.project-expanded-layer.is-static .project-expanded-close,
+.project-expanded-layer.is-static .project-expanded-maximize {
   color: var(--black);
 }
 
-.project-expanded-layer.is-static .project-expanded-action:hover {
-  background: rgba(16, 18, 23, 0.08);
+.project-expanded-layer.is-static .project-expanded-close:hover,
+.project-expanded-layer.is-static .project-expanded-maximize:hover {
+  background: #fff;
   color: var(--blue);
+}
+
+.project-expanded-content-placeholder {
+  height: 100%;
+  min-height: 100%;
+  background:
+    linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)),
+    linear-gradient(135deg, #f8f7f3, #fff 54%, #eef4f7);
+  background-size: 180% 100%, auto;
 }
 
 .project-expanded-body .personal-full-app-showcase {
@@ -2137,6 +2103,7 @@ button {
 }
 
 .project-expanded-frame-shell {
+  position: relative;
   overflow: hidden;
   background: #050705;
 }
@@ -2144,6 +2111,42 @@ button {
 .project-expanded-frame-shell > .live-frame {
   height: 100%;
   min-height: 100%;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.project-expanded-frame-shell.is-loaded > .live-frame {
+  opacity: 1;
+}
+
+.project-frame-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
+  background:
+    linear-gradient(90deg, rgba(16, 18, 23, 0.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(16, 18, 23, 0.035) 1px, transparent 1px),
+    #faf6ed;
+  background-size: 22px 22px, 22px 22px, auto;
+  color: var(--black);
+  pointer-events: none;
+}
+
+.project-frame-loading span {
+  font-size: 0.68rem;
+  font-weight: 720;
+  letter-spacing: 0.46em;
+  text-transform: uppercase;
+}
+
+.project-frame-loading strong {
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
+  font-weight: 560;
+  letter-spacing: 0;
 }
 
 .project-static-surface {
@@ -4577,6 +4580,11 @@ button {
   background: #fff;
 }
 
+.chorus-page .chorus-app-shell {
+  min-height: 100vh;
+  height: 100vh;
+}
+
 .chorus-app-frame {
   display: block;
   width: 100%;
@@ -4590,6 +4598,12 @@ button {
   .chorus-app-frame {
     min-height: calc(100dvh - 58px);
     height: calc(100dvh - 58px);
+  }
+
+  .chorus-page .chorus-app-shell,
+  .chorus-page .chorus-app-frame {
+    min-height: 100dvh;
+    height: 100dvh;
   }
 }
 
@@ -9666,32 +9680,19 @@ button {
   }
 
   .project-expanded-toolbar {
-    min-height: 56px;
+    min-height: 62px;
     padding: 0 86px 0 12px;
   }
 
   .project-expanded-actions {
     top: 10px;
     right: 10px;
-    gap: 2px;
   }
 
-  .project-expanded-action {
-    width: 32px;
-    min-width: 32px;
-    height: 32px;
-    padding: 0;
-  }
-
-  .project-expanded-layer.is-fullscreen .project-expanded-shell {
-    width: 100vw;
-    height: 100dvh;
-    border-radius: 0;
-  }
-
-  .project-expanded-layer.is-fullscreen .project-expanded-toolbar {
-    min-height: 54px;
-    padding-right: 54px;
+  .project-expanded-close,
+  .project-expanded-maximize {
+    width: 36px;
+    height: 36px;
   }
 
   .cover-collision-showcase.is-expanded {

@@ -97,6 +97,9 @@ const iconToneStyles = {
   }
 };
 
+const PROJECT_OVERLAY_EXIT_MS = 180;
+const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
+
 function getIconToneStyle(tone, index) {
   return {
     ...(iconToneStyles[tone] ?? iconToneStyles.slate),
@@ -594,16 +597,29 @@ function ProjectExpandedContent({ project, frameUrl }) {
 }
 
 function LiveProjectFrame({ project, frameUrl }) {
+  const [isFrameLoaded, setIsFrameLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsFrameLoaded(false);
+  }, [frameUrl]);
+
   return (
     <section className="project-expanded-frame" id={`${project.slug}-preview`} aria-live="polite">
       {frameUrl ? (
-        <div className="project-expanded-frame-shell">
+        <div className={`project-expanded-frame-shell ${isFrameLoaded ? "is-loaded" : "is-loading"}`}>
+          {!isFrameLoaded && (
+            <div className="project-frame-loading" aria-hidden="true">
+              <span>{project.title}</span>
+              <strong>{project.dashboardLabel ?? "Live project"}</strong>
+            </div>
+          )}
           <iframe
             src={frameUrl}
             title={`${project.title} live project`}
             className="live-frame"
             allow="clipboard-read; clipboard-write"
-            loading="lazy"
+            loading="eager"
+            onLoad={() => setIsFrameLoaded(true)}
           />
         </div>
       ) : (
@@ -625,16 +641,33 @@ function LiveProjectFrame({ project, frameUrl }) {
   );
 }
 
-function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const secondaryLabel = isFullScreen ? "Minimise" : "Close";
-  const secondaryTitle = isFullScreen ? "Minimise" : "Close";
-  const SecondaryIcon = isFullScreen ? Minimize2 : X;
-  const handleSecondaryAction = isFullScreen ? () => setIsFullScreen(false) : onClose;
+function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onClose, onToggleMaximized }) {
+  const [contentReady, setContentReady] = useState(false);
+
+  useEffect(() => {
+    if (!isVisible) return undefined;
+
+    setContentReady(false);
+    let timerId;
+    const frameId = window.requestAnimationFrame(() => {
+      const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      timerId = window.setTimeout(
+        () => setContentReady(true),
+        prefersReducedMotion ? 0 : PROJECT_OVERLAY_CONTENT_DELAY_MS
+      );
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (timerId) window.clearTimeout(timerId);
+    };
+  }, [isVisible, project.slug]);
 
   return (
     <div
-      className={`project-expanded-layer is-${project.visual ?? "static"} ${isFullScreen ? "is-fullscreen" : ""}`}
+      className={`project-expanded-layer is-${project.visual ?? "static"} ${isVisible ? "is-open" : "is-closing"} ${
+        isMaximized ? "is-maximized" : ""
+      }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby={`${project.slug}-expanded-title`}
@@ -646,33 +679,32 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
           <h2 id={`${project.slug}-expanded-title`} className="project-expanded-accessible-title">
             {project.title}
           </h2>
-          <div className="project-expanded-actions" aria-label={`${project.title} view controls`}>
-            {!isFullScreen && (
-              <button
-                type="button"
-                className="project-expanded-action project-expanded-extend"
-                aria-label={`Expand ${project.title} to full screen`}
-                title="Full screen"
-                onClick={() => setIsFullScreen(true)}
-              >
-                <Maximize2 size={17} strokeWidth={1.9} />
-                <span className="project-expanded-action-label">Full screen</span>
-              </button>
-            )}
+          <div className="project-expanded-actions">
             <button
               type="button"
-              className={`project-expanded-action project-expanded-minimise ${isFullScreen ? "is-minimise" : "is-close"}`}
-              aria-label={`${secondaryLabel} ${project.title}`}
-              title={secondaryTitle}
-              onClick={handleSecondaryAction}
+              className="project-expanded-maximize"
+              aria-label={`${isMaximized ? "Minimize" : "Maximize"} ${project.title}`}
+              aria-pressed={isMaximized}
+              onClick={onToggleMaximized}
             >
-              <SecondaryIcon size={17} strokeWidth={1.9} />
-              <span className="project-expanded-action-label">{secondaryLabel}</span>
+              {isMaximized ? <Minimize2 size={17} strokeWidth={1.9} /> : <Maximize2 size={17} strokeWidth={1.9} />}
+            </button>
+            <button
+              type="button"
+              className="project-expanded-close"
+              aria-label={`Close ${project.title}`}
+              onClick={onClose}
+            >
+              <X size={18} strokeWidth={1.9} />
             </button>
           </div>
         </header>
         <div className="project-expanded-body">
-          <ProjectExpandedContent project={project} frameUrl={frameUrl} />
+          {contentReady ? (
+            <ProjectExpandedContent project={project} frameUrl={frameUrl} />
+          ) : (
+            <div className="project-expanded-content-placeholder" aria-hidden="true" />
+          )}
         </div>
       </article>
     </div>
@@ -681,6 +713,9 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
 
 export function PersonalPage() {
   const [expandedSlug, setExpandedSlug] = useState(null);
+  const [overlaySlug, setOverlaySlug] = useState(null);
+  const [isOverlayMaximized, setIsOverlayMaximized] = useState(false);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isLocalHost, setIsLocalHost] = useState(false);
 
   useEffect(() => {
@@ -697,6 +732,12 @@ export function PersonalPage() {
         (item) => item.slug === hash || item.aliases?.includes(hash)
       );
       if (project) {
+        const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
+        if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals") && !hasInlineFrame) {
+          window.location.assign(project.fallbackHref);
+          return;
+        }
+
         setExpandedSlug(project.slug);
       } else {
         setExpandedSlug(null);
@@ -712,14 +753,37 @@ export function PersonalPage() {
     () => personalProjects.find((project) => project.slug === expandedSlug) ?? null,
     [expandedSlug]
   );
+  const overlayProject = useMemo(
+    () => personalProjects.find((project) => project.slug === overlaySlug) ?? null,
+    [overlaySlug]
+  );
+
+  useEffect(() => {
+    if (expandedSlug) {
+      setOverlaySlug(expandedSlug);
+      const frameId = window.requestAnimationFrame(() => setIsOverlayVisible(true));
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    setIsOverlayVisible(false);
+    if (!overlaySlug) return undefined;
+
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const timerId = window.setTimeout(
+      () => setOverlaySlug(null),
+      prefersReducedMotion ? 0 : PROJECT_OVERLAY_EXIT_MS
+    );
+    return () => window.clearTimeout(timerId);
+  }, [expandedSlug, overlaySlug]);
 
   const closeExpandedProject = useCallback(() => {
     setExpandedSlug(null);
+    setIsOverlayMaximized(false);
     window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
   }, []);
 
   useEffect(() => {
-    if (!expandedProject) return undefined;
+    if (!overlayProject) return undefined;
 
     const closeOnEscape = (event) => {
       if (event.key === "Escape") {
@@ -727,20 +791,27 @@ export function PersonalPage() {
       }
     };
     const previousOverflow = document.body.style.overflow;
+    const previousScrollbarGutter = document.documentElement.style.scrollbarGutter;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.scrollbarGutter = "stable";
     window.addEventListener("keydown", closeOnEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.documentElement.style.scrollbarGutter = previousScrollbarGutter;
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [closeExpandedProject, expandedProject]);
+  }, [closeExpandedProject, overlayProject]);
 
   const selectProject = (project) => {
+    setIsOverlayMaximized(false);
     setExpandedSlug(project.slug);
     window.history.replaceState(null, "", `#${project.slug}`);
   };
-  const frameUrl = expandedProject ? getProjectFrameUrl(expandedProject, isLocalHost) : "";
+  const toggleOverlayMaximized = useCallback(() => {
+    setIsOverlayMaximized((current) => !current);
+  }, []);
+  const frameUrl = overlayProject ? getProjectFrameUrl(overlayProject, isLocalHost) : "";
 
   return (
     <section className="studio-page personal-page">
@@ -763,8 +834,15 @@ export function PersonalPage() {
         </div>
       </section>
 
-      {expandedProject && (
-        <ProjectExpandedOverlay project={expandedProject} frameUrl={frameUrl} onClose={closeExpandedProject} />
+      {overlayProject && (
+        <ProjectExpandedOverlay
+          project={overlayProject}
+          frameUrl={frameUrl}
+          isMaximized={isOverlayMaximized}
+          isVisible={isOverlayVisible && overlayProject.slug === expandedSlug}
+          onClose={closeExpandedProject}
+          onToggleMaximized={toggleOverlayMaximized}
+        />
       )}
 
       <PageFooter />
