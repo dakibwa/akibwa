@@ -187,7 +187,7 @@ function getProjectFrameUrl(project, isLocalHost) {
 }
 
 function shouldOpenProjectRoute(project) {
-  return project.visual === "vitals" && Boolean(project.fallbackHref);
+  return project.mode !== "preview" && project.visual === "vitals" && Boolean(project.fallbackHref);
 }
 
 function PersonalProjectVisual({ project }) {
@@ -823,7 +823,12 @@ export function PersonalPage() {
         }
 
         const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
-        if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals") && !hasInlineFrame) {
+        if (
+          project.mode !== "preview" &&
+          project.fallbackHref &&
+          (project.visual === "chorus" || project.visual === "vitals") &&
+          !hasInlineFrame
+        ) {
           window.location.assign(project.fallbackHref);
           return;
         }
