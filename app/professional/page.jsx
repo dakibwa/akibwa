@@ -1,9 +1,9 @@
 import { OfferPage } from "@/components/pages/offer-page";
 
 export const metadata = {
-  title: "Professional",
+  title: "Professional Services",
   description:
-    "Commission a small AI-assisted system for one messy workflow."
+    "Commission Akibwa to design and build a focused AI-assisted system, dashboard, automation, or workflow tool."
 };
 
 export default function ProfessionalRoute() {

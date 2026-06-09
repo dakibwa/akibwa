@@ -2,8 +2,9 @@ import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { chorusAppUrl } from "@/components/site-data";
 
 export const metadata = {
-  title: "Chorus App",
-  description: "The live Chorus app route for Last.fm music intelligence."
+  title: "Chorus",
+  description:
+    "Chorus is an Akibwa music intelligence dashboard for Last.fm listening history, recent plays, top artists, and run pairings."
 };
 
 export default function ChorusPage() {

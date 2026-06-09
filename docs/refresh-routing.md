@@ -6,6 +6,8 @@ The website remains a static GitHub Pages export. GitHub Actions should build an
 
 Dynamic project apps should be framed, rendered, or progressively rebuilt inside Akibwa routes. Chorus is embedded at `https://akibwa.com/chorus`, while the dynamic runtime stays in the Cloudflare Worker app at `https://akibwa-chorus.dakibwa.workers.dev`. Vitals is surfaced at `https://akibwa.com/health` and reads aggregate public data from the Cloudflare refresh Worker.
 
+The current public surface registry is `data/public-surfaces.json`. Keep routes, fallback data files, Worker names, public data endpoints, and status endpoints there first; scripts and site data should read from the registry rather than duplicating endpoint lists.
+
 ## Current Cloudflare Refreshes
 
 | Surface | Worker | Schedule | Public data | Status | Notes |
@@ -25,6 +27,7 @@ Dynamic project apps should be framed, rendered, or progressively rebuilt inside
 7. Keep GitHub Actions to build/deploy only.
 
 Use `npm run refresh:status` to inspect the Cloudflare refresh status endpoints from this repo.
+Use `npm run publish:ready` before publishing website changes live.
 
 ## Not Public-Site Refreshes
 

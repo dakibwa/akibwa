@@ -30,14 +30,45 @@ import { PageFooter } from "@/components/page-footer";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
-import { chorusAppUrl, coverCollisionPosts, personalProjects, vitalsAppUrl } from "@/components/site-data";
+import {
+  akibwapediaData,
+  chorusAppUrl,
+  coverCollisionDataUrl,
+  coverCollisionPosts,
+  personalProjects,
+  vitalsAppUrl
+} from "@/components/site-data";
 
-const remoteCoverCollisionDataUrl = (
-  process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
-  "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision"
-).trim();
+const sourceLogoByName = {
+  gmail: "gmail",
+  "google drive": "drive",
+  drive: "drive",
+  calendar: "calendar",
+  finance: "finance",
+  health: "health",
+  github: "projects",
+  "media and taste": "projects"
+};
 
-const knowledgeSources = [
+const routeMetaByName = {
+  current_priorities: { label: "Today's priorities", Icon: CalendarCheck, tone: "blue" },
+  evidence_check: { label: "Evidence check", Icon: SearchCheck, tone: "teal" },
+  project_or_work: { label: "Project obligations", Icon: BriefcaseBusiness, tone: "orange" },
+  health: { label: "Health context", Icon: HeartPulse, tone: "rose" },
+  finance: { label: "Finance synthesis", Icon: Wallet, tone: "green" },
+  source_mining: { label: "Source mining", Icon: Pickaxe, tone: "slate" }
+};
+
+const preferredRouteOrder = [
+  "current_priorities",
+  "evidence_check",
+  "project_or_work",
+  "health",
+  "finance",
+  "source_mining"
+];
+
+const fallbackKnowledgeSources = [
   { name: "Gmail", detail: "Body-level backfill next", logo: "gmail" },
   { name: "Drive", detail: "Content map ready", logo: "drive" },
   { name: "Calendar", detail: "History pass queued", logo: "calendar" },
@@ -46,7 +77,7 @@ const knowledgeSources = [
   { name: "Projects", detail: "Active obligations", logo: "projects" }
 ];
 
-const knowledgeRoutes = [
+const fallbackKnowledgeRoutes = [
   { label: "Today's priorities", detail: "Calendar and inbox first", Icon: CalendarCheck, tone: "blue" },
   { label: "Evidence check", detail: "Source pointers before claims", Icon: SearchCheck, tone: "teal" },
   { label: "Project obligations", detail: "GitHub, Drive, and inbox", Icon: BriefcaseBusiness, tone: "orange" },
@@ -55,7 +86,7 @@ const knowledgeRoutes = [
   { label: "Source mining", detail: "Backfill by priority", Icon: Pickaxe, tone: "slate" }
 ];
 
-const knowledgeGuardrails = [
+const fallbackKnowledgeGuardrails = [
   { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" },
   { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" },
   { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" },
@@ -63,6 +94,42 @@ const knowledgeGuardrails = [
   { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" },
   { label: "Secrets stay out", detail: "No tokens or identifiers", Icon: LockKeyhole, tone: "slate" }
 ];
+
+const generatedKnowledgeSources =
+  akibwapediaData.source_families?.slice(0, 6).map((source) => ({
+    name: source.name,
+    detail: source.status,
+    logo: sourceLogoByName[String(source.name || "").toLowerCase()] || "projects"
+  })) || [];
+
+const knowledgeSources = generatedKnowledgeSources.length ? generatedKnowledgeSources : fallbackKnowledgeSources;
+
+const routeByName = Object.fromEntries(
+  (akibwapediaData.retrieval_routes || []).map((route) => [route.name, route])
+);
+
+const generatedKnowledgeRoutes =
+  preferredRouteOrder
+    .map((name) => {
+      const route = routeByName[name];
+      const meta = routeMetaByName[name];
+      if (!route || !meta) return null;
+
+      return {
+        ...meta,
+        detail: route.description || `${route.reads} source layers`
+      };
+    })
+    .filter(Boolean);
+
+const knowledgeRoutes = generatedKnowledgeRoutes.length ? generatedKnowledgeRoutes : fallbackKnowledgeRoutes;
+
+const generatedKnowledgeGuardrails =
+  akibwapediaData.privacy_rules?.slice(0, 6).map((rule, index) => guardrailFromRule(rule, index)) || [];
+
+const knowledgeGuardrails = generatedKnowledgeGuardrails.length ? generatedKnowledgeGuardrails : fallbackKnowledgeGuardrails;
+
+const knowledgeMetrics = akibwapediaData.metrics?.slice(0, 4) || [];
 
 const iconToneStyles = {
   blue: {
@@ -105,6 +172,49 @@ function getIconToneStyle(tone, index) {
     ...(iconToneStyles[tone] ?? iconToneStyles.slate),
     "--row-delay": `${index * 65}ms`
   };
+}
+
+function guardrailFromRule(rule, index) {
+  const text = String(rule || "");
+  const lower = text.toLowerCase();
+
+  if (lower.includes("raw") || lower.includes("identifiers") || lower.includes("secrets")) {
+    return { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" };
+  }
+
+  if (lower.includes("health")) {
+    return { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" };
+  }
+
+  if (lower.includes("old assistant") || lower.includes("leads")) {
+    return { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" };
+  }
+
+  if (lower.includes("public copy") || lower.includes("source layers")) {
+    return { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" };
+  }
+
+  if (lower.includes("read-only")) {
+    return { label: "Sources are read-only", detail: "Write only by request", Icon: ShieldCheck, tone: "teal" };
+  }
+
+  return {
+    label: fallbackKnowledgeGuardrails[index]?.label || "Privacy boundary",
+    detail: fallbackKnowledgeGuardrails[index]?.detail || text,
+    Icon: fallbackKnowledgeGuardrails[index]?.Icon || LockKeyhole,
+    tone: fallbackKnowledgeGuardrails[index]?.tone || "slate"
+  };
+}
+
+function compactMetricLabel(label) {
+  const labels = {
+    "Raw manifest records": "Manifest",
+    "Normalized entries": "Entries",
+    "Ledger events": "Events",
+    "Source files": "Source files"
+  };
+
+  return labels[label] || label;
 }
 
 function SourceLogo({ type }) {
@@ -285,7 +395,7 @@ function preferredCoverCollisionData(remoteData, fallbackData) {
   };
 }
 
-function useCoverCollisionData(dataUrl = remoteCoverCollisionDataUrl) {
+function useCoverCollisionData(dataUrl = coverCollisionDataUrl) {
   const fallbackData = {
     profileUrl: "https://www.instagram.com/dakibwa/",
     posts: coverCollisionPosts
@@ -460,6 +570,16 @@ function KnowledgeBaseShowcase({ project }) {
             A local, source-backed context system that helps Codex use personal records without exposing the records
             themselves.
           </p>
+          {knowledgeMetrics.length > 0 && (
+            <dl className="knowledge-system-metrics" aria-label="Public-safe knowledge system metrics">
+              {knowledgeMetrics.map((metric) => (
+                <div key={metric.label}>
+                  <dt>{compactMetricLabel(metric.label)}</dt>
+                  <dd>{metric.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
           <div className="knowledge-system-tags" aria-label={`${project.title} tags`}>
             {project.tags.map((tag) => (
               <span key={tag}>{tag}</span>

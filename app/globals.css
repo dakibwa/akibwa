@@ -2316,6 +2316,41 @@ button {
   line-height: 1.48;
 }
 
+.knowledge-system-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(100%, 520px);
+  gap: 8px;
+  margin: 4px 0 0;
+}
+
+.knowledge-system-metrics div {
+  min-width: 0;
+  border: 1px solid rgba(16, 18, 23, 0.1);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 10px;
+}
+
+.knowledge-system-metrics dt {
+  overflow: hidden;
+  margin: 0 0 5px;
+  color: #68727a;
+  font-size: 0.68rem;
+  font-weight: 620;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledge-system-metrics dd {
+  margin: 0;
+  color: var(--black);
+  font-size: 1.08rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
 .knowledge-system-tags {
   display: flex;
   flex-wrap: wrap;
@@ -9728,6 +9763,10 @@ button {
 
   .knowledge-system-copy h2 {
     font-size: 2.4rem;
+  }
+
+  .knowledge-system-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .knowledge-system-art img {

@@ -1,9 +1,9 @@
 import { PersonalPage } from "@/components/pages/personal-page";
 
 export const metadata = {
-  title: "Personal",
+  title: "Work",
   description:
-    "Personal projects by Daniel, including Chorus, Vitals, cover-art experiments, and a private AI memory system."
+    "See Akibwa work across AI-assisted systems, dashboards, public project surfaces, and compact tools for messy workflows."
 };
 
 export default function WorkRoute() {

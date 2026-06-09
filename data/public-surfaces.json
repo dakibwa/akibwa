@@ -1,0 +1,62 @@
+{
+  "updated": "2026-06-05",
+  "surfaces": [
+    {
+      "id": "chorus",
+      "title": "Chorus",
+      "route": "/chorus",
+      "kind": "cloudflare-app",
+      "visibility": "public",
+      "appUrlEnv": "NEXT_PUBLIC_CHORUS_APP_URL",
+      "defaultAppUrl": "https://akibwa-chorus.dakibwa.workers.dev",
+      "fallbackData": "data/chorus-data.json",
+      "refresh": {
+        "worker": "akibwa-chorus-refresh",
+        "schedule": "17 * * * *",
+        "dataUrl": "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus",
+        "statusUrl": "https://akibwa-chorus-refresh.dakibwa.workers.dev/status"
+      }
+    },
+    {
+      "id": "vitals",
+      "title": "Vitals",
+      "route": "/health",
+      "kind": "static-preview-with-refresh",
+      "visibility": "public-aggregate",
+      "appUrlEnv": "NEXT_PUBLIC_VITALS_APP_URL",
+      "defaultAppUrl": "",
+      "fallbackData": "data/public-health-data.json",
+      "refresh": {
+        "worker": "akibwa-vitals-refresh",
+        "schedule": "30 7 * * *",
+        "dataUrl": "https://akibwa-vitals-refresh.dakibwa.workers.dev/vitals",
+        "statusUrl": "https://akibwa-vitals-refresh.dakibwa.workers.dev/status"
+      }
+    },
+    {
+      "id": "cover-collision",
+      "title": "Cover Collision",
+      "route": "/personal#cover-collision",
+      "kind": "public-series-refresh",
+      "visibility": "public",
+      "externalUrlEnv": "NEXT_PUBLIC_COVER_COLLISION_URL",
+      "fallbackData": "data/cover-collision-data.json",
+      "refresh": {
+        "worker": "akibwa-cover-collision-refresh",
+        "schedule": "42 6 * * *",
+        "dataUrl": "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision",
+        "statusUrl": "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status"
+      }
+    },
+    {
+      "id": "personal-knowledge-base",
+      "title": "Personal Knowledge Base",
+      "route": "/personal#personal-knowledge-base",
+      "kind": "public-projection",
+      "visibility": "public-safe",
+      "siteData": "data/akibwapedia-data.json",
+      "sourceRoot": "/Users/danatkinson/Documents/Codex/2026-04-30/what-can-you-be-working-on/personal-memory-wiki",
+      "publishCommand": "python3 scripts/publish_public_system.py"
+    }
+  ]
+}

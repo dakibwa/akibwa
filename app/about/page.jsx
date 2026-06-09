@@ -3,7 +3,7 @@ import { AboutPage } from "@/components/pages/about-page";
 export const metadata = {
   title: "About",
   description:
-    "About Daniel: senior BI, analytics, Microsoft Fabric, Power BI, and AI-assisted systems."
+    "Learn about Akibwa, Daniel's studio for AI-assisted systems, dashboards, automation, and practical data products."
 };
 
 export default function AboutRoute() {

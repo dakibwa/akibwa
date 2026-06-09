@@ -1,28 +1,41 @@
-const refreshes = [
-  ["Vitals", "https://akibwa-vitals-refresh.dakibwa.workers.dev/status"],
-  ["Chorus", "https://akibwa-chorus-refresh.dakibwa.workers.dev/status"],
-  ["Cover Collision", "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status"]
-];
+import { readFileSync } from "node:fs";
+
+const surfaceConfig = JSON.parse(readFileSync(new URL("../data/public-surfaces.json", import.meta.url), "utf8"));
+const refreshes = surfaceConfig.surfaces
+  .filter((surface) => surface.refresh?.statusUrl)
+  .map((surface) => ({
+    id: surface.id,
+    name: surface.title,
+    url: surface.refresh.statusUrl,
+    worker: surface.refresh.worker,
+    route: surface.route
+  }));
 
 const rows = await Promise.all(
-  refreshes.map(async ([name, url]) => {
+  refreshes.map(async ({ id, name, url, worker, route }) => {
     try {
       const response = await fetch(url, { cache: "no-store" });
       const data = await response.json();
-      const degraded = isDegradedRefresh(name, data);
+      const degraded = isDegradedRefresh(id, data);
 
       return {
+        id,
         name,
+        worker,
+        route,
         ok: Boolean(response.ok && data.ok && !degraded),
         refreshedAt: data.refreshedAt || null,
         source: data.source || data.mode || null,
         degraded,
-        summary: summarize(name, data),
+        summary: summarize(id, data),
         error: data.error || (degraded ? "Refresh is serving fallback seed data instead of live source data." : null)
       };
     } catch (error) {
       return {
+        id,
         name,
+        worker,
+        route,
         ok: false,
         refreshedAt: null,
         source: null,
@@ -39,8 +52,8 @@ if (rows.some((row) => !row.ok)) {
   process.exitCode = 1;
 }
 
-function summarize(name, data) {
-  if (name === "Vitals") {
+function summarize(id, data) {
+  if (id === "vitals") {
     return {
       recovery: data.latest?.recovery || null,
       sleep: data.latest?.sleep || null,
@@ -48,7 +61,7 @@ function summarize(name, data) {
     };
   }
 
-  if (name === "Chorus") {
+  if (id === "chorus") {
     return {
       totalScrobbles: data.totalScrobbles || null,
       recentTracks: data.recentTracks || null,
@@ -64,8 +77,8 @@ function summarize(name, data) {
   };
 }
 
-function isDegradedRefresh(name, data) {
-  if (name !== "Cover Collision") return false;
+function isDegradedRefresh(id, data) {
+  if (id !== "cover-collision") return false;
 
   const source = String(data.source || "").toLowerCase();
   return source.includes("seed") || (source.includes("fallback") && !source.includes("public-profile"));

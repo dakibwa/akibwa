@@ -3,7 +3,7 @@ import { ContactPage } from "@/components/pages/contact-page";
 export const metadata = {
   title: "Contact",
   description:
-    "Contact Daniel about messy workflows, data, reporting, client-update, or handover problems."
+    "Contact Akibwa about AI-assisted systems, dashboards, automation, data products, reporting, or workflow handover problems."
 };
 
 export default function ContactRoute() {
