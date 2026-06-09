@@ -337,7 +337,8 @@ button {
   border-radius: 0;
   background: transparent;
   padding: 0;
-  color: inherit;
+  color: #84868d;
+  color: color-mix(in srgb, rgb(var(--cycle-accent-rgb)) 30%, #84868d);
   cursor: pointer;
   font: inherit;
   letter-spacing: 0;
@@ -447,8 +448,8 @@ button {
 
 .area-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px;
   margin-top: 16px;
 }
 
@@ -474,7 +475,7 @@ button {
 .area-art {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 2.25 / 1;
+  aspect-ratio: 2.1 / 1;
   background: #eeeeec;
 }
 
@@ -485,19 +486,19 @@ button {
 
 .area-caption {
   display: flex;
-  min-height: 66px;
+  min-height: 74px;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   border-top: 1px solid rgba(16, 18, 23, 0.06);
   background: #f7f7f5;
-  padding: 13px 16px 14px;
+  padding: 15px 18px 16px;
 }
 
 .area-caption h2 {
   margin: 0 0 4px;
   color: var(--black);
-  font-size: 0.92rem;
+  font-size: 1.04rem;
   font-weight: 560;
   letter-spacing: 0;
 }
@@ -505,7 +506,7 @@ button {
 .area-caption p {
   margin: 0;
   color: #6d7077;
-  font-size: 0.8rem;
+  font-size: 0.86rem;
 }
 
 .area-caption svg {
@@ -772,13 +773,9 @@ button {
 
 .personal-surface-registry-head dl div {
   display: grid;
-  min-height: 58px;
-  align-content: center;
+  align-content: end;
   gap: 4px;
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: var(--radius);
-  background: #fff;
-  padding: 10px 12px;
+  padding: 0 0 4px;
 }
 
 .personal-surface-registry-head dt {
@@ -805,8 +802,8 @@ button {
 .personal-surface-card {
   position: relative;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  min-height: 168px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 148px;
   min-width: 0;
   gap: 10px;
   overflow: hidden;
@@ -871,8 +868,9 @@ button {
 
 .personal-surface-card small em {
   overflow: hidden;
-  color: var(--black);
+  color: inherit;
   font-style: normal;
+  font-weight: 540;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -899,20 +897,13 @@ button {
 }
 
 .personal-surface-status {
+  overflow: hidden;
   display: inline-flex;
-  min-height: 28px;
-  max-width: 100%;
+  min-width: 0;
   align-items: center;
-  justify-self: start;
   gap: 7px;
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: 999px;
-  background: #f7f7f5;
-  color: #59616b;
-  padding: 0 9px;
-  font-size: 0.7rem;
-  font-weight: 650;
-  line-height: 1;
+  color: inherit;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -925,31 +916,12 @@ button {
   background: #9aa3aa;
 }
 
-.personal-surface-status.is-ok {
-  border-color: rgba(33, 138, 79, 0.18);
-  background: rgba(33, 138, 79, 0.08);
-  color: #1f7145;
-}
-
 .personal-surface-status.is-ok i {
   background: #218a4f;
 }
 
-.personal-surface-status.is-static {
-  border-color: rgba(47, 136, 255, 0.16);
-  background: rgba(47, 136, 255, 0.08);
-  color: #256fcf;
-}
-
 .personal-surface-status.is-static i {
   background: var(--blue);
-}
-
-.personal-surface-status.is-degraded,
-.personal-surface-status.is-error {
-  border-color: rgba(226, 85, 107, 0.2);
-  background: rgba(226, 85, 107, 0.08);
-  color: #bc4356;
 }
 
 .personal-surface-status.is-degraded i,
@@ -11010,13 +10982,37 @@ button {
   .home-footer > div {
     display: grid;
     justify-content: start;
-    gap: 14px;
+    gap: 18px;
   }
 
   .page-footer > div {
     display: grid;
     justify-content: start;
     gap: 14px;
+  }
+
+  .page-footer > div:first-child i,
+  .home-footer > div:first-child i {
+    display: none;
+  }
+
+  .page-footer > div:last-child {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 16px;
+    justify-content: stretch;
+  }
+
+  .page-footer > div:last-child a,
+  .page-footer .footer-location {
+    min-width: 0;
+  }
+
+  .page-footer > div:last-child a span,
+  .page-footer .footer-location span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .studio-page {

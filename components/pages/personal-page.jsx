@@ -381,15 +381,14 @@ function PublicSurfaceRegistry({ onSelectProject, selectedSlug }) {
               onClick={openSurface}
               key={surface.id}
             >
-              <span className={`personal-surface-status ${getSurfaceStatusTone(surface, status)}`}>
-                <i aria-hidden="true" />
-                {getSurfaceStatusLabel(surface, status)}
-              </span>
               <strong>{surface.title}</strong>
               <span>{getSurfaceSummary(surface, status)}</span>
               <small>
-                {humanizeSurfaceKind(surface.kind)}
-                <em>{humanizeSurfaceVisibility(surface.visibility)}</em>
+                <span className={`personal-surface-status ${getSurfaceStatusTone(surface, status)}`}>
+                  <i aria-hidden="true" />
+                  {getSurfaceStatusLabel(surface, status)}
+                </span>
+                <em>{humanizeSurfaceKind(surface.kind)}</em>
               </small>
               <ArrowRight size={17} strokeWidth={1.8} />
             </button>

@@ -32,7 +32,7 @@ export function HomePage() {
                 alt={tile.alt}
                 fill
                 priority={index === 0}
-                sizes="(max-width: 760px) 100vw, 31vw"
+                sizes="(max-width: 760px) 100vw, 48vw"
               />
             </div>
             <div className="area-caption">
