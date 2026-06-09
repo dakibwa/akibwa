@@ -166,7 +166,8 @@ export function AboutPage() {
         <div className="about-hero-copy">
           <h1>About</h1>
           <p>
-            Ten years in BI across finance and gaming — now building small, AI-assisted systems for messy workflows.
+            Ten years in BI across banks, gaming, and the UK&rsquo;s National Wealth Fund — now building small,
+            AI-assisted systems for messy workflows.
           </p>
         </div>
 
@@ -181,9 +182,11 @@ export function AboutPage() {
             Akibwa is that experience pointed at AI. I design small working systems — dashboards, automations,
             knowledge tools — that take a messy workflow and make it run, then hand over the keys.
           </p>
-          <Link className="text-action" href="/contact">
-            Send the messy bit
-            <ArrowRight size={15} strokeWidth={1.9} />
+          <Link className="about-cta" href="/contact">
+            <span className="about-cta-label">Send the messy bit</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={17} strokeWidth={2} />
+            </span>
           </Link>
         </div>
 
