@@ -688,7 +688,7 @@ function CoverCollisionPanel({ project, posts, galleryOnly = false }) {
                 priority={galleryOnly && index < galleryLayout.columns}
                 sizes={
                   galleryOnly
-                    ? `(max-width: 760px) ${Math.ceil(100 / Math.min(galleryLayout.columns, 3))}vw, ${Math.ceil(100 / galleryLayout.columns)}vw`
+                    ? `(max-width: 360px) 100vw, (max-width: 760px) 50vw, ${Math.ceil(100 / galleryLayout.columns)}vw`
                     : "(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
                 }
               />
