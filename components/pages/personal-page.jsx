@@ -36,6 +36,7 @@ import {
   coverCollisionDataUrl,
   coverCollisionPosts,
   personalProjects,
+  publicSurfaces,
   vitalsAppUrl
 } from "@/components/site-data";
 
@@ -167,6 +168,13 @@ const iconToneStyles = {
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
 
+const surfaceProjectSlugs = {
+  chorus: "chorus",
+  vitals: "vitals",
+  "cover-collision": "cover-collision",
+  "personal-knowledge-base": "personal-knowledge-base"
+};
+
 function getIconToneStyle(tone, index) {
   return {
     ...(iconToneStyles[tone] ?? iconToneStyles.slate),
@@ -215,6 +223,177 @@ function compactMetricLabel(label) {
   };
 
   return labels[label] || label;
+}
+
+function humanizeSurfaceKind(kind) {
+  const labels = {
+    "cloudflare-app": "Cloudflare app",
+    "static-preview-with-refresh": "Static preview",
+    "public-series-refresh": "Public series",
+    "public-projection": "Public projection"
+  };
+
+  return labels[kind] || String(kind || "Surface").replaceAll("-", " ");
+}
+
+function humanizeSurfaceVisibility(visibility) {
+  const labels = {
+    public: "Public",
+    "public-aggregate": "Public aggregate",
+    "public-safe": "Public-safe"
+  };
+
+  return labels[visibility] || String(visibility || "Public").replaceAll("-", " ");
+}
+
+function formatSurfaceDate(value, includeTime = true) {
+  if (!value) return "";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    ...(includeTime ? { hour: "2-digit", minute: "2-digit" } : {})
+  }).format(date);
+}
+
+function getSurfaceStatusTone(surface, status) {
+  if (!surface.refresh?.statusUrl) return "is-static";
+  if (!status) return "is-checking";
+  if (status.ok && !status.degraded) return "is-ok";
+  if (status.degraded) return "is-degraded";
+  return "is-error";
+}
+
+function getSurfaceStatusLabel(surface, status) {
+  if (!surface.refresh?.statusUrl) return "Public packet";
+  if (!status) return "Checking";
+  if (!status.ok) return "Needs review";
+  if (status.degraded) return "Degraded";
+
+  const refreshedAt = formatSurfaceDate(status.refreshedAt);
+  return refreshedAt ? `Refreshed ${refreshedAt}` : "Healthy";
+}
+
+function getSurfaceSummary(surface, status) {
+  const summary = status?.summary || {};
+
+  if (surface.id === "chorus" && summary.totalScrobbles) {
+    return `${Number(summary.totalScrobbles).toLocaleString("en-GB")} scrobbles / ${summary.recentTracks || 0} recent`;
+  }
+
+  if (surface.id === "vitals") {
+    return `Recovery ${summary.recovery || "latest"} / sleep ${summary.sleep || "latest"}`;
+  }
+
+  if (surface.id === "cover-collision" && summary.postCount) {
+    const latestPost = formatSurfaceDate(summary.latestPost, false);
+    return `${summary.postCount} posts${latestPost ? ` / latest ${latestPost}` : ""}`;
+  }
+
+  if (surface.id === "personal-knowledge-base") {
+    const metric = knowledgeMetrics[0];
+    return metric ? `${compactMetricLabel(metric.label)} ${metric.value}` : "Source-backed public projection";
+  }
+
+  return humanizeSurfaceVisibility(surface.visibility);
+}
+
+function PublicSurfaceRegistry({ onSelectProject, selectedSlug }) {
+  const [surfaceStatuses, setSurfaceStatuses] = useState({});
+
+  useEffect(() => {
+    const refreshableSurfaces = publicSurfaces.filter((surface) => surface.refresh?.statusUrl);
+    if (!refreshableSurfaces.length) return undefined;
+
+    let cancelled = false;
+
+    Promise.all(
+      refreshableSurfaces.map(async (surface) => {
+        try {
+          const response = await fetch(surface.refresh.statusUrl, { cache: "no-store" });
+          if (!response.ok) return [surface.id, { ok: false }];
+
+          return [surface.id, await response.json()];
+        } catch {
+          return [surface.id, { ok: false }];
+        }
+      })
+    ).then((entries) => {
+      if (!cancelled) {
+        setSurfaceStatuses(Object.fromEntries(entries));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const refreshableCount = publicSurfaces.filter((surface) => surface.refresh?.statusUrl).length;
+
+  return (
+    <section className="page-grid personal-surface-registry" aria-label="Public surfaces">
+      <div className="personal-surface-registry-head">
+        <div>
+          <span>Public surfaces</span>
+          <h2>Project views on Akibwa, with private refresh work kept behind the boundary.</h2>
+        </div>
+        <dl aria-label="Public surface registry totals">
+          <div>
+            <dt>Registered</dt>
+            <dd>{publicSurfaces.length}</dd>
+          </div>
+          <div>
+            <dt>Refreshing</dt>
+            <dd>{refreshableCount}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div className="personal-surface-list">
+        {publicSurfaces.map((surface) => {
+          const status = surfaceStatuses[surface.id];
+          const project = personalProjects.find((item) => item.slug === surfaceProjectSlugs[surface.id]);
+          const isSelected = project?.slug === selectedSlug;
+          const openSurface = () => {
+            if (project) {
+              onSelectProject(project);
+              return;
+            }
+
+            if (surface.route) {
+              window.location.assign(surface.route);
+            }
+          };
+
+          return (
+            <button
+              type="button"
+              className={`personal-surface-card ${isSelected ? "is-selected" : ""}`}
+              aria-pressed={isSelected}
+              onClick={openSurface}
+              key={surface.id}
+            >
+              <span className={`personal-surface-status ${getSurfaceStatusTone(surface, status)}`}>
+                <i aria-hidden="true" />
+                {getSurfaceStatusLabel(surface, status)}
+              </span>
+              <strong>{surface.title}</strong>
+              <span>{getSurfaceSummary(surface, status)}</span>
+              <small>
+                {humanizeSurfaceKind(surface.kind)}
+                <em>{humanizeSurfaceVisibility(surface.visibility)}</em>
+              </small>
+              <ArrowRight size={17} strokeWidth={1.8} />
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 function SourceLogo({ type }) {
@@ -1039,6 +1218,8 @@ export function PersonalPage() {
         <h1>Personal</h1>
         <p>Projects that interested me to build them.</p>
       </section>
+
+      <PublicSurfaceRegistry onSelectProject={selectProject} selectedSlug={expandedProject?.slug} />
 
       <section className="page-grid work-board personal-board" aria-label="Personal projects">
         <div className="work-card-grid personal-project-grid">
