@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --experimental-app-only",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "publish:check": "node scripts/check-publication.mjs",
+    "publish:ready": "npm run build && npm run publish:check && npm run refresh:status",
     "refresh:status": "node scripts/check-cloud-refreshes.mjs",
     "refresh:chorus:local": "node scripts/update-chorus-data.mjs",
     "refresh:vitals:local": "node scripts/update-vitals-data.mjs",

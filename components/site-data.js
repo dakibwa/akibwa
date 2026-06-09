@@ -1,8 +1,27 @@
 import coverCollisionData from "@/data/cover-collision-data.json";
+import akibwapediaPacket from "@/data/akibwapedia-data.json";
+import publicSurfaceConfig from "@/data/public-surfaces.json";
 
 export const contactEmail = "***REMOVED***";
-export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || "https://akibwa-chorus.dakibwa.workers.dev").trim();
-export const vitalsAppUrl = (process.env.NEXT_PUBLIC_VITALS_APP_URL || "").trim();
+export const akibwapediaData = akibwapediaPacket;
+
+export const publicSurfaces = publicSurfaceConfig.surfaces;
+
+export function getPublicSurface(id) {
+  return publicSurfaces.find((surface) => surface.id === id) ?? null;
+}
+
+const chorusSurface = getPublicSurface("chorus");
+const vitalsSurface = getPublicSurface("vitals");
+const coverCollisionSurface = getPublicSurface("cover-collision");
+
+export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || chorusSurface?.defaultAppUrl || "").trim();
+export const vitalsAppUrl = (process.env.NEXT_PUBLIC_VITALS_APP_URL || vitalsSurface?.defaultAppUrl || "").trim();
+export const coverCollisionDataUrl = (
+  process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
+  coverCollisionSurface?.refresh?.dataUrl ||
+  "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision"
+).trim();
 
 export const areaTiles = [
   {
@@ -124,7 +143,8 @@ export const personalProjects = [
     summary: "Turns listening history into a clear music dashboard.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "chorus",
-    mode: "preview",
+    mode: "embed",
+    embedUrl: chorusAppUrl,
     fallbackHref: "/chorus",
     cta: "Open on Akibwa"
   },
@@ -169,9 +189,12 @@ export const personalProjects = [
     type: "Private AI memory system",
     image: "/area-art/knowledge.png",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations",
-    summary: "Helps Codex use local, source-backed context without exposing raw records.",
-    tags: ["Local-first", "Source discipline", "Private system"],
-    cta: "Private system"
+    summary:
+      akibwapediaData.subtitle ||
+      "Helps Codex use local, source-backed context without exposing raw records.",
+    tags: ["Public-safe", "Source discipline", "Private system"],
+    mode: "preview",
+    cta: akibwapediaData.public_status || "Public-safe packet"
   }
 ];
 

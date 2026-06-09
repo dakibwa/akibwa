@@ -2,6 +2,9 @@ const USER_AGENT = "akibwa-cover-collision-cloudflare/1";
 
 const PUBLIC_DATA_KEY = "cover-collision-data";
 const STATUS_KEY = "refresh-status";
+const INSTAGRAM_PUBLIC_APP_ID = "936619743392459";
+const INSTAGRAM_PUBLIC_USER_AGENT =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -11,26 +14,34 @@ const CORS_HEADERS = {
 };
 
 const FALLBACK_DATA = {
-  generatedAt: "2026-06-04T00:00:00.000Z",
-  snapshotDate: "2026-06-04",
+  generatedAt: "2026-06-05T09:38:00.000Z",
+  snapshotDate: "2026-06-05",
   source: "worker-fallback-seed",
   profileUrl: "https://www.instagram.com/dakibwa/",
   posts: [
     {
-      number: "08",
+      number: "10",
+      title: "Ants from Up There × Man Alive",
+      date: "2026-06-04",
+      href: "https://www.instagram.com/p/DZKzch9CCpO/",
+      image: "/project-images/cover-collision/cover-collision-10.jpg",
+      alt: "Cover Collision no. 10 combining Ants from Up There and Man Alive album artwork"
+    },
+    {
+      number: "09",
       title: "Debonair × Turtleneck & Chain",
       date: "2026-05-08",
       href: "https://www.instagram.com/p/DYFYB5XiEIM/",
       image: "/project-images/cover-collision/cover-collision-01.jpg",
-      alt: "Cover Collision no. 08 combining Debonair and Turtleneck & Chain album artwork"
+      alt: "Cover Collision no. 09 combining Debonair and Turtleneck & Chain album artwork"
     },
     {
-      number: "07",
+      number: "08",
       title: "Bright Green Field × The Car",
       date: "2026-05-07",
       href: "https://www.instagram.com/p/DYCshR1COSH/",
       image: "/project-images/cover-collision/cover-collision-02.jpg",
-      alt: "Cover Collision no. 07 combining Bright Green Field and The Car album artwork"
+      alt: "Cover Collision no. 08 combining Bright Green Field and The Car album artwork"
     },
     {
       number: "07",
@@ -207,7 +218,7 @@ async function refreshCoverCollision(env, trigger) {
   await env.COVER_COLLISION_KV.put(PUBLIC_DATA_KEY, JSON.stringify(refreshed.data));
 
   const status = {
-    ok: true,
+    ok: !refreshed.error,
     trigger,
     changed: stableCoverCollisionData(current) !== stableCoverCollisionData(refreshed.data),
     refreshedAt: new Date().toISOString(),
@@ -224,44 +235,56 @@ async function refreshCoverCollision(env, trigger) {
 }
 
 async function fetchInstagramData(env, current) {
-  if (!env.INSTAGRAM_ACCESS_TOKEN) {
-    const seed = await fetchSeedData(env);
-    return {
-      source: "seed-no-instagram-token",
-      data: withRefreshMetadata(seed, "static-seed"),
-      error: "INSTAGRAM_ACCESS_TOKEN is not configured; serving checked-in public seed."
-    };
-  }
+  const attempts = [];
 
-  try {
-    const payload = await fetchInstagramMedia(env);
-    const posts = normalizeInstagramPosts(payload, current.posts);
-    if (!posts.length) {
-      return {
-        source: "instagram-empty-fallback-seed",
-        data: withRefreshMetadata(current, "static-seed"),
-        error: "Instagram API returned no usable Cover Collision posts."
-      };
-    }
-
-    return {
+  if (env.INSTAGRAM_ACCESS_TOKEN) {
+    attempts.push({
       source: "instagram-api",
-      data: {
-        generatedAt: new Date().toISOString(),
-        snapshotDate: new Date().toISOString().slice(0, 10),
-        source: "Instagram",
-        profileUrl: `https://www.instagram.com/${env.INSTAGRAM_USERNAME || "dakibwa"}/`,
-        posts
-      },
-      error: null
-    };
-  } catch (error) {
-    return {
-      source: "instagram-error-fallback-seed",
-      data: withRefreshMetadata(current, "static-seed"),
-      error: safeError(error)
-    };
+      fetchMedia: () => fetchInstagramMedia(env)
+    });
   }
+
+  attempts.push({
+    source: env.INSTAGRAM_ACCESS_TOKEN ? "instagram-public-profile-fallback" : "instagram-public-profile",
+    fetchMedia: () => fetchInstagramPublicProfileMedia(env)
+  });
+
+  const errors = [];
+
+  for (const attempt of attempts) {
+    try {
+      const payload = await attempt.fetchMedia();
+      const posts = normalizeInstagramPosts(payload, current.posts);
+      if (!posts.length) {
+        errors.push(`${attempt.source}: no usable Cover Collision posts`);
+        continue;
+      }
+
+      return {
+        source: attempt.source,
+        data: {
+          generatedAt: new Date().toISOString(),
+          snapshotDate: new Date().toISOString().slice(0, 10),
+          source: attempt.source === "instagram-api" ? "Instagram" : "Instagram public profile",
+          profileUrl: `https://www.instagram.com/${env.INSTAGRAM_USERNAME || "dakibwa"}/`,
+          posts
+        },
+        error: null
+      };
+    } catch (error) {
+      errors.push(`${attempt.source}: ${safeError(error)}`);
+    }
+  }
+
+  const seed = await fetchSeedData(env);
+  const fallback = isFresherCoverCollisionData(current, seed) ? current : seed;
+  const missingToken = env.INSTAGRAM_ACCESS_TOKEN ? null : "INSTAGRAM_ACCESS_TOKEN is not configured";
+
+  return {
+    source: env.INSTAGRAM_ACCESS_TOKEN ? "instagram-error-fallback-seed" : "instagram-public-error-fallback-seed",
+    data: withRefreshMetadata(fallback, fallback.source || "static-seed"),
+    error: [missingToken, ...errors, "serving checked-in/current public seed"].filter(Boolean).join("; ")
+  };
 }
 
 async function fetchInstagramMedia(env) {
@@ -286,6 +309,54 @@ async function fetchInstagramMedia(env) {
   return payload;
 }
 
+async function fetchInstagramPublicProfileMedia(env) {
+  const username = env.INSTAGRAM_USERNAME || "dakibwa";
+  const url = new URL("https://www.instagram.com/api/v1/users/web_profile_info/");
+  url.searchParams.set("username", username);
+
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      Referer: `https://www.instagram.com/${username}/`,
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
+      "User-Agent": env.INSTAGRAM_PUBLIC_USER_AGENT || INSTAGRAM_PUBLIC_USER_AGENT,
+      "X-IG-App-ID": env.INSTAGRAM_PUBLIC_APP_ID || INSTAGRAM_PUBLIC_APP_ID
+    }
+  });
+  const body = await response.text();
+  const payload = parseJson(body);
+
+  if (!response.ok || !payload || payload.status === "fail") {
+    throw new Error(payload?.message || body.slice(0, 140) || `Instagram public profile fetch failed with HTTP ${response.status}`);
+  }
+
+  const edges = asArray(payload?.data?.user?.edge_owner_to_timeline_media?.edges);
+  return {
+    data: edges.map((edge) => publicProfileNodeToMedia(edge?.node)).filter(Boolean)
+  };
+}
+
+function publicProfileNodeToMedia(node) {
+  if (!node?.shortcode) return null;
+
+  const timestamp = Number(node.taken_at_timestamp);
+  const caption = asArray(node.edge_media_to_caption?.edges)
+    .map((edge) => edge?.node?.text)
+    .find(Boolean);
+
+  return {
+    id: node.id || node.shortcode,
+    caption,
+    media_type: node.is_video ? "VIDEO" : "IMAGE",
+    media_url: node.display_url || node.thumbnail_src,
+    permalink: `https://www.instagram.com/p/${node.shortcode}/`,
+    thumbnail_url: node.thumbnail_src,
+    timestamp: Number.isFinite(timestamp) ? new Date(timestamp * 1000).toISOString() : undefined
+  };
+}
+
 function normalizeInstagramPosts(payload, fallbackPosts) {
   const fallbackByHref = new Map((fallbackPosts || []).map((post) => [stripTrailingSlash(post.href), post]));
   return asArray(payload?.data)
@@ -293,16 +364,19 @@ function normalizeInstagramPosts(payload, fallbackPosts) {
     .map((item, index) => {
       const fallback = fallbackByHref.get(stripTrailingSlash(item.permalink)) || {};
       const captionTitle = titleFromCaption(item.caption);
+      const captionNumber = numberFromCaption(item.caption);
       const timestamp = item.timestamp ? new Date(item.timestamp) : null;
       const date = Number.isNaN(timestamp?.getTime()) ? fallback.date : timestamp?.toISOString().slice(0, 10);
+      const number = captionNumber || fallback.number || String(index + 1).padStart(2, "0");
+      const title = captionTitle || fallback.title || `Cover Collision ${number}`;
 
       return {
-        number: fallback.number || String(index + 1).padStart(2, "0"),
-        title: captionTitle || fallback.title || `Cover Collision ${index + 1}`,
+        number,
+        title,
         date: date || new Date().toISOString().slice(0, 10),
         href: item.permalink || fallback.href,
-        image: item.media_url || item.thumbnail_url || fallback.image,
-        alt: fallback.alt || `Cover Collision Instagram post ${index + 1}`
+        image: fallback.image || item.media_url || item.thumbnail_url,
+        alt: fallback.alt || coverCollisionAlt(number, title)
       };
     })
     .filter((post) => post.href && post.image);
@@ -311,20 +385,31 @@ function normalizeInstagramPosts(payload, fallbackPosts) {
 function isCoverCollisionPost(item) {
   const caption = String(item?.caption || "");
   const permalink = String(item?.permalink || "");
-  return permalink.includes("instagram.com/") && /cover\\s*collision/i.test(caption);
+  return permalink.includes("instagram.com/") && /cover\s*collision/i.test(caption);
 }
 
 function titleFromCaption(caption) {
-  const firstLine = String(caption || "")
+  const lines = String(caption || "")
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .find(Boolean);
+    .filter(Boolean);
+  const firstLine = lines.find((line) => !/cover\s*collision/i.test(line)) || lines[0];
   if (!firstLine) return "";
 
   return firstLine
-    .replace(/^cover\s*collision\s*(no\\.?\\s*)?\\d+\\s*[:.-]?\\s*/i, "")
+    .replace(/^cover\s*collision\s*(?:no\.?\s*)?\d+\s*[:.-]?\s*/i, "")
     .replace(/\s*[|#].*$/, "")
     .trim();
+}
+
+function numberFromCaption(caption) {
+  const match = String(caption || "").match(/cover\s*collision\s*(?:no\.?\s*)?(\d+)/i);
+  return match?.[1] ? match[1].padStart(2, "0") : "";
+}
+
+function coverCollisionAlt(number, title) {
+  const readableTitle = title.replace(/\s*×\s*/g, " and ");
+  return `Cover Collision no. ${number} combining ${readableTitle} album artwork`;
 }
 
 function withRefreshMetadata(data, source) {
@@ -349,6 +434,16 @@ function stableCoverCollisionData(data) {
   return JSON.stringify(clone);
 }
 
+function isFresherCoverCollisionData(candidate, current) {
+  const candidatePosts = asArray(candidate?.posts);
+  const currentPosts = asArray(current?.posts);
+  const candidateDate = candidatePosts[0]?.date || candidate?.snapshotDate || "";
+  const currentDate = currentPosts[0]?.date || current?.snapshotDate || "";
+
+  if (candidateDate !== currentDate) return candidateDate > currentDate;
+  return candidatePosts.length >= currentPosts.length;
+}
+
 function asArray(value) {
   if (!value) return [];
   return Array.isArray(value) ? value : [value];
@@ -356,6 +451,14 @@ function asArray(value) {
 
 function stripTrailingSlash(value) {
   return String(value || "").replace(/\/+$/, "");
+}
+
+function parseJson(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
 }
 
 function safeError(error) {

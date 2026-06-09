@@ -485,6 +485,7 @@ async function pairRunWithLastFm(env, activity) {
     pace: formatPace(numberFrom(activity.distance) || 0, movingTime),
     elevation: formatElevation(numberFrom(activity.total_elevation_gain)),
     soundtrack: dominantArtist(tracks),
+    route: buildRouteMap(summaryPolylineFrom(activity.map)),
     tracks: tracks.map((track) => ({
       title: track.title,
       artist: track.artist,
@@ -596,6 +597,151 @@ function dominantArtist(tracks) {
   const counts = new Map();
   for (const track of tracks) counts.set(track.artist, (counts.get(track.artist) || 0) + 1);
   return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || tracks[0]?.artist || "Last.fm";
+}
+
+function summaryPolylineFrom(value) {
+  if (!value || typeof value !== "object") return null;
+  return stringFrom(value.summary_polyline);
+}
+
+const ROUTE_TILE_SIZE = 256;
+const ROUTE_MAP_WIDTH = 360;
+const ROUTE_MAP_HEIGHT = 220;
+const ROUTE_MAP_PADDING = 28;
+const ROUTE_MIN_ZOOM = 10;
+const ROUTE_MAX_ZOOM = 16;
+
+function buildRouteMap(summaryPolyline) {
+  if (!summaryPolyline) return null;
+
+  const coordinates = decodePolyline(summaryPolyline);
+  if (coordinates.length < 2) return null;
+
+  const lats = coordinates.map((point) => point.lat);
+  const lngs = coordinates.map((point) => point.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  const zoom = chooseRouteZoom(coordinates);
+  const projected = coordinates.map((point) => latLngToWorld(point.lat, point.lng, zoom));
+  const minX = Math.min(...projected.map((point) => point.x));
+  const maxX = Math.max(...projected.map((point) => point.x));
+  const minY = Math.min(...projected.map((point) => point.y));
+  const maxY = Math.max(...projected.map((point) => point.y));
+  const viewportX = (minX + maxX - ROUTE_MAP_WIDTH) / 2;
+  const viewportY = (minY + maxY - ROUTE_MAP_HEIGHT) / 2;
+  const points = projected.map((point) => ({
+    x: Number((point.x - viewportX).toFixed(1)),
+    y: Number((point.y - viewportY).toFixed(1))
+  }));
+
+  return {
+    summaryPolyline,
+    path: points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" "),
+    pointCount: coordinates.length,
+    start: points[0],
+    end: points[points.length - 1],
+    viewBox: {
+      width: ROUTE_MAP_WIDTH,
+      height: ROUTE_MAP_HEIGHT
+    },
+    bounds: {
+      minLat: Number(minLat.toFixed(6)),
+      minLng: Number(minLng.toFixed(6)),
+      maxLat: Number(maxLat.toFixed(6)),
+      maxLng: Number(maxLng.toFixed(6))
+    },
+    tiles: buildRouteTiles(viewportX, viewportY, zoom),
+    attribution: "OpenStreetMap"
+  };
+}
+
+function chooseRouteZoom(coordinates) {
+  for (let zoom = ROUTE_MAX_ZOOM; zoom >= ROUTE_MIN_ZOOM; zoom -= 1) {
+    const projected = coordinates.map((point) => latLngToWorld(point.lat, point.lng, zoom));
+    const spanX = Math.max(...projected.map((point) => point.x)) - Math.min(...projected.map((point) => point.x));
+    const spanY = Math.max(...projected.map((point) => point.y)) - Math.min(...projected.map((point) => point.y));
+    if (spanX <= ROUTE_MAP_WIDTH - ROUTE_MAP_PADDING * 2 && spanY <= ROUTE_MAP_HEIGHT - ROUTE_MAP_PADDING * 2) {
+      return zoom;
+    }
+  }
+
+  return ROUTE_MIN_ZOOM;
+}
+
+function latLngToWorld(lat, lng, zoom) {
+  const scale = ROUTE_TILE_SIZE * 2 ** zoom;
+  const sinLat = Math.sin(Math.max(Math.min(lat, 85.05112878), -85.05112878) * Math.PI / 180);
+  return {
+    x: (lng + 180) / 360 * scale,
+    y: (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * scale
+  };
+}
+
+function buildRouteTiles(viewportX, viewportY, zoom) {
+  const tileMinX = Math.floor(viewportX / ROUTE_TILE_SIZE);
+  const tileMaxX = Math.floor((viewportX + ROUTE_MAP_WIDTH) / ROUTE_TILE_SIZE);
+  const tileMinY = Math.floor(viewportY / ROUTE_TILE_SIZE);
+  const tileMaxY = Math.floor((viewportY + ROUTE_MAP_HEIGHT) / ROUTE_TILE_SIZE);
+  const tileLimit = 2 ** zoom;
+  const tiles = [];
+
+  for (let tileY = tileMinY; tileY <= tileMaxY; tileY += 1) {
+    if (tileY < 0 || tileY >= tileLimit) continue;
+
+    for (let tileX = tileMinX; tileX <= tileMaxX; tileX += 1) {
+      const wrappedX = (tileX % tileLimit + tileLimit) % tileLimit;
+      tiles.push({
+        x: Number((tileX * ROUTE_TILE_SIZE - viewportX).toFixed(1)),
+        y: Number((tileY * ROUTE_TILE_SIZE - viewportY).toFixed(1)),
+        width: ROUTE_TILE_SIZE,
+        height: ROUTE_TILE_SIZE,
+        url: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${tileY}.png`
+      });
+    }
+  }
+
+  return tiles;
+}
+
+function decodePolyline(polyline) {
+  const coordinates = [];
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+
+  while (index < polyline.length) {
+    const latitude = decodePolylineValue(polyline, index);
+    index = latitude.nextIndex;
+    lat += latitude.value;
+
+    const longitude = decodePolylineValue(polyline, index);
+    index = longitude.nextIndex;
+    lng += longitude.value;
+
+    coordinates.push({ lat: lat / 1e5, lng: lng / 1e5 });
+  }
+
+  return coordinates;
+}
+
+function decodePolylineValue(polyline, startIndex) {
+  let result = 0;
+  let shift = 0;
+  let index = startIndex;
+  let byte = 0;
+
+  do {
+    byte = polyline.charCodeAt(index++) - 63;
+    result |= (byte & 0x1f) << shift;
+    shift += 5;
+  } while (byte >= 0x20 && index < polyline.length);
+
+  return {
+    value: result & 1 ? ~(result >> 1) : result >> 1,
+    nextIndex: index
+  };
 }
 
 function readApiMessage(payload, fallback) {

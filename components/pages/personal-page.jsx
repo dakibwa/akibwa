@@ -15,6 +15,8 @@ import {
   HeartPulse,
   Instagram,
   LockKeyhole,
+  Maximize2,
+  Minimize2,
   Pickaxe,
   Route,
   SearchCheck,
@@ -29,14 +31,38 @@ import { PageFooter } from "@/components/page-footer";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
-import { coverCollisionPosts, personalProjects } from "@/components/site-data";
+import { akibwapediaData, coverCollisionDataUrl, coverCollisionPosts, personalProjects } from "@/components/site-data";
 
-const remoteCoverCollisionDataUrl = (
-  process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
-  "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision"
-).trim();
+const sourceLogoByName = {
+  gmail: "gmail",
+  "google drive": "drive",
+  drive: "drive",
+  calendar: "calendar",
+  finance: "finance",
+  health: "health",
+  github: "projects",
+  "media and taste": "projects"
+};
 
-const knowledgeSources = [
+const routeMetaByName = {
+  current_priorities: { label: "Today's priorities", Icon: CalendarCheck, tone: "blue" },
+  evidence_check: { label: "Evidence check", Icon: SearchCheck, tone: "teal" },
+  project_or_work: { label: "Project obligations", Icon: BriefcaseBusiness, tone: "orange" },
+  health: { label: "Health context", Icon: HeartPulse, tone: "rose" },
+  finance: { label: "Finance synthesis", Icon: Wallet, tone: "green" },
+  source_mining: { label: "Source mining", Icon: Pickaxe, tone: "slate" }
+};
+
+const preferredRouteOrder = [
+  "current_priorities",
+  "evidence_check",
+  "project_or_work",
+  "health",
+  "finance",
+  "source_mining"
+];
+
+const fallbackKnowledgeSources = [
   { name: "Gmail", detail: "Body-level backfill next", logo: "gmail" },
   { name: "Drive", detail: "Content map ready", logo: "drive" },
   { name: "Calendar", detail: "History pass queued", logo: "calendar" },
@@ -45,7 +71,7 @@ const knowledgeSources = [
   { name: "Projects", detail: "Active obligations", logo: "projects" }
 ];
 
-const knowledgeRoutes = [
+const fallbackKnowledgeRoutes = [
   { label: "Today's priorities", detail: "Calendar and inbox first", Icon: CalendarCheck, tone: "blue" },
   { label: "Evidence check", detail: "Source pointers before claims", Icon: SearchCheck, tone: "teal" },
   { label: "Project obligations", detail: "GitHub, Drive, and inbox", Icon: BriefcaseBusiness, tone: "orange" },
@@ -54,7 +80,7 @@ const knowledgeRoutes = [
   { label: "Source mining", detail: "Backfill by priority", Icon: Pickaxe, tone: "slate" }
 ];
 
-const knowledgeGuardrails = [
+const fallbackKnowledgeGuardrails = [
   { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" },
   { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" },
   { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" },
@@ -62,6 +88,45 @@ const knowledgeGuardrails = [
   { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" },
   { label: "Secrets stay out", detail: "No tokens or identifiers", Icon: LockKeyhole, tone: "slate" }
 ];
+
+const PROJECT_OVERLAY_EXIT_MS = 180;
+const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
+
+const generatedKnowledgeSources =
+  akibwapediaData.source_families?.slice(0, 6).map((source) => ({
+    name: source.name,
+    detail: source.status,
+    logo: sourceLogoByName[String(source.name || "").toLowerCase()] || "projects"
+  })) || [];
+
+const knowledgeSources = generatedKnowledgeSources.length ? generatedKnowledgeSources : fallbackKnowledgeSources;
+
+const routeByName = Object.fromEntries(
+  (akibwapediaData.retrieval_routes || []).map((route) => [route.name, route])
+);
+
+const generatedKnowledgeRoutes =
+  preferredRouteOrder
+    .map((name) => {
+      const route = routeByName[name];
+      const meta = routeMetaByName[name];
+      if (!route || !meta) return null;
+
+      return {
+        ...meta,
+        detail: route.description || `${route.reads} source layers`
+      };
+    })
+    .filter(Boolean);
+
+const knowledgeRoutes = generatedKnowledgeRoutes.length ? generatedKnowledgeRoutes : fallbackKnowledgeRoutes;
+
+const generatedKnowledgeGuardrails =
+  akibwapediaData.privacy_rules?.slice(0, 6).map((rule, index) => guardrailFromRule(rule, index)) || [];
+
+const knowledgeGuardrails = generatedKnowledgeGuardrails.length ? generatedKnowledgeGuardrails : fallbackKnowledgeGuardrails;
+
+const knowledgeMetrics = akibwapediaData.metrics?.slice(0, 4) || [];
 
 const iconToneStyles = {
   blue: {
@@ -101,6 +166,49 @@ function getIconToneStyle(tone, index) {
     ...(iconToneStyles[tone] ?? iconToneStyles.slate),
     "--row-delay": `${index * 65}ms`
   };
+}
+
+function guardrailFromRule(rule, index) {
+  const text = String(rule || "");
+  const lower = text.toLowerCase();
+
+  if (lower.includes("raw") || lower.includes("identifiers") || lower.includes("secrets")) {
+    return { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" };
+  }
+
+  if (lower.includes("health")) {
+    return { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" };
+  }
+
+  if (lower.includes("old assistant") || lower.includes("leads")) {
+    return { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" };
+  }
+
+  if (lower.includes("public copy") || lower.includes("source layers")) {
+    return { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" };
+  }
+
+  if (lower.includes("read-only")) {
+    return { label: "Sources are read-only", detail: "Write only by request", Icon: ShieldCheck, tone: "teal" };
+  }
+
+  return {
+    label: fallbackKnowledgeGuardrails[index]?.label || "Privacy boundary",
+    detail: fallbackKnowledgeGuardrails[index]?.detail || text,
+    Icon: fallbackKnowledgeGuardrails[index]?.Icon || LockKeyhole,
+    tone: fallbackKnowledgeGuardrails[index]?.tone || "slate"
+  };
+}
+
+function compactMetricLabel(label) {
+  const labels = {
+    "Raw manifest records": "Manifest",
+    "Normalized entries": "Entries",
+    "Ledger events": "Events",
+    "Source files": "Source files"
+  };
+
+  return labels[label] || label;
 }
 
 function SourceLogo({ type }) {
@@ -210,7 +318,12 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
     </>
   );
 
-  if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals")) {
+  if (
+    project.mode !== "preview" &&
+    project.fallbackHref &&
+    (project.visual === "chorus" || project.visual === "vitals") &&
+    !project.embedUrl
+  ) {
     return (
       <Link href={project.fallbackHref} className={cardClass} prefetch>
         {cardContent}
@@ -263,11 +376,32 @@ function isCoverCollisionData(data) {
   return data?.profileUrl && Array.isArray(data?.posts);
 }
 
-function useCoverCollisionData(dataUrl = remoteCoverCollisionDataUrl) {
-  const [runtimeData, setRuntimeData] = useState({
+function latestCoverCollisionDate(data) {
+  return data?.posts?.[0]?.date || data?.snapshotDate || "";
+}
+
+function preferredCoverCollisionData(remoteData, fallbackData) {
+  if (!isCoverCollisionData(remoteData)) return fallbackData;
+
+  const remoteDate = latestCoverCollisionDate(remoteData);
+  const fallbackDate = latestCoverCollisionDate(fallbackData);
+  if (remoteDate && fallbackDate && remoteDate < fallbackDate) return fallbackData;
+
+  const remotePosts = remoteData.posts.length ? remoteData.posts : fallbackData.posts;
+  if (remoteDate === fallbackDate && remotePosts.length < fallbackData.posts.length) return fallbackData;
+
+  return {
+    profileUrl: remoteData.profileUrl || fallbackData.profileUrl,
+    posts: remotePosts
+  };
+}
+
+function useCoverCollisionData(dataUrl = coverCollisionDataUrl) {
+  const fallbackData = {
     profileUrl: "https://www.instagram.com/dakibwa/",
     posts: coverCollisionPosts
-  });
+  };
+  const [runtimeData, setRuntimeData] = useState(fallbackData);
 
   useEffect(() => {
     const url = String(dataUrl || "").trim();
@@ -279,10 +413,7 @@ function useCoverCollisionData(dataUrl = remoteCoverCollisionDataUrl) {
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
         if (!cancelled && isCoverCollisionData(data)) {
-          setRuntimeData({
-            profileUrl: data.profileUrl,
-            posts: data.posts.length ? data.posts : coverCollisionPosts
-          });
+          setRuntimeData(preferredCoverCollisionData(data, fallbackData));
         }
       })
       .catch(() => {});
@@ -437,6 +568,16 @@ function KnowledgeBaseShowcase({ project }) {
             A local, source-backed context system that helps Codex use personal records without exposing the records
             themselves.
           </p>
+          {knowledgeMetrics.length > 0 && (
+            <dl className="knowledge-system-metrics" aria-label="Public-safe knowledge system metrics">
+              {knowledgeMetrics.map((metric) => (
+                <div key={metric.label}>
+                  <dt>{compactMetricLabel(metric.label)}</dt>
+                  <dd>{metric.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
           <div className="knowledge-system-tags" aria-label={`${project.title} tags`}>
             {project.tags.map((tag) => (
               <span key={tag}>{tag}</span>
@@ -578,15 +719,28 @@ function ProjectExpandedContent({ project, frameUrl }) {
 }
 
 function LiveProjectFrame({ project, frameUrl }) {
+  const [isFrameLoaded, setIsFrameLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsFrameLoaded(false);
+  }, [frameUrl]);
+
   return (
     <section className="project-expanded-frame" id={`${project.slug}-preview`} aria-live="polite">
       {frameUrl ? (
-        <div className="project-expanded-frame-shell">
+        <div className={`project-expanded-frame-shell ${isFrameLoaded ? "is-loaded" : "is-loading"}`}>
+          {!isFrameLoaded && (
+            <div className="project-frame-loading" aria-hidden="true">
+              <span>{project.title}</span>
+              <strong>{project.dashboardLabel ?? "Live project"}</strong>
+            </div>
+          )}
           <iframe
             src={frameUrl}
             title={`${project.title} live project`}
             className="live-frame"
-            loading="lazy"
+            loading="eager"
+            onLoad={() => setIsFrameLoaded(true)}
           />
         </div>
       ) : (
@@ -608,10 +762,33 @@ function LiveProjectFrame({ project, frameUrl }) {
   );
 }
 
-function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
+function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onClose, onToggleMaximized }) {
+  const [contentReady, setContentReady] = useState(false);
+
+  useEffect(() => {
+    if (!isVisible) return undefined;
+
+    setContentReady(false);
+    let timerId;
+    const frameId = window.requestAnimationFrame(() => {
+      const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      timerId = window.setTimeout(
+        () => setContentReady(true),
+        prefersReducedMotion ? 0 : PROJECT_OVERLAY_CONTENT_DELAY_MS
+      );
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      if (timerId) window.clearTimeout(timerId);
+    };
+  }, [isVisible, project.slug]);
+
   return (
     <div
-      className={`project-expanded-layer is-${project.visual ?? "static"}`}
+      className={`project-expanded-layer is-${project.visual ?? "static"} ${isVisible ? "is-open" : "is-closing"} ${
+        isMaximized ? "is-maximized" : ""
+      }`}
       role="dialog"
       aria-modal="true"
       aria-labelledby={`${project.slug}-expanded-title`}
@@ -623,17 +800,32 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
           <h2 id={`${project.slug}-expanded-title`} className="project-expanded-accessible-title">
             {project.title}
           </h2>
-          <button
-            type="button"
-            className="project-expanded-close"
-            aria-label={`Close ${project.title}`}
-            onClick={onClose}
-          >
-            <X size={18} strokeWidth={1.9} />
-          </button>
+          <div className="project-expanded-actions">
+            <button
+              type="button"
+              className="project-expanded-maximize"
+              aria-label={`${isMaximized ? "Minimize" : "Maximize"} ${project.title}`}
+              aria-pressed={isMaximized}
+              onClick={onToggleMaximized}
+            >
+              {isMaximized ? <Minimize2 size={17} strokeWidth={1.9} /> : <Maximize2 size={17} strokeWidth={1.9} />}
+            </button>
+            <button
+              type="button"
+              className="project-expanded-close"
+              aria-label={`Close ${project.title}`}
+              onClick={onClose}
+            >
+              <X size={18} strokeWidth={1.9} />
+            </button>
+          </div>
         </header>
         <div className="project-expanded-body">
-          <ProjectExpandedContent project={project} frameUrl={frameUrl} />
+          {contentReady ? (
+            <ProjectExpandedContent project={project} frameUrl={frameUrl} />
+          ) : (
+            <div className="project-expanded-content-placeholder" aria-hidden="true" />
+          )}
         </div>
       </article>
     </div>
@@ -642,6 +834,9 @@ function ProjectExpandedOverlay({ project, frameUrl, onClose }) {
 
 export function PersonalPage() {
   const [expandedSlug, setExpandedSlug] = useState(null);
+  const [overlaySlug, setOverlaySlug] = useState(null);
+  const [isOverlayMaximized, setIsOverlayMaximized] = useState(false);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isLocalHost, setIsLocalHost] = useState(false);
 
   useEffect(() => {
@@ -658,7 +853,13 @@ export function PersonalPage() {
         (item) => item.slug === hash || item.aliases?.includes(hash)
       );
       if (project) {
-        if (project.fallbackHref && (project.visual === "chorus" || project.visual === "vitals")) {
+        const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
+        if (
+          project.mode !== "preview" &&
+          project.fallbackHref &&
+          (project.visual === "chorus" || project.visual === "vitals") &&
+          !hasInlineFrame
+        ) {
           window.location.assign(project.fallbackHref);
           return;
         }
@@ -678,14 +879,37 @@ export function PersonalPage() {
     () => personalProjects.find((project) => project.slug === expandedSlug) ?? null,
     [expandedSlug]
   );
+  const overlayProject = useMemo(
+    () => personalProjects.find((project) => project.slug === overlaySlug) ?? null,
+    [overlaySlug]
+  );
+
+  useEffect(() => {
+    if (expandedSlug) {
+      setOverlaySlug(expandedSlug);
+      const frameId = window.requestAnimationFrame(() => setIsOverlayVisible(true));
+      return () => window.cancelAnimationFrame(frameId);
+    }
+
+    setIsOverlayVisible(false);
+    if (!overlaySlug) return undefined;
+
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const timerId = window.setTimeout(
+      () => setOverlaySlug(null),
+      prefersReducedMotion ? 0 : PROJECT_OVERLAY_EXIT_MS
+    );
+    return () => window.clearTimeout(timerId);
+  }, [expandedSlug, overlaySlug]);
 
   const closeExpandedProject = useCallback(() => {
     setExpandedSlug(null);
+    setIsOverlayMaximized(false);
     window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
   }, []);
 
   useEffect(() => {
-    if (!expandedProject) return undefined;
+    if (!overlayProject) return undefined;
 
     const closeOnEscape = (event) => {
       if (event.key === "Escape") {
@@ -693,20 +917,27 @@ export function PersonalPage() {
       }
     };
     const previousOverflow = document.body.style.overflow;
+    const previousScrollbarGutter = document.documentElement.style.scrollbarGutter;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.scrollbarGutter = "stable";
     window.addEventListener("keydown", closeOnEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.documentElement.style.scrollbarGutter = previousScrollbarGutter;
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [closeExpandedProject, expandedProject]);
+  }, [closeExpandedProject, overlayProject]);
 
   const selectProject = (project) => {
+    setIsOverlayMaximized(false);
     setExpandedSlug(project.slug);
     window.history.replaceState(null, "", `#${project.slug}`);
   };
-  const frameUrl = expandedProject ? getProjectFrameUrl(expandedProject, isLocalHost) : "";
+  const toggleOverlayMaximized = useCallback(() => {
+    setIsOverlayMaximized((current) => !current);
+  }, []);
+  const frameUrl = overlayProject ? getProjectFrameUrl(overlayProject, isLocalHost) : "";
 
   return (
     <section className="studio-page personal-page">
@@ -729,8 +960,15 @@ export function PersonalPage() {
         </div>
       </section>
 
-      {expandedProject && (
-        <ProjectExpandedOverlay project={expandedProject} frameUrl={frameUrl} onClose={closeExpandedProject} />
+      {overlayProject && (
+        <ProjectExpandedOverlay
+          project={overlayProject}
+          frameUrl={frameUrl}
+          isMaximized={isOverlayMaximized}
+          isVisible={isOverlayVisible && overlayProject.slug === expandedSlug}
+          onClose={closeExpandedProject}
+          onToggleMaximized={toggleOverlayMaximized}
+        />
       )}
 
       <PageFooter />

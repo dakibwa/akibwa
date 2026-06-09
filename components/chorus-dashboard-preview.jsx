@@ -220,18 +220,30 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
     if (!url) return undefined;
 
     let cancelled = false;
+    let idleId;
+    let timerId;
 
-    fetch(url, { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data) => {
-        if (!cancelled && isChorusData(data)) {
-          setRuntimeChorusData(data);
-        }
-      })
-      .catch(() => {});
+    const refreshData = () => {
+      fetch(url, { cache: "no-store" })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((data) => {
+          if (!cancelled && isChorusData(data)) {
+            setRuntimeChorusData(data);
+          }
+        })
+        .catch(() => {});
+    };
+
+    if (window.requestIdleCallback) {
+      idleId = window.requestIdleCallback(refreshData, { timeout: 1600 });
+    } else {
+      timerId = window.setTimeout(refreshData, 320);
+    }
 
     return () => {
       cancelled = true;
+      if (idleId) window.cancelIdleCallback(idleId);
+      if (timerId) window.clearTimeout(timerId);
     };
   }, [dataUrl]);
 

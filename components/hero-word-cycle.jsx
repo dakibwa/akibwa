@@ -38,6 +38,10 @@ const heroOutcomePhrases = [
   { label: "working prototypes", accent: outcomeAccents[5] }
 ];
 
+const AUTO_CYCLE_INITIAL_DELAY_MS = 12000;
+const AUTO_CYCLE_DURATION_MS = 3800;
+const AUTO_CYCLE_OUTCOME_STAGGER_MS = 475;
+
 function nextDifferentAccentIndex(phrases, currentIndex) {
   const currentAccent = phrases[currentIndex].accent;
 
@@ -95,16 +99,40 @@ export function HeroDynamicPhrase() {
   const [outcomeIndex, setOutcomeIndex] = useState(0);
   const [sourceActive, setSourceActive] = useState(false);
   const [outcomeActive, setOutcomeActive] = useState(false);
+  const phraseRef = useRef(null);
+  const userInteractedRef = useRef(false);
+  const autoCycleActiveRef = useRef(false);
+  const autoStopTimerRef = useRef(null);
   const sourceIndexRef = useRef(0);
   const outcomeIndexRef = useRef(0);
 
-  const activateSource = useCallback(() => {
-    setSourceActive(true);
+  const clearAutoStopTimer = useCallback(() => {
+    if (autoStopTimerRef.current) {
+      window.clearTimeout(autoStopTimerRef.current);
+      autoStopTimerRef.current = null;
+    }
   }, []);
 
+  const markUserInteracted = useCallback(() => {
+    userInteractedRef.current = true;
+
+    if (autoCycleActiveRef.current) {
+      clearAutoStopTimer();
+      autoCycleActiveRef.current = false;
+      setSourceActive(false);
+      setOutcomeActive(false);
+    }
+  }, [clearAutoStopTimer]);
+
+  const activateSource = useCallback(() => {
+    markUserInteracted();
+    setSourceActive(true);
+  }, [markUserInteracted]);
+
   const activateOutcome = useCallback(() => {
+    markUserInteracted();
     setOutcomeActive(true);
-  }, []);
+  }, [markUserInteracted]);
 
   const advanceSource = useCallback(() => {
     const nextIndex = nextDifferentAccentIndex(heroSourcePhrases, sourceIndexRef.current);
@@ -121,19 +149,85 @@ export function HeroDynamicPhrase() {
   }, []);
 
   const resetSource = useCallback(() => {
+    clearAutoStopTimer();
+    autoCycleActiveRef.current = false;
     sourceIndexRef.current = 0;
     setSourceIndex(0);
     setSourceActive(false);
-  }, []);
+  }, [clearAutoStopTimer]);
 
   const resetOutcome = useCallback(() => {
+    clearAutoStopTimer();
+    autoCycleActiveRef.current = false;
     outcomeIndexRef.current = 0;
     setOutcomeIndex(0);
     setOutcomeActive(false);
-  }, []);
+  }, [clearAutoStopTimer]);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+
+    if (prefersReducedMotion?.matches) return undefined;
+
+    let visibilityCleanup = null;
+
+    const shouldRunAutoCycle = () => {
+      if (userInteractedRef.current || autoCycleActiveRef.current) return false;
+      const bounds = phraseRef.current?.getBoundingClientRect();
+
+      return Boolean(bounds && bounds.bottom > 0 && bounds.top < window.innerHeight);
+    };
+
+    const endAutoCycle = () => {
+      autoCycleActiveRef.current = false;
+      autoStopTimerRef.current = null;
+      setSourceActive(false);
+      setOutcomeActive(false);
+    };
+
+    const startAutoCycle = () => {
+      if (!shouldRunAutoCycle()) return;
+
+      autoCycleActiveRef.current = true;
+      setSourceActive(true);
+      setOutcomeActive(true);
+      advanceSource();
+
+      window.setTimeout(() => {
+        if (autoCycleActiveRef.current) advanceOutcome();
+      }, AUTO_CYCLE_OUTCOME_STAGGER_MS);
+
+      autoStopTimerRef.current = window.setTimeout(endAutoCycle, AUTO_CYCLE_DURATION_MS);
+    };
+
+    const initialTimer = window.setTimeout(() => {
+      if (document.visibilityState === "hidden") {
+        const handleVisible = () => {
+          if (document.visibilityState !== "visible") return;
+
+          document.removeEventListener("visibilitychange", handleVisible);
+          visibilityCleanup = null;
+          startAutoCycle();
+        };
+
+        document.addEventListener("visibilitychange", handleVisible);
+        visibilityCleanup = () => document.removeEventListener("visibilitychange", handleVisible);
+        return;
+      }
+
+      startAutoCycle();
+    }, AUTO_CYCLE_INITIAL_DELAY_MS);
+
+    return () => {
+      window.clearTimeout(initialTimer);
+      visibilityCleanup?.();
+      clearAutoStopTimer();
+      autoCycleActiveRef.current = false;
+    };
+  }, [advanceOutcome, advanceSource, clearAutoStopTimer]);
 
   return (
-    <span className="hero-dynamic-phrase">
+    <span className="hero-dynamic-phrase" ref={phraseRef}>
       <span>that turn </span>
       <HeroWordCycle
         phrases={heroSourcePhrases}

@@ -5,7 +5,9 @@ This Worker is the public refresh runner for Cover Collision / Instagram album-a
 - Scheduled daily by Cloudflare cron.
 - Serves public post metadata at `/cover-collision`.
 - Stores only public post metadata in KV.
-- Uses the checked-in seed until Instagram API credentials are configured.
+- Uses the Instagram API when credentials are configured.
+- Falls back to the public Instagram profile endpoint when the API token is absent.
+- Uses the checked-in seed only when live Instagram reads fail.
 
 Secrets are set with Wrangler and must never be committed:
 
@@ -18,6 +20,7 @@ Optional non-secret vars:
 
 - `INSTAGRAM_USERNAME`: defaults to `dakibwa`
 - `INSTAGRAM_USER_ID`: only needed for Graph API business/creator account media endpoints
+- `INSTAGRAM_PUBLIC_APP_ID`: optional override for the public profile endpoint app id
 
 Manual refresh:
 

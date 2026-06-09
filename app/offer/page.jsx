@@ -1,9 +1,9 @@
 import { OfferPage } from "@/components/pages/offer-page";
 
 export const metadata = {
-  title: "Professional",
+  title: "Offer",
   description:
-    "Commission a small AI-assisted system for one messy workflow."
+    "Akibwa offers workflow teardowns, prototype sprints, and small AI-assisted systems for teams with messy information flows."
 };
 
 export default function OfferRoute() {
