@@ -2006,6 +2006,17 @@ button {
   border-radius: 10px;
 }
 
+.project-expanded-layer.is-vitals:not(.is-maximized) {
+  padding:
+    clamp(32px, 8vw, 118px)
+    clamp(22px, 8vw, 128px);
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
+  width: min(1120px, calc(100vw - clamp(44px, 16vw, 256px)));
+  height: min(700px, calc(100dvh - clamp(64px, 18dvh, 156px)));
+}
+
 .project-expanded-toolbar {
   position: relative;
   display: grid;
@@ -2174,12 +2185,109 @@ button {
   border-radius: 0;
 }
 
+.project-expanded-body .personal-full-app-showcase.is-vitals {
+  height: 100%;
+  overflow: auto;
+  background: #efeeea;
+}
+
+.project-expanded-body .personal-full-app-showcase.is-vitals > .vitals-ai-dashboard {
+  min-height: 100%;
+}
+
+.project-expanded-body .personal-full-app-showcase.is-vitals .vitals-ai-shell {
+  width: 100%;
+  min-height: calc(100% - 8px);
+}
+
 .project-expanded-body .personal-full-app-showcase > .vitals-dashboard {
   padding-bottom: 34px;
 }
 
 .project-expanded-body .personal-full-app-showcase .vitals-shell {
   width: min(calc(100% - 48px), 1440px);
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-shell {
+  padding: 20px 24px 12px;
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-sources,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls {
+  justify-content: flex-start;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-sources::-webkit-scrollbar,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls::-webkit-scrollbar {
+  display: none;
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-score-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-recovery-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-sleep-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-training-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-body-metrics-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-nutrition-card-v2,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-stress-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-trends-card {
+  grid-column: span 6;
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-habits-card,
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-insights-card {
+  grid-column: 1 / -1;
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief {
+  grid-template-columns: 72px minmax(180px, 0.4fr) repeat(2, minmax(0, 1fr));
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief > button {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1600px) {
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-shell {
+    padding: 20px 24px 12px;
+  }
+
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-sources,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-controls {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-sources::-webkit-scrollbar,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-controls::-webkit-scrollbar {
+    display: none;
+  }
+
+  .project-expanded-layer.is-vitals.is-maximized .vitals-score-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-recovery-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-sleep-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-training-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-body-metrics-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-nutrition-card-v2,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-stress-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-trends-card {
+    grid-column: span 6;
+  }
+
+  .project-expanded-layer.is-vitals.is-maximized .vitals-habits-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-insights-card {
+    grid-column: 1 / -1;
+  }
+
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief {
+    grid-template-columns: 72px minmax(180px, 0.4fr) repeat(2, minmax(0, 1fr));
+  }
+
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief > button {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (min-width: 761px) {
@@ -9941,6 +10049,15 @@ button {
     border-radius: 10px;
   }
 
+  .project-expanded-layer.is-vitals:not(.is-maximized) {
+    padding: 8px;
+  }
+
+  .project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
+    width: calc(100vw - 16px);
+    height: calc(100dvh - 16px);
+  }
+
   .project-expanded-toolbar {
     min-height: 62px;
     padding: 0 86px 0 12px;
@@ -10036,6 +10153,45 @@ button {
 
   .project-expanded-body .vitals-dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .project-expanded-layer.is-vitals .vitals-ai-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-score-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-recovery-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-sleep-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-training-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-body-metrics-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-nutrition-card-v2,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-stress-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-trends-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-habits-card,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-insights-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-score-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-recovery-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-sleep-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-training-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-body-metrics-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-nutrition-card-v2,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-stress-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-trends-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-habits-card,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-insights-card {
+    grid-column: 1 / -1;
+  }
+
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief section,
+  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief > button,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief section,
+  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief > button {
+    grid-column: 1 / -1;
   }
 
   .project-expanded-body .vitals-dashboard-grid > .vitals-stat-card,
