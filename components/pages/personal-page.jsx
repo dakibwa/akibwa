@@ -228,6 +228,7 @@ function compactMetricLabel(label) {
 function humanizeSurfaceKind(kind) {
   const labels = {
     "cloudflare-app": "Cloudflare app",
+    "interactive-preview-with-refresh": "Interactive preview",
     "static-preview-with-refresh": "Static preview",
     "public-series-refresh": "Public series",
     "public-projection": "Public projection"

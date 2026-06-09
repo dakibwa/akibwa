@@ -21,7 +21,7 @@
       "id": "vitals",
       "title": "Vitals",
       "route": "/health",
-      "kind": "static-preview-with-refresh",
+      "kind": "interactive-preview-with-refresh",
       "visibility": "public-aggregate",
       "appUrlEnv": "NEXT_PUBLIC_VITALS_APP_URL",
       "defaultAppUrl": "",
