@@ -8467,6 +8467,14 @@ button {
   font-weight: 720;
 }
 
+.vitals-habit-days span {
+  display: grid;
+  width: 18px;
+  justify-self: center;
+  place-items: center;
+  text-align: center;
+}
+
 .vitals-habit-days::before {
   content: "";
 }
@@ -8908,8 +8916,8 @@ button {
     grid-template-columns: 76px repeat(7, minmax(14px, 1fr));
   }
 
-  .vitals-habit-days span:nth-child(n + 9),
-  .vitals-habit-row i:nth-child(n + 9) {
+  .vitals-habit-days span:nth-of-type(n + 8),
+  .vitals-habit-row i:nth-of-type(n + 8) {
     display: none;
   }
 
