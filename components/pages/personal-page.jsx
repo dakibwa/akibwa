@@ -278,14 +278,15 @@ function getSurfaceStatusLabel(surface, status) {
 }
 
 function getSurfaceSummary(surface, status) {
-  const summary = status?.summary || {};
+  const summary = status?.summary || status || {};
 
   if (surface.id === "chorus" && summary.totalScrobbles) {
     return `${Number(summary.totalScrobbles).toLocaleString("en-GB")} scrobbles / ${summary.recentTracks || 0} recent`;
   }
 
   if (surface.id === "vitals") {
-    return `Recovery ${summary.recovery || "latest"} / sleep ${summary.sleep || "latest"}`;
+    const latest = summary.latest || summary;
+    return `Recovery ${latest.recovery || "latest"} / sleep ${latest.sleep || "latest"}`;
   }
 
   if (surface.id === "cover-collision" && summary.postCount) {
