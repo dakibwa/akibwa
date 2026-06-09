@@ -2240,14 +2240,6 @@ button {
   grid-column: 1 / -1;
 }
 
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief {
-  grid-template-columns: 72px minmax(180px, 0.4fr) repeat(2, minmax(0, 1fr));
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief > button {
-  grid-column: 1 / -1;
-}
-
 @media (max-width: 1600px) {
   .project-expanded-layer.is-vitals.is-maximized .vitals-ai-shell {
     padding: 20px 24px 12px;
@@ -2278,14 +2270,6 @@ button {
 
   .project-expanded-layer.is-vitals.is-maximized .vitals-habits-card,
   .project-expanded-layer.is-vitals.is-maximized .vitals-insights-card {
-    grid-column: 1 / -1;
-  }
-
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief {
-    grid-template-columns: 72px minmax(180px, 0.4fr) repeat(2, minmax(0, 1fr));
-  }
-
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief > button {
     grid-column: 1 / -1;
   }
 }
@@ -8453,8 +8437,7 @@ button {
 
 .vitals-habits-board header h2,
 .vitals-weekly-readiness h3,
-.vitals-insights-main h2,
-.vitals-ai-brief h2 {
+.vitals-insights-main h2 {
   margin: 0;
   color: #17211f;
   font-size: 1rem;
@@ -8463,8 +8446,7 @@ button {
 }
 
 .vitals-habits-board header p,
-.vitals-insights-main p,
-.vitals-ai-brief p {
+.vitals-insights-main p {
   margin: 4px 0 0;
   color: #52615b;
   font-size: 0.72rem;
@@ -8770,74 +8752,6 @@ button {
   font-weight: 800;
 }
 
-.vitals-ai-brief {
-  display: grid;
-  grid-template-columns: 72px 202px repeat(4, minmax(0, 1fr)) 228px;
-  grid-column: 1 / -1;
-  align-items: center;
-  gap: 14px;
-  min-height: 56px;
-  border: 1px solid rgba(36, 50, 45, 0.12);
-  border-radius: 13px;
-  background: rgba(255, 255, 255, 0.88);
-  padding: 5px 12px;
-  box-shadow: 0 8px 24px rgba(35, 38, 32, 0.048);
-}
-
-.vitals-brief-logo {
-  display: grid;
-  width: 72px;
-  height: 44px;
-  place-items: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #005648, #0c7462);
-  color: #fff;
-}
-
-.vitals-ai-brief section {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 9px;
-  align-items: center;
-}
-
-.vitals-ai-brief section svg {
-  color: #13816b;
-}
-
-.vitals-ai-brief span {
-  display: grid;
-  min-width: 0;
-}
-
-.vitals-ai-brief strong {
-  color: #17211f;
-  font-size: 0.78rem;
-  font-weight: 820;
-}
-
-.vitals-ai-brief small {
-  color: #53655f;
-  font-size: 0.68rem;
-  line-height: 1.25;
-}
-
-.vitals-ai-brief > button {
-  display: inline-flex;
-  min-height: 42px;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: 0;
-  border-radius: 9px;
-  background: linear-gradient(180deg, #005646, #004338);
-  color: #fff;
-  cursor: pointer;
-  padding: 0 22px;
-  font-size: 0.78rem;
-  font-weight: 820;
-}
-
 @media (max-width: 1440px) {
   .vitals-ai-shell {
     padding: 20px 24px 12px;
@@ -8872,14 +8786,6 @@ button {
 
   .vitals-habits-card,
   .vitals-insights-card {
-    grid-column: 1 / -1;
-  }
-
-  .vitals-ai-brief {
-    grid-template-columns: 72px minmax(180px, 0.4fr) repeat(2, minmax(0, 1fr));
-  }
-
-  .vitals-ai-brief > button {
     grid-column: 1 / -1;
   }
 }
@@ -9028,19 +8934,6 @@ button {
 
   .vitals-next-action {
     min-height: 230px;
-  }
-
-  .vitals-ai-brief {
-    grid-template-columns: 58px minmax(0, 1fr);
-  }
-
-  .vitals-brief-logo {
-    width: 58px;
-  }
-
-  .vitals-ai-brief section,
-  .vitals-ai-brief > button {
-    grid-column: 1 / -1;
   }
 }
 
@@ -10179,18 +10072,6 @@ button {
   .project-expanded-layer.is-vitals.is-maximized .vitals-trends-card,
   .project-expanded-layer.is-vitals.is-maximized .vitals-habits-card,
   .project-expanded-layer.is-vitals.is-maximized .vitals-insights-card {
-    grid-column: 1 / -1;
-  }
-
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief {
-    grid-template-columns: 58px minmax(0, 1fr);
-  }
-
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief section,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-brief > button,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief section,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-brief > button {
     grid-column: 1 / -1;
   }
 
