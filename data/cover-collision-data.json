@@ -1,9 +1,17 @@
 {
-  "generatedAt": "2026-06-05T09:38:00.000Z",
-  "snapshotDate": "2026-06-05",
+  "generatedAt": "2026-06-09T13:08:13.000Z",
+  "snapshotDate": "2026-06-09",
   "source": "static-seed",
   "profileUrl": "https://www.instagram.com/dakibwa/",
   "posts": [
+    {
+      "number": "11",
+      "title": "MM..FOOD × Coloring Book",
+      "date": "2026-06-07",
+      "href": "https://www.instagram.com/p/DZSlYf3iHg6/",
+      "image": "/project-images/cover-collision/cover-collision-11.jpg",
+      "alt": "Cover Collision no. 11 combining MM..FOOD and Coloring Book album artwork"
+    },
     {
       "number": "10",
       "title": "Ants from Up There × Man Alive",

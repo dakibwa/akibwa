@@ -13,18 +13,40 @@ const CORS_HEADERS = {
   "Access-Control-Max-Age": "86400"
 };
 
+const LOCAL_COVER_COLLISION_IMAGES = {
+  "01": "/project-images/cover-collision/cover-collision-09.jpg",
+  "02": "/project-images/cover-collision/cover-collision-08.jpg",
+  "03": "/project-images/cover-collision/cover-collision-07.jpg",
+  "04": "/project-images/cover-collision/cover-collision-06.jpg",
+  "05": "/project-images/cover-collision/cover-collision-05.jpg",
+  "06": "/project-images/cover-collision/cover-collision-04.jpg",
+  "07": "/project-images/cover-collision/cover-collision-03.jpg",
+  "08": "/project-images/cover-collision/cover-collision-02.jpg",
+  "09": "/project-images/cover-collision/cover-collision-01.jpg",
+  "10": "/project-images/cover-collision/cover-collision-10.jpg",
+  "11": "/project-images/cover-collision/cover-collision-11.jpg"
+};
+
 const FALLBACK_DATA = {
-  generatedAt: "2026-06-05T09:38:00.000Z",
-  snapshotDate: "2026-06-05",
+  generatedAt: "2026-06-09T13:08:13.000Z",
+  snapshotDate: "2026-06-09",
   source: "worker-fallback-seed",
   profileUrl: "https://www.instagram.com/dakibwa/",
   posts: [
+    {
+      number: "11",
+      title: "MM..FOOD × Coloring Book",
+      date: "2026-06-07",
+      href: "https://www.instagram.com/p/DZSlYf3iHg6/",
+      image: LOCAL_COVER_COLLISION_IMAGES["11"],
+      alt: "Cover Collision no. 11 combining MM..FOOD and Coloring Book album artwork"
+    },
     {
       number: "10",
       title: "Ants from Up There × Man Alive",
       date: "2026-06-04",
       href: "https://www.instagram.com/p/DZKzch9CCpO/",
-      image: "/project-images/cover-collision/cover-collision-10.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["10"],
       alt: "Cover Collision no. 10 combining Ants from Up There and Man Alive album artwork"
     },
     {
@@ -32,7 +54,7 @@ const FALLBACK_DATA = {
       title: "Debonair × Turtleneck & Chain",
       date: "2026-05-08",
       href: "https://www.instagram.com/p/DYFYB5XiEIM/",
-      image: "/project-images/cover-collision/cover-collision-01.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["09"],
       alt: "Cover Collision no. 09 combining Debonair and Turtleneck & Chain album artwork"
     },
     {
@@ -40,7 +62,7 @@ const FALLBACK_DATA = {
       title: "Bright Green Field × The Car",
       date: "2026-05-07",
       href: "https://www.instagram.com/p/DYCshR1COSH/",
-      image: "/project-images/cover-collision/cover-collision-02.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["08"],
       alt: "Cover Collision no. 08 combining Bright Green Field and The Car album artwork"
     },
     {
@@ -48,7 +70,7 @@ const FALLBACK_DATA = {
       title: "Honeybloom × Prospect Hummer",
       date: "2026-05-01",
       href: "https://www.instagram.com/p/DXzgTu2CGAi/",
-      image: "/project-images/cover-collision/cover-collision-03.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["07"],
       alt: "Cover Collision no. 07 combining Honeybloom and Prospect Hummer album artwork"
     },
     {
@@ -56,7 +78,7 @@ const FALLBACK_DATA = {
       title: "Blonde × Tomboy",
       date: "2026-04-28",
       href: "https://www.instagram.com/p/DXrq7fmiDDV/",
-      image: "/project-images/cover-collision/cover-collision-04.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["06"],
       alt: "Cover Collision no. 06 combining Blonde and Tomboy album artwork"
     },
     {
@@ -64,7 +86,7 @@ const FALLBACK_DATA = {
       title: "Recurring × Today",
       date: "2026-04-25",
       href: "https://www.instagram.com/p/DXjSKD5COsc/",
-      image: "/project-images/cover-collision/cover-collision-05.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["05"],
       alt: "Cover Collision no. 05 combining Recurring and Today album artwork"
     },
     {
@@ -72,7 +94,7 @@ const FALLBACK_DATA = {
       title: "Under the Lilac Sky × DSU",
       date: "2026-04-24",
       href: "https://www.instagram.com/p/DXhS92AiDF0/",
-      image: "/project-images/cover-collision/cover-collision-06.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["04"],
       alt: "Cover Collision no. 04 combining Under the Lilac Sky and DSU album artwork"
     },
     {
@@ -80,7 +102,7 @@ const FALLBACK_DATA = {
       title: "Jeffery × Teens of Denial",
       date: "2026-04-23",
       href: "https://www.instagram.com/p/DXeBILIiNv_/",
-      image: "/project-images/cover-collision/cover-collision-07.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["03"],
       alt: "Cover Collision no. 03 combining Jeffery and Teens of Denial album artwork"
     },
     {
@@ -88,7 +110,7 @@ const FALLBACK_DATA = {
       title: "Graceland × Person Pitch",
       date: "2026-04-22",
       href: "https://www.instagram.com/p/DXbLYtYCCf8/",
-      image: "/project-images/cover-collision/cover-collision-08.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["02"],
       alt: "Cover Collision no. 02 combining Graceland and Person Pitch album artwork"
     },
     {
@@ -96,7 +118,7 @@ const FALLBACK_DATA = {
       title: "Paranoid × How Strange, Innocence",
       date: "2026-04-21",
       href: "https://www.instagram.com/p/DXYp4MACABm/",
-      image: "/project-images/cover-collision/cover-collision-09.jpg",
+      image: LOCAL_COVER_COLLISION_IMAGES["01"],
       alt: "Cover Collision no. 01 combining Paranoid and How Strange, Innocence album artwork"
     }
   ]
@@ -375,7 +397,7 @@ function normalizeInstagramPosts(payload, fallbackPosts) {
         title,
         date: date || new Date().toISOString().slice(0, 10),
         href: item.permalink || fallback.href,
-        image: fallback.image || item.media_url || item.thumbnail_url,
+        image: LOCAL_COVER_COLLISION_IMAGES[number] || fallback.image || item.media_url || item.thumbnail_url,
         alt: fallback.alt || coverCollisionAlt(number, title)
       };
     })

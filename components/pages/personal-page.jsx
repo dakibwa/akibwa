@@ -559,6 +559,22 @@ function latestCoverCollisionDate(data) {
   return data?.posts?.[0]?.date || data?.snapshotDate || "";
 }
 
+function mergeCoverCollisionSeedImages(posts, fallbackPosts) {
+  const fallbackByHref = new Map((fallbackPosts || []).map((post) => [post.href, post]));
+  const fallbackByNumber = new Map((fallbackPosts || []).map((post) => [post.number, post]));
+
+  return posts.map((post) => {
+    const fallback = fallbackByHref.get(post.href) || fallbackByNumber.get(post.number);
+    if (!fallback?.image) return post;
+
+    return {
+      ...post,
+      image: fallback.image,
+      alt: fallback.alt || post.alt
+    };
+  });
+}
+
 function preferredCoverCollisionData(remoteData, fallbackData) {
   if (!isCoverCollisionData(remoteData)) return fallbackData;
 
@@ -566,7 +582,9 @@ function preferredCoverCollisionData(remoteData, fallbackData) {
   const fallbackDate = latestCoverCollisionDate(fallbackData);
   if (remoteDate && fallbackDate && remoteDate < fallbackDate) return fallbackData;
 
-  const remotePosts = remoteData.posts.length ? remoteData.posts : fallbackData.posts;
+  const remotePosts = remoteData.posts.length
+    ? mergeCoverCollisionSeedImages(remoteData.posts, fallbackData.posts)
+    : fallbackData.posts;
   if (remoteDate === fallbackDate && remotePosts.length < fallbackData.posts.length) return fallbackData;
 
   return {
