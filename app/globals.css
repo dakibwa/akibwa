@@ -7398,6 +7398,7 @@ button {
 
 .vitals-ai-source-pill,
 .vitals-ai-source-more {
+  position: relative;
   display: inline-flex;
   min-height: 40px;
   align-items: center;
@@ -7412,6 +7413,12 @@ button {
   font-size: 0.82rem;
   font-weight: 760;
   white-space: nowrap;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-ai-source-pill i {
@@ -7428,6 +7435,27 @@ button {
 .vitals-ai-source-more {
   min-width: 82px;
   box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.68);
+}
+
+.vitals-ai-source-pill:hover,
+.vitals-ai-source-pill:focus-visible,
+.vitals-ai-source-more:hover,
+.vitals-ai-source-more:focus-visible,
+.vitals-ai-source-pill.active,
+.vitals-ai-source-more.active {
+  border-color: rgba(8, 103, 85, 0.3);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    inset 0 0 0 4px rgba(255, 255, 255, 0.64),
+    0 10px 22px rgba(19, 54, 46, 0.11);
+  color: #073f36;
+  outline: 0;
+  transform: translateY(-1px);
+}
+
+.vitals-ai-source-pill.active i,
+.vitals-ai-source-more.active {
+  box-shadow: 0 0 0 4px rgba(21, 132, 111, 0.12);
 }
 
 .vitals-ai-controls {
@@ -7459,6 +7487,11 @@ button {
   background: transparent;
   color: #111918;
   cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .vitals-ai-date button {
@@ -7467,6 +7500,13 @@ button {
   height: 30px;
   place-items: center;
   border-radius: 8px;
+}
+
+.vitals-ai-date button:hover,
+.vitals-ai-date button:focus-visible {
+  background: rgba(0, 92, 76, 0.08);
+  outline: 0;
+  transform: translateY(-1px);
 }
 
 .vitals-ai-date span {
@@ -7501,6 +7541,22 @@ button {
   box-shadow: inset 0 -10px 22px rgba(255, 255, 255, 0.07);
 }
 
+.vitals-ai-ranges button:hover,
+.vitals-ai-ranges button:focus-visible {
+  color: #052f29;
+  outline: 0;
+}
+
+.vitals-ai-ranges button.active:hover,
+.vitals-ai-ranges button.active:focus-visible {
+  color: #fff;
+}
+
+.vitals-ai-alert-wrap {
+  position: relative;
+  display: grid;
+}
+
 .vitals-ai-bell {
   position: relative;
   display: grid;
@@ -7508,6 +7564,15 @@ button {
   height: 42px;
   place-items: center;
   color: #17211f;
+}
+
+.vitals-ai-bell:hover,
+.vitals-ai-bell:focus-visible,
+.vitals-ai-bell[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 22px rgba(19, 54, 46, 0.11);
+  outline: 0;
+  transform: translateY(-1px);
 }
 
 .vitals-ai-bell i {
@@ -7519,6 +7584,33 @@ button {
   border: 2px solid #fff;
   border-radius: 999px;
   background: #e63832;
+}
+
+.vitals-alert-popover {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  z-index: 20;
+  display: grid;
+  width: 218px;
+  gap: 4px;
+  border: 1px solid rgba(28, 51, 43, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 42px rgba(18, 48, 39, 0.16);
+  padding: 12px 13px;
+}
+
+.vitals-alert-popover strong {
+  color: #13201d;
+  font-size: 0.76rem;
+  font-weight: 820;
+}
+
+.vitals-alert-popover span {
+  color: #50615c;
+  font-size: 0.72rem;
+  line-height: 1.35;
 }
 
 .vitals-hero-topbar {
@@ -7660,19 +7752,49 @@ button {
   backdrop-filter: blur(10px);
 }
 
-.vitals-hero-metrics section {
+.vitals-hero-metrics section,
+.vitals-hero-metrics button {
+  position: relative;
   display: grid;
   min-height: 68px;
   align-content: center;
   gap: 4px;
   border-left: 1px solid rgba(36, 52, 47, 0.12);
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
   padding: 10px 16px;
+  text-align: left;
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
-.vitals-hero-metrics section.primary {
+.vitals-hero-metrics section.primary,
+.vitals-hero-metrics button.primary {
   border-left: 0;
   background: linear-gradient(135deg, rgba(0, 84, 72, 0.94), rgba(0, 68, 58, 0.92));
   color: #fff;
+}
+
+.vitals-hero-metrics button:hover,
+.vitals-hero-metrics button:focus-visible,
+.vitals-hero-metrics button.active {
+  outline: 0;
+  transform: translateY(-1px);
+}
+
+.vitals-hero-metrics button:not(.primary):hover,
+.vitals-hero-metrics button:not(.primary):focus-visible,
+.vitals-hero-metrics button:not(.primary).active {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 -3px 0 rgba(0, 108, 89, 0.22);
 }
 
 .vitals-hero-metrics span {
@@ -7688,7 +7810,8 @@ button {
   font-weight: 760;
 }
 
-.vitals-hero-metrics section.primary strong {
+.vitals-hero-metrics section.primary strong,
+.vitals-hero-metrics button.primary strong {
   color: #fff;
   font-size: 2.08rem;
   line-height: 0.95;
@@ -7707,7 +7830,9 @@ button {
 }
 
 .vitals-hero-metrics section.primary small,
-.vitals-hero-metrics section.primary b {
+.vitals-hero-metrics section.primary b,
+.vitals-hero-metrics button.primary small,
+.vitals-hero-metrics button.primary b {
   color: #fff;
 }
 
@@ -7722,12 +7847,113 @@ button {
 }
 
 .vitals-ai-card {
+  position: relative;
   min-width: 0;
   overflow: hidden;
   border: 1px solid rgba(36, 50, 45, 0.11);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 12px 34px rgba(35, 38, 32, 0.052);
+  outline: 0;
+  transform: translateZ(0);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.vitals-ai-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(11, 127, 106, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 58%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.vitals-ai-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.vitals-ai-card:hover,
+.vitals-ai-card:focus-visible,
+.vitals-ai-card:focus-within {
+  border-color: rgba(9, 108, 89, 0.26);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 48px rgba(26, 52, 43, 0.13);
+  transform: translateY(-3px);
+}
+
+.vitals-ai-card:hover::before,
+.vitals-ai-card:focus-visible::before,
+.vitals-ai-card:focus-within::before {
+  opacity: 1;
+}
+
+.vitals-ai-grid[data-focused-metric="readiness"] .vitals-ai-card[data-card-metric="readiness"],
+.vitals-ai-grid[data-focused-metric="recovery"] .vitals-ai-card[data-card-metric="recovery"],
+.vitals-ai-grid[data-focused-metric="sleep"] .vitals-ai-card[data-card-metric="sleep"],
+.vitals-ai-grid[data-focused-metric="training"] .vitals-ai-card[data-card-metric="training"] {
+  border-color: rgba(5, 100, 83, 0.28);
+  box-shadow: 0 18px 44px rgba(12, 86, 72, 0.12);
+}
+
+.vitals-score-card,
+.vitals-recovery-card,
+.vitals-sleep-card,
+.vitals-training-card,
+.vitals-body-metrics-card,
+.vitals-nutrition-card-v2,
+.vitals-stress-card,
+.vitals-trends-card,
+.vitals-habits-card {
+  overflow: visible;
+}
+
+.vitals-hover-tip {
+  position: relative;
+}
+
+.vitals-hover-tip::after {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 30;
+  width: max-content;
+  max-width: 220px;
+  border: 1px solid rgba(20, 45, 38, 0.12);
+  border-radius: 8px;
+  background: rgba(18, 31, 28, 0.96);
+  box-shadow: 0 14px 32px rgba(14, 36, 30, 0.18);
+  color: #fff;
+  content: attr(data-tooltip);
+  font-size: 0.68rem;
+  font-weight: 720;
+  line-height: 1.25;
+  opacity: 0;
+  padding: 7px 9px;
+  pointer-events: none;
+  text-align: center;
+  transform: translate(-50%, 5px) scale(0.98);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+  white-space: normal;
+}
+
+.vitals-hover-tip:hover::after,
+.vitals-hover-tip:focus-visible::after,
+.vitals-hover-tip:focus-within::after {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
 }
 
 .vitals-ai-card-heading {
@@ -7787,6 +8013,7 @@ button {
   justify-self: center;
   place-items: center;
   border-radius: 999px;
+  cursor: help;
 }
 
 .vitals-ai-ring.blue {
@@ -7819,6 +8046,9 @@ button {
     inset 0 1px 1px rgba(255, 255, 255, 0.8),
     inset 0 -8px 16px rgba(16, 42, 35, 0.08),
     0 9px 24px rgba(18, 81, 69, 0.12);
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 .vitals-ai-ring-orbit::before {
@@ -7863,6 +8093,7 @@ button {
   font-weight: 800;
   letter-spacing: 0;
   line-height: 0.95;
+  transition: color 180ms ease, transform 180ms ease;
 }
 
 .vitals-ai-ring-label {
@@ -7883,6 +8114,11 @@ button {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 3;
+  transition:
+    filter 180ms ease,
+    stroke-width 180ms ease,
+    transform 180ms ease;
+  transform-origin: center;
 }
 
 .vitals-ai-spark.blue polyline {
@@ -7964,6 +8200,13 @@ button {
   align-items: center;
   color: #293936;
   font-size: 0.72rem;
+  border-radius: 7px;
+  cursor: help;
+  padding: 2px 0;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-score-breakdown i,
@@ -7984,6 +8227,10 @@ button {
   inset: 0 auto 0 0;
   border-radius: inherit;
   background: #16836d;
+  transform-origin: left center;
+  transition:
+    filter 170ms ease,
+    transform 170ms ease;
 }
 
 .vitals-score-breakdown b.orange {
@@ -8059,10 +8306,17 @@ button {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 3;
+  transition:
+    filter 180ms ease,
+    stroke-width 180ms ease;
 }
 
 .vitals-ai-line-chart circle {
   fill: #16836d;
+  transition:
+    filter 180ms ease,
+    r 180ms ease,
+    transform 180ms ease;
 }
 
 .vitals-ai-axis {
@@ -8130,6 +8384,10 @@ button {
 .vitals-sleep-bar b {
   display: block;
   height: 100%;
+  cursor: help;
+  transition:
+    filter 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-sleep-stages footer,
@@ -8188,6 +8446,14 @@ button {
   width: 18px;
   border-radius: 3px 3px 0 0;
   background: linear-gradient(180deg, rgba(44, 139, 118, 0.38), rgba(44, 139, 118, 0.13));
+  cursor: help;
+  transform-origin: bottom center;
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease,
+    transform 160ms ease;
+  transition-delay: var(--bar-delay, 0ms);
 }
 
 .vitals-load-chart footer {
@@ -8242,6 +8508,69 @@ button {
   padding: 6px 20px 0;
 }
 
+.vitals-ai-card:hover .vitals-ai-ring-orbit,
+.vitals-ai-ring:focus-visible .vitals-ai-ring-orbit {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -8px 16px rgba(16, 42, 35, 0.08),
+    0 12px 28px rgba(18, 81, 69, 0.18);
+  transform: rotate(9deg) scale(1.018);
+}
+
+.vitals-ai-card:hover .vitals-ai-ring strong,
+.vitals-ai-ring:focus-visible strong {
+  color: #064d41;
+  transform: translateY(-1px);
+}
+
+.vitals-ai-card:hover .vitals-ai-line-chart path,
+.vitals-ai-card:focus-within .vitals-ai-line-chart path,
+.vitals-ai-card:hover .vitals-ai-spark polyline,
+.vitals-ai-card:focus-within .vitals-ai-spark polyline {
+  filter: drop-shadow(0 4px 6px rgba(18, 125, 103, 0.2));
+  stroke-width: 4;
+}
+
+.vitals-ai-card:hover .vitals-ai-line-chart circle,
+.vitals-ai-card:focus-within .vitals-ai-line-chart circle {
+  filter: drop-shadow(0 0 8px rgba(18, 125, 103, 0.42));
+  r: 6px;
+}
+
+.vitals-score-breakdown div:hover,
+.vitals-score-breakdown div:focus-within,
+.vitals-body-metrics-layout dl div:hover,
+.vitals-body-metrics-layout dl div:focus-within,
+.vitals-nutrition-v2-body section:hover,
+.vitals-nutrition-v2-body section:focus-within,
+.vitals-trends-list div:hover,
+.vitals-trends-list div:focus-within {
+  background: rgba(12, 112, 93, 0.055);
+  transform: translateX(2px);
+}
+
+.vitals-score-breakdown div:hover b,
+.vitals-nutrition-v2-body section:hover b,
+.vitals-stress-card:hover .vitals-stress-body b {
+  filter: saturate(1.12);
+  transform: scaleX(1.02);
+}
+
+.vitals-load-chart i:hover,
+.vitals-load-chart i:focus-visible {
+  background: linear-gradient(180deg, rgba(17, 130, 108, 0.68), rgba(17, 130, 108, 0.25));
+  box-shadow: 0 9px 16px rgba(17, 130, 108, 0.16);
+  outline: 0;
+  transform: scaleY(1.08);
+}
+
+.vitals-sleep-bar b:hover,
+.vitals-sleep-bar b:focus-visible {
+  filter: brightness(1.08) saturate(1.08);
+  outline: 0;
+  transform: scaleY(1.18);
+}
+
 .vitals-body-metrics-card,
 .vitals-nutrition-card-v2,
 .vitals-stress-card,
@@ -8269,6 +8598,11 @@ button {
   grid-template-columns: minmax(76px, 1fr) auto auto;
   gap: 10px;
   align-items: baseline;
+  border-radius: 7px;
+  cursor: help;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-body-metrics-layout dt {
@@ -8306,6 +8640,11 @@ button {
   gap: 7px 12px;
   align-items: center;
   margin-bottom: 11px;
+  border-radius: 8px;
+  cursor: help;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-nutrition-v2-body span {
@@ -8361,6 +8700,7 @@ button {
   gap: 8px;
   border-left: 1px solid rgba(24, 42, 36, 0.13);
   padding-left: 22px;
+  transition: border-color 160ms ease;
 }
 
 .vitals-stress-body span {
@@ -8393,6 +8733,12 @@ button {
   gap: 10px;
   align-items: center;
   min-height: 27px;
+  border-radius: 8px;
+  cursor: help;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-trends-list span {
@@ -8496,6 +8842,13 @@ button {
   justify-self: center;
   border-radius: 4px;
   background: #edf0ed;
+  cursor: help;
+  transform-origin: center;
+  transition:
+    box-shadow 160ms ease,
+    filter 160ms ease,
+    transform 160ms ease;
+  transition-delay: var(--cell-delay, 0ms);
 }
 
 .vitals-habit-row i.high,
@@ -8507,6 +8860,24 @@ button {
 .vitals-habit-row i.soft,
 .vitals-habit-row i.none,
 .vitals-habits-board footer i.none { background: #e8ebe8; }
+
+.vitals-habit-row:hover > span {
+  color: #005f50;
+}
+
+.vitals-habit-row i:hover,
+.vitals-habit-row i:focus-visible {
+  box-shadow: 0 8px 16px rgba(21, 93, 78, 0.18);
+  filter: saturate(1.12);
+  outline: 0;
+  transform: translateY(-3px) scale(1.18);
+  transition-delay: 0ms;
+}
+
+.vitals-habit-row i.watch:hover,
+.vitals-habit-row i.watch:focus-visible {
+  box-shadow: 0 8px 16px rgba(201, 141, 48, 0.18);
+}
 
 .vitals-habits-board footer {
   display: flex;
@@ -8535,6 +8906,15 @@ button {
   gap: 8px;
   border-left: 1px solid rgba(24, 42, 36, 0.12);
   padding: 15px 20px;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.vitals-habits-card:hover .vitals-weekly-readiness,
+.vitals-habits-card:focus-within .vitals-weekly-readiness {
+  border-color: rgba(6, 113, 94, 0.18);
+  background: rgba(255, 255, 255, 0.46);
 }
 
 .vitals-weekly-readiness header {
@@ -8634,7 +9014,8 @@ button {
   gap: 0;
 }
 
-.vitals-insight-list div {
+.vitals-insight-list div,
+.vitals-insight-row {
   display: grid;
   grid-template-columns: 24px 30px minmax(0, 1fr) 70px 18px;
   gap: 10px;
@@ -8643,8 +9024,25 @@ button {
   border-top: 1px solid rgba(24, 42, 36, 0.08);
 }
 
-.vitals-insight-list div:first-child {
+.vitals-insight-list div:first-child,
+.vitals-insight-row:first-child {
   border-top: 0;
+}
+
+.vitals-insight-row {
+  width: 100%;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .vitals-insight-list em {
@@ -8698,6 +9096,30 @@ button {
   color: #8d6d2b;
   font-size: 0.66rem;
   font-weight: 720;
+}
+
+.vitals-insight-row:hover,
+.vitals-insight-row:focus-visible {
+  background: rgba(7, 111, 92, 0.055);
+  outline: 0;
+  transform: translateX(2px);
+}
+
+.vitals-insight-row:hover small,
+.vitals-insight-row:focus-visible small {
+  white-space: normal;
+}
+
+.vitals-insight-row svg,
+.vitals-trends-list svg {
+  transition: transform 160ms ease, color 160ms ease;
+}
+
+.vitals-insight-row:hover svg,
+.vitals-insight-row:focus-visible svg,
+.vitals-trends-list div:hover svg {
+  color: #006c5a;
+  transform: translateX(3px);
 }
 
 .vitals-next-action {
@@ -8868,7 +9290,8 @@ button {
     width: 100%;
   }
 
-  .vitals-hero-metrics section {
+  .vitals-hero-metrics section,
+  .vitals-hero-metrics button {
     min-height: 70px;
     border-top: 1px solid rgba(36, 52, 47, 0.12);
     border-left: 0;
@@ -8932,7 +9355,8 @@ button {
     overflow-x: auto;
   }
 
-  .vitals-insight-list div {
+  .vitals-insight-list div,
+  .vitals-insight-row {
     grid-template-columns: 22px 28px minmax(0, 1fr) 18px;
   }
 
