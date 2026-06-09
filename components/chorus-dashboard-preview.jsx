@@ -259,7 +259,7 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
     ["Albums", formatNumber(visibleAlbums.length), "Known by Last.fm", Radio],
     ["Tracks", formatNumber(visibleTracks.length), "Known by Last.fm", Sparkles],
     ["Top artist", visibleArtists[0]?.name ?? "Unavailable", `${formatNumber(visibleArtists[0]?.plays ?? 0)} scrobbles`, null],
-    ["Account age", chorusData.summary.accountAgeLabel, "Since registration", Clock3]
+    ["Account age", chorusData.summary?.accountAgeLabel ?? "Unavailable", "Since registration", Clock3]
   ];
 
   return (

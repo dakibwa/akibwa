@@ -75,53 +75,6 @@ export const featuredProjects = [
   }
 ];
 
-export const workProjects = [
-  {
-    number: "01",
-    slug: "chorus",
-    aliases: ["lastfm-dashboard", "signals-dashboard"],
-    title: "Chorus",
-    type: "Music intelligence dashboard",
-    image: "/project-art/personal/chorus-collective.jpg",
-    alt: "Abstract paper collage of listeners gathered in a turquoise pool with constellations and a wavy listening path",
-    score: "FM",
-    metrics: [
-      ["Listening", "API"],
-      ["Artists", "Charts"],
-      ["Albums", "Cache"],
-      ["Reports", "Live"]
-    ],
-    rows: [
-      ["The state", "Live at /chorus on akibwa.com, with Cloudflare running the dynamic app and refresh logic behind it."],
-      ["What it does", featuredProjects[0].summary],
-      ["The problem", featuredProjects[0].problem],
-      ["Public note", "Akibwa.com is the surface; Cloudflare handles credentials, scheduled refreshes, and API-backed runtime work."]
-    ]
-  },
-  {
-    number: "02",
-    slug: "vitals",
-    title: "Vitals",
-    type: "Personal health signal dashboard",
-    image: "/project-art/personal/vitals-signal.jpg",
-    alt: "Abstract green paper collage of a health dashboard, profile silhouette, ECG heart, activity, hydration, sleep, and plant signals",
-    visual: "vitals",
-    score: "VT",
-    metrics: [
-      ["Signals", "Live"],
-      ["Sources", "Mapped"],
-      ["Review", "Clinician"],
-      ["Output", "Website"]
-    ],
-    rows: [
-      ["The state", "Live at /health on akibwa.com, with Cloudflare refreshing public aggregate health data in the background."],
-      ["The data", "Aggregate health values can surface on the website; raw source exports and identifiers stay out of the repository."],
-      ["The system", "The project pattern is source discipline, normalized local data, and calm review surfaces for personal health conversations."],
-      ["Public note", "Akibwa.com is the review surface; Cloudflare can do the private refresh and API work without exposing raw records."]
-    ]
-  }
-];
-
 export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL || coverCollisionData.profileUrl || "https://www.instagram.com/dakibwa/";
 export const coverCollisionPosts = coverCollisionData.posts;
 
@@ -134,10 +87,6 @@ export const personalProjects = [
     type: "Chorus",
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
-    dashboardImage: "/project-art/personal/chorus-collective.jpg",
-    dashboardImageAlt: "Abstract Chorus collage showing listeners gathered in water, constellation marks, and a wavy listening path",
-    dashboardImageWidth: 1672,
-    dashboardImageHeight: 941,
     dashboardLabel: "Chorus",
     dashboardStatus: "Live on Akibwa",
     summary: "Turns listening history into a clear music dashboard.",
@@ -155,10 +104,6 @@ export const personalProjects = [
     type: "Health Visualisation",
     image: "/project-art/personal/vitals-signal.jpg",
     alt: "Abstract green paper collage of a health dashboard, profile silhouette, ECG heart, activity, hydration, sleep, and plant signals",
-    dashboardImage: "/project-art/personal/vitals-signal.jpg",
-    dashboardImageAlt: "Abstract Vitals collage showing a profile silhouette, ECG heart, dashboard cards, activity, hydration, sleep, and plant signals",
-    dashboardImageWidth: 1672,
-    dashboardImageHeight: 941,
     dashboardLabel: "Health Dashboard",
     dashboardStatus: "Live on Akibwa",
     visual: "vitals",

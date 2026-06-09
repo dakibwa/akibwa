@@ -27,12 +27,19 @@ export function getPersonalProjectArt(project) {
   return artworkBySlug[project.slug] ?? artworkBySlug["personal-knowledge-base"];
 }
 
-export function PersonalProjectArt({ project, className = "" }) {
+export function PersonalProjectArt({ project, className = "", priority = false }) {
   const artwork = getPersonalProjectArt(project);
 
   return (
     <div className={`${styles.art} ${styles[artwork.variant]} ${className}`} aria-hidden="true">
-      <img src={artwork.src} alt="" draggable="false" />
+      <img
+        src={artwork.src}
+        alt=""
+        draggable="false"
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : undefined}
+        decoding="async"
+      />
     </div>
   );
 }

@@ -287,7 +287,9 @@ function getSurfaceSummary(surface, status) {
 
   if (surface.id === "vitals") {
     const latest = summary.latest || summary;
-    return `Recovery ${latest.recovery || "latest"} / sleep ${latest.sleep || "latest"}`;
+    const recoveryDay = formatSurfaceDate(latest.recovery, false);
+    const sleepDay = formatSurfaceDate(latest.sleep, false);
+    return `Recovery to ${recoveryDay || "latest"} / sleep to ${sleepDay || "latest"}`;
   }
 
   if (surface.id === "cover-collision" && summary.postCount) {
@@ -481,8 +483,8 @@ function shouldOpenProjectRoute(project) {
   return project.mode !== "preview" && project.visual === "vitals" && Boolean(project.fallbackHref);
 }
 
-function PersonalProjectVisual({ project }) {
-  return <PersonalProjectArt project={project} className="personal-project-card-art" />;
+function PersonalProjectVisual({ project, priority = false }) {
+  return <PersonalProjectArt project={project} priority={priority} className="personal-project-card-art" />;
 }
 
 function ProjectExpandedBanner({ project }) {
@@ -901,7 +903,7 @@ function ProjectExpandedContent({ project, frameUrl }) {
   }
 
   if (project.visual === "chorus" || project.visual === "vitals") {
-    return <DashboardShowcase project={project} frameUrl={frameUrl} immersive />;
+    return <DashboardShowcase project={project} immersive />;
   }
 
   if (project.visual === "cover-collision") {
