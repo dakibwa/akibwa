@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
 const workplaces = [
@@ -164,23 +166,25 @@ export function AboutPage() {
         <div className="about-hero-copy">
           <h1>About</h1>
           <p>
-            Senior BI and analytics operator turning messy data, reporting estates, and AI-assisted workflows into
-            useful systems.
+            Ten years in BI across finance and gaming — now building small, AI-assisted systems for messy workflows.
           </p>
         </div>
 
         <div className="about-profile-copy">
           <h2>What I do</h2>
           <p>
-            I am Daniel, a Business Intelligence specialist with experience across finance, infrastructure, and
-            gaming. My work sits where data engineering, reporting, product thinking, and practical AI tooling meet:
-            define the problem, build the source layer, make the model trustworthy, then turn it into something people
-            can actually use.
+            I am Daniel, a Business Intelligence specialist. The job has been the same everywhere I have
+            worked: find the question that matters, get the data straight, and build the dashboard, model, or tool
+            that people actually use.
           </p>
           <p>
-            The through-line is simple: make complicated systems understandable without flattening the detail that makes
-            them true, then shape the work into dashboards, models, and adoption paths that teams can trust.
+            Akibwa is that experience pointed at AI. I design small working systems — dashboards, automations,
+            knowledge tools — that take a messy workflow and make it run, then hand over the keys.
           </p>
+          <Link className="text-action" href="/contact">
+            Send the messy bit
+            <ArrowRight size={15} strokeWidth={1.9} />
+          </Link>
         </div>
 
         <div className="about-profile-side">

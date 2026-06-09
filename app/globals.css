@@ -1090,6 +1090,10 @@ button {
   font-size: 1.08rem;
 }
 
+.about-profile-copy .text-action {
+  margin-top: 16px;
+}
+
 .about-profile-side {
   grid-column: 2;
   grid-row: 1 / span 2;
