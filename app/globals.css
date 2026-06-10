@@ -121,6 +121,34 @@ button {
     transform 180ms ease;
 }
 
+.brand-mark {
+  position: relative;
+}
+
+/* Mirrors the favicon: blue underline beneath the A with an orange end point. */
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  right: -0.04em;
+  bottom: -0.22em;
+  left: -0.04em;
+  height: 0.13em;
+  border-radius: 999px;
+  background: #2f88ff;
+}
+
+.brand-mark::before {
+  content: "";
+  position: absolute;
+  right: -0.1em;
+  bottom: -0.265em;
+  width: 0.22em;
+  height: 0.22em;
+  border-radius: 50%;
+  background: #ff6f1a;
+  z-index: 1;
+}
+
 .brand::after {
   content: "";
   position: absolute;
@@ -11029,6 +11057,7 @@ button {
 
   .brand {
     min-width: 0;
+    font-size: 1.08rem;
   }
 
   .akibwa-home {
@@ -11488,5 +11517,62 @@ button {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Landing tiles: caption-rise hover — detail line reveals under the descriptor,
+   image quiets slightly. Hover-only enhancement; touch keeps the static caption. */
+.area-caption__more {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 180ms ease-out,
+    opacity 180ms ease-out;
+}
+
+.area-caption__more > p {
+  overflow: hidden;
+  margin: 0;
+  padding-top: 0;
+  color: #83868d;
+  font-size: 0.8rem;
+  transition: padding-top 180ms ease-out;
+}
+
+.area-card:hover .area-caption__more,
+.area-card:focus-visible .area-caption__more {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.area-card:hover .area-caption__more > p,
+.area-card:focus-visible .area-caption__more > p {
+  padding-top: 4px;
+}
+
+.area-art img {
+  transition:
+    filter 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.area-card:hover .area-art img,
+.area-card:focus-visible .area-art img {
+  filter: saturate(0.94) brightness(0.95);
+  transform: scale(1.02);
+}
+
+@media (hover: none) {
+  .area-caption__more {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .area-caption__more,
+  .area-caption__more > p,
+  .area-art img {
+    transition: none;
   }
 }
