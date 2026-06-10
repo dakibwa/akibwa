@@ -106,7 +106,7 @@ export const personalProjects = [
     number: "02",
     slug: "vitals",
     title: "Vitals",
-    type: "Health Visualisation",
+    type: "Health Intelligence",
     image: "/project-art/personal/albion-rose-card.webp",
     alt: "William Blake's Albion Rose: a radiant figure with outstretched arms against red, gold, and blue light",
     dashboardLabel: "Health Dashboard",

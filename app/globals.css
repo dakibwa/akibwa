@@ -7335,9 +7335,10 @@ button {
   background-position: center;
   background-size: cover;
   display: grid;
-  align-content: start;
+  align-content: center;
+  min-height: 116px;
   border-radius: 16px;
-  padding: 17px 32px;
+  padding: 16px 22px;
 }
 
 .vitals-hero-landscape::before {
@@ -7378,14 +7379,13 @@ button {
   position: relative;
   z-index: 1;
   display: inline-grid;
-  grid-template-columns: 216px repeat(3, 118px);
+  grid-template-columns: 188px repeat(3, 108px);
   align-items: stretch;
   overflow: hidden;
   width: fit-content;
   border: 1px solid rgba(55, 42, 38, 0.12);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.82);
-  margin-top: 18px;
   box-shadow: 0 16px 38px rgba(42, 34, 31, 0.15);
   backdrop-filter: blur(10px);
 }
@@ -7394,9 +7394,9 @@ button {
 .vitals-hero-metrics button {
   position: relative;
   display: grid;
-  min-height: 68px;
+  min-height: 56px;
   align-content: center;
-  gap: 4px;
+  gap: 3px;
   border-left: 1px solid rgba(52, 40, 36, 0.12);
   border-top: 0;
   border-right: 0;
@@ -7405,7 +7405,7 @@ button {
   color: inherit;
   cursor: pointer;
   font: inherit;
-  padding: 10px 16px;
+  padding: 8px 14px;
   text-align: left;
   transition:
     background 160ms ease,
@@ -7437,9 +7437,10 @@ button {
 
 .vitals-hero-metrics span {
   color: currentColor;
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   font-weight: 760;
   opacity: 0.86;
+  white-space: nowrap;
 }
 
 .vitals-hero-metrics strong {
@@ -7451,7 +7452,7 @@ button {
 .vitals-hero-metrics section.primary strong,
 .vitals-hero-metrics button.primary strong {
   color: #fff;
-  font-size: 2.08rem;
+  font-size: 1.66rem;
   line-height: 0.95;
 }
 
@@ -7612,15 +7613,16 @@ button {
 
 .vitals-ai-card-heading h2 {
   margin: 0;
-  color: #221a17;
-  font-size: 0.98rem;
-  font-weight: 760;
-  letter-spacing: 0;
+  color: #4a3a33;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
   line-height: 1.1;
+  text-transform: uppercase;
 }
 
 .vitals-ai-card-heading svg {
-  color: #351f18;
+  color: #82351d;
 }
 
 .vitals-ai-card-heading button {
@@ -8423,10 +8425,11 @@ button {
 .vitals-weekly-readiness h3,
 .vitals-insights-main h2 {
   margin: 0;
-  color: #211917;
-  font-size: 1rem;
+  color: #4a3a33;
+  font-size: 0.76rem;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
 }
 
 .vitals-habits-board header p,
@@ -8895,24 +8898,32 @@ button {
   }
 
   .vitals-hero-landscape {
-    min-height: 330px;
-    padding: 22px;
-  }
-
-  .vitals-hero-landscape h2 {
-    font-size: 1.56rem;
+    padding: 16px;
   }
 
   .vitals-hero-metrics {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
+  }
+
+  .vitals-hero-metrics section.primary,
+  .vitals-hero-metrics button.primary {
+    grid-column: 1 / -1;
   }
 
   .vitals-hero-metrics section,
   .vitals-hero-metrics button {
-    min-height: 70px;
+    min-height: 62px;
     border-top: 1px solid rgba(52, 40, 36, 0.12);
+  }
+
+  .vitals-hero-metrics section:not(.primary):first-of-type,
+  .vitals-hero-metrics button:nth-child(2) {
     border-left: 0;
+  }
+
+  .vitals-hero-metrics span {
+    white-space: normal;
   }
 
   .vitals-ai-grid {
