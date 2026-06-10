@@ -12,6 +12,7 @@ import {
   UserRound
 } from "lucide-react";
 import fallbackChorusData from "@/data/chorus-data.json";
+import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 
 const remoteChorusDataUrl = (
   process.env.NEXT_PUBLIC_CHORUS_DATA_URL || "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus"
@@ -223,15 +224,16 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
     let idleId;
     let timerId;
 
+    const applyChorusData = (data) => {
+      if (!cancelled && isChorusData(data)) {
+        setRuntimeChorusData(data);
+      }
+    };
+
+    applyChorusData(readSessionJson(url));
+
     const refreshData = () => {
-      fetch(url, { cache: "no-store" })
-        .then((response) => (response.ok ? response.json() : null))
-        .then((data) => {
-          if (!cancelled && isChorusData(data)) {
-            setRuntimeChorusData(data);
-          }
-        })
-        .catch(() => {});
+      fetchSessionJson(url).then(applyChorusData).catch(() => {});
     };
 
     if (window.requestIdleCallback) {

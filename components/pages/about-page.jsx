@@ -192,7 +192,7 @@ export function AboutPage() {
 
         <div className="about-profile-side">
           <figure className="about-portrait" aria-label="Portrait of Daniel smiling">
-            <img src="/about-portrait-smiling.jpg" alt="Portrait of Daniel smiling" />
+            <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
           </figure>

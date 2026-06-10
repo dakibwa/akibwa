@@ -2,23 +2,23 @@ import styles from "./personal-project-art.module.css";
 
 const artworkBySlug = {
   chorus: {
-    src: "/project-art/personal/chorus-collective.jpg",
-    bannerSrc: "/project-art/personal/chorus-collective-banner.jpg",
+    src: "/project-art/personal/chorus-collective.webp",
+    bannerSrc: "/project-art/personal/chorus-collective-banner.webp",
     variant: "music"
   },
   vitals: {
-    src: "/project-art/personal/vitals-signal.jpg",
-    bannerSrc: "/project-art/personal/vitals-signal-banner.jpg",
+    src: "/project-art/personal/vitals-signal.webp",
+    bannerSrc: "/project-art/personal/vitals-signal-banner.webp",
     variant: "health"
   },
   "cover-collision": {
-    src: "/project-art/personal/cover-collision.jpg",
-    bannerSrc: "/project-art/personal/cover-collision-banner.jpg",
+    src: "/project-art/personal/cover-collision.webp",
+    bannerSrc: "/project-art/personal/cover-collision-banner.webp",
     variant: "cover"
   },
   "personal-knowledge-base": {
-    src: "/project-art/personal/personal-knowledge-base.jpg",
-    bannerSrc: "/project-art/personal/personal-knowledge-base-banner.jpg",
+    src: "/project-art/personal/personal-knowledge-base.webp",
+    bannerSrc: "/project-art/personal/personal-knowledge-base-banner.webp",
     variant: "knowledge"
   }
 };

@@ -9,7 +9,7 @@ const offerSteps = [
     body:
       "We map your current workflow, uncover friction and waste, and identify the highest-leverage opportunities for automation or AI assistance.",
     output: "Clarity report",
-    image: "/area-art/work.png"
+    image: "/area-art/work.webp"
   },
   {
     number: "02",
@@ -17,7 +17,7 @@ const offerSteps = [
     body:
       "We design and build a focused prototype that solves the core problem fast, validating the approach with real data and real users.",
     output: "Working prototype",
-    image: "/area-art/systems.png"
+    image: "/area-art/systems.webp"
   },
   {
     number: "03",
@@ -25,7 +25,7 @@ const offerSteps = [
     body:
       "We turn the prototype into a robust, scalable system with documentation, safeguards, and a plan for continuous improvement.",
     output: "Production system",
-    image: "/area-art/offer.png"
+    image: "/area-art/offer.webp"
   }
 ];
 
@@ -44,10 +44,10 @@ const notFit = [
 ];
 
 const workflow = [
-  ["1", "Scope", "We align on goals, map the problem, and define success.", "/area-art/knowledge.png"],
-  ["2", "Design", "We design the system, interfaces, and flows.", "/area-art/signals.png"],
-  ["3", "Build", "We build, test, and iterate in short, focused cycles.", "/area-art/work.png"],
-  ["4", "Handover", "We document, train, and hand over the keys.", "/area-art/contact.png"]
+  ["1", "Scope", "We align on goals, map the problem, and define success.", "/area-art/knowledge.webp"],
+  ["2", "Design", "We design the system, interfaces, and flows.", "/area-art/signals.webp"],
+  ["3", "Build", "We build, test, and iterate in short, focused cycles.", "/area-art/work.webp"],
+  ["4", "Handover", "We document, train, and hand over the keys.", "/area-art/contact.webp"]
 ];
 
 export function OfferPage() {
@@ -116,7 +116,7 @@ export function OfferPage() {
           ))}
         </article>
         <div className="fit-map" aria-hidden="true">
-          <Image src="/area-art/contact.png" alt="" width={420} height={220} />
+          <Image src="/area-art/contact.webp" alt="" width={420} height={220} />
         </div>
       </section>
 

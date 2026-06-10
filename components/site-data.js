@@ -28,29 +28,34 @@ export const areaTiles = [
     title: "About",
     descriptor: "How I think and build",
     href: "/about",
-    image: "/area-art/knowledge.png",
-    alt: "Abstract evidence artwork with document layers, source lines, and annotations"
+    image: "/area-art/about-summer.webp",
+    imagePosition: "50% 78%",
+    alt: "Hans Thoma's Summer (1872): a couple resting in a flowering meadow beside a stream",
+    detail: "Background, working principles, and the current toolkit"
   },
   {
     title: "Personal",
     descriptor: "Self-built projects",
     href: "/personal",
-    image: "/area-art/work.png",
-    alt: "Abstract collage of interface fragments, paper proofs, and data marks"
+    image: "/area-art/work.webp",
+    alt: "Abstract collage of interface fragments, paper proofs, and data marks",
+    detail: "Chorus, Vitals, Cover Collision, and more"
   },
   {
     title: "Professional",
     descriptor: "Systems for companies",
     href: "/professional",
-    image: "/area-art/offer.png",
-    alt: "Abstract artwork showing a path from messy marks into a precise output"
+    image: "/area-art/offer.webp",
+    alt: "Abstract artwork showing a path from messy marks into a precise output",
+    detail: "Discovery, build, and handover for company systems"
   },
   {
     title: "Contact",
     descriptor: "Send the messy bit",
     href: "/contact",
-    image: "/area-art/contact.png",
-    alt: "Minimal abstract contact artwork with an open doorway and cursor gesture"
+    image: "/area-art/contact.webp",
+    alt: "Minimal abstract contact artwork with an open doorway and cursor gesture",
+    detail: "Email, X, or Instagram — bring the messy workflow"
   }
 ];
 
@@ -58,7 +63,7 @@ export const featuredProjects = [
   {
     title: "Chorus",
     type: "Data product",
-    image: "/project-art/personal/chorus-collective.jpg",
+    image: "/project-art/personal/chorus-collective.webp",
     alt: "Abstract paper collage of listeners gathered in a turquoise pool with constellations and a wavy listening path",
     summary:
       "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and listening reports.",
@@ -102,7 +107,7 @@ export const personalProjects = [
     slug: "vitals",
     title: "Vitals",
     type: "Health Visualisation",
-    image: "/project-art/personal/vitals-signal.jpg",
+    image: "/project-art/personal/vitals-signal.webp",
     alt: "Abstract green paper collage of a health dashboard, profile silhouette, ECG heart, activity, hydration, sleep, and plant signals",
     dashboardLabel: "Health Dashboard",
     dashboardStatus: "Live on Akibwa",
@@ -132,7 +137,7 @@ export const personalProjects = [
     slug: "personal-knowledge-base",
     title: "Personal Knowledge Base",
     type: "Private AI memory system",
-    image: "/area-art/knowledge.png",
+    image: "/area-art/knowledge.webp",
     alt: "Abstract evidence artwork with document layers, source lines, and annotations",
     summary:
       akibwapediaData.subtitle ||

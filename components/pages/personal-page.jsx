@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
+import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { VitalsDashboardPreview } from "@/components/vitals-dashboard-preview";
@@ -314,13 +315,17 @@ function PublicSurfaceRegistry({ onSelectProject, selectedSlug }) {
 
     let cancelled = false;
 
+    const cachedEntries = refreshableSurfaces
+      .map((surface) => [surface.id, readSessionJson(surface.refresh.statusUrl)])
+      .filter(([, status]) => status);
+    if (cachedEntries.length) {
+      setSurfaceStatuses(Object.fromEntries(cachedEntries));
+    }
+
     Promise.all(
       refreshableSurfaces.map(async (surface) => {
         try {
-          const response = await fetch(surface.refresh.statusUrl, { cache: "no-store" });
-          if (!response.ok) return [surface.id, { ok: false }];
-
-          return [surface.id, await response.json()];
+          return [surface.id, (await fetchSessionJson(surface.refresh.statusUrl)) ?? { ok: false }];
         } catch {
           return [surface.id, { ok: false }];
         }
@@ -608,14 +613,14 @@ function useCoverCollisionData(dataUrl = coverCollisionDataUrl) {
 
     let cancelled = false;
 
-    fetch(url, { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data) => {
-        if (!cancelled && isCoverCollisionData(data)) {
-          setRuntimeData(preferredCoverCollisionData(data, fallbackData));
-        }
-      })
-      .catch(() => {});
+    const applyCoverCollisionData = (data) => {
+      if (!cancelled && isCoverCollisionData(data)) {
+        setRuntimeData(preferredCoverCollisionData(data, fallbackData));
+      }
+    };
+
+    applyCoverCollisionData(readSessionJson(url));
+    fetchSessionJson(url).then(applyCoverCollisionData).catch(() => {});
 
     return () => {
       cancelled = true;
@@ -931,12 +936,11 @@ function LiveProjectFrame({ project, frameUrl }) {
     <section className="project-expanded-frame" id={`${project.slug}-preview`} aria-live="polite">
       {frameUrl ? (
         <div className={`project-expanded-frame-shell ${isFrameLoaded ? "is-loaded" : "is-loading"}`}>
-          {!isFrameLoaded && (
-            <div className="project-frame-loading" aria-hidden="true">
-              <span>{project.title}</span>
-              <strong>{project.dashboardLabel ?? "Live project"}</strong>
-            </div>
-          )}
+          <div className="project-frame-loading" aria-hidden="true">
+            <span>{project.title}</span>
+            <strong>{project.dashboardLabel ?? "Live project"}</strong>
+            <i className="project-frame-loading-bar" />
+          </div>
           <iframe
             src={frameUrl}
             title={`${project.title} live project`}

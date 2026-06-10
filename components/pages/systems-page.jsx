@@ -6,25 +6,25 @@ const systemSteps = [
     number: "01",
     title: "Capture",
     body: "Collect raw inputs from anywhere. No rigid formats.",
-    image: "/area-art/work.png"
+    image: "/area-art/work.webp"
   },
   {
     number: "02",
     title: "Structure",
     body: "Define, normalize, and connect. Make sense of what matters.",
-    image: "/area-art/knowledge.png"
+    image: "/area-art/knowledge.webp"
   },
   {
     number: "03",
     title: "Assist",
     body: "Use AI where it helps. Augment judgment, don't replace it.",
-    image: "/area-art/systems.png"
+    image: "/area-art/systems.webp"
   },
   {
     number: "04",
     title: "Operate",
     body: "Run the system. Deliver consistent, useful outcomes.",
-    image: "/area-art/offer.png"
+    image: "/area-art/offer.webp"
   }
 ];
 
@@ -79,7 +79,7 @@ export function SystemsPage() {
         <div className="model-intro">
           <h2>How the model works</h2>
           <p>A simple operating loop that keeps systems useful and current.</p>
-          <Image src="/area-art/signals.png" alt="" width={220} height={130} />
+          <Image src="/area-art/signals.webp" alt="" width={220} height={130} />
         </div>
         {modelColumns.map((column) => (
           <article key={column.title}>

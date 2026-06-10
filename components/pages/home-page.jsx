@@ -33,12 +33,18 @@ export function HomePage() {
                 fill
                 priority={index === 0}
                 sizes="(max-width: 760px) 100vw, 48vw"
+                style={tile.imagePosition ? { objectPosition: tile.imagePosition } : undefined}
               />
             </div>
             <div className="area-caption">
               <div>
                 <h2>{tile.title}</h2>
                 <p>{tile.descriptor}</p>
+                {tile.detail ? (
+                  <div className="area-caption__more" aria-hidden="true">
+                    <p>{tile.detail}</p>
+                  </div>
+                ) : null}
               </div>
               <ArrowRight size={19} strokeWidth={1.8} />
             </div>
