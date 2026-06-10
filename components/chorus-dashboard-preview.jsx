@@ -157,7 +157,7 @@ function TopTracks({ tracks }) {
 }
 
 function RunSoundtrackWidget({ recentRuns }) {
-  const pairedRuns = (recentRuns ?? []).filter((run) => run.tracks?.length);
+  const pairedRuns = (recentRuns ?? []).filter((run) => run.tracks?.length).slice(0, 4);
 
   if (!pairedRuns.length) return null;
 
@@ -226,7 +226,14 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
 
     const applyChorusData = (data) => {
       if (!cancelled && isChorusData(data)) {
-        setRuntimeChorusData(data);
+        // Older cached payloads can lack recentRuns; keep the previous runs so
+        // the Strava card never unmounts and reflows the page mid-load.
+        setRuntimeChorusData((previous) => ({
+          ...data,
+          recentRuns: data.recentRuns?.some((run) => run.tracks?.length)
+            ? data.recentRuns
+            : previous.recentRuns
+        }));
       }
     };
 
