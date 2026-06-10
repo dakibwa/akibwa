@@ -2220,14 +2220,12 @@ button {
   padding: 20px 24px 12px;
 }
 
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-sources,
 .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls {
   justify-content: flex-start;
   overflow-x: auto;
   scrollbar-width: none;
 }
 
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-sources::-webkit-scrollbar,
 .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls::-webkit-scrollbar {
   display: none;
 }
@@ -2253,14 +2251,12 @@ button {
     padding: 20px 24px 12px;
   }
 
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-sources,
   .project-expanded-layer.is-vitals.is-maximized .vitals-ai-controls {
     justify-content: flex-start;
     overflow-x: auto;
     scrollbar-width: none;
   }
 
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-sources::-webkit-scrollbar,
   .project-expanded-layer.is-vitals.is-maximized .vitals-ai-controls::-webkit-scrollbar {
     display: none;
   }
@@ -7369,75 +7365,6 @@ button {
   padding: 16px 32px 6px;
 }
 
-.vitals-ai-topbar {
-  display: grid;
-  grid-template-columns: auto minmax(360px, 1fr) auto;
-  min-height: 54px;
-  align-items: center;
-  gap: 28px;
-  border-bottom: 1px solid rgba(42, 34, 31, 0.1);
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-}
-
-.vitals-ai-title h1 {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0;
-  color: #191311;
-  font-size: 1.78rem;
-  font-weight: 760;
-  letter-spacing: 0;
-  line-height: 1;
-}
-
-.vitals-ai-title p {
-  margin: 9px 0 0;
-  color: #645652;
-  font-size: 0.88rem;
-  line-height: 1.25;
-}
-
-.vitals-leaf-logo {
-  position: relative;
-  display: inline-block;
-  width: 31px;
-  height: 27px;
-  flex: 0 0 auto;
-}
-
-.vitals-leaf-logo::before,
-.vitals-leaf-logo::after {
-  position: absolute;
-  border-radius: 100% 0 100% 0;
-  background: linear-gradient(135deg, #8b5b4d, #baa6a0);
-  content: "";
-  transform-origin: 70% 80%;
-}
-
-.vitals-leaf-logo::before {
-  top: 0;
-  left: 8px;
-  width: 13px;
-  height: 24px;
-  transform: rotate(-26deg);
-}
-
-.vitals-leaf-logo::after {
-  right: 2px;
-  bottom: 4px;
-  width: 12px;
-  height: 20px;
-  transform: rotate(36deg);
-}
-
-.vitals-leaf-logo.small {
-  width: 24px;
-  height: 22px;
-}
-
-.vitals-ai-sources,
 .vitals-ai-controls,
 .vitals-ai-date,
 .vitals-ai-ranges {
@@ -7445,99 +7372,29 @@ button {
   align-items: center;
 }
 
-.vitals-ai-sources {
-  justify-content: center;
-  gap: 8px;
-  padding-top: 3px;
-}
-
-.vitals-ai-source-pill,
-.vitals-ai-source-more {
-  position: relative;
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  border: 1px solid rgba(54, 43, 40, 0.12);
-  border-radius: 11px;
-  background: rgba(255, 255, 255, 0.72);
-  color: #211714;
-  cursor: pointer;
-  padding: 0 15px;
-  font-size: 0.82rem;
-  font-weight: 760;
-  white-space: nowrap;
-  transition:
-    background 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    color 160ms ease,
-    transform 160ms ease;
-}
-
-.vitals-ai-source-pill i {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-}
-
-.vitals-ai-source-pill i.green { background: #863117; }
-.vitals-ai-source-pill i.orange { background: #ee9a2f; }
-.vitals-ai-source-pill i.blue { background: #0b6f92; }
-.vitals-ai-source-pill i.red { background: #e84d42; }
-
-.vitals-ai-source-more {
-  min-width: 82px;
-  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.68);
-}
-
-.vitals-ai-source-pill:hover,
-.vitals-ai-source-pill:focus-visible,
-.vitals-ai-source-more:hover,
-.vitals-ai-source-more:focus-visible,
-.vitals-ai-source-pill.active,
-.vitals-ai-source-more.active {
-  border-color: rgba(103, 30, 8, 0.3);
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow:
-    inset 0 0 0 4px rgba(255, 255, 255, 0.64),
-    0 10px 22px rgba(54, 27, 19, 0.11);
-  color: #3f1407;
-  outline: 0;
-  transform: translateY(-1px);
-}
-
-.vitals-ai-source-pill.active i,
-.vitals-ai-source-more.active {
-  box-shadow: 0 0 0 4px rgba(132, 47, 21, 0.12);
-}
-
 .vitals-ai-controls {
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
 }
 
 .vitals-ai-date,
-.vitals-ai-ranges,
-.vitals-ai-bell {
-  border: 1px solid rgba(54, 43, 40, 0.13);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 8px 24px rgba(30, 25, 23, 0.045);
+.vitals-ai-ranges {
+  min-height: 40px;
+  border: 1px solid rgba(54, 43, 40, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 24px rgba(30, 25, 23, 0.05);
+  backdrop-filter: blur(8px);
 }
 
 .vitals-ai-date {
-  min-width: 304px;
-  min-height: 42px;
   justify-content: space-between;
-  gap: 13px;
-  padding: 0 10px;
+  gap: 6px;
+  padding: 0 6px;
 }
 
 .vitals-ai-date button,
-.vitals-ai-ranges button,
-.vitals-ai-bell {
+.vitals-ai-ranges button {
   border: 0;
   background: transparent;
   color: #191311;
@@ -7554,40 +7411,36 @@ button {
   width: 30px;
   height: 30px;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 999px;
 }
 
 .vitals-ai-date button:hover,
 .vitals-ai-date button:focus-visible {
   background: rgba(92, 21, 0, 0.08);
   outline: 0;
-  transform: translateY(-1px);
 }
 
 .vitals-ai-date span {
-  min-width: 132px;
+  min-width: 116px;
   text-align: center;
-  font-size: 0.9rem;
-  font-weight: 740;
+  font-size: 0.84rem;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .vitals-ai-ranges {
   overflow: hidden;
-  min-height: 42px;
+  gap: 2px;
+  padding: 3px;
 }
 
 .vitals-ai-ranges button {
-  min-width: 66px;
-  min-height: 42px;
-  border-left: 1px solid rgba(54, 43, 40, 0.09);
+  min-width: 50px;
+  min-height: 32px;
+  border-radius: 999px;
   color: #5d504c;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 680;
-}
-
-.vitals-ai-ranges button:first-child {
-  border-left: 0;
 }
 
 .vitals-ai-ranges button.active {
@@ -7607,136 +7460,41 @@ button {
   color: #fff;
 }
 
-.vitals-ai-alert-wrap {
-  position: relative;
-  display: grid;
-}
-
-.vitals-ai-bell {
-  position: relative;
-  display: grid;
-  width: 48px;
-  height: 42px;
-  place-items: center;
-  color: #211917;
-}
-
-.vitals-ai-bell:hover,
-.vitals-ai-bell:focus-visible,
-.vitals-ai-bell[aria-expanded="true"] {
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 10px 22px rgba(54, 27, 19, 0.11);
-  outline: 0;
-  transform: translateY(-1px);
-}
-
-.vitals-ai-bell i {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  width: 8px;
-  height: 8px;
-  border: 2px solid #fff;
-  border-radius: 999px;
-  background: #e63832;
-}
-
-.vitals-alert-popover {
-  position: absolute;
-  top: calc(100% + 9px);
-  right: 0;
-  z-index: 20;
-  display: grid;
-  width: 218px;
-  gap: 4px;
-  border: 1px solid rgba(51, 33, 28, 0.14);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 18px 42px rgba(48, 25, 18, 0.16);
-  padding: 12px 13px;
-}
-
-.vitals-alert-popover strong {
-  color: #201613;
-  font-size: 0.76rem;
-  font-weight: 820;
-}
-
-.vitals-alert-popover span {
-  color: #615450;
-  font-size: 0.72rem;
-  line-height: 1.35;
-}
-
 .vitals-hero-topbar {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 14px;
   min-width: 0;
 }
 
-.vitals-hero-topbar .vitals-ai-title {
-  min-width: 134px;
+.vitals-hero-eyebrow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+  color: #2a1c16;
+  font-size: 0.86rem;
+  font-weight: 780;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.vitals-hero-topbar .vitals-ai-title h1 {
-  font-size: 1.5rem;
-}
-
-.vitals-hero-topbar .vitals-ai-title p {
-  margin-top: 6px;
-  color: #55443f;
-  font-size: 0.82rem;
+.vitals-hero-eyebrow em {
+  color: #6b5a53;
+  font-size: 0.72rem;
+  font-style: normal;
   font-weight: 640;
+  letter-spacing: 0.08em;
 }
 
-.vitals-hero-topbar .vitals-ai-sources,
 .vitals-hero-topbar .vitals-ai-controls {
   min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.vitals-hero-topbar .vitals-ai-sources::-webkit-scrollbar,
-.vitals-hero-topbar .vitals-ai-controls::-webkit-scrollbar {
-  display: none;
-}
-
-.vitals-hero-topbar .vitals-ai-sources {
-  justify-content: flex-start;
-  gap: 6px;
-  padding-top: 0;
-}
-
-.vitals-hero-topbar .vitals-ai-controls {
   justify-content: flex-end;
   gap: 8px;
-}
-
-.vitals-hero-topbar .vitals-ai-source-pill,
-.vitals-hero-topbar .vitals-ai-source-more {
-  padding: 0 11px;
-  font-size: 0.78rem;
-}
-
-.vitals-hero-topbar .vitals-ai-date {
-  min-width: 244px;
-}
-
-.vitals-hero-topbar .vitals-ai-date span {
-  min-width: 108px;
-  font-size: 0.84rem;
-}
-
-.vitals-hero-topbar .vitals-ai-ranges button {
-  min-width: 52px;
-}
-
-.vitals-hero-topbar .vitals-ai-bell {
-  width: 40px;
 }
 
 .vitals-ai-hero {
@@ -9242,12 +9000,6 @@ button {
     padding: 20px 24px 12px;
   }
 
-  .vitals-ai-topbar {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .vitals-ai-sources,
   .vitals-ai-controls {
     justify-content: flex-start;
     overflow-x: auto;
@@ -9287,29 +9039,15 @@ button {
     padding: 18px 14px;
   }
 
-  .vitals-ai-title h1 {
-    font-size: 1.54rem;
-  }
-
   .vitals-hero-topbar {
-    grid-template-columns: 1fr;
+    flex-wrap: wrap;
     align-items: start;
     gap: 10px;
-  }
-
-  .vitals-hero-topbar .vitals-ai-title {
-    min-width: 0;
   }
 
   .vitals-hero-topbar .vitals-ai-controls {
     width: 100%;
     justify-content: stretch;
-  }
-
-  .vitals-ai-source-pill,
-  .vitals-ai-source-more {
-    min-height: 36px;
-    padding: 0 12px;
   }
 
   .vitals-ai-controls {
@@ -11472,4 +11210,106 @@ button {
   .area-art img {
     transition: none;
   }
+}
+
+/* Project overlay banner: surface title, scrobble count, and refresh live in
+   the banner strip; the embedded app hides its own masthead to save a row. */
+.project-expanded-banner-meta {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
+}
+
+.project-expanded-banner-meta strong {
+  font-size: 0.96rem;
+  font-weight: 620;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.project-expanded-banner-meta em {
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 540;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.project-expanded-banner-stat {
+  position: absolute;
+  top: 50%;
+  right: 138px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
+}
+
+.project-expanded-banner-stat strong {
+  font-size: 0.96rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.project-expanded-banner-stat small {
+  font-size: 0.64rem;
+  font-weight: 560;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.project-expanded-refresh {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.project-expanded-refresh:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.project-expanded-refresh + .project-expanded-maximize,
+.project-expanded-refresh + .project-expanded-close {
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 620px) {
+  .project-expanded-banner-meta em,
+  .project-expanded-banner-stat {
+    display: none;
+  }
+}
+
+/* Vitals opens at the same stage size as Chorus instead of the smaller cameo. */
+.project-expanded-layer.is-vitals:not(.is-maximized) {
+  padding: clamp(14px, 3vw, 46px);
+}
+
+.project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
+  width: min(1640px, calc(100vw - clamp(28px, 6vw, 92px)));
+  height: min(980px, calc(100dvh - clamp(28px, 6vw, 92px)));
 }
