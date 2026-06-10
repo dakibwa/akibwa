@@ -176,6 +176,13 @@ const surfaceProjectSlugs = {
   "personal-knowledge-base": "personal-knowledge-base"
 };
 
+const surfaceAccents = {
+  chorus: { "--surface-tint": "rgba(47, 136, 255, 0.055)", "--surface-border": "rgba(47, 136, 255, 0.34)" },
+  vitals: { "--surface-tint": "rgba(176, 73, 47, 0.06)", "--surface-border": "rgba(176, 73, 47, 0.36)" },
+  "cover-collision": { "--surface-tint": "rgba(255, 111, 26, 0.055)", "--surface-border": "rgba(255, 111, 26, 0.34)" },
+  "personal-knowledge-base": { "--surface-tint": "rgba(83, 96, 106, 0.06)", "--surface-border": "rgba(83, 96, 106, 0.34)" }
+};
+
 function getIconToneStyle(tone, index) {
   return {
     ...(iconToneStyles[tone] ?? iconToneStyles.slate),
@@ -345,21 +352,14 @@ function PublicSurfaceRegistry({ onSelectProject, selectedSlug }) {
 
   return (
     <section className="page-grid personal-surface-registry" aria-label="Public surfaces">
-      <div className="personal-surface-registry-head">
+      <div className="about-section-head">
         <div>
-          <span>Public surfaces</span>
-          <h2>Project views on Akibwa, with private refresh work kept behind the boundary.</h2>
+          <h2>Public surfaces</h2>
         </div>
-        <dl aria-label="Public surface registry totals">
-          <div>
-            <dt>Registered</dt>
-            <dd>{publicSurfaces.length}</dd>
-          </div>
-          <div>
-            <dt>Refreshing</dt>
-            <dd>{refreshableCount}</dd>
-          </div>
-        </dl>
+        <p>
+          {publicSurfaces.length} registered, {refreshableCount} refreshing live — private work stays behind the
+          boundary
+        </p>
       </div>
 
       <div className="personal-surface-list">
@@ -384,6 +384,7 @@ function PublicSurfaceRegistry({ onSelectProject, selectedSlug }) {
               className={`personal-surface-card ${isSelected ? "is-selected" : ""}`}
               aria-pressed={isSelected}
               onClick={openSurface}
+              style={surfaceAccents[surface.id]}
               key={surface.id}
             >
               <strong>{surface.title}</strong>
@@ -1247,6 +1248,12 @@ export function PersonalPage() {
       <PublicSurfaceRegistry onSelectProject={selectProject} selectedSlug={expandedProject?.slug} />
 
       <section className="page-grid work-board personal-board" aria-label="Personal projects">
+        <div className="about-section-head">
+          <div>
+            <h2>Projects</h2>
+          </div>
+          <p>Built because they interested me</p>
+        </div>
         <div className="work-card-grid personal-project-grid">
           {personalProjects.map((project, index) => (
             <PersonalProjectCard

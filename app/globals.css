@@ -733,66 +733,6 @@ button {
   padding: 8px 0 28px;
 }
 
-.personal-surface-registry-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.personal-surface-registry-head > div {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-}
-
-.personal-surface-registry-head span {
-  color: var(--black);
-  font-size: 0.8rem;
-  font-weight: 620;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.personal-surface-registry-head h2 {
-  max-width: 720px;
-  margin: 0;
-  color: #59616b;
-  font-size: clamp(1.24rem, 2vw, 1.72rem);
-  font-weight: 520;
-  line-height: 1.14;
-}
-
-.personal-surface-registry-head dl {
-  display: grid;
-  flex: 0 0 auto;
-  grid-template-columns: repeat(2, minmax(86px, 1fr));
-  gap: 8px;
-  margin: 0;
-}
-
-.personal-surface-registry-head dl div {
-  display: grid;
-  align-content: end;
-  gap: 4px;
-  padding: 0 0 4px;
-}
-
-.personal-surface-registry-head dt {
-  color: #68727a;
-  font-size: 0.68rem;
-  font-weight: 620;
-  text-transform: uppercase;
-}
-
-.personal-surface-registry-head dd {
-  margin: 0;
-  color: var(--black);
-  font-size: 1.18rem;
-  font-weight: 650;
-  line-height: 1;
-}
-
 .personal-surface-list {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -810,7 +750,7 @@ button {
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, rgba(47, 136, 255, 0.055), transparent 48%),
+    linear-gradient(135deg, var(--surface-tint, rgba(47, 136, 255, 0.055)), transparent 48%),
     #fff;
   color: var(--black);
   padding: 14px;
@@ -825,7 +765,7 @@ button {
 .personal-surface-card:hover,
 .personal-surface-card:focus-visible,
 .personal-surface-card.is-selected {
-  border-color: rgba(47, 136, 255, 0.34);
+  border-color: var(--surface-border, rgba(47, 136, 255, 0.34));
   box-shadow: 0 16px 44px rgba(16, 18, 23, 0.065);
   outline: 0;
   transform: translateY(-2px);
@@ -6263,14 +6203,14 @@ button {
 
 /* Vitals dashboard live aggregate preview */
 .vitals-dashboard {
-  --vitals-bg: #fbfcfb;
+  --vitals-bg: #fcfbfb;
   --vitals-surface: #ffffff;
   --vitals-ink: #081216;
   --vitals-muted: #5c666d;
   --vitals-line: rgba(8, 18, 22, 0.1);
   --vitals-line-strong: rgba(8, 18, 22, 0.16);
-  --vitals-green: #208768;
-  --vitals-green-dark: #006452;
+  --vitals-green: #873820;
+  --vitals-green-dark: #641700;
   --vitals-teal: #0b6874;
   --vitals-orange: #e7902f;
   --vitals-coral: #e46f43;
@@ -6428,7 +6368,7 @@ button {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 999px;
-  background: #064f53;
+  background: #531806;
   color: #fff;
   font-size: 0.86rem;
   font-weight: 660;
@@ -6737,15 +6677,15 @@ button {
   height: 22px;
   justify-self: center;
   border-radius: 4px;
-  background: #eef1f0;
+  background: #f1efee;
 }
 
 .vitals-heatmap-row i.mid {
-  background: #a8d0c5;
+  background: #d0b1a8;
 }
 
 .vitals-heatmap-row i.high {
-  background: #0b6b61;
+  background: #6b210b;
 }
 
 .vitals-heatmap-row i.watch {
@@ -6781,11 +6721,11 @@ button {
 }
 
 .vitals-legend i.mid {
-  background: #a8d0c5;
+  background: #d0b1a8;
 }
 
 .vitals-legend i.high {
-  background: #0b6b61;
+  background: #6b210b;
 }
 
 .vitals-mini-card {
@@ -7073,7 +7013,7 @@ button {
   width: 18px;
   height: var(--height);
   border-radius: 5px;
-  background: linear-gradient(180deg, #2aa985, var(--vitals-green));
+  background: linear-gradient(180deg, #a9482a, var(--vitals-green));
 }
 
 .vitals-bars span:last-child i {
@@ -7262,7 +7202,7 @@ button {
   max-width: 760px;
   border: 1px solid rgba(11, 104, 116, 0.18);
   border-radius: 8px;
-  background: #f7fbfb;
+  background: #fbf8f7;
   margin-top: 14px;
   padding: 16px;
   box-shadow: 0 16px 42px rgba(8, 18, 22, 0.055);
@@ -7413,7 +7353,7 @@ button {
   background:
     radial-gradient(circle at 8% 4%, rgba(244, 238, 221, 0.86), transparent 28%),
     linear-gradient(180deg, #efeeea 0%, #f6f4ef 100%);
-  color: #12201d;
+  color: #201512;
   padding: 4px;
   font-family: Inter, "Helvetica Neue", Arial, sans-serif;
 }
@@ -7421,7 +7361,7 @@ button {
 .vitals-ai-shell {
   width: min(calc(100vw - 8px), 2040px);
   min-height: calc(100vh - 8px);
-  border: 1px solid rgba(40, 54, 48, 0.12);
+  border: 1px solid rgba(54, 43, 40, 0.12);
   border-radius: 19px;
   background: rgba(252, 250, 244, 0.96);
   box-shadow: 0 18px 60px rgba(30, 31, 28, 0.14);
@@ -7435,7 +7375,7 @@ button {
   min-height: 54px;
   align-items: center;
   gap: 28px;
-  border-bottom: 1px solid rgba(31, 42, 38, 0.1);
+  border-bottom: 1px solid rgba(42, 34, 31, 0.1);
   margin-bottom: 14px;
   padding-bottom: 12px;
 }
@@ -7445,7 +7385,7 @@ button {
   align-items: center;
   gap: 9px;
   margin: 0;
-  color: #111918;
+  color: #191311;
   font-size: 1.78rem;
   font-weight: 760;
   letter-spacing: 0;
@@ -7454,7 +7394,7 @@ button {
 
 .vitals-ai-title p {
   margin: 9px 0 0;
-  color: #52645f;
+  color: #645652;
   font-size: 0.88rem;
   line-height: 1.25;
 }
@@ -7471,7 +7411,7 @@ button {
 .vitals-leaf-logo::after {
   position: absolute;
   border-radius: 100% 0 100% 0;
-  background: linear-gradient(135deg, #4d8b73, #a0baa3);
+  background: linear-gradient(135deg, #8b5b4d, #baa6a0);
   content: "";
   transform-origin: 70% 80%;
 }
@@ -7519,10 +7459,10 @@ button {
   align-items: center;
   justify-content: center;
   gap: 9px;
-  border: 1px solid rgba(40, 54, 48, 0.12);
+  border: 1px solid rgba(54, 43, 40, 0.12);
   border-radius: 11px;
   background: rgba(255, 255, 255, 0.72);
-  color: #14211f;
+  color: #211714;
   cursor: pointer;
   padding: 0 15px;
   font-size: 0.82rem;
@@ -7542,7 +7482,7 @@ button {
   border-radius: 999px;
 }
 
-.vitals-ai-source-pill i.green { background: #17866f; }
+.vitals-ai-source-pill i.green { background: #863117; }
 .vitals-ai-source-pill i.orange { background: #ee9a2f; }
 .vitals-ai-source-pill i.blue { background: #0b6f92; }
 .vitals-ai-source-pill i.red { background: #e84d42; }
@@ -7558,19 +7498,19 @@ button {
 .vitals-ai-source-more:focus-visible,
 .vitals-ai-source-pill.active,
 .vitals-ai-source-more.active {
-  border-color: rgba(8, 103, 85, 0.3);
+  border-color: rgba(103, 30, 8, 0.3);
   background: rgba(255, 255, 255, 0.94);
   box-shadow:
     inset 0 0 0 4px rgba(255, 255, 255, 0.64),
-    0 10px 22px rgba(19, 54, 46, 0.11);
-  color: #073f36;
+    0 10px 22px rgba(54, 27, 19, 0.11);
+  color: #3f1407;
   outline: 0;
   transform: translateY(-1px);
 }
 
 .vitals-ai-source-pill.active i,
 .vitals-ai-source-more.active {
-  box-shadow: 0 0 0 4px rgba(21, 132, 111, 0.12);
+  box-shadow: 0 0 0 4px rgba(132, 47, 21, 0.12);
 }
 
 .vitals-ai-controls {
@@ -7581,10 +7521,10 @@ button {
 .vitals-ai-date,
 .vitals-ai-ranges,
 .vitals-ai-bell {
-  border: 1px solid rgba(40, 54, 48, 0.13);
+  border: 1px solid rgba(54, 43, 40, 0.13);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 8px 24px rgba(23, 30, 27, 0.045);
+  box-shadow: 0 8px 24px rgba(30, 25, 23, 0.045);
 }
 
 .vitals-ai-date {
@@ -7600,7 +7540,7 @@ button {
 .vitals-ai-bell {
   border: 0;
   background: transparent;
-  color: #111918;
+  color: #191311;
   cursor: pointer;
   transition:
     background 160ms ease,
@@ -7619,7 +7559,7 @@ button {
 
 .vitals-ai-date button:hover,
 .vitals-ai-date button:focus-visible {
-  background: rgba(0, 92, 76, 0.08);
+  background: rgba(92, 21, 0, 0.08);
   outline: 0;
   transform: translateY(-1px);
 }
@@ -7640,8 +7580,8 @@ button {
 .vitals-ai-ranges button {
   min-width: 66px;
   min-height: 42px;
-  border-left: 1px solid rgba(40, 54, 48, 0.09);
-  color: #4c5d59;
+  border-left: 1px solid rgba(54, 43, 40, 0.09);
+  color: #5d504c;
   font-size: 0.88rem;
   font-weight: 680;
 }
@@ -7651,14 +7591,14 @@ button {
 }
 
 .vitals-ai-ranges button.active {
-  background: linear-gradient(180deg, #005646, #004338);
+  background: linear-gradient(180deg, #561400, #431000);
   color: #fff;
   box-shadow: inset 0 -10px 22px rgba(255, 255, 255, 0.07);
 }
 
 .vitals-ai-ranges button:hover,
 .vitals-ai-ranges button:focus-visible {
-  color: #052f29;
+  color: #2f0f05;
   outline: 0;
 }
 
@@ -7678,14 +7618,14 @@ button {
   width: 48px;
   height: 42px;
   place-items: center;
-  color: #17211f;
+  color: #211917;
 }
 
 .vitals-ai-bell:hover,
 .vitals-ai-bell:focus-visible,
 .vitals-ai-bell[aria-expanded="true"] {
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 10px 22px rgba(19, 54, 46, 0.11);
+  box-shadow: 0 10px 22px rgba(54, 27, 19, 0.11);
   outline: 0;
   transform: translateY(-1px);
 }
@@ -7709,21 +7649,21 @@ button {
   display: grid;
   width: 218px;
   gap: 4px;
-  border: 1px solid rgba(28, 51, 43, 0.14);
+  border: 1px solid rgba(51, 33, 28, 0.14);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 18px 42px rgba(18, 48, 39, 0.16);
+  box-shadow: 0 18px 42px rgba(48, 25, 18, 0.16);
   padding: 12px 13px;
 }
 
 .vitals-alert-popover strong {
-  color: #13201d;
+  color: #201613;
   font-size: 0.76rem;
   font-weight: 820;
 }
 
 .vitals-alert-popover span {
-  color: #50615c;
+  color: #615450;
   font-size: 0.72rem;
   line-height: 1.35;
 }
@@ -7748,7 +7688,7 @@ button {
 
 .vitals-hero-topbar .vitals-ai-title p {
   margin-top: 6px;
-  color: #3f5550;
+  color: #55443f;
   font-size: 0.82rem;
   font-weight: 640;
 }
@@ -7822,7 +7762,7 @@ button {
   inset: 0;
   background:
     linear-gradient(90deg, rgba(251, 247, 236, 0.86) 0%, rgba(251, 247, 236, 0.58) 35%, rgba(251, 247, 236, 0.06) 72%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(0, 64, 54, 0.14));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(64, 15, 0, 0.14));
   content: "";
 }
 
@@ -7837,7 +7777,7 @@ button {
   gap: 10px;
   max-width: 620px;
   margin: 0;
-  color: #101b19;
+  color: #1b1310;
   font-size: 1.74rem;
   font-weight: 760;
   line-height: 1.08;
@@ -7846,7 +7786,7 @@ button {
 .vitals-hero-landscape p {
   max-width: 540px;
   margin: 10px 0 0;
-  color: #2d3d38;
+  color: #3d312d;
   font-size: 0.9rem;
   line-height: 1.36;
 }
@@ -7859,11 +7799,11 @@ button {
   align-items: stretch;
   overflow: hidden;
   width: fit-content;
-  border: 1px solid rgba(38, 55, 49, 0.12);
+  border: 1px solid rgba(55, 42, 38, 0.12);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.82);
   margin-top: 18px;
-  box-shadow: 0 16px 38px rgba(31, 42, 36, 0.15);
+  box-shadow: 0 16px 38px rgba(42, 34, 31, 0.15);
   backdrop-filter: blur(10px);
 }
 
@@ -7874,7 +7814,7 @@ button {
   min-height: 68px;
   align-content: center;
   gap: 4px;
-  border-left: 1px solid rgba(36, 52, 47, 0.12);
+  border-left: 1px solid rgba(52, 40, 36, 0.12);
   border-top: 0;
   border-right: 0;
   border-bottom: 0;
@@ -7894,7 +7834,7 @@ button {
 .vitals-hero-metrics section.primary,
 .vitals-hero-metrics button.primary {
   border-left: 0;
-  background: linear-gradient(135deg, rgba(0, 84, 72, 0.94), rgba(0, 68, 58, 0.92));
+  background: linear-gradient(135deg, rgba(84, 20, 0, 0.94), rgba(68, 16, 0, 0.92));
   color: #fff;
 }
 
@@ -7909,7 +7849,7 @@ button {
 .vitals-hero-metrics button:not(.primary):focus-visible,
 .vitals-hero-metrics button:not(.primary).active {
   background: rgba(255, 255, 255, 0.7);
-  box-shadow: inset 0 -3px 0 rgba(0, 108, 89, 0.22);
+  box-shadow: inset 0 -3px 0 rgba(108, 25, 0, 0.22);
 }
 
 .vitals-hero-metrics span {
@@ -7920,7 +7860,7 @@ button {
 }
 
 .vitals-hero-metrics strong {
-  color: #12312b;
+  color: #311912;
   font-size: 0.85rem;
   font-weight: 760;
 }
@@ -7939,7 +7879,7 @@ button {
 }
 
 .vitals-hero-metrics small {
-  color: #00765f;
+  color: #761c00;
   font-size: 0.72rem;
   font-weight: 720;
 }
@@ -7952,7 +7892,7 @@ button {
 }
 
 .vitals-hero-metrics svg {
-  color: #255f54;
+  color: #5f3325;
 }
 
 .vitals-ai-grid {
@@ -7965,7 +7905,7 @@ button {
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(36, 50, 45, 0.11);
+  border: 1px solid rgba(50, 39, 36, 0.11);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 12px 34px rgba(35, 38, 32, 0.052);
@@ -7985,7 +7925,7 @@ button {
   z-index: 0;
   border-radius: inherit;
   background:
-    linear-gradient(135deg, rgba(11, 127, 106, 0.08), transparent 34%),
+    linear-gradient(135deg, rgba(127, 38, 11, 0.08), transparent 34%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 58%);
   content: "";
   opacity: 0;
@@ -8001,9 +7941,9 @@ button {
 .vitals-ai-card:hover,
 .vitals-ai-card:focus-visible,
 .vitals-ai-card:focus-within {
-  border-color: rgba(9, 108, 89, 0.26);
+  border-color: rgba(108, 32, 9, 0.26);
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 20px 48px rgba(26, 52, 43, 0.13);
+  box-shadow: 0 20px 48px rgba(52, 32, 26, 0.13);
   transform: translateY(-3px);
 }
 
@@ -8017,8 +7957,8 @@ button {
 .vitals-ai-grid[data-focused-metric="recovery"] .vitals-ai-card[data-card-metric="recovery"],
 .vitals-ai-grid[data-focused-metric="sleep"] .vitals-ai-card[data-card-metric="sleep"],
 .vitals-ai-grid[data-focused-metric="training"] .vitals-ai-card[data-card-metric="training"] {
-  border-color: rgba(5, 100, 83, 0.28);
-  box-shadow: 0 18px 44px rgba(12, 86, 72, 0.12);
+  border-color: rgba(100, 27, 5, 0.28);
+  box-shadow: 0 18px 44px rgba(86, 29, 12, 0.12);
 }
 
 .vitals-score-card,
@@ -8044,10 +7984,10 @@ button {
   z-index: 30;
   width: max-content;
   max-width: 220px;
-  border: 1px solid rgba(20, 45, 38, 0.12);
+  border: 1px solid rgba(45, 26, 20, 0.12);
   border-radius: 8px;
-  background: rgba(18, 31, 28, 0.96);
-  box-shadow: 0 14px 32px rgba(14, 36, 30, 0.18);
+  background: rgba(31, 21, 18, 0.96);
+  box-shadow: 0 14px 32px rgba(36, 19, 14, 0.18);
   color: #fff;
   content: attr(data-tooltip);
   font-size: 0.68rem;
@@ -8089,7 +8029,7 @@ button {
 
 .vitals-ai-card-heading h2 {
   margin: 0;
-  color: #17221f;
+  color: #221a17;
   font-size: 0.98rem;
   font-weight: 760;
   letter-spacing: 0;
@@ -8097,7 +8037,7 @@ button {
 }
 
 .vitals-ai-card-heading svg {
-  color: #18352f;
+  color: #351f18;
 }
 
 .vitals-ai-card-heading button {
@@ -8106,7 +8046,7 @@ button {
   gap: 8px;
   border: 0;
   background: transparent;
-  color: #103c35;
+  color: #3c1a10;
   cursor: pointer;
   font-size: 0.72rem;
   font-weight: 800;
@@ -8114,10 +8054,10 @@ button {
 }
 
 .vitals-ai-ring {
-  --ring-accent: #168872;
-  --ring-accent-strong: #04715f;
-  --ring-accent-soft: #73d1bf;
-  --ring-track: rgba(17, 33, 29, 0.09);
+  --ring-accent: #883116;
+  --ring-accent-strong: #711d04;
+  --ring-accent-soft: #d18973;
+  --ring-track: rgba(33, 21, 17, 0.09);
   --ring-stroke: clamp(8px, calc(var(--ring-size) * 0.105), 12px);
   isolation: isolate;
   position: relative;
@@ -8159,8 +8099,8 @@ button {
     );
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.8),
-    inset 0 -8px 16px rgba(16, 42, 35, 0.08),
-    0 9px 24px rgba(18, 81, 69, 0.12);
+    inset 0 -8px 16px rgba(42, 22, 16, 0.08),
+    0 9px 24px rgba(81, 33, 18, 0.12);
   transition:
     box-shadow 180ms ease,
     transform 180ms ease;
@@ -8169,13 +8109,13 @@ button {
 .vitals-ai-ring-orbit::before {
   inset: var(--ring-stroke);
   z-index: 1;
-  border: 1px solid rgba(25, 47, 40, 0.06);
+  border: 1px solid rgba(47, 30, 25, 0.06);
   background:
-    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.98) 0 18%, rgba(255, 255, 255, 0.93) 38%, rgba(248, 250, 247, 0.98) 72%, #eef3ee 100%),
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.98) 0 18%, rgba(255, 255, 255, 0.93) 38%, rgba(250, 248, 247, 0.98) 72%, #f3efee 100%),
     #f8faf6;
   box-shadow:
     inset 0 1px 7px rgba(255, 255, 255, 0.92),
-    inset 0 -8px 18px rgba(20, 47, 40, 0.06),
+    inset 0 -8px 18px rgba(47, 26, 20, 0.06),
     0 0 0 1px rgba(255, 255, 255, 0.62);
 }
 
@@ -8203,7 +8143,7 @@ button {
 }
 
 .vitals-ai-ring strong {
-  color: #17211f;
+  color: #211917;
   font-size: clamp(0.76rem, calc(var(--ring-size) * 0.17), 1.2rem);
   font-weight: 800;
   letter-spacing: 0;
@@ -8212,7 +8152,7 @@ button {
 }
 
 .vitals-ai-ring-label {
-  color: #51615d;
+  color: #615551;
   font-size: clamp(0.54rem, calc(var(--ring-size) * 0.058), 0.64rem);
   font-weight: 760;
   line-height: 1.05;
@@ -8225,7 +8165,7 @@ button {
 
 .vitals-ai-spark polyline {
   fill: none;
-  stroke: #177e6d;
+  stroke: #7e2f17;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 3;
@@ -8260,7 +8200,7 @@ button {
 .vitals-recovery-layout > div:first-child strong,
 .vitals-sleep-top > div:first-child strong,
 .vitals-training-main > div:first-child strong {
-  color: #111918;
+  color: #191311;
   font-size: 2.54rem;
   font-weight: 780;
   letter-spacing: 0;
@@ -8269,7 +8209,7 @@ button {
 
 .vitals-score-main > div:first-child span,
 .vitals-recovery-layout > div:first-child span {
-  color: #111918;
+  color: #191311;
   font-size: 1.4rem;
   font-weight: 520;
 }
@@ -8280,7 +8220,7 @@ button {
 .vitals-training-main small {
   display: block;
   margin-top: 9px;
-  color: #00836b;
+  color: #831f00;
   font-size: 0.9rem;
   font-weight: 760;
 }
@@ -8291,7 +8231,7 @@ button {
 .vitals-training-main p,
 .vitals-card-note {
   margin: 9px 0 0;
-  color: #28534b;
+  color: #533228;
   font-size: 0.78rem;
   font-weight: 620;
 }
@@ -8303,7 +8243,7 @@ button {
 
 .vitals-score-breakdown > strong {
   margin-bottom: 2px;
-  color: #25332f;
+  color: #332825;
   font-size: 0.7rem;
   font-weight: 800;
 }
@@ -8313,7 +8253,7 @@ button {
   grid-template-columns: 70px 1fr 34px;
   gap: 10px;
   align-items: center;
-  color: #293936;
+  color: #392d29;
   font-size: 0.72rem;
   border-radius: 7px;
   cursor: help;
@@ -8332,7 +8272,7 @@ button {
   height: 5px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(24, 42, 36, 0.1);
+  background: rgba(42, 28, 24, 0.1);
 }
 
 .vitals-score-breakdown b,
@@ -8341,7 +8281,7 @@ button {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: inherit;
-  background: #16836d;
+  background: #832f16;
   transform-origin: left center;
   transition:
     filter 170ms ease,
@@ -8356,10 +8296,10 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-top: 1px solid rgba(24, 42, 36, 0.1);
+  border-top: 1px solid rgba(42, 28, 24, 0.1);
   margin: 2px 20px 0;
   padding: 10px 0 0;
-  color: #566963;
+  color: #695a56;
   font-size: 0.72rem;
 }
 
@@ -8374,7 +8314,7 @@ button {
 .vitals-recovery-layout dl {
   display: grid;
   gap: 10px;
-  border-left: 1px solid rgba(24, 42, 36, 0.13);
+  border-left: 1px solid rgba(42, 28, 24, 0.13);
   margin: 0;
   padding-left: 24px;
 }
@@ -8387,19 +8327,19 @@ button {
 }
 
 .vitals-recovery-layout dt {
-  color: #53655f;
+  color: #655753;
   font-size: 0.72rem;
 }
 
 .vitals-recovery-layout dd {
   margin: 0;
-  color: #18231f;
+  color: #231b18;
   font-size: 0.77rem;
   font-weight: 800;
 }
 
 .vitals-recovery-layout em {
-  color: #007a64;
+  color: #7a1c00;
   font-size: 0.7rem;
   font-style: normal;
   font-weight: 760;
@@ -8412,12 +8352,12 @@ button {
 }
 
 .vitals-ai-line-chart line {
-  stroke: rgba(24, 42, 36, 0.12);
+  stroke: rgba(42, 28, 24, 0.12);
 }
 
 .vitals-ai-line-chart path {
   fill: none;
-  stroke: #16836d;
+  stroke: #832f16;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 3;
@@ -8427,7 +8367,7 @@ button {
 }
 
 .vitals-ai-line-chart circle {
-  fill: #16836d;
+  fill: #832f16;
   transition:
     filter 180ms ease,
     r 180ms ease,
@@ -8438,7 +8378,7 @@ button {
   display: flex;
   justify-content: space-between;
   padding: 0 27px 0;
-  color: #68766f;
+  color: #766b68;
   font-size: 0.68rem;
 }
 
@@ -8460,14 +8400,14 @@ button {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 14px;
-  color: #394b46;
+  color: #4b3d39;
   font-size: 0.66rem;
   font-weight: 720;
 }
 
 .vitals-sleep-stages header span {
   flex-basis: 100%;
-  color: #27332f;
+  color: #332a27;
   font-size: 0.76rem;
 }
 
@@ -8509,7 +8449,7 @@ button {
 .vitals-sleep-foot {
   display: flex;
   justify-content: space-between;
-  color: #55655f;
+  color: #655955;
   font-size: 0.66rem;
 }
 
@@ -8518,17 +8458,17 @@ button {
 }
 
 .vitals-sleep-foot {
-  border-top: 1px solid rgba(24, 42, 36, 0.1);
+  border-top: 1px solid rgba(42, 28, 24, 0.1);
   margin-top: 8px;
   padding: 8px 20px 0;
 }
 
 .vitals-sleep-foot b {
-  color: #16211f;
+  color: #211916;
 }
 
 .vitals-sleep-foot em {
-  color: #007a64;
+  color: #7a1c00;
   font-style: normal;
 }
 
@@ -8542,7 +8482,7 @@ button {
 }
 
 .vitals-load-chart > span {
-  color: #263531;
+  color: #352a26;
   font-size: 0.76rem;
   font-weight: 780;
 }
@@ -8552,7 +8492,7 @@ button {
   height: 56px;
   align-items: flex-end;
   gap: 11px;
-  border-bottom: 1px solid rgba(24, 42, 36, 0.1);
+  border-bottom: 1px solid rgba(42, 28, 24, 0.1);
   padding: 0 10px;
 }
 
@@ -8560,7 +8500,7 @@ button {
   display: block;
   width: 18px;
   border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, rgba(44, 139, 118, 0.38), rgba(44, 139, 118, 0.13));
+  background: linear-gradient(180deg, rgba(139, 66, 44, 0.38), rgba(139, 66, 44, 0.13));
   cursor: help;
   transform-origin: bottom center;
   transition:
@@ -8587,7 +8527,7 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr)) 78px;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid rgba(24, 42, 36, 0.1);
+  border-top: 1px solid rgba(42, 28, 24, 0.1);
   margin: 2px 20px 0;
   padding-top: 10px;
 }
@@ -8595,23 +8535,23 @@ button {
 .vitals-training-stats div {
   display: grid;
   gap: 3px;
-  border-right: 1px solid rgba(24, 42, 36, 0.12);
+  border-right: 1px solid rgba(42, 28, 24, 0.12);
   padding-right: 12px;
 }
 
 .vitals-training-stats span {
-  color: #52615b;
+  color: #615652;
   font-size: 0.64rem;
 }
 
 .vitals-training-stats strong {
-  color: #111918;
+  color: #191311;
   font-size: 1rem;
   font-weight: 800;
 }
 
 .vitals-training-stats small {
-  color: #007a64;
+  color: #7a1c00;
   font-size: 0.64rem;
   font-weight: 720;
 }
@@ -8627,14 +8567,14 @@ button {
 .vitals-ai-ring:focus-visible .vitals-ai-ring-orbit {
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.8),
-    inset 0 -8px 16px rgba(16, 42, 35, 0.08),
-    0 12px 28px rgba(18, 81, 69, 0.18);
+    inset 0 -8px 16px rgba(42, 22, 16, 0.08),
+    0 12px 28px rgba(81, 33, 18, 0.18);
   transform: rotate(9deg) scale(1.018);
 }
 
 .vitals-ai-card:hover .vitals-ai-ring strong,
 .vitals-ai-ring:focus-visible strong {
-  color: #064d41;
+  color: #4d1706;
   transform: translateY(-1px);
 }
 
@@ -8642,13 +8582,13 @@ button {
 .vitals-ai-card:focus-within .vitals-ai-line-chart path,
 .vitals-ai-card:hover .vitals-ai-spark polyline,
 .vitals-ai-card:focus-within .vitals-ai-spark polyline {
-  filter: drop-shadow(0 4px 6px rgba(18, 125, 103, 0.2));
+  filter: drop-shadow(0 4px 6px rgba(125, 43, 18, 0.2));
   stroke-width: 4;
 }
 
 .vitals-ai-card:hover .vitals-ai-line-chart circle,
 .vitals-ai-card:focus-within .vitals-ai-line-chart circle {
-  filter: drop-shadow(0 0 8px rgba(18, 125, 103, 0.42));
+  filter: drop-shadow(0 0 8px rgba(125, 43, 18, 0.42));
   r: 6px;
 }
 
@@ -8660,7 +8600,7 @@ button {
 .vitals-nutrition-v2-body section:focus-within,
 .vitals-trends-list div:hover,
 .vitals-trends-list div:focus-within {
-  background: rgba(12, 112, 93, 0.055);
+  background: rgba(112, 35, 12, 0.055);
   transform: translateX(2px);
 }
 
@@ -8673,8 +8613,8 @@ button {
 
 .vitals-load-chart i:hover,
 .vitals-load-chart i:focus-visible {
-  background: linear-gradient(180deg, rgba(17, 130, 108, 0.68), rgba(17, 130, 108, 0.25));
-  box-shadow: 0 9px 16px rgba(17, 130, 108, 0.16);
+  background: linear-gradient(180deg, rgba(130, 43, 17, 0.68), rgba(130, 43, 17, 0.25));
+  box-shadow: 0 9px 16px rgba(130, 43, 17, 0.16);
   outline: 0;
   transform: scaleY(1.08);
 }
@@ -8721,20 +8661,20 @@ button {
 }
 
 .vitals-body-metrics-layout dt {
-  color: #394b46;
+  color: #4b3d39;
   font-size: 0.72rem;
 }
 
 .vitals-body-metrics-layout dd {
   margin: 0;
-  color: #17211f;
+  color: #211917;
   font-size: 0.74rem;
   font-weight: 820;
   white-space: nowrap;
 }
 
 .vitals-body-metrics-layout em {
-  color: #007a64;
+  color: #7a1c00;
   font-size: 0.68rem;
   font-style: normal;
   font-weight: 760;
@@ -8763,12 +8703,12 @@ button {
 }
 
 .vitals-nutrition-v2-body span {
-  color: #52615b;
+  color: #615652;
   font-size: 0.72rem;
 }
 
 .vitals-nutrition-v2-body strong {
-  color: #17211f;
+  color: #211917;
   font-size: 0.76rem;
 }
 
@@ -8784,22 +8724,22 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid rgba(24, 42, 36, 0.1);
+  border-top: 1px solid rgba(42, 28, 24, 0.1);
   margin: 8px 20px 0;
   padding-top: 8px;
-  color: #5b6a65;
+  color: #6a5e5b;
   font-size: 0.68rem;
 }
 
 .vitals-nutrition-card-v2 footer strong {
-  color: #007a64;
+  color: #7a1c00;
 }
 
 .vitals-nutrition-card-v2 footer i {
   width: 9px;
   height: 9px;
   border-radius: 999px;
-  background: #147f6d;
+  background: #7f2d14;
 }
 
 .vitals-stress-body {
@@ -8813,13 +8753,13 @@ button {
 .vitals-stress-body > div:last-child {
   display: grid;
   gap: 8px;
-  border-left: 1px solid rgba(24, 42, 36, 0.13);
+  border-left: 1px solid rgba(42, 28, 24, 0.13);
   padding-left: 22px;
   transition: border-color 160ms ease;
 }
 
 .vitals-stress-body span {
-  color: #17211f;
+  color: #211917;
   font-size: 0.76rem;
   font-weight: 760;
 }
@@ -8828,12 +8768,12 @@ button {
   display: flex;
   justify-content: space-between;
   margin: 0;
-  color: #52615b;
+  color: #615652;
   font-size: 0.74rem;
 }
 
 .vitals-stress-body p strong {
-  color: #17211f;
+  color: #211917;
 }
 
 .vitals-trends-list {
@@ -8857,7 +8797,7 @@ button {
 }
 
 .vitals-trends-list span {
-  color: #475954;
+  color: #594b47;
   font-size: 0.72rem;
 }
 
@@ -8870,11 +8810,11 @@ button {
 
 .vitals-trends-list strong.up,
 .vitals-trends-list strong.down {
-  color: #17866f;
+  color: #863117;
 }
 
 .vitals-trends-list strong.flat {
-  color: #34433f;
+  color: #433834;
 }
 
 .vitals-trends-list .vitals-ai-spark {
@@ -8900,7 +8840,7 @@ button {
 .vitals-weekly-readiness h3,
 .vitals-insights-main h2 {
   margin: 0;
-  color: #17211f;
+  color: #211917;
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -8909,7 +8849,7 @@ button {
 .vitals-habits-board header p,
 .vitals-insights-main p {
   margin: 4px 0 0;
-  color: #52615b;
+  color: #615652;
   font-size: 0.72rem;
 }
 
@@ -8923,7 +8863,7 @@ button {
 
 .vitals-habit-days {
   margin-top: 12px;
-  color: #17211f;
+  color: #211917;
   font-size: 0.68rem;
   font-weight: 720;
 }
@@ -8945,7 +8885,7 @@ button {
 }
 
 .vitals-habit-row > span {
-  color: #17211f;
+  color: #211917;
   font-size: 0.72rem;
   font-weight: 680;
 }
@@ -8956,7 +8896,7 @@ button {
   height: 18px;
   justify-self: center;
   border-radius: 4px;
-  background: #edf0ed;
+  background: #f0eeed;
   cursor: help;
   transform-origin: center;
   transition:
@@ -8967,22 +8907,22 @@ button {
 }
 
 .vitals-habit-row i.high,
-.vitals-habits-board footer i.high { background: #0a7c68; }
+.vitals-habits-board footer i.high { background: #7c250a; }
 .vitals-habit-row i.mid,
-.vitals-habits-board footer i.mid { background: #9fcabe; }
+.vitals-habits-board footer i.mid { background: #caa99f; }
 .vitals-habit-row i.watch,
 .vitals-habits-board footer i.watch { background: #f3c377; }
 .vitals-habit-row i.soft,
 .vitals-habit-row i.none,
-.vitals-habits-board footer i.none { background: #e8ebe8; }
+.vitals-habits-board footer i.none { background: #ebe9e8; }
 
 .vitals-habit-row:hover > span {
-  color: #005f50;
+  color: #5f1600;
 }
 
 .vitals-habit-row i:hover,
 .vitals-habit-row i:focus-visible {
-  box-shadow: 0 8px 16px rgba(21, 93, 78, 0.18);
+  box-shadow: 0 8px 16px rgba(93, 38, 21, 0.18);
   filter: saturate(1.12);
   outline: 0;
   transform: translateY(-3px) scale(1.18);
@@ -8999,7 +8939,7 @@ button {
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 10px;
-  color: #52615b;
+  color: #615652;
   font-size: 0.68rem;
 }
 
@@ -9019,7 +8959,7 @@ button {
   display: grid;
   align-content: center;
   gap: 8px;
-  border-left: 1px solid rgba(24, 42, 36, 0.12);
+  border-left: 1px solid rgba(42, 28, 24, 0.12);
   padding: 15px 20px;
   transition:
     background 180ms ease,
@@ -9028,7 +8968,7 @@ button {
 
 .vitals-habits-card:hover .vitals-weekly-readiness,
 .vitals-habits-card:focus-within .vitals-weekly-readiness {
-  border-color: rgba(6, 113, 94, 0.18);
+  border-color: rgba(113, 31, 6, 0.18);
   background: rgba(255, 255, 255, 0.46);
 }
 
@@ -9038,13 +8978,13 @@ button {
 }
 
 .vitals-weekly-readiness > strong {
-  color: #101918;
+  color: #191210;
   font-size: 2rem;
   font-weight: 800;
 }
 
 .vitals-weekly-readiness > strong span {
-  color: #00836b;
+  color: #831f00;
   font-size: 0.88rem;
 }
 
@@ -9052,15 +8992,15 @@ button {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 12px;
-  border-top: 1px solid rgba(24, 42, 36, 0.12);
+  border-top: 1px solid rgba(42, 28, 24, 0.12);
   padding-top: 12px;
-  color: #4f605a;
+  color: #60534f;
   font-size: 0.68rem;
 }
 
 .vitals-weekly-readiness b {
   display: block;
-  color: #17211f;
+  color: #211917;
   margin-top: 4px;
 }
 
@@ -9089,7 +9029,7 @@ button {
   gap: 8px;
   border: 0;
   background: transparent;
-  color: #103c35;
+  color: #3c1a10;
   cursor: pointer;
   font-size: 0.72rem;
   font-weight: 800;
@@ -9099,14 +9039,14 @@ button {
 .vitals-insights-main nav {
   display: flex;
   gap: 26px;
-  border-bottom: 1px solid rgba(24, 42, 36, 0.1);
+  border-bottom: 1px solid rgba(42, 28, 24, 0.1);
   margin-top: 10px;
 }
 
 .vitals-insights-main nav button {
   border: 0;
   background: transparent;
-  color: #62736d;
+  color: #736662;
   cursor: pointer;
   padding: 0 0 10px;
   font-size: 0.72rem;
@@ -9114,12 +9054,12 @@ button {
 }
 
 .vitals-insights-main nav button.active {
-  color: #17211f;
+  color: #211917;
 }
 
 .vitals-insights-main nav span {
   border-radius: 999px;
-  background: #e7ece9;
+  background: #ece8e7;
   padding: 1px 6px;
   font-size: 0.62rem;
 }
@@ -9136,7 +9076,7 @@ button {
   gap: 10px;
   align-items: center;
   min-height: 35px;
-  border-top: 1px solid rgba(24, 42, 36, 0.08);
+  border-top: 1px solid rgba(42, 28, 24, 0.08);
 }
 
 .vitals-insight-list div:first-child,
@@ -9161,7 +9101,7 @@ button {
 }
 
 .vitals-insight-list em {
-  color: #17211f;
+  color: #211917;
   font-size: 0.72rem;
   font-style: normal;
   font-weight: 800;
@@ -9174,7 +9114,7 @@ button {
   height: 24px;
   place-items: center;
   border-radius: 999px;
-  color: #21403a;
+  color: #402821;
   font-size: 0.62rem;
   font-style: normal;
   font-weight: 800;
@@ -9183,7 +9123,7 @@ button {
 .vitals-insight-list i.amber { background: #f4d589; }
 .vitals-insight-list i.orange { background: #edb083; }
 .vitals-insight-list i.green { background: #b9d5a4; }
-.vitals-insight-list i.teal { background: #a9d1c9; }
+.vitals-insight-list i.teal { background: #d1b2a9; }
 
 .vitals-insight-list span {
   display: grid;
@@ -9192,7 +9132,7 @@ button {
 
 .vitals-insight-list strong {
   overflow: hidden;
-  color: #17211f;
+  color: #211917;
   font-size: 0.74rem;
   font-weight: 820;
   text-overflow: ellipsis;
@@ -9201,7 +9141,7 @@ button {
 
 .vitals-insight-list small {
   overflow: hidden;
-  color: #566963;
+  color: #695a56;
   font-size: 0.66rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -9215,7 +9155,7 @@ button {
 
 .vitals-insight-row:hover,
 .vitals-insight-row:focus-visible {
-  background: rgba(7, 111, 92, 0.055);
+  background: rgba(111, 31, 7, 0.055);
   outline: 0;
   transform: translateX(2px);
 }
@@ -9233,7 +9173,7 @@ button {
 .vitals-insight-row:hover svg,
 .vitals-insight-row:focus-visible svg,
 .vitals-trends-list div:hover svg {
-  color: #006c5a;
+  color: #6c1900;
   transform: translateX(3px);
 }
 
@@ -9250,7 +9190,7 @@ button {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(251, 247, 236, 0.14), rgba(0, 70, 60, 0.3)),
+    linear-gradient(90deg, rgba(251, 247, 236, 0.14), rgba(70, 16, 0, 0.3)),
     rgba(253, 248, 238, 0.45);
   content: "";
 }
@@ -9263,11 +9203,11 @@ button {
   min-height: 145px;
   place-items: center;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), transparent 30%), #07584a;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), transparent 30%), #581a07;
   color: #fff;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(1, 50, 42, 0.24);
+  box-shadow: 0 20px 40px rgba(50, 12, 1, 0.24);
 }
 
 .vitals-next-action span {
@@ -9290,7 +9230,7 @@ button {
   border: 0;
   border-radius: 999px;
   background: #fff;
-  color: #0a4e43;
+  color: #4e1a0a;
   cursor: pointer;
   padding: 0 16px;
   font-size: 0.7rem;
@@ -9408,7 +9348,7 @@ button {
   .vitals-hero-metrics section,
   .vitals-hero-metrics button {
     min-height: 70px;
-    border-top: 1px solid rgba(36, 52, 47, 0.12);
+    border-top: 1px solid rgba(52, 40, 36, 0.12);
     border-left: 0;
   }
 
@@ -9461,7 +9401,7 @@ button {
 
   .vitals-weekly-readiness,
   .vitals-stress-body > div:last-child {
-    border-top: 1px solid rgba(24, 42, 36, 0.12);
+    border-top: 1px solid rgba(42, 28, 24, 0.12);
     border-left: 0;
   }
 
@@ -11127,20 +11067,6 @@ button {
 
   .personal-surface-registry {
     padding-bottom: 24px;
-  }
-
-  .personal-surface-registry-head {
-    display: grid;
-    align-items: start;
-  }
-
-  .personal-surface-registry-head h2 {
-    font-size: 1.18rem;
-  }
-
-  .personal-surface-registry-head dl {
-    width: 100%;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .work-card-grid,

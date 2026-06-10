@@ -7,8 +7,8 @@ const artworkBySlug = {
     variant: "music"
   },
   vitals: {
-    src: "/project-art/personal/vitals-signal.webp",
-    bannerSrc: "/project-art/personal/vitals-signal-banner.webp",
+    src: "/project-art/personal/albion-rose-card.webp",
+    bannerSrc: "/project-art/personal/albion-rose-banner.webp",
     variant: "health"
   },
   "cover-collision": {
