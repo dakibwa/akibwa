@@ -7289,9 +7289,10 @@ button {
   position: relative;
   z-index: 1;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px 16px;
   min-width: 0;
 }
 
@@ -7325,7 +7326,6 @@ button {
 .vitals-ai-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  min-height: 226px;
   margin-bottom: 10px;
 }
 
@@ -11014,15 +11014,31 @@ button {
 }
 
 .area-art img {
-  transition:
-    filter 180ms ease-out,
-    transform 180ms ease-out;
+  will-change: transform;
+  transition: transform 200ms ease-out;
 }
 
 .area-card:hover .area-art img,
 .area-card:focus-visible .area-art img {
-  filter: saturate(0.94) brightness(0.95);
   transform: scale(1.02);
+}
+
+/* Dim via a composited overlay rather than a filter: animating filters
+   repaints the full image every frame and makes the hover-off stutter. */
+.area-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(13, 11, 9, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
+
+.area-card:hover .area-art::after,
+.area-card:focus-visible .area-art::after {
+  opacity: 1;
 }
 
 @media (hover: none) {
