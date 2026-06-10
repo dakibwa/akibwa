@@ -962,7 +962,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
             </span>
           ) : null}
           <div className="project-expanded-actions">
-            {frameUrl ? (
+            {frameUrl || project.visual === "chorus" || project.visual === "vitals" ? (
               <button
                 type="button"
                 className="project-expanded-refresh"
@@ -993,7 +993,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
         </header>
         <div className="project-expanded-body">
           {contentReady ? (
-            <ProjectExpandedContent project={project} frameUrl={frameUrl} frameNonce={frameNonce} />
+            <ProjectExpandedContent project={project} frameUrl={frameUrl} frameNonce={frameNonce} key={frameNonce} />
           ) : (
             <div className="project-expanded-content-placeholder" aria-hidden="true" />
           )}

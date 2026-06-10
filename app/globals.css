@@ -1850,6 +1850,21 @@ button {
   object-position: 50% 50%;
 }
 
+/* Legibility scrim: the toolbar text sits over arbitrary artwork, so anchor
+   both ends of the banner with a soft dark wash. */
+.project-expanded-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(13, 11, 9, 0.52),
+    rgba(13, 11, 9, 0.12) 34%,
+    rgba(13, 11, 9, 0.08) 62%,
+    rgba(13, 11, 9, 0.46)
+  );
+}
+
 .project-expanded-accessible-title {
   position: absolute;
   overflow: hidden;
