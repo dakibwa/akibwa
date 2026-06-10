@@ -7488,7 +7488,7 @@ button {
 .vitals-ai-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 14px;
+  gap: 18px;
 }
 
 .vitals-ai-card {
@@ -7496,7 +7496,7 @@ button {
   min-width: 0;
   overflow: hidden;
   border: 1px solid rgba(50, 39, 36, 0.11);
-  border-radius: 14px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 12px 34px rgba(35, 38, 32, 0.052);
   outline: 0;
@@ -7607,28 +7607,28 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 20px 24px 0;
+  padding: 24px 28px 0;
 }
 
 .vitals-ai-card-heading > div {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
 .vitals-ai-card-heading h2 {
   margin: 0;
-  color: #4a3a33;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.13em;
+  color: #7b685f;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   line-height: 1.1;
   text-transform: uppercase;
 }
 
 .vitals-ai-card-heading svg {
-  color: #82351d;
+  color: #9b5036;
 }
 
 .vitals-ai-card-heading button {
@@ -7759,7 +7759,7 @@ button {
   stroke: #7e2f17;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 3;
+  stroke-width: 3.5;
   transition:
     filter 180ms ease,
     stroke-width 180ms ease,
@@ -7776,46 +7776,71 @@ button {
 .vitals-sleep-card,
 .vitals-training-card {
   grid-column: span 3;
-  min-height: 258px;
+  min-height: 286px;
 }
 
 .vitals-score-main {
   display: grid;
-  grid-template-columns: minmax(88px, 0.58fr) 124px minmax(146px, 0.8fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 20px;
-  padding: 24px 24px 14px;
+  gap: 16px 36px;
+  padding: 22px 28px 8px;
+}
+
+.vitals-score-hero {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+}
+
+.vitals-score-hero p {
+  margin-top: 5px;
 }
 
 .vitals-score-main > div:first-child strong,
 .vitals-recovery-layout > div:first-child strong,
 .vitals-sleep-top > div:first-child strong,
 .vitals-training-main > div:first-child strong {
-  color: #191311;
-  font-size: 2.7rem;
-  font-weight: 660;
-  letter-spacing: -0.01em;
+  color: #1d1411;
+  font-size: clamp(2.2rem, 1.7rem + 0.9vw, 2.8rem);
+  font-weight: 560;
+  letter-spacing: -0.02em;
   line-height: 0.95;
+  white-space: nowrap;
 }
 
 .vitals-score-main > div:first-child span,
 .vitals-recovery-layout > div:first-child span {
-  color: #191311;
-  font-size: 1.4rem;
-  font-weight: 520;
+  color: #6e5d56;
+  font-size: 1.35rem;
+  font-weight: 460;
 }
 
 .vitals-score-main small,
 .vitals-recovery-layout small,
 .vitals-sleep-top small,
 .vitals-training-main small {
-  display: block;
-  margin-top: 10px;
-  color: #96321a;
-  font-size: 0.72rem;
-  font-weight: 780;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 7px;
+  margin-top: 13px;
+  color: #7c2a10;
+  font-size: 0.79rem;
+  font-weight: 620;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.vitals-score-main small::before,
+.vitals-recovery-layout small::before,
+.vitals-sleep-top small::before,
+.vitals-training-main small::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
 }
 
 .vitals-score-main p,
@@ -7823,33 +7848,33 @@ button {
 .vitals-sleep-top p,
 .vitals-training-main p,
 .vitals-card-note {
-  margin: 9px 0 0;
-  color: #8a7d78;
-  font-size: 0.76rem;
-  font-weight: 540;
+  margin: 7px 0 0;
+  color: #9c8f89;
+  font-size: 0.74rem;
+  font-weight: 500;
 }
 
 .vitals-score-breakdown {
   display: grid;
-  gap: 13px;
+  gap: 15px;
 }
 
 .vitals-score-breakdown > strong {
   margin-bottom: 2px;
-  color: #8a7d78;
+  color: #9c8f89;
   font-size: 0.64rem;
-  font-weight: 780;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
 .vitals-score-breakdown div {
   display: grid;
-  grid-template-columns: 70px 1fr 34px;
-  gap: 10px;
+  grid-template-columns: 74px 1fr 36px;
+  gap: 12px;
   align-items: center;
   color: #6b5d58;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   border-radius: 7px;
   cursor: help;
   padding: 2px 0;
@@ -7891,47 +7916,48 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-top: 1px solid rgba(42, 28, 24, 0.08);
-  margin: 8px 24px 0;
-  padding: 12px 0 0;
-  color: #8a7d78;
-  font-size: 0.72rem;
+  border-top: 1px solid rgba(42, 28, 24, 0.07);
+  margin: 14px 28px 0;
+  padding: 13px 0 22px;
+  color: #9c8f89;
+  font-size: 0.71rem;
 }
 
 .vitals-recovery-layout {
   display: grid;
-  grid-template-columns: 135px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: minmax(96px, auto) minmax(0, 1fr);
+  gap: 20px;
   align-items: start;
-  padding: 24px 24px 0;
+  padding: 26px 28px 0;
 }
 
 .vitals-recovery-layout dl {
   display: grid;
-  gap: 14px;
-  border-left: 1px solid rgba(42, 28, 24, 0.09);
+  gap: 17px;
+  border-left: 1px solid rgba(42, 28, 24, 0.08);
   margin: 0;
-  padding-left: 24px;
+  padding-left: 20px;
 }
 
 .vitals-recovery-layout dl div {
   display: grid;
   grid-template-columns: minmax(70px, 1fr) auto auto;
-  gap: 10px;
+  gap: 12px;
   align-items: baseline;
 }
 
 .vitals-recovery-layout dt {
-  color: #8a7d78;
-  font-size: 0.72rem;
+  color: #9c8f89;
+  font-size: 0.73rem;
 }
 
 .vitals-recovery-layout dd {
   margin: 0;
   color: #231b18;
-  font-size: 0.82rem;
-  font-weight: 680;
+  font-size: 0.84rem;
+  font-weight: 640;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .vitals-recovery-layout em {
@@ -7939,12 +7965,13 @@ button {
   font-size: 0.7rem;
   font-style: normal;
   font-weight: 660;
+  white-space: nowrap;
 }
 
 .vitals-ai-line-chart {
-  width: calc(100% - 48px);
+  width: calc(100% - 56px);
   height: 84px;
-  margin: 6px 24px 0;
+  margin: 10px 28px 0;
 }
 
 .vitals-ai-line-chart line {
@@ -7956,7 +7983,7 @@ button {
   stroke: #964226;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 2.5;
+  stroke-width: 3.5;
   transition:
     filter 180ms ease,
     stroke-width 180ms ease;
@@ -7973,8 +8000,8 @@ button {
 .vitals-ai-axis {
   display: flex;
   justify-content: space-between;
-  padding: 0 30px 0;
-  color: #998e8a;
+  padding: 4px 34px 20px;
+  color: #a2978f;
   font-size: 0.66rem;
 }
 
@@ -7982,13 +8009,13 @@ button {
 .vitals-training-main {
   display: grid;
   grid-template-columns: minmax(110px, 0.65fr) minmax(130px, 1fr);
-  gap: 22px;
+  gap: 26px;
   align-items: center;
-  padding: 24px 24px 10px;
+  padding: 26px 28px 12px;
 }
 
 .vitals-sleep-stages {
-  padding: 4px 24px 0;
+  padding: 6px 28px 0;
 }
 
 .vitals-sleep-stages header {
@@ -8026,10 +8053,10 @@ button {
 .vitals-sleep-bar {
   display: flex;
   overflow: hidden;
-  height: 12px;
+  height: 10px;
   border-radius: 999px;
   background: #eef0f2;
-  margin-top: 14px;
+  margin-top: 12px;
 }
 
 .vitals-sleep-bar b {
@@ -8045,18 +8072,18 @@ button {
 .vitals-sleep-foot {
   display: flex;
   justify-content: space-between;
-  color: #8a7d78;
-  font-size: 0.66rem;
+  color: #9c8f89;
+  font-size: 0.67rem;
 }
 
 .vitals-sleep-stages footer {
-  margin-top: 7px;
+  margin-top: 8px;
 }
 
 .vitals-sleep-foot {
-  border-top: 1px solid rgba(42, 28, 24, 0.08);
-  margin-top: 14px;
-  padding: 12px 24px 0;
+  border-top: 1px solid rgba(42, 28, 24, 0.07);
+  margin: 16px 28px 0;
+  padding: 13px 0 22px;
 }
 
 .vitals-sleep-foot b {
@@ -8096,8 +8123,8 @@ button {
 
 .vitals-load-chart i {
   display: block;
-  width: 18px;
-  border-radius: 3px 3px 0 0;
+  width: 14px;
+  border-radius: 999px 999px 0 0;
   background: linear-gradient(180deg, rgba(139, 66, 44, 0.38), rgba(139, 66, 44, 0.13));
   cursor: help;
   transform-origin: bottom center;
@@ -8124,10 +8151,10 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr)) 78px;
   align-items: center;
-  gap: 14px;
-  border-top: 1px solid rgba(42, 28, 24, 0.08);
-  margin: 10px 24px 0;
-  padding-top: 14px;
+  gap: 16px;
+  border-top: 1px solid rgba(42, 28, 24, 0.07);
+  margin: 12px 28px 0;
+  padding-top: 16px;
 }
 
 .vitals-training-stats div {
@@ -8159,7 +8186,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 10px 24px 0;
+  padding: 13px 28px 22px;
 }
 
 .vitals-ai-card:hover .vitals-ai-ring-orbit,
@@ -8182,7 +8209,7 @@ button {
 .vitals-ai-card:hover .vitals-ai-spark polyline,
 .vitals-ai-card:focus-within .vitals-ai-spark polyline {
   filter: drop-shadow(0 4px 6px rgba(125, 43, 18, 0.2));
-  stroke-width: 4;
+  stroke-width: 4.5;
 }
 
 .vitals-ai-card:hover .vitals-ai-line-chart circle,
@@ -8230,20 +8257,20 @@ button {
 .vitals-stress-card,
 .vitals-trends-card {
   grid-column: span 3;
-  min-height: 158px;
+  min-height: 186px;
 }
 
 .vitals-body-metrics-layout {
   display: grid;
   grid-template-columns: minmax(160px, 0.62fr) minmax(0, 1fr);
-  gap: 18px;
+  gap: 22px;
   align-items: end;
-  padding: 16px 24px 0;
+  padding: 20px 28px 0;
 }
 
 .vitals-body-metrics-layout dl {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   margin: 0;
 }
 
@@ -8260,8 +8287,8 @@ button {
 }
 
 .vitals-body-metrics-layout dt {
-  color: #8a7d78;
-  font-size: 0.72rem;
+  color: #9c8f89;
+  font-size: 0.73rem;
 }
 
 .vitals-body-metrics-layout dd {
@@ -8283,10 +8310,10 @@ button {
 
 .vitals-nutrition-v2-body {
   display: grid;
-  grid-template-columns: 118px minmax(0, 1fr);
-  gap: 22px;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 26px;
   align-items: center;
-  padding: 16px 24px 0;
+  padding: 20px 28px 0;
 }
 
 .vitals-nutrition-v2-body section {
@@ -8294,7 +8321,7 @@ button {
   grid-template-columns: 68px minmax(0, 1fr);
   gap: 7px 12px;
   align-items: center;
-  margin-bottom: 11px;
+  margin-bottom: 14px;
   border-radius: 8px;
   cursor: help;
   transition:
@@ -8326,11 +8353,11 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid rgba(42, 28, 24, 0.08);
-  margin: 12px 24px 0;
-  padding-top: 12px;
-  color: #8a7d78;
-  font-size: 0.68rem;
+  border-top: 1px solid rgba(42, 28, 24, 0.07);
+  margin: 14px 28px 0;
+  padding: 13px 0 22px;
+  color: #9c8f89;
+  font-size: 0.69rem;
 }
 
 .vitals-nutrition-card-v2 footer strong {
@@ -8346,17 +8373,17 @@ button {
 
 .vitals-stress-body {
   display: grid;
-  grid-template-columns: 116px minmax(0, 1fr);
-  gap: 22px;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 26px;
   align-items: center;
-  padding: 18px 24px 0;
+  padding: 22px 28px 24px;
 }
 
 .vitals-stress-body > div:last-child {
   display: grid;
-  gap: 10px;
-  border-left: 1px solid rgba(42, 28, 24, 0.09);
-  padding-left: 22px;
+  gap: 11px;
+  border-left: 1px solid rgba(42, 28, 24, 0.08);
+  padding-left: 24px;
   transition: border-color 160ms ease;
 }
 
@@ -8382,13 +8409,13 @@ button {
 
 .vitals-trends-list {
   display: grid;
-  gap: 7px;
-  padding: 14px 24px 16px;
+  gap: 9px;
+  padding: 16px 28px 22px;
 }
 
 .vitals-trends-list div {
   display: grid;
-  grid-template-columns: 96px minmax(100px, 1fr) 58px 82px 18px;
+  grid-template-columns: minmax(70px, auto) minmax(64px, auto) auto minmax(0, 1fr) 16px;
   gap: 10px;
   align-items: center;
   min-height: 27px;
@@ -8426,43 +8453,63 @@ button {
 }
 
 .vitals-trends-list .vitals-ai-spark polyline {
-  stroke-width: 2;
+  stroke-width: 2.5;
 }
 
 .vitals-habits-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr);
   grid-column: span 6;
   min-height: 220px;
 }
 
 .vitals-habits-board {
-  padding: 15px 20px 12px;
+  padding: 24px 28px 22px;
+}
+
+.vitals-habits-board > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.vitals-habits-meta {
+  display: flex;
+  gap: 22px;
+  margin: 0;
+  color: #9c8f89;
+  font-size: 0.72rem;
+}
+
+.vitals-habits-meta b {
+  margin-left: 5px;
+  color: #211917;
+  font-weight: 660;
 }
 
 .vitals-habits-board header h2,
-.vitals-weekly-readiness h3,
 .vitals-insights-main h2 {
   margin: 0;
-  color: #4a3a33;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.13em;
+  color: #7b685f;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
 .vitals-habits-board header p,
 .vitals-insights-main p {
-  margin: 4px 0 0;
-  color: #615652;
-  font-size: 0.72rem;
+  margin: 6px 0 0;
+  color: #8a7b74;
+  font-size: 0.73rem;
 }
 
 .vitals-habit-days,
 .vitals-habit-row {
   display: grid;
   grid-template-columns: 84px repeat(14, minmax(14px, 1fr));
-  gap: 7px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -8475,7 +8522,7 @@ button {
 
 .vitals-habit-days span {
   display: grid;
-  width: 18px;
+  width: 20px;
   justify-self: center;
   place-items: center;
   text-align: center;
@@ -8497,8 +8544,8 @@ button {
 
 .vitals-habit-row i {
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   justify-self: center;
   border-radius: 4px;
   background: #f0eeed;
@@ -8560,55 +8607,6 @@ button {
   border-radius: 3px;
 }
 
-.vitals-weekly-readiness {
-  display: grid;
-  align-content: center;
-  gap: 8px;
-  border-left: 1px solid rgba(42, 28, 24, 0.12);
-  padding: 15px 20px;
-  transition:
-    background 180ms ease,
-    border-color 180ms ease;
-}
-
-.vitals-habits-card:hover .vitals-weekly-readiness,
-.vitals-habits-card:focus-within .vitals-weekly-readiness {
-  border-color: rgba(113, 31, 6, 0.18);
-  background: rgba(255, 255, 255, 0.46);
-}
-
-.vitals-weekly-readiness header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.vitals-weekly-readiness > strong {
-  color: #191210;
-  font-size: 2rem;
-  font-weight: 800;
-}
-
-.vitals-weekly-readiness > strong span {
-  color: #831f00;
-  font-size: 0.88rem;
-}
-
-.vitals-weekly-readiness > div {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 12px;
-  border-top: 1px solid rgba(42, 28, 24, 0.12);
-  padding-top: 12px;
-  color: #60534f;
-  font-size: 0.68rem;
-}
-
-.vitals-weekly-readiness b {
-  display: block;
-  color: #211917;
-  margin-top: 4px;
-}
-
 .vitals-insights-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 310px;
@@ -8618,7 +8616,7 @@ button {
 
 .vitals-insights-main {
   min-width: 0;
-  padding: 15px 20px;
+  padding: 22px 26px;
 }
 
 .vitals-insights-main > header {
@@ -8663,10 +8661,9 @@ button {
 }
 
 .vitals-insights-main nav span {
-  border-radius: 999px;
-  background: #ece8e7;
-  padding: 1px 6px;
-  font-size: 0.62rem;
+  margin-left: 3px;
+  color: #a2978f;
+  font-size: 0.66rem;
 }
 
 .vitals-insight-list {
@@ -8677,11 +8674,11 @@ button {
 .vitals-insight-list div,
 .vitals-insight-row {
   display: grid;
-  grid-template-columns: 24px 30px minmax(0, 1fr) 70px 18px;
-  gap: 10px;
+  grid-template-columns: 10px minmax(0, 1fr) 18px;
+  gap: 14px;
   align-items: center;
-  min-height: 35px;
-  border-top: 1px solid rgba(42, 28, 24, 0.08);
+  min-height: 48px;
+  border-top: 1px solid rgba(42, 28, 24, 0.07);
 }
 
 .vitals-insight-list div:first-child,
@@ -8705,30 +8702,17 @@ button {
     transform 160ms ease;
 }
 
-.vitals-insight-list em {
-  color: #211917;
-  font-size: 0.72rem;
-  font-style: normal;
-  font-weight: 800;
-  text-align: center;
-}
-
 .vitals-insight-list i {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
+  display: block;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
-  color: #402821;
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 800;
 }
 
-.vitals-insight-list i.amber { background: #f4d589; }
-.vitals-insight-list i.orange { background: #edb083; }
-.vitals-insight-list i.green { background: #b9d5a4; }
-.vitals-insight-list i.teal { background: #d1b2a9; }
+.vitals-insight-list i.amber { background: #d99c20; }
+.vitals-insight-list i.orange { background: #c96b2c; }
+.vitals-insight-list i.green { background: #6f8f51; }
+.vitals-insight-list i.teal { background: #9b6f60; }
 
 .vitals-insight-list span {
   display: grid;
@@ -8750,12 +8734,6 @@ button {
   font-size: 0.66rem;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.vitals-insight-list b {
-  color: #8d6d2b;
-  font-size: 0.66rem;
-  font-weight: 720;
 }
 
 .vitals-insight-row:hover,
@@ -8992,10 +8970,13 @@ button {
     display: none;
   }
 
-  .vitals-weekly-readiness,
   .vitals-stress-body > div:last-child {
     border-top: 1px solid rgba(42, 28, 24, 0.12);
     border-left: 0;
+  }
+
+  .vitals-habits-board > header {
+    flex-direction: column;
   }
 
   .vitals-insights-main > header,
@@ -9005,11 +8986,7 @@ button {
 
   .vitals-insight-list div,
   .vitals-insight-row {
-    grid-template-columns: 22px 28px minmax(0, 1fr) 18px;
-  }
-
-  .vitals-insight-list b {
-    display: none;
+    grid-template-columns: 10px minmax(0, 1fr) 18px;
   }
 
   .vitals-next-action {
