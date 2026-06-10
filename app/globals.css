@@ -11523,16 +11523,15 @@ button {
 /* Landing tiles: caption-rise hover — detail line reveals under the descriptor,
    image quiets slightly. Hover-only enhancement; touch keeps the static caption. */
 .area-caption__more {
-  display: grid;
-  grid-template-rows: 0fr;
+  overflow: hidden;
+  max-height: 0;
   opacity: 0;
   transition:
-    grid-template-rows 180ms ease-out,
+    max-height 180ms ease-out,
     opacity 180ms ease-out;
 }
 
 .area-caption__more > p {
-  overflow: hidden;
   margin: 0;
   padding-top: 0;
   color: #83868d;
@@ -11542,7 +11541,7 @@ button {
 
 .area-card:hover .area-caption__more,
 .area-card:focus-visible .area-caption__more {
-  grid-template-rows: 1fr;
+  max-height: 3.4em;
   opacity: 1;
 }
 
