@@ -99,6 +99,7 @@ export const personalProjects = [
     visual: "chorus",
     mode: "embed",
     embedUrl: chorusAppUrl,
+    localUrl: "http://localhost:3211",
     fallbackHref: "/chorus",
     cta: "Open on Akibwa"
   },

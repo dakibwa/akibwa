@@ -240,6 +240,15 @@ const iconToneStyles = {
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
 
+const CHORUS_PAGES = [
+  { id: "overview", label: "Overview" },
+  { id: "artists", label: "Artists" },
+  { id: "albums", label: "Albums" },
+  { id: "tracks", label: "Tracks" },
+  { id: "timeline", label: "Timeline" },
+  { id: "reports", label: "Reports" }
+];
+
 
 
 function getIconToneStyle(tone, index) {
@@ -364,8 +373,8 @@ function canUseLocalFrame() {
 }
 
 function getProjectFrameUrl(project, isLocalHost) {
-  if (project.embedUrl) return project.embedUrl;
   if (isLocalHost && project.localUrl) return project.localUrl;
+  if (project.embedUrl) return project.embedUrl;
   if (project.visual === "chorus") return chorusAppUrl;
   if (project.visual === "vitals") return vitalsAppUrl;
   return "";
@@ -877,6 +886,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
   const isChorusSurface = project.visual === "chorus";
   const isVitalsSurface = project.visual === "vitals";
   const scrobbleTotal = useChorusScrobbleTotal(isChorusSurface);
+  const [chorusPage, setChorusPage] = useState("overview");
   const { readiness: vitalsReadiness, snapshotDate: vitalsSnapshotDate } = useVitalsToolbarData(isVitalsSurface);
   const [vitalsRange, setVitalsRange] = useState("7d");
   const [vitalsSnapshotIndex, setVitalsSnapshotIndex] = useState(0);
@@ -976,6 +986,20 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
     };
   }, []);
 
+  const postToChorus = useCallback(
+    (message) => {
+      const frame = shellRef.current?.querySelector("iframe.live-frame");
+      if (!frame?.contentWindow || !frameUrl) return false;
+      try {
+        frame.contentWindow.postMessage(message, new URL(frameUrl, window.location.href).origin);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [frameUrl]
+  );
+
   const toggleMaximized = useCallback(() => {
     if (shellRef.current) {
       shellResizeStartRef.current = shellRef.current.getBoundingClientRect();
@@ -1010,6 +1034,25 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
               return sublabel ? <em>{sublabel}</em> : null;
             })()}
           </div>
+          {isChorusSurface && frameUrl ? (
+            <nav className="project-expanded-chorus-tabs" aria-label="Chorus pages">
+              {CHORUS_PAGES.map((page) => (
+                <button
+                  type="button"
+                  key={page.id}
+                  className={chorusPage === page.id ? "is-active" : ""}
+                  aria-current={chorusPage === page.id ? "page" : undefined}
+                  onClick={() => {
+                    if (postToChorus({ type: "chorus:navigate", page: page.id })) {
+                      setChorusPage(page.id);
+                    }
+                  }}
+                >
+                  {page.label}
+                </button>
+              ))}
+            </nav>
+          ) : null}
           {isChorusSurface && scrobbleTotal ? (
             <span className="project-expanded-banner-stat">
               <strong>{formatScrobbleCount(scrobbleTotal)}</strong>
@@ -1053,7 +1096,12 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
                 type="button"
                 className="project-expanded-refresh"
                 aria-label={`Refresh ${project.title}`}
-                onClick={() => setFrameNonce((nonce) => nonce + 1)}
+                onClick={() => {
+                  // Chorus refreshes its data in place; reloading the iframe
+                  // is the fallback for everything else.
+                  if (isChorusSurface && postToChorus({ type: "chorus:refresh" })) return;
+                  setFrameNonce((nonce) => nonce + 1);
+                }}
               >
                 <RefreshCw size={16} strokeWidth={1.9} />
               </button>
