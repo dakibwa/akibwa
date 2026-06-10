@@ -11118,6 +11118,67 @@ button {
   text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
 }
 
+.project-expanded-toolbar-cluster {
+  position: absolute;
+  top: 50%;
+  right: 138px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(-50%);
+}
+
+.project-expanded-toolbar-cluster .project-expanded-banner-stat {
+  position: static;
+  transform: none;
+  margin-left: 4px;
+}
+
+.vitals-ai-date.is-toolbar,
+.vitals-ai-ranges.is-toolbar {
+  min-height: 34px;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.vitals-ai-date.is-toolbar span {
+  min-width: 0;
+  padding: 0 2px;
+  font-size: 0.78rem;
+}
+
+.vitals-ai-date.is-toolbar button {
+  width: 24px;
+  height: 24px;
+}
+
+.vitals-ai-ranges.is-toolbar {
+  padding: 2px;
+}
+
+.vitals-ai-ranges.is-toolbar button {
+  min-width: 40px;
+  min-height: 28px;
+  font-size: 0.76rem;
+}
+
+/* The toolbar carries the snapshot and range controls in the overlay, so the
+   embedded app hides its own copy on larger screens. */
+@media (min-width: 761px) {
+  .project-expanded-layer.is-vitals .vitals-hero-topbar .vitals-ai-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .project-expanded-toolbar-cluster .vitals-ai-date,
+  .project-expanded-toolbar-cluster .vitals-ai-ranges {
+    display: none;
+  }
+}
+
 .project-expanded-banner-stat strong {
   font-size: 0.96rem;
   font-weight: 650;
