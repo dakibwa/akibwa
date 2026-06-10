@@ -106,7 +106,7 @@ export function SiteShell({ children }) {
               }}
               onBlur={resetBrandPointer}
             >
-              <span className="brand-mark">A</span>KIBWA
+              AKIBWA
             </Link>
 
             <nav className="nav-desktop" aria-label="Main navigation">

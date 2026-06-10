@@ -121,34 +121,6 @@ button {
     transform 180ms ease;
 }
 
-.brand-mark {
-  position: relative;
-}
-
-/* Mirrors the favicon: blue underline beneath the A with an orange end point. */
-.brand-mark::after {
-  content: "";
-  position: absolute;
-  right: -0.04em;
-  bottom: -0.22em;
-  left: -0.04em;
-  height: 0.13em;
-  border-radius: 999px;
-  background: #2f88ff;
-}
-
-.brand-mark::before {
-  content: "";
-  position: absolute;
-  right: -0.1em;
-  bottom: -0.265em;
-  width: 0.22em;
-  height: 0.22em;
-  border-radius: 50%;
-  background: #ff6f1a;
-  z-index: 1;
-}
-
 .brand::after {
   content: "";
   position: absolute;
