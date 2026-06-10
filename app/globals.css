@@ -2045,6 +2045,12 @@ button {
   padding: 20px 24px 12px;
 }
 
+/* The overlay toolbar already names the project, so the embedded app skips
+   its own eyebrow and gives the row to the metrics and controls. */
+.project-expanded-layer.is-vitals .vitals-hero-eyebrow {
+  display: none;
+}
+
 .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls {
   justify-content: flex-start;
   overflow-x: auto;

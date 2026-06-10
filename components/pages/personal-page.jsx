@@ -74,6 +74,33 @@ function useChorusScrobbleTotal(enabled) {
   return total;
 }
 
+const vitalsSummaryDataUrl = (
+  process.env.NEXT_PUBLIC_VITALS_DATA_URL || "https://akibwa-vitals-refresh.dakibwa.workers.dev/vitals"
+).trim();
+
+function useVitalsReadiness(enabled) {
+  const [readiness, setReadiness] = useState(null);
+
+  useEffect(() => {
+    if (!enabled || !vitalsSummaryDataUrl) return undefined;
+
+    let cancelled = false;
+    const apply = (data) => {
+      const numeric = Number(data?.latest?.recovery_score?.value);
+      if (!cancelled && Number.isFinite(numeric) && numeric > 0) setReadiness(Math.round(numeric));
+    };
+
+    apply(readSessionJson(vitalsSummaryDataUrl));
+    fetchSessionJson(vitalsSummaryDataUrl).then(apply).catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled]);
+
+  return readiness;
+}
+
 const sourceLogoByName = {
   gmail: "gmail",
   "google drive": "drive",
@@ -828,7 +855,9 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
   const [contentReady, setContentReady] = useState(false);
   const [frameNonce, setFrameNonce] = useState(0);
   const isChorusSurface = project.visual === "chorus";
+  const isVitalsSurface = project.visual === "vitals";
   const scrobbleTotal = useChorusScrobbleTotal(isChorusSurface);
+  const vitalsReadiness = useVitalsReadiness(isVitalsSurface);
   const shellRef = useRef(null);
   const shellResizeAnimationRef = useRef(null);
   const shellResizeStartRef = useRef(null);
@@ -959,6 +988,12 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
             <span className="project-expanded-banner-stat">
               <strong>{formatScrobbleCount(scrobbleTotal)}</strong>
               <small>total scrobbles</small>
+            </span>
+          ) : null}
+          {isVitalsSurface && vitalsReadiness ? (
+            <span className="project-expanded-banner-stat">
+              <strong>{vitalsReadiness}%</strong>
+              <small>overall readiness</small>
             </span>
           ) : null}
           <div className="project-expanded-actions">
