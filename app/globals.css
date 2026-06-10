@@ -7488,7 +7488,7 @@ button {
 .vitals-ai-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 8px;
+  gap: 14px;
 }
 
 .vitals-ai-card {
@@ -7607,7 +7607,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 16px 20px 0;
+  padding: 20px 24px 0;
 }
 
 .vitals-ai-card-heading > div {
@@ -7783,8 +7783,8 @@ button {
   display: grid;
   grid-template-columns: minmax(88px, 0.58fr) 124px minmax(146px, 0.8fr);
   align-items: center;
-  gap: 16px;
-  padding: 21px 20px 10px;
+  gap: 20px;
+  padding: 24px 24px 14px;
 }
 
 .vitals-score-main > div:first-child strong,
@@ -7792,9 +7792,9 @@ button {
 .vitals-sleep-top > div:first-child strong,
 .vitals-training-main > div:first-child strong {
   color: #191311;
-  font-size: 2.54rem;
-  font-weight: 780;
-  letter-spacing: 0;
+  font-size: 2.7rem;
+  font-weight: 660;
+  letter-spacing: -0.01em;
   line-height: 0.95;
 }
 
@@ -7810,10 +7810,12 @@ button {
 .vitals-sleep-top small,
 .vitals-training-main small {
   display: block;
-  margin-top: 9px;
-  color: #831f00;
-  font-size: 0.9rem;
-  font-weight: 760;
+  margin-top: 10px;
+  color: #96321a;
+  font-size: 0.72rem;
+  font-weight: 780;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .vitals-score-main p,
@@ -7822,21 +7824,23 @@ button {
 .vitals-training-main p,
 .vitals-card-note {
   margin: 9px 0 0;
-  color: #533228;
-  font-size: 0.78rem;
-  font-weight: 620;
+  color: #8a7d78;
+  font-size: 0.76rem;
+  font-weight: 540;
 }
 
 .vitals-score-breakdown {
   display: grid;
-  gap: 10px;
+  gap: 13px;
 }
 
 .vitals-score-breakdown > strong {
   margin-bottom: 2px;
-  color: #332825;
-  font-size: 0.7rem;
-  font-weight: 800;
+  color: #8a7d78;
+  font-size: 0.64rem;
+  font-weight: 780;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .vitals-score-breakdown div {
@@ -7844,7 +7848,7 @@ button {
   grid-template-columns: 70px 1fr 34px;
   gap: 10px;
   align-items: center;
-  color: #392d29;
+  color: #6b5d58;
   font-size: 0.72rem;
   border-radius: 7px;
   cursor: help;
@@ -7860,10 +7864,10 @@ button {
 .vitals-stress-body i {
   position: relative;
   display: block;
-  height: 5px;
+  height: 4px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(42, 28, 24, 0.1);
+  background: rgba(42, 28, 24, 0.08);
 }
 
 .vitals-score-breakdown b,
@@ -7887,25 +7891,25 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-top: 1px solid rgba(42, 28, 24, 0.1);
-  margin: 2px 20px 0;
-  padding: 10px 0 0;
-  color: #695a56;
+  border-top: 1px solid rgba(42, 28, 24, 0.08);
+  margin: 8px 24px 0;
+  padding: 12px 0 0;
+  color: #8a7d78;
   font-size: 0.72rem;
 }
 
 .vitals-recovery-layout {
   display: grid;
   grid-template-columns: 135px minmax(0, 1fr);
-  gap: 18px;
+  gap: 24px;
   align-items: start;
-  padding: 21px 20px 0;
+  padding: 24px 24px 0;
 }
 
 .vitals-recovery-layout dl {
   display: grid;
-  gap: 10px;
-  border-left: 1px solid rgba(42, 28, 24, 0.13);
+  gap: 14px;
+  border-left: 1px solid rgba(42, 28, 24, 0.09);
   margin: 0;
   padding-left: 24px;
 }
@@ -7918,28 +7922,29 @@ button {
 }
 
 .vitals-recovery-layout dt {
-  color: #655753;
+  color: #8a7d78;
   font-size: 0.72rem;
 }
 
 .vitals-recovery-layout dd {
   margin: 0;
   color: #231b18;
-  font-size: 0.77rem;
-  font-weight: 800;
+  font-size: 0.82rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
 }
 
 .vitals-recovery-layout em {
-  color: #7a1c00;
+  color: #96321a;
   font-size: 0.7rem;
   font-style: normal;
-  font-weight: 760;
+  font-weight: 660;
 }
 
 .vitals-ai-line-chart {
-  width: calc(100% - 36px);
+  width: calc(100% - 48px);
   height: 84px;
-  margin: 2px 18px 0;
+  margin: 6px 24px 0;
 }
 
 .vitals-ai-line-chart line {
@@ -7948,10 +7953,10 @@ button {
 
 .vitals-ai-line-chart path {
   fill: none;
-  stroke: #832f16;
+  stroke: #964226;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 3;
+  stroke-width: 2.5;
   transition:
     filter 180ms ease,
     stroke-width 180ms ease;
@@ -7968,22 +7973,22 @@ button {
 .vitals-ai-axis {
   display: flex;
   justify-content: space-between;
-  padding: 0 27px 0;
-  color: #766b68;
-  font-size: 0.68rem;
+  padding: 0 30px 0;
+  color: #998e8a;
+  font-size: 0.66rem;
 }
 
 .vitals-sleep-top,
 .vitals-training-main {
   display: grid;
   grid-template-columns: minmax(110px, 0.65fr) minmax(130px, 1fr);
-  gap: 18px;
+  gap: 22px;
   align-items: center;
-  padding: 19px 20px 7px;
+  padding: 24px 24px 10px;
 }
 
 .vitals-sleep-stages {
-  padding: 0 20px;
+  padding: 4px 24px 0;
 }
 
 .vitals-sleep-stages header {
@@ -8021,10 +8026,10 @@ button {
 .vitals-sleep-bar {
   display: flex;
   overflow: hidden;
-  height: 17px;
-  border-radius: 3px;
-  background: #e9edf0;
-  margin-top: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #eef0f2;
+  margin-top: 14px;
 }
 
 .vitals-sleep-bar b {
@@ -8040,7 +8045,7 @@ button {
 .vitals-sleep-foot {
   display: flex;
   justify-content: space-between;
-  color: #655955;
+  color: #8a7d78;
   font-size: 0.66rem;
 }
 
@@ -8049,9 +8054,9 @@ button {
 }
 
 .vitals-sleep-foot {
-  border-top: 1px solid rgba(42, 28, 24, 0.1);
-  margin-top: 8px;
-  padding: 8px 20px 0;
+  border-top: 1px solid rgba(42, 28, 24, 0.08);
+  margin-top: 14px;
+  padding: 12px 24px 0;
 }
 
 .vitals-sleep-foot b {
@@ -8073,9 +8078,11 @@ button {
 }
 
 .vitals-load-chart > span {
-  color: #352a26;
-  font-size: 0.76rem;
+  color: #8a7d78;
+  font-size: 0.66rem;
   font-weight: 780;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .vitals-load-chart div {
@@ -8117,28 +8124,29 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr)) 78px;
   align-items: center;
-  gap: 12px;
-  border-top: 1px solid rgba(42, 28, 24, 0.1);
-  margin: 2px 20px 0;
-  padding-top: 10px;
+  gap: 14px;
+  border-top: 1px solid rgba(42, 28, 24, 0.08);
+  margin: 10px 24px 0;
+  padding-top: 14px;
 }
 
 .vitals-training-stats div {
   display: grid;
-  gap: 3px;
-  border-right: 1px solid rgba(42, 28, 24, 0.12);
+  gap: 4px;
+  border-right: 1px solid rgba(42, 28, 24, 0.09);
   padding-right: 12px;
 }
 
 .vitals-training-stats span {
-  color: #615652;
+  color: #8a7d78;
   font-size: 0.64rem;
 }
 
 .vitals-training-stats strong {
   color: #191311;
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: 1.06rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
 }
 
 .vitals-training-stats small {
@@ -8151,7 +8159,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 6px 20px 0;
+  padding: 10px 24px 0;
 }
 
 .vitals-ai-card:hover .vitals-ai-ring-orbit,
@@ -8228,14 +8236,14 @@ button {
 .vitals-body-metrics-layout {
   display: grid;
   grid-template-columns: minmax(160px, 0.62fr) minmax(0, 1fr);
-  gap: 14px;
+  gap: 18px;
   align-items: end;
-  padding: 11px 20px 0;
+  padding: 16px 24px 0;
 }
 
 .vitals-body-metrics-layout dl {
   display: grid;
-  gap: 9px;
+  gap: 12px;
   margin: 0;
 }
 
@@ -8252,32 +8260,33 @@ button {
 }
 
 .vitals-body-metrics-layout dt {
-  color: #4b3d39;
+  color: #8a7d78;
   font-size: 0.72rem;
 }
 
 .vitals-body-metrics-layout dd {
   margin: 0;
   color: #211917;
-  font-size: 0.74rem;
-  font-weight: 820;
+  font-size: 0.78rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .vitals-body-metrics-layout em {
-  color: #7a1c00;
+  color: #96321a;
   font-size: 0.68rem;
   font-style: normal;
-  font-weight: 760;
+  font-weight: 660;
   white-space: nowrap;
 }
 
 .vitals-nutrition-v2-body {
   display: grid;
   grid-template-columns: 118px minmax(0, 1fr);
-  gap: 18px;
+  gap: 22px;
   align-items: center;
-  padding: 12px 20px 0;
+  padding: 16px 24px 0;
 }
 
 .vitals-nutrition-v2-body section {
@@ -8294,13 +8303,15 @@ button {
 }
 
 .vitals-nutrition-v2-body span {
-  color: #615652;
+  color: #8a7d78;
   font-size: 0.72rem;
 }
 
 .vitals-nutrition-v2-body strong {
   color: #211917;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
+  font-weight: 680;
+  font-variant-numeric: tabular-nums;
 }
 
 .vitals-nutrition-v2-body i {
@@ -8315,10 +8326,10 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid rgba(42, 28, 24, 0.1);
-  margin: 8px 20px 0;
-  padding-top: 8px;
-  color: #6a5e5b;
+  border-top: 1px solid rgba(42, 28, 24, 0.08);
+  margin: 12px 24px 0;
+  padding-top: 12px;
+  color: #8a7d78;
   font-size: 0.68rem;
 }
 
@@ -8336,30 +8347,32 @@ button {
 .vitals-stress-body {
   display: grid;
   grid-template-columns: 116px minmax(0, 1fr);
-  gap: 18px;
+  gap: 22px;
   align-items: center;
-  padding: 14px 20px 0;
+  padding: 18px 24px 0;
 }
 
 .vitals-stress-body > div:last-child {
   display: grid;
-  gap: 8px;
-  border-left: 1px solid rgba(42, 28, 24, 0.13);
+  gap: 10px;
+  border-left: 1px solid rgba(42, 28, 24, 0.09);
   padding-left: 22px;
   transition: border-color 160ms ease;
 }
 
 .vitals-stress-body span {
-  color: #211917;
-  font-size: 0.76rem;
-  font-weight: 760;
+  color: #8a7d78;
+  font-size: 0.66rem;
+  font-weight: 780;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .vitals-stress-body p {
   display: flex;
   justify-content: space-between;
   margin: 0;
-  color: #615652;
+  color: #8a7d78;
   font-size: 0.74rem;
 }
 
@@ -8369,8 +8382,8 @@ button {
 
 .vitals-trends-list {
   display: grid;
-  gap: 3px;
-  padding: 10px 20px 12px;
+  gap: 7px;
+  padding: 14px 24px 16px;
 }
 
 .vitals-trends-list div {
@@ -8388,7 +8401,7 @@ button {
 }
 
 .vitals-trends-list span {
-  color: #594b47;
+  color: #8a7d78;
   font-size: 0.72rem;
 }
 
@@ -8396,7 +8409,7 @@ button {
 .vitals-trends-list em {
   font-size: 0.72rem;
   font-style: normal;
-  font-weight: 760;
+  font-weight: 660;
 }
 
 .vitals-trends-list strong.up,
@@ -11008,12 +11021,12 @@ button {
     rgba(13, 11, 9, 0.72) 100%
   );
   padding: 30px 18px 13px;
+  overflow: hidden;
   opacity: 0;
-  transform: translateY(10px);
   pointer-events: none;
-  transition:
-    opacity 200ms ease-out,
-    transform 200ms ease-out;
+  /* The wash only fades — translating it drags its rectangular edges into
+     view. The text alone glides up, clipped by the panel. */
+  transition: opacity 200ms ease-out;
 }
 
 .area-caption__more > p {
@@ -11022,11 +11035,17 @@ button {
   font-size: 0.82rem;
   line-height: 1.42;
   text-shadow: 0 1px 8px rgba(13, 11, 9, 0.4);
+  transform: translateY(14px);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .area-card:hover .area-caption__more,
 .area-card:focus-visible .area-caption__more {
   opacity: 1;
+}
+
+.area-card:hover .area-caption__more > p,
+.area-card:focus-visible .area-caption__more > p {
   transform: translateY(0);
 }
 
@@ -11066,6 +11085,8 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .area-caption__more,
+  .area-caption__more > p,
+  .area-art::after,
   .area-art img {
     transition: none;
     transform: none;
