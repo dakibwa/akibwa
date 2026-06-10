@@ -10971,34 +10971,46 @@ button {
   }
 }
 
-/* Landing tiles: caption-rise hover — detail line reveals under the descriptor,
-   image quiets slightly. Hover-only enhancement; touch keeps the static caption. */
+/* Tile hover: the detail line rises from behind the caption over the lower
+   edge of the artwork on a dark wash. The card itself never changes size.
+   Hover-only enhancement; touch keeps the static caption. */
+.area-caption {
+  position: relative;
+}
+
 .area-caption__more {
-  overflow: hidden;
-  max-height: 0;
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 11, 9, 0) 0%,
+    rgba(13, 11, 9, 0.52) 34%,
+    rgba(13, 11, 9, 0.72) 100%
+  );
+  padding: 30px 18px 13px;
   opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
   transition:
-    max-height 180ms ease-out,
-    opacity 180ms ease-out;
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
 }
 
 .area-caption__more > p {
   margin: 0;
-  padding-top: 0;
-  color: #83868d;
-  font-size: 0.8rem;
-  transition: padding-top 180ms ease-out;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.82rem;
+  line-height: 1.42;
+  text-shadow: 0 1px 8px rgba(13, 11, 9, 0.4);
 }
 
 .area-card:hover .area-caption__more,
 .area-card:focus-visible .area-caption__more {
-  max-height: 3.4em;
   opacity: 1;
-}
-
-.area-card:hover .area-caption__more > p,
-.area-card:focus-visible .area-caption__more > p {
-  padding-top: 4px;
+  transform: translateY(0);
 }
 
 .area-art img {
@@ -11021,9 +11033,9 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .area-caption__more,
-  .area-caption__more > p,
   .area-art img {
     transition: none;
+    transform: none;
   }
 }
 
