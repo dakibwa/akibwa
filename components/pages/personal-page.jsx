@@ -17,6 +17,7 @@ import {
   Maximize2,
   Minimize2,
   Pickaxe,
+  RefreshCw,
   Route,
   SearchCheck,
   ShieldCheck,
@@ -37,9 +38,41 @@ import {
   coverCollisionDataUrl,
   coverCollisionPosts,
   personalProjects,
-  publicSurfaces,
   vitalsAppUrl
 } from "@/components/site-data";
+import fallbackChorusData from "@/data/chorus-data.json";
+
+const chorusSummaryDataUrl = (
+  process.env.NEXT_PUBLIC_CHORUS_DATA_URL || "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus"
+).trim();
+
+function formatScrobbleCount(value) {
+  const numeric = Number(value);
+  return new Intl.NumberFormat("en").format(Number.isFinite(numeric) ? numeric : 0);
+}
+
+function useChorusScrobbleTotal(enabled) {
+  const [total, setTotal] = useState(fallbackChorusData?.summary?.totalScrobbles ?? null);
+
+  useEffect(() => {
+    if (!enabled || !chorusSummaryDataUrl) return undefined;
+
+    let cancelled = false;
+    const apply = (data) => {
+      const numeric = Number(data?.summary?.totalScrobbles);
+      if (!cancelled && Number.isFinite(numeric) && numeric > 0) setTotal(numeric);
+    };
+
+    apply(readSessionJson(chorusSummaryDataUrl));
+    fetchSessionJson(chorusSummaryDataUrl).then(apply).catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled]);
+
+  return total;
+}
 
 const sourceLogoByName = {
   gmail: "gmail",
@@ -169,19 +202,7 @@ const iconToneStyles = {
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
 
-const surfaceProjectSlugs = {
-  chorus: "chorus",
-  vitals: "vitals",
-  "cover-collision": "cover-collision",
-  "personal-knowledge-base": "personal-knowledge-base"
-};
 
-const surfaceAccents = {
-  chorus: { "--surface-tint": "rgba(47, 136, 255, 0.055)", "--surface-border": "rgba(47, 136, 255, 0.34)" },
-  vitals: { "--surface-tint": "rgba(176, 73, 47, 0.06)", "--surface-border": "rgba(176, 73, 47, 0.36)" },
-  "cover-collision": { "--surface-tint": "rgba(255, 111, 26, 0.055)", "--surface-border": "rgba(255, 111, 26, 0.34)" },
-  "personal-knowledge-base": { "--surface-tint": "rgba(83, 96, 106, 0.06)", "--surface-border": "rgba(83, 96, 106, 0.34)" }
-};
 
 function getIconToneStyle(tone, index) {
   return {
@@ -231,178 +252,6 @@ function compactMetricLabel(label) {
   };
 
   return labels[label] || label;
-}
-
-function humanizeSurfaceKind(kind) {
-  const labels = {
-    "cloudflare-app": "Cloudflare app",
-    "interactive-preview-with-refresh": "Interactive preview",
-    "static-preview-with-refresh": "Static preview",
-    "public-series-refresh": "Public series",
-    "public-projection": "Public projection"
-  };
-
-  return labels[kind] || String(kind || "Surface").replaceAll("-", " ");
-}
-
-function humanizeSurfaceVisibility(visibility) {
-  const labels = {
-    public: "Public",
-    "public-aggregate": "Public aggregate",
-    "public-safe": "Public-safe"
-  };
-
-  return labels[visibility] || String(visibility || "Public").replaceAll("-", " ");
-}
-
-function formatSurfaceDate(value, includeTime = true) {
-  if (!value) return "";
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    ...(includeTime ? { hour: "2-digit", minute: "2-digit" } : {})
-  }).format(date);
-}
-
-function getSurfaceStatusTone(surface, status) {
-  if (!surface.refresh?.statusUrl) return "is-static";
-  if (!status) return "is-checking";
-  if (status.ok && !status.degraded) return "is-ok";
-  if (status.degraded) return "is-degraded";
-  return "is-error";
-}
-
-function getSurfaceStatusLabel(surface, status) {
-  if (!surface.refresh?.statusUrl) return "Public packet";
-  if (!status) return "Checking";
-  if (!status.ok) return "Needs review";
-  if (status.degraded) return "Degraded";
-
-  const refreshedAt = formatSurfaceDate(status.refreshedAt);
-  return refreshedAt ? `Refreshed ${refreshedAt}` : "Healthy";
-}
-
-function getSurfaceSummary(surface, status) {
-  const summary = status?.summary || status || {};
-
-  if (surface.id === "chorus" && summary.totalScrobbles) {
-    return `${Number(summary.totalScrobbles).toLocaleString("en-GB")} scrobbles / ${summary.recentTracks || 0} recent`;
-  }
-
-  if (surface.id === "vitals") {
-    const latest = summary.latest || summary;
-    const recoveryDay = formatSurfaceDate(latest.recovery, false);
-    const sleepDay = formatSurfaceDate(latest.sleep, false);
-    return `Recovery to ${recoveryDay || "latest"} / sleep to ${sleepDay || "latest"}`;
-  }
-
-  if (surface.id === "cover-collision" && summary.postCount) {
-    const latestPost = formatSurfaceDate(summary.latestPost, false);
-    return `${summary.postCount} posts${latestPost ? ` / latest ${latestPost}` : ""}`;
-  }
-
-  if (surface.id === "personal-knowledge-base") {
-    const metric = knowledgeMetrics[0];
-    return metric ? `${compactMetricLabel(metric.label)} ${metric.value}` : "Source-backed public projection";
-  }
-
-  return humanizeSurfaceVisibility(surface.visibility);
-}
-
-function PublicSurfaceRegistry({ onSelectProject, selectedSlug }) {
-  const [surfaceStatuses, setSurfaceStatuses] = useState({});
-
-  useEffect(() => {
-    const refreshableSurfaces = publicSurfaces.filter((surface) => surface.refresh?.statusUrl);
-    if (!refreshableSurfaces.length) return undefined;
-
-    let cancelled = false;
-
-    const cachedEntries = refreshableSurfaces
-      .map((surface) => [surface.id, readSessionJson(surface.refresh.statusUrl)])
-      .filter(([, status]) => status);
-    if (cachedEntries.length) {
-      setSurfaceStatuses(Object.fromEntries(cachedEntries));
-    }
-
-    Promise.all(
-      refreshableSurfaces.map(async (surface) => {
-        try {
-          return [surface.id, (await fetchSessionJson(surface.refresh.statusUrl)) ?? { ok: false }];
-        } catch {
-          return [surface.id, { ok: false }];
-        }
-      })
-    ).then((entries) => {
-      if (!cancelled) {
-        setSurfaceStatuses(Object.fromEntries(entries));
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const refreshableCount = publicSurfaces.filter((surface) => surface.refresh?.statusUrl).length;
-
-  return (
-    <section className="page-grid personal-surface-registry" aria-label="Public surfaces">
-      <div className="about-section-head">
-        <div>
-          <h2>Public surfaces</h2>
-        </div>
-        <p>
-          {publicSurfaces.length} registered, {refreshableCount} refreshing live — private work stays behind the
-          boundary
-        </p>
-      </div>
-
-      <div className="personal-surface-list">
-        {publicSurfaces.map((surface) => {
-          const status = surfaceStatuses[surface.id];
-          const project = personalProjects.find((item) => item.slug === surfaceProjectSlugs[surface.id]);
-          const isSelected = project?.slug === selectedSlug;
-          const openSurface = () => {
-            if (project) {
-              onSelectProject(project);
-              return;
-            }
-
-            if (surface.route) {
-              window.location.assign(surface.route);
-            }
-          };
-
-          return (
-            <button
-              type="button"
-              className={`personal-surface-card ${isSelected ? "is-selected" : ""}`}
-              aria-pressed={isSelected}
-              onClick={openSurface}
-              style={surfaceAccents[surface.id]}
-              key={surface.id}
-            >
-              <strong>{surface.title}</strong>
-              <span>{getSurfaceSummary(surface, status)}</span>
-              <small>
-                <span className={`personal-surface-status ${getSurfaceStatusTone(surface, status)}`}>
-                  <i aria-hidden="true" />
-                  {getSurfaceStatusLabel(surface, status)}
-                </span>
-                <em>{humanizeSurfaceKind(surface.kind)}</em>
-              </small>
-              <ArrowRight size={17} strokeWidth={1.8} />
-            </button>
-          );
-        })}
-      </div>
-    </section>
-  );
 }
 
 function SourceLogo({ type }) {
@@ -488,10 +337,6 @@ function shouldOpenProjectRoute(project) {
   return project.mode !== "preview" && project.visual === "vitals" && Boolean(project.fallbackHref);
 }
 
-function PersonalProjectVisual({ project, priority = false }) {
-  return <PersonalProjectArt project={project} priority={priority} className="personal-project-card-art" />;
-}
-
 function ProjectExpandedBanner({ project }) {
   const artwork = getPersonalProjectArt(project);
 
@@ -503,29 +348,37 @@ function ProjectExpandedBanner({ project }) {
 }
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
-  const isLive = project.mode === "embed" || project.mode === "preview";
-  const cardClass = `studio-card work-card personal-project-card ${isSelected ? "is-selected" : ""}`;
-  const cardContent = (
-    <>
-      <PersonalProjectVisual project={project} priority={priority} />
-      <header>
-        <div>
-          <h3>{project.title}</h3>
-          <p>{project.type}</p>
-        </div>
-        {isLive ? <ArrowRight size={19} strokeWidth={1.8} /> : <LockKeyhole size={17} strokeWidth={1.7} />}
-      </header>
-    </>
-  );
+  const artwork = getPersonalProjectArt(project);
 
   return (
     <button
       type="button"
-      className={cardClass}
+      className={`area-card personal-area-card ${isSelected ? "is-selected" : ""}`}
       aria-pressed={isSelected}
       onClick={onSelect}
     >
-      {cardContent}
+      <div className="area-art">
+        <img
+          src={artwork.src}
+          alt=""
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          decoding="async"
+          draggable="false"
+        />
+      </div>
+      <div className="area-caption">
+        <div>
+          <h2>{project.title}</h2>
+          <p>{project.type}</p>
+          {project.summary ? (
+            <div className="area-caption__more" aria-hidden="true">
+              <p>{project.summary}</p>
+            </div>
+          ) : null}
+        </div>
+        <ArrowRight size={19} strokeWidth={1.8} />
+      </div>
     </button>
   );
 }
@@ -902,9 +755,9 @@ function StaticProjectSurface({ project }) {
   );
 }
 
-function ProjectExpandedContent({ project, frameUrl }) {
+function ProjectExpandedContent({ project, frameUrl, frameNonce = 0 }) {
   if ((project.visual === "chorus" || project.visual === "vitals") && frameUrl) {
-    return <LiveProjectFrame project={project} frameUrl={frameUrl} />;
+    return <LiveProjectFrame project={project} frameUrl={frameUrl} frameNonce={frameNonce} />;
   }
 
   if (project.visual === "chorus" || project.visual === "vitals") {
@@ -923,15 +776,15 @@ function ProjectExpandedContent({ project, frameUrl }) {
     return <StaticProjectSurface project={project} />;
   }
 
-  return <LiveProjectFrame project={project} frameUrl={frameUrl} />;
+  return <LiveProjectFrame project={project} frameUrl={frameUrl} frameNonce={frameNonce} />;
 }
 
-function LiveProjectFrame({ project, frameUrl }) {
+function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
   const [isFrameLoaded, setIsFrameLoaded] = useState(false);
 
   useEffect(() => {
     setIsFrameLoaded(false);
-  }, [frameUrl]);
+  }, [frameUrl, frameNonce]);
 
   return (
     <section className="project-expanded-frame" id={`${project.slug}-preview`} aria-live="polite">
@@ -943,6 +796,7 @@ function LiveProjectFrame({ project, frameUrl }) {
             <i className="project-frame-loading-bar" />
           </div>
           <iframe
+            key={frameNonce}
             src={frameUrl}
             title={`${project.title} live project`}
             className="live-frame"
@@ -972,6 +826,9 @@ function LiveProjectFrame({ project, frameUrl }) {
 
 function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onClose, onToggleMaximized }) {
   const [contentReady, setContentReady] = useState(false);
+  const [frameNonce, setFrameNonce] = useState(0);
+  const isChorusSurface = project.visual === "chorus";
+  const scrobbleTotal = useChorusScrobbleTotal(isChorusSurface);
   const shellRef = useRef(null);
   const shellResizeAnimationRef = useRef(null);
   const shellResizeStartRef = useRef(null);
@@ -1089,7 +946,32 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
           <h2 id={`${project.slug}-expanded-title`} className="project-expanded-accessible-title">
             {project.title}
           </h2>
+          <div className="project-expanded-banner-meta" aria-hidden="true">
+            <strong>{project.title}</strong>
+            {(() => {
+              const sublabel = [project.type, project.dashboardLabel, project.dashboardStatus].find(
+                (label) => label && label !== project.title,
+              );
+              return sublabel ? <em>{sublabel}</em> : null;
+            })()}
+          </div>
+          {isChorusSurface && scrobbleTotal ? (
+            <span className="project-expanded-banner-stat">
+              <strong>{formatScrobbleCount(scrobbleTotal)}</strong>
+              <small>total scrobbles</small>
+            </span>
+          ) : null}
           <div className="project-expanded-actions">
+            {frameUrl ? (
+              <button
+                type="button"
+                className="project-expanded-refresh"
+                aria-label={`Refresh ${project.title}`}
+                onClick={() => setFrameNonce((nonce) => nonce + 1)}
+              >
+                <RefreshCw size={16} strokeWidth={1.9} />
+              </button>
+            ) : null}
             <button
               type="button"
               className="project-expanded-maximize"
@@ -1111,7 +993,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
         </header>
         <div className="project-expanded-body">
           {contentReady ? (
-            <ProjectExpandedContent project={project} frameUrl={frameUrl} />
+            <ProjectExpandedContent project={project} frameUrl={frameUrl} frameNonce={frameNonce} />
           ) : (
             <div className="project-expanded-content-placeholder" aria-hidden="true" />
           )}
@@ -1245,26 +1127,16 @@ export function PersonalPage() {
         <p>Projects that interested me to build them.</p>
       </section>
 
-      <PublicSurfaceRegistry onSelectProject={selectProject} selectedSlug={expandedProject?.slug} />
-
-      <section className="page-grid work-board personal-board" aria-label="Personal projects">
-        <div className="about-section-head">
-          <div>
-            <h2>Projects</h2>
-          </div>
-          <p>Built because they interested me</p>
-        </div>
-        <div className="work-card-grid personal-project-grid">
-          {personalProjects.map((project, index) => (
-            <PersonalProjectCard
-              project={project}
-              priority={index < 2}
-              isSelected={project.slug === expandedProject?.slug}
-              onSelect={() => selectProject(project)}
-              key={project.slug}
-            />
-          ))}
-        </div>
+      <section className="page-grid area-grid personal-area-grid" aria-label="Personal projects">
+        {personalProjects.map((project, index) => (
+          <PersonalProjectCard
+            project={project}
+            priority={index < 2}
+            isSelected={project.slug === expandedProject?.slug}
+            onSelect={() => selectProject(project)}
+            key={project.slug}
+          />
+        ))}
       </section>
 
       {overlayProject && (

@@ -89,7 +89,7 @@ export const personalProjects = [
     slug: "chorus",
     aliases: ["lastfm-dashboard"],
     title: "Chorus",
-    type: "Chorus",
+    type: "Listening archive",
     image: featuredProjects[0].image,
     alt: featuredProjects[0].alt,
     dashboardLabel: "Chorus",
