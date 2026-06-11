@@ -138,8 +138,8 @@ export const personalProjects = [
     slug: "personal-knowledge-base",
     title: "Personal Knowledge Base",
     type: "Private AI memory system",
-    image: "/project-art/personal/knowledge-portrait-card.webp",
-    alt: "Expressionist portrait in oil pastel: a face in warm oranges and reds, half realistic and half abstracted behind dark curved lines",
+    image: "/project-art/personal/knowledge-flame-card.webp",
+    alt: "Watercolour abstract of a domed face rotated on its side: two eyes above golden arcs, ringed by a flame-like corona on black",
     summary:
       akibwapediaData.subtitle ||
       "Helps Codex use local, source-backed context without exposing raw records.",

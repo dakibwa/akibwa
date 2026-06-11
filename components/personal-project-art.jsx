@@ -17,8 +17,8 @@ const artworkBySlug = {
     variant: "cover"
   },
   "personal-knowledge-base": {
-    src: "/project-art/personal/knowledge-portrait-card.webp",
-    bannerSrc: "/project-art/personal/knowledge-portrait-banner.webp",
+    src: "/project-art/personal/knowledge-flame-card.webp",
+    bannerSrc: "/project-art/personal/knowledge-flame-banner.webp",
     variant: "knowledge"
   }
 };
