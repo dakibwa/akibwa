@@ -12,8 +12,8 @@ const artworkBySlug = {
     variant: "health"
   },
   "cover-collision": {
-    src: "/project-art/personal/cover-collision.webp",
-    bannerSrc: "/project-art/personal/cover-collision-banner.webp",
+    src: "/project-art/personal/cover-collision-saint.webp",
+    bannerSrc: "/project-art/personal/cover-collision-saint-banner.webp",
     variant: "cover"
   },
   "personal-knowledge-base": {
