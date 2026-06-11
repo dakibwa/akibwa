@@ -60,6 +60,7 @@ export function SystemsPage() {
     <section className="studio-page systems-page">
       <section className="page-grid studio-hero systems-studio-hero">
         <h1>Systems</h1>
+        <p>The operating loop behind every build.</p>
       </section>
 
       <section className="page-grid systems-card-grid">

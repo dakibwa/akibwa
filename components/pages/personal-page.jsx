@@ -32,6 +32,11 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
+import {
+  AnimatedCount,
+  KnowledgeCardArt,
+  KnowledgeSystemPipeline
+} from "@/components/knowledge-system-visual";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
   getVitalsSnapshotDate,
@@ -202,7 +207,80 @@ const generatedKnowledgeGuardrails =
 
 const knowledgeGuardrails = generatedKnowledgeGuardrails.length ? generatedKnowledgeGuardrails : fallbackKnowledgeGuardrails;
 
-const knowledgeMetrics = akibwapediaData.metrics?.slice(0, 4) || [];
+const knowledgeMetricByLabel = Object.fromEntries(
+  (akibwapediaData.metrics || []).map((metric) => [metric.label, metric])
+);
+
+const fallbackPipelineLayers = [
+  { name: "Raw Evidence", status: "private", summary: "Original files, exports, and snapshots stay local and auditable." },
+  { name: "Normalized Records", status: "generated", summary: "Readable entries make messy documents and exports comparable." },
+  { name: "Event Ledger", status: "generated", summary: "Dated rows preserve what happened and where it came from." },
+  { name: "Reasoning Views", status: "generated", summary: "Daily, weekly, and entity views help Codex reason without rereading the archive." },
+  { name: "Structured Facts", status: "compact", summary: "Durable claims are promoted only when they help future action." },
+  { name: "Codex Operating Layer", status: "active", summary: "Agent briefs, task queues, and retrieval routes boot new sessions quickly." },
+  { name: "Akibwapedia", status: "public projection", summary: "The website shows only safe architecture, counts, routes, and boundaries." }
+];
+
+const pipelineMetricLabelByLayer = {
+  "Raw Evidence": "Source files",
+  "Normalized Records": "Normalized entries",
+  "Event Ledger": "Ledger events",
+  "Reasoning Views": "Daily views",
+  "Structured Facts": "Structured facts",
+  "Codex Operating Layer": "Agent tasks"
+};
+
+const pipelineCountNouns = {
+  "Source files": "source files",
+  "Normalized entries": "entries",
+  "Ledger events": "dated events",
+  "Daily views": "reasoning days",
+  "Structured facts": "durable facts",
+  "Agent tasks": "open tasks"
+};
+
+const statusAccentByKeyword = [
+  ["public", "#ff6f1a"],
+  ["private", "#53606a"],
+  ["active", "#218a4f"],
+  ["compact", "#ff6f1a"],
+  ["generated", "#2f88ff"]
+];
+
+function pipelineStatusAccent(status) {
+  const lower = String(status || "").toLowerCase();
+  const match = statusAccentByKeyword.find(([keyword]) => lower.includes(keyword));
+  return match ? match[1] : "#53606a";
+}
+
+const knowledgePipelineLayers = (
+  akibwapediaData.layers?.length ? akibwapediaData.layers : fallbackPipelineLayers
+).map((layer) => {
+  const metricLabel = pipelineMetricLabelByLayer[layer.name];
+  const metric = metricLabel ? knowledgeMetricByLabel[metricLabel] : null;
+
+  return {
+    name: layer.name,
+    status: layer.status,
+    summary: layer.summary,
+    isPublic: String(layer.status || "").toLowerCase().includes("public"),
+    accent: pipelineStatusAccent(layer.status),
+    count: metric?.value ?? null,
+    countLabel: metric ? pipelineCountNouns[metricLabel] || metricLabel.toLowerCase() : null
+  };
+});
+
+const knowledgeDistillation = (() => {
+  const from = knowledgeMetricByLabel["Source files"]?.value;
+  const to = knowledgeMetricByLabel["Structured facts"]?.value;
+  return from && to ? { from, to } : null;
+})();
+
+const knowledgeUpdatedLabel = (() => {
+  const parsed = akibwapediaData.updated ? new Date(akibwapediaData.updated) : null;
+  if (!parsed || Number.isNaN(parsed.getTime())) return null;
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(parsed);
+})();
 
 const iconToneStyles = {
   blue: {
@@ -239,15 +317,6 @@ const iconToneStyles = {
 
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
-
-const CHORUS_PAGES = [
-  { id: "overview", label: "Overview" },
-  { id: "artists", label: "Artists" },
-  { id: "albums", label: "Albums" },
-  { id: "tracks", label: "Tracks" },
-  { id: "timeline", label: "Timeline" },
-  { id: "reports", label: "Reports" }
-];
 
 
 
@@ -288,17 +357,6 @@ function guardrailFromRule(rule, index) {
     Icon: fallbackKnowledgeGuardrails[index]?.Icon || LockKeyhole,
     tone: fallbackKnowledgeGuardrails[index]?.tone || "slate"
   };
-}
-
-function compactMetricLabel(label) {
-  const labels = {
-    "Raw manifest records": "Manifest",
-    "Normalized entries": "Entries",
-    "Ledger events": "Events",
-    "Source files": "Source files"
-  };
-
-  return labels[label] || label;
 }
 
 function SourceLogo({ type }) {
@@ -405,14 +463,18 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       onClick={onSelect}
     >
       <div className="area-art">
-        <img
-          src={artwork.src}
-          alt=""
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : undefined}
-          decoding="async"
-          draggable="false"
-        />
+        {project.slug === "personal-knowledge-base" ? (
+          <KnowledgeCardArt />
+        ) : (
+          <img
+            src={artwork.src}
+            alt=""
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : undefined}
+            decoding="async"
+            draggable="false"
+          />
+        )}
       </div>
       <div className="area-caption">
         <div>
@@ -673,42 +735,36 @@ function CoverCollisionShowcase({ project, immersive = false }) {
 }
 
 function KnowledgeBaseShowcase({ project }) {
-  const artwork = getPersonalProjectArt(project);
-
   return (
     <section className="knowledge-system-showcase" id={`${project.slug}-preview`} aria-live="polite">
       <div className="knowledge-system-hero">
         <div className="knowledge-system-copy">
-          <span>{project.number}</span>
+          <span>{project.number} · {project.type}</span>
           <h2>{project.title}</h2>
           <p>
             A local, source-backed context system that helps Codex use personal records without exposing the records
             themselves.
           </p>
-          {knowledgeMetrics.length > 0 && (
-            <dl className="knowledge-system-metrics" aria-label="Public-safe knowledge system metrics">
-              {knowledgeMetrics.map((metric) => (
-                <div key={metric.label}>
-                  <dt>{compactMetricLabel(metric.label)}</dt>
-                  <dd>{metric.value}</dd>
-                </div>
-              ))}
-            </dl>
+          {knowledgeDistillation && (
+            <p className="knowledge-system-lede">
+              <strong>
+                <AnimatedCount value={knowledgeDistillation.from} />
+              </strong>{" "}
+              source files on the desktop, distilled into{" "}
+              <strong>
+                <AnimatedCount value={knowledgeDistillation.to} />
+              </strong>{" "}
+              durable facts. This page only ever sees the projection.
+            </p>
           )}
-          <div className="knowledge-system-tags" aria-label={`${project.title} tags`}>
+          <div className="knowledge-system-status" aria-label={`${project.title} principles`}>
             {project.tags.map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
           </div>
         </div>
 
-        <figure className="knowledge-system-art">
-          <img src={artwork.src} alt="" draggable="false" />
-          <figcaption>
-            <span>Local memory</span>
-            <strong>Public-safe project view</strong>
-          </figcaption>
-        </figure>
+        <KnowledgeSystemPipeline layers={knowledgePipelineLayers} updatedLabel={knowledgeUpdatedLabel} />
       </div>
 
       <div className="knowledge-system-console" aria-label="Private knowledge system preview">
@@ -886,7 +942,6 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
   const isChorusSurface = project.visual === "chorus";
   const isVitalsSurface = project.visual === "vitals";
   const scrobbleTotal = useChorusScrobbleTotal(isChorusSurface);
-  const [chorusPage, setChorusPage] = useState("overview");
   const { readiness: vitalsReadiness, snapshotDate: vitalsSnapshotDate } = useVitalsToolbarData(isVitalsSurface);
   const [vitalsRange, setVitalsRange] = useState("7d");
   const [vitalsSnapshotIndex, setVitalsSnapshotIndex] = useState(0);
@@ -1034,25 +1089,6 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
               return sublabel ? <em>{sublabel}</em> : null;
             })()}
           </div>
-          {isChorusSurface && frameUrl ? (
-            <nav className="project-expanded-chorus-tabs" aria-label="Chorus pages">
-              {CHORUS_PAGES.map((page) => (
-                <button
-                  type="button"
-                  key={page.id}
-                  className={chorusPage === page.id ? "is-active" : ""}
-                  aria-current={chorusPage === page.id ? "page" : undefined}
-                  onClick={() => {
-                    if (postToChorus({ type: "chorus:navigate", page: page.id })) {
-                      setChorusPage(page.id);
-                    }
-                  }}
-                >
-                  {page.label}
-                </button>
-              ))}
-            </nav>
-          ) : null}
           {isChorusSurface && scrobbleTotal ? (
             <span className="project-expanded-banner-stat">
               <strong>{formatScrobbleCount(scrobbleTotal)}</strong>
@@ -1152,7 +1188,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
   );
 }
 
-export function PersonalPage() {
+export function PersonalPage({ initialSlug = null }) {
   const [expandedSlug, setExpandedSlug] = useState(null);
   const [overlaySlug, setOverlaySlug] = useState(null);
   const [isOverlayMaximized, setIsOverlayMaximized] = useState(false);
@@ -1162,43 +1198,39 @@ export function PersonalPage() {
   useEffect(() => {
     setIsLocalHost(canUseLocalFrame());
 
-    const syncFromHash = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (!hash) {
-        setExpandedSlug(null);
-        return;
-      }
+    // Projects live at /personal/<slug>/; legacy #slug links upgrade to the
+    // path form (aliases normalise to the canonical slug the same way).
+    const legacyHash = window.location.hash.replace("#", "");
+    const requested = legacyHash || initialSlug;
+    if (!requested) return;
 
-      const project = personalProjects.find(
-        (item) => item.slug === hash || item.aliases?.includes(hash)
-      );
-      if (project) {
-        if (shouldOpenProjectRoute(project)) {
-          window.location.assign(project.fallbackHref);
-          return;
-        }
+    const project = personalProjects.find(
+      (item) => item.slug === requested || item.aliases?.includes(requested)
+    );
+    if (!project) {
+      window.history.replaceState(null, "", "/personal/");
+      return;
+    }
 
-        const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
-        if (
-          project.mode !== "preview" &&
-          project.fallbackHref &&
-          (project.visual === "chorus" || project.visual === "vitals") &&
-          !hasInlineFrame
-        ) {
-          window.location.assign(project.fallbackHref);
-          return;
-        }
+    if (shouldOpenProjectRoute(project)) {
+      window.location.assign(project.fallbackHref);
+      return;
+    }
 
-        setExpandedSlug(project.slug);
-      } else {
-        setExpandedSlug(null);
-      }
-    };
+    const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
+    if (
+      project.mode !== "preview" &&
+      project.fallbackHref &&
+      (project.visual === "chorus" || project.visual === "vitals") &&
+      !hasInlineFrame
+    ) {
+      window.location.assign(project.fallbackHref);
+      return;
+    }
 
-    syncFromHash();
-    window.addEventListener("hashchange", syncFromHash);
-    return () => window.removeEventListener("hashchange", syncFromHash);
-  }, []);
+    setExpandedSlug(project.slug);
+    window.history.replaceState(null, "", `/personal/${project.slug}/`);
+  }, [initialSlug]);
 
   const expandedProject = useMemo(
     () => personalProjects.find((project) => project.slug === expandedSlug) ?? null,
@@ -1230,7 +1262,7 @@ export function PersonalPage() {
   const closeExpandedProject = useCallback(() => {
     setExpandedSlug(null);
     setIsOverlayMaximized(false);
-    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    window.history.replaceState(null, "", `/personal/${window.location.search}`);
   }, []);
 
   useEffect(() => {
@@ -1262,7 +1294,7 @@ export function PersonalPage() {
 
     setIsOverlayMaximized(false);
     setExpandedSlug(project.slug);
-    window.history.replaceState(null, "", `#${project.slug}`);
+    window.history.replaceState(null, "", `/personal/${project.slug}/`);
   };
   const toggleOverlayMaximized = useCallback(() => {
     setIsOverlayMaximized((current) => !current);
