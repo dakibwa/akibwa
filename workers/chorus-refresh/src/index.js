@@ -43,8 +43,21 @@ export default {
     }
 
     if (url.pathname === "/strava-runs") {
-      return jsonResponse(await readStravaRunSoundtracks(env), 200, {
-        "Cache-Control": "private, no-store"
+      // Serve from the KV-cached chorus payload; live Strava/Last.fm calls
+      // happen only during authorized/scheduled refreshes so anonymous
+      // requests cannot burn upstream API quota.
+      const data = await readPublicData(env);
+      const runs = Array.isArray(data.recentRuns) ? data.recentRuns : [];
+      return jsonResponse({
+        runs,
+        status: {
+          source: "kv-cache",
+          generatedAt: data.generatedAt || null,
+          pairedCount: runs.length,
+          error: null
+        }
+      }, 200, {
+        "Cache-Control": "public, max-age=60, s-maxage=180"
       });
     }
 
@@ -52,7 +65,7 @@ export default {
       if (request.method !== "POST") {
         return jsonResponse({ ok: false, error: "Use POST." }, 405);
       }
-      if (!isAuthorized(request, env)) {
+      if (!(await isAuthorized(request, env))) {
         return jsonResponse({ ok: false, error: "Unauthorized." }, 401);
       }
 
@@ -85,12 +98,32 @@ function jsonResponse(data, status = 200, headers = {}) {
   });
 }
 
-function isAuthorized(request, env) {
+async function isAuthorized(request, env) {
   const configuredToken = env.ADMIN_TOKEN || "";
   if (!configuredToken) return false;
 
   const header = request.headers.get("Authorization") || "";
-  return header === `Bearer ${configuredToken}`;
+  const provided = header.startsWith("Bearer ") ? header.slice(7) : "";
+  return timingSafeEqual(provided, configuredToken);
+}
+
+async function timingSafeEqual(a, b) {
+  const encoder = new TextEncoder();
+  const left = encoder.encode(a);
+  const right = encoder.encode(b);
+  if (left.length !== right.length) return false;
+
+  return crypto.subtle.timingSafeEqual
+    ? crypto.subtle.timingSafeEqual(left, right)
+    : fallbackTimingSafeEqual(left, right);
+}
+
+function fallbackTimingSafeEqual(left, right) {
+  let diff = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    diff |= left[index] ^ right[index];
+  }
+  return diff === 0;
 }
 
 async function readPublicData(env) {
