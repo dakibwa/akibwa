@@ -87,6 +87,12 @@ export function ContactPage() {
                 </span>
               </p>
             </div>
+            <p className="contact-direct">
+              <i aria-hidden="true" />
+              <span>
+                Prefer plain email? <a href="mailto:hello@akibwa.com">hello@akibwa.com</a>
+              </span>
+            </p>
           </form>
         </div>
 
@@ -99,7 +105,7 @@ export function ContactPage() {
           </div>
 
           <aside className="contact-note-card">
-            {contactNotes.map(([title, body], index) => (
+            {contactNotes.map(([title, body]) => (
               <div key={title}>
                 <i />
                 <p>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Check, X } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
@@ -54,7 +55,7 @@ export function OfferPage() {
   return (
     <section className="studio-page offer-page">
       <section className="page-grid offer-studio-hero">
-        <div>
+        <div className="offer-hero-title">
           <h1>Professional</h1>
           <p>
             Commission a useful system
@@ -62,11 +63,19 @@ export function OfferPage() {
             for a messy workflow.
           </p>
         </div>
-        <p>
-          I design and build small, AI-assisted systems that bring order to messy
-          workflows, turn data into decisions, and make knowledge easy to find
-          and reuse.
-        </p>
+        <div className="offer-hero-aside">
+          <p>
+            I design and build small, AI-assisted systems that bring order to messy
+            workflows, turn data into decisions, and make knowledge easy to find
+            and reuse.
+          </p>
+          <Link className="about-cta" href="/contact">
+            <span className="about-cta-label">Send the messy bit</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={17} strokeWidth={2} />
+            </span>
+          </Link>
+        </div>
       </section>
 
       <section className="page-grid offer-step-grid">
@@ -121,17 +130,23 @@ export function OfferPage() {
       </section>
 
       <section className="page-grid how-we-work-panel">
-        <h2>How we work</h2>
+        <header className="how-we-work-head">
+          <h2>How we work</h2>
+          <Link href="/contact">
+            Start a conversation
+            <ArrowRight size={16} strokeWidth={1.7} />
+          </Link>
+        </header>
         <div>
           {workflow.map(([number, title, body, image], index) => (
             <article key={title}>
-              <span>{number}</span>
-              <div>
+              <header>
+                <span>{number}</span>
                 <h3>{title}</h3>
-                <p>{body}</p>
-              </div>
-              <Image src={image} alt="" width={120} height={90} />
-              {index < workflow.length - 1 && <ArrowRight size={20} strokeWidth={1.4} />}
+              </header>
+              <p>{body}</p>
+              <Image src={image} alt="" width={320} height={150} />
+              {index < workflow.length - 1 && <ArrowRight size={18} strokeWidth={1.4} />}
             </article>
           ))}
         </div>
