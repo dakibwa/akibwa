@@ -311,7 +311,8 @@ button {
   max-width: 1060px;
   margin: 0;
   color: var(--black);
-  font-size: 4.18rem;
+  /* 4.18rem at 1440px, growing with the viewport above that */
+  font-size: clamp(4.18rem, 2.6rem + 1.76vw, 5.1rem);
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: 0;
@@ -3665,19 +3666,11 @@ button {
   font-weight: 560;
 }
 
-.model-panel article div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
-}
-
-.model-panel article div span {
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: 999px;
-  padding: 8px 12px;
-  color: #4a515b;
-  font-size: 0.75rem;
+.model-panel .model-tags {
+  margin-top: 16px;
+  color: #6b727c;
+  font-size: 0.85rem;
+  line-height: 1.7;
 }
 
 .offer-studio-hero {
@@ -3889,6 +3882,24 @@ button {
   color: var(--blue);
 }
 
+.how-we-work-foot {
+  margin-top: 24px;
+  border-top: 1px dashed rgba(16, 18, 23, 0.18);
+  padding-top: 16px;
+}
+
+.how-we-work-foot a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #59616b;
+  font-size: 0.9rem;
+}
+
+.how-we-work-foot a:hover {
+  color: var(--black);
+}
+
 .how-we-work-panel > div {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3933,14 +3944,6 @@ button {
   color: #59616b;
   font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
   line-height: 1.5;
-}
-
-.how-we-work-panel img {
-  width: 100%;
-  height: 116px;
-  object-fit: cover;
-  opacity: 0.86;
-  margin-top: 4px;
 }
 
 .how-we-work-panel article > svg {
@@ -11437,4 +11440,102 @@ button {
 .project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
   width: min(1640px, calc(100vw - clamp(28px, 6vw, 92px)));
   height: min(980px, calc(100dvh - clamp(28px, 6vw, 92px)));
+}
+
+/* Moved-page notices for legacy routes */
+.route-redirect {
+  padding: 96px 0 64px;
+}
+
+.route-redirect p {
+  margin: 0;
+  color: #59616b;
+  font-size: 1rem;
+}
+
+.route-redirect a {
+  color: var(--black);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Compact employer and tool rows on small screens */
+@media (max-width: 760px) {
+  .company-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-rows: none;
+    align-items: center;
+    gap: 2px 16px;
+    padding: 14px 16px 18px;
+  }
+
+  .company-mark {
+    display: contents;
+  }
+
+  .company-logo-cell {
+    width: 44px;
+    height: 44px;
+    grid-row: 1 / span 2;
+  }
+
+  .company-logo-cell > span {
+    width: 38px;
+    height: 32px;
+  }
+
+  .company-mark.mark-sky span {
+    width: 44px;
+    height: 18px;
+  }
+
+  .company-logo-cell img,
+  .company-mark.mark-nwf img,
+  .company-mark.mark-vanquis img,
+  .company-mark.mark-lloyds img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .company-mark.mark-leeds img {
+    width: 38px;
+    height: 24px;
+    padding: 7px 8px;
+  }
+
+  .company-mark strong {
+    max-width: none;
+  }
+
+  .company-card > div:last-child {
+    grid-column: 2;
+  }
+
+  .company-card h3 {
+    white-space: normal;
+  }
+
+  .company-card div p {
+    margin-top: 2px;
+  }
+
+  .tool-card {
+    min-height: auto;
+    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-rows: none;
+    align-items: center;
+    justify-items: start;
+    gap: 14px;
+    padding: 14px 16px 18px;
+    text-align: left;
+  }
+
+  .tool-card > div:not(.tool-glyph) {
+    min-height: auto;
+    justify-items: start;
+  }
+
+  .tool-card p {
+    margin-top: 2px;
+  }
 }

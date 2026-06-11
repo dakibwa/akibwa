@@ -1,11 +1,11 @@
-import { OfferPage } from "@/components/pages/offer-page";
+import { RouteRedirect } from "@/components/route-redirect";
 
 export const metadata = {
   title: "Offer",
-  description:
-    "Akibwa offers workflow teardowns, prototype sprints, and small AI-assisted systems for teams with messy information flows."
+  robots: { index: false },
+  alternates: { canonical: "/professional/" }
 };
 
 export default function OfferRoute() {
-  return <OfferPage />;
+  return <RouteRedirect to="/professional/" label="akibwa.com/professional" />;
 }

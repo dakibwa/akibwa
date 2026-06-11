@@ -45,10 +45,10 @@ const notFit = [
 ];
 
 const workflow = [
-  ["1", "Scope", "We align on goals, map the problem, and define success.", "/area-art/knowledge.webp"],
-  ["2", "Design", "We design the system, interfaces, and flows.", "/area-art/signals.webp"],
-  ["3", "Build", "We build, test, and iterate in short, focused cycles.", "/area-art/work.webp"],
-  ["4", "Handover", "We document, train, and hand over the keys.", "/area-art/contact.webp"]
+  ["1", "Scope", "We align on goals, map the problem, and define success."],
+  ["2", "Design", "We design the system, interfaces, and flows."],
+  ["3", "Build", "We build, test, and iterate in short, focused cycles."],
+  ["4", "Handover", "We document, train, and hand over the keys."]
 ];
 
 export function OfferPage() {
@@ -138,18 +138,23 @@ export function OfferPage() {
           </Link>
         </header>
         <div>
-          {workflow.map(([number, title, body, image], index) => (
+          {workflow.map(([number, title, body], index) => (
             <article key={title}>
               <header>
                 <span>{number}</span>
                 <h3>{title}</h3>
               </header>
               <p>{body}</p>
-              <Image src={image} alt="" width={320} height={150} />
               {index < workflow.length - 1 && <ArrowRight size={18} strokeWidth={1.4} />}
             </article>
           ))}
         </div>
+        <footer className="how-we-work-foot">
+          <Link href="/systems">
+            The operating loop behind every build
+            <ArrowRight size={15} strokeWidth={1.7} />
+          </Link>
+        </footer>
       </section>
 
       <PageFooter />

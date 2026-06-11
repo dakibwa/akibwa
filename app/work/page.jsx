@@ -1,11 +1,11 @@
-import { PersonalPage } from "@/components/pages/personal-page";
+import { RouteRedirect } from "@/components/route-redirect";
 
 export const metadata = {
   title: "Work",
-  description:
-    "See Akibwa work across AI-assisted systems, dashboards, public project surfaces, and compact tools for messy workflows."
+  robots: { index: false },
+  alternates: { canonical: "/personal/" }
 };
 
 export default function WorkRoute() {
-  return <PersonalPage />;
+  return <RouteRedirect to="/personal/" label="akibwa.com/personal" />;
 }

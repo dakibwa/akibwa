@@ -89,11 +89,7 @@ export function SystemsPage() {
               {column.title}
             </h3>
             <p>{column.body}</p>
-            <div>
-              {column.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
+            <p className="model-tags">{column.tags.join(" · ")}</p>
           </article>
         ))}
       </section>
