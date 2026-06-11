@@ -37,8 +37,8 @@ export const areaTiles = [
     title: "Personal",
     descriptor: "Self-built projects",
     href: "/personal",
-    image: "/area-art/work.webp",
-    alt: "Abstract collage of interface fragments, paper proofs, and data marks",
+    image: "/area-art/personal-tiles.webp",
+    alt: "Ceramic tile mosaic of glazed blue, orange, and green tiles with raised flowers, leaves, and abstract shapes",
     detail: "Chorus, Vitals, Cover Collision, and more"
   },
   {
@@ -138,8 +138,8 @@ export const personalProjects = [
     slug: "personal-knowledge-base",
     title: "Personal Knowledge Base",
     type: "Private AI memory system",
-    image: "/area-art/knowledge.webp",
-    alt: "Abstract evidence artwork with document layers, source lines, and annotations",
+    image: "/project-art/personal/knowledge-portrait-card.webp",
+    alt: "Expressionist portrait in oil pastel: a face in warm oranges and reds, half realistic and half abstracted behind dark curved lines",
     summary:
       akibwapediaData.subtitle ||
       "Helps Codex use local, source-backed context without exposing raw records.",

@@ -34,7 +34,6 @@ import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cach
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import {
   AnimatedCount,
-  KnowledgeCardArt,
   KnowledgeSystemPipeline
 } from "@/components/knowledge-system-visual";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
@@ -463,18 +462,14 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       onClick={onSelect}
     >
       <div className="area-art">
-        {project.slug === "personal-knowledge-base" ? (
-          <KnowledgeCardArt />
-        ) : (
-          <img
-            src={artwork.src}
-            alt=""
-            loading={priority ? "eager" : "lazy"}
-            fetchPriority={priority ? "high" : undefined}
-            decoding="async"
-            draggable="false"
-          />
-        )}
+        <img
+          src={artwork.src}
+          alt=""
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : undefined}
+          decoding="async"
+          draggable="false"
+        />
       </div>
       <div className="area-caption">
         <div>
