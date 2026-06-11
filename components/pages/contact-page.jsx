@@ -30,7 +30,7 @@ export function ContactPage() {
 
     const subject = encodeURIComponent("Akibwa enquiry");
     const message = encodeURIComponent(body || "Hi Daniel,");
-    window.location.href = `mailto:hello@akibwa.com?subject=${subject}&body=${message}`;
+    window.location.href = `mailto:***REMOVED***?subject=${subject}&body=${message}`;
   };
 
   return (
@@ -90,7 +90,7 @@ export function ContactPage() {
             <p className="contact-direct">
               <i aria-hidden="true" />
               <span>
-                Prefer plain email? <a href="mailto:hello@akibwa.com">hello@akibwa.com</a>
+                Prefer plain email? <a href="mailto:***REMOVED***">***REMOVED***</a>
               </span>
             </p>
           </form>
