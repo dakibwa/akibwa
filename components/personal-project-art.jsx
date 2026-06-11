@@ -2,8 +2,8 @@ import styles from "./personal-project-art.module.css";
 
 const artworkBySlug = {
   chorus: {
-    src: "/project-art/personal/chorus-collective.webp",
-    bannerSrc: "/project-art/personal/chorus-collective-banner.webp",
+    src: "/project-art/personal/chorus-trio.webp",
+    bannerSrc: "/project-art/personal/chorus-trio-banner.webp",
     variant: "music"
   },
   vitals: {

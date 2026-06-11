@@ -63,8 +63,8 @@ export const featuredProjects = [
   {
     title: "Chorus",
     type: "Data product",
-    image: "/project-art/personal/chorus-collective.webp",
-    alt: "Abstract paper collage of listeners gathered in a turquoise pool with constellations and a wavy listening path",
+    image: "/project-art/personal/chorus-trio.webp",
+    alt: "Pattachitra-style folk painting of three wide-eyed figures playing flute, drum, and veena under an ornate arch with music notes",
     summary:
       "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and listening reports.",
     problem:
