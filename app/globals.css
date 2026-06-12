@@ -261,6 +261,42 @@ button {
   transform: translateX(-50%) translateY(0) scale(1);
 }
 
+/* Hovering a nav item previews its area artwork as a soft wash behind the
+   label; the active page keeps a fainter version so the dot isn't alone.
+   Specificity note: `.nav-link span` hides legacy label spans, so the art
+   span is addressed with a two-class selector to win over it. */
+.nav-link {
+  isolation: isolate;
+}
+
+.nav-link .nav-link__art {
+  position: absolute;
+  inset: 11px -16px 10px;
+  z-index: -1;
+  display: block;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 72% 86% at 50% 50%, #000 30%, transparent 76%);
+  mask-image: radial-gradient(ellipse 72% 86% at 50% 50%, #000 30%, transparent 76%);
+  transition:
+    opacity 150ms ease-out,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link.active .nav-link__art {
+  opacity: 0.3;
+  transform: scale(1);
+}
+
+.nav-link:hover .nav-link__art,
+.nav-link:focus-visible .nav-link__art {
+  opacity: 0.55;
+  transform: scale(1);
+}
+
 .nav-mobile-toggle {
   position: relative;
   display: none;
@@ -460,7 +496,7 @@ button {
   border: 1px solid rgba(16, 18, 23, 0.1);
   border-radius: var(--radius);
   background: #f6f6f4;
-  box-shadow: 0 10px 32px rgba(16, 18, 23, 0.04);
+  box-shadow: 0 14px 40px rgba(16, 18, 23, 0.07);
   transition:
     border-color 110ms ease,
     box-shadow 110ms ease,
@@ -469,14 +505,14 @@ button {
 
 .area-card:hover {
   border-color: rgba(16, 18, 23, 0.24);
-  box-shadow: 0 16px 46px rgba(16, 18, 23, 0.08);
-  transform: translateY(-2px);
+  box-shadow: 0 24px 60px rgba(16, 18, 23, 0.12);
+  transform: translateY(-3px);
 }
 
 .area-art {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 2.1 / 1;
+  aspect-ratio: 1.78 / 1;
   background: #eeeeec;
 }
 
@@ -499,15 +535,15 @@ button {
 .area-caption h2 {
   margin: 0 0 4px;
   color: var(--black);
-  font-size: 1.04rem;
-  font-weight: 560;
-  letter-spacing: 0;
+  font-size: 1.16rem;
+  font-weight: 580;
+  letter-spacing: -0.01em;
 }
 
 .area-caption p {
   margin: 0;
   color: #6d7077;
-  font-size: 0.86rem;
+  font-size: 0.9rem;
 }
 
 .area-caption svg {
@@ -10902,6 +10938,14 @@ button {
     display: none;
   }
 
+  /* Mobile rows are full-width and left-aligned, so the art anchors to the
+     label edge and fades out rightward instead of pooling mid-row. */
+  .nav-mobile .nav-link .nav-link__art {
+    inset: 5px -12px 5px -16px;
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
+  }
+
   .route-note {
     align-items: stretch;
     flex-direction: column;
@@ -11332,6 +11376,7 @@ button {
   .gallery-card,
   .text-action svg,
   .nav-link::after,
+  .nav-link .nav-link__art,
   .brand,
   .brand::after,
   .nav-mobile,
@@ -11357,9 +11402,8 @@ button {
   }
 }
 
-/* Tile hover: the detail line rises from behind the caption over the lower
-   edge of the artwork on a dark wash. The card itself never changes size.
-   Hover-only enhancement; touch keeps the static caption. */
+/* Tile detail: the line sits permanently on a dark wash over the lower edge
+   of the artwork. Hover keeps only the gentle image zoom. */
 .area-caption {
   position: relative;
 }
@@ -11376,13 +11420,7 @@ button {
     rgba(13, 11, 9, 0.52) 34%,
     rgba(13, 11, 9, 0.72) 100%
   );
-  padding: 30px 18px 13px;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-  /* The wash only fades — translating it drags its rectangular edges into
-     view. The text alone glides up, clipped by the panel. */
-  transition: opacity 200ms ease-out;
+  padding: 34px 18px 13px;
 }
 
 .area-caption__more > p {
@@ -11391,18 +11429,6 @@ button {
   font-size: 0.82rem;
   line-height: 1.42;
   text-shadow: 0 1px 8px rgba(13, 11, 9, 0.4);
-  transform: translateY(14px);
-  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.area-card:hover .area-caption__more,
-.area-card:focus-visible .area-caption__more {
-  opacity: 1;
-}
-
-.area-card:hover .area-caption__more > p,
-.area-card:focus-visible .area-caption__more > p {
-  transform: translateY(0);
 }
 
 .area-art img {
@@ -11415,34 +11441,7 @@ button {
   transform: scale(1.02);
 }
 
-/* Dim via a composited overlay rather than a filter: animating filters
-   repaints the full image every frame and makes the hover-off stutter. */
-.area-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: rgba(13, 11, 9, 0.08);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 200ms ease-out;
-}
-
-.area-card:hover .area-art::after,
-.area-card:focus-visible .area-art::after {
-  opacity: 1;
-}
-
-@media (hover: none) {
-  .area-caption__more {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .area-caption__more,
-  .area-caption__more > p,
-  .area-art::after,
   .area-art img {
     transition: none;
     transform: none;

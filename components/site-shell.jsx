@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useRef, useState } from "react";
+import { areaTiles } from "@/components/site-data";
+
+const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.image]));
 
 const navItems = [
   { href: "/about", label: "About", match: ["/about"] },
@@ -120,6 +123,13 @@ export function SiteShell({ children }) {
                   onPointerEnter={() => primeRoute(item.href)}
                   onFocus={() => primeRoute(item.href)}
                 >
+                  {navArt[item.href] ? (
+                    <span
+                      className="nav-link__art"
+                      style={{ backgroundImage: `url(${navArt[item.href]})` }}
+                      aria-hidden="true"
+                    />
+                  ) : null}
                   {item.label}
                 </Link>
               ))}
@@ -150,6 +160,13 @@ export function SiteShell({ children }) {
                   onPointerEnter={() => primeRoute(item.href)}
                   onFocus={() => primeRoute(item.href)}
                 >
+                  {navArt[item.href] ? (
+                    <span
+                      className="nav-link__art"
+                      style={{ backgroundImage: `url(${navArt[item.href]})` }}
+                      aria-hidden="true"
+                    />
+                  ) : null}
                   {item.label}
                 </Link>
               ))}

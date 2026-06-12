@@ -41,7 +41,7 @@ export function HomePage() {
                 <h2>{tile.title}</h2>
                 <p>{tile.descriptor}</p>
                 {tile.detail ? (
-                  <div className="area-caption__more" aria-hidden="true">
+                  <div className="area-caption__more">
                     <p>{tile.detail}</p>
                   </div>
                 ) : null}
