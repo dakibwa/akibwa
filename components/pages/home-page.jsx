@@ -25,7 +25,13 @@ export function HomePage() {
 
       <div className="page-grid area-grid" aria-label="Featured areas">
         {areaTiles.map((tile, index) => (
-          <Link href={tile.href} prefetch className="area-card" key={tile.title}>
+          <Link
+            href={tile.href}
+            prefetch
+            className="area-card"
+            key={tile.title}
+            style={tile.accent ? { "--area-accent": tile.accent } : undefined}
+          >
             <div className="area-art">
               <Image
                 src={tile.image}

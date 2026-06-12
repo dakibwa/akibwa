@@ -30,6 +30,7 @@ export const areaTiles = [
     href: "/personal",
     image: "/area-art/personal-tiles.webp",
     alt: "Ceramic tile mosaic of glazed blue, orange, and green tiles with raised flowers, leaves, and abstract shapes",
+    accent: "#2f88ff",
     detail: "Chorus, Vitals, Cover Collision, and more"
   },
   {
@@ -38,6 +39,7 @@ export const areaTiles = [
     href: "/professional",
     image: "/area-art/offer.webp",
     alt: "Abstract artwork showing a path from messy marks into a precise output",
+    accent: "#ff6f1a",
     detail: "Discovery, build, and handover for company systems"
   },
   {
@@ -47,6 +49,7 @@ export const areaTiles = [
     image: "/area-art/about-summer.webp",
     imagePosition: "50% 78%",
     alt: "Hans Thoma's Summer (1872): a couple resting in a flowering meadow beside a stream",
+    accent: "#2c8068",
     detail: "Background, working principles, and the current toolkit"
   },
   {
@@ -55,6 +58,7 @@ export const areaTiles = [
     href: "/contact",
     image: "/area-art/contact.webp",
     alt: "Minimal abstract contact artwork with an open doorway and cursor gesture",
+    accent: "#e2556b",
     detail: "Email, X, or Instagram — bring the messy workflow"
   }
 ];

@@ -453,6 +453,13 @@ function ProjectExpandedBanner({ project }) {
 
 function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   const artwork = getPersonalProjectArt(project);
+  const projectAccent =
+    {
+      chorus: "#2f88ff",
+      vitals: "#9b5036",
+      "cover-collision": "#e2556b",
+      "personal-knowledge-base": "#d08f2c"
+    }[project.slug] ?? "#2f88ff";
 
   return (
     <button
@@ -460,6 +467,7 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
       className={`area-card personal-area-card ${isSelected ? "is-selected" : ""}`}
       aria-pressed={isSelected}
       onClick={onSelect}
+      style={{ "--area-accent": projectAccent }}
     >
       <div className="area-art">
         <img

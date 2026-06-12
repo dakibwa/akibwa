@@ -258,12 +258,12 @@ button {
   font-weight: 560;
   letter-spacing: 0;
   text-transform: none;
-  transition: color 90ms ease, transform 90ms ease;
+  transition: color var(--hover-out) var(--ease-out);
 }
 
 .nav-link:hover {
-  color: var(--blue);
-  transform: translateY(-1px);
+  color: var(--black);
+  transition-duration: var(--hover-in);
 }
 
 .nav-link span {
@@ -281,7 +281,7 @@ button {
 }
 
 .nav-link.active {
-  color: var(--blue);
+  color: var(--black);
 }
 
 .nav-desktop .nav-link__art {
@@ -296,17 +296,21 @@ button {
   background-position: center;
   opacity: 0;
   transform: translateY(-3px);
+  filter: saturate(0.92) contrast(0.98);
   pointer-events: none;
   transition:
-    opacity 150ms ease-out,
-    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out),
+    filter var(--hover-out) var(--ease-out);
 }
 
 .nav-desktop .nav-link:hover .nav-link__art,
 .nav-desktop .nav-link:focus-visible .nav-link__art,
 .nav-desktop .nav-link.active .nav-link__art {
-  opacity: 1;
+  opacity: 0.96;
   transform: translateY(0);
+  filter: saturate(1.04) contrast(1.03);
+  transition-duration: var(--hover-in);
 }
 
 .nav-mobile-toggle {
@@ -503,30 +507,88 @@ button {
 }
 
 .area-card {
+  --area-accent: var(--blue);
+  position: relative;
   overflow: hidden;
   display: grid;
+  gap: 0;
+  padding: 10px;
   border: 1px solid rgba(16, 18, 23, 0.1);
   border-radius: var(--radius);
-  background: #f6f6f4;
-  box-shadow: 0 14px 40px rgba(16, 18, 23, 0.07);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 245, 0.86)),
+    #ffffff;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.96) inset,
+    0 18px 50px rgba(16, 18, 23, 0.065);
+  isolation: isolate;
   transition:
     border-color var(--hover-out) var(--ease-out),
     box-shadow var(--hover-out) var(--ease-out);
 }
 
-.area-card:hover {
+.area-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      circle at 88% 10%,
+      color-mix(in srgb, var(--area-accent) 14%, transparent),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--area-accent) 8%, transparent),
+      transparent 42%
+    );
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--hover-out) var(--ease-out);
+}
+
+.area-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.area-card:hover,
+.area-card:focus-visible {
   border-color: rgba(16, 18, 23, 0.22);
   box-shadow:
-    0 2px 8px rgba(16, 18, 23, 0.05),
-    0 30px 80px rgba(16, 18, 23, 0.11);
+    0 1px 0 rgba(255, 255, 255, 0.98) inset,
+    0 6px 16px rgba(16, 18, 23, 0.05),
+    0 30px 80px rgba(16, 18, 23, 0.095);
+  transition-duration: var(--hover-in);
+}
+
+.area-card:hover::before,
+.area-card:focus-visible::before {
+  opacity: 1;
   transition-duration: var(--hover-in);
 }
 
 .area-art {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1.78 / 1;
+  aspect-ratio: 1.74 / 1;
+  border: 1px solid rgba(16, 18, 23, 0.08);
+  border-radius: calc(var(--radius) - 3px);
   background: #eeeeec;
+}
+
+.area-art::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 42%;
+  background: linear-gradient(180deg, transparent, rgba(13, 11, 9, 0.22));
+  content: "";
+  opacity: 0.28;
+  pointer-events: none;
+  transition: opacity var(--hover-out) var(--ease-out);
 }
 
 .area-art img {
@@ -535,14 +597,31 @@ button {
 }
 
 .area-caption {
+  position: relative;
   display: flex;
-  min-height: 74px;
+  min-height: 82px;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  border-top: 1px solid rgba(16, 18, 23, 0.06);
-  background: #f7f7f5;
-  padding: 15px 18px 16px;
+  border-top: 0;
+  background: transparent;
+  padding: 18px 8px 5px;
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+.area-caption::before {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  width: 42px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--area-accent);
+  content: "";
+  opacity: 0.72;
+  transition:
+    width var(--hover-out) var(--ease-out),
+    opacity var(--hover-out) var(--ease-out);
 }
 
 .area-caption h2 {
@@ -550,7 +629,7 @@ button {
   color: var(--black);
   font-size: 1.16rem;
   font-weight: 580;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .area-caption p {
@@ -567,9 +646,29 @@ button {
     color var(--hover-out) var(--ease-out);
 }
 
-.area-card:hover .area-caption svg {
+.area-card:hover .area-art::after,
+.area-card:focus-visible .area-art::after {
+  opacity: 0.38;
+  transition-duration: var(--hover-in);
+}
+
+.area-card:hover .area-caption,
+.area-card:focus-visible .area-caption {
+  transform: translateY(-1px);
+  transition-duration: var(--hover-in);
+}
+
+.area-card:hover .area-caption::before,
+.area-card:focus-visible .area-caption::before {
+  width: 64px;
+  opacity: 1;
+  transition-duration: var(--hover-in);
+}
+
+.area-card:hover .area-caption svg,
+.area-card:focus-visible .area-caption svg {
   transform: translateX(5px);
-  color: var(--blue);
+  color: var(--area-accent);
   transition-duration: var(--hover-in);
 }
 
@@ -793,7 +892,7 @@ button {
 
 .personal-area-card {
   margin: 0;
-  padding: 0;
+  padding: 10px;
   color: inherit;
   cursor: pointer;
   font: inherit;
@@ -810,8 +909,11 @@ button {
 }
 
 .personal-area-card.is-selected {
-  border-color: rgba(16, 18, 23, 0.24);
-  box-shadow: 0 16px 46px rgba(16, 18, 23, 0.08);
+  border-color: color-mix(in srgb, var(--area-accent) 34%, rgba(16, 18, 23, 0.18));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.98) inset,
+    0 8px 18px rgba(16, 18, 23, 0.055),
+    0 24px 58px color-mix(in srgb, var(--area-accent) 10%, rgba(16, 18, 23, 0.08));
 }
 
 
@@ -840,7 +942,7 @@ button {
 .about-hero-copy p {
   max-width: 850px;
   margin: 10px 0 0;
-  color: #9b9ba0;
+  color: #86868c;
   font-size: 2.82rem;
   font-weight: 520;
   line-height: 1.05;
@@ -10440,7 +10542,13 @@ button {
 
   .about-portrait,
   .about-portrait img {
+    aspect-ratio: 3 / 2;
+    max-height: 480px;
     min-height: 360px;
+  }
+
+  .about-portrait img {
+    height: 100%;
   }
 
   .tool-grid {
@@ -11207,6 +11315,8 @@ button {
 
   .about-portrait,
   .about-portrait img {
+    aspect-ratio: auto;
+    max-height: none;
     min-height: 390px;
   }
 
@@ -11492,7 +11602,13 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .page-transition,
+  .nav-link,
+  .nav-link .nav-link__art,
   .area-card,
+  .area-card::before,
+  .area-art::after,
+  .area-caption,
+  .area-caption::before,
   .area-caption svg,
   .hero-word-cycle,
   .hero-word-cycle::after,
@@ -11507,7 +11623,6 @@ button {
   .tool-card::before,
   .tool-card::after,
   .tool-glyph,
-  .nav-link .nav-link__art,
   .brand,
   .brand::after,
   .nav-mobile,
