@@ -120,14 +120,10 @@ button {
 .brand {
   --brand-x: 50%;
   --brand-y: 50%;
-  --brand-mark-width: 28px;
-  --brand-mark-height: 20px;
-  --brand-mark-gap: 9px;
   position: relative;
   isolation: isolate;
   display: inline-flex;
   align-items: center;
-  gap: var(--brand-mark-gap);
   padding: 21px 0 20px;
   color: var(--ink);
   font-size: 0.9rem;
@@ -140,42 +136,23 @@ button {
     filter var(--hover-out) var(--ease-out);
 }
 
-.brand::before {
-  content: "";
-  flex: 0 0 var(--brand-mark-width);
-  width: var(--brand-mark-width);
-  height: var(--brand-mark-height);
-  border: 1px solid rgba(16, 18, 23, 0.16);
-  border-radius: 4px;
-  background:
-    #f4efe8 url("/project-art/personal/cover-collision-saint.webp") 50% 52% / 255% auto no-repeat;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.72) inset;
-  filter: saturate(0.9) contrast(1.02);
-  transition:
-    border-color var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
-}
-
 .brand::after {
   content: "";
   position: absolute;
   right: 0;
   top: 13px;
-  left: calc(var(--brand-mark-width) + var(--brand-mark-gap));
-  height: 6px;
-  border-radius: 3px;
+  left: 0;
+  height: 3px;
+  border-radius: 999px;
   background:
-    #f4efe8 url("/project-art/personal/cover-collision-saint.webp") 50% 52% / 255% auto no-repeat;
-  filter: saturate(0.92) contrast(0.98);
+    linear-gradient(90deg, rgba(3, 4, 5, 0.74), rgba(3, 4, 5, 0.34));
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-3px);
+  transform: translateY(-3px) scaleX(0.54);
   transform-origin: var(--brand-x) center;
   transition:
     opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
+    transform var(--hover-out) var(--ease-out);
 }
 
 .brand:hover,
@@ -186,21 +163,10 @@ button {
   transition-duration: var(--hover-in);
 }
 
-.brand:hover::before,
-.brand:focus-visible::before {
-  border-color: rgba(16, 18, 23, 0.24);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.82) inset,
-    0 7px 18px rgba(16, 18, 23, 0.08);
-  filter: saturate(1.04) contrast(1.04);
-  transition-duration: var(--hover-in);
-}
-
 .brand:hover::after,
 .brand:focus-visible::after {
-  opacity: 0.96;
-  filter: saturate(1.04) contrast(1.03);
-  transform: translateY(0);
+  opacity: 0.58;
+  transform: translateY(0) scaleX(1);
   transition-duration: var(--hover-in);
 }
 
@@ -215,19 +181,16 @@ button {
 @keyframes brand-overline-arrive {
   0% {
     opacity: 0;
-    filter: saturate(0.86) contrast(0.96);
-    transform: translateY(-6px) scaleX(0.28);
+    transform: translateY(-6px) scaleX(0.18);
   }
 
   54% {
-    opacity: 0.98;
-    filter: saturate(1.08) contrast(1.04);
+    opacity: 0.64;
     transform: translateY(1px) scaleX(1);
   }
 
   100% {
-    opacity: 0.96;
-    filter: saturate(1.04) contrast(1.03);
+    opacity: 0.58;
     transform: translateY(0) scaleX(1);
   }
 }
@@ -11179,10 +11142,8 @@ button {
   }
 
   .brand {
-    --brand-mark-width: 30px;
-    --brand-mark-height: 22px;
     min-width: 0;
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .akibwa-home {
@@ -11617,7 +11578,6 @@ button {
   .tool-card::after,
   .tool-glyph,
   .brand,
-  .brand::before,
   .brand::after,
   .nav-mobile,
   .menu-icon {
@@ -11634,15 +11594,10 @@ button {
     text-shadow: none;
   }
 
-  .brand:hover::before,
-  .brand:focus-visible::before {
-    filter: saturate(1.04) contrast(1.04);
-  }
-
   .brand:hover::after,
   .brand:focus-visible::after {
     animation: none;
-    opacity: 0.96;
+    opacity: 0.58;
     transform: none;
   }
 }
