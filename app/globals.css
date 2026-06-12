@@ -284,9 +284,9 @@ button {
   transform: translateX(-50%) translateY(0) scale(1);
 }
 
-/* Hovering a nav item drops a small preview of its area artwork beneath the
-   header, in the same card language as the home grid. The active page is
-   marked by the dot plus a blue label, never a permanent image.
+/* Each nav item's area artwork doubles as its underline: a slim image strip
+   under the label that previews the page on hover and stays put on the
+   active page, replacing the dot on desktop.
    Specificity note: `.nav-link span` hides legacy label spans, so the art
    span is addressed with two-class selectors to win over it. */
 .nav-link {
@@ -297,34 +297,33 @@ button {
   color: var(--blue);
 }
 
+.nav-desktop .nav-link::after {
+  display: none;
+}
+
 .nav-desktop .nav-link__art {
   position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
+  right: 0;
+  bottom: 13px;
+  left: 0;
   display: block;
-  width: 124px;
-  aspect-ratio: 2.1 / 1;
-  /* Centered via margin, not translateX, so reduced-motion's blanket
-     `transform: none` can't knock the card off-axis. */
-  margin-left: -62px;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: 10px;
+  height: 6px;
+  border-radius: 3px;
   background-size: cover;
   background-position: center;
-  box-shadow: 0 14px 34px rgba(16, 18, 23, 0.16);
   opacity: 0;
-  transform: translateY(-6px) scale(0.96);
-  transform-origin: top center;
+  transform: translateY(3px);
   pointer-events: none;
   transition:
-    opacity 140ms ease-out,
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 150ms ease-out,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .nav-desktop .nav-link:hover .nav-link__art,
-.nav-desktop .nav-link:focus-visible .nav-link__art {
+.nav-desktop .nav-link:focus-visible .nav-link__art,
+.nav-desktop .nav-link.active .nav-link__art {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 .nav-mobile-toggle {
