@@ -270,9 +270,10 @@ button {
   display: none;
 }
 
-/* Each nav item's area artwork doubles as its underline: a slim image strip
-   under the label that previews the page on hover and stays put on the
-   active page.
+/* Each nav item's area artwork doubles as an overline: a slim image strip
+   above the label that previews the page on hover and stays put on the
+   active page. Above rather than below so the cursor — which arrives from
+   beneath — never sits on top of it.
    Specificity note: `.nav-link span` hides legacy label spans, so the art
    span is addressed with two-class selectors to win over it. */
 .nav-link {
@@ -285,8 +286,8 @@ button {
 
 .nav-desktop .nav-link__art {
   position: absolute;
+  top: 13px;
   right: 0;
-  bottom: 13px;
   left: 0;
   display: block;
   height: 6px;
@@ -294,7 +295,7 @@ button {
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transform: translateY(3px);
+  transform: translateY(-3px);
   pointer-events: none;
   transition:
     opacity 150ms ease-out,
