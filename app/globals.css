@@ -1045,6 +1045,7 @@ button {
 
 .company-card,
 .tool-card {
+  --about-card-accent: var(--company-accent, var(--tool-accent, var(--blue)));
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(16, 18, 23, 0.1);
@@ -1053,6 +1054,61 @@ button {
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 247, 245, 0.72)),
     #ffffff;
   box-shadow: 0 16px 46px rgba(16, 18, 23, 0.045);
+  isolation: isolate;
+  transform: translateY(0);
+  transition:
+    transform var(--hover-out) var(--ease-out),
+    border-color var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    background var(--hover-out) var(--ease-out);
+  will-change: transform;
+}
+
+.company-card::before,
+.tool-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--about-card-accent) 16%, transparent),
+      transparent 48%
+    ),
+    radial-gradient(
+      circle at 88% 14%,
+      color-mix(in srgb, var(--about-card-accent) 18%, transparent),
+      transparent 30%
+    );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--hover-out) var(--ease-out);
+}
+
+.company-card > *,
+.tool-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.company-card:hover,
+.tool-card:hover {
+  border-color: color-mix(in srgb, var(--about-card-accent) 42%, rgba(16, 18, 23, 0.16));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 247, 245, 0.88)),
+    #ffffff;
+  box-shadow:
+    0 8px 18px rgba(16, 18, 23, 0.06),
+    0 26px 64px color-mix(in srgb, var(--about-card-accent) 13%, transparent);
+  transform: translateY(-6px);
+  transition-duration: var(--hover-in);
+}
+
+.company-card:hover::before,
+.tool-card:hover::before {
+  opacity: 1;
+  transition-duration: var(--hover-in);
 }
 
 .company-card {
@@ -1071,8 +1127,20 @@ button {
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: 2;
   height: 4px;
   background: var(--company-accent, var(--tool-accent));
+  opacity: 0.86;
+  transition:
+    height var(--hover-out) var(--ease-out),
+    opacity var(--hover-out) var(--ease-out);
+}
+
+.company-card:hover::after,
+.tool-card:hover::after {
+  height: 7px;
+  opacity: 1;
+  transition-duration: var(--hover-in);
 }
 
 .company-mark {
@@ -1087,6 +1155,15 @@ button {
   width: 54px;
   height: 54px;
   place-items: center;
+  transition:
+    filter var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.company-card:hover .company-logo-cell {
+  filter: drop-shadow(0 10px 18px color-mix(in srgb, var(--company-accent) 20%, transparent));
+  transform: translateY(-3px) scale(1.04);
+  transition-duration: var(--hover-in);
 }
 
 .company-logo-cell > span {
@@ -1252,6 +1329,15 @@ button {
   width: 42px;
   height: 42px;
   place-items: center;
+  transition:
+    filter var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.tool-card:hover .tool-glyph {
+  filter: drop-shadow(0 10px 18px color-mix(in srgb, var(--tool-accent) 24%, transparent));
+  transform: translateY(-3px) scale(1.06);
+  transition-duration: var(--hover-in);
 }
 
 .tool-glyph span {
@@ -11413,6 +11499,14 @@ button {
   .hero-word-cycle-value,
   .gallery-card,
   .text-action svg,
+  .company-card,
+  .company-card::before,
+  .company-card::after,
+  .company-logo-cell,
+  .tool-card,
+  .tool-card::before,
+  .tool-card::after,
+  .tool-glyph,
   .nav-link .nav-link__art,
   .brand,
   .brand::after,
