@@ -264,29 +264,9 @@ button {
   display: none;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--ink);
-  opacity: 0;
-  transform: translateX(-50%) translateY(4px) scale(0.72);
-  transition: opacity 90ms ease, transform 90ms ease;
-}
-
-.nav-link.active::after,
-.nav-link:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
-}
-
 /* Each nav item's area artwork doubles as its underline: a slim image strip
    under the label that previews the page on hover and stays put on the
-   active page, replacing the dot on desktop.
+   active page.
    Specificity note: `.nav-link span` hides legacy label spans, so the art
    span is addressed with two-class selectors to win over it. */
 .nav-link {
@@ -295,10 +275,6 @@ button {
 
 .nav-link.active {
   color: var(--blue);
-}
-
-.nav-desktop .nav-link::after {
-  display: none;
 }
 
 .nav-desktop .nav-link__art {
@@ -10963,13 +10939,9 @@ button {
     padding: 17px 0;
   }
 
-  .nav-mobile .nav-link::after {
-    display: none;
-  }
-
   /* Mobile rows are full-width and left-aligned, so the active row's art
      anchors to the label edge and fades out rightward — the menu's only
-     active indicator, since the dot is hidden here. */
+     active indicator. */
   .nav-mobile .nav-link .nav-link__art {
     position: absolute;
     inset: 5px -12px 5px -16px;
@@ -11416,7 +11388,6 @@ button {
   .hero-word-cycle-value,
   .gallery-card,
   .text-action svg,
-  .nav-link::after,
   .nav-link .nav-link__art,
   .brand,
   .brand::after,
