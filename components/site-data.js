@@ -25,15 +25,6 @@ export const coverCollisionDataUrl = (
 
 export const areaTiles = [
   {
-    title: "About",
-    descriptor: "How I think and build",
-    href: "/about",
-    image: "/area-art/about-summer.webp",
-    imagePosition: "50% 78%",
-    alt: "Hans Thoma's Summer (1872): a couple resting in a flowering meadow beside a stream",
-    detail: "Background, working principles, and the current toolkit"
-  },
-  {
     title: "Personal",
     descriptor: "Self-built projects",
     href: "/personal",
@@ -48,6 +39,15 @@ export const areaTiles = [
     image: "/area-art/offer.webp",
     alt: "Abstract artwork showing a path from messy marks into a precise output",
     detail: "Discovery, build, and handover for company systems"
+  },
+  {
+    title: "About",
+    descriptor: "How I think and build",
+    href: "/about",
+    image: "/area-art/about-summer.webp",
+    imagePosition: "50% 78%",
+    alt: "Hans Thoma's Summer (1872): a couple resting in a flowering meadow beside a stream",
+    detail: "Background, working principles, and the current toolkit"
   },
   {
     title: "Contact",
