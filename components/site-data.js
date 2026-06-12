@@ -28,8 +28,8 @@ export const areaTiles = [
     title: "Personal",
     descriptor: "Self-built projects",
     href: "/personal",
-    image: "/area-art/personal-tiles.webp",
-    alt: "Ceramic tile mosaic of glazed blue, orange, and green tiles with raised flowers, leaves, and abstract shapes",
+    image: "/area-art/personal-rochegrosse-flowers.webp",
+    alt: "Georges Rochegrosse's The Knight of the Flowers: an armored figure surrounded by flower-crowned figures in a luminous meadow",
     accent: "#2f88ff",
     detail: "Chorus, Vitals, Cover Collision, and more"
   },
@@ -37,8 +37,8 @@ export const areaTiles = [
     title: "Professional",
     descriptor: "Systems for companies",
     href: "/professional",
-    image: "/area-art/offer.webp",
-    alt: "Abstract artwork showing a path from messy marks into a precise output",
+    image: "/area-art/personal-tiles.webp",
+    alt: "Ceramic tile mosaic of glazed blue, orange, and green tiles with raised flowers, leaves, and abstract shapes",
     accent: "#ff6f1a",
     detail: "Discovery, build, and handover for company systems"
   },
@@ -142,8 +142,8 @@ export const personalProjects = [
     slug: "personal-knowledge-base",
     title: "Personal Knowledge Base",
     type: "Private AI memory system",
-    image: "/project-art/personal/knowledge-flame-card.webp",
-    alt: "Watercolour abstract of a domed face rotated on its side: two eyes above golden arcs, ringed by a flame-like corona on black",
+    image: "/project-art/personal/knowledge-apple-card.webp",
+    alt: "Painterly collage of a bitten red apple on a yellow field above green patterned foliage",
     summary:
       akibwapediaData.subtitle ||
       "Helps Codex use local, source-backed context without exposing raw records.",
