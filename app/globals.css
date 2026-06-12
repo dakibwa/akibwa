@@ -19,6 +19,12 @@
   --page-title-line: 1.02;
   --sans: "Avenir Next", "Inter", "Helvetica Neue", Arial, sans-serif;
   --serif: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  /* Hover language: enter slowly with a long decelerating tail, leave a
+     touch quicker. Hover rules override transition-duration with
+     --hover-in; the base rule's --hover-out drives the exit. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --hover-in: 520ms;
+  --hover-out: 260ms;
 }
 
 * {
@@ -503,15 +509,16 @@ button {
   background: #f6f6f4;
   box-shadow: 0 14px 40px rgba(16, 18, 23, 0.07);
   transition:
-    border-color 110ms ease,
-    box-shadow 110ms ease,
-    transform 110ms ease;
+    border-color var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out);
 }
 
 .area-card:hover {
-  border-color: rgba(16, 18, 23, 0.24);
-  box-shadow: 0 24px 60px rgba(16, 18, 23, 0.12);
-  transform: translateY(-3px);
+  border-color: rgba(16, 18, 23, 0.22);
+  box-shadow:
+    0 2px 8px rgba(16, 18, 23, 0.05),
+    0 30px 80px rgba(16, 18, 23, 0.11);
+  transition-duration: var(--hover-in);
 }
 
 .area-art {
@@ -554,11 +561,15 @@ button {
 .area-caption svg {
   flex: 0 0 auto;
   color: var(--black);
-  transition: transform 110ms ease;
+  transition:
+    transform var(--hover-out) var(--ease-out),
+    color var(--hover-out) var(--ease-out);
 }
 
 .area-card:hover .area-caption svg {
-  transform: translateX(3px);
+  transform: translateX(5px);
+  color: var(--blue);
+  transition-duration: var(--hover-in);
 }
 
 .home-footer,
@@ -603,6 +614,11 @@ button {
 
 .x-logo {
   flex: 0 0 auto;
+}
+
+.page-footer a,
+.footer-location {
+  transition: color 300ms var(--ease-out);
 }
 
 .page-footer a:hover,
@@ -2844,13 +2860,14 @@ button {
     linear-gradient(90deg, rgba(16, 18, 23, 0.03) 1px, transparent 1px),
     linear-gradient(180deg, #fcfcfa, #eef2f7);
   background-size: auto, auto, auto, 100% 20%, 24px 100%, auto;
-  transition: transform 200ms ease-out;
+  transition: transform 600ms var(--ease-out);
   will-change: transform;
 }
 
 .area-card:hover .knowledge-card-art,
 .area-card:focus-visible .knowledge-card-art {
-  transform: scale(1.02);
+  transform: scale(1.035);
+  transition-duration: 1100ms;
 }
 
 .knowledge-card-art i {
@@ -3253,9 +3270,9 @@ button {
   border: 1px solid rgba(16, 18, 23, 0.1);
   border-radius: 6px;
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease,
-    transform 120ms ease;
+    border-color var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
 }
 
 .cover-collision-post-image img {
@@ -3271,6 +3288,7 @@ button {
   border-color: rgba(255, 111, 26, 0.38);
   box-shadow: 0 14px 30px rgba(16, 18, 23, 0.12);
   transform: translateY(-2px);
+  transition-duration: var(--hover-in);
 }
 
 .cover-collision-post strong {
@@ -4074,11 +4092,11 @@ button {
   color: var(--white);
   cursor: pointer;
   font-size: 0.98rem;
-  transition: background 200ms ease;
+  transition: background 320ms var(--ease-out);
 }
 
 .contact-actions button svg {
-  transition: transform 220ms ease;
+  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .contact-actions button:hover,
@@ -4089,6 +4107,7 @@ button {
 .contact-actions button:hover svg,
 .contact-actions button:focus-visible svg {
   transform: translateX(4px);
+  transition-duration: var(--hover-in);
 }
 
 .contact-actions p {
@@ -4122,6 +4141,9 @@ button {
   padding-bottom: 1px;
   color: var(--black);
   font-weight: 540;
+  transition:
+    color 300ms var(--ease-out),
+    border-color 300ms var(--ease-out);
 }
 
 .contact-direct a:hover {
@@ -4319,11 +4341,12 @@ button {
 
 .text-action svg {
   flex: 0 0 auto;
-  transition: transform 180ms ease;
+  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .text-action:hover svg {
   transform: translateX(4px);
+  transition-duration: var(--hover-in);
 }
 
 .gallery-track {
@@ -4337,11 +4360,12 @@ button {
   display: grid;
   min-width: 0;
   border-top: 1px solid var(--line-strong);
-  transition: transform 180ms ease;
+  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .gallery-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
+  transition-duration: var(--hover-in);
 }
 
 .gallery-media {
@@ -11445,16 +11469,21 @@ button {
 
 .area-art img {
   will-change: transform;
-  transition: transform 200ms ease-out;
+  transition:
+    transform 600ms var(--ease-out),
+    filter 600ms var(--ease-out);
 }
 
 .area-card:hover .area-art img,
 .area-card:focus-visible .area-art img {
-  transform: scale(1.02);
+  transform: scale(1.045);
+  filter: saturate(1.05) brightness(1.02);
+  transition-duration: 1100ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .area-art img {
+  .area-art img,
+  .knowledge-card-art {
     transition: none;
     transform: none;
   }
