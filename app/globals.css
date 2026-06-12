@@ -8699,7 +8699,7 @@ button {
 .vitals-habits-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-column: span 6;
+  grid-column: 1 / -1;
   min-height: 220px;
 }
 
@@ -9060,6 +9060,174 @@ button {
   font-weight: 800;
 }
 
+/* Banner toolbar — same artwork and white meta text as the Personal-page
+   expanded overlay, so the standalone page and the embed read as one app. */
+.vitals-ai-toolbar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 60px;
+  margin-bottom: 16px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: #080b12;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
+}
+
+.vitals-banner-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  filter: saturate(1.02) contrast(1.02);
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.vitals-ai-toolbar .vitals-hero-eyebrow {
+  color: #fff;
+}
+
+.vitals-ai-toolbar .vitals-hero-eyebrow em {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.vitals-banner-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  margin: 0 6px 0 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.vitals-banner-stat strong {
+  font-size: 0.96rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.vitals-banner-stat small {
+  font-size: 0.64rem;
+  font-weight: 560;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.vitals-ai-toolbar .vitals-ai-date,
+.vitals-ai-toolbar .vitals-ai-ranges {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  color: #191311;
+  text-shadow: none;
+}
+
+/* Card heading note — quiet source/date label in place of dead buttons. */
+.vitals-heading-note {
+  color: #9c8f89;
+  font-size: 0.67rem;
+  font-weight: 620;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Real nights replace the fabricated sleep-stage segments. */
+.vitals-sleep-bar .night {
+  background: #175fb2;
+}
+
+.vitals-sleep-bar .night:nth-child(2n) {
+  background: #4ea3ec;
+}
+
+/* Sources card — real coverage rows, live dot when the source has data
+   inside the current window. */
+.vitals-sources-card {
+  grid-column: span 3;
+  min-height: 186px;
+}
+
+.vitals-sources-list {
+  display: grid;
+  gap: 0;
+  margin: 4px 0 0;
+  padding: 0 28px 20px;
+  list-style: none;
+}
+
+.vitals-sources-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border-top: 1px solid rgba(42, 28, 24, 0.07);
+  padding: 8px 0;
+  font-size: 0.78rem;
+}
+
+.vitals-sources-list li:first-child {
+  border-top: 0;
+}
+
+.vitals-sources-list li i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(42, 28, 24, 0.18);
+  align-self: center;
+  flex: none;
+}
+
+.vitals-sources-list li i.high {
+  background: #2e7d4f;
+}
+
+.vitals-sources-list strong {
+  font-weight: 700;
+  color: #2a1c16;
+}
+
+.vitals-sources-list li span {
+  margin-left: auto;
+  color: #9c8f89;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Recovery line draws in left-to-right when the window changes. */
+@keyframes vitals-line-draw {
+  from {
+    stroke-dashoffset: -1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.vitals-ai-line-chart path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: vitals-line-draw 900ms cubic-bezier(0.45, 0, 0.25, 1) 120ms backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vitals-ai-line-chart path {
+    animation: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .vitals-banner-stat,
+  .vitals-ai-toolbar .vitals-hero-eyebrow em {
+    display: none;
+  }
+}
+
 @media (max-width: 1440px) {
   .vitals-ai-shell {
     padding: 20px 24px 12px;
@@ -9078,7 +9246,8 @@ button {
   .vitals-body-metrics-card,
   .vitals-nutrition-card-v2,
   .vitals-stress-card,
-  .vitals-trends-card {
+  .vitals-trends-card,
+  .vitals-sources-card {
     grid-column: span 6;
   }
 
@@ -9136,6 +9305,7 @@ button {
   .vitals-nutrition-card-v2,
   .vitals-stress-card,
   .vitals-trends-card,
+  .vitals-sources-card,
   .vitals-habits-card,
   .vitals-insights-card {
     grid-column: 1 / -1;
