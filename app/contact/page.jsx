@@ -3,7 +3,7 @@ import { ContactPage } from "@/components/pages/contact-page";
 export const metadata = {
   title: "Contact",
   description:
-    "Contact Akibwa about AI-assisted systems, dashboards, automation, data products, reporting, or workflow handover problems."
+    "Contact Akibwa with a messy workflow, reporting, automation, dashboard, or private knowledge problem that needs a small useful system."
 };
 
 export default function ContactRoute() {

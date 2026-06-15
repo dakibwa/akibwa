@@ -104,30 +104,54 @@ const tools = [
 
 const domains = [
   {
-    title: "Finance",
-    body: "Credit, banking, wealth, and investment environments.",
+    title: "Reporting estates",
+    body: "Power BI, Fabric, semantic models, adoption, and the meaning behind the numbers.",
     accent: "#006747"
   },
   {
-    title: "Infrastructure",
-    body: "Public-investment reporting and modern data foundations.",
+    title: "Private knowledge",
+    body: "Source-backed memory systems, retrieval routes, public-safe projections, and review loops.",
     accent: "#17324d"
   },
   {
-    title: "Gaming",
-    body: "Product, customer, and safer-gambling intelligence.",
+    title: "Workflow handover",
+    body: "Manual steps, recurring decisions, awkward files, and team hand-offs made easier to run.",
     accent: "#d01fcb"
   },
   {
-    title: "BI Systems",
-    body: "Dashboards, semantic layers, governance, and adoption.",
+    title: "Financial data",
+    body: "Credit, banking, wealth, public-investment, and regulated reporting environments.",
     accent: "#2f88ff"
   },
   {
-    title: "AI Workflows",
-    body: "Small systems that help teams move from mess to clarity.",
+    title: "AI build loops",
+    body: "Codex and Claude-assisted prototypes with docs, safeguards, and practical ownership.",
     accent: "#ff6f1a"
   }
+];
+
+const principles = [
+  {
+    number: "01",
+    title: "Start with the real work",
+    body: "Map the decision, hand-off, source, and person before deciding what should be automated."
+  },
+  {
+    number: "02",
+    title: "Build the smallest useful system",
+    body: "The first version should save a repeated step, make the hidden process visible, or clarify a decision."
+  },
+  {
+    number: "03",
+    title: "Leave the keys behind",
+    body: "Documentation, safeguards, ownership, and plain language matter as much as the build."
+  }
+];
+
+const proofPoints = [
+  "BI experience across banking, credit, gaming, and public-investment reporting.",
+  "Comfortable between messy source material, semantic models, dashboards, and AI-assisted build loops.",
+  "Interested in systems people can keep using, not demos that only work while the builder is in the room."
 ];
 
 function CompanyMark({ workplace }) {
@@ -166,22 +190,28 @@ export function AboutPage() {
         <div className="about-hero-copy">
           <h1>About</h1>
           <p>
-            Ten years in BI across banks, gaming, and the UK&rsquo;s National Wealth Fund — now building small,
-            AI-assisted systems for messy workflows.
+            Ten years turning messy data into useful decision surfaces — now building small, AI-assisted systems
+            for reporting, workflow, and private knowledge problems.
           </p>
         </div>
 
         <div className="about-profile-copy">
           <h2>What I do</h2>
           <p>
-            I am Daniel, a Business Intelligence specialist. The job has been the same everywhere I have
-            worked: find the question that matters, get the data straight, and build the dashboard, model, or tool
-            that people actually use.
+            I am Daniel, a Business Intelligence specialist. The pattern has been the same everywhere I
+            have worked: find the question that matters, get the data straight, then build the dashboard, model,
+            or tool that people actually use.
           </p>
           <p>
             Akibwa is that experience pointed at AI. I design small working systems — dashboards, automations,
-            knowledge tools — that take a messy workflow and make it run, then hand over the keys.
+            knowledge tools — that take a messy workflow and make it run without pretending the human context is
+            simpler than it is.
           </p>
+          <ul className="about-proof-list" aria-label="Proof points">
+            {proofPoints.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
           <Link className="about-cta" href="/contact">
             <span className="about-cta-label">Send the messy bit</span>
             <span className="about-cta-icon" aria-hidden="true">
@@ -199,12 +229,31 @@ export function AboutPage() {
         </div>
       </section>
 
+      <section className="page-grid about-method" aria-labelledby="method-heading">
+        <header className="about-method-head">
+          <h2 id="method-heading">How I tend to build</h2>
+          <p>Calm, practical, source-aware work that can be handed over.</p>
+        </header>
+
+        <div className="about-method-steps">
+          {principles.map((principle) => (
+            <article key={principle.title}>
+              <span>{principle.number}</span>
+              <div>
+                <h3>{principle.title}</h3>
+                <p>{principle.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="page-grid about-section" aria-labelledby="workplaces-heading">
         <div className="about-section-head">
           <div>
-            <h2 id="workplaces-heading">Where I have worked</h2>
+            <h2 id="workplaces-heading">Where the judgement comes from</h2>
           </div>
-          <p>Years of building my context window</p>
+          <p>Finance, gaming, public-investment, and BI teams where usefulness had to survive the meeting.</p>
         </div>
 
         <div className="company-grid">
@@ -227,9 +276,9 @@ export function AboutPage() {
       <section className="page-grid about-section" aria-labelledby="tools-heading">
         <div className="about-section-head">
           <div>
-            <h2 id="tools-heading">Tools I work with</h2>
+            <h2 id="tools-heading">Current toolkit</h2>
           </div>
-          <p>Modern tooling for the future of workflows</p>
+          <p>Data tools, automation, and local agentic build loops for turning rough material into working systems.</p>
         </div>
 
         <div className="tool-grid">
