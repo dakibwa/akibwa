@@ -81,13 +81,13 @@ export function ContactPage() {
               What are you trying to fix?
               <textarea
                 name="problem"
-                placeholder="Describe the problem, the goal, or what's getting in the way."
+                placeholder="What is broken, missing, or in the way?"
                 required
               />
             </label>
             <label>
               What does it touch today?
-              <input name="current" placeholder="Tools, files, dashboards, hand-offs, people." />
+              <input name="current" placeholder="Tools, files, dashboards, people." />
             </label>
             <label>
               What would make it worth doing?
@@ -125,11 +125,16 @@ export function ContactPage() {
         </div>
 
         <div className="contact-art-side">
-          <div className="door-art" aria-hidden="true">
-            <span className="door-plane" />
-            <span className="door-frame" />
-            <span className="door-path" />
-            <span className="door-cursor" />
+          <div className="contact-redon-art" aria-hidden="true">
+            <img
+              src="/area-art/contact-redon-star.jpg"
+              alt=""
+              width="500"
+              height="668"
+              loading="eager"
+              decoding="async"
+              draggable="false"
+            />
           </div>
 
           <aside className="contact-note-card" aria-label="What to include">

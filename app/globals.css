@@ -4251,6 +4251,11 @@ button {
   padding-top: 58px;
 }
 
+.contact-form-side,
+.contact-art-side {
+  min-width: 0;
+}
+
 
 .contact-form-side header > span {
   display: block;
@@ -4277,6 +4282,7 @@ button {
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
+  min-width: 0;
   width: 100%;
   border: 1px solid rgba(16, 18, 23, 0.13);
   border-radius: var(--radius);
@@ -4407,57 +4413,55 @@ button {
 
 .contact-art-side {
   display: grid;
-  gap: 16px;
+  justify-items: end;
+  gap: 18px;
   padding-top: 24px;
 }
 
-.door-art {
+.contact-redon-art {
   position: relative;
-  min-height: 350px;
+  overflow: hidden;
+  width: min(430px, 82%);
+  aspect-ratio: 500 / 668;
+  border: 1px solid rgba(16, 18, 23, 0.12);
+  border-radius: var(--radius);
+  background: #11100e;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 28px 78px rgba(16, 18, 23, 0.16);
+  isolation: isolate;
 }
 
-.door-plane {
+.contact-redon-art::before {
   position: absolute;
-  right: 22%;
-  bottom: 70px;
-  width: 58%;
-  height: 170px;
-  background: linear-gradient(90deg, rgba(21, 73, 255, 0), rgba(21, 73, 255, 0.9));
-  clip-path: polygon(0 72%, 78% 0, 100% 0, 66% 100%, 0 100%);
+  inset: 0;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
 }
 
-.door-frame {
+.contact-redon-art::after {
   position: absolute;
-  right: 19%;
-  bottom: 160px;
-  width: 120px;
-  height: 178px;
+  inset: 0;
+  z-index: 1;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0 36%, #0b1225 37% 100%);
-  transform: skewY(8deg);
-  box-shadow: 0 18px 52px rgba(16, 18, 23, 0.12);
+    radial-gradient(circle at 52% 36%, rgba(255, 95, 38, 0.2), transparent 24%),
+    linear-gradient(180deg, rgba(5, 5, 6, 0.05), rgba(5, 5, 6, 0.18));
+  content: "";
+  mix-blend-mode: screen;
+  opacity: 0.68;
+  pointer-events: none;
 }
 
-.door-path {
-  position: absolute;
-  right: 7%;
-  bottom: 96px;
-  width: 250px;
-  height: 120px;
-  border-bottom: 2px dashed rgba(16, 18, 23, 0.66);
-  transform: rotate(25deg);
-}
-
-.door-cursor {
-  position: absolute;
-  right: 21%;
-  bottom: 118px;
-  width: 0;
-  height: 0;
-  border-top: 22px solid transparent;
-  border-bottom: 22px solid transparent;
-  border-left: 36px solid var(--blue);
-  transform: rotate(44deg);
+.contact-redon-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.06) contrast(1.03);
 }
 
 .contact-note-card {
@@ -11364,6 +11368,16 @@ button {
     padding-top: 44px;
   }
 
+  .contact-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact-form-side,
+  .contact-form {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .about-overview {
     padding-top: 44px;
   }
@@ -11380,6 +11394,13 @@ button {
   .offer-hero-title p,
   .contact-form-side header > p {
     font-size: 2rem;
+  }
+
+  .contact-form-side header > span {
+    max-width: 360px;
+    font-size: 1.26rem;
+    line-height: 1.24;
+    overflow-wrap: anywhere;
   }
 
   .work-card-grid,
@@ -11547,30 +11568,9 @@ button {
     padding-top: 0;
   }
 
-  .door-art {
-    min-height: 260px;
-  }
-
-  .door-plane {
-    right: 10%;
-    width: 74%;
-    height: 120px;
-  }
-
-  .door-frame {
-    right: 10%;
-    bottom: 126px;
-    width: 82px;
-    height: 126px;
-  }
-
-  .door-path {
-    right: 4%;
-    width: 140px;
-  }
-
-  .door-cursor {
-    right: 20%;
+  .contact-redon-art {
+    width: min(410px, 100%);
+    justify-self: start;
   }
 
   .contact-note-card {
@@ -11671,6 +11671,27 @@ button {
 }
 
 @media (max-width: 480px) {
+  .contact-layout,
+  .contact-form-side,
+  .contact-form,
+  .contact-art-side,
+  .contact-note-card {
+    width: min(100%, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+  }
+
+  .contact-form-side header > span {
+    max-width: 318px;
+    font-size: 1.08rem;
+    line-height: 1.3;
+  }
+
+  .contact-redon-art {
+    width: min(100%, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+    justify-self: start;
+  }
+
   .akibwa-hero h1 {
     font-size: 1.92rem;
   }
