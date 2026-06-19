@@ -10729,7 +10729,7 @@ button {
   }
 
   .contact-layout {
-    gap: 44px;
+    gap: clamp(36px, 5vw, 52px);
   }
 
   .contact-form-side,
@@ -10740,21 +10740,41 @@ button {
   }
 
   .contact-art-side {
-    grid-template-columns: minmax(220px, 0.46fr) minmax(0, 1fr);
-    align-items: start;
+    grid-template-columns: minmax(260px, 0.48fr) minmax(0, 0.92fr);
+    align-items: stretch;
+    gap: clamp(20px, 3vw, 30px);
     justify-items: stretch;
     padding-top: 0;
   }
 
   .contact-redon-art {
     width: 100%;
-    max-width: 410px;
-    justify-self: start;
+    height: 100%;
+    min-height: 420px;
+    max-width: none;
+    justify-self: stretch;
   }
 
   .contact-note-card {
     width: 100%;
+    align-content: start;
     justify-self: stretch;
+    padding: 22px 30px;
+  }
+
+  .contact-note-card header {
+    gap: 7px;
+    padding: 4px 0 14px;
+  }
+
+  .contact-note-card div {
+    grid-template-columns: 12px minmax(0, 1fr);
+    gap: 22px;
+    padding: 17px 0;
+  }
+
+  .contact-note-card span {
+    line-height: 1.44;
   }
 
   .systems-strip {
@@ -11697,12 +11717,25 @@ button {
   }
 
   .contact-redon-art {
+    height: auto;
+    min-height: 0;
     width: min(410px, 100%);
     justify-self: start;
   }
 
   .contact-note-card {
     width: 100%;
+    padding: 22px 28px;
+  }
+
+  .contact-note-card div {
+    grid-template-columns: 12px minmax(0, 1fr);
+    align-items: start;
+    gap: 18px;
+  }
+
+  .contact-note-card i {
+    margin-top: 0.42em;
   }
 
   .contact-actions {
