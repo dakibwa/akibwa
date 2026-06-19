@@ -146,8 +146,8 @@ button {
   height: 6px;
   border-radius: 3px;
   background-image: url("/brand-art/akibwa-hover.png");
-  background-size: cover;
-  background-position: center;
+  background-size: 116% auto;
+  background-position: 50% 50%;
   opacity: 0.96;
   filter: saturate(1.04) contrast(1.03);
   pointer-events: none;
@@ -156,7 +156,8 @@ button {
   transition:
     opacity var(--hover-out) var(--ease-out),
     transform var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
+    filter var(--hover-out) var(--ease-out),
+    background-position var(--hover-out) var(--ease-out);
 }
 
 .brand:hover,
@@ -169,9 +170,10 @@ button {
 
 .brand:hover::after,
 .brand:focus-visible::after {
-  opacity: 0.96;
+  opacity: 0.98;
   transform: translateY(0);
-  filter: saturate(1.04) contrast(1.03);
+  filter: saturate(1.12) contrast(1.05);
+  animation: brand-strip-glint 820ms var(--ease-out) both;
   transition-duration: var(--hover-in);
 }
 
@@ -180,23 +182,23 @@ button {
 }
 
 .brand[data-entry="bottom"]:hover::after {
-  animation: none;
+  animation: brand-strip-glint 820ms var(--ease-out) both;
 }
 
-@keyframes brand-overline-arrive {
+@keyframes brand-strip-glint {
   0% {
-    opacity: 0;
-    transform: translateY(-6px);
+    background-position: 50% 50%;
+    filter: saturate(1.04) contrast(1.03);
   }
 
-  54% {
-    opacity: 1;
-    transform: translateY(1px);
+  45% {
+    background-position: 58% 46%;
+    filter: saturate(1.2) contrast(1.08);
   }
 
   100% {
-    opacity: 0.96;
-    transform: translateY(0);
+    background-position: 52% 50%;
+    filter: saturate(1.12) contrast(1.05);
   }
 }
 
