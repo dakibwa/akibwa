@@ -148,10 +148,10 @@ button {
   background-image: url("/brand-art/akibwa-hover.png");
   background-size: cover;
   background-position: center;
-  opacity: 0;
-  filter: saturate(0.92) contrast(0.98);
+  opacity: 0.96;
+  filter: saturate(1.04) contrast(1.03);
   pointer-events: none;
-  transform: translateY(-3px);
+  transform: translateY(0);
   transform-origin: var(--brand-x) center;
   transition:
     opacity var(--hover-out) var(--ease-out),
@@ -180,7 +180,7 @@ button {
 }
 
 .brand[data-entry="bottom"]:hover::after {
-  animation: brand-overline-arrive 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: none;
 }
 
 @keyframes brand-overline-arrive {
