@@ -142,17 +142,20 @@ button {
   right: 0;
   top: 13px;
   left: 0;
-  height: 3px;
-  border-radius: 999px;
-  background:
-    linear-gradient(90deg, rgba(3, 4, 5, 0.74), rgba(3, 4, 5, 0.34));
+  height: 6px;
+  border-radius: 3px;
+  background-image: url("/brand-art/akibwa-hover.png");
+  background-size: cover;
+  background-position: center;
   opacity: 0;
+  filter: saturate(0.92) contrast(0.98);
   pointer-events: none;
-  transform: translateY(-3px) scaleX(0.54);
+  transform: translateY(-3px);
   transform-origin: var(--brand-x) center;
   transition:
     opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
+    transform var(--hover-out) var(--ease-out),
+    filter var(--hover-out) var(--ease-out);
 }
 
 .brand:hover,
@@ -165,8 +168,9 @@ button {
 
 .brand:hover::after,
 .brand:focus-visible::after {
-  opacity: 0.58;
-  transform: translateY(0) scaleX(1);
+  opacity: 0.96;
+  transform: translateY(0);
+  filter: saturate(1.04) contrast(1.03);
   transition-duration: var(--hover-in);
 }
 
@@ -181,17 +185,17 @@ button {
 @keyframes brand-overline-arrive {
   0% {
     opacity: 0;
-    transform: translateY(-6px) scaleX(0.18);
+    transform: translateY(-6px);
   }
 
   54% {
-    opacity: 0.64;
-    transform: translateY(1px) scaleX(1);
+    opacity: 1;
+    transform: translateY(1px);
   }
 
   100% {
-    opacity: 0.58;
-    transform: translateY(0) scaleX(1);
+    opacity: 0.96;
+    transform: translateY(0);
   }
 }
 
@@ -11855,7 +11859,7 @@ button {
   .brand:hover::after,
   .brand:focus-visible::after {
     animation: none;
-    opacity: 0.58;
+    opacity: 0.96;
     transform: none;
   }
 }
