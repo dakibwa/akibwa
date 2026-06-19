@@ -10728,6 +10728,35 @@ button {
     max-width: 240px;
   }
 
+  .contact-layout {
+    gap: 44px;
+  }
+
+  .contact-form-side,
+  .contact-form,
+  .contact-art-side {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .contact-art-side {
+    grid-template-columns: minmax(220px, 0.46fr) minmax(0, 1fr);
+    align-items: start;
+    justify-items: stretch;
+    padding-top: 0;
+  }
+
+  .contact-redon-art {
+    width: 100%;
+    max-width: 410px;
+    justify-self: start;
+  }
+
+  .contact-note-card {
+    width: 100%;
+    justify-self: stretch;
+  }
+
   .systems-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
@@ -11662,6 +11691,8 @@ button {
   }
 
   .contact-art-side {
+    grid-template-columns: 1fr;
+    justify-items: start;
     padding-top: 0;
   }
 
