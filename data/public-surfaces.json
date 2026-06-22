@@ -18,22 +18,6 @@
       }
     },
     {
-      "id": "vitals",
-      "title": "Vitals",
-      "route": "/health",
-      "kind": "interactive-preview-with-refresh",
-      "visibility": "public-aggregate",
-      "appUrlEnv": "NEXT_PUBLIC_VITALS_APP_URL",
-      "defaultAppUrl": "",
-      "fallbackData": "data/public-health-data.json",
-      "refresh": {
-        "worker": "akibwa-vitals-refresh",
-        "schedule": "30 7 * * *",
-        "dataUrl": "https://akibwa-vitals-refresh.dakibwa.workers.dev/vitals",
-        "statusUrl": "https://akibwa-vitals-refresh.dakibwa.workers.dev/status"
-      }
-    },
-    {
       "id": "cover-collision",
       "title": "Cover Collision",
       "route": "/personal#cover-collision",

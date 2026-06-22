@@ -6,11 +6,6 @@ const artworkBySlug = {
     bannerSrc: "/project-art/personal/chorus-trio-banner.webp",
     variant: "music"
   },
-  vitals: {
-    src: "/project-art/personal/albion-rose-card.webp",
-    bannerSrc: "/project-art/personal/albion-sunburst-banner.webp",
-    variant: "health"
-  },
   "cover-collision": {
     src: "/project-art/personal/cover-collision-saint.webp",
     bannerSrc: "/project-art/personal/cover-collision-saint-banner.webp",
