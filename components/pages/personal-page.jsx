@@ -6,7 +6,6 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   CalendarCheck,
-  ChartNoAxesCombined,
   Database,
   Disc3,
   FileLock2,
@@ -23,7 +22,6 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
-  Wallet,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -81,7 +79,6 @@ const sourceLogoByName = {
   "google drive": "drive",
   drive: "drive",
   calendar: "calendar",
-  finance: "finance",
   health: "health",
   github: "projects",
   "media and taste": "projects"
@@ -92,7 +89,6 @@ const routeMetaByName = {
   evidence_check: { label: "Evidence check", Icon: SearchCheck, tone: "teal" },
   project_or_work: { label: "Project obligations", Icon: BriefcaseBusiness, tone: "orange" },
   health: { label: "Health context", Icon: HeartPulse, tone: "rose" },
-  finance: { label: "Finance synthesis", Icon: Wallet, tone: "green" },
   source_mining: { label: "Source mining", Icon: Pickaxe, tone: "slate" }
 };
 
@@ -101,7 +97,6 @@ const preferredRouteOrder = [
   "evidence_check",
   "project_or_work",
   "health",
-  "finance",
   "source_mining"
 ];
 
@@ -109,7 +104,6 @@ const fallbackKnowledgeSources = [
   { name: "Gmail", detail: "Body-level backfill next", logo: "gmail" },
   { name: "Drive", detail: "Content map ready", logo: "drive" },
   { name: "Calendar", detail: "History pass queued", logo: "calendar" },
-  { name: "Finance", detail: "Monthly aggregate only", logo: "finance" },
   { name: "Health", detail: "Local-only evidence", logo: "health" },
   { name: "Projects", detail: "Active obligations", logo: "projects" }
 ];
@@ -119,7 +113,6 @@ const fallbackKnowledgeRoutes = [
   { label: "Evidence check", detail: "Source pointers before claims", Icon: SearchCheck, tone: "teal" },
   { label: "Project obligations", detail: "GitHub, Drive, and inbox", Icon: BriefcaseBusiness, tone: "orange" },
   { label: "Health context", detail: "Logs for clinician prep", Icon: HeartPulse, tone: "rose" },
-  { label: "Finance synthesis", detail: "Monthly totals only", Icon: Wallet, tone: "green" },
   { label: "Source mining", detail: "Backfill by priority", Icon: Pickaxe, tone: "slate" }
 ];
 
@@ -127,7 +120,6 @@ const fallbackKnowledgeGuardrails = [
   { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" },
   { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" },
   { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" },
-  { label: "Finance is aggregate", detail: "No transaction rows", Icon: ChartNoAxesCombined, tone: "green" },
   { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" },
   { label: "Secrets stay out", detail: "No tokens or identifiers", Icon: LockKeyhole, tone: "slate" }
 ];
@@ -349,16 +341,6 @@ function SourceLogo({ type }) {
         <path d="M5 11h22V10a5 5 0 0 0-5-5H10a5 5 0 0 0-5 5z" fill="#4285f4" />
         <path d="M9 14h14" stroke="#e8eaed" strokeWidth="1.5" />
         <text x="16" y="23" textAnchor="middle" fontSize="9" fontWeight="700" fill="#3c4043">31</text>
-      </svg>
-    );
-  }
-
-  if (type === "finance") {
-    return (
-      <svg className="knowledge-source-logo is-finance" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="5" y="7" width="22" height="18" rx="5" fill="#132026" />
-        <path d="M9 12h14" stroke="#8fd6c0" strokeWidth="2" strokeLinecap="round" />
-        <path d="M10 18h4m4 0h4" stroke="#ff8b4a" strokeWidth="2" strokeLinecap="round" />
       </svg>
     );
   }
