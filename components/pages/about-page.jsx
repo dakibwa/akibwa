@@ -221,8 +221,11 @@ export function AboutPage() {
         </div>
 
         <div className="about-profile-side">
-          <figure className="about-portrait">
-            <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
+          <figure className="about-portrait about-portrait--artwork">
+            <img
+              src="/area-art/about-reflection.jpg"
+              alt="Black-and-white artwork of a serene mask reflected in rippled water"
+            />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
           </figure>

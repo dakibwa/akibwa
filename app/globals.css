@@ -1086,6 +1086,15 @@ button {
   transform: scale(1.01);
 }
 
+.about-portrait--artwork {
+  background: #070708;
+}
+
+.about-portrait--artwork img {
+  object-position: 50% 34%;
+  filter: grayscale(1) contrast(1.08) brightness(0.94);
+}
+
 .about-portrait::before {
   position: absolute;
   inset: 0;
@@ -1103,6 +1112,13 @@ button {
   content: "";
   mix-blend-mode: screen;
   pointer-events: none;
+}
+
+.about-portrait--artwork::before {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.18)),
+    radial-gradient(circle at 70% 18%, rgba(255, 255, 255, 0.16), transparent 30%);
+  mix-blend-mode: screen;
 }
 
 .about-portrait::after {
@@ -1139,6 +1155,11 @@ button {
   background: #2f88ff;
   box-shadow: 0 0 0 8px rgba(47, 136, 255, 0.12);
   pointer-events: none;
+}
+
+.about-portrait--artwork .about-portrait-orbit,
+.about-portrait--artwork .about-portrait-point {
+  display: none;
 }
 
 .about-section {
@@ -10733,6 +10754,16 @@ button {
     object-position: center 44%;
   }
 
+  .about-portrait--artwork {
+    aspect-ratio: 9 / 14;
+    max-width: min(100%, 420px);
+    max-height: none;
+  }
+
+  .about-portrait--artwork img {
+    object-position: 50% 50%;
+  }
+
   .tool-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -11616,6 +11647,15 @@ button {
   .about-portrait {
     aspect-ratio: 4 / 3;
     max-height: 390px;
+  }
+
+  .about-portrait--artwork {
+    aspect-ratio: 9 / 14;
+    max-height: none;
+  }
+
+  .about-portrait--artwork img {
+    object-position: 50% 50%;
   }
 
   .company-card {

@@ -46,9 +46,9 @@ export const areaTiles = [
     title: "About",
     descriptor: "How I think and build",
     href: "/about",
-    image: "/area-art/about-summer.webp",
-    imagePosition: "50% 78%",
-    alt: "Hans Thoma's Summer (1872): a couple resting in a flowering meadow beside a stream",
+    image: "/area-art/about-reflection.jpg",
+    imagePosition: "50% 32%",
+    alt: "Black-and-white artwork of a serene mask reflected in rippled water",
     accent: "#2c8068",
     detail: "Background, working principles, and the current toolkit"
   },
