@@ -47,7 +47,7 @@ export const areaTiles = [
     descriptor: "How I think and build",
     href: "/about",
     image: "/area-art/about-reflection.jpg",
-    imagePosition: "50% 32%",
+    imagePosition: "50% 10%",
     alt: "Black-and-white artwork of a serene mask reflected in rippled water",
     accent: "#2c8068",
     detail: "Background, working principles, and the current toolkit"
