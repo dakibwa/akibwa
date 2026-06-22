@@ -7,8 +7,6 @@ import {
   BriefcaseBusiness,
   CalendarCheck,
   ChartNoAxesCombined,
-  ChevronLeft,
-  ChevronRight,
   Database,
   Disc3,
   FileLock2,
@@ -38,17 +36,11 @@ import {
 } from "@/components/knowledge-system-visual";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
-  getVitalsSnapshotDate,
-  VitalsDashboardPreview,
-  vitalsSnapshotLabel
-} from "@/components/vitals-dashboard-preview";
-import {
   akibwapediaData,
   chorusAppUrl,
   coverCollisionDataUrl,
   coverCollisionPosts,
-  personalProjects,
-  vitalsAppUrl
+  personalProjects
 } from "@/components/site-data";
 import fallbackChorusData from "@/data/chorus-data.json";
 
@@ -82,38 +74,6 @@ function useChorusScrobbleTotal(enabled) {
   }, [enabled]);
 
   return total;
-}
-
-const vitalsSummaryDataUrl = (
-  process.env.NEXT_PUBLIC_VITALS_DATA_URL || "https://akibwa-vitals-refresh.dakibwa.workers.dev/vitals"
-).trim();
-
-function useVitalsToolbarData(enabled) {
-  const [summary, setSummary] = useState({ readiness: null, snapshotDate: null });
-
-  useEffect(() => {
-    if (!enabled || !vitalsSummaryDataUrl) return undefined;
-
-    let cancelled = false;
-    const apply = (data) => {
-      if (cancelled || !data) return;
-
-      const numeric = Number(data?.latest?.recovery_score?.value);
-      setSummary({
-        readiness: Number.isFinite(numeric) && numeric > 0 ? Math.round(numeric) : null,
-        snapshotDate: getVitalsSnapshotDate(data)
-      });
-    };
-
-    apply(readSessionJson(vitalsSummaryDataUrl));
-    fetchSessionJson(vitalsSummaryDataUrl).then(apply).catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled]);
-
-  return summary;
 }
 
 const sourceLogoByName = {
@@ -433,7 +393,6 @@ function getProjectFrameUrl(project, isLocalHost) {
   if (isLocalHost && project.localUrl) return project.localUrl;
   if (project.embedUrl) return project.embedUrl;
   if (project.visual === "chorus") return chorusAppUrl;
-  if (project.visual === "vitals") return vitalsAppUrl;
   return "";
 }
 
@@ -495,29 +454,17 @@ function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
   );
 }
 
-function DashboardShowcase({ project, immersive = false, vitalsView }) {
-  const isVitals = project.visual === "vitals";
-  const isChorus = project.visual === "chorus";
-
+function DashboardShowcase({ project, immersive = false }) {
   return (
     <section
-      className={`${immersive ? "" : "page-grid"} personal-full-app-showcase ${
-        isVitals ? "is-vitals" : "is-chorus"
-      } ${immersive ? "is-expanded" : ""}`}
+      className={`${immersive ? "" : "page-grid"} personal-full-app-showcase is-chorus ${
+        immersive ? "is-expanded" : ""
+      }`}
       id={`${project.slug}-preview`}
       aria-label={`${project.title} app preview`}
       aria-live="polite"
     >
-      {isChorus ? (
-        <ChorusDashboardPreview />
-      ) : (
-        <VitalsDashboardPreview
-          range={vitalsView?.range}
-          snapshotIndex={vitalsView?.snapshotIndex}
-          onRangeChange={vitalsView?.onRangeChange}
-          onSnapshotIndexChange={vitalsView?.onSnapshotIndexChange}
-        />
-      )}
+      <ChorusDashboardPreview />
     </section>
   );
 }
@@ -870,13 +817,13 @@ function StaticProjectSurface({ project }) {
   );
 }
 
-function ProjectExpandedContent({ project, frameUrl, frameNonce = 0, vitalsView }) {
-  if ((project.visual === "chorus" || project.visual === "vitals") && frameUrl) {
+function ProjectExpandedContent({ project, frameUrl, frameNonce = 0 }) {
+  if (project.visual === "chorus" && frameUrl) {
     return <LiveProjectFrame project={project} frameUrl={frameUrl} frameNonce={frameNonce} />;
   }
 
-  if (project.visual === "chorus" || project.visual === "vitals") {
-    return <DashboardShowcase project={project} immersive vitalsView={vitalsView} />;
+  if (project.visual === "chorus") {
+    return <DashboardShowcase project={project} immersive />;
   }
 
   if (project.visual === "cover-collision") {
@@ -943,15 +890,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
   const [contentReady, setContentReady] = useState(false);
   const [frameNonce, setFrameNonce] = useState(0);
   const isChorusSurface = project.visual === "chorus";
-  const isVitalsSurface = project.visual === "vitals";
   const scrobbleTotal = useChorusScrobbleTotal(isChorusSurface);
-  const { readiness: vitalsReadiness, snapshotDate: vitalsSnapshotDate } = useVitalsToolbarData(isVitalsSurface);
-  const [vitalsRange, setVitalsRange] = useState("7d");
-  const [vitalsSnapshotIndex, setVitalsSnapshotIndex] = useState(0);
-
-  const moveVitalsSnapshot = (direction) => {
-    setVitalsSnapshotIndex((current) => Math.max(0, Math.min(3, current - direction)));
-  };
   const shellRef = useRef(null);
   const shellResizeAnimationRef = useRef(null);
   const shellResizeStartRef = useRef(null);
@@ -1098,39 +1037,8 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
               <small>total scrobbles</small>
             </span>
           ) : null}
-          {isVitalsSurface ? (
-            <div className="project-expanded-toolbar-cluster">
-              <div className="vitals-ai-date is-toolbar">
-                <button type="button" onClick={() => moveVitalsSnapshot(-1)} aria-label="Previous dashboard snapshot">
-                  <ChevronLeft size={15} />
-                </button>
-                <span>Snapshot {vitalsSnapshotLabel(vitalsSnapshotDate, vitalsRange, vitalsSnapshotIndex)}</span>
-                <button type="button" onClick={() => moveVitalsSnapshot(1)} aria-label="Next dashboard snapshot">
-                  <ChevronRight size={15} />
-                </button>
-              </div>
-              <div className="vitals-ai-ranges is-toolbar" aria-label="Dashboard range">
-                {["7d", "14d", "30d"].map((option) => (
-                  <button
-                    type="button"
-                    className={vitalsRange === option ? "active" : ""}
-                    onClick={() => setVitalsRange(option)}
-                    key={option}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-              {vitalsReadiness ? (
-                <span className="project-expanded-banner-stat">
-                  <strong>{vitalsReadiness}%</strong>
-                  <small>overall readiness</small>
-                </span>
-              ) : null}
-            </div>
-          ) : null}
           <div className="project-expanded-actions">
-            {frameUrl || project.visual === "chorus" || project.visual === "vitals" ? (
+            {frameUrl || project.visual === "chorus" ? (
               <button
                 type="button"
                 className="project-expanded-refresh"
@@ -1170,16 +1078,6 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
               project={project}
               frameUrl={frameUrl}
               frameNonce={frameNonce}
-              vitalsView={
-                isVitalsSurface
-                  ? {
-                      range: vitalsRange,
-                      snapshotIndex: vitalsSnapshotIndex,
-                      onRangeChange: setVitalsRange,
-                      onSnapshotIndexChange: setVitalsSnapshotIndex
-                    }
-                  : undefined
-              }
               key={frameNonce}
             />
           ) : (

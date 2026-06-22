@@ -9,7 +9,7 @@ import { areaTiles } from "@/components/site-data";
 const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.image]));
 
 const navItems = [
-  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/health", "/chorus"] },
+  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/chorus"] },
   { href: "/professional", label: "Professional", match: ["/professional", "/offer", "/systems", "/services"] },
   { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
@@ -32,7 +32,7 @@ export function SiteShell({ children }) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const brandRef = useRef(null);
-  const immersiveRoutes = ["/health", "/chorus"];
+  const immersiveRoutes = ["/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
 
   const primeRoute = (href) => {

@@ -12,11 +12,9 @@ export function getPublicSurface(id) {
 }
 
 const chorusSurface = getPublicSurface("chorus");
-const vitalsSurface = getPublicSurface("vitals");
 const coverCollisionSurface = getPublicSurface("cover-collision");
 
 export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || chorusSurface?.defaultAppUrl || "").trim();
-export const vitalsAppUrl = (process.env.NEXT_PUBLIC_VITALS_APP_URL || vitalsSurface?.defaultAppUrl || "").trim();
 export const coverCollisionDataUrl = (
   process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
   coverCollisionSurface?.refresh?.dataUrl ||
@@ -31,7 +29,7 @@ export const areaTiles = [
     image: "/area-art/personal-rochegrosse-flowers.webp",
     alt: "Georges Rochegrosse's The Knight of the Flowers: an armored figure surrounded by flower-crowned figures in a luminous meadow",
     accent: "#2f88ff",
-    detail: "Chorus, Vitals, Cover Collision, and more"
+    detail: "Chorus, Cover Collision, and more"
   },
   {
     title: "Professional",
@@ -110,22 +108,6 @@ export const personalProjects = [
   },
   {
     number: "02",
-    slug: "vitals",
-    title: "Vitals",
-    type: "Health Intelligence",
-    image: "/project-art/personal/albion-rose-card.webp",
-    alt: "William Blake's Albion Rose: a radiant figure with outstretched arms against red, gold, and blue light",
-    dashboardLabel: "Health Dashboard",
-    dashboardStatus: "Live on Akibwa",
-    visual: "vitals",
-    summary: "Surfaces aggregate health signals for clearer review conversations.",
-    tags: ["Health dashboard", "Source freshness", "Review prompts"],
-    mode: "preview",
-    fallbackHref: "/health",
-    cta: "Open on Akibwa"
-  },
-  {
-    number: "03",
     slug: "cover-collision",
     title: "Cover Collision",
     type: "Album Art Mergers",
@@ -139,7 +121,7 @@ export const personalProjects = [
     cta: "View posts"
   },
   {
-    number: "04",
+    number: "03",
     slug: "personal-knowledge-base",
     title: "Personal Knowledge Base",
     type: "Private AI memory system",
