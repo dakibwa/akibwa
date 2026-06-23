@@ -25,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
@@ -1029,7 +1030,9 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
     onToggleMaximized();
   }, [onToggleMaximized]);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className={`project-expanded-layer is-${project.visual ?? "static"} ${isVisible ? "is-open" : "is-closing"} ${
         isMaximized ? "is-maximized" : ""
@@ -1108,7 +1111,8 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
           )}
         </div>
       </article>
-    </div>
+    </div>,
+    document.body
   );
 }
 
