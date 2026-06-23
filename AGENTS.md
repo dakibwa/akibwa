@@ -13,8 +13,10 @@ This repository is the public `akibwa.com` website.
 
 ## Default Publish Flow
 
-- For completed public Akibwa site changes, default to shipping them: validate locally, commit the scoped change, push to `main`, wait for the GitHub Pages deploy, and verify the live `akibwa.com` surface.
+**Standing policy (Dan, 2026-06-23): completed changes go live immediately. Ship by default — do not ask for per-change approval, and do not park finished work behind an unmerged PR or leave it local-only.**
+
+- For completed public Akibwa site changes: validate locally (`npm run build`), commit the scoped change, get it onto `main` (push directly, or open a PR and merge it straight away once checks pass — don't wait for a separate "please publish"), then confirm the GitHub Pages deploy succeeded and verify the live `akibwa.com` surface.
 - Use `npm run build` for ordinary changes; use `npm run publish:ready` when publication metadata, public surface routing, cloud refresh checks, or generated public data are touched.
 - Do not leave finished changes local-only unless Dan explicitly asks for a preview, local-only work, or a paused WIP state.
 - If the checkout has unrelated local edits, use a clean worktree based on `origin/main` and stage only the intended files. Do not include, revert, or overwrite unrelated worktree changes.
-- Pause before pushing only when validation fails, the change could expose private or sensitive data, the intended behavior is ambiguous or high-impact, or credentials/secrets/public-data boundaries are involved.
+- Pause before pushing only when validation fails, the change could expose private or sensitive data, the intended behavior is ambiguous or high-impact, or credentials/secrets/public-data boundaries are involved. Outside those cases, ship without asking.
