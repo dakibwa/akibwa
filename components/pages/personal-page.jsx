@@ -90,7 +90,9 @@ function ProjectExpandedBanner({ project }) {
 const ACCENT_BY_SLUG = {
   chorus: "#2f88ff",
   "cover-collision": "#e2556b",
-  "canta-porto": "#1f6f6b"
+  "canta-porto": "#1f6f6b",
+  "one-bag": "#d98a2b",
+  meditator: "#c2557a"
 };
 
 function accentForSlug(slug) {
@@ -135,8 +137,9 @@ function PersonalDetailPanel({ project, onOpen }) {
           </div>
         </div>
       ) : (
-        <div className="personal-detail-art">
+        <div className="personal-detail-art is-in-development">
           <img src={artwork.src} alt="" decoding="async" draggable="false" />
+          <span className="personal-detail-devtag">In development</span>
         </div>
       )}
       <div className="personal-detail-foot">
@@ -151,6 +154,8 @@ function PersonalDetailPanel({ project, onOpen }) {
 }
 
 function PersonalSelectorBar({ project, isActive, onPreview, onOpen }) {
+  const artwork = getPersonalProjectArt(project);
+
   return (
     <button
       type="button"
@@ -161,6 +166,10 @@ function PersonalSelectorBar({ project, isActive, onPreview, onOpen }) {
       onFocus={onPreview}
       onClick={onOpen}
     >
+      <span className="personal-selector-banner" aria-hidden="true">
+        <img src={artwork.bannerSrc} alt="" draggable="false" loading="lazy" decoding="async" />
+      </span>
+      <span className="personal-selector-scrim" aria-hidden="true" />
       <span className="personal-selector-num">{project.number}</span>
       <span className="personal-selector-copy">
         <strong>{project.title}</strong>
