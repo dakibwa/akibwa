@@ -3,25 +3,13 @@
 import Image from "next/image";
 import {
   ArrowRight,
-  BadgeCheck,
-  BriefcaseBusiness,
-  CalendarCheck,
-  Database,
   Disc3,
-  FileLock2,
-  Flag,
-  HeartPulse,
   Instagram,
   LockKeyhole,
   Maximize2,
   Minimize2,
-  Pickaxe,
   RefreshCw,
-  Route,
-  SearchCheck,
-  ShieldCheck,
   Sparkles,
-  Stethoscope,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -29,13 +17,8 @@ import { createPortal } from "react-dom";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
-import {
-  AnimatedCount,
-  KnowledgeSystemPipeline
-} from "@/components/knowledge-system-visual";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
-  akibwapediaData,
   chorusAppUrl,
   coverCollisionDataUrl,
   coverCollisionPosts,
@@ -75,297 +58,8 @@ function useChorusScrobbleTotal(enabled) {
   return total;
 }
 
-const sourceLogoByName = {
-  gmail: "gmail",
-  "google drive": "drive",
-  drive: "drive",
-  calendar: "calendar",
-  health: "health",
-  github: "projects",
-  "media and taste": "projects"
-};
-
-const routeMetaByName = {
-  current_priorities: { label: "Today's priorities", Icon: CalendarCheck, tone: "blue" },
-  evidence_check: { label: "Evidence check", Icon: SearchCheck, tone: "teal" },
-  project_or_work: { label: "Project obligations", Icon: BriefcaseBusiness, tone: "orange" },
-  health: { label: "Health context", Icon: HeartPulse, tone: "rose" },
-  source_mining: { label: "Source mining", Icon: Pickaxe, tone: "slate" }
-};
-
-const preferredRouteOrder = [
-  "current_priorities",
-  "evidence_check",
-  "project_or_work",
-  "health",
-  "source_mining"
-];
-
-const fallbackKnowledgeSources = [
-  { name: "Gmail", detail: "Body-level backfill next", logo: "gmail" },
-  { name: "Drive", detail: "Content map ready", logo: "drive" },
-  { name: "Calendar", detail: "History pass queued", logo: "calendar" },
-  { name: "Health", detail: "Local-only evidence", logo: "health" },
-  { name: "Projects", detail: "Active obligations", logo: "projects" }
-];
-
-const fallbackKnowledgeRoutes = [
-  { label: "Today's priorities", detail: "Calendar and inbox first", Icon: CalendarCheck, tone: "blue" },
-  { label: "Evidence check", detail: "Source pointers before claims", Icon: SearchCheck, tone: "teal" },
-  { label: "Project obligations", detail: "GitHub, Drive, and inbox", Icon: BriefcaseBusiness, tone: "orange" },
-  { label: "Health context", detail: "Logs for clinician prep", Icon: HeartPulse, tone: "rose" },
-  { label: "Source mining", detail: "Backfill by priority", Icon: Pickaxe, tone: "slate" }
-];
-
-const fallbackKnowledgeGuardrails = [
-  { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" },
-  { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" },
-  { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" },
-  { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" },
-  { label: "Secrets stay out", detail: "No tokens or identifiers", Icon: LockKeyhole, tone: "slate" }
-];
-
-const generatedKnowledgeSources =
-  akibwapediaData.source_families?.slice(0, 6).map((source) => ({
-    name: source.name,
-    detail: source.status,
-    logo: sourceLogoByName[String(source.name || "").toLowerCase()] || "projects"
-  })) || [];
-
-const knowledgeSources = generatedKnowledgeSources.length ? generatedKnowledgeSources : fallbackKnowledgeSources;
-
-const routeByName = Object.fromEntries(
-  (akibwapediaData.retrieval_routes || []).map((route) => [route.name, route])
-);
-
-const generatedKnowledgeRoutes =
-  preferredRouteOrder
-    .map((name) => {
-      const route = routeByName[name];
-      const meta = routeMetaByName[name];
-      if (!route || !meta) return null;
-
-      return {
-        ...meta,
-        detail: route.description || `${route.reads} source layers`
-      };
-    })
-    .filter(Boolean);
-
-const knowledgeRoutes = generatedKnowledgeRoutes.length ? generatedKnowledgeRoutes : fallbackKnowledgeRoutes;
-
-const generatedKnowledgeGuardrails =
-  akibwapediaData.privacy_rules?.slice(0, 6).map((rule, index) => guardrailFromRule(rule, index)) || [];
-
-const knowledgeGuardrails = generatedKnowledgeGuardrails.length ? generatedKnowledgeGuardrails : fallbackKnowledgeGuardrails;
-
-const knowledgeMetricByLabel = Object.fromEntries(
-  (akibwapediaData.metrics || []).map((metric) => [metric.label, metric])
-);
-
-const fallbackPipelineLayers = [
-  { name: "Raw Evidence", status: "private", summary: "Original files, exports, and snapshots stay local and auditable." },
-  { name: "Normalized Records", status: "generated", summary: "Readable entries make messy documents and exports comparable." },
-  { name: "Event Ledger", status: "generated", summary: "Dated rows preserve what happened and where it came from." },
-  { name: "Reasoning Views", status: "generated", summary: "Daily, weekly, and entity views help Codex reason without rereading the archive." },
-  { name: "Structured Facts", status: "compact", summary: "Durable claims are promoted only when they help future action." },
-  { name: "Codex Operating Layer", status: "active", summary: "Agent briefs, task queues, and retrieval routes boot new sessions quickly." },
-  { name: "Akibwapedia", status: "public projection", summary: "The website shows only safe architecture, counts, routes, and boundaries." }
-];
-
-const pipelineMetricLabelByLayer = {
-  "Raw Evidence": "Source files",
-  "Normalized Records": "Normalized entries",
-  "Event Ledger": "Ledger events",
-  "Reasoning Views": "Daily views",
-  "Structured Facts": "Structured facts",
-  "Codex Operating Layer": "Agent tasks"
-};
-
-const pipelineCountNouns = {
-  "Source files": "source files",
-  "Normalized entries": "entries",
-  "Ledger events": "dated events",
-  "Daily views": "reasoning days",
-  "Structured facts": "durable facts",
-  "Agent tasks": "open tasks"
-};
-
-const statusAccentByKeyword = [
-  ["public", "#ff6f1a"],
-  ["private", "#53606a"],
-  ["active", "#218a4f"],
-  ["compact", "#ff6f1a"],
-  ["generated", "#2f88ff"]
-];
-
-function pipelineStatusAccent(status) {
-  const lower = String(status || "").toLowerCase();
-  const match = statusAccentByKeyword.find(([keyword]) => lower.includes(keyword));
-  return match ? match[1] : "#53606a";
-}
-
-const knowledgePipelineLayers = (
-  akibwapediaData.layers?.length ? akibwapediaData.layers : fallbackPipelineLayers
-).map((layer) => {
-  const metricLabel = pipelineMetricLabelByLayer[layer.name];
-  const metric = metricLabel ? knowledgeMetricByLabel[metricLabel] : null;
-
-  return {
-    name: layer.name,
-    status: layer.status,
-    summary: layer.summary,
-    isPublic: String(layer.status || "").toLowerCase().includes("public"),
-    accent: pipelineStatusAccent(layer.status),
-    count: metric?.value ?? null,
-    countLabel: metric ? pipelineCountNouns[metricLabel] || metricLabel.toLowerCase() : null
-  };
-});
-
-const knowledgeDistillation = (() => {
-  const from = knowledgeMetricByLabel["Source files"]?.value;
-  const to = knowledgeMetricByLabel["Structured facts"]?.value;
-  return from && to ? { from, to } : null;
-})();
-
-const knowledgeUpdatedLabel = (() => {
-  const parsed = akibwapediaData.updated ? new Date(akibwapediaData.updated) : null;
-  if (!parsed || Number.isNaN(parsed.getTime())) return null;
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(parsed);
-})();
-
-const iconToneStyles = {
-  blue: {
-    "--icon-accent": "#2f88ff",
-    "--icon-bg": "rgba(47, 136, 255, 0.09)",
-    "--icon-border": "rgba(47, 136, 255, 0.18)"
-  },
-  teal: {
-    "--icon-accent": "#2c8068",
-    "--icon-bg": "rgba(44, 128, 104, 0.1)",
-    "--icon-border": "rgba(44, 128, 104, 0.18)"
-  },
-  orange: {
-    "--icon-accent": "#ff6f1a",
-    "--icon-bg": "rgba(255, 111, 26, 0.1)",
-    "--icon-border": "rgba(255, 111, 26, 0.18)"
-  },
-  rose: {
-    "--icon-accent": "#e2556b",
-    "--icon-bg": "rgba(226, 85, 107, 0.1)",
-    "--icon-border": "rgba(226, 85, 107, 0.18)"
-  },
-  green: {
-    "--icon-accent": "#218a4f",
-    "--icon-bg": "rgba(33, 138, 79, 0.1)",
-    "--icon-border": "rgba(33, 138, 79, 0.18)"
-  },
-  slate: {
-    "--icon-accent": "#53606a",
-    "--icon-bg": "rgba(83, 96, 106, 0.1)",
-    "--icon-border": "rgba(83, 96, 106, 0.16)"
-  }
-};
-
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
-
-
-
-function getIconToneStyle(tone, index) {
-  return {
-    ...(iconToneStyles[tone] ?? iconToneStyles.slate),
-    "--row-delay": `${index * 65}ms`
-  };
-}
-
-function guardrailFromRule(rule, index) {
-  const text = String(rule || "");
-  const lower = text.toLowerCase();
-
-  if (lower.includes("raw") || lower.includes("identifiers") || lower.includes("secrets")) {
-    return { label: "Records stay local", detail: "Raw material never displayed", Icon: FileLock2, tone: "slate" };
-  }
-
-  if (lower.includes("health")) {
-    return { label: "Health is context", detail: "For clinician conversations", Icon: Stethoscope, tone: "rose" };
-  }
-
-  if (lower.includes("old assistant") || lower.includes("leads")) {
-    return { label: "Generated claims are leads", detail: "Verify before reuse", Icon: Flag, tone: "orange" };
-  }
-
-  if (lower.includes("public copy") || lower.includes("source layers")) {
-    return { label: "Claims cite sources", detail: "Pointers before summaries", Icon: BadgeCheck, tone: "blue" };
-  }
-
-  if (lower.includes("read-only")) {
-    return { label: "Sources are read-only", detail: "Write only by request", Icon: ShieldCheck, tone: "teal" };
-  }
-
-  return {
-    label: fallbackKnowledgeGuardrails[index]?.label || "Privacy boundary",
-    detail: fallbackKnowledgeGuardrails[index]?.detail || text,
-    Icon: fallbackKnowledgeGuardrails[index]?.Icon || LockKeyhole,
-    tone: fallbackKnowledgeGuardrails[index]?.tone || "slate"
-  };
-}
-
-function SourceLogo({ type }) {
-  if (type === "gmail") {
-    return (
-      <svg className="knowledge-source-logo is-gmail" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="4" y="7" width="24" height="18" rx="4" fill="#fff" />
-        <path d="M7.5 11.2v11.1" stroke="#4285f4" strokeWidth="3" strokeLinecap="round" />
-        <path d="M24.5 11.2v11.1" stroke="#34a853" strokeWidth="3" strokeLinecap="round" />
-        <path d="M8 10.7 16 16.9l8-6.2" fill="none" stroke="#ea4335" strokeWidth="3.1" strokeLinejoin="round" />
-        <path d="M6.4 12.8 16 20.1l9.6-7.3" fill="none" stroke="#fbbc04" strokeWidth="1.8" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-
-  if (type === "drive") {
-    return (
-      <svg className="knowledge-source-logo is-drive" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M12.2 5.5h7.6l8.2 14.2h-7.7z" fill="#0f9d58" />
-        <path d="M12.2 5.5 4 19.7l3.9 6.8 8.2-14.2z" fill="#f4b400" />
-        <path d="M7.9 26.5h16.2l3.9-6.8H11.8z" fill="#4285f4" />
-        <path d="M12.2 5.5 16.1 12.3 11.8 19.7H4z" fill="#ffd45c" opacity="0.65" />
-      </svg>
-    );
-  }
-
-  if (type === "calendar") {
-    return (
-      <svg className="knowledge-source-logo is-calendar" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="5" y="5" width="22" height="22" rx="5" fill="#fff" />
-        <path d="M5 11h22V10a5 5 0 0 0-5-5H10a5 5 0 0 0-5 5z" fill="#4285f4" />
-        <path d="M9 14h14" stroke="#e8eaed" strokeWidth="1.5" />
-        <text x="16" y="23" textAnchor="middle" fontSize="9" fontWeight="700" fill="#3c4043">31</text>
-      </svg>
-    );
-  }
-
-  if (type === "health") {
-    return (
-      <svg className="knowledge-source-logo is-health" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="5" y="5" width="22" height="22" rx="6" fill="#fff" />
-        <path
-          d="M16 24.2s-7-4.5-7-9.6c0-2.7 1.8-4.6 4.2-4.6 1.4 0 2.4.7 2.8 1.6.4-.9 1.4-1.6 2.8-1.6 2.4 0 4.2 1.9 4.2 4.6 0 5.1-7 9.6-7 9.6z"
-          fill="#e2556b"
-        />
-      </svg>
-    );
-  }
-
-  return (
-    <svg className="knowledge-source-logo is-projects" viewBox="0 0 32 32" aria-hidden="true">
-      <rect x="5" y="7" width="22" height="18" rx="5" fill="#fff" />
-      <path d="M10 13h4l2 2h6" fill="none" stroke="#2f88ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M10 19h12" stroke="#59616b" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function canUseLocalFrame() {
   if (typeof window === "undefined") return false;
@@ -396,8 +90,7 @@ function ProjectExpandedBanner({ project }) {
 const ACCENT_BY_SLUG = {
   chorus: "#2f88ff",
   "cover-collision": "#e2556b",
-  "canta-porto": "#1f6f6b",
-  "personal-knowledge-base": "#d08f2c"
+  "canta-porto": "#1f6f6b"
 };
 
 function accentForSlug(slug) {
@@ -443,7 +136,7 @@ function PersonalDetailPanel({ project, onOpen }) {
         </div>
       ) : (
         <div className="personal-detail-art">
-          <img src={artwork.bannerSrc || artwork.src} alt="" decoding="async" draggable="false" />
+          <img src={artwork.src} alt="" decoding="async" draggable="false" />
         </div>
       )}
       <div className="personal-detail-foot">
@@ -708,102 +401,6 @@ function CoverCollisionShowcase({ project, immersive = false }) {
   );
 }
 
-function KnowledgeBaseShowcase({ project }) {
-  return (
-    <section className="knowledge-system-showcase" id={`${project.slug}-preview`} aria-live="polite">
-      <div className="knowledge-system-hero">
-        <div className="knowledge-system-copy">
-          <span>{project.number} · {project.type}</span>
-          <h2>{project.title}</h2>
-          <p>
-            A local, source-backed context system that helps Codex use personal records without exposing the records
-            themselves.
-          </p>
-          {knowledgeDistillation && (
-            <p className="knowledge-system-lede">
-              <strong>
-                <AnimatedCount value={knowledgeDistillation.from} />
-              </strong>{" "}
-              source files on the desktop, distilled into{" "}
-              <strong>
-                <AnimatedCount value={knowledgeDistillation.to} />
-              </strong>{" "}
-              durable facts. This page only ever sees the projection.
-            </p>
-          )}
-          <div className="knowledge-system-status" aria-label={`${project.title} principles`}>
-            {project.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
-          </div>
-        </div>
-
-        <KnowledgeSystemPipeline layers={knowledgePipelineLayers} updatedLabel={knowledgeUpdatedLabel} />
-      </div>
-
-      <div className="knowledge-system-console" aria-label="Private knowledge system preview">
-        <section className="knowledge-console-panel is-source-map">
-          <header>
-            <Database size={18} strokeWidth={1.7} />
-            <h3>Source map</h3>
-          </header>
-          <div className="knowledge-source-list">
-            {knowledgeSources.map(({ name, detail, logo }, index) => (
-              <div key={name} className="knowledge-source-row" style={{ "--row-delay": `${index * 65}ms` }}>
-                <SourceLogo type={logo} />
-                <span className="knowledge-row-copy">
-                  <strong className="knowledge-row-title">{name}</strong>
-                  <span className="knowledge-row-meta">{detail}</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="knowledge-console-panel is-routes">
-          <header>
-            <Route size={18} strokeWidth={1.7} />
-            <h3>Codex retrieval routes</h3>
-          </header>
-          <ol>
-            {knowledgeRoutes.map(({ label, detail, Icon, tone }, index) => (
-              <li key={label} className="knowledge-route-row" style={getIconToneStyle(tone, index)}>
-                <span className="knowledge-row-icon is-route" aria-hidden="true">
-                  <Icon size={15} strokeWidth={1.8} />
-                </span>
-                <span className="knowledge-row-copy">
-                  <strong className="knowledge-row-title">{label}</strong>
-                  <span className="knowledge-row-meta">{detail}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="knowledge-console-panel is-guardrails">
-          <header>
-            <ShieldCheck size={18} strokeWidth={1.7} />
-            <h3>Guardrails</h3>
-          </header>
-          <ul>
-            {knowledgeGuardrails.map(({ label, detail, Icon, tone }, index) => (
-              <li key={label} className="knowledge-rule-row" style={getIconToneStyle(tone, index)}>
-                <span className="knowledge-row-icon is-rule" aria-hidden="true">
-                  <Icon size={15} strokeWidth={1.8} />
-                </span>
-                <span className="knowledge-row-copy">
-                  <strong className="knowledge-row-title">{label}</strong>
-                  <span className="knowledge-row-meta">{detail}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-    </section>
-  );
-}
-
 function StaticProjectSurface({ project }) {
   const href = project.externalHref ?? project.fallbackHref;
 
@@ -852,10 +449,6 @@ function ProjectExpandedContent({ project, frameUrl, frameNonce = 0 }) {
 
   if (project.visual === "cover-collision") {
     return <CoverCollisionShowcase project={project} immersive />;
-  }
-
-  if (project.slug === "personal-knowledge-base") {
-    return <KnowledgeBaseShowcase project={project} />;
   }
 
   if (project.mode !== "embed") {

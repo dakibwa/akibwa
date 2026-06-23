@@ -1,5 +1,6 @@
 :root {
   --white: #ffffff;
+  --canvas: #faf8f3;
   --paper: #f6f8fb;
   --black: #030405;
   --ink: #101217;
@@ -37,7 +38,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--white);
+  background: var(--canvas);
   color: var(--ink);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -109,7 +110,7 @@ button {
   top: 0;
   z-index: 30;
   border-bottom: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.985);
+  background: rgba(250, 248, 243, 0.985);
 }
 
 .nav-row {
@@ -1146,7 +1147,6 @@ button {
   gap: 12px;
   padding: 12px 14px;
   border: 1px solid rgba(16, 18, 23, 0.09);
-  border-left: 3px solid transparent;
   border-radius: 11px;
   background: #fff;
   color: inherit;
@@ -1164,9 +1164,10 @@ button {
 .personal-selector-bar:hover,
 .personal-selector-bar:focus-visible {
   border-color: color-mix(in srgb, var(--area-accent) 28%, rgba(16, 18, 23, 0.12));
-  border-left-color: var(--area-accent);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--area-accent) 9%, rgba(16, 18, 23, 0.07));
+  box-shadow:
+    inset 3px 0 0 0 var(--area-accent),
+    0 6px 16px color-mix(in srgb, var(--area-accent) 9%, rgba(16, 18, 23, 0.07));
 }
 
 .personal-selector-bar:active {
@@ -1176,9 +1177,11 @@ button {
 }
 
 .personal-selector-bar.is-active {
-  border-left-color: var(--area-accent);
+  border-color: color-mix(in srgb, var(--area-accent) 22%, rgba(16, 18, 23, 0.1));
   background: color-mix(in srgb, var(--area-accent) 7%, #fff);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--area-accent) 10%, rgba(16, 18, 23, 0.05));
+  box-shadow:
+    inset 3px 0 0 0 var(--area-accent),
+    0 6px 16px color-mix(in srgb, var(--area-accent) 10%, rgba(16, 18, 23, 0.05));
 }
 
 .personal-selector-num {

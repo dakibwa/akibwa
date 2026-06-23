@@ -31,16 +31,6 @@
         "dataUrl": "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision",
         "statusUrl": "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status"
       }
-    },
-    {
-      "id": "personal-knowledge-base",
-      "title": "Personal Knowledge Base",
-      "route": "/personal#personal-knowledge-base",
-      "kind": "public-projection",
-      "visibility": "public-safe",
-      "siteData": "data/akibwapedia-data.json",
-      "sourceRoot": "/Users/danatkinson/Documents/Codex/2026-04-30/what-can-you-be-working-on/personal-memory-wiki",
-      "publishCommand": "python3 scripts/publish_public_system.py"
     }
   ]
 }

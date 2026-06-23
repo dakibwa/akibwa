@@ -1,9 +1,7 @@
 import coverCollisionData from "@/data/cover-collision-data.json";
-import akibwapediaPacket from "@/data/akibwapedia-data.json";
 import publicSurfaceConfig from "@/data/public-surfaces.json";
 
 export const contactEmail = "***REMOVED***";
-export const akibwapediaData = akibwapediaPacket;
 
 export const publicSurfaces = publicSurfaceConfig.surfaces;
 
@@ -157,20 +155,6 @@ export const personalProjects = [
     tags: ["Two-person", "Synced timer", "Presence"],
     mode: "preview",
     cta: "In development"
-  },
-  {
-    number: "06",
-    slug: "personal-knowledge-base",
-    title: "Personal Knowledge Base",
-    type: "Private AI memory system",
-    image: "/project-art/personal/knowledge-apple-card.webp",
-    alt: "Painterly collage of a bitten red apple on a yellow field above green patterned foliage",
-    summary:
-      akibwapediaData.subtitle ||
-      "Helps Codex use local, source-backed context without exposing raw records.",
-    tags: ["Public-safe", "Source discipline", "Private system"],
-    mode: "preview",
-    cta: akibwapediaData.public_status || "Public-safe packet"
   }
 ];
 

@@ -25,16 +25,11 @@ const artworkBySlug = {
     src: "/project-art/personal/albion-rose-card.webp",
     bannerSrc: "/project-art/personal/albion-rose-banner.webp",
     variant: "knowledge"
-  },
-  "personal-knowledge-base": {
-    src: "/project-art/personal/knowledge-apple-card.webp",
-    bannerSrc: "/project-art/personal/knowledge-apple-banner.webp",
-    variant: "knowledge"
   }
 };
 
 export function getPersonalProjectArt(project) {
-  return artworkBySlug[project.slug] ?? artworkBySlug["personal-knowledge-base"];
+  return artworkBySlug[project.slug] ?? artworkBySlug.chorus;
 }
 
 export function PersonalProjectArt({ project, className = "", priority = false }) {
