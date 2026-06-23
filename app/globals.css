@@ -1091,8 +1091,8 @@ button {
 }
 
 .about-portrait--artwork img {
-  object-position: 50% 34%;
-  filter: grayscale(1) contrast(1.08) brightness(0.94);
+  object-position: 50% 36%;
+  filter: saturate(0.96) contrast(1.02) brightness(0.99);
 }
 
 .about-portrait::before {
@@ -10761,7 +10761,7 @@ button {
   }
 
   .about-portrait--artwork img {
-    object-position: 50% 50%;
+    object-position: 50% 42%;
   }
 
   .tool-grid {
@@ -11655,7 +11655,7 @@ button {
   }
 
   .about-portrait--artwork img {
-    object-position: 50% 50%;
+    object-position: 50% 42%;
   }
 
   .company-card {
