@@ -45,9 +45,9 @@ export const areaTiles = [
     title: "About",
     descriptor: "How I think and build",
     href: "/about",
-    image: "/area-art/about-knight-flowers.jpg",
+    image: "/area-art/about-meadow-flowers.jpg",
     imagePosition: "50% 42%",
-    alt: "Armored figure standing among flower-crowned figures in a luminous meadow",
+    alt: "Flower-crowned figures gathered in a luminous painted meadow",
     accent: "#2c8068",
     detail: "Background, working principles, and the current toolkit"
   },

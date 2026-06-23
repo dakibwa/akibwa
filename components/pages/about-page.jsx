@@ -223,8 +223,8 @@ export function AboutPage() {
         <div className="about-profile-side">
           <figure className="about-portrait about-portrait--artwork">
             <img
-              src="/area-art/about-knight-flowers.jpg"
-              alt="Armored figure standing among flower-crowned figures in a luminous meadow"
+              src="/area-art/about-meadow-flowers.jpg"
+              alt="Flower-crowned figures gathered in a luminous painted meadow"
             />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
