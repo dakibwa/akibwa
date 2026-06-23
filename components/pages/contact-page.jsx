@@ -125,12 +125,12 @@ export function ContactPage() {
         </div>
 
         <div className="contact-art-side">
-          <div className="contact-redon-art" aria-hidden="true">
+          <div className="contact-signal-art" aria-hidden="true">
             <img
-              src="/area-art/contact-redon-star.jpg"
+              src="/area-art/contact-signal.jpg"
               alt=""
-              width="500"
-              height="668"
+              width="1200"
+              height="675"
               loading="eager"
               decoding="async"
               draggable="false"

@@ -54,9 +54,8 @@ export const areaTiles = [
     title: "Contact",
     descriptor: "Send the messy bit",
     href: "/contact",
-    image: "/area-art/contact-redon-star.jpg",
-    imagePosition: "50% 44%",
-    alt: "Odilon Redon's And there fell a great star from heaven burning as it were a lamp: a red falling star bursting through a dark field",
+    image: "/area-art/contact-signal.jpg",
+    alt: "Abstract teal and amber shards converging into a bright signal burst",
     accent: "#e2556b",
     detail: "Email, X, or Instagram — bring the messy workflow"
   }
