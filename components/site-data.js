@@ -35,8 +35,8 @@ export const areaTiles = [
     title: "Professional",
     descriptor: "Systems for companies",
     href: "/professional",
-    image: "/area-art/personal-tiles.webp",
-    alt: "Ceramic tile mosaic of glazed blue, orange, and green tiles with raised flowers, leaves, and abstract shapes",
+    image: "/area-art/professional-structure.jpg",
+    alt: "Cream sculptural architectural openings crossed by fine copper lines against a pale grey background",
     accent: "#ff6f1a",
     detail: "Discovery, build, and handover for company systems"
   },

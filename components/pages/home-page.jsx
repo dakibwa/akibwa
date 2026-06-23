@@ -37,7 +37,7 @@ export function HomePage() {
                 src={tile.image}
                 alt={tile.alt}
                 fill
-                priority={index === 0}
+                priority={index < 2}
                 sizes="(max-width: 760px) 100vw, 48vw"
                 style={tile.imagePosition ? { objectPosition: tile.imagePosition } : undefined}
               />
