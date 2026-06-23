@@ -392,46 +392,87 @@ function ProjectExpandedBanner({ project }) {
   );
 }
 
-function PersonalProjectCard({ project, priority, isSelected, onSelect }) {
-  const artwork = getPersonalProjectArt(project);
-  const projectAccent =
-    {
-      chorus: "#2f88ff",
-      vitals: "#9b5036",
-      "cover-collision": "#e2556b",
-      "personal-knowledge-base": "#d08f2c"
-    }[project.slug] ?? "#2f88ff";
+const ACCENT_BY_SLUG = {
+  chorus: "#2f88ff",
+  "cover-collision": "#e2556b",
+  "canta-porto": "#1f6f6b",
+  "personal-knowledge-base": "#d08f2c"
+};
 
+function accentForSlug(slug) {
+  return ACCENT_BY_SLUG[slug] ?? "#2f88ff";
+}
+
+function PersonalDetailPanel({ project, onOpen }) {
+  const { posts: collisionPosts } = useCoverCollisionData();
+  if (!project) return null;
+
+  const artwork = getPersonalProjectArt(project);
+  const isCoverCollision = project.visual === "cover-collision";
+
+  return (
+    <article className="personal-detail-card" style={{ "--area-accent": accentForSlug(project.slug) }}>
+      {isCoverCollision ? (
+        <div className="personal-detail-collision" aria-label={`${project.title} album-art series`}>
+          {collisionPosts.slice(0, 8).map((post) => (
+            <a
+              className="cover-collision-post"
+              href={post.href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Open ${post.title} on Instagram`}
+              key={post.href}
+            >
+              <span className="cover-collision-post-image">
+                <CoverCollisionImage post={post} sizes="(max-width: 760px) 30vw, 190px" />
+              </span>
+            </a>
+          ))}
+        </div>
+      ) : project.shot ? (
+        <div className="personal-detail-shot">
+          <span className="personal-detail-chrome" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+          <div className="personal-detail-shot-frame">
+            <img src={project.shot} alt={`${project.title} interface`} decoding="async" draggable="false" />
+          </div>
+        </div>
+      ) : (
+        <div className="personal-detail-art">
+          <img src={artwork.bannerSrc || artwork.src} alt="" decoding="async" draggable="false" />
+        </div>
+      )}
+      <div className="personal-detail-foot">
+        {project.summary ? <p>{project.summary}</p> : null}
+        <button type="button" className="personal-detail-open" onClick={onOpen}>
+          {project.cta || "Open"}
+          <ArrowRight size={16} strokeWidth={1.8} />
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function PersonalSelectorBar({ project, isActive, onPreview, onOpen }) {
   return (
     <button
       type="button"
-      className={`area-card personal-area-card ${isSelected ? "is-selected" : ""}`}
-      aria-pressed={isSelected}
-      onClick={onSelect}
-      style={{ "--area-accent": projectAccent }}
+      className={`personal-selector-bar ${isActive ? "is-active" : ""}`}
+      aria-pressed={isActive}
+      style={{ "--area-accent": accentForSlug(project.slug) }}
+      onPointerEnter={onPreview}
+      onFocus={onPreview}
+      onClick={onOpen}
     >
-      <div className="area-art">
-        <img
-          src={artwork.src}
-          alt=""
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : undefined}
-          decoding="async"
-          draggable="false"
-        />
-      </div>
-      <div className="area-caption">
-        <div>
-          <h2>{project.title}</h2>
-          <p>{project.type}</p>
-          {project.summary ? (
-            <div className="area-caption__more" aria-hidden="true">
-              <p>{project.summary}</p>
-            </div>
-          ) : null}
-        </div>
-        <ArrowRight size={19} strokeWidth={1.8} />
-      </div>
+      <span className="personal-selector-num">{project.number}</span>
+      <span className="personal-selector-copy">
+        <strong>{project.title}</strong>
+        <em>{project.type}</em>
+      </span>
+      <ArrowRight size={15} strokeWidth={1.8} />
     </button>
   );
 }
@@ -1077,6 +1118,7 @@ export function PersonalPage({ initialSlug = null }) {
   const [isOverlayMaximized, setIsOverlayMaximized] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isLocalHost, setIsLocalHost] = useState(false);
+  const [previewSlug, setPreviewSlug] = useState(personalProjects[0]?.slug ?? null);
 
   useEffect(() => {
     setIsLocalHost(canUseLocalFrame());
@@ -1115,13 +1157,13 @@ export function PersonalPage({ initialSlug = null }) {
     window.history.replaceState(null, "", `/personal/${project.slug}/`);
   }, [initialSlug]);
 
-  const expandedProject = useMemo(
-    () => personalProjects.find((project) => project.slug === expandedSlug) ?? null,
-    [expandedSlug]
-  );
   const overlayProject = useMemo(
     () => personalProjects.find((project) => project.slug === overlaySlug) ?? null,
     [overlaySlug]
+  );
+  const previewProject = useMemo(
+    () => personalProjects.find((project) => project.slug === previewSlug) ?? personalProjects[0] ?? null,
+    [previewSlug]
   );
 
   useEffect(() => {
@@ -1188,19 +1230,31 @@ export function PersonalPage({ initialSlug = null }) {
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
         <h1>Personal</h1>
-        <p>Projects that interested me to build them.</p>
+        <p>Things I wanted to exist — so I built them.</p>
       </section>
 
-      <section className="page-grid area-grid personal-area-grid" aria-label="Personal projects">
-        {personalProjects.map((project, index) => (
-          <PersonalProjectCard
-            project={project}
-            priority={index < 2}
-            isSelected={project.slug === expandedProject?.slug}
-            onSelect={() => selectProject(project)}
-            key={project.slug}
+      <section className="page-grid personal-explorer" aria-label="Personal projects">
+        <div className="personal-detail" aria-live="polite">
+          <PersonalDetailPanel
+            project={previewProject}
+            onOpen={() => previewProject && selectProject(previewProject)}
           />
-        ))}
+        </div>
+        <ol className="personal-selector" aria-label="Choose a project">
+          {personalProjects.map((project) => (
+            <li key={project.slug}>
+              <PersonalSelectorBar
+                project={project}
+                isActive={project.slug === previewSlug}
+                onPreview={() => setPreviewSlug(project.slug)}
+                onOpen={() => {
+                  if (project.slug === previewSlug) selectProject(project);
+                  else setPreviewSlug(project.slug);
+                }}
+              />
+            </li>
+          ))}
+        </ol>
       </section>
 
       {overlayProject && (
