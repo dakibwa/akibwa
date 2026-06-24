@@ -128,23 +128,49 @@ export function AboutPage() {
               </div>
             ))}
           </dl>
+          <p className="about-lede">
+            Akibwa is that BI experience pointed at AI — small working systems that take a messy workflow and
+            make it run, without pretending the human context is simpler than it is.
+          </p>
+          <Link className="about-cta" href="/contact">
+            <span className="about-cta-label">Send the messy bit</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={17} strokeWidth={2} />
+            </span>
+          </Link>
         </div>
 
-        <div className="about-profile-side">
+        <aside className="about-hero-side">
           <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
             <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
           </figure>
-        </div>
+
+          <div className="about-cv">
+            <p className="about-cv-label">Where I've worked</p>
+            <ol className="work-timeline">
+              {workplaces.map((workplace) => (
+                <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
+                  <span className="work-year">{workplace.year}</span>
+                  <span className="work-node" aria-hidden="true" />
+                  <span className="work-detail">
+                    <span className="work-company">
+                      <span className="work-logo" aria-hidden="true">
+                        {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
+                      </span>
+                      <strong>{workplace.name}</strong>
+                    </span>
+                    <span className="work-role">{workplace.role}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </aside>
       </section>
 
-      <section className="page-grid about-intro" aria-label="What I do">
-        <p className="about-lede">
-          Akibwa is that BI experience pointed at AI — small working systems that take a messy workflow and
-          make it run, without pretending the human context is simpler than it is.
-        </p>
-
+      <section className="page-grid about-proof-band" aria-label="Track record">
         <div className="about-proof-cols">
           {proofPoints.map((point) => (
             <div key={point.lead}>
@@ -153,38 +179,6 @@ export function AboutPage() {
             </div>
           ))}
         </div>
-
-        <Link className="about-cta" href="/contact">
-          <span className="about-cta-label">Send the messy bit</span>
-          <span className="about-cta-icon" aria-hidden="true">
-            <ArrowRight size={17} strokeWidth={2} />
-          </span>
-        </Link>
-      </section>
-
-      <section className="page-grid about-section" aria-labelledby="workplaces-heading">
-        <header className="about-section-head">
-          <h2 id="workplaces-heading">Where the judgement comes from</h2>
-          <p>Finance, gaming, public-investment, and BI teams where usefulness had to survive the meeting.</p>
-        </header>
-
-        <ol className="work-timeline">
-          {workplaces.map((workplace) => (
-            <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
-              <span className="work-year">{workplace.year}</span>
-              <span className="work-node" aria-hidden="true" />
-              <span className="work-detail">
-                <span className="work-company">
-                  <span className="work-logo" aria-hidden="true">
-                    {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
-                  </span>
-                  <strong>{workplace.name}</strong>
-                </span>
-                <span className="work-role">{workplace.role}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
       </section>
 
       <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">

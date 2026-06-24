@@ -1343,10 +1343,10 @@ button {
 
 .about-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.44fr);
   column-gap: 56px;
   row-gap: 32px;
-  align-items: center;
+  align-items: start;
   padding-top: 56px;
 }
 
@@ -1422,27 +1422,30 @@ button {
   line-height: 1.55;
 }
 
-.about-intro {
-  margin-top: 66px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(16, 18, 23, 0.14);
+.about-lede {
+  max-width: 36ch;
+  margin: 26px 0 0;
+  color: var(--black);
+  font-size: 1.42rem;
+  font-weight: 520;
+  line-height: 1.32;
+  letter-spacing: -0.004em;
 }
 
-.about-lede {
-  max-width: 30ch;
-  margin: 0;
-  color: var(--black);
-  font-size: 1.52rem;
-  font-weight: 520;
-  line-height: 1.3;
-  letter-spacing: -0.006em;
+.about-hero .about-cta {
+  margin-top: 26px;
+}
+
+.about-proof-band {
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(16, 18, 23, 0.14);
 }
 
 .about-proof-cols {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 30px;
-  margin-top: 36px;
 }
 
 .about-proof-cols > div {
@@ -1453,7 +1456,7 @@ button {
 .about-proof-cols h3 {
   margin: 0;
   color: var(--black);
-  font-size: 1.0rem;
+  font-size: 1rem;
   font-weight: 580;
 }
 
@@ -1462,10 +1465,6 @@ button {
   color: #59616b;
   font-size: 0.93rem;
   line-height: 1.5;
-}
-
-.about-intro .about-cta {
-  margin-top: 36px;
 }
 
 .about-cta {
@@ -1528,13 +1527,6 @@ button {
 .about-cta:focus-visible .about-cta-icon {
   background: var(--orange);
   transform: translateX(3px) rotate(-45deg);
-}
-
-.about-profile-side {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  display: grid;
-  gap: 16px;
 }
 
 .about-portrait {
@@ -1638,20 +1630,54 @@ button {
   display: none;
 }
 
-.about-hero .about-profile-side {
-  grid-row: auto;
-  align-self: center;
+.about-hero-side {
+  display: grid;
+  gap: 26px;
+  align-self: stretch;
 }
 
 .about-portrait--hero {
   min-height: 0;
-  aspect-ratio: 4 / 5;
-  max-height: 470px;
+  aspect-ratio: 5 / 4;
+  max-height: 390px;
 }
 
 .about-portrait--hero img {
   min-height: 0;
-  object-position: center 36%;
+  object-position: center 34%;
+}
+
+.about-cv {
+  display: grid;
+  gap: 12px;
+}
+
+.about-cv-label {
+  margin: 0;
+  color: #9298a0;
+  font-size: 0.7rem;
+  font-weight: 640;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.about-cv .work-row {
+  gap: 18px;
+  padding: 11px 2px;
+}
+
+.about-cv .work-detail {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.about-cv .work-company strong {
+  white-space: normal;
+}
+
+.about-cv .work-role {
+  font-size: 0.84rem;
 }
 
 .about-section {
@@ -10749,8 +10775,8 @@ button {
     padding: 6px 6px 6px 20px;
   }
 
-  .about-intro .about-cta {
-    margin-top: 28px;
+  .about-hero .about-cta {
+    margin-top: 22px;
   }
 
   .about-cta-icon {
@@ -10758,12 +10784,11 @@ button {
     height: 38px;
   }
 
-  .about-profile-side {
+  .about-hero-side {
     grid-column: auto;
     grid-row: auto;
-    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    max-width: 680px;
+    max-width: 720px;
   }
 
   .about-portrait,
@@ -11639,7 +11664,7 @@ button {
     text-align: left;
   }
 
-  .about-profile-side {
+  .about-hero-side {
     grid-column: auto;
     grid-row: auto;
     grid-template-columns: 1fr;
