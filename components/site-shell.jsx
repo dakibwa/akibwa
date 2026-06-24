@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { areaTiles } from "@/components/site-data";
 
 const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.image]));
@@ -31,53 +31,11 @@ export function SiteShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const brandRef = useRef(null);
   const immersiveRoutes = ["/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
 
   const primeRoute = (href) => {
     router.prefetch(href);
-  };
-
-  const getBrandEntryDirection = (event, rect) => {
-    const sideDistances = [
-      ["top", Math.abs(event.clientY - rect.top)],
-      ["right", Math.abs(event.clientX - rect.right)],
-      ["bottom", Math.abs(event.clientY - rect.bottom)],
-      ["left", Math.abs(event.clientX - rect.left)]
-    ];
-
-    return sideDistances.reduce((closest, current) => (current[1] < closest[1] ? current : closest))[0];
-  };
-
-  const syncBrandPointer = (event, currentRect) => {
-    const brand = brandRef.current;
-    if (!brand) return;
-
-    const rect = currentRect || brand.getBoundingClientRect();
-    const x = Math.min(100, Math.max(0, ((event.clientX - rect.left) / rect.width) * 100));
-    const y = Math.min(100, Math.max(0, ((event.clientY - rect.top) / rect.height) * 100));
-
-    brand.style.setProperty("--brand-x", `${x.toFixed(2)}%`);
-    brand.style.setProperty("--brand-y", `${y.toFixed(2)}%`);
-  };
-
-  const startBrandPointer = (event) => {
-    const brand = brandRef.current;
-    if (!brand) return;
-
-    const rect = brand.getBoundingClientRect();
-    brand.dataset.entry = getBrandEntryDirection(event, rect);
-    syncBrandPointer(event, rect);
-  };
-
-  const resetBrandPointer = () => {
-    const brand = brandRef.current;
-    if (!brand) return;
-
-    delete brand.dataset.entry;
-    brand.style.setProperty("--brand-x", "50%");
-    brand.style.setProperty("--brand-y", "50%");
   };
 
   return (
@@ -86,28 +44,12 @@ export function SiteShell({ children }) {
         <header className="site-header">
           <div className="site-frame nav-row">
             <Link
-              ref={brandRef}
               href="/"
               prefetch
               className="brand"
               onClick={() => setIsMenuOpen(false)}
-              onPointerEnter={(event) => {
-                primeRoute("/");
-                startBrandPointer(event);
-              }}
-              onPointerMove={syncBrandPointer}
-              onPointerLeave={resetBrandPointer}
-              onMouseEnter={(event) => {
-                primeRoute("/");
-                startBrandPointer(event);
-              }}
-              onMouseMove={syncBrandPointer}
-              onMouseLeave={resetBrandPointer}
-              onFocus={() => {
-                primeRoute("/");
-                resetBrandPointer();
-              }}
-              onBlur={resetBrandPointer}
+              onPointerEnter={() => primeRoute("/")}
+              onFocus={() => primeRoute("/")}
             >
               AKIBWA
             </Link>

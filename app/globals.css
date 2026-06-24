@@ -122,8 +122,6 @@ button {
 }
 
 .brand {
-  --brand-x: 50%;
-  --brand-y: 50%;
   position: relative;
   isolation: isolate;
   display: inline-flex;
