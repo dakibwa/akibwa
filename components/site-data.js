@@ -28,7 +28,7 @@ export const areaTiles = [
     imagePosition: "50% 10%",
     alt: "Black-and-white artwork of a serene mask reflected in rippled water",
     accent: "#2f88ff",
-    detail: "Chorus, Cover Collision, and more"
+    detail: "Chorus, Cover Collision and more"
   },
   {
     title: "Professional",
@@ -37,7 +37,7 @@ export const areaTiles = [
     image: "/area-art/professional-structure.jpg",
     alt: "Cream sculptural architectural openings crossed by fine copper lines against a pale grey background",
     accent: "#ff6f1a",
-    detail: "Discovery, build, and handover for company systems"
+    detail: "Discovery, build and handover"
   },
   {
     title: "About",
@@ -47,7 +47,7 @@ export const areaTiles = [
     imagePosition: "50% 42%",
     alt: "Flower-crowned figures gathered in a luminous painted meadow",
     accent: "#2c8068",
-    detail: "Background, working principles, and the current toolkit"
+    detail: "Background, principles and interests"
   },
   {
     title: "Contact",
@@ -56,7 +56,7 @@ export const areaTiles = [
     image: "/area-art/contact-signal.jpg",
     alt: "Abstract teal and amber shards converging into a bright signal burst",
     accent: "#e2556b",
-    detail: "Email, X, or Instagram — bring the messy workflow"
+    detail: "Get in contact"
   }
 ];
 
