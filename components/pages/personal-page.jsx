@@ -108,6 +108,14 @@ function PersonalDetailPanel({ project, onOpen }) {
 
   return (
     <article className="personal-detail-card" style={{ "--area-accent": accentForSlug(project.slug) }}>
+      <header className={`personal-detail-banner is-${artwork.variant}`}>
+        <img src={artwork.bannerSrc} alt="" draggable="false" loading="lazy" decoding="async" />
+        <span className="personal-detail-banner-scrim" aria-hidden="true" />
+        <div className="personal-detail-banner-meta">
+          <strong>{project.title}</strong>
+          {project.type ? <em>{project.type}</em> : null}
+        </div>
+      </header>
       {isCoverCollision ? (
         <div className="personal-detail-collision" aria-label={`${project.title} album-art series`}>
           {collisionPosts.slice(0, 8).map((post) => (
@@ -127,11 +135,6 @@ function PersonalDetailPanel({ project, onOpen }) {
         </div>
       ) : project.shot ? (
         <div className="personal-detail-shot">
-          <span className="personal-detail-chrome" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
           <div className="personal-detail-shot-frame">
             <img src={project.shot} alt={`${project.title} interface`} decoding="async" draggable="false" />
           </div>

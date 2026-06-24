@@ -1028,21 +1028,63 @@ button {
   }
 }
 
-.personal-detail-chrome {
+.personal-detail-banner {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 7px;
-  height: 34px;
-  padding: 0 15px;
-  background: #f5f6f8;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.07);
+  height: 56px;
+  overflow: hidden;
+  background: #0b0e15;
+  border-bottom: 1px solid color-mix(in srgb, var(--area-accent) 30%, rgba(16, 18, 23, 0.12));
 }
 
-.personal-detail-chrome i {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: rgba(16, 18, 23, 0.15);
+.personal-detail-banner img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+.personal-detail-banner-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(13, 11, 9, 0.64),
+    rgba(13, 11, 9, 0.2) 48%,
+    rgba(13, 11, 9, 0.34) 100%
+  );
+}
+
+.personal-detail-banner-meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 18px;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.5);
+}
+
+.personal-detail-banner-meta strong {
+  font-size: 0.92rem;
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.personal-detail-banner-meta em {
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 540;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .personal-detail-shot {
@@ -1067,7 +1109,9 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  /* Crop the screenshot's own header band so the colored banner above is the
+     card's only header (the capture repeats "Chorus / Listening archive"). */
+  object-position: 50% 100%;
 }
 
 .personal-detail-body {
@@ -1081,17 +1125,21 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 15px 22px 17px;
+  gap: 24px;
+  padding: 16px 22px;
+  border-top: 1px solid color-mix(in srgb, var(--area-accent) 10%, rgba(16, 18, 23, 0.07));
 }
 
 .personal-detail-foot p {
   margin: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
   min-width: 0;
-  min-height: calc(1.45em * 2);
+  min-height: calc(1.5em * 2);
   color: #4a525b;
   font-size: var(--type-sm, 0.92rem);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .personal-detail-foot .personal-detail-open {
