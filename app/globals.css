@@ -154,16 +154,7 @@ button {
   background-position: 50% 50%;
   opacity: 0.96;
   filter: saturate(1.04) contrast(1.03);
-  animation: brand-strip-live 5.8s ease-in-out infinite;
   pointer-events: none;
-  transform: translateY(0);
-  transform-origin: var(--brand-x) center;
-  will-change: background-position, filter, opacity;
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out),
-    background-position var(--hover-out) var(--ease-out);
 }
 
 .brand:hover,
@@ -172,67 +163,6 @@ button {
   filter: none;
   outline: 0;
   transition-duration: var(--hover-in);
-}
-
-.brand:hover::after,
-.brand:focus-visible::after {
-  opacity: 0.98;
-  transform: translateY(0);
-  filter: saturate(1.12) contrast(1.05);
-  animation: brand-strip-glint 820ms var(--ease-out) both;
-  transition-duration: var(--hover-in);
-}
-
-.brand[data-entry="bottom"]:hover {
-  animation: none;
-}
-
-.brand[data-entry="bottom"]:hover::after {
-  animation: brand-strip-glint 820ms var(--ease-out) both;
-}
-
-@keyframes brand-strip-live {
-  0%,
-  100% {
-    opacity: 0.95;
-    background-position: 50% 50%;
-    filter: saturate(1.03) contrast(1.02);
-  }
-
-  24% {
-    opacity: 0.98;
-    background-position: 53% 49%;
-    filter: saturate(1.1) contrast(1.05);
-  }
-
-  52% {
-    opacity: 0.955;
-    background-position: 48% 51%;
-    filter: saturate(1.05) contrast(1.03);
-  }
-
-  76% {
-    opacity: 0.975;
-    background-position: 55% 47%;
-    filter: saturate(1.12) contrast(1.06);
-  }
-}
-
-@keyframes brand-strip-glint {
-  0% {
-    background-position: 50% 50%;
-    filter: saturate(1.04) contrast(1.03);
-  }
-
-  45% {
-    background-position: 58% 46%;
-    filter: saturate(1.2) contrast(1.08);
-  }
-
-  100% {
-    background-position: 52% 50%;
-    filter: saturate(1.12) contrast(1.05);
-  }
 }
 
 .nav-desktop {
