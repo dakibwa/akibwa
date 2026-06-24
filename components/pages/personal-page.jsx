@@ -113,7 +113,7 @@ function statusForSlug(slug) {
   return STATUS_BY_SLUG[slug] ?? "dev";
 }
 
-function PersonalDetailPanel({ project, onOpen }) {
+function PersonalDetailPanel({ project }) {
   const { posts: collisionPosts } = useCoverCollisionData();
   if (!project) return null;
 
@@ -159,12 +159,6 @@ function PersonalDetailPanel({ project, onOpen }) {
           <span className="personal-detail-devtag">In development</span>
         </div>
       )}
-      <div className="personal-detail-foot">
-        <button type="button" className="personal-detail-open" onClick={onOpen}>
-          {project.cta || "Open"}
-          <ArrowRight size={16} strokeWidth={1.8} />
-        </button>
-      </div>
     </article>
   );
 }
@@ -881,10 +875,7 @@ export function PersonalPage({ initialSlug = null }) {
 
       <section className="page-grid personal-explorer" aria-label="Personal projects">
         <div className="personal-detail" aria-live="polite">
-          <PersonalDetailPanel
-            project={previewProject}
-            onOpen={() => previewProject && selectProject(previewProject)}
-          />
+          <PersonalDetailPanel project={previewProject} />
         </div>
         <ol
           className="personal-selector"

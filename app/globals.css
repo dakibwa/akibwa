@@ -1128,33 +1128,6 @@ button {
   padding: 22px 24px 24px;
 }
 
-.personal-detail-foot {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 24px;
-  padding: 16px 22px;
-  border-top: 1px solid color-mix(in srgb, var(--area-accent) 10%, rgba(16, 18, 23, 0.07));
-}
-
-.personal-detail-foot p {
-  margin: 0;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  min-height: calc(1.5em * 2);
-  color: #4a525b;
-  font-size: var(--type-sm, 0.92rem);
-  line-height: 1.5;
-}
-
-.personal-detail-foot .personal-detail-open {
-  margin-top: 0;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
 .personal-detail-eyebrow {
   font-size: var(--type-xs, 0.78rem);
   letter-spacing: 0.05em;
@@ -1191,31 +1164,6 @@ button {
   margin: 0 9px;
   font-style: normal;
   color: color-mix(in srgb, var(--area-accent) 55%, #aeb4bc);
-}
-
-.personal-detail-open {
-  align-self: flex-start;
-  margin-top: 5px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 600;
-  font-size: var(--type-sm, 0.92rem);
-  color: color-mix(in srgb, var(--area-accent) 78%, #10141b);
-}
-
-.personal-detail-open svg {
-  transition: transform 200ms ease;
-}
-
-.personal-detail-open:hover svg,
-.personal-detail-open:focus-visible svg {
-  transform: translateX(3px);
 }
 
 .personal-selector {
