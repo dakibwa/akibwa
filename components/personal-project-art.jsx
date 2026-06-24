@@ -12,13 +12,13 @@ const artworkBySlug = {
     variant: "cover"
   },
   "canta-porto": {
-    src: "/project-art/personal/music-intelligence.webp",
-    bannerSrc: "/project-art/personal/music-intelligence-banner.webp",
+    src: "/project-art/personal/canta-porto-azulejo.webp",
+    bannerSrc: "/project-art/personal/canta-porto-azulejo-banner.webp",
     variant: "music"
   },
   "one-bag": {
-    src: "/project-art/personal/albion-sunburst-hero.webp",
-    bannerSrc: "/project-art/personal/albion-sunburst-banner.webp",
+    src: "/project-art/personal/one-bag-traveller.webp",
+    bannerSrc: "/project-art/personal/one-bag-traveller-banner.webp",
     variant: "cover"
   },
   meditator: {
