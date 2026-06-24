@@ -2,38 +2,60 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
+const identity = [
+  { label: "Who", value: "Daniel · BI specialist" },
+  { label: "Based", value: "Manchester, UK" },
+  { label: "Sectors", value: "Banking · Gaming · Public investment" },
+  { label: "Now", value: "AI build loops at Akibwa" }
+];
+
+const proofPoints = [
+  {
+    lead: "Ten years in BI",
+    tail: "Banking, credit, gaming, and public-investment reporting."
+  },
+  {
+    lead: "Source to system",
+    tail: "Messy material, semantic models, dashboards, and AI build loops."
+  },
+  {
+    lead: "Built to keep",
+    tail: "Systems people keep using — not demos that need the builder in the room."
+  }
+];
+
 const workplaces = [
   {
+    year: "2024",
     name: "National Wealth Fund",
     role: "Senior BI Developer",
-    dates: "2024 - Present",
     accent: "#17324d",
     logo: "/brand-logos/national-wealth-fund-icon.png"
   },
   {
+    year: "2023",
     name: "Leeds Building Society",
     role: "BI Team Lead / BI Analyst",
-    dates: "2023 - 2024",
     accent: "#2f88ff",
     logo: "/brand-logos/leeds-building-society-icon.svg"
   },
   {
+    year: "2020",
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
-    dates: "2020 - 2022",
     accent: "#d01fcb"
   },
   {
+    year: "2018",
     name: "Vanquis Bank",
     role: "Strategic Insight Analyst",
-    dates: "2018 - 2019",
     accent: "#f15a24",
     logo: "/brand-logos/vanquis-icon.svg"
   },
   {
+    year: "2016",
     name: "Lloyds Banking Group",
     role: "Credit Risk Analyst",
-    dates: "2016 - 2017",
     accent: "#006747",
     logo: "/brand-logos/lloyds-horse-icon.png"
   }
@@ -65,69 +87,51 @@ const toolGroups = [
   }
 ];
 
-const principles = [
+const interests = [
   {
-    number: "01",
-    title: "Start with the real work",
-    body: "Map the decision, hand-off, source, and person before deciding what should be automated."
+    name: "AI & the singularity",
+    note: "Building with it every day — and paying close attention to where it all goes.",
+    accent: "#2f88ff"
   },
   {
-    number: "02",
-    title: "Build the smallest useful system",
-    body: "The first version should save a repeated step, make the hidden process visible, or clarify a decision."
+    name: "Nutrition",
+    note: "What actually moves the needle, measured honestly rather than guessed at.",
+    accent: "#12b981"
   },
   {
-    number: "03",
-    title: "Leave the keys behind",
-    body: "Documentation, safeguards, ownership, and plain language matter as much as the build."
+    name: "Music",
+    note: "Listening as data — the obsession behind Chorus.",
+    accent: "#d01fcb"
+  },
+  {
+    name: "Film",
+    note: "Story and craft, with the occasional very deep dive.",
+    accent: "#ff6f1a"
   }
-];
-
-const proofPoints = [
-  "BI experience across banking, credit, gaming, and public-investment reporting.",
-  "Comfortable between messy source material, semantic models, dashboards, and AI-assisted build loops.",
-  "Interested in systems people can keep using, not demos that only work while the builder is in the room."
 ];
 
 export function AboutPage() {
   return (
     <section className="studio-page about-page">
-      <section className="page-grid about-overview" aria-label="Profile">
+      <section className="page-grid about-hero" aria-label="Profile">
         <div className="about-hero-copy">
-          <h1>About</h1>
-          <p>
-            Ten years turning messy data into clear decisions — now building small, AI-assisted systems for
-            reporting, workflow, and the knowledge teams rely on.
+          <p className="about-eyebrow">About</p>
+          <h1>Ten years turning messy data into clear decisions.</h1>
+          <p className="about-hero-sub">
+            Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
           </p>
-        </div>
-
-        <div className="about-profile-copy">
-          <h2>What I do</h2>
-          <p>
-            I am Daniel, a Business Intelligence specialist. The pattern has been the same everywhere I
-            have worked: find the question that matters, get the data straight, then build the dashboard, model,
-            or tool that people actually use.
-          </p>
-          <p>
-            Akibwa is that experience pointed at AI. I design small working systems — dashboards, automations,
-            knowledge tools — that take a messy workflow and make it run without pretending the human context is
-            simpler than it is.
-          </p>
-          <ul className="about-proof-list" aria-label="Proof points">
-            {proofPoints.map((point) => (
-              <li key={point}>{point}</li>
+          <dl className="about-id-rail">
+            {identity.map((item) => (
+              <div key={item.label}>
+                <dt>{item.label}</dt>
+                <dd>{item.value}</dd>
+              </div>
             ))}
-          </ul>
-          <Link className="about-cta" href="/contact">
-            <span className="about-cta-label">Send the messy bit</span>
-            <span className="about-cta-icon" aria-hidden="true">
-              <ArrowRight size={17} strokeWidth={2} />
-            </span>
-          </Link>
+          </dl>
         </div>
 
         <div className="about-profile-side">
-          <figure className="about-portrait" aria-label="Portrait of Daniel smiling">
+          <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
             <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
@@ -135,23 +139,27 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="page-grid about-method" aria-labelledby="method-heading">
-        <header className="about-method-head">
-          <h2 id="method-heading">How I build</h2>
-          <p>Calm, practical, source-aware work that can be handed over.</p>
-        </header>
+      <section className="page-grid about-intro" aria-label="What I do">
+        <p className="about-lede">
+          Akibwa is that BI experience pointed at AI — small working systems that take a messy workflow and
+          make it run, without pretending the human context is simpler than it is.
+        </p>
 
-        <div className="about-method-steps">
-          {principles.map((principle) => (
-            <article key={principle.title}>
-              <span>{principle.number}</span>
-              <div>
-                <h3>{principle.title}</h3>
-                <p>{principle.body}</p>
-              </div>
-            </article>
+        <div className="about-proof-cols">
+          {proofPoints.map((point) => (
+            <div key={point.lead}>
+              <h3>{point.lead}</h3>
+              <p>{point.tail}</p>
+            </div>
           ))}
         </div>
+
+        <Link className="about-cta" href="/contact">
+          <span className="about-cta-label">Send the messy bit</span>
+          <span className="about-cta-icon" aria-hidden="true">
+            <ArrowRight size={17} strokeWidth={2} />
+          </span>
+        </Link>
       </section>
 
       <section className="page-grid about-section" aria-labelledby="workplaces-heading">
@@ -160,20 +168,23 @@ export function AboutPage() {
           <p>Finance, gaming, public-investment, and BI teams where usefulness had to survive the meeting.</p>
         </header>
 
-        <ul className="work-list">
+        <ol className="work-timeline">
           {workplaces.map((workplace) => (
             <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
-              <span className="work-company">
-                <span className="work-logo" aria-hidden="true">
-                  {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
+              <span className="work-year">{workplace.year}</span>
+              <span className="work-node" aria-hidden="true" />
+              <span className="work-detail">
+                <span className="work-company">
+                  <span className="work-logo" aria-hidden="true">
+                    {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
+                  </span>
+                  <strong>{workplace.name}</strong>
                 </span>
-                <strong>{workplace.name}</strong>
+                <span className="work-role">{workplace.role}</span>
               </span>
-              <span className="work-role">{workplace.role}</span>
-              <span className="work-dates">{workplace.dates}</span>
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
 
       <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">
@@ -201,6 +212,22 @@ export function AboutPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="page-grid about-section about-interests" aria-labelledby="interests-heading">
+        <header className="about-section-head">
+          <h2 id="interests-heading">Outside the work</h2>
+          <p>A few things I read, track, and argue about when I'm not building.</p>
+        </header>
+
+        <ul className="interest-grid">
+          {interests.map((interest) => (
+            <li key={interest.name} style={{ "--interest-accent": interest.accent }}>
+              <h3>{interest.name}</h3>
+              <p>{interest.note}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <PageFooter />
