@@ -728,6 +728,7 @@ export function PersonalPage({ initialSlug = null }) {
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isLocalHost, setIsLocalHost] = useState(false);
   const [previewSlug, setPreviewSlug] = useState(personalProjects[0]?.slug ?? null);
+  const [headlineSlug, setHeadlineSlug] = useState(null);
 
   useEffect(() => {
     setIsLocalHost(canUseLocalFrame());
@@ -773,6 +774,10 @@ export function PersonalPage({ initialSlug = null }) {
   const previewProject = useMemo(
     () => personalProjects.find((project) => project.slug === previewSlug) ?? personalProjects[0] ?? null,
     [previewSlug]
+  );
+  const headlineProject = useMemo(
+    () => personalProjects.find((project) => project.slug === headlineSlug) ?? null,
+    [headlineSlug]
   );
 
   useEffect(() => {
@@ -839,7 +844,16 @@ export function PersonalPage({ initialSlug = null }) {
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
         <h1>Personal</h1>
-        <p>Things I wanted to exist — so I built them.</p>
+        <p className="personal-hero-line">
+          <span
+            className="personal-hero-line-swap"
+            key={headlineProject ? headlineProject.slug : "default"}
+          >
+            {headlineProject
+              ? headlineProject.summary
+              : "Things I wanted to exist — so I built them."}
+          </span>
+        </p>
       </section>
 
       <section className="page-grid personal-explorer" aria-label="Personal projects">
@@ -849,13 +863,23 @@ export function PersonalPage({ initialSlug = null }) {
             onOpen={() => previewProject && selectProject(previewProject)}
           />
         </div>
-        <ol className="personal-selector" aria-label="Choose a project">
+        <ol
+          className="personal-selector"
+          aria-label="Choose a project"
+          onPointerLeave={() => setHeadlineSlug(null)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setHeadlineSlug(null);
+          }}
+        >
           {personalProjects.map((project) => (
             <li key={project.slug}>
               <PersonalSelectorBar
                 project={project}
                 isActive={project.slug === previewSlug}
-                onPreview={() => setPreviewSlug(project.slug)}
+                onPreview={() => {
+                  setPreviewSlug(project.slug);
+                  setHeadlineSlug(project.slug);
+                }}
                 onOpen={() => {
                   if (project.slug === previewSlug) selectProject(project);
                   else setPreviewSlug(project.slug);
