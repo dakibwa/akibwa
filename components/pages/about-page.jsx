@@ -8,7 +8,6 @@ const workplaces = [
     role: "Senior BI Developer",
     dates: "2024 - Present",
     accent: "#17324d",
-    mark: "nwf",
     logo: "/brand-logos/national-wealth-fund-icon.png"
   },
   {
@@ -16,22 +15,19 @@ const workplaces = [
     role: "BI Team Lead / BI Analyst",
     dates: "2023 - 2024",
     accent: "#2f88ff",
-    mark: "leeds",
     logo: "/brand-logos/leeds-building-society-icon.svg"
   },
   {
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
     dates: "2020 - 2022",
-    accent: "#d01fcb",
-    mark: "sky"
+    accent: "#d01fcb"
   },
   {
     name: "Vanquis Bank",
     role: "Strategic Insight Analyst",
     dates: "2018 - 2019",
     accent: "#f15a24",
-    mark: "vanquis",
     logo: "/brand-logos/vanquis-icon.svg"
   },
   {
@@ -39,94 +35,33 @@ const workplaces = [
     role: "Credit Risk Analyst",
     dates: "2016 - 2017",
     accent: "#006747",
-    mark: "lloyds",
     logo: "/brand-logos/lloyds-horse-icon.png"
   }
 ];
 
-const tools = [
+const toolGroups = [
   {
-    name: "Microsoft Fabric",
-    detail: "Lakehouse, pipelines, semantic models",
-    accent: "#2f88ff",
-    glyph: "fabric",
-    logo: "/brand-logos/microsoft-fabric.svg"
+    label: "Data & reporting",
+    tools: [
+      { name: "Microsoft Fabric", accent: "#2f88ff", logo: "/brand-logos/microsoft-fabric.svg" },
+      { name: "Power BI", accent: "#f2c811", logo: "/brand-logos/power-bi.svg" },
+      { name: "SQL", accent: "#7d9a92" }
+    ]
   },
   {
-    name: "Power BI",
-    detail: "DAX, reporting estates, Power BI Service",
-    accent: "#f2c811",
-    glyph: "powerbi",
-    logo: "/brand-logos/power-bi.svg"
+    label: "AI build loops",
+    tools: [
+      { name: "Claude Code", accent: "#c96f3c", logo: "/brand-logos/claude.svg" },
+      { name: "OpenAI Codex", accent: "#12b981", logo: "/brand-logos/openai-codex-app.png" },
+      { name: "Copilot", accent: "#557f8d", logo: "/brand-logos/microsoft-copilot.svg" }
+    ]
   },
   {
-    name: "SQL",
-    detail: "Analysis, modelling, source interrogation",
-    accent: "#7d9a92",
-    glyph: "sql"
-  },
-  {
-    name: "Claude Code",
-    detail: "AI-assisted building and refactoring",
-    accent: "#c96f3c",
-    glyph: "claude",
-    logo: "/brand-logos/claude.svg"
-  },
-  {
-    name: "OpenAI Codex",
-    detail: "Repo work, local agents, implementation",
-    accent: "#12b981",
-    glyph: "codex",
-    logo: "/brand-logos/openai-codex-app.png"
-  },
-  {
-    name: "Copilot",
-    detail: "Fabric, workflow, and knowledge assistance",
-    accent: "#557f8d",
-    glyph: "copilot",
-    logo: "/brand-logos/microsoft-copilot.svg"
-  },
-  {
-    name: "Python",
-    detail: "Source processing and automation",
-    accent: "#3776ab",
-    glyph: "python",
-    logo: "/brand-logos/python.svg"
-  },
-  {
-    name: "Data Modelling",
-    detail: "Definitions, lineage, reliable meaning",
-    accent: "#ff6f1a",
-    glyph: "model",
-    logo: "/brand-logos/data-modeling.svg"
-  }
-];
-
-const domains = [
-  {
-    title: "Reporting estates",
-    body: "Power BI, Fabric, semantic models, adoption, and the meaning behind the numbers.",
-    accent: "#006747"
-  },
-  {
-    title: "Private knowledge",
-    body: "Source-backed memory systems, retrieval routes, public-safe projections, and review loops.",
-    accent: "#17324d"
-  },
-  {
-    title: "Workflow handover",
-    body: "Manual steps, recurring decisions, awkward files, and team hand-offs made easier to run.",
-    accent: "#d01fcb"
-  },
-  {
-    title: "Financial data",
-    body: "Credit, banking, wealth, public-investment, and regulated reporting environments.",
-    accent: "#2f88ff"
-  },
-  {
-    title: "AI build loops",
-    body: "Codex and Claude-assisted prototypes with docs, safeguards, and practical ownership.",
-    accent: "#ff6f1a"
+    label: "Modelling & automation",
+    tools: [
+      { name: "Data modelling", accent: "#ff6f1a", logo: "/brand-logos/data-modeling.svg" },
+      { name: "Python", accent: "#3776ab", logo: "/brand-logos/python.svg" }
+    ]
   }
 ];
 
@@ -154,35 +89,6 @@ const proofPoints = [
   "Interested in systems people can keep using, not demos that only work while the builder is in the room."
 ];
 
-function CompanyMark({ workplace }) {
-  return (
-    <div className={`company-mark mark-${workplace.mark}`}>
-      <div className="company-logo-cell" aria-hidden="true">
-        {workplace.logo ? <img src={workplace.logo} alt="" /> : <span />}
-      </div>
-      <strong>{workplace.name}</strong>
-    </div>
-  );
-}
-
-function ToolGlyph({ tool }) {
-  if (tool.logo) {
-    return (
-      <div className={`tool-glyph tool-logo-wrap logo-${tool.glyph}`} aria-hidden="true">
-        <img src={tool.logo} alt="" />
-      </div>
-    );
-  }
-
-  return (
-    <div className={`tool-glyph glyph-${tool.glyph}`} aria-hidden="true">
-      <span />
-      <span />
-      <span />
-    </div>
-  );
-}
-
 export function AboutPage() {
   return (
     <section className="studio-page about-page">
@@ -190,8 +96,8 @@ export function AboutPage() {
         <div className="about-hero-copy">
           <h1>About</h1>
           <p>
-            Ten years turning messy data into useful decision surfaces — now building small, AI-assisted systems
-            for reporting, workflow, and private knowledge problems.
+            Ten years turning messy data into clear decisions — now building small, AI-assisted systems for
+            reporting, workflow, and the knowledge teams rely on.
           </p>
         </div>
 
@@ -231,7 +137,7 @@ export function AboutPage() {
 
       <section className="page-grid about-method" aria-labelledby="method-heading">
         <header className="about-method-head">
-          <h2 id="method-heading">How I tend to build</h2>
+          <h2 id="method-heading">How I build</h2>
           <p>Calm, practical, source-aware work that can be handed over.</p>
         </header>
 
@@ -249,59 +155,52 @@ export function AboutPage() {
       </section>
 
       <section className="page-grid about-section" aria-labelledby="workplaces-heading">
-        <div className="about-section-head">
-          <div>
-            <h2 id="workplaces-heading">Where the judgement comes from</h2>
-          </div>
+        <header className="about-section-head">
+          <h2 id="workplaces-heading">Where the judgement comes from</h2>
           <p>Finance, gaming, public-investment, and BI teams where usefulness had to survive the meeting.</p>
-        </div>
+        </header>
 
-        <div className="company-grid">
+        <ul className="work-list">
           {workplaces.map((workplace) => (
-            <article
-              className="company-card"
-              key={workplace.name}
-              style={{ "--company-accent": workplace.accent }}
-            >
-              <CompanyMark workplace={workplace} />
-              <div>
-                <h3>{workplace.role}</h3>
-                <p>{workplace.dates}</p>
-              </div>
-            </article>
+            <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
+              <span className="work-company">
+                <span className="work-logo" aria-hidden="true">
+                  {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
+                </span>
+                <strong>{workplace.name}</strong>
+              </span>
+              <span className="work-role">{workplace.role}</span>
+              <span className="work-dates">{workplace.dates}</span>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="page-grid about-section" aria-labelledby="tools-heading">
-        <div className="about-section-head">
-          <div>
-            <h2 id="tools-heading">Current toolkit</h2>
-          </div>
+      <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">
+        <header className="about-section-head">
+          <h2 id="tools-heading">Current toolkit</h2>
           <p>Data tools, automation, and local agentic build loops for turning rough material into working systems.</p>
-        </div>
+        </header>
 
-        <div className="tool-grid">
-          {tools.map((tool) => (
-            <article className="tool-card" key={tool.name} style={{ "--tool-accent": tool.accent }}>
-              <ToolGlyph tool={tool} />
-              <div>
-                <h3>{tool.name}</h3>
-                <p>{tool.detail}</p>
-              </div>
-            </article>
+        <div className="toolkit-groups">
+          {toolGroups.map((group) => (
+            <div className="toolkit-group" key={group.label}>
+              <h3 className="toolkit-label">{group.label}</h3>
+              <ul className="toolkit-list">
+                {group.tools.map((tool) => (
+                  <li className="toolkit-item" key={tool.name} style={{ "--tool-accent": tool.accent }}>
+                    {tool.logo ? (
+                      <img className="toolkit-logo" src={tool.logo} alt="" aria-hidden="true" />
+                    ) : (
+                      <span className="toolkit-dot" aria-hidden="true" />
+                    )}
+                    <span>{tool.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
-      </section>
-
-      <section className="page-grid about-domain-strip" aria-label="Experience domains">
-        {domains.map((domain) => (
-          <article key={domain.title} style={{ "--domain-accent": domain.accent }}>
-            <span />
-            <h2>{domain.title}</h2>
-            <p>{domain.body}</p>
-          </article>
-        ))}
       </section>
 
       <PageFooter />
