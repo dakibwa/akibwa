@@ -99,6 +99,20 @@ function accentForSlug(slug) {
   return ACCENT_BY_SLUG[slug] ?? "#2f88ff";
 }
 
+const STATUS_BY_SLUG = {
+  chorus: "live",
+  "cover-collision": "live",
+  "canta-porto": "dev",
+  "one-bag": "dev",
+  meditator: "dev"
+};
+
+const STATUS_LABELS = { live: "Live", dev: "Dev" };
+
+function statusForSlug(slug) {
+  return STATUS_BY_SLUG[slug] ?? "dev";
+}
+
 function PersonalDetailPanel({ project, onOpen }) {
   const { posts: collisionPosts } = useCoverCollisionData();
   if (!project) return null;
@@ -146,7 +160,6 @@ function PersonalDetailPanel({ project, onOpen }) {
         </div>
       )}
       <div className="personal-detail-foot">
-        {project.summary ? <p>{project.summary}</p> : null}
         <button type="button" className="personal-detail-open" onClick={onOpen}>
           {project.cta || "Open"}
           <ArrowRight size={16} strokeWidth={1.8} />
@@ -843,7 +856,17 @@ export function PersonalPage({ initialSlug = null }) {
   return (
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
-        <h1>Personal</h1>
+        <div className="personal-hero-top">
+          <h1>Personal Projects</h1>
+          <span
+            className={`personal-hero-status is-${
+              headlineProject ? statusForSlug(headlineProject.slug) : "idle"
+            }`}
+          >
+            <span className="personal-hero-status-dot" aria-hidden="true" />
+            {headlineProject ? STATUS_LABELS[statusForSlug(headlineProject.slug)] : ""}
+          </span>
+        </div>
         <p className="personal-hero-line">
           <span
             className="personal-hero-line-swap"
