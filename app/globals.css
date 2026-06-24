@@ -1481,35 +1481,14 @@ button {
   margin-top: 26px;
 }
 
-.about-proof-band {
-  margin-top: 60px;
-  padding-top: 30px;
-  border-top: 1px solid rgba(16, 18, 23, 0.14);
-}
-
-.about-proof-cols {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 30px;
-}
-
-.about-proof-cols > div {
-  padding-top: 16px;
-  border-top: 2px solid color-mix(in srgb, var(--blue) 70%, transparent);
-}
-
-.about-proof-cols h3 {
+.about-statement {
+  max-width: 46ch;
   margin: 0;
   color: var(--black);
-  font-size: 1rem;
-  font-weight: 580;
-}
-
-.about-proof-cols p {
-  margin: 9px 0 0;
-  color: #59616b;
-  font-size: 0.93rem;
-  line-height: 1.5;
+  font-size: 1.42rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.003em;
 }
 
 .about-cta {
@@ -11659,8 +11638,11 @@ button {
     font-size: 1.28rem;
   }
 
+  .about-statement {
+    font-size: 1.2rem;
+  }
+
   .about-id-rail,
-  .about-proof-cols,
   .interest-grid {
     grid-template-columns: 1fr;
     gap: 22px;

@@ -9,21 +9,6 @@ const identity = [
   { label: "Now", value: "AI build loops at Akibwa" }
 ];
 
-const proofPoints = [
-  {
-    lead: "Ten years in BI",
-    tail: "Banking, credit, gaming, and public-investment reporting."
-  },
-  {
-    lead: "Source to system",
-    tail: "Messy material, semantic models, dashboards, and AI build loops."
-  },
-  {
-    lead: "Built to keep",
-    tail: "Systems people keep using — not demos that need the builder in the room."
-  }
-];
-
 const workplaces = [
   {
     year: "2024",
@@ -90,23 +75,28 @@ const toolGroups = [
 const interests = [
   {
     name: "AI & the singularity",
-    note: "Building with it every day — and paying close attention to where it all goes.",
+    note: "I build with it daily and can't stop thinking about the long arc — where this ends up, and how we get there well.",
     accent: "#2f88ff"
   },
   {
-    name: "Nutrition",
-    note: "What actually moves the needle, measured honestly rather than guessed at.",
-    accent: "#12b981"
+    name: "Film",
+    note: "Art-house and the slightly strange. Yes, it all gets logged on Letterboxd.",
+    accent: "#ff6f1a"
   },
   {
     name: "Music",
-    note: "Listening as data — the obsession behind Chorus.",
+    note: "Wide, restless taste, every listen tracked — that habit is what became Chorus.",
     accent: "#d01fcb"
   },
   {
-    name: "Film",
-    note: "Story and craft, with the occasional very deep dive.",
-    accent: "#ff6f1a"
+    name: "Nutrition & running",
+    note: "Working out what actually makes the body run better, usually tested on myself.",
+    accent: "#12b981"
+  },
+  {
+    name: "A good long conversation",
+    note: "The real kind that goes somewhere. Probably my favourite thing.",
+    accent: "#557f8d"
   }
 ];
 
@@ -129,8 +119,7 @@ export function AboutPage() {
             ))}
           </dl>
           <p className="about-lede">
-            Akibwa is that BI experience pointed at AI — small working systems that take a messy workflow and
-            make it run, without pretending the human context is simpler than it is.
+            Akibwa is that experience pointed at AI — small systems that make a messy workflow actually run.
           </p>
           <Link className="about-cta" href="/contact">
             <span className="about-cta-label">Send the messy bit</span>
@@ -170,15 +159,17 @@ export function AboutPage() {
         </aside>
       </section>
 
-      <section className="page-grid about-proof-band" aria-label="Track record">
-        <div className="about-proof-cols">
-          {proofPoints.map((point) => (
-            <div key={point.lead}>
-              <h3>{point.lead}</h3>
-              <p>{point.tail}</p>
-            </div>
-          ))}
-        </div>
+      <section className="page-grid about-section about-who" aria-labelledby="who-heading">
+        <header className="about-section-head">
+          <h2 id="who-heading">Off the CV</h2>
+          <p>The part a job title doesn't cover.</p>
+        </header>
+        <p className="about-statement">
+          I'm happiest turning messy reality into something that works — and I do that to my own life as much
+          as my work. I track most things, follow the odd obsession all the way down, and I'm always quietly
+          trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
+          is that I'll try to optimise five things at once.
+        </p>
       </section>
 
       <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">
