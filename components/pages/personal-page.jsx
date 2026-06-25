@@ -174,7 +174,7 @@ function PersonalDetailLivePreview({ project, frameUrl }) {
         title={`${project.title} live app preview`}
         loading="lazy"
         tabIndex={-1}
-        allow="clipboard-read; clipboard-write; screen-wake-lock; web-share"
+        allow="clipboard-read; clipboard-write; screen-wake-lock"
       />
       <span className="personal-detail-live-badge" aria-hidden="true">
         Live app
@@ -518,7 +518,7 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
             src={frameUrl}
             title={`${project.title} live project`}
             className="live-frame"
-            allow="clipboard-read; clipboard-write; screen-wake-lock; web-share"
+            allow="clipboard-read; clipboard-write; screen-wake-lock"
             loading="eager"
             onLoad={() => setIsFrameLoaded(true)}
           />
