@@ -141,10 +141,14 @@ export const personalProjects = [
     type: "Travel & gear",
     image: "/project-art/personal/albion-sunburst-hero.webp",
     alt: "Radiant sunburst over a luminous horizon",
+    dashboardLabel: "One-Bag Planner",
+    dashboardStatus: "Live on Akibwa",
     summary: "Plan a one-bag loadout: prove the constraint, compare the gear, and buy only what earns its place.",
     tags: ["Packing optimiser", "Gear comparison", "Local-first"],
-    mode: "preview",
-    cta: "In development"
+    mode: "embed",
+    embedUrl: "https://one-bag.dakibwa.workers.dev",
+    localUrl: "http://localhost:3100",
+    cta: "Open on Akibwa"
   },
   {
     number: "05",
