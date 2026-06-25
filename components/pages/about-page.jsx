@@ -115,12 +115,6 @@ export function AboutPage() {
               is that I'll try to optimise five things at once.
             </p>
           </section>
-          <Link className="about-cta" href="/contact">
-            <span className="about-cta-label">Send the messy bit</span>
-            <span className="about-cta-icon" aria-hidden="true">
-              <ArrowRight size={17} strokeWidth={2} />
-            </span>
-          </Link>
         </div>
 
         <aside className="about-hero-side">
@@ -194,6 +188,26 @@ export function AboutPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section
+        className="page-grid about-section about-professional-bridge"
+        aria-labelledby="professional-bridge-heading"
+      >
+        <div>
+          <p className="about-professional-kicker">Professional</p>
+          <h2 id="professional-bridge-heading">If this is the work version of the same problem, start here.</h2>
+          <p>
+            The professional side is where the BI, workflow, and AI-assisted build-loop work lives: practical
+            systems for teams with too much messy information and not enough clarity.
+          </p>
+        </div>
+        <Link className="about-cta" href="/professional">
+          <span className="about-cta-label">See the professional side</span>
+          <span className="about-cta-icon" aria-hidden="true">
+            <ArrowRight size={17} strokeWidth={2} />
+          </span>
+        </Link>
       </section>
 
       <PageFooter />
