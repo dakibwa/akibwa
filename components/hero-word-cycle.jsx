@@ -40,8 +40,14 @@ const heroOutcomePhrases = [
 
 // Calm ambient pace at rest; quicker while the reader is hovering/focusing
 // either word, so curiosity is rewarded with a faster run through the range.
-const REST_INTERVAL = 2600;
-const HOVER_INTERVAL = 1000;
+// The two words intentionally run on offset clocks so the line feels alive,
+// not like a synchronized slot machine.
+const REST_INTERVAL = 4200;
+const HOVER_INTERVAL = 1500;
+const REST_SOURCE_INITIAL_DELAY = 1200;
+const REST_OUTCOME_INITIAL_DELAY = 2200;
+const HOVER_SOURCE_INITIAL_DELAY = 250;
+const HOVER_OUTCOME_INITIAL_DELAY = 850;
 
 function nextDifferentAccentIndex(phrases, currentIndex) {
   const currentAccent = phrases[currentIndex].accent;
@@ -68,6 +74,20 @@ function usePrefersReducedMotion() {
   }, []);
 
   return reduced;
+}
+
+function startOffsetCycle(advance, initialDelay, interval) {
+  let intervalId = null;
+
+  const timeoutId = window.setTimeout(() => {
+    advance();
+    intervalId = window.setInterval(advance, interval);
+  }, initialDelay);
+
+  return () => {
+    window.clearTimeout(timeoutId);
+    if (intervalId) window.clearInterval(intervalId);
+  };
 }
 
 function HeroWordCycle({ phrases, label, index, onEngage, onRelease, onStep }) {
@@ -116,25 +136,25 @@ export function HeroDynamicPhrase() {
     setOutcomeIndex(nextIndex);
   }, []);
 
-  const advanceBoth = useCallback(() => {
-    advanceSource();
-    advanceOutcome();
-  }, [advanceSource, advanceOutcome]);
-
   const engage = useCallback(() => setEngaged(true), []);
   const release = useCallback(() => setEngaged(false), []);
 
-  // Auto-cycle the whole line together so it reads as one composed phrase
-  // breathing, not two words flickering independently. Honour reduced motion
-  // by staying still until the reader clicks.
+  // Auto-cycle the two editable words on staggered clocks. Honour reduced
+  // motion by staying still until the reader clicks.
   useEffect(() => {
     if (reducedMotion) return undefined;
 
     const interval = engaged ? HOVER_INTERVAL : REST_INTERVAL;
-    const timer = window.setInterval(advanceBoth, interval);
+    const sourceDelay = engaged ? HOVER_SOURCE_INITIAL_DELAY : REST_SOURCE_INITIAL_DELAY;
+    const outcomeDelay = engaged ? HOVER_OUTCOME_INITIAL_DELAY : REST_OUTCOME_INITIAL_DELAY;
+    const cleanupSource = startOffsetCycle(advanceSource, sourceDelay, interval);
+    const cleanupOutcome = startOffsetCycle(advanceOutcome, outcomeDelay, interval);
 
-    return () => window.clearInterval(timer);
-  }, [engaged, reducedMotion, advanceBoth]);
+    return () => {
+      cleanupSource();
+      cleanupOutcome();
+    };
+  }, [engaged, reducedMotion, advanceSource, advanceOutcome]);
 
   return (
     <span className="hero-dynamic-phrase">
