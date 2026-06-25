@@ -1693,20 +1693,25 @@ button {
 .about-professional-bridge {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 28px 48px;
+  gap: 20px 36px;
   align-items: center;
-  margin-top: 52px;
-  padding: 28px 0;
+  margin-top: 34px;
+  padding: 18px 0 16px;
   border-top: 1px solid rgba(16, 18, 23, 0.14);
   border-bottom: 1px solid rgba(16, 18, 23, 0.1);
 }
 
 .about-professional-bridge > div {
-  max-width: 58rem;
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.8fr) minmax(24rem, 1fr);
+  gap: 8px 28px;
+  align-items: start;
+  max-width: none;
 }
 
 .about-professional-kicker {
-  margin: 0 0 10px;
+  grid-column: 1 / -1;
+  margin: 0;
   color: var(--blue);
   font-size: 0.72rem;
   font-weight: 680;
@@ -1715,27 +1720,31 @@ button {
 }
 
 .about-professional-bridge h2 {
-  max-width: 22ch;
+  max-width: 34ch;
   margin: 0;
   color: var(--black);
-  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-size: 1.3rem;
   font-weight: 560;
-  line-height: 1.12;
+  line-height: 1.14;
   letter-spacing: 0;
 }
 
 .about-professional-bridge p:not(.about-professional-kicker) {
-  max-width: 58ch;
-  margin: 14px 0 0;
+  max-width: 68ch;
+  margin: 0;
   color: #59616b;
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: 0.94rem;
+  line-height: 1.46;
 }
 
 .about-professional-bridge .about-cta {
   justify-self: end;
   margin-top: 0;
   white-space: nowrap;
+}
+
+.about-professional-bridge + .page-footer {
+  margin-top: 22px;
 }
 
 .about-section-head {
@@ -10854,6 +10863,11 @@ button {
     gap: 20px;
   }
 
+  .about-professional-bridge > div {
+    grid-template-columns: minmax(16rem, 0.76fr) minmax(0, 1fr);
+    gap: 8px 24px;
+  }
+
   .about-professional-bridge .about-cta {
     justify-self: start;
   }
@@ -11663,6 +11677,27 @@ button {
 
   .about-statement {
     font-size: 1.16rem;
+  }
+
+  .about-professional-bridge {
+    margin-top: 30px;
+    padding: 22px 0;
+  }
+
+  .about-professional-bridge > div {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .about-professional-bridge h2 {
+    max-width: 22ch;
+    font-size: 1.45rem;
+    line-height: 1.12;
+  }
+
+  .about-professional-bridge p:not(.about-professional-kicker) {
+    max-width: 100%;
+    font-size: 0.95rem;
   }
 
   .interest-grid {
