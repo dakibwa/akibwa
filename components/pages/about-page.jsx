@@ -21,7 +21,9 @@ const workplaces = [
     year: "2020",
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
-    accent: "#d01fcb"
+    accent: "#d01fcb",
+    logo: "/brand-logos/sky-bet.svg",
+    logoVariant: "wide"
   },
   {
     year: "2018",
@@ -132,7 +134,7 @@ export function AboutPage() {
                   <span className="work-node" aria-hidden="true" />
                   <span className="work-detail">
                     <span className="work-company">
-                      <span className="work-logo" aria-hidden="true">
+                      <span className={`work-logo ${workplace.logoVariant ? `work-logo--${workplace.logoVariant}` : ""}`} aria-hidden="true">
                         {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
                       </span>
                       <strong>{workplace.name}</strong>

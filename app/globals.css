@@ -1862,6 +1862,15 @@ button {
   object-position: center;
 }
 
+.work-logo--wide {
+  width: 42px;
+}
+
+.work-logo--wide img {
+  width: 40px;
+  height: 18px;
+}
+
 .work-dot {
   width: 11px;
   height: 11px;
