@@ -98,7 +98,6 @@ export function AboutPage() {
     <section className="studio-page about-page">
       <section className="page-grid about-hero" aria-label="Profile">
         <div className="about-hero-copy">
-          <p className="about-eyebrow">About</p>
           <h1>Ten years turning messy data into clear decisions.</h1>
           <p className="about-hero-sub">
             Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
