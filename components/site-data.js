@@ -151,10 +151,14 @@ export const personalProjects = [
     type: "Shared presence",
     image: "/project-art/personal/albion-rose-card.webp",
     alt: "William Blake's Albion Rose: a radiant figure with outstretched arms",
+    dashboardLabel: "Meditator",
+    dashboardStatus: "Live on Akibwa",
     summary: "A private two-person meditation room — start together, sit together, finish together, across any distance.",
     tags: ["Two-person", "Synced timer", "Presence"],
-    mode: "preview",
-    cta: "In development"
+    mode: "embed",
+    embedUrl: "https://meditator.dakibwa.workers.dev",
+    localUrl: "http://localhost:8787",
+    cta: "Open on Akibwa"
   }
 ];
 

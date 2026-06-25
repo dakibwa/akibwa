@@ -498,7 +498,7 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
             src={frameUrl}
             title={`${project.title} live project`}
             className="live-frame"
-            allow="clipboard-read; clipboard-write"
+            allow="clipboard-read; clipboard-write; screen-wake-lock; web-share"
             loading="eager"
             onLoad={() => setIsFrameLoaded(true)}
           />
