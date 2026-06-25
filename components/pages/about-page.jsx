@@ -118,9 +118,6 @@ export function AboutPage() {
               </div>
             ))}
           </dl>
-          <p className="about-lede">
-            Akibwa is that experience pointed at AI — small systems that make a messy workflow actually run.
-          </p>
           <Link className="about-cta" href="/contact">
             <span className="about-cta-label">Send the messy bit</span>
             <span className="about-cta-icon" aria-hidden="true">
