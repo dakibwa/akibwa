@@ -353,16 +353,14 @@ button {
 }
 
 .hero-word-cycle:hover,
-.hero-word-cycle:focus-visible,
-.hero-word-cycle.is-cycling {
+.hero-word-cycle:focus-visible {
   color: var(--black);
   outline: 0;
   text-shadow: 0 0 16px rgba(var(--cycle-accent-rgb), 0.14);
 }
 
 .hero-word-cycle:hover::after,
-.hero-word-cycle:focus-visible::after,
-.hero-word-cycle.is-cycling::after {
+.hero-word-cycle:focus-visible::after {
   height: 0.13em;
   background:
     linear-gradient(
@@ -383,8 +381,8 @@ button {
   white-space: nowrap;
 }
 
-.hero-word-cycle.is-cycling .hero-word-cycle-value {
-  animation: word-flick 180ms ease both;
+.hero-word-cycle-value {
+  animation: word-flick 220ms ease both;
 }
 
 @keyframes word-flick {
@@ -12107,18 +12105,18 @@ button {
   background: linear-gradient(
     180deg,
     rgba(13, 11, 9, 0) 0%,
-    rgba(13, 11, 9, 0.52) 34%,
-    rgba(13, 11, 9, 0.72) 100%
+    rgba(13, 11, 9, 0.5) 30%,
+    rgba(13, 11, 9, 0.88) 100%
   );
-  padding: 34px 18px 13px;
+  padding: 38px 18px 13px;
 }
 
 .area-caption__more > p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.94);
+  color: rgba(255, 255, 255, 0.98);
   font-size: 0.82rem;
   line-height: 1.42;
-  text-shadow: 0 1px 8px rgba(13, 11, 9, 0.4);
+  text-shadow: 0 1px 10px rgba(13, 11, 9, 0.55);
 }
 
 .area-art img {

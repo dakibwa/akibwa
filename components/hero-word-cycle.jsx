@@ -38,6 +38,11 @@ const heroOutcomePhrases = [
   { label: "working prototypes", accent: outcomeAccents[5] }
 ];
 
+// Calm ambient pace at rest; quicker while the reader is hovering/focusing
+// either word, so curiosity is rewarded with a faster run through the range.
+const REST_INTERVAL = 2600;
+const HOVER_INTERVAL = 1000;
+
 function nextDifferentAccentIndex(phrases, currentIndex) {
   const currentAccent = phrases[currentIndex].accent;
 
@@ -49,35 +54,36 @@ function nextDifferentAccentIndex(phrases, currentIndex) {
   return (currentIndex + 1) % phrases.length;
 }
 
-function HeroWordCycle({ phrases, label, index, isActive, onActivate, onAdvance, onReset }) {
-  const currentPhrase = phrases[index];
-  const currentLabel = currentPhrase.label;
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
-    if (!isActive) return undefined;
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(query.matches);
 
-    const timer = window.setInterval(() => {
-      onAdvance();
-    }, 950);
+    update();
+    query.addEventListener("change", update);
 
-    return () => window.clearInterval(timer);
-  }, [isActive, onAdvance]);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return reduced;
+}
+
+function HeroWordCycle({ phrases, label, index, onEngage, onRelease, onStep }) {
+  const currentPhrase = phrases[index];
+  const currentLabel = currentPhrase.label;
 
   return (
     <button
       type="button"
-      className={`hero-word-cycle ${isActive ? "is-cycling" : ""}`}
-      aria-label={`${label}: ${phrases.map((phrase) => phrase.label).join(", ")}`}
-      onMouseEnter={onActivate}
-      onMouseLeave={onReset}
-      onPointerEnter={onActivate}
-      onPointerLeave={onReset}
-      onClick={() => {
-        onActivate();
-        onAdvance();
-      }}
-      onFocus={onActivate}
-      onBlur={onReset}
+      className="hero-word-cycle"
+      aria-label={`${label}: ${currentLabel}. Activate to change.`}
+      onMouseEnter={onEngage}
+      onMouseLeave={onRelease}
+      onFocus={onEngage}
+      onBlur={onRelease}
+      onClick={onStep}
       style={{
         "--cycle-accent-rgb": currentPhrase.accent,
         "--cycle-underline-rgb": currentPhrase.accent
@@ -93,67 +99,63 @@ function HeroWordCycle({ phrases, label, index, isActive, onActivate, onAdvance,
 export function HeroDynamicPhrase() {
   const [sourceIndex, setSourceIndex] = useState(0);
   const [outcomeIndex, setOutcomeIndex] = useState(0);
-  const [sourceActive, setSourceActive] = useState(false);
-  const [outcomeActive, setOutcomeActive] = useState(false);
+  const [engaged, setEngaged] = useState(false);
   const sourceIndexRef = useRef(0);
   const outcomeIndexRef = useRef(0);
-
-  const activateSource = useCallback(() => {
-    setSourceActive(true);
-  }, []);
-
-  const activateOutcome = useCallback(() => {
-    setOutcomeActive(true);
-  }, []);
+  const reducedMotion = usePrefersReducedMotion();
 
   const advanceSource = useCallback(() => {
     const nextIndex = nextDifferentAccentIndex(heroSourcePhrases, sourceIndexRef.current);
-
     sourceIndexRef.current = nextIndex;
     setSourceIndex(nextIndex);
   }, []);
 
   const advanceOutcome = useCallback(() => {
     const nextIndex = nextDifferentAccentIndex(heroOutcomePhrases, outcomeIndexRef.current);
-
     outcomeIndexRef.current = nextIndex;
     setOutcomeIndex(nextIndex);
   }, []);
 
-  const resetSource = useCallback(() => {
-    sourceIndexRef.current = 0;
-    setSourceIndex(0);
-    setSourceActive(false);
-  }, []);
+  const advanceBoth = useCallback(() => {
+    advanceSource();
+    advanceOutcome();
+  }, [advanceSource, advanceOutcome]);
 
-  const resetOutcome = useCallback(() => {
-    outcomeIndexRef.current = 0;
-    setOutcomeIndex(0);
-    setOutcomeActive(false);
-  }, []);
+  const engage = useCallback(() => setEngaged(true), []);
+  const release = useCallback(() => setEngaged(false), []);
+
+  // Auto-cycle the whole line together so it reads as one composed phrase
+  // breathing, not two words flickering independently. Honour reduced motion
+  // by staying still until the reader clicks.
+  useEffect(() => {
+    if (reducedMotion) return undefined;
+
+    const interval = engaged ? HOVER_INTERVAL : REST_INTERVAL;
+    const timer = window.setInterval(advanceBoth, interval);
+
+    return () => window.clearInterval(timer);
+  }, [engaged, reducedMotion, advanceBoth]);
 
   return (
     <span className="hero-dynamic-phrase">
       <span>that turn </span>
       <HeroWordCycle
         phrases={heroSourcePhrases}
-        label="Cycle source material"
+        label="Source material"
         index={sourceIndex}
-        isActive={sourceActive}
-        onActivate={activateSource}
-        onAdvance={advanceSource}
-        onReset={resetSource}
+        onEngage={engage}
+        onRelease={release}
+        onStep={advanceSource}
       />
       <span className="hero-outcome">
         <span> into </span>
         <HeroWordCycle
           phrases={heroOutcomePhrases}
-          label="Cycle output type"
+          label="Output type"
           index={outcomeIndex}
-          isActive={outcomeActive}
-          onActivate={activateOutcome}
-          onAdvance={advanceOutcome}
-          onReset={resetOutcome}
+          onEngage={engage}
+          onRelease={release}
+          onStep={advanceOutcome}
         />
         <span>.</span>
       </span>

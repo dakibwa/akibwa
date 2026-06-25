@@ -9,7 +9,7 @@ export function HomePage() {
   return (
     <section className="akibwa-home">
       <div className="page-grid akibwa-hero">
-        <h1>
+        <h1 aria-label="I’m Daniel — I build small AI-assisted systems that turn messy workflows into useful tools.">
           I’m Daniel — I build small AI‑assisted systems{" "}
           <HeroDynamicPhrase />
         </h1>
