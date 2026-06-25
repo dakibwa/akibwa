@@ -1,7 +1,7 @@
 // Minimal offline shell. Network-first for navigations so room state is always
 // live; cache is only a fallback when offline. Realtime traffic (/api) is never
 // cached.
-const VERSION = "2026-06-25-login-first-v3";
+const VERSION = "2026-06-25-avatar-room-v4";
 const CACHE = `meditator-shell-${VERSION}`;
 const ASSET_CACHE = `meditator-assets-${VERSION}`;
 const CACHE_PREFIX = "meditator-";
