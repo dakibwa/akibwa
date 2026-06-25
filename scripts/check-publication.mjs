@@ -37,6 +37,15 @@ function readJson(relativePath) {
 }
 
 function routeCheck(surface) {
+  if (surface.staticPath) {
+    return {
+      surface: surface.id,
+      type: "static-source-route",
+      target: surface.staticPath,
+      ok: existsSync(join(root, surface.staticPath))
+    };
+  }
+
   const routePath = routeWithoutHash(surface.route);
   const appPath = routePath === "/" ? "app/page.jsx" : `app${routePath}/page.jsx`;
 
@@ -60,6 +69,19 @@ function dataChecks(surface) {
 }
 
 function exportCheck(surface) {
+  if (surface.staticPath) {
+    const routePath = routeWithoutHash(surface.route);
+    const outputPath =
+      routePath === "/" ? "out/index.html" : `out${routePath}/index.html`;
+
+    return {
+      surface: surface.id,
+      type: "static-export-route",
+      target: outputPath,
+      ok: existsSync(join(root, outputPath))
+    };
+  }
+
   const routePath = routeWithoutHash(surface.route);
   const outputPath = routePath === "/" ? "out/index.html" : `out${routePath}/index.html`;
 

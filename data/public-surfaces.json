@@ -1,6 +1,15 @@
 {
-  "updated": "2026-06-05",
+  "updated": "2026-06-25",
   "surfaces": [
+    {
+      "id": "meditator",
+      "title": "Meditator",
+      "route": "/meditator",
+      "kind": "static-directory",
+      "visibility": "public",
+      "staticPath": "public/meditator/index.html",
+      "backendUrl": "https://meditator.dakibwa.workers.dev"
+    },
     {
       "id": "chorus",
       "title": "Chorus",

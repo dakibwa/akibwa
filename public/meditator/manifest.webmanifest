@@ -1,0 +1,17 @@
+{
+  "name": "Meditator",
+  "short_name": "Meditator",
+  "description": "Sit together, wherever you are.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f2ec",
+  "theme_color": "#3a5a45",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
