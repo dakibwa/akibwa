@@ -2,13 +2,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
-const identity = [
-  { label: "Who", value: "Daniel · BI specialist" },
-  { label: "Based", value: "Manchester, UK" },
-  { label: "Sectors", value: "Banking · Gaming · Public investment" },
-  { label: "Now", value: "AI build loops at Akibwa" }
-];
-
 const workplaces = [
   {
     year: "2024",
@@ -110,14 +103,18 @@ export function AboutPage() {
           <p className="about-hero-sub">
             Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
           </p>
-          <dl className="about-id-rail">
-            {identity.map((item) => (
-              <div key={item.label}>
-                <dt>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
-            ))}
-          </dl>
+          <section className="about-hero-intro" aria-labelledby="who-heading">
+            <header className="about-section-head">
+              <h2 id="who-heading">A little bit about me</h2>
+              <p>The part a job title doesn't cover.</p>
+            </header>
+            <p className="about-statement">
+              I'm happiest turning messy reality into something that works — and I do that to my own life as much
+              as my work. I track most things, follow the odd obsession all the way down, and I'm always quietly
+              trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
+              is that I'll try to optimise five things at once.
+            </p>
+          </section>
           <Link className="about-cta" href="/contact">
             <span className="about-cta-label">Send the messy bit</span>
             <span className="about-cta-icon" aria-hidden="true">
@@ -154,19 +151,6 @@ export function AboutPage() {
             </ol>
           </div>
         </aside>
-      </section>
-
-      <section className="page-grid about-section about-who" aria-labelledby="who-heading">
-        <header className="about-section-head">
-          <h2 id="who-heading">Off the CV</h2>
-          <p>The part a job title doesn't cover.</p>
-        </header>
-        <p className="about-statement">
-          I'm happiest turning messy reality into something that works — and I do that to my own life as much
-          as my work. I track most things, follow the odd obsession all the way down, and I'm always quietly
-          trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
-          is that I'll try to optimise five things at once.
-        </p>
       </section>
 
       <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">
