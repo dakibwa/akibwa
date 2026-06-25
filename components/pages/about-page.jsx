@@ -195,19 +195,14 @@ export function AboutPage() {
       >
         <div>
           <h2 id="professional-bridge-heading">
-            If this is the{" "}
+            For the{" "}
             <Link className="about-professional-link" href="/professional">
               work version
-            </Link>{" "}
-            of the same problem, start here.
+            </Link>, start here.
           </h2>
-          <p className="about-professional-copy">
-            The professional side is where the BI, workflow, and AI-assisted build-loop work lives: practical
-            systems for teams with too much messy information and not enough clarity.
-          </p>
         </div>
         <Link className="about-cta" href="/professional">
-          <span className="about-cta-label">See the professional side</span>
+          <span className="about-cta-label">Professional</span>
           <span className="about-cta-icon" aria-hidden="true">
             <ArrowRight size={17} strokeWidth={2} />
           </span>

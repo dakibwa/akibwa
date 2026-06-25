@@ -1693,29 +1693,26 @@ button {
 .about-professional-bridge {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px 36px;
+  gap: 18px 28px;
   align-items: center;
   margin-top: 34px;
-  padding: 15px 0;
+  padding: 14px 0;
   border-top: 1px solid rgba(16, 18, 23, 0.14);
   border-bottom: 1px solid rgba(16, 18, 23, 0.1);
 }
 
 .about-professional-bridge > div {
-  display: grid;
-  grid-template-columns: minmax(18rem, 0.8fr) minmax(24rem, 1fr);
-  gap: 28px;
-  align-items: center;
+  min-width: 0;
   max-width: none;
 }
 
 .about-professional-bridge h2 {
-  max-width: 34ch;
+  max-width: none;
   margin: 0;
   color: var(--black);
-  font-size: 1.3rem;
+  font-size: 1.24rem;
   font-weight: 560;
-  line-height: 1.14;
+  line-height: 1.12;
   letter-spacing: 0;
 }
 
@@ -1764,14 +1761,6 @@ button {
   border-radius: 3px;
   outline: 2px solid rgba(47, 129, 247, 0.34);
   outline-offset: 5px;
-}
-
-.about-professional-copy {
-  max-width: 68ch;
-  margin: 0;
-  color: #59616b;
-  font-size: 0.94rem;
-  line-height: 1.46;
 }
 
 .about-professional-bridge .about-cta {
@@ -10900,11 +10889,6 @@ button {
     gap: 20px;
   }
 
-  .about-professional-bridge > div {
-    grid-template-columns: minmax(16rem, 0.76fr) minmax(0, 1fr);
-    gap: 24px;
-  }
-
   .about-professional-bridge .about-cta {
     justify-self: start;
   }
@@ -11727,14 +11711,9 @@ button {
   }
 
   .about-professional-bridge h2 {
-    max-width: 22ch;
-    font-size: 1.45rem;
+    max-width: 18ch;
+    font-size: 1.36rem;
     line-height: 1.12;
-  }
-
-  .about-professional-copy {
-    max-width: 100%;
-    font-size: 0.95rem;
   }
 
   .interest-grid {
