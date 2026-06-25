@@ -129,8 +129,10 @@ export const personalProjects = [
     shot: "/project-shots/canta-porto.jpg",
     summary: "Learn European Portuguese through songs — lyric recall, a Porto regional layer, and spaced review.",
     tags: ["European Portuguese", "Lyric recall", "Spaced review"],
-    mode: "preview",
-    cta: "In development"
+    mode: "embed",
+    embedUrl: "https://akibwa-canta-porto.dakibwa.workers.dev",
+    localUrl: "http://localhost:3215",
+    cta: "Open on Akibwa"
   },
   {
     number: "04",
