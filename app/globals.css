@@ -1008,6 +1008,47 @@ button {
   background: color-mix(in srgb, var(--area-accent) 6%, #eef0f3);
 }
 
+.personal-detail-live-preview {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--area-accent) 16%, transparent), transparent 52%),
+    #f4f5f2;
+  box-shadow: inset 0 0 0 1px rgba(16, 18, 23, 0.06);
+}
+
+.personal-detail-live-preview iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+  pointer-events: none;
+}
+
+.personal-detail-live-badge {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  z-index: 2;
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  border-radius: 999px;
+  background: rgba(8, 11, 14, 0.58);
+  padding: 0 11px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.72rem;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+}
+
 .personal-detail-collision {
   display: grid;
   aspect-ratio: 16 / 9;

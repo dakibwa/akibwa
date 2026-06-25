@@ -162,7 +162,9 @@ export const personalProjects = [
     summary: "A private two-person meditation room — start together, sit together, finish together, across any distance.",
     tags: ["Two-person", "Synced timer", "Presence"],
     mode: "embed",
-    embedUrl: "https://meditator.dakibwa.workers.dev",
+    detailPreview: "live-frame",
+    embedUrl: "/meditator/",
+    fallbackHref: "/meditator/",
     localUrl: "http://localhost:8787",
     cta: "Open on Akibwa"
   }

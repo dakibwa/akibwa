@@ -104,7 +104,7 @@ const STATUS_BY_SLUG = {
   "cover-collision": "live",
   "canta-porto": "dev",
   "one-bag": "dev",
-  meditator: "dev"
+  meditator: "live"
 };
 
 const STATUS_LABELS = { live: "Live", dev: "Dev" };
@@ -119,6 +119,7 @@ function PersonalDetailPanel({ project }) {
 
   const artwork = getPersonalProjectArt(project);
   const isCoverCollision = project.visual === "cover-collision";
+  const previewFrameUrl = project.detailPreview === "live-frame" ? project.embedUrl : "";
 
   return (
     <article className="personal-detail-card" style={{ "--area-accent": accentForSlug(project.slug) }}>
@@ -147,6 +148,8 @@ function PersonalDetailPanel({ project }) {
             </a>
           ))}
         </div>
+      ) : previewFrameUrl ? (
+        <PersonalDetailLivePreview project={project} frameUrl={previewFrameUrl} />
       ) : project.shot ? (
         <div className="personal-detail-shot">
           <div className="personal-detail-shot-frame">
@@ -160,6 +163,23 @@ function PersonalDetailPanel({ project }) {
         </div>
       )}
     </article>
+  );
+}
+
+function PersonalDetailLivePreview({ project, frameUrl }) {
+  return (
+    <div className="personal-detail-live-preview" aria-label={`${project.title} live app preview`}>
+      <iframe
+        src={frameUrl}
+        title={`${project.title} live app preview`}
+        loading="lazy"
+        tabIndex={-1}
+        allow="clipboard-read; clipboard-write; screen-wake-lock; web-share"
+      />
+      <span className="personal-detail-live-badge" aria-hidden="true">
+        Live app
+      </span>
+    </div>
   );
 }
 
