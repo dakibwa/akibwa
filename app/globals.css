@@ -1636,10 +1636,20 @@ button {
   margin-top: 42px;
 }
 
+.about-toolkit,
+.about-interests {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.3fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+  padding-top: 34px;
+  border-top: 1px solid rgba(16, 18, 23, 0.12);
+}
+
 .interest-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 26px 32px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1647,9 +1657,19 @@ button {
 
 .interest-grid li {
   display: grid;
-  gap: 9px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(16, 18, 23, 0.16);
+  grid-column: span 2;
+  align-content: start;
+  gap: 10px;
+  min-height: 164px;
+  padding: 18px;
+  border: 1px solid rgba(16, 18, 23, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.interest-grid li:nth-last-child(-n + 2) {
+  grid-column: span 3;
+  min-height: 0;
 }
 
 .interest-grid h3 {
@@ -1728,11 +1748,11 @@ button {
 }
 
 .about-section-head {
-  margin-bottom: 22px;
+  margin-bottom: 0;
 }
 
 .about-section-head p {
-  max-width: 560px;
+  max-width: 28ch;
   margin-top: 8px;
 }
 
@@ -1837,24 +1857,26 @@ button {
   line-height: 1.3;
 }
 
-/* Toolkit — quiet grouped rows instead of a card wall */
+/* Toolkit — compact grouped blocks for fast scanning */
 .about-toolkit {
-  margin-top: 48px;
+  margin-top: 52px;
 }
 
 .toolkit-groups {
   display: grid;
-  gap: 0;
-  border-top: 1px solid rgba(16, 18, 23, 0.13);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .toolkit-group {
   display: grid;
-  grid-template-columns: minmax(150px, 0.3fr) minmax(0, 1fr);
-  gap: 24px;
-  align-items: baseline;
-  padding: 20px 6px;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.13);
+  align-content: start;
+  gap: 16px;
+  min-height: 154px;
+  padding: 18px;
+  border: 1px solid rgba(16, 18, 23, 0.12);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.52);
 }
 
 .toolkit-label {
@@ -1866,9 +1888,8 @@ button {
 }
 
 .toolkit-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 24px;
+  display: grid;
+  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1878,9 +1899,11 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 9px;
+  min-width: 0;
   color: var(--black);
   font-size: 0.96rem;
   font-weight: 520;
+  line-height: 1.25;
 }
 
 .toolkit-logo {
@@ -10844,9 +10867,18 @@ button {
     justify-self: start;
   }
 
+  .about-toolkit,
+  .about-interests {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .about-section-head p {
+    max-width: 560px;
+  }
+
   .toolkit-group {
-    grid-template-columns: minmax(140px, 0.28fr) minmax(0, 1fr);
-    padding: 18px 6px;
+    padding: 18px;
   }
 
   .contact-layout {
@@ -11727,7 +11759,19 @@ button {
   .toolkit-group {
     grid-template-columns: 1fr;
     gap: 10px;
-    padding: 16px 2px;
+    min-height: 0;
+    padding: 16px;
+  }
+
+  .toolkit-groups,
+  .interest-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .interest-grid li,
+  .interest-grid li:nth-last-child(-n + 2) {
+    grid-column: auto;
+    min-height: 0;
   }
 
   .featured-case,
