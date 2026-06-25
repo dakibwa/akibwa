@@ -1360,7 +1360,7 @@ button {
 }
 
 .about-hero-sub {
-  max-width: 34ch;
+  max-width: 58ch;
   margin: 20px 0 0;
   color: #6b7178;
   font-size: 1.16rem;
@@ -1470,6 +1470,11 @@ button {
 .about-cta:focus-visible .about-cta-icon {
   background: var(--orange);
   transform: translateX(3px) rotate(-45deg);
+}
+
+.about-hero-cta {
+  justify-self: start;
+  margin-top: 24px;
 }
 
 .about-portrait {
@@ -1688,89 +1693,6 @@ button {
   color: #59616b;
   font-size: 0.92rem;
   line-height: 1.5;
-}
-
-.about-professional-bridge {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px 28px;
-  align-items: center;
-  margin-top: 34px;
-  padding: 14px 0;
-  border-top: 1px solid rgba(16, 18, 23, 0.14);
-  border-bottom: 1px solid rgba(16, 18, 23, 0.1);
-}
-
-.about-professional-bridge > div {
-  min-width: 0;
-  max-width: none;
-}
-
-.about-professional-bridge h2 {
-  max-width: none;
-  margin: 0;
-  color: var(--black);
-  font-size: 1.24rem;
-  font-weight: 560;
-  line-height: 1.12;
-  letter-spacing: 0;
-}
-
-.about-professional-link {
-  position: relative;
-  display: inline-block;
-  color: var(--blue);
-  text-decoration: none;
-  transition:
-    color var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.about-professional-link::after {
-  position: absolute;
-  right: 0;
-  bottom: -0.1em;
-  left: 0;
-  height: 2px;
-  border-radius: 999px;
-  background: currentColor;
-  content: "";
-  opacity: 0.72;
-  transform: scaleX(0.72);
-  transform-origin: left center;
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.about-professional-link:hover,
-.about-professional-link:focus-visible {
-  color: var(--blue);
-  transform: translateY(-1px);
-  transition-duration: var(--hover-in);
-}
-
-.about-professional-link:hover::after,
-.about-professional-link:focus-visible::after {
-  opacity: 1;
-  transform: scaleX(1);
-  transition-duration: var(--hover-in);
-}
-
-.about-professional-link:focus-visible {
-  border-radius: 3px;
-  outline: 2px solid rgba(47, 129, 247, 0.34);
-  outline-offset: 5px;
-}
-
-.about-professional-bridge .about-cta {
-  justify-self: end;
-  margin-top: 0;
-  white-space: nowrap;
-}
-
-.about-professional-bridge + .page-footer {
-  margin-top: 22px;
 }
 
 .about-section-head {
@@ -10895,15 +10817,6 @@ button {
     object-position: 50% 42%;
   }
 
-  .about-professional-bridge {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .about-professional-bridge .about-cta {
-    justify-self: start;
-  }
-
   .about-toolkit,
   .about-interests {
     grid-template-columns: 1fr;
@@ -11709,22 +11622,6 @@ button {
 
   .about-statement {
     font-size: 1.16rem;
-  }
-
-  .about-professional-bridge {
-    margin-top: 30px;
-    padding: 22px 0;
-  }
-
-  .about-professional-bridge > div {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .about-professional-bridge h2 {
-    max-width: 18ch;
-    font-size: 1.36rem;
-    line-height: 1.12;
   }
 
   .interest-grid {

@@ -104,6 +104,12 @@ export function AboutPage() {
           <p className="about-hero-sub">
             Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
           </p>
+          <Link className="about-cta about-hero-cta" href="/professional">
+            <span className="about-cta-label">See professional work</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={17} strokeWidth={2} />
+            </span>
+          </Link>
           <section className="about-hero-intro" aria-labelledby="who-heading">
             <header className="about-section-head">
               <h2 id="who-heading">A little bit about me</h2>
@@ -189,26 +195,6 @@ export function AboutPage() {
             </li>
           ))}
         </ul>
-      </section>
-
-      <section
-        className="page-grid about-section about-professional-bridge"
-        aria-labelledby="professional-bridge-heading"
-      >
-        <div>
-          <h2 id="professional-bridge-heading">
-            For the{" "}
-            <Link className="about-professional-link" href="/professional">
-              work version
-            </Link>, start here.
-          </h2>
-        </div>
-        <Link className="about-cta" href="/professional">
-          <span className="about-cta-label">Professional</span>
-          <span className="about-cta-icon" aria-hidden="true">
-            <ArrowRight size={17} strokeWidth={2} />
-          </span>
-        </Link>
       </section>
 
       <PageFooter />
