@@ -104,12 +104,6 @@ export function AboutPage() {
           <p className="about-hero-sub">
             Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
           </p>
-          <Link className="about-cta about-hero-cta" href="/professional">
-            <span className="about-cta-label">See professional work</span>
-            <span className="about-cta-icon" aria-hidden="true">
-              <ArrowRight size={17} strokeWidth={2} />
-            </span>
-          </Link>
           <section className="about-hero-intro" aria-labelledby="who-heading">
             <header className="about-section-head">
               <h2 id="who-heading">A little bit about me</h2>
@@ -121,6 +115,12 @@ export function AboutPage() {
               trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
               is that I'll try to optimise five things at once.
             </p>
+            <Link className="about-cta about-hero-cta" href="/professional">
+              <span className="about-cta-label">See professional work</span>
+              <span className="about-cta-icon" aria-hidden="true">
+                <ArrowRight size={17} strokeWidth={2} />
+              </span>
+            </Link>
           </section>
         </div>
 
