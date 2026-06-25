@@ -194,9 +194,14 @@ export function AboutPage() {
         aria-labelledby="professional-bridge-heading"
       >
         <div>
-          <p className="about-professional-kicker">Professional</p>
-          <h2 id="professional-bridge-heading">If this is the work version of the same problem, start here.</h2>
-          <p>
+          <h2 id="professional-bridge-heading">
+            If this is the{" "}
+            <Link className="about-professional-link" href="/professional">
+              work version
+            </Link>{" "}
+            of the same problem, start here.
+          </h2>
+          <p className="about-professional-copy">
             The professional side is where the BI, workflow, and AI-assisted build-loop work lives: practical
             systems for teams with too much messy information and not enough clarity.
           </p>

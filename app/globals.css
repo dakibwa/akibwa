@@ -1696,7 +1696,7 @@ button {
   gap: 20px 36px;
   align-items: center;
   margin-top: 34px;
-  padding: 18px 0 16px;
+  padding: 15px 0;
   border-top: 1px solid rgba(16, 18, 23, 0.14);
   border-bottom: 1px solid rgba(16, 18, 23, 0.1);
 }
@@ -1704,19 +1704,9 @@ button {
 .about-professional-bridge > div {
   display: grid;
   grid-template-columns: minmax(18rem, 0.8fr) minmax(24rem, 1fr);
-  gap: 8px 28px;
-  align-items: start;
+  gap: 28px;
+  align-items: center;
   max-width: none;
-}
-
-.about-professional-kicker {
-  grid-column: 1 / -1;
-  margin: 0;
-  color: var(--blue);
-  font-size: 0.72rem;
-  font-weight: 680;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .about-professional-bridge h2 {
@@ -1729,7 +1719,54 @@ button {
   letter-spacing: 0;
 }
 
-.about-professional-bridge p:not(.about-professional-kicker) {
+.about-professional-link {
+  position: relative;
+  display: inline-block;
+  color: var(--blue);
+  text-decoration: none;
+  transition:
+    color var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.about-professional-link::after {
+  position: absolute;
+  right: 0;
+  bottom: -0.1em;
+  left: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+  opacity: 0.72;
+  transform: scaleX(0.72);
+  transform-origin: left center;
+  transition:
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.about-professional-link:hover,
+.about-professional-link:focus-visible {
+  color: var(--blue);
+  transform: translateY(-1px);
+  transition-duration: var(--hover-in);
+}
+
+.about-professional-link:hover::after,
+.about-professional-link:focus-visible::after {
+  opacity: 1;
+  transform: scaleX(1);
+  transition-duration: var(--hover-in);
+}
+
+.about-professional-link:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid rgba(47, 129, 247, 0.34);
+  outline-offset: 5px;
+}
+
+.about-professional-copy {
   max-width: 68ch;
   margin: 0;
   color: #59616b;
@@ -10865,7 +10902,7 @@ button {
 
   .about-professional-bridge > div {
     grid-template-columns: minmax(16rem, 0.76fr) minmax(0, 1fr);
-    gap: 8px 24px;
+    gap: 24px;
   }
 
   .about-professional-bridge .about-cta {
@@ -11695,7 +11732,7 @@ button {
     line-height: 1.12;
   }
 
-  .about-professional-bridge p:not(.about-professional-kicker) {
+  .about-professional-copy {
     max-width: 100%;
     font-size: 0.95rem;
   }
