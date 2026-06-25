@@ -1862,13 +1862,15 @@ button {
   object-position: center;
 }
 
-.work-logo--wide {
-  width: 42px;
+.work-logo--tile {
+  width: 36px;
+  height: 36px;
 }
 
-.work-logo--wide img {
-  width: 40px;
-  height: 18px;
+.work-logo--tile img {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
 }
 
 .work-dot {

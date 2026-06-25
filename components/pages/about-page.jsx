@@ -22,8 +22,8 @@ const workplaces = [
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
     accent: "#d01fcb",
-    logo: "/brand-logos/sky-bet.svg",
-    logoVariant: "wide"
+    logo: "/brand-logos/sky-betting-gaming-logo.png",
+    logoVariant: "tile"
   },
   {
     year: "2018",
