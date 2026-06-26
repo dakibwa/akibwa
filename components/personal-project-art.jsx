@@ -4,27 +4,47 @@ const artworkBySlug = {
   chorus: {
     src: "/project-art/personal/chorus-trio.webp",
     bannerSrc: "/project-art/personal/chorus-trio-banner.webp",
-    variant: "music"
+    variant: "music",
+    detailBannerPosition: "50% 45%",
+    selectorBannerPosition: "50% 48%",
+    selectorSubjectPosition: "50% 48%",
+    expandedBannerPosition: "50% 45%"
   },
   "cover-collision": {
     src: "/project-art/personal/cover-collision-saint.webp",
     bannerSrc: "/project-art/personal/cover-collision-saint-banner.webp",
-    variant: "cover"
+    variant: "cover",
+    detailBannerPosition: "50% 48%",
+    selectorBannerPosition: "50% 48%",
+    selectorSubjectPosition: "54% 48%",
+    expandedBannerPosition: "50% 48%"
   },
   "canta-porto": {
     src: "/project-art/personal/canta-porto-azulejo.webp",
     bannerSrc: "/project-art/personal/canta-porto-azulejo-banner.webp",
-    variant: "music"
+    variant: "music",
+    detailBannerPosition: "50% 52%",
+    selectorBannerPosition: "52% 52%",
+    selectorSubjectPosition: "58% 50%",
+    expandedBannerPosition: "50% 52%"
   },
   "one-bag": {
     src: "/project-art/personal/one-bag-traveller.webp",
     bannerSrc: "/project-art/personal/one-bag-traveller-banner.webp",
-    variant: "cover"
+    variant: "cover",
+    detailBannerPosition: "50% 44%",
+    selectorBannerPosition: "50% 42%",
+    selectorSubjectPosition: "50% 38%",
+    expandedBannerPosition: "50% 42%"
   },
   meditator: {
     src: "/project-art/personal/albion-rose-card.webp",
     bannerSrc: "/project-art/personal/albion-rose-banner.webp",
-    variant: "knowledge"
+    variant: "knowledge",
+    detailBannerPosition: "47% 42%",
+    selectorBannerPosition: "47% 42%",
+    selectorSubjectPosition: "47% 42%",
+    expandedBannerPosition: "47% 42%"
   }
 };
 

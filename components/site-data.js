@@ -130,8 +130,10 @@ export const personalProjects = [
     summary: "Learn European Portuguese through songs — lyric recall, a Porto regional layer, and spaced review.",
     tags: ["European Portuguese", "Lyric recall", "Spaced review"],
     mode: "embed",
+    previewTreatment: "canta-vignette",
     embedUrl: "https://akibwa-canta-porto.dakibwa.workers.dev",
     localUrl: "http://localhost:3215",
+    useLocalFrame: false,
     cta: "Open on Akibwa"
   },
   {
@@ -146,8 +148,10 @@ export const personalProjects = [
     summary: "Plan a one-bag loadout: prove the constraint, compare the gear, and buy only what earns its place.",
     tags: ["Packing optimiser", "Gear comparison", "Local-first"],
     mode: "embed",
+    previewTreatment: "one-bag-vignette",
     embedUrl: "https://one-bag.dakibwa.workers.dev",
     localUrl: "http://localhost:3100",
+    useLocalFrame: false,
     cta: "Open on Akibwa"
   },
   {
@@ -162,10 +166,11 @@ export const personalProjects = [
     summary: "A private two-person meditation room — start together, sit together, finish together, across any distance.",
     tags: ["Two-person", "Synced timer", "Presence"],
     mode: "embed",
-    detailPreview: "live-frame",
-    embedUrl: "/meditator/",
+    previewTreatment: "meditator-vignette",
+    embedUrl: "/meditator/index.html",
     fallbackHref: "/meditator/",
     localUrl: "http://localhost:8787",
+    useLocalFrame: false,
     cta: "Open on Akibwa"
   }
 ];

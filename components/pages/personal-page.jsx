@@ -67,7 +67,7 @@ function canUseLocalFrame() {
 }
 
 function getProjectFrameUrl(project, isLocalHost) {
-  if (isLocalHost && project.localUrl) return project.localUrl;
+  if (isLocalHost && project.localUrl && project.useLocalFrame !== false) return project.localUrl;
   if (project.embedUrl) return project.embedUrl;
   if (project.visual === "chorus") return chorusAppUrl;
   return "";
@@ -79,9 +79,10 @@ function shouldOpenProjectRoute(project) {
 
 function ProjectExpandedBanner({ project }) {
   const artwork = getPersonalProjectArt(project);
+  const style = getProjectArtVariables(artwork);
 
   return (
-    <div className={`project-expanded-banner is-${artwork.variant}`} aria-hidden="true">
+    <div className={`project-expanded-banner is-${artwork.variant}`} style={style} aria-hidden="true">
       <img src={artwork.bannerSrc} alt="" draggable="false" />
     </div>
   );
@@ -113,16 +114,160 @@ function statusForSlug(slug) {
   return STATUS_BY_SLUG[slug] ?? "dev";
 }
 
+function getProjectArtVariables(artwork, extras = {}) {
+  return {
+    "--project-detail-banner-position": artwork.detailBannerPosition,
+    "--project-selector-banner-position": artwork.selectorBannerPosition,
+    "--project-selector-subject-position": artwork.selectorSubjectPosition,
+    "--project-expanded-banner-position": artwork.expandedBannerPosition,
+    ...extras
+  };
+}
+
+function ProjectAppPreview({ project, artwork }) {
+  if (project.previewTreatment === "canta-vignette") {
+    return <CantaPortoPreview project={project} artwork={artwork} />;
+  }
+
+  if (project.previewTreatment === "one-bag-vignette") {
+    return <OneBagPreview project={project} artwork={artwork} />;
+  }
+
+  if (project.previewTreatment === "meditator-vignette") {
+    return <MeditatorPreview project={project} artwork={artwork} />;
+  }
+
+  return null;
+}
+
+function AppPreviewShell({ project, artwork, children }) {
+  return (
+    <div
+      className={`personal-detail-app-preview is-${project.slug}`}
+      style={getProjectArtVariables(artwork)}
+      aria-label={`${project.title} app preview`}
+    >
+      <img
+        className="personal-detail-app-backdrop"
+        src={artwork.bannerSrc}
+        alt=""
+        draggable="false"
+        loading="lazy"
+        decoding="async"
+      />
+      <div className="personal-detail-app-chrome">
+        <div className="personal-detail-app-toolbar">
+          <span>{project.title}</span>
+          <em>{project.type}</em>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function CantaPortoPreview({ project, artwork }) {
+  return (
+    <AppPreviewShell project={project} artwork={artwork}>
+      <div className="app-preview-grid canta-preview">
+        <section className="app-preview-primary">
+          <span>Now practising</span>
+          <strong>Fado line recall</strong>
+          <p>Ouvir, repetir, lembrar.</p>
+          <div className="canta-lyric-lines" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </div>
+        </section>
+        <section className="app-preview-side">
+          <span>Porto layer</span>
+          <div className="canta-token-row" aria-hidden="true">
+            <b>saudade</b>
+            <b>Douro</b>
+            <b>voz</b>
+          </div>
+          <div className="app-preview-meter" aria-hidden="true">
+            <i style={{ width: "72%" }} />
+          </div>
+        </section>
+      </div>
+    </AppPreviewShell>
+  );
+}
+
+function OneBagPreview({ project, artwork }) {
+  return (
+    <AppPreviewShell project={project} artwork={artwork}>
+      <div className="app-preview-grid one-bag-preview">
+        <section className="app-preview-primary">
+          <span>Cabin constraint</span>
+          <strong>24L / 6.8kg</strong>
+          <div className="one-bag-pack" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+        </section>
+        <section className="app-preview-side">
+          <span>Earned its place</span>
+          <ul>
+            <li>
+              <b>Shell</b>
+              <em>320g</em>
+            </li>
+            <li>
+              <b>Merino tee</b>
+              <em>145g</em>
+            </li>
+            <li>
+              <b>Adapter</b>
+              <em>88g</em>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </AppPreviewShell>
+  );
+}
+
+function MeditatorPreview({ project, artwork }) {
+  return (
+    <AppPreviewShell project={project} artwork={artwork}>
+      <div className="app-preview-grid meditator-preview">
+        <section className="meditator-ring" aria-label="Synced meditation timer">
+          <span>12:00</span>
+        </section>
+        <section className="app-preview-side">
+          <span>Private room</span>
+          <div className="meditator-presence">
+            <b>You</b>
+            <b>Friend</b>
+          </div>
+          <div className="app-preview-meter" aria-hidden="true">
+            <i style={{ width: "58%" }} />
+          </div>
+        </section>
+      </div>
+    </AppPreviewShell>
+  );
+}
+
 function PersonalDetailPanel({ project }) {
   const { posts: collisionPosts } = useCoverCollisionData();
   if (!project) return null;
 
   const artwork = getPersonalProjectArt(project);
   const isCoverCollision = project.visual === "cover-collision";
+  const hasAppPreview = Boolean(project.previewTreatment);
   const previewFrameUrl = project.detailPreview === "live-frame" ? project.embedUrl : "";
 
   return (
-    <article className="personal-detail-card" style={{ "--area-accent": accentForSlug(project.slug) }}>
+    <article
+      className="personal-detail-card"
+      style={getProjectArtVariables(artwork, { "--area-accent": accentForSlug(project.slug) })}
+    >
       <header className={`personal-detail-banner is-${artwork.variant}`}>
         <img src={artwork.bannerSrc} alt="" draggable="false" loading="lazy" decoding="async" />
         <span className="personal-detail-banner-scrim" aria-hidden="true" />
@@ -148,6 +293,8 @@ function PersonalDetailPanel({ project }) {
             </a>
           ))}
         </div>
+      ) : hasAppPreview ? (
+        <ProjectAppPreview project={project} artwork={artwork} />
       ) : previewFrameUrl ? (
         <PersonalDetailLivePreview project={project} frameUrl={previewFrameUrl} />
       ) : project.shot ? (
@@ -191,7 +338,7 @@ function PersonalSelectorBar({ project, isActive, onPreview, onOpen }) {
       type="button"
       className={`personal-selector-bar ${isActive ? "is-active" : ""}`}
       aria-pressed={isActive}
-      style={{ "--area-accent": accentForSlug(project.slug) }}
+      style={getProjectArtVariables(artwork, { "--area-accent": accentForSlug(project.slug) })}
       onPointerEnter={onPreview}
       onFocus={onPreview}
       onClick={onOpen}
