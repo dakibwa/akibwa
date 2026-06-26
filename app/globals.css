@@ -3817,8 +3817,13 @@ button {
 
 .fit-panel {
   display: grid;
-  grid-template-columns: 0.58fr 1fr 1fr 0.82fr;
-  gap: 28px;
+  grid-template-columns:
+    minmax(136px, 0.48fr)
+    minmax(280px, 1fr)
+    minmax(280px, 1fr)
+    minmax(220px, 0.74fr);
+  column-gap: clamp(24px, 3vw, 44px);
+  row-gap: 28px;
   align-items: center;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
@@ -3827,7 +3832,8 @@ button {
 
 .fit-orbit {
   position: relative;
-  width: 180px;
+  justify-self: center;
+  width: clamp(138px, 11vw, 158px);
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background:
@@ -3843,17 +3849,17 @@ button {
   margin: -4px 0 0 -4px;
   border-radius: 50%;
   background: var(--black);
-  transform: rotate(-48deg) translateX(99px);
+  transform: rotate(-48deg) translateX(78px);
   animation: fit-orbit-turn 36s linear infinite;
 }
 
 @keyframes fit-orbit-turn {
   from {
-    transform: rotate(-48deg) translateX(99px);
+    transform: rotate(-48deg) translateX(78px);
   }
 
   to {
-    transform: rotate(312deg) translateX(99px);
+    transform: rotate(312deg) translateX(78px);
   }
 }
 
@@ -3865,7 +3871,10 @@ button {
 
 .fit-panel article {
   display: grid;
+  align-content: start;
+  align-self: stretch;
   gap: 12px;
+  min-width: 0;
 }
 
 .fit-panel h2 {
@@ -3909,9 +3918,15 @@ button {
 }
 
 .fit-map img {
+  display: block;
   width: 100%;
   height: auto;
   opacity: 0.88;
+}
+
+.fit-map {
+  width: min(100%, 284px);
+  justify-self: end;
 }
 
 .how-we-work-panel {
