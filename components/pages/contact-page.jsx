@@ -155,6 +155,45 @@ export function ContactPage() {
         </div>
       </section>
 
+      <section className="page-grid contact-next" aria-label="What happens next">
+        <header>
+          <span>What happens next</span>
+          <h2>From a draft email to a practical read.</h2>
+        </header>
+        <ol>
+          <li>
+            <span className="contact-next-step">01</span>
+            <p>
+              <strong>You send the shape</strong>
+              <span>
+                The button opens a draft email with your answers already filled in.
+                You read it, edit anything, and hit send — nothing leaves your machine until you do.
+              </span>
+            </p>
+          </li>
+          <li>
+            <span className="contact-next-step">02</span>
+            <p>
+              <strong>I run a quick diagnostic</strong>
+              <span>
+                I read it as a short workflow diagnostic: where the time goes, and what the
+                smallest useful system looks like — not a sales pitch or a giant transformation plan.
+              </span>
+            </p>
+          </li>
+          <li>
+            <span className="contact-next-step">03</span>
+            <p>
+              <strong>We talk only if it helps</strong>
+              <span>
+                You get a practical first take by email. If there is a clear fit, we book a short call.
+                If there is not, I will say so and point you somewhere useful.
+              </span>
+            </p>
+          </li>
+        </ol>
+      </section>
+
       <PageFooter />
     </section>
   );

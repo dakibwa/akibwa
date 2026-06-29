@@ -4337,6 +4337,81 @@ button {
   line-height: 1.5;
 }
 
+.contact-next {
+  display: grid;
+  gap: 22px;
+  padding: 4px 0 12px;
+}
+
+.contact-next > header {
+  display: grid;
+  gap: 8px;
+}
+
+.contact-next > header > span {
+  color: var(--blue);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-next > header h2 {
+  margin: 0;
+  color: var(--black);
+  font-size: clamp(1.35rem, 1.9vw, 1.85rem);
+  font-weight: 520;
+  line-height: 1.08;
+}
+
+.contact-next ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(16, 18, 23, 0.12);
+}
+
+.contact-next li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 22px 32px 22px 0;
+}
+
+.contact-next li + li {
+  border-left: 1px solid rgba(16, 18, 23, 0.1);
+  padding-left: 32px;
+}
+
+.contact-next-step {
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+
+.contact-next p {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+}
+
+.contact-next strong {
+  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 540;
+}
+
+.contact-next p > span {
+  font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
+  line-height: 1.5;
+}
+
 
 .not-found h1 {
   margin: 0;
@@ -5938,6 +6013,24 @@ button {
     align-content: start;
     justify-self: stretch;
     padding: 22px 30px;
+  }
+
+  .contact-next ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact-next li {
+    padding: 20px 0;
+    border-top: 1px solid rgba(16, 18, 23, 0.1);
+  }
+
+  .contact-next ol > li:first-child {
+    border-top: 0;
+  }
+
+  .contact-next li + li {
+    border-left: 0;
+    padding-left: 0;
   }
 
   .contact-note-card header {
