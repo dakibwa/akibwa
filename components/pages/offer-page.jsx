@@ -58,23 +58,29 @@ export function OfferPage() {
         <div className="offer-hero-title">
           <h1>Professional</h1>
           <p>
-            Commission a useful system
+            When the real work still runs
             <br />
-            for a messy workflow.
+            on spreadsheets, copy-paste, and memory.
           </p>
         </div>
         <div className="offer-hero-aside">
           <p>
-            I design and build small, AI-assisted systems that bring order to messy
-            workflows, turn data into decisions, and make knowledge easy to find
-            and reuse.
+            I help small teams and solo operators replace the manual, error-prone
+            workflow that quietly eats hours every week — with a small AI-assisted
+            system that does the repetitive part reliably and hands the time back.
+            Ten years turning messy data into decisions, now pointed at your actual work.
           </p>
           <Link className="about-cta" href="/contact">
-            <span className="about-cta-label">Send the messy bit</span>
+            <span className="about-cta-label">Book a short workflow triage</span>
             <span className="about-cta-icon" aria-hidden="true">
               <ArrowRight size={17} strokeWidth={2} />
             </span>
           </Link>
+          <p className="offer-hero-proof">
+            Proof, not promises: <Link href="/about">ten years in BI</Link>,{" "}
+            <Link href="/personal">public build loops</Link>, and{" "}
+            <Link href="/systems">the operating loop</Link> behind every build.
+          </p>
         </div>
       </section>
 

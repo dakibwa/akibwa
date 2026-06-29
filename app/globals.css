@@ -3754,6 +3754,27 @@ button {
   margin: 6px 0 16px;
 }
 
+.offer-hero-aside .offer-hero-proof {
+  margin: 2px 0 0;
+  color: var(--ink, #4a4f57);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.offer-hero-aside .offer-hero-proof a {
+  color: var(--black);
+  text-decoration: underline;
+  text-decoration-color: rgba(16, 18, 23, 0.26);
+  text-underline-offset: 3px;
+  transition: color 0.18s ease, text-decoration-color 0.18s ease;
+}
+
+.offer-hero-aside .offer-hero-proof a:hover,
+.offer-hero-aside .offer-hero-proof a:focus-visible {
+  color: var(--blue);
+  text-decoration-color: var(--blue);
+}
+
 .offer-step-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
