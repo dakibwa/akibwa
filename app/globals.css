@@ -1924,9 +1924,9 @@ button {
   display: grid;
   grid-column: span 2;
   align-content: start;
-  gap: 10px;
-  min-height: 164px;
-  padding: 18px;
+  gap: 8px;
+  min-height: 132px;
+  padding: 16px 18px;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.52);
@@ -2139,6 +2139,11 @@ button {
   width: 22px;
   height: 22px;
   object-fit: contain;
+}
+
+.toolkit-icon {
+  color: var(--tool-accent);
+  flex: none;
 }
 
 .toolkit-dot {

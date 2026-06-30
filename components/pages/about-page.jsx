@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Database } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
 const workplaces = [
@@ -47,7 +47,7 @@ const toolGroups = [
     tools: [
       { name: "Microsoft Fabric", accent: "#2f88ff", logo: "/brand-logos/microsoft-fabric.svg" },
       { name: "Power BI", accent: "#f2c811", logo: "/brand-logos/power-bi.svg" },
-      { name: "SQL", accent: "#7d9a92" }
+      { name: "SQL", accent: "#7d9a92", Icon: Database }
     ]
   },
   {
@@ -70,7 +70,7 @@ const toolGroups = [
 const interests = [
   {
     name: "AI & the singularity",
-    note: "I build with it daily and can't stop thinking about the long arc — where this ends up, and how we get there well.",
+    note: "Daily build loop; long-arc questions.",
     accent: "#2f88ff"
   },
   {
@@ -169,6 +169,8 @@ export function AboutPage() {
                   <li className="toolkit-item" key={tool.name} style={{ "--tool-accent": tool.accent }}>
                     {tool.logo ? (
                       <img className="toolkit-logo" src={tool.logo} alt="" aria-hidden="true" />
+                    ) : tool.Icon ? (
+                      <tool.Icon className="toolkit-logo toolkit-icon" size={22} strokeWidth={2.1} aria-hidden="true" />
                     ) : (
                       <span className="toolkit-dot" aria-hidden="true" />
                     )}
