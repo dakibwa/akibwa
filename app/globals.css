@@ -1914,7 +1914,7 @@ button {
 .interest-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
   gap: 14px;
   margin: 0;
   padding: 0;
@@ -1926,7 +1926,7 @@ button {
   grid-column: span 2;
   align-content: start;
   gap: 7px;
-  min-height: 0;
+  min-height: 104px;
   padding: 14px 18px;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
@@ -1935,7 +1935,6 @@ button {
 
 .interest-grid li:nth-last-child(-n + 2) {
   grid-column: span 3;
-  min-height: 0;
 }
 
 .interest-grid h3 {
@@ -6620,7 +6619,7 @@ button {
   .interest-grid li,
   .interest-grid li:nth-last-child(-n + 2) {
     grid-column: auto;
-    min-height: 0;
+    min-height: 104px;
   }
 
   

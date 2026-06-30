@@ -69,28 +69,28 @@ const toolGroups = [
 
 const interests = [
   {
+    name: "Film",
+    note: "Art-house, odd, logged on Letterboxd.",
+    accent: "#ff6f1a"
+  },
+  {
+    name: "Music",
+    note: "Restless taste; every listen tracked.",
+    accent: "#d01fcb"
+  },
+  {
+    name: "Nutrition & running",
+    note: "Testing what makes the body run better.",
+    accent: "#12b981"
+  },
+  {
     name: "AI & the singularity",
     note: "Daily build loop; long-arc questions.",
     accent: "#2f88ff"
   },
   {
-    name: "Film",
-    note: "Art-house and the slightly strange. Yes, it all gets logged on Letterboxd.",
-    accent: "#ff6f1a"
-  },
-  {
-    name: "Music",
-    note: "Wide, restless taste, every listen tracked — that habit is what became Chorus.",
-    accent: "#d01fcb"
-  },
-  {
-    name: "Nutrition & running",
-    note: "Working out what actually makes the body run better, usually tested on myself.",
-    accent: "#12b981"
-  },
-  {
     name: "A good long conversation",
-    note: "The real kind that goes somewhere. Probably my favourite thing.",
+    note: "The kind that actually goes somewhere.",
     accent: "#557f8d"
   }
 ];
