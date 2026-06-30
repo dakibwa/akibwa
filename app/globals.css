@@ -1914,6 +1914,7 @@ button {
 .interest-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: start;
   gap: 14px;
   margin: 0;
   padding: 0;
@@ -1924,9 +1925,9 @@ button {
   display: grid;
   grid-column: span 2;
   align-content: start;
-  gap: 8px;
-  min-height: 132px;
-  padding: 16px 18px;
+  gap: 7px;
+  min-height: 0;
+  padding: 14px 18px;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.52);
@@ -1961,7 +1962,7 @@ button {
   margin: 0;
   color: #59616b;
   font-size: 0.92rem;
-  line-height: 1.5;
+  line-height: 1.42;
 }
 
 .about-section-head {
