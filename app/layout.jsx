@@ -1,6 +1,6 @@
 import "./globals.css";
 import { SiteShell } from "@/components/site-shell";
-import { chorusAppUrl, publicSurfaces } from "@/components/site-data";
+import { chorusAppUrl, oneBaggerAppUrl, publicSurfaces } from "@/components/site-data";
 
 function toOrigins(urls) {
   return [
@@ -21,7 +21,7 @@ function toOrigins(urls) {
 
 // Iframe embeds navigate on credentialed connections; data refreshes fetch over
 // anonymous CORS connections. Preconnect each origin with the matching mode.
-const embedOrigins = toOrigins([chorusAppUrl]);
+const embedOrigins = toOrigins([chorusAppUrl, oneBaggerAppUrl]);
 const dataOrigins = toOrigins(
   publicSurfaces.flatMap((surface) => [surface.refresh?.dataUrl, surface.refresh?.statusUrl])
 ).filter((origin) => !embedOrigins.includes(origin));

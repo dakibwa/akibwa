@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25",
+  "updated": "2026-07-03",
   "surfaces": [
     {
       "id": "meditator",
@@ -25,6 +25,15 @@
         "dataUrl": "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus",
         "statusUrl": "https://akibwa-chorus-refresh.dakibwa.workers.dev/status"
       }
+    },
+    {
+      "id": "onebagger",
+      "title": "One-Bag Planner",
+      "route": "/onebagger",
+      "kind": "cloudflare-app",
+      "visibility": "public",
+      "appUrlEnv": "NEXT_PUBLIC_ONEBAGGER_APP_URL",
+      "defaultAppUrl": "https://one-bag.dakibwa.workers.dev"
     },
     {
       "id": "cover-collision",

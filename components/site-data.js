@@ -10,9 +10,11 @@ export function getPublicSurface(id) {
 }
 
 const chorusSurface = getPublicSurface("chorus");
+const oneBaggerSurface = getPublicSurface("onebagger");
 const coverCollisionSurface = getPublicSurface("cover-collision");
 
 export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || chorusSurface?.defaultAppUrl || "").trim();
+export const oneBaggerAppUrl = (process.env.NEXT_PUBLIC_ONEBAGGER_APP_URL || oneBaggerSurface?.defaultAppUrl || "").trim();
 export const coverCollisionDataUrl = (
   process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
   coverCollisionSurface?.refresh?.dataUrl ||
@@ -149,7 +151,7 @@ export const personalProjects = [
     tags: ["Packing optimiser", "Gear comparison", "Local-first"],
     mode: "embed",
     previewTreatment: "one-bag-vignette",
-    embedUrl: "https://one-bag.dakibwa.workers.dev",
+    embedUrl: oneBaggerAppUrl,
     localUrl: "http://localhost:3100",
     useLocalFrame: false,
     cta: "Open on Akibwa"
