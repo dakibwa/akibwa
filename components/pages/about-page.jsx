@@ -125,8 +125,8 @@ export function AboutPage() {
         </div>
 
         <aside className="about-hero-side">
-          <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
-            <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
+          <figure className="about-portrait about-portrait--hero about-portrait--artwork" aria-label="Sunlit mountain meadow with a layered data texture">
+            <img src="/about-mountain-meadow.webp" alt="Sunlit mountain meadow with a layered data texture" />
             <span className="about-portrait-orbit" aria-hidden="true" />
             <span className="about-portrait-point" aria-hidden="true" />
           </figure>
