@@ -1758,7 +1758,7 @@ button {
   display: grid;
   gap: 16px;
   max-width: 48rem;
-  margin-top: 34px;
+  min-width: 0;
   border: 1px solid rgba(44, 128, 104, 0.14);
   border-radius: var(--radius);
   background:
@@ -1975,6 +1975,8 @@ button {
 .about-cv {
   display: grid;
   gap: 12px;
+  min-width: 0;
+  padding-top: 1px;
 }
 
 .about-cv-label {
@@ -2007,6 +2009,27 @@ button {
 
 .about-section {
   margin-top: 42px;
+}
+
+.about-brief {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.44fr);
+  column-gap: 56px;
+  row-gap: 28px;
+  align-items: start;
+  margin-top: 36px;
+  padding-top: 28px;
+}
+
+.about-brief::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(217, 152, 52, 0.62), rgba(44, 128, 104, 0.36), rgba(16, 18, 23, 0.08));
+  content: "";
 }
 
 .about-toolkit,
@@ -6133,6 +6156,7 @@ button {
   .offer-studio-hero,
 
   .about-hero,
+  .about-brief,
 
   .contact-layout {
     grid-template-columns: 1fr;
@@ -6150,6 +6174,11 @@ button {
 
   .about-hero {
     padding-top: 44px;
+  }
+
+  .about-brief {
+    margin-top: 30px;
+    padding-top: 24px;
   }
 
   .about-cta {
@@ -6697,6 +6726,11 @@ button {
 
   .about-hero {
     padding-top: 34px;
+  }
+
+  .about-brief {
+    margin-top: 26px;
+    padding-top: 22px;
   }
 
   .studio-hero h1,

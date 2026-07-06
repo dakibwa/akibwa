@@ -104,53 +104,54 @@ export function AboutPage() {
           <p className="about-hero-sub">
             Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
           </p>
-          <section className="about-hero-intro" aria-labelledby="who-heading">
-            <header className="about-section-head">
-              <h2 id="who-heading">A little bit about me</h2>
-              <p>The part a job title doesn't cover.</p>
-            </header>
-            <p className="about-statement">
-              I'm happiest turning messy reality into something that works — and I do that to my own life as much
-              as my work. I track most things, follow the odd obsession all the way down, and I'm always quietly
-              trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
-              is that I'll try to optimise five things at once.
-            </p>
-            <Link className="about-cta about-hero-cta" href="/professional">
-              <span className="about-cta-label">See professional work</span>
-              <span className="about-cta-icon" aria-hidden="true">
-                <ArrowRight size={17} strokeWidth={2} />
-              </span>
-            </Link>
-          </section>
         </div>
 
-        <aside className="about-hero-side">
-          <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
-            <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
-            <span className="about-portrait-orbit" aria-hidden="true" />
-            <span className="about-portrait-point" aria-hidden="true" />
-          </figure>
+        <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
+          <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
+          <span className="about-portrait-orbit" aria-hidden="true" />
+          <span className="about-portrait-point" aria-hidden="true" />
+        </figure>
+      </section>
 
-          <div className="about-cv">
-            <p className="about-cv-label">Where I've worked</p>
-            <ol className="work-timeline">
-              {workplaces.map((workplace) => (
-                <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
-                  <span className="work-year">{workplace.year}</span>
-                  <span className="work-node" aria-hidden="true" />
-                  <span className="work-detail">
-                    <span className="work-company">
-                      <span className={`work-logo ${workplace.logoVariant ? `work-logo--${workplace.logoVariant}` : ""}`} aria-hidden="true">
-                        {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
-                      </span>
-                      <strong>{workplace.name}</strong>
+      <section className="page-grid about-brief" aria-label="Background">
+        <section className="about-hero-intro" aria-labelledby="who-heading">
+          <header className="about-section-head">
+            <h2 id="who-heading">A little bit about me</h2>
+            <p>The part a job title doesn't cover.</p>
+          </header>
+          <p className="about-statement">
+            I'm happiest turning messy reality into something that works — and I do that to my own life as much
+            as my work. I track most things, follow the odd obsession all the way down, and I'm always quietly
+            trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
+            is that I'll try to optimise five things at once.
+          </p>
+          <Link className="about-cta about-hero-cta" href="/professional">
+            <span className="about-cta-label">See professional work</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={17} strokeWidth={2} />
+            </span>
+          </Link>
+        </section>
+
+        <aside className="about-cv" aria-labelledby="cv-heading">
+          <h2 className="about-cv-label" id="cv-heading">Where I've worked</h2>
+          <ol className="work-timeline">
+            {workplaces.map((workplace) => (
+              <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
+                <span className="work-year">{workplace.year}</span>
+                <span className="work-node" aria-hidden="true" />
+                <span className="work-detail">
+                  <span className="work-company">
+                    <span className={`work-logo ${workplace.logoVariant ? `work-logo--${workplace.logoVariant}` : ""}`} aria-hidden="true">
+                      {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
                     </span>
-                    <span className="work-role">{workplace.role}</span>
+                    <strong>{workplace.name}</strong>
                   </span>
-                </li>
-              ))}
-            </ol>
-          </div>
+                  <span className="work-role">{workplace.role}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
         </aside>
       </section>
 
