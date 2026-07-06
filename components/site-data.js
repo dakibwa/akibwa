@@ -55,9 +55,9 @@ export const areaTiles = [
     title: "Contact",
     descriptor: "Send the messy bit",
     href: "/contact",
-    image: "/area-art/contact-signal.jpg",
-    alt: "Abstract teal and amber shards converging into a bright signal burst",
-    accent: "#e2556b",
+    image: "/area-art/contact-blue-clouds.webp",
+    alt: "Bright blue sky with white clouds and a dotted data texture",
+    accent: "#2f88ff",
     detail: "Get in contact"
   }
 ];

@@ -127,10 +127,10 @@ export function ContactPage() {
         <div className="contact-art-side">
           <div className="contact-signal-art" aria-hidden="true">
             <img
-              src="/area-art/contact-signal.jpg"
+              src="/area-art/contact-blue-clouds.webp"
               alt=""
-              width="1200"
-              height="675"
+              width="899"
+              height="1198"
               loading="eager"
               decoding="async"
               draggable="false"
