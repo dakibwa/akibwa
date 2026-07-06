@@ -4256,8 +4256,9 @@ button {
 
 .contact-layout {
   display: grid;
-  grid-template-columns: minmax(360px, 0.76fr) minmax(0, 1fr);
-  gap: 70px;
+  grid-template-columns: minmax(440px, 560px) minmax(340px, 430px);
+  justify-content: start;
+  gap: clamp(64px, 6vw, 96px);
   align-items: start;
   padding-top: 58px;
 }
@@ -4265,6 +4266,10 @@ button {
 .contact-form-side,
 .contact-art-side {
   min-width: 0;
+}
+
+.contact-form-side {
+  max-width: 560px;
 }
 
 
@@ -4285,9 +4290,9 @@ button {
   border-radius: var(--radius);
   background:
     radial-gradient(circle at 2px 2px, rgba(22, 133, 255, 0.075) 1px, transparent 1.7px) 0 0 / 16px 16px,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(237, 247, 255, 0.54));
-  padding: 22px;
-  box-shadow: 0 20px 58px rgba(7, 87, 191, 0.075);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(237, 247, 255, 0.48));
+  padding: 24px;
+  box-shadow: 0 18px 48px rgba(7, 87, 191, 0.065);
 }
 
 .contact-form label {
@@ -4432,22 +4437,24 @@ button {
 
 .contact-art-side {
   display: grid;
-  justify-items: end;
-  gap: 18px;
-  padding-top: 24px;
+  justify-self: end;
+  justify-items: stretch;
+  gap: 32px;
+  width: min(430px, 100%);
+  padding-top: 20px;
 }
 
 .contact-signal-art {
   position: relative;
   overflow: hidden;
-  width: min(430px, 82%);
-  aspect-ratio: 500 / 668;
+  width: 100%;
+  aspect-ratio: 4 / 5;
   border: 1px solid rgba(22, 133, 255, 0.24);
   border-radius: var(--radius);
   background: #1b7fff;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.18) inset,
-    0 28px 78px rgba(7, 87, 191, 0.18);
+    0 24px 64px rgba(7, 87, 191, 0.16);
   isolation: isolate;
 }
 
@@ -4485,21 +4492,20 @@ button {
 
 .contact-note-card {
   display: grid;
-  width: min(470px, 80%);
-  justify-self: end;
-  border: 1px solid rgba(22, 133, 255, 0.16);
-  border-radius: var(--radius);
-  padding: 18px 28px;
+  width: 100%;
+  justify-self: stretch;
+  border-top: 1px solid rgba(22, 133, 255, 0.22);
+  padding: 26px 0 0;
   background:
-    radial-gradient(circle at 2px 2px, rgba(22, 133, 255, 0.07) 1px, transparent 1.7px) 0 0 / 16px 16px,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(237, 247, 255, 0.6));
-  box-shadow: 0 18px 50px rgba(7, 87, 191, 0.065);
+    linear-gradient(90deg, rgba(22, 133, 255, 0.075), transparent 42%),
+    transparent;
+  box-shadow: none;
 }
 
 .contact-note-card header {
   display: grid;
   gap: 6px;
-  padding: 6px 0 18px;
+  padding: 0 0 18px;
 }
 
 .contact-note-card header > span {
@@ -4513,18 +4519,18 @@ button {
 .contact-note-card h2 {
   margin: 0;
   color: var(--black);
-  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-size: clamp(1.28rem, 1.6vw, 1.62rem);
   font-weight: 520;
-  line-height: 1.08;
+  line-height: 1.12;
 }
 
 .contact-note-card div {
   display: grid;
-  grid-template-columns: 14px minmax(0, 1fr);
-  gap: 28px;
-  align-items: center;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
   border-top: 1px solid rgba(16, 18, 23, 0.1);
-  padding: 20px 0;
+  padding: 16px 0;
 }
 
 .contact-note-card header + div {
@@ -4532,8 +4538,9 @@ button {
 }
 
 .contact-note-card i {
-  width: 11px;
-  height: 11px;
+  width: 9px;
+  height: 9px;
+  margin-top: 0.42em;
   border-radius: 50%;
   background: var(--contact-sky);
 }
@@ -4561,32 +4568,34 @@ button {
 
 .contact-note-card strong {
   color: var(--black);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 540;
 }
 
 .contact-note-card span {
-  font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
+  font-size: clamp(0.86rem, 0.82rem + 0.14vw, 0.95rem);
   line-height: 1.5;
 }
 
 .contact-next {
   display: grid;
-  gap: 22px;
-  margin-top: 42px;
-  border: 1px solid rgba(22, 133, 255, 0.15);
-  border-radius: var(--radius);
+  grid-template-columns: minmax(220px, 0.28fr) minmax(0, 1fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: start;
+  margin-top: clamp(54px, 7vw, 88px);
+  border-top: 1px solid rgba(22, 133, 255, 0.22);
+  border-radius: 0;
   background:
-    linear-gradient(90deg, rgba(22, 133, 255, 0.08), transparent 45%),
-    radial-gradient(circle at 2px 2px, rgba(22, 133, 255, 0.055) 1px, transparent 1.7px) 0 0 / 16px 16px,
-    rgba(255, 255, 255, 0.48);
-  padding: 24px;
-  box-shadow: 0 18px 50px rgba(7, 87, 191, 0.05);
+    linear-gradient(90deg, rgba(22, 133, 255, 0.065), transparent 42%),
+    transparent;
+  padding: 30px 0 12px;
+  box-shadow: none;
 }
 
 .contact-next > header {
   display: grid;
   gap: 8px;
+  max-width: 330px;
 }
 
 .contact-next > header > span {
@@ -4608,10 +4617,11 @@ button {
 .contact-next ol {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid rgba(16, 18, 23, 0.12);
+  border-top: 0;
 }
 
 .contact-next li {
@@ -4619,12 +4629,13 @@ button {
   grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-  padding: 22px 32px 22px 0;
+  border-top: 1px solid rgba(16, 18, 23, 0.1);
+  padding: 18px 0 0;
 }
 
 .contact-next li + li {
-  border-left: 1px solid rgba(16, 18, 23, 0.1);
-  padding-left: 32px;
+  border-left: 0;
+  padding-left: 0;
 }
 
 .contact-next-step {
@@ -6229,7 +6240,7 @@ button {
   }
 
   .contact-layout {
-    gap: clamp(36px, 5vw, 52px);
+    gap: clamp(38px, 5vw, 56px);
   }
 
   .contact-form-side,
@@ -6240,17 +6251,18 @@ button {
   }
 
   .contact-art-side {
-    grid-template-columns: minmax(260px, 0.48fr) minmax(0, 0.92fr);
-    align-items: stretch;
+    grid-template-columns: minmax(240px, 0.46fr) minmax(0, 0.54fr);
+    align-items: start;
     gap: clamp(20px, 3vw, 30px);
     justify-items: stretch;
+    justify-self: stretch;
     padding-top: 0;
   }
 
   .contact-signal-art {
     width: 100%;
-    height: 100%;
-    min-height: 420px;
+    height: auto;
+    min-height: 0;
     max-width: none;
     justify-self: stretch;
   }
@@ -6259,11 +6271,19 @@ button {
     width: 100%;
     align-content: start;
     justify-self: stretch;
-    padding: 22px 30px;
+    padding: 4px 0 0;
+  }
+
+  .contact-next {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 52px;
+    padding-top: 26px;
   }
 
   .contact-next ol {
     grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 
   .contact-next li {
@@ -6952,7 +6972,7 @@ button {
 
   .contact-note-card {
     width: 100%;
-    padding: 22px 28px;
+    padding: 22px 0 0;
   }
 
   .contact-note-card div {
