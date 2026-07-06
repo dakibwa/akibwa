@@ -24,38 +24,44 @@ export function HomePage() {
       </div>
 
       <div className="page-grid area-grid" aria-label="Featured areas">
-        {areaTiles.map((tile, index) => (
-          <Link
-            href={tile.href}
-            prefetch
-            className="area-card"
-            key={tile.title}
-            style={tile.accent ? { "--area-accent": tile.accent } : undefined}
-          >
-            <div className="area-art">
-              <Image
-                src={tile.image}
-                alt={tile.alt}
-                fill
-                priority={index < 2}
-                sizes="(max-width: 760px) 100vw, 48vw"
-                style={tile.imagePosition ? { objectPosition: tile.imagePosition } : undefined}
-              />
-            </div>
-            <div className="area-caption">
-              <div>
-                <h2>{tile.title}</h2>
-                <p>{tile.descriptor}</p>
-                {tile.detail ? (
-                  <div className="area-caption__more">
-                    <p>{tile.detail}</p>
-                  </div>
-                ) : null}
+        {areaTiles.map((tile, index) => {
+          const cardImage = tile.cardImage ?? tile.image;
+          const cardAlt = tile.cardAlt ?? tile.alt;
+          const cardImagePosition = tile.cardImagePosition ?? tile.imagePosition;
+
+          return (
+            <Link
+              href={tile.href}
+              prefetch
+              className="area-card"
+              key={tile.title}
+              style={tile.accent ? { "--area-accent": tile.accent } : undefined}
+            >
+              <div className="area-art">
+                <Image
+                  src={cardImage}
+                  alt={cardAlt}
+                  fill
+                  priority={index < 2}
+                  sizes="(max-width: 760px) 100vw, 48vw"
+                  style={cardImagePosition ? { objectPosition: cardImagePosition } : undefined}
+                />
               </div>
-              <ArrowRight size={19} strokeWidth={1.8} />
-            </div>
-          </Link>
-        ))}
+              <div className="area-caption">
+                <div>
+                  <h2>{tile.title}</h2>
+                  <p>{tile.descriptor}</p>
+                  {tile.detail ? (
+                    <div className="area-caption__more">
+                      <p>{tile.detail}</p>
+                    </div>
+                  ) : null}
+                </div>
+                <ArrowRight size={19} strokeWidth={1.8} />
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       <PageFooter />

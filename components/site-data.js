@@ -48,6 +48,9 @@ export const areaTiles = [
     image: "/area-art/about-meadow-flowers.jpg",
     imagePosition: "50% 42%",
     alt: "Flower-crowned figures gathered in a luminous painted meadow",
+    cardImage: "/about-mountain-meadow.webp",
+    cardImagePosition: "50% 54%",
+    cardAlt: "Sunlit mountain meadow with a layered data texture",
     accent: "#2c8068",
     detail: "Background, principles and interests"
   },
