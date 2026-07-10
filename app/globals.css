@@ -1911,23 +1911,33 @@ button {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: stretch;
-  gap: 14px;
+  gap: 26px;
   margin: 0;
   padding: 0;
   list-style: none;
+  counter-reset: interest;
 }
 
 .interest-grid li {
   display: grid;
   grid-column: span 2;
+  grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
-  gap: 7px;
-  min-height: 104px;
-  padding: 14px 18px;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--white);
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
+  column-gap: 14px;
+  row-gap: 7px;
+  border-top: 1px solid var(--line);
+  padding: 16px 0 0;
+}
+
+.interest-grid li::before {
+  counter-increment: interest;
+  content: "0" counter(interest);
+  padding-top: 3px;
+  color: var(--page-accent-strong, var(--ink));
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
 }
 
 .interest-grid li:nth-last-child(-n + 2) {
@@ -1935,9 +1945,6 @@ button {
 }
 
 .interest-grid h3 {
-  display: flex;
-  align-items: center;
-  gap: 11px;
   margin: 0;
   color: var(--black);
   font-size: 1.04rem;
@@ -1945,16 +1952,8 @@ button {
   line-height: 1.25;
 }
 
-.interest-grid h3::before {
-  content: "";
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--page-accent, var(--blue));
-}
-
 .interest-grid p {
+  grid-column: 2;
   margin: 0;
   color: #59616b;
   font-size: 0.92rem;
@@ -2116,27 +2115,32 @@ button {
 .toolkit-groups {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.toolkit-group {
-  display: grid;
-  align-content: start;
-  gap: 16px;
-  min-height: 154px;
-  padding: 18px;
+  overflow: hidden;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: var(--white);
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
 }
 
+.toolkit-group {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 22px 26px 24px;
+  border-left: 1px solid var(--line);
+}
+
+.toolkit-group:first-child {
+  border-left: 0;
+}
+
 .toolkit-label {
   margin: 0;
-  color: #59616b;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  color: #9298a0;
+  font-size: 0.7rem;
+  font-weight: 640;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 .toolkit-list {
@@ -2160,8 +2164,8 @@ button {
 
 .toolkit-logo {
   display: block;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
 }
 
@@ -6572,10 +6576,14 @@ button {
   }
 
   .toolkit-group {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    min-height: 0;
-    padding: 16px;
+    gap: 12px;
+    padding: 18px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .toolkit-group:first-child {
+    border-top: 0;
   }
 
   .toolkit-groups,
@@ -6583,10 +6591,13 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .interest-grid {
+    gap: 20px;
+  }
+
   .interest-grid li,
   .interest-grid li:nth-last-child(-n + 2) {
     grid-column: auto;
-    min-height: 104px;
   }
 
   
