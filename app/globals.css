@@ -219,6 +219,43 @@ button {
   transition-duration: var(--hover-in);
 }
 
+/* A warm light runs through the wordmark, following the cursor. The
+   letterforms are painted by background-clip: text — a solid ink base
+   is declared first so the mark can never render invisible, then the
+   glow layer overrides it where supported. */
+@property --brand-glow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .brand {
+    background-image: linear-gradient(var(--ink), var(--ink));
+    background-image:
+      radial-gradient(
+        42px circle at var(--brand-mx, 50%) 46%,
+        rgb(240 186 84 / calc(var(--brand-glow, 0) * 0.95)),
+        rgb(203 134 30 / calc(var(--brand-glow, 0) * 0.55)) 42%,
+        rgb(203 134 30 / 0) 78%
+      ),
+      linear-gradient(var(--ink), var(--ink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition:
+      --brand-glow var(--hover-out) var(--ease-out),
+      filter var(--hover-out) var(--ease-out);
+  }
+
+  .brand:hover,
+  .brand:focus-visible {
+    --brand-glow: 1;
+    color: transparent;
+    transition-duration: var(--hover-in);
+  }
+}
+
 .nav-desktop {
   display: flex;
   align-items: center;

@@ -49,6 +49,10 @@ export function SiteShell({ children }) {
               className="brand"
               onClick={() => setIsMenuOpen(false)}
               onPointerEnter={() => primeRoute("/")}
+              onPointerMove={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                event.currentTarget.style.setProperty("--brand-mx", `${event.clientX - rect.left}px`);
+              }}
               onFocus={() => primeRoute("/")}
             >
               AKIBWA
