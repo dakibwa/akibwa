@@ -1,4 +1,5 @@
 import "./globals.css";
+import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { SiteShell } from "@/components/site-shell";
 import { chorusAppUrl, oneBaggerAppUrl, publicSurfaces } from "@/components/site-data";
 
@@ -80,6 +81,7 @@ export default function RootLayout({ children }) {
           <link rel="preconnect" href={origin} crossOrigin="anonymous" key={origin} />
         ))}
         <SiteShell>{children}</SiteShell>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );

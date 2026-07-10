@@ -136,7 +136,7 @@ export const personalProjects = [
     type: "Language through music",
     image: "/project-art/personal/music-intelligence.webp",
     alt: "Painterly figures wrapped in flowing musical forms",
-    shot: "/project-shots/canta-porto.jpg",
+    shot: "/project-shots/canta-porto.webp",
     summary: "Learn European Portuguese through songs — lyric recall, a Porto regional layer, and spaced review.",
     tags: ["European Portuguese", "Lyric recall", "Spaced review"],
     mode: "embed",
