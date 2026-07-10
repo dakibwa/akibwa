@@ -140,6 +140,7 @@ button {
     .contact-next,
     .fit-panel,
     .how-we-work-panel,
+    .model-panel,
     .area-card {
       animation: scroll-rise both var(--ease-out);
       animation-timeline: view();
@@ -742,7 +743,8 @@ button {
   --page-accent-strong: #1565c9;
 }
 
-.offer-page {
+.offer-page,
+.systems-page {
   --page-accent: #ff6f1a;
   --page-accent-strong: #e05c0d;
 }
@@ -833,10 +835,6 @@ button {
 }
 
 
-.system-step-card img {
-  width: 100%;
-  object-fit: cover;
-}
 
 .work-card.is-selected footer {
   color: var(--blue);
@@ -3872,11 +3870,7 @@ button {
 .system-step-card {
   display: grid;
   gap: 14px;
-  padding: 20px;
-}
-
-.system-step-card img {
-  height: 176px;
+  padding: 22px 24px;
 }
 
 .model-panel {
@@ -3888,8 +3882,8 @@ button {
 }
 
 .model-panel > * {
-  padding: 22px;
-  border-left: 1px dashed rgba(16, 18, 23, 0.18);
+  padding: 22px 24px;
+  border-left: 1px solid var(--line);
 }
 
 .model-panel > *:first-child {
@@ -3904,19 +3898,22 @@ button {
   font-weight: 540;
 }
 
-.model-intro img {
-  width: 150px;
-  height: auto;
-  margin-top: 20px;
-}
-
 .model-panel h3 {
   display: flex;
+  align-items: baseline;
   gap: 10px;
   margin: 0 0 10px;
   color: var(--black);
   font-size: 1rem;
   font-weight: 560;
+}
+
+.model-panel h3 span {
+  color: #c05212;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
 }
 
 .model-panel .model-tags {
@@ -6170,7 +6167,7 @@ button {
 
   .model-panel > * {
     border-left: 0;
-    border-top: 1px dashed rgba(16, 18, 23, 0.18);
+    border-top: 1px solid var(--line);
   }
 
   .model-panel > *:first-child {
