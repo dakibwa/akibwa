@@ -46,83 +46,79 @@ export function ContactPage() {
 
   return (
     <section className="studio-page contact-page-new">
-      <section className="page-grid contact-layout">
-        <div className="contact-form-side">
-          <header>
-            <h1>Contact</h1>
-            <p>Send the messy bit.</p>
-            <span>
-              A short note is enough:
-              <br />
-              what is broken, what it touches,
-              <br />
-              and what good would look like.
-            </span>
-          </header>
+      <section className="page-grid contact-hero">
+        <div className="contact-hero-title">
+          <h1>Contact</h1>
+          <p>Send the messy bit.</p>
+        </div>
+        <p className="contact-hero-note">
+          A short note is enough: what is broken, what it touches, and what good would look like.
+        </p>
+      </section>
 
-          <form
-            className="contact-form"
-            onSubmit={handleSubmit}
-          >
-            <label>
-              What kind of work is it?
-              <select name="type" defaultValue="">
-                <option value="" disabled>
-                  Choose the closest shape
+      <section className="page-grid contact-layout">
+        <form
+          className="contact-form"
+          onSubmit={handleSubmit}
+        >
+          <label>
+            What kind of work is it?
+            <select name="type" defaultValue="">
+              <option value="" disabled>
+                Choose the closest shape
+              </option>
+              {enquiryTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
                 </option>
-                {enquiryTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              What are you trying to fix?
-              <textarea
-                name="problem"
-                placeholder="What is broken, missing, or in the way?"
-                required
-              />
-            </label>
-            <label>
-              What does it touch today?
-              <input name="current" placeholder="Tools, files, dashboards, people." />
-            </label>
-            <label>
-              What would make it worth doing?
-              <input name="outcome" placeholder="Clearer report, fewer steps, reusable process." />
-            </label>
-            <label>
-              Best reply email
-              <input name="email" type="email" placeholder="hello@company.com" required />
-            </label>
-            <label>
-              Preferred timing
-              <input name="timing" placeholder="e.g. this month, Q3, exploring options" />
-            </label>
-            <div className="contact-actions">
-              <button type="submit">
-                Draft email
-                <ArrowRight size={18} strokeWidth={1.8} />
-              </button>
-              <p>
-                <LockKeyhole size={18} strokeWidth={1.6} />
-                <span>
-                  Private by default.
-                  <br />
-                  No spam, ever.
-                </span>
-              </p>
-            </div>
-            <p className="contact-direct">
-              <i aria-hidden="true" />
+              ))}
+            </select>
+          </label>
+          <label>
+            What are you trying to fix?
+            <textarea
+              name="problem"
+              placeholder="What is broken, missing, or in the way?"
+              required
+            />
+          </label>
+          <label className="contact-field-half">
+            What does it touch today?
+            <input name="current" placeholder="Tools, files, dashboards, people." />
+          </label>
+          <label className="contact-field-half">
+            What would make it worth doing?
+            <input name="outcome" placeholder="Clearer report, fewer steps, reusable process." />
+          </label>
+          <label className="contact-field-half">
+            Best reply email
+            <input name="email" type="email" placeholder="hello@company.com" required />
+          </label>
+          <label className="contact-field-half">
+            Preferred timing
+            <input name="timing" placeholder="e.g. this month, Q3, exploring options" />
+          </label>
+          <div className="contact-actions">
+            <button type="submit">
+              Draft email
+              <ArrowRight size={18} strokeWidth={1.8} />
+            </button>
+            <p>
+              <LockKeyhole size={18} strokeWidth={1.6} />
               <span>
-                Prefer plain email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                Private by default.
+                <br />
+                No spam, ever.
               </span>
             </p>
-          </form>
-        </div>
+          </div>
+          <p className="contact-direct">
+            <i aria-hidden="true" />
+            <span>
+              Prefer plain email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+            </span>
+          </p>
+        </form>
 
         <div className="contact-art-side">
           <div className="contact-signal-art" aria-hidden="true">
@@ -136,23 +132,25 @@ export function ContactPage() {
               draggable="false"
             />
           </div>
-
-          <aside className="contact-note-card" aria-label="What to include">
-            <header>
-              <span>Good first note</span>
-              <h2>Make the shape visible.</h2>
-            </header>
-            {contactNotes.map(([title, body]) => (
-              <div key={title}>
-                <i />
-                <p>
-                  <strong>{title}</strong>
-                  <span>{body}</span>
-                </p>
-              </div>
-            ))}
-          </aside>
         </div>
+      </section>
+
+      <section className="page-grid contact-notes" aria-label="What to include">
+        <header>
+          <span>Good first note</span>
+          <h2>Make the shape visible.</h2>
+        </header>
+        <ul>
+          {contactNotes.map(([title, body]) => (
+            <li key={title}>
+              <i aria-hidden="true" />
+              <p>
+                <strong>{title}</strong>
+                <span>{body}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="page-grid contact-next" aria-label="What happens next">
