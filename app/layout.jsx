@@ -41,13 +41,22 @@ export const metadata = {
       "Small AI-assisted systems, dashboards, automations, and personal tools for turning messy information into useful workflows.",
     url: "https://akibwa.com",
     siteName: "Akibwa",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Sunlit mountain meadow with a layered data texture"
+      }
+    ]
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Akibwa",
     description:
-      "Small AI-assisted systems, dashboards, automations, and personal tools for turning messy information into useful workflows."
+      "Small AI-assisted systems, dashboards, automations, and personal tools for turning messy information into useful workflows.",
+    images: ["/og.jpg"]
   },
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],

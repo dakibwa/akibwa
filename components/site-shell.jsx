@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { areaTiles } from "@/components/site-data";
 
-const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.image]));
+const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navImage ?? tile.image]));
 
 const navItems = [
   { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/chorus"] },

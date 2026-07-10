@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const sourceAccents = [
   "47, 136, 255",
-  "32, 164, 139",
+  "27, 148, 125",
   "115, 112, 255",
   "0, 154, 205",
   "94, 142, 103",
@@ -12,8 +12,8 @@ const sourceAccents = [
 ];
 
 const outcomeAccents = [
-  "255, 111, 26",
-  "224, 154, 42",
+  "235, 92, 8",
+  "186, 121, 15",
   "226, 82, 118",
   "197, 92, 61",
   "164, 104, 217",

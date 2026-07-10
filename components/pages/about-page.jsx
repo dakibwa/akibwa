@@ -88,6 +88,9 @@ const interests = [
 export function AboutPage() {
   return (
     <section className="studio-page about-page">
+      {/* The meadow paints the LCP intro card as a CSS background, which the
+          browser discovers late; preloading it pulls the paint forward. */}
+      <link rel="preload" as="image" href="/about-mountain-meadow.webp" />
       <section className="page-grid about-hero" aria-label="Profile">
         <div className="about-hero-copy">
           <h1>Ten years turning messy data into clear decisions.</h1>

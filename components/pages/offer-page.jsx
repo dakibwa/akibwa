@@ -100,7 +100,7 @@ export function OfferPage() {
       <section className="page-grid page-art-break" aria-label="Sculptural artwork">
         <figure>
           <img
-            src="/area-art/professional-structure.jpg"
+            src="/area-art/professional-structure.webp"
             alt="Cream sculptural architectural openings crossed by fine copper lines"
           />
         </figure>

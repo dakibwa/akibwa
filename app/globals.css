@@ -147,7 +147,7 @@ button {
   left: 0;
   height: 6px;
   border-radius: 3px;
-  background-image: url("/brand-art/akibwa-accent.jpeg");
+  background-image: url("/brand-art/akibwa-accent-strip.webp");
   background-size: 116% auto;
   background-position: 50% 50%;
   opacity: 0.96;
@@ -293,7 +293,7 @@ button {
 }
 
 .akibwa-hero h1 .hero-dynamic-phrase {
-  color: #9b9ba0;
+  color: #84858d;
 }
 
 .hero-dynamic-phrase {
@@ -678,7 +678,7 @@ button {
 
 .contact-page-new {
   --page-accent: #2f88ff;
-  --page-accent-strong: #1a6fe6;
+  --page-accent-strong: #1565c9;
 }
 
 .offer-page {
@@ -710,7 +710,7 @@ button {
 .contact-hero-title p {
   max-width: 1160px;
   margin: 10px 0 0;
-  color: #9b9ba0;
+  color: #84858d;
   font-size: 2.82rem;
   font-weight: 520;
   line-height: 1.05;
@@ -1837,7 +1837,7 @@ button {
 
 .about-cv-label {
   margin: 0;
-  color: #9298a0;
+  color: #6b717b;
   font-size: 0.7rem;
   font-weight: 640;
   letter-spacing: 0.09em;
@@ -2115,6 +2115,31 @@ button {
   object-position: center 54%;
 }
 
+/* Progressive scroll reveal: the art band eases in as it enters the
+   viewport. Scroll-driven animations only where supported; static and
+   reduced-motion browsers see the band immediately. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .page-art-break figure {
+      animation: page-art-break-in both var(--ease-out);
+      animation-timeline: view();
+      animation-range: entry 5% entry 55%;
+    }
+  }
+}
+
+@keyframes page-art-break-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(22px) scale(0.992);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .toolkit-groups {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2139,7 +2164,7 @@ button {
 
 .toolkit-label {
   margin: 0;
-  color: #9298a0;
+  color: #6b717b;
   font-size: 0.7rem;
   font-weight: 640;
   letter-spacing: 0.09em;
@@ -3858,7 +3883,7 @@ button {
 }
 
 .offer-step-card footer strong {
-  color: var(--page-accent, var(--orange));
+  color: #c05212;
   font-weight: 520;
 }
 
@@ -3913,7 +3938,7 @@ button {
 .fit-panel svg {
   flex: 0 0 auto;
   margin-top: 4px;
-  color: var(--page-accent, var(--orange));
+  color: #c05212;
 }
 
 .fit-panel article + article svg {
@@ -3998,7 +4023,7 @@ button {
   place-items: center;
   border: 1px solid rgba(255, 111, 26, 0.45);
   border-radius: 50%;
-  color: var(--page-accent, var(--orange));
+  color: #c05212;
   font-size: 0.85rem;
 }
 
@@ -4147,7 +4172,7 @@ button {
   justify-content: space-between;
   border: 0;
   border-radius: var(--radius);
-  background: var(--page-accent, var(--blue));
+  background: #1a6fe6;
   padding: 0 24px;
   color: var(--white);
   cursor: pointer;
