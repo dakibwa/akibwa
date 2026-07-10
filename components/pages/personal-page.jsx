@@ -17,6 +17,7 @@ import { createPortal } from "react-dom";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
+import { PersonalAppPreview } from "@/components/personal-app-previews";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
   chorusAppUrl,
@@ -77,6 +78,15 @@ function shouldOpenProjectRoute(project) {
   return project.mode !== "preview" && project.visual === "vitals" && Boolean(project.fallbackHref);
 }
 
+function findPersonalProjectBySlug(slug) {
+  if (!slug) return null;
+  return personalProjects.find((project) => project.slug === slug || project.aliases?.includes(slug)) ?? null;
+}
+
+function getInitialPreviewSlug(initialSlug) {
+  return findPersonalProjectBySlug(initialSlug)?.slug ?? personalProjects[0]?.slug ?? null;
+}
+
 function ProjectExpandedBanner({ project }) {
   const artwork = getPersonalProjectArt(project);
   const style = getProjectArtVariables(artwork);
@@ -89,11 +99,11 @@ function ProjectExpandedBanner({ project }) {
 }
 
 const ACCENT_BY_SLUG = {
-  chorus: "#2f88ff",
+  chorus: "#ff6f1a",
   "cover-collision": "#e2556b",
-  "canta-porto": "#1f6f6b",
-  "one-bag": "#d98a2b",
-  meditator: "#c2557a"
+  "canta-porto": "#0d5267",
+  "one-bag": "#2f7d57",
+  meditator: "#3a5a45"
 };
 
 function accentForSlug(slug) {
@@ -122,136 +132,6 @@ function getProjectArtVariables(artwork, extras = {}) {
     "--project-expanded-banner-position": artwork.expandedBannerPosition,
     ...extras
   };
-}
-
-function ProjectAppPreview({ project, artwork }) {
-  if (project.previewTreatment === "canta-vignette") {
-    return <CantaPortoPreview project={project} artwork={artwork} />;
-  }
-
-  if (project.previewTreatment === "one-bag-vignette") {
-    return <OneBagPreview project={project} artwork={artwork} />;
-  }
-
-  if (project.previewTreatment === "meditator-vignette") {
-    return <MeditatorPreview project={project} artwork={artwork} />;
-  }
-
-  return null;
-}
-
-function AppPreviewShell({ project, artwork, children }) {
-  return (
-    <div
-      className={`personal-detail-app-preview is-${project.slug}`}
-      style={getProjectArtVariables(artwork)}
-      aria-label={`${project.title} app preview`}
-    >
-      <img
-        className="personal-detail-app-backdrop"
-        src={artwork.bannerSrc}
-        alt=""
-        draggable="false"
-        loading="lazy"
-        decoding="async"
-      />
-      <div className="personal-detail-app-chrome">
-        <div className="personal-detail-app-toolbar">
-          <span>{project.title}</span>
-          <em>{project.type}</em>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function CantaPortoPreview({ project, artwork }) {
-  return (
-    <AppPreviewShell project={project} artwork={artwork}>
-      <div className="app-preview-grid canta-preview">
-        <section className="app-preview-primary">
-          <span>Now practising</span>
-          <strong>Fado line recall</strong>
-          <p>Ouvir, repetir, lembrar.</p>
-          <div className="canta-lyric-lines" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </div>
-        </section>
-        <section className="app-preview-side">
-          <span>Porto layer</span>
-          <div className="canta-token-row" aria-hidden="true">
-            <b>saudade</b>
-            <b>Douro</b>
-            <b>voz</b>
-          </div>
-          <div className="app-preview-meter" aria-hidden="true">
-            <i style={{ width: "72%" }} />
-          </div>
-        </section>
-      </div>
-    </AppPreviewShell>
-  );
-}
-
-function OneBagPreview({ project, artwork }) {
-  return (
-    <AppPreviewShell project={project} artwork={artwork}>
-      <div className="app-preview-grid one-bag-preview">
-        <section className="app-preview-primary">
-          <span>Cabin constraint</span>
-          <strong>24L / 6.8kg</strong>
-          <div className="one-bag-pack" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-          </div>
-        </section>
-        <section className="app-preview-side">
-          <span>Earned its place</span>
-          <ul>
-            <li>
-              <b>Shell</b>
-              <em>320g</em>
-            </li>
-            <li>
-              <b>Merino tee</b>
-              <em>145g</em>
-            </li>
-            <li>
-              <b>Adapter</b>
-              <em>88g</em>
-            </li>
-          </ul>
-        </section>
-      </div>
-    </AppPreviewShell>
-  );
-}
-
-function MeditatorPreview({ project, artwork }) {
-  return (
-    <AppPreviewShell project={project} artwork={artwork}>
-      <div className="app-preview-grid meditator-preview">
-        <section className="meditator-ring" aria-label="Synced meditation timer">
-          <span>12:00</span>
-        </section>
-        <section className="app-preview-side">
-          <span>Private room</span>
-          <div className="meditator-presence">
-            <b>You</b>
-            <b>Friend</b>
-          </div>
-          <div className="app-preview-meter" aria-hidden="true">
-            <i style={{ width: "58%" }} />
-          </div>
-        </section>
-      </div>
-    </AppPreviewShell>
-  );
 }
 
 function PersonalDetailPanel({ project }) {
@@ -294,7 +174,7 @@ function PersonalDetailPanel({ project }) {
           ))}
         </div>
       ) : hasAppPreview ? (
-        <ProjectAppPreview project={project} artwork={artwork} />
+        <PersonalAppPreview project={project} />
       ) : previewFrameUrl ? (
         <PersonalDetailLivePreview project={project} frameUrl={previewFrameUrl} />
       ) : project.shot ? (
@@ -896,13 +776,14 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
 }
 
 export function PersonalPage({ initialSlug = null }) {
+  const initialPreviewSlug = getInitialPreviewSlug(initialSlug);
   const [expandedSlug, setExpandedSlug] = useState(null);
   const [overlaySlug, setOverlaySlug] = useState(null);
   const [isOverlayMaximized, setIsOverlayMaximized] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isLocalHost, setIsLocalHost] = useState(false);
-  const [previewSlug, setPreviewSlug] = useState(personalProjects[0]?.slug ?? null);
-  const [headlineSlug, setHeadlineSlug] = useState(null);
+  const [previewSlug, setPreviewSlug] = useState(initialPreviewSlug);
+  const [headlineSlug, setHeadlineSlug] = useState(initialSlug ? initialPreviewSlug : null);
 
   useEffect(() => {
     setIsLocalHost(canUseLocalFrame());
@@ -913,9 +794,7 @@ export function PersonalPage({ initialSlug = null }) {
     const requested = legacyHash || initialSlug;
     if (!requested) return;
 
-    const project = personalProjects.find(
-      (item) => item.slug === requested || item.aliases?.includes(requested)
-    );
+    const project = findPersonalProjectBySlug(requested);
     if (!project) {
       window.history.replaceState(null, "", "/personal/");
       return;
@@ -937,6 +816,8 @@ export function PersonalPage({ initialSlug = null }) {
       return;
     }
 
+    setPreviewSlug(project.slug);
+    setHeadlineSlug(project.slug);
     setExpandedSlug(project.slug);
     window.history.replaceState(null, "", `/personal/${project.slug}/`);
   }, [initialSlug]);

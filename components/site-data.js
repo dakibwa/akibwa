@@ -109,6 +109,7 @@ export const personalProjects = [
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "chorus",
     mode: "embed",
+    previewTreatment: "chorus-vignette",
     embedUrl: chorusAppUrl,
     localUrl: "http://localhost:3211",
     fallbackHref: "/chorus",
