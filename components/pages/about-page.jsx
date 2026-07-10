@@ -40,24 +40,24 @@ const toolGroups = [
   {
     label: "Data & reporting",
     tools: [
-      { name: "Microsoft Fabric", logo: "/brand-logos/microsoft-fabric.svg" },
-      { name: "Power BI", logo: "/brand-logos/power-bi.svg" },
-      { name: "SQL", Icon: Database }
+      { name: "Microsoft Fabric", note: "Pipelines and lakehouse reporting", logo: "/brand-logos/microsoft-fabric.svg" },
+      { name: "Power BI", note: "Dashboards people decide from", logo: "/brand-logos/power-bi.svg" },
+      { name: "SQL", note: "The query layer under everything", Icon: Database }
     ]
   },
   {
     label: "AI build loops",
     tools: [
-      { name: "Claude Code", logo: "/brand-logos/claude.svg" },
-      { name: "OpenAI Codex", logo: "/brand-logos/openai-codex-app.png" },
-      { name: "Copilot", logo: "/brand-logos/microsoft-copilot.svg" }
+      { name: "Claude Code", note: "The daily agentic build loop", logo: "/brand-logos/claude.svg" },
+      { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png" },
+      { name: "Copilot", note: "Completion inside the editor", logo: "/brand-logos/microsoft-copilot.svg" }
     ]
   },
   {
     label: "Modelling & automation",
     tools: [
-      { name: "Data modelling", logo: "/brand-logos/data-modeling.svg" },
-      { name: "Python", logo: "/brand-logos/python.svg" }
+      { name: "Data modelling", note: "Semantic models that hold up", logo: "/brand-logos/data-modeling.svg" },
+      { name: "Python", note: "Glue for automation and analysis", logo: "/brand-logos/python.svg" }
     ]
   }
 ];
@@ -166,7 +166,10 @@ export function AboutPage() {
                     ) : (
                       <span className="toolkit-dot" aria-hidden="true" />
                     )}
-                    <span>{tool.name}</span>
+                    <span className="toolkit-item-text">
+                      <strong>{tool.name}</strong>
+                      <em>{tool.note}</em>
+                    </span>
                   </li>
                 ))}
               </ul>
