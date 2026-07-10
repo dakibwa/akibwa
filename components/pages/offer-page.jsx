@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, X } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
@@ -9,24 +8,21 @@ const offerSteps = [
     title: "Workflow teardown",
     body:
       "We map your current workflow, uncover friction and waste, and identify the highest-leverage opportunities for automation or AI assistance.",
-    output: "Clarity report",
-    image: "/area-art/work.webp"
+    output: "Clarity report"
   },
   {
     number: "02",
     title: "Prototype sprint",
     body:
       "We design and build a focused prototype that solves the core problem fast, validating the approach with real data and real users.",
-    output: "Working prototype",
-    image: "/area-art/systems.webp"
+    output: "Working prototype"
   },
   {
     number: "03",
     title: "Operating system build",
     body:
       "We turn the prototype into a robust, scalable system with documentation, safeguards, and a plan for continuous improvement.",
-    output: "Production system",
-    image: "/area-art/offer.webp"
+    output: "Production system"
   }
 ];
 
@@ -97,20 +93,22 @@ export function OfferPage() {
                 <em>{step.output}</em>
               </footer>
             </div>
-            <Image src={step.image} alt="" width={700} height={260} sizes="(max-width: 900px) 100vw, 33vw" />
           </article>
         ))}
       </section>
 
+      <section className="page-grid page-art-break" aria-label="Sculptural artwork">
+        <figure>
+          <img
+            src="/area-art/professional-structure.jpg"
+            alt="Cream sculptural architectural openings crossed by fine copper lines"
+          />
+        </figure>
+      </section>
+
       <section className="page-grid fit-panel">
-        <div className="fit-orbit" aria-hidden="true">
-          <span />
-        </div>
         <article>
-          <h2>
-            <i />
-            Good fit
-          </h2>
+          <h2>Good fit</h2>
           {goodFit.map((item) => (
             <p key={item}>
               <Check size={13} strokeWidth={1.8} />
@@ -119,10 +117,7 @@ export function OfferPage() {
           ))}
         </article>
         <article>
-          <h2>
-            <i />
-            Not a fit
-          </h2>
+          <h2>Not a fit</h2>
           {notFit.map((item) => (
             <p key={item}>
               <X size={13} strokeWidth={1.8} />
@@ -130,9 +125,6 @@ export function OfferPage() {
             </p>
           ))}
         </article>
-        <div className="fit-map" aria-hidden="true">
-          <Image src="/area-art/contact.webp" alt="" width={420} height={220} />
-        </div>
       </section>
 
       <section className="page-grid how-we-work-panel">

@@ -7,21 +7,18 @@ const workplaces = [
     year: "2024",
     name: "National Wealth Fund",
     role: "Senior BI Developer",
-    accent: "#17324d",
     logo: "/brand-logos/national-wealth-fund-icon.png"
   },
   {
     year: "2023",
     name: "Leeds Building Society",
     role: "BI Team Lead / BI Analyst",
-    accent: "#2f88ff",
     logo: "/brand-logos/leeds-building-society-icon.svg"
   },
   {
     year: "2020",
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
-    accent: "#d01fcb",
     logo: "/brand-logos/sky-betting-gaming-logo.png",
     logoVariant: "tile"
   },
@@ -29,14 +26,12 @@ const workplaces = [
     year: "2018",
     name: "Vanquis Bank",
     role: "Strategic Insight Analyst",
-    accent: "#f15a24",
     logo: "/brand-logos/vanquis-icon.svg"
   },
   {
     year: "2016",
     name: "Lloyds Banking Group",
     role: "Credit Risk Analyst",
-    accent: "#006747",
     logo: "/brand-logos/lloyds-horse-icon.png"
   }
 ];
@@ -45,24 +40,24 @@ const toolGroups = [
   {
     label: "Data & reporting",
     tools: [
-      { name: "Microsoft Fabric", accent: "#2f88ff", logo: "/brand-logos/microsoft-fabric.svg" },
-      { name: "Power BI", accent: "#f2c811", logo: "/brand-logos/power-bi.svg" },
-      { name: "SQL", accent: "#7d9a92", Icon: Database }
+      { name: "Microsoft Fabric", logo: "/brand-logos/microsoft-fabric.svg" },
+      { name: "Power BI", logo: "/brand-logos/power-bi.svg" },
+      { name: "SQL", Icon: Database }
     ]
   },
   {
     label: "AI build loops",
     tools: [
-      { name: "Claude Code", accent: "#c96f3c", logo: "/brand-logos/claude.svg" },
-      { name: "OpenAI Codex", accent: "#12b981", logo: "/brand-logos/openai-codex-app.png" },
-      { name: "Copilot", accent: "#557f8d", logo: "/brand-logos/microsoft-copilot.svg" }
+      { name: "Claude Code", logo: "/brand-logos/claude.svg" },
+      { name: "OpenAI Codex", logo: "/brand-logos/openai-codex-app.png" },
+      { name: "Copilot", logo: "/brand-logos/microsoft-copilot.svg" }
     ]
   },
   {
     label: "Modelling & automation",
     tools: [
-      { name: "Data modelling", accent: "#ff6f1a", logo: "/brand-logos/data-modeling.svg" },
-      { name: "Python", accent: "#3776ab", logo: "/brand-logos/python.svg" }
+      { name: "Data modelling", logo: "/brand-logos/data-modeling.svg" },
+      { name: "Python", logo: "/brand-logos/python.svg" }
     ]
   }
 ];
@@ -70,28 +65,23 @@ const toolGroups = [
 const interests = [
   {
     name: "Film",
-    note: "Art-house, odd, logged on Letterboxd.",
-    accent: "#ff6f1a"
+    note: "Art-house, odd, logged on Letterboxd."
   },
   {
     name: "Music",
-    note: "Restless taste; every listen tracked.",
-    accent: "#d01fcb"
+    note: "Restless taste; every listen tracked."
   },
   {
     name: "Nutrition & running",
-    note: "Testing what makes the body run better.",
-    accent: "#12b981"
+    note: "Testing what makes the body run better."
   },
   {
     name: "AI & the singularity",
-    note: "Daily build loop; long-arc questions.",
-    accent: "#2f88ff"
+    note: "Daily build loop; long-arc questions."
   },
   {
     name: "A good long conversation",
-    note: "The kind that actually goes somewhere.",
-    accent: "#557f8d"
+    note: "The kind that actually goes somewhere."
   }
 ];
 
@@ -108,8 +98,6 @@ export function AboutPage() {
 
         <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
           <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
-          <span className="about-portrait-orbit" aria-hidden="true" />
-          <span className="about-portrait-point" aria-hidden="true" />
         </figure>
       </section>
 
@@ -137,7 +125,7 @@ export function AboutPage() {
           <h2 className="about-cv-label" id="cv-heading">Where I've worked</h2>
           <ol className="work-timeline">
             {workplaces.map((workplace) => (
-              <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
+              <li className="work-row" key={workplace.name}>
                 <span className="work-year">{workplace.year}</span>
                 <span className="work-node" aria-hidden="true" />
                 <span className="work-detail">
@@ -167,7 +155,7 @@ export function AboutPage() {
               <h3 className="toolkit-label">{group.label}</h3>
               <ul className="toolkit-list">
                 {group.tools.map((tool) => (
-                  <li className="toolkit-item" key={tool.name} style={{ "--tool-accent": tool.accent }}>
+                  <li className="toolkit-item" key={tool.name}>
                     {tool.logo ? (
                       <img className="toolkit-logo" src={tool.logo} alt="" aria-hidden="true" />
                     ) : tool.Icon ? (
@@ -184,7 +172,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="page-grid about-section about-art-break" aria-label="Landscape artwork">
+      <section className="page-grid about-section page-art-break" aria-label="Landscape artwork">
         <figure>
           <img src="/about-mountain-meadow.webp" alt="Sunlit mountain meadow with a layered data texture" />
         </figure>
@@ -198,7 +186,7 @@ export function AboutPage() {
 
         <ul className="interest-grid">
           {interests.map((interest) => (
-            <li key={interest.name} style={{ "--interest-accent": interest.accent }}>
+            <li key={interest.name}>
               <h3>{interest.name}</h3>
               <p>{interest.note}</p>
             </li>
