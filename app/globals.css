@@ -2017,9 +2017,31 @@ button {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--page-accent, var(--ink));
+  background: var(--company-accent, var(--page-accent, var(--ink)));
   box-shadow: 0 0 0 4px var(--canvas);
   transform: translate(-50%, -50%);
+  transition:
+    box-shadow var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+/* Hovering a row rewards curiosity: the company's colour blooms out of
+   its node and tints the year. */
+.work-row:hover .work-node {
+  box-shadow:
+    0 0 0 4px var(--canvas),
+    0 0 0 9px color-mix(in srgb, var(--company-accent, var(--ink)) 18%, transparent);
+  transform: translate(-50%, -50%) scale(1.2);
+  transition-duration: var(--hover-in);
+}
+
+.work-year {
+  transition: color var(--hover-out) var(--ease-out);
+}
+
+.work-row:hover .work-year {
+  color: var(--company-accent, var(--ink));
+  transition-duration: var(--hover-in);
 }
 
 .work-detail {
@@ -2067,7 +2089,7 @@ button {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: var(--page-accent, var(--ink));
+  background: var(--company-accent, var(--page-accent, var(--ink)));
 }
 
 .work-company strong {
@@ -2218,15 +2240,15 @@ button {
   line-height: 1.4;
 }
 
-/* Logos rest in monochrome so the panel reads as one quiet spec sheet;
-   colour returns on hover, matching the site's hover language. */
+/* Logos rest in slightly settled colour; hovering a row brings them to
+   full vividness, matching the site's hover language. */
 .toolkit-logo {
   display: block;
   width: 24px;
   height: 24px;
   margin-top: 1px;
   object-fit: contain;
-  filter: grayscale(1) opacity(0.66) contrast(1.05);
+  filter: saturate(0.72) opacity(0.84);
   transition: filter var(--hover-out) var(--ease-out);
 }
 
@@ -4123,8 +4145,7 @@ button {
 
 .contact-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px 16px;
+  gap: 18px;
   min-width: 0;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
@@ -4135,19 +4156,13 @@ button {
 
 .contact-form label {
   display: grid;
-  grid-column: 1 / -1;
   align-content: start;
   gap: 9px;
   color: var(--black);
   font-size: 0.92rem;
 }
 
-.contact-form label.contact-field-half {
-  grid-column: span 1;
-}
-
 .contact-form input,
-.contact-form select,
 .contact-form textarea {
   min-width: 0;
   width: 100%;
@@ -4160,18 +4175,9 @@ button {
   resize: vertical;
 }
 
-.contact-form select {
-  min-height: 53px;
-  color: var(--black);
-  appearance: none;
-  background:
-    linear-gradient(45deg, transparent 50%, #59616b 50%) calc(100% - 21px) 50% / 6px 6px no-repeat,
-    linear-gradient(135deg, #59616b 50%, transparent 50%) calc(100% - 16px) 50% / 6px 6px no-repeat,
-    var(--white);
-}
-
 .contact-form textarea {
-  min-height: 112px;
+  min-height: 340px;
+  line-height: 1.5;
 }
 
 .contact-form input::placeholder,
@@ -4180,23 +4186,10 @@ button {
 }
 
 .contact-form input:focus-visible,
-.contact-form select:focus-visible,
 .contact-form textarea:focus-visible {
   outline: none;
   border-color: var(--page-accent, var(--blue));
   box-shadow: 0 0 0 3px rgba(47, 136, 255, 0.16);
-}
-
-.contact-form input:focus-visible,
-.contact-form textarea:focus-visible {
-  background: var(--white);
-}
-
-.contact-form select:focus-visible {
-  background:
-    linear-gradient(45deg, transparent 50%, #59616b 50%) calc(100% - 21px) 50% / 6px 6px no-repeat,
-    linear-gradient(135deg, #59616b 50%, transparent 50%) calc(100% - 16px) 50% / 6px 6px no-repeat,
-    var(--white);
 }
 
 .contact-actions {

@@ -11,36 +11,15 @@ const contactNotes = [
   ["Manchester-based", "UK time, remote-friendly, happy to work async until a live conversation is genuinely useful."]
 ];
 
-const enquiryTypes = [
-  "Workflow / operations",
-  "Dashboard / reporting",
-  "Automation / internal tool",
-  "Private knowledge system",
-  "Prototype / rough idea",
-  "Not sure yet"
-];
-
 export function ContactPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const fields = [
-      ["Type of work", formData.get("type")],
-      ["What are you trying to fix?", formData.get("problem")],
-      ["What does it touch today?", formData.get("current")],
-      ["What would make it worth doing?", formData.get("outcome")],
-      ["Best reply email", formData.get("email")],
-      ["Preferred timing", formData.get("timing")]
-    ];
-    const body = fields
-      .map(([label, value]) => [label, value?.toString().trim()])
-      .filter(([, value]) => value)
-      .map(([label, value]) => `${label}\n${value}`)
-      .join("\n\n");
+    const note = formData.get("note")?.toString().trim();
 
     const subject = encodeURIComponent("Akibwa enquiry");
-    const message = encodeURIComponent(body || "Hi Daniel,");
+    const message = encodeURIComponent(note || "Hi Daniel,");
     window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${message}`;
   };
 
@@ -52,7 +31,7 @@ export function ContactPage() {
           <p>Send the messy bit.</p>
         </div>
         <p className="contact-hero-note">
-          A short note is enough: what is broken, what it touches, and what good would look like.
+          A rough note is enough — send it as it comes, and you&apos;ll get a practical first take back.
         </p>
       </section>
 
@@ -62,41 +41,12 @@ export function ContactPage() {
           onSubmit={handleSubmit}
         >
           <label>
-            What kind of work is it?
-            <select name="type" defaultValue="">
-              <option value="" disabled>
-                Choose the closest shape
-              </option>
-              {enquiryTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            What are you trying to fix?
+            What do you need?
             <textarea
-              name="problem"
-              placeholder="What is broken, missing, or in the way?"
+              name="note"
+              placeholder="Rough notes are fine — what's broken, what you're trying to do, what would make it worth it. Send it exactly as it is in your head."
               required
             />
-          </label>
-          <label className="contact-field-half">
-            What does it touch today?
-            <input name="current" placeholder="Tools, files, dashboards, people." />
-          </label>
-          <label className="contact-field-half">
-            What would make it worth doing?
-            <input name="outcome" placeholder="Clearer report, fewer steps, reusable process." />
-          </label>
-          <label className="contact-field-half">
-            Best reply email
-            <input name="email" type="email" placeholder="hello@company.com" required />
-          </label>
-          <label className="contact-field-half">
-            Preferred timing
-            <input name="timing" placeholder="e.g. this month, Q3, exploring options" />
           </label>
           <div className="contact-actions">
             <button type="submit">
@@ -164,7 +114,7 @@ export function ContactPage() {
             <p>
               <strong>You send the shape</strong>
               <span>
-                The button opens a draft email with your answers already filled in.
+                The button opens a draft email with your note in it.
                 You read it, edit anything, and hit send — nothing leaves your machine until you do.
               </span>
             </p>

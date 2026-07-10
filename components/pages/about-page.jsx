@@ -7,18 +7,21 @@ const workplaces = [
     year: "2024",
     name: "National Wealth Fund",
     role: "Senior BI Developer",
+    accent: "#732740",
     logo: "/brand-logos/national-wealth-fund-icon.png"
   },
   {
     year: "2023",
     name: "Leeds Building Society",
     role: "BI Team Lead / BI Analyst",
+    accent: "#2f88ff",
     logo: "/brand-logos/leeds-building-society-icon.svg"
   },
   {
     year: "2020",
     name: "Sky Betting & Gaming",
     role: "Business Intelligence Analyst",
+    accent: "#d01fcb",
     logo: "/brand-logos/sky-betting-gaming-logo.png",
     logoVariant: "tile"
   },
@@ -26,12 +29,14 @@ const workplaces = [
     year: "2018",
     name: "Vanquis Bank",
     role: "Strategic Insight Analyst",
+    accent: "#f15a24",
     logo: "/brand-logos/vanquis-icon.svg"
   },
   {
     year: "2016",
     name: "Lloyds Banking Group",
     role: "Credit Risk Analyst",
+    accent: "#006747",
     logo: "/brand-logos/lloyds-horse-icon.png"
   }
 ];
@@ -128,7 +133,7 @@ export function AboutPage() {
           <h2 className="about-cv-label" id="cv-heading">Where I've worked</h2>
           <ol className="work-timeline">
             {workplaces.map((workplace) => (
-              <li className="work-row" key={workplace.name}>
+              <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
                 <span className="work-year">{workplace.year}</span>
                 <span className="work-node" aria-hidden="true" />
                 <span className="work-detail">
