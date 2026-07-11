@@ -2166,7 +2166,7 @@ button {
 .work-row:hover .work-node {
   box-shadow:
     0 0 0 4px var(--canvas),
-    0 0 0 9px color-mix(in srgb, var(--company-accent, var(--ink)) 18%, transparent);
+    0 0 0 7px color-mix(in srgb, var(--company-accent, var(--ink)) 18%, transparent);
   transform: translate(-50%, -50%) scale(1.2);
   transition-duration: var(--hover-in);
 }
