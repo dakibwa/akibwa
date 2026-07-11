@@ -8,21 +8,27 @@ const offerSteps = [
     title: "Workflow teardown",
     body:
       "We map your current workflow, uncover friction and waste, and identify the highest-leverage opportunities for automation or AI assistance.",
-    output: "Clarity report"
+    output: "Clarity report",
+    art: "/area-art/professional-teardown.webp",
+    artPosition: "50% 52%"
   },
   {
     number: "02",
     title: "Prototype sprint",
     body:
       "We design and build a focused prototype that solves the core problem fast, validating the approach with real data and real users.",
-    output: "Working prototype"
+    output: "Working prototype",
+    art: "/area-art/professional-prototype.webp",
+    artPosition: "50% 58%"
   },
   {
     number: "03",
     title: "Operating system build",
     body:
       "We turn the prototype into a robust, scalable system with documentation, safeguards, and a plan for continuous improvement.",
-    output: "Production system"
+    output: "Production system",
+    art: "/area-art/professional-system.webp",
+    artPosition: "52% 54%"
   }
 ];
 
@@ -82,7 +88,14 @@ export function OfferPage() {
 
       <section className="page-grid offer-step-grid">
         {offerSteps.map((step) => (
-          <article className="studio-card offer-step-card" key={step.title}>
+          <article
+            className="studio-card offer-step-card"
+            key={step.title}
+            style={{
+              "--offer-art": `url("${step.art}")`,
+              "--offer-art-position": step.artPosition
+            }}
+          >
             <div>
               <span>{step.number}</span>
               <h2>{step.title}</h2>

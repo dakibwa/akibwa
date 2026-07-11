@@ -4187,11 +4187,54 @@ button {
 }
 
 .offer-step-card {
+  position: relative;
+  isolation: isolate;
   display: grid;
   height: 100%;
+  background: var(--white);
+}
+
+.offer-step-card::before,
+.offer-step-card::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.offer-step-card::before {
+  z-index: 0;
+  background: var(--offer-art) var(--offer-art-position, 50% 50%) / cover no-repeat;
+  transform: scale(1.01);
+  transition: transform 520ms var(--ease-out);
+}
+
+.offer-step-card::after {
+  z-index: 1;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.99) 0%,
+      rgba(255, 255, 255, 0.96) 38%,
+      rgba(255, 255, 255, 0.88) 68%,
+      rgba(255, 255, 255, 0.72) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.24),
+      transparent 18%,
+      transparent 82%,
+      rgba(255, 255, 255, 0.18)
+    );
+}
+
+.offer-step-card:hover::before {
+  transform: scale(1.025);
 }
 
 .offer-step-card > div {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
   grid-template-rows: auto minmax(94px, 1fr) auto;
@@ -7013,6 +7056,24 @@ button {
     gap: 14px;
   }
 
+  .offer-step-card::after {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.99) 0%,
+        rgba(255, 255, 255, 0.97) 38%,
+        rgba(255, 255, 255, 0.92) 68%,
+        rgba(255, 255, 255, 0.78) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.28),
+        transparent 18%,
+        transparent 82%,
+        rgba(255, 255, 255, 0.22)
+      );
+  }
+
   .offer-step-card h2,
   .offer-step-card p,
   .offer-step-card footer {
@@ -7031,6 +7092,17 @@ button {
 
   .contact-actions {
     display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .offer-step-card::before {
+    transform: none;
+    transition: none;
+  }
+
+  .offer-step-card:hover::before {
+    transform: none;
   }
 }
 
