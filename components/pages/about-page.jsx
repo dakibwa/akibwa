@@ -53,7 +53,7 @@ const toolGroups = [
   {
     label: "AI build loops",
     tools: [
-      { name: "Claude Code", note: "The daily agentic build loop", logo: "/brand-logos/claude.svg" },
+      { name: "Claude Code", note: "The daily build loop", logo: "/brand-logos/claude.svg" },
       { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png" },
       { name: "Copilot", note: "Completion inside the editor", logo: "/brand-logos/microsoft-copilot.svg" }
     ]
@@ -100,7 +100,7 @@ export function AboutPage() {
         <div className="about-hero-copy">
           <h1>Ten years turning messy data into clear decisions.</h1>
           <p className="about-hero-sub">
-            Now building small, AI-assisted systems for reporting, workflow, and the knowledge teams rely on.
+            Now building small AI-assisted systems for reporting, workflow, and knowledge.
           </p>
         </div>
 
@@ -116,10 +116,9 @@ export function AboutPage() {
             <p>The part a job title doesn't cover.</p>
           </header>
           <p className="about-statement">
-            I'm happiest turning messy reality into something that works — and I do that to my own life as much
-            as my work. I track most things, follow the odd obsession all the way down, and I'm always quietly
-            trying to become a slightly more alive version of myself. Curiosity is the engine; the running joke
-            is that I'll try to optimise five things at once.
+            I'm happiest turning messy reality into something that works — in my life as much as my work.
+            I track most things, follow the odd obsession all the way down, and keep trying to become a
+            slightly more alive version of myself. The running joke is that I'll optimise five things at once.
           </p>
           <Link className="about-cta about-hero-cta" href="/professional">
             <span className="about-cta-label">See professional work</span>
@@ -154,7 +153,7 @@ export function AboutPage() {
       <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">
         <header className="about-section-head">
           <h2 id="tools-heading">Current toolkit</h2>
-          <p>Data tools, automation, and local agentic build loops for turning rough material into working systems.</p>
+          <p>What the work runs on, day to day.</p>
         </header>
 
         <div className="toolkit-groups">

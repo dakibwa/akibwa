@@ -6,8 +6,7 @@ const offerSteps = [
   {
     number: "01",
     title: "Workflow teardown",
-    body:
-      "We map your current workflow, uncover friction and waste, and identify the highest-leverage opportunities for automation or AI assistance.",
+    body: "We map how the work actually happens and find where automation earns its keep.",
     output: "Clarity report",
     art: "/area-art/professional-teardown.webp",
     artPosition: "50% 52%"
@@ -15,8 +14,7 @@ const offerSteps = [
   {
     number: "02",
     title: "Prototype sprint",
-    body:
-      "We design and build a focused prototype that solves the core problem fast, validating the approach with real data and real users.",
+    body: "A focused prototype, built fast and tested on real data with real users.",
     output: "Working prototype",
     art: "/area-art/professional-prototype.webp",
     artPosition: "50% 58%"
@@ -24,8 +22,7 @@ const offerSteps = [
   {
     number: "03",
     title: "Operating system build",
-    body:
-      "We turn the prototype into a robust, scalable system with documentation, safeguards, and a plan for continuous improvement.",
+    body: "The prototype becomes a dependable system — documented, safeguarded, ready to run.",
     output: "Production system",
     art: "/area-art/professional-system.webp",
     artPosition: "52% 54%"
@@ -47,10 +44,10 @@ const notFit = [
 ];
 
 const workflow = [
-  ["1", "Scope", "We align on goals, map the problem, and define success."],
-  ["2", "Design", "We design the system, interfaces, and flows."],
-  ["3", "Build", "We build, test, and iterate in short, focused cycles."],
-  ["4", "Handover", "We document, train, and hand over the keys."]
+  ["1", "Scope", "Align on the goal and define success."],
+  ["2", "Design", "Design the system, interfaces, and flows."],
+  ["3", "Build", "Build, test, and iterate in short cycles."],
+  ["4", "Handover", "Document, train, and hand over the keys."]
 ];
 
 export function OfferPage() {
@@ -67,10 +64,9 @@ export function OfferPage() {
         </div>
         <div className="offer-hero-aside">
           <p>
-            I help small teams and solo operators replace the manual, error-prone
-            workflow that quietly eats hours every week — with a small AI-assisted
-            system that does the repetitive part reliably and hands the time back.
-            Ten years turning messy data into decisions, now pointed at your actual work.
+            I help small teams replace the manual workflow that quietly eats hours
+            every week with a small system that hands the time back. Ten years in BI,
+            pointed at your actual work.
           </p>
           <Link className="about-cta" href="/contact">
             <span className="about-cta-label">Book a short workflow triage</span>

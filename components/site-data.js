@@ -65,7 +65,7 @@ export const areaTiles = [
     navImage: "/brand-art/nav/contact.webp",
     alt: "Bright blue sky with white clouds and a dotted data texture",
     accent: "#2f88ff",
-    detail: "Get in contact"
+    detail: "Say what you need"
   }
 ];
 

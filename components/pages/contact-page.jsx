@@ -5,10 +5,10 @@ import { PageFooter } from "@/components/page-footer";
 import { contactEmail } from "@/components/site-data";
 
 const contactNotes = [
-  ["Bring the awkward middle", "A process, report, spreadsheet, source folder, or rough idea that is taking too much attention."],
-  ["Send the shape, not secrets", "A sanitised screenshot, tool list, or example flow is useful. Keep raw credentials and identifiers out."],
-  ["Expect a practical read", "I will look for the smallest useful system, not a theatre demo or a giant transformation programme."],
-  ["Manchester-based", "UK time, remote-friendly, happy to work async until a live conversation is genuinely useful."]
+  ["Bring the awkward middle", "The process, report, or spreadsheet that takes too much of your attention."],
+  ["Send the shape, not secrets", "Sanitised screenshots and tool lists help. Keep credentials and identifiers out."],
+  ["Expect a practical read", "I look for the smallest useful system — not a transformation programme."],
+  ["Manchester-based", "UK time, remote-friendly, async until a call earns its place."]
 ];
 
 export function ContactPage() {
@@ -31,7 +31,7 @@ export function ContactPage() {
           <p>Send the messy bit.</p>
         </div>
         <p className="contact-hero-note">
-          A rough note is enough — send it as it comes, and you&apos;ll get a practical first take back.
+          A rough note is enough. You&apos;ll get a practical first take back.
         </p>
       </section>
 
@@ -44,7 +44,7 @@ export function ContactPage() {
             What do you need?
             <textarea
               name="note"
-              placeholder="Rough notes are fine — what's broken, what you're trying to do, what would make it worth it. Send it exactly as it is in your head."
+              placeholder="Rough is fine — what's broken, what you're trying to do, what it's worth. Write it as it comes."
               required
             />
           </label>
@@ -114,8 +114,8 @@ export function ContactPage() {
             <p>
               <strong>You send the shape</strong>
               <span>
-                The button opens a draft email with your note in it.
-                You read it, edit anything, and hit send — nothing leaves your machine until you do.
+                The button opens a draft email with your note.
+                Nothing leaves your machine until you hit send.
               </span>
             </p>
           </li>
@@ -124,8 +124,7 @@ export function ContactPage() {
             <p>
               <strong>I run a quick diagnostic</strong>
               <span>
-                I read it as a short workflow diagnostic: where the time goes, and what the
-                smallest useful system looks like — not a sales pitch or a giant transformation plan.
+                I read for where the time goes and what the smallest useful system looks like.
               </span>
             </p>
           </li>
@@ -134,8 +133,8 @@ export function ContactPage() {
             <p>
               <strong>We talk only if it helps</strong>
               <span>
-                You get a practical first take by email. If there is a clear fit, we book a short call.
-                If there is not, I will say so and point you somewhere useful.
+                A first take by email. If there&apos;s a fit, we book a short call;
+                if not, I&apos;ll say so and point you somewhere useful.
               </span>
             </p>
           </li>
