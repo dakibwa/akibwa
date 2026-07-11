@@ -110,15 +110,6 @@ export function OfferPage() {
         ))}
       </section>
 
-      <section className="page-grid page-art-break" aria-label="Sculptural artwork">
-        <figure>
-          <img
-            src="/area-art/professional-structure.webp"
-            alt="Cream sculptural architectural openings crossed by fine copper lines"
-          />
-        </figure>
-      </section>
-
       <section className="page-grid fit-panel">
         <article>
           <h2>Good fit</h2>
@@ -138,6 +129,15 @@ export function OfferPage() {
             </p>
           ))}
         </article>
+        <div className="fit-art" aria-hidden="true">
+          <img
+            src="/area-art/professional-structure.webp"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          />
+        </div>
       </section>
 
       <section className="page-grid how-we-work-panel">
