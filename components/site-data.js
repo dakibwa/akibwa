@@ -149,11 +149,11 @@ export const personalProjects = [
   {
     number: "04",
     slug: "one-bag",
-    title: "One-Bag Planner",
+    title: "One Baggers",
     type: "Travel & gear",
     image: "/project-art/personal/albion-sunburst-hero.webp",
     alt: "Radiant sunburst over a luminous horizon",
-    dashboardLabel: "One-Bag Planner",
+    dashboardLabel: "One Baggers",
     dashboardStatus: "Live on Akibwa",
     summary: "Plan a one-bag loadout: prove the constraint, compare the gear, and buy only what earns its place.",
     tags: ["Packing optimiser", "Gear comparison", "Local-first"],

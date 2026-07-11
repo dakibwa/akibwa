@@ -46,7 +46,7 @@ Personal projects support the offer when they make a reusable capability visible
 The transferable proof should be one restrained sentence, not a sales card. Examples include:
 
 - Chorus demonstrates API integration, data modelling, caching, and readable reporting from inconsistent source data.
-- One-Bag demonstrates constraint modelling, decision support, evidence provenance, and local-first product design.
+- One Baggers demonstrates constraint modelling, decision support, evidence provenance, and local-first product design.
 - Meditator demonstrates real-time state, privacy-aware product choices, and calm cross-device interaction.
 - Canta Porto demonstrates structured learning loops, content provenance, and low-cost AI assistance within a bounded teaching system.
 

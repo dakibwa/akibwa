@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-03",
+  "updated": "2026-07-11",
   "surfaces": [
     {
       "id": "meditator",
@@ -28,7 +28,7 @@
     },
     {
       "id": "onebagger",
-      "title": "One-Bag Planner",
+      "title": "One Baggers",
       "route": "/onebagger",
       "kind": "cloudflare-app",
       "visibility": "public",
