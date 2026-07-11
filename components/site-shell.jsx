@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { areaTiles } from "@/components/site-data";
+import { areaTiles, personalProjects } from "@/components/site-data";
 
 const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navImage ?? tile.image]));
 
@@ -14,6 +14,19 @@ const navItems = [
   { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
+
+/* Lightened tints of each area's accent for the label glow (rgb triplets). */
+const navGlow = {
+  "/personal": { light: "143 188 255", mid: "93 157 255" },
+  "/professional": { light: "255 177 128", mid: "255 140 71" },
+  "/about": { light: "125 191 164", mid: "74 157 125" },
+  "/contact": { light: "143 188 255", mid: "93 157 255" }
+};
+
+const trackNavGlow = (event) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  event.currentTarget.style.setProperty("--nav-mx", `${event.clientX - rect.left}px`);
+};
 
 function normalize(pathname) {
   if (pathname !== "/" && pathname.endsWith("/")) {
@@ -60,24 +73,54 @@ export function SiteShell({ children }) {
 
             <nav className="nav-desktop" aria-label="Main navigation">
               {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  prefetch
-                  className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
-                  aria-current={isActive(pathname, item.match) ? "page" : undefined}
-                  onPointerEnter={() => primeRoute(item.href)}
-                  onFocus={() => primeRoute(item.href)}
-                >
-                  {navArt[item.href] ? (
-                    <span
-                      className="nav-link__art"
-                      style={{ backgroundImage: `url(${navArt[item.href]})` }}
-                      aria-hidden="true"
-                    />
+                <div className="nav-item" key={item.href}>
+                  <Link
+                    href={item.href}
+                    prefetch
+                    className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
+                    aria-current={isActive(pathname, item.match) ? "page" : undefined}
+                    style={{
+                      "--nav-glow-light": navGlow[item.href]?.light,
+                      "--nav-glow-mid": navGlow[item.href]?.mid
+                    }}
+                    onPointerEnter={() => primeRoute(item.href)}
+                    onPointerMove={trackNavGlow}
+                    onFocus={() => primeRoute(item.href)}
+                  >
+                    {navArt[item.href] ? (
+                      <span
+                        className="nav-link__art"
+                        style={{ backgroundImage: `url(${navArt[item.href]})` }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                    {item.label}
+                  </Link>
+
+                  {item.href === "/personal" ? (
+                    <div className="nav-dropdown" aria-label="Personal projects">
+                      <div className="nav-dropdown-panel">
+                        {personalProjects.map((project) => (
+                          <Link
+                            key={project.slug}
+                            href={`/personal/${project.slug}`}
+                            prefetch
+                            className="nav-dropdown-link"
+                            onPointerEnter={() => primeRoute(`/personal/${project.slug}`)}
+                          >
+                            <i aria-hidden="true">{project.number}</i>
+                            <strong>{project.title}</strong>
+                            <em>{project.type}</em>
+                          </Link>
+                        ))}
+                        <Link href="/personal" prefetch className="nav-dropdown-all">
+                          All personal projects
+                          <ArrowRight size={13} strokeWidth={1.8} />
+                        </Link>
+                      </div>
+                    </div>
                   ) : null}
-                  {item.label}
-                </Link>
+                </div>
               ))}
             </nav>
 

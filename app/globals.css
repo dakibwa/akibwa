@@ -262,6 +262,148 @@ button {
   gap: 42px;
 }
 
+.nav-item {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Each nav label carries the cursor-tracked light in its own area's
+   accent — the same physics as the wordmark glow. */
+@property --nav-glow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .nav-desktop .nav-link {
+    background-image: linear-gradient(var(--ink), var(--ink));
+    background-image:
+      radial-gradient(
+        34px circle at var(--nav-mx, 50%) 46%,
+        rgb(var(--nav-glow-light, 240 186 84) / calc(var(--nav-glow, 0) * 0.9)),
+        rgb(var(--nav-glow-mid, 203 134 30) / calc(var(--nav-glow, 0) * 0.5)) 46%,
+        rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
+      ),
+      linear-gradient(var(--ink), var(--ink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: --nav-glow var(--hover-out) var(--ease-out);
+  }
+
+  .nav-desktop .nav-link:hover,
+  .nav-desktop .nav-link:focus-visible {
+    --nav-glow: 1;
+    transition-duration: var(--hover-in);
+  }
+
+  .nav-desktop .nav-link.active {
+    color: transparent;
+  }
+}
+
+/* Personal opens a quiet project index. Revealed on hover and on
+   keyboard focus (the trigger link focusing satisfies :focus-within,
+   which makes the panel visible and therefore tabbable). */
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% - 8px);
+  left: 50%;
+  z-index: 60;
+  width: 268px;
+  padding-top: 12px;
+  transform: translate(-50%, 6px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 170ms var(--ease-out),
+    transform 170ms var(--ease-out),
+    visibility 0s linear 170ms;
+}
+
+.nav-item:hover .nav-dropdown,
+.nav-item:focus-within .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  transition:
+    opacity 240ms var(--ease-out),
+    transform 240ms var(--ease-out),
+    visibility 0s;
+}
+
+.nav-dropdown-panel {
+  display: grid;
+  padding: 8px;
+  border: 1px solid rgba(16, 18, 23, 0.12);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: 0 20px 54px rgba(16, 18, 23, 0.12);
+}
+
+.nav-dropdown-link {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  column-gap: 10px;
+  row-gap: 1px;
+  align-items: baseline;
+  padding: 9px 12px;
+  border-radius: calc(var(--radius) - 3px);
+  transition: background var(--hover-out) var(--ease-out);
+}
+
+.nav-dropdown-link:hover,
+.nav-dropdown-link:focus-visible {
+  background: rgba(16, 18, 23, 0.05);
+  transition-duration: var(--hover-in);
+}
+
+.nav-dropdown-link i {
+  color: #1565c9;
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.nav-dropdown-link strong {
+  color: var(--black);
+  font-size: 0.92rem;
+  font-weight: 560;
+  line-height: 1.3;
+}
+
+.nav-dropdown-link em {
+  grid-column: 2;
+  color: #6b717b;
+  font-size: 0.78rem;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.nav-dropdown-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 4px 0;
+  border-top: 1px solid var(--line);
+  padding: 12px 8px 6px;
+  color: #59616b;
+  font-size: 0.84rem;
+  font-weight: 540;
+  transition: color var(--hover-out) var(--ease-out);
+}
+
+.nav-dropdown-all:hover,
+.nav-dropdown-all:focus-visible {
+  color: var(--black);
+  transition-duration: var(--hover-in);
+}
+
 .nav-link {
   position: relative;
   display: inline-flex;
