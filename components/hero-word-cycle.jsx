@@ -41,7 +41,7 @@ const heroOutcomePhrases = [
 // Calm ambient pace at rest; quicker while the reader is hovering/focusing
 // either word, so curiosity is rewarded with a faster run through the range.
 // The two words intentionally run on offset clocks so the line feels alive,
-// not like a synchronized slot machine.
+// not like a synchronised slot machine.
 const REST_INTERVAL = 4200;
 const HOVER_INTERVAL = 1500;
 const REST_SOURCE_INITIAL_DELAY = 1200;

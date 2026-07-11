@@ -55,7 +55,7 @@ export function AnimatedCount({ value }) {
   }, [target]);
 
   if (target == null) return <span ref={ref}>{value}</span>;
-  return <span ref={ref}>{new Intl.NumberFormat("en").format(display)}</span>;
+  return <span ref={ref}>{new Intl.NumberFormat("en-GB").format(display)}</span>;
 }
 
 export function KnowledgeSystemPipeline({ layers, updatedLabel }) {

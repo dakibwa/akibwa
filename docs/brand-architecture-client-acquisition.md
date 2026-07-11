@@ -40,7 +40,7 @@ Personal projects support the offer when they make a reusable capability visible
 1. **Wanted outcome** — the useful thing Daniel wanted to exist.
 2. **Messy input or constraint** — the data, workflow, privacy boundary, device constraint, or unreliable source involved.
 3. **System response** — what was modelled, automated, designed, or made operable.
-4. **Evidence** — a working public surface, bounded screenshot, verified behavior, or clearly labelled status.
+4. **Evidence** — a working public surface, bounded screenshot, verified behaviour, or clearly labelled status.
 5. **Transferable proof** — the capability a client can reasonably infer from that evidence.
 
 The transferable proof should be one restrained sentence, not a sales card. Examples include:

@@ -20,7 +20,7 @@ const remoteChorusDataUrl = (
 
 function formatNumber(value) {
   const numeric = Number(value);
-  return new Intl.NumberFormat("en").format(Number.isFinite(numeric) ? numeric : 0);
+  return new Intl.NumberFormat("en-GB").format(Number.isFinite(numeric) ? numeric : 0);
 }
 
 function detailLine(primary, secondary) {

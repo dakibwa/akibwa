@@ -6,7 +6,7 @@ import { contactEmail } from "@/components/site-data";
 
 const contactNotes = [
   ["Bring the awkward middle", "A process, report, spreadsheet, source folder, or rough idea that is taking too much attention."],
-  ["Send the shape, not secrets", "A sanitized screenshot, tool list, or example flow is useful. Keep raw credentials and identifiers out."],
+  ["Send the shape, not secrets", "A sanitised screenshot, tool list, or example flow is useful. Keep raw credentials and identifiers out."],
   ["Expect a practical read", "I will look for the smallest useful system, not a theatre demo or a giant transformation programme."],
   ["Manchester-based", "UK time, remote-friendly, happy to work async until a live conversation is genuinely useful."]
 ];

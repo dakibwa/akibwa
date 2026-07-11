@@ -80,7 +80,7 @@ export const featuredProjects = [
     problem:
       "Music history is rich, but the raw API is inconsistent, incomplete, and hard to interpret over time.",
     built:
-      "Server-side Last.fm fetching, normalization, caching, charts, editorial summaries, and graceful handling for missing artwork or sparse data.",
+      "Server-side Last.fm fetching, normalisation, caching, charts, editorial summaries, and graceful handling for missing artwork or sparse data.",
     proves:
       "API integration, data modelling, dashboard design, and the ability to make messy personal data readable.",
     matters:
@@ -228,7 +228,7 @@ export const sprintIncludes = [
   "Workflow audit and opportunity map",
   "One selected workflow with a clear owner",
   "System design and working first version",
-  "Testing with real or safely anonymized examples",
+  "Testing with real or safely anonymised examples",
   "Documentation and handover",
   "Next-step roadmap"
 ];

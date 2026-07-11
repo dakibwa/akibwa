@@ -33,7 +33,7 @@ const chorusSummaryDataUrl = (
 
 function formatScrobbleCount(value) {
   const numeric = Number(value);
-  return new Intl.NumberFormat("en").format(Number.isFinite(numeric) ? numeric : 0);
+  return new Intl.NumberFormat("en-GB").format(Number.isFinite(numeric) ? numeric : 0);
 }
 
 function useChorusScrobbleTotal(enabled) {
@@ -741,7 +741,7 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
             <button
               type="button"
               className="project-expanded-maximize"
-              aria-label={`${isMaximized ? "Minimize" : "Maximize"} ${project.title}`}
+              aria-label={`${isMaximized ? "Minimise" : "Maximise"} ${project.title}`}
               aria-pressed={isMaximized}
               onClick={toggleMaximized}
             >

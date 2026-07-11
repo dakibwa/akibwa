@@ -72,7 +72,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en-GB">
       <body>
         {embedOrigins.map((origin) => (
           <link rel="preconnect" href={origin} key={origin} />

@@ -9,12 +9,12 @@ const systemSteps = [
   {
     number: "02",
     title: "Structure",
-    body: "Define, normalize, and connect. Make sense of what matters."
+    body: "Define, normalise, and connect. Make sense of what matters."
   },
   {
     number: "03",
     title: "Assist",
-    body: "Use AI where it helps. Augment judgment, don't replace it."
+    body: "Use AI where it helps. Augment judgement, don't replace it."
   },
   {
     number: "04",
