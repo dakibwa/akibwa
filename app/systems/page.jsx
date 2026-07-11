@@ -1,11 +1,11 @@
-import { SystemsPage } from "@/components/pages/systems-page";
+import { RouteRedirect } from "@/components/route-redirect";
 
 export const metadata = {
   title: "Systems",
-  description:
-    "Akibwa capabilities across workflow design, dashboards, internal tools, automation, prototypes, and knowledge systems."
+  robots: { index: false },
+  alternates: { canonical: "/professional/" }
 };
 
 export default function SystemsRoute() {
-  return <SystemsPage />;
+  return <RouteRedirect to="/professional/" label="akibwa.com/professional" />;
 }

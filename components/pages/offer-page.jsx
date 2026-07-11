@@ -78,11 +78,6 @@ export function OfferPage() {
               <ArrowRight size={17} strokeWidth={2} />
             </span>
           </Link>
-          <p className="offer-hero-proof">
-            Proof, not promises: <Link href="/about">ten years in BI</Link>,{" "}
-            <Link href="/personal">public build loops</Link>, and{" "}
-            <Link href="/systems">the operating loop</Link> behind every build.
-          </p>
         </div>
       </section>
 
@@ -160,12 +155,6 @@ export function OfferPage() {
             </article>
           ))}
         </div>
-        <footer className="how-we-work-foot">
-          <Link href="/systems">
-            The operating loop behind every build
-            <ArrowRight size={15} strokeWidth={1.7} />
-          </Link>
-        </footer>
       </section>
 
       <PageFooter />

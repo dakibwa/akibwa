@@ -6,7 +6,6 @@ const routes = [
   { path: "/personal/", priority: 0.9 },
   { path: "/about/", priority: 0.8 },
   { path: "/contact/", priority: 0.8 },
-  { path: "/systems/", priority: 0.5 },
   { path: "/personal/chorus/", priority: 0.5 },
   { path: "/personal/cover-collision/", priority: 0.5 },
   { path: "/personal/canta-porto/", priority: 0.5 },

@@ -183,12 +183,6 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="page-grid about-section page-art-break" aria-label="Landscape artwork">
-        <figure>
-          <img src="/about-mountain-meadow.webp" alt="Sunlit mountain meadow with a layered data texture" />
-        </figure>
-      </section>
-
       <section className="page-grid about-section about-interests" aria-labelledby="interests-heading">
         <header className="about-section-head">
           <h2 id="interests-heading">Outside the work</h2>

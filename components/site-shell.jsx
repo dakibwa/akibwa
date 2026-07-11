@@ -10,10 +10,19 @@ const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navIm
 
 const navItems = [
   { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/chorus"] },
-  { href: "/professional", label: "Professional", match: ["/professional", "/offer", "/systems", "/services"] },
+  { href: "/professional", label: "Professional", match: ["/professional", "/offer", "/services"] },
   { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
+
+/* Each project's accent, as used by its artwork on the personal page. */
+const projectAccents = {
+  chorus: "#ff6f1a",
+  "cover-collision": "#e2556b",
+  "canta-porto": "#0d5267",
+  "one-bag": "#2f7d57",
+  meditator: "#3a5a45"
+};
 
 /* Lightened tints of each area's accent for the label glow (rgb triplets). */
 const navGlow = {
@@ -106,6 +115,7 @@ export function SiteShell({ children }) {
                             href={`/personal/${project.slug}`}
                             prefetch
                             className="nav-dropdown-link"
+                            style={{ "--project-accent": projectAccents[project.slug] }}
                             onPointerEnter={() => primeRoute(`/personal/${project.slug}`)}
                           >
                             <i aria-hidden="true">{project.number}</i>
