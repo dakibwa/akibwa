@@ -1999,16 +1999,24 @@ button {
   font-weight: 640;
   letter-spacing: 0.01em;
   overflow: hidden;
-  transition: border-color 220ms ease, color 220ms ease;
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out),
+    box-shadow 420ms var(--ease-out);
 }
 
+/* On hover, the accent blooms out of the arrow circle to fill the pill. */
 .about-cta::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: var(--ink);
-  transform: translateX(-101%);
-  transition: transform 340ms cubic-bezier(0.4, 0, 0.2, 1);
+  top: 50%;
+  right: 7px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--page-accent, var(--ink));
+  transform: translateY(-50%) scale(0);
+  transition: transform 520ms var(--ease-out);
 }
 
 .about-cta-label,
@@ -2025,24 +2033,42 @@ button {
   border-radius: 999px;
   background: var(--page-accent, var(--ink));
   color: var(--white);
-  transition: background 220ms ease, transform 340ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background 300ms var(--ease-out),
+    color 300ms var(--ease-out),
+    transform 420ms var(--ease-out);
 }
 
 .about-cta:hover,
 .about-cta:focus-visible {
-  border-color: var(--ink);
+  border-color: var(--page-accent, var(--ink));
   color: var(--white);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--page-accent, #101217) 24%, transparent);
 }
 
 .about-cta:hover::before,
 .about-cta:focus-visible::before {
-  transform: translateX(0);
+  transform: translateY(-50%) scale(16);
 }
 
 .about-cta:hover .about-cta-icon,
 .about-cta:focus-visible .about-cta-icon {
-  background: var(--page-accent-strong, var(--page-accent, var(--ink)));
+  background: var(--white);
+  color: var(--page-accent, var(--ink));
   transform: translateX(3px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-cta::before {
+    transform: translateY(-50%) scale(16);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .about-cta:hover::before,
+  .about-cta:focus-visible::before {
+    opacity: 1;
+  }
 }
 
 .about-hero-cta {
@@ -4230,7 +4256,9 @@ button {
   align-items: baseline;
   justify-content: space-between;
   gap: 12px 24px;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
 }
 
 .how-we-work-head h2 {
@@ -4244,10 +4272,12 @@ button {
   color: var(--black);
   font-size: 0.92rem;
   font-weight: 540;
+  transition: color var(--hover-out) var(--ease-out);
 }
 
 .how-we-work-head a:hover {
-  color: var(--blue);
+  color: var(--page-accent, var(--blue));
+  transition-duration: var(--hover-in);
 }
 
 
@@ -4262,25 +4292,45 @@ button {
   display: grid;
   gap: 12px;
   align-content: start;
-  padding-right: 30px;
+}
+
+/* One track runs node to node — the journey, drawn. */
+.how-we-work-panel article:not(:last-of-type)::after {
+  content: "";
+  position: absolute;
+  top: 19px;
+  right: -26px;
+  left: 46px;
+  height: 1px;
+  background: var(--line);
 }
 
 .how-we-work-panel article header {
-  display: flex;
-  align-items: center;
+  display: grid;
+  justify-items: start;
   gap: 14px;
 }
 
 .how-we-work-panel article header span {
+  position: relative;
   display: grid;
-  flex: 0 0 auto;
   width: 38px;
   height: 38px;
   place-items: center;
   border: 1px solid rgba(255, 111, 26, 0.45);
   border-radius: 50%;
+  background: var(--white);
   color: #c05212;
   font-size: 0.85rem;
+  transition:
+    border-color var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out);
+}
+
+.how-we-work-panel article:hover header span {
+  border-color: rgba(255, 111, 26, 0.75);
+  box-shadow: 0 0 0 6px color-mix(in srgb, #ff6f1a 13%, transparent);
+  transition-duration: var(--hover-in);
 }
 
 .how-we-work-panel h3 {
@@ -4297,12 +4347,6 @@ button {
   line-height: 1.5;
 }
 
-.how-we-work-panel article > svg {
-  position: absolute;
-  right: 0;
-  top: 9px;
-  color: var(--black);
-}
 
 .contact-hero {
   display: grid;
@@ -6296,11 +6340,7 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .how-we-work-panel article {
-    padding-right: 0;
-  }
-
-  .how-we-work-panel article > svg {
+  .how-we-work-panel article:not(:last-of-type)::after {
     display: none;
   }
 }
@@ -6940,10 +6980,6 @@ button {
     grid-column: 2 / 3;
   }
 
-  .how-we-work-panel article > svg {
-    display: none;
-  }
-
   .contact-signal-art {
     width: 100%;
     height: auto;
@@ -7272,3 +7308,5 @@ button {
 }
 .area-card { --card-mx: 240px; --card-my: 150px; }
 .area-card .area-art img { filter: brightness(1.045) saturate(1.03) !important; }
+.offer-hero-aside .about-cta::before { transform: translateY(-50%) scale(16) !important; }
+.offer-hero-aside .about-cta .about-cta-icon { background: var(--white) !important; color: var(--page-accent) !important; transform: translateX(3px) rotate(-45deg) !important; }

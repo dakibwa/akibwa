@@ -140,14 +140,13 @@ export function OfferPage() {
           </Link>
         </header>
         <div>
-          {workflow.map(([number, title, body], index) => (
+          {workflow.map(([number, title, body]) => (
             <article key={title}>
               <header>
                 <span>{number}</span>
                 <h3>{title}</h3>
               </header>
               <p>{body}</p>
-              {index < workflow.length - 1 && <ArrowRight size={18} strokeWidth={1.4} />}
             </article>
           ))}
         </div>
