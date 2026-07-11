@@ -607,12 +607,37 @@ button {
 .area-art img {
   object-fit: cover;
   object-position: center;
-  transition: transform 1100ms var(--ease-out);
+  transition: filter 700ms var(--ease-out);
+}
+
+/* The artwork answers the cursor with light rather than movement: a soft
+   spot follows the pointer (same signature as the wordmark glow) while the
+   image itself brightens a touch. */
+.area-art::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    300px circle at var(--card-mx, 50%) var(--card-my, 40%),
+    rgba(255, 255, 255, 0.55),
+    transparent 70%
+  );
+  content: "";
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--hover-out) var(--ease-out);
+}
+
+.area-card:hover .area-art::before,
+.area-card:focus-visible .area-art::before {
+  opacity: 1;
+  transition-duration: var(--hover-in);
 }
 
 .area-card:hover .area-art img,
 .area-card:focus-visible .area-art img {
-  transform: scale(1.028);
+  filter: brightness(1.045) saturate(1.03);
 }
 
 .area-caption {
@@ -7171,3 +7196,5 @@ button {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.area-card { --card-mx: 240px; --card-my: 150px; }
+.area-card .area-art img { filter: brightness(1.045) saturate(1.03) !important; }
