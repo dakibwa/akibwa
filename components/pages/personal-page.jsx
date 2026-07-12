@@ -544,8 +544,12 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
       {frameUrl ? (
         <div className={`project-expanded-frame-shell ${isFrameLoaded ? "is-loaded" : "is-loading"}`}>
           <div className="project-frame-loading" aria-hidden="true">
-            <span>{project.title}</span>
-            <strong>{project.dashboardLabel ?? "Live project"}</strong>
+            <span>
+              {[project.dashboardStatus, project.dashboardLabel].find(
+                (label) => label && label !== project.title,
+              ) ?? "Live project"}
+            </span>
+            <strong>{project.title}</strong>
             <i className="project-frame-loading-bar" />
           </div>
           <iframe
@@ -797,8 +801,8 @@ export function PersonalPage({ initialSlug = null }) {
 
     // Projects live at /personal/<slug>/; legacy #slug links upgrade to the
     // path form (aliases normalise to the canonical slug the same way). A
-    // deep link lands on the project's storyboard section rather than
-    // auto-opening the overlay — each section's Open button does that.
+    // deep link lands on the project's storyboard section and opens the
+    // app overlay on top — closing it leaves you on the section.
     const legacyHash = window.location.hash.replace("#", "");
     const requested = legacyHash || initialSlug;
     if (!requested) return undefined;
@@ -817,6 +821,8 @@ export function PersonalPage({ initialSlug = null }) {
     window.history.replaceState(null, "", `/personal/${project.slug}/`);
     setArrivedSlug(project.slug);
     document.getElementById(project.slug)?.scrollIntoView({ behavior: "instant", block: "start" });
+    setIsOverlayMaximized(false);
+    setExpandedSlug(project.slug);
     return undefined;
   }, [initialSlug]);
 
