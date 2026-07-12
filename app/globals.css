@@ -920,7 +920,6 @@ button {
   transition-duration: var(--hover-in);
 }
 
-
 .page-footer {
   display: flex;
   align-items: center;
@@ -930,7 +929,6 @@ button {
   color: var(--black);
   font-size: 0.82rem;
 }
-
 
 .page-footer > div {
   display: flex;
@@ -974,7 +972,6 @@ button {
   color: var(--blue);
 }
 
-
 .page-footer i {
   display: block;
   width: 11px;
@@ -982,7 +979,6 @@ button {
   border-radius: 50%;
   background: var(--black);
 }
-
 
 .page-footer > div:last-child i {
   width: 7px;
@@ -1016,10 +1012,6 @@ button {
 
 .studio-hero {
   padding: 58px 0 24px;
-}
-
-.work-page .studio-hero {
-  padding-bottom: 8px;
 }
 
 .studio-hero h1,
@@ -1062,12 +1054,6 @@ button {
   transition-duration: var(--hover-in);
 }
 
-.work-card.is-selected {
-  border-color: rgba(47, 136, 255, 0.42);
-  box-shadow: 0 16px 42px rgba(47, 136, 255, 0.1);
-}
-
-
 .offer-step-card > div > span {
   color: var(--black);
   font-size: 0.86rem;
@@ -1089,12 +1075,6 @@ button {
   line-height: 1.5;
 }
 
-
-
-.work-card.is-selected footer {
-  color: var(--blue);
-}
-
 .personal-hero {
   padding-bottom: 8px;
 }
@@ -1106,23 +1086,6 @@ button {
   font-weight: 440;
   line-height: 1.45;
   color: #6b7480;
-}
-
-.personal-area-card .area-art img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.personal-area-card.is-selected {
-  border-color: color-mix(in srgb, var(--area-accent) 34%, rgba(16, 18, 23, 0.18));
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.98) inset,
-    0 8px 18px rgba(16, 18, 23, 0.055),
-    0 24px 58px color-mix(in srgb, var(--area-accent) 10%, rgba(16, 18, 23, 0.08));
 }
 
 /* Personal projects — storyboard folio. One full-width section per project:
@@ -1475,283 +1438,6 @@ button {
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
 }
 
-.personal-detail-app-preview {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 78% 22%, color-mix(in srgb, var(--area-accent) 22%, transparent), transparent 34%),
-    linear-gradient(135deg, #f6f2eb, #edf3f4 58%, #f8f8f4);
-  padding: clamp(16px, 2.4vw, 26px);
-}
-
-.personal-detail-app-backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: var(--project-detail-banner-position, 50% 50%);
-  opacity: 0.28;
-  filter: saturate(1.05) contrast(1.04);
-}
-
-.personal-detail-app-preview::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.58) 42%, transparent 74%),
-    radial-gradient(circle at var(--project-selector-subject-position, 50% 50%), rgba(255, 255, 255, 0.26), transparent 32%);
-}
-
-.personal-detail-app-chrome {
-  display: grid;
-  min-height: 0;
-  grid-template-rows: auto minmax(0, 1fr);
-  overflow: hidden;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow:
-    0 18px 50px rgba(16, 18, 23, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-}
-
-.personal-detail-app-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 46px;
-  padding: 0 15px;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.38));
-}
-
-.personal-detail-app-toolbar span {
-  font-size: 0.78rem;
-  font-weight: 690;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #11151b;
-}
-
-.personal-detail-app-toolbar em {
-  font-size: 0.7rem;
-  font-style: normal;
-  font-weight: 590;
-  color: rgba(16, 18, 23, 0.52);
-}
-
-.app-preview-grid {
-  display: grid;
-  min-height: 0;
-  grid-template-columns: minmax(0, 1.05fr) minmax(180px, 0.72fr);
-  gap: 14px;
-  padding: 16px;
-}
-
-.app-preview-primary,
-.app-preview-side {
-  min-width: 0;
-  border: 1px solid rgba(16, 18, 23, 0.08);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
-}
-
-.app-preview-primary {
-  display: grid;
-  align-content: center;
-  gap: 9px;
-  padding: 18px;
-}
-
-.app-preview-primary span,
-.app-preview-side > span {
-  font-size: 0.68rem;
-  font-weight: 690;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--area-accent) 72%, #20242b);
-}
-
-.app-preview-primary strong {
-  max-width: 13ch;
-  font-size: clamp(1.44rem, 3vw, 2.28rem);
-  line-height: 0.96;
-  color: #101317;
-}
-
-.app-preview-primary p {
-  margin: 0;
-  color: rgba(16, 18, 23, 0.64);
-  font-size: 0.9rem;
-}
-
-.app-preview-side {
-  display: grid;
-  align-content: start;
-  gap: 13px;
-  padding: 16px;
-}
-
-.app-preview-meter {
-  overflow: hidden;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(16, 18, 23, 0.1);
-}
-
-.app-preview-meter i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--area-accent);
-}
-
-.canta-lyric-lines {
-  display: grid;
-  gap: 7px;
-  width: min(260px, 100%);
-}
-
-.canta-lyric-lines i {
-  display: block;
-  height: 8px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--area-accent) 22%, rgba(16, 18, 23, 0.1));
-}
-
-.canta-lyric-lines i:nth-child(2) {
-  width: 74%;
-}
-
-.canta-lyric-lines i:nth-child(3) {
-  width: 48%;
-}
-
-.canta-token-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.canta-token-row b {
-  border: 1px solid color-mix(in srgb, var(--area-accent) 24%, rgba(16, 18, 23, 0.1));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--area-accent) 10%, #fff);
-  padding: 6px 9px;
-  color: #11151b;
-  font-size: 0.72rem;
-  font-weight: 650;
-}
-
-.one-bag-pack {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  width: min(280px, 100%);
-  align-items: end;
-}
-
-.one-bag-pack i {
-  display: block;
-  min-height: 48px;
-  border-radius: 12px 12px 6px 6px;
-  background: color-mix(in srgb, var(--area-accent) 22%, #2d3941);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.one-bag-pack i:nth-child(2) {
-  min-height: 66px;
-  background: color-mix(in srgb, var(--area-accent) 34%, #294533);
-}
-
-.one-bag-pack i:nth-child(3) {
-  min-height: 86px;
-  background: color-mix(in srgb, var(--area-accent) 46%, #1f2c33);
-}
-
-.one-bag-pack i:nth-child(4) {
-  min-height: 58px;
-  background: color-mix(in srgb, var(--area-accent) 18%, #5e644e);
-}
-
-.one-bag-preview ul {
-  display: grid;
-  gap: 8px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.one-bag-preview li,
-.meditator-presence b {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border: 1px solid rgba(16, 18, 23, 0.08);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.64);
-  padding: 9px 10px;
-  font-size: 0.78rem;
-}
-
-.one-bag-preview li b,
-.meditator-presence b {
-  font-weight: 650;
-  color: #11151b;
-}
-
-.one-bag-preview li em {
-  font-style: normal;
-  color: rgba(16, 18, 23, 0.56);
-}
-
-.meditator-preview {
-  grid-template-columns: minmax(180px, 0.82fr) minmax(0, 1fr);
-}
-
-.meditator-ring {
-  display: grid;
-  place-items: center;
-  min-width: 0;
-  border-radius: 22px;
-  background:
-    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 43%, transparent 44%),
-    conic-gradient(from -90deg, var(--area-accent) 0 58%, rgba(16, 18, 23, 0.1) 58% 100%);
-}
-
-.meditator-ring span {
-  font-size: clamp(1.72rem, 3vw, 2.58rem);
-  font-weight: 720;
-  letter-spacing: 0.02em;
-  color: #11151b;
-}
-
-.meditator-presence {
-  display: grid;
-  gap: 8px;
-}
-
-.meditator-presence b::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--area-accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--area-accent) 18%, transparent);
-}
-
 .personal-detail-collision {
   display: grid;
   aspect-ratio: 16 / 9;
@@ -1773,69 +1459,18 @@ button {
 }
 
 @media (max-width: 760px) {
-  .personal-detail-app-preview {
-    padding: 12px;
-  }
 
-  .personal-detail-app-toolbar {
-    min-height: 38px;
-    padding: 0 12px;
-  }
+  
 
-  .personal-detail-app-toolbar em {
-    display: none;
-  }
+  
 
-  .app-preview-grid,
-  .meditator-preview {
-    grid-template-columns: minmax(0, 1fr) minmax(104px, 0.58fr);
-    gap: 9px;
-    padding: 10px;
-  }
+  
 
-  .app-preview-primary,
-  .app-preview-side {
-    border-radius: 10px;
-    padding: 10px;
-  }
+  
 
-  .app-preview-primary {
-    gap: 6px;
-  }
+  
 
-  .app-preview-primary strong,
-  .meditator-ring span {
-    font-size: 1.18rem;
-    line-height: 1;
-  }
-
-  .app-preview-primary p,
-  .canta-token-row b,
-  .one-bag-preview li,
-  .meditator-presence b {
-    font-size: 0.66rem;
-  }
-
-  .one-bag-pack {
-    gap: 5px;
-  }
-
-  .one-bag-pack i,
-  .one-bag-pack i:nth-child(4) {
-    min-height: 30px;
-  }
-
-  .one-bag-pack i:nth-child(2) {
-    min-height: 42px;
-  }
-
-  .one-bag-pack i:nth-child(3) {
-    min-height: 54px;
-  }
-
-  .meditator-ring {
-    border-radius: 16px;
-  }
+  
 
   .personal-detail-collision {
     gap: 9px;
@@ -1928,7 +1563,6 @@ button {
      card's only header (the capture repeats "Chorus / Listening archive"). */
   object-position: 50% 100%;
 }
-
 
 .about-hero {
   position: relative;
@@ -2126,12 +1760,6 @@ button {
   min-height: 420px;
   object-fit: cover;
   object-position: center 50%;
-}
-
-.about-hero-side {
-  display: grid;
-  gap: 26px;
-  align-self: stretch;
 }
 
 .about-portrait--hero {
@@ -2688,33 +2316,16 @@ button {
   color: var(--blue);
 }
 
-.source-dashboard-showcase.is-private {
-  background:
-    linear-gradient(90deg, rgba(125, 154, 146, 0.08), transparent 38%),
-    #fff;
-}
-
 .personal-full-app-showcase {
   margin-top: 24px;
   scroll-margin-top: 86px;
 }
 
-.personal-full-app-showcase > .chorus-preview,
-.personal-full-app-showcase > .health-preview,
-.personal-full-app-showcase > .vitals-dashboard {
+.personal-full-app-showcase > .chorus-preview {
   overflow: hidden;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: #fff;
-}
-
-.personal-full-app-showcase > .health-preview,
-.personal-full-app-showcase > .vitals-dashboard {
-  padding-bottom: 24px;
-}
-
-.personal-full-app-showcase .vitals-shell {
-  width: 100%;
 }
 
 .project-expanded-layer {
@@ -3023,9 +2634,7 @@ button {
   scroll-margin-top: 0;
 }
 
-.project-expanded-body .personal-full-app-showcase > .chorus-preview,
-.project-expanded-body .personal-full-app-showcase > .health-preview,
-.project-expanded-body .personal-full-app-showcase > .vitals-dashboard {
+.project-expanded-body .personal-full-app-showcase > .chorus-preview {
   min-height: 100%;
   border: 0;
   border-radius: 0;
@@ -3037,131 +2646,8 @@ button {
   background: #efeeea;
 }
 
-.project-expanded-body .personal-full-app-showcase.is-vitals > .vitals-ai-dashboard {
-  min-height: 100%;
-}
-
-.project-expanded-body .personal-full-app-showcase.is-vitals .vitals-ai-shell {
-  width: 100%;
-  min-height: calc(100% - 8px);
-}
-
-.project-expanded-body .personal-full-app-showcase > .vitals-dashboard {
-  padding-bottom: 34px;
-}
-
-.project-expanded-body .personal-full-app-showcase .vitals-shell {
-  width: min(calc(100% - 48px), 1440px);
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-shell {
-  padding: 20px 24px 12px;
-}
-
 /* The overlay toolbar already names the project, so the embedded app skips
    its own eyebrow and gives the row to the metrics and controls. */
-.project-expanded-layer.is-vitals .vitals-hero-eyebrow {
-  display: none;
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls {
-  justify-content: flex-start;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-ai-controls::-webkit-scrollbar {
-  display: none;
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-score-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-recovery-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-sleep-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-training-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-body-metrics-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-nutrition-card-v2,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-stress-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-trends-card {
-  grid-column: span 6;
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-habits-card,
-.project-expanded-layer.is-vitals:not(.is-maximized) .vitals-insights-card {
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 1600px) {
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-shell {
-    padding: 20px 24px 12px;
-  }
-
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-controls {
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .project-expanded-layer.is-vitals.is-maximized .vitals-ai-controls::-webkit-scrollbar {
-    display: none;
-  }
-
-  .project-expanded-layer.is-vitals.is-maximized .vitals-score-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-recovery-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-sleep-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-training-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-body-metrics-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-nutrition-card-v2,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-stress-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-trends-card {
-    grid-column: span 6;
-  }
-
-  .project-expanded-layer.is-vitals.is-maximized .vitals-habits-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-insights-card {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (min-width: 761px) {
-  .project-expanded-body .vitals-dashboard-grid {
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-  }
-
-  .project-expanded-body .vitals-dashboard-grid > .vitals-stat-card,
-  .project-expanded-body .vitals-dashboard-grid > .vitals-mini-card,
-  .project-expanded-body .vitals-readiness-card,
-  .project-expanded-body .vitals-line-card,
-  .project-expanded-body .vitals-source-card,
-  .project-expanded-body .vitals-nutrition-card,
-  .project-expanded-body .vitals-review-card,
-  .project-expanded-body .vitals-labs-card,
-  .project-expanded-body .vitals-recent-card,
-  .project-expanded-body .vitals-actions-card {
-    grid-row: auto;
-  }
-
-  .project-expanded-body .vitals-dashboard-grid > .vitals-stat-card,
-  .project-expanded-body .vitals-dashboard-grid > .vitals-mini-card {
-    grid-column: span 2;
-  }
-
-  .project-expanded-body .vitals-readiness-card,
-  .project-expanded-body .vitals-review-card,
-  .project-expanded-body .vitals-labs-card,
-  .project-expanded-body .vitals-recent-card,
-  .project-expanded-body .vitals-actions-card {
-    grid-column: span 4;
-  }
-
-  .project-expanded-body .vitals-line-card {
-    grid-column: span 4;
-  }
-
-  .project-expanded-body .vitals-source-card,
-  .project-expanded-body .vitals-nutrition-card {
-    grid-column: span 2;
-  }
-}
 
 .cover-collision-showcase.is-expanded {
   width: 100%;
@@ -3779,27 +3265,6 @@ button {
   }
 }
 
-.knowledge-source-logo.is-drive {
-  border-color: rgba(16, 18, 23, 0.06);
-  background: #fff;
-}
-
-.knowledge-source-logo.is-finance {
-  border-color: rgba(19, 32, 38, 0.12);
-}
-
-.knowledge-source-logo.is-health {
-  border-color: rgba(226, 85, 107, 0.16);
-}
-
-.knowledge-source-logo.is-projects {
-  border-color: rgba(47, 136, 255, 0.14);
-}
-
-.knowledge-console-panel.is-guardrails .knowledge-row-icon {
-  color: var(--icon-accent, #2c8068);
-}
-
 @keyframes knowledgeSurfaceIn {
   from {
     opacity: 0;
@@ -4009,35 +3474,6 @@ button {
   font-style: normal;
 }
 
-.site-shell:has(.live-case.is-maximized) .site-header {
-  display: none;
-}
-
-.page-transition:has(.live-case.is-maximized) {
-  animation: none;
-  transform: none;
-}
-
-.live-case.is-maximized {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  width: auto;
-  max-width: none;
-  height: 100vh;
-  grid-template-rows: auto minmax(0, 1fr);
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.live-case.is-maximized .live-frame-shell {
-  height: 100%;
-  min-height: 0;
-}
-
 .live-frame {
   display: block;
   width: 100%;
@@ -4045,11 +3481,6 @@ button {
   border: 0;
   background: #050705;
 }
-
-.systems-studio-hero {
-  padding-bottom: 8px;
-}
-
 
 .offer-step-grid,
 
@@ -4312,7 +3743,6 @@ button {
   transition-duration: var(--hover-in);
 }
 
-
 .how-we-work-panel > div {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -4378,7 +3808,6 @@ button {
   font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
   line-height: 1.5;
 }
-
 
 .contact-hero {
   display: grid;
@@ -4741,7 +4170,6 @@ button {
   line-height: 1.5;
 }
 
-
 .not-found h1 {
   margin: 0;
   color: var(--ink);
@@ -4750,7 +4178,6 @@ button {
   line-height: 0.92;
   letter-spacing: 0;
 }
-
 
 .not-found p {
   max-width: 480px;
@@ -4779,11 +4206,6 @@ button {
 .text-action:hover svg {
   transform: translateX(4px);
   transition-duration: var(--hover-in);
-}
-
-.project-facts.compact div {
-  grid-template-columns: 1fr;
-  gap: 5px;
 }
 
 .mini-preview {
@@ -5061,14 +4483,6 @@ button {
     var(--chorus-bg);
   background-size: 22px 22px, 22px 22px, auto;
   color: var(--chorus-ink);
-}
-
-.chorus-topbar nav a.active {
-  color: var(--chorus-ink);
-}
-
-.chorus-topbar nav a.active::after {
-  background: var(--chorus-orange);
 }
 
 .chorus-dashboard {
@@ -5876,20 +5290,6 @@ button {
   min-height: 0;
 }
 
-.chorus-preview.is-compact .chorus-topbar {
-  min-height: 50px;
-  gap: 18px;
-  padding: 0 20px;
-}
-
-.chorus-preview.is-compact .chorus-brand {
-  font-size: 0.96rem;
-}
-
-.chorus-preview.is-compact .chorus-topbar nav {
-  gap: 22px;
-}
-
 .chorus-preview.is-compact .chorus-dashboard {
   width: 100%;
   gap: 10px;
@@ -5928,117 +5328,9 @@ button {
   padding: 0 12px 14px;
 }
 
-.personal-chorus-thumb .chorus-preview.is-compact {
-  width: 980px;
-  transform: scale(0.29);
-  transform-origin: top left;
-}
-
-.source-dashboard-art > .chorus-preview.is-compact {
-  width: 1180px;
-  max-width: none;
-  zoom: 0.72;
-}
-
 /* Vitals dashboard live aggregate preview */
 
-.vitals-range-control button.is-active,
-.vitals-focus-tabs button.is-active {
-  background: #081216;
-  color: #fff;
-}
-
-.vitals-card.is-focus-muted {
-  opacity: 0.42;
-}
-
-.vitals-card.is-focus-match {
-  border-color: rgba(11, 104, 116, 0.34);
-  box-shadow: 0 16px 42px rgba(11, 104, 116, 0.09);
-}
-
-.vitals-stat-card small.orange {
-  color: var(--vitals-orange);
-}
-
-.vitals-stat-card small.teal {
-  color: var(--vitals-teal);
-}
-
-.vitals-heatmap-row i.high {
-  background: #6b210b;
-}
-
-.vitals-legend i.high {
-  background: #6b210b;
-}
-
-.vitals-chart-legend i.teal {
-  background: #044e70;
-}
-
-.vitals-trend-chart path.teal {
-  stroke: #044e70;
-}
-
-.vitals-event-list div.is-active {
-  border-color: rgba(11, 104, 116, 0.16);
-  background: #eef7f8;
-}
-
 /* Vitals AI health intelligence dashboard */
-
-.vitals-ai-ranges button.active {
-  background: linear-gradient(180deg, #561400, #431000);
-  color: #fff;
-  box-shadow: inset 0 -10px 22px rgba(255, 255, 255, 0.07);
-}
-
-.vitals-ai-ranges button.active:hover,
-.vitals-ai-ranges button.active:focus-visible {
-  color: #fff;
-}
-
-.vitals-ai-ring.blue {
-  --ring-accent: #2097d7;
-  --ring-accent-strong: #0e78b9;
-  --ring-accent-soft: #8ed8f4;
-  --ring-track: rgba(18, 92, 130, 0.1);
-}
-
-.vitals-ai-spark.blue polyline {
-  stroke: #0b6385;
-}
-
-.vitals-score-breakdown b.orange {
-  background: #eeaf4c;
-}
-.vitals-sleep-stages i.light,
-.vitals-sleep-bar .light { background: #69bdd2; }
-
-.vitals-nutrition-v2-body b.blue {
-  background: #22a7e4;
-}
-
-.vitals-trends-list strong.up,
-.vitals-trends-list strong.down {
-  color: #863117;
-}
-
-.vitals-habit-row i.high,
-.vitals-habits-board footer i.high { background: #7c250a; }
-
-.vitals-habit-row i.none,
-
-.vitals-habits-board footer i.none { background: #ebe9e8; }
-
-.vitals-insights-main nav button.active {
-  color: #211917;
-}
-
-.vitals-insight-list i.amber { background: #d99c20; }
-.vitals-insight-list i.orange { background: #c96b2c; }
-.vitals-insight-list i.teal { background: #9b6f60; }
 
 /* Banner toolbar — same artwork and white meta text as the Personal-page
    expanded overlay, so the standalone page and the embed read as one app. */
@@ -6050,10 +5342,6 @@ button {
 /* Sources card — real coverage rows, live dot when the source has data
    inside the current window. */
 
-.vitals-sources-list li i.high {
-  background: #2e7d4f;
-}
-
 /* Recovery line draws in left-to-right when the window changes. */
 @keyframes vitals-line-draw {
   from {
@@ -6062,102 +5350,6 @@ button {
   to {
     stroke-dashoffset: 0;
   }
-}
-
-.health-dot.blue {
-  background: #245cff;
-}
-
-.signal-board i.good {
-  background: rgba(65, 92, 61, 0.72);
-}
-
-.health-preview.is-compact {
-  background: #fff;
-  padding: 16px;
-}
-
-.health-preview.is-compact .health-preview-grid {
-  width: 100%;
-  gap: 12px;
-}
-
-.health-preview.is-compact .health-card {
-  box-shadow: 0 10px 26px rgba(16, 18, 23, 0.035);
-}
-
-.health-preview.is-compact .health-card-header {
-  padding: 13px 13px 10px;
-}
-
-.health-preview.is-compact .health-overview-metric {
-  min-height: 94px;
-  padding: 11px;
-}
-
-.health-preview.is-compact .health-ring {
-  width: 62px;
-  height: 62px;
-}
-
-.health-preview.is-compact .health-ring strong {
-  font-size: 1rem;
-}
-
-.health-preview.is-compact .health-ring span {
-  display: none;
-}
-
-.health-preview.is-compact .health-bar-chart {
-  min-height: 158px;
-  gap: 10px;
-  padding: 24px 18px 18px;
-}
-
-.health-preview.is-compact .health-bar-column {
-  height: 112px;
-}
-
-.health-preview.is-compact .health-line-chart {
-  min-height: 144px;
-  padding: 6px 12px;
-}
-
-.health-preview.is-compact .health-training-layout,
-.health-preview.is-compact .health-nutrition-layout {
-  gap: 14px;
-  padding: 8px 16px 18px;
-}
-
-.health-preview.is-compact .health-donut {
-  width: 112px;
-}
-
-.health-preview.is-compact .health-donut::after {
-  inset: 24px;
-}
-
-.health-preview.is-compact .health-journal-layout {
-  gap: 24px;
-  padding: 10px 34px 18px;
-}
-
-.health-preview.is-compact .journal-note-card {
-  min-height: 112px;
-  padding: 18px 58px 18px 24px;
-}
-
-.personal-health-thumb .health-preview.is-compact {
-  width: 860px;
-  padding: 12px;
-  transform: scale(0.36);
-  transform-origin: top left;
-}
-
-.source-dashboard-art > .health-preview.is-compact {
-  width: 1320px;
-  max-width: none;
-  zoom: 0.66;
 }
 
 @media (max-width: 1060px) {
@@ -6200,14 +5392,6 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .source-dashboard-art .health-preview.is-compact .health-overview-card,
-  .source-dashboard-art .health-preview.is-compact .health-chart-card,
-  .source-dashboard-art .health-preview.is-compact .health-weight-card,
-  .source-dashboard-art .health-preview.is-compact .health-training-card,
-  .source-dashboard-art .health-preview.is-compact .health-nutrition-card {
-    grid-column: span 6;
-  }
-
   .akibwa-hero {
     padding-top: 62px;
   }
@@ -6235,7 +5419,6 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  
   .cover-collision-showcase,
 
   .offer-studio-hero,
@@ -6285,13 +5468,6 @@ button {
   .about-cta-icon {
     width: 38px;
     height: 38px;
-  }
-
-  .about-hero-side {
-    grid-column: auto;
-    grid-row: auto;
-    align-items: start;
-    max-width: 720px;
   }
 
   .about-portrait,
@@ -6479,54 +5655,9 @@ button {
     min-height: 240px;
   }
 
-  .project-expanded-body .personal-full-app-showcase .vitals-shell {
-    width: min(calc(100% - 20px), 1440px);
-  }
+  
 
-  .project-expanded-body .vitals-dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .project-expanded-layer.is-vitals .vitals-ai-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-score-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-recovery-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-sleep-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-training-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-body-metrics-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-nutrition-card-v2,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-stress-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-trends-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-habits-card,
-  .project-expanded-layer.is-vitals:not(.is-maximized) .vitals-insights-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-score-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-recovery-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-sleep-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-training-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-body-metrics-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-nutrition-card-v2,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-stress-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-trends-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-habits-card,
-  .project-expanded-layer.is-vitals.is-maximized .vitals-insights-card {
-    grid-column: 1 / -1;
-  }
-
-  .project-expanded-body .vitals-dashboard-grid > .vitals-stat-card,
-  .project-expanded-body .vitals-dashboard-grid > .vitals-mini-card,
-  .project-expanded-body .vitals-readiness-card,
-  .project-expanded-body .vitals-line-card,
-  .project-expanded-body .vitals-source-card,
-  .project-expanded-body .vitals-nutrition-card,
-  .project-expanded-body .vitals-review-card,
-  .project-expanded-body .vitals-labs-card,
-  .project-expanded-body .vitals-recent-card,
-  .project-expanded-body .vitals-actions-card {
-    grid-column: 1 / -1;
-    grid-row: auto;
-  }
+  
 
   .chorus-dashboard {
     width: min(calc(100% - 32px), var(--frame));
@@ -6628,28 +5759,9 @@ button {
     display: grid;
   }
 
-  .source-dashboard-art > .chorus-preview.is-compact {
-    width: 100%;
-    zoom: 1;
-  }
+  
 
-  .source-dashboard-art .health-preview.is-compact .health-preview-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .source-dashboard-art .health-preview.is-compact .health-overview-card,
-  .source-dashboard-art .health-preview.is-compact .health-chart-card,
-  .source-dashboard-art .health-preview.is-compact .health-weight-card,
-  .source-dashboard-art .health-preview.is-compact .health-training-card,
-  .source-dashboard-art .health-preview.is-compact .health-nutrition-card,
-  .source-dashboard-art .health-preview.is-compact .health-journal-card {
-    grid-column: 1 / -1;
-  }
-
-  .source-dashboard-art > .health-preview.is-compact {
-    width: 100%;
-    zoom: 1;
-  }
+  
 
   .site-frame,
   .page-grid {
@@ -6741,7 +5853,6 @@ button {
     min-height: 62px;
   }
 
-  
   .page-footer {
     display: grid;
     justify-content: start;
@@ -6893,12 +6004,6 @@ button {
     text-align: left;
   }
 
-  .about-hero-side {
-    grid-column: auto;
-    grid-row: auto;
-    grid-template-columns: 1fr;
-  }
-
   .about-portrait,
   .about-portrait img {
     min-height: 0;
@@ -6943,7 +6048,6 @@ button {
     grid-column: auto;
   }
 
-  
   .cover-collision-showcase,
 
   .fit-panel,
@@ -7244,48 +6348,8 @@ button {
   text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
 }
 
-.project-expanded-toolbar-cluster .project-expanded-banner-stat {
-  position: static;
-  transform: none;
-  margin-left: 4px;
-}
-
-.vitals-ai-date.is-toolbar,
-.vitals-ai-ranges.is-toolbar {
-  min-height: 34px;
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-}
-
-.vitals-ai-date.is-toolbar span {
-  min-width: 0;
-  padding: 0 2px;
-  font-size: 0.78rem;
-}
-
-.vitals-ai-date.is-toolbar button {
-  width: 24px;
-  height: 24px;
-}
-
-.vitals-ai-ranges.is-toolbar {
-  padding: 2px;
-}
-
-.vitals-ai-ranges.is-toolbar button {
-  min-width: 40px;
-  min-height: 28px;
-  font-size: 0.76rem;
-}
-
 /* The toolbar carries the snapshot and range controls in the overlay, so the
    embedded app hides its own copy on larger screens. */
-@media (min-width: 761px) {
-  .project-expanded-layer.is-vitals .vitals-ai-toolbar .vitals-ai-controls {
-    display: none;
-  }
-}
 
 .project-expanded-banner-stat strong {
   font-size: 0.96rem;
