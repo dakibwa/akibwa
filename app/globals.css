@@ -250,6 +250,9 @@ button {
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .brand {
+    /* The warm light rests in the letterforms full-time; hover lifts it
+       to full brightness and it follows the cursor. */
+    --brand-glow: 0.55;
     background-image: linear-gradient(var(--ink), var(--ink));
     background-image:
       radial-gradient(
@@ -260,8 +263,8 @@ button {
       ),
       radial-gradient(
         30px circle at var(--nav-sweep-x, -35%) 46%,
-        rgb(240 186 84 / 0.55),
-        rgb(203 134 30 / 0.3) 46%,
+        rgb(240 186 84 / 0.75),
+        rgb(203 134 30 / 0.42) 46%,
         rgb(203 134 30 / 0) 78%
       ),
       linear-gradient(var(--ink), var(--ink));
@@ -303,6 +306,9 @@ button {
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .nav-desktop .nav-link {
+    /* Each label keeps a resting glow in its own area's accent full-time;
+       hover lifts it to the full cursor-tracked light. */
+    --nav-glow: 0.55;
     background-image: linear-gradient(var(--ink), var(--ink));
     background-image:
       radial-gradient(
@@ -313,8 +319,8 @@ button {
       ),
       radial-gradient(
         28px circle at var(--nav-sweep-x, -35%) 46%,
-        rgb(var(--nav-glow-light, 240 186 84) / 0.55),
-        rgb(var(--nav-glow-mid, 203 134 30) / 0.3) 46%,
+        rgb(var(--nav-glow-light, 240 186 84) / 0.75),
+        rgb(var(--nav-glow-mid, 203 134 30) / 0.42) 46%,
         rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
       ),
       linear-gradient(var(--ink), var(--ink));

@@ -37,6 +37,11 @@ const trackNavGlow = (event) => {
   event.currentTarget.style.setProperty("--nav-mx", `${event.clientX - rect.left}px`);
 };
 
+/* The glow rests full-time, so it recentres once the cursor leaves. */
+const resetNavGlow = (event) => {
+  event.currentTarget.style.removeProperty("--nav-mx");
+};
+
 function normalize(pathname) {
   if (pathname !== "/" && pathname.endsWith("/")) {
     return pathname.slice(0, -1);
@@ -75,6 +80,7 @@ export function SiteShell({ children }) {
                 const rect = event.currentTarget.getBoundingClientRect();
                 event.currentTarget.style.setProperty("--brand-mx", `${event.clientX - rect.left}px`);
               }}
+              onPointerLeave={(event) => event.currentTarget.style.removeProperty("--brand-mx")}
               onFocus={() => primeRoute("/")}
             >
               AKIBWA
@@ -94,6 +100,7 @@ export function SiteShell({ children }) {
                     }}
                     onPointerEnter={() => primeRoute(item.href)}
                     onPointerMove={trackNavGlow}
+                    onPointerLeave={resetNavGlow}
                     onFocus={() => primeRoute(item.href)}
                   >
                     {navArt[item.href] ? (
