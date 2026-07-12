@@ -228,6 +228,26 @@ button {
   initial-value: 0;
 }
 
+/* The same light also makes an idle pass through the header on a slow
+   loop: one soft beam crosses the wordmark, then each menu label in
+   reading order (staggered below). Registered so it interpolates. */
+@property --nav-sweep-x {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: -35%;
+}
+
+@keyframes nav-idle-sweep {
+  0%,
+  6% {
+    --nav-sweep-x: -35%;
+  }
+  18%,
+  100% {
+    --nav-sweep-x: 135%;
+  }
+}
+
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .brand {
     background-image: linear-gradient(var(--ink), var(--ink));
@@ -238,10 +258,17 @@ button {
         rgb(203 134 30 / calc(var(--brand-glow, 0) * 0.55)) 42%,
         rgb(203 134 30 / 0) 78%
       ),
+      radial-gradient(
+        30px circle at var(--nav-sweep-x, -35%) 46%,
+        rgb(240 186 84 / 0.55),
+        rgb(203 134 30 / 0.3) 46%,
+        rgb(203 134 30 / 0) 78%
+      ),
       linear-gradient(var(--ink), var(--ink));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: nav-idle-sweep 8s linear infinite;
     transition:
       --brand-glow var(--hover-out) var(--ease-out),
       filter var(--hover-out) var(--ease-out);
@@ -284,11 +311,36 @@ button {
         rgb(var(--nav-glow-mid, 203 134 30) / calc(var(--nav-glow, 0) * 0.5)) 46%,
         rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
       ),
+      radial-gradient(
+        28px circle at var(--nav-sweep-x, -35%) 46%,
+        rgb(var(--nav-glow-light, 240 186 84) / 0.55),
+        rgb(var(--nav-glow-mid, 203 134 30) / 0.3) 46%,
+        rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
+      ),
       linear-gradient(var(--ink), var(--ink));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: nav-idle-sweep 8s linear infinite;
     transition: --nav-glow var(--hover-out) var(--ease-out);
+  }
+
+  /* Stagger the labels behind the wordmark so the beam reads as one light
+     travelling the header left to right. */
+  .nav-desktop .nav-item:nth-child(1) .nav-link {
+    animation-delay: 0.45s;
+  }
+
+  .nav-desktop .nav-item:nth-child(2) .nav-link {
+    animation-delay: 0.8s;
+  }
+
+  .nav-desktop .nav-item:nth-child(3) .nav-link {
+    animation-delay: 1.15s;
+  }
+
+  .nav-desktop .nav-item:nth-child(4) .nav-link {
+    animation-delay: 1.5s;
   }
 
   .nav-desktop .nav-link:hover,
@@ -439,8 +491,9 @@ button {
   color: var(--black);
 }
 
-/* The area artwork strips stay lit on every item; hover and the active
-   page bring theirs to full vividness. */
+/* The artwork strip is the current-page marker: only the active item keeps
+   its ribbon. Hovering any other item draws its ribbon in from the left —
+   a preview of where the link goes — and it retracts on the way out. */
 .nav-desktop .nav-link__art {
   position: absolute;
   top: 13px;
@@ -451,20 +504,28 @@ button {
   border-radius: 3px;
   background-size: cover;
   background-position: center;
-  opacity: 0.86;
+  opacity: 0;
+  clip-path: inset(0 100% 0 0 round 3px);
   filter: saturate(0.94) contrast(0.99);
   pointer-events: none;
   transition:
     opacity var(--hover-out) var(--ease-out),
+    clip-path var(--hover-out) var(--ease-out),
     filter var(--hover-out) var(--ease-out);
 }
 
 .nav-desktop .nav-link:hover .nav-link__art,
-.nav-desktop .nav-link:focus-visible .nav-link__art,
-.nav-desktop .nav-link.active .nav-link__art {
+.nav-desktop .nav-link:focus-visible .nav-link__art {
   opacity: 1;
+  clip-path: inset(0 0 0 0 round 3px);
   filter: saturate(1.06) contrast(1.03);
   transition-duration: var(--hover-in);
+}
+
+.nav-desktop .nav-link.active .nav-link__art {
+  opacity: 1;
+  clip-path: inset(0 0 0 0 round 3px);
+  filter: saturate(1.06) contrast(1.03);
 }
 
 .nav-mobile-toggle {
