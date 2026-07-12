@@ -83,10 +83,6 @@ function findPersonalProjectBySlug(slug) {
   return personalProjects.find((project) => project.slug === slug || project.aliases?.includes(slug)) ?? null;
 }
 
-function getInitialPreviewSlug(initialSlug) {
-  return findPersonalProjectBySlug(initialSlug)?.slug ?? personalProjects[0]?.slug ?? null;
-}
-
 function ProjectExpandedBanner({ project }) {
   const artwork = getPersonalProjectArt(project);
   const style = getProjectArtVariables(artwork);
@@ -210,30 +206,42 @@ function PersonalDetailLivePreview({ project, frameUrl }) {
   );
 }
 
-function PersonalSelectorBar({ project, isActive, onPreview, onOpen }) {
-  const artwork = getPersonalProjectArt(project);
+function PersonalStorySection({ project, flipped, isArrived, onOpen }) {
+  const status = statusForSlug(project.slug);
 
   return (
-    <button
-      type="button"
-      className={`personal-selector-bar ${isActive ? "is-active" : ""}`}
-      aria-pressed={isActive}
-      style={getProjectArtVariables(artwork, { "--area-accent": accentForSlug(project.slug) })}
-      onPointerEnter={onPreview}
-      onFocus={onPreview}
-      onClick={onOpen}
+    <section
+      className={`page-grid personal-story${flipped ? " is-flipped" : ""}${isArrived ? " is-arrived" : ""}`}
+      id={project.slug}
+      style={{ "--area-accent": accentForSlug(project.slug) }}
+      aria-labelledby={`${project.slug}-story-title`}
     >
-      <span className="personal-selector-banner" aria-hidden="true">
-        <img src={artwork.bannerSrc} alt="" draggable="false" loading="lazy" decoding="async" />
-      </span>
-      <span className="personal-selector-scrim" aria-hidden="true" />
-      <span className="personal-selector-num">{project.number}</span>
-      <span className="personal-selector-copy">
-        <strong>{project.title}</strong>
-        <em>{project.type}</em>
-      </span>
-      <ArrowRight size={15} strokeWidth={1.8} />
-    </button>
+      <div className="personal-story-copy">
+        <div className="personal-story-plate">
+          <span className="personal-story-num" aria-hidden="true">
+            {project.number}
+          </span>
+          <i className="personal-story-plate-line" aria-hidden="true" />
+          <span className={`personal-story-status is-${status}`}>
+            <span className="personal-story-status-dot" aria-hidden="true" />
+            {STATUS_LABELS[status]}
+          </span>
+        </div>
+        <h2 id={`${project.slug}-story-title`}>{project.title}</h2>
+        <p className="personal-story-type">{project.type}</p>
+        <p className="personal-story-summary">{project.summary}</p>
+        {project.proves ? <p className="personal-story-proof">{project.proves}</p> : null}
+        <button type="button" className="about-cta personal-story-open" onClick={onOpen}>
+          <span className="about-cta-label">Open {project.title}</span>
+          <span className="about-cta-icon" aria-hidden="true">
+            <ArrowRight size={18} strokeWidth={2} />
+          </span>
+        </button>
+      </div>
+      <div className="personal-story-media">
+        <PersonalDetailPanel project={project} />
+      </div>
+    </section>
   );
 }
 
@@ -776,63 +784,72 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
 }
 
 export function PersonalPage({ initialSlug = null }) {
-  const initialPreviewSlug = getInitialPreviewSlug(initialSlug);
   const [expandedSlug, setExpandedSlug] = useState(null);
   const [overlaySlug, setOverlaySlug] = useState(null);
   const [isOverlayMaximized, setIsOverlayMaximized] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [isLocalHost, setIsLocalHost] = useState(false);
-  const [previewSlug, setPreviewSlug] = useState(initialPreviewSlug);
-  const [headlineSlug, setHeadlineSlug] = useState(initialSlug ? initialPreviewSlug : null);
+  const [arrivedSlug, setArrivedSlug] = useState(null);
+  const storyboardRef = useRef(null);
 
   useEffect(() => {
     setIsLocalHost(canUseLocalFrame());
 
     // Projects live at /personal/<slug>/; legacy #slug links upgrade to the
-    // path form (aliases normalise to the canonical slug the same way).
+    // path form (aliases normalise to the canonical slug the same way). A
+    // deep link lands on the project's storyboard section rather than
+    // auto-opening the overlay — each section's Open button does that.
     const legacyHash = window.location.hash.replace("#", "");
     const requested = legacyHash || initialSlug;
-    if (!requested) return;
+    if (!requested) return undefined;
 
     const project = findPersonalProjectBySlug(requested);
     if (!project) {
       window.history.replaceState(null, "", "/personal/");
-      return;
+      return undefined;
     }
 
     if (shouldOpenProjectRoute(project)) {
       window.location.assign(project.fallbackHref);
-      return;
+      return undefined;
     }
 
-    const hasInlineFrame = Boolean(getProjectFrameUrl(project, canUseLocalFrame()));
-    if (
-      project.mode !== "preview" &&
-      project.fallbackHref &&
-      (project.visual === "chorus" || project.visual === "vitals") &&
-      !hasInlineFrame
-    ) {
-      window.location.assign(project.fallbackHref);
-      return;
-    }
-
-    setPreviewSlug(project.slug);
-    setHeadlineSlug(project.slug);
-    setExpandedSlug(project.slug);
     window.history.replaceState(null, "", `/personal/${project.slug}/`);
+    setArrivedSlug(project.slug);
+    document.getElementById(project.slug)?.scrollIntoView({ behavior: "instant", block: "start" });
+    return undefined;
   }, [initialSlug]);
+
+  // Sections fade up as they enter the viewport. The storyboard only opts
+  // into the hidden starting state once the observer exists, so reduced
+  // motion and no-JS both keep every section visible from the start.
+  useEffect(() => {
+    const storyboard = storyboardRef.current;
+    if (!storyboard) return undefined;
+
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (prefersReducedMotion || typeof IntersectionObserver === "undefined") return undefined;
+
+    storyboard.classList.add("has-reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-inview");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    );
+    storyboard.querySelectorAll(".personal-story").forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, []);
 
   const overlayProject = useMemo(
     () => personalProjects.find((project) => project.slug === overlaySlug) ?? null,
     [overlaySlug]
-  );
-  const previewProject = useMemo(
-    () => personalProjects.find((project) => project.slug === previewSlug) ?? personalProjects[0] ?? null,
-    [previewSlug]
-  );
-  const headlineProject = useMemo(
-    () => personalProjects.find((project) => project.slug === headlineSlug) ?? null,
-    [headlineSlug]
   );
 
   useEffect(() => {
@@ -856,7 +873,6 @@ export function PersonalPage({ initialSlug = null }) {
   const closeExpandedProject = useCallback(() => {
     setExpandedSlug(null);
     setIsOverlayMaximized(false);
-    window.history.replaceState(null, "", `/personal/${window.location.search}`);
   }, []);
 
   useEffect(() => {
@@ -898,59 +914,21 @@ export function PersonalPage({ initialSlug = null }) {
   return (
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
-        <div className="personal-hero-top">
-          <h1>Personal Projects</h1>
-          <span
-            className={`personal-hero-status is-${
-              headlineProject ? statusForSlug(headlineProject.slug) : "idle"
-            }`}
-          >
-            <span className="personal-hero-status-dot" aria-hidden="true" />
-            {headlineProject ? STATUS_LABELS[statusForSlug(headlineProject.slug)] : ""}
-          </span>
-        </div>
-        <p className="personal-hero-line">
-          <span
-            className="personal-hero-line-swap"
-            key={headlineProject ? headlineProject.slug : "default"}
-          >
-            {headlineProject
-              ? headlineProject.summary
-              : "Things I wanted to exist — so I built them."}
-          </span>
-        </p>
+        <h1>Personal Projects</h1>
+        <p>Things I wanted to exist — so I built them.</p>
       </section>
 
-      <section className="page-grid personal-explorer" aria-label="Personal projects">
-        <div className="personal-detail" aria-live="polite">
-          <PersonalDetailPanel project={previewProject} />
-        </div>
-        <ol
-          className="personal-selector"
-          aria-label="Choose a project"
-          onPointerLeave={() => setHeadlineSlug(null)}
-          onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) setHeadlineSlug(null);
-          }}
-        >
-          {personalProjects.map((project) => (
-            <li key={project.slug}>
-              <PersonalSelectorBar
-                project={project}
-                isActive={project.slug === previewSlug}
-                onPreview={() => {
-                  setPreviewSlug(project.slug);
-                  setHeadlineSlug(project.slug);
-                }}
-                onOpen={() => {
-                  if (project.slug === previewSlug) selectProject(project);
-                  else setPreviewSlug(project.slug);
-                }}
-              />
-            </li>
-          ))}
-        </ol>
-      </section>
+      <div className="personal-storyboard" ref={storyboardRef}>
+        {personalProjects.map((project, index) => (
+          <PersonalStorySection
+            key={project.slug}
+            project={project}
+            flipped={index % 2 === 1}
+            isArrived={project.slug === arrivedSlug}
+            onOpen={() => selectProject(project)}
+          />
+        ))}
+      </div>
 
       {overlayProject && (
         <ProjectExpandedOverlay
