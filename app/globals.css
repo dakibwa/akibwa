@@ -1841,33 +1841,29 @@ button {
   align-items: start;
 }
 
-.about-toolkit {
-  position: relative;
-  padding-top: 34px;
-}
-
-.about-toolkit::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 1px;
-  background: var(--line);
-  content: "";
-}
-
-/* Outside the work sits on a generated character-field in the meadow
-   palette — the site's data-texture language, drawn rather than
-   photographed, veiled just enough to keep the index legible. */
+/* The toolkit and interests are companion character-field panels: the
+   cooler blue field keeps the work card distinct from the meadow palette
+   below while preserving the same structure and visual weight. */
+.about-toolkit,
 .about-interests {
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
+  padding: 28px 30px 30px;
+  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
+}
+
+.about-toolkit {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.78) 26%, rgba(255, 255, 255, 0.42)),
+    url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
+  background-color: var(--white);
+}
+
+.about-interests {
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.78) 26%, rgba(255, 255, 255, 0.42)),
     url("/brand-art/about-outside-field.webp") center / cover no-repeat;
   background-color: var(--white);
-  padding: 28px 30px 30px;
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
 }
 
 .interest-grid {
@@ -2081,10 +2077,6 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   overflow: hidden;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--white);
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
 }
 
 .toolkit-group {
@@ -5491,6 +5483,7 @@ button {
     gap: 20px;
   }
 
+  .about-toolkit,
   .about-interests {
     padding: 22px 20px;
   }
