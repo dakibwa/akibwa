@@ -127,7 +127,7 @@ export function SiteShell({ children }) {
                           >
                             <i aria-hidden="true">{project.number}</i>
                             <strong>{project.title}</strong>
-                            <em>{project.type}</em>
+                            <em>{project.statusLabel ?? project.type}</em>
                           </Link>
                         ))}
                         <Link href="/personal" prefetch className="nav-dropdown-all">

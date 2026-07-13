@@ -224,7 +224,7 @@ function PersonalStorySection({ project, flipped, isArrived, onOpen }) {
           <i className="personal-story-plate-line" aria-hidden="true" />
           <span className={`personal-story-status is-${status}`}>
             <span className="personal-story-status-dot" aria-hidden="true" />
-            {STATUS_LABELS[status]}
+            {project.statusLabel ?? STATUS_LABELS[status]}
           </span>
         </div>
         <h2 id={`${project.slug}-story-title`}>{project.title}</h2>
