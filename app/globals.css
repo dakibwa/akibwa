@@ -203,13 +203,14 @@ button {
   height: 6px;
   border-radius: 3px;
   background-image: url("/brand-art/akibwa-accent-strip.webp");
-  background-size: 132% auto;
-  background-position: 32% 50%;
+  background-size: 116% auto;
+  background-position: center;
   opacity: 0.96;
   filter: saturate(1.04) contrast(1.03);
   pointer-events: none;
+  transform-origin: center;
   transition:
-    background-position var(--hover-out) var(--ease-out),
+    opacity var(--hover-out) var(--ease-out),
     filter var(--hover-out) var(--ease-out);
 }
 
@@ -221,11 +222,26 @@ button {
   transition-duration: var(--hover-in);
 }
 
+@keyframes brand-accent-glide {
+  0%,
+  100% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  38% {
+    transform: translateX(4px) scaleX(0.94);
+  }
+
+  70% {
+    transform: translateX(-2px) scaleX(1.02);
+  }
+}
+
 .brand:hover::after,
 .brand:focus-visible::after {
-  background-position: 68% 50%;
-  filter: saturate(1.12) contrast(1.05);
-  transition-duration: var(--hover-in);
+  animation: brand-accent-glide 720ms var(--ease-out) both;
+  opacity: 0.96;
+  filter: saturate(1.06) contrast(1.03);
 }
 
 /* A warm light runs through the wordmark, following the cursor. The
@@ -6190,13 +6206,8 @@ button {
   .brand:hover::after,
   .brand:focus-visible::after {
     animation: none;
-    background-position: 50% 50%;
     opacity: 0.96;
     transform: none;
-  }
-
-  .brand::after {
-    background-position: 50% 50%;
   }
 }
 
