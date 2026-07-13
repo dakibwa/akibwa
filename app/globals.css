@@ -1564,14 +1564,30 @@ button {
   object-position: 50% 100%;
 }
 
-.about-hero {
+.about-profile {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 0.44fr);
   column-gap: 56px;
-  row-gap: 32px;
   align-items: start;
   padding-top: 56px;
+  padding-bottom: 42px;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-profile-main,
+.about-profile-side {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+}
+
+.about-profile-main {
+  gap: 36px;
+}
+
+.about-profile-side {
+  gap: 30px;
 }
 
 .about-hero-copy {
@@ -1580,7 +1596,7 @@ button {
   min-width: 0;
 }
 
-.about-hero h1 {
+.about-profile h1 {
   margin: 0;
   max-width: 24ch;
   color: var(--black);
@@ -1810,27 +1826,6 @@ button {
 
 .about-section {
   margin-top: 42px;
-}
-
-.about-brief {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.44fr);
-  column-gap: 56px;
-  row-gap: 28px;
-  align-items: start;
-  margin-top: 36px;
-  padding-top: 28px;
-}
-
-.about-brief::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 1px;
-  background: var(--line);
-  content: "";
 }
 
 .about-toolkit,
@@ -5361,9 +5356,6 @@ button {
 
   .offer-studio-hero,
 
-  .about-hero,
-  .about-brief,
-
   .contact-hero,
   .contact-layout {
     grid-template-columns: 1fr;
@@ -5388,13 +5380,32 @@ button {
     padding-top: 0;
   }
 
-  .about-hero {
+  .about-profile {
+    grid-template-columns: 1fr;
+    gap: 28px;
     padding-top: 44px;
+    padding-bottom: 36px;
   }
 
-  .about-brief {
-    margin-top: 30px;
-    padding-top: 24px;
+  .about-profile-main,
+  .about-profile-side {
+    display: contents;
+  }
+
+  .about-hero-copy {
+    order: 1;
+  }
+
+  .about-portrait--hero {
+    order: 2;
+  }
+
+  .about-hero-intro {
+    order: 3;
+  }
+
+  .about-cv {
+    order: 4;
   }
 
   .about-cta {
@@ -5848,17 +5859,13 @@ button {
     max-width: 100%;
   }
 
-  .about-hero {
+  .about-profile {
     padding-top: 34px;
-  }
-
-  .about-brief {
-    margin-top: 26px;
-    padding-top: 22px;
+    padding-bottom: 30px;
   }
 
   .studio-hero h1,
-  .about-hero h1,
+  .about-profile h1,
   .offer-studio-hero h1,
   .contact-hero h1 {
     font-size: var(--page-title-mobile-size);
