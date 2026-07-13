@@ -1911,6 +1911,7 @@ button {
 
 .work-row {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 54px minmax(0, 1fr);
   align-items: center;
@@ -1918,8 +1919,42 @@ button {
   padding: 16px 6px;
 }
 
+.work-row::before {
+  position: absolute;
+  inset: 2px -8px;
+  z-index: -1;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: 0 0 0 rgba(16, 18, 23, 0);
+  content: "";
+  opacity: 0;
+  transform: scale(0.985);
+  transition:
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out),
+    border-color var(--hover-out) var(--ease-out),
+    background var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out);
+}
+
 .work-row + .work-row {
-  border-top: 1px solid rgba(16, 18, 23, 0.1);
+  border-top: 1px solid rgba(16, 18, 23, 0.065);
+  transition: border-color var(--hover-out) var(--ease-out);
+}
+
+.work-row:hover,
+.work-row:hover + .work-row {
+  border-top-color: transparent;
+}
+
+.work-row:hover::before {
+  border-color: color-mix(in srgb, var(--company-accent, var(--ink)) 16%, rgba(16, 18, 23, 0.08));
+  background: color-mix(in srgb, var(--company-accent, var(--ink)) 4%, rgba(255, 255, 255, 0.94));
+  box-shadow: 0 9px 22px rgba(16, 18, 23, 0.055);
+  opacity: 1;
+  transform: scale(1);
+  transition-duration: var(--hover-in);
 }
 
 .work-year {
@@ -1968,6 +2003,12 @@ button {
   align-items: center;
   gap: 16px;
   min-width: 0;
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+.work-row:hover .work-detail {
+  transform: translateX(3px);
+  transition-duration: var(--hover-in);
 }
 
 .work-company {
@@ -1978,11 +2019,43 @@ button {
 }
 
 .work-logo {
+  position: relative;
+  isolation: isolate;
   display: grid;
   flex: none;
   width: 28px;
   height: 28px;
   place-items: center;
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+.work-logo::before {
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--company-accent, var(--ink)) 17%, transparent),
+    transparent 70%
+  );
+  content: "";
+  opacity: 0;
+  transform: scale(0.72);
+  transition:
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.work-row:hover .work-logo {
+  transform: translateY(-1px) scale(1.04);
+  transition-duration: var(--hover-in);
+}
+
+.work-row:hover .work-logo::before {
+  opacity: 0.76;
+  transform: scale(1.06);
+  transition-duration: var(--hover-in);
 }
 
 .work-logo img {
@@ -6286,6 +6359,18 @@ button {
 
   .toolkit-item:hover .toolkit-logo {
     transition: none;
+  }
+
+  .work-row::before,
+  .work-detail,
+  .work-logo,
+  .work-logo::before,
+  .work-row:hover::before,
+  .work-row:hover .work-detail,
+  .work-row:hover .work-logo,
+  .work-row:hover .work-logo::before {
+    transition: none;
+    transform: none;
   }
 }
 
