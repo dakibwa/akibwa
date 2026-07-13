@@ -1866,65 +1866,6 @@ button {
   background-color: var(--white);
 }
 
-.interest-grid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  align-items: stretch;
-  gap: 26px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: interest;
-}
-
-.interest-grid li {
-  display: grid;
-  grid-column: span 2;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-content: start;
-  column-gap: 14px;
-  row-gap: 7px;
-  border-top: 1px solid var(--line);
-  padding: 16px 0 0;
-}
-
-.interest-grid li::before {
-  counter-increment: interest;
-  content: "0" counter(interest);
-  padding-top: 3px;
-  color: var(--page-accent-strong, var(--ink));
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-  transition: color var(--hover-out) var(--ease-out);
-}
-
-.interest-grid li:hover::before {
-  color: var(--page-accent, var(--ink));
-  transition-duration: var(--hover-in);
-}
-
-.interest-grid li:nth-last-child(-n + 2) {
-  grid-column: span 3;
-}
-
-.interest-grid h3 {
-  margin: 0;
-  color: var(--black);
-  font-size: 1.04rem;
-  font-weight: 560;
-  line-height: 1.25;
-}
-
-.interest-grid p {
-  grid-column: 2;
-  margin: 0;
-  color: #59616b;
-  font-size: 0.92rem;
-  line-height: 1.42;
-}
-
 .about-section-head {
   margin-bottom: 0;
 }
@@ -2172,6 +2113,11 @@ button {
 
 .toolkit-item:hover .toolkit-icon {
   color: var(--page-accent, var(--ink));
+}
+
+.interest-icon {
+  color: var(--page-accent-strong, var(--muted));
+  opacity: 0.78;
 }
 
 .toolkit-dot {
@@ -5932,11 +5878,6 @@ button {
     font-size: 1.16rem;
   }
 
-  .interest-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-
   .work-detail {
     flex-direction: column;
     align-items: flex-start;
@@ -6027,18 +5968,8 @@ button {
     border-top: 0;
   }
 
-  .toolkit-groups,
-  .interest-grid {
+  .toolkit-groups {
     grid-template-columns: 1fr;
-  }
-
-  .interest-grid {
-    gap: 20px;
-  }
-
-  .interest-grid li,
-  .interest-grid li:nth-last-child(-n + 2) {
-    grid-column: auto;
   }
 
   .cover-collision-showcase,

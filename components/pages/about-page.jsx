@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, Database } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  AudioLines,
+  Clapperboard,
+  Database,
+  MessagesSquare,
+  MoonStar,
+  Orbit
+} from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
 const workplaces = [
@@ -67,26 +76,27 @@ const toolGroups = [
   }
 ];
 
-const interests = [
+const interestGroups = [
   {
-    name: "Film",
-    note: "Art-house, odd, logged on Letterboxd."
+    label: "Culture",
+    interests: [
+      { name: "Film", note: "Art-house, odd, logged on Letterboxd.", Icon: Clapperboard },
+      { name: "Music", note: "Restless taste; every listen tracked.", Icon: AudioLines }
+    ]
   },
   {
-    name: "Music",
-    note: "Restless taste; every listen tracked."
+    label: "Physiology",
+    interests: [
+      { name: "Nutrition & running", note: "Testing what makes the body run better.", Icon: Activity },
+      { name: "Sleep & recovery", note: "Tracking the balance between strain and rest.", Icon: MoonStar }
+    ]
   },
   {
-    name: "Nutrition & running",
-    note: "Testing what makes the body run better."
-  },
-  {
-    name: "AI & the singularity",
-    note: "Daily build loop; long-arc questions."
-  },
-  {
-    name: "A good long conversation",
-    note: "The kind that actually goes somewhere."
+    label: "Philosophy",
+    interests: [
+      { name: "AI & the singularity", note: "Daily build loop; long-arc questions.", Icon: Orbit },
+      { name: "A good long conversation", note: "The kind that actually goes somewhere.", Icon: MessagesSquare }
+    ]
   }
 ];
 
@@ -188,14 +198,24 @@ export function AboutPage() {
           <p>A few things I read, track, and argue about when I'm not building.</p>
         </header>
 
-        <ul className="interest-grid">
-          {interests.map((interest) => (
-            <li key={interest.name}>
-              <h3>{interest.name}</h3>
-              <p>{interest.note}</p>
-            </li>
+        <div className="toolkit-groups interest-groups">
+          {interestGroups.map((group) => (
+            <div className="toolkit-group" key={group.label}>
+              <h3 className="toolkit-label">{group.label}</h3>
+              <ul className="toolkit-list">
+                {group.interests.map((interest) => (
+                  <li className="toolkit-item interest-item" key={interest.name}>
+                    <interest.Icon className="toolkit-logo toolkit-icon interest-icon" size={22} strokeWidth={1.9} aria-hidden="true" />
+                    <span className="toolkit-item-text">
+                      <strong>{interest.name}</strong>
+                      <em>{interest.note}</em>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </section>
 
       <PageFooter />
