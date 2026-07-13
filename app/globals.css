@@ -1854,15 +1854,15 @@ button {
 
 .about-toolkit {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.78) 26%, rgba(255, 255, 255, 0.42)),
-    url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
+    linear-gradient(to top right, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.88) 56%, rgba(255, 255, 255, 0.96)),
+    url("/brand-art/contact-notes-field.webp") center bottom / cover no-repeat;
   background-color: var(--white);
 }
 
 .about-interests {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.78) 26%, rgba(255, 255, 255, 0.42)),
-    url("/brand-art/about-outside-field.webp") center / cover no-repeat;
+    linear-gradient(to top right, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.88) 56%, rgba(255, 255, 255, 0.96)),
+    url("/brand-art/about-outside-field.webp") center bottom / cover no-repeat;
   background-color: var(--white);
 }
 
