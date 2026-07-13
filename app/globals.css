@@ -2123,14 +2123,14 @@ button {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--toolkit-glow) 34%, transparent) 0%,
-    color-mix(in srgb, var(--toolkit-glow) 12%, transparent) 44%,
+    color-mix(in srgb, var(--toolkit-glow) 18%, transparent) 0%,
+    color-mix(in srgb, var(--toolkit-glow) 5%, transparent) 46%,
     transparent 72%
   );
   content: "";
   opacity: 0;
-  filter: blur(2px);
-  transform: scale(0.58);
+  filter: blur(3px);
+  transform: scale(0.68);
   transition:
     opacity var(--hover-out) var(--ease-out),
     transform var(--hover-out) var(--ease-out);
@@ -2142,11 +2142,11 @@ button {
   }
 
   46% {
-    transform: translateY(-1px) scale(1.12);
+    transform: translateY(-1px) scale(1.07);
   }
 
   100% {
-    transform: translateY(-1px) scale(1.04);
+    transform: translateY(-1px) scale(1.02);
   }
 }
 
@@ -2161,10 +2161,12 @@ button {
 }
 
 .toolkit-item:hover .toolkit-logo {
-  filter:
-    saturate(1.06)
-    drop-shadow(0 0 5px color-mix(in srgb, var(--toolkit-glow) 42%, transparent));
+  filter: saturate(1.02);
   transition-duration: var(--hover-in);
+}
+
+.toolkit-logo--multiply {
+  mix-blend-mode: multiply;
 }
 
 .toolkit-item:hover .toolkit-mark {
@@ -2172,8 +2174,8 @@ button {
 }
 
 .toolkit-item:hover .toolkit-mark::before {
-  opacity: 1;
-  transform: scale(1.16);
+  opacity: 0.78;
+  transform: scale(1.08);
   transition-duration: var(--hover-in);
 }
 

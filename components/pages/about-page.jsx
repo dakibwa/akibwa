@@ -63,7 +63,7 @@ const toolGroups = [
     label: "AI build loops",
     tools: [
       { name: "Claude Code", note: "The daily build loop", logo: "/brand-logos/claude.svg", glow: "#c86f5d" },
-      { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png", glow: "#6675ff" },
+      { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png", glow: "#6675ff", blend: true },
       { name: "Copilot", note: "Completion inside the editor", logo: "/brand-logos/microsoft-copilot.svg", glow: "#4e8f92" }
     ]
   },
@@ -179,7 +179,7 @@ export function AboutPage() {
                   <li className="toolkit-item" key={tool.name} style={{ "--toolkit-glow": tool.glow }}>
                     <span className="toolkit-mark" aria-hidden="true">
                       {tool.logo ? (
-                        <img className="toolkit-logo" src={tool.logo} alt="" />
+                        <img className={`toolkit-logo${tool.blend ? " toolkit-logo--multiply" : ""}`} src={tool.logo} alt="" />
                       ) : tool.Icon ? (
                         <tool.Icon className="toolkit-logo toolkit-icon" size={22} strokeWidth={2.1} />
                       ) : (
