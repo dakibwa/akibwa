@@ -54,24 +54,24 @@ const toolGroups = [
   {
     label: "Data & reporting",
     tools: [
-      { name: "Microsoft Fabric", note: "Pipelines and lakehouse reporting", logo: "/brand-logos/microsoft-fabric.svg" },
-      { name: "Power BI", note: "Dashboards people decide from", logo: "/brand-logos/power-bi.svg" },
-      { name: "SQL", note: "The query layer under everything", Icon: Database }
+      { name: "Microsoft Fabric", note: "Pipelines and lakehouse reporting", logo: "/brand-logos/microsoft-fabric.svg", glow: "#159a82" },
+      { name: "Power BI", note: "Dashboards people decide from", logo: "/brand-logos/power-bi.svg", glow: "#d6a928" },
+      { name: "SQL", note: "The query layer under everything", Icon: Database, glow: "#667085" }
     ]
   },
   {
     label: "AI build loops",
     tools: [
-      { name: "Claude Code", note: "The daily build loop", logo: "/brand-logos/claude.svg" },
-      { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png" },
-      { name: "Copilot", note: "Completion inside the editor", logo: "/brand-logos/microsoft-copilot.svg" }
+      { name: "Claude Code", note: "The daily build loop", logo: "/brand-logos/claude.svg", glow: "#c86f5d" },
+      { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png", glow: "#6675ff" },
+      { name: "Copilot", note: "Completion inside the editor", logo: "/brand-logos/microsoft-copilot.svg", glow: "#4e8f92" }
     ]
   },
   {
     label: "Modelling & automation",
     tools: [
-      { name: "Data modelling", note: "Semantic models that hold up", logo: "/brand-logos/data-modeling.svg" },
-      { name: "Python", note: "Glue for automation and analysis", logo: "/brand-logos/python.svg" }
+      { name: "Data modelling", note: "Semantic models that hold up", logo: "/brand-logos/data-modeling.svg", glow: "#e57550" },
+      { name: "Python", note: "Glue for automation and analysis", logo: "/brand-logos/python.svg", glow: "#3f7ca6" }
     ]
   }
 ];
@@ -80,22 +80,22 @@ const interestGroups = [
   {
     label: "Culture",
     interests: [
-      { name: "Film", note: "Art-house, odd, logged on Letterboxd.", Icon: Clapperboard },
-      { name: "Music", note: "Restless taste; every listen tracked.", Icon: AudioLines }
+      { name: "Film", note: "Art-house, odd, logged on Letterboxd.", Icon: Clapperboard, glow: "#3c79a8" },
+      { name: "Music", note: "Restless taste; every listen tracked.", Icon: AudioLines, glow: "#7760c5" }
     ]
   },
   {
     label: "Physiology",
     interests: [
-      { name: "Nutrition & running", note: "Testing what makes the body run better.", Icon: Activity },
-      { name: "Sleep & recovery", note: "Tracking the balance between strain and rest.", Icon: MoonStar }
+      { name: "Nutrition & running", note: "Testing what makes the body run better.", Icon: Activity, glow: "#e05f48" },
+      { name: "Sleep & recovery", note: "Tracking the balance between strain and rest.", Icon: MoonStar, glow: "#5b65b8" }
     ]
   },
   {
     label: "Philosophy",
     interests: [
-      { name: "AI & the singularity", note: "Daily build loop; long-arc questions.", Icon: Orbit },
-      { name: "A good long conversation", note: "The kind that actually goes somewhere.", Icon: MessagesSquare }
+      { name: "AI & the singularity", note: "Daily build loop; long-arc questions.", Icon: Orbit, glow: "#2c8068" },
+      { name: "A good long conversation", note: "The kind that actually goes somewhere.", Icon: MessagesSquare, glow: "#b98234" }
     ]
   }
 ];
@@ -176,14 +176,16 @@ export function AboutPage() {
               <h3 className="toolkit-label">{group.label}</h3>
               <ul className="toolkit-list">
                 {group.tools.map((tool) => (
-                  <li className="toolkit-item" key={tool.name}>
-                    {tool.logo ? (
-                      <img className="toolkit-logo" src={tool.logo} alt="" aria-hidden="true" />
-                    ) : tool.Icon ? (
-                      <tool.Icon className="toolkit-logo toolkit-icon" size={22} strokeWidth={2.1} aria-hidden="true" />
-                    ) : (
-                      <span className="toolkit-dot" aria-hidden="true" />
-                    )}
+                  <li className="toolkit-item" key={tool.name} style={{ "--toolkit-glow": tool.glow }}>
+                    <span className="toolkit-mark" aria-hidden="true">
+                      {tool.logo ? (
+                        <img className="toolkit-logo" src={tool.logo} alt="" />
+                      ) : tool.Icon ? (
+                        <tool.Icon className="toolkit-logo toolkit-icon" size={22} strokeWidth={2.1} />
+                      ) : (
+                        <span className="toolkit-dot" />
+                      )}
+                    </span>
                     <span className="toolkit-item-text">
                       <strong>{tool.name}</strong>
                       <em>{tool.note}</em>
@@ -208,8 +210,10 @@ export function AboutPage() {
               <h3 className="toolkit-label">{group.label}</h3>
               <ul className="toolkit-list">
                 {group.interests.map((interest) => (
-                  <li className="toolkit-item interest-item" key={interest.name}>
-                    <interest.Icon className="toolkit-logo toolkit-icon interest-icon" size={22} strokeWidth={1.9} aria-hidden="true" />
+                  <li className="toolkit-item interest-item" key={interest.name} style={{ "--toolkit-glow": interest.glow }}>
+                    <span className="toolkit-mark" aria-hidden="true">
+                      <interest.Icon className="toolkit-logo toolkit-icon interest-icon" size={22} strokeWidth={1.9} />
+                    </span>
                     <span className="toolkit-item-text">
                       <strong>{interest.name}</strong>
                       <em>{interest.note}</em>

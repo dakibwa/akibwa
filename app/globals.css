@@ -2104,8 +2104,52 @@ button {
   line-height: 1.4;
 }
 
-/* Logos rest in slightly settled colour; hovering a row brings them to
-   full vividness, matching the site's hover language. */
+/* Each toolkit mark carries a colour-matched bloom. The icon itself stays
+   legible at rest, then lifts once as its halo opens behind it. */
+.toolkit-mark {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.toolkit-mark::before {
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--toolkit-glow) 34%, transparent) 0%,
+    color-mix(in srgb, var(--toolkit-glow) 12%, transparent) 44%,
+    transparent 72%
+  );
+  content: "";
+  opacity: 0;
+  filter: blur(2px);
+  transform: scale(0.58);
+  transition:
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+@keyframes toolkit-mark-bloom {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  46% {
+    transform: translateY(-1px) scale(1.12);
+  }
+
+  100% {
+    transform: translateY(-1px) scale(1.04);
+  }
+}
+
 .toolkit-logo {
   display: block;
   width: 24px;
@@ -2117,7 +2161,19 @@ button {
 }
 
 .toolkit-item:hover .toolkit-logo {
-  filter: none;
+  filter:
+    saturate(1.06)
+    drop-shadow(0 0 5px color-mix(in srgb, var(--toolkit-glow) 42%, transparent));
+  transition-duration: var(--hover-in);
+}
+
+.toolkit-item:hover .toolkit-mark {
+  animation: toolkit-mark-bloom 520ms var(--ease-out) both;
+}
+
+.toolkit-item:hover .toolkit-mark::before {
+  opacity: 1;
+  transform: scale(1.16);
   transition-duration: var(--hover-in);
 }
 
@@ -2128,7 +2184,7 @@ button {
 }
 
 .toolkit-item:hover .toolkit-icon {
-  color: var(--page-accent, var(--ink));
+  color: var(--toolkit-glow, var(--page-accent, var(--ink)));
 }
 
 .interest-icon {
@@ -6179,6 +6235,12 @@ button {
 
   .hero-word-cycle-value,
 
+  .toolkit-mark,
+
+  .toolkit-mark::before,
+
+  .toolkit-logo,
+
   .text-action svg,
 
   .work-row,
@@ -6208,6 +6270,20 @@ button {
     animation: none;
     opacity: 0.96;
     transform: none;
+  }
+
+  .toolkit-item:hover .toolkit-mark {
+    animation: none;
+    transform: none;
+  }
+
+  .toolkit-item:hover .toolkit-mark::before {
+    transform: none;
+    transition: none;
+  }
+
+  .toolkit-item:hover .toolkit-logo {
+    transition: none;
   }
 }
 
