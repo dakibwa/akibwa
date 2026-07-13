@@ -1587,7 +1587,7 @@ button {
 }
 
 .about-profile-side {
-  gap: 30px;
+  gap: 24px;
 }
 
 .about-hero-copy {
@@ -1807,7 +1807,7 @@ button {
 
 .about-cv .work-row {
   gap: 18px;
-  padding: 11px 2px;
+  padding: 4px 2px;
 }
 
 .about-cv .work-detail {
@@ -5406,6 +5406,10 @@ button {
 
   .about-cv {
     order: 4;
+  }
+
+  .about-cv .work-row {
+    padding: 11px 2px;
   }
 
   .about-cta {

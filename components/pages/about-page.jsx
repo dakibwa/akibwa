@@ -123,7 +123,9 @@ export function AboutPage() {
             <p className="about-statement">
               I'm happiest turning messy reality into something that works — in my life as much as my work.
               I track most things, follow the odd obsession all the way down, and keep trying to become a
-              slightly more alive version of myself. The running joke is that I'll optimise five things at once.
+              slightly more alive version of myself. That might mean a film log, a running experiment, a
+              half-built tool, or a conversation that carries on much longer than planned. The running joke
+              is that I'll optimise five things at once.
             </p>
             <Link className="about-cta about-hero-cta" href="/professional">
               <span className="about-cta-label">See professional work</span>
