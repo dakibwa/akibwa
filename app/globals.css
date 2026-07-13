@@ -597,16 +597,35 @@ button {
   color: #84858d;
 }
 
-.hero-word-accent {
-  --hero-accent-rgb: 47, 136, 255;
+.hero-dynamic-phrase {
+  display: inline;
+}
+
+.hero-word-cycle {
+  --cycle-accent-rgb: 47, 136, 255;
+  --cycle-underline-rgb: var(--cycle-accent-rgb);
+  appearance: none;
   position: relative;
   isolation: isolate;
   display: inline-block;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
   white-space: nowrap;
-  color: color-mix(in srgb, rgb(var(--hero-accent-rgb)) 34%, #84868d);
+  color: #84868d;
+  color: color-mix(in srgb, rgb(var(--cycle-accent-rgb)) 30%, #84868d);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0;
+  text-align: left;
+  vertical-align: baseline;
+  transition:
+    color 160ms ease,
+    text-shadow 160ms ease;
 }
 
-.hero-word-accent::after {
+.hero-word-cycle::after {
   position: absolute;
   right: 0.025em;
   bottom: 0.045em;
@@ -614,12 +633,60 @@ button {
   z-index: -1;
   height: 0.09em;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(var(--hero-accent-rgb), 0.2), rgba(var(--hero-accent-rgb), 0.08));
+  background: linear-gradient(
+    90deg,
+    rgba(var(--cycle-underline-rgb), 0.2),
+    rgba(var(--cycle-underline-rgb), 0.08)
+  );
   content: "";
+  transition:
+    background 160ms ease,
+    height 160ms ease;
 }
 
-.hero-word-accent--outcome {
-  --hero-accent-rgb: 186, 124, 40;
+.hero-outcome {
+  display: inline;
+}
+
+.hero-word-cycle:hover,
+.hero-word-cycle:focus-visible {
+  color: var(--black);
+  outline: 0;
+  text-shadow: 0 0 16px rgba(var(--cycle-accent-rgb), 0.14);
+}
+
+.hero-word-cycle:hover::after,
+.hero-word-cycle:focus-visible::after {
+  height: 0.13em;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--cycle-underline-rgb), 0.42),
+    rgba(var(--cycle-underline-rgb), 0.2)
+  );
+}
+
+.hero-word-cycle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(var(--cycle-accent-rgb), 0.22);
+}
+
+.hero-word-cycle-value {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  white-space: nowrap;
+  animation: word-flick 220ms ease both;
+}
+
+@keyframes word-flick {
+  from {
+    opacity: 0.46;
+    transform: translateY(0.04em);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .featured-areas-head {
@@ -6079,6 +6146,12 @@ button {
   .area-caption::before,
 
   .area-caption svg,
+
+  .hero-word-cycle,
+
+  .hero-word-cycle::after,
+
+  .hero-word-cycle-value,
 
   .text-action svg,
 
