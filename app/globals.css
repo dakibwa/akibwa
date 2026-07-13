@@ -203,11 +203,14 @@ button {
   height: 6px;
   border-radius: 3px;
   background-image: url("/brand-art/akibwa-accent-strip.webp");
-  background-size: 116% auto;
-  background-position: 50% 50%;
+  background-size: 132% auto;
+  background-position: 32% 50%;
   opacity: 0.96;
   filter: saturate(1.04) contrast(1.03);
   pointer-events: none;
+  transition:
+    background-position var(--hover-out) var(--ease-out),
+    filter var(--hover-out) var(--ease-out);
 }
 
 .brand:hover,
@@ -215,6 +218,13 @@ button {
   color: var(--black);
   filter: none;
   outline: 0;
+  transition-duration: var(--hover-in);
+}
+
+.brand:hover::after,
+.brand:focus-visible::after {
+  background-position: 68% 50%;
+  filter: saturate(1.12) contrast(1.05);
   transition-duration: var(--hover-in);
 }
 
@@ -6180,8 +6190,13 @@ button {
   .brand:hover::after,
   .brand:focus-visible::after {
     animation: none;
+    background-position: 50% 50%;
     opacity: 0.96;
     transform: none;
+  }
+
+  .brand::after {
+    background-position: 50% 50%;
   }
 }
 
