@@ -1,5 +1,4 @@
 import { AreaCard } from "@/components/area-card";
-import { HeroDynamicPhrase } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { areaTiles } from "@/components/site-data";
 
@@ -7,9 +6,12 @@ export function HomePage() {
   return (
     <section className="akibwa-home">
       <div className="page-grid akibwa-hero">
-        <h1 aria-label="I’m Daniel — I build small AI-assisted systems that turn messy workflows into useful tools.">
-          I’m Daniel — I build small AI‑assisted systems{" "}
-          <HeroDynamicPhrase />
+        <h1>
+          <span className="hero-line">I’m Daniel — I build AI systems</span>{" "}
+          <span className="hero-line hero-line--result">
+            that turn <span className="hero-word-accent hero-word-accent--source">messy work</span> into{" "}
+            <span className="hero-word-accent hero-word-accent--outcome">useful tools</span>.
+          </span>
         </h1>
       </div>
 
