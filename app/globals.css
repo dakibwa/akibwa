@@ -2067,14 +2067,23 @@ button {
 }
 
 .work-logo--tile {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
 }
 
 .work-logo--tile img {
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border-radius: 4px;
+}
+
+.work-row:hover .work-logo--tile {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.work-row:hover .work-logo--tile::before {
+  opacity: 0.62;
+  transform: scale(1.02);
 }
 
 .work-dot {
