@@ -1919,42 +1919,8 @@ button {
   padding: 16px 6px;
 }
 
-.work-row::before {
-  position: absolute;
-  inset: 2px -8px;
-  z-index: -1;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  box-shadow: 0 0 0 rgba(16, 18, 23, 0);
-  content: "";
-  opacity: 0;
-  transform: scale(0.985);
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out),
-    border-color var(--hover-out) var(--ease-out),
-    background var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out);
-}
-
 .work-row + .work-row {
   border-top: 1px solid rgba(16, 18, 23, 0.065);
-  transition: border-color var(--hover-out) var(--ease-out);
-}
-
-.work-row:hover,
-.work-row:hover + .work-row {
-  border-top-color: transparent;
-}
-
-.work-row:hover::before {
-  border-color: color-mix(in srgb, var(--company-accent, var(--ink)) 16%, rgba(16, 18, 23, 0.08));
-  background: color-mix(in srgb, var(--company-accent, var(--ink)) 4%, rgba(255, 255, 255, 0.94));
-  box-shadow: 0 9px 22px rgba(16, 18, 23, 0.055);
-  opacity: 1;
-  transform: scale(1);
-  transition-duration: var(--hover-in);
 }
 
 .work-year {
@@ -1974,27 +1940,15 @@ button {
   background: var(--company-accent, var(--page-accent, var(--ink)));
   box-shadow: 0 0 0 4px var(--canvas);
   transform: translate(-50%, -50%);
-  transition:
-    box-shadow var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
+  transition: box-shadow var(--hover-out) var(--ease-out);
 }
 
-/* Hovering a row rewards curiosity: the company's colour blooms out of
-   its node and tints the year. */
+/* Hover stays deliberately quiet: company colour glows around the fixed
+   timeline node and logo without moving or repainting the row. */
 .work-row:hover .work-node {
   box-shadow:
     0 0 0 4px var(--canvas),
     0 0 0 7px color-mix(in srgb, var(--company-accent, var(--ink)) 18%, transparent);
-  transform: translate(-50%, -50%) scale(1.2);
-  transition-duration: var(--hover-in);
-}
-
-.work-year {
-  transition: color var(--hover-out) var(--ease-out);
-}
-
-.work-row:hover .work-year {
-  color: var(--company-accent, var(--ink));
   transition-duration: var(--hover-in);
 }
 
@@ -2003,12 +1957,6 @@ button {
   align-items: center;
   gap: 16px;
   min-width: 0;
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-.work-row:hover .work-detail {
-  transform: translateX(3px);
-  transition-duration: var(--hover-in);
 }
 
 .work-company {
@@ -2026,7 +1974,6 @@ button {
   width: 28px;
   height: 28px;
   place-items: center;
-  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .work-logo::before {
@@ -2041,20 +1988,11 @@ button {
   );
   content: "";
   opacity: 0;
-  transform: scale(0.72);
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.work-row:hover .work-logo {
-  transform: translateY(-1px) scale(1.04);
-  transition-duration: var(--hover-in);
+  transition: opacity var(--hover-out) var(--ease-out);
 }
 
 .work-row:hover .work-logo::before {
-  opacity: 0.76;
-  transform: scale(1.06);
+  opacity: 0.68;
   transition-duration: var(--hover-in);
 }
 
@@ -2077,13 +2015,8 @@ button {
   border-radius: 4px;
 }
 
-.work-row:hover .work-logo--tile {
-  transform: translateY(-1px) scale(1.02);
-}
-
 .work-row:hover .work-logo--tile::before {
-  opacity: 0.62;
-  transform: scale(1.02);
+  opacity: 0.56;
 }
 
 .work-dot {
@@ -6327,8 +6260,6 @@ button {
 
   .text-action svg,
 
-  .work-row,
-
   .brand,
 
   .brand::after,
@@ -6370,16 +6301,11 @@ button {
     transition: none;
   }
 
-  .work-row::before,
-  .work-detail,
-  .work-logo,
+  .work-node,
   .work-logo::before,
-  .work-row:hover::before,
-  .work-row:hover .work-detail,
-  .work-row:hover .work-logo,
+  .work-row:hover .work-node,
   .work-row:hover .work-logo::before {
     transition: none;
-    transform: none;
   }
 }
 
