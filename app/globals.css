@@ -4242,8 +4242,7 @@ button {
   grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-  border-top: 1px solid rgba(16, 18, 23, 0.1);
-  padding: 18px 0 0;
+  padding: 2px 0 0;
 }
 
 .contact-next li:hover .contact-next-step {
@@ -5683,12 +5682,7 @@ button {
   }
 
   .contact-next li {
-    padding: 20px 0;
-    border-top: 1px solid rgba(16, 18, 23, 0.1);
-  }
-
-  .contact-next ol > li:first-child {
-    border-top: 0;
+    padding: 14px 0;
   }
 
   .contact-next li + li {

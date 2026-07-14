@@ -5,10 +5,10 @@ import { PageFooter } from "@/components/page-footer";
 import { contactEmail } from "@/components/site-data";
 
 const contactNotes = [
-  ["Bring the awkward middle", "The process, report, or spreadsheet that takes too much of your attention."],
-  ["Send the shape, not secrets", "Sanitised screenshots and tool lists help. Keep credentials and identifiers out."],
-  ["Expect a practical read", "I look for the smallest useful system — not a transformation programme."],
-  ["Manchester-based", "UK time, remote-friendly, async until a call earns its place."]
+  ["Repetitive work", "Copying, checking, updating and chasing."],
+  ["Spreadsheets and reports", "Fix them, simplify them or replace them."],
+  ["Tools and websites", "Build something new or improve what you use."],
+  ["Not sure what you need?", "Tell me what’s annoying. I’ll suggest a useful fix."]
 ];
 
 const interestEmailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
@@ -104,10 +104,10 @@ export function ContactPage() {
         </div>
       </section>
 
-      <section className="page-grid contact-notes" aria-label="What to include">
+      <section className="page-grid contact-notes" aria-label="What I can help with">
         <header>
-          <span>Good first note</span>
-          <h2>Make the shape visible.</h2>
+          <span>What I can help with</span>
+          <h2>If it’s done on a computer, I can probably help.</h2>
         </header>
         <ul>
           {contactNotes.map(([title, body]) => (
@@ -125,36 +125,28 @@ export function ContactPage() {
       <section className="page-grid contact-next" aria-label="What happens next">
         <header>
           <span>What happens next</span>
-          <h2>From a draft email to a practical read.</h2>
+          <h2>Send it. I’ll take a look.</h2>
         </header>
         <ol>
           <li>
             <span className="contact-next-step">01</span>
             <p>
-              <strong>You send the shape</strong>
-              <span>
-                Either button opens a draft email, with your note if you added one.
-                Nothing leaves your machine until you hit send.
-              </span>
+              <strong>Tell me the problem</strong>
+              <span>One sentence is enough.</span>
             </p>
           </li>
           <li>
             <span className="contact-next-step">02</span>
             <p>
-              <strong>I run a quick diagnostic</strong>
-              <span>
-                I read for where the time goes and what the smallest useful system looks like.
-              </span>
+              <strong>I find the simplest fix</strong>
+              <span>You’ll get a practical first take by email.</span>
             </p>
           </li>
           <li>
             <span className="contact-next-step">03</span>
             <p>
-              <strong>We talk only if it helps</strong>
-              <span>
-                A first take by email. If there&apos;s a fit, we book a short call;
-                if not, I&apos;ll say so and point you somewhere useful.
-              </span>
+              <strong>We go from there</strong>
+              <span>A short call only if it helps.</span>
             </p>
           </li>
         </ol>
