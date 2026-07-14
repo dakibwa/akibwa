@@ -76,24 +76,17 @@ export function ContactPage() {
           </label>
           <div className="contact-actions">
             <button type="submit">
-              Draft my note
+              Draft email
               <ArrowRight size={18} strokeWidth={1.8} />
             </button>
             <p>
               <LockKeyhole size={18} strokeWidth={1.6} />
-              <span>
-                Private by default.
-                <br />
-                No spam, ever.
-              </span>
+              <span>Opens in your email app. Nothing sends until you do.</span>
             </p>
+            <a className="contact-direct" href={`mailto:${contactEmail}`}>
+              {contactEmail}
+            </a>
           </div>
-          <p className="contact-direct">
-            <i aria-hidden="true" />
-            <span>
-              Prefer plain email? <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-            </span>
-          </p>
         </form>
 
         <div className="contact-art-side">
