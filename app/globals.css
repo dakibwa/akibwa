@@ -806,21 +806,28 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 28px;
-  margin-top: 34px;
-  color: var(--black);
-  font-size: 0.82rem;
+  margin-top: 38px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  color: #5d646e;
+  font-size: 0.78rem;
 }
 
-.page-footer > div {
+.page-footer-signoff,
+.page-footer-details {
   display: flex;
   align-items: center;
-  gap: 22px;
 }
 
-.page-footer > div:last-child {
+.page-footer-signoff {
+  color: #343a42;
+  font-weight: 560;
+}
+
+.page-footer-details {
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 14px 18px;
+  gap: 14px 20px;
 }
 
 .page-footer a,
@@ -849,22 +856,9 @@ button {
 }
 
 .page-footer a:hover,
+.page-footer a:focus-visible,
 .footer-location:hover {
   color: var(--blue);
-}
-
-.page-footer i {
-  display: block;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--black);
-}
-
-.page-footer > div:last-child i {
-  width: 7px;
-  height: 7px;
-  background: var(--blue);
 }
 
 .studio-page {
@@ -4122,14 +4116,6 @@ button {
   line-height: 1.5;
 }
 
-.contact-page-new .page-footer > div:first-child {
-  gap: 0;
-}
-
-.contact-page-new .page-footer > div:first-child i {
-  display: none;
-}
-
 .not-found h1 {
   margin: 0;
   color: var(--ink);
@@ -5836,32 +5822,30 @@ button {
   .page-footer {
     display: grid;
     justify-content: start;
-    gap: 18px;
+    gap: 16px;
+    padding-top: 16px;
   }
 
-  .page-footer > div {
+  .page-footer-signoff,
+  .page-footer-details {
     display: grid;
     justify-content: start;
     gap: 14px;
   }
 
-  .page-footer > div:first-child i {
-    display: none;
-  }
-
-  .page-footer > div:last-child {
+  .page-footer-details {
     width: 100%;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 13px 16px;
     justify-content: stretch;
   }
 
-  .page-footer > div:last-child a,
+  .page-footer-details a,
   .page-footer .footer-location {
     min-width: 0;
   }
 
-  .page-footer > div:last-child a span,
+  .page-footer-details a span,
   .page-footer .footer-location span {
     overflow: hidden;
     text-overflow: ellipsis;

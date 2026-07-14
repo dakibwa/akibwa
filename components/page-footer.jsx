@@ -21,26 +21,30 @@ function XLogo({ size = 14 }) {
 export function PageFooter() {
   return (
     <footer className="page-grid page-footer">
-      <div>
-        <i />
-        <span>Build small systems. Create clarity. Compound value.</span>
+      <div className="page-footer-signoff">
+        <span>Making computer work simpler.</span>
       </div>
-      <div>
+      <div className="page-footer-details">
         <span className="footer-location">
           <Navigation size={14} strokeWidth={1.9} />
           <span>Manchester, UK</span>
         </span>
-        <a href="https://x.com/dakibwa" target="_blank" rel="noreferrer" aria-label="dakibwa on X">
+        <a href="https://x.com/dakibwa" target="_blank" rel="noreferrer" aria-label="@dakibwa on X">
           <XLogo />
-          <span>dakibwa</span>
+          <span>@dakibwa</span>
         </a>
-        <a href="https://www.instagram.com/dakibwa" target="_blank" rel="noreferrer" aria-label="dakibwa on Instagram">
+        <a
+          href="https://www.instagram.com/dakibwa"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="@dakibwa on Instagram"
+        >
           <Instagram size={14} strokeWidth={1.8} />
-          <span>dakibwa</span>
+          <span>@dakibwa</span>
         </a>
         <a href="mailto:***REMOVED***" aria-label="Email ***REMOVED***">
           <Mail size={14} strokeWidth={1.8} />
-          <span>***REMOVED***</span>
+          <span>Email me</span>
         </a>
       </div>
     </footer>
