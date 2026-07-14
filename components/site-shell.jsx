@@ -24,24 +24,6 @@ const projectAccents = {
   meditator: "#3a5a45"
 };
 
-/* Lightened tints of each area's accent for the label glow (rgb triplets). */
-const navGlow = {
-  "/personal": { light: "143 188 255", mid: "93 157 255" },
-  "/professional": { light: "255 177 128", mid: "255 140 71" },
-  "/about": { light: "125 191 164", mid: "74 157 125" },
-  "/contact": { light: "143 188 255", mid: "93 157 255" }
-};
-
-const trackNavGlow = (event) => {
-  const rect = event.currentTarget.getBoundingClientRect();
-  event.currentTarget.style.setProperty("--nav-mx", `${event.clientX - rect.left}px`);
-};
-
-/* The glow rests full-time, so it recentres once the cursor leaves. */
-const resetNavGlow = (event) => {
-  event.currentTarget.style.removeProperty("--nav-mx");
-};
-
 function normalize(pathname) {
   if (pathname !== "/" && pathname.endsWith("/")) {
     return pathname.slice(0, -1);
@@ -76,11 +58,6 @@ export function SiteShell({ children }) {
               className="brand"
               onClick={() => setIsMenuOpen(false)}
               onPointerEnter={() => primeRoute("/")}
-              onPointerMove={(event) => {
-                const rect = event.currentTarget.getBoundingClientRect();
-                event.currentTarget.style.setProperty("--brand-mx", `${event.clientX - rect.left}px`);
-              }}
-              onPointerLeave={(event) => event.currentTarget.style.removeProperty("--brand-mx")}
               onFocus={() => primeRoute("/")}
             >
               AKIBWA
@@ -94,13 +71,7 @@ export function SiteShell({ children }) {
                     prefetch
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
                     aria-current={isActive(pathname, item.match) ? "page" : undefined}
-                    style={{
-                      "--nav-glow-light": navGlow[item.href]?.light,
-                      "--nav-glow-mid": navGlow[item.href]?.mid
-                    }}
                     onPointerEnter={() => primeRoute(item.href)}
-                    onPointerMove={trackNavGlow}
-                    onPointerLeave={resetNavGlow}
                     onFocus={() => primeRoute(item.href)}
                   >
                     {navArt[item.href] ? (
@@ -121,18 +92,20 @@ export function SiteShell({ children }) {
                             key={project.slug}
                             href={`/personal/${project.slug}`}
                             prefetch
-                            className="nav-dropdown-link"
+                            className={`nav-dropdown-link ${normalize(pathname) === `/personal/${project.slug}` ? "is-active" : ""}`}
+                            aria-current={normalize(pathname) === `/personal/${project.slug}` ? "page" : undefined}
                             style={{ "--project-accent": projectAccents[project.slug] }}
                             onPointerEnter={() => primeRoute(`/personal/${project.slug}`)}
                           >
                             <i aria-hidden="true">{project.number}</i>
                             <strong>{project.title}</strong>
                             <em>{project.statusLabel ?? project.type}</em>
+                            <ArrowRight className="nav-dropdown-link-arrow" size={13} strokeWidth={1.8} aria-hidden="true" />
                           </Link>
                         ))}
                         <Link href="/personal" prefetch className="nav-dropdown-all">
-                          All personal projects
-                          <ArrowRight size={13} strokeWidth={1.8} />
+                          View all projects
+                          <ArrowRight size={13} strokeWidth={1.8} aria-hidden="true" />
                         </Link>
                       </div>
                     </div>

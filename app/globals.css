@@ -194,92 +194,12 @@ button {
     filter var(--hover-out) var(--ease-out);
 }
 
-.brand::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 13px;
-  left: 0;
-  height: 6px;
-  border-radius: 3px;
-  background-image: url("/brand-art/akibwa-accent-strip.webp");
-  background-size: 116% auto;
-  background-position: center;
-  opacity: 0.96;
-  filter: saturate(1.04) contrast(1.03);
-  pointer-events: none;
-}
-
 .brand:hover,
 .brand:focus-visible {
   color: var(--black);
   filter: none;
   outline: 0;
   transition-duration: var(--hover-in);
-}
-
-/* A warm light runs through the wordmark, following the cursor. The
-   letterforms are painted by background-clip: text — a solid ink base
-   is declared first so the mark can never render invisible, then the
-   glow layer overrides it where supported. */
-@property --brand-glow {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-/* The same light also makes an idle pass through the header on a slow
-   loop: one soft beam crosses the wordmark, then each menu label in
-   reading order (staggered below). Registered so it interpolates. */
-@property --nav-sweep-x {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: -35%;
-}
-
-@keyframes nav-idle-sweep {
-  0%,
-  6% {
-    --nav-sweep-x: -35%;
-  }
-  18%,
-  100% {
-    --nav-sweep-x: 135%;
-  }
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .brand {
-    background-image: linear-gradient(var(--ink), var(--ink));
-    background-image:
-      radial-gradient(
-        42px circle at var(--brand-mx, 50%) 46%,
-        rgb(240 186 84 / calc(var(--brand-glow, 0) * 0.95)),
-        rgb(203 134 30 / calc(var(--brand-glow, 0) * 0.55)) 42%,
-        rgb(203 134 30 / 0) 78%
-      ),
-      radial-gradient(
-        30px circle at var(--nav-sweep-x, -35%) 46%,
-        rgb(240 186 84 / 0.55),
-        rgb(203 134 30 / 0.3) 46%,
-        rgb(203 134 30 / 0) 78%
-      ),
-      linear-gradient(var(--ink), var(--ink));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: nav-idle-sweep 8s linear infinite;
-    transition:
-      --brand-glow var(--hover-out) var(--ease-out),
-      filter var(--hover-out) var(--ease-out);
-  }
-
-  .brand:hover,
-  .brand:focus-visible {
-    --brand-glow: 1;
-    color: transparent;
-    transition-duration: var(--hover-in);
-  }
 }
 
 .nav-desktop {
@@ -295,69 +215,6 @@ button {
 
 /* Each nav label carries the cursor-tracked light in its own area's
    accent — the same physics as the wordmark glow. */
-@property --nav-glow {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .nav-desktop .nav-link {
-    background-image: linear-gradient(var(--ink), var(--ink));
-    background-image:
-      radial-gradient(
-        34px circle at var(--nav-mx, 50%) 46%,
-        rgb(var(--nav-glow-light, 240 186 84) / calc(var(--nav-glow, 0) * 0.9)),
-        rgb(var(--nav-glow-mid, 203 134 30) / calc(var(--nav-glow, 0) * 0.5)) 46%,
-        rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
-      ),
-      radial-gradient(
-        28px circle at var(--nav-sweep-x, -35%) 46%,
-        rgb(var(--nav-glow-light, 240 186 84) / 0.55),
-        rgb(var(--nav-glow-mid, 203 134 30) / 0.3) 46%,
-        rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
-      ),
-      linear-gradient(var(--ink), var(--ink));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: nav-idle-sweep 8s linear infinite;
-    transition: --nav-glow var(--hover-out) var(--ease-out);
-  }
-
-  /* Stagger the labels behind the wordmark so the beam reads as one light
-     travelling the header left to right. */
-  .nav-desktop .nav-item:nth-child(1) .nav-link {
-    animation-delay: 0.45s;
-  }
-
-  .nav-desktop .nav-item:nth-child(2) .nav-link {
-    animation-delay: 0.8s;
-  }
-
-  .nav-desktop .nav-item:nth-child(3) .nav-link {
-    animation-delay: 1.15s;
-  }
-
-  .nav-desktop .nav-item:nth-child(4) .nav-link {
-    animation-delay: 1.5s;
-  }
-
-  /* color stays transparent on hover so the glow shows through on every
-     item — without this, the generic `.nav-link:hover` black wins and
-     only the active item (whose selector is stronger) ever glowed. */
-  .nav-desktop .nav-link:hover,
-  .nav-desktop .nav-link:focus-visible {
-    --nav-glow: 1;
-    color: transparent;
-    transition-duration: var(--hover-in);
-  }
-
-  .nav-desktop .nav-link.active {
-    color: transparent;
-  }
-}
-
 /* Personal opens a quiet project index. Revealed on hover and on
    keyboard focus (the trigger link focusing satisfies :focus-within,
    which makes the panel visible and therefore tabbable). */
@@ -366,7 +223,7 @@ button {
   top: calc(100% - 8px);
   left: 50%;
   z-index: 60;
-  width: 216px;
+  width: 228px;
   padding-top: 12px;
   transform: translate(-50%, 6px);
   opacity: 0;
@@ -392,69 +249,125 @@ button {
 
 .nav-dropdown-panel {
   display: grid;
-  padding: 6px;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--white);
-  box-shadow: 0 20px 54px rgba(16, 18, 23, 0.12);
+  gap: 2px;
+  padding: 7px;
+  border: 1px solid rgba(16, 18, 23, 0.11);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow:
+    0 22px 56px rgba(16, 18, 23, 0.12),
+    0 3px 10px rgba(16, 18, 23, 0.05);
 }
 
 .nav-dropdown-link {
+  position: relative;
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  column-gap: 9px;
-  align-items: baseline;
-  padding: 7px 10px;
-  border-radius: calc(var(--radius) - 3px);
-  transition: background var(--hover-out) var(--ease-out);
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  padding: 7px 28px 7px 8px;
+  border-radius: 8px;
+  transition:
+    background var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.nav-dropdown-link-arrow {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  color: var(--project-accent, var(--ink));
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition:
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.nav-dropdown-link:hover,
+.nav-dropdown-link:focus-visible,
+.nav-dropdown-link.is-active {
+  background: color-mix(in srgb, var(--project-accent, var(--ink)) 7%, #fff);
 }
 
 .nav-dropdown-link:hover,
 .nav-dropdown-link:focus-visible {
-  background: color-mix(in srgb, var(--project-accent, var(--ink)) 8%, transparent);
+  transform: translateX(1px);
+  transition-duration: var(--hover-in);
+}
+
+.nav-dropdown-link:hover .nav-dropdown-link-arrow,
+.nav-dropdown-link:focus-visible .nav-dropdown-link-arrow,
+.nav-dropdown-link.is-active .nav-dropdown-link-arrow {
+  opacity: 0.72;
+  transform: translate(0, -50%);
   transition-duration: var(--hover-in);
 }
 
 .nav-dropdown-link i {
+  display: inline-flex;
+  grid-row: 1 / span 2;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid color-mix(in srgb, var(--project-accent, var(--ink)) 25%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--project-accent, var(--ink)) 7%, #fff);
   color: var(--project-accent, var(--ink));
-  font-size: 0.64rem;
+  font-size: 0.59rem;
   font-style: normal;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   font-variant-numeric: tabular-nums;
 }
 
 .nav-dropdown-link strong {
   color: var(--black);
-  font-size: 0.86rem;
-  font-weight: 560;
-  line-height: 1.3;
+  font-size: 0.82rem;
+  font-weight: 620;
+  line-height: 1.22;
 }
 
 .nav-dropdown-link em {
   grid-column: 2;
-  color: #6b717b;
-  font-size: 0.7rem;
+  color: #737983;
+  font-size: 0.67rem;
   font-style: normal;
-  line-height: 1.35;
+  line-height: 1.25;
 }
 
 .nav-dropdown-all {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 5px 4px 0;
+  justify-content: space-between;
+  margin-top: 5px;
   border-top: 1px solid var(--line);
-  padding: 10px 6px 4px;
+  border-radius: 0 0 7px 7px;
+  padding: 10px 10px 6px;
   color: #59616b;
-  font-size: 0.76rem;
-  font-weight: 540;
-  transition: color var(--hover-out) var(--ease-out);
+  font-size: 0.74rem;
+  font-weight: 580;
+  transition:
+    background var(--hover-out) var(--ease-out),
+    color var(--hover-out) var(--ease-out);
+}
+
+.nav-dropdown-all svg {
+  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .nav-dropdown-all:hover,
 .nav-dropdown-all:focus-visible {
+  background: rgba(16, 18, 23, 0.035);
   color: var(--black);
+  transition-duration: var(--hover-in);
+}
+
+.nav-dropdown-all:hover svg,
+.nav-dropdown-all:focus-visible svg {
+  transform: translateX(2px);
   transition-duration: var(--hover-in);
 }
 
@@ -495,41 +408,14 @@ button {
   color: var(--black);
 }
 
-/* The artwork strip is the current-page marker: only the active item keeps
-   its ribbon. Hovering any other item draws its ribbon in from the left —
-   a preview of where the link goes — and it retracts on the way out. */
+/* Desktop navigation stays deliberately typographic. Project artwork still
+   supplies the quieter active treatment in the full-width mobile menu. */
 .nav-desktop .nav-link__art {
-  position: absolute;
-  top: 13px;
-  right: 0;
-  left: 0;
-  display: block;
-  height: 6px;
-  border-radius: 3px;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  clip-path: inset(0 100% 0 0 round 3px);
-  filter: saturate(0.94) contrast(0.99);
-  pointer-events: none;
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    clip-path var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
+  display: none;
 }
 
-.nav-desktop .nav-link:hover .nav-link__art,
-.nav-desktop .nav-link:focus-visible .nav-link__art {
-  opacity: 1;
-  clip-path: inset(0 0 0 0 round 3px);
-  filter: saturate(1.06) contrast(1.03);
-  transition-duration: var(--hover-in);
-}
-
-.nav-desktop .nav-link.active .nav-link__art {
-  opacity: 1;
-  clip-path: inset(0 0 0 0 round 3px);
-  filter: saturate(1.06) contrast(1.03);
+.nav-desktop .nav-link.active {
+  font-weight: 650;
 }
 
 .nav-mobile-toggle {
