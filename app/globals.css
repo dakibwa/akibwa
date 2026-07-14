@@ -3899,13 +3899,93 @@ button {
 
 .contact-form {
   display: grid;
-  gap: 18px;
+  gap: 12px;
   min-width: 0;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: var(--white);
-  padding: 26px 28px;
+  padding: 20px;
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
+}
+
+.contact-fast-start {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  border: 1px solid rgba(47, 136, 255, 0.2);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(120deg, rgba(47, 136, 255, 0.085), rgba(47, 136, 255, 0.025)),
+    var(--white);
+  padding: 13px 14px;
+}
+
+.contact-fast-start p {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.contact-fast-start strong {
+  color: var(--black);
+  font-size: 0.98rem;
+  font-weight: 560;
+}
+
+.contact-fast-start p span {
+  max-width: 38ch;
+  color: #59616b;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.contact-interest-button {
+  display: inline-flex;
+  min-width: 174px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-radius: var(--radius);
+  background: #1a6fe6;
+  padding: 0 16px;
+  color: var(--white);
+  font-size: 0.92rem;
+  font-weight: 520;
+  transition: background 320ms var(--ease-out);
+}
+
+.contact-interest-button svg {
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+.contact-interest-button:hover,
+.contact-interest-button:focus-visible {
+  background: var(--page-accent-strong, var(--page-accent, var(--blue)));
+}
+
+.contact-interest-button:hover svg,
+.contact-interest-button:focus-visible svg {
+  transform: translateX(4px);
+  transition-duration: var(--hover-in);
+}
+
+.contact-form-divider {
+  display: grid;
+  grid-template-columns: minmax(20px, 1fr) auto minmax(20px, 1fr);
+  gap: 10px;
+  align-items: center;
+  color: #7b818a;
+  font-size: 0.76rem;
+  letter-spacing: 0.01em;
+}
+
+.contact-form-divider::before,
+.contact-form-divider::after {
+  height: 1px;
+  background: var(--line);
+  content: "";
 }
 
 .contact-form label {
@@ -3914,6 +3994,22 @@ button {
   gap: 9px;
   color: var(--black);
   font-size: 0.92rem;
+}
+
+.contact-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.contact-label-row em {
+  border-radius: 999px;
+  background: rgba(47, 136, 255, 0.08);
+  padding: 3px 8px;
+  color: var(--page-accent-strong, var(--blue));
+  font-size: 0.72rem;
+  font-style: normal;
 }
 
 .contact-form input,
@@ -3930,7 +4026,7 @@ button {
 }
 
 .contact-form textarea {
-  min-height: 340px;
+  min-height: 140px;
   line-height: 1.5;
 }
 
@@ -3950,21 +4046,21 @@ button {
   display: flex;
   grid-column: 1 / -1;
   align-items: center;
-  gap: 28px;
-  margin-top: 4px;
+  gap: 22px;
+  margin-top: 0;
 }
 
 .contact-actions button {
   display: inline-flex;
-  width: min(100%, 290px);
-  min-height: 56px;
+  width: min(100%, 230px);
+  min-height: 46px;
   align-items: center;
   justify-content: space-between;
-  border: 0;
+  border: 1px solid rgba(47, 136, 255, 0.28);
   border-radius: var(--radius);
-  background: #1a6fe6;
-  padding: 0 24px;
-  color: var(--white);
+  background: rgba(47, 136, 255, 0.055);
+  padding: 0 18px;
+  color: var(--page-accent-strong, var(--blue));
   cursor: pointer;
   font-size: 0.98rem;
   transition: background 320ms var(--ease-out);
@@ -3976,7 +4072,7 @@ button {
 
 .contact-actions button:hover,
 .contact-actions button:focus-visible {
-  background: var(--page-accent-strong, var(--page-accent, var(--blue)));
+  background: rgba(47, 136, 255, 0.11);
 }
 
 .contact-actions button:hover svg,
@@ -4030,7 +4126,7 @@ button {
 .contact-signal-art {
   overflow: hidden;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: var(--page-accent, var(--blue));
@@ -6209,6 +6305,14 @@ button {
 
   .contact-actions {
     display: grid;
+  }
+
+  .contact-fast-start {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-interest-button {
+    width: 100%;
   }
 }
 

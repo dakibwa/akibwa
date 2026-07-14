@@ -11,6 +11,12 @@ const contactNotes = [
   ["Manchester-based", "UK time, remote-friendly, async until a call earns its place."]
 ];
 
+const interestEmailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
+  "Interested in working with Akibwa"
+)}&body=${encodeURIComponent(
+  "Hi Daniel,\n\nI'm interested in talking about a project. Please get in touch and I'll share a little more context.\n\nThanks,"
+)}`;
+
 export function ContactPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -19,7 +25,11 @@ export function ContactPage() {
     const note = formData.get("note")?.toString().trim();
 
     const subject = encodeURIComponent("Akibwa enquiry");
-    const message = encodeURIComponent(note || "Hi Daniel,");
+    const message = encodeURIComponent(
+      note
+        ? `Hi Daniel,\n\n${note}`
+        : "Hi Daniel,\n\nI'm interested in talking about a project. Please get in touch.\n\nThanks,"
+    );
     window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${message}`;
   };
 
@@ -31,7 +41,7 @@ export function ContactPage() {
           <p>Send the messy bit.</p>
         </div>
         <p className="contact-hero-note">
-          A rough note is enough. You&apos;ll get a practical first take back.
+          A one-click hello or rough note is enough. You&apos;ll get a practical first take back.
         </p>
       </section>
 
@@ -40,17 +50,33 @@ export function ContactPage() {
           className="contact-form"
           onSubmit={handleSubmit}
         >
+          <div className="contact-fast-start">
+            <p>
+              <strong>Want the easy route?</strong>
+              <span>No brief needed. This opens a ready-to-send email in your mail app.</span>
+            </p>
+            <a className="contact-interest-button" href={interestEmailHref}>
+              I&apos;m interested
+              <ArrowRight size={18} strokeWidth={1.8} />
+            </a>
+          </div>
+          <div className="contact-form-divider" aria-hidden="true">
+            <span>or add a rough note</span>
+          </div>
           <label>
-            What do you need?
+            <span className="contact-label-row">
+              <span>What do you need?</span>
+              <em>Optional</em>
+            </span>
             <textarea
               name="note"
-              placeholder="Rough is fine — what's broken, what you're trying to do, what it's worth. Write it as it comes."
-              required
+              rows={5}
+              placeholder="What's broken, what are you trying to do, or what keeps taking too much time? Rough is fine."
             />
           </label>
           <div className="contact-actions">
             <button type="submit">
-              Draft email
+              Draft my note
               <ArrowRight size={18} strokeWidth={1.8} />
             </button>
             <p>
@@ -114,7 +140,7 @@ export function ContactPage() {
             <p>
               <strong>You send the shape</strong>
               <span>
-                The button opens a draft email with your note.
+                Either button opens a draft email, with your note if you added one.
                 Nothing leaves your machine until you hit send.
               </span>
             </p>
