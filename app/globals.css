@@ -4114,7 +4114,7 @@ button {
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.78) 26%, rgba(255, 255, 255, 0.4)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
     url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
   background-color: var(--white);
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
@@ -4133,9 +4133,9 @@ button {
 
 .contact-notes > header > span {
   color: var(--page-accent-strong, var(--blue));
-  font-size: 0.72rem;
-  font-weight: 760;
-  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
@@ -4192,12 +4192,12 @@ button {
 
 .contact-notes strong {
   color: var(--black);
-  font-size: 0.92rem;
-  font-weight: 540;
+  font-size: 0.94rem;
+  font-weight: 650;
 }
 
 .contact-notes li p span {
-  color: #59616b;
+  color: #4d5560;
   font-size: clamp(0.86rem, 0.82rem + 0.14vw, 0.95rem);
   line-height: 1.5;
 }
@@ -4215,9 +4215,9 @@ button {
 
 .contact-next > header > span {
   color: var(--page-accent-strong, var(--blue));
-  font-size: 0.72rem;
-  font-weight: 760;
-  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
@@ -4277,12 +4277,21 @@ button {
 .contact-next strong {
   color: var(--black);
   font-size: 0.95rem;
-  font-weight: 540;
+  font-weight: 650;
 }
 
 .contact-next p > span {
+  color: #4d5560;
   font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
   line-height: 1.5;
+}
+
+.contact-page-new .page-footer > div:first-child {
+  gap: 0;
+}
+
+.contact-page-new .page-footer > div:first-child i {
+  display: none;
 }
 
 .not-found h1 {
