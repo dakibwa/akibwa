@@ -44,10 +44,34 @@ const notFit = [
 ];
 
 const workflow = [
-  ["1", "Scope", "Align on the goal and define success."],
-  ["2", "Design", "Design the system, interfaces, and flows."],
-  ["3", "Build", "Build, test, and iterate in short cycles."],
-  ["4", "Handover", "Document, train, and hand over the keys."]
+  {
+    number: "1",
+    title: "Scope",
+    body: "Align on the goal and define success.",
+    art: "/area-art/professional-teardown.webp",
+    artPosition: "50% 52%"
+  },
+  {
+    number: "2",
+    title: "Design",
+    body: "Design the system, interfaces, and flows.",
+    art: "/area-art/professional-prototype.webp",
+    artPosition: "50% 58%"
+  },
+  {
+    number: "3",
+    title: "Build",
+    body: "Build, test, and iterate in short cycles.",
+    art: "/area-art/professional-system.webp",
+    artPosition: "52% 54%"
+  },
+  {
+    number: "4",
+    title: "Handover",
+    body: "Document, train, and hand over the keys.",
+    art: "/area-art/professional-structure.webp",
+    artPosition: "70% 50%"
+  }
 ];
 
 export function OfferPage() {
@@ -140,8 +164,14 @@ export function OfferPage() {
           </Link>
         </header>
         <div>
-          {workflow.map(([number, title, body]) => (
-            <article key={title}>
+          {workflow.map(({ number, title, body, art, artPosition }) => (
+            <article
+              key={title}
+              style={{
+                "--workflow-art": `url("${art}")`,
+                "--workflow-art-position": artPosition
+              }}
+            >
               <header>
                 <span>{number}</span>
                 <h3>{title}</h3>

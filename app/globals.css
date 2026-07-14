@@ -3735,9 +3735,14 @@ button {
 }
 
 .how-we-work-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
-  padding: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
+  padding: 20px;
 }
 
 .how-we-work-head {
@@ -3745,10 +3750,10 @@ button {
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px 24px;
-  margin-bottom: 26px;
+  gap: 10px 20px;
+  margin-bottom: 14px;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 18px;
+  padding-bottom: 12px;
 }
 
 .how-we-work-head h2 {
@@ -3758,14 +3763,23 @@ button {
 .how-we-work-head a {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
+  border: 1px solid rgba(16, 18, 23, 0.11);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 7px 10px 7px 12px;
   color: var(--black);
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   font-weight: 540;
-  transition: color var(--hover-out) var(--ease-out);
+  transition:
+    border-color var(--hover-out) var(--ease-out),
+    background var(--hover-out) var(--ease-out),
+    color var(--hover-out) var(--ease-out);
 }
 
 .how-we-work-head a:hover {
+  border-color: rgba(255, 111, 26, 0.35);
+  background: var(--white);
   color: var(--page-accent, var(--blue));
   transition-duration: var(--hover-in);
 }
@@ -3773,44 +3787,61 @@ button {
 .how-we-work-panel > div {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 26px;
+  gap: 10px;
 }
 
 .how-we-work-panel article {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
-  gap: 12px;
+  gap: 8px;
   align-content: start;
+  min-width: 0;
+  min-height: 104px;
+  border: 1px solid rgba(16, 18, 23, 0.1);
+  border-radius: calc(var(--radius) - 2px);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.97) 0%,
+      rgba(255, 255, 255, 0.91) 54%,
+      rgba(255, 255, 255, 0.76) 100%
+    ),
+    var(--workflow-art) var(--workflow-art-position, 50% 50%) / cover no-repeat;
+  box-shadow: 0 8px 24px rgba(16, 18, 23, 0.03);
+  padding: 13px 14px;
+  transition:
+    border-color var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
 }
 
-/* One track runs node to node — the journey, drawn. */
-.how-we-work-panel article:not(:last-of-type)::after {
-  content: "";
-  position: absolute;
-  top: 19px;
-  right: -26px;
-  left: 46px;
-  height: 1px;
-  background: var(--line);
+.how-we-work-panel article:hover {
+  border-color: rgba(255, 111, 26, 0.24);
+  box-shadow: 0 12px 30px rgba(16, 18, 23, 0.055);
+  transform: translateY(-1px);
+  transition-duration: var(--hover-in);
 }
 
 .how-we-work-panel article header {
   display: grid;
-  justify-items: start;
-  gap: 14px;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
 }
 
 .how-we-work-panel article header span {
   position: relative;
   display: grid;
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   place-items: center;
   border: 1px solid rgba(255, 111, 26, 0.45);
   border-radius: 50%;
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.88);
   color: #c05212;
-  font-size: 0.85rem;
+  font-size: 0.76rem;
   transition:
     border-color var(--hover-out) var(--ease-out),
     box-shadow var(--hover-out) var(--ease-out);
@@ -3818,22 +3849,22 @@ button {
 
 .how-we-work-panel article:hover header span {
   border-color: rgba(255, 111, 26, 0.75);
-  box-shadow: 0 0 0 6px color-mix(in srgb, #ff6f1a 13%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, #ff6f1a 11%, transparent);
   transition-duration: var(--hover-in);
 }
 
 .how-we-work-panel h3 {
   margin: 0;
   color: var(--black);
-  font-size: 1.02rem;
+  font-size: 0.96rem;
   font-weight: 540;
 }
 
 .how-we-work-panel p {
-  margin: 0;
+  margin: 0 0 0 40px;
   color: #59616b;
-  font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
-  line-height: 1.5;
+  font-size: clamp(0.82rem, 0.79rem + 0.14vw, 0.92rem);
+  line-height: 1.42;
 }
 
 .contact-hero {
