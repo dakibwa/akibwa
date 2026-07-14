@@ -61,6 +61,7 @@ function useChorusScrobbleTotal(enabled) {
 
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
+const PROJECT_OVERLAY_RESIZE_MS = 220;
 
 function canUseLocalFrame() {
   if (typeof window === "undefined") return false;
@@ -114,7 +115,7 @@ const STATUS_BY_SLUG = {
   meditator: "live"
 };
 
-const STATUS_LABELS = { live: "Live", dev: "Dev" };
+const STATUS_LABELS = { live: "Live", dev: "In development" };
 
 function statusForSlug(slug) {
   return STATUS_BY_SLUG[slug] ?? "dev";
@@ -544,13 +545,7 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
       {frameUrl ? (
         <div className={`project-expanded-frame-shell ${isFrameLoaded ? "is-loaded" : "is-loading"}`}>
           <div className="project-frame-loading" aria-hidden="true">
-            <span>
-              {[project.dashboardStatus, project.dashboardLabel].find(
-                (label) => label && label !== project.title,
-              ) ?? "Live project"}
-            </span>
             <strong>{project.title}</strong>
-            <i className="project-frame-loading-bar" />
           </div>
           <iframe
             key={frameNonce}
@@ -661,10 +656,10 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
 
     frameId = window.requestAnimationFrame(() => {
       shell.style.transition =
-        "transform 520ms cubic-bezier(0.4, 0, 0.2, 1), border-radius 520ms cubic-bezier(0.4, 0, 0.2, 1)";
+        `transform ${PROJECT_OVERLAY_RESIZE_MS}ms cubic-bezier(0.22, 1, 0.36, 1), border-radius ${PROJECT_OVERLAY_RESIZE_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`;
       shell.style.transform = "translate3d(0, 0, 0) scale(1, 1)";
       shell.style.borderRadius = isMaximized ? "10px" : "12px";
-      timerId = window.setTimeout(cleanup, 560);
+      timerId = window.setTimeout(cleanup, PROJECT_OVERLAY_RESIZE_MS + 40);
     });
 
     return () => {
