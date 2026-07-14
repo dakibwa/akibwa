@@ -3725,9 +3725,7 @@ button {
   align-items: baseline;
   justify-content: space-between;
   gap: 10px 20px;
-  margin-bottom: 14px;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .how-we-work-head h2 {
