@@ -205,14 +205,9 @@ button {
   background-image: url("/brand-art/akibwa-accent-strip.webp");
   background-size: 116% auto;
   background-position: center;
-  opacity: 0;
-  clip-path: inset(0 100% 0 0 round 3px);
-  filter: saturate(0.94) contrast(0.99);
+  opacity: 0.96;
+  filter: saturate(1.04) contrast(1.03);
   pointer-events: none;
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    clip-path var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
 }
 
 .brand:hover,
@@ -221,20 +216,6 @@ button {
   filter: none;
   outline: 0;
   transition-duration: var(--hover-in);
-}
-
-.brand:hover::after,
-.brand:focus-visible::after {
-  opacity: 0.96;
-  clip-path: inset(0 0 0 0 round 3px);
-  filter: saturate(1.06) contrast(1.03);
-  transition-duration: var(--hover-in);
-}
-
-.brand.active::after {
-  opacity: 0.96;
-  clip-path: inset(0 0 0 0 round 3px);
-  filter: saturate(1.06) contrast(1.03);
 }
 
 .nav-desktop {
