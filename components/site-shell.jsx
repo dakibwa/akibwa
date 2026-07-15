@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
@@ -143,35 +143,39 @@ export function SiteShell({ children }) {
               onClick={() => setIsMenuOpen((open) => !open)}
             >
               <span className="nav-mobile-toggle-icon" aria-hidden="true">
-                <Menu className="menu-icon menu-icon-open" size={20} />
-                <X className="menu-icon menu-icon-close" size={19} />
+                <span className="menu-line menu-line-top" />
+                <span className="menu-line menu-line-middle" />
+                <span className="menu-line menu-line-bottom" />
               </span>
             </button>
           </div>
 
           <div className={`nav-mobile ${isMenuOpen ? "is-open" : ""}`} aria-hidden={!isMenuOpen}>
-            <div className="site-frame nav-mobile-inner">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  prefetch
-                  className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
-                  aria-current={isActive(pathname, item.match) ? "page" : undefined}
-                  onClick={() => setIsMenuOpen(false)}
-                  onPointerEnter={() => primeRoute(item.href)}
-                  onFocus={() => primeRoute(item.href)}
-                >
-                  {navArt[item.href] ? (
-                    <span
-                      className="nav-link__art"
-                      style={{ backgroundImage: `url(${navArt[item.href]})` }}
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  {item.label}
-                </Link>
-              ))}
+            <div className="nav-mobile-clip">
+              <div className="site-frame nav-mobile-inner">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    prefetch
+                    tabIndex={isMenuOpen ? undefined : -1}
+                    className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
+                    aria-current={isActive(pathname, item.match) ? "page" : undefined}
+                    onClick={() => setIsMenuOpen(false)}
+                    onPointerEnter={() => primeRoute(item.href)}
+                    onFocus={() => primeRoute(item.href)}
+                  >
+                    {navArt[item.href] ? (
+                      <span
+                        className="nav-link__art"
+                        style={{ backgroundImage: `url(${navArt[item.href]})` }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </header>
