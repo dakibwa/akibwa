@@ -55,7 +55,8 @@ export function SiteShell({ children }) {
             <Link
               href="/"
               prefetch
-              className="brand"
+              className={`brand ${normalize(pathname) === "/" ? "active" : ""}`}
+              aria-current={normalize(pathname) === "/" ? "page" : undefined}
               onClick={() => setIsMenuOpen(false)}
               onPointerEnter={() => primeRoute("/")}
               onFocus={() => primeRoute("/")}
