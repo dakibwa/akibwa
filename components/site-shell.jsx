@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
+import { getPersonalProjectArt } from "@/components/personal-project-art";
 
 const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navImage ?? tile.image]));
 
@@ -89,9 +90,17 @@ export function SiteShell({ children }) {
                     <div className="nav-dropdown" aria-label="Personal projects">
                       <div className="nav-dropdown-panel">
                         {personalProjects.map((project) => {
+                          const artwork = getPersonalProjectArt(project);
                           const content = (
                             <>
-                              <i aria-hidden="true">{project.number}</i>
+                              <span
+                                className="nav-dropdown-link-art"
+                                style={{
+                                  backgroundImage: `url(${artwork.navBannerSrc})`,
+                                  backgroundPosition: artwork.selectorBannerPosition
+                                }}
+                                aria-hidden="true"
+                              />
                               <strong>{project.title}</strong>
                               <em>{project.statusLabel ?? project.type}</em>
                             </>
