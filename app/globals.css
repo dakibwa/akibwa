@@ -194,6 +194,22 @@ button {
     filter var(--hover-out) var(--ease-out);
 }
 
+.brand::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 13px;
+  left: 0;
+  height: 6px;
+  border-radius: 3px;
+  background-image: url("/brand-art/akibwa-accent-strip.webp");
+  background-size: 116% auto;
+  background-position: center;
+  opacity: 0.96;
+  filter: saturate(1.04) contrast(1.03);
+  pointer-events: none;
+}
+
 .brand:hover,
 .brand:focus-visible {
   color: var(--black);
@@ -213,8 +229,6 @@ button {
   display: inline-flex;
 }
 
-/* Each nav label carries the cursor-tracked light in its own area's
-   accent — the same physics as the wordmark glow. */
 /* Personal opens a quiet project index. Revealed on hover and on
    keyboard focus (the trigger link focusing satisfies :focus-within,
    which makes the panel visible and therefore tabbable). */
@@ -418,14 +432,32 @@ button {
   color: var(--black);
 }
 
-/* Desktop navigation stays deliberately typographic. Project artwork still
-   supplies the quieter active treatment in the full-width mobile menu. */
+/* Keep each area's artwork strip visible at rest. Hover and the active page
+   bring the relevant strip to full vividness. */
 .nav-desktop .nav-link__art {
-  display: none;
+  position: absolute;
+  top: 13px;
+  right: 0;
+  left: 0;
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.86;
+  filter: saturate(0.94) contrast(0.99);
+  pointer-events: none;
+  transition:
+    opacity var(--hover-out) var(--ease-out),
+    filter var(--hover-out) var(--ease-out);
 }
 
-.nav-desktop .nav-link.active {
-  font-weight: 650;
+.nav-desktop .nav-link:hover .nav-link__art,
+.nav-desktop .nav-link:focus-visible .nav-link__art,
+.nav-desktop .nav-link.active .nav-link__art {
+  opacity: 1;
+  filter: saturate(1.06) contrast(1.03);
+  transition-duration: var(--hover-in);
 }
 
 .nav-mobile-toggle {
