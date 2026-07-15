@@ -21,31 +21,34 @@ function XLogo({ size = 14 }) {
 export function PageFooter() {
   return (
     <footer className="page-grid page-footer">
-      <div className="page-footer-signoff">
-        <span>Making computer work simpler.</span>
-      </div>
-      <div className="page-footer-details">
-        <span className="footer-location">
-          <Navigation size={14} strokeWidth={1.9} />
-          <span>Manchester, UK</span>
-        </span>
-        <a href="https://x.com/dakibwa" target="_blank" rel="noreferrer" aria-label="@dakibwa on X">
-          <XLogo />
-          <span>@dakibwa</span>
-        </a>
-        <a
-          href="https://www.instagram.com/dakibwa"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="@dakibwa on Instagram"
-        >
-          <Instagram size={14} strokeWidth={1.8} />
-          <span>@dakibwa</span>
-        </a>
-        <a href="mailto:***REMOVED***" aria-label="Email ***REMOVED***">
-          <Mail size={14} strokeWidth={1.8} />
-          <span>Email me</span>
-        </a>
+      <div className="page-footer-panel">
+        <div className="page-footer-signoff">
+          <span className="page-footer-mark">AKIBWA</span>
+          <strong>Making computer work simpler.</strong>
+          <span className="footer-location">
+            <Navigation size={14} strokeWidth={1.9} />
+            <span>Manchester, UK</span>
+          </span>
+        </div>
+        <nav className="page-footer-details" aria-label="Elsewhere and contact">
+          <a href="https://x.com/dakibwa" target="_blank" rel="noreferrer" aria-label="@dakibwa on X">
+            <XLogo />
+            <span>X</span>
+          </a>
+          <a
+            href="https://www.instagram.com/dakibwa"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="@dakibwa on Instagram"
+          >
+            <Instagram size={14} strokeWidth={1.8} />
+            <span>Instagram</span>
+          </a>
+          <a href="mailto:***REMOVED***" aria-label="Email ***REMOVED***">
+            <Mail size={14} strokeWidth={1.8} />
+            <span>Email</span>
+          </a>
+        </nav>
       </div>
     </footer>
   );
