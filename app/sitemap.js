@@ -8,8 +8,6 @@ const routes = [
   { path: "/contact/", priority: 0.8 },
   { path: "/personal/chorus/", priority: 0.5 },
   { path: "/personal/cover-collision/", priority: 0.5 },
-  { path: "/personal/canta-porto/", priority: 0.5 },
-  { path: "/personal/one-bag/", priority: 0.5 },
   { path: "/personal/meditator/", priority: 0.5 }
 ];
 

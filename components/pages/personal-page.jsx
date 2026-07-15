@@ -23,6 +23,7 @@ import {
   chorusAppUrl,
   coverCollisionDataUrl,
   coverCollisionPosts,
+  isPersonalProjectLaunchable,
   personalProjects
 } from "@/components/site-data";
 import fallbackChorusData from "@/data/chorus-data.json";
@@ -69,6 +70,7 @@ function canUseLocalFrame() {
 }
 
 function getProjectFrameUrl(project, isLocalHost) {
+  if (!isPersonalProjectLaunchable(project)) return "";
   if (isLocalHost && project.localUrl && project.useLocalFrame !== false) return project.localUrl;
   if (project.embedUrl) return project.embedUrl;
   if (project.visual === "chorus") return chorusAppUrl;
@@ -232,12 +234,14 @@ function PersonalStorySection({ project, flipped, isArrived, onOpen }) {
         <p className="personal-story-type">{project.type}</p>
         <p className="personal-story-summary">{project.summary}</p>
         {project.proves ? <p className="personal-story-proof">{project.proves}</p> : null}
-        <button type="button" className="about-cta personal-story-open" onClick={onOpen}>
-          <span className="about-cta-label">Open {project.title}</span>
-          <span className="about-cta-icon" aria-hidden="true">
-            <ArrowRight size={18} strokeWidth={2} />
-          </span>
-        </button>
+        {isPersonalProjectLaunchable(project) ? (
+          <button type="button" className="about-cta personal-story-open" onClick={onOpen}>
+            <span className="about-cta-label">Open {project.title}</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+        ) : null}
       </div>
       <div className="personal-story-media">
         <PersonalDetailPanel project={project} />
@@ -813,6 +817,13 @@ export function PersonalPage({ initialSlug = null }) {
       return undefined;
     }
 
+    if (!isPersonalProjectLaunchable(project)) {
+      window.history.replaceState(null, "", `/personal/#${project.slug}`);
+      setArrivedSlug(project.slug);
+      document.getElementById(project.slug)?.scrollIntoView({ behavior: "instant", block: "start" });
+      return undefined;
+    }
+
     window.history.replaceState(null, "", `/personal/${project.slug}/`);
     setArrivedSlug(project.slug);
     document.getElementById(project.slug)?.scrollIntoView({ behavior: "instant", block: "start" });
@@ -898,6 +909,8 @@ export function PersonalPage({ initialSlug = null }) {
   }, [closeExpandedProject, overlayProject]);
 
   const selectProject = (project) => {
+    if (!isPersonalProjectLaunchable(project)) return;
+
     if (shouldOpenProjectRoute(project)) {
       window.location.assign(project.fallbackHref);
       return;

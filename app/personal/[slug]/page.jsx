@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { PersonalPage } from "@/components/pages/personal-page";
-import { personalProjects } from "@/components/site-data";
+import { isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
 const findProject = (slug) =>
   personalProjects.find((project) => project.slug === slug || project.aliases?.includes(slug)) ?? null;
@@ -8,7 +8,7 @@ const findProject = (slug) =>
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return personalProjects.flatMap((project) => [
+  return personalProjects.filter(isPersonalProjectLaunchable).flatMap((project) => [
     { slug: project.slug },
     ...(project.aliases ?? []).map((alias) => ({ slug: alias }))
   ]);

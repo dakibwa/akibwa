@@ -338,6 +338,16 @@ button {
   line-height: 1.25;
 }
 
+.nav-dropdown-link.is-unavailable {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.nav-dropdown-link.is-unavailable:hover {
+  background: transparent;
+  transform: none;
+}
+
 .nav-dropdown-all {
   display: flex;
   align-items: center;

@@ -10,11 +10,9 @@ export function getPublicSurface(id) {
 }
 
 const chorusSurface = getPublicSurface("chorus");
-const oneBaggerSurface = getPublicSurface("onebagger");
 const coverCollisionSurface = getPublicSurface("cover-collision");
 
 export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || chorusSurface?.defaultAppUrl || "").trim();
-export const oneBaggerAppUrl = (process.env.NEXT_PUBLIC_ONEBAGGER_APP_URL || oneBaggerSurface?.defaultAppUrl || "").trim();
 export const coverCollisionDataUrl = (
   process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
   coverCollisionSurface?.refresh?.dataUrl ||
@@ -93,6 +91,10 @@ export const featuredProjects = [
 export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL || coverCollisionData.profileUrl || "https://www.instagram.com/dakibwa/";
 export const coverCollisionPosts = coverCollisionData.posts;
 
+export function isPersonalProjectLaunchable(project) {
+  return project?.isLaunchable !== false;
+}
+
 export const personalProjects = [
   {
     number: "01",
@@ -161,15 +163,13 @@ export const personalProjects = [
     dashboardLabel: "One Baggers",
     dashboardStatus: "In development",
     statusLabel: "In development",
+    isLaunchable: false,
     summary: "Plan a one-bag loadout: prove the constraint, compare the gear, and buy only what earns its place.",
     proves: "Proof a hard constraint beats a long wishlist.",
     tags: ["Packing optimiser", "Gear comparison", "Local-first"],
-    mode: "embed",
+    mode: "preview",
     previewTreatment: "one-bag-vignette",
-    embedUrl: oneBaggerAppUrl,
-    localUrl: "http://localhost:3100",
-    useLocalFrame: false,
-    cta: "Open on Akibwa"
+    cta: "In development"
   },
   {
     number: "05",
@@ -181,15 +181,13 @@ export const personalProjects = [
     alt: "Painterly figures wrapped in flowing musical forms",
     shot: "/project-shots/canta-porto.webp",
     dashboardStatus: "In development",
+    isLaunchable: false,
     summary: "Learn European Portuguese through songs — lyric recall, a Porto regional layer, and spaced review.",
     proves: "Proof learning sticks when the material is music you love.",
     tags: ["European Portuguese", "Lyric recall", "Spaced review"],
-    mode: "embed",
+    mode: "preview",
     previewTreatment: "canta-vignette",
-    embedUrl: "https://akibwa-canta-porto.dakibwa.workers.dev",
-    localUrl: "http://localhost:3215",
-    useLocalFrame: false,
-    cta: "Open on Akibwa"
+    cta: "In development"
   }
 ];
 

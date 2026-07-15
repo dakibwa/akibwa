@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { areaTiles, personalProjects } from "@/components/site-data";
+import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
 const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navImage ?? tile.image]));
 
@@ -87,22 +87,43 @@ export function SiteShell({ children }) {
                   {item.href === "/personal" ? (
                     <div className="nav-dropdown" aria-label="Personal projects">
                       <div className="nav-dropdown-panel">
-                        {personalProjects.map((project) => (
-                          <Link
-                            key={project.slug}
-                            href={`/personal/${project.slug}`}
-                            prefetch
-                            className={`nav-dropdown-link ${normalize(pathname) === `/personal/${project.slug}` ? "is-active" : ""}`}
-                            aria-current={normalize(pathname) === `/personal/${project.slug}` ? "page" : undefined}
-                            style={{ "--project-accent": projectAccents[project.slug] }}
-                            onPointerEnter={() => primeRoute(`/personal/${project.slug}`)}
-                          >
-                            <i aria-hidden="true">{project.number}</i>
-                            <strong>{project.title}</strong>
-                            <em>{project.statusLabel ?? project.type}</em>
-                            <ArrowRight className="nav-dropdown-link-arrow" size={13} strokeWidth={1.8} aria-hidden="true" />
-                          </Link>
-                        ))}
+                        {personalProjects.map((project) => {
+                          const content = (
+                            <>
+                              <i aria-hidden="true">{project.number}</i>
+                              <strong>{project.title}</strong>
+                              <em>{project.statusLabel ?? project.type}</em>
+                            </>
+                          );
+
+                          if (!isPersonalProjectLaunchable(project)) {
+                            return (
+                              <div
+                                key={project.slug}
+                                className="nav-dropdown-link is-unavailable"
+                                aria-disabled="true"
+                                style={{ "--project-accent": projectAccents[project.slug] }}
+                              >
+                                {content}
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <Link
+                              key={project.slug}
+                              href={`/personal/${project.slug}`}
+                              prefetch
+                              className={`nav-dropdown-link ${normalize(pathname) === `/personal/${project.slug}` ? "is-active" : ""}`}
+                              aria-current={normalize(pathname) === `/personal/${project.slug}` ? "page" : undefined}
+                              style={{ "--project-accent": projectAccents[project.slug] }}
+                              onPointerEnter={() => primeRoute(`/personal/${project.slug}`)}
+                            >
+                              {content}
+                              <ArrowRight className="nav-dropdown-link-arrow" size={13} strokeWidth={1.8} aria-hidden="true" />
+                            </Link>
+                          );
+                        })}
                         <Link href="/personal" prefetch className="nav-dropdown-all">
                           View all projects
                           <ArrowRight size={13} strokeWidth={1.8} aria-hidden="true" />
