@@ -5,7 +5,7 @@ export function PageFooter() {
     <footer className="page-grid page-footer">
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
-          <strong>Making computer work simpler.</strong>
+          <strong>Useful tools for messy work.</strong>
           <span className="footer-location">
             <Navigation size={14} strokeWidth={1.9} />
             <span>Manchester, UK</span>
