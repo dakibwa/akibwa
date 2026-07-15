@@ -142,12 +142,9 @@ export function SiteShell({ children }) {
               aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
               onClick={() => setIsMenuOpen((open) => !open)}
             >
-              <span className="nav-mobile-toggle-label" aria-hidden="true">
-                {isMenuOpen ? "Close" : "Menu"}
-              </span>
               <span className="nav-mobile-toggle-icon" aria-hidden="true">
-                <Menu className="menu-icon menu-icon-open" size={18} />
-                <X className="menu-icon menu-icon-close" size={18} />
+                <Menu className="menu-icon menu-icon-open" size={20} />
+                <X className="menu-icon menu-icon-close" size={19} />
               </span>
             </button>
           </div>

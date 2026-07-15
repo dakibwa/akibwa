@@ -23,7 +23,6 @@ export function PageFooter() {
     <footer className="page-grid page-footer">
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
-          <span className="page-footer-mark">AKIBWA</span>
           <strong>Making computer work simpler.</strong>
           <span className="footer-location">
             <Navigation size={14} strokeWidth={1.9} />

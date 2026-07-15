@@ -463,19 +463,19 @@ button {
 .nav-mobile-toggle {
   position: relative;
   display: none;
-  min-width: 86px;
+  width: 42px;
   height: 42px;
+  flex: 0 0 42px;
   align-items: center;
   justify-content: center;
-  gap: 9px;
   border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.86);
-  padding: 0 12px 0 15px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0;
   color: var(--ink);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.98) inset,
-    0 8px 22px rgba(16, 18, 23, 0.06);
+    0 6px 16px rgba(16, 18, 23, 0.055);
   transition:
     border-color var(--hover-out) var(--ease-out),
     background var(--hover-out) var(--ease-out),
@@ -489,7 +489,7 @@ button {
   border-color: rgba(16, 18, 23, 0.24);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.98) inset,
-    0 10px 26px rgba(16, 18, 23, 0.09);
+    0 8px 20px rgba(16, 18, 23, 0.08);
   outline: 0;
   transform: translateY(-1px);
   transition-duration: var(--hover-in);
@@ -499,22 +499,14 @@ button {
   border-color: var(--ink);
   background: var(--ink);
   color: var(--white);
-  box-shadow: 0 10px 26px rgba(16, 18, 23, 0.15);
-}
-
-.nav-mobile-toggle-label {
-  font-size: 0.68rem;
-  font-weight: 680;
-  letter-spacing: 0.1em;
-  line-height: 1;
-  text-transform: uppercase;
+  box-shadow: 0 8px 20px rgba(16, 18, 23, 0.13);
 }
 
 .nav-mobile-toggle-icon {
   position: relative;
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .menu-icon {
@@ -890,7 +882,7 @@ button {
 }
 
 .page-footer {
-  margin-top: 48px;
+  margin-top: 42px;
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.78rem;
 }
@@ -901,63 +893,54 @@ button {
   overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 36px;
-  align-items: end;
+  gap: 24px;
+  align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  border-radius: 16px;
   background:
-    radial-gradient(circle at 12% 0%, rgba(47, 136, 255, 0.18), transparent 38%),
-    radial-gradient(circle at 92% 110%, rgba(255, 111, 26, 0.13), transparent 34%),
+    radial-gradient(circle at 10% 0%, rgba(47, 136, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 94% 120%, rgba(255, 111, 26, 0.1), transparent 30%),
     #15181d;
-  padding: 28px 30px;
+  padding: 17px 20px;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.06) inset,
-    0 24px 54px rgba(16, 18, 23, 0.12);
+    0 18px 38px rgba(16, 18, 23, 0.1);
+}
+
+.page-footer-panel::before {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 44px;
+  height: 4px;
+  border-radius: 0 0 999px 999px;
+  background: url("/brand-art/akibwa-accent-strip.webp") center / 116% auto;
+  content: "";
 }
 
 .page-footer-panel::after {
   position: absolute;
-  top: -72px;
-  right: -38px;
+  top: -82px;
+  right: -62px;
   z-index: -1;
-  width: 190px;
-  height: 190px;
+  width: 160px;
+  height: 160px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 50%;
-  box-shadow: 0 0 0 34px rgba(255, 255, 255, 0.018);
+  box-shadow: 0 0 0 28px rgba(255, 255, 255, 0.016);
   content: "";
 }
 
 .page-footer-signoff {
-  display: grid;
-  justify-items: start;
-  gap: 10px;
-}
-
-.page-footer-mark {
-  position: relative;
-  padding-top: 11px;
-  color: rgba(255, 255, 255, 0.58);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-}
-
-.page-footer-mark::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 46px;
-  height: 5px;
-  border-radius: 999px;
-  background: url("/brand-art/akibwa-accent-strip.webp") center / 116% auto;
-  content: "";
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
 .page-footer-signoff strong {
   max-width: 28ch;
   color: var(--white);
-  font-size: clamp(1.08rem, 0.96rem + 0.3vw, 1.24rem);
+  font-size: clamp(0.96rem, 0.9rem + 0.18vw, 1.08rem);
   font-weight: 540;
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -990,11 +973,11 @@ button {
 }
 
 .page-footer a {
-  min-height: 40px;
+  min-height: 36px;
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.055);
-  padding: 0 13px;
+  padding: 0 11px;
   color: rgba(255, 255, 255, 0.86);
   font-weight: 560;
   transition:
@@ -5958,14 +5941,23 @@ button {
   }
 
   .page-footer {
-    margin-top: 38px;
+    margin-top: 34px;
   }
 
   .page-footer-panel {
     grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-    border-radius: 18px;
-    padding: 22px 20px 20px;
+    gap: 13px;
+    border-radius: 15px;
+    padding: 16px;
+  }
+
+  .page-footer-panel::before {
+    left: 16px;
+  }
+
+  .page-footer-signoff {
+    display: grid;
+    gap: 5px;
   }
 
   .page-footer-details {
@@ -5977,9 +5969,9 @@ button {
   .page-footer-details a {
     min-width: 0;
     justify-content: center;
-    min-height: 38px;
-    padding-inline: 8px;
-    font-size: 0.7rem;
+    min-height: 34px;
+    padding-inline: 6px;
+    font-size: 0.68rem;
   }
 
   .page-footer-details a span {
