@@ -950,6 +950,10 @@ button {
   color: currentColor;
 }
 
+.x-logo {
+  flex: 0 0 auto;
+}
+
 .page-footer a {
   min-height: 32px;
   color: #343a42;
