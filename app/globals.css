@@ -1124,39 +1124,17 @@ button {
 }
 
 .personal-story-summary {
-  margin: 16px 0 0;
-  max-width: 44ch;
+  margin: 12px 0 0;
+  max-width: 34ch;
   color: #3f4650;
-  font-size: clamp(1.02rem, 0.96rem + 0.35vw, 1.22rem);
+  font-size: clamp(1rem, 0.95rem + 0.28vw, 1.16rem);
   font-weight: 460;
   line-height: 1.5;
 }
 
-/* The quiet second voice: what the project proves, set off by a short
-   accent dash rather than more type. */
-.personal-story-proof {
-  position: relative;
-  margin: 13px 0 0;
-  max-width: 44ch;
-  padding-left: 26px;
-  color: #6b7480;
-  font-size: 0.97rem;
-  line-height: 1.5;
-}
-
-.personal-story-proof::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.72em;
-  width: 16px;
-  height: 1px;
-  background: color-mix(in srgb, var(--area-accent) 70%, transparent);
-}
-
 .personal-story .about-cta {
   --page-accent: var(--area-accent);
-  margin-top: 26px;
+  margin-top: 20px;
   cursor: pointer;
 }
 
@@ -1229,8 +1207,8 @@ button {
   .personal-story,
   .personal-story.is-flipped {
     grid-template-columns: minmax(0, 1fr);
-    row-gap: 22px;
-    padding-block: clamp(36px, 6vw, 52px);
+    row-gap: 18px;
+    padding-block: clamp(30px, 6vw, 44px);
   }
 
   .personal-story.is-flipped .personal-story-copy {

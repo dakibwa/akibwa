@@ -233,10 +233,9 @@ function PersonalStorySection({ project, flipped, isArrived, onOpen }) {
         <h2 id={`${project.slug}-story-title`}>{project.title}</h2>
         <p className="personal-story-type">{project.type}</p>
         <p className="personal-story-summary">{project.summary}</p>
-        {project.proves ? <p className="personal-story-proof">{project.proves}</p> : null}
         {isPersonalProjectLaunchable(project) ? (
           <button type="button" className="about-cta personal-story-open" onClick={onOpen}>
-            <span className="about-cta-label">Open {project.title}</span>
+            <span className="about-cta-label">Open</span>
             <span className="about-cta-icon" aria-hidden="true">
               <ArrowRight size={18} strokeWidth={2} />
             </span>
@@ -929,7 +928,7 @@ export function PersonalPage({ initialSlug = null }) {
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
         <h1>Personal Projects</h1>
-        <p>Things I wanted to exist — so I built them.</p>
+        <p>Things I wanted to exist.</p>
       </section>
 
       <div className="personal-storyboard" ref={storyboardRef}>
