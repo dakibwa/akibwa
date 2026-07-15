@@ -13,7 +13,7 @@ export function PageFooter() {
         </div>
         <nav className="page-footer-details" aria-label="Elsewhere and contact">
           <a href="https://x.com/dakibwa" target="_blank" rel="noreferrer" aria-label="@dakibwa on X">
-            <span>X</span>
+            <span>X · @dakibwa</span>
           </a>
           <a
             href="https://www.instagram.com/dakibwa"
@@ -21,10 +21,10 @@ export function PageFooter() {
             rel="noreferrer"
             aria-label="@dakibwa on Instagram"
           >
-            <span>Instagram</span>
+            <span>Instagram · @dakibwa</span>
           </a>
           <a href="mailto:***REMOVED***" aria-label="Email ***REMOVED***">
-            <span>Email</span>
+            <span>Email me</span>
           </a>
         </nav>
       </div>
