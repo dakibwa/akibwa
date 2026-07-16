@@ -729,6 +729,7 @@ button {
 
 .nav-mobile {
   display: none;
+  pointer-events: none;
 }
 
 .akibwa-home {
@@ -6123,6 +6124,7 @@ button {
     border-color: var(--line);
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
     transition-delay: 0s;
   }
 

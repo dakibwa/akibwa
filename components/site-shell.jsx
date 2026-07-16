@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PointerResponseLink } from "@/components/pointer-response";
 import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 import { getPersonalProjectArt } from "@/components/personal-project-art";
@@ -64,12 +64,27 @@ export function SiteShell({ children }) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPersonalMenuOpen, setIsPersonalMenuOpen] = useState(false);
+  const mobileToggleRef = useRef(null);
   const immersiveRoutes = ["/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
 
   useEffect(() => {
+    setIsMenuOpen(false);
     setIsPersonalMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const closeMenusOnEscape = (event) => {
+      if (event.key !== "Escape") return;
+
+      setIsMenuOpen(false);
+      setIsPersonalMenuOpen(false);
+      mobileToggleRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", closeMenusOnEscape);
+    return () => window.removeEventListener("keydown", closeMenusOnEscape);
+  }, []);
 
   const primeRoute = (href) => {
     router.prefetch(href);
@@ -224,7 +239,9 @@ export function SiteShell({ children }) {
             <button
               type="button"
               className="nav-mobile-toggle"
+              ref={mobileToggleRef}
               aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation"
               aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
               onClick={() => {
                 setIsPersonalMenuOpen(false);
@@ -239,7 +256,12 @@ export function SiteShell({ children }) {
             </button>
           </div>
 
-          <div className={`nav-mobile ${isMenuOpen ? "is-open" : ""}`} aria-hidden={!isMenuOpen}>
+          <div
+            id="mobile-navigation"
+            className={`nav-mobile ${isMenuOpen ? "is-open" : ""}`}
+            aria-hidden={!isMenuOpen}
+            inert={!isMenuOpen}
+          >
             <div className="nav-mobile-clip">
               <div className="site-frame nav-mobile-inner">
                 {navItems.map((item) => (
