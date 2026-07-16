@@ -1,7 +1,8 @@
 import { RouteRedirect } from "@/components/route-redirect";
+import { siteSectionTitles } from "@/app/site-metadata";
 
 export const metadata = {
-  title: "Offer",
+  title: siteSectionTitles.professional,
   robots: { index: false },
   alternates: { canonical: "/professional/" }
 };

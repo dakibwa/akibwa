@@ -1,8 +1,9 @@
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import { chorusAppUrl } from "@/components/site-data";
+import { siteSectionTitles } from "@/app/site-metadata";
 
 export const metadata = {
-  title: "Chorus",
+  title: siteSectionTitles.chorus,
   description:
     "Chorus is an Akibwa music intelligence dashboard for Last.fm listening history, recent plays, top artists, and run pairings."
 };

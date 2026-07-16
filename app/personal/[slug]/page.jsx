@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { siteSectionTitles } from "@/app/site-metadata";
 import { PersonalPage } from "@/components/pages/personal-page";
 import { isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }) {
   if (!project) return {};
 
   return {
-    title: `${project.title} – Personal Projects`,
+    title: siteSectionTitles.personal,
     description: project.summary
   };
 }
