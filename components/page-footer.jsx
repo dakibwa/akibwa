@@ -26,7 +26,7 @@ export function PageFooter() {
           <strong>Making computer work simpler.</strong>
         </div>
         <div className="page-footer-meta">
-          <span className="footer-location">
+          <span className="footer-location" style={{ "--handle-accent": "#c05212" }}>
             <Navigation size={14} strokeWidth={1.9} />
             <span>Manchester</span>
           </span>
