@@ -288,14 +288,21 @@ button {
     transform var(--hover-out) var(--ease-out);
 }
 
+/* Veil over the artwork: near-solid behind the text column so glyph
+   edges stay crisp, thinning to the right where the colour blooms. */
 .nav-dropdown-link::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: #fff;
-  opacity: 0.62;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(255, 255, 255, 0.82) 44%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  opacity: 1;
   pointer-events: none;
   transition: opacity var(--hover-out) var(--ease-out);
 }
@@ -357,7 +364,7 @@ button {
 .nav-dropdown-link:hover::before,
 .nav-dropdown-link:focus-visible::before,
 .nav-dropdown-link.is-active::before {
-  opacity: 0.5;
+  opacity: 0.84;
   transition-duration: var(--hover-in);
 }
 
@@ -406,19 +413,33 @@ button {
   position: relative;
   z-index: 1;
   grid-column: 1;
-  color: color-mix(in srgb, var(--project-accent, #737983) 42%, #565d66);
-  font-size: 0.67rem;
+  color: color-mix(in srgb, var(--project-accent, #737983) 44%, #4d545d);
+  font-size: 0.7rem;
   font-style: normal;
   line-height: 1.25;
 }
 
+/* In-development rows mute through their parts (art, rail, ink) rather
+   than element opacity, which blurs the text along with everything else. */
 .nav-dropdown-link.is-unavailable {
   cursor: default;
-  opacity: 0.78;
 }
 
 .nav-dropdown-link.is-unavailable::after {
-  opacity: 0.55;
+  opacity: 0.5;
+}
+
+.nav-dropdown-link.is-unavailable strong {
+  color: #454b53;
+}
+
+.nav-dropdown-link.is-unavailable em {
+  color: color-mix(in srgb, var(--project-accent, #737983) 30%, #767c85);
+}
+
+.nav-dropdown-link.is-unavailable .nav-dropdown-link-art {
+  opacity: 0.4;
+  filter: saturate(0.62) contrast(0.86) brightness(1.06);
 }
 
 .nav-dropdown-link.is-unavailable:hover {
@@ -426,18 +447,18 @@ button {
 }
 
 .nav-dropdown-link.is-unavailable:hover::before {
-  opacity: 0.62;
+  opacity: 1;
 }
 
 .nav-dropdown-link.is-unavailable:hover::after {
   top: 10px;
   bottom: 10px;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 .nav-dropdown-link.is-unavailable:hover .nav-dropdown-link-art {
-  opacity: 0.58;
-  filter: saturate(1) contrast(0.9) brightness(1.04);
+  opacity: 0.4;
+  filter: saturate(0.62) contrast(0.86) brightness(1.06);
   transform: scale(1.015);
 }
 
@@ -1050,7 +1071,7 @@ button {
 
 .page-footer a {
   min-height: 32px;
-  color: color-mix(in srgb, var(--handle-accent, #343a42) 26%, #3c424a);
+  color: color-mix(in srgb, var(--handle-accent, #343a42) 22%, #30363e);
   font-weight: 560;
   transition:
     color 300ms var(--ease-out),
