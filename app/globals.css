@@ -6027,13 +6027,29 @@ button {
     background-size: cover;
     background-position: center;
     opacity: 0;
+    filter: saturate(0.82) contrast(0.94) brightness(1.04);
     pointer-events: none;
+    transform: translateX(-7px) scale(1.015);
+    transition:
+      opacity 300ms var(--ease-out),
+      filter 300ms var(--ease-out),
+      transform 480ms var(--ease-out);
     -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
     mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
   }
 
+  .nav-mobile .nav-link:hover .nav-link__art,
+  .nav-mobile .nav-link:focus-visible .nav-link__art,
+  .nav-mobile .nav-link:active .nav-link__art,
   .nav-mobile .nav-link.active .nav-link__art {
     opacity: 0.3;
+    filter: saturate(1.04) contrast(1) brightness(1.02);
+    transform: translateX(0) scale(1.025);
+  }
+
+  .nav-mobile .nav-link:active .nav-link__art {
+    opacity: 0.38;
+    transition-duration: 90ms;
   }
 
   .brand {
