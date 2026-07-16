@@ -232,14 +232,14 @@ button {
     background-image:
       radial-gradient(
         50px circle at var(--brand-mx, 50%) 46%,
-        rgb(221 55 54 / calc(var(--brand-glow, 0) * 0.98)) 0%,
-        rgb(239 112 68 / calc(var(--brand-glow, 0) * 0.96)) 17%,
-        rgb(224 185 72 / calc(var(--brand-glow, 0) * 0.95)) 34%,
-        rgb(75 156 109 / calc(var(--brand-glow, 0) * 0.94)) 52%,
-        rgb(54 143 166 / calc(var(--brand-glow, 0) * 0.94)) 68%,
-        rgb(88 99 183 / calc(var(--brand-glow, 0) * 0.92)) 83%,
-        rgb(139 78 156 / calc(var(--brand-glow, 0) * 0.78)) 93%,
-        rgb(139 78 156 / 0) 100%
+        rgb(176 58 50 / calc(var(--brand-glow, 0) * 0.9)) 0%,
+        rgb(196 92 61 / calc(var(--brand-glow, 0) * 0.88)) 17%,
+        rgb(186 151 62 / calc(var(--brand-glow, 0) * 0.88)) 34%,
+        rgb(69 132 88 / calc(var(--brand-glow, 0) * 0.86)) 52%,
+        rgb(50 120 134 / calc(var(--brand-glow, 0) * 0.86)) 68%,
+        rgb(72 86 151 / calc(var(--brand-glow, 0) * 0.84)) 83%,
+        rgb(108 73 128 / calc(var(--brand-glow, 0) * 0.72)) 93%,
+        rgb(108 73 128 / 0) 100%
       ),
       linear-gradient(var(--ink), var(--ink));
     -webkit-background-clip: text;
@@ -920,14 +920,33 @@ button {
   transition: opacity var(--hover-out) var(--ease-out);
 }
 
+/* The accent now follows the pointer across the complete clickable card,
+   rather than reading mainly as motion in the caption strip. */
+.area-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px circle at var(--card-mx, 50%) var(--card-my, 50%),
+    color-mix(in srgb, var(--area-accent) 15%, transparent),
+    transparent 72%
+  );
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--hover-out) var(--ease-out);
+}
+
 .area-card > * {
   position: relative;
   z-index: 1;
 }
 
 .area-card:hover,
-.area-card:focus-visible {
-  border-color: rgba(16, 18, 23, 0.22);
+.area-card:focus-visible,
+.area-card:active {
+  border-color: color-mix(in srgb, var(--area-accent) 46%, rgba(16, 18, 23, 0.22));
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.98) inset,
     0 6px 16px rgba(16, 18, 23, 0.05),
@@ -936,7 +955,11 @@ button {
 }
 
 .area-card:hover::before,
-.area-card:focus-visible::before {
+.area-card:focus-visible::before,
+.area-card:active::before,
+.area-card:hover::after,
+.area-card:focus-visible::after,
+.area-card:active::after {
   opacity: 1;
   transition-duration: var(--hover-in);
 }
@@ -989,13 +1012,15 @@ button {
 }
 
 .area-card:hover .area-art::before,
-.area-card:focus-visible .area-art::before {
+.area-card:focus-visible .area-art::before,
+.area-card:active .area-art::before {
   opacity: 1;
   transition-duration: var(--hover-in);
 }
 
 .area-card:hover .area-art img,
-.area-card:focus-visible .area-art img {
+.area-card:focus-visible .area-art img,
+.area-card:active .area-art img {
   filter: brightness(1.045) saturate(1.03);
 }
 
@@ -1050,29 +1075,44 @@ button {
 }
 
 .area-card:hover .area-art::after,
-.area-card:focus-visible .area-art::after {
+.area-card:focus-visible .area-art::after,
+.area-card:active .area-art::after {
   opacity: 0.38;
   transition-duration: var(--hover-in);
 }
 
 .area-card:hover .area-caption,
-.area-card:focus-visible .area-caption {
+.area-card:focus-visible .area-caption,
+.area-card:active .area-caption {
   transform: translateY(-1px);
   transition-duration: var(--hover-in);
 }
 
 .area-card:hover .area-caption::before,
-.area-card:focus-visible .area-caption::before {
+.area-card:focus-visible .area-caption::before,
+.area-card:active .area-caption::before {
   width: 64px;
   opacity: 1;
   transition-duration: var(--hover-in);
 }
 
 .area-card:hover .area-caption svg,
-.area-card:focus-visible .area-caption svg {
+.area-card:focus-visible .area-caption svg,
+.area-card:active .area-caption svg {
   transform: translateX(5px);
   color: var(--area-accent);
   transition-duration: var(--hover-in);
+}
+
+.area-card:active,
+.area-card:active::before,
+.area-card:active::after,
+.area-card:active .area-art::before,
+.area-card:active .area-art::after,
+.area-card:active .area-caption,
+.area-card:active .area-caption::before,
+.area-card:active .area-caption svg {
+  transition-duration: 90ms;
 }
 
 .page-footer {
@@ -6533,6 +6573,8 @@ button {
 
   .area-card::before,
 
+  .area-card::after,
+
   .area-art::after,
 
   .area-caption,
@@ -6646,10 +6688,16 @@ button {
 }
 
 .area-card:hover .area-art img,
-.area-card:focus-visible .area-art img {
+.area-card:focus-visible .area-art img,
+.area-card:active .area-art img {
   transform: scale(1.045);
   filter: saturate(1.05) brightness(1.02);
   transition-duration: 1100ms;
+}
+
+.area-card:active .area-art img {
+  transform: scale(1.02);
+  transition-duration: 90ms;
 }
 
 @media (prefers-reduced-motion: reduce) {

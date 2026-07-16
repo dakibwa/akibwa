@@ -4,6 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+const trackCardLight = (event) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  event.currentTarget.style.setProperty("--card-mx", `${event.clientX - rect.left}px`);
+  event.currentTarget.style.setProperty("--card-my", `${event.clientY - rect.top}px`);
+};
+
 export function AreaCard({ tile, index }) {
   const cardImage = tile.cardImage ?? tile.image;
   const cardAlt = tile.cardAlt ?? tile.alt;
@@ -15,11 +21,8 @@ export function AreaCard({ tile, index }) {
       prefetch
       className="area-card"
       style={tile.accent ? { "--area-accent": tile.accent } : undefined}
-      onPointerMove={(event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        event.currentTarget.style.setProperty("--card-mx", `${event.clientX - rect.left}px`);
-        event.currentTarget.style.setProperty("--card-my", `${event.clientY - rect.top}px`);
-      }}
+      onPointerMove={trackCardLight}
+      onPointerDown={trackCardLight}
     >
       <div className="area-art">
         <Image
