@@ -1006,7 +1006,6 @@ button {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
-  border-top: 1px solid var(--line);
   padding-top: 20px;
 }
 
@@ -1016,6 +1015,7 @@ button {
   left: 0;
   right: 0;
   height: 3px;
+  display: none;
   border-radius: 999px;
   background: url("/brand-art/footer-accent-band.webp") center / 100% 100% no-repeat;
   content: "";
@@ -6087,7 +6087,12 @@ button {
   .page-footer-panel {
     grid-template-columns: minmax(0, 1fr);
     gap: 10px;
+    border-top: 1px solid var(--line);
     padding-top: 18px;
+  }
+
+  .page-footer-panel::before {
+    display: block;
   }
 
   .page-footer-meta {
