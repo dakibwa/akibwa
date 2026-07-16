@@ -28,7 +28,7 @@ export const areaTiles = [
     navImage: "/brand-art/nav/personal.webp",
     imagePosition: "50% 10%",
     alt: "Black-and-white artwork of a serene mask reflected in rippled water",
-    accent: "#2f88ff",
+    accent: "#55585c",
     detail: "Chorus, Cover Collision and more"
   },
   {
@@ -38,7 +38,7 @@ export const areaTiles = [
     image: "/area-art/professional-structure.webp",
     navImage: "/brand-art/nav/professional.webp",
     alt: "Cream sculptural architectural openings crossed by fine copper lines against a pale grey background",
-    accent: "#ff6f1a",
+    accent: "#a65f45",
     detail: "Discovery, build and handover"
   },
   {
@@ -52,7 +52,7 @@ export const areaTiles = [
     cardImage: "/about-mountain-meadow.webp",
     cardImagePosition: "50% 54%",
     cardAlt: "Sunlit mountain meadow with a layered data texture",
-    accent: "#2c8068",
+    accent: "#7d506f",
     detail: "Background, principles and interests"
   },
   {
@@ -62,7 +62,7 @@ export const areaTiles = [
     image: "/area-art/contact-blue-clouds.webp",
     navImage: "/brand-art/nav/contact.webp",
     alt: "Bright blue sky with white clouds and a dotted data texture",
-    accent: "#2f88ff",
+    accent: "#1f63db",
     detail: "Say what you need"
   }
 ];
