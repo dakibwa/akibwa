@@ -271,17 +271,16 @@ button {
   display: inline-flex;
 }
 
-/* Personal opens a quiet project index. Revealed on hover and on
-   keyboard focus (the trigger link focusing satisfies :focus-within,
-   which makes the panel visible and therefore tabbable). */
+/* Personal opens a quiet project index. Its explicit open state keeps the
+   panel's hit area from latching the native :hover state over sibling links. */
 .nav-dropdown {
   position: absolute;
-  top: calc(100% - 8px);
-  left: 50%;
+  top: 100%;
+  right: 0;
   z-index: 60;
   width: 228px;
-  padding-top: 12px;
-  transform: translate(-50%, 6px);
+  padding-top: 8px;
+  transform: translateY(6px);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -291,12 +290,11 @@ button {
     visibility 0s linear 170ms;
 }
 
-.nav-item:hover .nav-dropdown,
-.nav-item:focus-within:not(:has(> .nav-link.is-pointer-focus)) .nav-dropdown {
+.nav-item.is-dropdown-open .nav-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translate(-50%, 0);
+  transform: translateY(0);
   transition:
     opacity 240ms var(--ease-out),
     transform 240ms var(--ease-out),
@@ -604,8 +602,7 @@ button {
   .nav-desktop .nav-link.is-hovering,
   .nav-desktop .nav-link.is-pressing,
   .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus),
-  .nav-desktop .nav-item:hover > .nav-link,
-  .nav-desktop .nav-item:focus-within:not(:has(> .nav-link.is-pointer-focus)) > .nav-link {
+  .nav-desktop .nav-item.is-dropdown-open > .nav-link {
     --nav-glow: 1;
     color: transparent;
     transition-duration: var(--hover-in);
@@ -641,8 +638,7 @@ button {
 .nav-desktop .nav-link.is-hovering .nav-link__art,
 .nav-desktop .nav-link.is-pressing .nav-link__art,
 .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__art,
-.nav-desktop .nav-item:hover > .nav-link .nav-link__art,
-.nav-desktop .nav-item:focus-within:not(:has(> .nav-link.is-pointer-focus)) > .nav-link .nav-link__art {
+.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__art {
   opacity: 1;
   clip-path: inset(0 0 0 0 round 3px);
   filter: saturate(1.06) contrast(1.03);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PointerResponseLink } from "@/components/pointer-response";
 import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 import { getPersonalProjectArt } from "@/components/personal-project-art";
@@ -63,8 +63,13 @@ export function SiteShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPersonalMenuOpen, setIsPersonalMenuOpen] = useState(false);
   const immersiveRoutes = ["/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
+
+  useEffect(() => {
+    setIsPersonalMenuOpen(false);
+  }, [pathname]);
 
   const primeRoute = (href) => {
     router.prefetch(href);
@@ -81,7 +86,10 @@ export function SiteShell({ children }) {
               className={`brand ${normalize(pathname) === "/" ? "active" : ""}`}
               aria-current={normalize(pathname) === "/" ? "page" : undefined}
               pointerXProperty="--brand-mx"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsPersonalMenuOpen(false);
+              }}
               onPointerEnter={() => primeRoute("/")}
               onFocus={() => primeRoute("/")}
             >
@@ -89,19 +97,54 @@ export function SiteShell({ children }) {
             </PointerResponseLink>
 
             <nav className="nav-desktop" aria-label="Main navigation">
-              {navItems.map((item) => (
-                <div className="nav-item" key={item.href}>
+              {navItems.map((item) => {
+                const hasDropdown = item.href === "/personal";
+                const syncPersonalMenuToPointer = (event) => {
+                  setIsPersonalMenuOpen(hasDropdown && event.pointerType !== "touch");
+                };
+
+                return (
+                  <div
+                    className={`nav-item ${hasDropdown && isPersonalMenuOpen ? "is-dropdown-open" : ""}`}
+                    key={item.href}
+                    onPointerEnter={syncPersonalMenuToPointer}
+                    onPointerMove={syncPersonalMenuToPointer}
+                    onPointerLeave={() => {
+                      if (hasDropdown) {
+                        setIsPersonalMenuOpen(false);
+                      }
+                    }}
+                    onFocusCapture={() => setIsPersonalMenuOpen(hasDropdown)}
+                    onBlurCapture={(event) => {
+                      if (hasDropdown && !event.currentTarget.contains(event.relatedTarget)) {
+                        setIsPersonalMenuOpen(false);
+                      }
+                    }}
+                    onKeyDown={(event) => {
+                      if (hasDropdown && event.key === "Escape") {
+                        event.preventDefault();
+                        setIsPersonalMenuOpen(false);
+                        event.currentTarget.querySelector(":scope > .nav-link")?.focus();
+                      }
+                    }}
+                  >
                   <PointerResponseLink
                     href={item.href}
                     prefetch
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
                     aria-current={navAriaCurrent(pathname, item)}
+                    aria-expanded={hasDropdown ? isPersonalMenuOpen : undefined}
+                    aria-haspopup={hasDropdown ? "true" : undefined}
                     pointerXProperty="--nav-mx"
                     style={{
                       "--nav-glow-light": navGlow[item.href]?.light,
                       "--nav-glow-mid": navGlow[item.href]?.mid
                     }}
-                    onPointerEnter={() => primeRoute(item.href)}
+                    onClick={() => setIsPersonalMenuOpen(false)}
+                    onPointerEnter={(event) => {
+                      syncPersonalMenuToPointer(event);
+                      primeRoute(item.href);
+                    }}
                     onFocus={() => primeRoute(item.href)}
                   >
                     {navArt[item.href] ? (
@@ -114,8 +157,12 @@ export function SiteShell({ children }) {
                     {item.label}
                   </PointerResponseLink>
 
-                  {item.href === "/personal" ? (
-                    <div className="nav-dropdown" aria-label="Personal projects">
+                  {hasDropdown ? (
+                    <div
+                      className="nav-dropdown"
+                      aria-label="Personal projects"
+                      aria-hidden={!isPersonalMenuOpen}
+                    >
                       <div className="nav-dropdown-panel">
                         {personalProjects.map((project) => {
                           const artwork = getPersonalProjectArt(project);
@@ -169,8 +216,9 @@ export function SiteShell({ children }) {
                       </div>
                     </div>
                   ) : null}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </nav>
 
             <button
@@ -178,7 +226,10 @@ export function SiteShell({ children }) {
               className="nav-mobile-toggle"
               aria-expanded={isMenuOpen}
               aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
-              onClick={() => setIsMenuOpen((open) => !open)}
+              onClick={() => {
+                setIsPersonalMenuOpen(false);
+                setIsMenuOpen((open) => !open);
+              }}
             >
               <span className="nav-mobile-toggle-icon" aria-hidden="true">
                 <span className="menu-line menu-line-top" />
