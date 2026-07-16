@@ -1,4 +1,11 @@
+"use client";
+
 import { Instagram, Mail, Navigation } from "lucide-react";
+
+const trackFooterGlow = (event) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  event.currentTarget.style.setProperty("--footer-mx", `${event.clientX - rect.left}px`);
+};
 
 function XLogo({ size = 14 }) {
   return (
@@ -23,7 +30,12 @@ export function PageFooter() {
     <footer className="page-grid page-footer">
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
-          <strong>Making computer work simpler.</strong>
+          <strong
+            onPointerMove={trackFooterGlow}
+            onPointerLeave={(event) => event.currentTarget.style.removeProperty("--footer-mx")}
+          >
+            Making computer work simpler.
+          </strong>
         </div>
         <div className="page-footer-meta">
           <span className="footer-location" style={{ "--handle-accent": "#c05212" }}>

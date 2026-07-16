@@ -218,6 +218,41 @@ button {
   transition-duration: var(--hover-in);
 }
 
+/* A warm light runs through the wordmark, following the cursor. The
+   permanent artwork strip above it remains unchanged. */
+@property --brand-glow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .brand {
+    background-image: linear-gradient(var(--ink), var(--ink));
+    background-image:
+      radial-gradient(
+        42px circle at var(--brand-mx, 50%) 46%,
+        rgb(240 186 84 / calc(var(--brand-glow, 0) * 0.95)),
+        rgb(203 134 30 / calc(var(--brand-glow, 0) * 0.55)) 42%,
+        rgb(203 134 30 / 0) 78%
+      ),
+      linear-gradient(var(--ink), var(--ink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition:
+      --brand-glow var(--hover-out) var(--ease-out),
+      filter var(--hover-out) var(--ease-out);
+  }
+
+  .brand:hover,
+  .brand:focus-visible {
+    --brand-glow: 1;
+    color: transparent;
+    transition-duration: var(--hover-in);
+  }
+}
+
 .nav-desktop {
   display: flex;
   align-items: center;
@@ -530,6 +565,43 @@ button {
 
 .nav-link.active {
   color: var(--black);
+}
+
+/* Each desktop label uses the same cursor-following light, tinted to the
+   artwork for its area. It only appears while hovered or keyboard-focused. */
+@property --nav-glow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .nav-desktop .nav-link {
+    background-image: linear-gradient(var(--ink), var(--ink));
+    background-image:
+      radial-gradient(
+        34px circle at var(--nav-mx, 50%) 46%,
+        rgb(var(--nav-glow-light, 240 186 84) / calc(var(--nav-glow, 0) * 0.9)),
+        rgb(var(--nav-glow-mid, 203 134 30) / calc(var(--nav-glow, 0) * 0.5)) 46%,
+        rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
+      ),
+      linear-gradient(var(--ink), var(--ink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: --nav-glow var(--hover-out) var(--ease-out);
+  }
+
+  .nav-desktop .nav-link:hover,
+  .nav-desktop .nav-link:focus-visible {
+    --nav-glow: 1;
+    color: transparent;
+    transition-duration: var(--hover-in);
+  }
+
+  .nav-desktop .nav-link.active {
+    color: transparent;
+  }
 }
 
 /* The current page keeps its artwork ribbon. Other ribbons draw in from the
@@ -1029,11 +1101,43 @@ button {
 }
 
 .page-footer-signoff strong {
+  display: inline-block;
   max-width: 28ch;
   color: #2b3138;
   font-size: 0.92rem;
   font-weight: 540;
   line-height: 1.25;
+}
+
+@property --footer-glow {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .page-footer-signoff strong {
+    background-image: linear-gradient(#2b3138, #2b3138);
+    background-image:
+      radial-gradient(
+        62px circle at var(--footer-mx, 50%) 46%,
+        rgb(240 186 84 / calc(var(--footer-glow, 0) * 0.95)),
+        rgb(203 134 30 / calc(var(--footer-glow, 0) * 0.55)) 42%,
+        rgb(203 134 30 / 0) 78%
+      ),
+      linear-gradient(#2b3138, #2b3138);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: default;
+    transition: --footer-glow var(--hover-out) var(--ease-out);
+  }
+
+  .page-footer-signoff strong:hover {
+    --footer-glow: 1;
+    color: transparent;
+    transition-duration: var(--hover-in);
+  }
 }
 
 .page-footer-meta {
@@ -6443,6 +6547,8 @@ button {
   .text-action svg,
 
   .brand,
+
+  .page-footer-signoff strong,
 
   .brand::after,
 
