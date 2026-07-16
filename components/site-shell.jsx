@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { PointerResponseLink } from "@/components/pointer-response";
 import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 import { getPersonalProjectArt } from "@/components/personal-project-art";
 
@@ -32,15 +33,6 @@ const navGlow = {
   "/professional": { light: "255 177 128", mid: "255 140 71" },
   "/about": { light: "125 191 164", mid: "74 157 125" },
   "/contact": { light: "143 188 255", mid: "93 157 255" }
-};
-
-const trackNavGlow = (event) => {
-  const rect = event.currentTarget.getBoundingClientRect();
-  event.currentTarget.style.setProperty("--nav-mx", `${event.clientX - rect.left}px`);
-};
-
-const resetNavGlow = (event) => {
-  event.currentTarget.querySelector(":scope > .nav-link")?.style.removeProperty("--nav-mx");
 };
 
 function normalize(pathname) {
@@ -83,37 +75,33 @@ export function SiteShell({ children }) {
       {!isImmersiveRoute && (
         <header className="site-header">
           <div className="site-frame nav-row">
-            <Link
+            <PointerResponseLink
               href="/"
               prefetch
               className={`brand ${normalize(pathname) === "/" ? "active" : ""}`}
               aria-current={normalize(pathname) === "/" ? "page" : undefined}
+              pointerXProperty="--brand-mx"
               onClick={() => setIsMenuOpen(false)}
               onPointerEnter={() => primeRoute("/")}
-              onPointerMove={(event) => {
-                const rect = event.currentTarget.getBoundingClientRect();
-                event.currentTarget.style.setProperty("--brand-mx", `${event.clientX - rect.left}px`);
-              }}
-              onPointerLeave={(event) => event.currentTarget.style.removeProperty("--brand-mx")}
               onFocus={() => primeRoute("/")}
             >
               AKIBWA
-            </Link>
+            </PointerResponseLink>
 
             <nav className="nav-desktop" aria-label="Main navigation">
               {navItems.map((item) => (
-                <div className="nav-item" key={item.href} onPointerLeave={resetNavGlow}>
-                  <Link
+                <div className="nav-item" key={item.href}>
+                  <PointerResponseLink
                     href={item.href}
                     prefetch
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
                     aria-current={navAriaCurrent(pathname, item)}
+                    pointerXProperty="--nav-mx"
                     style={{
                       "--nav-glow-light": navGlow[item.href]?.light,
                       "--nav-glow-mid": navGlow[item.href]?.mid
                     }}
                     onPointerEnter={() => primeRoute(item.href)}
-                    onPointerMove={trackNavGlow}
                     onFocus={() => primeRoute(item.href)}
                   >
                     {navArt[item.href] ? (
@@ -124,7 +112,7 @@ export function SiteShell({ children }) {
                       />
                     ) : null}
                     {item.label}
-                  </Link>
+                  </PointerResponseLink>
 
                   {item.href === "/personal" ? (
                     <div className="nav-dropdown" aria-label="Personal projects">
@@ -204,7 +192,7 @@ export function SiteShell({ children }) {
             <div className="nav-mobile-clip">
               <div className="site-frame nav-mobile-inner">
                 {navItems.map((item) => (
-                  <Link
+                  <PointerResponseLink
                     key={item.href}
                     href={item.href}
                     prefetch
@@ -223,7 +211,7 @@ export function SiteShell({ children }) {
                       />
                     ) : null}
                     {item.label}
-                  </Link>
+                  </PointerResponseLink>
                 ))}
               </div>
             </div>

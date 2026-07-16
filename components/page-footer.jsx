@@ -1,11 +1,7 @@
 "use client";
 
 import { Instagram, Mail, Navigation } from "lucide-react";
-
-const trackFooterGlow = (event) => {
-  const rect = event.currentTarget.getBoundingClientRect();
-  event.currentTarget.style.setProperty("--footer-mx", `${event.clientX - rect.left}px`);
-};
+import { usePointerResponse } from "@/components/pointer-response";
 
 function XLogo({ size = 14 }) {
   return (
@@ -26,24 +22,28 @@ function XLogo({ size = 14 }) {
 }
 
 export function PageFooter() {
+  const signoffPointer = usePointerResponse({ xProperty: "--footer-mx" });
+  const locationPointer = usePointerResponse();
+  const xPointer = usePointerResponse();
+  const instagramPointer = usePointerResponse();
+  const emailPointer = usePointerResponse();
+
   return (
     <footer className="page-grid page-footer">
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
-          <strong
-            onPointerMove={trackFooterGlow}
-            onPointerLeave={(event) => event.currentTarget.style.removeProperty("--footer-mx")}
-          >
+          <strong {...signoffPointer}>
             Making computer work simpler.
           </strong>
         </div>
         <div className="page-footer-meta">
-          <span className="footer-location" style={{ "--handle-accent": "#c05212" }}>
+          <span {...locationPointer} className="footer-location" style={{ "--handle-accent": "#c05212" }}>
             <Navigation size={14} strokeWidth={1.9} />
             <span>Manchester</span>
           </span>
           <nav className="page-footer-details" aria-label="Elsewhere and contact">
             <a
+              {...xPointer}
               href="https://x.com/dakibwa"
               target="_blank"
               rel="noreferrer"
@@ -54,6 +54,7 @@ export function PageFooter() {
               <span>dakibwa</span>
             </a>
             <a
+              {...instagramPointer}
               href="https://www.instagram.com/dakibwa"
               target="_blank"
               rel="noreferrer"
@@ -64,6 +65,7 @@ export function PageFooter() {
               <span>dakibwa</span>
             </a>
             <a
+              {...emailPointer}
               href="mailto:***REMOVED***"
               aria-label="Email ***REMOVED***"
               style={{ "--handle-accent": "#2f88ff" }}

@@ -210,8 +210,9 @@ button {
   pointer-events: none;
 }
 
-.brand:hover,
-.brand:focus-visible {
+.brand.is-hovering,
+.brand.is-pressing,
+.brand:focus-visible:not(.is-pointer-focus) {
   color: var(--black);
   filter: none;
   outline: 0;
@@ -250,8 +251,9 @@ button {
       filter var(--hover-out) var(--ease-out);
   }
 
-  .brand:hover,
-  .brand:focus-visible {
+  .brand.is-hovering,
+  .brand.is-pressing,
+  .brand:focus-visible:not(.is-pointer-focus) {
     --brand-glow: 1;
     color: transparent;
     transition-duration: var(--hover-in);
@@ -290,7 +292,7 @@ button {
 }
 
 .nav-item:hover .nav-dropdown,
-.nav-item:focus-within .nav-dropdown {
+.nav-item:focus-within:not(:has(> .nav-link.is-pointer-focus)) .nav-dropdown {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -549,7 +551,9 @@ button {
   transition: color var(--hover-out) var(--ease-out);
 }
 
-.nav-link:hover {
+.nav-link.is-hovering,
+.nav-link.is-pressing,
+.nav-link:focus-visible:not(.is-pointer-focus) {
   color: var(--black);
   transition-duration: var(--hover-in);
 }
@@ -597,10 +601,11 @@ button {
     transition: --nav-glow var(--hover-out) var(--ease-out);
   }
 
-  .nav-desktop .nav-link:hover,
-  .nav-desktop .nav-link:focus-visible,
+  .nav-desktop .nav-link.is-hovering,
+  .nav-desktop .nav-link.is-pressing,
+  .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus),
   .nav-desktop .nav-item:hover > .nav-link,
-  .nav-desktop .nav-item:focus-within > .nav-link {
+  .nav-desktop .nav-item:focus-within:not(:has(> .nav-link.is-pointer-focus)) > .nav-link {
     --nav-glow: 1;
     color: transparent;
     transition-duration: var(--hover-in);
@@ -633,10 +638,11 @@ button {
     filter var(--hover-out) var(--ease-out);
 }
 
-.nav-desktop .nav-link:hover .nav-link__art,
-.nav-desktop .nav-link:focus-visible .nav-link__art,
+.nav-desktop .nav-link.is-hovering .nav-link__art,
+.nav-desktop .nav-link.is-pressing .nav-link__art,
+.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__art,
 .nav-desktop .nav-item:hover > .nav-link .nav-link__art,
-.nav-desktop .nav-item:focus-within > .nav-link .nav-link__art {
+.nav-desktop .nav-item:focus-within:not(:has(> .nav-link.is-pointer-focus)) > .nav-link .nav-link__art {
   opacity: 1;
   clip-path: inset(0 0 0 0 round 3px);
   filter: saturate(1.06) contrast(1.03);
@@ -944,7 +950,7 @@ button {
 }
 
 .area-card.is-hovering,
-.area-card:focus-visible,
+.area-card:focus-visible:not(.is-pointer-focus),
 .area-card.is-pressing {
   border-color: color-mix(in srgb, var(--area-accent) 46%, rgba(16, 18, 23, 0.22));
   box-shadow:
@@ -955,10 +961,10 @@ button {
 }
 
 .area-card.is-hovering::before,
-.area-card:focus-visible::before,
+.area-card:focus-visible:not(.is-pointer-focus)::before,
 .area-card.is-pressing::before,
 .area-card.is-hovering::after,
-.area-card:focus-visible::after,
+.area-card:focus-visible:not(.is-pointer-focus)::after,
 .area-card.is-pressing::after {
   opacity: 1;
   transition-duration: var(--hover-in);
@@ -1012,14 +1018,14 @@ button {
 }
 
 .area-card.is-hovering .area-art::before,
-.area-card:focus-visible .area-art::before,
+.area-card:focus-visible:not(.is-pointer-focus) .area-art::before,
 .area-card.is-pressing .area-art::before {
   opacity: 1;
   transition-duration: var(--hover-in);
 }
 
 .area-card.is-hovering .area-art img,
-.area-card:focus-visible .area-art img,
+.area-card:focus-visible:not(.is-pointer-focus) .area-art img,
 .area-card.is-pressing .area-art img {
   filter: brightness(1.045) saturate(1.03);
 }
@@ -1075,21 +1081,21 @@ button {
 }
 
 .area-card.is-hovering .area-art::after,
-.area-card:focus-visible .area-art::after,
+.area-card:focus-visible:not(.is-pointer-focus) .area-art::after,
 .area-card.is-pressing .area-art::after {
   opacity: 0.38;
   transition-duration: var(--hover-in);
 }
 
 .area-card.is-hovering .area-caption,
-.area-card:focus-visible .area-caption,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption,
 .area-card.is-pressing .area-caption {
   transform: translateY(-1px);
   transition-duration: var(--hover-in);
 }
 
 .area-card.is-hovering .area-caption::before,
-.area-card:focus-visible .area-caption::before,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption::before,
 .area-card.is-pressing .area-caption::before {
   width: 64px;
   opacity: 1;
@@ -1097,7 +1103,7 @@ button {
 }
 
 .area-card.is-hovering .area-caption svg,
-.area-card:focus-visible .area-caption svg,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption svg,
 .area-card.is-pressing .area-caption svg {
   transform: translateX(5px);
   color: var(--area-accent);
@@ -1182,7 +1188,8 @@ button {
     transition: --footer-glow var(--hover-out) var(--ease-out);
   }
 
-  .page-footer-signoff strong:hover {
+  .page-footer-signoff strong.is-hovering,
+  .page-footer-signoff strong.is-pressing {
     --footer-glow: 1;
     color: transparent;
     transition-duration: var(--hover-in);
@@ -1233,9 +1240,11 @@ button {
   color: var(--handle-accent, currentColor);
 }
 
-.page-footer a:hover,
-.page-footer a:focus-visible,
-.footer-location:hover {
+.page-footer a.is-hovering,
+.page-footer a.is-pressing,
+.page-footer a:focus-visible:not(.is-pointer-focus),
+.footer-location.is-hovering,
+.footer-location.is-pressing {
   color: color-mix(in srgb, var(--handle-accent, var(--black)) 76%, var(--black));
   outline: 0;
   transform: translateY(-2px);
@@ -3382,7 +3391,7 @@ button {
 }
 
 .area-card.is-hovering .knowledge-card-art,
-.area-card:focus-visible .knowledge-card-art {
+.area-card:focus-visible:not(.is-pointer-focus) .knowledge-card-art {
   transform: scale(1.035);
   transition-duration: 1100ms;
 }
@@ -6182,16 +6191,16 @@ button {
     mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
   }
 
-  .nav-mobile .nav-link:hover .nav-link__art,
-  .nav-mobile .nav-link:focus-visible .nav-link__art,
-  .nav-mobile .nav-link:active .nav-link__art,
+  .nav-mobile .nav-link.is-hovering .nav-link__art,
+  .nav-mobile .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__art,
+  .nav-mobile .nav-link.is-pressing .nav-link__art,
   .nav-mobile .nav-link.active .nav-link__art {
     opacity: 0.3;
     filter: saturate(1.04) contrast(1) brightness(1.02);
     transform: translateX(0) scale(1.025);
   }
 
-  .nav-mobile .nav-link:active .nav-link__art {
+  .nav-mobile .nav-link.is-pressing .nav-link__art {
     opacity: 0.38;
     transition-duration: 90ms;
   }
@@ -6614,16 +6623,18 @@ button {
     transition: none;
   }
 
-  .brand:hover,
-  .brand:focus-visible {
+  .brand.is-hovering,
+  .brand.is-pressing,
+  .brand:focus-visible:not(.is-pointer-focus) {
     animation: none;
     color: var(--black);
     filter: none;
     text-shadow: none;
   }
 
-  .brand:hover::after,
-  .brand:focus-visible::after {
+  .brand.is-hovering::after,
+  .brand.is-pressing::after,
+  .brand:focus-visible:not(.is-pointer-focus)::after {
     animation: none;
     opacity: 0.96;
     transform: none;
@@ -6688,7 +6699,7 @@ button {
 }
 
 .area-card.is-hovering .area-art img,
-.area-card:focus-visible .area-art img,
+.area-card:focus-visible:not(.is-pointer-focus) .area-art img,
 .area-card.is-pressing .area-art img {
   transform: scale(1.045);
   filter: saturate(1.05) brightness(1.02);
