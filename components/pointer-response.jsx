@@ -21,7 +21,7 @@ const isWithin = (rect, clientX, clientY) => (
   && clientY <= rect.bottom
 );
 
-export function usePointerResponse({ xProperty, yProperty } = {}) {
+export function usePointerResponse({ xProperty, yProperty, resetSignal } = {}) {
   const ref = useRef(null);
   const isTracking = useRef(false);
 
@@ -93,6 +93,7 @@ export function usePointerResponse({ xProperty, yProperty } = {}) {
   const resetPointer = useCallback(() => {
     isTracking.current = false;
     clearInteraction(ref.current);
+    clearFocusOrigin(ref.current);
   }, []);
 
   const blurResponse = useCallback(() => {
@@ -100,6 +101,10 @@ export function usePointerResponse({ xProperty, yProperty } = {}) {
     clearInteraction(ref.current);
     clearFocusOrigin(ref.current);
   }, []);
+
+  useEffect(() => {
+    resetPointer();
+  }, [resetPointer, resetSignal]);
 
   useEffect(() => {
     const handlePointerOut = (event) => {
@@ -159,6 +164,7 @@ const composeHandlers = (...handlers) => (event) => {
 export function PointerResponseLink({
   pointerXProperty,
   pointerYProperty,
+  pointerResetSignal,
   onPointerEnter,
   onPointerMove,
   onPointerLeave,
@@ -172,7 +178,8 @@ export function PointerResponseLink({
 }) {
   const pointer = usePointerResponse({
     xProperty: pointerXProperty,
-    yProperty: pointerYProperty
+    yProperty: pointerYProperty,
+    resetSignal: pointerResetSignal
   });
 
   return (

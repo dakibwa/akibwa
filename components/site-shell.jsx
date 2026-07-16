@@ -64,9 +64,11 @@ export function SiteShell({ children }) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPersonalMenuOpen, setIsPersonalMenuOpen] = useState(false);
+  const [navigationInteractionCycle, setNavigationInteractionCycle] = useState(0);
   const mobileToggleRef = useRef(null);
   const immersiveRoutes = ["/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
+  const pointerResetSignal = `${normalize(pathname)}:${navigationInteractionCycle}`;
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -93,7 +95,10 @@ export function SiteShell({ children }) {
   return (
     <div className={`site-shell ${isImmersiveRoute ? "is-immersive" : ""}`}>
       {!isImmersiveRoute && (
-        <header className="site-header">
+        <header
+          className="site-header"
+          onClickCapture={() => setNavigationInteractionCycle((cycle) => cycle + 1)}
+        >
           <div className="site-frame nav-row">
             <PointerResponseLink
               href="/"
@@ -101,6 +106,7 @@ export function SiteShell({ children }) {
               className={`brand ${normalize(pathname) === "/" ? "active" : ""}`}
               aria-current={normalize(pathname) === "/" ? "page" : undefined}
               pointerXProperty="--brand-mx"
+              pointerResetSignal={pointerResetSignal}
               onClick={() => {
                 setIsMenuOpen(false);
                 setIsPersonalMenuOpen(false);
@@ -151,6 +157,7 @@ export function SiteShell({ children }) {
                     aria-expanded={hasDropdown ? isPersonalMenuOpen : undefined}
                     aria-haspopup={hasDropdown ? "true" : undefined}
                     pointerXProperty="--nav-mx"
+                    pointerResetSignal={pointerResetSignal}
                     style={{
                       "--nav-glow-light": navGlow[item.href]?.light,
                       "--nav-glow-mid": navGlow[item.href]?.mid
@@ -272,6 +279,7 @@ export function SiteShell({ children }) {
                     tabIndex={isMenuOpen ? undefined : -1}
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
                     aria-current={navAriaCurrent(pathname, item)}
+                    pointerResetSignal={`${pointerResetSignal}:${isMenuOpen ? "open" : "closed"}`}
                     onClick={() => setIsMenuOpen(false)}
                     onPointerEnter={() => primeRoute(item.href)}
                     onFocus={() => primeRoute(item.href)}
