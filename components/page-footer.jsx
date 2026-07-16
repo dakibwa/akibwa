@@ -24,30 +24,43 @@ export function PageFooter() {
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
           <strong>Making computer work simpler.</strong>
+        </div>
+        <div className="page-footer-meta">
           <span className="footer-location">
             <Navigation size={14} strokeWidth={1.9} />
-            <span>Manchester, UK</span>
+            <span>Manchester</span>
           </span>
+          <nav className="page-footer-details" aria-label="Elsewhere and contact">
+            <a
+              href="https://x.com/dakibwa"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="dakibwa on X"
+              style={{ "--handle-accent": "#0f1114" }}
+            >
+              <XLogo />
+              <span>dakibwa</span>
+            </a>
+            <a
+              href="https://www.instagram.com/dakibwa"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="dakibwa on Instagram"
+              style={{ "--handle-accent": "#d63a7a" }}
+            >
+              <Instagram size={14} strokeWidth={1.8} />
+              <span>dakibwa</span>
+            </a>
+            <a
+              href="mailto:***REMOVED***"
+              aria-label="Email ***REMOVED***"
+              style={{ "--handle-accent": "#2f88ff" }}
+            >
+              <Mail size={14} strokeWidth={1.8} />
+              <span>Email me</span>
+            </a>
+          </nav>
         </div>
-        <nav className="page-footer-details" aria-label="Elsewhere and contact">
-          <a href="https://x.com/dakibwa" target="_blank" rel="noreferrer" aria-label="@dakibwa on X">
-            <XLogo />
-            <span>@dakibwa</span>
-          </a>
-          <a
-            href="https://www.instagram.com/dakibwa"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="@dakibwa on Instagram"
-          >
-            <Instagram size={14} strokeWidth={1.8} />
-            <span>@dakibwa</span>
-          </a>
-          <a href="mailto:***REMOVED***" aria-label="Email ***REMOVED***">
-            <Mail size={14} strokeWidth={1.8} />
-            <span>Email me</span>
-          </a>
-        </nav>
       </div>
     </footer>
   );
