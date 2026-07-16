@@ -1056,45 +1056,36 @@ button {
   gap: 6px;
 }
 
-.footer-location {
-  color: #6c737c;
-  cursor: default;
-}
-
-.footer-location svg {
-  color: currentColor;
-}
-
 .x-logo {
   flex: 0 0 auto;
 }
 
-.page-footer a {
+.page-footer a,
+.footer-location {
   min-height: 32px;
   color: color-mix(in srgb, var(--handle-accent, #343a42) 22%, #30363e);
+  cursor: default;
   font-weight: 560;
   transition:
     color 300ms var(--ease-out),
     transform 300ms var(--ease-out);
 }
 
-.page-footer a svg {
+.page-footer a {
+  cursor: pointer;
+}
+
+.page-footer a svg,
+.footer-location svg {
   color: var(--handle-accent, currentColor);
 }
 
-.footer-location {
-  transition: color 300ms var(--ease-out);
-}
-
 .page-footer a:hover,
-.page-footer a:focus-visible {
+.page-footer a:focus-visible,
+.footer-location:hover {
   color: color-mix(in srgb, var(--handle-accent, var(--black)) 76%, var(--black));
   outline: 0;
   transform: translateY(-2px);
-}
-
-.footer-location:hover {
-  color: #343a42;
 }
 
 .studio-page {
@@ -6107,7 +6098,8 @@ button {
     gap: 16px;
   }
 
-  .page-footer-details a {
+  .page-footer-details a,
+  .footer-location {
     min-height: 30px;
     font-size: 0.72rem;
   }
