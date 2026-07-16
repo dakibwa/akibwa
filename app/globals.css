@@ -2069,8 +2069,8 @@ button {
 .about-toolkit,
 .about-interests {
   display: grid;
-  grid-template-columns: minmax(190px, 0.3fr) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 72px);
+  grid-template-columns: minmax(190px, 0.24fr) minmax(0, 1fr);
+  gap: clamp(28px, 3vw, 44px);
   align-items: start;
 }
 
@@ -2081,7 +2081,7 @@ button {
 .about-interests {
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
-  padding: 28px 30px 30px;
+  padding: 26px 28px;
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
 }
 
@@ -2271,13 +2271,9 @@ button {
 .toolkit-group {
   display: grid;
   align-content: start;
-  gap: 12px;
-  padding: 22px 26px 20px;
+  gap: 10px;
+  padding: 3px 24px 6px;
   border-left: 1px solid var(--line);
-}
-
-.toolkit-group:first-child {
-  border-left: 0;
 }
 
 .toolkit-label {
@@ -5831,6 +5827,10 @@ button {
 
   .toolkit-group {
     padding: 18px;
+  }
+
+  .toolkit-group:first-child {
+    border-left: 0;
   }
 
   .contact-layout {
