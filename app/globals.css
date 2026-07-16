@@ -593,7 +593,9 @@ button {
   }
 
   .nav-desktop .nav-link:hover,
-  .nav-desktop .nav-link:focus-visible {
+  .nav-desktop .nav-link:focus-visible,
+  .nav-desktop .nav-item:hover > .nav-link,
+  .nav-desktop .nav-item:focus-within > .nav-link {
     --nav-glow: 1;
     color: transparent;
     transition-duration: var(--hover-in);
@@ -627,7 +629,9 @@ button {
 }
 
 .nav-desktop .nav-link:hover .nav-link__art,
-.nav-desktop .nav-link:focus-visible .nav-link__art {
+.nav-desktop .nav-link:focus-visible .nav-link__art,
+.nav-desktop .nav-item:hover > .nav-link .nav-link__art,
+.nav-desktop .nav-item:focus-within > .nav-link .nav-link__art {
   opacity: 1;
   clip-path: inset(0 0 0 0 round 3px);
   filter: saturate(1.06) contrast(1.03);

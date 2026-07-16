@@ -40,7 +40,7 @@ const trackNavGlow = (event) => {
 };
 
 const resetNavGlow = (event) => {
-  event.currentTarget.style.removeProperty("--nav-mx");
+  event.currentTarget.querySelector(":scope > .nav-link")?.style.removeProperty("--nav-mx");
 };
 
 function normalize(pathname) {
@@ -52,7 +52,19 @@ function normalize(pathname) {
 }
 
 function isActive(pathname, match) {
-  return match.includes(normalize(pathname));
+  const current = normalize(pathname);
+
+  return match.includes(current) || (match.includes("/personal") && current.startsWith("/personal/"));
+}
+
+function navAriaCurrent(pathname, item) {
+  const current = normalize(pathname);
+
+  if (current === item.href) {
+    return "page";
+  }
+
+  return isActive(pathname, item.match) ? "location" : undefined;
 }
 
 export function SiteShell({ children }) {
@@ -90,19 +102,18 @@ export function SiteShell({ children }) {
 
             <nav className="nav-desktop" aria-label="Main navigation">
               {navItems.map((item) => (
-                <div className="nav-item" key={item.href}>
+                <div className="nav-item" key={item.href} onPointerLeave={resetNavGlow}>
                   <Link
                     href={item.href}
                     prefetch
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
-                    aria-current={isActive(pathname, item.match) ? "page" : undefined}
+                    aria-current={navAriaCurrent(pathname, item)}
                     style={{
                       "--nav-glow-light": navGlow[item.href]?.light,
                       "--nav-glow-mid": navGlow[item.href]?.mid
                     }}
                     onPointerEnter={() => primeRoute(item.href)}
                     onPointerMove={trackNavGlow}
-                    onPointerLeave={resetNavGlow}
                     onFocus={() => primeRoute(item.href)}
                   >
                     {navArt[item.href] ? (
@@ -199,7 +210,7 @@ export function SiteShell({ children }) {
                     prefetch
                     tabIndex={isMenuOpen ? undefined : -1}
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
-                    aria-current={isActive(pathname, item.match) ? "page" : undefined}
+                    aria-current={navAriaCurrent(pathname, item)}
                     onClick={() => setIsMenuOpen(false)}
                     onPointerEnter={() => primeRoute(item.href)}
                     onFocus={() => primeRoute(item.href)}
