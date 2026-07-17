@@ -11,9 +11,12 @@ QA.
 - Every navigation label owns one 6px artwork bar. The bar's clipping box is
   exactly the width of that label's link; it must never use the width of the
   nav, header, viewport, or page.
-- The artwork is a child of that clipping box. It animates from left to right
-  with `scaleX`, while `overflow: hidden` and `contain: paint` keep every frame
-  inside the owning label.
+- The artwork stays full-size inside that clipping box. A canvas-coloured
+  curtain slides away to reveal it from left to right; the image itself must
+  never squash or stretch during the animation.
+- The curtain reveals in 190ms with a fast decelerating ease and covers again
+  in 140ms. The label glow responds in 150ms and clears in 110ms. Do not route
+  these timings back through the slower site-wide hover variables.
 - The current route keeps its bar visible. Hover, press, keyboard focus, and an
   open Personal dropdown reveal the relevant bar. Leaving or resetting the
   interaction hides an inactive bar again.
@@ -28,6 +31,7 @@ QA.
   as a desktop overline.
 - The active row and keyboard focus may reveal the mobile artwork. A tap uses
   the row press colour; it must not replay the desktop ribbon animation.
+- Mobile artwork transitions complete within 220ms.
 - Menu close animation completes before route navigation, unless reduced motion
   is requested.
 

@@ -80,14 +80,35 @@ requireRuleText(".nav-link__bar {", [
 requireRuleText(".nav-link__bar-art {", [
   "width: 100%",
   "height: 100%",
-  "transform: scaleX(0)",
-  "transform-origin: left center"
+  "opacity: 1",
+  "transition: filter var(--nav-label-out) ease-out"
+]);
+
+requireRuleText(".nav-link__bar::after {", [
+  "content: \"\"",
+  "inset: -1px",
+  "background: var(--canvas)",
+  "transform: translateX(0)",
+  "var(--nav-ribbon-out)",
+  "var(--nav-ribbon-ease-out)"
 ]);
 
 requireRuleText(".nav-desktop .nav-link.active .nav-link__bar-art {", [
-  "opacity: 1",
-  "transform: scaleX(1)"
+  "opacity: 1"
 ]);
+
+requireRuleText(".nav-desktop .nav-link.active .nav-link__bar::after {", [
+  "transform: translateX(102%)"
+]);
+
+for (const timing of [
+  "--nav-label-in: 150ms",
+  "--nav-label-out: 110ms",
+  "--nav-ribbon-in: 190ms",
+  "--nav-ribbon-out: 140ms"
+]) {
+  requireText(css, timing, `navigation motion must retain ${timing}`);
+}
 
 requireRuleText(".nav-mobile .nav-link__bar {", ["display: none"]);
 requireRuleText(".nav-mobile .nav-link__mobile-art {", [

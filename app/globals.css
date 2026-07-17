@@ -554,6 +554,12 @@ button {
 }
 
 .nav-link {
+  --nav-label-in: 150ms;
+  --nav-label-out: 110ms;
+  --nav-ribbon-in: 190ms;
+  --nav-ribbon-out: 140ms;
+  --nav-ribbon-ease-in: cubic-bezier(0.16, 1, 0.3, 1);
+  --nav-ribbon-ease-out: cubic-bezier(0.4, 0, 1, 1);
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -564,14 +570,14 @@ button {
   font-weight: 560;
   letter-spacing: 0;
   text-transform: none;
-  transition: color var(--hover-out) var(--ease-out);
+  transition: color var(--nav-label-out) ease-out;
 }
 
 .nav-link.is-hovering,
 .nav-link.is-pressing,
 .nav-link:focus-visible:not(.is-pointer-focus) {
   color: var(--black);
-  transition-duration: var(--hover-in);
+  transition-duration: var(--nav-label-in);
 }
 
 .nav-link__label {
@@ -615,7 +621,7 @@ button {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    transition: --nav-glow var(--hover-out) var(--ease-out);
+    transition: --nav-glow var(--nav-label-out) ease-out;
   }
 
   .nav-desktop .nav-link.is-hovering,
@@ -631,7 +637,7 @@ button {
   .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__label,
   .nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__label {
     --nav-glow: 1;
-    transition-duration: var(--hover-in);
+    transition-duration: var(--nav-label-in);
   }
 
   .nav-desktop .nav-link.active .nav-link__label {
@@ -639,8 +645,9 @@ button {
   }
 }
 
-/* The current page keeps its artwork ribbon. Other ribbons scale inside a
-   fixed-width clipping box on hover or focus, then retract on pointer leave. */
+/* The current page keeps its artwork ribbon. Inactive ribbons remain full
+   size behind a fast moving curtain, avoiding the compressed-image look that
+   came from scaling the artwork itself. */
 .nav-link__bar {
   position: absolute;
   top: 13px;
@@ -660,14 +667,20 @@ button {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0;
+  opacity: 1;
   filter: saturate(0.94) contrast(0.99);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
+  transition: filter var(--nav-label-out) ease-out;
+}
+
+.nav-link__bar::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--canvas);
+  pointer-events: none;
+  transform: translateX(0);
+  transition: transform var(--nav-ribbon-out) var(--nav-ribbon-ease-out);
 }
 
 .nav-desktop .nav-link.is-hovering .nav-link__bar-art,
@@ -676,14 +689,25 @@ button {
 .nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar-art {
   opacity: 1;
   filter: saturate(1.06) contrast(1.03);
-  transform: scaleX(1);
-  transition-duration: var(--hover-in);
+  transition-duration: var(--nav-label-in);
+}
+
+.nav-desktop .nav-link.is-hovering .nav-link__bar::after,
+.nav-desktop .nav-link.is-pressing .nav-link__bar::after,
+.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar::after,
+.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar::after {
+  transform: translateX(102%);
+  transition-duration: var(--nav-ribbon-in);
+  transition-timing-function: var(--nav-ribbon-ease-in);
 }
 
 .nav-desktop .nav-link.active .nav-link__bar-art {
   opacity: 1;
   filter: saturate(1.06) contrast(1.03);
-  transform: scaleX(1);
+}
+
+.nav-desktop .nav-link.active .nav-link__bar::after {
+  transform: translateX(102%);
 }
 
 .nav-mobile-toggle {
@@ -6222,9 +6246,9 @@ button {
     pointer-events: none;
     transform: translateX(-7px) scale(1.015);
     transition:
-      opacity 300ms var(--ease-out),
-      filter 300ms var(--ease-out),
-      transform 480ms var(--ease-out);
+      opacity 150ms ease-out,
+      filter 180ms ease-out,
+      transform 220ms var(--ease-out);
     -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
     mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
   }
@@ -6587,6 +6611,8 @@ button {
   .nav-link,
 
   .nav-link__bar-art,
+
+  .nav-link__bar::after,
 
   .nav-link__mobile-art,
 
