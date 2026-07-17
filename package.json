@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "check:navigation": "node scripts/check-navigation-contract.mjs",
+    "build": "npm run check:navigation && NEXT_TELEMETRY_DISABLED=1 next build",
     "publish:check": "node scripts/check-publication.mjs",
     "publish:ready": "npm run build && npm run publish:check && npm run refresh:status",
     "refresh:status": "node scripts/check-cloud-refreshes.mjs",

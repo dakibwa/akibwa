@@ -194,20 +194,32 @@ button {
     filter var(--hover-out) var(--ease-out);
 }
 
-.brand::after {
-  content: "";
+.brand__bar {
   position: absolute;
   right: 0;
   top: 13px;
   left: 0;
+  display: block;
   height: 6px;
+  overflow: hidden;
   border-radius: 3px;
+  contain: paint;
+  pointer-events: none;
+}
+
+.brand__bar-art {
+  display: block;
+  width: 100%;
+  height: 100%;
   background-image: url("/brand-art/akibwa-accent-strip.webp");
   background-size: 116% auto;
   background-position: center;
   opacity: 0.96;
   filter: saturate(1.04) contrast(1.03);
-  pointer-events: none;
+}
+
+.brand__label {
+  display: block;
 }
 
 .brand.is-hovering,
@@ -228,7 +240,7 @@ button {
 }
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .brand {
+  .brand__label {
     background-image: linear-gradient(var(--ink), var(--ink));
     background-image:
       radial-gradient(
@@ -254,8 +266,14 @@ button {
   .brand.is-hovering,
   .brand.is-pressing,
   .brand:focus-visible:not(.is-pointer-focus) {
-    --brand-glow: 1;
     color: transparent;
+    transition-duration: var(--hover-in);
+  }
+
+  .brand.is-hovering .brand__label,
+  .brand.is-pressing .brand__label,
+  .brand:focus-visible:not(.is-pointer-focus) .brand__label {
+    --brand-glow: 1;
     transition-duration: var(--hover-in);
   }
 }
@@ -556,18 +574,19 @@ button {
   transition-duration: var(--hover-in);
 }
 
-.nav-link span {
-  display: none;
+.nav-link__label {
+  display: block;
 }
 
-/* Each nav item's area artwork doubles as an overline: a slim image strip
-   above the label that previews the page on hover and stays put on the
-   active page. Above rather than below so the cursor — which arrives from
-   beneath — never sits on top of it.
-   Specificity note: `.nav-link span` hides legacy label spans, so the art
-   span is addressed with two-class selectors to win over it. */
+/* Desktop overlines and mobile row artwork are deliberately separate DOM
+   elements. The overline is clipped by its own paint container, so an image
+   or transition can never escape the width of the link that owns it. */
 .nav-link {
   isolation: isolate;
+}
+
+.nav-link__mobile-art {
+  display: none;
 }
 
 .nav-link.active {
@@ -583,7 +602,7 @@ button {
 }
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .nav-desktop .nav-link {
+  .nav-desktop .nav-link__label {
     background-image: linear-gradient(var(--ink), var(--ink));
     background-image:
       radial-gradient(
@@ -603,52 +622,68 @@ button {
   .nav-desktop .nav-link.is-pressing,
   .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus),
   .nav-desktop .nav-item.is-dropdown-open > .nav-link {
-    --nav-glow: 1;
     color: transparent;
     transition-duration: var(--hover-in);
   }
 
-  .nav-desktop .nav-link.active {
+  .nav-desktop .nav-link.is-hovering .nav-link__label,
+  .nav-desktop .nav-link.is-pressing .nav-link__label,
+  .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__label,
+  .nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__label {
+    --nav-glow: 1;
+    transition-duration: var(--hover-in);
+  }
+
+  .nav-desktop .nav-link.active .nav-link__label {
     color: transparent;
   }
 }
 
-/* The current page keeps its artwork ribbon. Other ribbons draw in from the
-   left on hover or focus, then retract when the pointer leaves. */
-.nav-desktop .nav-link__art {
+/* The current page keeps its artwork ribbon. Other ribbons scale inside a
+   fixed-width clipping box on hover or focus, then retract on pointer leave. */
+.nav-link__bar {
   position: absolute;
   top: 13px;
   right: 0;
   left: 0;
   display: block;
   height: 6px;
+  overflow: hidden;
   border-radius: 3px;
+  contain: paint;
+  pointer-events: none;
+}
+
+.nav-link__bar-art {
+  display: block;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
   opacity: 0;
-  clip-path: inset(0 100% 0 0 round 3px);
   filter: saturate(0.94) contrast(0.99);
-  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
   transition:
     opacity var(--hover-out) var(--ease-out),
-    clip-path var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
+    filter var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
 }
 
-.nav-desktop .nav-link.is-hovering .nav-link__art,
-.nav-desktop .nav-link.is-pressing .nav-link__art,
-.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__art,
-.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__art {
+.nav-desktop .nav-link.is-hovering .nav-link__bar-art,
+.nav-desktop .nav-link.is-pressing .nav-link__bar-art,
+.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar-art,
+.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar-art {
   opacity: 1;
-  clip-path: inset(0 0 0 0 round 3px);
   filter: saturate(1.06) contrast(1.03);
+  transform: scaleX(1);
   transition-duration: var(--hover-in);
 }
 
-.nav-desktop .nav-link.active .nav-link__art {
+.nav-desktop .nav-link.active .nav-link__bar-art {
   opacity: 1;
-  clip-path: inset(0 0 0 0 round 3px);
   filter: saturate(1.06) contrast(1.03);
+  transform: scaleX(1);
 }
 
 .nav-mobile-toggle {
@@ -6171,7 +6206,11 @@ button {
   /* Mobile rows are full-width and left-aligned, so the active row's art
      anchors to the label edge and fades out rightward — the menu's only
      active indicator. */
-  .nav-mobile .nav-link .nav-link__art {
+  .nav-mobile .nav-link__bar {
+    display: none;
+  }
+
+  .nav-mobile .nav-link__mobile-art {
     position: absolute;
     inset: 5px -12px 5px -16px;
     z-index: -1;
@@ -6190,8 +6229,8 @@ button {
     mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
   }
 
-  .nav-mobile .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__art,
-  .nav-mobile .nav-link.active .nav-link__art {
+  .nav-mobile .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__mobile-art,
+  .nav-mobile .nav-link.active .nav-link__mobile-art {
     opacity: 0.3;
     filter: saturate(1.04) contrast(1) brightness(1.02);
     transform: translateX(0) scale(1.025);
@@ -6547,7 +6586,9 @@ button {
 
   .nav-link,
 
-  .nav-link .nav-link__art,
+  .nav-link__bar-art,
+
+  .nav-link__mobile-art,
 
   .area-card,
 
@@ -6581,7 +6622,7 @@ button {
 
   .page-footer-signoff strong,
 
-  .brand::after,
+  .brand__bar-art,
 
   .nav-mobile {
     animation: none;

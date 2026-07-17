@@ -61,6 +61,23 @@ function navAriaCurrent(pathname, item) {
   return isActive(pathname, item.match) ? "location" : undefined;
 }
 
+function NavigationArtwork({ src }) {
+  if (!src) {
+    return null;
+  }
+
+  const style = { backgroundImage: `url(${src})` };
+
+  return (
+    <>
+      <span className="nav-link__bar" aria-hidden="true">
+        <span className="nav-link__bar-art" style={style} />
+      </span>
+      <span className="nav-link__mobile-art" style={style} aria-hidden="true" />
+    </>
+  );
+}
+
 export function SiteShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -145,7 +162,10 @@ export function SiteShell({ children }) {
               onPointerEnter={() => primeRoute("/")}
               onFocus={() => primeRoute("/")}
             >
-              AKIBWA
+              <span className="brand__bar" aria-hidden="true">
+                <span className="brand__bar-art" />
+              </span>
+              <span className="brand__label">AKIBWA</span>
             </PointerResponseLink>
 
             <nav className="nav-desktop" aria-label="Main navigation">
@@ -200,14 +220,8 @@ export function SiteShell({ children }) {
                     }}
                     onFocus={() => primeRoute(item.href)}
                   >
-                    {navArt[item.href] ? (
-                      <span
-                        className="nav-link__art"
-                        style={{ backgroundImage: `url(${navArt[item.href]})` }}
-                        aria-hidden="true"
-                      />
-                    ) : null}
-                    {item.label}
+                    <NavigationArtwork src={navArt[item.href]} />
+                    <span className="nav-link__label">{item.label}</span>
                   </PointerResponseLink>
 
                   {hasDropdown ? (
@@ -316,14 +330,8 @@ export function SiteShell({ children }) {
                     onPointerEnter={() => primeRoute(item.href)}
                     onFocus={() => primeRoute(item.href)}
                   >
-                    {navArt[item.href] ? (
-                      <span
-                        className="nav-link__art"
-                        style={{ backgroundImage: `url(${navArt[item.href]})` }}
-                        aria-hidden="true"
-                      />
-                    ) : null}
-                    {item.label}
+                    <NavigationArtwork src={navArt[item.href]} />
+                    <span className="nav-link__label">{item.label}</span>
                   </PointerResponseLink>
                 ))}
               </div>
