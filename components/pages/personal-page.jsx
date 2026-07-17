@@ -77,10 +77,6 @@ function getProjectFrameUrl(project, isLocalHost) {
   return "";
 }
 
-function shouldOpenProjectRoute(project) {
-  return project.mode !== "preview" && project.visual === "vitals" && Boolean(project.fallbackHref);
-}
-
 function findPersonalProjectBySlug(slug) {
   if (!slug) return null;
   return personalProjects.find((project) => project.slug === slug || project.aliases?.includes(slug)) ?? null;
@@ -445,7 +441,7 @@ function CoverCollisionShowcase({ project, immersive = false }) {
       aria-live="polite"
     >
       {!immersive && (
-        <div className="vitals-showcase-copy cover-collision-copy">
+        <div className="project-showcase-copy cover-collision-copy">
           <span>Project</span>
           <h2>{project.title}</h2>
           <p>{project.summary}</p>
@@ -465,7 +461,7 @@ function CoverCollisionShowcase({ project, immersive = false }) {
               <dd>A public Instagram series of cover mismatches, collage moves, and visual recombination.</dd>
             </div>
           </dl>
-          <div className="vitals-showcase-actions">
+          <div className="project-showcase-actions">
             <a href={profileUrl || project.externalHref} target="_blank" rel="noreferrer">
               <Instagram size={15} strokeWidth={1.7} />
               Open Instagram
@@ -811,11 +807,6 @@ export function PersonalPage({ initialSlug = null }) {
       return undefined;
     }
 
-    if (shouldOpenProjectRoute(project)) {
-      window.location.assign(project.fallbackHref);
-      return undefined;
-    }
-
     if (!isPersonalProjectLaunchable(project)) {
       window.history.replaceState(null, "", `/personal/#${project.slug}`);
       setArrivedSlug(project.slug);
@@ -909,11 +900,6 @@ export function PersonalPage({ initialSlug = null }) {
 
   const selectProject = (project) => {
     if (!isPersonalProjectLaunchable(project)) return;
-
-    if (shouldOpenProjectRoute(project)) {
-      window.location.assign(project.fallbackHref);
-      return;
-    }
 
     setIsOverlayMaximized(false);
     setExpandedSlug(project.slug);

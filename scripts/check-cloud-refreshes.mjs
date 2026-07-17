@@ -53,14 +53,6 @@ if (rows.some((row) => !row.ok)) {
 }
 
 function summarize(id, data) {
-  if (id === "vitals") {
-    return {
-      recovery: data.latest?.recovery || null,
-      sleep: data.latest?.sleep || null,
-      strain: data.latest?.strain || null
-    };
-  }
-
   if (id === "chorus") {
     return {
       totalScrobbles: data.totalScrobbles || null,

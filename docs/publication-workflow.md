@@ -33,14 +33,3 @@ npm run publish:check
 4. Put credentialed refresh/API work in `workers/<surface>-refresh/`, not in GitHub Actions.
 5. Read the registry from `components/site-data.js` instead of duplicating URLs in page code.
 6. Run `npm run publish:ready`.
-
-## Private Documents To Website
-
-The Personal Knowledge Base surface is a public projection, not a memory browser. Refresh it from the private memory workspace:
-
-```bash
-cd /Users/danatkinson/Documents/Codex/2026-04-30/what-can-you-be-working-on/personal-memory-wiki
-python3 scripts/publish_public_system.py
-```
-
-That command rebuilds the project registry, agentic boot packet, public Akibwapedia packet, and `data/akibwapedia-data.json` in this site. It should export only low-sensitivity architecture, counts, source-family labels, routes, and guardrails.

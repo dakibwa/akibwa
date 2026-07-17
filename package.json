@@ -10,7 +10,6 @@
     "publish:ready": "npm run build && npm run publish:check && npm run refresh:status",
     "refresh:status": "node scripts/check-cloud-refreshes.mjs",
     "refresh:chorus:local": "node scripts/update-chorus-data.mjs",
-    "refresh:vitals:local": "node scripts/update-vitals-data.mjs",
     "start": "next start"
   },
   "dependencies": {

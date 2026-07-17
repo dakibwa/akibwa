@@ -2533,13 +2533,13 @@ button {
   color: var(--blue);
 }
 
-.vitals-showcase-copy {
+.project-showcase-copy {
   display: grid;
   align-content: start;
   gap: 18px;
 }
 
-.vitals-showcase-copy > span {
+.project-showcase-copy > span {
   color: var(--black);
   font-size: 0.74rem;
   font-weight: 620;
@@ -2547,7 +2547,7 @@ button {
   text-transform: uppercase;
 }
 
-.vitals-showcase-copy h2 {
+.project-showcase-copy h2 {
   margin: 0;
   color: var(--black);
   font-size: 2.6rem;
@@ -2555,27 +2555,27 @@ button {
   line-height: 0.98;
 }
 
-.vitals-showcase-copy p {
+.project-showcase-copy p {
   margin: 0;
   color: #59616b;
   font-size: 1rem;
   line-height: 1.52;
 }
 
-.vitals-showcase-copy dl {
+.project-showcase-copy dl {
   display: grid;
   gap: 14px;
   margin: 4px 0 0;
 }
 
-.vitals-showcase-copy dl div {
+.project-showcase-copy dl div {
   display: grid;
   gap: 7px;
   border-top: 1px solid rgba(16, 18, 23, 0.1);
   padding-top: 14px;
 }
 
-.vitals-showcase-copy dt {
+.project-showcase-copy dt {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2584,21 +2584,21 @@ button {
   font-weight: 560;
 }
 
-.vitals-showcase-copy dd {
+.project-showcase-copy dd {
   margin: 0;
   color: #59616b;
   font-size: 0.88rem;
   line-height: 1.5;
 }
 
-.vitals-showcase-actions {
+.project-showcase-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-.vitals-showcase-actions a,
-.vitals-showcase-actions span {
+.project-showcase-actions a,
+.project-showcase-actions span {
   display: inline-flex;
   min-height: 42px;
   align-items: center;
@@ -2611,7 +2611,7 @@ button {
   font-weight: 540;
 }
 
-.vitals-showcase-actions a:hover {
+.project-showcase-actions a:hover {
   border-color: rgba(47, 136, 255, 0.38);
   color: var(--blue);
 }
@@ -2712,17 +2712,6 @@ button {
   width: calc(100vw - 16px);
   height: calc(100dvh - 16px);
   border-radius: 10px;
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) {
-  padding:
-    clamp(32px, 8vw, 118px)
-    clamp(22px, 8vw, 128px);
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
-  width: min(1120px, calc(100vw - clamp(44px, 16vw, 256px)));
-  height: min(700px, calc(100dvh - clamp(64px, 18dvh, 156px)));
 }
 
 .project-expanded-toolbar {
@@ -2938,12 +2927,6 @@ button {
   min-height: 100%;
   border: 0;
   border-radius: 0;
-}
-
-.project-expanded-body .personal-full-app-showcase.is-vitals {
-  height: 100%;
-  overflow: auto;
-  background: #efeeea;
 }
 
 /* The overlay toolbar already names the project, so the embedded app skips
@@ -5693,30 +5676,6 @@ button {
   padding: 0 12px 14px;
 }
 
-/* Vitals dashboard live aggregate preview */
-
-/* Vitals AI health intelligence dashboard */
-
-/* Banner toolbar — same artwork and white meta text as the Personal-page
-   expanded overlay, so the standalone page and the embed read as one app. */
-
-/* Card heading note — quiet source/date label in place of dead buttons. */
-
-/* Real nights replace the fabricated sleep-stage segments. */
-
-/* Sources card — real coverage rows, live dot when the source has data
-   inside the current window. */
-
-/* Recovery line draws in left-to-right when the window changes. */
-@keyframes vitals-line-draw {
-  from {
-    stroke-dashoffset: -1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 @media (max-width: 1060px) {
   .project-expanded-shell {
     width: calc(100vw - 32px);
@@ -5968,15 +5927,6 @@ button {
     width: calc(100vw - 16px);
     height: calc(100dvh - 16px);
     border-radius: 10px;
-  }
-
-  .project-expanded-layer.is-vitals:not(.is-maximized) {
-    padding: 8px;
-  }
-
-  .project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
-    width: calc(100vw - 16px);
-    height: calc(100dvh - 16px);
   }
 
   .project-expanded-toolbar {
@@ -6850,16 +6800,6 @@ button {
   .project-expanded-banner-stat {
     display: none;
   }
-}
-
-/* Vitals opens at the same stage size as Chorus instead of the smaller cameo. */
-.project-expanded-layer.is-vitals:not(.is-maximized) {
-  padding: clamp(14px, 3vw, 46px);
-}
-
-.project-expanded-layer.is-vitals:not(.is-maximized) .project-expanded-shell {
-  width: min(1640px, calc(100vw - clamp(28px, 6vw, 92px)));
-  height: min(980px, calc(100dvh - clamp(28px, 6vw, 92px)));
 }
 
 /* Moved-page notices for legacy routes */

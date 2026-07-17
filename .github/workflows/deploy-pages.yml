@@ -35,7 +35,6 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NEXT_PUBLIC_CHORUS_APP_URL: ${{ vars.CHORUS_APP_URL }}
-          NEXT_PUBLIC_VITALS_APP_URL: ${{ vars.VITALS_APP_URL }}
 
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
