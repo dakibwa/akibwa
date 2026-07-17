@@ -6241,32 +6241,7 @@ button {
   }
 
   .page-footer {
-    margin-top: 32px;
-  }
-
-  .page-footer-panel {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
-    border-top: 1px solid var(--line);
-    padding-top: 18px;
-  }
-
-  .page-footer-panel::before {
-    display: block;
-  }
-
-  .page-footer-meta {
-    gap: 6px 16px;
-  }
-
-  .page-footer-details {
-    gap: 16px;
-  }
-
-  .page-footer-details a,
-  .footer-location {
-    min-height: 30px;
-    font-size: 0.72rem;
+    display: none;
   }
 
   .studio-page {
