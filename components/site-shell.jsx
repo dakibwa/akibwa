@@ -17,6 +17,8 @@ const navItems = [
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
 
+const mobileMenuExitMs = 180;
+
 /* Each project's accent, as used by its artwork on the personal page. */
 const projectAccents = {
   chorus: "#ff6f1a",
@@ -66,6 +68,7 @@ export function SiteShell({ children }) {
   const [isPersonalMenuOpen, setIsPersonalMenuOpen] = useState(false);
   const [navigationInteractionCycle, setNavigationInteractionCycle] = useState(0);
   const mobileToggleRef = useRef(null);
+  const mobileNavigationTimerRef = useRef(null);
   const immersiveRoutes = ["/chorus"];
   const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
   const pointerResetSignal = `${normalize(pathname)}:${navigationInteractionCycle}`;
@@ -88,8 +91,36 @@ export function SiteShell({ children }) {
     return () => window.removeEventListener("keydown", closeMenusOnEscape);
   }, []);
 
+  useEffect(() => () => {
+    window.clearTimeout(mobileNavigationTimerRef.current);
+  }, []);
+
   const primeRoute = (href) => {
     router.prefetch(href);
+  };
+
+  const navigateFromMobileMenu = (event, href) => {
+    const isModifiedClick = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+
+    if (event.button !== 0 || isModifiedClick) {
+      return;
+    }
+
+    event.preventDefault();
+    setIsMenuOpen(false);
+    window.clearTimeout(mobileNavigationTimerRef.current);
+
+    if (normalize(pathname) === normalize(href)) {
+      return;
+    }
+
+    const exitDelay = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : mobileMenuExitMs;
+
+    mobileNavigationTimerRef.current = window.setTimeout(() => {
+      router.push(href);
+    }, exitDelay);
   };
 
   return (
@@ -251,6 +282,7 @@ export function SiteShell({ children }) {
               aria-controls="mobile-navigation"
               aria-label={isMenuOpen ? "Close navigation" : "Open navigation"}
               onClick={() => {
+                window.clearTimeout(mobileNavigationTimerRef.current);
                 setIsPersonalMenuOpen(false);
                 setIsMenuOpen((open) => !open);
               }}
@@ -280,7 +312,7 @@ export function SiteShell({ children }) {
                     className={`nav-link ${isActive(pathname, item.match) ? "active" : ""}`}
                     aria-current={navAriaCurrent(pathname, item)}
                     pointerResetSignal={`${pointerResetSignal}:${isMenuOpen ? "open" : "closed"}`}
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={(event) => navigateFromMobileMenu(event, item.href)}
                     onPointerEnter={() => primeRoute(item.href)}
                     onFocus={() => primeRoute(item.href)}
                   >
