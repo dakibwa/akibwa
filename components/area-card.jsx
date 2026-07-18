@@ -27,18 +27,20 @@ export function AreaCard({ tile, index }) {
           sizes="(max-width: 760px) 100vw, 48vw"
           style={cardImagePosition ? { objectPosition: cardImagePosition } : undefined}
         />
+        {tile.detail ? (
+          <div className="area-art__detail">
+            <p>{tile.detail}</p>
+          </div>
+        ) : null}
       </div>
       <div className="area-caption">
         <div>
           <h2>{tile.title}</h2>
           <p>{tile.descriptor}</p>
-          {tile.detail ? (
-            <div className="area-caption__more">
-              <p>{tile.detail}</p>
-            </div>
-          ) : null}
         </div>
-        <ArrowRight size={19} strokeWidth={1.8} />
+        <span className="area-caption__arrow" aria-hidden="true">
+          <ArrowRight size={19} strokeWidth={1.8} />
+        </span>
       </div>
     </PointerResponseLink>
   );

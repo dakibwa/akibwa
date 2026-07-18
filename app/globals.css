@@ -1085,19 +1085,28 @@ button {
   transition: transform var(--hover-out) var(--ease-out);
 }
 
+/* The accent underline shares the header ribbon's motion signature: it
+   extends with the same fast decelerating ease and lifts with a soft glow
+   in the area's own colour. */
 .area-caption::before {
   position: absolute;
   top: 0;
   left: 8px;
   width: 42px;
-  height: 2px;
+  height: 3px;
   border-radius: 999px;
-  background: var(--area-accent);
+  background: linear-gradient(
+    90deg,
+    var(--area-accent),
+    color-mix(in srgb, var(--area-accent) 56%, #ffffff)
+  );
   content: "";
-  opacity: 0.72;
+  opacity: 0.78;
+  box-shadow: 0 1px 8px color-mix(in srgb, var(--area-accent) 0%, transparent);
   transition:
-    width var(--hover-out) var(--ease-out),
-    opacity var(--hover-out) var(--ease-out);
+    width 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out);
 }
 
 .area-caption h2 {
@@ -1114,12 +1123,37 @@ button {
   font-size: 0.9rem;
 }
 
-.area-caption svg {
+/* The arrow stays put and gains a quiet accent-tinted disc instead of
+   sliding into the card edge. */
+.area-caption__arrow {
+  position: relative;
+  display: grid;
   flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 999px;
   color: var(--black);
+  transition: color var(--hover-out) var(--ease-out);
+}
+
+.area-caption__arrow::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--area-accent) 13%, transparent);
+  content: "";
+  opacity: 0;
+  transform: scale(0.72);
   transition:
-    transform var(--hover-out) var(--ease-out),
-    color var(--hover-out) var(--ease-out);
+    opacity var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.area-caption__arrow svg {
+  position: relative;
+  display: block;
+  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .area-card.is-hovering .area-art::after,
@@ -1139,16 +1173,32 @@ button {
 .area-card.is-hovering .area-caption::before,
 .area-card:focus-visible:not(.is-pointer-focus) .area-caption::before,
 .area-card.is-pressing .area-caption::before {
-  width: 64px;
+  width: 76px;
   opacity: 1;
+  box-shadow: 0 1px 10px color-mix(in srgb, var(--area-accent) 42%, transparent);
+  transition-duration: 220ms, var(--hover-in), var(--hover-in);
+}
+
+.area-card.is-hovering .area-caption__arrow,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow,
+.area-card.is-pressing .area-caption__arrow {
+  color: var(--area-accent);
   transition-duration: var(--hover-in);
 }
 
-.area-card.is-hovering .area-caption svg,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption svg,
-.area-card.is-pressing .area-caption svg {
-  transform: translateX(5px);
-  color: var(--area-accent);
+.area-card.is-hovering .area-caption__arrow::before,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow::before,
+.area-card.is-pressing .area-caption__arrow::before {
+  opacity: 1;
+  transform: scale(1);
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.area-card.is-hovering .area-caption__arrow svg,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow svg,
+.area-card.is-pressing .area-caption__arrow svg {
+  transform: translateX(1.5px);
   transition-duration: var(--hover-in);
 }
 
@@ -1159,7 +1209,9 @@ button {
 .area-card.is-pressing .area-art::after,
 .area-card.is-pressing .area-caption,
 .area-card.is-pressing .area-caption::before,
-.area-card.is-pressing .area-caption svg {
+.area-card.is-pressing .area-caption__arrow,
+.area-card.is-pressing .area-caption__arrow::before,
+.area-card.is-pressing .area-caption__arrow svg {
   transition-duration: 90ms;
 }
 
@@ -6562,7 +6614,11 @@ button {
 
   .area-caption::before,
 
-  .area-caption svg,
+  .area-caption__arrow,
+
+  .area-caption__arrow::before,
+
+  .area-caption__arrow svg,
 
   .hero-word-cycle,
 
@@ -6644,17 +6700,14 @@ button {
 }
 
 /* Tile detail: the line sits permanently on a dark wash over the lower edge
-   of the artwork. Hover keeps only the gentle image zoom. */
-.area-caption {
-  position: relative;
-}
-
-.area-caption__more {
+   of the artwork, inside the frame so its corners are clipped by the frame's
+   own radius. Hover keeps only the gentle image zoom. */
+.area-art__detail {
   position: absolute;
   right: 0;
-  bottom: 100%;
+  bottom: 0;
   left: 0;
-  z-index: 1;
+  z-index: 2;
   background: linear-gradient(
     180deg,
     rgba(13, 11, 9, 0) 0%,
@@ -6662,9 +6715,10 @@ button {
     rgba(13, 11, 9, 0.88) 100%
   );
   padding: 38px 18px 13px;
+  pointer-events: none;
 }
 
-.area-caption__more > p {
+.area-art__detail > p {
   margin: 0;
   color: rgba(255, 255, 255, 0.98);
   font-size: 0.82rem;
