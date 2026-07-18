@@ -1123,14 +1123,15 @@ button {
   font-size: 0.9rem;
 }
 
-/* The arrow stays put and gains a quiet accent-tinted disc instead of
-   sliding into the card edge. */
+/* The arrow stays put and gains a hairline accent ring instead of sliding
+   into the card edge. A filled disc went flat and button-like on the muted
+   accents; the ring stays quiet in any colour. */
 .area-caption__arrow {
   position: relative;
   display: grid;
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   place-items: center;
   border-radius: 999px;
   color: var(--black);
@@ -1140,8 +1141,9 @@ button {
 .area-caption__arrow::before {
   position: absolute;
   inset: 0;
+  border: 1px solid color-mix(in srgb, var(--area-accent) 34%, transparent);
   border-radius: inherit;
-  background: color-mix(in srgb, var(--area-accent) 13%, transparent);
+  background: color-mix(in srgb, var(--area-accent) 6%, transparent);
   content: "";
   opacity: 0;
   transform: scale(0.72);
