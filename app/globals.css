@@ -556,10 +556,10 @@ button {
 .nav-link {
   --nav-label-in: 150ms;
   --nav-label-out: 110ms;
-  --nav-ribbon-in: 190ms;
+  --nav-ribbon-in: 180ms;
   --nav-ribbon-out: 140ms;
   --nav-ribbon-ease-in: cubic-bezier(0.16, 1, 0.3, 1);
-  --nav-ribbon-ease-out: cubic-bezier(0.4, 0, 1, 1);
+  --nav-ribbon-ease-out: ease-out;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -645,9 +645,12 @@ button {
   }
 }
 
-/* The current page keeps its artwork ribbon. Inactive ribbons remain full
-   size behind a fast moving curtain, avoiding the compressed-image look that
-   came from scaling the artwork itself. */
+/* Each link owns one 6px ribbon clipped to its own width. Visibility lives
+   on the bar itself: hidden is opacity 0, so a hidden bar paints nothing and
+   cannot leak artwork through the clipped corners (the retired canvas-curtain
+   overlay left antialiased specks there). Reveal state comes only from native
+   hover/focus, the open dropdown, and the active route — never from the JS
+   pointer classes, so a fast sweep cannot strand a bar. */
 .nav-link__bar {
   position: absolute;
   top: 13px;
@@ -659,6 +662,11 @@ button {
   border-radius: 3px;
   contain: paint;
   pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity var(--nav-ribbon-out) var(--nav-ribbon-ease-out),
+    transform var(--nav-ribbon-out) var(--nav-ribbon-ease-out);
 }
 
 .nav-link__bar-art {
@@ -667,47 +675,25 @@ button {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 1;
-  filter: saturate(0.94) contrast(0.99);
-  transition: filter var(--nav-label-out) ease-out;
-}
-
-.nav-link__bar::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: var(--canvas);
-  pointer-events: none;
-  transform: translateX(0);
-  transition: transform var(--nav-ribbon-out) var(--nav-ribbon-ease-out);
-}
-
-.nav-desktop .nav-link.is-hovering .nav-link__bar-art,
-.nav-desktop .nav-link.is-pressing .nav-link__bar-art,
-.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar-art,
-.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar-art {
-  opacity: 1;
   filter: saturate(1.06) contrast(1.03);
-  transition-duration: var(--nav-label-in);
 }
 
-.nav-desktop .nav-link.is-hovering .nav-link__bar::after,
-.nav-desktop .nav-link.is-pressing .nav-link__bar::after,
-.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar::after,
-.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar::after {
-  transform: translateX(102%);
+.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar,
+.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar,
+.nav-desktop .nav-link.active .nav-link__bar {
+  opacity: 1;
+  transform: none;
   transition-duration: var(--nav-ribbon-in);
   transition-timing-function: var(--nav-ribbon-ease-in);
 }
 
-.nav-desktop .nav-link.active .nav-link__bar-art {
-  opacity: 1;
-  filter: saturate(1.06) contrast(1.03);
-}
-
-.nav-desktop .nav-link.active .nav-link__bar::after {
-  transform: translateX(102%);
+@media (hover: hover) {
+  .nav-desktop .nav-link:hover .nav-link__bar {
+    opacity: 1;
+    transform: none;
+    transition-duration: var(--nav-ribbon-in);
+    transition-timing-function: var(--nav-ribbon-ease-in);
+  }
 }
 
 .nav-mobile-toggle {
@@ -6560,9 +6546,7 @@ button {
 
   .nav-link,
 
-  .nav-link__bar-art,
-
-  .nav-link__bar::after,
+  .nav-link__bar,
 
   .nav-link__mobile-art,
 
@@ -6609,6 +6593,15 @@ button {
   .menu-line {
     animation: none;
     transition: none;
+  }
+
+  /* Zeroing the durations beats every state rule on value, not specificity,
+     so reduced motion holds even for the higher-specificity reveal states. */
+  .nav-link {
+    --nav-label-in: 0ms;
+    --nav-label-out: 0ms;
+    --nav-ribbon-in: 0ms;
+    --nav-ribbon-out: 0ms;
   }
 
   .brand.is-hovering,
