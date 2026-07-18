@@ -1155,7 +1155,6 @@ button {
 .area-caption__arrow svg {
   position: relative;
   display: block;
-  transition: transform var(--hover-out) var(--ease-out);
 }
 
 .area-card.is-hovering .area-art::after,
@@ -1197,13 +1196,6 @@ button {
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.area-card.is-hovering .area-caption__arrow svg,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow svg,
-.area-card.is-pressing .area-caption__arrow svg {
-  transform: translateX(1.5px);
-  transition-duration: var(--hover-in);
-}
-
 .area-card.is-pressing,
 .area-card.is-pressing::before,
 .area-card.is-pressing::after,
@@ -1212,8 +1204,7 @@ button {
 .area-card.is-pressing .area-caption,
 .area-card.is-pressing .area-caption::before,
 .area-card.is-pressing .area-caption__arrow,
-.area-card.is-pressing .area-caption__arrow::before,
-.area-card.is-pressing .area-caption__arrow svg {
+.area-card.is-pressing .area-caption__arrow::before {
   transition-duration: 90ms;
 }
 
@@ -6619,8 +6610,6 @@ button {
   .area-caption__arrow,
 
   .area-caption__arrow::before,
-
-  .area-caption__arrow svg,
 
   .hero-word-cycle,
 

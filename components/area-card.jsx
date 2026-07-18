@@ -39,7 +39,7 @@ export function AreaCard({ tile, index }) {
           <p>{tile.descriptor}</p>
         </div>
         <span className="area-caption__arrow" aria-hidden="true">
-          <ArrowRight size={19} strokeWidth={1.8} />
+          <ArrowRight size={18} strokeWidth={1.8} />
         </span>
       </div>
     </PointerResponseLink>
