@@ -12,5 +12,6 @@ Data refreshes that can run from API credentials or public seeds should run in C
 - `npm run publish:check`: verify registered public surfaces, fallback data, public projection data, and exported routes when `out/` exists.
 - `npm run refresh:status`: read live Cloudflare refresh status endpoints from `data/public-surfaces.json`.
 - `npm run publish:ready`: run build, publication checks, and live refresh-status checks before pushing `main`.
+- Markdown and `docs/**`-only changes intentionally do not start a Pages build or deployment.
 
 Public project metadata lives in `data/public-surfaces.json`. Add new website surfaces there first, then wire the route/component/data seed around that registry entry.

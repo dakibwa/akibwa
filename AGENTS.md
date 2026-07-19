@@ -15,6 +15,7 @@ This repository is the public `akibwa.com` website.
 
 - For completed public Akibwa site changes: validate locally (`npm run build`), commit the scoped change, get it onto `main` (push directly, or open a PR and merge it straight away once checks pass — don't wait for a separate "please publish"), then confirm the GitHub Pages deploy succeeded and verify the live `akibwa.com` surface.
 - Use `npm run build` for ordinary changes; use `npm run publish:ready` when publication metadata, public surface routing, cloud refresh checks, or generated public data are touched.
+- Use the smallest relevant check while iterating. Markdown and `docs/**`-only changes do not require a site build or deployment; the Pages workflow intentionally ignores them.
 - Do not leave finished changes local-only unless Dan explicitly asks for a preview, local-only work, or a paused WIP state.
 - If the checkout has unrelated local edits, use a clean worktree based on `origin/main` and stage only the intended files. Do not include, revert, or overwrite unrelated worktree changes.
 - Pause before pushing only when validation fails, the change could expose private or sensitive data, the intended behaviour is ambiguous or high-impact, or credentials/secrets/public-data boundaries are involved. Outside those cases, ship without asking.
