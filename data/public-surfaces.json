@@ -1,6 +1,14 @@
 {
-  "updated": "2026-07-15",
+  "updated": "2026-07-23",
   "surfaces": [
+    {
+      "id": "portuguese-with-ines",
+      "title": "Português com a Inês",
+      "route": "/portugal",
+      "kind": "static-directory",
+      "visibility": "public",
+      "staticPath": "public/portugal/index.html"
+    },
     {
       "id": "meditator",
       "title": "Meditator",
