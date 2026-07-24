@@ -1,5 +1,5 @@
-:HL["/portugal/_next/static/chunks/125rxe4x3.0h3.css","style"]
-:HL["/portugal/_next/static/media/a3264cb69f626630-s.p.0x7~p8ws0wa0a.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/portugal/_next/static/chunks/0njdx0wuk-cij.css","style"]
 :HL["/portugal/_next/static/media/b10413e5bb48db70-s.p.180-k-k7sp7pp.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/portugal/_next/static/media/e8f2fbee2754df70-s.p.0fzkl03jw-sdz.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"WLi4CvRnV7j7HNxu68V8J"}
+:HL["/portugal/visuals/generated-splats/business-card-splat-generated-v2.webp","image",{"fetchPriority":"high"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"tUhLC6BvhvWvDt89B3SE0"}
