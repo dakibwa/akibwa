@@ -15,3 +15,5 @@ Data refreshes that can run from API credentials or public seeds should run in C
 - Markdown and `docs/**`-only changes intentionally do not start a Pages build or deployment.
 
 Public project metadata lives in `data/public-surfaces.json`. Add new website surfaces there first, then wire the route/component/data seed around that registry entry.
+
+The Personal project overlays are user-facing product surfaces, not decorative screenshots. Chorus labels fallback versus refreshed data, Cover Collision presents the series as a numbered exhibition with a direct Instagram route, and embedded apps retain their own live behaviour.

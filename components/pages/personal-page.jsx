@@ -263,9 +263,9 @@ function DashboardShowcase({ project, immersive = false }) {
 function getCoverCollisionGalleryLayout(postCount) {
   if (postCount <= 1) return { columns: 1, rows: 1 };
   if (postCount <= 4) return { columns: 2, rows: Math.ceil(postCount / 2) };
-  if (postCount <= 9) return { columns: 3, rows: Math.ceil(postCount / 3) };
-  if (postCount <= 16) return { columns: 4, rows: Math.ceil(postCount / 4) };
-  if (postCount <= 25) return { columns: 5, rows: Math.ceil(postCount / 5) };
+  if (postCount <= 12) return { columns: 3, rows: Math.ceil(postCount / 3) };
+  if (postCount <= 20) return { columns: 4, rows: Math.ceil(postCount / 4) };
+  if (postCount <= 30) return { columns: 5, rows: Math.ceil(postCount / 5) };
 
   const columns = 6;
   return { columns, rows: Math.ceil(postCount / columns) };
@@ -277,6 +277,19 @@ function isCoverCollisionData(data) {
 
 function latestCoverCollisionDate(data) {
   return data?.posts?.[0]?.date || data?.snapshotDate || "";
+}
+
+function formatCoverCollisionDate(value) {
+  if (!value) return "";
+  const date = new Date(`${value}T12:00:00Z`);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(date);
 }
 
 function mergeCoverCollisionSeedImages(posts, fallbackPosts) {
@@ -362,14 +375,12 @@ function CoverCollisionImage({ post, priority, sizes }) {
 
 function CoverCollisionPanel({ project, posts, galleryOnly = false }) {
   const galleryLayout = getCoverCollisionGalleryLayout(posts.length);
-  const fittedRows = Math.min(galleryLayout.rows, 4);
-  const panelAspect = galleryLayout.columns / fittedRows;
-  const verticalReserve = 174 + fittedRows * 32 + Math.max(0, fittedRows - 1) * 22;
+  const fittedRows = Math.min(galleryLayout.rows, 3);
   const galleryStyle = galleryOnly
     ? {
         "--cover-collision-columns": String(galleryLayout.columns),
         "--cover-collision-rows": String(fittedRows),
-        "--cover-collision-panel-width": `min(100%, ${galleryLayout.columns * 240}px, max(320px, calc((100dvh - ${verticalReserve}px) * ${panelAspect.toFixed(4)})))`,
+        "--cover-collision-panel-width": `min(100%, ${galleryLayout.columns * 244}px)`,
       }
     : undefined;
 
@@ -411,17 +422,20 @@ function CoverCollisionPanel({ project, posts, galleryOnly = false }) {
                     : "(max-width: 760px) 44vw, (max-width: 1100px) 22vw, 210px"
                 }
               />
-              {galleryOnly && (
-                <span className="cover-collision-post-caption" aria-hidden="true">
-                  <strong>{post.title}</strong>
-                </span>
-              )}
             </span>
-            {!galleryOnly && (
+            {galleryOnly ? (
+              <span className="cover-collision-post-caption" aria-hidden="true">
+                <span>
+                  <span>No. {post.number}</span>
+                  <time dateTime={post.date}>{formatCoverCollisionDate(post.date)}</time>
+                </span>
+                <strong>{post.title}</strong>
+              </span>
+            ) : (
               <>
                 <span>No. {post.number}</span>
                 <strong>{post.title}</strong>
-                <em>{post.date}</em>
+                <em>{formatCoverCollisionDate(post.date)}</em>
               </>
             )}
           </a>
@@ -470,7 +484,26 @@ function CoverCollisionShowcase({ project, immersive = false }) {
         </div>
       )}
 
-      <CoverCollisionPanel project={project} posts={posts} galleryOnly={immersive} />
+      {immersive ? (
+        <div className="cover-collision-exhibition">
+          <aside className="cover-collision-exhibition-note">
+            <span>Ongoing visual series</span>
+            <h3>Two familiar covers. One impossible record.</h3>
+            <p>Album artwork is cut, crossed, and recombined until both originals feel newly strange.</p>
+            <div>
+              <strong>{posts.length}</strong>
+              <span>collisions so far</span>
+            </div>
+            <a href={profileUrl || project.externalHref} target="_blank" rel="noreferrer">
+              <Instagram size={15} strokeWidth={1.7} />
+              Follow on Instagram
+            </a>
+          </aside>
+          <CoverCollisionPanel project={project} posts={posts} galleryOnly />
+        </div>
+      ) : (
+        <CoverCollisionPanel project={project} posts={posts} />
+      )}
     </section>
   );
 }

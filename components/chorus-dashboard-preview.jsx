@@ -23,6 +23,17 @@ function formatNumber(value) {
   return new Intl.NumberFormat("en-GB").format(Number.isFinite(numeric) ? numeric : 0);
 }
 
+function formatSnapshotDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeZone: "Europe/London"
+  }).format(date);
+}
+
 function detailLine(primary, secondary) {
   return secondary ? `${primary} - ${secondary}` : primary;
 }
@@ -215,6 +226,7 @@ function isChorusData(data) {
 
 export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorusDataUrl }) {
   const [runtimeChorusData, setRuntimeChorusData] = useState(fallbackChorusData);
+  const [hasRemoteData, setHasRemoteData] = useState(false);
 
   useEffect(() => {
     const url = String(dataUrl || "").trim();
@@ -234,6 +246,7 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
             ? data.recentRuns
             : previous.recentRuns
         }));
+        setHasRemoteData(true);
       }
     };
 
@@ -262,6 +275,7 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
   const visibleAlbums = useMemo(() => chorusData.topAlbums ?? [], [chorusData.topAlbums]);
   const visibleTracks = useMemo(() => chorusData.topTracks ?? [], [chorusData.topTracks]);
   const recentTracks = chorusData.recentTracks ?? [];
+  const snapshotDate = formatSnapshotDate(chorusData.generatedAt || chorusData.snapshotDate);
   const metrics = [
     ["Scrobbles", formatNumber(chorusData.summary?.totalScrobbles), "All-time total", Signal],
     ["Artists", formatNumber(visibleArtists.length), "Known by Last.fm", UserRound],
@@ -278,7 +292,7 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
           <div>
             <span>Chorus / Listening archive</span>
             <h1>Listening archive</h1>
-            <p>Live Last.fm snapshot with recent plays, top music, and run pairings.</p>
+            <p>A Last.fm snapshot with recent plays, top music, and run pairings.</p>
           </div>
           <p className="chorus-archive-stat">
             <strong>{formatNumber(chorusData.summary?.totalScrobbles)}</strong>
@@ -353,9 +367,12 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
         </section>
 
         <footer className="chorus-preview-footer">
-          <span>Snapshot from @{chorusData.username ?? "akibwa"} on Last.fm</span>
           <span>
-            Data from <strong>{chorusData.source ?? "Last.fm"}</strong>
+            {hasRemoteData ? "Refreshed" : "Fallback snapshot"}
+            {snapshotDate ? ` ${snapshotDate}` : ""} for @{chorusData.username ?? "akibwa"}
+          </span>
+          <span>
+            Source: <strong>{chorusData.source ?? "Last.fm"}</strong>
           </span>
         </footer>
       </section>
