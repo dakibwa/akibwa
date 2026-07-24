@@ -1257,7 +1257,9 @@ button {
 }
 
 .page-footer {
-  margin-top: 38px;
+  /* Match the section rhythm used elsewhere on the page rather than sitting
+     tight under the last block. */
+  margin-top: clamp(44px, 5vw, 64px);
   color: #646b74;
   font-size: 0.78rem;
 }
@@ -1268,7 +1270,8 @@ button {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
-  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
 }
 
 .page-footer-panel::before {
@@ -6330,8 +6333,27 @@ button {
     min-height: 62px;
   }
 
+  /* The footer used to be hidden here, which cost phones the sign-off,
+     the location, and the only footer route to email. Stack it instead. */
   .page-footer {
-    display: none;
+    margin-top: 40px;
+  }
+
+  .page-footer-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    padding-top: 18px;
+  }
+
+  .page-footer-meta {
+    align-items: flex-start;
+    gap: 10px 18px;
+  }
+
+  .page-footer-details {
+    flex-wrap: wrap;
+    gap: 4px 20px;
   }
 
   .studio-page {
