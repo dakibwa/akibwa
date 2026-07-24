@@ -990,7 +990,11 @@ button {
     0 1px 0 rgba(255, 255, 255, 0.96) inset,
     0 18px 50px rgba(16, 18, 23, 0.065);
   isolation: isolate;
+  /* `translate` rather than `transform`: the scroll-driven scroll-rise
+     animation owns `transform` on this element, and an animation always beats
+     a normal declaration, so a hover transform here would never apply. */
   transition:
+    translate var(--hover-out) var(--ease-out),
     border-color var(--hover-out) var(--ease-out),
     box-shadow var(--hover-out) var(--ease-out);
 }
@@ -1039,15 +1043,23 @@ button {
   z-index: 1;
 }
 
+/* The shadow used to deepen under a card that never moved, which read as a
+   lighting change rather than the card lifting. A small rise sells it. */
 .area-card.is-hovering,
 .area-card:focus-visible:not(.is-pointer-focus),
 .area-card.is-pressing {
+  translate: 0 -3px;
   border-color: color-mix(in srgb, var(--area-accent) 46%, rgba(16, 18, 23, 0.22));
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.98) inset,
     0 6px 16px rgba(16, 18, 23, 0.05),
     0 30px 80px rgba(16, 18, 23, 0.095);
   transition-duration: var(--hover-in);
+}
+
+/* Press settles the card back towards the page instead of holding it up. */
+.area-card.is-pressing {
+  translate: 0 -1px;
 }
 
 .area-card.is-hovering::before,
@@ -1085,7 +1097,6 @@ button {
 .area-art img {
   object-fit: cover;
   object-position: center;
-  transition: filter 700ms var(--ease-out);
 }
 
 /* The artwork answers the cursor with light rather than movement: a soft
@@ -1114,11 +1125,6 @@ button {
   transition-duration: var(--hover-in);
 }
 
-.area-card.is-hovering .area-art img,
-.area-card:focus-visible:not(.is-pointer-focus) .area-art img,
-.area-card.is-pressing .area-art img {
-  filter: brightness(1.045) saturate(1.03);
-}
 
 .area-caption {
   position: relative;
@@ -1152,7 +1158,7 @@ button {
   opacity: 0.78;
   box-shadow: 0 1px 8px color-mix(in srgb, var(--area-accent) 0%, transparent);
   transition:
-    width 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 380ms cubic-bezier(0.16, 1, 0.3, 1),
     opacity var(--hover-out) var(--ease-out),
     box-shadow var(--hover-out) var(--ease-out);
 }
@@ -1203,6 +1209,7 @@ button {
 .area-caption__arrow svg {
   position: relative;
   display: block;
+  transition: translate var(--hover-out) var(--ease-out);
 }
 
 .area-card.is-hovering .area-art::after,
@@ -1225,7 +1232,7 @@ button {
   width: 76px;
   opacity: 1;
   box-shadow: 0 1px 10px color-mix(in srgb, var(--area-accent) 42%, transparent);
-  transition-duration: 220ms, var(--hover-in), var(--hover-in);
+  transition-duration: 380ms, var(--hover-in), var(--hover-in);
 }
 
 .area-card.is-hovering .area-caption__arrow,
@@ -1240,8 +1247,16 @@ button {
 .area-card.is-pressing .area-caption__arrow::before {
   opacity: 1;
   transform: scale(1);
-  transition-duration: 220ms;
+  transition-duration: 380ms;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The glyph leans the way the card is about to take you. */
+.area-card.is-hovering .area-caption__arrow svg,
+.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow svg,
+.area-card.is-pressing .area-caption__arrow svg {
+  translate: 2px 0;
+  transition-duration: var(--hover-in);
 }
 
 .area-card.is-pressing,
@@ -6799,7 +6814,10 @@ button {
 .area-card.is-pressing .area-art img {
   transform: scale(1.045);
   filter: saturate(1.05) brightness(1.02);
-  transition-duration: 1100ms;
+  /* Was 1100ms, which left the artwork still drifting long after the card,
+     underline, and arrow had settled. Keep it the slowest of the family
+     without letting it read as a separate, later event. */
+  transition-duration: 720ms;
 }
 
 .area-card.is-pressing .area-art img {
@@ -6812,6 +6830,18 @@ button {
   .knowledge-card-art {
     transition: none;
     transform: none;
+  }
+
+  /* Keep the colour and shadow response; drop the movement. */
+  .area-card,
+  .area-card.is-hovering,
+  .area-card:focus-visible:not(.is-pointer-focus),
+  .area-card.is-pressing,
+  .area-caption__arrow svg,
+  .area-card.is-hovering .area-caption__arrow svg,
+  .area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow svg,
+  .area-card.is-pressing .area-caption__arrow svg {
+    translate: none;
   }
 }
 
@@ -6926,7 +6956,3 @@ button {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.area-card { --card-mx: 240px; --card-my: 150px; }
-.area-card .area-art img { filter: brightness(1.045) saturate(1.03) !important; }
-.offer-hero-aside .about-cta::before { transform: translateY(-50%) scale(16) !important; }
-.offer-hero-aside .about-cta .about-cta-icon { background: var(--white) !important; color: var(--page-accent) !important; transform: translateX(3px) rotate(-45deg) !important; }
