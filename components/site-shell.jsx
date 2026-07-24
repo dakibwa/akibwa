@@ -111,6 +111,14 @@ export function SiteShell({ children }) {
 
   return (
     <div className={`site-shell ${isImmersiveRoute ? "is-immersive" : ""}`}>
+      {/* Focusing the Personal link opens its project dropdown, so the header can
+          hold nine tab stops. Give keyboard users one stop past all of it. */}
+      {!isImmersiveRoute && (
+        <a className="skip-to-content" href="#main-content">
+          Skip to content
+        </a>
+      )}
+
       {!isImmersiveRoute && (
         <header
           className="site-header"
@@ -308,7 +316,7 @@ export function SiteShell({ children }) {
         </header>
       )}
 
-      <main className="page-transition">
+      <main className="page-transition" id="main-content" tabIndex={-1}>
         {children}
       </main>
     </div>

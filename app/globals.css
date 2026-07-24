@@ -76,6 +76,14 @@ button {
 
 .page-transition {
   min-height: calc(100vh - 68px);
+  /* Skip-link target: clear the sticky header when focus lands here. */
+  scroll-margin-top: 68px;
+}
+
+/* Focused programmatically by the skip link, so no ring around the whole page. */
+.page-transition:focus,
+.page-transition:focus-visible {
+  outline: 0;
 }
 
 .site-shell.is-immersive .page-transition {
@@ -157,6 +165,46 @@ button {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Off-canvas until a keyboard reaches it, then it sits above the sticky
+   header as the first stop on the page. */
+.skip-to-content {
+  position: fixed;
+  top: 12px;
+  left: 24px;
+  z-index: 40;
+  padding: 11px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 560;
+  line-height: 1;
+  box-shadow: 0 8px 24px rgba(16, 18, 23, 0.14);
+  transform: translateY(calc(-100% - 24px));
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+/* Plain :focus, not :focus-visible — the link sits off-canvas and cannot be
+   reached by pointer, so any focus is a keyboard or assistive-tech arrival. */
+.skip-to-content:focus {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Appear instantly, and land on the target without the page-length
+     smooth scroll set on html. */
+  html {
+    scroll-behavior: auto;
+  }
+
+  .skip-to-content {
+    transition: none;
   }
 }
 
