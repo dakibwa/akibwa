@@ -6,23 +6,23 @@ const offerSteps = [
   {
     number: "01",
     title: "Workflow teardown",
-    body: "We map how the work actually happens and find where automation earns its keep.",
-    output: "Clarity report",
+    body: "We map how the work actually happens, then find the part worth automating first.",
+    output: "A written map",
     art: "/area-art/professional-teardown.webp",
     artPosition: "50% 52%"
   },
   {
     number: "02",
     title: "Prototype sprint",
-    body: "A focused prototype, built fast and tested on real data with real users.",
+    body: "One prototype, built fast and tested on your real data by the people who'll use it.",
     output: "Working prototype",
     art: "/area-art/professional-prototype.webp",
     artPosition: "50% 58%"
   },
   {
     number: "03",
-    title: "Operating system build",
-    body: "The prototype becomes a dependable system — documented, safeguarded, ready to run.",
+    title: "System build",
+    body: "The prototype hardens into something documented, safe to run, and yours to keep.",
     output: "Production system",
     art: "/area-art/professional-system.webp",
     artPosition: "52% 54%"
@@ -30,45 +30,45 @@ const offerSteps = [
 ];
 
 const goodFit = [
-  "You have a messy or manual process you want to fix.",
-  "You work with data, content, or knowledge at scale.",
-  "You value clarity, automation, and repeatable systems.",
-  "You want a partner who thinks in systems, not tasks."
+  "Something that matters still runs on copy-paste.",
+  "There's more data or context than one person can hold.",
+  "You'd rather fix the process than keep working around it.",
+  "You want the whole workflow looked at, not one ticket closed."
 ];
 
 const notFit = [
-  "You're looking for off-the-shelf software.",
-  "You need a one-off task or quick fix.",
-  "You're not ready to improve how work gets done.",
-  "You prefer manual work over better systems."
+  "Off-the-shelf software already does the job.",
+  "You need one task done, once.",
+  "Nobody has the appetite to change how the work happens.",
+  "The manual version is working fine."
 ];
 
 const workflow = [
   {
     number: "1",
     title: "Scope",
-    body: "Align on the goal and define success.",
+    body: "Agree what finished looks like.",
     art: "/area-art/professional-teardown.webp",
     artPosition: "50% 52%"
   },
   {
     number: "2",
     title: "Design",
-    body: "Design the system, interfaces, and flows.",
+    body: "Draw the system before building it.",
     art: "/area-art/professional-prototype.webp",
     artPosition: "50% 58%"
   },
   {
     number: "3",
     title: "Build",
-    body: "Build, test, and iterate in short cycles.",
+    body: "Short cycles. You see it every week.",
     art: "/area-art/professional-system.webp",
     artPosition: "52% 54%"
   },
   {
     number: "4",
     title: "Handover",
-    body: "Document, train, and hand over the keys.",
+    body: "Documented, demoed, and handed over.",
     art: "/area-art/professional-structure.webp",
     artPosition: "70% 50%"
   }
@@ -88,12 +88,12 @@ export function OfferPage() {
         </div>
         <div className="offer-hero-aside">
           <p>
-            I help small teams replace the manual workflow that quietly eats hours
-            every week with a small system that hands the time back. Ten years in BI,
-            pointed at your actual work.
+            Most small teams have one workflow quietly eating a day a week. I find it and
+            replace it with something that runs itself. Ten years in BI, pointed at your
+            actual work.
           </p>
           <Link className="about-cta" href="/contact">
-            <span className="about-cta-label">Book a short workflow triage</span>
+            <span className="about-cta-label">Start with one workflow</span>
             <span className="about-cta-icon" aria-hidden="true">
               <ArrowRight size={17} strokeWidth={2} />
             </span>
@@ -159,7 +159,7 @@ export function OfferPage() {
         <header className="how-we-work-head">
           <h2>How we work</h2>
           <Link href="/contact">
-            Start a conversation
+            Tell me the problem
             <ArrowRight size={16} strokeWidth={1.7} />
           </Link>
         </header>

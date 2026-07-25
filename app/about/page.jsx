@@ -4,7 +4,7 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.about,
   description:
-    "Learn how Daniel turns BI experience into practical AI-assisted systems for reporting, workflow, and private knowledge problems."
+    "Ten years of BI, now pointed at AI-assisted systems for reporting, workflow and private knowledge. Plus the toolkit and the obsessions behind it."
 };
 
 export default function AboutRoute() {

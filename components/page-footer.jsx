@@ -33,7 +33,7 @@ export function PageFooter() {
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
           <strong {...signoffPointer}>
-            Making computer work simpler.
+            Fewer things done by hand.
           </strong>
         </div>
         <div className="page-footer-meta">

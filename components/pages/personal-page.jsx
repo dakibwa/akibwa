@@ -396,7 +396,7 @@ function CoverCollisionPanel({ project, posts, galleryOnly = false }) {
         <header>
           <div>
             <span>{project.title}</span>
-            <strong>Album art, recombined into a visual series.</strong>
+            <strong>The covers don&apos;t match. That&apos;s the point.</strong>
           </div>
           <em>{posts.length} posts</em>
         </header>
@@ -465,14 +465,14 @@ function CoverCollisionShowcase({ project, immersive = false }) {
                 <Disc3 size={15} />
                 Source material
               </dt>
-              <dd>Album covers are treated as source material: familiar references pulled slightly out of place.</dd>
+              <dd>Familiar covers, pulled just far enough out of place to look wrong.</dd>
             </div>
             <div>
               <dt>
                 <Sparkles size={15} />
                 Project shape
               </dt>
-              <dd>A public Instagram series of cover mismatches, collage moves, and visual recombination.</dd>
+              <dd>An open-ended Instagram series. A new collision whenever one lands.</dd>
             </div>
           </dl>
           <div className="project-showcase-actions">
@@ -489,7 +489,7 @@ function CoverCollisionShowcase({ project, immersive = false }) {
           <aside className="cover-collision-exhibition-note">
             <span>Ongoing visual series</span>
             <h3>Two familiar covers. One impossible record.</h3>
-            <p>Album artwork is cut, crossed, and recombined until both originals feel newly strange.</p>
+            <p>Cut, crossed and rejoined until neither original looks like itself.</p>
             <div>
               <strong>{posts.length}</strong>
               <span>collisions so far</span>
@@ -591,10 +591,10 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
         </div>
       ) : (
         <div className="personal-local-note">
-          <h3>{project.title} is a local project</h3>
+          <h3>{project.title} runs on my machine</h3>
           <p>
-            This live preview stays local unless an embed URL is configured. Public visitors see the project summary
-            without exposing the private app or source data.
+            There&apos;s no public URL to embed yet, so this stays a summary — the app and its data stay off the
+            open web.
           </p>
           {project.fallbackHref && (
             <a href={project.fallbackHref}>

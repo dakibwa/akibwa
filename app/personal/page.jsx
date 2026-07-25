@@ -4,7 +4,7 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.personal,
   description:
-    "Explore Akibwa personal projects including Chorus, Cover Collision, and public-safe experiments with AI memory systems."
+    "Things I wanted to exist: Chorus, a listening archive; Cover Collision, an album-art series; and three more in progress."
 };
 
 export default function PersonalRoute() {

@@ -7,8 +7,8 @@ import { contactEmail } from "@/components/site-data";
 const contactNotes = [
   ["Repetitive work", "Copying, checking, updating and chasing."],
   ["Spreadsheets and reports", "Fix them, simplify them or replace them."],
-  ["Tools and websites", "Build something new or improve what you use."],
-  ["Not sure what you need?", "Tell me what’s annoying. I’ll suggest a useful fix."]
+  ["Tools and websites", "Build one, or fix the one you've got."],
+  ["Not sure what you need?", "Tell me what’s annoying. I’ll suggest something."]
 ];
 
 const interestEmailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
@@ -41,7 +41,7 @@ export function ContactPage() {
           <p>Send the messy bit.</p>
         </div>
         <p className="contact-hero-note">
-          A one-click hello or rough note is enough. You&apos;ll get a practical first take back.
+          One click, or a rough note. Either way you get a straight answer back.
         </p>
       </section>
 
@@ -52,8 +52,8 @@ export function ContactPage() {
         >
           <div className="contact-fast-start">
             <p>
-              <strong>Want the easy route?</strong>
-              <span>No brief needed. This opens a ready-to-send email in your mail app.</span>
+              <strong>Nothing written yet?</strong>
+              <span>This opens an email that&apos;s already written. Just hit send.</span>
             </p>
             <a className="contact-interest-button" href={interestEmailHref}>
               I&apos;m interested
@@ -71,7 +71,7 @@ export function ContactPage() {
             <textarea
               name="note"
               rows={5}
-              placeholder="What's broken, what are you trying to do, or what keeps taking too much time? Rough is fine."
+              placeholder="What's broken, or what keeps eating the time. Rough is fine."
             />
           </label>
           <div className="contact-actions">
@@ -138,8 +138,8 @@ export function ContactPage() {
           <li>
             <span className="contact-next-step">02</span>
             <p>
-              <strong>I find the simplest fix</strong>
-              <span>You’ll get a practical first take by email.</span>
+              <strong>I find the smallest fix</strong>
+              <span>Whatever solves it with the least new machinery, by email.</span>
             </p>
           </li>
           <li>

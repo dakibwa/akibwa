@@ -40,11 +40,11 @@ export const metadata = {
     template: "Akibwa | %s"
   },
   description:
-    "Akibwa builds small AI-assisted systems, dashboards, automations, and personal tools that turn messy information into useful workflows.",
+    "Daniel builds small AI-assisted systems — dashboards, automations and internal tools that replace work still being done by hand.",
   openGraph: {
     title: "Akibwa",
     description:
-      "Small AI-assisted systems, dashboards, automations, and personal tools for turning messy information into useful workflows.",
+      "Small AI-assisted systems, dashboards and automations that replace work still being done by hand.",
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
@@ -61,7 +61,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Akibwa",
     description:
-      "Small AI-assisted systems, dashboards, automations, and personal tools for turning messy information into useful workflows.",
+      "Small AI-assisted systems, dashboards and automations that replace work still being done by hand.",
     images: ["/og.jpg"]
   },
   icons: {

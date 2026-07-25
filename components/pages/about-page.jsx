@@ -94,7 +94,7 @@ const interestGroups = [
   {
     label: "Philosophy",
     interests: [
-      { name: "AI & the singularity", note: "Daily build loop; long-arc questions.", Icon: Orbit, glow: "#2c8068" },
+      { name: "AI & the singularity", note: "Build with it daily; still arguing about where it ends.", Icon: Orbit, glow: "#2c8068" },
       { name: "A good long conversation", note: "The kind that actually goes somewhere.", Icon: MessagesSquare, glow: "#b98234" }
     ]
   }
@@ -109,9 +109,9 @@ export function AboutPage() {
       <section className="page-grid about-profile" aria-label="Profile">
         <div className="about-profile-main">
           <div className="about-hero-copy">
-            <h1>Ten years turning messy data into clear decisions.</h1>
+            <h1>Ten years turning other people&apos;s data into decisions.</h1>
             <p className="about-hero-sub">
-              Now building small AI-assisted systems for reporting, workflow, and knowledge.
+              Now doing it with small AI-assisted systems instead of a BI department.
             </p>
           </div>
 
@@ -121,11 +121,10 @@ export function AboutPage() {
               <p>The part a job title doesn't cover.</p>
             </header>
             <p className="about-statement">
-              I'm happiest turning messy reality into something that works — in my life as much as my work.
-              I track most things, follow the odd obsession all the way down, and keep trying to become a
-              slightly more alive version of myself. That might mean a film log, a running experiment, a
-              half-built tool, or a conversation that carries on much longer than planned. The running joke
-              is that I'll optimise five things at once.
+              I'm happiest turning messy reality into something that works — at home as much as at work.
+              I track most things and follow the odd obsession all the way down: a film log, a running
+              experiment, a half-built tool, a conversation that runs three hours past where it should.
+              The running joke is that I'll optimise five things at once.
             </p>
             <Link className="about-cta about-hero-cta" href="/professional">
               <span className="about-cta-label">See professional work</span>

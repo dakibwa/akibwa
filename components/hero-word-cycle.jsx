@@ -25,16 +25,16 @@ const heroSourcePhrases = [
   { label: "listening history", accent: sourceAccents[1] },
   { label: "health signals", accent: sourceAccents[2] },
   { label: "private context", accent: sourceAccents[3] },
-  { label: "scattered sources", accent: sourceAccents[4] },
+  { label: "twelve open tabs", accent: sourceAccents[4] },
   { label: "rough ideas", accent: sourceAccents[5] }
 ];
 
 const heroOutcomePhrases = [
-  { label: "useful tools", accent: outcomeAccents[0] },
-  { label: "clear dashboards", accent: outcomeAccents[1] },
-  { label: "calm review surfaces", accent: outcomeAccents[2] },
+  { label: "tools people use", accent: outcomeAccents[0] },
+  { label: "dashboards worth opening", accent: outcomeAccents[1] },
+  { label: "one screen, not six", accent: outcomeAccents[2] },
   { label: "listening reports", accent: outcomeAccents[3] },
-  { label: "source-backed briefs", accent: outcomeAccents[4] },
+  { label: "briefs you can check", accent: outcomeAccents[4] },
   { label: "working prototypes", accent: outcomeAccents[5] }
 ];
 

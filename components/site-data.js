@@ -29,7 +29,7 @@ export const areaTiles = [
     imagePosition: "50% 10%",
     alt: "Black-and-white artwork of a serene mask reflected in rippled water",
     accent: "#55585c",
-    detail: "Chorus, Cover Collision and more"
+    detail: "Chorus, Cover Collision and three more"
   },
   {
     title: "Professional",
@@ -53,17 +53,17 @@ export const areaTiles = [
     cardImagePosition: "50% 54%",
     cardAlt: "Sunlit mountain meadow with a layered data texture",
     accent: "#7d506f",
-    detail: "Background, principles and interests"
+    detail: "Ten years of BI, and what happens outside it"
   },
   {
     title: "Contact",
-    descriptor: "Want to talk?",
+    descriptor: "Send the messy bit",
     href: "/contact",
     image: "/area-art/contact-blue-clouds.webp",
     navImage: "/brand-art/nav/contact.webp",
     alt: "Bright blue sky with white clouds and a dotted data texture",
     accent: "#1f63db",
-    detail: "Say what you need"
+    detail: "One sentence is enough"
   }
 ];
 
@@ -107,7 +107,7 @@ export const personalProjects = [
     shot: "/project-shots/chorus.webp",
     dashboardLabel: "Chorus",
     dashboardStatus: "Live on Akibwa",
-    summary: "A clearer way to browse my listening history.",
+    summary: "Everything I've ever listened to, made browsable.",
     tags: ["Listening archive", "Albums wall", "Reports"],
     visual: "chorus",
     mode: "embed",
@@ -125,7 +125,7 @@ export const personalProjects = [
     image: coverCollisionPosts[0].image,
     alt: coverCollisionPosts[0].alt,
     visual: "cover-collision",
-    summary: "Album covers recombined into something new.",
+    summary: "Two album covers, spliced into one.",
     tags: ["Cover mismatches", "Collage", "Recombination"],
     mode: "preview",
     externalHref: coverCollisionUrl,
@@ -161,7 +161,7 @@ export const personalProjects = [
     dashboardStatus: "In development",
     statusLabel: "In development",
     isLaunchable: false,
-    summary: "Plan lighter trips with only what you need.",
+    summary: "Pack for a week in one bag.",
     tags: ["Packing optimiser", "Gear comparison", "Local-first"],
     mode: "preview",
     previewTreatment: "one-bag-vignette",
@@ -178,7 +178,7 @@ export const personalProjects = [
     shot: "/project-shots/canta-porto.webp",
     dashboardStatus: "In development",
     isLaunchable: false,
-    summary: "Learn Portuguese through songs you love.",
+    summary: "Learn Portuguese from songs you already play.",
     tags: ["European Portuguese", "Lyric recall", "Spaced review"],
     mode: "preview",
     previewTreatment: "canta-vignette",

@@ -5,7 +5,7 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.chorus,
   description:
-    "Chorus is an Akibwa music intelligence dashboard for Last.fm listening history, recent plays, top artists, and run pairings."
+    "Chorus turns a decade of Last.fm scrobbles into something browsable: recent plays, top artists and albums, timelines and listening reports."
 };
 
 export default function ChorusPage() {
