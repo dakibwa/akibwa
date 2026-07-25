@@ -20,6 +20,11 @@ function toOrigins(urls) {
   ];
 }
 
+// Every Chorus cover and thumbnail comes from Last.fm's image CDN — around
+// forty requests once the dashboard opens — so warm that origin too rather
+// than paying DNS + TLS on the first cover.
+const imageOrigins = ["https://lastfm.freetls.fastly.net"];
+
 // Iframe embeds navigate on credentialed connections; data refreshes fetch over
 // anonymous CORS connections. Preconnect each origin with the matching mode.
 const embedOrigins = toOrigins([chorusAppUrl]);
@@ -79,6 +84,9 @@ export default function RootLayout({ children }) {
         ))}
         {dataOrigins.map((origin) => (
           <link rel="preconnect" href={origin} crossOrigin="anonymous" key={origin} />
+        ))}
+        {imageOrigins.map((origin) => (
+          <link rel="preconnect" href={origin} key={origin} />
         ))}
         <SiteShell>{children}</SiteShell>
         <ServiceWorkerRegistration />

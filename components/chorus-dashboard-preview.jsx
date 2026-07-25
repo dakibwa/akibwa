@@ -18,6 +18,23 @@ const remoteChorusDataUrl = (
   process.env.NEXT_PUBLIC_CHORUS_DATA_URL || "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus"
 ).trim();
 
+/* Last.fm hands us 300x300 art for every image, including the 30-42px avatars
+   and feed thumbnails, which is roughly 17KB apiece for something drawn at a
+   tenth of that. Its CDN only understands a fixed set of size tokens, and an
+   unrecognised one (128s, for instance) quietly serves the full-size original
+   — over a megabyte. So only ever rewrite an exact 300x300 segment, only to a
+   token known to be real, and hand back anything unfamiliar untouched. */
+const LASTFM_SIZE_SEGMENT = "/i/u/300x300/";
+const LASTFM_THUMB_SEGMENT = "/i/u/174s/";
+
+function lastfmThumb(url) {
+  if (typeof url !== "string" || !url.includes(LASTFM_SIZE_SEGMENT)) {
+    return url;
+  }
+
+  return url.replace(LASTFM_SIZE_SEGMENT, LASTFM_THUMB_SEGMENT);
+}
+
 function formatNumber(value) {
   const numeric = Number(value);
   return new Intl.NumberFormat("en-GB").format(Number.isFinite(numeric) ? numeric : 0);
@@ -38,7 +55,7 @@ const fallbackNowPlaying = {
 function ChorusAvatar({ label, index = 0, imageUrl }) {
   return (
     <span className={`chorus-avatar chorus-avatar-${index % 6}`} aria-hidden="true">
-      {imageUrl ? <img src={imageUrl} alt="" loading="lazy" /> : label}
+      {imageUrl ? <img src={lastfmThumb(imageUrl)} alt="" loading="lazy" decoding="async" /> : label}
     </span>
   );
 }
@@ -46,7 +63,18 @@ function ChorusAvatar({ label, index = 0, imageUrl }) {
 function AlbumCover({ imageUrl, title, artist, tone = "bloom", className = "" }) {
   return (
     <span className={`chorus-album-cover is-${tone} ${imageUrl ? "has-artwork" : ""} ${className}`} aria-hidden="true">
-      {imageUrl ? <img src={imageUrl} alt={artist ? `${title} by ${artist}` : title} loading="lazy" /> : <i />}
+      {/* The wall and the now-playing card are drawn large enough to want the
+          full 300x300, so these keep it. */}
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={artist ? `${title} by ${artist}` : title}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <i />
+      )}
     </span>
   );
 }
@@ -192,7 +220,11 @@ function RunSoundtrackWidget({ recentRuns }) {
               {run.tracks.slice(0, 2).map((track) => (
                 <span className="chorus-run-track" key={`${run.name}-${track.artist}-${track.title}`}>
                   <span className="chorus-mini-cover" aria-hidden="true">
-                    {track.imageUrl ? <img src={track.imageUrl} alt="" loading="lazy" /> : <i />}
+                    {track.imageUrl ? (
+                      <img src={lastfmThumb(track.imageUrl)} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <i />
+                    )}
                   </span>
                   <span>
                     <strong>{track.title}</strong>
@@ -317,7 +349,11 @@ export function ChorusDashboardPreview({ compact = false, dataUrl = remoteChorus
               {recentTracks.map((track, index) => (
                 <article key={`${track.title}-${index}`}>
                   <span className="chorus-mini-cover" aria-hidden="true">
-                    {track.imageUrl ? <img src={track.imageUrl} alt="" loading="lazy" /> : <i />}
+                    {track.imageUrl ? (
+                      <img src={lastfmThumb(track.imageUrl)} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <i />
+                    )}
                   </span>
                   <div>
                     <strong>{track.title}</strong>
