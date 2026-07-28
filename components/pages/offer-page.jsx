@@ -21,7 +21,7 @@ export function OfferPage() {
               thing that does it, and you're left able to run it yourself.
             </p>
             <Link className="about-cta" href="/contact">
-              <span className="about-cta-label">Tell me what&apos;s annoying you</span>
+              <span className="about-cta-label">Tell me the problem</span>
               <span className="about-cta-icon" aria-hidden="true">
                 <ArrowRight size={17} strokeWidth={2} />
               </span>

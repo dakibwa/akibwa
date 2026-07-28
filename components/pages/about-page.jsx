@@ -56,16 +56,14 @@ export function AboutPage() {
           <section className="about-hero-intro" aria-labelledby="who-heading">
             <header className="about-section-head">
               <h2 id="who-heading">A little bit about me</h2>
-              <p>The part a job title doesn't cover.</p>
             </header>
             <p className="about-statement">
-              I'm happiest turning messy reality into something that works — at home as much as at work.
-              I track most things and follow the odd obsession all the way down: a film log, a running
-              experiment, a half-built tool, a conversation that runs three hours past where it should.
-              The running joke is that I'll optimise five things at once.
+              I'm happiest turning messy reality into something that works — at home as much as at
+              work. A film log, a running experiment, a half-built tool: I follow the odd obsession
+              all the way down, and I'll cheerfully optimise five things at once.
             </p>
             <Link className="about-cta about-hero-cta" href="/contact">
-              <span className="about-cta-label">Tell me what&apos;s annoying you</span>
+              <span className="about-cta-label">Tell me the problem</span>
               <span className="about-cta-icon" aria-hidden="true">
                 <ArrowRight size={17} strokeWidth={2} />
               </span>
