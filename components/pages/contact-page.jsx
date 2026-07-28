@@ -26,42 +26,34 @@ export function ContactPage() {
         <div className="contact-hero-title">
           <h1>Contact</h1>
           <p>Send the messy bit.</p>
-        </div>
-        <p className="contact-hero-note">
-          A rough note is enough. You get a straight answer back.
-        </p>
-      </section>
 
-      <section className="page-grid contact-layout">
-        <form
-          className="contact-form"
-          onSubmit={handleSubmit}
-        >
-          <label>
-            <span className="contact-label-row">
-              <span>What do you need?</span>
-              <em>Optional</em>
-            </span>
-            <textarea
-              name="note"
-              rows={5}
-              placeholder="What's broken, or what keeps eating the time. Rough is fine."
-            />
-          </label>
-          <div className="contact-actions">
-            <button type="submit">
-              Draft email
-              <ArrowRight size={18} strokeWidth={1.8} />
-            </button>
-            <p>
-              <LockKeyhole size={18} strokeWidth={1.6} />
-              <span>Opens in your email app. Nothing sends until you do.</span>
-            </p>
-            <a className="contact-direct" href={`mailto:${contactEmail}`}>
-              {contactEmail}
-            </a>
-          </div>
-        </form>
+          <form className="contact-form" onSubmit={handleSubmit}>
+            <label>
+              <span className="contact-label-row">
+                <span>What do you need?</span>
+                <em>Optional</em>
+              </span>
+              <textarea
+                name="note"
+                rows={5}
+                placeholder="What's broken, or what keeps eating the time. Rough is fine."
+              />
+            </label>
+            <div className="contact-actions">
+              <button type="submit">
+                Draft email
+                <ArrowRight size={18} strokeWidth={1.8} />
+              </button>
+              <p>
+                <LockKeyhole size={18} strokeWidth={1.6} />
+                <span>Opens in your email app. Nothing sends until you do.</span>
+              </p>
+              <a className="contact-direct" href={`mailto:${contactEmail}`}>
+                {contactEmail}
+              </a>
+            </div>
+          </form>
+        </div>
 
         <div className="contact-art-side">
           <div className="page-art-panel" aria-hidden="true">
