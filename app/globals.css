@@ -4399,7 +4399,7 @@ button {
 
 .contact-actions {
   display: grid;
-  grid-template-columns: minmax(180px, 210px) minmax(210px, 1fr) auto;
+  grid-template-columns: minmax(180px, 210px) minmax(0, 1fr);
   grid-column: 1 / -1;
   align-items: center;
   gap: 18px;
@@ -4521,6 +4521,22 @@ button {
 .page-strip {
   margin-top: clamp(48px, 6vw, 72px);
   padding: 28px 30px 24px;
+}
+
+/* Trial: each page's own artwork behind its box instead of the shared
+   character-field. Veiled hard enough that the text keeps its contrast. */
+.offer-page .page-strip {
+  background:
+    linear-gradient(92deg, rgba(255, 255, 255, 0.95) 26%, rgba(255, 255, 255, 0.78)),
+    url("/area-art/professional-structure.webp") center 58% / cover no-repeat;
+  background-color: var(--white);
+}
+
+.contact-page-new .contact-form {
+  background:
+    linear-gradient(104deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.7) 44%, rgba(255, 255, 255, 0.44) 100%),
+    url("/area-art/contact-blue-clouds.webp") center 46% / cover no-repeat;
+  background-color: var(--white);
 }
 
 .page-strip > header {
@@ -7031,4 +7047,65 @@ button {
   color: var(--black);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  /* On a phone the artwork shouldn't interrupt the reading order. The hero
+     splits apart so the picture can come last, after the words have done
+     their job: headline, offer, call to action, the box — then the image.
+     `display: contents` drops the hero grid, so its two halves take the
+     page gutter themselves. */
+  .offer-page,
+  .contact-page-new {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .offer-studio-hero,
+  .contact-hero {
+    display: contents;
+  }
+
+  .offer-hero-title,
+  .offer-hero-aside,
+  .contact-hero-title,
+  .contact-art-side {
+    width: min(calc(100% - 48px), var(--frame));
+    margin: 0 auto;
+  }
+
+  .offer-hero-title,
+  .contact-hero-title {
+    order: 1;
+    padding-top: 44px;
+  }
+
+  .page-strip,
+  .page-strip-steps {
+    order: 2;
+  }
+
+  .offer-hero-aside,
+  .contact-art-side {
+    order: 3;
+    margin-top: clamp(30px, 5vw, 44px);
+  }
+
+  .offer-page .page-footer,
+  .contact-page-new .page-footer {
+    order: 4;
+  }
+
+  /* The strip's artwork background is desktop-only — at this width the box is
+     most of the screen and the texture just crowds the text. */
+  .offer-page .page-strip {
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
+      url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
+    background-color: var(--white);
+  }
+
+  .contact-page-new .contact-form {
+    background: var(--white);
+  }
 }

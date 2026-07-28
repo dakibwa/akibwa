@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, LockKeyhole } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 import { contactEmail } from "@/components/site-data";
 
@@ -30,7 +30,6 @@ export function ContactPage() {
             <label>
               <span className="contact-label-row">
                 <span>Tell me what&apos;s going on</span>
-                <em>Optional</em>
               </span>
               <textarea
                 name="note"
@@ -43,10 +42,6 @@ export function ContactPage() {
                 Draft email
                 <ArrowRight size={18} strokeWidth={1.8} />
               </button>
-              <p>
-                <LockKeyhole size={18} strokeWidth={1.6} />
-                <span>Opens in your email app. Nothing sends until you do.</span>
-              </p>
               <a className="contact-direct" href={`mailto:${contactEmail}`}>
                 {contactEmail}
               </a>
