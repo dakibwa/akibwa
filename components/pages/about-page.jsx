@@ -67,12 +67,6 @@ export function AboutPage() {
               experiment, a half-built tool, a conversation that runs three hours past where it should.
               The running joke is that I'll optimise five things at once.
             </p>
-            <Link className="about-cta about-hero-cta" href="/professional">
-              <span className="about-cta-label">See what I can help with</span>
-              <span className="about-cta-icon" aria-hidden="true">
-                <ArrowRight size={17} strokeWidth={2} />
-              </span>
-            </Link>
           </section>
         </div>
 
@@ -101,6 +95,31 @@ export function AboutPage() {
               ))}
             </ol>
           </aside>
+        </div>
+      </section>
+
+      <section className="page-grid art-split" aria-label="Working together">
+        <div className="page-art-panel" style={{ "--page-art-position": "50% 42%" }} aria-hidden="true">
+          <img
+            src="/area-art/about-meadow-flowers.jpg"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          />
+        </div>
+        <div className="art-split-copy">
+          <p>
+            None of that matters much on its own. What matters is whether the thing
+            you're stuck on gets easier — so tell me what it is, and I'll tell you
+            straight whether I can help.
+          </p>
+          <Link className="about-cta" href="/contact">
+            <span className="about-cta-label">Tell me what&apos;s annoying you</span>
+            <span className="about-cta-icon" aria-hidden="true">
+              <ArrowRight size={17} strokeWidth={2} />
+            </span>
+          </Link>
         </div>
       </section>
 

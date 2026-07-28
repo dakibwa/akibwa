@@ -4,19 +4,6 @@ import { ArrowRight, LockKeyhole } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 import { contactEmail } from "@/components/site-data";
 
-const contactNotes = [
-  ["Repetitive work", "Copying, checking, updating and chasing."],
-  ["Spreadsheets and reports", "Fix them, simplify them or replace them."],
-  ["Tools and websites", "Build one, or fix the one you've got."],
-  ["Not sure what you need?", "Tell me what’s annoying. I’ll suggest something."]
-];
-
-const interestEmailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(
-  "Interested in working with Akibwa"
-)}&body=${encodeURIComponent(
-  "Hi Daniel,\n\nI'm interested in talking about a project. Please get in touch and I'll share a little more context.\n\nThanks,"
-)}`;
-
 export function ContactPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,7 +28,7 @@ export function ContactPage() {
           <p>Send the messy bit.</p>
         </div>
         <p className="contact-hero-note">
-          One click, or a rough note. Either way you get a straight answer back.
+          A rough note is enough. You get a straight answer back.
         </p>
       </section>
 
@@ -50,19 +37,6 @@ export function ContactPage() {
           className="contact-form"
           onSubmit={handleSubmit}
         >
-          <div className="contact-fast-start">
-            <p>
-              <strong>Nothing written yet?</strong>
-              <span>This opens an email that&apos;s already written. Just hit send.</span>
-            </p>
-            <a className="contact-interest-button" href={interestEmailHref}>
-              I&apos;m interested
-              <ArrowRight size={18} strokeWidth={1.8} />
-            </a>
-          </div>
-          <div className="contact-form-divider" aria-hidden="true">
-            <span>or add a rough note</span>
-          </div>
           <label>
             <span className="contact-label-row">
               <span>What do you need?</span>
@@ -90,7 +64,7 @@ export function ContactPage() {
         </form>
 
         <div className="contact-art-side">
-          <div className="contact-signal-art" aria-hidden="true">
+          <div className="page-art-panel" aria-hidden="true">
             <img
               src="/area-art/contact-blue-clouds.webp"
               alt=""
@@ -104,28 +78,10 @@ export function ContactPage() {
         </div>
       </section>
 
-      <section className="page-grid contact-notes" aria-label="What I can help with">
-        <header>
-          <span>What I can help with</span>
-          <h2>If it’s done on a computer, I can probably help.</h2>
-        </header>
-        <ul>
-          {contactNotes.map(([title, body]) => (
-            <li key={title}>
-              <i aria-hidden="true" />
-              <p>
-                <strong>{title}</strong>
-                <span>{body}</span>
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section className="page-grid contact-next" aria-label="What happens next">
         <header>
           <span>What happens next</span>
-          <h2>Send it. I’ll take a look.</h2>
+          <h2>Send it. I&apos;ll take a look.</h2>
         </header>
         <ol>
           <li>

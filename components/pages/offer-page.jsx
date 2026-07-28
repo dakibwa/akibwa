@@ -20,25 +20,36 @@ export function OfferPage() {
             <br />
             I can help you do it.
           </p>
+          <div className="offer-hero-copy">
+            <p>
+              Whatever it is. We work out what you're actually trying to do, I build the
+              thing that does it, and you're left able to run it yourself.
+            </p>
+            <Link className="about-cta" href="/contact">
+              <span className="about-cta-label">Tell me what&apos;s annoying you</span>
+              <span className="about-cta-icon" aria-hidden="true">
+                <ArrowRight size={17} strokeWidth={2} />
+              </span>
+            </Link>
+          </div>
         </div>
         <div className="offer-hero-aside">
-          <p>
-            Whatever it is. We work out what you're actually trying to do, I build the
-            thing that does it, and you're left able to run it yourself.
-          </p>
-          <Link className="about-cta" href="/contact">
-            <span className="about-cta-label">Tell me what&apos;s annoying you</span>
-            <span className="about-cta-icon" aria-hidden="true">
-              <ArrowRight size={17} strokeWidth={2} />
-            </span>
-          </Link>
+          <div className="page-art-panel" style={{ "--page-art-position": "68% 50%" }} aria-hidden="true">
+            <img
+              src="/area-art/professional-structure.webp"
+              alt=""
+              loading="eager"
+              decoding="async"
+              draggable="false"
+            />
+          </div>
         </div>
       </section>
 
       <section className="page-grid contact-notes" aria-label="What that looks like">
         <header>
           <span>What that looks like</span>
-          <h2>Start anywhere. One sentence is enough.</h2>
+          <h2>Start anywhere.</h2>
         </header>
         <ul>
           {examples.map(([title, body]) => (
