@@ -96,7 +96,6 @@ function ProjectExpandedBanner({ project }) {
 const ACCENT_BY_SLUG = {
   chorus: "#ff6f1a",
   "cover-collision": "#e2556b",
-  "canta-porto": "#0d5267",
   "one-bag": "#2f7d57",
   meditator: "#3a5a45"
 };
@@ -108,7 +107,6 @@ function accentForSlug(slug) {
 const STATUS_BY_SLUG = {
   chorus: "live",
   "cover-collision": "live",
-  "canta-porto": "dev",
   "one-bag": "dev",
   meditator: "live"
 };

@@ -48,7 +48,6 @@ The transferable proof should be one restrained sentence, not a sales card. Exam
 - Chorus demonstrates API integration, data modelling, caching, and readable reporting from inconsistent source data.
 - One Baggers demonstrates constraint modelling, decision support, evidence provenance, and local-first product design.
 - Meditator demonstrates real-time state, privacy-aware product choices, and calm cross-device interaction.
-- Canta Porto demonstrates structured learning loops, content provenance, and low-cost AI assistance within a bounded teaching system.
 
 Do not claim client outcomes that a personal project did not produce. Do not expose private records, credentials, raw messages, health detail, financial detail, or unpublished personal-memory material to make the proof feel stronger.
 

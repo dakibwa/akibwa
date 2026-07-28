@@ -21,16 +21,6 @@ const artworkBySlug = {
     selectorSubjectPosition: "54% 48%",
     expandedBannerPosition: "50% 48%"
   },
-  "canta-porto": {
-    src: "/project-art/personal/canta-porto-azulejo.webp",
-    bannerSrc: "/project-art/personal/canta-porto-azulejo-banner.webp",
-    navBannerSrc: "/brand-art/nav/projects/canta-porto.webp",
-    variant: "music",
-    detailBannerPosition: "50% 52%",
-    selectorBannerPosition: "52% 52%",
-    selectorSubjectPosition: "58% 50%",
-    expandedBannerPosition: "50% 52%"
-  },
   "one-bag": {
     src: "/project-art/personal/one-bag-traveller.webp",
     bannerSrc: "/project-art/personal/one-bag-traveller-banner.webp",

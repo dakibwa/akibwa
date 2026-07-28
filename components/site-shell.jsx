@@ -21,7 +21,6 @@ const navItems = [
 const projectAccents = {
   chorus: "#ff6f1a",
   "cover-collision": "#e2556b",
-  "canta-porto": "#0d5267",
   "one-bag": "#2f7d57",
   meditator: "#3a5a45"
 };

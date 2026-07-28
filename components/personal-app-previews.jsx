@@ -16,14 +16,12 @@ import styles from "./personal-app-previews.module.css";
 
 const PREVIEW_BY_TREATMENT = {
   "chorus-vignette": ChorusPreview,
-  "canta-vignette": CantaPortoPreview,
   "one-bag-vignette": OneBagPreview,
   "meditator-vignette": MeditatorPreview,
 };
 
 const TONE_BY_TREATMENT = {
   "chorus-vignette": styles.chorus,
-  "canta-vignette": styles.canta,
   "one-bag-vignette": styles.oneBag,
   "meditator-vignette": styles.meditator,
 };
@@ -118,63 +116,6 @@ function ChorusPreview() {
             </span>
           ))}
         </section>
-      </div>
-    </div>
-  );
-}
-
-const cantaNavigation = [
-  [Home, "Today"],
-  [Library, "Songs"],
-  [RotateCcw, "Review"],
-  [UserRound, "You"],
-];
-
-function CantaPortoPreview() {
-  return (
-    <div className={styles.cantaShell}>
-      <aside className={styles.cantaSidebar}>
-        <header>
-          <span><Music2 size={13} /></span>
-          <div>
-            <b>Canta Porto</b>
-            <small>Portuguese through songs</small>
-          </div>
-        </header>
-        <nav>
-          {cantaNavigation.map(([Icon, label], index) => (
-            <span className={index === 0 ? styles.isActive : ""} key={label}>
-              <Icon size={12} />
-              {label}
-            </span>
-          ))}
-        </nav>
-        <footer>
-          <Music2 size={12} />
-          <span><b>Music first</b><small>Catch one phrase.</small></span>
-        </footer>
-      </aside>
-      <div className={styles.cantaMain}>
-        <header>
-          <div><b>Canta Porto</b><small>Learn Portuguese through songs you love.</small></div>
-          <span>Find songs</span>
-        </header>
-        <div className={styles.cantaContent}>
-          <section className={styles.cantaHero}>
-            <span><Headphones size={12} /> Music first</span>
-            <h3>One song.<br />Portuguese that stays.</h3>
-            <p>Play a song, catch one phrase, and bring it back into your day.</p>
-            <div className={styles.cantaNext}>
-              <small>Next</small>
-              <b>Find your first song</b>
-              <em>Open songs</em>
-            </div>
-          </section>
-          <aside className={styles.cantaRail}>
-            <section><small>Continue</small><b>No songs yet</b><p>Choose a song and begin.</p></section>
-            <section><small>Review</small><b>Nothing due</b><p>Saved phrases return here.</p></section>
-          </aside>
-        </div>
       </div>
     </div>
   );

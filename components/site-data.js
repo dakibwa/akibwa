@@ -166,23 +166,6 @@ export const personalProjects = [
     mode: "preview",
     previewTreatment: "one-bag-vignette",
     cta: "In development"
-  },
-  {
-    number: "05",
-    slug: "canta-porto",
-    title: "Canta Porto",
-    type: "Portuguese through music",
-    statusLabel: "In development",
-    image: "/project-art/personal/music-intelligence.webp",
-    alt: "Painterly figures wrapped in flowing musical forms",
-    shot: "/project-shots/canta-porto.webp",
-    dashboardStatus: "In development",
-    isLaunchable: false,
-    summary: "Learn Portuguese from songs you already play.",
-    tags: ["European Portuguese", "Lyric recall", "Spaced review"],
-    mode: "preview",
-    previewTreatment: "canta-vignette",
-    cta: "In development"
   }
 ];
 
