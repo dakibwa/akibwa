@@ -18,6 +18,10 @@
   --page-title-size: 3.25rem;
   --page-title-mobile-size: 2.55rem;
   --page-title-line: 1.02;
+  /* Every page hero splits the same way: copy on the left, the page's own
+     image on the right. Change it here and all three move together. */
+  --page-hero-columns: minmax(0, 1fr) minmax(300px, 0.5fr);
+  --page-hero-gap: clamp(40px, 5vw, 72px);
   --sans: "Avenir Next", "Inter", "Helvetica Neue", Arial, sans-serif;
   --serif: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   /* Hover language: enter slowly with a long decelerating tail, leave a
@@ -144,8 +148,8 @@ button {
   @media (prefers-reduced-motion: no-preference) {
     .about-toolkit,
     .about-interests,
-    .contact-notes,
-    .contact-next,
+    .page-strip,
+    .page-strip-steps,
     .fit-panel,
     .how-we-work-panel,
     .area-card {
@@ -1444,7 +1448,8 @@ button {
 
 .studio-hero p,
 .offer-hero-title > p,
-.contact-hero-title > p {
+.contact-hero-title > p,
+.about-hero-copy > p {
   max-width: 1160px;
   margin: 10px 0 0;
   color: #84858d;
@@ -1962,8 +1967,8 @@ button {
 .about-profile {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.44fr);
-  column-gap: 56px;
+  grid-template-columns: var(--page-hero-columns);
+  column-gap: var(--page-hero-gap);
   align-items: start;
   padding-top: 56px;
   padding-bottom: 42px;
@@ -1993,21 +1998,11 @@ button {
 
 .about-profile h1 {
   margin: 0;
-  max-width: 24ch;
   color: var(--black);
-  font-size: clamp(3.25rem, 4.4vw, 3.95rem);
-  font-weight: 560;
-  line-height: 1.0;
-  letter-spacing: -0.016em;
-}
-
-.about-hero-sub {
-  max-width: 58ch;
-  margin: 20px 0 0;
-  color: var(--muted);
-  font-size: 1.16rem;
-  font-weight: 500;
-  line-height: 1.42;
+  font-size: var(--page-title-size);
+  font-weight: 540;
+  line-height: var(--page-title-line);
+  letter-spacing: 0;
 }
 
 .about-hero-intro {
@@ -3918,8 +3913,8 @@ button {
 
 .offer-studio-hero {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(360px, 0.62fr);
-  gap: clamp(42px, 6vw, 90px);
+  grid-template-columns: var(--page-hero-columns);
+  gap: var(--page-hero-gap);
   align-items: start;
   padding: 58px 0 20px;
 }
@@ -4257,13 +4252,10 @@ button {
   line-height: 1.42;
 }
 
-/* Same split as the professional hero: the copy column carries the title,
-   the line and the thing you actually do, with the artwork holding the
-   opposite column from the top of the page. */
 .contact-hero {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(360px, 0.62fr);
-  gap: clamp(42px, 6vw, 90px);
+  grid-template-columns: var(--page-hero-columns);
+  gap: var(--page-hero-gap);
   align-items: start;
   padding-top: 58px;
 }
@@ -4524,8 +4516,8 @@ button {
 /* The closing strips sit on a generated character-field in the sky
    palette — the contact page's data-texture, drawn like the About
    field, veiled so the text stays crisp. */
-.contact-notes,
-.contact-next {
+.page-strip,
+.page-strip-steps {
   display: grid;
   grid-template-columns: minmax(220px, 0.28fr) minmax(0, 1fr);
   gap: clamp(36px, 5vw, 72px);
@@ -4539,18 +4531,18 @@ button {
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
 }
 
-.contact-notes {
+.page-strip {
   margin-top: clamp(48px, 6vw, 72px);
   padding: 28px 30px 24px;
 }
 
-.contact-notes > header {
+.page-strip > header {
   display: grid;
   gap: 8px;
   max-width: 330px;
 }
 
-.contact-notes > header > span {
+.page-strip > header > span {
   color: var(--page-accent-strong, var(--blue));
   font-size: 0.76rem;
   font-weight: 800;
@@ -4558,7 +4550,7 @@ button {
   text-transform: uppercase;
 }
 
-.contact-notes h2 {
+.page-strip h2 {
   margin: 0;
   color: var(--black);
   font-size: clamp(1.35rem, 1.9vw, 1.85rem);
@@ -4566,7 +4558,7 @@ button {
   line-height: 1.08;
 }
 
-.contact-notes ul {
+.page-strip ul {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 clamp(28px, 4vw, 56px);
@@ -4575,7 +4567,7 @@ button {
   list-style: none;
 }
 
-.contact-notes li {
+.page-strip li {
   display: grid;
   grid-template-columns: 12px minmax(0, 1fr);
   gap: 18px;
@@ -4584,12 +4576,12 @@ button {
   padding: 16px 0;
 }
 
-.contact-notes li:nth-child(-n + 2) {
+.page-strip li:nth-child(-n + 2) {
   border-top: 0;
   padding-top: 2px;
 }
 
-.contact-notes i {
+.page-strip i {
   width: 9px;
   height: 9px;
   margin-top: 0.42em;
@@ -4598,24 +4590,24 @@ button {
   transition: box-shadow var(--hover-out) var(--ease-out);
 }
 
-.contact-notes li:hover i {
+.page-strip li:hover i {
   box-shadow: 0 0 0 6px color-mix(in srgb, var(--page-accent, var(--blue)) 16%, transparent);
   transition-duration: var(--hover-in);
 }
 
-.contact-notes li p {
+.page-strip li p {
   display: grid;
   gap: 4px;
   margin: 0;
 }
 
-.contact-notes strong {
+.page-strip strong {
   color: var(--black);
   font-size: 0.94rem;
   font-weight: 650;
 }
 
-.contact-notes li p span {
+.page-strip li p span {
   color: #4d5560;
   font-size: clamp(0.86rem, 0.82rem + 0.14vw, 0.95rem);
   line-height: 1.5;
@@ -4623,18 +4615,18 @@ button {
 
 /* Now the first closing strip on Contact, so it carries the same top
    breathing room the notes strip used to. */
-.contact-next {
+.page-strip-steps {
   margin-top: clamp(48px, 6vw, 72px);
   padding: 28px 30px 30px;
 }
 
-.contact-next > header {
+.page-strip-steps > header {
   display: grid;
   gap: 8px;
   max-width: 330px;
 }
 
-.contact-next > header > span {
+.page-strip-steps > header > span {
   color: var(--page-accent-strong, var(--blue));
   font-size: 0.76rem;
   font-weight: 800;
@@ -4642,7 +4634,7 @@ button {
   text-transform: uppercase;
 }
 
-.contact-next > header h2 {
+.page-strip-steps > header h2 {
   margin: 0;
   color: var(--black);
   font-size: clamp(1.35rem, 1.9vw, 1.85rem);
@@ -4650,7 +4642,7 @@ button {
   line-height: 1.08;
 }
 
-.contact-next ol {
+.page-strip-steps ol {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 26px;
@@ -4660,7 +4652,7 @@ button {
   border-top: 0;
 }
 
-.contact-next li {
+.page-strip-steps li {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
@@ -4668,17 +4660,17 @@ button {
   padding: 2px 0 0;
 }
 
-.contact-next li:hover .contact-next-step {
+.page-strip-steps li:hover .page-strip-steps-step {
   color: var(--page-accent, var(--blue));
   transition-duration: var(--hover-in);
 }
 
-.contact-next li + li {
+.page-strip-steps li + li {
   border-left: 0;
   padding-left: 0;
 }
 
-.contact-next-step {
+.page-strip-steps-step {
   color: var(--page-accent-strong, var(--blue));
   transition: color var(--hover-out) var(--ease-out);
   font-size: 0.8rem;
@@ -4688,19 +4680,19 @@ button {
   padding-top: 2px;
 }
 
-.contact-next p {
+.page-strip-steps p {
   display: grid;
   gap: 5px;
   margin: 0;
 }
 
-.contact-next strong {
+.page-strip-steps strong {
   color: var(--black);
   font-size: 0.95rem;
   font-weight: 650;
 }
 
-.contact-next p > span {
+.page-strip-steps p > span {
   color: #4d5560;
   font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
   line-height: 1.5;
@@ -5923,7 +5915,8 @@ button {
 
   .studio-hero p,
   .offer-hero-title > p,
-  .contact-hero-title > p {
+  .contact-hero-title > p,
+  .about-hero-copy > p {
     font-size: 2.05rem;
   }
 
@@ -6049,31 +6042,31 @@ button {
     min-height: 0;
   }
 
-  .contact-notes,
-  .contact-next {
+  .page-strip,
+  .page-strip-steps {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 22px 20px;
   }
 
-  .contact-notes {
+  .page-strip {
     margin-top: 52px;
   }
 
-  .contact-next {
+  .page-strip-steps {
     margin-top: 52px;
   }
 
-  .contact-next ol {
+  .page-strip-steps ol {
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
 
-  .contact-next li {
+  .page-strip-steps li {
     padding: 14px 0;
   }
 
-  .contact-next li + li {
+  .page-strip-steps li + li {
     border-left: 0;
     padding-left: 0;
   }
@@ -6530,7 +6523,8 @@ button {
 
   .studio-hero p,
   .offer-hero-title > p,
-  .contact-hero-title > p {
+  .contact-hero-title > p,
+  .about-hero-copy > p {
     font-size: 1.78rem;
   }
 
@@ -6678,11 +6672,11 @@ button {
     grid-template-columns: 1fr;
   }
 
-  .contact-notes ul {
+  .page-strip ul {
     grid-template-columns: 1fr;
   }
 
-  .contact-notes li:nth-child(2) {
+  .page-strip li:nth-child(2) {
     border-top: 1px solid rgba(16, 18, 23, 0.1);
     padding-top: 16px;
   }

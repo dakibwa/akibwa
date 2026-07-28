@@ -50,10 +50,8 @@ export function AboutPage() {
       <section className="page-grid about-profile" aria-label="Profile">
         <div className="about-profile-main">
           <div className="about-hero-copy">
-            <h1>I make computers do the work people are doing by hand.</h1>
-            <p className="about-hero-sub">
-              Ten years of it inside banks and building societies. Now for anyone who asks.
-            </p>
+            <h1>About</h1>
+            <p>I make computers do the work people are doing by hand.</p>
           </div>
 
           <section className="about-hero-intro" aria-labelledby="who-heading">
@@ -82,7 +80,7 @@ export function AboutPage() {
           </figure>
 
           <aside className="about-cv" aria-labelledby="cv-heading">
-            <h2 className="about-cv-label" id="cv-heading">Where I've worked</h2>
+            <h2 className="about-cv-label" id="cv-heading">Where I&apos;ve worked</h2>
             <ol className="work-timeline">
               {workplaces.map((workplace) => (
                 <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>

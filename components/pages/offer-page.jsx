@@ -46,7 +46,7 @@ export function OfferPage() {
         </div>
       </section>
 
-      <section className="page-grid contact-notes" aria-label="What that looks like">
+      <section className="page-grid page-strip" aria-label="What that looks like">
         <header>
           <span>What that looks like</span>
           <h2>Start anywhere.</h2>

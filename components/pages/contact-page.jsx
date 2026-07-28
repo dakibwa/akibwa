@@ -70,28 +70,28 @@ export function ContactPage() {
         </div>
       </section>
 
-      <section className="page-grid contact-next" aria-label="What happens next">
+      <section className="page-grid page-strip-steps" aria-label="What happens next">
         <header>
           <span>What happens next</span>
           <h2>Send it. I&apos;ll take a look.</h2>
         </header>
         <ol>
           <li>
-            <span className="contact-next-step">01</span>
+            <span className="page-strip-steps-step">01</span>
             <p>
               <strong>Tell me the problem</strong>
               <span>One sentence is enough.</span>
             </p>
           </li>
           <li>
-            <span className="contact-next-step">02</span>
+            <span className="page-strip-steps-step">02</span>
             <p>
               <strong>I find the smallest fix</strong>
               <span>Whatever solves it with the least new machinery, by email.</span>
             </p>
           </li>
           <li>
-            <span className="contact-next-step">03</span>
+            <span className="page-strip-steps-step">03</span>
             <p>
               <strong>We go from there</strong>
               <span>A short call only if it helps.</span>
