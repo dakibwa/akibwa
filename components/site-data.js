@@ -33,13 +33,13 @@ export const areaTiles = [
   },
   {
     title: "Professional",
-    descriptor: "Systems for companies",
+    descriptor: "Work I do for people",
     href: "/professional",
     image: "/area-art/professional-structure.webp",
     navImage: "/brand-art/nav/professional.webp",
     alt: "Cream sculptural architectural openings crossed by fine copper lines against a pale grey background",
     accent: "#a65f45",
-    detail: "Discovery, build and handover"
+    detail: "If it's done on a computer, I can help"
   },
   {
     title: "About",
@@ -53,7 +53,7 @@ export const areaTiles = [
     cardImagePosition: "50% 54%",
     cardAlt: "Sunlit mountain meadow with a layered data texture",
     accent: "#7d506f",
-    detail: "Ten years of BI, and what happens outside it"
+    detail: "Ten years of it, and what I do with it now"
   },
   {
     title: "Contact",
@@ -186,58 +186,3 @@ export const personalProjects = [
   }
 ];
 
-export const capabilities = [
-  {
-    title: "Workflow Design",
-    number: "01",
-    body:
-      "Map the real work, hand-offs, decisions, bottlenecks, and ownership before choosing what to automate."
-  },
-  {
-    title: "Dashboards & Data Products",
-    number: "02",
-    body:
-      "Turn raw data into tools people can use to understand, decide, and act."
-  },
-  {
-    title: "Internal Tools",
-    number: "03",
-    body:
-      "Build interfaces and utilities that make repeated work faster, clearer, and easier to trust."
-  },
-  {
-    title: "Automation",
-    number: "04",
-    body:
-      "Remove manual steps, connect tools, and design reliable human-in-the-loop handovers."
-  },
-  {
-    title: "Prototypes",
-    number: "05",
-    body:
-      "Ship small working versions fast enough to test ideas and create real evidence."
-  },
-  {
-    title: "Knowledge Systems",
-    number: "06",
-    body:
-      "Capture, structure, and retrieve private context without losing source discipline."
-  }
-];
-
-export const sprintIncludes = [
-  "Workflow audit and opportunity map",
-  "One selected workflow with a clear owner",
-  "System design and working first version",
-  "Testing with real or safely anonymised examples",
-  "Documentation and handover",
-  "Next-step roadmap"
-];
-
-export const goodProblems = [
-  "Your team rebuilds the same client update, report, or handover by hand.",
-  "The information exists, but it lives across inboxes, docs, spreadsheets, and tools.",
-  "Quality depends on one person remembering all the context.",
-  "AI experiments are happening, but no workflow has become durable.",
-  "You need a first useful system before deciding whether to invest further."
-];

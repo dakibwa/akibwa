@@ -4,7 +4,7 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.professional,
   description:
-    "For small teams whose real work still runs on spreadsheets, copy-paste and memory. Workflow teardown, prototype, then a system you keep."
+    "If it can be done on a computer, I can help you do it. Work done by hand, spreadsheets and reports, tools and websites. One sentence is enough to start."
 };
 
 export default function ProfessionalRoute() {

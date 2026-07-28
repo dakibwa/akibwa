@@ -1,14 +1,5 @@
 import Link from "next/link";
-import {
-  Activity,
-  ArrowRight,
-  AudioLines,
-  Clapperboard,
-  Database,
-  MessagesSquare,
-  MoonStar,
-  Orbit
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
 
 const workplaces = [
@@ -50,56 +41,6 @@ const workplaces = [
   }
 ];
 
-const toolGroups = [
-  {
-    label: "Data & reporting",
-    tools: [
-      { name: "Microsoft Fabric", note: "Pipelines and lakehouse reporting", logo: "/brand-logos/microsoft-fabric.svg", glow: "#159a82" },
-      { name: "Power BI", note: "Dashboards people decide from", logo: "/brand-logos/power-bi.svg", glow: "#d6a928" },
-      { name: "SQL", note: "The query layer under everything", Icon: Database, glow: "#667085" }
-    ]
-  },
-  {
-    label: "AI build loops",
-    tools: [
-      { name: "Claude Code", note: "The daily build loop", logo: "/brand-logos/claude.svg", glow: "#c86f5d" },
-      { name: "OpenAI Codex", note: "Parallel build lanes", logo: "/brand-logos/openai-codex-app.png", glow: "#6675ff", blend: true },
-      { name: "Copilot", note: "Completion inside the editor", logo: "/brand-logos/microsoft-copilot.svg", glow: "#4e8f92" }
-    ]
-  },
-  {
-    label: "Modelling & automation",
-    tools: [
-      { name: "Data modelling", note: "Semantic models that hold up", logo: "/brand-logos/data-modeling.svg", glow: "#e57550" },
-      { name: "Python", note: "Glue for automation and analysis", logo: "/brand-logos/python.svg", glow: "#3f7ca6" }
-    ]
-  }
-];
-
-const interestGroups = [
-  {
-    label: "Culture",
-    interests: [
-      { name: "Film", note: "Art-house, odd, logged on Letterboxd.", Icon: Clapperboard, glow: "#3c79a8" },
-      { name: "Music", note: "Restless taste; every listen tracked.", Icon: AudioLines, glow: "#7760c5" }
-    ]
-  },
-  {
-    label: "Physiology",
-    interests: [
-      { name: "Nutrition & running", note: "Testing what makes the body run better.", Icon: Activity, glow: "#e05f48" },
-      { name: "Sleep & recovery", note: "Tracking the balance between strain and rest.", Icon: MoonStar, glow: "#5b65b8" }
-    ]
-  },
-  {
-    label: "Philosophy",
-    interests: [
-      { name: "AI & the singularity", note: "Build with it daily; still arguing about where it ends.", Icon: Orbit, glow: "#2c8068" },
-      { name: "A good long conversation", note: "The kind that actually goes somewhere.", Icon: MessagesSquare, glow: "#b98234" }
-    ]
-  }
-];
-
 export function AboutPage() {
   return (
     <section className="studio-page about-page">
@@ -109,9 +50,9 @@ export function AboutPage() {
       <section className="page-grid about-profile" aria-label="Profile">
         <div className="about-profile-main">
           <div className="about-hero-copy">
-            <h1>Ten years turning other people&apos;s data into decisions.</h1>
+            <h1>I make computers do the work people are doing by hand.</h1>
             <p className="about-hero-sub">
-              Now doing it with small AI-assisted systems instead of a BI department.
+              Ten years of it inside banks and building societies. Now for anyone who asks.
             </p>
           </div>
 
@@ -127,7 +68,7 @@ export function AboutPage() {
               The running joke is that I'll optimise five things at once.
             </p>
             <Link className="about-cta about-hero-cta" href="/professional">
-              <span className="about-cta-label">See professional work</span>
+              <span className="about-cta-label">See what I can help with</span>
               <span className="about-cta-icon" aria-hidden="true">
                 <ArrowRight size={17} strokeWidth={2} />
               </span>
@@ -160,68 +101,6 @@ export function AboutPage() {
               ))}
             </ol>
           </aside>
-        </div>
-      </section>
-
-      <section className="page-grid about-section about-toolkit" aria-labelledby="tools-heading">
-        <header className="about-section-head">
-          <h2 id="tools-heading">Current toolkit</h2>
-          <p>What the work runs on, day to day.</p>
-        </header>
-
-        <div className="toolkit-groups">
-          {toolGroups.map((group) => (
-            <div className="toolkit-group" key={group.label}>
-              <h3 className="toolkit-label">{group.label}</h3>
-              <ul className="toolkit-list">
-                {group.tools.map((tool) => (
-                  <li className="toolkit-item" key={tool.name} style={{ "--toolkit-glow": tool.glow }}>
-                    <span className="toolkit-mark" aria-hidden="true">
-                      {tool.logo ? (
-                        <img className={`toolkit-logo${tool.blend ? " toolkit-logo--multiply" : ""}`} src={tool.logo} alt="" />
-                      ) : tool.Icon ? (
-                        <tool.Icon className="toolkit-logo toolkit-icon" size={22} strokeWidth={2.1} />
-                      ) : (
-                        <span className="toolkit-dot" />
-                      )}
-                    </span>
-                    <span className="toolkit-item-text">
-                      <strong>{tool.name}</strong>
-                      <em>{tool.note}</em>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="page-grid about-section about-interests" aria-labelledby="interests-heading">
-        <header className="about-section-head">
-          <h2 id="interests-heading">Outside the work</h2>
-          <p>A few things I read, track, and argue about when I'm not building.</p>
-        </header>
-
-        <div className="toolkit-groups interest-groups">
-          {interestGroups.map((group) => (
-            <div className="toolkit-group" key={group.label}>
-              <h3 className="toolkit-label">{group.label}</h3>
-              <ul className="toolkit-list">
-                {group.interests.map((interest) => (
-                  <li className="toolkit-item interest-item" key={interest.name} style={{ "--toolkit-glow": interest.glow }}>
-                    <span className="toolkit-mark" aria-hidden="true">
-                      <interest.Icon className="toolkit-logo toolkit-icon interest-icon" size={22} strokeWidth={1.9} />
-                    </span>
-                    <span className="toolkit-item-text">
-                      <strong>{interest.name}</strong>
-                      <em>{interest.note}</em>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
         </div>
       </section>
 
