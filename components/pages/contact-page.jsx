@@ -24,12 +24,12 @@ export function ContactPage() {
     <section className="studio-page contact-page-new">
       <section className="page-grid contact-hero">
         <div className="contact-hero-title">
-          <h1>Send me the messy bit.</h1>
+          <h1>How can I help?</h1>
 
           <form className="contact-form" onSubmit={handleSubmit}>
             <label>
               <span className="contact-label-row">
-                <span>What do you need?</span>
+                <span>Tell me what&apos;s going on</span>
                 <em>Optional</em>
               </span>
               <textarea

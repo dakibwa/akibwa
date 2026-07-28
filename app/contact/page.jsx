@@ -4,7 +4,7 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.contact,
   description:
-    "Send Akibwa the messy bit — a manual workflow, a broken report, a dashboard nobody trusts. One sentence is enough to start."
+    "If it can be done on a computer, I can help you do it. Tell me what's going on — one sentence is enough to start."
 };
 
 export default function ContactRoute() {

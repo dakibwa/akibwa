@@ -57,7 +57,7 @@ export const areaTiles = [
   },
   {
     title: "Contact",
-    descriptor: "Send the messy bit",
+    descriptor: "How can I help?",
     href: "/contact",
     image: "/area-art/contact-blue-clouds.webp",
     navImage: "/brand-art/nav/contact.webp",

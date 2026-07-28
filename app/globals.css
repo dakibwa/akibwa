@@ -1289,7 +1289,6 @@ button {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
-  border-top: 1px solid var(--line);
   padding-top: 22px;
 }
 
