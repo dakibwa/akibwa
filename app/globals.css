@@ -1439,23 +1439,11 @@ button {
 .offer-studio-hero h1,
 .contact-hero h1 {
   margin: 0;
+  max-width: 28ch;
   color: var(--black);
   font-size: var(--page-title-size);
   font-weight: 540;
   line-height: var(--page-title-line);
-  letter-spacing: 0;
-}
-
-.studio-hero p,
-.offer-hero-title > p,
-.contact-hero-title > p,
-.about-hero-copy > p {
-  max-width: 1160px;
-  margin: 10px 0 0;
-  color: #84858d;
-  font-size: 2.82rem;
-  font-weight: 520;
-  line-height: 1.05;
   letter-spacing: 0;
 }
 
@@ -1972,7 +1960,6 @@ button {
   align-items: start;
   padding-top: 56px;
   padding-bottom: 42px;
-  border-bottom: 1px solid var(--line);
 }
 
 .about-profile-main,
@@ -1998,6 +1985,7 @@ button {
 
 .about-profile h1 {
   margin: 0;
+  max-width: 28ch;
   color: var(--black);
   font-size: var(--page-title-size);
   font-weight: 540;
@@ -5913,13 +5901,6 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .studio-hero p,
-  .offer-hero-title > p,
-  .contact-hero-title > p,
-  .about-hero-copy > p {
-    font-size: 2.05rem;
-  }
-
   .offer-step-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -6519,13 +6500,6 @@ button {
   .offer-studio-hero h1,
   .contact-hero h1 {
     font-size: var(--page-title-mobile-size);
-  }
-
-  .studio-hero p,
-  .offer-hero-title > p,
-  .contact-hero-title > p,
-  .about-hero-copy > p {
-    font-size: 1.78rem;
   }
 
   .about-hero-sub {

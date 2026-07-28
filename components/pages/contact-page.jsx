@@ -24,8 +24,7 @@ export function ContactPage() {
     <section className="studio-page contact-page-new">
       <section className="page-grid contact-hero">
         <div className="contact-hero-title">
-          <h1>Contact</h1>
-          <p>Send the messy bit.</p>
+          <h1>Send me the messy bit.</h1>
 
           <form className="contact-form" onSubmit={handleSubmit}>
             <label>

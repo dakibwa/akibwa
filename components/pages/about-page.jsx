@@ -50,8 +50,7 @@ export function AboutPage() {
       <section className="page-grid about-profile" aria-label="Profile">
         <div className="about-profile-main">
           <div className="about-hero-copy">
-            <h1>About</h1>
-            <p>I make computers do the work people are doing by hand.</p>
+            <h1>I make computers do the work people are doing by hand.</h1>
           </div>
 
           <section className="about-hero-intro" aria-labelledby="who-heading">

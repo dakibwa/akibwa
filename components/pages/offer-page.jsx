@@ -14,12 +14,7 @@ export function OfferPage() {
     <section className="studio-page offer-page">
       <section className="page-grid offer-studio-hero">
         <div className="offer-hero-title">
-          <h1>Professional</h1>
-          <p>
-            If it can be done on a computer,
-            <br />
-            I can help you do it.
-          </p>
+          <h1>If it can be done on a computer, I can help you do it.</h1>
           <div className="offer-hero-copy">
             <p>
               Whatever it is. We work out what you're actually trying to do, I build the

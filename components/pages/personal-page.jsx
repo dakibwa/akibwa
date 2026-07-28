@@ -946,8 +946,7 @@ export function PersonalPage({ initialSlug = null }) {
   return (
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
-        <h1>Personal Projects</h1>
-        <p>Things I wanted to exist.</p>
+        <h1>Things I wanted to exist.</h1>
       </section>
 
       <div className="personal-storyboard" ref={storyboardRef}>
