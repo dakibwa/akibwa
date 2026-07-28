@@ -835,7 +835,7 @@ button {
 }
 
 .akibwa-hero {
-  padding-top: 72px;
+  padding-top: 56px;
 }
 
 .akibwa-hero h1 {
@@ -949,8 +949,11 @@ button {
   }
 }
 
+/* The first row of tiles used to finish 52px below a 900px fold, so a laptop
+   visitor saw four half-cards and no complete one. Reclaiming this margin and
+   16px of hero padding brings the whole first row above it. */
 .featured-areas-head {
-  margin-top: 104px;
+  margin-top: clamp(40px, 4vw, 48px);
 }
 
 .featured-areas-head p {
@@ -4472,7 +4475,7 @@ button {
 .page-art-panel {
   overflow: hidden;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--page-art-ratio, 4 / 3);
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   background: var(--page-accent, var(--blue));
@@ -4523,7 +4526,7 @@ button {
 }
 
 .page-strip {
-  margin-top: clamp(48px, 6vw, 72px);
+  margin-top: clamp(32px, 3vw, 44px);
   padding: 28px 30px 24px;
 }
 
@@ -4623,7 +4626,7 @@ button {
 /* Now the first closing strip on Contact, so it carries the same top
    breathing room the notes strip used to. */
 .page-strip-steps {
-  margin-top: clamp(48px, 6vw, 72px);
+  margin-top: clamp(32px, 3vw, 44px);
   padding: 28px 30px 30px;
 }
 
