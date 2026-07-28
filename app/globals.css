@@ -1439,6 +1439,9 @@ button {
 .contact-hero h1 {
   margin: 0;
   max-width: 28ch;
+  /* Without this the measure leaves a one-word last line at mid-desktop
+     widths — "it." on its own under two full ones. */
+  text-wrap: balance;
   color: var(--black);
   font-size: var(--page-title-size);
   font-weight: 540;
@@ -1985,6 +1988,7 @@ button {
 .about-profile h1 {
   margin: 0;
   max-width: 28ch;
+  text-wrap: balance;
   color: var(--black);
   font-size: var(--page-title-size);
   font-weight: 540;
