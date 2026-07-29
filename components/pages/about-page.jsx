@@ -76,28 +76,29 @@ export function AboutPage() {
             <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
           </figure>
 
-          <aside className="about-cv" aria-labelledby="cv-heading">
-            <h2 className="about-cv-label" id="cv-heading">Where I&apos;ve worked</h2>
-            <ol className="work-timeline">
-              {workplaces.map((workplace) => (
-                <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
-                  <span className="work-year">{workplace.year}</span>
-                  <span className="work-node" aria-hidden="true" />
-                  <span className="work-detail">
-                    <span className="work-company">
-                      <span className={`work-logo ${workplace.logoVariant ? `work-logo--${workplace.logoVariant}` : ""}`} aria-hidden="true">
-                        {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
-                      </span>
-                      <strong>{workplace.name}</strong>
-                    </span>
-                    <span className="work-role">{workplace.role}</span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </aside>
         </div>
       </section>
+
+      <aside className="page-grid about-cv" aria-labelledby="cv-heading">
+        <h2 className="about-cv-label" id="cv-heading">Where I&apos;ve worked</h2>
+        <ol className="work-timeline">
+          {workplaces.map((workplace) => (
+            <li className="work-row" key={workplace.name} style={{ "--company-accent": workplace.accent }}>
+              <span className="work-year">{workplace.year}</span>
+              <span className="work-node" aria-hidden="true" />
+              <span className="work-detail">
+                <span className="work-company">
+                  <span className={`work-logo ${workplace.logoVariant ? `work-logo--${workplace.logoVariant}` : ""}`} aria-hidden="true">
+                    {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
+                  </span>
+                  <strong>{workplace.name}</strong>
+                </span>
+                <span className="work-role">{workplace.role}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </aside>
 
       <PageFooter />
     </section>

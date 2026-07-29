@@ -2365,11 +2365,66 @@ button {
   object-position: center 34%;
 }
 
+/* The work history runs across the page rather than down it: one column per
+   employer, joined by a single rule at the nodes. It falls back to the
+   stacked list below 760px, which is the better shape on a phone. */
 .about-cv {
   display: grid;
-  gap: 12px;
+  gap: 18px;
   min-width: 0;
-  padding-top: 1px;
+  margin-top: clamp(30px, 4vw, 44px);
+}
+
+.about-cv .work-timeline {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 30px);
+}
+
+.about-cv .work-timeline::before {
+  top: 39px;
+  bottom: auto;
+  left: 0;
+  right: 0;
+  width: auto;
+  height: 1px;
+}
+
+.about-cv .work-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  align-items: start;
+  gap: 10px;
+  padding: 0;
+}
+
+.about-cv .work-row + .work-row {
+  border-top: 0;
+}
+
+.about-cv .work-node {
+  position: relative;
+  top: auto;
+  left: auto;
+  justify-self: start;
+  transform: none;
+}
+
+.about-cv .work-detail {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.about-cv .work-company strong {
+  white-space: normal;
+}
+
+.about-cv .work-role {
+  font-size: 0.84rem;
 }
 
 .about-cv-label {
@@ -2379,11 +2434,6 @@ button {
   font-weight: 640;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-}
-
-.about-cv .work-row {
-  gap: 18px;
-  padding: 4px 2px;
 }
 
 .about-cv .work-detail {
@@ -7262,6 +7312,42 @@ button {
 }
 
 @media (max-width: 760px) {
+  /* Phones keep the stacked list — it is the better shape at that width, and
+     only desktop needed the horizontal treatment. */
+  .about-cv .work-timeline {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: 0;
+  }
+
+  .about-cv .work-timeline::before {
+    top: 16px;
+    bottom: 16px;
+    left: 54px;
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+
+  .about-cv .work-row {
+    grid-template-columns: 54px minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 2px;
+  }
+
+  .about-cv .work-row + .work-row {
+    border-top: 1px solid rgba(16, 18, 23, 0.065);
+  }
+
+  .about-cv .work-node {
+    position: absolute;
+    left: 54px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   /* The cycling phrases run to 24 characters. `white-space: nowrap` on an
      inline-block meant the longest could not fit a line at this size, so it
      ran off the right edge — taking the page's width with it — and stranded
