@@ -39,11 +39,11 @@ export const areaTiles = [
     imagePosition: "50% 10%",
     alt: "Black-and-white artwork of a serene mask reflected in rippled water",
     accent: "#55585c",
-    detail: "Chorus, Cover Collision and two more"
+    detail: "Curiosity, mostly"
   },
   {
     title: "About",
-    descriptor: "How I think and build",
+    descriptor: "A bit about me",
     href: "/about",
     image: "/area-art/about-meadow-flowers.jpg",
     navImage: "/brand-art/nav/about.webp",
@@ -53,7 +53,7 @@ export const areaTiles = [
     cardImagePosition: "50% 54%",
     cardAlt: "Sunlit mountain meadow with a layered data texture",
     accent: "#7d506f",
-    detail: "Ten years of it, and what I do with it now"
+    detail: "Ten years in banks, now for anyone"
   },
   {
     title: "Contact",
