@@ -67,27 +67,6 @@ export const areaTiles = [
   }
 ];
 
-export const featuredProjects = [
-  {
-    title: "Chorus",
-    type: "Data product",
-    image: "/project-art/personal/chorus-trio.webp",
-    alt: "Pattachitra-style folk painting of three wide-eyed figures playing flute, drum, and veena under an ornate arch with music notes",
-    summary:
-      "A listening archive that turns Last.fm data into artists, albums, tracks, timelines, and listening reports.",
-    problem:
-      "Music history is rich, but the raw API is inconsistent, incomplete, and hard to interpret over time.",
-    built:
-      "Server-side Last.fm fetching, normalisation, caching, charts, editorial summaries, and graceful handling for missing artwork or sparse data.",
-    proves:
-      "API integration, data modelling, dashboard design, and the ability to make messy personal data readable.",
-    matters:
-      "The same pattern applies to client reporting: pull scattered signals into one surface people can understand and act from.",
-    stack: ["Next.js", "TypeScript", "Last.fm API", "Recharts", "Framer Motion"],
-    accent: "blue"
-  }
-];
-
 export const coverCollisionUrl = process.env.NEXT_PUBLIC_COVER_COLLISION_URL || coverCollisionData.profileUrl || "https://www.instagram.com/dakibwa/";
 export const coverCollisionPosts = coverCollisionData.posts;
 
@@ -102,8 +81,6 @@ export const personalProjects = [
     aliases: ["lastfm-dashboard"],
     title: "Chorus",
     type: "Listening archive",
-    image: featuredProjects[0].image,
-    alt: featuredProjects[0].alt,
     shot: "/project-shots/chorus.webp",
     dashboardLabel: "Chorus",
     dashboardStatus: "Live on Akibwa",
@@ -122,8 +99,6 @@ export const personalProjects = [
     slug: "cover-collision",
     title: "Cover Collision",
     type: "Album art series",
-    image: coverCollisionPosts[0].image,
-    alt: coverCollisionPosts[0].alt,
     visual: "cover-collision",
     summary: "Two album covers, spliced into one.",
     tags: ["Cover mismatches", "Collage", "Recombination"],
@@ -136,8 +111,6 @@ export const personalProjects = [
     slug: "meditator",
     title: "Meditator",
     type: "Shared meditation",
-    image: "/project-art/personal/albion-rose-card.webp",
-    alt: "William Blake's Albion Rose: a radiant figure with outstretched arms",
     dashboardLabel: "Meditator",
     dashboardStatus: "Live on Akibwa",
     summary: "A private meditation room for two.",
@@ -155,8 +128,6 @@ export const personalProjects = [
     slug: "portuguese-with-ines",
     title: "Português com a Inês",
     type: "Language teaching site",
-    image: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
-    alt: "Cream, blue and orange fan mark from the Português com a Inês identity",
     dashboardLabel: "Português com a Inês",
     dashboardStatus: "Live on Akibwa",
     summary: "Lessons, prices and booking for a teacher in Porto.",
@@ -172,8 +143,6 @@ export const personalProjects = [
     slug: "fellrun",
     title: "Fellrun",
     type: "Browser game",
-    image: "/project-art/personal/fellrun-ridge.webp",
-    alt: "A cloaked runner on a ridge path above a green dale, viaduct in the valley",
     statusLabel: "Dev",
     dashboardStatus: "In development",
     isLaunchable: false,
@@ -187,8 +156,6 @@ export const personalProjects = [
     slug: "fellblade",
     title: "Fellblade",
     type: "Action RPG",
-    image: "/project-art/personal/fellblade-encounter.webp",
-    alt: "A pixel-art swordsman facing a mossy creature on a path between dry-stone walls",
     statusLabel: "Dev",
     dashboardStatus: "In development",
     isLaunchable: false,
@@ -202,8 +169,6 @@ export const personalProjects = [
     slug: "one-bag",
     title: "One Bagger",
     type: "One-bag travel",
-    image: "/project-art/personal/albion-sunburst-hero.webp",
-    alt: "Radiant sunburst over a luminous horizon",
     dashboardLabel: "One Bagger",
     dashboardStatus: "In development",
     statusLabel: "Dev",
