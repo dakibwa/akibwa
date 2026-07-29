@@ -1592,6 +1592,7 @@ button {
 }
 
 .project-card-body {
+  position: relative;
   display: grid;
   align-content: start;
   gap: 3px;
@@ -1612,11 +1613,10 @@ button {
   backdrop-filter: blur(6px);
 }
 
+/* The title is pinned clear of the arrow rather than sharing a row with it,
+   so a name that wraps to two lines doesn't drag the arrow down with it. */
 .project-card-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+  padding-right: 34px;
 }
 
 .project-card-title {
@@ -1661,11 +1661,12 @@ button {
 }
 
 .project-card-cue {
+  position: absolute;
+  top: 12px;
+  right: 13px;
   display: inline-flex;
-  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  align-self: center;
   width: 24px;
   height: 24px;
   border-radius: 999px;
@@ -1686,13 +1687,6 @@ button {
 .project-card:hover .project-card-cue svg {
   transform: translateX(2px);
   transition-duration: var(--hover-in);
-}
-
-/* Personal projects — storyboard folio. One full-width section per project:
-   copy on one side, the product-faithful preview card on the other, sides
-   alternating down the page. The nav dropdown deep-links anchor here. */
-.personal-storyboard {
-  padding-bottom: 30px;
 }
 
 .personal-story {
@@ -7416,7 +7410,7 @@ button {
 
   .page-strip,
   .page-strip-steps,
-  .personal-storyboard {
+  .projects-grid {
     order: 2;
   }
 
