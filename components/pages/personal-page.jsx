@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
-import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
   chorusAppUrl,
   coverCollisionDataUrl,
@@ -24,6 +24,13 @@ import {
   personalProjects
 } from "@/components/site-data";
 import fallbackChorusData from "@/data/chorus-data.json";
+
+// The dashboard mock only ever appears inside the overlay, so it loads when a
+// card is opened rather than with the index.
+const ChorusDashboardPreview = dynamic(
+  () => import("@/components/chorus-dashboard-preview").then((m) => m.ChorusDashboardPreview),
+  { ssr: false }
+);
 
 const chorusSummaryDataUrl = (
   process.env.NEXT_PUBLIC_CHORUS_DATA_URL || "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus"
