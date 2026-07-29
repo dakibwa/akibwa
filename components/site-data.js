@@ -200,11 +200,11 @@ export const personalProjects = [
   {
     number: "07",
     slug: "one-bag",
-    title: "One Baggers",
+    title: "One Bagger",
     type: "One-bag travel",
     image: "/project-art/personal/albion-sunburst-hero.webp",
     alt: "Radiant sunburst over a luminous horizon",
-    dashboardLabel: "One Baggers",
+    dashboardLabel: "One Bagger",
     dashboardStatus: "In development",
     statusLabel: "Dev",
     isLaunchable: false,

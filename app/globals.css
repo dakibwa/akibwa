@@ -1573,20 +1573,6 @@ button {
   transition: transform 520ms var(--ease-out);
 }
 
-/* The Portuguese site's card carries its identity mark rather than a scene,
-   so it sits whole on a deep field instead of being cropped — the cream and
-   orange in the mark need something dark to read against. */
-.project-card-art.is-mark {
-  background:
-    radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.1), transparent 60%),
-    linear-gradient(140deg, #14335f, #0d2140);
-}
-
-.project-card-art.is-mark img {
-  object-fit: contain;
-  padding: 9%;
-}
-
 .project-card:hover .project-card-art img {
   transform: scale(1.035);
 }

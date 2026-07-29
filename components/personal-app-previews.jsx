@@ -127,7 +127,7 @@ function OneBagPreview() {
   return (
     <div className={styles.oneBagShell}>
       <header className={styles.oneBagMasthead}>
-        <span className={styles.oneBagBrand}><Backpack size={15} /><b>One Baggers</b></span>
+        <span className={styles.oneBagBrand}><Backpack size={15} /><b>One Bagger</b></span>
         <nav><span>Loadout</span><span>Shop</span><span>Gear Locker</span><span>Profile</span></nav>
         <em>Example loadout</em>
       </header>

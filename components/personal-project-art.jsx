@@ -2,40 +2,40 @@ import styles from "./personal-project-art.module.css";
 
 const artworkBySlug = {
   chorus: {
-    src: "/project-art/personal/chorus-trio.webp",
-    bannerSrc: "/project-art/personal/chorus-trio-banner.webp",
+    src: "/project-art/personal/chorus-symbol.webp",
+    bannerSrc: "/project-art/personal/chorus-symbol.webp",
     navBannerSrc: "/brand-art/nav/projects/chorus.webp",
-    variant: "music",
-    detailBannerPosition: "50% 45%",
-    selectorBannerPosition: "50% 48%",
-    selectorSubjectPosition: "50% 48%",
-    expandedBannerPosition: "50% 45%"
+    variant: "symbol",
+    detailBannerPosition: "50% 50%",
+    selectorBannerPosition: "50% 50%",
+    selectorSubjectPosition: "50% 50%",
+    expandedBannerPosition: "50% 50%"
   },
   "cover-collision": {
-    src: "/project-art/personal/cover-collision-saint.webp",
-    bannerSrc: "/project-art/personal/cover-collision-saint-banner.webp",
+    src: "/project-art/personal/cover-collision-symbol.webp",
+    bannerSrc: "/project-art/personal/cover-collision-symbol.webp",
     navBannerSrc: "/brand-art/nav/projects/cover-collision.webp",
-    variant: "cover",
-    detailBannerPosition: "50% 48%",
-    selectorBannerPosition: "50% 48%",
-    selectorSubjectPosition: "54% 48%",
-    expandedBannerPosition: "50% 48%"
+    variant: "symbol",
+    detailBannerPosition: "50% 50%",
+    selectorBannerPosition: "50% 50%",
+    selectorSubjectPosition: "50% 50%",
+    expandedBannerPosition: "50% 50%"
   },
   "one-bag": {
-    src: "/project-art/personal/one-bag-traveller.webp",
-    bannerSrc: "/project-art/personal/one-bag-traveller-banner.webp",
+    src: "/project-art/personal/one-bag-symbol.webp",
+    bannerSrc: "/project-art/personal/one-bag-symbol.webp",
     navBannerSrc: "/brand-art/nav/projects/one-bag.webp",
-    variant: "cover",
-    detailBannerPosition: "50% 44%",
-    selectorBannerPosition: "50% 42%",
-    selectorSubjectPosition: "50% 38%",
-    expandedBannerPosition: "50% 42%"
+    variant: "symbol",
+    detailBannerPosition: "50% 50%",
+    selectorBannerPosition: "50% 50%",
+    selectorSubjectPosition: "50% 50%",
+    expandedBannerPosition: "50% 50%"
   },
   "portuguese-with-ines": {
-    src: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
-    bannerSrc: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    src: "/project-art/personal/portuguese-with-ines-symbol.webp",
+    bannerSrc: "/project-art/personal/portuguese-with-ines-symbol.webp",
     navBannerSrc: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
-    variant: "mark",
+    variant: "symbol",
     detailBannerPosition: "50% 50%",
     selectorBannerPosition: "50% 50%",
     selectorSubjectPosition: "50% 50%",
@@ -62,14 +62,14 @@ const artworkBySlug = {
     expandedBannerPosition: "50% 46%"
   },
   meditator: {
-    src: "/project-art/personal/albion-rose-card.webp",
-    bannerSrc: "/project-art/personal/albion-rose-banner.webp",
+    src: "/project-art/personal/meditator-symbol.webp",
+    bannerSrc: "/project-art/personal/meditator-symbol.webp",
     navBannerSrc: "/brand-art/nav/projects/meditator.webp",
-    variant: "knowledge",
-    detailBannerPosition: "47% 42%",
-    selectorBannerPosition: "47% 42%",
-    selectorSubjectPosition: "47% 42%",
-    expandedBannerPosition: "47% 42%"
+    variant: "symbol",
+    detailBannerPosition: "50% 50%",
+    selectorBannerPosition: "50% 50%",
+    selectorSubjectPosition: "50% 50%",
+    expandedBannerPosition: "50% 50%"
   }
 };
 
