@@ -95,7 +95,9 @@ const ACCENT_BY_SLUG = {
   "cover-collision": "#e2556b",
   "one-bag": "#2f7d57",
   meditator: "#3a5a45",
-  "portuguese-with-ines": "#1f4f9c"
+  "portuguese-with-ines": "#1f4f9c",
+  fellrun: "#2f7fa8",
+  fellblade: "#6b7a3a"
 };
 
 function accentForSlug(slug) {
@@ -107,7 +109,9 @@ const STATUS_BY_SLUG = {
   "cover-collision": "live",
   "one-bag": "dev",
   meditator: "live",
-  "portuguese-with-ines": "live"
+  "portuguese-with-ines": "live",
+  fellrun: "dev",
+  fellblade: "dev"
 };
 
 const STATUS_LABELS = { live: "Live", dev: "In development" };

@@ -41,6 +41,26 @@ const artworkBySlug = {
     selectorSubjectPosition: "50% 50%",
     expandedBannerPosition: "50% 50%"
   },
+  fellrun: {
+    src: "/project-art/personal/fellrun-ridge.webp",
+    bannerSrc: "/project-art/personal/fellrun-ridge-banner.webp",
+    navBannerSrc: "/project-art/personal/fellrun-ridge-banner.webp",
+    variant: "knowledge",
+    detailBannerPosition: "50% 52%",
+    selectorBannerPosition: "50% 52%",
+    selectorSubjectPosition: "50% 52%",
+    expandedBannerPosition: "50% 52%"
+  },
+  fellblade: {
+    src: "/project-art/personal/fellblade-encounter.webp",
+    bannerSrc: "/project-art/personal/fellblade-encounter-banner.webp",
+    navBannerSrc: "/project-art/personal/fellblade-encounter-banner.webp",
+    variant: "cover",
+    detailBannerPosition: "50% 46%",
+    selectorBannerPosition: "50% 46%",
+    selectorSubjectPosition: "50% 46%",
+    expandedBannerPosition: "50% 46%"
+  },
   meditator: {
     src: "/project-art/personal/albion-rose-card.webp",
     bannerSrc: "/project-art/personal/albion-rose-banner.webp",
