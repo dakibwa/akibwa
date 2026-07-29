@@ -4539,10 +4539,14 @@ button {
   background-color: var(--white);
 }
 
-.contact-page-new .contact-form {
+/* At `cover` the sky rendered ~3x the scale it sits at in the hero panel and
+   read as a blue block rather than the same photograph. Sized to roughly the
+   panel's width and anchored right, it stays a motif and clears the header
+   text on the left. */
+.contact-page-new .page-strip-steps {
   background:
-    linear-gradient(104deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.7) 44%, rgba(255, 255, 255, 0.44) 100%),
-    url("/area-art/contact-blue-clouds.webp") center 46% / cover no-repeat;
+    linear-gradient(80deg, rgba(255, 255, 255, 0.97) 34%, rgba(255, 255, 255, 0.79)),
+    url("/area-art/contact-blue-clouds.webp") right -30px bottom 32% / auto 300% no-repeat;
   background-color: var(--white);
 }
 
@@ -7112,7 +7116,10 @@ button {
     background-color: var(--white);
   }
 
-  .contact-page-new .contact-form {
-    background: var(--white);
+  .contact-page-new .page-strip-steps {
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
+      url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
+    background-color: var(--white);
   }
 }
