@@ -114,7 +114,7 @@ const STATUS_BY_SLUG = {
   fellblade: "dev"
 };
 
-const STATUS_LABELS = { live: "Live", dev: "In development" };
+const STATUS_LABELS = { live: "Live", dev: "Dev" };
 
 function statusForSlug(slug) {
   return STATUS_BY_SLUG[slug] ?? "dev";

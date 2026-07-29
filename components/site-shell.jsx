@@ -208,35 +208,10 @@ export function SiteShell({ children }) {
                       aria-hidden={!isPersonalMenuOpen}
                     >
                       <div className="nav-dropdown-panel">
-                        {personalProjects.map((project) => {
+                        {/* Only what someone can actually open — an
+                            in-development entry here is a dead row. */}
+                        {personalProjects.filter(isPersonalProjectLaunchable).map((project) => {
                           const artwork = getPersonalProjectArt(project);
-                          const content = (
-                            <>
-                              <span
-                                className="nav-dropdown-link-art"
-                                style={{
-                                  backgroundImage: `url(${artwork.navBannerSrc})`,
-                                  backgroundPosition: artwork.selectorBannerPosition
-                                }}
-                                aria-hidden="true"
-                              />
-                              <strong>{project.title}</strong>
-                              <em>{project.statusLabel ?? project.type}</em>
-                            </>
-                          );
-
-                          if (!isPersonalProjectLaunchable(project)) {
-                            return (
-                              <div
-                                key={project.slug}
-                                className="nav-dropdown-link is-unavailable"
-                                aria-disabled="true"
-                                style={{ "--project-accent": projectAccents[project.slug] }}
-                              >
-                                {content}
-                              </div>
-                            );
-                          }
 
                           return (
                             <Link
@@ -248,7 +223,16 @@ export function SiteShell({ children }) {
                               style={{ "--project-accent": projectAccents[project.slug] }}
                               onPointerEnter={() => primeRoute(`/projects/${project.slug}`)}
                             >
-                              {content}
+                              <span
+                                className="nav-dropdown-link-art"
+                                style={{
+                                  backgroundImage: `url(${artwork.navBannerSrc})`,
+                                  backgroundPosition: artwork.selectorBannerPosition
+                                }}
+                                aria-hidden="true"
+                              />
+                              <strong>{project.title}</strong>
+                              <em>{project.statusLabel ?? project.type}</em>
                               <ArrowRight className="nav-dropdown-link-arrow" size={13} strokeWidth={1.8} aria-hidden="true" />
                             </Link>
                           );
