@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
+import {
+  preloadBackground,
+  preloadSiteImage,
+  resolveBackground,
+  SiteImage,
+  SLOT_SIZES
+} from "@/components/site-image";
 
 const workplaces = [
   {
@@ -42,11 +49,18 @@ const workplaces = [
 ];
 
 export function AboutPage() {
+  // The portrait is the LCP element; the meadow behind the intro card is a CSS
+  // background the browser only discovers once the stylesheet resolves.
+  // Preload both so neither waits on the other.
+  preloadSiteImage({
+    src: "/about-portrait-smiling.webp",
+    slot: "portrait",
+    sizes: SLOT_SIZES.portrait
+  });
+  preloadBackground("/about-mountain-meadow.webp", "aboutIntro");
+
   return (
     <section className="studio-page about-page">
-      {/* The meadow paints the LCP intro card as a CSS background, which the
-          browser discovers late; preloading it pulls the paint forward. */}
-      <link rel="preload" as="image" href="/about-mountain-meadow.webp" />
       <section className="page-grid about-profile" aria-label="Profile">
         <div className="about-profile-main">
           <div className="about-hero-copy">
@@ -73,7 +87,13 @@ export function AboutPage() {
 
         <div className="about-profile-side">
           <figure className="about-portrait about-portrait--hero" aria-label="Portrait of Daniel smiling">
-            <img src="/about-portrait-smiling.webp" alt="Portrait of Daniel smiling" />
+            <SiteImage
+              src="/about-portrait-smiling.webp"
+              slot="portrait"
+              sizes={SLOT_SIZES.portrait}
+              alt="Portrait of Daniel smiling"
+              priority
+            />
           </figure>
 
         </div>
@@ -89,7 +109,14 @@ export function AboutPage() {
               <span className="work-detail">
                 <span className="work-company">
                   <span className={`work-logo ${workplace.logoVariant ? `work-logo--${workplace.logoVariant}` : ""}`} aria-hidden="true">
-                    {workplace.logo ? <img src={workplace.logo} alt="" /> : <span className="work-dot" />}
+                    {/* SVG marks pass through untouched; the PNG exports run
+                        through the 56px logo rung — they were shipping at full
+                        logo resolution for a 28px slot. */}
+                    {workplace.logo ? (
+                      <img src={resolveBackground(workplace.logo, "logo")} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <span className="work-dot" />
+                    )}
                   </span>
                   <strong>{workplace.name}</strong>
                 </span>

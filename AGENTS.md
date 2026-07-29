@@ -9,6 +9,31 @@ This repository is the public `akibwa.com` website.
 - Public surface registry: `data/public-surfaces.json`.
 - Pre-publish check: `npm run publish:ready`.
 
+## Artwork and images
+
+`output: "export"` forces `images.unoptimized`, so `next/image` cannot resize
+anything — it emits a plain `<img>` with the original file. Responsive variants
+are therefore pre-rendered at build time and committed.
+
+- Render artwork with `<SiteImage>` (`components/site-image.jsx`), never a bare
+  `<img>` or `next/image`. It emits AVIF with a WebP fallback and the right
+  `srcset`. CSS backgrounds go through `resolveBackground()`.
+- Every image is bound to a **slot** — the layout it renders into — in
+  `scripts/generate-image-variants.mjs`. A slot carries the aspect ratio, the
+  CSS widths it takes at real breakpoints, and the `object-position` the layout
+  applies. Variants are cropped to the slot, so the crop position must match
+  what the CSS does or the artwork silently reframes.
+- After adding or replacing artwork: `npm run images:generate`, and commit
+  `public/_img/` and `components/image-variants.json` with it.
+- `npm run check:images` (part of `publish:ready`) fails if a source has changed
+  since its variants were generated.
+- The ladder caps at 1.5x DPR. The artwork is grain-heavy, and grain hides the
+  difference between 1.5x and 2x while costing about 1.8x the bytes.
+- **Export artwork once, at final size.** Re-encoding an already-lossy WebP
+  keeps the previous generation's artefacts as detail and inflates the file:
+  `contact-blue-clouds.webp` costs 437K for 899x1198 that way, and no amount of
+  re-encoding recovers it — only resizing does.
+
 ## Default Publish Flow
 
 **Standing policy (Dan, 2026-06-23): completed changes go live immediately. Ship by default — do not ask for per-change approval, and do not park finished work behind an unmerged PR or leave it local-only.**

@@ -7,8 +7,14 @@ import { useEffect, useRef, useState } from "react";
 import { PointerResponseLink } from "@/components/pointer-response";
 import { areaTiles, isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 import { getPersonalProjectArt } from "@/components/personal-project-art";
+import { resolveBackground } from "@/components/site-image";
 
-const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navImage ?? tile.image]));
+/* Painted at 112x39 in the bar and 215x45 in the dropdown, so resolve each to
+   its own rung rather than the full-size source — the dropdown art in
+   particular was pulling a 50K splat for a 215px row, on every page. */
+const navArt = Object.fromEntries(
+  areaTiles.map((tile) => [tile.href, resolveBackground(tile.navImage ?? tile.image, "navStrip")])
+);
 
 /* Offer, then the proof, then the person, then the way in. */
 const navItems = [
@@ -226,7 +232,7 @@ export function SiteShell({ children }) {
                               <span
                                 className="nav-dropdown-link-art"
                                 style={{
-                                  backgroundImage: `url(${artwork.navBannerSrc})`,
+                                  backgroundImage: `url(${resolveBackground(artwork.navBannerSrc, "navDropdown")})`,
                                   backgroundPosition: artwork.selectorBannerPosition
                                 }}
                                 aria-hidden="true"

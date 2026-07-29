@@ -6,9 +6,11 @@
     "dev": "next dev",
     "check:navigation": "node scripts/check-navigation-contract.mjs",
     "check:navigation:dom": "node scripts/check-navigation-dom.mjs",
+    "check:images": "node scripts/generate-image-variants.mjs --check",
+    "images:generate": "node scripts/generate-image-variants.mjs",
     "build": "npm run check:navigation && NEXT_TELEMETRY_DISABLED=1 next build",
     "publish:check": "node scripts/check-publication.mjs",
-    "publish:ready": "npm run build && npm run publish:check && npm run refresh:status",
+    "publish:ready": "npm run build && npm run check:images && npm run publish:check && npm run refresh:status",
     "refresh:status": "node scripts/check-cloud-refreshes.mjs",
     "refresh:chorus:local": "node scripts/update-chorus-data.mjs",
     "start": "next start"
@@ -18,6 +20,9 @@
     "next": "^15.5.18",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
   },
   "overrides": {
     "postcss": "8.5.10"

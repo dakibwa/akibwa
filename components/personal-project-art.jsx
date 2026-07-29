@@ -1,4 +1,5 @@
 import styles from "./personal-project-art.module.css";
+import { SiteImage, SLOT_SIZES } from "@/components/site-image";
 
 const artworkBySlug = {
   chorus: {
@@ -82,13 +83,15 @@ export function PersonalProjectArt({ project, className = "", priority = false }
 
   return (
     <div className={`${styles.art} ${styles[artwork.variant]} ${className}`} aria-hidden="true">
-      <img
+      {/* Six cards to a row at ~202 CSS px on desktop, one full-bleed card on
+          mobile — so mobile is the wider request of the two, not desktop. */}
+      <SiteImage
         src={artwork.src}
+        slot="projectCard"
+        sizes={SLOT_SIZES.projectCard}
         alt=""
         draggable="false"
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : undefined}
-        decoding="async"
+        priority={priority}
       />
     </div>
   );

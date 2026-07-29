@@ -1,0 +1,1264 @@
+{
+  "areaTile:/area-art/about-reflection.webp": {
+    "source": "/area-art/about-reflection.webp",
+    "slot": "areaTile",
+    "ratio": 1.74,
+    "sourceWidth": 675,
+    "sourceHeight": 1200,
+    "sourceHash": "fdc18f01b25a9228",
+    "variants": [
+      {
+        "width": 491,
+        "height": 282,
+        "avif": {
+          "src": "/_img/area-art/about-reflection-areaTile-491.avif",
+          "bytes": 23590
+        },
+        "webp": {
+          "src": "/_img/area-art/about-reflection-areaTile-491.webp",
+          "bytes": 33124
+        }
+      },
+      {
+        "width": 675,
+        "height": 388,
+        "avif": {
+          "src": "/_img/area-art/about-reflection-areaTile-675.avif",
+          "bytes": 55565
+        },
+        "webp": {
+          "src": "/_img/area-art/about-reflection-areaTile-675.webp",
+          "bytes": 73340
+        }
+      }
+    ]
+  },
+  "areaTile:/area-art/professional-structure.webp": {
+    "source": "/area-art/professional-structure.webp",
+    "slot": "areaTile",
+    "ratio": 1.74,
+    "sourceWidth": 1200,
+    "sourceHeight": 675,
+    "sourceHash": "4a87c983363487f6",
+    "variants": [
+      {
+        "width": 491,
+        "height": 282,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-areaTile-491.avif",
+          "bytes": 5019
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-areaTile-491.webp",
+          "bytes": 6730
+        }
+      },
+      {
+        "width": 690,
+        "height": 397,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-areaTile-690.avif",
+          "bytes": 7725
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-areaTile-690.webp",
+          "bytes": 11678
+        }
+      },
+      {
+        "width": 927,
+        "height": 533,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-areaTile-927.avif",
+          "bytes": 11861
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-areaTile-927.webp",
+          "bytes": 18328
+        }
+      },
+      {
+        "width": 1038,
+        "height": 597,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-areaTile-1038.avif",
+          "bytes": 13874
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-areaTile-1038.webp",
+          "bytes": 22090
+        }
+      }
+    ]
+  },
+  "areaTile:/area-art/about-meadow-flowers.jpg": {
+    "source": "/area-art/about-meadow-flowers.jpg",
+    "slot": "areaTile",
+    "ratio": 1.74,
+    "sourceWidth": 1200,
+    "sourceHeight": 900,
+    "sourceHash": "007dbbeba11e38eb",
+    "variants": [
+      {
+        "width": 491,
+        "height": 282,
+        "avif": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-491.avif",
+          "bytes": 18494
+        },
+        "webp": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-491.webp",
+          "bytes": 21948
+        }
+      },
+      {
+        "width": 690,
+        "height": 397,
+        "avif": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-690.avif",
+          "bytes": 34252
+        },
+        "webp": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-690.webp",
+          "bytes": 41400
+        }
+      },
+      {
+        "width": 927,
+        "height": 533,
+        "avif": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-927.avif",
+          "bytes": 57667
+        },
+        "webp": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-927.webp",
+          "bytes": 67646
+        }
+      },
+      {
+        "width": 1038,
+        "height": 597,
+        "avif": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-1038.avif",
+          "bytes": 67723
+        },
+        "webp": {
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-1038.webp",
+          "bytes": 79702
+        }
+      }
+    ]
+  },
+  "areaTile:/area-art/contact-blue-clouds.webp": {
+    "source": "/area-art/contact-blue-clouds.webp",
+    "slot": "areaTile",
+    "ratio": 1.74,
+    "sourceWidth": 899,
+    "sourceHeight": 1198,
+    "sourceHash": "8a0d59e6018d72b5",
+    "variants": [
+      {
+        "width": 491,
+        "height": 282,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-491.avif",
+          "bytes": 30492
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-491.webp",
+          "bytes": 48032
+        }
+      },
+      {
+        "width": 690,
+        "height": 397,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-690.avif",
+          "bytes": 74331
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-690.webp",
+          "bytes": 104002
+        }
+      },
+      {
+        "width": 899,
+        "height": 517,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-899.avif",
+          "bytes": 128160
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-899.webp",
+          "bytes": 172386
+        }
+      }
+    ]
+  },
+  "heroPanel43:/area-art/professional-teardown.webp": {
+    "source": "/area-art/professional-teardown.webp",
+    "slot": "heroPanel43",
+    "ratio": 1.3333,
+    "sourceWidth": 1200,
+    "sourceHeight": 641,
+    "sourceHash": "2f18917dd436785c",
+    "variants": [
+      {
+        "width": 491,
+        "height": 368,
+        "avif": {
+          "src": "/_img/area-art/professional-teardown-heroPanel43-491.avif",
+          "bytes": 5622
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-teardown-heroPanel43-491.webp",
+          "bytes": 9138
+        }
+      },
+      {
+        "width": 638,
+        "height": 479,
+        "avif": {
+          "src": "/_img/area-art/professional-teardown-heroPanel43-638.avif",
+          "bytes": 8395
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-teardown-heroPanel43-638.webp",
+          "bytes": 14224
+        }
+      },
+      {
+        "width": 780,
+        "height": 585,
+        "avif": {
+          "src": "/_img/area-art/professional-teardown-heroPanel43-780.avif",
+          "bytes": 11544
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-teardown-heroPanel43-780.webp",
+          "bytes": 19962
+        }
+      }
+    ]
+  },
+  "heroPanel43:/area-art/professional-system.webp": {
+    "source": "/area-art/professional-system.webp",
+    "slot": "heroPanel43",
+    "ratio": 1.3333,
+    "sourceWidth": 1200,
+    "sourceHeight": 676,
+    "sourceHash": "aa2b44575b6e8ac0",
+    "variants": [
+      {
+        "width": 491,
+        "height": 368,
+        "avif": {
+          "src": "/_img/area-art/professional-system-heroPanel43-491.avif",
+          "bytes": 7123
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-system-heroPanel43-491.webp",
+          "bytes": 10298
+        }
+      },
+      {
+        "width": 638,
+        "height": 479,
+        "avif": {
+          "src": "/_img/area-art/professional-system-heroPanel43-638.avif",
+          "bytes": 9047
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-system-heroPanel43-638.webp",
+          "bytes": 14266
+        }
+      },
+      {
+        "width": 780,
+        "height": 585,
+        "avif": {
+          "src": "/_img/area-art/professional-system-heroPanel43-780.avif",
+          "bytes": 11250
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-system-heroPanel43-780.webp",
+          "bytes": 18654
+        }
+      }
+    ]
+  },
+  "heroPanel43:/area-art/professional-prototype.webp": {
+    "source": "/area-art/professional-prototype.webp",
+    "slot": "heroPanel43",
+    "ratio": 1.3333,
+    "sourceWidth": 1200,
+    "sourceHeight": 676,
+    "sourceHash": "d4c5e8f271eb2b1c",
+    "variants": [
+      {
+        "width": 491,
+        "height": 368,
+        "avif": {
+          "src": "/_img/area-art/professional-prototype-heroPanel43-491.avif",
+          "bytes": 4902
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-prototype-heroPanel43-491.webp",
+          "bytes": 6854
+        }
+      },
+      {
+        "width": 638,
+        "height": 479,
+        "avif": {
+          "src": "/_img/area-art/professional-prototype-heroPanel43-638.avif",
+          "bytes": 6381
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-prototype-heroPanel43-638.webp",
+          "bytes": 9212
+        }
+      },
+      {
+        "width": 780,
+        "height": 585,
+        "avif": {
+          "src": "/_img/area-art/professional-prototype-heroPanel43-780.avif",
+          "bytes": 7699
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-prototype-heroPanel43-780.webp",
+          "bytes": 11754
+        }
+      }
+    ]
+  },
+  "heroPanel43:/area-art/contact-blue-clouds.webp": {
+    "source": "/area-art/contact-blue-clouds.webp",
+    "slot": "heroPanel43",
+    "ratio": 1.3333,
+    "sourceWidth": 899,
+    "sourceHeight": 1198,
+    "sourceHash": "8a0d59e6018d72b5",
+    "variants": [
+      {
+        "width": 491,
+        "height": 368,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-heroPanel43-491.avif",
+          "bytes": 40254
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-heroPanel43-491.webp",
+          "bytes": 62830
+        }
+      },
+      {
+        "width": 638,
+        "height": 479,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-heroPanel43-638.avif",
+          "bytes": 80656
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-heroPanel43-638.webp",
+          "bytes": 116180
+        }
+      },
+      {
+        "width": 780,
+        "height": 585,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-heroPanel43-780.avif",
+          "bytes": 120778
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-heroPanel43-780.webp",
+          "bytes": 171442
+        }
+      }
+    ]
+  },
+  "heroPanel16:/area-art/about-reflection.webp": {
+    "source": "/area-art/about-reflection.webp",
+    "slot": "heroPanel16",
+    "ratio": 1.7778,
+    "sourceWidth": 675,
+    "sourceHeight": 1200,
+    "sourceHash": "fdc18f01b25a9228",
+    "variants": [
+      {
+        "width": 491,
+        "height": 276,
+        "avif": {
+          "src": "/_img/area-art/about-reflection-heroPanel16-491.avif",
+          "bytes": 22138
+        },
+        "webp": {
+          "src": "/_img/area-art/about-reflection-heroPanel16-491.webp",
+          "bytes": 31150
+        }
+      },
+      {
+        "width": 638,
+        "height": 359,
+        "avif": {
+          "src": "/_img/area-art/about-reflection-heroPanel16-638.avif",
+          "bytes": 43741
+        },
+        "webp": {
+          "src": "/_img/area-art/about-reflection-heroPanel16-638.webp",
+          "bytes": 60044
+        }
+      },
+      {
+        "width": 675,
+        "height": 380,
+        "avif": {
+          "src": "/_img/area-art/about-reflection-heroPanel16-675.avif",
+          "bytes": 54828
+        },
+        "webp": {
+          "src": "/_img/area-art/about-reflection-heroPanel16-675.webp",
+          "bytes": 70882
+        }
+      }
+    ]
+  },
+  "heroPanel43:/area-art/professional-structure.webp": {
+    "source": "/area-art/professional-structure.webp",
+    "slot": "heroPanel43",
+    "ratio": 1.3333,
+    "sourceWidth": 1200,
+    "sourceHeight": 675,
+    "sourceHash": "4a87c983363487f6",
+    "variants": [
+      {
+        "width": 491,
+        "height": 368,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-heroPanel43-491.avif",
+          "bytes": 6682
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-heroPanel43-491.webp",
+          "bytes": 9226
+        }
+      },
+      {
+        "width": 638,
+        "height": 479,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-heroPanel43-638.avif",
+          "bytes": 9319
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-heroPanel43-638.webp",
+          "bytes": 13960
+        }
+      },
+      {
+        "width": 780,
+        "height": 585,
+        "avif": {
+          "src": "/_img/area-art/professional-structure-heroPanel43-780.avif",
+          "bytes": 12465
+        },
+        "webp": {
+          "src": "/_img/area-art/professional-structure-heroPanel43-780.webp",
+          "bytes": 19160
+        }
+      }
+    ]
+  },
+  "aboutIntro:/about-mountain-meadow.webp": {
+    "source": "/about-mountain-meadow.webp",
+    "slot": "aboutIntro",
+    "ratio": 2.5859,
+    "sourceWidth": 1690,
+    "sourceHeight": 1198,
+    "sourceHash": "088660b2cac45f8b",
+    "variants": [
+      {
+        "width": 840,
+        "height": 325,
+        "avif": {
+          "src": "/_img/about-mountain-meadow-aboutIntro-840.avif",
+          "bytes": 33027
+        },
+        "webp": {
+          "src": "/_img/about-mountain-meadow-aboutIntro-840.webp",
+          "bytes": 50118
+        }
+      }
+    ]
+  },
+  "areaTile:/about-mountain-meadow.webp": {
+    "source": "/about-mountain-meadow.webp",
+    "slot": "areaTile",
+    "ratio": 1.74,
+    "sourceWidth": 1690,
+    "sourceHeight": 1198,
+    "sourceHash": "088660b2cac45f8b",
+    "variants": [
+      {
+        "width": 491,
+        "height": 282,
+        "avif": {
+          "src": "/_img/about-mountain-meadow-areaTile-491.avif",
+          "bytes": 16835
+        },
+        "webp": {
+          "src": "/_img/about-mountain-meadow-areaTile-491.webp",
+          "bytes": 23462
+        }
+      },
+      {
+        "width": 690,
+        "height": 397,
+        "avif": {
+          "src": "/_img/about-mountain-meadow-areaTile-690.avif",
+          "bytes": 35647
+        },
+        "webp": {
+          "src": "/_img/about-mountain-meadow-areaTile-690.webp",
+          "bytes": 50008
+        }
+      },
+      {
+        "width": 927,
+        "height": 533,
+        "avif": {
+          "src": "/_img/about-mountain-meadow-areaTile-927.avif",
+          "bytes": 69986
+        },
+        "webp": {
+          "src": "/_img/about-mountain-meadow-areaTile-927.webp",
+          "bytes": 94144
+        }
+      },
+      {
+        "width": 1038,
+        "height": 597,
+        "avif": {
+          "src": "/_img/about-mountain-meadow-areaTile-1038.avif",
+          "bytes": 89077
+        },
+        "webp": {
+          "src": "/_img/about-mountain-meadow-areaTile-1038.webp",
+          "bytes": 118442
+        }
+      }
+    ]
+  },
+  "portrait:/about-portrait-smiling.webp": {
+    "source": "/about-portrait-smiling.webp",
+    "slot": "portrait",
+    "ratio": 1.253,
+    "sourceWidth": 1000,
+    "sourceHeight": 1000,
+    "sourceHash": "a4121af5bc1f9c4c",
+    "variants": [
+      {
+        "width": 491,
+        "height": 392,
+        "avif": {
+          "src": "/_img/about-portrait-smiling-portrait-491.avif",
+          "bytes": 14595
+        },
+        "webp": {
+          "src": "/_img/about-portrait-smiling-portrait-491.webp",
+          "bytes": 17704
+        }
+      },
+      {
+        "width": 617,
+        "height": 492,
+        "avif": {
+          "src": "/_img/about-portrait-smiling-portrait-617.avif",
+          "bytes": 21362
+        },
+        "webp": {
+          "src": "/_img/about-portrait-smiling-portrait-617.webp",
+          "bytes": 26038
+        }
+      }
+    ]
+  },
+  "navStrip:/brand-art/nav/personal.webp": {
+    "source": "/brand-art/nav/personal.webp",
+    "slot": "navStrip",
+    "ratio": 3.3333,
+    "sourceWidth": 320,
+    "sourceHeight": 96,
+    "sourceHash": "ca027e917f29f6fb",
+    "variants": [
+      {
+        "width": 168,
+        "height": 50,
+        "avif": {
+          "src": "/_img/brand-art/nav/personal-navStrip-168.avif",
+          "bytes": 633
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/personal-navStrip-168.webp",
+          "bytes": 568
+        }
+      }
+    ]
+  },
+  "navStrip:/brand-art/nav/professional.webp": {
+    "source": "/brand-art/nav/professional.webp",
+    "slot": "navStrip",
+    "ratio": 3.3333,
+    "sourceWidth": 320,
+    "sourceHeight": 96,
+    "sourceHash": "021dc06ad094f759",
+    "variants": [
+      {
+        "width": 168,
+        "height": 50,
+        "avif": {
+          "src": "/_img/brand-art/nav/professional-navStrip-168.avif",
+          "bytes": 888
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/professional-navStrip-168.webp",
+          "bytes": 798
+        }
+      }
+    ]
+  },
+  "navStrip:/brand-art/nav/about.webp": {
+    "source": "/brand-art/nav/about.webp",
+    "slot": "navStrip",
+    "ratio": 3.3333,
+    "sourceWidth": 320,
+    "sourceHeight": 96,
+    "sourceHash": "da1b6d3dadd918f1",
+    "variants": [
+      {
+        "width": 168,
+        "height": 50,
+        "avif": {
+          "src": "/_img/brand-art/nav/about-navStrip-168.avif",
+          "bytes": 1559
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/about-navStrip-168.webp",
+          "bytes": 1522
+        }
+      }
+    ]
+  },
+  "navStrip:/brand-art/nav/contact.webp": {
+    "source": "/brand-art/nav/contact.webp",
+    "slot": "navStrip",
+    "ratio": 3.3333,
+    "sourceWidth": 320,
+    "sourceHeight": 96,
+    "sourceHash": "be6be976827999e7",
+    "variants": [
+      {
+        "width": 168,
+        "height": 50,
+        "avif": {
+          "src": "/_img/brand-art/nav/contact-navStrip-168.avif",
+          "bytes": 887
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/contact-navStrip-168.webp",
+          "bytes": 970
+        }
+      }
+    ]
+  },
+  "navDropdown:/brand-art/nav/projects/chorus.webp": {
+    "source": "/brand-art/nav/projects/chorus.webp",
+    "slot": "navDropdown",
+    "ratio": 4.7778,
+    "sourceWidth": 512,
+    "sourceHeight": 80,
+    "sourceHash": "e181e46892a315e6",
+    "variants": [
+      {
+        "width": 323,
+        "height": 68,
+        "avif": {
+          "src": "/_img/brand-art/nav/projects/chorus-navDropdown-323.avif",
+          "bytes": 7166
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/projects/chorus-navDropdown-323.webp",
+          "bytes": 6834
+        }
+      }
+    ]
+  },
+  "navDropdown:/brand-art/nav/projects/cover-collision.webp": {
+    "source": "/brand-art/nav/projects/cover-collision.webp",
+    "slot": "navDropdown",
+    "ratio": 4.7778,
+    "sourceWidth": 512,
+    "sourceHeight": 80,
+    "sourceHash": "097a5037e4b8e689",
+    "variants": [
+      {
+        "width": 323,
+        "height": 68,
+        "avif": {
+          "src": "/_img/brand-art/nav/projects/cover-collision-navDropdown-323.avif",
+          "bytes": 4147
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/projects/cover-collision-navDropdown-323.webp",
+          "bytes": 4414
+        }
+      }
+    ]
+  },
+  "navDropdown:/brand-art/nav/projects/meditator.webp": {
+    "source": "/brand-art/nav/projects/meditator.webp",
+    "slot": "navDropdown",
+    "ratio": 4.7778,
+    "sourceWidth": 512,
+    "sourceHeight": 80,
+    "sourceHash": "e6b663426df4f824",
+    "variants": [
+      {
+        "width": 323,
+        "height": 68,
+        "avif": {
+          "src": "/_img/brand-art/nav/projects/meditator-navDropdown-323.avif",
+          "bytes": 2228
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/projects/meditator-navDropdown-323.webp",
+          "bytes": 2610
+        }
+      }
+    ]
+  },
+  "navDropdown:/brand-art/nav/projects/one-bag.webp": {
+    "source": "/brand-art/nav/projects/one-bag.webp",
+    "slot": "navDropdown",
+    "ratio": 4.7778,
+    "sourceWidth": 512,
+    "sourceHeight": 84,
+    "sourceHash": "d0abc63a233eeb39",
+    "variants": [
+      {
+        "width": 323,
+        "height": 68,
+        "avif": {
+          "src": "/_img/brand-art/nav/projects/one-bag-navDropdown-323.avif",
+          "bytes": 1077
+        },
+        "webp": {
+          "src": "/_img/brand-art/nav/projects/one-bag-navDropdown-323.webp",
+          "bytes": 1126
+        }
+      }
+    ]
+  },
+  "navDropdown:/portugal/visuals/generated-splats/cream-blue-fan-splat.webp": {
+    "source": "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    "slot": "navDropdown",
+    "ratio": 4.7778,
+    "sourceWidth": 1254,
+    "sourceHeight": 1254,
+    "sourceHash": "72cff9ffe56e4962",
+    "variants": [
+      {
+        "width": 323,
+        "height": 68,
+        "avif": {
+          "src": "/_img/portugal/visuals/generated-splats/cream-blue-fan-splat-navDropdown-323.avif",
+          "bytes": 4291
+        },
+        "webp": {
+          "src": "/_img/portugal/visuals/generated-splats/cream-blue-fan-splat-navDropdown-323.webp",
+          "bytes": 5010
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/chorus-symbol.webp": {
+    "source": "/project-art/personal/chorus-symbol.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "dc248548e7eddcc2",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/chorus-symbol-projectCard-303.avif",
+          "bytes": 2086
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/chorus-symbol-projectCard-303.webp",
+          "bytes": 3252
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/chorus-symbol-projectCard-390.avif",
+          "bytes": 2514
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/chorus-symbol-projectCard-390.webp",
+          "bytes": 4132
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/chorus-symbol-projectCard-491.avif",
+          "bytes": 3266
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/chorus-symbol-projectCard-491.webp",
+          "bytes": 5450
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/cover-collision-symbol.webp": {
+    "source": "/project-art/personal/cover-collision-symbol.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3d6af882ec68b70d",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/cover-collision-symbol-projectCard-303.avif",
+          "bytes": 1901
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/cover-collision-symbol-projectCard-303.webp",
+          "bytes": 2536
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/cover-collision-symbol-projectCard-390.avif",
+          "bytes": 2222
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/cover-collision-symbol-projectCard-390.webp",
+          "bytes": 3338
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/cover-collision-symbol-projectCard-491.avif",
+          "bytes": 2898
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/cover-collision-symbol-projectCard-491.webp",
+          "bytes": 4364
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/meditator-symbol.webp": {
+    "source": "/project-art/personal/meditator-symbol.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "01291c21315b33b1",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/meditator-symbol-projectCard-303.avif",
+          "bytes": 1481
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/meditator-symbol-projectCard-303.webp",
+          "bytes": 1736
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/meditator-symbol-projectCard-390.avif",
+          "bytes": 1771
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/meditator-symbol-projectCard-390.webp",
+          "bytes": 2396
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/meditator-symbol-projectCard-491.avif",
+          "bytes": 2346
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/meditator-symbol-projectCard-491.webp",
+          "bytes": 3142
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/portuguese-with-ines-symbol.webp": {
+    "source": "/project-art/personal/portuguese-with-ines-symbol.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "886843e88c3f5c7c",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-303.avif",
+          "bytes": 1992
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-303.webp",
+          "bytes": 2930
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-390.avif",
+          "bytes": 2379
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-390.webp",
+          "bytes": 3950
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-491.avif",
+          "bytes": 3132
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-491.webp",
+          "bytes": 5240
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/one-bag-symbol.webp": {
+    "source": "/project-art/personal/one-bag-symbol.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "fb67f0ccba9cd0ac",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-303.avif",
+          "bytes": 1505
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-303.webp",
+          "bytes": 1900
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-390.avif",
+          "bytes": 1770
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-390.webp",
+          "bytes": 2574
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-491.avif",
+          "bytes": 2317
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-491.webp",
+          "bytes": 3216
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/fellrun-ridge-banner.webp": {
+    "source": "/project-art/personal/fellrun-ridge-banner.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 760,
+    "sourceHeight": 428,
+    "sourceHash": "3f5664662b88b3b6",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-303.avif",
+          "bytes": 8181
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-303.webp",
+          "bytes": 9928
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-390.avif",
+          "bytes": 13025
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-390.webp",
+          "bytes": 16670
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-491.avif",
+          "bytes": 23756
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-491.webp",
+          "bytes": 30246
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/fellblade-encounter-banner.webp": {
+    "source": "/project-art/personal/fellblade-encounter-banner.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 760,
+    "sourceHeight": 428,
+    "sourceHash": "7f95d0b8832d4959",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-303.avif",
+          "bytes": 15803
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-303.webp",
+          "bytes": 18048
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-390.avif",
+          "bytes": 24216
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-390.webp",
+          "bytes": 27804
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-491.avif",
+          "bytes": 34701
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-491.webp",
+          "bytes": 40514
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/fellrun-ridge.webp": {
+    "source": "/project-art/personal/fellrun-ridge.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 600,
+    "sourceHeight": 338,
+    "sourceHash": "3638d11a8488957c",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-303.avif",
+          "bytes": 8422
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-303.webp",
+          "bytes": 10338
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-390.avif",
+          "bytes": 13480
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-390.webp",
+          "bytes": 17012
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-491.avif",
+          "bytes": 24436
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-491.webp",
+          "bytes": 30212
+        }
+      }
+    ]
+  },
+  "projectCard:/project-art/personal/fellblade-encounter.webp": {
+    "source": "/project-art/personal/fellblade-encounter.webp",
+    "slot": "projectCard",
+    "ratio": 1.5,
+    "sourceWidth": 600,
+    "sourceHeight": 338,
+    "sourceHash": "ed4f40e1787d58b2",
+    "variants": [
+      {
+        "width": 303,
+        "height": 202,
+        "avif": {
+          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-303.avif",
+          "bytes": 15365
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-303.webp",
+          "bytes": 17694
+        }
+      },
+      {
+        "width": 390,
+        "height": 260,
+        "avif": {
+          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-390.avif",
+          "bytes": 23124
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-390.webp",
+          "bytes": 26944
+        }
+      },
+      {
+        "width": 491,
+        "height": 327,
+        "avif": {
+          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-491.avif",
+          "bytes": 33163
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-491.webp",
+          "bytes": 39824
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/sky-betting-gaming-logo.png": {
+    "source": "/brand-logos/sky-betting-gaming-logo.png",
+    "slot": "logo",
+    "sourceWidth": 300,
+    "sourceHeight": 300,
+    "sourceHash": "cb6a05b10d6cbf75",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/sky-betting-gaming-logo-logo-56.webp",
+          "bytes": 1424
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/national-wealth-fund-icon.png": {
+    "source": "/brand-logos/national-wealth-fund-icon.png",
+    "slot": "logo",
+    "sourceWidth": 250,
+    "sourceHeight": 285,
+    "sourceHash": "7ac7256da01bb927",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/national-wealth-fund-icon-logo-56.webp",
+          "bytes": 1522
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/openai-codex-app.png": {
+    "source": "/brand-logos/openai-codex-app.png",
+    "slot": "logo",
+    "sourceWidth": 256,
+    "sourceHeight": 256,
+    "sourceHash": "3324c734272391ad",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/openai-codex-app-logo-56.webp",
+          "bytes": 686
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/lloyds-horse-icon.png": {
+    "source": "/brand-logos/lloyds-horse-icon.png",
+    "slot": "logo",
+    "sourceWidth": 54,
+    "sourceHeight": 50,
+    "sourceHash": "3d7fa84656dd595f",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/lloyds-horse-icon-logo-56.webp",
+          "bytes": 994
+        }
+      }
+    ]
+  }
+}

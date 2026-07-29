@@ -15,6 +15,7 @@ import { createPortal } from "react-dom";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
+import { SiteImage, SLOT_SIZES } from "@/components/site-image";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
   chorusAppUrl,
@@ -143,11 +144,13 @@ function ProjectCard({ project, isArrived, onOpen }) {
       aria-labelledby={`${project.slug}-card-title`}
     >
       <div className={`project-card-art is-${artwork.variant}`}>
-        <img
+        {/* Six to a row at ~202 CSS px on desktop, one full-bleed card on
+            mobile — so mobile is the wider request of the two. */}
+        <SiteImage
           src={artwork.bannerSrc ?? artwork.src}
+          slot="projectCard"
+          sizes={SLOT_SIZES.projectCard}
           alt=""
-          loading="lazy"
-          decoding="async"
           draggable="false"
         />
         <span className={`personal-story-status is-${status} project-card-status`}>
@@ -785,6 +788,17 @@ export function PersonalPage({ initialSlug = null }) {
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (prefersReducedMotion || typeof IntersectionObserver === "undefined") return undefined;
 
+    // Cards already on screen have been painted by the time this runs, so
+    // opting them into the hidden start state would blink them out and fade
+    // them back. Settle those first, in the same frame the class lands, and
+    // let the observer take only what is still below the fold.
+    const cards = [...storyboard.querySelectorAll(".project-card")];
+    cards.forEach((card) => {
+      if (card.getBoundingClientRect().top < window.innerHeight) {
+        card.classList.add("is-inview");
+      }
+    });
+
     storyboard.classList.add("has-reveal");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -797,7 +811,9 @@ export function PersonalPage({ initialSlug = null }) {
       },
       { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
     );
-    storyboard.querySelectorAll(".project-card").forEach((card) => observer.observe(card));
+    cards.forEach((card) => {
+      if (!card.classList.contains("is-inview")) observer.observe(card);
+    });
 
     return () => observer.disconnect();
   }, []);
@@ -873,13 +889,17 @@ export function PersonalPage({ initialSlug = null }) {
             things out before they turn up in someone else's work.
           </p>
         </div>
+        {/* Desktop-only: below 760px this panel reflows under the cards, where
+            it reads as a stray offcut rather than the hero's opposite column.
+            `lazy` keeps the phone from spending 252KB on a hidden image; the
+            media-scoped preload in the head keeps it immediate on desktop. */}
         <div className="personal-hero-art">
           <div className="page-art-panel" style={{ "--page-art-position": "50% 16%" }} aria-hidden="true">
-            <img
+            <SiteImage
               src="/area-art/about-reflection.webp"
+              slot="heroPanel16"
+              sizes={SLOT_SIZES.heroPanel16}
               alt=""
-              loading="eager"
-              decoding="async"
               draggable="false"
             />
           </div>

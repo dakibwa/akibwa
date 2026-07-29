@@ -59,6 +59,14 @@ img {
   display: block;
 }
 
+/* SiteImage wraps its <img> in a <picture> to offer AVIF before WebP. The
+   wrapper is presentational only, so drop its box entirely — every existing
+   `.thing img` rule then keeps matching and laying out exactly as it did when
+   the img was a direct child. */
+picture {
+  display: contents;
+}
+
 button {
   font: inherit;
 }
@@ -94,9 +102,16 @@ button {
   min-height: 100vh;
 }
 
-/* Each route change remounts app/template.jsx, fading the new page in.
-   Opacity-only so fixed-position overlays never lose their containing
-   block to a transformed ancestor. */
+/* Each route change remounts app/template.jsx. Opacity-only on the wrapper so
+   fixed-position overlays never lose their containing block to a transformed
+   ancestor.
+
+   The two cases are deliberately different. A route change has an outgoing
+   page to replace, so it earns a brief cross-fade. A first load has nothing to
+   replace, and fading it in only delays the paint: an element at opacity 0 is
+   not painted, so an entry fade is added to Largest Contentful Paint more or
+   less in full. First load therefore rises without fading — a translated
+   element still counts as painted, so the entrance costs nothing. */
 @keyframes route-fade-in {
   from {
     opacity: 0;
@@ -106,9 +121,15 @@ button {
   }
 }
 
-.route-fade {
+.route-fade,
+.route-enter {
   min-height: inherit;
-  animation: route-fade-in 300ms ease-out both;
+}
+
+.route-fade {
+  /* Was 300ms, which stacked with the 640ms child animation below and left
+     every navigation reading as a load rather than a change of page. */
+  animation: route-fade-in 140ms ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -117,27 +138,29 @@ button {
   }
 }
 
-/* Page entrance: the opening blocks of each page settle in with a quiet
-   stagger on top of the route fade. Keyframes end at transform: none so
-   fixed overlays never lose their containing block. */
+/* The opening blocks settle in with a quiet stagger. Transform-only: the
+   wrapper above owns the fade on a route change, and stacking a second
+   opacity animation on top of it multiplied the two and left the first
+   frames unreadable. Keyframes end at transform: none so fixed overlays
+   never lose their containing block. */
 @media (prefers-reduced-motion: no-preference) {
-  .route-fade > section > *:nth-child(-n + 2) {
-    animation: page-enter 640ms var(--ease-out) both;
+  .route-fade > section > *:nth-child(-n + 2),
+  .route-enter > section > *:nth-child(-n + 2) {
+    animation: page-rise 360ms var(--ease-out) both;
   }
 
-  .route-fade > section > *:nth-child(2) {
-    animation-delay: 90ms;
+  .route-fade > section > *:nth-child(2),
+  .route-enter > section > *:nth-child(2) {
+    animation-delay: 50ms;
   }
 }
 
-@keyframes page-enter {
+@keyframes page-rise {
   from {
-    opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(10px);
   }
 
   to {
-    opacity: 1;
     transform: none;
   }
 }
@@ -1101,7 +1124,13 @@ button {
   transition: opacity var(--hover-out) var(--ease-out);
 }
 
+/* The artwork used to be a next/image `fill`, which supplied the absolute
+   positioning inline; SiteImage does not, so the fill lives here now. */
 .area-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
 }
@@ -2179,10 +2208,14 @@ button {
   border: 1px solid rgba(16, 18, 23, 0.12);
   border-radius: var(--radius);
   /* The meadow artwork's sky, faded almost to white: its grain and a warm
-     whisper of colour show through without costing the text its contrast. */
+     whisper of colour show through without costing the text its contrast.
+     Sits behind a 97%-white wash at the card's widest point, so it runs from
+     the generated ladder rather than the 415K original — nothing survives that
+     overlay that a 840px rung cannot carry. Regenerate with
+     scripts/generate-image-variants.mjs if the source changes. */
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.97) 42%, rgba(255, 255, 255, 0.84)),
-    url("/about-mountain-meadow.webp") center 12% / cover no-repeat;
+    url("/_img/about-mountain-meadow-aboutIntro-840.webp") center 12% / cover no-repeat;
   background-color: var(--white);
   padding: 26px 28px;
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
@@ -7408,10 +7441,18 @@ button {
   }
 
   .offer-hero-aside,
-  .contact-art-side,
-  .personal-hero-art {
+  .contact-art-side {
     order: 3;
     margin-top: clamp(30px, 5vw, 44px);
+  }
+
+  /* Projects drops its hero panel here instead of reordering it. Stacked, the
+     artwork lands after seven cards with nothing left to pair with, so it
+     reads as an offcut above the footer rather than the hero's other half.
+     The img is lazy and its preload is min-width scoped, so a phone never
+     requests the file either. */
+  .personal-hero-art {
+    display: none;
   }
 
   .offer-page .page-footer,

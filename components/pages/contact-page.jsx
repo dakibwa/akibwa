@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
+import { SiteImage, SLOT_SIZES } from "@/components/site-image";
 import { contactEmail } from "@/components/site-data";
 
 export function ContactPage() {
@@ -48,13 +49,12 @@ export function ContactPage() {
 
         <div className="contact-art-side">
           <div className="page-art-panel" aria-hidden="true">
-            <img
+            <SiteImage
               src="/area-art/contact-blue-clouds.webp"
+              slot="heroPanel43"
+              sizes={SLOT_SIZES.heroPanel43}
               alt=""
-              width="899"
-              height="1198"
-              loading="eager"
-              decoding="async"
+              priority
               draggable="false"
             />
           </div>

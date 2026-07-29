@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageFooter } from "@/components/page-footer";
+import { SiteImage, SLOT_SIZES } from "@/components/site-image";
 
 const examples = [
   ["Work you do by hand", "Copying, checking, updating, chasing. The bits that quietly eat the week."],
@@ -30,11 +31,12 @@ export function OfferPage() {
         </div>
         <div className="offer-hero-aside">
           <div className="page-art-panel" style={{ "--page-art-position": "68% 50%" }} aria-hidden="true">
-            <img
+            <SiteImage
               src="/area-art/professional-structure.webp"
+              slot="heroPanel43"
+              sizes={SLOT_SIZES.heroPanel43}
               alt=""
-              loading="eager"
-              decoding="async"
+              priority
               draggable="false"
             />
           </div>
