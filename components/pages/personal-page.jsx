@@ -944,7 +944,24 @@ export function PersonalPage({ initialSlug = null }) {
   return (
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
-        <h1>Things I wanted to exist.</h1>
+        <div className="personal-hero-copy">
+          <h1>Things I wanted to exist.</h1>
+          <p>
+            Nobody asked for these. They're also where I try things out before they turn
+            up in someone else's work.
+          </p>
+        </div>
+        <div className="personal-hero-art">
+          <div className="page-art-panel" style={{ "--page-art-position": "50% 16%" }} aria-hidden="true">
+            <img
+              src="/area-art/about-reflection.webp"
+              alt=""
+              loading="eager"
+              decoding="async"
+              draggable="false"
+            />
+          </div>
+        </div>
       </section>
 
       <div className="personal-storyboard" ref={storyboardRef}>

@@ -1490,17 +1490,34 @@ button {
   line-height: 1.5;
 }
 
+/* Same split as the other four: the line and the copy on the left, the
+   page's own artwork opposite. */
 .personal-hero {
+  display: grid;
+  grid-template-columns: var(--page-hero-columns);
+  gap: var(--page-hero-gap);
+  align-items: start;
   padding-bottom: 8px;
 }
 
+.personal-hero-copy,
+.personal-hero-art {
+  min-width: 0;
+}
+
+/* Personal's copy column is a headline and two lines, shorter than the other
+   pages carry, so the panel is a wider crop to land near its foot. */
+.personal-hero-art {
+  --page-art-ratio: 16 / 9;
+}
+
 .studio-hero.personal-hero p {
-  margin-top: 8px;
-  max-width: none;
-  font-size: clamp(1.05rem, 0.96rem + 0.5vw, 1.4rem);
+  margin: clamp(24px, 3vw, 34px) 0 0;
+  max-width: 48ch;
+  color: var(--black);
+  font-size: 1.25rem;
   font-weight: 440;
   line-height: 1.45;
-  color: #6b7480;
 }
 
 /* Personal projects — storyboard folio. One full-width section per project:
@@ -5935,9 +5952,15 @@ button {
   }
 
   .offer-studio-hero,
-  .contact-hero {
+  .contact-hero,
+  .personal-hero {
+    grid-template-columns: 1fr;
     gap: 22px;
     align-items: start;
+  }
+
+  .personal-hero-art .page-art-panel {
+    max-width: 520px;
   }
 
   .offer-hero-aside,
@@ -7070,43 +7093,51 @@ button {
      `display: contents` drops the hero grid, so its two halves take the
      page gutter themselves. */
   .offer-page,
-  .contact-page-new {
+  .contact-page-new,
+  .personal-page {
     display: flex;
     flex-direction: column;
   }
 
   .offer-studio-hero,
-  .contact-hero {
+  .contact-hero,
+  .personal-hero {
     display: contents;
   }
 
   .offer-hero-title,
   .offer-hero-aside,
   .contact-hero-title,
-  .contact-art-side {
+  .contact-art-side,
+  .personal-hero-copy,
+  .personal-hero-art {
     width: min(calc(100% - 48px), var(--frame));
     margin: 0 auto;
   }
 
   .offer-hero-title,
-  .contact-hero-title {
+  .contact-hero-title,
+  .personal-hero-copy {
     order: 1;
     padding-top: 44px;
   }
 
   .page-strip,
-  .page-strip-steps {
+  .page-strip-steps,
+  .personal-storyboard {
     order: 2;
   }
 
   .offer-hero-aside,
-  .contact-art-side {
+  .contact-art-side,
+  .personal-hero-art {
     order: 3;
     margin-top: clamp(30px, 5vw, 44px);
   }
 
   .offer-page .page-footer,
-  .contact-page-new .page-footer {
+  .contact-page-new .page-footer,
+  .personal-page .page-footer {
     order: 4;
   }
 
