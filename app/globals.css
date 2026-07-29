@@ -1533,7 +1533,9 @@ button {
   column-gap: clamp(36px, 5vw, 78px);
   row-gap: 26px;
   align-items: center;
-  padding-block: clamp(44px, 6vw, 72px);
+  /* 72px top and bottom put 144px of air around a 462px card, four times
+     down the page. */
+  padding-block: clamp(36px, 4vw, 52px);
   scroll-margin-top: 76px;
 }
 

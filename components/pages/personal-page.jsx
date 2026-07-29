@@ -3,13 +3,11 @@
 import Image from "next/image";
 import {
   ArrowRight,
-  Disc3,
   Instagram,
   LockKeyhole,
   Maximize2,
   Minimize2,
   RefreshCw,
-  Sparkles,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -456,27 +454,11 @@ function CoverCollisionShowcase({ project, immersive = false }) {
         <div className="project-showcase-copy cover-collision-copy">
           <span>Project</span>
           <h2>{project.title}</h2>
-          <p>{project.summary}</p>
-          <dl>
-            <div>
-              <dt>
-                <Disc3 size={15} />
-                Source material
-              </dt>
-              <dd>Familiar covers, pulled just far enough out of place to look wrong.</dd>
-            </div>
-            <div>
-              <dt>
-                <Sparkles size={15} />
-                Project shape
-              </dt>
-              <dd>An open-ended Instagram series. A new collision whenever one lands.</dd>
-            </div>
-          </dl>
+          <p>{project.summary} I make a new one whenever a pair suggests itself.</p>
           <div className="project-showcase-actions">
             <a href={profileUrl || project.externalHref} target="_blank" rel="noreferrer">
               <Instagram size={15} strokeWidth={1.7} />
-              Open Instagram
+              See them on Instagram
             </a>
           </div>
         </div>
@@ -485,16 +467,16 @@ function CoverCollisionShowcase({ project, immersive = false }) {
       {immersive ? (
         <div className="cover-collision-exhibition">
           <aside className="cover-collision-exhibition-note">
-            <span>Ongoing visual series</span>
-            <h3>Two familiar covers. One impossible record.</h3>
-            <p>Cut, crossed and rejoined until neither original looks like itself.</p>
+            <span>Album art series</span>
+            <h3>Two covers, spliced into one.</h3>
+            <p>A new one whenever a pair suggests itself.</p>
             <div>
               <strong>{posts.length}</strong>
-              <span>collisions so far</span>
+              <span>so far</span>
             </div>
             <a href={profileUrl || project.externalHref} target="_blank" rel="noreferrer">
               <Instagram size={15} strokeWidth={1.7} />
-              Follow on Instagram
+              See them on Instagram
             </a>
           </aside>
           <CoverCollisionPanel project={project} posts={posts} galleryOnly />
@@ -945,10 +927,10 @@ export function PersonalPage({ initialSlug = null }) {
     <section className="studio-page personal-page">
       <section className="page-grid studio-hero personal-hero">
         <div className="personal-hero-copy">
-          <h1>Things I wanted to exist.</h1>
+          <h1>Things I've been building.</h1>
           <p>
-            Nobody asked for these. They're also where I try things out before they turn
-            up in someone else's work.
+            Curiosity, mostly — an idea I wanted to see working. They're also where I try
+            things out before they turn up in someone else's work.
           </p>
         </div>
         <div className="personal-hero-art">
