@@ -169,7 +169,6 @@ function ProjectCard({ project, isArrived, onOpen }) {
           )}
         </h2>
         <p className="project-card-type">{project.type}</p>
-        <p className="project-card-summary">{project.summary}</p>
         {launchable ? (
           <span className="project-card-cue" aria-hidden="true">
             Open
