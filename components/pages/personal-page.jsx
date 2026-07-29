@@ -15,7 +15,6 @@ import { createPortal } from "react-dom";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
-import { PersonalAppPreview } from "@/components/personal-app-previews";
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
 import {
   chorusAppUrl,
@@ -125,119 +124,58 @@ function getProjectArtVariables(artwork, extras = {}) {
   };
 }
 
-function PersonalDetailPanel({ project }) {
-  const { posts: collisionPosts } = useCoverCollisionData();
-  if (!project) return null;
-
+function ProjectCard({ project, isArrived, onOpen }) {
+  const status = statusForSlug(project.slug);
   const artwork = getPersonalProjectArt(project);
-  const isCoverCollision = project.visual === "cover-collision";
-  const hasAppPreview = Boolean(project.previewTreatment);
-  const previewFrameUrl = project.detailPreview === "live-frame" ? project.embedUrl : "";
+  const launchable = isPersonalProjectLaunchable(project);
 
   return (
     <article
-      className="personal-detail-card"
-      style={getProjectArtVariables(artwork, { "--area-accent": accentForSlug(project.slug) })}
-    >
-      <header className={`personal-detail-banner is-${artwork.variant}`}>
-        <img src={artwork.bannerSrc} alt="" draggable="false" loading="lazy" decoding="async" />
-        <span className="personal-detail-banner-scrim" aria-hidden="true" />
-        <div className="personal-detail-banner-meta">
-          <strong>{project.title}</strong>
-          {project.type ? <em>{project.type}</em> : null}
-        </div>
-      </header>
-      {isCoverCollision ? (
-        <div className="personal-detail-collision" aria-label={`${project.title} album-art series`}>
-          {collisionPosts.slice(0, 8).map((post) => (
-            <a
-              className="cover-collision-post"
-              href={post.href}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Open ${post.title} on Instagram`}
-              key={post.href}
-            >
-              <span className="cover-collision-post-image">
-                <CoverCollisionImage post={post} sizes="(max-width: 760px) 30vw, 190px" />
-              </span>
-            </a>
-          ))}
-        </div>
-      ) : hasAppPreview ? (
-        <PersonalAppPreview project={project} />
-      ) : previewFrameUrl ? (
-        <PersonalDetailLivePreview project={project} frameUrl={previewFrameUrl} />
-      ) : project.shot ? (
-        <div className="personal-detail-shot">
-          <div className="personal-detail-shot-frame">
-            <img src={project.shot} alt={`${project.title} interface`} decoding="async" draggable="false" />
-          </div>
-        </div>
-      ) : (
-        <div className="personal-detail-art is-in-development">
-          <img src={artwork.src} alt="" decoding="async" draggable="false" />
-          <span className="personal-detail-devtag">In development</span>
-        </div>
-      )}
-    </article>
-  );
-}
-
-function PersonalDetailLivePreview({ project, frameUrl }) {
-  return (
-    <div className="personal-detail-live-preview" aria-label={`${project.title} live app preview`}>
-      <iframe
-        src={frameUrl}
-        title={`${project.title} live app preview`}
-        loading="lazy"
-        tabIndex={-1}
-        allow="clipboard-read; clipboard-write; screen-wake-lock"
-      />
-      <span className="personal-detail-live-badge" aria-hidden="true">
-        Live app
-      </span>
-    </div>
-  );
-}
-
-function PersonalStorySection({ project, flipped, isArrived, onOpen }) {
-  const status = statusForSlug(project.slug);
-
-  return (
-    <section
-      className={`page-grid personal-story${flipped ? " is-flipped" : ""}${isArrived ? " is-arrived" : ""}`}
+      className={`project-card${isArrived ? " is-arrived" : ""}`}
       id={project.slug}
       style={{ "--area-accent": accentForSlug(project.slug) }}
-      aria-labelledby={`${project.slug}-story-title`}
+      aria-labelledby={`${project.slug}-card-title`}
     >
-      <div className="personal-story-copy">
-        <div className="personal-story-plate">
-          <span className="personal-story-num" aria-hidden="true">
+      <div className={`project-card-art is-${artwork.variant}`}>
+        <img
+          src={artwork.bannerSrc ?? artwork.src}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
+      </div>
+      <div className="project-card-body">
+        <div className="project-card-plate">
+          <span className="project-card-num" aria-hidden="true">
             {project.number}
           </span>
-          <i className="personal-story-plate-line" aria-hidden="true" />
           <span className={`personal-story-status is-${status}`}>
             <span className="personal-story-status-dot" aria-hidden="true" />
             {project.statusLabel ?? STATUS_LABELS[status]}
           </span>
         </div>
-        <h2 id={`${project.slug}-story-title`}>{project.title}</h2>
-        <p className="personal-story-type">{project.type}</p>
-        <p className="personal-story-summary">{project.summary}</p>
-        {isPersonalProjectLaunchable(project) ? (
-          <button type="button" className="about-cta personal-story-open" onClick={onOpen}>
-            <span className="about-cta-label">Open</span>
-            <span className="about-cta-icon" aria-hidden="true">
-              <ArrowRight size={18} strokeWidth={2} />
-            </span>
-          </button>
+        <h2 id={`${project.slug}-card-title`} className="project-card-title">
+          {launchable ? (
+            /* The button carries an ::after covering the card, so the whole
+               tile is the target while the heading stays a real heading. */
+            <button type="button" className="project-card-open" onClick={onOpen}>
+              {project.title}
+            </button>
+          ) : (
+            project.title
+          )}
+        </h2>
+        <p className="project-card-type">{project.type}</p>
+        <p className="project-card-summary">{project.summary}</p>
+        {launchable ? (
+          <span className="project-card-cue" aria-hidden="true">
+            Open
+            <ArrowRight size={15} strokeWidth={2} />
+          </span>
         ) : null}
       </div>
-      <div className="personal-story-media">
-        <PersonalDetailPanel project={project} />
-      </div>
-    </section>
+    </article>
   );
 }
 
@@ -857,7 +795,7 @@ export function PersonalPage({ initialSlug = null }) {
       },
       { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
     );
-    storyboard.querySelectorAll(".personal-story").forEach((section) => observer.observe(section));
+    storyboard.querySelectorAll(".project-card").forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
   }, []);
@@ -946,12 +884,11 @@ export function PersonalPage({ initialSlug = null }) {
         </div>
       </section>
 
-      <div className="personal-storyboard" ref={storyboardRef}>
-        {personalProjects.map((project, index) => (
-          <PersonalStorySection
+      <div className="page-grid projects-grid" ref={storyboardRef}>
+        {personalProjects.map((project) => (
+          <ProjectCard
             key={project.slug}
             project={project}
-            flipped={index % 2 === 1}
             isArrived={project.slug === arrivedSlug}
             onOpen={() => selectProject(project)}
           />

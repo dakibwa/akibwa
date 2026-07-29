@@ -1520,6 +1520,152 @@ button {
   line-height: 1.45;
 }
 
+/* Projects — an index, one card each. The full preview opens in the overlay
+   rather than taking a screen apiece on the way down. */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 30px);
+  margin-top: clamp(32px, 4vw, 48px);
+  padding-bottom: 30px;
+}
+
+.project-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border: 1px solid rgba(16, 18, 23, 0.12);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
+  transition:
+    border-color var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    transform var(--hover-out) var(--ease-out);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  border-color: color-mix(in srgb, var(--area-accent, var(--blue)) 45%, transparent);
+  box-shadow: 0 20px 54px rgba(16, 18, 23, 0.09);
+  transform: translateY(-3px);
+  transition-duration: var(--hover-in);
+}
+
+.project-card-art {
+  overflow: hidden;
+  /* Wider than the hero panels so a card reads as an index entry rather than
+     a poster — the art still carries, at about half the card. */
+  aspect-ratio: 2 / 1;
+  background: color-mix(in srgb, var(--area-accent, var(--blue)) 14%, var(--white));
+}
+
+.project-card-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 520ms var(--ease-out);
+}
+
+.project-card:hover .project-card-art img {
+  transform: scale(1.035);
+}
+
+.project-card-body {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  padding: 18px 20px 20px;
+}
+
+.project-card-plate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 2px;
+}
+
+.project-card-num {
+  color: var(--area-accent, var(--blue));
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+.project-card-title {
+  margin: 0;
+  color: var(--black);
+  font-size: clamp(1.24rem, 1.1rem + 0.4vw, 1.5rem);
+  font-weight: 560;
+  line-height: 1.12;
+}
+
+/* The heading stays a heading; its button carries a cover so the whole tile
+   is the hit area without nesting anything inside anything interactive. */
+.project-card-open {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+}
+
+.project-card-open::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+}
+
+.project-card-open:focus-visible {
+  outline: 2px solid var(--area-accent, var(--blue));
+  outline-offset: 3px;
+}
+
+.project-card-type {
+  margin: 0;
+  color: var(--area-accent, var(--blue));
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.project-card-summary {
+  margin: 4px 0 0;
+  color: #4d5560;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.project-card-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  color: var(--black);
+  font-size: 0.9rem;
+  font-weight: 620;
+}
+
+.project-card-cue svg {
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+.project-card:hover .project-card-cue svg {
+  transform: translateX(3px);
+  transition-duration: var(--hover-in);
+}
+
 /* Personal projects — storyboard folio. One full-width section per project:
    copy on one side, the product-faithful preview card on the other, sides
    alternating down the page. The nav dropdown deep-links anchor here. */
@@ -1682,19 +1828,19 @@ button {
 /* Sections fade up as they scroll into view (class applied by JS, so no-JS
    and reduced-motion visitors see everything from the start). */
 @media (prefers-reduced-motion: no-preference) {
-  .personal-storyboard.has-reveal .personal-story {
+  .projects-grid.has-reveal .project-card {
     opacity: 0;
     transform: translateY(22px);
     transition: opacity 640ms var(--ease-out), transform 640ms var(--ease-out);
   }
 
-  .personal-storyboard.has-reveal .personal-story.is-inview {
+  .projects-grid.has-reveal .project-card.is-inview {
     opacity: 1;
     transform: none;
   }
 
   /* Deep-link arrival: the preview card breathes one soft accent ring. */
-  .personal-story.is-arrived .personal-detail-card {
+  .project-card.is-arrived {
     animation: personal-story-arrive 1100ms var(--ease-out) 320ms backwards;
   }
 }
@@ -1871,6 +2017,11 @@ button {
 }
 
 @media (max-width: 760px) {
+  .projects-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
 
   
 
