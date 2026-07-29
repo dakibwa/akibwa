@@ -169,13 +169,9 @@ button {
    Scroll-driven only where supported; static everywhere else. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .about-toolkit,
-    .about-interests,
-    .page-strip,
-    .page-strip-steps,
-    .fit-panel,
-    .how-we-work-panel,
-    .area-card {
+.page-strip,
+.page-strip-steps,
+.area-card {
       animation: scroll-rise both var(--ease-out);
       animation-timeline: view();
       animation-range: entry 0% entry 36%;
@@ -1499,11 +1495,6 @@ button {
 }
 
 
-
-
-
-
-
 /* Same split as the other four: the line and the copy on the left, the
    page's own artwork opposite. */
 .personal-hero {
@@ -2451,24 +2442,6 @@ button {
 .about-section {
   margin-top: 42px;
 }
-
-
-
-/* The toolkit and interests are companion character-field panels: the
-   cooler blue field keeps the work card distinct from the meadow palette
-   below while preserving the same structure and visual weight. */
-.about-toolkit,
-.about-interests {
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  padding: 26px 28px;
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
-}
-
-
-
-
-
 .about-section-head {
   margin-bottom: 0;
 }
@@ -2626,79 +2599,6 @@ button {
   font-size: 0.9rem;
   line-height: 1.3;
 }
-
-/* Toolkit — compact grouped blocks for fast scanning */
-.about-toolkit {
-  margin-top: 52px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Each toolkit mark carries a colour-matched bloom. The icon itself stays
-   legible at rest, then lifts once as its halo opens behind it. */
-.toolkit-mark {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  width: 26px;
-  height: 26px;
-  place-items: center;
-  border-radius: 50%;
-}
-
-
-
-@keyframes toolkit-mark-bloom {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-
-  46% {
-    transform: translateY(-1px) scale(1.07);
-  }
-
-  100% {
-    transform: translateY(-1px) scale(1.02);
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .personal-local-note {
   display: grid;
@@ -3827,25 +3727,6 @@ button {
   }
 }
 
-@keyframes projectOverlayIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes projectShellIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.992);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .project-expanded-layer,
 
@@ -4023,9 +3904,6 @@ button {
 }
 
 
-
-
-
 .offer-studio-hero {
   display: grid;
   grid-template-columns: var(--page-hero-columns);
@@ -4057,35 +3935,6 @@ button {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* The area's sculpture lives inside the panel, bleeding to its edges
    and melting into the panel white behind the lists. */
 .fit-art {
@@ -4093,45 +3942,6 @@ button {
   align-self: stretch;
   margin: -30px -30px -30px 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .contact-hero {
@@ -4157,25 +3967,6 @@ button {
   padding: 20px;
   box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .contact-form label {
@@ -5751,7 +5542,6 @@ button {
   }
 
 
-
   .cover-collision-showcase,
 
   .offer-studio-hero,
@@ -5842,15 +5632,9 @@ button {
   }
 
 
-
-
-
   .about-section-head p {
     max-width: 560px;
   }
-
-
-
 
 
   .contact-form,
@@ -5893,14 +5677,6 @@ button {
     border-left: 0;
     padding-left: 0;
   }
-
-
-
-
-
-
-
-
 
 
 }
@@ -6372,13 +6148,6 @@ button {
   }
 
 
-
-
-
-
-
-
-
   .about-section-head {
     display: grid;
     align-items: start;
@@ -6406,20 +6175,7 @@ button {
   .work-role {
     font-size: 0.86rem;
   }
-
-
-
-
-
-
-
-  .cover-collision-showcase,
-
-  .fit-panel,
-
-  .how-we-work-panel,
-
-  .offer-step-card > div {
+.cover-collision-showcase {
     padding: 18px;
   }
 
@@ -6460,7 +6216,6 @@ button {
   }
 
 
-
   .page-strip ul {
     grid-template-columns: 1fr;
   }
@@ -6469,11 +6224,6 @@ button {
     border-top: 1px solid rgba(16, 18, 23, 0.1);
     padding-top: 16px;
   }
-
-
-
-
-
 
 
   .page-art-panel {
@@ -6492,12 +6242,9 @@ button {
   }
 
 
-
-
 }
 
 @media (prefers-reduced-motion: reduce) {
-
 
 
 }
@@ -6531,51 +6278,26 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-transition,
-
-  .nav-link,
-
-  .nav-link__bar,
-
-  .nav-link__mobile-art,
-
-  .area-card,
-
-  .area-card::before,
-
-  .area-card::after,
-
-  .area-art::after,
-
-  .area-caption,
-
-  .area-caption::before,
-
-  .area-caption__arrow,
-
-  .area-caption__arrow::before,
-
-  .hero-word-cycle,
-
-  .hero-word-cycle::after,
-
-  .hero-word-cycle-value,
-
-  .toolkit-mark,
-
-  .toolkit-mark::before,
-
-  .toolkit-logo,
-
-  .text-action svg,
-
-  .brand,
-
-  .page-footer-signoff strong,
-
-  .brand__bar-art,
-
-  .nav-mobile {
+.page-transition,
+.nav-link,
+.nav-link__bar,
+.nav-link__mobile-art,
+.area-card,
+.area-card::before,
+.area-card::after,
+.area-art::after,
+.area-caption,
+.area-caption::before,
+.area-caption__arrow,
+.area-caption__arrow::before,
+.hero-word-cycle,
+.hero-word-cycle::after,
+.hero-word-cycle-value,
+.text-action svg,
+.brand,
+.page-footer-signoff strong,
+.brand__bar-art,
+.nav-mobile {
     animation: none;
     transition: none;
     transform: none;
@@ -6611,11 +6333,6 @@ button {
     opacity: 0.96;
     transform: none;
   }
-
-
-
-
-
 
 
   .work-node,
