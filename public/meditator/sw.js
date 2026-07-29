@@ -1,7 +1,9 @@
 // Minimal offline shell. Network-first for navigations so room state is always
 // live; cache is only a fallback when offline. Realtime traffic (/api) is never
 // cached.
-const VERSION = "2026-07-10-history-v8";
+// Bump on any change to the cached shell (index.html, manifest, icons) so the
+// activate handler evicts the previous caches instead of serving them.
+const VERSION = "2026-07-29-robustness-v9";
 const CACHE = `meditator-shell-${VERSION}`;
 const ASSET_CACHE = `meditator-assets-${VERSION}`;
 const CACHE_PREFIX = "meditator-";

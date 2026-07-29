@@ -2,9 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- No maximum-scale: pinch-zoom must stay available (WCAG 1.4.4). -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="theme-color" content="#3a5a45" />
     <meta name="description" content="Sit together, wherever you are." />
@@ -12,9 +13,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="manifest" href="/meditator/manifest.webmanifest" />
     <link rel="icon" href="/meditator/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/meditator/icon.svg" />
+    <!-- iOS ignores an SVG apple-touch-icon and falls back to a screenshot of
+         the page, so the home-screen icon has to be a PNG. -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/meditator/apple-touch-icon.png"
+    />
     <title>Meditator — sit together, apart</title>
-    <script type="module" crossorigin src="/meditator/assets/index-ChKeBpUl.js"></script>
+    <script type="module" crossorigin src="/meditator/assets/index-CPYENxMD.js"></script>
     <link rel="stylesheet" crossorigin href="/meditator/assets/index-DPR5CtAT.css">
   </head>
   <body>
