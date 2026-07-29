@@ -806,7 +806,7 @@ export function PersonalPage({ initialSlug = null }) {
   useEffect(() => {
     setIsLocalHost(canUseLocalFrame());
 
-    // Projects live at /personal/<slug>/; legacy #slug links upgrade to the
+    // Projects live at /projects/<slug>/; legacy #slug links upgrade to the
     // path form (aliases normalise to the canonical slug the same way). A
     // deep link lands on the project's storyboard section and opens the
     // app overlay on top — closing it leaves you on the section.
@@ -816,18 +816,18 @@ export function PersonalPage({ initialSlug = null }) {
 
     const project = findPersonalProjectBySlug(requested);
     if (!project) {
-      window.history.replaceState(null, "", "/personal/");
+      window.history.replaceState(null, "", "/projects/");
       return undefined;
     }
 
     if (!isPersonalProjectLaunchable(project)) {
-      window.history.replaceState(null, "", `/personal/#${project.slug}`);
+      window.history.replaceState(null, "", `/projects/#${project.slug}`);
       setArrivedSlug(project.slug);
       document.getElementById(project.slug)?.scrollIntoView({ behavior: "instant", block: "start" });
       return undefined;
     }
 
-    window.history.replaceState(null, "", `/personal/${project.slug}/`);
+    window.history.replaceState(null, "", `/projects/${project.slug}/`);
     setArrivedSlug(project.slug);
     document.getElementById(project.slug)?.scrollIntoView({ behavior: "instant", block: "start" });
     setIsOverlayMaximized(false);
@@ -916,7 +916,7 @@ export function PersonalPage({ initialSlug = null }) {
 
     setIsOverlayMaximized(false);
     setExpandedSlug(project.slug);
-    window.history.replaceState(null, "", `/personal/${project.slug}/`);
+    window.history.replaceState(null, "", `/projects/${project.slug}/`);
   };
   const toggleOverlayMaximized = useCallback(() => {
     setIsOverlayMaximized((current) => !current);
