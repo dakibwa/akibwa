@@ -1600,17 +1600,8 @@ button {
 .project-card-plate {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 14px;
-  margin-bottom: 2px;
-}
-
-.project-card-num {
-  color: var(--area-accent, var(--blue));
-  font-size: 0.78rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.1em;
+  margin-bottom: 3px;
 }
 
 .project-card-title {
@@ -1645,6 +1636,13 @@ button {
 .project-card-open:focus-visible {
   outline: 2px solid var(--area-accent, var(--blue));
   outline-offset: 3px;
+}
+
+.project-card-summary {
+  margin: 5px 0 0;
+  color: #4d5560;
+  font-size: 0.86rem;
+  line-height: 1.45;
 }
 
 .project-card-type {

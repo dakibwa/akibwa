@@ -149,9 +149,6 @@ function ProjectCard({ project, isArrived, onOpen }) {
       </div>
       <div className="project-card-body">
         <div className="project-card-plate">
-          <span className="project-card-num" aria-hidden="true">
-            {project.number}
-          </span>
           <span className={`personal-story-status is-${status}`}>
             <span className="personal-story-status-dot" aria-hidden="true" />
             {project.statusLabel ?? STATUS_LABELS[status]}
@@ -169,6 +166,7 @@ function ProjectCard({ project, isArrived, onOpen }) {
           )}
         </h2>
         <p className="project-card-type">{project.type}</p>
+        <p className="project-card-summary">{project.summary}</p>
         {launchable ? (
           <span className="project-card-cue" aria-hidden="true">
             Open
