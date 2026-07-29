@@ -94,7 +94,8 @@ const ACCENT_BY_SLUG = {
   chorus: "#ff6f1a",
   "cover-collision": "#e2556b",
   "one-bag": "#2f7d57",
-  meditator: "#3a5a45"
+  meditator: "#3a5a45",
+  "portuguese-with-ines": "#1f4f9c"
 };
 
 function accentForSlug(slug) {
@@ -105,7 +106,8 @@ const STATUS_BY_SLUG = {
   chorus: "live",
   "cover-collision": "live",
   "one-bag": "dev",
-  meditator: "live"
+  meditator: "live",
+  "portuguese-with-ines": "live"
 };
 
 const STATUS_LABELS = { live: "Live", dev: "In development" };

@@ -31,6 +31,16 @@ const artworkBySlug = {
     selectorSubjectPosition: "50% 38%",
     expandedBannerPosition: "50% 42%"
   },
+  "portuguese-with-ines": {
+    src: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    bannerSrc: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    navBannerSrc: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    variant: "mark",
+    detailBannerPosition: "50% 50%",
+    selectorBannerPosition: "50% 50%",
+    selectorSubjectPosition: "50% 50%",
+    expandedBannerPosition: "50% 50%"
+  },
   meditator: {
     src: "/project-art/personal/albion-rose-card.webp",
     bannerSrc: "/project-art/personal/albion-rose-banner.webp",

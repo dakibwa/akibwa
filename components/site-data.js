@@ -152,6 +152,23 @@ export const personalProjects = [
   },
   {
     number: "04",
+    slug: "portuguese-with-ines",
+    title: "Português com a Inês",
+    type: "Language teaching site",
+    image: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    alt: "Cream, blue and orange fan mark from the Português com a Inês identity",
+    dashboardLabel: "Português com a Inês",
+    dashboardStatus: "Live on Akibwa",
+    summary: "Lessons, prices and booking for a teacher in Porto.",
+    tags: ["European Portuguese", "Lessons", "Booking"],
+    mode: "embed",
+    embedUrl: "/portugal/index.html",
+    fallbackHref: "/portugal/",
+    useLocalFrame: false,
+    cta: "Open on Akibwa"
+  },
+  {
+    number: "05",
     slug: "one-bag",
     title: "One Baggers",
     type: "One-bag travel",

@@ -1524,8 +1524,10 @@ button {
    rather than taking a screen apiece on the way down. */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 30px);
+  /* Small enough that the page reads as a body of work rather than a few
+     showpieces — and it fills out rather than stretching as more land. */
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: clamp(16px, 1.8vw, 24px);
   margin-top: clamp(32px, 4vw, 48px);
   padding-bottom: 30px;
 }
@@ -1558,7 +1560,7 @@ button {
   overflow: hidden;
   /* Wider than the hero panels so a card reads as an index entry rather than
      a poster — the art still carries, at about half the card. */
-  aspect-ratio: 2 / 1;
+  aspect-ratio: 3 / 2;
   background: color-mix(in srgb, var(--area-accent, var(--blue)) 14%, var(--white));
 }
 
@@ -1570,6 +1572,17 @@ button {
   transition: transform 520ms var(--ease-out);
 }
 
+/* The Portuguese site's card carries its identity mark rather than a scene,
+   so it sits whole on the brand field instead of being cropped. */
+.project-card-art.is-mark {
+  background: color-mix(in srgb, var(--area-accent, var(--blue)) 8%, var(--white));
+}
+
+.project-card-art.is-mark img {
+  object-fit: contain;
+  padding: 9%;
+}
+
 .project-card:hover .project-card-art img {
   transform: scale(1.035);
 }
@@ -1577,8 +1590,8 @@ button {
 .project-card-body {
   display: grid;
   align-content: start;
-  gap: 7px;
-  padding: 18px 20px 20px;
+  gap: 5px;
+  padding: 14px 16px 16px;
 }
 
 .project-card-plate {
@@ -1600,9 +1613,9 @@ button {
 .project-card-title {
   margin: 0;
   color: var(--black);
-  font-size: clamp(1.24rem, 1.1rem + 0.4vw, 1.5rem);
-  font-weight: 560;
-  line-height: 1.12;
+  font-size: 1.12rem;
+  font-weight: 570;
+  line-height: 1.14;
 }
 
 /* The heading stays a heading; its button carries a cover so the whole tile
@@ -1643,17 +1656,17 @@ button {
 .project-card-summary {
   margin: 4px 0 0;
   color: #4d5560;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.86rem;
+  line-height: 1.45;
 }
 
 .project-card-cue {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  margin-top: 10px;
+  margin-top: 8px;
   color: var(--black);
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 620;
 }
 
