@@ -71,7 +71,7 @@ export function PageFooter() {
               style={{ "--handle-accent": "#2f88ff" }}
             >
               <Mail size={14} strokeWidth={1.8} />
-              <span>Email me</span>
+              <span>Email</span>
             </a>
           </nav>
         </div>

@@ -4404,13 +4404,19 @@ button {
   box-shadow: 0 0 0 3px rgba(47, 136, 255, 0.16);
 }
 
+/* One action left, so it sizes to itself rather than stretching a row that
+   no longer has anything else in it. */
 .contact-actions {
-  display: grid;
-  grid-template-columns: minmax(180px, 210px) minmax(0, 1fr);
+  display: flex;
   grid-column: 1 / -1;
   align-items: center;
   gap: 18px;
   margin-top: 0;
+}
+
+.contact-actions button {
+  width: auto;
+  min-width: 190px;
 }
 
 .contact-actions button {
@@ -6490,14 +6496,22 @@ button {
     padding-top: 18px;
   }
 
+  /* Location and the three links fit one row at 390px once the gaps come in;
+     wrapping put Manchester on a line of its own for no reason. */
   .page-footer-meta {
-    align-items: flex-start;
-    gap: 10px 18px;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0 12px;
   }
 
   .page-footer-details {
-    flex-wrap: wrap;
-    gap: 4px 20px;
+    flex-wrap: nowrap;
+    gap: 0 12px;
+  }
+
+  .page-footer a,
+  .footer-location {
+    gap: 5px;
   }
 
   .studio-page {

@@ -24,12 +24,12 @@ export function ContactPage() {
     <section className="studio-page contact-page-new">
       <section className="page-grid contact-hero">
         <div className="contact-hero-title">
-          <h1>How can I help?</h1>
+          <h1>Tell me what&apos;s going on, and I&apos;ll tell you if I can help.</h1>
 
           <form className="contact-form" onSubmit={handleSubmit}>
             <label>
               <span className="contact-label-row">
-                <span>Tell me what&apos;s going on</span>
+                <span>In your own words</span>
               </span>
               <textarea
                 name="note"
@@ -42,9 +42,6 @@ export function ContactPage() {
                 Draft email
                 <ArrowRight size={18} strokeWidth={1.8} />
               </button>
-              <a className="contact-direct" href={`mailto:${contactEmail}`}>
-                {contactEmail}
-              </a>
             </div>
           </form>
         </div>
