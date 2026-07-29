@@ -493,6 +493,7 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
         <div className={`project-expanded-frame-shell ${isFrameLoaded ? "is-loaded" : "is-loading"}`}>
           <div className="project-frame-loading" aria-hidden="true">
             <strong>{project.title}</strong>
+            <span>Loading the live app…</span>
           </div>
           <iframe
             key={frameNonce}

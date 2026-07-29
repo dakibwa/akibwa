@@ -3485,6 +3485,13 @@ button {
   transition: opacity 160ms ease, visibility 0s linear 0s;
 }
 
+.project-frame-loading span {
+  margin-top: 8px;
+  color: #6b7178;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
 .project-expanded-frame-shell.is-loaded > .project-frame-loading {
   opacity: 0;
   visibility: hidden;
