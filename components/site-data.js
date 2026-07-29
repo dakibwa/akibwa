@@ -21,17 +21,6 @@ export const coverCollisionDataUrl = (
 
 export const areaTiles = [
   {
-    title: "Personal",
-    descriptor: "Self-built projects",
-    href: "/personal",
-    image: "/area-art/about-reflection.webp",
-    navImage: "/brand-art/nav/personal.webp",
-    imagePosition: "50% 10%",
-    alt: "Black-and-white artwork of a serene mask reflected in rippled water",
-    accent: "#55585c",
-    detail: "Chorus, Cover Collision and three more"
-  },
-  {
     title: "Professional",
     descriptor: "Work I do for people",
     href: "/professional",
@@ -40,6 +29,17 @@ export const areaTiles = [
     alt: "Cream sculptural architectural openings crossed by fine copper lines against a pale grey background",
     accent: "#a65f45",
     detail: "If it's done on a computer, I can help"
+  },
+  {
+    title: "Projects",
+    descriptor: "Things I've built",
+    href: "/projects",
+    image: "/area-art/about-reflection.webp",
+    navImage: "/brand-art/nav/personal.webp",
+    imagePosition: "50% 10%",
+    alt: "Black-and-white artwork of a serene mask reflected in rippled water",
+    accent: "#55585c",
+    detail: "Chorus, Cover Collision and two more"
   },
   {
     title: "About",

@@ -1,12 +1,12 @@
-import { PersonalPage } from "@/components/pages/personal-page";
+import { RouteRedirect } from "@/components/route-redirect";
 import { siteSectionTitles } from "@/app/site-metadata";
 
 export const metadata = {
-  title: siteSectionTitles.personal,
-  description:
-    "Things I wanted to exist: Chorus, a listening archive; Cover Collision, an album-art series; and three more in progress."
+  title: siteSectionTitles.projects,
+  robots: { index: false },
+  alternates: { canonical: "/projects/" }
 };
 
 export default function PersonalRoute() {
-  return <PersonalPage />;
+  return <RouteRedirect to="/projects/" label="akibwa.com/projects" />;
 }

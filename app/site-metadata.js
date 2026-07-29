@@ -1,5 +1,5 @@
 export const siteSectionTitles = Object.freeze({
-  personal: "Personal",
+  projects: "Projects",
   professional: "Professional",
   about: "About",
   contact: "Contact",

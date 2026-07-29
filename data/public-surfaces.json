@@ -37,7 +37,7 @@
     {
       "id": "cover-collision",
       "title": "Cover Collision",
-      "route": "/personal#cover-collision",
+      "route": "/projects#cover-collision",
       "kind": "public-series-refresh",
       "visibility": "public",
       "externalUrlEnv": "NEXT_PUBLIC_COVER_COLLISION_URL",

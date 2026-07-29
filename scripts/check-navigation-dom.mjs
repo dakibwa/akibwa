@@ -241,7 +241,7 @@ const visibleBars = (state) => state.filter((item) => item.bar && item.bar.opaci
 /* ---------- test sections ---------- */
 
 const routes = [
-  { path: "/personal/", href: "/personal" },
+  { path: "/projects/", href: "/projects" },
   { path: "/professional/", href: "/professional" },
   { path: "/about/", href: "/about" },
   { path: "/contact/", href: "/contact" }
@@ -287,18 +287,18 @@ const checkHover = async () => {
   await setDesktop();
   await goto("/about/");
   let state = await navState();
-  const personal = state.find((item) => item.href === "/personal");
-  const target = linkCenter(personal);
+  const projects = state.find((item) => item.href === "/projects");
+  const target = linkCenter(projects);
 
   await mouseMove(target.x, target.y);
-  state = await pollUntil(navState, (s) => s.find((i) => i.href === "/personal").bar.opacity > 0.99);
-  check(state.find((i) => i.href === "/personal").bar.opacity > 0.99, "hovering Personal reveals its bar");
+  state = await pollUntil(navState, (s) => s.find((i) => i.href === "/projects").bar.opacity > 0.99);
+  check(state.find((i) => i.href === "/projects").bar.opacity > 0.99, "hovering Projects reveals its bar");
   check(state.find((i) => i.href === "/about").bar.opacity > 0.99, "active About bar stays visible during hover");
   check(visibleBars(state).length === 2, "only the active and hovered bars are visible");
 
   await mouseMove(720, 500);
-  state = await pollUntil(navState, (s) => s.find((i) => i.href === "/personal").bar.opacity < 0.01);
-  check(state.find((i) => i.href === "/personal").bar.opacity < 0.01, "leaving Personal hides its bar completely");
+  state = await pollUntil(navState, (s) => s.find((i) => i.href === "/projects").bar.opacity < 0.01);
+  check(state.find((i) => i.href === "/projects").bar.opacity < 0.01, "leaving Projects hides its bar completely");
   check(state.find((i) => i.href === "/about").bar.opacity > 0.99, "active About bar survives pointer exit");
 
   /* interrupt: enter then leave mid-transition */
@@ -336,9 +336,9 @@ const checkRapidSweep = async () => {
 };
 
 const checkKeyboardFocus = async () => {
-  section("keyboard focus (on /personal/)");
+  section("keyboard focus (on /projects/)");
   await setDesktop();
-  await goto("/personal/");
+  await goto("/projects/");
   let focusedNav = null;
   for (let presses = 0; presses < 20 && !focusedNav; presses++) {
     await pressTab();
@@ -351,7 +351,7 @@ const checkKeyboardFocus = async () => {
       (s) => s.find((i) => i.href === focusedNav.href).bar.opacity > 0.99);
     check(state.find((i) => i.href === focusedNav.href).bar.opacity > 0.99,
       `keyboard focus reveals the ${focusedNav.href} bar`);
-    check(state.find((i) => i.href === "/personal").bar.opacity > 0.99,
+    check(state.find((i) => i.href === "/projects").bar.opacity > 0.99,
       "active bar stays visible while a sibling is focused");
   }
 };
@@ -388,7 +388,7 @@ const checkClickTransition = async () => {
 const checkMobile = async () => {
   section("mobile leakage at 390px");
   await setMobile();
-  await goto("/personal/");
+  await goto("/projects/");
   const desktopHidden = await evaluate(
     `getComputedStyle(document.querySelector(".nav-desktop")).display`
   );
@@ -397,11 +397,13 @@ const checkMobile = async () => {
     `[...document.querySelectorAll(".nav-link__bar")].filter((bar) => bar.getClientRects().length > 0).length`
   );
   check(barRects === 0, "no desktop patterned bar renders a box at mobile width");
-  const footerHidden = await evaluate(`(() => {
+  const footerVisible = await evaluate(`(() => {
     const footer = document.querySelector(".page-footer");
-    return !footer || getComputedStyle(footer).display === "none";
+    if (!footer) return false;
+    const style = getComputedStyle(footer);
+    return style.display !== "none" && footer.getClientRects().length > 0;
   })()`);
-  check(footerHidden, "shared footer is hidden on mobile");
+  check(footerVisible, "shared footer is visible on mobile");
 
   await evaluate(`document.querySelector(".nav-mobile-toggle").click()`);
   const opened = await pollUntil(

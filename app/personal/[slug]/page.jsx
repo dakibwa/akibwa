@@ -1,10 +1,9 @@
-import { notFound } from "next/navigation";
+import { RouteRedirect } from "@/components/route-redirect";
 import { siteSectionTitles } from "@/app/site-metadata";
-import { PersonalPage } from "@/components/pages/personal-page";
 import { isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
-const findProject = (slug) =>
-  personalProjects.find((project) => project.slug === slug || project.aliases?.includes(slug)) ?? null;
+/* The project pages moved to /projects/. These stay so the deep links that
+   were already live keep working. */
 
 export const dynamicParams = false;
 
@@ -15,21 +14,13 @@ export function generateStaticParams() {
   ]);
 }
 
-export async function generateMetadata({ params }) {
+export const metadata = {
+  title: siteSectionTitles.projects,
+  robots: { index: false }
+};
+
+export default async function PersonalProjectRedirect({ params }) {
   const { slug } = await params;
-  const project = findProject(slug);
-  if (!project) return {};
 
-  return {
-    title: siteSectionTitles.personal,
-    description: project.summary
-  };
-}
-
-export default async function PersonalProjectRoute({ params }) {
-  const { slug } = await params;
-  const project = findProject(slug);
-  if (!project) notFound();
-
-  return <PersonalPage initialSlug={project.slug} />;
+  return <RouteRedirect to={`/projects/${slug}/`} label={`akibwa.com/projects/${slug}`} />;
 }

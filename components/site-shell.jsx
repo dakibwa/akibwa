@@ -10,9 +10,10 @@ import { getPersonalProjectArt } from "@/components/personal-project-art";
 
 const navArt = Object.fromEntries(areaTiles.map((tile) => [tile.href, tile.navImage ?? tile.image]));
 
+/* Offer, then the proof, then the person, then the way in. */
 const navItems = [
-  { href: "/personal", label: "Personal", match: ["/personal", "/work", "/projects", "/chorus"] },
   { href: "/professional", label: "Professional", match: ["/professional", "/offer", "/services"] },
+  { href: "/projects", label: "Projects", match: ["/projects", "/personal", "/work", "/chorus"] },
   { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
@@ -28,7 +29,7 @@ const projectAccents = {
 /* Light and mid tones from each area's artwork, used by the
    cursor-tracked colour passing through the desktop navigation text. */
 const navGlow = {
-  "/personal": { light: "143 188 255", mid: "93 157 255" },
+  "/projects": { light: "143 188 255", mid: "93 157 255" },
   "/professional": { light: "255 177 128", mid: "255 140 71" },
   "/about": { light: "125 191 164", mid: "74 157 125" },
   "/contact": { light: "143 188 255", mid: "93 157 255" }
@@ -45,7 +46,7 @@ function normalize(pathname) {
 function isActive(pathname, match) {
   const current = normalize(pathname);
 
-  return match.includes(current) || (match.includes("/personal") && current.startsWith("/personal/"));
+  return match.includes(current) || (match.includes("/projects") && current.startsWith("/projects/"));
 }
 
 function navAriaCurrent(pathname, item) {
@@ -146,7 +147,7 @@ export function SiteShell({ children }) {
 
             <nav className="nav-desktop" aria-label="Main navigation">
               {navItems.map((item) => {
-                const hasDropdown = item.href === "/personal";
+                const hasDropdown = item.href === "/projects";
                 const syncPersonalMenuToPointer = (event) => {
                   setIsPersonalMenuOpen(hasDropdown && event.pointerType !== "touch");
                 };
@@ -240,19 +241,19 @@ export function SiteShell({ children }) {
                           return (
                             <Link
                               key={project.slug}
-                              href={`/personal/${project.slug}`}
+                              href={`/projects/${project.slug}`}
                               prefetch
-                              className={`nav-dropdown-link ${normalize(pathname) === `/personal/${project.slug}` ? "is-active" : ""}`}
-                              aria-current={normalize(pathname) === `/personal/${project.slug}` ? "page" : undefined}
+                              className={`nav-dropdown-link ${normalize(pathname) === `/projects/${project.slug}` ? "is-active" : ""}`}
+                              aria-current={normalize(pathname) === `/projects/${project.slug}` ? "page" : undefined}
                               style={{ "--project-accent": projectAccents[project.slug] }}
-                              onPointerEnter={() => primeRoute(`/personal/${project.slug}`)}
+                              onPointerEnter={() => primeRoute(`/projects/${project.slug}`)}
                             >
                               {content}
                               <ArrowRight className="nav-dropdown-link-arrow" size={13} strokeWidth={1.8} aria-hidden="true" />
                             </Link>
                           );
                         })}
-                        <Link href="/personal" prefetch className="nav-dropdown-all">
+                        <Link href="/projects" prefetch className="nav-dropdown-all">
                           View all projects
                           <ArrowRight size={13} strokeWidth={1.8} aria-hidden="true" />
                         </Link>

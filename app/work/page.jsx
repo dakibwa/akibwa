@@ -2,11 +2,11 @@ import { RouteRedirect } from "@/components/route-redirect";
 import { siteSectionTitles } from "@/app/site-metadata";
 
 export const metadata = {
-  title: siteSectionTitles.personal,
+  title: siteSectionTitles.projects,
   robots: { index: false },
-  alternates: { canonical: "/personal/" }
+  alternates: { canonical: "/projects/" }
 };
 
 export default function WorkRoute() {
-  return <RouteRedirect to="/personal/" label="akibwa.com/personal" />;
+  return <RouteRedirect to="/projects/" label="akibwa.com/projects" />;
 }

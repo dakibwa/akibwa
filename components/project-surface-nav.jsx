@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 export function ProjectSurfaceNav({ title }) {
   return (
     <nav className="project-surface-nav" aria-label={`${title} navigation`}>
-      <Link href="/personal" className="project-surface-back">
+      <Link href="/projects" className="project-surface-back">
         <ArrowLeft size={16} strokeWidth={1.9} />
         <span>Personal</span>
       </Link>
