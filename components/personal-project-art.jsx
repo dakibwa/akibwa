@@ -35,7 +35,7 @@ const artworkBySlug = {
   "portuguese-with-ines": {
     src: "/project-art/personal/portuguese-with-ines-symbol.webp",
     bannerSrc: "/project-art/personal/portuguese-with-ines-symbol.webp",
-    navBannerSrc: "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
+    navBannerSrc: "/project-art/personal/portuguese-with-ines-symbol.webp",
     variant: "symbol",
     detailBannerPosition: "50% 50%",
     selectorBannerPosition: "50% 50%",
