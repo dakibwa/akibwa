@@ -4545,17 +4545,6 @@ button {
   background-color: var(--white);
 }
 
-/* At `cover` the sky rendered ~3x the scale it sits at in the hero panel and
-   read as a blue block rather than the same photograph. Sized to roughly the
-   panel's width and anchored right, it stays a motif and clears the header
-   text on the left. */
-.contact-page-new .page-strip-steps {
-  background:
-    linear-gradient(80deg, rgba(255, 255, 255, 0.97) 34%, rgba(255, 255, 255, 0.79)),
-    url("/area-art/contact-blue-clouds.webp") right -30px bottom 32% / auto 300% no-repeat;
-  background-color: var(--white);
-}
-
 .page-strip > header {
   display: grid;
   gap: 8px;
@@ -7124,13 +7113,6 @@ button {
   /* The strip's artwork background is desktop-only — at this width the box is
      most of the screen and the texture just crowds the text. */
   .offer-page .page-strip {
-    background:
-      linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
-      url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
-    background-color: var(--white);
-  }
-
-  .contact-page-new .page-strip-steps {
     background:
       linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
       url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
