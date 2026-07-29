@@ -7087,6 +7087,37 @@ button {
 }
 
 @media (max-width: 760px) {
+  /* The cycling phrases run to 24 characters. `white-space: nowrap` on an
+     inline-block meant the longest could not fit a line at this size, so it
+     ran off the right edge — taking the page's width with it — and stranded
+     the full stop on a line of its own. Let it wrap like the text it is, and
+     draw the underline as a background so each line fragment keeps one. */
+  .hero-word-cycle {
+    display: inline;
+    white-space: normal;
+    background-image: linear-gradient(
+      90deg,
+      rgba(var(--cycle-underline-rgb), 0.2),
+      rgba(var(--cycle-underline-rgb), 0.08)
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 0.09em;
+    background-position: 0 calc(100% - 0.06em);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .hero-word-cycle::after {
+    display: none;
+  }
+
+  /* The value span is the inline-block that actually blocks wrapping; the
+     flick animation still plays on an inline box. */
+  .hero-word-cycle-value {
+    display: inline;
+    white-space: normal;
+  }
+
   /* On a phone the artwork shouldn't interrupt the reading order. The hero
      splits apart so the picture can come last, after the words have done
      their job: headline, offer, call to action, the box — then the image.
