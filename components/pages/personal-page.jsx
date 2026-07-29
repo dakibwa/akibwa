@@ -146,33 +146,31 @@ function ProjectCard({ project, isArrived, onOpen }) {
           decoding="async"
           draggable="false"
         />
+        <span className={`personal-story-status is-${status} project-card-status`}>
+          <span className="personal-story-status-dot" aria-hidden="true" />
+          {project.statusLabel ?? STATUS_LABELS[status]}
+        </span>
       </div>
       <div className="project-card-body">
-        <div className="project-card-plate">
-          <span className={`personal-story-status is-${status}`}>
-            <span className="personal-story-status-dot" aria-hidden="true" />
-            {project.statusLabel ?? STATUS_LABELS[status]}
-          </span>
-        </div>
-        <h2 id={`${project.slug}-card-title`} className="project-card-title">
+        <div className="project-card-head">
+          <h2 id={`${project.slug}-card-title`} className="project-card-title">
+            {launchable ? (
+              /* The button carries an ::after covering the card, so the whole
+                 tile is the target while the heading stays a real heading. */
+              <button type="button" className="project-card-open" onClick={onOpen}>
+                {project.title}
+              </button>
+            ) : (
+              project.title
+            )}
+          </h2>
           {launchable ? (
-            /* The button carries an ::after covering the card, so the whole
-               tile is the target while the heading stays a real heading. */
-            <button type="button" className="project-card-open" onClick={onOpen}>
-              {project.title}
-            </button>
-          ) : (
-            project.title
-          )}
-        </h2>
-        <p className="project-card-type">{project.type}</p>
+            <span className="project-card-cue" aria-hidden="true">
+              <ArrowRight size={16} strokeWidth={2} />
+            </span>
+          ) : null}
+        </div>
         <p className="project-card-summary">{project.summary}</p>
-        {launchable ? (
-          <span className="project-card-cue" aria-hidden="true">
-            Open
-            <ArrowRight size={15} strokeWidth={2} />
-          </span>
-        ) : null}
       </div>
     </article>
   );

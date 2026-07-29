@@ -1526,8 +1526,8 @@ button {
   display: grid;
   /* Small enough that the page reads as a body of work rather than a few
      showpieces — and it fills out rather than stretching as more land. */
-  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-  gap: clamp(16px, 1.8vw, 24px);
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: clamp(14px, 1.5vw, 20px);
   margin-top: clamp(32px, 4vw, 48px);
   padding-bottom: 30px;
 }
@@ -1557,6 +1557,7 @@ button {
 }
 
 .project-card-art {
+  position: relative;
   overflow: hidden;
   /* Wider than the hero panels so a card reads as an index entry rather than
      a poster — the art still carries, at about half the card. */
@@ -1593,23 +1594,37 @@ button {
 .project-card-body {
   display: grid;
   align-content: start;
-  gap: 5px;
-  padding: 14px 16px 16px;
+  gap: 3px;
+  padding: 12px 13px 14px;
 }
 
-.project-card-plate {
+/* Status sits on the artwork so the body below is only ever the name and the
+   line that identifies it. */
+.project-card-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 8px;
+  box-shadow: 0 2px 10px rgba(16, 18, 23, 0.14);
+  backdrop-filter: blur(6px);
+}
+
+.project-card-head {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 3px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .project-card-title {
   margin: 0;
   color: var(--black);
-  font-size: 1.12rem;
-  font-weight: 570;
-  line-height: 1.14;
+  font-size: 1rem;
+  font-weight: 580;
+  line-height: 1.16;
 }
 
 /* The heading stays a heading; its button carries a cover so the whole tile
@@ -1639,37 +1654,37 @@ button {
 }
 
 .project-card-summary {
-  margin: 5px 0 0;
-  color: #4d5560;
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-
-.project-card-type {
-  margin: 0;
-  color: var(--area-accent, var(--blue));
-  font-size: 0.7rem;
-  font-weight: 650;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  margin: 4px 0 0;
+  color: color-mix(in srgb, var(--area-accent, var(--blue)) 82%, #10121a);
+  font-size: 0.79rem;
+  line-height: 1.4;
 }
 
 .project-card-cue {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  color: var(--black);
-  font-size: 0.84rem;
-  font-weight: 620;
+  justify-content: center;
+  align-self: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--area-accent, var(--blue)) 12%, transparent);
+  color: var(--area-accent, var(--blue));
+  transition: background var(--hover-out) var(--ease-out);
 }
 
 .project-card-cue svg {
   transition: transform var(--hover-out) var(--ease-out);
 }
 
+.project-card:hover .project-card-cue {
+  background: color-mix(in srgb, var(--area-accent, var(--blue)) 22%, transparent);
+  transition-duration: var(--hover-in);
+}
+
 .project-card:hover .project-card-cue svg {
-  transform: translateX(3px);
+  transform: translateX(2px);
   transition-duration: var(--hover-in);
 }
 
