@@ -155,9 +155,7 @@ const sources = [
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/one-bag-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/fellrun-ridge-banner.webp", slot: "projectCard" },
-  { file: "project-art/personal/fellblade-encounter-banner.webp", slot: "projectCard" },
-  { file: "project-art/personal/fellrun-ridge.webp", slot: "projectCard" },
-  { file: "project-art/personal/fellblade-encounter.webp", slot: "projectCard" }
+  { file: "project-art/personal/fellrun-ridge.webp", slot: "projectCard" }
 ];
 
 /*

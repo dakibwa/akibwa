@@ -1037,52 +1037,6 @@
       }
     ]
   },
-  "projectCard:/project-art/personal/fellblade-encounter-banner.webp": {
-    "source": "/project-art/personal/fellblade-encounter-banner.webp",
-    "slot": "projectCard",
-    "ratio": 1.5,
-    "sourceWidth": 760,
-    "sourceHeight": 428,
-    "sourceHash": "7f95d0b8832d4959",
-    "variants": [
-      {
-        "width": 303,
-        "height": 202,
-        "avif": {
-          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-303.avif",
-          "bytes": 15803
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-303.webp",
-          "bytes": 18048
-        }
-      },
-      {
-        "width": 390,
-        "height": 260,
-        "avif": {
-          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-390.avif",
-          "bytes": 24216
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-390.webp",
-          "bytes": 27804
-        }
-      },
-      {
-        "width": 491,
-        "height": 327,
-        "avif": {
-          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-491.avif",
-          "bytes": 34701
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellblade-encounter-banner-projectCard-491.webp",
-          "bytes": 40514
-        }
-      }
-    ]
-  },
   "projectCard:/project-art/personal/fellrun-ridge.webp": {
     "source": "/project-art/personal/fellrun-ridge.webp",
     "slot": "projectCard",
@@ -1125,52 +1079,6 @@
         "webp": {
           "src": "/_img/project-art/personal/fellrun-ridge-projectCard-491.webp",
           "bytes": 30212
-        }
-      }
-    ]
-  },
-  "projectCard:/project-art/personal/fellblade-encounter.webp": {
-    "source": "/project-art/personal/fellblade-encounter.webp",
-    "slot": "projectCard",
-    "ratio": 1.5,
-    "sourceWidth": 600,
-    "sourceHeight": 338,
-    "sourceHash": "ed4f40e1787d58b2",
-    "variants": [
-      {
-        "width": 303,
-        "height": 202,
-        "avif": {
-          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-303.avif",
-          "bytes": 15365
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-303.webp",
-          "bytes": 17694
-        }
-      },
-      {
-        "width": 390,
-        "height": 260,
-        "avif": {
-          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-390.avif",
-          "bytes": 23124
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-390.webp",
-          "bytes": 26944
-        }
-      },
-      {
-        "width": 491,
-        "height": 327,
-        "avif": {
-          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-491.avif",
-          "bytes": 33163
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellblade-encounter-projectCard-491.webp",
-          "bytes": 39824
         }
       }
     ]

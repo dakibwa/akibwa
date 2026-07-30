@@ -52,16 +52,6 @@ const artworkBySlug = {
     selectorSubjectPosition: "50% 52%",
     expandedBannerPosition: "50% 52%"
   },
-  fellblade: {
-    src: "/project-art/personal/fellblade-encounter.webp",
-    bannerSrc: "/project-art/personal/fellblade-encounter-banner.webp",
-    navBannerSrc: "/project-art/personal/fellblade-encounter-banner.webp",
-    variant: "cover",
-    detailBannerPosition: "50% 46%",
-    selectorBannerPosition: "50% 46%",
-    selectorSubjectPosition: "50% 46%",
-    expandedBannerPosition: "50% 46%"
-  },
   meditator: {
     src: "/project-art/personal/meditator-symbol.webp",
     bannerSrc: "/project-art/personal/meditator-symbol.webp",

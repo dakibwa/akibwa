@@ -152,19 +152,6 @@ export const personalProjects = [
   },
   {
     number: "06",
-    slug: "fellblade",
-    title: "Fellblade",
-    type: "Action RPG",
-    statusLabel: "Dev",
-    dashboardStatus: "In development",
-    isLaunchable: false,
-    summary: "Sword, dale, and something in the moss.",
-    tags: ["16-bit", "Godot", "Timed combat"],
-    mode: "preview",
-    cta: "In development"
-  },
-  {
-    number: "07",
     slug: "one-bag",
     title: "One Bagger",
     type: "One-bag travel",
