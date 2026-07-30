@@ -761,28 +761,6 @@
       }
     ]
   },
-  "navDropdown:/portugal/visuals/generated-splats/cream-blue-fan-splat.webp": {
-    "source": "/portugal/visuals/generated-splats/cream-blue-fan-splat.webp",
-    "slot": "navDropdown",
-    "ratio": 4.7778,
-    "sourceWidth": 1254,
-    "sourceHeight": 1254,
-    "sourceHash": "72cff9ffe56e4962",
-    "variants": [
-      {
-        "width": 323,
-        "height": 68,
-        "avif": {
-          "src": "/_img/portugal/visuals/generated-splats/cream-blue-fan-splat-navDropdown-323.avif",
-          "bytes": 4291
-        },
-        "webp": {
-          "src": "/_img/portugal/visuals/generated-splats/cream-blue-fan-splat-navDropdown-323.webp",
-          "bytes": 5010
-        }
-      }
-    ]
-  },
   "projectCard:/project-art/personal/chorus-symbol.webp": {
     "source": "/project-art/personal/chorus-symbol.webp",
     "slot": "projectCard",

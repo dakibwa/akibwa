@@ -147,7 +147,6 @@ const sources = [
   { file: "brand-art/nav/projects/cover-collision.webp", slot: "navDropdown" },
   { file: "brand-art/nav/projects/meditator.webp", slot: "navDropdown" },
   { file: "brand-art/nav/projects/one-bag.webp", slot: "navDropdown" },
-  { file: "portugal/visuals/generated-splats/cream-blue-fan-splat.webp", slot: "navDropdown" },
 
   // Project cards.
   { file: "project-art/personal/chorus-symbol.webp", slot: "projectCard" },
