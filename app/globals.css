@@ -6525,6 +6525,71 @@ button {
   text-underline-offset: 3px;
 }
 
+@media (max-width: 1060px) {
+  /* Once the hero stacks the artwork must not interrupt the reading order. The hero
+     splits apart so the picture can come last, after the words have done
+     their job: headline, offer, call to action, the box — then the image.
+     This has to match the width the hero collapses at (1060px); scoped to
+     760px it left a band where the picture sat between the two.
+     `display: contents` drops the hero grid, so its two halves take the
+     page gutter themselves. */
+  .offer-page,
+  .contact-page-new,
+  .personal-page {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .offer-studio-hero,
+  .contact-hero,
+  .personal-hero {
+    display: contents;
+  }
+
+  .offer-hero-title,
+  .offer-hero-aside,
+  .contact-hero-title,
+  .contact-art-side,
+  .personal-hero-copy,
+  .personal-hero-art {
+    width: min(calc(100% - 48px), var(--frame));
+    margin: 0 auto;
+  }
+
+  .offer-hero-title,
+  .contact-hero-title,
+  .personal-hero-copy {
+    order: 1;
+    padding-top: 44px;
+  }
+
+  .page-strip,
+  .page-strip-steps,
+  .projects-grid {
+    order: 2;
+  }
+
+  .offer-hero-aside,
+  .contact-art-side {
+    order: 3;
+    margin-top: clamp(30px, 5vw, 44px);
+  }
+
+  .offer-page .page-footer,
+  .contact-page-new .page-footer,
+  .personal-page .page-footer {
+    order: 4;
+  }
+
+  /* Projects drops its panel rather than reordering it. Stacked, the artwork
+     lands after the whole card grid with nothing left to pair with, so it
+     reads as an offcut above the footer rather than the hero's other half.
+     The img is lazy, so a hidden panel costs no request. */
+  .personal-hero-art {
+    display: none;
+  }
+}
+
 @media (max-width: 760px) {
   /* Phones keep the stacked list — it is the better shape at that width, and
      only desktop needed the horizontal treatment. */
@@ -6591,68 +6656,6 @@ button {
   .hero-word-cycle-value {
     display: inline;
     white-space: normal;
-  }
-
-  /* On a phone the artwork shouldn't interrupt the reading order. The hero
-     splits apart so the picture can come last, after the words have done
-     their job: headline, offer, call to action, the box — then the image.
-     `display: contents` drops the hero grid, so its two halves take the
-     page gutter themselves. */
-  .offer-page,
-  .contact-page-new,
-  .personal-page {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .offer-studio-hero,
-  .contact-hero,
-  .personal-hero {
-    display: contents;
-  }
-
-  .offer-hero-title,
-  .offer-hero-aside,
-  .contact-hero-title,
-  .contact-art-side,
-  .personal-hero-copy,
-  .personal-hero-art {
-    width: min(calc(100% - 48px), var(--frame));
-    margin: 0 auto;
-  }
-
-  .offer-hero-title,
-  .contact-hero-title,
-  .personal-hero-copy {
-    order: 1;
-    padding-top: 44px;
-  }
-
-  .page-strip,
-  .page-strip-steps,
-  .projects-grid {
-    order: 2;
-  }
-
-  .offer-hero-aside,
-  .contact-art-side {
-    order: 3;
-    margin-top: clamp(30px, 5vw, 44px);
-  }
-
-  /* Projects drops its hero panel here instead of reordering it. Stacked, the
-     artwork lands after seven cards with nothing left to pair with, so it
-     reads as an offcut above the footer rather than the hero's other half.
-     The img is lazy and its preload is min-width scoped, so a phone never
-     requests the file either. */
-  .personal-hero-art {
-    display: none;
-  }
-
-  .offer-page .page-footer,
-  .contact-page-new .page-footer,
-  .personal-page .page-footer {
-    order: 4;
   }
 
   /* The strip's artwork background is desktop-only — at this width the box is
