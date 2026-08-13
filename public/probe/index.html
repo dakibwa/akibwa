@@ -717,11 +717,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .field .tutspot{pointer-events:none}
   .field .tutscrim{fill:var(--surface);opacity:.8;
     transition:opacity .28s var(--ease-out)}
-  /* `animation:none` is not tidiness: a running css animation outranks a normal
-     declaration in the cascade, so the ring's own ping was holding it at full
-     opacity through every drag and the hint stayed anchored to a neuron that
-     had left it. the leader needs no such thing — its animation only touches
-     stroke-dashoffset. */
+  /* the ping needs `animation:none` and the other three do not, which is not
+     tidiness either way: a running css animation outranks a normal declaration
+     in the cascade, so an animated opacity simply ignores the rule below and
+     the hint stays anchored to a neuron that has left it — measured, before the
+     ring and the ping were separate elements. the leader is animated too and
+     needs nothing, because its animation only touches stroke-dashoffset. */
   .field.dragging .tutscrim,
   .field.dragging .tutring,
   .field.dragging .tutlead{opacity:0}
