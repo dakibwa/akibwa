@@ -14,9 +14,7 @@ const sourceAccents = [
 const outcomeAccents = [
   "235, 92, 8",
   "186, 121, 15",
-  "226, 82, 118",
   "197, 92, 61",
-  "164, 104, 217",
   "186, 124, 40"
 ];
 
@@ -32,10 +30,8 @@ const heroSourcePhrases = [
 const heroOutcomePhrases = [
   { label: "tools people use", accent: outcomeAccents[0] },
   { label: "dashboards worth opening", accent: outcomeAccents[1] },
-  { label: "one screen, not six", accent: outcomeAccents[2] },
-  { label: "listening reports", accent: outcomeAccents[3] },
-  { label: "briefs you can check", accent: outcomeAccents[4] },
-  { label: "working prototypes", accent: outcomeAccents[5] }
+  { label: "listening reports", accent: outcomeAccents[2] },
+  { label: "working prototypes", accent: outcomeAccents[3] }
 ];
 
 const REST_INTERVAL = 4200;
@@ -99,10 +95,7 @@ function HeroWordCycle({ phrases, label, index, onEngage, onRelease, onStep }) {
       onFocus={onEngage}
       onBlur={onRelease}
       onClick={onStep}
-      style={{
-        "--cycle-accent-rgb": currentPhrase.accent,
-        "--cycle-underline-rgb": currentPhrase.accent
-      }}
+      style={{ "--cycle-accent-rgb": currentPhrase.accent }}
     >
       <span key={currentPhrase.label} className="hero-word-cycle-value">
         {currentPhrase.label}
