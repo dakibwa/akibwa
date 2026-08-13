@@ -140,9 +140,9 @@ export const personalProjects = [
   {
     number: "05",
     slug: "probe",
-    title: "Probe",
+    title: "features",
     type: "Daily puzzle",
-    dashboardLabel: "Probe",
+    dashboardLabel: "features",
     dashboardStatus: "Live on Akibwa",
     summary: "Pull tangled features apart, ten nets a day.",
     tags: ["Daily nets", "Untangling", "Interpretability"],

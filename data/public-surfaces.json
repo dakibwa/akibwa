@@ -3,7 +3,7 @@
   "surfaces": [
     {
       "id": "probe",
-      "title": "Probe",
+      "title": "features",
       "route": "/probe",
       "kind": "static-directory",
       "visibility": "public",
