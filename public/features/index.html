@@ -605,8 +605,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .field.dimthreads .thread.lit{opacity:1}
   .field.dimthreads .thread.freedt.lit{opacity:.62}
   /* translucent so a thread or crossing passing beneath still reads through */
-  .field .mnode{fill:var(--node-fill);r:var(--nr);stroke-width:var(--nw);cursor:grab;
+  .field .mnode{fill:var(--node-fill);r:var(--nr);stroke-width:var(--nw);
     transition:opacity .4s,r var(--t-lift) var(--ease-out),stroke-width var(--t-lift) var(--ease-out)}
+  /* the grab hand is on the FIELD, set from pick() — see hoverNode. it used to
+     be on .mnode, which is the drawn circle and less than half the radius a
+     press actually reaches, so the cursor and the press disagreed and anything
+     drawn over a node took the hand away from it. */
+  .field.overnode{cursor:grab}
   .field.dragging,.field.dragging .mnode{cursor:grabbing}
   /* a neuron whose every feature is already free is not draggable — pick()
      skips it — so it must not advertise otherwise */
@@ -4918,6 +4923,25 @@ $('netsvg').addEventListener('pointerdown',e=>{
     dragOff={x:dragN.x0-p.x,y:dragN.y0-p.y};
     try{$('netsvg').setPointerCapture(e.pointerId)}catch(err){} e.preventDefault()}
 });
+/* ---- the hand knows what the press will do ----
+   the grab cursor used to live on `.mnode`, the drawn circle — 10 board units.
+   what a press actually grabs is pick()'s radius, a finger-friendly ~26 screen
+   px. so the two disagreed by more than double: you could be well inside
+   grabbing distance and still be shown an arrow, and crossing marks draw ABOVE
+   the neurons, so passing one flipped the cursor off a node you were still on
+   top of. moving across the board flickered.
+   so the cursor is decided by pick() itself, on the field rather than on any
+   element. it cannot disagree with the press, because it IS the press's own
+   test — and it stops caring what happens to be painted over the node. */
+function hoverNode(e){
+  const f=$('field');
+  if(dragN || R().over){ f.classList.remove('overnode'); return }
+  const p=svgPt(e);
+  f.classList.toggle('overnode', !!pick(p.x,p.y));
+}
+$('netsvg').addEventListener('pointermove',hoverNode);
+// leaving the board with the class still on would leave a grab hand over the panel
+$('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('overnode'));
 $('netsvg').addEventListener('pointermove',e=>{
   if(!dragN)return;
   const p=svgPt(e);
