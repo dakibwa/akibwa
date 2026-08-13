@@ -60,6 +60,51 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        see TIERCOL — so CARDCOL is three canonical signal colours and nothing
        reads this. gone rather than left lying about, the same way `--talk` went. */
 
+    /* ---- the four-colour band, and its ORDER, in one place ----
+       five things draw this band: the wordmark's rule, the coach strip, the
+       intro strip, the say card's strip (FLAG) and the share card's mark
+       (MARK). they are meant to be ONE object restated, and the only thing
+       that can break that is the order drifting in one of them — which is
+       exactly what five hand-written copies of four token names invite. so the
+       order lives here and every one of the five reads it. `cssv('--flag-1')`
+       resolves the chain to a hex, which is what lets the share card's svg use
+       it too.
+
+       the order is hellblau · gelb · gruen · orange, and it is the shipped
+       order with the middle two TRANSPOSED. it was hellblau · gruen · gelb ·
+       orange, which put both of the palette's weak joins in the same rule.
+       measured as CIE76 dE between adjacent quarters, in normal vision and
+       under simulated deuteranopia, protanopia and tritanopia — the worst of
+       the four is what a join is actually worth, because a mark has to hold for
+       everybody:
+         hellblau|gruen  77.2 normal, but 27.3 tritan — and 3.8 apart in L*.
+                         two saturated colours of the SAME lightness make a
+                         hue-only boundary, and a hue-only boundary at 4px
+                         reads as a blend. this is the one the owner named.
+         gelb|orange     39.8 normal, 10.5 protan. the weakest join available.
+         hellblau|gelb   79.7 worst case
+         gelb|gruen      68.8 worst case
+         gruen|orange    68.8 worst case
+         hellblau|orange 100.3 worst case — the strongest, and note it is also
+                         0.3 apart in L*, so lightness is not the whole rule:
+                         hue opposition can carry a join on its own.
+       the transposition separates both weak pairs at once. the mark's weakest
+       join goes from 10.5 to 68.8 — 6.6x — and from 39.8 to 75.8 in normal
+       vision, with no colour changed and none added.
+       two things the old order got right and this one keeps. it still OPENS on
+       hellblau, which is the colour this interface already spends on focus
+       rings, the live dot and a first identification. and it is still not a
+       lightness ramp — L* runs 63.3, 80.4, 59.5, 63.6, rising then dropping —
+       so the rule cannot be read as a scale climbing from low to high, which is
+       what would make four coloured parts look like a legend for a quantity.
+       it is better on one count besides: gelb is now INTERIOR. gelb is 1.61:1
+       against the light panel and is the one quarter that struggles there, so
+       the band's two outer edges are now both colours that hold ~2.7:1. */
+    --flag-1:var(--hellblau);
+    --flag-2:var(--gelb);
+    --flag-3:var(--gruen);
+    --flag-4:var(--orange);
+
     color-scheme:dark;
     --paper:#0E1214;
     --ink:#F2F0EA;
@@ -208,11 +253,31 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* ---------- frame ---------- */
   .hud{background:var(--surface);border:1px solid var(--rule);box-shadow:var(--shadow-panel);
        flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
-  /* the top strip is one instrument in three readings — see .instruments */
+  /* the top strip is one instrument in three readings — see .instruments.
+     THE HEAD IS 67px, and it was 101. the board is aspect-locked and letterboxes
+     into whatever the window leaves, so on a 16:9 window the board is
+     HEIGHT-bound and every pixel of head is a pixel of board: at 1280x720 the
+     plate goes 1031x575 -> 1092x609, and at 1440x900 it stops being height-bound
+     altogether and fills the panel's width, 1354x755 -> 1398x780. on a tall wide
+     monitor it is width-bound already and the head's height buys nothing — which
+     is exactly the case the owner was looking at, and is why none of the 34px
+     came out of a reading. all of it came out of parts that drew nothing:
+       17px  the foot row, which held a word that duplicated its neighbour
+       14px  the bay's caption register, folded onto the figure's line
+        3px  padding, 12/14 -> 11/12
+     nothing that draws lost a pixel. the numerals, the labels and all three
+     tracks are the size they were.
+     the columns: the mark takes its own measure and the cluster takes the rest.
+     it was a fixed 210px against a word that is 94px wide, so 116px of the head
+     was a column held open for a tagline that has been cut. what the mark needs
+     is not a column, it is AIR and a rule to be on the other side of — see the
+     four arguments in the .mark note — and 26px of gap gives it the first while
+     .instruments' own border gives it the second. the same 26 stands between the
+     cluster and the buttons, so the head has one spacing and not three. */
   .hud-head{
     flex:0 0 auto;
-    display:grid;grid-template-columns:210px minmax(330px,1fr) auto;
-    align-items:stretch;gap:18px;padding:12px 18px 14px;border-bottom:1px solid var(--silver)
+    display:grid;grid-template-columns:auto minmax(330px,1fr) auto;
+    align-items:stretch;gap:26px;padding:11px 18px 12px;border-bottom:1px solid var(--silver)
   }
   /* ---------- the mark ----------
      the four colours were a 2x2 block standing to the LEFT of the word: a badge,
@@ -239,8 +304,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
          shrink-wraps to its own text and the rule fills it, so `features` at
          94px, the phone's 21px setting at 79px, and anything this game is ever
          renamed to all re-cut themselves with no second number to keep in step.
-         a track's width is its BAY, 130-206px, and has nothing to do with what
-         is above it.
+         a track's width is its BAY — 88px on a phone, 239 at 1280, about 330 at
+         the widest the sheet goes — and has nothing to do with what is above it.
+         the mark is the only length in the head that does NOT grow with the
+         window, which is now the plainest of the three tells.
        GROUND — a track is a length of --rule with colour laid over PART of it,
          and the unfilled remainder is half the reading. this is four saturated
          hues edge to edge with no ground and no remainder: there is nothing for
@@ -257,15 +324,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      thing in the row that is not an instrument, so it is the one thing that
      stays off it.
 
-     the order is hellblau, gruen, gelb, orange, left to right — the same run the
-     bulletin and coach strips already draw, so the mark and those strips are the
-     same object rather than two arrangements of one palette. it is also
-     deliberately NOT a lightness ramp: gelb is far and away the brightest of the
-     four and it lands third, not at an end, so the rule cannot be read as a
-     scale climbing from low to high. an ordered ramp is precisely what would
-     make four coloured parts look like a legend for a quantity. and it opens on
-     hellblau, which is the colour this interface already spends on focus rings,
-     the live dot and a first identification — the right first beat for a mark.
+     the order is not written here any more, and no longer restated in the coach
+     strip, the intro strip, FLAG and MARK either — all five read --flag-1..4,
+     which is where the run and the whole argument for it now live. it changed
+     on 13 aug 2026: the two middle quarters were transposed, because the old
+     run put the palette's two weakest joins in one rule and the owner could see
+     the blue give way to the green. see the --flag-* note in :root.
 
      ONE element with hard-stop gradient stops, not four siblings. four siblings
      put their boundaries on fractional css pixels — 93.7/4 is 23.425 — and at
@@ -284,28 +348,29 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      what it says it is. */
   h1{font-size:25px;font-weight:700;letter-spacing:-.02em;text-transform:lowercase;
      line-height:1.2;width:max-content}
-  /* the canonical FIELD colours rather than the --sig-* line strengths. this is
-     a four-colour BAND, the same object the bulletin and coach strips draw at 5
-     and 7px, and those are fields — they hold canonical gelb on paper because
-     gelb as a line there is a bronze, and a mark that repaints itself when the
-     ground flips is not a mark. what carries the form is the contrast between
-     ADJACENT parts, not each part against the panel, and those boundaries are
-     the same on both grounds because the four colours are. 4px is partly what
-     that costs: at 3 the yellow quarter starts to give up against the light
-     surface and at 4 it holds. */
+  /* --flag-* resolve to the canonical FIELD colours rather than the --sig-* line
+     strengths. this is a four-colour BAND, the same object the coach and intro
+     strips draw at 5 and 7px, and those are fields — they hold canonical gelb on
+     paper because gelb as a line there is a bronze, and a mark that repaints
+     itself when the ground flips is not a mark. what carries the form is the
+     contrast between ADJACENT parts, not each part against the panel, and those
+     boundaries are the same on both grounds because the four colours are. 4px is
+     partly what that costs: at 3 the yellow quarter starts to give up against the
+     light surface and at 4 it holds. */
   .wordrule{
     display:block;height:4px;margin-top:5px;
     background:linear-gradient(90deg,
-      var(--hellblau) 0 25%, var(--gruen) 25% 50%,
-      var(--gelb) 50% 75%, var(--orange) 75% 100%);
+      var(--flag-1) 0 25%, var(--flag-2) 25% 50%,
+      var(--flag-3) 50% 75%, var(--flag-4) 75% 100%);
   }
   /* 5px above the rule and 6 below it: the mark sits nearer the word it belongs
      to than the line it introduces, which is the whole difference between an
      underline and a divider. */
   /* ---------- the instrument cluster ----------
-     three readings of one run, in one grammar: a label, a value, a block track,
-     on a single line across the masthead — one instrument rather than three
-     widgets.
+     three readings of one run, in one grammar: a figure, the words it is a
+     figure of, and a block track under both — one instrument rather than three
+     widgets. the first two share a line and stand at opposite ends of the bay;
+     see .unit-top for why, and for what it costs on a phone.
 
      each owns a hue, and no two of them own the same one. that took work,
      because the two readings that matter most were both drawing from the tier
@@ -372,38 +437,71 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      reference, so it flips with everything else. */
   /* the turns bay draws ONE line at a time and the whole bar IS that line, and
      the three it draws are the ladder's own three, in the ladder's own order.
-     that is the whole point of them being these colours: while the bar is green
-     you are playing for a green cell, and the turn it turns turquoise is the
-     turn the green cell stopped being available. the strip two bays over then
-     mints the colour the bar was showing when you finished. */
-  .unit-par{--par-perfect:var(--sig-gruen);
-            --par-par:var(--sig-hellblau);
-            --par-over:var(--sig-tuerkis)}
+     that is the whole point of them being these colours: while the bar is yellow
+     you are playing for a yellow cell, and the turn it turns turquoise is the
+     turn the yellow cell stopped being available. the strip two bays over then
+     mints the colour the bar was showing when you finished.
+     the bar therefore cools as it drains — a bright head, a calm body, and a
+     violet that builds up past par. violet is the one hue in the set that is not
+     a "go" colour, which is right for the only budget here you overspend. */
+  .unit-par{--par-perfect:var(--sig-gelb);
+            --par-par:var(--sig-tuerkis);
+            --par-over:var(--sig-violett)}
   /* `--set-ahead` was declared here: silver mixed 42% into the track, a bespoke
      grey for the day still to play. it is gone, and so is the mix. no rung is a
      neutral any more, so the day ahead is simply the bare track — the same
      material the two bays beside it already use for the part of the reading that
      is not live. see SETAHEAD. one row, one vocabulary, one less colour. */
+  /* ---- the figure and the words, on ONE line, at OPPOSITE ends of the bay ----
+     they were stacked: caption, then figure, then bar — three registers, all
+     three of them pinned to the left of the bay. that was built when the head
+     was a narrow strip, and it stopped being true. the sheet runs to 1478px of
+     head, which made a bay 300px wide, and the type in one is about 100px of
+     that: three small clusters sitting in the left third of three wide boxes,
+     with the bar underneath as the only thing that knew how wide the bay was.
+     the owner looked at it on a wide screen and asked what the space was for.
+     it is one line now, and it is anchored at both edges: the figure at the
+     left, where the bar's live run starts and drains FROM, and the words hard
+     right. so the bay is spoken for at both ends at every width, and the width
+     it gains on a wide screen goes into the gap between a figure and its own
+     caption rather than into a hole. it reads as a sentence besides — "8 …
+     crossings left", "3 … turns to perfect" — which is what the two lines were
+     saying in two goes.
+     it also costs 14px of masthead height, and on a 16:9 window the board is
+     letterboxed against the head, so that is 14px of board. see .hud-head.
+     the wrap is the phone: below 700 there is no width for a figure and a
+     caption side by side, so .unit-name takes a full line and the caption drops
+     under the figure. same parts, same order, one flex line instead of two.
+     NOWRAP above the fold, and that is load-bearing rather than tidy. a bay that
+     wrapped when its figure reached two digits would grow the masthead by a line
+     mid-run, and a masthead that grows by a line is a board that resizes under
+     the drag that caused it. the squeeze is real but small: at the very bottom of
+     the one-row range, around 861-885px of window, `28 crossings left` wants
+     about 8px more than the crossings bay has. it ellipsizes there instead, which
+     is what .unit-label's overflow rule has always been for, and the head does
+     not move. below 700 the fold is forced for every bay at once, so the three
+     can never disagree about which form they are in. */
+  .unit-top{display:flex;flex-wrap:nowrap;align-items:baseline;gap:0 12px;min-width:0}
+  /* the caption and its unit are one phrase and travel as one, or "to perfect"
+     ends up at the far side of the bay from the "turns" it qualifies */
+  .unit-name{margin-left:auto;display:flex;align-items:baseline;gap:4px;min-width:0}
   .unit-label{
     font-size:9.5px;line-height:1.2;letter-spacing:.16em;color:var(--ink-soft);
     text-transform:lowercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
   }
-  /* a fixed height, so the three tracks stay on one line whatever the value
-     row holds — one 25px numeral in two bays, a row of thread counts in the third */
-  .unit-value{display:flex;align-items:baseline;gap:6px;white-space:nowrap;margin-top:3px;min-height:21px}
   /* every numeral in the head is ink. they were taking the tier colour, which
      made the most-read figures change hue as you played and left the three
      instruments looking like two orange ones and a spare. colour belongs to the
      tracks, which is where it means something; a number should just be readable
      — and ink needs no per-theme handling, being near-white on this ground and
      near-black on the light one. */
-  .unit-value b{
+  .unit-fig{
     font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size:25px;font-weight:800;line-height:.82;letter-spacing:-.06em;font-variant-numeric:tabular-nums;
     color:var(--ink);
   }
-  .unit-value em{font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--ink-soft);text-transform:lowercase}
-  .unit-foot,.stat-note{
+  .unit-of{font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--ink-soft);text-transform:lowercase;white-space:nowrap}
+  .stat-note{
     display:block;font-size:8.5px;line-height:1.2;letter-spacing:.11em;color:var(--ink-soft);
     text-transform:lowercase;font-variant-numeric:tabular-nums;white-space:nowrap
   }
@@ -909,17 +1007,19 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-  /* the run's state, under all three tracks — the board carries the tangle and
-     nothing else, and there is no third bar at the bottom to look down at.
-     the talking line used to sit here too, as 10px of light blue tucked into
-     the foot of the masthead. it is the card over the board now (see `.say`);
-     what is left here is the aria-live region it always was, kept in the dom
-     and out of the picture. clipping rather than display:none is the point —
-     a hidden live region announces, a displayless one does not.
-     the slot is still held open by min-height; the foot's own layout is
-     somebody else's to settle now that nothing visible lands in it. */
-  .unit-feet{display:flex;align-items:baseline;gap:10px;min-width:0;margin-top:5px;
-             line-height:1.2;min-height:12px}
+  /* `.unit-feet` and `#statusword` were here: a row under all three tracks
+     holding a small word for the run's state, plus the live region. it drew
+     nothing at all in ordinary play and cost the head 17px — 5 of margin and 12
+     of reserved height — at every width, every day, which on a 16:9 window is
+     17px taken off the board to hold a slot.
+     and the two things it ever said were already said. "time trial" is what the
+     third bay's own label switches to, two inches to its left, in the same
+     render pass. "day complete" arrives with a card over the board and a strip
+     of ten filled cells. a reading that is a copy of its neighbour is exactly
+     what `features freed`, `16/16 at clean` and `depth` were removed for.
+     the live region is not the row and never was: it is clipped rather than
+     hidden — a hidden live region announces, a displayless one does not — so it
+     costs no layout and simply moves up a level into `.instruments`. */
   .msg{
     position:absolute;width:1px;height:1px;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;
@@ -929,13 +1029,23 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* descent sits with the other actions now. it stays visible but inert until
      you stall, so the affordance is learnable before you need it rather than
      appearing from nowhere at the moment you are stuck. */
+  /* descent's colour must not be a rung, and it was one. it owned turquoise
+     while turquoise was `done` — which rhymed, because descent caps a net at
+     done and the card it speaks in said so in done's own colour. the ladder has
+     moved and turquoise is `clean` now, so the same rhyme became a lie: the one
+     card in the game that tells you a rung is no longer available was drawn in
+     the colour of a rung you can still reach.
+     green instead, which is off the ladder entirely and already means exactly
+     this — `.coach-dots i.done` is the tutorial's mark for a step the game has
+     walked you through. one colour for the game helping, on both surfaces that
+     do it. see the flashMsg calls in descentTick, which follow it. */
   .descentbtn{opacity:.4;pointer-events:none;
     transition:opacity .5s var(--ease-out),color var(--t-ui),transform var(--t-lift) var(--ease-out)}
   .descentbtn.on{opacity:1;pointer-events:auto}
-  .descentbtn.on:hover{color:var(--sig-tuerkis)}
-  .descentbtn.on:hover svg{border-color:var(--sig-tuerkis)}
-  .descentbtn.running{color:var(--sig-tuerkis);pointer-events:none;opacity:1}
-  .descentbtn.running svg{border-color:var(--sig-tuerkis);animation:pulse 1.5s ease-in-out infinite}
+  .descentbtn.on:hover{color:var(--sig-gruen)}
+  .descentbtn.on:hover svg{border-color:var(--sig-gruen)}
+  .descentbtn.running{color:var(--sig-gruen);pointer-events:none;opacity:1}
+  .descentbtn.running svg{border-color:var(--sig-gruen);animation:pulse 1.5s ease-in-out infinite}
   .field .mnode.settling{animation:settle 2.4s ease-in-out infinite}
   @keyframes settle{0%,100%{stroke-width:var(--nw)}50%{stroke-width:calc(var(--nw) * 1.4)}}
   #netsvg{transition:filter .45s}
@@ -1122,48 +1232,90 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      with its head cut off */
   @media (max-height:760px){ .veil{align-items:flex-start} }
 
-  /* bulletin-style panel */
+  /* ---------- bulletin-style panel ----------
+     THE SAME CARD AS THE OTHER TWO. everything the game floats over the board —
+     the in-play `.saycard`, the tutorial `.coach` — is a --surface ground, a
+     hairline --silver border, ink type, and a thin colour strip along the top.
+     this one was the exception: a saturated --dunkelblau plate carrying white
+     type, with the tier as a band across it. it is the card that lands at the
+     best moment in the game and it did not belong to the game's own family.
+     it is a surface card now, in the same four parts and the same order.
+
+     what that costs and what it buys. white on dunkelblau measured 5.39:1; ink
+     on --surface measures 15.22 dark and 16.93 light, so the 12px note has three
+     times the headroom it had. the stamps gain more: a feature plate against the
+     dunkelblau card ran 1.00 to 3.21 — an emblem you could barely find on the
+     card announcing you had earned it — and against --surface it is 3.22 to
+     10.32 on the dark ground. and the tier strip is freed: see TIERCOL, where
+     that one plate was quietly deciding the whole ladder.
+
+     it stays OPAQUE, which was measured separately and does not change with the
+     ground: the thing behind this card is a lit board, and a note composited
+     over a board is a note on an unknown ground. 12% does not read as
+     transparency anyway. */
   .bulletin{
-    max-width:440px;width:100%;color:#fff;position:relative;overflow:hidden;
-    background:var(--dunkelblau);
+    max-width:440px;width:100%;color:var(--ink);position:relative;overflow:hidden;
+    background:var(--surface);border:1px solid var(--silver);
     box-shadow:var(--shadow-card);
   }
+  /* the tier, and the one place on this card the ladder is drawn. same 7px the
+     `.say` card uses for the feature it is speaking about — the two cards sit in
+     the same corner of the same board and their strips have to weigh the same. */
   .bulletin .bstrip{height:7px;width:100%;display:block}
   .bulletin .bhead{display:flex;justify-content:space-between;align-items:flex-start;padding:20px 22px 0}
   .bulletin h2{font-size:31px;font-weight:700;letter-spacing:-.025em;text-transform:lowercase;line-height:1}
-  .bulletin .bsub{font-size:11px;letter-spacing:.18em;text-transform:lowercase;opacity:.85;margin-top:5px}
-  .bulletin .bnum{font-size:52px;font-weight:300;line-height:.85;letter-spacing:-.04em;font-variant-numeric:tabular-nums;opacity:.95}
-  .bulletin .brules{margin:18px 0 0;border-top:1px solid rgba(255,255,255,.35)}
-  .bulletin .brow{display:flex;justify-content:space-between;gap:12px;padding:9px 22px;border-bottom:1px solid rgba(255,255,255,.35);font-size:11.5px;letter-spacing:.1em;text-transform:lowercase}
+  /* the rung, in words, directly under the title. it is ink rather than the
+     tier's own colour: the strip above has already said which rung this is, and
+     a word in a signal colour would be the game's one saturated piece of TYPE. */
+  .bulletin .bsub{font-size:11px;letter-spacing:.18em;text-transform:lowercase;color:var(--ink-soft);margin-top:5px}
+  .bulletin .bnum{font-size:52px;font-weight:300;line-height:.85;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  /* hairlines in --rule, the same material every other rule in the game is drawn
+     in. they were white at 35%, which is a rule mixed with its own ground and
+     only exists on a plate that has one. */
+  .bulletin .brules{margin:18px 0 0;border-top:1px solid var(--rule)}
+  .bulletin .brow{display:flex;justify-content:space-between;gap:12px;padding:9px 22px;border-bottom:1px solid var(--rule);font-size:11.5px;letter-spacing:.1em;text-transform:lowercase;color:var(--ink-soft)}
   /* the rows arrive in reading order, a beat apart, inside the card's own
      entrance — the card is a readout being printed, not a picture being shown */
   .veil.show .bulletin .brow{animation:rowin .26s var(--ease-out) both;
     animation-delay:calc(70ms + var(--i,0) * 32ms)}
   @keyframes rowin{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
-  .bulletin .brow b{font-weight:400;font-variant-numeric:tabular-nums}
+  /* the label is quiet and the figure is ink: on a row that is a reading, the
+     reading is the part worth looking at. on the white plate they were one
+     colour and the distinction could not be made at all. */
+  .bulletin .brow b{font-weight:400;font-variant-numeric:tabular-nums;color:var(--ink)}
   .bulletin .bbody{padding:16px 22px 20px;position:relative}
-  .bulletin .bnote{font-size:12.5px;line-height:1.55;opacity:.92;padding-right:46px}
+  .bulletin .bnote{font-size:12.5px;line-height:1.55;color:var(--ink-soft);padding-right:46px}
   /* the ray dial belongs to the card, not to its controls. anchored to the whole
      bulletin it sat in the same band as the buttons, and on a narrow card the
      buttons grow until they reach it — measured 15px of it lying across "stop
      for today" at a 306px card. a decoration that lands on a control's label is
      not decoration. so it hangs off the note band instead, where the only thing
      it can ever overlap is the text that has been given room for it. */
-  .bulletin .bsun{position:absolute;right:22px;bottom:16px;width:34px;height:34px;opacity:.5;pointer-events:none}
+  /* the dial is drawn in --silver rather than at 50% white, for the same reason
+     the rules are: a decoration mixed with its own ground cannot follow the
+     ground anywhere else. it keeps its opacity, which is what makes it a
+     watermark rather than a diagram. */
+  .bulletin .bsun{position:absolute;right:22px;bottom:16px;width:34px;height:34px;opacity:.55;pointer-events:none}
   .bactions{display:flex;gap:9px;padding:0 22px 20px}
   /* a wide button depresses rather than shrinking. it is the same physical idea
      as the icon buttons — the control moves under the finger — said in the way
-     each shape can say it: a small square scales, a long bar goes down. */
+     each shape can say it: a small square scales, a long bar goes down.
+     these are the game's own two button idioms now that the card has no plate to
+     invert against: a ghost is a --silver hairline round ink, like `.dstate` and
+     `.act`; the primary is a solid block of ink with the ground knocked out of
+     it, which is exactly `.intro-start` — down to the dunkelblau it goes to on
+     hover, the one job that colour still has here. */
   .wbtn{
-    border:1px solid rgba(255,255,255,.75);background:transparent;font:inherit;font-size:12px;
-    letter-spacing:.1em;padding:8px 15px;cursor:pointer;color:#fff;text-transform:lowercase;
-    transition:background var(--t-ui),color var(--t-ui),transform var(--t-lift) var(--ease-out);
+    border:1px solid var(--silver);background:transparent;font:inherit;font-size:12px;
+    letter-spacing:.1em;padding:8px 15px;cursor:pointer;color:var(--ink);text-transform:lowercase;
+    transition:background var(--t-ui),color var(--t-ui),border-color var(--t-ui),
+               transform var(--t-lift) var(--ease-out);
   }
-  .wbtn:hover{background:#fff;color:var(--dunkelblau)}
+  .wbtn:hover{background:var(--surface-2);border-color:var(--ink)}
   .wbtn:active{transform:translateY(1px) scale(.99);
-    transition-duration:var(--t-ui),var(--t-ui),var(--t-press)}
-  .wbtn.solid{background:#fff;color:var(--dunkelblau);border-color:#fff}
-  .wbtn.solid:hover{background:rgba(255,255,255,.85)}
+    transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
+  .wbtn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .wbtn.solid:hover{background:var(--dunkelblau);border-color:var(--dunkelblau);color:var(--paper)}
 
   /* minted badges strip inside bulletin.
      the stamps are sized to hold a row rather than to a drawing width. at 82px
@@ -1180,11 +1332,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .minted .mb{flex:0 1 78px;min-width:0;text-align:center;animation:stampin .32s var(--ease-snap) both;
     animation-delay:calc(150ms + var(--i,0) * 60ms)}
   .minted .mb .feature-stamp{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 0 rgba(36,52,61,.12))}
-  .minted .mb span{display:block;font-size:9px;letter-spacing:.08em;padding:3px 2px 0;text-transform:lowercase;opacity:.95}
+  .minted .mb span{display:block;font-size:9px;letter-spacing:.08em;padding:3px 2px 0;text-transform:lowercase;color:var(--ink)}
   /* the strength tally belongs to the label above it, so it sits ON it rather
      than floating a line below looking like a stray mark */
   .minted .mb u{display:block;text-decoration:none;font-size:8px;letter-spacing:1px;
-    line-height:1;margin-top:2px;opacity:.7}
+    line-height:1;margin-top:2px;color:var(--ink-soft)}
   @keyframes stampin{from{opacity:0;transform:scale(1.16)}to{opacity:1;transform:none}}
 
   /* ---------- the cleared card sits ON the board ----------
@@ -1210,15 +1362,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      sources of truth for one number. absolute rather than fixed, so `.field`'s
      own overflow clips it to the board and the masthead stays reachable behind.
 
-     WHAT IT IS NOT: translucent. white on --dunkelblau measures 5.39:1, which is
-     why the ground is dunkelblau at all (see bulletinHTML) and is also less head-
-     room than that comment used to claim. the thing behind this card is a lit
-     board, not a flat colour, and composited over the paper plate the same white
-     falls to 4.37:1 at 12% clear and 3.49:1 at 25% — under the 4.5 a 12px note
-     needs, before a gelb thread has passed beneath it (4.80 and 4.16). 12% does
-     not read as transparency anyway. so the ground stays opaque at 5.39:1 and the
-     board shows AROUND the card rather than through it: 16% of the plate covered
-     where it was 43%, and none of the rest blurred. */
+     WHAT IT IS NOT: translucent. the ground was --dunkelblau when that was
+     measured and is --surface now, and the answer did not change — it got
+     easier. white on dunkelblau was 5.39:1, and composited over the paper plate
+     at 12% clear the same white fell to 4.37:1, under the 4.5 a 12px note needs,
+     before a gelb thread had passed beneath it (4.80). ink on --surface starts
+     from 15.22:1 dark and 16.93 light, so the arithmetic no longer binds — but
+     the reason underneath it does: the thing behind this card is a LIT BOARD,
+     not a flat colour, so a translucent card's contrast is whatever happens to
+     be passing under it. 12% does not read as transparency anyway. the ground
+     stays opaque and the board shows AROUND the card rather than through it:
+     16% of the plate covered where it was 43%, and none of the rest blurred. */
   #netveil{
     position:absolute;background:none;padding:0;overflow:visible;
     align-items:flex-end;justify-content:flex-end;
@@ -1228,6 +1382,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     max-width:min(360px,calc(100% - 2 * var(--plate-x,0px) - 36px));
     max-height:calc(100% - var(--plate-y,0px) - 36px);
     margin:0 calc(var(--plate-x,0px) + 18px) calc(var(--plate-y,0px) + 18px) 0;
+    /* the shadow of the other corner card, not of a modal: `.saycard` sits on
+       --shadow-float and this now sits beside it on the same board. the deeper
+       --shadow-card belongs to the day-end plate, which is a modal and keeps it. */
+    box-shadow:var(--shadow-float);
     /* a corner card lifts the way the other corner card does: 7px, no scale.
        the 14px-and-a-scale entrance belongs to a plate arriving in the middle of
        the screen, and this is not one any more. */
@@ -1423,12 +1581,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* ---------- the day's ten ----------
      one cell per net, and THE TIER IS THE HEIGHT: full, two thirds, a third,
      and a hairline for a net the day never reached. colour comes off TIERCOL
-     and says the same thing a second time, which is the point of it — the three
-     tier hues measure 1.00 : 1.00 : 1.01 in greyscale against each other, so a
-     hue-only strip is one flat grey block in a screenshot, on a monochrome
-     panel, and to anyone whose cones do not separate green from turquoise.
-     height survives all three, and it is horizontals and verticals only, so it
-     stays on the 45° grid the rest of the card is drawn on.
+     and says the same thing a second time, which is the point of it. under the
+     old green/light blue/turquoise ladder the hues measured 1.00 : 1.00 : 1.01
+     in greyscale against each other, so a hue-only strip was one flat grey block
+     in a screenshot, on a monochrome panel, and to anyone whose cones did not
+     separate green from turquoise. the current ladder separates in greyscale
+     too — worst pair 1.43 dark, 1.08 light — but not by enough to lean on, and
+     the height is still what carries the reading through all three. it is
+     horizontals and verticals only, so it stays on the 45° grid the rest of the
+     card is drawn on.
 
      what stood here was the day's FEATURES — about fourteen emblems of a
      possible sixteen on every finished day, so every row carried roughly the
@@ -1457,7 +1618,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* played, but filled in from the archive rather than earned on the day —
      hatched, the mark the calendar used, and the reason it never touched the
      streak. a bought day fills the grid; it cannot buy the run of days. */
-  .dayrow.back .dtier{background:repeating-linear-gradient(45deg,var(--tc) 0 3px,var(--surface) 3px 6px)}
+  /* `--tc` carries its own fallback here as well as on .dtier: a backfilled day
+     from a legacy save has no recorded rung and sets no --tc, and a bare
+     `var(--tc)` inside a gradient is invalid at computed-value time — which
+     drops the whole background and draws NOTHING, rather than dropping through
+     to the hairline the way .dtier does. */
+  .dayrow.back .dtier{background:repeating-linear-gradient(45deg,var(--tc,var(--rule)) 0 3px,var(--surface) 3px 6px)}
   /* a day you can still play is SOLID. it was dashed, and dashed is the idiom
      for "not available yet" — so the primary call to action on the screen, and
      today's own row, were drawn as though disabled, and playing one rewarded you
@@ -1582,16 +1748,27 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .sheet{padding:14px 10px 36px}
     h1{font-size:21px}
     .hud-head{gap:11px;padding:11px 13px 12px}
-    /* three columns of a third of a phone still hold a label, a numeral and a
-       countable track, so the cluster stays whole rather than splitting up —
+    /* three columns of a third of a phone still hold a figure, its caption and
+       a countable track, so the cluster stays whole rather than splitting up —
        splitting it would cost the one line the three tracks share, which is
-       the whole of what makes them one instrument. */
+       the whole of what makes them one instrument. what gives instead is the
+       figure and the caption sharing a line; see .unit-top below. */
     .instruments{padding:9px 11px 8px}
     .unit{padding:0 9px}
     .unit-label{font-size:8.5px;letter-spacing:.1em}
-    .unit-value{margin-top:3px}
-    .unit-value b{font-size:20px}
-    .unit-value em{font-size:7.5px}
+    .unit-fig{font-size:20px}
+    .unit-of{font-size:7.5px}
+    /* THE LINE FOLDS. a third of a phone is ~92px of usable bay, and the widest
+       bay wants 20px of figure, 12 of gap and 62 of caption to hold them side by
+       side — it fits at 375 by two pixels and does not fit at 360. so the
+       caption takes a full line and drops under its figure. same three parts in
+       the same order, one flex line instead of two, and it is the wrap doing it
+       rather than a second layout: nothing here restates the desktop rule.
+       the fold is set at 700 rather than at the ~430 where it is forced, because
+       700 is where this file already puts the narrow treatment and a fourth
+       breakpoint costs more than the 200px of tablet it would buy. */
+    .unit-top{flex-wrap:wrap}
+    .unit-name{margin-left:0;flex-basis:100%;margin-top:2px}
     /* a fourth button in the cluster is 48px including its gap, and on a phone
        the head did not have 48px spare: the row ran 27px past the panel and
        took the instrument tracks with it, which is a horizontal scrollbar on a
@@ -1638,11 +1815,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        cluster around it and keeps everything else — there is nothing to thin
        out any more, because there are no gaps left to spend. */
     .track{height:8px;margin-top:7px}
-    /* this used to hold two lines open, because the talking line wrapped and a
-       masthead that grows by a line is a board that resizes under the drag that
-       caused it. the line is a card over the board now, so the phone gets those
-       12px of board back. */
-    .unit-feet{margin-top:5px}
 
     /* a vertical list of days should be at its best on a phone, so nothing
        here reflows the row — it stays one line and the margins give instead.
@@ -1781,27 +1953,37 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     </div>
     <div class="instruments">
       <div class="unitrow">
+        <!-- figure first, then the words it is a figure OF, then the bar. the
+             figure and the words are one line and stand at opposite ends of the
+             bay, so the bay is spoken for at both edges however wide it gets —
+             see .unit-top. -->
         <div class="unit unit-cross">
-          <span class="unit-label">crossings left</span>
-          <span class="unit-value"><b id="crossnum">0</b></span>
+          <div class="unit-top">
+            <b class="unit-fig" id="crossnum">0</b>
+            <span class="unit-name"><span class="unit-label">crossings left</span></span>
+          </div>
           <div class="track crossbar" id="crossbar"><span class="run" id="threadrow"></span></div>
         </div>
         <div class="unit unit-par">
-          <span class="unit-label">turns</span>
-          <span class="unit-value"><b id="parnum">0</b><em id="parof">to par</em></span>
+          <div class="unit-top">
+            <b class="unit-fig" id="parnum">0</b>
+            <!-- "turns" is what is counted and "to perfect" is which line it is
+                 counted against, so they are one phrase and travel together -->
+            <span class="unit-name"><span class="unit-label">turns</span><em class="unit-of" id="parof">to par</em></span>
+          </div>
           <div class="track parmeter" id="parmeter" aria-label="turns against par"><span class="run" id="parrow"></span></div>
         </div>
         <div class="unit unit-set">
-          <span class="unit-label" id="setlabel">today's set</span>
-          <span class="unit-value"><b id="setnum">0</b></span>
+          <div class="unit-top">
+            <b class="unit-fig" id="setnum">0</b>
+            <span class="unit-name"><span class="unit-label" id="setlabel">today's set</span></span>
+          </div>
           <div class="track setmeter" id="setmeter" aria-label="today's set"></div>
         </div>
       </div>
-      <div class="unit-feet">
-        <small class="unit-foot" id="statusword"></small>
-        <!-- every piece of game feedback lands here, so it has to be announced -->
-        <span class="msg" id="msg" role="status" aria-live="polite"></span>
-      </div>
+      <!-- every piece of game feedback lands here, so it has to be announced.
+           it is clipped, not hidden, and it costs the head no height. -->
+      <span class="msg" id="msg" role="status" aria-live="polite"></span>
     </div>
     <div class="btns">
       <!-- one button, because there is one screen: the collection and the record
@@ -1839,8 +2021,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
     <div class="coach" id="coach">
       <div class="coach-strip" aria-hidden="true">
-        <i style="background:var(--hellblau)"></i><i style="background:var(--gruen)"></i>
-        <i style="background:var(--gelb)"></i><i style="background:var(--orange)"></i>
+        <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
+        <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
       </div>
       <div class="coach-body">
         <div class="coach-head">
@@ -1926,8 +2108,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 <div class="veil" id="introveil">
   <div class="intro-card">
     <div class="intro-strip" aria-hidden="true">
-      <i style="background:var(--hellblau)"></i><i style="background:var(--gruen)"></i>
-      <i style="background:var(--gelb)"></i><i style="background:var(--orange)"></i>
+      <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
+      <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
     </div>
     <!-- the plate is a net drawn by the board's own marks, filled by renderIntro -->
     <div class="intro-art" id="introart"></div>
@@ -2115,11 +2297,17 @@ const lum=hex=>{
    3.2:1 when the dark one was worth 5.9:1. five of the sixteen emblems. */
 const markOn=v=>lum(cssv(v))>0.192?'#0E1214':'#ffffff';
 /* the band under the emblem says which tier the stamp was earned at, and it
-   said it in colour alone — so on citrus and fire, whose plate IS the clean
-   orange, and on weather and water, whose plate IS the done blue, it said
-   nothing: the stamp read as one flat block of colour. give the band a count
-   as well. three cells clean, two done, one over — which survives a plate of
-   its own colour, a colour-blind reader, and a greyscale share card. */
+   said it in colour alone — so wherever the band and the plate above it are the
+   same colour it said nothing, and the stamp read as one flat block. that is
+   two features per rung on the current ladder: tools and numbers are turquoise
+   like `clean`, music, chess and animals are violet like `done`, doubled and
+   motion are yellow like `perfect`. give the band a count as well. three cells
+   clean, two done, one over — which survives a plate of its own colour, a
+   colour-blind reader, and a greyscale share card.
+   note what the count does NOT do: `perfect` has no entry and falls to one cell,
+   the same as `over`. that predates this ladder and is left alone here, because
+   TIERCELLS is read by every stamp in the game and this change is the ladder's
+   colours. it is a real gap and it is worth closing on its own. */
 const TIERCELLS={clean:3, done:2, par:2, over:1};
 function featureStamp(k,tier,locked){
   const d=FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
@@ -2152,57 +2340,88 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
    par), done (finished). `par` and `over` are dead keys kept only so badges
    minted under older schemes still render — nothing awards them now.
    silver is deliberately not on the live ladder: the day cannot be failed, so
-   the bottom rung is a finish rather than a demerit, and hellblau says that.
-
-   perfect was gelb and is green. gelb measures 1.69:1 against a white ground
-   against 11.2:1 against this one — the same reason yellow was pulled from the
-   thread palette in the paper-ground era — so the top of a scoring ladder would
-   have been invisible in one of the two themes. green is 3.21:1 light and
-   5.91:1 dark, the strip's three rungs are three plainly different hues on
-   either ground, and no badge had been minted at perfect yet, so nothing in
-   anybody's collection moves. */
+   the bottom rung is a finish rather than a demerit, and a colour says that
+   where a grey would not. */
 /* ONE ladder, and both instruments draw from it: the day's strip colours each
    net by the rung it minted, and the turns bay colours its three budgets with
-   the same three, in the same order. green is the rung you are chasing while the
-   bar is green; turquoise is the rung you are chasing while it is turquoise.
-   orange is gone. it was `clean` — the commonest good outcome in the game and
-   therefore the colour most of the strip was made of — and it reads as a warning
-   rather than as a result. */
+   the same three, in the same order. yellow is the rung you are chasing while
+   the bar is yellow; turquoise is the rung you are chasing while it is
+   turquoise.
+   orange is not on it and will not be. it was `clean` — the commonest good
+   outcome in the game and therefore the colour most of the strip was made of —
+   and it reads as a warning rather than as a result. it stays a THREAD colour,
+   which is a different job on a different surface. */
 /* NO NEUTRAL IS A RUNG. `done` was silver, and silver put a grey next to the
    day-ahead grey: a net you FINISHED and a net you have NOT PLAYED were both
    neutrals, one shade apart, so the strip stopped answering how far through the
    day you are. every rung is a colour now and the neutral belongs to the day
    ahead alone — which is the reading the strip exists for.
 
-   the three are not a preference, they are what is left once four grounds have
-   had their say. measured as CIE76 dE after simulating protanopia, deuteranopia
-   and tritanopia — under about 18 is a confusion risk, the same bar THREADPAL
-   is ordered against — and as contrast against each surface a rung is drawn on:
-     panel/track, both grounds .. every signal clears it; the neutrals do not
-     the share plate #0E1214 ... gruen 5.84  hellblau 6.62  tuerkis 5.91
-     the BULLETIN plate ....... it is --dunkelblau itself, and a tier strip is
-                                drawn ON it: dunkelblau 1.00 (gone), violett
-                                1.18, silver 1.08, against gruen 1.67, tuerkis
-                                1.69, hellblau 1.90
-   the bulletin is what closes the question. it rules out every neutral AND the
-   two remaining signals, so the three rungs can only be gruen, hellblau and
-   tuerkis, and the only choice left is which is which.
-     perfect gruen ... the top of the ladder and the one warm rung, so a perfect
-                       is the one cell that is not blue.
-     clean   hellblau  the commonest good outcome, so it is the body colour of
-                       the strip — and light blue is what the masthead already
-                       opens with in the flag and in the first thread.
-     done    tuerkis .. dimmer than hellblau on both grounds, which is the half
-                       of "perfect brightest, done dimmest" that actually
-                       matters: the bottom rung must never be the loudest mark.
-   what this costs, stated plainly: gruen against tuerkis is dE 5.3 under
-   tritanopia on the dark ground. that pair was already on the ladder and is
-   unchanged — the pair that has GONE is tuerkis against silver at 2.4 under
-   protanopia, and protanopia is one man in a hundred where tritanopia is one
-   person in ten thousand. the floor moved off the common deficiency onto the
-   rarest one, and the reading the owner was complaining about — played against
-   still to play — went from 13.3 to 33.3. */
-const TIERCOL={perfect:'--sig-gruen', clean:'--sig-hellblau', done:'--sig-tuerkis', par:'--sig-hellblau', over:'--sig-tuerkis'};
+   WHAT WAS CHOOSING THESE, AND NO LONGER IS. the ladder used to be gruen /
+   hellblau / tuerkis, and that was not a preference either — it was the residue
+   of one surface. the bulletin drew a tier strip on a saturated --dunkelblau
+   plate, and against that plate nothing in the palette reaches 2:1: violett
+   1.18, silver 1.08, gruen 1.67, tuerkis 1.69, hellblau 1.90, and dunkelblau
+   itself 1.00. one card therefore ruled out most of the palette and left
+   exactly the three signals that sit in the same corner of the wheel — so the
+   ladder's three rungs were three near neighbours, by construction. the owner
+   read it back the way it was built: turquoise too close, green and blue the
+   same, not striking, no distinct edges.
+   THE BULLETIN IS A SURFACE CARD NOW (see .bulletin), on --surface with a
+   hairline and ink type, like every other card the game floats over the board.
+   the plate is gone and so is the constraint, and the ladder is picked on
+   distinctness instead of on what survived a blue plate.
+
+   measured as CIE76 dE, worst rung pair, worse of the two grounds, after
+   simulating protanopia, deuteranopia and tritanopia — under about 18 is a
+   confusion risk, the same bar THREADPAL is ordered against:
+                                       normal   cvd
+     gelb / tuerkis / violett .......... 57.8   18.0   <- this ladder
+     gelb / gruen   / violett .......... 57.1   18.0
+     gelb / hellblau/ violett .......... 37.9   14.1
+     gruen/ hellblau/ tuerkis .......... 38.1    5.5   <- what shipped
+   orange-bearing sets score higher still (gruen/violett/orange 89.5) and are
+   not available: see above. of the two that lead the orange-free field, this one
+   wins on the protanopia floor (41.5 against 26.9 — green collapses toward the
+   bronze yellow, turquoise does not) and on every light-ground contrast, because
+   --sig-tuerkis is darker on paper than --sig-gruen: 4.52 against the board
+   where gruen manages 3.27, and 3.10 against the bare track where gruen is 2.24.
+   so the ladder is 1.5x more distinct than the shipped one in normal vision and
+   over 3x under colour blindness, and the worst pair is gelb against violett,
+   under TRITANOPIA, on the LIGHT ground — where both are dark and desaturated.
+   tritanopia is one person in ten thousand; the pair is 57.8 apart in normal
+   vision and 26.9 under protanopia, the deficiency that is one man in a hundred.
+
+   contrast, as every rung is a graphical object on some ground:
+                      board d  board l  track d  track l  share plate #0E1214
+     gelb    perfect   10.32     7.25     8.09     4.96          11.20
+     tuerkis clean      5.44     4.52     4.27     3.10           5.91
+     violett done       3.80     6.72     2.98     4.60           4.13
+   violett on the dark track is 2.98, which is 3:1 to two decimal places and the
+   one number here that does not clear the bar outright. it is stated rather than
+   rounded away.
+     perfect gelb .... the loudest mark on the card in BOTH grounds, which the
+                       shipped ladder could not manage in either: `clean` was
+                       the brightest of its three. the top of the ladder is now
+                       the strongest thing on the strip. it is safe here because
+                       --sig-gelb exists: canonical gelb measures 1.68:1 on paper
+                       and is unusable as a line there, and the paper ladder
+                       draws #665207 instead — a bronze, not Aicher's yellow, and
+                       the same substitution the thread palette already makes.
+     clean   tuerkis   the commonest good outcome, so it is the body colour of
+                       the strip, and it is the only one of the three that does
+                       not swing between grounds: 5.44 dark against 4.52 light.
+                       a typical day's strip weighs the same on either ground.
+     done    violett . never the loudest mark in either ground, which is the half
+                       of "perfect brightest, done dimmest" that survives two
+                       grounds. on the dark ground, which is what the game is
+                       drawn on, it is also plainly the dimmest.
+   and one thing this ladder gets that no previous one had: it separates in
+   GREYSCALE. worst pair 1.43 dark / 1.08 light, against the old ladder's 1.01
+   and 1.00 — three hues that were literally one flat grey in a screenshot. the
+   height channel (CELLH, SHAREFILL) is still what carries the reading, but it is
+   no longer carrying it alone. */
+const TIERCOL={perfect:'--sig-gelb', clean:'--sig-tuerkis', done:'--sig-violett', par:'--sig-tuerkis', over:'--sig-violett'};
 /* and a net you have not played yet is THE BARE TRACK. not silver, which now
    collides with tuerkis; not the shade of silver mixed down towards the track
    that stood here, which measured 1.42 against the track it sits on and so was
@@ -2223,11 +2442,15 @@ const SETAHEAD='--rule';
    lands in someone else's feed, where it has to be comparable with everyone
    else's. so it reads the canonical values and never the ground-adapted ones —
    two players on different grounds must post the same card. */
-const CARDCOL={perfect:'--gruen', clean:'--hellblau', done:'--tuerkis', par:'--hellblau', over:'--tuerkis'};
-/* the bulletin and the share card are both fixed dark-blue plates in either
-   ground, so a tier drawn ON one of them wants the canonical value: it is
-   already sitting on a colour rather than on the paper, and the darkened
-   version made for paper reads as mud there. */
+const CARDCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', par:'--tuerkis', over:'--violett'};
+/* ONE reader, now: shareCardSVG. the bulletin used to read this too, because it
+   was a fixed dark-blue plate in either ground and a rung drawn on a colour
+   wants the canonical value rather than the darkened one made for paper. the
+   bulletin follows the ground now — it is a --surface card — so it takes
+   TIERCOL like every other on-screen surface, and canonical is left to the one
+   thing that genuinely leaves the screen. that is the whole rule, said once:
+   adapted for what is drawn on the player's own ground, canonical for what is
+   drawn on a plate that travels. */
 const TICKETDEFS=[
   {id:'first',  label:'first identification',   band:'--sig-hellblau'},
   {id:'depth3', label:'depth three',            band:'--sig-gruen'},
@@ -2709,9 +2932,14 @@ function paintRun(id,pct,segs,label){
 /* the ladder's colours live on TIERCOL. this only guards the case where a tier
    key arrives that TIERCOL has not been taught yet, and it answers with the
    BOTTOM rung: an unknown key means a net was played, and the conservative
-   thing to say about a net you cannot grade is that it finished. it used to
-   answer hellblau, which is `clean` now — a guard that promotes. */
-const tierCol=t=>TIERCOL[t]||'--sig-tuerkis';
+   thing to say about a net you cannot grade is that it finished.
+   it has to be re-pointed every time the ladder moves, and it has been missed
+   once already: it answered hellblau, which became `clean`, and then tuerkis,
+   which is `clean` again now. a guard that promotes is worse than no guard. it
+   is written as the bottom rung's own token so the next move is one line, and
+   it is a LITERAL rather than TIERCOL.done on purpose — this exists for the case
+   where the table itself is the thing that cannot be trusted. */
+const tierCol=t=>TIERCOL[t]||'--sig-violett';
 /* the tier this net would mint if it finished on the turn you are on — the same
    three rungs tierFor() awards, read a move early so the track can show you
    which band you are standing in. */
@@ -5198,9 +5426,11 @@ function descentTick(){
     if(++descentStall===1) flashMsg(mergedCount()
       ? 'descent can untangle but it cannot split a shared neuron · that part is yours'
       : 'descent has settled as far as it can · the last crossings are yours',
-      // descent owns turquoise on its own button; the card it speaks in is the
-      // same colour, so a glance places it before a word is read
-      {cols:['--sig-tuerkis'], hold:true});
+      // descent owns green on its own button; the card it speaks in is the
+      // same colour, so a glance places it before a word is read. green rather
+      // than the turquoise that stood here because turquoise is a rung now —
+      // see .descentbtn
+      {cols:['--sig-gruen'], hold:true});
     return;
   }
   descentStall=0;
@@ -5233,7 +5463,7 @@ $('descentbtn').onclick=()=>{
   db.querySelector('span').textContent='settling';
   // tierFor forces `done` on an assisted net, so par is not what it tops out at
   flashMsg('descent engaged · the net relaxes on its own · this net now tops out at done',
-           {cols:['--sig-tuerkis']});
+           {cols:['--sig-gruen']});
   idleAt=performance.now()-DESCENT_OFFER_MS;
 };
 function resetDescent(){
@@ -5858,26 +6088,28 @@ function endRun(){
 
 /* ================= bulletins ================= */
 
-/* the card ground is fixed at dunkelblau, the only palette colour that carries
-   white body type (5.39:1 — gelb managed 1.68:1, which was a blank card every
-   seventh net). the run's colour moves to the strip, where it can now MEAN
-   something: the tier this net minted at.
-   that number read 7.09 until today, and 7.09 is the OLD dunkelblau's: #1D5C8C
-   measures 7.13 against white. lifting the token to #24709F so it would clear
-   3.5:1 as a LINE on the near-black ground (see its note in :root) cost the card
-   1.7 of contrast and nothing came back here to say so. 5.39 still clears the
-   4.5 a 12px note needs — but by half of what this line claimed, which is most
-   of the reason the cleared card ended up opaque rather than translucent. */
+/* the ground was fixed at dunkelblau, because it was the only palette colour
+   that carried white body type (5.39:1 — gelb managed 1.68, which was a blank
+   card every seventh net) and because a card that is a plate has to be a plate
+   of SOMETHING. it is not a plate any more: see .bulletin. it takes --surface
+   like the two other cards the game floats over the board, and the run's colour
+   stays where it was already the more useful of the two — the strip, where it
+   names the tier this net minted at.
+   the strip reads TIERCOL, not CARDCOL. a card drawn on the player's own ground
+   wants the ground-adapted value: on paper --sig-gelb is #665207, a bronze, and
+   canonical gelb there would be a 1.61:1 band that vanished into the card. the
+   canonical set is for the share plate alone, which is the one surface that
+   leaves this screen. */
 /* the note and the ray dial are optional now, and both are off on the cleared
    card. a note that is true of every net after every net is not a reading, and
    the dial is decoration that needs 34px plus 46px of clearance on the note it
    hangs off — which a card tucked into the corner of the board does not have to
    spend. the day card is unchanged: it keeps both. */
 function bulletinHTML(o){
-  return `<div class="bstrip" style="background:var(${o.strip||'--hellblau'})"></div>
+  return `<div class="bstrip" style="background:var(${o.strip||'--sig-tuerkis'})"></div>
   <div class="bhead"><div><h2>${o.title}</h2><div class="bsub">${o.sub}</div></div><div class="bnum">${o.num}</div></div>
   <div class="brules">${o.rows.map((r,i)=>`<div class="brow" style="--i:${i}"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>
-  <div class="bbody">${o.body||''}${o.note?`<div class="bnote">${o.note}</div>`:''}${o.sun===false?'':`<div class="bsun">${SUN('#fff')}</div>`}</div>
+  <div class="bbody">${o.body||''}${o.note?`<div class="bnote">${o.note}</div>`:''}${o.sun===false?'':`<div class="bsun">${SUN('var(--silver)')}</div>`}</div>
   <div class="bactions">${o.actions}</div>`;
 }
 function showNetCleared(feats,tier,wasTutorial){
@@ -5901,7 +6133,7 @@ function showNetCleared(feats,tier,wasTutorial){
     `${feats.map(k=>k+' '+['','faint','clear','dominant'][strengthOf(k)]).join(', ')}. `+
     `${cleanN} of ${r.cleared.length} clean so far. ${r.turns||0} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
-    strip:CARDCOL[tier],
+    strip:TIERCOL[tier],
     title:wasTutorial?'you untangled it':'net cleared',
     /* the tier IS the score and the rules card teaches the ladder, so this line
        is one word. it used to gloss each rung — "clean · within par" — which is
@@ -5953,13 +6185,21 @@ function showRunOver(){
        all, and depth is ten for everyone who finishes, so the band that crowns
        the day was the same band for every completed day ever played.
        it takes the ladder instead, off the one reading the game is scored on:
-       under par, level with it, past it. a day left short stays neutral rather
-       than claiming a rung it never played for. */
-    strip: trial ? '--violett'
-         : depth < POLICY.dailyNets ? CARDCOL.done
-         : (turns-parTot) < 0 ? CARDCOL.perfect
-         : (turns-parTot) === 0 ? CARDCOL.clean
-         : CARDCOL.done,
+       under par, level with it, past it. TIERCOL rather than CARDCOL, because
+       this card follows the ground now — see bulletinHTML.
+       the two rows that are NOT a scored day are the two that were wrong here.
+       a day left short said `done`, which is the comment's own "stays neutral"
+       drawn in the bottom rung — a set you put down and a set you finished over
+       par came out the same colour. and a trial said violett, which used to be
+       nobody's and is now the bottom rung itself. both take a colour that cannot
+       be a rung: silver for a day that was never scored, dunkelblau for a trial,
+       which is not a day at all and is the one thing here still worth a plate
+       colour of its own. */
+    strip: trial ? '--sig-dunkelblau'
+         : depth < POLICY.dailyNets ? '--silver'
+         : (turns-parTot) < 0 ? TIERCOL.perfect
+         : (turns-parTot) === 0 ? TIERCOL.clean
+         : TIERCOL.done,
     title:trial?'out-trained':(depth>=POLICY.dailyNets?'day complete':'day set aside'),
     sub:trial?'time trial · the net kept learning'
         :`${cleanN} of ${depth} clean · ${turns} turns against par ${parTot}`,
@@ -6224,7 +6464,14 @@ function openRecord(){
        one every day for as long as the game exists. counted here, said once
        below. */
     if(!played && !canPlay){ shut.push(d); return }
-    const tier=played?(row.best||'over'):null;
+    /* a played day with no recorded rung draws NO rung. it used to fall back to
+       `over`, which TIERCOL paints identically to `done` — so a day the game has
+       no record of rendered exactly like a day you finished over par, and the
+       spine of the list asserted a score nobody played for. it is a legacy save
+       shape and the honest drawing of it is the bare --rule the .dtier already
+       falls back to, which is also what dayCells() does one column over: no
+       tiers, no cells. an absence is drawn as an absence. */
+    const tier=played?(row.best||null):null;
     const el=document.createElement('div');
     el.className='dayrow'+(isToday?' today':'')
       +(played ? (row.back?' back':'') : ' open');
@@ -6424,7 +6671,8 @@ function renderThreads(){
    than that and it is a new event, and the card is replaced. */
 const SAY_BASE=1400, SAY_PER=55, SAY_MIN=2200, SAY_MAX=5600, SAY_MERGE=650, SAY_ROWS=3;
 let sayT=null, sayRows=[], sayAt=0;
-const FLAG=['--hellblau','--gruen','--gelb','--orange'];
+// the wordmark's own flag, read off the one place its order is written
+const FLAG=['--flag-1','--flag-2','--flag-3','--flag-4'];
 
 function flashMsg(txt,o){
   $('msg').textContent=txt;
@@ -6661,8 +6909,10 @@ function renderHud(){
   $('parof').textContent=unit;
 
   $('field').classList.toggle('over',!!r.over);
-  // silent during ordinary play — it only names a state worth noticing
-  $('statusword').textContent=r.over?(trial?'out-trained':'day complete'):(trial?'time trial':'');
+  /* `statusword` was written here — "day complete", "out-trained", "time trial".
+     the element is gone and so is the reading: the trial case is what setlabel
+     above already switched the third bay to, and the over case arrives as a card
+     over the board. see the note where .unit-feet used to be. */
   const d=new Date(), mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
   $('statusdate').textContent=`${d.getDate()} ${mo[d.getMonth()]}`+((store.meta.streak||0)>0?` · ${store.meta.streak}`:'');
   $('histbtn').title=`the record · ${d.getDate()} ${mo[d.getMonth()]}`
@@ -6704,23 +6954,26 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');set
 /* the plate is FIXED and near-black, and that is measured rather than chosen.
    CARDCOL is canonical by design — two players on different grounds have to
    post the same card — so the only question is which ground carries canonical
-   green, light blue and turquoise at once. contrast against the three CARDCOL
-   values, and against white type:
-     ink   #0E1214   5.84  6.62  5.91   type 18.83
-     dunkelblau      1.67  1.90  1.69   the bulletin's plate: nothing is strong
-                                        on it, which is why no rung may BE it
-     paper #EAE7DF   2.61  2.30  2.58   every rung under 3:1
-     white           3.22  2.85  3.19   clean drops under 3:1
+   gelb, tuerkis and violett at once. contrast against the three CARDCOL values,
+   and against white type:
+     ink   #0E1214   11.20  5.91  4.13   type 18.83
+     paper #EAE7DF    1.36  2.58  3.69   two rungs under 3:1
+     white            1.68  3.19  4.56   canonical gelb is unusable on paper
    the ink plate is the only ground where all three rungs clear 3:1, and it is
-   the only one where they do so comfortably — 5.84, 6.62, 5.91, a full stop
-   above the old ladder's 3.23 for `done`. so the card commits to it and does
-   not follow the theme, the same literal markOn already carries.
-   the ladder is no longer ordered by brightness on this plate and cannot be:
-   the three rungs left after the bulletin has had its say sit inside a narrow
-   band (.276 / .319 / .280), and hellblau is the brightest of them. what still
-   holds is the half that matters — `done` is never the loudest mark — and the
-   card was never leaning on brightness anyway: SHAREFILL below draws the rung
-   as a HEIGHT, which is the channel that survives a greyscale feed. */
+   the only one where they do so comfortably. so the card commits to it and does
+   not follow the theme, the same literal markOn already carries. this is also
+   the whole reason the on-screen ladder reads --sig-gelb rather than this one:
+   1.68 on white is not a rung, it is a blank.
+   dunkelblau used to be on this list, because the bulletin was a dunkelblau
+   plate and shared this table's problem — nothing measures strong on it, which
+   is why no rung could BE it and, transitively, why the ladder was three near
+   neighbours. the bulletin is a --surface card now; that row is gone and so is
+   its grip on TIERCOL. see the note there.
+   what the new ladder gets back on this plate is the ORDER: 11.20, 5.91, 4.13
+   is monotonic, so perfect is the brightest mark and done the dimmest, which the
+   previous three could not manage in a narrow .276/.319/.280 band. SHAREFILL
+   below still draws the rung as a HEIGHT, because that is the channel that
+   survives a greyscale feed whatever the colours do. */
 /* the game's name, in one place, for everything JS draws. the masthead's own
    <h1> is static markup and carries it literally; everything generated —
    the share plate, the share text, the exported filename — reads it from here,
@@ -6748,12 +7001,14 @@ const PLATEINK=lum(PLATE)>0.192?'#0E1214':'#ffffff';   // the mark rule applied,
    they do in CARDCOL. */
 const SHAREFILL={perfect:1, clean:2/3, par:2/3, done:1/3, over:1/3};
 /* and the same ladder in text, for the clipboard fallback. deliberately NOT
-   emoji. the ladder is green, light blue, turquoise, and the emoji set has an
-   honest square for exactly one of them: 🟩 is right for perfect, and 🟦 would
-   have to stand in for BOTH of the other two — the set has one blue, and this
-   ladder now needs two. a strip whose bottom two rungs are the same character
-   says less than no strip. the block characters carry the card's own height
-   encoding instead, and cannot contradict a colour they never state. */
+   emoji. the ladder is yellow, turquoise, violet, and the emoji set has honest
+   squares for two of them — 🟨 and 🟪 — and nothing at all for turquoise: the
+   set has 🟦 and 🟩 and the rung sits between them, so the MIDDLE of the ladder
+   would be the one that lied. the previous ladder failed the same test from the
+   other end (one blue character for two blue rungs). a strip in which any rung
+   is drawn as a colour it is not says less than no strip. the block characters
+   carry the card's own height encoding instead, and cannot contradict a colour
+   they never state. */
 const SHAREBLOCK={perfect:'█', clean:'▅', par:'▅', done:'▃', over:'▃'};
 const SHAREEMPTY='▁';                 // a net of the day still to play
 const CARD_W=760, CARD_H=470;
@@ -6837,7 +7092,11 @@ function shareCardSVG(){
       return Math.max(60,c.measureText(WORDMARK).width-(WORDMARK.length-1)*1.4);
     }catch(e){return 190}   // a plausible measure, so the mark still draws
   })();
-  const MARK=['--hellblau','--gruen','--gelb','--orange'].map((c,i)=>
+  /* the same four quarters in the same order as the wordmark on screen — FLAG,
+     not a fifth hand-written copy of the run. cssv resolves --flag-1 through its
+     var() chain to the canonical hex, which is what an svg leaving this machine
+     needs: the card is rasterised and shared, so it cannot carry a token. */
+  const MARK=FLAG.map((c,i)=>
     `<stop offset="${i/4}" stop-color="${cssv(c)}"/><stop offset="${(i+1)/4}" stop-color="${cssv(c)}"/>`
   ).join('');
 
