@@ -40,9 +40,10 @@ const DPR_CAP = 1.5;
  * DPR cap, deduplicated.
  */
 const SLOTS = {
-  // .area-art — aspect-ratio: 1.74/1. Two-up inside a 1310px frame (618 CSS px
-  // each); full-bleed under 760px, where the frame gutter leaves ~692.
-  areaTile: { ratio: 1.74, css: [327, 460, 618, 692] },
+  // .area-art — aspect-ratio: 1.74/1. Four-up inside a 1310px frame (286 CSS px
+  // each, down to 211 where the frame is still fluid); two-up under 1060px
+  // (471 at the top of that range); full-bleed under 760px, leaving ~690.
+  areaTile: { ratio: 1.74, css: [211, 286, 471, 690] },
 
   // .project-card-art — aspect-ratio: 3/2. auto-fill minmax(190px), so six to a
   // row at ~202 CSS px on desktop and one full-bleed card at ~327 on mobile.

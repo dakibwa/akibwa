@@ -8,15 +8,27 @@
     "sourceHash": "fdc18f01b25a9228",
     "variants": [
       {
-        "width": 491,
-        "height": 282,
+        "width": 317,
+        "height": 182,
         "avif": {
-          "src": "/_img/area-art/about-reflection-areaTile-491.avif",
-          "bytes": 23590
+          "src": "/_img/area-art/about-reflection-areaTile-317.avif",
+          "bytes": 4744
         },
         "webp": {
-          "src": "/_img/area-art/about-reflection-areaTile-491.webp",
-          "bytes": 33124
+          "src": "/_img/area-art/about-reflection-areaTile-317.webp",
+          "bytes": 7662
+        }
+      },
+      {
+        "width": 429,
+        "height": 247,
+        "avif": {
+          "src": "/_img/area-art/about-reflection-areaTile-429.avif",
+          "bytes": 14849
+        },
+        "webp": {
+          "src": "/_img/area-art/about-reflection-areaTile-429.webp",
+          "bytes": 22298
         }
       },
       {
@@ -42,51 +54,51 @@
     "sourceHash": "4a87c983363487f6",
     "variants": [
       {
-        "width": 491,
-        "height": 282,
+        "width": 317,
+        "height": 182,
         "avif": {
-          "src": "/_img/area-art/professional-structure-areaTile-491.avif",
-          "bytes": 5019
+          "src": "/_img/area-art/professional-structure-areaTile-317.avif",
+          "bytes": 2751
         },
         "webp": {
-          "src": "/_img/area-art/professional-structure-areaTile-491.webp",
-          "bytes": 6730
+          "src": "/_img/area-art/professional-structure-areaTile-317.webp",
+          "bytes": 3348
         }
       },
       {
-        "width": 690,
-        "height": 397,
+        "width": 429,
+        "height": 247,
         "avif": {
-          "src": "/_img/area-art/professional-structure-areaTile-690.avif",
-          "bytes": 7725
+          "src": "/_img/area-art/professional-structure-areaTile-429.avif",
+          "bytes": 4081
         },
         "webp": {
-          "src": "/_img/area-art/professional-structure-areaTile-690.webp",
-          "bytes": 11678
+          "src": "/_img/area-art/professional-structure-areaTile-429.webp",
+          "bytes": 5470
         }
       },
       {
-        "width": 927,
-        "height": 533,
+        "width": 707,
+        "height": 406,
         "avif": {
-          "src": "/_img/area-art/professional-structure-areaTile-927.avif",
-          "bytes": 11861
+          "src": "/_img/area-art/professional-structure-areaTile-707.avif",
+          "bytes": 8111
         },
         "webp": {
-          "src": "/_img/area-art/professional-structure-areaTile-927.webp",
-          "bytes": 18328
+          "src": "/_img/area-art/professional-structure-areaTile-707.webp",
+          "bytes": 12198
         }
       },
       {
-        "width": 1038,
-        "height": 597,
+        "width": 1035,
+        "height": 595,
         "avif": {
-          "src": "/_img/area-art/professional-structure-areaTile-1038.avif",
-          "bytes": 13874
+          "src": "/_img/area-art/professional-structure-areaTile-1035.avif",
+          "bytes": 13784
         },
         "webp": {
-          "src": "/_img/area-art/professional-structure-areaTile-1038.webp",
-          "bytes": 22090
+          "src": "/_img/area-art/professional-structure-areaTile-1035.webp",
+          "bytes": 22070
         }
       }
     ]
@@ -100,51 +112,51 @@
     "sourceHash": "007dbbeba11e38eb",
     "variants": [
       {
-        "width": 491,
-        "height": 282,
+        "width": 317,
+        "height": 182,
         "avif": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-491.avif",
-          "bytes": 18494
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-317.avif",
+          "bytes": 8198
         },
         "webp": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-491.webp",
-          "bytes": 21948
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-317.webp",
+          "bytes": 9600
         }
       },
       {
-        "width": 690,
-        "height": 397,
+        "width": 429,
+        "height": 247,
         "avif": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-690.avif",
-          "bytes": 34252
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-429.avif",
+          "bytes": 14060
         },
         "webp": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-690.webp",
-          "bytes": 41400
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-429.webp",
+          "bytes": 17064
         }
       },
       {
-        "width": 927,
-        "height": 533,
+        "width": 707,
+        "height": 406,
         "avif": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-927.avif",
-          "bytes": 57667
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-707.avif",
+          "bytes": 35318
         },
         "webp": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-927.webp",
-          "bytes": 67646
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-707.webp",
+          "bytes": 43486
         }
       },
       {
-        "width": 1038,
-        "height": 597,
+        "width": 1035,
+        "height": 595,
         "avif": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-1038.avif",
-          "bytes": 67723
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-1035.avif",
+          "bytes": 67453
         },
         "webp": {
-          "src": "/_img/area-art/about-meadow-flowers-areaTile-1038.webp",
-          "bytes": 79702
+          "src": "/_img/area-art/about-meadow-flowers-areaTile-1035.webp",
+          "bytes": 79100
         }
       }
     ]
@@ -158,27 +170,39 @@
     "sourceHash": "8a0d59e6018d72b5",
     "variants": [
       {
-        "width": 491,
-        "height": 282,
+        "width": 317,
+        "height": 182,
         "avif": {
-          "src": "/_img/area-art/contact-blue-clouds-areaTile-491.avif",
-          "bytes": 30492
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-317.avif",
+          "bytes": 7698
         },
         "webp": {
-          "src": "/_img/area-art/contact-blue-clouds-areaTile-491.webp",
-          "bytes": 48032
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-317.webp",
+          "bytes": 14986
         }
       },
       {
-        "width": 690,
-        "height": 397,
+        "width": 429,
+        "height": 247,
         "avif": {
-          "src": "/_img/area-art/contact-blue-clouds-areaTile-690.avif",
-          "bytes": 74331
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-429.avif",
+          "bytes": 20127
         },
         "webp": {
-          "src": "/_img/area-art/contact-blue-clouds-areaTile-690.webp",
-          "bytes": 104002
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-429.webp",
+          "bytes": 34078
+        }
+      },
+      {
+        "width": 707,
+        "height": 406,
+        "avif": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-707.avif",
+          "bytes": 76530
+        },
+        "webp": {
+          "src": "/_img/area-art/contact-blue-clouds-areaTile-707.webp",
+          "bytes": 108948
         }
       },
       {
@@ -502,51 +526,51 @@
     "sourceHash": "088660b2cac45f8b",
     "variants": [
       {
-        "width": 491,
-        "height": 282,
+        "width": 317,
+        "height": 182,
         "avif": {
-          "src": "/_img/about-mountain-meadow-areaTile-491.avif",
-          "bytes": 16835
+          "src": "/_img/about-mountain-meadow-areaTile-317.avif",
+          "bytes": 7457
         },
         "webp": {
-          "src": "/_img/about-mountain-meadow-areaTile-491.webp",
-          "bytes": 23462
+          "src": "/_img/about-mountain-meadow-areaTile-317.webp",
+          "bytes": 8900
         }
       },
       {
-        "width": 690,
-        "height": 397,
+        "width": 429,
+        "height": 247,
         "avif": {
-          "src": "/_img/about-mountain-meadow-areaTile-690.avif",
-          "bytes": 35647
+          "src": "/_img/about-mountain-meadow-areaTile-429.avif",
+          "bytes": 12896
         },
         "webp": {
-          "src": "/_img/about-mountain-meadow-areaTile-690.webp",
-          "bytes": 50008
+          "src": "/_img/about-mountain-meadow-areaTile-429.webp",
+          "bytes": 17598
         }
       },
       {
-        "width": 927,
-        "height": 533,
+        "width": 707,
+        "height": 406,
         "avif": {
-          "src": "/_img/about-mountain-meadow-areaTile-927.avif",
-          "bytes": 69986
+          "src": "/_img/about-mountain-meadow-areaTile-707.avif",
+          "bytes": 36797
         },
         "webp": {
-          "src": "/_img/about-mountain-meadow-areaTile-927.webp",
-          "bytes": 94144
+          "src": "/_img/about-mountain-meadow-areaTile-707.webp",
+          "bytes": 52200
         }
       },
       {
-        "width": 1038,
-        "height": 597,
+        "width": 1035,
+        "height": 595,
         "avif": {
-          "src": "/_img/about-mountain-meadow-areaTile-1038.avif",
-          "bytes": 89077
+          "src": "/_img/about-mountain-meadow-areaTile-1035.avif",
+          "bytes": 87758
         },
         "webp": {
-          "src": "/_img/about-mountain-meadow-areaTile-1038.webp",
-          "bytes": 118442
+          "src": "/_img/about-mountain-meadow-areaTile-1035.webp",
+          "bytes": 117952
         }
       }
     ]

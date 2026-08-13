@@ -13,7 +13,11 @@ import variants from "./image-variants.json";
  * sizes silently vanish from the preload.
  */
 export const SLOT_SIZES = {
-  areaTile: "(max-width: 760px) calc(100vw - 48px), (max-width: 1358px) calc(50vw - 37px), 618px",
+  // Four-up above 1060px, two-up to 760, then full-bleed — and the frame's
+  // gutter tightens from 48px to 32px at that last step. Each term is the art
+  // box, so the card's 22px of padding and border comes off every one.
+  areaTile:
+    "(max-width: 760px) calc(100vw - 54px), (max-width: 1060px) calc(50vw - 59px), (max-width: 1358px) calc(25vw - 53.5px), 286px",
   projectCard: "(max-width: 760px) calc(100vw - 48px), 202px",
   heroPanel16: "(max-width: 760px) calc(100vw - 48px), (max-width: 1060px) 520px, 425px",
   heroPanel43: "(max-width: 760px) calc(100vw - 48px), (max-width: 1060px) 520px, 425px",

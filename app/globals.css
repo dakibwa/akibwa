@@ -993,9 +993,13 @@ button {
   font-style: normal;
 }
 
+/* Four across rather than two-up. At two-up each tile ran 581 CSS px wide,
+   which pushed the fourth area below the fold and asked the artwork to hold
+   up at a size the sources cannot serve at 2x DPR. A row of four fits the
+   whole set in one glance and lands the art nearer its native resolution. */
 .area-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 26px;
   margin-top: 16px;
 }
