@@ -139,7 +139,7 @@ export const personalProjects = [
   },
   {
     number: "05",
-    slug: "probe",
+    slug: "features",
     title: "features",
     type: "Daily puzzle",
     dashboardLabel: "features",
@@ -147,8 +147,8 @@ export const personalProjects = [
     summary: "Pull tangled features apart, ten nets a day.",
     tags: ["Daily nets", "Untangling", "Interpretability"],
     mode: "embed",
-    embedUrl: "/probe/index.html",
-    fallbackHref: "/probe/",
+    embedUrl: "/features/index.html",
+    fallbackHref: "/features/",
     useLocalFrame: false,
     cta: "Open on Akibwa"
   },

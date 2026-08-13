@@ -42,10 +42,10 @@ const artworkBySlug = {
     selectorSubjectPosition: "50% 50%",
     expandedBannerPosition: "50% 50%"
   },
-  probe: {
-    src: "/project-art/personal/probe-symbol.webp",
-    bannerSrc: "/project-art/personal/probe-symbol.webp",
-    navBannerSrc: "/project-art/personal/probe-symbol.webp",
+  features: {
+    src: "/project-art/personal/features-symbol.webp",
+    bannerSrc: "/project-art/personal/features-symbol.webp",
+    navBannerSrc: "/project-art/personal/features-symbol.webp",
     variant: "symbol",
     detailBannerPosition: "50% 50%",
     selectorBannerPosition: "50% 50%",

@@ -785,8 +785,8 @@
       }
     ]
   },
-  "navDropdown:/project-art/personal/probe-symbol.webp": {
-    "source": "/project-art/personal/probe-symbol.webp",
+  "navDropdown:/project-art/personal/features-symbol.webp": {
+    "source": "/project-art/personal/features-symbol.webp",
     "slot": "navDropdown",
     "ratio": 4.7778,
     "sourceWidth": 1200,
@@ -797,11 +797,11 @@
         "width": 323,
         "height": 68,
         "avif": {
-          "src": "/_img/project-art/personal/probe-symbol-navDropdown-323.avif",
+          "src": "/_img/project-art/personal/features-symbol-navDropdown-323.avif",
           "bytes": 1952
         },
         "webp": {
-          "src": "/_img/project-art/personal/probe-symbol-navDropdown-323.webp",
+          "src": "/_img/project-art/personal/features-symbol-navDropdown-323.webp",
           "bytes": 2126
         }
       }
@@ -1037,8 +1037,8 @@
       }
     ]
   },
-  "projectCard:/project-art/personal/probe-symbol.webp": {
-    "source": "/project-art/personal/probe-symbol.webp",
+  "projectCard:/project-art/personal/features-symbol.webp": {
+    "source": "/project-art/personal/features-symbol.webp",
     "slot": "projectCard",
     "ratio": 1.5,
     "sourceWidth": 1200,
@@ -1049,11 +1049,11 @@
         "width": 303,
         "height": 202,
         "avif": {
-          "src": "/_img/project-art/personal/probe-symbol-projectCard-303.avif",
+          "src": "/_img/project-art/personal/features-symbol-projectCard-303.avif",
           "bytes": 2382
         },
         "webp": {
-          "src": "/_img/project-art/personal/probe-symbol-projectCard-303.webp",
+          "src": "/_img/project-art/personal/features-symbol-projectCard-303.webp",
           "bytes": 2656
         }
       },
@@ -1061,11 +1061,11 @@
         "width": 390,
         "height": 260,
         "avif": {
-          "src": "/_img/project-art/personal/probe-symbol-projectCard-390.avif",
+          "src": "/_img/project-art/personal/features-symbol-projectCard-390.avif",
           "bytes": 2763
         },
         "webp": {
-          "src": "/_img/project-art/personal/probe-symbol-projectCard-390.webp",
+          "src": "/_img/project-art/personal/features-symbol-projectCard-390.webp",
           "bytes": 3538
         }
       },
@@ -1073,11 +1073,11 @@
         "width": 491,
         "height": 327,
         "avif": {
-          "src": "/_img/project-art/personal/probe-symbol-projectCard-491.avif",
+          "src": "/_img/project-art/personal/features-symbol-projectCard-491.avif",
           "bytes": 3690
         },
         "webp": {
-          "src": "/_img/project-art/personal/probe-symbol-projectCard-491.webp",
+          "src": "/_img/project-art/personal/features-symbol-projectCard-491.webp",
           "bytes": 4726
         }
       }

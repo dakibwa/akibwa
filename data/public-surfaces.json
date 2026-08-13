@@ -2,12 +2,12 @@
   "updated": "2026-08-13",
   "surfaces": [
     {
-      "id": "probe",
+      "id": "features",
       "title": "features",
-      "route": "/probe",
+      "route": "/features",
       "kind": "static-directory",
       "visibility": "public",
-      "staticPath": "public/probe/index.html"
+      "staticPath": "public/features/index.html"
     },
     {
       "id": "portuguese-with-ines",

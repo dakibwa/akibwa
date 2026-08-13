@@ -150,7 +150,7 @@ const sources = [
   { file: "brand-art/nav/projects/one-bag.webp", slot: "navDropdown" },
   // Probe has no separate nav strip: its card symbol is the dropdown art too,
   // so it is laddered for both slots rather than served full-size to a 215px box.
-  { file: "project-art/personal/probe-symbol.webp", slot: "navDropdown" },
+  { file: "project-art/personal/features-symbol.webp", slot: "navDropdown" },
 
   // Project cards.
   { file: "project-art/personal/chorus-symbol.webp", slot: "projectCard" },
@@ -158,7 +158,7 @@ const sources = [
   { file: "project-art/personal/meditator-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/one-bag-symbol.webp", slot: "projectCard" },
-  { file: "project-art/personal/probe-symbol.webp", slot: "projectCard" }
+  { file: "project-art/personal/features-symbol.webp", slot: "projectCard" }
 ];
 
 /*

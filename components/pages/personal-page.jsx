@@ -104,7 +104,7 @@ const ACCENT_BY_SLUG = {
   "one-bag": "#2f7d57",
   meditator: "#3a5a45",
   "portuguese-with-ines": "#1f4f9c",
-  probe: "#6e5da8"
+  features: "#6e5da8"
 };
 
 function accentForSlug(slug) {
@@ -117,7 +117,7 @@ const STATUS_BY_SLUG = {
   "one-bag": "dev",
   meditator: "live",
   "portuguese-with-ines": "live",
-  probe: "live"
+  features: "live"
 };
 
 const STATUS_LABELS = { live: "Live", dev: "Dev" };
