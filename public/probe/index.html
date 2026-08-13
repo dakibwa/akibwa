@@ -200,7 +200,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* every control answers the keyboard the same way. there was no focus style
      at all, and the UA default is close to invisible on this ground. */
   .help:focus-visible,.act:focus-visible,.wbtn:focus-visible,.intro-start:focus-visible,
-  .devtab:focus-visible,.rec-close:focus-visible,.dayrow:focus-visible,.buybtn:focus-visible{
+  .devtab:focus-visible,.rec-close:focus-visible,.dayrow:focus-visible,.archlink:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
 
@@ -294,8 +294,20 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      against the hue on the dark ground, 1.74 and 1.78 on paper: even, both ways,
      on both grounds. mixing off the tokens rather than off values keeps it a
      reference, so it flips with everything else. */
-  .unit-par{--hue:var(--sig-tuerkis);
-            --hue-soft:color-mix(in srgb, var(--hue) 50%, var(--rule))}
+  /* the turns bay draws ONE line at a time and the whole bar IS that line, and
+     the three it draws are the ladder's own three, in the ladder's own order.
+     that is the whole point of them being these colours: while the bar is green
+     you are playing for a green cell, and the turn it turns turquoise is the
+     turn the green cell stopped being available. the strip two bays over then
+     mints the colour the bar was showing when you finished. */
+  .unit-par{--par-perfect:var(--sig-gruen);
+            --par-par:var(--sig-tuerkis);
+            --par-over:var(--silver)}
+  /* the day still to play. derived from the two colours it has to sit between —
+     silver, which `done` now owns, and the track — so it cannot drift out of
+     step with either when a ground changes. it reads as material, not as a rung
+     and not as a hole. */
+  .unit-set{--set-ahead:color-mix(in srgb, var(--silver) 42%, var(--rule))}
   .unit-label{
     font-size:9.5px;line-height:1.2;letter-spacing:.16em;color:var(--ink-soft);
     text-transform:lowercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
@@ -354,24 +366,37 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      no cap, no quantising, exact at 90px and at 300px alike. */
   .run > *{flex:0 1 0;min-width:0;background:var(--fill);
            transition:flex-grow var(--t-ui) var(--ease-out),background var(--t-ui)}
-  .track > i{flex:1 1 0;min-width:0;transition:background .3s}
+  /* the cell eases from the day-ahead colour into the rung it just minted. long
+     enough to be seen as a change rather than a repaint — this is the moment a
+     net is banked, and it is the only thing the strip ever animates. */
+  .track > i{flex:1 1 0;min-width:0;transition:background .45s var(--ease-out)}
   .track > i.on{background:var(--fill)}
-  /* the divisions. never a gap, and never the first thing drawn: a segment with
-     no width paints no shadow either, so the cut always lands on the leading
-     edge of something real, and at the very start of a bar it is a pixel of
-     panel colour against the panel — which is nothing at all. */
-  .track > i + i,.run > * + *{box-shadow:inset 1px 0 0 var(--surface)}
-  /* the net you are on. the only cell drawn in ink, so the strip says where you
-     are without a second copy of the number the board already shows. it sits at
-     the join between the day behind and the day ahead, and the ink outline is
-     what makes it findable rather than merely inferable.
-     it no longer paints its own ground. it used to sit on --ray-off, which was
-     right when the day ahead was bare track — the cell you were on had to be
-     SOMETHING against a row of nothings. now that the strip starts full, a cell
-     in ray-off is a hole punched in a solid bar, and the eye reads a hole as
-     damage rather than as position. so the ring is all that is left of this
-     rule, and the cell keeps whatever the day ahead is drawn in beneath it. */
-  .setmeter i.now{box-shadow:inset 0 0 0 1px var(--ink)}
+  /* THERE ARE NO DIVISIONS. every one of these bars is a single unbroken length
+     now, and the only thing that ends a part is the next part being a different
+     colour — which is the boundary anyway, drawn in the one channel that is
+     already carrying the reading.
+     the cut used to be a 1px inset of panel colour on the leading edge of each
+     part. between two different colours it drew a seam nobody needed; between
+     two parts of the SAME colour it drew the only thing separating them, which
+     is the whole of what this costs. so on the set strip four clean nets in a
+     row are now one clean run and cannot be counted off individually.
+     that trade was already made once, deliberately, for the crossings bay — see
+     the note above: "you could count blocks and you cannot count a length. the
+     numeral standing over every one of these tracks was always the count." it
+     holds here for the same reason, and the strip keeps three readings besides:
+     where the played colours give way to the day ahead, the ink ring on the net
+     you are on, and the numeral. the share card is unaffected — shareCardSVG
+     draws its own squares and never came through this rule. */
+  /* the net you are on is NOT drawn. it used to carry an ink outline, and that
+     outline was the last hard edge left anywhere in the cluster once the
+     divisions went — one boxed cell in an otherwise unbroken bar, which read as
+     the very seam the smoothing was there to remove.
+     it is not needed: the cell you are on is the FIRST cell of the day ahead, so
+     the boundary where the played colours give way already stands exactly on it.
+     the ring made that findable rather than merely inferable, and inferable is
+     the price of the smooth bar. `.now` is still set on the cell — the aria
+     label and anything that wants to know where the day stands can read it —
+     it simply has nothing to paint. */
 
   /* ---- the crossings bay ----
      ONE bar, and it IS the track. it was two: a bar divided into thread colours
@@ -741,37 +766,69 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      card and the coach — a colour strip, a flat panel, hairline rules, plain
      lowercase — because the things it says are the game talking, not telemetry.
 
-     WHERE. "over the middle" is the instruction, and the middle of the screen
-     is very nearly the middle of the board, which is where the puzzle is. so it
-     sits on the board's upper-third line instead. that is still read as the
-     middle of the screen (at 1440x900 the card centres 41px above the window's
-     own centre — nobody calls that a banner), and it is measurably cheaper:
-     across 190 generated nets a 400x96 card centred on the board hides 15.6% of
-     the day's crossings, and the same card on the third line hides 8.6%. the
-     crossings ARE the puzzle; the neurons are only 5% either way.
-     it also stays clear of the coach card above it, so the guided net can have
-     both at once.
+     WHERE. it went to the middle first, then to the board's upper-third line,
+     and it is in the bottom-right corner now — because a card over the tangle
+     is a card over the puzzle, and the third line only made that cheaper
+     rather than free. measured across 250 generated nets, what a card-sized
+     rectangle hides in board coordinates:
+
+       bottom right   0.02 crossings a net, worst net 4%   <- here
+       top left       0.05                       worst 12%
+       top right      0.07                       worst 17%
+       bottom left    0.07                       worst 21%
+       centre         1.01                       worst 71%
+
+     drawn line is ~1.5% either way and is not the deciding number: the
+     crossings are what the player is hunting, and the centre hid fifty times
+     more of them than the corner does. bottom right also has the whole of the
+     coach card's half of the board between it and the coach, so the guided net
+     can still have both at once. bottom LEFT is a one-line change if the
+     corners ever want swapping — the two are within a rounding error of each
+     other on the mean, and it is the worst net that separates them.
+
+     WHICH CORNER OF WHAT. `.say` is positioned against `.field`, and the board
+     does not fill `.field` — a fixed viewBox under xMidYMid meet is
+     letterboxed into whatever the window leaves. a plain `right:18px` would
+     hang the card in that dead margin, ~85px clear of the board it belongs to.
+     so the corner offsets add the measured letterbox, published onto `.field`
+     by publishPlateInset as `--plate-x` / `--plate-y`. the fallbacks are what
+     the card falls back TO if the script never ran, which is the field corner
+     — wrong but on-screen, rather than nothing.
 
      it never takes a pointer. a message can land the instant a drag ends and
      the next one begins under it, and on a phone the finger is where the card
      is. `.field` has overflow:hidden, so a tall card is clipped by the board
      rather than growing the page — this cannot introduce a scrollbar. */
   .say{
-    position:absolute;left:50%;top:34%;
+    position:absolute;
+    right:calc(var(--plate-x,0px) + 18px);
+    bottom:calc(var(--plate-y,0px) + 18px);
     /* the card is as wide as what it has to say and no wider — "weather" in a
        408px plate is mostly empty plate. the cap is what keeps the long ones
-       from becoming a line of type across the board. */
-    width:max-content;max-width:min(408px,calc(100% - 28px));
+       from becoming a line of type across the board.
+       the second term is the letterbox again, in the other dimension: 100% is
+       the field, and a cap measured against the field lets the longest message
+       in the game (the descent one, 389px) run off the side of a plate narrower
+       than that. at 720x420 the plate is 347px and it overhung by 59. so the
+       cap comes off the plate — the field less both margins, less the 18px
+       inset twice so the wrap point is where the card would touch the far
+       corner. it only ever binds on a plate under ~440px wide; every ordinary
+       desktop is still capped at 408. */
+    width:max-content;
+    max-width:min(408px,calc(100% - 2 * var(--plate-x,0px) - 36px));
     z-index:7;pointer-events:none;
-    /* the card is centred BY a transform, so its entrance has to compose with
-       that one rather than replace it — same trap the coach's exit hit */
-    transform:translate(-50%,-50%) translateY(7px);
+    /* the card used to be centred BY a transform, which its entrance then had
+       to compose with rather than replace. a corner needs no transform to sit
+       in, so `transform` is the entrance and nothing else — and where the
+       phone still centres on an axis it does it with the separate `translate`
+       property, which composes with this one instead of fighting it. */
+    transform:translateY(7px);
     opacity:0;visibility:hidden;
     transition:opacity var(--t-fade) var(--ease-in),transform 0s linear var(--t-fade),
                visibility 0s linear var(--t-fade);
   }
   .say.on{
-    opacity:1;visibility:visible;transform:translate(-50%,-50%);
+    opacity:1;visibility:visible;transform:none;
     transition:opacity var(--t-card) var(--ease-out),transform var(--t-card) var(--ease-out),visibility 0s;
   }
   .saycard{background:var(--surface);border:1px solid var(--silver);box-shadow:var(--shadow-float)}
@@ -945,6 +1002,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        overflow-y of its own, and here that would take the head with it */
     max-height:calc(100dvh - 40px);overflow:hidden;
     border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
+    /* the same material the masthead's strip uses for a net not played yet, for
+       the same reason and by the same argument (see SETAHEAD): `done` is silver,
+       so an unreached net cannot also be silver or the two marks collide, and
+       --rule alone is 1.28:1 here, which is no mark at all. it is declared again
+       rather than lifted to :root because it belongs to the two instruments that
+       draw a set of ten, not to the document. */
+    --set-ahead:color-mix(in srgb, var(--silver) 42%, var(--rule));
   }
   .rec-head{
     flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -959,8 +1023,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .recstats{display:flex;align-items:baseline;gap:14px;min-width:0}
   .rstat{display:flex;align-items:baseline;gap:5px;white-space:nowrap;
     font-size:8.5px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
-  .rstat b{font-size:13px;font-weight:400;letter-spacing:0;color:var(--ink);font-variant-numeric:tabular-nums}
-  .rstat i{font-style:normal}
+  /* the score is the screen's subject, so it is drawn as one. it used to be
+     13px/400 — smaller and lighter than the word "record" beside it, and smaller
+     than the close button, on a screen whose entire job is telling you how you
+     did. this is the numeral voice the file already uses on the run card and the
+     share plate (300 weight, tabular, tight), not a new size invented here.
+     the figure carries no tracking: tracking is for words. */
+  .rstat b{font-size:23px;font-weight:300;letter-spacing:-.02em;line-height:1;
+    color:var(--ink);font-variant-numeric:tabular-nums}
+  .rstat em{font-style:normal;font-size:11px;letter-spacing:.06em;color:var(--ink)}
+  .rstat i{font-style:normal;font-size:9px;letter-spacing:.12em;color:var(--ink-soft)}
+  .rstat i::before{content:'·';margin-right:5px;opacity:.55}
 
   /* ---------- the sixteen ----------
      one row, pinned, and the whole of what used to be a panel up here. a found
@@ -978,34 +1051,46 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .fcell.none{border:1px solid var(--rule);border-bottom-width:3px;color:var(--silver)}
 
   /* ---------- the days ----------
-     the archive is the paid tier, and this button is the whole of the
-     transaction: it flips POLICY.premium and nothing else. there is no payment
-     behind it and there cannot be until there is a server to take one. it
-     rides the first shut day rather than floating above the list, because a
-     locked day is a row like any other and the thing that opens it belongs on
-     it — which also means it disappears the moment there is nothing shut. */
-  /* violet, and a field rather than a keyline: it is the one action here that
-     is not a day, and violet is the palette's spare — the ladder owns green,
-     orange and blue, so nothing else can be mistaken for a tier. white on it
-     measures 4.56:1 on the dark ground and 7.02:1 on paper. a solid white
-     block, which is what --ink gives here, out-shouted the whole list. */
-  .buybtn{
-    display:flex;align-items:center;gap:6px;flex:0 0 auto;
-    font:inherit;font-size:9px;letter-spacing:.12em;text-transform:lowercase;
-    border:1px solid var(--sig-violett);background:var(--sig-violett);color:#fff;
-    padding:5px 9px;cursor:pointer;
-    transition:filter var(--t-ui),transform var(--t-lift);
+     the archive is the paid tier, and it is now ONE row at the foot of the list
+     rather than a row per shut day. a free player has every day older than
+     yesterday shut, which was 11 of the 13 rows a new player met, growing by one
+     every day forever — about 95% of the list inside a year — and the violet
+     field on the first of them was the only saturated object on the card, so the
+     visual anchor of a history screen was a shop. the count says the same thing
+     in one line, the list stops growing, and the way through is a link in the
+     quietest ink here rather than the loudest field.
+     it is dashed and it is --rule: dashed means shut, the one thing it means
+     anywhere on this screen, and --rule is a step below the played rows' own
+     keyline, which is where the archive belongs in the order of things. */
+  .dayarch{
+    display:flex;align-items:center;gap:10px;width:100%;
+    border:1px dashed var(--rule);background:transparent;
+    padding:0 11px;min-height:34px;
   }
-  .buybtn:hover{filter:var(--hover-lift)}
-  .buybtn:active{transform:translateY(1px) scale(.99);transition-duration:var(--t-press)}
+  .dayarch .datext{font-size:10px;letter-spacing:.09em;
+    color:var(--ink-soft);text-transform:lowercase}
+  /* a way through, not the subject: same ink as the line it sits on, and a
+     hairline under it rather than a field around it — at 9px an unmarked link
+     is not readable as one, and a hairline is the mark this whole card is made
+     of. it still flips POLICY.premium and nothing else; there is no payment
+     behind it and there cannot be until there is a server to take one. */
+  .archlink{
+    margin-left:auto;flex:0 0 auto;text-decoration:none;
+    font-size:9px;letter-spacing:.12em;text-transform:lowercase;
+    color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:1px;
+    transition:color var(--t-ui),border-color var(--t-ui);
+  }
+  .archlink:hover{color:var(--ink);border-bottom-color:var(--ink)}
 
   /* the list is the one region on this card that scrolls */
   .daylist{flex:1 1 auto;min-height:0;overflow-y:auto;padding:10px 18px 16px;
     display:flex;flex-direction:column;gap:5px}
-  /* ONE LINE, and structurally so: the row never wraps, the middle column is
-     the only thing that gives (it ellipses), and the stamp strip is clipped
-     rather than allowed to fall to a second row. how many stamps actually fit
-     is measured once in openRecord; the +n at the end carries the remainder. */
+  /* ONE LINE, and structurally so: the row never wraps and the middle column is
+     the only thing that gives (it ellipses). the right-hand column is a fixed
+     width now — ten cells and nine gaps, the same on every row — so nothing has
+     to be measured to know it fits, and the bars line up down the card as a
+     column you can read across. that is the difference between a list of days
+     and a scoreboard. */
   .dayrow{
     display:flex;align-items:center;gap:10px;flex-wrap:nowrap;width:100%;
     font:inherit;color:var(--ink);text-align:left;appearance:none;
@@ -1013,39 +1098,72 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     padding:0 11px 0 0;min-height:38px;cursor:pointer;overflow:hidden;
     transition:border-color var(--t-ui);
   }
-  .dayrow:hover{border-color:var(--ink)}
+  /* silver, not ink: ink is what marks TODAY, so hovering any row used to make
+     it look like the row you are on */
+  .dayrow:hover{border-color:var(--silver)}
   .dayrow .dtier{flex:0 0 auto;width:7px;align-self:stretch;background:var(--tc,var(--rule))}
   .dayrow .ddate{flex:0 0 auto;width:78px;padding:11px 0;
     font-size:10.5px;letter-spacing:.07em;text-transform:lowercase;font-variant-numeric:tabular-nums}
   .dayrow .ddet{flex:0 1 auto;min-width:0;max-width:47%;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     font-size:10px;letter-spacing:.09em;color:var(--ink-soft);text-transform:lowercase}
-  .dayrow .dfeats{flex:1 1 0;min-width:0;display:flex;flex-wrap:nowrap;
-    align-items:center;justify-content:flex-end;gap:4px;overflow:hidden}
-  .dayrow .dfeats svg{display:block;width:22px;height:22px;flex:0 0 auto}
-  .dmore{flex:0 0 auto;font-style:normal;font-size:9px;letter-spacing:.06em;
-    color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  /* ---------- the day's ten ----------
+     one cell per net, and THE TIER IS THE HEIGHT: full, two thirds, a third,
+     and a hairline for a net the day never reached. colour comes off TIERCOL
+     and says the same thing a second time, which is the point of it — the three
+     tier hues measure 1.00 : 1.00 : 1.01 in greyscale against each other, so a
+     hue-only strip is one flat grey block in a screenshot, on a monochrome
+     panel, and to anyone whose cones do not separate green from turquoise.
+     height survives all three, and it is horizontals and verticals only, so it
+     stays on the 45° grid the rest of the card is drawn on.
+
+     what stood here was the day's FEATURES — about fourteen emblems of a
+     possible sixteen on every finished day, so every row carried roughly the
+     same fourteen as every other. 151 coloured glyphs on one screenful against
+     a score glyph a fraction of the size: 26.6 : 1 of ink in favour of the
+     collectibles, on a screen whose subject is the score. these cells differ
+     from day to day, which is the only thing that makes a row worth drawing.
+
+     it is the form the file already has twice — the masthead's set strip and
+     the share card's ladder — not a third one. cells of one width on one
+     baseline, each handed `var(--token)` rather than a resolved colour, so a
+     theme flip repaints them with no javascript re-running. */
+  .dayrow .dcells{
+    --cw:6px;--ch:18px;
+    flex:0 0 auto;margin-left:auto;display:flex;align-items:flex-end;gap:2px;height:var(--ch);
+  }
+  /* the hairline is the set-ahead material, not silver: `done` is silver, so an
+     unreached net drawn in it would be a short bar beside a shorter bar of the
+     same colour. it has to be a neutral that is plainly not a rung. */
+  .dayrow .dcells i{flex:0 0 auto;width:var(--cw);height:1px;
+    background:var(--fill,var(--set-ahead))}
+  .dayrow .dcells i.t1{height:calc(var(--ch) / 3)}
+  .dayrow .dcells i.t2{height:calc(var(--ch) / 3 * 2)}
+  .dayrow .dcells i.t3{height:var(--ch)}
   /* played, but filled in from the archive rather than earned on the day —
      hatched, the mark the calendar used, and the reason it never touched the
      streak. a bought day fills the grid; it cannot buy the run of days. */
   .dayrow.back .dtier{background:repeating-linear-gradient(45deg,var(--tc) 0 3px,var(--surface) 3px 6px)}
-  .dayrow.open{border-style:dashed;border-color:var(--silver)}
-  /* shut, not absent and not failed: a locked day keeps its full weight, its
-     date and its place in the run of days, and says plainly what it is. the
-     bar is hatched in silver rather than left empty — an empty bar reads as a
-     day that is not there, and this one is there and closed. */
-  .dayrow.lock{border-style:dashed}
-  .dayrow.lock .dtier{background:repeating-linear-gradient(45deg,var(--silver) 0 3px,var(--surface) 3px 7px)}
+  /* a day you can still play is SOLID. it was dashed, and dashed is the idiom
+     for "not available yet" — so the primary call to action on the screen, and
+     today's own row, were drawn as though disabled, and playing one rewarded you
+     by making it solid. dashed now means exactly one thing, below: shut. */
+  .dayrow.open{border-color:var(--silver)}
+  /* a shut day has no row of its own any more — see .dayarch, which carries the
+     whole run of them in one line at the foot of the list. */
   /* today outranks both: whatever else the row is, it is the one you are on */
   .dayrow.today{border-color:var(--ink)}
-  .dayrow.open:hover{border-style:solid;border-color:var(--sig-hellblau)}
-  .dstate{flex:0 0 auto;display:flex;align-items:center;gap:5px;
+  /* ink, not a signal colour: the ladder owns the hues, so a border in one of
+     them reads as a tier the row did not mint */
+  .dayrow.open:hover{border-color:var(--ink)}
+  /* the one chip left on a row: `play →` on a day still open to you. it takes
+     the slot the cells take on a played row, so the right edge of the list is
+     one column whatever the row is. */
+  .dstate{flex:0 0 auto;margin-left:auto;display:flex;align-items:center;gap:5px;
     font-size:9px;letter-spacing:.11em;text-transform:lowercase;color:var(--ink-soft);
     border:1px solid var(--rule);padding:3px 7px}
   .dayrow.open .dstate{color:var(--ink);border-color:var(--silver)}
   .dayrow.open:hover .dstate{border-color:var(--sig-hellblau);color:var(--sig-hellblau)}
-  .dlock{width:11px;height:11px;flex:0 0 auto;display:block}
-  .dnone{flex:0 0 auto;font-size:9.5px;letter-spacing:.1em;color:var(--ink-soft);text-transform:lowercase}
   .runempty{
     border:1px dashed var(--silver);padding:17px 15px;text-align:center;
     font-size:11.5px;letter-spacing:.07em;color:var(--ink-soft);text-transform:lowercase;line-height:1.6
@@ -1230,8 +1348,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .dayrow{gap:8px;padding-right:9px}
     .dayrow .ddate{width:64px;font-size:10px;letter-spacing:.04em}
     .dayrow .ddet{font-size:9.5px}
-    .dayrow .dfeats{gap:3px}
-    .dayrow .dfeats svg{width:19px;height:19px}
+    /* 68px of bar against 78: the cells lose a pixel of width and three of
+       height and stay on exact thirds — 5 / 10 / 15 — because a tier read off a
+       height cannot afford to round. two numbers change and the whole form
+       follows them, which is what the two custom properties are for. */
+    .dayrow .dcells{--cw:5px;--ch:15px}
+    .dayarch{padding:0 9px;gap:8px}
+    .dayarch .datext{font-size:9.5px}
     /* nothing floats over the board any more, so it keeps its whole height */
     .field{padding-bottom:0}
     .coach{top:10px;width:calc(100% - 20px)}
@@ -1239,8 +1362,30 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        spanning the width covers a whole LAYER of the net rather than a slice of
        one. it drops to the type the coach uses at this size, and it sits higher
        — 28% of a tall board is well clear of the middle, and clear of the coach
-       card inlined above it on the guided net. */
-    .say{width:calc(100% - 20px);top:28%}
+       card inlined above it on the guided net.
+       the phone deliberately does NOT follow the desktop card into the corner.
+       the corner is worth having because a 408px card is a small object on a
+       1040-wide plate and can be tucked out of the way; a card that spans the
+       width has no corner to be tucked into, and putting it at the foot would
+       cover the last layer of the net instead of a middle one — the same cost,
+       moved. the measurement that chose bottom right was taken on a landscape
+       plate with a card-sized rectangle and does not transfer to this shape.
+       so the rule above is reset back to a top anchor. `bottom` has to be
+       cleared explicitly or an element carrying both top and bottom is
+       stretched between them rather than sized by its content; the plate
+       offset on `right` is simply overwritten. the letterbox is horizontal
+       only here (the turned plate fills the field's height), so 28% needs no
+       plate correction — and the plate is 338 of the field's 353px, so a card
+       inset 14px from the field is inside it either way.
+       both axes are centred without a transform: auto inline margins across a
+       left:0/right:0 span, and the `translate` property for the half-height,
+       which composes with the entrance lift instead of replacing it.
+       the width cap goes back to being measured off the field too. the desktop
+       one subtracts the letterbox, which is right for a card tucked into a
+       corner of the plate and wrong for one spanning the board: it would take
+       15px off a card that is already inside the plate at both ends. */
+    .say{left:0;right:0;top:28%;bottom:auto;translate:0 -50%;
+         width:calc(100% - 20px);max-width:calc(100% - 28px);margin-inline:auto}
     /* the coach card is not floating here, it is INLINE at the top of the board
        — so on the guided net the top of the board is spoken for, and 28% lands
        the message on top of it. this is the only screen where the two can meet. */
@@ -1284,9 +1429,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .veil,.veil.show,.veil > *,.veil.show > *{transform:none;transition-property:opacity,visibility}
     /* the card still arrives, holds and fades — a cross-fade is not motion, and
        this is the only channel several of these facts have. what goes is the
-       7px lift and the rows printing themselves in one at a time. the centring
-       transform has to survive, so it is restated rather than cleared. */
-    .say,.say.on{transform:translate(-50%,-50%);
+       7px lift and the rows printing themselves in one at a time. clearing
+       `transform` outright is safe now that the card sits in a corner rather
+       than being centred by one — and the phone's half-height centring is on
+       the `translate` property, which this does not touch. */
+    .say,.say.on{transform:none;
       transition-property:opacity,visibility}
     .say .rowin{animation:none}
     .help:active,.act:active,.wbtn:active,.intro-start:active,
@@ -1346,6 +1493,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
       </button>
       <button class="help" id="helpbtn" title="how to play" aria-label="how to play">?</button>
+      <!-- DEVELOPER TOOL, and it says so. it solves the net down the exact route
+           par is priced from, so it is also a live check that the two agree.
+           `hidden` by default and only unhidden on a DEV host — it must never
+           reach a player, because a button that plays the game for you is the
+           one control that can empty the whole product. -->
+      <button class="help devsolve" id="solvebtn" hidden
+              title="dev · solve this net (walks the route par is priced from)"
+              aria-label="dev · solve this net">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7">
+          <path d="M4 18L10 12L4 6"/><path d="M12 18h8"/></g></svg>
+      </button>
       </div>
   </header>
 
@@ -1644,7 +1802,14 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
    5.91:1 dark, the strip's three rungs are three plainly different hues on
    either ground, and no badge had been minted at perfect yet, so nothing in
    anybody's collection moves. */
-const TIERCOL={perfect:'--sig-gruen', clean:'--sig-orange', done:'--sig-hellblau', par:'--sig-hellblau', over:'--silver'};
+/* ONE ladder, and both instruments draw from it: the day's strip colours each
+   net by the rung it minted, and the turns bay colours its three budgets with
+   the same three, in the same order. green is the rung you are chasing while the
+   bar is green; turquoise is the rung you are chasing while it is turquoise.
+   orange is gone. it was `clean` — the commonest good outcome in the game and
+   therefore the colour most of the strip was made of — and it reads as a warning
+   rather than as a result. */
+const TIERCOL={perfect:'--sig-gruen', clean:'--sig-tuerkis', done:'--silver', par:'--sig-tuerkis', over:'--silver'};
 /* a net you have not played yet. the strip starts FULL now, so the day ahead
    needs a material of its own, and silver is the one the ladder above already
    sets aside: it is not a rung, and an unplayed net makes no claim to be one.
@@ -1666,12 +1831,17 @@ const TIERCOL={perfect:'--sig-gruen', clean:'--sig-orange', done:'--sig-hellblau
    under tritanopia alone, which is a hundredth of a percent, and because green
    is the rung nothing has minted yet. that argument does not transfer to a
    colour that would be on screen from the first net of every day. */
-const SETAHEAD='--silver';
+/* the day ahead can no longer BE silver: `done` is silver now, so an unplayed
+   net and a net you finished would be the same mark and the strip would stop
+   saying how far through the day you are. so it is silver taken most of the way
+   down to the track — still a material rather than a hole, still not a rung, but
+   plainly fainter than any net you have actually played. */
+const SETAHEAD='--set-ahead';
 /* the share card is the one thing here that leaves the sharer's screen: it
    lands in someone else's feed, where it has to be comparable with everyone
    else's. so it reads the canonical values and never the ground-adapted ones —
    two players on different grounds must post the same card. */
-const CARDCOL={perfect:'--gruen', clean:'--orange', done:'--hellblau', par:'--hellblau', over:'--silver-fixed'};
+const CARDCOL={perfect:'--gruen', clean:'--tuerkis', done:'--silver-fixed', par:'--tuerkis', over:'--silver-fixed'};
 /* the bulletin and the share card are both fixed dark-blue plates in either
    ground, so a tier drawn ON one of them wants the canonical value: it is
    already sitting on a colour rather than on the paper, and the darkened
@@ -1777,50 +1947,102 @@ function netSpec(i){
    allowance is deliberately NOT guessed: setting it wants the proxy's
    distribution of finishing move counts per net, not a plausible-looking
    constant, and a wrong one would restate every score in the game. */
-/* the solver's optima, `${day}:${netIndex}` -> turns, lifted from
-   tools/optima.json. copied in rather than fetched because this file has no
-   build step and no network; regenerate with tools/build-optima.mjs.
+/* the solver's best known route for every net, `day -> [ten turn counts]`,
+   lifted from tools/optima.json. copied in rather than fetched because this file
+   has no build step and no network; regenerate with tools/build-optima.mjs.
+   grouped by day rather than keyed `day:index` because it is 610 numbers and a
+   day is the unit everything else here is keyed on.
 
-   ONLY the nets the solver PROVED are here — 67 of the 610 it searched, 8 closed
-   by A* and 59 by a family construction it could bracket shut. the other 543 are
-   upper bounds, and an upper bound minted as `perfect` would be a lie: a player
-   who beat it would be told they had merely matched it. so they stay out, and
-   netTargets() falls back to optimum===par for anything not listed, which is the
-   no-perfect path the whole ladder was already built to survive.
+   WHAT `perfect` MEANS, EXACTLY. 67 of these are proved optima — 8 closed by A*,
+   59 by a family construction the solver could bracket shut. the other 543 are
+   UPPER BOUNDS: the cheapest route it found, not the cheapest that exists.
+   shipping only the proved ones was the first cut, and it was honest and nearly
+   useless — it lit the perfect band on 12.3% of nets, one or two a day, always
+   an early one, so the ladder's top rung was invisible on the nets where it
+   would have meant most. with the bounds in it is 96.8%, 9.7 nets of every ten,
+   and no day without one.
+
+   so `perfect` now means "you matched the best line anyone has found for this
+   net", not "you proved the optimum". the failure mode of that is generous, not
+   wrong: a player who finds something better still scores perfect, because the
+   tier awards `moves <= optimum` — they simply are not told they beat it. the
+   reverse, a target nobody can reach, cannot happen, because every one of these
+   numbers is a route the solver actually walked.
+   tightening the 543 is a solver problem, not a table problem — tools/BALANCE.md
+   states the obstruction: the search is a column model and only two of the seven
+   layout families reduce to one.
 
    the unit is TOTAL moves — every drag and every split, including the action
    that finishes the net, which is what netMoves counts now nothing is waived.
-   optima.json also carries `optimumCharged`, which is the OLD billing, one
-   lower. it is not the number this wants.
-
-   the shape of what got proved is the honest caveat: nearly every entry is an
-   early net and nearly every value is 2, because the search is a column model
-   and only the column-shaped families reduce to one. so a day lights its perfect
-   band on one or two of its ten, near the start, and the deep nets — where the
-   tier would mean most — stay dark. widening that is a solver problem, not a
-   table problem; tools/BALANCE.md states the obstruction. */
+   optima.json also carries `optimumCharged`, the OLD billing, one lower. it is
+   not the number this wants. */
 const OPTIMA={
-  '2026-08-12:0':1, '2026-08-12:1':2, '2026-08-12:2':2, '2026-08-12:3':3,
-  '2026-08-12:4':4, '2026-08-12:5':3, '2026-08-12:6':6, '2026-08-12:7':5,
-  '2026-08-13:1':2, '2026-08-13:2':2, '2026-08-13:3':2, '2026-08-14:2':2,
-  '2026-08-15:1':2, '2026-08-16:1':2, '2026-08-17:2':2, '2026-08-18:1':2,
-  '2026-08-18:2':2, '2026-08-21:1':2, '2026-08-21:2':2, '2026-08-22:2':2,
-  '2026-08-23:1':2, '2026-08-26:3':2, '2026-08-27:1':2, '2026-08-27:2':1,
-  '2026-08-28:1':2, '2026-08-29:1':2, '2026-08-29:2':2, '2026-08-30:1':2,
-  '2026-08-31:1':2, '2026-08-31:2':2, '2026-09-01:1':2, '2026-09-02:2':2,
-  '2026-09-03:1':2, '2026-09-03:2':2, '2026-09-05:1':2, '2026-09-06:1':2,
-  '2026-09-07:1':2, '2026-09-07:2':2, '2026-09-08:1':2, '2026-09-09:1':2,
-  '2026-09-09:2':2, '2026-09-10:1':2, '2026-09-10:2':2, '2026-09-12:1':2,
-  '2026-09-12:2':2, '2026-09-13:1':2, '2026-09-13:2':2, '2026-09-15:1':2,
-  '2026-09-15:2':2, '2026-09-16:2':2, '2026-09-17:1':2, '2026-09-17:2':2,
-  '2026-09-18:1':2, '2026-09-19:1':2, '2026-09-20:1':2, '2026-09-20:3':2,
-  '2026-09-21:1':2, '2026-09-22:1':2, '2026-09-24:1':2, '2026-09-24:2':2,
-  '2026-09-25:1':2, '2026-09-26:1':2, '2026-09-26:2':2, '2026-09-27:1':2,
-  '2026-09-29:1':2, '2026-09-29:2':2, '2026-09-30:2':1
+  '2026-08-01':[6,5,8,11,16,17,20,20,27,34],
+  '2026-08-02':[5,4,5,12,17,18,17,23,24,32],
+  '2026-08-03':[3,7,8,11,17,14,17,21,29,32],
+  '2026-08-04':[6,5,9,9,14,14,17,26,30,31],
+  '2026-08-05':[4,7,9,11,17,15,17,20,31,28],
+  '2026-08-06':[6,7,7,11,15,16,17,19,32,32],
+  '2026-08-07':[5,7,8,13,17,15,15,22,32,34],
+  '2026-08-08':[5,8,10,13,16,15,18,21,27,34],
+  '2026-08-09':[5,6,11,10,12,18,18,24,33,37],
+  '2026-08-10':[4,7,7,10,17,17,16,20,32,35],
+  '2026-08-11':[5,7,7,14,18,16,17,23,32,33],
+  '2026-08-12':[1,2,2,3,4,3,6,5,10,11],
+  '2026-08-13':[2,2,2,2,6,5,8,6,9,14],
+  '2026-08-14':[2,2,2,4,8,6,9,11,13,15],
+  '2026-08-15':[2,2,2,4,7,5,7,12,16,12],
+  '2026-08-16':[2,2,3,5,6,5,9,10,13,16],
+  '2026-08-17':[2,2,2,4,8,9,8,8,10,16],
+  '2026-08-18':[2,2,2,4,4,5,11,12,11,19],
+  '2026-08-19':[2,2,3,4,8,4,10,7,20,19],
+  '2026-08-20':[2,2,3,5,7,5,9,12,14,12],
+  '2026-08-21':[2,2,2,3,6,6,8,14,13,15],
+  '2026-08-22':[2,2,2,3,8,5,7,11,12,16],
+  '2026-08-23':[2,2,3,7,10,6,6,9,14,11],
+  '2026-08-24':[2,2,2,4,6,10,5,12,13,19],
+  '2026-08-25':[2,2,3,6,7,4,9,11,15,15],
+  '2026-08-26':[2,2,3,2,7,9,9,7,18,15],
+  '2026-08-27':[2,2,1,4,6,9,11,11,13,16],
+  '2026-08-28':[2,2,3,5,7,4,8,11,17,15],
+  '2026-08-29':[2,2,2,4,7,12,6,8,12,14],
+  '2026-08-30':[2,2,2,4,7,7,6,8,13,18],
+  '2026-08-31':[2,2,2,4,6,5,9,9,9,16],
+  '2026-09-01':[2,2,2,4,9,4,8,11,18,17],
+  '2026-09-02':[2,2,2,4,7,8,6,13,13,19],
+  '2026-09-03':[2,2,2,3,6,5,10,8,13,16],
+  '2026-09-04':[2,2,2,3,7,8,10,13,14,12],
+  '2026-09-05':[2,2,3,2,7,5,7,14,9,17],
+  '2026-09-06':[2,2,3,2,5,6,7,9,14,18],
+  '2026-09-07':[2,2,2,4,8,8,8,14,10,16],
+  '2026-09-08':[2,2,2,4,7,6,10,13,13,16],
+  '2026-09-09':[2,2,2,5,5,6,5,11,13,13],
+  '2026-09-10':[2,2,2,7,6,9,7,9,13,18],
+  '2026-09-11':[2,2,3,4,8,4,6,12,12,11],
+  '2026-09-12':[2,2,2,3,7,7,5,11,12,16],
+  '2026-09-13':[2,2,2,6,7,10,9,9,13,17],
+  '2026-09-14':[2,2,2,4,7,6,6,8,15,16],
+  '2026-09-15':[2,2,2,6,7,5,5,11,12,18],
+  '2026-09-16':[2,2,2,5,8,8,7,6,13,17],
+  '2026-09-17':[2,2,2,5,9,7,8,11,16,15],
+  '2026-09-18':[2,2,3,4,5,7,9,14,14,15],
+  '2026-09-19':[2,2,3,5,7,10,7,8,18,13],
+  '2026-09-20':[2,2,3,2,8,5,7,11,13,9],
+  '2026-09-21':[2,2,3,6,9,5,8,14,8,16],
+  '2026-09-22':[2,2,2,5,7,9,4,16,13,15],
+  '2026-09-23':[2,2,2,7,7,6,10,12,14,13],
+  '2026-09-24':[2,2,2,3,7,9,8,8,14,17],
+  '2026-09-25':[2,2,2,4,6,6,3,11,15,14],
+  '2026-09-26':[2,2,2,4,5,4,8,9,14,16],
+  '2026-09-27':[2,2,2,4,7,6,7,9,15,12],
+  '2026-09-28':[2,2,3,4,7,5,6,16,19,15],
+  '2026-09-29':[2,2,2,7,6,7,5,12,9,21],
+  '2026-09-30':[2,2,1,4,6,9,5,9,10,16]
 };
 function netTargets(){
   const par=spec?spec.par:0, r=R();
-  const o=OPTIMA[r.day+':'+r.netIndex];
+  const day=OPTIMA[r.day];                       // ten numbers, or nothing for a day outside the table
+  const o=day?day[r.netIndex]:undefined;
   /* an optimum at or above par is not an optimum, and an optimum of zero is a
      rung everybody stands on — 17% of nets have one, because the move that
      finishes a net is not charged. both fall back rather than shipping a
@@ -2049,13 +2271,20 @@ if(SYSLIGHT && SYSLIGHT.addEventListener){
    cells: a fixed number of equal divisions, each either a colour or empty. only
    the day's strip wants this, and it wants it because ten nets are ten things —
    the discreteness IS the reading, and it is the same object that gets shared. */
+/* the cells are REUSED, never rebuilt. this used to empty the strip and make ten
+   fresh elements on every renderHud, which is why `.track > i`'s
+   `transition:background` had never once run in the life of the game: a brand
+   new element has no previous colour to ease from, so a net completing snapped
+   from the day-ahead colour to its tier between two frames. keeping the same ten
+   nodes alive is the whole of what makes that transition real. */
 function paintCells(id,colors,label){
   const el=$(id); if(!el)return;
-  el.innerHTML='';
-  colors.forEach(c=>{
-    const cell=document.createElement('i');
-    if(c){ cell.className='on'; cell.style.setProperty('--fill',c) }
-    el.appendChild(cell);
+  while(el.children.length>colors.length) el.lastElementChild.remove();
+  while(el.children.length<colors.length) el.appendChild(document.createElement('i'));
+  colors.forEach((c,i)=>{
+    const cell=el.children[i];
+    cell.classList.toggle('on',!!c);
+    if(c) cell.style.setProperty('--fill',c); else cell.style.removeProperty('--fill');
   });
   if(label)el.setAttribute('aria-label',label);
 }
@@ -2943,12 +3172,43 @@ function wantsPortrait(){
 }
 function applyOrientation(force){
   const p=wantsPortrait();
-  if(p===portrait && !force) return false;
+  if(p===portrait && !force){ publishPlateInset(); return false }
   portrait=p;
   $('netsvg').setAttribute('viewBox', portrait?`0 0 ${BH} ${BW}`:`0 0 ${BW} ${BH}`);
   if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH})`:'');
   if(gLabels) threads.forEach(t=>{if(t.freed) repositionLabel(t)});
+  publishPlateInset();
   return true;
+}
+
+/* ---- how far the plate is from the field's edge ----
+   everything that floats over the board is positioned against `.field`, and
+   `.field` is not the board: the plate keeps its fixed viewBox and is
+   letterboxed into whatever the window leaves, so at 1280x720 the field is
+   1238px wide and the plate 1031 — 103px of dead margin down each side. a
+   corner-anchored card measured off the field would sit in that margin, off
+   the board entirely.
+   css cannot work this out for itself, because it falls out of the aspect
+   ratio rather than out of any box, so it is measured here once per layout and
+   published as two lengths the corner offsets add to. it reads the viewBox off
+   the element rather than off `portrait`, so it is correct whichever way up
+   the board is and whoever calls it. measured against `#netsvg` rather than
+   the field because the phone inlines the coach card as a flex sibling, which
+   makes the svg shorter than the field it sits in. */
+function publishPlateInset(){
+  const f=$('field'), s=$('netsvg');
+  if(!f || !s) return;
+  const vb=s.viewBox.baseVal, sr=s.getBoundingClientRect(), fr=f.getBoundingClientRect();
+  if(!vb || !vb.width || !vb.height || !sr.width || !sr.height) return;
+  // xMidYMid meet: the largest scale that fits whole, centred on both axes
+  const k=Math.min(sr.width/vb.width, sr.height/vb.height);
+  // `right` and `bottom` are measured from the containing block's PADDING box,
+  // which is what clientLeft/clientWidth describe — the field has neither
+  // border nor padding today, and this does not quietly break if it gains one
+  const padR=fr.left+f.clientLeft+f.clientWidth, padB=fr.top+f.clientTop+f.clientHeight;
+  const plateR=sr.left+(sr.width+vb.width*k)/2, plateB=sr.top+(sr.height+vb.height*k)/2;
+  f.style.setProperty('--plate-x', Math.max(0,padR-plateR).toFixed(2)+'px');
+  f.style.setProperty('--plate-y', Math.max(0,padB-plateB).toFixed(2)+'px');
 }
 
 function buildNet(force){
@@ -3709,10 +3969,17 @@ function refresh(){
 }
 /* when a feature comes free it settles into a drawing of itself.
    the emblem's longest continuous edge is sampled to exactly as many points as
-   the thread has neurons, then fitted over the thread's own centroid — so the
-   line you just untangled becomes the sign for the thing it turned out to be.
+   the thread has neurons, and the thread wears the result — so the line you
+   just untangled becomes the sign for the thing it turned out to be.
    only neurons whose every thread is free are moved: one still carrying a live
-   feature stays where the player put it. */
+   feature stays where the player put it, and a pin never moves at all.
+
+   the shape used to be fitted over the THREAD'S OWN CENTROID, which is where it
+   happened to finish being untangled. a feature that came apart in a crowded
+   corner therefore drew its sign in that crowded corner — small, over the live
+   tangle, and on top of whatever had settled there before it. the sign is the
+   answer to the puzzle. it has to be readable, and it cannot be readable on top
+   of something else. see signSlots. */
 /* every feature's markup begins with its PRIMARY path — the sign itself — and
    anything after it is a hole or a counterform. that convention is what makes
    the emblem and the settle-shape one drawing instead of two. it replaces
@@ -3778,11 +4045,24 @@ function featureShape(k,n){
    directions, and a quarter-turned board moves them. "above" is a smaller x
    when the layers run down the screen, and the glyphs turn back the other way
    about their own anchor. */
+/* a settled feature owns its whole cell — the sign AND the name. so the name is
+   laid off the sign's leading edge as before, but read from the neurons that
+   actually DREW the sign rather than from all of them (a pin left behind used to
+   drag the name off towards itself), and then held inside the cell. that second
+   part is what stops two neighbours captioning each other: a name cannot leave
+   its own cell, and no two features share one. */
 function labelAnchor(t){
-  const xs=t.nodes.map(n=>n.x0), ys=t.nodes.map(n=>n.y0);
+  const s=t.signSlot;
+  const held=s?heldNodes(t):null;
+  const src=s ? t.nodes.filter(n=>!held.includes(n)) : t.nodes;
+  const xs=src.map(n=>n.x0), ys=src.map(n=>n.y0);
   const mid=a=>(Math.min(...a)+Math.max(...a))/2;
-  return portrait ? {x:clampX(Math.min(...xs)-26), y:mid(ys)}
-                  : {x:mid(xs), y:clampY(Math.min(...ys)-16)};
+  if(portrait){
+    const x=Math.min(...xs)-26;
+    return {x:clampX(s?Math.max(s.cx-s.cw/2+LABEL_CAP,x):x), y:s?s.cy:mid(ys)};
+  }
+  const y=Math.min(...ys)-16;
+  return {x:s?s.cx:mid(xs), y:clampY(s?Math.max(s.cy-s.ch/2+LABEL_CAP,y):y)};
 }
 function placeLabel(lbl,p){
   const x=p.x.toFixed(1), y=p.y.toFixed(1);
@@ -3793,14 +4073,187 @@ function repositionLabel(t){
   const lbl=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===t.key);
   if(lbl) placeLabel(lbl,labelAnchor(t));
 }
+/* ---- where a settling sign goes ----
+   the board carries a grid of SLOTS, one per thread in this net, and a settling
+   feature takes the emptiest slot nobody has claimed yet.
+
+   a grid rather than a repulsion pass, for three reasons. spacing stops being
+   something to negotiate every time a feature comes free and becomes a property
+   of the layout — two footprints in two different cells cannot overlap, so no
+   sign can ever land on another one. the size follows from it for free: the
+   arrangement is chosen to make the biggest square it can, so a two-feature net
+   draws two large signs and a five-feature net five smaller ones, every sign in
+   a net the same size as its neighbours. and it is a grid, which is the one
+   thing this board was already made of.
+
+   the arrangement is sized from threads.length, not from how many have come
+   free so far, so a sign never changes size or slot because a LATER one landed.
+   only the new feature is placed. re-flowing the settled ones on every free
+   would buy nothing — their slots cannot conflict with anything placed after
+   them — and would re-animate a moment that has already happened, which reads
+   as churn exactly when the player is trying to look at what they just found. */
+const SIGN_GAP=10;        // clear board kept around every sign's own box
+const SIGN_LEAD=40;       // and the room its name needs off the leading edge
+const SIGN_MAX=300;       // past this an emblem stops gaining legibility
+/* how far a name reaches back from its own baseline, measured rather than
+   guessed: at the 28-unit size the phone rules give it, the caps run 20 and the
+   paper halo paint-order lays behind them adds another 4.5 — 26.6 off the glass.
+   SIGN_LEAD has to leave at least this much, or a clamped name would sit
+   outside its cell instead of inside it. band = SIGN_GAP + SIGN_LEAD/2 = 30. */
+const LABEL_CAP=28;
+/* THE NON-OVERLAP IS STRUCTURAL, not a preference the scoring might give up on.
+   the cells tile the board and do not intersect. a sign's footprint is r+2*GAP
+   across, centred in its cell, and r is min(cellW,cellH)-2*GAP-LEAD — so the
+   footprint is LEAD narrower than the cell it sits in, on both axes, always.
+   two signs in two different cells are therefore at least SIGN_LEAD apart and
+   cannot touch whatever the board looks like, and one cell holds at most one
+   sign because claimSlot strikes a slot off the moment it is taken. the name is
+   held inside the same cell by labelAnchor. nothing here is left to a distance
+   test that could come out wrong. */
+function signSlots(){
+  const n=Math.max(1,threads.length);
+  const W=BW-2*PADX, H=BH-2*PADY;
+  let g=null;
+  for(let rows=1;rows<=n;rows++){
+    const cols=Math.ceil(n/rows), cw=W/cols, ch=H/rows;
+    // the sign is square, so the short side of the cell is what it can grow to.
+    // the lead is taken off BOTH axes: the name sits above the sign in
+    // landscape and to its left on a quarter-turned board, and a slot that has
+    // to work in either orientation reserves the room in either direction.
+    const r=Math.min(cw,ch)-2*SIGN_GAP-SIGN_LEAD;
+    if(!g||r>g.r) g={rows,cols,cw,ch,r};
+  }
+  const r=Math.min(g.r,SIGN_MAX), slots=[];
+  for(let j=0;j<g.rows;j++)for(let i=0;i<g.cols;i++)
+    slots.push({i:slots.length, cx:PADX+g.cw*(i+.5), cy:PADY+g.ch*(j+.5),
+                r, cw:g.cw, ch:g.ch});
+  return slots;
+}
+/* everything still drawn that a settling sign has to keep off. a thread that
+   already holds a slot is represented by that slot instead of by its points —
+   its neurons are inside its own footprint, and slots are excluded outright.
+   (a thread's claim is `signSlot`, not `slot`: `t.slot` is already the thread's
+   row in the masthead, and writing a plain object over a live dom element there
+   makes the meters rebuild themselves every frame.) */
+function boardOccupancy(t){
+  const pts=[], add=(x,y)=>pts.push({x,y});
+  threads.forEach(o=>{
+    if(o===t||o.signSlot) return;
+    o.nodes.forEach((n,i)=>{
+      add(n.x0,n.y0);
+      // a long line between two neurons occupies its whole length, not its ends
+      const m=o.nodes[i+1]; if(!m) return;
+      const steps=Math.max(1,Math.round(Math.hypot(m.x0-n.x0,m.y0-n.y0)/56));
+      for(let s=1;s<steps;s++) add(n.x0+(m.x0-n.x0)*s/steps, n.y0+(m.y0-n.y0)*s/steps);
+    });
+  });
+  members.forEach(n=>{ if(n.pinned) add(n.x0,n.y0) });   // a pin outlives its thread
+  countCross().marks.forEach(m=>add(m.x,m.y));
+  return pts;
+}
+/* how far the nearest occupied thing is from a slot's footprint — 0 if it is
+   sitting inside it. the sign box plus its gap IS the footprint, which is why
+   the same SIGN_GAP appears here and in the layout above. */
+function slotGap(s,p){
+  const h=s.r/2+SIGN_GAP;
+  const dx=Math.max(Math.abs(p.x-s.cx)-h,0), dy=Math.max(Math.abs(p.y-s.cy)-h,0);
+  return Math.hypot(dx,dy);
+}
+/* the neurons a settling feature is NOT allowed to move: its pins, and anything
+   still shared with a feature that is still live. everything else is the sign. */
+function heldNodes(t){ return t.nodes.filter(n=>n.pinned||!n.threads.every(th=>th.freed)) }
+/* the cost of a slot, and the whole of what "emptiest" means here: every
+   occupied point near the slot counts, weighted by how close it is and squared
+   so that being under something matters far more than being beside it. one unit
+   is one obstacle sitting inside the footprint.
+
+   it is a crowding sum rather than a distance to the nearest thing, because
+   distance-to-nearest saturates: a slot clipped by one stray neuron and a slot
+   with an entire thread lying across it both read as zero clearance, and the
+   game then picks between them on a tie-break. the sum can tell them apart —
+   in a real five-thread net the numbers came out 1.3 against 52.5. */
+function slotCost(s,occ){
+  const rho=s.r*0.45;                      // beside it, not under it, at this far out
+  let c=0;
+  for(let k=0;k<occ.length;k++){
+    const d=slotGap(s,occ[k]);
+    if(d<rho){ const w=1-d/rho; c+=w*w }
+  }
+  return c;
+}
+const HOME_W=6;    // cost of a slot one board-width from where the thread untangled
+const PULL_W=26;   // and of one pin left a board-width behind
+/* the pins a thread will still be holding once it settles. NOT heldNodes: that
+   also counts neurons shared with a live feature, which is every neuron of a
+   thread that has not come free yet — right for deciding what a settling sign
+   may move, useless as an anchor for one that has not settled. */
+function pinsOf(o){ return o.nodes.filter(n=>n.pinned) }
+function nearestSlot(list,x,y){
+  let b=null,bd=Infinity;
+  list.forEach(s=>{const d=Math.hypot(s.cx-x,s.cy-y); if(d<bd){bd=d;b=s}});
+  return b;
+}
+function claimSlot(t){
+  if(t.signSlot) return t.signSlot;
+  const slots=signSlots();
+  const taken=new Set(threads.filter(o=>o!==t&&o.signSlot).map(o=>o.signSlot.i));
+  let open=slots.filter(s=>!taken.has(s.i));
+  if(!open.length) return (t.signSlot=slots[Math.max(0,threads.indexOf(t))%slots.length]);
+  const mean=(a,f)=>a.reduce((s,n)=>s+f(n),0)/a.length;
+  /* a pin stays exactly where it is and the line still runs through it, so a
+     sign that flies to the far side of the board drags a spike all the way back
+     across everything in between. it therefore pulls its own sign towards
+     itself — hard enough to overrule a moderately emptier slot, not hard enough
+     to nail the sign to the cell it started in. a feature with no pins is free,
+     and most are. */
+  const held=pinsOf(t);
+  const hx=held.length?mean(held,n=>n.x0):0, hy=held.length?mean(held,n=>n.y0):0;
+  const cx=mean(t.nodes,n=>n.x0), cy=mean(t.nodes,n=>n.y0);
+  /* and a feature that is pinned has less choice than one that is not, so the
+     pinned ones that are still tangled get first refusal on the cell nearest
+     their pin. without this the free-moving features take the good cells in the
+     order the player happens to untangle them, and the pinned one comes free
+     last to find every near cell gone — then draws a line half the board long
+     back to a neuron it was never allowed to move. reserving costs the mover
+     almost nothing: it is choosing between empty cells either way. */
+  const mine=held.length?nearestSlot(open,hx,hy):null, res=new Set();
+  threads.forEach(o=>{
+    if(o===t||o.signSlot) return;
+    const op=pinsOf(o); if(!op.length) return;
+    const s=nearestSlot(open.filter(q=>!res.has(q.i)), mean(op,n=>n.x0), mean(op,n=>n.y0));
+    if(s && s!==mine) res.add(s.i);                  // never reserve away my own anchor
+  });
+  const room=open.filter(s=>!res.has(s.i));
+  if(room.length) open=room;                         // unless it would leave nothing
+  const occ=boardOccupancy(t);
+  let best=open[0], bv=Infinity;
+  open.forEach(s=>{
+    let v=slotCost(s,occ);
+    v+=HOME_W*Math.hypot(s.cx-cx,s.cy-cy)/BW;                  // ties go to where it already was
+    if(held.length) v+=PULL_W*held.length*Math.hypot(s.cx-hx,s.cy-hy)/BW;
+    if(v<bv){bv=v;best=s}
+  });
+  return (t.signSlot=best);
+}
 function settleIntoShape(t){
-  const movable=t.nodes.filter(n=>n.threads.every(th=>th.freed) && !n.pinned);
-  if(movable.length<3) return;
+  const held=heldNodes(t);
+  const movable=t.nodes.filter(n=>!held.includes(n));
+  if(movable.length<3) return;                        // claim no slot it cannot draw in
   const pts=featureShape(t.key, t.nodes.length);
   if(!pts) return;
-  const cx=t.nodes.reduce((a,n)=>a+n.x0,0)/t.nodes.length;
-  const cy=t.nodes.reduce((a,n)=>a+n.y0,0)/t.nodes.length;
-  const S=Math.min(BH*0.42, BW*0.22)/96;              // fit the sign, do not fill the board
+  const slot=claimSlot(t);
+  const cx=slot.cx, cy=slot.cy;
+  /* the sign is fitted to its own extent, not to the 96 box it was drawn in.
+     the emblems do not fill that box evenly — reduced to six points the moon is
+     35 units across and the bird is 85 — so scaling everything by 96 drew the
+     narrow ones at a third of the size of the wide ones and called it a system.
+     each sign's long side reaches the slot instead, scaled the same on both
+     axes so nothing is stretched, which is how the munich pictograms are sized
+     against each other in the first place: optically, to a common field. */
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const ox=(Math.min(...xs)+Math.max(...xs))/2, oy=(Math.min(...ys)+Math.max(...ys))/2;
+  const span=Math.max(Math.max(...xs)-Math.min(...xs), Math.max(...ys)-Math.min(...ys), 1);
+  const S=slot.r/span;
   const now=performance.now();
   let k=0;                                            // stagger counter over the MOVABLE nodes
   t.nodes.forEach((n,i)=>{
@@ -3808,8 +4261,9 @@ function settleIntoShape(t){
     const [px,py]=pts[Math.min(i,pts.length-1)];
     /* the sign has an up. on a quarter-turned board the board's +x runs down
        the screen and +y runs left, so the emblem is laid into those axes
-       instead of straight onto x and y — or it settles on its side. */
-    const dx=portrait?(py-48):(px-48), dy=portrait?-(px-48):(py-48);
+       instead of straight onto x and y — or it settles on its side. the slot is
+       square, so the same fit serves either way round. */
+    const dx=portrait?(py-oy):(px-ox), dy=portrait?-(px-ox):(py-oy);
     const bx=clampX(cx+dx*S), by=clampY(cy+dy*S);
     /* staggered along the thread, and eased hard OUT rather than in-and-out:
        each neuron leaves at once, travels fast and stops dead on its mark, and
@@ -4069,8 +4523,16 @@ addEventListener('pointerup',()=>{swallowNextDown=false});
    window listener at all. */
 let resizeT=null;
 function relayoutBoard(){
+  /* the letterbox is the one thing here that must not wait out the debounce:
+     a card already on screen is anchored to it, and 100ms of the card adrift
+     in the margin is 100ms of it visibly off the board. it is two rects and
+     two custom properties, so it is cheap enough to do on every callback —
+     and it is ahead of the early return below, because the field can change
+     shape before a net exists. */
+  publishPlateInset();
   clearTimeout(resizeT);
   resizeT=setTimeout(()=>{
+    publishPlateInset();     // again once the dust settles; applyOrientation may flip it
     if(!threads.length) return;
     applyOrientation();
     // the phone treatment changes the mark sizes, and the fused body is built
@@ -4411,6 +4873,17 @@ function stampToday(depth,feats,tier){
     const had=row.depth||0;
     if(depth>had || (depth===had && (row.turns==null || turns-par < row.turns-row.par))){
       row.turns=turns; row.par=par; row.moves=R().turns||0;
+      /* the rung each of the ten minted, in order, one letter each — the record
+         draws them as ten cells and there is nowhere else to read them from.
+         it rides inside this guard with the turns/par pair on purpose: the three
+         of them describe the SAME run, so a replay that cannot beat the pair must
+         not be allowed to overwrite the tiers that earned it either.
+         a string, not an array: it is ten characters against ten objects in a
+         save that already carries a row a day forever, and tierFor mints exactly
+         perfect / clean / done, whose initials do not collide. it is purely
+         ADDITIVE — every row written before this has no `tiers` at all, nothing
+         reads it without checking, and no existing field changes shape. */
+      row.tiers=cl.map(c=>String(c.tier||'')[0]||'').join('');
     }
     row.depth=Math.max(had,depth);
     row.mode='daily';
@@ -4454,11 +4927,63 @@ function clearNet(){
   save();
   celebrateGauge();
   boardCleared();
-  /* the last thread's light runs to 380ms and its sign finishes assembling at
-     roughly 890. the card waits for that: the settle is the payoff and drawing
-     a bulletin over the top of it was spending the best moment in the game to
-     save sixty milliseconds. */
-  setTimeout(()=>showNetCleared(feats,tier,wasTutorial), reduceMotion?260:940);
+  /* under reduced motion the sign is already drawn the instant the thread frees
+     and nothing is in flight, so there is nothing to hold FOR: the card keeps
+     the 260 it always had and not one millisecond of the beat is scheduled. */
+  if(reduceMotion) setTimeout(()=>showNetCleared(feats,tier,wasTutorial),260);
+  else holdCleared(()=>showNetCleared(feats,tier,wasTutorial));
+}
+/* ---- the beat ----
+   a net finishing is the best moment in this game and it was the one moment you
+   were never shown. the last crossing goes, the thread pulls loose, names itself
+   and eases into a drawing of its own sign — and the bulletin used to arrive at
+   940ms, which is the same instant the longest of those signs lands. the solved
+   board, every feature drawn as its own emblem, existed for about a frame before
+   a card was drawn over it.
+   so the card waits the gesture out and then holds still:
+      ~940   the last sign lands. settleIntoShape starts at +320, staggers 26ms a
+             neuron and runs 440, so a thread of n neurons is down at 320+26(n-1)
+             +440 — stepped through at 882 for a five-neuron thread and 942 for a
+             seven. 980 clears both, and would still clear a nine at 968: the card
+             now waits for the sign the DEEP nets draw, not for the common one.
+       980   the game stops talking. the feature's name card goes down under its
+             own fade (--t-fade, 420ms) instead of being cut off mid-sentence by
+             the bulletin landing on top of it, so the board is clear at 1400.
+   1150-1370 the freed threads recede out of `justfreed` into their filed opacity
+             — the last thing on the board that moves, and it finishes with the
+             card's fade rather than after it.
+   1400-1600 nothing moves at all. that stillness is the whole point.
+   the beat goes here and not on the other side of the card. by the time you have
+   pressed `continue →` you have said you are done looking; holding you after an
+   explicit press is the exact failure the swap already avoids, and the 170ms the
+   veil takes to fade would spend most of a beat there behind a blur anyway.
+   and it is a beat, not a wait: any press or key lands the card immediately, the
+   same way a press lands the net swap. the listeners are armed only once the
+   signs are down — before that a press is still about the move you just made
+   rather than about the board, and letting it through would spend the entire
+   payoff on a stray finger. same floor, same reason, as sayNudge's own. */
+const NET_QUIET=980;   // the last sign has landed and the board stops arriving
+const NET_BEAT=620;    // 420 for the name card to clear, then 200 of dead still
+let holdT=null, holdSkip=null;
+function cancelHold(){
+  if(!holdSkip) return;
+  removeEventListener('pointerdown',holdSkip,true);
+  removeEventListener('keydown',holdSkip,true);
+  holdSkip=null; clearTimeout(holdT); holdT=null;
+}
+function holdCleared(show){
+  const land=()=>{ if(!holdSkip) return; cancelHold(); show() };
+  holdSkip=land;                      // so a net advanced mid-beat cancels through this
+  holdT=setTimeout(()=>{
+    // "you are back on the board; the game stops talking" — except here it is the
+    // board itself that has become the thing worth reading, not a press
+    sayNudge();
+    const skip=e=>{ if(e&&e.type==='pointerdown') swallowNextDown=true; land() };
+    holdSkip=skip;
+    addEventListener('pointerdown',skip,true);
+    addEventListener('keydown',skip,true);
+    holdT=setTimeout(skip,NET_BEAT);
+  },NET_QUIET);
 }
 /* the whole net coming clean gets the gesture the board never had: one bar
    crosses the plate, and the threads come up out of their ghosted state behind
@@ -4486,6 +5011,11 @@ function boardCleared(){
 let swapT=null, swapSkip=null;
 function nextNet(){
   hideVeils();
+  /* the beat can still be running when this is reached — `skip net` stays live
+     while the cleared board is being held, and nothing else takes it down. the
+     previous net's bulletin arriving over the net you have already moved on to
+     is worse than never seeing it. */
+  cancelHold();
   const f=$('field');
   if(swapSkip) swapSkip();            // a second press mid-swap simply lands it
   const land=()=>{
@@ -4583,13 +5113,27 @@ function showNetCleared(feats,tier,wasTutorial){
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
   const feats=[...new Set(r.cleared.flatMap(c=>c.feats))];
-  const strip=r.cleared.map(c=>c.tier==='perfect'?'🟨':c.tier==='clean'?'🟧':'🟦').join('');
+  /* the emoji strip that used to be built here — and handed to copyShare as the
+     text share — is gone. it painted perfect 🟨 against a ladder whose perfect
+     is green, and there is no honest emoji for the silver rung at all. the
+     share now reads the run itself; see SHAREBLOCK. */
   const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   const turns=r.cleared.reduce((a,c)=>a+c.moves,0);
   const parTot=r.cleared.reduce((a,c)=>a+c.par,0);
   const trial=isTrial();
   $('runbulletin').innerHTML=bulletinHTML({
-    strip:trial?'--violett':(depth>=5?'--orange':depth>=3?'--gruen':'--hellblau'),
+    /* the strip took its colour from DEPTH — orange at five nets or more — and
+       both halves of that are now wrong. orange is no longer a tier colour at
+       all, and depth is ten for everyone who finishes, so the band that crowns
+       the day was the same band for every completed day ever played.
+       it takes the ladder instead, off the one reading the game is scored on:
+       under par, level with it, past it. a day left short stays neutral rather
+       than claiming a rung it never played for. */
+    strip: trial ? '--violett'
+         : depth < POLICY.dailyNets ? CARDCOL.done
+         : (turns-parTot) < 0 ? CARDCOL.perfect
+         : (turns-parTot) === 0 ? CARDCOL.clean
+         : CARDCOL.done,
     title:trial?'out-trained':(depth>=POLICY.dailyNets?'day complete':'day set aside'),
     sub:trial?'time trial · the net kept learning'
         :`${cleanN} of ${depth} clean · ${turns} turns against par ${parTot}`,
@@ -4621,7 +5165,7 @@ function showRunOver(){
             `<button class="wbtn" id="trialbtn">${trial?'trial again':'time trial'} ⏱</button>`
   });
   showVeil('runveil');
-  $('sharebtn').onclick=()=>copyShare(depth,strip,feats);
+  $('sharebtn').onclick=()=>copyShare();
   $('recordbtn2').onclick=()=>{hideVeils();openRecord()};
   $('trialbtn').onclick=()=>startTrialRun();
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
@@ -4649,11 +5193,16 @@ function dayLabel(iso){
   const yr=d.getFullYear()!==new Date().getFullYear()?" '"+String(d.getFullYear()).slice(2):'';
   return `${WDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}${yr}`;
 }
-/* three prototypes have written playedDays: bare iso strings, {d,depth}, and
-   the current row carrying feats / best / mode / moves. every read normalises
-   instead of migrating, so an old save renders and nothing in it is dropped —
-   a legacy row simply has nothing to say beyond having happened. stampToday
-   and recordDay do the upgrade in place, the next time that day is played. */
+/* four prototypes have written playedDays now: bare iso strings, {d,depth}, the
+   row carrying feats / best / mode / moves, and that row plus `tiers`. every
+   read normalises instead of migrating, so an old save renders and nothing in it
+   is dropped — a legacy row simply has nothing to say beyond having happened.
+   stampToday and recordDay do the upgrade in place, the next time that day is
+   played. NOTHING is backfilled here, and `tiers` in particular must not be:
+   which rung each of a day's ten nets minted is not derivable from a row that
+   never stored it, and inventing ten cells from `best` or from turns-against-par
+   would be drawing a day that did not happen. a row without it draws no cells at
+   all, which reads as an absence — which is what it is. */
 function dayRows(){
   const out=new Map();
   (store.collection.playedDays||[]).forEach(x=>{
@@ -4681,10 +5230,40 @@ function allDays(){
   for(let i=0;i<730 && d>=LAUNCH;i++,d=dayAdd(d,-1)) days.add(d);
   return [...days].sort().reverse().map(x=>({d:x,row:by.get(x)||null}));
 }
-/* an arc and a rectangle: a padlock inside the same geometry as everything else */
-const LOCKGLYPH=`<svg class="dlock" viewBox="0 0 24 24" aria-hidden="true">`+
-  `<path d="M7.5 11V8a4.5 4.5 0 0 1 9 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/>`+
-  `<rect x="4" y="11" width="16" height="10" fill="currentColor"/></svg>`;
+/* ---- the day's ten, drawn ----
+   ten cells, one per net, and the tier is the HEIGHT — see .dayrow .dcells for
+   why height rather than hue, and for what this replaced.
+   `tiers` is the initials stampToday stored, one per cleared net in order. the
+   decode is a table rather than a startsWith so that an unknown letter draws a
+   hairline instead of throwing or inventing a rung: TIERRANK still carries two
+   dead keys, and a save is the one input here nothing can validate in advance.
+   the colours come off TIERCOL and are handed over as `var(--token)` strings,
+   never resolved, so flipping the ground repaints ten cells a row with no
+   javascript re-running — the same discipline paintCells and paintRun keep. */
+const TIEROF={p:'perfect', c:'clean', d:'done'};
+const CELLH={perfect:'t3', clean:'t2', done:'t1'};
+function dayCells(tiers){
+  // a row from any earlier save shape has no tiers and draws nothing at all.
+  // no cells is an absence, and an absence is exactly what it is; ten hairlines
+  // would be a claim that the day was played and scored nothing.
+  if(typeof tiers!=='string' || !tiers) return '';
+  let out='';
+  for(let i=0;i<POLICY.dailyNets;i++){
+    const t=TIEROF[tiers[i]];
+    out += t ? `<i class="${CELLH[t]}" style="--fill:var(${TIERCOL[t]})"></i>` : '<i></i>';
+  }
+  return `<span class="dcells" aria-hidden="true">${out}</span>`;
+}
+/* the same reading in words, because the cells are a picture and the row's
+   label is what a screen reader gets instead of it */
+function tierWords(tiers){
+  if(typeof tiers!=='string' || !tiers) return '';
+  const n={};
+  [...tiers.slice(0,POLICY.dailyNets)].forEach(ch=>{
+    const t=TIEROF[ch]; if(t) n[t]=(n[t]||0)+1;
+  });
+  return ['perfect','clean','done'].filter(t=>n[t]).map(t=>n[t]+' '+t).join(', ');
+}
 
 /* clicking a row offers that day. replaying one you already cleared is allowed
    — it simply cannot improve a tier you already hold, same as any net. */
@@ -4715,7 +5294,23 @@ function unlockArchive(){
    headline is this and not a count of perfects. `perfect` can only fire where
    the solver can prove an optimum, which today is two of the seven layout
    families: a perfect count would mostly measure which families the day drew. */
-function fmtScore(n){ return n>0?'+'+n : n<0?'−'+(-n) : 'level par' }
+/* the score says which side of par it is IN WORDS, because a bare sign cannot.
+   it used to render `+3` / `−8`, and three things were wrong with that. the
+   minus sign U+2212 is a stroke away from the em dash used for "no data", at
+   13px and in the same slot — so a new player's record read `— best day` and
+   looked like a negative score. golf's red-for-under convention would have
+   disambiguated it, except this palette has no red and WCAG forbids colour as
+   the sole carrier anyway. and a signed number needs the reader to already know
+   which direction is good; "8 under par" needs nothing. the spoken form of the
+   game's own scoring was always the answer. */
+function fmtScore(n){ return n>0 ? n+' over par' : n<0 ? (-n)+' under par' : 'level par' }
+/* the same reading split, for the one place that sets the figure large and the
+   words small beside it */
+function scoreParts(n){
+  return n>0 ? {fig:String(n), word:'over par'}
+     : n<0 ? {fig:String(-n), word:'under par'}
+           : {fig:'level',     word:'par'};
+}
 /* a day only has a score if it has both halves stored and the set was actually
    finished — ten nets. two nets at three under is not a round. */
 const dayScore=r=>(r && r.turns!=null && r.par!=null && (r.depth||0)>=POLICY.dailyNets)
@@ -4736,122 +5331,177 @@ function openRecord(){
      says nothing whatever about how well they did. */
   const best=rows.map(dayScore).filter(v=>v!=null).sort((a,b)=>a-b)[0];
   const badges=store.collection.badges||{};
-  const clean=FKEYS.filter(k=>TIERRANK[(badges[k]||{}).tier]>=TIERRANK.clean).length;
-  const stat=(v,label)=>`<span class="rstat"><b>${v}</b><i>${label}</i></span>`;
-  $('recstats').innerHTML=
-     stat(best==null?'—':fmtScore(best),'best day')
-    +stat(clean+'/'+FKEYS.length,'at clean');
+  const stat=(fig,word,label)=>
+    `<span class="rstat"><b>${fig}</b><em>${word}</em><i>${label}</i></span>`;
+  /* ONE reading, and it names itself. two changes here.
+     `16/16 at clean` is gone. a finished day frees about fourteen of the sixteen
+     features, so the counter reaches 16/16 inside two or three days and then
+     reads the same forever — the identical terminal-counter failure that
+     `bestDepth` and `features collected` were already deleted for elsewhere. a
+     number that stops moving is not a reading.
+     and the survivor leads with TODAY when today has been scored, because the
+     screen is opened seconds after finishing a run and the live question is how
+     that run went. best-ever changes a handful of times and then never again. on
+     day one they are the same number, so nothing is lost by preferring today. */
+  const todayScore=dayScore(rows.find(x=>x.d===d0));
+  const shown = todayScore!=null ? todayScore : best;
+  if(shown!=null){
+    const {fig,word}=scoreParts(shown);
+    $('recstats').innerHTML=stat(fig,word,
+      todayScore==null ? 'your best day'
+      : (best!=null && todayScore<=best) ? 'today · your best' : 'today');
+  } else {
+    /* no scored day anywhere: say what a day IS rather than print a dash. this
+       is the whole of the old `—`, which meant "no data" and read as a minus. */
+    $('recstats').innerHTML=stat(POLICY.dailyNets,'nets today','not played yet');
+  }
 
-  /* ---- the sixteen ----
+  /* ---- the sixteen, for exactly as long as there are any left to find ----
      a found feature wears its plate with a band in the tier it was minted at;
      an unfound one is a hairline square with a cross in it, which says
-     unidentified without giving the sign away. */
+     unidentified without giving the sign away.
+
+     the row answers the one question a list of days structurally cannot — which
+     features have I never seen — and that question expires. a finished day frees
+     about fourteen of the sixteen, so the set closes in two or three days and
+     the row then shows sixteen filled plates for the rest of the game: a
+     collection display, in a game that is not scored on collecting.
+     so it retires with the set it tracks. it also stops the worst first
+     impression on the screen — a new player used to meet sixteen crosses at the
+     top of a game whose whole promise is that a day cannot be failed. it now
+     leads with what is left to find, and when nothing is, it leaves. */
   const named=FKEYS.filter(k=>badges[k]).length;
-  $('recfeatrow').innerHTML=FKEYS.map(k=>{
-    const b=badges[k];
-    return b
-      ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${b.tier}">${featIcon(k)}</span>`
-      : `<span class="fcell none" title="unidentified"><svg viewBox="0 0 96 96" role="img" aria-label="unidentified feature">`
-        +`<g fill="none" stroke="currentColor" stroke-width="7"><path d="M30 30L66 66M66 30L30 66"/></g></svg></span>`;
-  }).join('');
-  const sum=`the sixteen features · ${named} of ${FKEYS.length} identified, ${clean} at clean`;
-  $('recfeatrow').setAttribute('aria-label',sum);
-  $('recfeatrow').title=sum;
+  const featrow=$('recfeatrow'), done=named>=FKEYS.length;
+  featrow.style.display=done?'none':'';
+  if(done){ featrow.innerHTML=''; featrow.removeAttribute('aria-label') }
+  else {
+    featrow.innerHTML=FKEYS.map(k=>{
+      const b=badges[k];
+      return b
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${b.tier}">${featIcon(k)}</span>`
+        : `<span class="fcell none" title="unidentified"><svg viewBox="0 0 96 96" role="img" aria-label="unidentified feature">`
+          +`<g fill="none" stroke="currentColor" stroke-width="7"><path d="M30 30L66 66M66 30L30 66"/></g></svg></span>`;
+    }).join('');
+    const sum=`still to identify · ${FKEYS.length-named} of ${FKEYS.length}`;
+    featrow.setAttribute('aria-label',sum);
+    featrow.title=sum;
+  }
 
   /* ---- the days ---- */
   const list=$('daylist'); list.innerHTML='';
   const days=allDays();
-  const strips=[];
-  let buyPlaced=false;            // the unlock belongs on the first shut day, not above the list
+  const shut=[];       // every day the archive holds. they get ONE row, at the foot
   days.forEach(({d,row})=>{
     const played=!!row, canPlay=canPlayDay(d), isToday=d===d0;
+    /* a day that is neither played nor open to you is not a row. eleven of the
+       thirteen a new player met were exactly that, and the run of them grows by
+       one every day for as long as the game exists. counted here, said once
+       below. */
+    if(!played && !canPlay){ shut.push(d); return }
     const tier=played?(row.best||'over'):null;
     const el=document.createElement('div');
     el.className='dayrow'+(isToday?' today':'')
-      +(played ? (row.back?' back':'') : (canPlay?' open':' lock'));
+      +(played ? (row.back?' back':'') : ' open');
 
-    let det, right, feats=[];
+    let det, right='';
     if(played){
       const p=[], sc=dayScore(row);
-      if(row.depth) p.push(row.depth+(row.depth===1?' net':' nets'));
-      // the score if the set was finished, the raw turn count if it was not —
-      // and a legacy row has neither and simply says that it happened
+      /* the net count only earns its place when the set was left SHORT. it used
+         to lead every row — "10 nets · " on 37 of 42 — which is the same
+         tautology bestDepth was deleted for: a finished day is always ten, so
+         the most repeated string on the screen carried no information and stood
+         in front of the one that did.
+         a scored day therefore leads with its score. a day left short says how
+         far it got, because that is the thing that differs. a legacy row has
+         neither and simply says it happened. */
       if(sc!=null) p.push(fmtScore(sc));
-      else if(row.moves!=null) p.push(row.moves+' turns');
+      else {
+        if(row.depth) p.push(row.depth+' of '+POLICY.dailyNets+' nets');
+        if(row.moves!=null) p.push(row.moves+' turns');
+      }
       if(row.mode==='trial'&&row.trialDepth) p.push('time trial · depth '+row.trialDepth);
       // filled in from the archive rather than earned on the day. it counts
       // toward the record and never toward the streak, and says so.
       if(row.back) p.push('archive');
       det=p.join(' · ')||'played';
-      feats=(row.feats||[]).filter(k=>FEATURES[k]);   // a retired key draws nothing
-      right=feats.length?'':'<span class="dnone">nothing freed</span>';
-    } else if(canPlay){
+      /* the ten cells, and nothing else on the right of a played row. what was
+         here was the day's features — fourteen of sixteen on a finished day, so
+         near enough the same fourteen on every row in the list. */
+      right=dayCells(row.tiers);
+    } else {
       det=isToday?'not played yet':'not played';
       right='<span class="dstate">play →</span>';
-    } else {
-      /* shut, not missing and not failed. the first one carries the unlock:
-         a locked day is a row like any other, and the thing that opens it
-         belongs on it rather than floating above the list as its own panel. */
-      det='in the archive';
-      right = buyPlaced
-        ? `<span class="dstate">${LOCKGLYPH}locked</span>`
-        : `<button class="buybtn" type="button" data-buy="1"`
-          +` title="flips the client-side premium flag · there is no payment behind it yet">`
-          +`${LOCKGLYPH}unlock the archive</button>`;
-      buyPlaced=true;
     }
 
     el.innerHTML=`<i class="dtier"${tier?` style="--tc:var(${TIERCOL[tier]})"`:''}></i>`
       +`<span class="ddate">${dayLabel(d)}</span>`
       +`<span class="ddet">${det}</span>`
-      +`<span class="dfeats">${right}</span>`;
-    const label=dayLabel(d)+' · '+det+(played&&tier?' · '+tier:'')+(feats.length?' · '+feats.join(', '):'');
-    /* only a row you can actually do something with is a control. a shut day
-       answers a click with a line of text, which is not worth a tab stop —
-       the unlock button on it is the tab stop. */
+      +right;
+    // the cells are aria-hidden, so the tiers go into the label as words instead
+    const words=played?tierWords(row.tiers):'';
+    const label=dayLabel(d)+' · '+det+(played&&tier?' · '+tier:'')+(words?' · '+words:'');
+    el.setAttribute('aria-label',label);
+    /* only a row you can actually do something with is a control. every row
+       reaching here either is playable or is a day you have already played —
+       a shut day is not a row any more. */
     if(canPlay){
       el.setAttribute('role','button'); el.tabIndex=0;
-      el.setAttribute('aria-label',label);
       el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offerDay(d,played) } };
-    } else {
-      el.setAttribute('aria-label',label);
     }
-    el.onclick=e=>{
-      if(e.target.closest('[data-buy]')) return unlockArchive();
+    el.onclick=()=>{
       if(canPlay) offerDay(d,played);
       else flashMsg('that day is in the archive · unlock it to play');
     };
     list.appendChild(el);
-    if(feats.length) strips.push({el:el.lastElementChild,feats});
   });
-  if(!days.length) list.innerHTML='<div class="runempty">no days on record yet.<br>clear a net and the first one lands here.</div>';
+  /* ---- the archive, in one line ----
+     the run of shut days used to be a row each, with a filled violet button on
+     the first of them — the only saturated object on the card, which made the
+     visual anchor of a history screen a shop, and a list that grew by a row a
+     day forever whether you played or not. one line at the foot says the same
+     thing and says it once. `unlock` is a link in the quietest ink here rather
+     than a field: it is a way through, not the subject.
+     POLICY.premium opens every one of these days, so when it is on `shut` is
+     empty and there is no row to draw — the gate is the same one canPlayDay
+     already applies, not a second copy of it. */
+  if(shut.length){
+    const el=document.createElement('div');
+    el.className='dayarch';
+    el.innerHTML=`<span class="datext">${shut.length} earlier day${shut.length===1?'':'s'} · in the archive</span>`
+      +(POLICY.premium ? ''
+        : `<a href="#" class="archlink" data-buy="1"`
+          +` title="flips the client-side premium flag · there is no payment behind it yet">unlock</a>`);
+    el.onclick=e=>{
+      if(!e.target.closest('[data-buy]')) return;
+      e.preventDefault(); unlockArchive();
+    };
+    list.appendChild(el);
+  }
+  /* the empty state tested `days`, which allDays() seeds with every date back to
+     LAUNCH — so it was never empty and this branch had never once rendered in
+     the life of the game. what a new player actually met was a list of locked
+     archive rows with a violet unlock button as the brightest thing on screen:
+     a history screen whose first impression was a shop.
+     `rows` is the honest test — days you have actually played — and when there
+     are none the archive is not the story, so it replaces the list entirely
+     rather than sitting above it. */
+  if(!rows.length) list.innerHTML=
+    '<div class="runempty">nothing on record yet.<br>'
+    +'play today\'s ten and this fills in — one day, ten nets, the same ten for everyone.</div>';
 
-  $('histveil').classList.add('show');       // widths are only real once it is laid out
+  /* the whole screen is written before this and nothing is read back after it.
+     there used to be a second pass here: read `clientWidth` off every stamp
+     strip in the list — a forced synchronous layout, on a card that had just
+     been made visible — to work out how many emblems fitted and where a `+n`
+     overflow marker went, mirroring the icon size and gap out of the css into
+     two javascript constants that had to be kept in step by hand. a resize
+     listener then re-ran the whole of openRecord to do it again.
+     ten cells of a fixed width fit by construction, so all of that is gone: one
+     write, no read, no mirror of the css, and nothing to redo when the window
+     changes size — the media query moves the two numbers and the cells follow. */
+  $('histveil').classList.add('show');
   list.scrollTop=keep;
-
-  /* ---- how many stamps fit on the line ----
-     the row is nowrap and the strip is clipped, so nothing can fall to a second
-     line whatever this decides; what it decides is where the +n takes over. one
-     read pass then one write pass, so the whole thing costs a single layout.
-     the two numbers mirror `.dayrow .dfeats svg` and its gap in the css. */
-  const narrow=matchMedia('(max-width:700px)').matches;
-  const ICON=narrow?19:22, GAP=narrow?3:4;
-  const widths=strips.map(s=>s.el.clientWidth);
-  strips.forEach((s,i)=>{
-    const fits=Math.max(0,Math.floor((widths[i]+GAP)/(ICON+GAP)));
-    let shown=s.feats, more=0;
-    // the +n needs a slot of its own, so it takes the last one
-    if(s.feats.length>fits){ shown=s.feats.slice(0,Math.max(0,fits-1)); more=s.feats.length-shown.length }
-    s.el.innerHTML=shown.map(featIcon).join('')
-      +(more?`<em class="dmore" title="${more} more">+${more}</em>`:'');
-  });
 }
-/* the stamp count is measured, so a resize has to measure again */
-let recResizeT=null;
-addEventListener('resize',()=>{
-  if(!$('histveil').classList.contains('show')) return;
-  clearTimeout(recResizeT); recResizeT=setTimeout(openRecord,140);
-});
 
 /* ================= hud ================= */
 
@@ -5056,13 +5706,14 @@ function renderHud(){
      silver, and that is why it is the one chosen.
      this is the share strip too, which is the reason it is worth ten cells of
      the masthead: the day is the same ten for everyone, so the strip compares.
-     it is the one track here that stays DISCRETE while the other two went
-     continuous, and that is not an exception to the family — it is the reason
-     the family is a form rather than a shape. ten nets are ten things, each of
-     which minted a particular rung; averaging them into a length would delete
-     the only reading the strip has. so the object is continuous — one bar, cells
-     meeting edge to edge, hairlines where the 2px gaps were — and the divisions
-     stay exactly as countable as they were. */
+     it is still TEN CELLS underneath — the rung each net minted is still a
+     separate thing, and the strip is still what gets shared — but the divisions
+     between them are no longer drawn, so it reads as one length like the two
+     bays beside it. what that costs is countability WITHIN a run of the same
+     rung: four clean nets in a row are one clean length now and cannot be
+     counted off. the numeral above has always been the count, the boundary into
+     the day ahead is still exactly where you are, and the cells themselves are
+     untouched for anything that reads them. see the note by .track. */
   const D=POLICY.dailyNets;
   // a trial has no ten, so its strip rolls: a band of ten that empties and refills
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
@@ -5071,7 +5722,12 @@ function renderHud(){
      is one `if`, and a track handed a hole should draw a hole rather than throw. */
   paintCells('setmeter',Array.from({length:D},(_,i)=>'var('+(cells[i]?tierCol(cells[i].tier):SETAHEAD)+')'),
     cells.length+' of '+D+' nets cleared');
-  const cur=$('setmeter').children[cells.length];
+  /* the cells persist between renders now (paintCells reuses them so the colour
+     can transition), so `now` has to be cleared off the cell that was carrying
+     it — it used to be discarded for free when the strip was rebuilt. */
+  const strip=$('setmeter');
+  [...strip.children].forEach(c=>c.classList.remove('now'));
+  const cur=strip.children[cells.length];
   if(cur && !r.over) cur.classList.add('now');
   /* nets at or above the clean line, drawn in the clean line's own colour —
      which is what let the word "clean" come off it. the strip beneath is the
@@ -5097,44 +5753,80 @@ function renderHud(){
   $('setnum').textContent=trial?r.cleared.length:Math.max(0,D-r.cleared.length);
 
   /* ---- turns against par ----
-     it counts DOWN, and it is the one reading here that is genuinely continuous:
-     a turn is not a thing you collect, it is distance to a line. so it is one
-     length rather than a row of blocks, and the perfect line is drawn as a
-     change of colour ALONG it — solid while a turn would still leave the net
-     perfect, half-strength while it would still leave it clean. that is the
-     statement the solid and hollow blocks were making, in one object, without
-     this instrument and the day's strip both drawing from the ladder and coming
-     out looking like each other.
-     zero is not failure — the day cannot be failed. past par the bar refills
-     from the left in the neutral, which reads as turns spent beyond the line
-     rather than as a demerit; the rung the net actually mints is the strip's
-     business, and it is a colour, not a grey. */
+     ONE line at a time, and the whole bar is that line.
+
+     it used to draw both lines at once — a solid run for the turns that still
+     left a perfect and a half-strength run for the ones that only left a clean —
+     two bands sharing ten pixels, in which the band you were actually chasing
+     was whichever one you worked out you were standing in. and the two were the
+     same colour in practice: `--hue-soft` mixed `--hue` with the track, which on
+     a bar sitting ON that track is a band you cannot find.
+
+     so the bar is a budget, and there are three of them in sequence. while a
+     perfect is still on, the bar IS the perfect budget: full at the first turn,
+     draining to nothing exactly as the optimum runs out. the turn after that it
+     hands over — refills, and is now the par budget, draining the same way. past
+     par it inverts and builds up from nothing, which is the one reading here
+     that counts UP, because turns over par are the only thing in this game you
+     accumulate rather than spend.
+     each phase gets the whole width, so the same ten pixels answer one question
+     at a time and the numeral beside it always names the line the bar is drawing.
+     zero is still not failure — the day cannot be failed, and the rung the net
+     mints is the strip's business.
+
+     `graded` is the two cases with no perfect to chase: no proved optimum for
+     this net (most of them — see OPTIMA), and a net under descent, which is
+     capped at done. both skip straight to the par budget, which is then the
+     whole of par rather than the part of it past the optimum. */
   const t=r.netMoves, over=t>par;
-  /* half-strength means "still clean, no longer perfect", so it can only exist
-     where a perfect does. with no optimum the whole remaining run is solid — the
-     first cut of this drew it all soft, which put a faint wash in the bay on the
-     shipped path and is precisely the emptiness the redesign is fixing. a net
-     under descent is capped and goes all soft on purpose: every turn left is
-     still worth spending, none of them is worth a perfect any more. */
   const hasOpt=optimum<par, capped=(tier==='done'&&!over);
-  const graded=hasOpt&&!capped;                    // is there a perfect to chase
-  const left=Math.max(0,par-t);
-  const solid=capped?0:Math.max(0,Math.min(left,optimum-t));
-  paintRun('parmeter',
-    over ? 100*Math.min(t-par,par)/par : 100*left/par,
-    over ? [{col:'var(--silver)',grow:1}]
-         : [{col:'var(--hue)',grow:solid},{col:'var(--hue-soft)',grow:left-solid}],
-    over?(t-par)+' turns over par':left+' turns to par');
-  /* the countdown names the nearer line you can still make, and `<=` is what
-     makes it agree with the rung it is counting toward: tierFor awards perfect
-     at moves===optimum, so standing exactly on the optimum has to read "0 to
-     perfect" — one more and it is gone — rather than jumping to the par line a
-     turn early. same shape as 0 to par. `graded` carries the two cases where
-     there is no perfect to chase: no real optimum, and a net descent has
-     already capped. */
+  const graded=hasOpt&&!capped;
+  /* `<=` is what makes this agree with the rung it counts toward: tierFor awards
+     perfect at moves===optimum, so standing exactly on the optimum reads "0 to
+     perfect" — one more and it is gone — rather than jumping to par a turn
+     early. the bar is empty at that moment and that is correct: the budget is
+     spent, and the perfect is still yours until you spend one more. */
   const chasing=graded&&t<=optimum;
-  $('parnum').textContent=over?(t-par):(chasing?optimum-t:par-t);
-  $('parof').textContent=over?'over par':(chasing?'to perfect':'to par');
+  let pct, col, num, unit;
+  if(over){
+    pct=100*Math.min(t-par,par)/par; col='--par-over';
+    num=t-par; unit='over par';
+  } else if(chasing){
+    pct=100*(optimum-t)/optimum;     col='--par-perfect';
+    num=optimum-t; unit='to perfect';
+  } else {
+    /* the par budget is measured from the HANDOVER, not from the optimum, and
+       that is what makes the bar come back FULL. the turn that ends the perfect
+       run is the turn this phase begins on, so the budget is the turns from
+       there to par — `par-optimum-1` — and on that first turn every one of them
+       is still unspent. measuring from the optimum instead left the bar arriving
+       at three quarters, which does not read as replenishing, it reads as the
+       previous phase having glitched.
+       max(1,…) guards a net whose par is one turn past its optimum: the phase is
+       then a single turn wide, and a single turn is a full bar. */
+    const budget=graded?Math.max(1,par-optimum-1):par;
+    pct=100*Math.max(0,Math.min(budget,par-t))/budget; col='--par-par';
+    num=par-t; unit='to par';
+  }
+  /* the handover is a MOVE, not an update. spending one turn is a small step and
+     --t-ui (170ms) is right for it; refilling from empty to a whole new budget is
+     the moment one line is given up and the next taken on, and at 170ms that
+     reads as a flicker rather than as the bar being handed over. so a change of
+     phase gets its own, slower sweep — and only the sweep, so the drain either
+     side of it keeps its own pace. */
+  const meter=$('parmeter'), phase=over?'over':(chasing?'perfect':'par');
+  if(!reduceMotion && meter.dataset.phase && meter.dataset.phase!==phase){
+    const bar=meter.firstElementChild;
+    bar.style.transitionDuration='520ms';
+    clearTimeout(meter.__phaseT);
+    meter.__phaseT=setTimeout(()=>{ bar.style.transitionDuration='' },560);
+  }
+  meter.dataset.phase=phase;
+  paintRun('parmeter',pct,[{col:`var(${col})`,grow:1}],num+' turns '+unit);
+  // the numeral and its unit come off the same branch that drew the bar, so the
+  // two can never name different lines
+  $('parnum').textContent=num;
+  $('parof').textContent=unit;
 
   $('field').classList.toggle('over',!!r.over);
   // silent during ordinary play — it only names a state worth noticing
@@ -5153,69 +5845,179 @@ function renderAll(){
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 
-/* ---- share card: the run rendered as a print plate ---- */
-function shareCardSVG(depth,feats){
-  const W=760,H=470;
-  // never tint the plate with a tier colour, or that tier goes invisible on it
-  const bg=cssv(depth>=5?'--tuerkis':depth>=3?'--gruen':'--dunkelblau');
-  const r=R();
-  const tiles=feats.slice(0,8).map((k,i)=>{
-    const col=i%4, row=Math.floor(i/4);
-    const x=44+col*118, y=214+row*100;
-    const b=store.collection.badges[k]||{tier:'over'};
-    return `<g transform="translate(${x},${y})">
-      <rect x="0" y="0" width="98" height="84" fill="rgba(255,255,255,.14)" stroke="rgba(255,255,255,.5)"/>
-      <rect x="0" y="0" width="98" height="5" fill="${cssv(CARDCOL[b.tier])}" stroke="#fff" stroke-width=".8" stroke-opacity=".7"/>
-      <g transform="translate(27,14) scale(.46)" fill="#fff" style="--emblem:${bg}">${FEATURES[k].p}</g>
-      <text x="49" y="76" text-anchor="middle" font-family="Helvetica,Arial" font-size="10" fill="#fff" opacity=".95">${k}</text>
-    </g>`;
+/* ---- share card: the day rendered as a plate ----
+
+   this is the one thing the game makes that leaves the sharer's screen, and it
+   lands in a feed beside other people's. so everything on it has to be a
+   reading that DIFFERS between two players who both played today — and the day
+   being a fixed ten that cannot be failed kills most of what a run knows about
+   itself. depth is ten for everyone who finishes. the same ten nets free the
+   same features for everyone. par is the same par.
+
+   two things differ, and they are the whole card:
+     the SCORE — turns against par, which the record screen and the masthead
+     both now lead on; and
+     the STRIP — one cell per net in the rung it minted, which is the
+     comparable, Wordle-grade artifact now that everyone plays the same ten.
+
+   what was here led with `depth` at 76px over the words "nets deep" (identical
+   for every finisher), captioned it `n/16 collected` (a finished day frees
+   about fourteen of the sixteen, so it saturates in two or three days — the
+   same terminal counter the record screen and the welcome card have already
+   deleted), listed `features named` and `streak`, and drew eight feature tiles
+   whose emblem marks were forced to white in defiance of markOn. all of that is
+   gone. the sun, the wordmark, the date and the imprint stay: they are the
+   plate, not a reading. */
+
+/* the plate is FIXED and near-black, and that is measured rather than chosen.
+   CARDCOL is canonical by design — two players on different grounds have to
+   post the same card — so the only question is which ground carries canonical
+   green, turquoise and silver at once. contrast against the three CARDCOL
+   values, and against white type:
+     ink   #0E1214   5.84  5.91  3.23   type 18.83
+     dunkelblau      1.67  1.69  1.08   the bulletin's plate: `done` disappears
+     paper #EAE7DF   2.61  2.58  4.72   both live rungs under 3:1
+     white           3.22  3.19  5.83   all clear 3:1 — but the ladder INVERTS,
+                                        silver `done` becoming the loudest mark
+   the ink plate is the only ground where every rung clears 3:1 AND the
+   brightness order agrees with the ladder: perfect brightest, done dimmest. so
+   the card commits to it and does not follow the theme — the same reason
+   --silver-fixed exists, and the same literal markOn already carries for the
+   same reason. */
+const PLATE='#0E1214';
+const PLATEINK=lum(PLATE)>0.192?'#0E1214':'#ffffff';   // the mark rule applied, not asserted
+/* the strip's second channel: the rung as a HEIGHT, so the reading survives a
+   greyscale feed, a colour-blind reader, and the thumbnail a feed actually
+   shows. perfect full, clean two thirds, done one third — the same three
+   fractions the record screen's day bar draws in css (CELLH / .dayrow .dcells
+   i.t1-t3), so a day reads the same on the card as it does in the record.
+   the one deliberate difference is the unreached net. the record row is
+   eighteen pixels tall and draws it as a hairline on the baseline; the card
+   draws it as the empty FRAME the played bars rise inside, because at seventy
+   pixels a frame is what makes a one-third bar read as a third of something,
+   and because it leaves a day left short visibly unfinished.
+   `par` and `over` are the dead tier keys TIERRANK still carries for badges
+   minted under older schemes; they ride with their live equivalents, exactly as
+   they do in CARDCOL. */
+const SHAREFILL={perfect:1, clean:2/3, par:2/3, done:1/3, over:1/3};
+/* and the same ladder in text, for the clipboard fallback. deliberately NOT
+   emoji. the ladder is green, turquoise, silver, and the emoji set has an
+   honest square for exactly one of them: 🟩 is right for perfect, 🟦 is a blue
+   standing in for a turquoise, and there is no grey square at all — ⬜ is the
+   brightest character in the set, so the bottom rung would draw the eye first
+   and the strip would say the opposite of the ladder. (what was here was worse
+   still: 🟨 for perfect, against a ladder whose perfect is green.) the block
+   characters carry the card's own height encoding instead, and cannot
+   contradict a colour they never state. */
+const SHAREBLOCK={perfect:'█', clean:'▅', par:'▅', done:'▃', over:'▃'};
+const SHAREEMPTY='▁';                 // a net of the day still to play
+const CARD_W=760, CARD_H=470;
+
+/* the two sums the whole card is built from, read off the run itself: the
+   cleared nets' own turns and par, which is exactly the pair stampToday writes
+   to the day row and the pair the run-over bulletin totals. */
+function shareFigures(r){
+  const cells=(r&&r.cleared)||[];
+  return {cells,
+    turns:cells.reduce((a,c)=>a+(c.moves||0),0),
+    par:cells.reduce((a,c)=>a+(c.par||0),0),
+    slots:Math.max(POLICY.dailyNets,cells.length)};   // a time trial runs past ten
+}
+function shareCardSVG(){
+  const r=R(), W=CARD_W, H=CARD_H, M=44, RX=W-M;
+  const {cells,turns,par,slots}=shareFigures(r);
+  const played=cells.length>0;
+  const sp=scoreParts(turns-par);
+  /* nothing cleared is not level par, it is a day not started. the figure says
+     so rather than printing a score nobody played for. */
+  const fig=played?sp.fig:'0', word=played?sp.word:'nets played';
+  const numeric=/^\d+$/.test(fig);
+
+  /* the strip. `slots` frames on one baseline; a played net rises out of its
+     frame to the height of its rung, an unplayed one stays an empty frame. the
+     frame is what makes a `done` cell read as a third of something rather than
+     as a small mark on its own, and it is what makes the day ahead visible
+     without needing a colour of its own. */
+  const SY=312, SH=72, GAP=slots>12?4:8, CW=(RX-M-(slots-1)*GAP)/slots;
+  const strip=Array.from({length:slots},(_,i)=>{
+    const x=(M+i*(CW+GAP)).toFixed(1), w=CW.toFixed(1), c=cells[i];
+    const frame=`<rect x="${x}" y="${SY}" width="${w}" height="${SH}" fill="none" stroke="${PLATEINK}" stroke-opacity=".3"/>`;
+    if(!c) return frame;
+    const h=Math.round(SH*(SHAREFILL[c.tier]||SHAREFILL.done));
+    return frame+`<rect x="${x}" y="${SY+SH-h}" width="${w}" height="${h}" fill="${cssv(CARDCOL[c.tier])}"/>`;
   }).join('');
-  // tier squares carry a white outline so a clean/orange net still reads on an orange field
-  const ladder=r.cleared.slice(0,26).map((c,i)=>
-    `<rect x="${44+i*22}" y="170" width="15" height="15" fill="${cssv(CARDCOL[c.tier])}" stroke="#fff" stroke-opacity=".75"/>`).join('');
+
+  /* the key. the card lands in front of people who have never played, and a bar
+     chart of an invented ladder is decoration to them. three cells at the three
+     heights, in the three colours, named. */
+  const LY=414, KW=11, KH=20;
+  let kx=M;
+  const key=['perfect','clean','done'].map(name=>{
+    const kh=Math.round(KH*SHAREFILL[name]);
+    const g=`<rect x="${kx}" y="${LY-KH}" width="${KW}" height="${KH}" fill="none" stroke="${PLATEINK}" stroke-opacity=".3"/>`
+      +`<rect x="${kx}" y="${LY-kh}" width="${KW}" height="${kh}" fill="${cssv(CARDCOL[name])}"/>`
+      +`<text x="${kx+KW+13}" y="${LY-4}" font-size="14" letter-spacing="2" fill-opacity=".8">${name}</text>`;
+    kx+=KW+13+name.length*9.3+22;
+    return g;
+  }).join('');
+  /* the only states the strip cannot draw for itself: a day left short says how
+     far it got, and a trial says it is not a day at all. a finished daily set
+     says nothing, because ten of ten is the same for everyone who got there. */
+  const note=isTrial() ? 'time trial'
+    : (played && cells.length<POLICY.dailyNets) ? `${cells.length} of ${POLICY.dailyNets} nets` : '';
+
+  // the munich sun, the same fourteen struck arcs the bulletins draw
   const sun=Array.from({length:14},(_,i)=>{
     const a=i*(360/14)*Math.PI/180;
-    return `<line x1="${(700+Math.cos(a)*7).toFixed(1)}" y1="${(424+Math.sin(a)*7).toFixed(1)}" x2="${(700+Math.cos(a+.22)*19).toFixed(1)}" y2="${(424+Math.sin(a+.22)*19).toFixed(1)}"/>`;
+    return `<line x1="${(694+Math.cos(a)*8).toFixed(1)}" y1="${(70+Math.sin(a)*8).toFixed(1)}" x2="${(694+Math.cos(a+.22)*22).toFixed(1)}" y2="${(70+Math.sin(a+.22)*22).toFixed(1)}"/>`;
   }).join('');
+
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-    <rect width="${W}" height="${H}" fill="${bg}"/>
-    <g font-family="Helvetica,Arial" fill="#fff">
-      <text x="44" y="78" font-size="44" font-weight="700" letter-spacing="-1">probe</text>
-      <text x="44" y="102" font-size="12" letter-spacing="3" opacity=".85">${today()}</text>
-      <text x="716" y="84" font-size="76" font-weight="300" text-anchor="end" letter-spacing="-3">${depth}</text>
-      <text x="716" y="106" font-size="11" letter-spacing="3" text-anchor="end" opacity=".85">nets deep</text>
-      <line x1="44" y1="130" x2="716" y2="130" stroke="#fff" opacity=".45"/>
-      <text x="44" y="154" font-size="12" letter-spacing="2.4" opacity=".9">${feats.length} features named · ${Object.keys(store.collection.badges).length}/${FKEYS.length} collected · streak ${store.meta.streak||1}</text>
-      ${ladder}
-      ${tiles}
-      <g stroke="#fff" stroke-width="2.2" opacity=".5">${sun}</g>
-      <text x="44" y="430" font-size="10" letter-spacing="2.6" opacity=".75">untangling superposed features · after otl aicher, munich 1972</text>
+    <rect width="${W}" height="${H}" fill="${PLATE}"/>
+    <g font-family="Helvetica,Arial" fill="${PLATEINK}">
+      <text x="${M}" y="76" font-size="46" font-weight="700" letter-spacing="-1.4">probe</text>
+      <text x="${M}" y="102" font-size="14" letter-spacing="3.4" fill-opacity=".8">${dayLabel(r.day||today())}</text>
+      <g stroke="${PLATEINK}" stroke-width="2.4" stroke-opacity=".55">${sun}</g>
+      <line x1="${M}" y1="126" x2="${RX}" y2="126" stroke="${PLATEINK}" stroke-opacity=".32"/>
+      <text x="${M}" y="236" font-size="${numeric?126:88}" font-weight="300" letter-spacing="${numeric?-5:-2}">${fig}</text>
+      <text x="${M+2}" y="274" font-size="22" letter-spacing="3.6" fill-opacity=".92">${word}</text>
+      ${played?`<text x="${RX}" y="274" font-size="15" letter-spacing="1.6" text-anchor="end" fill-opacity=".72">${turns} turns · par ${par}</text>`:''}
+      <line x1="${M}" y1="296" x2="${RX}" y2="296" stroke="${PLATEINK}" stroke-opacity=".32"/>
+      ${strip}
+      ${key}
+      ${note?`<text x="${RX}" y="${LY-4}" font-size="14" letter-spacing="2" text-anchor="end" fill-opacity=".8">${note}</text>`:''}
+      <text x="${M}" y="450" font-size="12" letter-spacing="2.2" fill-opacity=".7">untangling superposed features · after otl aicher, munich 1972</text>
     </g>
   </svg>`;
 }
-async function shareCardBlob(depth,feats){
-  const svg=shareCardSVG(depth,feats);
+async function shareCardBlob(){
+  const svg=shareCardSVG();
   const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
   const img=new Image();
   await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});
   const c=document.createElement('canvas');
-  c.width=1520; c.height=940;
+  c.width=CARD_W*2; c.height=CARD_H*2;
   const ctx=c.getContext('2d');
   ctx.scale(2,2); ctx.drawImage(img,0,0);
   return await new Promise(r=>c.toBlob(r,'image/png'));
 }
-async function copyShare(depth,strip,feats){
-  const txt=`probe · ${today()}\ndepth ${depth} · ${Object.keys(store.collection.badges).length}/${FKEYS.length} features\n${strip}`;
+async function copyShare(){
+  const r=R(), day=r.day||today();
+  const {cells,turns,par,slots}=shareFigures(r);
+  // the same two readings the plate carries, in characters that survive a chat
+  const strip=Array.from({length:slots},(_,i)=>
+    cells[i] ? (SHAREBLOCK[cells[i].tier]||SHAREBLOCK.done) : SHAREEMPTY).join('');
+  const txt=`probe · ${dayLabel(day)}\n${cells.length?fmtScore(turns-par)+' · '+turns+' turns':'not played'}\n${strip}`;
   // try the image first, fall back to text, then to a download
   try{
-    const blob=await shareCardBlob(depth,feats||[]);
+    const blob=await shareCardBlob();
     if(blob && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
       await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
       toast('card copied'); return;
     }
     if(blob){
       const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob); a.download=`probe-${today()}.png`;
+      a.href=URL.createObjectURL(blob); a.download=`probe-${day}.png`;
       a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
       toast('card saved'); return;
     }
@@ -5329,8 +6131,13 @@ function introPlate(){
 }
 function renderIntro(mode){
   const b=$('introbody');
-  document.querySelector('.intro-card').classList.toggle('plain',mode==='rules');
-  if(mode!=='rules' && !$('introart').firstChild) $('introart').innerHTML=introPlate();
+  /* the welcome card is plain too. it used to lead with a plate of board artwork
+     — a drawing of a tangle, above two paragraphs describing a tangle, in front
+     of the actual tangle the button drops you into. three tellings of one thing,
+     and the only one that can teach you anything is the third. */
+  const plain = mode==='rules' || mode==='welcome';
+  document.querySelector('.intro-card').classList.toggle('plain',plain);
+  if(!plain && !$('introart').firstChild) $('introart').innerHTML=introPlate();
   const got=Object.keys(store.collection.badges).length;
   if(mode==='rules'){
     /* a legend, not a lesson. the guided net teaches on first play, so what is
@@ -5352,11 +6159,17 @@ function renderIntro(mode){
       ten nets a day &middot; within par is <b>clean</b> &middot; finishing is <b>done</b> &middot; a day cannot be failed</div>
       <button class="intro-start" id="introstart">back to the net</button>`;
   } else if(mode==='welcome'){
+    /* one sentence about the game, one about why it is worth playing, and the
+       button. what went: "a card on the board walks you through the first one",
+       which announced the coach card the player is about to be shown anyway —
+       a card telling you about a card. and the SAE line's second half, which
+       explained a mechanism nobody has seen yet; the claim is the hook, the
+       explanation belongs in the rules card where the marks are there to hang
+       it on. */
     b.innerHTML=`<div class="intro-title">probe</div>
       <div class="intro-sub">a game about features</div>
       <p class="intro-lead">a small net has learned a few features and threaded them through the same neurons. pull them apart.</p>
-      <p class="intro-lead">a card on the board walks you through the first one.</p>
-      <div class="intro-note">a sparse autoencoder does this for real: separating superposed features so a net can be read.</div>
+      <div class="intro-note">a sparse autoencoder does this for real.</div>
       <button class="intro-start" id="introstart">untangle your first net</button>`;
   } else {
     const days=Math.max(1,store.meta.streak||1);
@@ -5375,13 +6188,21 @@ function renderIntro(mode){
        score against par is the reading that moves, and it is the same one the
        record leads on. */
     const best=dayRows().map(dayScore).filter(v=>v!=null).sort((a,b2)=>a-b2)[0];
+    /* two readings, not four. `features at clean` and `superposed pairs` are
+       both collection counters, and this game is not scored on collecting — the
+       same objection that removed `16/16` from the record. worse, they were the
+       two BIGGEST numbers on the card a returning player sees first, so the
+       screen opened by telling them how much of a set they owned rather than
+       how they had been playing.
+       the `—` is gone with them. it meant "no score yet" and sat one stroke away
+       from the minus sign it shared a slot with, so a new player's card read
+       `— best day` and looked like a negative number. a day that has not been
+       scored says so in words. */
     b.innerHTML=`<div class="intro-title">welcome back</div>
       <div class="intro-sub">today's ten · the same ten for everyone</div>
-      <div class="wbstats">
-        <div><b>${days}</b><span>day streak</span></div>
-        <div><b>${best==null?'—':fmtScore(best)}</b><span>best day</span></div>
-        <div><b>${clean}/${FKEYS.length}</b><span>features at clean</span></div>
-        <div><b>${pairsGot}/${pairsAll}</b><span>superposed pairs</span></div>
+      <div class="wbstats wbstats-2">
+        <div><b>${days}</b><span>day${days===1?'':'s'} running</span></div>
+        <div><b>${best==null?'not yet':fmtScore(best)}</b><span>best day</span></div>
       </div>
       <div class="wbrow">${FKEYS.map(k=>{
         const bd=store.collection.badges[k];
@@ -5405,6 +6226,15 @@ function renderIntro(mode){
 }
 $('helpbtn').onclick=()=>{renderIntro('rules');showVeil('introveil')};
 $('themebtn').onclick=()=>setTheme(themeNow()==='light'?'dark':'light');
+/* the solve button. playtesting a ramp means reaching net eight, and reaching
+   net eight by hand is most of an evening — so the fastest honest way to look at
+   the deep nets is to walk the solver down to them. it is gated on DEV, the same
+   flag the unlimited-runs and new-run controls use, so it exists on localhost
+   and on nothing else. */
+if(DEV){
+  $('solvebtn').hidden=false;
+  $('solvebtn').onclick=()=>{ try{ window.__solveNet() }catch(e){ toast('solve failed · '+e.message) } };
+}
 document.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   document.querySelectorAll('.veil.show').forEach(dismissVeil);
@@ -5481,6 +6311,12 @@ window.__solveNet=()=>{
 };
 
 renderAll();
+/* the first build already publishes the letterbox through applyOrientation,
+   but that is measured mid-build. do it once more against the settled layout,
+   so the first card of the session is anchored to where the plate actually
+   ended up rather than to where it was halfway through being drawn. */
+publishPlateInset();
+addEventListener('load',publishPlateInset);
 // first visit gets the short welcome; a returning player gets it once a day
 if(!store.tutorialDone){
   if(!store.introSeen){renderIntro('welcome'); showVeil('introveil')}
