@@ -702,8 +702,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .field.dimthreads .thread{opacity:.18}
   .field.dimthreads .thread.lit{opacity:1}
   .field.dimthreads .thread.freedt.lit{opacity:.62}
-  /* translucent so a thread or crossing passing beneath still reads through */
-  .field .mnode{fill:var(--node-fill);r:var(--nr);stroke-width:var(--nw);
+  /* translucent so a thread or crossing passing beneath still reads through.
+     `r` IS A LENGTH AND MUST CARRY A UNIT. it was `r:var(--nr)`, and --nr is a
+     bare number so the tokens stay usable in the scale() factors below. chrome
+     accepts a unitless r as user units; WebKit does not — it is invalid, and an
+     invalid value substituted through var() computes to the property's INITIAL
+     value, which for r is 0. a css declaration still beats the r="10"
+     presentation attribute, so on iphone every neuron drew at radius zero and
+     vanished while the threads, which have no r, stayed. multiply by 1px. */
+  .field .mnode{fill:var(--node-fill);r:calc(var(--nr) * 1px);stroke-width:var(--nw);
     transition:opacity .4s,r var(--t-lift) var(--ease-out),stroke-width var(--t-lift) var(--ease-out)}
   /* the grab hand is on the FIELD, set from pick() — see hoverNode. it used to
      be on .mnode, which is the drawn circle and less than half the radius a
@@ -752,7 +759,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      ring came back the mark has been drawing as one fat two-tone ring, not as
      two. half of --nr, so it scales with the phone treatment like everything
      else here. */
-  .field .mnode2{r:calc(var(--nr) * .5)}
+  .field .mnode2{r:calc(var(--nr) * .5px)}
   /* ---------- and the halo that says to act on it ----------
      the superposed neuron is the only node you tap rather than drag, and the
      only one that costs a turn on its own. the double ring says "two features
@@ -787,10 +794,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     transform:scale(calc(var(--nr) / 10));
     animation:sharedping 3.2s linear infinite}
   @keyframes sharedping{
-    0%,17%{r:15.6;opacity:.62}
-    58%{r:22;opacity:0}
-    59%,70%{r:15.6;opacity:0}
-    100%{r:15.6;opacity:.62}
+    0%,17%{r:15.6px;opacity:.62}
+    58%{r:22px;opacity:0}
+    59%,70%{r:15.6px;opacity:0}
+    100%{r:15.6px;opacity:.62}
   }
 
   /* ---------- the guided net's spotlight ----------
@@ -864,10 +871,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      not there and the standing ring is the whole mark. */
   .field .tutping{animation:tutping 2.6s linear infinite}
   @keyframes tutping{
-    0%{r:24;opacity:0}
+    0%{r:24px;opacity:0}
     14%{opacity:.5}
-    66%{r:33;opacity:0}
-    100%{r:33;opacity:0}
+    66%{r:33px;opacity:0}
+    100%{r:33px;opacity:0}
   }
   /* and where to take it: a leader line to a ghost of the neuron on the spot.
      both hairline, both dashed, both ink — a dimension drawing laid over the
@@ -888,7 +895,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      physics stops its drift and its spring dead — the lift is the only thing
      that confirms the grab took, and it has to arrive within a frame or two.
      it is below .merged so a superposed neuron picked up still lifts. */
-  .field .mnode.grabbed{r:calc(var(--nr) * 1.32);stroke-width:calc(var(--nw) * 1.3);
+  .field .mnode.grabbed{r:calc(var(--nr) * 1.32px);stroke-width:calc(var(--nw) * 1.3);
     transition:r var(--t-press) var(--ease-out),stroke-width var(--t-press) var(--ease-out)}
   /* and the landing: one flick of the ring as it is let go, or as a neuron
      arrives on its mark in the settle */
