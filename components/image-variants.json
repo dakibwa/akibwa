@@ -761,6 +761,28 @@
       }
     ]
   },
+  "navDropdown:/project-art/personal/probe-symbol.webp": {
+    "source": "/project-art/personal/probe-symbol.webp",
+    "slot": "navDropdown",
+    "ratio": 4.7778,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "33d7331b68dcca3f",
+    "variants": [
+      {
+        "width": 323,
+        "height": 68,
+        "avif": {
+          "src": "/_img/project-art/personal/probe-symbol-navDropdown-323.avif",
+          "bytes": 1952
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/probe-symbol-navDropdown-323.webp",
+          "bytes": 2126
+        }
+      }
+    ]
+  },
   "projectCard:/project-art/personal/chorus-symbol.webp": {
     "source": "/project-art/personal/chorus-symbol.webp",
     "slot": "projectCard",
@@ -991,94 +1013,48 @@
       }
     ]
   },
-  "projectCard:/project-art/personal/fellrun-ridge-banner.webp": {
-    "source": "/project-art/personal/fellrun-ridge-banner.webp",
+  "projectCard:/project-art/personal/probe-symbol.webp": {
+    "source": "/project-art/personal/probe-symbol.webp",
     "slot": "projectCard",
     "ratio": 1.5,
-    "sourceWidth": 760,
-    "sourceHeight": 428,
-    "sourceHash": "3f5664662b88b3b6",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "33d7331b68dcca3f",
     "variants": [
       {
         "width": 303,
         "height": 202,
         "avif": {
-          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-303.avif",
-          "bytes": 8181
+          "src": "/_img/project-art/personal/probe-symbol-projectCard-303.avif",
+          "bytes": 2382
         },
         "webp": {
-          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-303.webp",
-          "bytes": 9928
+          "src": "/_img/project-art/personal/probe-symbol-projectCard-303.webp",
+          "bytes": 2656
         }
       },
       {
         "width": 390,
         "height": 260,
         "avif": {
-          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-390.avif",
-          "bytes": 13025
+          "src": "/_img/project-art/personal/probe-symbol-projectCard-390.avif",
+          "bytes": 2763
         },
         "webp": {
-          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-390.webp",
-          "bytes": 16670
+          "src": "/_img/project-art/personal/probe-symbol-projectCard-390.webp",
+          "bytes": 3538
         }
       },
       {
         "width": 491,
         "height": 327,
         "avif": {
-          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-491.avif",
-          "bytes": 23756
+          "src": "/_img/project-art/personal/probe-symbol-projectCard-491.avif",
+          "bytes": 3690
         },
         "webp": {
-          "src": "/_img/project-art/personal/fellrun-ridge-banner-projectCard-491.webp",
-          "bytes": 30246
-        }
-      }
-    ]
-  },
-  "projectCard:/project-art/personal/fellrun-ridge.webp": {
-    "source": "/project-art/personal/fellrun-ridge.webp",
-    "slot": "projectCard",
-    "ratio": 1.5,
-    "sourceWidth": 600,
-    "sourceHeight": 338,
-    "sourceHash": "3638d11a8488957c",
-    "variants": [
-      {
-        "width": 303,
-        "height": 202,
-        "avif": {
-          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-303.avif",
-          "bytes": 8422
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-303.webp",
-          "bytes": 10338
-        }
-      },
-      {
-        "width": 390,
-        "height": 260,
-        "avif": {
-          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-390.avif",
-          "bytes": 13480
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-390.webp",
-          "bytes": 17012
-        }
-      },
-      {
-        "width": 491,
-        "height": 327,
-        "avif": {
-          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-491.avif",
-          "bytes": 24436
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/fellrun-ridge-projectCard-491.webp",
-          "bytes": 30212
+          "src": "/_img/project-art/personal/probe-symbol-projectCard-491.webp",
+          "bytes": 4726
         }
       }
     ]

@@ -42,15 +42,15 @@ const artworkBySlug = {
     selectorSubjectPosition: "50% 50%",
     expandedBannerPosition: "50% 50%"
   },
-  fellrun: {
-    src: "/project-art/personal/fellrun-ridge.webp",
-    bannerSrc: "/project-art/personal/fellrun-ridge-banner.webp",
-    navBannerSrc: "/project-art/personal/fellrun-ridge-banner.webp",
-    variant: "knowledge",
-    detailBannerPosition: "50% 52%",
-    selectorBannerPosition: "50% 52%",
-    selectorSubjectPosition: "50% 52%",
-    expandedBannerPosition: "50% 52%"
+  probe: {
+    src: "/project-art/personal/probe-symbol.webp",
+    bannerSrc: "/project-art/personal/probe-symbol.webp",
+    navBannerSrc: "/project-art/personal/probe-symbol.webp",
+    variant: "symbol",
+    detailBannerPosition: "50% 50%",
+    selectorBannerPosition: "50% 50%",
+    selectorSubjectPosition: "50% 50%",
+    expandedBannerPosition: "50% 50%"
   },
   meditator: {
     src: "/project-art/personal/meditator-symbol.webp",

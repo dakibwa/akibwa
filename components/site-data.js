@@ -139,16 +139,18 @@ export const personalProjects = [
   },
   {
     number: "05",
-    slug: "fellrun",
-    title: "Fellrun",
-    type: "Browser game",
-    statusLabel: "Dev",
-    dashboardStatus: "In development",
-    isLaunchable: false,
-    summary: "A run through a Yorkshire dale, at speed.",
-    tags: ["Third person", "Momentum", "Procedural terrain"],
-    mode: "preview",
-    cta: "In development"
+    slug: "probe",
+    title: "Probe",
+    type: "Daily puzzle",
+    dashboardLabel: "Probe",
+    dashboardStatus: "Live on Akibwa",
+    summary: "Pull tangled features apart, ten nets a day.",
+    tags: ["Daily nets", "Untangling", "Interpretability"],
+    mode: "embed",
+    embedUrl: "/probe/index.html",
+    fallbackHref: "/probe/",
+    useLocalFrame: false,
+    cta: "Open on Akibwa"
   },
   {
     number: "06",

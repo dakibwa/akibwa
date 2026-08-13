@@ -29,7 +29,8 @@ const projectAccents = {
   chorus: "#ff6f1a",
   "cover-collision": "#e2556b",
   "one-bag": "#2f7d57",
-  meditator: "#3a5a45"
+  meditator: "#3a5a45",
+  probe: "#6e5da8"
 };
 
 /* Light and mid tones from each area's artwork, used by the

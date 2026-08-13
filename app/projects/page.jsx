@@ -4,7 +4,7 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.projects,
   description:
-    "Things I wanted to exist: Chorus, a listening archive; Cover Collision, an album-art series; and three more in progress."
+    "Things I wanted to exist: Chorus, a listening archive; Probe, a daily untangling puzzle; and four more."
 };
 
 export default function ProjectsRoute() {

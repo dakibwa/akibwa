@@ -1,6 +1,14 @@
 {
-  "updated": "2026-07-23",
+  "updated": "2026-08-13",
   "surfaces": [
+    {
+      "id": "probe",
+      "title": "Probe",
+      "route": "/probe",
+      "kind": "static-directory",
+      "visibility": "public",
+      "staticPath": "public/probe/index.html"
+    },
     {
       "id": "portuguese-with-ines",
       "title": "Português com a Inês",
