@@ -432,6 +432,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .btns{display:flex;gap:6px;align-self:center}
   /* a press is asymmetric: down fast under the finger, back up slowly. that one
      detail is most of what makes a button feel like it has any mass. */
+  /* `display:flex` below outranks the user agent's own `[hidden]{display:none}`,
+     so a masthead button carrying the hidden attribute still drew. that shipped
+     the DEV-only solve control to the live site as a visible dead button — it had
+     no handler off localhost, but a button that plays the game for you has no
+     business being on screen at all. any rule that sets display has to say what
+     hidden means, or hidden means nothing. */
+  .help[hidden]{display:none}
   .help{
     min-width:42px;height:34px;padding:0 9px;border:1px solid var(--silver);background:transparent;
     font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;
