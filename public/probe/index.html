@@ -5787,34 +5787,40 @@ function renderHud(){
      early. the bar is empty at that moment and that is correct: the budget is
      spent, and the perfect is still yours until you spend one more. */
   const chasing=graded&&t<=optimum;
-  let pct, col, num, unit;
+  /* BOTH LINES, ON ONE BAR, FROM THE FIRST TURN. the bar is the whole run to
+     par, and the green head of it is the part that would still leave a perfect —
+     so the join between green and turquoise IS the perfect line, standing where
+     it will be, and you can see from the opening turn how much of the run is
+     perfect and how much is only clean.
+     it drains from that end, so the green shortens first: when it runs out you
+     have spent the perfect and the turquoise is what is left to par. no refill,
+     because there is nothing to hand over to — the par run was always on the bar,
+     you were simply looking at the front of it.
+     this replaces a version that gave each line the whole width in turn. that one
+     read well moment to moment and could not answer the question the owner
+     actually had, which is where par sits while you are still chasing perfect.
+     the WORDING still switches — the numeral names the nearer line you can still
+     make — so the reading changes hands even though the bar does not. */
+  const left=Math.max(0,par-t);
+  const perfectLeft=graded?Math.max(0,Math.min(left,optimum-t)):0;
+  let pct, segs, num, unit;
   if(over){
-    pct=100*Math.min(t-par,par)/par; col='--par-over';
+    pct=100*Math.min(t-par,par)/par;
+    segs=[{col:'var(--par-over)',grow:1}];
     num=t-par; unit='over par';
-  } else if(chasing){
-    pct=100*(optimum-t)/optimum;     col='--par-perfect';
-    num=optimum-t; unit='to perfect';
   } else {
-    /* the par budget is measured from the HANDOVER, not from the optimum, and
-       that is what makes the bar come back FULL. the turn that ends the perfect
-       run is the turn this phase begins on, so the budget is the turns from
-       there to par — `par-optimum-1` — and on that first turn every one of them
-       is still unspent. measuring from the optimum instead left the bar arriving
-       at three quarters, which does not read as replenishing, it reads as the
-       previous phase having glitched.
-       max(1,…) guards a net whose par is one turn past its optimum: the phase is
-       then a single turn wide, and a single turn is a full bar. */
-    const budget=graded?Math.max(1,par-optimum-1):par;
-    pct=100*Math.max(0,Math.min(budget,par-t))/budget; col='--par-par';
-    num=par-t; unit='to par';
+    pct=100*left/par;
+    segs=[{col:'var(--par-perfect)',grow:perfectLeft},
+          {col:'var(--par-par)',    grow:left-perfectLeft}];
+    num=chasing?optimum-t:par-t;
+    unit=chasing?'to perfect':'to par';
   }
-  /* the handover is a MOVE, not an update. spending one turn is a small step and
-     --t-ui (170ms) is right for it; refilling from empty to a whole new budget is
-     the moment one line is given up and the next taken on, and at 170ms that
-     reads as a flicker rather than as the bar being handed over. so a change of
-     phase gets its own, slower sweep — and only the sweep, so the drain either
-     side of it keeps its own pace. */
-  const meter=$('parmeter'), phase=over?'over':(chasing?'perfect':'par');
+  /* crossing par is the one moment the bar does something other than shorten: it
+     empties, then starts filling again from the other end, and at --t-ui (170ms,
+     the hover speed) that reversal reads as a glitch rather than as a turn. so
+     that ONE change gets a slower sweep. the perfect line needs none — the bar
+     simply keeps draining through it, which is the point of drawing both. */
+  const meter=$('parmeter'), phase=over?'over':'under';
   if(!reduceMotion && meter.dataset.phase && meter.dataset.phase!==phase){
     const bar=meter.firstElementChild;
     bar.style.transitionDuration='520ms';
@@ -5822,7 +5828,7 @@ function renderHud(){
     meter.__phaseT=setTimeout(()=>{ bar.style.transitionDuration='' },560);
   }
   meter.dataset.phase=phase;
-  paintRun('parmeter',pct,[{col:`var(${col})`,grow:1}],num+' turns '+unit);
+  paintRun('parmeter',pct,segs,num+' turns '+unit);
   // the numeral and its unit come off the same branch that drew the bar, so the
   // two can never name different lines
   $('parnum').textContent=num;
