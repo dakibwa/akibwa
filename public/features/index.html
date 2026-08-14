@@ -582,6 +582,18 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .unit-par{--par-perfect:var(--gelb);
             --par-par:var(--tuerkis);
             --par-over:var(--violett)}
+  /* ---- and past twice par, the ground under the bar ----
+     the overspend bar wraps rather than pinning — see LAPCOL, which owns the
+     colours and the reason there are three of them. what belongs here is only
+     the ground: on any lap after the first, the track behind the run carries
+     the colour the run just FINISHED in, so a bar that has just filled and a
+     bar that has just emptied are the same pixels and the wrap has nothing to
+     flash. lap zero falls back to the bare track, which is what crossing par
+     has always looked like.
+     written with both classes on purpose. `.track` sets this background eighty
+     lines below and would otherwise win on source order alone, which is a way
+     for the bay's colours to stop living in the bay's own block. */
+  .track.parmeter{background:var(--lap-under,var(--rule))}
   /* `--set-ahead` was declared here: silver mixed 42% into the track, a bespoke
      grey for the day still to play. it is gone, and so is the mix. no rung is a
      neutral any more, so the day ahead is simply the bare track — the same
@@ -2691,9 +2703,29 @@ const GEN_VERSIONS=[
        split:'vertical'  the halves part up and down, never sideways
        merge:'widen'     keep looking for a pair rather than drop a superposition
        pinFill:true      a pin lands somewhere rather than being quietly skipped
-       parMode:'greedy'  par is the cheapest walkthrough found, not the first one */
+       parMode:'greedy'  par is the cheapest walkthrough found, not the first one
+
+     v5 IS AMENDED, AND IT IS THE ONLY ENTRY THAT EVER HAS BEEN. the table is
+     frozen because restating an entry rewrites every day it owns, and v5 owns
+     exactly one: v6 starts on 2026-08-15, the morning after v5's `from`, so the
+     whole blast radius of this line is 2026-08-14 — checked against genFor, not
+     assumed. the owner asked for it on that day knowing the cost.
+       rung:'gap'  clean is held at least one turn above perfect
+     v5 has no parSlack, so par IS plan.route, and the table's optimum for a v5
+     net is that same route — the two lines landed on top of each other and the
+     `flat` reading threw the top rung away on 7 of the day's 10 nets. net 3 read
+     optimum 4 / par 4 and could mint nothing but clean.
+     parSlack:3 is the obvious fix and it is the wrong one. spec.minX/maxX are
+     cut from plan.par, so slack moves the salt-acceptance band and REDRAWS the
+     boards — under everyone playing the day, and out from under the OPTIMA row
+     measured against them. `rung` is read at scoring time, after the board is
+     settled, so today's ten are untouched geometry and only the clean line moves.
+     it moves one way. par rises by a turn on the seven nets where the lines
+     collided and nowhere else, so a net that scored `done` at route+1 now scores
+     `clean` and one that matched the route now scores `perfect`: every run
+     already recorded today either keeps its tier or gains one, and none loses. */
   { v:5, from:'2026-08-14', par:'family', layout:'families',
-    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', rung:'gap',
     feats:['weather','birds','tools','music','citrus','chess','water','night',
            'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] },
   /* v6 changes no geometry at all — the boards are v5's, seed for seed. it
@@ -2753,17 +2785,99 @@ const GEN_VERSIONS=[
     split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
     splitPart:'clear', optimum:'route',
     feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] },
+  /* v9 changes no geometry: v8's boards, seed for seed, checked by hash over
+     2026-08-18 … 2036-08-18. it changes where the TOP rung stands.
+       rung:'ramp'  perfect sits 0, 1 or 2 turns above the true optimum, by how
+                    much the net is carrying, and clean is derived to stand at
+                    least one turn above THAT.
+     v8 made perfect the plan's own cheapest route, which is the right number to
+     measure against and the wrong one to demand: it asks a player to match, on
+     the nose, the best line the generator knows, on a net carrying five threads
+     and two pins. the owner's rule is that perfect should be close to optimal
+     rather than on it — "maybe 1 or 2 over depending on the difficulty" — so the
+     opening two-thread nets are still asked for the optimum exactly and the line
+     loosens as the day's ingredients arrive. see graceFor for the reading.
+     the second half matters more than the first. up to here the two lines were
+     found separately and COMPARED, and a perfect that failed to land under par
+     was dropped — which is how a day ends up with seven nets scored on two rungs
+     (see v5). from `gap` onward clean is derived from perfect rather than tested
+     against it, so the ladder has three rungs by construction and no arithmetic
+     can collapse it. on a v9 net clean lands on v8's par anyway, every time,
+     because grace caps at 2 and parSlack is 3 — the derivation is a floor that
+     is never the binding number here, and it is written so that a later version
+     moving parSlack cannot silently take the rung away again.
+     `from` is the day after v8's, so v8 keeps the single day it was written for
+     and no day that has been played changes rungs. */
+  { v:9, from:'2026-08-18', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'route', rung:'ramp',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] },
+  /* v9 puts a CHORD in the thread, and it is the first change to what a feature
+     IS since the game was a scatter.
+       chord:'one'    one extra edge per thread, from a loose end back into its
+                      own run, wherever the solved figure has room for it
+       selfX:'count'  a thread crossing its own line is a crossing, on every
+                      thread, chorded or not
+     up to v8 a feature was strictly a path: neuron i joined i-1 and i+1 and
+     nothing else, degree never above two. so untangling one was sorting a
+     single sequence, and the line had no inside — it could be beside a neuron
+     but never around it. a chord ties one end back in at some interior neuron,
+     which makes the thread a run with a loop on it: it encloses, it can meet
+     ITSELF, and the shape has a name you can say out loud.
+
+     WHY IT IS STILL ALWAYS SOLVABLE, and this is the only thing about it that
+     really matters. the guarantee has never been that a thread's graph is
+     planar in the abstract — a planar graph can still be undrawable at the
+     positions a board actually offers — it is that the generator STARTS from a
+     crossing-free drawing at real coordinates and hands the player a
+     permutation of it. that argument is untouched here, and the chord is made
+     to join it rather than to test it: famChord picks an edge only after
+     measuring it against the finished figure, at the coordinates that figure
+     uses, and takes it only if it crosses nothing there and stands a clearance
+     clear of every neuron it passes. an edge that cannot pass is not drawn.
+     famCrossFree then re-proves the whole figure, chords and all, before the
+     net is allowed to ship. so there is no retry-and-hope and no sampling:
+     every chord on every board was individually checked against the drawing it
+     ships in, and if a family offers none the net is exactly v8's.
+
+     the figure it is measured against is the SPLIT one — every superposition
+     parted and both halves home — because that is the board the player ends on.
+     a merged neuron is standing in two threads' lists at one slot, and the
+     thread that lent it the seat gets its own seat back the moment the pair is
+     parted; measuring a chord against the merged figure is measuring it against
+     a board nobody finishes on.
+
+     self-crossings are counted from here on EVERY thread, not only the chorded
+     ones. countCross only ever compared thread i with thread j>i, so a thread
+     meeting its own line was invisible — which was not a decision, it was a
+     consequence of the solved figure being a flat lane, which cannot self-cross.
+     the tangled board can and does, on about a quarter of nets, and the game
+     was quietly calling those threads clean and letting them free through a
+     knot in themselves. a chord makes that common rather than incidental, so
+     it is fixed for both at once rather than for the new case only.
+     it moves crossings, so it moves par, so it is a version and not an edit.
+     `from` is 2026-08-20, three days clear of v8 and past anything anyone can
+     have played; 08-18 and 08-19 are deliberately left unclaimed. */
+  { v:10, from:'2026-08-20', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'route', rung:'ramp', chord:'one', selfX:'count',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
            'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] }
 ];
 /* the rules in force for the net being built. a module-level object rather than
    an argument threaded through nine functions, because splitNode is called by
    the player's hand long after buildNet has returned and has no day to read. */
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
-                 splitPart:'fixed', optimum:'table'};
+                 splitPart:'fixed', optimum:'table', rung:'flat',
+                 chord:'none', selfX:'off'};
 function genRules(g){
   return {split:g.split||'angled', merge:g.merge||'tight',
           pinFill:!!g.pinFill, parMode:g.parMode||'walk', parSlack:g.parSlack||0,
-          splitPart:g.splitPart||'fixed', optimum:g.optimum||'table'};
+          splitPart:g.splitPart||'fixed', optimum:g.optimum||'table',
+          rung:g.rung||'flat',
+          chord:g.chord||'none', selfX:g.selfX||'off'};
 }
 function genFor(day){
   let g=GEN_VERSIONS[0];
@@ -2949,6 +3063,48 @@ const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', par:'--tue
    and a bar of grey asserting otherwise was the fourth material in a row that
    only needed three. */
 const SETAHEAD='--rule';
+/* ---- the turns bay past twice par: the bar wraps, and each lap is one colour ----
+
+   the overspend bar fills to twice par and then pinned there, which on the
+   shallow nets is the whole reading spent in four turns — par 3 tops out six
+   over and sits full for the rest of the net, and thirty over par draws exactly
+   the same picture as six. so it wraps: every 2*par turns of overspend the run
+   empties and starts again in the next colour down this list, and the track
+   behind it takes the colour the run just finished in (see .track.parmeter).
+   the numeral is untouched and still names the exact overspend, which is what
+   lets the bar give up absolute depth for a lap count without losing anything.
+   it is never announced, and there is nothing in the interface that explains
+   it. it is for the player who has thrashed a net long enough to deserve it.
+
+   WHICH COLOURS, and it is a shorter list than it looks. the ladder owns gelb,
+   tuerkis and violett wherever they are drawn (TIERCOL) and --ink is the
+   crossing marks, so the free field colours are hellblau, gruen and orange.
+   hellblau is then out on measurement rather than taste. worst-case CIE76 dE
+   across normal vision and the three dichromacies, on the canonical values —
+   the same instrument and the same 18.0 confusion floor the ladder above was
+   chosen at:
+     violett|gruen  41.9      hellblau|gruen    13.7
+     gruen|orange   26.1      hellblau|violett  13.8
+     orange|violett 68.8      hellblau|orange   97.1
+   hellblau clears the floor against exactly one of the others. a lap sits
+   directly against the lap before it — that boundary IS how far into the lap
+   you are — so a colour with one clean neighbour cannot be in a ring at all,
+   and putting it in anyway buys a fourth colour at the price of one lap you
+   cannot read. the flag note upstairs names the hellblau|gruen join for the
+   same reason and moved gelb between them to fix it; gelb is not available
+   here.
+   what is left closes on its own, which is the good part. violett 256deg,
+   gruen 147deg, orange 29deg is a walk one way round the hue circle in
+   near-equal thirds, and orange back to violett CONTINUES that walk past zero
+   rather than jumping back — so it simply cycles, and there is no last lap to
+   fall off the end of. a player thirty over par on a par-3 net is on lap five
+   and still has a bar that is doing something. the weakest join in the cycle is
+   26.1, which is the shipped ladder's own weakest join to the decimal.
+
+   lap zero reads --par-over rather than --violett so the bay's declaration
+   stays the one place the first lap's colour is written: nothing above twice
+   par may quietly re-point what the first lap looks like. */
+const LAPCOL=['--par-over','--gruen','--orange'];
 /* CARDCOL was here, and it was this table: the canonical ladder, kept apart for
    the share card, which is the one thing the game makes that leaves the sharer's
    screen and therefore has to be the same card for two players on two different
@@ -3042,12 +3198,19 @@ function netSpec(i){
    the cleared card — comes through netTargets, so how a day finds its optimum
    is decided in one place and versioned in one place.
 
-   `optimum` is the best route known for this net. from v8 the game does compute
-   it at play time, because it turned out it always had: famPlan prices par from
-   a walkthrough of its own construction, and that walkthrough is the number the
-   offline solver was shipping back as `optimum`. before v8 it is the lookup.
-   `par` is the clean line and it is live on `spec` — measured against the net
-   you actually got, so it is not netSpec()'s number.
+   `optimum` is the perfect line. its raw material is the best route known for
+   this net: from v8 the game computes that at play time, because it turned out
+   it always had — famPlan prices par from a walkthrough of its own construction,
+   and that walkthrough is the number the offline solver was shipping back as
+   `optimum`. before v8 it is the lookup. from v9 the line is the route plus a
+   grace of 0 to 2 turns by how loaded the net is, so `perfect` is close to the
+   best line rather than exactly on it; see graceFor.
+   `par` is the clean line. its raw material is live on `spec` — measured against
+   the net you actually got, so it is not netSpec()'s number — but from v5's
+   `gap` rule this returns it derived rather than raw, held at least one turn
+   above the perfect line. spec.par is the BOARD's par and belongs to generation;
+   this is the SCORING par and it is the one every reading should use, which is
+   why clearNet records this number on the net rather than spec's.
 
    with no optimum at all, optimum stands AT par: `perfect` cannot fire, the
    turns track shows one band, and tierFor() returns the two tiers it returned
@@ -3143,6 +3306,35 @@ function dayBest(iso){
   const n=day.reduce((a,b)=>a+b,0);
   return n>0?n:null;
 }
+/* ---- how far above the true optimum `perfect` is allowed to stand ----
+   the owner's rule, in his words: perfect and clean can never be the same, and
+   perfect should be "close to the optimal number of turns in that net maybe 1 or
+   2 over depending on the difficulty".
+
+   the difficulty reading is the RAMP's own, in the RAMP's own order. the ladder
+   introduces one ingredient at a time — a third thread, then a superposed neuron
+   to split, then pins that cannot be moved, then width — so counting the
+   ingredients a net is carrying is counting exactly what the day already meant
+   by harder, rather than inventing a second opinion about it. a net carrying
+   none of them is the morning's two-thread warm-up and is asked for the optimum
+   exactly; one ingredient in, the line loosens by a turn; on the wide pinned
+   nets that end the day, by two.
+   it reads the ingredients rather than the net's INDEX, though on the daily ten
+   those come to the same thing, because the index is a position in a run and the
+   load is the property that actually makes the net cost turns — the deep-net
+   branch of netSpec keeps ramping past the RAMP's last row, and a reading built
+   on the index would stop noticing.
+
+   two is the ceiling, and not as a matter of taste: clean is route + parSlack
+   and parSlack is 3, so a grace of 3 would stand perfect ON clean and collapse
+   the ladder to the two rungs this whole block exists to prevent. netTargets
+   derives clean from perfect as well, so the invariant survives a later version
+   moving parSlack and forgetting this line. */
+function graceFor(s){
+  if(!s) return 0;
+  const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
+  return load>=4?2:load>=1?1:0;
+}
 function netTargets(){
   const par=spec?spec.par:0, r=R();
   /* WHERE THE TOP RUNG COMES FROM, and it is a generator rule because it decides
@@ -3155,14 +3347,31 @@ function netTargets(){
   const day=OPTIMA[r.day];                       // ten numbers, or nothing outside the closed window
   const o = GEN_RULES.optimum==='route' ? (spec&&spec.plan?spec.plan.route:undefined)
                                         : (day?day[r.netIndex]:undefined);
-  /* an optimum at or above par is not an optimum, and an optimum of zero is a
-     rung everybody stands on. both fall back to par rather than shipping a
-     degenerate `perfect`, which costs the top rung for that net — that is the
-     old table's failure mode, on 80 of the 610 nets it covered, and it is why
-     the route replaced it rather than being extended: par is route + parSlack,
-     so a route is under par by construction and this guard cannot fire on a
-     v8 day. it still stands, for a build with no plan to read. */
-  return {optimum:(typeof o==='number'&&o>0&&o<par)?o:par, par};
+  /* NO OPTIMUM AT ALL: the time trial, which draws a scatter and has no plan to
+     read, and any build with neither a route nor a table row. an optimum of zero
+     is a rung everybody stands on, so it counts as none. optimum stands AT par,
+     the perfect branch cannot fire, and this returns exactly the two tiers it
+     returned before there was a solver. nothing here invents a number it has not
+     got. */
+  if(!(typeof o==='number' && o>0)) return {optimum:par, par};
+  /* THE LADDER, AND WHY IT IS DERIVED RATHER THAN COMPARED.
+     `flat` is what shipped, and it TESTS the two lines against each other: an
+     optimum that does not happen to fall under par is not an optimum, so it is
+     dropped and the net scores on two rungs. that reading cost 7 of
+     2026-08-14's ten nets their top rung and 48 of the 120 across 2026-08-01 …
+     2026-08-12 — par on those days is the route itself or lanePar's estimate,
+     and the optimum landed on it or above it. it stays the rule for every day
+     that was played under it: a day already played keeps the rungs it was
+     played with, which is the whole reason this is a version and not a fix.
+     from `gap` the two lines come out of ONE number. perfect is the optimum,
+     plus its grace under `ramp`, and clean is held a turn above it — so the
+     three rungs are three by construction and no arithmetic can fold two of
+     them together. `Math.max` keeps clean at the board's par wherever par is
+     already clear of perfect, which on a v9 net is every time, so the derivation
+     is a floor rather than a new number. */
+  if(GEN_RULES.rung==='flat') return {optimum:(o<par)?o:par, par};
+  const perfect = o + (GEN_RULES.rung==='ramp' ? graceFor(spec) : 0);
+  return {optimum:perfect, par:Math.max(par, perfect+1)};
 }
 
 /* ================= state ================= */
@@ -3280,13 +3489,16 @@ function startAnotherRun(){
   toast('fresh run · today\'s ten again');
   return true;
 }
-/* stopping for the day used to set `over`, which nothing could clear: the card
-   said "the rest of today's set is still there when you are" and there was no
-   way back to it. stopping is now a pause the run remembers, and `over` means
-   only what it says. */
-function pauseRun(){
-  const r=R(); r.paused=true; r.over=true; save();
-}
+/* `paused` OUTLIVED ITS WRITER, deliberately. the only thing that ever set it was
+   the cleared card's `stop for today`, and that button is gone (14 Aug 2026) —
+   but the flag is in the saves of everyone who pressed it, and their next load
+   reads it here to put the way back on the day card. so pauseRun is deleted and
+   the two readers below are not. the other half of canResume, `store.parked`, is
+   still written every time a time trial displaces a daily run, so none of this is
+   dead code — only its first entrance is.
+   for the record, since the argument is easy to lose: stopping used to set `over`
+   alone, which nothing could clear, so the card said "the rest of today's set is
+   still there when you are" and there was no way back to it. */
 function resumeRun(){
   const r=R(); r.paused=false; r.over=false;
   builtFor=-1; resetDescent(); save();
@@ -4215,18 +4427,50 @@ function setTension(cross,init){
   $('threadrow').style.width=(100*cross/peakCross).toFixed(1)+'%';
   $('crossbar').setAttribute('aria-label',cross+' of '+init+' crossings left');
 }
-/* and then floods, in the tier the net just minted — the colour that lands in
-   the day's strip a beat later. lastT is deliberately left standing so an
-   incidental refresh cannot repaint over the finish. */
+/* and then floods, in the four the wordmark is made of, ACROSS TWO BAYS, and
+   holds there until the next net is built. the three bays are `flex:1 1 0`, so
+   two colours in each of the first two are four true quarters — read left to
+   right across the pair it is the wordmark's rule, at the width of the whole
+   instrument cluster.
+
+   the third bay is deliberately left alone. `setmeter` draws the day's cells in
+   the tier ladder, so it is where the tier this net just earned LANDS — flooding
+   it would cover the reward at the moment it arrives, which is the opposite of
+   celebrating. so the flag runs across the two bays that read the net, and the
+   bay that reads the DAY carries on doing it while you watch the new cell drop
+   in beside the flood.
+
+   it used to flood in the tier the net had just minted, to preview the colour
+   landing in the day's strip a beat later. that was the one place left where an
+   instrument borrowed the ladder, and the rule two bays up says why it should
+   not: crossings is drawn in the THREAD palette because its divisions are the
+   threads, and the ladder belongs to the day's strip because that is the only
+   place a tier is actually earned. a bay that reads the board in thread colours
+   for a whole net and then answers in a tier colour is two instruments wearing
+   one track.
+
+   the flag is the right thing to answer with because it is not a reading at
+   all. it is what the game wears when the game itself is speaking — the
+   wordmark, the intro strip, the card that announces a new net — and a cleared
+   net is the game speaking. the tier is not lost by this: it is on the card
+   that arrives over the board, in its own strip, and in the day's cells.
+
+   lastT is deliberately left standing so an incidental refresh cannot repaint
+   over the finish. */
 function celebrateGauge(){
-  const last=R().cleared[R().cleared.length-1];
-  const row=$('threadrow');
-  row.style.width='100%';
-  // it has to ask for the whole bar: a segment's basis is zero and its width is
-  // whatever grow it is given, which for one segment is any number above nothing
-  row.innerHTML='<i style="flex-grow:1;--fill:var('+tierCol(last?last.tier:'clean')+')"></i>';
-  row.dataset.done='1';
-  $('crossbar').setAttribute('aria-label','net untangled');
+  // each has to ask for its share: a segment's basis is zero and its width is
+  // whatever grow it is given, so two equal grows are two equal halves of a bay
+  const half=(a,b)=>'<i style="flex-grow:1;--fill:var('+a+')"></i>'
+                   +'<i style="flex-grow:1;--fill:var('+b+')"></i>';
+  const flood=(rowId,trackId,html,label)=>{
+    const row=$(rowId); if(!row) return;
+    row.style.width='100%';
+    row.innerHTML=html;
+    row.dataset.done='1';
+    $(trackId).setAttribute('aria-label',label);
+  };
+  flood('threadrow','crossbar', half(FLAG[0],FLAG[1]), 'net untangled');
+  flood('parrow',   'parmeter', half(FLAG[2],FLAG[3]), 'net untangled');
 }
 
 /* ================= tangle ================= */
@@ -4314,18 +4558,68 @@ function lanePar(){
 
 const FAM_SEP=64;          // the clearance a *composition* wants, not the 38 that stops overlap
 
+/* ---- the segments a thread draws ----
+   a thread used to be a path and nothing else, so its segments were "every
+   consecutive pair" and every crossing loop in the game spelled that out inline
+   as `i` and `i+1`. from v9 it can also carry a CHORD — one extra edge, from a
+   loose end back to an interior neuron of its own run — and there is no longer
+   a formula for which pairs are joined. so the joins are listed instead, once,
+   and every loop that walks a thread walks this list.
+
+   they are INDICES into the node list, never node objects. the node list is
+   what the rest of the game addresses a neuron by: splitNode replaces a
+   superposed neuron with one of its halves in place, famCost and famGreedy do
+   the same to price it, and an index survives all three where a captured object
+   would go stale. it is also why the chord cannot be expressed by repeating a
+   node in the list — a repeat would be counted, dragged, split and freed twice.
+
+   the chord is [a,b] with b>a+1, and one of a,b is always an END of the run.
+   that is not arbitrary: a thread with an end-anchored chord is still a single
+   unbroken walk — down the run and back along the chord — so it keeps drawing
+   as ONE polyline, which is what the board, the release runner and the settle
+   are all built on. an interior-to-interior chord would leave four odd-degree
+   neurons and need a second element per thread. see famChord. */
+function segList(len, chord){
+  const s=[];
+  for(let i=0;i<len-1;i++) s.push([i,i+1]);
+  if(chord) s.push(chord);
+  return s;
+}
 /* two segments-of-polylines test, on hypothetical positions rather than the
    live board — used to prove a family's solved figure before it is allowed to
-   generate anything. */
-function famCrossFree(polys){
-  for(let i=0;i<polys.length;i++)for(let j=i+1;j<polys.length;j++){
-    const A=polys[i],B=polys[j];
-    for(let a=0;a<A.length-1;a++)for(let b=0;b<B.length-1;b++){
-      if(A[a]===B[b]||A[a]===B[b+1]||A[a+1]===B[b]||A[a+1]===B[b+1])continue;
-      if(segX(A[a],A[a+1],B[b],B[b+1]))return false;
+   generate anything. `chords` is the parallel list of one-per-thread chords, or
+   nothing before v9.
+   a thread is now checked against ITSELF as well as against the others: a run
+   with a chord on it can meet its own line, which a flat lane never could. that
+   pass costs nothing on a net with no chords — a path's segments only ever meet
+   at the neuron they share, which the identity test already skips — so it runs
+   unconditionally rather than behind a flag that could disagree with the board. */
+function famCrossFree(polys,chords){
+  for(let i=0;i<polys.length;i++){
+    const A=polys[i], SA=segList(A.length, chords&&chords[i]);
+    for(let a=0;a<SA.length;a++)for(let b=a+1;b<SA.length;b++){
+      const p1=A[SA[a][0]],p2=A[SA[a][1]],q1=A[SA[b][0]],q2=A[SA[b][1]];
+      if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+      if(segX(p1,p2,q1,q2))return false;
+    }
+    for(let j=i+1;j<polys.length;j++){
+      const B=polys[j], SB=segList(B.length, chords&&chords[j]);
+      for(let a=0;a<SA.length;a++)for(let b=0;b<SB.length;b++){
+        const p1=A[SA[a][0]],p2=A[SA[a][1]],q1=B[SB[b][0]],q2=B[SB[b][1]];
+        if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+        if(segX(p1,p2,q1,q2))return false;
+      }
     }
   }
   return true;
+}
+/* how far a point stands off a segment. the chord's clearance test, and the one
+   reason a chord is ever refused on a shape that could geometrically hold it. */
+function segDist(p,a,b){
+  const vx=b.x-a.x, vy=b.y-a.y, L=vx*vx+vy*vy;
+  let t=L?((p.x-a.x)*vx+(p.y-a.y)*vy)/L:0;
+  t=Math.max(0,Math.min(1,t));
+  return Math.hypot(p.x-(a.x+vx*t), p.y-(a.y+vy*t));
 }
 
 /* a stadium track — two straights and two half turns — walked at equal arc
@@ -4616,6 +4910,62 @@ function famStep(live,cyc,local,rnd){
   return {pick, px, py};
 }
 
+/* ---- where a thread's chord goes, if it goes anywhere ----
+   `fig` is the FINISHED figure: every thread's neurons at the coordinates they
+   hold when the net is solved and every superposition parted. `chords` is the
+   list built so far, so each new edge is measured against the ones already
+   accepted as well as against every run.
+
+   the candidates are the end-anchored pairs, and they are tried biggest loop
+   first with the outright closing edge last. biggest first because the loop is
+   the point: a chord that cuts off two neurons draws a cell you can see a
+   neuron sitting inside, and a chord that cuts off one draws a sliver. closing
+   edge last because a thread that still has a loose end reads as a thread with
+   a loop ON it, where a fully closed one reads as a ring — a different object,
+   worth having but not worth having first.
+
+   an edge is taken only if it clears every neuron on the board by the same
+   clearance two neurons keep from each other, and crosses nothing already
+   drawn. the clearance test is doing two jobs at once and both matter: it is
+   what refuses a chord lying flat along a straight run — the four lane
+   families draw their threads collinear, so a chord there IS the run, an
+   invisible edge that segX cannot even report because parallel segments never
+   report — and it is the hourglass's own waist argument, that a gap you cannot
+   get a neuron into is not a gap. what survives is a loop with room in it.
+
+   first fit wins and nothing is drawn at random, so this consumes no numbers
+   from the stream: a v9 figure is v8's figure with edges added to it, not a
+   different draw. */
+function famChord(fig, chords, k){
+  const o=fig[k], n=o.length;
+  if(n<3) return null;
+  const cand=[];
+  for(let j=2;j<n;j++) cand.push([0,j]);           // the head tied back in
+  for(let i=n-3;i>=1;i--) cand.push([i,n-1]);      // the tail tied back in
+  cand.sort((p,q)=>{
+    const sp=p[1]-p[0], sq=q[1]-q[0];
+    return (sp===n-1?1:0)-(sq===n-1?1:0) || sq-sp || p[0]-q[0];
+  });
+  for(const c of cand){
+    const A=o[c[0]], B=o[c[1]];
+    let ok=true;
+    for(let i=0;i<fig.length && ok;i++) for(const p of fig[i]){
+      if(p===A||p===B) continue;
+      if(segDist(p,A,B)<MIN_SEP){ ok=false; break }
+    }
+    for(let i=0;i<fig.length && ok;i++){
+      const P=fig[i], S=segList(P.length, chords[i]);
+      for(const [u,v] of S){
+        const q1=P[u], q2=P[v];
+        if(q1===A||q1===B||q2===A||q2===B) continue;
+        if(segX(A,B,q1,q2)){ ok=false; break }
+      }
+    }
+    if(ok) return c;
+  }
+  return null;
+}
+
 /* the whole placement for one net, as plain data: no svg, no dom, no board
    state, so the offline harness runs the very same function the browser does
    rather than a copy of it that can drift. returns null when the family will
@@ -4688,6 +5038,30 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
       B.gone=true; merges++;
     }
   }
+
+  /* ---- and now the chords, from v9 ----
+     the figure they are measured against is the one the player ENDS on: every
+     superposition parted, both halves standing on their own slots. a merged
+     neuron is in two threads' lists at one slot, and the thread that lent it
+     the seat gets that seat back — n.alt, the hole the merge left — the moment
+     the pair is split. measuring a chord against the merged figure would be
+     measuring it against a board nobody finishes on, and on a lane family it
+     would pass: a borrowed seat bends a straight run, and the bend goes away
+     again the instant the player does the one thing the net is about.
+     the whole figure is re-proved with its chords in before any of it ships.
+     it cannot fail — every chord was checked against this exact drawing as it
+     was chosen — and it is asked anyway, because "cannot fail" is the sentence
+     that precedes an unsolvable board. failing drops the chords rather than the
+     family: a net without them is still a good net, and it is v8's exactly. */
+  let chords=null;
+  if(GEN_RULES.chord==='one'){
+    const fin=order.map((o,k)=>o.map(n=>
+      (n.merged && n.t[1]===k && n.alt) ? {x:n.alt.x, y:n.alt.y}
+                                        : {x:n.hx, y:n.hy}));
+    chords=order.map(()=>null);
+    for(let k=0;k<order.length;k++) chords[k]=famChord(fin, chords, k);
+    if(!chords.some(c=>c) || !famCrossFree(fin, chords)) chords=null;
+  }
   const live=nodes.filter(n=>!n.gone);
 
   /* a pin sits exactly on its own slot and is never scrambled.
@@ -4726,7 +5100,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
      out of, or when the figure stops yielding — and par then follows what was
      actually achieved rather than what was asked for. */
   live.forEach(n=>n.moved=false);
-  const plan={fam, nodes:live, order, d:0, merges, minSep, par:0, x:0};
+  const plan={fam, nodes:live, order, chords, d:0, merges, minSep, par:0, x:0};
   plan.par=famCost(plan); plan.x=famX(plan);
   for(let miss=0; plan.par<want && miss<26; ){
     const st=famStep(live, F.cyc||3, !!F.local, rnd);
@@ -4804,17 +5178,37 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
   return plan;
 }
 
-/* crossings on the board as it stands, before anybody has touched it */
+/* the segment lists for a plan's threads, in the order plan.order holds them.
+   built once per count rather than per pair, because it is the same list every
+   time and a crossing loop asks for it O(T^2) times. */
+function planSegs(plan){
+  return plan.order.map((o,k)=>segList(o.length, plan.chords&&plan.chords[k]));
+}
+/* crossings on the board as it stands, before anybody has touched it.
+   the self pass is the same rule countCross follows and for the same reason: a
+   thread that meets its own line is crossing something, and from v9 that counts
+   against it whether the meeting is over a chord or over a knot in a plain run.
+   before v9 nobody looked, so it stays behind the version's rule. */
 function famX(plan){
   const at=new Map(); plan.nodes.forEach((n,i)=>at.set(n,i));
   const P=plan.nodes.map(n=>({x:clampX(n.x), y:clampY(n.y)}));
   const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
+  const S=planSegs(plan), self=GEN_RULES.selfX==='count';
   let n=0;
-  for(let a=0;a<seq.length;a++)for(let b=a+1;b<seq.length;b++){
-    const A=seq[a],B=seq[b];
-    for(let p=0;p<A.length-1;p++)for(let q=0;q<B.length-1;q++){
-      if(A[p]===B[q]||A[p]===B[q+1]||A[p+1]===B[q]||A[p+1]===B[q+1])continue;
-      if(segX(A[p],A[p+1],B[q],B[q+1])) n++;
+  for(let a=0;a<seq.length;a++){
+    const A=seq[a], SA=S[a];
+    if(self) for(let p=0;p<SA.length;p++)for(let q=p+1;q<SA.length;q++){
+      const p1=A[SA[p][0]],p2=A[SA[p][1]],q1=A[SA[q][0]],q2=A[SA[q][1]];
+      if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+      if(segX(p1,p2,q1,q2)) n++;
+    }
+    for(let b=a+1;b<seq.length;b++){
+      const B=seq[b], SB=S[b];
+      for(let p=0;p<SA.length;p++)for(let q=0;q<SB.length;q++){
+        const p1=A[SA[p][0]],p2=A[SA[p][1]],q1=B[SB[q][0]],q2=B[SB[q][1]];
+        if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+        if(segX(p1,p2,q1,q2)) n++;
+      }
     }
   }
   return n;
@@ -4851,15 +5245,28 @@ function famX(plan){
    f counts the features that would come free: a thread with nothing crossing it
    and no superposition left on it. that is canFree, said in the plan's own
    vocabulary, and it is what makes the last split of a net able to finish it. */
-function famProbe(seq,T,pa,pb){
+function famProbe(seq,T,pa,pb,S){
+  const self=GEN_RULES.selfX==='count';
   return (A,B)=>{
     pa.x=A.x; pa.y=A.y; pb.x=B.x; pb.y=B.y;
     const c=new Array(T).fill(0);
-    for(let a=0;a<T;a++)for(let b=a+1;b<T;b++){
-      const U=seq[a],V=seq[b];
-      for(let p=0;p<U.length-1;p++)for(let q=0;q<V.length-1;q++){
-        if(U[p]===V[q]||U[p]===V[q+1]||U[p+1]===V[q]||U[p+1]===V[q+1])continue;
-        if(segX(U[p],U[p+1],V[q],V[q+1])){c[a]++;c[b]++}
+    for(let a=0;a<T;a++){
+      const U=seq[a], SU=S[a];
+      /* a self-crossing scores TWO on its own thread, where a shared one scores
+         one on each of the two it joins. that keeps the halving below honest:
+         every crossing costs the tally exactly two, whoever it belongs to. */
+      if(self) for(let p=0;p<SU.length;p++)for(let q=p+1;q<SU.length;q++){
+        const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=U[SU[q][0]],q2=U[SU[q][1]];
+        if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+        if(segX(p1,p2,q1,q2)) c[a]+=2;
+      }
+      for(let b=a+1;b<T;b++){
+        const V=seq[b], SV=S[b];
+        for(let p=0;p<SU.length;p++)for(let q=0;q<SV.length;q++){
+          const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=V[SV[q][0]],q2=V[SV[q][1]];
+          if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+          if(segX(p1,p2,q1,q2)){c[a]++;c[b]++}
+        }
       }
     }
     let x=0,f=0;
@@ -4874,19 +5281,18 @@ function famCost(plan){
                                   merged:n.merged, alt:n.alt, t:n.t.slice(),
                                   pinned:n.pinned, i}));
   const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
+  const S=planSegs(plan);
   const all=P.slice();
   let moves=0;
-  const step=()=>{
-    const c=new Array(T).fill(0);
-    for(let a=0;a<T;a++)for(let b=a+1;b<T;b++){
-      const A=seq[a],B=seq[b];
-      for(let p=0;p<A.length-1;p++)for(let q=0;q<B.length-1;q++){
-        if(A[p]===B[q]||A[p]===B[q+1]||A[p+1]===B[q]||A[p+1]===B[q+1])continue;
-        if(segX(A[p],A[p+1],B[q],B[q+1])){c[a]++;c[b]++}
-      }
-    }
-    moves++;   // every action bills, the finishing one included
-  };
+  /* every action bills, the finishing one included.
+     this used to count the crossings on the board first and then throw the
+     count away — a leftover from the billing rule that waived whichever action
+     finished the net, retired when par and the turn counter were put into the
+     same units. it is removed rather than made chord-aware: a crossing loop
+     sitting here that nothing reads is indistinguishable from one that has
+     forgotten about the chord, and the next reader would have to work out which
+     it was. */
+  const step=()=>{ moves++ };
   P.forEach(p=>{
     if(!p.merged) return;
     /* through splitPlace, never a second copy of it: the price of a solution
@@ -4899,7 +5305,7 @@ function famCost(plan){
                 hy:p.alt?p.alt.y:null, merged:false, t:[kb], i:1000+p.i};
     if(j>=0) seq[kb][j]=half;
     p.merged=false; p.t=[p.t[0]];
-    const put=splitPlace(p.i, p.x, p.y, j>=0?famProbe(seq,T,p,half):null);
+    const put=splitPlace(p.i, p.x, p.y, j>=0?famProbe(seq,T,p,half,S):null);
     p.x=put.a.x; p.y=put.a.y; half.x=put.b.x; half.y=put.b.y;
     all.push(half);
     step();
@@ -4928,14 +5334,26 @@ function famGreedy(plan){
                                   merged:n.merged, alt:n.alt, t:n.t.slice(),
                                   pinned:n.pinned, i}));
   const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
+  const S=planSegs(plan), self=GEN_RULES.selfX==='count';
   const all=P.slice();
   const X=()=>{
     let c=0;
-    for(let a=0;a<T;a++)for(let b=a+1;b<T;b++){
-      const A=seq[a],B=seq[b];
-      for(let p=0;p<A.length-1;p++)for(let q=0;q<B.length-1;q++){
-        if(A[p]===B[q]||A[p]===B[q+1]||A[p+1]===B[q]||A[p+1]===B[q+1])continue;
-        if(segX(A[p],A[p+1],B[q],B[q+1])) c++;
+    for(let a=0;a<T;a++){
+      const A=seq[a], SA=S[a];
+      // a thread meeting itself is a crossing the player has to clear, so it is
+      // one the route has to be priced against
+      if(self) for(let p=0;p<SA.length;p++)for(let q=p+1;q<SA.length;q++){
+        const p1=A[SA[p][0]],p2=A[SA[p][1]],q1=A[SA[q][0]],q2=A[SA[q][1]];
+        if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+        if(segX(p1,p2,q1,q2)) c++;
+      }
+      for(let b=a+1;b<T;b++){
+        const B=seq[b], SB=S[b];
+        for(let p=0;p<SA.length;p++)for(let q=0;q<SB.length;q++){
+          const p1=A[SA[p][0]],p2=A[SA[p][1]],q1=B[SB[q][0]],q2=B[SB[q][1]];
+          if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+          if(segX(p1,p2,q1,q2)) c++;
+        }
       }
     }
     return c;
@@ -4971,11 +5389,39 @@ function famGreedy(plan){
                   hy:p.alt?p.alt.y:null, merged:false, t:[kb], i:1000+p.i};
       if(j>=0) seq[kb][j]=half;
       p.merged=false; p.t=[p.t[0]];
-      const put=splitPlace(p.i, p.x, p.y, j>=0?famProbe(seq,T,p,half):null);
+      const put=splitPlace(p.i, p.x, p.y, j>=0?famProbe(seq,T,p,half,S):null);
       p.x=put.a.x; p.y=put.a.y; half.x=put.b.x; half.y=put.b.y;
       all.push(half);
       log.push(['split', p.i]);
     }
+    actions++;
+  }
+  /* ---- and if the board still is not clean, finish it properly ----
+     THIS HAS NEVER FIRED — 3650 v9 nets, a year of them, and the loop above
+     cleared every one. it is here as the guarantee rather than as a fix, and
+     the guarantee is the only promise this function makes: par is quoted from
+     this walk, so this walk has to finish.
+     what it is guarding against is `adrift`, which calls a neuron home once it
+     is within .7 of a clearance. on a plain run that is close enough — the
+     segments a neuron carries are short, so a few units of slop cannot swing
+     one across anything. a chord is not short, it spans two to five neurons of
+     the run, so the same slop at its far end sweeps it a long way. the figure
+     is provably clean with every neuron exactly on its slot, so if anything is
+     left, put them there and bill for it.
+     it is gated on the rule that changed what X() reports rather than on the
+     chord itself, because that is the honest test of "is this a board the old
+     scores were taken on": a day scored before v9 must be priced by exactly the
+     walk it was priced by, and one net in a thousand quietly gaining a turn
+     years later is the failure the version table exists to prevent.
+     NOTE if it ever does fire, window.__solveNet will come up short: it skips a
+     logged drag for a neuron already inside that .7, which is exactly the drag
+     this appends. the dev walkthrough would end one crossing dirty and say so. */
+  if(GEN_RULES.selfX==='count') for(let guard=0; guard<200 && X()>0; guard++){
+    const p=all.find(q=>!q.pinned && q.hx!=null &&
+                        (q.x!==clampX(q.hx) || q.y!==clampY(q.hy)));
+    if(!p) break;
+    p.x=clampX(p.hx); p.y=clampY(p.hy);
+    log.push(['drag', p.i]);
     actions++;
   }
   return {actions, log, left:X()};
@@ -5105,7 +5551,8 @@ function buildNet(force){
   const idx=R().netIndex;
   if(builtFor===idx && !force) return;
   builtFor=idx; lastT=''; peakCross=1;
-  { const r=$('threadrow'); if(r) delete r.dataset.done; }
+  // both bays the finish flood claimed, released together — see celebrateGauge
+  { for(const id of ['threadrow','parrow']){ const r=$(id); if(r) delete r.dataset.done } }
   // presentation state belonging to the net being replaced, not to this one
   $('field').classList.remove('cleared','dimthreads','swap-in');
   readMarkSizes();
@@ -5252,7 +5699,12 @@ function buildNet(force){
           if(n.merged) m.merged=true;
           n.m=m; members.push(m);
         });
-        threads.forEach((th,k)=>{ th.nodes=plan.order[k].map(n=>n.m) });
+        /* the chord is the plan's, never the thread's own idea. par was priced
+           on a figure that either carries it or does not, and a board that
+           disagreed with its own par about how many edges it draws would be
+           scored against a puzzle nobody was given. */
+        threads.forEach((th,k)=>{ th.nodes=plan.order[k].map(n=>n.m);
+                                  th.chord=plan.chords?plan.chords[k]:null });
         plan.nodes.forEach(n=>n.t.forEach(k=>{
           if(!n.m.threads.includes(threads[k])) n.m.threads.push(threads[k]);
         }));
@@ -5730,6 +6182,11 @@ function splitNode(n,silent){
     const map=new Map([[n,A]]);
     const pt=m=>{let p=map.get(m); if(!p){p={x:m.x0,y:m.y0}; map.set(m,p)} return p};
     const seq=act.map(t=>t.nodes.map(m=>(m===n&&t===b)?B:pt(m)));
+    // the edges each thread draws, the chord included: the board this is asking
+    // about is the board the player is looking at, and famProbe prices the same
+    // question the same way
+    const S=act.map(t=>segList(t.nodes.length,t.chord));
+    const self=GEN_RULES.selfX==='count';
     // n is about to stop being a superposition, so it does not count against
     // its own threads when we ask which of them could come free
     const open=act.map(t=>t.nodes.every(m=>m===n||!m.merged));
@@ -5737,11 +6194,20 @@ function splitNode(n,silent){
     const put=splitPlace(n.idx, ox, oy, (qa,qb)=>{
       A.x=qa.x;A.y=qa.y;B.x=qb.x;B.y=qb.y;
       const c=new Array(T).fill(0);
-      for(let i=0;i<T;i++)for(let j=i+1;j<T;j++){
-        const U=seq[i],V=seq[j];
-        for(let p=0;p<U.length-1;p++)for(let q=0;q<V.length-1;q++){
-          if(U[p]===V[q]||U[p]===V[q+1]||U[p+1]===V[q]||U[p+1]===V[q+1])continue;
-          if(segX(U[p],U[p+1],V[q],V[q+1])){c[i]++;c[j]++}
+      for(let i=0;i<T;i++){
+        const U=seq[i], SU=S[i];
+        if(self) for(let p=0;p<SU.length;p++)for(let q=p+1;q<SU.length;q++){
+          const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=U[SU[q][0]],q2=U[SU[q][1]];
+          if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+          if(segX(p1,p2,q1,q2)) c[i]+=2;
+        }
+        for(let j=i+1;j<T;j++){
+          const V=seq[j], SV=S[j];
+          for(let p=0;p<SU.length;p++)for(let q=0;q<SV.length;q++){
+            const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=V[SV[q][0]],q2=V[SV[q][1]];
+            if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+            if(segX(p1,p2,q1,q2)){c[i]++;c[j]++}
+          }
         }
       }
       let x=0,f=0;
@@ -5803,17 +6269,41 @@ function segX(p1,p2,p3,p4){
   if(t>.001&&t<.999&&u>.001&&u<.999)return{x:p1.x+t*(p2.x-p1.x),y:p1.y+t*(p2.y-p1.y)};
   return null;
 }
+/* a thread is compared with ITSELF as well as with the others, from v9.
+   up to v8 nothing looked: a thread was only ever compared with the threads
+   after it in the list, so its own line meeting its own line was invisible.
+   that was not a decision, it was a consequence of the solved figure being a
+   flat lane, which cannot self-cross — but the TANGLED board can and does, on
+   about a quarter of nets, and the game was calling those threads clean and
+   letting a feature come free through a knot in itself. a chord makes it
+   common rather than incidental, so it is closed for the plain run and the
+   chorded one at once. an open thread played before v9 keeps the old count,
+   because changing it would rescore days people have already played. */
 function countCross(vis){
   const pt=vis?(n=>({x:n.xr,y:n.yr})):(n=>({x:n.x0,y:n.y0}));
   const marks=[]; threads.forEach(t=>t.crossings=0);
   const act=threads.filter(t=>!t.freed);
-  for(let i=0;i<act.length;i++)for(let j=i+1;j<act.length;j++){
-    const A=act[i],B=act[j];
-    for(let a=0;a<A.nodes.length-1;a++)for(let b=0;b<B.nodes.length-1;b++){
-      const n1=A.nodes[a],n2=A.nodes[a+1],n3=B.nodes[b],n4=B.nodes[b+1];
+  const S=act.map(t=>segList(t.nodes.length,t.chord)), self=GEN_RULES.selfX==='count';
+  for(let i=0;i<act.length;i++){
+    const A=act[i], SA=S[i];
+    if(self) for(let a=0;a<SA.length;a++)for(let b=a+1;b<SA.length;b++){
+      const n1=A.nodes[SA[a][0]],n2=A.nodes[SA[a][1]],
+            n3=A.nodes[SA[b][0]],n4=A.nodes[SA[b][1]];
       if(n1===n3||n1===n4||n2===n3||n2===n4)continue;
       const x=segX(pt(n1),pt(n2),pt(n3),pt(n4));
-      if(x){A.crossings++;B.crossings++;marks.push(x)}
+      // two on its own thread, one on each of two, so a crossing always costs
+      // the tally the same whoever owns it — see famProbe
+      if(x){A.crossings+=2;marks.push(x)}
+    }
+    for(let j=i+1;j<act.length;j++){
+      const B=act[j], SB=S[j];
+      for(let a=0;a<SA.length;a++)for(let b=0;b<SB.length;b++){
+        const n1=A.nodes[SA[a][0]],n2=A.nodes[SA[a][1]],
+              n3=B.nodes[SB[b][0]],n4=B.nodes[SB[b][1]];
+        if(n1===n3||n1===n4||n2===n3||n2===n4)continue;
+        const x=segX(pt(n1),pt(n2),pt(n3),pt(n4));
+        if(x){A.crossings++;B.crossings++;marks.push(x)}
+      }
     }
   }
   return {total:marks.length,marks};
@@ -5841,7 +6331,29 @@ function countCross(vis){
    par is measured by the generator before the board is ever drawn. it changes
    what a finished feature LOOKS like and nothing else, which is why it is not a
    generator version — see signWhole. */
+/* ---- and the chord is drawn by walking, not by a second element ----
+   a thread's chord always ties one END of the run back in, and that is what
+   makes it drawable as one polyline: go down the run and come back along the
+   chord, and every edge is drawn exactly once. head chord [0,j]: walk the run
+   BACKWARDS to 0 and then out to j. tail chord [i,n-1]: walk it forwards and
+   then back to i. the closing chord [0,n-1] is both, and is the plain loop.
+   one neuron is passed twice, which is a fact about the drawing and about
+   nothing else: t.nodes is untouched, so every index in the game still means
+   what it meant.
+   a SETTLED thread drops the chord. by then it is not a line any more, it is
+   one of the sixteen drawings, and all sixteen are outlines — a chord across
+   one is a scar on a sign rather than a line of it. the loop resolving into
+   the sign is the right read, and it is the same argument that closes the sign
+   in the first place. the release runner is drawn BEFORE the settle, so the
+   light still runs the whole loop the player actually cleared. */
 function threadPoints(t,get){
+  const n=t.nodes.length;
+  if(t.chord && !t.settled && n>2){
+    const [a,b]=t.chord, p=[];
+    if(a===0){ for(let i=n-1;i>=0;i--) p.push(get(t.nodes[i])); p.push(get(t.nodes[b])) }
+    else     { for(let i=0;i<n;i++)    p.push(get(t.nodes[i])); p.push(get(t.nodes[a])) }
+    return p.join(' ');
+  }
   const p=t.nodes.map(get);
   if(t.signWhole && p.length>2) p.push(get(t.nodes[0]));
   return p.join(' ');
@@ -6210,10 +6722,12 @@ function boardOccupancy(t){
   const pts=[], add=(x,y)=>pts.push({x,y});
   threads.forEach(o=>{
     if(o===t||o.signSlot) return;
-    o.nodes.forEach((n,i)=>{
-      add(n.x0,n.y0);
-      // a long line between two neurons occupies its whole length, not its ends
-      const m=o.nodes[i+1]; if(!m) return;
+    o.nodes.forEach(n=>add(n.x0,n.y0));
+    // a long line between two neurons occupies its whole length, not its ends —
+    // the chord included, which is the longest line a thread owns and therefore
+    // the worst one to let a settling sign come down on top of
+    segList(o.nodes.length,o.chord).forEach(([u,v])=>{
+      const n=o.nodes[u], m=o.nodes[v];
       const steps=Math.max(1,Math.round(Math.hypot(m.x0-n.x0,m.y0-n.y0)/56));
       for(let s=1;s<steps;s++) add(n.x0+(m.x0-n.x0)*s/steps, n.y0+(m.y0-n.y0)*s/steps);
     });
@@ -6443,11 +6957,11 @@ function freeThread(t,silent){
     tutReach(2);
     // the light gets most of the way down the thread before the sign starts
     // assembling behind it
-    setTimeout(()=>{ t.signWhole=whole; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
+    setTimeout(()=>{ t.signWhole=whole; t.settled=true; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
   }else{
     /* the restore path: the neurons are loaded already standing on their sign,
        so there is nothing to settle and nothing to wait for. */
-    t.signWhole=whole;
+    t.signWhole=whole; t.settled=true;
   }
 }
 
@@ -6467,6 +6981,13 @@ function neighboursOf(n){
     const i=t.nodes.indexOf(n); if(i<0) return;
     add(t.nodes[i-1],1); add(t.nodes[i+1],1);
     add(t.nodes[i-2],.42); add(t.nodes[i+2],.42);
+    // the tug runs along the thread, and a chord is part of the thread: without
+    // this the one edge that spans the run is the one edge that does not pull
+    if(t.chord){
+      const [a,b]=t.chord;
+      if(i===a){ add(t.nodes[b],1); add(t.nodes[b-1],.42); add(t.nodes[b+1],.42) }
+      if(i===b){ add(t.nodes[a],1); add(t.nodes[a-1],.42); add(t.nodes[a+1],.42) }
+    }
   });
   return [...w].map(([m,x])=>({n:m,w:x}));
 }
@@ -6724,16 +7245,24 @@ function incidentCross(n){
   let c=0;
   const act=threads.filter(t=>!t.freed);
   const P=m=>({x:m.x0,y:m.y0});
+  const self=GEN_RULES.selfX==='count';
   for(const A of n.threads){
     if(A.freed) continue;
     const i=A.nodes.indexOf(n); if(i<0) continue;
-    const segs=[];
-    if(i>0) segs.push([A.nodes[i-1],n]);
-    if(i<A.nodes.length-1) segs.push([n,A.nodes[i+1]]);
+    /* which of this thread's edges the neuron is actually an end of. it used to
+       be "the one before and the one after", which is right for a plain run and
+       misses the chord entirely — and a chord is the longest edge the neuron
+       owns, so descent would have been hunting with the biggest line on the
+       board invisible to it. */
+    const SA=segList(A.nodes.length,A.chord);
+    const segs=SA.filter(s=>s[0]===i||s[1]===i).map(s=>[A.nodes[s[0]],A.nodes[s[1]]]);
     for(const [p1,p2] of segs) for(const B of act){
-      if(B===A) continue;
-      for(let b=0;b<B.nodes.length-1;b++){
-        const n3=B.nodes[b],n4=B.nodes[b+1];
+      // a thread is compared with itself where the version counts that, for the
+      // same reason countCross does it: it can meet itself, and that is real
+      if(B===A && !self) continue;
+      const SB=segList(B.nodes.length,B.chord);
+      for(const [u,v] of SB){
+        const n3=B.nodes[u],n4=B.nodes[v];
         if(p1===n3||p1===n4||p2===n3||p2===n4) continue;
         if(segX(P(p1),P(p2),P(n3),P(n4))) c++;
       }
@@ -6878,7 +7407,13 @@ let gTut=null, tutLit=null;
    whichever crossings a named neuron is party to. this is countCross's inner
    loop with the position lookup made substitutable and the thread state left
    alone — countCross writes t.crossings, and the search runs hundreds of these
-   between two frames of a real game. */
+   between two frames of a real game.
+   it walks consecutive pairs and knows nothing about a v9 chord, which is safe
+   because the tutorial is always net 0, net 0 can only ever be the stack (see
+   the FAM_FROM note), and a stack's threads are drawn collinear so famChord can
+   never find an edge to give one. the branch is left out rather than written
+   and never taken, because this runs hundreds of times between two frames. a
+   family that ever reaches net 0 with a chord on it has to come back here. */
 function tutCross(sub,want){
   const pt=n=>(sub&&n===sub.n)?{x:sub.x,y:sub.y}:{x:n.x0,y:n.y0};
   const act=threads.filter(t=>!t.freed);
@@ -7292,7 +7827,13 @@ function stampToday(depth,feats,tier){
   if(tier && (!row.best || TIERRANK[tier]>TIERRANK[row.best])) row.best=tier;
 }
 function clearNet(){
-  const r=R(), tier=tierFor(r.netMoves,spec.par,r.assisted);
+  /* the clean line comes from netTargets, not from spec.par, and those are two
+     different numbers from `gap` onward — spec.par is the board's par and
+     netTargets may hold clean a turn above it to keep the rungs apart. reading
+     spec.par here would score the net against one line and draw its bay, its
+     card strip and its share plate against another. under `flat` they are the
+     same number, so every frozen day is untouched by this. */
+  const r=R(), par=netTargets().par, tier=tierFor(r.netMoves,par,r.assisted);
   const wasTutorial=inTutorial();
   const feats=threads.map(t=>t.key);
   /* one ladder, TIERRANK, shared with the day row. the local copy this replaces
@@ -7305,7 +7846,7 @@ function clearNet(){
     const cur=store.collection.badges[k];
     if(!cur||TIERRANK[tier]>TIERRANK[cur.tier]) store.collection.badges[k]={tier,day:r.day};
   });
-  r.cleared.push({feats,tier,moves:r.netMoves,par:spec.par,idx:r.netIndex,assisted:!!r.assisted});
+  r.cleared.push({feats,tier,moves:r.netMoves,par,idx:r.netIndex,assisted:!!r.assisted});
   /* the set finishing is not a net finishing. advancing the index and wiping the
      board are how the game gets to the NEXT net, and after the tenth there is no
      next net — so doing them anyway generated an eleventh, drew it, and left the
@@ -7482,6 +8023,32 @@ function endRun(){
 
 /* ================= bulletins ================= */
 
+/* WHAT A CARD IS ALLOWED TO SAY. five of these drifted the same way and were cut
+   back together on 14 Aug 2026, so the rule is written here once rather than
+   argued five times. a card has four text slots and each says its thing ONCE:
+
+     the numeral  how far you got — a net's ordinal, a day's depth. nothing else
+                  on the card repeats it.
+     the sub      the CONCLUSION: the tier on a net, the score on a day. the
+                  strip above it is already drawing that as a colour, so this is
+                  the same reading in words and it belongs at the top.
+     the rows     the reading nothing else on the card carries, and only that. a
+                  row restating the numeral, the sub or the stamps below it is
+                  ink spent saying nothing — `turns 2 / 9` under a card already
+                  headed `perfect` was the whole of the complaint, and it was
+                  ambiguous into the bargain: 2 of 9 reads as progress, not as a
+                  score against par.
+     the note     at most one short sentence, and only where it says something
+                  that will NOT be true of the next card of the same kind. "from
+                  here the nets deepen" is a fact about the game and the nets
+                  teach it themselves; "untangle the next one unaided" is a fact
+                  about the net you just played.
+
+   and nothing offers a way to stop. the buttons lead on, and a card is closed by
+   escape or a click beside it — which on the cleared card IS continuing, see
+   dismissVeil. an explicit `stop for today` was a button asking a player who has
+   just won to consider not playing. */
+
 /* the ground was fixed at dunkelblau, because it was the only palette colour
    that carried white body type (5.39:1 — gelb managed 1.68, which was a blank
    card every seventh net) and because a card that is a plate has to be a plate
@@ -7579,33 +8146,50 @@ function showNetCleared(feats,tier,wasTutorial){
        reason this one could not mint above done. */
     sub:last.assisted?'done · settled with descent':tier,
     num:String(r.netIndex).padStart(2,'0'),
-    /* one row. what actually differs between one cleared net and the next is the
-       numeral, the tier, the turns against par, and which features came free —
-       and three of those four are already drawn above and below this. what went:
-       `features freed`, a count of the stamps immediately beneath it; and
-       `clean so far` and `turns today`, which are DAY readings on a card about a
-       single net. the masthead carries the day while you play it and the record
-       holds it afterwards; this card is the net. */
-    rows:[['turns',last.moves+' / '+last.par]],
+    /* one row, and it is the turns ALONE. what differs between one cleared net
+       and the next is the numeral, the tier, the turns and which features came
+       free — and three of those four are drawn above and below this, so the turns
+       are all this row has ever had to carry. it used to print them as
+       `2 / 9`, turns over par, which was wrong twice: par at the moment of
+       winning is the yardstick the tier directly above has already ruled on, and
+       a bare ratio reads as progress — 2 of 9 — rather than as a score.
+       `taken` is in the label because the value here is a bare number and needs
+       the verb; the day card's row says `against par` in the value and does not.
+       what went before that: `features freed`, a count of the stamps immediately
+       beneath it; and `clean so far` and `turns today`, which are DAY readings on
+       a card about a single net. the masthead carries the day while you play it
+       and the record holds it afterwards; this card is the net. */
+    rows:[['turns taken',last.moves]],
     body:mint+quiet,
-    /* the note earns its place only when it has something to say once. the
-       tutorial's is the game explaining what it is about to become, and the
-       assisted one names a consequence you cannot see anywhere on the board. the
-       ordinary one said "minted into your collection" above the stamps that ARE
-       the minting, then "the next net is deeper", which is true of every net
+    /* the note earns its place only when it says something that will not be true
+       of the next cleared net too. the assisted one names a consequence you
+       cannot see anywhere on the board, so it stays.
+       the tutorial's was three lines of roadmap — longer threads, a third
+       feature, shared neurons — delivered to somebody who has met none of the
+       three, and it was the largest block of text on the card at the one moment
+       the game has nothing to explain. the nets ARE the curriculum and each of
+       those arrives with its own coaching when it arrives (see the shared-neuron
+       message in afterMove). so the line keeps the payoff and drops the syllabus.
+       the ordinary note said "minted into your collection" above the stamps that
+       ARE the minting, then "the next net is deeper", which is true of every net
        after every net forever. */
     note:wasTutorial
-      ? 'that is the whole game. from here the nets deepen — longer threads, then a third feature, then neurons shared between two features at once.'
+      ? 'that is the whole game. it gets deeper from here.'
       : (last.assisted ? 'untangle the next one unaided for a clean badge.' : ''),
     sun:false,
-    actions:`<button class="wbtn solid" id="contbtn">continue →</button><button class="wbtn" id="stopbtn">stop for today</button>`,
+    /* one action, and it goes forward. `stop for today` sat beside it and was an
+       invitation to put the game down at the exact moment the player had just
+       been rewarded for picking it up — see the note at the head of this section.
+       nothing is lost with it: clearNet saved before this card was built, so the
+       tier, the badges and the day's row are already on disk, and closing the tab
+       leaves the run exactly where a stop would have. */
+    actions:`<button class="wbtn solid" id="contbtn">continue →</button>`,
     // the one place in the game that offers a sign-in unprompted, and only here
     foot:wasTutorial?signInInvite():''
   });
   showVeil('netveil');
   if(wasTutorial) fillSignInInvite();
   $('contbtn').onclick=nextNet;
-  $('stopbtn').onclick=()=>{pauseRun();hideVeils();setTimeout(showRunOver,150)};
 }
 /* ---- the offer, on the one card that has earned the right to make it ----
    a daily game's paid tier is only ever wanted at one moment: the moment you
@@ -7665,23 +8249,39 @@ function showRunOver(){
          : (turns-parTot) === 0 ? TIERCOL.clean
          : TIERCOL.done,
     title:trial?'out-trained':(depth>=POLICY.dailyNets?'day complete':'day set aside'),
+    /* THE CONCLUSION, not the inputs. this line used to read `12 of 12 clean · 57
+       turns against par 230` with `against par | 173 under par · 57 of 230`
+       directly beneath it, and between the two of them the card stated its
+       inputs three times and its answer once, quietly, on the right-hand end of a
+       row whose label repeated the line above. 57, 230, the depth and the words
+       "against par" were each on the card twice.
+       so the sub takes the answer — the day's score, the single reading the whole
+       set was played for — and the row below takes the two figures it was worked
+       out from, once. the strip is already drawing the same answer as a rung, so
+       this is that rung in words, which is exactly what the net card's sub does
+       with its tier. the clean count went to .bquiet: the day's ten rungs are
+       drawn in the masthead strip, which is still on screen behind this card.
+       a SHORT set has no day score — dayScore refuses one under ten nets, because
+       four nets at three under is not a round — so it says how far it got
+       instead, which is the numeral plus the denominator the numeral lacks. */
     sub:trial?'time trial · the net kept learning'
-        :`${cleanN} of ${depth} clean · ${turns} turns against par ${parTot}`,
+        :(depth>=POLICY.dailyNets ? fmtScore(turns-parTot)
+                                  : `${depth} of ${POLICY.dailyNets} nets`),
     num:String(depth).padStart(2,'0'),
-    /* four rows became one, the same cut and for the same reason the net card
-       took: a card in the corner of a board prints the reading you cannot get
-       anywhere else and stops. `today's set 10 / 10` is the title and the
-       numeral, six inches apart on the same line. `clean 7 of 10` is the first
-       half of the sub directly above it. `day streak` is in the masthead, which
-       is still on screen — that is the whole point of the card being here rather
-       than over it. what is left is the score the day is played for.
-       a trial genuinely is a descent and depth is its whole score, so it keeps
-       that: how deep you went, against how deep you have ever gone. `features
-       named` goes for the reason the net card's did — it is a count of the
-       stamps in the next block down. */
+    /* one row: the two numbers the score above was cut from, said once and said
+       plainly. `57 against par 230` rather than `57 of 230` for the reason the
+       net card dropped `2 / 9` — a bare ratio reads as progress.
+       a trial has no par, so its row is the only comparison it has: this descent
+       against the deepest you have ever gone. it used to print `depth reached`
+       too, which is the numeral in the corner of the same card spelled out; and
+       when this run IS the best, bestTrialDepth has already been raised to match
+       it, so the row would have said the same number twice over. it names the run
+       instead. `features named` went for the reason the net card's did — it is a
+       count of the stamps in the next block down. */
     rows:trial
-      ? [['depth reached',depth+' nets'],['best time trial',store.meta.bestTrialDepth||depth]]
-      : [['against par',fmtScore(turns-parTot)+' · '+turns+' of '+parTot]],
+      ? [['best time trial', (store.meta.bestTrialDepth||depth)>depth
+            ? (store.meta.bestTrialDepth)+' nets' : 'this run']]
+      : [['turns',turns+' against par '+parTot]],
     /* ten, not eight. the stamps stepped down to 58px with the rest of the card
        and five of them now fit a row, so eight drew a five and a ragged three
        with a hole beside it — the exact break the net card's own sizing note is
@@ -7926,23 +8526,52 @@ function tierWords(tiers){
 }
 
 /* clicking a row offers that day. replaying one you already cleared is allowed
-   — it simply cannot improve a tier you already hold, same as any net. */
-async function offerDay(iso,done){
+   — it simply cannot improve a tier you already hold, same as any net.
+   `tiers` is the row's own stored rungs, handed in by the record rather than
+   looked up here, because the record has it in scope and this has no business
+   reaching back into playedDays for a day it was told about. it may be absent:
+   an unplayed day has no row at all, and a row from an earlier save shape has no
+   rungs — tierWords answers '' to both. */
+async function offerDay(iso,done,tiers){
   if(iso===today() && !isArchive()){ hideVeils(); return }
   if(!canPlayDay(iso)) return flashMsg('that day is in the archive · unlock it to play');
-  /* "your run in progress is set aside" is what the browser dialog said and it
-     was not true: newRun REPLACES store.run, and only startTrialRun parks the
-     one it displaces. what survives is what was already written as you went —
-     the badges you minted and the day's row in the record — and what does not is
-     where you had got to. the card says the part that is lost, because that is
-     the part the question is about. */
+  /* WHAT THE CARD HAS TO SAY, and it is a cost and a reassurance rather than a
+     description. "your run in progress is set aside" is what the browser dialog
+     said and it was not true: newRun REPLACES store.run, and only startTrialRun
+     parks the one it displaces. what survives is what was already written as you
+     went — the badges you minted and the day's row in the record — and what does
+     not is where you had got to.
+     so: the ROW is the cost, and it is a place rather than a category. `the run
+     you are on / ends here` named no price at all; `net 5 of 10` is one, and it
+     is the reading that makes the answer obvious in either direction.
+     the NOTE is the reassurance, which used to be nowhere: what the sub carried
+     was "replaying cannot lower a tier", a footnote about the day you are going
+     TO, in the slot the day you are LEAVING needed. it is not lost by being cut,
+     it is subsumed — stampToday only overwrites a day's row with a deeper or
+     better run, so "nothing you have earned is lost" is the same promise stated
+     wider. it is a negation on purpose: the question is what this COSTS, and the
+     shortest true answer to that is almost nothing. it is also measured — with
+     the streak line after it, it is two lines on this card's measure, and every
+     longer way of saying it was three.
+     the SUB takes the rungs instead, because "played" is a word and "3 perfect,
+     2 clean" is the reason you are looking at this day again.
+     NOTHING AT STAKE IS A REAL STATE. a run nobody has touched — no turns, no
+     nets, no moves — loses nothing, and a row announcing a cost would be a lie
+     told to sell caution. the test is the one the save merge already uses on the
+     same three fields; see `untouched` there. `over` counts as untouched too: a
+     finished or set-aside day is already banked in the record. */
+  const r=R();
+  const live=!r.over && !!(r.turns||r.netIndex||r.cleared.length||r.netMoves);
+  const words=tierWords(tiers);
   const ok=await ask({
     title:dayLabel(iso),
-    sub:done?'played · replaying cannot lower a tier':'not played yet',
-    rows:[['the run you are on','ends here']],
-    note:iso===today()
-      ? 'today\'s set starts again from the first net.'
-      : 'an archive day does not extend a streak.',
+    sub:done?(words?'played · '+words:'played'):'not played yet',
+    rows:live?[['the run you are on',
+      isTrial() ? 'time trial · net '+(r.netIndex+1)
+                : 'net '+(r.netIndex+1)+' of '+POLICY.dailyNets]]:[],
+    note:[live?'nothing you have earned is lost — only your place in the set.':'',
+          iso===today()?'':'an archive day does not extend a streak.']
+         .filter(Boolean).join(' '),
     yes:'play →', no:'not now'
   });
   if(!ok) return;
@@ -8264,10 +8893,10 @@ function openRecord(){
        where the day is, so nothing is hidden from a screen reader. */
     if(canPlay){
       el.setAttribute('role','button'); el.tabIndex=0;
-      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offerDay(d,played) } };
+      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offerDay(d,played,played?row.tiers:null) } };
     }
     el.onclick=()=>{
-      if(canPlay) return offerDay(d,played);
+      if(canPlay) return offerDay(d,played,played?row.tiers:null);
       /* it names the day you just pressed and what opening it costs, and stops
          there. the line above is the way through; a row that went straight to a
          payment page would make three hundred accidental tap targets out of a
@@ -8588,8 +9217,9 @@ function renderHud(){
      mints is the strip's business.
 
      `graded` is the two cases with no perfect to chase: no optimum standing
-     under par for this net — rare now, and only on the frozen days before v8,
-     see netTargets — and a net under descent, which is capped at done. both
+     under par for this net — which from v5's `gap` rule means no optimum at
+     all, so it is the time trial and the frozen days up to 2026-08-13, see
+     netTargets — and a net under descent, which is capped at done. both
      skip straight to the par budget, which is then the whole of par rather than
      the part of it past the optimum. */
   const t=r.netMoves, over=t>par;
@@ -8619,7 +9249,7 @@ function renderHud(){
      make — so the reading changes hands even though the bar does not. */
   const left=Math.max(0,par-t);
   const perfectLeft=graded?Math.max(0,Math.min(left,optimum-t)):0;
-  let pct, segs, num, unit;
+  let pct, segs, num, unit, lap=-1;
   if(over){
     /* PAST PAR THE BAR FILLS AGAIN, and the full bar is TWICE par rather than
        par. the overspend is the one reading here with no ceiling of its own, so
@@ -8635,10 +9265,17 @@ function renderHud(){
        nearly half a bar, and seven over on fifteen is not half a disaster.
        the numeral is untouched either way. it names the exact overspend from the
        first turn past par and keeps naming it long after the bar has pinned, so
-       nothing is lost at the ceiling except the picture. */
-    pct=100*Math.min(t-par,2*par)/(2*par);
-    segs=[{col:'var(--par-over)',grow:1}];
-    num=t-par; unit='over par';
+       nothing is lost at the ceiling except the picture.
+       AND IT NO LONGER PINS. twice par is the length of a LAP now rather than a
+       ceiling: the bar wraps there and fills again in the next colour, forever.
+       see LAPCOL. the arithmetic below is the old line with the clamp taken off
+       and the remainder taken instead, so the first lap draws what it has always
+       drawn, to the pixel, up to and including the turn it fills at. */
+    const span=2*par, overBy=t-par;
+    lap=Math.floor(overBy/span);
+    pct=100*(overBy-lap*span)/span;
+    segs=[{col:`var(${LAPCOL[lap%LAPCOL.length]})`,grow:1}];
+    num=overBy; unit='over par';
   } else {
     pct=100*left/par;
     segs=[{col:'var(--par-perfect)',grow:perfectLeft},
@@ -8646,20 +9283,57 @@ function renderHud(){
     num=chasing?optimum-t:par-t;
     unit=chasing?'to perfect':'to par';
   }
-  /* crossing par is the one moment the bar does something other than shorten: it
-     empties, then starts filling again from the other end, and at --t-ui (170ms,
-     the hover speed) that reversal reads as a glitch rather than as a turn. so
-     that ONE change gets a slower sweep. the perfect line needs none — the bar
-     simply keeps draining through it, which is the point of drawing both. */
-  const meter=$('parmeter'), phase=over?'over':'under';
+  /* crossing par is one of two moments the bar does something other than shorten:
+     it empties, then starts filling again from the other end, and at --t-ui
+     (170ms, the hover speed) that reversal reads as a glitch rather than as a
+     turn. so that change gets a slower sweep. the perfect line needs none — the
+     bar simply keeps draining through it, which is the point of drawing both.
+     the other moment is a lap wrap, and it wants the opposite treatment for a
+     reason spelled out where it is handled, below. */
+  const meter=$('parmeter'), phase=over?'over':'under', bar=meter.firstElementChild;
+  /* the finish flood owns this bar until the next net, the same way it owns the
+     crossings one — celebrateGauge writes both, and its full-width run covers the
+     lap ground behind it, so a net cleared deep into a lap still ends on the flag
+     rather than on the colour it happened to stop in.
+
+     the numeral carries on: it is final the moment the net clears and has nothing
+     to say the flood contradicts. the phase is still written, because a bar that
+     returned early and left it stale would open the NEXT net on a 520ms sweep
+     inherited from this one. the lap bookkeeping below needs no such care — the
+     next net is under par, which clears both the ground and the lap. */
+  if($('parrow').dataset.done){
+    meter.dataset.phase=phase;
+    $('parnum').textContent=num; $('parof').textContent=unit;
+    return;
+  }
   if(!reduceMotion && meter.dataset.phase && meter.dataset.phase!==phase){
-    const bar=meter.firstElementChild;
     bar.style.transitionDuration='520ms';
     clearTimeout(meter.__phaseT);
     meter.__phaseT=setTimeout(()=>{ bar.style.transitionDuration='' },560);
   }
   meter.dataset.phase=phase;
+  /* the ground under the bar is the lap it just finished, so a lap that has
+     filled and the next one at nothing are the same picture. lap zero has no
+     previous lap and falls back to the bare track — which is what every net
+     under par is already drawing, and what crossing par has always looked
+     like. see LAPCOL and .track.parmeter. */
+  if(lap>0) meter.style.setProperty('--lap-under',`var(${LAPCOL[(lap-1)%LAPCOL.length]})`);
+  else meter.style.removeProperty('--lap-under');
+  /* the wrap is the one width change that must NOT ease, and for the opposite
+     reason to the par crossing above. the run goes from nearly the whole bay to
+     nothing while the segment inside it is rebuilt in the NEXT colour — so an
+     eased wrap draws a full bar of the new colour collapsing to a sliver, which
+     is precisely the flash the ground was arranged to avoid. killed for one
+     paint and handed straight back, with the reflow between so the width lands
+     under the zeroed duration rather than after it.
+     the previous lap has to be read before it is written, and only while the
+     bar was already past par: arriving over par is a phase change, which the
+     block above already owns. */
+  const wrapping = over && meter.dataset.lap!==undefined && meter.dataset.lap!==String(lap);
+  if(wrapping){ clearTimeout(meter.__phaseT); bar.style.transitionDuration='0s' }
+  if(over) meter.dataset.lap=lap; else delete meter.dataset.lap;
   paintRun('parmeter',pct,segs,num+' turns '+unit);
+  if(wrapping){ void bar.offsetWidth; bar.style.transitionDuration='' }
   // the numeral and its unit come off the same branch that drew the bar, so the
   // two can never name different lines
   $('parnum').textContent=num;
@@ -9181,6 +9855,15 @@ window.__st=()=>({run:R(),badges:store.collection.badges,threads:threads.map(t=>
    off, so a run of this is a check that the two agree. */
 window.__solveNet=()=>{
   const r=R();
+  /* the only route to clearNet that was NOT already gated on `over`. dragging
+     bails at pointerdown, descentTick and retangleTick bail on `.veil.show` and
+     on `over`, and skip bails — but this walked a finished board again, found
+     every thread already free, and pushed an eleventh and twelfth net into a run
+     that has ten. that is where a `day complete` card reading `12 of 12` came
+     from, and it wrote the same nonsense through stampToday into the day's row.
+     dev-only, and a save is the one input nothing can validate, so it is fixed
+     at the source rather than papered over in the card. */
+  if(r.over) return;
   if(spec.fam){
     /* walks the route par was priced from, action for action, billed through
        the same function a real move is. so running this is a direct test of
