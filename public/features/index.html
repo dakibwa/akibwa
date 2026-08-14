@@ -6180,9 +6180,15 @@ const part=(tag,attrs,paint,role,cls)=>({tag,attrs,paint,role,cls});
    competing with the mark it most needs to be told apart from, and confusing
    those two is a gameplay error rather than a visual one — one cannot be
    touched, the other must be, and costs a turn.
-   the one channel nothing else uses is the silhouette. so a pinned neuron is
-   not a circle: it is a square, in the same feature colour, sized and stroked
-   to weigh the same in a line of round ones. it is still a neuron and it
+   the one channel nothing else uses is the silhouette. so a neuron that is
+   HOLDING a pin is not a circle: it is a square, in the same feature colour,
+   sized and stroked to weigh the same in a line of round ones. it draws that way
+   only while the pin is holding — see pinHolds and the call in mountNode. once
+   the last feature through it is identified the pin releases, it takes its place
+   in the sign, and it is a circle again: the square means THIS WILL NOT MOVE,
+   and a square left on a neuron that has just moved is the mark arguing with the
+   board. the pin is a state, not a species.
+   it is still a neuron and it
    still carries its feature — it has simply stopped being a free variable, and
    a square is what a fixed point is drawn as everywhere from a structural
    support to a terminal in a circuit. it is the only angular mark on a board of
@@ -6388,7 +6394,12 @@ function paintNode(n){
   n.ax=n.x0; n.ay=n.y0;                 // where this mark was authored
   // every mark comes from the builders the teaching cards use, so the cards
   // cannot drift from the board
-  const els=neuronParts(n.x0,n.y0,n.threads.map(t=>t.col),{pinned:n.pinned})
+  /* `pinHolds`, not `n.pinned`: the square says THIS WILL NOT MOVE, and once the
+     last feature through it is identified the pin releases and it walks into the
+     sign with the rest. a square still sitting there after that is the mark
+     contradicting what the board just did. it goes back to being a circle, which
+     is what it always was underneath — the pin was a state, not a species. */
+  const els=neuronParts(n.x0,n.y0,n.threads.map(t=>t.col),{pinned:pinHolds(n)})
     .map(p=>[p.role,partEl(p,n.g)]);
   const by=r=>{const f=els.find(e=>e[0]===r); return f?f[1]:null};
   n.el=by('body'); n.el2=by('inner'); n.halo=by('halo');
@@ -6397,6 +6408,12 @@ function paintNode(n){
      rule of its own, so the blanket width would thicken it to match the outer
      ring and lose the difference the mark is made of. */
   if(n.el2) n.el2.style.strokeWidth=MARK.wIn;
+  /* the dim a neuron wears once every feature through it is identified. it is
+     applied here rather than only where it is earned, because repainting is
+     total — the group is dropped and rebuilt — so a mark that gains a repaint
+     later in its life must not come back brighter than the one beside it that
+     did not. a released pin is exactly that mark. */
+  if(n.threads.every(t=>t.freed)) n.el.classList.add('done');
   placeNode(n);
 }
 // the whole mark, wherever the physics has put the neuron
@@ -6642,13 +6659,20 @@ const atRendered=n=>`${n.xr.toFixed(1)},${n.yr.toFixed(1)}`;
 
    - a sign the settle declined to draw at all. that is settleIntoShape's own
      guard, restated rather than remembered, so the two cannot drift.
-   - an end neuron that is pinned, or still carrying a live feature. the closing
-     edge runs from the last neuron to the first, so if either of them stayed
-     behind in the tangle that edge is not a line of the drawing, it is a second
-     spike across the board to a neuron that never moved. the sign is already
-     incomplete there and closing it would only be louder about it. a HELD
-     MIDDLE neuron is fine: the outline either side of it is whole and the
-     closing edge is still the sign's own edge.
+   - an end neuron still carrying a live feature. the closing edge runs from the
+     last neuron to the first, so if either of them stayed behind in the tangle
+     that edge is not a line of the drawing, it is a second spike across the
+     board to a neuron that never moved. the sign is already incomplete there
+     and closing it would only be louder about it. a HELD MIDDLE neuron is fine:
+     the outline either side of it is whole and the closing edge is still the
+     sign's own edge.
+
+   a pinned end used to be the third case, and was by far the commonest: a pin
+   is placed at a position the solution needs, so pins land on ends often. it is
+   gone because a pin is released the moment the last feature through it is
+   identified — see pinHolds — and a released pin walks into the sign with
+   everything else. that removed the one reason most signs on the pinned nets
+   arrived broken.
 
    it is asked once, in freeThread, and not per frame — and it has to be, because
    `held` shrinks as later threads come free while this thread's sign was drawn
@@ -6775,9 +6799,11 @@ function startPhysics(){
          a neuron whose features are all identified breathes with its THREAD —
          same phase, same slow frequency — so a settled emblem moves as one
          object instead of dissolving into eight independent wobbles.
-         a pin never moves at all. */
+         a pin that is still holding does not move at all; one that has been
+         released has taken its place in the sign and breathes with the rest of
+         it, or the emblem has one dead vertex in it. */
       let amp=0, ph=n.phase, fr=n.freq;
-      if(!quiet && !n.pinned){
+      if(!quiet && !pinHolds(n)){
         let worst=-1;
         for(let i=0;i<n.threads.length;i++){const th=n.threads[i]; if(!th.freed&&th.crossings>worst) worst=th.crossings}
         if(worst>=0){ amp=.85+Math.min(.65,worst*.09) }
@@ -6810,7 +6836,17 @@ function refresh(){
    the thread has neurons, and the thread wears the result — so the line you
    just untangled becomes the sign for the thing it turned out to be.
    only neurons whose every thread is free are moved: one still carrying a live
-   feature stays where the player put it, and a pin never moves at all.
+   feature stays where the player put it. a PIN is moved like any of them, and
+   released as it goes — it was holding the neuron out of the drawing, and by
+   here the puzzle it was holding it for is over. it used to be the third
+   exception and it was the commonest, because a pin is placed where the
+   solution needs it and so lands on an end; that is what left most signs on the
+   pinned nets broken.
+
+   that "every thread is free" test is also what keeps this legal at all: it
+   writes x0/y0, which is what crossings and par are read from, and it is only
+   safe because a neuron moves once nothing still being scored is standing on
+   it. loosen THAT and the settle starts editing live boards.
 
    the shape used to be fitted over the THREAD'S OWN CENTROID, which is where it
    happened to finish being untangled. a feature that came apart in a crowded
@@ -6874,9 +6910,14 @@ function featureShape(k,n){
      22-70% at n=3, because the shortest edge of a pentagon is still a third of
      a pentagon. `chess` at n=3 loses 99% of itself and settles as a bare V.
      so this is damage limitation, not a free lunch, and the sign closes instead
-     wherever it can — see signWhole, which is now the usual case. what is left
-     here is the fallback for the sign that cannot: a thread with a pinned end.
-     losing the shortest edge is still the right one to lose.
+     wherever it can — see signWhole, which is now every sign the game actually
+     draws. the fallback used to be reached by a thread with a pinned end, which
+     was common; a pin now releases at the settle, and canFree is what keeps the
+     other case — an end still shared with a live feature — from arising.
+     the rotation stays regardless: it is a no-op on a whole sign, and this
+     cache is keyed by feature and point count rather than by thread, so it
+     could not be asked per sign anyway. if one ever cannot close, the shortest
+     edge is still the right one to lose.
 
      on a whole sign the rotation is a no-op. rotating a polygon's vertex list
      leaves the polygon alone, and bestTurn re-turns it anyway to whichever
@@ -6898,10 +6939,12 @@ function featureShape(k,n){
    about their own anchor. */
 /* a settled feature owns its whole cell — the sign AND the name. so the name is
    laid off the sign's leading edge as before, but read from the neurons that
-   actually DREW the sign rather than from all of them (a pin left behind used to
-   drag the name off towards itself), and then held inside the cell. that second
-   part is what stops two neighbours captioning each other: a name cannot leave
-   its own cell, and no two features share one. */
+   actually DREW the sign rather than from all of them, and then held inside the
+   cell. that second part is what stops two neighbours captioning each other: a
+   name cannot leave its own cell, and no two features share one.
+   the filter was put here because a pin left behind dragged the name off
+   towards itself; a pin is not left behind any more, so what it now excludes is
+   heldNodes' remaining case, and on every board the game deals that is none. */
 function labelAnchor(t){
   const s=t.signSlot;
   const held=s?heldNodes(t):null;
@@ -7000,7 +7043,13 @@ function boardOccupancy(t){
       for(let s=1;s<steps;s++) add(n.x0+(m.x0-n.x0)*s/steps, n.y0+(m.y0-n.y0)*s/steps);
     });
   });
-  members.forEach(n=>{ if(n.pinned) add(n.x0,n.y0) });   // a pin outlives its thread
+  /* a pin used to be listed here as well, under "a pin outlives its thread" —
+     it stayed on the board after the sign it belonged to had flown off to a
+     cell. it does not outlive it any more: it travels with the sign, into the
+     slot that is already excluded outright, so listing it would push every
+     other sign away from a cell that is about to be empty. a pin on a thread
+     that has NOT settled is still counted, by the loop above, with the rest of
+     that thread's neurons. */
   countCross().marks.forEach(m=>add(m.x,m.y));
   return pts;
 }
@@ -7012,9 +7061,31 @@ function slotGap(s,p){
   const dx=Math.max(Math.abs(p.x-s.cx)-h,0), dy=Math.max(Math.abs(p.y-s.cy)-h,0);
   return Math.hypot(dx,dy);
 }
-/* the neurons a settling feature is NOT allowed to move: its pins, and anything
-   still shared with a feature that is still live. everything else is the sign. */
-function heldNodes(t){ return t.nodes.filter(n=>n.pinned||!n.threads.every(th=>th.freed)) }
+/* ---- a pin holds until the feature through it is identified, and not after ----
+   the pin is a constraint on the PUZZLE: this neuron is load-bearing for a
+   feature you have not found yet, so you may not move it and must route round
+   it. once every feature through it is free there is no puzzle left for it to
+   constrain, and holding it there only kept it out of the drawing — a sign with
+   a pinned vertex either flew off leaving a spike back to it, or, if the pin
+   was an END of the run, refused to close at all and settled as a broken line.
+   the constraint has run out; the picture has not.
+
+   it is worded as "every thread through it" and not "its thread" so that it
+   cannot be read as releasing early. nothing whose position is still scored may
+   move: countCross, incidentCross and tutCross all walk `threads.filter(t=>
+   !t.freed)`, so a neuron with no live thread left feeds no crossing count, no
+   par and no tier — and that is exactly the neuron this frees. (a pin is never
+   superposed — the generator picks pins from unmerged neurons only — so in
+   practice this is its own single thread. the general form is what makes the
+   invariant above true by construction rather than by that coincidence.) */
+function pinHolds(n){ return n.pinned && !n.threads.every(th=>th.freed) }
+/* the neurons a settling feature is NOT allowed to move: anything still shared
+   with a feature that is still live. everything else is the sign — its released
+   pins included, which is the whole of what makes the sign whole.
+   canFree refuses a thread that still holds a shared neuron, so today this
+   never actually catches anything; it is the predicate the settle is written
+   against and the ends test in signWhole reads, and it costs one pass. */
+function heldNodes(t){ return t.nodes.filter(n=>!n.threads.every(th=>th.freed)) }
 /* the cost of a slot, and the whole of what "emptiest" means here: every
    occupied point near the slot counts, weighted by how close it is and squared
    so that being under something matters far more than being beside it. one unit
@@ -7035,55 +7106,30 @@ function slotCost(s,occ){
   return c;
 }
 const HOME_W=6;    // cost of a slot one board-width from where the thread untangled
-const PULL_W=26;   // and of one pin left a board-width behind
-/* the pins a thread will still be holding once it settles. NOT heldNodes: that
-   also counts neurons shared with a live feature, which is every neuron of a
-   thread that has not come free yet — right for deciding what a settling sign
-   may move, useless as an anchor for one that has not settled. */
-function pinsOf(o){ return o.nodes.filter(n=>n.pinned) }
-function nearestSlot(list,x,y){
-  let b=null,bd=Infinity;
-  list.forEach(s=>{const d=Math.hypot(s.cx-x,s.cy-y); if(d<bd){bd=d;b=s}});
-  return b;
-}
+/* a pin used to anchor its sign to the cell nearest itself, at PULL_W=26 —
+   four times the weight of every other consideration here — and pinned threads
+   got first refusal on those cells ahead of unpinned ones. both were the same
+   argument: the pin stayed exactly where it was, the line still ran through it,
+   so a sign that flew to the far side of the board dragged a spike all the way
+   back across everything in between, and a pinned feature that came free last
+   found every near cell gone and drew the longest spike of all.
+   a released pin travels into the cell with the rest of the sign, so there is
+   no spike to shorten and nothing to anchor to. what is left is the honest
+   question — which open cell is emptiest, ties going to where the thread
+   already was — asked the same way for every feature. */
 function claimSlot(t){
   if(t.signSlot) return t.signSlot;
   const slots=signSlots();
   const taken=new Set(threads.filter(o=>o!==t&&o.signSlot).map(o=>o.signSlot.i));
-  let open=slots.filter(s=>!taken.has(s.i));
+  const open=slots.filter(s=>!taken.has(s.i));
   if(!open.length) return (t.signSlot=slots[Math.max(0,threads.indexOf(t))%slots.length]);
   const mean=(a,f)=>a.reduce((s,n)=>s+f(n),0)/a.length;
-  /* a pin stays exactly where it is and the line still runs through it, so a
-     sign that flies to the far side of the board drags a spike all the way back
-     across everything in between. it therefore pulls its own sign towards
-     itself — hard enough to overrule a moderately emptier slot, not hard enough
-     to nail the sign to the cell it started in. a feature with no pins is free,
-     and most are. */
-  const held=pinsOf(t);
-  const hx=held.length?mean(held,n=>n.x0):0, hy=held.length?mean(held,n=>n.y0):0;
   const cx=mean(t.nodes,n=>n.x0), cy=mean(t.nodes,n=>n.y0);
-  /* and a feature that is pinned has less choice than one that is not, so the
-     pinned ones that are still tangled get first refusal on the cell nearest
-     their pin. without this the free-moving features take the good cells in the
-     order the player happens to untangle them, and the pinned one comes free
-     last to find every near cell gone — then draws a line half the board long
-     back to a neuron it was never allowed to move. reserving costs the mover
-     almost nothing: it is choosing between empty cells either way. */
-  const mine=held.length?nearestSlot(open,hx,hy):null, res=new Set();
-  threads.forEach(o=>{
-    if(o===t||o.signSlot) return;
-    const op=pinsOf(o); if(!op.length) return;
-    const s=nearestSlot(open.filter(q=>!res.has(q.i)), mean(op,n=>n.x0), mean(op,n=>n.y0));
-    if(s && s!==mine) res.add(s.i);                  // never reserve away my own anchor
-  });
-  const room=open.filter(s=>!res.has(s.i));
-  if(room.length) open=room;                         // unless it would leave nothing
   const occ=boardOccupancy(t);
   let best=open[0], bv=Infinity;
   open.forEach(s=>{
     let v=slotCost(s,occ);
     v+=HOME_W*Math.hypot(s.cx-cx,s.cy-cy)/BW;                  // ties go to where it already was
-    if(held.length) v+=PULL_W*held.length*Math.hypot(s.cx-hx,s.cy-hy)/BW;
     if(v<bv){bv=v;best=s}
   });
   return (t.signSlot=best);
@@ -7165,6 +7211,19 @@ function settleIntoShape(t){
           out:true, land:!reduceMotion};
     k++;
     n.x0=bx; n.y0=by;
+    /* and a released pin stops being drawn as one, HERE, at the moment it
+       moves. the square is not a description of the neuron, it is the mark for
+       a rule — "will not move", in those words on the rules card — and it is
+       the only angular mark on a board of arcs precisely so that it is found
+       instantly. a square left in a settled sign is that mark contradicting
+       itself inside an Aicher pictogram made of circles, arcs and 45s.
+       it goes at the settle rather than at the free because between the two the
+       neuron is still lying in the tangle, where the rule still reads true of
+       where it is standing. it is the same rule the split already follows: a
+       superposed neuron stops being drawn fused the instant it is parted.
+       paintNode rebuilds the mark from n.pinned, so the flag is what changes —
+       and the flag is what everything else asks. */
+    if(n.pinned){ n.pinned=false; paintNode(n) }
   });
   physDirty=true;
 }
@@ -7228,8 +7287,19 @@ function freeThread(t,silent){
     setTimeout(()=>{ t.signWhole=whole; t.settled=true; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
   }else{
     /* the restore path: the neurons are loaded already standing on their sign,
-       so there is nothing to settle and nothing to wait for. */
+       so there is nothing to settle and nothing to wait for.
+
+       the pin release is the one part that does NOT come back with the
+       positions, because it lives in a flag rather than in a coordinate.
+       settleIntoShape drops it at the end of the animation, and this path never
+       runs the animation — so without this the tenth net of a reloaded finished
+       day came back with its pin still set: undraggable, pushing neighbours
+       around in the physics as a fixed point, and telling every reader of
+       `n.pinned` that a neuron which has plainly moved into a sign has not.
+       the same condition as the settle's, so a restored board and a played one
+       arrive at the same state rather than merely looking alike. */
     t.signWhole=whole; t.settled=true;
+    t.nodes.forEach(n=>{ if(n.pinned && n.threads.every(th=>th.freed)){ n.pinned=false; paintNode(n) } });
   }
 }
 
