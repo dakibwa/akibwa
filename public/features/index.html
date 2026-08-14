@@ -1687,10 +1687,19 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        that cannot shrink on a plate that cannot widen, and it is charged on the
        one card in the game shown to a board that is already SOLVED — nothing
        under it is still being hunted. it is not the trade `.say` was making. */
+    /* THE FOOT, not the plate's foot. `--plate-y` is the board's letterbox, and
+       on a portrait phone it is enormous — 128px at 375x812 — so a card inset by
+       it floated 146px clear of the bottom with a band of empty board under it,
+       which reads as a card stranded mid-screen rather than one sitting at the
+       end. that inset was written for the horizontal case, where `--plate-x`
+       keeps the card off the plate's edge and the margin either side is small.
+       vertically it buys nothing: nothing is drawn in the letterbox, so there is
+       nothing to stay clear of. the coach card sits at the foot of the field on
+       this width and so does every message; this now does too. */
     .boardcard > .bulletin{
       max-width:min(360px,calc(100% - 2 * var(--plate-x,0px) - 36px));
       width:calc(100% - 20px);
-      margin:0 auto calc(var(--plate-y,0px) + 18px);max-height:62%;
+      margin:0 auto 10px;max-height:62%;
     }
     /* 297px inside the padding here against the 318 five 58s want: the worst case
        broke to a second row and cost 90px of card — 15% of the plate — to show
@@ -7757,7 +7766,7 @@ function tutSpotlight(){
   /* TUT_RING has to equal the rest radius in @keyframes tutping: the leader
      line leaves the RING, not the aperture, and starting it at the aperture
      edge instead left a 30-unit gap that read as two unrelated marks. */
-  const k=NR/10, hole=46*k, xhole=24*k, dropR=14*k, ringR=TUT_RING*k;
+  const k=NR/10, hole=46*k, xhole=24*k, ringR=TUT_RING*k;
   const f=(v)=>v.toFixed(1);
   if(!gTut||!gTut.isConnected){
     gTut=document.createElementNS('http://www.w3.org/2000/svg','g');
@@ -7772,29 +7781,22 @@ function tutSpotlight(){
     if(gLabels&&gLabels.parentNode===gRoot) gRoot.insertBefore(gTut,gLabels);
     else gRoot.appendChild(gTut);
   }
+  // the spotlight's cut-outs: the neuron to move, and the crossings to clear
   const holes=[{x:t.n.x0,y:t.n.y0,r:hole}].concat(t.marks.map(m=>({x:m.x,y:m.y,r:xhole})));
-  // where to take it, drawn only when there is room to draw it: a leader
-  // shorter than the two marks it joins would be a smudge, not an instruction
-  const dx=t.x-t.n.x0, dy=t.y-t.n.y0, len=Math.hypot(dx,dy);
-  let lead='';
-  if(len>ringR+dropR+26*k){
-    const ux=dx/len, uy=dy/len;
-    const ax=t.n.x0+ux*(ringR+9*k), ay=t.n.y0+uy*(ringR+9*k);
-    const bx=t.x-ux*(dropR+8*k),    by=t.y-uy*(dropR+8*k);
-    const cyc=13*k;
-    lead=`<path class="tutlead" d="M${f(ax)} ${f(ay)}L${f(bx)} ${f(by)}"`
-       + ` stroke-width="${f(1.6*k)}" stroke-dasharray="${f(7*k)} ${f(6*k)}"`
-       + ` style="--flow:${f(-cyc)}px"/>`;
-  }
+  /* the light picks out the neuron to move and the crossings to clear, and stops
+     there. it used to also draw a leader line to a dashed ghost on the exact
+     spot — which is not a lesson, it is the answer: there was nothing left to
+     work out, only two shapes to match, and a player who follows it has learned
+     where to look rather than what the game is. what the first net has to teach
+     is that a neuron can be dragged and that crossings are the thing to get rid
+     of. the light says both. where to put it is the puzzle, and it is the same
+     puzzle every net after this one asks. */
   gTut.innerHTML=
      `<mask id="tutcut" maskUnits="userSpaceOnUse" x="0" y="0" width="${BW}" height="${BH}">`
     +`<rect x="0" y="0" width="${BW}" height="${BH}" fill="#fff"/>`
     + holes.map(h=>`<circle cx="${f(h.x)}" cy="${f(h.y)}" r="${f(h.r)}" fill="#000"/>`).join('')
     +`</mask>`
     +`<rect class="tutscrim" x="0" y="0" width="${BW}" height="${BH}" mask="url(#tutcut)"/>`
-    + lead
-    +`<circle class="tutdrop" cx="${f(t.x)}" cy="${f(t.y)}" r="${f(dropR)}"`
-    + ` stroke-width="${f(1.9*k)}" stroke-dasharray="${f(5.5*k)} ${f(4.8*k)}"/>`
     /* the ping is under the standing ring: it is the quieter of the two and
        must never sit on top of it. both are authored at r=10 scale and the css
        scales them, so TUT_RING is the literal @keyframes tutping starts from.
@@ -7826,10 +7828,18 @@ if(window.ResizeObserver) new ResizeObserver(tutRelayout).observe($('field'));
    `net` anywhere, and reintroducing it in the first sentence of the guided net
    would put the word back four seconds after it was removed. `here` costs
    nothing — the board is on screen and the card is pointing at it. */
+/* one idea per step, and the instruction FIRST. every one of these used to open
+   with a fact and bury the thing to do at the end of it — "two features run
+   through here, and they cross" before "drag a neuron", and "the ringed dots are
+   crossings" before anything to do about them. a player reading a card mid-net
+   wants the verb, and the board behind it is already showing the fact.
+   the nouns are the ones the key row directly below is drawing at that exact
+   moment: neuron, crossing, and the two coloured lines. nothing here names a
+   thing the player cannot point at. */
 const TUTSTEPS=[
-  'two features run through here, and they cross. <b>drag a neuron</b> to move one out of the way.',
-  'the ringed dots are <b>crossings</b>. clear every crossing off one feature and it <b>pulls free</b>, naming itself.',
-  'one to go. <b>free the last one</b> to mint your first badges.'
+  '<b>drag the lit neuron.</b> the lines follow it.',
+  'each <b>X</b> is a crossing. clear every crossing off one line and it comes free.',
+  'one crossing left. <b>clear it</b> and the last line comes free too.'
 ];
 /* what the card says once the board is doing the pointing. step one stops
    saying "a neuron" — the whole complaint was that a player has to map that
@@ -7838,7 +7848,7 @@ const TUTSTEPS=[
    they are variants rather than replacements: if the search finds no move worth
    lighting, the light is off and the card must not refer to it. */
 const TUTLIT=[
-  'two features run through here, and they cross. <b>drag the lit neuron</b> onto the dashed ring.',
+  '<b>drag the lit neuron.</b> the lines follow it.',
   null, null
 ];
 const TUTLITADD=' the light is on the next one.';
@@ -8385,13 +8395,14 @@ function showNetCleared(feats,tier,wasTutorial){
        three, and it was the largest block of text on the card at the one moment
        the game has nothing to explain. the nets ARE the curriculum and each of
        those arrives with its own coaching when it arrives (see the shared-neuron
-       message in afterMove). so the line keeps the payoff and drops the syllabus.
-       the ordinary note said "minted into your collection" above the stamps that
-       ARE the minting, then "the next net is deeper", which is true of every net
-       after every net forever. */
-    note:wasTutorial
-      ? 'that is the whole game. it gets deeper from here.'
-      : (last.assisted ? 'untangle the next one unaided for a clean badge.' : ''),
+       message in afterMove).
+       what replaced it — "that is the whole game. it gets deeper from here." —
+       went the same way for the same reason, just smaller: the card already says
+       `perfect` in the largest type on it and holds two stamps the player has
+       just earned, and a line telling them it gets harder is the game talking
+       over its own reward. the assisted note stays, because it names a
+       consequence that is nowhere on the board. */
+    note:last.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
     /* one action, and it goes forward. `stop for today` sat beside it and was an
        invitation to put the game down at the exact moment the player had just
@@ -9372,9 +9383,16 @@ function renderHud(){
      counted off. the numeral above has always been the count, the boundary into
      the day ahead is still exactly where you are, and the cells themselves are
      untouched for anything that reads them. see the note by .track. */
-  const D=POLICY.dailyNets;
+  const D=POLICY.dailyNets, tut=inTutorial();
   // a trial has no ten, so its strip rolls: a band of ten that empties and refills
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
+  /* three steps rather than ten nets, filled as they are reached and all in the
+     one colour — see the label above for why a step is not a rung. */
+  if(tut){
+    const step=Math.min(tutStepAt,3);
+    paintCells('setmeter',Array.from({length:3},(_,i)=>'var('+(i<step?TIERCOL.perfect:SETAHEAD)+')'),
+      'tutorial step '+step+' of 3');
+  } else
   /* every cell is handed a colour now, so paintCells never draws its empty case
      here any more. the case stays in paintCells rather than being torn out: it
      is one `if`, and a track handed a hole should draw a hole rather than throw. */
@@ -9400,7 +9418,13 @@ function renderHud(){
      has shortened is a thing spent. same direction of travel, opposite meaning,
      and the eye gets both without either instrument breaking the form. */
   const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
-  $('setlabel').textContent=trial?'time trial':"today's set";
+  /* the guided net is not part of the day's ten and never was — it is one net
+     played before the set starts. so the bay says what is actually happening and
+     counts UP through the three steps, instead of showing a set that has not
+     begun and a countdown from ten that the tutorial can never move. every step
+     is drawn in `perfect`, because a step is not a rung: nothing here is being
+     scored, and colouring it anything else would invent a grade for a lesson. */
+  $('setlabel').textContent=tut?'tutorial':(trial?'time trial':"today's set");
   /* the numeral counts DOWN, like the two beside it: nets still to play, ten to
      nothing. all three readings in the head now answer "how much is left", so
      the day ends with three noughts rather than two noughts and a ten.
@@ -9408,7 +9432,8 @@ function renderHud(){
      which rung each net minted, and a strip that emptied as you played would
      erase the day while you were having it. so the number is what is spent and
      the strip is what was earned. */
-  $('setnum').textContent=trial?r.cleared.length:Math.max(0,D-r.cleared.length);
+  $('setnum').textContent=tut?Math.min(tutStepAt,3)
+    :(trial?r.cleared.length:Math.max(0,D-r.cleared.length));
 
   /* ---- turns against par ----
      ONE line at a time, and the whole bar is that line.
