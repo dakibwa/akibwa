@@ -5,7 +5,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>features</title>
 <meta http-equiv="cache-control" content="no-store">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%23E97E18' stroke-width='2.6'%3E%3Cline x1='16' y1='2' x2='16' y2='9'/%3E%3Cline x1='16' y1='23' x2='16' y2='30'/%3E%3Cline x1='2' y1='16' x2='9' y2='16'/%3E%3Cline x1='23' y1='16' x2='30' y2='16'/%3E%3Cline x1='6' y1='6' x2='11' y2='11'/%3E%3Cline x1='21' y1='21' x2='26' y2='26'/%3E%3Cline x1='26' y1='6' x2='21' y2='11'/%3E%3Cline x1='11' y1='21' x2='6' y2='26'/%3E%3C/g%3E%3C/svg%3E">
+<!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
+     construction: a rounded white tile, a faint inner keyline at 13% ink, a
+     bold near-black letter, and the colour beneath it. that file is 64 wide and
+     this one is 32, so the shared measures here are exactly half of it — rx 14
+     -> 7, the keyline's 1.5/61/12.5/3 -> .75/30.5/6.25/1.5. side by side in a
+     bookmarks bar the CORNER RADIUS is what makes two marks read as a set, so
+     it is copied to the unit.
+
+     where the two part company is the colour. akibwa carries a thin blue line
+     with an orange terminal dot; this one FILLS the bottom 12 of its 32 with the
+     four-colour flag, on the owner's instruction, and a filled field is a bigger
+     departure than a rule was. the tile, the radius and the keyline are what
+     still carry the family — stated here because the next person to look at the
+     pair will wonder whether the divergence was noticed.
+
+     the letter is also a PATH, not a <text>. akibwa's asks for Avenir Next, then
+     Inter, then Helvetica Neue, so its A is a different glyph on a machine with
+     none of them. this one cannot drift. it is lowercase because everything this
+     game writes is, and it is FITTED to the masthead's f rather than invented:
+     against the real 25px/700 glyph, as ratios of its height, width .455 against
+     .467, stem .18 against .20, hook overhang .18 against .147. the crossbar is
+     the one place the aicher grid costs fidelity — it sits .45 down where the
+     title's sits .34, because a TRUE circular hook wide enough to reach that far
+     right springs lower than a real type hook, which is flattened. raise it and
+     the counter closes and the letter rasterises as a plus sign.
+
+     the band is 4 units, and that number is not taste. the viewBox is 32 and a
+     tab draws it at 16, so a unit is half a device pixel and only EVEN heights
+     land on whole ones — an odd band is a blurred band, which is what capped the
+     original 2-unit rule: at 3 units it was 1.5px and smeared. 4 units is the
+     next clean step up, and it exactly doubles the colour that survives — 28
+     pure flag pixels at 16px against the 2-unit rule's 14.
+
+     it stops at 4 because of where the letter ends. the stem's baseline is y24,
+     so a band from y24 has the f standing exactly ON it and needs nothing doing
+     to either. 6 units would climb two past the baseline and the stem would have
+     to be knocked out of the colour; 12 fills the bottom third and the tile stops
+     being a letter on a ground and becomes a colour chip with a letter on top.
+     both were built and both were rejected — the point of this mark is a letter
+     with a rule under it, and the rule should be legible, not loud.
+
+     the band also still FLOATS: four units of tile below it, the way akibwa's
+     blue line sits clear of its own bottom edge. run flush to the edge instead
+     and the family resemblance goes with it, for one extra pixel of colour.
+
+     the band is CLIPPED to the tile so it takes the bottom corner arcs.
+     unclipped it is a square block in a rounded tile and looks broken at 96px —
+     checked, and checked in webkit too, because a clipPath is exactly the kind
+     of thing that renders in one engine and not the other. it does not: both
+     agree to the pixel, and both put zero flag pixels outside the arc. the
+     keyline is drawn LAST, over the field, because it is the tile's edge and an
+     edge that stops where a colour starts is not an edge.
+
+     the tile is also what lets the colours be fixed at all. a tab bar is light
+     on one machine and dark on the next and an icon cannot ask which. a
+     prefers-color-scheme rule inside the svg looks like the answer and is not:
+     chromium honours it, WEBKIT IGNORES IT, so the f would stay near-black on
+     every safari and ios dark tab bar — the same class of bug as the unitless
+     `r`. so the mark brings its own ground.
+
+     A DATA-URI CANNOT READ A CSS TOKEN. these are therefore resolved values and
+     the only hardcoded colours in the file: --surface and --ink at their LIGHT
+     values, then --flag-1..4 resolved through their var() chains — hellblau,
+     gelb, gruen, orange, in that order and for the reasons given at --flag-*.
+     if any of the six move in :root, MOVE THEM HERE BY HAND. nothing checks
+     this and nothing will tell you. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CclipPath id='t'%3E%3Crect width='32' height='32' rx='7'/%3E%3C/clipPath%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%23FBFAF6'/%3E%3Cg fill='none' stroke='%2315191C' stroke-width='4'%3E%3Cpath d='M14 24V12A6 6 0 0 1 20 6'/%3E%3Cpath d='M10 14H20'/%3E%3C/g%3E%3Cg clip-path='url(%23t)'%3E%3Crect y='24' width='8' height='4' fill='%232EA3DC'/%3E%3Crect x='8' y='24' width='8' height='4' fill='%23EFC319'/%3E%3Crect x='16' y='24' width='8' height='4' fill='%231FA45A'/%3E%3Crect x='24' y='24' width='8' height='4' fill='%23E97E18'/%3E%3C/g%3E%3Crect x='.75' y='.75' width='30.5' height='30.5' rx='6.25' fill='none' stroke='%2315191C' stroke-opacity='.13' stroke-width='1.5'/%3E%3C/svg%3E">
 <!-- the ground is stamped before the first paint, or the page shows one theme
      and then the other. the key is repeated here rather than shared because
      this has to run before the stylesheet is even parsed; it is the one place
@@ -1184,6 +1250,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      corners ever want swapping — the two are within a rounding error of each
      other on the mean, and it is the worst net that separates them.
 
+     THIS RULE IS THE WHOLE PLACEMENT, at every width. the phone used to override
+     it into a band across the middle of the board and no longer does; the
+     re-measurement that ended that is in the max-width:700px block, and it found
+     the same shape of answer on a turned plate that this table found on a flat
+     one. what the phone still changes is the type, not the corner.
+
      WHICH CORNER OF WHAT. `.say` is positioned against `.field`, and the board
      does not fill `.field` — a fixed viewBox under xMidYMid meet is
      letterboxed into whatever the window leaves. a plain `right:18px` would
@@ -1336,8 +1408,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   /* the tier, and the one place on this card the ladder is drawn. same 7px the
      `.say` card uses for the feature it is speaking about — the two cards sit in
-     the same corner of the same board and their strips have to weigh the same. */
-  .bulletin .bstrip{height:7px;width:100%;display:block}
+     the same corner of the same board and their strips have to weigh the same.
+     it is bands rather than a fill because the strip can now carry more than
+     one colour, exactly as `.saystrip` does and for the same reason: one band is
+     a tier, four is the wordmark's flag. a single band still fills the width. */
+  .bulletin .bstrip{height:7px;width:100%;display:flex}
+  .bulletin .bstrip i{flex:1;display:block}
   .bulletin .bhead{display:flex;justify-content:space-between;align-items:flex-start;padding:20px 22px 0}
   .bulletin h2{font-size:31px;font-weight:700;letter-spacing:-.025em;text-transform:lowercase;line-height:1}
   /* the rung, in words, directly under the title. it is ink rather than the
@@ -1361,6 +1437,27 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .bulletin .brow b{font-weight:400;font-variant-numeric:tabular-nums;color:var(--ink)}
   .bulletin .bbody{padding:16px 22px 20px;position:relative}
   .bulletin .bnote{font-size:12.5px;line-height:1.55;color:var(--ink-soft);padding-right:46px}
+  /* the offer, under the note that has just said the day is over. it is the
+     same idea as the archive line at the foot of the record and it is drawn to
+     the same rule: quieter than the thing above it, a hairline under the way
+     through rather than a field around it, and no colour of its own. a filled
+     button here would be the loudest object on the screen that is the payoff of
+     the whole day — which is the mistake the record already made once and had
+     taken out of it.
+     a step down from .bnote in size and a step up in tracking, because it is a
+     different KIND of sentence from the one above: that one is the game telling
+     you where you are, this one is an offer, and a reader who cannot tell them
+     apart will read the offer as the game talking. */
+  .bulletin .boffer{
+    margin-top:9px;font-size:10.5px;letter-spacing:.05em;
+    color:var(--ink-soft);padding-right:46px;
+  }
+  .bulletin .boffer a{
+    color:var(--ink-soft);text-decoration:none;
+    border-bottom:1px solid var(--rule);padding-bottom:1px;
+    transition:color var(--t-ui),border-color var(--t-ui);
+  }
+  .bulletin .boffer a:hover{color:var(--ink);border-bottom-color:var(--ink)}
   /* the ray dial belongs to the card, not to its controls. anchored to the whole
      bulletin it sat in the same band as the buttons, and on a narrow card the
      buttons grow until they reach it — measured 15px of it lying across "stop
@@ -1373,6 +1470,28 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      watermark rather than a diagram. */
   .bulletin .bsun{position:absolute;right:22px;bottom:16px;width:34px;height:34px;opacity:.55;pointer-events:none}
   .bactions{display:flex;gap:9px;padding:0 22px 20px}
+  /* the sign-in invitation, and the only thing that ever sits below the buttons
+     on a bulletin. it is the record's foot, moved: same hairline rule, same
+     quietest ink, same links — because it is the same offer, and a player who
+     meets it here and then finds it again at the foot of the record should
+     recognise it rather than meet it twice. --surface-2 so it reads as a
+     footnote to the card rather than a second card stacked under it. */
+  /* two lines here where the record's foot is one, and that is the card's width
+     talking: the bulletin is a little over half as wide as the record, and one
+     line across it ellipsed the message down to a single letter while the four
+     names — which are the actionable half — kept every pixel they asked for.
+     so the message gets its own line and wraps rather than truncating. it is
+     the sentence that makes the links mean anything; a link row above an
+     ellipsis is four words with no reason attached. */
+  .bfoot{
+    display:flex;flex-direction:column;align-items:flex-start;gap:7px;
+    padding:10px 22px 12px;border-top:1px solid var(--rule);background:var(--surface-2);
+    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
+  }
+  .bfoot[hidden]{display:none}
+  .bfoot-say{line-height:1.5}
+  .bfoot-ins{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+  .bfoot-ins .acctlink{margin-left:0}
   /* a wide button depresses rather than shrinking. it is the same physical idea
      as the icon buttons — the control moves under the finger — said in the way
      each shape can say it: a small square scales, a long bar goes down.
@@ -1392,6 +1511,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
   .wbtn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .wbtn.solid:hover{background:var(--dunkelblau);border-color:var(--dunkelblau);color:var(--paper)}
+  /* shut, drawn the way the archive line at the foot of the record is drawn: a
+     dashed hairline and the quieter ink. dashed means shut and means nothing
+     else anywhere in this game. it is NOT disabled — it still leads somewhere,
+     to the record, where the unlock lives — so it keeps its hover, it simply
+     does not light up as though it were about to start a run. */
+  .wbtn.shut{border-style:dashed;color:var(--ink-soft)}
+  .wbtn.shut:hover{background:transparent;border-color:var(--silver);color:var(--ink)}
 
   /* minted badges strip inside bulletin.
      the stamps are sized to hold a row rather than to a drawing width. at 82px
@@ -1523,16 +1649,36 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
   @media (max-width:700px){
-    /* the plate is turned a quarter and comes out about 256x460 inside a 355px
-       field: there is no corner here to tuck 360px of card into, which is the
-       same wall `.say` hit at this width. so the card spans the board and sits at
-       the FOOT of it — the one edge a portrait net can spare, and short enough
-       now that the top half of the plate, where the signs mostly settle, is still
-       open. the width comes off the field rather than the plate for the same
-       reason `.say`'s does: a card spanning the board is already inside it. */
+    /* the card spans the board and sits at the FOOT of it — the one edge a
+       portrait net can spare, and short enough that the top half of the plate,
+       where the signs mostly settle, is still open. unlike `.say`, this one
+       genuinely is a wide card at every width: a title, a numeral, a row of
+       stamps and two buttons will not fold into a 159px object, so there is no
+       corner for it to shrink into and the foot is the honest place for it.
+       WIDTH AND INSET COME OFF THE PLATE, not off the field. they used to come
+       off the field — `max-width:none;width:calc(100% - 20px)` — on the argument
+       that a card spanning the board is already inside it. that is true only
+       where the plate nearly fills the field, which is the phone and nothing
+       else. measured on the cleared card:
+         375x812  field 353, plate 349  -> card 333, 8px clear of the plate
+         700x900  field 678, plate 398  -> card 658, 130px off EACH side of it
+       at 700 the card announcing a board was twice the width of the board. so it
+       takes the same cap the desktop rule takes, which is the plate less both
+       18px insets, and the same bottom inset — 313 wide with 18 clear at 375,
+       and inside the plate at every width in between. the bare 10px bottom was
+       measurably wrong too: at 430x932 the plate carries an 8px bottom letterbox
+       and the card was landing 3px off the plate's edge.
+       the numbers this replaces were desktop numbers and were only ever true
+       there: `.boardcard` above says the corner covers 16% of the plate where the
+       centred modal covered 43%, and that holds at 1280x720 (14.6%) and 1440x900
+       (8.9%). at 375x812 the same card covers 40%. that is the cost of a card
+       that cannot shrink on a plate that cannot widen, and it is charged on the
+       one card in the game shown to a board that is already SOLVED — nothing
+       under it is still being hunted. it is not the trade `.say` was making. */
     .boardcard > .bulletin{
-      max-width:none;width:calc(100% - 20px);
-      margin:0 auto 10px;max-height:62%;
+      max-width:min(360px,calc(100% - 2 * var(--plate-x,0px) - 36px));
+      width:calc(100% - 20px);
+      margin:0 auto calc(var(--plate-y,0px) + 18px);max-height:62%;
     }
     /* 297px inside the padding here against the 318 five 58s want: the worst case
        broke to a second row and cost 90px of card — 15% of the plate — to show
@@ -1558,6 +1704,28 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   @media (max-height:560px){
     #runveil .minted .mb:nth-child(n+6){display:none}
   }
+
+  /* ---------- a question ----------
+     `confirm()` is titled "akibwa.com says". it uses the OS button shapes, the
+     OS button ORDER, sentence case and the system face, and none of that can be
+     reached from here — so at the one moment the game asks the player to decide
+     something, the decision is handed to a different piece of software wearing a
+     different typeface. it was also the only sentence in the game that was not
+     lowercase.
+     a question is a bulletin. the same four parts in the same order as the card
+     that ends a net, and that card already IS a confirm: a title, a reading, and
+     two buttons where one of them leads. nothing new is drawn here — the whole
+     of this rule is a z-index and a measure.
+     ABOVE EVERYTHING. it is the one overlay that has to be answered before
+     anything else can happen, and both callers are reached from something that
+     is already covering the screen: the record (a veil, 40) and the dev drawer
+     (70). a question underneath the thing that asked it is not a question. */
+  .askveil{z-index:80}
+  /* narrower than the 440 the bulletin takes on its own. a question is one line
+     of consequence and two buttons; at 440 the buttons sit in the corner of a
+     mostly empty card and the sentence runs longer than the eye wants for a
+     thing it has to decide on. */
+  .askveil > .bulletin{max-width:392px}
 
   /* every control is in here until it earns a place on the board. the HUD
      should be readable as a HUD, not as a HUD plus a workbench. */
@@ -1659,20 +1827,121 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     border:1px dashed var(--rule);background:transparent;
     padding:0 11px;min-height:34px;
   }
-  .dayarch .datext{font-size:10px;letter-spacing:.09em;
+  /* the same line once the full version is held, and it must NOT be dashed:
+     dashed means shut and means only that, and what this row says then is the
+     opposite — everything is open, here is your code. solid is what a day you
+     can play wears two rules down (.dayrow.open), which is the right company
+     for it to keep. */
+  .dayarch.held{border-style:solid}
+  /* the auto margin is on the TEXT rather than on the link, because there are
+     two links now — `unlock` and `restore` — and an auto margin on each of them
+     splits the free space between the pair and floats them apart in the middle
+     of the row. pushed from the left, they stay a set at the right-hand end. */
+  .dayarch .datext{margin-right:auto;font-size:10px;letter-spacing:.09em;
     color:var(--ink-soft);text-transform:lowercase}
   /* a way through, not the subject: same ink as the line it sits on, and a
      hairline under it rather than a field around it — at 9px an unmarked link
      is not readable as one, and a hairline is the mark this whole card is made
-     of. it still flips POLICY.premium and nothing else; there is no payment
-     behind it and there cannot be until there is a server to take one. */
-  .archlink{
-    margin-left:auto;flex:0 0 auto;text-decoration:none;
+     of. `unlock` opens stripe's own checkout and the sign-in names open the
+     provider; see the account section in the script, and worker/ for what is on
+     the other end of both. */
+  .archlink,.acctlink{
+    flex:0 0 auto;text-decoration:none;
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;
     color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:1px;
     transition:color var(--t-ui),border-color var(--t-ui);
   }
-  .archlink:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  .archlink:hover,.acctlink:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  /* the restore code, once the full version is held. it is what moves a purchase
+     onto a device that is NOT signed in, so it is set to be READ OFF A SCREEN
+     and typed into another one: tabular figures so the groups line up, wide
+     tracking so no two characters touch, and select-all on one click because
+     the alternative is dragging across a 9px string. it is data rather than
+     copy, so it is the one string on this card that is not lowercase. */
+  .dacode{
+    flex:0 0 auto;font-size:9.5px;letter-spacing:.16em;
+    font-variant-numeric:tabular-nums;color:var(--ink-soft);
+    user-select:all;-webkit-user-select:all;cursor:text;
+  }
+
+  /* ---------- whose record this is ----------
+     the same hairline link the archive uses, for the same reason: a way through
+     rather than the subject. a row of three branded buttons is the loudest
+     object anywhere in this game and it would sit under a year of somebody's
+     days, which is the wrong order of importance — and the marks themselves
+     cannot be drawn here anyway. google's is four colours including a red, and
+     no red is the one rule this palette has no exception for; apple's and
+     facebook's are curves that are on nobody's 45° grid. so the providers are
+     set as words, in the voice every other control on this card is set in.
+     each is `sign in with <name>` to a screen reader, where there is no palette
+     to break and the long form is the clear one.
+     the foot is one line and never two: `min-width:0` plus the ellipsis on the
+     saying is what holds a long email inside a 640px card on a phone. */
+  .rec-foot{
+    flex:0 0 auto;display:flex;align-items:center;gap:10px;
+    padding:9px 18px 11px;border-top:1px solid var(--rule);
+    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
+  }
+  .rec-foot[hidden]{display:none}
+  .acct-say{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* the sync state is a footnote to the saying, not a status light: it earns no
+     colour of its own, because "saved" is the expected case and a green dot on
+     the expected case is furniture. `offline` is the only one worth reading and
+     it reads because it is a different word, not because it is a different hue. */
+  .acct-state{opacity:.62;flex:0 0 auto}
+  .acct-state::before{content:'·';margin-right:6px;opacity:.55}
+  .acct-ins{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:10px}
+  .acct-ins .acctlink{margin-left:0}
+  /* signed in, the saying is a button: it is the way back to the card, and the
+     only one. it wears the underline the other links wear so that it reads as a
+     way through rather than as a label that happens to be clickable. */
+  .acct-who{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    border-bottom:1px solid transparent;transition:color var(--t-ui),border-color var(--t-ui)}
+  .acct-who:hover{color:var(--ink);border-bottom-color:var(--rule)}
+
+  /* ---------- the account card ----------
+     the same card as the record, one size down: it is the record's own
+     footnote opened up, so it is built of the same head, the same hairlines and
+     the same buttons rather than of a second visual language. */
+  .acct-card{
+    max-width:400px;width:100%;display:flex;flex-direction:column;
+    max-height:calc(100dvh - 40px);overflow:hidden;
+    border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
+  }
+  .acct-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:13px;overflow-y:auto}
+  .acct-ask{font-size:13px;color:var(--ink);line-height:1.45}
+  .acct-note{font-size:10px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
+  /* a field drawn the way this whole game draws things: a hairline under a
+     word, no box and no rounded corner anywhere. the underline thickens to the
+     ink on focus, which is the only state change it has. */
+  .acct-field{
+    appearance:none;width:100%;box-sizing:border-box;background:transparent;color:var(--ink);
+    border:0;border-bottom:1px solid var(--rule);padding:7px 1px;font:inherit;font-size:15px;
+    letter-spacing:.01em;transition:border-color var(--t-ui);
+  }
+  .acct-field::placeholder{color:var(--ink-soft);opacity:.75;font-size:13px}
+  .acct-field:focus{outline:none;border-bottom-color:var(--ink)}
+  /* the code, set as the six figures it is: tabular, tracked wide, so it can be
+     read back off the mail a character at a time */
+  .acct-field.code{font-size:26px;font-weight:300;letter-spacing:.32em;font-variant-numeric:tabular-nums}
+  .acct-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .acct-row .wbtn{flex:0 0 auto}
+  /* the opt-in. a real checkbox, because a real checkbox is the one control
+     every assistive technology already knows, and `accent-color` is enough to
+     bring it into the palette without rebuilding it out of divs. */
+  .acct-check{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45}
+  .acct-check input{appearance:auto;accent-color:var(--sig-blau);margin:2px 0 0;flex:0 0 auto;width:14px;height:14px}
+  .acct-check span{min-width:0}
+  /* the quiet foot of the card: sign out, and the one destructive thing in the
+     game. it is set in --ink-soft with no field behind it and it takes two
+     presses, which is the whole of its safety. no red — there is none here — so
+     the confirm carries the weight instead of the colour. */
+  .acct-foot{display:flex;align-items:center;gap:12px;padding-top:3px;border-top:1px solid var(--rule);margin-top:2px}
+  .acct-foot .acctlink{margin-left:0;padding-top:10px}
+  .acct-foot .acctlink.last{margin-left:auto}
+  .acct-err{font-size:11px;letter-spacing:.04em;color:var(--ink);
+    border-left:2px solid var(--sig-orange);padding-left:9px;line-height:1.45}
 
   /* the list is the one region on this card that scrolls */
   .daylist{flex:1 1 auto;min-height:0;overflow-y:auto;padding:10px 18px 16px;
@@ -1693,6 +1962,40 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* silver, not ink: ink is what marks TODAY, so hovering any row used to make
      it look like the row you are on */
   .dayrow:hover{border-color:var(--silver)}
+  /* ---------- a day in the archive ----------
+     dashed and a step back in ink, which is what shut means everywhere else on
+     this card. it draws nothing on the right: `play →` is the mark of a day
+     that is open to you, and three hundred greyed copies of it is the shop
+     repeated once per row, which is what got these rows deleted the first time.
+     the keyline says shut without spending any ink at all.
+     the hover moves the DETAIL and not the border. a border that lifts to
+     silver on hover is the promise `.dayrow.open` makes — that pressing this
+     starts a run — and a shut row must not make it. but it does answer when you
+     press it, so it is not inert either, and a row that responds nowhere is a
+     row people press twice and then stop trusting. */
+  .dayrow.shut{border-style:dashed}
+  .dayrow.shut .ddate{color:var(--ink-soft)}
+  /* the 47% cap exists to stop a long detail crowding THE TEN CELLS on its
+     right, which only a played row has. a shut row has nothing there and an
+     open one has `play →`, which is `margin-left:auto` and holds its own width
+     — so on both of them the cap was doing nothing except ellipsing the
+     difficulty reading off the end on a phone. */
+  .dayrow.shut .ddet,.dayrow.open .ddet{max-width:none}
+  .dayrow.shut:hover{border-color:var(--rule)}
+  .dayrow.shut:hover .ddet{color:var(--ink)}
+  /* ---------- the month ----------
+     a spine for a list that is now every day since launch. at a fortnight old
+     it is one word at the top doing nothing; at a year old it is the only way
+     to find the saturday you missed without counting rows. it is NOT the month
+     calendar coming back — that was a second view of the history drawn beside
+     the list that already held it, and this is a hairline inside the list it
+     labels. the rule runs to the end so the eye can follow it across. */
+  .daymon{
+    display:flex;align-items:center;gap:9px;margin:8px 0 1px;
+    font-size:9px;letter-spacing:.14em;text-transform:lowercase;color:var(--ink-soft);
+  }
+  .daymon:first-child{margin-top:0}
+  .daymon::after{content:'';flex:1 1 auto;height:1px;background:var(--rule)}
   .dayrow .dtier{flex:0 0 auto;width:7px;align-self:stretch;background:var(--tc,var(--rule))}
   .dayrow .ddate{flex:0 0 auto;width:78px;padding:11px 0;
     font-size:10.5px;letter-spacing:.07em;text-transform:lowercase;font-variant-numeric:tabular-nums}
@@ -1820,6 +2123,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
   .intro-alt{margin-top:8px;background:transparent;color:var(--ink);border-color:var(--silver)}
   .intro-alt:hover{background:var(--sig-violett);border-color:var(--sig-violett);color:#fff}
+  /* the same shut mark as .wbtn.shut, and for the same reason — see there */
+  .intro-alt.shut{border-style:dashed;color:var(--ink-soft)}
+  .intro-alt.shut:hover{background:transparent;border-color:var(--silver);color:var(--ink)}
 
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
@@ -1943,7 +2249,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        the sixteen fold to two rows of eight; sixteen cells across 315px would
        be 16px each, which is a colour chip rather than a sign. */
     .veil{padding:12px}
-    .record{max-height:calc(100dvh - 24px)}
+    .record,.acct-card{max-height:calc(100dvh - 24px)}
+    .acct-body{padding:14px 13px 15px}
+    /* 16px on the fields, not 15: ios zooms the whole page in on a focused
+       input under 16px, and this page does not scroll, so the zoom cannot be
+       got back out of by scrolling. it is the one size on this card set by the
+       platform rather than by the scale. */
+    .acct-field{font-size:16px}
+    .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
     .rec-right{gap:12px}
     .recstats{gap:11px}
@@ -1965,38 +2278,32 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     /* nothing floats over the board any more, so it keeps its whole height */
     .field{padding-bottom:0}
     .coach{top:10px;width:calc(100% - 20px)}
-    /* the board is turned a quarter turn here and is tall and narrow, so a card
-       spanning the width covers a whole LAYER of the net rather than a slice of
-       one. it drops to the type the coach uses at this size, and it sits higher
-       — 28% of a tall board is well clear of the middle, and clear of the coach
-       card inlined above it on the guided net.
-       the phone deliberately does NOT follow the desktop card into the corner.
-       the corner is worth having because a 408px card is a small object on a
-       1040-wide plate and can be tucked out of the way; a card that spans the
-       width has no corner to be tucked into, and putting it at the foot would
-       cover the last layer of the net instead of a middle one — the same cost,
-       moved. the measurement that chose bottom right was taken on a landscape
-       plate with a card-sized rectangle and does not transfer to this shape.
-       so the rule above is reset back to a top anchor. `bottom` has to be
-       cleared explicitly or an element carrying both top and bottom is
-       stretched between them rather than sized by its content; the plate
-       offset on `right` is simply overwritten. the letterbox is horizontal
-       only here (the turned plate fills the field's height), so 28% needs no
-       plate correction — and the plate is 338 of the field's 353px, so a card
-       inset 14px from the field is inside it either way.
-       both axes are centred without a transform: auto inline margins across a
-       left:0/right:0 span, and the `translate` property for the half-height,
-       which composes with the entrance lift instead of replacing it.
-       the width cap goes back to being measured off the field too. the desktop
-       one subtracts the letterbox, which is right for a card tucked into a
-       corner of the plate and wrong for one spanning the board: it would take
-       15px off a card that is already inside the plate at both ends. */
-    .say{left:0;right:0;top:28%;bottom:auto;translate:0 -50%;
-         width:calc(100% - 20px);max-width:calc(100% - 28px);margin-inline:auto}
-    /* the coach card is not floating here, it is INLINE at the top of the board
-       — so on the guided net the top of the board is spoken for, and 28% lands
-       the message on top of it. this is the only screen where the two can meet. */
-    .play.tutorial .say{top:40%}
+    /* THE PHONE KEEPS THE CORNER. it used to be pulled out of it and laid across
+       the middle of the board — `left:0;right:0;top:28%;translate:0 -50%` and a
+       width off the FIELD — on the argument that a card spanning the width has
+       no corner to be tucked into, and that the foot would cover the last layer
+       of the net rather than a middle one, "the same cost, moved".
+       both halves of that are false, and the numbers are the ones the corner was
+       chosen on in the first place. measured over nets 1-9 at 375x812, on the
+       announcement a net opens with:
+         middle band  325x65  10.1% of the plate  2.78 neurons  0.78 crossings
+         corner        159x65   5.1% of the plate  1.00 neuron   0.00 crossings
+       the card spanned the width only because this rule SET it to. released back
+       to `max-content` the opening line is 159px on a 349px plate — a small
+       object with a corner to sit in, which is the exact case the corner was
+       built for. and the foot is not the same cost as the middle: the crossings
+       cluster where the layers interleave, so the middle band stood on 0.78 of
+       them a net and anything at the foot stands on none. a card over the marks
+       the player is hunting is the one thing this card must never be.
+       what the phone still needs from a media query is the TYPE — everything
+       below — and nothing about where the card goes. the base rule already caps
+       the measure to the plate (408px, or the plate less both 18px insets, which
+       binds here at 313), so the longest message in the game is a band at the
+       foot of the board rather than across the middle of it.
+       the guided net's `top:40%` goes with it. that rule existed because the
+       coach card is INLINE at the top of the board at this width and 28% landed
+       the message on it; a card in the bottom corner cannot reach the coach at
+       all, so the exception has nothing left to except. */
     .sayrow{gap:11px;padding:10px 12px}
     .sayline{font-size:13px}
     .sayline.big{font-size:21px}
@@ -2228,6 +2535,29 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
          the days themselves answer — was furniture, and is gone. -->
     <div class="featrow" id="recfeatrow" role="img"></div>
     <div class="daylist" id="daylist"></div>
+    <!-- whose record this is. it belongs at the FOOT of this card and nowhere
+         else in the game: the question "where does this live" only occurs to
+         you once you are looking at a year of days you would hate to lose, and
+         that is this screen. drawn only when there is a server to sign in to —
+         renderAccount leaves it hidden otherwise, so a copy of index.html
+         opened off a disk shows no dead buttons. -->
+    <div class="rec-foot" id="recfoot" hidden></div>
+  </section>
+</div>
+
+<!-- the account card. the LAST STEP of signing in and the only screen in the
+     game with a field in it, so it is kept to one question at a time: where to
+     send a code, or what to call you, or whether you want the morning line.
+     everything on it is optional and every mode closes — a player who signs in
+     and answers nothing gets the whole game and a record that follows them,
+     which is the point of it. -->
+<div class="veil" id="acctveil">
+  <section class="acct-card">
+    <div class="rec-head">
+      <strong class="rec-title" id="accttitle">your account</strong>
+      <span class="rec-right"><a href="#" class="rec-close" id="acctclose">close &times;</a></span>
+    </div>
+    <div class="acct-body" id="acctbody"></div>
   </section>
 </div>
 
@@ -2241,6 +2571,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     <div class="intro-art" id="introart"></div>
     <div class="intro-body" id="introbody"></div>
   </div>
+</div>
+
+<!-- a question, in the game's own card instead of the browser's.
+     empty until ask() fills it, and only ever one at a time — a second question
+     supersedes the first rather than stacking on it. `alertdialog` rather than
+     `dialog` because it is always a consequence being reported, never a form;
+     the label is written by ask() off the title, since the card is built from
+     the same bulletinHTML as the other two and that has no id to point at. -->
+<div class="veil askveil" id="askveil">
+  <section class="bulletin" id="askbulletin" role="alertdialog" aria-modal="true"></section>
 </div>
 
 <div class="toast" id="toast">copied</div>
@@ -2387,17 +2727,43 @@ const GEN_VERSIONS=[
     split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
     splitPart:'clear',
     feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] },
+  /* v8 changes no geometry either — v7's boards, seed for seed, checked by hash
+     over 2026-08-17 … 2036-08-17. it changes where the TOP rung comes from.
+       optimum:'route'  the perfect line is the plan's own cheapest walkthrough,
+                        read off the board at play time, not looked up in OPTIMA.
+     OPTIMA is a literal, so it has an end: it ran to 2026-09-30, and from the
+     first of october every net on every day would have fallen through to
+     `optimum = par` and lost its perfect rung, silently and forever. any table
+     has that cliff — a generated day is a pure function of the date and there
+     are infinitely many of them — so the fix is not a longer table.
+     it is also the number the table was already carrying. optima.json's family
+     rows are min(construction, famGreedy) and famGreedy wins all 490 of them,
+     which is exactly what famPlan prices par from and now keeps as plan.route.
+     so this reads the same figure from the board rather than from a copy of it,
+     and cannot go stale against the board the way the copy already had: the
+     shipped table was built on 12 august against v5, and v6's parSlack moved
+     the salt-acceptance band (spec.minX/maxX are cut from plan.par), so from
+     2026-08-15 the boards it describes are not the boards the game draws.
+     `from` is the first date v7 does not claim, which is also the first day
+     nobody can have played — a day already played must keep the rungs it was
+     played with, and that is the whole reason this is a version rather than an
+     edit to netTargets. */
+  { v:8, from:'2026-08-17', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'route',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
            'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] }
 ];
 /* the rules in force for the net being built. a module-level object rather than
    an argument threaded through nine functions, because splitNode is called by
    the player's hand long after buildNet has returned and has no day to read. */
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
-                 splitPart:'fixed'};
+                 splitPart:'fixed', optimum:'table'};
 function genRules(g){
   return {split:g.split||'angled', merge:g.merge||'tight',
           pinFill:!!g.pinFill, parMode:g.parMode||'walk', parSlack:g.parSlack||0,
-          splitPart:g.splitPart||'fixed'};
+          splitPart:g.splitPart||'fixed', optimum:g.optimum||'table'};
 }
 function genFor(day){
   let g=GEN_VERSIONS[0];
@@ -2673,52 +3039,57 @@ function netSpec(i){
 
 /* ---- the two lines a net is scored against ----
    every reading of a target — the masthead's bands, the tier a net mints at,
-   the cleared card — comes through here, so the day the solver's numbers are
-   wired is a change to OPTIMA and to nothing else.
+   the cleared card — comes through netTargets, so how a day finds its optimum
+   is decided in one place and versioned in one place.
 
-   `optimum` is the true minimum. the game cannot compute it at play time; it is
-   the offline solver's job, arriving as a {day, netIndex, optimum} lookup.
-   `par` is the clean line, and today it is lanePar()'s geometric estimate, live
-   on `spec` — measured against the net you actually got, so it is not
-   netSpec()'s number.
+   `optimum` is the best route known for this net. from v8 the game does compute
+   it at play time, because it turned out it always had: famPlan prices par from
+   a walkthrough of its own construction, and that walkthrough is the number the
+   offline solver was shipping back as `optimum`. before v8 it is the lookup.
+   `par` is the clean line and it is live on `spec` — measured against the net
+   you actually got, so it is not netSpec()'s number.
 
-   with no optimum, optimum stands AT par. that is what makes the whole ladder
-   safe to ship early: `perfect` cannot fire, the turns track shows one band,
-   and tierFor() returns exactly the two tiers it returned before. nothing here
-   invents a number it does not have.
+   with no optimum at all, optimum stands AT par: `perfect` cannot fire, the
+   turns track shows one band, and tierFor() returns the two tiers it returned
+   before there was a solver. nothing here invents a number it does not have.
 
-   THE SEAM. par is an estimate and it is a loose one: against the solver's
-   output it sits 3 to 8 turns above the true optimum, and a competent-player
-   proxy minted `clean` on ~90% of 500 nets. so the middle rung of the ladder
-   is only worth something once par is derived from the optimum rather than
-   from geometry — `par = optimum + allowance`, one line, right here. the
-   allowance is deliberately NOT guessed: setting it wants the proxy's
-   distribution of finishing move counts per net, not a plausible-looking
-   constant, and a wrong one would restate every score in the game. */
-/* the solver's best known route for every net, `day -> [ten turn counts]`,
-   lifted from tools/optima.json. copied in rather than fetched because this file
-   has no build step and no network; regenerate with tools/build-optima.mjs.
-   grouped by day rather than keyed `day:index` because it is 610 numbers and a
-   day is the unit everything else here is keyed on.
+   THE SEAM IS CLOSED, and this is the last note on it. par used to be a
+   geometric estimate sitting 3 to 8 turns above the true optimum, which minted
+   `clean` on ~90% of nets; from v6 par IS the optimum plus an allowance, and
+   the allowance came from the proxy's distribution rather than from taste — see
+   the parSlack note in the version table. */
+/* the solver's best known route, `day -> [ten turn counts]`, lifted from
+   tools/optima.json. copied in rather than fetched because this file has no
+   build step and no network; regenerate with tools/build-optima.mjs.
 
-   WHAT `perfect` MEANS, EXACTLY. 67 of these are proved optima — 8 closed by A*,
-   59 by a family construction the solver could bracket shut. the other 543 are
+   THIS TABLE IS A CLOSED WINDOW, 2026-08-01 … 2026-08-16, and it will not grow
+   again. it covers the days generated before v8 and nothing else: from
+   2026-08-17 the optimum is famPlan's own route, computed at play time, so
+   there is no table to run off the end of. it ran to 2026-09-30 and the day
+   after that every net on every day would have lost its perfect rung — see the
+   v8 note for why a longer table is the same bug with a later date on it.
+   the last two rows are the only ones ever rewritten, and they were rewritten
+   before either day could be played: v6's parSlack widened the salt-acceptance
+   band, so 2026-08-15 and 2026-08-16 draw different boards from the ones the
+   12 august build measured, and three of their twenty numbers were quoted for
+   a board that no longer exists. everything from 2026-08-14 back is the
+   original build and stays frozen — those days have been played.
+
+   WHAT `perfect` MEANS, EXACTLY. 12 of these are proved optima — 8 closed by
+   A*, 4 by a family construction the solver could bracket shut. the rest are
    UPPER BOUNDS: the cheapest route it found, not the cheapest that exists.
    shipping only the proved ones was the first cut, and it was honest and nearly
    useless — it lit the perfect band on 12.3% of nets, one or two a day, always
    an early one, so the ladder's top rung was invisible on the nets where it
-   would have meant most. with the bounds in it is 96.8%, 9.7 nets of every ten,
-   and no day without one.
+   would have meant most.
 
-   so `perfect` now means "you matched the best line anyone has found for this
-   net", not "you proved the optimum". the failure mode of that is generous, not
+   so `perfect` means "you matched the best line anyone has found for this net",
+   not "you proved the optimum". the failure mode of that is generous, not
    wrong: a player who finds something better still scores perfect, because the
-   tier awards `moves <= optimum` — they simply are not told they beat it. the
-   reverse, a target nobody can reach, cannot happen, because every one of these
-   numbers is a route the solver actually walked.
-   tightening the 543 is a solver problem, not a table problem — tools/BALANCE.md
-   states the obstruction: the search is a column model and only two of the seven
-   layout families reduce to one.
+   tier awards `moves <= optimum` — they simply are not told they beat it.
+   tightening the bounds is a solver problem, not a table problem —
+   tools/BALANCE.md states the obstruction: the search is a column model and
+   only two of the seven layout families reduce to one.
 
    the unit is TOTAL moves — every drag and every split, including the action
    that finishes the net, which is what netMoves counts now nothing is waived.
@@ -2739,62 +3110,58 @@ const OPTIMA={
   '2026-08-12':[1,2,2,3,4,3,6,5,10,11],
   '2026-08-13':[2,2,2,2,6,5,8,6,9,14],
   '2026-08-14':[2,2,2,4,8,6,9,11,13,15],
-  '2026-08-15':[2,2,2,4,7,5,7,12,16,12],
-  '2026-08-16':[2,2,3,5,6,5,9,10,13,16],
-  '2026-08-17':[2,2,2,4,8,9,8,8,10,16],
-  '2026-08-18':[2,2,2,4,4,5,11,12,11,19],
-  '2026-08-19':[2,2,3,4,8,4,10,7,20,19],
-  '2026-08-20':[2,2,3,5,7,5,9,12,14,12],
-  '2026-08-21':[2,2,2,3,6,6,8,14,13,15],
-  '2026-08-22':[2,2,2,3,8,5,7,11,12,16],
-  '2026-08-23':[2,2,3,7,10,6,6,9,14,11],
-  '2026-08-24':[2,2,2,4,6,10,5,12,13,19],
-  '2026-08-25':[2,2,3,6,7,4,9,11,15,15],
-  '2026-08-26':[2,2,3,2,7,9,9,7,18,15],
-  '2026-08-27':[2,2,1,4,6,9,11,11,13,16],
-  '2026-08-28':[2,2,3,5,7,4,8,11,17,15],
-  '2026-08-29':[2,2,2,4,7,12,6,8,12,14],
-  '2026-08-30':[2,2,2,4,7,7,6,8,13,18],
-  '2026-08-31':[2,2,2,4,6,5,9,9,9,16],
-  '2026-09-01':[2,2,2,4,9,4,8,11,18,17],
-  '2026-09-02':[2,2,2,4,7,8,6,13,13,19],
-  '2026-09-03':[2,2,2,3,6,5,10,8,13,16],
-  '2026-09-04':[2,2,2,3,7,8,10,13,14,12],
-  '2026-09-05':[2,2,3,2,7,5,7,14,9,17],
-  '2026-09-06':[2,2,3,2,5,6,7,9,14,18],
-  '2026-09-07':[2,2,2,4,8,8,8,14,10,16],
-  '2026-09-08':[2,2,2,4,7,6,10,13,13,16],
-  '2026-09-09':[2,2,2,5,5,6,5,11,13,13],
-  '2026-09-10':[2,2,2,7,6,9,7,9,13,18],
-  '2026-09-11':[2,2,3,4,8,4,6,12,12,11],
-  '2026-09-12':[2,2,2,3,7,7,5,11,12,16],
-  '2026-09-13':[2,2,2,6,7,10,9,9,13,17],
-  '2026-09-14':[2,2,2,4,7,6,6,8,15,16],
-  '2026-09-15':[2,2,2,6,7,5,5,11,12,18],
-  '2026-09-16':[2,2,2,5,8,8,7,6,13,17],
-  '2026-09-17':[2,2,2,5,9,7,8,11,16,15],
-  '2026-09-18':[2,2,3,4,5,7,9,14,14,15],
-  '2026-09-19':[2,2,3,5,7,10,7,8,18,13],
-  '2026-09-20':[2,2,3,2,8,5,7,11,13,9],
-  '2026-09-21':[2,2,3,6,9,5,8,14,8,16],
-  '2026-09-22':[2,2,2,5,7,9,4,16,13,15],
-  '2026-09-23':[2,2,2,7,7,6,10,12,14,13],
-  '2026-09-24':[2,2,2,3,7,9,8,8,14,17],
-  '2026-09-25':[2,2,2,4,6,6,3,11,15,14],
-  '2026-09-26':[2,2,2,4,5,4,8,9,14,16],
-  '2026-09-27':[2,2,2,4,7,6,7,9,15,12],
-  '2026-09-28':[2,2,3,4,7,5,6,16,19,15],
-  '2026-09-29':[2,2,2,7,6,7,5,12,9,21],
-  '2026-09-30':[2,2,1,4,6,9,5,9,10,16]
+  /* the two rewritten rows, measured off the boards these days now draw
+     (famGreedy on the accepted plan, the same call build-optima makes) */
+  '2026-08-15':[2,2,3,4,7,5,7,12,16,12],
+  '2026-08-16':[2,2,3,5,6,4,9,10,18,16]
 };
+/* ---- how hard a day was, before you play it ----
+   a list of archive rows that all say `in the archive` is a list of one row
+   drawn three hundred times, and nothing in it is worth choosing between. this
+   is the one reading available without generating the day: OPTIMA already ships
+   the solver's answer for every net, so the sum of a day's ten is the fewest
+   turns the day can be finished in. days differ by a factor of three across the
+   table — 47 at the bottom, 174 at the top — so it separates them properly.
+
+   it is a FLOOR rather than a promise. netTargets falls back to par where an
+   optimum came out degenerate, and par is always the higher number, so a day
+   plays at this or above and never below. that is the safe direction for a
+   figure someone is choosing a day by.
+
+   what this is NOT, and what several better-looking ideas turned out to be: a
+   ten-cell strip like the played rows'. within a day the optima always ramp, so
+   normalised they draw the same picture for every day; on an absolute scale
+   they carry exactly the magnitude this number already carries, in ten times
+   the ink, less precisely, and in the block form that means TIER one column
+   over. the layout families are genuinely different day to day and cannot be
+   summarised either — the picker's own rules (no repeat, twice at most in ten,
+   unlocking in order) make every day's cast six or seven of the seven. the
+   number is the only thing here that both differs and can be read at a glance. */
+function dayBest(iso){
+  const day=OPTIMA[iso];
+  if(!day || !day.length) return null;      // outside the table's range
+  const n=day.reduce((a,b)=>a+b,0);
+  return n>0?n:null;
+}
 function netTargets(){
   const par=spec?spec.par:0, r=R();
-  const day=OPTIMA[r.day];                       // ten numbers, or nothing for a day outside the table
-  const o=day?day[r.netIndex]:undefined;
+  /* WHERE THE TOP RUNG COMES FROM, and it is a generator rule because it decides
+     a score. from v8 the day reads its own board: famPlan priced par from a
+     walkthrough and kept it as plan.route, and that route is the same figure the
+     offline solver ships as `optimum` for a family net. before v8 it is the
+     shipped table, which is why every day up to 2026-08-16 still scores exactly
+     as it did. the table cannot answer for a day after that and no longer
+     pretends to — the route always can, for any date the generator can draw. */
+  const day=OPTIMA[r.day];                       // ten numbers, or nothing outside the closed window
+  const o = GEN_RULES.optimum==='route' ? (spec&&spec.plan?spec.plan.route:undefined)
+                                        : (day?day[r.netIndex]:undefined);
   /* an optimum at or above par is not an optimum, and an optimum of zero is a
-     rung everybody stands on — 17% of nets have one, because the move that
-     finishes a net is not charged. both fall back rather than shipping a
-     degenerate `perfect`; the real fix is upstream, in what counts as a move. */
+     rung everybody stands on. both fall back to par rather than shipping a
+     degenerate `perfect`, which costs the top rung for that net — that is the
+     old table's failure mode, on 80 of the 610 nets it covered, and it is why
+     the route replaced it rather than being extended: par is route + parSlack,
+     so a route is under par by construction and this guard cannot fire on a
+     v8 day. it still stands, for a build with no plan to read. */
   return {optimum:(typeof o==='number'&&o>0&&o<par)?o:par, par};
 }
 
@@ -2825,12 +3192,16 @@ const DEV = /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostnam
 const POLICY = {
   dailyNets: 10,           // today's ten, same ten for everyone
   runsPerDay: DEV ? Infinity : 1,
-  /* the paid tier, and the whole of it: one boolean, kept in the save so the
-     unlock button in the record survives a reload. it reads through to `store`
-     rather than holding its own copy so that there is exactly one switch —
-     the button, the devtools flip the archive was tested with, and anything a
-     server eventually says all land on the same field. no payment goes
-     anywhere near it and none can until there is a backend to take one. */
+  /* the paid tier, and the whole of it: one boolean, kept in the save so a
+     purchase survives a reload. it reads through to `store` rather than holding
+     its own copy so that there is exactly one switch — the unlock button, the
+     devtools flip the archive was tested with, and what the server says all
+     land on the same field.
+     the server is now the authority on it, in both directions: `worker/` holds
+     the entitlement, applyEntitlement writes what it says here, and that is
+     what makes a devtools flip last until the next sync rather than forever.
+     it stays a local field rather than a call, because the game is a static
+     file that has to play with the api unreachable and unbought. */
   get premium(){ return !!store.premium },
   set premium(v){ store.premium = !!v },
   get unlimited(){ return this.runsPerDay===Infinity }
@@ -2864,11 +3235,24 @@ const isTrial=()=>R().mode==='trial';
 const isArchive=()=>!!R().archive;
 /* today is free, yesterday is the taste, everything older is the paid tier.
    the future is not for sale — its puzzles do not exist yet. */
+/* older than yesterday, which is the line the whole paid tier is drawn on. it
+   is a fact about the DATE and says nothing about what you own — canPlayDay
+   asks it and then asks about the money, and the record asks it to decide which
+   rows are worth a difficulty reading. one expression of it, so the two can
+   never disagree about where the archive starts. */
+const inArchive=d=>d<dayAdd(today(),-1);
 function canPlayDay(d){
   if(d>today() || d<LAUNCH) return false;
-  if(d===today() || d===dayAdd(today(),-1)) return true;
+  if(!inArchive(d)) return true;      // today and yesterday
   return !!POLICY.premium;
 }
+/* the other half of what a purchase buys. the trial used to be free and is not
+   any more: the full version is the archive AND the trial, and a paid tier that
+   only opens days you did not play is one most players never find a reason to
+   want. there is no taste of this one — the archive already gives yesterday,
+   and a game with two different free samples is explaining itself twice.
+   DEV plays everything, the same way it gets unlimited runs. */
+function canTimeTrial(){ return DEV || !!POLICY.premium }
 /* how many runs you have had TODAY is a fact about today, not about whichever
    run you happen to be sitting in. it used to be reset only where the run rolls
    over — which an archive run skips — so starting yesterday's puzzle at 23:50
@@ -2926,6 +3310,7 @@ function canResume(){
 /* time trial: no move budget — instead the net keeps training, re-tangling
    itself as you work. clear nets until it out-trains you. */
 function startTrialRun(){
+  if(!canTimeTrial()) return offerFull('time trial');
   const cur=R();
   if(cur && cur.mode!=='trial' && !cur.archive && cur.cleared.length<POLICY.dailyNets) store.parked=cur;
   newRun('trial');
@@ -2936,12 +3321,722 @@ function startTrialRun(){
            {cols:['--sig-violett']});
   return true;
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}syncSoon()}
 const R=()=>store.run;
 const $=id=>document.getElementById(id);
+
+/* ================= the account =================
+
+   localStorage is a good home for a save and a bad home for a RECORD. it is
+   keyed to the origin, it does not cross from a laptop to a phone, and a
+   browser clearing site data takes a collection and a streak with it and there
+   is nothing to recover from. so: sign in, and the same record is on both
+   devices and survives the browser.
+
+   three things this deliberately is NOT.
+
+   it is not a login wall. the game has never needed a server and still does
+   not — nets are a pure function of (day, netIndex), so the day's ten, par and
+   the whole archive work offline and always will. every call below is behind
+   either "already signed in" or a probe that hides the row when it fails, so
+   index.html opened straight off a disk is still the entire game.
+
+   it is not an upload. there is no authority between two saves: a phone that
+   has been offline for a week is not stale, it is holding a different subset of
+   the same facts. the device sends what it has, the server folds it into what
+   it holds by rules that only ever move one way (a tier climbs, a day deepens,
+   a pair keeps the earliest day it was found), and both ends come away with the
+   union. worker/merge.js is the only copy of those rules and this file has no
+   opinion about them — a second copy would drift, and what it would drift on is
+   somebody's collection.
+
+   and it is not a second save. localStorage stays the thing the game reads and
+   writes at every turn; this rides along behind it, three seconds after the
+   last write. an offline device plays exactly as it always did and syncs when
+   it comes back. */
+
+/* the api is a sibling of the page and must stay one: apple's sign-in replies
+   with a cross-site form POST that a static host cannot answer, and a session
+   cookie that has to travel cross-origin is a fight with SameSite for nothing.
+   this is the one string in the file that has to agree with something outside
+   it — BASE_PATH in worker/wrangler.toml — so it says so out loud.
+   `?api=` is for pointing a local page at a `wrangler dev`; a page opened off
+   the disk has no origin to be a sibling of and gets no account at all. */
+const API = (()=>{
+  const q=new URLSearchParams(location.search).get('api');
+  if(q) return q.replace(/\/+$/,'');
+  if(location.protocol!=='http:' && location.protocol!=='https:') return null;
+  return '/features/api';
+})();
+
+let account=null;        // null until asked. {signedIn:bool, provider, email}
+let signIns=null;        // which sign-ins this deployment offers; [] means none
+let syncSay='';          // what the record's foot says about the last sync
+
+/* an email is the one string in this game that was typed by somebody else, and
+   the record's foot is the one place a string is set into markup rather than
+   drawn. so it is escaped there, and this is the whole of why this exists. */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* what goes up the wire. these two are facts about this BROWSER rather than
+   about the player — one so a device that has never had an account never asks
+   "who am i", the other so the account card asks its question once — so they
+   stay here rather than riding into everyone's server-side save and back out
+   to their other phone. */
+function outbound(){ const {signedInOnce,askedDaily,...rest}=store; return JSON.stringify(rest) }
+
+async function apiCall(path,opts){
+  if(!API) throw new Error('no api');
+  const r=await fetch(API+path,{credentials:'same-origin',...opts});
+  const body=await r.json().catch(()=>null);
+  if(!r.ok) throw new Error((body&&body.error)||('http '+r.status));
+  return body;
+}
+
+/* which sign-ins exist is a question about the DEPLOYMENT, not about the
+   player, so it is asked once a session and its answer decides whether the row
+   is drawn at all. no worker, or a worker with no credentials configured, comes
+   back as an empty list and the record simply has no foot — which is the honest
+   thing to show rather than three buttons that lead nowhere. */
+async function askSignIns(){
+  if(signIns) return signIns;
+  if(!API) return (signIns=[]);
+  try{
+    const j=await apiCall('/providers');
+    signIns=Array.isArray(j.providers)?j.providers:[];
+  }catch(e){ signIns=[] }
+  return signIns;
+}
+
+/* the timezone, told once a session.
+   the daily nudge is sent on the player's own clock — the game turns its day
+   over at local midnight, so a server-side "today" in UTC would mail half the
+   world about yesterday. this is the only thing sent up that the player did not
+   type, and it is minutes, not a place. */
+function tellClock(){
+  if(!account||!account.signedIn) return;
+  apiCall('/me',{method:'PATCH',headers:{'content-type':'application/json'},
+    body:JSON.stringify({tzOffset:new Date().getTimezoneOffset()})}).catch(()=>{});
+}
+
+/* what the player chose: the nickname, the address, the daily. one call, and
+   the answer IS the new profile, so nothing here keeps its own copy. */
+async function saveProfile(patch){
+  const me=await apiCall('/me',{method:'PATCH',headers:{'content-type':'application/json'},
+    body:JSON.stringify(patch)});
+  account={...account,...me,signedIn:true};
+  if($('histveil').classList.contains('show')) renderAccount();
+  return me;
+}
+
+function goSignIn(p){
+  // the email route is a card rather than a journey off to somebody else's site
+  if(p==='email') return openAccount('email');
+  /* a full-page redirect rather than a popup: popups are blocked on ios by
+     default and lost behind the tab on android, and there is nothing in memory
+     here worth preserving — every byte of the run is already in localStorage.
+     `signin` is scrubbed off the return path so signing in twice cannot carry
+     the last attempt's verdict into the next one. */
+  const u=new URL(location.href);
+  u.searchParams.delete('signin');
+  location.href=API+'/auth/'+p+'/start?return='+encodeURIComponent(u.pathname+u.search);
+}
+
+async function doSignOut(){
+  try{ await apiCall('/signout',{method:'POST'}) }catch(e){}
+  account={signedIn:false};
+  /* the local save is untouched. signing out is leaving a DEVICE, not deleting
+     a record — the collection stays on this browser exactly as it was, and
+     signing back in merges rather than replaces.
+     the unlock stays too, and that is the same sentence rather than an
+     oversight: the purchase has not gone anywhere, the player is coming back,
+     and this browser had the archive open a moment ago. deleting the ACCOUNT is
+     the one that gives it up, and that one says so before the second press. */
+  syncSay='';
+  if($('histveil').classList.contains('show')) renderAccount();
+  toast('signed out · this device keeps its own record');
+}
+
+/* ---- the sync ----
+   one call, both directions. `save()` is called on nearly every turn, so this
+   is debounced hard rather than being called from the handful of places that
+   matter — a list of "places that matter" is a list that goes out of date. */
+let syncTimer=null, syncing=false, syncQueued=false;
+function syncSoon(){
+  if(!account||!account.signedIn) return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>syncNow(),3000);
+}
+async function syncNow(){
+  if(!API||!account||!account.signedIn) return;
+  if(syncing){ syncQueued=true; return }
+  syncing=true; syncSay='saving';
+  if($('histveil').classList.contains('show')) renderAccount();
+  /* what was sent, as it was sent. a net cleared while the request was in
+     flight is NOT in the answer coming back, so adopting that answer would drop
+     it — and it is a clear, which is the one thing this must never lose. if the
+     collection moved underneath us, throw the answer away and sync again with
+     the newer one; a run takes seconds and this converges immediately. */
+  const sent=JSON.stringify(store.collection);
+  try{
+    const j=await apiCall('/sync',{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:outbound()
+    });
+    if(JSON.stringify(store.collection)!==sent){ syncQueued=true }
+    else if(j&&j.state){ adoptState(j.state); syncSay='saved' }
+  }catch(e){
+    // an offline device is not a broken one. it keeps playing and tries later.
+    syncSay = /^http 401/.test(e.message) ? '' : 'offline';
+    if(/^http 401/.test(e.message)) account={signedIn:false};
+  }
+  syncing=false;
+  if($('histveil').classList.contains('show')) renderAccount();
+  if(syncQueued){ syncQueued=false; syncSoon() }
+}
+
+/* take the merged record; leave the board alone.
+   the collection, the day rows and the high-water marks are the point and they
+   are adopted whole. the RUN is not — replacing it mid-drag would swap the
+   board out from under a hand that is on it. the one exception is a run that
+   has not been touched, which is what a device that has never seen today has:
+   there, taking the further-along run is the whole reason somebody signed in. */
+function adoptState(merged){
+  if(!merged||typeof merged!=='object') return;
+  const mine=R(), theirs=merged.run;
+  store.collection=merged.collection||store.collection;
+  store.meta=merged.meta||store.meta;
+  store.premium=!!merged.premium;
+  if(merged.runsDay===store.runsDay) store.runsToday=Math.max(store.runsToday||0,merged.runsToday||0);
+
+  const untouched = mine && !mine.turns && !mine.netIndex && !(mine.cleared||[]).length && !mine.netMoves;
+  const catchUp = untouched && theirs && theirs.day===mine.day && theirs.mode===mine.mode
+               && ((theirs.cleared||[]).length>0 || theirs.netIndex>0);
+  if(catchUp){
+    store.run=theirs;
+    if(merged.parked) store.parked=merged.parked;
+    try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+    builtFor=-1; resetDescent(); renderAll();
+    toast('your set is where you left it · net '+((theirs.cleared||[]).length+1));
+  } else {
+    try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+    renderHud();
+  }
+  if($('histveil').classList.contains('show')) openRecord();
+}
+
+/* on boot, and only for a device that has signed in before — asking `who am i`
+   of a browser that never has is a request that can only ever answer "nobody". */
+async function wakeAccount(){
+  if(!API) return;
+  const back=new URLSearchParams(location.search).get('signin');
+  if(back){
+    /* scrub the verdict out of the url before anything else: it must not
+       survive a reload, and it must not end up in a shared link. */
+    const u=new URL(location.href); u.searchParams.delete('signin');
+    history.replaceState(null,'',u.pathname+u.search+u.hash);
+    if(back==='cancelled'){ /* pressing cancel is not a failure worth a line */ }
+    else if(back!=='ok') toast('that sign-in did not go through · nothing was lost');
+  }
+  /* a player still in the tutorial is about to be offered a sign-in on the card
+     that ends it, and that card cannot wait on a request. asking here — and
+     ONLY here, for the one load where it is needed — means the answer is in
+     hand by the time a first net is untangled. everybody else pays nothing:
+     a returning player with no account still makes no request at all. */
+  if(!store.tutorialDone) askSignIns();
+  /* three reasons to ask, and "somebody opened the game" is not one of them: a
+     browser that has signed in before, one coming back from a provider, and one
+     holding a purchase made without an account. every other visit sends nothing
+     at all, which is what keeps a static file a static file. */
+  if(!store.signedInOnce && back!=='ok' && !acct.token) return;
+  /* one call answers both halves — who this is, and what they own — and it is
+     the quiet one, because there is no button behind this. an unreachable
+     worker leaves the local flag and the local record exactly as it found them. */
+  const me=await api('me');
+  if(!me || me.error){
+    account={signedIn:false};
+    if(!me) syncSay='offline';
+  } else {
+    account=me;
+    if(applyEntitlement(me)) entitlementChanged();
+    if(me.signedIn){
+      store.signedInOnce=true;
+      if(back==='ok') toast('signed in · your record follows you now');
+      // a purchase made before there was an account catches up with it here
+      await linkUnlock();
+      await syncNow();
+      tellClock();
+      // signing in is not finished until anything still unanswered is asked
+      if(back==='ok') afterSignIn();
+    } else {
+      /* the session expired or was signed out elsewhere. forget the hint so the
+         next boot is silent rather than asking again every single load. */
+      delete store.signedInOnce;
+      try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
+    }
+  }
+  if($('histveil').classList.contains('show')) renderAccount();
+}
+
+/* ================= the account card =================
+   one screen, three things it can be asking, and never more than one at a time:
+   where to send a code, what to call you, or what you have already chosen.
+
+   the shape of the whole thing is that NOTHING on it is required. an account
+   exists to carry a record between devices; a name is so the game can say hello
+   and so a leaderboard has a handle one day; an address is only ever for the
+   two mails that exist. a player who signs in and closes this immediately has
+   the entire game and a record that follows them. the rest is asked once,
+   politely, at the one moment it makes sense — straight after signing in — and
+   then never again. */
+let acctMode='hello', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
+
+function openAccount(mode){
+  acctMode=mode||'manage'; acctErr=''; acctArmed=false;
+  if(mode!=='code') acctEmail=(account&&account.email)||'';
+  renderAcct(); showVeil('acctveil');
+}
+const closeAccount=()=>{ $('acctveil').classList.remove('show');
+                         if($('histveil').classList.contains('show')) renderAccount() };
+
+/* the last step of signing in. it only appears while there is still something
+   unanswered — no name, or the daily never put to this account — so somebody
+   who signed in with google and said yes to the mail last month simply lands
+   back in the game. */
+function afterSignIn(){
+  if(!account||!account.signedIn) return;
+  const noName=!account.nickname;
+  const unasked=account.mail && !account.dailyEmail && !store.askedDaily;
+  if(!noName && !unasked) return;
+  if(document.querySelector('.veil.show')) return;   // never on top of another card
+  openAccount('hello');
+}
+
+function acctBtn(id,label,solid){
+  return `<button class="wbtn${solid?' solid':''}" id="${id}"${acctBusy?' disabled':''}>${label}</button>`;
+}
+
+function renderAcct(){
+  const body=$('acctbody'), title=$('accttitle');
+  const err=acctErr?`<div class="acct-err">${esc(acctErr)}</div>`:'';
+  const signedIn=!!(account&&account.signedIn);
+
+  /* ---- signing in with an address ---- */
+  if(acctMode==='email'||acctMode==='code'){
+    title.textContent='sign in with email';
+    if(acctMode==='email'){
+      body.innerHTML=err
+        +`<div class="acct-ask">where should the code go?</div>`
+        +`<input class="acct-field" id="acctemail" type="email" inputmode="email" autocomplete="email"
+                spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">`
+        +`<div class="acct-row">${acctBtn('acctsend',acctBusy?'sending…':'send the code',true)}</div>`
+        /* said before the address is typed, not after: it is the reason to type
+           one at all, and a promise made afterwards is an excuse. */
+        +`<div class="acct-note">no password, ever. six digits, and you are in.<br>
+            the only mails this game sends are that code and the daily, and the daily is off unless you ask.</div>`;
+      $('acctsend').onclick=sendCode;
+      $('acctemail').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();sendCode()} };
+      setTimeout(()=>$('acctemail')&&$('acctemail').focus(),40);
+    } else {
+      body.innerHTML=err
+        +`<div class="acct-ask">six digits, sent to <b>${esc(acctEmail)}</b>.</div>`
+        +`<input class="acct-field code" id="acctcode" type="text" inputmode="numeric"
+                autocomplete="one-time-code" maxlength="6" placeholder="000000">`
+        +`<div class="acct-row">${acctBtn('acctverify',acctBusy?'checking…':'sign in',true)}`
+        +`<a href="#" class="acctlink" id="acctagain">send another</a></div>`
+        +`<div class="acct-note">it lasts ten minutes. check the spam folder — a first mail from a new sender often lands there.</div>`;
+      const go=()=>verifyCode();
+      $('acctverify').onclick=go;
+      $('acctagain').onclick=e=>{e.preventDefault();acctMode='email';acctErr='';renderAcct()};
+      const f=$('acctcode');
+      // six digits and it goes, because typing a sixth digit and then hunting
+      // for a button is a step that exists only because nobody removed it
+      f.oninput=()=>{ f.value=f.value.replace(/\D/g,'').slice(0,6); if(f.value.length===6) go() };
+      f.onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();go()} };
+      setTimeout(()=>f&&f.focus(),40);
+    }
+    return;
+  }
+
+  if(!signedIn){ closeAccount(); return }
+
+  /* ---- what to call you, and whether you want the morning line ---- */
+  const nick=account.nickname||'';
+  const mail=account.email||'';
+  const canMail=!!account.mail;
+
+  if(acctMode==='hello'){
+    title.textContent='hello';
+    body.innerHTML=err
+      +`<div class="acct-ask">what do you want to be called?</div>`
+      +`<input class="acct-field" id="acctnick" type="text" maxlength="40" autocomplete="nickname"
+              placeholder="anything you like" value="${esc(nick)}">`
+      +(canMail?`<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
+        +`<span>send me the daily · one line each morning when the day's ten are up${
+            mail&&account.emailOk?` · to ${esc(mail)}`:''}</span></label>`
+        +(mail&&account.emailOk?'':`<input class="acct-field" id="acctaddr" type="email" inputmode="email"
+              autocomplete="email" spellcheck="false" placeholder="where to send it" value="${esc(mail)}">`)
+      :'')
+      +`<div class="acct-row">${acctBtn('acctdone',acctBusy?'saving…':'done',true)}`
+      +`<a href="#" class="acctlink" id="acctskip">not now</a></div>`
+      +`<div class="acct-note">both are optional and both can change later, from the foot of the record.</div>`;
+    $('acctdone').onclick=()=>saveHello();
+    $('acctskip').onclick=e=>{e.preventDefault();store.askedDaily=true;save();closeAccount()};
+    $('acctnick').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();saveHello()} };
+    setTimeout(()=>$('acctnick')&&!nick&&$('acctnick').focus(),40);
+    return;
+  }
+
+  /* ---- everything already chosen, and the way out ---- */
+  title.textContent='your account';
+  body.innerHTML=err
+    +`<div class="acct-ask">what do you want to be called?</div>`
+    +`<input class="acct-field" id="acctnick" type="text" maxlength="40" placeholder="anything you like" value="${esc(nick)}">`
+    +(canMail
+      ? `<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
+        +`<span>send me the daily · one line each morning</span></label>`
+        +`<input class="acct-field" id="acctaddr" type="email" inputmode="email" spellcheck="false"
+                placeholder="where to send it" value="${esc(mail)}">`
+        +(mail&&!account.emailOk
+          ? `<div class="acct-note">that address is not confirmed yet, so nothing is sent to it.
+               <a href="#" class="acctlink" id="acctconfirm" style="margin-left:0">send a code</a></div>`
+          : '')
+      : `<div class="acct-note">this deployment cannot send mail, so there is no daily to offer.</div>`)
+    +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
+    +`<div class="acct-foot">`
+      +`<a href="#" class="acctlink" id="acctout2">sign out</a>`
+      /* the one destructive thing in the game, and it takes two presses. no red
+         to lean on — there is none in this palette — so the second press is
+         what carries the weight, and it says exactly what it will do. */
+      +`<a href="#" class="acctlink last" id="acctdel">${acctArmed?'press again to erase it':'delete account'}</a>`
+    +`</div>`
+    /* the second press has to say everything it does, and the purchase is the
+       half nobody expects — the record is on this browser as well, so losing
+       the server's copy costs nothing, and the unlock is not. it is only said
+       when there IS one: a warning about a thing you do not own is noise. */
+    +(acctArmed?`<div class="acct-note">this erases the record held for you. this browser keeps its own copy, so nothing on this device is lost.`
+       +(POLICY.premium?' the full version goes with the account and cannot be restored afterwards.':'')
+       +`</div>`:'');
+  $('acctsave').onclick=()=>saveHello(true);
+  $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
+  $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
+  if($('acctconfirm')) $('acctconfirm').onclick=e=>{
+    e.preventDefault(); acctEmail=$('acctaddr').value.trim(); acctMode='email'; renderAcct();
+  };
+}
+
+async function sendCode(){
+  const el=$('acctemail'); if(!el) return;
+  acctEmail=el.value.trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(acctEmail)){ acctErr='that address does not look like one'; return renderAcct() }
+  acctBusy=true; acctErr=''; renderAcct();
+  try{
+    await apiCall('/auth/email/code',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail})});
+    acctBusy=false; acctMode='code'; acctErr=''; renderAcct();
+  }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
+}
+
+async function verifyCode(){
+  const el=$('acctcode'); if(!el||acctBusy) return;
+  const code=el.value.replace(/\D/g,'');
+  if(code.length!==6){ acctErr='that code is six digits'; return renderAcct() }
+  acctBusy=true; acctErr=''; renderAcct();
+  try{
+    const me=await apiCall('/auth/email/verify',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail,code})});
+    acctBusy=false; account={...me,signedIn:true,mail:true};
+    store.signedInOnce=true; save();
+    /* the record comes down before anything else is asked: the point of the
+       whole exercise is on the other side of this call. */
+    await syncNow(); tellClock();
+    acctMode='hello'; acctErr=''; renderAcct();
+  }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
+}
+
+async function saveHello(stay){
+  if(acctBusy) return;
+  const patch={tzOffset:new Date().getTimezoneOffset()};
+  const nick=$('acctnick'); if(nick) patch.nickname=nick.value.trim();
+  const addr=$('acctaddr'); const daily=$('acctdaily');
+  const wantDaily=!!(daily&&daily.checked);
+  const typed=addr?addr.value.trim().toLowerCase():'';
+  /* the address goes up FIRST and on its own when it changed, because turning
+     the daily on is refused against an address nobody has proved — so the two
+     have to be two calls, in that order, with a code in between. */
+  acctBusy=true; acctErr=''; renderAcct();
+  try{
+    if(addr && typed!==(account.email||'')){
+      await saveProfile({email:typed});
+      if(wantDaily && !account.emailOk){
+        acctBusy=false; store.askedDaily=true; save();
+        acctEmail=typed; acctMode='email';
+        acctErr='one code to that address and the daily is on';
+        return renderAcct();
+      }
+    }
+    if(daily) patch.dailyEmail=wantDaily;
+    await saveProfile(patch);
+    store.askedDaily=true; save();
+    acctBusy=false;
+    if(stay){ acctErr=''; renderAcct(); toast('saved') }
+    else closeAccount();
+  }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
+}
+
+async function deleteAccount(){
+  acctBusy=true; renderAcct();
+  try{ await apiCall('/account',{method:'DELETE'}) }catch(e){}
+  acctBusy=false; acctArmed=false;
+  account={signedIn:false}; syncSay='';
+  delete store.signedInOnce; delete store.askedDaily;
+  /* the entitlement went with the account, which the second press said it
+     would, so the flag goes here too — leaving it on would give this browser a
+     full version the server has never heard of, and the first sync of the next
+     account somebody signs into would take it away with no explanation. the
+     code is gone too: it belonged to an order that no longer names anybody. */
+  POLICY.premium=false; save();
+  acct={}; saveAcct();
+  entitlementChanged();
+  closeAccount();
+  toast('erased · this device keeps its own record');
+}
+
+/* a tab going away is the last chance to send a run that finished seconds ago
+   and is still sitting inside the three-second debounce. `keepalive` is what
+   lets it outlive the page; nothing reads the answer, so nothing waits. */
+addEventListener('pagehide',()=>{
+  if(!API||!account||!account.signedIn||!navigator.sendBeacon) return;
+  clearTimeout(syncTimer);
+  try{
+    navigator.sendBeacon(API+'/sync',new Blob([outbound()],{type:'application/json'}));
+  }catch(e){}
+});
 function fnv(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 function mulberry32(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+
+/* ================= the unlock =================
+   the full version — the archive and the time trial — is one payment, and the
+   same worker that holds the record holds it. this is the client half: four
+   calls, and one rule that outranks all of them.
+
+   THE RULE: NOTHING HERE IS LOAD-BEARING. the game is a static file that plays
+   offline, and `worker/` may not be deployed at all, so every call is guarded
+   and every failure is silent — the local flag stands, today and yesterday stay
+   free, and the only thing lost is the ability to buy. that is the difference
+   between giving a game a back end and making a game need one.
+
+   the token is for a player who bought WITHOUT signing in: there has to be
+   something holding the purchase, and it is a random id the server minted,
+   signed, and handed back. a player who signs in has a session doing that job
+   instead, and `linkUnlock` hands the one over to the other.
+
+   it lives under its OWN key rather than inside the save. `probe-run-v3` is the
+   game and the controls drawer can reset it; an entitlement a reset could wipe
+   is an entitlement people will lose. */
+const ACCT='features-acct-v1';
+let acct={};
+try{acct=JSON.parse(localStorage.getItem(ACCT)||'{}')}catch(e){acct={}}
+function saveAcct(){try{localStorage.setItem(ACCT,JSON.stringify(acct))}catch(e){}}
+
+let priceInfo=null;                 // {amount,currency}, once the server has said
+/* is there anywhere to pay. null is UNKNOWN, which is what a page that has not
+   asked yet holds and what a page with no worker behind it holds forever — and
+   the two are treated the same, because an `unlock` link that leads to "the
+   till is not answering" is worse than no link. this game shipped for a fortnight
+   with a placeholder that flipped the flag and said nothing was charged; the
+   honest version of that is to say nothing at all until there is a till.
+   DEV is the exception, so the paid tier stays testable with no backend. */
+let till=null;
+
+/* the quiet face of the same api. `apiCall` above throws, which is right for the
+   sign-in card: a player who just pressed a button is owed a reason. nothing on
+   the unlock path is, because an absent server is the NORMAL state here — the
+   game ships without one — so this answers `null` for "could not ask" and
+   `{error}` for "asked and was refused", and every caller treats the first as
+   silence rather than as a fault. */
+async function api(path,body){
+  if(!API) return null;
+  const o={headers:{},credentials:'same-origin'};
+  if(acct.token) o.headers['Authorization']='Bearer '+acct.token;
+  if(body!==undefined){
+    o.method='POST'; o.headers['Content-Type']='application/json'; o.body=JSON.stringify(body);
+  }
+  let res;
+  try{ res=await fetch(API+'/'+path,o) }catch(e){ return null }   // offline, blocked, or not deployed
+  let data=null;
+  try{ data=await res.json() }catch(e){}
+  /* a token the server will not take is worse than no token at all: it fails
+     every call from here to the end of time. throw it away and carry on
+     anonymous — signing in, or the code, is what gets the purchase back.
+     a SIGNED-IN caller is not holding a token at all, so this cannot touch a
+     session; /me answers a signed-out visitor with a 200 and no `full`. */
+  if(res.status===401 && acct.token){ acct.token=null; saveAcct() }
+  return res.ok ? (data||{}) : {error:(data&&data.error)||{code:'http_'+res.status}};
+}
+
+/* the server's answer, written into the one switch. it speaks in BOTH
+   directions — it grants what was bought and takes back what was refunded,
+   which is most of the point of having it — but only when it actually answers,
+   so an unreachable api leaves the flag exactly as it found it. */
+function applyEntitlement(r){
+  if(!r || r.error) return false;
+  /* the server has looked at this token and does not know it — a rotated
+     signing secret, or an account that has since been linked or deleted. it
+     will never work again, so it goes now rather than riding along failing
+     quietly on every call from here to the end of time. */
+  if(r.badToken) acct.token=null;
+  if(r.token) acct.token=r.token;
+  if('restoreCode' in r) acct.code=r.restoreCode||null;
+  if(r.price) priceInfo=r.price;
+  if(typeof r.till==='boolean') till=r.till;
+  saveAcct();
+  if(typeof r.full!=='boolean') return false;
+  const was=!!store.premium;
+  POLICY.premium=r.full; save();
+  return was!==r.full;
+}
+/* is there a till to send anybody to. see `till` — DEV counts so the paid tier
+   is testable with no worker running, and everybody else is only offered a
+   purchase once the server has said it can take one. */
+const canBuy=()=>DEV||till===true;
+/* the two screens that draw the entitlement, redrawn when it moves. everywhere
+   else reads the flag at the moment it renders, so it is already right.
+   the cleared card is in here for the price as much as for the flag: it is
+   built the instant the day ends and the price may still be in flight, so this
+   is also what puts the number on the offer when the answer lands late. */
+function entitlementChanged(){
+  if($('histveil').classList.contains('show')) openRecord();
+  if($('runveil').classList.contains('show')) showRunOver();
+}
+/* what it costs, asked for only when there is somewhere to print it — a player
+   who never opens the record never makes this call. the record redraws when the
+   answer lands, because it was drawn before the answer existed.
+   /me is one call answering both halves: who is signed in, and what they own.
+   a visitor with neither a session nor a token still gets the price, because
+   somebody has to be told the cost before they can decide to pay it. */
+let priceAsked=false;
+async function ensurePrice(){
+  if(priceInfo || priceAsked || !API) return;
+  priceAsked=true;
+  const moved=applyEntitlement(await api('me'));
+  if(priceInfo || moved) entitlementChanged();
+}
+/* the purchase catching up with the account.
+   somebody can buy without ever signing in — that is deliberate, a till that
+   demands an account first is a till fewer people reach — and then sign in
+   later, at which point the entitlement is sitting on an anonymous id and the
+   record is sitting on a real one. this moves the first onto the second, once,
+   and the token is spent doing it. */
+async function linkUnlock(){
+  if(!acct.token || !account || !account.signedIn) return;
+  const r=await api('unlock/link',{});
+  if(!r || r.error) return;
+  /* the anonymous id is gone now: the account holds the purchase. dropping the
+     token here rather than waiting for the next 401 is what stops this device
+     presenting a credential to a row that no longer exists. */
+  acct.token=null;
+  if(applyEntitlement(r)) entitlementChanged();
+  else saveAcct();
+}
+/* £3, not £3.00 — the second is a form for invoices, not a price on a link. the
+   divisor comes out of Intl rather than being 100, because a yen amount is
+   already whole and dividing it would offer the game for a hundredth of what it
+   costs. */
+function priceWords(){
+  if(!priceInfo || typeof priceInfo.amount!=='number' || !priceInfo.currency) return '';
+  try{
+    const cur=priceInfo.currency.toUpperCase();
+    const digits=new Intl.NumberFormat(undefined,{style:'currency',currency:cur})
+      .resolvedOptions().minimumFractionDigits;
+    const unit=Math.pow(10,digits), whole=priceInfo.amount%unit===0;
+    return new Intl.NumberFormat(undefined,{style:'currency',currency:cur,
+      minimumFractionDigits:whole?0:digits, maximumFractionDigits:digits})
+      .format(priceInfo.amount/unit);
+  }catch(e){ return '' }
+}
+
+/* a shut door that leads somewhere. the record is where the unlock lives — a
+   way through rather than the subject, which is the design — so a locked trial
+   says what it is and opens the screen that sells it, rather than throwing a
+   payment page at one tap of a button that used to be free. */
+function offerFull(what){
+  hideVeils();
+  openRecord();
+  toast(what+' · part of the full version');
+  return false;
+}
+/* the unlock, for real. it hands off to stripe's own checkout page — this game
+   never sees a card number and does not want to — and the player comes back to
+   `return_path` with a session id, which readUnlockReturn picks up.
+   with nothing behind it a dev build still flips the switch locally, which is
+   how the paid tier was tested before there was anything to pay. */
+async function beginUnlock(){
+  if(POLICY.premium) return;
+  const r=API ? await api('unlock/checkout',{return_path:location.pathname}) : null;
+  if(!r || r.error){
+    if(DEV){
+      POLICY.premium=true; save(); entitlementChanged();
+      return toast('unlocked locally · dev build, nothing was charged');
+    }
+    return toast(r && r.error && r.error.code==='rate_limited'
+      ? 'too many tries · give it a minute'
+      : 'the till is not answering · try again shortly');
+  }
+  if(r.token){ acct.token=r.token; saveAcct() }
+  // bought already, and only the local flag had drifted — a reinstall, or a
+  // second browser on the same purchase
+  if(r.already){
+    applyEntitlement(Object.assign({full:true},r)); entitlementChanged();
+    return toast('you already own the full version');
+  }
+  if(r.url) location.href=r.url;
+  else toast('the till is not answering · try again shortly');
+}
+/* the same purchase on a second device, for somebody who bought without an
+   account. signing in is the other way and the better one — it moves the record
+   too — but a purchase made anonymously has to have SOME way across, and the
+   code is it. which is why the server counts every guess at one, and why a
+   wrong code and a malformed one get the same answer here. */
+async function restoreUnlock(){
+  if(!API) return toast('restoring needs the game served over the web');
+  const code=prompt('unlock code from the device you bought it on');
+  if(code==null) return;
+  const r=await api('unlock/restore',{code:code});
+  if(!r) return toast('could not reach the till · try again shortly');
+  if(r.error) return toast(
+      r.error.code==='device_limit' ? 'that code is open on as many devices as it opens'
+    : r.error.code==='rate_limited' ? 'too many tries · wait an hour'
+    : 'that code does not open anything');
+  applyEntitlement(r); entitlementChanged();
+  toast('full version restored');
+}
+/* coming back from stripe. the webhook is the authority and will grant this on
+   its own, so confirming here buys one thing only: the player is looking at the
+   screen NOW and should not have to wait on a round trip they cannot see. when
+   it fails, the next visit's /me picks it up. */
+async function readUnlockReturn(){
+  const q=new URLSearchParams(location.search);
+  const state=q.get('unlock');
+  if(!state) return;
+  const cs=q.get('cs');
+  // the parameters have done their job, and a reload must not re-run this
+  q.delete('unlock'); q.delete('cs');
+  const rest=q.toString();
+  try{history.replaceState(null,'',location.pathname+(rest?'?'+rest:'')+location.hash)}catch(e){}
+  if(state!=='done') return toast('nothing was charged');
+  const r=cs ? await api('unlock/confirm',{session_id:cs}) : null;
+  if(r && !r.error && r.full){
+    applyEntitlement(r); entitlementChanged();
+    return flashMsg('unlocked · the archive and the time trial are yours',{cols:['--sig-violett']});
+  }
+  if(r && r.pending) return toast('payment still clearing · it opens when it does');
+  // paid for, but by a device this one cannot prove it is
+  if(r && r.mismatch) return toast('paid · restore it here with your unlock code');
+  toast('could not confirm just now · it will be there next visit');
+}
 
 /* ================= the ground =================
    two grounds, one game. the tokens do nearly all of it, but a good deal of
@@ -3698,6 +4793,13 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
      fewer on 78%, and the marginal gain collapsing after three — and the same
      allowance is what makes `perfect` mean something, since perfect is the
      optimum and clean now sits a few honest turns above it. */
+  /* the route par is quoted FROM, kept rather than thrown away. it is the same
+     number the offline solver ships as `optimum` for a family net — checked, it
+     is famGreedy on all 490 family rows in optima.json — so a day from v8 can
+     read its top rung straight off the board it is standing on instead of out
+     of a table that has to be generated ahead and eventually runs out. see
+     netTargets. */
+  plan.route=plan.par;
   plan.par=Math.max(3, plan.par + (GEN_RULES.parSlack||0));
   return plan;
 }
@@ -4723,6 +5825,64 @@ function countCross(vis){
    free with no visible crossing anywhere on it is the worst thing an untangling
    game can do to you. the ~1px disagreement with the drawn line during a spring
    settle is the cheaper of the two errors by far. */
+/* ---- the points a thread draws ----
+   a thread is an open polyline while it is being untangled, and that is right:
+   it has two loose ends and the puzzle is the order between them. once it has
+   come free and laid itself into its sign it is not a line any more, it is a
+   DRAWING, and all sixteen of those drawings are closed outlines. so a settled
+   sign repeats its first neuron at the end and arrives whole.
+
+   the repeat is done HERE, at the drawing, and nowhere near `t.nodes`: the node
+   list is what every index in the game refers to, and a duplicate entry in it
+   would be counted, dragged, split and freed twice.
+
+   this cannot move a score. crossings are counted over `threads.filter(t=>
+   !t.freed)`, and a thread only closes once it is freed and out of that set;
+   par is measured by the generator before the board is ever drawn. it changes
+   what a finished feature LOOKS like and nothing else, which is why it is not a
+   generator version — see signWhole. */
+function threadPoints(t,get){
+  const p=t.nodes.map(get);
+  if(t.signWhole && p.length>2) p.push(get(t.nodes[0]));
+  return p.join(' ');
+}
+const atRendered=n=>`${n.xr.toFixed(1)},${n.yr.toFixed(1)}`;
+/* ---- will this sign arrive whole? ----
+   every one of the sixteen primaries is a closed outline — the FEATURES table
+   says so and featureShape has always known it, which is why it drops exactly
+   one edge to wear the sign onto an open line. measured over all sixteen at the
+   neuron counts the ramp actually deals (n runs 3,4,5,4,5,5,6,5,5,7), the
+   dropped edge is 18-42% of the sign's span at n=5 and 22-70% at n=3. that is
+   not a gap the eye closes for free, which is what the old comment claimed and
+   what is true of a dense polygon; at five points the shortest edge of a
+   pentagon is still a third of it. `chess` at n=3 loses 99%.
+
+   so the sign closes whenever it CAN, and the two things that stop it are both
+   about neurons that never reached the drawing:
+
+   - a sign the settle declined to draw at all. that is settleIntoShape's own
+     guard, restated rather than remembered, so the two cannot drift.
+   - an end neuron that is pinned, or still carrying a live feature. the closing
+     edge runs from the last neuron to the first, so if either of them stayed
+     behind in the tangle that edge is not a line of the drawing, it is a second
+     spike across the board to a neuron that never moved. the sign is already
+     incomplete there and closing it would only be louder about it. a HELD
+     MIDDLE neuron is fine: the outline either side of it is whole and the
+     closing edge is still the sign's own edge.
+
+   it is asked once, in freeThread, and not per frame — and it has to be, because
+   `held` shrinks as later threads come free while this thread's sign was drawn
+   against the held set it had at the time. freeThread runs in free order on
+   both paths (the restore replays `R().freed`, which is pushed in that order),
+   so the answer after a reload is the same answer. */
+function signWhole(t){
+  const n=t.nodes.length;
+  if(n<3) return false;
+  const held=heldNodes(t);
+  if(n-held.length<3) return false;                   // settleIntoShape's guard
+  if(held.includes(t.nodes[0])||held.includes(t.nodes[n-1])) return false;
+  return !!featureShape(t.key,n);
+}
 function paintNow(marks){
   members.forEach(n=>{
     if(document.hidden){n.xv=n.x0;n.yv=n.y0}
@@ -4736,7 +5896,7 @@ function paintNow(marks){
     placeNode(n);
   });
   // backwards: a mark that finishes coming apart takes itself out of this list
-  threads.forEach(t=>t.el.setAttribute('points',t.nodes.map(n=>`${n.xr.toFixed(1)},${n.yr.toFixed(1)}`).join(' ')));
+  threads.forEach(t=>t.el.setAttribute('points',threadPoints(t,atRendered)));
   drawMarkers(marks||countCross().marks);
 }
 /* ---- crossing marks, fused when they meet ----
@@ -4848,7 +6008,7 @@ function startPhysics(){
         n.yr=n.yv+Math.cos(ts*fr*1.7+ph)*amp*.8;
       } else { n.xr=n.xv; n.yr=n.yv }
     });
-    threads.forEach(t=>t.el.setAttribute('points',t.nodes.map(n=>`${n.xr.toFixed(1)},${n.yr.toFixed(1)}`).join(' ')));
+    threads.forEach(t=>t.el.setAttribute('points',threadPoints(t,atRendered)));
     members.forEach(placeNode);
     if(moving||physDirty){
       physDirty=false;
@@ -4925,9 +6085,22 @@ function featureShape(k,n){
     }
     pts=pts.slice(0,bi).concat(pts.slice(bi+1));
   }
-  /* a thread is an open polyline, so a closed sign loses exactly one edge when
-     it is worn. lose the shortest one: the eye closes a small gap for free and
-     the shape still reads as itself. */
+  /* a thread that cannot close loses exactly one edge of its sign, and it loses
+     the shortest one.
+
+     this used to say "the eye closes a small gap for free", and that is true of
+     a dense polygon and false of the ones the game actually deals. measured
+     over all sixteen: the dropped edge is 18-42% of the sign's span at n=5 and
+     22-70% at n=3, because the shortest edge of a pentagon is still a third of
+     a pentagon. `chess` at n=3 loses 99% of itself and settles as a bare V.
+     so this is damage limitation, not a free lunch, and the sign closes instead
+     wherever it can — see signWhole, which is now the usual case. what is left
+     here is the fallback for the sign that cannot: a thread with a pinned end.
+     losing the shortest edge is still the right one to lose.
+
+     on a whole sign the rotation is a no-op. rotating a polygon's vertex list
+     leaves the polygon alone, and bestTurn re-turns it anyway to whichever
+     corner the neurons are nearest. */
   if(closed && pts.length>2){
     let bi=0, bl=Infinity;
     for(let i=0;i<pts.length;i++){
@@ -5133,11 +6306,40 @@ function claimSlot(t){
   });
   return (t.signSlot=best);
 }
+/* ---- which corner each neuron draws ----
+   an open sign has a first vertex: it is where the line starts, and the order
+   is a fact about the drawing. a CLOSED one does not. rotating the vertex list,
+   or reversing it, gives back exactly the same polygon — so on a whole sign the
+   order carries no information, and there is nothing to preserve.
+
+   which makes it free to spend on the arrival. the rotation and the direction
+   taken are the ones the neurons travel least to reach, so the thread folds
+   into its sign from wherever the player left it instead of every point
+   crossing the figure to reach the corner the emblem's path direction happened
+   to name. n is under ten, so this is 2n orders of at most ten distances.
+
+   it reads x0 — the logical board — and never xv, so it is the same answer
+   whether or not a spring is still moving, and the same answer twice. */
+function bestTurn(nodes, pts, at){
+  const n=pts.length;
+  let best=null, bv=Infinity;
+  for(let dir=0;dir<2;dir++)for(let r=0;r<n;r++){
+    const ord=[]; for(let i=0;i<n;i++) ord.push(((dir?r-i:r+i)%n+n)%n);
+    let v=0;
+    for(let i=0;i<n;i++){
+      const p=at(pts[ord[i]]), m=nodes[i];
+      if(!m) continue;                                // a held neuron does not travel
+      v+=(m.x0-p[0])**2+(m.y0-p[1])**2;
+    }
+    if(v<bv){ bv=v; best=ord }
+  }
+  return best.map(i=>pts[i]);
+}
 function settleIntoShape(t){
   const held=heldNodes(t);
   const movable=t.nodes.filter(n=>!held.includes(n));
   if(movable.length<3) return;                        // claim no slot it cannot draw in
-  const pts=featureShape(t.key, t.nodes.length);
+  let pts=featureShape(t.key, t.nodes.length);
   if(!pts) return;
   const slot=claimSlot(t);
   const cx=slot.cx, cy=slot.cy;
@@ -5152,17 +6354,24 @@ function settleIntoShape(t){
   const ox=(Math.min(...xs)+Math.max(...xs))/2, oy=(Math.min(...ys)+Math.max(...ys))/2;
   const span=Math.max(Math.max(...xs)-Math.min(...xs), Math.max(...ys)-Math.min(...ys), 1);
   const S=slot.r/span;
+  /* where a vertex of the sign lands on the board. one function, used by the
+     turn search and by the placement below, because two copies of it is the
+     search choosing an order for marks that end up somewhere else.
+     the sign has an up. on a quarter-turned board the board's +x runs down the
+     screen and +y runs left, so the emblem is laid into those axes instead of
+     straight onto x and y — or it settles on its side. the slot is square, so
+     the same fit serves either way round. */
+  const at=([px,py])=>{
+    const dx=portrait?(py-oy):(px-ox), dy=portrait?-(px-ox):(py-oy);
+    return [clampX(cx+dx*S), clampY(cy+dy*S)];
+  };
+  // a whole sign has no first corner, so it is turned to wherever it is nearest
+  if(t.signWhole) pts=bestTurn(t.nodes.map(n=>movable.includes(n)?n:null), pts, at);
   const now=performance.now();
   let k=0;                                            // stagger counter over the MOVABLE nodes
   t.nodes.forEach((n,i)=>{
     if(!movable.includes(n)) return;
-    const [px,py]=pts[Math.min(i,pts.length-1)];
-    /* the sign has an up. on a quarter-turned board the board's +x runs down
-       the screen and +y runs left, so the emblem is laid into those axes
-       instead of straight onto x and y — or it settles on its side. the slot is
-       square, so the same fit serves either way round. */
-    const dx=portrait?(py-oy):(px-ox), dy=portrait?-(px-ox):(py-oy);
-    const bx=clampX(cx+dx*S), by=clampY(cy+dy*S);
+    const [bx,by]=at(pts[Math.min(i,pts.length-1)]);
     /* staggered along the thread, and eased hard OUT rather than in-and-out:
        each neuron leaves at once, travels fast and stops dead on its mark, and
        they arrive in order, so the sign draws itself instead of every point
@@ -5182,6 +6391,12 @@ function freeThread(t,silent){
   // the phase a settled thread breathes on: shared by all its neurons, so the
   // emblem it becomes moves as one object rather than eight separate points
   t.calm=threads.indexOf(t)*1.1;
+  /* asked NOW, against the held set this thread's sign will actually be drawn
+     against — see signWhole. it is armed with the settle rather than with the
+     free, because between the two the neurons are still lying in the tangle,
+     and a closing edge across the board for a third of a second is exactly the
+     spike the whole rule exists to avoid. */
+  const whole=signWhole(t);
   const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
   lbl.setAttribute('class','tlabel2');lbl.setAttribute('text-anchor','middle');
   lbl.textContent=t.key;
@@ -5203,7 +6418,7 @@ function freeThread(t,silent){
     if(!reduceMotion){
       const run=document.createElementNS('http://www.w3.org/2000/svg','polyline');
       run.setAttribute('class','freerun');
-      run.setAttribute('points',t.nodes.map(n=>`${n.x0.toFixed(1)},${n.y0.toFixed(1)}`).join(' '));
+      run.setAttribute('points',threadPoints(t,n=>`${n.x0.toFixed(1)},${n.y0.toFixed(1)}`));
       run.style.stroke=cssv(t.col);
       run.style.strokeWidth=(t.width*1.4*markScale()).toFixed(2);
       gFx.appendChild(run);
@@ -5228,7 +6443,11 @@ function freeThread(t,silent){
     tutReach(2);
     // the light gets most of the way down the thread before the sign starts
     // assembling behind it
-    setTimeout(()=>{ settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
+    setTimeout(()=>{ t.signWhole=whole; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
+  }else{
+    /* the restore path: the neurons are loaded already standing on their sign,
+       so there is nothing to settle and nothing to wait for. */
+    t.signWhole=whole;
   }
 }
 
@@ -6282,12 +7501,52 @@ function endRun(){
    the dial is decoration that needs 34px plus 46px of clearance on the note it
    hangs off — which a card tucked into the corner of the board does not have to
    spend. the day card is unchanged: it keeps both. */
+/* the strip takes a LIST as well as a single token. one band is a tier or a
+   feature — a reading of the board. four is the wordmark's own flag, which is
+   what `.saystrip` already draws for the messages that are the GAME speaking
+   rather than a reading, and a question is exactly that. a single token still
+   draws one full-width band, so neither of the two cards that were here before
+   changes by a pixel. */
 function bulletinHTML(o){
-  return `<div class="bstrip" style="background:var(${o.strip||'--tuerkis'})"></div>
+  const bands=Array.isArray(o.strip)?o.strip:[o.strip||'--tuerkis'];
+  return `<div class="bstrip">${bands.map(c=>`<i style="background:var(${c})"></i>`).join('')}</div>
   <div class="bhead"><div><h2>${o.title}</h2><div class="bsub">${o.sub}</div></div><div class="bnum">${o.num}</div></div>
   <div class="brules">${o.rows.map((r,i)=>`<div class="brow" style="--i:${i}"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>
-  <div class="bbody">${o.body||''}${o.note?`<div class="bnote">${o.note}</div>`:''}${o.sun===false?'':`<div class="bsun">${SUN('var(--silver)')}</div>`}</div>
-  <div class="bactions">${o.actions}</div>`;
+  <div class="bbody">${o.body||''}${o.note?`<div class="bnote">${o.note}</div>`:''}${o.offer?`<div class="boffer">${o.offer}</div>`:''}${o.sun===false?'':`<div class="bsun">${SUN('var(--silver)')}</div>`}</div>
+  <div class="bactions">${o.actions}</div>
+  ${o.foot||''}`;
+}
+/* ---- the one invitation ----
+   the tutorial's cleared card carries this and nothing else in the game does.
+   it is the right moment because it is the FIRST one: they have just felt the
+   thing work, they have a stamp, and there is now something to lose.
+
+   what it says is what is true. a player without an account does not lose their
+   progress — it is in this browser and it always was — so an ask built on "sign
+   in or lose it" would be a lie, and a lie about the one subject where being
+   caught costs you the account. what signing in actually buys is the SECOND
+   device and surviving a browser clear, so that is what it offers.
+   it draws nothing when there is no backend to sign in to, and it never appears
+   again: the tutorial happens once, and after it the foot of the record is the
+   permanent home. */
+function signInInvite(){
+  return `<div class="bfoot" id="binvite" hidden></div>`;
+}
+function fillSignInInvite(){
+  const el=$('binvite');
+  if(!el||!API) return;
+  askSignIns().then(list=>{
+    if(!$('binvite')||!list.length||(account&&account.signedIn)) return;
+    const el2=$('binvite');
+    el2.hidden=false;
+    el2.innerHTML=`<span class="bfoot-say">saved in this browser · sign in and it follows you anywhere</span>`
+      +`<span class="bfoot-ins">${list.map(p=>
+          `<a href="#" class="acctlink" id="binv-${p}" aria-label="sign in with ${p}">${p}</a>`).join('')}</span>`;
+    list.forEach(p=>{
+      const a=$('binv-'+p);
+      if(a) a.onclick=e=>{e.preventDefault(); if(p==='email') hideVeils(); goSignIn(p)};
+    });
+  });
 }
 function showNetCleared(feats,tier,wasTutorial){
   const r=R();
@@ -6339,11 +7598,39 @@ function showNetCleared(feats,tier,wasTutorial){
       ? 'that is the whole game. from here the nets deepen — longer threads, then a third feature, then neurons shared between two features at once.'
       : (last.assisted ? 'untangle the next one unaided for a clean badge.' : ''),
     sun:false,
-    actions:`<button class="wbtn solid" id="contbtn">continue →</button><button class="wbtn" id="stopbtn">stop for today</button>`
+    actions:`<button class="wbtn solid" id="contbtn">continue →</button><button class="wbtn" id="stopbtn">stop for today</button>`,
+    // the one place in the game that offers a sign-in unprompted, and only here
+    foot:wasTutorial?signInInvite():''
   });
   showVeil('netveil');
+  if(wasTutorial) fillSignInInvite();
   $('contbtn').onclick=nextNet;
   $('stopbtn').onclick=()=>{pauseRun();hideVeils();setTimeout(showRunOver,150)};
+}
+/* ---- the offer, on the one card that has earned the right to make it ----
+   a daily game's paid tier is only ever wanted at one moment: the moment you
+   finish and there is nothing left until midnight. this card is already
+   standing in that moment — the line above this one says "the set resets at
+   midnight" — so the offer costs nothing to place and is asked at the only
+   time the answer is plausibly yes. anywhere earlier and it is interrupting a
+   game to sell a game.
+
+   THE CONDITIONS ARE THE DESIGN. a finished day only: a set you put down has
+   not run out of anything, and someone who stopped at net four is being sold
+   more of a thing they just walked away from. never on a trial card, which is
+   already the paid thing. and never once it is bought, obviously.
+
+   it says the count, because "the archive" is a word and "12 earlier days" is
+   an amount, and it names the trial second because that is the half a player
+   has just watched go dark on the button below. the price rides the link so
+   that nobody has to press it to find out. */
+function runOverOffer(trial,depth){
+  if(trial || POLICY.premium || depth<POLICY.dailyNets) return '';
+  ensurePrice();                      // redraws this card if the answer is late
+  if(!canBuy()) return '';            // nothing to sell here yet — see `till`
+  const n=archiveCount(), price=priceWords();
+  const what=n ? `${n} earlier day${n===1?'':'s'} and the time trial` : 'the time trial';
+  return `${what} · <a href="#" id="runoffer">unlock</a>${price?' · '+price:''}`;
 }
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
@@ -6419,22 +7706,123 @@ function showRunOver(){
        a watermark. it is still on the share plate, which is the surface that
        has room for it. */
     sun:false,
+    offer:runOverOffer(trial,depth),
     /* an unfinished set gets its way back, and it leads: it is the thing the
        note directly above promises is still there. */
     actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
             `<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">share</button>`+
             `<button class="wbtn" id="recordbtn2">the record</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')+
-            `<button class="wbtn" id="trialbtn">${trial?'trial again':'time trial'} ⏱</button>`
+            `<button class="wbtn${canTimeTrial()?'':' shut'}" id="trialbtn">${trial?'trial again':'time trial'} ⏱</button>`
   });
   showVeil('runveil');
   $('sharebtn').onclick=()=>copyShare();
   $('recordbtn2').onclick=()=>{hideVeils();openRecord()};
   $('trialbtn').onclick=()=>startTrialRun();
+  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
 }
-function hideVeils(){document.querySelectorAll('.veil').forEach(v=>v.classList.remove('show'))}
+/* hideVeils takes the question down too — it is a `.veil` and would be caught by
+   the selector anyway. what it must not do is take it down SILENTLY: a caller
+   awaiting an answer that never arrives is a run that stops halfway through
+   changing, which is worse than either answer. so it goes through closeAsk,
+   which resolves first and hides second. */
+function hideVeils(){
+  closeAsk(false);
+  document.querySelectorAll('.veil').forEach(v=>v.classList.remove('show'));
+}
+
+/* ================= asking =================
+
+   `confirm()` was the only thing in this game the game did not draw. it is
+   titled "akibwa.com says", it is sentence case in the system face, its buttons
+   are the OS's in the OS's order, and none of it is reachable from the
+   stylesheet — so the one moment the game asks the player to decide something
+   was the one moment it stopped looking like itself. see .askveil.
+
+   WHAT IT COSTS. `confirm()` is synchronous and returns a boolean; this returns
+   a promise, and every caller has to await it. that is not a mechanical change,
+   because the game keeps running while the card is up, so between the question
+   and the answer the run can move. two things make that safe here and both are
+   inherited rather than invented:
+     - the card is a `.veil.show`, and descentTick and retangleTick — the only
+       two loops that WRITE run state on a timer — both already bail on
+       `.veil.show`. so the run is frozen for exactly as long as the question is
+       open, the same way it is under the record or the rules.
+     - dragging is guarded on `.veil.show` too, so no move can be made behind it.
+   what is NOT frozen is anything a caller started before it asked, so a caller
+   that cares re-checks after the await. offerDay does; see there.
+
+   ONE AT A TIME. a second question supersedes the first and the first resolves
+   FALSE — an unanswered question is a no, which is the answer that does nothing.
+   every way this card can close resolves: the buttons, escape, a click beside
+   it, hideVeils, and being superseded. there is no path that leaves a caller
+   waiting on a card that is no longer on screen.
+
+   A TEXT ENTRY GOES IN `body`. bulletinHTML already takes arbitrary html there
+   — it is where the cleared card puts its stamps — so a card that asks for a
+   restore code is an `<input>` in `body` plus a `value()` reading it at confirm
+   time, and nothing here changes shape to allow it. */
+let askResolve=null, askReturn=null;
+function closeAsk(v){
+  if(!askResolve) return;
+  const done=askResolve; askResolve=null;
+  $('askveil').classList.remove('show');
+  document.removeEventListener('keydown',askKeys,true);
+  /* back where the question came from — the record row, the drawer button.
+     a modal that leaves focus on a button it has just removed drops the
+     keyboard back to the top of the document. */
+  const back=askReturn; askReturn=null;
+  if(back && document.contains(back)) back.focus();
+  done(v);
+}
+function askKeys(e){
+  if(e.key==='Escape'){
+    /* escape cancels the QUESTION and nothing behind it. the global handler
+       lower down dismisses every open veil, which with this card up would take
+       the record down with it and leave the player two screens from where they
+       were. stopping propagation in the capture phase is what keeps this one
+       key from meaning two things at once. */
+    e.preventDefault(); e.stopPropagation(); closeAsk(false); return;
+  }
+  if(e.key!=='Tab') return;
+  const f=[...$('askbulletin').querySelectorAll('button,input,select,textarea,a[href],[tabindex]:not([tabindex="-1"])')]
+          .filter(el=>!el.disabled && el.offsetParent!==null);
+  if(!f.length) return;
+  const first=f[0], last=f[f.length-1];
+  // the trap, in the only three states it has: off the end, off the front, or
+  // adrift entirely — which is where focus is the moment the card opens
+  if(!$('askbulletin').contains(document.activeElement)){ e.preventDefault(); (e.shiftKey?last:first).focus() }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus() }
+  else if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus() }
+}
+function ask(o){
+  // superseded, not stacked: the older question resolves false and gives up the
+  // card. `.show` is re-added in the same task, so nothing paints in between.
+  closeAsk(false);
+  askReturn=document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  $('askbulletin').innerHTML=bulletinHTML({
+    // the game speaking rather than a reading of the board — see bulletinHTML
+    strip:FLAG,
+    title:o.title, sub:o.sub||'', num:'',
+    rows:o.rows||[], body:o.body||'', note:o.note||'', sun:false,
+    /* the confirm leads and the cancel follows, the same order and the same two
+       idioms as the card that ends a net. what moves is the WEIGHT: on an
+       ordinary question the block of ink is the thing you came to do, and on a
+       destructive one it is the way out. either way the keyboard starts on the
+       cancel, so a return pressed on reflex costs nothing. */
+    actions:`<button class="wbtn${o.danger?'':' solid'}" id="askyes">${o.yes}</button>`
+           +`<button class="wbtn${o.danger?' solid':''}" id="askno">${o.no||'not now'}</button>`
+  });
+  $('askbulletin').setAttribute('aria-label',[o.title,o.sub,o.note].filter(Boolean).join(' · '));
+  $('askyes').onclick=()=>closeAsk(true);
+  $('askno').onclick=()=>closeAsk(false);
+  showVeil('askveil');
+  $('askno').focus();
+  document.addEventListener('keydown',askKeys,true);
+  return new Promise(res=>{askResolve=res});
+}
 
 /* ================= the record ================= */
 
@@ -6493,6 +7881,15 @@ function allDays(){
   for(let i=0;i<730 && d>=LAUNCH;i++,d=dayAdd(d,-1)) days.add(d);
   return [...days].sort().reverse().map(x=>({d:x,row:by.get(x)||null}));
 }
+/* a day the archive holds and nothing else does: shut to you, and with no row
+   of its own because you never played it. a day you DID play stays a row after
+   it ages out — it is your history, and history is not for sale.
+   two screens count these and they must agree, so the rule is written once: the
+   record collapses them into one line at its foot, and the cleared card says how
+   many there are in its offer. two copies of this would be two different numbers
+   on two screens about the same thing. */
+const isShut=({d,row})=>!row && !canPlayDay(d);
+const archiveCount=()=>allDays().filter(isShut).length;
 /* ---- the day's ten, drawn ----
    ten cells, one per net, and the tier is the HEIGHT — see .dayrow .dcells for
    why height rather than hue, and for what this replaced.
@@ -6530,26 +7927,34 @@ function tierWords(tiers){
 
 /* clicking a row offers that day. replaying one you already cleared is allowed
    — it simply cannot improve a tier you already hold, same as any net. */
-function offerDay(iso,done){
+async function offerDay(iso,done){
   if(iso===today() && !isArchive()){ hideVeils(); return }
   if(!canPlayDay(iso)) return flashMsg('that day is in the archive · unlock it to play');
-  if(!confirm(`play ${dayLabel(iso)}? your run in progress is set aside.`)) return;
+  /* "your run in progress is set aside" is what the browser dialog said and it
+     was not true: newRun REPLACES store.run, and only startTrialRun parks the
+     one it displaces. what survives is what was already written as you went —
+     the badges you minted and the day's row in the record — and what does not is
+     where you had got to. the card says the part that is lost, because that is
+     the part the question is about. */
+  const ok=await ask({
+    title:dayLabel(iso),
+    sub:done?'played · replaying cannot lower a tier':'not played yet',
+    rows:[['the run you are on','ends here']],
+    note:iso===today()
+      ? 'today\'s set starts again from the first net.'
+      : 'an archive day does not extend a streak.',
+    yes:'play →', no:'not now'
+  });
+  if(!ok) return;
+  /* the run is frozen while the card is up (see ask), but the ARCHIVE is a
+     stored flag rather than a fact about the board, and this is the one gate
+     between the question and the act. re-reading it costs nothing and means the
+     answer can never be applied to a day that stopped being playable. */
+  if(!canPlayDay(iso)) return flashMsg('that day is in the archive · unlock it to play');
   newRun('daily',iso);
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
   flashMsg(iso===today()?'today\'s net':'playing the archive · '+dayLabel(iso)+' · this does not extend a streak');
 }
-/* the unlock. POLICY.premium is a client constant with nothing behind it, so
-   this is the whole transaction: flip the one switch and redraw. it is here to
-   show what unlocking looks like — no payment is taken, no provider is called,
-   and none can be until there is a backend to take one (README, phase 2). */
-function unlockArchive(){
-  if(POLICY.premium) return;
-  POLICY.premium=true;
-  save();
-  openRecord();
-  toast('archive unlocked · placeholder, nothing was charged');
-}
-
 /* the day's score, golf style: turns against par across the ten. negative is
    under par and good. it is the one reading that every net contributes to —
    tier counts are lumpy, a net missed by one turn scoring the same as one
@@ -6578,6 +7983,105 @@ function scoreParts(n){
    finished — ten nets. two nets at three under is not a round. */
 const dayScore=r=>(r && r.turns!=null && r.par!=null && (r.depth||0)>=POLICY.dailyNets)
   ? r.turns-r.par : null;
+
+/* the archive's one line, in its two states — ONE element, because they are the
+   same fact seen from either side of the payment: what is still shut, or what
+   was bought. `unlock` and `restore` are links in the quietest ink on the card
+   rather than fields: a way through, not the subject. */
+function archiveLineEl(shutN){
+  ensurePrice();     // redraws this card if the answer arrives after it
+  const el=document.createElement('div');
+  el.className='dayarch'+(POLICY.premium?' held':'');
+  if(POLICY.premium){
+    el.innerHTML='<span class="datext">full version · the archive and the time trial</span>'
+      +(acct.code
+        ? `<span class="dacode" title="type this on another device to open it there">${acct.code}</span>`
+        : '');
+  } else {
+    const price=priceWords();
+    /* the count is a fact and is always drawn; the two links are only drawn
+       when there is somewhere for them to lead. a deploy with no till — which
+       is every deploy until the stripe keys go in — says what the archive holds
+       and offers nothing, rather than offering a press that fails. */
+    el.innerHTML=`<span class="datext">${shutN} earlier day${shutN===1?'':'s'} · in the archive</span>`
+      +(canBuy()
+        ? `<a href="#" class="archlink" data-buy="1"`
+          +` title="one payment · opens every day back to launch, and the time trial">unlock${price?' · '+price:''}</a>`
+          +`<a href="#" class="archlink" data-restore="1"`
+          +` title="bought it already? enter the code from your other device">restore</a>`
+        : '');
+  }
+  el.onclick=e=>{
+    if(e.target.closest('[data-buy]')){ e.preventDefault(); beginUnlock() }
+    else if(e.target.closest('[data-restore]')){ e.preventDefault(); restoreUnlock() }
+  };
+  return el;
+}
+/* the month a run of rows belongs to. it reuses MONTHS rather than spelling the
+   names out again, and carries the year only when it is not this one — the rule
+   dayLabel already follows, and the reason is the same: a marker that says 2026
+   on every month of 2026 is a list repeating itself twelve times a year. */
+function monthMarkEl(iso){
+  const dt=new Date(iso+'T00:00:00'), yr=new Date().getFullYear();
+  const el=document.createElement('div');
+  el.className='daymon';
+  el.innerHTML=`<span>${MONTHS[dt.getMonth()]}${dt.getFullYear()!==yr?' '+dt.getFullYear():''}</span>`;
+  return el;
+}
+
+/* ---- the foot: whose record this is ----
+   drawn from three things and nothing else: whether this deployment has any
+   sign-ins at all, whether this browser is signed in, and what the last sync
+   said. it renders SYNCHRONOUSLY from whatever is known and then asks — a card
+   that pops a row in half a second after opening is worse than one that grows a
+   row the first time you open it, and both beat blocking the screen on a fetch
+   that may be answering from a plane. */
+function renderAccount(){
+  const foot=$('recfoot');
+  if(!API || (signIns && !signIns.length)){ foot.hidden=true; foot.innerHTML=''; return }
+  if(!signIns){                            // first look on this session
+    foot.hidden=true;
+    askSignIns().then(()=>{ if($('histveil').classList.contains('show')) renderAccount() });
+    return;
+  }
+  foot.hidden=false;
+  const link=(id,text,label)=>`<a href="#" class="acctlink" id="${id}" aria-label="${label}">${text}</a>`;
+
+  if(account&&account.signedIn){
+    /* who, in the plainest terms available, and in this order: the name they
+       chose, then the address — which is how you know WHICH google you are on —
+       then the provider, which is all there is for a facebook account
+       registered by phone or an apple one whose relay we were never given.
+       the whole saying is the way back into the card, because "that is not the
+       right account" and "I want to change that" are the same press. */
+    const who=account.nickname||account.email||('your '+(account.provider||'')+' account').trim();
+    const state=syncSay==='saving' ? '<span class="acct-state">saving</span>'
+              : syncSay==='offline' ? '<span class="acct-state">offline · will send later</span>'
+              : syncSay==='saved' ? '<span class="acct-state">saved</span>' : '';
+    foot.innerHTML=`<button class="acct-who acct-say" id="acctwho" title="your account">signed in · ${esc(who)}</button>${state}`
+      +`<span class="acct-ins">${link('acctout','sign out','sign out of this device')}</span>`;
+    $('acctwho').onclick=()=>openAccount('manage');
+    $('acctout').onclick=e=>{e.preventDefault();doSignOut()};
+    return;
+  }
+
+  /* signed out. the line says what is TRUE rather than what is on offer: this
+     record is on this browser and nowhere else, which is the fact that makes
+     signing in worth doing and which nobody is otherwise ever told.
+     it is four words because of the phone. the three names and their lead-in
+     are fixed width and must never be the thing that gives — a control you
+     cannot read is worse than a sentence you cannot finish — so at 375px it is
+     the saying that ellipses, and a longer one ellipsed mid-thought. the card
+     is titled "the record" a few lines above, so "kept" needs no subject. */
+  const names={google:'google',apple:'apple',facebook:'facebook',email:'email'};
+  foot.innerHTML=`<span class="acct-say">kept on this device only</span>`
+    +`<span class="acct-ins">sign in${signIns.map(p=>
+        link('acctin-'+p,names[p]||p,'sign in with '+(names[p]||p))).join('')}</span>`;
+  signIns.forEach(p=>{
+    const el=$('acctin-'+p);
+    if(el) el.onclick=e=>{e.preventDefault();goSignIn(p)};
+  });
+}
 
 /* ---- the one screen ----
    a head that does not move — the sixteen, which is the question a day list
@@ -6650,17 +8154,42 @@ function openRecord(){
     featrow.title=sum;
   }
 
-  /* ---- the days ---- */
+  /* ---- the days ----
+     EVERY day since launch, including the ones you cannot play. they were
+     collapsed into a single counted line for a while, and the reasoning was
+     sound about the drawing and wrong about the product: a shut day drawn as a
+     row is a thing, and "12 earlier days" is a word. nobody wants a word. the
+     backlog is what is for sale, so the backlog is what the screen shows.
+     the two objections that collapsed it in the first place are both about the
+     SHOP and neither about the days, so both are answered without hiding
+     anything. no row is a violet field — a shut row is dashed and a step back
+     in ink, which is what shut means everywhere else on this card. and there is
+     exactly ONE way through, on one line where the wall starts, rather than a
+     button per row growing by one a day forever.
+     nothing has to be invented to fill it. the nets are a pure function of the
+     date, so every day back to LAUNCH — 1 august — already exists and is already
+     playable; the list was simply refusing to draw them. */
   const list=$('daylist'); list.innerHTML='';
   const days=allDays();
-  const shut=[];       // every day the archive holds. they get ONE row, at the foot
+  const shutN=days.filter(isShut).length;
+  let archDrawn=false, monthDrawn='';
   days.forEach(({d,row})=>{
-    const played=!!row, canPlay=canPlayDay(d), isToday=d===d0;
-    /* a day that is neither played nor open to you is not a row. eleven of the
-       thirteen a new player met were exactly that, and the run of them grows by
-       one every day for as long as the game exists. counted here, said once
-       below. */
-    if(!played && !canPlay){ shut.push(d); return }
+    const played=!!row, canPlay=canPlayDay(d), isToday=d===d0, locked=isShut({d,row});
+
+    /* the one way through, placed where the wall actually starts rather than at
+       the foot of everything. it introduces the run it gates, and it scrolls
+       away as you read past it — which is the difference between a shop you
+       walk through and a shop you are standing in. */
+    if(locked && !archDrawn && !POLICY.premium){ archDrawn=true; list.appendChild(archiveLineEl(shutN)) }
+    /* a spine, because this list is now every day since launch. at a fortnight
+       old it is one word at the top doing nothing; at a year old it is the only
+       way to find the saturday you missed without counting rows. it is not the
+       month calendar coming back — that was a second VIEW of the history, drawn
+       beside the list that already held it. this is a hairline inside the list
+       it labels. */
+    const mk=d.slice(0,7);
+    if(mk!==monthDrawn){ monthDrawn=mk; list.appendChild(monthMarkEl(d)) }
+
     /* a played day with no recorded rung draws NO rung. it used to fall back to
        `over`, which TIERCOL paints identically to `done` — so a day the game has
        no record of rendered exactly like a day you finished over par, and the
@@ -6671,10 +8200,26 @@ function openRecord(){
     const tier=played?(row.best||null):null;
     const el=document.createElement('div');
     el.className='dayrow'+(isToday?' today':'')
-      +(played ? (row.back?' back':'') : ' open');
+      +(locked ? ' shut' : played ? (row.back?' back':'') : ' open');
 
     let det, right='';
-    if(played){
+    /* how hard the day is, on any archive day you have not played — whether it
+       is shut to you or open. it is drawn for the buyer too, and especially:
+       they are the one with three hundred days to choose between, so taking the
+       reading away at the moment it becomes useful would be exactly backwards.
+       never on today or yesterday. today is the day everybody is playing right
+       now and being told its difficulty before you start changes the run; the
+       archive is a chooser, which is a different question. */
+    const best=(!played && inArchive(d)) ? dayBest(d) : null;
+    const bestWords=best!=null ? ' · '+best+' turns at best' : '';
+    if(locked){
+      /* nothing on the right. `play →` is the mark of a day that is open to
+         you, and a greyed copy of it on every shut row is the shop repeated
+         three hundred times — which is exactly what got these rows deleted
+         before. the detail column says where the day is instead, once, in
+         words, and the dashed keyline says it again without any ink at all. */
+      det='in the archive'+bestWords;
+    } else if(played){
       const p=[], sc=dayScore(row);
       /* the net count only earns its place when the set was left SHORT. it used
          to lead every row — "10 nets · " on 37 of 42 — which is the same
@@ -6699,7 +8244,7 @@ function openRecord(){
          near enough the same fourteen on every row in the list. */
       right=dayCells(row.tiers);
     } else {
-      det=isToday?'not played yet':'not played';
+      det=(isToday?'not played yet':'not played')+bestWords;
       right='<span class="dstate">play →</span>';
     }
 
@@ -6711,53 +8256,49 @@ function openRecord(){
     const words=played?tierWords(row.tiers):'';
     const label=dayLabel(d)+' · '+det+(played&&tier?' · '+tier:'')+(words?' · '+words:'');
     el.setAttribute('aria-label',label);
-    /* only a row you can actually do something with is a control. every row
-       reaching here either is playable or is a day you have already played —
-       a shut day is not a row any more. */
+    /* only a row you can actually do something with is a control. a shut row
+       answers a press by naming its price, which is a courtesy and not a
+       control — making three hundred of them tab stops would put the whole
+       archive between the keyboard and the rest of the card, to reach a reading
+       the `unlock` link right above them already gives. the label still says
+       where the day is, so nothing is hidden from a screen reader. */
     if(canPlay){
       el.setAttribute('role','button'); el.tabIndex=0;
       el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offerDay(d,played) } };
     }
     el.onclick=()=>{
-      if(canPlay) offerDay(d,played);
-      else flashMsg('that day is in the archive · unlock it to play');
+      if(canPlay) return offerDay(d,played);
+      /* it names the day you just pressed and what opening it costs, and stops
+         there. the line above is the way through; a row that went straight to a
+         payment page would make three hundred accidental tap targets out of a
+         list whose whole purpose is browsing. */
+      const price=priceWords();
+      flashMsg(`${dayLabel(d)} · in the archive · unlock${price?' · '+price:''}`);
     };
     list.appendChild(el);
   });
-  /* ---- the archive, in one line ----
-     the run of shut days used to be a row each, with a filled violet button on
-     the first of them — the only saturated object on the card, which made the
-     visual anchor of a history screen a shop, and a list that grew by a row a
-     day forever whether you played or not. one line at the foot says the same
-     thing and says it once. `unlock` is a link in the quietest ink here rather
-     than a field: it is a way through, not the subject.
-     POLICY.premium opens every one of these days, so when it is on `shut` is
-     empty and there is no row to draw — the gate is the same one canPlayDay
-     already applies, not a second copy of it. */
-  if(shut.length){
+  /* ---- nothing on record yet ----
+     `rows` is the honest test — days you have actually played — not `days`,
+     which allDays() seeds back to LAUNCH and which is therefore never empty.
+     it used to REPLACE the list, and that has to go: the list it was replacing
+     now holds the whole backlog, which is the one thing a new player most needs
+     to see, plus the way back in for anyone who bought on another device. it
+     leads the card and the days follow it. */
+  if(!rows.length){
     const el=document.createElement('div');
-    el.className='dayarch';
-    el.innerHTML=`<span class="datext">${shut.length} earlier day${shut.length===1?'':'s'} · in the archive</span>`
-      +(POLICY.premium ? ''
-        : `<a href="#" class="archlink" data-buy="1"`
-          +` title="flips the client-side premium flag · there is no payment behind it yet">unlock</a>`);
-    el.onclick=e=>{
-      if(!e.target.closest('[data-buy]')) return;
-      e.preventDefault(); unlockArchive();
-    };
-    list.appendChild(el);
+    el.className='runempty';
+    el.innerHTML='nothing on record yet.<br>'
+      +'play today\'s ten and this fills in — one day, ten nets, the same ten for everyone.';
+    list.insertBefore(el,list.firstChild);
   }
-  /* the empty state tested `days`, which allDays() seeds with every date back to
-     LAUNCH — so it was never empty and this branch had never once rendered in
-     the life of the game. what a new player actually met was a list of locked
-     archive rows with a violet unlock button as the brightest thing on screen:
-     a history screen whose first impression was a shop.
-     `rows` is the honest test — days you have actually played — and when there
-     are none the archive is not the story, so it replaces the list entirely
-     rather than sitting above it. */
-  if(!rows.length) list.innerHTML=
-    '<div class="runempty">nothing on record yet.<br>'
-    +'play today\'s ten and this fills in — one day, ten nets, the same ten for everyone.</div>';
+  /* the receipt, once the full version is held, and it goes at the TOP. an
+     offer belongs down where the wall starts — you meet it in the course of
+     reading, which is what keeps a history screen a history screen. a receipt
+     does not: with the archive open every day since launch is a row of its own,
+     growing by one a day forever, so anywhere but the top is somewhere the
+     buyer would have to scroll a year of history to find on the morning they
+     get a new phone. */
+  if(POLICY.premium) list.insertBefore(archiveLineEl(0),list.firstChild);
 
   /* the whole screen is written before this and nothing is read back after it.
      there used to be a second pass here: read `clientWidth` off every stamp
@@ -6769,6 +8310,7 @@ function openRecord(){
      ten cells of a fixed width fit by construction, so all of that is gone: one
      write, no read, no mirror of the css, and nothing to redo when the window
      changes size — the media query moves the two numbers and the cells follow. */
+  renderAccount();
   $('histveil').classList.add('show');
   list.scrollTop=keep;
 }
@@ -7045,10 +8587,11 @@ function renderHud(){
      zero is still not failure — the day cannot be failed, and the rung the net
      mints is the strip's business.
 
-     `graded` is the two cases with no perfect to chase: no proved optimum for
-     this net (most of them — see OPTIMA), and a net under descent, which is
-     capped at done. both skip straight to the par budget, which is then the
-     whole of par rather than the part of it past the optimum. */
+     `graded` is the two cases with no perfect to chase: no optimum standing
+     under par for this net — rare now, and only on the frozen days before v8,
+     see netTargets — and a net under descent, which is capped at done. both
+     skip straight to the par budget, which is then the whole of par rather than
+     the part of it past the optimum. */
   const t=r.netMoves, over=t>par;
   const hasOpt=optimum<par, capped=(tier==='done'&&!over);
   const graded=hasOpt&&!capped;
@@ -7400,6 +8943,7 @@ async function copyShare(){
 })();
 $('histbtn').onclick=openRecord;
 $('histclose').onclick=e=>{e.preventDefault();$('histveil').classList.remove('show')};
+$('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
 /* clicking beside a card is the most natural way anyone dismisses a modal, and
    for the cleared-net bulletin it used to leave you staring at a solved, dead
    board: by the time that card is up the net index has already moved on, and
@@ -7407,6 +8951,11 @@ $('histclose').onclick=e=>{e.preventDefault();$('histveil').classList.remove('sh
    run-over card is terminal and carries its own actions, so it does not
    dismiss at all — there is nothing behind it to go back to. */
 function dismissVeil(v){
+  /* clicking beside a question answers it, and the answer is no — the same
+     reading escape gets, and the only one that is safe to infer from a click
+     that was not on either button. it goes through closeAsk so the caller is
+     told, rather than through the class toggle below. */
+  if(v.id==='askveil'){ closeAsk(false); return }
   if(v.id==='introveil'||v.id==='runveil') return;
   /* a drag that picks up a feature's name and releases past the edge of the
      card reports its click against the veil, not the card — so taking the one
@@ -7428,7 +8977,22 @@ $('skipnet').onclick=e=>{
   resetDescent();
   save(); nextNet(); toast('net skipped · 5 turns');
 };
-$('reset').onclick=e=>{e.preventDefault();if(confirm('reset all progress?')){localStorage.removeItem(KEY);location.reload()}};
+/* the one destructive control in the game, so the card's weight is on the way
+   out rather than on the way through — see ask(). the note is the fact that
+   makes it destructive: there is no account and no server, so the only copy of a
+   collection is the one this button removes. */
+$('reset').onclick=async e=>{
+  e.preventDefault();
+  const ok=await ask({
+    title:'reset everything', sub:'controls',
+    rows:[['this clears','every day, badge and streak']],
+    note:'none of it is kept anywhere else, so there is nothing to put it back from.',
+    yes:'reset', no:'keep it', danger:true
+  });
+  if(!ok) return;
+  localStorage.removeItem(KEY);
+  location.reload();
+};
 /* test-build affordances: play as many runs as you like, top up moves */
 if(DEV){
   $('newrun').hidden=false;
@@ -7577,7 +9141,7 @@ function renderIntro(mode){
         : clean<FKEYS.length ? `every feature named · ${FKEYS.length-clean} still short of clean.`
         : `every feature clean · ${pairsAll-pairsGot} pairs left to catch sharing a neuron.`}</div>
       <button class="intro-start" id="introstart">start today's run</button>
-      <button class="intro-start intro-alt" id="introtrial">time trial ⏱</button>`;
+      <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`;
   }
   $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
@@ -7599,6 +9163,10 @@ if(DEV){
   $('solvebtn').hidden=false;
   $('solvebtn').onclick=()=>{ try{ window.__solveNet() }catch(e){ toast('solve failed · '+e.message) } };
 }
+/* escape closes every open overlay, which is right while they are alternatives
+   to each other and wrong the moment one is stacked ON another. a question is
+   the only card that stacks, and it takes escape for itself in the capture phase
+   so this never sees it — see askKeys. */
 document.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   document.querySelectorAll('.veil.show').forEach(dismissVeil);
@@ -7687,6 +9255,16 @@ if(!store.tutorialDone){
 } else if(store.lastIntroDay!==today() && R().netMoves===0 && !R().cleared.length){
   renderIntro('back'); showVeil('introveil');
 }
+/* the account, last and off to one side. both are network calls the first frame
+   must not wait on, and both are no-ops for the visits that make up nearly all
+   of them: no `?unlock=` on the url, no token and no account means nothing is
+   sent at all, and the game is on screen and playable before either could have
+   answered anyway.
+   chained rather than fired together so that a confirm coming back from stripe
+   writes the flag before /me reads it — otherwise an answer computed a second
+   before the webhook landed comes back last and undoes the purchase the player
+   just made, on screen, in front of them. */
+readUnlockReturn().then(wakeAccount);
 </script>
 </body>
 </html>
