@@ -5769,6 +5769,20 @@ function buildNet(force){
   const GEN={...genFor(R().day)};
   Object.assign(GEN_RULES, genRules(GEN));
   spec=netSpec(idx, GEN_RULES);
+  /* THE GUIDED NET IS ONE NEURON LONGER THAN NET 0, and that is the difference
+     between a lesson and a gesture. the ramp opens on two threads over three
+     neurons, which is the right size for a first puzzle and the wrong size for
+     a first LESSON: three neurons can barely hold two crossings, so 26 days in
+     40 built a tutorial with exactly one, and one crossing means one drag frees
+     both threads at once. all three coaching steps then fired on the same move
+     and the player was told what a crossing is, that clearing them frees a line,
+     and that they had finished, in the same instant.
+     four neurons carries two or three crossings comfortably, so the steps land
+     where they were written to: drag, watch a line come free, clear the last.
+     it applies only while the tutorial is unfinished — net 0 replayed after it
+     is the ramp's own opener again, which is also why this cannot drift the
+     day's other nine. */
+  if(!store.tutorialDone && idx===0){ spec.nodes=4; spec.minX=2; spec.maxX=5 }
   const svg=$('netsvg'); svg.innerHTML='';
   const mk=(n,a,p)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
   const defs=mk('defs',{});
@@ -5794,7 +5808,23 @@ function buildNet(force){
     chosen.push(pool.splice(Math.floor(fr()*pool.length),1)[0]);
   }
 
+  /* the search gives up after 40 salts and takes whatever the last one made,
+     which on a small net can be well under the band it was asking for. that hurt
+     most exactly where it mattered least in code and most in play: the tutorial
+     net is two threads over three neurons, 2 crossings is the floor it asks for,
+     and 26 days in 40 landed on ONE — a first net solvable in a single drag, so
+     the three coaching steps all fired on the same move and the lesson collapsed
+     into a gesture.
+     so a failed search no longer takes the last board, it takes the BEST one it
+     saw: two passes over the same salts, the first looking for the band and
+     remembering the closest miss, the second replaying that salt. deterministic
+     either way — the same day still builds the same net, because both passes
+     read the same seeded sequence. */
+  let bestSalt=39, bestMiss=Infinity, accepted=false;
+  for(let pass=0;pass<2;pass++){
+  const forced=pass===1?bestSalt:-1;
   for(let salt=0;salt<40;salt++){
+    if(forced>=0 && salt!==forced) continue;
     const rnd=mulberry32(fnv(R().day+':net:'+idx+':'+salt));
     members=[];
     // thread colours are assigned per-net so no two threads ever share one
@@ -6009,7 +6039,17 @@ function buildNet(force){
        own progress, which reset the masthead track to 0% untangled.
        judge the salt on pristine geometry; restore the player afterwards. */
     const c0=countCross();
-    if((c0.total>=spec.minX && c0.total<=spec.maxX) || salt===39){
+    /* how far outside the band this salt fell, so pass two can replay the least
+       wrong one. under the floor is what actually bites — a net below minX is a
+       net with too little to do — so being short counts double against being
+       over, and a board inside the band always wins by scoring zero. */
+    if(pass===0){
+      const miss=c0.total<spec.minX ? (spec.minX-c0.total)*2
+               : c0.total>spec.maxX ? (c0.total-spec.maxX) : 0;
+      if(miss<bestMiss){ bestMiss=miss; bestSalt=salt }
+    }
+    const inBand=c0.total>=spec.minX && c0.total<=spec.maxX;
+    if(inBand || pass===1){
       initialCross=Math.max(c0.total,1);
       if(GEN.par==='lanes') spec.par=lanePar();      // measure the net you actually got
       /* par came from famPlan, which scrambled until the walkthrough cost it.
@@ -6019,8 +6059,11 @@ function buildNet(force){
       if(GEN.par==='family') spec.par=spec.plan?spec.plan.par:lanePar();
       const pos=R().positions||{};
       members.forEach(n=>{if(pos[n.idx]){n.x0=pos[n.idx][0];n.y0=pos[n.idx][1];n.xv=n.xr=n.x0;n.yv=n.yr=n.y0}});
+      accepted=true;
       break;
     }
+  }
+  if(accepted) break;
   }
   // the pairs this net superposed, captured before any saved split is replayed
   netPairs=[...new Set(members.filter(n=>n.threads.length>1)
@@ -7875,7 +7918,9 @@ function renderTutorial(){
 }
 function tutReach(step){
   if(!inTutorial())return;
-  if(step>=tutStepAt){tutStepAt=step+1; renderTutorial()}
+  // the bay counts the steps too, and it is renderHud that draws it — without
+  // this the card advanced and the numeral beside it sat on 1 for all three
+  if(step>=tutStepAt){tutStepAt=step+1; renderTutorial(); renderHud()}
   /* a move that does not advance the step still changed the board, and the
      spotlight is a reading of the board — this is where it re-points at a
      player who ignored it. every committed move reaches here, so it is the one
