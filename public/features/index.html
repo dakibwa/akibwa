@@ -118,6 +118,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --stamp-edge:#2E383E;
     --grid:#191F23;
     --veil:rgba(8,11,13,.68);
+    /* the wash behind selected text — hellblau, the same blue the game opens
+       with, spelled out because rgba() cannot take a hex token for its colour
+       and this file has no color-mix anywhere else to borrow. it is a shade
+       heavier here than on paper: a quarter-strength wash that reads as a band
+       on a near-white card is barely a stain on near black, and a selection
+       you cannot see is the same as no selection. it was a bare rgba() at the
+       usage site before, which is the one thing a ground flip cannot repaint. */
+    --select:rgba(46,163,220,.34);
     /* the neuron body: translucent, so a thread or crossing passing beneath
        still reads through. it sits a shade off the plate in whichever
        direction the ground goes. */
@@ -204,6 +212,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --stamp-edge:#CBC6B9;
     --grid:#E9E5DA;
     --veil:rgba(226,222,213,.72);
+    --select:rgba(46,163,220,.25);
     --node-fill:rgba(255,255,255,.86);
     --grain:.4;
     --shadow-panel:0 1px 2px rgba(28,32,36,.10),0 16px 44px rgba(28,32,36,.14);
@@ -219,9 +228,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --sig-tuerkis:#0E817C;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  /* a game is dragged, not read: selection only ever produced blue smears */
+  /* a game is dragged, not read: selection only ever produced blue smears.
+     the cursor is half of that and was missing. `auto` over any text is the
+     I-beam, so the pointer snagged into a caret over the wordmark, over every
+     readout in the masthead, over the coach copy — announcing a grab that
+     user-select had already refused, on a surface whose whole gesture is drag.
+     the arrow now GLIDES across the instrument, and the caret is left to mean
+     the one thing it should: there is text here you can take. see .pick. */
   body{-webkit-user-select:none;-moz-user-select:none;user-select:none;
-       -webkit-tap-highlight-color:transparent}
+       -webkit-tap-highlight-color:transparent;cursor:default}
   html{-webkit-text-size-adjust:100%;height:100%}
   /* the game occupies the window and never scrolls. the board was sized from
      the width alone and kept its 16:9-ish ratio downward, so at 1280x720 it
@@ -242,7 +257,34 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .sheet{position:relative;z-index:2;width:100%;max-width:1520px;padding:20px 20px 22px;
          height:100%;display:flex;flex-direction:column;min-height:0}
-  ::selection{background:rgba(46,163,220,.25)}
+  /* ---------- the text you are allowed to take ----------
+     selection is off everywhere and switched back on here, by name, so that
+     the list of what is worth carrying off the screen is a list somebody
+     wrote rather than whatever the markup happened to leave reachable.
+
+     what qualifies is a READING — something the game worked out that you
+     might want somewhere else. a feature's name is the one the game exists to
+     produce: the payoff of a net is a thread naming itself, and that name is
+     the string you would look up or paste to somebody. the card's sub line and
+     its turns figure are the score, and the share button hands you a picture —
+     this is how you get the words instead.
+
+     what does not qualify is the instrument: the masthead's live readouts, the
+     board, the coach, the record's day rows. those are dials, and a dial you
+     can smear a blue box across is a dial that has stopped looking machined.
+     the record's rows are also click targets, where a stray drag would fight
+     the tap that opens the day.
+
+     `.pick` is the name to reach for when something new earns a place here.
+     ::selection stays global on purpose: it can only ever paint on text that
+     one of these rules has already made selectable. */
+  .pick,
+  .bulletin .bsub,
+  .bulletin .brow b,
+  .minted .mb span{
+    -webkit-user-select:text;-moz-user-select:text;user-select:text;cursor:text;
+  }
+  ::selection{background:var(--select)}
 
   /* ---------- motion ----------
      one vocabulary for the whole game, so a button, a card and the board move
@@ -7334,7 +7376,11 @@ async function copyShare(){
     }
   }catch(e){/* fall through to text */}
   try{await navigator.clipboard.writeText(txt);toast('copied')}
-  catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+  /* `.pick` is not decoration here: this is the last-resort copy, and it runs
+     in exactly the browsers that have no clipboard API — where an inherited
+     -webkit-user-select:none makes .select() a no-op and execCommand goes on
+     to copy nothing at all, silently, under a toast that says it worked. */
+  catch(e){const ta=document.createElement('textarea');ta.className='pick';ta.value=txt;document.body.appendChild(ta);ta.select();
     try{document.execCommand('copy');toast('copied')}catch(e2){toast('copy failed')}ta.remove()}
 }
 /* the controls live behind `d` (or the dot in the corner) so the HUD can be
@@ -7362,6 +7408,13 @@ $('histclose').onclick=e=>{e.preventDefault();$('histveil').classList.remove('sh
    dismiss at all — there is nothing behind it to go back to. */
 function dismissVeil(v){
   if(v.id==='introveil'||v.id==='runveil') return;
+  /* a drag that picks up a feature's name and releases past the edge of the
+     card reports its click against the veil, not the card — so taking the one
+     bit of text the card offers would dismiss the card, and on the net card
+     that means advancing the run. a live selection inside this card is
+     therefore not a click beside it. */
+  const sel=window.getSelection();
+  if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
   if(v.id==='netveil'){ nextNet(); return }
   v.classList.remove('show');
 }
