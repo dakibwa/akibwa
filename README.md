@@ -2,7 +2,7 @@
 
 Public portfolio site for `akibwa.com`.
 
-The site is a static Next.js export deployed by GitHub Pages from `main`.
+The site is a static Next.js export deployed by GitHub Pages from `main`. Cloudflare reverse-proxies the domain in front of that origin, so response headers are split between the two. See [Static Asset Caching](docs/asset-caching.md).
 
 Data refreshes that can run from API credentials or public seeds should run in Cloudflare Workers, not local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md).
 
