@@ -5782,7 +5782,12 @@ function buildNet(force){
      it applies only while the tutorial is unfinished — net 0 replayed after it
      is the ramp's own opener again, which is also why this cannot drift the
      day's other nine. */
-  if(!store.tutorialDone && idx===0){ spec.nodes=4; spec.minX=2; spec.maxX=5 }
+  if(inTutorialRun() && idx<TUTNETS.length) Object.assign(spec, TUTNETS[idx], {
+    // par is recomputed from the spec the tutorial actually asked for, not the
+    // ramp row it replaced — see netSpec for the same arithmetic
+    par: TUTNETS[idx].threads*2 + TUTNETS[idx].shared*3
+       + (TUTNETS[idx].nodes-3)*2 + TUTNETS[idx].pinned*2 + 3
+  });
   const svg=$('netsvg'); svg.innerHTML='';
   const mk=(n,a,p)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
   const defs=mk('defs',{});
@@ -5801,7 +5806,17 @@ function buildNet(force){
   // (GEN and the rules it freezes are read above, before the spec that now
   // depends on them)
   if(isTrial()) GEN.layout='scatter';   // the trial is the endless unstructured one
-  const fr=mulberry32(fnv(R().day+':feat:'+idx));
+  /* THE GUIDED NETS ARE NOT THE DAY'S NETS. every other board is seeded from the
+     date because the day's ten must be the same ten for everyone; a tutorial has
+     the opposite requirement — it is the same LESSON for everyone — so it cannot
+     be redrawn every midnight. seeded from a constant it is a fixed set of three
+     boards that every player meets, and that can be reasoned about, screenshotted
+     and written coaching against.
+     they are also OUTSIDE the day: the tutorial used to borrow net 0, so a new
+     player's first day was nine scored nets and a lesson. it runs first, counts
+     nothing, and hands over a full ten. */
+  const seedKey=inTutorialRun() ? 'tutorial' : R().day;
+  const fr=mulberry32(fnv(seedKey+':feat:'+idx));
   const pool=[...GEN.feats];
   const chosen=[];
   while(chosen.length<spec.threads && pool.length){
@@ -5825,7 +5840,7 @@ function buildNet(force){
   const forced=pass===1?bestSalt:-1;
   for(let salt=0;salt<40;salt++){
     if(forced>=0 && salt!==forced) continue;
-    const rnd=mulberry32(fnv(R().day+':net:'+idx+':'+salt));
+    const rnd=mulberry32(fnv(seedKey+':net:'+idx+':'+salt));
     members=[];
     // thread colours are assigned per-net so no two threads ever share one
     /* feature strength is drawn, not written: a strongly-represented feature
@@ -7627,7 +7642,26 @@ function resetDescent(){
 
 /* ================= tutorial ================= */
 
-function inTutorial(){return !store.tutorialDone && R().netIndex===0 && !R().over}
+/* THE TUTORIAL IS THREE NETS AND IT TEACHES THE THREE RULES. one per net, in the
+   order they are needed, and nothing else on the board while each is being
+   taught: net 0 is two plain threads (drag, crossings, a line coming free), net 1
+   adds one shared neuron (tap to split), net 2 adds a pin (a neuron that will not
+   move, so you go round it).
+   they used to be one net, which taught only the first rule — a player met their
+   first superposed neuron mid-day, in a scored net, with a passing message to
+   explain it, and met their first pin the same way. those are the two moves the
+   game turns on and both were being discovered rather than taught.
+   the run is OUTSIDE the day: nothing here is scored, no badge is minted, and
+   the day's ten begins afterwards untouched. */
+const TUTNETS=[
+  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
+  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:5},
+  {threads:2, nodes:5, shared:0, pinned:1, minX:2, maxX:6}
+];
+// the whole tutorial run, whatever net of it you are on
+function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
+// this particular net is a guided one — the coach card and the spotlight ask this
+function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !R().over}
 let tutStepAt=1;
 
 /* ================= the spotlight =================
@@ -7879,11 +7913,28 @@ if(window.ResizeObserver) new ResizeObserver(tutRelayout).observe($('field'));
    the nouns are the ones the key row directly below is drawing at that exact
    moment: neuron, crossing, and the two coloured lines. nothing here names a
    thing the player cannot point at. */
-const TUTSTEPS=[
-  '<b>drag the lit neuron.</b> the lines follow it.',
-  'each <b>X</b> is a crossing. clear every crossing off one line and it comes free.',
-  'one crossing left. <b>clear it</b> and the last line comes free too.'
+/* one set of steps per guided net, because each net is teaching a different rule
+   and the coaching for a pin is no use on a board that has none. every step is
+   about a mark the player can see on the board in front of them at the moment it
+   is written — the spotlight is picking that mark out while they read it. */
+const TUTSTEPS_BY_NET=[
+  [ // net 0 — the gesture, and what a crossing is
+    '<b>drag the lit neuron.</b> the lines follow it.',
+    'each <b>X</b> is a crossing. clear every crossing off one line and it comes free.',
+    'one crossing left. <b>clear it</b> and the last line comes free too.'
+  ],
+  [ // net 1 — superposition. the one move the game turns on
+    'one neuron here is carrying <b>both</b> features at once — the double ring.',
+    '<b>tap it to split.</b> a shared neuron has to come apart before either line can leave.',
+    'now they are two. <b>clear the crossings</b> and both come free.'
+  ],
+  [ // net 2 — the pin. a constraint rather than an action
+    'the <b>square</b> neuron is pinned. it will not move, whatever you do to it.',
+    '<b>move the others around it.</b> everything else works exactly as before.',
+    'last crossing. <b>clear it</b> and that is every rule the game has.'
+  ]
 ];
+const TUTSTEPS=TUTSTEPS_BY_NET[0];   // the shape older code still reads
 /* what the card says once the board is doing the pointing. step one stops
    saying "a neuron" — the whole complaint was that a player has to map that
    word onto one of a board of marks — and the later two get one short clause,
@@ -7898,13 +7949,17 @@ const TUTLITADD=' the light is on the next one.';
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
   if(!inTutorial()){ tutSpotClear(); return }
-  const step=Math.min(tutStepAt,3);
+  // the coaching for THIS net — a pin's lesson is no use on a board without one
+  const net=Math.min(R().netIndex, TUTSTEPS_BY_NET.length-1);
+  const steps=TUTSTEPS_BY_NET[net];
+  const step=Math.min(tutStepAt,steps.length);
   // the board first: what the card is allowed to say depends on whether there
   // is anything lit to say it about
   tutSpotlight();
-  $('coachlabel').textContent=`guided net · step ${step} of 3`;
-  $('coachtext').innerHTML = !tutLit ? TUTSTEPS[step-1]
-    : (TUTLIT[step-1] || TUTSTEPS[step-1]+TUTLITADD);
+  // and which lesson of the three you are on, since there are three nets now
+  $('coachlabel').textContent=`guided net ${net+1} of ${TUTNETS.length} · step ${step} of ${steps.length}`;
+  $('coachtext').innerHTML = (!tutLit || net>0) ? steps[step-1]
+    : (TUTLIT[step-1] || steps[step-1]+TUTLITADD);
   [...$('coachdots').children].forEach((d,i)=>{
     d.classList.toggle('done',i+1<step);
     d.classList.toggle('now',i+1===step);
@@ -7928,7 +7983,19 @@ function tutReach(step){
   else tutSpotlight();
 }
 function endTutorial(){
-  store.tutorialDone=true; save();
+  store.tutorialDone=true;
+  /* and the day starts, clean. the tutorial ran on netIndex 0..2 outside the
+     day, so leaving those on the run would hand a new player a day that opens on
+     net 3 with three nets already "cleared" — a first day of seven, scored
+     against a set of ten, with three lessons stamped into the record as if they
+     had been played. the run is reset to the day's own first net and the ten it
+     is owed. nothing here is lost: the tutorial mints nothing and scores
+     nothing, which is the whole reason it can be thrown away. */
+  const r=R();
+  r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
+  r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
+  builtFor=-1;
+  save();
   tutSpotClear();
   const c=$('coach');
   // it leaves rather than being switched off — it is the last thing the guided
@@ -8135,7 +8202,14 @@ function clearNet(){
   if(depth>=5)award('depth5');
   if(spec.shared>0)award('super');
   if((store.meta.streak||0)>=7)award('week');
-  if(wasTutorial){tutReach(3); endTutorial()}
+  /* the tutorial only ENDS on its last net. before that the coach simply moves on
+     to the next lesson with the ordinary net-cleared card in between, so the
+     three arrive as three nets rather than as one net that changed its mind. */
+  if(wasTutorial){
+    tutReach(3);
+    if(r.netIndex>=TUTNETS.length-1) endTutorial();
+    else { tutStepAt=1; }
+  }
   save();
   celebrateGauge();
   boardCleared();
