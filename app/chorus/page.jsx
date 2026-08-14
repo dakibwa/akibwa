@@ -1,4 +1,5 @@
 import { ChorusDashboardPreview } from "@/components/chorus-dashboard-preview";
+import { ChorusPreconnects } from "@/components/chorus-preconnects";
 import { chorusAppUrl } from "@/components/site-data";
 import { siteSectionTitles } from "@/app/site-metadata";
 
@@ -11,6 +12,7 @@ export const metadata = {
 export default function ChorusPage() {
   return (
     <section className="project-surface-page chorus-page" aria-label="Chorus">
+      <ChorusPreconnects />
       {chorusAppUrl ? (
         <div className="chorus-app-shell">
           <iframe

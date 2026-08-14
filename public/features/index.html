@@ -2864,6 +2864,54 @@ const GEN_VERSIONS=[
     split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
     splitPart:'clear', optimum:'route', rung:'ramp', chord:'one', selfX:'count',
     feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] },
+  /* v11 is the RAMP, and it is the first version aimed at somebody who has not
+     played this before. it came out of the first playtest by a stranger, whose
+     verdict was that the difficulty ramp is too hard; measuring it across 193
+     days said she was right about the ramp and that three separate things were
+     wrong with it, none of which is "the nets are too big".
+       ramp:'even'   one ingredient per net, the whole way down. the shipped
+                     table claims that in a comment and does not do it — net 7
+                     brings a fourth feature, a second superposition and a
+                     second pin at once. see RAMP_EVEN. the day's ceiling does
+                     not move: net 9 is the old net 9 to the neuron.
+       dense:'cap'   the scramble stops adding crossings once the board carries
+                     enough of them, instead of only when the ROUTE is long
+                     enough. this is the big one. measured at a fixed net index
+                     the crossing count varied by a factor of four to six purely
+                     by which layout family the date drew — a ring net 9 opens at
+                     a median 75 crossings and a fan net 9 at 16, for the same
+                     par and the same tier ladder. the player reads the plate,
+                     not the par, so the difficulty they meet at net 6 was a coin
+                     flip between 6 crossings and 37. a ceiling tied to the net's
+                     own par is what makes the picture track the ramp.
+       chord:'late'  ONE loop before net 2 rather than two. net 1 carries a mean
+                     of 2.0 chords — both of its threads, on every day of a
+                     193-day range, because its family pool at that index is arcs
+                     and hourglass and both of those curve — against 0.5 to 1.3
+                     on every net below it. so the second net of the day is the
+                     most looped net in the day, and a chord is close to pure
+                     density: at a fixed net index it roughly doubles the
+                     crossings and moves the route by nought to one turn.
+                     removing them from net 1 outright was tried first and
+                     measured worse — see CHORD_FROM.
+       rung:'wide'   the grace inverted and the clean band opened out. see
+                     graceFor and cleanGap for the measurement; the short of it
+                     is that the route is the optimum on the small nets and
+                     about double it on the big ones, so the shipped ladder
+                     spends its forgiveness in the wrong half of the day and
+                     441 of the 443 nets two player models finished came in at
+                     `perfect`. perfect never falls below the route, so it stays
+                     a line the generator can prove is reachable.
+     the first three are geometry and the fourth is scoring, so this rewrites
+     boards, which is exactly why it is a version. `from` is four days past
+     v10's, leaving v10 the window it shipped for, and ten days past the day
+     this was written — no day it claims can have been played. */
+  { v:11, from:'2026-08-14', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'route', rung:'wide', chord:'late', selfX:'count',
+    ramp:'even', dense:'cap',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
            'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] }
 ];
 /* the rules in force for the net being built. a module-level object rather than
@@ -2871,13 +2919,14 @@ const GEN_VERSIONS=[
    the player's hand long after buildNet has returned and has no day to read. */
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
                  splitPart:'fixed', optimum:'table', rung:'flat',
-                 chord:'none', selfX:'off'};
+                 chord:'none', selfX:'off', ramp:'front', dense:'open'};
 function genRules(g){
   return {split:g.split||'angled', merge:g.merge||'tight',
           pinFill:!!g.pinFill, parMode:g.parMode||'walk', parSlack:g.parSlack||0,
           splitPart:g.splitPart||'fixed', optimum:g.optimum||'table',
           rung:g.rung||'flat',
-          chord:g.chord||'none', selfX:g.selfX||'off'};
+          chord:g.chord||'none', selfX:g.selfX||'off',
+          ramp:g.ramp||'front', dense:g.dense||'open'};
 }
 function genFor(day){
   let g=GEN_VERSIONS[0];
@@ -3184,10 +3233,64 @@ const RAMP=[
   {threads:3, nodes:6, shared:1, pinned:2, minX:12, maxX:24},
   {threads:4, nodes:5, shared:2, pinned:2, minX:14, maxX:30}
 ];
-function netSpec(i){
-  const s = i<RAMP.length ? {...RAMP[i]}
-    : {threads:5, nodes:5+((i-RAMP.length)%3), shared:Math.min(2+Math.floor((i-RAMP.length)/2),4),
-       pinned:Math.min(2+Math.floor((i-RAMP.length)/3),5), minX:16, maxX:60};
+/* ---- the same claim, actually kept: one ingredient per step ----
+   the table above says "one at a time" and does not do it. net 4 brings the
+   first superposition AND a fifth neuron; net 7 brings a fourth feature, a
+   SECOND superposition and a second pin in one step; net 8 brings a fifth
+   feature on top of that. so the day is flat for three nets and then arrives
+   all at once, which is what a general player meets as "the ramp is too hard".
+
+   the day's CEILING is deliberately untouched — net 9 is the old net 9 to the
+   neuron, five features, six deep, two superposed, two pinned — because the
+   complaint is about the climb, not the summit, and a shorter day is a
+   different fix to a different problem. what moves is everything under it:
+   the first superposition slides from net 4 to net 5, the first pin from 5 to
+   6, the second superposition from 7 to 8, the fifth feature from 8 to 9.
+   total neurons per net go 6,8,10,12,15,15,15,20,24,30 against the old
+   6,8,10,12,15,15,18,20,25,30 — the same day's bulk, spread evenly.
+
+   TWO OF THE OLD TABLE'S STEPS RUN BACKWARDS, and the first draft of this one
+   repeated both because they are counter-intuitive:
+   - a PIN makes a net EASIER, not harder. the family comment on the pin loop
+     says so and the solver measured it at 0.3 to 0.8 moves cheaper — a pin in a
+     family net is a neuron already standing in the answer, so it is texture.
+     a step whose only new ingredient is a pin therefore measures as a step DOWN:
+     the draft that put the first pin on its own net had that net come out a turn
+     cheaper than the one before it on 51% of days. pins ride along with a real
+     ingredient here instead of being asked to be one.
+   - a SUPERPOSITION REMOVES A NEURON. two threads share one seat, so the board
+     shrinks by one at the moment it is supposed to get harder; the draft's
+     superposition net measured fewer crossings than the net above it on 54% of
+     days. so the row that brings it brings the neuron it costs as well.
+   live neurons per net are 6,8,10,12,15,17,19,23,26,28 — monotone, which the
+   shipped table is not.
+
+   it is ten rows rather than eight so the daily ten are all written down.
+   the deep branch below still runs past the end of whichever table is in
+   force, for the time trial, and still ramps the same way.  */
+const RAMP_EVEN=[
+  {threads:2, nodes:3, shared:0, pinned:0, minX:2,  maxX:4},   //  6 · learn the drag
+  {threads:2, nodes:4, shared:0, pinned:0, minX:3,  maxX:6},   //  8 · + length
+  {threads:2, nodes:5, shared:0, pinned:0, minX:4,  maxX:9},   // 10 · + length
+  {threads:3, nodes:4, shared:0, pinned:0, minX:6,  maxX:12},  // 12 · + a third feature
+  {threads:3, nodes:5, shared:0, pinned:0, minX:7,  maxX:14},  // 15 · + length
+  {threads:3, nodes:6, shared:1, pinned:0, minX:8,  maxX:16},  // 17 · + the first superposition
+  {threads:4, nodes:5, shared:1, pinned:1, minX:10, maxX:20},  // 19 · + a fourth feature
+  {threads:4, nodes:6, shared:1, pinned:2, minX:12, maxX:24},  // 23 · + length
+  {threads:4, nodes:7, shared:2, pinned:2, minX:14, maxX:30},  // 26 · + the second superposition
+  {threads:5, nodes:6, shared:2, pinned:2, minX:16, maxX:36}   // 28 · + a fifth feature
+];
+const rampFor=r=>((r||GEN_RULES).ramp==='even'?RAMP_EVEN:RAMP);
+/* `rules` is passed rather than read off GEN_RULES by every caller, because
+   famSeq asks for a spec while deciding a whole day's layouts and has only the
+   date in hand — GEN_RULES holds whatever net was built last. buildNet does set
+   it before asking, and passing it anyway is what stops that ordering from
+   being load-bearing again. */
+function netSpec(i, rules){
+  const T=rampFor(rules);
+  const s = i<T.length ? {...T[i]}
+    : {threads:5, nodes:5+((i-T.length)%3), shared:Math.min(2+Math.floor((i-T.length)/2),4),
+       pinned:Math.min(2+Math.floor((i-T.length)/3),5), minX:16, maxX:60};
   // par allows for the extra neurons strength brings, and for routing round pins
   s.par = s.threads*2 + s.shared*3 + (s.nodes-3)*2 + (s.pinned||0)*2 + 3;
   return s;
@@ -3330,11 +3433,44 @@ function dayBest(iso){
    the ladder to the two rungs this whole block exists to prevent. netTargets
    derives clean from perfect as well, so the invariant survives a later version
    moving parSlack and forgetting this line. */
+/* ---- and why v11 turns that reading UPSIDE DOWN ----
+   the reading above assumed the route is the optimum, which is what the solver
+   reported for the nets it could close. it is true on the small ones and badly
+   false on the big ones, and the measurement is not subtle. a search player who
+   never puts a neuron back where it came from — it parks it wherever the board
+   is empty, which is what people actually do — clears the day's last net in a
+   median 8 turns against a route of 16, net 7 in 6 against 11, and matches the
+   route exactly on nets 0 to 2. so the route is honest at the top of the day
+   and roughly double at the bottom, because famGreedy's only move is to
+   RECONSTRUCT the generator's figure and a player never has to.
+   grace on top of that is padding on padding: over 40 days, every single net
+   either of two player models managed to finish came in at `perfect` — 441 of
+   443, two clean, no `done` at all. the ladder has one rung.
+   so `wide` spends the grace where the route is tight and withdraws it where
+   the route is already generous. a net carrying nothing is the morning's
+   warm-up and gets two turns of room to fumble the interface in; the loaded
+   nets that end the day are asked for the route itself. perfect never drops
+   BELOW the route, so it stays a line the generator can prove is reachable —
+   that guarantee is the whole reason the top rung is quoted from a
+   construction rather than from a search's average. */
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
+  if(GEN_RULES.rung==='wide') return load>=3?0:load>=1?1:2;
   return load>=4?2:load>=1?1:0;
 }
+/* ---- the room between perfect and clean, and why it has to grow ----
+   it currently shrinks: clean is par (= route + 3) and perfect is route + up to
+   2, so the gap runs 3,3,3,3,2,2,2,1,1,1 down the day. the hardest net in the
+   game gives one turn of room and the easiest gives three, which is exactly
+   backwards for anybody who is not the person who built it. error scales with
+   the number of decisions, so the allowance has to scale with them too.
+   a third of the line, floored at two: a one-turn net still allows a fumble,
+   and a sixteen-turn net allows five. that is the rung a general player is
+   meant to land on most mornings — the game has no fail state, so `clean` is
+   what "I did that well" has to mean, and it cannot mean it while it sits one
+   turn under a line nobody misses. */
+function cleanGap(perfect){ return Math.max(2, Math.round(perfect/3)); }
 function netTargets(){
   const par=spec?spec.par:0, r=R();
   /* WHERE THE TOP RUNG COMES FROM, and it is a generator rule because it decides
@@ -3370,8 +3506,13 @@ function netTargets(){
      already clear of perfect, which on a v9 net is every time, so the derivation
      is a floor rather than a new number. */
   if(GEN_RULES.rung==='flat') return {optimum:(o<par)?o:par, par};
-  const perfect = o + (GEN_RULES.rung==='ramp' ? graceFor(spec) : 0);
-  return {optimum:perfect, par:Math.max(par, perfect+1)};
+  const graced = GEN_RULES.rung==='ramp' || GEN_RULES.rung==='wide';
+  const perfect = o + (graced ? graceFor(spec) : 0);
+  /* `wide` holds clean a THIRD of the line above perfect rather than one turn
+     above it — see cleanGap. it is still a floor over the board's own par, so
+     a later version raising parSlack still raises clean with it. */
+  const gap = GEN_RULES.rung==='wide' ? cleanGap(perfect) : 1;
+  return {optimum:perfect, par:Math.max(par, perfect+gap)};
 }
 
 /* ================= state ================= */
@@ -4831,8 +4972,11 @@ let _famDay=null,_famSeq=null;
 function famSeq(day){
   if(_famDay===day) return _famSeq;
   const rnd=mulberry32(fnv(day+':layout')), seq=[], used={};
+  /* the day's own rules, not whatever net was built last: this decides a whole
+     day's layouts in one pass and netSpec reads the ramp table out of them. */
+  const rules=genRules(genFor(day));
   for(let i=0;i<32;i++){
-    const s=netSpec(i), T=s.threads, L=Math.max(3,s.nodes);
+    const s=netSpec(i,rules), T=s.threads, L=Math.max(3,s.nodes);
     const all=FAM_LIST.filter(f=>FAM_FROM[f]<=i && T>=FAMILIES[f].minT && L>=FAMILIES[f].minL);
     let pool=all.filter(f=>f!==seq[i-1] && (i>=10 || (used[f]||0)<2));
     if(pool.length<2) pool=all.filter(f=>i>=10 || (used[f]||0)<2);
@@ -4971,9 +5115,31 @@ function famChord(fig, chords, k){
    rather than a copy of it that can drift. returns null when the family will
    not fit this net — too tight to grab, off the plate, or a solved figure that
    is not actually clean — and the caller falls back to the stack. */
-function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
+/* ---- how many loops the opening may carry, under `chord:'late'` ----
+   NOT whether: net 0 is always the stack and a stack's threads are collinear,
+   so famChord can never give one an edge anyway, which leaves net 1 as the only
+   net a whether-gate could reach — and gating it there was tried and measured
+   worse. net 1 is two threads of four neurons; strip its chords and it comes out
+   at exactly 3 crossings and a 2-turn route on every day of a 193-day range, the
+   same puzzle every morning forever.
+   what the measurement does support is a count. net 1 carries a mean of 2.0
+   chords — BOTH its threads, every day, because its family pool at that index is
+   arcs and hourglass and both of those curve — against 0.5 to 1.3 everywhere
+   below it. so the second net of the day is the most looped net in the day. one
+   chord before net 2 keeps the idea and drops the pile-up. */
+const CHORD_FROM=2, CHORD_OPEN=1;
+/* the crossing ceiling, from `dense:'cap'`. it is tied to the net's own par
+   target rather than being a table of its own, so it tracks whatever curve
+   famTarget draws and cannot drift away from it. 1.8 turns' worth of crossings
+   plus two: measured over 193 days it sits above the median opening board at
+   every net index and under the ninetieth percentile from net 3 down, which is
+   exactly the tail — the ring and lattice draws — that made the same net index
+   a different game on different mornings. */
+const famCeil=want=>Math.round(want*1.8)+2;
+function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx){
   const F=FAMILIES[fam];
   if(!F || T<F.minT || L<F.minL) return null;
+  const xCap = GEN_RULES.dense==='cap' ? famCeil(want) : Infinity;
   const {s,g}=F.slots(T,L,tut,rnd);
   const nodes=[], order=[];
   for(let k=0;k<T;k++){
@@ -5054,12 +5220,26 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
      that precedes an unsolvable board. failing drops the chords rather than the
      family: a net without them is still a good net, and it is v8's exactly. */
   let chords=null;
-  if(GEN_RULES.chord==='one'){
+  if(GEN_RULES.chord==='one' || GEN_RULES.chord==='late'){
     const fin=order.map((o,k)=>o.map(n=>
       (n.merged && n.t[1]===k && n.alt) ? {x:n.alt.x, y:n.alt.y}
                                         : {x:n.hx, y:n.hy}));
     chords=order.map(()=>null);
-    for(let k=0;k<order.length;k++) chords[k]=famChord(fin, chords, k);
+    /* `late` allows CHORD_OPEN loops before CHORD_FROM and as many as the figure
+       will take after it. an idx of nothing — the offline harnesses, which price
+       a plan without a position in a day — counts as late, because a plan asked
+       for on its own is not the opening of anybody's morning.
+       the cap is applied as the chords are CHOSEN rather than trimmed off
+       afterwards, because famChord measures each candidate against the chords
+       already accepted: dropping one after the fact would leave the rest proved
+       against a figure that is not the one being shipped. */
+    const room = (GEN_RULES.chord==='late' && idx!=null && idx<CHORD_FROM) ? CHORD_OPEN : order.length;
+    let put=0;
+    for(let k=0;k<order.length;k++){
+      if(put>=room) break;
+      chords[k]=famChord(fin, chords, k);
+      if(chords[k]) put++;
+    }
     if(!chords.some(c=>c) || !famCrossFree(fin, chords)) chords=null;
   }
   const live=nodes.filter(n=>!n.gone);
@@ -5114,8 +5294,15 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
        price, every rotation available to net 0 looked worthless and got rolled
        back, and the tutorial shipped already solved. the clause also refuses
        the relabel — swapping every layer the same way empties the board of
-       crossings, and that now reads as the step backwards it is. */
-    if(priced>plan.par || (priced===plan.par && x>plan.x)){
+       crossings, and that now reads as the step backwards it is.
+       AND FROM v11, NEVER PAST THE CEILING. a rotation that would take the
+       board over xCap is rolled back exactly like one that bought nothing, so
+       the accepted figure is under the ceiling by construction rather than by
+       luck, and par follows what was actually achieved — which is what this
+       loop has always done when the figure stopped yielding. a ring net simply
+       stops being scrambled into a mat that costs no more turns than the fan
+       net beside it and merely looks four times worse. */
+    if((priced>plan.par || (priced===plan.par && x>plan.x)) && x<=xCap){
       if(priced>plan.par) miss=0;
       plan.par=priced; plan.x=x; plan.d+=st.pick.length;
     } else {
@@ -5140,7 +5327,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd){
       const st=famStep(live, F.cyc||3, !!F.local, rnd);
       if(!st) break;
       const priced=famGreedy(plan).actions, x=famX(plan);
-      if(priced>plan.par || (priced===plan.par && x>plan.x)){
+      if((priced>plan.par || (priced===plan.par && x>plan.x)) && x<=xCap){
         if(priced>plan.par) miss=0;
         plan.par=priced; plan.x=x; plan.d+=st.pick.length;
       } else {
@@ -5556,7 +5743,14 @@ function buildNet(force){
   // presentation state belonging to the net being replaced, not to this one
   $('field').classList.remove('cleared','dimthreads','swap-in');
   readMarkSizes();
-  spec=netSpec(idx);
+  /* the day's rules BEFORE its spec, because from v11 the ramp table is one of
+     them. GEN_RULES is module-level so splitNode can reach it long after this
+     returns, which also means it holds the last net's rules until this line —
+     netSpec is handed them explicitly rather than trusting the order, but the
+     order is put right as well. */
+  const GEN={...genFor(R().day)};
+  Object.assign(GEN_RULES, genRules(GEN));
+  spec=netSpec(idx, GEN_RULES);
   const svg=$('netsvg'); svg.innerHTML='';
   const mk=(n,a,p)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
   const defs=mk('defs',{});
@@ -5572,10 +5766,8 @@ function buildNet(force){
   mk("rect",{x:0,y:0,width:BW,height:BH,fill:"url(#fg)"},gRoot);
 
   // pick features for this net, from the cast frozen into this day's generator
-  const GEN={...genFor(R().day)};
-  // the geometry rules this day's version freezes, where splitNode can reach
-  // them long after this function has returned
-  Object.assign(GEN_RULES, genRules(GEN));
+  // (GEN and the rules it freezes are read above, before the spec that now
+  // depends on them)
   if(isTrial()) GEN.layout='scatter';   // the trial is the endless unstructured one
   const fr=mulberry32(fnv(R().day+':feat:'+idx));
   const pool=[...GEN.feats];
@@ -5686,8 +5878,8 @@ function buildNet(force){
          because a net that cannot be drawn well is worse than a familiar one. */
       const T=threads.length, L=Math.max(3,spec.nodes);
       const fam=famFor(R().day,idx);
-      const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd)
-              || famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd);
+      const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx)
+              || famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx);
       if(!plan){ ok=false }
       else{
         spec.fam=plan.fam; spec.famD=plan.d; spec.plan=plan;

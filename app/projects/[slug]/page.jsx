@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { siteSectionTitles } from "@/app/site-metadata";
 import { PersonalPage } from "@/components/pages/personal-page";
+import { ChorusPreconnects } from "@/components/chorus-preconnects";
 import { isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
 const findProject = (slug) =>
@@ -31,5 +32,10 @@ export default async function PersonalProjectRoute({ params }) {
   const project = findProject(slug);
   if (!project) notFound();
 
-  return <PersonalPage initialSlug={project.slug} />;
+  return (
+    <>
+      <ChorusPreconnects />
+      <PersonalPage initialSlug={project.slug} />
+    </>
+  );
 }
