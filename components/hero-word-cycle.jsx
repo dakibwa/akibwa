@@ -68,6 +68,55 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
+/* Whether every phrase combination wraps the heading to the same height at the
+   current width — i.e. whether cycling is free.
+
+   Measured on the live site: it is free on desktop, where the line count never
+   changes, and expensive on a phone, where "messy work" against "dashboards
+   worth opening" swings the heading by 96px at 320px wide and 64px at 390px.
+   Those swaps fire at 1.2s and 2.2s, so they land squarely in the CLS window
+   and were the homepage's mobile score.
+
+   Reserving the tallest combination instead would hold the layout, but it buys
+   that with two to three empty lines under the heading on the widths that need
+   it most, and the reservation itself moves the page when it is applied after
+   hydration. Not animating where animating would reflow costs nothing on the
+   widths that were already stable, and leaves a complete, still headline on the
+   ones that were not. */
+function phraseCyclingHoldsLayout(h1) {
+  const width = h1.getBoundingClientRect().width;
+  if (!width) return false;
+
+  const clone = h1.cloneNode(true);
+  const values = clone.querySelectorAll(".hero-word-cycle-value");
+  if (values.length < 2) return false;
+
+  clone.setAttribute("aria-hidden", "true");
+  clone.style.position = "absolute";
+  clone.style.top = "0";
+  clone.style.left = "0";
+  clone.style.width = `${width}px`;
+  clone.style.visibility = "hidden";
+  clone.style.pointerEvents = "none";
+  h1.parentElement.appendChild(clone);
+
+  let tallest = 0;
+  let shortest = Infinity;
+  for (const source of heroSourcePhrases) {
+    for (const outcome of heroOutcomePhrases) {
+      values[0].textContent = source.label;
+      values[1].textContent = outcome.label;
+      const { height } = clone.getBoundingClientRect();
+      tallest = Math.max(tallest, height);
+      shortest = Math.min(shortest, height);
+    }
+  }
+
+  clone.remove();
+  /* Sub-pixel rounding, not a reflow. */
+  return tallest - shortest < 1;
+}
+
 function startOffsetCycle(advance, initialDelay, interval) {
   let intervalId = null;
 
@@ -110,6 +159,8 @@ export function HeroDynamicPhrase() {
   const [engaged, setEngaged] = useState(false);
   const sourceIndexRef = useRef(0);
   const outcomeIndexRef = useRef(0);
+  const phraseRef = useRef(null);
+  const [layoutHolds, setLayoutHolds] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
 
   const advanceSource = useCallback(() => {
@@ -128,7 +179,23 @@ export function HeroDynamicPhrase() {
   const release = useCallback(() => setEngaged(false), []);
 
   useEffect(() => {
-    if (reducedMotion) return undefined;
+    const h1 = phraseRef.current?.closest("h1");
+    if (!h1) return undefined;
+
+    const measure = () => setLayoutHolds(phraseCyclingHoldsLayout(h1));
+    measure();
+
+    /* Webfonts land after first paint and change the metrics underneath us. */
+    document.fonts?.ready.then(measure).catch(() => {});
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(h1.parentElement);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || !layoutHolds) return undefined;
 
     const interval = engaged ? HOVER_INTERVAL : REST_INTERVAL;
     const sourceDelay = engaged ? HOVER_SOURCE_INITIAL_DELAY : REST_SOURCE_INITIAL_DELAY;
@@ -140,10 +207,10 @@ export function HeroDynamicPhrase() {
       cleanupSource();
       cleanupOutcome();
     };
-  }, [engaged, reducedMotion, advanceSource, advanceOutcome]);
+  }, [engaged, reducedMotion, layoutHolds, advanceSource, advanceOutcome]);
 
   return (
-    <span className="hero-dynamic-phrase">
+    <span className="hero-dynamic-phrase" ref={phraseRef}>
       <span>that turn </span>
       <HeroWordCycle
         phrases={heroSourcePhrases}
