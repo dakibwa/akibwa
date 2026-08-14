@@ -1,4 +1,5 @@
 import { PersonalPage } from "@/components/pages/personal-page";
+import { ChorusPreconnects } from "@/components/chorus-preconnects";
 import { siteSectionTitles } from "@/app/site-metadata";
 
 export const metadata = {
@@ -8,5 +9,10 @@ export const metadata = {
 };
 
 export default function ProjectsRoute() {
-  return <PersonalPage />;
+  return (
+    <>
+      <ChorusPreconnects />
+      <PersonalPage />
+    </>
+  );
 }
