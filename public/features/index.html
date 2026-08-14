@@ -2221,11 +2221,18 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .railactions{flex-wrap:wrap}
     .railactions .actionrow{flex:1 1 100%}
     /* the coach card floated over the board and covered 73% of it — on the
-       first screen a new player ever sees. inline it above the tangle instead;
-       there is no width here to overlay anything on. */
+       first screen a new player ever sees. inline it instead; there is no width
+       here to overlay anything on.
+
+       it goes UNDER the board, not over it. everything else the game says on a
+       phone arrives at the foot — the net card, the cleared card, the say card
+       in its corner — so a coach card at the top is the one box that speaks from
+       somewhere else, and it pushes the board down the screen on the one screen
+       where the board is the entire lesson. the first thing a new player should
+       see is the tangle. */
     .field{display:flex;flex-direction:column}
     .coach{
-      position:static;transform:none;width:auto;order:-1;margin-bottom:10px;
+      position:static;transform:none;width:auto;order:1;margin-top:10px;
       box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface);
     }
     .play.tutorial .coach{animation:none}
@@ -2313,9 +2320,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        binds here at 313), so the longest message in the game is a band at the
        foot of the board rather than across the middle of it.
        the guided net's `top:40%` goes with it. that rule existed because the
-       coach card is INLINE at the top of the board at this width and 28% landed
-       the message on it; a card in the bottom corner cannot reach the coach at
-       all, so the exception has nothing left to except. */
+       coach card used to be inline at the TOP of the board at this width and 28%
+       landed the message on it. the coach is under the board now, so the two are
+       at the same end again — but they cannot overlap: the coach is a flex item
+       BELOW the plate and this card is absolute INSIDE it, clipped to the plate
+       by `.field`'s own overflow. they stack, they do not collide. */
     .sayrow{gap:11px;padding:10px 12px}
     .sayline{font-size:13px}
     .sayline.big{font-size:21px}
@@ -7813,8 +7822,12 @@ if(window.ResizeObserver) new ResizeObserver(tutRelayout).observe($('field'));
    for a polysemantic neuron and is the one thing this net does not have — and
    step two called the crossing marks white dots, when a crossing is a dark disc
    with a pale ring. both are marks the player is looking straight at. */
+/* `this net` went with the welcome card's jargon: the opening no longer says
+   `net` anywhere, and reintroducing it in the first sentence of the guided net
+   would put the word back four seconds after it was removed. `here` costs
+   nothing — the board is on screen and the card is pointing at it. */
 const TUTSTEPS=[
-  'two features run through this net, and they cross. <b>drag a neuron</b> to move one out of the way.',
+  'two features run through here, and they cross. <b>drag a neuron</b> to move one out of the way.',
   'the ringed dots are <b>crossings</b>. clear every crossing off one feature and it <b>pulls free</b>, naming itself.',
   'one to go. <b>free the last one</b> to mint your first badges.'
 ];
@@ -7825,7 +7838,7 @@ const TUTSTEPS=[
    they are variants rather than replacements: if the search finds no move worth
    lighting, the light is off and the card must not refer to it. */
 const TUTLIT=[
-  'two features run through this net, and they cross. <b>drag the lit neuron</b> onto the dashed ring.',
+  'two features run through here, and they cross. <b>drag the lit neuron</b> onto the dashed ring.',
   null, null
 ];
 const TUTLITADD=' the light is on the next one.';
@@ -8270,7 +8283,10 @@ function bulletinHTML(o){
   const bands=Array.isArray(o.strip)?o.strip:[o.strip||'--tuerkis'];
   return `<div class="bstrip">${bands.map(c=>`<i style="background:var(${c})"></i>`).join('')}</div>
   <div class="bhead"><div><h2>${o.title}</h2><div class="bsub">${o.sub}</div></div><div class="bnum">${o.num}</div></div>
-  <div class="brules">${o.rows.map((r,i)=>`<div class="brow" style="--i:${i}"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>
+  ${/* a card with no rows draws no rule strip: .brules carries a top border, so
+        an empty one is a hairline across the card under a heading, which reads as
+        a row that failed to render rather than as a card that has none. */
+    (o.rows||[]).length?`<div class="brules">${o.rows.map((r,i)=>`<div class="brow" style="--i:${i}"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>`:''}
   <div class="bbody">${o.body||''}${o.note?`<div class="bnote">${o.note}</div>`:''}${o.offer?`<div class="boffer">${o.offer}</div>`:''}${o.sun===false?'':`<div class="bsun">${SUN('var(--silver)')}</div>`}</div>
   <div class="bactions">${o.actions}</div>
   ${o.foot||''}`;
@@ -8329,29 +8345,37 @@ function showNetCleared(feats,tier,wasTutorial){
     `${cleanN} of ${r.cleared.length} clean so far. ${r.turns||0} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
     strip:TIERCOL[tier],
-    title:wasTutorial?'you untangled it':'net cleared',
-    /* the tier IS the score and the rules card teaches the ladder, so this line
-       is one word. it used to gloss each rung — "clean · within par" — which is
-       the rung said twice, and the gloss for `done` ("over par") was the same
-       fact as the turns row directly under it. an assisted net keeps its second
-       clause: descent is not something the tier name can tell you, and it is the
-       reason this one could not mint above done. */
-    sub:last.assisted?'done · settled with descent':tier,
+    /* THE TIER LEADS. it used to sit in the sub, one grey word under `net
+       cleared`, which had the card announcing the thing that is true of every
+       cleared net and whispering the thing that is only true of this one. the
+       tier is the score — the day is measured in rungs now, not in turns against
+       par — so it is the headline and `net cleared` is the quiet line beneath it
+       saying what happened.
+       the rules card teaches the ladder, so this stays one word. it used to
+       gloss each rung — "clean · within par" — which is the rung said twice. */
+    title:tier,
+    /* an assisted net keeps its clause, and it belongs here now: descent is not
+       something the tier name can tell you, and it is the reason this one could
+       not mint above done. */
+    sub:(wasTutorial?'you untangled it':'net cleared')
+        +(last.assisted?' · settled with descent':''),
     num:String(r.netIndex).padStart(2,'0'),
-    /* one row, and it is the turns ALONE. what differs between one cleared net
-       and the next is the numeral, the tier, the turns and which features came
-       free — and three of those four are drawn above and below this, so the turns
-       are all this row has ever had to carry. it used to print them as
-       `2 / 9`, turns over par, which was wrong twice: par at the moment of
-       winning is the yardstick the tier directly above has already ruled on, and
-       a bare ratio reads as progress — 2 of 9 — rather than as a score.
-       `taken` is in the label because the value here is a bare number and needs
-       the verb; the day card's row says `against par` in the value and does not.
-       what went before that: `features freed`, a count of the stamps immediately
-       beneath it; and `clean so far` and `turns today`, which are DAY readings on
-       a card about a single net. the masthead carries the day while you play it
-       and the record holds it afterwards; this card is the net. */
-    rows:[['turns taken',last.moves]],
+    /* NO ROW. the turns were the last thing on this card measuring the net in a
+       currency the game no longer scores in: the day is counted in rungs, so
+       what matters at the moment of winning is which rung, and that is now the
+       biggest word on the card. a turns count under it invited the player to
+       audit a number the tier had already ruled on.
+       the count is not lost — the masthead carries it for the whole net, right
+       up to the moment this card covers the board.
+
+       what this row held, in the order it held it, because each was cut for a
+       reason worth not repeating: `2 / 9`, turns over par, which read as
+       progress rather than as a score and quoted a yardstick the tier above had
+       already ruled on; then `turns taken 2`, the bare count, which is what went
+       just now; and before all of it `features freed`, a count of the stamps
+       immediately beneath it, plus `clean so far` and `turns today`, which are
+       DAY readings on a card about a single net. */
+    rows:[],
     body:mint+quiet,
     /* the note earns its place only when it says something that will not be true
        of the next cleared net too. the assisted one names a consequence you
@@ -9960,11 +9984,32 @@ function renderIntro(mode){
        explained a mechanism nobody has seen yet; the claim is the hook, the
        explanation belongs in the rules card where the marks are there to hang
        it on. */
+    /* NO JARGON HERE, and that is a rule rather than a preference. the first
+       stranger to play this game bounced off the words: `net`, `neurons`,
+       `features` in a sense that is not the everyday one, and `a sparse
+       autoencoder does this for real` — five technical terms before her first
+       drag, on a card she has to decode before she is allowed to touch
+       anything. she said it looked harder than it is, which is the one thing
+       this card must never do.
+
+       the subject is NOT gone, it is said in english. `stored them all on top
+       of each other` IS superposition, and it is the reason this game exists
+       rather than being a generic untangling puzzle — if a later edit tightens
+       this card, that clause is the one to keep. `a game about features`
+       defined the word with itself and read as PRODUCT features to anyone who
+       had not already been told otherwise; the subtitle asks a question instead.
+
+       and the second line is the hook, deliberately after the setup: a tangle
+       resolving into a named drawing is the strangest thing this game does, and
+       nobody needs to know what an autoencoder is to want it. the technical
+       name is not deferred to a later card either — it is simply not the
+       opening's job. the rules card, behind `?`, is where the marks are there
+       to hang the vocabulary on. */
     b.innerHTML=`<div class="intro-title">${WORDMARK}</div>
-      <div class="intro-sub">a game about features</div>
-      <p class="intro-lead">a small net has learned a few features and threaded them through the same neurons. pull them apart.</p>
-      <div class="intro-note">a sparse autoencoder does this for real.</div>
-      <button class="intro-start" id="introstart">untangle your first net</button>`;
+      <div class="intro-sub">a game about what a machine knows</div>
+      <p class="intro-lead">a small machine learned a few things and stored them all on top of each other.</p>
+      <div class="intro-note">pull them apart. free one and it draws itself, and tells you its name.</div>
+      <button class="intro-start" id="introstart">start untangling</button>`;
   } else {
     const days=Math.max(1,store.meta.streak||1);
     /* the card leads with what still has somewhere to go. "features collected"
