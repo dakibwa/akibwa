@@ -979,6 +979,7 @@ button {
   position: relative;
   overflow: hidden;
   display: grid;
+  grid-template-rows: auto 82px;
   gap: 0;
   padding: 10px;
   border: 1px solid rgba(16, 18, 23, 0.1);
@@ -990,6 +991,7 @@ button {
     0 1px 0 rgba(255, 255, 255, 0.96) inset,
     0 18px 50px rgba(16, 18, 23, 0.065);
   isolation: isolate;
+  contain: layout style;
   /* `translate` rather than `transform`: the scroll-driven scroll-rise
      animation owns `transform` on this element, and an animation always beats
      a normal declaration, so a hover transform here would never apply. */
@@ -6027,6 +6029,10 @@ button {
   .area-grid {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .area-card {
+    grid-template-rows: auto 62px;
   }
 
   .area-caption {
