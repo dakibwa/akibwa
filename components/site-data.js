@@ -128,14 +128,12 @@ export const personalProjects = [
     title: "Português com a Inês",
     type: "Language teaching site",
     dashboardLabel: "Português com a Inês",
-    dashboardStatus: "Live on Akibwa",
+    dashboardStatus: "Independent site",
     summary: "Lessons, prices and booking for a teacher in Porto.",
     tags: ["European Portuguese", "Lessons", "Booking"],
-    mode: "embed",
-    embedUrl: "/portugal/index.html",
-    fallbackHref: "/portugal/",
-    useLocalFrame: false,
-    cta: "Open on Akibwa"
+    mode: "link",
+    externalHref: "https://portuguesewithines.com/",
+    cta: "Visit Inês’s site"
   },
   {
     number: "05",
@@ -168,4 +166,3 @@ export const personalProjects = [
     cta: "In development"
   }
 ];
-
