@@ -1789,8 +1789,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        them, and --rule on --surface is 1.28:1, which is no mark at all. what
        they take instead is plain --silver, which is free again now that no rung
        is a neutral, and which measures 4.31 here on paper and 2.97 on the dark
-       ground. the hairline is a hairline and every rung is a block, so height
-       tells them apart before colour is asked to. */
+       ground. the hairline is a hairline and every rung is a block, which is
+       the one thing the rows kept when their ladder became a bar — see
+       .track.dtrack, where the same two measurements decide the same thing. */
   }
   .rec-head{
     flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -2022,10 +2023,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     display:flex;flex-direction:column;gap:5px}
   /* ONE LINE, and structurally so: the row never wraps and the middle column is
      the only thing that gives (it ellipses). the right-hand column is a fixed
-     width now — ten cells and nine gaps, the same on every row — so nothing has
-     to be measured to know it fits, and the bars line up down the card as a
-     column you can read across. that is the difference between a list of days
-     and a scoreboard. */
+     width now — one bar, the same width on every row — so nothing has to be
+     measured to know it fits, and the bars line up down the card as a column
+     you can read across. that is the difference between a list of days and a
+     scoreboard. */
   .dayrow{
     display:flex;align-items:center;gap:10px;flex-wrap:nowrap;width:100%;
     font:inherit;color:var(--ink);text-align:left;appearance:none;
@@ -2049,11 +2050,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      row people press twice and then stop trusting. */
   .dayrow.shut{border-style:dashed}
   .dayrow.shut .ddate{color:var(--ink-soft)}
-  /* the 47% cap exists to stop a long detail crowding THE TEN CELLS on its
-     right, which only a played row has. a shut row has nothing there and an
-     open one has `play →`, which is `margin-left:auto` and holds its own width
-     — so on both of them the cap was doing nothing except ellipsing the
-     difficulty reading off the end on a phone. */
+  /* the 47% cap exists to stop a long detail crowding THE BAR on its right,
+     which only a played row has. a shut row has nothing there and an open one
+     has `play →`, which is `margin-left:auto` and holds its own width — so on
+     both of them the cap was doing nothing except ellipsing the difficulty
+     reading off the end on a phone.
+     it is NOT what decides the phone, on any row: at 375 the fixed columns
+     leave the detail about 141px and the cap resolves to 151, so what ellipses
+     `· archive` there is flex-shrink and the cap is not reachable. removing it
+     would move nothing, which is why it is still here. */
   .dayrow.shut .ddet,.dayrow.open .ddet{max-width:none}
   .dayrow.shut:hover{border-color:var(--rule)}
   .dayrow.shut:hover .ddet{color:var(--ink)}
@@ -2077,43 +2082,65 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     font-size:10px;letter-spacing:.09em;color:var(--ink-soft);text-transform:lowercase}
   /* ---------- the day's ten ----------
-     one cell per net, and THE TIER IS THE HEIGHT: full, two thirds, a third,
-     and a hairline for a net the day never reached. colour comes off TIERCOL
-     and says the same thing a second time, which is the point of it. under the
-     old green/light blue/turquoise ladder the hues measured 1.00 : 1.00 : 1.01
-     in greyscale against each other, so a hue-only strip was one flat grey block
-     in a screenshot, on a monochrome panel, and to anyone whose cones did not
-     separate green from turquoise. the current ladder separates in greyscale
-     too — worst pair 1.43 on either ground now the rungs are canonical on both,
-     against 1.08 while the light ladder read --sig-* — but not by enough to
-     lean on, and the height is still what carries the reading through all
-     three. it is horizontals and verticals only, so it stays on the 45° grid
-     the rest of the card is drawn on.
+     the head's bar, at the row's size: one length divided by colour, ten cells,
+     no gaps. it is `.track` — the object the masthead draws three of and the
+     record's own head one of — and rungTrack draws both from one function.
 
-     what stood here was the day's FEATURES — about fourteen emblems of a
-     possible sixteen on every finished day, so every row carried roughly the
-     same fourteen as every other. 151 coloured glyphs on one screenful against
-     a score glyph a fraction of the size: 26.6 : 1 of ink in favour of the
-     collectibles, on a screen whose subject is the score. these cells differ
-     from day to day, which is the only thing that makes a row worth drawing.
-
-     it is the form the file already has twice — the masthead's set strip and
-     the share card's ladder — not a third one. cells of one width on one
-     baseline, each handed `var(--token)` rather than a resolved colour, so a
-     theme flip repaints them with no javascript re-running. */
-  .dayrow .dcells{
-    --cw:6px;--ch:18px;
-    flex:0 0 auto;margin-left:auto;display:flex;align-items:flex-end;gap:2px;height:var(--ch);
+     WHAT IT REPLACED, because that argument was a good one and deserves an
+     answer rather than a deletion. it was a height ladder: ten narrow bars,
+     full for perfect, two thirds for clean, a third for done, and a hairline
+     for a net the day never reached. HEIGHT was chosen because hue could not be
+     leant on — turquoise against violet measures 1.43 in greyscale on either
+     ground, which is a reading a screenshot, a monochrome panel and anyone
+     whose cones do not part those two would lose. all of that is still true,
+     and it is what this costs.
+     what changed is that the ladder stopped being the only drawing on the card.
+     the head above these rows is a BAY now, and it draws the same ten as a
+     length divided by colour — so one screen said the day's ten twice, in two
+     forms, a few inches apart, and you had to learn both to read one card. one
+     instrument used twice beats two used once, and the ladder was the odd one
+     out rather than the bar: the masthead's set strip, the turns bay, the
+     cleared card's strips, the share plate and now the head are all this shape.
+     the note that stood here called the ladder "the form the file already has
+     twice", and it was — until `.track` gave up its divisions and became a
+     single unbroken length. a row of separated blocks stopped being that form
+     on the day that landed, and this is the debt from it being paid.
+     WHAT THE BAR WINS beyond agreeing with itself: the ladder spent most of its
+     box on the air above the short rungs, and it could only say how FAR the day
+     got in the hairlines along its baseline, which is the one part of it nobody
+     reads. filled length against bare says that at a glance — the masthead's
+     own picture of the day ahead — and it is why `n of 10 nets` came out of the
+     words beside it.
+     colour is not the sole carrier of anything here: the count stands in words
+     in the detail column of the same row, and the row's aria-label spells the
+     rungs out. what goes is the greyscale channel, and it goes knowingly. the
+     share plate keeps its height ladder and should — see SHAREFILL, where the
+     reading has to survive a feed's thumbnail with no words anywhere near it. */
+  .track.dtrack{
+    flex:0 0 auto;margin-left:auto;margin-top:0;width:92px;height:10px;
+    /* the track's own ground is --rule, and --rule on --surface measures 1.28
+       on the dark ground and 1.46 on the light: no mark at all, which is what
+       the note on .record already says of that pair. on the masthead the track
+       sits on the rail and reads; on this card it would draw nothing, and a day
+       left at six would be a short bar with no box around it to be short of. so
+       the ground goes and the unreached cells carry themselves, below. */
+    background:transparent;
   }
-  /* the hairline is silver, and it can be again: no rung is a neutral now, so
-     silver is nobody else's and an unreached net is the only thing on this card
-     wearing it. it is also the one mark here that is not a block — see the note
-     on --set-ahead's removal above. */
-  .dayrow .dcells i{flex:0 0 auto;width:var(--cw);height:1px;
-    background:var(--fill,var(--silver))}
-  .dayrow .dcells i.t1{height:calc(var(--ch) / 3)}
-  .dayrow .dcells i.t2{height:calc(var(--ch) / 3 * 2)}
-  .dayrow .dcells i.t3{height:var(--ch)}
+  /* a net the day never reached is a HAIRLINE, and it is the only place this
+     parts from the head's bar. silver measures 2.97 against this surface on the
+     dark ground and 4.31 on the light, it is nobody else's now that no rung is
+     a neutral, and it is the mark the ladder already used here for the same
+     measured reason. it is also the ladder's one distinction worth keeping: the
+     hairline is a hairline and every rung is a block, so a day left short reads
+     as short rather than as a bar that happens to stop.
+     no gaps between these either, so four unreached nets draw one hairline four
+     cells long — the same grammar the coloured runs follow. */
+  .track.dtrack > i:not(.on){align-self:center;height:1px;background:var(--silver)}
+  /* a finished reading and not a live one, exactly as .rstat .track has it: a
+     cell easing into its colour is a rung being minted, and nothing is minted
+     on this screen. it matters here as well as there, because a ground flip
+     changes what every --fill resolves to. */
+  .track.dtrack > i{transition:none}
   /* played, but filled in from the archive rather than earned on the day —
      hatched, the mark the calendar used, and the reason it never touched the
      streak. a bought day fills the grid; it cannot buy the run of days. */
@@ -2136,8 +2163,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      them reads as a tier the row did not mint */
   .dayrow.open:hover{border-color:var(--ink)}
   /* the one chip left on a row: `play →` on a day still open to you. it takes
-     the slot the cells take on a played row, so the right edge of the list is
-     one column whatever the row is.
+     the slot the bar takes on a played row, so the right edge of the list is
+     one column whatever the row is — both are `margin-left:auto` against the
+     row's own padding, so it is the edge that lines up and not the width.
      the border, the ink and the hover come off the shared control block by
      .rec-close — this sets the SIZE, which is the only thing a row's button
      needs to differ in. the hover used to turn the chip hellblau while the row
@@ -2390,11 +2418,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .dayrow{gap:8px;padding-right:9px}
     .dayrow .ddate{width:64px;font-size:10px;letter-spacing:.04em}
     .dayrow .ddet{font-size:9.5px}
-    /* 68px of bar against 78: the cells lose a pixel of width and three of
-       height and stay on exact thirds — 5 / 10 / 15 — because a tier read off a
-       height cannot afford to round. two numbers change and the whole form
-       follows them, which is what the two custom properties are for. */
-    .dayrow .dcells{--cw:5px;--ch:15px}
+    /* 76px of bar against 92, and 8px of height with the masthead's. the height
+       has to be RESTATED rather than inherited from the `.track` rule above:
+       .track.dtrack sets its own and outranks a bare `.track` at any width.
+       76 still gives 7.6px a cell. what would not survive going further is two
+       neighbouring colours reading as one length. */
+    .track.dtrack{width:76px;height:8px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     /* nothing floats over the board any more, so it keeps its whole height */
@@ -3204,9 +3233,11 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
    identical 1.61:1, and it does not vanish — it is the brightest thing in the
    masthead.
    worst rung-against-bare-track, worst of four visions: 22.5 light, 30.7 dark.
-   and the reading never rested on colour alone anyway — the height channel
-   (CELLH, SHAREFILL) carries it in the record and on the share plate, and length
-   carries it in the two bays. */
+   and the reading never rests on colour alone anyway — the height channel
+   (SHAREFILL) carries it on the share plate, length carries it in the two bays,
+   and on the record the count stands in words on the same row as the bar. the
+   record's rows carried a height channel of their own until the day rows became
+   bars; see .track.dtrack, which is honest about that being the cost. */
 const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', par:'--tuerkis', over:'--violett'};
 /* and a net you have not played yet is THE BARE TRACK. not silver, which now
    collides with tuerkis; not the shade of silver mixed down towards the track
@@ -9086,7 +9117,7 @@ function dayLabel(iso){
    played. NOTHING is backfilled here, and `tiers` in particular must not be:
    which rung each of a day's ten nets minted is not derivable from a row that
    never stored it, and inventing ten cells from `best` or from turns-against-par
-   would be drawing a day that did not happen. a row without it draws no cells at
+   would be drawing a day that did not happen. a row without it draws no bar at
    all, which reads as an absence — which is what it is. */
 function dayRows(){
   const out=new Map();
@@ -9125,56 +9156,46 @@ function allDays(){
 const isShut=({d,row})=>!row && !canPlayDay(d);
 const archiveCount=()=>allDays().filter(isShut).length;
 /* ---- the day's ten, drawn ----
-   ten cells, one per net, and the tier is the HEIGHT — see .dayrow .dcells for
-   why height rather than hue, and for what this replaced.
+   ONE drawing, used twice. the record's head draws it as its bay's track, and
+   every played row in the list below draws the same bar at the row's size —
+   a length divided by colour, the masthead's `.track` and nothing invented
+   here. the rows drew a height ladder of their own until this; see
+   `.track.dtrack` for why it went, and for the one channel that went with it.
    `tiers` is the initials stampToday stored, one per cleared net in order. the
-   decode is a table rather than a startsWith so that an unknown letter draws a
-   hairline instead of throwing or inventing a rung: TIERRANK still carries two
-   dead keys, and a save is the one input here nothing can validate in advance.
+   decode is a table rather than a startsWith so that an unknown letter draws an
+   unreached cell instead of throwing or inventing a rung: TIERRANK still
+   carries two dead keys, and a save is the one input here nothing can validate
+   in advance.
    the colours come off TIERCOL and are handed over as `var(--token)` strings,
    never resolved, so flipping the ground repaints ten cells a row with no
-   javascript re-running — the same discipline paintCells and paintRun keep. */
-const TIEROF={p:'perfect', c:'clean', d:'done'};
-const CELLH={perfect:'t3', clean:'t2', done:'t1'};
-function dayCells(tiers){
-  // a row from any earlier save shape has no tiers and draws nothing at all.
-  // no cells is an absence, and an absence is exactly what it is; ten hairlines
-  // would be a claim that the day was played and scored nothing.
-  if(typeof tiers!=='string' || !tiers) return '';
-  let out='';
-  for(let i=0;i<POLICY.dailyNets;i++){
-    const t=TIEROF[tiers[i]];
-    out += t ? `<i class="${CELLH[t]}" style="--fill:var(${TIERCOL[t]})"></i>` : '<i></i>';
-  }
-  return `<span class="dcells" aria-hidden="true">${out}</span>`;
-}
-/* THE SAME TEN, AS A BAR. the day rows draw the tier as a HEIGHT because a row
-   is a list item and a list of them has to be scannable down its own column;
-   the record's head is a bay, and a bay's reading is a length divided by colour
-   — the masthead's set strip exactly, down to `.track > i.on` and the fill
-   handed over as `var(--token)` so a ground flip repaints it with no javascript
-   re-running. two drawings of the day's ten and no third form: this is that
-   one, borrowed, not another.
+   javascript re-running — the same discipline paintCells and paintRun keep.
    an unreached net is a bare cell rather than a coloured one, which is what the
    masthead already draws for the day ahead — and it is why the not-played case
    can use this too: ten bare cells is a true picture of a day nobody has
-   started, where a hidden bar would just be a missing instrument. */
-function rungTrack(tiers){
+   started, where a hidden bar would just be a missing instrument.
+   `row` asks for the list's form and changes exactly two things. the metrics
+   move to the row's size (`.dtrack`), and the bar leaves the accessibility
+   tree: the head stands on its own and needs a label, a row does not, because
+   the row already carries an aria-label with these same rungs in words and a
+   second reading inside it would be the day said twice. */
+const TIEROF={p:'perfect', c:'clean', d:'done'};
+function rungTrack(tiers,row){
   const s=typeof tiers==='string'?tiers:'';
   let out='';
   for(let i=0;i<POLICY.dailyNets;i++){
     const t=TIEROF[s[i]];
     out += t ? `<i class="on" style="--fill:var(${TIERCOL[t]})"></i>` : '<i></i>';
   }
+  if(row) return `<span class="track dtrack" aria-hidden="true">${out}</span>`;
   // the words the bar is a picture of. the figure beside it says how many are
   // clean or better and never which rungs made that up, so this is a reading
   // and not a restatement — see tierWords, which the day rows use the same way.
   const said=tierWords(s,' · ');
   return `<span class="track" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
 }
-/* the same reading in words, because the cells are a picture and the row's
-   label is what a screen reader gets instead of it. `sep` is the card's idiom
-   where the card asks for it and a comma everywhere prose is wanted. */
+/* the same reading in words, because the bar is a picture and the row's label
+   is what a screen reader gets instead of it. `sep` is the card's idiom where
+   the card asks for it and a comma everywhere prose is wanted. */
 function tierWords(tiers,sep){
   const g=rungsOf(tiers);
   return g?rungWords(g,sep):'';
@@ -9232,7 +9253,8 @@ function rungCount(list,of){
 /* the same tally off a stored row. the letters are capped at the day's ten for
    the reason tierWords caps them: a save is the one input here nothing can
    validate in advance. a row from any earlier shape has no tiers and gets no
-   count at all — an absence, drawn as an absence, exactly as dayCells does. */
+   count at all — an absence, drawn as an absence, which is exactly what the
+   record's rows do with the bar when this answers null. */
 const rungsOf=tiers=>(typeof tiers==='string' && tiers)
   ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
   : null;
@@ -9588,7 +9610,7 @@ function openRecord(){
        no record of rendered exactly like a day you finished over par, and the
        spine of the list asserted a score nobody played for. it is a legacy save
        shape and the honest drawing of it is the bare --rule the .dtier already
-       falls back to, which is also what dayCells() does one column over: no
+       falls back to, and what the bar does one column over: no
        tiers, no cells. an absence is drawn as an absence. */
     const tier=played?(row.best||null):null;
     const el=document.createElement('div');
@@ -9614,6 +9636,22 @@ function openRecord(){
       det='in the archive'+bestWords;
     } else if(played){
       const p=[], rd=dayReading(row);
+      /* THE BAR, and nothing else on the right of a played row — the same one
+         the head draws, at the row's size. see .track.dtrack for what it
+         replaced and rungTrack for the drawing.
+         a row from any earlier save shape has no rungs and gets NO bar. an
+         absence drawn as an absence, which is the answer .dtier already gives a
+         day with no recorded rung, and what the height ladder did here before
+         it. ten bare cells would be a claim that the day was played and scored
+         nothing. `rd.rungs` is the same predicate the words are chosen by, so
+         the picture and the reading can never disagree about which they are. */
+      const bar=(rd&&rd.rungs)?rungTrack(row.tiers,true):'';
+      /* how many nets the bar can actually vouch for. normally the day's depth
+         exactly — stampToday writes tiers and depth from one run — but they can
+         part on a merged save: worker/merge.js takes depth as the MAX across
+         devices while the scored quartet travels off the single winning run, so
+         a legacy row that went deeper can leave depth 8 against six letters. */
+      const barDepth=bar?Math.min(row.tiers.length,POLICY.dailyNets):0;
       /* the net count only earns its place when the set was left SHORT. it used
          to lead every row — "10 nets · " on 37 of 42 — which is the same
          tautology bestDepth was deleted for: a finished day is always ten, so
@@ -9621,25 +9659,35 @@ function openRecord(){
          in front of the one that did.
          a scored day therefore leads with its score. a SHORT set is scored too
          now — the rungs count out of the day rather than out of the run, see
-         rungCount — so it leads with the same reading and adds how far it got
-         after it, which is still the thing that differs about it. a row too old
-         to read either way simply says it happened.
-         the cells one column over draw the same rungs as a picture, and that is
+         rungCount — so it leads with the same reading. a row too old to read
+         either way simply says it happened.
+         the bar one column over draws the same rungs as a picture, and that is
          the pairing the cleared card already makes: the strip is the answer as a
-         mark, the words are the answer as a reading. what neither the cells nor
-         a glance can give is the COUNT, which is the whole measure. */
+         mark, the words are the answer as a reading. what neither the bar nor a
+         glance can give is the COUNT, which is the whole measure — and the bar
+         made that MORE true, not less: it has no divisions, so four cleans in a
+         row are one turquoise length and cannot be counted off at all. */
       if(rd) p.push(rd.fig+' '+rd.word);
-      if(row.depth && row.depth<POLICY.dailyNets) p.push(row.depth+' of '+POLICY.dailyNets+' nets');
+      /* CUT once the bar is there. `6 of 10 nets` is filled length against bare
+         length, which is the masthead's own reading for the day ahead and the
+         one thing here a picture says better than a clause. it comes back the
+         moment the bar cannot say it — no bar at all, or a bar that does not
+         reach as far as the day did. */
+      if(row.depth && row.depth<POLICY.dailyNets && barDepth<row.depth)
+        p.push(row.depth+' of '+POLICY.dailyNets+' nets');
       if(!rd && row.moves!=null) p.push(row.moves+' turns');
       if(row.mode==='trial'&&row.trialDepth) p.push('time trial · depth '+row.trialDepth);
-      // filled in from the archive rather than earned on the day. it counts
-      // toward the record and never toward the streak, and says so.
+      /* filled in from the archive rather than earned on the day. it counts
+         toward the record and never toward the streak, and says so.
+         it STAYS, though it was looked at with the net count: the bar does not
+         say it, and cutting what the bar does not say is how the row ends up
+         with a fact carried only by 7px of 45° hatching on the .dtier spine —
+         a mark with no legend anywhere on the card. it is also the one thing
+         here that is about where the day came from rather than how it went,
+         which is why no reading can absorb it. */
       if(row.back) p.push('archive');
       det=p.join(' · ')||'played';
-      /* the ten cells, and nothing else on the right of a played row. what was
-         here was the day's features — fourteen of sixteen on a finished day, so
-         near enough the same fourteen on every row in the list. */
-      right=dayCells(row.tiers);
+      right=bar;
     } else {
       det=(isToday?'not played yet':'not played')+bestWords;
       right='<span class="dstate">play →</span>';
@@ -9704,9 +9752,10 @@ function openRecord(){
      overflow marker went, mirroring the icon size and gap out of the css into
      two javascript constants that had to be kept in step by hand. a resize
      listener then re-ran the whole of openRecord to do it again.
-     ten cells of a fixed width fit by construction, so all of that is gone: one
+     a bar of a fixed width fits by construction, so all of that is gone: one
      write, no read, no mirror of the css, and nothing to redo when the window
-     changes size — the media query moves the two numbers and the cells follow. */
+     changes size — the media query moves the bar's two numbers and the ten
+     cells inside it divide whatever they are given. */
   renderAccount();
   $('histveil').classList.add('show');
   list.scrollTop=keep;
@@ -10217,13 +10266,19 @@ const PLATEINK=lum(PLATE)>0.192?'#0E1214':'#ffffff';   // the mark rule applied,
 /* the strip's second channel: the rung as a HEIGHT, so the reading survives a
    greyscale feed, a colour-blind reader, and the thumbnail a feed actually
    shows. perfect full, clean two thirds, done one third — the same three
-   fractions the record screen's day bar draws in css (CELLH / .dayrow .dcells
-   i.t1-t3), so a day reads the same on the card as it does in the record.
-   the one deliberate difference is the unreached net. the record row is
-   eighteen pixels tall and draws it as a hairline on the baseline; the card
-   draws it as the empty FRAME the played bars rise inside, because at seventy
-   pixels a frame is what makes a one-third bar read as a third of something,
-   and because it leaves a day left short visibly unfinished.
+   fractions the record's day rows drew in css until they became bars.
+   IT IS NOW THE ONLY HEIGHT LADDER LEFT, and it should be. inside the app the
+   count is always in words beside the picture, so the record's rows could give
+   the channel up for one instrument used everywhere — see .track.dtrack. a
+   share plate has no words anywhere near it: it goes into a feed as a thumbnail,
+   through a greyscale render, past a reader whose cones do not part turquoise
+   from violet, and the height is the whole of what survives that. the two
+   screens diverge here on purpose and for a reason that only holds on one.
+   the unreached net differs too. the record's rows draw it as a silver hairline
+   on the bar's centreline; the card draws it as the empty FRAME the played bars
+   rise inside, because at seventy pixels a frame is what makes a one-third bar
+   read as a third of something, and because it leaves a day left short visibly
+   unfinished.
    `par` and `over` are the dead tier keys TIERRANK still carries for badges
    minted under older schemes; they ride with their live equivalents, exactly as
    they do in TIERCOL. */
