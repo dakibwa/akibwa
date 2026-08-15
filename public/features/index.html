@@ -2185,6 +2185,30 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      legend now, and nothing else in the game is a numbered list. */
   .intro-note{margin-top:15px;padding-top:13px;border-top:1px dashed var(--silver);font-size:12px;color:var(--ink-soft);line-height:1.55}
   .intro-note b{color:var(--ink);font-weight:700}
+  /* ONE material for the card's internal divisions. the rules card is the only
+     variant that draws two of these rules at once, and they were two different
+     greys — the key's in --rule and the note's in --silver, which is visibly the
+     heavier of the two on both grounds. the adjacency is the scope: `.rkey` is
+     only ever followed by the note on `rules`, so welcome keeps the stronger
+     rule between its lead and its hook, where it is the only division there is
+     and is doing real work. */
+  .rkey + .intro-note{border-top-color:var(--rule)}
+  /* ---- the three rungs, as the bar the game already scores in ----
+     the same `.track` as the masthead's set strip and the record's head, cut in
+     three instead of ten, with the words under their own thirds. see
+     rungLadder() for why it is a divided length rather than three swatches and
+     why the names stay in ink.
+     the one difference from the masthead's, and the same one .rstat takes: it
+     does not animate. a cell easing into its colour is a rung being minted, and
+     nothing is minted on a card that only explains what minting is. */
+  .rladder{margin-top:15px}
+  .rladder .track{margin-top:6px}
+  .rladder .track > i{transition:none}
+  .rlcap{display:block;font-size:11px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
+  .rlnames{display:grid;grid-template-columns:repeat(3,1fr);margin-top:7px}
+  /* named rather than `.rladder i`, because every cell of the track above is an
+     `i` too — the scar .rstat-top carries, and it draws the same way here. */
+  .rlnames > i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--ink);text-transform:lowercase}
   .intro-lead{font-size:14px;line-height:1.55;margin-top:14px}
   .wbstats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0 0;border-top:1px solid var(--ink)}
   .wbstats div{padding:11px 0;border-bottom:1px solid var(--rule)}
@@ -10455,7 +10479,26 @@ if(DEV){
    scale, in a shared 68x44 window. the rules card and the coach card paste the
    same strings, so neither can end up describing a board that does not exist.
    THREADPAL's own order is used for the colours, so a fragment is coloured the
-   way an actual first, second and third feature is. */
+   way an actual feature is — the first, second, third and fifth, which between
+   them are the wordmark's own four.
+
+   AND THAT IS ALL THE COLOUR MEANS HERE: these are different features. a mark
+   that made green MEAN pinned would be contradicted by the first pinned net,
+   where a pin wears whatever colour its own thread wears — pins are any of six
+   hues on a real board. `--ink` on the crossing is the one colour on this card
+   that is a fact rather than an identity.
+   the pin used to draw in the second feature's orange, repeating the neuron
+   directly above it: the one duplicated colour on a card whose strip carries
+   four. it takes the fifth feature's green instead, which is --flag-3 and
+   completes that set. it had to be THIS mark. light blue against green is the
+   worst pair in the palette — 7.0 light / 9.7 dark, worst of four visions — so
+   green cannot share a figure with the blue in `feature`, `shared` or
+   `crossing`; and `neuron` is pasted into the coach card over a two-thread
+   board drawn blue and orange, where a green one would argue with the net
+   behind it. the pin is on neither hook.
+   what it costs, stated: green is the FIFTH thread, so it only reaches the
+   board on five-feature nets. a first-day player meets a green mark here
+   before any green thread. */
 const RMARK={
   feature:()=>[threadPart([[4,32],[24,12],[44,32],[64,12]],THREADPAL[0])],
   neuron:()=>[threadPart([[2,22],[66,22]],THREADPAL[1]),
@@ -10469,8 +10512,8 @@ const RMARK={
   shared:(a,b)=>[threadPart([[2,22],[34,22],[66,22]],a||THREADPAL[0]),
               threadPart([[16,4],[34,22],[52,40]],b||THREADPAL[2]),
               ...neuronParts(34,22,[a||THREADPAL[0],b||THREADPAL[2]])],
-  pinned:()=>[threadPart([[2,22],[66,22]],THREADPAL[1]),
-              ...neuronParts(34,22,[THREADPAL[1]],{pinned:true})],
+  pinned:()=>[threadPart([[2,22],[66,22]],THREADPAL[4]),
+              ...neuronParts(34,22,[THREADPAL[4]],{pinned:true})],
   crossing:()=>[threadPart([[14,2],[54,42]],THREADPAL[0]),
                 threadPart([[54,2],[14,42]],THREADPAL[1]),
                 ...crossParts([[34,22]])]
@@ -10507,6 +10550,32 @@ function introPlate(){
     <rect x="-200" y="-200" width="700" height="800" fill="url(#introgrid)"/>
     ${parts.map(partHTML).join('')}</svg>`;
 }
+/* ---- the ladder, drawn as the instrument the rest of the game scores in ----
+   `perfect` is the one rung the player never sees explained. the cleared-net
+   card deliberately says the rung as ONE word and defers the teaching here (see
+   showNetCleared's note), and what stood here taught two of the three and defined
+   `clean` with `par`, a word this card never introduces. so the ladder is drawn
+   rather than glossed: three fields in TIERCOL, in the ladder's own order, best
+   first — the same order rungWords prints them in.
+
+   IT IS A DIVIDED LENGTH, NOT THREE SWATCHES. `.track` is what the masthead's
+   set strip and the record's head already draw the day's ten in, and a swatch
+   beside a word would be a badge — the one form this interface does not use.
+   the words sit under their own thirds, which is also what makes it legible:
+   the colour is carried by a FIELD and the vocabulary stays in ink, and gelb is
+   1.61:1 on this panel, unreadable as type and perfectly clear as a bar. that
+   split is the whole reason TIERCOL went canonical — see its note.
+   the bar is aria-hidden because the three words are right underneath it; the
+   record's track carries the label instead, because there it has no words. */
+function rungLadder(){
+  const rungs=['perfect','clean','done'];
+  return `<div class="rladder">
+    <span class="rlcap">every net mints a rung</span>
+    <span class="track" aria-hidden="true">${
+      rungs.map(t=>`<i class="on" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
+    <span class="rlnames">${rungs.map(t=>`<i>${t}</i>`).join('')}</span>
+  </div>`;
+}
 function renderIntro(mode){
   const b=$('introbody');
   /* the welcome card is plain too. it used to lead with a plate of board artwork
@@ -10523,18 +10592,33 @@ function renderIntro(mode){
        better than sentences about them did. the four numbered steps, the ramp
        panels and the "the day gets harder" heading all went: the ramp repeated
        what the shared and pinned rows already show, and settle is behind the
-       controls drawer, not a rule you meet in play. */
+       controls drawer, not a rule you meet in play.
+
+       THREE ZONES, ONE JOB EACH, and the pass that got them there was about
+       what the card said TWICE. the sub was `untangle the net · free the
+       features`, which is one action stated from both ends, under a title that
+       had already said how to play — the only slot on the card carrying no
+       fact, so it took the shape of a day instead. the closing paragraph opened
+       by re-listing the two conditions the key had just drawn (`no crossings`,
+       `no shared neuron`) and reached the one thing the marks CANNOT draw — a
+       freed feature naming itself — in its eleventh word; it is the sentence's
+       subject now. and the ladder line went to the ladder, below.
+       the two smallest ones are worth keeping written down because they look
+       like nothing: `feature` had no clause at all, which left the card's most
+       important word undefined beside an empty grid cell, and `clear them` was
+       the one plural clause on the card, against a mark that draws exactly one
+       crossing. */
     b.innerHTML=`<div class="intro-title">how to play</div>
-      <div class="intro-sub">untangle the net &middot; free the features</div>
+      <div class="intro-sub">ten nets a day &middot; a day cannot be failed</div>
       <div class="rkey">
-        ${rmark('feature')}<span><b>feature</b></span>
+        ${rmark('feature')}<span><b>feature</b> &middot; free it</span>
         ${rmark('neuron')}<span><b>neuron</b> &middot; drag it</span>
         ${rmark('shared')}<span><b>shared neuron</b> &middot; tap to split</span>
         ${rmark('pinned')}<span><b>pinned</b> &middot; will not move</span>
-        ${rmark('crossing')}<span><b>crossing</b> &middot; clear them</span>
+        ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
       </div>
-      <div class="intro-note">a feature with no crossings and no shared neuron pulls free and names itself.<br>
-      ten nets a day &middot; within par is <b>clean</b> &middot; finishing is <b>done</b> &middot; a day cannot be failed</div>
+      <div class="intro-note">a feature clear of crossings and sharing pulls free and names itself.</div>
+      ${rungLadder()}
       <button class="intro-start" id="introstart">back to the net</button>`;
   } else if(mode==='welcome'){
     /* one sentence about the game, one about why it is worth playing, and the
