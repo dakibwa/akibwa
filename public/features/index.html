@@ -3591,7 +3591,13 @@ if(!store.collection.pairs) store.collection.pairs={};   // added after first sh
    is therefore just a run whose `day` is not today. that single field already
    feeds the generator, so the rest of this is bookkeeping: keep the calendar
    honest about which days were played live, and keep the streak un-buyable. */
-const LAUNCH='2026-08-01';
+/* the first day this game's boards exist as they now are. it is v11's `from`
+   and it moves with it: a record that starts earlier lists days drawn by a
+   retired generator, which is a row you can press and a puzzle nobody designed.
+   it was 2026-08-01 while the archive was being built out, and those twelve
+   days were never played by anyone — they were the shape of the record rather
+   than days, and the scope is now one day and the tutorial. */
+const LAUNCH='2026-08-14';
 const dayAdd=(iso,n)=>new Date(new Date(iso+'T00:00:00Z').getTime()+n*864e5).toISOString().slice(0,10);
 function newRun(mode,day){
   const d=day||today();
@@ -4857,13 +4863,25 @@ const FAMILIES={
      columns cannot break the argument. the two end columns are never dropped,
      so every thread still spans the plate. */
   residual:{ minT:2, minL:5, cyc:3, slots(T,L,tut,rnd){
+    /* THE RUN IS DRAWN WIDER THAN THE RAMP ASKED, and each thread skips back
+       down to it. dropping columns out of L was the obvious way to write this
+       and it quietly undercut the ladder: at nodes:5 every thread came out four
+       deep, so a residual net stood 15 neurons where its rung asks 19, and it
+       is the only family that ever came out smaller than the rung it was drawn
+       for — 55 nets over a 60-day sweep, 5.9 neurons short on average. it is
+       what put a perfect of 5 at net 6 behind a perfect of 9 at net 5.
+       the skips ARE the family and they stay. spanning L+2 and dropping one or
+       two keeps every one of them — lengths still differ, columns still hold
+       different numbers of neurons, the long segments still cut across — while
+       a thread never falls below the L its rung asked for. */
+    const span=L+(L>=6?2:1);
     const x0=BW*.08,x1=BW*.92,ytop=BH*.13,ybot=BH*.89;
-    const X=i=>x0+(x1-x0)*(L>1?i/(L-1):.5), Y=k=>ytop+(ybot-ytop)*(T>1?k/(T-1):.5);
+    const X=i=>x0+(x1-x0)*(span>1?i/(span-1):.5), Y=k=>ytop+(ybot-ytop)*(T>1?k/(T-1):.5);
     const s=[],g=[];
     for(let k=0;k<T;k++){
-      const want=Math.min(L>=6?1+Math.floor(rnd()*2):1, L-3), drop=new Set();
-      for(let q=0;q<24 && drop.size<want;q++) drop.add(1+Math.floor(rnd()*(L-2)));
-      const keep=[]; for(let i=0;i<L;i++) if(!drop.has(i)) keep.push(i);
+      const want=Math.min(span-L, L>=6?1+Math.floor(rnd()*2):1), drop=new Set();
+      for(let q=0;q<24 && drop.size<want;q++) drop.add(1+Math.floor(rnd()*(span-2)));
+      const keep=[]; for(let i=0;i<span;i++) if(!drop.has(i)) keep.push(i);
       s[k]=keep.map(i=>({x:X(i),y:Y(k)}));
       g[k]=keep.map(i=>'c'+i);
     }
@@ -4986,6 +5004,25 @@ const FAMILIES={
    answer is not variety — it is a different fixed sequence. */
 const FAM_LIST=['layered','arcs','hourglass','lattice','ring','fan','residual'];
 const FAM_FROM={layered:0, arcs:1, hourglass:1, lattice:2, ring:3, fan:4, residual:5};
+/* ---- and where a family has to STOP ----
+   FAM_FROM says a shape needs a certain size before it reads as itself. this
+   says the opposite thing at the other end: a shape has to be able to PRICE the
+   net it is drawn for, and two of them cannot price the last one.
+
+   famTarget asks net 9 for a 15-turn route. measured over 40 days: hourglass,
+   lattice, layered and residual reach it every time. ring reaches it on none of
+   them and fan on one in seven — and the two miss for opposite reasons, which
+   is why one rule covers both and neither is a scramble-budget problem.
+   ring is BLOCKED, not cheap. lift the v11 crossing ceiling and it prices net 9
+   correctly on every day — by drawing 67 crossings, which is precisely the mat
+   `dense:'cap'` was added to stop. ring at the deep end can be honestly priced
+   or it can be legible, and it cannot be both.
+   fan is simply cheap. no ceiling is near it — 15 crossings against a cap of 29
+   — and neither lifting the cap nor a ten-fold scramble budget moves it off a
+   route of 11. threads radiating from a point are cheap to walk back.
+   so the last net of the day is drawn from the four shapes that can carry it.
+   both families keep everything up to net 8, which is most of the day. */
+const FAM_UNTIL={ring:8, fan:8};
 let _famDay=null,_famSeq=null;
 function famSeq(day){
   if(_famDay===day) return _famSeq;
@@ -4995,7 +5032,8 @@ function famSeq(day){
   const rules=genRules(genFor(day));
   for(let i=0;i<32;i++){
     const s=netSpec(i,rules), T=s.threads, L=Math.max(3,s.nodes);
-    const all=FAM_LIST.filter(f=>FAM_FROM[f]<=i && T>=FAMILIES[f].minT && L>=FAMILIES[f].minL);
+    const all=FAM_LIST.filter(f=>FAM_FROM[f]<=i && i<=(FAM_UNTIL[f]??99)
+                                 && T>=FAMILIES[f].minT && L>=FAMILIES[f].minL);
     let pool=all.filter(f=>f!==seq[i-1] && (i>=10 || (used[f]||0)<2));
     if(pool.length<2) pool=all.filter(f=>i>=10 || (used[f]||0)<2);
     if(!pool.length) pool=all;
@@ -6058,12 +6096,43 @@ function buildNet(force){
        wrong one. under the floor is what actually bites — a net below minX is a
        net with too little to do — so being short counts double against being
        over, and a board inside the band always wins by scoring zero. */
+    /* ---- and the ROUTE has to arrive as well as the picture ----
+       famTarget draws the ladder the day is supposed to climb and famPlan
+       scrambles towards it, but the scramble GIVES UP after 26 barren rotations
+       and hands back whatever it reached — so the target was a hope and the
+       accepted route was whatever the shape happened to yield.
+       measured over 40 days, that is not a rounding error: at a fixed net index
+       the route ranges 8 to 15 turns across the layout families, against a
+       ladder that steps 1 or 2 between rungs. the dice throw six times the
+       signal, which is why 49 of 53 downward steps in the day's perfect line
+       are the route falling — and why no edit to RAMP_EVEN can fix it. moving
+       the pin off net 6 just moves the dip to net 7.
+       so a route outside the rung is a miss, exactly like a board outside the
+       crossing band, and it is scored the same way and replayed the same way:
+       the salt loop already tries forty scrambles and pass two replays the
+       least wrong of them, so this is the existing machinery being told about
+       the other half of what a net has to be. a day where no salt reaches the
+       rung still builds — it takes the closest, which is what pass two has
+       always done.
+       IT IS A BAND AND NOT A FLOOR, and the floor alone was tried first. the
+       designed line — famTarget plus graceFor — already climbs 5,6,7,8,9,9,10,
+       11,13,15, so once nothing may come in UNDER its rung the thing that
+       breaks the climb is a net coming in over it: a lattice that prices net 4
+       at 9 stands above a net 5 that correctly priced at 8. one turn of room
+       took the dips from 34 over 40 days to 10, and left the day's median line
+       sitting exactly on the designed one. wider bands give most of it back —
+       two turns leaves 22, three leaves 25 — and none of them moves the median
+       opening board off 11 crossings, so the ladder costs no extra tangle.
+       it costs about 5ms a net in extra scrambling, on a build of ten. */
+    const shortBy = (GEN.layout==='families' && spec.plan)
+      ? Math.max(0, famTarget(idx)-spec.plan.route,
+                    spec.plan.route-(famTarget(idx)+1)) : 0;
     if(pass===0){
-      const miss=c0.total<spec.minX ? (spec.minX-c0.total)*2
-               : c0.total>spec.maxX ? (c0.total-spec.maxX) : 0;
+      const miss=(c0.total<spec.minX ? (spec.minX-c0.total)*2
+               : c0.total>spec.maxX ? (c0.total-spec.maxX) : 0) + shortBy*3;
       if(miss<bestMiss){ bestMiss=miss; bestSalt=salt }
     }
-    const inBand=c0.total>=spec.minX && c0.total<=spec.maxX;
+    const inBand=c0.total>=spec.minX && c0.total<=spec.maxX && !shortBy;
     if(inBand || pass===1){
       initialCross=Math.max(c0.total,1);
       if(GEN.par==='lanes') spec.par=lanePar();      // measure the net you actually got
@@ -8203,7 +8272,24 @@ function stampToday(depth,feats,tier){
     const turns=cl.reduce((a,c)=>a+(c.moves||0),0);
     const par=cl.reduce((a,c)=>a+(c.par||0),0);
     const had=row.depth||0;
-    if(depth>had || (depth===had && (row.turns==null || turns-par < row.turns-row.par))){
+    /* THE GUARD RANKS BY THE READING THE DAY IS SHOWN IN, which is the rungs —
+       see rungCount. it used to rank by turns against par alone, and leaving it
+       there while the card and the record moved would have been the worst of
+       both: a run with more good rungs shown as the better day and then thrown
+       away by the guard, so the row on screen and the row in the save disagree
+       about which run happened.
+       turns against par survives as the TIEBREAK, which is exactly the demotion
+       it took everywhere else — the rungs are lumpy and two runs that both post
+       `8 of 10` are separated by nothing else. a run with no tiers at all (an
+       older save's row) has no key, so it ranks on the differential alone and
+       any run carrying rungs beats it, which is the same precedence bestReading
+       applies on the record.
+       worker/merge.js's bestRun() is the other copy of this and moves with it. */
+    const keyNow=rungCount(cl.map(c=>c.tier), POLICY.dailyNets).key;
+    const keyHad=rungsOf(row.tiers) ? rungsOf(row.tiers).key : -1;
+    const better = keyNow!==keyHad ? keyNow>keyHad
+                 : (row.turns==null || turns-par < row.turns-row.par);
+    if(depth>had || (depth===had && better)){
       row.turns=turns; row.par=par; row.moves=R().turns||0;
       /* the rung each of the ten minted, in order, one letter each — the record
          draws them as ten cells and there is nowhere else to read them from.
@@ -8639,10 +8725,13 @@ function showRunOver(){
      text share — is gone. it painted perfect 🟨 against a ladder whose perfect
      is green, and there is no honest emoji for the silver rung at all. the
      share now reads the run itself; see SHAREBLOCK. */
-  const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   const turns=r.cleared.reduce((a,c)=>a+c.moves,0);
   const parTot=r.cleared.reduce((a,c)=>a+c.par,0);
   const trial=isTrial();
+  /* the day's own rungs, off the run rather than off a stored row. a trial runs
+     past ten and is counted out of its own length; a daily set, short or not, is
+     counted out of the day — see rungCount. */
+  const rung=rungCount(r.cleared.map(c=>c.tier), trial?depth:POLICY.dailyNets);
   $('runbulletin').innerHTML=bulletinHTML({
     /* the strip took its colour from DEPTH — orange at five nets or more — and
        both halves of that are now wrong. orange is no longer a tier colour at
@@ -8651,18 +8740,22 @@ function showRunOver(){
        it takes the ladder instead, off the one reading the game is scored on:
        under par, level with it, past it — one TIERCOL, canonical on either
        ground, the same rung this day would post on a share plate.
-       the two rows that are NOT a scored day are the two that were wrong here.
-       a day left short said `done`, which is the comment's own "stays neutral"
-       drawn in the bottom rung — a set you put down and a set you finished over
-       par came out the same colour. and a trial said violett, which used to be
-       nobody's and is now the bottom rung itself. both take a colour that cannot
-       be a rung: silver for a day that was never scored, dunkelblau for a trial,
-       which is not a day at all and is the one thing here still worth a plate
-       colour of its own. */
+       the reading it takes is the day's RUNGS now, and the two boundaries are
+       the only two that are not invented: every net at clean or better takes the
+       top band, none of them takes the bottom, anything between takes the middle.
+       a threshold anywhere else would be a fourth rule about the ladder that
+       nothing else in the game knows. the top band is much rarer than it was —
+       any under-par day used to earn it, and a set with nothing wrong in it now
+       has to — which is the same correction the headline itself is.
+       the silver is gone with it. it meant "a day that was never scored", and a
+       set left short IS scored now; a strip saying otherwise would contradict the
+       sub directly under it. it cannot reach the top band anyway, because its
+       count is out of ten and it did not play ten. a TRIAL keeps dunkelblau: it
+       is not a day at all, and is the one thing here still worth a plate colour
+       of its own. */
     strip: trial ? '--sig-dunkelblau'
-         : depth < POLICY.dailyNets ? '--silver'
-         : (turns-parTot) < 0 ? TIERCOL.perfect
-         : (turns-parTot) === 0 ? TIERCOL.clean
+         : rung.good>=rung.of ? TIERCOL.perfect
+         : rung.good ? TIERCOL.clean
          : TIERCOL.done,
     title:trial?'out-trained':(depth>=POLICY.dailyNets?'day complete':'day set aside'),
     /* THE CONCLUSION, not the inputs. this line used to read `12 of 12 clean · 57
@@ -8672,21 +8765,26 @@ function showRunOver(){
        row whose label repeated the line above. 57, 230, the depth and the words
        "against par" were each on the card twice.
        so the sub takes the answer — the day's score, the single reading the whole
-       set was played for — and the row below takes the two figures it was worked
-       out from, once. the strip is already drawing the same answer as a rung, so
-       this is that rung in words, which is exactly what the net card's sub does
-       with its tier. the clean count went to .bquiet: the day's ten rungs are
-       drawn in the masthead strip, which is still on screen behind this card.
-       a SHORT set has no day score — dayScore refuses one under ten nets, because
-       four nets at three under is not a round — so it says how far it got
-       instead, which is the numeral plus the denominator the numeral lacks. */
-    sub:trial?'time trial · the net kept learning'
-        :(depth>=POLICY.dailyNets ? fmtScore(turns-parTot)
-                                  : `${depth} of ${POLICY.dailyNets} nets`),
+       set was played for — and the row below takes the figures it was worked out
+       from, once. the strip is already drawing the same answer as a rung, so this
+       is that rung in words, which is exactly what the net card's sub does with
+       its tier.
+       THE ANSWER IS THE RUNGS NOW, not turns against par — see rungCount for the
+       flaw that moved it — so the pairing is simply re-pointed: the sub says how
+       many of the day came in at clean or better, and the row under it says which
+       rungs those were. turns against par went to .bquiet, which is where the
+       clean count used to sit; the two of them swapped places, and the card's
+       shape is untouched.
+       a SHORT set no longer needs a line of its own here. the count is out of the
+       DAY rather than out of the run, so a set left short reads on the same scale
+       as a finished one; how far it got is the numeral in the corner, the
+       denominator in .bquiet, and the title above. */
+    sub:trial?'time trial · the net kept learning':rungText(rung),
     num:String(depth).padStart(2,'0'),
-    /* one row: the two numbers the score above was cut from, said once and said
-       plainly. `57 against par 230` rather than `57 of 230` for the reason the
-       net card dropped `2 / 9` — a bare ratio reads as progress.
+    /* one row: what the answer above was made of, said once. the three rungs in
+       the ladder's own order, and `done` is named rather than left as the
+       remainder — the set is ten and the reader should not have to subtract to
+       find where the other six went.
        a trial has no par, so its row is the only comparison it has: this descent
        against the deepest you have ever gone. it used to print `depth reached`
        too, which is the numeral in the corner of the same card spelled out; and
@@ -8697,7 +8795,7 @@ function showRunOver(){
     rows:trial
       ? [['best time trial', (store.meta.bestTrialDepth||depth)>depth
             ? (store.meta.bestTrialDepth)+' nets' : 'this run']]
-      : [['turns',turns+' against par '+parTot]],
+      : [['rungs',rungWords(rung,' · ')||'none yet']],
     /* ten, not eight. the stamps stepped down to 58px with the rest of the card
        and five of them now fit a row, so eight drew a five and a ragged three
        with a hole beside it — the exact break the net card's own sizing note is
@@ -8709,7 +8807,7 @@ function showRunOver(){
     }).join('')}</div>`:'')
     // the cut rows, kept for the reader — see .bquiet
     +`<p class="bquiet">${trial?`${feats.length} features named.`
-        :`today's set ${depth} of ${POLICY.dailyNets}. ${cleanN} of ${depth} clean. ${feats.length} features named.`} `
+        :`today's set ${depth} of ${POLICY.dailyNets}. ${turns} turns against par ${parTot}. ${feats.length} features named.`} `
       +`day streak ${store.meta.streak||1}.</p>`,
     note:trial
       ? 'the net re-tangled faster than you could separate it. it gets quicker the deeper you go.'
@@ -8931,15 +9029,76 @@ function dayCells(tiers){
   return `<span class="dcells" aria-hidden="true">${out}</span>`;
 }
 /* the same reading in words, because the cells are a picture and the row's
-   label is what a screen reader gets instead of it */
-function tierWords(tiers){
-  if(typeof tiers!=='string' || !tiers) return '';
-  const n={};
-  [...tiers.slice(0,POLICY.dailyNets)].forEach(ch=>{
-    const t=TIEROF[ch]; if(t) n[t]=(n[t]||0)+1;
-  });
-  return ['perfect','clean','done'].filter(t=>n[t]).map(t=>n[t]+' '+t).join(', ');
+   label is what a screen reader gets instead of it. `sep` is the card's idiom
+   where the card asks for it and a comma everywhere prose is wanted. */
+function tierWords(tiers,sep){
+  const g=rungsOf(tiers);
+  return g?rungWords(g,sep):'';
 }
+function rungWords(g,sep){
+  return ['perfect','clean','done'].filter(t=>g[t]).map(t=>g[t]+' '+t).join(sep||', ');
+}
+
+/* ---- THE DAY'S MEASURE: a count of the rungs it earned ----
+   this replaced turns against par as the headline, and the reason is a real
+   flaw in the old one: A TURN DIFFERENTIAL CAN BE BANKED. the ten ramp, so the
+   morning's two-thread nets are cheap to beat — a strong player builds a large
+   surplus over nets one to four, coasts the hard six well over par, and still
+   posts a good number. a rung count cannot be inflated that way: every net
+   awards exactly one rung whether it is the easiest of the day or the hardest,
+   so the reading is how the whole set went rather than how far ahead the easy
+   end of it got.
+
+   HOW TWO DAYS RANK, and it is deliberately NOT the obvious lexicographic
+   `most perfects wins, then most cleans`. that rule breaks at the ends: it makes
+   `1 perfect, 9 done` beat `10 clean`, which is one lucky net and nine sloppy
+   ones outranking a set with nothing wrong in it — and worse, it is the SAME
+   failure as the differential, since it still lets a few good early nets carry a
+   day that was coasted. so the count leads and the top rung breaks the tie:
+   clean-or-better first, perfect second. `4 perfect, 6 clean` therefore beats
+   `5 perfect, 3 clean, 2 done`, ten good rungs to eight, which is exactly the
+   question this measure was asked to answer.
+
+   THE DENOMINATOR IS THE DAY, NOT THE RUN, and that is what lets a set left
+   short be scored at all where a differential could not. ten nets are set for
+   everybody; play six and you got what you got out of ten. so a count is
+   comparable across days whatever depth they reached, and — the property the
+   differential never had — it can only ever go UP by playing on. another net
+   over par made the old number worse, so stopping improved it; nothing improves
+   this one except another rung.
+
+   the standing objection to counting perfects was that it would mostly measure
+   which layout families the day drew, because the top rung could only fire
+   where the shipped OPTIMA table had an answer. that is no longer true: from v8
+   the optimum is plan.route, read off the board, so every net the generator can
+   draw has one. see netTargets. */
+const RUNGOF={perfect:'perfect', clean:'clean', par:'clean', done:'done', over:'done'};
+function rungCount(list,of){
+  const n={perfect:0, clean:0, done:0};
+  list.forEach(t=>{ const k=RUNGOF[t]; if(k) n[k]++ });
+  const good=n.perfect+n.clean;
+  /* ONE integer, so two days can be compared, sorted and max'd — which is what
+     the record's best-day scan, stampToday's guard and worker/merge.js all
+     need. the base is one more than the day's nets, so no number of perfects
+     can outweigh a single extra good rung: that is the ranking above, arithmetic
+     rather than a pair of comparisons repeated in four places.
+     worker/merge.js's rungKey() is the other copy. if this moves, it moves. */
+  return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
+}
+/* the same tally off a stored row. the letters are capped at the day's ten for
+   the reason tierWords caps them: a save is the one input here nothing can
+   validate in advance. a row from any earlier shape has no tiers and gets no
+   count at all — an absence, drawn as an absence, exactly as dayCells does. */
+const rungsOf=tiers=>(typeof tiers==='string' && tiers)
+  ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
+  : null;
+/* the reading in words, and the same reading split for the one place that sets
+   the figure large and the words small beside it — the pair fmtScore and
+   scoreParts already are for turns against par. `or better` is not padding: a
+   perfect net is inside par too, so `8 of 10 clean` on one line and `2 clean` in
+   the breakdown under it would read as a contradiction. */
+const rungText=g=>`${g.good} of ${g.of} clean or better`;
+const rungParts=g=>({fig:String(g.good), word:`of ${g.of} clean or better`});
 
 /* clicking a row offers that day. replaying one you already cleared is allowed
    — it simply cannot improve a tier you already hold, same as any net.
@@ -9001,12 +9160,17 @@ async function offerDay(iso,done,tiers){
   flashMsg(iso===today()?'today\'s net':'playing the archive · '+dayLabel(iso)+' · this does not extend a streak');
 }
 /* the day's score, golf style: turns against par across the ten. negative is
-   under par and good. it is the one reading that every net contributes to —
-   tier counts are lumpy, a net missed by one turn scoring the same as one
-   missed by nine — and it needs nothing from the solver, which is why the
-   headline is this and not a count of perfects. `perfect` can only fire where
-   the solver can prove an optimum, which today is two of the seven layout
-   families: a perfect count would mostly measure which families the day drew. */
+   under par and good.
+   IT IS NO LONGER THE HEADLINE — the day's rungs are, see rungCount — and it is
+   kept rather than deleted because it is still true and still the only reading
+   here with fine resolution. the rungs are lumpy: a net missed by one turn and a
+   net missed by nine both say `done`, and two days that both post `8 of 10` are
+   separated by nothing else. so it survives as the SECOND reading, in the slots
+   it already had — the card's quiet line, the plate's corner, the share text,
+   and the tiebreak in stampToday's guard — and leads nowhere.
+   the ten-net floor stays with it. a partial differential really is meaningless:
+   two nets at three under is not a round. a partial COUNT is not, which is why
+   rungsOf has no such floor. */
 /* the score says which side of par it is IN WORDS, because a bare sign cannot.
    it used to render `+3` / `−8`, and three things were wrong with that. the
    minus sign U+2212 is a stroke away from the em dash used for "no data", at
@@ -9028,6 +9192,34 @@ function scoreParts(n){
    finished — ten nets. two nets at three under is not a round. */
 const dayScore=r=>(r && r.turns!=null && r.par!=null && (r.depth||0)>=POLICY.dailyNets)
   ? r.turns-r.par : null;
+
+/* what a stored day says about itself, in the two parts the record sets large
+   and small. every day since the rungs started being stored can answer in the
+   current measure, which is most of the record and all of it from here on.
+   A ROW WRITTEN BEFORE THEM FALLS BACK TO ITS SCORE rather than to nothing. it
+   still has its turns and its par, and that reading was demoted rather than
+   deleted — so an old row goes on speaking a language the game still speaks,
+   instead of a fortnight of somebody's history quietly turning into `10 of 10
+   nets` because the game changed its mind about how to read it.
+   `key` is bigger-is-better in BOTH kinds so a caller can sort without knowing
+   which it got. the two are never compared against each other: they are not the
+   same unit, and bestReading picks a kind before it ranks anything. */
+function dayReading(r){
+  const g=rungsOf(r&&r.tiers);
+  if(g) return {...rungParts(g), rungs:true, key:g.key};
+  const s=dayScore(r);
+  if(s==null) return null;
+  return {...scoreParts(s), rungs:false, key:-s};
+}
+/* the best day in the record. rungs if ANY day can be read in rungs, so one
+   ancient row cannot win a comparison it is not even in; the older measure only
+   if nothing in the whole record has rungs at all, which is a save that has not
+   been played since they landed. */
+function bestReading(rows){
+  const all=rows.map(dayReading).filter(Boolean);
+  const g=all.filter(x=>x.rungs);
+  return (g.length?g:all).sort((a,b)=>b.key-a.key)[0]||null;
+}
 
 /* the archive's one line, in its two states — ONE element, because they are the
    same fact seen from either side of the payment: what is still shut, or what
@@ -9141,7 +9333,7 @@ function openRecord(){
      the rows it claims to summarise. best DEPTH is gone — a day is a fixed set
      of ten that cannot be failed, so depth is ten for anyone who finishes and
      says nothing whatever about how well they did. */
-  const best=rows.map(dayScore).filter(v=>v!=null).sort((a,b)=>a-b)[0];
+  const best=bestReading(rows);
   const badges=store.collection.badges||{};
   const stat=(fig,word,label)=>
     `<span class="rstat"><b>${fig}</b><em>${word}</em><i>${label}</i></span>`;
@@ -9155,13 +9347,17 @@ function openRecord(){
      screen is opened seconds after finishing a run and the live question is how
      that run went. best-ever changes a handful of times and then never again. on
      day one they are the same number, so nothing is lost by preferring today. */
-  const todayScore=dayScore(rows.find(x=>x.d===d0));
-  const shown = todayScore!=null ? todayScore : best;
-  if(shown!=null){
-    const {fig,word}=scoreParts(shown);
+  /* the comparison is guarded on KIND as well as on the number: a day read in
+     rungs and a day read in turns against par are not the same unit, and
+     crowning one against the other would be arithmetic on two different
+     questions. it can only happen on a save with exactly one readable day. */
+  const todayR=dayReading(rows.find(x=>x.d===d0));
+  const shown = todayR || best;
+  if(shown){
+    const {fig,word}=shown;
     $('recstats').innerHTML=stat(fig,word,
-      todayScore==null ? 'your best day'
-      : (best!=null && todayScore<=best) ? 'today · your best' : 'today');
+      !todayR ? 'your best day'
+      : (best && best.rungs===todayR.rungs && todayR.key>=best.key) ? 'today · your best' : 'today');
   } else {
     /* no scored day anywhere: say what a day IS rather than print a dash. this
        is the whole of the old `—`, which meant "no data" and read as a minus. */
@@ -9265,20 +9461,24 @@ function openRecord(){
          words, and the dashed keyline says it again without any ink at all. */
       det='in the archive'+bestWords;
     } else if(played){
-      const p=[], sc=dayScore(row);
+      const p=[], rd=dayReading(row);
       /* the net count only earns its place when the set was left SHORT. it used
          to lead every row — "10 nets · " on 37 of 42 — which is the same
          tautology bestDepth was deleted for: a finished day is always ten, so
          the most repeated string on the screen carried no information and stood
          in front of the one that did.
-         a scored day therefore leads with its score. a day left short says how
-         far it got, because that is the thing that differs. a legacy row has
-         neither and simply says it happened. */
-      if(sc!=null) p.push(fmtScore(sc));
-      else {
-        if(row.depth) p.push(row.depth+' of '+POLICY.dailyNets+' nets');
-        if(row.moves!=null) p.push(row.moves+' turns');
-      }
+         a scored day therefore leads with its score. a SHORT set is scored too
+         now — the rungs count out of the day rather than out of the run, see
+         rungCount — so it leads with the same reading and adds how far it got
+         after it, which is still the thing that differs about it. a row too old
+         to read either way simply says it happened.
+         the cells one column over draw the same rungs as a picture, and that is
+         the pairing the cleared card already makes: the strip is the answer as a
+         mark, the words are the answer as a reading. what neither the cells nor
+         a glance can give is the COUNT, which is the whole measure. */
+      if(rd) p.push(rd.fig+' '+rd.word);
+      if(row.depth && row.depth<POLICY.dailyNets) p.push(row.depth+' of '+POLICY.dailyNets+' nets');
+      if(!rd && row.moves!=null) p.push(row.moves+' turns');
       if(row.mode==='trial'&&row.trialDepth) p.push('time trial · depth '+row.trialDepth);
       // filled in from the archive rather than earned on the day. it counts
       // toward the record and never toward the streak, and says so.
@@ -9877,15 +10077,21 @@ const SHAREBLOCK={perfect:'█', clean:'▅', par:'▅', done:'▃', over:'▃'}
 const SHAREEMPTY='▁';                 // a net of the day still to play
 const CARD_W=760, CARD_H=470;
 
-/* the two sums the whole card is built from, read off the run itself: the
-   cleared nets' own turns and par, which is exactly the pair stampToday writes
-   to the day row and the pair the run-over bulletin totals. */
+/* everything the card is built from, read off the run itself: the cleared nets'
+   own turns and par — exactly the pair stampToday writes to the day row and the
+   pair the run-over bulletin totals — and the rungs those nets minted, which is
+   what the card now leads on.
+   `slots` is the denominator for BOTH the strip and the count, and it is the
+   same number for a good reason: a daily set is scored out of the day's ten
+   however many of them were played, and a trial, which runs past ten, is scored
+   out of its own length. see rungCount. */
 function shareFigures(r){
   const cells=(r&&r.cleared)||[];
-  return {cells,
+  const slots=Math.max(POLICY.dailyNets,cells.length);
+  return {cells,slots,
     turns:cells.reduce((a,c)=>a+(c.moves||0),0),
     par:cells.reduce((a,c)=>a+(c.par||0),0),
-    slots:Math.max(POLICY.dailyNets,cells.length)};   // a time trial runs past ten
+    rung:rungCount(cells.map(c=>c.tier),slots)};
 }
 function shareCardSVG(){
   const r=R(), W=CARD_W, H=CARD_H, M=44, RX=W-M;
