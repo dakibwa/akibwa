@@ -2062,19 +2062,30 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dayrow.shut .ddet,.dayrow.open .ddet{max-width:none}
   .dayrow.shut:hover{border-color:var(--rule)}
   .dayrow.shut:hover .ddet{color:var(--ink)}
-  /* ---------- the month ----------
-     a spine for a list that is now every day since launch. at a fortnight old
-     it is one word at the top doing nothing; at a year old it is the only way
-     to find the saturday you missed without counting rows. it is NOT the month
-     calendar coming back — that was a second view of the history drawn beside
-     the list that already held it, and this is a hairline inside the list it
-     labels. the rule runs to the end so the eye can follow it across. */
-  .daymon{
-    display:flex;align-items:center;gap:9px;margin:8px 0 1px;
-    font-size:9px;letter-spacing:.14em;text-transform:lowercase;color:var(--ink-soft);
+  /* ---------- your best day ----------
+     the month spine stood here and is gone with the long list it navigated.
+     what closes the list now is the one reading that still scans the whole of
+     playedDays — and closing it is half its job: two rows and then nothing
+     reads as a list that failed to load, two rows and then a line that clearly
+     ends the list reads as all there is.
+     so it is NOT a row. it is a rule with a reading on it: no keyline, no
+     surface, no field — a hairline above and type sitting on it, which is the
+     mark this whole card is made of and the one shape here that cannot be
+     mistaken for a day you could press. the reading goes hard right, in the
+     column the played rows put their ten cells in, so the card keeps one right
+     edge down its whole length.
+     the figure takes the day rows' own weight rather than the head's black:
+     the head is today and has to win, and a best day set in the same face
+     would be a second headline at the bottom of the card. */
+  .daybest{
+    display:flex;align-items:baseline;gap:9px;margin-top:9px;padding-top:10px;
+    border-top:1px solid var(--rule);
+    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
   }
-  .daymon:first-child{margin-top:0}
-  .daymon::after{content:'';flex:1 1 auto;height:1px;background:var(--rule)}
+  .daybest .dbwhen{font-variant-numeric:tabular-nums;letter-spacing:.07em}
+  .daybest .dbread{margin-left:auto;white-space:nowrap;color:var(--ink-soft)}
+  .daybest .dbread b{font-weight:700;font-size:11px;color:var(--ink);
+    font-variant-numeric:tabular-nums;letter-spacing:0}
   .dayrow .dtier{flex:0 0 auto;width:7px;align-self:stretch;background:var(--tc,var(--rule))}
   .dayrow .ddate{flex:0 0 auto;width:78px;padding:11px 0;
     font-size:10.5px;letter-spacing:.07em;text-transform:lowercase;font-variant-numeric:tabular-nums}
@@ -9133,28 +9144,49 @@ function dayRows(){
   });
   return [...out.values()];
 }
-/* the spine of the screen: every day from today back to launch, newest first,
-   played or not — a day you never opened is the product, because it is a
-   specific date you can still go back for. any played day older than launch
-   comes too: an early prototype's rows predate it, and a record that drops
-   them is not a record. two years of rows is the cap, so a runaway LAUNCH
-   cannot build a hundred thousand of them. */
+/* the spine of the screen: TODAY AND YESTERDAY, newest first, played or not,
+   each with whatever the save has stored against it.
+   it was every day back to LAUNCH plus every played day older than that, which
+   made this list a browsable archive — and the archive is half of what the full
+   version is sold on. the owner cut it to the two free days knowing exactly
+   that, so what is left is a record of where you are standing rather than a
+   shop you walk through. THE STORED ROWS ARE UNTOUCHED: this decides which days
+   are LISTED and nothing else. bestReading still reads the whole of
+   playedDays, the streak is store.meta's own count, and a day that stops being
+   a row here is still in the save and still counts everywhere it counted.
+   yesterday is clamped at LAUNCH, because a day before it was drawn by a
+   retired generator and is a row you could press to play a puzzle nobody
+   designed — on launch day itself the record is one row, which is true.
+   the walk and its two-year cap are gone with the long tail, and so is a hole
+   they carried: a row's own date used to seed this set, so a malformed
+   `{d:'not-a-day'}` in a save sorted ABOVE today and drew `undefined nan` at
+   the head of the record. the dates are now stated here rather than supplied
+   by the one input nothing can validate. */
 function allDays(){
-  const rows=dayRows(), by=new Map(rows.map(r=>[r.d,r]));
-  const days=new Set(rows.map(r=>r.d));
-  let d=today();
-  for(let i=0;i<730 && d>=LAUNCH;i++,d=dayAdd(d,-1)) days.add(d);
-  return [...days].sort().reverse().map(x=>({d:x,row:by.get(x)||null}));
+  const by=new Map(dayRows().map(r=>[r.d,r]));
+  const d0=today(), y=dayAdd(d0,-1);
+  return (y>=LAUNCH?[d0,y]:[d0]).map(d=>({d,row:by.get(d)||null}));
 }
 /* a day the archive holds and nothing else does: shut to you, and with no row
    of its own because you never played it. a day you DID play stays a row after
-   it ages out — it is your history, and history is not for sale.
-   two screens count these and they must agree, so the rule is written once: the
-   record collapses them into one line at its foot, and the cleared card says how
-   many there are in its offer. two copies of this would be two different numbers
-   on two screens about the same thing. */
+   it ages out — it is your history, and history is not for sale. */
 const isShut=({d,row})=>!row && !canPlayDay(d);
-const archiveCount=()=>allDays().filter(isShut).length;
+/* how many days the archive holds, over the WHOLE run of dates rather than over
+   the record's list. it used to filter allDays(), which was that whole run and
+   is two days now — so left alone it would answer 0 forever and the cleared
+   card would offer the archive as nothing. ONE screen asks this now, so this is
+   the only copy of the count rather than the shared one, and the predicate is
+   still written once above.
+   the LAUNCH floor and the two-year cap came off the old walk with it, for the
+   reason they were on it: a runaway LAUNCH cannot build a hundred thousand. */
+const archiveCount=()=>{
+  const played=new Set(dayRows().map(r=>r.d));
+  let n=0, d=today();
+  for(let i=0;i<730 && d>=LAUNCH;i++,d=dayAdd(d,-1)){
+    if(isShut({d, row:played.has(d)?{d}:null})) n++;
+  }
+  return n;
+};
 /* ---- the day's ten, drawn ----
    ONE drawing, used twice. the record's head draws it as its bay's track, and
    every played row in the list below draws the same bar at the row's size —
@@ -9386,18 +9418,58 @@ function dayReading(r){
 /* the best day in the record. rungs if ANY day can be read in rungs, so one
    ancient row cannot win a comparison it is not even in; the older measure only
    if nothing in the whole record has rungs at all, which is a save that has not
-   been played since they landed. */
+   been played since they landed.
+   IT SCANS THE WHOLE OF playedDays and always did — `rows` is dayRows(), not
+   the record's list — which is why it still answers over years of history now
+   that the list itself is two days. it carries the DATE of the day that won,
+   because that day is usually no longer a row you can look at, and a best
+   figure with no day attached is a number rather than a memory. */
 function bestReading(rows){
-  const all=rows.map(dayReading).filter(Boolean);
+  const all=rows.map(r=>{ const x=dayReading(r); return x?{...x,d:r.d}:null }).filter(Boolean);
   const g=all.filter(x=>x.rungs);
   return (g.length?g:all).sort((a,b)=>b.key-a.key)[0]||null;
 }
+/* the record's long memory, at the foot of a list that is now two days long.
+   without it the card cannot say a longer record exists at all: the days that
+   made it scrolled out of the list when the list stopped holding them, and the
+   head is today by definition. it names the DATE for that reason — the date is
+   the only trace left of the days that are no longer rows.
+   it is drawn only when the best day is NOT today. the head already says
+   today, and setting the same figure twice on one card is the tautology this
+   screen has deleted three times over — see the note on `10 nets · ` in the
+   row detail, and bestDepth before it.
+   the date is guarded rather than trusted: a save is the one input nothing can
+   validate, and dayLabel on a row whose `d` is not a date prints `undefined
+   nan`, which is exactly what this screen just stopped doing upstairs. a
+   reading with an unreadable date keeps the reading and drops the date. */
+const isIso=d=>typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)
+  && !Number.isNaN(new Date(d+'T00:00:00').getTime());
+function bestLineEl(best){
+  const el=document.createElement('div');
+  el.className='daybest';
+  const when=isIso(best.d)?dayLabel(best.d):'';
+  el.innerHTML='<span class="dbtext">your best day</span>'
+    +(when?`<span class="dbwhen">${when}</span>`:'')
+    +`<span class="dbread"><b>${best.fig}</b> ${best.word}</span>`;
+  return el;
+}
 
-/* the archive's one line, in its two states — ONE element, because they are the
-   same fact seen from either side of the payment: what is still shut, or what
-   was bought. `unlock` and `restore` are links in the quietest ink on the card
-   rather than fields: a way through, not the subject. */
-function archiveLineEl(shutN){
+/* the purchase's one line, in its two states — ONE element, because they are
+   the same fact seen from either side of the payment: what you hold, or the way
+   to claim what you already paid for. `restore` is a link in the quietest ink on
+   the card rather than a field: a way through, not the subject.
+   IT NO LONGER SELLS ANYTHING. it used to lead with a count of the shut days and
+   an `unlock`, and it stood on the first shut row — where the wall started. the
+   record shows today and yesterday now, so there is no wall and no count to
+   make; the offer moved wholly to the cleared card's runOverOffer, which is one
+   screen and one place the archive is asked for rather than two.
+   what could NOT move is `restore`, and it nearly went out with the offer it was
+   standing next to. this was its only door in the whole game: a player who bought
+   anonymously on their phone gets across to their laptop by typing the code, and
+   deleting the line that carries it would have sold a purchase with no way to
+   claim it on a second device. `beginUnlock` had two doors and kept the other
+   one; this had one. */
+function archiveLineEl(){
   ensurePrice();     // redraws this card if the answer arrives after it
   const el=document.createElement('div');
   el.className='dayarch'+(POLICY.premium?' held':'');
@@ -9407,17 +9479,14 @@ function archiveLineEl(shutN){
         ? `<span class="dacode" title="type this on another device to open it there">${acct.code}</span>`
         : '');
   } else {
-    const price=priceWords();
-    /* the count is a fact and is always drawn; the two links are only drawn
-       when there is somewhere for them to lead. a deploy with no till — which
-       is every deploy until the stripe keys go in — says what the archive holds
-       and offers nothing, rather than offering a press that fails. */
-    el.innerHTML=`<span class="datext">${shutN} earlier day${shutN===1?'':'s'} · in the archive</span>`
-      +(canBuy()
-        ? `<a href="#" class="archlink" data-buy="1"`
-          +` title="one payment · opens every day back to launch, and the time trial">unlock${price?' · '+price:''}</a>`
-          +`<a href="#" class="archlink" data-restore="1"`
-          +` title="bought it already? enter the code from your other device">restore</a>`
+    /* the link is only drawn when there is somewhere for it to lead. a copy
+       opened off a disk has no api and no code to check one against, and an
+       offer that answers "not from here" is worse than no offer — the same rule
+       the till puts on `unlock`, asked of the thing restore actually needs. */
+    el.innerHTML='<span class="datext">bought the full version already?</span>'
+      +(API
+        ? `<a href="#" class="archlink" data-restore="1"`
+          +` title="enter the code from the device you bought it on">restore</a>`
         : '');
   }
   el.onclick=e=>{
@@ -9426,17 +9495,11 @@ function archiveLineEl(shutN){
   };
   return el;
 }
-/* the month a run of rows belongs to. it reuses MONTHS rather than spelling the
-   names out again, and carries the year only when it is not this one — the rule
-   dayLabel already follows, and the reason is the same: a marker that says 2026
-   on every month of 2026 is a list repeating itself twelve times a year. */
-function monthMarkEl(iso){
-  const dt=new Date(iso+'T00:00:00'), yr=new Date().getFullYear();
-  const el=document.createElement('div');
-  el.className='daymon';
-  el.innerHTML=`<span>${MONTHS[dt.getMonth()]}${dt.getFullYear()!==yr?' '+dt.getFullYear():''}</span>`;
-  return el;
-}
+/* the month spine that stood here is gone with the long list it was a spine
+   for. it existed so a year of rows could be found in — the saturday you missed,
+   without counting rows — and a list of today and yesterday, each writing its
+   date in full, has nothing to navigate. on the first of a month it would have
+   drawn a header per row. see the note in openRecord where it was called. */
 
 /* ---- the foot: whose record this is ----
    drawn from three things and nothing else: whether this deployment has any
@@ -9499,7 +9562,7 @@ function openRecord(){
   const d0=today(), rows=dayRows();
   const keep=$('daylist').scrollTop;          // a theme flip redraws this whole screen
 
-  /* ---- the two numbers worth keeping ----
+  /* ---- the one number worth keeping ----
      derived, not stored: every day row carries its own turns and par, so the
      best round is a scan rather than a field that can drift out of step with
      the rows it claims to summarise. best DEPTH is gone — a day is a fixed set
@@ -9510,31 +9573,33 @@ function openRecord(){
   const stat=(fig,word,label,tiers)=>
     `<span class="rstat"><span class="rstat-top"><b>${fig}</b><em>${word}</em><i>${label}</i></span>`
     +`${rungTrack(tiers)}</span>`;
-  /* ONE reading, and it names itself. two changes here.
-     `16/16 at clean` is gone. a finished day frees about fourteen of the sixteen
-     features, so the counter reaches 16/16 inside two or three days and then
-     reads the same forever — the identical terminal-counter failure that
-     `bestDepth` and `features collected` were already deleted for elsewhere. a
-     number that stops moving is not a reading.
-     and the survivor leads with TODAY when today has been scored, because the
-     screen is opened seconds after finishing a run and the live question is how
-     that run went. best-ever changes a handful of times and then never again. on
-     day one they are the same number, so nothing is lost by preferring today. */
-  /* the comparison is guarded on KIND as well as on the number: a day read in
-     rungs and a day read in turns against par are not the same unit, and
-     crowning one against the other would be arithmetic on two different
-     questions. it can only happen on a save with exactly one readable day. */
+  /* THE HEAD IS TODAY, AND ONLY EVER TODAY.
+     `16/16 at clean` went first: a finished day frees about fourteen of the
+     sixteen features, so the counter reached 16/16 inside two or three days and
+     then read the same forever — the terminal-counter failure `bestDepth` and
+     `features collected` were already deleted for. a number that stops moving
+     is not a reading.
+     what survived it PREFERRED today and fell back to your best day when today
+     was unplayed, relabelling itself `your best day` as it went. so the one
+     figure at the top of the screen answered two different questions depending
+     on the time of day you opened it, and the number a player met before their
+     morning run was a number from some other week. it is today's now, always,
+     and the label no longer has to say which day it is because there is only
+     one it can be.
+     the fallback did not go anywhere — see bestLineEl, which puts your best day
+     at the FOOT of the list where the rest of the history is. above the day's
+     own score it was competing with today; below it, it is the record. */
   const todayR=dayReading(rows.find(x=>x.d===d0));
-  const shown = todayR || best;
-  if(shown){
-    const {fig,word}=shown;
-    $('recstats').innerHTML=stat(fig,word,
-      !todayR ? 'your best day'
-      : (best && best.rungs===todayR.rungs && todayR.key>=best.key) ? 'today · your best' : 'today',
-      shown.tiers);
+  if(todayR){
+    $('recstats').innerHTML=stat(todayR.fig,todayR.word,'today',todayR.tiers);
   } else {
-    /* no scored day anywhere: say what a day IS rather than print a dash. this
-       is the whole of the old `—`, which meant "no data" and read as a minus. */
+    /* today, not started. it says what a day IS rather than printing a dash —
+       this is the whole of the old `—`, which meant "no data" and read as a
+       minus — and rungTrack draws ten bare cells under it, which is a true
+       picture of a day nobody has begun and the same drawing the masthead
+       already makes of the nets ahead. it used to be reached only by a save
+       with no scored day anywhere; it is now every morning before the run, and
+       it is the same honest empty state either way. */
     $('recstats').innerHTML=stat(POLICY.dailyNets,'nets today','not played yet');
   }
 
@@ -9570,40 +9635,33 @@ function openRecord(){
   }
 
   /* ---- the days ----
-     EVERY day since launch, including the ones you cannot play. they were
-     collapsed into a single counted line for a while, and the reasoning was
-     sound about the drawing and wrong about the product: a shut day drawn as a
-     row is a thing, and "12 earlier days" is a word. nobody wants a word. the
-     backlog is what is for sale, so the backlog is what the screen shows.
-     the two objections that collapsed it in the first place are both about the
-     SHOP and neither about the days, so both are answered without hiding
-     anything. no row is a violet field — a shut row is dashed and a step back
-     in ink, which is what shut means everywhere else on this card. and there is
-     exactly ONE way through, on one line where the wall starts, rather than a
-     button per row growing by one a day forever.
-     nothing has to be invented to fill it. the nets are a pure function of the
-     date, so every day back to LAUNCH — 1 august — already exists and is already
-     playable; the list was simply refusing to draw them. */
+     TODAY AND YESTERDAY. it was every day since launch, shut ones included,
+     because the backlog was what the full version sold and a shut day drawn as
+     a row is a thing where "12 earlier days" is only a word. the owner cut it
+     anyway and with the consequence in front of him: the archive stops being a
+     surface here, and this screen stops selling it. the offer is not gone from
+     the game — the cleared card's runOverOffer still makes it, on the one
+     screen where a player has just finished the thing being extended — but it
+     is gone from the record, and that is the trade that was chosen.
+     what is left is the two days you can actually play, which is also all this
+     list ever showed a free player that they could press. the archive line, the
+     month spine and the shut row went with the tail; see below for each.
+     nothing is hidden by it. the days that scrolled away are still in the save,
+     still counted by the streak, and still read by the best day at the foot. */
   const list=$('daylist'); list.innerHTML='';
   const days=allDays();
-  const shutN=days.filter(isShut).length;
-  let archDrawn=false, monthDrawn='';
   days.forEach(({d,row})=>{
     const played=!!row, canPlay=canPlayDay(d), isToday=d===d0, locked=isShut({d,row});
 
-    /* the one way through, placed where the wall actually starts rather than at
-       the foot of everything. it introduces the run it gates, and it scrolls
-       away as you read past it — which is the difference between a shop you
-       walk through and a shop you are standing in. */
-    if(locked && !archDrawn && !POLICY.premium){ archDrawn=true; list.appendChild(archiveLineEl(shutN)) }
-    /* a spine, because this list is now every day since launch. at a fortnight
-       old it is one word at the top doing nothing; at a year old it is the only
-       way to find the saturday you missed without counting rows. it is not the
-       month calendar coming back — that was a second VIEW of the history, drawn
-       beside the list that already held it. this is a hairline inside the list
-       it labels. */
-    const mk=d.slice(0,7);
-    if(mk!==monthDrawn){ monthDrawn=mk; list.appendChild(monthMarkEl(d)) }
+    /* the archive line stood here, on the first shut row, where the wall
+       started. there is no shut row in a list of today and yesterday, so there
+       is no wall for it to introduce and it is not drawn among the rows at all.
+       it is not gone — it lost the selling half and kept `restore`, and it is
+       drawn once at one end or the other of the list; see the two calls below.
+       the month spine went the same way and for the same reason: it existed so
+       a year of rows could be navigated, and two rows that both write their
+       date in full navigate themselves. it would have drawn a header per row on
+       the first of a month, which is a spine with nothing to hold up. */
 
     /* a played day with no recorded rung draws NO rung. it used to fall back to
        `over`, which TIERCOL paints identically to `done` — so a day the game has
@@ -9722,13 +9780,24 @@ function openRecord(){
     };
     list.appendChild(el);
   });
+  /* ---- your best day, at the foot ----
+     the one reading here that still scans the whole of playedDays, and with the
+     list down to two days it is the only thing on the card that knows a longer
+     record exists. it took the head's place as the fallback and is better off
+     here: over today's score it was a rival, under the days it is the record.
+     not drawn when the best day IS today — the head is already saying it — and
+     not drawn when there is no readable day at all, where the empty state below
+     is the truer thing to say.
+     it also gives the list a bottom edge. two rows and then nothing reads as a
+     list that stopped loading; two rows and then a closing line reads as all
+     there is, which is what it now is. */
+  if(best && best.d!==d0) list.appendChild(bestLineEl(best));
   /* ---- nothing on record yet ----
      `rows` is the honest test — days you have actually played — not `days`,
-     which allDays() seeds back to LAUNCH and which is therefore never empty.
-     it used to REPLACE the list, and that has to go: the list it was replacing
-     now holds the whole backlog, which is the one thing a new player most needs
-     to see, plus the way back in for anyone who bought on another device. it
-     leads the card and the days follow it. */
+     which is today and yesterday and is therefore never empty.
+     it used to REPLACE the list, and that had to go: the list it was replacing
+     holds the days you can play plus the way back in for anyone who bought on
+     another device. it leads the card and the days follow it. */
   if(!rows.length){
     const el=document.createElement('div');
     el.className='runempty';
@@ -9736,14 +9805,16 @@ function openRecord(){
       +'play today\'s ten and this fills in — one day, ten nets, the same ten for everyone.';
     list.insertBefore(el,list.firstChild);
   }
-  /* the receipt, once the full version is held, and it goes at the TOP. an
-     offer belongs down where the wall starts — you meet it in the course of
-     reading, which is what keeps a history screen a history screen. a receipt
-     does not: with the archive open every day since launch is a row of its own,
-     growing by one a day forever, so anywhere but the top is somewhere the
-     buyer would have to scroll a year of history to find on the morning they
-     get a new phone. */
-  if(POLICY.premium) list.insertBefore(archiveLineEl(0),list.firstChild);
+  /* the same line, at the two ends it belongs at.
+     HELD, it is a receipt and goes at the TOP: it carries the restore code, and
+     a buyer looks for that on the morning they get a new phone rather than in
+     the course of reading their history.
+     NOT HELD, it is the way to claim a purchase made somewhere else, and it goes
+     at the FOOT under the days — it is the quietest thing on the card and it is
+     addressed to the few people who have already paid, not to the player whose
+     record this is. it does not sell anything any more; see archiveLineEl. */
+  if(POLICY.premium) list.insertBefore(archiveLineEl(),list.firstChild);
+  else if(API) list.appendChild(archiveLineEl());
 
   /* the whole screen is written before this and nothing is read back after it.
      there used to be a second pass here: read `clientWidth` off every stamp
