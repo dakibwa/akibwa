@@ -1802,16 +1802,38 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      own baseline, which is the difference between a reading and a dashboard */
   .rec-right{display:flex;align-items:baseline;gap:16px;margin-left:auto;min-width:0}
   .recstats{display:flex;align-items:baseline;gap:14px;min-width:0}
-  .rstat{display:flex;align-items:baseline;gap:5px;white-space:nowrap;
+  /* ---- the head is a BAY, the same instrument the masthead draws three of ----
+     it was a figure and two clauses on the title's baseline: the reading in
+     words, with the picture of it left downstairs in the day rows. so the one
+     screen whose subject is how you did drew the score as a caption, while the
+     board — where the score is not the subject — drew it as an instrument.
+     it is that instrument now. figure and words on one line, the day's ten
+     underneath in the rung each net minted, which is the masthead's own
+     `.unit-top` over `.track` and no new form invented here. the two readings
+     stop disagreeing about which of them is the picture: the numeral says how
+     many are clean or better, and the bar under it says WHICH, in the colours
+     the whole game already scores in. */
+  .rstat{display:flex;flex-direction:column;min-width:190px;
     font-size:8.5px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
+  .rstat-top{display:flex;align-items:baseline;gap:5px;white-space:nowrap;min-width:0}
   /* the score is the screen's subject, so it is drawn as one. it used to be
      13px/400 — smaller and lighter than the word "record" beside it, and smaller
      than the close button, on a screen whose entire job is telling you how you
-     did. this is the numeral voice the file already uses on the run card and the
-     share plate (300 weight, tabular, tight), not a new size invented here.
+     did. 300-weight tabular was the run card's and the share plate's numeral
+     voice, and it was the right borrowing while this was a line of type. now
+     that it stands over a track it takes the voice of the bay it has become —
+     the masthead's own figure face, the black one the wordmark is set in, at the
+     size this head already had so nothing below it moves.
      the figure carries no tracking: tracking is for words. */
-  .rstat b{font-size:23px;font-weight:300;letter-spacing:-.02em;line-height:1;
+  .rstat b{font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:23px;font-weight:800;letter-spacing:-.05em;line-height:1;
     color:var(--ink);font-variant-numeric:tabular-nums}
+  /* the bay's own track, and the ONE difference from the masthead's: this one
+     is a finished reading rather than a live one, so it does not animate. a
+     record cell easing into its colour would be a rung being minted, and
+     nothing is being minted on this screen. */
+  .rstat .track{margin-top:7px}
+  .rstat .track > i{transition:none}
   .rstat em{font-style:normal;font-size:11px;letter-spacing:.06em;color:var(--ink)}
   .rstat i{font-style:normal;font-size:9px;letter-spacing:.12em;color:var(--ink-soft)}
   .rstat i::before{content:'·';margin-right:5px;opacity:.55}
@@ -2286,8 +2308,21 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .acct-field{font-size:16px}
     .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
-    .rec-right{gap:12px}
-    .recstats{gap:11px}
+    /* ---- the head takes two lines here, and it had to ----
+       title, reading and close never fitted on one at this width: `today · your
+       best` ran UNDER `close ×` and the two drew on top of each other. it was
+       doing that before the bay arrived — the reading has always been the widest
+       thing in this head — and a bay is the wrong thing to squeeze into a gap
+       that was already short.
+       so the close keeps the title's line, where the way out belongs, and the
+       reading takes the next one with the card's whole width. the bay is the one
+       part of this head that gets BETTER for the extra width: ten cells across
+       309px is 31px a cell, three times what it would have had. */
+    .rec-head{align-items:flex-start}
+    .rec-right{gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .recstats{gap:11px;order:2;width:100%}
+    .rstat{min-width:0}
+    .rstat b{font-size:20px}
     /* still one row of sixteen: at 309px that is 18px a cell, which loses the
        detail of a sign but keeps the only thing this row is for — how much of
        the set is filled, and where the gaps are */
@@ -9054,6 +9089,30 @@ function dayCells(tiers){
   }
   return `<span class="dcells" aria-hidden="true">${out}</span>`;
 }
+/* THE SAME TEN, AS A BAR. the day rows draw the tier as a HEIGHT because a row
+   is a list item and a list of them has to be scannable down its own column;
+   the record's head is a bay, and a bay's reading is a length divided by colour
+   — the masthead's set strip exactly, down to `.track > i.on` and the fill
+   handed over as `var(--token)` so a ground flip repaints it with no javascript
+   re-running. two drawings of the day's ten and no third form: this is that
+   one, borrowed, not another.
+   an unreached net is a bare cell rather than a coloured one, which is what the
+   masthead already draws for the day ahead — and it is why the not-played case
+   can use this too: ten bare cells is a true picture of a day nobody has
+   started, where a hidden bar would just be a missing instrument. */
+function rungTrack(tiers){
+  const s=typeof tiers==='string'?tiers:'';
+  let out='';
+  for(let i=0;i<POLICY.dailyNets;i++){
+    const t=TIEROF[s[i]];
+    out += t ? `<i class="on" style="--fill:var(${TIERCOL[t]})"></i>` : '<i></i>';
+  }
+  // the words the bar is a picture of. the figure beside it says how many are
+  // clean or better and never which rungs made that up, so this is a reading
+  // and not a restatement — see tierWords, which the day rows use the same way.
+  const said=tierWords(s,' · ');
+  return `<span class="track" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
+}
 /* the same reading in words, because the cells are a picture and the row's
    label is what a screen reader gets instead of it. `sep` is the card's idiom
    where the card asks for it and a comma everywhere prose is wanted. */
@@ -9232,7 +9291,13 @@ const dayScore=r=>(r && r.turns!=null && r.par!=null && (r.depth||0)>=POLICY.dai
    same unit, and bestReading picks a kind before it ranks anything. */
 function dayReading(r){
   const g=rungsOf(r&&r.tiers);
-  if(g) return {...rungParts(g), rungs:true, key:g.key};
+  /* the rungs travel with the reading. the record's head draws the day's ten as
+     a bar under the figure, and the figure can be today's or the best day's —
+     so whichever day wins has to carry its own cells with it rather than have
+     the head go back to the rows and guess which one it just showed. the older
+     measure has no cells to carry: a row scored in turns against par never
+     stored a rung, and an absence is drawn as an absence. */
+  if(g) return {...rungParts(g), rungs:true, key:g.key, tiers:r.tiers};
   const s=dayScore(r);
   if(s==null) return null;
   return {...scoreParts(s), rungs:false, key:-s};
@@ -9361,8 +9426,9 @@ function openRecord(){
      says nothing whatever about how well they did. */
   const best=bestReading(rows);
   const badges=store.collection.badges||{};
-  const stat=(fig,word,label)=>
-    `<span class="rstat"><b>${fig}</b><em>${word}</em><i>${label}</i></span>`;
+  const stat=(fig,word,label,tiers)=>
+    `<span class="rstat"><span class="rstat-top"><b>${fig}</b><em>${word}</em><i>${label}</i></span>`
+    +`${rungTrack(tiers)}</span>`;
   /* ONE reading, and it names itself. two changes here.
      `16/16 at clean` is gone. a finished day frees about fourteen of the sixteen
      features, so the counter reaches 16/16 inside two or three days and then
@@ -9383,7 +9449,8 @@ function openRecord(){
     const {fig,word}=shown;
     $('recstats').innerHTML=stat(fig,word,
       !todayR ? 'your best day'
-      : (best && best.rungs===todayR.rungs && todayR.key>=best.key) ? 'today · your best' : 'today');
+      : (best && best.rungs===todayR.rungs && todayR.key>=best.key) ? 'today · your best' : 'today',
+      shown.tiers);
   } else {
     /* no scored day anywhere: say what a day IS rather than print a dash. this
        is the whole of the old `—`, which meant "no data" and read as a minus. */
