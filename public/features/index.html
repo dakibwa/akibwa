@@ -1651,12 +1651,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* the readings these cards stopped printing. on the net card: features freed
      was a count of the stamps directly beneath it, the strength tally had no key
      anywhere on the card, and clean-so-far and turns-today are DAY facts on a
-     card about one net. on the day card: today's set, clean and the streak, all
-     three of which are drawn or written within an inch of the row that repeated
-     them — the title and the numeral say the set is complete and how deep it
-     went, the sub line says the clean count, and the masthead carries the streak.
-     cut from the drawing, kept for the reader, because a screen reader has no
-     masthead glance and no board to count stamps off. */
+     card about one net. on the day card: today's set, clean and the streak, none
+     of which this card has to print — the title and the numeral say the set is
+     complete and how deep it went an inch above, the sub line says the clean
+     count, and the streak is the welcome back card's own headline, `n days
+     running`, from when the session opened. cut from the drawing, kept for the
+     reader, because a screen reader has no glance back at a card already
+     dismissed and no board to count stamps off. */
   .bulletin .bquiet{position:absolute;width:1px;height:1px;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
@@ -2595,7 +2596,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
          down a scroll, so you can read it for a minute and not know you are four
          short. this is the only view of the set as a whole, and it doubles as
          the legend for the stamps in the rows underneath it. everything else
-         that used to sit up here — a streak the masthead already carries, a
+         that used to sit up here — a streak the welcome back card carries, a
          best depth left over from when a run was open-ended, a count of days
          the days themselves answer — was furniture, and is gone. -->
     <div class="featrow" id="recfeatrow" role="img"></div>
@@ -10067,10 +10068,22 @@ function renderHud(){
      the element is gone and so is the reading: the trial case is what setlabel
      above already switched the third bay to, and the over case arrives as a card
      over the board. see the note where .unit-feet used to be. */
+  /* the button says the date and stops there. the streak used to ride on the end
+     of it — `15 aug · 5` — and a bare numeral after a two-part date reads as a
+     third part of the date rather than as a count of days. labelling it here was
+     never the answer: this is one of three controls sharing the head's right
+     edge, and on a phone they are already 34px squares that had to give width
+     back to keep the row inside the panel (see .btns .help there).
+     the reading is not lost with it, which is why it could go rather than move.
+     the welcome back card leads with it as `n days running`, once a day, at the
+     moment coming back is the thing the number measures; the cleared day card
+     keeps it in .bquiet for a reader with no masthead to glance at. the title
+     drops it too — a tooltip naming a reading the button does not show is the
+     same fragment with a label bolted on where nobody reading the button is
+     looking. */
   const d=new Date(), mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-  $('statusdate').textContent=`${d.getDate()} ${mo[d.getMonth()]}`+((store.meta.streak||0)>0?` · ${store.meta.streak}`:'');
-  $('histbtn').title=`the record · ${d.getDate()} ${mo[d.getMonth()]}`
-    +((store.meta.streak||0)>0?` · streak ${store.meta.streak}`:'');
+  $('statusdate').textContent=`${d.getDate()} ${mo[d.getMonth()]}`;
+  $('histbtn').title=`the record · ${d.getDate()} ${mo[d.getMonth()]}`;
 }
 function renderAll(){
   buildNet(); renderHud(); refresh(); startPhysics(); renderTutorial();
