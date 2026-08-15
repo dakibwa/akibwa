@@ -1836,8 +1836,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .rstat .track{margin-top:7px}
   .rstat .track > i{transition:none}
   .rstat em{font-style:normal;font-size:11px;letter-spacing:.06em;color:var(--ink)}
-  .rstat i{font-style:normal;font-size:9px;letter-spacing:.12em;color:var(--ink-soft)}
-  .rstat i::before{content:'·';margin-right:5px;opacity:.55}
+  /* SCOPED TO THE TOP LINE, and it has to be. the tail is an `i` and so is every
+     cell of the track under it — ten of them, all descendants of .rstat — so
+     `.rstat i` reached into the bar and hung a `·` inside each cell, which drew
+     as a row of little dots along a reading that is meant to be one clean
+     length. the bay's own two elements are the line and the track, and a rule
+     written for one of them names it. */
+  .rstat-top i{font-style:normal;font-size:9px;letter-spacing:.12em;color:var(--ink-soft)}
+  .rstat-top i::before{content:'·';margin-right:5px;opacity:.55}
 
   /* ---------- the sixteen ----------
      one row, pinned, and the whole of what used to be a panel up here. a found
