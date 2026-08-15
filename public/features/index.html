@@ -8343,6 +8343,23 @@ function clearNet(){
   const setDone = !isTrial() && r.cleared.length>=POLICY.dailyNets;
   if(setDone) r.over=true;
   else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false }
+  /* WHAT THE CARD WILL SAY, READ NOW. the cleared card is deferred by the beat
+     at the foot of this function, and one of the things that can happen in the
+     1.6 seconds between is this very function ending the tutorial: endTutorial
+     resets the run so the day starts clean, which empties r.cleared and zeroes
+     the turns the card was about to report. the card used to read the run at
+     the moment it DREW, found the net it was describing gone, and returned
+     without drawing — so the last guided net ended with no card, no `continue
+     →`, and nextNet is the only thing that builds the next board. the tutorial
+     dead-ended on a solved board, and only a reload got out of it.
+     the reading is taken here instead, while the net it describes is still the
+     run's own state, and handed to the card. `run` is the run OBJECT: the card
+     is about that run and no other, and identity is the honest test — a new run
+     is a new object, while the tutorial's reset mutates this one in place. */
+  const read={run:r, num:r.netIndex, turns:r.turns||0,
+              depth:r.cleared.length,
+              assisted:!!r.cleared[r.cleared.length-1].assisted,
+              clean:r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length};
   resetDescent();
   const depth=r.cleared.length;
   if(isTrial()) store.meta.bestTrialDepth=Math.max(store.meta.bestTrialDepth||0,depth);
@@ -8363,7 +8380,13 @@ function clearNet(){
      three arrive as three nets rather than as one net that changed its mind. */
   if(wasTutorial){
     tutReach(3);
-    if(r.netIndex>=TUTNETS.length-1) endTutorial();
+    /* netIndex was advanced above, so it is already the index of the net the
+       player is about to be given — the run has left the tutorial when that
+       index is past the end of TUTNETS. it read `length-1`, which ended the
+       tutorial one net early: three lessons were written and only two were ever
+       played, so the pin — the one rule you cannot discover by dragging, since
+       the neuron simply refuses — was never taught at all. */
+    if(r.netIndex>=TUTNETS.length) endTutorial();
     else { tutStepAt=1; }
   }
   save();
@@ -8383,7 +8406,7 @@ function clearNet(){
      bulletins, in the same corner, for one moment, the first of them offering a
      net that no longer existed. the day card carries the net's own reading
      inside its totals, so it simply arrives instead, off the same beat. */
-  const card = setDone ? showRunOver : (()=>showNetCleared(feats,tier,wasTutorial));
+  const card = setDone ? showRunOver : (()=>showNetCleared(feats,tier,wasTutorial,read));
   /* under reduced motion the sign is already drawn the instant the thread frees
      and nothing is in flight, so there is nothing to hold FOR: the card keeps
      the 260 it always had and not one millisecond of the beat is scheduled. */
@@ -8608,13 +8631,17 @@ function fillSignInInvite(){
     });
   });
 }
-function showNetCleared(feats,tier,wasTutorial){
-  const r=R();
-  const last=r.cleared[r.cleared.length-1];
-  // the card is shown on a timer, and the run it describes can be gone by then
-  // — a new run, an archive day, a trial. it has nothing to say about a run
-  // that no longer exists.
-  if(!last) return;
+function showNetCleared(feats,tier,wasTutorial,read){
+  /* the card is shown on a timer, and the run it describes can be gone by then
+     — a new run, an archive day, a trial. it has nothing to say about a run
+     that no longer exists.
+     it used to test that the net it was about to describe was still the last
+     entry in r.cleared, which is the one thing the tutorial ending takes away
+     while leaving the run itself standing — so the one card the tutorial cannot
+     afford to lose was the only card that never drew. the test is the run's own
+     identity now, and everything the card reports comes off the reading taken
+     when the net was won (see clearNet). */
+  if(!read || read.run!==R()) return;
   const strengthOf=k=>{const t=threads.find(x=>x.key===k);return t?t.strength:2};
   /* the strength tally under each label went with the rest. three block glyphs
      with no key anywhere on the card read as an artefact rather than a reading,
@@ -8623,11 +8650,10 @@ function showNetCleared(feats,tier,wasTutorial){
     const b=store.collection.badges[k];
     return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false)}<span>${k}</span></div>`;
   }).join('')}</div>`;
-  const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   // the cut readings, kept for the reader — see .bquiet
   const quiet=`<p class="bquiet">${feats.length} features freed: `+
     `${feats.map(k=>k+' '+['','faint','clear','dominant'][strengthOf(k)]).join(', ')}. `+
-    `${cleanN} of ${r.cleared.length} clean so far. ${r.turns||0} turns today.</p>`;
+    `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
     strip:TIERCOL[tier],
     /* THE TIER LEADS. it used to sit in the sub, one grey word under `net
@@ -8643,8 +8669,8 @@ function showNetCleared(feats,tier,wasTutorial){
        something the tier name can tell you, and it is the reason this one could
        not mint above done. */
     sub:(wasTutorial?'you untangled it':'net cleared')
-        +(last.assisted?' · settled with descent':''),
-    num:String(r.netIndex).padStart(2,'0'),
+        +(read.assisted?' · settled with descent':''),
+    num:String(read.num).padStart(2,'0'),
     /* NO ROW. the turns were the last thing on this card measuring the net in a
        currency the game no longer scores in: the day is counted in rungs, so
        what matters at the moment of winning is which rung, and that is now the
@@ -8677,7 +8703,7 @@ function showNetCleared(feats,tier,wasTutorial){
        just earned, and a line telling them it gets harder is the game talking
        over its own reward. the assisted note stays, because it names a
        consequence that is nowhere on the board. */
-    note:last.assisted ? 'untangle the next one unaided for a clean badge.' : '',
+    note:read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
     /* one action, and it goes forward. `stop for today` sat beside it and was an
        invitation to put the game down at the exact moment the player had just
