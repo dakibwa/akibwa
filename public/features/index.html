@@ -1797,8 +1797,32 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     padding:13px 18px;border-bottom:1px solid var(--ink);
   }
   .rec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase;line-height:1}
-  .rec-close{font-size:11px;letter-spacing:.14em;color:var(--ink-soft);text-decoration:none;text-transform:lowercase}
-  .rec-close:hover{color:var(--ink)}
+  /* ---- the way out is a button, the same one the masthead draws ----
+     it was a text link, and `play →` on a day row was a bordered chip, and the
+     three controls in the masthead were hairline boxes: three treatments for
+     the same act of pressing something, on two screens the player moves between
+     constantly. the material is `.help`'s — a --silver hairline, ink-soft type,
+     ink on hover, and the asymmetric press — and it is written once here for all
+     three so they cannot drift apart again. what differs between them is SIZE
+     and nothing else: a masthead button is 34px because it stands alone in a
+     row of its own, a row's chip is smaller because a list of forty of them at
+     34px would be a wall of boxes.
+     `.help` keeps its own copy of these values rather than joining the list: it
+     also carries [hidden], a min-width and the caltext, and folding all of that
+     in here to save four declarations would put the masthead's layout inside a
+     rule about the record. if the material moves, it moves in both. */
+  .rec-close,.dstate{
+    border:1px solid var(--silver);color:var(--ink-soft);text-decoration:none;
+    transition:border-color var(--t-ui),color var(--t-ui),
+               transform var(--t-lift) var(--ease-out);
+  }
+  .rec-close:hover,.dayrow.open:hover .dstate{border-color:var(--ink);color:var(--ink)}
+  .rec-close:active{transform:scale(.93);
+    transition-duration:var(--t-ui),var(--t-ui),var(--t-press)}
+  .rec-close{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    height:34px;padding:0 11px;font-size:11px;letter-spacing:.14em;text-transform:lowercase
+  }
   /* a line, not a block: the numerals sit beside their labels on the title's
      own baseline, which is the difference between a reading and a dashboard */
   .rec-right{display:flex;align-items:baseline;gap:16px;margin-left:auto;min-width:0}
@@ -2113,12 +2137,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dayrow.open:hover{border-color:var(--ink)}
   /* the one chip left on a row: `play →` on a day still open to you. it takes
      the slot the cells take on a played row, so the right edge of the list is
-     one column whatever the row is. */
-  .dstate{flex:0 0 auto;margin-left:auto;display:flex;align-items:center;gap:5px;
-    font-size:9px;letter-spacing:.11em;text-transform:lowercase;color:var(--ink-soft);
-    border:1px solid var(--rule);padding:3px 7px}
-  .dayrow.open .dstate{color:var(--ink);border-color:var(--silver)}
-  .dayrow.open:hover .dstate{border-color:var(--sig-hellblau);color:var(--sig-hellblau)}
+     one column whatever the row is.
+     the border, the ink and the hover come off the shared control block by
+     .rec-close — this sets the SIZE, which is the only thing a row's button
+     needs to differ in. the hover used to turn the chip hellblau while the row
+     around it turned ink: one press, two colours, and the blue was the row's
+     only signal hue at rest. it takes ink now, with the row. */
+  .dstate{flex:0 0 auto;margin-left:auto;display:inline-flex;align-items:center;
+    justify-content:center;gap:5px;height:24px;padding:0 9px;
+    font-size:9px;letter-spacing:.11em;text-transform:lowercase}
+  .dayrow.open .dstate{color:var(--ink)}
   .runempty{
     border:1px dashed var(--silver);padding:17px 15px;text-align:center;
     font-size:11.5px;letter-spacing:.07em;color:var(--ink-soft);text-transform:lowercase;line-height:1.6
