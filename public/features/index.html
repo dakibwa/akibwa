@@ -376,9 +376,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   /* every control answers the keyboard the same way. there was no focus style
-     at all, and the UA default is close to invisible on this ground. */
+     at all, and the UA default is close to invisible on this ground.
+     `.rec-btn` was missed when the record's head was built — the close beside it
+     was listed and the two chips next to it were not, so tabbing through that
+     head went dark for two stops and lit for the third. it matters more now
+     there is a control up there whose whole state is which way a glyph faces. */
   .help:focus-visible,.act:focus-visible,.wbtn:focus-visible,.intro-start:focus-visible,
-  .devtab:focus-visible,.rec-close:focus-visible,.dayrow:focus-visible,.archlink:focus-visible{
+  .devtab:focus-visible,.rec-close:focus-visible,.rec-btn:focus-visible,
+  .dayrow:focus-visible,.archlink:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
 
@@ -676,8 +681,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      the floor under a segment (below) can never push the bar longer than the
      number it is drawing, and a bar drained to nothing draws nothing at all —
      which is the one thing the old version got wrong. empty has to be empty.
-     it is the beat before the finish flood and the strongest the instrument has;
-     three surviving pixels of colour make it look broken rather than complete. */
+     it is what a cleared net leaves standing all through the beat, and the
+     strongest thing this instrument ever says; three surviving pixels of colour
+     make it look broken rather than complete. */
   .run{
     display:flex;flex:0 0 auto;height:100%;min-width:0;overflow:hidden;
     transition:width var(--t-ui) var(--ease-out)
@@ -1793,8 +1799,23 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        the one thing the rows kept when their ladder became a bar — see
        .track.dtrack, where the same two measurements decide the same thing. */
   }
+  /* IT WRAPS AGAIN, and only when it has to. this head is a title plus up to
+     four controls, and the fourth — the ground square — is what tipped the
+     narrowest case over: at 375 the card gives the row 323px, and title +
+     `collection` + `full version` + ground + close want 372. with nowrap the
+     flexbox pays for that by deforming everything at once, which is what it did
+     — the title broke onto two lines, `full version` lost 17px of its box, and
+     both 34px squares came out 26.5 wide, which is a square that is not one.
+     wrapping spends the same shortfall in one place instead: the controls drop
+     to a line of their own at full size, and the head gets 26px taller on the
+     one screen where that is the cheapest thing it owns.
+     it engages nowhere else. `full version` is drawn only where there is a till
+     (`canBuy`), so the everyday narrow head is three items wanting 257 of 323
+     and stays on one line, and at 640px the card has 602 for a row that wants
+     363. this is the graceful end of a range, not a layout. */
   .rec-head{
-    flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;
+    justify-content:space-between;gap:12px;
     padding:13px 18px;border-bottom:1px solid var(--ink);
   }
   .rec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase;line-height:1}
@@ -1812,73 +1833,97 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      also carries [hidden], a min-width and the caltext, and folding all of that
      in here to save four declarations would put the masthead's layout inside a
      rule about the record. if the material moves, it moves in both. */
-  .rec-close,.dstate{
+  .rec-close,.rec-btn,.dstate{
     border:1px solid var(--silver);color:var(--ink-soft);text-decoration:none;
     transition:border-color var(--t-ui),color var(--t-ui),
                transform var(--t-lift) var(--ease-out);
   }
-  .rec-close:hover,.dayrow.open:hover .dstate{border-color:var(--ink);color:var(--ink)}
-  .rec-close:active{transform:scale(.93);
+  .rec-close:hover,.rec-btn:hover,.dayrow.open:hover .dstate{border-color:var(--ink);color:var(--ink)}
+  .rec-close:active,.rec-btn:active{transform:scale(.93);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-press)}
-  .rec-close{
+  .rec-close,.rec-btn{
     display:inline-flex;align-items:center;justify-content:center;gap:7px;
-    height:34px;padding:0 11px;font-size:11px;letter-spacing:.14em;text-transform:lowercase
+    height:34px;font-size:11px;letter-spacing:.14em;text-transform:lowercase
   }
-  /* a line, not a block: the numerals sit beside their labels on the title's
-     own baseline, which is the difference between a reading and a dashboard */
-  .rec-right{display:flex;align-items:baseline;gap:16px;margin-left:auto;min-width:0}
-  .recstats{display:flex;align-items:baseline;gap:14px;min-width:0}
-  /* ---- the head is a BAY, the same instrument the masthead draws three of ----
-     it was a figure and two clauses on the title's baseline: the reading in
-     words, with the picture of it left downstairs in the day rows. so the one
-     screen whose subject is how you did drew the score as a caption, while the
-     board — where the score is not the subject — drew it as an instrument.
-     it is that instrument now. figure and words on one line, the day's ten
-     underneath in the rung each net minted, which is the masthead's own
-     `.unit-top` over `.track` and no new form invented here. the two readings
-     stop disagreeing about which of them is the picture: the numeral says how
-     many are clean or better, and the bar under it says WHICH, in the colours
-     the whole game already scores in. */
-  .rstat{display:flex;flex-direction:column;min-width:190px;
-    font-size:8.5px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
-  .rstat-top{display:flex;align-items:baseline;gap:5px;white-space:nowrap;min-width:0}
-  /* the score is the screen's subject, so it is drawn as one. it used to be
-     13px/400 — smaller and lighter than the word "record" beside it, and smaller
-     than the close button, on a screen whose entire job is telling you how you
-     did. 300-weight tabular was the run card's and the share plate's numeral
-     voice, and it was the right borrowing while this was a line of type. now
-     that it stands over a track it takes the voice of the bay it has become —
-     the masthead's own figure face, the black one the wordmark is set in, at the
-     size this head already had so nothing below it moves.
-     the figure carries no tracking: tracking is for words. */
-  .rstat b{font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size:23px;font-weight:800;letter-spacing:-.05em;line-height:1;
-    color:var(--ink);font-variant-numeric:tabular-nums}
-  /* the bay's own track, and the ONE difference from the masthead's: this one
-     is a finished reading rather than a live one, so it does not animate. a
-     record cell easing into its colour would be a rung being minted, and
-     nothing is being minted on this screen. */
-  .rstat .track{margin-top:7px}
-  .rstat .track > i{transition:none}
-  .rstat em{font-style:normal;font-size:11px;letter-spacing:.06em;color:var(--ink)}
-  /* SCOPED TO THE TOP LINE, and it has to be. the tail is an `i` and so is every
-     cell of the track under it — ten of them, all descendants of .rstat — so
-     `.rstat i` reached into the bar and hung a `·` inside each cell, which drew
-     as a row of little dots along a reading that is meant to be one clean
-     length. the bay's own two elements are the line and the track, and a rule
-     written for one of them names it. */
-  .rstat-top i{font-style:normal;font-size:9px;letter-spacing:.12em;color:var(--ink-soft)}
-  .rstat-top i::before{content:'·';margin-right:5px;opacity:.55}
-
+  .rec-btn{padding:0 13px}
+  /* the `display:inline-flex` above outranks the user agent's own
+     `[hidden]{display:none}`, so a `hidden` button stays on screen — the same
+     scar `.help`, `.act`, `.bfoot` and `.devchip` all carry a line for. it bites
+     hardest here because the thing that would not hide is an offer to take
+     money, shown to somebody who has already paid. */
+  .rec-btn[hidden]{display:none}
+  /* SQUARE, and that is the whole point of dropping the word. a cross in a
+     34×34 box is a control; a cross on the end of `close` in a wide box is a
+     word with a decoration after it. the glyph needs more than 11px type to
+     carry a button on its own.
+     no ::before nudge here, and that was the first attempt: this is a flex
+     container, so a pseudo-element is a second FLEX ITEM and centring two of
+     them puts the cross off to one side. `line-height:1` is what actually
+     centres it — the glyph's own line box is what was off, not its position. */
+  .rec-close{width:34px;padding:0;font-size:17px;line-height:1;letter-spacing:0}
+  /* the same square for a button whose mark is DRAWN rather than set. it takes
+     only the two declarations that make the box square, because the other three
+     above are about a glyph that is type — `×` needs 17px and a corrected line
+     box to sit in the middle of 34, and an svg sized in css needs neither.
+     it has to come after `.rec-btn`'s `padding:0 13px`: same specificity, so
+     source order is the whole of what decides it. */
+  .rec-sq{width:34px;padding:0}
+  /* A SQUARE IS AN OBJECT AND DOES NOT DEFORM. flex-shrink is 1 by default, so
+     a `width:34px` in a tight row is a suggestion — both of these came out 26.5
+     wide the first time the head was over-subscribed, and a 26.5×34 box with a
+     circle in it says nothing about anything. the row gives elsewhere: the
+     words shrink first and past that the head wraps, which are both losses you
+     can look at. */
+  .rec-close,.rec-sq{flex:0 0 auto}
+  /* the controls sit on their own centre line rather than the title's baseline.
+     the stats block that used to share this row was type, so a baseline was
+     right for it; two buttons of the same height are objects, and objects line
+     up on their middles. */
+  .rec-right{display:flex;align-items:center;gap:8px;margin-left:auto;min-width:0}
   /* ---------- the sixteen ----------
      one row, pinned, and the whole of what used to be a panel up here. a found
      feature wears its own plate with a band under it in the tier it was minted
      at; an unfound one is a hairline square with a cross in it, which says
      unidentified without giving the sign away. the plates are what make it a
      legend as well as a tally: a stamp in a row below is the same drawing. */
-  .featrow{
-    flex:0 0 auto;display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;
-    padding:11px 18px 12px;border-bottom:1px solid var(--rule);
+  /* ---------- the collection ----------
+     SEVEN COLUMNS, FIXED, and neither of the two numbers that stood here before
+     was one. it began as `repeat(16, 1fr)` — a cast size written into the
+     stylesheet, which had to be edited every time the cast changed. it then
+     took `--cols` from the render as ceil(sqrt(n)), which was square at any
+     cast but made the SHAPE of the screen a reading of how many features happen
+     to exist: four wide today, five the morning a seventeenth landed, and the
+     player's collection re-laid-out under them by a change that was about the
+     game and not about this card.
+     seven is a target rather than a reading — 7×7 is forty-nine, the cast this
+     is aimed at — so it is written here, once, and does not move again.
+     ONLY THE FEATURES THAT EXIST ARE DRAWN. sixteen fills two rows and starts a
+     third, which is ragged and is the honest shape: the alternative is
+     forty-nine slots of which thirty-three can never be filled by any board the
+     game can generate, under a caption counting to sixteen. the day the cast
+     reaches forty-nine this becomes a true 7×7 with nothing changed here.
+     the cells shrink as the columns rise — about 145px at four, about 80px at
+     seven on the 640px card — which is why the emblems are drawn as flat signs
+     rather than as illustrations.
+     it scrolls like the day list it replaces on screen, and for the same reason:
+     the card is a fixed height and the thing inside it is not. */
+  .collection{
+    flex:1 1 auto;min-height:0;overflow-y:auto;padding:14px 18px 18px;
+    display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:7px;align-content:start;
+  }
+  /* BOTH VIEWS NEED THIS and the day list has needed it since the moment it
+     could be hidden: `display:grid` and `display:flex` each outrank the user
+     agent's `[hidden]{display:none}`, so setting the attribute hides neither.
+     the failure is the two views stacked — the collection printed underneath a
+     day list that believed it was gone — and it is the same scar `.help`,
+     `.act`, `.bfoot`, `.devchip` and `.rec-btn` all carry a line for. */
+  .collection[hidden],.daylist[hidden]{display:none}
+  /* the caption spans the grid rather than sitting above it, so it scrolls with
+     the cells instead of pinning a line of type to the top of a square. */
+  .colcap{
+    grid-column:1/-1;margin:0 0 3px;
+    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
   }
   .fcell{display:block;min-width:0;border-bottom:3px solid var(--tc,var(--rule));transition:filter var(--t-ui)}
   .fcell svg{display:block;width:100%;height:auto}
@@ -2062,6 +2107,35 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dayrow.shut .ddet,.dayrow.open .ddet{max-width:none}
   .dayrow.shut:hover{border-color:var(--rule)}
   .dayrow.shut:hover .ddet{color:var(--ink)}
+  /* ---------- a day you have already had your run at ----------
+     IT IS NOT DRESSED AS SHUT ANY MORE, and that is the whole of what changed
+     here. it was dashed with the date a step back in ink — the card's idiom for
+     "not available to you", borrowed from .shut on the argument that a second
+     kind of closed should not make the reader learn a second mark. the argument
+     was sound and the premise was wrong: this row is not closed. the day was
+     played, the row is the record of it, and a free player has been refused
+     nothing — a new set of ten arrives every day and that is the finished game.
+     dressing their own record as spent was the free tier drawn as a punishment,
+     on the one screen they look at their history.
+     WHAT IS WITHHELD IS THE REPLAY, so the replay wears the mark: the chip on
+     the right of this row is dashed, and the row around it draws exactly like
+     the same row does for somebody who has paid. see .dreplay.shut. one fact,
+     one mark, at the size of the thing the money actually buys — and it puts
+     the idiom on an object small enough that a hundred of them would still not
+     make a shop out of a list.
+     WHAT SURVIVES IS THE BEHAVIOUR, which was never about ink: a border lifting
+     to silver is the promise .open makes, that pressing this starts a run, and
+     this row must not make it, because pressing it answers in words instead. so
+     the hover moves the detail and the keyline holds still — the same contract
+     .shut has, minus the drawing. TODAY is exempt and has to be: .today is ink
+     and outranks whatever else a row is, but a :hover carries more weight than a
+     plain pair of classes, so an unqualified rule here would drop today's own
+     keyline to a hairline under the pointer.
+     it keeps the played row's 47% detail cap, which .shut lifts: this row has
+     the day's ten drawn on its right and a detail that grows into them is the
+     crowding that cap exists to stop. .shut has nothing there to crowd. */
+  .dayrow.spent:not(.today):hover{border-color:var(--rule)}
+  .dayrow.spent:hover .ddet{color:var(--ink)}
   /* ---------- your best day ----------
      the month spine stood here and is gone with the long list it navigated.
      what closes the list now is the one reading that still scans the whole of
@@ -2071,21 +2145,19 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      so it is NOT a row. it is a rule with a reading on it: no keyline, no
      surface, no field — a hairline above and type sitting on it, which is the
      mark this whole card is made of and the one shape here that cannot be
-     mistaken for a day you could press. the reading goes hard right, in the
-     column the played rows put their ten cells in, so the card keeps one right
-     edge down its whole length.
-     the figure takes the day rows' own weight rather than the head's black:
-     the head is today and has to win, and a best day set in the same face
-     would be a second headline at the bottom of the card. */
+     mistaken for a day you could press.
+     IT NAMES A DAY AND NO LONGER SCORES IT. the score went hard right in the
+     column the played rows draw their ten cells in — and it was the third place
+     on one card saying how a day went, after the head and the day's own row.
+     what is left is the only thing this line was ever the answer to: WHICH day
+     was your best. how well it went is in that day's row, in the cells, and on
+     a two-row list that row is usually still on screen. */
   .daybest{
     display:flex;align-items:baseline;gap:9px;margin-top:9px;padding-top:10px;
     border-top:1px solid var(--rule);
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
   }
   .daybest .dbwhen{font-variant-numeric:tabular-nums;letter-spacing:.07em}
-  .daybest .dbread{margin-left:auto;white-space:nowrap;color:var(--ink-soft)}
-  .daybest .dbread b{font-weight:700;font-size:11px;color:var(--ink);
-    font-variant-numeric:tabular-nums;letter-spacing:0}
   .dayrow .dtier{flex:0 0 auto;width:7px;align-self:stretch;background:var(--tc,var(--rule))}
   .dayrow .ddate{flex:0 0 auto;width:78px;padding:11px 0;
     font-size:10.5px;letter-spacing:.07em;text-transform:lowercase;font-variant-numeric:tabular-nums}
@@ -2127,8 +2199,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      rungs out. what goes is the greyscale channel, and it goes knowingly. the
      share plate keeps its height ladder and should — see SHAREFILL, where the
      reading has to survive a feed's thumbnail with no words anywhere near it. */
+  /* IT GROWS NOW. it was 92px pinned to the right edge, because the middle of
+     the row was carrying the same reading in words and the bar was the smaller
+     of two statements of one fact. the words are gone, so the picture takes the
+     column: `flex:1 1 auto` rather than a fixed width, with a floor so a row
+     that DOES still have something to say in words — a short set, a trial, an
+     archived day — keeps a bar long enough to read as ten of anything.
+     `margin-left:auto` had to go with the fixed width. an auto margin on a flex
+     item eats the free space before flex-grow ever sees it, so the two together
+     are a bar that never grows; the gap is a real margin now. */
   .track.dtrack{
-    flex:0 0 auto;margin-left:auto;margin-top:0;width:92px;height:10px;
+    flex:1 1 auto;margin-left:16px;margin-top:0;min-width:92px;height:10px;
     /* the track's own ground is --rule, and --rule on --surface measures 1.28
        on the dark ground and 1.46 on the light: no mark at all, which is what
        the note on .record already says of that pair. on the masthead the track
@@ -2137,17 +2218,32 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        the ground goes and the unreached cells carry themselves, below. */
     background:transparent;
   }
-  /* a net the day never reached is a HAIRLINE, and it is the only place this
-     parts from the head's bar. silver measures 2.97 against this surface on the
-     dark ground and 4.31 on the light, it is nobody else's now that no rung is
-     a neutral, and it is the mark the ladder already used here for the same
-     measured reason. it is also the ladder's one distinction worth keeping: the
-     hairline is a hairline and every rung is a block, so a day left short reads
-     as short rather than as a bar that happens to stop.
-     no gaps between these either, so four unreached nets draw one hairline four
+  /* a net the day never reached is a BARE BLOCK, the same as the masthead's own
+     track and for the owner's own reason: the two instruments are the same
+     object and were not reading as it. the masthead draws the day ahead as a
+     grey length the coloured run eats into, and this drew it as a 1px hairline —
+     so the bar a player meets on the board and the bar they meet in the record
+     said the same thing in two different shapes.
+     IT IS --rule, the masthead's own token, and the note that used to sit here
+     rejected it on a measurement taken for the wrong shape. 1.28 on the dark
+     ground and 1.46 on the light are the numbers for a HAIRLINE, where they are
+     indeed nothing; the same pair under a 10px block two hundred wide is a
+     plainly visible field, because a large area needs a fraction of the contrast
+     a thin line does. silver was the honest answer to the old question and the
+     wrong answer to this one — on the light ground it comes out DARKER than the
+     rungs it is a ground for, so the bar reads as filled where it is empty and
+     empty where it is filled. --rule sits under the colour on both grounds,
+     which is the relationship the masthead has and the reason this matches it.
+     WHAT IT COSTS, since the hairline was a decision and not an oversight: a
+     hairline is unmistakably not a rung, and a block is a rung's shape. a day
+     left at six now draws a full-width bar with four grey cells rather than a
+     bar that visibly stops short. filled-against-bare is still the reading —
+     it is the masthead's reading — but it is now carried by colour alone where
+     it used to be carried by shape as well.
+     no gaps between them, so four unreached nets draw one grey length four
      cells long — the same grammar the coloured runs follow. */
-  .track.dtrack > i:not(.on){align-self:center;height:1px;background:var(--silver)}
-  /* a finished reading and not a live one, exactly as .rstat .track has it: a
+  .track.dtrack > i:not(.on){background:var(--rule)}
+  /* a finished reading and not a live one: a
      cell easing into its colour is a rung being minted, and nothing is minted
      on this screen. it matters here as well as there, because a ground flip
      changes what every --fill resolves to. */
@@ -2186,10 +2282,63 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     justify-content:center;gap:5px;height:24px;padding:0 9px;
     font-size:9px;letter-spacing:.11em;text-transform:lowercase}
   .dayrow.open .dstate{color:var(--ink)}
-  .runempty{
-    border:1px dashed var(--silver);padding:17px 15px;text-align:center;
-    font-size:11.5px;letter-spacing:.07em;color:var(--ink-soft);text-transform:lowercase;line-height:1.6
+  /* square, and the margin is real rather than `auto`: the bar beside it is
+     `flex:1 1 auto`, and an auto margin would eat the free space before the bar
+     could grow into it — the same pairing that kept the bar at 92px until it
+     was untangled. the glyph carries a chip on its own so it takes more than
+     the 9px the worded chips are set in. */
+  .dreplay{width:24px;padding:0;margin-left:10px;font-size:13px;letter-spacing:0}
+  /* the one row with no bar to push it: a legacy save shape with no stored
+     rungs draws nothing in the bar's column, and a real 10px margin then leaves
+     the chip sitting against the end of the detail instead of at the row's
+     right edge, where every other row's right-hand object is. this is the auto
+     margin only that row needs, and it cannot reach a row that has a bar. */
+  .dayrow .ddet + .dreplay{margin-left:auto}
+  /* ---------- the replay you have not bought ----------
+     the chip is drawn on every played row now, because it is the product: a
+     buyer who never sees it never finds the thing they paid for, and a free
+     player who sees their row apologise instead is being told the game they are
+     playing is the broken half of a better one. it is neither. so the row draws
+     what money adds, and this is the mark for "not yours yet".
+     IT IS DASHED AND THAT IS ALL, which is exactly .wbtn.shut and .dayrow.shut
+     and the archive line at the foot of this list. dashed means shut and means
+     nothing else anywhere in this game, so the reader has no second idiom to
+     learn — and the three rules AGENTS.md draws round this are all kept by
+     drawing nothing: no lock glyph, because a lock on a day you PLAYED reads as
+     a day taken away from you rather than one you finished; no field, because a
+     saturated field on a row is the single thing that got the archive rows
+     deleted the first time; and no press to checkout, because the chip is a span
+     inside the row and the row answers in words. the ink does not step back with
+     the keyline: --ink-soft is already the resting colour of every chip here,
+     and the step below it is --silver, which measures 3.1 against this row's own
+     ground on the dark theme — a 13px glyph in it is a mark you have to hunt
+     for, and a locked thing still has to be visible to read as locked.
+     it keeps a hover, for .wbtn.shut's reason: it is shut, not disabled, and it
+     does answer when pressed. the ink lifts and the keyline holds still, so it
+     never lights up as though it were about to start a run. the live chip does
+     the opposite and both move, because the row under it genuinely does. */
+  .dreplay.shut{border-style:dashed}
+  .dayrow:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
+  .dayrow:hover .dreplay.shut{color:var(--ink)}
+  /* the day's ten on the card that offers the day. it is `.track` at the card's
+     own measure — a little taller than a row's, because here it is the subject
+     rather than a column of a list, and the card has the room a row does not. */
+  .askrungs{margin:14px 0 2px}
+  /* the count sits under the bar and hard right, in the quietest ink the card
+     has. it is a reading rather than a sentence, so it takes the numeral voice
+     the rest of the game gives readings — tabular, so a 9 and a 10 do not shift
+     the line under them. */
+  .askruns{
+    text-align:right;margin-top:5px;
+    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums;
   }
+  /* the row's own geometry comes off it here. `.dtrack` is built to sit at the
+     end of a day row — a 16px gutter from the date and a 92px floor so it stays
+     readable when a clause crowds it — and neither applies on a card where it
+     is the only thing on its line. */
+  .askrungs .track.dtrack{margin:0;min-width:0;height:12px}
+  .askrungs .track > i{transition:none}
 
   /* the rules card is read, not admired: one column, no artwork plate.
      it is also a reference you come back to, not a lesson — the guided net does
@@ -2237,16 +2386,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      three instead of ten, with the words under their own thirds. see
      rungLadder() for why it is a divided length rather than three swatches and
      why the names stay in ink.
-     the one difference from the masthead's, and the same one .rstat takes: it
+     the one difference from the masthead's: it
      does not animate. a cell easing into its colour is a rung being minted, and
      nothing is minted on a card that only explains what minting is. */
   .rladder{margin-top:15px}
   .rladder .track{margin-top:6px}
   .rladder .track > i{transition:none}
-  .rlcap{display:block;font-size:11px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
   .rlnames{display:grid;grid-template-columns:repeat(3,1fr);margin-top:7px}
   /* named rather than `.rladder i`, because every cell of the track above is an
-     `i` too — the scar .rstat-top carries, and it draws the same way here. */
+     `i` too, so an unscoped rule reaches into the bar and hangs a `·` inside
+     every cell of it. a rule written for one element names it. */
   .rlnames > i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--ink);text-transform:lowercase}
   .intro-lead{font-size:14px;line-height:1.55;margin-top:14px}
   .wbstats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0 0;border-top:1px solid var(--ink)}
@@ -2394,8 +2543,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
     /* a vertical list of days should be at its best on a phone, so nothing
        here reflows the row — it stays one line and the margins give instead.
-       the sixteen fold to two rows of eight; sixteen cells across 315px would
-       be 16px each, which is a colour chip rather than a sign. */
+       the collection's phone treatment used to be described here too, from
+       when it was a strip pinned above the list that folded to two rows of
+       eight. it is a view of its own with a fixed column count now, and what
+       this width does to it is set on `.collection` further down. */
     .veil{padding:12px}
     .record,.acct-card{max-height:calc(100dvh - 24px)}
     .acct-body{padding:14px 13px 15px}
@@ -2406,35 +2557,44 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .acct-field{font-size:16px}
     .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
-    /* ---- the head takes two lines here, and it had to ----
-       title, reading and close never fitted on one at this width: `today · your
-       best` ran UNDER `close ×` and the two drew on top of each other. it was
-       doing that before the bay arrived — the reading has always been the widest
-       thing in this head — and a bay is the wrong thing to squeeze into a gap
-       that was already short.
-       so the close keeps the title's line, where the way out belongs, and the
-       reading takes the next one with the card's whole width. the bay is the one
-       part of this head that gets BETTER for the extra width: ten cells across
-       309px is 31px a cell, three times what it would have had. */
-    .rec-head{align-items:flex-start}
-    .rec-right{gap:12px;flex-wrap:wrap;justify-content:flex-end}
-    .recstats{gap:11px;order:2;width:100%}
-    .rstat{min-width:0}
-    .rstat b{font-size:20px}
-    /* still one row of sixteen: at 309px that is 18px a cell, which loses the
-       detail of a sign but keeps the only thing this row is for — how much of
-       the set is filled, and where the gaps are */
-    .featrow{padding:10px 13px 11px;gap:3px}
+    /* ---- and it fits on one line, unless the till is open ----
+       this head used to wrap onto two ALWAYS: title, reading and close never
+       fitted at 309px, and `today · your best` drew straight on top of
+       `close ×`. the reading was always the widest thing here, and the bay that
+       replaced it was wider still, so the rule here gave it a line of its own —
+       plus `order` and `width` juggling to put the reading second.
+       none of that is here now. the reading is gone, and `flex-wrap` moved up
+       to the base `.rec-head` rule where it is conditional rather than forced:
+       three items fit on one line at this width and four do not, so the head
+       wraps on exactly the deploys that draw `full version` and nowhere else.
+       see the comment there for the numbers. */
+    .rec-right{gap:7px}
+    /* SEVEN HERE TOO, and it was worth measuring rather than assuming. the
+       column count is fixed now, so a phone gets the same seven across a third
+       of the width: about 42px a cell against the desktop's 80. that is small
+       and it still READS — the emblems are flat signs on a plate, so what
+       survives the shrink is the silhouette, and the cloud, the hammer, the
+       note and the leaf are all still themselves at 42px on both grounds
+       (checked). the counterforms are the first thing to go and none of them
+       carries a sign on its own.
+       a phone-only column count was the obvious alternative and is the wrong
+       trade: it would make the collection a different shape on the two devices
+       the same player uses, to buy legibility that is not actually in danger.
+       only the padding and the gap come in, to match the day list beside it. */
+    .collection{padding:11px 13px 14px;gap:5px}
     .daylist{padding:9px 13px 13px}
     .dayrow{gap:8px;padding-right:9px}
     .dayrow .ddate{width:64px;font-size:10px;letter-spacing:.04em}
     .dayrow .ddet{font-size:9.5px}
-    /* 76px of bar against 92, and 8px of height with the masthead's. the height
-       has to be RESTATED rather than inherited from the `.track` rule above:
-       .track.dtrack sets its own and outranks a bare `.track` at any width.
-       76 still gives 7.6px a cell. what would not survive going further is two
-       neighbouring colours reading as one length. */
-    .track.dtrack{width:76px;height:8px}
+    /* the WIDTH is gone and only the height is set here. 76px against the
+       desktop's 92 made sense while the bar was a fixed object in the corner of
+       a row; it is `flex:1 1 auto` with a 92px floor now, so a fixed width here
+       fought the floor and won nothing — the row is narrower, so the bar is
+       narrower, without a second number saying so.
+       the height still has to be RESTATED rather than inherited from the
+       `.track` rule above: .track.dtrack sets its own and outranks a bare
+       `.track` at any width. */
+    .track.dtrack{height:8px;min-width:0}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     /* nothing floats over the board any more, so it keeps its whole height */
@@ -2589,7 +2749,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
         </svg>
         <span class="caltext" id="statusdate"></span>
       </button>
-      <button class="help" id="themebtn" title="ground" aria-label="ground">
+      <!-- `groundbtn` is what applyTheme writes and what the click is wired to,
+           so this one and the record's are found together and cannot drift. the
+           id stays because it is what `.help`'s layout and the tests know it by. -->
+      <button class="help groundbtn" id="themebtn" title="ground" aria-label="ground">
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
       </button>
       <button class="help" id="helpbtn" title="how to play" aria-label="how to play">?</button>
@@ -2677,28 +2840,72 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      which of the sixteen features you have still never seen. -->
 <div class="veil" id="histveil">
   <section class="record">
-    <!-- two numbers, on the title's own line, because a block of them across
-         the top of a history screen is furniture. what survives is the score a
-         day is actually played for — turns against par, golf style, every net
-         contributing — and the one collection figure with runway left in it.
-         best depth went: the day is a fixed ten and cannot be failed, so depth
-         is ten for anyone who finishes it and says nothing about how. -->
+    <!-- THE HEAD IS CONTROLS NOW, NOT A READING.
+         it carried the day's score as an instrument — a figure, two clauses and
+         the day's ten rungs drawn underneath. that reading is already on the
+         screen twice: every row draws its own ten cells, and the row for today
+         is two inches below the head saying the same thing about the same day.
+         a number the eye meets three times in one card is furniture whatever it
+         is made of, and this one was the biggest thing on a screen whose subject
+         is a LIST.
+         so the top of the record is a title and the ways out of it, which is
+         what a title bar is for. the score lives in the rows, where it is
+         attached to the day it belongs to. -->
     <div class="rec-head">
       <strong class="rec-title">the record</strong>
-      <span class="rec-right"><span class="recstats" id="recstats"></span>
-        <a href="#" class="rec-close" id="histclose">close &times;</a></span>
+      <span class="rec-right">
+        <!-- the way to the full version, drawn only when there is a till to
+             answer — `canBuy()` is the one gate and an unlock that answers "the
+             till is not responding" is worse than no unlock. it is the same act
+             `runOverOffer` performs on the cleared card and it calls the same
+             `beginUnlock`; what is new is only that the record can reach it,
+             which it could not since the archive line stopped selling. -->
+        <!-- the card holds two views of one record and this is the way between
+             them: the days, which answer "what did i do on the 11th", and the
+             collection, which answers "which have i still not found". a list
+             cannot answer the second — the emblems are scattered down a scroll,
+             so you can read it for a minute and not know you are four short —
+             and a grid cannot answer the first. one card, two readings, and a
+             button rather than a second screen to get lost in. -->
+        <a href="#" class="rec-btn" id="histview">collection</a>
+        <a href="#" class="rec-btn" id="histbuy" hidden>full version</a>
+        <!-- THE GROUND, and it is here because the record is the one screen you
+             cannot reach the masthead from: this card is a modal veil, so while
+             it is up its own head is the whole of the interface. it is also the
+             screen where the ground matters most — sixteen emblems and a column
+             of tier blocks, all of them fields, seen against one plate.
+             a SQUARE with the glyph, not a worded chip. `collection` and `full
+             version` are words because they are places to go and a place needs
+             naming; this is a state you flip, which is what `×` is too, and two
+             34px squares at the end of the row read as controls rather than as a
+             third and fourth thing to read. a worded `ground · paper` would also
+             be the widest object in a head that has 323px at 375px wide.
+             the mark is the masthead's, spelt out again rather than shared: a
+             static file has no partials, and the half that can actually drift —
+             the size, the colour and the half-turn that IS the state — lives in
+             `.themeglyph`, once, for both. -->
+        <a href="#" class="rec-btn rec-sq groundbtn" id="histtheme" role="button"
+           title="ground" aria-label="ground">
+          <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
+        </a>
+        <!-- a cross and nothing else. `close ×` said it twice — the word and
+             the glyph are the same instruction, and the glyph is the one every
+             player already reads without being taught. square, so it reads as a
+             control rather than as a word that happens to be boxed. -->
+        <a href="#" class="rec-close" id="histclose" aria-label="close" title="close">&times;</a></span>
     </div>
-    <!-- the sixteen, pinned above the list.
-         the list is excellent at "what did i do on the 11th" and structurally
-         incapable of "which have i still not found" — the emblems are scattered
-         down a scroll, so you can read it for a minute and not know you are four
-         short. this is the only view of the set as a whole, and it doubles as
-         the legend for the stamps in the rows underneath it. everything else
-         that used to sit up here — a streak the welcome back card carries, a
-         best depth left over from when a run was open-ended, a count of days
-         the days themselves answer — was furniture, and is gone. -->
-    <div class="featrow" id="recfeatrow" role="img"></div>
     <div class="daylist" id="daylist"></div>
+    <!-- THE SET AS A WHOLE, and it used to be a strip pinned above the list —
+         one row of sixteen plates, squeezed to a card's width, retiring the
+         moment the set filled. it was the only view of the collection and it was
+         the smallest thing on the screen.
+         it is a view now, reached by the button in the head. that buys three
+         things the strip could not have: the cells are large enough to be the
+         drawings they are rather than thumbnails, the grid stays square as the
+         cast grows, and the set stops competing with the days for the same
+         inches. it also stops retiring — a filled collection is worth looking
+         at, and the strip deleted itself at exactly the moment it became one. -->
+    <div class="collection" id="reccollection" hidden></div>
     <!-- whose record this is. it belongs at the FOOT of this card and nowhere
          else in the game: the question "where does this live" only occurs to
          you once you are looking at a year of days you would hate to lose, and
@@ -2857,11 +3064,15 @@ const GEN_VERSIONS=[
        pinFill:true      a pin lands somewhere rather than being quietly skipped
        parMode:'greedy'  par is the cheapest walkthrough found, not the first one
 
-     v5 IS AMENDED, AND IT IS THE ONLY ENTRY THAT EVER HAS BEEN. the table is
-     frozen because restating an entry rewrites every day it owns, and v5 owns
-     exactly one: v6 starts on 2026-08-15, the morning after v5's `from`, so the
-     whole blast radius of this line is 2026-08-14 — checked against genFor, not
-     assumed. the owner asked for it on that day knowing the cost.
+     v5 IS AMENDED, and this note used to say the table was frozen and that v5
+     was the only entry that would ever be touched. THAT IS NO LONGER TRUE and
+     AGENTS.md says so plainly: nobody is playing yet, so any entry may be
+     edited, and editing one is usually simpler than appending a version and
+     doing date arithmetic. what survives is the COST, which is the same as it
+     ever was: restating an entry rewrites every day it owns, so know which days
+     that is before you touch it. v5 owns exactly one — v6 starts on 2026-08-15,
+     the morning after v5's `from`, so the blast radius of this particular line
+     is 2026-08-14, checked against genFor rather than assumed.
        rung:'gap'  clean is held at least one turn above perfect
      v5 has no parSlack, so par IS plan.route, and the table's optimum for a v5
      net is that same route — the two lines landed on top of each other and the
@@ -3250,6 +3461,16 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
    record's rows carried a height channel of their own until the day rows became
    bars; see .track.dtrack, which is honest about that being the cost. */
 const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', par:'--tuerkis', over:'--violett'};
+/* the day rows' left spine, and it is deliberately DISJOINT from TIERCOL above.
+   the three tier colours are the game's scoring language and the spine sits
+   inches from a bar drawn in them, so a spine that borrowed one would read as a
+   rung. these are the other three of the Munich six — never a rung anywhere, so
+   they can be decorative without lying. */
+const DAYSPINE=['--hellblau','--gruen','--orange'];
+/* days since the epoch, off the iso string rather than a Date, so it is the
+   same integer in every timezone and a day's colour never depends on where it
+   is read. */
+const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 /* and a net you have not played yet is THE BARE TRACK. not silver, which now
    collides with tuerkis; not the shade of silver mixed down towards the track
    that stood here, which measured 1.42 against the track it sits on and so was
@@ -3319,14 +3540,6 @@ const LAPCOL=['--par-over','--gruen','--orange'];
    as a LINE on paper, because that is the one case --sig-* exists for; nothing
    does today, and a stroke would be the thing to reconsider rather than the
    table. */
-const TICKETDEFS=[
-  {id:'first',  label:'first identification',   band:'--sig-hellblau'},
-  {id:'depth3', label:'depth three',            band:'--sig-gruen'},
-  {id:'depth5', label:'depth five',             band:'--sig-orange'},
-  {id:'clean',  label:'a clean net',            band:'--sig-gelb'},
-  {id:'super',  label:'superposition resolved', band:'--sig-violett'},
-  {id:'week',   label:'seven day streak',       band:'--sig-tuerkis'}
-];
 
 /* board coordinate space. bigger than the old 720x400 so nodes have room to
    breathe at the same on-screen size — crowding was doing difficulty's job. */
@@ -3695,7 +3908,14 @@ const DEV = /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostnam
    day-long resource that could run out under you. */
 const POLICY = {
   dailyNets: 10,           // today's ten, same ten for everyone
-  runsPerDay: DEV ? Infinity : 1,
+  /* one run at a day, and another run is exactly what the full version sells.
+     it is a GETTER because `premium` is one: a purchase that lands mid-session
+     has to open the cleared card's `run again` there and then, and a number read
+     once at parse time would hold the free game's answer until the next reload.
+     it is also the today-shaped half of the same rule canPlayDay draws for the
+     record — this counts runs at TODAY, that one asks whether a given day has
+     been started already, and both answer premium the same way. */
+  get runsPerDay(){ return (DEV || this.premium) ? Infinity : 1 },
   /* the paid tier, and the whole of it: one boolean, kept in the save so a
      purchase survives a reload. it reads through to `store` rather than holding
      its own copy so that there is exactly one switch — the unlock button, the
@@ -3713,8 +3933,8 @@ const POLICY = {
 let store={};
 try{store=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){store={}}
 if(!store.collection){
-  store.collection={badges:{},tickets:[],playedDays:[],pairs:{}};
-  try{ // carry stamps/tickets forward from earlier prototypes
+  store.collection={badges:{},playedDays:[],pairs:{}};
+  try{ // carry stamps forward from earlier prototypes
     const old=JSON.parse(localStorage.getItem('probe-proto-v2')||'{}');
     if(old.meta&&old.meta.playedDays) store.collection.playedDays=old.meta.playedDays;
   }catch(e){}
@@ -3737,7 +3957,15 @@ const LAUNCH='2026-08-14';
 const dayAdd=(iso,n)=>new Date(new Date(iso+'T00:00:00Z').getTime()+n*864e5).toISOString().slice(0,10);
 function newRun(mode,day){
   const d=day||today();
+  /* `startedAt` is when this attempt began, and it does two jobs. it NAMES the
+     run, which is how stampToday knows whether the first-ever score it is
+     holding belongs to the run now playing or to an earlier one — see `first`
+     there. and it is the instant worker/merge.js orders two devices' first
+     attempts by, so a phone and a laptop that both played the day offline
+     converge on the one that genuinely happened first. utc to the millisecond,
+     so it compares as a string, the same reason the day itself is an iso date. */
   store.run={day:d, mode:mode||'daily', archive:d!==today(),
+             startedAt:new Date().toISOString(),
              turns:0, netIndex:0, netMoves:0,
              positions:{}, freed:[], splitNodes:[], saeUsed:false, over:false, cleared:[], assisted:false};
 }
@@ -3751,10 +3979,39 @@ const isArchive=()=>!!R().archive;
    rows are worth a difficulty reading. one expression of it, so the two can
    never disagree about where the archive starts. */
 const inArchive=d=>d<dayAdd(today(),-1);
+/* ---- WHAT BURNS THE ONE ATTEMPT ----
+   a day is spent once it has a row against it and no run of yours is still
+   standing on it. both halves carry weight.
+
+   THE ROW is what says the attempt happened, and recordDay writes it on the
+   first move — so an attempt is spent by STARTING the day, not by finishing it.
+   finishing is the wrong event to hang this on: a player who stopped at net
+   four could otherwise begin the day again as often as they liked, and "one
+   attempt" would mean "one attempt you chose to finish", which is no limit at
+   all.
+
+   THE LIVE RUN is what stops the lock from ever closing on a set you are still
+   in. nothing here takes a run away: `store.run` is restored on every load, so
+   a reload mid-net, a closed tab and a night's sleep all leave the day exactly
+   where you left it, and a time trial parks the daily run and hands it back
+   (which is why `parked` counts and a trial itself does not — a trial is not an
+   attempt at the day). what is refused is a SECOND run at a day, which is a
+   different thing from the first one carrying on.
+   the one way a free player can still lose an unfinished set is by starting a
+   run on ANOTHER day, because that replaces it — offerDay says so on the card
+   before it happens. midnight ends today's set for everybody either way.
+
+   NONE OF THIS IS STORED, which is what makes a purchase retroactive: there is
+   no lock written into a row to go back and clear, so applyEntitlement flipping
+   one boolean opens every day the player had used up. */
+const liveRunOn=d=>[store.run,store.parked].some(r=>r&&r.day===d&&r.mode!=='trial'&&!r.over);
+const spentDay=d=>!liveRunOn(d) && dayRows().some(r=>r.d===d);
 function canPlayDay(d){
   if(d>today() || d<LAUNCH) return false;
-  if(!inArchive(d)) return true;      // today and yesterday
-  return !!POLICY.premium;
+  if(inArchive(d) && !POLICY.premium) return false;   // today and yesterday are the free ones
+  /* and one run at each of them. the full version replays any day it can
+     reach, which is the whole of what "you can go back and beat it" means. */
+  return !!POLICY.premium || !spentDay(d);
 }
 /* the other half of what a purchase buys. the trial used to be free and is not
    any more: the full version is the archive AND the trial, and a paid tier that
@@ -3778,6 +4035,11 @@ if(!store.run || (!store.run.archive && store.run.day!==today())){
 if(store.runsToday==null) store.runsToday=0;
 // a run saved under the budget model carries what it spent, not what it used
 if(store.run && store.run.turns==null) store.run.turns=Math.max(0,50-(store.run.movesLeft??50));
+/* a run that was already in flight when `startedAt` landed gets one now rather
+   than a blank. it is late by however long that run has been going, which does
+   not matter: nothing has ever been ordered against it, and what it is needed
+   for from here is naming this run apart from the next one. */
+if(store.run && !store.run.startedAt) store.run.startedAt=new Date().toISOString();
 function canStartAnotherRun(){
   return POLICY.unlimited || (store.runsToday||0) < POLICY.runsPerDay;
 }
@@ -4570,12 +4832,21 @@ function themeNow(){
   if(store.theme==='light'||store.theme==='dark') return store.theme;
   return (SYSLIGHT && SYSLIGHT.matches) ? 'light' : 'dark';
 }
+/* the ground is toggled in two places — the masthead, and the record's head,
+   which is the only one reachable while that card is up. so this stops asking
+   for ONE button by id and writes whichever exist: two controls reporting one
+   state is the way they drift, and the drift is silent because both of them
+   LOOK right (the glyph's half-turn is a css rule keyed off data-theme, so it
+   follows the ground whatever this function does). what would go stale is what
+   the reader and the tooltip get, which is exactly the half nobody checks.
+   a third one anywhere would need no line here — only the class. */
 function applyTheme(mode){
   document.documentElement.setAttribute('data-theme',mode);
-  const b=$('themebtn'); if(!b) return;
   const label='ground · '+(mode==='light'?'paper':'dark');
-  b.title=label; b.setAttribute('aria-label',label);
-  b.setAttribute('aria-pressed',mode==='light'?'true':'false');
+  document.querySelectorAll('.groundbtn').forEach(b=>{
+    b.title=label; b.setAttribute('aria-label',label);
+    b.setAttribute('aria-pressed',mode==='light'?'true':'false');
+  });
 }
 function repaintTheme(){
   /* everything built by partEl — every neuron ring, pin and card fragment —
@@ -4710,11 +4981,15 @@ function liveTier(){
    crossing count while needing different track lengths. */
 let lastT='', peakCross=1;
 function setTension(cross,init){
-  /* the finish flood owns the bar until the next net, exactly as it does in
-     renderThreads. only the segments were guarded, and the LENGTH is the other
-     half of the flood: a theme flip mid-card resets lastT on purpose and then
-     calls refresh, which walked in and set the full bar back to a width of
-     nothing — a flood of the right colour and no width at all. */
+  /* a cleared net holds this bay until the next one is built, exactly as it does
+     in renderThreads — see holdGauge. clearNet has already advanced netIndex and
+     zeroed netMoves by the time the beat starts, so anything walking in here is
+     repainting an instrument against a board that is not on screen: a theme flip
+     resets lastT on purpose and then calls refresh, which is how it gets in.
+     the LENGTH is guarded as well as the segments because it is the other half of
+     the same picture. this bay would land back on the same nothing it is already
+     showing — a net clears at zero crossings — and the turns bay would not, and
+     one rule over both is what keeps them a pair. */
   if($('threadrow').dataset.done) return;
   const sig=cross+'/'+init;
   if(sig===lastT) return; lastT=sig;
@@ -4728,50 +5003,40 @@ function setTension(cross,init){
   $('threadrow').style.width=(100*cross/peakCross).toFixed(1)+'%';
   $('crossbar').setAttribute('aria-label',cross+' of '+init+' crossings left');
 }
-/* and then floods, in the four the wordmark is made of, ACROSS TWO BAYS, and
-   holds there until the next net is built. the three bays are `flex:1 1 0`, so
-   two colours in each of the first two are four true quarters — read left to
-   right across the pair it is the wordmark's rule, at the width of the whole
-   instrument cluster.
+/* ---- and then the two bays that read the NET simply stop, holding the last
+   thing they said about it until the next net is built.
 
-   the third bay is deliberately left alone. `setmeter` draws the day's cells in
-   the tier ladder, so it is where the tier this net just earned LANDS — flooding
-   it would cover the reward at the moment it arrives, which is the opposite of
-   celebrating. so the flag runs across the two bays that read the net, and the
-   bay that reads the DAY carries on doing it while you watch the new cell drop
-   in beside the flood.
+   they used to flood at this point, in the four colours the wordmark is made of,
+   across the pair. the argument for it was that a cleared net is the game itself
+   speaking and the flag is what the game wears when it speaks. the owner asked
+   for it out (16 Aug 2026), and he is right about the instrument: a bay that has
+   spent a whole net being a measurement should not answer the finish by turning
+   into a mark. it also threw away the only reading the player wants at exactly
+   the moment they want it — how the net they just finished actually went.
 
-   it used to flood in the tier the net had just minted, to preview the colour
-   landing in the day's strip a beat later. that was the one place left where an
-   instrument borrowed the ladder, and the rule two bays up says why it should
-   not: crossings is drawn in the THREAD palette because its divisions are the
-   threads, and the ladder belongs to the day's strip because that is the only
-   place a tier is actually earned. a bay that reads the board in thread colours
-   for a whole net and then answers in a tier colour is two instruments wearing
-   one track.
+   what is left standing IS the finish, and it needs no decoration. the crossings
+   bay is drained to nothing, which is what clearing a net means and which the
+   `.run` note calls the strongest thing that instrument says. the turns bay is on
+   the score the net ended with, numeral and bar agreeing, which is the same
+   number the card about to arrive leads with.
 
-   the flag is the right thing to answer with because it is not a reading at
-   all. it is what the game wears when the game itself is speaking — the
-   wordmark, the intro strip, the card that announces a new net — and a cleared
-   net is the game speaking. the tier is not lost by this: it is on the card
-   that arrives over the board, in its own strip, and in the day's cells.
+   so this writes no colour, no width and no label. all it does is CLAIM the two
+   bays, and the claim is the load-bearing half: clearNet has already advanced
+   netIndex and zeroed netMoves by the time the beat starts, so anything that
+   repaints a bay during it is drawing the NEXT net's opening budget beside a card
+   announcing the one that just cleared — a full bar reading `n to perfect` over a
+   board still showing the net you solved. setTension, renderThreads and the turns
+   bar each check the claim; buildNet releases both together.
 
-   lastT is deliberately left standing so an incidental refresh cannot repaint
-   over the finish. */
-function celebrateGauge(){
-  // each has to ask for its share: a segment's basis is zero and its width is
-  // whatever grow it is given, so two equal grows are two equal halves of a bay
-  const half=(a,b)=>'<i style="flex-grow:1;--fill:var('+a+')"></i>'
-                   +'<i style="flex-grow:1;--fill:var('+b+')"></i>';
-  const flood=(rowId,trackId,html,label)=>{
-    const row=$(rowId); if(!row) return;
-    row.style.width='100%';
-    row.innerHTML=html;
-    row.dataset.done='1';
-    $(trackId).setAttribute('aria-label',label);
-  };
-  flood('threadrow','crossbar', half(FLAG[0],FLAG[1]), 'net untangled');
-  flood('parrow',   'parmeter', half(FLAG[2],FLAG[3]), 'net untangled');
+   the third bay is deliberately NOT claimed. `setmeter` draws the day's cells in
+   the tier ladder, so it is where the tier this net just earned LANDS, and it is
+   the one bay whose reading is about the day rather than about the net — holding
+   it would hold the reward back at the moment it arrives.
+
+   lastT is deliberately left standing too, so an incidental refresh cannot walk
+   the crossings bay off the reading it stopped on. */
+function holdGauge(){
+  for(const id of ['threadrow','parrow']){ const r=$(id); if(r) r.dataset.done='1' }
 }
 
 /* ================= tangle ================= */
@@ -5930,7 +6195,7 @@ function buildNet(force){
   const idx=R().netIndex;
   if(builtFor===idx && !force) return;
   builtFor=idx; lastT=''; peakCross=1;
-  // both bays the finish flood claimed, released together — see celebrateGauge
+  // both bays the cleared net held, released together — see holdGauge
   { for(const id of ['threadrow','parrow']){ const r=$(id); if(r) delete r.dataset.done } }
   // presentation state belonging to the net being replaced, not to this one
   $('field').classList.remove('cleared','dimthreads','swap-in');
@@ -8354,12 +8619,6 @@ function tierFor(moves,par,assisted){
   const t = moves>par ? 'done' : (optimum<par && moves<=optimum) ? 'perfect' : 'clean';
   return (assisted && t!=='done') ? 'done' : t;   // descent caps a net at done
 }
-function award(id){
-  const t=TICKETDEFS.find(x=>x.id===id);
-  if(!t||store.collection.tickets.includes(id))return;
-  store.collection.tickets.push(id);
-  setTimeout(()=>toast('ticket earned · '+t.label),1500);
-}
 /* `x&&x.d||x` rather than `x.d||x`: the day list already renders around a row
    it cannot make sense of, and a writer that throws on the same row would take
    the whole game down over a save the record displays perfectly well. */
@@ -8425,20 +8684,50 @@ function stampToday(depth,feats,tier){
     const keyHad=rungsOf(row.tiers) ? rungsOf(row.tiers).key : -1;
     const better = keyNow!==keyHad ? keyNow>keyHad
                  : (row.turns==null || turns-par < row.turns-row.par);
+    /* the rung each of the ten minted, in order, one letter each — the record
+       draws them as ten cells and there is nowhere else to read them from.
+       a string, not an array: it is ten characters against ten objects in a
+       save that already carries a row a day forever, and tierFor mints exactly
+       perfect / clean / done, whose initials do not collide. */
+    const tiers=cl.map(c=>String(c.tier||'')[0]||'').join('');
     if(depth>had || (depth===had && better)){
       row.turns=turns; row.par=par; row.moves=R().turns||0;
-      /* the rung each of the ten minted, in order, one letter each — the record
-         draws them as ten cells and there is nowhere else to read them from.
-         it rides inside this guard with the turns/par pair on purpose: the three
-         of them describe the SAME run, so a replay that cannot beat the pair must
-         not be allowed to overwrite the tiers that earned it either.
-         a string, not an array: it is ten characters against ten objects in a
-         save that already carries a row a day forever, and tierFor mints exactly
-         perfect / clean / done, whose initials do not collide. it is purely
-         ADDITIVE — every row written before this has no `tiers` at all, nothing
-         reads it without checking, and no existing field changes shape. */
-      row.tiers=cl.map(c=>String(c.tier||'')[0]||'').join('');
+      /* the rungs ride inside this guard with the turns/par pair on purpose:
+         the three of them describe the SAME run, so a replay that cannot beat
+         the pair must not be allowed to overwrite the tiers that earned it
+         either. it is purely ADDITIVE — every row written before this has no
+         `tiers` at all, nothing reads it without checking, and no existing
+         field changes shape. */
+      row.tiers=tiers;
     }
+    /* ---- THE FIRST EVER RUN AT THIS DAY, kept whatever a later one scores ----
+       everything above is a high-water mark and a replay is meant to climb it.
+       but the day you first played is not a score you can beat, it is a thing
+       that happened, and a better run writing over it would be the only place
+       in this file where playing more DELETES something. so it is written by
+       the first run to score the day and by no other, and every replay after it
+       leaves it exactly alone.
+       `at` is that run's own start time, which is what tells the two apart: the
+       first attempt goes on deepening for as long as it is the run playing, and
+       stops the moment a different one comes along. it is also the instant
+       worker/merge.js orders two devices by — EARLIER WINS there, the way a
+       pair keeps the day it was first found, rather than better winning the way
+       the score does.
+       purely ADDITIVE, the same as `tiers` was: every row written before this
+       has no `first`, nothing reads it without checking, and no existing field
+       changes shape. */
+    const began=R().startedAt||'';
+    if(!row.first || row.first.at===began) row.first={at:began, depth, turns, par, tiers};
+    /* HOW MANY TIMES THIS DAY HAS BEEN PLAYED, counted off `startedAt` rather
+       than incremented somewhere a run begins. stampToday runs after every net,
+       so a counter that simply added one would count nets; keyed on the run's
+       own stamp it moves once per run and cannot double no matter how many nets
+       that run clears. `lastRun` is the whole state it needs.
+       a row from before this has no count and gets 1 on its next run rather
+       than a guess at its history — undercounting a past nobody recorded is the
+       honest direction, and it is why this is additive like `first` and `tiers`
+       before it. worker/merge.js takes the MAX, the way it does depth. */
+    if(row.lastRun!==began){ row.runs=(row.runs||0)+1; row.lastRun=began }
     row.depth=Math.max(had,depth);
     row.mode='daily';
   }
@@ -8505,12 +8794,6 @@ function clearNet(){
      net superposed was found and split. */
   netPairs.forEach(p=>{ if(!store.collection.pairs[p]) store.collection.pairs[p]=r.day });
   stampToday(depth,feats,tier);
-  award('first');
-  if(tier==='clean')award('clean');
-  if(depth>=3)award('depth3');
-  if(depth>=5)award('depth5');
-  if(spec.shared>0)award('super');
-  if((store.meta.streak||0)>=7)award('week');
   /* the tutorial only ENDS on its last net. before that the coach simply moves on
      to the next lesson with the ordinary net-cleared card in between, so the
      three arrive as three nets rather than as one net that changed its mind. */
@@ -8526,23 +8809,56 @@ function clearNet(){
     else { tutStepAt=1; }
   }
   save();
-  celebrateGauge();
+  holdGauge();
   boardCleared();
   /* the masthead lags a net all through the cleared beat: the bays are written
      by renderHud, and nothing calls it between a net clearing and the next one
      being built. that was invisible while there was always a next net. the last
      net of the day has none, so `today's set 1` sat beside a card reading `day
      complete` until the page was reloaded — the game contradicting itself, in
-     two places six inches apart. the flood the gauge just laid down survives
-     this: setTension and renderThreads both hold the bar until buildNet clears
-     `dataset.done`. */
+     two places six inches apart.
+     this only has the DAY's bay to put right, and that is the one bay holdGauge
+     leaves open. the other two are already standing on this net's own final
+     reading and are meant to stay there — setTension, renderThreads and the turns
+     bar all leave them alone until buildNet clears `dataset.done`. */
   if(setDone) renderHud();
   /* the tenth net gets ONE card, not two. it used to print `net cleared ·
      continue →`, and the only thing continuing led to was the day card — two
      bulletins, in the same corner, for one moment, the first of them offering a
      net that no longer existed. the day card carries the net's own reading
      inside its totals, so it simply arrives instead, off the same beat. */
-  const card = setDone ? showRunOver : (()=>showNetCleared(feats,tier,wasTutorial,read));
+  /* ---- the guided nets clear without a card ----
+     the note above says the card between tutorial nets is what makes the three
+     read as three nets rather than as one net changing its mind, and that was
+     right about the sequence and wrong about the screen. the coach card is
+     already up — a titled block with a step counter, an instruction and a
+     three-term legend under it — and a bulletin lands on top of it for a player
+     who has made perhaps four drags in their life. two stacked cards is the
+     most crowded the game ever gets, and it happens at the one moment a
+     newcomer is deciding whether this is for them.
+     THE BEAT IS UNTOUCHED, which is what actually carried the sequence. the
+     sign still lands, the board still clears, the game still stops talking for
+     a moment — see holdCleared — and then the next lesson simply arrives. what
+     goes is a card over the top of that, not the pause underneath it.
+     ONLY the nets with another lesson behind them. the last guided net has
+     already run endTutorial() a few lines above, so its card lands on a screen
+     with no coach on it and is not crowded at all — and it is the one place in
+     the game that offers a sign-in unprompted, which has nowhere else to go.
+     THE TEST IS `tutorialDone`, NOT THE NET INDEX, and the first version of this
+     got that wrong in a way nothing on screen announced. it read
+     `r.netIndex < TUTNETS.length` — but `endTutorial()` runs a few lines above
+     and RESETS the run to net 0, so after the third guided net the test was
+     `0 < 3`, true, and the last lesson lost its card along with the two that
+     were meant to. that quietly killed the one thing the exception above exists
+     for: `signInInvite()` is only ever reached with `wasTutorial` true, so the
+     game's single unprompted offer of a sign-in became unreachable code, and
+     this comment claimed the opposite of what ran.
+     `store.tutorialDone` is what actually changed, it is what `endTutorial`
+     sets, and it cannot be reset out from under this the way an index can. */
+  const tutMidway = wasTutorial && !store.tutorialDone;
+  const card = setDone ? showRunOver
+             : tutMidway ? nextNet
+             : (()=>showNetCleared(feats,tier,wasTutorial,read));
   /* under reduced motion the sign is already drawn the instant the thread frees
      and nothing is in flight, so there is nothing to hold FOR: the card keeps
      the 260 it always had and not one millisecond of the beat is scheduled. */
@@ -8645,11 +8961,29 @@ function nextNet(){
       f.classList.add('swap-in');
       swapT=setTimeout(()=>f.classList.remove('swap-in'),320);
     }
-    /* not a feature and not a neuron, so not a feature's colour: the four the
+    /* ---- the guided nets arrive without a plaque ----
+       the same reason the net-cleared card was taken out from between them (see
+       clearNet): the coach card is already up — a title, a step counter, an
+       instruction and a three-term legend — and this lands on top of it for
+       somebody who has made about four drags in their life. it does not even
+       pay for the room it takes: `2 features, 2 crossings` is the two numbers
+       the masthead bays are drawing live, and the ordinal counts the day's ten,
+       which the guided nets sit outside of.
+       inTutorial() rather than inTutorialRun() is the point. it asks whether the
+       net just built is a GUIDED one, so the plaque is absent exactly where the
+       coach card is present and returns the moment the coach leaves. that also
+       settles the replay: once the tutorial is done, net 0 is the ramp's own
+       opener again (see buildNet) — an ordinary scored net of the day's ten with
+       nothing else on screen naming it — so it gets its plaque like any other.
+       nothing goes missing that was not already missing: the FIRST guided net is
+       built at boot rather than through here and never had a plaque either, so
+       all three now read the same way.
+       not a feature and not a neuron, so not a feature's colour: the four the
        wordmark is made of. a new net is the game starting something, and this
        is the game's own mark. */
-    flashMsg('net '+String(R().netIndex+1).padStart(3,'0')+' · '+spec.threads+' features, '+countCross().total+' crossings',
-             {cols:FLAG});
+    if(!inTutorial())
+      flashMsg('net '+String(R().netIndex+1).padStart(3,'0')+' · '+spec.threads+' features, '+countCross().total+' crossings',
+               {cols:FLAG});
   };
   swapSkip=land;
   if(reduceMotion){ land(); return }
@@ -8871,13 +9205,26 @@ function showNetCleared(feats,tier,wasTutorial,read){
    it says the count, because "the archive" is a word and "12 earlier days" is
    an amount, and it names the trial second because that is the half a player
    has just watched go dark on the button below. the price rides the link so
-   that nobody has to press it to find out. */
+   that nobody has to press it to find out.
+   ANOTHER RUN LEADS IT, and it is the one thing here about the day the player
+   is standing in rather than about days they have never seen: they have just
+   played ten nets, `run again` is not on the card, and this names the one thing
+   the card is not already giving them. the other two follow it in the order they
+   always had.
+   IT IS AN ADDITION AND NOT A RESTORATION, which is the whole reason this line
+   still reads right after the record's rows stopped saying `one run only`. it
+   does not say what the free player has run out of — they have run out of
+   nothing, a new set of ten arrives tomorrow and that is the finished game — it
+   says what money puts on top. `another run at any day` is deliberately the same
+   phrase the locked replay chip answers a press with — two screens, one product,
+   one way of naming it. see replayWords. */
 function runOverOffer(trial,depth){
   if(trial || POLICY.premium || depth<POLICY.dailyNets) return '';
   ensurePrice();                      // redraws this card if the answer is late
   if(!canBuy()) return '';            // nothing to sell here yet — see `till`
   const n=archiveCount(), price=priceWords();
-  const what=n ? `${n} earlier day${n===1?'':'s'} and the time trial` : 'the time trial';
+  const what=n ? `another run at any day, ${n} earlier day${n===1?'':'s'} and the time trial`
+               : 'another run at any day and the time trial';
   return `${what} · <a href="#" id="runoffer">unlock</a>${price?' · '+price:''}`;
 }
 function showRunOver(){
@@ -8967,9 +9314,22 @@ function showRunOver(){
       const b=store.collection.badges[k]||{tier:'over'};
       return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false)}<span>${k}</span></div>`;
     }).join('')}</div>`:'')
-    // the cut rows, kept for the reader — see .bquiet
+    /* the quiet line, and PAR IS NO LONGER IN IT. `57 turns against par 62` was
+       the last place in the game that spoke par as a RESULT, and it had been
+       demoted twice already — off the record's head, off the best-day line, off
+       the day rows — each time on the same argument, which is that the day is
+       scored in rungs and a second scoring language beside it is one the reader
+       has to reconcile. it survived here as "the reading with fine resolution",
+       and that was true and beside the point: nobody was asking this card to
+       separate two days that both posted 8 of 10.
+       par has not gone anywhere and cannot. it IS the clean line — tierFor is
+       `moves > par ? done : … clean` — and the turns bay counts against it live,
+       where knowing how much room is left is the whole use of it. what is gone
+       is par as a score after the fact, which is what the rungs are for. it also
+       still breaks a tie in stampToday and in worker/merge.js, invisibly, where
+       it remains the better number. */
     +`<p class="bquiet">${trial?`${feats.length} features named.`
-        :`today's set ${depth} of ${POLICY.dailyNets}. ${turns} turns against par ${parTot}. ${feats.length} features named.`} `
+        :`today's set ${depth} of ${POLICY.dailyNets}. ${feats.length} features named.`} `
       +`day streak ${store.meta.streak||1}.</p>`,
     note:trial
       ? 'the net re-tangled faster than you could separate it. it gets quicker the deeper you go.'
@@ -9091,7 +9451,7 @@ function ask(o){
     actions:`<button class="wbtn${o.danger?'':' solid'}" id="askyes">${o.yes}</button>`
            +`<button class="wbtn${o.danger?' solid':''}" id="askno">${o.no||'not now'}</button>`
   });
-  $('askbulletin').setAttribute('aria-label',[o.title,o.sub,o.note].filter(Boolean).join(' · '));
+  $('askbulletin').setAttribute('aria-label',[o.title,o.sub,o.say,o.note].filter(Boolean).join(' · '));
   $('askyes').onclick=()=>closeAsk(true);
   $('askno').onclick=()=>closeAsk(false);
   showVeil('askveil');
@@ -9298,16 +9658,60 @@ const rungsOf=tiers=>(typeof tiers==='string' && tiers)
 const rungText=g=>`${g.good} of ${g.of} clean or better`;
 const rungParts=g=>({fig:String(g.good), word:`of ${g.of} clean or better`});
 
-/* clicking a row offers that day. replaying one you already cleared is allowed
-   — it simply cannot improve a tier you already hold, same as any net.
-   `tiers` is the row's own stored rungs, handed in by the record rather than
-   looked up here, because the record has it in scope and this has no business
-   reaching back into playedDays for a day it was told about. it may be absent:
-   an unplayed day has no row at all, and a row from an earlier save shape has no
-   rungs — tierWords answers '' to both. */
-async function offerDay(iso,done,tiers){
-  if(iso===today() && !isArchive()){ hideVeils(); return }
-  if(!canPlayDay(iso)) return flashMsg('that day is in the archive · unlock it to play');
+/* WHAT PAYING ADDS, written once and read by everything that says it: the locked
+   replay chip's tooltip, the press that answers it, and offerDay's own refusal.
+   it used to read `you have had your run`, which framed the free game as a thing
+   you had used up — and the owner's correction is that a free player has run out
+   of nothing. the free game is a new set of ten every day and it is complete;
+   what money buys is the REPLAY, on top of a game that was already whole. so the
+   sentence names the replay as an addition and never as a loss, and there is no
+   apology anywhere in it.
+   THE OFFER HALF IS GATED ON A TILL, the same gate `unlock` itself is drawn
+   behind — see canBuy. a copy opened off a disk has no api and can take no
+   money, and naming a version nobody here can buy is worse than naming none.
+   what stands in its place is the true half of the same fact, and it is the
+   owner's own framing of the free tier rather than a consolation. */
+function replayWords(){
+  if(!canBuy()) return 'a new set of ten arrives every day';
+  const price=priceWords();
+  return `another run at a day is the full version${price?' · '+price:''}`;
+}
+/* the words a day answers a press with when it will not open. two different
+   refusals and they must not be confused: one is a day you have never been
+   allowed to reach and the other is a day you have already had your run at, and
+   telling a player who just finished yesterday that it is "in the archive" is
+   the game misreading its own record back to them. */
+function shutWords(iso){
+  return spentDay(iso) ? replayWords()
+                       : 'that day is in the archive · unlock it to play';
+}
+/* clicking a row offers that day. REPLAYING ONE IS THE FULL VERSION'S, and this
+   is the gate that makes the free game one attempt a day — canPlayDay refuses a
+   second run at a day already started, so what reaches the card is either a day
+   nobody has begun or a player who has bought the right to begin it again.
+   it used to be open to everybody on the grounds that a replay could not improve
+   a tier already held, which was true of the BADGES and never true of the day: a
+   deeper or better run overwrites the row, so an unlimited retry was an
+   unlimited chance to post a better day. that is now the thing being sold.
+   `tiers` is the row's own stored rungs and `first` its first-ever run, both
+   handed in by the record rather than looked up here, because the record has
+   them in scope and this has no business reaching back into playedDays for a day
+   it was told about. either may be absent: an unplayed day has no row at all, a
+   row from an earlier save shape has no rungs, and a row written before `first`
+   existed has no first run — tierWords answers '' to all of them. */
+async function offerDay(iso,done,tiers,first){
+  /* you are already on this day, so pressing it is not a request for another
+     run at it. it read `iso===today() && !isArchive()`, which said exactly this
+     about today and left the ARCHIVE DAY YOU WERE HALF WAY THROUGH pressable —
+     so pressing it threw that set away and started the same day again, which is
+     the one replay a free player could always take.
+     a trial counts as being on today whether or not it has ended: the daily run
+     it displaced is parked behind it and the cleared card is what hands that
+     back, so opening today from here would drop it on the floor.
+     a FINISHED daily run falls through on purpose. that is a player asking to
+     play the day again, which is the question canPlayDay is here to answer. */
+  if(R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
+  if(!canPlayDay(iso)) return flashMsg(shutWords(iso));
   /* WHAT THE CARD HAS TO SAY, and it is a cost and a reassurance rather than a
      description. "your run in progress is set aside" is what the browser dialog
      said and it was not true: newRun REPLACES store.run, and only startTrialRun
@@ -9326,33 +9730,82 @@ async function offerDay(iso,done,tiers){
      shortest true answer to that is almost nothing. it is also measured — with
      the streak line after it, it is two lines on this card's measure, and every
      longer way of saying it was three.
-     the SUB takes the rungs instead, because "played" is a word and "3 perfect,
-     2 clean" is the reason you are looking at this day again.
-     NOTHING AT STAKE IS A REAL STATE. a run nobody has touched — no turns, no
-     nets, no moves — loses nothing, and a row announcing a cost would be a lie
-     told to sell caution. the test is the one the save merge already uses on the
-     same three fields; see `untouched` there. `over` counts as untouched too: a
-     finished or set-aside day is already banked in the record. */
-  const r=R();
-  const live=!r.over && !!(r.turns||r.netIndex||r.cleared.length||r.netMoves);
+     the SUB IS THE BAR, not a sentence. it read `played · 1 perfect, 3 clean,
+     2 done` — the reason you are looking at this day again, which was the right
+     subject and the wrong form: a card asking a one-word question carried a
+     clause you had to parse to answer it. the day's ten rungs are a picture
+     everywhere else in the game, and this is the one screen that spelled them.
+     so the card draws the same bar the record's row draws, which also answers
+     the never-played case for free — `rungTrack` with no tiers is ten bare
+     cells, so a day you have not touched shows an empty grey bar rather than
+     the words `not played yet`. the reading and the absence of one are the same
+     object in two states.
+     THE COST OF LEAVING A RUN IS NO LONGER STATED, and the machinery that
+     measured it went with the words. `live` tested whether the run being left
+     had been touched at all, and `burns` narrowed that to the case where the set
+     will not open again — a real distinction, drawn carefully, and both existed
+     solely to choose between two sentences that are now gone. the owner's call
+     is that a player learns this by doing it once. nothing a run earned is lost
+     either way: badges and the day's row are written as you go, so what a
+     restart costs is a place in a set, not a score. */
   const words=tierWords(tiers);
+  /* how many runs this day has had, off its own row rather than the run in hand
+     — the card is about the day being offered, which may not be the day being
+     played. see stampToday, where it is counted once per run off `startedAt`. */
+  const runs=(dayRows().find(x=>x.d===iso)||{}).runs||0;
+  /* the first run at this day, shown only once a replay has actually beaten it —
+     equal to the row's own rungs it is the same reading twice, and this card
+     already carries that one in its sub. it is the one place the kept first
+     score is legible, and the moment it matters: another run is about to be
+     offered against a row that has already been improved once. */
+  const firstWords=first&&first.tiers&&first.tiers!==tiers ? tierWords(first.tiers) : '';
   const ok=await ask({
     title:dayLabel(iso),
-    sub:done?(words?'played · '+words:'played'):'not played yet',
-    rows:live?[['the run you are on',
-      isTrial() ? 'time trial · net '+(r.netIndex+1)
-                : 'net '+(r.netIndex+1)+' of '+POLICY.dailyNets]]:[],
-    note:[live?'nothing you have earned is lost — only your place in the set.':'',
-          iso===today()?'':'an archive day does not extend a streak.']
-         .filter(Boolean).join(' '),
+    sub:'',
+    /* aria-hidden on the mark, because `ask` already folds the words into the
+       card's own label — see the aria-label it builds from title, sub and note.
+       `words` is what carries this to a screen reader and it is why that
+       variable survives the sub being emptied. */
+    /* the bar, and under it the count. `runs` is how many times this day has been
+       played and it goes bottom right because that is where every other number
+       on this card's family sits — it is a reading, not a sentence, and it does
+       not compete with the mark above it for the same line. a day never played
+       has no count and shows none: `0 attempts` is a number reporting an absence
+       the empty bar directly above it already draws. */
+    body:`<div class="askrungs" aria-hidden="true">${rungTrack(tiers,true)}</div>`
+      +(runs?`<div class="askruns">${runs} attempt${runs===1?'':'s'}</div>`:''),
+    /* the bar in words, for the card's own aria-label. the mark is aria-hidden
+       and this is what replaces it — the same division dayCells and the record's
+       rows already make, and the reason `words` outlived the sub it used to
+       fill. a day never played has no rungs and says so by saying nothing. */
+    say:done?(words||'played'):'not played yet',
+    /* `the run you are on · net 2 of 10` went with the note below it. it was the
+       COST — the place in the set you give up by opening another day — and the
+       owner's call is that a player finds that out by doing it once, which is
+       cheaper than a clause on every offer forever. the run being replaced is
+       one press away from being restarted and nothing it earned is lost. */
+    rows:firstWords?[['your first run',firstWords]]:[],
+    /* THE CARD HAS NO NOTE AT ALL NOW, and it had three at various points.
+       `an archive day does not extend a streak` went first: the game already
+       says it at the moment it becomes true — the flashMsg at the foot of this
+       function reads `playing the archive · sat 15 aug · this does not extend a
+       streak` as the day opens. Said before you decide it is a caveat on a
+       question; said as you start it is a fact about what you are doing.
+       `nothing you have earned is lost` and `you cannot come back to that set`
+       went with the row above them, on the owner's call: both described the cost
+       of leaving a run in progress, and that is a thing a player learns by doing
+       it once. A clause on every offer forever is the more expensive way to
+       teach it, and nothing a run earned is lost either way — badges and the
+       day's row are written as you go.
+       what is left is a date, a bar, a count, and two buttons. */
     yes:'play →', no:'not now'
   });
   if(!ok) return;
-  /* the run is frozen while the card is up (see ask), but the ARCHIVE is a
-     stored flag rather than a fact about the board, and this is the one gate
+  /* the run is frozen while the card is up (see ask), but what a day COSTS is a
+     stored fact rather than a fact about the board, and this is the one gate
      between the question and the act. re-reading it costs nothing and means the
      answer can never be applied to a day that stopped being playable. */
-  if(!canPlayDay(iso)) return flashMsg('that day is in the archive · unlock it to play');
+  if(!canPlayDay(iso)) return flashMsg(shutWords(iso));
   newRun('daily',iso);
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
   flashMsg(iso===today()?'today\'s net':'playing the archive · '+dayLabel(iso)+' · this does not extend a streak');
@@ -9448,9 +9901,16 @@ function bestLineEl(best){
   const el=document.createElement('div');
   el.className='daybest';
   const when=isIso(best.d)?dayLabel(best.d):'';
+  /* THE READING CAME OFF THIS LINE and the date stayed. it read `your best day ·
+     fri 14 aug · 7 of 10 clean or better`, which is three things where the line
+     only ever answered one: WHICH day was your best. how well it went is drawn
+     in that day's own row, in the ten cells, in the colours the whole game
+     scores in — and on a two-row list the row is usually still on screen.
+     `bestReading` has not gone anywhere and is not doing less work: ranking the
+     days is exactly how this line knows which date to print. it just stops
+     printing the number it ranked them by. */
   el.innerHTML='<span class="dbtext">your best day</span>'
-    +(when?`<span class="dbwhen">${when}</span>`:'')
-    +`<span class="dbread"><b>${best.fig}</b> ${best.word}</span>`;
+    +(when?`<span class="dbwhen">${when}</span>`:'');
   return el;
 }
 
@@ -9471,13 +9931,21 @@ function bestLineEl(best){
    one; this had one. */
 function archiveLineEl(){
   ensurePrice();     // redraws this card if the answer arrives after it
+  /* HELD, AND NOTHING TO SAY ABOUT IT. this drew `full version · the archive and
+     the time trial` across the top of a buyer's record every time they opened
+     it — a label telling somebody what they already bought, on the screen they
+     came to for something else. the entitlement announces itself by the archive
+     working.
+     the CODE is the exception and it is why this can still draw at all: it is
+     what a buyer types on a second device, and this line is its only home in the
+     whole game. so a buyer with a code gets the code, a buyer without one gets
+     nothing at all, and the caller handles the nothing. */
+  if(POLICY.premium && !acct.code) return null;
   const el=document.createElement('div');
   el.className='dayarch'+(POLICY.premium?' held':'');
   if(POLICY.premium){
-    el.innerHTML='<span class="datext">full version · the archive and the time trial</span>'
-      +(acct.code
-        ? `<span class="dacode" title="type this on another device to open it there">${acct.code}</span>`
-        : '');
+    el.innerHTML='<span class="datext">on another device</span>'
+      +`<span class="dacode" title="type this on another device to open it there">${acct.code}</span>`;
   } else {
     /* the link is only drawn when there is somewhere for it to lead. a copy
        opened off a disk has no api and no code to check one against, and an
@@ -9555,9 +10023,17 @@ function renderAccount(){
   });
 }
 
-/* ---- the one screen ----
-   a head that does not move — the sixteen, which is the question a day list
-   structurally cannot answer — and the days, which do. */
+/* ---- the one screen, in two views ----
+   the days answer "what did i do on the 11th"; the collection answers "which
+   have i still not found". neither can answer the other's question, and they
+   want the same inches, so they take turns.
+   it is deliberately NOT remembered across sessions. the record is opened to
+   see how today went far more often than to look at the set, so a player who
+   browsed the collection once should not meet it every morning afterwards; the
+   toggle is one press from wherever you land. it DOES survive a redraw within
+   a session — a theme flip, an entitlement arriving — because the alternative
+   is the card silently changing subject under a player who is reading it. */
+let recView='days';
 function openRecord(){
   const d0=today(), rows=dayRows();
   const keep=$('daylist').scrollTop;          // a theme flip redraws this whole screen
@@ -9570,69 +10046,86 @@ function openRecord(){
      says nothing whatever about how well they did. */
   const best=bestReading(rows);
   const badges=store.collection.badges||{};
-  const stat=(fig,word,label,tiers)=>
-    `<span class="rstat"><span class="rstat-top"><b>${fig}</b><em>${word}</em><i>${label}</i></span>`
-    +`${rungTrack(tiers)}</span>`;
-  /* THE HEAD IS TODAY, AND ONLY EVER TODAY.
-     `16/16 at clean` went first: a finished day frees about fourteen of the
-     sixteen features, so the counter reached 16/16 inside two or three days and
-     then read the same forever — the terminal-counter failure `bestDepth` and
-     `features collected` were already deleted for. a number that stops moving
-     is not a reading.
-     what survived it PREFERRED today and fell back to your best day when today
-     was unplayed, relabelling itself `your best day` as it went. so the one
-     figure at the top of the screen answered two different questions depending
-     on the time of day you opened it, and the number a player met before their
-     morning run was a number from some other week. it is today's now, always,
-     and the label no longer has to say which day it is because there is only
-     one it can be.
-     the fallback did not go anywhere — see bestLineEl, which puts your best day
-     at the FOOT of the list where the rest of the history is. above the day's
-     own score it was competing with today; below it, it is the record. */
-  const todayR=dayReading(rows.find(x=>x.d===d0));
-  if(todayR){
-    $('recstats').innerHTML=stat(todayR.fig,todayR.word,'today',todayR.tiers);
-  } else {
-    /* today, not started. it says what a day IS rather than printing a dash —
-       this is the whole of the old `—`, which meant "no data" and read as a
-       minus — and rungTrack draws ten bare cells under it, which is a true
-       picture of a day nobody has begun and the same drawing the masthead
-       already makes of the nets ahead. it used to be reached only by a save
-       with no scored day anywhere; it is now every morning before the run, and
-       it is the same honest empty state either way. */
-    $('recstats').innerHTML=stat(POLICY.dailyNets,'nets today','not played yet');
-  }
+  /* ---- THE HEAD SAYS NOTHING ABOUT TODAY ANY MORE ----
+     it drew today's score as an instrument: a figure, two clauses, and the
+     day's ten rungs on a track underneath. the figure was right and the place
+     was wrong. today's row is the FIRST row of the list, two inches below,
+     drawing the same ten rungs about the same day — so the card stated one
+     number twice in two forms, and the larger of the two sat where a title bar
+     goes on a screen whose subject is the list.
+     it also had to invent an empty state. before the morning's run there is no
+     score, so the head said `10 nets today · not played yet` over ten bare
+     cells — a whole instrument reporting that nothing had happened yet. the
+     row says `not played yet` on its own and needs no instrument to do it.
+     nothing was lost with it. the score is in the rows where it is attached to
+     its day, `bestLineEl` still names the best one at the foot, and the head is
+     now a title and the ways out, which is what a title bar is. */
 
-  /* ---- the sixteen, for exactly as long as there are any left to find ----
+  /* the way to the full version, and it is the same gate the cleared card's
+     offer uses — `canBuy()` is true only when a till has answered. a copy of
+     the game opened off a disk has no api at all and gets no button, which is
+     the rule the whole account block already follows: an unlock that answers
+     "not from here" is worse than no unlock.
+     already bought is not a reason to draw it either. `archiveLineEl` at the
+     top of the list is what speaks to a player who holds the full version, and
+     it carries the restore code with it. */
+  const buy=$('histbuy');
+  buy.hidden = POLICY.premium || !canBuy();
+  buy.onclick=e=>{ e.preventDefault(); beginUnlock() };
+
+  /* ---- the collection ----
      a found feature wears its plate with a band in the tier it was minted at;
      an unfound one is a hairline square with a cross in it, which says
      unidentified without giving the sign away.
 
-     the row answers the one question a list of days structurally cannot — which
-     features have I never seen — and that question expires. a finished day frees
-     about fourteen of the sixteen, so the set closes in two or three days and
-     the row then shows sixteen filled plates for the rest of the game: a
-     collection display, in a game that is not scored on collecting.
-     so it retires with the set it tracks. it also stops the worst first
-     impression on the screen — a new player used to meet sixteen crosses at the
-     top of a game whose whole promise is that a day cannot be failed. it now
-     leads with what is left to find, and when nothing is, it leaves. */
+     it answers the one question a list of days structurally cannot — which
+     features have I never seen — and as a strip above the list it USED to
+     retire the moment the set filled, on the argument that a full row of plates
+     is a collection display in a game not scored on collecting. that argument
+     was right about a strip and wrong about a collection: the thing it deleted
+     at the moment of completion is the thing a player would want to look at.
+     it is a view of its own now and it stays, full or not.
+
+     THE COLUMN COUNT IS NOT COMPUTED HERE ANY MORE. it was
+     ceil(sqrt(FKEYS.length)), set on the element from this function, which kept
+     the grid square at any cast and made the width of the card's whole subject
+     move whenever a feature was added. it is a flat seven in the stylesheet
+     now — see .collection for why — and this loop draws ONLY the features that
+     exist, so the caption below and the cells above it are counting the same
+     set. nothing here needs to change when the cast grows. */
   const named=FKEYS.filter(k=>badges[k]).length;
-  const featrow=$('recfeatrow'), done=named>=FKEYS.length;
-  featrow.style.display=done?'none':'';
-  if(done){ featrow.innerHTML=''; featrow.removeAttribute('aria-label') }
-  else {
-    featrow.innerHTML=FKEYS.map(k=>{
+  const grid=$('reccollection');
+  /* the caption leads with what is LEFT, which is the only half with anywhere
+     to go, and falls back to the total once nothing is. a line reading `0 still
+     to identify` is a counter that has stopped, and this card has deleted two
+     of those already. */
+  const left=FKEYS.length-named;
+  grid.innerHTML=`<p class="colcap">${left
+      ? `${left} of ${FKEYS.length} still to identify`
+      : `all ${FKEYS.length} identified`}</p>`
+    +FKEYS.map(k=>{
       const b=badges[k];
       return b
         ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${b.tier}">${featIcon(k)}</span>`
         : `<span class="fcell none" title="unidentified"><svg viewBox="0 0 96 96" role="img" aria-label="unidentified feature">`
           +`<g fill="none" stroke="currentColor" stroke-width="7"><path d="M30 30L66 66M66 30L30 66"/></g></svg></span>`;
     }).join('');
-    const sum=`still to identify · ${FKEYS.length-named} of ${FKEYS.length}`;
-    featrow.setAttribute('aria-label',sum);
-    featrow.title=sum;
-  }
+
+  /* ---- which of the two views is up ----
+     the days and the collection are one card, so only one of them is in the
+     flow at a time — both are `flex:1 1 auto` in a fixed-height column and
+     showing both would give each half a card and a scrollbar. the button says
+     where it GOES, not where you are, which is the way every other control in
+     this game is labelled. */
+  const dayEl=$('daylist'), viewBtn=$('histview');
+  dayEl.hidden = recView!=='days';
+  grid.hidden = recView!=='collection';
+  viewBtn.textContent = recView==='days' ? 'collection' : 'the days';
+  viewBtn.onclick=e=>{
+    e.preventDefault();
+    recView = recView==='days' ? 'collection' : 'days';
+    openRecord();
+  };
 
   /* ---- the days ----
      TODAY AND YESTERDAY. it was every day since launch, shut ones included,
@@ -9652,6 +10145,21 @@ function openRecord(){
   const days=allDays();
   days.forEach(({d,row})=>{
     const played=!!row, canPlay=canPlayDay(d), isToday=d===d0, locked=isShut({d,row});
+    /* A DAY YOU HAVE HAD YOUR RUN AT. it is the other way a row can be closed,
+       and the two never appear together: `locked` is a day in the archive you
+       never played, and this list holds today and yesterday, neither of which
+       is ever in the archive. so on this screen a played day you cannot play is
+       a spent one, and there is nothing else it could be.
+       WHAT IT DRESSES IS THE CHIP AND NO LONGER THE ROW. it used to wear the
+       shut idiom whole — dashed keyline, date a step back in ink — which said
+       "this day is not available to you" about a day the player had just
+       finished. that is the free tier drawn as a loss, and it is not one: the
+       day was played, the row is the record of it, and nothing about it is
+       withheld. the one thing that IS withheld is the replay, so the replay is
+       what carries the mark. the row keeps only the half of `.spent` that was
+       about behaviour rather than about ink — it must not promise a run under
+       the pointer — and see .dayrow.spent for that. */
+    const spent=played && !canPlay;
 
     /* the archive line stood here, on the first shut row, where the wall
        started. there is no shut row in a list of today and yesterday, so there
@@ -9663,17 +10171,19 @@ function openRecord(){
        date in full navigate themselves. it would have drawn a header per row on
        the first of a month, which is a spine with nothing to hold up. */
 
-    /* a played day with no recorded rung draws NO rung. it used to fall back to
-       `over`, which TIERCOL paints identically to `done` — so a day the game has
-       no record of rendered exactly like a day you finished over par, and the
-       spine of the list asserted a score nobody played for. it is a legacy save
-       shape and the honest drawing of it is the bare --rule the .dtier already
-       falls back to, and what the bar does one column over: no
-       tiers, no cells. an absence is drawn as an absence. */
+    /* THE DAY'S BEST RUNG, and it no longer draws anything — the spine it used
+       to colour is a date mark now, see DAYSPINE. what it still does is speak:
+       the row's aria-label names the best tier, because a screen reader gets no
+       bar and no cells and this is the one word that says how the day went.
+       it stays null on a played day with no recorded rung rather than falling
+       back to `over`, which TIERCOL paints identically to `done` — that is a
+       legacy save shape, and a label claiming a score nobody played for is the
+       same lie in words that the spine used to tell in colour. an absence is
+       said as an absence. */
     const tier=played?(row.best||null):null;
     const el=document.createElement('div');
     el.className='dayrow'+(isToday?' today':'')
-      +(locked ? ' shut' : played ? (row.back?' back':'') : ' open');
+      +(locked ? ' shut' : played ? ((row.back?' back':'')+(spent?' spent':'')) : ' open');
 
     let det, right='';
     /* how hard the day is, on any archive day you have not played — whether it
@@ -9694,6 +10204,18 @@ function openRecord(){
       det='in the archive'+bestWords;
     } else if(played){
       const p=[], rd=dayReading(row);
+      /* `one run only` LED THIS COLUMN and is gone. it was the free tier stated
+         as a restriction, in the loudest slot the row has, on the one screen a
+         free player looks at their own record — and the free tier is not a
+         restriction. a new set of ten arrives every day and you play it; that is
+         the whole game, finished. the row has no reason to apologise for it.
+         what money adds is the replay, and that now has a mark of its own on the
+         right of the same row — see the chip below. an addition drawn as an
+         addition says the same product fact without the row calling itself
+         spent, and it says it to the player who has bought it as well, who
+         otherwise had no way to discover the thing they paid for.
+         so a played row's detail is what it always was for a buyer: whatever the
+         bar beside it cannot say, and nothing when the bar says it all. */
       /* THE BAR, and nothing else on the right of a played row — the same one
          the head draws, at the row's size. see .track.dtrack for what it
          replaced and rungTrack for the drawing.
@@ -9724,8 +10246,23 @@ function openRecord(){
          mark, the words are the answer as a reading. what neither the bar nor a
          glance can give is the COUNT, which is the whole measure — and the bar
          made that MORE true, not less: it has no divisions, so four cleans in a
-         row are one turquoise length and cannot be counted off at all. */
-      if(rd) p.push(rd.fig+' '+rd.word);
+         row are one turquoise length and cannot be counted off at all.
+
+         THE READING CAME OFF THE ROW AND THE BAR TOOK THE SPACE. the argument
+         above is still true — a length cannot be counted off — and it is
+         answered by giving the picture enough room to be read as a proportion
+         instead of a caption: the bar was 92px in the corner of a row whose
+         middle held its own restatement in words, and it now runs the width the
+         words were using. filled against bare says how far the day got, and the
+         colours say how it went, which is what the whole card is scored in.
+         WHAT THIS COSTS, stated rather than discovered: colour is now the only
+         VISUAL carrier of the count. turquoise against violet measures 1.43 in
+         greyscale, so a screenshot, a monochrome panel or anyone whose cones do
+         not part those two gets the length and not the breakdown. the row's
+         aria-label still spells the rungs out in words, so nothing is lost to a
+         screen reader — but a sighted reader who cannot separate the two hues
+         has lost a reading they had. the owner asked for the bar and this is
+         the trade it carries. */
       /* CUT once the bar is there. `6 of 10 nets` is filled length against bare
          length, which is the masthead's own reading for the day ahead and the
          one thing here a picture says better than a clause. it comes back the
@@ -9744,39 +10281,116 @@ function openRecord(){
          here that is about where the day came from rather than how it went,
          which is why no reading can absorb it. */
       if(row.back) p.push('archive');
-      det=p.join(' · ')||'played';
-      right=bar;
+      /* `played` was the fallback when nothing else needed saying, and with the
+         reading gone that is now the ordinary case rather than the odd one — so
+         every finished day would carry a word that the bar beside it, and the
+         date, and the tier spine already make unmistakable. a row with a bar
+         says nothing in words unless it has something the bar cannot say. a row
+         with NO bar still says `played`, because there it is the only evidence
+         the day happened at all. */
+      det=p.join(' · ')||(bar?'':'played');
+      /* ---- the replay, drawn on every played row ----
+         it is a glyph and not the word `replay` because it sits at the end of a
+         row that already carries a date, possibly a clause, and a ten-cell bar:
+         a fourth text object is the crowding the bar was widened to escape. the
+         arrow is a true circular arc, which is the one curve this palette
+         allows, and it is `.dstate` at every other measure so a row's two
+         possible chips are the same object at the same size.
+         EVERYONE GETS IT, and that is the change. it used to be drawn only where
+         the day could actually be replayed, which meant the two players who most
+         needed to see it saw nothing: the buyer, for whom a replayable row
+         carried no mark a non-replayable one lacked, so the thing they had paid
+         for was reachable and undiscoverable; and the free player, whose row
+         instead said `one run only` and dressed itself as spent, which is the
+         free tier drawn as a punishment rather than as the complete game it is.
+         so the chip is the product, present on the row either way, and the only
+         difference is whether it is yours yet.
+         LOCKED IS DASHED AND NOTHING ELSE — see .dreplay.shut, and .wbtn.shut
+         before it. no lock glyph and no field: a lock on a day you PLAYED reads
+         as a day taken away from you, and a saturated field on a row is the mark
+         that got the archive rows deleted the first time. pressing it is the
+         row's own press, which answers in words and never opens a checkout. */
+      right = bar + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true"`
+        +` title="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
     } else {
       det=(isToday?'not played yet':'not played')+bestWords;
       right='<span class="dstate">play →</span>';
     }
 
-    el.innerHTML=`<i class="dtier"${tier?` style="--tc:var(${TIERCOL[tier]})"`:''}></i>`
+    /* ---- the spine is a DATE mark now, not a score one ----
+       it drew TIERCOL[row.best] — the best rung the day minted — which is the
+       maximum of a set the bar two columns over already draws in full, all ten
+       of them, in the same three colours. a summary of a thing shown complete,
+       three inches from it.
+       so it goes decorative, and the owner asked for that. THE COLOURS ARE THE
+       THREE THAT ARE NOT RUNGS, and that is the whole of the care needed here:
+       gelb, tuerkis and violett mean perfect, clean and done everywhere in this
+       game, so cycling all six would put a gelb spine against a bar whose gelb
+       cell means something — a false signal, at a glance, on the screen where
+       the reading matters most. hellblau, gruen and orange are never rungs, so
+       a spine cannot be misread as one however pretty it gets.
+       keyed on the date rather than the row's position, so a day's colour is a
+       property of the day: it does not shuffle when the list gains a row, and
+       the same date is the same colour on every device. */
+    el.innerHTML=`<i class="dtier" style="--tc:var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})"></i>`
       +`<span class="ddate">${dayLabel(d)}</span>`
       +`<span class="ddet">${det}</span>`
       +right;
     // the cells are aria-hidden, so the tiers go into the label as words instead
     const words=played?tierWords(row.tiers):'';
-    const label=dayLabel(d)+' · '+det+(played&&tier?' · '+tier:'')+(words?' · '+words:'');
+    /* the replay chip is aria-hidden — it is a glyph, and a screen reader
+       announcing `clockwise open circle arrow` inside a row that is itself the
+       button is worse than silence. so the row's own label carries what the
+       chip means, which is the same division `dayCells` and this label already
+       make: the picture is hidden and the words say what it drew.
+       BOTH of its states, now that it has two. a dashed keyline is not a thing a
+       screen reader can be given, so the label is where the locked chip says in
+       words what the drawing says in ink — and it says it in the same sentence
+       the press and the tooltip use, so the three cannot drift. */
+    /* JOINED FROM THE PARTS THAT EXIST, rather than concatenated around a `det`
+       that is assumed to. `det` is empty on an ordinary played row now — the bar
+       says what it used to — so the old form read `sat 15 aug ·  · 2 perfect`,
+       with an empty segment a screen reader pauses twice for. */
+    const label=[dayLabel(d), det, played&&tier?tier:'', words,
+                 played?(canPlay?'play again':replayWords()):''].filter(Boolean).join(' · ');
     el.setAttribute('aria-label',label);
     /* only a row you can actually do something with is a control. a shut row
        answers a press by naming its price, which is a courtesy and not a
        control — making three hundred of them tab stops would put the whole
        archive between the keyboard and the rest of the card, to reach a reading
        the `unlock` link right above them already gives. the label still says
-       where the day is, so nothing is hidden from a screen reader. */
+       where the day is, so nothing is hidden from a screen reader.
+       a SPENT row is not a control for the same reason and by the same test —
+       canPlay is the whole of it, and it now answers the money and the one run
+       a day alike. */
+    /* the row hands the day its own stored readings rather than letting offerDay
+       reach back into playedDays for a day it was told about — the rungs it has
+       drawn, and the first run it is keeping. see offerDay. */
+    const offer=()=>offerDay(d,played,played?row.tiers:null,played?row.first:null);
     if(canPlay){
       el.setAttribute('role','button'); el.tabIndex=0;
-      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offerDay(d,played,played?row.tiers:null) } };
+      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offer() } };
     }
     el.onclick=()=>{
-      if(canPlay) return offerDay(d,played,played?row.tiers:null);
+      if(canPlay) return offer();
       /* it names the day you just pressed and what opening it costs, and stops
          there. the line above is the way through; a row that went straight to a
          payment page would make three hundred accidental tap targets out of a
-         list whose whole purpose is browsing. */
+         list whose whole purpose is browsing.
+         THIS IS ALSO THE LOCKED CHIP'S PRESS. the chip is a span inside the row
+         and not a control of its own, so a tap on it arrives here — one handler,
+         one sentence, and no way for the mark and the answer to disagree. it is
+         why the chip needs no listener and why it can never open a checkout: the
+         only thing on this screen that could is the row, and the row says words.
+         a SPENT day is a different sentence: it is not in the archive, it is a
+         day you have finished, and what the answer names is the replay that
+         money adds rather than a run you have used up — see replayWords. telling
+         somebody who played this morning that today is archived would be the
+         card misreading its own record. */
       const price=priceWords();
-      flashMsg(`${dayLabel(d)} · in the archive · unlock${price?' · '+price:''}`);
+      flashMsg(spent
+        ? `${dayLabel(d)} · ${replayWords()}`
+        : `${dayLabel(d)} · in the archive · unlock${price?' · '+price:''}`);
     };
     list.appendChild(el);
   });
@@ -9792,19 +10406,17 @@ function openRecord(){
      list that stopped loading; two rows and then a closing line reads as all
      there is, which is what it now is. */
   if(best && best.d!==d0) list.appendChild(bestLineEl(best));
-  /* ---- nothing on record yet ----
-     `rows` is the honest test — days you have actually played — not `days`,
-     which is today and yesterday and is therefore never empty.
-     it used to REPLACE the list, and that had to go: the list it was replacing
-     holds the days you can play plus the way back in for anyone who bought on
-     another device. it leads the card and the days follow it. */
-  if(!rows.length){
-    const el=document.createElement('div');
-    el.className='runempty';
-    el.innerHTML='nothing on record yet.<br>'
-      +'play today\'s ten and this fills in — one day, ten nets, the same ten for everyone.';
-    list.insertBefore(el,list.firstChild);
-  }
+  /* ---- THERE IS NO EMPTY STATE, and the list is why ----
+     it used to lead with `nothing on record yet. play today's ten and this fills
+     in — one day, ten nets, the same ten for everyone.` — two lines in a dashed
+     box, above a list that was already showing today and yesterday, each drawing
+     ten bare cells and a `play →`.
+     so the card said `nothing here yet, go and play` directly on top of the two
+     days you can play, both of which say `not played yet` and carry the button
+     that starts them. an empty state is for a list with nothing in it; this list
+     is never empty, because `allDays()` seeds today and yesterday whatever the
+     save holds. the rows ARE the invitation and they are a better one — they
+     name the day, draw its bar, and can be pressed. */
   /* the same line, at the two ends it belongs at.
      HELD, it is a receipt and goes at the TOP: it carries the restore code, and
      a buyer looks for that on the morning they get a new phone rather than in
@@ -9813,8 +10425,10 @@ function openRecord(){
      at the FOOT under the days — it is the quietest thing on the card and it is
      addressed to the few people who have already paid, not to the player whose
      record this is. it does not sell anything any more; see archiveLineEl. */
-  if(POLICY.premium) list.insertBefore(archiveLineEl(),list.firstChild);
-  else if(API) list.appendChild(archiveLineEl());
+  /* it returns null for a buyer with no code to show — see archiveLineEl, where
+     the label went and only the code stayed. */
+  const arch=(POLICY.premium||API)?archiveLineEl():null;
+  if(arch){ if(POLICY.premium) list.insertBefore(arch,list.firstChild); else list.appendChild(arch) }
 
   /* the whole screen is written before this and nothing is read back after it.
      there used to be a second pass here: read `clientWidth` off every stamp
@@ -9850,7 +10464,7 @@ function renderThreads(){
      then failed the `if(!t.slot) return` below and the row quietly stopped
      updating, still showing the counts it had before the rebuild. */
   const sig=R().netIndex+':'+threads.map(t=>t.key).join(',');
-  if(c.dataset.done) return;          // the finish flood owns the bar until the next net
+  if(c.dataset.done) return;          // a cleared net holds this bay until the next one — see holdGauge
   if(c.dataset.sig!==sig || threads.some(t=>!t.slot||!t.slot.isConnected)){
     c.dataset.sig=sig;
     c.innerHTML='';
@@ -10193,19 +10807,27 @@ function renderHud(){
      the other moment is a lap wrap, and it wants the opposite treatment for a
      reason spelled out where it is handled, below. */
   const meter=$('parmeter'), phase=over?'over':'under', bar=meter.firstElementChild;
-  /* the finish flood owns this bar until the next net, the same way it owns the
-     crossings one — celebrateGauge writes both, and its full-width run covers the
-     lap ground behind it, so a net cleared deep into a lap still ends on the flag
-     rather than on the colour it happened to stop in.
+  /* a cleared net holds this bay until the next one is built, the same way it
+     holds the crossings one — see holdGauge. what it holds is this net's own final
+     score: the bar wherever it stopped, on the lap it stopped in, and the numeral
+     naming the same line. clearNet has already advanced netIndex and zeroed
+     netMoves, so EVERYTHING computed above this line describes the next net, and
+     any of it drawn here would be that net's opening budget standing beside a card
+     announcing the one that just cleared.
 
-     the numeral carries on: it is final the moment the net clears and has nothing
-     to say the flood contradicts. the phase is still written, because a bar that
-     returned early and left it stale would open the NEXT net on a 520ms sweep
-     inherited from this one. the lap bookkeeping below needs no such care — the
-     next net is under par, which clears both the ground and the lap. */
+     the numeral goes with the bar rather than carrying on, which is a change: it
+     used to be written through the hold, because a flag over the bar had nothing
+     to contradict. now that the bar is a reading again, a live numeral over a held
+     bar would be the one place in this function where the two name different
+     lines — see the note where they are written for why that is the thing being
+     avoided.
+
+     the phase is still written, because it is not a reading: it decides whether
+     the NEXT paint gets the 520ms sweep, and a stale one would open the next net
+     on a sweep inherited from this one. the lap bookkeeping below needs no such
+     care — the next net is under par, which clears both the ground and the lap. */
   if($('parrow').dataset.done){
     meter.dataset.phase=phase;
-    $('parnum').textContent=num; $('parof').textContent=unit;
     return;
   }
   if(!reduceMotion && meter.dataset.phase && meter.dataset.phase!==phase){
@@ -10694,9 +11316,13 @@ function introPlate(){
    the bar is aria-hidden because the three words are right underneath it; the
    record's track carries the label instead, because there it has no words. */
 function rungLadder(){
+  /* THE CAPTION IS GONE. `every net mints a rung` sat over three named colours
+     and told you, in the game's own vocabulary, what the three named colours
+     underneath it were about to tell you — and `mints a rung` is the one phrase
+     on this card a first-time reader has no way to decode. the ladder is three
+     words on three colours and it does not need announcing. */
   const rungs=['perfect','clean','done'];
   return `<div class="rladder">
-    <span class="rlcap">every net mints a rung</span>
     <span class="track" aria-hidden="true">${
       rungs.map(t=>`<i class="on" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
     <span class="rlnames">${rungs.map(t=>`<i>${t}</i>`).join('')}</span>
@@ -10735,7 +11361,7 @@ function renderIntro(mode){
        the one plural clause on the card, against a mark that draws exactly one
        crossing. */
     b.innerHTML=`<div class="intro-title">how to play</div>
-      <div class="intro-sub">ten nets a day &middot; a day cannot be failed</div>
+      <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div>
       <div class="rkey">
         ${rmark('feature')}<span><b>feature</b> &middot; free it</span>
         ${rmark('neuron')}<span><b>neuron</b> &middot; drag it</span>
@@ -10743,7 +11369,6 @@ function renderIntro(mode){
         ${rmark('pinned')}<span><b>pinned</b> &middot; will not move</span>
         ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
       </div>
-      <div class="intro-note">a feature clear of crossings and sharing pulls free and names itself.</div>
       ${rungLadder()}
       <button class="intro-start" id="introstart">back to the net</button>`;
   } else if(mode==='welcome'){
@@ -10754,39 +11379,61 @@ function renderIntro(mode){
        explained a mechanism nobody has seen yet; the claim is the hook, the
        explanation belongs in the rules card where the marks are there to hang
        it on. */
-    /* NO JARGON HERE, and that is a rule rather than a preference. the first
-       stranger to play this game bounced off the words: `net`, `neurons`,
+    /* ONE technical phrase on this card and it is `neural net`. the first
+       stranger to play the game bounced off the words — `net`, `neurons`,
        `features` in a sense that is not the everyday one, and `a sparse
        autoencoder does this for real` — five technical terms before her first
-       drag, on a card she has to decode before she is allowed to touch
+       drag, on a card she had to decode before she was allowed to touch
        anything. she said it looked harder than it is, which is the one thing
-       this card must never do.
+       this card must never do. THAT FINDING STANDS and those words are still
+       out; what moved (16 Aug 2026) is where the line is drawn.
 
-       the subject is NOT gone, it is said in english. `stored them all on top
-       of each other` IS superposition, and it is the reason this game exists
-       rather than being a generic untangling puzzle — if a later edit tightens
-       this card, that clause is the one to keep. `a game about features`
-       defined the word with itself and read as PRODUCT features to anyone who
-       had not already been told otherwise; the subtitle asks a question instead.
+       the card that answered her went so far the other way that it described
+       any machine at all: `a game about what a machine knows`, over `a small
+       machine learned a few things`. a washing machine learns a few things and
+       stores them somewhere. so the net is named once, in the one phrase of
+       this vocabulary a stranger already owns — and it teaches the shorthand
+       while it is at it, since the opening says `neural net` and the game says
+       `nets` from then on. `neurons`, `superposed` and `sparse autoencoder` are
+       the words that made it homework and they are NOT here. they live in the
+       rules card behind `?`, where the marks are on screen to hang them on.
 
-       and the second line is the hook, deliberately after the setup: a tangle
-       resolving into a named drawing is the strangest thing this game does, and
-       nobody needs to know what an autoencoder is to want it. the technical
-       name is not deferred to a later card either — it is simply not the
-       opening's job. the rules card, behind `?`, is where the marks are there
-       to hang the vocabulary on. */
+       THE SUBTITLE DOES NOT DEFINE `features`, and a pass that had it do so was
+       tried and cut. `a feature is one thing a machine knows` over `a small
+       neural net learned a few of them` is a definition stacked on a definition:
+       the reader is told what a word means, then made to carry `a few of them`
+       back to it, before anything has happened. the last line defines it far
+       better by demonstration — the thing you free is the thing that names
+       itself — so the subtitle is spent on the ACT instead, which is also what
+       the button underneath it promises. three short sentences, each of which
+       can be read without holding the one above it.
+
+       `stored them all on top of each other` IS superposition and it survives
+       every pass of this card: it is the reason this game exists rather than
+       being a generic untangling puzzle, so if a later edit tightens the card,
+       that clause is the one to keep. the closing line is the hook and it comes
+       last on purpose — a tangle resolving into a named drawing is the
+       strangest thing this game does, and nobody needs to know what an
+       autoencoder is to want it. it promises BOTH halves, the picture and the
+       name; the draft that prompted this pass ended `and the feature will
+       reveal itself`, which is one vaguer word in place of both. */
     b.innerHTML=`<div class="intro-title">${WORDMARK}</div>
-      <div class="intro-sub">a game about what a machine knows</div>
-      <p class="intro-lead">a small machine learned a few things and stored them all on top of each other.</p>
+      <div class="intro-sub">untangle what a neural net knows</div>
+      <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>
       <div class="intro-note">pull them apart. free one and it draws itself, and tells you its name.</div>
       <button class="intro-start" id="introstart">start untangling</button>`;
   } else {
     const days=Math.max(1,store.meta.streak||1);
     /* the card leads with what still has somewhere to go. "features collected"
-       and "tickets" both finish inside a week — measured at a median of two
-       days for all sixteen, and all six tickets by day seven — so a returning
-       player was being shown two counters that were already over. clean-tier
-       badges and superposition pairs are the tracks with runway. */
+       finished inside a week — a median of two days for all sixteen — so a
+       returning player was being shown a counter that was already over.
+       clean-tier badges and superposition pairs are the tracks with runway.
+       the other counter here was "tickets", six one-off awards for things like
+       a first identification or a seven day streak. they were granted, toasted
+       once, written to the save, merged across devices — and never drawn
+       anywhere. write-only state costs a field in everybody's save and a branch
+       in the merge to say nothing, and two of the six counted a `depth` the set
+       of ten cannot have. gone entirely rather than given a screen. */
     // at or above the clean line, so a badge upgraded to perfect still counts
     const clean=FKEYS.filter(k=>TIERRANK[(store.collection.badges[k]||{}).tier]>=TIERRANK.clean).length;
     const pairsGot=Object.keys(store.collection.pairs||{}).length;
@@ -10834,7 +11481,15 @@ function renderIntro(mode){
   };
 }
 $('helpbtn').onclick=()=>{renderIntro('rules');showVeil('introveil')};
-$('themebtn').onclick=()=>setTheme(themeNow()==='light'?'dark':'light');
+/* one act, both places it can be pressed — found by the same class applyTheme
+   writes, so a control that reports the ground is a control that flips it and
+   there is no way to add one and get only half of that.
+   preventDefault because the record's is an anchor: `.rec-btn` is the material
+   its two neighbours in that head are made of, and following `#` there would
+   put a fragment in the url of a page that has no fragments. */
+document.querySelectorAll('.groundbtn').forEach(b=>{
+  b.onclick=e=>{ e.preventDefault(); setTheme(themeNow()==='light'?'dark':'light') };
+});
 /* the solve button. playtesting a ramp means reaching net eight, and reaching
    net eight by hand is most of an evening — so the fastest honest way to look at
    the deep nets is to walk the solver down to them. it is gated on DEV, the same
