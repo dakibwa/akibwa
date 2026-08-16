@@ -287,7 +287,30 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --hover-lift:brightness(.98) drop-shadow(0 1px 4px rgba(20,24,28,.22));
     --sig-hellblau:#2294CC;
     --sig-gruen:#1E9F57;
-    --sig-gelb:var(--gelb);      /* the one signal that keeps its canonical value on paper — see above */
+    /* GELB IS DARKENED ON PAPER AFTER ALL, and the note that kept it canonical
+       was right about the danger and wrong about which colour poses it. it said
+       a darkened gelb came 16.0 dE from the VIOLET thread; measured in dE2000
+       against every other thread on this ground, the nearest neighbour is
+       ORANGE, and it is much tighter — two warm colours converge as either
+       darkens, which violet never does.
+       so the floor of 18 dE is what sets this value rather than taste. the
+       canonical #EFC319 measures 1.61:1 against the board plate — a thread you
+       have to hunt for on a white ground, which is the complaint — and every
+       darker candidate trades contrast against that orange:
+         #EFC319  1.61:1  27.7 dE   the pale one
+         #C99A0F  2.48:1  18.5 dE   clears the floor, and is this
+         #B8890B  3.04:1  15.5 dE   fails
+         #A87C0A  3.62:1  15.1 dE   fails
+       #C99A0F is the darkest yellow that still clears 18 from orange. It does
+       not reach 3:1 and cannot without colliding, which is the honest limit of
+       a yellow line on white paper — but it is half a stop of real visibility
+       over what shipped, and the failure it leaves is "faint" rather than
+       "indistinguishable from the orange thread beside it", which is the worse
+       of the two on a board whose whole task is telling threads apart.
+       FIELDS ARE UNAFFECTED: --gelb stays canonical, so the perfect rung, the
+       tier bars, the emblem plates and the wordmark are all untouched. this is
+       the stroke value only, which is the whole point of the --sig-* set. */
+    --sig-gelb:#C99A0F;
     --sig-orange:#D37114;
     --sig-dunkelblau:var(--dunkelblau);   /* 5.16:1 on paper already */
     --sig-violett:#5F4E92;
@@ -2067,11 +2090,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .daylist{flex:1 1 auto;min-height:0;overflow-y:auto;padding:10px 18px 16px;
     display:flex;flex-direction:column;gap:5px}
   /* ONE LINE, and structurally so: the row never wraps and the middle column is
-     the only thing that gives (it ellipses). the right-hand column is a fixed
-     width now — one bar, the same width on every row — so nothing has to be
-     measured to know it fits, and the bars line up down the card as a column
-     you can read across. that is the difference between a list of days and a
-     scoreboard. */
+     the only thing that gives (it ellipses). everything to the right of it holds
+     a measure of its own — the bar, the slot the attempt count sits in whether or
+     not the day has one, and the chip — so nothing has to be measured to know it
+     fits, and the bars line up down the card as a column you can read across.
+     that is the difference between a list of days and a scoreboard.
+     that claim was false for a while and is true again. the bar spent a spell at
+     `flex:1 1 auto`, which made it as wide as whatever the row had left over —
+     so a row carrying a clause drew a shorter bar than one that did not, and the
+     two rows of this list disagreed about the size of the same instrument. see
+     .track.dtrack, where the measure is set and the argument is made. */
   .dayrow{
     display:flex;align-items:center;gap:10px;flex-wrap:nowrap;width:100%;
     font:inherit;color:var(--ink);text-align:left;appearance:none;
@@ -2095,16 +2123,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      row people press twice and then stop trusting. */
   .dayrow.shut{border-style:dashed}
   .dayrow.shut .ddate{color:var(--ink-soft)}
-  /* the 47% cap exists to stop a long detail crowding THE BAR on its right,
-     which only a played row has. a shut row has nothing there and an open one
-     has `play →`, which is `margin-left:auto` and holds its own width — so on
-     both of them the cap was doing nothing except ellipsing the difficulty
-     reading off the end on a phone.
-     it is NOT what decides the phone, on any row: at 375 the fixed columns
-     leave the detail about 141px and the cap resolves to 151, so what ellipses
-     `· archive` there is flex-shrink and the cap is not reachable. removing it
-     would move nothing, which is why it is still here. */
-  .dayrow.shut .ddet,.dayrow.open .ddet{max-width:none}
   .dayrow.shut:hover{border-color:var(--rule)}
   .dayrow.shut:hover .ddet{color:var(--ink)}
   /* ---------- a day you have already had your run at ----------
@@ -2130,10 +2148,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      .shut has, minus the drawing. TODAY is exempt and has to be: .today is ink
      and outranks whatever else a row is, but a :hover carries more weight than a
      plain pair of classes, so an unqualified rule here would drop today's own
-     keyline to a hairline under the pointer.
-     it keeps the played row's 47% detail cap, which .shut lifts: this row has
-     the day's ten drawn on its right and a detail that grows into them is the
-     crowding that cap exists to stop. .shut has nothing there to crowd. */
+     keyline to a hairline under the pointer. */
   .dayrow.spent:not(.today):hover{border-color:var(--rule)}
   .dayrow.spent:hover .ddet{color:var(--ink)}
   /* ---------- your best day ----------
@@ -2161,7 +2176,20 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dayrow .dtier{flex:0 0 auto;width:7px;align-self:stretch;background:var(--tc,var(--rule))}
   .dayrow .ddate{flex:0 0 auto;width:78px;padding:11px 0;
     font-size:10.5px;letter-spacing:.07em;text-transform:lowercase;font-variant-numeric:tabular-nums}
-  .dayrow .ddet{flex:0 1 auto;min-width:0;max-width:47%;
+  /* THE ONLY COLUMN THAT MOVES, in both directions: it takes the row's slack
+     and it is what ellipses when there is none. everything either side of it
+     holds a fixed measure, so a row with nothing to say in words is a date at
+     one end and the day's reading at the other with air between them — which is
+     what a list item looks like — and a row with a clause spends that air on it.
+     it grows because the bar stopped growing. while the bar was `flex:1 1 auto`
+     this was `flex:0 1 auto` under a `max-width:47%` cap, and the cap existed to
+     stop a long clause crowding the bar; a bar that neither grows nor shrinks
+     cannot be crowded, so the cap and the two rules that lifted it for .shut and
+     .open went with it. the growth is also what pins the right-hand objects to
+     the row's edge, and it is now the only thing that does: an auto margin has
+     no free space left to move anything with once this has taken it, so the two
+     that used to hold that edge are gone — see .dstate and .dreplay. */
+  .dayrow .ddet{flex:1 1 auto;min-width:0;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     font-size:10px;letter-spacing:.09em;color:var(--ink-soft);text-transform:lowercase}
   /* ---------- the day's ten ----------
@@ -2194,22 +2222,44 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      reads. filled length against bare says that at a glance — the masthead's
      own picture of the day ahead — and it is why `n of 10 nets` came out of the
      words beside it.
-     colour is not the sole carrier of anything here: the count stands in words
-     in the detail column of the same row, and the row's aria-label spells the
-     rungs out. what goes is the greyscale channel, and it goes knowingly. the
-     share plate keeps its height ladder and should — see SHAREFILL, where the
-     reading has to survive a feed's thumbnail with no words anywhere near it. */
-  /* IT GROWS NOW. it was 92px pinned to the right edge, because the middle of
-     the row was carrying the same reading in words and the bar was the smaller
-     of two statements of one fact. the words are gone, so the picture takes the
-     column: `flex:1 1 auto` rather than a fixed width, with a floor so a row
-     that DOES still have something to say in words — a short set, a trial, an
-     archived day — keeps a bar long enough to read as ten of anything.
-     `margin-left:auto` had to go with the fixed width. an auto margin on a flex
-     item eats the free space before flex-grow ever sees it, so the two together
-     are a bar that never grows; the gap is a real margin now. */
+     colour is the sole VISUAL carrier of the breakdown, and that is the trade —
+     the count in words came off the row when the bar took its column, so what is
+     left in greyscale is the filled length. the row's aria-label still spells the
+     rungs out, so nothing is lost to a screen reader. the share plate keeps its
+     height ladder and should — see SHAREFILL, where the reading has to survive a
+     feed's thumbnail with no words anywhere near it. */
+  /* ---------- ITS MEASURE, and it is a column of a list rather than a chart ----
+     the owner asked for a row that is less dominant, and the bar is what was
+     dominating it: 414px of saturated colour and 10px of height against a 10.5px
+     date, which is a chart with a date attached rather than a day in a list.
+     THE HEIGHT CARRIES NOTHING and pays for the most. the two readings here are
+     how far the day got — filled length against bare — and how it went, in the
+     proportions of colour along that length. both are read ALONG the bar, so
+     every pixel of height is ink spent on neither: 10px to 6px is 40% of the
+     mark's area for nothing the eye was using. the floor is the bare run rather
+     than the rungs, because --rule on --surface is the faintest pair on the card
+     (1.28 dark, 1.46 light) and a field that thin is where it stops being a
+     field — checked on both grounds at this height with four cells unreached,
+     which is the case that needs it, and it still reads as a length.
+     IT STOPPED GROWING. `flex:1 1 auto` gave it every pixel the row had spare,
+     which is how it got to 414 — and it also meant the bar was as long as the row
+     was empty, so a day with a clause beside it drew a shorter bar than a day
+     without one, and the count that now sits between the bar and the chip would
+     have shortened it again. a fixed 240 is the same instrument on every row, at
+     40% of the row's width where it was at 69%. what took the space back is the
+     detail column, which grows now; see .ddet.
+     it can still SHRINK — `0 1 auto` with a floor — and that is a safety rather
+     than a working part: at the three sizes this game is checked at the row has
+     room for everything on it, so nothing here ever gives. it is what stops a
+     window narrower than any of them clipping the chip off the row's end.
+     WHY 240 AND NOT LESS, measured rather than judged: the masthead draws these
+     same ten cells at 245px on this window, and that is the bar every player
+     reads all day while they play. matching its LENGTH and dropping its height is
+     the trade this row can make — the reading is unchanged and the ink is not —
+     and going shorter than the board's own instrument would be spending
+     legibility the game has already priced. */
   .track.dtrack{
-    flex:1 1 auto;margin-left:16px;margin-top:0;min-width:92px;height:10px;
+    flex:0 1 auto;width:240px;margin-left:16px;margin-top:0;min-width:120px;height:6px;
     /* the track's own ground is --rule, and --rule on --surface measures 1.28
        on the dark ground and 1.46 on the light: no mark at all, which is what
        the note on .record already says of that pair. on the masthead the track
@@ -2269,31 +2319,58 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* ink, not a signal colour: the ladder owns the hues, so a border in one of
      them reads as a tier the row did not mint */
   .dayrow.open:hover{border-color:var(--ink)}
+  /* ---------- how many goes the day has had ----------
+     a multiplier and not a sentence: the row already carries a date, sometimes a
+     clause, a ten-cell bar and a button, and `3 attempts` there is the fourth
+     text object the bar was widened to escape. the unit is not lost, it moves —
+     the row's aria-label says `3 attempts` in words, which is the same division
+     the bar and the chip beside it already make.
+     THE SLOT IS ALWAYS HERE ON A PLAYED ROW and is usually empty. a `×` that
+     appears and disappears would shift the bar sideways by its own width, and
+     the whole argument for a fixed bar is that the two rows of this list draw
+     the same instrument in the same place. so the space is reserved and only the
+     ink is conditional, which costs nothing on a row that never uses it.
+     right-aligned, so the digits sit against the chip and a second one grows
+     leftward into the air rather than towards it. `min-width` rather than
+     `width` so a three-figure count is never clipped — it moves the bar 6px,
+     which is the honest cost of a day somebody has played a hundred times.
+     the quietest ink the row has (--ink-soft, the detail column's own), and the
+     numeral voice every reading in this game takes: tabular, so a 9 and a 10 do
+     not shift what is under them.
+     it is the ONLY place this count is drawn. it was on the card that offered a
+     day before starting it as well, in words; that card went the same day this
+     arrived (see openDay), which is most of why the row needed it. */
+  .druns{flex:0 0 auto;min-width:20px;margin-left:10px;text-align:right;
+    font-size:9px;letter-spacing:.06em;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums}
   /* the one chip left on a row: `play →` on a day still open to you. it takes
-     the slot the bar takes on a played row, so the right edge of the list is
-     one column whatever the row is — both are `margin-left:auto` against the
-     row's own padding, so it is the edge that lines up and not the width.
+     the slot the bar takes on a played row, so the right edge of the list is one
+     column whatever the row is. it held that edge with `margin-left:auto` and
+     does not need to any more: .ddet grows into whatever the row has spare, so
+     there is no free space left for an auto margin to move anything with, and
+     ONE mechanism pins every right-hand object on every row instead of two that
+     have to agree.
      the border, the ink and the hover come off the shared control block by
      .rec-close — this sets the SIZE, which is the only thing a row's button
      needs to differ in. the hover used to turn the chip hellblau while the row
      around it turned ink: one press, two colours, and the blue was the row's
      only signal hue at rest. it takes ink now, with the row. */
-  .dstate{flex:0 0 auto;margin-left:auto;display:inline-flex;align-items:center;
+  .dstate{flex:0 0 auto;display:inline-flex;align-items:center;
     justify-content:center;gap:5px;height:24px;padding:0 9px;
     font-size:9px;letter-spacing:.11em;text-transform:lowercase}
   .dayrow.open .dstate{color:var(--ink)}
-  /* square, and the margin is real rather than `auto`: the bar beside it is
-     `flex:1 1 auto`, and an auto margin would eat the free space before the bar
-     could grow into it — the same pairing that kept the bar at 92px until it
-     was untangled. the glyph carries a chip on its own so it takes more than
-     the 9px the worded chips are set in. */
+  /* square, and the margin is real rather than `auto`: an auto margin eats the
+     row's free space before anything else can, and the detail column is what
+     takes it now — with `auto` here the chip would sit at the right edge and the
+     bar and the count would be pushed off the middle of the row instead. the
+     glyph carries a chip on its own so it takes more than the 9px the worded
+     chips are set in.
+     the legacy row used to need an exception here — a save with no stored rungs
+     draws no bar, and the chip landed against the end of the detail rather than
+     at the row's edge. it does not any more: .ddet grows on every row, so the
+     row's right-hand objects are pinned by the column to their left whether or
+     not there is a bar among them. */
   .dreplay{width:24px;padding:0;margin-left:10px;font-size:13px;letter-spacing:0}
-  /* the one row with no bar to push it: a legacy save shape with no stored
-     rungs draws nothing in the bar's column, and a real 10px margin then leaves
-     the chip sitting against the end of the detail instead of at the row's
-     right edge, where every other row's right-hand object is. this is the auto
-     margin only that row needs, and it cannot reach a row that has a bar. */
-  .dayrow .ddet + .dreplay{margin-left:auto}
   /* ---------- the replay you have not bought ----------
      the chip is drawn on every played row now, because it is the product: a
      buyer who never sees it never finds the thing they paid for, and a free
@@ -2320,25 +2397,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dreplay.shut{border-style:dashed}
   .dayrow:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
   .dayrow:hover .dreplay.shut{color:var(--ink)}
-  /* the day's ten on the card that offers the day. it is `.track` at the card's
-     own measure — a little taller than a row's, because here it is the subject
-     rather than a column of a list, and the card has the room a row does not. */
-  .askrungs{margin:14px 0 2px}
-  /* the count sits under the bar and hard right, in the quietest ink the card
-     has. it is a reading rather than a sentence, so it takes the numeral voice
-     the rest of the game gives readings — tabular, so a 9 and a 10 do not shift
-     the line under them. */
-  .askruns{
-    text-align:right;margin-top:5px;
-    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
-    font-variant-numeric:tabular-nums;
-  }
-  /* the row's own geometry comes off it here. `.dtrack` is built to sit at the
-     end of a day row — a 16px gutter from the date and a 92px floor so it stays
-     readable when a clause crowds it — and neither applies on a card where it
-     is the only thing on its line. */
-  .askrungs .track.dtrack{margin:0;min-width:0;height:12px}
-  .askrungs .track > i{transition:none}
+  /* `.askrungs` and `.askruns` stood here: the day's ten and its attempt count,
+     drawn on the card that used to offer a day before starting it. the card is
+     gone (16 Aug 2026, see openDay) and nothing else ever wrote either class, so
+     the four rules had no selector left to match. the readings did not go with
+     them — the record's own row draws the same bar, at `.track.dtrack`, which is
+     what these were re-measuring for a card's width. */
 
   /* the rules card is read, not admired: one column, no artwork plate.
      it is also a reference you come back to, not a lesson — the guided net does
@@ -2586,15 +2650,31 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .dayrow{gap:8px;padding-right:9px}
     .dayrow .ddate{width:64px;font-size:10px;letter-spacing:.04em}
     .dayrow .ddet{font-size:9.5px}
-    /* the WIDTH is gone and only the height is set here. 76px against the
-       desktop's 92 made sense while the bar was a fixed object in the corner of
-       a row; it is `flex:1 1 auto` with a 92px floor now, so a fixed width here
-       fought the floor and won nothing — the row is narrower, so the bar is
-       narrower, without a second number saying so.
-       the height still has to be RESTATED rather than inherited from the
-       `.track` rule above: .track.dtrack sets its own and outranks a bare
-       `.track` at any width. */
-    .track.dtrack{height:8px;min-width:0}
+    /* THE MEASURE IS BACK HERE, because the bar has one again and a phone's row
+       is 323px where the desktop's is 602. the desktop's 240 is three quarters
+       of that and would leave the detail column nothing at all — and the gutter
+       before it comes in too, since 16 plus the row's own gap is a lot of air to
+       spend at this width.
+       88 IS THE MASTHEAD'S OWN TRACK, measured: the board draws these same ten
+       cells at 88px on this device, and that is the bar every player reads all
+       day. so the record's bar and the board's are the same length here, and the
+       row's is quieter only in height.
+       WHAT SIZED IT is the row that has to hold everything at once: an archived
+       day, replayed, is a clause AND a bar AND a count on 323px, which leaves
+       the bar and the clause 127px between them. `archive` wants 36 of that, so
+       anything over 91 here ellipses the one thing on the row the bar cannot say
+       — 114 and 100 were both tried and both drew `arch…`. at 88 the words fit
+       whole and a longer clause ellipses instead, which is the right way round.
+       leaving them the room is the only way to get that: flex-shrink is
+       proportional and cannot be ordered, so a bar that gives ground reluctantly
+       still takes a share of every squeeze the row gets.
+       the floor is BELOW the measure on purpose, and it is the only thing here
+       that is not about 375: nothing shrinks at the three sizes this game is
+       checked at, and a 320px phone would otherwise clip the chip off the end of
+       the row rather than give the last few pixels back.
+       all of it has to be RESTATED rather than inherited: .track.dtrack sets its
+       own and outranks a bare `.track` at any width. */
+    .track.dtrack{width:88px;min-width:80px;height:5px;margin-left:10px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     /* nothing floats over the board any more, so it keeps its whole height */
@@ -2960,9 +3040,22 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 /* ================= feature catalogue ================= */
 
 const MARKGRID=`<g fill="none" stroke="var(--mark,#fff)" stroke-width="1" opacity=".16"><path d="M12 0V96M24 0V96M36 0V96M48 0V96M60 0V96M72 0V96M84 0V96M0 12H96M0 24H96M0 36H96M0 48H96M0 60H96M0 72H96M0 84H96"/></g>`;
-/* ---- the sixteen signs ----
+/* ---- the forty-nine signs ----
    96x96, single colour, horizontals / verticals / 45° diagonals / true circular
    arcs only, after Aicher's Munich 1972 system.
+
+   `e` used to ride alongside `c` and `p`: one emoji per feature, for the emoji
+   strip the run-over card used to build. that strip is gone (see showRunOver)
+   and SHAREBLOCK says why the text share is deliberately NOT emoji — so the
+   field was read by nothing at all, in this file or in tools/ or worker/. it is
+   dropped here rather than restated thirty-three more times.
+
+   AT FORTY-NINE THE BINDING CONSTRAINT IS EACH OTHER, NOT EACH ONE. the grid
+   draws these at about eighty pixels a side, so a sign is not finished when it
+   reads — it is finished when it cannot be mistaken for any of the other
+   forty-eight. that is what the notes above each entry are: what the sign is
+   NOT, and which neighbour made it move. the pairs that cost the most were
+   round ones (nine of the cast are a disc of some sort) and triangles.
 
    the FIRST shape in `p` is the primary path: the sign proper, and the one
    `featureShape` wears down into the settle-polyline when the feature comes
@@ -2979,51 +3072,219 @@ const MARKGRID=`<g fill="none" stroke="var(--mark,#fff)" stroke-width="1" opacit
 const FEATURES={
   // a lumpy cloud, and the rain as separate strokes below. flat-based it
   // reduced to the same low ridge as mountains; a closed blob does not
-  weather:{c:'--hellblau',e:'🟦',p:`<path d="M16 56A16 16 0 0 1 34 32A18 18 0 0 1 64 28A16 16 0 0 1 82 48A70 70 0 0 1 16 56Z"/><path d="M26 70H36L18 88H8ZM52 70H62L44 88H34ZM78 70H88L70 88H60Z"/>`},
+  weather:{c:'--hellblau',p:`<path d="M16 56A16 16 0 0 1 34 32A18 18 0 0 1 64 28A16 16 0 0 1 82 48A70 70 0 0 1 16 56Z"/><path d="M26 70H36L18 88H8ZM52 70H62L44 88H34ZM78 70H88L70 88H60Z"/>`},
   // a bird in profile. drawn head-on with swept wings it was an arrow, every time
-  birds:{c:'--gruen',e:'🟩',p:`<path d="M4 40L14 30A10 10 0 0 1 32 26A26 26 0 0 1 64 42L90 16V34L66 58A40 40 0 0 1 4 40Z"/><path d="M28 40H56L38 58L28 48Z" fill="var(--emblem)"/><circle cx="21" cy="33" r="2.5" fill="var(--emblem)"/>`},
+  birds:{c:'--gruen',p:`<path d="M4 40L14 30A10 10 0 0 1 32 26A26 26 0 0 1 64 42L90 16V34L66 58A40 40 0 0 1 4 40Z"/><path d="M28 40H56L38 58L28 48Z" fill="var(--emblem)"/><circle cx="21" cy="33" r="2.5" fill="var(--emblem)"/>`},
   // a hammer laid on the diagonal — upright it read as a signpost
-  tools:{c:'--tuerkis',e:'⬛',p:`<path d="M12 36L36 12L46 22L38 30L78 70L70 78L30 38L22 46Z"/>`},
+  tools:{c:'--tuerkis',p:`<path d="M12 36L36 12L46 22L38 30L78 70L70 78L30 38L22 46Z"/>`},
   // an eighth note. the head is a diamond so head, stem and flag are one path
-  music:{c:'--violett',e:'🟪',p:`<path d="M48 14H58L80 36V50L58 28V70L40 88L22 70L40 52L48 60Z"/>`},
+  music:{c:'--violett',p:`<path d="M48 14H58L80 36V50L58 28V70L40 88L22 70L40 52L48 60Z"/>`},
   // half a slice, cut side up, rind left standing between the segments
-  citrus:{c:'--orange',e:'🟧',p:`<path d="M12 44H84A36 36 0 0 1 12 44Z"/><g fill="var(--emblem)"><path d="M44 44H52V86H44Z"/><path d="M44 44H52V86H44Z" transform="rotate(45 48 44)"/><path d="M44 44H52V86H44Z" transform="rotate(-45 48 44)"/><path d="M38 44H58A10 10 0 0 1 38 44Z"/></g>`},
-  chess:{c:'--violett',e:'🟪',p:`<path d="M28 16H42V28H54V16H68V70L84 86H12L28 70Z"/>`},
+  citrus:{c:'--orange',p:`<path d="M12 44H84A36 36 0 0 1 12 44Z"/><g fill="var(--emblem)"><path d="M44 44H52V86H44Z"/><path d="M44 44H52V86H44Z" transform="rotate(45 48 44)"/><path d="M44 44H52V86H44Z" transform="rotate(-45 48 44)"/><path d="M38 44H58A10 10 0 0 1 38 44Z"/></g>`},
+  chess:{c:'--violett',p:`<path d="M28 16H42V28H54V16H68V70L84 86H12L28 70Z"/>`},
   // sea, not two thin bands: a solid with a wave for a top edge. the crest is
   // an arc, not a peak — sharp peaks are what mountains is, and it showed
-  water:{c:'--hellblau',e:'🟦',p:`<path d="M8 62A20 20 0 0 1 48 62A20 20 0 0 0 88 62V86H8Z"/><path d="M8 34A20 20 0 0 1 48 34A20 20 0 0 0 88 34V44A20 20 0 0 1 48 44A20 20 0 0 0 8 44Z"/>`},
+  water:{c:'--hellblau',p:`<path d="M8 62A20 20 0 0 1 48 62A20 20 0 0 0 88 62V86H8Z"/><path d="M8 34A20 20 0 0 1 48 34A20 20 0 0 0 88 34V44A20 20 0 0 1 48 44A20 20 0 0 0 8 44Z"/>`},
   // one path, two arcs: a crescent rather than a disc with a disc cut out of it
-  night:{c:'--dunkelblau',e:'🟦',p:`<path d="M60 14A36 36 0 1 0 60 82A35 35 0 0 1 60 14Z"/><path d="M76 62L84 70L76 78L68 70Z"/>`},
-  fire:{c:'--orange',e:'🟧',p:`<path d="M34 8L74 48A26 26 0 0 1 22 48L34 36Z"/><path d="M48 40L58 50A10 10 0 0 1 38 50Z" fill="var(--emblem)"/>`},
-  mountains:{c:'--gruen',e:'🟩',p:`<path d="M8 84L32 60L44 72L64 52L88 76V84Z"/><path d="M32 60L40 68H24ZM64 52L72 60H56Z" fill="var(--emblem)"/>`},
+  night:{c:'--dunkelblau',p:`<path d="M60 14A36 36 0 1 0 60 82A35 35 0 0 1 60 14Z"/><path d="M76 62L84 70L76 78L68 70Z"/>`},
+  fire:{c:'--orange',p:`<path d="M34 8L74 48A26 26 0 0 1 22 48L34 36Z"/><path d="M48 40L58 50A10 10 0 0 1 38 50Z" fill="var(--emblem)"/>`},
+  mountains:{c:'--gruen',p:`<path d="M8 84L32 60L44 72L64 52L88 76V84Z"/><path d="M32 60L40 68H24ZM64 52L72 60H56Z" fill="var(--emblem)"/>`},
   // two of the same thing, one behind the other — the sign for a doubled letter
-  doubled:{c:'--gelb',e:'🟨',p:`<path d="M18 18H60V36H78V78H36V60H18Z"/><path d="M30 30H60V36H36V60H30Z" fill="var(--emblem)"/>`},
+  doubled:{c:'--gelb',p:`<path d="M18 18H60V36H78V78H36V60H18Z"/><path d="M30 30H60V36H36V60H30Z" fill="var(--emblem)"/>`},
   // three bars as one rising step, the gaps cut back in above a kept baseline
-  numbers:{c:'--tuerkis',e:'🟩',p:`<path d="M10 86V64H32V46H54V22H78V86Z"/><g fill="var(--emblem)"><rect x="29" y="46" width="6" height="34"/><rect x="51" y="22" width="6" height="58"/></g>`},
+  numbers:{c:'--tuerkis',p:`<path d="M10 86V64H32V46H54V22H78V86Z"/><g fill="var(--emblem)"><rect x="29" y="46" width="6" height="34"/><rect x="51" y="22" width="6" height="58"/></g>`},
   // a leaf on the diagonal, midrib cut out of it
-  plants:{c:'--gruen',e:'🟩',p:`<path d="M16 80A64 64 0 0 1 80 16A64 64 0 0 1 16 80Z"/><path d="M28 72L72 28L76 32L32 76Z" fill="var(--emblem)"/>`},
-  animals:{c:'--violett',e:'⬛',p:`<path d="M10 26H26L38 38H80L88 46V84H76V58H48V84H36V50H22L10 38Z"/><circle cx="19" cy="31" r="3" fill="var(--emblem)"/>`},
+  plants:{c:'--gruen',p:`<path d="M16 80A64 64 0 0 1 80 16A64 64 0 0 1 16 80Z"/><path d="M28 72L72 28L76 32L32 76Z" fill="var(--emblem)"/>`},
+  animals:{c:'--violett',p:`<path d="M10 26H26L38 38H80L88 46V84H76V58H48V84H36V50H22L10 38Z"/><circle cx="19" cy="31" r="3" fill="var(--emblem)"/>`},
   // a skyline: gable and tower as one outline, windows cut out of it
-  buildings:{c:'--dunkelblau',e:'🟦',p:`<path d="M12 88V52L34 30L56 52V40L70 26L84 40V88Z"/><g fill="var(--emblem)"><rect x="26" y="58" width="12" height="14"/><rect x="62" y="52" width="10" height="12"/><rect x="42" y="70" width="10" height="18"/></g>`},
+  buildings:{c:'--dunkelblau',p:`<path d="M12 88V52L34 30L56 52V40L70 26L84 40V88Z"/><g fill="var(--emblem)"><rect x="26" y="58" width="12" height="14"/><rect x="62" y="52" width="10" height="12"/><rect x="42" y="70" width="10" height="18"/></g>`},
   // an arrow with the tail notched out of it, and the speed left behind it
-  motion:{c:'--gelb',e:'🟨',p:`<path d="M28 36H56V20L84 48L56 76V60H28L40 48Z"/><path d="M6 38H22V44H6ZM6 52H22V58H6Z"/>`}
+  motion:{c:'--gelb',p:`<path d="M28 36H56V20L84 48L56 76V60H28L40 48Z"/><path d="M6 38H22V44H6ZM6 52H22V58H6Z"/>`},
+
+  /* ---- the thirty-three added on 16 Aug 2026 ----
+     THE ORDER BELOW IS THE GRID'S, NOT THE CAST'S. FKEYS is what the collection
+     renders and `--cols` is ceil(sqrt(n)), so these fall into rows of seven —
+     and appended in any sensible reading order (all the abstractions together,
+     all the round ones together) the grid comes out in bands of one colour and
+     one silhouette. so each row of seven below holds seven different plate
+     colours, and no cell shares a colour with the one above it. the cast the
+     generator draws from is GEN_VERSIONS[].feats and it is a separate list;
+     reordering this one moves nothing but the picture. */
+
+  // ROW 3. a lens with a swallowtail. drawn as a plain almond it was `eyes`
+  // with a fin, so the tail is cut back into the body rather than stuck on
+  fish:{c:'--tuerkis',p:`<path d="M12 48A46 46 0 0 1 70 32L90 12V84L70 64A46 46 0 0 1 12 48Z"/><circle cx="30" cy="42" r="5" fill="var(--emblem)"/>`},
+  // two tiers and a trunk. one triangle on a stick was a road sign, and worn
+  // to five points it was `mountains` again — the second tier is what fixes it
+  trees:{c:'--gruen',p:`<path d="M48 8L76 36H64L88 60H54V88H42V60H8L32 36H20Z"/>`},
+  // a disc with the features CUT rather than drawn: added in the mark colour
+  // they closed up at eighty pixels and the head went back to being a disc
+  faces:{c:'--violett',p:`<path d="M10 46A38 38 0 1 1 86 46A38 38 0 1 1 10 46Z"/><g fill="var(--emblem)"><path d="M28 34H37V47H28ZM59 34H68V47H59ZM30 62H66V71H30Z"/></g>`},
+  // every edge is a horizontal or a 45°, and the closing edge is one too —
+  // which is what took four attempts. a bolt with one arbitrary angle is a rip
+  lightning:{c:'--orange',p:`<path d="M58 8H86L46 48H66L38 76H6L34 48H18Z"/>`},
+  // a fat almond with the pupil ringed in the plate colour. a plain dark disc
+  // in a plain lens read as a fish's head; the ring is what makes it look back
+  eyes:{c:'--hellblau',p:`<path d="M6 48A54 54 0 0 1 90 48A54 54 0 0 1 6 48Z"/><circle cx="48" cy="48" r="16" fill="var(--emblem)"/><circle cx="48" cy="48" r="8"/>`},
+
+  // ROW 4. radial legs off a standing body. laid on its side with the legs
+  // down it was `animals` at half the size — an insect is read end-on
+  insects:{c:'--gruen',p:`<path d="M48 24A36 36 0 0 1 48 84A36 36 0 0 1 48 24Z"/><circle cx="48" cy="16" r="10"/><path d="M8 22L28 42H36L16 22ZM4 50H30V58H4ZM16 86L36 66H28L8 86ZM88 22L68 42H60L80 22ZM92 50H66V58H92ZM80 86L60 66H68L88 86Z"/><path d="M45 30H51V80H45Z" fill="var(--emblem)"/>`},
+  // a ring sitting ON a line that runs the width of the plate — the game's own
+  // chord, drawn. a ring with a stub coming off it is a magnifying glass, and
+  // it stays one however thin the stub gets: two goes at that proved it. what
+  // stops it being a lens is the line CARRYING ON past the loop on both sides
+  loops:{c:'--violett',p:`<path d="M4 70H92V82H4Z"/><path d="M18 44A30 30 0 1 1 78 44A30 30 0 1 1 18 44Z"/><circle cx="48" cy="44" r="20" fill="var(--emblem)"/>`},
+  // four fingers and a thumb, cut as ONE outline. a palm with a rounded bottom
+  // and short finger gutters was an oven glove — the fingers have to be
+  // separated all the way down to the knuckle or the hand stays a mitten
+  hands:{c:'--orange',p:`<path d="M24 20H36V48H40V12H52V48H56V14H68V48H72V26H84V84H24Z"/><path d="M24 50L4 70V84H24Z"/>`},
+  // deck and abutment as one outline with the arch cut out. a bare arch was a
+  // tunnel mouth; the deck laid across the top is what makes it a crossing
+  bridges:{c:'--hellblau',p:`<path d="M6 40H90V54H84V88H70V76A22 22 0 0 0 26 76V88H12V54H6Z"/>`},
+  // the half-plane, which is the first thing any net learns. on its own it is
+  // a triangle, so the boundary is restated as a bar parallel to the cut
+  edges:{c:'--dunkelblau',p:`<path d="M8 8L88 88H8Z"/><path d="M40 8H52L88 44V56Z"/>`},
+  // the union of a square and a 45° square, so every edge is legal and the
+  // points are the corners of both. a spiked disc drew a sun and lost the word
+  stars:{c:'--gelb',p:`<path d="M48 2L64 18H78V32L94 48L78 64V78H64L48 94L32 78H18V64L2 48L18 32V18H32Z"/>`},
+  // a quarter annulus anchored to a corner, ends cut square. free-floating and
+  // tapered it was `night`'s crescent — a moon is pointed, a bend is not
+  curves:{c:'--tuerkis',p:`<path d="M14 8A74 74 0 0 0 88 82V52A44 44 0 0 1 44 8Z"/>`},
+
+  // ROW 5. an irregular slab bitten through in three unequal places. three
+  // even holes on a rounded square is a die face, which is what the first
+  // version drew — so the slab is off-square and no two holes match
+  holes:{c:'--hellblau',p:`<path d="M12 20H52V8H84V44H92V72L76 88H28L12 72Z"/><g fill="var(--emblem)"><circle cx="34" cy="46" r="16"/><circle cx="70" cy="26" r="8"/><circle cx="64" cy="64" r="11"/></g>`},
+  // a thin bracket with the outer corner chamfered. drawn with thick arms it
+  // was one step of `numbers`; the open crook is what says corner
+  corners:{c:'--dunkelblau',p:`<path d="M14 14H34V64H84V84H30L14 68Z"/>`},
+  // bow, shaft and three teeth as one outline. a round bow put a ring on the
+  // board next to `loops` and `clocks`, so the bow is square and cut hollow
+  keys:{c:'--gelb',p:`<path d="M10 28H46V42H88V54H84V68H76V54H70V68H62V54H46V68H10Z"/><path d="M20 38H36V58H20Z" fill="var(--emblem)"/>`},
+  // gated and deliberately off-centre. a clean concentric maze is `nesting`
+  // exactly, so the gap in the outer wall and the dead end are load-bearing
+  labyrinth:{c:'--tuerkis',p:`<path d="M8 8H88V88H52V76H76V20H20V76H40V88H8Z"/><path d="M32 32H64V64H40V52H52V44H32Z"/>`},
+  // eight lobes round a cut centre. five petals need 72° and there is no such
+  // angle here; eight is what the system can draw and it reads as a flower
+  flowers:{c:'--gruen',p:`<path d="M48 6A21 21 0 0 1 69 27A21 21 0 0 1 90 48A21 21 0 0 1 69 69A21 21 0 0 1 48 90A21 21 0 0 1 27 69A21 21 0 0 1 6 48A21 21 0 0 1 27 27A21 21 0 0 1 48 6Z"/><circle cx="48" cy="48" r="13" fill="var(--emblem)"/>`},
+  // dots on a 45° lattice so every link is legal. scattered at true star
+  // positions the links came out at arbitrary angles and it left the system
+  constellation:{c:'--violett',p:`<path d="M56 20L72 36 56 52 40 36Z"/><path d="M9 78L31 56H37L15 78ZM31 56L53 78H59L37 56ZM31 56L53 34H59L37 56ZM53 34L77 58H83L59 34ZM53 34L75 12H81L59 34ZM53 34L27 8H21L47 34Z"/><circle cx="12" cy="78" r="7"/><circle cx="34" cy="56" r="6"/><circle cx="56" cy="78" r="7"/><circle cx="80" cy="58" r="6"/><circle cx="78" cy="12" r="8"/><circle cx="30" cy="8" r="6"/>`},
+  // asked for by name. a round mantle over eight even tentacles is an octopus
+  // and nothing else — the wings and the two-eyed head are what make it the
+  // other thing, and the tentacles are uneven on purpose
+  cthulhu:{c:'--orange',p:`<path d="M20 52V34A28 28 0 0 1 76 34V52Z"/><path d="M20 36L2 18V50L20 68ZM76 36L94 18V50L76 68Z"/><path d="M20 52H30V70L14 86H4L20 70ZM36 52H46V70L30 86H20L36 70ZM50 52H60V70L76 86H66L50 70ZM66 52H76V66L88 78V88L66 66Z"/><g fill="var(--emblem)"><path d="M32 26H40V34H32ZM56 26H64V34H56Z"/></g>`},
+
+  // ROW 6. seated: an upright body, arms falling out to the knees, and the
+  // ground as a flat bar. drawn as a triangle with a head on it — the obvious
+  // way — it was `boats` with the sails swapped for a ball, same trapezoid and
+  // same wedge, three cells apart on the same row
+  stillness:{c:'--tuerkis',p:`<path d="M38 26H58V76H38Z"/><circle cx="48" cy="15" r="12"/><path d="M38 36L14 60H26L50 36ZM58 36L82 60H70L46 36Z"/><path d="M6 74H90V86H6Z"/>`},
+  // the Munich athletics pictogram, which is where this whole system comes
+  // from. the first version leant the torso at 45° like the real thing, and
+  // with 45° limbs off a 45° body every line was parallel and it drew an X —
+  // so the body stands up and only the limbs are diagonal
+  running:{c:'--gruen',p:`<path d="M38 26H58V54H38Z"/><circle cx="48" cy="14" r="11"/><path d="M46 52L68 74H80L58 52ZM68 74H84V86H68ZM50 52L28 74H16L38 52Z"/><path d="M56 30L78 8H90L68 30ZM40 34L18 56H30L52 34Z"/>`},
+  // pole and swallowtail as one outline. a rectangular banner was a label on a
+  // stick; the notch is the only thing in the mark that says wind
+  flags:{c:'--violett',p:`<path d="M14 8H26V12H86L66 32L86 52H26V88H14Z"/>`},
+  // hull, mast and two sails. the hull alone is `roads` upside down, which is
+  // how the road got cut — one trapezoid in the cast is enough
+  boats:{c:'--orange',p:`<path d="M8 62H88L66 84H30Z"/><path d="M44 8H52V56H44Z"/><path d="M52 12L82 42V56H52Z"/><path d="M40 20L14 46V56H40Z"/>`},
+  // a form and its mirror with the axis kept as a mark. drawn as two facing
+  // chevrons it read as a pair of arrows pointing at each other
+  symmetry:{c:'--hellblau',p:`<path d="M6 12L40 46 6 80Z"/><path d="M90 12L56 46 90 80Z"/><path d="M45 6H51V86H45Z"/>`},
+  // square rings, exactly concentric. offset by a few units they were
+  // `doubled` at a different scale, and the whole idea is that they share a
+  // centre — so the tolerance here is zero, not small
+  nesting:{c:'--dunkelblau',p:`<path d="M6 6H90V90H6ZM22 74H74V22H22Z"/><path d="M34 34H62V62H34ZM44 52H52V44H44Z"/>`},
+  // a THIN ring with two straight hands. drawn thick it was `loops` without
+  // its tail; the hands need the empty middle more than the ring needs weight
+  clocks:{c:'--gelb',p:`<path d="M10 48A38 38 0 1 1 86 48A38 38 0 1 1 10 48Z"/><circle cx="48" cy="48" r="29" fill="var(--emblem)"/><path d="M45 24H51V50H45ZM48 45H74V51H48Z"/>`},
+
+  // ROW 7. one fork with square-cut arms. a second generation of branches was
+  // drawn and cut — four leaves closed into a solid triangle at grid size and
+  // the sign became `trees`
+  branching:{c:'--dunkelblau',p:`<path d="M40 88V52L14 26V10H26L48 32L70 10H82V26L56 52V88Z"/>`},
+  // an A, because a net that reads text learns letterforms before it learns
+  // words. the legs are 45° and vertical, which is not how an A is drawn and
+  // is the only way it can be drawn here; the crossbar is what keeps it off
+  // `mountains`
+  letters:{c:'--gelb',p:`<path d="M48 6L88 46V88H72V54L48 30 24 54V88H8V46Z"/><path d="M24 58H72V68H24Z"/>`},
+  // capital, fluted shaft and base as ONE outline, which settles as a proper
+  // twelve-corner figure. `chess` is the other tall thing in the cast and it
+  // is crenellated — this one is smooth and symmetrical top to bottom
+  column:{c:'--dunkelblau',p:`<path d="M12 8H84V22H70V74H84V88H12V74H26V22H12Z"/><g fill="var(--emblem)"><path d="M34 22H39V74H34ZM45 22H50V74H45ZM56 22H61V74H56Z"/></g>`},
+  // a core inside a ring with a clear gap. the first version was a downward
+  // funnel with a point at the bottom, which is `stillness` upside down —
+  // a triangle with a disc at one end, twice in one grid
+  singularity:{c:'--tuerkis',p:`<path d="M10 48A38 38 0 1 1 86 48A38 38 0 1 1 10 48Z"/><circle cx="48" cy="48" r="30" fill="var(--emblem)"/><circle cx="48" cy="48" r="22"/>`},
+  // one bubble with lines of text cut out of it. two bubbles for two tongues
+  // was tried and it was `doubled` with a tail
+  languages:{c:'--gelb',p:`<path d="M8 12H88V64H44L24 84V64H8Z"/><g fill="var(--emblem)"><path d="M22 28H44V36H22ZM52 28H74V36H52ZM22 44H62V52H22Z"/></g>`},
+  // a flat sheet dented by the mass sitting in it. two other readings were
+  // drawn and thrown away: a bowl with a ball in it is the download arrow, and
+  // a dome with marks falling onto it closed up into one block at grid size
+  // however the gaps were spaced — which is the thing the picture was for
+  gravity:{c:'--orange',p:`<path d="M4 16H92V28H76L48 56 20 28H4Z"/><circle cx="48" cy="54" r="20"/>`},
+  // an azulejo: a framed field with a half disc taken out of each edge, so what
+  // is left is a four-point star with CONCAVE sides. `stars` is the convex one
+  // and they are not the same mark; the frame is what makes this a tile rather
+  // than a shape.
+  // the bites are HALF discs and not whole ones for a reason that only shows up
+  // on the stamp: a full circle centred on an edge midpoint runs five units
+  // past the plate, featIcon clips it at the viewBox and featureStamp does not
+  // — so the icon looked right and the stamp wore four blue smudges on its
+  // paper margin. drawn as arcs that close along the edge, the mark is the same
+  // and nothing leaves the 96x96 box
+  tiles:{c:'--hellblau',p:`<path d="M2 2H94V94H2ZM10 86H86V10H10Z"/><path d="M14 14H82V82H14Z"/><g fill="var(--emblem)"><path d="M29 14A19 19 0 0 0 67 14ZM82 29A19 19 0 0 0 82 67ZM67 82A19 19 0 0 0 29 82ZM14 67A19 19 0 0 0 14 29Z"/></g>`}
 };
 const FKEYS=Object.keys(FEATURES);
 
 /* ================= generator versions =================
    a day is generated by the newest version whose `from` is on or before it.
-   a version is FROZEN the moment it ships: never edit one, add another. this
-   is the only reason a day from months ago still regenerates identically —
-   and it is why `feats` is spelled out here rather than read from FKEYS.
 
-   feature choice splices from a shrinking pool, so the pool's LENGTH is a
-   hidden seed input: adding a seventeenth feature to FEATURES silently
-   rewrote the cast of every day ever played (verified — every date tested
-   changed). pinning the list per version is what stops that.
+   FEATURE CHOICE SPLICES FROM A SHRINKING POOL, SO THE POOL'S LENGTH IS A
+   HIDDEN SEED INPUT. `Math.floor(fr()*pool.length)` reads a different index the
+   moment the length changes, and every splice after it inherits the shift — so
+   a seventeenth feature does not add a seventeenth name to the same ten nets,
+   it rewrites which features are on every board of every day the version owns.
+   `feats` is spelled out per entry rather than read from FKEYS for exactly that
+   reason: it puts the pool under version control instead of under whatever the
+   drawing table happens to hold.
 
-   adding a feature, or changing geometry or par, means appending a version
-   with `from` set to the day it ships. everything before that date is
-   untouched. */
+   WHAT IT DOES NOT DO, ON A FAMILY BOARD, IS MOVE THE GEOMETRY — and this file
+   and AGENTS.md both used to say it did, which was true when they were written
+   and has been false since v4. the only thing a feature KEY feeds is
+   `strength`, and strength's two consumers are `width` (stroke, drawing only)
+   and `nodeCount` — and nodeCount is read in exactly one place, the scatter
+   placement loop, which is the `else` of the layered/families branch. every
+   daily board from v4 on is a family board, so nodeCount is dead code for all
+   of them and the coordinates do not know which feature is riding them.
+   measured when the cast went to forty-nine: 910 boards over 100 sampled days,
+   780 casts rewritten, ZERO changes to xyHash, par, starting crossings or
+   neuron count. the pool length still moves geometry where the scatter loop is
+   live — v1 and v2's days, and the time trial, which forces layout='scatter'.
+
+   SO DO NOT LET tools/parity-fixtures.json TELL YOU A CAST CHANGE WAS SAFE. its
+   rows are startCrossings, salt, par, nodes and a hash of the coordinates, and
+   not one of those five carries which features are on the board — so `verify-
+   parity --check` passes clean through a change that renamed every thread in
+   the game, and it did. that is the fixtures being narrow, not the change being
+   inert. to see a cast move you have to hash `threads.map(t=>t.key)` yourself.
+
+   what none of this means is that an entry can never be edited. this file used
+   to say a version is frozen the moment it ships and that editing one is never
+   right; it is not, pre-launch. nobody has played a day yet, so there is no
+   run to protect, and editing the entry that owns today is usually simpler and
+   far more legible than appending a version whose only difference is a list.
+   v5 was amended on the day it shipped and v11's cast was rewritten on 16 Aug
+   2026. the cost is real and it is only this: a score already in your own save
+   refers to a board that no longer exists.
+
+   changing geometry or par for a day that HAS been played is a different
+   matter, and that is what appending a version with a future `from` is for. */
 /*@gen*/
 const GEN_VERSIONS=[
   { v:1, from:'2000-01-01', par:'recipe', layout:'scatter',
@@ -3269,13 +3530,37 @@ const GEN_VERSIONS=[
      the first three are geometry and the fourth is scoring, so this rewrites
      boards, which is exactly why it is a version. `from` is four days past
      v10's, leaving v10 the window it shipped for, and ten days past the day
-     this was written — no day it claims can have been played. */
+     this was written — no day it claims can have been played.
+
+     ON 16 AUG 2026 THE CAST GREW FROM SIXTEEN TO FORTY-NINE, in this entry and
+     in no other, so the collection grid is a true 7x7. it was measured before
+     and after over 910 boards across a hundred sampled days, and the result is
+     the opposite of what the table's own header used to promise: 780 boards
+     drew a different cast and NOT ONE moved a neuron. par, starting crossings,
+     neuron count and the coordinate hash are identical on every board — see
+     the header for why (nodeCount is scatter-only, and every daily board has
+     been a family board since v4). the 130 boards that kept their cast are the
+     pre-v11 days in the sample, which this entry does not own.
+     tools/parity-fixtures.json is therefore unchanged, to the digit, and that
+     is not evidence of anything: its five fields cannot see a cast.
+     v5 to v10 keep the sixteen. they are not being preserved for the past —
+     v11's `from` is 2026-08-14 and it is last in the table, so genFor never
+     returns any of them and not one day reaches their casts. they are left
+     alone because rewriting a version nothing can select is churn: it would
+     move no board a player can meet and would bury the one entry that did move
+     in six identical diffs. `feats` is spelled out per entry precisely so a
+     table this long can be edited one line at a time. */
   { v:11, from:'2026-08-14', par:'family', layout:'families',
     split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
     splitPart:'clear', optimum:'route', rung:'wide', chord:'late', selfX:'count',
     ramp:'even', dense:'cap',
     feats:['weather','birds','tools','music','citrus','chess','water','night',
-           'fire','mountains','doubled','numbers','plants','animals','buildings','motion'] }
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion',
+           'fish','trees','faces','lightning','eyes',
+           'insects','loops','hands','bridges','edges','stars','curves',
+           'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
+           'stillness','running','flags','boats','symmetry','nesting','clocks',
+           'branching','letters','column','singularity','languages','gravity','tiles'] }
 ];
 /* the rules in force for the net being built. a module-level object rather than
    an argument threaded through nine functions, because splitNode is called by
@@ -3313,6 +3598,34 @@ const lum=hex=>{
    L = .192, not the .30 that was here. the difference is not academic — green
    and turquoise sit at .275 and .279, so both were taking a white mark worth
    3.2:1 when the dark one was worth 5.9:1. five of the sixteen emblems. */
+/* ---- the emblem's mark is INK, on every plate ----
+   the emblems used to take `markOn`, which picks black or white off the plate's
+   luminance — the textbook answer, and it gave a grid whose foreground colour
+   changed halfway down: five bright plates carrying a black mark, two dark ones
+   carrying a white one. legible everywhere and consistent nowhere, and at
+   forty-nine tiles the switch is what the eye lands on rather than the drawings.
+   the owner asked for one colour. WHITE WAS THE ASK AND IT IS NOT POSSIBLE:
+   white measures 1.68:1 on gelb — a mark that simply is not there — plus 2.81
+   on orange and 2.84 on hellblau, both under 3. nor can the plates be darkened
+   into it, because white needs a genuinely dark ground to reach 4.5 and a gelb
+   that dark is an olive rather than a yellow. bright plates and white marks are
+   mutually exclusive.
+   INK is the other uniform answer and it holds on all seven:
+     gelb 11.20 · orange 6.69 · hellblau 6.62 · tuerkis 5.91 · gruen 5.84
+     violett 4.13 · dunkelblau 3.49
+   the two that used to take white are the two that give up contrast — 4.13 and
+   3.49 against the 4.56 and 5.39 they had — and both still clear 3:1, which is
+   the floor a filled mark of this size is read against. that is the whole cost,
+   and it buys forty-nine tiles that read as one set.
+   a LITERAL ink rather than `var(--ink)`, because the emblem plate is canonical
+   on both grounds: a token here would repaint the drawing on a ground flip
+   while the plate under it stayed put. */
+const EMBLEM_INK='#0E1214';
+/* markOn KEEPS its luminance rule, and the locked stamp is why. that one draws
+   on `--rule` rather than on a feature colour — near-black on the dark ground
+   and near-white on paper — so a fixed ink would put 1.4:1 on it and the cross
+   would vanish on every dark screen. the emblems are one plate set with one
+   answer; this is the other, and it genuinely has to be computed. */
 const markOn=v=>lum(cssv(v))>0.192?'#0E1214':'#ffffff';
 /* the band under the emblem says which tier the stamp was earned at, and it
    said it in colour alone — so wherever the band and the plate above it are the
@@ -3329,7 +3642,7 @@ const markOn=v=>lum(cssv(v))>0.192?'#0E1214':'#ffffff';
 const TIERCELLS={clean:3, done:2, par:2, over:1};
 function featureStamp(k,tier,locked){
   const d=FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
-  const mk=locked?markOn('--rule'):markOn(d.c);
+  const mk=locked?markOn('--rule'):EMBLEM_INK;
   const mark=locked
     ? `<g fill="none" stroke="${mk}" stroke-width="2" opacity=".78"><circle cx="48" cy="48" r="21"/><path d="M48 18V78M18 48H78M27 27L69 69M69 27L27 69"/></g>`
     : `<g fill="${mk}">${d.p}</g>`;
@@ -3998,8 +4311,9 @@ const inArchive=d=>d<dayAdd(today(),-1);
    attempt at the day). what is refused is a SECOND run at a day, which is a
    different thing from the first one carrying on.
    the one way a free player can still lose an unfinished set is by starting a
-   run on ANOTHER day, because that replaces it — offerDay says so on the card
-   before it happens. midnight ends today's set for everybody either way.
+   run on ANOTHER day, because that replaces it. openDay used to put that on a
+   card and ask first; it does not ask at all any more (16 Aug 2026), so it is
+   one press. midnight ends today's set for everybody either way.
 
    NONE OF THIS IS STORED, which is what makes a purchase retroactive: there is
    no lock written into a row to go back and clear, so applyEntitlement flipping
@@ -9388,7 +9702,11 @@ function hideVeils(){
        open, the same way it is under the record or the rules.
      - dragging is guarded on `.veil.show` too, so no move can be made behind it.
    what is NOT frozen is anything a caller started before it asked, so a caller
-   that cares re-checks after the await. offerDay does; see there.
+   that cares must re-check after the await. the day offer was the one that did,
+   and it is a straight press now — see openDay — which leaves `reset` as the
+   only caller and nothing for it to re-read, since it wipes the save whatever
+   the run has been doing meanwhile. the obligation is not gone, it is unclaimed:
+   the next caller reading a stored fact across the await inherits it.
 
    ONE AT A TIME. a second question supersedes the first and the first resolves
    FALSE — an unanswered question is a no, which is the answer that does nothing.
@@ -9467,7 +9785,7 @@ function ask(o){
 function featIcon(k){
   const d=FEATURES[k]; if(!d) return '';
   return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}" style="--emblem:var(${d.c})">
-    <rect width="96" height="96" fill="var(--emblem)"/><g fill="${markOn(d.c)}">${d.p}</g></svg>`;
+    <rect width="96" height="96" fill="var(--emblem)"/><g fill="${EMBLEM_INK}">${d.p}</g></svg>`;
 }
 const MONTHS=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const WDAYS=['sun','mon','tue','wed','thu','fri','sat'];
@@ -9659,7 +9977,7 @@ const rungText=g=>`${g.good} of ${g.of} clean or better`;
 const rungParts=g=>({fig:String(g.good), word:`of ${g.of} clean or better`});
 
 /* WHAT PAYING ADDS, written once and read by everything that says it: the locked
-   replay chip's tooltip, the press that answers it, and offerDay's own refusal.
+   replay chip's tooltip, the press that answers it, and openDay's own refusal.
    it used to read `you have had your run`, which framed the free game as a thing
    you had used up — and the owner's correction is that a free player has run out
    of nothing. the free game is a new set of ten every day and it is complete;
@@ -9685,21 +10003,53 @@ function shutWords(iso){
   return spentDay(iso) ? replayWords()
                        : 'that day is in the archive · unlock it to play';
 }
-/* clicking a row offers that day. REPLAYING ONE IS THE FULL VERSION'S, and this
-   is the gate that makes the free game one attempt a day — canPlayDay refuses a
-   second run at a day already started, so what reaches the card is either a day
-   nobody has begun or a player who has bought the right to begin it again.
+/* pressing a day starts it. REPLAYING ONE IS THE FULL VERSION'S, and canPlayDay
+   is the gate that makes the free game one attempt a day — it refuses a second
+   run at a day already started, so what gets this far is either a day nobody has
+   begun or a player who has bought the right to begin it again.
    it used to be open to everybody on the grounds that a replay could not improve
    a tier already held, which was true of the BADGES and never true of the day: a
    deeper or better run overwrites the row, so an unlimited retry was an
    unlimited chance to post a better day. that is now the thing being sold.
-   `tiers` is the row's own stored rungs and `first` its first-ever run, both
-   handed in by the record rather than looked up here, because the record has
-   them in scope and this has no business reaching back into playedDays for a day
-   it was told about. either may be absent: an unplayed day has no row at all, a
-   row from an earlier save shape has no rungs, and a row written before `first`
-   existed has no first run — tierWords answers '' to all of them. */
-async function offerDay(iso,done,tiers,first){
+
+   IT ASKED FIRST UNTIL 16 AUG 2026, and it was `offerDay` for as long as there
+   was an offer to make. the card carried the date, the day's ten rungs, a count
+   of its attempts and two buttons — and everything that made it a QUESTION was
+   cut out from under it one piece at a time. `an archive day does not extend a
+   streak` went because the game already says it as the day opens, in the
+   flashMsg at the foot of this function: said before you decide it is a caveat
+   on a question, said as you start it is a fact about what you are doing. `the
+   run you are on · net 2 of 10` and `nothing you have earned is lost` went on
+   the owner's call, both being descriptions of what leaving a run costs, which
+   is a thing a player learns by doing it once — a clause on every offer forever
+   is the more expensive way to teach it. what was left asked you to confirm
+   something it gave you no reason to reconsider, so the press does the thing.
+   THE CARD'S BODY WENT WITH IT, and one of its two readings was never only
+   there: the day's ten rungs are drawn by the record's own row, which is the
+   thing you press to get here. the other was. `first` — the first ever run at
+   the day — is still written by stampToday and still merged by worker/merge.js,
+   so what it has lost is its one reader rather than its keeper.
+   BOTH PRESSES LOSE THE CARD, the replay chip's and the unplayed row's `play →`.
+   they are one press in the code — the chip is a span inside the row, see the
+   record — and a card on one but not the other would be the same act asking a
+   question half the time.
+
+   NOTHING STANDS BETWEEN THE PRESS AND THE RUN NOW, and on one path that has a
+   price. newRun REPLACES store.run, so a player part way through today who
+   presses yesterday gives up their place in today's set on a single unguarded
+   press; and for a FREE player today then has a row with no live run standing on
+   it, which is spentDay, so it does not open again. what a run earned is written
+   as it goes — the badges, the day's row — and none of that moves. the card
+   never made this safe, it only made it slower, and the owner has taken that
+   trade knowingly.
+
+   ONE canPlayDay, where the card needed two. the second read existed because the
+   answer came back after an await and what a day COSTS is a stored fact rather
+   than a fact about the board — the day could stop being playable while the card
+   was up. nothing between the press and newRun is asynchronous any more, so
+   there is no gap for the answer to go stale across and one read is the whole
+   of it. */
+function openDay(iso){
   /* you are already on this day, so pressing it is not a request for another
      run at it. it read `iso===today() && !isArchive()`, which said exactly this
      about today and left the ARCHIVE DAY YOU WERE HALF WAY THROUGH pressable —
@@ -9709,105 +10059,48 @@ async function offerDay(iso,done,tiers,first){
      it displaced is parked behind it and the cleared card is what hands that
      back, so opening today from here would drop it on the floor.
      a FINISHED daily run falls through on purpose. that is a player asking to
-     play the day again, which is the question canPlayDay is here to answer. */
+     play the day again, which is the question canPlayDay is here to answer.
+     it takes the record down and says nothing: you pressed the day you are on
+     from a screen covering it, so what you asked for is the board you were
+     already on, and a message naming a run that never restarted would be the
+     game reporting an event that did not happen. */
   if(R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
   if(!canPlayDay(iso)) return flashMsg(shutWords(iso));
-  /* WHAT THE CARD HAS TO SAY, and it is a cost and a reassurance rather than a
-     description. "your run in progress is set aside" is what the browser dialog
-     said and it was not true: newRun REPLACES store.run, and only startTrialRun
-     parks the one it displaces. what survives is what was already written as you
-     went — the badges you minted and the day's row in the record — and what does
-     not is where you had got to.
-     so: the ROW is the cost, and it is a place rather than a category. `the run
-     you are on / ends here` named no price at all; `net 5 of 10` is one, and it
-     is the reading that makes the answer obvious in either direction.
-     the NOTE is the reassurance, which used to be nowhere: what the sub carried
-     was "replaying cannot lower a tier", a footnote about the day you are going
-     TO, in the slot the day you are LEAVING needed. it is not lost by being cut,
-     it is subsumed — stampToday only overwrites a day's row with a deeper or
-     better run, so "nothing you have earned is lost" is the same promise stated
-     wider. it is a negation on purpose: the question is what this COSTS, and the
-     shortest true answer to that is almost nothing. it is also measured — with
-     the streak line after it, it is two lines on this card's measure, and every
-     longer way of saying it was three.
-     the SUB IS THE BAR, not a sentence. it read `played · 1 perfect, 3 clean,
-     2 done` — the reason you are looking at this day again, which was the right
-     subject and the wrong form: a card asking a one-word question carried a
-     clause you had to parse to answer it. the day's ten rungs are a picture
-     everywhere else in the game, and this is the one screen that spelled them.
-     so the card draws the same bar the record's row draws, which also answers
-     the never-played case for free — `rungTrack` with no tiers is ten bare
-     cells, so a day you have not touched shows an empty grey bar rather than
-     the words `not played yet`. the reading and the absence of one are the same
-     object in two states.
-     THE COST OF LEAVING A RUN IS NO LONGER STATED, and the machinery that
-     measured it went with the words. `live` tested whether the run being left
-     had been touched at all, and `burns` narrowed that to the case where the set
-     will not open again — a real distinction, drawn carefully, and both existed
-     solely to choose between two sentences that are now gone. the owner's call
-     is that a player learns this by doing it once. nothing a run earned is lost
-     either way: badges and the day's row are written as you go, so what a
-     restart costs is a place in a set, not a score. */
-  const words=tierWords(tiers);
-  /* how many runs this day has had, off its own row rather than the run in hand
-     — the card is about the day being offered, which may not be the day being
-     played. see stampToday, where it is counted once per run off `startedAt`. */
-  const runs=(dayRows().find(x=>x.d===iso)||{}).runs||0;
-  /* the first run at this day, shown only once a replay has actually beaten it —
-     equal to the row's own rungs it is the same reading twice, and this card
-     already carries that one in its sub. it is the one place the kept first
-     score is legible, and the moment it matters: another run is about to be
-     offered against a row that has already been improved once. */
-  const firstWords=first&&first.tiers&&first.tiers!==tiers ? tierWords(first.tiers) : '';
-  const ok=await ask({
-    title:dayLabel(iso),
-    sub:'',
-    /* aria-hidden on the mark, because `ask` already folds the words into the
-       card's own label — see the aria-label it builds from title, sub and note.
-       `words` is what carries this to a screen reader and it is why that
-       variable survives the sub being emptied. */
-    /* the bar, and under it the count. `runs` is how many times this day has been
-       played and it goes bottom right because that is where every other number
-       on this card's family sits — it is a reading, not a sentence, and it does
-       not compete with the mark above it for the same line. a day never played
-       has no count and shows none: `0 attempts` is a number reporting an absence
-       the empty bar directly above it already draws. */
-    body:`<div class="askrungs" aria-hidden="true">${rungTrack(tiers,true)}</div>`
-      +(runs?`<div class="askruns">${runs} attempt${runs===1?'':'s'}</div>`:''),
-    /* the bar in words, for the card's own aria-label. the mark is aria-hidden
-       and this is what replaces it — the same division dayCells and the record's
-       rows already make, and the reason `words` outlived the sub it used to
-       fill. a day never played has no rungs and says so by saying nothing. */
-    say:done?(words||'played'):'not played yet',
-    /* `the run you are on · net 2 of 10` went with the note below it. it was the
-       COST — the place in the set you give up by opening another day — and the
-       owner's call is that a player finds that out by doing it once, which is
-       cheaper than a clause on every offer forever. the run being replaced is
-       one press away from being restarted and nothing it earned is lost. */
-    rows:firstWords?[['your first run',firstWords]]:[],
-    /* THE CARD HAS NO NOTE AT ALL NOW, and it had three at various points.
-       `an archive day does not extend a streak` went first: the game already
-       says it at the moment it becomes true — the flashMsg at the foot of this
-       function reads `playing the archive · sat 15 aug · this does not extend a
-       streak` as the day opens. Said before you decide it is a caveat on a
-       question; said as you start it is a fact about what you are doing.
-       `nothing you have earned is lost` and `you cannot come back to that set`
-       went with the row above them, on the owner's call: both described the cost
-       of leaving a run in progress, and that is a thing a player learns by doing
-       it once. A clause on every offer forever is the more expensive way to
-       teach it, and nothing a run earned is lost either way — badges and the
-       day's row are written as you go.
-       what is left is a date, a bar, a count, and two buttons. */
-    yes:'play →', no:'not now'
-  });
-  if(!ok) return;
-  /* the run is frozen while the card is up (see ask), but what a day COSTS is a
-     stored fact rather than a fact about the board, and this is the one gate
-     between the question and the act. re-reading it costs nothing and means the
-     answer can never be applied to a day that stopped being playable. */
-  if(!canPlayDay(iso)) return flashMsg(shutWords(iso));
+  /* ---- THE RUN YOU ARE LEAVING IS PARKED, NOT THROWN AWAY ----
+     the confirmation card went because the owner's call is that a player learns
+     the cost of leaving a set by doing it once. driving the flow without it
+     showed the cost is not the one either of us had in mind. for a FREE player,
+     five nets into today, one press on yesterday did this:
+       today playable: true  ->  false
+     `newRun` replaces `store.run`, so today is left with a row and no live run
+     standing on it — which is `spentDay` exactly — and one run a day means it
+     never opens again. not a lost place in a set: the whole day, gone to a
+     single press, with nothing on screen beforehand and no way back after.
+     that is a trap rather than a lesson, and it is not what "they can just learn
+     that" was agreed to.
+     so the run is parked, which costs nothing and needs no card. `store.parked`
+     already exists for exactly this — `startTrialRun` has parked the daily run
+     it displaces since a trial could throw one away, and `liveRunOn` already
+     counts a parked run as live, so today stays open by the rule that was
+     already written rather than by an exception. same guard as the trial's: a
+     trial is not parked (it has nothing to come back to), an archive day is not
+     parked (it is not the day's set), and a finished set is not parked (it is
+     already banked in the record).
+     what is still true, and is the lesson the owner wanted: you lose your PLACE.
+     the parked run comes back at net zero of wherever it was — `resumeParked` is
+     what hands it over — and nothing it earned was ever at risk, since badges
+     and the day's row are written as you go. */
+  const leaving=R();
+  if(leaving && leaving.mode!=='trial' && !leaving.archive
+     && leaving.day!==iso && leaving.cleared.length<POLICY.dailyNets) store.parked=leaving;
   newRun('daily',iso);
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
+  /* THE ONLY THING THAT SAYS WHAT JUST HAPPENED, now that no card said it in
+     advance — and it lands after hideVeils, on the board it is talking about,
+     because showVeil clears the say card and a message under a veil is a
+     message nobody reads. it names the day either way: today's ten by their
+     name, an archive day by its date plus the one thing playing it does not do,
+     which is the sentence the card used to carry as a caveat. */
   flashMsg(iso===today()?'today\'s net':'playing the archive · '+dayLabel(iso)+' · this does not extend a streak');
 }
 /* the day's score, golf style: turns against par across the ten. negative is
@@ -10252,9 +10545,12 @@ function openRecord(){
          above is still true — a length cannot be counted off — and it is
          answered by giving the picture enough room to be read as a proportion
          instead of a caption: the bar was 92px in the corner of a row whose
-         middle held its own restatement in words, and it now runs the width the
-         words were using. filled against bare says how far the day got, and the
-         colours say how it went, which is what the whole card is scored in.
+         middle held its own restatement in words, and it took the room those
+         words were using. it is 240 now rather than the whole of it, which is
+         still two and a half times the old measure and no longer the largest
+         object on the card; see .track.dtrack. filled against bare says how far
+         the day got, and the colours say how it went, which is what the whole
+         card is scored in.
          WHAT THIS COSTS, stated rather than discovered: colour is now the only
          VISUAL carrier of the count. turquoise against violet measures 1.43 in
          greyscale, so a screenshot, a monochrome panel or anyone whose cones do
@@ -10289,10 +10585,28 @@ function openRecord(){
          with NO bar still says `played`, because there it is the only evidence
          the day happened at all. */
       det=p.join(' · ')||(bar?'':'played');
+      /* ---- HOW MANY TIMES THE DAY HAS BEEN PLAYED ----
+         `runs` is counted once per run in stampToday, off the run's own
+         `startedAt`, and merged as a max in worker/merge.js. it was drawn only on
+         the card that offers a day — the one place a replay was ever weighed —
+         and the row is where it belongs: the row IS the record of the day, and a
+         reading about how that record was got is a fact about the day rather
+         than about the offer.
+         A SINGLE RUN SHOWS NOTHING. `×1` is a multiplier that multiplies
+         nothing, and every played row in the game would wear one — a mark on all
+         of them is a mark that distinguishes none of them. what the glyph says is
+         that this day was played more than once, so it appears exactly when that
+         became true. a legacy row has no `runs` at all and says nothing either,
+         which is the same absence stated by the same test.
+         the unit is in the row's aria-label, in words, and the glyph is
+         aria-hidden — the division dayCells and the chip below already make. see
+         .druns for the slot it sits in and why that slot is always there. */
+      const again = row.runs>1 ? '&times;'+row.runs : '';
       /* ---- the replay, drawn on every played row ----
          it is a glyph and not the word `replay` because it sits at the end of a
-         row that already carries a date, possibly a clause, and a ten-cell bar:
-         a fourth text object is the crowding the bar was widened to escape. the
+         row that already carries a date, possibly a clause, a ten-cell bar and
+         now a count: a text object saying `replay` is the crowding the bar was
+         narrowed and the count was abbreviated to escape. the
          arrow is a true circular arc, which is the one curve this palette
          allows, and it is `.dstate` at every other measure so a row's two
          possible chips are the same object at the same size.
@@ -10310,7 +10624,8 @@ function openRecord(){
          as a day taken away from you, and a saturated field on a row is the mark
          that got the archive rows deleted the first time. pressing it is the
          row's own press, which answers in words and never opens a checkout. */
-      right = bar + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true"`
+      right = bar + `<span class="druns" aria-hidden="true">${again}</span>`
+        + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true"`
         +` title="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
     } else {
       det=(isToday?'not played yet':'not played')+bestWords;
@@ -10350,8 +10665,15 @@ function openRecord(){
     /* JOINED FROM THE PARTS THAT EXIST, rather than concatenated around a `det`
        that is assumed to. `det` is empty on an ordinary played row now — the bar
        says what it used to — so the old form read `sat 15 aug ·  · 2 perfect`,
-       with an empty segment a screen reader pauses twice for. */
+       with an empty segment a screen reader pauses twice for.
+       the attempt count is the ONE reading here that is drawn as a mark and said
+       as words rather than being a picture of the words: `×3` carries no unit,
+       so this is where the unit is — and it is said in the same order the row
+       draws it, after how the day went and before what pressing it does. `>1` is
+       the same test the mark is drawn by, so the label and the row cannot
+       disagree about whether the day was replayed. */
     const label=[dayLabel(d), det, played&&tier?tier:'', words,
+                 played&&row.runs>1 ? row.runs+' attempts' : '',
                  played?(canPlay?'play again':replayWords()):''].filter(Boolean).join(' · ');
     el.setAttribute('aria-label',label);
     /* only a row you can actually do something with is a control. a shut row
@@ -10363,10 +10685,13 @@ function openRecord(){
        a SPENT row is not a control for the same reason and by the same test —
        canPlay is the whole of it, and it now answers the money and the one run
        a day alike. */
-    /* the row hands the day its own stored readings rather than letting offerDay
-       reach back into playedDays for a day it was told about — the rungs it has
-       drawn, and the first run it is keeping. see offerDay. */
-    const offer=()=>offerDay(d,played,played?row.tiers:null,played?row.first:null);
+    /* THE DATE IS ALL IT TAKES NOW. the row used to hand the day its own stored
+       readings too — the rungs it had drawn and the first run it was keeping —
+       because the card openDay put up drew both and had no business reaching
+       back into playedDays for a day it was told about. there is no card, so
+       there is nothing to draw them on — and the rungs were never only there,
+       since this row draws them itself. see openDay. */
+    const offer=()=>openDay(d);
     if(canPlay){
       el.setAttribute('role','button'); el.tabIndex=0;
       el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offer() } };
@@ -11247,6 +11572,18 @@ if(DEV){
    what it costs, stated: green is the FIFTH thread, so it only reaches the
    board on five-feature nets. a first-day player meets a green mark here
    before any green thread. */
+/* ---- the legend, and it uses THE WHOLE PALETTE ----
+   it drew from four of the six: hellblau three times, orange twice, gelb and
+   gruen once each, and violett and tuerkis not at all. five marks in a column,
+   three of them opening on the same blue — which reads as one feature explained
+   five ways rather than five different marks, and quietly implies blue means
+   something. it does not; a thread's colour is a cast assignment and nothing
+   else, which is exactly why the legend can spend the palette freely.
+   seven colour slots across five marks and six colours to fill them: every
+   token appears once, and the only repeat is hellblau on the crossing, where it
+   is deliberate — the crossing is a FEATURE meeting another one, so it opens in
+   the same colour the `feature` mark above it did, and the eye reads the pair
+   as related rather than as a sixth thing. */
 const RMARK={
   feature:()=>[threadPart([[4,32],[24,12],[44,32],[64,12]],THREADPAL[0])],
   neuron:()=>[threadPart([[2,22],[66,22]],THREADPAL[1]),
@@ -11255,15 +11592,16 @@ const RMARK={
      ring is inside the first's rather than beside it.
      the two colours are arguments so the card that says "tap it to split" can
      draw the neuron actually on the board rather than a generic one; called
-     with none it is the legend's version, in a first and a third feature's
-     colours the way `rmark` has always drawn it. */
-  shared:(a,b)=>[threadPart([[2,22],[34,22],[66,22]],a||THREADPAL[0]),
-              threadPart([[16,4],[34,22],[52,40]],b||THREADPAL[2]),
-              ...neuronParts(34,22,[a||THREADPAL[0],b||THREADPAL[2]])],
+     with none it is the legend's version, which is gelb through violett — the
+     warmest and the coolest of the six, so the two rings of a shared neuron are
+     as far apart as the palette can put them at the size this draws. */
+  shared:(a,b)=>[threadPart([[2,22],[34,22],[66,22]],a||THREADPAL[2]),
+              threadPart([[16,4],[34,22],[52,40]],b||THREADPAL[3]),
+              ...neuronParts(34,22,[a||THREADPAL[2],b||THREADPAL[3]])],
   pinned:()=>[threadPart([[2,22],[66,22]],THREADPAL[4]),
               ...neuronParts(34,22,[THREADPAL[4]],{pinned:true})],
-  crossing:()=>[threadPart([[14,2],[54,42]],THREADPAL[0]),
-                threadPart([[54,2],[14,42]],THREADPAL[1]),
+  crossing:()=>[threadPart([[14,2],[54,42]],THREADPAL[5]),
+                threadPart([[54,2],[14,42]],THREADPAL[0]),
                 ...crossParts([[34,22]])]
 };
 const rmark=k=>markSVG(RMARK[k](),'0 0 68 44','rmark');
