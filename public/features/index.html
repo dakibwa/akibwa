@@ -808,11 +808,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .track.dtrack > i:not(.on){background:var(--rule)}
   .track.dtrack > i{transition:none}
-  .track.flawless{position:relative;overflow:visible}
-  .track.flawless::after{
-    content:"";position:absolute;left:0;right:0;top:calc(100% + 3px);
-    height:2px;background:var(--sig-rosa);
-  }
   .dayrow.back .dtier{background:repeating-linear-gradient(45deg,var(--tc,var(--rule)) 0 3px,var(--surface) 3px 6px)}
   .dayrow.open{border-color:var(--silver)}
   .dayrow.today{border-color:var(--ink)}
@@ -1091,7 +1086,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       <!-- one button, because there is one screen: the collection and the record
            were two readings of the same history and are now one list. it is also
            the fourth button the phone head never had 48px spare for. -->
-      <button class="help" id="histbtn" title="the record · every day you have played" aria-label="the record">
+      <button class="help" id="histbtn" title="your days · every day since launch" aria-label="your days">
         <svg class="recglyph" viewBox="0 0 24 24" aria-hidden="true">
           <g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>
           <g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>
@@ -4703,12 +4698,13 @@ const isFlawless=tiers=>typeof tiers==='string'
   && [...tiers.slice(0,POLICY.dailyNets)].every(ch=>ch==='p');
 function rungTrack(tiers,row){
   const s=typeof tiers==='string'?tiers:'';
+  const flawless=isFlawless(s);
   let out='';
   for(let i=0;i<POLICY.dailyNets;i++){
     const t=TIEROF[s[i]];
-    out += t ? `<i class="on" style="--fill:var(${TIERCOL[t]})"></i>` : '<i></i>';
+    out += t ? `<i class="on" style="--fill:var(${flawless?TIERCOL.flawless:TIERCOL[t]})"></i>` : '<i></i>';
   }
-  const flaw = isFlawless(s) ? ' flawless' : '';
+  const flaw = flawless ? ' flawless' : '';
   if(row) return `<span class="track dtrack${flaw}" aria-hidden="true">${out}</span>`;
   const said=tierWords(s,' · ');
   return `<span class="track${flaw}" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
@@ -5116,7 +5112,7 @@ function renderHud(){
   $('field').classList.toggle('over',!!r.over);
   const d=new Date(), mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
   $('statusdate').textContent=`${d.getDate()} ${mo[d.getMonth()]}`;
-  $('histbtn').title=`the record · ${d.getDate()} ${mo[d.getMonth()]}`;
+  $('histbtn').title=`your days · ${d.getDate()} ${mo[d.getMonth()]}`;
 }
 function renderAll(){
   buildNet(); renderHud(); refresh(); startPhysics(); renderTutorial();
@@ -5295,7 +5291,7 @@ async function copyShare(){
     else if(e.key===']') step(1);
   });
 })();
-$('histbtn').onclick=()=>{ fromCard=false; recView='days'; openRecord() };
+$('histbtn').onclick=()=>{ fromCard=false; renderIntro('day'); showVeil('introveil') };
 function closeRecord(){
   $('histveil').classList.remove('show');
   if(fromCard) backToCard();
@@ -5465,11 +5461,6 @@ function renderIntro(mode){
       +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
       +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
       +`</g></svg></button>`
-      +`<button class="help" id="introhist" title="the record · every day you have played" aria-label="the record">`
-      +`<svg viewBox="0 0 24 24" aria-hidden="true">`
-      +`<g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>`
-      +`<g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>`
-      +`</svg></button>`
       +`<button class="help${canTimeTrial()?'':' shut'}" id="introtrial" title="time trial · one net after another until it out-tangles you" aria-label="time trial">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6">`
       +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
@@ -5509,7 +5500,6 @@ function renderIntro(mode){
     store.introSeen=true; store.lastIntroDay=today(); save();
   };
   if($('introlessons')) $('introlessons').onclick=()=>startLessons();
-  if($('introhist')) $('introhist').onclick=()=>{ fromCard=true; recView='days'; hideVeils(); openRecord() };
   if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
   if($('introbuy')) $('introbuy').onclick=()=>{ if(!POLICY.premium) beginUnlock() };
   if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
