@@ -901,6 +901,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .help.owned{cursor:default}
   .help.owned:active{transform:none}
   .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
+  .help.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
   .help.owned .tickmark{stroke-dasharray:11.31;stroke-dashoffset:0;
     stroke-linecap:square;stroke-linejoin:miter}
   .help.owned:hover .tickmark{animation:tickdraw .34s linear both}
@@ -2132,6 +2133,7 @@ function paintTill(el){
   if(!el) return;
   const owned=!!POLICY.premium;
   el.innerHTML=TILL_GLYPH(owned);
+  el.classList.add('till');          // both states, so the hover can find either
   el.classList.toggle('owned',owned);
   el.title=owned?'the full version · yours':'the full version';
   el.setAttribute('aria-label',el.title);
