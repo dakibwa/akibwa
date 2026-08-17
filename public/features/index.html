@@ -847,9 +847,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .rladder{margin-top:15px}
   .rladder .track{margin-top:6px}
   .rladder .track > i{transition:none}
-  .rlnames{display:grid;grid-template-columns:repeat(3,1fr);margin-top:7px}
+  .rladder .track > i.flaw{clip-path:polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px)}
+  .rlnames{display:grid;grid-template-columns:repeat(4,1fr);margin-top:7px}
   .rlnames > i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--ink);text-transform:lowercase}
-  .intro-lead{font-size:14px;line-height:1.55;margin-top:14px}
   .wbstats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:15px 0 0;border-top:1px solid var(--ink)}
   .wbstats div{padding:11px 0;border-bottom:1px solid var(--rule)}
   .wbstats div:nth-child(odd){border-right:1px solid var(--rule);padding-right:12px}
@@ -862,11 +862,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbweek{margin-top:12px;display:grid;gap:3px}
-  .wbday{display:grid;grid-template-columns:78px minmax(0,1fr) 18px 21px;
-         gap:10px;align-items:center;padding:2px 0}
+  .wbday{display:grid;grid-template-columns:7px 74px minmax(0,1fr) 18px 21px;
+         gap:9px;align-items:center;padding:0 9px 0 0;min-height:28px;
+         border:1px solid var(--rule);background:var(--surface);overflow:hidden;
+         transition:border-color var(--t-ui)}
+  .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
   .wbday .wbwhen{white-space:nowrap}
   .wbday.now .wbwhen{color:var(--ink)}
+  .wbday.now{border-color:var(--ink)}
   .wbday[data-day]{cursor:pointer}
+  .wbday[data-day]:hover{border-color:var(--ink)}
   .wbday[data-day]:hover .wbwhen{color:var(--ink)}
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
@@ -1499,6 +1504,7 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
 
 const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', flawless:'--rosa', par:'--tuerkis', over:'--violett'};
 const DAYSPINE=['--hellblau','--gruen','--orange'];
+const daySpine=d=>`var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})`;
 const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 const SETAHEAD='--rule';
 const LAPCOL=['--par-over','--gruen','--orange'];
@@ -4842,10 +4848,10 @@ function openRecord(){
         +` title="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
     } else {
       det=(isToday?'not played yet':'not played')+bestWords;
-      right='<span class="dstate">play →</span>';
+      right=rungTrack('',true)+'<span class="dstate">play →</span>';
     }
 
-    el.innerHTML=`<i class="dtier" style="--tc:var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})"></i>`
+    el.innerHTML=`<i class="dtier" style="--tc:${daySpine(d)}"></i>`
       +`<span class="ddate">${dayLabel(d)}</span>`
       +`<span class="ddet">${det}</span>`
       +right;
@@ -5259,10 +5265,10 @@ function introPlate(){
     ${parts.map(partHTML).join('')}</svg>`;
 }
 function rungLadder(){
-  const rungs=['perfect','clean','done'];
+  const rungs=['flawless','perfect','clean','done'];
   return `<div class="rladder">
     <span class="track" aria-hidden="true">${
-      rungs.map(t=>`<i class="on" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
+      rungs.map(t=>`<i class="on${t==='flawless'?' flaw':''}" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
     <span class="rlnames">${rungs.map(t=>`<i>${t}</i>`).join('')}</span>
   </div>`;
 }
@@ -5311,6 +5317,7 @@ function renderIntro(mode){
         +(!isNow&&played?` role="button" tabindex="0" data-day="${d}"`:'')
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):'not played'}`
         +`${!isNow&&played?' · '+(can?'play again':replayWords()):''}">`
+        +`<i class="wbtier" style="--tc:${daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabel(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
         +`<span class="wbmini">${played&&rd?rd.fig:''}</span>${chip}</div>`;
@@ -5318,8 +5325,7 @@ function renderIntro(mode){
     const firstDay = !fresh && !rows.length;
     const head=fresh
       ? `<div class="intro-title">${WORDMARK}</div>
-         <div class="intro-sub">untangle what a neural net knows</div>
-         <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>`
+         <div class="intro-sub">untangle what a neural net knows</div>`
       : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
     b.innerHTML=head
