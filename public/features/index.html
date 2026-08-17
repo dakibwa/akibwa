@@ -868,17 +868,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  .wbweek{margin-top:12px;display:grid;gap:3px}
+  .wbweek{margin-top:12px;display:grid;gap:4px}
   .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 18px 21px;
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
-         border:1px solid var(--rule);background:var(--surface);overflow:hidden;
-         transition:border-color var(--t-ui)}
+         overflow:hidden}
   .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
   .wbday .wbwhen{white-space:nowrap}
   .wbday.now .wbwhen{color:var(--ink)}
-  .wbday.now{border-color:var(--ink)}
   .wbday[data-day]{cursor:pointer}
-  .wbday[data-day]:hover{border-color:var(--ink)}
   .wbday[data-day]:hover .wbwhen{color:var(--ink)}
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
@@ -901,9 +898,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
   .intro-doors #introbuy,.intro-doors .owned{margin-left:auto}
-  .intro-doors .owned{cursor:default}
-  .intro-doors .owned:hover{border-color:var(--silver);color:var(--ink-soft)}
-  .intro-doors .owned:active{transform:none}
+  .help.owned{cursor:default}
+  .help.owned:active{transform:none}
+  .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
+  .help.owned .tickmark{stroke-dasharray:11.31;stroke-dashoffset:0;
+    stroke-linecap:square;stroke-linejoin:miter}
+  .help.owned:hover .tickmark{animation:tickdraw .34s linear both}
+  @keyframes tickdraw{ from{stroke-dashoffset:11.31} to{stroke-dashoffset:0} }
   @media (max-width:340px){
     .intro-doors{gap:5px}
     .intro-doors .help{min-width:30px;padding:0 3px}
@@ -1016,6 +1017,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .freerun,.clearsweep{display:none}
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
+    .help.owned:hover .tickmark{animation:none}
     .live-dot,.coach-dots i.now{animation:none;opacity:.85}
     .veil,.veil.show,.veil > *,.veil.show > *{transform:none;transition-property:opacity,visibility}
     .say,.say.on{transform:none;
@@ -1130,25 +1132,26 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            it stays in the QUIET ink of every other control here rather than taking
            the purchase violet: a saturated field in the masthead is a badge, and
            a badge is the one form this interface does not use. -->
-      <button class="help" id="buybtn" hidden
-              title="the full version" aria-label="the full version">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
-          <path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/>
-        </svg>
-      </button>
       <button class="help" id="helpbtn" title="how to play" aria-label="how to play">?</button>
-      <!-- DEVELOPER TOOL, and it says so. it solves the net down the exact route
-           par is priced from, so it is also a live check that the two agree.
-           `hidden` by default and only unhidden on a DEV host — it must never
-           reach a player, because a button that plays the game for you is the
-           one control that can empty the whole product. -->
-      <button class="help devsolve" id="solvebtn" hidden
-              title="dev · solve this net (walks the route par is priced from)"
-              aria-label="dev · solve this net">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7">
-          <path d="M4 18L10 12L4 6"/><path d="M12 18h8"/></g></svg>
-      </button>
+      <!-- ---- THE TILL HOLDS THIS CORNER TOO ---- (17 Aug 2026, the owner's call)
+           it stood between the collection and `?` and was drawn only to somebody
+           who could still buy — so the one mark in this row that reports WHO YOU
+           ARE sat among the doors and disappeared the moment you bought it. it is
+           last now, at the end of the row, which is the same corner the day card
+           gives it, and it is drawn in BOTH states: a plus while it is for sale,
+           a tick once it is yours. `paintTill` draws both, in one place, so the
+           two corners cannot end up disagreeing about what a purchase looks like.
+           the old `hidden` gate on `canBuy()` has gone with it — see paintTill for
+           what replaced it and why. it stays in the QUIET ink of every other
+           control here rather than taking the purchase violet: a saturated field
+           in the masthead is a badge, and a badge is the one form this interface
+           does not use.
+           the `>_` solve button was the last mark in this row and is now in the
+           controls drawer with every other dev affordance. it never reached a
+           player — it was `hidden` off a DEV host — but it was in the masthead on
+           every screenshot taken during development, which is the row this game
+           is judged on. -->
+      <button class="help" id="buybtn" hidden></button>
       </div>
   </header>
 
@@ -1203,6 +1206,18 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     <button class="act" id="skipnet"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6l7 6-7 6zM13 6l7 6-7 6z"/></g></svg><span>skip net</span></button>
     <button class="act" id="reset"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12a7 7 0 1 1-2-4.9M19 4v4h-4"/></g></svg><span>reset</span></button>
     <button class="act" id="newrun" hidden><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5l11 7-11 7z"/></g></svg><span>new run</span></button>
+    <!-- DEVELOPER TOOL, and it says so. it solves the net down the exact route
+         par is priced from, so it is also a live check that the two agree.
+         it was a mark in the masthead — `hidden` off a DEV host, so it never
+         reached a player, but present in the top right of every screenshot taken
+         while the game was being designed. it belongs here, with the reset button
+         and under the note saying none of this is settled. still `hidden` until
+         DEV unhides it: a button that plays the game for you is the one control
+         that can empty the whole product. -->
+    <button class="act devsolve" id="solvebtn" hidden
+            title="dev · solve this net (walks the route par is priced from)">
+      <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 18L10 12L4 6"/><path d="M12 18h8"/></g></svg><span>solve net</span></button>
   </div>
   <!-- ---- STEP THROUGH EVERY SCREEN ----
        the game is one file of overlays and most of them are only reachable by
@@ -2108,6 +2123,22 @@ function applyEntitlement(r){
   return was!==r.full;
 }
 const canBuy=()=>DEV||till===true;
+const TILL_GLYPH=(owned)=>`<svg viewBox="0 0 24 24" aria-hidden="true">`
+  +`<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+  +(owned?`<path class="tickmark" d="M8 12l3 3 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+         :`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/>`)
+  +`</svg>`;
+function paintTill(el){
+  if(!el) return;
+  const owned=!!POLICY.premium;
+  el.innerHTML=TILL_GLYPH(owned);
+  el.classList.toggle('owned',owned);
+  el.title=owned?'the full version · yours':'the full version';
+  el.setAttribute('aria-label',el.title);
+  if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
+  else { el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex') }
+  el.hidden=false;
+}
 function entitlementChanged(){
   if($('histveil').classList.contains('show')) openRecord();
   if($('runveil').classList.contains('show')) showRunOver();
@@ -5007,7 +5038,7 @@ function sayNudge(){
 function showVeil(id){ sayHide(true); $(id).classList.add('show') }
 function renderHud(){
   const r=R();
-  $('buybtn').hidden = !(canBuy() && !POLICY.premium);
+  paintTill($('buybtn'));
   const trial=isTrial();
   const {optimum,par}=netTargets();
   const tier=liveTier();
@@ -5332,7 +5363,7 @@ function introPlate(){
     ${parts.map(partHTML).join('')}</svg>`;
 }
 function rungLadder(){
-  const rungs=['flawless','perfect','clean','done'];
+  const rungs=['done','clean','perfect','flawless'];
   return `<div class="rladder">
     <span class="track" aria-hidden="true">${
       rungs.map(t=>`<i class="on${t==='flawless'?' flaw':''}" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
@@ -5411,11 +5442,10 @@ function renderIntro(mode){
       +`<div class="intro-doors">`
       +(fresh?'':`<button class="help" id="introlessons" title="the guided nets · the three lessons again" aria-label="the guided nets">`
         +`<svg viewBox="0 0 24 24" aria-hidden="true">`
-        +`<circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/>`
-        +`<circle cx="12" cy="12" r="1.8" fill="currentColor"/>`
-        +`<g fill="none" stroke="currentColor" stroke-width="1.5">`
-        +`<path d="M4.8 4.8l2.6 2.6M19.2 4.8l-2.6 2.6M4.8 19.2l2.6-2.6M19.2 19.2l-2.6-2.6"/>`
-        +`</g></svg></button>`)
+        +`<rect x="2.5" y="9" width="6" height="6" fill="currentColor"/>`
+        +`<rect x="10.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
+        +`<rect x="17.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
+        +`</svg></button>`)
       +`<button class="help" id="introcoll" title="the collection · every feature you have named" aria-label="the collection">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
       +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
@@ -5434,16 +5464,9 @@ function renderIntro(mode){
       +`<button class="help" id="introrules" title="how to play" aria-label="how to play">?</button>`
       +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
       +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-      +(POLICY.premium
-        ? `<span class="help owned" id="introowned" role="img" title="the full version · yours" aria-label="the full version · yours">`
-          +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
-          +`<path d="M8 12l3 3 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>`
-        : canBuy()
-        ? `<button class="help" id="introbuy" title="the full version" aria-label="the full version">`
-          +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
-          +`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>`
-        : '')
+      +`<button class="help" id="introbuy"></button>`
       +`</div>`;
+    paintTill($('introbuy'));
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
@@ -5474,7 +5497,7 @@ function renderIntro(mode){
   if($('introlessons')) $('introlessons').onclick=()=>startLessons();
   if($('introhist')) $('introhist').onclick=()=>{ fromCard=true; recView='days'; hideVeils(); openRecord() };
   if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
-  if($('introbuy')) $('introbuy').onclick=()=>beginUnlock();
+  if($('introbuy')) $('introbuy').onclick=()=>{ if(!POLICY.premium) beginUnlock() };
   if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
 }
 function startLessons(){
