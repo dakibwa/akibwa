@@ -652,6 +652,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dd-head a{color:var(--silver);text-decoration:none}
   .dd-head a:hover{color:var(--ink)}
   .devdrawer .actionrow{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+  .dd-screens{display:grid;grid-template-columns:26px minmax(0,1fr) 26px;gap:3px;
+    align-items:stretch;margin-top:3px}
+  .dd-screens .act.sq{padding:0;min-height:26px;justify-content:center;font-size:13px}
+  .dd-screen{display:flex;align-items:center;justify-content:center;text-align:center;
+    border:1px solid var(--rule);font-size:9px;letter-spacing:.1em;
+    color:var(--ink-soft);text-transform:lowercase;padding:0 4px;min-height:26px}
   .dd-note{margin-top:10px;padding-top:9px;border-top:1px solid var(--rule);
     font-size:9px;line-height:1.5;letter-spacing:.06em;color:var(--silver);text-transform:lowercase}
   .dd-note b{color:var(--ink-soft)}
@@ -1198,7 +1204,21 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     <button class="act" id="reset"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12a7 7 0 1 1-2-4.9M19 4v4h-4"/></g></svg><span>reset</span></button>
     <button class="act" id="newrun" hidden><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5l11 7-11 7z"/></g></svg><span>new run</span></button>
   </div>
-  <div class="dd-note">press <b>d</b> to hide &middot; none of this is settled as part of the game</div>
+  <!-- ---- STEP THROUGH EVERY SCREEN ----
+       the game is one file of overlays and most of them are only reachable by
+       playing your way to them: a card that appears on a cleared net, a record
+       you have to have a record for. so judging the SET of them — do they agree
+       about the ground, do the cards sit at the same measure, does one of them
+       still say something the others stopped saying — meant a run per screen.
+       this walks the list instead, in the drawer that already says none of it is
+       settled as part of the game. `[` and `]` do the same thing off the drawer,
+       so the screen can be judged without a panel over the corner of it. -->
+  <div class="dd-screens">
+    <button class="act sq" id="ddprev" aria-label="previous screen">&lsaquo;</button>
+    <span class="dd-screen" id="ddscreen">the board</span>
+    <button class="act sq" id="ddnext" aria-label="next screen">&rsaquo;</button>
+  </div>
+  <div class="dd-note">press <b>d</b> to hide &middot; <b>[</b> <b>]</b> to step through the screens &middot; none of this is settled as part of the game</div>
 </div>
 
 <!-- neither bulletin is here: both live inside `.field`, above, because both are
@@ -5187,10 +5207,49 @@ async function copyShare(){
   document.body.appendChild(tab);
   const hide=()=>{$('devdrawer').hidden=true; tab.hidden=false};
   $('ddclose').onclick=e=>{e.preventDefault();hide()};
+
+  const DEVSCREENS=[
+    ['the board',      ()=>hideVeils()],
+    ['the day card',   ()=>{fromCard=false; renderIntro('day'); showVeil('introveil')}],
+    ['how to play',    ()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')}],
+    ['the record',     ()=>{fromCard=false; recView='days'; hideVeils(); openRecord()}],
+    ['the collection', ()=>{fromCard=false; recView='collection'; hideVeils(); openRecord()}],
+    ['net cleared',    ()=>{
+      const badged=Object.keys(store.collection.badges||{});
+      if(!badged.length) return toast('nothing minted yet · clear a net first');
+      const feats=badged.slice(0,2);
+      hideVeils();
+      showNetCleared(feats, store.collection.badges[feats[0]].tier||'clean', false,
+        {run:R(), clean:R().cleared.length, depth:R().cleared.length,
+         turns:R().turns||0, assisted:false});
+    }],
+    ['run over',       ()=>{
+      if(!R().cleared.length) return toast('no run to report · clear a net first');
+      hideVeils(); showRunOver();
+    }],
+    ['your account',   ()=>{hideVeils(); openAccount()}],
+  ];
+  let at=0;
+  const step=n=>{
+    at=(at+n+DEVSCREENS.length)%DEVSCREENS.length;
+    const [name,show]=DEVSCREENS[at];
+    $('ddscreen').textContent=name;
+    try{ show() }catch(e){ toast('screen failed · '+e.message) }
+  };
+  $('ddprev').onclick=()=>step(-1);
+  $('ddnext').onclick=()=>step(1);
+
   document.addEventListener('keydown',e=>{
-    if(e.key!=='d'||e.metaKey||e.ctrlKey||e.altKey) return;
-    const open=!$('devdrawer').hidden;
-    if(open) hide(); else {$('devdrawer').hidden=false; tab.hidden=true}
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    const t=e.target;
+    if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)) return;
+    if(e.key==='d'){
+      const open=!$('devdrawer').hidden;
+      if(open) hide(); else {$('devdrawer').hidden=false; tab.hidden=true}
+      return;
+    }
+    if(e.key==='[') step(-1);
+    else if(e.key===']') step(1);
   });
 })();
 $('histbtn').onclick=()=>{ fromCard=false; recView='days'; openRecord() };
