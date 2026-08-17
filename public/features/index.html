@@ -2709,11 +2709,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        took the instrument tracks with it, which is a horizontal scrollbar on a
        page that does not scroll. the buttons give the width back — they are
        34px tall already, so 34 wide is the square they were always closest to. */
-    /* A FIFTH, SIXTH AND SEVENTH BUTTON, and the note above is the record of what
-       a fourth already cost: the row ran past the panel and took the instrument
-       tracks with it, which is a horizontal scrollbar on a page that does not
-       scroll. the collection, the lessons and the till are three more marks in
-       that cluster, so it happened again — 14px at 375 and 69px at 320.
+    /* A FIFTH AND SIXTH BUTTON, and the note above is the record of what a fourth
+       already cost: the row ran past the panel and took the instrument tracks with
+       it, which is a horizontal scrollbar on a page that does not scroll. the
+       collection, the lessons and the till were three more marks in that cluster,
+       so it happened again — 14px at 375 and 69px at 320. the lessons' mark has
+       since gone to the day card, which gives one slot back; the squeeze below is
+       what made SEVEN fit, so it is still what the remaining six are laid out by
+       and it is not being unwound for the headroom.
        what gives is the RECORD BUTTON'S DATE, not another squeeze on all of
        them: 34px squares are already the smallest square they can be, and the
        date is the one thing in the cluster that is said elsewhere as well —
@@ -3017,25 +3020,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
           <rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>
         </g></svg>
       </button>
-      <!-- ---- the guided nets ----
-           the tutorial's OWN mark: the spotlight it draws on the neuron to act
-           on, which is a ring with light coming off it. a circle and four 45°
-           rays, so it is inside the palette's geometry, and it is the one thing
-           on screen a returning player has seen before in exactly this shape.
-           hidden while the lessons are still ahead — pressing it then would
-           restart a tutorial the player is already inside — and shown for the
-           first time when they finish, which is when it becomes the only way
-           back. renderHud keeps that in step. -->
-      <button class="help" id="tutbtn" hidden
-              title="the guided nets · the three lessons again" aria-label="the guided nets">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
-          <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
-          <g fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M4.8 4.8l2.6 2.6M19.2 4.8l-2.6 2.6M4.8 19.2l2.6-2.6M19.2 19.2l-2.6-2.6"/>
-          </g>
-        </svg>
-      </button>
+      <!-- ---- the guided nets are NOT here ----
+           a mark for the lessons stood in this slot, hidden until `tutorialDone`
+           and shown from then on as the only way back to them. it moved to the
+           foot of the day card on the owner's call (17 Aug 2026): the lessons are
+           a thing you decide to do before a day starts, not a control you reach
+           for mid-net, and the card that opens the day is where that decision is
+           already being made. see `introlessons` in renderIntro.
+           what the bar keeps is what belongs to a net in progress — the ground,
+           the record, the collection, the till and `?` — and the cluster gets a
+           sixth slot back, which it needed: a seventh mark overflows a phone. -->
       <!-- ---- the full version ----
            a PLUS, because that is what it is: the game's own framing is that the
            free tier is complete and money adds the archive, the replay and the
@@ -9420,11 +9414,10 @@ function endTutorial(){
   r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
   builtFor=-1;
   save();
-  /* the bar carries the lessons' own door and it is decided by `tutorialDone`,
-     which has just moved — so it is redrawn here rather than left to the next
-     move to pick up. without this the mark a player would use to come back
-     appears a beat after the card that tells them they are finished, on whatever
-     the next render happens to be. */
+  /* renderHud no longer draws a door for the lessons — that moved to the day
+     card — but `tutorialDone` has just changed and the bar reads it for the
+     tutorial's own bay, so it is redrawn here rather than left to whatever the
+     next render happens to be. */
   renderHud();
   tutSpotClear();
   const c=$('coach');
@@ -11656,18 +11649,16 @@ function showVeil(id){ sayHide(true); $(id).classList.add('show') }
 function renderHud(){
   const r=R();
   /* ---- which doors the bar is showing ----
-     HERE AND NOT IN renderTutorial, which is where these two landed first and is
-     the one function that cannot draw them: it runs only while a guided net is on
-     screen, so the lessons' own mark appeared for nobody. renderHud is what every
-     move, every veil and every entitlement answer already calls.
-     both are computed and never stored, the same way the archive's lock is (see
-     POLICY.premium): that is what makes a purchase retroactive, and what shows the
-     lessons' door on the same frame the third one clears.
-     the lessons' mark waits until they are behind you — pressing it mid-tutorial
-     would restart the tutorial the player is inside — and the till's waits for a
-     server that says it can take money, and hides again the moment it says the
-     player already holds it. */
-  $('tutbtn').hidden = !store.tutorialDone;
+     HERE AND NOT IN renderTutorial, which is where this landed first and is the
+     one function that cannot draw it: it runs only while a guided net is on
+     screen, so a door meant for a player who has FINISHED the lessons appeared
+     for nobody. renderHud is what every move, every veil and every entitlement
+     answer already calls.
+     it is computed and never stored, the same way the archive's lock is (see
+     POLICY.premium): that is what makes a purchase retroactive.
+     the lessons' mark was the other line here and is now the day card's, so what
+     is left is the till's: it waits for a server that says it can take money, and
+     hides again the moment it says the player already holds it. */
   $('buybtn').hidden = !(canBuy() && !POLICY.premium);
   const trial=isTrial();
   const {optimum,par}=netTargets();
@@ -12645,12 +12636,28 @@ function renderIntro(mode){
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>
       <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`
-    /* the card carries NO menu of its own. a row of five text links at its foot
-       was tried and cut on the owner's call: the doors are small marks in the top
-       bar, where two of them (`?` and the record) have always been, and where a
-       control is a control rather than a paragraph. the card is the day — the
-       week, the readings and the one press that starts it — and it stopped being
-       a contents page for the rest of the game. see the masthead's control row. */
+      /* ---- and the lessons, which are the third thing you can start here ----
+         this was a mark in the top bar and moved here on the owner's call (17 Aug
+         2026). the bar is for a net in progress; the lessons are not something you
+         reach for mid-net, they are a decision made before a day starts — and this
+         card is where the other two such decisions already live. so the foot of the
+         card is three presses, in descending order of what a returning player wants:
+         the day, the trial, the lessons again.
+         ONLY ONCE THEY ARE BEHIND YOU, which is `tutorialDone` and therefore
+         `!fresh` — the same gate the bar's mark carried, for the same reason.
+         pressing it mid-tutorial would restart the tutorial you are inside; and on
+         a fresh save the primary button already says `start untangling` and the
+         lessons ARE what it starts, so a second door to them would be the card
+         offering the same thing twice.
+         NOT a text link. the row of five links this card used to end with was cut
+         because a control in a paragraph is not a control — a press that starts a
+         run is shaped like the two above it. */
+      +(fresh?'':`<button class="intro-start intro-alt" id="introlessons">`
+        +`the three lessons again</button>`)
+    /* the card still carries no MENU. what came back is one door, to one thing you
+       start from here; the row of five text links at its foot is still cut, and the
+       collection, the record, the till and `?` are still marks in the top bar where
+       a control is a control rather than a paragraph. see the masthead's row. */
       ;
     /* one handler for the whole list, on the container: seven rows each with
        their own closure is seven listeners rebuilt every morning, and the row
@@ -12688,6 +12695,11 @@ function renderIntro(mode){
     store.introSeen=true; store.lastIntroDay=today(); save();
     startTrialRun();
   };
+  /* startLessons does the rest itself — it writes introSeen and lastIntroDay,
+     clears tutorialDone, resets the run, hides the veils and redraws, which is
+     exactly what it did for the bar's mark. nothing is repeated here, so the
+     card and any later door cannot drift over what replaying the lessons costs. */
+  if($('introlessons')) $('introlessons').onclick=()=>startLessons();
 }
 /* ---- the three lessons, again ----
    `tutorialDone` was written once and never cleared, so the guided nets were a
@@ -12716,17 +12728,19 @@ function startLessons(){
   flashMsg('the guided nets · three lessons, and nothing here is scored');
 }
 $('helpbtn').onclick=()=>{renderIntro('rules'); showVeil('introveil')};
-/* the three marks added beside it, each a door to a surface that already exists.
-   none of them draws anything of its own: the collection and the record are two
-   views of one screen, the lessons are the tutorial, and the till is beginUnlock.
-   they are wired here, with `?`, because a control in that row is that row's. */
+/* the two marks added beside it, each a door to a surface that already exists.
+   neither draws anything of its own: the collection and the record are two views
+   of one screen, and the till is beginUnlock. they are wired here, with `?`,
+   because a control in that row is that row's.
+   there were three. the lessons' mark was the middle one and it is the day card's
+   now (see `introlessons`) — the bar is what a net in progress needs, and the
+   lessons are started before a day rather than during one. */
 /* each of the two marks opens its OWN view, and says which. `recView` is module
    state that remembers where you were — which was right while the in-record
    toggle was the only way to move between them, and is wrong the moment there are
    two doors: without setting it, the record's mark opens the collection because
    the collection's mark was pressed an hour ago. two controls, two answers. */
 $('collbtn').onclick=()=>{ recView='collection'; hideVeils(); openRecord() };
-$('tutbtn').onclick=()=>startLessons();
 $('buybtn').onclick=()=>beginUnlock();
 /* one act, both places it can be pressed — found by the same class applyTheme
    writes, so a control that reports the ground is a control that flips it and
