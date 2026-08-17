@@ -5216,7 +5216,7 @@ async function copyShare(){
     ['the collection', ()=>{fromCard=false; recView='collection'; hideVeils(); openRecord()}],
     ['net cleared',    ()=>{
       const badged=Object.keys(store.collection.badges||{});
-      if(!badged.length) return toast('nothing minted yet · clear a net first');
+      if(!badged.length){ toast('nothing minted yet · clear a net first'); return false }
       const feats=badged.slice(0,2);
       hideVeils();
       showNetCleared(feats, store.collection.badges[feats[0]].tier||'clean', false,
@@ -5224,7 +5224,7 @@ async function copyShare(){
          turns:R().turns||0, assisted:false});
     }],
     ['run over',       ()=>{
-      if(!R().cleared.length) return toast('no run to report · clear a net first');
+      if(!R().cleared.length){ toast('no run to report · clear a net first'); return false }
       hideVeils(); showRunOver();
     }],
     ['your account',   ()=>{hideVeils(); openAccount()}],
@@ -5233,8 +5233,9 @@ async function copyShare(){
   const step=n=>{
     at=(at+n+DEVSCREENS.length)%DEVSCREENS.length;
     const [name,show]=DEVSCREENS[at];
-    $('ddscreen').textContent=name;
-    try{ show() }catch(e){ toast('screen failed · '+e.message) }
+    let ok=true;
+    try{ ok = show()!==false }catch(e){ ok=false; toast('screen failed · '+e.message) }
+    $('ddscreen').textContent = ok ? name : name+' · not yet';
   };
   $('ddprev').onclick=()=>step(-1);
   $('ddnext').onclick=()=>step(1);
