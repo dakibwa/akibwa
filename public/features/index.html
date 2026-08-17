@@ -2540,6 +2540,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      chip — today, and a day nobody played. the slot is ALWAYS here for the
      reason .druns is: a mark that appears and disappears moves the bar sideways
      by its own width on the rows that lack it, and the columns are the reading. */
+  /* the closing line of the pitch. it is a paragraph and not `.intro-note`,
+     which draws a dashed rule above itself — on this card that rule belongs to
+     the crowd line at the foot and to nothing else, and two of them is the
+     ambiguous division the rules card was fixed for. */
+  .intro-hook{margin-top:9px;color:var(--ink-soft)}
   .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
   .wbday .dreplay.ghost{visibility:hidden}
   /* the hover pair the record's rows have, at the record's meaning: an unlocked
@@ -2639,8 +2644,23 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
        took the instrument tracks with it, which is a horizontal scrollbar on a
        page that does not scroll. the buttons give the width back — they are
        34px tall already, so 34 wide is the square they were always closest to. */
-    .btns{gap:4px}
+    /* A FIFTH, SIXTH AND SEVENTH BUTTON, and the note above is the record of what
+       a fourth already cost: the row ran past the panel and took the instrument
+       tracks with it, which is a horizontal scrollbar on a page that does not
+       scroll. the collection, the lessons and the till are three more marks in
+       that cluster, so it happened again — 14px at 375 and 69px at 320.
+       what gives is the RECORD BUTTON'S DATE, not another squeeze on all of
+       them: 34px squares are already the smallest square they can be, and the
+       date is the one thing in the cluster that is said elsewhere as well —
+       the day card's subtitle leads with it, and the record's own head is the
+       date. so on a phone that button is its glyph, like every other, and the
+       row comes in at 224 of the 353 it has.
+       and the cluster wraps, as the floor under all of it. it is not the layout
+       — nothing here is meant to reach a second line — it is what happens
+       instead of a scrollbar if a mark is ever added to this row again. */
+    .btns{gap:4px;flex-wrap:wrap;justify-content:flex-end}
     .btns .help{min-width:34px;padding:0 6px}
+    #histbtn .caltext{display:none}
     .rail{gap:15px 20px;padding:14px 13px 15px}
     .rail .gauge{flex:1 1 128px}
     .railactions{flex-wrap:wrap}
@@ -2917,6 +2937,59 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            id stays because it is what `.help`'s layout and the tests know it by. -->
       <button class="help groundbtn" id="themebtn" title="ground" aria-label="ground">
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
+      </button>
+      <!-- ---- the collection ----
+           the 7x7 grid it actually draws, at three by three: squares only, which
+           is the one shape a grid of named things can be in this palette, and the
+           same mark language `recglyph` above already uses for a list. it opens
+           the record ON its collection view rather than being a screen of its
+           own — there is one collection and this is a door to it. -->
+      <button class="help" id="collbtn" title="the collection · every feature you have named"
+              aria-label="the collection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">
+          <rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>
+          <rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>
+          <rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>
+        </g></svg>
+      </button>
+      <!-- ---- the guided nets ----
+           the tutorial's OWN mark: the spotlight it draws on the neuron to act
+           on, which is a ring with light coming off it. a circle and four 45°
+           rays, so it is inside the palette's geometry, and it is the one thing
+           on screen a returning player has seen before in exactly this shape.
+           hidden while the lessons are still ahead — pressing it then would
+           restart a tutorial the player is already inside — and shown for the
+           first time when they finish, which is when it becomes the only way
+           back. renderHud keeps that in step. -->
+      <button class="help" id="tutbtn" hidden
+              title="the guided nets · the three lessons again" aria-label="the guided nets">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
+          <g fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4.8 4.8l2.6 2.6M19.2 4.8l-2.6 2.6M4.8 19.2l2.6-2.6M19.2 19.2l-2.6-2.6"/>
+          </g>
+        </svg>
+      </button>
+      <!-- ---- the full version ----
+           a PLUS, because that is what it is: the game's own framing is that the
+           free tier is complete and money adds the archive, the replay and the
+           trial — "an addition drawn as an addition" (see the note on the record's
+           played row). a circle, a horizontal and a vertical, which is as plain as
+           this palette gets.
+           `hidden` until `canBuy()` says there is a till AND the player does not
+           already hold it, which is the same gate the record's line and the
+           cleared card's offer read. a shop button that answers "the till is not
+           answering" is worse than none, and a buyer must never see one at all.
+           it stays in the QUIET ink of every other control here rather than taking
+           the purchase violet: a saturated field in the masthead is a badge, and
+           a badge is the one form this interface does not use. -->
+      <button class="help" id="buybtn" hidden
+              title="the full version" aria-label="the full version">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
       </button>
       <button class="help" id="helpbtn" title="how to play" aria-label="how to play">?</button>
       <!-- DEVELOPER TOOL, and it says so. it solves the net down the exact route
@@ -5168,6 +5241,14 @@ const canBuy=()=>DEV||till===true;
 function entitlementChanged(){
   if($('histveil').classList.contains('show')) openRecord();
   if($('runveil').classList.contains('show')) showRunOver();
+  /* the day card too, since it draws the till link and the price in its foot and
+     is built before either can have arrived. only that card: the rules card has
+     nothing on it money can change, and redrawing it under somebody reading it
+     would be the network taking a screen away. */
+  if(introMode==='day' && $('introveil').classList.contains('show')) renderIntro('day');
+  /* and the masthead, which carries the till's own mark. renderHud is what
+     decides whether it is drawn, so the answer landing has to reach it. */
+  renderHud();
 }
 /* what it costs, asked for only when there is somewhere to print it — a player
    who never opens the record never makes this call. the record redraws when the
@@ -9229,6 +9310,12 @@ function endTutorial(){
   r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
   builtFor=-1;
   save();
+  /* the bar carries the lessons' own door and it is decided by `tutorialDone`,
+     which has just moved — so it is redrawn here rather than left to the next
+     move to pick up. without this the mark a player would use to come back
+     appears a beat after the card that tells them they are finished, on whatever
+     the next render happens to be. */
+  renderHud();
   tutSpotClear();
   const c=$('coach');
   // it leaves rather than being switched off — it is the last thing the guided
@@ -9317,6 +9404,22 @@ function tierFor(moves,par,assisted){
    the whole game down over a save the record displays perfectly well. */
 const isDay=(x,d)=>(x&&x.d||x)===d;
 function recordDay(){
+  /* THE LESSONS DO NOT TOUCH THE DAY, which is what the tutorial has always said
+     about itself — "the run is OUTSIDE the day: nothing here is scored, no badge
+     is minted, and the day's ten begins afterwards untouched" — and was not true
+     of these two lines. every committed move lands here, guided or not, so the
+     three lessons wrote a row against today and bumped the streak before the
+     day's ten had begun. it cost a new player nothing visible: a live run on the
+     day keeps `spentDay` false, and the real run upgrades the row in place.
+     it is not nothing now. the welcome card leads on the run of days, and the
+     lessons can be replayed from its foot — so without this, `the guided nets` is
+     a way to add a day to your streak without playing one, and a player who does
+     the three and closes the tab has a day on record they never played. the row
+     is written by the first move of the DAY'S ten instead, which is the event
+     `spentDay` and the streak were always about.
+     the exit is the only exit: endTutorial is reached from one place, when the
+     third guided net clears, so this cannot suppress a real move. */
+  if(inTutorialRun()) return;
   const d=R().day, pd=store.collection.playedDays;
   if(!pd.some(x=>isDay(x,d))){
     // `back` marks a day filled in later rather than earned on the day. the
@@ -11365,6 +11468,20 @@ function sayNudge(){
 function showVeil(id){ sayHide(true); $(id).classList.add('show') }
 function renderHud(){
   const r=R();
+  /* ---- which doors the bar is showing ----
+     HERE AND NOT IN renderTutorial, which is where these two landed first and is
+     the one function that cannot draw them: it runs only while a guided net is on
+     screen, so the lessons' own mark appeared for nobody. renderHud is what every
+     move, every veil and every entitlement answer already calls.
+     both are computed and never stored, the same way the archive's lock is (see
+     POLICY.premium): that is what makes a purchase retroactive, and what shows the
+     lessons' door on the same frame the third one clears.
+     the lessons' mark waits until they are behind you — pressing it mid-tutorial
+     would restart the tutorial the player is inside — and the till's waits for a
+     server that says it can take money, and hides again the moment it says the
+     player already holds it. */
+  $('tutbtn').hidden = !store.tutorialDone;
+  $('buybtn').hidden = !(canBuy() && !POLICY.premium);
   const trial=isTrial();
   const {optimum,par}=netTargets();
   const tier=liveTier();
@@ -11901,7 +12018,7 @@ async function copyShare(){
     if(open) hide(); else {$('devdrawer').hidden=false; tab.hidden=true}
   });
 })();
-$('histbtn').onclick=openRecord;
+$('histbtn').onclick=()=>{ recView='days'; openRecord() };
 $('histclose').onclick=e=>{e.preventDefault();$('histveil').classList.remove('show')};
 $('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
 /* clicking beside a card is the most natural way anyone dismisses a modal, and
@@ -12079,13 +12196,31 @@ function rungLadder(){
     <span class="rlnames">${rungs.map(t=>`<i>${t}</i>`).join('')}</span>
   </div>`;
 }
+/* which card the intro veil is holding. it exists so that an answer arriving from
+   the network — the price, which decides whether the till's mark can be drawn at
+   all — redraws the card that is actually on screen rather than guessing at one.
+   there was an `introFrom` beside it, for a rules card that had to find its way
+   back to the day card it was opened from. it has no path any more and is gone:
+   the doors are marks in the top bar, the card is a modal over that bar, so `?`
+   is only ever pressed from the board and `back to the net` is only ever the
+   truth. THE CARD IS NOT A DEAD END EITHER, which is what makes that fine —
+   `start today's run` only hides the veil, and recordDay fires on the first MOVE,
+   so closing the card to reach the bar spends nothing. */
+let introMode='day';
 function renderIntro(mode){
+  introMode=mode;
   const b=$('introbody');
   /* the welcome card is plain too. it used to lead with a plate of board artwork
      — a drawing of a tangle, above two paragraphs describing a tangle, in front
      of the actual tangle the button drops you into. three tellings of one thing,
      and the only one that can teach you anything is the third. */
-  const plain = mode==='rules' || mode==='welcome';
+  /* the rules card is the plain one, and now the only one. the first-visit card
+     used to be plain too — it was a title, three sentences and a button, and a
+     plate of board artwork above a paragraph describing a tangle in front of the
+     actual tangle was three tellings of one thing. it carries the week and the
+     readings now, which are not a telling of anything: they are the instruments,
+     and the plate is the card's own furniture on every day after. */
+  const plain = mode==='rules';
   document.querySelector('.intro-card').classList.toggle('plain',plain);
   if(!plain && !$('introart').firstChild) $('introart').innerHTML=introPlate();
   if(mode==='rules'){
@@ -12121,14 +12256,25 @@ function renderIntro(mode){
       </div>
       ${rungLadder()}
       <button class="intro-start" id="introstart">back to the net</button>`;
-  } else if(mode==='welcome'){
-    /* one sentence about the game, one about why it is worth playing, and the
-       button. what went: "a card on the board walks you through the first one",
-       which announced the coach card the player is about to be shown anyway —
-       a card telling you about a card. and the SAE line's second half, which
-       explained a mechanism nobody has seen yet; the claim is the hook, the
-       explanation belongs in the rules card where the marks are there to hang
-       it on. */
+  } else {
+    /* ---- ONE CARD, whether or not you have ever played ----
+       there were two, and the owner's correction is that they should be the same
+       object so it is familiar the second time you see it. the first-visit card
+       was a title, three sentences and a button; the returning one was the week,
+       the readings and two buttons. a player therefore met the game on one screen
+       and then never saw that screen again — the thing they had learned to read
+       was replaced by something else the following morning.
+       so it is one card with one shape, and what varies is what it can honestly
+       say. A FRESH SAVE STILL GETS THE PITCH: the three sentences below are the
+       output of an actual test on an actual stranger (see the note on them) and
+       they are the only thing on this card a first-time player needs. what they
+       ALSO get now is the week — seven bare bars with today at the top, which is
+       the week they are about to fill in rather than a record of nothing — and
+       the same two readings saying `not yet` and `0` in the words this card
+       already uses for an absence. that is the familiarity: the instruments are
+       in the same places on day one and on day forty, and they fill up.
+       the tutorial is offered here too, and it is the one control that is NOT
+       symmetrical — see the foot of the card. */
     /* ONE technical phrase on this card and it is `neural net`. the first
        stranger to play the game bounced off the words — `net`, `neurons`,
        `features` in a sense that is not the everyday one, and `a sparse
@@ -12167,12 +12313,16 @@ function renderIntro(mode){
        autoencoder is to want it. it promises BOTH halves, the picture and the
        name; the draft that prompted this pass ended `and the feature will
        reveal itself`, which is one vaguer word in place of both. */
-    b.innerHTML=`<div class="intro-title">${WORDMARK}</div>
-      <div class="intro-sub">untangle what a neural net knows</div>
-      <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>
-      <div class="intro-note">pull them apart. free one and it draws itself, and tells you its name.</div>
-      <button class="intro-start" id="introstart">start untangling</button>`;
-  } else {
+    /* ---- what the card is about, and it is the one thing that varies ----
+       `fresh` is the tutorial, not the save: somebody who has done the three
+       lessons has met the game, whatever else their record says, and somebody who
+       has not is still being introduced to it however many times they have
+       opened the tab. it is the same test `inTutorialRun` reads, so the pitch is
+       on screen for exactly as long as the guided nets are still ahead.
+       it deliberately is NOT `no history yet`. a player who did the lessons and
+       then never finished a day has an empty record and does not need the pitch
+       again; a player who cleared their save does. */
+    const fresh=!store.tutorialDone;
     /* ---- the card a returning player opens the day on ----
        it appears once a day, before a single move, and it is the only screen in
        the game whose job is to make somebody want to press the button. so what
@@ -12290,9 +12440,28 @@ function renderIntro(mode){
         +rungTrack(played?row.tiers:'',true)
         +`<span class="wbmini">${played&&rd?rd.fig:''}</span>${chip}</div>`;
     }).join('');
-    b.innerHTML=`<div class="intro-title">welcome back</div>
-      <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>
-      <div class="wbstats">
+    /* the head, and the ONLY part of the card that knows which player it has.
+       a fresh save gets the wordmark and the three sentences; everybody else gets
+       the date, which is the fact that makes the run of days underneath mean
+       something. both then run into the same instruments in the same order.
+       the pitch keeps `.intro-lead`, and the closing line is a plain paragraph
+       rather than `.intro-note` — that class draws a dashed rule above itself,
+       which on this card now belongs to the crowd line at the foot and nowhere
+       else. two dashed rules on one card is the division that made the rules
+       card ambiguous; see the note by .rkey. */
+    const head=fresh
+      ? `<div class="intro-title">${WORDMARK}</div>
+         <div class="intro-sub">untangle what a neural net knows</div>
+         <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>
+         <p class="intro-lead intro-hook">pull them apart. free one and it draws itself, and tells you its name.</p>`
+      : `<div class="intro-title">welcome back</div>
+         <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
+    /* the button says what pressing it does, and for a fresh save that is the
+       lessons rather than the day — `start today's run` in front of somebody who
+       is about to be taught to drag a neuron is the card promising the wrong
+       thing. `start untangling` is the sentence the first card always ended on. */
+    b.innerHTML=head
+      +`<div class="wbstats">
         <div>${runSay}</div>
         <div><b>${perfect}</b><span>perfect nets</span></div>
       </div>
@@ -12306,8 +12475,15 @@ function renderIntro(mode){
           : ''}</div>
       <div class="wbweek">${week}</div>
       <div class="intro-note wbspread" id="wbspread"></div>
-      <button class="intro-start" id="introstart">start today's run</button>
-      <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`;
+      <button class="intro-start" id="introstart">${fresh?'start untangling':"start today's run"}</button>
+      <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`
+    /* the card carries NO menu of its own. a row of five text links at its foot
+       was tried and cut on the owner's call: the doors are small marks in the top
+       bar, where two of them (`?` and the record) have always been, and where a
+       control is a control rather than a paragraph. the card is the day — the
+       week, the readings and the one press that starts it — and it stopped being
+       a contents page for the rest of the game. see the masthead's control row. */
+      ;
     /* one handler for the whole list, on the container: seven rows each with
        their own closure is seven listeners rebuilt every morning, and the row
        already carries the only thing the press needs. `openDay` is the record's
@@ -12329,8 +12505,12 @@ function renderIntro(mode){
     };
     /* the crowd, asked for after the card is drawn and never waited on. it fills
        the line above if it answers and leaves it empty if it does not — which is
-       most of the time right now, because the worker has never been deployed. */
-    paintSpread(); ensureSpread();
+       most of the time right now, because the worker has never been deployed.
+       the price is asked for here for a mark that is NOT on this card: the
+       masthead's till button cannot be drawn until the server says there is a
+       till, and this is the one screen every player passes through each day. the
+       answer landing calls entitlementChanged, which redraws the bar. */
+    paintSpread(); ensureSpread(); ensurePrice();
   }
   $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
@@ -12341,7 +12521,45 @@ function renderIntro(mode){
     startTrialRun();
   };
 }
-$('helpbtn').onclick=()=>{renderIntro('rules');showVeil('introveil')};
+/* ---- the three lessons, again ----
+   `tutorialDone` was written once and never cleared, so the guided nets were a
+   one-way door: the only way back was the controls drawer's reset, which takes
+   the record, the streak and the collection with it. this clears the one flag and
+   resets the RUN the way endTutorial does — the same fields, in the same order,
+   because a half-reset run is a day that opens on net 3 with three lessons
+   stamped into it.
+   NOTHING PLAYED IS TOUCHED, and the guard is what makes that true rather than
+   likely: the reset above would throw away a set in progress, so a day with a
+   move on it refuses. The card this is pressed from only appears on a day with no
+   moves, so the refusal is unreachable today — it is here because a door to this
+   is exactly the thing somebody adds next, and then the reset is live on a run.
+   playedDays is not read or written here at all: the lessons score nothing and
+   record nothing (see recordDay's own guard), so a replay cannot cost a day. */
+function startLessons(){
+  const r=R();
+  if(r.netMoves || (r.cleared||[]).length)
+    return flashMsg('the guided nets need a day you have not started');
+  store.introSeen=true; store.lastIntroDay=today();
+  store.tutorialDone=false;
+  r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
+  r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
+  builtFor=-1; resetDescent(); save();
+  hideVeils(); renderAll();
+  flashMsg('the guided nets · three lessons, and nothing here is scored');
+}
+$('helpbtn').onclick=()=>{renderIntro('rules'); showVeil('introveil')};
+/* the three marks added beside it, each a door to a surface that already exists.
+   none of them draws anything of its own: the collection and the record are two
+   views of one screen, the lessons are the tutorial, and the till is beginUnlock.
+   they are wired here, with `?`, because a control in that row is that row's. */
+/* each of the two marks opens its OWN view, and says which. `recView` is module
+   state that remembers where you were — which was right while the in-record
+   toggle was the only way to move between them, and is wrong the moment there are
+   two doors: without setting it, the record's mark opens the collection because
+   the collection's mark was pressed an hour ago. two controls, two answers. */
+$('collbtn').onclick=()=>{ recView='collection'; hideVeils(); openRecord() };
+$('tutbtn').onclick=()=>startLessons();
+$('buybtn').onclick=()=>beginUnlock();
 /* one act, both places it can be pressed — found by the same class applyTheme
    writes, so a control that reports the ground is a control that flips it and
    there is no way to add one and get only half of that.
@@ -12455,11 +12673,18 @@ renderAll();
    ended up rather than to where it was halfway through being drawn. */
 publishPlateInset();
 addEventListener('load',publishPlateInset);
-// first visit gets the short welcome; a returning player gets it once a day
-if(!store.tutorialDone){
-  if(!store.introSeen){renderIntro('welcome'); showVeil('introveil')}
-} else if(store.lastIntroDay!==today() && R().netMoves===0 && !R().cleared.length){
-  renderIntro('back'); showVeil('introveil');
+/* ---- when the card comes up ----
+   ONE CARD NOW, so one gate: never seen, or a day you have not opened it on —
+   and never over a run with a move in it, which is the half that was already
+   here. it used to be two gates for two cards, and the first-visit one was
+   `!introSeen` INSIDE `!tutorialDone`: a player who opened the card, did not
+   finish the three lessons and came back the next day therefore got nothing at
+   all, which is precisely the player the lessons link is for.
+   the move guard now covers the first visit as well. it costs nothing — a fresh
+   save has no moves — and it means there is one rule about when this card is
+   allowed to cover the board rather than two that can disagree. */
+if(!store.introSeen || (store.lastIntroDay!==today() && R().netMoves===0 && !R().cleared.length)){
+  renderIntro('day'); showVeil('introveil');
 }
 /* the account, last and off to one side. both are network calls the first frame
    must not wait on, and both are no-ops for the visits that make up nearly all
