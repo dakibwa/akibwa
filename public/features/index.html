@@ -1884,20 +1884,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      them puts the cross off to one side. `line-height:1` is what actually
      centres it — the glyph's own line box is what was off, not its position. */
   .rec-close{width:34px;padding:0;font-size:17px;line-height:1;letter-spacing:0}
-  /* the same square for a button whose mark is DRAWN rather than set. it takes
-     only the two declarations that make the box square, because the other three
-     above are about a glyph that is type — `×` needs 17px and a corrected line
-     box to sit in the middle of 34, and an svg sized in css needs neither.
-     it has to come after `.rec-btn`'s `padding:0 13px`: same specificity, so
-     source order is the whole of what decides it. */
-  .rec-sq{width:34px;padding:0}
-  /* A SQUARE IS AN OBJECT AND DOES NOT DEFORM. flex-shrink is 1 by default, so
-     a `width:34px` in a tight row is a suggestion — both of these came out 26.5
-     wide the first time the head was over-subscribed, and a 26.5×34 box with a
-     circle in it says nothing about anything. the row gives elsewhere: the
-     words shrink first and past that the head wraps, which are both losses you
-     can look at. */
-  .rec-close,.rec-sq{flex:0 0 auto}
+  /* `.rec-sq` stood here — the same 34px square for a button whose mark is drawn
+     rather than set. its one user was the head's ground button, which the owner
+     moved to the top bar (17 Aug 2026), so the rule had no selector left.
+     A SQUARE IS AN OBJECT AND DOES NOT DEFORM, which is why the close keeps the
+     line below: flex-shrink is 1 by default, so a `width:34px` in a tight row is
+     a suggestion — it came out 26.5 wide the first time this head was
+     over-subscribed, and a 26.5×34 box with a cross in it says nothing about
+     anything. the row gives elsewhere: the word shrinks first and past that the
+     head wraps, which are both losses you can look at. */
+  .rec-close{flex:0 0 auto}
   /* the controls sit on their own centre line rather than the title's baseline.
      the stats block that used to share this row was type, so a baseline was
      right for it; two buttons of the same height are objects, and objects line
@@ -2319,30 +2315,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   /* ink, not a signal colour: the ladder owns the hues, so a border in one of
      them reads as a tier the row did not mint */
   .dayrow.open:hover{border-color:var(--ink)}
-  /* ---------- how many goes the day has had ----------
-     a multiplier and not a sentence: the row already carries a date, sometimes a
-     clause, a ten-cell bar and a button, and `3 attempts` there is the fourth
-     text object the bar was widened to escape. the unit is not lost, it moves —
-     the row's aria-label says `3 attempts` in words, which is the same division
-     the bar and the chip beside it already make.
-     THE SLOT IS ALWAYS HERE ON A PLAYED ROW and is usually empty. a `×` that
-     appears and disappears would shift the bar sideways by its own width, and
-     the whole argument for a fixed bar is that the two rows of this list draw
-     the same instrument in the same place. so the space is reserved and only the
-     ink is conditional, which costs nothing on a row that never uses it.
-     right-aligned, so the digits sit against the chip and a second one grows
-     leftward into the air rather than towards it. `min-width` rather than
-     `width` so a three-figure count is never clipped — it moves the bar 6px,
-     which is the honest cost of a day somebody has played a hundred times.
-     the quietest ink the row has (--ink-soft, the detail column's own), and the
-     numeral voice every reading in this game takes: tabular, so a 9 and a 10 do
-     not shift what is under them.
-     it is the ONLY place this count is drawn. it was on the card that offered a
-     day before starting it as well, in words; that card went the same day this
-     arrived (see openDay), which is most of why the row needed it. */
-  .druns{flex:0 0 auto;min-width:20px;margin-left:10px;text-align:right;
-    font-size:9px;letter-spacing:.06em;color:var(--ink-soft);
-    font-variant-numeric:tabular-nums}
+  /* `.druns` and its note stood here: a `×2` multiplier on the right of a row
+     played more than once. the owner cut it (17 Aug 2026) — how a record was got
+     is not the record, and it was a fourth object in a row that already carries a
+     date, a clause, a ten-cell bar and the replay chip. `runs` is still counted in
+     stampToday and still merged as a max in worker/merge.js, because it is a fact
+     about the day and cheap to keep; nothing in the client draws it. */
   /* the one chip left on a row: `play →` on a day still open to you. it takes
      the slot the bar takes on a played row, so the right edge of the list is one
      column whatever the row is. it held that edge with `margin-left:auto` and
@@ -2527,7 +2505,19 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      automatic minimum is its min-content size, and 120px of it would push the
      column out on a phone.
      the best-day line above is still a flex row, so it keeps a basis there. */
-  .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0}
+  /* THE WEEK'S BARS ARE 10px, which is `.track`'s own height and the height of
+     every instrument a player reads on the board — the masthead's three bays and
+     the record's head all draw at it. `.dtrack` drops to 6 because it is a bar
+     riding inside a text row on the record, where a 10px block beside 13px type
+     would out-weigh the date next to it. this card is not that: the bars ARE the
+     rows here, there is no clause competing with them, and at 6px they read as a
+     caption for a week that is the subject. the owner asked for the calendar's
+     weight and this is where it comes from.
+     `min-width:0` is not cosmetic — a grid item's automatic minimum is its
+     min-content size, and `.dtrack`'s 120px would push the column out on a
+     phone. `width:auto` for the same reason: 240px is wider than the column and
+     does not shrink, so without it the bar draws over the figure and the chip. */
+  .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
   .wbread .track.dtrack{flex:0 1 auto;width:96px;min-width:70px;margin-left:0;align-self:center}
   /* the day's figure, in the column between the bar and the chip. it is the ONE
      number on the row and it is the count of nets at clean or better — the words
@@ -2537,9 +2527,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
           font-variant-numeric:tabular-nums}
   /* the replay chip. `.dstate.dreplay` is the record's own mark at the record's
      own size, and `.ghost` is that slot left empty on the rows that have no
-     chip — today, and a day nobody played. the slot is ALWAYS here for the
-     reason .druns is: a mark that appears and disappears moves the bar sideways
-     by its own width on the rows that lack it, and the columns are the reading. */
+     chip — today, and a day nobody played. the slot is ALWAYS here, which is the
+     argument the record's own `.druns` used to carry before it was cut: a mark
+     that appears and disappears moves the bar sideways by its own width on the
+     rows that lack it, and the columns are the reading. */
   /* the closing line of the pitch. it is a paragraph and not `.intro-note`,
      which draws a dashed rule above itself — on this card that rule belongs to
      the crowd line at the foot and to nothing else, and two of them is the
@@ -3096,34 +3087,23 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
              `runOverOffer` performs on the cleared card and it calls the same
              `beginUnlock`; what is new is only that the record can reach it,
              which it could not since the archive line stopped selling. -->
-        <!-- the card holds two views of one record and this is the way between
-             them: the days, which answer "what did i do on the 11th", and the
-             collection, which answers "which have i still not found". a list
-             cannot answer the second — the emblems are scattered down a scroll,
-             so you can read it for a minute and not know you are four short —
-             and a grid cannot answer the first. one card, two readings, and a
-             button rather than a second screen to get lost in. -->
-        <a href="#" class="rec-btn" id="histview">collection</a>
+        <!-- `histview` stood here: a `collection` / `the days` toggle, the way
+             between the card's two readings. and after it a `groundbtn` square,
+             which was here because the record is a modal veil and its own head was
+             the whole of the interface while it was up.
+             BOTH ARE IN THE TOP BAR NOW and the owner cut them from here (17 Aug
+             2026). the bar carries the ground, and it carries a mark for each of
+             the two views — so the toggle became a third control for a choice two
+             marks already make, and it made the record's mark ambiguous: press
+             `collection` here and the bar's record mark opened the collection
+             afterwards, because `recView` remembered.
+             WHAT IT COSTS, stated rather than discovered: while this veil is up
+             there is no way to flip the ground or to cross between the two
+             readings. you close it — one press, and the mark you want is in the
+             bar behind it. that is the trade a single menu makes, and the reason
+             each bar mark now sets `recView` for itself rather than inheriting
+             whatever the last one chose. -->
         <a href="#" class="rec-btn" id="histbuy" hidden>full version</a>
-        <!-- THE GROUND, and it is here because the record is the one screen you
-             cannot reach the masthead from: this card is a modal veil, so while
-             it is up its own head is the whole of the interface. it is also the
-             screen where the ground matters most — sixteen emblems and a column
-             of tier blocks, all of them fields, seen against one plate.
-             a SQUARE with the glyph, not a worded chip. `collection` and `full
-             version` are words because they are places to go and a place needs
-             naming; this is a state you flip, which is what `×` is too, and two
-             34px squares at the end of the row read as controls rather than as a
-             third and fourth thing to read. a worded `ground · paper` would also
-             be the widest object in a head that has 323px at 375px wide.
-             the mark is the masthead's, spelt out again rather than shared: a
-             static file has no partials, and the half that can actually drift —
-             the size, the colour and the half-turn that IS the state — lives in
-             `.themeglyph`, once, for both. -->
-        <a href="#" class="rec-btn rec-sq groundbtn" id="histtheme" role="button"
-           title="ground" aria-label="ground">
-          <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
-        </a>
         <!-- a cross and nothing else. `close ×` said it twice — the word and
              the glyph are the same instruction, and the glyph is the one every
              player already reads without being taught. square, so it reads as a
@@ -10926,15 +10906,14 @@ function openRecord(){
      showing both would give each half a card and a scrollbar. the button says
      where it GOES, not where you are, which is the way every other control in
      this game is labelled. */
-  const dayEl=$('daylist'), viewBtn=$('histview');
+  /* which of the two readings this card is showing. `recView` is still the
+     switch and is still module state — what went is the head's toggle that used
+     to flip it: the top bar has a mark for each view now, and each one sets this
+     before opening (see collbtn and histbtn). so this reads the choice and draws
+     it, and nothing on this card changes it. */
+  const dayEl=$('daylist');
   dayEl.hidden = recView!=='days';
   grid.hidden = recView!=='collection';
-  viewBtn.textContent = recView==='days' ? 'collection' : 'the days';
-  viewBtn.onclick=e=>{
-    e.preventDefault();
-    recView = recView==='days' ? 'collection' : 'days';
-    openRecord();
-  };
 
   /* ---- the days ----
      TODAY AND YESTERDAY. it was every day since launch, shut ones included,
@@ -11101,23 +11080,6 @@ function openRecord(){
          with NO bar still says `played`, because there it is the only evidence
          the day happened at all. */
       det=p.join(' · ')||(bar?'':'played');
-      /* ---- HOW MANY TIMES THE DAY HAS BEEN PLAYED ----
-         `runs` is counted once per run in stampToday, off the run's own
-         `startedAt`, and merged as a max in worker/merge.js. it was drawn only on
-         the card that offers a day — the one place a replay was ever weighed —
-         and the row is where it belongs: the row IS the record of the day, and a
-         reading about how that record was got is a fact about the day rather
-         than about the offer.
-         A SINGLE RUN SHOWS NOTHING. `×1` is a multiplier that multiplies
-         nothing, and every played row in the game would wear one — a mark on all
-         of them is a mark that distinguishes none of them. what the glyph says is
-         that this day was played more than once, so it appears exactly when that
-         became true. a legacy row has no `runs` at all and says nothing either,
-         which is the same absence stated by the same test.
-         the unit is in the row's aria-label, in words, and the glyph is
-         aria-hidden — the division dayCells and the chip below already make. see
-         .druns for the slot it sits in and why that slot is always there. */
-      const again = row.runs>1 ? '&times;'+row.runs : '';
       /* ---- the replay, drawn on every played row ----
          it is a glyph and not the word `replay` because it sits at the end of a
          row that already carries a date, possibly a clause, a ten-cell bar and
@@ -11140,7 +11102,7 @@ function openRecord(){
          as a day taken away from you, and a saturated field on a row is the mark
          that got the archive rows deleted the first time. pressing it is the
          row's own press, which answers in words and never opens a checkout. */
-      right = bar + `<span class="druns" aria-hidden="true">${again}</span>`
+      right = bar
         + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true"`
         +` title="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
     } else {
@@ -11189,7 +11151,6 @@ function openRecord(){
        the same test the mark is drawn by, so the label and the row cannot
        disagree about whether the day was replayed. */
     const label=[dayLabel(d), det, played&&tier?tier:'', words,
-                 played&&row.runs>1 ? row.runs+' attempts' : '',
                  played?(canPlay?'play again':replayWords()):''].filter(Boolean).join(' · ');
     el.setAttribute('aria-label',label);
     /* only a row you can actually do something with is a control. a shut row
