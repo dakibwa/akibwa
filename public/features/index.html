@@ -883,10 +883,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-start:hover{background:var(--dunkelblau)}
   .intro-start:active{transform:translateY(1px) scale(.995);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
-  .intro-doors{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-  .intro-doors .help{flex:0 0 auto}
+  .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+  .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
+  @media (max-width:340px){
+    .intro-doors{gap:5px}
+    .intro-doors .help{min-width:30px;padding:0 3px}
+    .intro-doors .help svg{width:22px;height:22px}
+  }
 
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
@@ -4520,7 +4525,7 @@ function showRunOver(){
   });
   showVeil('runveil');
   $('sharebtn').onclick=()=>copyShare();
-  $('recordbtn2').onclick=()=>{hideVeils();openRecord()};
+  $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
   $('trialbtn').onclick=()=>startTrialRun();
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
@@ -5175,8 +5180,12 @@ async function copyShare(){
     if(open) hide(); else {$('devdrawer').hidden=false; tab.hidden=true}
   });
 })();
-$('histbtn').onclick=()=>{ recView='days'; openRecord() };
-$('histclose').onclick=e=>{e.preventDefault();$('histveil').classList.remove('show')};
+$('histbtn').onclick=()=>{ fromCard=false; recView='days'; openRecord() };
+function closeRecord(){
+  $('histveil').classList.remove('show');
+  if(fromCard) backToCard();
+}
+$('histclose').onclick=e=>{e.preventDefault();closeRecord()};
 $('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
 function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
@@ -5184,6 +5193,7 @@ function dismissVeil(v){
   const sel=window.getSelection();
   if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
   if(v.id==='netveil'){ nextNet(); return }
+  if(v.id==='histveil'){ closeRecord(); return }
   v.classList.remove('show');
 }
 document.querySelectorAll('.veil').forEach(v=>v.addEventListener('click',e=>{
@@ -5257,6 +5267,12 @@ function rungLadder(){
   </div>`;
 }
 let introMode='day';
+let fromCard=false;
+function backToCard(){
+  fromCard=false;
+  renderIntro('day');
+  showVeil('introveil');
+}
 function renderIntro(mode){
   introMode=mode;
   const b=$('introbody');
@@ -5274,7 +5290,7 @@ function renderIntro(mode){
         ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
       </div>
       ${rungLadder()}
-      <button class="intro-start" id="introstart">back to the net</button>`;
+      <button class="intro-start" id="introstart">${fromCard?'back':'back to the net'}</button>`;
   } else {
     const fresh=!store.tutorialDone;
     const streak=store.meta.streak||0;
@@ -5329,6 +5345,11 @@ function renderIntro(mode){
       +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
       +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
       +`</g></svg></button>`
+      +`<button class="help" id="introhist" title="the record · every day you have played" aria-label="the record">`
+      +`<svg viewBox="0 0 24 24" aria-hidden="true">`
+      +`<g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>`
+      +`<g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>`
+      +`</svg></button>`
       +`<button class="help${canTimeTrial()?'':' shut'}" id="introtrial" title="time trial · one net after another until it out-tangles you" aria-label="time trial">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6">`
       +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
@@ -5357,17 +5378,21 @@ function renderIntro(mode){
     paintSpread(); ensureSpread(); ensurePrice();
   }
   $('introstart').onclick=()=>{
+    if(introMode==='rules' && fromCard) return backToCard();
     store.introSeen=true; store.lastIntroDay=today(); save();
     $('introveil').classList.remove('show');
   };
   if($('introtrial')) $('introtrial').onclick=()=>{
+    fromCard=true;
+    if(startTrialRun()!==true) return;
+    fromCard=false;
     store.introSeen=true; store.lastIntroDay=today(); save();
-    startTrialRun();
   };
   if($('introlessons')) $('introlessons').onclick=()=>startLessons();
-  if($('introcoll')) $('introcoll').onclick=()=>{ recView='collection'; hideVeils(); openRecord() };
+  if($('introhist')) $('introhist').onclick=()=>{ fromCard=true; recView='days'; hideVeils(); openRecord() };
+  if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
   if($('introbuy')) $('introbuy').onclick=()=>beginUnlock();
-  if($('introrules')) $('introrules').onclick=()=>renderIntro('rules');
+  if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
 }
 function startLessons(){
   const r=R();
@@ -5381,8 +5406,8 @@ function startLessons(){
   hideVeils(); renderAll();
   flashMsg('the guided nets · three lessons, and nothing here is scored');
 }
-$('helpbtn').onclick=()=>{renderIntro('rules'); showVeil('introveil')};
-$('collbtn').onclick=()=>{ recView='collection'; hideVeils(); openRecord() };
+$('helpbtn').onclick=()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')};
+$('collbtn').onclick=()=>{ fromCard=false; recView='collection'; hideVeils(); openRecord() };
 $('buybtn').onclick=()=>beginUnlock();
 addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('.groundbtn');
