@@ -10111,7 +10111,22 @@ function showNetCleared(feats,tier,wasTutorial,read){
   });
   showVeil('netveil');
   if(wasTutorial) fillSignInInvite();
-  $('contbtn').onclick=nextNet;
+  /* ---- the lessons hand you to the card, not to the board ----
+     the third guided net used to clear, print this bulletin, and drop the player
+     straight onto net 1 of the day's ten — so the moment their first real day
+     began was a board appearing, indistinguishable from the board they had been
+     practising on. nothing said the lessons were over or that this one counts.
+     so the press goes through the day card instead: it names the date, says `your
+     first day`, and its button starts the ten. the board is built BEHIND it by the
+     same `nextNet` every other press calls, so nothing about the swap changes and
+     dismissing the card reveals a net that is already there.
+     the test is `store.tutorialDone` with `wasTutorial`, which is the pair that
+     means "this net was a lesson and it was the last one" — the same pair
+     `tutMidway` is built from in clearNet, and for the same reason: endTutorial
+     resets the run's index out from under any test that used it. */
+  $('contbtn').onclick = (wasTutorial && store.tutorialDone)
+    ? ()=>{ nextNet(); renderIntro('day'); showVeil('introveil') }
+    : nextNet;
 }
 /* ---- the offer, on the one card that has earned the right to make it ----
    a daily game's paid tier is only ever wanted at one moment: the moment you
@@ -12574,12 +12589,27 @@ function renderIntro(mode){
        which on this card now belongs to the crowd line at the foot and nowhere
        else. two dashed rules on one card is the division that made the rules
        card ambiguous; see the note by .rkey. */
+    /* ---- THREE HEADS, and the third is the one the tutorial hands you to ----
+       the card used to have two: the pitch for somebody still owed the lessons,
+       and `welcome back` for everybody else. that second one is a lie on exactly
+       one occasion, and it is the occasion that matters most — the player who has
+       just finished the three lessons and has never played a day. they are not
+       coming back to anything; they are starting.
+       so `firstDay` is the lessons behind you and NOTHING PLAYED YET, and it is
+       read off state rather than set by a flag: `recordDay` writes a row on the
+       first move of the day's ten and the guided nets no longer write one at all,
+       so an empty `playedDays` after the tutorial is exactly this moment. it
+       survives a reload for the same reason — close the tab after the lessons and
+       come back, and it is still your first day, which is still true.
+       it is spent the moment they make a move. that is when the row lands, and
+       the card is not shown again the same day anyway. */
+    const firstDay = !fresh && !rows.length;
     const head=fresh
       ? `<div class="intro-title">${WORDMARK}</div>
          <div class="intro-sub">untangle what a neural net knows</div>
          <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>
          <p class="intro-lead intro-hook">pull them apart. free one and it draws itself, and tells you its name.</p>`
-      : `<div class="intro-title">welcome back</div>
+      : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
     /* the button says what pressing it does, and for a fresh save that is the
        lessons rather than the day — `start today's run` in front of somebody who
@@ -12592,7 +12622,8 @@ function renderIntro(mode){
       </div>
       <div class="wbweek">${week}</div>
       <div class="intro-note wbspread" id="wbspread"></div>
-      <button class="intro-start" id="introstart">${fresh?'start untangling':"start today's run"}</button>
+      <button class="intro-start" id="introstart">${fresh?'start untangling'
+        :firstDay?'start your first ten':"start today's run"}</button>
       <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`
     /* the card carries NO menu of its own. a row of five text links at its foot
        was tried and cut on the owner's call: the doors are small marks in the top
