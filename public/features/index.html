@@ -883,12 +883,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-start:hover{background:var(--dunkelblau)}
   .intro-start:active{transform:translateY(1px) scale(.995);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
-  .intro-alt{margin-top:8px;background:transparent;color:var(--ink);border-color:var(--silver)}
-  .intro-alt:hover{background:var(--sig-violett);border-color:var(--sig-violett);color:#fff}
-  .intro-alt.shut{border-style:dashed;color:var(--ink-soft)}
-  .intro-alt.shut:hover{background:transparent;border-color:var(--silver);color:var(--ink)}
   .intro-doors{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
   .intro-doors .help{flex:0 0 auto}
+  .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
+  .intro-doors .help.shut:hover{color:var(--ink)}
 
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
@@ -4068,14 +4066,29 @@ function tutFind(){
   if(best.freeable<=now.freeable && best.total>=now.total) return null;
   return {n:best.n, x:best.x, y:best.y, marks:tutCross(null,best.n).mine};
 }
+const TUT_JOIN=2400;
+let tutJoinT=null, tutJoinKey='', tutJoined=false;
 function tutSpotClear(){
   if(gTut){ gTut.remove(); gTut=null }
+  clearTimeout(tutJoinT); tutJoinT=null; tutJoinKey=''; tutJoined=false;
   tutLit=null;
 }
 function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
   readMarkSizes();                 // the aperture is in neuron radii, and those move
-  const t=tutLit=tutNamed()||tutFind();
+  const named=tutNamed();
+  let move=null;
+  if(!named) move=tutFind();
+  else if(named.join){
+    const key=R().netIndex+':'+tutStepAt;
+    if(key!==tutJoinKey){
+      tutJoinKey=key; tutJoined=!!reduceMotion; clearTimeout(tutJoinT);
+      if(!tutJoined) tutJoinT=setTimeout(()=>{tutJoined=true; tutSpotlight()},TUT_JOIN);
+    }
+    if(tutJoined) move=tutFind();
+  }
+  const lights=[named,move].filter(Boolean);
+  const t=tutLit=lights[0];
   if(!t){ tutSpotClear(); return }
   const k=NR/10, hole=46*k, xhole=24*k, ringR=TUT_RING*k;
   const f=(v)=>v.toFixed(1);
@@ -4088,17 +4101,22 @@ function tutSpotlight(){
     if(gLabels&&gLabels.parentNode===gRoot) gRoot.insertBefore(gTut,gLabels);
     else gRoot.appendChild(gTut);
   }
-  const holes=[{x:t.n.x0,y:t.n.y0,r:hole}].concat(t.marks.map(m=>({x:m.x,y:m.y,r:xhole})));
+  const holes=[];
+  lights.forEach(l=>{
+    holes.push({x:l.n.x0,y:l.n.y0,r:hole});
+    l.marks.forEach(m=>holes.push({x:m.x,y:m.y,r:xhole}));
+  });
   gTut.innerHTML=
      `<mask id="tutcut" maskUnits="userSpaceOnUse" x="0" y="0" width="${BW}" height="${BH}">`
     +`<rect x="0" y="0" width="${BW}" height="${BH}" fill="#fff"/>`
     + holes.map(h=>`<circle cx="${f(h.x)}" cy="${f(h.y)}" r="${f(h.r)}" fill="#000"/>`).join('')
     +`</mask>`
     +`<rect class="tutscrim" x="0" y="0" width="${BW}" height="${BH}" mask="url(#tutcut)"/>`
-    +(t.look?'':`<circle class="tutping" cx="${f(t.n.x0)}" cy="${f(t.n.y0)}" r="${TUT_RING}"`
-    + ` stroke-width="1.5" opacity="0"/>`)
-    +`<circle class="tutring" cx="${f(t.n.x0)}" cy="${f(t.n.y0)}" r="${TUT_RING}"`
-    + ` stroke-width="1.8"/>`;
+    + lights.map(l=>
+        (l.look?'':`<circle class="tutping" cx="${f(l.n.x0)}" cy="${f(l.n.y0)}" r="${TUT_RING}"`
+      + ` stroke-width="1.5" opacity="0"/>`)
+      +`<circle class="tutring" cx="${f(l.n.x0)}" cy="${f(l.n.y0)}" r="${TUT_RING}"`
+      + ` stroke-width="1.8"/>`).join('');
 }
 let tutRelayoutT=null;
 function tutRelayout(){
@@ -4137,7 +4155,7 @@ function tutNamed(){
   const n = net===1 && step<=2 ? members.find(m=>m.merged)
     : net===2 && step===1 ? members.find(m=>m.pinned)
     : null;
-  return n ? {n,marks:[],look:true} : null;
+  return n ? {n,marks:[],look:true,join:net===2} : null;
 }
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
@@ -5296,8 +5314,7 @@ function renderIntro(mode){
       <div class="wbweek">${week}</div>
       <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${fresh?'start untangling'
-        :firstDay?'start your first ten':"start today's run"}</button>
-      <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`
+        :firstDay?'start your first ten':"start today's run"}</button>`
       +`<div class="intro-doors">`
       +(fresh?'':`<button class="help" id="introlessons" title="the guided nets · the three lessons again" aria-label="the guided nets">`
         +`<svg viewBox="0 0 24 24" aria-hidden="true">`
@@ -5312,12 +5329,16 @@ function renderIntro(mode){
       +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
       +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
       +`</g></svg></button>`
-      +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
-      +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
+      +`<button class="help${canTimeTrial()?'':' shut'}" id="introtrial" title="time trial · one net after another until it out-tangles you" aria-label="time trial">`
+      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6">`
+      +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
+      +`</g></svg></button>`
       +(canBuy()&&!POLICY.premium?`<button class="help" id="introbuy" title="the full version" aria-label="the full version">`
         +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
         +`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>`:'')
       +`<button class="help" id="introrules" title="how to play" aria-label="how to play">?</button>`
+      +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
+      +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
       +`</div>`;
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
