@@ -2504,19 +2504,31 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbstats div{padding:11px 0;border-bottom:1px solid var(--rule)}
   .wbstats div:nth-child(odd){border-right:1px solid var(--rule);padding-right:12px}
   .wbstats div:nth-child(even){padding-left:12px}
-  .wbstats b{display:block;font-size:23px;font-weight:300;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  /* THE FIGURES ARE THE GAME'S OWN NUMERALS. they were 300 — a hairline weight
+     that made the two readings a returning player opens on the lightest type on
+     the card, under a 700 wordmark and beside a board drawn in 5px strokes. the
+     owner asked for the weight of the logo and of the figure above the bars in
+     play, and those two are the same answer: `.unit-fig` sets crossings, turns
+     and the set count in Univers 75 Black at 800, and `h1` sets the wordmark at
+     700. this takes the numeral treatment — the family, the weight and the tight
+     tracking that goes with it — because these ARE numbers, and the one place
+     this game already sets a number large is that bay.
+     the SIZE stays at 23 rather than the bay's 25: the card's own rhythm is set
+     by its 19px title, and matching the masthead's figure would put the two
+     largest objects on the screen in a stats block rather than in the week.
+     `not yet` lands in this slot too, on a save with no run yet, and it is the
+     same object in the same place — a word where a figure would go, which is what
+     that phrase has meant on this card since the `—` came out of it. */
+  .wbstats b{
+    display:block;font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:23px;font-weight:800;letter-spacing:-.06em;
+    font-variant-numeric:tabular-nums;color:var(--ink);
+  }
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  /* ---- yesterday, and the best day ----
-     the record's own shape, at card size: when on the left in the label ink, the
-     reading on the right with the figure set against its unit, and the day's ten
-     cells after it. it is a ROW rather than a stat cell because the reading is a
-     sentence — `8 of 10 clean or better` under a 23px figure would be a caption
-     as long as the panel. */
-  .wbread{margin-top:13px;display:grid;gap:7px}
-  .wbread > div{display:flex;align-items:baseline;gap:10px}
+  /* `.wbread`, `.wbfig` and its `b` stood here — the yesterday / best-day reading
+     line, cut with the markup it dressed. `.wbwhen` stays, because it is the
+     week's date column as well and always was. */
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  .wbfig{flex:1 1 auto;font-size:11.5px;color:var(--ink-soft);letter-spacing:.02em}
-  .wbfig b{font-size:15px;font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
   /* ---- the week ----
      seven rows of the same three objects, so the eye reads DOWN the columns: the
      date, the day's ten, and the replay. that alignment is the whole reason the
@@ -2576,9 +2588,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      `min-width:0` is not cosmetic — a grid item's automatic minimum is its
      min-content size, and `.dtrack`'s 120px would push the column out on a
      phone. `width:auto` for the same reason: 240px is wider than the column and
-     does not shrink, so without it the bar draws over the figure and the chip. */
+     does not shrink, so without it the bar draws over the figure and the chip.
+     it is the only `.dtrack` on this card now — the reading line above the week
+     carried a short one and went with the line. */
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
-  .wbread .track.dtrack{flex:0 1 auto;width:96px;min-width:70px;margin-left:0;align-self:center}
   /* the day's figure, in the column between the bar and the chip. it is the ONE
      number on the row and it is the count of nets at clean or better — the words
      `of 10 clean or better` are on the best-day line above and would be seven
@@ -12509,51 +12522,17 @@ function renderIntro(mode){
     const rows=dayRows();
     const perfect=rows.reduce((a,r)=>a+(typeof r.tiers==='string'
       ? r.tiers.slice(0,POLICY.dailyNets).split('p').length-1 : 0),0);
-    /* yesterday and the best day, in the measure the RECORD leads on.
-       this card used to compute turns-against-par itself and nothing else, which
-       put it a full measure behind every other screen: the rungs are what a day
-       is read in since v8, dayScore is the demoted fallback for rows written
-       before them, and a day left at six has rungs to show while dayScore
-       refuses it for want of ten. so the same save read `not yet` here and
-       `6 of 10 clean or better` one press later, about the same day. dayReading
-       and bestReading are the record's own two functions and they are not
-       reimplemented — see the note on bestReading for how it picks a measure. */
-    const yday=dayAdd(today(),-1);
-    const ylast=dayReading(rows.find(r=>r.d===yday));
-    const best=bestReading(rows);
-    /* SETTING ONE FIGURE TWICE is the tautology this game has deleted three times
-       over — see bestLineEl, which drops itself off the record for exactly this
-       reason — and yesterday against the best day can collide two ways.
-       the first is the obvious one: yesterday IS the best day, in which case the
-       second line is the first line with another date on it. it is tested on the
-       KEY and not on the date, because two days can tie at the top and which one
-       bestReading returns then is the save's own order — so a yesterday that
-       equals the record must not be drawn as though something beat it.
-       and when yesterday ties the record it is worth SAYING, on the day a player
-       opens the card wanting a reason to press the button. not on a first scored
-       day though: everything is a personal best when there is one of them, and a
-       card that congratulates you for existing is noise.
-       the second collision is quieter and the render caught it: two DIFFERENT
-       days can print the same reading, because the key ranks perfects and the
-       reading does not — 9 of 10 with two perfects beats 9 of 10 with one, and
-       both lines say `9 of 10 clean or better`. so the best day keeps its line
-       there, and drops the figure it would only be repeating. the date is the
-       fact left, which is exactly what bestLineEl prints on the record and the
-       whole of what it prints. */
-    const scored=rows.filter(r=>dayReading(r)).length;
-    const yBest=!!(ylast && best && ylast.key===best.key);
-    /* the best day, as ONE line above the week. it is not drawn when yesterday
-       ties it — that is the top row of the list, three lines down, and setting one
-       figure twice on a card is the tautology this game has deleted three times
-       over (see bestLineEl, which drops itself off the record for the same
-       reason). the tie is tested on the KEY and not on the date, because two days
-       can tie at the top and which one bestReading returns then is the save's own
-       order — so a yesterday that equals the record must not be drawn as though
-       something beat it. and when it DOES tie, that is worth saying on the card a
-       player opens wanting a reason to press the button; not on a first scored
-       day, where everything is a personal best and a card that congratulates you
-       for existing is noise. */
-    const bestNew=best && !yBest;
+    /* THE READING LINE IS GONE, and with it every local that fed it. it said
+       `yesterday · your best  9 of 10 clean or better`, or the best day's date
+       and figure when yesterday was not it, and the owner cut it (17 Aug 2026).
+       It was the one object on this card that stated in a sentence what the week
+       under it draws: yesterday is the second row, with its ten cells and its
+       count, and the day that beat it is a row too on any week that holds it. A
+       clause and a picture of the same fact, an inch apart — which is the
+       tautology this screen has now deleted four times over. `bestReading`,
+       `dayReading` and `bestLineEl` are all still the record's and untouched;
+       nothing here reimplemented them and nothing here reads them any more
+       except `.wbmini`, the count on each row. */
     /* ---- the week, and the only press on it ----
        the chip is the record's, at the record's meaning: drawn on every played
        day either way, dashed when it is not yours yet, and it NEVER opens a
@@ -12611,14 +12590,6 @@ function renderIntro(mode){
         <div>${runSay}</div>
         <div><b>${perfect}</b><span>perfect nets</span></div>
       </div>
-      <div class="wbread">${
-        ylast&&yBest&&scored>1
-          ? `<div><span class="wbwhen">yesterday · your best</span>`
-            +`<span class="wbfig"><b>${ylast.fig}</b> ${ylast.word}</span></div>`
-        : bestNew
-          ? `<div><span class="wbwhen">best day${isIso(best.d)?' · '+dayLabel(best.d):''}</span>`
-            +`<span class="wbfig"><b>${best.fig}</b> ${best.word}</span></div>`
-          : ''}</div>
       <div class="wbweek">${week}</div>
       <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${fresh?'start untangling':"start today's run"}</button>
