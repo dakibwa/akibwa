@@ -2972,7 +2972,7 @@ function buildNet(force){
               nodes:[],freed:false,crossings:0};
     });
     let ok=true;
-    const tut=!store.tutorialDone && R().netIndex===0;
+    const tut=inTutorialRun() && R().netIndex<TUTNETS.length;
 
     const layered=()=>{
       const L=Math.max(3,spec.nodes);                     // columns
@@ -4075,7 +4075,7 @@ function tutSpotClear(){
 function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
   readMarkSizes();                 // the aperture is in neuron radii, and those move
-  const t=tutLit=tutFind();
+  const t=tutLit=tutNamed()||tutFind();
   if(!t){ tutSpotClear(); return }
   const k=NR/10, hole=46*k, xhole=24*k, ringR=TUT_RING*k;
   const f=(v)=>v.toFixed(1);
@@ -4095,8 +4095,8 @@ function tutSpotlight(){
     + holes.map(h=>`<circle cx="${f(h.x)}" cy="${f(h.y)}" r="${f(h.r)}" fill="#000"/>`).join('')
     +`</mask>`
     +`<rect class="tutscrim" x="0" y="0" width="${BW}" height="${BH}" mask="url(#tutcut)"/>`
-    +`<circle class="tutping" cx="${f(t.n.x0)}" cy="${f(t.n.y0)}" r="${TUT_RING}"`
-    + ` stroke-width="1.5" opacity="0"/>`
+    +(t.look?'':`<circle class="tutping" cx="${f(t.n.x0)}" cy="${f(t.n.y0)}" r="${TUT_RING}"`
+    + ` stroke-width="1.5" opacity="0"/>`)
     +`<circle class="tutring" cx="${f(t.n.x0)}" cy="${f(t.n.y0)}" r="${TUT_RING}"`
     + ` stroke-width="1.8"/>`;
 }
@@ -4130,6 +4130,15 @@ const TUTLIT=[
   '<b>drag the lit neuron.</b> the lines follow.',
   null, null
 ];
+function tutNamed(){
+  const net=R().netIndex, steps=TUTSTEPS_BY_NET[net];
+  if(!steps) return null;
+  const step=Math.min(tutStepAt,steps.length);
+  const n = net===1 && step<=2 ? members.find(m=>m.merged)
+    : net===2 && step===1 ? members.find(m=>m.pinned)
+    : null;
+  return n ? {n,marks:[],look:true} : null;
+}
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
   if(!inTutorial()){ tutSpotClear(); return }
