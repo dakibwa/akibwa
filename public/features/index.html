@@ -2516,9 +2516,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      the SIZE stays at 23 rather than the bay's 25: the card's own rhythm is set
      by its 19px title, and matching the masthead's figure would put the two
      largest objects on the screen in a stats block rather than in the week.
-     `not yet` lands in this slot too, on a save with no run yet, and it is the
-     same object in the same place — a word where a figure would go, which is what
-     that phrase has meant on this card since the `—` came out of it. */
+     both readings in this block are figures, on every save — `0 days running`
+     beside `0 perfect nets` on one with nothing behind either. the slot held the
+     words `not yet` for a while; see the note by `runSay` for why it is a nought
+     again. */
   .wbstats b{
     display:block;font-family:"Univers 75 Black","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size:23px;font-weight:800;letter-spacing:-.06em;
@@ -12444,8 +12445,8 @@ function renderIntro(mode){
        they are the only thing on this card a first-time player needs. what they
        ALSO get now is the week — seven bare bars with today at the top, which is
        the week they are about to fill in rather than a record of nothing — and
-       the same two readings saying `not yet` and `0` in the words this card
-       already uses for an absence. that is the familiarity: the instruments are
+       the same two readings, both saying `0`, which is what this card says for a
+       nought. that is the familiarity: the instruments are
        in the same places on day one and on day forty, and they fill up.
        the tutorial is offered here too, and it is the one control that is NOT
        symmetrical — see the foot of the card. */
@@ -12520,14 +12521,21 @@ function renderIntro(mode){
        one stroke from the minus sign it shared a slot with, so a new player's
        card read `— best day` and looked like a negative number. a day that has
        not been scored says so in words, here and on the record both. */
+    /* NO `Math.max(1, …)` and NO `not yet` either. the floor came off first: it
+       read `1 day running` to somebody who has never finished a day, so the card
+       opened on a false claim about them rather than on a nought. `not yet` stood
+       in for that nought for a while, on the principle that a reading with nothing
+       behind it says so in words — which is why the `—` came off the best-day slot,
+       and that argument still holds where the alternative is a PUNCTUATION mark
+       that reads as a minus sign.
+       it does not hold here, and the owner's correction is the cell beside it: it
+       says `0 perfect nets` and always did. two adjacent readings of the same shape
+       with nothing behind either, one answering in a figure and one in a phrase,
+       is the card being inconsistent about its own nought — and `0` is not
+       ambiguous, not mistakable for anything, and shorter than the words. the
+       plural is still counted, so a one-day run reads `1 day running`. */
     const streak=store.meta.streak||0;
-    /* NO `Math.max(1, …)`. it read `1 day running` to somebody who has never
-       finished a day — the floor was there so the card never printed a nought,
-       and what it actually did was open the returning-player screen with a
-       false claim about them. a run that has not started says so in words, the
-       same as a day that has not been scored. */
-    const runSay=streak?`<b>${streak}</b><span>day${streak===1?'':'s'} running</span>`
-                       :`<b>not yet</b><span>days running</span>`;
+    const runSay=`<b>${streak}</b><span>day${streak===1?'':'s'} running</span>`;
     /* every perfect ever minted, counted off the rows the record already draws.
        it is the one counter on this card with no end: `perfect` is the rare rung
        and the only one the game never explains, so this climbs on mastery rather
