@@ -3643,6 +3643,41 @@ const GEN_VERSIONS=[
            'insects','loops','hands','bridges','edges','stars','curves',
            'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
            'stillness','running','flags','boats','symmetry','nesting','clocks',
+           'branching','letters','column','singularity','languages','gravity','tiles'] },
+  /* v12 is about what the board LOOKS LIKE when you meet it, and it is the
+     first version whose headline change is not a difficulty number.
+       weave:'pattern'  the scramble starts from one permutation applied across
+                        the whole figure — a braid, a chevron, a rosette — and
+                        the local rotations only close whatever gap is left
+       ramp:'mech'      the day's ingredients arrive early and the day's bulk
+                        stops growing. see RAMP_MECH
+     v11 measured the ramp and fixed its SHAPE: one ingredient per net, a
+     crossing ceiling so a ring net and a fan net at the same index are the same
+     difficulty. what it could not fix, because the scramble is the wrong
+     instrument for it, is that the ceiling only decides how much mess there is
+     and never what the mess looks like. the owner put it exactly: more is not
+     harder, it is messier. a board scrambled by locally-random rotations is
+     noise whatever its crossing count, and noise at 25 crossings is not a
+     harder puzzle than noise at 12 — it is the same puzzle, less legible.
+     so the weave replaces the noise with a design, and it costs nothing in
+     solvability because it is still precisely a permutation of the solved
+     figure's own seats — see famWeave and the fitting block in famPlan. what
+     the rotations leave on top of it are defects: a handful of neurons standing
+     off an otherwise readable pattern, which is a thing to be READ rather than
+     a thing to be waded through.
+     both halves move geometry, so this is a version and not an edit. `from` is
+     2026-08-24, four days past v10's window and ten past the day it was
+     written — no day it claims can have been played. */
+  { v:12, from:'2026-08-24', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'route', rung:'wide', chord:'late', selfX:'count',
+    ramp:'mech', dense:'cap', weave:'pattern',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion',
+           'fish','trees','faces','lightning','eyes',
+           'insects','loops','hands','bridges','edges','stars','curves',
+           'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
+           'stillness','running','flags','boats','symmetry','nesting','clocks',
            'branching','letters','column','singularity','languages','gravity','tiles'] }
 ];
 /* the rules in force for the net being built. a module-level object rather than
@@ -3650,14 +3685,16 @@ const GEN_VERSIONS=[
    the player's hand long after buildNet has returned and has no day to read. */
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
                  splitPart:'fixed', optimum:'table', rung:'flat',
-                 chord:'none', selfX:'off', ramp:'front', dense:'open'};
+                 chord:'none', selfX:'off', ramp:'front', dense:'open',
+                 weave:'none'};
 function genRules(g){
   return {split:g.split||'angled', merge:g.merge||'tight',
           pinFill:!!g.pinFill, parMode:g.parMode||'walk', parSlack:g.parSlack||0,
           splitPart:g.splitPart||'fixed', optimum:g.optimum||'table',
           rung:g.rung||'flat',
           chord:g.chord||'none', selfX:g.selfX||'off',
-          ramp:g.ramp||'front', dense:g.dense||'open'};
+          ramp:g.ramp||'front', dense:g.dense||'open',
+          weave:g.weave||'none'};
 }
 function genFor(day){
   let g=GEN_VERSIONS[0];
@@ -4043,7 +4080,56 @@ const RAMP_EVEN=[
   {threads:4, nodes:7, shared:2, pinned:2, minX:14, maxX:30},  // 26 · + the second superposition
   {threads:5, nodes:6, shared:2, pinned:2, minX:16, maxX:36}   // 28 · + a fifth feature
 ];
-const rampFor=r=>((r||GEN_RULES).ramp==='even'?RAMP_EVEN:RAMP);
+/* ---- the same ramp again, and this time the day stops GROWING ----
+   RAMP_EVEN fixed the right thing in the wrong currency. it spread the day's
+   ingredients one per net, which was the real complaint, and it paid for the
+   spreading in bulk: live neurons run 6,8,10,12,15,17,19,23,26,28, so the last
+   net is nearly five times the first and every step down the day is mostly
+   MORE OF THE SAME. the owner's reading of that is the one this table is built
+   on — more is not harder, it is messier, and the mess had piled up at the
+   bottom of the day where the climb was supposed to be steepest.
+
+   so the currency changes. MECHANICS ARRIVE EARLY and size grows gently:
+     the first superposition  net 5 -> net 3
+     the first pin            net 6 -> net 4
+     the second superposition net 8 -> net 6
+     the fifth feature        net 9 -> net 8
+     a third superposition, which no earlier table ever reached, at net 9
+   live neurons run 6,8,12,11,14,15,18,18,23,22 against RAMP_EVEN's 28 at the
+   bottom — the deepest net of the day is now SMALLER than it used to be while
+   carrying one more superposition than it ever has. the day still grows, which
+   is what the owner asked for; it grows about half as fast.
+
+   MONOTONE NEURON COUNT IS DELIBERATELY GIVEN UP, and RAMP_EVEN's own note is
+   why it has to be. a superposition removes a neuron — two threads share one
+   seat — so a row that introduces one is a row that shrinks, and RAMP_EVEN
+   bought its monotone count by pairing every superposition with the neuron it
+   costs. that is exactly the bulk this table is trying not to spend. net 3 is
+   smaller than net 2 and harder than it, because it is the first net of the day
+   that cannot be solved by dragging alone. the ladder the player actually meets
+   is famTarget, which is monotone and unchanged, and the difficulty they meet
+   is the ingredient list, which is monotone by construction here.
+
+   the pin still rides along with a real ingredient rather than being asked to
+   be one, for the reason RAMP_EVEN gives and measured: a pin in a family net is
+   a neuron already standing in the answer, so a step whose only news is a pin
+   measures as a step DOWN. */
+const RAMP_MECH=[
+  {threads:2, nodes:3, shared:0, pinned:0, minX:2,  maxX:4},   //  6 · learn the drag
+  {threads:2, nodes:4, shared:0, pinned:0, minX:3,  maxX:6},   //  8 · + length
+  {threads:3, nodes:4, shared:0, pinned:0, minX:5,  maxX:11},  // 12 · + a third feature
+  {threads:3, nodes:4, shared:1, pinned:0, minX:6,  maxX:13},  // 11 · + the first superposition
+  {threads:3, nodes:5, shared:1, pinned:1, minX:7,  maxX:15},  // 14 · + length, + the first pin
+  {threads:4, nodes:4, shared:1, pinned:1, minX:9,  maxX:18},  // 15 · + a fourth feature
+  {threads:4, nodes:5, shared:2, pinned:1, minX:10, maxX:20},  // 18 · + the second superposition
+  {threads:4, nodes:5, shared:2, pinned:2, minX:12, maxX:24},  // 18 · + the second pin
+  {threads:5, nodes:5, shared:2, pinned:2, minX:14, maxX:28},  // 23 · + a fifth feature
+  {threads:5, nodes:5, shared:3, pinned:2, minX:15, maxX:32}   // 22 · + the third superposition
+];
+const rampFor=r=>{
+  const m=(r||GEN_RULES).ramp;
+  return m==='mech'?RAMP_MECH : m==='even'?RAMP_EVEN : RAMP;
+};
 /* `rules` is passed rather than read off GEN_RULES by every caller, because
    famSeq asks for a spec while deciding a whole day's layouts and has only the
    date in hand — GEN_RULES holds whatever net was built last. buildNet does set
@@ -5900,6 +5986,80 @@ const famFor=(day,i)=>famSeq(day)[Math.min(i,31)];
 const FAM_PAR=[3,4,5,6,7,8,10,11,13,15];
 const famTarget=i=>i<FAM_PAR.length?FAM_PAR[i]:15+Math.floor((i-9)*1.5);
 
+/* ---- the weave: a board that opens as a PATTERN ------------------------------
+   the scramble below is a good difficulty engine and a bad picture. it rotates
+   two or three seats in one group at a time, keeps the rotation when it costs a
+   turn, and repeats until par is met — so what the player is handed is a pile of
+   locally-random swaps. measured on any net past the fourth that reads as a mat,
+   and the complaint it produced is the accurate one: more crossings made the
+   board messier without making it harder.
+
+   a WEAVE is the opposite move. it is a single permutation applied across the
+   whole figure at once, so every neuron is displaced by the same RULE rather
+   than by its own dice roll, and the opening board is a design — a diagonal
+   braid, a chevron, a rosette — rather than a tangle. it is still exactly a
+   permutation of the solved figure's own seats, so the guarantee this whole
+   block rests on is untouched: the zero-crossing arrangement is where the
+   generator started and every neuron reaches it by going to its own slot.
+
+   IT IS ONE MECHANISM AND NOT SEVEN. the permutation is indexed by (thread,
+   position) — order[k][i] — which every family has, so nothing here knows what
+   a column is and no family is special-cased. what each family makes of it is
+   its own geometry's business: the stacks braid, the lattice weaves, the ring
+   interleaves its runs into a rosette, the polar families pinwheel.
+
+   the shift at position i is the whole vocabulary. k(i)=a*i walks one seat
+   further along at every step and draws a diagonal; folding that at the middle
+   draws a chevron; running it through a sine draws a wave; alternating it draws
+   a plait. amplitude `a` is the knob, and it is what the caller turns to buy
+   turns without buying mess. */
+const WEAVES={
+  twist:  (i,L,a)=> a*i,
+  chevron:(i,L,a)=> a*(i<=(L-1)/2 ? i : L-1-i),
+  wave:   (i,L,a)=> Math.round(a*Math.sin(2*Math.PI*i/Math.max(1,L-1))*1.5),
+  plait:  (i,L,a)=> a*(i%2)
+};
+const WEAVE_LIST=['twist','chevron','wave','plait'];
+/* apply one weave to the figure, in place.
+
+   at each position index the movable neurons are collected in their own across
+   order and their COORDINATES are cycled by the shift the weave asks for.
+
+   a PINNED neuron is the one thing held out. it sits exactly on its own slot by
+   construction, and that is the whole reason a family net carrying pins is
+   still solvable — move one and the figure it is a permutation of stops being
+   reachable. so the weave flows around it and leaves a hole.
+
+   a MERGED neuron is NOT held out, and getting that wrong is what made the
+   deepest boards illegible on the first pass. it stands in two threads' lists,
+   so a loop over (thread, position) reaches it twice and the second write
+   decides where it lands — which is why it was skipped outright to begin with.
+   skipping is the expensive fix: superpositions plus pins came to 23% of the
+   neurons on net 9, and a quarter of a pattern punched out is not a pattern.
+   writing it ONCE costs nothing instead. it weaves at the first position it
+   appears at and is passed over afterwards, which is what `placed` is for, and
+   the holes on the deepest net fall back to the pins alone.
+
+   it consumes no randomness — the caller picks the weave and the amplitude —
+   so a weave is a deterministic function of the plan it is handed. */
+function famWeave(order, name, amp){
+  const f=WEAVES[name]; if(!f||!amp) return;
+  const L=Math.max(...order.map(o=>o.length));
+  const placed=new Set();
+  for(let i=0;i<L;i++){
+    const seats=[];
+    for(let k=0;k<order.length;k++){
+      const n=order[k][i];
+      if(n && !n.pinned && !placed.has(n) && !seats.includes(n)) seats.push(n);
+    }
+    if(seats.length<2) continue;
+    seats.forEach(n=>placed.add(n));
+    const home=seats.map(n=>({x:n.x, y:n.y}));
+    const S=seats.length, sh=((Math.round(f(i,L,amp))%S)+S)%S;
+    if(!sh) continue;
+    seats.forEach((n,j)=>{ n.x=home[(j+sh)%S].x; n.y=home[(j+sh)%S].y });
+  }
+}
 /* one disturbance: take a few seats in the same layer and rotate what sits in
    them. a rotation is a derangement, so every neuron picked genuinely ends up
    somewhere that is not its own slot. it hands back what it did, because the
@@ -6182,6 +6342,78 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx){
      actually achieved rather than what was asked for. */
   live.forEach(n=>n.moved=false);
   const plan={fam, nodes:live, order, chords, d:0, merges, minSep, par:0, x:0};
+
+
+  /* ---- the weave goes on FIRST, and the rotations only close the gap --------
+     order matters and it is the whole point. a weave laid over a board that has
+     already been locally scrambled is a pattern drawn on a mat and reads as the
+     mat; laid first, it is the board's composition, and what follows are
+     departures FROM it.
+
+     it is fitted rather than chosen: every (weave, amplitude) pair is priced on
+     the figure it would actually make and the best-fitting one is kept, where
+     best means the dearest route that is still under this net's crossing
+     ceiling. that is the same two tests the rotation loop below applies, asked
+     once over a catalogue instead of one rotation at a time — so a weave can
+     never hand back a board the scramble would have refused.
+
+     a weave that buys nothing is REFUSED, not merely unhelpful. an amplitude
+     that divides the seat count rotates every seat the same way and relabels
+     the figure — the exact bug the rotation loop's second clause was written
+     for — and on a two-thread net most amplitudes do precisely that. so the
+     plain figure is the baseline and a weave has to beat it.
+
+     the woven seats are deliberately NOT protected from the rotation loop
+     below, and that is the second half of the design rather than an oversight.
+     a weave rarely lands exactly on the net's par target — on the small nets it
+     lands well under — so something has to close the gap, and the rotations are
+     what close it. what they leave behind is a handful of neurons standing off
+     the pattern: DEFECTS, which is the difficulty this board has that a plain
+     weave does not, because a pattern with three liars in it has to be read
+     rather than merely recognised. their number is self-regulating, since every
+     rotation is priced and kept only if it buys a turn — the nearer the weave
+     gets to par, the fewer of them there are.
+
+     THREE THREADS IS THE FLOOR, and it is arithmetic rather than taste. the
+     weave cycles the seats at a position, so with two threads the only shift
+     available is the one that swaps them: the cyclic group has order two, there
+     is no pattern to draw, and every weave in the catalogue collapses to the
+     same alternation. worse, it collapses to a CHEAP one — both threads
+     swapping at the same column is close to the relabel, and it took the two
+     opening nets of the day from a 2-turn route to a 1-turn one, which is a
+     tutorial-sized net solvable in a single drag. the morning's two-thread
+     warm-ups therefore keep the local scramble they already had; they are three
+     and four neurons deep and were never the boards anyone called a mat. */
+  if(GEN_RULES.weave==='pattern' && T>=3){
+    const home=live.map(n=>({n, x:n.x, y:n.y}));
+    const restore=()=>home.forEach(h=>{h.n.x=h.x; h.n.y=h.y});
+    let best=null;
+    /* the catalogue is walked in a fixed order and the draw only decides where
+       it STARTS, so the day still picks the pattern but the fit still decides
+       whether it is worth having. */
+    const off=Math.floor(rnd()*WEAVE_LIST.length);
+    for(let w=0;w<WEAVE_LIST.length;w++){
+      const name=WEAVE_LIST[(w+off)%WEAVE_LIST.length];
+      for(let amp=1;amp<=3;amp++){
+        restore();
+        famWeave(order, name, amp);
+        const priced=famCost(plan), x=famX(plan);
+        if(x>xCap) continue;
+        if(!best || priced>best.par || (priced===best.par && x>best.x))
+          best={name, amp, par:priced, x};
+      }
+    }
+    restore();
+    if(best){
+      const bare=famCost(plan);
+      if(best.par>bare || (best.par===bare && best.x>famX(plan))){
+        famWeave(order, best.name, best.amp);
+        plan.weave=best.name; plan.amp=best.amp;
+        plan.d=live.filter(n=>Math.hypot(n.x-n.hx,n.y-n.hy)>.5).length;
+      }
+    }
+  }
+
   plan.par=famCost(plan); plan.x=famX(plan);
   for(let miss=0; plan.par<want && miss<26; ){
     const st=famStep(live, F.cyc||3, !!F.local, rnd);
@@ -6202,8 +6434,23 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx){
        luck, and par follows what was actually achieved — which is what this
        loop has always done when the figure stopped yielding. a ring net simply
        stops being scrambled into a mat that costs no more turns than the fan
-       net beside it and merely looks four times worse. */
-    if((priced>plan.par || (priced===plan.par && x>plan.x)) && x<=xCap){
+       net beside it and merely looks four times worse.
+       AND FROM v12, NEVER BACKWARDS EITHER. the first clause asks only that the
+       price went up and says nothing about the board, so a rotation that costs
+       a turn more while REMOVING a crossing has always been accepted — a puzzle
+       that bills higher and looks tidier, which is the whole complaint this
+       version exists to answer, running in reverse. it was harmless while the
+       board was noise and is fatal on a woven one: net 0 is two threads over
+       three columns, the weave leaves it at 2 crossings, and one such rotation
+       took it to 1 — under the band, so no salt could be accepted and pass two
+       shipped the closest miss. a first net solvable in a single drag is the
+       exact failure the two-pass salt search was written to stop.
+       so the crossing count may rise or hold and never fall. it is gated on the
+       weave rule rather than applied outright because it is a generator rule
+       like any other: every board from v11 back was drawn with the old test and
+       has to stay drawn with it. */
+    const holdsX = GEN_RULES.weave!=='pattern' || x>=plan.x;
+    if((priced>plan.par || (priced===plan.par && x>plan.x)) && holdsX && x<=xCap){
       if(priced>plan.par) miss=0;
       plan.par=priced; plan.x=x; plan.d+=st.pick.length;
     } else {
@@ -6228,7 +6475,9 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx){
       const st=famStep(live, F.cyc||3, !!F.local, rnd);
       if(!st) break;
       const priced=famGreedy(plan).actions, x=famX(plan);
-      if((priced>plan.par || (priced===plan.par && x>plan.x)) && x<=xCap){
+      // the same two gates as phase one, for the same reasons
+      const holdsX = GEN_RULES.weave!=='pattern' || x>=plan.x;
+      if((priced>plan.par || (priced===plan.par && x>plan.x)) && holdsX && x<=xCap){
         if(priced>plan.par) miss=0;
         plan.par=priced; plan.x=x; plan.d+=st.pick.length;
       } else {
