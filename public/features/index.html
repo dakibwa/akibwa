@@ -2462,14 +2462,97 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      every cell of it. a rule written for one element names it. */
   .rlnames > i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--ink);text-transform:lowercase}
   .intro-lead{font-size:14px;line-height:1.55;margin-top:14px}
-  .wbstats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:16px 0 0;border-top:1px solid var(--ink)}
+  .wbstats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:15px 0 0;border-top:1px solid var(--ink)}
   .wbstats div{padding:11px 0;border-bottom:1px solid var(--rule)}
   .wbstats div:nth-child(odd){border-right:1px solid var(--rule);padding-right:12px}
   .wbstats div:nth-child(even){padding-left:12px}
   .wbstats b{display:block;font-size:23px;font-weight:300;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  .wbrow{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap}
-  .wbrow i{width:15px;height:15px;border:1.5px solid var(--rule);display:block}
+  /* ---- yesterday, and the best day ----
+     the record's own shape, at card size: when on the left in the label ink, the
+     reading on the right with the figure set against its unit, and the day's ten
+     cells after it. it is a ROW rather than a stat cell because the reading is a
+     sentence — `8 of 10 clean or better` under a 23px figure would be a caption
+     as long as the panel. */
+  .wbread{margin-top:13px;display:grid;gap:7px}
+  .wbread > div{display:flex;align-items:baseline;gap:10px}
+  .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
+  .wbfig{flex:1 1 auto;font-size:11.5px;color:var(--ink-soft);letter-spacing:.02em}
+  .wbfig b{font-size:15px;font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+  /* ---- the week ----
+     seven rows of the same three objects, so the eye reads DOWN the columns: the
+     date, the day's ten, and the replay. that alignment is the whole reason the
+     bars are the same width on every row and the reason an unplayed day draws a
+     bare one — a row that opted out of the middle column would break the only
+     comparison the list exists to make.
+     no borders between rows and no field on any of them. this list sits under a
+     card that already draws two horizontal rules; a seven-row table of keylines
+     is the shape that got the record's own long list deleted. the rows are
+     separated by the gap and nothing else. */
+  .wbweek{margin-top:12px;display:grid;gap:3px}
+  /* A GRID AND NOT A FLEX ROW, and the two bugs that decided it are worth having
+     written down, because both were invisible on screen.
+     the row was flex with the bar set to grow. the date column was 66px, so
+     `wed 12 aug` broke over two lines and that one row stood taller than its
+     neighbours with its bar half a line out of the column. and the bar, growing
+     from a flex base of zero — `.track`'s own cells are `flex:1 1 0`, so its
+     content width IS zero — took the space the figure and the chip needed and
+     pushed both off the right of the panel. NEITHER SHOWED UP AS AN OVERFLOW:
+     .intro-card clips, so there was no scrollbar and no page scroll to catch,
+     and the chips were simply not on the card.
+     four fixed columns cannot do either. the bar takes 1fr and everything else
+     has a declared width, so the columns line up down the list however long a
+     date is and whatever the panel is doing — and the columns are the reading. */
+  .wbday{display:grid;grid-template-columns:78px minmax(0,1fr) 18px 21px;
+         gap:10px;align-items:center;padding:2px 0}
+  .wbday .wbwhen{white-space:nowrap}
+  /* today is the row the card is about: the date in full ink, and it is the one
+     row with no press and no chip — see the note in renderIntro. */
+  .wbday.now .wbwhen{color:var(--ink)}
+  .wbday[data-day]{cursor:pointer}
+  /* the press is on the ROW, so the row is what shows it is pressable. an
+     underline or a border would be a control drawn inside a list of readings;
+     the date coming up to full ink is the same move .dayrow.open:hover makes. */
+  .wbday[data-day]:hover .wbwhen{color:var(--ink)}
+  .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+  /* the ten cells at the record row's own size. the week's rows are centre
+     aligned rather than baseline aligned, because a 6px bar has no baseline
+     worth aligning type to.
+     the week's bar FILLS ITS COLUMN, which makes it the largest object on the row
+     — the same trade the record made when it widened .dtrack to 240 and cut the
+     words beside it. both halves of that are needed and neither is decoration:
+     `.track.dtrack` ships `width:240px;min-width:120px`, which is wider than the
+     column and does not shrink, so without this the bar drew straight over the
+     figure and the chip. `min-width:0` is the other half — a grid item's
+     automatic minimum is its min-content size, and 120px of it would push the
+     column out on a phone.
+     the best-day line above is still a flex row, so it keeps a basis there. */
+  .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0}
+  .wbread .track.dtrack{flex:0 1 auto;width:96px;min-width:70px;margin-left:0;align-self:center}
+  /* the day's figure, in the column between the bar and the chip. it is the ONE
+     number on the row and it is the count of nets at clean or better — the words
+     `of 10 clean or better` are on the best-day line above and would be seven
+     more copies of themselves here. tabular so the column is a column. */
+  .wbmini{flex:0 0 18px;text-align:right;font-size:11.5px;color:var(--ink-soft);
+          font-variant-numeric:tabular-nums}
+  /* the replay chip. `.dstate.dreplay` is the record's own mark at the record's
+     own size, and `.ghost` is that slot left empty on the rows that have no
+     chip — today, and a day nobody played. the slot is ALWAYS here for the
+     reason .druns is: a mark that appears and disappears moves the bar sideways
+     by its own width on the rows that lack it, and the columns are the reading. */
+  .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
+  .wbday .dreplay.ghost{visibility:hidden}
+  /* the hover pair the record's rows have, at the record's meaning: an unlocked
+     chip comes up to ink with the row, and a dashed one takes the ink and keeps
+     the dashes — it is still not yours. */
+  .wbday[data-day]:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
+  .wbday[data-day]:hover .dreplay.shut{color:var(--ink)}
+  /* the crowd's line, and it is EMPTY until the answer lands. no min-height and
+     no placeholder: an undeployed worker leaves nothing here, and a reserved
+     empty strip would be the game holding a slot open for a feature it cannot
+     reach. margin only when it has something in it. */
+  .wbspread:empty{display:none}
+  .wbspread{margin-top:12px;font-variant-numeric:tabular-nums}
   .intro-start{margin-top:17px;width:100%;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:inherit;font-size:12.5px;letter-spacing:.1em;padding:9px;cursor:pointer;text-transform:lowercase;
     transition:background var(--t-ui),border-color var(--t-ui),color var(--t-ui),transform var(--t-lift) var(--ease-out)}
   .intro-start:hover{background:var(--dunkelblau)}
@@ -5045,6 +5128,53 @@ function priceWords(){
       minimumFractionDigits:whole?0:digits, maximumFractionDigits:digits})
       .format(priceInfo.amount/unit);
   }catch(e){ return '' }
+}
+
+/* ---- how everybody else did yesterday ----
+   `the same ten for everyone` is the strongest thing in the design and until now
+   it did nothing: it was a promise about fairness with no way to see the other
+   side of it. every player got the identical ten nets, so the spread across them
+   is a real comparison rather than a table of who plays most — which is why what
+   comes back is a HISTOGRAM and there is no leaderboard, no nickname and no
+   other player's row anywhere in it.
+   YESTERDAY AND NEVER TODAY. today's spread would be a spoiler in the same way
+   the archive's difficulty reading is one — it says how hard the ten you are
+   about to play turned out to be — and it would be a spoiler measured off a day
+   half the world has not woken up to yet.
+   it is asked for exactly where it is drawn, after the card is already on
+   screen, and it is silent every way it can fail: no api, an undeployed worker,
+   a file:// url, a day too thin to be anonymous, or a reply that is not the
+   shape it should be. the line is simply absent, which is the same discipline
+   the sign-in row and the price follow — the game plays whole with none of this
+   reachable, and this is the last thing that should test that. */
+let spread=null, spreadAsked=false;
+async function ensureSpread(){
+  if(spreadAsked || !API) return;
+  spreadAsked=true;
+  const r=await api('day/'+dayAdd(today(),-1)+'/spread');
+  if(!r || r.error || !r.enough || !Array.isArray(r.dist)) return;
+  spread=r;
+  paintSpread();
+}
+/* the line, or nothing at all. `beat` is strictly-fewer, which is what the word
+   means — a tie is not a win — and the clause is DROPPED at zero rather than
+   printed. that is not flattery: this game's own rule is that a day cannot be
+   failed, so the one screen a player opens before playing does not get to open
+   with a nought, and the median above it has already told them where they were.
+   the count leads because it is the part that is actually new — somebody else
+   played this. */
+function paintSpread(){
+  const el=$('wbspread');
+  if(!el || !spread) return;
+  const nets=spread.nets||POLICY.dailyNets;
+  let say=`${spread.players} played yesterday · median ${spread.median} of ${nets}`;
+  const mine=rungsOf((dayRows().find(r=>r.d===dayAdd(today(),-1))||{}).tiers);
+  if(mine){
+    const under=spread.dist.reduce((a,b)=>a+(b.good<mine.good?b.n:0),0);
+    const pct=Math.round(under/spread.players*100);
+    if(pct>0) say+=` · you beat ${pct}%`;
+  }
+  el.textContent=say;
 }
 
 /* a shut door that leads somewhere. the record is where the unlock lives — a
@@ -9903,6 +10033,40 @@ function rungTrack(tiers,row){
   const said=tierWords(s,' · ');
   return `<span class="track" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
 }
+/* ---- your last week of runs, on the card you open the day on ----
+   the welcome card led on `1 day running` over a row of collection tiles, and
+   the owner's correction is that what a returning player wants to see is their
+   own runs. so this is the week: seven days, newest first, each drawing the ten
+   cells that day minted.
+   A DAY NOBODY PLAYED DRAWS THE BARE BAR, and that is the owner's call too — it
+   replaced the words `not played`, which was a sentence where every other row
+   had a picture, so the one thing the eye could not do was compare them. ten
+   grey cells is the drawing the masthead already uses for the day ahead and
+   rungTrack already returns for a day with no letters; a gap in a week reads as
+   a gap in the same instrument rather than as a caption.
+   IT IS NOT THE RECORD AND MUST NOT GROW INTO IT. the record is today and
+   yesterday with a date, a detail clause, an attempt count, a spine and a
+   pressable row; this is a date, a bar and the replay chip, over a fixed seven
+   days, on a card that has two buttons under it. the SHARED PARTS are shared and
+   not copied — dayLabel, rungTrack, dayReading, canPlayDay, spentDay,
+   replayWords and openDay are the record's own, so a rule that moves there moves
+   here. what is deliberately not shared is the drawing.
+   WHY SEVEN. it is the window a run of days is read in, it is short enough that
+   the card still fits a phone with the stats and both buttons on it (measured at
+   375x812 and at 320 wide), and it stops at seven rather than walking back to
+   LAUNCH for the reason the record stopped at two: a list you scroll through a
+   year of is a shop, and this card is not one. */
+const WEEK_DAYS=7;
+function weekList(){
+  const by=new Map(dayRows().map(r=>[r.d,r]));
+  const out=[];
+  for(let i=0;i<WEEK_DAYS;i++){
+    const d=dayAdd(today(),-i);
+    if(d<LAUNCH) break;          // a day before launch was drawn by a retired generator
+    out.push({d,row:by.get(d)||null});
+  }
+  return out;
+}
 /* the same reading in words, because the bar is a picture and the row's label
    is what a screen reader gets instead of it. `sep` is the card's idiom where
    the card asks for it and a comma everywhere prose is wanted. */
@@ -11675,7 +11839,6 @@ function renderIntro(mode){
   const plain = mode==='rules' || mode==='welcome';
   document.querySelector('.intro-card').classList.toggle('plain',plain);
   if(!plain && !$('introart').firstChild) $('introart').innerHTML=introPlate();
-  const got=Object.keys(store.collection.badges).length;
   if(mode==='rules'){
     /* a legend, not a lesson. the guided net teaches on first play, so what is
        wanted here weeks later is what each mark means — and the marks say that
@@ -11761,53 +11924,164 @@ function renderIntro(mode){
       <div class="intro-note">pull them apart. free one and it draws itself, and tells you its name.</div>
       <button class="intro-start" id="introstart">start untangling</button>`;
   } else {
-    const days=Math.max(1,store.meta.streak||1);
-    /* the card leads with what still has somewhere to go. "features collected"
-       finished inside a week — a median of two days for all sixteen — so a
-       returning player was being shown a counter that was already over.
-       clean-tier badges and superposition pairs are the tracks with runway.
-       the other counter here was "tickets", six one-off awards for things like
-       a first identification or a seven day streak. they were granted, toasted
-       once, written to the save, merged across devices — and never drawn
-       anywhere. write-only state costs a field in everybody's save and a branch
-       in the merge to say nothing, and two of the six counted a `depth` the set
-       of ten cannot have. gone entirely rather than given a screen. */
-    // at or above the clean line, so a badge upgraded to perfect still counts
-    const clean=FKEYS.filter(k=>TIERRANK[(store.collection.badges[k]||{}).tier]>=TIERRANK.clean).length;
-    const pairsGot=Object.keys(store.collection.pairs||{}).length;
-    const pairsAll=FKEYS.length*(FKEYS.length-1)/2;
-    /* best depth went from here too. it counted a descent that no longer
-       exists — the set is ten and cannot be failed — so it read ten for anyone
-       who finished a day and said nothing about how they finished it. the day's
-       score against par is the reading that moves, and it is the same one the
-       record leads on. */
-    const best=dayRows().map(dayScore).filter(v=>v!=null).sort((a,b2)=>a-b2)[0];
-    /* two readings, not four. `features at clean` and `superposed pairs` are
-       both collection counters, and this game is not scored on collecting — the
-       same objection that removed `16/16` from the record. worse, they were the
-       two BIGGEST numbers on the card a returning player sees first, so the
-       screen opened by telling them how much of a set they owned rather than
-       how they had been playing.
-       the `—` is gone with them. it meant "no score yet" and sat one stroke away
-       from the minus sign it shared a slot with, so a new player's card read
-       `— best day` and looked like a negative number. a day that has not been
-       scored says so in words. */
+    /* ---- the card a returning player opens the day on ----
+       it appears once a day, before a single move, and it is the only screen in
+       the game whose job is to make somebody want to press the button. so what
+       it shows is the RUN and the TARGET, in that order, and nothing that is
+       merely true about the save.
+       WHAT WENT, and it was most of the card. `features at clean` and
+       `superposed pairs` were both collection counters, and a longer note about
+       them was the biggest text on the screen — so a returning player was told
+       how much of a set they owned rather than how they had been playing. the
+       row of feature tiles went with them and had a second problem the counters
+       did not: it drew one tile per feature in the cast, and the cast grew from
+       16 to 49 on 16 Aug 2026. 49 tiles wrap to four rows and the pairs figure
+       they were captioned with reads `1176 pairs left`, which is a number in the
+       shape of noise. the collection is still every bit of it in the save and
+       every bit of it in the record; it is not what this card is for.
+       `features collected` had already gone the same way for the same reason —
+       it finished inside a week, so the card led on a counter that was over.
+       THE DEPTH READING went too, one pass before that: it counted a descent
+       that no longer exists, so it read ten for anyone who finished a day.
+       and the `—` that used to mean "no score yet" went with all of it. it sat
+       one stroke from the minus sign it shared a slot with, so a new player's
+       card read `— best day` and looked like a negative number. a day that has
+       not been scored says so in words, here and on the record both. */
+    const streak=store.meta.streak||0;
+    /* NO `Math.max(1, …)`. it read `1 day running` to somebody who has never
+       finished a day — the floor was there so the card never printed a nought,
+       and what it actually did was open the returning-player screen with a
+       false claim about them. a run that has not started says so in words, the
+       same as a day that has not been scored. */
+    const runSay=streak?`<b>${streak}</b><span>day${streak===1?'':'s'} running</span>`
+                       :`<b>not yet</b><span>days running</span>`;
+    /* every perfect ever minted, counted off the rows the record already draws.
+       it is the one counter on this card with no end: `perfect` is the rare rung
+       and the only one the game never explains, so this climbs on mastery rather
+       than on attendance and cannot finish the way the collection did. no new
+       field in anybody's save — the letters are already there, one per net, in
+       the `tiers` string stampToday writes. */
+    const rows=dayRows();
+    const perfect=rows.reduce((a,r)=>a+(typeof r.tiers==='string'
+      ? r.tiers.slice(0,POLICY.dailyNets).split('p').length-1 : 0),0);
+    /* yesterday and the best day, in the measure the RECORD leads on.
+       this card used to compute turns-against-par itself and nothing else, which
+       put it a full measure behind every other screen: the rungs are what a day
+       is read in since v8, dayScore is the demoted fallback for rows written
+       before them, and a day left at six has rungs to show while dayScore
+       refuses it for want of ten. so the same save read `not yet` here and
+       `6 of 10 clean or better` one press later, about the same day. dayReading
+       and bestReading are the record's own two functions and they are not
+       reimplemented — see the note on bestReading for how it picks a measure. */
+    const yday=dayAdd(today(),-1);
+    const ylast=dayReading(rows.find(r=>r.d===yday));
+    const best=bestReading(rows);
+    /* SETTING ONE FIGURE TWICE is the tautology this game has deleted three times
+       over — see bestLineEl, which drops itself off the record for exactly this
+       reason — and yesterday against the best day can collide two ways.
+       the first is the obvious one: yesterday IS the best day, in which case the
+       second line is the first line with another date on it. it is tested on the
+       KEY and not on the date, because two days can tie at the top and which one
+       bestReading returns then is the save's own order — so a yesterday that
+       equals the record must not be drawn as though something beat it.
+       and when yesterday ties the record it is worth SAYING, on the day a player
+       opens the card wanting a reason to press the button. not on a first scored
+       day though: everything is a personal best when there is one of them, and a
+       card that congratulates you for existing is noise.
+       the second collision is quieter and the render caught it: two DIFFERENT
+       days can print the same reading, because the key ranks perfects and the
+       reading does not — 9 of 10 with two perfects beats 9 of 10 with one, and
+       both lines say `9 of 10 clean or better`. so the best day keeps its line
+       there, and drops the figure it would only be repeating. the date is the
+       fact left, which is exactly what bestLineEl prints on the record and the
+       whole of what it prints. */
+    const scored=rows.filter(r=>dayReading(r)).length;
+    const yBest=!!(ylast && best && ylast.key===best.key);
+    /* the best day, as ONE line above the week. it is not drawn when yesterday
+       ties it — that is the top row of the list, three lines down, and setting one
+       figure twice on a card is the tautology this game has deleted three times
+       over (see bestLineEl, which drops itself off the record for the same
+       reason). the tie is tested on the KEY and not on the date, because two days
+       can tie at the top and which one bestReading returns then is the save's own
+       order — so a yesterday that equals the record must not be drawn as though
+       something beat it. and when it DOES tie, that is worth saying on the card a
+       player opens wanting a reason to press the button; not on a first scored
+       day, where everything is a personal best and a card that congratulates you
+       for existing is noise. */
+    const bestNew=best && !yBest;
+    /* ---- the week, and the only press on it ----
+       the chip is the record's, at the record's meaning: drawn on every played
+       day either way, dashed when it is not yours yet, and it NEVER opens a
+       checkout — the press answers in words, exactly as the record's row does,
+       and `replayWords` is the one copy of what paying adds. see the long note on
+       the record's chip for why a lock glyph and a solid field are both out.
+       TODAY IS NOT PRESSABLE and carries no chip. the button under this list is
+       how today starts, and a second door to the same run on the same card is two
+       paths that can disagree about what pressing means. it is still drawn, as
+       the bare bar, because a week with today missing is not a week.
+       a day with no row is not pressable either. it is either the archive's,
+       which the record's own foot is the one place to be sold, or a day before
+       LAUNCH that weekList has already dropped — and a press on every empty row
+       going to an upsell is the three-hundred-buy-buttons list that got the
+       archive rows deleted the first time. */
+    const week=weekList().map(({d,row})=>{
+      const played=!!(row && typeof row.tiers==='string' && row.tiers);
+      const isNow=d===today();
+      const can=!isNow && played && canPlayDay(d);
+      const chip=!isNow && played
+        ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true"`
+          +` title="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
+        : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
+      const rd=dayReading(row);
+      return `<div class="wbday${isNow?' now':''}${played?'':' none'}"`
+        +(!isNow&&played?` role="button" tabindex="0" data-day="${d}"`:'')
+        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):'not played'}`
+        +`${!isNow&&played?' · '+(can?'play again':replayWords()):''}">`
+        +`<span class="wbwhen">${isNow?'today':dayLabel(d)}</span>`
+        +rungTrack(played?row.tiers:'',true)
+        +`<span class="wbmini">${played&&rd?rd.fig:''}</span>${chip}</div>`;
+    }).join('');
     b.innerHTML=`<div class="intro-title">welcome back</div>
-      <div class="intro-sub">today's ten · the same ten for everyone</div>
-      <div class="wbstats wbstats-2">
-        <div><b>${days}</b><span>day${days===1?'':'s'} running</span></div>
-        <div><b>${best==null?'not yet':fmtScore(best)}</b><span>best day</span></div>
+      <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>
+      <div class="wbstats">
+        <div>${runSay}</div>
+        <div><b>${perfect}</b><span>perfect nets</span></div>
       </div>
-      <div class="wbrow">${FKEYS.map(k=>{
-        const bd=store.collection.badges[k];
-        return `<i title="${k}${bd?' · '+bd.tier:' · unidentified'}" style="${bd?`background:var(${TIERCOL[bd.tier]});border-color:var(${TIERCOL[bd.tier]})`:''}"></i>`;
-      }).join('')}</div>
-      <div class="intro-note">${
-        got<FKEYS.length ? `${FKEYS.length-got} features still unidentified.`
-        : clean<FKEYS.length ? `every feature named · ${FKEYS.length-clean} still short of clean.`
-        : `every feature clean · ${pairsAll-pairsGot} pairs left to catch sharing a neuron.`}</div>
+      <div class="wbread">${
+        ylast&&yBest&&scored>1
+          ? `<div><span class="wbwhen">yesterday · your best</span>`
+            +`<span class="wbfig"><b>${ylast.fig}</b> ${ylast.word}</span></div>`
+        : bestNew
+          ? `<div><span class="wbwhen">best day${isIso(best.d)?' · '+dayLabel(best.d):''}</span>`
+            +`<span class="wbfig"><b>${best.fig}</b> ${best.word}</span></div>`
+          : ''}</div>
+      <div class="wbweek">${week}</div>
+      <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">start today's run</button>
       <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`;
+    /* one handler for the whole list, on the container: seven rows each with
+       their own closure is seven listeners rebuilt every morning, and the row
+       already carries the only thing the press needs. `openDay` is the record's
+       own — it starts the day, and refuses a day that is not yours with the same
+       sentence in the same words. */
+    const press=d=>{
+      if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
+        $('introveil').classList.remove('show'); return openDay(d) }
+      flashMsg(`${dayLabel(d)} · ${replayWords()}`);
+    };
+    $('introbody').querySelector('.wbweek').onclick=e=>{
+      const row=e.target.closest('[data-day]');
+      if(row) press(row.dataset.day);
+    };
+    $('introbody').querySelector('.wbweek').onkeydown=e=>{
+      if(e.key!=='Enter' && e.key!==' ') return;
+      const row=e.target.closest('[data-day]');
+      if(row){ e.preventDefault(); press(row.dataset.day) }
+    };
+    /* the crowd, asked for after the card is drawn and never waited on. it fills
+       the line above if it answers and leaves it empty if it does not — which is
+       most of the time right now, because the worker has never been deployed. */
+    paintSpread(); ensureSpread();
   }
   $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
