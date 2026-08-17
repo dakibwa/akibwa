@@ -9328,36 +9328,48 @@ if(window.ResizeObserver) new ResizeObserver(tutRelayout).observe($('field'));
 /* one set of steps per guided net, because each net is teaching a different rule
    and the coaching for a pin is no use on a board that has none. every step is
    about a mark the player can see on the board in front of them at the moment it
-   is written — the spotlight is picking that mark out while they read it. */
+   is written — the spotlight is picking that mark out while they read it.
+   ONE SENTENCE, OR ONE SENTENCE AND A SHORT CLAUSE, AND NEVER MORE. these were
+   all three-clause paragraphs — "each X is a crossing. clear every crossing off
+   one line and it comes free. the light is on the next one." is an instruction
+   with a definition in front of it and a hint behind it, and a player four drags
+   into their first game reads the first sentence and stops. the definition is
+   already on screen: `coachkey` draws the neuron, crossing and feature marks
+   with their names under step one. the hint is the light itself. so the card
+   keeps the verb and drops the two things the board is saying anyway. */
 const TUTSTEPS_BY_NET=[
   [ // net 0 — the gesture, and what a crossing is
-    '<b>drag the lit neuron.</b> the lines follow it.',
-    'each <b>X</b> is a crossing. clear every crossing off one line and it comes free.',
-    'one crossing left. <b>clear it</b> and the last line comes free too.'
+    '<b>drag a neuron.</b> the lines follow.',
+    '<b>clear every crossing off one line.</b> it comes free.',
+    'one crossing left. <b>clear it.</b>'
   ],
   [ // net 1 — superposition. the one move the game turns on
-    'one neuron here is carrying <b>both</b> features at once — the double ring.',
-    '<b>tap it to split.</b> a shared neuron has to come apart before either line can leave.',
-    'now they are two. <b>clear the crossings</b> and both come free.'
+    'the <b>double ring</b> holds two features.',
+    '<b>tap it to split.</b> neither line can leave until you do.',
+    '<b>clear the crossings.</b> both come free.'
   ],
   [ // net 2 — the pin. a constraint rather than an action
-    'the <b>square</b> neuron is pinned. it will not move, whatever you do to it.',
-    '<b>move the others around it.</b> everything else works exactly as before.',
-    'last crossing. <b>clear it</b> and that is every rule the game has.'
+    'the <b>square</b> neuron is pinned — it cannot move.',
+    '<b>move the others around it.</b>',
+    'last crossing. <b>clear it</b> and you know the game.'
   ]
 ];
 const TUTSTEPS=TUTSTEPS_BY_NET[0];   // the shape older code still reads
-/* what the card says once the board is doing the pointing. step one stops
-   saying "a neuron" — the whole complaint was that a player has to map that
-   word onto one of a board of marks — and the later two get one short clause,
-   because by then the gesture is known and only the target has moved.
-   they are variants rather than replacements: if the search finds no move worth
-   lighting, the light is off and the card must not refer to it. */
+/* THE LIGHT IS NAMED ONCE AND THEN LEFT ALONE. every step used to get
+   " the light is on the next one." appended to it, which is where step two's
+   third sentence came from — and it landed behind the verb it was hinting at,
+   so the hint arrived after the player had already read what to do. step one
+   names it, the player learns the light means act here, and from then on the
+   light does its own pointing. a step with no variant falls through to the
+   plain text, which is what the `||` below is for.
+   it is a variant rather than a replacement because the light is not
+   guaranteed: if the search finds no move worth lighting the light is off and
+   the card must not refer to one. that is the whole reason the plain step one
+   says `a neuron` and only this one says `the lit neuron`. */
 const TUTLIT=[
-  '<b>drag the lit neuron.</b> the lines follow it.',
+  '<b>drag the lit neuron.</b> the lines follow.',
   null, null
 ];
-const TUTLITADD=' the light is on the next one.';
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
   if(!inTutorial()){ tutSpotClear(); return }
@@ -9371,7 +9383,7 @@ function renderTutorial(){
   // and which lesson of the three you are on, since there are three nets now
   $('coachlabel').textContent=`guided net ${net+1} of ${TUTNETS.length} · step ${step} of ${steps.length}`;
   $('coachtext').innerHTML = (!tutLit || net>0) ? steps[step-1]
-    : (TUTLIT[step-1] || steps[step-1]+TUTLITADD);
+    : (TUTLIT[step-1] || steps[step-1]);
   [...$('coachdots').children].forEach((d,i)=>{
     d.classList.toggle('done',i+1<step);
     d.classList.toggle('now',i+1===step);
