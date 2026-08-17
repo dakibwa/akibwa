@@ -120,6 +120,30 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --dunkelblau:#24709F;
     --violett:#7D6BB0;
     --tuerkis:#12A19A;
+    /* ---- ROSA: the eighth colour, and the first one added to this block ----
+       the owner opened the palette for it, and it exists because the ladder ran
+       out of room: `flawless` needs a rung colour and the Munich six had none
+       left. measured with the ladder's own instrument — worst-case CIE76 dE
+       across normal vision and three dichromacies, floor 18.0 — every one of the
+       six collapses into a rung already on it: hellblau 2.8 from tuerkis, gruen
+       2.1 from tuerkis, dunkelblau 6.4 from violett, orange 13.4 from gelb.
+       so the gamut was searched instead, under the constraints this palette
+       actually satisfies: chroma inside the family's own 33..79 band, so it is a
+       flat poster colour and not a neon; a real mark on BOTH grounds; and clear
+       of the 18.0 floor against all three rungs and the bare track.
+         vs gelb 24.3 · vs tuerkis 23.9 · vs violett 28.1 · worst 23.9
+         contrast 4.14 dark / 4.01 light — the most evenly balanced pair of any
+         colour in this block, the six included, and the reason it was chosen
+         over the roses that scored higher on dE alone.
+       IT IS A ROSE AND NOT A RED, and the line above still holds: red is a
+       signal colour for danger and this is at L* 51.9 with chroma 66, which
+       reads as the pink of a poster and not as a warning. it is the one hue the
+       ladder had room for — magenta crowds violett, lime and teal collapse into
+       tuerkis, orange collapses into gelb.
+       it is NOT a thread colour and must not become one. the generator draws
+       from FEATURES, whose plates are seven each of the six; adding rosa there
+       would put a rung's colour on a board. */
+    --rosa:#DE3C75;
     /* `--silver-fixed` was here: a theme-proof silver for the share card, which
        leaves the sharer's screen and cannot read a token that moves. the card
        needed it only because `done` was a neutral. no rung is a neutral now —
@@ -210,6 +234,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --sig-dunkelblau:var(--dunkelblau);
     --sig-violett:var(--violett);
     --sig-tuerkis:var(--tuerkis);
+    --sig-rosa:var(--rosa);
     /* `--talk` was here: the light blue the 10px talking line was set in, held
        apart from the thread blue because 10px text wants 4.5:1 where a line
        wants 3:1. the line is a card now and its type is plain ink, so the token
@@ -315,6 +340,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --sig-dunkelblau:var(--dunkelblau);   /* 5.16:1 on paper already */
     --sig-violett:#5F4E92;
     --sig-tuerkis:#0E817C;
+    /* rosa needs no darkening on paper, which is the whole reason it was chosen
+       over the roses that scored better on dE: it measures 4.01:1 on the stamp
+       card as it stands, where gelb manages 1.61 and has to be taken to a bronze
+       to draw a line at all. the one colour in the block that is the same value
+       in the field set and the line set on BOTH grounds. */
+    --sig-rosa:var(--rosa);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   /* a game is dragged, not read: selection only ever produced blue smears.
@@ -2294,6 +2325,35 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      on this screen. it matters here as well as there, because a ground flip
      changes what every --fill resolves to. */
   .track.dtrack > i{transition:none}
+  /* ---- THE FLAWLESS DAY, in the record ----
+     the CELLS stay gelb here and do not go rosa, which is the one place the day
+     and the stamp deliberately part. a cell is one net's rung and every net in a
+     flawless day is genuinely `perfect` — recolouring them would be the bar
+     telling ten small lies to make one large true statement. flawless is a fact
+     about the SET, so it is drawn under the set: a rosa rule the width of the
+     whole bar, which is the mark for the day the way the cut is the mark for the
+     stamp, both in the same colour.
+     IT IS A PSEUDO-ELEMENT AND CHANGES NO LAYOUT, and the version before it did
+     both the wrong ways. it took the rule as a border-bottom with padding above
+     it, inside a track that is exactly 6px tall — so the padding ate the bar and
+     a flawless day drew as a HAIRLINE while every ordinary day drew as a block:
+     the best day in the record was the thinnest mark on the card. it also cut
+     the two ends at 45° to echo the stamp, which at 6px on a 240px bar is a
+     detail no one can see and which clipped the rule off with it.
+     `top:calc(100% + 3px)` hangs it below the track rather than inside it, so
+     the six pixels stay six pixels at every breakpoint — .dtrack's height is
+     restated in three places and none of them has to know about this.
+     `overflow:visible` is the one thing it has to undo, and it is safe for
+     exactly the reason the base rule needs the opposite: .track clips its
+     children so a RUN — the moving length on the crossings and turns bays —
+     can never draw longer than the number it reports. this class only ever
+     lands on a ten-cell rung track, which has no run in it and nothing to
+     overshoot, and it is applied only when all ten cells are there. */
+  .track.flawless{position:relative;overflow:visible}
+  .track.flawless::after{
+    content:"";position:absolute;left:0;right:0;top:calc(100% + 3px);
+    height:2px;background:var(--sig-rosa);
+  }
   /* played, but filled in from the archive rather than earned on the day —
      hatched, the mark the calendar used, and the reason it never touched the
      streak. a bought day fills the grid; it cannot buy the run of days. */
@@ -3808,27 +3868,60 @@ const markOn=v=>lum(cssv(v))>0.192?'#0E1214':'#ffffff';
    motion are yellow like `perfect`. give the band a count as well. three cells
    clean, two done, one over — which survives a plate of its own colour, a
    colour-blind reader, and a greyscale share card.
-   note what the count does NOT do: `perfect` has no entry and falls to one cell,
-   the same as `over`. that predates this ladder and is left alone here, because
-   TIERCELLS is read by every stamp in the game and this change is the ladder's
-   colours. it is a real gap and it is worth closing on its own. */
-const TIERCELLS={clean:3, done:2, par:2, over:1};
+   THE COUNT NOW RUNS THE WHOLE LADDER: done 2, clean 3, perfect 4. perfect used
+   to have no entry and fall to one cell, the same as the dead `over` key — so
+   the best rung in the game drew the emptiest band, and the count contradicted
+   the colour it was there to back up. that gap was flagged here for a while as
+   worth closing on its own; closing it is what makes the band a reading a
+   colour-blind or greyscale eye can take, which is the whole point of counting.
+   FLAWLESS IS THE BAR CLOSED UP. it falls through to one cell, which the width
+   formula draws as a single unbroken bar, and it is given the extra height the
+   gaps were spending. so the band goes 2, 3, 4, then whole — the ramp fills in
+   rather than adding a fifth sliver nobody could resolve at 80px. */
+const TIERCELLS={clean:3, done:2, perfect:4, par:2, over:1};
 function featureStamp(k,tier,locked){
   const d=FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
   const mk=locked?markOn('--rule'):EMBLEM_INK;
   const mark=locked
     ? `<g fill="none" stroke="${mk}" stroke-width="2" opacity=".78"><circle cx="48" cy="48" r="21"/><path d="M48 18V78M18 48H78M27 27L69 69M69 27L27 69"/></g>`
     : `<g fill="${mk}">${d.p}</g>`;
+  const flawless = tier==='flawless';
   const cells=tier?(TIERCELLS[tier]||1):1;
   const cw=(96-(cells-1)*5)/cells;
-  const band=Array.from({length:cells},(_,i)=>
+  const band=flawless
+    ? `<rect x="12" y="109" width="96" height="11" fill="var(--tier)"/>`
+    : Array.from({length:cells},(_,i)=>
     `<rect x="${(12+i*(cw+5)).toFixed(1)}" y="112" width="${cw.toFixed(1)}" height="8" fill="var(--tier)"/>`).join('');
+  /* ---- THE CUT CORNER: the mark of a stamp off a flawless day ----
+     the SECOND channel, and the rung's colour is the first — see TIERCOL. it is
+     here because a colour is the one thing that does not survive being shrunk,
+     photographed or read by an eye that does not part two hues: in the
+     collection a rung is three pixels of border at about 80px a cell, and a
+     shared screenshot flattens the lot. every other rung is carried by hue
+     alone. the top one, which is the rarest thing in the game, should not be
+     the one that disappears in a photograph.
+     it is a real cut rather than a painted triangle, and that is load-bearing:
+     taken out to the stamp's own card it cannot collide with the plate beneath
+     it. SEVEN of the forty-nine emblems are gelb and seven more will be rosa's
+     neighbours in tone — a coloured corner on a plate of its own colour says
+     nothing at all, which is what ruled out the two treatments that looked
+     strongest at full size.
+     the diagonal is then ruled in the rung's line colour, because a flat field
+     with a hairline on it is what every other edge in this game is. --sig-rosa
+     resolves to --rosa on both grounds; unlike gelb it needs no darkening to
+     draw a line on paper, which is part of why it was the rose chosen.
+     it is drawn INSIDE the emblem group and after the mark, so it cuts the
+     drawing rather than sliding underneath it. */
+  const cut = flawless
+    ? `<path d="M0 0H24L0 24Z" fill="var(--stamp)"/>`
+      +`<path d="M24 0L0 24" fill="none" stroke="var(--sig-rosa)" stroke-width="3.5"/>`
+    : '';
   const cancel=locked?'':`<g fill="none" stroke="${mk}" stroke-width="2" opacity=".45"><circle cx="88" cy="34" r="17"/><path d="M72 28H108M72 34H108M72 40H108"/></g>`;
   return `<svg class="feature-stamp" viewBox="0 0 120 134" role="img" aria-label="${locked?'unidentified feature':k+' feature · '+tier}" style="--emblem:var(${locked?'--rule':d.c});--tier:var(${tierCol})">
     <rect x="4" y="4" width="112" height="126" fill="var(--stamp)" stroke="var(--stamp-edge)"/>
     <g fill="var(--surface)">${PERF_X}${PERF_Y}</g>
     <rect x="12" y="12" width="96" height="96" fill="var(--emblem)"/>
-    <g transform="translate(12 12)" style="--mark:${mk}">${MARKGRID}${mark}</g>
+    <g transform="translate(12 12)" style="--mark:${mk}">${MARKGRID}${mark}${cut}</g>
     ${cancel}${band}
     <rect x="12" y="124" width="42" height="2" fill="var(--stamp-edge)"/><rect x="59" y="124" width="49" height="2" fill="var(--stamp-edge)"/>
   </svg>`;
@@ -3946,7 +4039,18 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
    and on the record the count stands in words on the same row as the bar. the
    record's rows carried a height channel of their own until the day rows became
    bars; see .track.dtrack, which is honest about that being the cost. */
-const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', par:'--tuerkis', over:'--violett'};
+/* FLAWLESS TAKES ROSA, THE EIGHTH COLOUR, AND IT HAD TO BE AN EIGHTH. the six
+   were measured against this ladder first and every one of them collapses into
+   a rung already on it — hellblau 2.8 from tuerkis, gruen 2.1, dunkelblau 6.4
+   from violett, orange 13.4 from gelb, against the 18.0 confusion floor. so the
+   palette gained a colour rather than the ladder gaining a collision; see --rosa
+   for the search and the numbers it was picked on.
+   IT KEEPS THE CUT AS WELL, and the cut is not decoration now that there is a
+   colour. it is the second channel: at collection size a rung is three pixels
+   of border, and the cut is what a greyscale reader, a colour-blind reader and a
+   shared screenshot have instead. every other rung is carried by hue alone and
+   the top one should not be the one that vanishes in a photograph. */
+const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', flawless:'--rosa', par:'--tuerkis', over:'--violett'};
 /* the day rows' left spine, and it is deliberately DISJOINT from TIERCOL above.
    the three tier colours are the game's scoring language and the spine sits
    inches from a bar drawn in them, so a spine that borrowed one would read as a
@@ -9420,7 +9524,16 @@ function recordDay(){
    the day — not just a played / not-played flag. rows written by earlier
    prototypes are bare strings or {d,depth}; upgrade them in place rather than
    dropping a player's history on the floor */
-const TIERRANK={over:0,done:1,par:1,clean:2,perfect:3};
+/* `flawless` is on this ladder but NO NET CAN MINT IT. tierFor answers over /
+   done / clean / perfect and nothing else, so it can never reach `row.best` or
+   a `tiers` letter — it is minted by the DAY, in clearNet, onto the badges of a
+   set that came in ten perfects. it is here because badges are compared with
+   this table and a rung it does not know would rank below `over`.
+   IT MUST STAY IN STEP WITH worker/merge.js, which mirrors this table to merge
+   two devices' badges: a tier the worker has never heard of ranks -1 there and
+   loses to everything, so a flawless stamp earned on a phone would come back
+   from a sync demoted to whatever the laptop last had. */
+const TIERRANK={over:0,done:1,par:1,clean:2,perfect:3,flawless:4};
 function stampToday(depth,feats,tier){
   const d=R().day, pd=store.collection.playedDays;
   const i=pd.findIndex(x=>isDay(x,d));
@@ -9542,6 +9655,28 @@ function clearNet(){
      .boardcard — and nextNet is simply never reached, because nothing on that
      card asks for another net. */
   const setDone = !isTrial() && r.cleared.length>=POLICY.dailyNets;
+  /* ---- THE FLAWLESS DAY ----
+     the only rung in the game minted by the SET rather than by a net, and it is
+     awarded backwards: finish all ten at `perfect` and every feature that came
+     free anywhere in that day goes to `flawless` at once — including the ones
+     freed on net one, hours before the day could possibly be known to be
+     flawless. that is why it is here and not in the loop above, which can only
+     ever see the net it is standing on.
+     `setDone` carries two guards this needs and already had for its own reasons:
+     a TRIAL cannot mint it (a trial is not the day's set), and the ten must
+     actually be there. the third guard is the `every` — and it is read off
+     `r.cleared`, the same list the day card and stampToday read, so a day that
+     looks flawless on the card cannot fail to be flawless here.
+     A REPLAY CAN EARN IT, deliberately: badges are high-water marks and this is
+     the top of the ladder, so a player who goes back and finally takes a day
+     clean gets the stamps for it. TIERRANK guards the write, so a flawless
+     stamp is never demoted by a later ordinary run at the same day. */
+  if(setDone && r.cleared.every(c=>c.tier==='perfect')){
+    [...new Set(r.cleared.flatMap(c=>c.feats))].forEach(k=>{
+      const cur=store.collection.badges[k];
+      if(!cur||TIERRANK.flawless>TIERRANK[cur.tier]) store.collection.badges[k]={tier:'flawless',day:r.day};
+    });
+  }
   if(setDone) r.over=true;
   else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false }
   /* WHAT THE CARD WILL SAY, READ NOW. the cleared card is deferred by the beat
@@ -10243,11 +10378,21 @@ function ask(o){
 /* ================= the record ================= */
 
 /* a feature at icon size: the emblem without the stamp frame or the perforation,
-   both of which turn to mud below about thirty pixels */
-function featIcon(k){
+   both of which turn to mud below about thirty pixels.
+   THE TIER IS PASSED IN because one rung has a second channel. all four colour
+   the cell's bottom border, and that is the whole of it for three of them;
+   flawless also carries the cut (see featureStamp), which a border cannot draw
+   and which is what survives the border being three pixels tall. the cut is
+   filled with --surface, the record card these sit on — the same reasoning as
+   the stamp's, one plate down. */
+function featIcon(k,tier){
   const d=FEATURES[k]; if(!d) return '';
+  const cut = tier==='flawless'
+    ? `<path d="M0 0H23L0 23Z" fill="var(--surface)"/>`
+      +`<path d="M23 0L0 23" fill="none" stroke="var(--sig-rosa)" stroke-width="4"/>`
+    : '';
   return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}" style="--emblem:var(${d.c})">
-    <rect width="96" height="96" fill="var(--emblem)"/><g fill="${EMBLEM_INK}">${d.p}</g></svg>`;
+    <rect width="96" height="96" fill="var(--emblem)"/><g fill="${EMBLEM_INK}">${d.p}</g>${cut}</svg>`;
 }
 const MONTHS=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const WDAYS=['sun','mon','tue','wed','thu','fri','sat'];
@@ -10351,6 +10496,18 @@ const archiveCount=()=>{
    the row already carries an aria-label with these same rungs in words and a
    second reading inside it would be the day said twice. */
 const TIEROF={p:'perfect', c:'clean', d:'done'};
+/* ---- was this day flawless: all ten nets at perfect ----
+   read off `tiers` rather than stored, for the same reason the best round is a
+   scan: the letters are already the record of what happened and a second field
+   saying the same thing is a field that can drift out of step with them. it is
+   also the ONE definition — the badge mint in clearNet asks the live run the
+   same question of `r.cleared`, and this asks the row it wrote.
+   the length check is not decoration: a part-played day whose three cleared
+   nets are all `p` must not read as flawless, and `every` over a short string
+   would say it did. */
+const isFlawless=tiers=>typeof tiers==='string'
+  && tiers.length>=POLICY.dailyNets
+  && [...tiers.slice(0,POLICY.dailyNets)].every(ch=>ch==='p');
 function rungTrack(tiers,row){
   const s=typeof tiers==='string'?tiers:'';
   let out='';
@@ -10358,12 +10515,17 @@ function rungTrack(tiers,row){
     const t=TIEROF[s[i]];
     out += t ? `<i class="on" style="--fill:var(${TIERCOL[t]})"></i>` : '<i></i>';
   }
-  if(row) return `<span class="track dtrack" aria-hidden="true">${out}</span>`;
+  /* a flawless day keeps its ten gelb cells — each one is a net that really did
+     come in at perfect — and takes the mark on the BAR instead: the stamps' own
+     cut, ruled in rosa. see .track.flawless for the drawing and why the cells
+     are left alone. */
+  const flaw = isFlawless(s) ? ' flawless' : '';
+  if(row) return `<span class="track dtrack${flaw}" aria-hidden="true">${out}</span>`;
   // the words the bar is a picture of. the figure beside it says how many are
   // clean or better and never which rungs made that up, so this is a reading
   // and not a restatement — see tierWords, which the day rows use the same way.
   const said=tierWords(s,' · ');
-  return `<span class="track" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
+  return `<span class="track${flaw}" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
 }
 /* ---- your last week of runs, on the card you open the day on ----
    the welcome card led on `1 day running` over a row of collection tiles, and
@@ -10469,8 +10631,20 @@ const rungsOf=tiers=>(typeof tiers==='string' && tiers)
    scoreParts already are for turns against par. `or better` is not padding: a
    perfect net is inside par too, so `8 of 10 clean` on one line and `2 clean` in
    the breakdown under it would read as a contradiction. */
-const rungText=g=>`${g.good} of ${g.of} clean or better`;
-const rungParts=g=>({fig:String(g.good), word:`of ${g.of} clean or better`});
+/* A FLAWLESS DAY SAYS SO, and `10 of 10 clean or better` is exactly the reading
+   that hides it — every rung above clean is folded into the same word, so the
+   best day the game can produce reads identically to ten scruffy passes inside
+   par. it is derived from the tally rather than passed in: `g.perfect===g.of`
+   is the same fact isFlawless reads off the letters, one layer up.
+   the figure is left alone in both. it is the count these rows are sorted and
+   compared on, and a day that swapped it for a word would be the one row in the
+   record with nothing to line up against its neighbours. */
+const flawlessDay=g=>g.of>0 && g.perfect===g.of;
+const rungText=g=>flawlessDay(g)
+  ? `flawless · all ${g.of} perfect`
+  : `${g.good} of ${g.of} clean or better`;
+const rungParts=g=>({fig:String(g.good),
+  word: flawlessDay(g) ? `of ${g.of} perfect · flawless` : `of ${g.of} clean or better`});
 
 /* WHAT PAYING ADDS, written once and read by everything that says it: the locked
    replay chip's tooltip, the press that answers it, and openDay's own refusal.
@@ -10895,7 +11069,7 @@ function openRecord(){
     +FKEYS.map(k=>{
       const b=badges[k];
       return b
-        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${b.tier}">${featIcon(k)}</span>`
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${b.tier}">${featIcon(k,b.tier)}</span>`
         : `<span class="fcell none" title="unidentified"><svg viewBox="0 0 96 96" role="img" aria-label="unidentified feature">`
           +`<g fill="none" stroke="currentColor" stroke-width="7"><path d="M30 30L66 66M66 30L30 66"/></g></svg></span>`;
     }).join('');
@@ -11059,6 +11233,17 @@ function openRecord(){
          one thing here a picture says better than a clause. it comes back the
          moment the bar cannot say it — no bar at all, or a bar that does not
          reach as far as the day did. */
+      /* THE ONE READING THE BAR CANNOT GIVE, and the deliberate exception to the
+         rule above that a played row says only what the bar cannot. the bar CAN
+         be read — ten gelb cells and the cut across them — but only against the
+         other rows, and on a record two days long there may be nothing to
+         compare it to. the word is absolute where the picture is relative.
+         it is also the rarest thing this column will ever print. `one run only`
+         was cut from here for leading 37 rows in 42; this leads a row on the
+         days a player takes all ten at the solver's own line, and says nothing
+         at all on every other. that is the opposite failure mode, which is the
+         one a detail column is for. */
+      if(isFlawless(row.tiers)) p.push('flawless');
       if(row.depth && row.depth<POLICY.dailyNets && barDepth<row.depth)
         p.push(row.depth+' of '+POLICY.dailyNets+' nets');
       if(!rd && row.moves!=null) p.push(row.moves+' turns');
