@@ -863,7 +863,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbweek{margin-top:12px;display:grid;gap:3px}
-  .wbday{display:grid;grid-template-columns:7px 70px minmax(0,1fr) 18px 48px;
+  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 18px 21px;
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          border:1px solid var(--rule);background:var(--surface);overflow:hidden;
          transition:border-color var(--t-ui)}
@@ -880,8 +880,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
           font-variant-numeric:tabular-nums}
   .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
   .wbday .dreplay.ghost{visibility:hidden}
-  .wbday .dstate{justify-self:end}
-  .wbday .dplay{height:21px;padding:0 6px;font-size:8.5px;letter-spacing:.04em}
+  .wbday .dplay{font-size:12px;line-height:1}
   .wbday[data-day]:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
   .wbday[data-day]:hover .dreplay.shut{color:var(--ink)}
   .wbspread:empty{display:none}
@@ -1510,7 +1509,7 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
 
 
 const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', flawless:'--rosa', par:'--tuerkis', over:'--violett'};
-const DAYSPINE=['--hellblau','--gruen','--orange'];
+const DAYSPINE=['--hellblau','--gruen','--dunkelblau','--orange'];
 const daySpine=d=>`var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})`;
 const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 const SETAHEAD='--rule';
@@ -4608,6 +4607,7 @@ function dayLabel(iso){
   const yr=d.getFullYear()!==new Date().getFullYear()?" '"+String(d.getFullYear()).slice(2):'';
   return `${WDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}${yr}`;
 }
+const dayLabelShort=iso=>dayLabel(iso).replace(/^\S+\s/,'');
 function dayRows(){
   const out=new Map();
   (store.collection.playedDays||[]).forEach(x=>{
@@ -5319,7 +5319,7 @@ function renderIntro(mode){
         ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true"`
           +` title="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
         : canPlayDay(d)
-        ? `<span class="dstate dplay" aria-hidden="true">play &rarr;</span>`
+        ? `<span class="dstate dreplay dplay" aria-hidden="true" title="play this day">&rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const rd=dayReading(row);
       const press=played||canPlayDay(d);
@@ -5329,7 +5329,7 @@ function renderIntro(mode){
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):'not played'}`
         +`${say?' · '+say:''}">`
         +`<i class="wbtier" style="--tc:${daySpine(d)}" aria-hidden="true"></i>`
-        +`<span class="wbwhen">${isNow?'today':dayLabel(d)}</span>`
+        +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
         +`<span class="wbmini">${played&&rd?rd.fig:''}</span>${chip}</div>`;
     }).join('');
