@@ -868,13 +868,21 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  .wbweek{margin-top:12px;display:grid;gap:4px}
+  .wbweek{margin-top:12px;display:grid;gap:4px;
+    max-height:206px;overflow-y:auto;overscroll-behavior:contain}
+  .wbweek{scrollbar-width:thin;scrollbar-color:var(--silver) transparent}
+  .wbweek::-webkit-scrollbar{width:5px}
+  .wbweek::-webkit-scrollbar-thumb{background:var(--silver)}
+  .wbweek::-webkit-scrollbar-track{background:transparent}
   .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 18px 21px;
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          overflow:hidden}
   .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
   .wbday .wbwhen{white-space:nowrap}
   .wbday.now .wbwhen{color:var(--ink)}
+  .wbday.shut .wbtier{background:var(--rule)}
+  .wbday.shut .wbwhen{color:var(--rule)}
+  .wbday.shut .track{opacity:.45}
   .wbday[data-day]{cursor:pointer}
   .wbday[data-day]:hover .wbwhen{color:var(--ink)}
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
@@ -4705,13 +4713,12 @@ function rungTrack(tiers,row){
   const said=tierWords(s,' · ');
   return `<span class="track${flaw}" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
 }
-const WEEK_DAYS=7;
-function weekList(){
+const MENU_CAP=730;
+function menuDays(){
   const by=new Map(dayRows().map(r=>[r.d,r]));
   const out=[];
-  for(let i=0;i<WEEK_DAYS;i++){
-    const d=dayAdd(today(),-i);
-    if(d<LAUNCH) break;          // a day before launch was drawn by a retired generator
+  let d=today();
+  for(let i=0;i<MENU_CAP && d>=LAUNCH;i++,d=dayAdd(d,-1)){
     out.push({d,row:by.get(d)||null});
   }
   return out;
@@ -5406,10 +5413,11 @@ function renderIntro(mode){
     const rows=dayRows();
     const perfect=rows.reduce((a,r)=>a+(typeof r.tiers==='string'
       ? r.tiers.slice(0,POLICY.dailyNets).split('p').length-1 : 0),0);
-    const week=weekList().map(({d,row})=>{
+    const week=menuDays().map(({d,row})=>{
       const played=!!(row && typeof row.tiers==='string' && row.tiers);
       const isNow=d===today();
       const can=played && canPlayDay(d);
+      const shut=isShut({d,row});
       const chip=played
         ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true"`
           +` title="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
@@ -5419,11 +5427,11 @@ function renderIntro(mode){
       const rd=dayReading(row);
       const press=played||canPlayDay(d);
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
-      return `<div class="wbday${isNow?' now':''}${played?'':' none'}"`
+      return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
         +(press?` role="button" tabindex="0" data-day="${d}"`:'')
-        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):'not played'}`
+        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'in the archive':'not played')}`
         +`${say?' · '+say:''}">`
-        +`<i class="wbtier" style="--tc:${daySpine(d)}" aria-hidden="true"></i>`
+        +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
         +`<span class="wbmini">${played&&rd?rd.fig:''}</span>${chip}</div>`;
@@ -5434,6 +5442,7 @@ function renderIntro(mode){
          <div class="intro-sub">untangle what a neural net knows</div>`
       : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
+    const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
     b.innerHTML=head
       +`<div class="wbstats">
         <div>${runSay}</div>
@@ -5476,6 +5485,7 @@ function renderIntro(mode){
         $('introveil').classList.remove('show'); return openDay(d) }
       flashMsg(`${dayLabel(d)} · ${replayWords()}`);
     };
+    $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
     $('introbody').querySelector('.wbweek').onclick=e=>{
       const row=e.target.closest('[data-day]');
       if(row) press(row.dataset.day);
