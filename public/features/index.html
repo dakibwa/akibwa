@@ -265,6 +265,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .tval:hover{opacity:.7}
   .btns{display:flex;gap:6px;align-self:center}
   .help[hidden]{display:none}
+  .help svg{width:22px;height:22px;display:block;flex:0 0 auto}
   .help{
     min-width:42px;height:34px;padding:0 9px;border:1px solid var(--silver);background:transparent;
     font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;
@@ -796,7 +797,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     font-size:10px;letter-spacing:.09em;color:var(--ink-soft);text-transform:lowercase}
   .track.dtrack{
-    flex:0 1 auto;width:240px;margin-left:16px;margin-top:0;min-width:120px;height:6px;
+    flex:0 1 auto;width:240px;margin-left:16px;margin-top:0;min-width:120px;height:10px;
     background:transparent;
   }
   .track.dtrack > i:not(.on){background:var(--rule)}
@@ -862,8 +863,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbweek{margin-top:12px;display:grid;gap:3px}
-  .wbday{display:grid;grid-template-columns:7px 74px minmax(0,1fr) 18px 21px;
-         gap:9px;align-items:center;padding:0 9px 0 0;min-height:28px;
+  .wbday{display:grid;grid-template-columns:7px 70px minmax(0,1fr) 18px 48px;
+         gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          border:1px solid var(--rule);background:var(--surface);overflow:hidden;
          transition:border-color var(--t-ui)}
   .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
@@ -879,6 +880,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
           font-variant-numeric:tabular-nums}
   .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
   .wbday .dreplay.ghost{visibility:hidden}
+  .wbday .dstate{justify-self:end}
+  .wbday .dplay{height:21px;padding:0 6px;font-size:8.5px;letter-spacing:.04em}
   .wbday[data-day]:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
   .wbday[data-day]:hover .dreplay.shut{color:var(--ink)}
   .wbspread:empty{display:none}
@@ -892,10 +895,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
+  .intro-doors #introbuy,.intro-doors .owned{margin-left:auto}
+  .intro-doors .owned{cursor:default}
+  .intro-doors .owned:hover{border-color:var(--silver);color:var(--ink-soft)}
+  .intro-doors .owned:active{transform:none}
   @media (max-width:340px){
     .intro-doors{gap:5px}
     .intro-doors .help{min-width:30px;padding:0 3px}
-    .intro-doors .help svg{width:22px;height:22px}
+    .intro-doors .help svg{width:18px;height:18px}
   }
 
   .toast{
@@ -976,7 +983,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .dayrow{gap:8px;padding-right:9px}
     .dayrow .ddate{width:64px;font-size:10px;letter-spacing:.04em}
     .dayrow .ddet{font-size:9.5px}
-    .track.dtrack{width:88px;min-width:80px;height:5px;margin-left:10px}
+    .track.dtrack{width:88px;min-width:80px;height:8px;margin-left:10px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:0}
@@ -5307,16 +5314,20 @@ function renderIntro(mode){
     const week=weekList().map(({d,row})=>{
       const played=!!(row && typeof row.tiers==='string' && row.tiers);
       const isNow=d===today();
-      const can=!isNow && played && canPlayDay(d);
-      const chip=!isNow && played
+      const can=played && canPlayDay(d);
+      const chip=played
         ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true"`
           +` title="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
+        : canPlayDay(d)
+        ? `<span class="dstate dplay" aria-hidden="true">play &rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const rd=dayReading(row);
+      const press=played||canPlayDay(d);
+      const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}"`
-        +(!isNow&&played?` role="button" tabindex="0" data-day="${d}"`:'')
+        +(press?` role="button" tabindex="0" data-day="${d}"`:'')
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):'not played'}`
-        +`${!isNow&&played?' · '+(can?'play again':replayWords()):''}">`
+        +`${say?' · '+say:''}">`
         +`<i class="wbtier" style="--tc:${daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabel(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
@@ -5360,12 +5371,18 @@ function renderIntro(mode){
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6">`
       +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
       +`</g></svg></button>`
-      +(canBuy()&&!POLICY.premium?`<button class="help" id="introbuy" title="the full version" aria-label="the full version">`
-        +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
-        +`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>`:'')
       +`<button class="help" id="introrules" title="how to play" aria-label="how to play">?</button>`
       +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
       +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
+      +(POLICY.premium
+        ? `<span class="help owned" id="introowned" role="img" title="the full version · yours" aria-label="the full version · yours">`
+          +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+          +`<path d="M8 12l3 3 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>`
+        : canBuy()
+        ? `<button class="help" id="introbuy" title="the full version" aria-label="the full version">`
+          +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+          +`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>`
+        : '')
       +`</div>`;
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
