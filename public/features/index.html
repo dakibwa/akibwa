@@ -872,7 +872,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
   .wbmini{flex:0 0 18px;text-align:right;font-size:11.5px;color:var(--ink-soft);
           font-variant-numeric:tabular-nums}
-  .intro-hook{margin-top:9px;color:var(--ink-soft)}
   .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
   .wbday .dreplay.ghost{visibility:hidden}
   .wbday[data-day]:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
@@ -888,6 +887,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-alt:hover{background:var(--sig-violett);border-color:var(--sig-violett);color:#fff}
   .intro-alt.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-alt.shut:hover{background:transparent;border-color:var(--silver);color:var(--ink)}
+  .intro-doors{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .intro-doors .help{flex:0 0 auto}
 
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
@@ -5275,8 +5276,7 @@ function renderIntro(mode){
     const head=fresh
       ? `<div class="intro-title">${WORDMARK}</div>
          <div class="intro-sub">untangle what a neural net knows</div>
-         <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>
-         <p class="intro-lead intro-hook">pull them apart. free one and it draws itself, and tells you its name.</p>`
+         <p class="intro-lead">it learned a few things and stored them all on top of each other.</p>`
       : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
     b.innerHTML=head
@@ -5289,9 +5289,27 @@ function renderIntro(mode){
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>
       <button class="intro-start intro-alt${canTimeTrial()?'':' shut'}" id="introtrial">time trial ⏱</button>`
-      +(fresh?'':`<button class="intro-start intro-alt" id="introlessons">`
-        +`the three lessons again</button>`)
-      ;
+      +`<div class="intro-doors">`
+      +(fresh?'':`<button class="help" id="introlessons" title="the guided nets · the three lessons again" aria-label="the guided nets">`
+        +`<svg viewBox="0 0 24 24" aria-hidden="true">`
+        +`<circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+        +`<circle cx="12" cy="12" r="1.8" fill="currentColor"/>`
+        +`<g fill="none" stroke="currentColor" stroke-width="1.5">`
+        +`<path d="M4.8 4.8l2.6 2.6M19.2 4.8l-2.6 2.6M4.8 19.2l2.6-2.6M19.2 19.2l-2.6-2.6"/>`
+        +`</g></svg></button>`)
+      +`<button class="help" id="introcoll" title="the collection · every feature you have named" aria-label="the collection">`
+      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
+      +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
+      +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
+      +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
+      +`</g></svg></button>`
+      +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
+      +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
+      +(canBuy()&&!POLICY.premium?`<button class="help" id="introbuy" title="the full version" aria-label="the full version">`
+        +`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+        +`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>`:'')
+      +`<button class="help" id="introrules" title="how to play" aria-label="how to play">?</button>`
+      +`</div>`;
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
@@ -5317,6 +5335,9 @@ function renderIntro(mode){
     startTrialRun();
   };
   if($('introlessons')) $('introlessons').onclick=()=>startLessons();
+  if($('introcoll')) $('introcoll').onclick=()=>{ recView='collection'; hideVeils(); openRecord() };
+  if($('introbuy')) $('introbuy').onclick=()=>beginUnlock();
+  if($('introrules')) $('introrules').onclick=()=>renderIntro('rules');
 }
 function startLessons(){
   const r=R();
@@ -5333,8 +5354,11 @@ function startLessons(){
 $('helpbtn').onclick=()=>{renderIntro('rules'); showVeil('introveil')};
 $('collbtn').onclick=()=>{ recView='collection'; hideVeils(); openRecord() };
 $('buybtn').onclick=()=>beginUnlock();
-document.querySelectorAll('.groundbtn').forEach(b=>{
-  b.onclick=e=>{ e.preventDefault(); setTheme(themeNow()==='light'?'dark':'light') };
+addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('.groundbtn');
+  if(!b) return;
+  e.preventDefault();
+  setTheme(themeNow()==='light'?'dark':'light');
 });
 if(DEV){
   $('solvebtn').hidden=false;
