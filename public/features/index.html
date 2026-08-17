@@ -1528,7 +1528,7 @@ function featureStamp(k,tier,locked){
       +`<path d="M24 0L0 24" fill="none" stroke="var(--sig-rosa)" stroke-width="3.5"/>`
     : '';
   const cancel=locked?'':`<g fill="none" stroke="${mk}" stroke-width="2" opacity=".45"><circle cx="88" cy="34" r="17"/><path d="M72 28H108M72 34H108M72 40H108"/></g>`;
-  return `<svg class="feature-stamp" viewBox="0 0 120 134" role="img" aria-label="${locked?'unidentified feature':k+' feature · '+tier}" style="--emblem:var(${locked?'--rule':d.c});--tier:var(${tierCol})">
+  return `<svg class="feature-stamp" viewBox="0 0 120 134" role="img" aria-label="${locked?'unidentified feature':k+' feature · '+tierSay(tier)}" style="--emblem:var(${locked?'--rule':d.c});--tier:var(${tierCol})">
     <rect x="4" y="4" width="112" height="126" fill="var(--stamp)" stroke="var(--stamp-edge)"/>
     <g fill="var(--surface)">${PERF_X}${PERF_Y}</g>
     <rect x="12" y="12" width="96" height="96" fill="var(--emblem)"/>
@@ -4521,7 +4521,7 @@ function showNetCleared(feats,tier,wasTutorial,read){
     `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
     strip:TIERCOL[tier],
-    title:tier,
+    title:tierSay(tier),
     sub:(wasTutorial?'you untangled it':'net cleared')
         +(read.assisted?' · settled with descent':''),
     num:String(read.num).padStart(2,'0'),
@@ -4686,6 +4686,8 @@ const archiveCount=()=>{
   return n;
 };
 const TIEROF={p:'perfect', c:'clean', d:'done'};
+const TIERSAY={done:'resolved'};
+const tierSay=t=>TIERSAY[t]||t;
 const isFlawless=tiers=>typeof tiers==='string'
   && tiers.length>=POLICY.dailyNets
   && [...tiers.slice(0,POLICY.dailyNets)].every(ch=>ch==='p');
@@ -4717,7 +4719,7 @@ function tierWords(tiers,sep){
   return g?rungWords(g,sep):'';
 }
 function rungWords(g,sep){
-  return ['perfect','clean','done'].filter(t=>g[t]).map(t=>g[t]+' '+t).join(sep||', ');
+  return ['perfect','clean','done'].filter(t=>g[t]).map(t=>g[t]+' '+tierSay(t)).join(sep||', ');
 }
 
 const RUNGOF={perfect:'perfect', clean:'clean', par:'clean', done:'done', over:'done'};
@@ -4864,7 +4866,7 @@ function openRecord(){
     +FKEYS.map(k=>{
       const b=badges[k];
       return b
-        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${b.tier}">${featIcon(k,b.tier)}</span>`
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${tierSay(b.tier)}">${featIcon(k,b.tier)}</span>`
         : `<span class="fcell none" title="unidentified"><svg viewBox="0 0 96 96" role="img" aria-label="unidentified feature">`
           +`<g fill="none" stroke="currentColor" stroke-width="7"><path d="M30 30L66 66M66 30L30 66"/></g></svg></span>`;
     }).join('');
@@ -4914,7 +4916,7 @@ function openRecord(){
       +`<span class="ddet">${det}</span>`
       +right;
     const words=played?tierWords(row.tiers):'';
-    const label=[dayLabel(d), det, played&&tier?tier:'', words,
+    const label=[dayLabel(d), det, played&&tier?tierSay(tier):'', words,
                  played?(canPlay?'play again':replayWords()):''].filter(Boolean).join(' · ');
     el.setAttribute('aria-label',label);
     const offer=()=>openDay(d);
@@ -5155,8 +5157,8 @@ function shareCardSVG(){
     const kh=Math.round(KH*SHAREFILL[name]);
     const g=`<rect x="${kx}" y="${LY-KH}" width="${KW}" height="${KH}" fill="none" stroke="${PLATEINK}" stroke-opacity=".3"/>`
       +`<rect x="${kx}" y="${LY-kh}" width="${KW}" height="${kh}" fill="${cssv(TIERCOL[name])}"/>`
-      +`<text x="${kx+KW+13}" y="${LY-4}" font-size="14" letter-spacing="2" fill-opacity=".8">${name}</text>`;
-    kx+=KW+13+name.length*9.3+22;
+      +`<text x="${kx+KW+13}" y="${LY-4}" font-size="14" letter-spacing="2" fill-opacity=".8">${tierSay(name)}</text>`;
+    kx+=KW+13+tierSay(name).length*9.3+22;
     return g;
   }).join('');
   const note=isTrial() ? 'time trial'
@@ -5367,7 +5369,7 @@ function rungLadder(){
   return `<div class="rladder">
     <span class="track" aria-hidden="true">${
       rungs.map(t=>`<i class="on${t==='flawless'?' flaw':''}" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
-    <span class="rlnames">${rungs.map(t=>`<i>${t}</i>`).join('')}</span>
+    <span class="rlnames">${rungs.map(t=>`<i>${tierSay(t)}</i>`).join('')}</span>
   </div>`;
 }
 let introMode='day';
