@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>features</title>
-<meta http-equiv="cache-control" content="no-store">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -441,7 +440,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .play{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column}
   .coach{
     display:none;position:absolute;top:16px;left:50%;transform:translateX(-50%);
-    width:min(440px,calc(100% - 40px));background:var(--surface);
+    width:max-content;
+    min-width:min(300px,calc(100% - 40px));
+    max-width:min(440px,calc(100% - 40px));background:var(--surface);
     border:1px solid var(--silver);box-shadow:var(--shadow-float);z-index:6;
     -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
   }
@@ -768,6 +769,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-check{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45}
   .acct-check input{appearance:auto;accent-color:var(--sig-blau);margin:2px 0 0;flex:0 0 auto;width:14px;height:14px}
   .acct-check span{min-width:0}
+  .acct-sec{display:flex;flex-direction:column;gap:9px}
+  .acct-sec + .acct-sec{padding-top:13px;border-top:1px solid var(--rule)}
+  .acct-lab{font-size:9px;letter-spacing:.16em;color:var(--ink-soft);text-transform:lowercase}
   .acct-foot{display:flex;align-items:center;gap:12px;padding-top:3px;border-top:1px solid var(--rule);margin-top:2px}
   .acct-foot .acctlink{margin-left:0;padding-top:10px}
   .acct-foot .acctlink.last{margin-left:auto}
@@ -869,9 +873,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbweek::-webkit-scrollbar{width:5px}
   .wbweek::-webkit-scrollbar-thumb{background:var(--silver)}
   .wbweek::-webkit-scrollbar-track{background:transparent}
-  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 18px 21px;
+  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 18px 48px;
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          overflow:hidden}
+  .wbchips{display:flex;gap:6px;justify-content:flex-end}
+  .wbday .dtrial{padding:0;background:transparent;color:inherit;font:inherit;
+    -webkit-appearance:none;appearance:none}
+  .wbday .dtrial svg{width:15px;height:15px;display:block}
   .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
   .wbday .wbwhen{white-space:nowrap}
   .wbday.now .wbwhen{color:var(--ink)}
@@ -913,6 +921,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .intro-doors{gap:5px}
     .intro-doors .help{min-width:30px;padding:0 3px}
     .intro-doors .help svg{width:18px;height:18px}
+    .wbday{grid-template-columns:7px 44px minmax(0,1fr) 0 48px}
+    .wbmini{display:none}
   }
 
   .toast{
@@ -997,7 +1007,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:0}
-    .coach{top:10px;width:calc(100% - 20px)}
+    .coach{top:10px;min-width:min(280px,calc(100% - 20px));max-width:calc(100% - 20px)}
     .sayrow{gap:11px;padding:10px 12px}
     .sayline{font-size:13px}
     .sayline.big{font-size:21px}
@@ -1330,7 +1340,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   <section class="acct-card">
     <div class="rec-head">
       <strong class="rec-title" id="accttitle">your account</strong>
-      <span class="rec-right"><a href="#" class="rec-close" id="acctclose">close &times;</a></span>
+      <!-- a cross and nothing else, which is what `.rec-close` is sized for: it is a
+           34px square built round one glyph, so the word `close` inside it overflowed
+           the box and printed across the title. the record's own cross lost the word
+           for the same reason — see the note there. -->
+      <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close" title="close">&times;</a></span>
     </div>
     <div class="acct-body" id="acctbody"></div>
   </section>
@@ -1730,11 +1744,12 @@ function canResume(){
   return !!store.parked ||
          (R().paused && !isTrial() && R().cleared.length<POLICY.dailyNets);
 }
-function startTrialRun(){
+const startDayTrial=d=>startTrialRun(d);
+function startTrialRun(day){
   if(!canTimeTrial()) return offerFull('time trial');
   const cur=R();
   if(cur && cur.mode!=='trial' && !cur.archive && cur.cleared.length<POLICY.dailyNets) store.parked=cur;
-  newRun('trial');
+  newRun('trial',day);
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
   flashMsg('time trial · the net is still training. clear nets before it out-tangles you.',
@@ -1906,9 +1921,8 @@ const closeAccount=()=>{ $('acctveil').classList.remove('show');
 
 function afterSignIn(){
   if(!account||!account.signedIn) return;
-  const noName=!account.nickname;
   const unasked=account.mail && !account.dailyEmail && !store.askedDaily;
-  if(!noName && !unasked) return;
+  if(!unasked) return;
   if(document.querySelector('.veil.show')) return;   // never on top of another card
   openAccount('hello');
 }
@@ -1956,46 +1970,59 @@ function renderAcct(){
 
   if(!signedIn){ closeAccount(); return }
 
-  const nick=account.nickname||'';
   const mail=account.email||'';
   const canMail=!!account.mail;
 
   if(acctMode==='hello'){
-    title.textContent='hello';
+    title.textContent='the daily';
     body.innerHTML=err
-      +`<div class="acct-ask">what do you want to be called?</div>`
-      +`<input class="acct-field" id="acctnick" type="text" maxlength="40" autocomplete="nickname"
-              placeholder="anything you like" value="${esc(nick)}">`
-      +(canMail?`<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
-        +`<span>send me the daily · one line each morning when the day's ten are up${
-            mail&&account.emailOk?` · to ${esc(mail)}`:''}</span></label>`
+      +(canMail?`<div class="acct-ask">one line each morning, when the day's ten are up.</div>`
+        +`<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
+        +`<span>send me the daily${mail&&account.emailOk?` · to ${esc(mail)}`:''}</span></label>`
         +(mail&&account.emailOk?'':`<input class="acct-field" id="acctaddr" type="email" inputmode="email"
               autocomplete="email" spellcheck="false" placeholder="where to send it" value="${esc(mail)}">`)
-      :'')
+      :`<div class="acct-ask">this deployment cannot send mail, so there is nothing to ask you.</div>`)
       +`<div class="acct-row">${acctBtn('acctdone',acctBusy?'saving…':'done',true)}`
       +`<a href="#" class="acctlink" id="acctskip">not now</a></div>`
-      +`<div class="acct-note">both are optional and both can change later, from the foot of the record.</div>`;
+      +`<div class="acct-note">optional, and it changes later from the foot of the record.</div>`;
     $('acctdone').onclick=()=>saveHello();
     $('acctskip').onclick=e=>{e.preventDefault();store.askedDaily=true;save();closeAccount()};
-    $('acctnick').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();saveHello()} };
-    setTimeout(()=>$('acctnick')&&!nick&&$('acctnick').focus(),40);
     return;
   }
 
   title.textContent='your account';
+  const idLine = mail
+    ? `<b>${esc(mail)}</b>${account.emailOk?'':' · not confirmed'}`
+    : `signed in with ${esc(account.provider||'a linked account')}`;
   body.innerHTML=err
-    +`<div class="acct-ask">what do you want to be called?</div>`
-    +`<input class="acct-field" id="acctnick" type="text" maxlength="40" placeholder="anything you like" value="${esc(nick)}">`
-    +(canMail
-      ? `<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
-        +`<span>send me the daily · one line each morning</span></label>`
-        +`<input class="acct-field" id="acctaddr" type="email" inputmode="email" spellcheck="false"
-                placeholder="where to send it" value="${esc(mail)}">`
+    +`<div class="acct-sec">`
+      +`<div class="acct-lab">who you are</div>`
+      +`<div class="acct-ask">${idLine}</div>`
+      +`<input class="acct-field" id="acctaddr" type="email" inputmode="email" spellcheck="false"
+              autocomplete="email" placeholder="${mail?'a different address':'add an address'}" value="">`
+      +`<div class="acct-note">this is what signs you in, and it is the only thing the record is held under.`
         +(mail&&!account.emailOk
-          ? `<div class="acct-note">that address is not confirmed yet, so nothing is sent to it.
-               <a href="#" class="acctlink" id="acctconfirm" style="margin-left:0">send a code</a></div>`
-          : '')
-      : `<div class="acct-note">this deployment cannot send mail, so there is no daily to offer.</div>`)
+          ? ` it is not confirmed yet. <a href="#" class="acctlink" id="acctconfirm" style="margin-left:0">send a code</a>`
+          : ' change it and the next code goes to the new one.')
+      +`</div>`
+    +`</div>`
+    +`<div class="acct-sec">`
+      +`<div class="acct-lab">the daily</div>`
+      +(canMail
+        ? `<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
+          +`<span>one line each morning, when the day's ten are up</span></label>`
+          +`<div class="acct-note">it goes to the address above, once that address is confirmed. one link in it turns it off again.</div>`
+        : `<div class="acct-note">this deployment cannot send mail, so there is no daily to offer.</div>`)
+    +`</div>`
+    +`<div class="acct-sec">`
+      +`<div class="acct-lab">the full version</div>`
+      +`<div class="acct-ask">${POLICY.premium
+          ? 'yours · the archive, the replay and the time trial'
+          : 'not yours yet · the archive, the replay and the time trial'}</div>`
+      +`<div class="acct-note">${POLICY.premium
+          ? 'it rides on this account, so it follows you to any device you sign in on.'
+          : 'buying it here is once only, and signing in is what carries it between devices.'}</div>`
+    +`</div>`
     +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
     +`<div class="acct-foot">`
       +`<a href="#" class="acctlink" id="acctout2">sign out</a>`
@@ -2008,7 +2035,9 @@ function renderAcct(){
   $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
   $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
   if($('acctconfirm')) $('acctconfirm').onclick=e=>{
-    e.preventDefault(); acctEmail=$('acctaddr').value.trim(); acctMode='email'; renderAcct();
+    e.preventDefault();
+    acctEmail=(($('acctaddr')&&$('acctaddr').value.trim())||mail);
+    acctMode='email'; renderAcct();
   };
 }
 
@@ -2042,13 +2071,12 @@ async function verifyCode(){
 async function saveHello(stay){
   if(acctBusy) return;
   const patch={tzOffset:new Date().getTimezoneOffset()};
-  const nick=$('acctnick'); if(nick) patch.nickname=nick.value.trim();
   const addr=$('acctaddr'); const daily=$('acctdaily');
   const wantDaily=!!(daily&&daily.checked);
   const typed=addr?addr.value.trim().toLowerCase():'';
   acctBusy=true; acctErr=''; renderAcct();
   try{
-    if(addr && typed!==(account.email||'')){
+    if(addr && typed && typed!==(account.email||'')){
       await saveProfile({email:typed});
       if(wantDaily && !account.emailOk){
         acctBusy=false; store.askedDaily=true; save();
@@ -4829,7 +4857,7 @@ function renderAccount(){
   const link=(id,text,label)=>`<a href="#" class="acctlink" id="${id}" aria-label="${label}">${text}</a>`;
 
   if(account&&account.signedIn){
-    const who=account.nickname||account.email||('your '+(account.provider||'')+' account').trim();
+    const who=account.email||('your '+(account.provider||'')+' account').trim();
     const state=syncSay==='saving' ? '<span class="acct-state">saving</span>'
               : syncSay==='offline' ? '<span class="acct-state">offline · will send later</span>'
               : syncSay==='saved' ? '<span class="acct-state">saved</span>' : '';
@@ -5420,6 +5448,14 @@ function renderIntro(mode){
         : canPlayDay(d)
         ? `<span class="dstate dreplay dplay" aria-hidden="true" title="play this day">&rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
+      const trialable=played||canPlayDay(d);
+      const trialChip=trialable
+        ? `<button class="dstate dreplay dtrial${canTimeTrial()?'':' shut'}" data-trial="${d}"`
+          +` title="${esc(canTimeTrial()?'play this day as a time trial':'the time trial is part of the full version')}"`
+          +` aria-label="time trial · ${dayLabel(d)}">`
+          +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
+          +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/></g></svg></button>`
+        : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const rd=dayReading(row);
       const press=played||canPlayDay(d);
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
@@ -5430,7 +5466,8 @@ function renderIntro(mode){
         +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
-        +`<span class="wbmini">${played&&rd?rd.fig:''}</span>${chip}</div>`;
+        +`<span class="wbmini">${played&&rd?rd.fig:''}</span>`
+        +`<span class="wbchips">${chip}${trialChip}</span></div>`;
     }).join('');
     const firstDay = !fresh && !rows.length;
     const head=fresh
@@ -5461,10 +5498,6 @@ function renderIntro(mode){
       +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
       +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
       +`</g></svg></button>`
-      +`<button class="help${canTimeTrial()?'':' shut'}" id="introtrial" title="time trial · one net after another until it out-tangles you" aria-label="time trial">`
-      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6">`
-      +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
-      +`</g></svg></button>`
       +`<button class="help" id="introrules" title="how to play" aria-label="how to play">?</button>`
       +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
       +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
@@ -5478,6 +5511,8 @@ function renderIntro(mode){
     };
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
     $('introbody').querySelector('.wbweek').onclick=e=>{
+      const t=e.target.closest('[data-trial]');
+      if(t){ e.stopPropagation(); return startDayTrial(t.dataset.trial) }
       const row=e.target.closest('[data-day]');
       if(row) press(row.dataset.day);
     };
@@ -5492,12 +5527,6 @@ function renderIntro(mode){
     if(introMode==='rules' && fromCard) return backToCard();
     store.introSeen=true; store.lastIntroDay=today(); save();
     $('introveil').classList.remove('show');
-  };
-  if($('introtrial')) $('introtrial').onclick=()=>{
-    fromCard=true;
-    if(startTrialRun()!==true) return;
-    fromCard=false;
-    store.introSeen=true; store.lastIntroDay=today(); save();
   };
   if($('introlessons')) $('introlessons').onclick=()=>startLessons();
   if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
