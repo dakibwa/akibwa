@@ -15,13 +15,13 @@ Akibwa does not yet need to identify visitors. It needs to learn whether clear p
 | Attention | `professional_view` | Optional future aggregate instrumentation records a view of `/professional`. | Aggregate daily route counter only. | IP, user agent, referrer detail, cookie, identity, session trail. |
 | Intent | `contact_click` | Optional future aggregate instrumentation records a move from Professional to Contact. | Aggregate daily event counter only. | Visitor identity or cross-page profile. |
 | Intent | `diagnostic_download` | A future public diagnostic is actually downloaded. Do not record this event until that asset exists. | Aggregate daily asset counter only. | Identity, document fingerprint, or follow-on tracking. |
-| Targeting | `outreach_sent` | Dan sends one personalised message to an approved target. | Private local lead log; weekly aggregate in Notion. | Name, contact details, or message body in Notion/public repo. |
-| Response | `reply_received` | The person sends a substantive reply, positive or negative. | Private local lead log; weekly aggregate in Notion. | Message text, private context, or inferred sentiment. |
+| Targeting | `outreach_sent` | Dan sends one personalised message to an approved target. | Private local lead log; weekly aggregate. | Name, contact details, or message body in the aggregate or a public repo. |
+| Response | `reply_received` | The person sends a substantive reply, positive or negative. | Private local lead log; weekly aggregate. | Message text, private context, or inferred sentiment. |
 | Conversation | `triage_booked` | A short workflow triage is scheduled. | Private local lead log; aggregate count. | Calendar notes or attendee details in public/aggregate surfaces. |
 | Conversation | `triage_held` | The triage takes place. | Private local lead log; aggregate count. | Call transcript, raw notes, business data, or private identifiers. |
 | Paid diagnosis | `teardown_proposed` | A fixed-scope paid teardown is offered in writing. | Proposal ID and aggregate count. | Proposal contents or client identity outside the private folder. |
-| Paid diagnosis | `teardown_paid` | Payment for a teardown is received or contractually confirmed. | Private invoice/proposal record; aggregate count and value band if useful. | Bank data, invoice number, address, tax ID, or exact payment detail in Notion. |
-| Build | `prototype_proposed` | A bounded prototype proposal is sent. | Proposal ID and aggregate count. | Private proposal text in Notion/public repo. |
+| Paid diagnosis | `teardown_paid` | Payment for a teardown is received or contractually confirmed. | Private invoice/proposal record; aggregate count and value band if useful. | Bank data, invoice number, address, tax ID, or exact payment detail in the aggregate. |
+| Build | `prototype_proposed` | A bounded prototype proposal is sent. | Proposal ID and aggregate count. | Private proposal text in the aggregate or a public repo. |
 | Build | `paid_pilot` | A prototype or implementation pilot is accepted and paid/contracted. | Private contract/invoice record; aggregate count. | Client-sensitive delivery data or credentials. |
 | Outcome | `closed_lost` | The opportunity is explicitly declined, not pursued, or inactive after the agreed follow-up. | Opaque reason code in private log. | Blame, speculative personal notes, or copied messages. |
 
@@ -43,7 +43,7 @@ Site attention metrics are optional context. They should not be allowed to repla
 
 ## Phase 1: manual operating log
 
-Keep the detailed lead log in a private local file or private system. Give each lead an opaque ID such as `L-001`; keep the name-to-ID mapping in that same private location, not in Notion or this repo.
+Keep the detailed lead log in a private local file or private system. Give each lead an opaque ID such as `L-001`; keep the name-to-ID mapping in that same private location, not in the aggregate or this repo.
 
 Recommended event-log columns:
 
@@ -62,9 +62,9 @@ Do not put free-text notes, names, email addresses, company-private information,
 
 Keep working notes separately per active lead, with the minimum private detail required to do the work. Delete or archive notes when they are no longer operationally needed.
 
-## Notion aggregate
+## The weekly aggregate
 
-Notion should show the health of the funnel, not become a contact database. Record one weekly row or a compact weekly update with:
+The aggregate should show the health of the funnel, not become a contact database. Keep it in a private local file. Record one weekly row with:
 
 ```text
 week_start
@@ -145,7 +145,7 @@ This document is a measurement plan, not legal advice. The implementation packet
 ## Separate implementation tickets
 
 1. Create the private local lead event log and a weekly aggregate export.
-2. Add the aggregate funnel fields to the visible Project Control or Notion review surface.
+2. Add the aggregate funnel fields to the private weekly aggregate file.
 3. Decide whether a public diagnostic asset exists and what `diagnostic_download` would mean.
 4. Only if justified, build the bounded first-party aggregate Worker and add public disclosure.
 5. Review retention and privacy requirements before enabling any live site event.
