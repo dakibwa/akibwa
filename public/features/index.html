@@ -147,7 +147,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     --hover-lift:brightness(.98) drop-shadow(0 1px 4px rgba(20,24,28,.22));
     --sig-hellblau:#2294CC;
     --sig-gruen:#1E9F57;
-    --sig-gelb:#C99A0F;
+    --sig-gelb:#E0AC08;
     --sig-orange:#D37114;
     --sig-dunkelblau:var(--dunkelblau);   /* 5.16:1 on paper already */
     --sig-violett:#5F4E92;
@@ -1434,7 +1434,138 @@ const FEATURES={
   gravity:{c:'--orange',p:`<path d="M4 16H92V28H76L48 56 20 28H4Z"/><circle cx="48" cy="54" r="20"/>`},
   tiles:{c:'--hellblau',p:`<path d="M2 2H94V94H2ZM10 86H86V10H10Z"/><path d="M14 14H82V82H14Z"/><g fill="var(--emblem)"><path d="M29 14A19 19 0 0 0 67 14ZM82 29A19 19 0 0 0 82 67ZM67 82A19 19 0 0 0 29 82ZM14 67A19 19 0 0 0 14 29Z"/></g>`}
 };
-const FKEYS=Object.keys(FEATURES);
+const FIGURES={
+  edge:{n:3,c:'--hellblau',p:[[-1.2247,0],[0,0],[1.2247,0]]},
+  bend:{n:3,c:'--hellblau',p:[[-1.1634,-0.3039],[0.1259,-0.3039],[1.0375,0.6078]]},
+  arc:{n:4,c:'--gruen',p:[[-1.1156,-0.6101],[-0.1047,-0.6101],[0.6101,0.1047],[0.6101,1.1156]]},
+  elbow:{n:4,c:'--gruen',p:[[-1.1991,-0.4967],[-0.2625,-0.4967],[0.3997,0.1656],[1.0619,0.8278]]},
+  hook:{n:4,c:'--gruen',p:[[-1.3362,-0.1656],[-0.3997,-0.1656],[0.5368,-0.1656],[1.1991,0.4967]]},
+  crook:{n:4,c:'--gruen',p:[[-0.489,0.1807],[0.7445,0.1807],[0.7445,-1.0529],[-1,0.6916]]},
+  delta:{n:4,c:'--gruen',p:[[-0.0525,-0.5593],[1.1711,-0.5593],[-0.5593,1.1711],[-0.5593,-0.0525]]},
+  scroll:{n:5,c:'--gelb',p:[[-0.9836,-0.8229],[-0.1802,-0.8229],[0.3879,-0.2548],[0.3879,0.5486],[0.3879,1.3521]]},
+  wave:{n:5,c:'--gelb',p:[[-1.3377,-0.4286],[-0.5801,-0.4286],[-0.0444,0.1071],[0.7132,0.1071],[1.2489,0.6429]]},
+  shelf:{n:5,c:'--gelb',p:[[-1.4076,-0.2115],[-0.66,-0.2115],[0.0876,-0.2115],[0.6162,0.3172],[1.3639,0.3172]]},
+  drift:{n:5,c:'--gelb',p:[[-1.4037,-0.2249],[-0.6087,-0.2249],[-0.0466,0.3373],[0.7484,0.3373],[1.3106,-0.2249]]},
+  bow:{n:5,c:'--gelb',p:[[-0.9464,-0.844],[-0.0724,-0.844],[0.5456,-0.226],[0.5456,0.648],[-0.0724,1.266]]},
+  bolt:{n:5,c:'--gelb',p:[[-0.5224,-0.2523],[1.2613,-0.2523],[0,1.009],[-1.2613,-0.2523],[0.5224,-0.2523]]},
+  hinge:{n:5,c:'--gelb',p:[[-0.5498,0.1436],[0.4657,0.1436],[1.1838,-0.5745],[0.1683,-0.5745],[-1.2679,0.8617]]},
+  knot:{n:5,c:'--gelb',p:[[-0.4321,-0.7972],[0.7972,-0.7972],[-0.9412,0.9412],[0.288,0.9412],[0.288,-0.288]]},
+  coil:{n:6,c:'--violett',p:[[-0.7045,-0.9813],[0.0362,-0.9813],[0.5599,-0.4576],[0.5599,0.283],[0.0362,0.8067],[-0.4876,1.3305]]},
+  rule:{n:6,c:'--violett',p:[[-1.4771,-0.071],[-0.8745,-0.071],[-0.2719,-0.071],[0.3307,-0.071],[0.9333,-0.071],[1.3594,0.3551]]},
+  crest:{n:6,c:'--violett',p:[[-1.2855,-0.596],[-0.5449,-0.596],[0.1958,-0.596],[0.7195,-0.0723],[0.7195,0.6683],[0.1958,1.192]]},
+  crank:{n:6,c:'--violett',p:[[-1.0722,-0.8567],[-0.4256,-0.8567],[0.0316,-0.3995],[0.0316,0.2471],[0.4888,0.7043],[0.946,1.1615]]},
+  slope:{n:6,c:'--violett',p:[[-1.4669,-0.264],[-0.8108,-0.264],[-0.1546,-0.264],[0.5015,-0.264],[0.9654,0.1999],[0.9654,0.8561]]},
+  stair:{n:6,c:'--violett',p:[[-1.0722,-0.8567],[-0.4256,-0.8567],[0.0316,-0.3995],[0.4888,0.0577],[0.4888,0.7043],[0.4888,1.3509]]},
+  bracket:{n:6,c:'--violett',p:[[-1.2722,-0.6548],[-0.6548,-0.6548],[-0.2183,-0.2183],[0.2183,0.2183],[0.6548,0.6548],[1.2722,0.6548]]},
+  ripple:{n:6,c:'--violett',p:[[-1.4541,-0.1553],[-0.7953,-0.1553],[-0.3294,0.3106],[0.3294,0.3106],[0.7953,-0.1553],[1.4541,-0.1553]]},
+  angle:{n:6,c:'--violett',p:[[-1.0084,-0.6759],[-0.0897,-0.6759],[0.829,-0.6759],[0.829,0.2428],[0.1794,0.8924],[-0.7393,0.8924]]},
+  zed:{n:6,c:'--violett',p:[[-0.5455,0.341],[1.3836,0.341],[0.0195,-1.0231],[-1.3446,0.341],[0.5845,0.341],[-0.0975,-0.341]]},
+  staple:{n:6,c:'--violett',p:[[-0.6712,0],[0.3356,0],[1.0475,-0.7119],[0.0407,-0.7119],[-1.3831,0.7119],[0.6305,0.7119]]},
+  trap:{n:6,c:'--violett',p:[[-0.6119,-0.8212],[1.0788,-0.8212],[-0.1167,0.3743],[-0.1167,1.2197],[-0.7145,0.622],[0.4811,-0.5736]]},
+  flag:{n:6,c:'--violett',p:[[-0.7826,-0.7005],[0.4062,-0.7005],[1.2468,0.1401],[-1.1308,0.1401],[-0.2902,0.9807],[0.5505,0.1401]]},
+  comb:{n:6,c:'--violett',p:[[-1.1941,-0.4187],[-0.0099,-0.4187],[-0.8472,0.4187],[1.5211,0.4187],[0.6837,-0.4187],[-0.1536,0.4187]]},
+  meander:{n:7,c:'--tuerkis',p:[[-1.4683,-0.1494],[-0.8557,-0.1494],[-0.4226,-0.5826],[0.0106,-0.1494],[0.6232,-0.1494],[1.0564,0.2838],[1.0564,0.8964]]},
+  mast:{n:7,c:'--tuerkis',p:[[-0.903,-1.0125],[-0.2859,-1.0125],[0.1505,-0.5762],[0.5869,-0.1398],[0.1505,0.2966],[0.1505,0.9137],[0.1505,1.5308]]},
+  loop:{n:7,c:'--tuerkis',p:[[-0.7721,-0.6773],[0.1036,-0.6773],[0.9793,-0.6773],[0.9793,0.1984],[0.3601,0.8176],[-0.5156,0.8176],[-1.1348,0.1984]]},
+  latch:{n:7,c:'--tuerkis',p:[[-1.1196,0.941],[-0.4944,0.941],[-0.0523,0.4989],[-0.0523,-0.1263],[-0.0523,-0.7515],[0.5729,-0.7515],[1.1981,-0.7515]]},
+  stream:{n:7,c:'--tuerkis',p:[[-1.5112,0.0531],[-0.8761,0.0531],[-0.427,0.5022],[0.208,0.5022],[0.6571,0.0531],[0.6571,-0.5819],[1.2921,-0.5819]]},
+  curve:{n:7,c:'--tuerkis',p:[[-1.4772,-0.1277],[-0.7855,-0.1277],[-0.2964,-0.6168],[0.3952,-0.6168],[0.8843,-0.1277],[0.8843,0.5639],[0.3952,1.053]]},
+  channel:{n:7,c:'--tuerkis',p:[[-1.3665,-0.6122],[-0.7389,-0.6122],[-0.2952,-0.1684],[-0.2952,0.4591],[0.3323,0.4591],[0.9599,0.4591],[1.4036,0.0154]]},
+  switch:{n:7,c:'--tuerkis',p:[[-1.3053,-0.8078],[-0.6819,-0.8078],[-0.2411,-0.367],[0.1997,0.0738],[0.8231,0.0738],[0.8231,0.6972],[0.3823,1.138]]},
+  branch:{n:7,c:'--tuerkis',p:[[-1.2428,0.8641],[-0.6422,0.8641],[-0.2175,0.4394],[0.2071,0.0147],[0.2071,-0.5859],[0.6318,-1.0106],[1.0565,-0.5859]]},
+  tower:{n:7,c:'--tuerkis',p:[[-1.1568,-0.7525],[-0.5396,-0.7525],[0.0775,-0.7525],[0.5138,-0.3161],[0.5138,0.301],[0.5138,0.9181],[0.0775,1.3545]]},
+  gate:{n:7,c:'--tuerkis',p:[[-0.1615,-0.8643],[0.5515,-0.8643],[1.0557,-0.3601],[0.5515,0.144],[0.0473,0.6482],[-0.6657,0.6482],[-1.3787,0.6482]]},
+  bridge:{n:7,c:'--tuerkis',p:[[-1.4577,-0.343],[-0.8575,-0.343],[-0.2572,-0.343],[-0.2572,0.2572],[0.343,0.2572],[0.9432,0.2572],[1.5435,0.2572]]},
+  spur:{n:7,c:'--tuerkis',p:[[-1.3448,-0.6333],[-0.7223,-0.6333],[-0.0997,-0.6333],[-0.0997,-0.0108],[0.3405,0.4294],[0.963,0.4294],[0.963,1.052]]},
+  anchor:{n:7,c:'--tuerkis',p:[[-1.1701,0.5113],[1.0038,0.5113],[1.0038,-0.5756],[-1.1701,-0.5756],[-0.4015,0.193],[0.3671,-0.5756],[0.3671,0.5113]]},
+  keel:{n:7,c:'--tuerkis',p:[[-0.4592,-0.2985],[0.4248,-0.2985],[-0.2003,0.3265],[-0.8253,0.9516],[-0.8253,-0.8164],[0.9427,-0.8164],[0.9427,0.9516]]},
+  thorn:{n:7,c:'--tuerkis',p:[[-0.2392,0.4502],[1.5435,0.4502],[0.2829,-0.8104],[-0.6084,-0.8104],[0.6521,0.4502],[-1.1306,0.4502],[-0.5003,-0.1801]]},
+  strata:{n:7,c:'--tuerkis',p:[[-1.3455,0.4149],[0.0237,0.4149],[1.393,0.4149],[0.4248,-0.5533],[-0.9445,-0.5533],[-0.4604,-0.0692],[0.9089,-0.0692]]},
+  pylon:{n:7,c:'--tuerkis',p:[[-0.3029,0.2803],[0.4864,0.2803],[-0.6299,-0.8361],[0.9489,-0.8361],[0.9489,0.7427],[-0.1675,-0.3737],[-1.2838,0.7427]]},
+  gable:{n:7,c:'--tuerkis',p:[[-0.3838,0.8016],[0.491,0.8016],[0.491,-0.0732],[-1.2585,-0.0732],[-0.0214,-1.3103],[1.2157,-0.0732],[-0.5339,-0.0732]]},
+  snarl:{n:7,c:'--tuerkis',p:[[-0.7999,-1],[1,-1],[-0.2727,0.2727],[0.6272,0.2727],[-0.0091,0.9091],[-0.9091,0.9091],[0.3636,-0.3636]]},
+};
+const FIG_BAND={};
+for(const k in FIGURES){const f=FIGURES[k];(FIG_BAND[f.n]??=[]).push(k)}
+
+function figNorm(pts){
+  const n=pts.length; let cx=0,cy=0;
+  for(const p of pts){cx+=p[0];cy+=p[1]}
+  cx/=n; cy/=n;
+  const c=pts.map(p=>[p[0]-cx,p[1]-cy]);
+  let s=0; for(const p of c) s+=p[0]*p[0]+p[1]*p[1];
+  s=Math.sqrt(s/n)||1;
+  return c.map(p=>[p[0]/s,p[1]/s]);
+}
+function figRot(A,b){
+  let sxx=0,sxy=0,syx=0,syy=0;
+  for(let i=0;i<A.length;i++){
+    sxx+=A[i][0]*b[i][0]; sxy+=A[i][0]*b[i][1];
+    syx+=A[i][1]*b[i][0]; syy+=A[i][1]*b[i][1];
+  }
+  const th=Math.atan2(sxy-syx,sxx+syy),ct=Math.cos(th),st=Math.sin(th);
+  let d=0;
+  for(let i=0;i<A.length;i++){
+    const x=ct*A[i][0]-st*A[i][1], y=st*A[i][0]+ct*A[i][1];
+    d+=(x-b[i][0])**2+(y-b[i][1])**2;
+  }
+  return Math.sqrt(d/A.length);
+}
+const figMirror=pts=>pts.map(p=>[-p[0],p[1]]);
+function figDist(a,b){ return Math.min(figRot(a,b), figRot(figNorm(figMirror(a)),b)) }
+const FITRANK={rough:1, clear:2, sharp:3};
+const fitFor=d=>d<0.10?'sharp':d<0.20?'clear':'rough';
+function classifyFigure(t){
+  const band=FIG_BAND[t.nodes.length];
+  if(!band||!band.length) return null;
+  const s=figNorm(t.nodes.map(n=>[n.x0,n.y0]));
+  let best=null,bd=Infinity;
+  for(const k of band){ const d=figDist(s,FIGURES[k].p); if(d<bd){bd=d;best=k} }
+  t.fitDist=bd; t.fit=fitFor(bd);
+  return best;
+}
+const FIG_WEIGHT={3:19,4:18,5:17,6:15,7:14};
+const FIG_FLAT=0.12;
+const figFlatness=f=>{
+  const p=f.p, a=p[0], b=p[p.length-1];
+  const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
+  let dev=0;
+  for(const q of p) dev=Math.max(dev, Math.abs((b[0]-a[0])*(a[1]-q[1])-(a[0]-q[0])*(b[1]-a[1]))/L);
+  return dev/L;
+};
+let _figAngle=null;
+function figFlatAngle(f){
+  if(!_figAngle){
+    _figAngle=new Map(); let i=0;
+    for(const k of Object.keys(FIGURES))
+      if(figFlatness(FIGURES[k])<FIG_FLAT) _figAngle.set(FIGURES[k], (i++%4)*Math.PI/4);
+  }
+  return _figAngle.get(f)||0;
+}
+const FIT_WEIGHT={rough:0.78, clear:1, sharp:1.18};
+function figMarkup(k,{ink='currentColor',ghost=false,pad=20,fit=null}={}){
+  const f=FIGURES[k]; if(!f) return '';
+  const th=figFlatAngle(f);
+  const pts = th
+    ? f.p.map(q=>[Math.cos(th)*q[0]-Math.sin(th)*q[1], Math.sin(th)*q[0]+Math.cos(th)*q[1]])
+    : f.p;
+  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
+  const mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);
+  const bw=mxx-mnx||1, bh=mxy-mny||1, S=Math.min((96-2*pad)/bw,(96-2*pad)/bh);
+  const ox=pad+((96-2*pad)-bw*S)/2, oy=pad+((96-2*pad)-bh*S)/2;
+  const P=pts.map(p=>[ox+(p[0]-mnx)*S, oy+(p[1]-mny)*S]);
+  const w=(FIG_WEIGHT[f.n]||15)*(ghost?0.82:1)*(fit&&FIT_WEIGHT[fit]||1);
+  const m=P.length-1, TAPER=0.45;
+  let out='';
+  for(let i=0;i<m;i++){
+    const sw=w*(1-TAPER*(i/Math.max(1,m-1)));
+    out+=`<path d="M${P[i][0].toFixed(1)} ${P[i][1].toFixed(1)}L${P[i+1][0].toFixed(1)} ${P[i+1][1].toFixed(1)}" `
+      +`fill="none" stroke="${ink}" stroke-width="${sw.toFixed(2)}" stroke-linecap="round"/>`;
+  }
+  out+=`<circle cx="${P[0][0].toFixed(1)}" cy="${P[0][1].toFixed(1)}" r="${(w*0.62).toFixed(2)}" fill="${ink}"/>`;
+  return ghost ? `<g opacity=".5">${out}</g>` : out;
+}
+const FKEYS=Object.keys(FIGURES);
 
 const GEN_VERSIONS=[
   { v:1, from:'2000-01-01', par:'recipe', layout:'scatter',
@@ -1528,12 +1659,12 @@ const lum=hex=>{
 const EMBLEM_INK='#0E1214';
 const markOn=v=>lum(cssv(v))>0.192?'#0E1214':'#ffffff';
 const TIERCELLS={clean:3, done:2, perfect:4, par:2, over:1};
-function featureStamp(k,tier,locked){
-  const d=FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
+function featureStamp(k,tier,locked,fit){
+  const d=FIGURES[k]||FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
   const mk=locked?markOn('--rule'):EMBLEM_INK;
   const mark=locked
     ? `<g fill="none" stroke="${mk}" stroke-width="2" opacity=".78"><circle cx="48" cy="48" r="21"/><path d="M48 18V78M18 48H78M27 27L69 69M69 27L27 69"/></g>`
-    : `<g fill="${mk}">${d.p}</g>`;
+    : FIGURES[k] ? figMarkup(k,{ink:mk,fit}) : `<g fill="${mk}">${d.p}</g>`;
   const flawless = tier==='flawless';
   const cells=tier?(TIERCELLS[tier]||1):1;
   const cw=(96-(cells-1)*5)/cells;
@@ -2230,8 +2361,6 @@ function paintSpread(){
 }
 
 function offerFull(what){
-  hideVeils();
-  openRecord();
   toast(what+' · part of the full version');
   return false;
 }
@@ -3067,7 +3196,7 @@ function buildNet(force){
       const strength=1+(fnv(R().day+':str:'+idx+':'+k)%3);   // 1 faint, 2 clear, 3 dominant
       return {key:k,def:FEATURES[k],col:THREADPAL[i%THREADPAL.length],
               strength, nodeCount:spec.nodes+(strength-1),
-              width:(2.2+strength*1.15),      // 3.4 / 4.5 / 5.6 — a readable spread
+              width:4.5,
               nodes:[],freed:false,crossings:0};
     });
     let ok=true;
@@ -3592,6 +3721,8 @@ function refresh(){
 }
 let _shapeSVG=null, _shapeCache={};
 function featureShape(k,n){
+  const fig=FIGURES[k];
+  if(fig && fig.n===n) return fig.p;
   const key=k+':'+n; if(key in _shapeCache) return _shapeCache[key];
   if(!_shapeSVG){
     _shapeSVG=document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -3755,7 +3886,7 @@ function settleIntoShape(t){
     const dx=portrait?(py-oy):(px-ox), dy=portrait?-(px-ox):(py-oy);
     return [clampX(cx+dx*S), clampY(cy+dy*S)];
   };
-  if(t.signWhole) pts=bestTurn(t.nodes.map(n=>movable.includes(n)?n:null), pts, at);
+  if(t.signWhole && !FIGURES[t.key]) pts=bestTurn(t.nodes.map(n=>movable.includes(n)?n:null), pts, at);
   const now=performance.now();
   let k=0;                                            // stagger counter over the MOVABLE nodes
   t.nodes.forEach((n,i)=>{
@@ -3772,6 +3903,8 @@ function settleIntoShape(t){
 }
 function freeThread(t,silent){
   t.freed=true; t.el.classList.add('freedt');
+  t.key=classifyFigure(t)||t.key;
+  t.def=FIGURES[t.key]||t.def;
   t.calm=threads.indexOf(t)*1.1;
   const whole=signWhole(t);
   const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
@@ -4399,16 +4532,20 @@ function clearNet(){
   const r=R(), par=netTargets().par, tier=tierFor(r.netMoves,par,r.assisted);
   const wasTutorial=inTutorial();
   const feats=threads.map(t=>t.key);
-  feats.forEach(k=>{
+  threads.forEach(t=>{
+    const k=t.key, fit=t.fit;
     const cur=store.collection.badges[k];
-    if(!cur||TIERRANK[tier]>TIERRANK[cur.tier]) store.collection.badges[k]={tier,day:r.day};
+    if(!cur){ store.collection.badges[k]={tier,day:r.day,fit,fitDay:fit?r.day:undefined}; return }
+    if(TIERRANK[tier]>TIERRANK[cur.tier]){ cur.tier=tier; cur.day=r.day }
+    if(fit && (!cur.fit || FITRANK[fit]>FITRANK[cur.fit])){ cur.fit=fit; cur.fitDay=r.day }
   });
   r.cleared.push({feats,tier,moves:r.netMoves,par,idx:r.netIndex,assisted:!!r.assisted});
   const setDone = !isTrial() && r.cleared.length>=POLICY.dailyNets;
   if(setDone && r.cleared.every(c=>c.tier==='perfect')){
     [...new Set(r.cleared.flatMap(c=>c.feats))].forEach(k=>{
       const cur=store.collection.badges[k];
-      if(!cur||TIERRANK.flawless>TIERRANK[cur.tier]) store.collection.badges[k]={tier:'flawless',day:r.day};
+      if(!cur) store.collection.badges[k]={tier:'flawless',day:r.day};
+      else if(TIERRANK.flawless>TIERRANK[cur.tier]){ cur.tier='flawless'; cur.day=r.day }
     });
   }
   if(setDone) r.over=true;
@@ -4544,13 +4681,12 @@ function fillSignInInvite(){
 }
 function showNetCleared(feats,tier,wasTutorial,read){
   if(!read || read.run!==R()) return;
-  const strengthOf=k=>{const t=threads.find(x=>x.key===k);return t?t.strength:2};
   const mint=`<div class="minted">${feats.map((k,i)=>{
     const b=store.collection.badges[k];
-    return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false)}<span>${k}</span></div>`;
+    return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}</span></div>`;
   }).join('')}</div>`;
   const quiet=`<p class="bquiet">${feats.length} features freed: `+
-    `${feats.map(k=>k+' '+['','faint','clear','dominant'][strengthOf(k)]).join(', ')}. `+
+    `${feats.join(', ')}. `+
     `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
     strip:TIERCOL[tier],
@@ -4601,7 +4737,7 @@ function showRunOver(){
       : [['rungs',rungWords(rung,' · ')||'none yet']],
     body:(feats.length?`<div class="minted">${feats.slice(0,10).map((k,i)=>{
       const b=store.collection.badges[k]||{tier:'over'};
-      return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false)}<span>${k}</span></div>`;
+      return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}</span></div>`;
     }).join('')}</div>`:'')
     +`<p class="bquiet">${trial?`${feats.length} features named.`
         :`today's set ${depth} of ${POLICY.dailyNets}. ${feats.length} features named.`} `
@@ -4675,8 +4811,18 @@ function ask(o){
 }
 
 
-function featIcon(k,tier){
-  const d=FEATURES[k]; if(!d) return '';
+function featIcon(k,tier,fit){
+  const d=FIGURES[k]||FEATURES[k]; if(!d) return '';
+  if(FIGURES[k]){
+    const cut2 = tier==='flawless'
+      ? `<path d="M0 0H23L0 23Z" fill="var(--surface)"/>`
+        +`<path d="M23 0L0 23" fill="none" stroke="var(--sig-rosa)" stroke-width="4"/>`
+      : '';
+    return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}" `
+      +`style="--emblem:var(${d.c});--fig-hole:var(${d.c})">`
+      +`<rect width="96" height="96" fill="var(--emblem)"/>`
+      +figMarkup(k,{ink:EMBLEM_INK,fit})+cut2+`</svg>`;
+  }
   const cut = tier==='flawless'
     ? `<path d="M0 0H23L0 23Z" fill="var(--surface)"/>`
       +`<path d="M23 0L0 23" fill="none" stroke="var(--sig-rosa)" stroke-width="4"/>`
@@ -4899,9 +5045,10 @@ function openRecord(){
     +FKEYS.map(k=>{
       const b=badges[k];
       return b
-        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${tierSay(b.tier)}">${featIcon(k,b.tier)}</span>`
-        : `<span class="fcell none" title="unidentified"><svg viewBox="0 0 96 96" role="img" aria-label="unidentified feature">`
-          +`<g fill="none" stroke="currentColor" stroke-width="7"><path d="M30 30L66 66M66 30L30 66"/></g></svg></span>`;
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${tierSay(b.tier)}${b.fit?' · '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
+        : `<span class="fcell none" title="not yet drawn">`
+          +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure">`
+          +figMarkup(k,{ink:'var(--silver)',ghost:true})+`</svg></span>`;
     }).join('');
 
   const dayEl=$('daylist');
@@ -4976,7 +5123,6 @@ function openRecord(){
 }
 
 
-const STRENGTH=['','faint','clear','dominant'];
 function renderThreads(){
   const c=$('threadrow');
   const sig=R().netIndex+':'+threads.map(t=>t.key).join(',');
@@ -5003,13 +5149,13 @@ function renderThreads(){
   threads.forEach(t=>{
     if(!t.slot)return;
     const shares=!t.freed&&t.nodes.some(n=>n.merged);
-    t.slot.dataset.s=t.strength;
     t.slot.style.flexGrow = t.crossings;
     t.slot.classList.toggle('clear', t.crossings===0);
+    const idx=threads.indexOf(t)+1;
     t.slot.setAttribute('aria-label',
       t.freed?t.key+' · freed'
-      :t.key+' · '+(shares&&t.crossings===0?'shares a neuron, split it'
-                    :t.crossings+' crossings')+' · '+STRENGTH[t.strength]+' feature');
+      :'thread '+idx+' · '+(shares&&t.crossings===0?'shares a neuron, split it'
+                    :t.crossings+' crossings'));
     t.slot.title=t.slot.getAttribute('aria-label');
   });
 }
