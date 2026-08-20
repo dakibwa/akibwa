@@ -982,7 +982,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .railactions .actionrow{flex:1 1 100%}
     .field{display:flex;flex-direction:column}
     .coach{
-      position:static;transform:none;width:auto;order:1;margin-top:10px;
+      position:static;transform:none;width:max-content;max-width:calc(100% - 20px);
+      align-self:center;order:1;margin-top:10px;
       box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface);
     }
     .play.tutorial .coach{animation:none}
@@ -1013,7 +1014,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:0}
-    .coach{top:10px;min-width:min(280px,calc(100% - 20px));max-width:calc(100% - 20px)}
+    .coach{top:10px;min-width:0;max-width:calc(100% - 20px)}
     .sayrow{gap:11px;padding:10px 12px}
     .sayline{font-size:13px}
     .sayline.big{font-size:21px}
