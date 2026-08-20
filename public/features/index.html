@@ -921,6 +921,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .intro-doors .help svg{width:18px;height:18px}
   }
 
+  #tip{
+    position:fixed;left:0;top:0;z-index:80;pointer-events:none;
+    background:var(--surface);color:var(--ink);border:1px solid var(--silver);
+    font-size:11.5px;line-height:1.35;letter-spacing:.04em;text-transform:lowercase;
+    padding:5px 9px;max-width:220px;opacity:0;
+    transform:translateY(3px);box-shadow:var(--shadow-float);
+    transition:opacity .12s var(--ease-out),transform .12s var(--ease-out);
+  }
+  #tip.on{opacity:1;transform:translateY(0)}
+  @media (prefers-reduced-motion: reduce){ #tip{transition:none} }
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
     background:var(--ink);color:var(--paper);font-size:11.5px;letter-spacing:.1em;
@@ -1092,7 +1102,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       <!-- one button, because there is one screen: the collection and the record
            were two readings of the same history and are now one list. it is also
            the fourth button the phone head never had 48px spare for. -->
-      <button class="help" id="histbtn" title="your days · every day since launch" aria-label="your days">
+      <button class="help" id="histbtn" aria-label="your days">
         <svg class="recglyph" viewBox="0 0 24 24" aria-hidden="true">
           <g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>
           <g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>
@@ -1102,7 +1112,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       <!-- `groundbtn` is what applyTheme writes and what the click is wired to,
            so this one and the record's are found together and cannot drift. the
            id stays because it is what `.help`'s layout and the tests know it by. -->
-      <button class="help groundbtn" id="themebtn" title="ground" aria-label="ground">
+      <button class="help groundbtn" id="themebtn" aria-label="ground">
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
       </button>
       <!-- ---- the collection ----
@@ -1111,7 +1121,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            same mark language `recglyph` above already uses for a list. it opens
            the record ON its collection view rather than being a screen of its
            own — there is one collection and this is a door to it. -->
-      <button class="help" id="collbtn" title="the collection · every feature you have named"
+      <button class="help" id="collbtn" aria-label="the collection"
               aria-label="the collection">
         <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">
           <rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>
@@ -1142,7 +1152,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            it stays in the QUIET ink of every other control here rather than taking
            the purchase violet: a saturated field in the masthead is a badge, and
            a badge is the one form this interface does not use. -->
-      <button class="help" id="helpbtn" title="how to play" aria-label="how to play">?</button>
+      <button class="help" id="helpbtn" aria-label="how to play">?</button>
       <!-- ---- THE TILL HOLDS THIS CORNER TOO ---- (17 Aug 2026, the owner's call)
            it stood between the collection and `?` and was drawn only to somebody
            who could still buy — so the one mark in this row that reports WHO YOU
@@ -1302,7 +1312,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
              the glyph are the same instruction, and the glyph is the one every
              player already reads without being taught. square, so it reads as a
              control rather than as a word that happens to be boxed. -->
-        <a href="#" class="rec-close" id="histclose" aria-label="close" title="close">&times;</a></span>
+        <a href="#" class="rec-close" id="histclose" aria-label="close">&times;</a></span>
     </div>
     <div class="daylist" id="daylist"></div>
     <!-- THE SET AS A WHOLE, and it used to be a strip pinned above the list —
@@ -1340,7 +1350,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            34px square built round one glyph, so the word `close` inside it overflowed
            the box and printed across the title. the record's own cross lost the word
            for the same reason — see the note there. -->
-      <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close" title="close">&times;</a></span>
+      <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close">&times;</a></span>
     </div>
     <div class="acct-body" id="acctbody"></div>
   </section>
@@ -2294,7 +2304,7 @@ function paintTill(el){
   el.innerHTML=TILL_GLYPH(owned);
   el.classList.add('till');          // both states, so the hover can find either
   el.classList.toggle('owned',owned);
-  el.title=owned?'the full version · yours':'the full version';
+  el.setAttribute('data-tip',owned?'the full version · yours':'the full version');
   el.setAttribute('aria-label',el.title);
   if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
   else { el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex') }
@@ -2422,7 +2432,7 @@ function applyTheme(mode){
   document.documentElement.setAttribute('data-theme',mode);
   const label='ground · '+(mode==='light'?'paper':'dark');
   document.querySelectorAll('.groundbtn').forEach(b=>{
-    b.title=label; b.setAttribute('aria-label',label);
+    b.setAttribute('aria-label',label);
     b.setAttribute('aria-pressed',mode==='light'?'true':'false');
   });
 }
@@ -4973,12 +4983,12 @@ function archiveLineEl(){
   el.className='dayarch'+(POLICY.premium?' held':'');
   if(POLICY.premium){
     el.innerHTML='<span class="datext">on another device</span>'
-      +`<span class="dacode" title="type this on another device to open it there">${acct.code}</span>`;
+      +`<span class="dacode" aria-label="type this on another device to open it there">${acct.code}</span>`;
   } else {
     el.innerHTML='<span class="datext">bought the full version already?</span>'
       +(API
         ? `<a href="#" class="archlink" data-restore="1"`
-          +` title="enter the code from the device you bought it on">restore</a>`
+          +` aria-label="enter the code from the device you bought it on">restore</a>`
         : '');
   }
   el.onclick=e=>{
@@ -5004,7 +5014,7 @@ function renderAccount(){
     const state=syncSay==='saving' ? '<span class="acct-state">saving</span>'
               : syncSay==='offline' ? '<span class="acct-state">offline · will send later</span>'
               : syncSay==='saved' ? '<span class="acct-state">saved</span>' : '';
-    foot.innerHTML=`<button class="acct-who acct-say" id="acctwho" title="your account">signed in · ${esc(who)}</button>${state}`
+    foot.innerHTML=`<button class="acct-who acct-say" id="acctwho" aria-label="your account">signed in · ${esc(who)}</button>${state}`
       +`<span class="acct-ins">${link('acctout','sign out','sign out of this device')}</span>`;
     $('acctwho').onclick=()=>openAccount('manage');
     $('acctout').onclick=e=>{e.preventDefault();doSignOut()};
@@ -5042,8 +5052,8 @@ function openRecord(){
     +FKEYS.map(k=>{
       const b=badges[k];
       return b
-        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" title="${k} · ${tierSay(b.tier)}${b.fit?' · '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
-        : `<span class="fcell none" title="not yet drawn">`
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" data-tip="${k} · ${tierSay(b.tier)}${b.fit?' · '+b.fit:''}" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
+        : `<span class="fcell none" data-tip="not yet drawn" aria-label="an undiscovered figure">`
           +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure">`
           +figMarkup(k,{ink:'var(--silver)',ghost:true})+`</svg></span>`;
     }).join('');
@@ -5082,7 +5092,7 @@ function openRecord(){
       det=p.join(' · ')||(bar?'':'played');
       right = bar
         + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true"`
-        +` title="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
+        +` data-tip="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
     } else {
       det=(isToday?'not played yet':'not played')+bestWords;
       right=rungTrack('',true)+'<span class="dstate">play →</span>';
@@ -5153,7 +5163,6 @@ function renderThreads(){
       t.freed?t.key+' · freed'
       :'thread '+idx+' · '+(shares&&t.crossings===0?'shares a neuron, split it'
                     :t.crossings+' crossings'));
-    t.slot.title=t.slot.getAttribute('aria-label');
   });
 }
 const SAY_BASE=1400, SAY_PER=55, SAY_MIN=2200, SAY_MAX=5600, SAY_MERGE=650, SAY_ROWS=3;
@@ -5283,13 +5292,46 @@ function renderHud(){
   $('field').classList.toggle('over',!!r.over);
   const d=new Date(), mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
   $('statusdate').textContent=`${d.getDate()} ${mo[d.getMonth()]}`;
-  $('histbtn').title=`your days · ${d.getDate()} ${mo[d.getMonth()]}`;
+  $('histbtn').setAttribute('aria-label',`your days · ${d.getDate()} ${mo[d.getMonth()]}`);
 }
 function renderAll(){
   buildNet(); renderHud(); refresh(); startPhysics(); renderTutorial();
   if(R().over) setTimeout(showRunOver,200);
 }
 
+
+let _tipEl=null,_tipT=null;
+function tipNode(){
+  if(!_tipEl){
+    _tipEl=document.createElement('div');
+    _tipEl.id='tip'; _tipEl.setAttribute('aria-hidden','true');
+    document.body.appendChild(_tipEl);
+  }
+  return _tipEl;
+}
+function tipPlace(el,msg){
+  const t=tipNode();
+  t.textContent=msg;
+  const r=el.getBoundingClientRect(), b=t.getBoundingClientRect();
+  let x=r.left+r.width/2-b.width/2, y=r.top-b.height-8;
+  if(y<6) y=r.bottom+8;                                   // no room above
+  x=Math.max(6,Math.min(x,innerWidth-b.width-6));
+  y=Math.max(6,Math.min(y,innerHeight-b.height-6));
+  t.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px)`;
+  t.classList.add('on');
+}
+function tipFor(el,now){
+  clearTimeout(_tipT);
+  const msg=el&&el.getAttribute&&el.getAttribute('data-tip');
+  if(!msg){ if(_tipEl) _tipEl.classList.remove('on'); return }
+  if(now) tipPlace(el,msg);
+  else _tipT=setTimeout(()=>tipPlace(el,msg),90);
+}
+addEventListener('pointerover',e=>tipFor(e.target&&e.target.closest&&e.target.closest('[data-tip]')),true);
+addEventListener('pointerdown',()=>tipFor(null),true);
+addEventListener('focusin',e=>tipFor(e.target&&e.target.closest&&e.target.closest('[data-tip]'),true),true);
+addEventListener('focusout',()=>tipFor(null),true);
+addEventListener('scroll',()=>tipFor(null),true);
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 
@@ -5587,14 +5629,14 @@ function renderIntro(mode){
       const shut=isShut({d,row});
       const chip=played
         ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true"`
-          +` title="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
+          +` data-tip="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
         : canPlayDay(d)
-        ? `<span class="dstate dreplay dplay" aria-hidden="true" title="play this day">&rarr;</span>`
+        ? `<span class="dstate dreplay dplay" aria-hidden="true">&rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const trialable=played||canPlayDay(d);
       const trialChip=trialable
         ? `<button class="dstate dreplay dtrial${canTimeTrial()?'':' shut'}" data-trial="${d}"`
-          +` title="${esc(canTimeTrial()?'play this day as a time trial':'the time trial is part of the full version')}"`
+          +` data-tip="${esc(canTimeTrial()?'play this day as a time trial':'the time trial is part of the full version')}"`
           +` aria-label="time trial · ${dayLabel(d)}">`
           +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
           +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/></g></svg></button>`
@@ -5627,20 +5669,20 @@ function renderIntro(mode){
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>`
       +`<div class="intro-doors">`
-      +(fresh?'':`<button class="help" id="introlessons" title="the guided nets · the three lessons again" aria-label="the guided nets">`
+      +(fresh?'':`<button class="help" id="introlessons" aria-label="the guided nets">`
         +`<svg viewBox="0 0 24 24" aria-hidden="true">`
         +`<rect x="2.5" y="9" width="6" height="6" fill="currentColor"/>`
         +`<rect x="10.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
         +`<rect x="17.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
         +`</svg></button>`)
-      +`<button class="help" id="introcoll" title="the collection · every feature you have named" aria-label="the collection">`
+      +`<button class="help" id="introcoll" aria-label="the collection" aria-label="the collection">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
       +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
       +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
       +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
       +`</g></svg></button>`
-      +`<button class="help" id="introrules" title="how to play" aria-label="how to play">?</button>`
-      +`<button class="help groundbtn" id="introground" title="ground" aria-label="ground">`
+      +`<button class="help" id="introrules" aria-label="how to play">?</button>`
+      +`<button class="help groundbtn" id="introground" aria-label="ground">`
       +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
       +`<button class="help" id="introbuy"></button>`
       +`</div>`;
