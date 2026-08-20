@@ -1598,14 +1598,14 @@ const RAMP_EVEN=[
 const RAMP_MECH=[
   {threads:2, nodes:3, shared:0, pinned:0, minX:2,  maxX:4},   //  6 · learn the drag
   {threads:2, nodes:4, shared:0, pinned:0, minX:3,  maxX:6},   //  8 · + length
-  {threads:3, nodes:4, shared:0, pinned:0, minX:5,  maxX:11},  // 12 · + a third feature
-  {threads:3, nodes:4, shared:1, pinned:0, minX:6,  maxX:13},  // 11 · + the first superposition
-  {threads:3, nodes:5, shared:1, pinned:1, minX:7,  maxX:15},  // 14 · + length, + the first pin
-  {threads:4, nodes:4, shared:1, pinned:1, minX:9,  maxX:18},  // 15 · + a fourth feature
-  {threads:4, nodes:5, shared:2, pinned:1, minX:10, maxX:20},  // 18 · + the second superposition
-  {threads:4, nodes:5, shared:2, pinned:2, minX:12, maxX:24},  // 18 · + the second pin
-  {threads:5, nodes:5, shared:2, pinned:2, minX:14, maxX:28},  // 23 · + a fifth feature
-  {threads:5, nodes:5, shared:3, pinned:2, minX:15, maxX:32}   // 22 · + the third superposition
+  {threads:3, nodes:4, shared:0, pinned:0, minX:5,  maxX:10},  // 12 · + a third feature
+  {threads:3, nodes:4, shared:1, pinned:0, minX:6,  maxX:12},  // 11 · + the first superposition
+  {threads:3, nodes:5, shared:1, pinned:1, minX:7,  maxX:14},  // 14 · + length, + the first pin
+  {threads:4, nodes:5, shared:1, pinned:1, minX:9,  maxX:15},  // 19 · + a fourth feature
+  {threads:4, nodes:6, shared:2, pinned:1, minX:11, maxX:19},  // 22 · + length, + the 2nd superposition
+  {threads:4, nodes:6, shared:2, pinned:2, minX:12, maxX:21},  // 22 · + the second pin
+  {threads:4, nodes:7, shared:3, pinned:2, minX:14, maxX:24},  // 25 · + length, + the 3rd superposition
+  {threads:4, nodes:7, shared:3, pinned:3, minX:16, maxX:28}   // 25 · + the third pin
 ];
 const rampFor=r=>{
   const m=(r||GEN_RULES).ramp;
@@ -2474,7 +2474,7 @@ const FAMILIES={
     const X=i=>x0+(x1-x0)*(span>1?i/(span-1):.5), Y=k=>ytop+(ybot-ytop)*(T>1?k/(T-1):.5);
     const s=[],g=[];
     for(let k=0;k<T;k++){
-      const want=Math.min(span-L, L>=6?1+Math.floor(rnd()*2):1), drop=new Set();
+      const want=span-L, drop=new Set();
       for(let q=0;q<24 && drop.size<want;q++) drop.add(1+Math.floor(rnd()*(span-2)));
       const keep=[]; for(let i=0;i<span;i++) if(!drop.has(i)) keep.push(i);
       s[k]=keep.map(i=>({x:X(i),y:Y(k)}));
