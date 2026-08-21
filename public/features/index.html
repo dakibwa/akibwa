@@ -708,7 +708,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .fcell{display:block;min-width:0;border-bottom:3px solid var(--tc,var(--rule));transition:filter var(--t-ui)}
   .fcell svg{display:block;width:100%;height:auto}
-  .fcell:not(.none):hover{filter:var(--hover-lift)}
+  .fcell:hover{filter:var(--hover-lift)}
   .fcell.none{border:1px solid var(--rule);border-bottom-width:3px;color:var(--silver)}
 
   .dayarch{
@@ -923,16 +923,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .intro-doors .help svg{width:18px;height:18px}
   }
 
-  #tip{
-    position:fixed;left:0;top:0;z-index:80;pointer-events:none;
-    background:var(--surface);color:var(--ink);border:1px solid var(--silver);
-    font-size:11.5px;line-height:1.35;letter-spacing:.04em;text-transform:lowercase;
-    padding:5px 9px;max-width:220px;opacity:0;
-    transform:translateY(3px);box-shadow:var(--shadow-float);
-    transition:opacity .12s var(--ease-out),transform .12s var(--ease-out);
-  }
-  #tip.on{opacity:1;transform:translateY(0)}
-  @media (prefers-reduced-motion: reduce){ #tip{transition:none} }
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
     background:var(--ink);color:var(--paper);font-size:11.5px;letter-spacing:.1em;
@@ -2312,8 +2302,7 @@ function paintTill(el){
   el.innerHTML=TILL_GLYPH(owned);
   el.classList.add('till');          // both states, so the hover can find either
   el.classList.toggle('owned',owned);
-  el.setAttribute('data-tip',owned?'the full version · yours':'the full version');
-  el.setAttribute('aria-label',el.title);
+  el.setAttribute('aria-label',owned?'the full version · yours':'the full version');
   if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
   else { el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex') }
   el.hidden=false;
@@ -5060,7 +5049,7 @@ function openRecord(){
     +FKEYS.map(k=>{
       const b=badges[k];
       return b
-        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" data-tip="${k} · ${tierSay(b.tier)}${b.fit?' · '+b.fit:''}" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
         : `<span class="fcell none" aria-label="an undiscovered figure">`
           +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure" style="--emblem:var(--surface)">`
           +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></span>`;
@@ -5099,8 +5088,7 @@ function openRecord(){
       if(row.back) p.push('archive');
       det=p.join(' · ')||(bar?'':'played');
       right = bar
-        + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true"`
-        +` data-tip="${esc(canPlay?'play this day again':replayWords())}">&#8635;</span>`;
+        + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true">&#8635;</span>`;
     } else {
       det=(isToday?'not played yet':'not played')+bestWords;
       right=rungTrack('',true)+'<span class="dstate">play →</span>';
@@ -5308,38 +5296,6 @@ function renderAll(){
 }
 
 
-let _tipEl=null,_tipT=null;
-function tipNode(){
-  if(!_tipEl){
-    _tipEl=document.createElement('div');
-    _tipEl.id='tip'; _tipEl.setAttribute('aria-hidden','true');
-    document.body.appendChild(_tipEl);
-  }
-  return _tipEl;
-}
-function tipPlace(el,msg){
-  const t=tipNode();
-  t.textContent=msg;
-  const r=el.getBoundingClientRect(), b=t.getBoundingClientRect();
-  let x=r.left+r.width/2-b.width/2, y=r.top-b.height-8;
-  if(y<6) y=r.bottom+8;                                   // no room above
-  x=Math.max(6,Math.min(x,innerWidth-b.width-6));
-  y=Math.max(6,Math.min(y,innerHeight-b.height-6));
-  t.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px)`;
-  t.classList.add('on');
-}
-function tipFor(el,now){
-  clearTimeout(_tipT);
-  const msg=el&&el.getAttribute&&el.getAttribute('data-tip');
-  if(!msg){ if(_tipEl) _tipEl.classList.remove('on'); return }
-  if(now) tipPlace(el,msg);
-  else _tipT=setTimeout(()=>tipPlace(el,msg),90);
-}
-addEventListener('pointerover',e=>tipFor(e.target&&e.target.closest&&e.target.closest('[data-tip]')),true);
-addEventListener('pointerdown',()=>tipFor(null),true);
-addEventListener('focusin',e=>tipFor(e.target&&e.target.closest&&e.target.closest('[data-tip]'),true),true);
-addEventListener('focusout',()=>tipFor(null),true);
-addEventListener('scroll',()=>tipFor(null),true);
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 
@@ -5636,8 +5592,7 @@ function renderIntro(mode){
       const can=played && canPlayDay(d);
       const shut=isShut({d,row});
       const chip=played
-        ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true"`
-          +` data-tip="${esc(can?'play this day again':replayWords())}">&#8635;</span>`
+        ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true">&#8635;</span>`
         : canPlayDay(d)
         ? `<span class="dstate dreplay dplay" aria-hidden="true">&rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
@@ -5645,7 +5600,6 @@ function renderIntro(mode){
       const trialOn=canTimeTrial();
       const trialChip=trialable
         ? `<button class="dstate dreplay dtrial${trialOn?'':' shut'}" data-trial="${d}"`
-          +` data-tip="${esc(trialOn?'play this day as a time trial':'the time trial is part of the full version')}"`
           +` aria-label="time trial · ${dayLabel(d)}${trialOn?'':' · the full version'}">`
           +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
           +(trialOn
