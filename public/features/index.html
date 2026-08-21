@@ -708,7 +708,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .fcell{display:block;min-width:0;border-bottom:3px solid var(--tc,var(--rule));transition:filter var(--t-ui)}
   .fcell svg{display:block;width:100%;height:auto}
-  .fcell:hover{filter:var(--hover-lift)}
+  .fcell:not(.none):hover{filter:var(--hover-lift)}
   .fcell.none{border:1px solid var(--rule);border-bottom-width:3px;color:var(--silver)}
 
   .dayarch{
@@ -877,7 +877,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          overflow:hidden}
   .wbchips{flex:0 0 auto;display:flex;gap:6px;justify-content:flex-end}
-  .wbday .dtrial{padding:0;background:transparent;color:inherit;font:inherit;
+  .wbday .dtrial{padding:0;background:transparent;font:inherit;
     -webkit-appearance:none;appearance:none}
   .wbday .dtrial svg{width:15px;height:15px;display:block}
   .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
@@ -893,8 +893,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
   .wbday .dreplay.ghost{visibility:hidden}
   .wbday .dplay{font-size:12px;line-height:1}
-  .wbday[data-day]:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
-  .wbday[data-day]:hover .dreplay.shut{color:var(--ink)}
+  .wbday .dreplay:not(.shut):hover,
+  .wbday .dreplay:not(.shut):focus-visible{border-color:var(--ink);color:var(--ink)}
+  .wbday .dreplay.shut:hover,
+  .wbday .dreplay.shut:focus-visible{color:var(--ink)}
   .wbspread:empty{display:none}
   .wbspread{margin-top:12px;font-variant-numeric:tabular-nums}
   .intro-start{margin-top:17px;width:100%;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:inherit;font-size:12.5px;letter-spacing:.1em;padding:9px;cursor:pointer;text-transform:lowercase;
@@ -5059,7 +5061,7 @@ function openRecord(){
       const b=badges[k];
       return b
         ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" data-tip="${k} · ${tierSay(b.tier)}${b.fit?' · '+b.fit:''}" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
-        : `<span class="fcell none" data-tip="not yet drawn" aria-label="an undiscovered figure">`
+        : `<span class="fcell none" aria-label="an undiscovered figure">`
           +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure" style="--emblem:var(--surface)">`
           +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></span>`;
     }).join('');
@@ -5640,12 +5642,16 @@ function renderIntro(mode){
         ? `<span class="dstate dreplay dplay" aria-hidden="true">&rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const trialable=played||canPlayDay(d);
+      const trialOn=canTimeTrial();
       const trialChip=trialable
-        ? `<button class="dstate dreplay dtrial${canTimeTrial()?'':' shut'}" data-trial="${d}"`
-          +` data-tip="${esc(canTimeTrial()?'play this day as a time trial':'the time trial is part of the full version')}"`
-          +` aria-label="time trial · ${dayLabel(d)}">`
+        ? `<button class="dstate dreplay dtrial${trialOn?'':' shut'}" data-trial="${d}"`
+          +` data-tip="${esc(trialOn?'play this day as a time trial':'the time trial is part of the full version')}"`
+          +` aria-label="time trial · ${dayLabel(d)}${trialOn?'':' · the full version'}">`
           +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
-          +`<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/></g></svg></button>`
+          +(trialOn
+            ? `<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
+            : `<rect x="5.4" y="10.6" width="13.2" height="9.4" rx="1.6"/><path d="M9 10.6V7.6a3 3 0 0 1 6 0v3"/>`)
+          +`</g></svg></button>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const press=played||canPlayDay(d);
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
