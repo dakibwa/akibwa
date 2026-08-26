@@ -752,7 +752,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .rec-btn{padding:0 13px}
   .rec-btn[hidden]{display:none}
-  .rec-close{width:34px;padding:0;font-size:17px;line-height:1;letter-spacing:0}
+  .rec-close{width:34px;padding:0;letter-spacing:0}
+  .rec-close svg{display:block}
   .rec-close{flex:0 0 auto}
   .rec-right{display:flex;align-items:center;gap:8px;margin-left:auto;min-width:0}
   .collection{
@@ -960,6 +961,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbweek{margin-top:12px;display:grid;gap:4px;
     max-height:206px;overflow-y:auto;overscroll-behavior:contain}
+  .wbweek{margin-right:-9px;padding-right:9px}
   .wbweek{scrollbar-width:thin;scrollbar-color:var(--silver) transparent}
   .wbweek::-webkit-scrollbar{width:5px}
   .wbweek::-webkit-scrollbar-thumb{background:var(--silver)}
@@ -1403,7 +1405,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
              the glyph are the same instruction, and the glyph is the one every
              player already reads without being taught. square, so it reads as a
              control rather than as a word that happens to be boxed. -->
-        <a href="#" class="rec-close" id="histclose" aria-label="close">&times;</a></span>
+        <a href="#" class="rec-close" id="histclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
     </div>
     <div class="daylist" id="daylist"></div>
     <!-- THE SET AS A WHOLE, and it used to be a strip pinned above the list —
@@ -1441,7 +1443,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            34px square built round one glyph, so the word `close` inside it overflowed
            the box and printed across the title. the record's own cross lost the word
            for the same reason — see the note there. -->
-      <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close">&times;</a></span>
+      <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
     </div>
     <div class="acct-body" id="acctbody"></div>
   </section>
@@ -1460,7 +1462,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   <section class="arch-card pay-card">
     <div class="rec-head">
       <strong class="rec-title">the full version</strong>
-      <span class="rec-right"><a href="#" class="rec-close" id="payclose" aria-label="close">&times;</a></span>
+      <span class="rec-right"><a href="#" class="rec-close" id="payclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
     </div>
     <div class="pay-body" id="paybody"></div>
   </section>
@@ -1470,7 +1472,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   <section class="arch-card">
     <div class="rec-head">
       <strong class="rec-title" id="archtitle">the archive</strong>
-      <span class="rec-right"><a href="#" class="rec-close" id="archclose" aria-label="close">&times;</a></span>
+      <span class="rec-right"><a href="#" class="rec-close" id="archclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
     </div>
     <div class="arch-body" id="archbody"></div>
   </section>
@@ -1984,7 +1986,8 @@ function newRun(mode,day){
   store.run={day:d, mode:mode||'daily', archive:d!==today(),
              startedAt:new Date().toISOString(),
              turns:0, netIndex:0, netMoves:0,
-             positions:{}, freed:[], splitNodes:[], saeUsed:false, over:false, cleared:[], assisted:false};
+             positions:{}, freed:[], splitNodes:[], saeUsed:false, over:false, cleared:[], assisted:false,
+             log:[], assists:0, logGap:false};
 }
 const isTrial=()=>R().mode==='trial';
 const isArchive=()=>!!R().archive;
@@ -4260,8 +4263,15 @@ $('netsvg').addEventListener('pointermove',e=>{
   if(Math.hypot(dragN.x0-dragStart.x,dragN.y0-dragStart.y)>6)dragMoved=true;
   refresh();
 });
-function chargeTurn(r){
+const LOGCAP=4000;
+function logMove(r,e){
+  if(!r.log) r.log=[];
+  if(r.log.length>=LOGCAP){ r.logGap=true; return }
+  r.log.push(e);
+}
+function chargeTurn(r,e){
   countCross();
+  if(e) logMove(r,e); else r.logGap=true;
   if(!isTrial()) r.turns=(r.turns||0)+1;   // trials cost time, not turns
   r.netMoves++;
 }
@@ -4284,14 +4294,14 @@ function endDrag(e){
       splitNode(node,false);
       recordDay(); tutReach(1);
       r.positions[node.idx]=[Math.round(node.x0*10)/10,Math.round(node.y0*10)/10];
-      chargeTurn(r);
+      chargeTurn(r,[1,node.idx]);
       afterMove(r);
     }
     return;
   }
   r.positions[node.idx]=[Math.round(node.x0*10)/10,Math.round(node.y0*10)/10];
   recordDay(); tutReach(1);
-  chargeTurn(r);
+  chargeTurn(r,[0,node.idx,r.positions[node.idx][0],r.positions[node.idx][1]]);
   afterMove(r);
 }
 function afterMove(r){
@@ -4435,6 +4445,9 @@ function crossingsIfMoved(n,nx,ny,base){
   n.x0=ox; n.y0=oy;
   return base-before+after;
 }
+function assistSpin(r,kind,n){
+  return Math.floor(mulberry32(fnv(r.day+':'+kind+':'+r.netIndex+':'+(r.assists||0)))()*n);
+}
 function descentTick(){
   const r=R(), btn=$('descentbtn');
   if(r.over || dragN || document.querySelector('.veil.show') || !threads.length || threads.every(t=>t.freed)){
@@ -4450,7 +4463,7 @@ function descentTick(){
   if(descentStalledAt===idleAt) return;
   const base=countCross().total;
   if(base===0) return;
-  const spin=Math.floor(Math.random()*DESCENT_ANGLES);
+  const spin=assistSpin(r,'descent',DESCENT_ANGLES);
   const searchIn=nodes=>{
     for(const rad of DESCENT_RADII){
       for(const n of nodes){
@@ -4478,6 +4491,8 @@ function descentTick(){
   }
   descentStall=0;
   r.assisted=true;
+  r.assists=(r.assists||0)+1;
+  logMove(r,[2]);
   if(settlingNode&&settlingNode!==best.n) settlingNode.el.classList.remove('settling');
   settlingNode=best.n; settlingNode.el.classList.add('settling');
   best.n.tw={ax:best.n.xv, ay:best.n.yv, bx:best.nx, by:best.ny,
@@ -4743,6 +4758,7 @@ function endTutorial(){
   const r=R();
   r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
   r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
+  r.log=[]; r.assists=0; r.logGap=false;
   builtFor=-1;
   save();
   renderHud();
@@ -4772,7 +4788,7 @@ function retangleTick(){
   const base=countCross().total;
   const cand=members.filter(n=>!n.pinned&&!n.threads.every(t=>t.freed));
   if(!cand.length) return;
-  const spin=Math.floor(Math.random()*16);
+  const spin=assistSpin(r,'retangle',16);
   let worst=null;
   for(const rad of [80,150,230,320]){
     for(const n of cand){
@@ -4787,6 +4803,7 @@ function retangleTick(){
     if(worst) break;
   }
   if(!worst) return;
+  r.assists=(r.assists||0)+1;          // spent on the nudge, not on the search
   worst.n.x0=worst.nx; worst.n.y0=worst.ny;
   R().positions[worst.n.idx]=[Math.round(worst.n.x0*10)/10,Math.round(worst.n.y0*10)/10];
   save();
@@ -4862,7 +4879,8 @@ function clearNet(){
     if(TIERRANK[tier]>TIERRANK[cur.tier]){ cur.tier=tier; cur.day=r.day }
     if(fit && (!cur.fit || FITRANK[fit]>FITRANK[cur.fit])){ cur.fit=fit; cur.fitDay=r.day }
   });
-  r.cleared.push({feats,tier,moves:r.netMoves,par,idx:r.netIndex,assisted:!!r.assisted});
+  r.cleared.push({feats,tier,moves:r.netMoves,par,idx:r.netIndex,assisted:!!r.assisted,
+                  log:(r.logGap||r.log.length!==r.netMoves)?null:r.log});
   const setDone = !isTrial() && r.cleared.length>=POLICY.dailyNets;
   if(setDone && r.cleared.every(c=>c.tier==='perfect')){
     [...new Set(r.cleared.flatMap(c=>c.feats))].forEach(k=>{
@@ -4872,7 +4890,8 @@ function clearNet(){
     });
   }
   if(setDone) r.over=true;
-  else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false }
+  else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false;
+         r.log=[]; r.assists=0; r.logGap=false }
   const read={run:r, num:r.netIndex, turns:r.turns||0,
               depth:r.cleared.length,
               assisted:!!r.cleared[r.cleared.length-1].assisted,
@@ -5777,6 +5796,7 @@ $('skipnet').onclick=e=>{
   e.preventDefault();
   const r=R(); if(r.over)return;
   r.turns=(r.turns||0)+5; r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false;
+  r.log=[]; r.assists=0; r.logGap=false;
   resetDescent();
   save(); nextNet(); toast('net skipped · 5 turns');
 };
@@ -5959,6 +5979,7 @@ function startLessons(){
   store.tutorialDone=false;
   r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
   r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
+  r.log=[]; r.assists=0; r.logGap=false;
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
   flashMsg('the guided nets · three lessons, and nothing here is scored');
@@ -5998,7 +6019,7 @@ window.__solveNet=()=>{
         if(!n.merged) continue;
         const alt=n.alt;
         (r.splitNodes=r.splitNodes||[]).push(n.idx);
-        splitNode(n,true); chargeTurn(r);
+        splitNode(n,true); chargeTurn(r,[1,n.idx]);
         const half=members.find(m=>m.idx===1000+n.idx);
         if(half&&alt){half.hx=alt.x; half.hy=alt.y}
       } else {
@@ -6006,7 +6027,7 @@ window.__solveNet=()=>{
         if(Math.hypot(n.x0-n.hx,n.y0-n.hy)<=MIN_SEP*.7) continue;
         n.x0=clampX(n.hx); n.y0=clampY(n.hy);
         r.positions[n.idx]=[n.x0,n.y0];
-        chargeTurn(r);
+        chargeTurn(r,[0,n.idx,Math.round(n.x0*10)/10,Math.round(n.y0*10)/10]);
       }
     }
     recordDay(); countCross();
@@ -6025,11 +6046,11 @@ window.__solveNet=()=>{
       else{n.x0=clampX(BW*.07+(BW*.86*i/Math.max(1,t.nodes.length-1)));n.y0=lane(t)+(i%2?9:-9)}
       r.positions[n.idx]=[n.x0,n.y0];
     });
-    r.turns=(r.turns||0)+1; r.netMoves++;
+    r.turns=(r.turns||0)+1; r.netMoves++; r.logGap=true;
   });
   members.filter(n=>n.merged).slice().forEach(n=>{
     (r.splitNodes=r.splitNodes||[]).push(n.idx);
-    splitNode(n,true); r.turns=(r.turns||0)+1; r.netMoves++;
+    splitNode(n,true); r.turns=(r.turns||0)+1; r.netMoves++; r.logGap=true;
   });
   recordDay(); countCross();
   threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>{freeThread(t,false);r.freed.push(t.key)});
