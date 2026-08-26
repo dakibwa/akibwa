@@ -787,6 +787,36 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
   }
   .acct-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:13px;overflow-y:auto}
+
+  .arch-card{
+    max-width:660px;width:100%;display:flex;flex-direction:column;
+    max-height:calc(100dvh - 40px);overflow:hidden;
+    border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
+  }
+  .arch-body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .arch-read{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    font-size:11px;letter-spacing:.06em;color:var(--ink-soft)}
+  .arch-read b{font-size:13px;letter-spacing:.02em;color:var(--ink);font-weight:600}
+  .arch-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:9px;
+    overflow-y:auto;padding-right:2px;
+  }
+  .arch-net{display:flex;flex-direction:column;gap:4px}
+  .arch-plate{
+    position:relative;background:var(--paper);border:0;aspect-ratio:1040/580;
+    display:block;overflow:hidden;
+  }
+  .arch-plate svg{display:block;width:100%;height:100%}
+  .arch-plate::after{content:'';position:absolute;inset:0;background:var(--paper);opacity:.3}
+  .arch-foot{display:flex;align-items:baseline;justify-content:space-between;gap:6px;
+    font-size:9.5px;letter-spacing:.08em;color:var(--ink-soft)}
+  .arch-rung{height:3px;flex:0 0 26px;background:var(--rung,var(--rule))}
+  .arch-offer{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    border-top:1px solid var(--rule);padding-top:12px;
+  }
+  .arch-say{font-size:11px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
+
   .acct-ask{font-size:13px;color:var(--ink);line-height:1.45}
   .acct-note{font-size:10px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
   .acct-field{
@@ -1024,7 +1054,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .track{height:8px;margin-top:7px}
 
     .veil{padding:12px}
-    .record,.acct-card{max-height:calc(100dvh - 24px)}
+    .record,.acct-card,.arch-card{max-height:calc(100dvh - 24px)}
+    .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
+    .arch-body{padding:12px 13px 15px}
     .acct-body{padding:14px 13px 15px}
     .acct-field{font-size:16px}
     .rec-foot{padding:9px 13px 11px}
@@ -1379,6 +1411,23 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close">&times;</a></span>
     </div>
     <div class="acct-body" id="acctbody"></div>
+  </section>
+</div>
+
+<!-- ---- THE ARCHIVE'S LOOK ----
+     a day you played, that you can no longer play. it used to answer a press
+     with a toast and nothing else, which is the game refusing and then having
+     nothing to show for the refusal. this is the day itself: its ten nets as
+     they were dealt, drawn small and unplayable, with the rung each one minted
+     under it. what is for sale is the right to play them again, so the thing
+     on the page is the thing for sale. -->
+<div class="veil" id="archveil">
+  <section class="arch-card">
+    <div class="rec-head">
+      <strong class="rec-title" id="archtitle">the archive</strong>
+      <span class="rec-right"><a href="#" class="rec-close" id="archclose" aria-label="close">&times;</a></span>
+    </div>
+    <div class="arch-body" id="archbody"></div>
   </section>
 </div>
 
@@ -5106,9 +5155,81 @@ function shutWords(iso){
   return spentDay(iso) ? replayWords()
                        : 'that day is in the archive · unlock it to play';
 }
+
+
+function archiveNets(iso){
+  const keep=JSON.stringify(store.run), out=[];
+  try{
+    for(let i=0;i<POLICY.dailyNets;i++){
+      store.run={...store.run, day:iso, netIndex:i, mode:'daily',
+                 positions:{}, freed:[], splitNodes:[]};
+      builtFor=-1; buildNet(true);
+      out.push({
+        idx:i,
+        nodes: members.map(n=>({x:n.x0, y:n.y0, merged:!!n.merged, pinned:!!n.pinned,
+                                col:n.threads[0].col})),
+        edges: threads.flatMap(t=>segList(t.nodes.length,t.chord).map(([a,b])=>({
+          col:t.col, x1:t.nodes[a].x0, y1:t.nodes[a].y0, x2:t.nodes[b].x0, y2:t.nodes[b].y0 }))),
+      });
+    }
+  }finally{
+    store.run=JSON.parse(keep); builtFor=-1; buildNet(true);
+  }
+  return out;
+}
+
+function archiveNetSVG(net){
+  const lines=net.edges.map(e=>
+    `<line x1="${e.x1.toFixed(0)}" y1="${e.y1.toFixed(0)}" x2="${e.x2.toFixed(0)}" y2="${e.y2.toFixed(0)}"`
+    +` stroke="var(${e.col})" stroke-width="7" stroke-linecap="round"/>`).join('');
+  const dots=net.nodes.map(n=>
+    `<circle cx="${n.x.toFixed(0)}" cy="${n.y.toFixed(0)}" r="${n.merged?15:11}"`
+    +` fill="var(--paper)" stroke="var(${n.col})" stroke-width="${n.merged?7:5}"/>`).join('');
+  const M=26;
+  return `<svg viewBox="${-M} ${-M} ${BW+M*2} ${BH+M*2}" aria-hidden="true">${lines}${dots}</svg>`;
+}
+
+let archFrom=null;
+function openArchiveLook(iso){
+  const row=dayRows().find(r=>r.d===iso);
+  if(!row) return false;
+  archFrom = $('histveil').classList.contains('show') ? 'histveil'
+           : $('introveil').classList.contains('show') ? 'introveil' : null;
+  const read=dayReading(row);
+  $('archtitle').textContent=dayLabel(iso);
+  const nets=archiveNets(iso);
+  const tiers=typeof row.tiers==='string'?row.tiers:'';
+  const flawless=isFlawless(tiers);
+  const grid=nets.map(n=>{
+    const t=TIEROF[tiers[n.idx]];
+    const col=t?`var(${flawless?TIERCOL.flawless:TIERCOL[t]})`:'var(--rule)';
+    return `<div class="arch-net">`
+      +`<span class="arch-plate">${archiveNetSVG(n)}</span>`
+      +`<span class="arch-foot"><span>${String(n.idx+1).padStart(2,'0')}</span>`
+      +`<i class="arch-rung" style="--rung:${col}" role="img"`
+      +` aria-label="net ${n.idx+1}${t?', '+tierSay(t):', not cleared'}"></i></span>`
+      +`</div>`;
+  }).join('');
+  const offer = canBuy()
+    ? `<span class="arch-say">these ten are yours to play again with the full version</span>`
+      +`<button class="wbtn solid" id="archbuy">unlock${priceWords()?' · '+priceWords():''}</button>`
+    : `<span class="arch-say">${esc(replayWords())}</span>`;
+  $('archbody').innerHTML=
+     `<div class="arch-read"><b>${esc(read.fig!=null?String(read.fig):'')} ${esc(read.word||'')}</b>`
+    +`<span>${esc(dayLabel(iso))} · played</span></div>`
+    +`<div class="arch-grid">${grid}</div>`
+    +`<div class="arch-offer">${offer}</div>`;
+  if($('archbuy')) $('archbuy').onclick=()=>beginUnlock();
+  if(archFrom) $(archFrom).classList.remove('show');
+  showVeil('archveil');
+  return true;
+}
 function openDay(iso){
   if(R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
-  if(!canPlayDay(iso)) return flashMsg(shutWords(iso));
+  if(!canPlayDay(iso)){
+    if(openArchiveLook(iso)) return;
+    return flashMsg(shutWords(iso));
+  }
   const leaving=R();
   const parkedHere = store.parked && store.parked.day===iso
                   && store.parked.mode!=='trial' && !store.parked.over ? store.parked : null;
@@ -5281,12 +5402,14 @@ function openRecord(){
                  played?(canPlay?'play again':replayWords()):''].filter(Boolean).join(' · ');
     el.setAttribute('aria-label',label);
     const offer=()=>openDay(d);
-    if(canPlay){
+    const looks=!canPlay && !!row;
+    if(canPlay||looks){
       el.setAttribute('role','button'); el.tabIndex=0;
-      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); offer() } };
+      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.onclick() } };
     }
     el.onclick=()=>{
       if(canPlay) return offer();
+      if(openArchiveLook(d)) return;
       const price=priceWords();
       flashMsg(spent
         ? `${dayLabel(d)} · ${replayWords()}`
@@ -5539,6 +5662,13 @@ function closeRecord(){
 }
 $('histclose').onclick=e=>{e.preventDefault();closeRecord()};
 $('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
+function closeArchiveLook(){
+  $('archveil').classList.remove('show');
+  if(archFrom==='histveil') openRecord();
+  else if(archFrom==='introveil'){ renderIntro('day'); showVeil('introveil') }
+  archFrom=null;
+}
+$('archclose').onclick=e=>{e.preventDefault();closeArchiveLook()};
 function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
   if(v.id==='introveil'||v.id==='runveil') return;
@@ -5720,6 +5850,7 @@ function renderIntro(mode){
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
+      if(openArchiveLook(d)) return;
       flashMsg(`${dayLabel(d)} · ${replayWords()}`);
     };
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
