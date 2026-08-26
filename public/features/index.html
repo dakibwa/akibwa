@@ -964,7 +964,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbweek::-webkit-scrollbar{width:5px}
   .wbweek::-webkit-scrollbar-thumb{background:var(--silver)}
   .wbweek::-webkit-scrollbar-track{background:transparent}
-  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 52px;
+  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr);
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          overflow:hidden}
   .wbchips{flex:0 0 auto;display:flex;gap:6px;justify-content:flex-end}
@@ -977,9 +977,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbday.shut .wbtier{background:var(--rule)}
   .wbday.shut .wbwhen{color:var(--rule)}
   .wbday.shut .track{opacity:.45}
-  .wbday[data-day]{cursor:pointer}
-  .wbday[data-day]:hover .wbwhen{color:var(--ink)}
-  .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+  .wbday[data-day]{cursor:pointer;transition:background var(--t-ui)}
+  .wbday[data-day]:hover,
+  .wbday[data-day]:focus-visible{background:var(--surface-2)}
+  .wbday[data-day]:hover .wbwhen,
+  .wbday[data-day]:focus-visible .wbwhen{color:var(--ink)}
+  .wbday[data-day]:hover .wbtier,
+  .wbday[data-day]:focus-visible .wbtier{width:9px}
+  .wbday[data-day]:active{background:var(--stamp-edge)}
+  .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:-1px}
+  .wbday .wbtier{transition:width var(--t-ui)}
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
   .wbday .dreplay{margin-left:0;height:21px;width:100%;padding:0}
   .wbday .dreplay:not(.shut):hover,
@@ -5870,11 +5877,6 @@ function renderIntro(mode){
       const isNow=d===today();
       const can=played && canPlayDay(d);
       const shut=isShut({d,row});
-      const chip=played
-        ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true">again</span>`
-        : canPlayDay(d)
-        ? `<span class="dstate dreplay" aria-hidden="true">play</span>`
-        : '';
       const press=played||canPlayDay(d);
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
@@ -5884,7 +5886,7 @@ function renderIntro(mode){
         +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
-        +`<span class="wbchips">${chip}</span></div>`;
+        +`</div>`;
     }).join('');
     const firstDay = !fresh && !rows.length;
     const head=fresh
