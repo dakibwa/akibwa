@@ -4,6 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>features</title>
+<!-- THE POLICY, AND WHAT IT CAN AND CANNOT DO HERE (26 Aug 2026).
+
+     `'unsafe-inline'` is in script-src and is not going away: the whole game is
+     two inline script blocks by design — no build, no bundler, nothing to
+     hash against — and hashes with no build step would mean the game stopped
+     booting on every edit until somebody remembered to recompute them. that is
+     a worse failure than the one it prevents, and it would end with the policy
+     being deleted rather than maintained. so this does NOT stop an injected
+     inline handler.
+
+     what it does stop is what an injected handler is FOR. `connect-src 'self'`
+     is the line that matters: the reflected XSS found in the provider names
+     was worth having because it could post the save and the unlock token to an
+     origin the attacker chose, and this refuses every destination but ours.
+     `base-uri 'none'` kills the <base> trick that repoints every relative url
+     at once, `object-src 'none'` closes plugin embedding, `form-action 'self'`
+     stops an injected form posting outward, and img-src is `data:` for the
+     favicon and nothing else — no pixel can carry data off the page.
+
+     the localhost origins are for `?api=`, which points a DEV page at a
+     `wrangler dev` on another port. it is not a hole worth removing: a remote
+     attacker gains a channel to the VICTIM'S OWN MACHINE, which they cannot
+     read back cross-origin, rather than a channel to themselves.
+
+     `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
+     it is header-only. Clickjacking cover has to come from the site serving
+     this file; the akibwa deploy is the place for that. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://localhost:* http://127.0.0.1:*; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -196,6 +224,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dayrow:focus-visible,.archlink:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
+  .field g.node{outline:none}
+  .field g.node:focus{outline:none}
+  .field .nfocus{opacity:0;pointer-events:none;transition:opacity .12s linear}
+  .field g.node:focus-visible .nfocus{opacity:1}
+  .field g.node.live:focus-visible{cursor:grab}
 
   .hud{background:var(--surface);border:1px solid var(--rule);box-shadow:var(--shadow-panel);
        flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
@@ -1690,7 +1723,8 @@ const TIERCELLS={clean:3, done:2, perfect:4, par:2, over:1};
 function featureStamp(k,tier,locked,fit){
   const d=FIGURES[k]||FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
   const mk=locked?markOn('--rule'):EMBLEM_INK;
-  const mark=locked
+  const unknown=!d;
+  const mark=(locked||unknown)
     ? `<g fill="none" stroke="${mk}" stroke-width="2" opacity=".78"><circle cx="48" cy="48" r="21"/><path d="M48 18V78M18 48H78M27 27L69 69M69 27L27 69"/></g>`
     : FIGURES[k] ? figEmblem(k,{ink:mk,fit}) : `<g fill="${mk}">${d.p}</g>`;
   const flawless = tier==='flawless';
@@ -1705,7 +1739,7 @@ function featureStamp(k,tier,locked,fit){
       +`<path d="M24 0L0 24" fill="none" stroke="var(--sig-rosa)" stroke-width="3.5"/>`
     : '';
   const cancel=locked?'':`<g fill="none" stroke="${mk}" stroke-width="2" opacity=".45"><circle cx="88" cy="34" r="17"/><path d="M72 28H108M72 34H108M72 40H108"/></g>`;
-  return `<svg class="feature-stamp" viewBox="0 0 120 134" role="img" aria-label="${locked?'unidentified feature':k+' feature · '+tierSay(tier)}" style="--emblem:var(${locked?'--rule':d.c});--tier:var(${tierCol})">
+  return `<svg class="feature-stamp" viewBox="0 0 120 134" role="img" aria-label="${locked||unknown?'unidentified feature':k+' feature · '+tierSay(tier)}" style="--emblem:var(${locked||unknown?'--rule':d.c});--tier:var(${tierCol})">
     <rect x="4" y="4" width="112" height="126" fill="var(--stamp)" stroke="var(--stamp-edge)"/>
     <g fill="var(--surface)">${PERF_X}${PERF_Y}</g>
     <rect x="12" y="12" width="96" height="96" fill="var(--emblem)"/>
@@ -1827,8 +1861,7 @@ function netTargets(){
 const KEY='probe-run-v3';
 function today(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 
-const DEV = /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostname)
-         || /[?&]dev\b/.test(location.search);
+const DEV = /^(localhost|127\.0\.0\.1|\[::1\]|.*\.local)$/.test(location.hostname);
 const POLICY = {
   dailyNets: 10,           // today's ten, same ten for everyone
   get runsPerDay(){ return (DEV || this.premium) ? Infinity : 1 },
@@ -1837,8 +1870,11 @@ const POLICY = {
   get unlimited(){ return this.runsPerDay===Infinity }
 };
 let store={};
-try{store=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){store={}}
-if(!store.collection){
+try{
+  const raw=JSON.parse(localStorage.getItem(KEY)||'{}');
+  if(raw && typeof raw==='object' && !Array.isArray(raw)) store=raw;
+}catch(e){store={}}
+if(!store.collection || typeof store.collection!=='object'){
   store.collection={badges:{},playedDays:[],pairs:{}};
   try{ // carry stamps forward from earlier prototypes
     const old=JSON.parse(localStorage.getItem('probe-proto-v2')||'{}');
@@ -1875,6 +1911,12 @@ if(!store.run || (!store.run.archive && store.run.day!==today())){
 if(store.runsToday==null) store.runsToday=0;
 if(store.run && store.run.turns==null) store.run.turns=Math.max(0,50-(store.run.movesLeft??50));
 if(store.run && !store.run.startedAt) store.run.startedAt=new Date().toISOString();
+if(store.run){
+  const r=store.run;
+  for(const k of ['turns','netIndex','netMoves']) if(!Number.isFinite(r[k])) r[k]=0;
+  for(const k of ['cleared','freed','splitNodes']) if(!Array.isArray(r[k])) r[k]=[];
+  if(!r.positions || typeof r.positions!=='object') r.positions={};
+}
 function canStartAnotherRun(){
   return POLICY.unlimited || (store.runsToday||0) < POLICY.runsPerDay;
 }
@@ -1921,7 +1963,7 @@ const $=id=>document.getElementById(id);
 
 
 const API = (()=>{
-  const q=new URLSearchParams(location.search).get('api');
+  const q=DEV && new URLSearchParams(location.search).get('api');
   if(q) return q.replace(/\/+$/,'');
   if(location.protocol!=='http:' && location.protocol!=='https:') return null;
   return '/features/api';
@@ -2011,10 +2053,19 @@ async function syncNow(){
   if(syncQueued){ syncQueued=false; syncSoon() }
 }
 
+function sanitizeCollection(c){
+  if(!c||typeof c!=='object'||!c.badges||typeof c.badges!=='object') return c;
+  for(const b of Object.values(c.badges)){
+    if(!b||typeof b!=='object') continue;
+    if(!(b.tier in TIERRANK)) b.tier='done';   // a rung it earned, just not a nameable one
+    if(b.fit!=null && !(b.fit in FITRANK)) delete b.fit;
+  }
+  return c;
+}
 function adoptState(merged){
   if(!merged||typeof merged!=='object') return;
   const mine=R(), theirs=merged.run;
-  store.collection=merged.collection||store.collection;
+  store.collection=sanitizeCollection(merged.collection)||store.collection;
   store.meta=merged.meta||store.meta;
   store.premium=!!merged.premium;
   if(merged.runsDay===store.runsDay) store.runsToday=Math.max(store.runsToday||0,merged.runsToday||0);
@@ -3181,6 +3232,7 @@ function buildNet(force){
   const idx=R().netIndex;
   if(builtFor===idx && !force) return;
   builtFor=idx; lastT=''; peakCross=1;
+  dragN=null; dragId=null; dragNbrs=[]; $('field').classList.remove('dragging');
   { for(const id of ['threadrow','parrow']){ const r=$(id); if(r) delete r.dataset.done } }
   $('field').classList.remove('cleared','dimthreads','swap-in');
   readMarkSizes();
@@ -3518,6 +3570,13 @@ function paintNode(n){
   n.el=by('body'); n.el2=by('inner'); n.halo=by('halo');
   if(n.el2) n.el2.style.strokeWidth=MARK.wIn;
   if(n.threads.every(t=>t.freed)) n.el.classList.add('done');
+  const live=grabbable(n);
+  svgAdd('circle',{class:'nfocus',cx:n.x0,cy:n.y0,r:MARK.rHalo+4,fill:'none',
+    stroke:'var(--sig-gruen)','stroke-width':2.5},n.g);
+  n.g.setAttribute('tabindex', live?'0':'-1');
+  n.g.setAttribute('role','button');
+  n.g.setAttribute('aria-label', nodeSay(n));
+  n.g.classList.toggle('live', live);
   placeNode(n);
 }
 function placeNode(n){
@@ -3972,6 +4031,7 @@ function freeThread(t,silent){
 
 let dragN=null,dragMoved=false,dragStart=null,dragOff={x:0,y:0};
 let dragLast={x:0,y:0},dragNbrs=[],swallowNextDown=false;
+let dragId=null;
 function neighboursOf(n){
   const w=new Map();
   const add=(m,x)=>{ if(m&&m!==n&&!m.pinned&&(w.get(m)||0)<x) w.set(m,x) };
@@ -3999,18 +4059,30 @@ function boardScale(){
   if(m){const s=Math.hypot(m.a,m.b); if(s) return s}
   const w=$('netsvg').getBoundingClientRect().width; return w?w/BW:1;
 }
+const grabbable=n=>!n.pinned && !n.threads.every(t=>t.freed);
+function nodeSay(n){
+  const keys=n.threads.map(t=>t.key);
+  const what = n.threads.every(t=>t.freed) ? 'identified'
+             : n.pinned ? 'pinned neuron, will not move'
+             : n.merged ? 'shared neuron, carries two features'
+             : 'neuron';
+  const x = n.threads.some(t=>t.freed) ? 0 : incidentCross(n);
+  const crossing = x===1 ? '1 crossing' : x+' crossings';
+  return `${what} · ${keys.join(' and ')} · ${crossing}`;
+}
 function pick(x,y){
   const scale=1/boardScale();
   let best=null,bd=Math.max(20,26*scale);
-  members.forEach(n=>{if(n.pinned||n.threads.every(t=>t.freed))return;
+  members.forEach(n=>{if(!grabbable(n))return;
     const d=Math.hypot(n.x0-x,n.y0-y); if(d<bd){bd=d;best=n}}); return best}
 $('netsvg').addEventListener('pointerdown',e=>{
   if(R().over)return;
+  if(dragN)return;
   if(swallowNextDown){swallowNextDown=false; return}
   bumpIdle();
   sayNudge();          // you are back on the board; the game stops talking
   const p=svgPt(e); dragN=pick(p.x,p.y);
-  if(dragN){dragMoved=false;dragStart={x:dragN.x0,y:dragN.y0};
+  if(dragN){dragId=e.pointerId; dragMoved=false;dragStart={x:dragN.x0,y:dragN.y0};
     dragLast={x:dragN.x0,y:dragN.y0};
     $('field').classList.add('dragging');
     dragN.el.classList.add('grabbed');
@@ -4029,7 +4101,7 @@ function hoverNode(e){
 $('netsvg').addEventListener('pointermove',hoverNode);
 $('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('overnode'));
 $('netsvg').addEventListener('pointermove',e=>{
-  if(!dragN)return;
+  if(!dragN || e.pointerId!==dragId)return;   // only the finger that grabbed it moves it
   const p=svgPt(e);
   dragN.tw=null;                      // your hand always wins over a glide
   dragN.x0=clampX(p.x+dragOff.x); dragN.y0=clampY(p.y+dragOff.y);
@@ -4051,13 +4123,14 @@ function chargeTurn(r){
   if(!isTrial()) r.turns=(r.turns||0)+1;   // trials cost time, not turns
   r.netMoves++;
 }
-function endDrag(){
+function endDrag(e){
+  if(e && dragId!=null && e.pointerId!==dragId) return;
   $('field').classList.remove('dragging');
-  if(!dragN)return;
+  if(!dragN){dragId=null; return}
   const r=R(), node=dragN;
   node.el.classList.remove('grabbed');
   if(node.mf) node.mf.g.classList.remove('grabbed');
-  dragN=null;
+  dragN=null; dragId=null;
   dragNbrs=[];
   if(!(node.merged&&!dragMoved)) flickNode(node);   // a split has its own gesture
   if(!dragMoved){
@@ -4095,6 +4168,68 @@ function afterMove(r){
 }
 $('netsvg').addEventListener('pointerup',endDrag);
 $('netsvg').addEventListener('pointercancel',endDrag);
+
+const KEYSTEP=8, KEYSTEP_BIG=40;
+function keyGrab(n){
+  if(dragN===n) return true;
+  if(dragN) endDrag();               // one hold at a time, same as a finger
+  if(!grabbable(n) || R().over) return false;
+  dragN=n; dragId='kbd'; dragMoved=false;
+  dragStart={x:n.x0,y:n.y0}; dragLast={x:n.x0,y:n.y0};
+  dragNbrs=neighboursOf(n);
+  n.tw=null; n.tug=null;
+  n.el.classList.add('grabbed');
+  if(n.mf) n.mf.g.classList.add('grabbed');
+  return true;
+}
+function keyNudge(n,dx,dy){
+  if(!keyGrab(n)) return;
+  n.x0=clampX(n.x0+dx); n.y0=clampY(n.y0+dy);
+  n.xv=n.x0; n.yv=n.y0;
+  if(Math.hypot(n.x0-dragStart.x,n.y0-dragStart.y)>6) dragMoved=true;
+  dragLast={x:n.x0,y:n.y0};
+  refresh();
+  n.g.setAttribute('aria-label',nodeSay(n));
+}
+function keyCancel(){
+  if(!dragN || dragId!=='kbd') return;
+  const n=dragN;
+  n.x0=n.xv=n.xr=dragStart.x; n.y0=n.yv=n.yr=dragStart.y;
+  n.el.classList.remove('grabbed');
+  if(n.mf) n.mf.g.classList.remove('grabbed');
+  dragN=null; dragId=null; dragNbrs=[];
+  refresh(); n.g.setAttribute('aria-label',nodeSay(n));
+  flashMsg('put back · nothing spent');
+}
+$('netsvg').addEventListener('keydown',e=>{
+  const g=e.target.closest && e.target.closest('g.node');
+  if(!g) return;
+  const n=members.find(m=>m.g===g);
+  if(!n) return;
+  const big=e.shiftKey, step=big?KEYSTEP_BIG:KEYSTEP;
+  const move={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[e.key];
+  if(move){
+    if(!grabbable(n)){
+      if(n.pinned) flashMsg('this neuron is pinned · move the others around it');
+      return;
+    }
+    e.preventDefault(); bumpIdle(); sayNudge();
+    keyNudge(n,move[0],move[1]);
+    return;
+  }
+  if(e.key==='Enter'||e.key===' '){
+    e.preventDefault();
+    if(!grabbable(n)) return;
+    if(dragN!==n && !keyGrab(n)) return;
+    endDrag();
+    if(n.g) n.g.setAttribute('aria-label',nodeSay(n));
+    return;
+  }
+  if(e.key==='Escape' && dragN===n){ e.preventDefault(); keyCancel() }
+});
+$('netsvg').addEventListener('focusout',e=>{
+  if(dragId==='kbd' && dragN && e.target.closest && e.target.closest('g.node')===dragN.g) endDrag();
+});
 addEventListener('pointerup',()=>{swallowNextDown=false});
 
 let resizeT=null;
@@ -4215,6 +4350,25 @@ function descentTick(){
     clearNet();
   }
 }
+let seenDay=today();
+function dayRollover(){
+  const now=today();
+  if(now===seenDay) return;
+  seenDay=now;
+  store.runsDay=now; store.runsToday=0;
+  const r=R();
+  const untouched = r && !r.archive && r.mode!=='trial'
+                 && !r.turns && !r.netIndex && !(r.cleared||[]).length && !r.netMoves;
+  if(untouched && r.day!==now){ newRun('daily',now); builtFor=-1; resetDescent() }
+  save();
+  renderAll();
+  if($('runveil').classList.contains('show')) showRunOver();
+  if(introMode==='day' && $('introveil').classList.contains('show')) renderIntro('day');
+  if($('histveil').classList.contains('show')) openRecord();
+  if(!untouched && r && r.day!==now && !r.over) flashMsg('a new day · yesterday\'s set is still yours to finish');
+}
+setInterval(dayRollover,60000);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) dayRollover() });
 setInterval(descentTick,DESCENT_TICK_MS);
 $('descentbtn').onclick=()=>{
   if(descentArmed) return;
@@ -4516,7 +4670,7 @@ function recordDay(){
   if(!pd.some(x=>isDay(x,d))){
     pd.push({d,depth:0,back:isArchive()});
     if(!isArchive()){
-      const y=dayAdd(today(),-1);
+      const y=dayAdd(d,-1);
       store.meta.streak = (store.meta.lastPlayDay===y)?(store.meta.streak||0)+1:1;
       store.meta.lastPlayDay=d;
     }
@@ -4698,10 +4852,10 @@ function fillSignInInvite(){
     const el2=$('binvite');
     el2.hidden=false;
     el2.innerHTML=`<span class="bfoot-say">saved in this browser · sign in and it follows you anywhere</span>`
-      +`<span class="bfoot-ins">${list.map(p=>
-          `<a href="#" class="acctlink" id="binv-${p}" aria-label="sign in with ${p}">${p}</a>`).join('')}</span>`;
-    list.forEach(p=>{
-      const a=$('binv-'+p);
+      +`<span class="bfoot-ins">${list.map((p,i)=>{const nm=esc(p);
+          return `<a href="#" class="acctlink" id="binv-${i}" aria-label="sign in with ${nm}">${nm}</a>`}).join('')}</span>`;
+    list.forEach((p,i)=>{
+      const a=$('binv-'+i);
       if(a) a.onclick=e=>{e.preventDefault(); if(p==='email') hideVeils(); goSignIn(p)};
     });
   });
@@ -4777,13 +4931,11 @@ function showRunOver(){
     sun:false,
     offer:runOverOffer(trial,depth),
     actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
-            `<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">share</button>`+
-            `<button class="wbtn" id="recordbtn2">the record</button>`+
+            `<button class="wbtn${canResume()?'':' solid'}" id="recordbtn2">the record</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')+
             `<button class="wbtn${canTimeTrial()?'':' shut'}" id="trialbtn">${trial?'trial again':'time trial'} ⏱</button>`
   });
   showVeil('runveil');
-  $('sharebtn').onclick=()=>copyShare();
   $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
   $('trialbtn').onclick=()=>startTrialRun();
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
@@ -4958,9 +5110,12 @@ function openDay(iso){
   if(R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
   if(!canPlayDay(iso)) return flashMsg(shutWords(iso));
   const leaving=R();
+  const parkedHere = store.parked && store.parked.day===iso
+                  && store.parked.mode!=='trial' && !store.parked.over ? store.parked : null;
+  if(parkedHere) store.parked=null;
   if(leaving && leaving.mode!=='trial' && !leaving.archive
      && leaving.day!==iso && leaving.cleared.length<POLICY.dailyNets) store.parked=leaving;
-  newRun('daily',iso);
+  if(parkedHere) store.run=parkedHere; else newRun('daily',iso);
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
   flashMsg(iso===today()?'today\'s net':'playing the archive · '+dayLabel(iso)+' · this does not extend a streak');
 }
@@ -5003,7 +5158,7 @@ function archiveLineEl(){
   el.className='dayarch'+(POLICY.premium?' held':'');
   if(POLICY.premium){
     el.innerHTML='<span class="datext">on another device</span>'
-      +`<span class="dacode" aria-label="type this on another device to open it there">${acct.code}</span>`;
+      +`<span class="dacode" aria-label="type this on another device to open it there">${esc(acct.code)}</span>`;
   } else {
     el.innerHTML='<span class="datext">bought the full version already?</span>'
       +(API
@@ -5043,10 +5198,10 @@ function renderAccount(){
 
   const names={google:'google',apple:'apple',facebook:'facebook',email:'email'};
   foot.innerHTML=`<span class="acct-say">kept on this device only</span>`
-    +`<span class="acct-ins">sign in${signIns.map(p=>
-        link('acctin-'+p,names[p]||p,'sign in with '+(names[p]||p))).join('')}</span>`;
-  signIns.forEach(p=>{
-    const el=$('acctin-'+p);
+    +`<span class="acct-ins">sign in${signIns.map((p,i)=>{const nm=esc(names[p]||p);
+        return link('acctin-'+i,nm,'sign in with '+nm)}).join('')}</span>`;
+  signIns.forEach((p,i)=>{
+    const el=$('acctin-'+i);
     if(el) el.onclick=e=>{e.preventDefault();goSignIn(p)};
   });
 }
@@ -5324,123 +5479,9 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');set
 
 
 const WORDMARK='features';
-const PLATE='#0E1214';
-const PLATEINK=lum(PLATE)>0.192?'#0E1214':'#ffffff';   // the mark rule applied, not asserted
-const SHAREFILL={perfect:1, clean:2/3, par:2/3, done:1/3, over:1/3};
-const SHAREBLOCK={perfect:'█', clean:'▅', par:'▅', done:'▃', over:'▃'};
-const SHAREEMPTY='▁';                 // a net of the day still to play
-const CARD_W=760, CARD_H=470;
-
-function shareFigures(r){
-  const cells=(r&&r.cleared)||[];
-  const slots=Math.max(POLICY.dailyNets,cells.length);
-  return {cells,slots,
-    turns:cells.reduce((a,c)=>a+(c.moves||0),0),
-    par:cells.reduce((a,c)=>a+(c.par||0),0),
-    rung:rungCount(cells.map(c=>c.tier),slots)};
-}
-function shareCardSVG(){
-  const r=R(), W=CARD_W, H=CARD_H, M=44, RX=W-M;
-  const {cells,turns,par,slots}=shareFigures(r);
-  const played=cells.length>0;
-  const sp=scoreParts(turns-par);
-  const fig=played?sp.fig:'0', word=played?sp.word:'nets played';
-  const numeric=/^\d+$/.test(fig);
-
-  const SY=312, SH=72, GAP=slots>12?4:8, CW=(RX-M-(slots-1)*GAP)/slots;
-  const strip=Array.from({length:slots},(_,i)=>{
-    const x=(M+i*(CW+GAP)).toFixed(1), w=CW.toFixed(1), c=cells[i];
-    const frame=`<rect x="${x}" y="${SY}" width="${w}" height="${SH}" fill="none" stroke="${PLATEINK}" stroke-opacity=".3"/>`;
-    if(!c) return frame;
-    const h=Math.round(SH*(SHAREFILL[c.tier]||SHAREFILL.done));
-    return frame+`<rect x="${x}" y="${SY+SH-h}" width="${w}" height="${h}" fill="${cssv(TIERCOL[c.tier])}"/>`;
-  }).join('');
-
-  const LY=414, KW=11, KH=20;
-  let kx=M;
-  const key=['perfect','clean','done'].map(name=>{
-    const kh=Math.round(KH*SHAREFILL[name]);
-    const g=`<rect x="${kx}" y="${LY-KH}" width="${KW}" height="${KH}" fill="none" stroke="${PLATEINK}" stroke-opacity=".3"/>`
-      +`<rect x="${kx}" y="${LY-kh}" width="${KW}" height="${kh}" fill="${cssv(TIERCOL[name])}"/>`
-      +`<text x="${kx+KW+13}" y="${LY-4}" font-size="14" letter-spacing="2" fill-opacity=".8">${tierSay(name)}</text>`;
-    kx+=KW+13+tierSay(name).length*9.3+22;
-    return g;
-  }).join('');
-  const note=isTrial() ? 'time trial'
-    : (played && cells.length<POLICY.dailyNets) ? `${cells.length} of ${POLICY.dailyNets} nets` : '';
-
-  const MW=(()=>{
-    try{const c=document.createElement('canvas').getContext('2d');
-      c.font='700 46px Helvetica,Arial';
-      return Math.max(60,c.measureText(WORDMARK).width-(WORDMARK.length-1)*1.4);
-    }catch(e){return 190}   // a plausible measure, so the mark still draws
-  })();
-  const MARK=FLAG.map((c,i)=>
-    `<stop offset="${i/4}" stop-color="${cssv(c)}"/><stop offset="${(i+1)/4}" stop-color="${cssv(c)}"/>`
-  ).join('');
-
-  const sun=Array.from({length:14},(_,i)=>{
-    const a=i*(360/14)*Math.PI/180;
-    return `<line x1="${(694+Math.cos(a)*8).toFixed(1)}" y1="${(70+Math.sin(a)*8).toFixed(1)}" x2="${(694+Math.cos(a+.22)*22).toFixed(1)}" y2="${(70+Math.sin(a+.22)*22).toFixed(1)}"/>`;
-  }).join('');
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-    <rect width="${W}" height="${H}" fill="${PLATE}"/>
-    <defs><linearGradient id="mark" x1="0" y1="0" x2="1" y2="0">${MARK}</linearGradient></defs>
-    <g font-family="Helvetica,Arial" fill="${PLATEINK}">
-      <text x="${M}" y="76" font-size="46" font-weight="700" letter-spacing="-1.4">${WORDMARK}</text>
-      <rect x="${M}" y="91" width="${MW.toFixed(2)}" height="7" fill="url(#mark)"/>
-      <text x="${M}" y="114" font-size="14" letter-spacing="3.4" fill-opacity=".8">${dayLabel(r.day||today())}</text>
-      <g stroke="${PLATEINK}" stroke-width="2.4" stroke-opacity=".55">${sun}</g>
-      <line x1="${M}" y1="128" x2="${RX}" y2="128" stroke="${PLATEINK}" stroke-opacity=".32"/>
-      <text x="${M}" y="236" font-size="${numeric?126:88}" font-weight="300" letter-spacing="${numeric?-5:-2}">${fig}</text>
-      <text x="${M+2}" y="274" font-size="22" letter-spacing="3.6" fill-opacity=".92">${word}</text>
-      ${played?`<text x="${RX}" y="274" font-size="15" letter-spacing="1.6" text-anchor="end" fill-opacity=".72">${turns} turns · par ${par}</text>`:''}
-      <line x1="${M}" y1="296" x2="${RX}" y2="296" stroke="${PLATEINK}" stroke-opacity=".32"/>
-      ${strip}
-      ${key}
-      ${note?`<text x="${RX}" y="${LY-4}" font-size="14" letter-spacing="2" text-anchor="end" fill-opacity=".8">${note}</text>`:''}
-      <text x="${M}" y="450" font-size="12" letter-spacing="2.2" fill-opacity=".7">untangling superposed features · after otl aicher, munich 1972</text>
-    </g>
-  </svg>`;
-}
-async function shareCardBlob(){
-  const svg=shareCardSVG();
-  const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
-  const img=new Image();
-  await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});
-  const c=document.createElement('canvas');
-  c.width=CARD_W*2; c.height=CARD_H*2;
-  const ctx=c.getContext('2d');
-  ctx.scale(2,2); ctx.drawImage(img,0,0);
-  return await new Promise(r=>c.toBlob(r,'image/png'));
-}
-async function copyShare(){
-  const r=R(), day=r.day||today();
-  const {cells,turns,par,slots}=shareFigures(r);
-  const strip=Array.from({length:slots},(_,i)=>
-    cells[i] ? (SHAREBLOCK[cells[i].tier]||SHAREBLOCK.done) : SHAREEMPTY).join('');
-  const txt=`${WORDMARK} · ${dayLabel(day)}\n${cells.length?fmtScore(turns-par)+' · '+turns+' turns':'not played'}\n${strip}`;
-  try{
-    const blob=await shareCardBlob();
-    if(blob && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
-      await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-      toast('card copied'); return;
-    }
-    if(blob){
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob); a.download=`${WORDMARK}-${day}.png`;
-      a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-      toast('card saved'); return;
-    }
-  }catch(e){/* fall through to text */}
-  try{await navigator.clipboard.writeText(txt);toast('copied')}
-  catch(e){const ta=document.createElement('textarea');ta.className='pick';ta.value=txt;document.body.appendChild(ta);ta.select();
-    try{document.execCommand('copy');toast('copied')}catch(e2){toast('copy failed')}ta.remove()}
-}
 (function(){
   const tab=document.createElement('button');
-  tab.className='devtab'; tab.title='controls (d)';
+  tab.className='devtab'; tab.title='controls (d)'; tab.setAttribute('aria-label','controls');
   tab.onclick=()=>{$('devdrawer').hidden=false; tab.hidden=true};
   document.body.appendChild(tab);
   const hide=()=>{$('devdrawer').hidden=true; tab.hidden=false};
@@ -5664,7 +5705,7 @@ function renderIntro(mode){
         +`<rect x="10.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
         +`<rect x="17.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
         +`</svg></button>`)
-      +`<button class="help" id="introcoll" aria-label="the collection" aria-label="the collection">`
+      +`<button class="help" id="introcoll" aria-label="the collection">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
       +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
       +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
@@ -5690,6 +5731,8 @@ function renderIntro(mode){
     };
     $('introbody').querySelector('.wbweek').onkeydown=e=>{
       if(e.key!=='Enter' && e.key!==' ') return;
+      const t=e.target.closest('[data-trial]');
+      if(t){ e.preventDefault(); return startDayTrial(t.dataset.trial) }
       const row=e.target.closest('[data-day]');
       if(row){ e.preventDefault(); press(row.dataset.day) }
     };
