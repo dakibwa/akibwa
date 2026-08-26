@@ -1824,6 +1824,17 @@ const GEN_VERSIONS=[
            'insects','loops','hands','bridges','edges','stars','curves',
            'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
            'stillness','running','flags','boats','symmetry','nesting','clocks',
+           'branching','letters','column','singularity','languages','gravity','tiles'] },
+  { v:13, from:'2026-09-01', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'line', rung:'earn', chord:'late', selfX:'count',
+    ramp:'mech', dense:'cap', weave:'pattern',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion',
+           'fish','trees','faces','lightning','eyes',
+           'insects','loops','hands','bridges','edges','stars','curves',
+           'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
+           'stillness','running','flags','boats','symmetry','nesting','clocks',
            'branching','letters','column','singularity','languages','gravity','tiles'] }
 ];
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
@@ -1981,10 +1992,15 @@ function cleanGap(perfect){ return Math.max(2, Math.round(perfect/3)); }
 function netTargets(){
   const par=spec?spec.par:0, r=R();
   const day=OPTIMA[r.day];                       // ten numbers, or nothing outside the closed window
-  const o = GEN_RULES.optimum==='route' ? (spec&&spec.plan?spec.plan.route:undefined)
+  const o = GEN_RULES.optimum==='line'  ? (spec&&spec.plan?spec.plan.line:undefined)
+          : GEN_RULES.optimum==='route' ? (spec&&spec.plan?spec.plan.route:undefined)
                                         : (day?day[r.netIndex]:undefined);
   if(!(typeof o==='number' && o>0)) return {optimum:par, par};
   if(GEN_RULES.rung==='flat') return {optimum:(o<par)?o:par, par};
+  if(GEN_RULES.rung==='earn'){
+    const perfect=Math.max(1, o-Math.ceil(o/6));
+    return {optimum:perfect, par:Math.max(perfect+1, o)};
+  }
   const graced = GEN_RULES.rung==='ramp' || GEN_RULES.rung==='wide';
   const perfect = o + (graced ? graceFor(spec) : 0);
   const gap = GEN_RULES.rung==='wide' ? cleanGap(perfect) : 1;
@@ -3214,6 +3230,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx){
     }
   }
   plan.route=plan.par;
+  if(GEN_RULES.optimum==='line') plan.line=famLine(plan);
   plan.par=Math.max(3, plan.par + (GEN_RULES.parSlack||0));
   return plan;
 }
@@ -3377,6 +3394,75 @@ function famGreedy(plan){
     actions++;
   }
   return {actions, log, left:X()};
+}
+function famLine(plan){
+  const walk=famGreedy(plan).log;
+  const at=new Map(); plan.nodes.forEach((n,i)=>at.set(n,i));
+  const T=plan.order.length;
+  const P=plan.nodes.map((n,i)=>({x:clampX(n.x), y:clampY(n.y), hx:n.hx, hy:n.hy,
+                                  merged:n.merged, alt:n.alt, t:n.t.slice(),
+                                  pinned:n.pinned, i}));
+  const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
+  const S=planSegs(plan), self=GEN_RULES.selfX==='count';
+  const byI=new Map(P.map(p=>[p.i,p]));
+  const freed=new Array(T).fill(false);
+  const cross=()=>{
+    const c=new Array(T).fill(0);
+    for(let a=0;a<T;a++){
+      if(freed[a]) continue;
+      const U=seq[a], SU=S[a];
+      if(self) for(let p=0;p<SU.length;p++)for(let q=p+1;q<SU.length;q++){
+        const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=U[SU[q][0]],q2=U[SU[q][1]];
+        if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+        if(segX(p1,p2,q1,q2)) c[a]+=2;
+      }
+      for(let b=a+1;b<T;b++){
+        if(freed[b]) continue;
+        const V=seq[b], SV=S[b];
+        for(let p=0;p<SU.length;p++)for(let q=0;q<SV.length;q++){
+          const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=V[SV[q][0]],q2=V[SV[q][1]];
+          if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+          if(segX(p1,p2,q1,q2)){c[a]++;c[b]++}
+        }
+      }
+    }
+    return c;
+  };
+  const sweep=()=>{
+    const c=cross();
+    for(let k=0;k<T;k++){
+      if(freed[k]) continue;
+      if(c[k]===0 && !seq[k].some(p=>p.merged)) freed[k]=true;
+    }
+    return freed.every(Boolean);
+  };
+  let n=0;
+  if(sweep()) return 0;
+  for(const [kind,id] of walk){
+    const p=byI.get(id);
+    if(!p) continue;
+    if(kind==='split'){
+      if(!p.merged) continue;
+      const kb=p.t[1], j=seq[kb].indexOf(p);
+      if(j<0) continue;
+      const half={x:p.x, y:p.y, hx:p.alt?p.alt.x:null,
+                  hy:p.alt?p.alt.y:null, merged:false, t:[kb], i:1000+p.i};
+      seq[kb][j]=half;
+      p.merged=false; p.t=[p.t[0]];
+      const put=splitPlace(p.i, p.x, p.y, famProbe(seq,T,p,half,S));
+      p.x=put.a.x; p.y=put.a.y; half.x=put.b.x; half.y=put.b.y;
+      byI.set(half.i, half);
+    } else {
+      if(p.pinned || p.hx==null) continue;
+      if(p.t.every(k=>freed[k])) continue;            // grabbable, in one line
+      const nx=clampX(p.hx), ny=clampY(p.hy);
+      if(Math.abs(p.x-nx)<.5 && Math.abs(p.y-ny)<.5) continue;
+      p.x=nx; p.y=ny;
+    }
+    n++;
+    if(sweep()) return n;
+  }
+  return n;
 }
 
 let gRoot,gThreads,gMarkers,gMembers,gLabels,gFx,physRAF=null,physDirty=true;
