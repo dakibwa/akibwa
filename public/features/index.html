@@ -861,6 +861,33 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-field::placeholder{color:var(--ink-soft);opacity:.75;font-size:13px}
   .acct-field:focus{outline:none;border-bottom-color:var(--ink)}
   .acct-field.code{font-size:26px;font-weight:300;letter-spacing:.32em;font-variant-numeric:tabular-nums}
+  .acct-field.tagfield{font-size:22px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--tc,var(--ink));font-weight:600}
+  .acct-field.tagfield::placeholder{color:var(--ink-soft);font-weight:400;letter-spacing:.28em}
+  .tagcols{display:flex;gap:9px;margin-top:11px}
+  .tagcol{
+    appearance:none;width:24px;height:24px;padding:0;border:0;cursor:pointer;
+    background:var(--tc);box-shadow:0 0 0 1px var(--rule);
+    transition:box-shadow var(--t-ui),transform var(--t-lift) var(--ease-out);
+  }
+  .tagcol:hover{box-shadow:0 0 0 1px var(--ink-soft)}
+  .tagcol.on{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink)}
+  .tagcol:active{transform:scale(.92)}
+  .tagcol:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+
+  .recboard{border-top:1px solid var(--rule);padding:12px 18px 16px;display:grid;gap:5px}
+  .recboard .bd-lab{font-size:11px;letter-spacing:.16em;text-transform:lowercase;color:var(--ink-soft)}
+  .bd-row{
+    display:grid;grid-template-columns:22px 3.4em minmax(0,1fr) auto;gap:10px;
+    align-items:center;min-height:24px;font-size:12px;letter-spacing:.04em;
+    color:var(--ink-soft);
+  }
+  .bd-row .bd-place{font-variant-numeric:tabular-nums;color:var(--rule);text-align:right}
+  .bd-row .bd-tag{color:var(--tc);letter-spacing:.18em;font-weight:600;font-size:13px}
+  .bd-row .bd-fig{font-variant-numeric:tabular-nums;color:var(--ink)}
+  .bd-row.mine .bd-place,.bd-row.mine{color:var(--ink)}
+  .bd-open{color:var(--rule);font-size:14px;line-height:1}
+  .recboard .bd-note{font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);margin-top:4px}
   .acct-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .acct-row .wbtn{flex:0 0 auto}
   .acct-check{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45}
@@ -1413,6 +1440,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
         <a href="#" class="rec-close" id="histclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
     </div>
     <div class="daylist" id="daylist"></div>
+    <!-- today's board, under the list because it is the same reading widened:
+         the list says how your day went and this says how it stands against
+         everyone who chose a mark. hidden until the api answers with rows —
+         a copy opened off a disk has no api, a day with nobody on it has no
+         board, and an empty heading is worse than no heading. -->
+    <div class="recboard" id="recboard" hidden></div>
     <!-- THE SET AS A WHOLE, and it used to be a strip pinned above the list —
          one row of sixteen plates, squeezed to a card's width, retiring the
          moment the set filled. it was the only view of the collection and it was
@@ -2001,7 +2034,7 @@ const liveRunOn=d=>[store.run,store.parked].some(r=>r&&r.day===d&&r.mode!=='tria
 const spentDay=d=>!liveRunOn(d) && dayRows().some(r=>r.d===d);
 function canPlayDay(d){
   if(d>today() || d<LAUNCH) return false;
-  if(inArchive(d) && !POLICY.premium) return false;   // today and yesterday are the free ones
+  if(inArchive(d)) return false;                      // today and yesterday are the set
   return !!POLICY.premium || !spentDay(d);
 }
 function canTimeTrial(){ return DEV || !!POLICY.premium }
@@ -2083,7 +2116,11 @@ async function apiCall(path,opts){
   if(!API) throw new Error('no api');
   const r=await fetch(API+path,{credentials:'same-origin',...opts});
   const body=await r.json().catch(()=>null);
-  if(!r.ok) throw new Error((body&&body.error)||('http '+r.status));
+  if(!r.ok){
+    const err=new Error((body&&body.error)||('http '+r.status));
+    err.status=r.status;
+    throw err;
+  }
   return body;
 }
 
@@ -2327,10 +2364,22 @@ function renderAcct(){
         : `<div class="acct-note">this deployment cannot send mail, so there is no daily to offer.</div>`)
     +`</div>`
     +`<div class="acct-sec">`
+      +`<div class="acct-lab">the board</div>`
+      +`<div class="acct-ask">${account.tag?'on the board':'you are not on it'}</div>`
+      +`<input class="acct-field tagfield" id="accttag" maxlength="3" spellcheck="false"
+              autocapitalize="characters" autocomplete="off" placeholder="AAA"
+              style="--tc:var(--${TAGCOLS.includes(tagPick||account.tagCol)?(tagPick||account.tagCol):'ink'})"
+              value="${esc(account.tag||'')}">`
+      +`<div class="tagcols" id="tagcols">${TAGCOLS.map(c=>
+          `<button type="button" class="tagcol${c===(tagPick||account.tagCol)?' on':''}" data-col="${c}"
+                   style="--tc:var(--${c})" aria-label="${c}"></button>`).join('')}</div>`
+      +`<div class="acct-note">three letters or numbers, and one colour. it is what a score is posted under, and it is the whole of what the board shows — no name, no address, nothing that can be looked up. clear it and you come off.</div>`
+    +`</div>`
+    +`<div class="acct-sec">`
       +`<div class="acct-lab">the full version</div>`
       +`<div class="acct-ask">${POLICY.premium
-          ? 'yours · the archive, the replay and the time trial'
-          : 'not yours yet · the archive, the replay and the time trial'}</div>`
+          ? 'yours · another run at a day you have played'
+          : 'not yours yet · another run at a day you have played'}</div>`
       +`<div class="acct-note">${POLICY.premium
           ? 'it rides on this account, so it follows you to any device you sign in on.'
           : 'buying it here is once only, and signing in is what carries it between devices.'}</div>`
@@ -2344,6 +2393,13 @@ function renderAcct(){
        +(POLICY.premium?' the full version goes with the account and cannot be restored afterwards.':'')
        +`</div>`:'');
   $('acctsave').onclick=()=>saveHello(true);
+  if($('tagcols')) $('tagcols').onclick=e=>{
+    const b=e.target.closest&&e.target.closest('.tagcol');
+    if(!b) return;
+    tagPick=b.dataset.col;
+    [...$('tagcols').children].forEach(c=>c.classList.toggle('on',c===b));
+    if($('accttag')) $('accttag').style.setProperty('--tc','var(--'+tagPick+')');
+  };
   $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
   $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
   if($('acctconfirm')) $('acctconfirm').onclick=e=>{
@@ -2385,6 +2441,13 @@ async function saveHello(stay){
   const patch={tzOffset:new Date().getTimezoneOffset()};
   const addr=$('acctaddr'); const daily=$('acctdaily');
   const wantDaily=!!(daily&&daily.checked);
+  const tagEl=$('accttag');
+  if(tagEl){
+    const t=tagEl.value.trim().toUpperCase();
+    if(t && !/^[A-Z0-9]{3}$/.test(t)){ acctErr='three letters or numbers'; return renderAcct() }
+    patch.tag=t;
+    patch.tagCol=t ? (tagPick||account.tagCol||TAGCOLS[1]) : '';
+  }
   const typed=addr?addr.value.trim().toLowerCase():'';
   acctBusy=true; acctErr=''; renderAcct();
   try{
@@ -2637,7 +2700,7 @@ async function readUnlockReturn(){
   if(r && !r.error && r.full){
     done();
     applyEntitlement(r); entitlementChanged();
-    return flashMsg('unlocked · the archive is yours',{cols:['--sig-violett']});
+    return flashMsg('unlocked · the replay is yours',{cols:['--sig-violett']});
   }
   if(r && r.pending) return toast('payment still clearing · it opens when it does');
   if(r && r.mismatch){ done(); return toast('paid · restore it here with your unlock code') }
@@ -4299,7 +4362,7 @@ function endDrag(e){
       splitNode(node,false);
       recordDay(); tutReach(1);
       r.positions[node.idx]=[Math.round(node.x0*10)/10,Math.round(node.y0*10)/10];
-      chargeTurn(r,[1,node.idx]);
+      chargeTurn(r,[1,node.idx,...(r.positions[node.idx]||[]),...(r.positions[1000+node.idx]||[])]);
       afterMove(r);
     }
     return;
@@ -4497,7 +4560,7 @@ function descentTick(){
   descentStall=0;
   r.assisted=true;
   r.assists=(r.assists||0)+1;
-  logMove(r,[2]);
+  logMove(r,[2,best.n.idx,Math.round(best.nx*10)/10,Math.round(best.ny*10)/10]);
   if(settlingNode&&settlingNode!==best.n) settlingNode.el.classList.remove('settling');
   settlingNode=best.n; settlingNode.el.classList.add('settling');
   best.n.tw={ax:best.n.xv, ay:best.n.yv, bx:best.nx, by:best.ny,
@@ -5058,10 +5121,8 @@ function runOverOffer(trial,depth){
   if(trial || POLICY.premium || depth<POLICY.dailyNets) return '';
   ensurePrice();                      // redraws this card if the answer is late
   if(!canBuy()) return '';            // nothing to sell here yet — see `till`
-  const n=archiveCount(), price=priceWords();
-  const what=n ? `another run at any day, and ${n} earlier day${n===1?'':'s'}`
-               : 'another run at any day';
-  return `${what} · <a href="#" id="runoffer">unlock</a>${price?' · '+price:''}`;
+  const price=priceWords();
+  return `another run at a day you have played · <a href="#" id="runoffer">unlock</a>${price?' · '+price:''}`;
 }
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
@@ -5103,6 +5164,7 @@ function showRunOver(){
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
   showVeil('runveil');
+  postBoard();
   $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
@@ -5241,12 +5303,8 @@ function rungTrack(tiers,row){
 const MENU_CAP=730;
 function menuDays(){
   const by=new Map(dayRows().map(r=>[r.d,r]));
-  const out=[];
-  let d=today();
-  for(let i=0;i<MENU_CAP && d>=LAUNCH;i++,d=dayAdd(d,-1)){
-    out.push({d,row:by.get(d)||null});
-  }
-  return out;
+  const d0=today(), y=dayAdd(d0,-1);
+  return (y>=LAUNCH?[d0,y]:[d0]).map(d=>({d,row:by.get(d)||null}));
 }
 function tierWords(tiers,sep){
   const g=rungsOf(tiers);
@@ -5263,6 +5321,8 @@ function rungCount(list,of){
   const good=n.perfect+n.clean;
   return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
 }
+const TAGCOLS=['hellblau','gruen','orange','dunkelblau'];
+let tagPick=null;              // the swatch under the pointer's last press
 const RUNGMOJI={perfect:'🟨', clean:'🟩', done:'🟪'};
 function dayStrip(tiers){
   const s=typeof tiers==='string'?tiers:'';
@@ -5291,6 +5351,57 @@ async function copyText(t){
     return !!ok;
   }catch(e){ return false }
 }
+let boardRows=null, boardFor=null, boardBusy=false;
+async function askBoard(day){
+  if(!API || boardBusy || boardFor===day) return;
+  boardBusy=true;
+  try{
+    const j=await apiCall(`/day/${day}/board`);
+    boardRows=(j&&Array.isArray(j.rows))?j.rows:[];
+    boardFor=day;
+  }catch(e){ boardRows=null; boardFor=day }      // asked and answered with nothing
+  boardBusy=false;
+  if($('histveil').classList.contains('show')) drawBoard();
+}
+function drawBoard(){
+  const el=$('recboard');
+  if(!el) return;
+  if(!boardRows || !boardRows.length){ el.hidden=true; el.innerHTML=''; return }
+  const mine=(account&&account.tag)||'';
+  const open=boardRows.some(r=>!r.checked);
+  el.hidden=false;
+  el.innerHTML=`<div class="bd-lab">today's board</div>`
+    +boardRows.map(r=>{
+      const col=TAGCOLS.includes(r.col)?r.col:'gruen';
+      return `<div class="bd-row${r.tag===mine?' mine':''}" style="--tc:var(--${col})">`
+        +`<span class="bd-place">${r.place}</span>`
+        +`<span class="bd-tag">${esc(r.tag)}</span>`
+        +`<span class="bd-fig">${r.good} of ${POLICY.dailyNets}</span>`
+        +`<span>${r.turns} turns${r.checked?'':' <i class="bd-open" aria-label="not replayed yet">·</i>'}</span>`
+      +`</div>`;
+    }).join('')
+    +(open?`<div class="bd-note">· not replayed yet. a score stays until its move log has been re-run.</div>`:'');
+}
+let boardSent=null;
+async function postBoard(){
+  const r=R();
+  if(!API || !account || !account.signedIn || !account.tag) return;
+  if(isTrial() || r.archive || r.cleared.length<POLICY.dailyNets) return;
+  if(boardSent===r.day) return;
+  const nets=r.cleared.map(c=>({idx:c.idx, moves:c.moves, log:c.log})).filter(n=>Array.isArray(n.log));
+  if(nets.length!==r.cleared.length) return;
+  boardSent=r.day;
+  const send=()=>apiCall(`/day/${r.day}/board`,{method:'POST',
+    headers:{'content-type':'application/json'}, body:JSON.stringify({nets})});
+  try{
+    await syncNow();
+    await send();
+  }catch(e){
+    if(e.status===409){
+      try{ await syncNow(); await send() }catch(e2){ boardSent=null }
+    } else boardSent=null;
+  }
+}
 const rungsOf=tiers=>(typeof tiers==='string' && tiers)
   ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
   : null;
@@ -5308,7 +5419,7 @@ function replayWords(){
 }
 function shutWords(iso){
   return spentDay(iso) ? replayWords()
-                       : 'that day is in the archive · unlock it to play';
+                       : 'today and yesterday are the set';
 }
 
 
@@ -5393,7 +5504,7 @@ function openDay(iso){
      && leaving.day!==iso && leaving.cleared.length<POLICY.dailyNets) store.parked=leaving;
   if(parkedHere) store.run=parkedHere; else newRun('daily',iso);
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
-  flashMsg(iso===today()?'today\'s net':'playing the archive · '+dayLabel(iso)+' · this does not extend a streak');
+  flashMsg(iso===today()?'today\'s net':dayLabel(iso)+' · this does not extend a streak');
 }
 function fmtScore(n){ return n>0 ? n+' over par' : n<0 ? (-n)+' under par' : 'level par' }
 function scoreParts(n){
@@ -5485,6 +5596,7 @@ function renderAccount(){
 let recView='days';
 function openRecord(){
   const d0=today(), rows=dayRows();
+  askBoard(d0); drawBoard();
   const keep=$('daylist').scrollTop;          // a theme flip redraws this whole screen
 
   const best=bestReading(rows);
@@ -5529,7 +5641,7 @@ function openRecord(){
     const best=(!played && inArchive(d)) ? dayBest(d) : null;
     const bestWords=best!=null ? ' · '+best+' turns at best' : '';
     if(locked){
-      det='in the archive'+bestWords;
+      det='not open'+bestWords;
     } else if(played){
       const p=[], rd=dayReading(row);
       const bar=(rd&&rd.rungs)?rungTrack(row.tiers,true):'';
@@ -5946,7 +6058,7 @@ function renderIntro(mode){
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
         +(press?` role="button" tabindex="0" data-day="${d}"`:'')
-        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'in the archive':'not played')}`
+        +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'not open':'not played')}`
         +`${say?' · '+say:''}">`
         +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
@@ -6064,7 +6176,8 @@ window.__solveNet=()=>{
         if(!n.merged) continue;
         const alt=n.alt;
         (r.splitNodes=r.splitNodes||[]).push(n.idx);
-        splitNode(n,true); chargeTurn(r,[1,n.idx]);
+        splitNode(n,true);
+        chargeTurn(r,[1,n.idx,...(r.positions[n.idx]||[]),...(r.positions[1000+n.idx]||[])]);
         const half=members.find(m=>m.idx===1000+n.idx);
         if(half&&alt){half.hx=alt.x; half.hy=alt.y}
       } else {
