@@ -954,7 +954,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbweek::-webkit-scrollbar{width:5px}
   .wbweek::-webkit-scrollbar-thumb{background:var(--silver)}
   .wbweek::-webkit-scrollbar-track{background:transparent}
-  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 48px;
+  .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr) 52px;
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          overflow:hidden}
   .wbchips{flex:0 0 auto;display:flex;gap:6px;justify-content:flex-end}
@@ -971,9 +971,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbday[data-day]:hover .wbwhen{color:var(--ink)}
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
-  .wbday .dreplay{margin-left:0;height:21px;width:21px}   /* the row's gap already spaces it */
-  .wbday .dreplay.ghost{visibility:hidden}
-  .wbday .dplay{font-size:12px;line-height:1}
+  .wbday .dreplay{margin-left:0;height:21px;width:100%;padding:0}
   .wbday .dreplay:not(.shut):hover,
   .wbday .dreplay:not(.shut):focus-visible{border-color:var(--ink);color:var(--ink)}
   .wbday .dreplay.shut:hover,
@@ -2542,23 +2540,31 @@ async function restoreUnlock(){
   applyEntitlement(r); entitlementChanged();
   toast('full version restored');
 }
+const PENDING_CS='features-pending-cs';
 async function readUnlockReturn(){
   const q=new URLSearchParams(location.search);
   const state=q.get('unlock');
-  if(!state) return;
-  const cs=q.get('cs');
-  q.delete('unlock'); q.delete('cs');
-  const rest=q.toString();
-  try{history.replaceState(null,'',location.pathname+(rest?'?'+rest:'')+location.hash)}catch(e){}
-  if(state!=='done') return toast('nothing was charged');
+  let cs=q.get('cs');
+  if(state){
+    q.delete('unlock'); q.delete('cs');
+    const rest=q.toString();
+    try{history.replaceState(null,'',location.pathname+(rest?'?'+rest:'')+location.hash)}catch(e){}
+    if(state!=='done'){ try{localStorage.removeItem(PENDING_CS)}catch(e){} return toast('nothing was charged') }
+    try{ if(cs) localStorage.setItem(PENDING_CS,cs) }catch(e){}
+  }else{
+    try{ cs=localStorage.getItem(PENDING_CS) }catch(e){ cs=null }
+    if(!cs) return;
+  }
+  const done=()=>{ try{localStorage.removeItem(PENDING_CS)}catch(e){} };
   const r=cs ? await api('unlock/confirm',{session_id:cs}) : null;
   if(r && !r.error && r.full){
+    done();
     applyEntitlement(r); entitlementChanged();
     return flashMsg('unlocked · the archive is yours',{cols:['--sig-violett']});
   }
   if(r && r.pending) return toast('payment still clearing · it opens when it does');
-  if(r && r.mismatch) return toast('paid · restore it here with your unlock code');
-  toast('could not confirm just now · it will be there next visit');
+  if(r && r.mismatch){ done(); return toast('paid · restore it here with your unlock code') }
+  if(state) toast('could not confirm just now · it will retry when you come back');
 }
 
 const SYSLIGHT = window.matchMedia ? matchMedia('(prefers-color-scheme: light)') : null;
@@ -5802,11 +5808,10 @@ function renderIntro(mode){
       const can=played && canPlayDay(d);
       const shut=isShut({d,row});
       const chip=played
-        ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true">&#8635;</span>`
+        ? `<span class="dstate dreplay${can?'':' shut'}" aria-hidden="true">again</span>`
         : canPlayDay(d)
-        ? `<span class="dstate dreplay dplay" aria-hidden="true">&rarr;</span>`
-        : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
-      const trialChip='<span class="dstate dreplay ghost" aria-hidden="true"></span>';
+        ? `<span class="dstate dreplay" aria-hidden="true">play</span>`
+        : '';
       const press=played||canPlayDay(d);
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
@@ -5816,7 +5821,7 @@ function renderIntro(mode){
         +`<i class="wbtier" style="${shut?'':'--tc:'+daySpine(d)}" aria-hidden="true"></i>`
         +`<span class="wbwhen">${isNow?'today':dayLabelShort(d)}</span>`
         +rungTrack(played?row.tiers:'',true)
-        +`<span class="wbchips">${chip}${trialChip}</span></div>`;
+        +`<span class="wbchips">${chip}</span></div>`;
     }).join('');
     const firstDay = !fresh && !rows.length;
     const head=fresh
