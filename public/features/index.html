@@ -617,6 +617,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .bulletin .boffer a:hover{color:var(--ink);border-bottom-color:var(--ink)}
   .bulletin .bsun{position:absolute;right:22px;bottom:16px;width:34px;height:34px;opacity:.55;pointer-events:none}
+  .shareout{display:block;width:100%;margin:2px 0 0;padding:9px 10px;
+    background:var(--paper);color:var(--ink);border:1px solid var(--silver);
+    font:inherit;font-size:12px;line-height:1.5;letter-spacing:.02em;
+    resize:none;white-space:pre}
+  .shareout[hidden]{display:none}
   .bactions{display:flex;gap:9px;padding:0 22px 20px}
   .bfoot{
     display:flex;flex-direction:column;align-items:flex-start;gap:7px;
@@ -5081,6 +5086,7 @@ function showRunOver(){
       const b=store.collection.badges[k]||{tier:'over'};
       return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}</span></div>`;
     }).join('')}</div>`:'')
+    +(trial?'':`<textarea class="shareout" id="shareout" readonly rows="3" aria-label="the day, to copy" hidden></textarea>`)
     +`<p class="bquiet">${trial?`${feats.length} features named.`
         :`today's set ${depth} of ${POLICY.dailyNets}. ${feats.length} features named.`} `
       +`day streak ${store.meta.streak||1}.</p>`,
@@ -5092,11 +5098,22 @@ function showRunOver(){
     sun:false,
     offer:runOverOffer(trial,depth),
     actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
-            `<button class="wbtn${canResume()?'':' solid'}" id="recordbtn2">the record</button>`+
+            (trial?'':`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">copy the day</button>`)+
+            `<button class="wbtn" id="recordbtn2">the record</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
   showVeil('runveil');
   $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
+  if($('sharebtn')) $('sharebtn').onclick=async e=>{
+    const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
+    const ok=await copyText(txt);
+    b.textContent = ok ? 'copied' : 'select it below';
+    if(!ok){
+      const out=$('shareout');
+      if(out){ out.hidden=false; out.value=txt; out.focus(); out.select() }
+    }
+    clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent='copy the day' },2400);
+  };
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
@@ -5245,6 +5262,34 @@ function rungCount(list,of){
   list.forEach(t=>{ const k=RUNGOF[t]; if(k) n[k]++ });
   const good=n.perfect+n.clean;
   return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
+}
+const RUNGMOJI={perfect:'🟨', clean:'🟩', done:'🟪'};
+function dayStrip(tiers){
+  const s=typeof tiers==='string'?tiers:'';
+  let out='';
+  for(let i=0;i<POLICY.dailyNets;i++) out += RUNGMOJI[TIEROF[s[i]]] || '⬛';
+  return out;
+}
+const shareText=(day,tiers)=>
+  'features · '+dayLabel(day)+(isFlawless(tiers)?' · flawless':'')
+  +'\n'+dayStrip(tiers)
+  +'\nakibwa.com/features';
+async function copyText(t){
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(t); return true;
+    }
+  }catch(e){}
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=t; ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:-2000px;left:0;opacity:0';
+    document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0,t.length);
+    const ok=document.execCommand('copy');
+    ta.remove();
+    return !!ok;
+  }catch(e){ return false }
 }
 const rungsOf=tiers=>(typeof tiers==='string' && tiers)
   ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
