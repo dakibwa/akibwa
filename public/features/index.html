@@ -1835,6 +1835,17 @@ const GEN_VERSIONS=[
            'insects','loops','hands','bridges','edges','stars','curves',
            'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
            'stillness','running','flags','boats','symmetry','nesting','clocks',
+           'branching','letters','column','singularity','languages','gravity','tiles'] },
+  { v:14, from:'2026-09-07', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'free', rung:'earned', chord:'late', selfX:'count',
+    ramp:'mech', dense:'cap', weave:'pattern',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion',
+           'fish','trees','faces','lightning','eyes',
+           'insects','loops','hands','bridges','edges','stars','curves',
+           'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
+           'stillness','running','flags','boats','symmetry','nesting','clocks',
            'branching','letters','column','singularity','languages','gravity','tiles'] }
 ];
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
@@ -1992,7 +2003,8 @@ function cleanGap(perfect){ return Math.max(2, Math.round(perfect/3)); }
 function netTargets(){
   const par=spec?spec.par:0, r=R();
   const day=OPTIMA[r.day];                       // ten numbers, or nothing outside the closed window
-  const o = GEN_RULES.optimum==='line'  ? (spec&&spec.plan?spec.plan.line:undefined)
+  const o = GEN_RULES.optimum==='free'  ? (spec&&spec.plan?spec.plan.free:undefined)
+          : GEN_RULES.optimum==='line'  ? (spec&&spec.plan?spec.plan.line:undefined)
           : GEN_RULES.optimum==='route' ? (spec&&spec.plan?spec.plan.route:undefined)
                                         : (day?day[r.netIndex]:undefined);
   if(!(typeof o==='number' && o>0)) return {optimum:par, par};
@@ -2000,6 +2012,10 @@ function netTargets(){
   if(GEN_RULES.rung==='earn'){
     const perfect=Math.max(1, o-Math.ceil(o/6));
     return {optimum:perfect, par:Math.max(perfect+1, o)};
+  }
+  if(GEN_RULES.rung==='earned'){
+    const perfect=Math.max(1, o-Math.ceil(o/8));
+    return {optimum:perfect, par:Math.max(perfect+1, o+Math.max(2, Math.ceil(o/3)))};
   }
   const graced = GEN_RULES.rung==='ramp' || GEN_RULES.rung==='wide';
   const perfect = o + (graced ? graceFor(spec) : 0);
@@ -3464,6 +3480,140 @@ function famLine(plan){
   }
   return n;
 }
+const FREE_GRID=[5,4], FREE_CLEAR=34, FREE_STEPS=90;
+function famFree(plan){
+  const at=new Map(); plan.nodes.forEach((n,i)=>at.set(n,i));
+  const T=plan.order.length;
+  const P=plan.nodes.map((n,i)=>({x:clampX(n.x), y:clampY(n.y), hx:n.hx, hy:n.hy,
+                                  merged:n.merged, alt:n.alt, t:n.t.slice(),
+                                  pinned:n.pinned, i}));
+  const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
+  const S=planSegs(plan), self=GEN_RULES.selfX==='count';
+  const all=P.slice();
+  const freed=new Array(T).fill(false);
+  const cross=()=>{
+    const c=new Array(T).fill(0);
+    for(let a=0;a<T;a++){
+      if(freed[a]) continue;
+      const U=seq[a], SU=S[a];
+      if(self) for(let p=0;p<SU.length;p++)for(let q=p+1;q<SU.length;q++){
+        const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=U[SU[q][0]],q2=U[SU[q][1]];
+        if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+        if(segX(p1,p2,q1,q2)) c[a]+=2;
+      }
+      for(let b=a+1;b<T;b++){
+        if(freed[b]) continue;
+        const V=seq[b], SV=S[b];
+        for(let p=0;p<SU.length;p++)for(let q=0;q<SV.length;q++){
+          const p1=U[SU[p][0]],p2=U[SU[p][1]],q1=V[SV[q][0]],q2=V[SV[q][1]];
+          if(p1===q1||p1===q2||p2===q1||p2===q2)continue;
+          if(segX(p1,p2,q1,q2)){c[a]++;c[b]++}
+        }
+      }
+    }
+    return c;
+  };
+  const touch=(p,px,py)=>{
+    const ox=p.x, oy=p.y; p.x=px; p.y=py;
+    const per=new Array(T).fill(0); let total=0;
+    for(let a=0;a<T;a++){
+      if(freed[a]) continue;
+      const U=seq[a], SU=S[a];
+      for(const e of SU){
+        const u1=U[e[0]], u2=U[e[1]];
+        if(u1!==p && u2!==p) continue;
+        for(let b=0;b<T;b++){
+          if(freed[b]) continue;
+          if(b===a && !self) continue;
+          const V=seq[b], SV=S[b];
+          for(const f of SV){
+            const v1=V[f[0]], v2=V[f[1]];
+            if(v1===p||v2===p) continue;
+            if(u1===v1||u1===v2||u2===v1||u2===v2) continue;
+            if(!segX(u1,u2,v1,v2)) continue;
+            total++;
+            if(b===a) per[a]+=2; else { per[a]++; per[b]++ }
+          }
+        }
+      }
+    }
+    p.x=ox; p.y=oy;
+    return {total, per};
+  };
+  const sweep=()=>{
+    const c=cross();
+    for(let k=0;k<T;k++){
+      if(freed[k]) continue;
+      if(c[k]===0 && !seq[k].some(q=>q.merged)) freed[k]=true;
+    }
+    return {c, done:freed.every(Boolean)};
+  };
+  let been=new Set();
+  const stood=()=>all.forEach((q,k)=>been.add(k+'@'+Math.round(q.x/8)+','+Math.round(q.y/8)));
+  stood();
+  let s=sweep();
+  if(s.done) return 0;
+  let moves=0;
+  for(let step=0; step<FREE_STEPS; step++){
+    let merged=0; for(const q of all) if(q.merged) merged++;
+    const now=s.c.reduce((a,b)=>a+b,0)/2;
+    const spots=[];
+    for(let gx=0;gx<FREE_GRID[0];gx++) for(let gy=0;gy<FREE_GRID[1];gy++){
+      const x=PADX+18+gx*(BW-2*PADX-36)/(FREE_GRID[0]-1);
+      const y=PADY+18+gy*(BH-2*PADY-36)/(FREE_GRID[1]-1);
+      if(all.every(q=>Math.hypot(q.x-x,q.y-y)>FREE_CLEAR)) spots.push({x,y});
+    }
+    let best=null;
+    for(let k=0;k<all.length;k++){
+      const p=all[k];
+      if(p.pinned || p.t.every(j=>freed[j])) continue;
+      const cur=touch(p,p.x,p.y);
+      if(!cur.total) continue;
+      const tries=spots.slice();
+      if(p.hx!=null) tries.push({x:clampX(p.hx), y:clampY(p.hy)});
+      for(const t of tries){
+        if(been.has(k+'@'+Math.round(t.x/8)+','+Math.round(t.y/8))) continue;
+        const nx=touch(p,t.x,t.y);
+        let free=0;
+        for(let j=0;j<T;j++){
+          if(freed[j]) continue;
+          if(s.c[j]-cur.per[j]+nx.per[j]===0 && !seq[j].some(q=>q.merged)) free++;
+        }
+        const score=now-cur.total+nx.total+3*merged-1.5*free;
+        if(!best || score<best.score) best={score, kind:'drag', p, x:t.x, y:t.y};
+      }
+    }
+    if(merged){
+      const score=now+3*(merged-1)-0.5;
+      if(!best || score<best.score) best={score, kind:'split', p:all.find(q=>q.merged)};
+    }
+    if(!best) return 0;                       // nothing legal left: no line to quote
+    if(best.kind==='split'){
+      const p=best.p, kb=p.t[1], j=seq[kb].indexOf(p);
+      if(j<0) return 0;
+      const half={x:p.x, y:p.y, hx:p.alt?p.alt.x:null, hy:p.alt?p.alt.y:null,
+                  merged:false, t:[kb], i:1000+p.i};
+      seq[kb][j]=half;
+      p.merged=false; p.t=[p.t[0]];
+      const put=splitPlace(p.i, p.x, p.y, famProbe(seq,T,p,half,S));
+      p.x=put.a.x; p.y=put.a.y; half.x=put.b.x; half.y=put.b.y;
+      all.push(half);
+    } else { best.p.x=best.x; best.p.y=best.y }
+    moves++;
+    const was=freed.filter(Boolean).length;
+    s=sweep();
+    if(freed.filter(Boolean).length>was) been=new Set();
+    stood();
+    if(s.done) return moves;
+  }
+  return 0;                                   // did not finish: the caller falls back
+}
+function famBest(plan){
+  const w=famLine(plan), f=famFree(plan);
+  if(!f) return w||plan.route;
+  if(!w) return f;
+  return f<w?f:w;
+}
 
 let gRoot,gThreads,gMarkers,gMembers,gLabels,gFx,physRAF=null,physDirty=true;
 
@@ -3717,6 +3867,7 @@ function buildNet(force){
       initialCross=Math.max(c0.total,1);
       if(GEN.par==='lanes') spec.par=lanePar();      // measure the net you actually got
       if(GEN.par==='family') spec.par=spec.plan?spec.plan.par:lanePar();
+      if(GEN_RULES.optimum==='free' && spec.plan) spec.plan.free=famBest(spec.plan);
       const pos=R().positions||{};
       members.forEach(n=>{if(pos[n.idx]){n.x0=pos[n.idx][0];n.y0=pos[n.idx][1];n.xv=n.xr=n.x0;n.yv=n.yr=n.y0}});
       accepted=true;
