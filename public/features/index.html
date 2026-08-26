@@ -2554,7 +2554,7 @@ async function readUnlockReturn(){
   const r=cs ? await api('unlock/confirm',{session_id:cs}) : null;
   if(r && !r.error && r.full){
     applyEntitlement(r); entitlementChanged();
-    return flashMsg('unlocked · the archive and the time trial are yours',{cols:['--sig-violett']});
+    return flashMsg('unlocked · the archive is yours',{cols:['--sig-violett']});
   }
   if(r && r.pending) return toast('payment still clearing · it opens when it does');
   if(r && r.mismatch) return toast('paid · restore it here with your unlock code');
@@ -4960,8 +4960,8 @@ function runOverOffer(trial,depth){
   ensurePrice();                      // redraws this card if the answer is late
   if(!canBuy()) return '';            // nothing to sell here yet — see `till`
   const n=archiveCount(), price=priceWords();
-  const what=n ? `another run at any day, ${n} earlier day${n===1?'':'s'} and the time trial`
-               : 'another run at any day and the time trial';
+  const what=n ? `another run at any day, and ${n} earlier day${n===1?'':'s'}`
+               : 'another run at any day';
   return `${what} · <a href="#" id="runoffer">unlock</a>${price?' · '+price:''}`;
 }
 function showRunOver(){
@@ -4999,12 +4999,10 @@ function showRunOver(){
     offer:runOverOffer(trial,depth),
     actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
             `<button class="wbtn${canResume()?'':' solid'}" id="recordbtn2">the record</button>`+
-            (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')+
-            `<button class="wbtn${canTimeTrial()?'':' shut'}" id="trialbtn">${trial?'trial again':'time trial'} ⏱</button>`
+            (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
   showVeil('runveil');
   $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
-  $('trialbtn').onclick=()=>startTrialRun();
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
@@ -5808,17 +5806,7 @@ function renderIntro(mode){
         : canPlayDay(d)
         ? `<span class="dstate dreplay dplay" aria-hidden="true">&rarr;</span>`
         : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
-      const trialable=played||canPlayDay(d);
-      const trialOn=canTimeTrial();
-      const trialChip=trialable
-        ? `<button class="dstate dreplay dtrial${trialOn?'':' shut'}" data-trial="${d}"`
-          +` aria-label="time trial · ${dayLabel(d)}${trialOn?'':' · the full version'}">`
-          +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
-          +(trialOn
-            ? `<circle cx="12" cy="13.5" r="7"/><path d="M10 3.5h4M12 3.5v3M12 13.5l3-3"/>`
-            : `<rect x="5.4" y="10.6" width="13.2" height="9.4" rx="1.6"/><path d="M9 10.6V7.6a3 3 0 0 1 6 0v3"/>`)
-          +`</g></svg></button>`
-        : '<span class="dstate dreplay ghost" aria-hidden="true"></span>';
+      const trialChip='<span class="dstate dreplay ghost" aria-hidden="true"></span>';
       const press=played||canPlayDay(d);
       const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
@@ -5873,15 +5861,11 @@ function renderIntro(mode){
     };
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
     $('introbody').querySelector('.wbweek').onclick=e=>{
-      const t=e.target.closest('[data-trial]');
-      if(t){ e.stopPropagation(); return startDayTrial(t.dataset.trial) }
       const row=e.target.closest('[data-day]');
       if(row) press(row.dataset.day);
     };
     $('introbody').querySelector('.wbweek').onkeydown=e=>{
       if(e.key!=='Enter' && e.key!==' ') return;
-      const t=e.target.closest('[data-trial]');
-      if(t){ e.preventDefault(); return startDayTrial(t.dataset.trial) }
       const row=e.target.closest('[data-day]');
       if(row){ e.preventDefault(); press(row.dataset.day) }
     };
