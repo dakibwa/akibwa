@@ -49,7 +49,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://localhost:* http://127.0.0.1:*; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://maps.googleapis.com http://localhost:* http://127.0.0.1:*; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -812,6 +812,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
   }
   .arch-body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .pay-card{max-width:520px;background:var(--paper)}
+  .pay-body{padding:0 0 4px;overflow-y:auto;min-height:220px}
   .arch-read{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
     font-size:11px;letter-spacing:.06em;color:var(--ink-soft)}
   .arch-read b{font-size:13px;letter-spacing:.02em;color:var(--ink);font-weight:600}
@@ -1437,6 +1439,18 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      they were dealt, drawn small and unplayable, with the rung each one minted
      under it. what is for sale is the right to play them again, so the thing
      on the page is the thing for sale. -->
+<!-- checkout, mounted inside the game rather than a page away. the card is
+     Stripe's own iframe; this is only the frame around it and the way out. -->
+<div class="veil" id="payveil">
+  <section class="arch-card pay-card">
+    <div class="rec-head">
+      <strong class="rec-title">the full version</strong>
+      <span class="rec-right"><a href="#" class="rec-close" id="payclose" aria-label="close">&times;</a></span>
+    </div>
+    <div class="pay-body" id="paybody"></div>
+  </section>
+</div>
+
 <div class="veil" id="archveil">
   <section class="arch-card">
     <div class="rec-head">
@@ -2507,9 +2521,44 @@ function offerFull(what){
   toast(what+' · part of the full version');
   return false;
 }
+let stripeLib=null;
+function stripeJS(){
+  if(stripeLib) return stripeLib;
+  stripeLib=new Promise(res=>{
+    if(window.Stripe) return res(window.Stripe);
+    const el=document.createElement('script');
+    el.src='https://js.stripe.com/v3/';
+    el.async=true;
+    el.onload=()=>res(window.Stripe||null);
+    el.onerror=()=>res(null);          // offline, blocked, or refused by the CSP
+    document.head.appendChild(el);
+    setTimeout(()=>res(window.Stripe||null),6000);
+  });
+  return stripeLib;
+}
+let stripeCheckout=null;
+async function mountCheckout(clientSecret,pk){
+  const Stripe=await stripeJS();
+  if(!Stripe||!pk) return false;
+  try{
+    const s=Stripe(pk);
+    const co=await s.initEmbeddedCheckout({clientSecret});
+    $('paybody').innerHTML='';
+    co.mount('#paybody');
+    stripeCheckout=co;
+    showVeil('payveil');
+    return true;
+  }catch(e){ return false }
+}
+function closeCheckout(){
+  $('payveil').classList.remove('show');
+  if(stripeCheckout){ try{stripeCheckout.destroy()}catch(e){} stripeCheckout=null }
+}
 async function beginUnlock(){
   if(POLICY.premium) return;
-  const r=API ? await api('unlock/checkout',{return_path:location.pathname}) : null;
+  const Stripe=API ? await stripeJS() : null;
+  const wantEmbedded=!!(Stripe && priceInfo && priceInfo.pk);
+  const r=API ? await api('unlock/checkout',{return_path:location.pathname,embedded:wantEmbedded}) : null;
   if(!r || r.error){
     if(DEV){
       POLICY.premium=true; save(); entitlementChanged();
@@ -2524,8 +2573,13 @@ async function beginUnlock(){
     applyEntitlement(Object.assign({full:true},r)); entitlementChanged();
     return toast('you already own the full version');
   }
-  if(r.url) location.href=r.url;
-  else toast('the till is not answering · try again shortly');
+  if(r.client_secret && await mountCheckout(r.client_secret, priceInfo && priceInfo.pk)) return;
+  if(r.url) return void(location.href=r.url);
+  if(r.client_secret){
+    const again=await api('unlock/checkout',{return_path:location.pathname,embedded:false});
+    if(again && again.url) return void(location.href=again.url);
+  }
+  toast('the till is not answering · try again shortly');
 }
 async function restoreUnlock(){
   if(!API) return toast('restoring needs the game served over the web');
@@ -5691,6 +5745,7 @@ function closeArchiveLook(){
   archFrom=null;
 }
 $('archclose').onclick=e=>{e.preventDefault();closeArchiveLook()};
+$('payclose').onclick=e=>{e.preventDefault();closeCheckout()};
 function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
   if(v.id==='introveil'||v.id==='runveil') return;
