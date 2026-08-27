@@ -3682,7 +3682,9 @@ function applyOrientation(force){
   if(p===portrait && !force){ publishPlateInset(); return false }
   portrait=p;
   $('netsvg').setAttribute('viewBox', portrait?`0 0 ${BH} ${BW}`:`0 0 ${BW} ${BH}`);
-  if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH})`:'');
+  const tutLift = (portrait && inTutorialRun() && R().netIndex<TUTNETS.length)
+    ? -(BH*(((.46+.88)/2)-.5)) : 0;
+  if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH+tutLift})`:'');
   if(gLabels) threads.forEach(t=>{if(t.freed) repositionLabel(t)});
   publishPlateInset();
   return true;
