@@ -1844,11 +1844,23 @@ const GEN_VERSIONS=[
            'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
            'stillness','running','flags','boats','symmetry','nesting','clocks',
            'branching','letters','column','singularity','languages','gravity','tiles'] }
+  ,
+  { v:15, from:'2026-09-10', par:'family', layout:'families',
+    split:'vertical', merge:'widen', pinFill:true, parMode:'greedy', parSlack:3,
+    splitPart:'clear', optimum:'free', rung:'earned', chord:'late', selfX:'count',
+    ramp:'mech', dense:'cap', weave:'pattern', mix:'contig',
+    feats:['weather','birds','tools','music','citrus','chess','water','night',
+           'fire','mountains','doubled','numbers','plants','animals','buildings','motion',
+           'fish','trees','faces','lightning','eyes',
+           'insects','loops','hands','bridges','edges','stars','curves',
+           'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
+           'stillness','running','flags','boats','symmetry','nesting','clocks',
+           'branching','letters','column','singularity','languages','gravity','tiles'] }
 ];
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
                  splitPart:'fixed', optimum:'table', rung:'flat',
                  chord:'none', selfX:'off', ramp:'front', dense:'open',
-                 weave:'none'};
+                 weave:'none', mix:'even'};
 function genRules(g){
   return {split:g.split||'angled', merge:g.merge||'tight',
           pinFill:!!g.pinFill, parMode:g.parMode||'walk', parSlack:g.parSlack||0,
@@ -1856,7 +1868,7 @@ function genRules(g){
           rung:g.rung||'flat',
           chord:g.chord||'none', selfX:g.selfX||'off',
           ramp:g.ramp||'front', dense:g.dense||'open',
-          weave:g.weave||'none'};
+          weave:g.weave||'none', mix:g.mix||'even'};
 }
 function genFor(day){
   let g=GEN_VERSIONS[0];
@@ -1957,12 +1969,17 @@ const rampFor=r=>{
   const m=(r||GEN_RULES).ramp;
   return m==='mech'?RAMP_MECH : m==='even'?RAMP_EVEN : RAMP;
 };
+function mixLens(threads, nodes){
+  const step=Math.min(threads, Math.max(1, nodes-2));
+  return [...Array(threads)].map((_,k)=>Math.max(3, nodes-(k%step)));
+}
 function netSpec(i, rules){
   const T=rampFor(rules);
   const s = i<T.length ? {...T[i]}
     : {threads:5, nodes:5+((i-T.length)%3), shared:Math.min(2+Math.floor((i-T.length)/2),4),
        pinned:Math.min(2+Math.floor((i-T.length)/3),5), minX:16, maxX:60};
   s.par = s.threads*2 + s.shared*3 + (s.nodes-3)*2 + (s.pinned||0)*2 + 3;
+  if(rules.mix==='contig' && s.nodes>=5) s.lens=mixLens(s.threads, s.nodes);
   return s;
 }
 
@@ -3107,11 +3124,19 @@ function famChord(fig, chords, k){
 
 const CHORD_FROM=2, CHORD_OPEN=1;
 const famCeil=want=>Math.round(want*1.8)+2;
-function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx){
+function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens){
   const F=FAMILIES[fam];
   if(!F || T<F.minT || L<F.minL) return null;
   const xCap = GEN_RULES.dense==='cap' ? famCeil(want) : Infinity;
   const {s,g}=F.slots(T,L,tut,rnd);
+  const rot = lens ? Math.floor(rnd()*T) : 0;
+  if(lens) for(let k=0;k<T;k++){
+    if(!s[k]) continue;
+    const want=Math.max(3, Math.min(lens[(k+rot)%lens.length], s[k].length));
+    if(want>=s[k].length) continue;
+    const o=Math.floor(rnd()*(s[k].length-want+1));
+    s[k]=s[k].slice(o,o+want); g[k]=g[k].slice(o,o+want);
+  }
   const nodes=[], order=[];
   for(let k=0;k<T;k++){
     if(!s[k] || s[k].length<2) return null;
@@ -3777,8 +3802,8 @@ function buildNet(force){
     if(GEN.layout==='families'){
       const T=threads.length, L=Math.max(3,spec.nodes);
       const fam=famFor(R().day,idx);
-      const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx)
-              || famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx);
+      const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens)
+              || famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens);
       if(!plan){ ok=false }
       else{
         spec.fam=plan.fam; spec.famD=plan.d; spec.plan=plan;
