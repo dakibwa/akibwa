@@ -697,8 +697,8 @@
       }
     ]
   },
-  "navDropdown:/brand-art/nav/projects/chorus.webp": {
-    "source": "/brand-art/nav/projects/chorus.webp",
+  "navDropdown:/brand-art/nav/projects/albums.webp": {
+    "source": "/brand-art/nav/projects/albums.webp",
     "slot": "navDropdown",
     "ratio": 4.7778,
     "sourceWidth": 512,
@@ -709,11 +709,11 @@
         "width": 323,
         "height": 68,
         "avif": {
-          "src": "/_img/brand-art/nav/projects/chorus-navDropdown-323.avif",
+          "src": "/_img/brand-art/nav/projects/albums-navDropdown-323.avif",
           "bytes": 7166
         },
         "webp": {
-          "src": "/_img/brand-art/nav/projects/chorus-navDropdown-323.webp",
+          "src": "/_img/brand-art/nav/projects/albums-navDropdown-323.webp",
           "bytes": 6834
         }
       }
@@ -741,50 +741,6 @@
       }
     ]
   },
-  "navDropdown:/brand-art/nav/projects/meditator.webp": {
-    "source": "/brand-art/nav/projects/meditator.webp",
-    "slot": "navDropdown",
-    "ratio": 4.7778,
-    "sourceWidth": 512,
-    "sourceHeight": 80,
-    "sourceHash": "e6b663426df4f824",
-    "variants": [
-      {
-        "width": 323,
-        "height": 68,
-        "avif": {
-          "src": "/_img/brand-art/nav/projects/meditator-navDropdown-323.avif",
-          "bytes": 2228
-        },
-        "webp": {
-          "src": "/_img/brand-art/nav/projects/meditator-navDropdown-323.webp",
-          "bytes": 2610
-        }
-      }
-    ]
-  },
-  "navDropdown:/brand-art/nav/projects/one-bag.webp": {
-    "source": "/brand-art/nav/projects/one-bag.webp",
-    "slot": "navDropdown",
-    "ratio": 4.7778,
-    "sourceWidth": 512,
-    "sourceHeight": 84,
-    "sourceHash": "d0abc63a233eeb39",
-    "variants": [
-      {
-        "width": 323,
-        "height": 68,
-        "avif": {
-          "src": "/_img/brand-art/nav/projects/one-bag-navDropdown-323.avif",
-          "bytes": 1077
-        },
-        "webp": {
-          "src": "/_img/brand-art/nav/projects/one-bag-navDropdown-323.webp",
-          "bytes": 1126
-        }
-      }
-    ]
-  },
   "navDropdown:/project-art/personal/features-symbol.webp": {
     "source": "/project-art/personal/features-symbol.webp",
     "slot": "navDropdown",
@@ -807,8 +763,8 @@
       }
     ]
   },
-  "projectCard:/project-art/personal/chorus-symbol.webp": {
-    "source": "/project-art/personal/chorus-symbol.webp",
+  "projectCard:/project-art/personal/albums-symbol.webp": {
+    "source": "/project-art/personal/albums-symbol.webp",
     "slot": "projectCard",
     "ratio": 1.5,
     "sourceWidth": 1200,
@@ -819,11 +775,11 @@
         "width": 303,
         "height": 202,
         "avif": {
-          "src": "/_img/project-art/personal/chorus-symbol-projectCard-303.avif",
+          "src": "/_img/project-art/personal/albums-symbol-projectCard-303.avif",
           "bytes": 2086
         },
         "webp": {
-          "src": "/_img/project-art/personal/chorus-symbol-projectCard-303.webp",
+          "src": "/_img/project-art/personal/albums-symbol-projectCard-303.webp",
           "bytes": 3252
         }
       },
@@ -831,11 +787,11 @@
         "width": 390,
         "height": 260,
         "avif": {
-          "src": "/_img/project-art/personal/chorus-symbol-projectCard-390.avif",
+          "src": "/_img/project-art/personal/albums-symbol-projectCard-390.avif",
           "bytes": 2514
         },
         "webp": {
-          "src": "/_img/project-art/personal/chorus-symbol-projectCard-390.webp",
+          "src": "/_img/project-art/personal/albums-symbol-projectCard-390.webp",
           "bytes": 4132
         }
       },
@@ -843,11 +799,11 @@
         "width": 491,
         "height": 327,
         "avif": {
-          "src": "/_img/project-art/personal/chorus-symbol-projectCard-491.avif",
+          "src": "/_img/project-art/personal/albums-symbol-projectCard-491.avif",
           "bytes": 3266
         },
         "webp": {
-          "src": "/_img/project-art/personal/chorus-symbol-projectCard-491.webp",
+          "src": "/_img/project-art/personal/albums-symbol-projectCard-491.webp",
           "bytes": 5450
         }
       }
@@ -899,52 +855,6 @@
       }
     ]
   },
-  "projectCard:/project-art/personal/meditator-symbol.webp": {
-    "source": "/project-art/personal/meditator-symbol.webp",
-    "slot": "projectCard",
-    "ratio": 1.5,
-    "sourceWidth": 1200,
-    "sourceHeight": 800,
-    "sourceHash": "01291c21315b33b1",
-    "variants": [
-      {
-        "width": 303,
-        "height": 202,
-        "avif": {
-          "src": "/_img/project-art/personal/meditator-symbol-projectCard-303.avif",
-          "bytes": 1481
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/meditator-symbol-projectCard-303.webp",
-          "bytes": 1736
-        }
-      },
-      {
-        "width": 390,
-        "height": 260,
-        "avif": {
-          "src": "/_img/project-art/personal/meditator-symbol-projectCard-390.avif",
-          "bytes": 1771
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/meditator-symbol-projectCard-390.webp",
-          "bytes": 2396
-        }
-      },
-      {
-        "width": 491,
-        "height": 327,
-        "avif": {
-          "src": "/_img/project-art/personal/meditator-symbol-projectCard-491.avif",
-          "bytes": 2346
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/meditator-symbol-projectCard-491.webp",
-          "bytes": 3142
-        }
-      }
-    ]
-  },
   "projectCard:/project-art/personal/portuguese-with-ines-symbol.webp": {
     "source": "/project-art/personal/portuguese-with-ines-symbol.webp",
     "slot": "projectCard",
@@ -987,52 +897,6 @@
         "webp": {
           "src": "/_img/project-art/personal/portuguese-with-ines-symbol-projectCard-491.webp",
           "bytes": 5240
-        }
-      }
-    ]
-  },
-  "projectCard:/project-art/personal/one-bag-symbol.webp": {
-    "source": "/project-art/personal/one-bag-symbol.webp",
-    "slot": "projectCard",
-    "ratio": 1.5,
-    "sourceWidth": 1200,
-    "sourceHeight": 800,
-    "sourceHash": "fb67f0ccba9cd0ac",
-    "variants": [
-      {
-        "width": 303,
-        "height": 202,
-        "avif": {
-          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-303.avif",
-          "bytes": 1505
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-303.webp",
-          "bytes": 1900
-        }
-      },
-      {
-        "width": 390,
-        "height": 260,
-        "avif": {
-          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-390.avif",
-          "bytes": 1770
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-390.webp",
-          "bytes": 2574
-        }
-      },
-      {
-        "width": 491,
-        "height": 327,
-        "avif": {
-          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-491.avif",
-          "bytes": 2317
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/one-bag-symbol-projectCard-491.webp",
-          "bytes": 3216
         }
       }
     ]

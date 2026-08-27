@@ -1,6 +1,20 @@
 {
-  "updated": "2026-08-14",
+  "updated": "2026-08-27",
   "surfaces": [
+    {
+      "id": "albums",
+      "title": "The wall",
+      "route": "/albums",
+      "kind": "public-series-refresh",
+      "visibility": "public",
+      "fallbackData": "data/album-wall.json",
+      "refresh": {
+        "worker": "akibwa-albums-refresh",
+        "schedule": "23 * * * *",
+        "dataUrl": "https://akibwa-albums-refresh.dakibwa.workers.dev/albums",
+        "statusUrl": "https://akibwa-albums-refresh.dakibwa.workers.dev/status"
+      }
+    },
     {
       "id": "features",
       "title": "features",
@@ -11,36 +25,11 @@
     },
     {
       "id": "portuguese-with-ines",
-      "title": "Português com a Inês",
+      "title": "Portugu\u00eas com a In\u00eas",
       "route": "/portugal",
       "kind": "external-site",
       "visibility": "public",
       "externalUrl": "https://portuguesewithines.com/"
-    },
-    {
-      "id": "meditator",
-      "title": "Meditator",
-      "route": "/meditator",
-      "kind": "static-directory",
-      "visibility": "public",
-      "staticPath": "public/meditator/index.html",
-      "backendUrl": "https://meditator.dakibwa.workers.dev"
-    },
-    {
-      "id": "chorus",
-      "title": "Chorus",
-      "route": "/chorus",
-      "kind": "cloudflare-app",
-      "visibility": "public",
-      "appUrlEnv": "NEXT_PUBLIC_CHORUS_APP_URL",
-      "defaultAppUrl": "https://akibwa-chorus.dakibwa.workers.dev",
-      "fallbackData": "data/chorus-data.json",
-      "refresh": {
-        "worker": "akibwa-chorus-refresh",
-        "schedule": "17 * * * *",
-        "dataUrl": "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus",
-        "statusUrl": "https://akibwa-chorus-refresh.dakibwa.workers.dev/status"
-      }
     },
     {
       "id": "cover-collision",

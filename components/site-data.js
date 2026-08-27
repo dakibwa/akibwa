@@ -9,10 +9,14 @@ export function getPublicSurface(id) {
   return publicSurfaces.find((surface) => surface.id === id) ?? null;
 }
 
-const chorusSurface = getPublicSurface("chorus");
 const coverCollisionSurface = getPublicSurface("cover-collision");
 
-export const chorusAppUrl = (process.env.NEXT_PUBLIC_CHORUS_APP_URL || chorusSurface?.defaultAppUrl || "").trim();
+export const albumPlaysDataUrl = (
+  process.env.NEXT_PUBLIC_ALBUM_PLAYS_DATA_URL ||
+  getPublicSurface("albums")?.refresh?.dataUrl ||
+  "https://akibwa-albums-refresh.dakibwa.workers.dev/albums"
+).trim();
+
 export const coverCollisionDataUrl = (
   process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
   coverCollisionSurface?.refresh?.dataUrl ||
@@ -77,21 +81,18 @@ export function isPersonalProjectLaunchable(project) {
 export const personalProjects = [
   {
     number: "01",
-    slug: "chorus",
+    slug: "albums",
     aliases: ["lastfm-dashboard"],
-    title: "Chorus",
-    type: "Listening archive",
-    dashboardLabel: "Chorus",
+    title: "The wall",
+    type: "Record collection",
+    dashboardLabel: "The wall",
     dashboardStatus: "Live on Akibwa",
-    summary: "Everything I've ever listened to, made browsable.",
-    tags: ["Listening archive", "Albums wall", "Reports"],
-    visual: "chorus",
-    mode: "embed",
-    previewTreatment: "chorus-vignette",
-    embedUrl: chorusAppUrl,
-    localUrl: "http://localhost:3211",
-    fallbackHref: "/chorus",
-    cta: "Open on Akibwa"
+    summary: "My whole record collection, ranked by how often I play it.",
+    tags: ["Printed cards", "Play counts", "Last.fm"],
+    visual: "albums",
+    mode: "link",
+    fallbackHref: "/albums/",
+    cta: "Open the wall"
   },
   {
     number: "02",
@@ -107,23 +108,6 @@ export const personalProjects = [
   },
   {
     number: "03",
-    slug: "meditator",
-    title: "Meditator",
-    type: "Shared meditation",
-    dashboardLabel: "Meditator",
-    dashboardStatus: "Live on Akibwa",
-    summary: "A private meditation room for two.",
-    tags: ["Two-person", "Synced timer", "Presence"],
-    mode: "embed",
-    previewTreatment: "meditator-vignette",
-    embedUrl: "/meditator/index.html",
-    fallbackHref: "/meditator/",
-    localUrl: "http://localhost:8787",
-    useLocalFrame: false,
-    cta: "Open on Akibwa"
-  },
-  {
-    number: "04",
     slug: "portuguese-with-ines",
     title: "Português com a Inês",
     type: "Language teaching site",
@@ -136,7 +120,7 @@ export const personalProjects = [
     cta: "Visit Inês’s site"
   },
   {
-    number: "05",
+    number: "04",
     slug: "features",
     title: "features",
     type: "Daily puzzle",
@@ -149,20 +133,5 @@ export const personalProjects = [
     fallbackHref: "/features/",
     useLocalFrame: false,
     cta: "Open on Akibwa"
-  },
-  {
-    number: "06",
-    slug: "one-bag",
-    title: "One Bagger",
-    type: "One-bag travel",
-    dashboardLabel: "One Bagger",
-    dashboardStatus: "In development",
-    statusLabel: "Dev",
-    isLaunchable: false,
-    summary: "Pack for a week in one bag.",
-    tags: ["Packing optimiser", "Gear comparison", "Local-first"],
-    mode: "preview",
-    previewTreatment: "one-bag-vignette",
-    cta: "In development"
   }
 ];

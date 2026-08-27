@@ -53,12 +53,12 @@ if (rows.some((row) => !row.ok)) {
 }
 
 function summarize(id, data) {
-  if (id === "chorus") {
+  if (id === "albums") {
     return {
       totalScrobbles: data.totalScrobbles || null,
-      recentTracks: data.recentTracks || null,
-      stravaSource: data.strava?.source || null,
-      stravaPairedCount: data.strava?.pairedCount || null
+      sleeveCount: data.sleeveCount || null,
+      playedCount: data.playedCount || null,
+      librarySize: data.librarySize || null
     };
   }
 

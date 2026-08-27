@@ -144,26 +144,22 @@ const sources = [
   { file: "brand-art/nav/professional.webp", slot: "navStrip" },
   { file: "brand-art/nav/about.webp", slot: "navStrip" },
   { file: "brand-art/nav/contact.webp", slot: "navStrip" },
-  { file: "brand-art/nav/projects/chorus.webp", slot: "navDropdown" },
+  { file: "brand-art/nav/projects/albums.webp", slot: "navDropdown" },
   { file: "brand-art/nav/projects/cover-collision.webp", slot: "navDropdown" },
-  { file: "brand-art/nav/projects/meditator.webp", slot: "navDropdown" },
-  { file: "brand-art/nav/projects/one-bag.webp", slot: "navDropdown" },
   // Probe has no separate nav strip: its card symbol is the dropdown art too,
   // so it is laddered for both slots rather than served full-size to a 215px box.
   { file: "project-art/personal/features-symbol.webp", slot: "navDropdown" },
 
   // Project cards.
-  { file: "project-art/personal/chorus-symbol.webp", slot: "projectCard" },
+  { file: "project-art/personal/albums-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/cover-collision-symbol.webp", slot: "projectCard" },
-  { file: "project-art/personal/meditator-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
-  { file: "project-art/personal/one-bag-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" }
 ];
 
 /*
- * Deliberately absent: chorus-trio, albion-rose-card, albion-sunburst-hero and
- * project-shots/chorus. They survive in site-data.js as `image`/`shot` fields,
+ * Deliberately absent: albion-rose-card and albion-sunburst-hero. They survive
+ * in site-data.js as `image`/`shot` fields,
  * but nothing reads those fields — the cards render the `-symbol` art through
  * personal-project-art.jsx instead. They appear in the bundle only as data
  * strings, never as an <img src>, so they are ~560K of files that ship in the

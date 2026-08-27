@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "akibwa-albums-refresh",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-27",
+  "workers_dev": true,
+  "triggers": {
+    "crons": ["23 * * * *"]
+  },
+  "vars": {
+    "MANIFEST_URL": "https://akibwa.com/album-wall-manifest.json",
+    "LASTFM_USERNAME": "akibwa"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "ALBUMS_KV",
+      "id": "4515efa3d7224769b7aed73b2ca313cd"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

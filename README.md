@@ -16,4 +16,4 @@ Data refreshes that can run from API credentials or public seeds should run in C
 
 Public project metadata lives in `data/public-surfaces.json`. Add new website surfaces there first, then wire the route/component/data seed around that registry entry.
 
-The Personal project overlays are user-facing product surfaces, not decorative screenshots. Chorus distinguishes live from fallback data without timestamps and keeps its last paired Strava runs visible, Cover Collision presents the series as a numbered exhibition with a direct Instagram route, and embedded apps retain their own live behaviour.
+The Personal project overlays are user-facing product surfaces, not decorative screenshots. The wall ranks the whole record collection by play count and says plainly what its counts do and do not cover, Cover Collision presents the series as a numbered exhibition with a direct Instagram route, and embedded apps retain their own live behaviour.

@@ -19,17 +19,15 @@ const navArt = Object.fromEntries(
 /* Offer, then the proof, then the person, then the way in. */
 const navItems = [
   { href: "/professional", label: "Professional", match: ["/professional", "/offer", "/services"] },
-  { href: "/projects", label: "Projects", match: ["/projects", "/personal", "/work", "/chorus"] },
+  { href: "/projects", label: "Projects", match: ["/projects", "/personal", "/work", "/albums"] },
   { href: "/about", label: "About", match: ["/about"] },
   { href: "/contact", label: "Contact", match: ["/contact", "/book-a-call"] }
 ];
 
 /* Each project's accent, as used by its artwork on the personal page. */
 const projectAccents = {
-  chorus: "#ff6f1a",
+  albums: "#ff6f1a",
   "cover-collision": "#e2556b",
-  "one-bag": "#2f7d57",
-  meditator: "#3a5a45",
   features: "#6e5da8"
 };
 
@@ -90,8 +88,7 @@ export function SiteShell({ children }) {
   const [isPersonalMenuOpen, setIsPersonalMenuOpen] = useState(false);
   const [navigationInteractionCycle, setNavigationInteractionCycle] = useState(0);
   const mobileToggleRef = useRef(null);
-  const immersiveRoutes = ["/chorus"];
-  const isImmersiveRoute = immersiveRoutes.includes(normalize(pathname));
+  const isImmersiveRoute = false;
   const pointerResetSignal = `${normalize(pathname)}:${navigationInteractionCycle}`;
 
   useEffect(() => {

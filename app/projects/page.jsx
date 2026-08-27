@@ -1,18 +1,12 @@
 import { PersonalPage } from "@/components/pages/personal-page";
-import { ChorusPreconnects } from "@/components/chorus-preconnects";
 import { siteSectionTitles } from "@/app/site-metadata";
 
 export const metadata = {
   title: siteSectionTitles.projects,
   description:
-    "Things I wanted to exist: Chorus, a listening archive; Probe, a daily untangling puzzle; and four more."
+    "Things I wanted to exist: The wall, a record collection ranked by play count; features, a daily untangling puzzle; and three more."
 };
 
 export default function ProjectsRoute() {
-  return (
-    <>
-      <ChorusPreconnects />
-      <PersonalPage />
-    </>
-  );
+  return <PersonalPage />;
 }

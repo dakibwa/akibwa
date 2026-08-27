@@ -2,10 +2,10 @@ import styles from "./personal-project-art.module.css";
 import { SiteImage, SLOT_SIZES } from "@/components/site-image";
 
 const artworkBySlug = {
-  chorus: {
-    src: "/project-art/personal/chorus-symbol.webp",
-    bannerSrc: "/project-art/personal/chorus-symbol.webp",
-    navBannerSrc: "/brand-art/nav/projects/chorus.webp",
+  albums: {
+    src: "/project-art/personal/albums-symbol.webp",
+    bannerSrc: "/project-art/personal/albums-symbol.webp",
+    navBannerSrc: "/brand-art/nav/projects/albums.webp",
     variant: "symbol",
     detailBannerPosition: "50% 50%",
     selectorBannerPosition: "50% 50%",
@@ -16,16 +16,6 @@ const artworkBySlug = {
     src: "/project-art/personal/cover-collision-symbol.webp",
     bannerSrc: "/project-art/personal/cover-collision-symbol.webp",
     navBannerSrc: "/brand-art/nav/projects/cover-collision.webp",
-    variant: "symbol",
-    detailBannerPosition: "50% 50%",
-    selectorBannerPosition: "50% 50%",
-    selectorSubjectPosition: "50% 50%",
-    expandedBannerPosition: "50% 50%"
-  },
-  "one-bag": {
-    src: "/project-art/personal/one-bag-symbol.webp",
-    bannerSrc: "/project-art/personal/one-bag-symbol.webp",
-    navBannerSrc: "/brand-art/nav/projects/one-bag.webp",
     variant: "symbol",
     detailBannerPosition: "50% 50%",
     selectorBannerPosition: "50% 50%",
@@ -51,21 +41,11 @@ const artworkBySlug = {
     selectorBannerPosition: "50% 50%",
     selectorSubjectPosition: "50% 50%",
     expandedBannerPosition: "50% 50%"
-  },
-  meditator: {
-    src: "/project-art/personal/meditator-symbol.webp",
-    bannerSrc: "/project-art/personal/meditator-symbol.webp",
-    navBannerSrc: "/brand-art/nav/projects/meditator.webp",
-    variant: "symbol",
-    detailBannerPosition: "50% 50%",
-    selectorBannerPosition: "50% 50%",
-    selectorSubjectPosition: "50% 50%",
-    expandedBannerPosition: "50% 50%"
   }
 };
 
 export function getPersonalProjectArt(project) {
-  return artworkBySlug[project.slug] ?? artworkBySlug.chorus;
+  return artworkBySlug[project.slug] ?? artworkBySlug.albums;
 }
 
 export function PersonalProjectArt({ project, className = "", priority = false }) {

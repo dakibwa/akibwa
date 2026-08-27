@@ -13,3 +13,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Cached Last.fm cover downloads — re-fetchable, and 900+ files of third-party art.
+.album-art-cache/
+
+# Wrangler keeps local Worker state here; none of it belongs in a public repo.
+.wrangler/

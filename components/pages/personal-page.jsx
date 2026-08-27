@@ -12,58 +12,16 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import dynamic from "next/dynamic";
 import { PageFooter } from "@/components/page-footer";
 import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
 import { getPersonalProjectArt, PersonalProjectArt } from "@/components/personal-project-art";
 import { SiteImage, SLOT_SIZES } from "@/components/site-image";
 import {
-  chorusAppUrl,
   coverCollisionDataUrl,
   coverCollisionPosts,
   isPersonalProjectLaunchable,
   personalProjects
 } from "@/components/site-data";
-import fallbackChorusData from "@/data/chorus-data.json";
-
-// The dashboard mock only ever appears inside the overlay, so it loads when a
-// card is opened rather than with the index.
-const ChorusDashboardPreview = dynamic(
-  () => import("@/components/chorus-dashboard-preview").then((m) => m.ChorusDashboardPreview),
-  { ssr: false }
-);
-
-const chorusSummaryDataUrl = (
-  process.env.NEXT_PUBLIC_CHORUS_DATA_URL || "https://akibwa-chorus-refresh.dakibwa.workers.dev/chorus"
-).trim();
-
-function formatScrobbleCount(value) {
-  const numeric = Number(value);
-  return new Intl.NumberFormat("en-GB").format(Number.isFinite(numeric) ? numeric : 0);
-}
-
-function useChorusScrobbleTotal(enabled) {
-  const [total, setTotal] = useState(fallbackChorusData?.summary?.totalScrobbles ?? null);
-
-  useEffect(() => {
-    if (!enabled || !chorusSummaryDataUrl) return undefined;
-
-    let cancelled = false;
-    const apply = (data) => {
-      const numeric = Number(data?.summary?.totalScrobbles);
-      if (!cancelled && Number.isFinite(numeric) && numeric > 0) setTotal(numeric);
-    };
-
-    apply(readSessionJson(chorusSummaryDataUrl));
-    fetchSessionJson(chorusSummaryDataUrl).then(apply).catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled]);
-
-  return total;
-}
 
 const PROJECT_OVERLAY_EXIT_MS = 180;
 const PROJECT_OVERLAY_CONTENT_DELAY_MS = 90;
@@ -78,7 +36,6 @@ function getProjectFrameUrl(project, isLocalHost) {
   if (!isPersonalProjectLaunchable(project)) return "";
   if (isLocalHost && project.localUrl && project.useLocalFrame !== false) return project.localUrl;
   if (project.embedUrl) return project.embedUrl;
-  if (project.visual === "chorus") return chorusAppUrl;
   return "";
 }
 
@@ -99,10 +56,8 @@ function ProjectExpandedBanner({ project }) {
 }
 
 const ACCENT_BY_SLUG = {
-  chorus: "#ff6f1a",
+  albums: "#ff6f1a",
   "cover-collision": "#e2556b",
-  "one-bag": "#2f7d57",
-  meditator: "#3a5a45",
   "portuguese-with-ines": "#1f4f9c",
   features: "#6e5da8"
 };
@@ -112,10 +67,8 @@ function accentForSlug(slug) {
 }
 
 const STATUS_BY_SLUG = {
-  chorus: "live",
+  albums: "live",
   "cover-collision": "live",
-  "one-bag": "dev",
-  meditator: "live",
   "portuguese-with-ines": "live",
   features: "live"
 };
@@ -185,21 +138,6 @@ function ProjectCard({ project, isArrived, onOpen }) {
         <p className="project-card-summary">{project.summary}</p>
       </div>
     </article>
-  );
-}
-
-function DashboardShowcase({ project, immersive = false }) {
-  return (
-    <section
-      className={`${immersive ? "" : "page-grid"} personal-full-app-showcase is-chorus ${
-        immersive ? "is-expanded" : ""
-      }`}
-      id={`${project.slug}-preview`}
-      aria-label={`${project.title} app preview`}
-      aria-live="polite"
-    >
-      <ChorusDashboardPreview />
-    </section>
   );
 }
 
@@ -473,14 +411,6 @@ function StaticProjectSurface({ project }) {
 }
 
 function ProjectExpandedContent({ project, frameUrl, frameNonce = 0 }) {
-  if (project.visual === "chorus" && frameUrl) {
-    return <LiveProjectFrame project={project} frameUrl={frameUrl} frameNonce={frameNonce} />;
-  }
-
-  if (project.visual === "chorus") {
-    return <DashboardShowcase project={project} immersive />;
-  }
-
   if (project.visual === "cover-collision") {
     return <CoverCollisionShowcase project={project} immersive />;
   }
@@ -539,8 +469,6 @@ function LiveProjectFrame({ project, frameUrl, frameNonce = 0 }) {
 function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onClose, onToggleMaximized }) {
   const [contentReady, setContentReady] = useState(false);
   const [frameNonce, setFrameNonce] = useState(0);
-  const isChorusSurface = project.visual === "chorus";
-  const scrobbleTotal = useChorusScrobbleTotal(isChorusSurface);
   const shellRef = useRef(null);
   const shellResizeAnimationRef = useRef(null);
   const shellResizeStartRef = useRef(null);
@@ -633,20 +561,6 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
     };
   }, []);
 
-  const postToChorus = useCallback(
-    (message) => {
-      const frame = shellRef.current?.querySelector("iframe.live-frame");
-      if (!frame?.contentWindow || !frameUrl) return false;
-      try {
-        frame.contentWindow.postMessage(message, new URL(frameUrl, window.location.href).origin);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    [frameUrl]
-  );
-
   const toggleMaximized = useCallback(() => {
     if (shellRef.current) {
       shellResizeStartRef.current = shellRef.current.getBoundingClientRect();
@@ -683,24 +597,13 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
               return sublabel ? <em>{sublabel}</em> : null;
             })()}
           </div>
-          {isChorusSurface && scrobbleTotal ? (
-            <span className="project-expanded-banner-stat">
-              <strong>{formatScrobbleCount(scrobbleTotal)}</strong>
-              <small>total scrobbles</small>
-            </span>
-          ) : null}
           <div className="project-expanded-actions">
-            {frameUrl || project.visual === "chorus" ? (
+            {frameUrl ? (
               <button
                 type="button"
                 className="project-expanded-refresh"
                 aria-label={`Refresh ${project.title}`}
-                onClick={() => {
-                  // Chorus refreshes its data in place; reloading the iframe
-                  // is the fallback for everything else.
-                  if (isChorusSurface && postToChorus({ type: "chorus:refresh" })) return;
-                  setFrameNonce((nonce) => nonce + 1);
-                }}
+                onClick={() => setFrameNonce((nonce) => nonce + 1)}
               >
                 <RefreshCw size={16} strokeWidth={1.9} />
               </button>

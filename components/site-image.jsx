@@ -108,6 +108,49 @@ export function SiteImage({
 }
 
 /*
+ * The album wall's 249 sleeves.
+ *
+ * They do not go through the slot manifest above, and deliberately so: every
+ * source there is a file committed to `public/`, and these sources are 607MB of
+ * print masters that live outside the repo entirely. scripts/build-album-art.mjs
+ * writes their rungs straight to `public/album-art/<id>-<rung>.<fmt>`, so
+ * the paths are derivable from the id and need no manifest lookup.
+ *
+ * They still belong in this module rather than as a bare <img> in the page, so
+ * that every piece of artwork on the site is served from one place.
+ *
+ * `rung` is "wall" (198px, the grid) or "card" (the opened sleeve — 570px for a
+ * printed master, 300px for Last.fm art, which is all Last.fm has). One rung
+ * each, no srcset: both are already sized for exactly one box.
+ *
+ * The card rung ships AVIF only. Its WebP twin cost 23MB across 1,650 albums for
+ * a rung nobody sees until they click, and the ~3% of browsers without AVIF can
+ * fall back to the wall rung they have already downloaded — softer in the
+ * dialog, but present, and free. The wall rung keeps its WebP, because that is
+ * the one every visitor actually loads.
+ */
+export function AlbumArtImage({ id, rung = "wall", alt = "", priority = false, className, ...rest }) {
+  // The wall rung's WebP is both the wall's own fallback and the card's, so it
+  // is the <img> src either way.
+  const wallWebp = `/album-art/${id}-wall.webp`;
+  return (
+    <picture>
+      <source type="image/avif" srcSet={`/album-art/${id}-${rung}.avif`} />
+      <img
+        src={wallWebp}
+        alt={alt}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : undefined}
+        decoding="async"
+        draggable="false"
+        className={className}
+        {...rest}
+      />
+    </picture>
+  );
+}
+
+/*
  * Preload the rung a given viewport will actually pick, so an above-the-fold
  * image starts downloading with the stylesheet rather than after it.
  *

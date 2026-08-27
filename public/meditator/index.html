@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Akibwa</title>
+<meta name="robots" content="noindex">
+<script>
+  // Meditator was retired on 27 August 2026. Unregister its service worker
+  // before leaving, so a returning visitor's cached copy cannot resurrect it.
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((rs) => {
+      for (const r of rs) if (r.scope.includes("/meditator")) r.unregister();
+    });
+  }
+  location.replace("/projects/");
+</script>
+<p>This project has been retired. <a href="/projects/">Akibwa projects</a>.</p>

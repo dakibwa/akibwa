@@ -6,9 +6,9 @@ const routes = [
   { path: "/projects/", priority: 0.9 },
   { path: "/about/", priority: 0.8 },
   { path: "/contact/", priority: 0.8 },
-  { path: "/projects/chorus/", priority: 0.5 },
+  { path: "/albums/", priority: 0.7 },
+  { path: "/projects/albums/", priority: 0.5 },
   { path: "/projects/cover-collision/", priority: 0.5 },
-  { path: "/projects/meditator/", priority: 0.5 }
 ];
 
 export default function sitemap() {
