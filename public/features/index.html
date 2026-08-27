@@ -5187,7 +5187,9 @@ function clearNet(){
   r.cleared.push({feats,tier,moves:r.netMoves,par,idx:r.netIndex,assisted:!!r.assisted,
                   log:(r.logGap||r.log.length!==r.netMoves)?null:r.log});
   const setDone = !isTrial() && r.cleared.length>=POLICY.dailyNets;
-  if(setDone && r.cleared.every(c=>c.tier==='perfect')){
+  if(setDone && flawlessTally(r.cleared.filter(c=>c.tier==='perfect').length,
+                              r.cleared.filter(c=>c.tier!=='done').length,
+                              r.cleared.length)){
     [...new Set(r.cleared.flatMap(c=>c.feats))].forEach(k=>{
       const cur=store.collection.badges[k];
       if(!cur) store.collection.badges[k]={tier:'flawless',day:r.day};
@@ -5370,6 +5372,7 @@ function showRunOver(){
   const rung=rungCount(r.cleared.map(c=>c.tier), trial?depth:POLICY.dailyNets);
   $('runbulletin').innerHTML=bulletinHTML({
     strip: trial ? '--sig-dunkelblau'
+         : flawlessDay(rung) ? TIERCOL.flawless
          : rung.good>=rung.of ? TIERCOL.perfect
          : rung.good ? TIERCOL.clean
          : TIERCOL.done,
@@ -5521,9 +5524,15 @@ const archiveCount=()=>{
 const TIEROF={p:'perfect', c:'clean', d:'done'};
 const TIERSAY={done:'resolved'};
 const tierSay=t=>TIERSAY[t]||t;
-const isFlawless=tiers=>typeof tiers==='string'
-  && tiers.length>=POLICY.dailyNets
-  && [...tiers.slice(0,POLICY.dailyNets)].every(ch=>ch==='p');
+const FLAW_PERFECT=5;
+const flawlessTally=(perfect,good,of)=>
+  of>=POLICY.dailyNets && good>=of && perfect>=FLAW_PERFECT;
+const isFlawless=tiers=>{
+  if(typeof tiers!=='string' || tiers.length<POLICY.dailyNets) return false;
+  const t=[...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]||'done');
+  return flawlessTally(t.filter(x=>x==='perfect').length,
+                       t.filter(x=>x!=='done').length, t.length);
+};
 function rungTrack(tiers,row){
   const s=typeof tiers==='string'?tiers:'';
   const flawless=isFlawless(s);
@@ -5642,11 +5651,11 @@ async function postBoard(){
 const rungsOf=tiers=>(typeof tiers==='string' && tiers)
   ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
   : null;
-const flawlessDay=g=>g.of>0 && g.perfect===g.of;
+const flawlessDay=g=>flawlessTally(g.perfect,g.good,g.of);
 const rungText=g=>flawlessDay(g)
-  ? `flawless · all ${g.of} perfect`
+  ? `flawless · ${g.perfect} of ${g.of} perfect`
   : `${g.good} of ${g.of} clean or better`;
-const rungParts=g=>({fig:String(g.good),
+const rungParts=g=>({fig:String(flawlessDay(g)?g.perfect:g.good),
   word: flawlessDay(g) ? `of ${g.of} perfect · flawless` : `of ${g.of} clean or better`});
 
 function replayWords(){
