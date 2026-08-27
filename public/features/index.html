@@ -766,11 +766,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .rec-close{flex:0 0 auto}
   .rec-right{display:flex;align-items:center;gap:8px;margin-left:auto;min-width:0}
   .collection{
-    flex:1 1 auto;min-height:0;overflow-y:auto;padding:14px 18px 18px;
+    flex:1 1 auto;min-height:0;overflow-y:auto;padding:8px 18px 18px;
     display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
     gap:7px;align-content:start;
   }
-  .collection[hidden],.daylist[hidden]{display:none}
+  .collection[hidden],.daylist[hidden],.recboard[hidden]{display:none}
   .colcap{
     grid-column:1/-1;margin:0 0 3px;
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
@@ -1153,10 +1153,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
 
   @media (max-width:345px){
-    .hud-head{grid-template-columns:1fr}
-    .mark{grid-row:1}
-    .btns{grid-column:1;grid-row:2;justify-content:flex-start}
-    .instruments{grid-row:3}
     #runveil .wbtn{letter-spacing:.04em;padding:8px 6px;white-space:nowrap}
   }
 
@@ -1249,20 +1245,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       <button class="help groundbtn" id="themebtn" aria-label="ground">
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
       </button>
-      <!-- ---- the collection ----
-           the 7x7 grid it actually draws, at three by three: squares only, which
-           is the one shape a grid of named things can be in this palette, and the
-           same mark language `recglyph` above already uses for a list. it opens
-           the record ON its collection view rather than being a screen of its
-           own — there is one collection and this is a door to it. -->
-      <button class="help" id="collbtn" aria-label="the collection"
-              aria-label="the collection">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">
-          <rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>
-          <rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>
-          <rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>
-        </g></svg>
-      </button>
+      <!-- ---- the collection's masthead mark is gone ---- (27 Aug 2026)
+           the owner's call: five marks wrapped into a ragged four-and-one on a
+           phone, and this one was a duplicate door — the day card is the menu,
+           one tap away behind the record mark, and carries its own way in
+           (`introcoll`). the collection lost nothing; the masthead lost the
+           orphan. -->
+      
       <!-- ---- the guided nets are NOT here ----
            a mark for the lessons stood in this slot, hidden until `tutorialDone`
            and shown from then on as the only way back to them. it moved to the
@@ -3747,10 +3736,31 @@ function buildNet(force){
     chosen.push(pool.splice(Math.floor(fr()*pool.length),1)[0]);
   }
 
-  let bestSalt=39, bestMiss=Infinity, accepted=false;
+  const tutSym=()=>{
+    const cx=BW/2, eps=3;
+    const ys=threads.flatMap(t=>t.nodes.map(n=>n.y0));
+    const cy=(Math.min(...ys)+Math.max(...ys))/2;
+    const lines=threads.map(t=>t.nodes.map(n=>[n.x0,n.y0]));
+    const eq=(A,B)=>A.length===B.length&&A.every((q,i)=>Math.hypot(q[0]-B[i][0],q[1]-B[i][1])<eps);
+    const T1=([x,y])=>[2*cx-x,y], T2=([x,y])=>[2*cx-x,2*cy-y];
+    const cls=n=>n.merged?2:(n.pinned?1:0);
+    const under=f=>{
+      if(!lines.every(L=>{const R=L.map(f);return lines.some(M=>eq(R,M)||eq([...R].reverse(),M))})) return false;
+      return members.every(m=>{
+        if(cls(m)!==2) return true;
+        const [tx,ty]=f([m.x0,m.y0]);
+        const tw=members.find(n=>Math.hypot(tx-n.x0,ty-n.y0)<eps);
+        return tw && cls(tw)===2;
+      });
+    };
+    return under(T1)||under(T2);
+  };
+
+  const SALTS = (inTutorialRun() && idx<TUTNETS.length) ? 4000 : 40;
+  let bestSalt=SALTS-1, bestMiss=Infinity, accepted=false;
   for(let pass=0;pass<2;pass++){
   const forced=pass===1?bestSalt:-1;
-  for(let salt=0;salt<40;salt++){
+  for(let salt=0;salt<SALTS;salt++){
     if(forced>=0 && salt!==forced) continue;
     const rnd=mulberry32(fnv(seedKey+':net:'+idx+':'+salt));
     members=[];
@@ -3813,7 +3823,8 @@ function buildNet(force){
 
     if(GEN.layout==='families'){
       const T=threads.length, L=Math.max(3,spec.nodes);
-      const fam=famFor(R().day,idx);
+      const TUTFAM=['layered','hourglass','layered'];
+      const fam=tut?TUTFAM[idx]:famFor(R().day,idx);
       const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens)
               || famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens);
       if(!plan){ ok=false }
@@ -3834,6 +3845,7 @@ function buildNet(force){
         }));
         spec.minX=Math.max(2, Math.round(plan.par*0.5));
         spec.maxX=Math.max(spec.minX+3, Math.round(plan.par*5)+8);
+        if(tut){ spec.minX=TUTNETS[idx].minX; spec.maxX=TUTNETS[idx].maxX; }
         ok=threads.every(t=>t.nodes.length>=2);
       }
     } else if(GEN.layout==='layered'){
@@ -3891,12 +3903,14 @@ function buildNet(force){
     const shortBy = (GEN.layout==='families' && spec.plan)
       ? Math.max(0, famTarget(idx)-spec.plan.route,
                     spec.plan.route-(famTarget(idx)+1)) : 0;
+    const sym = !tut || tutSym();
     if(pass===0){
       const miss=(c0.total<spec.minX ? (spec.minX-c0.total)*2
-               : c0.total>spec.maxX ? (c0.total-spec.maxX) : 0) + shortBy*3;
+               : c0.total>spec.maxX ? (c0.total-spec.maxX) : 0) + shortBy*3
+               + (sym?0:2);
       if(miss<bestMiss){ bestMiss=miss; bestSalt=salt }
     }
-    const inBand=c0.total>=spec.minX && c0.total<=spec.maxX && !shortBy;
+    const inBand=c0.total>=spec.minX && c0.total<=spec.maxX && !shortBy && sym;
     if(inBand || pass===1){
       initialCross=Math.max(c0.total,1);
       if(GEN.par==='lanes') spec.par=lanePar();      // measure the net you actually got
@@ -4889,8 +4903,8 @@ function resetDescent(){
 
 const TUTNETS=[
   {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
-  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:5},
-  {threads:2, nodes:5, shared:0, pinned:1, minX:2, maxX:6}
+  {threads:2, nodes:5, shared:1, pinned:0, minX:2, maxX:5},
+  {threads:2, nodes:5, shared:0, pinned:2, minX:2, maxX:6}
 ];
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
 function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !R().over}
@@ -5048,9 +5062,9 @@ const TUTSTEPS_BY_NET=[
     '<b>tap it to split.</b> neither line can leave until you do.',
     '<b>clear the crossings.</b> both come free.'
   ],
-  [ // net 2 — the pin. a constraint rather than an action
-    'the <b>square</b> neuron is pinned — it cannot move.',
-    '<b>move the others around it.</b>',
+  [ // net 2 — the pins. a constraint rather than an action
+    'the <b>square</b> neurons are pinned — they cannot move.',
+    '<b>move the others around them.</b>',
     'last crossing. <b>clear it</b> and you know the game.'
   ]
 ];
@@ -6422,7 +6436,6 @@ function startLessons(){
   flashMsg('the guided nets · three lessons, and nothing here is scored');
 }
 $('helpbtn').onclick=()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')};
-$('collbtn').onclick=()=>{ fromCard=false; recView='collection'; hideVeils(); openRecord() };
 $('buybtn').onclick=()=>beginUnlock();
 addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('.groundbtn');
