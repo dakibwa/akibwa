@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
@@ -170,50 +170,14 @@ export function HomePage() {
     return () => window.clearInterval(id);
   }, []);
 
-  /* FLIP: note where every card is before the order changes, then invert the
-     difference and let it play out. Re-ordering a grid is not animatable on its
-     own — without this the cards would teleport. */
-  const before = useRef(null);
-
-  useLayoutEffect(() => {
-    const rects = before.current;
-    before.current = null;
-    if (!rects || !deckRef.current) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    deckRef.current.querySelectorAll(".card").forEach((card) => {
-      const was = rects.get(card);
-      if (!was) return;
-      const now = card.getBoundingClientRect();
-      const dx = was.left - now.left;
-      const dy = was.top - now.top;
-      if (!dx && !dy) return;
-      card.classList.remove("is-sliding");
-      card.style.transform = `translate(${dx}px, ${dy}px)`;
-      requestAnimationFrame(() => {
-        card.classList.add("is-sliding");
-        card.style.transform = "";
-      });
-    });
-  }, [lens]);
 
 
-  /* Note where every card is before the order changes, so the FLIP pass can
-     carry them to their new places instead of teleporting. */
-  const capture = useCallback(() => {
-    if (!deckRef.current) return;
-    before.current = new Map(
-      Array.from(deckRef.current.querySelectorAll(".card"))
-        .map((card) => [card, card.getBoundingClientRect()])
-    );
-  }, []);
 
   /* A rail name holds a lens over its own row — the same machinery as the
      sentence's bucket words, one interaction language across the site.
      Clicking again lets go. */
   const focusSet = useCallback(
     (id) => {
-      capture();
       setHeldBucket((current) => {
         const key = `set:${id}`;
         const next = current === key ? null : key;
@@ -221,7 +185,7 @@ export function HomePage() {
         return next;
       });
     },
-    [capture]
+    []
   );
 
   /* Which bucket's lens is held, if any. Rail-name panels clear it. */
@@ -231,14 +195,13 @@ export function HomePage() {
 
   const openBucket = useCallback(
     (bucket) => {
-      capture();
       setHeldBucket((current) => {
         const next = current === bucket.id ? null : bucket.id;
         setLens(next ? bucket.lens : null);
         return next;
       });
     },
-    [capture]
+    []
   );
 
 
@@ -259,31 +222,17 @@ export function HomePage() {
     if (!lens) return undefined;
     const onKey = (event) => {
       if (event.key !== "Escape") return;
-      capture();
       setHeldBucket(null);
       setLens(null);
     };
     document.addEventListener("keydown", onKey);
-    /* The gathered rows have been carried to the top of the wall; follow. */
-    const section = deckRef.current?.querySelector(`.set[data-set="${lens[0]}"]`);
-    section?.scrollIntoView({ behavior: "smooth", block: "start" });
+    /* The stream has folded to the lit collection; go to its word. */
+    const word = document.getElementById(`set-${lens[0]}`);
+    word?.scrollIntoView({ behavior: "smooth", block: "start" });
     return () => document.removeEventListener("keydown", onKey);
-  }, [lens, capture]);
+  }, [lens]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
-  /* Lit sets take the low orders so they gather at the top; everything else is
-     pushed below them, still there and still readable, just stepped back.
-     A section that carries several collections rises when the lens names any
-     of them — Projects & Life share a row, each with its own light. */
-  const SECTION_OWNS = { sites: ["sites", "creations", "life"], jobs: ["jobs", "tools"] };
-  const orderOf = useCallback(
-    (id) => {
-      const rank = sets.findIndex((s) => s.id === id);
-      const owns = SECTION_OWNS[id] ?? [id];
-      return lens ? (owns.some((o) => lens.includes(o)) ? rank : 100 + rank) : rank;
-    },
-    [lens]
-  );
 
   const cardsFor = (id, { all = false, as } = {}) => {
     /* `as` renders one collection inside another set's row — the toolkit
@@ -546,11 +495,10 @@ export function HomePage() {
     (event) => {
       if (!lens) return;
       if (event.target.closest("button, a")) return;
-      capture();
       setHeldBucket(null);
       setLens(null);
     },
-    [lens, capture]
+    [lens]
   );
 
   return (
@@ -584,16 +532,11 @@ export function HomePage() {
           </h1>
         </div>
 
-        {sets.map((set, i) => {
-          const cards = (
-            <>
-              {cardsFor(set.id)}
-            </>
-          );
-
-          /* Every collection lies open: the word leads, and the whole
-             library wraps beside and beneath it — cards side by side, all of
-             them, nothing hidden behind a marquee. */
+        {sets.map((set) => {
+          const cards = cardsFor(set.id);
+          /* One library: the word leads its collection and the next
+             collection continues in the same stream — a single wrapping
+             flow, no blocks, no rows of its own. */
           const flow =
             set.id === "jobs" ? (
               <>
@@ -603,8 +546,6 @@ export function HomePage() {
             ) : set.id === "sites" ? (
               <>
                 {cards}
-                {/* Life leads its own cards mid-flow, an opener like every
-                    other word; the collisions follow as part of the shelf. */}
                 <button
                   type="button"
                   className={`rail-word${dim("life") ? "" : " is-lit"}`}
@@ -622,28 +563,20 @@ export function HomePage() {
             );
 
           return (
-            <section
-              className="set"
-              data-set={set.id}
-              key={set.id}
-              style={{ "--order": orderOf(set.id) }}
-              aria-labelledby={`set-${set.id}`}
-            >
-              <div className="set-flow">
-                <h2 className="set-name" id={`set-${set.id}`}>
-                  <button
-                    type="button"
-                    className="rail-word"
-                    style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-                    aria-expanded={heldBucket === `set:${set.id}`}
-                    onClick={() => focusSet(set.id)}
-                  >
-                    {set.label}
-                  </button>
-                </h2>
-                {flow}
-              </div>
-            </section>
+            <Fragment key={set.id}>
+              <h2 className="set-name" id={`set-${set.id}`}>
+                <button
+                  type="button"
+                  className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
+                  style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+                  aria-expanded={heldBucket === `set:${set.id}`}
+                  onClick={() => focusSet(set.id)}
+                >
+                  {set.label}
+                </button>
+              </h2>
+              {flow}
+            </Fragment>
           );
         })}
       </div>

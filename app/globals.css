@@ -5863,26 +5863,9 @@ button {
 
 /* When the lens lights the other group on this rail, the word steps back
    with its cards. */
-.deck.is-lensed .set:has(.card.is-lit) .rail-word:not(.is-lit) {
-  opacity: 0.22;
-}
-
-/* Inside a lit row, cards the lens does not name step back individually —
-   how Life fades while Projects shines on the rail they share. */
-.deck.is-lensed .set:has(.card.is-lit) .card:not(.is-lit) {
-  opacity: 0.22;
-  filter: saturate(0.35);
-}
-
 /* Under the rail width the name cannot hold a column, so it sits above the
    cards instead and the row keeps its full width for them. */
 @media (max-width: 760px) {
-  .set {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 9px;
-    padding-right: max(24px, calc((100vw - var(--frame)) / 2));
-  }
-
     /* The cards bleed past the gutter again once the name is out of their row. */
   }
 
@@ -6116,59 +6099,88 @@ button {
    the move continuous rather than a jump. */
 
 
-/* Every section is an open shelf: the word leads and the entire collection
-   wraps beside and beneath it. Holding a lens folds everything the lens does
-   not name to nothing — a grid-rows fold, so any length of section closes in
-   the same smooth breath — leaving the lit shelves and the footer. */
-.set {
-  order: var(--order, 0);
-  display: grid;
-  grid-template-rows: 1fr;
-  transition:
-    grid-template-rows 560ms var(--ease-out),
-    opacity 400ms var(--ease-out),
-    transform 480ms var(--ease-out);
-  content-visibility: auto;
-  contain-intrinsic-size: auto 640px;
-}
-
-.set-flow {
-  display: flex;
+/* One library. Words and cards share a single wrapping stream: a section's
+   last row is finished by the next section's word and cards, so the whole
+   site reads as one continuous shelf. Spacing lives on the items, not the
+   container, so a folded card leaves no ghost gap behind. */
+.deck {
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: stretch;
-  gap: clamp(8px, 0.9vw, 13px);
-  min-height: 0;
-  overflow: hidden;
-  padding-bottom: clamp(14px, 1.6vw, 24px);
+  gap: 0;
 }
 
-.set-flow .card {
+.deck > .card,
+.deck .set-name ~ .card,
+.card {
+  margin: clamp(4px, 0.45vw, 6.5px);
+}
+
+.deck .card {
   flex: 0 0 clamp(100px, 8.6vw, 148px);
   width: clamp(100px, 8.6vw, 148px);
+}
+
+.deck .card--hero {
+  flex: 1 1 100%;
+  width: auto;
+  margin: 0 0 clamp(10px, 1.2vw, 18px);
 }
 
 .set-name {
   display: contents;
 }
 
-.deck.is-lensed .set:not(:has(.card.is-lit)) {
-  grid-template-rows: 0fr;
+.rail-word {
+  margin: clamp(4px, 0.45vw, 6.5px) clamp(10px, 1.1vw, 16px) clamp(4px, 0.45vw, 6.5px) clamp(14px, 1.6vw, 24px);
+}
+
+/* Holding a lens: everything the lens does not name folds out of the stream
+   — width, spacing and all — and the library closes up around what remains.
+   The hero sentence stays; it holds the words that let go. */
+.deck.is-lensed .card:not(.is-lit):not(.card--hero),
+.deck.is-lensed .rail-word:not(.is-lit) {
+  flex-basis: 0;
+  width: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
   opacity: 0;
-  transform: translateY(8px);
   pointer-events: none;
-  content-visibility: visible;
+  overflow: hidden;
+}
+
+.card {
+  transition:
+    transform var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    border-color var(--hover-out) var(--ease-out),
+    flex-basis 480ms var(--ease-out),
+    width 480ms var(--ease-out),
+    margin 480ms var(--ease-out),
+    opacity 320ms var(--ease-out);
+}
+
+.rail-word {
+  transition:
+    color 160ms ease,
+    flex-basis 480ms var(--ease-out),
+    width 480ms var(--ease-out),
+    margin 480ms var(--ease-out),
+    opacity 320ms var(--ease-out);
 }
 
 /* The collectible press: the top-left corner gives, the bottom-right lifts,
    and a foil glint crosses the face — a shiny card between finger and thumb,
    not a button jumping. */
-.set-flow .card:hover,
-.set-flow .card:focus-visible {
+.deck .card:hover,
+.deck .card:focus-visible {
   transform: perspective(640px) rotate3d(1, -1, 0, 9deg) scale(1.035);
   border-color: var(--line-strong);
   box-shadow: -12px 14px 30px rgba(16, 18, 23, 0.16);
   z-index: 3;
-  transition-duration: var(--hover-in);
+  transition-duration: var(--hover-in), var(--hover-in), var(--hover-in), 480ms, 480ms, 480ms, 320ms;
 }
 
 .card-sheen {
@@ -6189,33 +6201,21 @@ button {
   transition: opacity 200ms ease, background-position 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.set-flow .card:hover .card-sheen,
-.set-flow .card:focus-visible .card-sheen {
+.deck .card:hover .card-sheen,
+.deck .card:focus-visible .card-sheen {
   opacity: 1;
   background-position: -15% 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .set-flow .card:hover,
-  .set-flow .card:focus-visible {
+  .deck .card:hover,
+  .deck .card:focus-visible {
     transform: none;
   }
   .card-sheen { transition: none; opacity: 0; }
 }
 
-
-/* Nothing to read while a set is receded, so it should not be tabbable or
-   announced from down there. */
-.deck.is-lensed .set:not(:has(.card.is-lit)) .card-back {
-  display: none;
-}
-
-.set {
-  transition: opacity 460ms var(--ease-out);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .set { transition-duration: 1ms; }
 }
 
 
