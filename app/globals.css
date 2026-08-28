@@ -5815,9 +5815,10 @@ button {
      left edge, so the wall can be read down that column while the cards move
      across it. With the names riding the tracks there was no left edge at all
      and a title could drift to the middle of its own row. */
-  /* The column fits the word rather than reserving a fixed rail — a single
-     name next to a wall of cards should sit close, not across a channel. */
-  grid-template-columns: fit-content(clamp(120px, 14vw, 200px)) minmax(0, 1fr);
+  /* One shared rail width for every row — fit-content let each row size to
+     its own word, so "Life" and "Projects" started their cards at different
+     x and the wall lost its left edge. Sized to the widest word, no more. */
+  grid-template-columns: clamp(96px, 10vw, 150px) minmax(0, 1fr);
   align-items: center;
   column-gap: clamp(12px, 1.4vw, 22px);
   /* Cards run edge to edge; the name keeps the page gutter so it lines up with
@@ -5832,6 +5833,9 @@ button {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  /* The words end on a shared right edge, flush against their cards. */
+  align-items: flex-end;
+  text-align: right;
   padding-right: clamp(6px, 0.8vw, 14px);
 }
 
