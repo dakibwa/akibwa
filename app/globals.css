@@ -5848,6 +5848,10 @@ button {
 }
 
 .set-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
   margin: 0;
 }
 
@@ -5959,6 +5963,22 @@ button {
    what made the wall look broken rather than moving. */
 .set-rail:not(.is-travelling) .track-run[data-clone] {
   display: none;
+}
+
+/* The hairline between Projects and Life on their shared rail. */
+.rail-divider {
+  flex: 0 0 1px;
+  align-self: center;
+  height: 62%;
+  margin: 0 clamp(6px, 0.7vw, 11px);
+  background: var(--line-strong);
+}
+
+/* Inside a lit row, cards the lens does not name step back individually —
+   how Life fades while Projects shines on the rail they share. */
+.deck.is-lensed .set:has(.card.is-lit) .card:not(.is-lit) {
+  opacity: 0.22;
+  filter: saturate(0.35);
 }
 
 .track-run {

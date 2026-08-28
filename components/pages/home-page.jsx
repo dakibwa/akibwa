@@ -387,11 +387,15 @@ export function HomePage() {
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
   /* Lit sets take the low orders so they gather at the top; everything else is
-     pushed below them, still there and still readable, just stepped back. */
+     pushed below them, still there and still readable, just stepped back.
+     A section that carries several collections rises when the lens names any
+     of them — Projects & Life share a row, each with its own light. */
+  const SECTION_OWNS = { sites: ["sites", "creations", "life"], jobs: ["jobs", "tools"] };
   const orderOf = useCallback(
     (id) => {
       const rank = sets.findIndex((s) => s.id === id);
-      return lens ? (lens.includes(id) ? rank : 100 + rank) : rank;
+      const owns = SECTION_OWNS[id] ?? [id];
+      return lens ? (owns.some((o) => lens.includes(o)) ? rank : 100 + rank) : rank;
     },
     [lens]
   );
@@ -708,28 +712,16 @@ export function HomePage() {
             set.id === "jobs"
               ? [{ cards }, { cards: cardsFor("tools", { as: "jobs" }), sub: true }]
               : set.id === "sites"
-                ? [{ cards }, { cards: (
+                ? [{ cards: (
                     <>
-                      {cardsFor("creations", { as: "sites" })}
-                      <Card
-                        suit="sites"
-                        dim={dim("sites")}
-                        ground="#c13584"
-                        href={instagramUrl}
-                        label="The rest of the collisions, on Instagram"
-                        face={
-                          <span className="card-face-stack">
-                            <span className="c-head"><span className="f-suit">More</span></span>
-                            <span className="site-go" aria-hidden="true">↗</span>
-                            <span className="c-foot">
-                              <span className="c-title c-title--tool">Instagram</span>
-                            </span>
-                          </span>
-                        }
-                        back={null}
-                      />
+                      {cards}
+                      {/* Projects and Life, side by side on one rail, a
+                          hairline between them. Each keeps its own light:
+                          the life lens lifts its two while the sites fade. */}
+                      <span className="rail-divider" aria-hidden="true" />
+                      {cardsFor("life")}
                     </>
-                  ), sub: true }]
+                  ) }, { cards: cardsFor("creations", { as: "sites" }), sub: true }]
                 : [{ cards }];
 
           return (
@@ -748,8 +740,7 @@ export function HomePage() {
                 <h2 className="set-name" id={`set-${set.id}`}>
                   {/* The word alone, in the set's own colour — no tally, no
                       caption. The wall is the statement; the detail comes from
-                      enquiring. The whole set opens from its name as well as
-                      from any of its cards. */}
+                      enquiring. The merged row carries both its words. */}
                   <button
                     type="button"
                     className="set-open"
@@ -759,6 +750,17 @@ export function HomePage() {
                   >
                     {set.label}
                   </button>
+                  {set.id === "sites" ? (
+                    <button
+                      type="button"
+                      className="set-open"
+                      style={{ "--index-accent-rgb": INDEX_ACCENT.life }}
+                      aria-expanded={heldBucket === "set:life"}
+                      onClick={() => focusSet("life")}
+                    >
+                      Life
+                    </button>
+                  ) : null}
                 </h2>
               </div>
 
