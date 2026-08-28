@@ -979,7 +979,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     grid-template-rows:auto minmax(0,1fr);
   }
   .intro-card,.record{height:min(680px,calc(100dvh - 40px))}
-  .intro-strip{height:7px;display:flex;grid-column:1/-1}
+  .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
   .intro-art > svg{display:block;width:100%;height:100%;min-height:390px}
@@ -1434,6 +1434,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      which of the sixteen features you have still never seen. -->
 <div class="veil" id="histveil">
   <section class="record">
+    <!-- the same four-band strip the intro card wears, at the same top edge —
+         (28 Aug 2026, the owner's call: "the colour bars across the top of each
+         page as well, so it's real consistent".) the three sheets share the
+         frame, the doors row and now the flag. -->
+    <div class="intro-strip" aria-hidden="true">
+      <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
+      <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
+    </div>
     <!-- THE HEAD IS CONTROLS NOW, NOT A READING.
          it carried the day's score as an instrument — a figure, two clauses and
          the day's ten rungs drawn underneath. that reading is already on the
@@ -2216,6 +2224,13 @@ async function fillIntroAuth(){
         +`<path d="M12.5 12h7"/>`
         +`</g></svg></button>`;
       el.firstChild.onclick=()=>goSignIn('google');
+    }else if(ins.length){
+      el.innerHTML=`<button class="help" aria-label="sign in">`
+        +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
+        +`<circle cx="12" cy="8.6" r="3.6"/>`
+        +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
+        +`</g></svg></button>`;
+      el.firstChild.onclick=()=>goSignIn(ins[0]);
     }else el.innerHTML='';
   });
 }
@@ -4980,6 +4995,31 @@ function dayRollover(){
 }
 setInterval(dayRollover,60000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) dayRollover() });
+let buildTag=null, buildStale=false;
+async function buildStamp(){
+  try{
+    const r=await fetch(location.pathname+'?fresh='+Date.now().toString(36),{method:'HEAD',cache:'no-store'});
+    if(!r.ok) return null;
+    return r.headers.get('etag')||r.headers.get('last-modified')||null;
+  }catch(e){ return null }
+}
+function freshReload(){
+  let at=0; try{ at=+sessionStorage.getItem('fresh-at')||0 }catch(e){}
+  if(Date.now()-at<300000) return;
+  try{ sessionStorage.setItem('fresh-at',String(Date.now())) }catch(e){}
+  location.reload();
+}
+async function checkFresh(swapNow){
+  if(location.protocol==='file:') return;
+  const tag=await buildStamp();
+  if(!tag) return;
+  if(!buildTag){ buildTag=tag; return }
+  if(tag!==buildTag) buildStale=true;
+  if(buildStale && (swapNow || document.hidden)) freshReload();
+}
+checkFresh(false);
+document.addEventListener('visibilitychange',()=>checkFresh(!document.hidden));
+setInterval(()=>checkFresh(false),60*60*1000);
 setInterval(descentTick,DESCENT_TICK_MS);
 $('descentbtn').onclick=()=>{
   if(descentArmed) return;
@@ -6352,11 +6392,17 @@ $('archclose').onclick=e=>{e.preventDefault();closeArchiveLook()};
 $('payclose').onclick=e=>{e.preventDefault();closeCheckout()};
 function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
-  if(v.id==='introveil'||v.id==='runveil') return;
+  if(v.id==='runveil') return;
+  if(v.id==='introveil'){
+    store.introSeen=true; store.lastIntroDay=today(); save();
+    fromCard=false;
+    v.classList.remove('show');
+    return;
+  }
   const sel=window.getSelection();
   if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
   if(v.id==='netveil'){ nextNet(); return }
-  if(v.id==='histveil'){ closeRecord(); return }
+  if(v.id==='histveil'){ fromCard=false; closeRecord(); return }
   v.classList.remove('show');
 }
 document.querySelectorAll('.veil').forEach(v=>v.addEventListener('click',e=>{
