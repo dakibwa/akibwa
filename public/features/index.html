@@ -2624,11 +2624,16 @@ function entitlementChanged(){
   renderHud();
 }
 let priceAsked=false;
-async function ensurePrice(){
-  if(priceInfo || priceAsked || !API) return;
+let pricePromise=null;
+function ensurePrice(){
+  if(priceInfo || !API) return Promise.resolve();
+  if(pricePromise) return pricePromise;
   priceAsked=true;
-  const moved=applyEntitlement(await api('me'));
-  if(priceInfo || moved) entitlementChanged();
+  pricePromise=(async()=>{
+    const moved=applyEntitlement(await api('me'));
+    if(priceInfo || moved) entitlementChanged();
+  })();
+  return pricePromise;
 }
 async function linkUnlock(){
   if(!acct.token || !account || !account.signedIn) return;
@@ -2713,6 +2718,7 @@ function closeCheckout(){
 }
 async function beginUnlock(){
   if(POLICY.premium) return;
+  if(API) await ensurePrice();       // the mode decision needs the key, not a guess
   const Stripe=API ? await stripeJS() : null;
   const wantEmbedded=!!(Stripe && priceInfo && priceInfo.pk);
   const r=API ? await api('unlock/checkout',{return_path:location.pathname,embedded:wantEmbedded}) : null;
