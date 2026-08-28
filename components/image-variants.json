@@ -1043,20 +1043,20 @@
     "source": "/tv-posters/arrested-development.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "fbdf5c4c86cabca9",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "434318a299c26410",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/arrested-development-deckTile-138.avif",
-          "bytes": 3377
+          "bytes": 942
         },
         "webp": {
           "src": "/_img/tv-posters/arrested-development-deckTile-138.webp",
-          "bytes": 3152
+          "bytes": 902
         }
       },
       {
@@ -1064,11 +1064,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/arrested-development-deckTile-200.avif",
-          "bytes": 5633
+          "bytes": 1107
         },
         "webp": {
           "src": "/_img/tv-posters/arrested-development-deckTile-200.webp",
-          "bytes": 5582
+          "bytes": 1172
         }
       },
       {
@@ -1076,11 +1076,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/arrested-development-deckTile-264.avif",
-          "bytes": 8254
+          "bytes": 1394
         },
         "webp": {
           "src": "/_img/tv-posters/arrested-development-deckTile-264.webp",
-          "bytes": 8386
+          "bytes": 1696
         }
       }
     ]
@@ -1089,20 +1089,20 @@
     "source": "/tv-posters/atlanta.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "d41d1315624738c5",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7e91ee79c61b78af",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/atlanta-deckTile-138.avif",
-          "bytes": 2254
+          "bytes": 923
         },
         "webp": {
           "src": "/_img/tv-posters/atlanta-deckTile-138.webp",
-          "bytes": 2288
+          "bytes": 1048
         }
       },
       {
@@ -1110,11 +1110,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/atlanta-deckTile-200.avif",
-          "bytes": 3462
+          "bytes": 1098
         },
         "webp": {
           "src": "/_img/tv-posters/atlanta-deckTile-200.webp",
-          "bytes": 3934
+          "bytes": 1532
         }
       },
       {
@@ -1122,11 +1122,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/atlanta-deckTile-264.avif",
-          "bytes": 4677
+          "bytes": 1503
         },
         "webp": {
           "src": "/_img/tv-posters/atlanta-deckTile-264.webp",
-          "bytes": 5458
+          "bytes": 2202
         }
       }
     ]
@@ -1135,20 +1135,20 @@
     "source": "/tv-posters/better-call-saul.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "98e674cdf65930ba",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4141878bc0331a2a",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/better-call-saul-deckTile-138.avif",
-          "bytes": 1492
+          "bytes": 1348
         },
         "webp": {
           "src": "/_img/tv-posters/better-call-saul-deckTile-138.webp",
-          "bytes": 1512
+          "bytes": 1490
         }
       },
       {
@@ -1156,11 +1156,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/better-call-saul-deckTile-200.avif",
-          "bytes": 2247
+          "bytes": 1668
         },
         "webp": {
           "src": "/_img/tv-posters/better-call-saul-deckTile-200.webp",
-          "bytes": 2572
+          "bytes": 2138
         }
       },
       {
@@ -1168,11 +1168,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/better-call-saul-deckTile-264.avif",
-          "bytes": 3114
+          "bytes": 2182
         },
         "webp": {
           "src": "/_img/tv-posters/better-call-saul-deckTile-264.webp",
-          "bytes": 3752
+          "bytes": 3020
         }
       }
     ]
@@ -1181,20 +1181,20 @@
     "source": "/tv-posters/better-things.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "dafb1333174e02da",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "cdb1e6b4327fce4e",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/better-things-deckTile-138.avif",
-          "bytes": 1760
+          "bytes": 836
         },
         "webp": {
           "src": "/_img/tv-posters/better-things-deckTile-138.webp",
-          "bytes": 1850
+          "bytes": 860
         }
       },
       {
@@ -1202,11 +1202,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/better-things-deckTile-200.avif",
-          "bytes": 2714
+          "bytes": 1035
         },
         "webp": {
           "src": "/_img/tv-posters/better-things-deckTile-200.webp",
-          "bytes": 3138
+          "bytes": 1260
         }
       },
       {
@@ -1214,11 +1214,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/better-things-deckTile-264.avif",
-          "bytes": 3756
+          "bytes": 1247
         },
         "webp": {
           "src": "/_img/tv-posters/better-things-deckTile-264.webp",
-          "bytes": 4480
+          "bytes": 1632
         }
       }
     ]
@@ -1227,20 +1227,20 @@
     "source": "/tv-posters/black-mirror.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "570b83b05a913266",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "93e5db01ab3b8b26",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/black-mirror-deckTile-138.avif",
-          "bytes": 4087
+          "bytes": 519
         },
         "webp": {
           "src": "/_img/tv-posters/black-mirror-deckTile-138.webp",
-          "bytes": 4306
+          "bytes": 438
         }
       },
       {
@@ -1248,11 +1248,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/black-mirror-deckTile-200.avif",
-          "bytes": 7904
+          "bytes": 656
         },
         "webp": {
           "src": "/_img/tv-posters/black-mirror-deckTile-200.webp",
-          "bytes": 8348
+          "bytes": 564
         }
       },
       {
@@ -1260,11 +1260,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/black-mirror-deckTile-264.avif",
-          "bytes": 13016
+          "bytes": 784
         },
         "webp": {
           "src": "/_img/tv-posters/black-mirror-deckTile-264.webp",
-          "bytes": 13522
+          "bytes": 920
         }
       }
     ]
@@ -1273,20 +1273,20 @@
     "source": "/tv-posters/breaking-bad.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "ae019b757f40815a",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "07e5b79a4ce99107",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/breaking-bad-deckTile-138.avif",
-          "bytes": 2620
+          "bytes": 1032
         },
         "webp": {
           "src": "/_img/tv-posters/breaking-bad-deckTile-138.webp",
-          "bytes": 2662
+          "bytes": 1026
         }
       },
       {
@@ -1294,11 +1294,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/breaking-bad-deckTile-200.avif",
-          "bytes": 4374
+          "bytes": 1229
         },
         "webp": {
           "src": "/_img/tv-posters/breaking-bad-deckTile-200.webp",
-          "bytes": 4860
+          "bytes": 1434
         }
       },
       {
@@ -1306,11 +1306,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/breaking-bad-deckTile-264.avif",
-          "bytes": 6832
+          "bytes": 1430
         },
         "webp": {
           "src": "/_img/tv-posters/breaking-bad-deckTile-264.webp",
-          "bytes": 7610
+          "bytes": 1942
         }
       }
     ]
@@ -1319,20 +1319,20 @@
     "source": "/tv-posters/community.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "15b9f705450917d4",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "5e9ca3807d02ad49",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/community-deckTile-138.avif",
-          "bytes": 3438
+          "bytes": 1099
         },
         "webp": {
           "src": "/_img/tv-posters/community-deckTile-138.webp",
-          "bytes": 3158
+          "bytes": 1174
         }
       },
       {
@@ -1340,11 +1340,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/community-deckTile-200.avif",
-          "bytes": 5507
+          "bytes": 1290
         },
         "webp": {
           "src": "/_img/tv-posters/community-deckTile-200.webp",
-          "bytes": 5480
+          "bytes": 1680
         }
       },
       {
@@ -1352,11 +1352,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/community-deckTile-264.avif",
-          "bytes": 7950
+          "bytes": 1513
         },
         "webp": {
           "src": "/_img/tv-posters/community-deckTile-264.webp",
-          "bytes": 8456
+          "bytes": 2048
         }
       }
     ]
@@ -1365,20 +1365,20 @@
     "source": "/tv-posters/fargo.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "f12b1f0a087ac646",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2a1ac6a0c28cc854",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/fargo-deckTile-138.avif",
-          "bytes": 2661
+          "bytes": 783
         },
         "webp": {
           "src": "/_img/tv-posters/fargo-deckTile-138.webp",
-          "bytes": 2800
+          "bytes": 806
         }
       },
       {
@@ -1386,11 +1386,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/fargo-deckTile-200.avif",
-          "bytes": 4413
+          "bytes": 922
         },
         "webp": {
           "src": "/_img/tv-posters/fargo-deckTile-200.webp",
-          "bytes": 4876
+          "bytes": 1138
         }
       },
       {
@@ -1398,11 +1398,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/fargo-deckTile-264.avif",
-          "bytes": 6364
+          "bytes": 1074
         },
         "webp": {
           "src": "/_img/tv-posters/fargo-deckTile-264.webp",
-          "bytes": 7200
+          "bytes": 1484
         }
       }
     ]
@@ -1411,20 +1411,20 @@
     "source": "/tv-posters/fawlty-towers.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "fc3b596e017b4808",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "50690276582fe55f",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/fawlty-towers-deckTile-138.avif",
-          "bytes": 3700
+          "bytes": 1240
         },
         "webp": {
           "src": "/_img/tv-posters/fawlty-towers-deckTile-138.webp",
-          "bytes": 3714
+          "bytes": 1564
         }
       },
       {
@@ -1432,11 +1432,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/fawlty-towers-deckTile-200.avif",
-          "bytes": 5838
+          "bytes": 1474
         },
         "webp": {
           "src": "/_img/tv-posters/fawlty-towers-deckTile-200.webp",
-          "bytes": 6296
+          "bytes": 1936
         }
       },
       {
@@ -1444,11 +1444,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/fawlty-towers-deckTile-264.avif",
-          "bytes": 8476
+          "bytes": 1638
         },
         "webp": {
           "src": "/_img/tv-posters/fawlty-towers-deckTile-264.webp",
-          "bytes": 9520
+          "bytes": 2598
         }
       }
     ]
@@ -1457,20 +1457,20 @@
     "source": "/tv-posters/fleabag.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "727305fc92c4d68e",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3144c14ec0f1b563",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/fleabag-deckTile-138.avif",
-          "bytes": 3211
+          "bytes": 1268
         },
         "webp": {
           "src": "/_img/tv-posters/fleabag-deckTile-138.webp",
-          "bytes": 3132
+          "bytes": 1504
         }
       },
       {
@@ -1478,11 +1478,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/fleabag-deckTile-200.avif",
-          "bytes": 5103
+          "bytes": 1526
         },
         "webp": {
           "src": "/_img/tv-posters/fleabag-deckTile-200.webp",
-          "bytes": 5388
+          "bytes": 2076
         }
       },
       {
@@ -1490,11 +1490,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/fleabag-deckTile-264.avif",
-          "bytes": 7517
+          "bytes": 1994
         },
         "webp": {
           "src": "/_img/tv-posters/fleabag-deckTile-264.webp",
-          "bytes": 8142
+          "bytes": 2964
         }
       }
     ]
@@ -1503,20 +1503,20 @@
     "source": "/tv-posters/hannibal.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "cec9e42a77142fa3",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "56af355c9ab9bd1d",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/hannibal-deckTile-138.avif",
-          "bytes": 2227
+          "bytes": 1479
         },
         "webp": {
           "src": "/_img/tv-posters/hannibal-deckTile-138.webp",
-          "bytes": 2398
+          "bytes": 1830
         }
       },
       {
@@ -1524,11 +1524,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/hannibal-deckTile-200.avif",
-          "bytes": 3550
+          "bytes": 1924
         },
         "webp": {
           "src": "/_img/tv-posters/hannibal-deckTile-200.webp",
-          "bytes": 3958
+          "bytes": 2718
         }
       },
       {
@@ -1536,11 +1536,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/hannibal-deckTile-264.avif",
-          "bytes": 5528
+          "bytes": 2468
         },
         "webp": {
           "src": "/_img/tv-posters/hannibal-deckTile-264.webp",
-          "bytes": 6140
+          "bytes": 3744
         }
       }
     ]
@@ -1549,20 +1549,20 @@
     "source": "/tv-posters/im-alan-partridge.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "1519feca7dc4642e",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d11aea80b0c6d61f",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/im-alan-partridge-deckTile-138.avif",
-          "bytes": 2571
+          "bytes": 839
         },
         "webp": {
           "src": "/_img/tv-posters/im-alan-partridge-deckTile-138.webp",
-          "bytes": 2586
+          "bytes": 894
         }
       },
       {
@@ -1570,11 +1570,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/im-alan-partridge-deckTile-200.avif",
-          "bytes": 4087
+          "bytes": 1057
         },
         "webp": {
           "src": "/_img/tv-posters/im-alan-partridge-deckTile-200.webp",
-          "bytes": 4406
+          "bytes": 1420
         }
       },
       {
@@ -1582,11 +1582,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/im-alan-partridge-deckTile-264.avif",
-          "bytes": 5663
+          "bytes": 1359
         },
         "webp": {
           "src": "/_img/tv-posters/im-alan-partridge-deckTile-264.webp",
-          "bytes": 6512
+          "bytes": 2180
         }
       }
     ]
@@ -1595,20 +1595,20 @@
     "source": "/tv-posters/its-always-sunny.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "3e4aaf3723d2093d",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d8d4a0488636deaa",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/its-always-sunny-deckTile-138.avif",
-          "bytes": 4598
+          "bytes": 896
         },
         "webp": {
           "src": "/_img/tv-posters/its-always-sunny-deckTile-138.webp",
-          "bytes": 4072
+          "bytes": 952
         }
       },
       {
@@ -1616,11 +1616,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/its-always-sunny-deckTile-200.avif",
-          "bytes": 7734
+          "bytes": 1086
         },
         "webp": {
           "src": "/_img/tv-posters/its-always-sunny-deckTile-200.webp",
-          "bytes": 7138
+          "bytes": 1352
         }
       },
       {
@@ -1628,11 +1628,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/its-always-sunny-deckTile-264.avif",
-          "bytes": 11047
+          "bytes": 1245
         },
         "webp": {
           "src": "/_img/tv-posters/its-always-sunny-deckTile-264.webp",
-          "bytes": 10508
+          "bytes": 2030
         }
       }
     ]
@@ -1641,20 +1641,20 @@
     "source": "/tv-posters/louie.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "49ec3780e6061bdc",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "242055bebea9e588",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/louie-deckTile-138.avif",
-          "bytes": 2336
+          "bytes": 1511
         },
         "webp": {
           "src": "/_img/tv-posters/louie-deckTile-138.webp",
-          "bytes": 2278
+          "bytes": 1708
         }
       },
       {
@@ -1662,11 +1662,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/louie-deckTile-200.avif",
-          "bytes": 3645
+          "bytes": 2391
         },
         "webp": {
           "src": "/_img/tv-posters/louie-deckTile-200.webp",
-          "bytes": 3974
+          "bytes": 2888
         }
       },
       {
@@ -1674,11 +1674,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/louie-deckTile-264.avif",
-          "bytes": 5177
+          "bytes": 3143
         },
         "webp": {
           "src": "/_img/tv-posters/louie-deckTile-264.webp",
-          "bytes": 6016
+          "bytes": 3906
         }
       }
     ]
@@ -1687,20 +1687,20 @@
     "source": "/tv-posters/normal-people.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "c85fb07404b8c108",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "8881a71267288f96",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/normal-people-deckTile-138.avif",
-          "bytes": 2342
+          "bytes": 937
         },
         "webp": {
           "src": "/_img/tv-posters/normal-people-deckTile-138.webp",
-          "bytes": 2390
+          "bytes": 984
         }
       },
       {
@@ -1708,11 +1708,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/normal-people-deckTile-200.avif",
-          "bytes": 3577
+          "bytes": 1162
         },
         "webp": {
           "src": "/_img/tv-posters/normal-people-deckTile-200.webp",
-          "bytes": 3928
+          "bytes": 1446
         }
       },
       {
@@ -1720,11 +1720,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/normal-people-deckTile-264.avif",
-          "bytes": 4846
+          "bytes": 1579
         },
         "webp": {
           "src": "/_img/tv-posters/normal-people-deckTile-264.webp",
-          "bytes": 5536
+          "bytes": 2076
         }
       }
     ]
@@ -1733,20 +1733,20 @@
     "source": "/tv-posters/parks-and-recreation.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "233044f434659deb",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6940922798ddaaf2",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/parks-and-recreation-deckTile-138.avif",
-          "bytes": 3497
+          "bytes": 776
         },
         "webp": {
           "src": "/_img/tv-posters/parks-and-recreation-deckTile-138.webp",
-          "bytes": 3416
+          "bytes": 742
         }
       },
       {
@@ -1754,11 +1754,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/parks-and-recreation-deckTile-200.avif",
-          "bytes": 5667
+          "bytes": 920
         },
         "webp": {
           "src": "/_img/tv-posters/parks-and-recreation-deckTile-200.webp",
-          "bytes": 6076
+          "bytes": 998
         }
       },
       {
@@ -1766,11 +1766,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/parks-and-recreation-deckTile-264.avif",
-          "bytes": 8367
+          "bytes": 1147
         },
         "webp": {
           "src": "/_img/tv-posters/parks-and-recreation-deckTile-264.webp",
-          "bytes": 9190
+          "bytes": 1528
         }
       }
     ]
@@ -1779,20 +1779,20 @@
     "source": "/tv-posters/peep-show.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "51205addb28bdff6",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "e8ae5a1263c69c1a",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/peep-show-deckTile-138.avif",
-          "bytes": 2903
+          "bytes": 1354
         },
         "webp": {
           "src": "/_img/tv-posters/peep-show-deckTile-138.webp",
-          "bytes": 2734
+          "bytes": 1560
         }
       },
       {
@@ -1800,11 +1800,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/peep-show-deckTile-200.avif",
-          "bytes": 4684
+          "bytes": 1784
         },
         "webp": {
           "src": "/_img/tv-posters/peep-show-deckTile-200.webp",
-          "bytes": 4728
+          "bytes": 2360
         }
       },
       {
@@ -1812,11 +1812,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/peep-show-deckTile-264.avif",
-          "bytes": 6495
+          "bytes": 2414
         },
         "webp": {
           "src": "/_img/tv-posters/peep-show-deckTile-264.webp",
-          "bytes": 6928
+          "bytes": 3446
         }
       }
     ]
@@ -1825,20 +1825,20 @@
     "source": "/tv-posters/phoenix-nights.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "3245459820590763",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "312e043592620c94",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/phoenix-nights-deckTile-138.avif",
-          "bytes": 4299
+          "bytes": 1588
         },
         "webp": {
           "src": "/_img/tv-posters/phoenix-nights-deckTile-138.webp",
-          "bytes": 4108
+          "bytes": 1826
         }
       },
       {
@@ -1846,11 +1846,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/phoenix-nights-deckTile-200.avif",
-          "bytes": 7194
+          "bytes": 2237
         },
         "webp": {
           "src": "/_img/tv-posters/phoenix-nights-deckTile-200.webp",
-          "bytes": 7228
+          "bytes": 3124
         }
       },
       {
@@ -1858,11 +1858,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/phoenix-nights-deckTile-264.avif",
-          "bytes": 10436
+          "bytes": 2968
         },
         "webp": {
           "src": "/_img/tv-posters/phoenix-nights-deckTile-264.webp",
-          "bytes": 10756
+          "bytes": 3924
         }
       }
     ]
@@ -1871,20 +1871,20 @@
     "source": "/tv-posters/severance.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "22b904351da93843",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "66683ea1e54abf91",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/severance-deckTile-138.avif",
-          "bytes": 1697
+          "bytes": 855
         },
         "webp": {
           "src": "/_img/tv-posters/severance-deckTile-138.webp",
-          "bytes": 1748
+          "bytes": 988
         }
       },
       {
@@ -1892,11 +1892,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/severance-deckTile-200.avif",
-          "bytes": 2340
+          "bytes": 1128
         },
         "webp": {
           "src": "/_img/tv-posters/severance-deckTile-200.webp",
-          "bytes": 2734
+          "bytes": 1286
         }
       },
       {
@@ -1904,11 +1904,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/severance-deckTile-264.avif",
-          "bytes": 3234
+          "bytes": 1189
         },
         "webp": {
           "src": "/_img/tv-posters/severance-deckTile-264.webp",
-          "bytes": 3776
+          "bytes": 1574
         }
       }
     ]
@@ -1917,20 +1917,20 @@
     "source": "/tv-posters/spaced.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "bfc54ee04b0e89d7",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "739ccc8c509efb94",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/spaced-deckTile-138.avif",
-          "bytes": 3136
+          "bytes": 1435
         },
         "webp": {
           "src": "/_img/tv-posters/spaced-deckTile-138.webp",
-          "bytes": 2890
+          "bytes": 1622
         }
       },
       {
@@ -1938,11 +1938,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/spaced-deckTile-200.avif",
-          "bytes": 4987
+          "bytes": 1969
         },
         "webp": {
           "src": "/_img/tv-posters/spaced-deckTile-200.webp",
-          "bytes": 4842
+          "bytes": 2528
         }
       },
       {
@@ -1950,11 +1950,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/spaced-deckTile-264.avif",
-          "bytes": 7221
+          "bytes": 2460
         },
         "webp": {
           "src": "/_img/tv-posters/spaced-deckTile-264.webp",
-          "bytes": 7270
+          "bytes": 3448
         }
       }
     ]
@@ -1963,20 +1963,20 @@
     "source": "/tv-posters/succession.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "df43fff6aa522b1d",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2f0dfb1cc1dafcdb",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/succession-deckTile-138.avif",
-          "bytes": 2923
+          "bytes": 1375
         },
         "webp": {
           "src": "/_img/tv-posters/succession-deckTile-138.webp",
-          "bytes": 3026
+          "bytes": 1700
         }
       },
       {
@@ -1984,11 +1984,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/succession-deckTile-200.avif",
-          "bytes": 5098
+          "bytes": 1814
         },
         "webp": {
           "src": "/_img/tv-posters/succession-deckTile-200.webp",
-          "bytes": 5500
+          "bytes": 2668
         }
       },
       {
@@ -1996,11 +1996,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/succession-deckTile-264.avif",
-          "bytes": 7649
+          "bytes": 2301
         },
         "webp": {
           "src": "/_img/tv-posters/succession-deckTile-264.webp",
-          "bytes": 8272
+          "bytes": 3506
         }
       }
     ]
@@ -2009,20 +2009,20 @@
     "source": "/tv-posters/the-leftovers.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "98492f59edfa8cf0",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "20ba22b2d524226e",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/the-leftovers-deckTile-138.avif",
-          "bytes": 2919
+          "bytes": 741
         },
         "webp": {
           "src": "/_img/tv-posters/the-leftovers-deckTile-138.webp",
-          "bytes": 2932
+          "bytes": 736
         }
       },
       {
@@ -2030,11 +2030,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/the-leftovers-deckTile-200.avif",
-          "bytes": 4954
+          "bytes": 933
         },
         "webp": {
           "src": "/_img/tv-posters/the-leftovers-deckTile-200.webp",
-          "bytes": 5486
+          "bytes": 1046
         }
       },
       {
@@ -2042,11 +2042,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/the-leftovers-deckTile-264.avif",
-          "bytes": 8247
+          "bytes": 1099
         },
         "webp": {
           "src": "/_img/tv-posters/the-leftovers-deckTile-264.webp",
-          "bytes": 9018
+          "bytes": 1552
         }
       }
     ]
@@ -2055,20 +2055,20 @@
     "source": "/tv-posters/the-office-uk.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "73d122033af42600",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "22237d3066b6c5e5",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/the-office-uk-deckTile-138.avif",
-          "bytes": 2597
+          "bytes": 673
         },
         "webp": {
           "src": "/_img/tv-posters/the-office-uk-deckTile-138.webp",
-          "bytes": 2708
+          "bytes": 676
         }
       },
       {
@@ -2076,11 +2076,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/the-office-uk-deckTile-200.avif",
-          "bytes": 3952
+          "bytes": 885
         },
         "webp": {
           "src": "/_img/tv-posters/the-office-uk-deckTile-200.webp",
-          "bytes": 4342
+          "bytes": 1018
         }
       },
       {
@@ -2088,11 +2088,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/the-office-uk-deckTile-264.avif",
-          "bytes": 5402
+          "bytes": 1107
         },
         "webp": {
           "src": "/_img/tv-posters/the-office-uk-deckTile-264.webp",
-          "bytes": 6124
+          "bytes": 1536
         }
       }
     ]
@@ -2101,20 +2101,20 @@
     "source": "/tv-posters/the-thick-of-it.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "fd08bc96cf42c46e",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "44e3dee32ad41282",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/the-thick-of-it-deckTile-138.avif",
-          "bytes": 1968
+          "bytes": 1543
         },
         "webp": {
           "src": "/_img/tv-posters/the-thick-of-it-deckTile-138.webp",
-          "bytes": 2008
+          "bytes": 1554
         }
       },
       {
@@ -2122,11 +2122,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/the-thick-of-it-deckTile-200.avif",
-          "bytes": 2875
+          "bytes": 2134
         },
         "webp": {
           "src": "/_img/tv-posters/the-thick-of-it-deckTile-200.webp",
-          "bytes": 3274
+          "bytes": 2402
         }
       },
       {
@@ -2134,11 +2134,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/the-thick-of-it-deckTile-264.avif",
-          "bytes": 3960
+          "bytes": 2894
         },
         "webp": {
           "src": "/_img/tv-posters/the-thick-of-it-deckTile-264.webp",
-          "bytes": 4428
+          "bytes": 3408
         }
       }
     ]
@@ -2147,20 +2147,20 @@
     "source": "/tv-posters/the-trip.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "5cc4e0185166a8ae",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "10b5fb9d7fbe02c8",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/the-trip-deckTile-138.avif",
-          "bytes": 2468
+          "bytes": 1078
         },
         "webp": {
           "src": "/_img/tv-posters/the-trip-deckTile-138.webp",
-          "bytes": 2526
+          "bytes": 1082
         }
       },
       {
@@ -2168,11 +2168,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/the-trip-deckTile-200.avif",
-          "bytes": 3837
+          "bytes": 1317
         },
         "webp": {
           "src": "/_img/tv-posters/the-trip-deckTile-200.webp",
-          "bytes": 4178
+          "bytes": 1598
         }
       },
       {
@@ -2180,11 +2180,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/the-trip-deckTile-264.avif",
-          "bytes": 5518
+          "bytes": 1661
         },
         "webp": {
           "src": "/_img/tv-posters/the-trip-deckTile-264.webp",
-          "bytes": 6104
+          "bytes": 2230
         }
       }
     ]
@@ -2193,20 +2193,20 @@
     "source": "/tv-posters/true-detective.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "f6e59febbf343b72",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d5398e809b08dbb0",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/true-detective-deckTile-138.avif",
-          "bytes": 1405
+          "bytes": 1317
         },
         "webp": {
           "src": "/_img/tv-posters/true-detective-deckTile-138.webp",
-          "bytes": 1396
+          "bytes": 1388
         }
       },
       {
@@ -2214,11 +2214,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/true-detective-deckTile-200.avif",
-          "bytes": 2005
+          "bytes": 1692
         },
         "webp": {
           "src": "/_img/tv-posters/true-detective-deckTile-200.webp",
-          "bytes": 2210
+          "bytes": 2076
         }
       },
       {
@@ -2226,11 +2226,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/true-detective-deckTile-264.avif",
-          "bytes": 2811
+          "bytes": 2145
         },
         "webp": {
           "src": "/_img/tv-posters/true-detective-deckTile-264.webp",
-          "bytes": 3354
+          "bytes": 3128
         }
       }
     ]
@@ -2239,20 +2239,20 @@
     "source": "/tv-posters/twin-peaks-the-return.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "39d9cb943272b246",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "61ad7c9cddd10987",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/twin-peaks-the-return-deckTile-138.avif",
-          "bytes": 2270
+          "bytes": 3565
         },
         "webp": {
           "src": "/_img/tv-posters/twin-peaks-the-return-deckTile-138.webp",
-          "bytes": 2206
+          "bytes": 3500
         }
       },
       {
@@ -2260,11 +2260,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/twin-peaks-the-return-deckTile-200.avif",
-          "bytes": 3698
+          "bytes": 5186
         },
         "webp": {
           "src": "/_img/tv-posters/twin-peaks-the-return-deckTile-200.webp",
-          "bytes": 4024
+          "bytes": 5426
         }
       },
       {
@@ -2272,11 +2272,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/twin-peaks-the-return-deckTile-264.avif",
-          "bytes": 5342
+          "bytes": 6924
         },
         "webp": {
           "src": "/_img/tv-posters/twin-peaks-the-return-deckTile-264.webp",
-          "bytes": 6206
+          "bytes": 7656
         }
       }
     ]
@@ -2285,20 +2285,20 @@
     "source": "/tv-posters/watchmen.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "961fcbfb93b6509c",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "5d8661b76dfd1a25",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/tv-posters/watchmen-deckTile-138.avif",
-          "bytes": 2769
+          "bytes": 976
         },
         "webp": {
           "src": "/_img/tv-posters/watchmen-deckTile-138.webp",
-          "bytes": 2988
+          "bytes": 1162
         }
       },
       {
@@ -2306,11 +2306,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/tv-posters/watchmen-deckTile-200.avif",
-          "bytes": 4191
+          "bytes": 1153
         },
         "webp": {
           "src": "/_img/tv-posters/watchmen-deckTile-200.webp",
-          "bytes": 4746
+          "bytes": 1532
         }
       },
       {
@@ -2318,11 +2318,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/tv-posters/watchmen-deckTile-264.avif",
-          "bytes": 6060
+          "bytes": 1605
         },
         "webp": {
           "src": "/_img/tv-posters/watchmen-deckTile-264.webp",
-          "bytes": 7006
+          "bytes": 2162
         }
       }
     ]
@@ -2331,20 +2331,20 @@
     "source": "/game-covers/bioshock.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "f3e12e1d8dbc1873",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4fa41f261354dfd9",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/bioshock-deckTile-138.avif",
-          "bytes": 4872
+          "bytes": 1356
         },
         "webp": {
           "src": "/_img/game-covers/bioshock-deckTile-138.webp",
-          "bytes": 4250
+          "bytes": 1558
         }
       },
       {
@@ -2352,11 +2352,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/bioshock-deckTile-200.avif",
-          "bytes": 8269
+          "bytes": 1739
         },
         "webp": {
           "src": "/_img/game-covers/bioshock-deckTile-200.webp",
-          "bytes": 7622
+          "bytes": 2200
         }
       },
       {
@@ -2364,11 +2364,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/bioshock-deckTile-264.avif",
-          "bytes": 12190
+          "bytes": 2239
         },
         "webp": {
           "src": "/_img/game-covers/bioshock-deckTile-264.webp",
-          "bytes": 11836
+          "bytes": 2954
         }
       }
     ]
@@ -2377,20 +2377,20 @@
     "source": "/game-covers/bloodborne.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "64b8c12db41fa39c",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "85f97601908f9931",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/bloodborne-deckTile-138.avif",
-          "bytes": 2716
+          "bytes": 1947
         },
         "webp": {
           "src": "/_img/game-covers/bloodborne-deckTile-138.webp",
-          "bytes": 2746
+          "bytes": 2276
         }
       },
       {
@@ -2398,11 +2398,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/bloodborne-deckTile-200.avif",
-          "bytes": 4475
+          "bytes": 2431
         },
         "webp": {
           "src": "/_img/game-covers/bloodborne-deckTile-200.webp",
-          "bytes": 4816
+          "bytes": 3172
         }
       },
       {
@@ -2410,11 +2410,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/bloodborne-deckTile-264.avif",
-          "bytes": 6810
+          "bytes": 3066
         },
         "webp": {
           "src": "/_img/game-covers/bloodborne-deckTile-264.webp",
-          "bytes": 7472
+          "bytes": 4268
         }
       }
     ]
@@ -2423,20 +2423,20 @@
     "source": "/game-covers/call-of-duty-4.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "324432b52e725a7f",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "81c651e74b992be5",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/call-of-duty-4-deckTile-138.avif",
-          "bytes": 2351
+          "bytes": 1048
         },
         "webp": {
           "src": "/_img/game-covers/call-of-duty-4-deckTile-138.webp",
-          "bytes": 2406
+          "bytes": 1146
         }
       },
       {
@@ -2444,11 +2444,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/call-of-duty-4-deckTile-200.avif",
-          "bytes": 3667
+          "bytes": 1332
         },
         "webp": {
           "src": "/_img/game-covers/call-of-duty-4-deckTile-200.webp",
-          "bytes": 4092
+          "bytes": 1538
         }
       },
       {
@@ -2456,11 +2456,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/call-of-duty-4-deckTile-264.avif",
-          "bytes": 5251
+          "bytes": 1560
         },
         "webp": {
           "src": "/_img/game-covers/call-of-duty-4-deckTile-264.webp",
-          "bytes": 5862
+          "bytes": 2152
         }
       }
     ]
@@ -2469,20 +2469,20 @@
     "source": "/game-covers/dark-souls-3.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "a247acbea4cdfd9a",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "06a8ae3a2c44184f",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/dark-souls-3-deckTile-138.avif",
-          "bytes": 2955
+          "bytes": 1194
         },
         "webp": {
           "src": "/_img/game-covers/dark-souls-3-deckTile-138.webp",
-          "bytes": 3108
+          "bytes": 1190
         }
       },
       {
@@ -2490,11 +2490,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/dark-souls-3-deckTile-200.avif",
-          "bytes": 4961
+          "bytes": 1495
         },
         "webp": {
           "src": "/_img/game-covers/dark-souls-3-deckTile-200.webp",
-          "bytes": 5470
+          "bytes": 1738
         }
       },
       {
@@ -2502,11 +2502,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/dark-souls-3-deckTile-264.avif",
-          "bytes": 7207
+          "bytes": 1790
         },
         "webp": {
           "src": "/_img/game-covers/dark-souls-3-deckTile-264.webp",
-          "bytes": 8208
+          "bytes": 2356
         }
       }
     ]
@@ -2515,20 +2515,20 @@
     "source": "/game-covers/devil-may-cry.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "dfece074dcdce6c7",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6e59df0fc9d3fac0",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/devil-may-cry-deckTile-138.avif",
-          "bytes": 3194
+          "bytes": 1163
         },
         "webp": {
           "src": "/_img/game-covers/devil-may-cry-deckTile-138.webp",
-          "bytes": 3196
+          "bytes": 1384
         }
       },
       {
@@ -2536,11 +2536,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/devil-may-cry-deckTile-200.avif",
-          "bytes": 5327
+          "bytes": 1398
         },
         "webp": {
           "src": "/_img/game-covers/devil-may-cry-deckTile-200.webp",
-          "bytes": 5566
+          "bytes": 1962
         }
       },
       {
@@ -2548,11 +2548,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/devil-may-cry-deckTile-264.avif",
-          "bytes": 7317
+          "bytes": 1779
         },
         "webp": {
           "src": "/_img/game-covers/devil-may-cry-deckTile-264.webp",
-          "bytes": 7976
+          "bytes": 2548
         }
       }
     ]
@@ -2561,20 +2561,20 @@
     "source": "/game-covers/elder-scrolls.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "acb746af30a3da14",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "bcfccdfc768b6601",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/elder-scrolls-deckTile-138.avif",
-          "bytes": 2394
+          "bytes": 944
         },
         "webp": {
           "src": "/_img/game-covers/elder-scrolls-deckTile-138.webp",
-          "bytes": 2584
+          "bytes": 976
         }
       },
       {
@@ -2582,11 +2582,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/elder-scrolls-deckTile-200.avif",
-          "bytes": 3857
+          "bytes": 1092
         },
         "webp": {
           "src": "/_img/game-covers/elder-scrolls-deckTile-200.webp",
-          "bytes": 4330
+          "bytes": 1420
         }
       },
       {
@@ -2594,11 +2594,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/elder-scrolls-deckTile-264.avif",
-          "bytes": 5576
+          "bytes": 1414
         },
         "webp": {
           "src": "/_img/game-covers/elder-scrolls-deckTile-264.webp",
-          "bytes": 6474
+          "bytes": 1812
         }
       }
     ]
@@ -2607,20 +2607,20 @@
     "source": "/game-covers/fallout.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "1fc0a1e05c1d762d",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "36b133da3bb83a78",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/fallout-deckTile-138.avif",
-          "bytes": 3420
+          "bytes": 1381
         },
         "webp": {
           "src": "/_img/game-covers/fallout-deckTile-138.webp",
-          "bytes": 3330
+          "bytes": 1544
         }
       },
       {
@@ -2628,11 +2628,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/fallout-deckTile-200.avif",
-          "bytes": 5704
+          "bytes": 1710
         },
         "webp": {
           "src": "/_img/game-covers/fallout-deckTile-200.webp",
-          "bytes": 5976
+          "bytes": 2330
         }
       },
       {
@@ -2640,11 +2640,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/fallout-deckTile-264.avif",
-          "bytes": 8706
+          "bytes": 2218
         },
         "webp": {
           "src": "/_img/game-covers/fallout-deckTile-264.webp",
-          "bytes": 9298
+          "bytes": 3090
         }
       }
     ]
@@ -2653,20 +2653,20 @@
     "source": "/game-covers/final-fantasy.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "8ef8b5274e2502d4",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "43b415a4b8c5f725",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/final-fantasy-deckTile-138.avif",
-          "bytes": 2988
+          "bytes": 1368
         },
         "webp": {
           "src": "/_img/game-covers/final-fantasy-deckTile-138.webp",
-          "bytes": 2994
+          "bytes": 1622
         }
       },
       {
@@ -2674,11 +2674,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/final-fantasy-deckTile-200.avif",
-          "bytes": 4778
+          "bytes": 1666
         },
         "webp": {
           "src": "/_img/game-covers/final-fantasy-deckTile-200.webp",
-          "bytes": 5098
+          "bytes": 2240
         }
       },
       {
@@ -2686,11 +2686,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/final-fantasy-deckTile-264.avif",
-          "bytes": 6909
+          "bytes": 2139
         },
         "webp": {
           "src": "/_img/game-covers/final-fantasy-deckTile-264.webp",
-          "bytes": 7674
+          "bytes": 3262
         }
       }
     ]
@@ -2699,20 +2699,20 @@
     "source": "/game-covers/god-of-war.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "f032ea15a12be7f3",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "408eccb304b76801",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/god-of-war-deckTile-138.avif",
-          "bytes": 2317
+          "bytes": 977
         },
         "webp": {
           "src": "/_img/game-covers/god-of-war-deckTile-138.webp",
-          "bytes": 2134
+          "bytes": 964
         }
       },
       {
@@ -2720,11 +2720,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/god-of-war-deckTile-200.avif",
-          "bytes": 3750
+          "bytes": 1144
         },
         "webp": {
           "src": "/_img/game-covers/god-of-war-deckTile-200.webp",
-          "bytes": 3732
+          "bytes": 1342
         }
       },
       {
@@ -2732,11 +2732,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/god-of-war-deckTile-264.avif",
-          "bytes": 5479
+          "bytes": 1409
         },
         "webp": {
           "src": "/_img/game-covers/god-of-war-deckTile-264.webp",
-          "bytes": 5586
+          "bytes": 1760
         }
       }
     ]
@@ -2745,20 +2745,20 @@
     "source": "/game-covers/half-life.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "b5b028d321a7dca5",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "351c546381a11573",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/half-life-deckTile-138.avif",
-          "bytes": 3274
+          "bytes": 992
         },
         "webp": {
           "src": "/_img/game-covers/half-life-deckTile-138.webp",
-          "bytes": 2528
+          "bytes": 1196
         }
       },
       {
@@ -2766,11 +2766,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/half-life-deckTile-200.avif",
-          "bytes": 6164
+          "bytes": 1103
         },
         "webp": {
           "src": "/_img/game-covers/half-life-deckTile-200.webp",
-          "bytes": 5094
+          "bytes": 1682
         }
       },
       {
@@ -2778,11 +2778,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/half-life-deckTile-264.avif",
-          "bytes": 9951
+          "bytes": 1356
         },
         "webp": {
           "src": "/_img/game-covers/half-life-deckTile-264.webp",
-          "bytes": 8632
+          "bytes": 2214
         }
       }
     ]
@@ -2791,20 +2791,20 @@
     "source": "/game-covers/halo-3.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "d50edc977868ffa1",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "30da6dbb0d09ff74",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/halo-3-deckTile-138.avif",
-          "bytes": 2448
+          "bytes": 1311
         },
         "webp": {
           "src": "/_img/game-covers/halo-3-deckTile-138.webp",
-          "bytes": 2488
+          "bytes": 1546
         }
       },
       {
@@ -2812,11 +2812,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/halo-3-deckTile-200.avif",
-          "bytes": 3683
+          "bytes": 1745
         },
         "webp": {
           "src": "/_img/game-covers/halo-3-deckTile-200.webp",
-          "bytes": 4110
+          "bytes": 2394
         }
       },
       {
@@ -2824,11 +2824,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/halo-3-deckTile-264.avif",
-          "bytes": 5036
+          "bytes": 2174
         },
         "webp": {
           "src": "/_img/game-covers/halo-3-deckTile-264.webp",
-          "bytes": 5880
+          "bytes": 3444
         }
       }
     ]
@@ -2837,20 +2837,20 @@
     "source": "/game-covers/hearthstone.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "6e5e86a09e1844fe",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "adf0bc1dbdc890b2",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/hearthstone-deckTile-138.avif",
-          "bytes": 2495
+          "bytes": 1033
         },
         "webp": {
           "src": "/_img/game-covers/hearthstone-deckTile-138.webp",
-          "bytes": 2202
+          "bytes": 1132
         }
       },
       {
@@ -2858,11 +2858,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/hearthstone-deckTile-200.avif",
-          "bytes": 4010
+          "bytes": 1358
         },
         "webp": {
           "src": "/_img/game-covers/hearthstone-deckTile-200.webp",
-          "bytes": 3752
+          "bytes": 1654
         }
       },
       {
@@ -2870,11 +2870,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/hearthstone-deckTile-264.avif",
-          "bytes": 5531
+          "bytes": 1621
         },
         "webp": {
           "src": "/_img/game-covers/hearthstone-deckTile-264.webp",
-          "bytes": 5496
+          "bytes": 2138
         }
       }
     ]
@@ -2883,20 +2883,20 @@
     "source": "/game-covers/journey.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "4fc159a6f670d9dd",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "f80884f767b2cd73",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/journey-deckTile-138.avif",
-          "bytes": 808
+          "bytes": 981
         },
         "webp": {
           "src": "/_img/game-covers/journey-deckTile-138.webp",
-          "bytes": 806
+          "bytes": 1106
         }
       },
       {
@@ -2904,11 +2904,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/journey-deckTile-200.avif",
-          "bytes": 1032
+          "bytes": 1206
         },
         "webp": {
           "src": "/_img/game-covers/journey-deckTile-200.webp",
-          "bytes": 1176
+          "bytes": 1590
         }
       },
       {
@@ -2916,11 +2916,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/journey-deckTile-264.avif",
-          "bytes": 1294
+          "bytes": 1505
         },
         "webp": {
           "src": "/_img/game-covers/journey-deckTile-264.webp",
-          "bytes": 1590
+          "bytes": 2118
         }
       }
     ]
@@ -2929,20 +2929,20 @@
     "source": "/game-covers/last-of-us.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "8ac635bf444a8a50",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "11a998bf9564c7c2",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/last-of-us-deckTile-138.avif",
-          "bytes": 1909
+          "bytes": 1210
         },
         "webp": {
           "src": "/_img/game-covers/last-of-us-deckTile-138.webp",
-          "bytes": 2022
+          "bytes": 1258
         }
       },
       {
@@ -2950,11 +2950,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/last-of-us-deckTile-200.avif",
-          "bytes": 3008
+          "bytes": 1500
         },
         "webp": {
           "src": "/_img/game-covers/last-of-us-deckTile-200.webp",
-          "bytes": 3490
+          "bytes": 1798
         }
       },
       {
@@ -2962,11 +2962,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/last-of-us-deckTile-264.avif",
-          "bytes": 4306
+          "bytes": 1956
         },
         "webp": {
           "src": "/_img/game-covers/last-of-us-deckTile-264.webp",
-          "bytes": 5268
+          "bytes": 2444
         }
       }
     ]
@@ -2975,20 +2975,20 @@
     "source": "/game-covers/league-of-legends.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "946b4919e662c857",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "a75926bc14a4163f",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/league-of-legends-deckTile-138.avif",
-          "bytes": 1962
+          "bytes": 1035
         },
         "webp": {
           "src": "/_img/game-covers/league-of-legends-deckTile-138.webp",
-          "bytes": 2354
+          "bytes": 1118
         }
       },
       {
@@ -2996,11 +2996,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/league-of-legends-deckTile-200.avif",
-          "bytes": 2612
+          "bytes": 1303
         },
         "webp": {
           "src": "/_img/game-covers/league-of-legends-deckTile-200.webp",
-          "bytes": 3524
+          "bytes": 1540
         }
       },
       {
@@ -3008,11 +3008,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/league-of-legends-deckTile-264.avif",
-          "bytes": 3065
+          "bytes": 1506
         },
         "webp": {
           "src": "/_img/game-covers/league-of-legends-deckTile-264.webp",
-          "bytes": 4490
+          "bytes": 2020
         }
       }
     ]
@@ -3021,20 +3021,20 @@
     "source": "/game-covers/pyre.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "a24e75ae85bd4767",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "e77171fc8593c359",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/pyre-deckTile-138.avif",
-          "bytes": 3141
+          "bytes": 1987
         },
         "webp": {
           "src": "/_img/game-covers/pyre-deckTile-138.webp",
-          "bytes": 2734
+          "bytes": 2300
         }
       },
       {
@@ -3042,11 +3042,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/pyre-deckTile-200.avif",
-          "bytes": 4964
+          "bytes": 2527
         },
         "webp": {
           "src": "/_img/game-covers/pyre-deckTile-200.webp",
-          "bytes": 4842
+          "bytes": 3374
         }
       },
       {
@@ -3054,11 +3054,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/pyre-deckTile-264.avif",
-          "bytes": 7261
+          "bytes": 3282
         },
         "webp": {
           "src": "/_img/game-covers/pyre-deckTile-264.webp",
-          "bytes": 7230
+          "bytes": 4586
         }
       }
     ]
@@ -3067,20 +3067,20 @@
     "source": "/game-covers/saints-row.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "455c74be72d88f09",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "51af6da8fc935555",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/saints-row-deckTile-138.avif",
-          "bytes": 2504
+          "bytes": 1727
         },
         "webp": {
           "src": "/_img/game-covers/saints-row-deckTile-138.webp",
-          "bytes": 2678
+          "bytes": 2028
         }
       },
       {
@@ -3088,11 +3088,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/saints-row-deckTile-200.avif",
-          "bytes": 3933
+          "bytes": 2045
         },
         "webp": {
           "src": "/_img/game-covers/saints-row-deckTile-200.webp",
-          "bytes": 4400
+          "bytes": 2678
         }
       },
       {
@@ -3100,11 +3100,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/saints-row-deckTile-264.avif",
-          "bytes": 5512
+          "bytes": 2718
         },
         "webp": {
           "src": "/_img/game-covers/saints-row-deckTile-264.webp",
-          "bytes": 6254
+          "bytes": 3502
         }
       }
     ]
@@ -3113,20 +3113,20 @@
     "source": "/game-covers/slay-the-spire.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "bbe673f453fa7689",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6ea9b9a3343bb470",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/slay-the-spire-deckTile-138.avif",
-          "bytes": 2964
+          "bytes": 1091
         },
         "webp": {
           "src": "/_img/game-covers/slay-the-spire-deckTile-138.webp",
-          "bytes": 2862
+          "bytes": 1286
         }
       },
       {
@@ -3134,11 +3134,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/slay-the-spire-deckTile-200.avif",
-          "bytes": 4777
+          "bytes": 1406
         },
         "webp": {
           "src": "/_img/game-covers/slay-the-spire-deckTile-200.webp",
-          "bytes": 5014
+          "bytes": 1810
         }
       },
       {
@@ -3146,11 +3146,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/slay-the-spire-deckTile-264.avif",
-          "bytes": 6743
+          "bytes": 1697
         },
         "webp": {
           "src": "/_img/game-covers/slay-the-spire-deckTile-264.webp",
-          "bytes": 7390
+          "bytes": 2350
         }
       }
     ]
@@ -3159,20 +3159,20 @@
     "source": "/game-covers/terraria.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "54b65340f9cb28c5",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6828e023617ffcc7",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/terraria-deckTile-138.avif",
-          "bytes": 3897
+          "bytes": 1704
         },
         "webp": {
           "src": "/_img/game-covers/terraria-deckTile-138.webp",
-          "bytes": 3398
+          "bytes": 1736
         }
       },
       {
@@ -3180,11 +3180,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/terraria-deckTile-200.avif",
-          "bytes": 6768
+          "bytes": 1920
         },
         "webp": {
           "src": "/_img/game-covers/terraria-deckTile-200.webp",
-          "bytes": 6114
+          "bytes": 2286
         }
       },
       {
@@ -3192,11 +3192,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/terraria-deckTile-264.avif",
-          "bytes": 10081
+          "bytes": 2482
         },
         "webp": {
           "src": "/_img/game-covers/terraria-deckTile-264.webp",
-          "bytes": 9760
+          "bytes": 3032
         }
       }
     ]
@@ -3205,20 +3205,20 @@
     "source": "/game-covers/warcraft-3.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "da823db0d19cedf9",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "fd0e0aebfb0d17ed",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/game-covers/warcraft-3-deckTile-138.avif",
-          "bytes": 3617
+          "bytes": 1127
         },
         "webp": {
           "src": "/_img/game-covers/warcraft-3-deckTile-138.webp",
-          "bytes": 3536
+          "bytes": 1138
         }
       },
       {
@@ -3226,11 +3226,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/game-covers/warcraft-3-deckTile-200.avif",
-          "bytes": 6534
+          "bytes": 1371
         },
         "webp": {
           "src": "/_img/game-covers/warcraft-3-deckTile-200.webp",
-          "bytes": 6544
+          "bytes": 1580
         }
       },
       {
@@ -3238,11 +3238,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/game-covers/warcraft-3-deckTile-264.avif",
-          "bytes": 9456
+          "bytes": 1742
         },
         "webp": {
           "src": "/_img/game-covers/warcraft-3-deckTile-264.webp",
-          "bytes": 10080
+          "bytes": 2122
         }
       }
     ]
@@ -3251,20 +3251,20 @@
     "source": "/project-art/personal/butterfly-rose-card.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "2719a6cde74ea520",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "5bdf6bf90bb6e799",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/project-art/personal/butterfly-rose-card-deckTile-138.avif",
-          "bytes": 3099
+          "bytes": 1033
         },
         "webp": {
           "src": "/_img/project-art/personal/butterfly-rose-card-deckTile-138.webp",
-          "bytes": 3262
+          "bytes": 1152
         }
       },
       {
@@ -3272,11 +3272,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/project-art/personal/butterfly-rose-card-deckTile-200.avif",
-          "bytes": 5019
+          "bytes": 1339
         },
         "webp": {
           "src": "/_img/project-art/personal/butterfly-rose-card-deckTile-200.webp",
-          "bytes": 5820
+          "bytes": 1678
         }
       },
       {
@@ -3284,11 +3284,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/project-art/personal/butterfly-rose-card-deckTile-264.avif",
-          "bytes": 7165
+          "bytes": 1751
         },
         "webp": {
           "src": "/_img/project-art/personal/butterfly-rose-card-deckTile-264.webp",
-          "bytes": 8454
+          "bytes": 2342
         }
       }
     ]
@@ -3297,20 +3297,20 @@
     "source": "/project-art/personal/trek-card.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "fb4b780d9a5e7ae0",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1ac690790fc8340c",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/project-art/personal/trek-card-deckTile-138.avif",
-          "bytes": 1203
+          "bytes": 1309
         },
         "webp": {
           "src": "/_img/project-art/personal/trek-card-deckTile-138.webp",
-          "bytes": 1186
+          "bytes": 1526
         }
       },
       {
@@ -3318,11 +3318,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/project-art/personal/trek-card-deckTile-200.avif",
-          "bytes": 2101
+          "bytes": 1755
         },
         "webp": {
           "src": "/_img/project-art/personal/trek-card-deckTile-200.webp",
-          "bytes": 2338
+          "bytes": 2274
         }
       },
       {
@@ -3330,11 +3330,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/project-art/personal/trek-card-deckTile-264.avif",
-          "bytes": 3265
+          "bytes": 2367
         },
         "webp": {
           "src": "/_img/project-art/personal/trek-card-deckTile-264.webp",
-          "bytes": 3848
+          "bytes": 3388
         }
       }
     ]
@@ -3343,20 +3343,20 @@
     "source": "/project-art/personal/life-map-card.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "cb3082ee57db778c",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7aafcb8eb52b32b3",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/project-art/personal/life-map-card-deckTile-138.avif",
-          "bytes": 1880
+          "bytes": 2952
         },
         "webp": {
           "src": "/_img/project-art/personal/life-map-card-deckTile-138.webp",
-          "bytes": 2098
+          "bytes": 3350
         }
       },
       {
@@ -3364,11 +3364,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/project-art/personal/life-map-card-deckTile-200.avif",
-          "bytes": 3291
+          "bytes": 4429
         },
         "webp": {
           "src": "/_img/project-art/personal/life-map-card-deckTile-200.webp",
-          "bytes": 3996
+          "bytes": 5798
         }
       },
       {
@@ -3376,11 +3376,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/project-art/personal/life-map-card-deckTile-264.avif",
-          "bytes": 5020
+          "bytes": 5849
         },
         "webp": {
           "src": "/_img/project-art/personal/life-map-card-deckTile-264.webp",
-          "bytes": 6208
+          "bytes": 8308
         }
       }
     ]
@@ -3427,6 +3427,52 @@
         "webp": {
           "src": "/_img/project-art/personal/ines-fan-splat-deckTile-264.webp",
           "bytes": 11712
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/personal/features-card.webp": {
+    "source": "/project-art/personal/features-card.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "289764c757da51ff",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/personal/features-card-deckTile-138.avif",
+          "bytes": 826
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/features-card-deckTile-138.webp",
+          "bytes": 790
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/personal/features-card-deckTile-200.avif",
+          "bytes": 1106
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/features-card-deckTile-200.webp",
+          "bytes": 1290
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/personal/features-card-deckTile-264.avif",
+          "bytes": 1544
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/features-card-deckTile-264.webp",
+          "bytes": 2218
         }
       }
     ]
@@ -3481,20 +3527,20 @@
     "source": "/film-posters/a-clockwork-orange.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "52394c76c2880af2",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c0cf4fe5e535a516",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/a-clockwork-orange-deckTile-138.avif",
-          "bytes": 1965
+          "bytes": 681
         },
         "webp": {
           "src": "/_img/film-posters/a-clockwork-orange-deckTile-138.webp",
-          "bytes": 1954
+          "bytes": 732
         }
       },
       {
@@ -3502,11 +3548,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/a-clockwork-orange-deckTile-200.avif",
-          "bytes": 2917
+          "bytes": 899
         },
         "webp": {
           "src": "/_img/film-posters/a-clockwork-orange-deckTile-200.webp",
-          "bytes": 3212
+          "bytes": 1226
         }
       },
       {
@@ -3514,11 +3560,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/a-clockwork-orange-deckTile-264.avif",
-          "bytes": 3896
+          "bytes": 1164
         },
         "webp": {
           "src": "/_img/film-posters/a-clockwork-orange-deckTile-264.webp",
-          "bytes": 4548
+          "bytes": 1882
         }
       }
     ]
@@ -3527,20 +3573,20 @@
     "source": "/film-posters/adaptation.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "bdddc5e1eeb8e828",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2a9b57ac33faaaf3",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/adaptation-deckTile-138.avif",
-          "bytes": 1625
+          "bytes": 662
         },
         "webp": {
           "src": "/_img/film-posters/adaptation-deckTile-138.webp",
-          "bytes": 1634
+          "bytes": 690
         }
       },
       {
@@ -3548,11 +3594,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/adaptation-deckTile-200.avif",
-          "bytes": 2398
+          "bytes": 841
         },
         "webp": {
           "src": "/_img/film-posters/adaptation-deckTile-200.webp",
-          "bytes": 2614
+          "bytes": 1136
         }
       },
       {
@@ -3560,11 +3606,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/adaptation-deckTile-264.avif",
-          "bytes": 3325
+          "bytes": 1203
         },
         "webp": {
           "src": "/_img/film-posters/adaptation-deckTile-264.webp",
-          "bytes": 3680
+          "bytes": 1858
         }
       }
     ]
@@ -3573,20 +3619,20 @@
     "source": "/film-posters/american-beauty.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "2e95bf4f5d46b3b6",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "b613ef93cf1ba243",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/american-beauty-deckTile-138.avif",
-          "bytes": 1396
+          "bytes": 458
         },
         "webp": {
           "src": "/_img/film-posters/american-beauty-deckTile-138.webp",
-          "bytes": 1396
+          "bytes": 360
         }
       },
       {
@@ -3594,11 +3640,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/american-beauty-deckTile-200.avif",
-          "bytes": 1949
+          "bytes": 583
         },
         "webp": {
           "src": "/_img/film-posters/american-beauty-deckTile-200.webp",
-          "bytes": 2184
+          "bytes": 718
         }
       },
       {
@@ -3606,11 +3652,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/american-beauty-deckTile-264.avif",
-          "bytes": 2627
+          "bytes": 749
         },
         "webp": {
           "src": "/_img/film-posters/american-beauty-deckTile-264.webp",
-          "bytes": 3216
+          "bytes": 1178
         }
       }
     ]
@@ -3619,20 +3665,20 @@
     "source": "/film-posters/anomalisa.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "5da2aaebcf680ae9",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2f15cd514f67c3d5",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/anomalisa-deckTile-138.avif",
-          "bytes": 1565
+          "bytes": 627
         },
         "webp": {
           "src": "/_img/film-posters/anomalisa-deckTile-138.webp",
-          "bytes": 1610
+          "bytes": 638
         }
       },
       {
@@ -3640,11 +3686,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/anomalisa-deckTile-200.avif",
-          "bytes": 2201
+          "bytes": 810
         },
         "webp": {
           "src": "/_img/film-posters/anomalisa-deckTile-200.webp",
-          "bytes": 2586
+          "bytes": 1190
         }
       },
       {
@@ -3652,11 +3698,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/anomalisa-deckTile-264.avif",
-          "bytes": 3059
+          "bytes": 971
         },
         "webp": {
           "src": "/_img/film-posters/anomalisa-deckTile-264.webp",
-          "bytes": 3620
+          "bytes": 1586
         }
       }
     ]
@@ -3665,20 +3711,20 @@
     "source": "/film-posters/before-trilogy.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "97e35a19c789f0c0",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7d81ef47f0332f84",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/before-trilogy-deckTile-138.avif",
-          "bytes": 1473
+          "bytes": 876
         },
         "webp": {
           "src": "/_img/film-posters/before-trilogy-deckTile-138.webp",
-          "bytes": 1414
+          "bytes": 1176
         }
       },
       {
@@ -3686,11 +3732,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/before-trilogy-deckTile-200.avif",
-          "bytes": 2209
+          "bytes": 1176
         },
         "webp": {
           "src": "/_img/film-posters/before-trilogy-deckTile-200.webp",
-          "bytes": 2452
+          "bytes": 1974
         }
       },
       {
@@ -3698,11 +3744,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/before-trilogy-deckTile-264.avif",
-          "bytes": 2995
+          "bytes": 1596
         },
         "webp": {
           "src": "/_img/film-posters/before-trilogy-deckTile-264.webp",
-          "bytes": 3514
+          "bytes": 3134
         }
       }
     ]
@@ -3711,20 +3757,20 @@
     "source": "/film-posters/blue-valentine.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "95ecfa65722142c3",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3f077f6b4a7b2ace",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/blue-valentine-deckTile-138.avif",
-          "bytes": 2239
+          "bytes": 654
         },
         "webp": {
           "src": "/_img/film-posters/blue-valentine-deckTile-138.webp",
-          "bytes": 2416
+          "bytes": 684
         }
       },
       {
@@ -3732,11 +3778,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/blue-valentine-deckTile-200.avif",
-          "bytes": 3695
+          "bytes": 858
         },
         "webp": {
           "src": "/_img/film-posters/blue-valentine-deckTile-200.webp",
-          "bytes": 4168
+          "bytes": 1088
         }
       },
       {
@@ -3744,11 +3790,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/blue-valentine-deckTile-264.avif",
-          "bytes": 5502
+          "bytes": 1067
         },
         "webp": {
           "src": "/_img/film-posters/blue-valentine-deckTile-264.webp",
-          "bytes": 6362
+          "bytes": 1594
         }
       }
     ]
@@ -3757,20 +3803,20 @@
     "source": "/film-posters/boogie-nights.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "6ea6bcaa5c0896f4",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "47fdd8a8281183a9",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/boogie-nights-deckTile-138.avif",
-          "bytes": 2667
+          "bytes": 1094
         },
         "webp": {
           "src": "/_img/film-posters/boogie-nights-deckTile-138.webp",
-          "bytes": 2696
+          "bytes": 1414
         }
       },
       {
@@ -3778,11 +3824,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/boogie-nights-deckTile-200.avif",
-          "bytes": 4433
+          "bytes": 1514
         },
         "webp": {
           "src": "/_img/film-posters/boogie-nights-deckTile-200.webp",
-          "bytes": 4738
+          "bytes": 2320
         }
       },
       {
@@ -3790,11 +3836,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/boogie-nights-deckTile-264.avif",
-          "bytes": 6493
+          "bytes": 2006
         },
         "webp": {
           "src": "/_img/film-posters/boogie-nights-deckTile-264.webp",
-          "bytes": 7240
+          "bytes": 3284
         }
       }
     ]
@@ -3803,20 +3849,20 @@
     "source": "/film-posters/call-me-by-your-name.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "1e63e91410d04a11",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "cba4e7d8f5f3b92d",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/call-me-by-your-name-deckTile-138.avif",
-          "bytes": 2263
+          "bytes": 645
         },
         "webp": {
           "src": "/_img/film-posters/call-me-by-your-name-deckTile-138.webp",
-          "bytes": 2354
+          "bytes": 710
         }
       },
       {
@@ -3824,11 +3870,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/call-me-by-your-name-deckTile-200.avif",
-          "bytes": 3533
+          "bytes": 874
         },
         "webp": {
           "src": "/_img/film-posters/call-me-by-your-name-deckTile-200.webp",
-          "bytes": 3878
+          "bytes": 1220
         }
       },
       {
@@ -3836,11 +3882,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/call-me-by-your-name-deckTile-264.avif",
-          "bytes": 4857
+          "bytes": 1098
         },
         "webp": {
           "src": "/_img/film-posters/call-me-by-your-name-deckTile-264.webp",
-          "bytes": 5502
+          "bytes": 1872
         }
       }
     ]
@@ -3849,20 +3895,20 @@
     "source": "/film-posters/drive.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "1490f02f35a7aa6f",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "5e1c8d6eac91e7c8",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/drive-deckTile-138.avif",
-          "bytes": 1843
+          "bytes": 687
         },
         "webp": {
           "src": "/_img/film-posters/drive-deckTile-138.webp",
-          "bytes": 2012
+          "bytes": 736
         }
       },
       {
@@ -3870,11 +3916,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/drive-deckTile-200.avif",
-          "bytes": 2718
+          "bytes": 859
         },
         "webp": {
           "src": "/_img/film-posters/drive-deckTile-200.webp",
-          "bytes": 3160
+          "bytes": 1246
         }
       },
       {
@@ -3882,11 +3928,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/drive-deckTile-264.avif",
-          "bytes": 3554
+          "bytes": 1146
         },
         "webp": {
           "src": "/_img/film-posters/drive-deckTile-264.webp",
-          "bytes": 4398
+          "bytes": 2000
         }
       }
     ]
@@ -3895,20 +3941,20 @@
     "source": "/film-posters/eternal-sunshine-of-the-spotless-mind.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "f28079f94b060b62",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c57f537ef5c74180",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-deckTile-138.avif",
-          "bytes": 1976
+          "bytes": 983
         },
         "webp": {
           "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-deckTile-138.webp",
-          "bytes": 2010
+          "bytes": 1034
         }
       },
       {
@@ -3916,11 +3962,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-deckTile-200.avif",
-          "bytes": 3032
+          "bytes": 1273
         },
         "webp": {
           "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-deckTile-200.webp",
-          "bytes": 3420
+          "bytes": 1676
         }
       },
       {
@@ -3928,11 +3974,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-deckTile-264.avif",
-          "bytes": 4169
+          "bytes": 1730
         },
         "webp": {
           "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-deckTile-264.webp",
-          "bytes": 5096
+          "bytes": 2582
         }
       }
     ]
@@ -3941,20 +3987,20 @@
     "source": "/film-posters/everybody-wants-some.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "5b436f69c873d050",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "43b5f787d6ba5bde",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/everybody-wants-some-deckTile-138.avif",
-          "bytes": 3541
+          "bytes": 1657
         },
         "webp": {
           "src": "/_img/film-posters/everybody-wants-some-deckTile-138.webp",
-          "bytes": 3646
+          "bytes": 2186
         }
       },
       {
@@ -3962,11 +4008,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/everybody-wants-some-deckTile-200.avif",
-          "bytes": 5869
+          "bytes": 2278
         },
         "webp": {
           "src": "/_img/film-posters/everybody-wants-some-deckTile-200.webp",
-          "bytes": 6392
+          "bytes": 3520
         }
       },
       {
@@ -3974,11 +4020,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/everybody-wants-some-deckTile-264.avif",
-          "bytes": 8554
+          "bytes": 3095
         },
         "webp": {
           "src": "/_img/film-posters/everybody-wants-some-deckTile-264.webp",
-          "bytes": 9622
+          "bytes": 5014
         }
       }
     ]
@@ -3987,20 +4033,20 @@
     "source": "/film-posters/foxcatcher.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "03b1435e68031636",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "e95570c393f1ece8",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/foxcatcher-deckTile-138.avif",
-          "bytes": 1712
+          "bytes": 942
         },
         "webp": {
           "src": "/_img/film-posters/foxcatcher-deckTile-138.webp",
-          "bytes": 1778
+          "bytes": 1118
         }
       },
       {
@@ -4008,11 +4054,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/foxcatcher-deckTile-200.avif",
-          "bytes": 2764
+          "bytes": 1190
         },
         "webp": {
           "src": "/_img/film-posters/foxcatcher-deckTile-200.webp",
-          "bytes": 3068
+          "bytes": 1736
         }
       },
       {
@@ -4020,11 +4066,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/foxcatcher-deckTile-264.avif",
-          "bytes": 4097
+          "bytes": 1559
         },
         "webp": {
           "src": "/_img/film-posters/foxcatcher-deckTile-264.webp",
-          "bytes": 4692
+          "bytes": 2698
         }
       }
     ]
@@ -4033,20 +4079,20 @@
     "source": "/film-posters/frances-ha.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "cae30eeff8e8877e",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "131b5643345c01e8",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/frances-ha-deckTile-138.avif",
-          "bytes": 2715
+          "bytes": 803
         },
         "webp": {
           "src": "/_img/film-posters/frances-ha-deckTile-138.webp",
-          "bytes": 3014
+          "bytes": 940
         }
       },
       {
@@ -4054,11 +4100,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/frances-ha-deckTile-200.avif",
-          "bytes": 4217
+          "bytes": 1182
         },
         "webp": {
           "src": "/_img/film-posters/frances-ha-deckTile-200.webp",
-          "bytes": 5090
+          "bytes": 1704
         }
       },
       {
@@ -4066,11 +4112,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/frances-ha-deckTile-264.avif",
-          "bytes": 5940
+          "bytes": 1578
         },
         "webp": {
           "src": "/_img/film-posters/frances-ha-deckTile-264.webp",
-          "bytes": 7110
+          "bytes": 2396
         }
       }
     ]
@@ -4079,20 +4125,20 @@
     "source": "/film-posters/good-will-hunting.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "e62689ac13504b85",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "f14c6314fb5fb209",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/good-will-hunting-deckTile-138.avif",
-          "bytes": 2279
+          "bytes": 840
         },
         "webp": {
           "src": "/_img/film-posters/good-will-hunting-deckTile-138.webp",
-          "bytes": 2466
+          "bytes": 1008
         }
       },
       {
@@ -4100,11 +4146,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/good-will-hunting-deckTile-200.avif",
-          "bytes": 3611
+          "bytes": 1278
         },
         "webp": {
           "src": "/_img/film-posters/good-will-hunting-deckTile-200.webp",
-          "bytes": 4194
+          "bytes": 2048
         }
       },
       {
@@ -4112,11 +4158,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/good-will-hunting-deckTile-264.avif",
-          "bytes": 5093
+          "bytes": 1793
         },
         "webp": {
           "src": "/_img/film-posters/good-will-hunting-deckTile-264.webp",
-          "bytes": 6080
+          "bytes": 3098
         }
       }
     ]
@@ -4125,20 +4171,20 @@
     "source": "/film-posters/her.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "66797c6a2427a027",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "8bd9b97474eaff38",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/her-deckTile-138.avif",
-          "bytes": 1723
+          "bytes": 478
         },
         "webp": {
           "src": "/_img/film-posters/her-deckTile-138.webp",
-          "bytes": 1824
+          "bytes": 430
         }
       },
       {
@@ -4146,11 +4192,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/her-deckTile-200.avif",
-          "bytes": 2584
+          "bytes": 588
         },
         "webp": {
           "src": "/_img/film-posters/her-deckTile-200.webp",
-          "bytes": 2884
+          "bytes": 844
         }
       },
       {
@@ -4158,11 +4204,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/her-deckTile-264.avif",
-          "bytes": 3395
+          "bytes": 922
         },
         "webp": {
           "src": "/_img/film-posters/her-deckTile-264.webp",
-          "bytes": 3980
+          "bytes": 1510
         }
       }
     ]
@@ -4171,20 +4217,20 @@
     "source": "/film-posters/licorice-pizza.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "caf615697fef0141",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "41e79d52f25d5c78",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/licorice-pizza-deckTile-138.avif",
-          "bytes": 3898
+          "bytes": 746
         },
         "webp": {
           "src": "/_img/film-posters/licorice-pizza-deckTile-138.webp",
-          "bytes": 3644
+          "bytes": 952
         }
       },
       {
@@ -4192,11 +4238,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/licorice-pizza-deckTile-200.avif",
-          "bytes": 6468
+          "bytes": 1010
         },
         "webp": {
           "src": "/_img/film-posters/licorice-pizza-deckTile-200.webp",
-          "bytes": 6414
+          "bytes": 1500
         }
       },
       {
@@ -4204,11 +4250,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/licorice-pizza-deckTile-264.avif",
-          "bytes": 9201
+          "bytes": 1380
         },
         "webp": {
           "src": "/_img/film-posters/licorice-pizza-deckTile-264.webp",
-          "bytes": 9554
+          "bytes": 2298
         }
       }
     ]
@@ -4217,20 +4263,20 @@
     "source": "/film-posters/lost-in-translation.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "c8f31c0b08cd7e20",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "50739183ba6beb51",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/lost-in-translation-deckTile-138.avif",
-          "bytes": 3542
+          "bytes": 540
         },
         "webp": {
           "src": "/_img/film-posters/lost-in-translation-deckTile-138.webp",
-          "bytes": 3498
+          "bytes": 546
         }
       },
       {
@@ -4238,11 +4284,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/lost-in-translation-deckTile-200.avif",
-          "bytes": 5785
+          "bytes": 690
         },
         "webp": {
           "src": "/_img/film-posters/lost-in-translation-deckTile-200.webp",
-          "bytes": 6174
+          "bytes": 964
         }
       },
       {
@@ -4250,11 +4296,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/lost-in-translation-deckTile-264.avif",
-          "bytes": 8518
+          "bytes": 820
         },
         "webp": {
           "src": "/_img/film-posters/lost-in-translation-deckTile-264.webp",
-          "bytes": 9508
+          "bytes": 1498
         }
       }
     ]
@@ -4263,20 +4309,20 @@
     "source": "/film-posters/love-actually.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "bee4dfe7b21d00a6",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "e8fcc718993febf5",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/love-actually-deckTile-138.avif",
-          "bytes": 4084
+          "bytes": 847
         },
         "webp": {
           "src": "/_img/film-posters/love-actually-deckTile-138.webp",
-          "bytes": 4232
+          "bytes": 984
         }
       },
       {
@@ -4284,11 +4330,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/love-actually-deckTile-200.avif",
-          "bytes": 6511
+          "bytes": 1249
         },
         "webp": {
           "src": "/_img/film-posters/love-actually-deckTile-200.webp",
-          "bytes": 7112
+          "bytes": 1624
         }
       },
       {
@@ -4296,11 +4342,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/love-actually-deckTile-264.avif",
-          "bytes": 8923
+          "bytes": 1728
         },
         "webp": {
           "src": "/_img/film-posters/love-actually-deckTile-264.webp",
-          "bytes": 9876
+          "bytes": 2374
         }
       }
     ]
@@ -4309,20 +4355,20 @@
     "source": "/film-posters/magnolia.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "4a8e20cefcf64914",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1b6d1fbf54688751",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/magnolia-deckTile-138.avif",
-          "bytes": 2508
+          "bytes": 769
         },
         "webp": {
           "src": "/_img/film-posters/magnolia-deckTile-138.webp",
-          "bytes": 2626
+          "bytes": 886
         }
       },
       {
@@ -4330,11 +4376,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/magnolia-deckTile-200.avif",
-          "bytes": 3761
+          "bytes": 1130
         },
         "webp": {
           "src": "/_img/film-posters/magnolia-deckTile-200.webp",
-          "bytes": 4166
+          "bytes": 1400
         }
       },
       {
@@ -4342,11 +4388,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/magnolia-deckTile-264.avif",
-          "bytes": 5064
+          "bytes": 1597
         },
         "webp": {
           "src": "/_img/film-posters/magnolia-deckTile-264.webp",
-          "bytes": 6028
+          "bytes": 2268
         }
       }
     ]
@@ -4355,20 +4401,20 @@
     "source": "/film-posters/moonrise-kingdom.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "04965a0174215671",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4af89192912815c6",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/moonrise-kingdom-deckTile-138.avif",
-          "bytes": 2995
+          "bytes": 997
         },
         "webp": {
           "src": "/_img/film-posters/moonrise-kingdom-deckTile-138.webp",
-          "bytes": 2992
+          "bytes": 1076
         }
       },
       {
@@ -4376,11 +4422,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/moonrise-kingdom-deckTile-200.avif",
-          "bytes": 4855
+          "bytes": 1231
         },
         "webp": {
           "src": "/_img/film-posters/moonrise-kingdom-deckTile-200.webp",
-          "bytes": 5138
+          "bytes": 1604
         }
       },
       {
@@ -4388,11 +4434,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/moonrise-kingdom-deckTile-264.avif",
-          "bytes": 7332
+          "bytes": 1644
         },
         "webp": {
           "src": "/_img/film-posters/moonrise-kingdom-deckTile-264.webp",
-          "bytes": 7792
+          "bytes": 2374
         }
       }
     ]
@@ -4401,20 +4447,20 @@
     "source": "/film-posters/mysterious-skin.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "737326dcac80b21f",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "001fd806b58032f7",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/mysterious-skin-deckTile-138.avif",
-          "bytes": 1910
+          "bytes": 429
         },
         "webp": {
           "src": "/_img/film-posters/mysterious-skin-deckTile-138.webp",
-          "bytes": 2084
+          "bytes": 326
         }
       },
       {
@@ -4422,11 +4468,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/mysterious-skin-deckTile-200.avif",
-          "bytes": 2828
+          "bytes": 511
         },
         "webp": {
           "src": "/_img/film-posters/mysterious-skin-deckTile-200.webp",
-          "bytes": 3200
+          "bytes": 602
         }
       },
       {
@@ -4434,11 +4480,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/mysterious-skin-deckTile-264.avif",
-          "bytes": 3562
+          "bytes": 719
         },
         "webp": {
           "src": "/_img/film-posters/mysterious-skin-deckTile-264.webp",
-          "bytes": 4344
+          "bytes": 1030
         }
       }
     ]
@@ -4447,20 +4493,20 @@
     "source": "/film-posters/one-more-time-with-feeling.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "a2332bf9ced303df",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "f44e8e291c814c1f",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/one-more-time-with-feeling-deckTile-138.avif",
-          "bytes": 657
+          "bytes": 794
         },
         "webp": {
           "src": "/_img/film-posters/one-more-time-with-feeling-deckTile-138.webp",
-          "bytes": 526
+          "bytes": 964
         }
       },
       {
@@ -4468,11 +4514,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/one-more-time-with-feeling-deckTile-200.avif",
-          "bytes": 892
+          "bytes": 1058
         },
         "webp": {
           "src": "/_img/film-posters/one-more-time-with-feeling-deckTile-200.webp",
-          "bytes": 850
+          "bytes": 1568
         }
       },
       {
@@ -4480,11 +4526,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/one-more-time-with-feeling-deckTile-264.avif",
-          "bytes": 1239
+          "bytes": 1312
         },
         "webp": {
           "src": "/_img/film-posters/one-more-time-with-feeling-deckTile-264.webp",
-          "bytes": 1282
+          "bytes": 2436
         }
       }
     ]
@@ -4493,20 +4539,20 @@
     "source": "/film-posters/paths-of-glory.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "dbbabbd4e5f92eab",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4340c0e88b8cbae0",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/paths-of-glory-deckTile-138.avif",
-          "bytes": 3037
+          "bytes": 1093
         },
         "webp": {
           "src": "/_img/film-posters/paths-of-glory-deckTile-138.webp",
-          "bytes": 3014
+          "bytes": 1296
         }
       },
       {
@@ -4514,11 +4560,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/paths-of-glory-deckTile-200.avif",
-          "bytes": 5017
+          "bytes": 1564
         },
         "webp": {
           "src": "/_img/film-posters/paths-of-glory-deckTile-200.webp",
-          "bytes": 5226
+          "bytes": 2272
         }
       },
       {
@@ -4526,11 +4572,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/paths-of-glory-deckTile-264.avif",
-          "bytes": 7137
+          "bytes": 2283
         },
         "webp": {
           "src": "/_img/film-posters/paths-of-glory-deckTile-264.webp",
-          "bytes": 7738
+          "bytes": 3392
         }
       }
     ]
@@ -4539,20 +4585,20 @@
     "source": "/film-posters/rushmore.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "c8fc3eddd11eafa0",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d1fac2b0ec3cac54",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/rushmore-deckTile-138.avif",
-          "bytes": 2012
+          "bytes": 637
         },
         "webp": {
           "src": "/_img/film-posters/rushmore-deckTile-138.webp",
-          "bytes": 2114
+          "bytes": 602
         }
       },
       {
@@ -4560,11 +4606,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/rushmore-deckTile-200.avif",
-          "bytes": 3077
+          "bytes": 767
         },
         "webp": {
           "src": "/_img/film-posters/rushmore-deckTile-200.webp",
-          "bytes": 3744
+          "bytes": 950
         }
       },
       {
@@ -4572,11 +4618,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/rushmore-deckTile-264.avif",
-          "bytes": 4637
+          "bytes": 1079
         },
         "webp": {
           "src": "/_img/film-posters/rushmore-deckTile-264.webp",
-          "bytes": 5490
+          "bytes": 1564
         }
       }
     ]
@@ -4585,20 +4631,20 @@
     "source": "/film-posters/school-of-rock.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "98f6a9b7884bcf6c",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "cb4fa91b4afbefa3",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/school-of-rock-deckTile-138.avif",
-          "bytes": 3495
+          "bytes": 773
         },
         "webp": {
           "src": "/_img/film-posters/school-of-rock-deckTile-138.webp",
-          "bytes": 3382
+          "bytes": 914
         }
       },
       {
@@ -4606,11 +4652,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/school-of-rock-deckTile-200.avif",
-          "bytes": 5683
+          "bytes": 1050
         },
         "webp": {
           "src": "/_img/film-posters/school-of-rock-deckTile-200.webp",
-          "bytes": 5902
+          "bytes": 1506
         }
       },
       {
@@ -4618,11 +4664,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/school-of-rock-deckTile-264.avif",
-          "bytes": 8170
+          "bytes": 1362
         },
         "webp": {
           "src": "/_img/film-posters/school-of-rock-deckTile-264.webp",
-          "bytes": 8846
+          "bytes": 2164
         }
       }
     ]
@@ -4631,20 +4677,20 @@
     "source": "/film-posters/submarine.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "ead74b2faa8b7e83",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "06d199233e305bdb",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/submarine-deckTile-138.avif",
-          "bytes": 1598
+          "bytes": 916
         },
         "webp": {
           "src": "/_img/film-posters/submarine-deckTile-138.webp",
-          "bytes": 1764
+          "bytes": 1050
         }
       },
       {
@@ -4652,11 +4698,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/submarine-deckTile-200.avif",
-          "bytes": 2226
+          "bytes": 1234
         },
         "webp": {
           "src": "/_img/film-posters/submarine-deckTile-200.webp",
-          "bytes": 2662
+          "bytes": 1696
         }
       },
       {
@@ -4664,11 +4710,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/submarine-deckTile-264.avif",
-          "bytes": 2976
+          "bytes": 1431
         },
         "webp": {
           "src": "/_img/film-posters/submarine-deckTile-264.webp",
-          "bytes": 3576
+          "bytes": 2390
         }
       }
     ]
@@ -4677,20 +4723,20 @@
     "source": "/film-posters/superbad.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "400f41f08c8aa098",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "ad747ed119c9e2bb",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/superbad-deckTile-138.avif",
-          "bytes": 2789
+          "bytes": 881
         },
         "webp": {
           "src": "/_img/film-posters/superbad-deckTile-138.webp",
-          "bytes": 2800
+          "bytes": 1072
         }
       },
       {
@@ -4698,11 +4744,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/superbad-deckTile-200.avif",
-          "bytes": 4286
+          "bytes": 1137
         },
         "webp": {
           "src": "/_img/film-posters/superbad-deckTile-200.webp",
-          "bytes": 4724
+          "bytes": 1628
         }
       },
       {
@@ -4710,11 +4756,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/superbad-deckTile-264.avif",
-          "bytes": 5927
+          "bytes": 1522
         },
         "webp": {
           "src": "/_img/film-posters/superbad-deckTile-264.webp",
-          "bytes": 6714
+          "bytes": 2420
         }
       }
     ]
@@ -4723,20 +4769,20 @@
     "source": "/film-posters/the-big-lebowski.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "62eecf50d705934a",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d3d09bbeb4ec0143",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/the-big-lebowski-deckTile-138.avif",
-          "bytes": 1804
+          "bytes": 1035
         },
         "webp": {
           "src": "/_img/film-posters/the-big-lebowski-deckTile-138.webp",
-          "bytes": 1910
+          "bytes": 1278
         }
       },
       {
@@ -4744,11 +4790,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/the-big-lebowski-deckTile-200.avif",
-          "bytes": 2998
+          "bytes": 1320
         },
         "webp": {
           "src": "/_img/film-posters/the-big-lebowski-deckTile-200.webp",
-          "bytes": 3332
+          "bytes": 2016
         }
       },
       {
@@ -4756,11 +4802,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/the-big-lebowski-deckTile-264.avif",
-          "bytes": 4543
+          "bytes": 1833
         },
         "webp": {
           "src": "/_img/film-posters/the-big-lebowski-deckTile-264.webp",
-          "bytes": 5180
+          "bytes": 3084
         }
       }
     ]
@@ -4769,20 +4815,20 @@
     "source": "/film-posters/the-holdovers.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "f701db7795515efd",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "193e4e7b05fc07ad",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/the-holdovers-deckTile-138.avif",
-          "bytes": 2698
+          "bytes": 862
         },
         "webp": {
           "src": "/_img/film-posters/the-holdovers-deckTile-138.webp",
-          "bytes": 2840
+          "bytes": 990
         }
       },
       {
@@ -4790,11 +4836,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/the-holdovers-deckTile-200.avif",
-          "bytes": 4161
+          "bytes": 1188
         },
         "webp": {
           "src": "/_img/film-posters/the-holdovers-deckTile-200.webp",
-          "bytes": 4702
+          "bytes": 1450
         }
       },
       {
@@ -4802,11 +4848,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/the-holdovers-deckTile-264.avif",
-          "bytes": 6062
+          "bytes": 1660
         },
         "webp": {
           "src": "/_img/film-posters/the-holdovers-deckTile-264.webp",
-          "bytes": 6880
+          "bytes": 2208
         }
       }
     ]
@@ -4815,20 +4861,20 @@
     "source": "/film-posters/the-king-s-speech.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "b782331eda734772",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "557182969ac6e56a",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/the-king-s-speech-deckTile-138.avif",
-          "bytes": 2569
+          "bytes": 1175
         },
         "webp": {
           "src": "/_img/film-posters/the-king-s-speech-deckTile-138.webp",
-          "bytes": 2700
+          "bytes": 1466
         }
       },
       {
@@ -4836,11 +4882,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/the-king-s-speech-deckTile-200.avif",
-          "bytes": 3980
+          "bytes": 1603
         },
         "webp": {
           "src": "/_img/film-posters/the-king-s-speech-deckTile-200.webp",
-          "bytes": 4500
+          "bytes": 2394
         }
       },
       {
@@ -4848,11 +4894,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/the-king-s-speech-deckTile-264.avif",
-          "bytes": 5669
+          "bytes": 2219
         },
         "webp": {
           "src": "/_img/film-posters/the-king-s-speech-deckTile-264.webp",
-          "bytes": 6566
+          "bytes": 3560
         }
       }
     ]
@@ -4861,20 +4907,20 @@
     "source": "/film-posters/the-lord-of-the-rings.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "25553e0de77feaa2",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "352ad6714025eae9",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/the-lord-of-the-rings-deckTile-138.avif",
-          "bytes": 2356
+          "bytes": 831
         },
         "webp": {
           "src": "/_img/film-posters/the-lord-of-the-rings-deckTile-138.webp",
-          "bytes": 2506
+          "bytes": 912
         }
       },
       {
@@ -4882,11 +4928,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/the-lord-of-the-rings-deckTile-200.avif",
-          "bytes": 3849
+          "bytes": 1005
         },
         "webp": {
           "src": "/_img/film-posters/the-lord-of-the-rings-deckTile-200.webp",
-          "bytes": 4458
+          "bytes": 1498
         }
       },
       {
@@ -4894,11 +4940,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/the-lord-of-the-rings-deckTile-264.avif",
-          "bytes": 5902
+          "bytes": 1397
         },
         "webp": {
           "src": "/_img/film-posters/the-lord-of-the-rings-deckTile-264.webp",
-          "bytes": 6784
+          "bytes": 2214
         }
       }
     ]
@@ -4907,20 +4953,20 @@
     "source": "/film-posters/the-master.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "e6e921758b147d7f",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "b29aced86934a1df",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/the-master-deckTile-138.avif",
-          "bytes": 2402
+          "bytes": 922
         },
         "webp": {
           "src": "/_img/film-posters/the-master-deckTile-138.webp",
-          "bytes": 2588
+          "bytes": 1052
         }
       },
       {
@@ -4928,11 +4974,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/the-master-deckTile-200.avif",
-          "bytes": 3828
+          "bytes": 1200
         },
         "webp": {
           "src": "/_img/film-posters/the-master-deckTile-200.webp",
-          "bytes": 4374
+          "bytes": 1794
         }
       },
       {
@@ -4940,11 +4986,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/the-master-deckTile-264.avif",
-          "bytes": 5603
+          "bytes": 1684
         },
         "webp": {
           "src": "/_img/film-posters/the-master-deckTile-264.webp",
-          "bytes": 6356
+          "bytes": 2756
         }
       }
     ]
@@ -4953,20 +4999,20 @@
     "source": "/film-posters/the-social-network.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "eca9b74b5dbeb271",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4bdfc084e08fe7f9",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/the-social-network-deckTile-138.avif",
-          "bytes": 1714
+          "bytes": 997
         },
         "webp": {
           "src": "/_img/film-posters/the-social-network-deckTile-138.webp",
-          "bytes": 1840
+          "bytes": 1178
         }
       },
       {
@@ -4974,11 +5020,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/the-social-network-deckTile-200.avif",
-          "bytes": 2542
+          "bytes": 1531
         },
         "webp": {
           "src": "/_img/film-posters/the-social-network-deckTile-200.webp",
-          "bytes": 3028
+          "bytes": 2122
         }
       },
       {
@@ -4986,11 +5032,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/the-social-network-deckTile-264.avif",
-          "bytes": 3415
+          "bytes": 2208
         },
         "webp": {
           "src": "/_img/film-posters/the-social-network-deckTile-264.webp",
-          "bytes": 4290
+          "bytes": 3312
         }
       }
     ]
@@ -4999,20 +5045,20 @@
     "source": "/film-posters/watchmen.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "d4cad51131b6f400",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "99eded0bc444ee4a",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/watchmen-deckTile-138.avif",
-          "bytes": 3364
+          "bytes": 922
         },
         "webp": {
           "src": "/_img/film-posters/watchmen-deckTile-138.webp",
-          "bytes": 3434
+          "bytes": 1114
         }
       },
       {
@@ -5020,11 +5066,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/watchmen-deckTile-200.avif",
-          "bytes": 5569
+          "bytes": 1288
         },
         "webp": {
           "src": "/_img/film-posters/watchmen-deckTile-200.webp",
-          "bytes": 6004
+          "bytes": 1762
         }
       },
       {
@@ -5032,11 +5078,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/watchmen-deckTile-264.avif",
-          "bytes": 7923
+          "bytes": 1591
         },
         "webp": {
           "src": "/_img/film-posters/watchmen-deckTile-264.webp",
-          "bytes": 8980
+          "bytes": 2590
         }
       }
     ]
@@ -5045,20 +5091,20 @@
     "source": "/film-posters/you-were-never-really-here.webp",
     "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 600,
-    "sourceHeight": 600,
-    "sourceHash": "3d44f4970a75b760",
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2f372ab20cc9f9f6",
     "variants": [
       {
         "width": 138,
         "height": 138,
         "avif": {
           "src": "/_img/film-posters/you-were-never-really-here-deckTile-138.avif",
-          "bytes": 2372
+          "bytes": 556
         },
         "webp": {
           "src": "/_img/film-posters/you-were-never-really-here-deckTile-138.webp",
-          "bytes": 2674
+          "bytes": 466
         }
       },
       {
@@ -5066,11 +5112,11 @@
         "height": 200,
         "avif": {
           "src": "/_img/film-posters/you-were-never-really-here-deckTile-200.avif",
-          "bytes": 3553
+          "bytes": 655
         },
         "webp": {
           "src": "/_img/film-posters/you-were-never-really-here-deckTile-200.webp",
-          "bytes": 4154
+          "bytes": 814
         }
       },
       {
@@ -5078,11 +5124,11 @@
         "height": 264,
         "avif": {
           "src": "/_img/film-posters/you-were-never-really-here-deckTile-264.avif",
-          "bytes": 5010
+          "bytes": 844
         },
         "webp": {
           "src": "/_img/film-posters/you-were-never-really-here-deckTile-264.webp",
-          "bytes": 5962
+          "bytes": 1322
         }
       }
     ]

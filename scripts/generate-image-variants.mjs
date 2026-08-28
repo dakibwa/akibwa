@@ -214,6 +214,7 @@ const sources = [
   { file: "project-art/personal/trek-card.webp", slot: "deckTile" },
   { file: "project-art/personal/life-map-card.webp", slot: "deckTile" },
   { file: "project-art/personal/ines-fan-splat.webp", slot: "deckTile" },
+  { file: "project-art/personal/features-card.webp", slot: "deckTile" },
   { file: "project-art/personal/features-symbol.webp", slot: "deckTile" },
   { file: "film-posters/a-clockwork-orange.webp", slot: "deckTile" },
   { file: "film-posters/adaptation.webp", slot: "deckTile" },

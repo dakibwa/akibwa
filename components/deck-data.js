@@ -2592,7 +2592,7 @@ export const sites = [
     ground: "#8e4457", accent: "#8e4457", eyebrow: "Live", art: "/project-art/personal/butterfly-rose-card.webp",
     note: "The website and booking system for a hair salon on Boroughgate in [place removed] — prices per stylist, colour development time handled properly." },
   { name: "features", href: "https://akibwa.com/features/",
-    ground: "#6e5da8", accent: "#6e5da8", eyebrow: "Live", art: "/project-art/personal/features-symbol.webp",
+    ground: "#f4f1e8", accent: "#6e5da8", eyebrow: "Live", art: "/project-art/personal/features-card.webp",
     note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." }
 ];
 
