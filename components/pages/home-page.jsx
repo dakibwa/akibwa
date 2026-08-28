@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
+import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES, resolveBackground } from "@/components/site-image";
 import { deck, sites, life, games, tv, sets, instagramUrl } from "@/components/deck-data";
@@ -152,6 +153,11 @@ export function HomePage() {
   /* The roving light in the hero index: one set word at a time lifts to full
      colour, on the same pulse as the flipping words above it. */
   const [spot, setSpot] = useState(-1);
+  /* The ink prototype rides behind ?ink only — off for everyone else. */
+  const [inkOn, setInkOn] = useState(false);
+  useEffect(() => {
+    setInkOn(new URLSearchParams(window.location.search).has("ink"));
+  }, []);
   /* One card, brought forward: everything else dims and comes to rest. */
   const [lit, setLit] = useState(null);
   const litOriginRef = useRef(null);
@@ -460,10 +466,19 @@ export function HomePage() {
           ground={TOOL_GROUND[tool.name]}
           label={tool.name}
           face={
-            <span className="card-face-stack card-face-stack--solo">
-              {/* Just the mark — the name waits in the spotlight. */}
-              <Mark src={tool.mark} tile={tool.mark?.endsWith(".png")} />
-            </span>
+            <>
+              {tool.art ? (
+                <>
+                  <SiteImage src={tool.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+                  <span className="card-scrim" aria-hidden="true" />
+                </>
+              ) : (
+                <span className="card-face-stack card-face-stack--solo">
+                  {/* Just the mark — the name waits in the spotlight. */}
+                  <Mark src={tool.mark} tile={tool.mark?.endsWith(".png")} />
+                </span>
+              )}
+            </>
           }
           back={
             <>
@@ -674,6 +689,7 @@ export function HomePage() {
 
   return (
     <section className="akibwa-home">
+      {inkOn ? <InkPaper /> : null}
       <div
         className={`page-grid deck${lens ? " is-lensed" : ""}`}
         ref={deckRef}

@@ -91,72 +91,84 @@ export const deck = {
   "tools": [
     {
       "name": "Claude Code",
+      "art": "/project-art/tools/claude.webp",
       "line": "Where most of the building happens. Pointed at real repositories all day, not kept as a toy.",
       "group": "AI",
       "mark": "/brand-logos/claude.svg"
     },
     {
       "name": "Codex",
+      "art": "/project-art/tools/openai.webp",
       "line": "OpenAI's agent, kept running alongside Claude. Two opinions on the same problem beats one.",
       "group": "AI",
       "mark": "/brand-logos/openai.svg"
     },
     {
       "name": "Grok Bot",
+      "art": "/project-art/tools/grok-bot.webp",
       "line": "The agent I run from my phone when I'm nowhere near the desk.",
       "group": "AI",
       "mark": "/brand-logos/grok-bot.png"
     },
     {
       "name": "GitHub",
+      "art": "/project-art/tools/github.webp",
       "line": "Every project, private by default. It is also the backup.",
       "group": "Platform",
       "mark": "/brand-logos/github.svg"
     },
     {
       "name": "Cloudflare",
+      "art": "/project-art/tools/cloudflare.webp",
       "line": "Where the small always-on things live. Workers and D1, and a bill that rounds to nothing.",
       "group": "Platform",
       "mark": "/brand-logos/cloudflare.svg"
     },
     {
       "name": "Figma",
+      "art": "/project-art/tools/figma.webp",
       "line": "For working a design out properly before it costs anything to build.",
       "group": "Platform",
       "mark": "/brand-logos/figma.svg"
     },
     {
       "name": "SQL",
+      "art": "/project-art/tools/sql.webp",
       "line": "The language under everything since Lloyds. Still the sharpest question-asking tool there is.",
       "group": "Data",
       "mark": "/brand-logos/sql.svg"
     },
     {
       "name": "Power BI",
+      "art": "/project-art/tools/power-bi.webp",
       "line": "Years of it — Sky Betting, Leeds Building Society, and the estate at the National Wealth Fund.",
       "group": "Data",
       "mark": "/brand-logos/power-bi.svg"
     },
     {
       "name": "Microsoft Fabric",
+      "art": "/project-art/tools/fabric.webp",
       "line": "The data estate at the National Wealth Fund runs on it — architected and standardised from scratch.",
       "group": "Data",
       "mark": "/brand-logos/fabric.svg"
     },
     {
       "name": "Oracle BI",
+      "art": "/project-art/tools/oracle.webp",
       "line": "OBIEE — Oracle Business Intelligence Enterprise Edition, the workhorse of the Lloyds and Vanquis years.",
       "group": "Data",
       "mark": "/brand-logos/oracle.svg"
     },
     {
       "name": "Excel",
+      "art": "/project-art/tools/excel.webp",
       "line": "Still the fastest way to think in numbers with someone watching.",
       "group": "Office",
       "mark": "/brand-logos/excel.svg"
     },
     {
       "name": "PowerPoint",
+      "art": "/project-art/tools/powerpoint.webp",
       "line": "Where analysis goes to meet its audience.",
       "group": "Office",
       "mark": "/brand-logos/powerpoint.svg"

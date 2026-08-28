@@ -5798,6 +5798,8 @@ button {
    through the wall. Same tile, same gap, no cross-set flow. */
 
 .deck {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: clamp(5px, 0.55vw, 9px);
@@ -6107,6 +6109,18 @@ button {
     margin-left: calc(0px - max(24px, calc((100vw - var(--frame)) / 2)));
     padding-left: max(24px, calc((100vw - var(--frame)) / 2));
   }
+}
+
+/* The ink prototype's canvas: fixed under everything, purely decorative. */
+.ink-paper {
+  position: fixed;
+  inset: 0;
+  /* Above the body's paper paint, below every card — the ink lives ON the
+     page ground, and content sits on top of it. */
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
 }
 
 /* ── The spotlight ──────────────────────────────────────────────────────
