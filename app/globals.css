@@ -5975,18 +5975,8 @@ button {
   view-transition-name: akibwa-hero;
 }
 
-/* The menu IS the sentence: coloured nouns open their collections, and the
-   two verbs — built, love — hold a lens over their half of the wall. The
-   verbs wear the ink with a dotted underline, quieter than the nouns'
-   colour but still visibly a door. */
-.hero-index-word--verb:not(.is-held) {
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-thickness: 0.055em;
-  text-decoration-color: rgba(40, 42, 48, 0.4);
-  text-underline-offset: 0.16em;
-}
-
+/* The menu IS the sentence, under one rule: a coloured word is a door,
+   plain text is just the sentence. Nothing else is decorated. */
 .hero-index-word {
   --index-accent-rgb: 47, 136, 255;
   appearance: none;

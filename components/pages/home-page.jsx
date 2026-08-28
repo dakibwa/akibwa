@@ -299,23 +299,8 @@ export function HomePage() {
     [withMorph]
   );
 
-  /* Which bucket's lens is held, if any. Rail-name panels clear it. */
+  /* Which word's lens is held, if any. */
   const [heldBucket, setHeldBucket] = useState(null);
-
-  const bucketHeld = useCallback((bucket) => heldBucket === bucket.id, [heldBucket]);
-
-  const openBucket = useCallback(
-    (bucket) => {
-      withMorph(() => {
-      setHeldBucket((current) => {
-        const next = current === bucket.id ? null : bucket.id;
-        setLens(next ? bucket.lens : null);
-        return next;
-      });
-      });
-    },
-    [withMorph]
-  );
 
 
   useEffect(() => {
@@ -659,18 +644,6 @@ export function HomePage() {
     </button>
   );
 
-  const BucketWord = ({ bucket, children }) => (
-    <button
-      type="button"
-      className={`hero-index-word hero-index-word--verb${bucketHeld(bucket) ? " is-held" : ""}`}
-      style={{ "--index-accent-rgb": bucket.accent }}
-      aria-expanded={bucketHeld(bucket)}
-      onClick={() => openBucket(bucket)}
-    >
-      {children}
-    </button>
-  );
-
   /* Career leads the front of the wall with its two current roles; the six
      past ones are dealt through the blend below with everything else. */
   const jobCards = cardsFor("jobs");
@@ -687,15 +660,14 @@ export function HomePage() {
         <div className="deck-hero">
           {/* One sentence across the whole top of the page, and the menu is
               simply three of its words. Nothing else up here at all. */}
-          {/* The sentence is the menu. Every coloured noun opens its
-              collection, and the two verbs hold a lens over their halves —
-              nothing separate below it, no second row of words. */}
+          {/* The sentence is the menu, and the rule is one rule: a coloured
+              word is a door, plain text is just the sentence. The seven
+              collection nouns are the whole menu — nothing else decorated,
+              nothing separate below. */}
           <h1 className="hero-sentence">
-            <HeroFlipName /> — the things I{" "}
-            <BucketWord bucket={BUCKETS[0]}>built</BucketWord>:{" "}
+            <HeroFlipName /> — the things I built:{" "}
             <SetWord set={SET.sites}>projects</SetWord>, a <SetWord set={SET.jobs}>career</SetWord>, a{" "}
-            <SetWord set={SET.life}>life</SetWord>. The things I{" "}
-            <BucketWord bucket={BUCKETS[1]}>love</BucketWord>:{" "}
+            <SetWord set={SET.life}>life</SetWord>. The things I love:{" "}
             <SetWord set={SET.music}>music</SetWord>, <SetWord set={SET.films}>films</SetWord>,{" "}
             <SetWord set={SET.games}>games</SetWord>, <SetWord set={SET.tv}>TV</SetWord>.
           </h1>
@@ -774,20 +746,6 @@ const INDEX_ACCENT = {
    cards ride in the sites flow — but it is very much one of the keys. */
 const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
 
-
-/* The menu is four buckets, and every one behaves the same way: it gathers
-   its rows to the top and lets the rest of the page recede — no unfolding,
-   no reflow. The rows themselves are the content; the panels wait behind the
-   rail names. */
-const TASTE = ["music", "films", "games", "tv"];
-/* Two verbs carry the sentence: "built" holds a lens over everything made —
-   the sites, the career, the life pieces — and "love" over the four taste
-   collections. They wear the ink rather than a collection's colour, because
-   each is an umbrella over several. */
-const BUCKETS = [
-  { id: "built", accent: "40, 42, 48", lens: ["sites", "jobs", "life"] },
-  { id: "love", accent: "40, 42, 48", lens: TASTE }
-];
 
 /* The seven collection words, addressable by id for the sentence. */
 const SET = Object.fromEntries(LEGEND.map((entry) => [entry.id, entry]));

@@ -66,11 +66,10 @@ requireRuleText(".hero-name-value::after {", [
   "background: rgba(var(--name-accent-rgb)"
 ]);
 
-/* The menu is three words inside the hero sentence, and every rail's name
-   is an opener. */
-requireText(home, "hero-index-word", "the hero sentence must carry its bucket words");
-requireText(home, "onClick={() => openBucket(bucket)}", "each bucket word must open its bucket");
-requireText(home, "onClick={() => focusSet(set.id)}", "each rail name must open its set");
+/* The menu IS the sentence: its seven coloured collection words are the
+   only navigation on the page, each opening its collection's lens. */
+requireText(home, "hero-index-word", "the hero sentence must carry its collection words");
+requireText(home, "onClick={() => focusSet(set.id)}", "each sentence word must open its set");
 
 /* The footer is the one fixed route to contact — the contact row is gone. */
 requireText(footer, 'href="mailto:', "the footer must keep an email route");
