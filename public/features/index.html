@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAE7DF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1214" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>features</title>
 <!-- This is the one image that leaves the game before a player opens it. Keep
      its words aligned with the welcome card and publish it with the page: a
@@ -210,7 +216,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{-webkit-user-select:none;-moz-user-select:none;user-select:none;
-       -webkit-tap-highlight-color:transparent;cursor:default}
+       -webkit-tap-highlight-color:transparent;cursor:default;
+       -webkit-touch-callout:none;overscroll-behavior-y:none}
   html{-webkit-text-size-adjust:100%;height:100%}
   body{
     background:var(--paper);
@@ -223,7 +230,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:var(--grain);
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
   }
-  .sheet{position:relative;z-index:2;width:100%;max-width:1520px;padding:20px 20px 22px;
+  .sheet{position:relative;z-index:2;width:100%;max-width:1520px;
+         padding:20px calc(20px + env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px));
          height:100%;display:flex;flex-direction:column;min-height:0}
   .pick,
   .bulletin .bsub,
@@ -567,7 +575,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
   .veil{
     position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-    z-index:40;background:var(--veil);padding:20px;overflow-y:auto;
+    z-index:40;background:var(--veil);overflow-y:auto;
+    padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));
     opacity:0;visibility:hidden;pointer-events:none;
     transition:opacity var(--t-exit) var(--ease-in),visibility 0s linear var(--t-exit);
   }
@@ -619,7 +628,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .bulletin .bsun{position:absolute;right:22px;bottom:16px;width:34px;height:34px;opacity:.55;pointer-events:none}
   .shareout{display:block;width:100%;margin:2px 0 0;padding:9px 10px;
     background:var(--paper);color:var(--ink);border:1px solid var(--silver);
-    font:inherit;font-size:12px;line-height:1.5;letter-spacing:.02em;
+    font:inherit;font-size:16px;line-height:1.5;letter-spacing:.02em;
     resize:none;white-space:pre}
   .shareout[hidden]{display:none}
   .bactions{display:flex;gap:9px;padding:0 22px 20px}
@@ -771,6 +780,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     gap:7px;align-content:start;
   }
   .collection[hidden],.daylist[hidden],.recboard[hidden]{display:none}
+  .daylist,.collection,.acct-body,.pay-body,.arch-grid,.boardcard > .bulletin,.veil{overscroll-behavior:contain}
   .colcap{
     grid-column:1/-1;margin:0 0 3px;
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
@@ -1086,7 +1096,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
 
   @media (max-width:700px){
-    .sheet{padding:14px 10px 36px}
+    .sheet{padding:14px calc(10px + env(safe-area-inset-right,0px)) calc(36px + env(safe-area-inset-bottom,0px)) calc(10px + env(safe-area-inset-left,0px))}
     h1{font-size:21px}
     .hud-head{gap:11px;padding:11px 13px 12px}
     .instruments{padding:9px 11px 8px}
@@ -1150,6 +1160,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
     .intro-art > svg{min-height:0}
     .intro-body{padding:17px 18px 20px}
+  }
+
+  @media (max-height:560px) and (min-width:701px){
+    .field{display:flex;flex-direction:column}
+    .coach{
+      position:static;transform:none;width:max-content;max-width:calc(100% - 20px);
+      align-self:center;order:1;margin-top:10px;
+      box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface);
+    }
+    .play.tutorial .coach{animation:none}
   }
 
   @media (max-width:345px){
@@ -3758,11 +3778,10 @@ function buildNet(force){
     return under(T1)||under(T2);
   };
 
-  const SALTS = (inTutorialRun() && idx<TUTNETS.length) ? 4000 : 40;
-  let bestSalt=SALTS-1, bestMiss=Infinity, accepted=false;
+  let bestSalt=39, bestMiss=Infinity, accepted=false;
   for(let pass=0;pass<2;pass++){
   const forced=pass===1?bestSalt:-1;
-  for(let salt=0;salt<SALTS;salt++){
+  for(let salt=0;salt<40;salt++){
     if(forced>=0 && salt!==forced) continue;
     const rnd=mulberry32(fnv(seedKey+':net:'+idx+':'+salt));
     members=[];
@@ -5449,7 +5468,7 @@ function showRunOver(){
     sun:false,
     offer:runOverOffer(trial,depth),
     actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
-            (trial?'':`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">copy the day</button>`)+
+            (trial?'':`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">${SHARE_LABEL}</button>`)+
             `<button class="wbtn" id="recordbtn2">the record</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
@@ -5458,13 +5477,18 @@ function showRunOver(){
   $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
+    if(navigator.share){
+      try{ await navigator.share({text:txt}); b.textContent='shared';
+           clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent=SHARE_LABEL },2400); return }
+      catch(err){ if(err && err.name==='AbortError') return }
+    }
     const ok=await copyText(txt);
     b.textContent = ok ? 'copied' : 'select it below';
     if(!ok){
       const out=$('shareout');
       if(out){ out.hidden=false; out.value=txt; out.focus(); out.select() }
     }
-    clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent='copy the day' },2400);
+    clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent=SHARE_LABEL },2400);
   };
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
@@ -5626,6 +5650,7 @@ function dayStrip(tiers){
   for(let i=0;i<POLICY.dailyNets;i++) out += RUNGMOJI[TIEROF[s[i]]] || '⬛';
   return out;
 }
+const SHARE_LABEL = (typeof navigator!=='undefined' && navigator.share) ? 'share the day' : 'copy the day';
 const shareText=(day,tiers)=>
   'features · '+dayLabel(day)+(isFlawless(tiers)?' · flawless':'')
   +'\n'+dayStrip(tiers)
