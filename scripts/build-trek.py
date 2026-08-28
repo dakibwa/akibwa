@@ -15,6 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "public/life-map/index.html"
 TEMPLATE = Path(__file__).with_name("trek-page-template.html")
+COVERS = ROOT / "data/trek-covers.json"
 OUT_JSON = ROOT / "data/trek-days.json"
 OUT_HTML = ROOT / "public/trek/index.html"
 
@@ -100,6 +101,37 @@ def title_of(n: str):
     return t.strip("'")
 
 
+def rdp(pts, eps):
+    if len(pts) < 3:
+        return list(pts)
+    ax, ay = pts[0]
+    bx, by = pts[-1]
+    dx, dy = bx - ax, by - ay
+    denom = dx * dx + dy * dy or 1.0
+    maxd = -1.0
+    idx = 0
+    for i in range(1, len(pts) - 1):
+        px, py = pts[i]
+        t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / denom))
+        qx, qy = ax + t * dx, ay + t * dy
+        d = (px - qx) ** 2 + (py - qy) ** 2
+        if d > maxd:
+            maxd = d
+            idx = i
+    if maxd > eps * eps:
+        return rdp(pts[: idx + 1], eps)[:-1] + rdp(pts[idx:], eps)
+    return [pts[0], pts[-1]]
+
+
+def sample(pts, cap):
+    if len(pts) <= cap:
+        return list(pts)
+    step = len(pts) / cap
+    out = [pts[int(i * step)] for i in range(cap - 1)]
+    out.append(pts[-1])
+    return out
+
+
 def main():
     src = SRC.read_text()
     walkm = extract_array(src, "walkm")
@@ -134,12 +166,17 @@ def main():
         return None
 
     by_num = {}
+    tracks = []
     for d in walkm:
         pts = decode(d["p"])
         if not pts:
             continue
+        merc = [(p[0] * WALKQ, p[1] * WALKQ) for p in pts]
+        slim = rdp(sample(merc, 80), 6000)
+        if len(slim) >= 2:
+            tracks.append([[round(x), round(y)] for x, y in slim])
         nums = daynums(d["n"])
-        country = assign(pts[-1][0] * WALKQ, pts[-1][1] * WALKQ)
+        country = assign(merc[-1][0], merc[-1][1])
         if len(nums) == 1:
             n = nums[0]
             by_num[n] = {
@@ -147,25 +184,25 @@ def main():
                 "date": d["d"],
                 "title": title_of(d["n"]),
                 "raw": d["n"],
-                "x": pts[-1][0] * WALKQ,
-                "y": pts[-1][1] * WALKQ,
+                "x": merc[-1][0],
+                "y": merc[-1][1],
                 "walked": True,
                 "country": country,
             }
         elif len(nums) >= 2:
             for i_n, n in enumerate(nums):
                 t = i_n / (len(nums) - 1)
-                idx = round(t * (len(pts) - 1))
-                p = pts[idx]
+                idx = round(t * (len(merc) - 1))
+                p = merc[idx]
                 by_num[n] = {
                     "n": n,
                     "date": d["d"],
                     "title": title_of(d["n"]),
                     "raw": d["n"],
-                    "x": p[0] * WALKQ,
-                    "y": p[1] * WALKQ,
+                    "x": p[0],
+                    "y": p[1],
                     "walked": True,
-                    "country": assign(p[0] * WALKQ, p[1] * WALKQ) or country,
+                    "country": assign(p[0], p[1]) or country,
                 }
 
     last = None
@@ -190,13 +227,55 @@ def main():
             }
         )
 
+    covers = {}
+    if COVERS.exists():
+        payload_c = json.loads(COVERS.read_text())
+        covers = {int(k): v for k, v in payload_c.get("days", {}).items()}
+        for d in days:
+            rec = covers.get(d["n"])
+            if rec and rec.get("matched") and rec.get("src"):
+                d["cover"] = rec["src"]
+                d["coverArtist"] = rec.get("artist")
+                d["coverAlbum"] = rec.get("album")
+
+    xs = [d["x"] for d in days]
+    ys = [d["y"] for d in days]
+    for poly in tracks:
+        for x, y in poly:
+            xs.append(x)
+            ys.append(y)
+    minx, maxx = min(xs), max(xs)
+    miny, maxy = min(ys), max(ys)
+    pad = 80000
+    bbox = (minx - pad, miny - pad, maxx + pad, maxy + pad)
+
+    def overlaps(ring):
+        rx = [p[0] for p in ring]
+        ry = [p[1] for p in ring]
+        return not (max(rx) < bbox[0] or min(rx) > bbox[2] or max(ry) < bbox[1] or min(ry) > bbox[3])
+
+    country_rings = []
+    for name in WALKED:
+        slim = []
+        for ring in country_polys[name]:
+            if len(ring) < 4 or not overlaps(ring):
+                continue
+            pts = rdp(sample(ring, 120), 18000)
+            if len(pts) >= 4:
+                slim.append([[round(x), round(y)] for x, y in pts])
+        if slim:
+            country_rings.append({"name": name, "color": COLORS[name], "rings": slim})
+
     walked_n = sum(1 for d in days if d["walked"])
     rest_n = sum(1 for d in days if not d["walked"])
     countries = {
         c: sum(1 for d in days if d["walked"] and d["country"] == c) for c in WALKED
     }
-    print(f"nodes {len(days)} walked {walked_n} rest {rest_n}")
+    covered = sum(1 for d in days if d.get("cover"))
+    print(f"nodes {len(days)} walked {walked_n} rest {rest_n} covers {covered}")
     print("countries", countries)
+    print(f"track segs {len(tracks)} pts {sum(len(t) for t in tracks)}")
+    print(f"country rings {sum(len(c['rings']) for c in country_rings)}")
     assert len(days) == 67, len(days)
     assert walked_n == 52, walked_n
     assert all(d["country"] in WALKED for d in days)
@@ -204,6 +283,8 @@ def main():
     assert days[-1]["country"] == "Bulgaria"
     last_walked = next(d for d in reversed(days) if d["walked"])
     assert last_walked["title"] == "Allelujah! Don't Bend! Ascend!", last_walked["title"]
+    assert all(not d.get("cover") for d in days if not d["walked"])
+    assert 1982 // 52 == 38
 
     payload = {
         "facts": {
@@ -211,6 +292,7 @@ def main():
             "walked": 52,
             "numbered": 67,
             "countries": 7,
+            "kmPerWalkedDay": 38,
             "from": "Paris",
             "to": "Sofia",
             "start": "2019-09-24",
@@ -220,6 +302,8 @@ def main():
             "after": "He got the coach from Sofia to Istanbul. He was done.",
         },
         "countries": [{"name": n, "color": COLORS[n]} for n in WALKED],
+        "countryRings": country_rings,
+        "tracks": tracks,
         "days": days,
     }
 

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The trek — Paris to Sofia</title>
-<meta name="description" content="Paris to Sofia on foot, 24 September to 28 November 2019. 1,982 km, fifty-two days walked of sixty-seven numbered, seven countries. Every walked day named after a record.">
+<meta name="description" content="Paris to Sofia on foot, 24 September to 28 November 2019. 1,982 km, fifty-two days walked of sixty-seven numbered, about 38 km a walked day, seven countries. Every walked day named after a record.">
 <link rel="canonical" href="https://akibwa.com/trek/">
 <meta name="theme-color" content="#0E1214">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="akibwa">
 <meta property="og:title" content="The trek — Paris to Sofia">
-<meta property="og:description" content="1,982 km on foot, 52 days walked of 67 numbered, seven countries. Every walked day named after a record.">
+<meta property="og:description" content="1,982 km on foot, 52 days walked of 67 numbered, about 38 km a walked day. Every walked day named after a record.">
 <meta property="og:url" content="https://akibwa.com/trek/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230E1214'/%3E%3Ccircle cx='6' cy='22' r='2.2' fill='%23F2F0EA'/%3E%3Ccircle cx='12' cy='16' r='2.2' fill='%23F2F0EA'/%3E%3Ccircle cx='18' cy='18' r='2.2' fill='%23F2F0EA'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%23F2F0EA'/%3E%3Cpath d='M6 22 L12 16 L18 18 L26 10' fill='none' stroke='%232EA3DC' stroke-width='1.6'/%3E%3Crect y='26' width='8' height='6' fill='%232EA3DC'/%3E%3Crect x='8' y='26' width='8' height='6' fill='%23EFC319'/%3E%3Crect x='16' y='26' width='8' height='6' fill='%231FA45A'/%3E%3Crect x='24' y='26' width='8' height='6' fill='%23E97E18'/%3E%3C/svg%3E">
 <style>
@@ -78,17 +78,22 @@
   main{flex:1 1 auto;min-height:0;display:flex;margin:14px 0 0;border-top:1px solid var(--rule)}
   .stage{flex:1 1 auto;min-width:0;position:relative;min-height:280px}
   svg#net{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .land{fill:rgba(242,240,234,.028);stroke:rgba(242,240,234,.07);stroke-width:1}
+  .gps{fill:none;stroke:rgba(242,240,234,.11);stroke-width:1.05;stroke-linecap:round;stroke-linejoin:round}
   .thread{fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.94}
   .thread.dim{opacity:.16}
   .node{cursor:pointer}
   .node circle.hit{fill:transparent;stroke:none}
   .node circle.ring{fill:none;stroke:var(--node);stroke-width:1.7}
-  .node circle.fill{fill:var(--node)}
   .node.rest circle.ring{stroke:var(--ink-soft);stroke-width:1.3}
   .node.sel circle.ring{stroke-width:2.4}
-  .node.dim{opacity:.2}
+  .node.dim{opacity:.22}
   .node:focus{outline:none}
   .node:focus-visible circle.ring{stroke:var(--hellblau)}
+  .node:focus-visible .frame,.node:focus-visible .empty{stroke:var(--hellblau);stroke-width:2}
+  .sleeve image,.sleeve .empty,.sleeve .frame{pointer-events:none}
+  .sleeve .empty{fill:rgba(242,240,234,.08);stroke:var(--node);stroke-width:1.15}
+  .sleeve .frame{fill:none;stroke:rgba(242,240,234,.62);stroke-width:1.1}
   .nlabel{font:600 8px var(--sans);fill:var(--ink-soft);letter-spacing:.04em;
           paint-order:stroke;stroke:var(--paper);stroke-width:3.5px;stroke-linejoin:round;
           pointer-events:none}
@@ -98,6 +103,9 @@
   .clabel{font:600 10px var(--sans);letter-spacing:.08em;text-transform:uppercase;
           paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round;
           pointer-events:none}
+  .tiplabel{font:600 11px var(--sans);fill:var(--ink);letter-spacing:.02em;
+            paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round;
+            pointer-events:none}
   aside{
     flex:0 0 300px;border-left:1px solid var(--rule);padding:22px 22px 28px;
     background:var(--surface);overflow:auto;
@@ -111,14 +119,20 @@
   aside .after{margin-top:22px;padding-top:16px;border-top:1px solid var(--rule);
                font:400 13px/1.5 var(--sans);color:var(--ink-soft)}
   aside .after a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+  aside .art{
+    width:96px;height:96px;object-fit:cover;border-radius:2px;
+    display:block;margin:0 0 14px;background:var(--paper);
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
   .daylist{list-style:none;margin:0;padding:0}
   .daylist li{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--rule);
-              cursor:pointer;font:400 13px/1.35 var(--sans);color:var(--ink-soft)}
+              cursor:pointer;font:400 13px/1.35 var(--sans);color:var(--ink-soft);align-items:center}
   .daylist li:first-child{border-top:0}
   .daylist li b{flex:0 0 3.4em;font:600 11px var(--sans);letter-spacing:.04em;
                 color:var(--ink);font-weight:600}
   .daylist li.rest{opacity:.7;font-style:italic}
   .daylist li:hover{color:var(--ink)}
+  .daylist img{width:22px;height:22px;object-fit:cover;border-radius:1px;flex:0 0 22px}
   .hint{position:absolute;left:16px;bottom:12px;font:400 11px var(--sans);
         color:var(--ink-soft);pointer-events:none;letter-spacing:.04em}
   @media (max-width:860px){
@@ -130,7 +144,7 @@
     h1{font-size:26px}
   }
   @media (prefers-reduced-motion:reduce){
-    .thread,.node{transition:none}
+    .thread,.node,.sleeve image,.sleeve .empty{transition:none}
   }
   .thread,.node{transition:opacity .25s ease}
 </style>
@@ -147,11 +161,12 @@
 <h1>Paris → Sofia</h1>
 <p class="lede">He walked out of the perimeter of Charles de Gaulle on 24 September 2019
 and stopped in Sofia on 28 November. <b>1,982 kilometres</b>, seven countries,
-fifty-two days walked of sixty-seven numbered. Alone, over the Tauern.
-Every walked day named after a record.</p>
+fifty-two days walked of sixty-seven numbered — about <b>38 km</b> on a walked day.
+Alone, over the Tauern. Every walked day named after a record.</p>
 <div class="facts">
   <div><b>1,982 km</b><i>on foot</i></div>
   <div><b>52 / 67</b><i>days walked</i></div>
+  <div><b>38 km</b><i>a walked day</i></div>
   <div><b>7</b><i>countries</i></div>
   <div><b>24 Sep – 28 Nov</b><i>2019</i></div>
 </div>
@@ -159,15 +174,17 @@ Every walked day named after a record.</p>
 <main>
   <div class="stage">
     <svg id="net" viewBox="0 0 1200 640" role="img"
-         aria-label="The 2019 walk from Paris to Sofia as coloured threads through numbered days"></svg>
-    <div class="hint">click a day · arrows move · filled marks were walked</div>
+         aria-label="The 2019 walk from Paris to Sofia as coloured threads of record sleeves, over the geographic GPS as quiet contour"></svg>
+    <div class="hint">hover a sleeve · arrows move · open pins were numbered, not walked</div>
   </div>
   <aside id="panel"></aside>
 </main>
 </div>
 <script>
 const DATA = __TREK_DATA__;
-const VB = {w:1200, h:640, pad:64};
+const VB = {w:1200, h:640, pad:56};
+const SLEEVE = 18;
+const SLEEVE_HOT = 52;
 
 function octi(a, b){
   const dx=b.x-a.x, dy=b.y-a.y;
@@ -187,14 +204,13 @@ function colorOf(name){
 }
 function el(n,a){
   const e=document.createElementNS("http://www.w3.org/2000/svg", n);
-  for(const k in a) e.setAttribute(k,a[k]);
+  for(const k in a) if(a[k]!=null) e.setAttribute(k,a[k]);
   return e;
 }
 function h(tag, attrs, kids){
   const e=document.createElement(tag);
   if(attrs) for(const k in attrs){
     if(k==="style" && typeof attrs[k]==="object") Object.assign(e.style, attrs[k]);
-    else if(k.startsWith("on") && typeof attrs[k]==="function") e.addEventListener(k.slice(2), attrs[k]);
     else if(attrs[k]!=null) e.setAttribute(k, String(attrs[k]));
   }
   (kids||[]).forEach(c=>{
@@ -205,20 +221,20 @@ function h(tag, attrs, kids){
 }
 
 const xs=DATA.days.map(d=>d.x), ys=DATA.days.map(d=>d.y);
+(DATA.tracks||[]).forEach(seg=>seg.forEach(p=>{ xs.push(p[0]); ys.push(p[1]); }));
 const minx=Math.min(...xs), maxx=Math.max(...xs);
 const miny=Math.min(...ys), maxy=Math.max(...ys);
 const bw=maxx-minx||1, bh=maxy-miny||1;
 const innerW=VB.w-2*VB.pad, innerH=VB.h-2*VB.pad;
 const k=Math.min(innerW/bw, innerH/bh);
 const ox=VB.pad+(innerW-bw*k)/2, oy=VB.pad+(innerH-bh*k)/2;
-const nodes=DATA.days.map(d=>({...d, x:ox+(d.x-minx)*k, y:oy+(d.y-miny)*k}));
+const xy=(x,y)=>({x:ox+(x-minx)*k, y:oy+(y-miny)*k});
+const nodes=DATA.days.map(d=>({...d, ...xy(d.x, d.y)}));
 
-/* Rest days share the last walked GPS. Nudge them in the diagram so the
-   net can be read — the coordinates in the data stay where the record is. */
 (function unstack(){
   const groups=new Map();
   nodes.forEach(n=>{
-    const key=Math.round(n.x/0.5)+","+Math.round(n.y/0.5);
+    const key=Math.round(n.x)+","+Math.round(n.y);
     if(!groups.has(key)) groups.set(key, []);
     groups.get(key).push(n);
   });
@@ -226,23 +242,80 @@ const nodes=DATA.days.map(d=>({...d, x:ox+(d.x-minx)*k, y:oy+(d.y-miny)*k}));
     if(arr.length<2) return;
     const rest=arr.filter(d=>!d.walked);
     rest.forEach((d,i)=>{
-      const dist=22*(i+1);
+      const dist=26*(i+1);
       d.x += dist * Math.cos(-Math.PI/5);
       d.y += dist * Math.sin(-Math.PI/5);
     });
+    const walkedHere=arr.filter(d=>d.walked);
+    walkedHere.forEach((d,i)=>{
+      if(walkedHere.length<2) return;
+      const dist=(SLEEVE+6)*(i-(walkedHere.length-1)/2);
+      d.x += dist * Math.cos(-Math.PI/6);
+      d.y += dist * Math.sin(-Math.PI/6);
+    });
   });
+  const walked=nodes.filter(d=>d.walked);
+  const min=SLEEVE+6;
+  for(let pass=0; pass<5; pass++){
+    for(let i=0;i<walked.length;i++){
+      for(let j=i+1;j<walked.length;j++){
+        const a=walked[i], b=walked[j];
+        let dx=b.x-a.x, dy=b.y-a.y;
+        let dist=Math.hypot(dx,dy);
+        if(dist>=min) continue;
+        if(dist<0.01){
+          dx=1; dy=0; dist=1;
+        }
+        const push=(min-dist)/2;
+        const ux=dx/dist, uy=dy/dist;
+        a.x -= ux*push; a.y -= uy*push;
+        b.x += ux*push; b.y += uy*push;
+      }
+    }
+  }
+  const restNodes=nodes.filter(d=>!d.walked);
+  const minR=SLEEVE/2+10;
+  for(const r of restNodes){
+    for(const w of walked){
+      const dx=r.x-w.x, dy=r.y-w.y;
+      let dist=Math.hypot(dx,dy);
+      if(dist>=minR) continue;
+      if(dist<0.01){ r.x += minR; continue; }
+      const push=minR-dist;
+      r.x += (dx/dist)*push;
+      r.y += (dy/dist)*push;
+    }
+  }
 })();
 
 const svg=document.getElementById("net");
+const defs=el("defs",{});
+const filt=el("filter",{id:"sleeve-shadow", x:"-20%", y:"-20%", width:"140%", height:"140%"});
+filt.appendChild(el("feDropShadow",{"dx":"0","dy":"0.5","stdDeviation":"0.7","flood-color":"#000","flood-opacity":".4"}));
+defs.appendChild(filt);
+svg.appendChild(defs);
+const gC=el("g",{id:"contour"});
 const gT=el("g",{id:"threads"});
 const gN=el("g",{id:"nodes"});
-svg.appendChild(gT); svg.appendChild(gN);
+const gL=el("g",{id:"labels"});
+svg.appendChild(gC); svg.appendChild(gT); svg.appendChild(gN); svg.appendChild(gL);
+
+(DATA.countryRings||[]).forEach(c=>{
+  (c.rings||[]).forEach(ring=>{
+    const pts=ring.map(([x,y])=>xy(x,y));
+    gC.appendChild(el("path",{class:"land", d:dstr(pts)+"Z"}));
+  });
+});
+(DATA.tracks||[]).forEach(seg=>{
+  const pts=seg.map(([x,y])=>xy(x,y));
+  gC.appendChild(el("path",{class:"gps", d:dstr(pts)}));
+});
 
 for(let i=1;i<nodes.length;i++){
   const a=nodes[i-1], b=nodes[i];
   const p=el("path",{
     d:dstr(octi(a,b)), class:"thread", stroke:colorOf(b.country),
-    "stroke-width": b.walked ? "2.8" : "1.5",
+    "stroke-width": b.walked ? "2.2" : "1.4",
     "data-c": b.country||"", fill:"none"
   });
   if(!b.walked) p.setAttribute("stroke-dasharray","4 5");
@@ -253,39 +326,73 @@ const firstOf={};
 nodes.forEach(d=>{
   if(d.walked && d.country && firstOf[d.country]==null) firstOf[d.country]=d;
 });
-const gL=el("g",{id:"labels"});
 DATA.countries.forEach(c=>{
   const d=firstOf[c.name]; if(!d) return;
-  const t=el("text",{x:d.x, y:d.y+18, class:"clabel", fill:c.color, "text-anchor":"middle"});
+  const t=el("text",{x:d.x, y:d.y+32, class:"clabel", fill:c.color, "text-anchor":"middle"});
   t.textContent=c.name;
   gL.appendChild(t);
 });
 const lastWalked=[...nodes].reverse().find(d=>d.walked) || nodes[nodes.length-1];
-[["Paris", nodes[0], "middle", -16], ["Sofia", lastWalked, "middle", -16]].forEach(([name,p,,dy])=>{
+[["Paris", nodes[0], -30], ["Sofia", lastWalked, -30]].forEach(([name,p,dy])=>{
   const t=el("text",{x:p.x, y:p.y+dy, class:"endlabel", "text-anchor":"middle"});
   t.textContent=name;
   gL.appendChild(t);
 });
-svg.appendChild(gL);
+
+function setSleeveSize(g, size){
+  const d=nodes[+g.dataset.i];
+  const half=size/2;
+  const img=g.querySelector("image");
+  const empty=g.querySelector(".empty");
+  const frame=g.querySelector(".frame");
+  const hit=g.querySelector("circle.hit");
+  const box=(node)=>{
+    if(!node) return;
+    node.setAttribute("x", d.x-half);
+    node.setAttribute("y", d.y-half);
+    node.setAttribute("width", size);
+    node.setAttribute("height", size);
+  };
+  box(img); box(empty); box(frame);
+  if(hit) hit.setAttribute("r", Math.max(12, half+5));
+}
 
 nodes.forEach((d,i)=>{
   const g=el("g",{
-    class:"node"+(d.walked?"":" rest"),
+    class:"node"+(d.walked?" sleeve":" rest"),
     "data-i":String(i), tabindex:"0", role:"button",
     "aria-label": d.walked ? ("Day "+d.n+" — "+(d.title||"")) : ("Day "+d.n+", numbered, not walked")
   });
-  const r=d.walked?6.2:4.6;
-  g.appendChild(el("circle",{class:"hit", cx:d.x, cy:d.y, r: d.walked?12:9}));
-  g.appendChild(el("circle",{class:"ring", cx:d.x, cy:d.y, r}));
-  if(d.walked) g.appendChild(el("circle",{class:"fill", cx:d.x, cy:d.y, r:2}));
+  g.appendChild(el("circle",{class:"hit", cx:d.x, cy:d.y, r: d.walked?14:9}));
+  if(d.walked){
+    g.setAttribute("filter","url(#sleeve-shadow)");
+    const x=d.x-SLEEVE/2, y=d.y-SLEEVE/2;
+    if(d.cover){
+      const img=el("image",{
+        href:d.cover, x, y,
+        width:SLEEVE, height:SLEEVE, preserveAspectRatio:"xMidYMid slice"
+      });
+      img.setAttributeNS("http://www.w3.org/1999/xlink","href", d.cover);
+      img.addEventListener("error", ()=>{
+        img.remove();
+        const empty=el("rect",{class:"empty", x, y, width:SLEEVE, height:SLEEVE, rx:1.5});
+        const frame=g.querySelector(".frame");
+        if(frame) g.insertBefore(empty, frame);
+        else g.appendChild(empty);
+      });
+      g.appendChild(img);
+      g.appendChild(el("rect",{class:"frame", x, y, width:SLEEVE, height:SLEEVE, rx:1.5}));
+    } else {
+      g.appendChild(el("rect",{
+        class:"empty", x, y, width:SLEEVE, height:SLEEVE, rx:1.5
+      }));
+    }
+  } else {
+    g.appendChild(el("circle",{class:"ring", cx:d.x, cy:d.y, r:4.6}));
+  }
   const title=document.createElementNS("http://www.w3.org/2000/svg","title");
   title.textContent=d.walked ? ("Day "+d.n+" — "+d.title) : ("Day "+d.n+" — numbered, not walked");
   g.appendChild(title);
-  if(d.walked && (d.n===1 || d.n===lastWalked.n || d===firstOf[d.country])){
-    const lab=el("text",{x:d.x, y:d.y-11, class:"nlabel", "text-anchor":"middle"});
-    lab.textContent=String(d.n);
-    g.appendChild(lab);
-  }
   gN.appendChild(g);
 });
 [...gN.querySelectorAll(".node:not(.rest)")].forEach(n=>gN.appendChild(n));
@@ -301,7 +408,7 @@ DATA.countries.forEach(c=>{
 });
 
 const panel=document.getElementById("panel");
-let sel=null, cFocus=null;
+let sel=null, cFocus=null, hot=null;
 
 function idleCopy(){
   panel.replaceChildren(
@@ -309,8 +416,8 @@ function idleCopy(){
     h("h2", null, ["Paris → Sofia"]),
     h("p",{class:"when"}, ["24 September – 28 November 2019 · alone"]),
     h("div",{class:"body"}, [
-      h("p", null, ["Sixty-seven numbered days. Fifty-two of them walked. Each filled mark is a day with GPS, named after a record. Colour is the country that day’s last point sat in."]),
-      h("p", null, ["Open marks are numbered days with no GPS, pinned at the last walked point. The thread is octilinear so the days read as a net, not a heatmap."])
+      h("p", null, ["Sixty-seven numbered days. Fifty-two of them walked — about 38 km on a walked day. Each sleeve is a day named after a record. Colour is the country that day’s last GPS point sat in."]),
+      h("p", null, ["The pale line is the GPS. The coloured thread is octilinear so the days read as a net. Open pins are numbered days with no GPS, and no cover."])
     ]),
     h("p",{class:"after"}, [
       "“I got the coach from Sofia to Istanbul, I was done.” The last walked day is titled ",
@@ -327,12 +434,13 @@ function paint(){
     const i=+n.dataset.i;
     const d=nodes[i];
     n.classList.toggle("sel", sel===i);
-    const dim = cFocus ? (d.country!==cFocus && sel!==i)
-                       : (sel!=null && sel!==i);
+    const dim = cFocus ? (d.country!==cFocus && sel!==i && hot!==i)
+                       : (sel!=null && sel!==i && hot!==i);
     n.classList.toggle("dim", dim);
     const ring=n.querySelector("circle.ring");
     if(ring && sel===i && d.country) ring.setAttribute("stroke", colorOf(d.country));
-    else if(ring) ring.setAttribute("stroke", d.walked ? "var(--node)" : "var(--ink-soft)");
+    else if(ring) ring.setAttribute("stroke", "var(--ink-soft)");
+    if(d.walked) setSleeveSize(n, (hot===i || sel===i) ? SLEEVE_HOT : SLEEVE);
   });
   gT.querySelectorAll(".thread").forEach(p=>{
     p.classList.toggle("dim", !!(cFocus && p.dataset.c!==cFocus));
@@ -340,6 +448,21 @@ function paint(){
   gL.querySelectorAll(".clabel").forEach(t=>{
     t.style.opacity = (!cFocus || t.textContent===cFocus) ? "1" : ".2";
   });
+  const tip=gL.querySelector(".tiplabel");
+  if(tip) tip.remove();
+  const hi = hot!=null ? hot : sel;
+  if(hi!=null && nodes[hi].walked){
+    const d=nodes[hi];
+    const above=d.y - SLEEVE_HOT/2 - 8;
+    const ty=above<14 ? d.y + SLEEVE_HOT/2 + 14 : above;
+    const t=el("text",{
+      x:d.x, y:ty, class:"tiplabel", "text-anchor":"middle"
+    });
+    t.textContent=d.title;
+    gL.appendChild(t);
+    const g=gN.querySelector('.node[data-i="'+hi+'"]');
+    if(g) gN.appendChild(g);
+  }
   key.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.c===cFocus)));
 }
 
@@ -349,7 +472,7 @@ function fmtDate(iso){
 }
 
 function show(i){
-  sel=i; cFocus=null;
+  sel=i; cFocus=null; hot=i;
   const d=DATA.days[i];
   const color=colorOf(d.country);
   if(!d.walked){
@@ -358,18 +481,26 @@ function show(i){
       h("h2", null, ["Not walked"]),
       h("p",{class:"when"}, ["A numbered day with no GPS"]),
       h("div",{class:"body"}, [
-        h("p", null, ["Pinned at the last walked point before it — the place the record actually has, not a guessed campsite."])
+        h("p", null, ["Pinned at the last walked point before it — the place the record actually has, not a guessed campsite. No sleeve, because there is no record for a day that was not walked."])
       ])
     );
   } else {
-    const kids=[
+    const kids=[];
+    if(d.cover){
+      kids.push(h("img",{class:"art", src:d.cover, alt:(d.coverAlbum||d.title||"")}));
+    }
+    kids.push(
       h("p",{class:"kicker", style:{color}}, ["Day "+d.n+(d.country?(" · "+d.country):"")]),
       h("h2", null, [d.title || ("Day "+d.n)]),
-      h("p",{class:"when"}, [fmtDate(d.date)]),
+      h("p",{class:"when"}, [
+        fmtDate(d.date) + (d.coverArtist ? (" · "+d.coverArtist) : "")
+      ]),
       h("div",{class:"body"}, [
-        h("p", null, ["Named after a record, from the GPS of that day."])
+        h("p", null, [d.cover
+          ? "Named after a record. The sleeve is the Cover Art Archive front for that exact release."
+          : "Named after a record, from the GPS of that day. No sleeve here — nothing in MusicBrainz matched this title exactly, and we would not guess one."])
       ])
-    ];
+    );
     if(d.n===66){
       kids.push(h("p",{class:"after"}, [
         "The last walked day. Then the coach from Sofia to Istanbul — he refused to walk that leg. “I was done.”"
@@ -381,16 +512,16 @@ function show(i){
 }
 
 function showCountry(name){
-  cFocus = name; sel=null;
+  cFocus = name; sel=null; hot=null;
   const color=colorOf(name);
   const days=DATA.days.filter(d=>d.country===name);
   const walked=days.filter(d=>d.walked);
   const ol=h("ol",{class:"daylist"});
   days.forEach(d=>{
-    const li=h("li", {"data-i": String(d.n-1), class: d.walked?"":"rest"}, [
-      h("b", null, ["Day "+d.n]),
-      d.walked ? (d.title || "") : "numbered, not walked"
-    ]);
+    const bits=[h("b", null, ["Day "+d.n])];
+    if(d.cover) bits.push(h("img",{src:d.cover, alt:""}));
+    bits.push(d.walked ? (d.title || "") : "numbered, not walked");
+    const li=h("li", {"data-i": String(d.n-1), class: d.walked?"":"rest"}, bits);
     ol.appendChild(li);
   });
   panel.replaceChildren(
@@ -402,8 +533,18 @@ function showCountry(name){
   paint();
 }
 
-function idlePanel(){ sel=null; cFocus=null; idleCopy(); paint(); }
+function idlePanel(){ sel=null; cFocus=null; hot=null; idleCopy(); paint(); }
 
+gN.addEventListener("pointerenter", e=>{
+  const n=e.target.closest(".node"); if(!n) return;
+  const i=+n.dataset.i;
+  if(!nodes[i].walked) return;
+  hot=i; paint();
+}, true);
+gN.addEventListener("pointerleave", e=>{
+  const n=e.target.closest(".node"); if(!n) return;
+  if(hot===+n.dataset.i && sel!==hot){ hot=sel; paint(); }
+}, true);
 gN.addEventListener("click", e=>{
   const n=e.target.closest(".node"); if(!n) return;
   const i=+n.dataset.i;
@@ -412,6 +553,10 @@ gN.addEventListener("click", e=>{
 gN.addEventListener("keydown", e=>{
   const n=e.target.closest(".node"); if(!n) return;
   if(e.key==="Enter" || e.key===" "){ e.preventDefault(); n.dispatchEvent(new Event("click", {bubbles:true})); }
+});
+gN.addEventListener("focusin", e=>{
+  const n=e.target.closest(".node"); if(!n) return;
+  hot=+n.dataset.i; paint();
 });
 svg.addEventListener("click", e=>{ if(!e.target.closest(".node")) idlePanel(); });
 key.addEventListener("click", e=>{
