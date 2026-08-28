@@ -3523,6 +3523,592 @@
       }
     ]
   },
+  "grandTile:/music-art/graceland.webp": {
+    "source": "/music-art/graceland.webp",
+    "slot": "grandTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 1200,
+    "sourceHash": "53d57df08f76fc1d",
+    "variants": [
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/music-art/graceland-grandTile-264.avif",
+          "bytes": 4207
+        },
+        "webp": {
+          "src": "/_img/music-art/graceland-grandTile-264.webp",
+          "bytes": 4514
+        }
+      },
+      {
+        "width": 375,
+        "height": 375,
+        "avif": {
+          "src": "/_img/music-art/graceland-grandTile-375.avif",
+          "bytes": 7375
+        },
+        "webp": {
+          "src": "/_img/music-art/graceland-grandTile-375.webp",
+          "bytes": 8106
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/claude.webp": {
+    "source": "/project-art/tools/claude.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "a1906bb1bbdf7e9e",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/claude-deckTile-138.avif",
+          "bytes": 933
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/claude-deckTile-138.webp",
+          "bytes": 912
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/claude-deckTile-200.avif",
+          "bytes": 1250
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/claude-deckTile-200.webp",
+          "bytes": 1440
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/claude-deckTile-264.avif",
+          "bytes": 1530
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/claude-deckTile-264.webp",
+          "bytes": 2160
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/cloudflare.webp": {
+    "source": "/project-art/tools/cloudflare.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "61b7335b4f678b0f",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/cloudflare-deckTile-138.avif",
+          "bytes": 797
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/cloudflare-deckTile-138.webp",
+          "bytes": 894
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/cloudflare-deckTile-200.avif",
+          "bytes": 1051
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/cloudflare-deckTile-200.webp",
+          "bytes": 1368
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/cloudflare-deckTile-264.avif",
+          "bytes": 1320
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/cloudflare-deckTile-264.webp",
+          "bytes": 2062
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/excel.webp": {
+    "source": "/project-art/tools/excel.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "f95d91b80d5164c4",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/excel-deckTile-138.avif",
+          "bytes": 1121
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/excel-deckTile-138.webp",
+          "bytes": 1322
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/excel-deckTile-200.avif",
+          "bytes": 1762
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/excel-deckTile-200.webp",
+          "bytes": 2062
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/excel-deckTile-264.avif",
+          "bytes": 2087
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/excel-deckTile-264.webp",
+          "bytes": 2722
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/fabric.webp": {
+    "source": "/project-art/tools/fabric.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "742049ebdfb6061e",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/fabric-deckTile-138.avif",
+          "bytes": 1002
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/fabric-deckTile-138.webp",
+          "bytes": 948
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/fabric-deckTile-200.avif",
+          "bytes": 1216
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/fabric-deckTile-200.webp",
+          "bytes": 1478
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/fabric-deckTile-264.avif",
+          "bytes": 1470
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/fabric-deckTile-264.webp",
+          "bytes": 2122
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/figma.webp": {
+    "source": "/project-art/tools/figma.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "515f73acb9838864",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/figma-deckTile-138.avif",
+          "bytes": 831
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/figma-deckTile-138.webp",
+          "bytes": 794
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/figma-deckTile-200.avif",
+          "bytes": 1080
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/figma-deckTile-200.webp",
+          "bytes": 1220
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/figma-deckTile-264.avif",
+          "bytes": 1290
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/figma-deckTile-264.webp",
+          "bytes": 1864
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/github.webp": {
+    "source": "/project-art/tools/github.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "b8f2226f514b1537",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/github-deckTile-138.avif",
+          "bytes": 1104
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/github-deckTile-138.webp",
+          "bytes": 1134
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/github-deckTile-200.avif",
+          "bytes": 1632
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/github-deckTile-200.webp",
+          "bytes": 1926
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/github-deckTile-264.avif",
+          "bytes": 2104
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/github-deckTile-264.webp",
+          "bytes": 2928
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/grok-bot.webp": {
+    "source": "/project-art/tools/grok-bot.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c02103973067ae1c",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/grok-bot-deckTile-138.avif",
+          "bytes": 580
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/grok-bot-deckTile-138.webp",
+          "bytes": 456
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/grok-bot-deckTile-200.avif",
+          "bytes": 699
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/grok-bot-deckTile-200.webp",
+          "bytes": 628
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/grok-bot-deckTile-264.avif",
+          "bytes": 857
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/grok-bot-deckTile-264.webp",
+          "bytes": 1192
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/openai.webp": {
+    "source": "/project-art/tools/openai.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "a7ce7f4310a71689",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/openai-deckTile-138.avif",
+          "bytes": 706
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/openai-deckTile-138.webp",
+          "bytes": 648
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/openai-deckTile-200.avif",
+          "bytes": 935
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/openai-deckTile-200.webp",
+          "bytes": 872
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/openai-deckTile-264.avif",
+          "bytes": 1107
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/openai-deckTile-264.webp",
+          "bytes": 1266
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/oracle.webp": {
+    "source": "/project-art/tools/oracle.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d256577834f1e94e",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/oracle-deckTile-138.avif",
+          "bytes": 969
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/oracle-deckTile-138.webp",
+          "bytes": 960
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/oracle-deckTile-200.avif",
+          "bytes": 1149
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/oracle-deckTile-200.webp",
+          "bytes": 1306
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/oracle-deckTile-264.avif",
+          "bytes": 1463
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/oracle-deckTile-264.webp",
+          "bytes": 1714
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/power-bi.webp": {
+    "source": "/project-art/tools/power-bi.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "e983ef0fe6fd0d6d",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/power-bi-deckTile-138.avif",
+          "bytes": 717
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/power-bi-deckTile-138.webp",
+          "bytes": 674
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/power-bi-deckTile-200.avif",
+          "bytes": 848
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/power-bi-deckTile-200.webp",
+          "bytes": 898
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/power-bi-deckTile-264.avif",
+          "bytes": 1125
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/power-bi-deckTile-264.webp",
+          "bytes": 1316
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/powerpoint.webp": {
+    "source": "/project-art/tools/powerpoint.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1e8b08d4efc45163",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/powerpoint-deckTile-138.avif",
+          "bytes": 708
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/powerpoint-deckTile-138.webp",
+          "bytes": 666
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/powerpoint-deckTile-200.avif",
+          "bytes": 870
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/powerpoint-deckTile-200.webp",
+          "bytes": 906
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/powerpoint-deckTile-264.avif",
+          "bytes": 1063
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/powerpoint-deckTile-264.webp",
+          "bytes": 1304
+        }
+      }
+    ]
+  },
+  "deckTile:/project-art/tools/sql.webp": {
+    "source": "/project-art/tools/sql.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "21174e5499ba1296",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/project-art/tools/sql-deckTile-138.avif",
+          "bytes": 1093
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/sql-deckTile-138.webp",
+          "bytes": 1356
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/project-art/tools/sql-deckTile-200.avif",
+          "bytes": 1537
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/sql-deckTile-200.webp",
+          "bytes": 2012
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/project-art/tools/sql-deckTile-264.avif",
+          "bytes": 2195
+        },
+        "webp": {
+          "src": "/_img/project-art/tools/sql-deckTile-264.webp",
+          "bytes": 2938
+        }
+      }
+    ]
+  },
   "deckTile:/film-posters/a-clockwork-orange.webp": {
     "source": "/film-posters/a-clockwork-orange.webp",
     "slot": "deckTile",

@@ -54,6 +54,9 @@ const SLOTS = {
   // and 176 on the widest frames.
   deckTile: { ratio: 1, css: [92, 133, 176] },
 
+  // .deck .card--grand — the three-unit card for the truly important.
+  grandTile: { ratio: 1, css: [176, 250] },
+
   // .page-art-panel — 0.5fr of the hero grid, capped at 520px under 1060px.
   heroPanel16: { ratio: 16 / 9, css: [327, 425, 520] },
   heroPanel43: { ratio: 4 / 3, css: [327, 425, 520] },
@@ -216,6 +219,19 @@ const sources = [
   { file: "project-art/personal/ines-fan-splat.webp", slot: "deckTile" },
   { file: "project-art/personal/features-card.webp", slot: "deckTile" },
   { file: "project-art/personal/features-symbol.webp", slot: "deckTile" },
+  { file: "music-art/graceland.webp", slot: "grandTile" },
+  { file: "project-art/tools/claude.webp", slot: "deckTile" },
+  { file: "project-art/tools/cloudflare.webp", slot: "deckTile" },
+  { file: "project-art/tools/excel.webp", slot: "deckTile" },
+  { file: "project-art/tools/fabric.webp", slot: "deckTile" },
+  { file: "project-art/tools/figma.webp", slot: "deckTile" },
+  { file: "project-art/tools/github.webp", slot: "deckTile" },
+  { file: "project-art/tools/grok-bot.webp", slot: "deckTile" },
+  { file: "project-art/tools/openai.webp", slot: "deckTile" },
+  { file: "project-art/tools/oracle.webp", slot: "deckTile" },
+  { file: "project-art/tools/power-bi.webp", slot: "deckTile" },
+  { file: "project-art/tools/powerpoint.webp", slot: "deckTile" },
+  { file: "project-art/tools/sql.webp", slot: "deckTile" },
   { file: "film-posters/a-clockwork-orange.webp", slot: "deckTile" },
   { file: "film-posters/adaptation.webp", slot: "deckTile" },
   { file: "film-posters/american-beauty.webp", slot: "deckTile" },

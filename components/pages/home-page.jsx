@@ -1,11 +1,11 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES, resolveBackground } from "@/components/site-image";
-import { deck, sites, life, games, tv, sets, instagramUrl } from "@/components/deck-data";
+import { deck, sites, life, games, tv, sets, graceland, instagramUrl } from "@/components/deck-data";
 
 const nf = new Intl.NumberFormat("en-GB");
 
@@ -21,10 +21,13 @@ const crop = (i, n) => `${n > 1 ? Math.round((i / (n - 1)) * 100) : 50}% 50%`;
 
 /* The whole site is one wall of identically sized cards. Every card shows one
    thing face up and turns over to say how — hover on a pointer, tap on touch. */
-function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, small, onActivate }) {
+function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace, back, held, dim, size, onActivate }) {
   const props = {
-    className: `card card--${suit}${small ? " card--small" : ""}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${size === "small" ? " card--small" : ""}${size === "grand" ? " card--grand" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
+    /* The key: which legend word this card answers to. Its colour is worn as
+       the card's bottom edge, so a blended wall still reads at a glance. */
+    "data-key": keySet ?? suit,
     "aria-label": label,
     hidden: held || undefined,
     style:
@@ -39,7 +42,7 @@ function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, 
       {...props}
       type="button"
       onClick={(event) =>
-        onActivate?.({ suit, ground, accent, crop, label, face, back, href }, event.currentTarget)
+        onActivate?.({ suit, ground, accent, crop, label, face, spotFace, back, href }, event.currentTarget)
       }
     >
       <span className="card-face">{face}</span>
@@ -85,6 +88,18 @@ function Spotlight({ lit, onClose }) {
     return () => document.removeEventListener("keydown", onKey);
   });
 
+  /* The wall's faces load lazily, and a face replayed inside this overlay
+     keeps that attribute — where, mid-FLIP, the lazy gate never fires and the
+     image simply never fetches. The spotlight is the one place the visitor
+     has explicitly asked for the picture, so everything in it loads now. */
+  useLayoutEffect(() => {
+    figureRef.current
+      ?.querySelectorAll('img[loading="lazy"]')
+      .forEach((img) => {
+        img.loading = "eager";
+      });
+  }, [lit]);
+
   useLayoutEffect(() => {
     const fig = figureRef.current;
     if (!fig) return;
@@ -125,7 +140,10 @@ function Spotlight({ lit, onClose }) {
               : undefined
           }
         >
-          <span className="card-face">{card.face}</span>
+          {/* Played large, the card deserves better than the wall's 264px
+              rung — a spotlight face is the full-size artwork where one
+              exists, and the wall face only as the fallback. */}
+          <span className="card-face">{card.spotFace ?? card.face}</span>
         </div>
         <figcaption className="spotlight-caption" data-suit={card.suit}>
           {card.back}
@@ -146,6 +164,20 @@ function Spotlight({ lit, onClose }) {
       </button>
     </div>
   );
+}
+
+/* The blend: each collection is dealt evenly through the whole stream rather
+   than standing as its own block — item i of a collection of n lands at
+   (i + φ) / n, and one sort by that position shuffles every collection through
+   every other, deterministically. φ staggers the collections so equal-length
+   lists do not zipper, and the leads (low i) still surface near the top. */
+const PHASE = { music: 0.5, films: 0.23, games: 0.71, tv: 0.37, jobs: 0.81, tools: 0.11, creations: 0.61 };
+
+function blend(lists) {
+  return lists
+    .flatMap(([id, cards]) => cards.map((card, i) => ({ at: (i + PHASE[id]) / cards.length, card })))
+    .sort((a, b) => a.at - b.at)
+    .map((dealt) => dealt.card);
 }
 
 function sizeClass(text, serif) {
@@ -279,8 +311,15 @@ export function HomePage() {
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
 
   /* How many of a collection lead at full size before the rest pack small —
-     four small tiles to one large. The making sets stay large throughout. */
-  const LEAD = { music: 12, films: 8, games: 6, tv: 6, creations: 2 };
+     four small tiles to one large. The making sets stay large throughout.
+     BEAT then lifts one tail card in every so many back to full size, so the
+     deep wall keeps varying instead of settling into a uniform grain. */
+  const LEAD = { music: 12, films: 8, games: 6, tv: 6, creations: 2, tools: 0 };
+  const BEAT = { music: 24, films: 12, games: 9, tv: 11, creations: 6, tools: 7 };
+  const sizeFor = (id, index) => {
+    if (index < LEAD[id]) return undefined;
+    return (index - LEAD[id]) % BEAT[id] === BEAT[id] - 1 ? undefined : "small";
+  };
 
   const cardsFor = (id, { all = false, as } = {}) => {
     /* `as` renders one collection inside another set's row — the toolkit
@@ -296,12 +335,15 @@ export function HomePage() {
     if (id === "jobs") {
       return deck.jobs.map((job) => (
         <Card
-          key={job.name}
+          key={`job-${job.name}`}
           suit="jobs"
           dim={isDim}
           {...shared}
           accent={job.accent}
           label={`${job.name}, ${job.role}`}
+          spotFace={
+            job.art ? <SiteImage src={job.art} priority alt="" className="c-art" /> : undefined
+          }
           face={
             <>
               {job.art ? (
@@ -335,14 +377,19 @@ export function HomePage() {
     }
 
     if (id === "tools") {
-      return deck.tools.map((tool) => (
+      return deck.tools.map((tool, index) => (
         <Card
-          key={tool.name}
+          size={sizeFor("tools", index)}
+          key={`tool-${tool.name}`}
           suit="tools"
+          keySet="jobs"
           dim={isDim}
           {...shared}
           ground={TOOL_GROUND[tool.name]}
           label={tool.name}
+          spotFace={
+            tool.art ? <SiteImage src={tool.art} priority alt="" className="c-art" /> : undefined
+          }
           face={
             <>
               {tool.art ? (
@@ -371,7 +418,7 @@ export function HomePage() {
     if (id === "sites") {
       return sites.map((site) => (
         <Card
-          key={site.name}
+          key={`site-${site.name}`}
           suit="sites"
           dim={isDim}
           {...shared}
@@ -381,6 +428,7 @@ export function HomePage() {
           face={
             <SiteImage src={site.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
+          spotFace={<SiteImage src={site.art} priority alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{site.name}</span>
@@ -394,8 +442,9 @@ export function HomePage() {
     if (id === "life") {
       return life.map((piece) => (
         <Card
-          key={piece.name}
+          key={`life-${piece.name}`}
           suit="sites"
+          keySet="life"
           dim={isDim}
           {...shared}
           ground={piece.ground}
@@ -404,6 +453,7 @@ export function HomePage() {
           face={
             <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
+          spotFace={<SiteImage src={piece.art} priority alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{piece.name}</span>
@@ -417,13 +467,14 @@ export function HomePage() {
     if (id === "music") {
       return deck.music.slice(0, cap === Infinity ? deck.music.length : cap).map((album, index) => (
         <Card
-          small={index >= LEAD.music}
-          key={album.id}
+          size={sizeFor("music", index)}
+          key={`album-${album.id}`}
           suit="music"
           dim={isDim}
           {...shared}
           label={`${album.artist} — ${album.album}`}
           face={<AlbumArtImage id={album.id} rung="wall" className="c-art" />}
+          spotFace={<AlbumArtImage id={album.id} rung="card" priority className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{album.artist}</span>
@@ -442,16 +493,17 @@ export function HomePage() {
         const [a, b] = post.title.split(" × ");
         return (
           <Card
-            small={index >= LEAD.creations}
-            key={post.number}
+            size={sizeFor("creations", index)}
+            key={`collision-${post.number}`}
             suit="creations"
+            keySet="sites"
             dim={isDim}
             {...shared}
-          {...shared}
             label={`Cover Collision ${post.number}: ${post.title}`}
             face={
               <SiteImage src={post.image} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
             }
+            spotFace={<SiteImage src={post.image} priority alt="" className="c-art" />}
             back={
               <>
                 <span className="b-eyebrow">No. {post.number}</span>
@@ -470,8 +522,8 @@ export function HomePage() {
     if (id === "films") {
       return deck.films.slice(0, cap === Infinity ? deck.films.length : cap).map((film, index) => (
         <Card
-          small={index >= LEAD.films}
-          key={film.title}
+          size={sizeFor("films", index)}
+          key={`film-${film.title}`}
           suit="films"
           dim={isDim}
           {...shared}
@@ -479,6 +531,7 @@ export function HomePage() {
           face={
             <SiteImage src={film.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
+          spotFace={<SiteImage src={film.poster} priority alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{film.title}</span>
@@ -497,8 +550,8 @@ export function HomePage() {
     if (id === "games") {
       return games.slice(0, cap === Infinity ? games.length : cap).map((game, index) => (
         <Card
-          small={index >= LEAD.games}
-          key={game.title}
+          size={sizeFor("games", index)}
+          key={`game-${game.title}`}
           suit="games"
           dim={isDim}
           {...shared}
@@ -506,6 +559,7 @@ export function HomePage() {
           face={
             <SiteImage src={game.cover} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
+          spotFace={<SiteImage src={game.cover} priority alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{game.studio}</span>
@@ -519,8 +573,8 @@ export function HomePage() {
     if (id === "tv") {
       return tv.slice(0, cap === Infinity ? tv.length : cap).map((show, index) => (
         <Card
-          small={index >= LEAD.tv}
-          key={show.title}
+          size={sizeFor("tv", index)}
+          key={`tv-${show.title}`}
           suit="tv"
           dim={isDim}
           {...shared}
@@ -528,6 +582,7 @@ export function HomePage() {
           face={
             <SiteImage src={show.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
+          spotFace={<SiteImage src={show.poster} priority alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{show.year}{show.creator ? ` · ${show.creator}` : ""}</span>
@@ -554,6 +609,10 @@ export function HomePage() {
     },
     [lens, withMorph]
   );
+
+  /* Career leads the front of the wall with its two current roles; the six
+     past ones are dealt through the blend below with everything else. */
+  const jobCards = cardsFor("jobs");
 
   return (
     <section className="akibwa-home" onClick={releaseOnPaper}>
@@ -586,53 +645,69 @@ export function HomePage() {
           </h1>
         </div>
 
-        {sets.map((set) => {
-          const cards = cardsFor(set.id);
-          /* One library: the word leads its collection and the next
-             collection continues in the same stream — a single wrapping
-             flow, no blocks, no rows of its own. */
-          const flow =
-            set.id === "jobs" ? (
-              <>
-                {cards}
-                {cardsFor("tools", { as: "jobs" })}
-              </>
-            ) : set.id === "sites" ? (
-              <>
-                {cards}
-                <button
-                  type="button"
-                  className={`rail-word${dim("life") ? "" : " is-lit"}`}
-                  style={{ "--index-accent-rgb": INDEX_ACCENT.life }}
-                  aria-expanded={heldBucket === "set:life"}
-                  onClick={() => focusSet("life")}
-                >
-                  Life
-                </button>
-                {cardsFor("life")}
-                {cardsFor("creations", { as: "sites" })}
-              </>
-            ) : (
-              cards
-            );
+        {/* The key. Every collection's word, printed in its own ink — the
+            same ink every card below wears along its bottom edge, so the
+            blended wall still reads at a glance. Each word is an opener:
+            hold it and the wall folds to just that collection. */}
+        <div className="deck-legend" aria-label="The key — each word folds the wall to its collection">
+          {LEGEND.map((set) => (
+            <button
+              key={set.id}
+              id={`set-${set.id}`}
+              type="button"
+              className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
+              style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+              aria-expanded={heldBucket === `set:${set.id}`}
+              onClick={() => focusSet(set.id)}
+            >
+              {set.label}
+            </button>
+          ))}
+        </div>
 
-          return (
-            <Fragment key={set.id}>
-              <h2 className="set-name" id={`set-${set.id}`}>
-                <button
-                  type="button"
-                  className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
-                  style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-                  aria-expanded={heldBucket === `set:${set.id}`}
-                  onClick={() => focusSet(set.id)}
-                >
-                  {set.label}
-                </button>
-              </h2>
-              {flow}
-            </Fragment>
-          );
-        })}
+        {/* The front of the wall: the things made, the life pieces, the two
+            current roles — and Graceland, grand, because it matters most. */}
+        {cardsFor("sites")}
+        <Card
+          key="graceland"
+          suit="music"
+          size="grand"
+          dim={dim("music")}
+          onActivate={openLit}
+          label={`${graceland.artist} — ${graceland.album}`}
+          face={
+            <SiteImage
+              src={graceland.art}
+              slot="grandTile"
+              sizes="(max-width: 560px) calc(60vw - 16px), 250px"
+              alt=""
+              className="c-art"
+            />
+          }
+          spotFace={<SiteImage src={graceland.art} priority alt="" className="c-art" />}
+          back={
+            <>
+              <span className="b-eyebrow">{graceland.artist}</span>
+              <span className="b-body b-body--tight">{graceland.album}</span>
+              <span className="b-figure">{graceland.year} · the one that matters most</span>
+            </>
+          }
+        />
+        {cardsFor("life")}
+        {jobCards.slice(0, 2)}
+
+        {/* Everything else, dealt together: one long blended collage, each
+            collection spread through the others, sizes varying all the way
+            down. The key above is what keeps it legible. */}
+        {blend([
+          ["music", cardsFor("music")],
+          ["films", cardsFor("films")],
+          ["games", cardsFor("games")],
+          ["tv", cardsFor("tv")],
+          ["jobs", jobCards.slice(2)],
+          ["tools", cardsFor("tools", { as: "jobs" })],
+          ["creations", cardsFor("creations", { as: "sites" })]
+        ])}
       </div>
 
       {lit ? <Spotlight lit={lit} onClose={closeLit} /> : null}
@@ -656,6 +731,11 @@ const INDEX_ACCENT = {
   games: "115, 112, 255",
   tv: "0, 154, 205"
 };
+
+/* The legend's order mirrors the wall: the things made, the life pieces, the
+   career, then the taste collections. Life is not one of the data sets — its
+   cards ride in the sites flow — but it is very much one of the keys. */
+const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
 
 /* The menu is four buckets, and every one behaves the same way: it gathers
    its rows to the top and lets the rest of the page recede — no unfolding,

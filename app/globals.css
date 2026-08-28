@@ -5808,10 +5808,6 @@ button {
 }
 
 
-.set-name {
-  margin: 0;
-}
-
 /* A solo mark fills its little card. */
 .card-face-stack--solo {
   justify-content: center;
@@ -6125,23 +6121,55 @@ button {
   grid-row: span 1;
 }
 
+/* The grand tier: a card for the truly important, half again the size of a
+   lead. Kept rare, or nothing reads as important. */
+.deck .card--grand {
+  grid-column: span 3;
+  grid-row: span 3;
+}
+
 .deck .card--hero {
   grid-column: 1 / -1;
   grid-row: auto;
   margin: 0 0 clamp(8px, 1vw, 14px);
 }
 
-.set-name {
-  display: contents;
+/* ── The key ────────────────────────────────────────────────────────────
+   The wall is blended, so every card wears its collection's ink along its
+   bottom edge — the same ink its legend word is printed in. The edge is the
+   whole key: no badges, no labels, just a coloured baseline. */
+.deck .card[data-key="sites"] { --key-rgb: 27, 148, 125; }
+.deck .card[data-key="jobs"] { --key-rgb: 203, 66, 94; }
+.deck .card[data-key="life"] { --key-rgb: 61, 90, 128; }
+.deck .card[data-key="music"] { --key-rgb: 224, 122, 26; }
+.deck .card[data-key="films"] { --key-rgb: 94, 142, 103; }
+.deck .card[data-key="games"] { --key-rgb: 115, 112, 255; }
+.deck .card[data-key="tv"] { --key-rgb: 0, 154, 205; }
+
+.deck .card {
+  border-bottom: 3px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 62%, var(--white));
 }
 
-/* A word holds a card-sized slot in the collage, centred in its cell. */
-.rail-word {
-  grid-column: span 2;
-  grid-row: span 2;
-  align-self: center;
-  justify-self: center;
-  text-align: center;
+.deck .card--hero {
+  border-bottom: 0;
+}
+
+/* The key itself: one row of the collection words just under the sentence,
+   each printed in its ink, each an opener. It replaces the section words
+   that used to stand in the stream — the wall no longer has sections. */
+.deck-legend {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: clamp(16px, 2vw, 30px);
+  row-gap: 2px;
+  margin: 0 0 clamp(4px, 0.6vw, 10px);
+}
+
+.deck-legend .rail-word {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.35vw, 1.35rem);
 }
 
 /* Holding a lens: everything the lens does not name leaves the collage, and

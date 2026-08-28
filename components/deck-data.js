@@ -2664,6 +2664,17 @@ export const life = [
     note: "Paris to Sofia on foot is the thread — 1,982 km, seven countries, from the real GPS. The thirty years around it stay on the map, quieter." }
 ];
 
+/* Graceland is not one of the 246 printed sleeves, and it will not join them:
+   the album-art ids are positional over the masters folder, so a new master
+   renumbers every sleeve after it. It carries its own artwork instead — and it
+   sits at the front of the wall because Dan says it matters most. */
+export const graceland = {
+  artist: "Paul Simon",
+  album: "Graceland",
+  year: "1986",
+  art: "/music-art/graceland.webp"
+};
+
 export const sets = [
   { id: "sites", label: "Projects", noun: "of them", note: "Sites, a game, one long walk, and a map of all of it" },
   { id: "jobs", label: "Career", noun: "roles", note: "Freelance now, on the toolkit below — before that, banks, building societies and building sites" },
