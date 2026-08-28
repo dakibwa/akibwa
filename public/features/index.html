@@ -751,7 +751,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
   .record{
     max-width:790px;width:100%;display:flex;flex-direction:column;
-    max-height:calc(100dvh - 40px);overflow:hidden;
+    overflow:hidden;
     border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
   }
   .rec-head{
@@ -969,13 +969,16 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
   .rkey{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;
     margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule);
-    font-size:12.5px;color:var(--ink-soft);line-height:1.4}
+    font-size:12.5px;color:var(--ink-soft);line-height:1.4;
+    flex:1 0 auto;align-content:space-evenly}
   .rkey b{color:var(--ink);font-weight:700}
   .rmark{width:56px;height:36px;display:block;flex:0 0 auto}
   .intro-card{
     max-width:790px;width:100%;background:var(--surface);border:1px solid var(--ink);display:grid;
     grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);overflow:hidden;box-shadow:var(--shadow-card);
+    grid-template-rows:auto minmax(0,1fr);
   }
+  .intro-card,.record{height:min(680px,calc(100dvh - 40px))}
   .intro-strip{height:7px;display:flex;grid-column:1/-1}
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
@@ -984,7 +987,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     position:absolute;left:14px;bottom:14px;background:var(--surface);border:1px solid var(--silver);
     padding:5px 8px;font-size:9.5px;letter-spacing:.16em;color:var(--ink);text-transform:lowercase;
   }
-  .intro-body{padding:20px 22px 24px}
+  .intro-body{padding:20px 22px 24px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
   .intro-title{font-size:19px;font-weight:700;text-transform:lowercase;letter-spacing:-.01em}
   .intro-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.12em;margin-top:3px;text-transform:lowercase}
   .intro-note{margin-top:15px;padding-top:13px;border-top:1px dashed var(--silver);font-size:12px;color:var(--ink-soft);line-height:1.55}
@@ -1007,8 +1010,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .wbstats span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .wbwhen{flex:0 0 auto;font-size:10px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
-  .wbweek{margin-top:12px;display:grid;gap:4px;
-    max-height:206px;overflow-y:auto;overscroll-behavior:contain}
+  .wbweek{margin-top:12px;display:grid;gap:4px;align-content:start;
+    flex:1 1 auto;min-height:96px;overflow-y:auto;overscroll-behavior:contain}
   .wbweek{margin-right:-9px;padding-right:9px}
   .wbweek{scrollbar-width:thin;scrollbar-color:var(--silver) transparent}
   .wbweek::-webkit-scrollbar{width:5px}
@@ -1053,7 +1056,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-alt{background:transparent;color:var(--ink)}
   .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
   .intro-alt + .intro-start{margin-top:8px}
-  .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+  .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;flex:0 0 auto}
+  .intro-doors .help.here{border-color:var(--ink);color:var(--ink);cursor:default}
+  .intro-doors .help.here:active{transform:none}
+  .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
   .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
   .introauth{display:inline-flex;margin-left:auto}
@@ -1066,9 +1072,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .help.owned{cursor:default}
   .help.owned:active{transform:none}
   .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
-  .help.till:not(.owned):hover,.rec-btn.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
-  .rec-btn.till svg{width:17px;height:17px;flex:0 0 auto}
-  .rec-btn.till .tillword{font-size:11px;letter-spacing:.09em}
+  .help.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
   @media (max-width:340px){
     .intro-doors{gap:5px}
@@ -1146,7 +1150,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .track{height:8px;margin-top:7px}
 
     .veil{padding:12px}
-    .record,.acct-card,.arch-card{max-height:calc(100dvh - 24px)}
+    .acct-card,.arch-card{max-height:calc(100dvh - 24px)}
+    .intro-card,.record{height:calc(100dvh - 24px)}
     .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
     .arch-body{padding:12px 13px 15px}
     .acct-body{padding:14px 13px 15px}
@@ -1170,7 +1175,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .saymark{width:46px;height:30px}
     .coach-body{padding:11px 13px 12px}
     .coach-text{font-size:13px}
-    .intro-card{max-width:430px;grid-template-columns:1fr;max-height:92vh;overflow-y:auto}
+    .intro-card{max-width:430px;grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
     .intro-art > svg{min-height:0}
     .intro-body{padding:17px 18px 20px}
@@ -1443,29 +1448,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     <div class="rec-head">
       <strong class="rec-title">the record</strong>
       <span class="rec-right">
-        <!-- the way to the full version, drawn only when there is a till to
-             answer — `canBuy()` is the one gate and an unlock that answers "the
-             till is not responding" is worse than no unlock. it is the same act
-             `runOverOffer` performs on the cleared card and it calls the same
-             `beginUnlock`; what is new is only that the record can reach it,
-             which it could not since the archive line stopped selling. -->
-        <!-- `histview` stood here: a `collection` / `the days` toggle, the way
-             between the card's two readings. and after it a `groundbtn` square,
-             which was here because the record is a modal veil and its own head was
-             the whole of the interface while it was up.
-             BOTH ARE IN THE TOP BAR NOW and the owner cut them from here (17 Aug
-             2026). the bar carries the ground, and it carries a mark for each of
-             the two views — so the toggle became a third control for a choice two
-             marks already make, and it made the record's mark ambiguous: press
-             `collection` here and the bar's record mark opened the collection
-             afterwards, because `recView` remembered.
-             WHAT IT COSTS, stated rather than discovered: while this veil is up
-             there is no way to flip the ground or to cross between the two
-             readings. you close it — one press, and the mark you want is in the
-             bar behind it. that is the trade a single menu makes, and the reason
-             each bar mark now sets `recView` for itself rather than inheriting
-             whatever the last one chose. -->
-        <a href="#" class="rec-btn" id="histbuy" hidden>full version</a>
+        <!-- `histbuy` stood here — the head's own `full version` link — and the
+             `histview` toggle and a `groundbtn` square before it. ALL THREE ARE
+             IN THE DOORS ROW AT THE FOOT NOW (28 Aug 2026, the owner's call:
+             one persistent menu along the bottom of every sheet). the head is a
+             title and the one way out, which is what a title bar is. -->
+
         <!-- a cross and nothing else. `close ×` said it twice — the word and
              the glyph are the same instruction, and the glyph is the one every
              player already reads without being taught. square, so it reads as a
@@ -1497,6 +1485,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
          renderAccount leaves it hidden otherwise, so a copy of index.html
          opened off a disk shows no dead buttons. -->
     <div class="rec-foot" id="recfoot" hidden></div>
+    <!-- the doors: the same persistent row every sheet ends in — see doorsInner.
+         filled and wired by openRecord, because paintTill and the auth slot both
+         need the moment's answer rather than the markup's. -->
+    <div class="intro-doors rec-doors" id="recdoors"></div>
   </section>
 </div>
 
@@ -2116,7 +2108,7 @@ const liveRunOn=d=>[store.run,store.parked].some(r=>r&&r.day===d&&r.mode!=='tria
 const spentDay=d=>!liveRunOn(d) && dayRows().some(r=>r.d===d);
 function canPlayDay(d){
   if(d>today() || d<LAUNCH) return false;
-  if(inArchive(d)) return false;                      // today and yesterday are the set
+  if(inArchive(d)) return DEV || !!POLICY.premium;    // the archive is the full version's
   return !!POLICY.premium || !spentDay(d);
 }
 function canTimeTrial(){ return DEV || !!POLICY.premium }
@@ -2207,24 +2199,61 @@ async function apiCall(path,opts){
 }
 
 async function fillIntroAuth(){
-  const el=$('introauth'); if(!el) return;
+  if(!document.querySelector('.door-auth')) return;
   const ins=await askSignIns();
-  const el2=$('introauth'); if(!el2) return;   // the card may have re-rendered
-  if(account && account.signedIn){
-    el2.innerHTML=`<button class="help" id="introprofile" aria-label="your account">`
-      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
-      +`<circle cx="12" cy="8.6" r="3.6"/>`
-      +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
-      +`</g></svg></button>`;
-    $('introprofile').onclick=()=>{hideVeils();openAccount()};
-  }else if(ins.includes('google')){
-    el2.innerHTML=`<button class="help" id="introgoogle" aria-label="sign in with google">`
-      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2">`
-      +`<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/>`
-      +`<path d="M12.5 12h7"/>`
-      +`</g></svg></button>`;
-    $('introgoogle').onclick=()=>goSignIn('google');
-  }else el2.innerHTML='';
+  document.querySelectorAll('.door-auth').forEach(el=>{   // re-queried: a sheet may have re-rendered
+    if(account && account.signedIn){
+      el.innerHTML=`<button class="help" aria-label="your account">`
+        +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
+        +`<circle cx="12" cy="8.6" r="3.6"/>`
+        +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
+        +`</g></svg></button>`;
+      el.firstChild.onclick=()=>{hideVeils();openAccount()};
+    }else if(ins.includes('google')){
+      el.innerHTML=`<button class="help" aria-label="sign in with google">`
+        +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2">`
+        +`<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/>`
+        +`<path d="M12.5 12h7"/>`
+        +`</g></svg></button>`;
+      el.firstChild.onclick=()=>goSignIn('google');
+    }else el.innerHTML='';
+  });
+}
+function doorsInner(here){
+  const collHere=here==='record', rulesHere=here==='rules';
+  return `<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
+    +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
+    +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
+    +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
+    +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
+    +`</g></svg></button>`
+    +`<button class="help door-rules${rulesHere?' here':''}" ${rulesHere?'aria-current="page" tabindex="-1" ':''}aria-label="how to play">?</button>`
+    +`<button class="help groundbtn" aria-label="ground">`
+    +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
+    +`<span class="introauth door-auth"></span>`
+    +`<button class="help label door-buy"></button>`;
+}
+function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here)}</div>` }
+function wireDoors(row,here){
+  row.onclick=e=>{
+    if(e.target.closest('.door-coll')){
+      if(here==='record') return;                      // you are standing on it
+      if(here==='day') fromCard=true;                  // rules keeps whatever brought it
+      recView='collection'; hideVeils(); openRecord();
+    }else if(e.target.closest('.door-rules')){
+      if(here==='rules') return;
+      if(here==='day'){ fromCard=true; renderIntro('rules'); return }
+      hideVeils(); renderIntro('rules'); showVeil('introveil');
+    }
+  };
+}
+function paintDoors(){
+  document.querySelectorAll('.intro-doors .door-buy').forEach(el=>{
+    paintTill(el);
+    el.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
+    el.onclick=()=>{ if(!POLICY.premium){ hideVeils(); beginUnlock() } };
+  });
+  fillIntroAuth();
 }
 async function askSignIns(){
   if(signIns) return signIns;
@@ -2652,6 +2681,7 @@ function entitlementChanged(){
   if($('histveil').classList.contains('show')) openRecord();
   if($('runveil').classList.contains('show')) showRunOver();
   if(introMode==='day' && $('introveil').classList.contains('show')) renderIntro('day');
+  paintDoors();
   renderHud();
 }
 let priceAsked=false;
@@ -5489,7 +5519,8 @@ function runOverOffer(trial,depth){
   ensurePrice();                      // redraws this card if the answer is late
   if(!canBuy()) return '';            // nothing to sell here yet — see `till`
   const price=priceWords();
-  return `<span class="boffer-what">another run at any day you have played</span>`
+  const n=archiveCount();
+  return `<span class="boffer-what">another run at any day${n?` · ${n} more in the archive`:''}</span>`
        +`<button class="wbtn solid" id="runoffer">unlock${price?' · '+price:''}</button>`;
 }
 function showRunOver(){
@@ -5641,11 +5672,7 @@ function dayRows(){
   });
   return [...out.values()];
 }
-function allDays(){
-  const by=new Map(dayRows().map(r=>[r.d,r]));
-  const d0=today(), y=dayAdd(d0,-1);
-  return (y>=LAUNCH?[d0,y]:[d0]).map(d=>({d,row:by.get(d)||null}));
-}
+function allDays(){ return menuDays() }
 const isShut=({d,row})=>!row && !canPlayDay(d);
 const archiveCount=()=>{
   const played=new Set(dayRows().map(r=>r.d));
@@ -5683,8 +5710,10 @@ function rungTrack(tiers,row){
 const MENU_CAP=730;
 function menuDays(){
   const by=new Map(dayRows().map(r=>[r.d,r]));
-  const d0=today(), y=dayAdd(d0,-1);
-  return (y>=LAUNCH?[d0,y]:[d0]).map(d=>({d,row:by.get(d)||null}));
+  const out=[];
+  for(let i=0,d=today(); i<MENU_CAP && d>=LAUNCH; i++,d=dayAdd(d,-1))
+    out.push({d,row:by.get(d)||null});
+  return out;
 }
 function tierWords(tiers,sep){
   const g=rungsOf(tiers);
@@ -5799,8 +5828,10 @@ function replayWords(){
   return `another run at a day is the full version${price?' · '+price:''}`;
 }
 function shutWords(iso){
+  const price=priceWords();
   return spentDay(iso) ? replayWords()
-                       : 'today and yesterday are the set';
+       : canBuy() ? `the archive is the full version${price?' · '+price:''}`
+       : 'an older day, from the archive';
 }
 
 
@@ -5983,12 +6014,10 @@ function openRecord(){
   const best=bestReading(rows);
   const badges=store.collection.badges||{};
 
-  const buy=$('histbuy');
-  paintTill(buy);
-  if(!buy.querySelector('.tillword'))
-    buy.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
-  buy.hidden = POLICY.premium || !canBuy();
-  buy.onclick=e=>{ e.preventDefault(); beginUnlock() };
+  const doors=$('recdoors');
+  doors.innerHTML=doorsInner('record');
+  wireDoors(doors,'record');
+  paintDoors();
 
   const named=FKEYS.filter(k=>badges[k]).length;
   const grid=$('reccollection');
@@ -6424,7 +6453,8 @@ function renderIntro(mode){
       </div>
       ${rungLadder()}
       ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the tutorial</button>`:''}
-      <button class="intro-start" id="introstart">${fromCard?'back':'back to the net'}</button>`;
+      <button class="intro-start" id="introstart">${fromCard?'back':'back to the net'}</button>
+      ${doorsRow('rules')}`;
   } else {
     const fresh=!store.tutorialDone;
     const streak=store.meta.streak||0;
@@ -6464,29 +6494,12 @@ function renderIntro(mode){
       <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>`
-      +`<div class="intro-doors">`
-
-      +`<button class="help" id="introcoll" aria-label="the collection">`
-      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
-      +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
-      +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
-      +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
-      +`</g></svg></button>`
-      +`<button class="help" id="introrules" aria-label="how to play">?</button>`
-      +`<button class="help groundbtn" id="introground" aria-label="ground">`
-      +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-      +`<span class="introauth" id="introauth"></span>`
-      +`<button class="help label" id="introbuy"></button>`
-      +`</div>`;
-    paintTill($('introbuy'));
-    if($('introbuy') && !$('introbuy').querySelector('.tillword'))
-      $('introbuy').insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
-    fillIntroAuth();
+      +doorsRow('day');
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
       if(openArchiveLook(d)) return;
-      flashMsg(`${dayLabel(d)} · ${replayWords()}`);
+      flashMsg(`${dayLabel(d)} · ${shutWords(d)}`);
     };
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
     $('introbody').querySelector('.wbweek').onclick=e=>{
@@ -6506,9 +6519,8 @@ function renderIntro(mode){
     store.introSeen=true; store.lastIntroDay=today(); save();
     $('introveil').classList.remove('show');
   };
-  if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
-  if($('introbuy')) $('introbuy').onclick=()=>{ if(!POLICY.premium){ hideVeils(); beginUnlock() } };
-  if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
+  const dr=b.querySelector('.intro-doors');
+  if(dr){ wireDoors(dr, introMode==='rules'?'rules':'day'); paintDoors() }
 }
 function startLessons(){
   const cur=R();
