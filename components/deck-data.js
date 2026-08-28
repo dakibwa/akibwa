@@ -2593,10 +2593,7 @@ export const sites = [
     note: "The website and booking system for a hair salon on Boroughgate in [place removed] — prices per stylist, colour development time handled properly." },
   { name: "features", href: "https://akibwa.com/features/",
     ground: "#6e5da8", accent: "#6e5da8", eyebrow: "Live", art: "/project-art/personal/features-symbol.webp",
-    note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." },
-  { name: "The Trek", href: "/trek/",
-    ground: "#2c5d46", accent: "#2c5d46", eyebrow: "Live", art: "/project-art/personal/trek-card.webp",
-    note: "Paris to Sofia on foot — 1,982 km, fifty-two days walked of sixty-seven numbered, seven countries. Every walked day named after a record." }
+    note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." }
 ];
 
 export const visited = [
