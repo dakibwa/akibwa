@@ -5150,12 +5150,20 @@ function tutReach(step){
 }
 function endTutorial(){
   store.tutorialDone=true;
-  const r=R();
-  r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
-  r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
-  r.log=[]; r.assists=0; r.logGap=false;
-  builtFor=-1;
-  save();
+  if(store.parked){
+    store.run=store.parked; store.parked=null;
+    builtFor=-1; resetDescent(); save();
+    renderAll();
+    flashMsg('back to today\'s set');
+    if(R().over) showRunOver();
+  }else{
+    const r=R();
+    r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
+    r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
+    r.log=[]; r.assists=0; r.logGap=false;
+    builtFor=-1;
+    save();
+  }
   renderHud();
   tutSpotClear();
   const c=$('coach');
@@ -6469,14 +6477,13 @@ function renderIntro(mode){
   if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
 }
 function startLessons(){
-  const r=R();
-  if(r.netMoves || (r.cleared||[]).length)
-    return flashMsg('the tutorial needs a day you have not started');
+  const cur=R();
+  if(cur && cur.mode!=='trial' && !cur.archive && !store.parked
+     && (cur.netMoves || (cur.cleared||[]).length || cur.over))
+    store.parked=cur;
   store.introSeen=true; store.lastIntroDay=today();
   store.tutorialDone=false;
-  r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
-  r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
-  r.log=[]; r.assists=0; r.logGap=false;
+  newRun('daily',today());
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
   flashMsg('the tutorial · three lessons, and nothing here is scored');
