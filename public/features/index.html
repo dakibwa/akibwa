@@ -1056,10 +1056,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
   .intro-alt + .intro-start{margin-top:8px}
   .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+  .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
+  .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
+  .introauth{display:inline-flex;margin-left:auto}
+  .introauth:empty{margin-left:auto}
+  .introauth + .help.label{margin-left:0}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
-  .intro-doors #introbuy,.intro-doors .owned{margin-left:auto}
+  .intro-doors .owned{margin-left:0}
   .help.owned{cursor:default}
   .help.owned:active{transform:none}
   .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
@@ -2199,6 +2204,26 @@ async function apiCall(path,opts){
   return body;
 }
 
+async function fillIntroAuth(){
+  const el=$('introauth'); if(!el) return;
+  const ins=await askSignIns();
+  const el2=$('introauth'); if(!el2) return;   // the card may have re-rendered
+  if(account && account.signedIn){
+    el2.innerHTML=`<button class="help" id="introprofile" aria-label="your account">`
+      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
+      +`<circle cx="12" cy="8.6" r="3.6"/>`
+      +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
+      +`</g></svg></button>`;
+    $('introprofile').onclick=()=>{hideVeils();openAccount()};
+  }else if(ins.includes('google')){
+    el2.innerHTML=`<button class="help" id="introgoogle" aria-label="sign in with google">`
+      +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2">`
+      +`<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/>`
+      +`<path d="M12.5 12h7"/>`
+      +`</g></svg></button>`;
+    $('introgoogle').onclick=()=>goSignIn('google');
+  }else el2.innerHTML='';
+}
 async function askSignIns(){
   if(signIns) return signIns;
   if(!API) return (signIns=[]);
@@ -6445,9 +6470,13 @@ function renderIntro(mode){
       +`<button class="help" id="introrules" aria-label="how to play">?</button>`
       +`<button class="help groundbtn" id="introground" aria-label="ground">`
       +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-      +`<button class="help" id="introbuy"></button>`
+      +`<span class="introauth" id="introauth"></span>`
+      +`<button class="help label" id="introbuy"></button>`
       +`</div>`;
     paintTill($('introbuy'));
+    if($('introbuy') && !$('introbuy').querySelector('.tillword'))
+      $('introbuy').insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
+    fillIntroAuth();
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
