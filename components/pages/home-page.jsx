@@ -25,8 +25,9 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
   const props = {
     className: `card card--${suit}${size === "small" ? " card--small" : ""}${size === "grand" ? " card--grand" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
-    /* The key: which legend word this card answers to. Its colour is worn as
-       the card's bottom edge, so a blended wall still reads at a glance. */
+    /* The key: which legend word this card answers to. Its colour is worn on
+       the card's frame — and in variant B as the backing behind it — so a
+       blended wall still reads at a glance. */
     "data-key": keySet ?? suit,
     "aria-label": label,
     hidden: held || undefined,
@@ -91,13 +92,19 @@ function Spotlight({ lit, onClose }) {
   /* The wall's faces load lazily, and a face replayed inside this overlay
      keeps that attribute — where, mid-FLIP, the lazy gate never fires and the
      image simply never fetches. The spotlight is the one place the visitor
-     has explicitly asked for the picture, so everything in it loads now. */
+     has explicitly asked for the picture, so everything in it loads now —
+     and the full-size layer announces itself the moment it has pixels. */
   useLayoutEffect(() => {
-    figureRef.current
-      ?.querySelectorAll('img[loading="lazy"]')
-      .forEach((img) => {
-        img.loading = "eager";
-      });
+    const fig = figureRef.current;
+    if (!fig) return;
+    fig.querySelectorAll('img[loading="lazy"]').forEach((img) => {
+      img.loading = "eager";
+    });
+    fig.querySelectorAll(".card-face--hi img").forEach((img) => {
+      const ready = () => img.classList.add("is-ready");
+      if (img.complete && img.naturalWidth > 0) ready();
+      else img.addEventListener("load", ready, { once: true });
+    });
   }, [lit]);
 
   useLayoutEffect(() => {
@@ -140,10 +147,18 @@ function Spotlight({ lit, onClose }) {
               : undefined
           }
         >
-          {/* Played large, the card deserves better than the wall's 264px
-              rung — a spotlight face is the full-size artwork where one
-              exists, and the wall face only as the fallback. */}
-          <span className="card-face">{card.spotFace ?? card.face}</span>
+          {/* The wall face opens the spotlight — its file is already in
+              cache, so the card is never blank — and the full-size artwork
+              fades in over it. Without the base layer, suits whose large
+              face is a fresh fetch opened dark and popped in late, while
+              the sleeves arrived instantly: one suit seemed to animate
+              differently from the rest. */}
+          <span className="card-face">{card.face}</span>
+          {card.spotFace ? (
+            <span className="card-face card-face--hi" aria-hidden="true">
+              {card.spotFace}
+            </span>
+          ) : null}
         </div>
         <figcaption className="spotlight-caption" data-suit={card.suit}>
           {card.back}
@@ -204,8 +219,14 @@ export function HomePage() {
   const [spot, setSpot] = useState(-1);
   /* The ink prototype rides behind ?ink only — off for everyone else. */
   const [inkOn, setInkOn] = useState(false);
+  /* Variant B, behind ?b for comparison: the menu words become cards of
+     their own at the head of the wall, and the key colour moves from the
+     card frame to a backing card behind each tile. */
+  const [variantB, setVariantB] = useState(false);
   useEffect(() => {
-    setInkOn(new URLSearchParams(window.location.search).has("ink"));
+    const params = new URLSearchParams(window.location.search);
+    setInkOn(params.has("ink"));
+    setVariantB(params.has("b"));
   }, []);
   /* One card, brought forward: everything else dims and comes to rest. */
   const [lit, setLit] = useState(null);
@@ -302,9 +323,12 @@ export function HomePage() {
       });
     };
     document.addEventListener("keydown", onKey);
-    /* The stream has folded to the lit collection; go to its word. */
-    const word = document.getElementById(`set-${lens[0]}`);
-    word?.scrollIntoView({ behavior: "smooth", block: "start" });
+    /* The stream has folded to the lit collection — go to the top of the
+       wall, hero and key included. Scrolling to the held word instead put it
+       at the very top of the viewport, which shoved the hero off screen for
+       any collection tall enough to scroll and stayed put for the rest: the
+       one word with a long collection seemed to behave differently. */
+    window.scrollTo({ top: 0, behavior: "smooth" });
     return () => document.removeEventListener("keydown", onKey);
   }, [lens]);
 
@@ -618,7 +642,7 @@ export function HomePage() {
     <section className="akibwa-home" onClick={releaseOnPaper}>
       {inkOn ? <InkPaper /> : null}
       <div
-        className={`page-grid deck${lens ? " is-lensed" : ""}`}
+        className={`page-grid deck${lens ? " is-lensed" : ""}${variantB ? " deck--b" : ""}`}
         ref={deckRef}
         aria-label="Everything on one wall"
       >
@@ -627,43 +651,78 @@ export function HomePage() {
           {/* One sentence across the whole top of the page, and the menu is
               simply three of its words. Nothing else up here at all. */}
           <h1 className="hero-sentence">
-            <HeroFlipName /> — here&rsquo;s my website containing my{" "}
-            {BUCKETS.map((bucket, i) => (
-              <span key={bucket.id} className="hero-bucket">
-                <button
-                  type="button"
-                  className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!lens && spot === i ? " is-spot" : ""}`}
-                  style={{ "--index-accent-rgb": bucket.accent }}
-                  aria-expanded={bucketHeld(bucket)}
-                  onClick={() => openBucket(bucket)}
-                >
-                  {bucket.label.toLowerCase()}
-                </button>
-                <span className="hero-sep">{i < BUCKETS.length - 1 ? ", " : "."}</span>
-              </span>
-            ))}
+            <HeroFlipName /> — here&rsquo;s my website
+            {variantB ? (
+              /* In variant B the menu words are cards on the wall below, so
+                 the sentence ends where the wall begins. */
+              "."
+            ) : (
+              <>
+                {" "}containing my{" "}
+                {BUCKETS.map((bucket, i) => (
+                  <span key={bucket.id} className="hero-bucket">
+                    <button
+                      type="button"
+                      className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!lens && spot === i ? " is-spot" : ""}`}
+                      style={{ "--index-accent-rgb": bucket.accent }}
+                      aria-expanded={bucketHeld(bucket)}
+                      onClick={() => openBucket(bucket)}
+                    >
+                      {bucket.label.toLowerCase()}
+                    </button>
+                    <span className="hero-sep">{i < BUCKETS.length - 1 ? ", " : "."}</span>
+                  </span>
+                ))}
+              </>
+            )}
           </h1>
         </div>
 
         {/* The key. Every collection's word, printed in its own ink — the
-            same ink every card below wears along its bottom edge, so the
-            blended wall still reads at a glance. Each word is an opener:
-            hold it and the wall folds to just that collection. */}
-        <div className="deck-legend" aria-label="The key — each word folds the wall to its collection">
-          {LEGEND.map((set) => (
-            <button
-              key={set.id}
-              id={`set-${set.id}`}
-              type="button"
-              className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
-              style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-              aria-expanded={heldBucket === `set:${set.id}`}
-              onClick={() => focusSet(set.id)}
-            >
-              {set.label}
-            </button>
-          ))}
-        </div>
+            same ink every card below wears on its frame, so the blended wall
+            still reads at a glance. Each word is an opener: hold it and the
+            wall folds to just that collection. In variant B the words are
+            cards themselves, dealt at the head of the wall. */}
+        {variantB ? (
+          WORD_CARDS.map((word) => {
+            const isTaste = word.id === "taste";
+            const held = isTaste ? heldBucket === "taste" : heldBucket === `set:${word.id}`;
+            const wordDim = isTaste
+              ? Boolean(lens) && !TASTE.every((id) => lens.includes(id))
+              : dim(word.id);
+            return (
+              <button
+                key={`word-${word.id}`}
+                id={`set-${word.id}`}
+                type="button"
+                className={`card card--word${wordDim ? "" : " is-lit"}`}
+                data-key={word.id}
+                style={{ "--index-accent-rgb": WORD_ACCENT[word.id] }}
+                aria-expanded={held}
+                onClick={() => (isTaste ? openBucket(TASTE_BUCKET) : focusSet(word.id))}
+              >
+                <span className="word-card-label">{word.label}</span>
+                <span className="card-sheen" aria-hidden="true" />
+              </button>
+            );
+          })
+        ) : (
+          <div className="deck-legend" aria-label="The key — each word folds the wall to its collection">
+            {LEGEND.map((set) => (
+              <button
+                key={set.id}
+                id={`set-${set.id}`}
+                type="button"
+                className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
+                style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+                aria-expanded={heldBucket === `set:${set.id}`}
+                onClick={() => focusSet(set.id)}
+              >
+                {set.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* The front of the wall: the things made, the life pieces, the two
             current roles — and Graceland, grand, because it matters most. */}
@@ -737,6 +796,21 @@ const INDEX_ACCENT = {
    cards ride in the sites flow — but it is very much one of the keys. */
 const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
 
+/* Variant B's menu-as-cards: the legend words plus Taste, the umbrella over
+   the four collections, each a card of its own at the head of the wall. */
+const WORD_CARDS = [
+  { id: "sites", label: "Projects" },
+  { id: "life", label: "Life" },
+  { id: "jobs", label: "Career" },
+  { id: "taste", label: "Taste" },
+  { id: "music", label: "Music" },
+  { id: "films", label: "Films" },
+  { id: "games", label: "Games" },
+  { id: "tv", label: "TV" }
+];
+
+const WORD_ACCENT = { ...INDEX_ACCENT, taste: "40, 42, 48" };
+
 /* The menu is four buckets, and every one behaves the same way: it gathers
    its rows to the top and lets the rest of the page recede — no unfolding,
    no reflow. The rows themselves are the content; the panels wait behind the
@@ -748,6 +822,10 @@ const BUCKETS = [
   { id: "career", label: "Career", accent: "203, 66, 94", lens: ["jobs"] },
   { id: "taste", label: "Taste", accent: "115, 112, 255", lens: TASTE }
 ];
+
+/* Variant B's Taste card opens the same four-collection lens the sentence
+   word does. */
+const TASTE_BUCKET = BUCKETS[BUCKETS.length - 1];
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for
    variety: five near-black brands in a row is one flat stripe. */

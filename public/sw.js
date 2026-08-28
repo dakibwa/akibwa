@@ -5,7 +5,10 @@
  * from cache and refreshed in the background. HTML is never touched, so
  * new deploys always reach returning visitors.
  */
-const CACHE_NAME = "akibwa-static-v1";
+/* Bump the version whenever committed artwork is replaced in place — same
+   URLs, new pixels. Activation purges the old cache, so returning visitors
+   get the new art on their next load instead of one visit behind. */
+const CACHE_NAME = "akibwa-static-v2";
 
 const IMMUTABLE_PATH = "/_next/static/";
 const ASSET_EXTENSIONS = /\.(?:webp|avif|jpg|jpeg|png|gif|svg|ico|woff2?)$/;

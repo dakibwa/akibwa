@@ -5923,6 +5923,22 @@ button {
   box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
 }
 
+/* The spotlight opens on the wall's own art — already in cache, so the card
+   is never blank — and the full-size face fades in over it once it has
+   pixels. One arrival for every suit; no suit pops in late. */
+.spotlight .card-face--hi img {
+  opacity: 0;
+  transition: opacity 260ms var(--ease-out);
+}
+
+.spotlight .card-face--hi img.is-ready {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight .card-face--hi img { transition: none; }
+}
+
 /* The same ink panel the card back uses, laid open beneath the face. */
 .spotlight-caption {
   margin: 0;
@@ -6145,13 +6161,23 @@ button {
 .deck .card[data-key="films"] { --key-rgb: 94, 142, 103; }
 .deck .card[data-key="games"] { --key-rgb: 115, 112, 255; }
 .deck .card[data-key="tv"] { --key-rgb: 0, 154, 205; }
+/* Taste is the umbrella over four collections, so its card wears the ink
+   itself — the master key rather than one collection's colour. */
+.deck .card[data-key="taste"] { --key-rgb: 40, 42, 48; }
 
+/* The whole frame wears the ink, not just a baseline — and pressing the card
+   deepens its own colour rather than swapping to the neutral line. */
 .deck .card {
-  border-bottom: 3px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 62%, var(--white));
+  border: 2px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 52%, var(--white));
+}
+
+.deck .card[data-key]:hover,
+.deck .card[data-key]:focus-visible {
+  border-color: color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 82%, var(--white));
 }
 
 .deck .card--hero {
-  border-bottom: 0;
+  border: 0;
 }
 
 /* The key itself: one row of the collection words just under the sentence,
@@ -6170,6 +6196,51 @@ button {
 .deck-legend .rail-word {
   margin: 0;
   font-size: clamp(1.05rem, 1.35vw, 1.35rem);
+}
+
+/* ── Variant B (?b) — for comparison ────────────────────────────────────
+   The menu words leave the sentence and the legend row and become cards of
+   their own at the head of the wall, and the key moves BEHIND the cards:
+   every tile sits on a backing card in its collection's ink, offset like a
+   stacked deck, while the frame goes back to the neutral line. */
+.card--word {
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, rgb(var(--index-accent-rgb)) 9%, var(--white));
+}
+
+.word-card-label {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: clamp(1.02rem, 1.5vw, 1.4rem);
+  letter-spacing: -0.014em;
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 74%, var(--black));
+}
+
+.card--word[aria-expanded="true"] .word-card-label {
+  text-decoration: underline;
+  text-decoration-thickness: 0.09em;
+  text-underline-offset: 0.18em;
+}
+
+.deck.deck--b .card {
+  border: 1px solid var(--line);
+  box-shadow:
+    5px 6px 0 color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 55%, var(--white)),
+    0 4px 14px rgba(16, 18, 23, 0.03);
+}
+
+.deck.deck--b .card[data-key]:hover,
+.deck.deck--b .card[data-key]:focus-visible {
+  border-color: var(--line-strong);
+  box-shadow:
+    5px 6px 0 color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 75%, var(--white)),
+    -12px 14px 30px rgba(16, 18, 23, 0.16);
+}
+
+.deck.deck--b .card--hero {
+  border: 0;
+  box-shadow: none;
 }
 
 /* Holding a lens: everything the lens does not name leaves the collage, and
