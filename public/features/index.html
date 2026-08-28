@@ -2187,6 +2187,10 @@ function renderMenu(){
   }
   if(menuView==='pay' && !$('paybody').firstChild)
     $('paybody').innerHTML='<p class="colcap">opening the till&hellip;</p>';
+  if(menuView==='coll'||menuView==='rules'){
+    const t=$('introbody').querySelector('.intro-title');
+    if(t) t.textContent = menuView==='coll' ? 'the collection' : 'how to play';
+  }
   renderPanes();
   paintDoors();
 }
