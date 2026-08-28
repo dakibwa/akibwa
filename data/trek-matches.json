@@ -1,0 +1,264 @@
+{
+  "rule": "GPS titles are searched as lyrics, then as song titles, then as albums. A sleeve is only the real front of a verified record he could have been walking to in 2019 (indie / folk / post-rock / classic songwriters, and his printed or heavily played collection). Walking-day puns, geography, weather, and common titles without a unique match stay blank. Imagine art is never used as a fake sleeve.",
+  "matches": {
+    "One way to lose them walking blues!": {
+      "kind": "lyrics",
+      "song": "Diamonds on the Soles of Her Shoes",
+      "album": "Graceland",
+      "artist": "Paul Simon",
+      "source": "https://www.paulsimon.com/track/diamonds-on-the-soles-of-her-shoes/",
+      "note": "Official lyric: \u201cWell, that\u2019s one way to lose these walking blues.\u201d 123 Last.fm plays on Graceland.",
+      "mbid": "19847822-1430-3380-9cf1-bc45545b34ac"
+    },
+    "Witchi Tai To": {
+      "kind": "song",
+      "song": "Witchi Tai To",
+      "album": "Everything Is Everything",
+      "artist": "Everything Is Everything",
+      "source": "https://en.wikipedia.org/wiki/Jim_Pepper",
+      "note": "Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on.",
+      "mbid": "f83079d3-0712-4160-a871-69a0e2ecdbb4",
+      "coverUrls": [
+        "https://coverartarchive.org/release-group/da8f54e3-2f50-4b6f-bb2d-87affbf47520/front-500"
+      ]
+    },
+    "Hey Moon": {
+      "kind": "song",
+      "song": "Hey Moon",
+      "album": "We Must Become the Pitiless Censors of Ourselves",
+      "artist": "John Maus",
+      "source": "https://johnmaus.bandcamp.com/track/hey-moon",
+      "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days.",
+      "mbid": "cc2f0368-1b4a-47a1-8c3d-f727f85f707a"
+    },
+    "Another One Goes By": {
+      "kind": "album",
+      "song": "Another One Goes By",
+      "album": "Another One Goes By",
+      "artist": "Mazarin",
+      "source": "https://musicbrainz.org/release-group/34838821-1b46-3110-a4e1-138a8ab90a6a",
+      "mbid": "34838821-1b46-3110-a4e1-138a8ab90a6a"
+    },
+    "The Predatory Wasp": {
+      "kind": "song",
+      "song": "The Predatory Wasp of the Palisades Is Out to Get Us!",
+      "album": "Illinois",
+      "artist": "Sufjan Stevens",
+      "source": "https://en.wikipedia.org/wiki/Illinois_(Sufjan_Stevens_album)",
+      "mbid": "1fb75447-c513-38c4-ad8f-1bfc441aa74c"
+    },
+    "Taking Tiger Mountain": {
+      "kind": "album",
+      "song": null,
+      "album": "Taking Tiger Mountain (By Strategy)",
+      "artist": "Brian Eno",
+      "source": "https://en.wikipedia.org/wiki/Taking_Tiger_Mountain_(By_Strategy)",
+      "wallId": "142",
+      "file": "taking-tiger-mountain-by-strategy.webp",
+      "note": "GPS split the album title across two days. Same sleeve as \u201c(By Strategy)\u201d."
+    },
+    "(By Strategy)": {
+      "kind": "album",
+      "song": null,
+      "album": "Taking Tiger Mountain (By Strategy)",
+      "artist": "Brian Eno",
+      "source": "https://en.wikipedia.org/wiki/Taking_Tiger_Mountain_(By_Strategy)",
+      "wallId": "142",
+      "file": "taking-tiger-mountain-by-strategy.webp",
+      "note": "Second half of the Eno title. Same sleeve as day 29."
+    },
+    "I'll Come Running To Tie Your Shoes": {
+      "kind": "lyrics",
+      "song": "I'll Come Running",
+      "album": "Another Green World",
+      "artist": "Brian Eno",
+      "source": "https://genius.com/Brian-eno-ill-come-running-lyrics",
+      "wallId": "139",
+      "note": "Chorus: \u201cI\u2019ll come running to tie your shoe.\u201d The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."
+    },
+    "Katy Song": {
+      "kind": "song",
+      "song": "Katy Song",
+      "album": "Red House Painters",
+      "artist": "Red House Painters",
+      "source": "https://en.wikipedia.org/wiki/Red_House_Painters_(Rollercoaster)",
+      "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection.",
+      "mbid": "04a0a433-80bc-3b55-91cd-322a0d644c95"
+    },
+    "Beyond Me, Beyond You": {
+      "kind": "lyrics",
+      "song": "Daydreaming",
+      "album": "A Moon Shaped Pool",
+      "artist": "Radiohead",
+      "source": "https://genius.com/Radiohead-daydreaming-lyrics",
+      "wallId": "208",
+      "note": "Lyric: \u201cThis goes / beyond me / beyond you.\u201d Printed sleeve 208."
+    },
+    "Everything That Happens": {
+      "kind": "album",
+      "song": null,
+      "album": "Everything That Happens Will Happen Today",
+      "artist": "David Byrne & Brian Eno",
+      "source": "https://en.wikipedia.org/wiki/Everything_That_Happens_Will_Happen_Today",
+      "mbid": "c9cf80df-db8f-34b4-9b86-012edfa6180f"
+    },
+    "Distant Sky": {
+      "kind": "song",
+      "song": "Distant Sky",
+      "album": "Skeleton Tree",
+      "artist": "Nick Cave & the Bad Seeds",
+      "source": "https://www.nickcave.com/lyric/distant-sky-2/",
+      "wallId": "193",
+      "note": "Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."
+    },
+    "Biscuit Town": {
+      "kind": "song",
+      "song": "Biscuit Town",
+      "album": "The OOZ",
+      "artist": "King Krule",
+      "source": "https://genius.com/King-krule-biscuit-town-lyrics",
+      "note": "Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk).",
+      "mbid": "6ee668b0-8d9b-490b-bdf2-1c68cf197891"
+    },
+    "Sweet Road": {
+      "kind": "song",
+      "song": "Sweet Road",
+      "album": "Sung Tongs",
+      "artist": "Animal Collective",
+      "source": "https://en.wikipedia.org/wiki/Sung_Tongs",
+      "wallId": "128"
+    },
+    "In Between Dreams": {
+      "kind": "album",
+      "song": null,
+      "album": "In Between Dreams",
+      "artist": "Jack Johnson",
+      "source": "https://en.wikipedia.org/wiki/In_Between_Dreams",
+      "wallId": "040",
+      "mbid": "20151063-d6d9-3131-91ac-5c4a7a0f5f01"
+    },
+    "Build A Rocket Boys!": {
+      "kind": "album",
+      "song": null,
+      "album": "Build a Rocket Boys!",
+      "artist": "Elbow",
+      "source": "https://en.wikipedia.org/wiki/Build_a_Rocket_Boys!",
+      "mbid": "f1071218-4843-4360-ab81-f93dc1707ce0"
+    },
+    "Disorder": {
+      "kind": "song",
+      "song": "Disorder",
+      "album": "Unknown Pleasures",
+      "artist": "Joy Division",
+      "source": "https://en.wikipedia.org/wiki/Unknown_Pleasures",
+      "wallId": "045"
+    },
+    "A Quick One While She's Away": {
+      "kind": "song",
+      "song": "A Quick One, While He's Away",
+      "album": "A Quick One",
+      "artist": "The Who",
+      "source": "https://en.wikipedia.org/wiki/A_Quick_One,_While_He%27s_Away",
+      "note": "GPS has \u201cShe\u2019s\u201d; the 1966 mini-opera is \u201cHe\u2019s.\u201d Same song.",
+      "mbid": "475af630-84df-3243-9888-c03c67d54d1a"
+    },
+    "You Can't Live There Forever": {
+      "kind": "album",
+      "song": null,
+      "album": "You Can\u2019t Live There Forever",
+      "artist": "Summer Years",
+      "source": "https://musicbrainz.org/release-group/eccfaff0-d16d-45db-b11f-c28ba083cfa3",
+      "mbid": "eccfaff0-d16d-45db-b11f-c28ba083cfa3"
+    },
+    "A Postcard to Nina": {
+      "kind": "song",
+      "song": "A Postcard to Nina",
+      "album": "Night Falls Over Kortedala",
+      "artist": "Jens Lekman",
+      "source": "https://en.wikipedia.org/wiki/Night_Falls_Over_Kortedala",
+      "mbid": "57c5901d-f140-34ba-a64b-414c1f9347f3"
+    },
+    "A Plea For Tenderness": {
+      "kind": "album",
+      "song": null,
+      "album": "A Plea for Tenderness",
+      "artist": "Dump",
+      "source": "https://www.discogs.com/release/2470175-Dump-A-Plea-For-Tenderness",
+      "mbid": "b2d0a054-9294-3645-abd2-c39d38a20024",
+      "coverUrls": [
+        "https://lastfm.freetls.fastly.net/i/u/300x300/abf788ea76cf484593033095afbcd3bf.jpg",
+        "https://coverartarchive.org/release/33952942-b855-4427-8039-60206965ed4f/front-500"
+      ],
+      "note": "James McNew (Yo La Tengo). Cover Art Archive has no front; Last.fm has the pink-bunny sleeve."
+    },
+    "I'll Come Too": {
+      "kind": "song",
+      "song": "I'll Come Too",
+      "album": "Assume Form",
+      "artist": "James Blake",
+      "source": "https://en.wikipedia.org/wiki/I%27ll_Come_Too",
+      "note": "Assume Form was released January 2019. 13 plays in the collection.",
+      "mbid": "8fceea87-5273-408b-a2f3-723d9b64800a"
+    },
+    "Dogmeat": {
+      "kind": "album",
+      "song": null,
+      "album": "Dogmeat",
+      "artist": "Kid Carpet",
+      "source": "https://musicbrainz.org/release-group/c90c3ad9-3f3a-4c91-bb44-962ec487c007",
+      "mbid": "c90c3ad9-3f3a-4c91-bb44-962ec487c007"
+    },
+    "Banshee Beat": {
+      "kind": "song",
+      "song": "Banshee Beat",
+      "album": "Feels",
+      "artist": "Animal Collective",
+      "source": "https://en.wikipedia.org/wiki/Feels_(Animal_Collective_album)",
+      "wallId": "125"
+    },
+    "Infant Dressing Table": {
+      "kind": "song",
+      "song": "Infant Dressing Table",
+      "album": "Here Comes the Indian",
+      "artist": "Animal Collective",
+      "source": "https://en.wikipedia.org/wiki/Here_Comes_the_Indian",
+      "wallId": "126",
+      "note": "Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."
+    },
+    "Allelujah! Don't Bend! Ascend!": {
+      "kind": "album",
+      "song": null,
+      "album": "\u2019ALLELUJAH! DON\u2019T BEND! ASCEND!",
+      "artist": "Godspeed You! Black Emperor",
+      "source": "https://en.wikipedia.org/wiki/%27Allelujah!_Don%27t_Bend!_Ascend!",
+      "mbid": "62959180-8405-41f9-8fb8-1e18a5e8902d"
+    }
+  },
+  "unmatched": {
+    "And We're Off!": "Walking diary. No verified lyric, song, or album.",
+    "After the Storm": "Common title (Kali Uchis Isolation is a song in the collection at 2 plays; Crosby, Stills & Nash have an album). Day 2 of the walk reads as weather. Left blank rather than guess.",
+    "Reservoirs of Untapped Potential": "No verified lyric, song, or album.",
+    "On the 5th day, Dan rested": "Genesis joke / rest note, not a record.",
+    "Now I'm on my way": "Too many songs share \u201cI'm on my way\u201d; GPS reads as a walking note.",
+    "Getting the Hang of It": "Idiom. Dan Israel\u2019s \u201cThe Hang of It\u201d is 2021, after the walk.",
+    "Lilac!": "Common title. Arushi Jain Under the Lilac Sky is 2021, after the walk.",
+    "Sure is a Hot One!": "Weather diary.",
+    "Short Walk to Nancy": "Geography (Nancy, France).",
+    "The Long Canal": "Geography.",
+    "Tapping Into Flow": "Walking note.",
+    "Recovery": "Common title; also a walking recovery day.",
+    "Easy Day Turned Hill Sprints": "Walking note.",
+    "Scorching": "Weather diary.",
+    "Slowly Does It": "Idiom.",
+    "Negative Split": "Running term.",
+    "One Of Those Days": "Common title. John Martyn and Lal Waterson songs exist; neither is a unique collection match.",
+    "Arrival": "Common title; also arriving in Austria.",
+    "Business As Usual": "Walking note. Men at Work\u2019s album is not in the collection.",
+    "Sing Me To Sleep": "Common title. Alan Walker\u2019s 2015 track is not his taste.",
+    "The Process": "Common title / walking note.",
+    "Skipper": "Common short title. No collection match.",
+    "Eyes Open Wide": "Common phrase. Toad the Wet Sprocket have a song; not in the collection. A 2025 trance single is after the walk.",
+    "Walk to Niska": "Geography (Ni\u0161 / Ni\u0161ka, Serbia).",
+    "The Two Towers": "Tolkien. Would not put an audiobook or film-score sleeve on a walked day."
+  }
+}

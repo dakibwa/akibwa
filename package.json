@@ -18,7 +18,8 @@
     "albums:lastfm-art": "node scripts/fetch-lastfm-art.mjs",
     "refresh:albums:local": "node scripts/refresh-album-plays.mjs",
     "trek:build": "python3 scripts/build-trek.py",
-    "trek:covers": "node scripts/resolve-trek-covers.mjs"
+    "trek:covers": "node scripts/resolve-trek-covers.mjs",
+    "trek:grounds": "node scripts/resolve-trek-covers.mjs --grounds"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",

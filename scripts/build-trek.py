@@ -237,6 +237,10 @@ def main():
                 d["cover"] = rec["src"]
                 d["coverArtist"] = rec.get("artist")
                 d["coverAlbum"] = rec.get("album")
+                if rec.get("song"):
+                    d["coverSong"] = rec["song"]
+                if rec.get("kind"):
+                    d["coverKind"] = rec["kind"]
 
     xs = [d["x"] for d in days]
     ys = [d["y"] for d in days]
