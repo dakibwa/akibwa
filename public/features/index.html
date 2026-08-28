@@ -750,7 +750,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .devtab:hover{border-color:var(--silver)}
 
   .record{
-    max-width:640px;width:100%;display:flex;flex-direction:column;
+    max-width:790px;width:100%;display:flex;flex-direction:column;
     max-height:calc(100dvh - 40px);overflow:hidden;
     border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
   }
@@ -967,8 +967,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .dayrow:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
   .dayrow:hover .dreplay.shut{color:var(--ink)}
 
-  .intro-card.plain{grid-template-columns:1fr;max-width:452px}
-  .intro-card.plain .intro-art{display:none}
   .rkey{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;
     margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule);
     font-size:12.5px;color:var(--ink-soft);line-height:1.4}
@@ -1068,7 +1066,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .help.owned{cursor:default}
   .help.owned:active{transform:none}
   .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
-  .help.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
+  .help.till:not(.owned):hover,.rec-btn.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
+  .rec-btn.till svg{width:17px;height:17px;flex:0 0 auto}
+  .rec-btn.till .tillword{font-size:11px;letter-spacing:.09em}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
   @media (max-width:340px){
     .intro-doors{gap:5px}
@@ -5983,6 +5983,9 @@ function openRecord(){
   const badges=store.collection.badges||{};
 
   const buy=$('histbuy');
+  paintTill(buy);
+  if(!buy.querySelector('.tillword'))
+    buy.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
   buy.hidden = POLICY.premium || !canBuy();
   buy.onclick=e=>{ e.preventDefault(); beginUnlock() };
 
@@ -6407,9 +6410,7 @@ function backToCard(){
 function renderIntro(mode){
   introMode=mode;
   const b=$('introbody');
-  const plain = mode==='rules';
-  document.querySelector('.intro-card').classList.toggle('plain',plain);
-  if(!plain && !$('introart').firstChild) $('introart').innerHTML=introPlate();
+  if(!$('introart').firstChild) $('introart').innerHTML=introPlate();
   if(mode==='rules'){
     b.innerHTML=`<div class="intro-title">how to play</div>
       <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div>

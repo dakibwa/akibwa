@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="features">
+  <defs>
+    <clipPath id="t">
+      <rect width="32" height="32" rx="7"/>
+    </clipPath>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="#FBFAF6"/>
+  <g fill="none" stroke="#15191C" stroke-width="4">
+    <path d="M14 24V12A6 6 0 0 1 20 6"/>
+    <path d="M10 14H20"/>
+  </g>
+  <g clip-path="url(#t)">
+    <rect y="24" width="8" height="4" fill="#2EA3DC"/>
+    <rect x="8" y="24" width="8" height="4" fill="#EFC319"/>
+    <rect x="16" y="24" width="8" height="4" fill="#1FA45A"/>
+    <rect x="24" y="24" width="8" height="4" fill="#E97E18"/>
+  </g>
+  <rect x=".75" y=".75" width="30.5" height="30.5" rx="6.25" fill="none" stroke="#15191C" stroke-opacity=".13" stroke-width="1.5"/>
+</svg>
