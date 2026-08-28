@@ -17,3 +17,7 @@ Data refreshes that can run from API credentials or public seeds should run in C
 Public project metadata lives in `data/public-surfaces.json`. Add new website surfaces there first, then wire the route/component/data seed around that registry entry.
 
 The Personal project overlays are user-facing product surfaces, not decorative screenshots. The wall ranks the whole record collection by play count and says plainly what its counts do and do not cover, Cover Collision presents the series as a numbered exhibition with a direct Instagram route, and embedded apps retain their own live behaviour.
+
+`/life-map/` is a static surface at `public/life-map/index.html`. First paint is the 2019 walk (Paris → Sofia, 1,982 km, real GPS). Homes and other countries stay on the map as contour; the rest of the life is still there, quieter.
+
+`/trek/` is a static surface at `public/trek/index.html`. Same walk, Features grammar: coloured country threads through the 67 numbered day-nodes, 52 of them walked and named after a record. Built from the life-map GPS (`npm run trek:build`). The wall’s Trek card and the walk chapter on `/life-map/` both open it.

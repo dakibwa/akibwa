@@ -16,7 +16,8 @@
     "albums:art": "node scripts/build-album-art.mjs",
     "albums:art:check": "node scripts/build-album-art.mjs --check",
     "albums:lastfm-art": "node scripts/fetch-lastfm-art.mjs",
-    "refresh:albums:local": "node scripts/refresh-album-plays.mjs"
+    "refresh:albums:local": "node scripts/refresh-album-plays.mjs",
+    "trek:build": "python3 scripts/build-trek.py"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",

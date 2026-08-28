@@ -2282,14 +2282,13 @@ export const lived = [
   { name: "Porto", span: "From Oct 2026", note: "The next one. Booked, and the reason the Portuguese is not a hobby." }
 ];
 
-/* The 2019 walk, Paris to Sofia. Distances are measured, not estimated: every
-   GPS trackpoint from the 58 tracked days is placed inside real country borders
-   and each day's mileage is split between the countries it actually crossed.
-   2,017 km in total, nothing unattributed.
+/* The 2019 walk, Paris to Sofia. Per-country figures below are a GPS-in-border
+   split and do not sum to the walk total shown on /life-map/ and /trek/
+   (1,982 km, 52 days walked of 67 numbered). Do not put those country km on
+   the public walk surfaces.
 
    Order is the order walked. Countries reached other than on foot carry no
    distance. This is not yet a complete travel history — Dan's to extend. */
-/* The three live sites — each card is the door to the real thing. */
 export const games = [
   {
     "title": "Bloodborne",
@@ -2584,7 +2583,7 @@ export const tv = [
   }
 ];
 
-/* The three live sites — each card is the door to the real thing. */
+/* The live sites — each card is the door to the real thing. */
 export const sites = [
   { name: "Português com a Inês", short: "Português\ncom a Inês", href: "https://portuguesewithines.com/",
     ground: "#1d3557", accent: "#1d3557", eyebrow: "Live", art: "/project-art/personal/ines-fan-splat.webp",
@@ -2594,7 +2593,10 @@ export const sites = [
     note: "The website and booking system for a hair salon on Boroughgate in [place removed] — prices per stylist, colour development time handled properly." },
   { name: "features", href: "https://akibwa.com/features/",
     ground: "#6e5da8", accent: "#6e5da8", eyebrow: "Live", art: "/project-art/personal/features-symbol.webp",
-    note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." }
+    note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." },
+  { name: "The Trek", href: "/trek/",
+    ground: "#2c5d46", accent: "#2c5d46", eyebrow: "Live", art: "/project-art/personal/trek-card.webp",
+    note: "Paris to Sofia on foot — 1,982 km, fifty-two days walked of sixty-seven numbered, seven countries. Every walked day named after a record." }
 ];
 
 export const visited = [
@@ -2650,19 +2652,19 @@ export const visited = [
     note: "Lisbon many times over, Faro, Paredes de Coura — and Porto, which stopped being a trip and became the plan." }
 ];
 
-export const walkTotal = { km: 2017, miles: 1254, countries: 7, days: 58 };
+export const walkTotal = { km: 1982, miles: 1232, countries: 7, days: 52 };
 
 /* `noun` is the unit a set counts in. The count itself is read off the arrays
    above when the card renders rather than written down here, so the figure on
    the wall cannot drift from the data behind it. */
 /* The life pieces — the walk, and the map of all of it. */
 export const life = [
-  { name: "The Trek", href: null,
-    ground: "#2c5d46", accent: "#2c5d46", eyebrow: "2019", art: "/project-art/personal/trek-card.webp",
-    note: "Paris to Sofia on foot — 2,017 km across France, Germany, Austria, Slovenia, Croatia, Serbia and Bulgaria, over the Tauern at 2,500 m. Two months, seven countries, then Istanbul and India." },
+  { name: "The Trek", href: "/trek/",
+    ground: "#2c5d46", accent: "#2c5d46", eyebrow: "Live", art: "/project-art/personal/trek-card.webp",
+    note: "Paris to Sofia on foot — 1,982 km, fifty-two days walked of sixty-seven numbered, seven countries. Then the coach to Istanbul, because he was done." },
   { name: "A Life in Maps", href: "/life-map/",
     ground: "#1d4f63", accent: "#1d4f63", eyebrow: "Live", art: "/project-art/personal/life-map-card.webp",
-    note: "One map of the whole thing — thirty years, nineteen homes, twenty-three countries, drawn from the real GPS tracks. The story, in the order it happened." }
+    note: "Paris to Sofia on foot is the thread — 1,982 km, seven countries, from the real GPS. The thirty years around it stay on the map, quieter." }
 ];
 
 export const sets = [
