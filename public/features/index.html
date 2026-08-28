@@ -1052,6 +1052,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-start:hover{background:var(--dunkelblau)}
   .intro-start:active{transform:translateY(1px) scale(.995);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
+  .intro-alt{background:transparent;color:var(--ink)}
+  .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
+  .intro-alt + .intro-start{margin-top:8px}
   .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
@@ -1282,7 +1285,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            foot of the day card on the owner's call (17 Aug 2026): the lessons are
            a thing you decide to do before a day starts, not a control you reach
            for mid-net, and the card that opens the day is where that decision is
-           already being made. see `introlessons` in renderIntro.
+           already being made. it has since moved once more, to the `?` card
+           (28 Aug) — see `ruleslessons` in renderIntro — where help lives.
            what the bar keeps is what belongs to a net in progress — the ground,
            the record, the collection, the till and `?` — and the cluster gets a
            sixth slot back, which it needed: a seventh mark overflows a phone. -->
@@ -6381,6 +6385,7 @@ function renderIntro(mode){
         ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
       </div>
       ${rungLadder()}
+      ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the guided nets</button>`:''}
       <button class="intro-start" id="introstart">${fromCard?'back':'back to the net'}</button>`;
   } else {
     const fresh=!store.tutorialDone;
@@ -6422,12 +6427,7 @@ function renderIntro(mode){
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>`
       +`<div class="intro-doors">`
-      +(fresh?'':`<button class="help" id="introlessons" aria-label="the guided nets">`
-        +`<svg viewBox="0 0 24 24" aria-hidden="true">`
-        +`<rect x="2.5" y="9" width="6" height="6" fill="currentColor"/>`
-        +`<rect x="10.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
-        +`<rect x="17.5" y="9.75" width="4.5" height="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>`
-        +`</svg></button>`)
+
       +`<button class="help" id="introcoll" aria-label="the collection">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
       +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
@@ -6458,12 +6458,12 @@ function renderIntro(mode){
     };
     paintSpread(); ensureSpread(); ensurePrice();
   }
+  if($('ruleslessons')) $('ruleslessons').onclick=()=>startLessons();
   $('introstart').onclick=()=>{
     if(introMode==='rules' && fromCard) return backToCard();
     store.introSeen=true; store.lastIntroDay=today(); save();
     $('introveil').classList.remove('show');
   };
-  if($('introlessons')) $('introlessons').onclick=()=>startLessons();
   if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
   if($('introbuy')) $('introbuy').onclick=()=>{ if(!POLICY.premium){ hideVeils(); beginUnlock() } };
   if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
