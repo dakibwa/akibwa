@@ -254,8 +254,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .help:focus-visible,.act:focus-visible,.wbtn:focus-visible,.intro-start:focus-visible,
-  .devtab:focus-visible,.rec-close:focus-visible,.rec-btn:focus-visible,
-  .dayrow:focus-visible,.archlink:focus-visible{
+  .devtab:focus-visible,.rec-close:focus-visible,
+  .archlink:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
   .field g.node{outline:none}
@@ -760,20 +760,18 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     padding:13px 18px;border-bottom:1px solid var(--ink);
   }
   .rec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase;line-height:1}
-  .rec-close,.rec-btn,.dstate{
+  .rec-close{
     border:1px solid var(--silver);color:var(--ink-soft);text-decoration:none;
     transition:border-color var(--t-ui),color var(--t-ui),
                transform var(--t-lift) var(--ease-out);
   }
-  .rec-close:hover,.rec-btn:hover,.dayrow.open:hover .dstate{border-color:var(--ink);color:var(--ink)}
-  .rec-close:active,.rec-btn:active{transform:scale(.93);
+  .rec-close:hover{border-color:var(--ink);color:var(--ink)}
+  .rec-close:active{transform:scale(.93);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-press)}
-  .rec-close,.rec-btn{
+  .rec-close{
     display:inline-flex;align-items:center;justify-content:center;gap:7px;
     height:34px;font-size:11px;letter-spacing:.14em;text-transform:lowercase
   }
-  .rec-btn{padding:0 13px}
-  .rec-btn[hidden]{display:none}
   .rec-close{width:34px;padding:0;letter-spacing:0}
   .rec-close svg{display:block}
   .rec-close{flex:0 0 auto}
@@ -783,8 +781,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
     gap:7px;align-content:start;
   }
-  .collection[hidden],.daylist[hidden],.recboard[hidden]{display:none}
-  .daylist,.collection,.acct-body,.pay-body,.arch-grid,.boardcard > .bulletin,.veil{overscroll-behavior:contain}
+  .collection[hidden],.recboard[hidden]{display:none}
+  .collection,.acct-body,.pay-body,.arch-grid,.boardcard > .bulletin,.veil{overscroll-behavior:contain}
   .colcap{
     grid-column:1/-1;margin:0 0 3px;
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
@@ -920,52 +918,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-err{font-size:11px;letter-spacing:.04em;color:var(--ink);
     border-left:2px solid var(--sig-orange);padding-left:9px;line-height:1.45}
 
-  .daylist{flex:1 1 auto;min-height:0;overflow-y:auto;padding:10px 18px 16px;
-    display:flex;flex-direction:column;gap:5px}
-  .dayrow{
-    display:flex;align-items:center;gap:10px;flex-wrap:nowrap;width:100%;
-    font:inherit;color:var(--ink);text-align:left;appearance:none;
-    border:1px solid var(--rule);background:var(--surface);
-    padding:0 11px 0 0;min-height:38px;cursor:pointer;overflow:hidden;
-    transition:border-color var(--t-ui);
-  }
-  .dayrow:hover{border-color:var(--silver)}
-  .dayrow.shut{border-style:dashed}
-  .dayrow.shut .ddate{color:var(--ink-soft)}
-  .dayrow.shut:hover{border-color:var(--rule)}
-  .dayrow.shut:hover .ddet{color:var(--ink)}
-  .dayrow.spent:not(.today):hover{border-color:var(--rule)}
-  .dayrow.spent:hover .ddet{color:var(--ink)}
-  .daybest{
-    display:flex;align-items:baseline;gap:9px;margin-top:9px;padding-top:10px;
-    border-top:1px solid var(--rule);
-    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
-  }
-  .daybest .dbwhen{font-variant-numeric:tabular-nums;letter-spacing:.07em}
-  .dayrow .dtier{flex:0 0 auto;width:7px;align-self:stretch;background:var(--tc,var(--rule))}
-  .dayrow .ddate{flex:0 0 auto;width:78px;padding:11px 0;
-    font-size:10.5px;letter-spacing:.07em;text-transform:lowercase;font-variant-numeric:tabular-nums}
-  .dayrow .ddet{flex:1 1 auto;min-width:0;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    font-size:10px;letter-spacing:.09em;color:var(--ink-soft);text-transform:lowercase}
-  .track.dtrack{
-    flex:0 1 auto;width:240px;margin-left:16px;margin-top:0;min-width:120px;height:10px;
-    background:transparent;
-  }
-  .track.dtrack > i:not(.on){background:var(--rule)}
-  .track.dtrack > i{transition:none}
-  .dayrow.back .dtier{background:repeating-linear-gradient(45deg,var(--tc,var(--rule)) 0 3px,var(--surface) 3px 6px)}
-  .dayrow.open{border-color:var(--silver)}
-  .dayrow.today{border-color:var(--ink)}
-  .dayrow.open:hover{border-color:var(--ink)}
-  .dstate{flex:0 0 auto;display:inline-flex;align-items:center;
-    justify-content:center;gap:5px;height:24px;padding:0 9px;
-    font-size:9px;letter-spacing:.11em;text-transform:lowercase}
-  .dayrow.open .dstate{color:var(--ink)}
-  .dreplay{width:24px;padding:0;margin-left:10px;font-size:13px;letter-spacing:0}
-  .dreplay.shut{border-style:dashed}
-  .dayrow:hover .dreplay:not(.shut){border-color:var(--ink);color:var(--ink)}
-  .dayrow:hover .dreplay.shut{color:var(--ink)}
+  .rec-arch{flex:0 0 auto;padding:2px 18px 10px}
+  .rec-arch[hidden]{display:none}
 
   .rkey{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;
     margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule);
@@ -1041,6 +995,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:-1px}
   .wbday .wbtier{transition:width var(--t-ui)}
   .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
+  .track.dtrack > i{transition:none}
+  .track.dtrack > i:not(.on){background:var(--rule)}
   .wbday .dreplay{margin-left:0;height:21px;width:100%;padding:0}
   .wbday .dreplay:not(.shut):hover,
   .wbday .dreplay:not(.shut):focus-visible{border-color:var(--ink);color:var(--ink)}
@@ -1137,7 +1093,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     }
     .play.tutorial .coach{animation:none}
     .play.tutorial .field.portrait{justify-content:center}
-    .play.tutorial .field.portrait #netsvg{flex:0 1 auto;aspect-ratio:580/1040;min-height:0;max-height:80%}
+    .play.tutorial .field.portrait #netsvg{flex:0 1 auto;aspect-ratio:580/1040;min-height:0;max-height:min(80%,calc(100% - 150px))}
 
     .field{--nr:15;--nw:4.2}
     .field .tlabel2{font-size:28px;stroke-width:9}
@@ -1160,11 +1116,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .rec-head{padding:11px 13px}
     .rec-right{gap:7px}
     .collection{padding:11px 13px 14px;gap:5px}
-    .daylist{padding:9px 13px 13px}
-    .dayrow{gap:8px;padding-right:9px}
-    .dayrow .ddate{width:64px;font-size:10px;letter-spacing:.04em}
-    .dayrow .ddet{font-size:9.5px}
-    .track.dtrack{width:88px;min-width:80px;height:8px;margin-left:10px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:0}
@@ -1424,78 +1375,47 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      the three overlays that genuinely replace the screen — the record, the rules
      and the welcome. -->
 
-<!-- the record: one list, one screen.
-     the month calendar, the fourteen-day stamp strip and the run list were three
-     drawings of the same history — a grid you could not read a run off, a strip
-     that only went back a fortnight, and a list that did not know which days you
-     had missed. this is the one surface: a day per line, newest first, every day
-     back to launch whether you played it or not, with the stamps you minted that
-     day laid along the line. the head carries what a day list cannot say —
-     which of the sixteen features you have still never seen. -->
+<!-- THE COLLECTION SHEET, and there is no record page any more (28 Aug 2026,
+     the owner's call: "didn't we get rid of the record? it's just the menu page
+     and you scroll"). he is right, and it is the second time the same
+     duplication has been caught — the day card's calendar became the menu on
+     17 Aug and the record's own door was cut for being a door back to the
+     screen you were standing on; reopening the archive this morning quietly
+     rebuilt the record's day walk beside the menu's, two drawings of one
+     thing, two doors apart, again. so the DAYS live on the menu alone, and
+     this sheet is the collection: the grid, today's board under it, the
+     restore line, whose record this is, and the doors. no head at all —
+     "remove the `the record` from that page and the X should go in the bottom
+     bar menu too, for mobile users" — so the way out is the doors' own cross,
+     where a thumb is. -->
 <div class="veil" id="histveil">
   <section class="record">
     <!-- the same four-band strip the intro card wears, at the same top edge —
-         (28 Aug 2026, the owner's call: "the colour bars across the top of each
-         page as well, so it's real consistent".) the three sheets share the
-         frame, the doors row and now the flag. -->
+         the three sheets share the frame, the doors row and the flag. -->
     <div class="intro-strip" aria-hidden="true">
       <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
       <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
     </div>
-    <!-- THE HEAD IS CONTROLS NOW, NOT A READING.
-         it carried the day's score as an instrument — a figure, two clauses and
-         the day's ten rungs drawn underneath. that reading is already on the
-         screen twice: every row draws its own ten cells, and the row for today
-         is two inches below the head saying the same thing about the same day.
-         a number the eye meets three times in one card is furniture whatever it
-         is made of, and this one was the biggest thing on a screen whose subject
-         is a LIST.
-         so the top of the record is a title and the ways out of it, which is
-         what a title bar is for. the score lives in the rows, where it is
-         attached to the day it belongs to. -->
-    <div class="rec-head">
-      <strong class="rec-title">the record</strong>
-      <span class="rec-right">
-        <!-- `histbuy` stood here — the head's own `full version` link — and the
-             `histview` toggle and a `groundbtn` square before it. ALL THREE ARE
-             IN THE DOORS ROW AT THE FOOT NOW (28 Aug 2026, the owner's call:
-             one persistent menu along the bottom of every sheet). the head is a
-             title and the one way out, which is what a title bar is. -->
-
-        <!-- a cross and nothing else. `close ×` said it twice — the word and
-             the glyph are the same instruction, and the glyph is the one every
-             player already reads without being taught. square, so it reads as a
-             control rather than as a word that happens to be boxed. -->
-        <a href="#" class="rec-close" id="histclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
-    </div>
-    <div class="daylist" id="daylist"></div>
-    <!-- today's board, under the list because it is the same reading widened:
-         the list says how your day went and this says how it stands against
-         everyone who chose a mark. hidden until the api answers with rows —
-         a copy opened off a disk has no api, a day with nobody on it has no
-         board, and an empty heading is worse than no heading. -->
+    <!-- the set as a whole: a found feature wears its plate with a band in the
+         tier it was minted at; an unfound one is the stamp's own shadow. -->
+    <div class="collection" id="reccollection"></div>
+    <!-- today's board: how the day stands against everyone who chose a mark.
+         hidden until the api answers with rows — a copy opened off a disk has
+         no api, a day with nobody on it has no board, and an empty heading is
+         worse than no heading. -->
     <div class="recboard" id="recboard" hidden></div>
-    <!-- THE SET AS A WHOLE, and it used to be a strip pinned above the list —
-         one row of sixteen plates, squeezed to a card's width, retiring the
-         moment the set filled. it was the only view of the collection and it was
-         the smallest thing on the screen.
-         it is a view now, reached by the button in the head. that buys three
-         things the strip could not have: the cells are large enough to be the
-         drawings they are rather than thumbnails, the grid stays square as the
-         cast grows, and the set stops competing with the days for the same
-         inches. it also stops retiring — a filled collection is worth looking
-         at, and the strip deleted itself at exactly the moment it became one. -->
-    <div class="collection" id="reccollection" hidden></div>
-    <!-- whose record this is. it belongs at the FOOT of this card and nowhere
-         else in the game: the question "where does this live" only occurs to
-         you once you are looking at a year of days you would hate to lose, and
-         that is this screen. drawn only when there is a server to sign in to —
+    <!-- the restore line's one home now that the day list is gone: a buyer on a
+         new phone still has to find the code somewhere, and the quietest slot
+         above the foot is where the quietest thing on the card belongs. -->
+    <div class="rec-arch" id="recarch" hidden></div>
+    <!-- whose record this is. drawn only when there is a server to sign in to —
          renderAccount leaves it hidden otherwise, so a copy of index.html
          opened off a disk shows no dead buttons. -->
     <div class="rec-foot" id="recfoot" hidden></div>
     <!-- the doors: the same persistent row every sheet ends in — see doorsInner.
          filled and wired by openRecord, because paintTill and the auth slot both
-         need the moment's answer rather than the markup's. -->
+         need the moment's answer rather than the markup's. this sheet's copy
+         carries the cross. -->
     <div class="intro-doors rec-doors" id="recdoors"></div>
   </section>
 </div>
@@ -1531,11 +1451,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      Stripe's own iframe; this is only the frame around it and the way out. -->
 <div class="veil" id="payveil">
   <section class="arch-card pay-card">
-    <div class="rec-head">
-      <strong class="rec-title">the full version</strong>
-      <span class="rec-right"><a href="#" class="rec-close" id="payclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
+    <!-- the checkout joined the sheet family (28 Aug 2026, the owner's
+         screenshot: it had neither the strip along the top nor the buttons
+         along the bottom). its head is gone the way the collection's went —
+         stripe's own frame already says `features — full version`, so the
+         title said it twice — and the way out is the doors' cross. -->
+    <div class="intro-strip" aria-hidden="true">
+      <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
+      <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
     </div>
     <div class="pay-body" id="paybody"></div>
+    <div class="intro-doors rec-doors" id="paydoors"></div>
   </section>
 </div>
 
@@ -2234,7 +2160,7 @@ async function fillIntroAuth(){
     }else el.innerHTML='';
   });
 }
-function doorsInner(here){
+function doorsInner(here,withClose){
   const collHere=here==='record', rulesHere=here==='rules';
   return `<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
@@ -2246,19 +2172,26 @@ function doorsInner(here){
     +`<button class="help groundbtn" aria-label="ground">`
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
     +`<span class="introauth door-auth"></span>`
-    +`<button class="help label door-buy"></button>`;
+    +`<button class="help label door-buy"></button>`
+    +(withClose?`<button class="help door-close" aria-label="close">`
+      +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`:'');
 }
 function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here)}</div>` }
 function wireDoors(row,here){
+  const leave=()=>{ if(here==='pay') closeCheckout(); hideVeils() };
   row.onclick=e=>{
+    if(e.target.closest('.door-close')){
+      if(here==='pay') return closeCheckout();
+      return closeRecord();
+    }
     if(e.target.closest('.door-coll')){
       if(here==='record') return;                      // you are standing on it
       if(here==='day') fromCard=true;                  // rules keeps whatever brought it
-      recView='collection'; hideVeils(); openRecord();
+      leave(); openRecord();
     }else if(e.target.closest('.door-rules')){
       if(here==='rules') return;
       if(here==='day'){ fromCard=true; renderIntro('rules'); return }
-      hideVeils(); renderIntro('rules'); showVeil('introveil');
+      leave(); renderIntro('rules'); showVeil('introveil');
     }
   };
 }
@@ -2266,7 +2199,10 @@ function paintDoors(){
   document.querySelectorAll('.intro-doors .door-buy').forEach(el=>{
     paintTill(el);
     el.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
-    el.onclick=()=>{ if(!POLICY.premium){ hideVeils(); beginUnlock() } };
+    el.onclick=()=>{
+      if($('payveil').classList.contains('show')) return;
+      if(!POLICY.premium){ hideVeils(); beginUnlock() }
+    };
   });
   fillIntroAuth();
 }
@@ -2784,6 +2720,10 @@ async function mountCheckout(clientSecret,pk){
     $('paybody').innerHTML='';
     co.mount('#paybody');
     stripeCheckout=co;
+    const pd=$('paydoors');
+    pd.innerHTML=doorsInner('pay',true);
+    wireDoors(pd,'pay');
+    paintDoors();
     showVeil('payveil');
     return true;
   }catch(e){ return false }
@@ -5712,7 +5652,6 @@ function dayRows(){
   });
   return [...out.values()];
 }
-function allDays(){ return menuDays() }
 const isShut=({d,row})=>!row && !canPlayDay(d);
 const archiveCount=()=>{
   const played=new Set(dayRows().map(r=>r.d));
@@ -5974,21 +5913,6 @@ function dayReading(r){
   if(s==null) return null;
   return {...scoreParts(s), rungs:false, key:-s};
 }
-function bestReading(rows){
-  const all=rows.map(r=>{ const x=dayReading(r); return x?{...x,d:r.d}:null }).filter(Boolean);
-  const g=all.filter(x=>x.rungs);
-  return (g.length?g:all).sort((a,b)=>b.key-a.key)[0]||null;
-}
-const isIso=d=>typeof d==='string' && /^\d{4}-\d{2}-\d{2}$/.test(d)
-  && !Number.isNaN(new Date(d+'T00:00:00').getTime());
-function bestLineEl(best){
-  const el=document.createElement('div');
-  el.className='daybest';
-  const when=isIso(best.d)?dayLabel(best.d):'';
-  el.innerHTML='<span class="dbtext">your best day</span>'
-    +(when?`<span class="dbwhen">${when}</span>`:'');
-  return el;
-}
 
 function archiveLineEl(){
   ensurePrice();     // redraws this card if the answer arrives after it
@@ -6045,17 +5969,14 @@ function renderAccount(){
   });
 }
 
-let recView='days';
 function openRecord(){
-  const d0=today(), rows=dayRows();
+  const d0=today();
   askBoard(d0); drawBoard();
-  const keep=$('daylist').scrollTop;          // a theme flip redraws this whole screen
+  const keep=$('reccollection').scrollTop;    // a theme flip redraws this whole screen
 
-  const best=bestReading(rows);
   const badges=store.collection.badges||{};
-
   const doors=$('recdoors');
-  doors.innerHTML=doorsInner('record');
+  doors.innerHTML=doorsInner('record',true);
   wireDoors(doors,'record');
   paintDoors();
 
@@ -6074,76 +5995,16 @@ function openRecord(){
           +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></span>`;
     }).join('');
 
-  const dayEl=$('daylist');
-  dayEl.hidden = recView!=='days';
-  grid.hidden = recView!=='collection';
-
-  const list=$('daylist'); list.innerHTML='';
-  const days=allDays();
-  days.forEach(({d,row})=>{
-    const played=!!row, canPlay=canPlayDay(d), isToday=d===d0, locked=isShut({d,row});
-    const spent=played && !canPlay;
-
-
-    const tier=played?(row.best||null):null;
-    const el=document.createElement('div');
-    el.className='dayrow'+(isToday?' today':'')
-      +(locked ? ' shut' : played ? ((row.back?' back':'')+(spent?' spent':'')) : ' open');
-
-    let det, right='';
-    const best=(!played && inArchive(d)) ? dayBest(d) : null;
-    const bestWords=best!=null ? ' · '+best+' turns at best' : '';
-    if(locked){
-      det='not open'+bestWords;
-    } else if(played){
-      const p=[], rd=dayReading(row);
-      const bar=(rd&&rd.rungs)?rungTrack(row.tiers,true):'';
-      const barDepth=bar?Math.min(row.tiers.length,POLICY.dailyNets):0;
-      if(isFlawless(row.tiers)) p.push('flawless');
-      if(row.depth && row.depth<POLICY.dailyNets && barDepth<row.depth)
-        p.push(row.depth+' of '+POLICY.dailyNets+' nets');
-      if(!rd && row.moves!=null) p.push(row.moves+' turns');
-      if(row.mode==='trial'&&row.trialDepth) p.push('time trial · depth '+row.trialDepth);
-      if(row.back) p.push('archive');
-      det=p.join(' · ')||(bar?'':'played');
-      right = bar
-        + `<span class="dstate dreplay${canPlay?'':' shut'}" aria-hidden="true">&#8635;</span>`;
-    } else {
-      det=(isToday?'not played yet':'not played')+bestWords;
-      right=rungTrack('',true)+'<span class="dstate">play →</span>';
-    }
-
-    el.innerHTML=`<i class="dtier" style="--tc:${daySpine(d)}"></i>`
-      +`<span class="ddate">${dayLabel(d)}</span>`
-      +`<span class="ddet">${det}</span>`
-      +right;
-    const words=played?tierWords(row.tiers):'';
-    const label=[dayLabel(d), det, played&&tier?tierSay(tier):'', words,
-                 played?(canPlay?'play again':replayWords()):''].filter(Boolean).join(' · ');
-    el.setAttribute('aria-label',label);
-    const offer=()=>openDay(d);
-    const looks=!canPlay && !!row;
-    if(canPlay||looks){
-      el.setAttribute('role','button'); el.tabIndex=0;
-      el.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.onclick() } };
-    }
-    el.onclick=()=>{
-      if(canPlay) return offer();
-      if(openArchiveLook(d)) return;
-      const price=priceWords();
-      flashMsg(spent
-        ? `${dayLabel(d)} · ${replayWords()}`
-        : `${dayLabel(d)} · in the archive · unlock${price?' · '+price:''}`);
-    };
-    list.appendChild(el);
-  });
-  if(best && best.d!==d0) list.appendChild(bestLineEl(best));
+  grid.hidden=false;
+  grid.scrollTop=keep;
+  const archEl=$('recarch');
+  archEl.innerHTML='';
   const arch=(POLICY.premium||API)?archiveLineEl():null;
-  if(arch){ if(POLICY.premium) list.insertBefore(arch,list.firstChild); else list.appendChild(arch) }
+  archEl.hidden=!arch;
+  if(arch) archEl.appendChild(arch);
 
   renderAccount();
   $('histveil').classList.add('show');
-  list.scrollTop=keep;
 }
 
 
@@ -6334,8 +6195,7 @@ const WORDMARK='features';
     ['the board',      ()=>hideVeils()],
     ['the day card',   ()=>{fromCard=false; renderIntro('day'); showVeil('introveil')}],
     ['how to play',    ()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')}],
-    ['the record',     ()=>{fromCard=false; recView='days'; hideVeils(); openRecord()}],
-    ['the collection', ()=>{fromCard=false; recView='collection'; hideVeils(); openRecord()}],
+    ['the collection', ()=>{fromCard=false; hideVeils(); openRecord()}],
     ['net cleared',    ()=>{
       const badged=Object.keys(store.collection.badges||{});
       if(!badged.length){ toast('nothing minted yet · clear a net first'); return false }
@@ -6380,7 +6240,6 @@ function closeRecord(){
   $('histveil').classList.remove('show');
   if(fromCard) backToCard();
 }
-$('histclose').onclick=e=>{e.preventDefault();closeRecord()};
 $('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
 function closeArchiveLook(){
   $('archveil').classList.remove('show');
@@ -6389,7 +6248,6 @@ function closeArchiveLook(){
   archFrom=null;
 }
 $('archclose').onclick=e=>{e.preventDefault();closeArchiveLook()};
-$('payclose').onclick=e=>{e.preventDefault();closeCheckout()};
 function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
   if(v.id==='runveil') return;
