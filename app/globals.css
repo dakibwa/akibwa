@@ -5358,14 +5358,8 @@ button {
     border-color var(--hover-out) var(--ease-out);
 }
 
-.card:hover,
-.card:focus-visible,
-.card.is-open {
-  transform: translateY(-2px);
-  border-color: var(--line-strong);
-  box-shadow: 0 14px 32px rgba(16, 18, 23, 0.11);
-  transition-duration: var(--hover-in);
-}
+/* The old translateY jump is retired — the collectible tilt below is the
+   hover for every card on the wall. */
 
 .card:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
@@ -5813,62 +5807,10 @@ button {
   gap: clamp(5px, 0.55vw, 9px);
 }
 
-/* One row per set: a fixed name rail on the left, the cards running off the
-   right edge. The set is the unit the nav addresses, so lensing re-orders a
-   handful of rows rather than reflowing every card between them. */
-.set {
-  order: var(--order, 0);
-  display: grid;
-  /* A fixed first column is the whole point: every set name lands on the same
-     left edge, so the wall can be read down that column while the cards move
-     across it. With the names riding the tracks there was no left edge at all
-     and a title could drift to the middle of its own row. */
-  /* One shared rail width for every row — fit-content let each row size to
-     its own word, so "Life" and "Projects" started their cards at different
-     x and the wall lost its left edge. Sized to the widest word, no more. */
-  grid-template-columns: clamp(96px, 10vw, 150px) minmax(0, 1fr);
-  align-items: center;
-  column-gap: clamp(12px, 1.4vw, 22px);
-  /* Cards run edge to edge; the name keeps the page gutter so it lines up with
-     the headline above it. */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  padding-left: max(24px, calc((100vw - var(--frame)) / 2));
-  padding-bottom: clamp(6px, 0.7vw, 10px);
-}
-
-.set-label {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  /* The words end on a shared right edge, flush against their cards. */
-  align-items: flex-end;
-  text-align: right;
-  padding-right: clamp(6px, 0.8vw, 14px);
-}
 
 .set-name {
   margin: 0;
 }
-
-.set-rail {
-  overflow: hidden;
-}
-
-.set-rails {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(6px, 0.7vw, 10px);
-  min-width: 0;
-}
-
-/* The toolkit rides beneath the roles at a smaller size, pulling the other
-   way — an offset of Jobs rather than a set of its own. */
-.set-rail--sub .track .card {
-  flex: 0 0 clamp(70px, 7.6vw, 96px);
-  width: clamp(70px, 7.6vw, 96px);
-}
-
 
 /* A solo mark fills its little card. */
 .card-face-stack--solo {
@@ -5890,77 +5832,9 @@ button {
   object-fit: contain;
 }
 
-/* Names sized for the smaller tile — "Cloudflare" was clipping mid-word. */
-.set-rail--sub .card .c-title {
-  font-size: 0.68rem;
-  letter-spacing: 0;
-}
-
-.set-rail--sub .card .f-suit { font-size: 0.5rem; }
-
-/* Only a travelling rail needs the edges softened — cards should dissolve as
-   they leave rather than be guillotined by the viewport. A still rail starts
-   flush against its name, where a fade would just look like a fault. */
-.set-rail.is-travelling {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 clamp(16px, 2.4vw, 40px),
-    #000 calc(100% - clamp(16px, 2.4vw, 40px)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 clamp(16px, 2.4vw, 40px),
-    #000 calc(100% - clamp(16px, 2.4vw, 40px)),
-    transparent 100%
-  );
-}
-
 /* The set's name is also its opener — the same unfold a card click does.
    It wears the hero index's clothes: the big coloured word and its full stop,
    nothing else. The wall is the statement; detail comes from enquiring. */
-.set-open {
-  --index-accent-rgb: 47, 136, 255;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
-  cursor: pointer;
-  font-family: var(--sans);
-  font-size: clamp(1.3rem, 1.9vw, 1.9rem);
-  font-weight: 540;
-  line-height: 1.04;
-  letter-spacing: -0.012em;
-  text-align: left;
-  transition: color 160ms ease;
-}
-
-.set-open:hover,
-.set-open:focus-visible {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
-  outline: 0;
-}
-
-.track {
-  display: flex;
-  width: max-content;
-}
-
-/* The travel transform is written by a velocity loop in the page script —
-   speed changes glide instead of cutting, which no CSS keyframe can do.
-   .track--rtl carries no styles of its own: it tells the loop which way
-   this row pulls. */
-
-/* The second run exists only to close the loop. In a row that does not
-   overflow it is simply the same cards printed twice on one screen, which is
-   what made the wall look broken rather than moving. */
-.set-rail:not(.is-travelling) .track-run[data-clone] {
-  display: none;
-}
-
 /* A word riding the rail in front of its own cards — the same voice as the
    left-hand names, an opener like every other word on the page. */
 .rail-word {
@@ -6000,19 +5874,6 @@ button {
   filter: saturate(0.35);
 }
 
-.track-run {
-  display: flex;
-  gap: clamp(8px, 0.9vw, 13px);
-  padding-right: clamp(8px, 0.9vw, 13px);
-}
-
-.track .card {
-  flex: 0 0 clamp(96px, 11vw, 134px);
-  width: clamp(96px, 11vw, 134px);
-}
-
-/* Reduced motion: the loop never starts, so the wall simply stands. */
-
 /* Under the rail width the name cannot hold a column, so it sits above the
    cards instead and the row keeps its full width for them. */
 @media (max-width: 760px) {
@@ -6022,20 +5883,8 @@ button {
     padding-right: max(24px, calc((100vw - var(--frame)) / 2));
   }
 
-  .set-label {
-    flex-flow: row wrap;
-    align-items: baseline;
-    gap: 4px 10px;
-    padding-right: 0;
+    /* The cards bleed past the gutter again once the name is out of their row. */
   }
-
-  /* The cards bleed past the gutter again once the name is out of their row. */
-  .set-rail {
-    width: 100vw;
-    margin-left: calc(0px - max(24px, calc((100vw - var(--frame)) / 2)));
-    padding-left: max(24px, calc((100vw - var(--frame)) / 2));
-  }
-}
 
 /* The ink prototype's canvas: fixed under everything, purely decorative. */
 .ink-paper {
@@ -6253,11 +6102,7 @@ button {
 }
 
 @media (max-width: 560px) {
-  .track .card {
-    flex-basis: clamp(88px, 28vw, 120px);
-    width: clamp(88px, 28vw, 120px);
-  }
-}/* The foot is pushed to the bottom of the card in its own right. Relying on
+  }/* The foot is pushed to the bottom of the card in its own right. Relying on
    space-between only worked while something sat between the head and the foot;
    on a card with just a name, both collapsed to the top and overlapped. */
 
@@ -6270,36 +6115,92 @@ button {
    below is what carries them, and the script measures before and after to make
    the move continuous rather than a jump. */
 
-.card {
+
+/* Every section is an open shelf: the word leads and the entire collection
+   wraps beside and beneath it. Holding a lens folds everything the lens does
+   not name to nothing — a grid-rows fold, so any length of section closes in
+   the same smooth breath — leaving the lit shelves and the footer. */
+.set {
   order: var(--order, 0);
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows 560ms var(--ease-out),
+    opacity 400ms var(--ease-out),
+    transform 480ms var(--ease-out);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
 }
 
-/* Holding a lens drops the room dark: a fixed veil covers the page, and only
-   the lit rows are raised above it. The dimmed rows stay faintly visible
-   through the veil, still travelling — the world recedes, it does not stop
-   existing. */
-.deck-veil {
-  position: fixed;
+.set-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: clamp(8px, 0.9vw, 13px);
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: clamp(14px, 1.6vw, 24px);
+}
+
+.set-flow .card {
+  flex: 0 0 clamp(100px, 8.6vw, 148px);
+  width: clamp(100px, 8.6vw, 148px);
+}
+
+.set-name {
+  display: contents;
+}
+
+.deck.is-lensed .set:not(:has(.card.is-lit)) {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  content-visibility: visible;
+}
+
+/* The collectible press: the top-left corner gives, the bottom-right lifts,
+   and a foil glint crosses the face — a shiny card between finger and thumb,
+   not a button jumping. */
+.set-flow .card:hover,
+.set-flow .card:focus-visible {
+  transform: perspective(640px) rotate3d(1, -1, 0, 9deg) scale(1.035);
+  border-color: var(--line-strong);
+  box-shadow: -12px 14px 30px rgba(16, 18, 23, 0.16);
+  z-index: 3;
+  transition-duration: var(--hover-in);
+}
+
+.card-sheen {
+  position: absolute;
   inset: 0;
-  z-index: 4;
-  /* The same recession the spotlight uses: the paper thickens and softens
-     rather than going black — the rest of the site dims, it does not die.
-     It also catches every click: nothing in the recess is selectable, and
-     pressing anywhere off the lit rows lets the lens go. */
-  background: rgba(250, 248, 243, 0.78);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  animation: veil-in 460ms var(--ease-out) both;
-}
-
-@keyframes veil-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.deck.is-lensed .set:has(.card.is-lit) {
-  position: relative;
   z-index: 5;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.32) 47%,
+    rgba(255, 255, 255, 0.1) 54%,
+    transparent 66%
+  );
+  background-size: 240% 100%;
+  background-position: 115% 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, background-position 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.set-flow .card:hover .card-sheen,
+.set-flow .card:focus-visible .card-sheen {
+  opacity: 1;
+  background-position: -15% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .set-flow .card:hover,
+  .set-flow .card:focus-visible {
+    transform: none;
+  }
+  .card-sheen { transition: none; opacity: 0; }
 }
 
 

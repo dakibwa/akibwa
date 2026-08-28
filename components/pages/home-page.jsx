@@ -15,10 +15,6 @@ const nf = new Intl.NumberFormat("en-GB");
    the picture instead. */
 const crop = (i, n) => `${n > 1 ? Math.round((i / (n - 1)) * 100) : 50}% 50%`;
 
-/* Pixels a second, the speed every travelling row is held to. Slow enough to
-   read a card as it passes and to sit under text without pulling at it. */
-const DRIFT = 22;
-
 /* Every set counts something, and its title card says how many. Counted off the
    arrays at render rather than written into the data, so the figure on the wall
    cannot outlive what is behind it. */
@@ -48,6 +44,7 @@ function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, 
     >
       <span className="card-face">{face}</span>
       <span className="card-back">{back}</span>
+      <span className="card-sheen" aria-hidden="true" />
     </button>
   );
 }
@@ -200,43 +197,6 @@ export function HomePage() {
     });
   }, [lens]);
 
-  /* Travelling is a property of overflow, not a style choice.
-
-     A track loops by running the cards twice and sliding one full run; that
-     only reads as motion if a run is wider than the rail it moves through.
-     Seven of the nine sets were narrower — Contact fitted nearly twice over —
-     so both copies sat on screen at once and the wall looked like it was
-     stuttering rather than turning. Anything that fits now simply sits still,
-     which leaves the motion to the three sets that have the material for it. */
-  useEffect(() => {
-    const deckEl = deckRef.current;
-    if (!deckEl) return undefined;
-
-    const measure = () => {
-      deckEl.querySelectorAll(".set-rail").forEach((rail) => {
-        const run = rail.querySelector(".track-run");
-        if (!run) return;
-        /* One gap of slack: a run that overflows by less than the gutter would
-           travel a few pixels and read as a twitch. */
-        const slack = parseFloat(getComputedStyle(run).gap) || 0;
-        const travels = run.offsetWidth > rail.clientWidth + slack;
-        rail.classList.toggle("is-travelling", travels);
-        /* The physics loop below reads the run width to know where to wrap. */
-        rail.dataset.runw = run.offsetWidth;
-      });
-    };
-
-    measure();
-    /* Fonts and lazy art both land after first paint and both change the run
-       width, so measure again once the page has settled. */
-    const settled = window.setTimeout(measure, 400);
-    document.fonts?.ready.then(measure).catch(() => {});
-    window.addEventListener("resize", measure);
-    return () => {
-      window.clearTimeout(settled);
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
 
   /* Note where every card is before the order changes, so the FLIP pass can
      carry them to their new places instead of teleporting. */
@@ -281,85 +241,6 @@ export function HomePage() {
     [capture]
   );
 
-  /* The travel itself. Not a CSS keyframe — a velocity loop, which is how
-     the marquees worth copying do it: position integrates a velocity, and the
-     velocity only ever EASES toward its target, so a change of pace is a
-     glide rather than a cut. Hovering a row slows it to reading pace; a
-     spotlight brings the whole wall to rest; scrolling the page gives every
-     row a kick that decays. */
-  const spotRef = useRef(null);
-  useEffect(() => {
-    spotRef.current = lit;
-    document.body.style.overflow = lit ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [lit]);
-
-  useEffect(() => {
-    const deckEl = deckRef.current;
-    if (!deckEl) return undefined;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-
-    const state = new Map(); // rail -> { x, v }
-    let raf = 0;
-    let last = performance.now();
-    let scrollKick = 0;
-    let lastScroll = window.scrollY;
-    let hovered = null;
-
-    const onScroll = () => {
-      scrollKick = Math.min(2.2, Math.abs(window.scrollY - lastScroll) / 90);
-      lastScroll = window.scrollY;
-    };
-    const onOver = (event) => {
-      hovered = event.target.closest?.(".set-rail") ?? null;
-    };
-    const onOut = () => {
-      hovered = null;
-    };
-
-    const tick = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      scrollKick *= 0.94;
-
-      deckEl.querySelectorAll(".set-rail.is-travelling").forEach((rail, i) => {
-        const runW = Number(rail.dataset.runw) || 0;
-        if (!runW) return;
-        let st = state.get(rail);
-        if (!st) {
-          st = { x: 0, v: DRIFT };
-          state.set(rail, st);
-        }
-        /* The world holds its breath while something is in the spotlight;
-           a hovered row slows to reading pace; scroll hurries everything. */
-        const target = spotRef.current
-          ? 0
-          : (rail === hovered ? DRIFT * 0.22 : DRIFT) * (1 + scrollKick);
-        st.v += (target - st.v) * Math.min(1, dt * 5);
-        const rtl = rail.querySelector(".track--rtl") !== null;
-        st.x -= (rtl ? -st.v : st.v) * dt;
-        /* Wrap on the run width — the clone makes the seam invisible. */
-        if (st.x <= -runW) st.x += runW;
-        if (st.x > 0) st.x -= runW;
-        const track = rail.querySelector(".track");
-        if (track) track.style.transform = `translate3d(${st.x.toFixed(2)}px,0,0)`;
-      });
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    deckEl.addEventListener("pointerover", onOver);
-    deckEl.addEventListener("pointerleave", onOut);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      deckEl.removeEventListener("pointerover", onOver);
-      deckEl.removeEventListener("pointerleave", onOut);
-    };
-  }, []);
 
   useEffect(() => {
     if (!lit) return undefined;
@@ -367,7 +248,11 @@ export function HomePage() {
       if (event.key === "Escape") closeLit();
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [lit, closeLit]);
 
   useEffect(() => {
@@ -655,27 +540,28 @@ export function HomePage() {
     return null;
   };
 
+  /* While a lens is held, any press on open paper — anything that is not a
+     button or a link — lets the site back in. */
+  const releaseOnPaper = useCallback(
+    (event) => {
+      if (!lens) return;
+      if (event.target.closest("button, a")) return;
+      capture();
+      setHeldBucket(null);
+      setLens(null);
+    },
+    [lens, capture]
+  );
+
   return (
-    <section className="akibwa-home">
+    <section className="akibwa-home" onClick={releaseOnPaper}>
       {inkOn ? <InkPaper /> : null}
       <div
         className={`page-grid deck${lens ? " is-lensed" : ""}`}
         ref={deckRef}
         aria-label="Everything on one wall"
       >
-        {/* Holding a lens drops the room lights: everything but the lit rows
-            falls into the dark. A real element, not a pseudo — it needs to sit
-            between the dimmed sets and the lit ones in the stack. */}
-        {lens ? (
-          <div
-            className="deck-veil"
-            onClick={() => {
-              capture();
-              setHeldBucket(null);
-              setLens(null);
-            }}
-          />
-        ) : null}
+
         <div className="card card--hero">
           {/* One sentence across the whole top of the page, and the menu is
               simply three of its words. Nothing else up here at all. */}
@@ -705,32 +591,35 @@ export function HomePage() {
             </>
           );
 
-          /* Jobs carries two rails: the roles, and the toolkit they run on —
-             smaller cards, travelling against the row above. The collisions
-             ride the Projects rail: made things among the made things. */
-          const rails =
-            set.id === "jobs"
-              ? [{ cards }, { cards: cardsFor("tools", { as: "jobs" }), sub: true }]
-              : set.id === "sites"
-                ? [{ cards: (
-                    <>
-                      {cards}
-                      {/* Life rides the rail in person — the word sits in
-                          front of the walk and the map, an opener like every
-                          other word on the page, travelling with its cards. */}
-                      <button
-                        type="button"
-                        className={`rail-word${dim("life") ? "" : " is-lit"}`}
-                        style={{ "--index-accent-rgb": INDEX_ACCENT.life }}
-                        aria-expanded={heldBucket === "set:life"}
-                        onClick={() => focusSet("life")}
-                      >
-                        Life
-                      </button>
-                      {cardsFor("life")}
-                    </>
-                  ) }, { cards: cardsFor("creations", { as: "sites" }), sub: true }]
-                : [{ cards }];
+          /* Every collection lies open: the word leads, and the whole
+             library wraps beside and beneath it — cards side by side, all of
+             them, nothing hidden behind a marquee. */
+          const flow =
+            set.id === "jobs" ? (
+              <>
+                {cards}
+                {cardsFor("tools", { as: "jobs" })}
+              </>
+            ) : set.id === "sites" ? (
+              <>
+                {cards}
+                {/* Life leads its own cards mid-flow, an opener like every
+                    other word; the collisions follow as part of the shelf. */}
+                <button
+                  type="button"
+                  className={`rail-word${dim("life") ? "" : " is-lit"}`}
+                  style={{ "--index-accent-rgb": INDEX_ACCENT.life }}
+                  aria-expanded={heldBucket === "set:life"}
+                  onClick={() => focusSet("life")}
+                >
+                  Life
+                </button>
+                {cardsFor("life")}
+                {cardsFor("creations", { as: "sites" })}
+              </>
+            ) : (
+              cards
+            );
 
           return (
             <section
@@ -740,18 +629,11 @@ export function HomePage() {
               style={{ "--order": orderOf(set.id) }}
               aria-labelledby={`set-${set.id}`}
             >
-              {/* The name sits in a fixed rail rather than riding the track.
-                  A signpost that travels at the speed of the thing it names is
-                  not a signpost, and with the labels adrift the wall had no
-                  left edge to read down. */}
-              <div className="set-label">
+              <div className="set-flow">
                 <h2 className="set-name" id={`set-${set.id}`}>
-                  {/* The word alone, in the set's own colour — no tally, no
-                      caption. The wall is the statement; the detail comes from
-                      enquiring. The merged row carries both its words. */}
                   <button
                     type="button"
-                    className="set-open"
+                    className="rail-word"
                     style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
                     aria-expanded={heldBucket === `set:${set.id}`}
                     onClick={() => focusSet(set.id)}
@@ -759,27 +641,8 @@ export function HomePage() {
                     {set.label}
                   </button>
                 </h2>
+                {flow}
               </div>
-
-              <div className="set-rails">
-                {rails.map((rail, r) => (
-                  <div className={`set-rail${rail.sub ? " set-rail--sub" : ""}`} key={r}>
-                    <div className={`track${(i + r) % 2 ? " track--rtl" : ""}`}>
-                      <div className="track-run">{rail.cards}</div>
-                      {/* The run is repeated once so the loop closes on itself:
-                          at -50% the copy sits exactly where the original began.
-                          It is hidden from assistive tech and taken out of the
-                          tab order so the wall is not read or tabbed through
-                          twice. Only a rail that actually overflows renders it
-                          as visible — see the overflow measurement above. */}
-                      <div className="track-run" aria-hidden="true" data-clone="1">
-                        {rail.cards}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
             </section>
           );
         })}
