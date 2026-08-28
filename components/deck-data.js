@@ -2582,13 +2582,7 @@ export const sites = [
     note: "The website and booking system for a hair salon on Boroughgate in [place removed] — prices per stylist, colour development time handled properly." },
   { name: "features", href: "https://akibwa.com/features/",
     ground: "#6e5da8", accent: "#6e5da8", eyebrow: "Live", art: "/project-art/personal/features-symbol.webp",
-    note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." },
-  { name: "The Trek", href: null,
-    ground: "#2c5d46", accent: "#2c5d46", eyebrow: "2019", art: "/project-art/personal/trek-card.webp",
-    note: "Paris to Sofia on foot — 2,017 km across France, Germany, Austria, Slovenia, Croatia, Serbia and Bulgaria, over the Tauern at 2,500 m. Two months, seven countries, then Istanbul and India." },
-  { name: "A Life in Maps", href: "/life-map/",
-    ground: "#1d4f63", accent: "#1d4f63", eyebrow: "Live", art: "/project-art/personal/life-map-card.webp",
-    note: "One map of the whole thing — thirty years, nineteen homes, twenty-three countries, drawn from the real GPS tracks. The story, in the order it happened." }
+    note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." }
 ];
 
 export const visited = [
@@ -2649,8 +2643,19 @@ export const walkTotal = { km: 2017, miles: 1254, countries: 7, days: 58 };
 /* `noun` is the unit a set counts in. The count itself is read off the arrays
    above when the card renders rather than written down here, so the figure on
    the wall cannot drift from the data behind it. */
+/* The life pieces — the walk, and the map of all of it. */
+export const life = [
+  { name: "The Trek", href: null,
+    ground: "#2c5d46", accent: "#2c5d46", eyebrow: "2019", art: "/project-art/personal/trek-card.webp",
+    note: "Paris to Sofia on foot — 2,017 km across France, Germany, Austria, Slovenia, Croatia, Serbia and Bulgaria, over the Tauern at 2,500 m. Two months, seven countries, then Istanbul and India." },
+  { name: "A Life in Maps", href: "/life-map/",
+    ground: "#1d4f63", accent: "#1d4f63", eyebrow: "Live", art: "/project-art/personal/life-map-card.webp",
+    note: "One map of the whole thing — thirty years, nineteen homes, twenty-three countries, drawn from the real GPS tracks. The story, in the order it happened." }
+];
+
 export const sets = [
   { id: "sites", label: "Projects", noun: "of them", note: "Sites, a game, one long walk, and a map of all of it" },
+  { id: "life", label: "Life", noun: "so far", note: "One long walk, and a map of everywhere" },
   { id: "jobs", label: "Career", noun: "roles", note: "Freelance now, on the toolkit below — before that, banks, building societies and building sites" },
   { id: "music", label: "Music", noun: "sleeves", note: "246 sleeves, printed as cards, ranked by plays", cap: 12 },
   { id: "films", label: "Films", noun: "picked", note: "In his own order, not ranked" },

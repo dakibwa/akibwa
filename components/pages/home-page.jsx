@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES, resolveBackground } from "@/components/site-image";
-import { deck, sites, games, tv, sets, instagramUrl } from "@/components/deck-data";
+import { deck, sites, life, games, tv, sets, instagramUrl } from "@/components/deck-data";
 
 const nf = new Intl.NumberFormat("en-GB");
 
@@ -257,6 +257,7 @@ export function HomePage() {
   const focusSet = useCallback(
     (id) => {
       capture();
+      setHeldBucket(null);
       setFocus((current) => {
         const next = current === id ? null : id;
         setLens(next ? [next] : null);
@@ -266,24 +267,22 @@ export function HomePage() {
     [capture]
   );
 
-  const bucketHeld = useCallback(
-    (bucket) => (bucket.set ? focus === bucket.set : !focus && Array.isArray(lens) && lens.length > 1),
-    [focus, lens]
-  );
+  /* Which bucket's lens is held, if any. Rail-name panels clear it. */
+  const [heldBucket, setHeldBucket] = useState(null);
+
+  const bucketHeld = useCallback((bucket) => heldBucket === bucket.id, [heldBucket]);
 
   const openBucket = useCallback(
     (bucket) => {
-      if (bucket.set) {
-        focusSet(bucket.set);
-        return;
-      }
-      /* Taste holds a lens over its four rows rather than opening a panel —
-         the rows themselves are the content. Click again to let go. */
       capture();
       setFocus(null);
-      setLens((current) => (Array.isArray(current) && current.length > 1 ? null : bucket.lens));
+      setHeldBucket((current) => {
+        const next = current === bucket.id ? null : bucket.id;
+        setLens(next ? bucket.lens : null);
+        return next;
+      });
     },
-    [capture, focusSet]
+    [capture]
   );
 
   /* The travel itself. Not a CSS keyframe — a velocity loop, which is how
@@ -507,6 +506,43 @@ export function HomePage() {
             <>
               <span className="b-eyebrow">{site.name}</span>
               <span className="b-body">{site.note}</span>
+            </>
+          }
+        />
+      ));
+    }
+
+    if (id === "life") {
+      return life.map((piece) => (
+        <Card
+          key={piece.name}
+          suit="sites"
+          dim={isDim}
+          {...shared}
+          ground={piece.ground}
+          href={piece.href ?? undefined}
+          label={piece.href ? `${piece.name} — opens the live page` : piece.name}
+          face={
+            <>
+              {piece.art ? (
+                <>
+                  <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+                  <span className="card-scrim" aria-hidden="true" />
+                </>
+              ) : null}
+              <span className="card-face-stack">
+                <span className="c-head"><span className="f-suit">{piece.eyebrow}</span></span>
+                {piece.href ? <span className="site-go" aria-hidden="true">↗</span> : null}
+                <span className="c-foot">
+                  <span className={`c-title c-title--tool ${sizeClass(piece.name)}`}>{piece.name}</span>
+                </span>
+              </span>
+            </>
+          }
+          back={
+            <>
+              <span className="b-eyebrow">{piece.name}</span>
+              <span className="b-body">{piece.note}</span>
             </>
           }
         />
@@ -792,19 +828,22 @@ export function HomePage() {
 const INDEX_ACCENT = {
   sites: "27, 148, 125",
   jobs: "203, 66, 94",
+  life: "61, 90, 128",
   music: "224, 122, 26",
   films: "94, 142, 103",
   games: "115, 112, 255",
   tv: "0, 154, 205"
 };
 
-/* The menu is three buckets, not seven rows: the career, the things built,
-   and the taste that fuels both. Career and Projects unfold their set; Taste
-   gathers its four rows to the top and lets them speak. */
+/* The menu is four buckets, and every one behaves the same way: it gathers
+   its rows to the top and lets the rest of the page recede — no unfolding,
+   no reflow. The rows themselves are the content; the panels wait behind the
+   rail names. */
 const TASTE = ["music", "films", "games", "tv"];
 const BUCKETS = [
-  { id: "projects", label: "Projects", accent: "27, 148, 125", set: "sites" },
-  { id: "career", label: "Career", accent: "203, 66, 94", set: "jobs" },
+  { id: "projects", label: "Projects", accent: "27, 148, 125", lens: ["sites"] },
+  { id: "life", label: "Life", accent: "61, 90, 128", lens: ["life"] },
+  { id: "career", label: "Career", accent: "203, 66, 94", lens: ["jobs"] },
   { id: "taste", label: "Taste", accent: "115, 112, 255", lens: TASTE }
 ];
 
