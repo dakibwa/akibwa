@@ -5926,7 +5926,7 @@ function openArchiveLook(iso){
     +`<span>${esc(dayLabel(iso))} · played</span></div>`
     +`<div class="arch-grid">${grid}</div>`
     +`<div class="arch-offer">${offer}</div>`;
-  if($('archbuy')) $('archbuy').onclick=()=>beginUnlock();
+  if($('archbuy')) $('archbuy').onclick=()=>{ hideVeils(); openMenu('pay'); beginUnlock() };
   if(archFrom) $(archFrom).classList.remove('show');
   showVeil('archveil');
   return true;
@@ -5980,7 +5980,7 @@ function archiveLineEl(){
         : '');
   }
   el.onclick=e=>{
-    if(e.target.closest('[data-buy]')){ e.preventDefault(); beginUnlock() }
+    if(e.target.closest('[data-buy]')){ e.preventDefault(); openMenu('pay'); beginUnlock() }
     else if(e.target.closest('[data-restore]')){ e.preventDefault(); restoreUnlock() }
   };
   return el;
