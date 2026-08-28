@@ -513,7 +513,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     border:1px solid var(--silver);box-shadow:var(--shadow-float);z-index:6;
     -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
   }
-  .play.tutorial .coach{display:block;animation:coachin .42s var(--ease-out) both}
+  .play.tutorial .coach{display:block;pointer-events:none;
+    animation:coachin .42s var(--ease-out) both, coachsettle .9s var(--ease-in) 3.4s forwards}
+  @keyframes coachsettle{to{opacity:.45}}
+  @keyframes coachinflat{from{opacity:0}to{opacity:1}}
   @keyframes coachin{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%)}}
   .play.tutorial .coach.leaving{animation:coachout .24s var(--ease-in) forwards}
   @keyframes coachout{to{opacity:0}}
@@ -1015,6 +1018,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;flex:0 0 auto}
   .intro-doors .help.here{border-color:var(--ink);color:var(--ink);cursor:default}
   .intro-doors .help.here:active{transform:none}
+  .intro-doors .help.door-back{width:auto;min-width:0;padding:0 20px;
+    background:var(--ink);border-color:var(--ink);color:var(--surface);
+    font-size:11px;letter-spacing:.14em}
+  .intro-doors .help.door-back:hover{background:var(--ink);border-color:var(--ink);color:var(--surface);filter:var(--hover-lift)}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
   .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
@@ -1091,7 +1098,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       align-self:center;order:1;margin-top:10px;
       box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface);
     }
-    .play.tutorial .coach{animation:none}
+    .play.tutorial .coach{animation:coachinflat .42s var(--ease-out) both, coachsettle .9s var(--ease-in) 3.4s forwards}
     .play.tutorial .field.portrait{justify-content:center}
     .play.tutorial .field.portrait #netsvg{flex:0 1 auto;aspect-ratio:580/1040;min-height:0;max-height:min(80%,calc(100% - 150px))}
 
@@ -1108,6 +1115,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .veil{padding:12px}
     .acct-card,.arch-card{max-height:calc(100dvh - 24px)}
     .intro-card,.record{height:calc(100dvh - 24px)}
+    .record,.pay-card{max-width:430px}
     .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
     .arch-body{padding:12px 13px 15px}
     .acct-body{padding:14px 13px 15px}
@@ -1139,7 +1147,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       align-self:center;order:1;margin-top:10px;
       box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface);
     }
-    .play.tutorial .coach{animation:none}
+    .play.tutorial .coach{animation:coachinflat .42s var(--ease-out) both, coachsettle .9s var(--ease-in) 3.4s forwards}
   }
 
   @media (max-width:345px){
@@ -2160,7 +2168,7 @@ async function fillIntroAuth(){
     }else el.innerHTML='';
   });
 }
-function doorsInner(here,withClose){
+function doorsInner(here,withClose,withBack){
   const collHere=here==='record', rulesHere=here==='rules';
   return `<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
@@ -2173,15 +2181,26 @@ function doorsInner(here,withClose){
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
     +`<span class="introauth door-auth"></span>`
     +`<button class="help label door-buy"></button>`
+    +(withBack?`<button class="help door-back">back</button>`:'')
     +(withClose?`<button class="help door-close" aria-label="close">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`:'');
 }
-function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here)}</div>` }
+function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here, here==='rules', here==='rules')}</div>` }
 function wireDoors(row,here){
   const leave=()=>{ if(here==='pay') closeCheckout(); hideVeils() };
   row.onclick=e=>{
+    if(e.target.closest('.door-back')){
+      if(fromCard) return backToCard();
+      $('introveil').classList.remove('show');
+      return;
+    }
     if(e.target.closest('.door-close')){
       if(here==='pay') return closeCheckout();
+      if(here==='rules'){
+        fromCard=false;
+        $('introveil').classList.remove('show');
+        return;
+      }
       return closeRecord();
     }
     if(e.target.closest('.door-coll')){
@@ -3729,8 +3748,13 @@ function applyOrientation(force){
   portrait=p;
   $('netsvg').setAttribute('viewBox', portrait?`0 0 ${BH} ${BW}`:`0 0 ${BW} ${BH}`);
   $('field').classList.toggle('portrait', portrait);
-  const tutLift = (portrait && inTutorialRun() && R().netIndex<TUTNETS.length)
-    ? -(BH*(((.46+.88)/2)-.5)) : 0;
+  let tutLift=0;
+  if(portrait && inTutorialRun() && R().netIndex<TUTNETS.length){
+    if(matchMedia('(max-width:700px)').matches){
+      const ys=threads.flatMap(t=>t.nodes.map(n=>n.y0));
+      if(ys.length) tutLift=BH/2-(Math.min(...ys)+Math.max(...ys))/2;
+    }else tutLift=-(BH*(((.46+.88)/2)-.5));
+  }
   if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH+tutLift})`:'');
   if(gLabels) threads.forEach(t=>{if(t.freed) repositionLabel(t)});
   publishPlateInset();
@@ -5163,12 +5187,19 @@ function tutNamed(){
     : null;
   return n ? {n,marks:[],look:true,join:net===2} : null;
 }
+let coachSig='';
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
   if(!inTutorial()){ tutSpotClear(); return }
   const net=Math.min(R().netIndex, TUTSTEPS_BY_NET.length-1);
   const steps=TUTSTEPS_BY_NET[net];
   const step=Math.min(tutStepAt,steps.length);
+  const sig=net+':'+step;
+  if(sig!==coachSig){
+    coachSig=sig;
+    const c=$('coach');
+    c.style.animation='none'; void c.offsetWidth; c.style.animation='';
+  }
   tutSpotlight();
   $('coachlabel').textContent=`tutorial ${net+1} of ${TUTNETS.length} · step ${step} of ${steps.length}`;
   $('coachtext').innerHTML = (!tutLit || net>0) ? steps[step-1]
@@ -6357,7 +6388,6 @@ function renderIntro(mode){
       </div>
       ${rungLadder()}
       ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the tutorial</button>`:''}
-      <button class="intro-start" id="introstart">${fromCard?'back':'back to the net'}</button>
       ${doorsRow('rules')}`;
   } else {
     const fresh=!store.tutorialDone;
@@ -6418,8 +6448,7 @@ function renderIntro(mode){
     paintSpread(); ensureSpread(); ensurePrice();
   }
   if($('ruleslessons')) $('ruleslessons').onclick=()=>startLessons();
-  $('introstart').onclick=()=>{
-    if(introMode==='rules' && fromCard) return backToCard();
+  if($('introstart')) $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
     $('introveil').classList.remove('show');
   };
