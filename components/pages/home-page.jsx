@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
-import { AlbumArtImage, SiteImage, SLOT_SIZES, resolveBackground } from "@/components/site-image";
+import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
 import { deck, sites, life, games, tv, sets, graceland, instagramUrl } from "@/components/deck-data";
 
 const nf = new Intl.NumberFormat("en-GB");
@@ -25,9 +25,8 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
   const props = {
     className: `card card--${suit}${size === "small" ? " card--small" : ""}${size === "grand" ? " card--grand" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
-    /* The key: which legend word this card answers to. Its colour is worn on
-       the card's frame — and in variant B as the backing behind it — so a
-       blended wall still reads at a glance. */
+    /* The key: which legend word this card answers to. Its colour is worn
+       as the card's baseline, so a blended wall still reads at a glance. */
     "data-key": keySet ?? suit,
     "aria-label": label,
     hidden: held || undefined,
@@ -195,12 +194,6 @@ function blend(lists) {
     .map((dealt) => dealt.card);
 }
 
-function sizeClass(text, serif) {
-  const n = text.length;
-  if (serif) return n <= 11 ? "s1" : n <= 19 ? "s2" : n <= 30 ? "s3" : "s4";
-  return n <= 10 ? "s1" : n <= 18 ? "s2" : n <= 27 ? "s3" : "s4";
-}
-
 function Mark({ src, tile }) {
   if (!src) return null;
   return (
@@ -219,14 +212,8 @@ export function HomePage() {
   const [spot, setSpot] = useState(-1);
   /* The ink prototype rides behind ?ink only — off for everyone else. */
   const [inkOn, setInkOn] = useState(false);
-  /* Variant B, behind ?b for comparison: the menu words become cards of
-     their own at the head of the wall, and the key colour moves from the
-     card frame to a backing card behind each tile. */
-  const [variantB, setVariantB] = useState(false);
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setInkOn(params.has("ink"));
-    setVariantB(params.has("b"));
+    setInkOn(new URLSearchParams(window.location.search).has("ink"));
   }, []);
   /* One card, brought forward: everything else dims and comes to rest. */
   const [lit, setLit] = useState(null);
@@ -262,11 +249,37 @@ export function HomePage() {
 
 
 
-  /* Grid reflows snap; a view transition morphs them. Progressive: browsers
-     without it just get the plain state change. */
+  /* Grid reflows snap; a view transition morphs them — and a morph is only
+     as good as its names. Every card near the viewport gets a transition
+     name for the duration, so survivors glide to their packed slots and
+     leavers dissolve in place, instead of one flat crossfade. Capped and
+     viewport-scoped: naming all 366 would ask the compositor to track
+     hundreds of layers for cards nobody can see. Progressive: browsers
+     without the API just get the plain state change. */
   const withMorph = useCallback((apply) => {
-    if (document.startViewTransition) document.startViewTransition(apply);
-    else apply();
+    if (
+      !document.startViewTransition ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      apply();
+      return;
+    }
+    const cards = [...(deckRef.current?.querySelectorAll(".card, .rail-word") ?? [])];
+    const near = [];
+    for (const el of cards) {
+      if (near.length >= 120) break;
+      const r = el.getBoundingClientRect();
+      if (r.bottom > -window.innerHeight && r.top < window.innerHeight * 2.5) near.push(el);
+    }
+    near.forEach((el, i) => {
+      el.style.viewTransitionName = `deck-${i}`;
+    });
+    const transition = document.startViewTransition(apply);
+    transition.finished.finally(() => {
+      near.forEach((el) => {
+        el.style.viewTransitionName = "";
+      });
+    });
   }, []);
 
   /* A rail name holds a lens over its own row — the same machinery as the
@@ -357,6 +370,11 @@ export function HomePage() {
     const shared = { onActivate: openLit };
 
     if (id === "jobs") {
+      /* A job card is the company's mark on the company's colour — the
+         logo IS the face, white where a silhouette exists, kept as its own
+         tile where the logo is a filled block (Sky). Freelance is Dan's own
+         practice with no mark to wear, so its generated art carries it.
+         The name waits in the spotlight, like everywhere else. */
       return deck.jobs.map((job) => (
         <Card
           key={`job-${job.name}`}
@@ -366,34 +384,25 @@ export function HomePage() {
           accent={job.accent}
           label={`${job.name}, ${job.role}`}
           spotFace={
-            job.art ? <SiteImage src={job.art} priority alt="" className="c-art" /> : undefined
+            job.logo ? undefined : <SiteImage src={job.art} priority alt="" className="c-art" />
           }
           face={
-            <>
-              {job.art ? (
-                <>
-                  <SiteImage src={job.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
-                  <span className="card-scrim" aria-hidden="true" />
-                </>
-              ) : job.tile ? null : (
-                <span
-                  className="c-ghost"
-                  aria-hidden="true"
-                  style={{ "--mark": `url(${resolveBackground(job.logo, "logo")})` }}
-                />
-              )}
-              <span className="card-face-stack">
-                <span className="c-foot">
-                  <span className={`c-title ${sizeClass(job.name)}`}>{job.name}</span>
-                  {job.span ? <span className="c-sub">{job.span}</span> : null}
-                </span>
+            job.logo ? (
+              <span className="card-face-stack card-face-stack--solo">
+                <Mark src={job.logo} tile={job.tile} />
               </span>
-            </>
+            ) : (
+              <SiteImage src={job.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+            )
           }
           back={
             <>
-              <span className="b-eyebrow">{job.role}</span>
+              <span className="b-eyebrow">{job.name}</span>
               <span className="b-body">{job.back}</span>
+              <span className="b-figure">
+                {job.role}
+                {job.span ? ` · ${job.span}` : ""}
+              </span>
             </>
           }
         />
@@ -642,39 +651,30 @@ export function HomePage() {
     <section className="akibwa-home" onClick={releaseOnPaper}>
       {inkOn ? <InkPaper /> : null}
       <div
-        className={`page-grid deck${lens ? " is-lensed" : ""}${variantB ? " deck--b" : ""}`}
+        className={`page-grid deck${lens ? " is-lensed" : ""}`}
         ref={deckRef}
         aria-label="Everything on one wall"
       >
 
-        <div className="card card--hero">
+        <div className="deck-hero">
           {/* One sentence across the whole top of the page, and the menu is
               simply three of its words. Nothing else up here at all. */}
           <h1 className="hero-sentence">
-            <HeroFlipName /> — here&rsquo;s my website
-            {variantB ? (
-              /* In variant B the menu words are cards on the wall below, so
-                 the sentence ends where the wall begins. */
-              "."
-            ) : (
-              <>
-                {" "}containing my{" "}
-                {BUCKETS.map((bucket, i) => (
-                  <span key={bucket.id} className="hero-bucket">
-                    <button
-                      type="button"
-                      className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!lens && spot === i ? " is-spot" : ""}`}
-                      style={{ "--index-accent-rgb": bucket.accent }}
-                      aria-expanded={bucketHeld(bucket)}
-                      onClick={() => openBucket(bucket)}
-                    >
-                      {bucket.label.toLowerCase()}
-                    </button>
-                    <span className="hero-sep">{i < BUCKETS.length - 1 ? ", " : "."}</span>
-                  </span>
-                ))}
-              </>
-            )}
+            <HeroFlipName /> — here&rsquo;s my website containing my{" "}
+            {BUCKETS.map((bucket, i) => (
+              <span key={bucket.id} className="hero-bucket">
+                <button
+                  type="button"
+                  className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!lens && spot === i ? " is-spot" : ""}`}
+                  style={{ "--index-accent-rgb": bucket.accent }}
+                  aria-expanded={bucketHeld(bucket)}
+                  onClick={() => openBucket(bucket)}
+                >
+                  {bucket.label.toLowerCase()}
+                </button>
+                <span className="hero-sep">{i < BUCKETS.length - 1 ? ", " : "."}</span>
+              </span>
+            ))}
           </h1>
         </div>
 
@@ -683,46 +683,22 @@ export function HomePage() {
             still reads at a glance. Each word is an opener: hold it and the
             wall folds to just that collection. In variant B the words are
             cards themselves, dealt at the head of the wall. */}
-        {variantB ? (
-          WORD_CARDS.map((word) => {
-            const isTaste = word.id === "taste";
-            const held = isTaste ? heldBucket === "taste" : heldBucket === `set:${word.id}`;
-            const wordDim = isTaste
-              ? Boolean(lens) && !TASTE.every((id) => lens.includes(id))
-              : dim(word.id);
-            return (
-              <button
-                key={`word-${word.id}`}
-                id={`set-${word.id}`}
-                type="button"
-                className={`card card--word${wordDim ? "" : " is-lit"}`}
-                data-key={word.id}
-                style={{ "--index-accent-rgb": WORD_ACCENT[word.id] }}
-                aria-expanded={held}
-                onClick={() => (isTaste ? openBucket(TASTE_BUCKET) : focusSet(word.id))}
-              >
-                <span className="word-card-label">{word.label}</span>
-                <span className="card-sheen" aria-hidden="true" />
-              </button>
-            );
-          })
-        ) : (
-          <div className="deck-legend" aria-label="The key — each word folds the wall to its collection">
-            {LEGEND.map((set) => (
-              <button
-                key={set.id}
-                id={`set-${set.id}`}
-                type="button"
-                className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
-                style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-                aria-expanded={heldBucket === `set:${set.id}`}
-                onClick={() => focusSet(set.id)}
-              >
-                {set.label}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="deck-legend" aria-label="The key — each word folds the wall to its collection">
+          {LEGEND.map((set) => (
+            <button
+              key={set.id}
+              id={`set-${set.id}`}
+              type="button"
+              className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
+              style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+              aria-expanded={heldBucket === `set:${set.id}`}
+              onClick={() => focusSet(set.id)}
+            >
+              {set.label}
+            </button>
+          ))}
+        </div>
+
 
         {/* The front of the wall: the things made, the life pieces, the two
             current roles — and Graceland, grand, because it matters most. */}
@@ -796,20 +772,6 @@ const INDEX_ACCENT = {
    cards ride in the sites flow — but it is very much one of the keys. */
 const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
 
-/* Variant B's menu-as-cards: the legend words plus Taste, the umbrella over
-   the four collections, each a card of its own at the head of the wall. */
-const WORD_CARDS = [
-  { id: "sites", label: "Projects" },
-  { id: "life", label: "Life" },
-  { id: "jobs", label: "Career" },
-  { id: "taste", label: "Taste" },
-  { id: "music", label: "Music" },
-  { id: "films", label: "Films" },
-  { id: "games", label: "Games" },
-  { id: "tv", label: "TV" }
-];
-
-const WORD_ACCENT = { ...INDEX_ACCENT, taste: "40, 42, 48" };
 
 /* The menu is four buckets, and every one behaves the same way: it gathers
    its rows to the top and lets the rest of the page recede — no unfolding,
@@ -823,9 +785,6 @@ const BUCKETS = [
   { id: "taste", label: "Taste", accent: "115, 112, 255", lens: TASTE }
 ];
 
-/* Variant B's Taste card opens the same four-collection lens the sentence
-   word does. */
-const TASTE_BUCKET = BUCKETS[BUCKETS.length - 1];
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for
    variety: five near-black brands in a row is one flat stripe. */

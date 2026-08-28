@@ -5400,68 +5400,40 @@ button {
    The card is its own query container because everything on it is sized
    against the tile rather than the window; see the name below. */
 
+/* A job card is the company's mark on the company's colour: the accent
+   floods the whole tile — no white space to speak of — and the logo sits
+   centred as a white silhouette, the way a printed club card carries its
+   crest. Sky's logo is a filled block with no silhouette to take, so it
+   keeps its own face as a rounded tile. The name waits in the spotlight. */
+
 .card--jobs {
   --suit: var(--accent, var(--ink));
-  background: var(--white);
-  container-type: inline-size;
+  background: var(--accent, var(--white));
+  border-color: color-mix(in srgb, var(--accent, var(--line)) 72%, var(--black));
 }
-
-.card--jobs::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(142% 104% at 20% 114%, var(--accent, transparent), transparent 74%);
-  opacity: 0.26;
-}
-
-/* The wash already says which company this is, so the suit dot would be saying
-   it a second time — the same reason Tools and Contact drop theirs. */
 
 .card--jobs::after { display: none; }
 
-/* The mark is the artwork rather than a corner sticker. Blown up, run off the
-   edge and dropped to a wash, it fills the card the way a sleeve or a poster
-   fills its neighbours — and it is the same 56px file the small mark used, so
-   nothing new is fetched. It is taken as a silhouette and filled with the
-   accent rather than drawn: half these logos are black, and a black ghost is a
-   smudge where a coloured one is a watermark. Softness cannot show at this
-   opacity, which is why the small file is enough. Sky's logo is a filled tile
-   rather than a glyph, so it has no silhouette to take and shows none: laid
-   down as a picture it put its own wordmark behind the company's name.
-
-   Carrying the mark this way is also what makes the card fit. A 26px logo in
-   the flow cost the same height as a line and a half of the name, and between
-   about 600px and 1300px — where the tile bottoms out near 105px — that was
-   the line the years sat on: they were being clipped by the card's own edge. */
-
-.c-ghost {
-  position: absolute;
-  top: 3%;
-  right: -11%;
-  width: 76%;
-  aspect-ratio: 1;
-  background: var(--accent);
-  -webkit-mask: var(--mark) center / contain no-repeat;
-  mask: var(--mark) center / contain no-repeat;
-  opacity: 0.17;
+.card--jobs .card-face-stack--solo .c-mark {
+  width: 52%;
+  height: 52%;
 }
 
-/* The name has the card to itself now, so it takes a step up on every rung —
-   measured against the tile. The tile is a sawtooth against the viewport,
-   134px wide at 1440 but 99px at 900 as the grid takes another column, so a
-   fixed size is either too small at the wide end or pushes the years off the
-   bottom edge at the narrow one. In card widths it fits at every width the
-   grid produces, which was checked from 320px up. */
+.card--jobs .c-mark img {
+  filter: brightness(0) invert(1) drop-shadow(0 2px 12px rgba(0, 0, 0, 0.18));
+  opacity: 0.96;
+}
 
-.card--jobs .c-title.s1 { font-size: clamp(1.04rem, 17.5cqw, 1.46rem); }
+/* The filled-tile logos keep their own colours and edges. */
+.card--jobs .c-mark--tile {
+  width: 58%;
+  height: 58%;
+}
 
-.card--jobs .c-title.s2 { font-size: clamp(0.94rem, 15.4cqw, 1.3rem); }
-
-.card--jobs .c-title.s3 { font-size: clamp(0.86rem, 13.9cqw, 1.18rem); }
-
-.card--jobs .c-title.s4 { font-size: clamp(0.8rem, 12.7cqw, 1.08rem); }
-
-.card--jobs .c-sub { font-size: clamp(0.56rem, 8.1cqw, 0.68rem); }
+.card--jobs .c-mark--tile img {
+  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.22));
+  border-radius: 16%;
+}
 
 .card--tools {
   --suit: var(--suit-tools);
@@ -6018,21 +5990,18 @@ button {
   filter: saturate(0.4);
 }
 
-/* The hero is the one card that carries running text, so it spans a block of
-   the wall rather than a single tile. */
+/* The hero is not a card — it is the sentence the wall hangs under. A plain
+   grid item spanning the full row, and during a fold it holds perfectly
+   still: its own view-transition name pins it while the wall morphs. */
 
-.card--hero {
-  aspect-ratio: auto;
+.deck-hero {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-end;
   gap: clamp(12px, 1.4vw, 20px);
   padding: clamp(14px, 1.6vw, 22px);
-  background: none;
-  border: 0;
-  box-shadow: none;
-  cursor: default;
+  view-transition-name: akibwa-hero;
 }
 
 /* The menu, retired into the site's own vocabulary. Ten words that are the
@@ -6077,11 +6046,7 @@ button {
   text-underline-offset: 6px;
 }
 
-.card--hero::after { display: none; }
-
-.card--hero:hover { transform: none; box-shadow: none; }
-
-.card--hero h1 {
+.deck-hero h1 {
   margin: 0;
   color: var(--black);
   /* Sized so the one sentence runs the width of the page. */
@@ -6093,7 +6058,7 @@ button {
 
 
 @media (max-width: 760px) {
-.card--hero { grid-column: 1 / -1; }
+.deck-hero { grid-column: 1 / -1; }
 }
 
 @media (max-width: 560px) {
@@ -6144,7 +6109,7 @@ button {
   grid-row: span 3;
 }
 
-.deck .card--hero {
+.deck .deck-hero {
   grid-column: 1 / -1;
   grid-row: auto;
   margin: 0 0 clamp(8px, 1vw, 14px);
@@ -6161,23 +6126,12 @@ button {
 .deck .card[data-key="films"] { --key-rgb: 94, 142, 103; }
 .deck .card[data-key="games"] { --key-rgb: 115, 112, 255; }
 .deck .card[data-key="tv"] { --key-rgb: 0, 154, 205; }
-/* Taste is the umbrella over four collections, so its card wears the ink
-   itself — the master key rather than one collection's colour. */
-.deck .card[data-key="taste"] { --key-rgb: 40, 42, 48; }
 
-/* The whole frame wears the ink, not just a baseline — and pressing the card
-   deepens its own colour rather than swapping to the neutral line. */
+/* The key is a quiet baseline: each card underlined in its collection's
+   ink, the frame staying the neutral line. (A full coloured frame was
+   tried and reverted — it shouted.) */
 .deck .card {
-  border: 2px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 52%, var(--white));
-}
-
-.deck .card[data-key]:hover,
-.deck .card[data-key]:focus-visible {
-  border-color: color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 82%, var(--white));
-}
-
-.deck .card--hero {
-  border: 0;
+  border-bottom: 3px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 62%, var(--white));
 }
 
 /* The key itself: one row of the collection words just under the sentence,
@@ -6198,57 +6152,52 @@ button {
   font-size: clamp(1.05rem, 1.35vw, 1.35rem);
 }
 
-/* ── Variant B (?b) — for comparison ────────────────────────────────────
-   The menu words leave the sentence and the legend row and become cards of
-   their own at the head of the wall, and the key moves BEHIND the cards:
-   every tile sits on a backing card in its collection's ink, offset like a
-   stacked deck, while the frame goes back to the neutral line. */
-.card--word {
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, rgb(var(--index-accent-rgb)) 9%, var(--white));
-}
-
-.word-card-label {
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: clamp(1.02rem, 1.5vw, 1.4rem);
-  letter-spacing: -0.014em;
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 74%, var(--black));
-}
-
-.card--word[aria-expanded="true"] .word-card-label {
-  text-decoration: underline;
-  text-decoration-thickness: 0.09em;
-  text-underline-offset: 0.18em;
-}
-
-.deck.deck--b .card {
-  border: 1px solid var(--line);
-  box-shadow:
-    5px 6px 0 color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 55%, var(--white)),
-    0 4px 14px rgba(16, 18, 23, 0.03);
-}
-
-.deck.deck--b .card[data-key]:hover,
-.deck.deck--b .card[data-key]:focus-visible {
-  border-color: var(--line-strong);
-  box-shadow:
-    5px 6px 0 color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 75%, var(--white)),
-    -12px 14px 30px rgba(16, 18, 23, 0.16);
-}
-
-.deck.deck--b .card--hero {
-  border: 0;
-  box-shadow: none;
-}
 
 /* Holding a lens: everything the lens does not name leaves the collage, and
    the view transition morphs the survivors into their closed-up places. The
    hero sentence stays; it holds the words that let go. */
-.deck.is-lensed .card:not(.is-lit):not(.card--hero),
+.deck.is-lensed .card:not(.is-lit),
 .deck.is-lensed .rail-word:not(.is-lit) {
   display: none;
+}
+
+/* ── The fold, choreographed ────────────────────────────────────────────
+   Holding or releasing a word runs through a view transition, and the
+   script names every card near the viewport, so survivors GLIDE into their
+   packed slots while the leavers dissolve where they stand — a morph, not a
+   crossfade. One long decelerating curve; the paper (root) barely breathes. */
+::view-transition-group(*) {
+  animation-duration: 540ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+}
+
+/* A leaver has only an old snapshot: let it dissolve softly, shrinking a
+   touch, rather than blinking off. */
+::view-transition-old(*):only-child {
+  animation: deck-card-leave 300ms var(--ease-out) both;
+}
+
+/* An arriver has only a new snapshot: it settles in with the same breath. */
+::view-transition-new(*):only-child {
+  animation: deck-card-arrive 420ms 90ms var(--ease-out) both;
+}
+
+@keyframes deck-card-leave {
+  to { opacity: 0; transform: scale(0.94); }
+}
+
+@keyframes deck-card-arrive {
+  from { opacity: 0; transform: scale(0.96); }
+}
+
+/* The sentence holds perfectly still while the wall moves beneath it. */
+::view-transition-group(akibwa-hero) {
+  animation-duration: 0ms;
 }
 
 .card {
