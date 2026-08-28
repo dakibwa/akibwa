@@ -1018,11 +1018,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;flex:0 0 auto}
   .intro-doors .help.here{background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors .help.here:active{transform:none}
-  .intro-doors .help.door-back{width:auto;min-width:0;padding:0 20px;
-    background:var(--ink);border-color:var(--ink);color:var(--surface);
-    font-size:11px;letter-spacing:.14em;
-    margin-left:auto}
-  .intro-doors .help.door-back:hover{background:var(--ink);border-color:var(--ink);color:var(--surface);filter:var(--hover-lift)}
+  .intro-doors .help.door-close{margin-left:auto}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
   .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
@@ -1881,7 +1877,7 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
 
 
 const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', flawless:'--rosa', par:'--tuerkis', over:'--violett'};
-const DAYSPINE=['--hellblau','--gruen','--dunkelblau','--orange'];
+const DAYSPINE=['--hellblau','--orange','--gruen','--rosa','--dunkelblau','--gelb','--tuerkis','--violett'];
 const daySpine=d=>`var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})`;
 const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 const SETAHEAD='--rule';
@@ -2159,7 +2155,7 @@ async function fillIntroAuth(){
     }else el.innerHTML='';
   });
 }
-function doorsInner(here,withClose,withBack){
+function doorsInner(here,withClose){
   const collHere=here==='record', rulesHere=here==='rules';
   return `<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
@@ -2172,23 +2168,17 @@ function doorsInner(here,withClose,withBack){
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
     +`<span class="introauth door-auth"></span>`
     +`<button class="help label door-buy"></button>`
-    +(withBack?`<button class="help door-back">back</button>`:'')
     +(withClose?`<button class="help door-close" aria-label="close">`
       +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`:'');
 }
-function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here, here==='rules', here==='rules')}</div>` }
+function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here, here==='rules')}</div>` }
 function wireDoors(row,here){
   const leave=()=>{ if(here==='pay') closeCheckout(); hideVeils() };
   row.onclick=e=>{
-    if(e.target.closest('.door-back')){
-      if(fromCard) return backToCard();
-      $('introveil').classList.remove('show');
-      return;
-    }
     if(e.target.closest('.door-close')){
       if(here==='pay') return closeCheckout();
       if(here==='rules'){
-        fromCard=false;
+        if(fromCard) return backToCard();
         $('introveil').classList.remove('show');
         return;
       }
@@ -2208,7 +2198,7 @@ function wireDoors(row,here){
 function paintDoors(){
   document.querySelectorAll('.intro-doors .door-buy').forEach(el=>{
     paintTill(el);
-    el.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
+    if(!POLICY.premium) el.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
     el.onclick=()=>{
       if($('payveil').classList.contains('show')) return;
       if(!POLICY.premium){ hideVeils(); beginUnlock() }
