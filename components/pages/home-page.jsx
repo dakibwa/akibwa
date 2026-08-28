@@ -242,7 +242,7 @@ export function HomePage() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const id = window.setInterval(() => setSpot((v) => (v + 1) % BUCKETS.length), 1400);
+    const id = window.setInterval(() => setSpot((v) => (v + 1) % SPOT_ORDER.length), 1400);
     return () => window.clearInterval(id);
   }, []);
 
@@ -264,7 +264,7 @@ export function HomePage() {
       apply();
       return;
     }
-    const cards = [...(deckRef.current?.querySelectorAll(".card, .rail-word") ?? [])];
+    const cards = [...(deckRef.current?.querySelectorAll(".card") ?? [])];
     const near = [];
     for (const el of cards) {
       if (near.length >= 120) break;
@@ -643,6 +643,34 @@ export function HomePage() {
     [lens, withMorph]
   );
 
+  /* The sentence's own words are its menu: a noun opens one collection, a
+     verb holds a lens over its half of the wall. */
+  const SetWord = ({ set, children }) => (
+    <button
+      type="button"
+      className={`hero-index-word${heldBucket === `set:${set.id}` ? " is-held" : ""}${
+        !lens && SPOT_ORDER[spot] === set.id ? " is-spot" : ""
+      }`}
+      style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+      aria-expanded={heldBucket === `set:${set.id}`}
+      onClick={() => focusSet(set.id)}
+    >
+      {children}
+    </button>
+  );
+
+  const BucketWord = ({ bucket, children }) => (
+    <button
+      type="button"
+      className={`hero-index-word hero-index-word--verb${bucketHeld(bucket) ? " is-held" : ""}`}
+      style={{ "--index-accent-rgb": bucket.accent }}
+      aria-expanded={bucketHeld(bucket)}
+      onClick={() => openBucket(bucket)}
+    >
+      {children}
+    </button>
+  );
+
   /* Career leads the front of the wall with its two current roles; the six
      past ones are dealt through the blend below with everything else. */
   const jobCards = cardsFor("jobs");
@@ -659,44 +687,18 @@ export function HomePage() {
         <div className="deck-hero">
           {/* One sentence across the whole top of the page, and the menu is
               simply three of its words. Nothing else up here at all. */}
+          {/* The sentence is the menu. Every coloured noun opens its
+              collection, and the two verbs hold a lens over their halves —
+              nothing separate below it, no second row of words. */}
           <h1 className="hero-sentence">
-            <HeroFlipName /> — here&rsquo;s my website containing my{" "}
-            {BUCKETS.map((bucket, i) => (
-              <span key={bucket.id} className="hero-bucket">
-                <button
-                  type="button"
-                  className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!lens && spot === i ? " is-spot" : ""}`}
-                  style={{ "--index-accent-rgb": bucket.accent }}
-                  aria-expanded={bucketHeld(bucket)}
-                  onClick={() => openBucket(bucket)}
-                >
-                  {bucket.label.toLowerCase()}
-                </button>
-                <span className="hero-sep">{i < BUCKETS.length - 1 ? ", " : "."}</span>
-              </span>
-            ))}
+            <HeroFlipName /> — the things I{" "}
+            <BucketWord bucket={BUCKETS[0]}>built</BucketWord>:{" "}
+            <SetWord set={SET.sites}>projects</SetWord>, a <SetWord set={SET.jobs}>career</SetWord>, a{" "}
+            <SetWord set={SET.life}>life</SetWord>. The things I{" "}
+            <BucketWord bucket={BUCKETS[1]}>love</BucketWord>:{" "}
+            <SetWord set={SET.music}>music</SetWord>, <SetWord set={SET.films}>films</SetWord>,{" "}
+            <SetWord set={SET.games}>games</SetWord>, <SetWord set={SET.tv}>TV</SetWord>.
           </h1>
-        </div>
-
-        {/* The key. Every collection's word, printed in its own ink — the
-            same ink every card below wears on its frame, so the blended wall
-            still reads at a glance. Each word is an opener: hold it and the
-            wall folds to just that collection. In variant B the words are
-            cards themselves, dealt at the head of the wall. */}
-        <div className="deck-legend" aria-label="The key — each word folds the wall to its collection">
-          {LEGEND.map((set) => (
-            <button
-              key={set.id}
-              id={`set-${set.id}`}
-              type="button"
-              className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
-              style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-              aria-expanded={heldBucket === `set:${set.id}`}
-              onClick={() => focusSet(set.id)}
-            >
-              {set.label}
-            </button>
-          ))}
         </div>
 
 
@@ -778,12 +780,20 @@ const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
    no reflow. The rows themselves are the content; the panels wait behind the
    rail names. */
 const TASTE = ["music", "films", "games", "tv"];
+/* Two verbs carry the sentence: "built" holds a lens over everything made —
+   the sites, the career, the life pieces — and "love" over the four taste
+   collections. They wear the ink rather than a collection's colour, because
+   each is an umbrella over several. */
 const BUCKETS = [
-  { id: "projects", label: "Projects", accent: "27, 148, 125", lens: ["sites"] },
-  { id: "life", label: "Life", accent: "61, 90, 128", lens: ["life"] },
-  { id: "career", label: "Career", accent: "203, 66, 94", lens: ["jobs"] },
-  { id: "taste", label: "Taste", accent: "115, 112, 255", lens: TASTE }
+  { id: "built", accent: "40, 42, 48", lens: ["sites", "jobs", "life"] },
+  { id: "love", accent: "40, 42, 48", lens: TASTE }
 ];
+
+/* The seven collection words, addressable by id for the sentence. */
+const SET = Object.fromEntries(LEGEND.map((entry) => [entry.id, entry]));
+
+/* The roving light passes over the coloured nouns only. */
+const SPOT_ORDER = ["sites", "jobs", "life", "music", "films", "games", "tv"];
 
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for

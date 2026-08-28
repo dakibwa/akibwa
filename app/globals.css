@@ -5800,35 +5800,6 @@ button {
   object-fit: contain;
 }
 
-/* The set's name is also its opener — the same unfold a card click does.
-   It wears the hero index's clothes: the big coloured word and its full stop,
-   nothing else. The wall is the statement; detail comes from enquiring. */
-/* A word riding the rail in front of its own cards — the same voice as the
-   left-hand names, an opener like every other word on the page. */
-.rail-word {
-  --index-accent-rgb: 61, 90, 128;
-  flex: 0 0 auto;
-  align-self: center;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  margin: 0 clamp(8px, 0.9vw, 14px) 0 clamp(10px, 1.2vw, 18px);
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
-  cursor: pointer;
-  font-family: var(--sans);
-  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
-  font-weight: 540;
-  letter-spacing: -0.012em;
-  transition: color 160ms ease, opacity 460ms var(--ease-out);
-}
-
-.rail-word:hover,
-.rail-word:focus-visible {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
-  outline: 0;
-}
-
 /* When the lens lights the other group on this rail, the word steps back
    with its cards. */
 /* Under the rail width the name cannot hold a column, so it sits above the
@@ -6004,14 +5975,17 @@ button {
   view-transition-name: akibwa-hero;
 }
 
-/* The menu, retired into the site's own vocabulary. Ten words that are the
-   rows, set like a line of the sentence above them: each in its set's colour,
-   each opening its set with the same unfold a card click does. */
-/* The bucket words sit inside the sentence itself — same size, same line,
-   only the colour says they are doors. */
-.hero-bucket { white-space: nowrap; }
-
-.hero-sep { color: #84858d; }
+/* The menu IS the sentence: coloured nouns open their collections, and the
+   two verbs — built, love — hold a lens over their half of the wall. The
+   verbs wear the ink with a dotted underline, quieter than the nouns'
+   colour but still visibly a door. */
+.hero-index-word--verb:not(.is-held) {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 0.055em;
+  text-decoration-color: rgba(40, 42, 48, 0.4);
+  text-underline-offset: 0.16em;
+}
 
 .hero-index-word {
   --index-accent-rgb: 47, 136, 255;
@@ -6134,30 +6108,12 @@ button {
   border-bottom: 3px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 62%, var(--white));
 }
 
-/* The key itself: one row of the collection words just under the sentence,
-   each printed in its ink, each an opener. It replaces the section words
-   that used to stand in the stream — the wall no longer has sections. */
-.deck-legend {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: clamp(16px, 2vw, 30px);
-  row-gap: 2px;
-  margin: 0 0 clamp(4px, 0.6vw, 10px);
-}
-
-.deck-legend .rail-word {
-  margin: 0;
-  font-size: clamp(1.05rem, 1.35vw, 1.35rem);
-}
 
 
 /* Holding a lens: everything the lens does not name leaves the collage, and
    the view transition morphs the survivors into their closed-up places. The
    hero sentence stays; it holds the words that let go. */
-.deck.is-lensed .card:not(.is-lit),
-.deck.is-lensed .rail-word:not(.is-lit) {
+.deck.is-lensed .card:not(.is-lit) {
   display: none;
 }
 
@@ -6205,10 +6161,6 @@ button {
     transform var(--hover-out) var(--ease-out),
     box-shadow var(--hover-out) var(--ease-out),
     border-color var(--hover-out) var(--ease-out);
-}
-
-.rail-word {
-  transition: color 160ms ease;
 }
 
 /* The collectible press: the top-left corner gives, the bottom-right lifts,
