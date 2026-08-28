@@ -4556,11 +4556,12 @@ function freeThread(t,silent){
   t.calm=threads.indexOf(t)*1.1;
   const whole=signWhole(t);
   const twin=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===t.key);
+  let lbl=twin;
   if(twin){
     const n=(+twin.dataset.n||1)+1; twin.dataset.n=n;
     twin.textContent=`${t.key} ×${n}`;
   }else{
-    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
     lbl.setAttribute('class','tlabel2');lbl.setAttribute('text-anchor','middle');
     lbl.textContent=t.key;
     lbl.dataset.thread=t.key;
