@@ -720,7 +720,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     #runveil .minted .mb:nth-child(n+6){display:none}
   }
 
-  #payveil{z-index:50}
   .askveil{z-index:80}
   .askveil > .bulletin{max-width:392px}
 
@@ -752,11 +751,20 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .devtab:hover{border-color:var(--silver)}
 
-  .record{
-    display:flex;flex-direction:column;
-    overflow:hidden;
-    border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
-  }
+  /* IT WRAPS AGAIN, and only when it has to. this head is a title plus up to
+     four controls, and the fourth — the ground square — is what tipped the
+     narrowest case over: at 375 the card gives the row 323px, and title +
+     `collection` + `full version` + ground + close want 372. with nowrap the
+     flexbox pays for that by deforming everything at once, which is what it did
+     — the title broke onto two lines, `full version` lost 17px of its box, and
+     both 34px squares came out 26.5 wide, which is a square that is not one.
+     wrapping spends the same shortfall in one place instead: the controls drop
+     to a line of their own at full size, and the head gets 26px taller on the
+     one screen where that is the cheapest thing it owns.
+     it engages nowhere else. `full version` is drawn only where there is a till
+     (`canBuy`), so the everyday narrow head is three items wanting 257 of 323
+     and stays on one line, and at 640px the card has 602 for a row that wants
+     363. this is the graceful end of a range, not a layout. */
   .rec-head{
     flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;
     justify-content:space-between;gap:12px;
@@ -832,12 +840,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     border-bottom:1px solid transparent;transition:color var(--t-ui),border-color var(--t-ui)}
   .acct-who:hover{color:var(--ink);border-bottom-color:var(--rule)}
 
-  .acct-card{
-    max-width:400px;width:100%;display:flex;flex-direction:column;
-    max-height:calc(100dvh - 40px);overflow:hidden;
-    border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
-  }
-  .acct-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:13px;overflow-y:auto}
+  .acct-body{display:flex;flex-direction:column;gap:13px;overflow-y:auto}
 
   .arch-card{
     max-width:660px;width:100%;display:flex;flex-direction:column;
@@ -933,8 +936,22 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-card{
     background:var(--surface);border:1px solid var(--ink);display:grid;
     grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);overflow:hidden;box-shadow:var(--shadow-card);
-    grid-template-rows:auto minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1fr) auto;
   }
+  .intro-art{grid-column:1;grid-row:2}
+  #introbody{grid-column:2;grid-row:2}
+  .menupane{grid-row:2;grid-column:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  .menupane[hidden]{display:none}
+  .collection.menupane{padding:14px 18px 18px;grid-template-columns:repeat(4,1fr);border-right:1px solid var(--rule);background:var(--paper)}
+  .panerules{display:flex;flex-direction:column;padding:20px 22px 24px;border-right:1px solid var(--rule);background:var(--paper)}
+  .paneside{grid-column:2;display:flex;flex-direction:column;gap:12px;padding:16px 22px 20px}
+  .paneside .pay-body{flex:1 1 auto;min-height:0;overflow-y:auto}
+  .paneside .acct-body{flex:1 1 auto;min-height:0;overflow-y:auto}
+  .pane-head[hidden],.paneside .pay-body[hidden],.paneside .acct-body[hidden],.rec-arch[hidden]{display:none}
+  .pane-head .rec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase}
+  #menudoors{grid-column:1/-1;grid-row:3}
+  #introcard.view-coll .intro-art,#introcard.view-rules .intro-art{display:none}
+  #introcard.view-profile #introbody,#introcard.view-pay #introbody{display:none}
   .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px))}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
@@ -1109,7 +1126,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .track{height:8px;margin-top:7px}
 
     .veil{padding:12px}
-    .acct-card,.arch-card{max-height:calc(100dvh - 24px)}
+    .arch-card{max-height:calc(100dvh - 24px)}
     .menusheet{height:calc(100dvh - 24px);max-width:430px}
     .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
     .arch-body{padding:12px 13px 15px}
@@ -1129,7 +1146,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .saymark{width:46px;height:30px}
     .coach-body{padding:11px 13px 12px}
     .coach-text{font-size:13px}
-    .intro-card{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}
+    .intro-card{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr) auto}
+    .intro-art{grid-column:1;grid-row:2}
+    #introbody{grid-column:1;grid-row:3}
+    .menupane,.paneside{grid-column:1;grid-row:3;border-right:0}
+    #menudoors{grid-row:4}
+    #introcard:not(.view-home) .intro-art{display:none}
+    #introcard:not(.view-home) #introbody{display:none}
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
     .intro-art > svg{min-height:0}
     .intro-body{padding:17px 18px 20px}
@@ -1386,67 +1409,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      the three overlays that genuinely replace the screen — the record, the rules
      and the welcome. -->
 
-<!-- THE COLLECTION SHEET, and there is no record page any more (28 Aug 2026,
-     the owner's call: "didn't we get rid of the record? it's just the menu page
-     and you scroll"). he is right, and it is the second time the same
-     duplication has been caught — the day card's calendar became the menu on
-     17 Aug and the record's own door was cut for being a door back to the
-     screen you were standing on; reopening the archive this morning quietly
-     rebuilt the record's day walk beside the menu's, two drawings of one
-     thing, two doors apart, again. so the DAYS live on the menu alone, and
-     this sheet is the collection: the grid, today's board under it, the
-     restore line, whose record this is, and the doors. no head at all —
-     "remove the `the record` from that page and the X should go in the bottom
-     bar menu too, for mobile users" — so the way out is the doors' own cross,
-     where a thumb is. -->
-<div class="veil" id="histveil">
-  <section class="record menusheet">
-    <!-- the same four-band strip the intro card wears, at the same top edge —
-         the three sheets share the frame, the doors row and the flag. -->
-    <div class="intro-strip" aria-hidden="true"></div>
-    <!-- the set as a whole: a found feature wears its plate with a band in the
-         tier it was minted at; an unfound one is the stamp's own shadow. -->
-    <div class="collection" id="reccollection"></div>
-    <!-- today's board: how the day stands against everyone who chose a mark.
-         hidden until the api answers with rows — a copy opened off a disk has
-         no api, a day with nobody on it has no board, and an empty heading is
-         worse than no heading. -->
-    <div class="recboard" id="recboard" hidden></div>
-    <!-- the restore line's one home now that the day list is gone: a buyer on a
-         new phone still has to find the code somewhere, and the quietest slot
-         above the foot is where the quietest thing on the card belongs. -->
-    <div class="rec-arch" id="recarch" hidden></div>
-    <!-- whose record this is. drawn only when there is a server to sign in to —
-         renderAccount leaves it hidden otherwise, so a copy of index.html
-         opened off a disk shows no dead buttons. -->
-    <div class="rec-foot" id="recfoot" hidden></div>
-    <!-- the doors: the same persistent row every sheet ends in — see doorsInner.
-         filled and wired by openRecord, because paintTill and the auth slot both
-         need the moment's answer rather than the markup's. this sheet's copy
-         carries the cross. -->
-    <div class="intro-doors rec-doors" id="recdoors"></div>
-  </section>
-</div>
+<!-- the record, the account card and the checkout were three veils of their
+     own and are PANES OF THE ONE MENU now (28 Aug 2026, the owner's call:
+     "the collection displayed on the left hand side so the menu never
+     changes... the profile takes over where the previous runs are showing...
+     same with the pay feature — the new stuff fades into the same menu and
+     you never feel like you're going to a new page"). see the intro card. -->
 
-<!-- the account card. the LAST STEP of signing in and the only screen in the
-     game with a field in it, so it is kept to one question at a time: where to
-     send a code, or what to call you, or whether you want the morning line.
-     everything on it is optional and every mode closes — a player who signs in
-     and answers nothing gets the whole game and a record that follows them,
-     which is the point of it. -->
-<div class="veil" id="acctveil">
-  <section class="acct-card">
-    <div class="rec-head">
-      <strong class="rec-title" id="accttitle">your account</strong>
-      <!-- a cross and nothing else, which is what `.rec-close` is sized for: it is a
-           34px square built round one glyph, so the word `close` inside it overflowed
-           the box and printed across the title. the record's own cross lost the word
-           for the same reason — see the note there. -->
-      <span class="rec-right"><a href="#" class="rec-close" id="acctclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
-    </div>
-    <div class="acct-body" id="acctbody"></div>
-  </section>
-</div>
 
 <!-- ---- THE ARCHIVE'S LOOK ----
      a day you played, that you can no longer play. it used to answer a press
@@ -1457,18 +1426,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      on the page is the thing for sale. -->
 <!-- checkout, mounted inside the game rather than a page away. the card is
      Stripe's own iframe; this is only the frame around it and the way out. -->
-<div class="veil" id="payveil">
-  <section class="arch-card pay-card menusheet">
-    <!-- the checkout joined the sheet family (28 Aug 2026, the owner's
-         screenshot: it had neither the strip along the top nor the buttons
-         along the bottom). its head is gone the way the collection's went —
-         stripe's own frame already says `features — full version`, so the
-         title said it twice — and the way out is the doors' cross. -->
-    <div class="intro-strip" aria-hidden="true"></div>
-    <div class="pay-body" id="paybody"></div>
-    <div class="intro-doors rec-doors" id="paydoors"></div>
-  </section>
-</div>
 
 <div class="veil" id="archveil">
   <section class="arch-card">
@@ -1481,11 +1438,31 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 </div>
 
 <div class="veil" id="introveil">
-  <div class="intro-card menusheet">
+  <!-- ---- THE ONE MENU ---- (28 Aug 2026, the owner's call)
+       every page is a PANE of this card now, so the frame never changes and
+       nothing feels like a new screen. the left half is the plate, or the
+       collection, or the rules; the right half is the menu itself, or the
+       profile, or the checkout taking over "where the previous runs are
+       showing". the strip, the doors and the frame never move; `menuView`
+       decides the panes and renderPanes draws the decision. -->
+  <div class="intro-card menusheet" id="introcard">
     <div class="intro-strip" aria-hidden="true"></div>
     <!-- the plate is a net drawn by the board's own marks, filled by renderIntro -->
     <div class="intro-art" id="introart"></div>
+    <div class="menupane collection" id="panecoll" hidden></div>
+    <div class="menupane panerules" id="panerules" hidden></div>
+    <div class="menupane paneside" id="paneside" hidden>
+      <div class="pane-head" id="panehead"><strong class="rec-title" id="accttitle">your account</strong></div>
+      <div class="acct-body" id="acctbody"></div>
+      <!-- the restore line lives with the profile: a buyer on a new phone is
+           exactly who is standing here -->
+      <div class="rec-arch" id="recarch" hidden></div>
+      <div class="pay-body" id="paybody" hidden></div>
+    </div>
     <div class="intro-body" id="introbody"></div>
+    <!-- the persistent doors: built ONCE at boot, never rebuilt with the
+         morning's card — renderPanes only moves the `here` mark -->
+    <div class="intro-doors rec-doors" id="menudoors"></div>
   </div>
 </div>
 
@@ -2144,7 +2121,7 @@ async function fillIntroAuth(){
         +`<circle cx="12" cy="8.6" r="3.6"/>`
         +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
         +`</g></svg></button>`;
-      el.firstChild.onclick=()=>{hideVeils();openAccount()};
+      el.firstChild.onclick=()=>openAccount();
     }else if(ins.includes('google')){
       el.innerHTML=`<button class="help" aria-label="sign in with google">`
         +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2">`
@@ -2162,20 +2139,19 @@ async function fillIntroAuth(){
     }else el.innerHTML='';
   });
 }
-function doorsInner(here){
-  const homeHere=here==='day', collHere=here==='record', rulesHere=here==='rules';
-  return `<button class="help door-home${homeHere?' here':''}" ${homeHere?'aria-current="page" tabindex="-1" ':''}aria-label="the menu">`
+function doorsInner(){
+  return `<button class="help door-home" aria-label="the menu">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true">`
     +`<g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>`
     +`<g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>`
     +`</svg></button>`
-    +`<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
+    +`<button class="help door-coll" aria-label="the collection">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
     +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
     +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
     +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
     +`</g></svg></button>`
-    +`<button class="help door-rules${rulesHere?' here':''}" ${rulesHere?'aria-current="page" tabindex="-1" ':''}aria-label="how to play">?</button>`
+    +`<button class="help door-rules" aria-label="how to play">?</button>`
     +`<button class="help groundbtn" aria-label="ground">`
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
     +`<span class="doorside">`
@@ -2185,32 +2161,92 @@ function doorsInner(here){
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`
     +`</span>`;
 }
-function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here)}</div>` }
-function wireDoors(row,here){
-  const leave=()=>{ if(here==='pay') closeCheckout(); hideVeils() };
-  const spend=()=>{ if(here==='day'||here==='rules'){ store.introSeen=true; store.lastIntroDay=today(); save() } };
+function wireDoors(row){
   row.onclick=e=>{
-    if(e.target.closest('.door-home')){
-      if(here==='day') return;                         // you are standing on it
-      leave(); renderIntro('day'); showVeil('introveil');
-    }else if(e.target.closest('.door-coll')){
-      if(here==='record') return;
-      spend(); leave(); openRecord();
-    }else if(e.target.closest('.door-rules')){
-      if(here==='rules') return;
-      spend(); leave(); renderIntro('rules'); showVeil('introveil');
-    }else if(e.target.closest('.door-close')){
-      spend(); leave();
+    const go=v=>{ if(menuView==='pay') closeCheckout(); if(menuView!==v||!menuShown()) openMenu(v) };
+    if(e.target.closest('.door-home')) go('home');
+    else if(e.target.closest('.door-coll')) go('coll');
+    else if(e.target.closest('.door-rules')) go('rules');
+    else if(e.target.closest('.door-close')){
+      store.introSeen=true; store.lastIntroDay=today(); save();
+      if(menuView==='pay') closeCheckout();
+      hideVeils();
     }
   };
+}
+let menuView='home';
+const menuShown=()=>$('introveil').classList.contains('show');
+function openMenu(v){ menuView=v||'home'; renderMenu(); showVeil('introveil'); }
+function renderMenu(){
+  renderIntro();
+  if(menuView==='coll') renderCollection();
+  else if(menuView==='rules') renderRulesPane();
+  else if(menuView==='profile'){
+    if(!$('acctbody').contains(document.activeElement)) renderAcct();
+    fillRecArch();
+  }
+  if(menuView==='pay' && !$('paybody').firstChild)
+    $('paybody').innerHTML='<p class="colcap">opening the till&hellip;</p>';
+  renderPanes();
+  paintDoors();
+}
+function fillRecArch(){
+  const el=$('recarch'); el.innerHTML='';
+  const a=(POLICY.premium||API)?archiveLineEl():null;
+  el.hidden=!a; if(a) el.appendChild(a);
+}
+function renderPanes(){
+  const c=$('introcard');
+  ['home','coll','rules','profile','pay'].forEach(v=>c.classList.toggle('view-'+v,menuView===v));
+  $('panecoll').hidden = menuView!=='coll';
+  $('panerules').hidden = menuView!=='rules';
+  $('paneside').hidden = !(menuView==='profile'||menuView==='pay');
+  $('panehead').hidden = menuView!=='profile';
+  $('acctbody').hidden = menuView!=='profile';
+  if(menuView!=='profile') $('recarch').hidden=true;
+  $('paybody').hidden = menuView!=='pay';
+  const row=$('menudoors');
+  row.querySelectorAll('.here').forEach(el=>{el.classList.remove('here');el.removeAttribute('aria-current');el.removeAttribute('tabindex')});
+  const sel={home:'.door-home',coll:'.door-coll',rules:'.door-rules',pay:'.door-buy',profile:'.door-auth button'}[menuView];
+  const el=sel&&row.querySelector(sel);
+  if(el){ el.classList.add('here'); el.setAttribute('aria-current','page'); el.tabIndex=-1 }
+}
+function renderCollection(){
+  const badges=store.collection.badges||{};
+  const named=FKEYS.filter(k=>badges[k]).length, left=FKEYS.length-named;
+  $('panecoll').innerHTML=`<p class="colcap">${left
+      ? `${left} of ${FKEYS.length} still to identify`
+      : `all ${FKEYS.length} identified`}</p>`
+    +FKEYS.map(k=>{
+      const b=badges[k];
+      return b
+        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
+        : `<span class="fcell none" aria-label="an undiscovered figure">`
+          +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure" style="--emblem:var(--surface)">`
+          +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></span>`;
+    }).join('');
+}
+function renderRulesPane(){
+  $('panerules').innerHTML=`<div class="intro-title">how to play</div>
+      <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div>
+      <div class="rkey">
+        ${rmark('feature')}<span><b>feature</b> &middot; free it</span>
+        ${rmark('neuron')}<span><b>neuron</b> &middot; drag it</span>
+        ${rmark('shared')}<span><b>shared neuron</b> &middot; tap to split</span>
+        ${rmark('pinned')}<span><b>pinned</b> &middot; will not move</span>
+        ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
+      </div>
+      ${rungLadder()}
+      ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the tutorial</button>`:''}`;
+  if($('ruleslessons')) $('ruleslessons').onclick=()=>startLessons();
 }
 function paintDoors(){
   document.querySelectorAll('.intro-doors .door-buy').forEach(el=>{
     paintTill(el);
     if(!POLICY.premium) el.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
     el.onclick=()=>{
-      if($('payveil').classList.contains('show')) return;
-      if(!POLICY.premium){ hideVeils(); beginUnlock() }
+      if(menuShown() && menuView==='pay') return;
+      if(!POLICY.premium){ openMenu('pay'); beginUnlock() }
     };
   });
   fillIntroAuth();
@@ -2235,7 +2271,7 @@ async function saveProfile(patch){
   const me=await apiCall('/me',{method:'PATCH',headers:{'content-type':'application/json'},
     body:JSON.stringify(patch)});
   account={...account,...me,signedIn:true};
-  if($('histveil').classList.contains('show')) renderAccount();
+  if(menuShown()&&menuView==='profile') renderAcct();
   return me;
 }
 
@@ -2250,7 +2286,7 @@ async function doSignOut(){
   try{ await apiCall('/signout',{method:'POST'}) }catch(e){}
   account={signedIn:false};
   syncSay='';
-  if($('histveil').classList.contains('show')) renderAccount();
+  if(menuShown()&&menuView==='profile') renderAcct();
   toast('signed out · this device keeps its own record');
 }
 
@@ -2264,7 +2300,7 @@ async function syncNow(){
   if(!API||!account||!account.signedIn) return;
   if(syncing){ syncQueued=true; return }
   syncing=true; syncSay='saving';
-  if($('histveil').classList.contains('show')) renderAccount();
+  if(menuShown()&&menuView==='profile') renderAcct();
   const sent=JSON.stringify(store.collection);
   try{
     const j=await apiCall('/sync',{
@@ -2279,7 +2315,7 @@ async function syncNow(){
     if(/^http 401/.test(e.message)) account={signedIn:false};
   }
   syncing=false;
-  if($('histveil').classList.contains('show')) renderAccount();
+  if(menuShown()&&menuView==='profile') renderAcct();
   if(syncQueued){ syncQueued=false; syncSoon() }
 }
 
@@ -2313,7 +2349,7 @@ function adoptState(merged){
     try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
     renderHud();
   }
-  if($('histveil').classList.contains('show')) openRecord();
+  if(menuShown()) renderMenu();
 }
 
 async function wakeAccount(){
@@ -2346,7 +2382,7 @@ async function wakeAccount(){
       try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
     }
   }
-  if($('histveil').classList.contains('show')) renderAccount();
+  if(menuShown()&&menuView==='profile') renderAcct();
 }
 
 let acctMode='hello', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
@@ -2354,10 +2390,9 @@ let acctMode='hello', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
 function openAccount(mode){
   acctMode=mode||'manage'; acctErr=''; acctArmed=false;
   if(mode!=='code') acctEmail=(account&&account.email)||'';
-  renderAcct(); showVeil('acctveil');
+  openMenu('profile');
 }
-const closeAccount=()=>{ $('acctveil').classList.remove('show');
-                         if($('histveil').classList.contains('show')) renderAccount() };
+const closeAccount=()=>{ if(menuShown()&&menuView==='profile') openMenu('home') };
 
 function afterSignIn(){
   if(!account||!account.signedIn) return;
@@ -2638,10 +2673,9 @@ function paintTill(el){
   el.hidden=false;
 }
 function entitlementChanged(){
-  if($('histveil').classList.contains('show')) openRecord();
+  if(menuShown()) renderMenu();
   if($('runveil').classList.contains('show')) showRunOver();
-  if(introMode==='day' && $('introveil').classList.contains('show')) renderIntro('day');
-  paintDoors();
+  if(menuShown()){ renderIntro(); paintDoors() }
   renderHud();
 }
 let priceAsked=false;
@@ -2729,17 +2763,14 @@ async function mountCheckout(clientSecret,pk){
     $('paybody').innerHTML='';
     co.mount('#paybody');
     stripeCheckout=co;
-    const pd=$('paydoors');
-    pd.innerHTML=doorsInner('pay');
-    wireDoors(pd,'pay');
-    paintDoors();
-    showVeil('payveil');
+    openMenu('pay');
     return true;
   }catch(e){ return false }
 }
 function closeCheckout(){
-  $('payveil').classList.remove('show');
   if(stripeCheckout){ try{stripeCheckout.destroy()}catch(e){} stripeCheckout=null }
+  $('paybody').innerHTML='';
+  if(menuShown()&&menuView==='pay'){ menuView='home'; renderMenu() }
 }
 async function beginUnlock(){
   if(POLICY.premium) return;
@@ -2842,7 +2873,7 @@ function repaintTheme(){
   }
   lastT='';                  // the crossings track skips a repaint it thinks it already did
   renderHud(); refresh();
-  if($('histveil').classList.contains('show')) openRecord();
+  if(menuShown()) renderMenu();
 }
 function setTheme(mode){ store.theme=mode; save(); applyTheme(mode); repaintTheme() }
 applyTheme(themeNow());
@@ -4943,8 +4974,7 @@ function dayRollover(){
   save();
   renderAll();
   if($('runveil').classList.contains('show')) showRunOver();
-  if(introMode==='day' && $('introveil').classList.contains('show')) renderIntro('day');
-  if($('histveil').classList.contains('show')) openRecord();
+  if(menuShown()) renderMenu();
   if(!untouched && r && r.day!==now && !r.over) flashMsg('a new day · yesterday\'s set is still yours to finish');
 }
 setInterval(dayRollover,60000);
@@ -5512,7 +5542,7 @@ function showNetCleared(feats,tier,wasTutorial,read){
   showVeil('netveil');
   if(wasTutorial) fillSignInInvite();
   $('contbtn').onclick = (wasTutorial && store.tutorialDone)
-    ? ()=>{ nextNet(); renderIntro('day'); showVeil('introveil') }
+    ? ()=>{ nextNet(); openMenu('home') }
     : nextNet;
 }
 function runOverOffer(trial,depth){
@@ -5566,7 +5596,7 @@ function showRunOver(){
   });
   showVeil('runveil');
   postBoard();
-  $('recordbtn2').onclick=()=>{hideVeils();renderIntro('day');showVeil('introveil')};
+  $('recordbtn2').onclick=()=>{hideVeils();openMenu('home')};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
     if(navigator.share){
@@ -5582,7 +5612,7 @@ function showRunOver(){
     }
     clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent=SHARE_LABEL },2400);
   };
-  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); beginUnlock()};
+  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openMenu('pay'); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
 }
@@ -5771,7 +5801,7 @@ async function askBoard(day){
     boardFor=day;
   }catch(e){ boardRows=null; boardFor=day }      // asked and answered with nothing
   boardBusy=false;
-  if($('histveil').classList.contains('show')) drawBoard();
+  if(menuShown()) drawBoard();
 }
 function drawBoard(){
   const el=$('recboard');
@@ -5871,8 +5901,7 @@ let archFrom=null;
 function openArchiveLook(iso){
   const row=dayRows().find(r=>r.d===iso);
   if(!row) return false;
-  archFrom = $('histveil').classList.contains('show') ? 'histveil'
-           : $('introveil').classList.contains('show') ? 'introveil' : null;
+  archFrom = menuShown();
   const read=dayReading(row);
   $('archtitle').textContent=dayLabel(iso);
   const nets=archiveNets(iso);
@@ -5957,76 +5986,8 @@ function archiveLineEl(){
   return el;
 }
 
-function renderAccount(){
-  const foot=$('recfoot');
-  if(!API || (signIns && !signIns.length)){ foot.hidden=true; foot.innerHTML=''; return }
-  if(!signIns){                            // first look on this session
-    foot.hidden=true;
-    askSignIns().then(()=>{ if($('histveil').classList.contains('show')) renderAccount() });
-    return;
-  }
-  foot.hidden=false;
-  const link=(id,text,label)=>`<a href="#" class="acctlink" id="${id}" aria-label="${label}">${text}</a>`;
 
-  if(account&&account.signedIn){
-    const who=account.email||('your '+(account.provider||'')+' account').trim();
-    const state=syncSay==='saving' ? '<span class="acct-state">saving</span>'
-              : syncSay==='offline' ? '<span class="acct-state">offline · will send later</span>'
-              : syncSay==='saved' ? '<span class="acct-state">saved</span>' : '';
-    foot.innerHTML=`<button class="acct-who acct-say" id="acctwho" aria-label="your account">signed in · ${esc(who)}</button>${state}`
-      +`<span class="acct-ins">${link('acctout','sign out','sign out of this device')}</span>`;
-    $('acctwho').onclick=()=>openAccount('manage');
-    $('acctout').onclick=e=>{e.preventDefault();doSignOut()};
-    return;
-  }
-
-  const names={google:'google',apple:'apple',facebook:'facebook',email:'email'};
-  foot.innerHTML=`<span class="acct-say">kept on this device only</span>`
-    +`<span class="acct-ins">sign in${signIns.map((p,i)=>{const nm=esc(names[p]||p);
-        return link('acctin-'+i,nm,'sign in with '+nm)}).join('')}</span>`;
-  signIns.forEach((p,i)=>{
-    const el=$('acctin-'+i);
-    if(el) el.onclick=e=>{e.preventDefault();goSignIn(p)};
-  });
-}
-
-function openRecord(){
-  const d0=today();
-  askBoard(d0); drawBoard();
-  const keep=$('reccollection').scrollTop;    // a theme flip redraws this whole screen
-
-  const badges=store.collection.badges||{};
-  const doors=$('recdoors');
-  doors.innerHTML=doorsInner('record');
-  wireDoors(doors,'record');
-  paintDoors();
-
-  const named=FKEYS.filter(k=>badges[k]).length;
-  const grid=$('reccollection');
-  const left=FKEYS.length-named;
-  grid.innerHTML=`<p class="colcap">${left
-      ? `${left} of ${FKEYS.length} still to identify`
-      : `all ${FKEYS.length} identified`}</p>`
-    +FKEYS.map(k=>{
-      const b=badges[k];
-      return b
-        ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
-        : `<span class="fcell none" aria-label="an undiscovered figure">`
-          +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure" style="--emblem:var(--surface)">`
-          +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></span>`;
-    }).join('');
-
-  grid.hidden=false;
-  grid.scrollTop=keep;
-  const archEl=$('recarch');
-  archEl.innerHTML='';
-  const arch=(POLICY.premium||API)?archiveLineEl():null;
-  archEl.hidden=!arch;
-  if(arch) archEl.appendChild(arch);
-
-  renderAccount();
-  $('histveil').classList.add('show');
-}
+function openRecord(){ openMenu('coll') }
 
 
 function renderThreads(){
@@ -6215,9 +6176,9 @@ const WORDMARK='features';
 
   const DEVSCREENS=[
     ['the board',      ()=>hideVeils()],
-    ['the day card',   ()=>{renderIntro('day'); showVeil('introveil')}],
-    ['how to play',    ()=>{renderIntro('rules'); showVeil('introveil')}],
-    ['the collection', ()=>{hideVeils(); openRecord()}],
+    ['the day card',   ()=>openMenu('home')],
+    ['how to play',    ()=>openMenu('rules')],
+    ['the collection', ()=>openMenu('coll')],
     ['net cleared',    ()=>{
       const badged=Object.keys(store.collection.badges||{});
       if(!badged.length){ toast('nothing minted yet · clear a net first'); return false }
@@ -6257,16 +6218,11 @@ const WORDMARK='features';
     else if(e.key===']') step(1);
   });
 })();
-$('histbtn').onclick=()=>{ renderIntro('day'); showVeil('introveil') };
-$('collbtn').onclick=()=>{ hideVeils(); openRecord() };
-function closeRecord(){
-  $('histveil').classList.remove('show');
-}
-$('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
+$('histbtn').onclick=()=>openMenu('home');
+$('collbtn').onclick=()=>openMenu('coll');
 function closeArchiveLook(){
   $('archveil').classList.remove('show');
-  if(archFrom==='histveil') openRecord();
-  else if(archFrom==='introveil'){ renderIntro('day'); showVeil('introveil') }
+  if(archFrom){ renderMenu(); showVeil('introveil') }
   archFrom=null;
 }
 $('archclose').onclick=e=>{e.preventDefault();closeArchiveLook()};
@@ -6275,14 +6231,13 @@ function dismissVeil(v){
   if(v.id==='runveil') return;
   if(v.id==='introveil'){
     store.introSeen=true; store.lastIntroDay=today(); save();
+    if(menuView==='pay') closeCheckout();
     v.classList.remove('show');
     return;
   }
   const sel=window.getSelection();
   if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
-  if(v.id==='payveil'){ closeCheckout(); return }
   if(v.id==='netveil'){ nextNet(); return }
-  if(v.id==='histveil'){ closeRecord(); return }
   v.classList.remove('show');
 }
 document.querySelectorAll('.veil').forEach(v=>v.addEventListener('click',e=>{
@@ -6356,25 +6311,10 @@ function rungLadder(){
     <span class="rlnames">${rungs.map(t=>`<i>${tierSay(t)}</i>`).join('')}</span>
   </div>`;
 }
-let introMode='day';
-function renderIntro(mode){
-  introMode=mode;
+function renderIntro(){
   const b=$('introbody');
   if(!$('introart').firstChild) $('introart').innerHTML=introPlate();
-  if(mode==='rules'){
-    b.innerHTML=`<div class="intro-title">how to play</div>
-      <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div>
-      <div class="rkey">
-        ${rmark('feature')}<span><b>feature</b> &middot; free it</span>
-        ${rmark('neuron')}<span><b>neuron</b> &middot; drag it</span>
-        ${rmark('shared')}<span><b>shared neuron</b> &middot; tap to split</span>
-        ${rmark('pinned')}<span><b>pinned</b> &middot; will not move</span>
-        ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
-      </div>
-      ${rungLadder()}
-      ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the tutorial</button>`:''}
-      ${doorsRow('rules')}`;
-  } else {
+  {
     const fresh=!store.tutorialDone;
     const streak=store.meta.streak||0;
     const runSay=`<b>${streak}</b><span>day${streak===1?'':'s'} running</span>`;
@@ -6413,7 +6353,8 @@ function renderIntro(mode){
       <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>`
-      +doorsRow('day');
+      +`<div class="recboard" id="recboard" hidden></div>`;
+    drawBoard();
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
@@ -6432,13 +6373,10 @@ function renderIntro(mode){
     };
     paintSpread(); ensureSpread(); ensurePrice();
   }
-  if($('ruleslessons')) $('ruleslessons').onclick=()=>startLessons();
   if($('introstart')) $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
     $('introveil').classList.remove('show');
   };
-  const dr=b.querySelector('.intro-doors');
-  if(dr){ wireDoors(dr, introMode==='rules'?'rules':'day'); paintDoors() }
 }
 function startLessons(){
   const cur=R();
@@ -6451,12 +6389,14 @@ function startLessons(){
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
 }
-$('helpbtn').onclick=()=>{renderIntro('rules'); showVeil('introveil')};
-$('buybtn').onclick=()=>beginUnlock();
+$('helpbtn').onclick=()=>openMenu('rules');
+$('buybtn').onclick=()=>{ if(!POLICY.premium){ openMenu('pay'); beginUnlock() } };
 const FLAGSTRIP='<i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>'
   +'<i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>';
 document.querySelectorAll('.menusheet .intro-strip').forEach(el=>el.innerHTML=FLAGSTRIP);
-fillIntroAuth();
+$('menudoors').innerHTML=doorsInner();
+wireDoors($('menudoors'));
+paintDoors();
 addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('.groundbtn');
   if(!b) return;
@@ -6533,7 +6473,7 @@ renderAll();
 publishPlateInset();
 addEventListener('load',publishPlateInset);
 if(!store.introSeen || (store.lastIntroDay!==today() && R().netMoves===0 && !R().cleared.length)){
-  renderIntro('day'); showVeil('introveil');
+  openMenu('home');
 }
 readUnlockReturn().then(wakeAccount);
 </script>
