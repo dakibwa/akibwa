@@ -36,22 +36,14 @@ function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, 
         ? { "--ground": ground, "--accent": accent, "--crop": crop }
         : undefined
   };
-  if (href) {
-    return (
-      <a {...props} href={href} target="_blank" rel="noopener noreferrer">
-        <span className="card-face">{face}</span>
-        <span className="card-back">{back}</span>
-      </a>
-    );
-  }
-  /* On the wall a card steps forward when pressed: it hands its own face,
-     detail and position to the spotlight. */
+  /* Every card steps forward when pressed — one grammar for the whole wall.
+     A card with somewhere to go carries its door into the spotlight. */
   return (
     <button
       {...props}
       type="button"
       onClick={(event) =>
-        onActivate?.({ suit, ground, accent, crop, label, face, back }, event.currentTarget)
+        onActivate?.({ suit, ground, accent, crop, label, face, back, href }, event.currentTarget)
       }
     >
       <span className="card-face">{face}</span>
@@ -111,6 +103,16 @@ function Spotlight({ lit, onClose }) {
         </div>
         <figcaption className="spotlight-caption" data-suit={card.suit}>
           {card.back}
+          {card.href ? (
+            <a
+              className="spotlight-visit"
+              href={card.href}
+              target={/^https?:/.test(card.href) ? "_blank" : undefined}
+              rel={/^https?:/.test(card.href) ? "noopener noreferrer" : undefined}
+            >
+              Open it ↗
+            </a>
+          ) : null}
         </figcaption>
       </figure>
       <button type="button" className="spotlight-close" onClick={onClose} aria-label="Close">
@@ -489,23 +491,9 @@ export function HomePage() {
           {...shared}
           ground={site.ground}
           href={site.href ?? undefined}
-          label={site.href ? `${site.name} — opens the live site` : site.name}
+          label={site.name}
           face={
-            <>
-              {site.art ? (
-                <>
-                  <SiteImage src={site.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
-                  <span className="card-scrim" aria-hidden="true" />
-                </>
-              ) : null}
-              <span className="card-face-stack">
-                <span className="c-head"><span className="f-suit">{site.eyebrow}</span></span>
-                {site.href ? <span className="site-go" aria-hidden="true">↗</span> : null}
-                <span className="c-foot">
-                  <span className={`c-title c-title--tool ${sizeClass(site.name)}`}>{site.name}</span>
-                </span>
-              </span>
-            </>
+            <SiteImage src={site.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
           back={
             <>
@@ -526,23 +514,9 @@ export function HomePage() {
           {...shared}
           ground={piece.ground}
           href={piece.href ?? undefined}
-          label={piece.href ? `${piece.name} — opens the live page` : piece.name}
+          label={piece.name}
           face={
-            <>
-              {piece.art ? (
-                <>
-                  <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
-                  <span className="card-scrim" aria-hidden="true" />
-                </>
-              ) : null}
-              <span className="card-face-stack">
-                <span className="c-head"><span className="f-suit">{piece.eyebrow}</span></span>
-                {piece.href ? <span className="site-go" aria-hidden="true">↗</span> : null}
-                <span className="c-foot">
-                  <span className={`c-title c-title--tool ${sizeClass(piece.name)}`}>{piece.name}</span>
-                </span>
-              </span>
-            </>
+            <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
           }
           back={
             <>
@@ -688,7 +662,16 @@ export function HomePage() {
         {/* Holding a lens drops the room lights: everything but the lit rows
             falls into the dark. A real element, not a pseudo — it needs to sit
             between the dimmed sets and the lit ones in the stack. */}
-        {lens ? <div className="deck-veil" aria-hidden="true" /> : null}
+        {lens ? (
+          <div
+            className="deck-veil"
+            onClick={() => {
+              capture();
+              setHeldBucket(null);
+              setLens(null);
+            }}
+          />
+        ) : null}
         <div className="card card--hero">
           {/* One sentence across the whole top of the page, and the menu is
               simply three of its words. Nothing else up here at all. */}

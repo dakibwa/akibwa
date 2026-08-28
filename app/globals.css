@@ -38,6 +38,8 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+  background: #faf8f3;
 }
 
 body {
@@ -268,11 +270,17 @@ button {
 .hero-name-stack {
   display: inline-grid;
   white-space: nowrap;
+  /* Closes up around the visible name; the dash after it rides along. */
+  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: visible;
 }
 
-/* Invisible copies of both names hold the cell at the wider one's width. */
+/* Invisible copies of the names, hugging their own text so each reports its
+   true width — the slot is sized from these, name by name. */
 .hero-name-sizer {
   grid-area: 1 / 1;
+  justify-self: start;
+  width: max-content;
   visibility: hidden;
   pointer-events: none;
 }
@@ -5861,46 +5869,6 @@ button {
   width: clamp(70px, 7.6vw, 96px);
 }
 
-/* Art-faced cards float their type on a bottom-weighted scrim, so a light
-   image cannot swallow a light title. */
-.card-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    to top,
-    rgba(16, 18, 23, 0.72),
-    rgba(16, 18, 23, 0.2) 46%,
-    rgba(16, 18, 23, 0) 72%
-  );
-  pointer-events: none;
-}
-
-.card--sites .card-face-stack {
-  position: relative;
-  z-index: 2;
-  /* The art is the card; the words wait. Hover, and the name surfaces
-     through a deepening scrim — unhurried, like a caption arriving. */
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 340ms ease, transform 340ms ease;
-}
-
-.card--sites .card-scrim {
-  opacity: 0;
-  transition: opacity 340ms ease;
-}
-
-.card--sites:hover .card-face-stack,
-.card--sites:focus-visible .card-face-stack {
-  opacity: 1;
-  transform: none;
-}
-
-.card--sites:hover .card-scrim,
-.card--sites:focus-visible .card-scrim {
-  opacity: 1;
-}
 
 /* A solo mark fills its little card. */
 .card-face-stack--solo {
@@ -6109,6 +6077,26 @@ button {
 /* The face's corners square off against the caption below. */
 .spotlight .card--spotlight { border-radius: calc(var(--radius) * 1.4) calc(var(--radius) * 1.4) 0 0; }
 
+.spotlight-visit {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: var(--radius);
+  color: var(--white);
+  font-size: 0.8rem;
+  font-weight: 560;
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.spotlight-visit:hover,
+.spotlight-visit:focus-visible {
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  outline: 0;
+}
+
 .spotlight-close {
   position: fixed;
   top: 18px;
@@ -6256,11 +6244,12 @@ button {
   inset: 0;
   z-index: 4;
   /* The same recession the spotlight uses: the paper thickens and softens
-     rather than going black — the rest of the site dims, it does not die. */
+     rather than going black — the rest of the site dims, it does not die.
+     It also catches every click: nothing in the recess is selectable, and
+     pressing anywhere off the lit rows lets the lens go. */
   background: rgba(250, 248, 243, 0.78);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
-  pointer-events: none;
   animation: veil-in 460ms var(--ease-out) both;
 }
 

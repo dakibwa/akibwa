@@ -166,6 +166,11 @@ const NAME_INITIAL_DELAY = 3200;
 
 export function HeroFlipName() {
   const [index, setIndex] = useState(0);
+  /* The measured width of each name, so the slot can close up around the
+     one showing — the dash glides in behind a short name instead of holding
+     the widest name's distance. */
+  const [widths, setWidths] = useState(null);
+  const stackRef = useRef(null);
   const reducedMotion = usePrefersReducedMotion();
 
   const advance = useCallback(() => setIndex((i) => (i + 1) % heroNames.length), []);
@@ -174,6 +179,18 @@ export function HeroFlipName() {
     if (reducedMotion) return undefined;
     return startOffsetCycle(advance, NAME_INITIAL_DELAY, REST_INTERVAL);
   }, [reducedMotion, advance]);
+
+  useEffect(() => {
+    const measure = () => {
+      const sizers = stackRef.current?.querySelectorAll(".hero-name-sizer");
+      if (!sizers?.length) return;
+      setWidths([...sizers].map((el) => el.offsetWidth));
+    };
+    measure();
+    document.fonts?.ready.then(measure).catch(() => {});
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   const current = heroNames[index];
 
@@ -187,7 +204,11 @@ export function HeroFlipName() {
         onClick={advance}
         style={{ "--name-accent-rgb": current.accent }}
       >
-        <span className="hero-name-stack">
+        <span
+          className="hero-name-stack"
+          ref={stackRef}
+          style={widths ? { width: `${widths[index]}px` } : undefined}
+        >
           {heroNames.map((name) => (
             <span key={name.label} className="hero-name-sizer" aria-hidden="true">
               {name.label}
