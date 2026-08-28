@@ -715,10 +715,18 @@ export function HomePage() {
                 ? [{ cards: (
                     <>
                       {cards}
-                      {/* Projects and Life, side by side on one rail, a
-                          hairline between them. Each keeps its own light:
-                          the life lens lifts its two while the sites fade. */}
-                      <span className="rail-divider" aria-hidden="true" />
+                      {/* Life rides the rail in person — the word sits in
+                          front of the walk and the map, an opener like every
+                          other word on the page, travelling with its cards. */}
+                      <button
+                        type="button"
+                        className={`rail-word${dim("life") ? "" : " is-lit"}`}
+                        style={{ "--index-accent-rgb": INDEX_ACCENT.life }}
+                        aria-expanded={heldBucket === "set:life"}
+                        onClick={() => focusSet("life")}
+                      >
+                        Life
+                      </button>
                       {cardsFor("life")}
                     </>
                   ) }, { cards: cardsFor("creations", { as: "sites" }), sub: true }]
@@ -750,17 +758,6 @@ export function HomePage() {
                   >
                     {set.label}
                   </button>
-                  {set.id === "sites" ? (
-                    <button
-                      type="button"
-                      className="set-open"
-                      style={{ "--index-accent-rgb": INDEX_ACCENT.life }}
-                      aria-expanded={heldBucket === "set:life"}
-                      onClick={() => focusSet("life")}
-                    >
-                      Life
-                    </button>
-                  ) : null}
                 </h2>
               </div>
 

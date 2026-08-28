@@ -5848,10 +5848,6 @@ button {
 }
 
 .set-name {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
   margin: 0;
 }
 
@@ -5965,13 +5961,36 @@ button {
   display: none;
 }
 
-/* The hairline between Projects and Life on their shared rail. */
-.rail-divider {
-  flex: 0 0 1px;
+/* A word riding the rail in front of its own cards — the same voice as the
+   left-hand names, an opener like every other word on the page. */
+.rail-word {
+  --index-accent-rgb: 61, 90, 128;
+  flex: 0 0 auto;
   align-self: center;
-  height: 62%;
-  margin: 0 clamp(6px, 0.7vw, 11px);
-  background: var(--line-strong);
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0 clamp(8px, 0.9vw, 14px) 0 clamp(10px, 1.2vw, 18px);
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
+  font-weight: 540;
+  letter-spacing: -0.012em;
+  transition: color 160ms ease, opacity 460ms var(--ease-out);
+}
+
+.rail-word:hover,
+.rail-word:focus-visible {
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
+  outline: 0;
+}
+
+/* When the lens lights the other group on this rail, the word steps back
+   with its cards. */
+.deck.is-lensed .set:has(.card.is-lit) .rail-word:not(.is-lit) {
+  opacity: 0.22;
 }
 
 /* Inside a lit row, cards the lens does not name step back individually —
