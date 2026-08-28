@@ -616,9 +616,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .bulletin .bbody{padding:16px 22px 20px;position:relative}
   .bulletin .bnote{font-size:12.5px;line-height:1.55;color:var(--ink-soft);padding-right:46px}
   .bulletin .boffer{
-    margin-top:9px;font-size:10.5px;letter-spacing:.05em;
-    color:var(--ink-soft);padding-right:46px;
+    margin-top:12px;font-size:11px;letter-spacing:.05em;
+    color:var(--ink-soft);
+    display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
   }
+  .bulletin .boffer .wbtn{align-self:center;padding:8px 16px}
   .bulletin .boffer a{
     color:var(--ink-soft);text-decoration:none;
     border-bottom:1px solid var(--rule);padding-bottom:1px;
@@ -695,6 +697,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   #runveil .bactions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
   #runveil .bactions .wbtn:first-child:nth-last-child(odd){grid-column:1 / -1}
   #runveil .wbtn{padding:8px 10px;font-size:11.5px;letter-spacing:.08em}
+  #runveil .bnote{text-align:center;font-size:13.5px;padding-right:0}
   .bulletin .bquiet{position:absolute;width:1px;height:1px;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
@@ -714,6 +717,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     #runveil .minted .mb:nth-child(n+6){display:none}
   }
 
+  #payveil{z-index:50}
   .askveil{z-index:80}
   .askveil > .bulletin{max-width:392px}
 
@@ -4513,12 +4517,18 @@ function freeThread(t,silent){
   t.def=FIGURES[t.key]||t.def;
   t.calm=threads.indexOf(t)*1.1;
   const whole=signWhole(t);
-  const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-  lbl.setAttribute('class','tlabel2');lbl.setAttribute('text-anchor','middle');
-  lbl.textContent=t.key;
-  lbl.dataset.thread=t.key;
-  gLabels.appendChild(lbl);
-  placeLabel(lbl,labelAnchor(t));
+  const twin=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===t.key);
+  if(twin){
+    const n=(+twin.dataset.n||1)+1; twin.dataset.n=n;
+    twin.textContent=`${t.key} ×${n}`;
+  }else{
+    const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lbl.setAttribute('class','tlabel2');lbl.setAttribute('text-anchor','middle');
+    lbl.textContent=t.key;
+    lbl.dataset.thread=t.key;
+    gLabels.appendChild(lbl);
+    placeLabel(lbl,labelAnchor(t));
+  }
   t.nodes.forEach(n=>{if(n.threads.every(th=>th.freed)) n.el.classList.add('done')});
   if(!silent){
     if(!reduceMotion){
@@ -5400,9 +5410,10 @@ function fillSignInInvite(){
 }
 function showNetCleared(feats,tier,wasTutorial,read){
   if(!read || read.run!==R()) return;
-  const mint=`<div class="minted">${feats.map((k,i)=>{
+  const dedup=[...new Map(feats.map(k=>[k,0])).keys()].map(k=>({k,n:feats.filter(f=>f===k).length}));
+  const mint=`<div class="minted">${dedup.map(({k,n},i)=>{
     const b=store.collection.badges[k];
-    return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}</span></div>`;
+    return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
   }).join('')}</div>`;
   const quiet=`<p class="bquiet">${feats.length} features freed: `+
     `${feats.join(', ')}. `+
@@ -5431,7 +5442,8 @@ function runOverOffer(trial,depth){
   ensurePrice();                      // redraws this card if the answer is late
   if(!canBuy()) return '';            // nothing to sell here yet — see `till`
   const price=priceWords();
-  return `another run at a day you have played · <a href="#" id="runoffer">unlock</a>${price?' · '+price:''}`;
+  return `<span class="boffer-what">another run at any day you have played</span>`
+       +`<button class="wbtn solid" id="runoffer">unlock${price?' · '+price:''}</button>`;
 }
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
@@ -5470,12 +5482,12 @@ function showRunOver(){
     offer:runOverOffer(trial,depth),
     actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
             (trial?'':`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">${SHARE_LABEL}</button>`)+
-            `<button class="wbtn" id="recordbtn2">the record</button>`+
+            `<button class="wbtn" id="recordbtn2">menu</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
   showVeil('runveil');
   postBoard();
-  $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();openRecord()};
+  $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();renderIntro('day');showVeil('introveil')};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
     if(navigator.share){
@@ -5940,7 +5952,7 @@ function openRecord(){
         ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
         : `<span class="fcell none" aria-label="an undiscovered figure">`
           +`<svg viewBox="0 0 96 96" role="img" aria-label="an undiscovered figure" style="--emblem:var(--surface)">`
-          +`<g opacity=".38">`+figMarkup(k,{ink:'var(--silver)'})+`</g></svg></span>`;
+          +`<g opacity=".38">`+figEmblem(k,{ink:'var(--silver)'})+`</g></svg></span>`;
     }).join('');
 
   const dayEl=$('daylist');
@@ -6447,7 +6459,7 @@ function renderIntro(mode){
   };
   if($('introlessons')) $('introlessons').onclick=()=>startLessons();
   if($('introcoll')) $('introcoll').onclick=()=>{ fromCard=true; recView='collection'; hideVeils(); openRecord() };
-  if($('introbuy')) $('introbuy').onclick=()=>{ if(!POLICY.premium) beginUnlock() };
+  if($('introbuy')) $('introbuy').onclick=()=>{ if(!POLICY.premium){ hideVeils(); beginUnlock() } };
   if($('introrules')) $('introrules').onclick=()=>{ fromCard=true; renderIntro('rules') };
 }
 function startLessons(){
