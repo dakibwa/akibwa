@@ -1132,6 +1132,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--surface);
     }
     .play.tutorial .coach{animation:none}
+    .play.tutorial .field.portrait{justify-content:center}
+    .play.tutorial .field.portrait #netsvg{flex:0 1 auto;aspect-ratio:580/1040;min-height:0;max-height:80%}
 
     .field{--nr:15;--nw:4.2}
     .field .tlabel2{font-size:28px;stroke-width:9}
@@ -3741,6 +3743,7 @@ function applyOrientation(force){
   if(p===portrait && !force){ publishPlateInset(); return false }
   portrait=p;
   $('netsvg').setAttribute('viewBox', portrait?`0 0 ${BH} ${BW}`:`0 0 ${BW} ${BH}`);
+  $('field').classList.toggle('portrait', portrait);
   const tutLift = (portrait && inTutorialRun() && R().netIndex<TUTNETS.length)
     ? -(BH*(((.46+.88)/2)-.5)) : 0;
   if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH+tutLift})`:'');
@@ -6515,7 +6518,6 @@ function startLessons(){
   newRun('daily',today());
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
-  flashMsg('the tutorial · three lessons, and nothing here is scored');
 }
 $('helpbtn').onclick=()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')};
 $('buybtn').onclick=()=>beginUnlock();
