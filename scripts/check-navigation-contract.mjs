@@ -1,7 +1,17 @@
 import { readFileSync } from "node:fs";
 
+/* The site retired its navigation: no header, no wordmark, no menu. What
+   replaced each piece is what this contract now guards — the name flip in the
+   headline carries the brand strip, the hero index of set names is the menu,
+   and the footer is the one fixed route to contact. A regression on any of
+   these quietly strands a visitor, which is exactly the class of bug this
+   check exists to stop at build time. */
+
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 const shell = readFileSync(new URL("../components/site-shell.jsx", import.meta.url), "utf8");
+const hero = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
+const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
+const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 
 const fail = (message) => {
   throw new Error(`Navigation contract failed: ${message}`);
@@ -43,94 +53,29 @@ const requireRuleText = (selector, declarations) => {
   }
 };
 
-for (const className of [
-  "brand__bar",
-  "brand__bar-art",
-  "brand__label",
-  "nav-link__bar",
-  "nav-link__bar-art",
-  "nav-link__mobile-art",
-  "nav-link__label"
-]) {
-  requireText(shell, `className="${className}"`, `site shell must render .${className}`);
-}
+/* The shell is just the page. Any header creeping back in should be a
+   deliberate decision, not a drive-by. */
+forbidText(shell, "site-header", "the header was retired — the hero carries the identity");
+forbidText(shell, "nav-", "the menu was retired into the hero index");
+forbidText(shell, "brand__", "the wordmark was retired into the hero name flip");
 
-forbidText(css, ".nav-link span {", "generic span rules can hide or detach navigation artwork");
-forbidText(css, ".nav-link__art", "desktop and mobile artwork must not share the retired element");
-forbidText(css, ".nav-link__bar::after", "the retired canvas-curtain overlay leaks artwork at the clipped corners");
-forbidText(css, "clip-path: inset(0 100%", "desktop bars must not animate clip-path");
-
-/* Bars reveal through native hover/focus and route state only. The JS pointer
-   classes must never gate bar visibility, or a fast sweep can strand a bar. */
-forbidText(css, ".is-hovering .nav-link__bar", "bar visibility must not depend on JS pointer classes");
-forbidText(css, ".is-pressing .nav-link__bar", "bar visibility must not depend on JS pointer classes");
-
-/* The mobile menu must close synchronously with navigation, not on a timer. */
-forbidText(shell, "setTimeout", "mobile menu navigation must not be deferred by timers");
-
-requireRuleText(".brand__bar {", [
+/* The name flip carries its accent underline on the visible name itself. */
+requireText(hero, 'className="hero-name-value"', "the hero name flip must render its value span");
+requireRuleText(".hero-name-value::after {", [
   "position: absolute",
-  "right: 0",
-  "left: 0",
-  "height: 6px",
-  "overflow: hidden",
-  "contain: paint"
+  "background: rgba(var(--name-accent-rgb)"
 ]);
 
-/* Hidden bars paint nothing at all: opacity 0 on the clipping box itself,
-   with the artwork a plain static child. Anything that instead covers or
-   partially fades the artwork will leak antialiased pixels at the corners. */
-requireRuleText(".nav-link__bar {", [
-  "position: absolute",
-  "right: 0",
-  "left: 0",
-  "height: 6px",
-  "overflow: hidden",
-  "contain: paint",
-  "opacity: 0",
-  "var(--nav-ribbon-out)"
-]);
+/* The menu is three words inside the hero sentence, and every rail's name
+   is an opener. */
+requireText(home, "hero-index-word", "the hero sentence must carry its bucket words");
+requireText(home, "onClick={() => openBucket(bucket)}", "each bucket word must open its bucket");
+requireText(home, "onClick={() => focusSet(set.id)}", "each rail name must open its set");
 
-requireRuleText(".nav-link__bar-art {", [
-  "width: 100%",
-  "height: 100%",
-  "background-size: cover"
-]);
+/* The footer is the one fixed route to contact — the contact row is gone. */
+requireText(footer, 'href="mailto:', "the footer must keep an email route");
+requireText(footer, 'href="https://x.com/', "the footer must keep the X route");
+requireText(footer, 'href="https://www.instagram.com/', "the footer must keep the Instagram route");
+requireText(home, "<PageFooter", "the home page must render the footer");
 
-requireRuleText(".nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar,", [
-  ".nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar",
-  ".nav-desktop .nav-link.active .nav-link__bar",
-  "opacity: 1",
-  "transition-duration: var(--nav-ribbon-in)"
-]);
-
-requireRuleText(".nav-desktop .nav-link:hover .nav-link__bar {", [
-  "opacity: 1",
-  "transition-duration: var(--nav-ribbon-in)"
-]);
-requireText(css, "@media (hover: hover)", "hover reveal must be scoped to hover-capable devices");
-
-for (const timing of [
-  "--nav-label-in: 150ms",
-  "--nav-label-out: 110ms",
-  "--nav-ribbon-in: 180ms",
-  "--nav-ribbon-out: 140ms"
-]) {
-  requireText(css, timing, `navigation motion must retain ${timing}`);
-}
-
-/* Reduced motion zeroes the duration variables, which beats every reveal
-   state on value rather than specificity. */
-requireRuleText("  .nav-link {\n    --nav-label-in: 0ms", [
-  "--nav-label-out: 0ms",
-  "--nav-ribbon-in: 0ms",
-  "--nav-ribbon-out: 0ms"
-]);
-
-requireRuleText(".nav-mobile .nav-link__bar {", ["display: none"]);
-requireRuleText(".nav-mobile .nav-link__mobile-art {", [
-  "position: absolute",
-  "display: block"
-]);
-
-console.log("Navigation animation contract passed.");
+console.log("Navigation contract passed.");

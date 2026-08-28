@@ -19,6 +19,9 @@ export const SLOT_SIZES = {
   areaTile:
     "(max-width: 760px) calc(100vw - 54px), (max-width: 1060px) calc(50vw - 59px), (max-width: 1358px) calc(25vw - 53.5px), 286px",
   projectCard: "(max-width: 760px) calc(100vw - 48px), 202px",
+  // .deck .card — one square tile of the card wall. The grid runs two-up on a
+  // phone and up to thirteen across on the widest frame.
+  deckTile: "(max-width: 560px) calc(50vw - 20px), (max-width: 1000px) calc(25vw - 14px), 133px",
   heroPanel16: "(max-width: 760px) calc(100vw - 48px), (max-width: 1060px) 520px, 425px",
   heroPanel43: "(max-width: 760px) calc(100vw - 48px), (max-width: 1060px) 520px, 425px",
   portrait: "(max-width: 1060px) calc(100vw - 48px), 411px",

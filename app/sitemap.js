@@ -1,14 +1,13 @@
 export const dynamic = "force-static";
 
+/* One page, so one entry. The old section routes still resolve, but they only
+   redirect here now — advertising them would point search at a bounce. The two
+   project detail pages stay because they hold their own content. */
 const routes = [
   { path: "/", priority: 1 },
-  { path: "/professional/", priority: 0.9 },
-  { path: "/projects/", priority: 0.9 },
-  { path: "/about/", priority: 0.8 },
-  { path: "/contact/", priority: 0.8 },
-  { path: "/albums/", priority: 0.7 },
+  { path: "/albums/", priority: 0.6 },
   { path: "/projects/albums/", priority: 0.5 },
-  { path: "/projects/cover-collision/", priority: 0.5 },
+  { path: "/projects/cover-collision/", priority: 0.5 }
 ];
 
 export default function sitemap() {

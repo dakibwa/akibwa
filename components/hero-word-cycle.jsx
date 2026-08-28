@@ -153,6 +153,57 @@ function HeroWordCycle({ phrases, label, index, onEngage, onRelease, onStep }) {
   );
 }
 
+/* The header wordmark folded into the headline: "I'm " holds still while the
+   name flips between Daniel and Akibwa, coloured the way the other flipping
+   words are and with the brand's accent strip run under it as an underline.
+   Both names are laid up in the same grid cell so the slot holds the width of
+   the wider one — the flip never moves the dash after it. */
+const heroNames = [
+  { label: "Daniel", accent: "47, 136, 255" },
+  { label: "Akibwa", accent: "235, 92, 8" }
+];
+const NAME_INITIAL_DELAY = 3200;
+
+export function HeroFlipName() {
+  const [index, setIndex] = useState(0);
+  const reducedMotion = usePrefersReducedMotion();
+
+  const advance = useCallback(() => setIndex((i) => (i + 1) % heroNames.length), []);
+
+  useEffect(() => {
+    if (reducedMotion) return undefined;
+    return startOffsetCycle(advance, NAME_INITIAL_DELAY, REST_INTERVAL);
+  }, [reducedMotion, advance]);
+
+  const current = heroNames[index];
+
+  return (
+    <>
+      {"I\u2019m "}
+      <button
+        type="button"
+        className="hero-name"
+        aria-label={`I\u2019m ${current.label}. Activate to change.`}
+        onClick={advance}
+        style={{ "--name-accent-rgb": current.accent }}
+      >
+        <span className="hero-name-stack">
+          {heroNames.map((name) => (
+            <span key={name.label} className="hero-name-sizer" aria-hidden="true">
+              {name.label}
+            </span>
+          ))}
+          {/* The underline rides on the value itself, so it hugs whichever
+              name is showing instead of spanning the widest one's slot. */}
+          <span key={current.label} className="hero-name-value">
+            {current.label}
+          </span>
+        </span>
+      </button>
+    </>
+  );
+}
+
 export function HeroDynamicPhrase() {
   const [sourceIndex, setSourceIndex] = useState(0);
   const [outcomeIndex, setOutcomeIndex] = useState(0);
@@ -230,7 +281,9 @@ export function HeroDynamicPhrase() {
           onRelease={release}
           onStep={advanceOutcome}
         />
-        <span>.</span>
+        {/* A colon, not a full stop — the sentence continues into the menu
+            line beneath, which is its list. */}
+        <span>:</span>
       </span>
     </span>
   );

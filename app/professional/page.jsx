@@ -1,12 +1,13 @@
-import { OfferPage } from "@/components/pages/offer-page";
-import { siteSectionTitles } from "@/app/site-metadata";
+import { RouteRedirect } from "@/components/route-redirect";
 
+/* The site is one page now: every set that used to be its own route lives on
+   the wall, surfaced by the nav rather than navigated to. Kept as a redirect
+   rather than deleted so existing links and bookmarks still land somewhere. */
 export const metadata = {
-  title: siteSectionTitles.professional,
-  description:
-    "If it can be done on a computer, I can help you do it. Work done by hand, spreadsheets and reports, tools and websites. One sentence is enough to start."
+  robots: { index: false },
+  alternates: { canonical: "/" }
 };
 
 export default function ProfessionalRoute() {
-  return <OfferPage />;
+  return <RouteRedirect to="/" label="akibwa.com" />;
 }

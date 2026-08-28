@@ -1,12 +1,13 @@
-import { AboutPage } from "@/components/pages/about-page";
-import { siteSectionTitles } from "@/app/site-metadata";
+import { RouteRedirect } from "@/components/route-redirect";
 
+/* The site is one page now: every set that used to be its own route lives on
+   the wall, surfaced by the nav rather than navigated to. Kept as a redirect
+   rather than deleted so existing links and bookmarks still land somewhere. */
 export const metadata = {
-  title: siteSectionTitles.about,
-  description:
-    "Daniel — I make computers do the work people are doing by hand. Ten years of it inside banks and building societies. Now for anyone who asks."
+  robots: { index: false },
+  alternates: { canonical: "/" }
 };
 
 export default function AboutRoute() {
-  return <AboutPage />;
+  return <RouteRedirect to="/" label="akibwa.com" />;
 }

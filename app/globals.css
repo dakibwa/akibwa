@@ -87,7 +87,7 @@ button {
 }
 
 .page-transition {
-  min-height: calc(100vh - 68px);
+  min-height: 100vh;
   /* Skip-link target: clear the sticky header when focus lands here. */
   scroll-margin-top: 68px;
 }
@@ -191,665 +191,15 @@ button {
   }
 }
 
-/* Off-canvas until a keyboard reaches it, then it sits above the sticky
-   header as the first stop on the page. */
-.skip-to-content {
-  position: fixed;
-  top: 12px;
-  left: 24px;
-  z-index: 40;
-  padding: 11px 16px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  background: var(--white);
-  color: var(--ink);
-  font-size: 0.85rem;
-  font-weight: 560;
-  line-height: 1;
-  box-shadow: 0 8px 24px rgba(16, 18, 23, 0.14);
-  transform: translateY(calc(-100% - 24px));
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-/* Plain :focus, not :focus-visible — the link sits off-canvas and cannot be
-   reached by pointer, so any focus is a keyboard or assistive-tech arrival. */
-.skip-to-content:focus {
-  outline: 2px solid var(--orange);
-  outline-offset: 2px;
-  transform: none;
-}
 
 @media (prefers-reduced-motion: reduce) {
   /* Appear instantly, and land on the target without the page-length
      smooth scroll set on html. */
   html {
     scroll-behavior: auto;
-  }
-
-  .skip-to-content {
-    transition: none;
-  }
-}
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  border-bottom: 1px solid transparent;
-  background: rgba(250, 248, 243, 0.985);
-}
-
-.nav-row {
-  display: flex;
-  min-height: 68px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-}
-
-.brand {
-  position: relative;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  min-height: 61px;
-  padding: 21px 0 20px;
-  color: var(--ink);
-  font-size: 0.9rem;
-  font-weight: 560;
-  line-height: 1;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  transition:
-    color var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out);
-}
-
-.brand__bar {
-  position: absolute;
-  right: 0;
-  top: 13px;
-  left: 0;
-  display: block;
-  height: 6px;
-  overflow: hidden;
-  border-radius: 3px;
-  contain: paint;
-  pointer-events: none;
-}
-
-.brand__bar-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-image: url("/brand-art/akibwa-accent-strip.webp");
-  background-size: 116% auto;
-  background-position: center;
-  opacity: 0.96;
-  filter: saturate(1.04) contrast(1.03);
-}
-
-.brand__label {
-  display: block;
-}
-
-.brand.is-hovering,
-.brand.is-pressing,
-.brand:focus-visible:not(.is-pointer-focus) {
-  color: var(--black);
-  filter: none;
-  outline: 0;
-  transition-duration: var(--hover-in);
-}
-
-/* A compact spectrum drawn from the accent artwork runs through the
-   wordmark with the cursor. The permanent strip above stays unchanged. */
-@property --brand-glow {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .brand__label {
-    background-image: linear-gradient(var(--ink), var(--ink));
-    background-image:
-      radial-gradient(
-        50px circle at var(--brand-mx, 50%) 46%,
-        rgb(176 58 50 / calc(var(--brand-glow, 0) * 0.9)) 0%,
-        rgb(196 92 61 / calc(var(--brand-glow, 0) * 0.88)) 17%,
-        rgb(186 151 62 / calc(var(--brand-glow, 0) * 0.88)) 34%,
-        rgb(69 132 88 / calc(var(--brand-glow, 0) * 0.86)) 52%,
-        rgb(50 120 134 / calc(var(--brand-glow, 0) * 0.86)) 68%,
-        rgb(72 86 151 / calc(var(--brand-glow, 0) * 0.84)) 83%,
-        rgb(108 73 128 / calc(var(--brand-glow, 0) * 0.72)) 93%,
-        rgb(108 73 128 / 0) 100%
-      ),
-      linear-gradient(var(--ink), var(--ink));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    transition:
-      --brand-glow var(--hover-out) var(--ease-out),
-      filter var(--hover-out) var(--ease-out);
-  }
-
-  .brand.is-hovering,
-  .brand.is-pressing,
-  .brand:focus-visible:not(.is-pointer-focus) {
-    color: transparent;
-    transition-duration: var(--hover-in);
-  }
-
-  .brand.is-hovering .brand__label,
-  .brand.is-pressing .brand__label,
-  .brand:focus-visible:not(.is-pointer-focus) .brand__label {
-    --brand-glow: 1;
-    transition-duration: var(--hover-in);
-  }
-}
-
-.nav-desktop {
-  display: flex;
-  align-items: center;
-  gap: 42px;
-}
-
-.nav-item {
-  position: relative;
-  display: inline-flex;
-}
-
-/* Personal opens a quiet project index. Its explicit open state keeps the
-   panel's hit area from latching the native :hover state over sibling links. */
-.nav-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  z-index: 60;
-  width: 228px;
-  padding-top: 8px;
-  transform: translate(-50%, 6px);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity 170ms var(--ease-out),
-    transform 170ms var(--ease-out),
-    visibility 0s linear 170ms;
-}
-
-.nav-item.is-dropdown-open .nav-dropdown {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translate(-50%, 0);
-  transition:
-    opacity 240ms var(--ease-out),
-    transform 240ms var(--ease-out),
-    visibility 0s;
-}
-
-.nav-dropdown-panel {
-  display: grid;
-  gap: 2px;
-  padding: 7px;
-  border: 1px solid rgba(16, 18, 23, 0.11);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow:
-    0 22px 56px rgba(16, 18, 23, 0.12),
-    0 3px 10px rgba(16, 18, 23, 0.05);
-}
-
-.nav-dropdown-link {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  min-height: 44px;
-  padding: 7px 28px 7px 16px;
-  border-radius: 8px;
-  transition:
-    background var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-/* Veil over the artwork: near-solid behind the text column so glyph
-   edges stay crisp, thinning to the right where the colour blooms. */
-.nav-dropdown-link::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.94) 0%,
-    rgba(255, 255, 255, 0.82) 44%,
-    rgba(255, 255, 255, 0.3) 100%
-  );
-  opacity: 1;
-  pointer-events: none;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
-/* Each row carries its project's accent as a small rail on the left. */
-.nav-dropdown-link::after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  bottom: 10px;
-  left: 6px;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--project-accent, var(--ink));
-  opacity: 0.82;
-  pointer-events: none;
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    top var(--hover-out) var(--ease-out),
-    bottom var(--hover-out) var(--ease-out);
-}
-
-.nav-dropdown-link-art {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  display: block;
-  border-radius: inherit;
-  background-repeat: no-repeat;
-  background-size: cover;
-  opacity: 0.58;
-  filter: saturate(1) contrast(0.9) brightness(1.04);
-  pointer-events: none;
-  transform: scale(1.015);
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    filter var(--hover-out) var(--ease-out),
-    transform 420ms var(--ease-out);
-}
-
-.nav-dropdown-link-arrow {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  color: var(--project-accent, var(--ink));
-  opacity: 0;
-  transform: translate(-4px, -50%);
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.nav-dropdown-link:hover,
-.nav-dropdown-link:focus-visible,
-.nav-dropdown-link.is-active {
-  background: color-mix(in srgb, var(--project-accent, var(--ink)) 7%, #fff);
-}
-
-.nav-dropdown-link:hover::before,
-.nav-dropdown-link:focus-visible::before,
-.nav-dropdown-link.is-active::before {
-  opacity: 0.84;
-  transition-duration: var(--hover-in);
-}
-
-.nav-dropdown-link:hover::after,
-.nav-dropdown-link:focus-visible::after,
-.nav-dropdown-link.is-active::after {
-  top: 8px;
-  bottom: 8px;
-  opacity: 1;
-  transition-duration: var(--hover-in);
-}
-
-.nav-dropdown-link:hover .nav-dropdown-link-art,
-.nav-dropdown-link:focus-visible .nav-dropdown-link-art,
-.nav-dropdown-link.is-active .nav-dropdown-link-art {
-  opacity: 0.68;
-  filter: saturate(1.08) contrast(0.94) brightness(1.02);
-  transform: scale(1.03);
-  transition-duration: var(--hover-in);
-}
-
-.nav-dropdown-link:hover,
-.nav-dropdown-link:focus-visible {
-  transform: translateX(1px);
-  transition-duration: var(--hover-in);
-}
-
-.nav-dropdown-link:hover .nav-dropdown-link-arrow,
-.nav-dropdown-link:focus-visible .nav-dropdown-link-arrow,
-.nav-dropdown-link.is-active .nav-dropdown-link-arrow {
-  opacity: 0.72;
-  transform: translate(0, -50%);
-  transition-duration: var(--hover-in);
-}
-
-.nav-dropdown-link strong {
-  position: relative;
-  z-index: 1;
-  color: var(--black);
-  font-size: 0.82rem;
-  font-weight: 620;
-  line-height: 1.22;
-}
-
-.nav-dropdown-link em {
-  position: relative;
-  z-index: 1;
-  grid-column: 1;
-  color: color-mix(in srgb, var(--project-accent, #737983) 44%, #4d545d);
-  font-size: 0.7rem;
-  font-style: normal;
-  line-height: 1.25;
-}
-
-/* In-development rows mute through their parts (art, rail, ink) rather
-   than element opacity, which blurs the text along with everything else. */
-.nav-dropdown-link.is-unavailable {
-  cursor: default;
-}
-
-.nav-dropdown-link.is-unavailable::after {
-  opacity: 0.5;
-}
-
-.nav-dropdown-link.is-unavailable strong {
-  color: #454b53;
-}
-
-.nav-dropdown-link.is-unavailable em {
-  color: color-mix(in srgb, var(--project-accent, #737983) 30%, #767c85);
-}
-
-.nav-dropdown-link.is-unavailable .nav-dropdown-link-art {
-  opacity: 0.4;
-  filter: saturate(0.62) contrast(0.86) brightness(1.06);
-}
-
-.nav-dropdown-link.is-unavailable:hover {
-  transform: none;
-}
-
-.nav-dropdown-link.is-unavailable:hover::before {
-  opacity: 1;
-}
-
-.nav-dropdown-link.is-unavailable:hover::after {
-  top: 10px;
-  bottom: 10px;
-  opacity: 0.5;
-}
-
-.nav-dropdown-link.is-unavailable:hover .nav-dropdown-link-art {
-  opacity: 0.4;
-  filter: saturate(0.62) contrast(0.86) brightness(1.06);
-  transform: scale(1.015);
-}
-
-.nav-dropdown-all {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 5px;
-  border-top: 1px solid var(--line);
-  border-radius: 0 0 7px 7px;
-  padding: 10px 10px 6px;
-  color: #59616b;
-  font-size: 0.74rem;
-  font-weight: 580;
-  transition:
-    background var(--hover-out) var(--ease-out),
-    color var(--hover-out) var(--ease-out);
-}
-
-.nav-dropdown-all svg {
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-.nav-dropdown-all:hover,
-.nav-dropdown-all:focus-visible {
-  background: rgba(47, 136, 255, 0.07);
-  color: #1565c9;
-  transition-duration: var(--hover-in);
-}
-
-.nav-dropdown-all:hover svg,
-.nav-dropdown-all:focus-visible svg {
-  transform: translateX(2px);
-  transition-duration: var(--hover-in);
-}
-
-.nav-link {
-  --nav-label-in: 150ms;
-  --nav-label-out: 110ms;
-  --nav-ribbon-in: 180ms;
-  --nav-ribbon-out: 140ms;
-  --nav-ribbon-ease-in: cubic-bezier(0.16, 1, 0.3, 1);
-  --nav-ribbon-ease-out: ease-out;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 21px 0 20px;
-  color: var(--ink);
-  font-size: 0.92rem;
-  font-weight: 560;
-  letter-spacing: 0;
-  text-transform: none;
-  transition: color var(--nav-label-out) ease-out;
-}
-
-.nav-link.is-hovering,
-.nav-link.is-pressing,
-.nav-link:focus-visible:not(.is-pointer-focus) {
-  color: var(--black);
-  transition-duration: var(--nav-label-in);
-}
-
-.nav-link__label {
-  display: block;
-}
-
-/* Desktop overlines and mobile row artwork are deliberately separate DOM
-   elements. The overline is clipped by its own paint container, so an image
-   or transition can never escape the width of the link that owns it. */
-.nav-link {
-  isolation: isolate;
-}
-
-.nav-link__mobile-art {
-  display: none;
-}
-
-.nav-link.active {
-  color: var(--black);
-}
-
-/* Each desktop label uses the same cursor-following light, tinted to the
-   artwork for its area. It only appears while hovered or keyboard-focused. */
-@property --nav-glow {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .nav-desktop .nav-link__label {
-    background-image: linear-gradient(var(--ink), var(--ink));
-    background-image:
-      radial-gradient(
-        34px circle at var(--nav-mx, 50%) 46%,
-        rgb(var(--nav-glow-light, 240 186 84) / calc(var(--nav-glow, 0) * 0.9)),
-        rgb(var(--nav-glow-mid, 203 134 30) / calc(var(--nav-glow, 0) * 0.5)) 46%,
-        rgb(var(--nav-glow-mid, 203 134 30) / 0) 80%
-      ),
-      linear-gradient(var(--ink), var(--ink));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    transition: --nav-glow var(--nav-label-out) ease-out;
-  }
-
-  .nav-desktop .nav-link.is-hovering,
-  .nav-desktop .nav-link.is-pressing,
-  .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus),
-  .nav-desktop .nav-item.is-dropdown-open > .nav-link {
-    color: transparent;
-    transition-duration: var(--hover-in);
-  }
-
-  .nav-desktop .nav-link.is-hovering .nav-link__label,
-  .nav-desktop .nav-link.is-pressing .nav-link__label,
-  .nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__label,
-  .nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__label {
-    --nav-glow: 1;
-    transition-duration: var(--nav-label-in);
-  }
-
-  .nav-desktop .nav-link.active .nav-link__label {
-    color: transparent;
-  }
-}
-
-/* Each link owns one 6px ribbon clipped to its own width. Visibility lives
-   on the bar itself: hidden is opacity 0, so a hidden bar paints nothing and
-   cannot leak artwork through the clipped corners (the retired canvas-curtain
-   overlay left antialiased specks there). Reveal state comes only from native
-   hover/focus, the open dropdown, and the active route — never from the JS
-   pointer classes, so a fast sweep cannot strand a bar. */
-.nav-link__bar {
-  position: absolute;
-  top: 13px;
-  right: 0;
-  left: 0;
-  display: block;
-  height: 6px;
-  overflow: hidden;
-  border-radius: 3px;
-  contain: paint;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(2px);
-  transition:
-    opacity var(--nav-ribbon-out) var(--nav-ribbon-ease-out),
-    transform var(--nav-ribbon-out) var(--nav-ribbon-ease-out);
-}
-
-.nav-link__bar-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  filter: saturate(1.06) contrast(1.03);
-}
-
-.nav-desktop .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__bar,
-.nav-desktop .nav-item.is-dropdown-open > .nav-link .nav-link__bar,
-.nav-desktop .nav-link.active .nav-link__bar {
-  opacity: 1;
-  transform: none;
-  transition-duration: var(--nav-ribbon-in);
-  transition-timing-function: var(--nav-ribbon-ease-in);
-}
-
-@media (hover: hover) {
-  .nav-desktop .nav-link:hover .nav-link__bar {
-    opacity: 1;
-    transform: none;
-    transition-duration: var(--nav-ribbon-in);
-    transition-timing-function: var(--nav-ribbon-ease-in);
-  }
-}
-
-.nav-mobile-toggle {
-  position: relative;
-  display: none;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  padding: 0;
-  color: var(--ink);
-  transition:
-    background var(--hover-out) var(--ease-out),
-    color var(--hover-out) var(--ease-out);
-}
-
-.nav-mobile-toggle:hover,
-.nav-mobile-toggle:focus-visible {
-  background: rgba(16, 18, 23, 0.045);
-  outline: 0;
-  transition-duration: var(--hover-in);
-}
-
-.nav-mobile-toggle[aria-expanded="true"] {
-  background: rgba(16, 18, 23, 0.06);
-  color: var(--black);
-}
-
-.nav-mobile-toggle-icon {
-  position: relative;
-  display: block;
-  width: 20px;
-  height: 16px;
-}
-
-.menu-line {
-  position: absolute;
-  top: 7px;
-  right: 0;
-  left: 0;
-  height: 1.5px;
-  border-radius: 999px;
-  background: currentColor;
-  transform-origin: center;
-  transition:
-    opacity 130ms ease,
-    transform 240ms var(--ease-out);
-}
-
-.menu-line-top {
-  transform: translateY(-6px);
-}
-
-.menu-line-middle {
-  transform: scaleX(0.76);
-}
-
-.menu-line-bottom {
-  transform: translateY(6px);
-}
-
-.nav-mobile-toggle[aria-expanded="true"] .menu-line-top {
-  transform: rotate(45deg);
-}
-
-.nav-mobile-toggle[aria-expanded="true"] .menu-line-middle {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.nav-mobile-toggle[aria-expanded="true"] .menu-line-bottom {
-  transform: rotate(-45deg);
-}
-
-.nav-mobile {
-  display: none;
-  pointer-events: none;
-}
-
+  }}
 .akibwa-home {
-  min-height: calc(100vh - 68px);
+  min-height: 100vh;
   padding: 0 0 46px;
 }
 
@@ -878,6 +228,78 @@ button {
 
 .hero-dynamic-phrase {
   display: inline;
+}
+
+/* The site's name, folded into the first words of the headline. A button like
+   the other flipping words — same flick, same cadence, click to step — with
+   the brand's accent strip run underneath as its underline. Both names sit in
+   one grid cell so the slot keeps the wider width and the dash after it never
+   moves. */
+.hero-name {
+  --name-accent-rgb: 47, 136, 255;
+  appearance: none;
+  position: relative;
+  display: inline-block;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 0.1em;
+  /* The same treatment as the other flipping words, weighted for the black
+     line it sits in rather than the grey one they sit in. */
+  color: color-mix(in srgb, rgb(var(--name-accent-rgb)) 58%, var(--black));
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  vertical-align: baseline;
+  transition: color 160ms ease;
+}
+
+.hero-name:hover,
+.hero-name:focus-visible {
+  color: var(--black);
+  outline: 0;
+}
+
+.hero-name:focus-visible {
+  box-shadow: 0 0 0 3px rgba(var(--name-accent-rgb), 0.22);
+}
+
+.hero-name-stack {
+  display: inline-grid;
+  white-space: nowrap;
+}
+
+/* Invisible copies of both names hold the cell at the wider one's width. */
+.hero-name-sizer {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero-name-value {
+  position: relative;
+  grid-area: 1 / 1;
+  /* Hug the visible word — a grid item stretches to the cell, which is the
+     width of the widest name, and the underline was inheriting that. */
+  justify-self: start;
+  width: max-content;
+  animation: word-flick 220ms ease both;
+}
+
+/* The underline lives on the visible name, so it is exactly as wide as the
+   word above it and flicks in with it. A clean rule in the name's accent,
+   back at the weight the wordmark strip used to have. */
+.hero-name-value::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -0.08em;
+  left: 0;
+  height: 0.11em;
+  border-radius: 0.055em;
+  background: rgba(var(--name-accent-rgb), 0.62);
+  pointer-events: none;
 }
 
 .hero-word-cycle {
@@ -1409,7 +831,7 @@ button {
 }
 
 .studio-page {
-  min-height: calc(100vh - 68px);
+  min-height: 100vh;
   background: var(--canvas);
   padding-bottom: 40px;
 }
@@ -4782,126 +4204,7 @@ button {
   .site-frame,
   .page-grid {
     width: min(calc(100% - 32px), var(--frame));
-  }
-
-  .nav-row {
-    min-height: 60px;
-  }
-
-  .nav-desktop {
-    display: none;
-  }
-
-  .nav-mobile-toggle {
-    display: inline-flex;
-  }
-
-  .nav-mobile {
-    display: grid;
-    grid-template-rows: 0fr;
-    border-top: 1px solid transparent;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      grid-template-rows 180ms var(--ease-out),
-      border-color 130ms ease,
-      opacity 130ms ease,
-      visibility 0s linear 180ms;
-  }
-
-  .nav-mobile.is-open {
-    grid-template-rows: 1fr;
-    border-color: var(--line);
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
-  }
-
-  .nav-mobile-clip {
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .nav-mobile-inner {
-    display: grid;
-    padding: 5px 0 10px;
-  }
-
-  .nav-mobile .nav-link {
-    justify-content: space-between;
-    border-bottom: 1px solid var(--line);
-    padding: 14px 0;
-    opacity: 0;
-    transform: translateY(-5px);
-    transition:
-      color var(--hover-out) var(--ease-out),
-      background-color 110ms ease,
-      opacity 120ms ease,
-      transform 180ms var(--ease-out);
-  }
-
-  .nav-mobile.is-open .nav-link {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .nav-mobile.is-open .nav-link:nth-child(2) {
-    transition-delay: 20ms;
-  }
-
-  .nav-mobile.is-open .nav-link:nth-child(3) {
-    transition-delay: 40ms;
-  }
-
-  .nav-mobile.is-open .nav-link:nth-child(4) {
-    transition-delay: 60ms;
-  }
-
-  /* Mobile rows are full-width and left-aligned, so the active row's art
-     anchors to the label edge and fades out rightward — the menu's only
-     active indicator. */
-  .nav-mobile .nav-link__bar {
-    display: none;
-  }
-
-  .nav-mobile .nav-link__mobile-art {
-    position: absolute;
-    inset: 5px -12px 5px -16px;
-    z-index: -1;
-    display: block;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    filter: saturate(0.82) contrast(0.94) brightness(1.04);
-    pointer-events: none;
-    transform: translateX(-7px) scale(1.015);
-    transition:
-      opacity 150ms ease-out,
-      filter 180ms ease-out,
-      transform 220ms var(--ease-out);
-    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
-    mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 72%);
-  }
-
-  .nav-mobile .nav-link:focus-visible:not(.is-pointer-focus) .nav-link__mobile-art,
-  .nav-mobile .nav-link.active .nav-link__mobile-art {
-    opacity: 0.3;
-    filter: saturate(1.04) contrast(1) brightness(1.02);
-    transform: translateX(0) scale(1.025);
-  }
-
-  .nav-mobile .nav-link.is-pressing {
-    background-color: rgba(16, 18, 23, 0.045);
-  }
-
-  .brand {
-    min-height: 60px;
-    min-width: 0;
-    font-size: 1.08rem;
-  }
-
-  .akibwa-home {
+  }  .akibwa-home {
     min-height: calc(100vh - 60px);
     padding-bottom: 36px;
   }
@@ -5117,10 +4420,6 @@ button {
 
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-
-}
 
 @media (max-width: 480px) {
   .contact-form,
@@ -5152,9 +4451,6 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
 .page-transition,
-.nav-link,
-.nav-link__bar,
-.nav-link__mobile-art,
 .area-card,
 .area-card::before,
 .area-card::after,
@@ -5165,47 +4461,13 @@ button {
 .area-caption__arrow::before,
 .hero-word-cycle,
 .hero-word-cycle-value,
+.hero-name-value,
 .text-action svg,
-.brand,
-.page-footer-signoff strong,
-.brand__bar-art,
-.nav-mobile {
+.page-footer-signoff strong {
     animation: none;
     transition: none;
     transform: none;
   }
-
-  .menu-line {
-    animation: none;
-    transition: none;
-  }
-
-  /* Zeroing the durations beats every state rule on value, not specificity,
-     so reduced motion holds even for the higher-specificity reveal states. */
-  .nav-link {
-    --nav-label-in: 0ms;
-    --nav-label-out: 0ms;
-    --nav-ribbon-in: 0ms;
-    --nav-ribbon-out: 0ms;
-  }
-
-  .brand.is-hovering,
-  .brand.is-pressing,
-  .brand:focus-visible:not(.is-pointer-focus) {
-    animation: none;
-    color: var(--black);
-    filter: none;
-    text-shadow: none;
-  }
-
-  .brand.is-hovering::after,
-  .brand.is-pressing::after,
-  .brand:focus-visible:not(.is-pointer-focus)::after {
-    animation: none;
-    opacity: 0.96;
-    transform: none;
-  }
-
 
   .work-node,
   .work-logo::before,
@@ -5950,4 +5212,1193 @@ button {
   .album-card-face {
     transform: none;
   }
+}
+/* ===========================================================================
+   The card deck — akibwa.com as one wall.
+
+   Every card is the same square tile: face up it names one thing, turned over
+   it says how. Sets are grouped so the nav can light the ones it names, and
+   the picture sets cap what they show behind an "all of them" card.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Prototype of a rebuilt akibwa.com/about.
+
+   Deliberately single-theme. akibwa.com is a committed light design — warm
+   cream ground, pure-white cards lifting off it — so a dark variant here would
+   let Dan judge colours the real page will never have. Every colour is painted
+   explicitly so the page holds on either host ground.
+
+   Tokens are lifted from app/globals.css rather than invented, so what renders
+   here is what the site would render.
+--------------------------------------------------------------------------- */
+
+* { box-sizing: border-box; }
+
+/* .card sets its own display, which outranks the user-agent rule for [hidden] —
+   so filtering set the attribute and nothing left the screen. */
+
+[hidden] { display: none !important; }
+
+/* Lifted from the live site so the deck is judged as a page on akibwa.com
+   rather than as a standalone interface. */
+
+/* The nav is a lens over one wall rather than a set of destinations: the sets
+   it does not name step back instead of disappearing, so you keep sight of
+   everything while one part is picked out. */
+
+/* --- note strip ---------------------------------------------------------- */
+
+/* --- deck head ----------------------------------------------------------- */
+
+/* The full set opens over the page rather than replacing it, so following the
+   wall never costs you your place. The band's own grid is moved in here and
+   moved back on close — 246 sleeves are not worth rendering twice. */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 3vw, 40px);
+  background: rgba(3, 4, 5, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.lightbox-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 1180px);
+  max-height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--canvas);
+  box-shadow: 0 40px 90px rgba(3, 4, 5, 0.4);
+}
+
+.lightbox-head {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px clamp(16px, 2.4vw, 26px) 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lightbox-head h2 {
+  margin: 0;
+  color: var(--black);
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.lightbox-close {
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: none;
+  padding: 5px 15px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background var(--hover-out) var(--ease-out);
+}
+
+.lightbox-close:hover { background: rgba(16, 18, 23, 0.06); }
+
+.lightbox-close:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.lightbox-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 2.4vw, 26px);
+}
+
+/* Inside the panel the chip has nothing left to open. */
+
+.lightbox .card--more { display: none; }
+
+/* Plain text, not pills — status chrome above a card grid reads as clutter. */
+
+/* --- the deck ------------------------------------------------------------ */
+
+/* Sleeves are small objects and were reading far too large at card width, so
+   the Music band runs on its own finer track. Its own grid, so the half-size
+   tiles never have to share auto-placement with full-size cards. */
+
+.card {
+  position: relative;
+  aspect-ratio: 1;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
+  transition:
+    transform var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    border-color var(--hover-out) var(--ease-out);
+}
+
+.card:hover,
+.card:focus-visible,
+.card.is-open {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: 0 14px 32px rgba(16, 18, 23, 0.11);
+  transition-duration: var(--hover-in);
+}
+
+.card:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+/* Suit marker: a 5px dot, top right. */
+
+.card::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--suit);
+  opacity: 0.85;
+  z-index: 2;
+  transition: opacity var(--hover-out) var(--ease-out);
+}
+
+.card:hover::after,
+.card:focus-visible::after,
+.card.is-open::after { opacity: 0; }
+
+/* Work carries a logo and Records carry the sleeve, so those keep the dot.
+   Where the suit is spelled out, the dot would be saying it twice. */
+
+.card--tools::after,
+.card--films::after,
+.card--games::after,
+.card--tv::after { display: none; }
+
+/* Jobs have no artwork of their own — the logos are committed at 56px and
+   Lloyds' original is 54px square, so there is nothing to blow up sharply — and
+   the company's own colour carries the card instead. A wash rather than a
+   flood: half these brands are pale enough that white type on them would fail,
+   and black on a tint reads at any size.
+
+   The card is its own query container because everything on it is sized
+   against the tile rather than the window; see the name below. */
+
+.card--jobs {
+  --suit: var(--accent, var(--ink));
+  background: var(--white);
+  container-type: inline-size;
+}
+
+.card--jobs::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(142% 104% at 20% 114%, var(--accent, transparent), transparent 74%);
+  opacity: 0.26;
+}
+
+/* The wash already says which company this is, so the suit dot would be saying
+   it a second time — the same reason Tools and Contact drop theirs. */
+
+.card--jobs::after { display: none; }
+
+/* The mark is the artwork rather than a corner sticker. Blown up, run off the
+   edge and dropped to a wash, it fills the card the way a sleeve or a poster
+   fills its neighbours — and it is the same 56px file the small mark used, so
+   nothing new is fetched. It is taken as a silhouette and filled with the
+   accent rather than drawn: half these logos are black, and a black ghost is a
+   smudge where a coloured one is a watermark. Softness cannot show at this
+   opacity, which is why the small file is enough. Sky's logo is a filled tile
+   rather than a glyph, so it has no silhouette to take and shows none: laid
+   down as a picture it put its own wordmark behind the company's name.
+
+   Carrying the mark this way is also what makes the card fit. A 26px logo in
+   the flow cost the same height as a line and a half of the name, and between
+   about 600px and 1300px — where the tile bottoms out near 105px — that was
+   the line the years sat on: they were being clipped by the card's own edge. */
+
+.c-ghost {
+  position: absolute;
+  top: 3%;
+  right: -11%;
+  width: 76%;
+  aspect-ratio: 1;
+  background: var(--accent);
+  -webkit-mask: var(--mark) center / contain no-repeat;
+  mask: var(--mark) center / contain no-repeat;
+  opacity: 0.17;
+}
+
+/* The name has the card to itself now, so it takes a step up on every rung —
+   measured against the tile. The tile is a sawtooth against the viewport,
+   134px wide at 1440 but 99px at 900 as the grid takes another column, so a
+   fixed size is either too small at the wide end or pushes the years off the
+   bottom edge at the narrow one. In card widths it fits at every width the
+   grid produces, which was checked from 320px up. */
+
+.card--jobs .c-title.s1 { font-size: clamp(1.04rem, 17.5cqw, 1.46rem); }
+
+.card--jobs .c-title.s2 { font-size: clamp(0.94rem, 15.4cqw, 1.3rem); }
+
+.card--jobs .c-title.s3 { font-size: clamp(0.86rem, 13.9cqw, 1.18rem); }
+
+.card--jobs .c-title.s4 { font-size: clamp(0.8rem, 12.7cqw, 1.08rem); }
+
+.card--jobs .c-sub { font-size: clamp(0.56rem, 8.1cqw, 0.68rem); }
+
+.card--tools {
+  --suit: var(--suit-tools);
+  background: var(--ground, var(--white));
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 18px rgba(16, 18, 23, 0.1);
+}
+
+.card--tools::after { display: none; }
+
+.card--tools .c-title { color: var(--white); }
+
+.card--tools .f-suit { color: rgba(255, 255, 255, 0.62); }
+
+.card--tools .c-mark { filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.22)); }
+
+/* Grok Bot's is a raster app tile, so it keeps its own edges rather than
+   being flooded white like the vector marks. */
+
+.card--tools .c-mark--tile { filter: none; }
+
+.card--music { --suit: var(--suit-music); }
+
+.card--creations { --suit: var(--suit-creations); }
+
+.card--films:has(.c-art),
+.card--games:has(.c-art),
+.card--tv:has(.c-art) { background: var(--ink); border-color: var(--ink); }
+
+.card--films .c-art,
+.card--games .c-art,
+.card--tv .c-art { object-fit: cover; }
+
+.card--films { --suit: var(--suit-films); }.card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+  padding: 13px;
+}
+
+.c-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* The logo used to be absolutely positioned while the title grew upward from
+   the bottom of the card, so a three-line name slid straight underneath it —
+   "Leeds Building Society" sat on top of its own mark. Both are in normal flow
+   now, pushed apart, so they cannot meet however long the name gets. */
+
+.card-face-stack {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 0;
+}
+
+/* The foot must not be squeezed: as a shrinkable flex child it was compressed
+   to about a line and a half, so "Leeds Building Society" lost its third line
+   to the card's overflow rather than to the clamp. */
+
+.c-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.c-title { flex: none; }
+
+/* The label is the card. Sized to fill the tile rather than sit in it — the
+   grid was a field of near-empty squares when these were set at caption size. */
+
+.c-title {
+  /* Clamped so a long name can never push the card past its square and leave
+     its neighbours short in the same row. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  color: var(--black);
+  font-weight: 560;
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.c-title.s1 { font-size: 1.16rem; }
+
+.c-title.s2 { font-size: 1.02rem; }
+
+.c-title.s3 { font-size: 0.92rem; }
+
+.c-title.s4 { font-size: 0.84rem; letter-spacing: -0.006em; }
+
+.c-title--tool { font-weight: 530; }
+
+/* The portrait is the header. Two by two at the top left, it anchors the wall
+   and carries the h1, so the page can open straight onto the deck. */
+
+/* In one continuous grid the suits ran into each other. Each set now opens
+   with a tile carrying its name — no chrome, so it reads as a heading that
+   happens to occupy two cells rather than another card. */
+
+/* One tile, like everything else on the page. */
+
+.card--me {
+  cursor: default;
+}
+
+/* No room for a suit dot at this scale, and the whole band is one suit anyway. */
+
+.card--music { border-radius: 5px; }
+
+.card--music::after { display: none; }
+
+.card--music .card-back { padding: 8px; gap: 2px; border-top-width: 1px; }
+
+.card--music .b-eyebrow { font-size: 0.5rem; letter-spacing: 0.06em; }
+
+.card--music .b-body--tight { font-size: 0.58rem; line-height: 1.18; }
+
+.card--music .b-figure { font-size: 0.5rem; }
+
+.card--me::after { display: none; }
+
+.card--me:hover {
+  transform: none;
+  border-color: var(--line);
+  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
+}
+
+.me-name {
+  position: absolute;
+  right: 13px;
+  bottom: 12px;
+  left: 13px;
+  z-index: 2;
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(0.9rem, 1.35vw, 1.16rem);
+  font-weight: 560;
+  line-height: 1.08;
+  letter-spacing: -0.016em;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.45);
+}
+
+.card--me::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  height: 46%;
+  background: linear-gradient(to top, rgba(3, 4, 5, 0.62), rgba(3, 4, 5, 0));
+}
+
+/* Stands in for the rest of the wall in the default view. It is a card rather
+   than a line of copy, so the deck stays the only thing on the page. */
+
+.card--more {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.card--more .c-art { object-fit: cover; }
+
+.card--more .c-head,
+.card--more .more-n,
+.card--more .more-label { position: relative; z-index: 2; }
+
+.card--more .f-suit { color: rgba(255, 255, 255, 0.72); }
+
+.card--more::after { display: none; }
+
+/* One tile rather than four: eleven collages cannot fill the second row a
+   two-row chip would open, and half an empty row is worse than a small chip. */
+
+.card--more .c-head { position: absolute; }
+
+.card--more .card-face { padding: 11px; }
+
+.card--more .f-suit { color: rgba(255, 255, 255, 0.5); }
+
+.more-n {
+  color: var(--white);
+  font-size: 1.18rem;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.more-go {
+  color: var(--white);
+  font-size: 1.32rem;
+  line-height: 1;
+}
+
+/* The Records suit on its own is 246 sleeves. At deck size that is a very long
+   page, so the wall tightens to something you can take in at a glance. */
+
+.c-head {
+  position: absolute;
+  top: 12px;
+  right: 13px;
+  left: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.c-head .f-suit { position: static; }
+
+/* The mark was a 26px corner icon and read as a favicon. On a card whose whole
+   job is "this is the tool", it should be the thing you see. */
+
+.c-mark {
+  flex: 1;
+  align-self: center;
+  width: min(58%, 76px);
+  min-height: 0;
+  margin: 2px 0;
+}
+
+.c-mark svg,
+.c-mark img { width: 100%; height: 100%; object-fit: contain; }
+
+.card--tools .c-head { position: static; justify-content: flex-end; }
+
+.c-mark--tile img { border-radius: 22%; }
+
+.f-suit {
+  position: absolute;
+  top: 14px;
+  left: 15px;
+  color: #9aa2ad;
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 640;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.c-sub {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.008em;
+}
+
+/* The back. Uniform ink across every suit — it is the reverse of a printed
+   card, so it should not change identity from one to the next. The suit shows
+   only as the hairline along the top edge. */
+
+.card-back {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px;
+  background: var(--ink);
+  border-top: 2px solid var(--suit);
+  color: rgba(255, 255, 255, 0.9);
+  transform: translateY(101%);
+  transition: transform var(--hover-out) var(--ease-out);
+}
+
+/* The back never shows on the wall — hover teases nothing. The detail is
+   the click's reward, in the spotlight or a panel. */
+
+.b-eyebrow {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.62rem;
+  font-weight: 640;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+}
+
+.b-body {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.755rem;
+  line-height: 1.44;
+  overflow: hidden;
+}
+
+.b-body--tight { color: var(--white); font-weight: 540; font-size: 0.86rem; line-height: 1.24; }
+
+.b-x { color: rgba(255, 255, 255, 0.45); font-weight: 400; }
+
+.b-figure {
+  margin-top: auto;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.b-figure strong { color: var(--white); font-weight: 600; }
+
+/* Two columns on a phone made each card enormous, and the empty half of a
+   tile scales with it — the wall stopped reading as a wall. Three narrower
+   cards keep it at roughly the density the desktop grid has. */
+
+@media (max-width: 560px) {
+.card-face, .card-back { padding: 11px; }
+.c-head { top: 10px; right: 11px; left: 11px; }
+.more-n { font-size: 1.2rem; }
+.f-suit { top: 10px; left: 11px; font-size: 0.55rem; }
+.c-mark { width: min(54%, 62px); }
+.me-name { right: 11px; bottom: 10px; left: 11px; }
+.c-title.s1 { font-size: 1.12rem; }
+.c-title.s2 { font-size: 1.02rem; }
+.c-title.s3 { font-size: 0.92rem; }
+.c-title.s4 { font-size: 0.84rem; }
+.c-sub { font-size: 0.65rem; }
+.b-body { font-size: 0.66rem; line-height: 1.36; }
+.b-body--tight { font-size: 0.74rem; }
+.b-eyebrow { font-size: 0.55rem; }
+.b-x { color: rgba(255, 255, 255, 0.45); font-weight: 400; }
+.b-figure { font-size: 0.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+.card, .card-back, .card::after, .suit { transition-duration: 1ms; }
+}
+
+/* Each set is its own grid on the same track size. One continuous grid looked
+   right in theory and scattered in practice: a set could not start on a clean
+   row, so title cards landed mid-row and every spanning card pushed a hole
+   through the wall. Same tile, same gap, no cross-set flow. */
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 0.55vw, 9px);
+}
+
+/* One row per set: a fixed name rail on the left, the cards running off the
+   right edge. The set is the unit the nav addresses, so lensing re-orders a
+   handful of rows rather than reflowing every card between them. */
+.set {
+  order: var(--order, 0);
+  display: grid;
+  /* A fixed first column is the whole point: every set name lands on the same
+     left edge, so the wall can be read down that column while the cards move
+     across it. With the names riding the tracks there was no left edge at all
+     and a title could drift to the middle of its own row. */
+  /* The column fits the word rather than reserving a fixed rail — a single
+     name next to a wall of cards should sit close, not across a channel. */
+  grid-template-columns: fit-content(clamp(120px, 14vw, 200px)) minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(12px, 1.4vw, 22px);
+  /* Cards run edge to edge; the name keeps the page gutter so it lines up with
+     the headline above it. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-left: max(24px, calc((100vw - var(--frame)) / 2));
+  padding-bottom: clamp(6px, 0.7vw, 10px);
+}
+
+.set-label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-right: clamp(6px, 0.8vw, 14px);
+}
+
+.set-name {
+  margin: 0;
+}
+
+.set-rail {
+  overflow: hidden;
+}
+
+.set-rails {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.7vw, 10px);
+  min-width: 0;
+}
+
+/* The toolkit rides beneath the roles at a smaller size, pulling the other
+   way — an offset of Jobs rather than a set of its own. */
+.set-rail--sub .track .card {
+  flex: 0 0 clamp(70px, 7.6vw, 96px);
+  width: clamp(70px, 7.6vw, 96px);
+}
+
+/* Art-faced cards float their type on a bottom-weighted scrim, so a light
+   image cannot swallow a light title. */
+.card-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    rgba(16, 18, 23, 0.72),
+    rgba(16, 18, 23, 0.2) 46%,
+    rgba(16, 18, 23, 0) 72%
+  );
+  pointer-events: none;
+}
+
+.card--sites .card-face-stack {
+  position: relative;
+  z-index: 2;
+  /* The art is the card; the words wait. Hover, and the name surfaces
+     through a deepening scrim — unhurried, like a caption arriving. */
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 340ms ease, transform 340ms ease;
+}
+
+.card--sites .card-scrim {
+  opacity: 0;
+  transition: opacity 340ms ease;
+}
+
+.card--sites:hover .card-face-stack,
+.card--sites:focus-visible .card-face-stack {
+  opacity: 1;
+  transform: none;
+}
+
+.card--sites:hover .card-scrim,
+.card--sites:focus-visible .card-scrim {
+  opacity: 1;
+}
+
+/* A solo mark fills its little card. */
+.card-face-stack--solo {
+  justify-content: center;
+  align-items: center;
+}
+
+.card-face-stack--solo .c-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62%;
+  height: 62%;
+}
+
+.card-face-stack--solo .c-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Names sized for the smaller tile — "Cloudflare" was clipping mid-word. */
+.set-rail--sub .card .c-title {
+  font-size: 0.68rem;
+  letter-spacing: 0;
+}
+
+.set-rail--sub .card .f-suit { font-size: 0.5rem; }
+
+/* Only a travelling rail needs the edges softened — cards should dissolve as
+   they leave rather than be guillotined by the viewport. A still rail starts
+   flush against its name, where a fade would just look like a fault. */
+.set-rail.is-travelling {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 clamp(16px, 2.4vw, 40px),
+    #000 calc(100% - clamp(16px, 2.4vw, 40px)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 clamp(16px, 2.4vw, 40px),
+    #000 calc(100% - clamp(16px, 2.4vw, 40px)),
+    transparent 100%
+  );
+}
+
+/* The set's name is also its opener — the same unfold a card click does.
+   It wears the hero index's clothes: the big coloured word and its full stop,
+   nothing else. The wall is the statement; detail comes from enquiring. */
+.set-open {
+  --index-accent-rgb: 47, 136, 255;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: clamp(1.3rem, 1.9vw, 1.9rem);
+  font-weight: 540;
+  line-height: 1.04;
+  letter-spacing: -0.012em;
+  text-align: left;
+  transition: color 160ms ease;
+}
+
+.set-open:hover,
+.set-open:focus-visible {
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
+  outline: 0;
+}
+
+/* The set, opened out under its travelling row: the full collection laid
+   flat, every card with its detail showing. It spans both grid columns so
+   the cards line up under the rail and the name alike. */
+.set-panel {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.6vw, 22px);
+  padding: clamp(14px, 1.8vw, 26px) max(24px, calc((100vw - var(--frame)) / 2)) clamp(10px, 1.4vw, 20px) 0;
+}
+
+.set-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: clamp(10px, 1.1vw, 16px);
+}
+
+.set-panel-sub {
+  margin: clamp(4px, 0.6vw, 10px) 0 calc(-1 * clamp(6px, 0.8vw, 12px));
+  color: var(--black);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-weight: 500;
+}
+
+.set-panel-more {
+  align-self: flex-start;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 560;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.set-panel-close {
+  appearance: none;
+  align-self: flex-start;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: 8px 14px;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 560;
+}
+
+.set-panel-close:hover,
+.set-panel-close:focus-visible {
+  border-color: var(--ink);
+  outline: 0;
+}
+
+/* A spread card is shown, not pressed: the face keeps its square, and the
+   back — the same detail the wall reveals on hover — lies open beneath it
+   as a caption instead of waiting behind it. */
+.card--spread {
+  aspect-ratio: auto;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+}
+
+.card--spread:hover {
+  transform: none;
+  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
+}
+
+.card--spread .card-face {
+  position: relative;
+  inset: auto;
+  aspect-ratio: 1;
+  flex: none;
+}
+
+.card--spread .card-back {
+  position: static;
+  inset: auto;
+  z-index: auto;
+  flex: 1;
+  transform: none;
+  transition: none;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+}
+
+/* The travel transform is written by a velocity loop in the page script —
+   speed changes glide instead of cutting, which no CSS keyframe can do.
+   .track--rtl carries no styles of its own: it tells the loop which way
+   this row pulls. */
+
+/* The second run exists only to close the loop. In a row that does not
+   overflow it is simply the same cards printed twice on one screen, which is
+   what made the wall look broken rather than moving. */
+.set-rail:not(.is-travelling) .track-run[data-clone] {
+  display: none;
+}
+
+.track-run {
+  display: flex;
+  gap: clamp(8px, 0.9vw, 13px);
+  padding-right: clamp(8px, 0.9vw, 13px);
+}
+
+.track .card {
+  flex: 0 0 clamp(96px, 11vw, 134px);
+  width: clamp(96px, 11vw, 134px);
+}
+
+/* Reduced motion: the loop never starts, so the wall simply stands. */
+
+/* Under the rail width the name cannot hold a column, so it sits above the
+   cards instead and the row keeps its full width for them. */
+@media (max-width: 760px) {
+  .set {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 9px;
+    padding-right: max(24px, calc((100vw - var(--frame)) / 2));
+  }
+
+  .set-label {
+    flex-flow: row wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    padding-right: 0;
+  }
+
+  /* The cards bleed past the gutter again once the name is out of their row. */
+  .set-rail {
+    width: 100vw;
+    margin-left: calc(0px - max(24px, calc((100vw - var(--frame)) / 2)));
+    padding-left: max(24px, calc((100vw - var(--frame)) / 2));
+  }
+}
+
+/* ── The spotlight ──────────────────────────────────────────────────────
+   The picked card, played large over a dimmed, stilled page. The scrim is
+   the paper itself thickened, not a black-out; the figure carries the same
+   suit styling the wall card had, so nothing changes but the distance. */
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vh, 48px);
+  background: rgba(250, 248, 243, 0);
+  transition: background 420ms var(--ease-out), backdrop-filter 420ms var(--ease-out);
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+}
+
+.spotlight.is-entered {
+  background: rgba(250, 248, 243, 0.82);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.spotlight-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(80vw, 44vh, 360px);
+  transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  filter: drop-shadow(0 24px 60px rgba(16, 18, 23, 0.18));
+}
+
+.spotlight .card--spotlight {
+  aspect-ratio: 1;
+  width: 100%;
+  cursor: default;
+  border-radius: calc(var(--radius) * 1.4);
+}
+
+.spotlight .card--spotlight:hover {
+  transform: none;
+  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
+}
+
+/* The same ink panel the card back uses, laid open beneath the face. */
+.spotlight-caption {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 0 0 calc(var(--radius) * 1.4) calc(var(--radius) * 1.4);
+  border-top: 2px solid var(--suit, var(--orange));
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.spotlight-caption .b-eyebrow { font-size: 0.7rem; }
+.spotlight-caption .b-body { font-size: 0.92rem; line-height: 1.5; overflow: visible; }
+.spotlight-caption .b-body--tight { font-size: 1.05rem; }
+.spotlight-caption .b-figure { font-size: 0.78rem; }
+
+/* The face's corners square off against the caption below. */
+.spotlight .card--spotlight { border-radius: calc(var(--radius) * 1.4) calc(var(--radius) * 1.4) 0 0; }
+
+.spotlight-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: 8px 14px;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 560;
+  opacity: 0;
+  transition: opacity 300ms ease 200ms;
+}
+
+.spotlight.is-entered .spotlight-close { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight, .spotlight-figure { transition: none; }
+}
+
+.card {
+  transition:
+    transform var(--hover-out) var(--ease-out),
+    box-shadow var(--hover-out) var(--ease-out),
+    border-color var(--hover-out) var(--ease-out),
+    opacity var(--hover-in) var(--ease-out),
+    filter 520ms var(--ease-out);
+}
+
+.card.is-dim {
+  opacity: 0.2;
+  filter: saturate(0.4);
+}
+
+/* The hero is the one card that carries running text, so it spans a block of
+   the wall rather than a single tile. */
+
+.card--hero {
+  aspect-ratio: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: clamp(12px, 1.4vw, 20px);
+  padding: clamp(14px, 1.6vw, 22px);
+  background: none;
+  border: 0;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* The menu, retired into the site's own vocabulary. Ten words that are the
+   rows, set like a line of the sentence above them: each in its set's colour,
+   each opening its set with the same unfold a card click does. */
+/* The bucket words sit inside the sentence itself — same size, same line,
+   only the colour says they are doors. */
+.hero-bucket { white-space: nowrap; }
+
+.hero-sep { color: #84858d; }
+
+.hero-index-word {
+  --index-accent-rgb: 47, 136, 255;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
+  cursor: pointer;
+  font: inherit;
+  transition: color 220ms ease;
+}
+
+.hero-index-word:hover,
+.hero-index-word:focus-visible {
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 78%, var(--black));
+  outline: 0;
+}
+
+/* The roving light: one word at a time lifts to full strength, the same flick
+   the words above use, so the whole headline flickers as one instrument. */
+.hero-index-word.is-spot {
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 74%, var(--black));
+}
+
+/* The held word is the one place on the page saying what is open. */
+.hero-index-word.is-held {
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 80%, var(--black));
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: rgba(var(--index-accent-rgb), 0.5);
+  text-underline-offset: 6px;
+}
+
+.card--hero::after { display: none; }
+
+.card--hero:hover { transform: none; box-shadow: none; }
+
+.card--hero h1 {
+  margin: 0;
+  color: var(--black);
+  /* Sized so the one sentence runs the width of the page. */
+  font-size: clamp(1.6rem, 3.2vw, 3.2rem);
+  font-weight: 540;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+}
+
+
+@media (max-width: 760px) {
+.card--hero { grid-column: 1 / -1; }
+}
+
+@media (max-width: 560px) {
+  .track .card {
+    flex-basis: clamp(88px, 28vw, 120px);
+    width: clamp(88px, 28vw, 120px);
+  }
+}/* The foot is pushed to the bottom of the card in its own right. Relying on
+   space-between only worked while something sat between the head and the foot;
+   on a card with just a name, both collapsed to the top and overlapped. */
+
+.card-face-stack .c-foot {
+  margin-top: auto;
+}
+
+/* The lens animation. Cards keep their place in the DOM and are re-ordered by
+   `order`, so nothing is destroyed and re-created; the transform transition
+   below is what carries them, and the script measures before and after to make
+   the move continuous rather than a jump. */
+
+.card {
+  order: var(--order, 0);
+}
+
+/* Holding a lens drops the room dark: a fixed veil covers the page, and only
+   the lit rows are raised above it. The dimmed rows stay faintly visible
+   through the veil, still travelling — the world recedes, it does not stop
+   existing. */
+.deck-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  /* The same recession the spotlight uses: the paper thickens and softens
+     rather than going black — the rest of the site dims, it does not die. */
+  background: rgba(250, 248, 243, 0.78);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  animation: veil-in 460ms var(--ease-out) both;
+}
+
+@keyframes veil-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.deck.is-lensed .set:has(.card.is-lit) {
+  position: relative;
+  z-index: 5;
+}
+
+
+/* Nothing to read while a set is receded, so it should not be tabbable or
+   announced from down there. */
+.deck.is-lensed .set:not(:has(.card.is-lit)) .card-back {
+  display: none;
+}
+
+.set {
+  transition: opacity 460ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .set { transition-duration: 1ms; }
+}
+
+
+.card.is-sliding {
+  transition:
+    transform 620ms var(--ease-out),
+    opacity 380ms var(--ease-out),
+    filter 380ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+.card.is-sliding { transition-duration: 1ms; }
+}
+
+/* The arrow on a website card — the card is a door, and says so. */
+.card--sites .site-go {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.card--sites {
+  background: var(--ground, var(--white));
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.card--sites .c-title,
+.card--sites .f-suit {
+  color: var(--white);
+}
+
+.card--sites .f-suit { color: rgba(255, 255, 255, 0.72); }
+
+/* A handle is an address, not a label — it keeps its own case and shrinks to
+   fit rather than shouting in small caps. */
+.f-suit--handle {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.62rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
