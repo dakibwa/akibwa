@@ -3730,7 +3730,8 @@ function buildNet(force){
   { for(const id of ['threadrow','parrow']){ const r=$(id); if(r) delete r.dataset.done } }
   $('field').classList.remove('cleared','dimthreads','swap-in');
   readMarkSizes();
-  const GEN={...genFor(R().day)};
+  const TUTDAY='2026-08-27';
+  const GEN={...genFor(inTutorialRun() && idx<TUTNETS.length ? TUTDAY : R().day)};
   Object.assign(GEN_RULES, genRules(GEN));
   spec=netSpec(idx, GEN_RULES);
   if(inTutorialRun() && idx<TUTNETS.length) Object.assign(spec, TUTNETS[idx], {
