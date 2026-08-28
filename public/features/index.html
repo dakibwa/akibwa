@@ -1018,13 +1018,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;flex:0 0 auto}
   .intro-doors .help.here{background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors .help.here:active{transform:none}
-  .intro-doors .help.door-close{margin-left:auto}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
+  .doorside{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
+  .door-auth{display:inline-flex}
+  .mastauth{display:contents}
   .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
-  .introauth{display:inline-flex;margin-left:auto}
-  .introauth:empty{margin-left:auto}
-  .introauth + .help.label{margin-left:0}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
@@ -1233,18 +1232,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
         </svg>
         <span class="caltext" id="statusdate"></span>
       </button>
-      <!-- `groundbtn` is what applyTheme writes and what the click is wired to,
-           so this one and the record's are found together and cannot drift. the
-           id stays because it is what `.help`'s layout and the tests know it by. -->
-      <button class="help groundbtn" id="themebtn" aria-label="ground">
-        <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
+      <!-- THE ORDER IS THE DOORS ROW'S (28 Aug 2026, the owner's call: "the
+           order should always be the same") — home, collection, ?, ground,
+           who-you-are, till. the collection's mark returns for exactly that
+           parity: the sheets carry it, so the bar does too. -->
+      <button class="help" id="collbtn" aria-label="the collection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">
+        <rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>
+        <rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>
+        <rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>
+        </g></svg>
       </button>
-      <!-- ---- the collection's masthead mark is gone ---- (27 Aug 2026)
-           the owner's call: five marks wrapped into a ragged four-and-one on a
-           phone, and this one was a duplicate door — the day card is the menu,
-           one tap away behind the record mark, and carries its own way in
-           (`introcoll`). the collection lost nothing; the masthead lost the
-           orphan. -->
       
       <!-- ---- the guided nets are NOT here ----
            a mark for the lessons stood in this slot, hidden until `tutorialDone`
@@ -1271,6 +1269,15 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            the purchase violet: a saturated field in the masthead is a badge, and
            a badge is the one form this interface does not use. -->
       <button class="help" id="helpbtn" aria-label="how to play">?</button>
+      <!-- `groundbtn` is what applyTheme writes and what the click is wired to,
+           so this one and the sheets' are found together and cannot drift. -->
+      <button class="help groundbtn" id="themebtn" aria-label="ground">
+        <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
+      </button>
+      <!-- who you are, in the bar too — filled by fillIntroAuth with the same
+           mark every doors row gets; display:contents so the button inside is
+           the cluster's own flex item. -->
+      <span class="door-auth mastauth"></span>
       <!-- ---- THE TILL HOLDS THIS CORNER TOO ---- (17 Aug 2026, the owner's call)
            it stood between the collection and `?` and was drawn only to somebody
            who could still buy — so the one mark in this row that reports WHO YOU
@@ -2155,9 +2162,14 @@ async function fillIntroAuth(){
     }else el.innerHTML='';
   });
 }
-function doorsInner(here,withClose){
-  const collHere=here==='record', rulesHere=here==='rules';
-  return `<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
+function doorsInner(here){
+  const homeHere=here==='day', collHere=here==='record', rulesHere=here==='rules';
+  return `<button class="help door-home${homeHere?' here':''}" ${homeHere?'aria-current="page" tabindex="-1" ':''}aria-label="the menu">`
+    +`<svg viewBox="0 0 24 24" aria-hidden="true">`
+    +`<g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>`
+    +`<g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>`
+    +`</svg></button>`
+    +`<button class="help door-coll${collHere?' here':''}" ${collHere?'aria-current="page" tabindex="-1" ':''}aria-label="the collection">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">`
     +`<rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>`
     +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
@@ -2166,32 +2178,29 @@ function doorsInner(here,withClose){
     +`<button class="help door-rules${rulesHere?' here':''}" ${rulesHere?'aria-current="page" tabindex="-1" ':''}aria-label="how to play">?</button>`
     +`<button class="help groundbtn" aria-label="ground">`
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-    +`<span class="introauth door-auth"></span>`
+    +`<span class="doorside">`
+    +`<span class="door-auth"></span>`
     +`<button class="help label door-buy"></button>`
-    +(withClose?`<button class="help door-close" aria-label="close">`
-      +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`:'');
+    +`<button class="help door-close" aria-label="close">`
+    +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`
+    +`</span>`;
 }
-function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here, here==='rules')}</div>` }
+function doorsRow(here){ return `<div class="intro-doors">${doorsInner(here)}</div>` }
 function wireDoors(row,here){
   const leave=()=>{ if(here==='pay') closeCheckout(); hideVeils() };
+  const spend=()=>{ if(here==='day'||here==='rules'){ store.introSeen=true; store.lastIntroDay=today(); save() } };
   row.onclick=e=>{
-    if(e.target.closest('.door-close')){
-      if(here==='pay') return closeCheckout();
-      if(here==='rules'){
-        if(fromCard) return backToCard();
-        $('introveil').classList.remove('show');
-        return;
-      }
-      return closeRecord();
-    }
-    if(e.target.closest('.door-coll')){
-      if(here==='record') return;                      // you are standing on it
-      if(here==='day') fromCard=true;                  // rules keeps whatever brought it
-      leave(); openRecord();
+    if(e.target.closest('.door-home')){
+      if(here==='day') return;                         // you are standing on it
+      leave(); renderIntro('day'); showVeil('introveil');
+    }else if(e.target.closest('.door-coll')){
+      if(here==='record') return;
+      spend(); leave(); openRecord();
     }else if(e.target.closest('.door-rules')){
       if(here==='rules') return;
-      if(here==='day'){ fromCard=true; renderIntro('rules'); return }
-      leave(); renderIntro('rules'); showVeil('introveil');
+      spend(); leave(); renderIntro('rules'); showVeil('introveil');
+    }else if(e.target.closest('.door-close')){
+      spend(); leave();
     }
   };
 }
@@ -2721,7 +2730,7 @@ async function mountCheckout(clientSecret,pk){
     co.mount('#paybody');
     stripeCheckout=co;
     const pd=$('paydoors');
-    pd.innerHTML=doorsInner('pay',true);
+    pd.innerHTML=doorsInner('pay');
     wireDoors(pd,'pay');
     paintDoors();
     showVeil('payveil');
@@ -5557,7 +5566,7 @@ function showRunOver(){
   });
   showVeil('runveil');
   postBoard();
-  $('recordbtn2').onclick=()=>{fromCard=false;hideVeils();renderIntro('day');showVeil('introveil')};
+  $('recordbtn2').onclick=()=>{hideVeils();renderIntro('day');showVeil('introveil')};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
     if(navigator.share){
@@ -5988,7 +5997,7 @@ function openRecord(){
 
   const badges=store.collection.badges||{};
   const doors=$('recdoors');
-  doors.innerHTML=doorsInner('record',true);
+  doors.innerHTML=doorsInner('record');
   wireDoors(doors,'record');
   paintDoors();
 
@@ -6137,7 +6146,7 @@ function renderHud(){
   const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   $('setlabel').textContent=tut?'tutorial':(trial?'time trial':"today's set");
   $('setnum').textContent=tut?Math.min(R().netIndex+1,3)
-    :(trial?r.cleared.length:Math.max(0,D-r.cleared.length));
+    :(trial?r.cleared.length:Math.min(r.cleared.length+1,D));
 
   const t=r.netMoves, over=t>par;
   const hasOpt=optimum<par, capped=(tier==='done'&&!over);
@@ -6206,9 +6215,9 @@ const WORDMARK='features';
 
   const DEVSCREENS=[
     ['the board',      ()=>hideVeils()],
-    ['the day card',   ()=>{fromCard=false; renderIntro('day'); showVeil('introveil')}],
-    ['how to play',    ()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')}],
-    ['the collection', ()=>{fromCard=false; hideVeils(); openRecord()}],
+    ['the day card',   ()=>{renderIntro('day'); showVeil('introveil')}],
+    ['how to play',    ()=>{renderIntro('rules'); showVeil('introveil')}],
+    ['the collection', ()=>{hideVeils(); openRecord()}],
     ['net cleared',    ()=>{
       const badged=Object.keys(store.collection.badges||{});
       if(!badged.length){ toast('nothing minted yet · clear a net first'); return false }
@@ -6248,10 +6257,10 @@ const WORDMARK='features';
     else if(e.key===']') step(1);
   });
 })();
-$('histbtn').onclick=()=>{ fromCard=false; renderIntro('day'); showVeil('introveil') };
+$('histbtn').onclick=()=>{ renderIntro('day'); showVeil('introveil') };
+$('collbtn').onclick=()=>{ hideVeils(); openRecord() };
 function closeRecord(){
   $('histveil').classList.remove('show');
-  if(fromCard) backToCard();
 }
 $('acctclose').onclick=e=>{e.preventDefault();closeAccount()};
 function closeArchiveLook(){
@@ -6266,7 +6275,6 @@ function dismissVeil(v){
   if(v.id==='runveil') return;
   if(v.id==='introveil'){
     store.introSeen=true; store.lastIntroDay=today(); save();
-    fromCard=false;
     v.classList.remove('show');
     return;
   }
@@ -6274,7 +6282,7 @@ function dismissVeil(v){
   if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
   if(v.id==='payveil'){ closeCheckout(); return }
   if(v.id==='netveil'){ nextNet(); return }
-  if(v.id==='histveil'){ fromCard=false; closeRecord(); return }
+  if(v.id==='histveil'){ closeRecord(); return }
   v.classList.remove('show');
 }
 document.querySelectorAll('.veil').forEach(v=>v.addEventListener('click',e=>{
@@ -6349,12 +6357,6 @@ function rungLadder(){
   </div>`;
 }
 let introMode='day';
-let fromCard=false;
-function backToCard(){
-  fromCard=false;
-  renderIntro('day');
-  showVeil('introveil');
-}
 function renderIntro(mode){
   introMode=mode;
   const b=$('introbody');
@@ -6449,11 +6451,12 @@ function startLessons(){
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
 }
-$('helpbtn').onclick=()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')};
+$('helpbtn').onclick=()=>{renderIntro('rules'); showVeil('introveil')};
 $('buybtn').onclick=()=>beginUnlock();
 const FLAGSTRIP='<i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>'
   +'<i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>';
 document.querySelectorAll('.menusheet .intro-strip').forEach(el=>el.innerHTML=FLAGSTRIP);
+fillIntroAuth();
 addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('.groundbtn');
   if(!b) return;
