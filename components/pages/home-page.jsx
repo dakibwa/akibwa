@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
@@ -8,12 +8,6 @@ import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
 import { deck, sites, life, games, tv, sets, graceland, instagramUrl } from "@/components/deck-data";
 
 const nf = new Intl.NumberFormat("en-GB");
-
-/* Hobbies and Lived share one photograph across every card in the row, which
-   printed the same tile six times over and read as art nobody had got round to
-   making. Walking the crop across the frame gives each card its own piece of
-   the picture instead. */
-const crop = (i, n) => `${n > 1 ? Math.round((i / (n - 1)) * 100) : 50}% 50%`;
 
 /* Every set counts something, and its title card says how many. Counted off the
    arrays at render rather than written into the data, so the figure on the wall
@@ -134,8 +128,16 @@ function Spotlight({ lit, onClose }) {
   return (
     <div
       className={`spotlight${entered ? " is-entered" : ""}`}
-      onClick={(event) => event.target === event.currentTarget && close()}
+      onClick={(event) =>
+        (event.target === event.currentTarget ||
+          event.target.classList?.contains("spotlight-scrim")) &&
+        close()
+      }
     >
+      {/* The paper thickens on its own layer: fading a pre-blurred scrim is
+          compositor work, where animating the blur radius itself re-blurred
+          the whole viewport every frame. */}
+      <span className="spotlight-scrim" aria-hidden="true" />
       <figure className="spotlight-figure" ref={figureRef}>
         <div
           className={`card card--${card.suit} card--spotlight`}
@@ -194,6 +196,44 @@ function blend(lists) {
     .map((dealt) => dealt.card);
 }
 
+/* The sentence owns its own pulse. The roving light used to be HomePage
+   state, which re-rendered the entire 366-card wall every 1.4 seconds — a
+   metronome of jank. Isolated here, the pulse re-renders one heading. */
+function HeroSentence({ lens, heldBucket, focusSet }) {
+  const [spot, setSpot] = useState(-1);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    const id = window.setInterval(() => setSpot((v) => (v + 1) % SPOT_ORDER.length), 1400);
+    return () => window.clearInterval(id);
+  }, []);
+
+  /* The sentence's own words are its menu: each coloured noun opens its
+     collection; plain text is just the sentence. */
+  const SetWord = ({ set, children }) => (
+    <button
+      type="button"
+      className={`hero-index-word${heldBucket === `set:${set.id}` ? " is-held" : ""}${
+        !lens && SPOT_ORDER[spot] === set.id ? " is-spot" : ""
+      }`}
+      style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+      aria-expanded={heldBucket === `set:${set.id}`}
+      onClick={() => focusSet(set.id)}
+    >
+      {children}
+    </button>
+  );
+
+  return (
+    <h1 className="hero-sentence">
+      <HeroFlipName /> — the things I built:{" "}
+      <SetWord set={SET.sites}>projects</SetWord>, a <SetWord set={SET.jobs}>career</SetWord>, a{" "}
+      <SetWord set={SET.life}>life</SetWord>. The things I love:{" "}
+      <SetWord set={SET.music}>music</SetWord>, <SetWord set={SET.films}>films</SetWord>,{" "}
+      <SetWord set={SET.games}>games</SetWord>, <SetWord set={SET.tv}>TV</SetWord>.
+    </h1>
+  );
+}
+
 function Mark({ src, tile }) {
   if (!src) return null;
   return (
@@ -207,9 +247,6 @@ export function HomePage() {
   const [lens, setLens] = useState(null);
   /* One set opened out into the page — the row rides to the top and the whole
      collection unfolds beneath it, detail showing. */
-  /* The roving light in the hero index: one set word at a time lifts to full
-     colour, on the same pulse as the flipping words above it. */
-  const [spot, setSpot] = useState(-1);
   /* The ink prototype rides behind ?ink only — off for everyone else. */
   const [inkOn, setInkOn] = useState(false);
   useEffect(() => {
@@ -240,14 +277,6 @@ export function HomePage() {
     setLit(null);
   }, []);
 
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const id = window.setInterval(() => setSpot((v) => (v + 1) % SPOT_ORDER.length), 1400);
-    return () => window.clearInterval(id);
-  }, []);
-
-
-
 
   /* Grid reflows snap; a view transition morphs them — and a morph is only
      as good as its names. Every card near the viewport gets a transition
@@ -271,13 +300,21 @@ export function HomePage() {
       const r = el.getBoundingClientRect();
       if (r.bottom > -window.innerHeight && r.top < window.innerHeight * 2.5) near.push(el);
     }
+    /* The wave: each card is banded by how far down the screen it sits, and
+       the bands start their glide a beat apart — the fold sweeps down the
+       wall instead of every card lurching in lockstep. (view-transition-class
+       is simply ignored where unsupported; the morph still runs.) */
+    const bandOf = (top) =>
+      Math.min(7, Math.max(0, Math.floor(top / (window.innerHeight / 6))));
     near.forEach((el, i) => {
       el.style.viewTransitionName = `deck-${i}`;
+      el.style.viewTransitionClass = `vt-band-${bandOf(el.getBoundingClientRect().top)}`;
     });
     const transition = document.startViewTransition(apply);
     transition.finished.finally(() => {
       near.forEach((el) => {
         el.style.viewTransitionName = "";
+        el.style.viewTransitionClass = "";
       });
     });
   }, []);
@@ -321,12 +358,12 @@ export function HomePage() {
       });
     };
     document.addEventListener("keydown", onKey);
-    /* The stream has folded to the lit collection — go to the top of the
-       wall, hero and key included. Scrolling to the held word instead put it
-       at the very top of the viewport, which shoved the hero off screen for
-       any collection tall enough to scroll and stayed put for the rest: the
-       one word with a long collection seemed to behave differently. */
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    /* The stream has folded to the lit collection — jump to the top of the
+       wall inside the morph. The view transition is the motion: the named
+       cards glide from their old viewport positions into the packed fold. A
+       smooth scroll here ran a second animation UNDER the morph and the two
+       fought — that was the clunk. */
+    window.scrollTo({ top: 0, behavior: "instant" });
     return () => document.removeEventListener("keydown", onKey);
   }, [lens]);
 
@@ -628,52 +665,15 @@ export function HomePage() {
     [lens, withMorph]
   );
 
-  /* The sentence's own words are its menu: a noun opens one collection, a
-     verb holds a lens over its half of the wall. */
-  const SetWord = ({ set, children }) => (
-    <button
-      type="button"
-      className={`hero-index-word${heldBucket === `set:${set.id}` ? " is-held" : ""}${
-        !lens && SPOT_ORDER[spot] === set.id ? " is-spot" : ""
-      }`}
-      style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-      aria-expanded={heldBucket === `set:${set.id}`}
-      onClick={() => focusSet(set.id)}
-    >
-      {children}
-    </button>
-  );
-
-  /* Career leads the front of the wall with its two current roles; the six
-     past ones are dealt through the blend below with everything else. */
-  const jobCards = cardsFor("jobs");
-
-  return (
-    <section className="akibwa-home" onClick={releaseOnPaper}>
-      {inkOn ? <InkPaper /> : null}
-      <div
-        className={`page-grid deck${lens ? " is-lensed" : ""}`}
-        ref={deckRef}
-        aria-label="Everything on one wall"
-      >
-
-        <div className="deck-hero">
-          {/* One sentence across the whole top of the page, and the menu is
-              simply three of its words. Nothing else up here at all. */}
-          {/* The sentence is the menu, and the rule is one rule: a coloured
-              word is a door, plain text is just the sentence. The seven
-              collection nouns are the whole menu — nothing else decorated,
-              nothing separate below. */}
-          <h1 className="hero-sentence">
-            <HeroFlipName /> — the things I built:{" "}
-            <SetWord set={SET.sites}>projects</SetWord>, a <SetWord set={SET.jobs}>career</SetWord>, a{" "}
-            <SetWord set={SET.life}>life</SetWord>. The things I love:{" "}
-            <SetWord set={SET.music}>music</SetWord>, <SetWord set={SET.films}>films</SetWord>,{" "}
-            <SetWord set={SET.games}>games</SetWord>, <SetWord set={SET.tv}>TV</SetWord>.
-          </h1>
-        </div>
-
-
+  /* The wall itself only changes when a lens changes — 366 cards need no
+     rebuilding when the spotlight opens or the sentence pulses. */
+  const wall = useMemo(() => {
+    /* Career leads the front of the wall with its two current roles; the
+       six past ones are dealt through the blend below with everything
+       else. */
+    const jobCards = cardsFor("jobs");
+    return (
+      <>
         {/* The front of the wall: the things made, the life pieces, the two
             current roles — and Graceland, grand, because it matters most. */}
         {cardsFor("sites")}
@@ -717,6 +717,25 @@ export function HomePage() {
           ["tools", cardsFor("tools", { as: "jobs" })],
           ["creations", cardsFor("creations", { as: "sites" })]
         ])}
+      </>
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lens]);
+
+  return (
+    <section className="akibwa-home" onClick={releaseOnPaper}>
+      {inkOn ? <InkPaper /> : null}
+      <div
+        className={`page-grid deck${lens ? " is-lensed" : ""}`}
+        ref={deckRef}
+        aria-label="Everything on one wall"
+      >
+
+        <div className="deck-hero">
+          <HeroSentence lens={lens} heldBucket={heldBucket} focusSet={focusSet} />
+        </div>
+
+        {wall}
       </div>
 
       {lit ? <Spotlight lit={lit} onClose={closeLit} /> : null}

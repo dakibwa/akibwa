@@ -5832,16 +5832,23 @@ button {
   align-items: center;
   justify-content: center;
   padding: clamp(16px, 4vh, 48px);
-  background: rgba(250, 248, 243, 0);
-  transition: background 420ms var(--ease-out), backdrop-filter 420ms var(--ease-out);
-  -webkit-backdrop-filter: blur(0);
-  backdrop-filter: blur(0);
 }
 
-.spotlight.is-entered {
+/* The thickened paper is its own layer, faded in by opacity. Animating the
+   blur radius on the container re-blurred the entire viewport every frame
+   of the entrance; fading a pre-blurred layer is compositor work. */
+.spotlight-scrim {
+  position: absolute;
+  inset: 0;
   background: rgba(250, 248, 243, 0.82);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
+}
+
+.spotlight.is-entered .spotlight-scrim {
+  opacity: 1;
 }
 
 .spotlight-figure {
@@ -5949,16 +5956,9 @@ button {
 
 .card {
   transition:
-    transform var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out),
-    border-color var(--hover-out) var(--ease-out),
-    opacity var(--hover-in) var(--ease-out),
-    filter 520ms var(--ease-out);
-}
-
-.card.is-dim {
-  opacity: 0.2;
-  filter: saturate(0.4);
+    transform 440ms var(--ease-out),
+    box-shadow 440ms var(--ease-out),
+    border-color 440ms var(--ease-out);
 }
 
 /* The hero is not a card — it is the sentence the wall hangs under. A plain
@@ -6059,6 +6059,10 @@ button {
   grid-row: span 2;
   width: auto;
   aspect-ratio: auto;
+  /* Offscreen cards skip paint and style entirely — the grid fixes every
+     card's box, so skipped contents cannot shift layout. With 366 cards,
+     this is the difference between painting a wall and painting a window. */
+  content-visibility: auto;
 }
 
 .deck .card--small {
@@ -6113,7 +6117,7 @@ button {
    packed slots while the leavers dissolve where they stand — a morph, not a
    crossfade. One long decelerating curve; the paper (root) barely breathes. */
 ::view-transition-group(*) {
-  animation-duration: 540ms;
+  animation-duration: 620ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -6122,47 +6126,73 @@ button {
   animation-duration: 300ms;
 }
 
-/* A leaver has only an old snapshot: let it dissolve softly, shrinking a
-   touch, rather than blinking off. */
+/* A leaver has only an old snapshot: it falls away softly — a breath of
+   blur, a small settle downward — rather than blinking off. */
 ::view-transition-old(*):only-child {
-  animation: deck-card-leave 300ms var(--ease-out) both;
+  animation: deck-card-leave 360ms var(--ease-out) both;
 }
 
-/* An arriver has only a new snapshot: it settles in with the same breath. */
+/* An arriver has only a new snapshot: it rises into place after the
+   survivors have begun to move, on the same breath. */
 ::view-transition-new(*):only-child {
-  animation: deck-card-arrive 420ms 90ms var(--ease-out) both;
+  animation: deck-card-arrive 460ms 110ms var(--ease-out) both;
 }
 
 @keyframes deck-card-leave {
-  to { opacity: 0; transform: scale(0.94); }
+  to { opacity: 0; transform: translateY(7px) scale(0.94); filter: blur(3px); }
 }
 
 @keyframes deck-card-arrive {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: translateY(9px) scale(0.96); filter: blur(2px); }
 }
+
+/* The wave. Cards are banded by where they sit on screen, and each band
+   starts a beat after the one above — the fold sweeps down the wall. The
+   delays sit on top of the durations above; groups hold their old frame
+   until their beat arrives. */
+::view-transition-group(.vt-band-0) { animation-delay: 0ms; }
+::view-transition-old(.vt-band-0):only-child { animation-delay: 0ms; }
+::view-transition-new(.vt-band-0):only-child { animation-delay: 110ms; }
+::view-transition-group(.vt-band-1) { animation-delay: 26ms; }
+::view-transition-old(.vt-band-1):only-child { animation-delay: 22ms; }
+::view-transition-new(.vt-band-1):only-child { animation-delay: 136ms; }
+::view-transition-group(.vt-band-2) { animation-delay: 52ms; }
+::view-transition-old(.vt-band-2):only-child { animation-delay: 44ms; }
+::view-transition-new(.vt-band-2):only-child { animation-delay: 162ms; }
+::view-transition-group(.vt-band-3) { animation-delay: 78ms; }
+::view-transition-old(.vt-band-3):only-child { animation-delay: 66ms; }
+::view-transition-new(.vt-band-3):only-child { animation-delay: 188ms; }
+::view-transition-group(.vt-band-4) { animation-delay: 104ms; }
+::view-transition-old(.vt-band-4):only-child { animation-delay: 88ms; }
+::view-transition-new(.vt-band-4):only-child { animation-delay: 214ms; }
+::view-transition-group(.vt-band-5) { animation-delay: 130ms; }
+::view-transition-old(.vt-band-5):only-child { animation-delay: 110ms; }
+::view-transition-new(.vt-band-5):only-child { animation-delay: 240ms; }
+::view-transition-group(.vt-band-6) { animation-delay: 156ms; }
+::view-transition-old(.vt-band-6):only-child { animation-delay: 132ms; }
+::view-transition-new(.vt-band-6):only-child { animation-delay: 266ms; }
+::view-transition-group(.vt-band-7) { animation-delay: 182ms; }
+::view-transition-old(.vt-band-7):only-child { animation-delay: 154ms; }
+::view-transition-new(.vt-band-7):only-child { animation-delay: 292ms; }
 
 /* The sentence holds perfectly still while the wall moves beneath it. */
 ::view-transition-group(akibwa-hero) {
   animation-duration: 0ms;
 }
 
-.card {
-  transition:
-    transform var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out),
-    border-color var(--hover-out) var(--ease-out);
-}
-
 /* The collectible press: the top-left corner gives, the bottom-right lifts,
    and a foil glint crosses the face — a shiny card between finger and thumb,
    not a button jumping. */
+/* The press answers in 170ms and the release settles over 440 — a card
+   should feel picked up the instant it is touched, and set down softly.
+   (It used to be the other way round: 520ms to respond read as lag.) */
 .deck .card:hover,
 .deck .card:focus-visible {
   transform: perspective(640px) rotate3d(1, -1, 0, 9deg) scale(1.035);
   border-color: var(--line-strong);
   box-shadow: -12px 14px 30px rgba(16, 18, 23, 0.16);
   z-index: 3;
-  transition-duration: var(--hover-in);
+  transition-duration: 170ms;
 }
 
 .card-sheen {
