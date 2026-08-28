@@ -2671,7 +2671,7 @@ export const sets = [
   { id: "sites", label: "Projects", noun: "of them", note: "Sites, a game, one long walk, and a map of all of it" },
   { id: "life", label: "Life", noun: "so far", note: "One long walk, and a map of everywhere" },
   { id: "jobs", label: "Career", noun: "roles", note: "Freelance now, on the toolkit below — before that, banks, building societies and building sites" },
-  { id: "music", label: "Music", noun: "sleeves", note: "246 sleeves, printed as cards, ranked by plays", cap: 12 },
+  { id: "music", label: "Music", noun: "sleeves", note: "246 sleeves, printed as cards, ranked by plays" },
   { id: "films", label: "Films", noun: "picked", note: "In his own order, not ranked" },
   { id: "games", label: "Games", noun: "played", note: "His list, in his order — series counted once" },
   { id: "tv", label: "TV", noun: "series", note: "A British comedy spine, and a drama half" }

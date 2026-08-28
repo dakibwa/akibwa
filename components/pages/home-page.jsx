@@ -25,9 +25,9 @@ const DRIFT = 22;
 
 /* The whole site is one wall of identically sized cards. Every card shows one
    thing face up and turns over to say how — hover on a pointer, tap on touch. */
-function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, spread, onActivate }) {
+function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, onActivate }) {
   const props = {
-    className: `card card--${suit}${spread ? " card--spread" : ""}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
     "aria-label": label,
     hidden: held || undefined,
@@ -36,16 +36,6 @@ function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, 
         ? { "--ground": ground, "--accent": accent, "--crop": crop }
         : undefined
   };
-  /* Spread out in a panel the card is just shown, face and detail together —
-     nothing to press. A link card keeps its link either way. */
-  if (spread && !href) {
-    return (
-      <article {...props}>
-        <span className="card-face">{face}</span>
-        <span className="card-back">{back}</span>
-      </article>
-    );
-  }
   if (href) {
     return (
       <a {...props} href={href} target="_blank" rel="noopener noreferrer">
@@ -149,7 +139,6 @@ export function HomePage() {
   const [lens, setLens] = useState(null);
   /* One set opened out into the page — the row rides to the top and the whole
      collection unfolds beneath it, detail showing. */
-  const [focus, setFocus] = useState(null);
   /* The roving light in the hero index: one set word at a time lifts to full
      colour, on the same pulse as the flipping words above it. */
   const [spot, setSpot] = useState(-1);
@@ -257,16 +246,16 @@ export function HomePage() {
     );
   }, []);
 
-  /* Clicking a card, or a set's name, opens that set out: the row travels to
-     the top exactly as the nav lens moves it, and the full collection unfolds
-     beneath with its detail showing. Clicking again folds it away. */
+  /* A rail name holds a lens over its own row — the same machinery as the
+     sentence's bucket words, one interaction language across the site.
+     Clicking again lets go. */
   const focusSet = useCallback(
     (id) => {
       capture();
-      setHeldBucket(null);
-      setFocus((current) => {
-        const next = current === id ? null : id;
-        setLens(next ? [next] : null);
+      setHeldBucket((current) => {
+        const key = `set:${id}`;
+        const next = current === key ? null : key;
+        setLens(next ? [id] : null);
         return next;
       });
     },
@@ -281,7 +270,6 @@ export function HomePage() {
   const openBucket = useCallback(
     (bucket) => {
       capture();
-      setFocus(null);
       setHeldBucket((current) => {
         const next = current === bucket.id ? null : bucket.id;
         setLens(next ? bucket.lens : null);
@@ -381,16 +369,19 @@ export function HomePage() {
   }, [lit, closeLit]);
 
   useEffect(() => {
-    if (!focus) return undefined;
+    if (!lens) return undefined;
     const onKey = (event) => {
-      if (event.key === "Escape") focusSet(focus);
+      if (event.key !== "Escape") return;
+      capture();
+      setHeldBucket(null);
+      setLens(null);
     };
     document.addEventListener("keydown", onKey);
-    /* The focused row has been carried to the top of the wall; follow it. */
-    const section = deckRef.current?.querySelector(`.set[data-set="${focus}"]`);
+    /* The gathered rows have been carried to the top of the wall; follow. */
+    const section = deckRef.current?.querySelector(`.set[data-set="${lens[0]}"]`);
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
     return () => document.removeEventListener("keydown", onKey);
-  }, [focus, focusSet]);
+  }, [lens, capture]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
   /* Lit sets take the low orders so they gather at the top; everything else is
@@ -403,17 +394,16 @@ export function HomePage() {
     [lens]
   );
 
-  const cardsFor = (id, { all = false, spread = false, as } = {}) => {
+  const cardsFor = (id, { all = false, as } = {}) => {
     /* `as` renders one collection inside another set's row — the toolkit
        rides with Jobs, so its cards dim, light and open as Jobs does. */
     const owner = as ?? id;
     const set = sets.find((s) => s.id === owner);
-    const isDim = spread ? false : dim(owner);
+    const isDim = dim(owner);
     const cap = all ? Infinity : set?.cap ?? Infinity;
-    /* On the wall a card steps into the spotlight — itself, large, with the
-       page dimmed and stilled behind it. Spread out in a panel the cards are
-       already the destination. */
-    const shared = spread ? { spread: true } : { onActivate: openLit };
+    /* A card steps into the spotlight — itself, large, with the page dimmed
+       and stilled behind it. One interaction for every card on the site. */
+    const shared = { onActivate: openLit };
 
     if (id === "jobs") {
       return deck.jobs.map((job) => (
@@ -708,7 +698,7 @@ export function HomePage() {
               <span key={bucket.id} className="hero-bucket">
                 <button
                   type="button"
-                  className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!focus && !lens && spot === i ? " is-spot" : ""}`}
+                  className={`hero-index-word${bucketHeld(bucket) ? " is-held" : ""}${!lens && spot === i ? " is-spot" : ""}`}
                   style={{ "--index-accent-rgb": bucket.accent }}
                   aria-expanded={bucketHeld(bucket)}
                   onClick={() => openBucket(bucket)}
@@ -735,7 +725,28 @@ export function HomePage() {
             set.id === "jobs"
               ? [{ cards }, { cards: cardsFor("tools", { as: "jobs" }), sub: true }]
               : set.id === "sites"
-                ? [{ cards }, { cards: cardsFor("creations", { as: "sites" }), sub: true }]
+                ? [{ cards }, { cards: (
+                    <>
+                      {cardsFor("creations", { as: "sites" })}
+                      <Card
+                        suit="sites"
+                        dim={dim("sites")}
+                        ground="#c13584"
+                        href={instagramUrl}
+                        label="The rest of the collisions, on Instagram"
+                        face={
+                          <span className="card-face-stack">
+                            <span className="c-head"><span className="f-suit">More</span></span>
+                            <span className="site-go" aria-hidden="true">↗</span>
+                            <span className="c-foot">
+                              <span className="c-title c-title--tool">Instagram</span>
+                            </span>
+                          </span>
+                        }
+                        back={null}
+                      />
+                    </>
+                  ), sub: true }]
                 : [{ cards }];
 
           return (
@@ -760,7 +771,7 @@ export function HomePage() {
                     type="button"
                     className="set-open"
                     style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-                    aria-expanded={focus === set.id}
+                    aria-expanded={heldBucket === `set:${set.id}`}
                     onClick={() => focusSet(set.id)}
                   >
                     {set.label}
@@ -787,43 +798,6 @@ export function HomePage() {
                 ))}
               </div>
 
-              {/* The set, opened out. The travelling row stays up top as the
-                  marquee; everything in the collection lies flat below it with
-                  its detail showing. */}
-              {focus === set.id ? (
-                <div className="set-panel">
-                  <div className="set-panel-grid">
-                    {cardsFor(set.id, { all: true, spread: true })}
-                  </div>
-                  {set.id === "jobs" ? (
-                    <>
-                      <p className="set-panel-sub">The toolkit</p>
-                      <div className="set-panel-grid">
-                        {cardsFor("tools", { all: true, spread: true, as: "jobs" })}
-                      </div>
-                    </>
-                  ) : null}
-                  {set.id === "sites" ? (
-                    <>
-                      <p className="set-panel-sub">Cover collisions — two album covers, spliced into one</p>
-                      <div className="set-panel-grid">
-                        {cardsFor("creations", { all: true, spread: true, as: "sites" })}
-                      </div>
-                      <a
-                        className="set-panel-more"
-                        href={instagramUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        The rest are on Instagram ↗
-                      </a>
-                    </>
-                  ) : null}
-                  <button type="button" className="set-panel-close" onClick={() => focusSet(set.id)}>
-                    Fold it away
-                  </button>
-                </div>
-              ) : null}
             </section>
           );
         })}
