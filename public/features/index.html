@@ -753,7 +753,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .devtab:hover{border-color:var(--silver)}
 
   .record{
-    max-width:790px;width:100%;display:flex;flex-direction:column;
+    display:flex;flex-direction:column;
     overflow:hidden;
     border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
   }
@@ -931,11 +931,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .rkey b{color:var(--ink);font-weight:700}
   .rmark{width:56px;height:36px;display:block;flex:0 0 auto}
   .intro-card{
-    max-width:790px;width:100%;background:var(--surface);border:1px solid var(--ink);display:grid;
+    background:var(--surface);border:1px solid var(--ink);display:grid;
     grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);overflow:hidden;box-shadow:var(--shadow-card);
     grid-template-rows:auto minmax(0,1fr);
   }
-  .intro-card,.record{height:min(680px,calc(100dvh - 40px))}
+  .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px))}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
@@ -1016,7 +1016,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
   .intro-alt + .intro-start{margin-top:8px}
   .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;flex:0 0 auto}
-  .intro-doors .help.here{border-color:var(--ink);color:var(--ink);cursor:default}
+  .intro-doors .help.here{background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors .help.here:active{transform:none}
   .intro-doors .help.door-back{width:auto;min-width:0;padding:0 20px;
     background:var(--ink);border-color:var(--ink);color:var(--surface);
@@ -1115,8 +1115,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
     .veil{padding:12px}
     .acct-card,.arch-card{max-height:calc(100dvh - 24px)}
-    .intro-card,.record{height:calc(100dvh - 24px)}
-    .record,.pay-card{max-width:430px}
+    .menusheet{height:calc(100dvh - 24px);max-width:430px}
     .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
     .arch-body{padding:12px 13px 15px}
     .acct-body{padding:14px 13px 15px}
@@ -1124,7 +1123,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
     .rec-right{gap:7px}
-    .collection{padding:11px 13px 14px;gap:5px}
+    .collection{padding:11px 13px 14px;gap:7px;grid-template-columns:repeat(4,1fr)}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:0}
@@ -1135,7 +1134,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .saymark{width:46px;height:30px}
     .coach-body{padding:11px 13px 12px}
     .coach-text{font-size:13px}
-    .intro-card{max-width:430px;grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}
+    .intro-card{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
     .intro-art > svg{min-height:0}
     .intro-body{padding:17px 18px 20px}
@@ -1398,13 +1397,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      bar menu too, for mobile users" — so the way out is the doors' own cross,
      where a thumb is. -->
 <div class="veil" id="histveil">
-  <section class="record">
+  <section class="record menusheet">
     <!-- the same four-band strip the intro card wears, at the same top edge —
          the three sheets share the frame, the doors row and the flag. -->
-    <div class="intro-strip" aria-hidden="true">
-      <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
-      <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
-    </div>
+    <div class="intro-strip" aria-hidden="true"></div>
     <!-- the set as a whole: a found feature wears its plate with a band in the
          tier it was minted at; an unfound one is the stamp's own shadow. -->
     <div class="collection" id="reccollection"></div>
@@ -1459,16 +1455,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 <!-- checkout, mounted inside the game rather than a page away. the card is
      Stripe's own iframe; this is only the frame around it and the way out. -->
 <div class="veil" id="payveil">
-  <section class="arch-card pay-card">
+  <section class="arch-card pay-card menusheet">
     <!-- the checkout joined the sheet family (28 Aug 2026, the owner's
          screenshot: it had neither the strip along the top nor the buttons
          along the bottom). its head is gone the way the collection's went —
          stripe's own frame already says `features — full version`, so the
          title said it twice — and the way out is the doors' cross. -->
-    <div class="intro-strip" aria-hidden="true">
-      <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
-      <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
-    </div>
+    <div class="intro-strip" aria-hidden="true"></div>
     <div class="pay-body" id="paybody"></div>
     <div class="intro-doors rec-doors" id="paydoors"></div>
   </section>
@@ -1485,11 +1478,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 </div>
 
 <div class="veil" id="introveil">
-  <div class="intro-card">
-    <div class="intro-strip" aria-hidden="true">
-      <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
-      <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
-    </div>
+  <div class="intro-card menusheet">
+    <div class="intro-strip" aria-hidden="true"></div>
     <!-- the plate is a net drawn by the board's own marks, filled by renderIntro -->
     <div class="intro-art" id="introart"></div>
     <div class="intro-body" id="introbody"></div>
@@ -2979,7 +2969,7 @@ function trackPt(u){
 const FAMILIES={
 
   layered:{ minT:2, minL:3, cyc:3, slots(T,L,tut){
-    const x0=BW*.10,x1=BW*.90,ytop=tut?BH*.46:BH*.14,ybot=BH*.88,s=[],g=[];
+    const x0=BW*.10,x1=BW*.90,ytop=tut?BH*.30:BH*.14,ybot=BH*.88,s=[],g=[];
     for(let k=0;k<T;k++){s[k]=[];g[k]=[];for(let i=0;i<L;i++){
       s[k][i]={x:x0+(x1-x0)*(L>1?i/(L-1):.5), y:ytop+(ybot-ytop)*(T>1?k/(T-1):.5)};
       g[k][i]='c'+i;
@@ -3754,7 +3744,7 @@ function applyOrientation(force){
     if(matchMedia('(max-width:700px)').matches){
       const ys=threads.flatMap(t=>t.nodes.map(n=>n.y0));
       if(ys.length) tutLift=BH/2-(Math.min(...ys)+Math.max(...ys))/2;
-    }else tutLift=-(BH*(((.46+.88)/2)-.5));
+    }else tutLift=-(BH*(((.30+.88)/2)-.5));
   }
   if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH+tutLift})`:'');
   if(gLabels) threads.forEach(t=>{if(t.freed) repositionLabel(t)});
@@ -6143,9 +6133,10 @@ function renderHud(){
   const D=POLICY.dailyNets, tut=inTutorial();
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
   if(tut){
-    const step=Math.min(tutStepAt,3);
-    paintCells('setmeter',Array.from({length:3},(_,i)=>'var('+(i<step?TIERCOL.perfect:SETAHEAD)+')'),
-      'tutorial step '+step+' of 3');
+    const les=Math.min(R().netIndex,2);
+    const LCOL=[TIERCOL.perfect,TIERCOL.clean,TIERCOL.flawless];
+    paintCells('setmeter',Array.from({length:3},(_,i)=>'var('+(i<les?LCOL[i]:SETAHEAD)+')'),
+      'tutorial '+Math.min(les+1,3)+' of 3');
   } else
   paintCells('setmeter',Array.from({length:D},(_,i)=>'var('+(cells[i]?tierCol(cells[i].tier):SETAHEAD)+')'),
     cells.length+' of '+D+' nets cleared');
@@ -6155,7 +6146,7 @@ function renderHud(){
   if(cur && !r.over) cur.classList.add('now');
   const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   $('setlabel').textContent=tut?'tutorial':(trial?'time trial':"today's set");
-  $('setnum').textContent=tut?Math.min(tutStepAt,3)
+  $('setnum').textContent=tut?Math.min(R().netIndex+1,3)
     :(trial?r.cleared.length:Math.max(0,D-r.cleared.length));
 
   const t=r.netMoves, over=t>par;
@@ -6469,6 +6460,9 @@ function startLessons(){
 }
 $('helpbtn').onclick=()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')};
 $('buybtn').onclick=()=>beginUnlock();
+const FLAGSTRIP='<i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>'
+  +'<i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>';
+document.querySelectorAll('.menusheet .intro-strip').forEach(el=>el.innerHTML=FLAGSTRIP);
 addEventListener('click',e=>{
   const b=e.target.closest&&e.target.closest('.groundbtn');
   if(!b) return;
