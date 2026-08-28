@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
@@ -21,9 +21,9 @@ const crop = (i, n) => `${n > 1 ? Math.round((i / (n - 1)) * 100) : 50}% 50%`;
 
 /* The whole site is one wall of identically sized cards. Every card shows one
    thing face up and turns over to say how — hover on a pointer, tap on touch. */
-function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, onActivate }) {
+function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, small, onActivate }) {
   const props = {
-    className: `card card--${suit}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${small ? " card--small" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
     "aria-label": label,
     hidden: held || undefined,
@@ -55,6 +55,35 @@ function Card({ suit, ground, accent, crop, href, label, face, back, held, dim, 
 function Spotlight({ lit, onClose }) {
   const figureRef = useRef(null);
   const [entered, setEntered] = useState(false);
+  const closingRef = useRef(false);
+
+  /* Leaving is the arrival played backwards: the card returns to its slot on
+     the wall, the paper clears, and only then does the overlay unmount. */
+  const close = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    const fig = figureRef.current;
+    if (!fig || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      onClose();
+      return;
+    }
+    const to = fig.getBoundingClientRect();
+    const { from } = lit;
+    const dx = from.x + from.w / 2 - (to.left + to.width / 2);
+    const dy = from.y + from.h / 2 - (to.top + to.height / 2);
+    const scale = from.w / to.width;
+    setEntered(false);
+    fig.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+    window.setTimeout(onClose, 420);
+  };
+
+  useEffect(() => {
+    const onKey = (event) => {
+      if (event.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  });
 
   useLayoutEffect(() => {
     const fig = figureRef.current;
@@ -84,7 +113,7 @@ function Spotlight({ lit, onClose }) {
   return (
     <div
       className={`spotlight${entered ? " is-entered" : ""}`}
-      onClick={(event) => event.target === event.currentTarget && onClose()}
+      onClick={(event) => event.target === event.currentTarget && close()}
     >
       <figure className="spotlight-figure" ref={figureRef}>
         <div
@@ -112,7 +141,7 @@ function Spotlight({ lit, onClose }) {
           ) : null}
         </figcaption>
       </figure>
-      <button type="button" className="spotlight-close" onClick={onClose} aria-label="Close">
+      <button type="button" className="spotlight-close" onClick={close} aria-label="Close">
         Close
       </button>
     </div>
@@ -152,8 +181,15 @@ export function HomePage() {
   const deckRef = useRef(null);
 
   const openLit = useCallback((card, element) => {
+    /* The card is mid-tilt under the cursor — measure it at rest, or the
+       zoom launches from a skewed box. */
+    const priorTransition = element.style.transition;
+    element.style.transition = "none";
+    element.style.transform = "none";
     const from = element.getBoundingClientRect();
     element.style.visibility = "hidden";
+    element.style.transition = priorTransition;
+    element.style.transform = "";
     litOriginRef.current = element;
     setLit({ card, from: { x: from.left, y: from.top, w: from.width, h: from.height } });
   }, []);
@@ -173,19 +209,28 @@ export function HomePage() {
 
 
 
+  /* Grid reflows snap; a view transition morphs them. Progressive: browsers
+     without it just get the plain state change. */
+  const withMorph = useCallback((apply) => {
+    if (document.startViewTransition) document.startViewTransition(apply);
+    else apply();
+  }, []);
+
   /* A rail name holds a lens over its own row — the same machinery as the
      sentence's bucket words, one interaction language across the site.
      Clicking again lets go. */
   const focusSet = useCallback(
     (id) => {
+      withMorph(() => {
       setHeldBucket((current) => {
         const key = `set:${id}`;
         const next = current === key ? null : key;
         setLens(next ? [id] : null);
         return next;
       });
+      });
     },
-    []
+    [withMorph]
   );
 
   /* Which bucket's lens is held, if any. Rail-name panels clear it. */
@@ -195,35 +240,34 @@ export function HomePage() {
 
   const openBucket = useCallback(
     (bucket) => {
+      withMorph(() => {
       setHeldBucket((current) => {
         const next = current === bucket.id ? null : bucket.id;
         setLens(next ? bucket.lens : null);
         return next;
       });
+      });
     },
-    []
+    [withMorph]
   );
 
 
   useEffect(() => {
     if (!lit) return undefined;
-    const onKey = (event) => {
-      if (event.key === "Escape") closeLit();
-    };
-    document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [lit, closeLit]);
+  }, [lit]);
 
   useEffect(() => {
     if (!lens) return undefined;
     const onKey = (event) => {
       if (event.key !== "Escape") return;
-      setHeldBucket(null);
-      setLens(null);
+      withMorph(() => {
+        setHeldBucket(null);
+        setLens(null);
+      });
     };
     document.addEventListener("keydown", onKey);
     /* The stream has folded to the lit collection; go to its word. */
@@ -233,6 +277,10 @@ export function HomePage() {
   }, [lens]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
+
+  /* How many of a collection lead at full size before the rest pack small —
+     four small tiles to one large. The making sets stay large throughout. */
+  const LEAD = { music: 12, films: 8, games: 6, tv: 6, creations: 2 };
 
   const cardsFor = (id, { all = false, as } = {}) => {
     /* `as` renders one collection inside another set's row — the toolkit
@@ -367,8 +415,9 @@ export function HomePage() {
     }
 
     if (id === "music") {
-      return deck.music.slice(0, cap === Infinity ? deck.music.length : cap).map((album) => (
+      return deck.music.slice(0, cap === Infinity ? deck.music.length : cap).map((album, index) => (
         <Card
+          small={index >= LEAD.music}
           key={album.id}
           suit="music"
           dim={isDim}
@@ -389,15 +438,15 @@ export function HomePage() {
     }
 
     if (id === "creations") {
-      return deck.creations.slice(0, cap === Infinity ? deck.creations.length : cap).map((post) => {
+      return deck.creations.slice(0, cap === Infinity ? deck.creations.length : cap).map((post, index) => {
         const [a, b] = post.title.split(" × ");
         return (
           <Card
+            small={index >= LEAD.creations}
             key={post.number}
             suit="creations"
             dim={isDim}
-          {...shared}
-          dim={isDim}
+            {...shared}
           {...shared}
             label={`Cover Collision ${post.number}: ${post.title}`}
             face={
@@ -419,8 +468,9 @@ export function HomePage() {
     }
 
     if (id === "films") {
-      return deck.films.slice(0, cap === Infinity ? deck.films.length : cap).map((film) => (
+      return deck.films.slice(0, cap === Infinity ? deck.films.length : cap).map((film, index) => (
         <Card
+          small={index >= LEAD.films}
           key={film.title}
           suit="films"
           dim={isDim}
@@ -445,8 +495,9 @@ export function HomePage() {
     }
 
     if (id === "games") {
-      return games.slice(0, cap === Infinity ? games.length : cap).map((game) => (
+      return games.slice(0, cap === Infinity ? games.length : cap).map((game, index) => (
         <Card
+          small={index >= LEAD.games}
           key={game.title}
           suit="games"
           dim={isDim}
@@ -466,8 +517,9 @@ export function HomePage() {
     }
 
     if (id === "tv") {
-      return tv.slice(0, cap === Infinity ? tv.length : cap).map((show) => (
+      return tv.slice(0, cap === Infinity ? tv.length : cap).map((show, index) => (
         <Card
+          small={index >= LEAD.tv}
           key={show.title}
           suit="tv"
           dim={isDim}
@@ -495,10 +547,12 @@ export function HomePage() {
     (event) => {
       if (!lens) return;
       if (event.target.closest("button, a")) return;
-      setHeldBucket(null);
-      setLens(null);
+      withMorph(() => {
+        setHeldBucket(null);
+        setLens(null);
+      });
     },
-    [lens]
+    [lens, withMorph]
   );
 
   return (
