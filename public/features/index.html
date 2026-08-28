@@ -1338,7 +1338,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       </div>
       <div class="coach-body">
         <div class="coach-head">
-          <span id="coachlabel">guided net · step 1 of 3</span>
+          <span id="coachlabel">tutorial · step 1 of 3</span>
           <span class="coach-dots" id="coachdots"><i></i><i></i><i></i></span>
         </div>
         <div class="coach-text" id="coachtext"></div>
@@ -5131,7 +5131,7 @@ function renderTutorial(){
   const steps=TUTSTEPS_BY_NET[net];
   const step=Math.min(tutStepAt,steps.length);
   tutSpotlight();
-  $('coachlabel').textContent=`guided net ${net+1} of ${TUTNETS.length} · step ${step} of ${steps.length}`;
+  $('coachlabel').textContent=`tutorial ${net+1} of ${TUTNETS.length} · step ${step} of ${steps.length}`;
   $('coachtext').innerHTML = (!tutLit || net>0) ? steps[step-1]
     : (TUTLIT[step-1] || steps[step-1]);
   [...$('coachdots').children].forEach((d,i)=>{
@@ -6385,7 +6385,7 @@ function renderIntro(mode){
         ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
       </div>
       ${rungLadder()}
-      ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the guided nets</button>`:''}
+      ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the tutorial</button>`:''}
       <button class="intro-start" id="introstart">${fromCard?'back':'back to the net'}</button>`;
   } else {
     const fresh=!store.tutorialDone;
@@ -6471,7 +6471,7 @@ function renderIntro(mode){
 function startLessons(){
   const r=R();
   if(r.netMoves || (r.cleared||[]).length)
-    return flashMsg('the guided nets need a day you have not started');
+    return flashMsg('the tutorial needs a day you have not started');
   store.introSeen=true; store.lastIntroDay=today();
   store.tutorialDone=false;
   r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
@@ -6479,7 +6479,7 @@ function startLessons(){
   r.log=[]; r.assists=0; r.logGap=false;
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
-  flashMsg('the guided nets · three lessons, and nothing here is scored');
+  flashMsg('the tutorial · three lessons, and nothing here is scored');
 }
 $('helpbtn').onclick=()=>{fromCard=false; renderIntro('rules'); showVeil('introveil')};
 $('buybtn').onclick=()=>beginUnlock();
