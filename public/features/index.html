@@ -6272,6 +6272,7 @@ function dismissVeil(v){
   }
   const sel=window.getSelection();
   if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
+  if(v.id==='payveil'){ closeCheckout(); return }
   if(v.id==='netveil'){ nextNet(); return }
   if(v.id==='histveil'){ fromCard=false; closeRecord(); return }
   v.classList.remove('show');
