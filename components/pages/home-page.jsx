@@ -51,29 +51,66 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
    stilled page — the same face, the same detail, just brought forward. It
    arrives FROM its place on the wall and returns TO it. */
 function Spotlight({ lit, onClose }) {
-  const figureRef = useRef(null);
+  /* The CARD is the shared element, not the figure that wraps it. The figure
+     is a flex column holding the card AND the caption, so centring it on the
+     wall tile put the card half a caption too high — measured at 21.3px above
+     its own slot, so it launched from thin air and slid down as it grew. */
+  const cardRef = useRef(null);
+  const restRef = useRef(null);
   const [entered, setEntered] = useState(false);
+  const [closing, setClosing] = useState(false);
   const closingRef = useRef(false);
+  const bailRef = useRef(0);
 
-  /* Leaving is the arrival played backwards: the card returns to its slot on
-     the wall, the paper clears, and only then does the overlay unmount. */
-  const close = () => {
-    if (closingRef.current) return;
-    closingRef.current = true;
-    const fig = figureRef.current;
-    if (!fig || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  /* The wall tile is 1.0497:1 and the spotlight card is 1:1, so one
+     width-derived scale leaves the height wrong by ~7px. Scale each axis. */
+  const invert = (from, rest) => {
+    const snap = (v) => (Math.abs(v - 1) <= 1e-4 ? 1 : v);
+    const sx = snap(Math.max(from.w, 1) / Math.max(rest.width, 1));
+    const sy = snap(Math.max(from.h, 1) / Math.max(rest.height, 1));
+    /* transform-origin is 0 0, so this is a plain affine composition and no
+       half-caption offset can creep back in. */
+    return `translate(${from.x - rest.left}px, ${from.y - rest.top}px) scale(${sx}, ${sy})`;
+  };
+
+  /* Leaving is the arrival played backwards — but it can be interrupted, so
+     it restarts from wherever the card visually IS rather than refusing. */
+  const close = useCallback(() => {
+    const card = cardRef.current;
+    const rest = restRef.current;
+    if (!card || !rest || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       onClose();
       return;
     }
-    const to = fig.getBoundingClientRect();
-    const { from } = lit;
-    const dx = from.x + from.w / 2 - (to.left + to.width / 2);
-    const dy = from.y + from.h / 2 - (to.top + to.height / 2);
-    const scale = from.w / to.width;
-    setEntered(false);
-    fig.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
-    window.setTimeout(onClose, 420);
-  };
+    /* A mid-flight rect is where the eye last saw the card: the correct
+       origin for an interrupted close. The destination is always the cached
+       rest box, never a fresh measurement of a moving element. */
+    const live = card.getBoundingClientRect();
+    if (!closingRef.current) {
+      closingRef.current = true;
+      setClosing(true);
+      setEntered(false);
+    }
+    card.style.transition = "none";
+    card.style.transform =
+      `translate(${live.left - rest.left}px, ${live.top - rest.top}px) ` +
+      `scale(${live.width / rest.width}, ${live.height / rest.height})`;
+    void card.offsetWidth;
+    card.style.transition = "";
+    card.style.transform = invert(lit.from, rest);
+
+    const done = (event) => {
+      if (event && (event.target !== card || event.propertyName !== "transform")) return;
+      window.clearTimeout(bailRef.current);
+      card.removeEventListener("transitionend", done);
+      onClose();
+    };
+    card.addEventListener("transitionend", done);
+    /* transitionend never fires when the computed transform already equals
+       the target, and a backgrounded tab can hold it for seconds. */
+    window.clearTimeout(bailRef.current);
+    bailRef.current = window.setTimeout(done, 520);
+  }, [lit, onClose]);
 
   useEffect(() => {
     const onKey = (event) => {
@@ -81,7 +118,9 @@ function Spotlight({ lit, onClose }) {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  });
+  }, [close]);
+
+  useEffect(() => () => window.clearTimeout(bailRef.current), []);
 
   /* The wall's faces load lazily, and a face replayed inside this overlay
      keeps that attribute — where, mid-FLIP, the lazy gate never fires and the
@@ -89,12 +128,12 @@ function Spotlight({ lit, onClose }) {
      has explicitly asked for the picture, so everything in it loads now —
      and the full-size layer announces itself the moment it has pixels. */
   useLayoutEffect(() => {
-    const fig = figureRef.current;
-    if (!fig) return;
-    fig.querySelectorAll('img[loading="lazy"]').forEach((img) => {
+    const card = cardRef.current;
+    if (!card) return;
+    card.querySelectorAll('img[loading="lazy"]').forEach((img) => {
       img.loading = "eager";
     });
-    fig.querySelectorAll(".card-face--hi img").forEach((img) => {
+    card.querySelectorAll(".card-face--hi img").forEach((img) => {
       const ready = () => img.classList.add("is-ready");
       if (img.complete && img.naturalWidth > 0) ready();
       else img.addEventListener("load", ready, { once: true });
@@ -102,24 +141,22 @@ function Spotlight({ lit, onClose }) {
   }, [lit]);
 
   useLayoutEffect(() => {
-    const fig = figureRef.current;
-    if (!fig) return;
+    const card = cardRef.current;
+    if (!card) return;
+    /* Cache the card's own untransformed box once: every later inversion
+       measures against this, so nothing ever reads a moving element. */
+    const rest = card.getBoundingClientRect();
+    restRef.current = rest;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setEntered(true);
       return;
     }
-    /* FLIP: render at final size, start inverted over the wall card, release. */
-    const to = fig.getBoundingClientRect();
-    const { from } = lit;
-    const dx = from.x + from.w / 2 - (to.left + to.width / 2);
-    const dy = from.y + from.h / 2 - (to.top + to.height / 2);
-    const scale = from.w / to.width;
-    fig.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
-    fig.style.transition = "none";
+    card.style.transition = "none";
+    card.style.transform = invert(lit.from, rest);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        fig.style.transition = "";
-        fig.style.transform = "";
+        card.style.transition = "";
+        card.style.transform = "";
         setEntered(true);
       });
     });
@@ -128,7 +165,7 @@ function Spotlight({ lit, onClose }) {
   const { card } = lit;
   return (
     <div
-      className={`spotlight${entered ? " is-entered" : ""}`}
+      className={`spotlight${entered ? " is-entered" : ""}${closing ? " is-closing" : ""}`}
       onClick={(event) =>
         (event.target === event.currentTarget ||
           event.target.classList?.contains("spotlight-scrim")) &&
@@ -139,8 +176,9 @@ function Spotlight({ lit, onClose }) {
           compositor work, where animating the blur radius itself re-blurred
           the whole viewport every frame. */}
       <span className="spotlight-scrim" aria-hidden="true" />
-      <figure className="spotlight-figure" ref={figureRef}>
+      <figure className="spotlight-figure">
         <div
+          ref={cardRef}
           className={`card card--${card.suit} card--spotlight`}
           data-suit={card.suit}
           style={
@@ -162,6 +200,9 @@ function Spotlight({ lit, onClose }) {
             </span>
           ) : null}
         </div>
+        {/* The caption never travels and never scales: it sits at its final
+            place and arrives, like a label set down under a poster that has
+            just been hung. */}
         <figcaption className="spotlight-caption" data-suit={card.suit}>
           {card.back}
           {card.href ? (

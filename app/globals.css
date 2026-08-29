@@ -5890,26 +5890,84 @@ button {
   opacity: 1;
 }
 
+/* The figure no longer moves. It only stacks the card and its caption; the
+   card alone is the shared element that flies, so nothing about the
+   caption's height can offset where the card launches from. */
 .spotlight-figure {
+  position: relative;
   margin: 0;
   display: flex;
   flex-direction: column;
   width: min(80vw, 44vh, 360px);
-  transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-  filter: drop-shadow(0 24px 60px rgba(16, 18, 23, 0.18));
 }
 
 .spotlight .card--spotlight {
+  position: relative;
   aspect-ratio: 1;
   width: 100%;
   cursor: default;
-  border-radius: calc(var(--radius) * 1.4);
+  /* 0 0 keeps the inversion a plain affine composition. */
+  transform-origin: 0 0;
+  transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  border-radius: calc(var(--radius) * 1.4) calc(var(--radius) * 1.4) 0 0;
+  box-shadow: none;
 }
 
 .spotlight .card--spotlight:hover {
   transform: none;
-  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
+  box-shadow: none;
+}
+
+/* The lift belongs to the figure, not the card. On the card it would be
+   clipped away by the card's own overflow: hidden, and it would ride the
+   scale — the old drop-shadow was re-rasterised at every step from 0.39 to
+   1 and drawn far too tight at the launch frame. Here it never transforms
+   and never re-rasterises: it simply blooms as the card lands. */
+.spotlight-figure::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--radius) * 1.4);
+  box-shadow: 0 24px 60px rgba(16, 18, 23, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms cubic-bezier(0, 0.55, 0.45, 1) 180ms;
+}
+
+.spotlight.is-entered .spotlight-figure::before { opacity: 1; }
+
+/* The caption does not travel with the card. It waits at its final place
+   and arrives just behind it, the way a label is set down under a poster
+   that has only just been hung. */
+.spotlight-caption {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 260ms cubic-bezier(0, 0.55, 0.45, 1) 200ms,
+    transform 260ms cubic-bezier(0, 0.55, 0.45, 1) 200ms;
+}
+
+.spotlight.is-entered .spotlight-caption {
+  opacity: 1;
+  transform: none;
+}
+
+/* Going is quicker than coming, and the close button's lead-in delay —
+   right on the way in — is wrong on the way out. */
+.spotlight.is-closing .card--spotlight { transition-duration: 380ms; }
+.spotlight.is-closing .spotlight-figure::before { transition: opacity 140ms linear; }
+.spotlight.is-closing .spotlight-scrim { transition: opacity 260ms linear; }
+.spotlight.is-closing .spotlight-caption {
+  transition: opacity 140ms linear, transform 140ms linear;
+}
+.spotlight.is-closing .spotlight-close { transition: opacity 120ms linear 0ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight .card--spotlight,
+  .spotlight-figure::before,
+  .spotlight-caption { transition: none; }
+  .spotlight-caption { opacity: 1; transform: none; }
 }
 
 /* The spotlight opens on the wall's own art — already in cache, so the card
