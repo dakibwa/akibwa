@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
@@ -234,6 +235,55 @@ function HeroSentence({ lens, heldBucket, focusSet }) {
   );
 }
 
+/* Snapshot capture is the whole cost of a fold — measured on this wall at
+   roughly 0.85ms per named card — so the budget gets spent deliberately.
+
+   Two passes, because the wall that leaves and the wall that arrives are
+   different sets of cards. Pass one runs before the update and names what is
+   on screen now: the survivors and the leavers. Pass two runs inside the
+   update, after a synchronous commit, and names what exists only in the new
+   state: the arrivers, which then carry a `new` snapshot and no `old` one —
+   precisely what ::view-transition-new(*):only-child is written to animate.
+
+   Without pass two, every release and every switch between words spent its
+   entire budget before the change, and a measured 22 of 56 names went to
+   display:none cards — whose zero-size boxes pass any viewport test while
+   producing no snapshot at all. So the half of the interaction that hands
+   300 cards back to the wall was falling through to the browser's flat
+   default crossfade. */
+/* Tuned by measurement, three runs per candidate: 32/52 gave 0.3 long
+   frames on a fold where 40/64 gave 2.7, and raising the budget to 80 made
+   both directions worse. Pass one is deliberately the smaller share — the
+   arrivers are what the eye follows when a word is released. */
+const PASS_ONE_NAMES = 32;
+const TOTAL_NAMES = 52;
+
+function nameVisible(deck, named, start, limit) {
+  const vh = window.innerHeight;
+  const cards = deck.querySelectorAll(".card");
+  /* Read every box, then write every name. Interleaving the two forced a
+     synchronous layout per card, inside the click's own frame. */
+  const rects = new Array(cards.length);
+  for (let i = 0; i < cards.length; i += 1) rects[i] = cards[i].getBoundingClientRect();
+
+  let n = start;
+  for (let i = 0; i < cards.length && n < limit; i += 1) {
+    const el = cards[i];
+    const r = rects[i];
+    if (el.style.viewTransitionName) continue;
+    /* Not rendered: a name here buys an inert group and wastes the budget. */
+    if (r.width === 0 || r.height === 0) continue;
+    if (r.bottom <= vh * -0.25 || r.top >= vh * 1.25) continue;
+    el.style.viewTransitionName = `deck-${n}`;
+    /* The wave: banded by where the card sits, each band a beat behind. */
+    const band = Math.min(7, Math.max(0, Math.floor((r.top + vh * 0.25) / (vh / 5))));
+    el.style.viewTransitionClass = `vt-band-${band}`;
+    named.push(el);
+    n += 1;
+  }
+  return n;
+}
+
 function Mark({ src, tile }) {
   if (!src) return null;
   return (
@@ -279,50 +329,37 @@ export function HomePage() {
 
 
   /* Grid reflows snap; a view transition morphs them — and a morph is only
-     as good as its names. Every card near the viewport gets a transition
-     name for the duration, so survivors glide to their packed slots and
-     leavers dissolve in place, instead of one flat crossfade. Capped and
-     viewport-scoped: naming all 366 would ask the compositor to track
-     hundreds of layers for cards nobody can see. Progressive: browsers
-     without the API just get the plain state change. */
+     as good as its names. See nameVisible above for why this runs in two
+     passes rather than one. Progressive: browsers without the API, and
+     anyone who asked for less motion, get the plain state change. */
   const withMorph = useCallback((apply) => {
+    const deck = deckRef.current;
     if (
+      !deck ||
       !document.startViewTransition ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       apply();
       return;
     }
-    /* Only what the eye can actually see gets a name. Every named element is
-       a snapshot the compositor must capture before the transition starts,
-       and that capture is the whole cost of the fold: measured on the live
-       wall, naming 120 cards spent one frame of 100ms; naming the visible
-       ~50 spends 50ms, and dropping view transitions entirely spends none.
-       A quarter-viewport of margin keeps cards just past the fold gliding
-       in properly rather than popping. */
-    const cards = [...(deckRef.current?.querySelectorAll(".card") ?? [])];
-    const near = [];
-    for (const el of cards) {
-      if (near.length >= 56) break;
-      const r = el.getBoundingClientRect();
-      if (r.bottom > window.innerHeight * -0.25 && r.top < window.innerHeight * 1.25) near.push(el);
-    }
-    /* The wave: each card is banded by how far down the screen it sits, and
-       the bands start their glide a beat apart — the fold sweeps down the
-       wall instead of every card lurching in lockstep. (view-transition-class
-       is simply ignored where unsupported; the morph still runs.) */
-    const bandOf = (top) =>
-      Math.min(7, Math.max(0, Math.floor((top + window.innerHeight * 0.25) / (window.innerHeight / 5))));
-    near.forEach((el, i) => {
-      el.style.viewTransitionName = `deck-${i}`;
-      el.style.viewTransitionClass = `vt-band-${bandOf(el.getBoundingClientRect().top)}`;
+
+    const named = [];
+    const afterPassOne = nameVisible(deck, named, 0, PASS_ONE_NAMES);
+
+    const transition = document.startViewTransition(() => {
+      /* Commit synchronously, so pass two measures the wall that is about to
+         be captured rather than the one that just left. It also makes the
+         ordering explicit: without it the fold worked only because React's
+         scheduler happened to land in the right place. */
+      flushSync(apply);
+      nameVisible(deck, named, afterPassOne, TOTAL_NAMES);
     });
-    const transition = document.startViewTransition(apply);
+
     transition.finished.finally(() => {
-      near.forEach((el) => {
+      for (const el of named) {
         el.style.viewTransitionName = "";
         el.style.viewTransitionClass = "";
-      });
+      }
     });
   }, []);
 

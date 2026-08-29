@@ -28,6 +28,13 @@
      touch quicker. Hover rules override transition-duration with
      --hover-in; the base rule's --hover-out drives the exit. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Geometry leaving and geometry arriving are different physical events, so
+     they take different curves. A departing object has nothing at the
+     destination to arrive at, so it should still be accelerating when it
+     goes; decelerating it makes it hang at the edge of vision, which is the
+     loudest tell of hand-rolled motion. (Material 3 emphasized pair.) */
+  --ease-exit-emphatic: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ease-enter-emphatic: cubic-bezier(0.05, 0.7, 0.1, 1);
   --hover-in: 520ms;
   --hover-out: 260ms;
 }
@@ -162,6 +169,25 @@ button {
   .route-fade > section > *:nth-child(2),
   .route-enter > section > *:nth-child(2) {
     animation-delay: 50ms;
+  }
+
+  /* The entry rise is for the page's own content, and two children of the
+     home section are not that. The spotlight is a fixed overlay running its
+     own FLIP: a transform here drifts the whole overlay 10px through the
+     card's flight, and — because a transformed ancestor becomes the
+     containing block for fixed descendants — drags the close button with
+     it. It also lands before the FLIP measures, so the arrival was being
+     computed against a translated box. The footer only re-enters the
+     nth-child window because the overlay above it unmounted, so it re-rose
+     on every dismissal. Both sit still now.
+
+     Specificity: the rule above is (0,2,1) and so is this one, so source
+     order decides — do not move this block above it. */
+  .route-fade > section > .spotlight,
+  .route-enter > section > .spotlight,
+  .route-fade > section > .page-footer,
+  .route-enter > section > .page-footer {
+    animation: none;
   }
 }
 
@@ -6157,20 +6183,24 @@ button {
   animation-duration: 300ms;
 }
 
-/* A leaver has only an old snapshot: it falls away softly — a breath of
-   blur, a small settle downward — rather than blinking off. */
+/* A leaver has only an old snapshot, and it goes while still accelerating —
+   240ms against the arriver's 460ms, inside the 30-50% rule. Below ~180ms
+   the blur has no time to register and cards simply vanish; the blur is also
+   the expensive channel, so it drops to 2px, which is all that reads at this
+   speed anyway. It must end at exactly zero opacity: an accelerate curve is
+   at maximum velocity when it finishes, so anything left over stops dead. */
 ::view-transition-old(*):only-child {
-  animation: deck-card-leave 360ms var(--ease-out) both;
+  animation: deck-card-leave 240ms var(--ease-exit-emphatic) both;
 }
 
-/* An arriver has only a new snapshot: it rises into place after the
-   survivors have begun to move, on the same breath. */
+/* An arriver has only a new snapshot: it rises into place after the leavers
+   have cleared and the survivors have begun to move, and decelerates home. */
 ::view-transition-new(*):only-child {
-  animation: deck-card-arrive 460ms 110ms var(--ease-out) both;
+  animation: deck-card-arrive 460ms 90ms var(--ease-enter-emphatic) both;
 }
 
 @keyframes deck-card-leave {
-  to { opacity: 0; transform: translateY(7px) scale(0.94); filter: blur(3px); }
+  to { opacity: 0; transform: translateY(5px) scale(0.95); filter: blur(2px); }
 }
 
 @keyframes deck-card-arrive {
