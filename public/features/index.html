@@ -63,7 +63,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-KUofRnQaEK/8ztpTwVicdiexqrMTpPThBwszAyptioI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-9sEFJEO6CcJQ6FK9hhaYetpZHH2LCQGx+AX2V+6zi3M=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -2182,6 +2182,7 @@ async function fillIntroAuth(){
       el.firstChild.onclick=()=>goSignIn(ins[0]);
     }else el.innerHTML='';
   });
+  markHere();
 }
 function doorsInner(){
   return `<button class="help door-home" aria-label="the menu">`
@@ -2247,6 +2248,9 @@ function renderPanes(){
   $('acctbody').hidden = menuView!=='profile';
   if(menuView!=='profile') $('recarch').hidden=true;
   $('paybody').hidden = menuView!=='pay';
+  markHere();
+}
+function markHere(){
   const row=$('menudoors');
   row.querySelectorAll('.here').forEach(el=>{el.classList.remove('here');el.removeAttribute('aria-current');el.removeAttribute('tabindex')});
   const sel={home:'.door-home',coll:'.door-coll',rules:'.door-rules',pay:'.door-buy',profile:'.door-auth button'}[menuView];
@@ -2509,7 +2513,7 @@ function renderAcct(){
       :`<div class="acct-ask">this deployment cannot send mail, so there is nothing to ask you.</div>`)
       +`<div class="acct-row">${acctBtn('acctdone',acctBusy?'saving…':'done',true)}`
       +`<a href="#" class="acctlink" id="acctskip">not now</a></div>`
-      +`<div class="acct-note">optional, and it changes later from the foot of the record.</div>`;
+      +`<div class="acct-note">optional, and it changes later from your account.</div>`;
     $('acctdone').onclick=()=>saveHello();
     $('acctskip').onclick=e=>{e.preventDefault();store.askedDaily=true;save();closeAccount()};
     return;
