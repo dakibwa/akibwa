@@ -1012,7 +1012,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbday.shut .wbtier{background:var(--rule)}
   .wbday.shut .wbwhen{color:var(--rule)}
   .wbday.shut .track{opacity:.45}
-  .wbday[data-day]{cursor:pointer;transition:background var(--t-ui)}
+  .wbday[data-day]{cursor:pointer;background-clip:content-box;
+    transition:background var(--t-ui)}
   .wbday[data-day]:hover,
   .wbday[data-day]:focus-visible{background:var(--surface-2)}
   .wbday[data-day]:hover .wbwhen,
@@ -1022,7 +1023,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .wbday[data-day]:active{background:var(--stamp-edge)}
   .wbday[data-day]:focus-visible{outline:1px solid var(--ink);outline-offset:-1px}
   .wbday .wbtier{transition:width var(--t-ui)}
-  .wbweek .track.dtrack{width:auto;min-width:0;margin-left:0;height:10px}
+  .wbweek .track.dtrack{width:auto;min-width:0;margin:0;height:10px}
   .track.dtrack > i{transition:none}
   .track.dtrack > i:not(.on){background:var(--rule)}
   .wbday .dreplay{margin-left:0;height:21px;width:100%;padding:0}
