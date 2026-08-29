@@ -98,6 +98,15 @@ requireRuleText(".spotlight-caption {", [
 ]);
 requireText(css, "radial-gradient(circle at 50% 45%", "the spotlight must keep its soft paper pool");
 
+/* The homepage behaves as a wall of controls, not selectable prose. Only
+   actual buttons and links should answer the pointer. */
+requireRuleText(".akibwa-home {", ["user-select: none", "-webkit-user-select: none"]);
+requireRuleText(".spotlight-caption,", ["user-select: none", "-webkit-touch-callout: none"]);
+forbidText(footer, "signoffPointer", "non-clickable footer copy must not imitate a link");
+forbidText(footer, "locationPointer", "the non-clickable location must not imitate a link");
+requireText(css, ".hero-name:hover .hero-name-value", "the clickable headline name must answer hover");
+requireText(css, ".page-footer a.is-hovering::after", "footer links must draw their hover register");
+
 /* The footer is the one fixed route to contact — the contact row is gone. */
 requireText(footer, 'href="mailto:', "the footer must keep an email route");
 requireText(footer, 'href="https://x.com/', "the footer must keep the X route");

@@ -22,8 +22,6 @@ function XLogo({ size = 14 }) {
 }
 
 export function PageFooter() {
-  const signoffPointer = usePointerResponse({ xProperty: "--footer-mx" });
-  const locationPointer = usePointerResponse();
   const xPointer = usePointerResponse();
   const instagramPointer = usePointerResponse();
   const emailPointer = usePointerResponse();
@@ -32,12 +30,10 @@ export function PageFooter() {
     <footer className="page-grid page-footer" id="site-footer" tabIndex={-1}>
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
-          <strong {...signoffPointer}>
-            Fewer things done by hand.
-          </strong>
+          <strong>Fewer things done by hand.</strong>
         </div>
         <div className="page-footer-meta">
-          <span {...locationPointer} className="footer-location" style={{ "--handle-accent": "#c05212" }}>
+          <span className="footer-location" style={{ "--handle-accent": "#c05212" }}>
             <Navigation size={14} strokeWidth={1.9} />
             <span>Manchester</span>
           </span>
