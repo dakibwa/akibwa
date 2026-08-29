@@ -30,10 +30,8 @@ function walkableCards(deck) {
 }
 
 /* Degrees at the corner. Steeper than a thumbnail hover, quieter than the
-   album wall's 30° — these tiles are larger, and the shared perspective on
-   the deck does the rest of the depth. */
-const TILT = 9;
-const SPOT_TILT = 5;
+   album wall's 30° — these tiles are larger, so the same angle over-reads. */
+const TILT = 7;
 const PRESS_TILT = 6;
 const FOIL_PROPS = [
   "--pointer-x",
@@ -45,9 +43,9 @@ const FOIL_PROPS = [
   "--tilt-y"
 ];
 
-function applyFoil(el, px, py, tilt = TILT) {
-  el.style.setProperty("--tilt-x", `${(tilt * (1 - 2 * py)).toFixed(2)}deg`);
-  el.style.setProperty("--tilt-y", `${(tilt * (2 * px - 1)).toFixed(2)}deg`);
+function applyFoil(el, px, py) {
+  el.style.setProperty("--tilt-x", `${(TILT * (1 - 2 * py)).toFixed(2)}deg`);
+  el.style.setProperty("--tilt-y", `${(TILT * (2 * px - 1)).toFixed(2)}deg`);
   el.style.setProperty("--pointer-x", `${(px * 100).toFixed(1)}%`);
   el.style.setProperty("--pointer-y", `${(py * 100).toFixed(1)}%`);
   el.style.setProperty("--background-x", `${(37 + px * 26).toFixed(1)}%`);
@@ -118,7 +116,6 @@ function Spotlight({ lit, onClose, onStep }) {
      wall tile put the card half a caption too high — measured at 21.3px above
      its own slot, so it launched from thin air and slid down as it grew. */
   const cardRef = useRef(null);
-  const figureRef = useRef(null);
   const restRef = useRef(null);
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -305,38 +302,11 @@ function Spotlight({ lit, onClose, onStep }) {
           compositor work, where animating the blur radius itself re-blurred
           the whole viewport every frame. */}
       <span className="spotlight-scrim" aria-hidden="true" />
-      <figure
-        ref={figureRef}
-        className="spotlight-figure"
-        onMouseMove={(event) => {
-          if (!entered) return;
-          if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-          const cardEl = cardRef.current;
-          const figure = figureRef.current;
-          if (!cardEl || !figure) return;
-          const box = cardEl.getBoundingClientRect();
-          if (!box.width || !box.height) return;
-          const px = (event.clientX - box.left) / box.width;
-          const py = (event.clientY - box.top) / box.height;
-          applyFoil(cardEl, px, py, SPOT_TILT);
-          figure.style.setProperty("--spot-tilt-x", `${(SPOT_TILT * (1 - 2 * py)).toFixed(2)}deg`);
-          figure.style.setProperty("--spot-tilt-y", `${(SPOT_TILT * (2 * px - 1)).toFixed(2)}deg`);
-        }}
-        onMouseLeave={() => {
-          const cardEl = cardRef.current;
-          const figure = figureRef.current;
-          if (cardEl) clearFoil(cardEl);
-          if (figure) {
-            figure.style.removeProperty("--spot-tilt-x");
-            figure.style.removeProperty("--spot-tilt-y");
-          }
-        }}
-      >
+      <figure className="spotlight-figure">
         <div
           ref={cardRef}
           className={`card card--${card.suit} card--spotlight`}
           data-suit={card.suit}
-          data-key={card.keySet ?? card.suit}
           style={
             card.ground || card.accent || card.crop
               ? { "--ground": card.ground, "--accent": card.accent, "--crop": card.crop }
@@ -355,7 +325,6 @@ function Spotlight({ lit, onClose, onStep }) {
               {card.spotFace}
             </span>
           ) : null}
-          <span className="card-sheen" aria-hidden="true" />
         </div>
         {/* The caption never travels and never scales: it sits at its final
             place and arrives, like a label set down under a poster that has
