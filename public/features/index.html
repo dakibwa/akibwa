@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-CVE/s7rhaOvZpBaoh1bngfb4FqjZUKqJIfWz5/mzkaU=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-y6dACFNcMKV/vjnjk64NIdtY1xaRukW7wxYdmx0pPrQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -5846,6 +5846,12 @@ function nextNet(){
   addEventListener('keydown',skip,true);
   swapT=setTimeout(skip,190);
 }
+function leaveNetCard(){
+  const returnView=$('netveil').dataset.returnView||'';
+  $('netveil').dataset.returnView='';
+  nextNet();
+  if(returnView) openMenu(returnView);
+}
 function endRun(){
   const r=R(); if(r.over)return;
   r.over=true; save();
@@ -5911,9 +5917,8 @@ function showNetCleared(feats,tier,wasTutorial,read){
   });
   showVeil('netveil');
   if(wasTutorial) fillSignInInvite();
-  $('contbtn').onclick = (wasTutorial && store.tutorialDone)
-    ? ()=>{ nextNet(); openMenu('home') }
-    : nextNet;
+  $('netveil').dataset.returnView=(wasTutorial && store.tutorialDone)?'rules':'';
+  $('contbtn').onclick=leaveNetCard;
 }
 function runOverOffer(trial,depth){
   if(trial || POLICY.premium || depth<POLICY.dailyNets) return '';
@@ -6607,7 +6612,7 @@ function dismissVeil(v){
   }
   const sel=window.getSelection();
   if(sel && !sel.isCollapsed && sel.anchorNode && v.contains(sel.anchorNode)) return;
-  if(v.id==='netveil'){ nextNet(); return }
+  if(v.id==='netveil'){ leaveNetCard(); return }
   v.classList.remove('show');
 }
 document.querySelectorAll('.veil').forEach(v=>v.addEventListener('click',e=>{
