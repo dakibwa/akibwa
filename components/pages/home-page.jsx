@@ -136,71 +136,31 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
   );
 }
 
-/* The spotlight: the picked card, played large in the middle of a dimmed,
-   stilled page — the same face, the same detail, just brought forward. It
-   arrives FROM its place on the wall and returns TO it. */
+/* The spotlight: the picked card, played large in the middle of a quiet,
+   stilled page. It appears in place rather than flying out of the wall; the
+   click already establishes where it came from, so extra travel is theatre. */
 function Spotlight({ lit, onClose, onStep }) {
   const closeRef = useRef(null);
-  /* The CARD is the shared element, not the figure that wraps it. The figure
-     is a flex column holding the card AND the caption, so centring it on the
-     wall tile put the card half a caption too high — measured at 21.3px above
-     its own slot, so it launched from thin air and slid down as it grew. */
   const cardRef = useRef(null);
-  const restRef = useRef(null);
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
   const closingRef = useRef(false);
-  const bailRef = useRef(0);
+  const closeTimerRef = useRef(0);
 
-  /* The wall tile is 1.0497:1 and the spotlight card is 1:1, so one
-     width-derived scale leaves the height wrong by ~7px. Scale each axis. */
-  const invert = (from, rest) => {
-    const snap = (v) => (Math.abs(v - 1) <= 1e-4 ? 1 : v);
-    const sx = snap(Math.max(from.w, 1) / Math.max(rest.width, 1));
-    const sy = snap(Math.max(from.h, 1) / Math.max(rest.height, 1));
-    /* transform-origin is 0 0, so this is a plain affine composition and no
-       half-caption offset can creep back in. */
-    return `translate(${from.x - rest.left}px, ${from.y - rest.top}px) scale(${sx}, ${sy})`;
-  };
-
-  /* Leaving is the arrival played backwards — but it can be interrupted, so
-     it restarts from wherever the card visually IS rather than refusing. */
+  /* Closing is the same quiet dissolve as opening. There is no return flight:
+     restoring focus to the originating card is enough to preserve context. */
   const close = useCallback(() => {
-    const card = cardRef.current;
-    const rest = restRef.current;
-    if (!card || !rest || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (closingRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       onClose();
       return;
     }
-    /* A mid-flight rect is where the eye last saw the card: the correct
-       origin for an interrupted close. The destination is always the cached
-       rest box, never a fresh measurement of a moving element. */
-    const live = card.getBoundingClientRect();
-    if (!closingRef.current) {
-      closingRef.current = true;
-      setClosing(true);
-      setEntered(false);
-    }
-    card.style.transition = "none";
-    card.style.transform =
-      `translate(${live.left - rest.left}px, ${live.top - rest.top}px) ` +
-      `scale(${live.width / rest.width}, ${live.height / rest.height})`;
-    void card.offsetWidth;
-    card.style.transition = "";
-    card.style.transform = invert(lit.from, rest);
-
-    const done = (event) => {
-      if (event && (event.target !== card || event.propertyName !== "transform")) return;
-      window.clearTimeout(bailRef.current);
-      card.removeEventListener("transitionend", done);
-      onClose();
-    };
-    card.addEventListener("transitionend", done);
-    /* transitionend never fires when the computed transform already equals
-       the target, and a backgrounded tab can hold it for seconds. */
-    window.clearTimeout(bailRef.current);
-    bailRef.current = window.setTimeout(done, 520);
-  }, [lit, onClose]);
+    closingRef.current = true;
+    setClosing(true);
+    setEntered(false);
+    window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = window.setTimeout(onClose, 150);
+  }, [onClose]);
 
   useEffect(() => {
     const onKey = (event) => {
@@ -222,7 +182,7 @@ function Spotlight({ lit, onClose, onStep }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [close, onStep]);
 
-  useEffect(() => () => window.clearTimeout(bailRef.current), []);
+  useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
 
   /* Focus has to come with the card. Scroll was locked here but focus was
      not, so a keyboard visitor who opened a card tabbed straight out of the
@@ -281,38 +241,19 @@ function Spotlight({ lit, onClose, onStep }) {
   }, [lit]);
 
   useLayoutEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    /* A step inside the spotlight swaps the face in place — no travel.
-       Re-running the inversion would launch the new sleeve from the old
-       card's rest box and read as a jump. */
+    /* A step inside the spotlight swaps the face in place, without replaying
+       the entrance. On first open, one painted frame establishes opacity: 0
+       before the overlay dissolves in. */
     if (lit.travel === false) {
-      restRef.current = card.getBoundingClientRect();
       setEntered(true);
       return;
     }
-    /* Cache the card's own untransformed box once: every later inversion
-       measures against this, so nothing ever reads a moving element. */
-    const rest = card.getBoundingClientRect();
-    restRef.current = rest;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      /* Still across two frames. Layout effects run before paint, so setting
-         this synchronously made the paper veil appear across the whole
-         viewport in one frame with no opacity: 0 frame to transition from —
-         a hard flash, which is precisely what reduce is meant to avoid. The
-         card does not travel; only the veil fades. */
-      requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
+      setEntered(true);
       return;
     }
-    card.style.transition = "none";
-    card.style.transform = invert(lit.from, rest);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        card.style.transition = "";
-        card.style.transform = "";
-        setEntered(true);
-      });
-    });
+    const frame = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(frame);
   }, [lit]);
 
   const { card } = lit;
@@ -719,13 +660,7 @@ export function HomePage() {
   useCardKeys(deckRef, lens);
 
   const placeLit = useCallback((card, element, { travel = true } = {}) => {
-    const priorTransition = element.style.transition;
-    element.style.transition = "none";
-    element.style.transform = "none";
-    const from = element.getBoundingClientRect();
     element.style.visibility = "hidden";
-    element.style.transition = priorTransition;
-    element.style.transform = "";
     const previous = litOriginRef.current;
     if (previous && previous !== element) previous.style.visibility = "";
     litOriginRef.current = element;
@@ -733,7 +668,6 @@ export function HomePage() {
     const index = Math.max(0, list.indexOf(element));
     setLit({
       card,
-      from: { x: from.left, y: from.top, w: from.width, h: from.height },
       travel,
       index,
       total: Math.max(1, list.length)
@@ -741,8 +675,6 @@ export function HomePage() {
   }, []);
 
   const openLit = useCallback((card, element) => {
-    /* The card is mid-tilt under the cursor — measure it at rest, or the
-       zoom launches from a skewed box. */
     placeLit(card, element, { travel: true });
   }, [placeLit]);
 
@@ -1332,7 +1264,7 @@ export function HomePage() {
     <section className="akibwa-home" onClick={releaseOnPaper}>
       {inkOn ? <InkPaper /> : null}
       <div
-        className={`page-grid deck${lens ? " is-lensed" : ""}${lit ? " is-receded" : ""}`}
+        className={`page-grid deck${lens ? " is-lensed" : ""}`}
         ref={deckRef}
         aria-label="Everything on one wall"
       >
