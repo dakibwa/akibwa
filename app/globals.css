@@ -6280,26 +6280,20 @@ button {
 .rail-word {
   --index-accent-rgb: 61, 90, 128;
   appearance: none;
-  position: relative;
   border: 0;
   background: transparent;
   padding: 0;
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 24%, var(--black));
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
   cursor: pointer;
   font-family: var(--sans);
   font-size: clamp(1.2rem, 1.7vw, 1.7rem);
   font-weight: 540;
   letter-spacing: -0.012em;
-  transition:
-    color 180ms ease,
-    background-color 180ms ease,
-    box-shadow 180ms ease,
-    opacity 460ms var(--ease-out),
-    transform 180ms var(--ease-out);
+  transition: color 160ms ease, opacity 460ms var(--ease-out);
 }
 .rail-word:hover,
 .rail-word:focus-visible {
-  color: var(--black);
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
   outline: 0;
 }
 
@@ -6398,81 +6392,24 @@ button {
   margin: 0 0 clamp(6px, 0.7vw, 10px);
 }
 
-/* The key sits directly below the sentence again. Six small editorial tabs
-   share one paper tray; the coloured register under each label carries the
-   same collection ink as the cards without turning the menu into badges. */
+/* The key sits directly below the sentence as six plain words. Their ink is
+   enough to connect them to the cards; a tray, badges, or decorative rules
+   only make this quiet menu heavier than the collage it introduces. */
 .deck-legend {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 2px;
+  gap: 0.28em 0.78em;
   margin: 0;
-  border: 1px solid color-mix(in srgb, var(--black) 11%, transparent);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--white) 88%, transparent);
-  padding: 3px;
-  box-shadow:
-    0 7px 20px rgba(24, 22, 18, 0.055),
-    inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .deck-legend .rail-word {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   margin: 0;
-  border-radius: 3px;
-  padding: 0.48em clamp(7px, 0.75vw, 10px) 0.62em;
+  padding: 0;
   font-size: clamp(0.86rem, 1.15vw, 1.08rem);
-  line-height: 1;
-  vertical-align: middle;
-}
-
-/* Adapted from a sliding-tab indicator: the register line rests short, then
-   draws across the word on hover or selection. Transform keeps it on the
-   compositor and makes the motion as light as the control looks. */
-.deck-legend .rail-word::after {
-  content: "";
-  position: absolute;
-  right: clamp(7px, 0.75vw, 10px);
-  bottom: 0.27em;
-  left: clamp(7px, 0.75vw, 10px);
-  height: 2px;
-  border-radius: 1px;
-  background: rgb(var(--index-accent-rgb));
-  opacity: 0.58;
-  transform: scaleX(0.34);
-  transform-origin: left center;
-  transition: transform 240ms var(--ease-out), opacity 180ms ease;
-}
-
-.deck-legend .rail-word:hover {
-  background: rgba(var(--index-accent-rgb), 0.075);
-  box-shadow: 0 5px 13px rgba(var(--index-accent-rgb), 0.13);
-  transform: translateY(-2px) scale(1.025);
-}
-
-.deck-legend .rail-word:hover::after,
-.deck-legend .rail-word[aria-expanded="true"]::after {
-  opacity: 0.92;
-  transform: scaleX(1);
-}
-
-.deck-legend .rail-word[aria-expanded="true"] {
-  background: color-mix(in srgb, rgb(var(--index-accent-rgb)) 11%, var(--white));
-  color: var(--black);
-  box-shadow: inset 0 0 0 1px rgba(var(--index-accent-rgb), 0.2);
-}
-
-.deck-legend .rail-word:focus-visible {
-  background: rgba(var(--index-accent-rgb), 0.09);
-  box-shadow:
-    0 0 0 2px var(--white),
-    0 0 0 4px rgba(var(--index-accent-rgb), 0.5);
-}
-
-.deck-legend .rail-word:active {
-  transform: translateY(0) scale(0.98);
+  line-height: 1.2;
+  vertical-align: baseline;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -6497,11 +6434,6 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .deck-legend .rail-word,
-  .deck-legend .rail-word::after {
-    transition: none;
-  }
-
   .hero-name,
   .hero-index-word,
   .hero-name-value,
@@ -6516,7 +6448,6 @@ button {
 
   .hero-name:hover,
   .hero-index-word:hover,
-  .deck-legend .rail-word:hover,
   .page-footer a.is-hovering,
   .page-footer a.is-pressing,
   .page-footer a:focus-visible:not(.is-pointer-focus),

@@ -53,6 +53,14 @@ const requireRuleText = (selector, declarations) => {
   }
 };
 
+const forbidRuleText = (selector, declarations) => {
+  const cssRule = rule(selector);
+
+  for (const declaration of declarations) {
+    forbidText(cssRule, declaration, `${selector} must not include ${declaration}`);
+  }
+};
+
 /* The shell is just the page. Any header creeping back in should be a
    deliberate decision, not a drive-by. */
 forbidText(shell, "site-header", "the header was retired — the hero carries the identity");
@@ -75,10 +83,11 @@ requireText(home, 'id: "projects", label: "Projects", lens: PROJECTS_LENS', "pro
 requireText(home, 'const PROJECTS_LENS = ["sites", "life"]', "projects must include both project and life cards");
 requireText(home, "onClick={() => focusSet(set)}", "each legend word must open its lens");
 requireRuleText(".deck-hero {", ["display: flex", "flex-direction: column"]);
-requireRuleText(".deck-legend {", ["display: flex", "flex-wrap: wrap"]);
-requireRuleText('.deck-legend .rail-word::after {', ["background: rgb(var(--index-accent-rgb))", "transform: scaleX(0.34)"]);
-requireRuleText('.deck-legend .rail-word[aria-expanded="true"] {', ["background: color-mix", "box-shadow: inset"]);
-requireRuleText(".deck-legend .rail-word:focus-visible {", ["0 0 0 4px rgba(var(--index-accent-rgb), 0.5)"]);
+requireRuleText(".deck-legend {", ["display: flex", "flex-wrap: wrap", "gap: 0.28em 0.78em"]);
+forbidRuleText(".deck-legend {", ["border:", "background:", "padding:", "box-shadow:"]);
+requireRuleText(".deck-legend .rail-word {", ["display: block", "padding: 0", "line-height: 1.2"]);
+forbidText(css, ".deck-legend .rail-word::after {", "the collection menu must remain plain words without decorative rules");
+forbidText(css, '.deck-legend .rail-word[aria-expanded="true"] {', "the selected collection must not turn into a tab");
 requireText(hero, "export function HeroCycleWord", "the hero sentence must cycle a single bucket word");
 requireText(hero, "onClick={() => onActivate(current)}", "the cycling word must open a bucket rather than advance");
 requireText(hero, "const visibleIndex = heldIndex >= 0 ? heldIndex : index", "the cycling word must hold the selected bucket");
