@@ -1,15 +1,12 @@
 import { readFileSync } from "node:fs";
 
-/* The site retired its navigation: no header, no wordmark, no menu bar. What
-   replaced each piece is what this contract now guards — the name flip in the
-   headline carries the brand strip, the legend under the sentence is the menu,
-   and the footer is the one fixed route to contact. A regression on any of
-   these quietly strands a visitor, which is exactly the class of bug this
-   check exists to stop at build time. */
+/* Build-time contract for Akibwa's deliberately small interface. The public
+   index has no site header, modal viewer, card buttons, or motion system. It
+   is one static sentence, seven plain filters, a square visual wall, and one
+   quiet footer. This check makes that restraint harder to accidentally undo. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 const shell = readFileSync(new URL("../components/site-shell.jsx", import.meta.url), "utf8");
-const hero = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 
@@ -18,111 +15,102 @@ const fail = (message) => {
 };
 
 const requireText = (source, text, message) => {
-  if (!source.includes(text)) {
-    fail(message);
-  }
+  if (!source.includes(text)) fail(message);
 };
 
 const forbidText = (source, text, message) => {
-  if (source.includes(text)) {
-    fail(message);
-  }
+  if (source.includes(text)) fail(message);
 };
 
 const rule = (selector) => {
   const start = css.indexOf(selector);
-
-  if (start === -1) {
-    fail(`missing CSS rule ${selector}`);
-  }
-
+  if (start === -1) fail(`missing CSS rule ${selector}`);
   const end = css.indexOf("}", start);
-
-  if (end === -1) {
-    fail(`unterminated CSS rule ${selector}`);
-  }
-
+  if (end === -1) fail(`unterminated CSS rule ${selector}`);
   return css.slice(start, end + 1);
 };
 
 const requireRuleText = (selector, declarations) => {
   const cssRule = rule(selector);
-
   for (const declaration of declarations) {
     requireText(cssRule, declaration, `${selector} must include ${declaration}`);
   }
 };
 
-const forbidRuleText = (selector, declarations) => {
-  const cssRule = rule(selector);
+/* The identity and menu live in the index, never in a separate header. */
+forbidText(shell, "site-header", "the retired site header must stay retired");
+requireText(
+  home,
+  "I’m <span>Daniel</span> — this is what I’ve made, done and loved.",
+  "the homepage must keep its static first-principles sentence"
+);
+forbidText(home, "HeroCycleWord", "the headline must not cycle");
+forbidText(home, "HeroFlipName", "the name must not flip");
 
-  for (const declaration of declarations) {
-    forbidText(cssRule, declaration, `${selector} must not include ${declaration}`);
-  }
-};
-
-/* The shell is just the page. Any header creeping back in should be a
-   deliberate decision, not a drive-by. */
-forbidText(shell, "site-header", "the header was retired — the hero carries the identity");
-forbidText(shell, "nav-", "the menu was retired into the legend");
-forbidText(shell, "brand__", "the wordmark was retired into the hero name flip");
-
-/* The name flip carries its accent underline on the visible name itself. */
-requireText(hero, 'className="hero-name-value"', "the hero name flip must render its value span");
-requireRuleText(".hero-name-value::after {", [
-  "position: absolute",
-  "background: rgba(var(--name-accent-rgb)"
+/* Seven plain words are the complete filter model. Projects owns both the
+   shipped work and the former Life pieces; Everything is the explicit reset. */
+requireText(home, 'const PROJECTS_LENS = ["sites", "life"]', "Projects must include Life");
+requireText(home, '{ id: "everything", label: "Everything", lens: null', "Everything must be explicit");
+requireText(home, '{ id: "projects", label: "Projects", lens: PROJECTS_LENS', "Projects must be one merged filter");
+requireText(home, 'aria-pressed={activeId === set.id}', "filters must expose their selected state");
+requireText(home, 'onClick={() => selectFilter(set)}', "each word must select its filter");
+forbidText(home, "aria-expanded=", "plain filters must not pretend to open panels");
+requireRuleText(".akibwa-home .deck-legend .rail-word {", [
+  "font-size",
+  "text-decoration-line: none"
 ]);
+requireText(
+  css,
+  ".akibwa-home .deck-legend .rail-word.is-active {\n  text-decoration-line: underline",
+  "the selected word must use a plain underline"
+);
 
-/* The legend under the sentence is the menu: six collection words, each
-   opening its lens. The sentence keeps one cycling noun as a shortcut into
-   three buckets — a door, not a flip. */
-requireText(home, "deck-legend", "the homepage must keep the collection legend");
-requireText(home, "rail-word", "legend words must use the rail-word control");
-requireText(home, 'id: "projects", label: "Projects", lens: PROJECTS_LENS', "projects must own the merged projects and life lens");
-requireText(home, 'const PROJECTS_LENS = ["sites", "life"]', "projects must include both project and life cards");
-requireText(home, "onClick={() => focusSet(set)}", "each legend word must open its lens");
-requireRuleText(".deck-hero {", ["display: flex", "flex-direction: column"]);
-requireRuleText(".deck-legend {", ["display: flex", "flex-wrap: wrap", "gap: 0.28em 0.78em"]);
-forbidRuleText(".deck-legend {", ["border:", "background:", "padding:", "box-shadow:"]);
-requireRuleText(".deck-legend .rail-word {", ["display: block", "padding: 0", "line-height: 1.2"]);
-forbidText(css, ".deck-legend .rail-word::after {", "the collection menu must remain plain words without decorative rules");
-forbidText(css, '.deck-legend .rail-word[aria-expanded="true"] {', "the selected collection must not turn into a tab");
-requireText(hero, "export function HeroCycleWord", "the hero sentence must cycle a single bucket word");
-requireText(hero, "onClick={() => onActivate(current)}", "the cycling word must open a bucket rather than advance");
-requireText(hero, "const visibleIndex = heldIndex >= 0 ? heldIndex : index", "the cycling word must hold the selected bucket");
-requireText(home, "heldBucket={bucketIdForLens(lens)}", "the sentence must follow the selected menu lens");
+/* Cards are visual objects unless they genuinely go somewhere. Linked cards
+   are anchors, not buttons that first open another layer. */
+requireText(home, "if (href) {", "Card must branch only when it has a destination");
+requireText(home, "<a", "linked cards must render as anchors");
+requireText(home, 'role="img" aria-label={label}', "passive cards must be labelled visual objects");
+requireText(home, "href={site.href ?? undefined}", "project cards must keep their direct links");
+requireText(home, "href={piece.href ?? undefined}", "Life Map and Trek cards must keep their direct links");
+forbidText(home, "function Spotlight", "the modal viewer must stay removed");
+forbidText(home, "card-back", "cards must not have backs");
+forbidText(home, "card-sheen", "cards must not carry foil");
+forbidText(home, "startViewTransition", "filtering must remain immediate");
+forbidText(home, "translateZ", "cards must not tilt toward the visitor");
+forbidText(home, 'size="grand"', "the wall must keep only standard and small cards");
 
-/* Cards keep their small-object hover on a pointer, while opening one stays
-   deliberately quieter: the whole spotlight dissolves in together rather
-   than flying, blurring or pulling the wall backwards. On phones the wall
-   uses smaller square units so more of the collection remains visible. */
-requireText(home, 'el.style.setProperty("--art-x"', "card artwork must keep its pointer parallax");
-requireText(home, 'el.style.setProperty("--art-y"', "card artwork must keep its pointer parallax");
-requireText(css, "translate(var(--art-x, 0), var(--art-y, 0))", "card faces must render their pointer parallax");
-requireText(css, "transform 440ms var(--ease-out)", "card faces must settle rather than snap");
-requireText(css, "translateZ(18px) scale(1.012)", "hovered cards must lift toward the visitor");
-requireRuleText(".spotlight-scrim {", ["background: rgba(250, 248, 243, 0.94)", "transition: opacity 160ms ease-out"]);
-requireRuleText(".spotlight-figure {", ["opacity: 0", "transition: opacity 170ms ease-out"]);
-forbidRuleText(".spotlight-caption {", ["filter:", "transform:", "transition:"]);
-forbidText(css, ".deck.is-receded", "opening a card must not pull the wall backwards");
-forbidText(home, "from: { x:", "the spotlight must not measure a flight path from the wall");
-requireText(css, "--u: 44px", "the mobile wall must keep its smaller unit");
-requireText(css, "aspect-ratio: 1", "mobile cards must preserve square artwork");
+/* The wall stays compact and square on every viewport. Link feedback is a
+   quiet label reveal; touch keeps the label visible because hover is absent. */
+requireRuleText(".akibwa-home .deck .card {", [
+  "aspect-ratio: 1",
+  "border-radius: 5px",
+  "box-shadow: none",
+  "transform: none"
+]);
+requireText(css, "--u: 44px", "the mobile wall must keep its compact unit");
+requireRuleText(".akibwa-home .card-label {", [
+  "opacity: 0",
+  "transition: opacity 120ms ease"
+]);
+requireRuleText(".akibwa-home .card--link:hover .card-label,", ["opacity: 1"]);
+requireRuleText(".akibwa-home .card--link .card-label {", ["opacity: 1"]);
+requireText(
+  css,
+  ".akibwa-home .deck.is-lensed .card:not(.is-lit)",
+  "filters must hide only non-matching cards"
+);
 
-/* The homepage behaves as a wall of controls, not selectable prose. Only
-   actual buttons and links should answer the pointer. */
+/* The homepage is an object wall, not selectable prose. */
 requireRuleText(".akibwa-home {", ["user-select: none", "-webkit-user-select: none"]);
-requireRuleText(".spotlight-caption,", ["user-select: none", "-webkit-touch-callout: none"]);
-forbidText(footer, "signoffPointer", "non-clickable footer copy must not imitate a link");
-forbidText(footer, "locationPointer", "the non-clickable location must not imitate a link");
-requireText(css, ".hero-name:hover .hero-name-value", "the clickable headline name must answer hover");
-requireText(css, ".page-footer a.is-hovering::after", "footer links must draw their hover register");
 
-/* The footer is the one fixed route to contact — the contact row is gone. */
-requireText(footer, 'href="mailto:', "the footer must keep an email route");
-requireText(footer, 'href="https://x.com/', "the footer must keep the X route");
-requireText(footer, 'href="https://www.instagram.com/', "the footer must keep the Instagram route");
+/* The footer is one unadorned line: location plus the three real routes. */
+requireText(footer, 'className="page-footer-line"', "the footer must be a single line");
+requireText(footer, "<span>Manchester</span>", "the footer must keep the location");
+requireText(footer, 'href="mailto:', "the footer must keep email");
+requireText(footer, 'href="https://x.com/', "the footer must keep X");
+requireText(footer, 'href="https://www.instagram.com/', "the footer must keep Instagram");
+forbidText(footer, "lucide-react", "the footer must not bring back icon chrome");
+forbidText(footer, "page-footer-signoff", "the footer must not bring back a signoff panel");
 requireText(home, "<PageFooter", "the home page must render the footer");
 
 console.log("Navigation contract passed.");

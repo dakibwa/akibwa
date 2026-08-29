@@ -4,6 +4,12 @@ Public portfolio site for `akibwa.com`.
 
 The site is a static Next.js export deployed by GitHub Pages from `main`.
 
+The homepage is one visual index rather than a conventional portfolio: a static
+sentence, plain word filters, and a dense two-size mosaic. `Projects` includes
+the Trek and Life Map pieces, while Career, Music, Films, Games, and TV remain
+their own lenses. Only tiles with a real destination are links; the rest are
+labelled visual objects, and there is no modal viewer or card-back interaction.
+
 Data refreshes that can run from API credentials or public seeds should run in Cloudflare Workers, not local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md).
 
 ## Publishing
