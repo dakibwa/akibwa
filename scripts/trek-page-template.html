@@ -284,20 +284,6 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dust);margin-bottom:22px}
 .after h2{font-size:clamp(34px,5vw,58px);line-height:1.08;font-weight:500;letter-spacing:-.01em;font-variation-settings:"opsz" 100,"SOFT" 85,"WONK" 1;max-width:17ch}
 .after .done{font-style:italic;color:var(--dust);font-size:clamp(21px,2.8vw,28px);margin-top:16px;font-variation-settings:"opsz" 36,"SOFT" 80,"WONK" 0}
-.after .then{color:var(--dust);font-size:17px;max-width:56ch;margin-top:38px}
-.after .then b{color:var(--bone);font-weight:500}
-.after .origin-note{color:var(--dust);font-size:15.5px;max-width:56ch;margin-top:26px}
-.after .origin-note em{color:var(--bone)}
-
-/* ------------------------------------------------------------------- shelf */
-.shelf{max-width:1200px;margin:0 auto;padding:4vh clamp(24px,6vw,48px) 12vh;position:relative;z-index:2;background:var(--peat)}
-.shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:34px;flex-wrap:wrap}
-.shelf h2{font-size:clamp(24px,3.2vw,36px);font-weight:480;font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 0}
-.shelf-head p{font-family:var(--mono);font-size:11.5px;color:var(--dust);letter-spacing:.06em}
-.shelf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:13px;padding:0;list-style:none}
-.shelf-grid button{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:100%;aspect-ratio:1;overflow:hidden;line-height:0;transition:transform .3s,border-color .3s}
-.shelf-grid button:hover{transform:translateY(-3px);border-color:var(--sc,var(--dust))}
-.shelf-grid img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;display:block}
 
 footer{
   border-top:1px solid var(--rule);position:relative;z-index:2;background:var(--peat);
@@ -470,18 +456,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   <p class="eyebrow">after sixty-seven days</p>
   <h2>He got the coach from Sofia to Istanbul.</h2>
   <p class="done">He was done.</p>
-  <p class="then">Done with walking — not with moving. <b>Istanbul:</b> two weeks and 157 km of running with local crews on both sides of the Bosphorus. <b>Rishikesh</b> by late December, a first run in India along the Ganges. <b>Goa</b> in the new year, barefoot sprints on Calangute beach. <b>Home in [place removed] by 16 January</b> — a “Welcome Home Run”, and a 10k with [place removed] AC the same day.</p>
-  <p class="origin-note">It had started nine months before Paris, in Greenwich Park, with an experiment in sitting somewhere with nothing — a choir rehearsing in the Old Naval College chapel, <em>“a sort of future-formed nostalgia.”</em> Nine months later he walked out of the airport instead of flying home.</p>
-</section>
-
-<section class="shelf" aria-label="The records">
-  <div class="shelf-head">
-    <h2>The records that walked with him</h2>
-    <p>every sleeve a real front · titles without a verified record stay blank</p>
-  </div>
-  <ul class="shelf-grid" id="shelf">
-    <!--__SHELF__-->
-  </ul>
 </section>
 
 <footer>
@@ -995,7 +969,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!spot.open) { stopWalk(); spot.showModal(); }
   }
   document.addEventListener("click", function(e){
-    var b = e.target.closest(".dsleeve, #shelf button");
+    var b = e.target.closest(".dsleeve");
     if (!b) return;
     var n = +b.getAttribute("data-day");
     var i = matched.findIndex(function(d){ return d.n === n; });

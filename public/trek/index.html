@@ -284,20 +284,6 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dust);margin-bottom:22px}
 .after h2{font-size:clamp(34px,5vw,58px);line-height:1.08;font-weight:500;letter-spacing:-.01em;font-variation-settings:"opsz" 100,"SOFT" 85,"WONK" 1;max-width:17ch}
 .after .done{font-style:italic;color:var(--dust);font-size:clamp(21px,2.8vw,28px);margin-top:16px;font-variation-settings:"opsz" 36,"SOFT" 80,"WONK" 0}
-.after .then{color:var(--dust);font-size:17px;max-width:56ch;margin-top:38px}
-.after .then b{color:var(--bone);font-weight:500}
-.after .origin-note{color:var(--dust);font-size:15.5px;max-width:56ch;margin-top:26px}
-.after .origin-note em{color:var(--bone)}
-
-/* ------------------------------------------------------------------- shelf */
-.shelf{max-width:1200px;margin:0 auto;padding:4vh clamp(24px,6vw,48px) 12vh;position:relative;z-index:2;background:var(--peat)}
-.shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:34px;flex-wrap:wrap}
-.shelf h2{font-size:clamp(24px,3.2vw,36px);font-weight:480;font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 0}
-.shelf-head p{font-family:var(--mono);font-size:11.5px;color:var(--dust);letter-spacing:.06em}
-.shelf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:13px;padding:0;list-style:none}
-.shelf-grid button{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:100%;aspect-ratio:1;overflow:hidden;line-height:0;transition:transform .3s,border-color .3s}
-.shelf-grid button:hover{transform:translateY(-3px);border-color:var(--sc,var(--dust))}
-.shelf-grid img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;display:block}
 
 footer{
   border-top:1px solid var(--rule);position:relative;z-index:2;background:var(--peat);
@@ -795,42 +781,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   <p class="eyebrow">after sixty-seven days</p>
   <h2>He got the coach from Sofia to Istanbul.</h2>
   <p class="done">He was done.</p>
-  <p class="then">Done with walking — not with moving. <b>Istanbul:</b> two weeks and 157 km of running with local crews on both sides of the Bosphorus. <b>Rishikesh</b> by late December, a first run in India along the Ganges. <b>Goa</b> in the new year, barefoot sprints on Calangute beach. <b>Home in [place removed] by 16 January</b> — a “Welcome Home Run”, and a 10k with [place removed] AC the same day.</p>
-  <p class="origin-note">It had started nine months before Paris, in Greenwich Park, with an experiment in sitting somewhere with nothing — a choir rehearsing in the Old Naval College chapel, <em>“a sort of future-formed nostalgia.”</em> Nine months later he walked out of the airport instead of flying home.</p>
-</section>
-
-<section class="shelf" aria-label="The records">
-  <div class="shelf-head">
-    <h2>The records that walked with him</h2>
-    <p>every sleeve a real front · titles without a verified record stay blank</p>
-  </div>
-  <ul class="shelf-grid" id="shelf">
-    <li><button data-day="6" style="--sc:#2EA3DC" aria-haspopup="dialog" aria-label="Paul Simon — Graceland, day 6"><img src="covers/graceland-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="14" style="--sc:#2EA3DC" aria-haspopup="dialog" aria-label="Everything Is Everything — Everything Is Everything, day 14"><img src="covers/everything-is-everything-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="16" style="--sc:#2EA3DC" aria-haspopup="dialog" aria-label="John Maus — We Must Become the Pitiless Censors of Ourselves, day 16"><img src="covers/we-must-become-the-pitiless-censors-of-ourselves-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="25" style="--sc:#24709F" aria-haspopup="dialog" aria-label="Mazarin — Another One Goes By, day 25"><img src="covers/another-one-goes-by-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="28" style="--sc:#7D6BB0" aria-haspopup="dialog" aria-label="Sufjan Stevens — Illinois, day 28"><img src="covers/illinois-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="29" style="--sc:#7D6BB0" aria-haspopup="dialog" aria-label="Brian Eno — Taking Tiger Mountain (By Strategy), day 29"><img src="covers/taking-tiger-mountain-by-strategy-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="32" style="--sc:#7D6BB0" aria-haspopup="dialog" aria-label="Brian Eno — Another Green World, day 32"><img src="covers/another-green-world-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="33" style="--sc:#7D6BB0" aria-haspopup="dialog" aria-label="Red House Painters — Red House Painters, day 33"><img src="covers/red-house-painters-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="36" style="--sc:#12A19A" aria-haspopup="dialog" aria-label="Radiohead — A Moon Shaped Pool, day 36"><img src="covers/a-moon-shaped-pool-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="38" style="--sc:#1FA45A" aria-haspopup="dialog" aria-label="David Byrne &amp; Brian Eno — Everything That Happens Will Happen Today, day 38"><img src="covers/everything-that-happens-will-happen-today-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="40" style="--sc:#1FA45A" aria-haspopup="dialog" aria-label="Nick Cave &amp; the Bad Seeds — Skeleton Tree, day 40"><img src="covers/skeleton-tree-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="41" style="--sc:#1FA45A" aria-haspopup="dialog" aria-label="King Krule — The OOZ, day 41"><img src="covers/the-ooz-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="42" style="--sc:#1FA45A" aria-haspopup="dialog" aria-label="Animal Collective — Sung Tongs, day 42"><img src="covers/sung-tongs-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="48" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Jack Johnson — In Between Dreams, day 48"><img src="covers/in-between-dreams-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="49" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Elbow — Build a Rocket Boys!, day 49"><img src="covers/build-a-rocket-boys-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="52" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Joy Division — Unknown Pleasures, day 52"><img src="covers/unknown-pleasures-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="53" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="The Who — A Quick One, day 53"><img src="covers/a-quick-one-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="55" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Summer Years — You Can’t Live There Forever, day 55"><img src="covers/you-cant-live-there-forever-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="56" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Jens Lekman — Night Falls Over Kortedala, day 56"><img src="covers/night-falls-over-kortedala-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="57" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Jonathan Richman — A Plea for Tenderness, day 57"><img src="covers/a-plea-for-tenderness-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="58" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="James Blake — Assume Form, day 58"><img src="covers/assume-form-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="59" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Kid Carpet — Dogmeat, day 59"><img src="covers/dogmeat-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="64" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Animal Collective — Feels, day 64"><img src="covers/feels-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="65" style="--sc:#E97E18" aria-haspopup="dialog" aria-label="Animal Collective — Here Comes the Indian, day 65"><img src="covers/here-comes-the-indian-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="66" style="--sc:#E97E18" aria-haspopup="dialog" aria-label="Godspeed You! Black Emperor — ’ALLELUJAH! DON’T BEND! ASCEND!, day 66"><img src="covers/allelujah-dont-bend-ascend-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-  </ul>
 </section>
 
 <footer>
@@ -1410,7 +1360,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!spot.open) { stopWalk(); spot.showModal(); }
   }
   document.addEventListener("click", function(e){
-    var b = e.target.closest(".dsleeve, #shelf button");
+    var b = e.target.closest(".dsleeve");
     if (!b) return;
     var n = +b.getAttribute("data-day");
     var i = matched.findIndex(function(d){ return d.n === n; });

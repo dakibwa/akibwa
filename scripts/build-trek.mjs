@@ -647,18 +647,6 @@ const platesHtml = actsMeta
   })
   .join("\n");
 
-// -------------------------------------------------------------------- shelf
-const seenSlug = new Set();
-const shelfDays = data.days.filter(
-  (d) => d.sleeve && !seenSlug.has(d.sleeve.slug) && seenSlug.add(d.sleeve.slug)
-);
-const shelfHtml = shelfDays
-  .map(
-    (d) =>
-      `<li><button data-day="${d.n}" style="--sc:${COUNTRY_COLOR[d.country]}" aria-haspopup="dialog" aria-label="${esc(d.sleeve.artist)} — ${esc(d.sleeve.album)}, day ${d.n}"><img src="covers/${d.sleeve.slug}-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>`
-  )
-  .join("\n    ");
-
 // -------------------------------------------------------- noscript fallback
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const shortDate = (iso) => {
@@ -687,7 +675,6 @@ const fill = (token, value) => {
 };
 fill("<!--__ATLAS__-->", atlasSvg);
 fill("<!--__PLATES__-->", platesHtml);
-fill("<!--__SHELF__-->", shelfHtml);
 fill("<!--__NOSCRIPT_DAYS__-->", noscriptHtml);
 fill("__DATA_JSON__", JSON.stringify(jsData));
 
@@ -698,7 +685,7 @@ const townReport = townsPlaced
   .map((t) => `${t.name} ${(t.snapM / 1000).toFixed(1)}km`)
   .join(", ");
 console.log(
-  `built public/trek/index.html — ${pts.length} days, ${shelfDays.length} records, timeline ${TIMELINE_TOTAL}px, ${(html.length / 1024).toFixed(0)}K, route ${route.length} pts (${townsPlaced.length} cities)${grid ? ", elevation on" : ""}`
+  `built public/trek/index.html — ${pts.length} days, timeline ${TIMELINE_TOTAL}px, ${(html.length / 1024).toFixed(0)}K, route ${route.length} pts (${townsPlaced.length} cities)${grid ? ", elevation on" : ""}`
 );
 console.log(`cities on the line: ${townReport}`);
 }
