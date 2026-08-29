@@ -80,17 +80,32 @@ button{font:inherit;color:inherit}
   font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.11em;
   color:color-mix(in srgb,var(--black) 64%,var(--canvas));text-transform:lowercase;
 }
-.country-menu{min-width:0}
-.countries{display:flex;justify-content:center;gap:17px;margin:0;padding:2px 0 3px;list-style:none;overflow-x:auto;scrollbar-width:none}
+.country-menu{position:relative;min-width:0;padding:4px 0 9px}
+.countries{display:flex;justify-content:center;gap:10px;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
 .countries::-webkit-scrollbar{display:none}
+.countries li{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.countries li+li::before{
+  content:"→";font-family:var(--mono);font-size:10px;line-height:1;
+  color:color-mix(in srgb,var(--black) 24%,var(--canvas));transition:color .25s ease;
+}
+.countries li.passed::before,.countries li.current::before{color:color-mix(in srgb,var(--w) 54%,var(--black))}
 .countries a{
   display:block;font-family:var(--sans);font-size:15px;font-weight:540;letter-spacing:-.012em;
-  color:color-mix(in srgb,var(--w) 58%,var(--black));text-decoration:none;white-space:nowrap;
-  border-bottom:2px solid transparent;padding-bottom:2px;
-  transition:color .16s ease,border-color .25s ease;
+  color:color-mix(in srgb,var(--w) 30%,var(--black));text-decoration:none;white-space:nowrap;
+  transition:color .16s ease,opacity .25s ease;
 }
 .countries a:hover{color:color-mix(in srgb,var(--w) 84%,var(--black))}
-.countries a.current{color:color-mix(in srgb,var(--w) 84%,var(--black));border-color:color-mix(in srgb,var(--w) 78%,var(--black))}
+.countries a.passed{color:color-mix(in srgb,var(--w) 58%,var(--black))}
+.countries a.current{color:color-mix(in srgb,var(--w) 88%,var(--black));font-weight:650}
+.journey-progress{
+  position:absolute;inset:auto 0 0;height:3px;overflow:hidden;
+  background:color-mix(in srgb,var(--black) 10%,var(--canvas));
+}
+.journey-progress i{
+  display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left center;
+  background:linear-gradient(90deg,__ROUTE_GRADIENT__);
+  transition:transform .12s linear;
+}
 .walkbtn{
   background:transparent;border:1px solid var(--site-line);color:var(--black);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
@@ -236,6 +251,43 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .hud .progress{height:2px;margin-top:13px;background:var(--rule);overflow:hidden}
 .hud .progress i{display:block;width:0;height:100%;background:var(--c-cur,var(--bone));transform-origin:left center;transition:background-color .3s}
 
+/* ---------------------------------------------------------- collections */
+.collector{
+  position:absolute;top:78px;right:22px;bottom:22px;z-index:7;width:228px;
+  display:flex;flex-direction:column;align-items:stretch;gap:18px;
+  font-family:var(--mono);opacity:0;transform:translateX(8px);pointer-events:none;
+  transition:opacity .35s,transform .35s;
+}
+.collector.on{opacity:1;transform:none}
+.collector-section{
+  min-height:0;padding:11px 13px 13px;border-top:1px solid color-mix(in srgb,var(--bone) 22%,transparent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--peat) 86%,transparent),color-mix(in srgb,var(--peat) 62%,transparent));
+  backdrop-filter:blur(8px);
+}
+.collector-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.collector-head span{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dust)}
+.collector-head b{font-size:12px;font-weight:500;color:var(--bone);font-variant-numeric:tabular-nums}
+.collector-places{overflow:hidden}
+.collector-places ol,.collector-albums ol{margin:0;padding:0;list-style:none}
+.collector-places ol{display:flex;flex-direction:column;gap:4px}
+.collector-place{
+  display:flex;align-items:baseline;gap:7px;color:var(--dust);font-size:10px;line-height:1.35;
+  animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
+}
+.collector-place::before{content:"";width:5px;height:5px;background:var(--w);flex:0 0 auto;transform:rotate(45deg)}
+.collector-place.latest{color:var(--bone)}
+.collector-place.pass{font-style:italic}
+.collector-albums ol{display:flex;flex-direction:column;gap:8px}
+.collector-album{
+  display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:9px;
+  animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
+}
+.collector-album img{width:34px;height:34px;object-fit:cover;border:1px solid color-mix(in srgb,var(--bone) 18%,transparent)}
+.collector-album p{min-width:0;color:var(--dust);font-size:8.5px;line-height:1.25}
+.collector-album b,.collector-album span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.collector-album b{color:var(--bone);font-weight:500;margin-bottom:2px}
+@keyframes collect-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
 /* ----------------------------------------------------------------- daycard */
 .daycard{
   position:absolute;left:22px;bottom:22px;z-index:7;max-width:420px;
@@ -328,14 +380,55 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 .noscript-days{max-width:760px;margin:0 auto;padding:40px 24px;color:var(--dust)}
 .noscript-days li{margin:6px 0}
 
+/* -------------------------------------------------------------- data wall */
+.archive-wall{
+  position:relative;z-index:20;min-height:100svh;padding:clamp(92px,9vw,138px) clamp(24px,6vw,92px) 88px;
+  color:var(--black);background:var(--canvas);font-family:var(--sans);
+}
+.archive-wall :focus-visible{outline-color:var(--black)}
+.archive-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.archive-stats{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin-top:24px;
+  background:var(--site-line);border-block:1px solid var(--site-line);
+}
+.archive-stat{min-width:0;padding:clamp(18px,2.5vw,34px) clamp(12px,2vw,26px);background:var(--canvas)}
+.archive-stat:first-child{padding-left:0}
+.archive-stat b{
+  display:block;font-size:clamp(34px,5vw,74px);font-weight:540;line-height:.94;letter-spacing:-.055em;
+  font-variant-numeric:tabular-nums;
+}
+.archive-stat span{display:block;margin-top:10px;font-family:var(--mono);font-size:9px;line-height:1.35;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.archive-section{padding-top:clamp(54px,7vw,100px)}
+.archive-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--site-line)}
+.archive-section-head h2{font-size:clamp(29px,4.2vw,58px);font-weight:540;line-height:1;letter-spacing:-.035em}
+.archive-section-head p{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.archive-route{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:24px 0 0;padding:0;list-style:none}
+.archive-route li{display:flex;align-items:center;gap:12px;color:color-mix(in srgb,var(--w) 72%,var(--black));font-size:clamp(17px,2.1vw,28px);font-weight:540;letter-spacing:-.018em}
+.archive-route li+li::before{content:"→";font-family:var(--mono);font-size:.54em;color:color-mix(in srgb,var(--black) 30%,var(--canvas))}
+.album-wall{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(18px,2vw,30px) clamp(10px,1.4vw,20px);margin-top:28px}
+.album-card{min-width:0;border-top:3px solid var(--w);padding-top:7px}
+.album-open{appearance:none;display:block;width:100%;padding:0;border:0;background:transparent;cursor:pointer}
+.album-open img{width:100%;aspect-ratio:1/1;object-fit:cover;filter:saturate(.92);transition:filter .25s,transform .35s cubic-bezier(.2,.72,.2,1)}
+.album-open:hover img,.album-open:focus-visible img{filter:saturate(1.08);transform:translateY(-3px)}
+.album-day{margin-top:9px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--w) 66%,var(--black))}
+.album-name{margin-top:5px;font-size:12px;line-height:1.3}
+.album-name b,.album-name span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.album-name b{font-weight:600}.album-name span{color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+
 /* ------------------------------------------------------------- responsive */
+@media (min-width:1181px){
+  .photo{right:calc(250px + clamp(18px,2vw,32px));width:min(24vw,300px)}
+}
+@media (max-width:1180px){.collector{display:none}}
 @media (max-width:900px){
   .masthead{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;min-height:56px;padding:8px 12px}
   .masthead .site{display:none}
   .masthead .mark{gap:8px}
   .masthead .mark-word{font-size:22px}
   .masthead .mark-date{font-size:9px}
-  .countries{justify-content:flex-start;gap:13px}
+  .country-menu{padding-bottom:8px}
+  .countries{justify-content:flex-start;gap:8px}
+  .countries li{gap:8px}
   .countries a{font-size:14px}
   .walkbtn{padding:7px 10px;font-size:10px}
   .hud{top:58px;left:12px;width:min(226px,calc(100vw - 24px));padding:11px 13px 10px}
@@ -350,6 +443,16 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo.on{transform:rotate(-1deg)}
   h1{font-size:clamp(50px,13vw,90px)}
   .titlecard .facts{gap:10px 22px}
+  .archive-wall{padding:80px 16px 54px}
+  .archive-stats{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px}
+  .archive-stat{padding:18px 12px}.archive-stat:first-child{padding-left:12px}
+  .archive-stat:last-child{grid-column:1/-1}
+  .archive-section{padding-top:54px}
+  .archive-section-head{align-items:flex-end}
+  .archive-section-head h2{font-size:34px}
+  .archive-route{gap:8px 9px;margin-top:20px}
+  .archive-route li{gap:9px;font-size:17px}
+  .album-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px;margin-top:20px}
 }
 @media (max-width:900px) and (max-height:680px){
   .photo{top:168px;width:min(28vw,132px)}
@@ -357,7 +460,8 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.daycard{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i{transition-duration:.01s}
+  .collector-place,.collector-album{animation:none}
 }
 </style>
 </head>
@@ -370,14 +474,15 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   </a>
   <nav class="country-menu" aria-label="Countries on the trek">
     <ul class="countries" id="country-nav">
-      <li><a href="#france" style="--w:#2EA3DC">France</a></li>
-      <li><a href="#germany" style="--w:#24709F">Germany</a></li>
-      <li><a href="#austria" style="--w:#7D6BB0">Austria</a></li>
-      <li><a href="#slovenia" style="--w:#12A19A">Slovenia</a></li>
-      <li><a href="#croatia" style="--w:#1FA45A">Croatia</a></li>
-      <li><a href="#serbia" style="--w:#EFC319">Serbia</a></li>
-      <li><a href="#bulgaria" style="--w:#E97E18">Bulgaria</a></li>
+      <li style="--w:#2EA3DC"><a href="#france">France</a></li>
+      <li style="--w:#24709F"><a href="#germany">Germany</a></li>
+      <li style="--w:#7D6BB0"><a href="#austria">Austria</a></li>
+      <li style="--w:#12A19A"><a href="#slovenia">Slovenia</a></li>
+      <li style="--w:#1FA45A"><a href="#croatia">Croatia</a></li>
+      <li style="--w:#EFC319"><a href="#serbia">Serbia</a></li>
+      <li style="--w:#E97E18"><a href="#bulgaria">Bulgaria</a></li>
     </ul>
+    <div class="journey-progress" id="journey-progress" role="progressbar" aria-label="Journey progress" aria-valuemin="0" aria-valuemax="1982" aria-valuenow="0"><i></i></div>
   </nav>
   <button class="walkbtn" id="walkbtn" aria-pressed="false">▶ walk it</button>
   <a class="site" href="https://akibwa.com/">akibwa.com</a>
@@ -445,6 +550,17 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       <div class="progress" aria-hidden="true"><i id="hud-progress"></i></div>
     </div>
 
+    <aside class="collector" id="collector" aria-label="Collected along the journey">
+      <section class="collector-section collector-places">
+        <p class="collector-head"><span>places passed</span><b id="collector-place-count">1 / __WALL_PLACE_COUNT__</b></p>
+        <ol id="collector-place-list"></ol>
+      </section>
+      <section class="collector-section collector-albums">
+        <p class="collector-head"><span>albums heard</span><b id="collector-album-count">0 / __WALL_ALBUM_COUNT__</b></p>
+        <ol id="collector-album-list"></ol>
+      </section>
+    </aside>
+
     <div class="daycard" id="daycard">
       <p class="dline" id="dc-line"></p>
       <p class="dtitle" id="dc-title"></p>
@@ -472,6 +588,35 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   </div>
 </div>
+
+<section class="archive-wall" id="archive-wall" aria-labelledby="archive-places-title">
+  <p class="archive-kicker">Paris → Sofia · 24 sep → 28 nov 2019</p>
+  <div class="archive-stats" aria-label="Final journey totals">
+    <p class="archive-stat"><b>1,982</b><span>kilometres walked</span></p>
+    <p class="archive-stat"><b>52</b><span>days on foot</span></p>
+    <p class="archive-stat"><b>7</b><span>countries crossed</span></p>
+    <p class="archive-stat"><b>__WALL_ASCENT__</b><span>metres climbed</span></p>
+    <p class="archive-stat"><b>__WALL_HOURS__</b><span>hours moving</span></p>
+  </div>
+  <section class="archive-section">
+    <header class="archive-section-head">
+      <h2 id="archive-places-title">places passed</h2>
+      <p>__WALL_PLACE_COUNT__ collected</p>
+    </header>
+    <ol class="archive-route">
+      <!--__WALL_PLACES__-->
+    </ol>
+  </section>
+  <section class="archive-section" aria-labelledby="archive-albums-title">
+    <header class="archive-section-head">
+      <h2 id="archive-albums-title">albums heard</h2>
+      <p>__WALL_ALBUM_COUNT__ collected</p>
+    </header>
+    <div class="album-wall">
+<!--__WALL_ALBUMS__-->
+    </div>
+  </section>
+</section>
 
 <dialog class="spot" id="spot" aria-label="Record">
   <div class="spot-inner">
@@ -509,6 +654,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   var experience = document.getElementById("experience");
   var stage = document.getElementById("stage");
+  var archiveWall = document.getElementById("archive-wall");
   var atlas = document.getElementById("atlas");
   var camera = document.getElementById("camera");
   var walkerG = document.getElementById("walker-g");
@@ -540,18 +686,28 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var photoBox = document.getElementById("photo");
   var photoImg = document.getElementById("photo-img");
   var photoCap = document.getElementById("photo-cap");
+  var countryMenu = document.querySelector(".country-menu");
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
+  var journeyProgress = document.getElementById("journey-progress");
+  var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
+  var collector = document.getElementById("collector");
+  var collectorPlaceCount = document.getElementById("collector-place-count");
+  var collectorPlaceList = document.getElementById("collector-place-list");
+  var collectorAlbumCount = document.getElementById("collector-album-count");
+  var collectorAlbumList = document.getElementById("collector-album-list");
   var currentWalker = null;
   // experience height drives the journey
   var VH = innerHeight || 900;
   var experienceTop = experience.offsetTop;
   experience.style.height = (DATA.timeline + VH) + "px";
+  var PLAY_END = archiveWall ? archiveWall.offsetTop : experienceTop + DATA.timeline;
   addEventListener("resize", function(){
     VH = innerHeight || VH;
     experienceTop = experience.offsetTop;
     experience.style.height = (DATA.timeline + VH) + "px";
+    PLAY_END = archiveWall ? archiveWall.offsetTop : experienceTop + DATA.timeline;
     scrollDirty = true;
     requestFrame();
   });
@@ -701,9 +857,17 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function showCountry(country){
     if (!country || country === lastCountryShown) return;
     lastCountryShown = country;
-    navLinks.forEach(function(a){
-      var isCurrent = a.getAttribute("href") === "#" + country.toLowerCase();
+    var currentIndex = navLinks.findIndex(function(a){ return a.getAttribute("href") === "#" + country.toLowerCase(); });
+    navLinks.forEach(function(a, index){
+      var isCurrent = index === currentIndex;
+      var isPassed = index < currentIndex;
       a.classList.toggle("current", isCurrent);
+      a.classList.toggle("passed", isPassed);
+      a.classList.toggle("future", index > currentIndex);
+      if (a.parentElement) {
+        a.parentElement.classList.toggle("current", isCurrent);
+        a.parentElement.classList.toggle("passed", isPassed);
+      }
       if (isCurrent && countryNav && innerWidth <= 900) {
         var navRect = countryNav.getBoundingClientRect();
         var linkRect = a.getBoundingClientRect();
@@ -731,6 +895,11 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
     setText(hudHours, (moving / 60).toFixed(1));
     if (hudProgress) hudProgress.style.width = Math.max(0, Math.min(100, km / DATA.total * 100)).toFixed(2) + "%";
+    if (journeyProgressFill) journeyProgressFill.style.transform = "scaleX(" + Math.max(0, Math.min(1, km / DATA.total)).toFixed(4) + ")";
+    if (journeyProgress) {
+      journeyProgress.setAttribute("aria-valuenow", String(Math.round(km)));
+      journeyProgress.setAttribute("aria-valuetext", Math.round(km).toLocaleString("en-GB") + " of " + DATA.total.toLocaleString("en-GB") + " kilometres");
+    }
   }
 
   // --------------------------------------------------------------- daycard
@@ -757,6 +926,24 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
     dcJournal.textContent = d.j || "";
+  }
+
+  var lastCollectionDay = -1;
+  function updateCollections(scene, wp, inJourney){
+    if (collector) collector.classList.toggle("on", inJourney);
+    var dayN = scene.t === "start" ? 0 : wp.day.n;
+    if (dayN === lastCollectionDay) return;
+    lastCollectionDay = dayN;
+    var places = (DATA.places || []).filter(function(place){ return place.day <= dayN; });
+    var albums = (DATA.albums || []).filter(function(album){ return album.day <= dayN; });
+    setText(collectorPlaceCount, places.length + " / " + (DATA.places || []).length);
+    setText(collectorAlbumCount, albums.length + " / " + (DATA.albums || []).length);
+    if (collectorPlaceList) collectorPlaceList.innerHTML = places.map(function(place, index){
+      return '<li class="collector-place' + (index === places.length - 1 ? ' latest' : '') + (place.pass ? ' pass' : '') + '" style="--w:' + DATA.colors[place.country] + '"><span>' + esc(place.name) + '</span></li>';
+    }).join("");
+    if (collectorAlbumList) collectorAlbumList.innerHTML = albums.slice(-4).map(function(album){
+      return '<li class="collector-album"><img src="covers/' + album.slug + '-thumb.webp" alt="" width="34" height="34"><p><b>' + esc(album.artist) + '</b><span>' + esc(album.album) + '</span></p></li>';
+    }).join("");
   }
 
   // ---------------------------------------------------------------- photos
@@ -878,6 +1065,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     updateStats(scene, wp);
     updateTrail(scene, wp, inJourney);
     showCountry(scene.t === "enter" ? scene.country : wp.day.c);
+    updateCollections(scene, wp, inJourney);
 
     // day content
     if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showDay(wp.day); showPhoto(wp.day, wp.t); }
@@ -908,7 +1096,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       fade(quote, String(Math.max(0, op)));
     } else fade(quote, "0");
 
-    // Let the route itself be the ending: no separate closing card.
+    // The map stays visible through the finish, then hands off to the data wall.
     if (scene.t === "end") {
       daycard.classList.remove("on");
       photoBox.classList.remove("on"); photoShown = null;
@@ -938,10 +1126,10 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     try {
       var elapsed = lastFrameTime ? Math.min(50, now - lastFrameTime) : 16.7;
       if (playing) {
-        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, experienceTop + DATA.timeline);
+        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, PLAY_END);
         scrollTo(0, next);
         scrollDirty = true;
-        if (next >= experienceTop + DATA.timeline - 2) stopWalk();
+        if (next >= PLAY_END - 2) stopWalk();
       }
       if (scrollDirty) {
         readScroll();
@@ -1060,7 +1248,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!spot.open) { stopWalk(); spot.showModal(); }
   }
   document.addEventListener("click", function(e){
-    var b = e.target.closest(".dsleeve");
+    var b = e.target.closest(".dsleeve, .album-open");
     if (!b) return;
     var n = +b.getAttribute("data-day");
     var i = matched.findIndex(function(d){ return d.n === n; });

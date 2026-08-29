@@ -80,17 +80,32 @@ button{font:inherit;color:inherit}
   font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.11em;
   color:color-mix(in srgb,var(--black) 64%,var(--canvas));text-transform:lowercase;
 }
-.country-menu{min-width:0}
-.countries{display:flex;justify-content:center;gap:17px;margin:0;padding:2px 0 3px;list-style:none;overflow-x:auto;scrollbar-width:none}
+.country-menu{position:relative;min-width:0;padding:4px 0 9px}
+.countries{display:flex;justify-content:center;gap:10px;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
 .countries::-webkit-scrollbar{display:none}
+.countries li{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.countries li+li::before{
+  content:"→";font-family:var(--mono);font-size:10px;line-height:1;
+  color:color-mix(in srgb,var(--black) 24%,var(--canvas));transition:color .25s ease;
+}
+.countries li.passed::before,.countries li.current::before{color:color-mix(in srgb,var(--w) 54%,var(--black))}
 .countries a{
   display:block;font-family:var(--sans);font-size:15px;font-weight:540;letter-spacing:-.012em;
-  color:color-mix(in srgb,var(--w) 58%,var(--black));text-decoration:none;white-space:nowrap;
-  border-bottom:2px solid transparent;padding-bottom:2px;
-  transition:color .16s ease,border-color .25s ease;
+  color:color-mix(in srgb,var(--w) 30%,var(--black));text-decoration:none;white-space:nowrap;
+  transition:color .16s ease,opacity .25s ease;
 }
 .countries a:hover{color:color-mix(in srgb,var(--w) 84%,var(--black))}
-.countries a.current{color:color-mix(in srgb,var(--w) 84%,var(--black));border-color:color-mix(in srgb,var(--w) 78%,var(--black))}
+.countries a.passed{color:color-mix(in srgb,var(--w) 58%,var(--black))}
+.countries a.current{color:color-mix(in srgb,var(--w) 88%,var(--black));font-weight:650}
+.journey-progress{
+  position:absolute;inset:auto 0 0;height:3px;overflow:hidden;
+  background:color-mix(in srgb,var(--black) 10%,var(--canvas));
+}
+.journey-progress i{
+  display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left center;
+  background:linear-gradient(90deg,#2EA3DC 0.00% 28.83%,#24709F 28.83% 43.40%,#7D6BB0 43.40% 58.29%,#12A19A 58.29% 65.24%,#1FA45A 65.24% 73.61%,#EFC319 73.61% 96.50%,#E97E18 96.50% 100.00%);
+  transition:transform .12s linear;
+}
 .walkbtn{
   background:transparent;border:1px solid var(--site-line);color:var(--black);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
@@ -236,6 +251,43 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .hud .progress{height:2px;margin-top:13px;background:var(--rule);overflow:hidden}
 .hud .progress i{display:block;width:0;height:100%;background:var(--c-cur,var(--bone));transform-origin:left center;transition:background-color .3s}
 
+/* ---------------------------------------------------------- collections */
+.collector{
+  position:absolute;top:78px;right:22px;bottom:22px;z-index:7;width:228px;
+  display:flex;flex-direction:column;align-items:stretch;gap:18px;
+  font-family:var(--mono);opacity:0;transform:translateX(8px);pointer-events:none;
+  transition:opacity .35s,transform .35s;
+}
+.collector.on{opacity:1;transform:none}
+.collector-section{
+  min-height:0;padding:11px 13px 13px;border-top:1px solid color-mix(in srgb,var(--bone) 22%,transparent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--peat) 86%,transparent),color-mix(in srgb,var(--peat) 62%,transparent));
+  backdrop-filter:blur(8px);
+}
+.collector-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.collector-head span{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dust)}
+.collector-head b{font-size:12px;font-weight:500;color:var(--bone);font-variant-numeric:tabular-nums}
+.collector-places{overflow:hidden}
+.collector-places ol,.collector-albums ol{margin:0;padding:0;list-style:none}
+.collector-places ol{display:flex;flex-direction:column;gap:4px}
+.collector-place{
+  display:flex;align-items:baseline;gap:7px;color:var(--dust);font-size:10px;line-height:1.35;
+  animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
+}
+.collector-place::before{content:"";width:5px;height:5px;background:var(--w);flex:0 0 auto;transform:rotate(45deg)}
+.collector-place.latest{color:var(--bone)}
+.collector-place.pass{font-style:italic}
+.collector-albums ol{display:flex;flex-direction:column;gap:8px}
+.collector-album{
+  display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:9px;
+  animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
+}
+.collector-album img{width:34px;height:34px;object-fit:cover;border:1px solid color-mix(in srgb,var(--bone) 18%,transparent)}
+.collector-album p{min-width:0;color:var(--dust);font-size:8.5px;line-height:1.25}
+.collector-album b,.collector-album span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.collector-album b{color:var(--bone);font-weight:500;margin-bottom:2px}
+@keyframes collect-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
 /* ----------------------------------------------------------------- daycard */
 .daycard{
   position:absolute;left:22px;bottom:22px;z-index:7;max-width:420px;
@@ -328,14 +380,55 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 .noscript-days{max-width:760px;margin:0 auto;padding:40px 24px;color:var(--dust)}
 .noscript-days li{margin:6px 0}
 
+/* -------------------------------------------------------------- data wall */
+.archive-wall{
+  position:relative;z-index:20;min-height:100svh;padding:clamp(92px,9vw,138px) clamp(24px,6vw,92px) 88px;
+  color:var(--black);background:var(--canvas);font-family:var(--sans);
+}
+.archive-wall :focus-visible{outline-color:var(--black)}
+.archive-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.archive-stats{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin-top:24px;
+  background:var(--site-line);border-block:1px solid var(--site-line);
+}
+.archive-stat{min-width:0;padding:clamp(18px,2.5vw,34px) clamp(12px,2vw,26px);background:var(--canvas)}
+.archive-stat:first-child{padding-left:0}
+.archive-stat b{
+  display:block;font-size:clamp(34px,5vw,74px);font-weight:540;line-height:.94;letter-spacing:-.055em;
+  font-variant-numeric:tabular-nums;
+}
+.archive-stat span{display:block;margin-top:10px;font-family:var(--mono);font-size:9px;line-height:1.35;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.archive-section{padding-top:clamp(54px,7vw,100px)}
+.archive-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--site-line)}
+.archive-section-head h2{font-size:clamp(29px,4.2vw,58px);font-weight:540;line-height:1;letter-spacing:-.035em}
+.archive-section-head p{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.archive-route{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:24px 0 0;padding:0;list-style:none}
+.archive-route li{display:flex;align-items:center;gap:12px;color:color-mix(in srgb,var(--w) 72%,var(--black));font-size:clamp(17px,2.1vw,28px);font-weight:540;letter-spacing:-.018em}
+.archive-route li+li::before{content:"→";font-family:var(--mono);font-size:.54em;color:color-mix(in srgb,var(--black) 30%,var(--canvas))}
+.album-wall{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(18px,2vw,30px) clamp(10px,1.4vw,20px);margin-top:28px}
+.album-card{min-width:0;border-top:3px solid var(--w);padding-top:7px}
+.album-open{appearance:none;display:block;width:100%;padding:0;border:0;background:transparent;cursor:pointer}
+.album-open img{width:100%;aspect-ratio:1/1;object-fit:cover;filter:saturate(.92);transition:filter .25s,transform .35s cubic-bezier(.2,.72,.2,1)}
+.album-open:hover img,.album-open:focus-visible img{filter:saturate(1.08);transform:translateY(-3px)}
+.album-day{margin-top:9px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--w) 66%,var(--black))}
+.album-name{margin-top:5px;font-size:12px;line-height:1.3}
+.album-name b,.album-name span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.album-name b{font-weight:600}.album-name span{color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+
 /* ------------------------------------------------------------- responsive */
+@media (min-width:1181px){
+  .photo{right:calc(250px + clamp(18px,2vw,32px));width:min(24vw,300px)}
+}
+@media (max-width:1180px){.collector{display:none}}
 @media (max-width:900px){
   .masthead{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;min-height:56px;padding:8px 12px}
   .masthead .site{display:none}
   .masthead .mark{gap:8px}
   .masthead .mark-word{font-size:22px}
   .masthead .mark-date{font-size:9px}
-  .countries{justify-content:flex-start;gap:13px}
+  .country-menu{padding-bottom:8px}
+  .countries{justify-content:flex-start;gap:8px}
+  .countries li{gap:8px}
   .countries a{font-size:14px}
   .walkbtn{padding:7px 10px;font-size:10px}
   .hud{top:58px;left:12px;width:min(226px,calc(100vw - 24px));padding:11px 13px 10px}
@@ -350,6 +443,16 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo.on{transform:rotate(-1deg)}
   h1{font-size:clamp(50px,13vw,90px)}
   .titlecard .facts{gap:10px 22px}
+  .archive-wall{padding:80px 16px 54px}
+  .archive-stats{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px}
+  .archive-stat{padding:18px 12px}.archive-stat:first-child{padding-left:12px}
+  .archive-stat:last-child{grid-column:1/-1}
+  .archive-section{padding-top:54px}
+  .archive-section-head{align-items:flex-end}
+  .archive-section-head h2{font-size:34px}
+  .archive-route{gap:8px 9px;margin-top:20px}
+  .archive-route li{gap:9px;font-size:17px}
+  .album-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px;margin-top:20px}
 }
 @media (max-width:900px) and (max-height:680px){
   .photo{top:168px;width:min(28vw,132px)}
@@ -357,7 +460,8 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.daycard{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i{transition-duration:.01s}
+  .collector-place,.collector-album{animation:none}
 }
 </style>
 </head>
@@ -370,14 +474,15 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   </a>
   <nav class="country-menu" aria-label="Countries on the trek">
     <ul class="countries" id="country-nav">
-      <li><a href="#france" style="--w:#2EA3DC">France</a></li>
-      <li><a href="#germany" style="--w:#24709F">Germany</a></li>
-      <li><a href="#austria" style="--w:#7D6BB0">Austria</a></li>
-      <li><a href="#slovenia" style="--w:#12A19A">Slovenia</a></li>
-      <li><a href="#croatia" style="--w:#1FA45A">Croatia</a></li>
-      <li><a href="#serbia" style="--w:#EFC319">Serbia</a></li>
-      <li><a href="#bulgaria" style="--w:#E97E18">Bulgaria</a></li>
+      <li style="--w:#2EA3DC"><a href="#france">France</a></li>
+      <li style="--w:#24709F"><a href="#germany">Germany</a></li>
+      <li style="--w:#7D6BB0"><a href="#austria">Austria</a></li>
+      <li style="--w:#12A19A"><a href="#slovenia">Slovenia</a></li>
+      <li style="--w:#1FA45A"><a href="#croatia">Croatia</a></li>
+      <li style="--w:#EFC319"><a href="#serbia">Serbia</a></li>
+      <li style="--w:#E97E18"><a href="#bulgaria">Bulgaria</a></li>
     </ul>
+    <div class="journey-progress" id="journey-progress" role="progressbar" aria-label="Journey progress" aria-valuemin="0" aria-valuemax="1982" aria-valuenow="0"><i></i></div>
   </nav>
   <button class="walkbtn" id="walkbtn" aria-pressed="false">▶ walk it</button>
   <a class="site" href="https://akibwa.com/">akibwa.com</a>
@@ -767,6 +872,17 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       <div class="progress" aria-hidden="true"><i id="hud-progress"></i></div>
     </div>
 
+    <aside class="collector" id="collector" aria-label="Collected along the journey">
+      <section class="collector-section collector-places">
+        <p class="collector-head"><span>places passed</span><b id="collector-place-count">1 / 17</b></p>
+        <ol id="collector-place-list"></ol>
+      </section>
+      <section class="collector-section collector-albums">
+        <p class="collector-head"><span>albums heard</span><b id="collector-album-count">0 / 30</b></p>
+        <ol id="collector-album-list"></ol>
+      </section>
+    </aside>
+
     <div class="daycard" id="daycard">
       <p class="dline" id="dc-line"></p>
       <p class="dtitle" id="dc-title"></p>
@@ -856,6 +972,290 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   </div>
 </div>
+
+<section class="archive-wall" id="archive-wall" aria-labelledby="archive-places-title">
+  <p class="archive-kicker">Paris → Sofia · 24 sep → 28 nov 2019</p>
+  <div class="archive-stats" aria-label="Final journey totals">
+    <p class="archive-stat"><b>1,982</b><span>kilometres walked</span></p>
+    <p class="archive-stat"><b>52</b><span>days on foot</span></p>
+    <p class="archive-stat"><b>7</b><span>countries crossed</span></p>
+    <p class="archive-stat"><b>49,954</b><span>metres climbed</span></p>
+    <p class="archive-stat"><b>338</b><span>hours moving</span></p>
+  </div>
+  <section class="archive-section">
+    <header class="archive-section-head">
+      <h2 id="archive-places-title">places passed</h2>
+      <p>17 collected</p>
+    </header>
+    <ol class="archive-route">
+      <li style="--w:#2EA3DC"><span>Paris</span></li>
+      <li style="--w:#2EA3DC"><span>Reims</span></li>
+      <li style="--w:#2EA3DC"><span>Nancy</span></li>
+      <li style="--w:#2EA3DC"><span>Saverne</span></li>
+      <li style="--w:#24709F"><span>Pforzheim</span></li>
+      <li style="--w:#24709F"><span>Stuttgart</span></li>
+      <li style="--w:#24709F"><span>Augsburg</span></li>
+      <li style="--w:#24709F"><span>Munich</span></li>
+      <li style="--w:#7D6BB0"><span>Zell am See</span></li>
+      <li style="--w:#7D6BB0"><span>the Tauern</span></li>
+      <li style="--w:#7D6BB0"><span>Klagenfurt</span></li>
+      <li style="--w:#12A19A"><span>Ptuj</span></li>
+      <li style="--w:#1FA45A"><span>Osijek</span></li>
+      <li style="--w:#EFC319"><span>Novi Sad</span></li>
+      <li style="--w:#EFC319"><span>Belgrade</span></li>
+      <li style="--w:#EFC319"><span>Niš</span></li>
+      <li style="--w:#E97E18"><span>Sofia</span></li>
+    </ol>
+  </section>
+  <section class="archive-section" aria-labelledby="archive-albums-title">
+    <header class="archive-section-head">
+      <h2 id="archive-albums-title">albums heard</h2>
+      <p>30 collected</p>
+    </header>
+    <div class="album-wall">
+
+      <article class="album-card" style="--w:#2EA3DC">
+        <button class="album-open" data-day="2" aria-haspopup="dialog" aria-label="Kali Uchis — Isolation">
+          <img src="covers/isolation-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 02</p>
+        <p class="album-name"><b>Kali Uchis</b><span>Isolation</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#2EA3DC">
+        <button class="album-open" data-day="6" aria-haspopup="dialog" aria-label="Paul Simon — Graceland">
+          <img src="covers/graceland-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 06</p>
+        <p class="album-name"><b>Paul Simon</b><span>Graceland</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#2EA3DC">
+        <button class="album-open" data-day="9" aria-haspopup="dialog" aria-label="Brian Eno &amp; Karl Hyde — High Life">
+          <img src="covers/high-life-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 09</p>
+        <p class="album-name"><b>Brian Eno &amp; Karl Hyde</b><span>High Life</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#2EA3DC">
+        <button class="album-open" data-day="14" aria-haspopup="dialog" aria-label="Harpers Bizarre — Harpers Bizarre 4">
+          <img src="covers/harpers-bizarre-4-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 14</p>
+        <p class="album-name"><b>Harpers Bizarre</b><span>Harpers Bizarre 4</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#2EA3DC">
+        <button class="album-open" data-day="16" aria-haspopup="dialog" aria-label="John Maus — We Must Become the Pitiless Censors of Ourselves">
+          <img src="covers/we-must-become-the-pitiless-censors-of-ourselves-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 16</p>
+        <p class="album-name"><b>John Maus</b><span>We Must Become the Pitiless Censors of Ourselves</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#24709F">
+        <button class="album-open" data-day="25" aria-haspopup="dialog" aria-label="Mazarin — Another One Goes By">
+          <img src="covers/another-one-goes-by-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 25</p>
+        <p class="album-name"><b>Mazarin</b><span>Another One Goes By</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#7D6BB0">
+        <button class="album-open" data-day="28" aria-haspopup="dialog" aria-label="Sufjan Stevens — Illinois">
+          <img src="covers/illinois-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 28</p>
+        <p class="album-name"><b>Sufjan Stevens</b><span>Illinois</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#7D6BB0">
+        <button class="album-open" data-day="29" aria-haspopup="dialog" aria-label="Brian Eno — Taking Tiger Mountain (By Strategy)">
+          <img src="covers/taking-tiger-mountain-by-strategy-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 29</p>
+        <p class="album-name"><b>Brian Eno</b><span>Taking Tiger Mountain (By Strategy)</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#7D6BB0">
+        <button class="album-open" data-day="32" aria-haspopup="dialog" aria-label="Brian Eno — Another Green World">
+          <img src="covers/another-green-world-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 32</p>
+        <p class="album-name"><b>Brian Eno</b><span>Another Green World</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#7D6BB0">
+        <button class="album-open" data-day="33" aria-haspopup="dialog" aria-label="Red House Painters — Red House Painters">
+          <img src="covers/red-house-painters-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 33</p>
+        <p class="album-name"><b>Red House Painters</b><span>Red House Painters</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#7D6BB0">
+        <button class="album-open" data-day="34" aria-haspopup="dialog" aria-label="The Smiths — Louder Than Bombs">
+          <img src="covers/louder-than-bombs-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 34</p>
+        <p class="album-name"><b>The Smiths</b><span>Louder Than Bombs</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#12A19A">
+        <button class="album-open" data-day="36" aria-haspopup="dialog" aria-label="Radiohead — A Moon Shaped Pool">
+          <img src="covers/a-moon-shaped-pool-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 36</p>
+        <p class="album-name"><b>Radiohead</b><span>A Moon Shaped Pool</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#12A19A">
+        <button class="album-open" data-day="37" aria-haspopup="dialog" aria-label="Alex G — DSU">
+          <img src="covers/dsu-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 37</p>
+        <p class="album-name"><b>Alex G</b><span>DSU</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#1FA45A">
+        <button class="album-open" data-day="38" aria-haspopup="dialog" aria-label="David Byrne &amp; Brian Eno — Everything That Happens Will Happen Today">
+          <img src="covers/everything-that-happens-will-happen-today-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 38</p>
+        <p class="album-name"><b>David Byrne &amp; Brian Eno</b><span>Everything That Happens Will Happen Today</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#1FA45A">
+        <button class="album-open" data-day="39" aria-haspopup="dialog" aria-label="Aldous Harding — Designer">
+          <img src="covers/designer-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 39</p>
+        <p class="album-name"><b>Aldous Harding</b><span>Designer</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#1FA45A">
+        <button class="album-open" data-day="40" aria-haspopup="dialog" aria-label="Nick Cave &amp; the Bad Seeds — Skeleton Tree">
+          <img src="covers/skeleton-tree-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 40</p>
+        <p class="album-name"><b>Nick Cave &amp; the Bad Seeds</b><span>Skeleton Tree</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#1FA45A">
+        <button class="album-open" data-day="41" aria-haspopup="dialog" aria-label="King Krule — The OOZ">
+          <img src="covers/the-ooz-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 41</p>
+        <p class="album-name"><b>King Krule</b><span>The OOZ</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#1FA45A">
+        <button class="album-open" data-day="42" aria-haspopup="dialog" aria-label="Animal Collective — Sung Tongs">
+          <img src="covers/sung-tongs-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 42</p>
+        <p class="album-name"><b>Animal Collective</b><span>Sung Tongs</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="48" aria-haspopup="dialog" aria-label="Jack Johnson — In Between Dreams">
+          <img src="covers/in-between-dreams-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 48</p>
+        <p class="album-name"><b>Jack Johnson</b><span>In Between Dreams</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="49" aria-haspopup="dialog" aria-label="Elbow — Build a Rocket Boys!">
+          <img src="covers/build-a-rocket-boys-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 49</p>
+        <p class="album-name"><b>Elbow</b><span>Build a Rocket Boys!</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="52" aria-haspopup="dialog" aria-label="Joy Division — Unknown Pleasures">
+          <img src="covers/unknown-pleasures-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 52</p>
+        <p class="album-name"><b>Joy Division</b><span>Unknown Pleasures</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="53" aria-haspopup="dialog" aria-label="The Who — A Quick One">
+          <img src="covers/a-quick-one-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 53</p>
+        <p class="album-name"><b>The Who</b><span>A Quick One</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="55" aria-haspopup="dialog" aria-label="Summer Years — You Can’t Live There Forever">
+          <img src="covers/you-cant-live-there-forever-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 55</p>
+        <p class="album-name"><b>Summer Years</b><span>You Can’t Live There Forever</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="56" aria-haspopup="dialog" aria-label="Jens Lekman — Night Falls Over Kortedala">
+          <img src="covers/night-falls-over-kortedala-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 56</p>
+        <p class="album-name"><b>Jens Lekman</b><span>Night Falls Over Kortedala</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="57" aria-haspopup="dialog" aria-label="Jonathan Richman — A Plea for Tenderness">
+          <img src="covers/a-plea-for-tenderness-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 57</p>
+        <p class="album-name"><b>Jonathan Richman</b><span>A Plea for Tenderness</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="58" aria-haspopup="dialog" aria-label="James Blake — Assume Form">
+          <img src="covers/assume-form-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 58</p>
+        <p class="album-name"><b>James Blake</b><span>Assume Form</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="59" aria-haspopup="dialog" aria-label="Kid Carpet — Dogmeat">
+          <img src="covers/dogmeat-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 59</p>
+        <p class="album-name"><b>Kid Carpet</b><span>Dogmeat</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#EFC319">
+        <button class="album-open" data-day="64" aria-haspopup="dialog" aria-label="Animal Collective — Feels">
+          <img src="covers/feels-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 64</p>
+        <p class="album-name"><b>Animal Collective</b><span>Feels</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#E97E18">
+        <button class="album-open" data-day="65" aria-haspopup="dialog" aria-label="Animal Collective — Here Comes the Indian">
+          <img src="covers/here-comes-the-indian-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 65</p>
+        <p class="album-name"><b>Animal Collective</b><span>Here Comes the Indian</span></p>
+      </article>
+
+      <article class="album-card" style="--w:#E97E18">
+        <button class="album-open" data-day="66" aria-haspopup="dialog" aria-label="Godspeed You! Black Emperor — ’ALLELUJAH! DON’T BEND! ASCEND!">
+          <img src="covers/allelujah-dont-bend-ascend-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day 66</p>
+        <p class="album-name"><b>Godspeed You! Black Emperor</b><span>’ALLELUJAH! DON’T BEND! ASCEND!</span></p>
+      </article>
+    </div>
+  </section>
+</section>
 
 <dialog class="spot" id="spot" aria-label="Record">
   <div class="spot-inner">
@@ -950,7 +1350,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 <script>
 (function(){
   "use strict";
-  var DATA = {"days":[{"n":1,"t":"And We're Off!","date":"2019-09-24","km":29.1,"min":335,"elev":835,"alt":111,"w":1,"c":"France","x":260,"y":306.9,"s":null,"j":"My navigation immediately took me through beautiful farmland and forest — the first hint of what beauty was yet to be seen.","cum":29.4,"cumElev":835,"cumMin":335,"footDays":1,"countries":1},{"n":2,"t":"After the Storm","date":"2019-09-25","km":35.5,"min":430,"elev":1313,"alt":126,"w":1,"c":"France","x":306.8,"y":294.7,"s":{"slug":"isolation","kind":"song","song":"After the Storm","album":"Isolation","artist":"Kali Uchis","note":"Featuring Tyler, the Creator and Bootsy Collins."},"j":"A quiet, peaceful path ran beside a clear green river. I had imagined motorways; instead I kept finding fields.","cum":65.3,"cumElev":2148,"cumMin":765,"footDays":2,"countries":1},{"n":3,"t":"Reservoirs of Untapped Potential","date":"2019-09-26","km":35.9,"min":421,"elev":1225,"alt":107,"w":1,"c":"France","x":342.3,"y":269.5,"s":null,"j":"I followed the green river for 20 km, then stopped in a church in Château-Thierry before returning to the wooded paths.","cum":101.6,"cumElev":3373,"cumMin":1186,"footDays":3,"countries":1},{"n":4,"t":"On the 5th day, Dan rested","date":"2019-09-27","km":34.6,"min":431,"elev":1621,"alt":116,"w":1,"c":"France","x":381.4,"y":255.3,"s":null,"j":null,"cum":136.6,"cumElev":4994,"cumMin":1617,"footDays":4,"countries":1},{"n":5,"t":"Köln River Run (12 miles)","date":"2019-03-27","km":16.8,"min":97,"elev":93,"alt":116,"w":0,"c":"France","x":381.4,"y":255.3,"s":null,"j":null,"cum":136.6,"cumElev":4994,"cumMin":1617,"footDays":4,"countries":1},{"n":6,"t":"One way to lose them walking blues!","date":"2019-09-29","km":50,"min":512,"elev":1415,"alt":143,"w":1,"c":"France","x":418.7,"y":306.6,"s":{"slug":"graceland","kind":"lyrics","song":"Diamonds on the Soles of Her Shoes","album":"Graceland","artist":"Paul Simon","note":"Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."},"j":null,"cum":187.2,"cumElev":6409,"cumMin":2129,"footDays":5,"countries":1},{"n":7,"t":"Now I'm on my way","date":"2019-09-30","km":37,"min":358,"elev":973,"alt":179,"w":1,"c":"France","x":460.7,"y":327.9,"s":null,"j":"The canal left Châlons-en-Champagne between vineyards and orchards, under a boiling late-September sun.","cum":224.6,"cumElev":7382,"cumMin":2487,"footDays":6,"countries":1},{"n":8,"t":"Getting the Hang of It","date":"2019-10-01","km":35.7,"min":309,"elev":933,"alt":228,"w":1,"c":"France","x":507.7,"y":331.9,"s":null,"j":"A monumental thunderstorm broke over the route into Bar-le-Duc: pouring rain, lightning and a pause beneath the trees.","cum":260.7,"cumElev":8315,"cumMin":2796,"footDays":7,"countries":1},{"n":9,"t":"Lilac!","date":"2019-10-02","km":36,"min":268,"elev":999,"alt":276,"w":1,"c":"France","x":554.5,"y":334.4,"s":{"slug":"high-life","kind":"song","song":"Lilac","album":"High Life","artist":"Brian Eno & Karl Hyde","note":"The Eno · Hyde collaboration from High Life (2014)."},"j":"In the woods the wind went still and the sun came through. For a moment, everything in the air was calm.","cum":297.1,"cumElev":9314,"cumMin":3064,"footDays":8,"countries":1},{"n":10,"t":"Sure is a Hot One!","date":"2019-10-03","km":50,"min":425,"elev":1365,"alt":340,"w":1,"c":"France","x":608.4,"y":354,"s":null,"j":null,"cum":347.6,"cumElev":10679,"cumMin":3489,"footDays":9,"countries":1},{"n":11,"t":"Short Walk to Nancy","date":"2019-10-04","km":12.6,"min":159,"elev":634,"alt":327,"w":1,"c":"France","x":620.8,"y":343.9,"s":null,"j":"The path to Nancy ran through a national park in hard rain, with the trees rising high overhead.","cum":360.4,"cumElev":11313,"cumMin":3648,"footDays":10,"countries":1},{"n":12,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":327,"w":0,"c":"France","x":620.8,"y":343.9,"s":null,"j":null,"cum":360.4,"cumElev":11313,"cumMin":3648,"footDays":10,"countries":1},{"n":13,"t":"The Long Canal","date":"2019-10-06","km":21.1,"min":235,"elev":471,"alt":314,"w":1,"c":"France","x":679.2,"y":344.3,"s":null,"j":null,"cum":381.7,"cumElev":11784,"cumMin":3883,"footDays":11,"countries":1},{"n":14,"t":"Witchi Tai To","date":"2019-10-07","km":56.8,"min":569,"elev":1901,"alt":246,"w":1,"c":"France","x":746.9,"y":341.8,"s":{"slug":"harpers-bizarre-4","kind":"song","song":"Witchi Tai To","album":"Harpers Bizarre 4","artist":"Harpers Bizarre","note":"The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song."},"j":"Cliff faces stood on both sides of the path, blue flies fluttering between them as Witchi Tai To played.","cum":439.2,"cumElev":13685,"cumMin":4452,"footDays":12,"countries":1},{"n":15,"t":"Tapping Into Flow","date":"2019-10-08","km":59.9,"min":573,"elev":1472,"alt":301,"w":1,"c":"France","x":820.2,"y":325.6,"s":null,"j":"Back on the canal out of Saverne, heading towards the Rhine and the German border.","cum":499.7,"cumElev":15157,"cumMin":5025,"footDays":13,"countries":1},{"n":16,"t":"Hey Moon","date":"2019-10-09","km":70.9,"min":986,"elev":3306,"alt":312,"w":1,"c":"France","x":823.5,"y":325.9,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"j":null,"cum":571.4,"cumElev":18463,"cumMin":6011,"footDays":14,"countries":1},{"n":17,"t":"Hey Moon","date":"2019-10-09","km":0,"min":0,"elev":0,"alt":426,"w":1,"c":"Germany","x":901.3,"y":306.3,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"j":null,"cum":571.4,"cumElev":18463,"cumMin":6011,"footDays":15,"countries":2},{"n":18,"t":"Recovery","date":"2019-10-11","km":27.8,"min":325,"elev":1609,"alt":455,"w":1,"c":"Germany","x":987.4,"y":336.6,"s":null,"j":null,"cum":599.5,"cumElev":20072,"cumMin":6336,"footDays":16,"countries":2},{"n":19,"t":"Easy Day Turned Hill Sprints","date":"2019-10-12","km":26.6,"min":232,"elev":1309,"alt":559,"w":1,"c":"Germany","x":1004.5,"y":356.4,"s":null,"j":null,"cum":626.4,"cumElev":21381,"cumMin":6568,"footDays":17,"countries":2},{"n":20,"t":"Scorching","date":"2019-10-13","km":53,"min":558,"elev":1515,"alt":515,"w":1,"c":"Germany","x":1070,"y":377,"s":null,"j":null,"cum":680,"cumElev":22896,"cumMin":7126,"footDays":18,"countries":2},{"n":21,"t":"Slowly Does It","date":"2019-10-14","km":41.3,"min":508,"elev":1453,"alt":506,"w":1,"c":"Germany","x":1146.2,"y":390.9,"s":null,"j":null,"cum":721.8,"cumElev":24349,"cumMin":7634,"footDays":19,"countries":2},{"n":22,"t":"Negative Split","date":"2019-10-15","km":48.8,"min":565,"elev":1354,"alt":568,"w":1,"c":"Germany","x":1196.8,"y":421.4,"s":null,"j":null,"cum":771.1,"cumElev":25703,"cumMin":8199,"footDays":20,"countries":2},{"n":23,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":568,"w":0,"c":"Germany","x":1196.8,"y":421.4,"s":null,"j":null,"cum":771.1,"cumElev":25703,"cumMin":8199,"footDays":20,"countries":2},{"n":24,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":568,"w":0,"c":"Germany","x":1196.8,"y":421.4,"s":null,"j":null,"cum":771.1,"cumElev":25703,"cumMin":8199,"footDays":20,"countries":2},{"n":25,"t":"Another One Goes By","date":"2019-10-18","km":59,"min":513,"elev":2194,"alt":687,"w":1,"c":"Germany","x":1288.6,"y":454.5,"s":{"slug":"another-one-goes-by","kind":"album","song":"Another One Goes By","album":"Another One Goes By","artist":"Mazarin","note":null},"j":"The best running rhythm of the journey so far, with the Austrian mountains finally visible ahead.","cum":830.8,"cumElev":27897,"cumMin":8712,"footDays":21,"countries":2},{"n":26,"t":"One Of Those Days","date":"2019-10-19","km":29.1,"min":319,"elev":1357,"alt":696,"w":1,"c":"Germany","x":1340.6,"y":474.9,"s":null,"j":null,"cum":860.2,"cumElev":29254,"cumMin":9031,"footDays":22,"countries":2},{"n":27,"t":"Arrival","date":"2019-10-20","km":47.8,"min":439,"elev":3468,"alt":1386,"w":1,"c":"Austria","x":1353,"y":499.4,"s":null,"j":"The Austrian border began with a sharp climb and a small waterfall — mountains all around, country three underfoot.","cum":908.5,"cumElev":32722,"cumMin":9470,"footDays":23,"countries":3},{"n":28,"t":"The Predatory Wasp","date":"2019-10-21","km":34.5,"min":365,"elev":1540,"alt":1967,"w":1,"c":"Austria","x":1360.3,"y":515,"s":{"slug":"illinois","kind":"song","song":"The Predatory Wasp of the Palisades Is Out to Get Us!","album":"Illinois","artist":"Sufjan Stevens","note":null},"j":"A cold, crisp morning turned into glaring sun. The route was beginning to rise towards the Ankogel mountains.","cum":943.4,"cumElev":34262,"cumMin":9835,"footDays":24,"countries":3},{"n":29,"t":"Taking Tiger Mountain","date":"2019-10-22","km":39.5,"min":444,"elev":2100,"alt":2063,"w":1,"c":"Austria","x":1391,"y":530,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"GPS split the album title across two days. Same sleeve as “(By Strategy)”."},"j":"A whole new terrain of steep mountain paths, each climb opening another view across Austria.","cum":983.4,"cumElev":36362,"cumMin":10279,"footDays":25,"countries":3},{"n":30,"t":"(By Strategy)","date":"2019-10-23","km":33.5,"min":480,"elev":2895,"alt":1994,"w":1,"c":"Austria","x":1398.9,"y":562.8,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"Second half of the Eno title. Same sleeve as day 29."},"j":"At 2,500 metres it was almost silent: only my breath and footsteps, then a race down the empty ski slopes before dark.","cum":1017.2,"cumElev":39257,"cumMin":10759,"footDays":26,"countries":3},{"n":31,"t":"Business As Usual","date":"2019-10-24","km":44.8,"min":435,"elev":1374,"alt":1815,"w":1,"c":"Austria","x":1434.1,"y":601.9,"s":null,"j":"The sun kept beaming down despite it being almost November; another 50 km had begun to feel methodical.","cum":1062.5,"cumElev":40631,"cumMin":11194,"footDays":27,"countries":3},{"n":32,"t":"I'll Come Running To Tie Your Shoes","date":"2019-10-25","km":40.6,"min":353,"elev":1233,"alt":1159,"w":1,"c":"Austria","x":1474.3,"y":655.2,"s":{"slug":"another-green-world","kind":"lyrics","song":"I'll Come Running","album":"Another Green World","artist":"Brian Eno","note":"Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."},"j":"Lacing my shoes, heading for the trails and covering the next stretch had become ordinary everyday life.","cum":1103.6,"cumElev":41864,"cumMin":11547,"footDays":28,"countries":3},{"n":33,"t":"Katy Song","date":"2019-10-26","km":17.5,"min":229,"elev":577,"alt":908,"w":1,"c":"Austria","x":1496.2,"y":665.3,"s":{"slug":"red-house-painters","kind":"song","song":"Katy Song","album":"Red House Painters","artist":"Red House Painters","note":"The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."},"j":null,"cum":1121.3,"cumElev":42441,"cumMin":11776,"footDays":29,"countries":3},{"n":34,"t":"Sing Me To Sleep","date":"2019-10-27","km":33.6,"min":309,"elev":958,"alt":637,"w":1,"c":"Austria","x":1564.5,"y":682.3,"s":{"slug":"louder-than-bombs","kind":"lyrics","song":"Asleep","album":"Louder Than Bombs","artist":"The Smiths","note":"The GPS title takes its phrase from “Asleep”."},"j":null,"cum":1155.3,"cumElev":43399,"cumMin":12085,"footDays":30,"countries":3},{"n":35,"t":"The Process","date":"2019-10-28","km":31,"min":354,"elev":206,"alt":788,"w":1,"c":"Slovenia","x":1598.4,"y":681.6,"s":null,"j":"I stopped tracking every kilometre so closely and tried to pay more attention to the day-to-day details as they appeared.","cum":1186.6,"cumElev":43605,"cumMin":12439,"footDays":31,"countries":4},{"n":36,"t":"Beyond Me, Beyond You","date":"2019-10-29","km":55,"min":632,"elev":1203,"alt":757,"w":1,"c":"Slovenia","x":1646.2,"y":710.4,"s":{"slug":"a-moon-shaped-pool","kind":"lyrics","song":"Daydreaming","album":"A Moon Shaped Pool","artist":"Radiohead","note":"Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."},"j":"More than 50 km through drizzle, rain, wind chill, flooded paths and fog, ending with a wooded climb in darkness.","cum":1242.2,"cumElev":44808,"cumMin":13071,"footDays":32,"countries":4},{"n":37,"t":"Skipper","date":"2019-10-30","km":50.3,"min":496,"elev":369,"alt":392,"w":1,"c":"Slovenia","x":1699.4,"y":715.9,"s":{"slug":"dsu","kind":"song","song":"Skipper","album":"DSU","artist":"Alex G","note":null},"j":"Another 50 km in rain and low temperatures, followed by a warm arrival in Ptuj.","cum":1293.1,"cumElev":45177,"cumMin":13567,"footDays":33,"countries":4},{"n":38,"t":"Everything That Happens","date":"2019-10-31","km":44.5,"min":475,"elev":252,"alt":255,"w":1,"c":"Croatia","x":1751.9,"y":737.7,"s":{"slug":"everything-that-happens-will-happen-today","kind":"album","song":null,"album":"Everything That Happens Will Happen Today","artist":"David Byrne & Brian Eno","note":null},"j":"Croatia arrived after nearly fifteen consecutive days on the road: first the main road, then the welcome quiet of a canal path.","cum":1338.1,"cumElev":45429,"cumMin":14042,"footDays":34,"countries":5},{"n":39,"t":"Zoo Eyes","date":null,"km":0,"min":0,"elev":0,"alt":255,"w":0,"c":"Croatia","x":1751.9,"y":737.7,"s":{"slug":"designer","kind":"song","song":"Zoo Eyes","album":"Designer","artist":"Aldous Harding","note":null},"j":null,"cum":1338.1,"cumElev":45429,"cumMin":14042,"footDays":34,"countries":5},{"n":40,"t":"Distant Sky","date":"2019-11-02","km":31.3,"min":230,"elev":49,"alt":223,"w":1,"c":"Croatia","x":1832.8,"y":783.3,"s":{"slug":"skeleton-tree","kind":"song","song":"Distant Sky","album":"Skeleton Tree","artist":"Nick Cave & the Bad Seeds","note":"Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."},"j":"Grey roads and monotonous trails headed east across Croatia, with Osijek the next clear point on the horizon.","cum":1369.7,"cumElev":45478,"cumMin":14272,"footDays":35,"countries":5},{"n":41,"t":"Biscuit Town","date":"2019-11-03","km":21.4,"min":236,"elev":56,"alt":205,"w":1,"c":"Croatia","x":1850.6,"y":799.7,"s":{"slug":"the-ooz","kind":"song","song":"Biscuit Town","album":"The OOZ","artist":"King Krule","note":"Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."},"j":"A warm, sunny day across the sparse northern Croatian plain — a startling contrast with the Austrian mountains.","cum":1391.4,"cumElev":45534,"cumMin":14508,"footDays":36,"countries":5},{"n":42,"t":"Sweet Road","date":"2019-11-04","km":41.9,"min":461,"elev":124,"alt":89,"w":1,"c":"Croatia","x":2013.4,"y":866.8,"s":{"slug":"sung-tongs","kind":"song","song":"Sweet Road","album":"Sung Tongs","artist":"Animal Collective","note":null},"j":"Trains bridged the unsafe main-road sections; after the last stop, 40 km of flat farms stretched to Osijek.","cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":43,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":44,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":45,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":46,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":47,"t":"Eyes Open Wide","date":"2019-11-09","km":25,"min":170,"elev":60,"alt":86,"w":1,"c":"Croatia","x":2042.5,"y":870.3,"s":null,"j":"New shoes, a half-marathon run and, beside the Croatian road, the unexpected sight of a warning sign for mines.","cum":1459,"cumElev":45718,"cumMin":15139,"footDays":38,"countries":5},{"n":48,"t":"In Between Dreams","date":"2019-11-10","km":41.9,"min":413,"elev":137,"alt":83,"w":1,"c":"Serbia","x":2073.1,"y":892.3,"s":{"slug":"in-between-dreams","kind":"album","song":null,"album":"In Between Dreams","artist":"Jack Johnson","note":null},"j":"The last muddy fields of Croatia led to passport control, then river paths and fishing huts on the Serbian side.","cum":1501.4,"cumElev":45855,"cumMin":15552,"footDays":39,"countries":6},{"n":49,"t":"Build A Rocket Boys!","date":"2019-11-11","km":69,"min":770,"elev":148,"alt":83,"w":1,"c":"Serbia","x":2142.5,"y":914.6,"s":{"slug":"build-a-rocket-boys","kind":"album","song":null,"album":"Build a Rocket Boys!","artist":"Elbow","note":null},"j":"Seventy kilometres to Novi Sad, finishing after dark through technical paths, brambles and whatever route the app could find.","cum":1571.2,"cumElev":46003,"cumMin":16322,"footDays":40,"countries":6},{"n":50,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":83,"w":0,"c":"Serbia","x":2142.5,"y":914.6,"s":null,"j":null,"cum":1571.2,"cumElev":46003,"cumMin":16322,"footDays":40,"countries":6},{"n":51,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":83,"w":0,"c":"Serbia","x":2142.5,"y":914.6,"s":null,"j":null,"cum":1571.2,"cumElev":46003,"cumMin":16322,"footDays":40,"countries":6},{"n":52,"t":"Disorder","date":"2019-11-14","km":46.7,"min":382,"elev":250,"alt":90,"w":1,"c":"Serbia","x":2176.7,"y":956,"s":{"slug":"unknown-pleasures","kind":"song","song":"Disorder","album":"Unknown Pleasures","artist":"Joy Division","note":null},"j":null,"cum":1618.4,"cumElev":46253,"cumMin":16704,"footDays":41,"countries":6},{"n":53,"t":"A Quick One While She's Away","date":"2019-11-15","km":34.8,"min":364,"elev":141,"alt":99,"w":1,"c":"Serbia","x":2210.4,"y":981.8,"s":{"slug":"a-quick-one","kind":"song","song":"A Quick One, While He's Away","album":"A Quick One","artist":"The Who","note":"GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."},"j":"Walking into Belgrade in perfect weather, I decided to take my time before the final push towards Sofia.","cum":1653.6,"cumElev":46394,"cumMin":17068,"footDays":42,"countries":6},{"n":54,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":99,"w":0,"c":"Serbia","x":2210.4,"y":981.8,"s":null,"j":null,"cum":1653.6,"cumElev":46394,"cumMin":17068,"footDays":42,"countries":6},{"n":55,"t":"You Can't Live There Forever","date":"2019-11-17","km":7.6,"min":65,"elev":130,"alt":102,"w":1,"c":"Serbia","x":2218.5,"y":989,"s":{"slug":"you-cant-live-there-forever","kind":"album","song":null,"album":"You Can’t Live There Forever","artist":"Summer Years","note":null},"j":null,"cum":1661.3,"cumElev":46524,"cumMin":17133,"footDays":43,"countries":6},{"n":56,"t":"A Postcard to Nina","date":"2019-11-18","km":69.8,"min":488,"elev":1014,"alt":179,"w":1,"c":"Serbia","x":2264,"y":1048.9,"s":{"slug":"night-falls-over-kortedala","kind":"song","song":"A Postcard to Nina","album":"Night Falls Over Kortedala","artist":"Jens Lekman","note":null},"j":null,"cum":1731.8,"cumElev":47538,"cumMin":17621,"footDays":44,"countries":6},{"n":57,"t":"A Plea For Tenderness","date":"2019-11-19","km":37,"min":506,"elev":121,"alt":285,"w":1,"c":"Serbia","x":2293,"y":1067.9,"s":{"slug":"a-plea-for-tenderness","kind":"album","song":null,"album":"A Plea for Tenderness","artist":"Jonathan Richman","note":null},"j":"A farm track, small tractors chugging past and one farmer tipping his hat in acknowledgement.","cum":1769.2,"cumElev":47659,"cumMin":18127,"footDays":45,"countries":6},{"n":58,"t":"I'll Come Too","date":"2019-11-20","km":43.1,"min":324,"elev":485,"alt":479,"w":1,"c":"Serbia","x":2312.7,"y":1104.2,"s":{"slug":"assume-form","kind":"song","song":"I'll Come Too","album":"Assume Form","artist":"James Blake","note":"Assume Form was released January 2019. 13 plays in the collection."},"j":"A pipeline construction made an unexpectedly direct path; the guesthouse welcome was tea, wafers and home-brewed raki.","cum":1812.8,"cumElev":48144,"cumMin":18451,"footDays":46,"countries":6},{"n":59,"t":"Dogmeat","date":"2019-11-21","km":10,"min":134,"elev":38,"alt":481,"w":1,"c":"Serbia","x":2316.4,"y":1116.1,"s":{"slug":"dogmeat","kind":"album","song":null,"album":"Dogmeat","artist":"Kid Carpet","note":null},"j":"A short day with a stray dog for company — named Dogmeat in the journal — following part of the route.","cum":1822.9,"cumElev":48182,"cumMin":18585,"footDays":47,"countries":6},{"n":60,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":481,"w":0,"c":"Serbia","x":2316.4,"y":1116.1,"s":null,"j":null,"cum":1822.9,"cumElev":48182,"cumMin":18585,"footDays":47,"countries":6},{"n":61,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":481,"w":0,"c":"Serbia","x":2316.4,"y":1116.1,"s":null,"j":null,"cum":1822.9,"cumElev":48182,"cumMin":18585,"footDays":47,"countries":6},{"n":62,"t":"Walk to Niska","date":"2019-11-24","km":10.3,"min":106,"elev":70,"alt":583,"w":1,"c":"Serbia","x":2383.1,"y":1199.9,"s":null,"j":null,"cum":1833.4,"cumElev":48252,"cumMin":18691,"footDays":48,"countries":6},{"n":63,"t":"The Two Towers","date":"2019-11-25","km":52.3,"min":474,"elev":984,"alt":1201,"w":1,"c":"Serbia","x":2440.3,"y":1196.8,"s":null,"j":null,"cum":1886.2,"cumElev":49236,"cumMin":19165,"footDays":49,"countries":6},{"n":64,"t":"Banshee Beat","date":"2019-11-26","km":26,"min":282,"elev":117,"alt":1181,"w":1,"c":"Serbia","x":2468.1,"y":1219.7,"s":{"slug":"feels","kind":"song","song":"Banshee Beat","album":"Feels","artist":"Animal Collective","note":null},"j":null,"cum":1912.5,"cumElev":49353,"cumMin":19447,"footDays":50,"countries":6},{"n":65,"t":"Infant Dressing Table","date":"2019-11-27","km":21.2,"min":275,"elev":419,"alt":1007,"w":1,"c":"Bulgaria","x":2485.4,"y":1240.3,"s":{"slug":"here-comes-the-indian","kind":"song","song":"Infant Dressing Table","album":"Here Comes the Indian","artist":"Animal Collective","note":"Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."},"j":"Country seven. Crossing into Bulgaria made the end feel suddenly close: Sofia was one more day away.","cum":1934,"cumElev":49772,"cumMin":19722,"footDays":51,"countries":7},{"n":66,"t":"Allelujah! Don't Bend! Ascend!","date":"2019-11-28","km":47.5,"min":556,"elev":182,"alt":923,"w":1,"c":"Bulgaria","x":2528.8,"y":1277.2,"s":{"slug":"allelujah-dont-bend-ascend","kind":"album","song":null,"album":"’ALLELUJAH! DON’T BEND! ASCEND!","artist":"Godspeed You! Black Emperor","note":null},"j":"Sofia, at last. The arrival closed this part of the road and opened a few quiet days to take it all in.","cum":1982,"cumElev":49954,"cumMin":20278,"footDays":52,"countries":7},{"n":67,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":923,"w":0,"c":"Bulgaria","x":2528.8,"y":1277.2,"s":null,"j":null,"cum":1982,"cumElev":49954,"cumMin":20278,"footDays":52,"countries":7}],"colors":{"France":"#2EA3DC","Germany":"#24709F","Austria":"#7D6BB0","Slovenia":"#12A19A","Croatia":"#1FA45A","Serbia":"#EFC319","Bulgaria":"#E97E18"},"total":1982,"stats":{"days":52,"ascent":49954,"minutes":20278,"countries":7},"scenes":[{"t":"start","len":620,"at":0},{"t":"enter","country":"France","len":760,"at":620},{"t":"walk","day":1,"len":262,"at":1380},{"t":"walk","day":2,"len":320,"at":1642},{"t":"walk","day":3,"len":323,"at":1962},{"t":"walk","day":4,"len":311,"at":2285},{"t":"walk","day":5,"len":36,"at":2596},{"t":"walk","day":6,"len":450,"at":2632},{"t":"walk","day":7,"len":333,"at":3082},{"t":"walk","day":8,"len":321,"at":3415},{"t":"walk","day":9,"len":324,"at":3736},{"t":"walk","day":10,"len":450,"at":4060},{"t":"walk","day":11,"len":180,"at":4510},{"t":"walk","day":12,"len":36,"at":4690},{"t":"walk","day":13,"len":190,"at":4726},{"t":"walk","day":14,"len":511,"at":4916},{"t":"walk","day":15,"len":539,"at":5427},{"t":"walk","day":16,"len":638,"at":5966},{"t":"enter","country":"Germany","len":760,"at":6604},{"t":"walk","day":17,"len":270,"at":7364},{"t":"walk","day":18,"len":250,"at":7634},{"t":"walk","day":19,"len":239,"at":7884},{"t":"walk","day":20,"len":477,"at":8123},{"t":"walk","day":21,"len":372,"at":8600},{"t":"walk","day":22,"len":439,"at":8972},{"t":"walk","day":23,"len":36,"at":9411},{"t":"walk","day":24,"len":36,"at":9447},{"t":"walk","day":25,"len":531,"at":9483},{"t":"walk","day":26,"len":262,"at":10014},{"t":"enter","country":"Austria","len":760,"at":10276},{"t":"walk","day":27,"len":430,"at":11036},{"t":"walk","day":28,"len":311,"at":11466},{"t":"walk","day":29,"len":356,"at":11777},{"t":"walk","day":30,"len":302,"at":12133},{"t":"beat","day":30,"len":720,"at":12435},{"t":"walk","day":31,"len":403,"at":13155},{"t":"walk","day":32,"len":365,"at":13558},{"t":"beat","day":32,"len":720,"at":13923},{"t":"walk","day":33,"len":180,"at":14643},{"t":"walk","day":34,"len":302,"at":14823},{"t":"enter","country":"Slovenia","len":760,"at":15125},{"t":"walk","day":35,"len":279,"at":15885},{"t":"walk","day":36,"len":495,"at":16164},{"t":"beat","day":36,"len":720,"at":16659},{"t":"walk","day":37,"len":453,"at":17379},{"t":"enter","country":"Croatia","len":760,"at":17832},{"t":"walk","day":38,"len":401,"at":18592},{"t":"walk","day":39,"len":36,"at":18993},{"t":"walk","day":40,"len":282,"at":19029},{"t":"walk","day":41,"len":193,"at":19311},{"t":"walk","day":42,"len":377,"at":19504},{"t":"beat","day":42,"len":720,"at":19881},{"t":"walk","day":43,"len":36,"at":20601},{"t":"walk","day":44,"len":36,"at":20637},{"t":"walk","day":45,"len":36,"at":20673},{"t":"walk","day":46,"len":36,"at":20709},{"t":"walk","day":47,"len":225,"at":20745},{"t":"enter","country":"Serbia","len":760,"at":20970},{"t":"walk","day":48,"len":377,"at":21730},{"t":"walk","day":49,"len":621,"at":22107},{"t":"beat","day":49,"len":720,"at":22728},{"t":"walk","day":50,"len":36,"at":23448},{"t":"walk","day":51,"len":36,"at":23484},{"t":"walk","day":52,"len":420,"at":23520},{"t":"walk","day":53,"len":313,"at":23940},{"t":"walk","day":54,"len":36,"at":24253},{"t":"walk","day":55,"len":180,"at":24289},{"t":"walk","day":56,"len":628,"at":24469},{"t":"walk","day":57,"len":333,"at":25097},{"t":"walk","day":58,"len":388,"at":25430},{"t":"walk","day":59,"len":180,"at":25818},{"t":"walk","day":60,"len":36,"at":25998},{"t":"walk","day":61,"len":36,"at":26034},{"t":"walk","day":62,"len":180,"at":26070},{"t":"walk","day":63,"len":471,"at":26250},{"t":"walk","day":64,"len":234,"at":26721},{"t":"enter","country":"Bulgaria","len":760,"at":26955},{"t":"walk","day":65,"len":191,"at":27715},{"t":"beat","day":65,"len":720,"at":27906},{"t":"walk","day":66,"len":428,"at":28626},{"t":"walk","day":67,"len":36,"at":29054},{"t":"end","len":900,"at":29090}],"timeline":29990,"beats":{"30":{"label":"the high point","quote":"Today's seen me climb over the Austrian Alps to a peak height of 2500m. The climb involved a variety of terrains spanning from walking up streams, technical scrambles and narrow ridge trails."},"32":{"label":"the routine","quote":"It's occurred to me that this is now my everyday life. Today, like yesterday, I've gone through the motions of my morning routine, lacing up my shoes, heading for the trails."},"36":{"label":"rain over Slovenia","quote":"After navigating the many hills, the busy roadsides and the waterlogged footpaths, I arrived at what I thought was a short walk — only to find another steep wooded climb in the darkness."},"42":{"label":"the safer line","quote":"I caught a few trains to avoid travelling on main roads. Jumping off the train saw 40 km ahead of me, which proved to be a linear eight-hour walk through the flat Croatian farms."},"49":{"label":"the furthest day","quote":"Today I have set a new personal record, not for speed but instead for the furthest I've ever travelled on foot. My ankles feel shot but surprisingly the rest of my body feels full of vigor."},"65":{"label":"country seven","quote":"Having crossed the border, something seems to have clicked and it has occurred to me how close I am to achieving what I set out to do. Tomorrow I will be arriving in Sofia."}},"vb":[2789,1572],"start":[231.1,291.7],"startAlt":93,"walkPaths":{"1":[{"x":231.1,"y":291.7,"alt":93},{"x":260,"y":306.9,"alt":111}],"2":[{"x":260,"y":306.9,"alt":111},{"x":266.7,"y":308.1,"alt":116},{"x":306.8,"y":294.7,"alt":126}],"3":[{"x":306.8,"y":294.7,"alt":126},{"x":342.3,"y":269.5,"alt":107}],"4":[{"x":342.3,"y":269.5,"alt":107},{"x":342.2,"y":269.4,"alt":107},{"x":381.4,"y":255.3,"alt":116}],"5":[{"x":381.4,"y":255.3,"alt":116},{"x":381.4,"y":255.3,"alt":116}],"6":[{"x":381.4,"y":255.3,"alt":116},{"x":385,"y":255.4,"alt":118},{"x":418.7,"y":306.6,"alt":143}],"7":[{"x":418.7,"y":306.6,"alt":143},{"x":421.2,"y":308.1,"alt":144},{"x":436,"y":326.7,"alt":156},{"x":460.7,"y":327.9,"alt":179}],"8":[{"x":460.7,"y":327.9,"alt":179},{"x":460.9,"y":327.9,"alt":179},{"x":507.7,"y":331.9,"alt":228}],"9":[{"x":507.7,"y":331.9,"alt":228},{"x":508.3,"y":333.7,"alt":231},{"x":522.8,"y":342.9,"alt":259},{"x":554.5,"y":334.4,"alt":276}],"10":[{"x":554.5,"y":334.4,"alt":276},{"x":554.3,"y":333.1,"alt":274},{"x":570.1,"y":346.2,"alt":304},{"x":608.4,"y":354,"alt":340}],"11":[{"x":608.4,"y":354,"alt":340},{"x":620.8,"y":343.9,"alt":327}],"12":[{"x":620.8,"y":343.9,"alt":327},{"x":620.8,"y":343.9,"alt":327}],"13":[{"x":620.8,"y":343.9,"alt":327},{"x":623.9,"y":346.8,"alt":331},{"x":651.3,"y":350.8,"alt":336},{"x":679.2,"y":344.3,"alt":314}],"14":[{"x":679.2,"y":344.3,"alt":314},{"x":679.4,"y":344.2,"alt":314},{"x":746.9,"y":341.8,"alt":246}],"15":[{"x":746.9,"y":341.8,"alt":246},{"x":752.1,"y":338.9,"alt":238},{"x":820.2,"y":325.6,"alt":301}],"16":[{"x":820.2,"y":325.6,"alt":301},{"x":823.5,"y":325.9,"alt":312}],"17":[{"x":823.5,"y":325.9,"alt":312},{"x":868.4,"y":299.1,"alt":391},{"x":901.3,"y":306.3,"alt":426}],"18":[{"x":901.3,"y":306.3,"alt":426},{"x":954.7,"y":325.6,"alt":408},{"x":987.4,"y":336.6,"alt":455}],"19":[{"x":987.4,"y":336.6,"alt":455},{"x":987.3,"y":336.5,"alt":455},{"x":986.6,"y":345.1,"alt":505},{"x":1004.5,"y":356.4,"alt":559}],"20":[{"x":1004.5,"y":356.4,"alt":559},{"x":1004.4,"y":356.7,"alt":560},{"x":1070,"y":377,"alt":515}],"21":[{"x":1070,"y":377,"alt":515},{"x":1090.9,"y":380.4,"alt":513},{"x":1146.2,"y":390.9,"alt":506}],"22":[{"x":1146.2,"y":390.9,"alt":506},{"x":1157.8,"y":409.3,"alt":534},{"x":1196.8,"y":421.4,"alt":568}],"23":[{"x":1196.8,"y":421.4,"alt":568},{"x":1196.8,"y":421.4,"alt":568}],"24":[{"x":1196.8,"y":421.4,"alt":568},{"x":1196.8,"y":421.4,"alt":568}],"25":[{"x":1196.8,"y":421.4,"alt":568},{"x":1221.9,"y":426.3,"alt":587},{"x":1280,"y":442.1,"alt":644},{"x":1288.6,"y":454.5,"alt":687}],"26":[{"x":1288.6,"y":454.5,"alt":687},{"x":1288.5,"y":454.7,"alt":688},{"x":1307.4,"y":469.4,"alt":722},{"x":1340.6,"y":474.9,"alt":696}],"27":[{"x":1340.6,"y":474.9,"alt":696},{"x":1340.2,"y":475,"alt":697},{"x":1353,"y":499.4,"alt":1386}],"28":[{"x":1353,"y":499.4,"alt":1386},{"x":1353.2,"y":499.5,"alt":1390},{"x":1361.5,"y":501.9,"alt":1485},{"x":1357.7,"y":512.7,"alt":1885},{"x":1360.3,"y":515,"alt":1967}],"29":[{"x":1360.3,"y":515,"alt":1967},{"x":1360.4,"y":515,"alt":1968},{"x":1387.4,"y":516.3,"alt":1970},{"x":1391,"y":530,"alt":2063}],"30":[{"x":1391,"y":530,"alt":2063},{"x":1398.9,"y":562.8,"alt":1994}],"31":[{"x":1398.9,"y":562.8,"alt":1994},{"x":1399.1,"y":563,"alt":1993},{"x":1434.1,"y":601.9,"alt":1815}],"32":[{"x":1434.1,"y":601.9,"alt":1815},{"x":1474.3,"y":655.2,"alt":1159}],"33":[{"x":1474.3,"y":655.2,"alt":1159},{"x":1474.6,"y":656.1,"alt":1150},{"x":1496.2,"y":665.3,"alt":908}],"34":[{"x":1496.2,"y":665.3,"alt":908},{"x":1525.8,"y":676.6,"alt":577},{"x":1564.5,"y":682.3,"alt":637}],"35":[{"x":1564.5,"y":682.3,"alt":637},{"x":1564.5,"y":682.5,"alt":637},{"x":1598.4,"y":681.6,"alt":788}],"36":[{"x":1598.4,"y":681.6,"alt":788},{"x":1646.2,"y":710.4,"alt":757}],"37":[{"x":1646.2,"y":710.4,"alt":757},{"x":1646.1,"y":710.2,"alt":758},{"x":1699.4,"y":715.9,"alt":392}],"38":[{"x":1699.4,"y":715.9,"alt":392},{"x":1751.9,"y":737.7,"alt":255}],"39":[{"x":1751.9,"y":737.7,"alt":255},{"x":1751.9,"y":737.7,"alt":255}],"40":[{"x":1751.9,"y":737.7,"alt":255},{"x":1804.9,"y":762.2,"alt":254},{"x":1832.8,"y":783.3,"alt":223}],"41":[{"x":1832.8,"y":783.3,"alt":223},{"x":1832.8,"y":783.5,"alt":223},{"x":1850.6,"y":799.7,"alt":205}],"42":[{"x":1850.6,"y":799.7,"alt":205},{"x":1969.4,"y":866.7,"alt":129},{"x":2013.4,"y":866.8,"alt":89}],"43":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"44":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"45":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"46":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"47":[{"x":2013.4,"y":866.8,"alt":89},{"x":2042.5,"y":870.3,"alt":86}],"48":[{"x":2042.5,"y":870.3,"alt":86},{"x":2043.3,"y":870.8,"alt":86},{"x":2068.7,"y":873.4,"alt":84},{"x":2073.1,"y":892.3,"alt":83}],"49":[{"x":2073.1,"y":892.3,"alt":83},{"x":2073.2,"y":892.9,"alt":83},{"x":2104,"y":904.8,"alt":82},{"x":2120.3,"y":899.4,"alt":82},{"x":2142.5,"y":914.6,"alt":83}],"50":[{"x":2142.5,"y":914.6,"alt":83},{"x":2142.5,"y":914.6,"alt":83}],"51":[{"x":2142.5,"y":914.6,"alt":83},{"x":2142.5,"y":914.6,"alt":83}],"52":[{"x":2142.5,"y":914.6,"alt":83},{"x":2165.2,"y":929.5,"alt":86},{"x":2176.7,"y":956,"alt":90}],"53":[{"x":2176.7,"y":956,"alt":90},{"x":2178.6,"y":955.6,"alt":90},{"x":2210.4,"y":981.8,"alt":99}],"54":[{"x":2210.4,"y":981.8,"alt":99},{"x":2210.4,"y":981.8,"alt":99}],"55":[{"x":2210.4,"y":981.8,"alt":99},{"x":2218.5,"y":989,"alt":102}],"56":[{"x":2218.5,"y":989,"alt":102},{"x":2218.5,"y":989.3,"alt":102},{"x":2239.2,"y":1035.1,"alt":119},{"x":2264,"y":1048.9,"alt":179}],"57":[{"x":2264,"y":1048.9,"alt":179},{"x":2286,"y":1052.4,"alt":215},{"x":2293,"y":1067.9,"alt":285}],"58":[{"x":2293,"y":1067.9,"alt":285},{"x":2312.7,"y":1104.2,"alt":479}],"59":[{"x":2312.7,"y":1104.2,"alt":479},{"x":2311.8,"y":1105.5,"alt":475},{"x":2316.4,"y":1116.1,"alt":481}],"60":[{"x":2316.4,"y":1116.1,"alt":481},{"x":2316.4,"y":1116.1,"alt":481}],"61":[{"x":2316.4,"y":1116.1,"alt":481},{"x":2316.4,"y":1116.1,"alt":481}],"62":[{"x":2316.4,"y":1116.1,"alt":481},{"x":2370.7,"y":1202.3,"alt":414},{"x":2383.1,"y":1199.9,"alt":583}],"63":[{"x":2383.1,"y":1199.9,"alt":583},{"x":2382.9,"y":1199.9,"alt":580},{"x":2440.3,"y":1196.8,"alt":1201}],"64":[{"x":2440.3,"y":1196.8,"alt":1201},{"x":2447.1,"y":1194.8,"alt":1270},{"x":2468.1,"y":1219.7,"alt":1181}],"65":[{"x":2468.1,"y":1219.7,"alt":1181},{"x":2468.4,"y":1220.2,"alt":1176},{"x":2485.4,"y":1240.3,"alt":1007}],"66":[{"x":2485.4,"y":1240.3,"alt":1007},{"x":2486.1,"y":1240.9,"alt":1003},{"x":2513.4,"y":1256.4,"alt":933},{"x":2528.8,"y":1277.2,"alt":923}],"67":[{"x":2528.8,"y":1277.2,"alt":923},{"x":2528.8,"y":1277.2,"alt":923}]},"photos":[{"day":1,"src":"day01.webp","w":620,"h":1100},{"day":2,"src":"day02.webp","w":1100,"h":825},{"day":3,"src":"day03-vineyards.webp","w":480,"h":360,"caption":"champagne vineyards","alt":"Vineyards and green fields beneath a grey Champagne sky"},{"day":3,"src":"day03-road.webp","w":360,"h":480,"caption":"the road east","alt":"A long empty road crossing farmland east of Château-Thierry"},{"day":11,"src":"day11.webp","w":825,"h":1100},{"day":14,"src":"day14.webp","w":825,"h":1100},{"day":20,"src":"day20.webp","w":825,"h":1100},{"day":23,"src":"day23.webp","w":825,"h":1100},{"day":25,"src":"day25.webp","w":825,"h":1100},{"day":26,"src":"day26.webp","w":825,"h":1100},{"day":27,"src":"day27.webp","w":825,"h":1100},{"day":28,"src":"day28.webp","w":825,"h":1100},{"day":29,"src":"day29.webp","w":825,"h":1100},{"day":30,"src":"day30.webp","w":825,"h":1100},{"day":30,"src":"day30-tauern-ridges.webp","w":825,"h":1100,"caption":"tauern ridges","alt":"Layered mountain ridges seen from the high Tauern crossing"},{"day":30,"src":"day30-tauern-trail.webp","w":825,"h":1100,"caption":"the high trail","alt":"A narrow trail traversing a steep Austrian mountainside above the valley"},{"day":30,"src":"day30-tauern-bowl.webp","w":825,"h":1100,"caption":"the alpine bowl","alt":"An alpine bowl lit by late-afternoon sun during the Tauern crossing"},{"day":31,"src":"day31.webp","w":825,"h":1100},{"day":32,"src":"day32.webp","w":825,"h":1100},{"day":34,"src":"day34.webp","w":825,"h":1100},{"day":35,"src":"day35.webp","w":825,"h":1100},{"day":36,"src":"day36.webp","w":825,"h":1100},{"day":38,"src":"day38.webp","w":825,"h":1100},{"day":40,"src":"day40.webp","w":825,"h":1100},{"day":42,"src":"day42.webp","w":825,"h":1100},{"day":48,"src":"day48.webp","w":825,"h":1100},{"day":49,"src":"day49.webp","w":825,"h":1100},{"day":53,"src":"day53-aircraft-monument.webp","w":360,"h":480,"caption":"belgrade aircraft monument","alt":"A Yugoslav jet displayed as a roadside monument near Belgrade"},{"day":53,"src":"day53-friendship-monument.webp","w":360,"h":480,"caption":"park of friendship","alt":"The pale stone Eternal Flame monument in Belgrade's Park of Friendship"},{"day":56,"src":"day56.webp","w":825,"h":1100},{"day":63,"src":"day63.webp","w":825,"h":1100},{"day":66,"src":"day66-final-road.webp","w":360,"h":480,"caption":"the final road","alt":"An empty wet Bulgarian road running beneath a broken grey sky"},{"day":66,"src":"day66-bulgarian-hills.webp","w":360,"h":480,"caption":"hills before sofia","alt":"A narrow grass path crossing open hills beneath cloud before Sofia"},{"day":66,"src":"day66-roadside-frame.webp","w":360,"h":480,"caption":"roadside remains","alt":"Two weathered concrete wall frames standing alone in Bulgarian grassland"},{"day":67,"src":"day67.webp","w":825,"h":1100}]};
+  var DATA = {"days":[{"n":1,"t":"And We're Off!","date":"2019-09-24","km":29.1,"min":335,"elev":835,"alt":111,"w":1,"c":"France","x":260,"y":306.9,"s":null,"j":"My navigation immediately took me through beautiful farmland and forest — the first hint of what beauty was yet to be seen.","cum":29.4,"cumElev":835,"cumMin":335,"footDays":1,"countries":1},{"n":2,"t":"After the Storm","date":"2019-09-25","km":35.5,"min":430,"elev":1313,"alt":126,"w":1,"c":"France","x":306.8,"y":294.7,"s":{"slug":"isolation","kind":"song","song":"After the Storm","album":"Isolation","artist":"Kali Uchis","note":"Featuring Tyler, the Creator and Bootsy Collins."},"j":"A quiet, peaceful path ran beside a clear green river. I had imagined motorways; instead I kept finding fields.","cum":65.3,"cumElev":2148,"cumMin":765,"footDays":2,"countries":1},{"n":3,"t":"Reservoirs of Untapped Potential","date":"2019-09-26","km":35.9,"min":421,"elev":1225,"alt":107,"w":1,"c":"France","x":342.3,"y":269.5,"s":null,"j":"I followed the green river for 20 km, then stopped in a church in Château-Thierry before returning to the wooded paths.","cum":101.6,"cumElev":3373,"cumMin":1186,"footDays":3,"countries":1},{"n":4,"t":"On the 5th day, Dan rested","date":"2019-09-27","km":34.6,"min":431,"elev":1621,"alt":116,"w":1,"c":"France","x":381.4,"y":255.3,"s":null,"j":null,"cum":136.6,"cumElev":4994,"cumMin":1617,"footDays":4,"countries":1},{"n":5,"t":"Köln River Run (12 miles)","date":"2019-03-27","km":16.8,"min":97,"elev":93,"alt":116,"w":0,"c":"France","x":381.4,"y":255.3,"s":null,"j":null,"cum":136.6,"cumElev":4994,"cumMin":1617,"footDays":4,"countries":1},{"n":6,"t":"One way to lose them walking blues!","date":"2019-09-29","km":50,"min":512,"elev":1415,"alt":143,"w":1,"c":"France","x":418.7,"y":306.6,"s":{"slug":"graceland","kind":"lyrics","song":"Diamonds on the Soles of Her Shoes","album":"Graceland","artist":"Paul Simon","note":"Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."},"j":null,"cum":187.2,"cumElev":6409,"cumMin":2129,"footDays":5,"countries":1},{"n":7,"t":"Now I'm on my way","date":"2019-09-30","km":37,"min":358,"elev":973,"alt":179,"w":1,"c":"France","x":460.7,"y":327.9,"s":null,"j":"The canal left Châlons-en-Champagne between vineyards and orchards, under a boiling late-September sun.","cum":224.6,"cumElev":7382,"cumMin":2487,"footDays":6,"countries":1},{"n":8,"t":"Getting the Hang of It","date":"2019-10-01","km":35.7,"min":309,"elev":933,"alt":228,"w":1,"c":"France","x":507.7,"y":331.9,"s":null,"j":"A monumental thunderstorm broke over the route into Bar-le-Duc: pouring rain, lightning and a pause beneath the trees.","cum":260.7,"cumElev":8315,"cumMin":2796,"footDays":7,"countries":1},{"n":9,"t":"Lilac!","date":"2019-10-02","km":36,"min":268,"elev":999,"alt":276,"w":1,"c":"France","x":554.5,"y":334.4,"s":{"slug":"high-life","kind":"song","song":"Lilac","album":"High Life","artist":"Brian Eno & Karl Hyde","note":"The Eno · Hyde collaboration from High Life (2014)."},"j":"In the woods the wind went still and the sun came through. For a moment, everything in the air was calm.","cum":297.1,"cumElev":9314,"cumMin":3064,"footDays":8,"countries":1},{"n":10,"t":"Sure is a Hot One!","date":"2019-10-03","km":50,"min":425,"elev":1365,"alt":340,"w":1,"c":"France","x":608.4,"y":354,"s":null,"j":null,"cum":347.6,"cumElev":10679,"cumMin":3489,"footDays":9,"countries":1},{"n":11,"t":"Short Walk to Nancy","date":"2019-10-04","km":12.6,"min":159,"elev":634,"alt":327,"w":1,"c":"France","x":620.8,"y":343.9,"s":null,"j":"The path to Nancy ran through a national park in hard rain, with the trees rising high overhead.","cum":360.4,"cumElev":11313,"cumMin":3648,"footDays":10,"countries":1},{"n":12,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":327,"w":0,"c":"France","x":620.8,"y":343.9,"s":null,"j":null,"cum":360.4,"cumElev":11313,"cumMin":3648,"footDays":10,"countries":1},{"n":13,"t":"The Long Canal","date":"2019-10-06","km":21.1,"min":235,"elev":471,"alt":314,"w":1,"c":"France","x":679.2,"y":344.3,"s":null,"j":null,"cum":381.7,"cumElev":11784,"cumMin":3883,"footDays":11,"countries":1},{"n":14,"t":"Witchi Tai To","date":"2019-10-07","km":56.8,"min":569,"elev":1901,"alt":246,"w":1,"c":"France","x":746.9,"y":341.8,"s":{"slug":"harpers-bizarre-4","kind":"song","song":"Witchi Tai To","album":"Harpers Bizarre 4","artist":"Harpers Bizarre","note":"The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song."},"j":"Cliff faces stood on both sides of the path, blue flies fluttering between them as Witchi Tai To played.","cum":439.2,"cumElev":13685,"cumMin":4452,"footDays":12,"countries":1},{"n":15,"t":"Tapping Into Flow","date":"2019-10-08","km":59.9,"min":573,"elev":1472,"alt":301,"w":1,"c":"France","x":820.2,"y":325.6,"s":null,"j":"Back on the canal out of Saverne, heading towards the Rhine and the German border.","cum":499.7,"cumElev":15157,"cumMin":5025,"footDays":13,"countries":1},{"n":16,"t":"Hey Moon","date":"2019-10-09","km":70.9,"min":986,"elev":3306,"alt":312,"w":1,"c":"France","x":823.5,"y":325.9,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"j":null,"cum":571.4,"cumElev":18463,"cumMin":6011,"footDays":14,"countries":1},{"n":17,"t":"Hey Moon","date":"2019-10-09","km":0,"min":0,"elev":0,"alt":426,"w":1,"c":"Germany","x":901.3,"y":306.3,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"j":null,"cum":571.4,"cumElev":18463,"cumMin":6011,"footDays":15,"countries":2},{"n":18,"t":"Recovery","date":"2019-10-11","km":27.8,"min":325,"elev":1609,"alt":455,"w":1,"c":"Germany","x":987.4,"y":336.6,"s":null,"j":null,"cum":599.5,"cumElev":20072,"cumMin":6336,"footDays":16,"countries":2},{"n":19,"t":"Easy Day Turned Hill Sprints","date":"2019-10-12","km":26.6,"min":232,"elev":1309,"alt":559,"w":1,"c":"Germany","x":1004.5,"y":356.4,"s":null,"j":null,"cum":626.4,"cumElev":21381,"cumMin":6568,"footDays":17,"countries":2},{"n":20,"t":"Scorching","date":"2019-10-13","km":53,"min":558,"elev":1515,"alt":515,"w":1,"c":"Germany","x":1070,"y":377,"s":null,"j":null,"cum":680,"cumElev":22896,"cumMin":7126,"footDays":18,"countries":2},{"n":21,"t":"Slowly Does It","date":"2019-10-14","km":41.3,"min":508,"elev":1453,"alt":506,"w":1,"c":"Germany","x":1146.2,"y":390.9,"s":null,"j":null,"cum":721.8,"cumElev":24349,"cumMin":7634,"footDays":19,"countries":2},{"n":22,"t":"Negative Split","date":"2019-10-15","km":48.8,"min":565,"elev":1354,"alt":568,"w":1,"c":"Germany","x":1196.8,"y":421.4,"s":null,"j":null,"cum":771.1,"cumElev":25703,"cumMin":8199,"footDays":20,"countries":2},{"n":23,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":568,"w":0,"c":"Germany","x":1196.8,"y":421.4,"s":null,"j":null,"cum":771.1,"cumElev":25703,"cumMin":8199,"footDays":20,"countries":2},{"n":24,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":568,"w":0,"c":"Germany","x":1196.8,"y":421.4,"s":null,"j":null,"cum":771.1,"cumElev":25703,"cumMin":8199,"footDays":20,"countries":2},{"n":25,"t":"Another One Goes By","date":"2019-10-18","km":59,"min":513,"elev":2194,"alt":687,"w":1,"c":"Germany","x":1288.6,"y":454.5,"s":{"slug":"another-one-goes-by","kind":"album","song":"Another One Goes By","album":"Another One Goes By","artist":"Mazarin","note":null},"j":"The best running rhythm of the journey so far, with the Austrian mountains finally visible ahead.","cum":830.8,"cumElev":27897,"cumMin":8712,"footDays":21,"countries":2},{"n":26,"t":"One Of Those Days","date":"2019-10-19","km":29.1,"min":319,"elev":1357,"alt":696,"w":1,"c":"Germany","x":1340.6,"y":474.9,"s":null,"j":null,"cum":860.2,"cumElev":29254,"cumMin":9031,"footDays":22,"countries":2},{"n":27,"t":"Arrival","date":"2019-10-20","km":47.8,"min":439,"elev":3468,"alt":1386,"w":1,"c":"Austria","x":1353,"y":499.4,"s":null,"j":"The Austrian border began with a sharp climb and a small waterfall — mountains all around, country three underfoot.","cum":908.5,"cumElev":32722,"cumMin":9470,"footDays":23,"countries":3},{"n":28,"t":"The Predatory Wasp","date":"2019-10-21","km":34.5,"min":365,"elev":1540,"alt":1967,"w":1,"c":"Austria","x":1360.3,"y":515,"s":{"slug":"illinois","kind":"song","song":"The Predatory Wasp of the Palisades Is Out to Get Us!","album":"Illinois","artist":"Sufjan Stevens","note":null},"j":"A cold, crisp morning turned into glaring sun. The route was beginning to rise towards the Ankogel mountains.","cum":943.4,"cumElev":34262,"cumMin":9835,"footDays":24,"countries":3},{"n":29,"t":"Taking Tiger Mountain","date":"2019-10-22","km":39.5,"min":444,"elev":2100,"alt":2063,"w":1,"c":"Austria","x":1391,"y":530,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"GPS split the album title across two days. Same sleeve as “(By Strategy)”."},"j":"A whole new terrain of steep mountain paths, each climb opening another view across Austria.","cum":983.4,"cumElev":36362,"cumMin":10279,"footDays":25,"countries":3},{"n":30,"t":"(By Strategy)","date":"2019-10-23","km":33.5,"min":480,"elev":2895,"alt":1994,"w":1,"c":"Austria","x":1398.9,"y":562.8,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"Second half of the Eno title. Same sleeve as day 29."},"j":"At 2,500 metres it was almost silent: only my breath and footsteps, then a race down the empty ski slopes before dark.","cum":1017.2,"cumElev":39257,"cumMin":10759,"footDays":26,"countries":3},{"n":31,"t":"Business As Usual","date":"2019-10-24","km":44.8,"min":435,"elev":1374,"alt":1815,"w":1,"c":"Austria","x":1434.1,"y":601.9,"s":null,"j":"The sun kept beaming down despite it being almost November; another 50 km had begun to feel methodical.","cum":1062.5,"cumElev":40631,"cumMin":11194,"footDays":27,"countries":3},{"n":32,"t":"I'll Come Running To Tie Your Shoes","date":"2019-10-25","km":40.6,"min":353,"elev":1233,"alt":1159,"w":1,"c":"Austria","x":1474.3,"y":655.2,"s":{"slug":"another-green-world","kind":"lyrics","song":"I'll Come Running","album":"Another Green World","artist":"Brian Eno","note":"Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."},"j":"Lacing my shoes, heading for the trails and covering the next stretch had become ordinary everyday life.","cum":1103.6,"cumElev":41864,"cumMin":11547,"footDays":28,"countries":3},{"n":33,"t":"Katy Song","date":"2019-10-26","km":17.5,"min":229,"elev":577,"alt":908,"w":1,"c":"Austria","x":1496.2,"y":665.3,"s":{"slug":"red-house-painters","kind":"song","song":"Katy Song","album":"Red House Painters","artist":"Red House Painters","note":"The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."},"j":null,"cum":1121.3,"cumElev":42441,"cumMin":11776,"footDays":29,"countries":3},{"n":34,"t":"Sing Me To Sleep","date":"2019-10-27","km":33.6,"min":309,"elev":958,"alt":637,"w":1,"c":"Austria","x":1564.5,"y":682.3,"s":{"slug":"louder-than-bombs","kind":"lyrics","song":"Asleep","album":"Louder Than Bombs","artist":"The Smiths","note":"The GPS title takes its phrase from “Asleep”."},"j":null,"cum":1155.3,"cumElev":43399,"cumMin":12085,"footDays":30,"countries":3},{"n":35,"t":"The Process","date":"2019-10-28","km":31,"min":354,"elev":206,"alt":788,"w":1,"c":"Slovenia","x":1598.4,"y":681.6,"s":null,"j":"I stopped tracking every kilometre so closely and tried to pay more attention to the day-to-day details as they appeared.","cum":1186.6,"cumElev":43605,"cumMin":12439,"footDays":31,"countries":4},{"n":36,"t":"Beyond Me, Beyond You","date":"2019-10-29","km":55,"min":632,"elev":1203,"alt":757,"w":1,"c":"Slovenia","x":1646.2,"y":710.4,"s":{"slug":"a-moon-shaped-pool","kind":"lyrics","song":"Daydreaming","album":"A Moon Shaped Pool","artist":"Radiohead","note":"Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."},"j":"More than 50 km through drizzle, rain, wind chill, flooded paths and fog, ending with a wooded climb in darkness.","cum":1242.2,"cumElev":44808,"cumMin":13071,"footDays":32,"countries":4},{"n":37,"t":"Skipper","date":"2019-10-30","km":50.3,"min":496,"elev":369,"alt":392,"w":1,"c":"Slovenia","x":1699.4,"y":715.9,"s":{"slug":"dsu","kind":"song","song":"Skipper","album":"DSU","artist":"Alex G","note":null},"j":"Another 50 km in rain and low temperatures, followed by a warm arrival in Ptuj.","cum":1293.1,"cumElev":45177,"cumMin":13567,"footDays":33,"countries":4},{"n":38,"t":"Everything That Happens","date":"2019-10-31","km":44.5,"min":475,"elev":252,"alt":255,"w":1,"c":"Croatia","x":1751.9,"y":737.7,"s":{"slug":"everything-that-happens-will-happen-today","kind":"album","song":null,"album":"Everything That Happens Will Happen Today","artist":"David Byrne & Brian Eno","note":null},"j":"Croatia arrived after nearly fifteen consecutive days on the road: first the main road, then the welcome quiet of a canal path.","cum":1338.1,"cumElev":45429,"cumMin":14042,"footDays":34,"countries":5},{"n":39,"t":"Zoo Eyes","date":null,"km":0,"min":0,"elev":0,"alt":255,"w":0,"c":"Croatia","x":1751.9,"y":737.7,"s":{"slug":"designer","kind":"song","song":"Zoo Eyes","album":"Designer","artist":"Aldous Harding","note":null},"j":null,"cum":1338.1,"cumElev":45429,"cumMin":14042,"footDays":34,"countries":5},{"n":40,"t":"Distant Sky","date":"2019-11-02","km":31.3,"min":230,"elev":49,"alt":223,"w":1,"c":"Croatia","x":1832.8,"y":783.3,"s":{"slug":"skeleton-tree","kind":"song","song":"Distant Sky","album":"Skeleton Tree","artist":"Nick Cave & the Bad Seeds","note":"Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."},"j":"Grey roads and monotonous trails headed east across Croatia, with Osijek the next clear point on the horizon.","cum":1369.7,"cumElev":45478,"cumMin":14272,"footDays":35,"countries":5},{"n":41,"t":"Biscuit Town","date":"2019-11-03","km":21.4,"min":236,"elev":56,"alt":205,"w":1,"c":"Croatia","x":1850.6,"y":799.7,"s":{"slug":"the-ooz","kind":"song","song":"Biscuit Town","album":"The OOZ","artist":"King Krule","note":"Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."},"j":"A warm, sunny day across the sparse northern Croatian plain — a startling contrast with the Austrian mountains.","cum":1391.4,"cumElev":45534,"cumMin":14508,"footDays":36,"countries":5},{"n":42,"t":"Sweet Road","date":"2019-11-04","km":41.9,"min":461,"elev":124,"alt":89,"w":1,"c":"Croatia","x":2013.4,"y":866.8,"s":{"slug":"sung-tongs","kind":"song","song":"Sweet Road","album":"Sung Tongs","artist":"Animal Collective","note":null},"j":"Trains bridged the unsafe main-road sections; after the last stop, 40 km of flat farms stretched to Osijek.","cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":43,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":44,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":45,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":46,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":866.8,"s":null,"j":null,"cum":1433.7,"cumElev":45658,"cumMin":14969,"footDays":37,"countries":5},{"n":47,"t":"Eyes Open Wide","date":"2019-11-09","km":25,"min":170,"elev":60,"alt":86,"w":1,"c":"Croatia","x":2042.5,"y":870.3,"s":null,"j":"New shoes, a half-marathon run and, beside the Croatian road, the unexpected sight of a warning sign for mines.","cum":1459,"cumElev":45718,"cumMin":15139,"footDays":38,"countries":5},{"n":48,"t":"In Between Dreams","date":"2019-11-10","km":41.9,"min":413,"elev":137,"alt":83,"w":1,"c":"Serbia","x":2073.1,"y":892.3,"s":{"slug":"in-between-dreams","kind":"album","song":null,"album":"In Between Dreams","artist":"Jack Johnson","note":null},"j":"The last muddy fields of Croatia led to passport control, then river paths and fishing huts on the Serbian side.","cum":1501.4,"cumElev":45855,"cumMin":15552,"footDays":39,"countries":6},{"n":49,"t":"Build A Rocket Boys!","date":"2019-11-11","km":69,"min":770,"elev":148,"alt":83,"w":1,"c":"Serbia","x":2142.5,"y":914.6,"s":{"slug":"build-a-rocket-boys","kind":"album","song":null,"album":"Build a Rocket Boys!","artist":"Elbow","note":null},"j":"Seventy kilometres to Novi Sad, finishing after dark through technical paths, brambles and whatever route the app could find.","cum":1571.2,"cumElev":46003,"cumMin":16322,"footDays":40,"countries":6},{"n":50,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":83,"w":0,"c":"Serbia","x":2142.5,"y":914.6,"s":null,"j":null,"cum":1571.2,"cumElev":46003,"cumMin":16322,"footDays":40,"countries":6},{"n":51,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":83,"w":0,"c":"Serbia","x":2142.5,"y":914.6,"s":null,"j":null,"cum":1571.2,"cumElev":46003,"cumMin":16322,"footDays":40,"countries":6},{"n":52,"t":"Disorder","date":"2019-11-14","km":46.7,"min":382,"elev":250,"alt":90,"w":1,"c":"Serbia","x":2176.7,"y":956,"s":{"slug":"unknown-pleasures","kind":"song","song":"Disorder","album":"Unknown Pleasures","artist":"Joy Division","note":null},"j":null,"cum":1618.4,"cumElev":46253,"cumMin":16704,"footDays":41,"countries":6},{"n":53,"t":"A Quick One While She's Away","date":"2019-11-15","km":34.8,"min":364,"elev":141,"alt":99,"w":1,"c":"Serbia","x":2210.4,"y":981.8,"s":{"slug":"a-quick-one","kind":"song","song":"A Quick One, While He's Away","album":"A Quick One","artist":"The Who","note":"GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."},"j":"Walking into Belgrade in perfect weather, I decided to take my time before the final push towards Sofia.","cum":1653.6,"cumElev":46394,"cumMin":17068,"footDays":42,"countries":6},{"n":54,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":99,"w":0,"c":"Serbia","x":2210.4,"y":981.8,"s":null,"j":null,"cum":1653.6,"cumElev":46394,"cumMin":17068,"footDays":42,"countries":6},{"n":55,"t":"You Can't Live There Forever","date":"2019-11-17","km":7.6,"min":65,"elev":130,"alt":102,"w":1,"c":"Serbia","x":2218.5,"y":989,"s":{"slug":"you-cant-live-there-forever","kind":"album","song":null,"album":"You Can’t Live There Forever","artist":"Summer Years","note":null},"j":null,"cum":1661.3,"cumElev":46524,"cumMin":17133,"footDays":43,"countries":6},{"n":56,"t":"A Postcard to Nina","date":"2019-11-18","km":69.8,"min":488,"elev":1014,"alt":179,"w":1,"c":"Serbia","x":2264,"y":1048.9,"s":{"slug":"night-falls-over-kortedala","kind":"song","song":"A Postcard to Nina","album":"Night Falls Over Kortedala","artist":"Jens Lekman","note":null},"j":null,"cum":1731.8,"cumElev":47538,"cumMin":17621,"footDays":44,"countries":6},{"n":57,"t":"A Plea For Tenderness","date":"2019-11-19","km":37,"min":506,"elev":121,"alt":285,"w":1,"c":"Serbia","x":2293,"y":1067.9,"s":{"slug":"a-plea-for-tenderness","kind":"album","song":null,"album":"A Plea for Tenderness","artist":"Jonathan Richman","note":null},"j":"A farm track, small tractors chugging past and one farmer tipping his hat in acknowledgement.","cum":1769.2,"cumElev":47659,"cumMin":18127,"footDays":45,"countries":6},{"n":58,"t":"I'll Come Too","date":"2019-11-20","km":43.1,"min":324,"elev":485,"alt":479,"w":1,"c":"Serbia","x":2312.7,"y":1104.2,"s":{"slug":"assume-form","kind":"song","song":"I'll Come Too","album":"Assume Form","artist":"James Blake","note":"Assume Form was released January 2019. 13 plays in the collection."},"j":"A pipeline construction made an unexpectedly direct path; the guesthouse welcome was tea, wafers and home-brewed raki.","cum":1812.8,"cumElev":48144,"cumMin":18451,"footDays":46,"countries":6},{"n":59,"t":"Dogmeat","date":"2019-11-21","km":10,"min":134,"elev":38,"alt":481,"w":1,"c":"Serbia","x":2316.4,"y":1116.1,"s":{"slug":"dogmeat","kind":"album","song":null,"album":"Dogmeat","artist":"Kid Carpet","note":null},"j":"A short day with a stray dog for company — named Dogmeat in the journal — following part of the route.","cum":1822.9,"cumElev":48182,"cumMin":18585,"footDays":47,"countries":6},{"n":60,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":481,"w":0,"c":"Serbia","x":2316.4,"y":1116.1,"s":null,"j":null,"cum":1822.9,"cumElev":48182,"cumMin":18585,"footDays":47,"countries":6},{"n":61,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":481,"w":0,"c":"Serbia","x":2316.4,"y":1116.1,"s":null,"j":null,"cum":1822.9,"cumElev":48182,"cumMin":18585,"footDays":47,"countries":6},{"n":62,"t":"Walk to Niska","date":"2019-11-24","km":10.3,"min":106,"elev":70,"alt":583,"w":1,"c":"Serbia","x":2383.1,"y":1199.9,"s":null,"j":null,"cum":1833.4,"cumElev":48252,"cumMin":18691,"footDays":48,"countries":6},{"n":63,"t":"The Two Towers","date":"2019-11-25","km":52.3,"min":474,"elev":984,"alt":1201,"w":1,"c":"Serbia","x":2440.3,"y":1196.8,"s":null,"j":null,"cum":1886.2,"cumElev":49236,"cumMin":19165,"footDays":49,"countries":6},{"n":64,"t":"Banshee Beat","date":"2019-11-26","km":26,"min":282,"elev":117,"alt":1181,"w":1,"c":"Serbia","x":2468.1,"y":1219.7,"s":{"slug":"feels","kind":"song","song":"Banshee Beat","album":"Feels","artist":"Animal Collective","note":null},"j":null,"cum":1912.5,"cumElev":49353,"cumMin":19447,"footDays":50,"countries":6},{"n":65,"t":"Infant Dressing Table","date":"2019-11-27","km":21.2,"min":275,"elev":419,"alt":1007,"w":1,"c":"Bulgaria","x":2485.4,"y":1240.3,"s":{"slug":"here-comes-the-indian","kind":"song","song":"Infant Dressing Table","album":"Here Comes the Indian","artist":"Animal Collective","note":"Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."},"j":"Country seven. Crossing into Bulgaria made the end feel suddenly close: Sofia was one more day away.","cum":1934,"cumElev":49772,"cumMin":19722,"footDays":51,"countries":7},{"n":66,"t":"Allelujah! Don't Bend! Ascend!","date":"2019-11-28","km":47.5,"min":556,"elev":182,"alt":923,"w":1,"c":"Bulgaria","x":2528.8,"y":1277.2,"s":{"slug":"allelujah-dont-bend-ascend","kind":"album","song":null,"album":"’ALLELUJAH! DON’T BEND! ASCEND!","artist":"Godspeed You! Black Emperor","note":null},"j":"Sofia, at last. The arrival closed this part of the road and opened a few quiet days to take it all in.","cum":1982,"cumElev":49954,"cumMin":20278,"footDays":52,"countries":7},{"n":67,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":923,"w":0,"c":"Bulgaria","x":2528.8,"y":1277.2,"s":null,"j":null,"cum":1982,"cumElev":49954,"cumMin":20278,"footDays":52,"countries":7}],"colors":{"France":"#2EA3DC","Germany":"#24709F","Austria":"#7D6BB0","Slovenia":"#12A19A","Croatia":"#1FA45A","Serbia":"#EFC319","Bulgaria":"#E97E18"},"total":1982,"stats":{"days":52,"ascent":49954,"minutes":20278,"countries":7},"scenes":[{"t":"start","len":620,"at":0},{"t":"enter","country":"France","len":760,"at":620},{"t":"walk","day":1,"len":262,"at":1380},{"t":"walk","day":2,"len":320,"at":1642},{"t":"walk","day":3,"len":323,"at":1962},{"t":"walk","day":4,"len":311,"at":2285},{"t":"walk","day":5,"len":36,"at":2596},{"t":"walk","day":6,"len":450,"at":2632},{"t":"walk","day":7,"len":333,"at":3082},{"t":"walk","day":8,"len":321,"at":3415},{"t":"walk","day":9,"len":324,"at":3736},{"t":"walk","day":10,"len":450,"at":4060},{"t":"walk","day":11,"len":180,"at":4510},{"t":"walk","day":12,"len":36,"at":4690},{"t":"walk","day":13,"len":190,"at":4726},{"t":"walk","day":14,"len":511,"at":4916},{"t":"walk","day":15,"len":539,"at":5427},{"t":"walk","day":16,"len":638,"at":5966},{"t":"enter","country":"Germany","len":760,"at":6604},{"t":"walk","day":17,"len":270,"at":7364},{"t":"walk","day":18,"len":250,"at":7634},{"t":"walk","day":19,"len":239,"at":7884},{"t":"walk","day":20,"len":477,"at":8123},{"t":"walk","day":21,"len":372,"at":8600},{"t":"walk","day":22,"len":439,"at":8972},{"t":"walk","day":23,"len":36,"at":9411},{"t":"walk","day":24,"len":36,"at":9447},{"t":"walk","day":25,"len":531,"at":9483},{"t":"walk","day":26,"len":262,"at":10014},{"t":"enter","country":"Austria","len":760,"at":10276},{"t":"walk","day":27,"len":430,"at":11036},{"t":"walk","day":28,"len":311,"at":11466},{"t":"walk","day":29,"len":356,"at":11777},{"t":"walk","day":30,"len":302,"at":12133},{"t":"beat","day":30,"len":720,"at":12435},{"t":"walk","day":31,"len":403,"at":13155},{"t":"walk","day":32,"len":365,"at":13558},{"t":"beat","day":32,"len":720,"at":13923},{"t":"walk","day":33,"len":180,"at":14643},{"t":"walk","day":34,"len":302,"at":14823},{"t":"enter","country":"Slovenia","len":760,"at":15125},{"t":"walk","day":35,"len":279,"at":15885},{"t":"walk","day":36,"len":495,"at":16164},{"t":"beat","day":36,"len":720,"at":16659},{"t":"walk","day":37,"len":453,"at":17379},{"t":"enter","country":"Croatia","len":760,"at":17832},{"t":"walk","day":38,"len":401,"at":18592},{"t":"walk","day":39,"len":36,"at":18993},{"t":"walk","day":40,"len":282,"at":19029},{"t":"walk","day":41,"len":193,"at":19311},{"t":"walk","day":42,"len":377,"at":19504},{"t":"beat","day":42,"len":720,"at":19881},{"t":"walk","day":43,"len":36,"at":20601},{"t":"walk","day":44,"len":36,"at":20637},{"t":"walk","day":45,"len":36,"at":20673},{"t":"walk","day":46,"len":36,"at":20709},{"t":"walk","day":47,"len":225,"at":20745},{"t":"enter","country":"Serbia","len":760,"at":20970},{"t":"walk","day":48,"len":377,"at":21730},{"t":"walk","day":49,"len":621,"at":22107},{"t":"beat","day":49,"len":720,"at":22728},{"t":"walk","day":50,"len":36,"at":23448},{"t":"walk","day":51,"len":36,"at":23484},{"t":"walk","day":52,"len":420,"at":23520},{"t":"walk","day":53,"len":313,"at":23940},{"t":"walk","day":54,"len":36,"at":24253},{"t":"walk","day":55,"len":180,"at":24289},{"t":"walk","day":56,"len":628,"at":24469},{"t":"walk","day":57,"len":333,"at":25097},{"t":"walk","day":58,"len":388,"at":25430},{"t":"walk","day":59,"len":180,"at":25818},{"t":"walk","day":60,"len":36,"at":25998},{"t":"walk","day":61,"len":36,"at":26034},{"t":"walk","day":62,"len":180,"at":26070},{"t":"walk","day":63,"len":471,"at":26250},{"t":"walk","day":64,"len":234,"at":26721},{"t":"enter","country":"Bulgaria","len":760,"at":26955},{"t":"walk","day":65,"len":191,"at":27715},{"t":"beat","day":65,"len":720,"at":27906},{"t":"walk","day":66,"len":428,"at":28626},{"t":"walk","day":67,"len":36,"at":29054},{"t":"end","len":900,"at":29090}],"timeline":29990,"beats":{"30":{"label":"the high point","quote":"Today's seen me climb over the Austrian Alps to a peak height of 2500m. The climb involved a variety of terrains spanning from walking up streams, technical scrambles and narrow ridge trails."},"32":{"label":"the routine","quote":"It's occurred to me that this is now my everyday life. Today, like yesterday, I've gone through the motions of my morning routine, lacing up my shoes, heading for the trails."},"36":{"label":"rain over Slovenia","quote":"After navigating the many hills, the busy roadsides and the waterlogged footpaths, I arrived at what I thought was a short walk — only to find another steep wooded climb in the darkness."},"42":{"label":"the safer line","quote":"I caught a few trains to avoid travelling on main roads. Jumping off the train saw 40 km ahead of me, which proved to be a linear eight-hour walk through the flat Croatian farms."},"49":{"label":"the furthest day","quote":"Today I have set a new personal record, not for speed but instead for the furthest I've ever travelled on foot. My ankles feel shot but surprisingly the rest of my body feels full of vigor."},"65":{"label":"country seven","quote":"Having crossed the border, something seems to have clicked and it has occurred to me how close I am to achieving what I set out to do. Tomorrow I will be arriving in Sofia."}},"vb":[2789,1572],"start":[231.1,291.7],"startAlt":93,"walkPaths":{"1":[{"x":231.1,"y":291.7,"alt":93},{"x":260,"y":306.9,"alt":111}],"2":[{"x":260,"y":306.9,"alt":111},{"x":266.7,"y":308.1,"alt":116},{"x":306.8,"y":294.7,"alt":126}],"3":[{"x":306.8,"y":294.7,"alt":126},{"x":342.3,"y":269.5,"alt":107}],"4":[{"x":342.3,"y":269.5,"alt":107},{"x":342.2,"y":269.4,"alt":107},{"x":381.4,"y":255.3,"alt":116}],"5":[{"x":381.4,"y":255.3,"alt":116},{"x":381.4,"y":255.3,"alt":116}],"6":[{"x":381.4,"y":255.3,"alt":116},{"x":385,"y":255.4,"alt":118},{"x":418.7,"y":306.6,"alt":143}],"7":[{"x":418.7,"y":306.6,"alt":143},{"x":421.2,"y":308.1,"alt":144},{"x":436,"y":326.7,"alt":156},{"x":460.7,"y":327.9,"alt":179}],"8":[{"x":460.7,"y":327.9,"alt":179},{"x":460.9,"y":327.9,"alt":179},{"x":507.7,"y":331.9,"alt":228}],"9":[{"x":507.7,"y":331.9,"alt":228},{"x":508.3,"y":333.7,"alt":231},{"x":522.8,"y":342.9,"alt":259},{"x":554.5,"y":334.4,"alt":276}],"10":[{"x":554.5,"y":334.4,"alt":276},{"x":554.3,"y":333.1,"alt":274},{"x":570.1,"y":346.2,"alt":304},{"x":608.4,"y":354,"alt":340}],"11":[{"x":608.4,"y":354,"alt":340},{"x":620.8,"y":343.9,"alt":327}],"12":[{"x":620.8,"y":343.9,"alt":327},{"x":620.8,"y":343.9,"alt":327}],"13":[{"x":620.8,"y":343.9,"alt":327},{"x":623.9,"y":346.8,"alt":331},{"x":651.3,"y":350.8,"alt":336},{"x":679.2,"y":344.3,"alt":314}],"14":[{"x":679.2,"y":344.3,"alt":314},{"x":679.4,"y":344.2,"alt":314},{"x":746.9,"y":341.8,"alt":246}],"15":[{"x":746.9,"y":341.8,"alt":246},{"x":752.1,"y":338.9,"alt":238},{"x":820.2,"y":325.6,"alt":301}],"16":[{"x":820.2,"y":325.6,"alt":301},{"x":823.5,"y":325.9,"alt":312}],"17":[{"x":823.5,"y":325.9,"alt":312},{"x":868.4,"y":299.1,"alt":391},{"x":901.3,"y":306.3,"alt":426}],"18":[{"x":901.3,"y":306.3,"alt":426},{"x":954.7,"y":325.6,"alt":408},{"x":987.4,"y":336.6,"alt":455}],"19":[{"x":987.4,"y":336.6,"alt":455},{"x":987.3,"y":336.5,"alt":455},{"x":986.6,"y":345.1,"alt":505},{"x":1004.5,"y":356.4,"alt":559}],"20":[{"x":1004.5,"y":356.4,"alt":559},{"x":1004.4,"y":356.7,"alt":560},{"x":1070,"y":377,"alt":515}],"21":[{"x":1070,"y":377,"alt":515},{"x":1090.9,"y":380.4,"alt":513},{"x":1146.2,"y":390.9,"alt":506}],"22":[{"x":1146.2,"y":390.9,"alt":506},{"x":1157.8,"y":409.3,"alt":534},{"x":1196.8,"y":421.4,"alt":568}],"23":[{"x":1196.8,"y":421.4,"alt":568},{"x":1196.8,"y":421.4,"alt":568}],"24":[{"x":1196.8,"y":421.4,"alt":568},{"x":1196.8,"y":421.4,"alt":568}],"25":[{"x":1196.8,"y":421.4,"alt":568},{"x":1221.9,"y":426.3,"alt":587},{"x":1280,"y":442.1,"alt":644},{"x":1288.6,"y":454.5,"alt":687}],"26":[{"x":1288.6,"y":454.5,"alt":687},{"x":1288.5,"y":454.7,"alt":688},{"x":1307.4,"y":469.4,"alt":722},{"x":1340.6,"y":474.9,"alt":696}],"27":[{"x":1340.6,"y":474.9,"alt":696},{"x":1340.2,"y":475,"alt":697},{"x":1353,"y":499.4,"alt":1386}],"28":[{"x":1353,"y":499.4,"alt":1386},{"x":1353.2,"y":499.5,"alt":1390},{"x":1361.5,"y":501.9,"alt":1485},{"x":1357.7,"y":512.7,"alt":1885},{"x":1360.3,"y":515,"alt":1967}],"29":[{"x":1360.3,"y":515,"alt":1967},{"x":1360.4,"y":515,"alt":1968},{"x":1387.4,"y":516.3,"alt":1970},{"x":1391,"y":530,"alt":2063}],"30":[{"x":1391,"y":530,"alt":2063},{"x":1398.9,"y":562.8,"alt":1994}],"31":[{"x":1398.9,"y":562.8,"alt":1994},{"x":1399.1,"y":563,"alt":1993},{"x":1434.1,"y":601.9,"alt":1815}],"32":[{"x":1434.1,"y":601.9,"alt":1815},{"x":1474.3,"y":655.2,"alt":1159}],"33":[{"x":1474.3,"y":655.2,"alt":1159},{"x":1474.6,"y":656.1,"alt":1150},{"x":1496.2,"y":665.3,"alt":908}],"34":[{"x":1496.2,"y":665.3,"alt":908},{"x":1525.8,"y":676.6,"alt":577},{"x":1564.5,"y":682.3,"alt":637}],"35":[{"x":1564.5,"y":682.3,"alt":637},{"x":1564.5,"y":682.5,"alt":637},{"x":1598.4,"y":681.6,"alt":788}],"36":[{"x":1598.4,"y":681.6,"alt":788},{"x":1646.2,"y":710.4,"alt":757}],"37":[{"x":1646.2,"y":710.4,"alt":757},{"x":1646.1,"y":710.2,"alt":758},{"x":1699.4,"y":715.9,"alt":392}],"38":[{"x":1699.4,"y":715.9,"alt":392},{"x":1751.9,"y":737.7,"alt":255}],"39":[{"x":1751.9,"y":737.7,"alt":255},{"x":1751.9,"y":737.7,"alt":255}],"40":[{"x":1751.9,"y":737.7,"alt":255},{"x":1804.9,"y":762.2,"alt":254},{"x":1832.8,"y":783.3,"alt":223}],"41":[{"x":1832.8,"y":783.3,"alt":223},{"x":1832.8,"y":783.5,"alt":223},{"x":1850.6,"y":799.7,"alt":205}],"42":[{"x":1850.6,"y":799.7,"alt":205},{"x":1969.4,"y":866.7,"alt":129},{"x":2013.4,"y":866.8,"alt":89}],"43":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"44":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"45":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"46":[{"x":2013.4,"y":866.8,"alt":89},{"x":2013.4,"y":866.8,"alt":89}],"47":[{"x":2013.4,"y":866.8,"alt":89},{"x":2042.5,"y":870.3,"alt":86}],"48":[{"x":2042.5,"y":870.3,"alt":86},{"x":2043.3,"y":870.8,"alt":86},{"x":2068.7,"y":873.4,"alt":84},{"x":2073.1,"y":892.3,"alt":83}],"49":[{"x":2073.1,"y":892.3,"alt":83},{"x":2073.2,"y":892.9,"alt":83},{"x":2104,"y":904.8,"alt":82},{"x":2120.3,"y":899.4,"alt":82},{"x":2142.5,"y":914.6,"alt":83}],"50":[{"x":2142.5,"y":914.6,"alt":83},{"x":2142.5,"y":914.6,"alt":83}],"51":[{"x":2142.5,"y":914.6,"alt":83},{"x":2142.5,"y":914.6,"alt":83}],"52":[{"x":2142.5,"y":914.6,"alt":83},{"x":2165.2,"y":929.5,"alt":86},{"x":2176.7,"y":956,"alt":90}],"53":[{"x":2176.7,"y":956,"alt":90},{"x":2178.6,"y":955.6,"alt":90},{"x":2210.4,"y":981.8,"alt":99}],"54":[{"x":2210.4,"y":981.8,"alt":99},{"x":2210.4,"y":981.8,"alt":99}],"55":[{"x":2210.4,"y":981.8,"alt":99},{"x":2218.5,"y":989,"alt":102}],"56":[{"x":2218.5,"y":989,"alt":102},{"x":2218.5,"y":989.3,"alt":102},{"x":2239.2,"y":1035.1,"alt":119},{"x":2264,"y":1048.9,"alt":179}],"57":[{"x":2264,"y":1048.9,"alt":179},{"x":2286,"y":1052.4,"alt":215},{"x":2293,"y":1067.9,"alt":285}],"58":[{"x":2293,"y":1067.9,"alt":285},{"x":2312.7,"y":1104.2,"alt":479}],"59":[{"x":2312.7,"y":1104.2,"alt":479},{"x":2311.8,"y":1105.5,"alt":475},{"x":2316.4,"y":1116.1,"alt":481}],"60":[{"x":2316.4,"y":1116.1,"alt":481},{"x":2316.4,"y":1116.1,"alt":481}],"61":[{"x":2316.4,"y":1116.1,"alt":481},{"x":2316.4,"y":1116.1,"alt":481}],"62":[{"x":2316.4,"y":1116.1,"alt":481},{"x":2370.7,"y":1202.3,"alt":414},{"x":2383.1,"y":1199.9,"alt":583}],"63":[{"x":2383.1,"y":1199.9,"alt":583},{"x":2382.9,"y":1199.9,"alt":580},{"x":2440.3,"y":1196.8,"alt":1201}],"64":[{"x":2440.3,"y":1196.8,"alt":1201},{"x":2447.1,"y":1194.8,"alt":1270},{"x":2468.1,"y":1219.7,"alt":1181}],"65":[{"x":2468.1,"y":1219.7,"alt":1181},{"x":2468.4,"y":1220.2,"alt":1176},{"x":2485.4,"y":1240.3,"alt":1007}],"66":[{"x":2485.4,"y":1240.3,"alt":1007},{"x":2486.1,"y":1240.9,"alt":1003},{"x":2513.4,"y":1256.4,"alt":933},{"x":2528.8,"y":1277.2,"alt":923}],"67":[{"x":2528.8,"y":1277.2,"alt":923},{"x":2528.8,"y":1277.2,"alt":923}]},"photos":[{"day":1,"src":"day01.webp","w":620,"h":1100},{"day":2,"src":"day02.webp","w":1100,"h":825},{"day":3,"src":"day03-vineyards.webp","w":480,"h":360,"caption":"champagne vineyards","alt":"Vineyards and green fields beneath a grey Champagne sky"},{"day":3,"src":"day03-road.webp","w":360,"h":480,"caption":"the road east","alt":"A long empty road crossing farmland east of Château-Thierry"},{"day":11,"src":"day11.webp","w":825,"h":1100},{"day":14,"src":"day14.webp","w":825,"h":1100},{"day":20,"src":"day20.webp","w":825,"h":1100},{"day":23,"src":"day23.webp","w":825,"h":1100},{"day":25,"src":"day25.webp","w":825,"h":1100},{"day":26,"src":"day26.webp","w":825,"h":1100},{"day":27,"src":"day27.webp","w":825,"h":1100},{"day":28,"src":"day28.webp","w":825,"h":1100},{"day":29,"src":"day29.webp","w":825,"h":1100},{"day":30,"src":"day30.webp","w":825,"h":1100},{"day":30,"src":"day30-tauern-ridges.webp","w":825,"h":1100,"caption":"tauern ridges","alt":"Layered mountain ridges seen from the high Tauern crossing"},{"day":30,"src":"day30-tauern-trail.webp","w":825,"h":1100,"caption":"the high trail","alt":"A narrow trail traversing a steep Austrian mountainside above the valley"},{"day":30,"src":"day30-tauern-bowl.webp","w":825,"h":1100,"caption":"the alpine bowl","alt":"An alpine bowl lit by late-afternoon sun during the Tauern crossing"},{"day":31,"src":"day31.webp","w":825,"h":1100},{"day":32,"src":"day32.webp","w":825,"h":1100},{"day":34,"src":"day34.webp","w":825,"h":1100},{"day":35,"src":"day35.webp","w":825,"h":1100},{"day":36,"src":"day36.webp","w":825,"h":1100},{"day":38,"src":"day38.webp","w":825,"h":1100},{"day":40,"src":"day40.webp","w":825,"h":1100},{"day":42,"src":"day42.webp","w":825,"h":1100},{"day":48,"src":"day48.webp","w":825,"h":1100},{"day":49,"src":"day49.webp","w":825,"h":1100},{"day":53,"src":"day53-aircraft-monument.webp","w":360,"h":480,"caption":"belgrade aircraft monument","alt":"A Yugoslav jet displayed as a roadside monument near Belgrade"},{"day":53,"src":"day53-friendship-monument.webp","w":360,"h":480,"caption":"park of friendship","alt":"The pale stone Eternal Flame monument in Belgrade's Park of Friendship"},{"day":56,"src":"day56.webp","w":825,"h":1100},{"day":63,"src":"day63.webp","w":825,"h":1100},{"day":66,"src":"day66-final-road.webp","w":360,"h":480,"caption":"the final road","alt":"An empty wet Bulgarian road running beneath a broken grey sky"},{"day":66,"src":"day66-bulgarian-hills.webp","w":360,"h":480,"caption":"hills before sofia","alt":"A narrow grass path crossing open hills beneath cloud before Sofia"},{"day":66,"src":"day66-roadside-frame.webp","w":360,"h":480,"caption":"roadside remains","alt":"Two weathered concrete wall frames standing alone in Bulgarian grassland"},{"day":67,"src":"day67.webp","w":825,"h":1100}],"places":[{"name":"Paris","day":0,"country":"France","pass":0},{"name":"Reims","day":4,"country":"France","pass":0},{"name":"Nancy","day":11,"country":"France","pass":0},{"name":"Saverne","day":14,"country":"France","pass":0},{"name":"Pforzheim","day":17,"country":"Germany","pass":0},{"name":"Stuttgart","day":18,"country":"Germany","pass":0},{"name":"Augsburg","day":21,"country":"Germany","pass":0},{"name":"Munich","day":22,"country":"Germany","pass":0},{"name":"Zell am See","day":28,"country":"Austria","pass":0},{"name":"the Tauern","day":29,"country":"Austria","pass":1},{"name":"Klagenfurt","day":33,"country":"Austria","pass":0},{"name":"Ptuj","day":37,"country":"Slovenia","pass":0},{"name":"Osijek","day":42,"country":"Croatia","pass":0},{"name":"Novi Sad","day":49,"country":"Serbia","pass":0},{"name":"Belgrade","day":53,"country":"Serbia","pass":0},{"name":"Niš","day":62,"country":"Serbia","pass":0},{"name":"Sofia","day":66,"country":"Bulgaria","pass":0}],"albums":[{"day":2,"title":"After the Storm","artist":"Kali Uchis","album":"Isolation","slug":"isolation","country":"France"},{"day":6,"title":"One way to lose them walking blues!","artist":"Paul Simon","album":"Graceland","slug":"graceland","country":"France"},{"day":9,"title":"Lilac!","artist":"Brian Eno & Karl Hyde","album":"High Life","slug":"high-life","country":"France"},{"day":14,"title":"Witchi Tai To","artist":"Harpers Bizarre","album":"Harpers Bizarre 4","slug":"harpers-bizarre-4","country":"France"},{"day":16,"title":"Hey Moon","artist":"John Maus","album":"We Must Become the Pitiless Censors of Ourselves","slug":"we-must-become-the-pitiless-censors-of-ourselves","country":"France"},{"day":25,"title":"Another One Goes By","artist":"Mazarin","album":"Another One Goes By","slug":"another-one-goes-by","country":"Germany"},{"day":28,"title":"The Predatory Wasp","artist":"Sufjan Stevens","album":"Illinois","slug":"illinois","country":"Austria"},{"day":29,"title":"Taking Tiger Mountain","artist":"Brian Eno","album":"Taking Tiger Mountain (By Strategy)","slug":"taking-tiger-mountain-by-strategy","country":"Austria"},{"day":32,"title":"I'll Come Running To Tie Your Shoes","artist":"Brian Eno","album":"Another Green World","slug":"another-green-world","country":"Austria"},{"day":33,"title":"Katy Song","artist":"Red House Painters","album":"Red House Painters","slug":"red-house-painters","country":"Austria"},{"day":34,"title":"Sing Me To Sleep","artist":"The Smiths","album":"Louder Than Bombs","slug":"louder-than-bombs","country":"Austria"},{"day":36,"title":"Beyond Me, Beyond You","artist":"Radiohead","album":"A Moon Shaped Pool","slug":"a-moon-shaped-pool","country":"Slovenia"},{"day":37,"title":"Skipper","artist":"Alex G","album":"DSU","slug":"dsu","country":"Slovenia"},{"day":38,"title":"Everything That Happens","artist":"David Byrne & Brian Eno","album":"Everything That Happens Will Happen Today","slug":"everything-that-happens-will-happen-today","country":"Croatia"},{"day":39,"title":"Zoo Eyes","artist":"Aldous Harding","album":"Designer","slug":"designer","country":"Croatia"},{"day":40,"title":"Distant Sky","artist":"Nick Cave & the Bad Seeds","album":"Skeleton Tree","slug":"skeleton-tree","country":"Croatia"},{"day":41,"title":"Biscuit Town","artist":"King Krule","album":"The OOZ","slug":"the-ooz","country":"Croatia"},{"day":42,"title":"Sweet Road","artist":"Animal Collective","album":"Sung Tongs","slug":"sung-tongs","country":"Croatia"},{"day":48,"title":"In Between Dreams","artist":"Jack Johnson","album":"In Between Dreams","slug":"in-between-dreams","country":"Serbia"},{"day":49,"title":"Build A Rocket Boys!","artist":"Elbow","album":"Build a Rocket Boys!","slug":"build-a-rocket-boys","country":"Serbia"},{"day":52,"title":"Disorder","artist":"Joy Division","album":"Unknown Pleasures","slug":"unknown-pleasures","country":"Serbia"},{"day":53,"title":"A Quick One While She's Away","artist":"The Who","album":"A Quick One","slug":"a-quick-one","country":"Serbia"},{"day":55,"title":"You Can't Live There Forever","artist":"Summer Years","album":"You Can’t Live There Forever","slug":"you-cant-live-there-forever","country":"Serbia"},{"day":56,"title":"A Postcard to Nina","artist":"Jens Lekman","album":"Night Falls Over Kortedala","slug":"night-falls-over-kortedala","country":"Serbia"},{"day":57,"title":"A Plea For Tenderness","artist":"Jonathan Richman","album":"A Plea for Tenderness","slug":"a-plea-for-tenderness","country":"Serbia"},{"day":58,"title":"I'll Come Too","artist":"James Blake","album":"Assume Form","slug":"assume-form","country":"Serbia"},{"day":59,"title":"Dogmeat","artist":"Kid Carpet","album":"Dogmeat","slug":"dogmeat","country":"Serbia"},{"day":64,"title":"Banshee Beat","artist":"Animal Collective","album":"Feels","slug":"feels","country":"Serbia"},{"day":65,"title":"Infant Dressing Table","artist":"Animal Collective","album":"Here Comes the Indian","slug":"here-comes-the-indian","country":"Bulgaria"},{"day":66,"title":"Allelujah! Don't Bend! Ascend!","artist":"Godspeed You! Black Emperor","album":"’ALLELUJAH! DON’T BEND! ASCEND!","slug":"allelujah-dont-bend-ascend","country":"Bulgaria"}]};
   var days = DATA.days;
   var scenes = DATA.scenes;
   var byN = {}; days.forEach(function(d){ byN[d.n] = d; });
@@ -959,6 +1359,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   var experience = document.getElementById("experience");
   var stage = document.getElementById("stage");
+  var archiveWall = document.getElementById("archive-wall");
   var atlas = document.getElementById("atlas");
   var camera = document.getElementById("camera");
   var walkerG = document.getElementById("walker-g");
@@ -990,18 +1391,28 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var photoBox = document.getElementById("photo");
   var photoImg = document.getElementById("photo-img");
   var photoCap = document.getElementById("photo-cap");
+  var countryMenu = document.querySelector(".country-menu");
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
+  var journeyProgress = document.getElementById("journey-progress");
+  var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
+  var collector = document.getElementById("collector");
+  var collectorPlaceCount = document.getElementById("collector-place-count");
+  var collectorPlaceList = document.getElementById("collector-place-list");
+  var collectorAlbumCount = document.getElementById("collector-album-count");
+  var collectorAlbumList = document.getElementById("collector-album-list");
   var currentWalker = null;
   // experience height drives the journey
   var VH = innerHeight || 900;
   var experienceTop = experience.offsetTop;
   experience.style.height = (DATA.timeline + VH) + "px";
+  var PLAY_END = archiveWall ? archiveWall.offsetTop : experienceTop + DATA.timeline;
   addEventListener("resize", function(){
     VH = innerHeight || VH;
     experienceTop = experience.offsetTop;
     experience.style.height = (DATA.timeline + VH) + "px";
+    PLAY_END = archiveWall ? archiveWall.offsetTop : experienceTop + DATA.timeline;
     scrollDirty = true;
     requestFrame();
   });
@@ -1151,9 +1562,17 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function showCountry(country){
     if (!country || country === lastCountryShown) return;
     lastCountryShown = country;
-    navLinks.forEach(function(a){
-      var isCurrent = a.getAttribute("href") === "#" + country.toLowerCase();
+    var currentIndex = navLinks.findIndex(function(a){ return a.getAttribute("href") === "#" + country.toLowerCase(); });
+    navLinks.forEach(function(a, index){
+      var isCurrent = index === currentIndex;
+      var isPassed = index < currentIndex;
       a.classList.toggle("current", isCurrent);
+      a.classList.toggle("passed", isPassed);
+      a.classList.toggle("future", index > currentIndex);
+      if (a.parentElement) {
+        a.parentElement.classList.toggle("current", isCurrent);
+        a.parentElement.classList.toggle("passed", isPassed);
+      }
       if (isCurrent && countryNav && innerWidth <= 900) {
         var navRect = countryNav.getBoundingClientRect();
         var linkRect = a.getBoundingClientRect();
@@ -1181,6 +1600,11 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
     setText(hudHours, (moving / 60).toFixed(1));
     if (hudProgress) hudProgress.style.width = Math.max(0, Math.min(100, km / DATA.total * 100)).toFixed(2) + "%";
+    if (journeyProgressFill) journeyProgressFill.style.transform = "scaleX(" + Math.max(0, Math.min(1, km / DATA.total)).toFixed(4) + ")";
+    if (journeyProgress) {
+      journeyProgress.setAttribute("aria-valuenow", String(Math.round(km)));
+      journeyProgress.setAttribute("aria-valuetext", Math.round(km).toLocaleString("en-GB") + " of " + DATA.total.toLocaleString("en-GB") + " kilometres");
+    }
   }
 
   // --------------------------------------------------------------- daycard
@@ -1207,6 +1631,24 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
     dcJournal.textContent = d.j || "";
+  }
+
+  var lastCollectionDay = -1;
+  function updateCollections(scene, wp, inJourney){
+    if (collector) collector.classList.toggle("on", inJourney);
+    var dayN = scene.t === "start" ? 0 : wp.day.n;
+    if (dayN === lastCollectionDay) return;
+    lastCollectionDay = dayN;
+    var places = (DATA.places || []).filter(function(place){ return place.day <= dayN; });
+    var albums = (DATA.albums || []).filter(function(album){ return album.day <= dayN; });
+    setText(collectorPlaceCount, places.length + " / " + (DATA.places || []).length);
+    setText(collectorAlbumCount, albums.length + " / " + (DATA.albums || []).length);
+    if (collectorPlaceList) collectorPlaceList.innerHTML = places.map(function(place, index){
+      return '<li class="collector-place' + (index === places.length - 1 ? ' latest' : '') + (place.pass ? ' pass' : '') + '" style="--w:' + DATA.colors[place.country] + '"><span>' + esc(place.name) + '</span></li>';
+    }).join("");
+    if (collectorAlbumList) collectorAlbumList.innerHTML = albums.slice(-4).map(function(album){
+      return '<li class="collector-album"><img src="covers/' + album.slug + '-thumb.webp" alt="" width="34" height="34"><p><b>' + esc(album.artist) + '</b><span>' + esc(album.album) + '</span></p></li>';
+    }).join("");
   }
 
   // ---------------------------------------------------------------- photos
@@ -1328,6 +1770,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     updateStats(scene, wp);
     updateTrail(scene, wp, inJourney);
     showCountry(scene.t === "enter" ? scene.country : wp.day.c);
+    updateCollections(scene, wp, inJourney);
 
     // day content
     if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showDay(wp.day); showPhoto(wp.day, wp.t); }
@@ -1358,7 +1801,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       fade(quote, String(Math.max(0, op)));
     } else fade(quote, "0");
 
-    // Let the route itself be the ending: no separate closing card.
+    // The map stays visible through the finish, then hands off to the data wall.
     if (scene.t === "end") {
       daycard.classList.remove("on");
       photoBox.classList.remove("on"); photoShown = null;
@@ -1388,10 +1831,10 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     try {
       var elapsed = lastFrameTime ? Math.min(50, now - lastFrameTime) : 16.7;
       if (playing) {
-        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, experienceTop + DATA.timeline);
+        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, PLAY_END);
         scrollTo(0, next);
         scrollDirty = true;
-        if (next >= experienceTop + DATA.timeline - 2) stopWalk();
+        if (next >= PLAY_END - 2) stopWalk();
       }
       if (scrollDirty) {
         readScroll();
@@ -1510,7 +1953,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!spot.open) { stopWalk(); spot.showModal(); }
   }
   document.addEventListener("click", function(e){
-    var b = e.target.closest(".dsleeve");
+    var b = e.target.closest(".dsleeve, .album-open");
     if (!b) return;
     var n = +b.getAttribute("data-day");
     var i = matched.findIndex(function(d){ return d.n === n; });

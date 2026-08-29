@@ -883,6 +883,59 @@ for (const d of jsDays) {
   d.footDays = footDays;
   d.countries = countriesSeen.size;
 }
+const countryDistances = data.countries.map((country) => ({
+  name: country.name,
+  color: country.color,
+  km: jsDays
+    .filter((day) => day.c === country.name && day.w)
+    .reduce((sum, day) => sum + day.km * distanceScale, 0),
+}));
+let countryDistanceAt = 0;
+const routeGradient = countryDistances
+  .map((country) => {
+    const from = (countryDistanceAt / data.facts.km) * 100;
+    countryDistanceAt += country.km;
+    const to = (countryDistanceAt / data.facts.km) * 100;
+    return `${country.color} ${from.toFixed(2)}% ${to.toFixed(2)}%`;
+  })
+  .join(",");
+
+// The collecting rail and final wall follow the same journey clock as the
+// walker. Places inherit the nearest numbered day along the GPS trace; albums
+// are unique records, collected on the first day they appear.
+const dayPositions = pts.map((d) => ({
+  day: d.n,
+  country: d.country,
+  s: nearestOnVerts(d.x, d.y, gpsVerts).s,
+}));
+const places = townsPlaced.map((town) => {
+  const nearestDay = dayPositions.reduce(
+    (best, day) => (Math.abs(day.s - town.s) < Math.abs(best.s - town.s) ? day : best),
+    dayPositions[0]
+  );
+  return {
+    name: town.name,
+    day: town.start ? 0 : nearestDay.day,
+    country: nearestDay.country,
+    pass: town.pass ? 1 : 0,
+  };
+});
+const albumKeys = new Set();
+const albums = [];
+for (const day of jsDays) {
+  if (!day.s) continue;
+  const key = `${day.s.artist}\u0000${day.s.album}`;
+  if (albumKeys.has(key)) continue;
+  albumKeys.add(key);
+  albums.push({
+    day: day.n,
+    title: day.t,
+    artist: day.s.artist,
+    album: day.s.album,
+    slug: day.s.slug,
+    country: day.c,
+  });
+}
 // Photographs from the road: public/trek/photos/manifest.json, written by the
 // curation step — [{ day, src, w, h }] with files sitting alongside it.
 const photosManifestPath = path.join(root, "public/trek/photos/manifest.json");
@@ -908,11 +961,34 @@ const jsData = {
   startAlt: Math.round(startAlt),
   walkPaths,
   photos,
+  places,
+  albums,
 };
 
 // ------------------------------------------------------------------- helpers
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+const wallPlacesHtml = places
+  .map(
+    (place) =>
+      `<li style="--w:${COUNTRY_COLOR[place.country]}"><span>${esc(place.name)}</span></li>`
+  )
+  .join("\n      ");
+const wallAlbumsHtml = albums
+  .map(
+    (album) => `
+      <article class="album-card" style="--w:${COUNTRY_COLOR[album.country]}">
+        <button class="album-open" data-day="${album.day}" aria-haspopup="dialog" aria-label="${esc(
+          `${album.artist} — ${album.album}`
+        )}">
+          <img src="covers/${album.slug}-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
+        </button>
+        <p class="album-day">day ${String(album.day).padStart(2, "0")}</p>
+        <p class="album-name"><b>${esc(album.artist)}</b><span>${esc(album.album)}</span></p>
+      </article>`
+  )
+  .join("\n");
 
 // -------------------------------------------------- country entry plates
 const ordinals = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh"];
@@ -968,6 +1044,13 @@ const fill = (token, value) => {
 fill("<!--__ATLAS__-->", atlasSvg);
 fill("<!--__PLATES__-->", platesHtml);
 fill("<!--__NOSCRIPT_DAYS__-->", noscriptHtml);
+fill("<!--__WALL_PLACES__-->", wallPlacesHtml);
+fill("<!--__WALL_ALBUMS__-->", wallAlbumsHtml);
+fill("__WALL_PLACE_COUNT__", places.length);
+fill("__WALL_ALBUM_COUNT__", albums.length);
+fill("__WALL_ASCENT__", Math.round(cumElev).toLocaleString("en-GB"));
+fill("__WALL_HOURS__", Math.round(cumMin / 60).toLocaleString("en-GB"));
+fill("__ROUTE_GRADIENT__", routeGradient);
 fill("__DATA_JSON__", JSON.stringify(jsData));
 
 fs.writeFileSync(dataPath, JSON.stringify(data, null, 1) + "\n");
