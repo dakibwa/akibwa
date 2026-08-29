@@ -325,6 +325,166 @@ function nameVisible(deck, named, start, limit) {
   return n;
 }
 
+/* The wall answers the hand.
+
+   This mirrors the tilt already running on /albums (album-wall-page.jsx) —
+   one delegated listener, rAF-throttled, gated on a fine pointer — because
+   that implementation is proven and this is the flagship wall. The card the
+   cursor is over sinks under it and the opposite corner rises, and the foil
+   highlight is pinned to the pointer rather than replaying a canned sweep.
+
+   The asymmetry is the whole trick: the material's travel is compressed to
+   a narrow band while the light's travel is full range. Map them 1:1 and it
+   reads as a sliding texture rather than as light moving over a surface. */
+const TILT = 7;
+const PRESS_TILT = 6;
+const FOIL_PROPS = [
+  "--pointer-x",
+  "--pointer-y",
+  "--background-x",
+  "--background-y",
+  "--pointer-from-center",
+  "--tilt-x",
+  "--tilt-y"
+];
+
+function useCardPointer(deckRef) {
+  useEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return undefined;
+
+    let frame = 0;
+    let lit = null;
+
+    const clear = () => {
+      if (!lit) return;
+      for (const prop of FOIL_PROPS) lit.style.removeProperty(prop);
+      lit = null;
+    };
+
+    /* mousemove rather than pointermove: both fire for a real mouse, and
+       mousemove is the one every browser and automation layer agrees on.
+       Touch is gated on the hover query, not on pointerType, so a coarse
+       pointer never glints rather than glinting once per tap. */
+    const onMove = (event) => {
+      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+      const card = event.target.closest(".card");
+      if (!card || !deck.contains(card)) {
+        clear();
+        return;
+      }
+      const { clientX, clientY } = event;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const box = card.getBoundingClientRect();
+        if (!box.width || !box.height) return;
+        const px = (clientX - box.left) / box.width;
+        const py = (clientY - box.top) / box.height;
+        if (lit && lit !== card) clear();
+        lit = card;
+        /* rotateX(+) pushes the top edge away and rotateY(+) the right edge,
+           both inverted so the point under the cursor is the one that sinks. */
+        card.style.setProperty("--tilt-x", `${(TILT * (1 - 2 * py)).toFixed(2)}deg`);
+        card.style.setProperty("--tilt-y", `${(TILT * (2 * px - 1)).toFixed(2)}deg`);
+        card.style.setProperty("--pointer-x", `${(px * 100).toFixed(1)}%`);
+        card.style.setProperty("--pointer-y", `${(py * 100).toFixed(1)}%`);
+        /* Compressed travel for the material... */
+        card.style.setProperty("--background-x", `${(37 + px * 26).toFixed(1)}%`);
+        card.style.setProperty("--background-y", `${(33 + py * 34).toFixed(1)}%`);
+        /* ...and the restraint dial: strongest across the middle of the card,
+           gone by the corners, so it reads as something in the paper rather
+           than as a shiny card. */
+        const away = Math.min(1, Math.hypot(px - 0.5, py - 0.5) * 2);
+        card.style.setProperty("--pointer-from-center", away.toFixed(3));
+      });
+    };
+
+    const onLeave = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      clear();
+    };
+
+    deck.addEventListener("mousemove", onMove);
+    deck.addEventListener("mouseleave", onLeave);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      deck.removeEventListener("mousemove", onMove);
+      deck.removeEventListener("mouseleave", onLeave);
+      clear();
+    };
+  }, [deckRef]);
+}
+
+/* A phone has no hover at all, so everything the tilt and the glint carry is
+   simply missing there — and worse than missing: a tapped <button> keeps a
+   synthesised hover until you tap somewhere else, which left a card sitting
+   at an angle with its glint lit long after the spotlight had closed. On a
+   wall whose whole aesthetic is grid alignment that reads as a bug, not as
+   an effect. The hover is gated to fine pointers in CSS; touch gets a real
+   press instead, tilted by where the finger actually landed. */
+function useCardPress(deckRef) {
+  useEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return undefined;
+    if (window.matchMedia("(hover: hover)").matches) return undefined;
+
+    let pressed = null;
+    let startX = 0;
+    let startY = 0;
+
+    const release = () => {
+      if (!pressed) return;
+      pressed.classList.remove("is-pressed");
+      pressed.style.removeProperty("--press-x");
+      pressed.style.removeProperty("--press-y");
+      pressed = null;
+    };
+
+    const onStart = (event) => {
+      const touch = event.touches ? event.touches[0] : event;
+      if (!touch) return;
+      const card = event.target.closest(".card");
+      if (!card || !deck.contains(card)) return;
+      const box = card.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      const px = (touch.clientX - box.left) / box.width;
+      const py = (touch.clientY - box.top) / box.height;
+      release();
+      pressed = card;
+      card.style.setProperty("--press-x", `${(PRESS_TILT * (1 - 2 * py)).toFixed(2)}deg`);
+      card.style.setProperty("--press-y", `${(PRESS_TILT * (2 * px - 1)).toFixed(2)}deg`);
+      card.classList.add("is-pressed");
+    };
+
+    /* Past a few pixels the finger is scrolling, not pressing — let go, or
+       the wall scrolls away with a card still held down. */
+    const onMove = (event) => {
+      if (!pressed) return;
+      const touch = event.touches ? event.touches[0] : event;
+      if (!touch) return;
+      if (Math.hypot(touch.clientX - startX, touch.clientY - startY) > 10) release();
+    };
+
+    deck.addEventListener("touchstart", onStart, { passive: true });
+    deck.addEventListener("touchmove", onMove, { passive: true });
+    deck.addEventListener("touchend", release, { passive: true });
+    deck.addEventListener("touchcancel", release, { passive: true });
+    window.addEventListener("scroll", release, { passive: true });
+    return () => {
+      deck.removeEventListener("touchstart", onStart);
+      deck.removeEventListener("touchmove", onMove);
+      deck.removeEventListener("touchend", release);
+      deck.removeEventListener("touchcancel", release);
+      window.removeEventListener("scroll", release);
+      release();
+    };
+  }, [deckRef]);
+}
+
 function Mark({ src, tile }) {
   if (!src) return null;
   return (
@@ -347,6 +507,9 @@ export function HomePage() {
   const [lit, setLit] = useState(null);
   const litOriginRef = useRef(null);
   const deckRef = useRef(null);
+
+  useCardPointer(deckRef);
+  useCardPress(deckRef);
 
   const openLit = useCallback((card, element) => {
     /* The card is mid-tilt under the cursor — measure it at rest, or the
