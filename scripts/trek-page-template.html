@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The trek — Paris to Sofia</title>
-<meta name="description" content="Paris to Sofia on foot, 24 September to 28 November 2019. 1,982 km, fifty-two days walked of sixty-seven numbered, seven countries, alone. Travel the GPS line town by town — every day named after a record.">
+<meta name="description" content="Paris to Sofia on foot, 24 September to 28 November 2019. 1,982 km through seven countries, alone. Travel the GPS line city by city — every day named after a record.">
 <link rel="canonical" href="https://akibwa.com/trek/">
 <meta name="theme-color" content="#12100C">
 <meta property="og:type" content="website">
@@ -88,8 +88,16 @@ button{font:inherit;color:inherit}
 }
 
 /* atlas drawing */
-#gps{}
-.seg{opacity:.28;transition:opacity .5s}
+#relief{opacity:.78;transition:opacity .5s}
+.contour{
+  fill:none;stroke:var(--bone);stroke-opacity:.075;stroke-width:.8;
+  vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,.72));
+}
+.contour.major{stroke-opacity:.13;stroke-width:1.1}
+.stage[data-zoom="travel"] #relief,.stage[data-zoom="close"] #relief{opacity:1}
+#gps{filter:drop-shadow(0 2px 0 rgba(0,0,0,.62))}
+.seg{opacity:.28;transition:opacity .5s;filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.72))}
 .seg.lit{opacity:1}
 .stage[data-zoom="hero"] .seg{opacity:.55}
 .stage[data-zoom="hero"] #gps{stroke-opacity:.22}
@@ -121,7 +129,8 @@ button{font:inherit;color:inherit}
 }
 .town{opacity:0;transition:opacity .8s}
 .stage[data-zoom="travel"] .town,.stage[data-zoom="close"] .town{opacity:1}
-.towndot{fill:var(--dust)}
+.townhalo{fill:var(--peat);stroke:var(--bone);stroke-opacity:.34;stroke-width:1;vector-effect:non-scaling-stroke}
+.towndot{fill:var(--bone)}
 .townlabel{
   font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;fill:var(--bone);
   text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:3px;stroke-linejoin:round;
@@ -377,7 +386,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       <p class="sub">Out of the perimeter of Charles de Gaulle and east across a whole autumn — <em>1,982 kilometres through seven countries</em>, every day named after a song, a lyric, or a record. Scroll, or press <em>walk it</em>, and travel the line.</p>
       <ul class="facts">
         <li><b>1,982</b><span>km on foot</span></li>
-        <li><b>52 / 67</b><span>days walked</span></li>
         <li><b>7</b><span>countries</span></li>
         <li><b>2,500 m</b><span>over the Tauern</span></li>
       </ul>
@@ -432,9 +440,9 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
     <div class="endcard" id="endcard">
       <div class="endcard-inner">
-        <p class="end-facts">day 67 · sofia · 28 november 2019</p>
+        <p class="end-facts">sofia · 28 november 2019</p>
         <p class="end-line">1,982 km, walked.</p>
-        <p class="end-sub">Fifty-two days on foot, and one whole autumn.</p>
+        <p class="end-sub">One whole autumn on foot.</p>
       </div>
     </div>
   </div>

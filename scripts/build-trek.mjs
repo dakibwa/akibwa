@@ -114,8 +114,9 @@ const GAP39 =
 // GPS fills the journey between them. Coordinates are Web Mercator (same
 // CRS as the Strava tracks). Paris is the walk start at Charles de Gaulle,
 // not the city centre.
-// Labels only for places the GPS actually went through — not nearby cities
-// the walk passed. Paris stays at the CDG start, not Notre-Dame.
+// Every non-pass entry is a visited stop and therefore a hard route anchor:
+// the rendered line must meet its city marker exactly. The raw GPS supplies
+// the shape between those anchors. Paris stays at the CDG start, not Notre-Dame.
 const TOWNS = [
   { name: "Paris", lon: 2.55, lat: 49.01, dx: -10, dy: -12, anchor: "end", start: true },
   { name: "Reims", lon: 4.03, lat: 49.26, dx: 0, dy: -14 },
@@ -332,8 +333,6 @@ const altAt = (x, y) => {
 };
 
 const gpsVerts = flattenTracks(data.tracks);
-// Pull the line through a town centre only if the walk actually got that close.
-const THROUGH_M = 8000;
 const MERGE_M = 3000;
 const townsPlaced = [];
 for (const t of TOWNS) {
@@ -344,7 +343,6 @@ for (const t of TOWNS) {
   }
   const [px, py] = mercProj(t);
   const snap = nearestOnVerts(px, py, gpsVerts);
-  if (!t.pass && snap.d > THROUGH_M) continue;
   if (t.pass) {
     townsPlaced.push({
       ...t,
@@ -402,6 +400,61 @@ const ringPaths = data.countryRings
     return `<path d="${d}" fill="${c.color}" fill-opacity=".05" stroke="${c.color}" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
   })
   .join("\n    ");
+
+function contourPath(level) {
+  if (!grid) return "";
+  const point = (r, c) => {
+    const lon = grid.west + (c * (grid.east - grid.west)) / (grid.cols - 1);
+    const lat = grid.north - (r * (grid.north - grid.south)) / (grid.rows - 1);
+    const [x, y] = mercProj({ lon, lat });
+    return { x: sx(x), y: sy(y), z: grid.elev[r * grid.cols + c] || 0 };
+  };
+  const crossing = (a, b) => {
+    if (!((a.z < level && b.z >= level) || (a.z >= level && b.z < level))) return null;
+    const u = (level - a.z) / (b.z - a.z || 1);
+    return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
+  };
+  const segments = [];
+  for (let r = 0; r < grid.rows - 1; r++) {
+    for (let c = 0; c < grid.cols - 1; c++) {
+      const corners = [point(r, c), point(r, c + 1), point(r + 1, c + 1), point(r + 1, c)];
+      const hits = [
+        crossing(corners[0], corners[1]),
+        crossing(corners[1], corners[2]),
+        crossing(corners[2], corners[3]),
+        crossing(corners[3], corners[0]),
+      ].filter(Boolean);
+      const add = (a, b) => {
+        segments.push(`M${a.x.toFixed(1)} ${a.y.toFixed(1)}L${b.x.toFixed(1)} ${b.y.toFixed(1)}`);
+      };
+      if (hits.length === 2) add(hits[0], hits[1]);
+      else if (hits.length === 4) {
+        const centre = corners.reduce((sum, p) => sum + p.z, 0) / 4;
+        if (centre >= level) {
+          add(hits[0], hits[3]);
+          add(hits[1], hits[2]);
+        } else {
+          add(hits[0], hits[1]);
+          add(hits[2], hits[3]);
+        }
+      }
+    }
+  }
+  return segments.join("");
+}
+
+const contourLevels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
+const contourPaths = grid
+  ? contourLevels
+      .map((level) => {
+        const d = contourPath(level);
+        if (!d) return "";
+        const major = level % 800 === 0 ? " major" : "";
+        return `<path class="contour${major}" data-elevation="${level}" d="${d}"/>`;
+      })
+      .filter(Boolean)
+      .join("\n      ")
+  : "";
 
 const trackPath = "M" + route.map((p) => `${sx(p.x)} ${sy(p.y)}`).join("L");
 
@@ -465,6 +518,7 @@ const townMarks = townsPlaced
     const Y = sy(t.y);
     const anchor = t.anchor === "start" ? "start" : t.anchor === "end" ? "end" : "middle";
     return `<g class="town${t.pass ? " pass" : ""}" id="town-${t.name.toLowerCase().replace(/[^a-z]+/g, "-")}">
+${t.pass ? "" : `      <circle cx="${X}" cy="${Y}" r="5" class="townhalo"/>\n`}
       <circle cx="${X}" cy="${Y}" r="2" class="towndot"/>
       <text x="${X + (t.dx || 0)}" y="${Y + (t.dy || 0)}" text-anchor="${anchor}" class="townlabel">${t.name}</text>
     </g>`;
@@ -477,6 +531,7 @@ const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <g id="camera">
     <g id="rings">${ringPaths}</g>
+    <g id="relief">${contourPaths}</g>
     <path id="gps" d="${trackPath}" fill="none" stroke="#EFE6D4" stroke-opacity=".14" stroke-width="1" vector-effect="non-scaling-stroke"/>
     ${segs.join("\n    ")}
     ${dayDots}
@@ -580,15 +635,13 @@ for (const day of data.days) {
 const platesHtml = actsMeta
   .map((act, i) => {
     const km = Math.round(act.days.reduce((s, d) => s + (d.walked ? d.km || 0 : 0), 0));
-    const walked = act.days.filter((d) => d.walked).length;
-    const rest = act.days.length - walked;
     return `
   <div class="plate" id="plate-${act.name.toLowerCase()}" style="--c:${COUNTRY_COLOR[act.name]}">
     <img src="grounds/${act.name.toLowerCase()}.webp" alt="" width="640" height="640" loading="lazy" decoding="async">
     <div class="plate-text">
       <p class="plate-count">the ${ordinals[i]} country</p>
       <h2 class="plate-name">${act.name}</h2>
-      <p class="plate-facts">${km} km · ${walked} days walked${rest ? ` · ${rest} rest` : ""}</p>
+      <p class="plate-facts">${km} km on foot</p>
     </div>
   </div>`;
   })
