@@ -84,6 +84,20 @@ requireText(hero, "onClick={() => onActivate(current)}", "the cycling word must 
 requireText(hero, "const visibleIndex = heldIndex >= 0 ? heldIndex : index", "the cycling word must hold the selected bucket");
 requireText(home, "heldBucket={bucketIdForLens(lens)}", "the sentence must follow the selected menu lens");
 
+/* Cards should keep the small-object interaction that makes the wall feel
+   handled rather than hovered: the stock lifts, the printed face counters the
+   pointer, and the spotlight's label resolves after the object lands. */
+requireText(home, 'el.style.setProperty("--art-x"', "card artwork must keep its pointer parallax");
+requireText(home, 'el.style.setProperty("--art-y"', "card artwork must keep its pointer parallax");
+requireText(css, "translate(var(--art-x, 0), var(--art-y, 0))", "card faces must render their pointer parallax");
+requireText(css, "transform 440ms var(--ease-out)", "card faces must settle rather than snap");
+requireText(css, "translateZ(18px) scale(1.012)", "hovered cards must lift toward the visitor");
+requireRuleText(".spotlight-caption {", [
+  "filter: blur(3px)",
+  "filter 280ms"
+]);
+requireText(css, "radial-gradient(circle at 50% 45%", "the spotlight must keep its soft paper pool");
+
 /* The footer is the one fixed route to contact — the contact row is gone. */
 requireText(footer, 'href="mailto:', "the footer must keep an email route");
 requireText(footer, 'href="https://x.com/', "the footer must keep the X route");

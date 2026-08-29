@@ -5414,14 +5414,17 @@ button {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--black) 13%, var(--white));
+  border-radius: calc(var(--radius) + 1px);
   background: var(--white);
   color: inherit;
   font: inherit;
   text-align: left;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    0 1px 2px rgba(36, 31, 24, 0.075),
+    0 5px 16px rgba(36, 31, 24, 0.045);
   transition:
     transform var(--hover-out) var(--ease-out),
     box-shadow var(--hover-out) var(--ease-out),
@@ -5547,7 +5550,17 @@ button {
   padding: 13px;
 }
 
-.c-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.c-art {
+  position: absolute;
+  inset: -1.5%;
+  width: 103%;
+  height: 103%;
+  object-fit: cover;
+  transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1.001);
+  transition:
+    transform 440ms var(--ease-out),
+    filter 440ms var(--ease-out);
+}
 
 /* The logo used to be absolutely positioned while the title grew upward from
    the bottom of the card, so a three-line name slid straight underneath it —
@@ -5731,6 +5744,8 @@ button {
   width: min(58%, 76px);
   min-height: 0;
   margin: 2px 0;
+  transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1);
+  transition: transform 440ms var(--ease-out);
 }
 
 .c-mark svg,
@@ -5917,7 +5932,8 @@ button {
 .spotlight-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(250, 248, 243, 0.88);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.97) 0, rgba(250, 248, 243, 0.92) 30%, rgba(247, 244, 238, 0.9) 74%);
   opacity: 0;
   transition: opacity 420ms var(--ease-out);
 }
@@ -5965,7 +5981,10 @@ button {
   position: absolute;
   inset: 0;
   border-radius: calc(var(--radius) * 1.4);
-  box-shadow: 0 24px 60px rgba(16, 18, 23, 0.2);
+  box-shadow:
+    0 3px 9px rgba(75, 59, 39, 0.1),
+    0 28px 72px rgba(35, 28, 20, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.68);
   opacity: 0;
   pointer-events: none;
   transition: opacity 280ms cubic-bezier(0, 0.55, 0.45, 1) 180ms;
@@ -5979,14 +5998,17 @@ button {
 .spotlight-caption {
   opacity: 0;
   transform: translateY(6px);
+  filter: blur(3px);
   transition:
     opacity 260ms cubic-bezier(0, 0.55, 0.45, 1) 200ms,
-    transform 260ms cubic-bezier(0, 0.55, 0.45, 1) 200ms;
+    transform 300ms cubic-bezier(0, 0.55, 0.45, 1) 200ms,
+    filter 280ms cubic-bezier(0, 0.55, 0.45, 1) 200ms;
 }
 
 .spotlight.is-entered .spotlight-caption {
   opacity: 1;
   transform: none;
+  filter: none;
 }
 
 /* Going is quicker than coming, and the close button's lead-in delay —
@@ -5995,15 +6017,19 @@ button {
 .spotlight.is-closing .spotlight-figure::before { transition: opacity 140ms linear; }
 .spotlight.is-closing .spotlight-scrim { transition: opacity 260ms linear; }
 .spotlight.is-closing .spotlight-caption {
-  transition: opacity 140ms linear, transform 140ms linear;
+  filter: blur(2px);
+  transition: opacity 140ms linear, transform 140ms linear, filter 140ms linear;
 }
-.spotlight.is-closing .spotlight-close { transition: opacity 120ms linear 0ms; }
+.spotlight.is-closing .spotlight-close {
+  transform: translateY(-3px);
+  transition: opacity 120ms linear 0ms, transform 120ms linear 0ms;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .spotlight .card--spotlight,
   .spotlight-figure::before,
   .spotlight-caption { transition: none; }
-  .spotlight-caption { opacity: 1; transform: none; }
+  .spotlight-caption { opacity: 1; transform: none; filter: none; }
 }
 
 /* The spotlight opens on the wall's own art — already in cache, so the card
@@ -6106,10 +6132,11 @@ button {
   font-size: 0.78rem;
   font-weight: 560;
   opacity: 0;
-  transition: opacity 300ms ease 200ms;
+  transform: translateY(-5px);
+  transition: opacity 300ms ease 200ms, transform 300ms var(--ease-out) 200ms;
 }
 
-.spotlight.is-entered .spotlight-close { opacity: 1; }
+.spotlight.is-entered .spotlight-close { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .spotlight, .spotlight-figure { transition: none; }
@@ -6554,6 +6581,8 @@ button {
 @property --background-x { syntax: "<percentage>"; initial-value: 50%; inherits: false; }
 @property --background-y { syntax: "<percentage>"; initial-value: 50%; inherits: false; }
 @property --pointer-from-center { syntax: "<number>"; initial-value: 1; inherits: false; }
+@property --art-x { syntax: "<length>"; initial-value: 0px; inherits: false; }
+@property --art-y { syntax: "<length>"; initial-value: 0px; inherits: false; }
 
 /* Gated on a fine pointer. Cards are real buttons, so a phone synthesises a
    hover on tap and holds it until you tap somewhere else — without this gate
@@ -6568,26 +6597,29 @@ button {
       perspective(640px)
       rotateX(var(--tilt-x, 3deg))
       rotateY(var(--tilt-y, -3deg))
-      scale(1.035);
+      translateZ(18px)
+      scale(1.012);
     border-color: var(--line-strong);
     /* Warm, and in two parts. The ground is warm paper, so the light it
        bounces is warm too; one cool near-black blur read synthetic against
        it. A tight contact shadow holds the card to the page and a wide soft
        one gives it height. */
     box-shadow:
-      -2px 3px 6px hsl(32 24% 26% / 0.13),
-      -12px 16px 34px hsl(32 26% 28% / 0.17);
+      inset 0 1px 0 rgba(255, 255, 255, 0.66),
+      0 4px 9px hsl(32 24% 26% / 0.12),
+      0 19px 38px hsl(32 26% 28% / 0.17);
     z-index: 3;
     transition-duration: 170ms;
   }
 }
 
 .deck .card:focus-visible {
-  transform: perspective(640px) rotate3d(1, -1, 0, 7deg) scale(1.035);
+  transform: perspective(640px) rotate3d(1, -1, 0, 7deg) translateZ(18px) scale(1.012);
   border-color: var(--line-strong);
   box-shadow:
-    -2px 3px 6px hsl(32 24% 26% / 0.13),
-    -12px 16px 34px hsl(32 26% 28% / 0.17);
+    inset 0 1px 0 rgba(255, 255, 255, 0.66),
+    0 4px 9px hsl(32 24% 26% / 0.12),
+    0 19px 38px hsl(32 26% 28% / 0.17);
   z-index: 3;
   transition-duration: 170ms;
 }
@@ -6652,9 +6684,20 @@ button {
    card, gone by the corners, so it stays something in the paper rather than
    a shiny card. */
 @media (hover: hover) and (pointer: fine) {
+  .deck .card:hover .c-art,
+  .deck .card:focus-visible .c-art {
+    transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1.045);
+    filter: saturate(1.035) contrast(1.015);
+  }
+
+  .deck .card:hover .c-mark,
+  .deck .card:focus-visible .c-mark {
+    transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1.045);
+  }
+
   .deck .card:hover .card-sheen {
     mix-blend-mode: soft-light;
-    opacity: calc(1.1 - var(--pointer-from-center, 1));
+    opacity: calc(0.78 - var(--pointer-from-center, 1) * 0.46);
   }
 
   .deck .card:hover .card-sheen::after { opacity: 1; }
@@ -6719,10 +6762,12 @@ button {
       perspective(640px)
       rotateX(var(--press-x, 0deg))
       rotateY(var(--press-y, 0deg))
-      scale(1.03);
+      translateZ(12px)
+      scale(1.012);
     box-shadow:
-      -2px 3px 6px hsl(32 24% 26% / 0.13),
-      -8px 11px 24px hsl(32 26% 28% / 0.15);
+      inset 0 1px 0 rgba(255, 255, 255, 0.66),
+      0 3px 7px hsl(32 24% 26% / 0.12),
+      0 13px 28px hsl(32 26% 28% / 0.15);
     z-index: 3;
     transition-duration: 90ms;
   }
@@ -6734,6 +6779,11 @@ button {
   }
 
   .deck .card.is-pressed .card-sheen::after { opacity: 1; }
+
+  .deck .card.is-pressed .c-art,
+  .deck .card.is-pressed .c-mark {
+    transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1.035);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -6743,6 +6793,17 @@ button {
   }
 
   .deck .card.is-pressed { transform: scale(0.985); }
+
+  .deck .card:hover .c-art,
+  .deck .card:focus-visible .c-art,
+  .deck .card.is-pressed .c-art,
+  .deck .card:hover .c-mark,
+  .deck .card:focus-visible .c-mark,
+  .deck .card.is-pressed .c-mark {
+    transform: none;
+    filter: none;
+    transition: none;
+  }
 
   .card-sheen,
   .card-sheen::after { transition: none; }

@@ -40,7 +40,9 @@ const FOIL_PROPS = [
   "--background-y",
   "--pointer-from-center",
   "--tilt-x",
-  "--tilt-y"
+  "--tilt-y",
+  "--art-x",
+  "--art-y"
 ];
 
 function applyFoil(el, px, py) {
@@ -52,6 +54,10 @@ function applyFoil(el, px, py) {
   el.style.setProperty("--background-y", `${(33 + py * 34).toFixed(1)}%`);
   const away = Math.min(1, Math.hypot(px - 0.5, py - 0.5) * 2);
   el.style.setProperty("--pointer-from-center", away.toFixed(3));
+  /* The face moves against the hand by only a few pixels: enough to separate
+     print from card stock, not enough to feel like an image panning. */
+  el.style.setProperty("--art-x", `${((0.5 - px) * 5).toFixed(2)}px`);
+  el.style.setProperty("--art-y", `${((0.5 - py) * 5).toFixed(2)}px`);
 }
 
 function clearFoil(el) {
