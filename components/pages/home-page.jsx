@@ -73,6 +73,11 @@ const BUCKETS = [
   { id: "taste", label: "taste", accent: "115, 112, 255", lens: TASTE }
 ];
 
+function bucketIdForLens(activeLens) {
+  if (!activeLens) return null;
+  return BUCKETS.find((bucket) => bucket.lens.some((id) => activeLens.includes(id)))?.id ?? null;
+}
+
 function resolveLens(hash) {
   if (!hash) return null;
   const bucket = BUCKETS.find((entry) => entry.id === hash);
@@ -406,7 +411,7 @@ function blend(lists) {
 }
 
 /* The sentence has one moving noun — projects, career, taste — a pulse and
-   a shortcut into those three buckets. The seven collections sit immediately
+   a shortcut into those three buckets. The six collections sit immediately
    beneath it as the menu. Isolated here so the cycle cannot re-render the wall. */
 function HeroSentence({ heldBucket, openBucket }) {
   return (
@@ -1327,7 +1332,7 @@ export function HomePage() {
       >
 
         <div className="deck-hero">
-          <HeroSentence heldBucket={heldBucket} openBucket={openBucket} />
+          <HeroSentence heldBucket={bucketIdForLens(lens)} openBucket={openBucket} />
           {/* Six smaller words directly beneath the sentence, in the same
               ink the cards wear, so the wall still reads at a glance. Each
               is an opener. */}

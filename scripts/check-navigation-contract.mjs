@@ -76,8 +76,13 @@ requireText(home, 'const PROJECTS_LENS = ["sites", "life"]', "projects must incl
 requireText(home, "onClick={() => focusSet(set)}", "each legend word must open its lens");
 requireRuleText(".deck-hero {", ["display: flex", "flex-direction: column"]);
 requireRuleText(".deck-legend {", ["display: flex", "flex-wrap: wrap"]);
+requireRuleText('.deck-legend .rail-word::after {', ["background: rgb(var(--index-accent-rgb))", "transform: scaleX(0.34)"]);
+requireRuleText('.deck-legend .rail-word[aria-expanded="true"] {', ["background: color-mix", "box-shadow: inset"]);
+requireRuleText(".deck-legend .rail-word:focus-visible {", ["0 0 0 4px rgba(var(--index-accent-rgb), 0.5)"]);
 requireText(hero, "export function HeroCycleWord", "the hero sentence must cycle a single bucket word");
 requireText(hero, "onClick={() => onActivate(current)}", "the cycling word must open a bucket rather than advance");
+requireText(hero, "const visibleIndex = heldIndex >= 0 ? heldIndex : index", "the cycling word must hold the selected bucket");
+requireText(home, "heldBucket={bucketIdForLens(lens)}", "the sentence must follow the selected menu lens");
 
 /* The footer is the one fixed route to contact — the contact row is gone. */
 requireText(footer, 'href="mailto:', "the footer must keep an email route");

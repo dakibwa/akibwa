@@ -236,13 +236,15 @@ export function HeroCycleWord({ phrases, heldId, onActivate }) {
   const [widths, setWidths] = useState(null);
   const stackRef = useRef(null);
   const reducedMotion = usePrefersReducedMotion();
+  const heldIndex = phrases.findIndex((phrase) => phrase.id === heldId);
+  const visibleIndex = heldIndex >= 0 ? heldIndex : index;
 
   const advance = useCallback(() => setIndex((i) => (i + 1) % phrases.length), [phrases.length]);
 
   useEffect(() => {
-    if (reducedMotion) return undefined;
+    if (reducedMotion || heldIndex >= 0) return undefined;
     return startOffsetCycle(advance, SEE_WORD_INITIAL_DELAY, REST_INTERVAL);
-  }, [reducedMotion, advance]);
+  }, [reducedMotion, heldIndex, advance]);
 
   useEffect(() => {
     const measure = () => {
@@ -256,8 +258,8 @@ export function HeroCycleWord({ phrases, heldId, onActivate }) {
     return () => window.removeEventListener("resize", measure);
   }, [phrases]);
 
-  const current = phrases[index];
-  const held = heldId === current.id;
+  const current = phrases[visibleIndex];
+  const held = heldIndex >= 0;
 
   return (
     <button
@@ -271,7 +273,7 @@ export function HeroCycleWord({ phrases, heldId, onActivate }) {
       <span
         className="hero-name-stack"
         ref={stackRef}
-        style={widths ? { width: `${widths[index]}px` } : undefined}
+        style={widths ? { width: `${widths[visibleIndex]}px` } : undefined}
       >
         {phrases.map((phrase) => (
           <span key={phrase.label} className="hero-name-sizer" aria-hidden="true">
