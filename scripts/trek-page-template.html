@@ -80,6 +80,7 @@ button{font:inherit;color:inherit}
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
 .stage{position:sticky;top:0;height:100svh;overflow:clip;background:var(--peat)}
+.atlas-scene{position:absolute;inset:0}
 #atlas{position:absolute;inset:0;width:100%;height:100%}
 .vignette{
   position:absolute;inset:0;pointer-events:none;
@@ -98,11 +99,25 @@ button{font:inherit;color:inherit}
 .restdot.seen{fill:none;stroke:var(--bone);opacity:.75}
 .stage[data-zoom="travel"] .daydot,.stage[data-zoom="close"] .daydot{opacity:.35}
 .stage[data-zoom="travel"] .daydot.seen,.stage[data-zoom="close"] .daydot.seen{opacity:1}
-#walker{fill:var(--bone)}
-#walker-halo{fill:none;stroke:var(--bone);stroke-opacity:.4;stroke-width:1.4}
+#walker-g{pointer-events:none}
+#walker-pin{fill:var(--bone)}
+#walker-shadow{fill:#000;opacity:.38}
+.walker-html{
+  position:absolute;left:0;top:0;z-index:5;
+  width:36px;height:54px;margin-left:-18px;margin-top:-50px;
+  pointer-events:none;opacity:0;transition:opacity .35s;
+}
+.stage[data-zoom="travel"] .walker-html,
+.stage[data-zoom="close"] .walker-html{opacity:1}
+.walker-html svg{width:100%;height:100%;overflow:visible;display:block}
+.walker-html .head{fill:var(--bone)}
+.walker-html .pack{fill:var(--tent);stroke:var(--bone);stroke-width:1.1}
+.walker-html line{stroke:var(--bone);stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
+.walker-html .arm,.walker-html .leg{transform-box:fill-box;transform-origin:50% 0%}
 @media (prefers-reduced-motion:no-preference){
-  #walker-halo{animation:halo 2.6s ease-out infinite}
-  @keyframes halo{0%{transform:scale(.4);transform-origin:center;transform-box:fill-box;stroke-opacity:.5}100%{transform:scale(1.6);transform-origin:center;transform-box:fill-box;stroke-opacity:0}}
+  .stage.is-walking .walker-html .leg-l,.stage.is-walking .walker-html .arm-r{animation:stride .52s ease-in-out infinite}
+  .stage.is-walking .walker-html .leg-r,.stage.is-walking .walker-html .arm-l{animation:stride .52s ease-in-out infinite reverse}
+  @keyframes stride{0%,100%{transform:rotate(28deg)}50%{transform:rotate(-28deg)}}
 }
 .town{opacity:0;transition:opacity .8s}
 .stage[data-zoom="travel"] .town,.stage[data-zoom="close"] .town{opacity:1}
@@ -150,6 +165,13 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .hud .day{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-cur,var(--dust))}
 .hud .kmline{font-size:13px;color:var(--dust);margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .hud .kmline b{color:var(--bone);font-weight:500;font-size:19px;letter-spacing:.01em}
+.hud .elev{display:flex;align-items:center;gap:10px;margin-top:10px}
+.hud .elev svg{width:132px;height:28px;display:block;flex:0 0 auto}
+.hud #elev-area{fill:color-mix(in srgb,var(--c-cur,var(--dust)) 22%,transparent)}
+.hud #elev-line{fill:none;stroke:var(--bone);stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round}
+.hud #elev-now{fill:var(--bone)}
+.hud .altline{font-size:11px;color:var(--dust);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.hud .altline b{color:var(--bone);font-weight:500;font-size:13px}
 
 /* ----------------------------------------------------------------- daycard */
 .daycard{
@@ -163,9 +185,9 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .daycard .dtitle{font-size:21px;font-weight:490;line-height:1.25;font-variation-settings:"opsz" 28,"SOFT" 60,"WONK" 0}
 .daycard .drow{display:flex;gap:14px;align-items:center;margin-top:12px}
 .daycard .drow:empty{display:none}
-.daycard .dsleeve{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:64px;flex:0 0 auto;transition:border-color .3s,transform .3s}
+.daycard .dsleeve{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:64px;height:64px;flex:0 0 auto;overflow:hidden;line-height:0;transition:border-color .3s,transform .3s}
 .daycard .dsleeve:hover{border-color:var(--c-cur,var(--dust));transform:translateY(-2px)}
-.daycard .dsleeve img{width:100%;aspect-ratio:1}
+.daycard .dsleeve img{width:64px;height:64px;aspect-ratio:1/1;object-fit:cover;display:block}
 .daycard .drec{color:var(--dust);font-size:14px;line-height:1.45}
 .daycard .drec em{font-variation-settings:"opsz" 16,"SOFT" 60,"WONK" 0}
 .daycard .dfacts{font-family:var(--mono);font-size:11px;color:var(--dust);margin-top:12px;letter-spacing:.06em;font-variant-numeric:tabular-nums;opacity:.85}
@@ -256,9 +278,9 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .shelf h2{font-size:clamp(24px,3.2vw,36px);font-weight:480;font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 0}
 .shelf-head p{font-family:var(--mono);font-size:11.5px;color:var(--dust);letter-spacing:.06em}
 .shelf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:13px;padding:0;list-style:none}
-.shelf-grid button{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:100%;transition:transform .3s,border-color .3s}
+.shelf-grid button{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:100%;aspect-ratio:1;overflow:hidden;line-height:0;transition:transform .3s,border-color .3s}
 .shelf-grid button:hover{transform:translateY(-3px);border-color:var(--sc,var(--dust))}
-.shelf-grid img{width:100%;aspect-ratio:1}
+.shelf-grid img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;display:block}
 
 footer{
   border-top:1px solid var(--rule);position:relative;z-index:2;background:var(--peat);
@@ -275,7 +297,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 .spot-inner{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px;position:relative;color:var(--bone);font-family:var(--serif)}
 .spot-stage{position:relative;display:grid;place-items:center;padding:30px 60px 44px}
 .spot-stage::before{content:"";position:absolute;inset:auto 0 0 0;height:70%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--sc) 32%,transparent),transparent 72%);filter:blur(8px)}
-.spot-stage img{position:relative;width:min(58vw,330px);aspect-ratio:1;border:1px solid color-mix(in srgb,var(--bone) 22%,transparent);box-shadow:0 34px 70px -18px rgba(0,0,0,.75)}
+.spot-stage img{position:relative;width:min(58vw,330px);height:auto;aspect-ratio:1/1;object-fit:cover;display:block;border:1px solid color-mix(in srgb,var(--bone) 22%,transparent);box-shadow:0 34px 70px -18px rgba(0,0,0,.75)}
 .spot-facts{font-family:var(--mono);font-size:11.5px;color:var(--dust);letter-spacing:.08em;margin-top:24px;font-variant-numeric:tabular-nums;text-transform:uppercase}
 .spot-title{font-size:clamp(25px,3.8vw,38px);font-weight:490;margin-top:10px;text-align:center;max-width:24ch;line-height:1.15;font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 0}
 .spot-record{color:var(--dust);font-size:16px;margin-top:12px;text-align:center;max-width:52ch}
@@ -297,10 +319,15 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .masthead .site{display:none}
   .hud{top:58px;left:16px}
   .daycard{left:12px;right:12px;bottom:12px;max-width:none;padding:14px 16px 13px}
-  .photo{top:auto;bottom:calc(24px + 132px);right:12px;width:min(44vw,240px);transform:rotate(1.6deg)}
+  .photo{top:190px;bottom:auto;right:12px;width:min(34vw,220px);transform:rotate(1.6deg)}
   .photo.on{transform:rotate(-1deg)}
   h1{font-size:clamp(50px,13vw,90px)}
   .titlecard .facts{gap:10px 22px}
+}
+@media (max-width:900px) and (max-height:680px){
+  .photo{top:168px;width:min(28vw,132px)}
+  .photo figure{padding:6px}
+  .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .seg,.daydot,.town,.plate,.quote,.gapveil,.photo,.endcard,.daycard{transition-duration:.01s}
@@ -326,7 +353,22 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
 <div class="experience" id="experience">
   <div class="stage" id="stage" data-zoom="hero">
+    <div class="atlas-scene" id="atlas-scene">
     <!--__ATLAS__-->
+    </div>
+    <div class="walker-html" id="walker-html" aria-hidden="true">
+      <svg viewBox="-7 -16 16 24">
+        <g id="stick">
+          <circle class="head" cx="0" cy="-12.2" r="2.35"/>
+          <rect class="pack" x="1.3" y="-9.4" width="2.8" height="3.4" rx=".5"/>
+          <line x1="0" y1="-9.8" x2="0" y2="-3.1"/>
+          <g class="arm arm-l" transform="translate(0,-8.5) rotate(-22)"><line x1="0" y1="0" x2="0" y2="5.8"/></g>
+          <g class="arm arm-r" transform="translate(0,-8.5) rotate(22)"><line x1="0" y1="0" x2="0" y2="5.8"/></g>
+          <g class="leg leg-l" transform="translate(0,-3.1) rotate(24)"><line x1="0" y1="0" x2="0" y2="7.4"/></g>
+          <g class="leg leg-r" transform="translate(0,-3.1) rotate(-24)"><line x1="0" y1="0" x2="0" y2="7.4"/></g>
+        </g>
+      </svg>
+    </div>
     <div class="vignette"></div>
 
     <div class="titlecard" id="titlecard">
@@ -345,6 +387,14 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <div class="hud" id="hud">
       <p class="day" id="hud-day">day 1 · 24 sep</p>
       <p class="kmline"><b id="hud-km">0.0</b> <span id="hud-total">of 1,982 km</span></p>
+      <div class="elev">
+        <svg viewBox="0 0 132 28" aria-hidden="true">
+          <path id="elev-area"></path>
+          <path id="elev-line"></path>
+          <circle id="elev-now" r="2.2" cx="3" cy="20"></circle>
+        </svg>
+        <p class="altline"><b id="hud-alt">—</b> m</p>
+      </div>
     </div>
 
     <div class="daycard" id="daycard">
@@ -451,8 +501,13 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var stage = document.getElementById("stage");
   var atlas = document.getElementById("atlas");
   var camera = document.getElementById("camera");
-  var walker = document.getElementById("walker");
-  var walkerHalo = document.getElementById("walker-halo");
+  var walkerG = document.getElementById("walker-g");
+  var stick = document.getElementById("stick");
+  var walkerHtml = document.getElementById("walker-html");
+  var hudAlt = document.getElementById("hud-alt");
+  var elevNow = document.getElementById("elev-now");
+  var elevLine = document.getElementById("elev-line");
+  var elevArea = document.getElementById("elev-area");
   var titlecard = document.getElementById("titlecard");
   var hint = document.getElementById("hint");
   var hud = document.getElementById("hud");
@@ -473,6 +528,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var photoBox = document.getElementById("photo");
   var photoImg = document.getElementById("photo-img");
   var photoCap = document.getElementById("photo-cap");
+  var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var walkbtn = document.getElementById("walkbtn");
   document.getElementById("gap-quote").textContent = "“" + DATA.gap39 + "”";
@@ -489,7 +545,9 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   // ---------------------------------------------------------------- camera
   var VBW = DATA.vb[0], VBH = DATA.vb[1];
   var FULLW = VBW;
-  var TRAVELW = 300, CLOSEW = 205;
+  var TRAVELW = 500, CLOSEW = 340;
+  var lastWalk = null;
+  var walkFace = 1;
   var cam = { x: days[0].x, y: days[0].y, w: FULLW };
   var target = { x: days[0].x, y: days[0].y, w: FULLW };
 
@@ -527,27 +585,87 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   function lerp(a, b, t){ return a + (b - a) * t; }
 
+  function altOf(d){ return (d && d.alt != null) ? d.alt : 0; }
+  function liftY(y){ return y; }
+
+  function alongPath(pts, t){
+    if (!pts || !pts.length) return null;
+    if (pts.length === 1) return { x: pts[0].x, y: pts[0].y, alt: pts[0].alt || 0 };
+    var lens = [0];
+    for (var i = 1; i < pts.length; i++) {
+      lens.push(lens[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+    }
+    var target = Math.max(0, Math.min(1, t)) * lens[lens.length - 1];
+    for (var i = 1; i < pts.length; i++) {
+      if (target <= lens[i]) {
+        var span = lens[i] - lens[i - 1] || 1;
+        var u = (target - lens[i - 1]) / span;
+        return {
+          x: lerp(pts[i - 1].x, pts[i].x, u),
+          y: lerp(pts[i - 1].y, pts[i].y, u),
+          alt: lerp(pts[i - 1].alt || 0, pts[i].alt || 0, u)
+        };
+      }
+    }
+    var last = pts[pts.length - 1];
+    return { x: last.x, y: last.y, alt: last.alt || 0 };
+  }
+
   function walkerPosAt(scene, p){
     if (scene.t === "walk") {
       var d = byN[scene.day];
-      var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1] } : (byN[scene.day - 1] || d);
       var t = Math.min(1, Math.max(0, (p - scene.at) / scene.len));
-      return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), day: d, t: t };
+      var along = alongPath((DATA.walkPaths || {})[d.n], t);
+      if (along) return { x: along.x, y: along.y, alt: along.alt, day: d, t: t };
+      var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0 } : (byN[scene.day - 1] || d);
+      return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), alt: lerp(altOf(prev), altOf(d), t), day: d, t: t };
     }
     if (scene.t === "gap") {
       var d39 = byN[39], d38 = byN[38];
       var tg = Math.min(1, Math.max(0, (p - scene.at) / scene.len));
-      return { x: lerp(d38.x, d39.x, tg), y: lerp(d38.y, d39.y, tg), day: d39, t: tg };
+      return { x: lerp(d38.x, d39.x, tg), y: lerp(d38.y, d39.y, tg), alt: lerp(altOf(d38), altOf(d39), tg), day: d39, t: tg };
     }
-    if (scene.t === "beat") { var db = byN[scene.day]; return { x: db.x, y: db.y, day: db, t: 1 }; }
+    if (scene.t === "beat") { var db = byN[scene.day]; return { x: db.x, y: db.y, alt: altOf(db), day: db, t: 1 }; }
     if (scene.t === "enter") {
       var idx = days.findIndex(function(d){ return d.c === scene.country; });
-      if (idx === 0) return { x: DATA.start[0], y: DATA.start[1], day: days[0], t: 0 };
+      if (idx === 0) return { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0, day: days[0], t: 0 };
       var da = days[Math.max(0, idx - 1)];
-      return { x: da.x, y: da.y, day: da, t: 1 };
+      return { x: da.x, y: da.y, alt: altOf(da), day: da, t: 1 };
     }
-    if (scene.t === "end") { var dl = days[days.length - 1]; return { x: dl.x, y: dl.y, day: dl, t: 1 }; }
-    return { x: days[0].x, y: days[0].y, day: days[0], t: 0 };
+    if (scene.t === "end") { var dl = days[days.length - 1]; return { x: dl.x, y: dl.y, alt: altOf(dl), day: dl, t: 1 }; }
+    return { x: days[0].x, y: days[0].y, alt: altOf(days[0]), day: days[0], t: 0 };
+  }
+
+  (function initSpark(){
+    if (!elevLine) return;
+    var alts = days.map(function(d){ return altOf(d); });
+    var mn = Math.min.apply(null, alts), mx = Math.max.apply(null, alts);
+    if (!(mx > mn)) { mx = mn + 80; }
+    DATA._altMin = mn; DATA._altMax = mx;
+    var w = 132, h = 28, pad = 3;
+    var pts = alts.map(function(a, i){
+      var x = pad + i * (w - pad * 2) / Math.max(1, alts.length - 1);
+      var y = h - pad - (a - mn) / (mx - mn) * (h - pad * 2);
+      return [x, y];
+    });
+    var line = pts.map(function(pt, i){ return (i ? "L" : "M") + pt[0].toFixed(1) + " " + pt[1].toFixed(1); }).join(" ");
+    elevLine.setAttribute("d", line);
+    if (elevArea) {
+      var last = pts[pts.length - 1], first = pts[0];
+      elevArea.setAttribute("d", line + " L" + last[0].toFixed(1) + " " + (h - pad) + " L" + first[0].toFixed(1) + " " + (h - pad) + " Z");
+    }
+  })();
+
+  function sparkAt(alt, dayN, t){
+    if (!elevNow) return;
+    var mn = DATA._altMin, mx = DATA._altMax;
+    var w = 132, h = 28, pad = 3;
+    var u = (dayN - 1 + (t || 0)) / Math.max(1, days.length - 1);
+    var x = pad + u * (w - pad * 2);
+    var y = h - pad - ((alt || 0) - mn) / Math.max(1, mx - mn) * (h - pad * 2);
+    elevNow.setAttribute("cx", x.toFixed(1));
+    elevNow.setAttribute("cy", y.toFixed(1));
+    if (hudAlt) hudAlt.textContent = Math.round(alt || 0).toLocaleString("en-GB");
   }
 
   // --------------------------------------------------------------- daycard
@@ -561,7 +679,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     dcTitle.textContent = d.t || (d.w ? "—" : "rest — numbered, not walked");
     if (d.s) {
       dcRow.innerHTML = '<button class="dsleeve" data-day="' + d.n + '" aria-haspopup="dialog" aria-label="' +
-        esc(d.s.artist + " — " + d.s.album) + '"><img src="covers/' + d.s.slug + '-thumb.webp" alt="" width="160" height="160" loading="lazy"></button>' +
+        esc(d.s.artist + " — " + d.s.album) + '"><img src="covers/' + d.s.slug + '-thumb.webp" alt="" width="64" height="64" loading="lazy"></button>' +
         '<p class="drec">' + esc(d.s.artist) + " — <em>" + esc(d.s.album) + "</em></p>";
     } else {
       dcRow.innerHTML = "";
@@ -569,13 +687,21 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     var facts = [
       d.w ? d.km.toFixed(1) + " km" : "no walk recorded",
       hours(d.min),
+      altOf(d) ? Math.round(altOf(d)).toLocaleString("en-GB") + " m" : null,
       d.elev > 900 ? "+" + d.elev + " m climbed" : null
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
     hudDay.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "");
     hudKm.textContent = d.cum.toFixed(1);
     navLinks.forEach(function(a){
-      a.classList.toggle("current", a.getAttribute("href") === "#" + d.c.toLowerCase());
+      var isCurrent = a.getAttribute("href") === "#" + d.c.toLowerCase();
+      a.classList.toggle("current", isCurrent);
+      if (isCurrent && countryNav && innerWidth <= 900) {
+        var navRect = countryNav.getBoundingClientRect();
+        var linkRect = a.getBoundingClientRect();
+        var left = countryNav.scrollLeft + linkRect.left + linkRect.width / 2 - navRect.left - navRect.width / 2;
+        countryNav.scrollTo({ left: Math.max(0, left), behavior: REDUCED ? "auto" : "smooth" });
+      }
     });
   }
 
@@ -635,14 +761,37 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW }; }
 
     // walker + trail
-    walker.setAttribute("cx", wp.x); walker.setAttribute("cy", wp.y);
-    walkerHalo.setAttribute("cx", wp.x); walkerHalo.setAttribute("cy", wp.y);
+    var wy = wp.y;
+    if (lastWalk) {
+      var dxw = wp.x - lastWalk.x;
+      if (Math.abs(dxw) > 0.04) walkFace = dxw < 0 ? -1 : 1;
+    }
+    lastWalk = { x: wp.x, y: wp.y };
+    if (walkerG) walkerG.setAttribute("transform", "translate(" + wp.x.toFixed(2) + "," + wy.toFixed(2) + ")");
+    if (stick) stick.setAttribute("transform", walkFace < 0 ? "scale(-1,1)" : "");
+    try {
+      if (walkerHtml && atlas && atlas.createSVGPoint) {
+        var pt = atlas.createSVGPoint();
+        pt.x = wp.x; pt.y = wy;
+        var ctm = atlas.getScreenCTM();
+        if (ctm) {
+          var sp = pt.matrixTransform(ctm);
+          var box = stage.getBoundingClientRect();
+          walkerHtml.style.transform = "translate(" + (sp.x - box.left).toFixed(1) + "px," + (sp.y - box.top).toFixed(1) + "px)";
+        }
+      }
+    } catch (e) {}
+    stage.classList.toggle("is-walking", !REDUCED && (scene.t === "walk" || scene.t === "gap") && !!wp.day.w);
+    sparkAt(wp.alt, wp.day.n, wp.t);
     days.forEach(function(d){
       if (d.n === 1) return;
       var seg = document.getElementById("seg-" + d.n);
       var dot = document.getElementById("dot-" + d.n);
       var passed = (scene.t === "walk" || scene.t === "gap") ? d.n < wp.day.n : d.n <= wp.day.n;
-      if (seg) seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
+      if (seg) {
+        seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
+        if (passed) seg.removeAttribute("stroke-dasharray");
+      }
       if (dot) dot.classList.toggle("seen", passed || wp.day.n === d.n && wp.t > .96);
     });
     var dot1 = document.getElementById("dot-1");
@@ -652,15 +801,19 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       var segNow = document.getElementById("seg-" + wp.day.n);
       if (segNow) {
         var prev = byN[wp.day.n - 1] || wp.day;
-        var len = Math.hypot(wp.day.x - prev.x, wp.day.y - prev.y);
+        var len = (segNow.getTotalLength ? segNow.getTotalLength() : Math.hypot(wp.day.x - prev.x, wp.day.y - prev.y)) || 1;
         segNow.classList.add("lit");
-        segNow.setAttribute("stroke-dasharray", (len * wp.t).toFixed(1) + " " + (len + 2).toFixed(1));
+        if (wp.t >= .98) segNow.removeAttribute("stroke-dasharray");
+        else segNow.setAttribute("stroke-dasharray", (len * wp.t).toFixed(1) + " " + (len + 2).toFixed(1));
       }
     }
 
     // day content
     if (scene.t === "walk" || scene.t === "beat" || scene.t === "gap") { showDay(wp.day); showPhoto(wp.day); }
-    else if (scene.t === "enter") { showDay(wp.day); showPhoto(wp.day); }
+    else if (scene.t === "enter") {
+      showDay(wp.day);
+      photoBox.classList.remove("on"); photoShown = null;
+    }
     if (scene.t === "walk" && wp.day.w) {
       var prevDay = byN[wp.day.n - 1];
       var liveKm = (prevDay ? prevDay.cum : 0) + wp.day.km * wp.t;
@@ -716,22 +869,26 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     var top = experience.getBoundingClientRect().top;
     progress = Math.max(0, Math.min(DATA.timeline, -top));
   }
-  var CAMEASE = REDUCED ? 1 : 0.085;
+  var CAMEASE = REDUCED ? 1 : (FORCED_P != null ? 1 : 0.085);
   function frame(){
-    readScroll();
-    update(progress);
-    cam.x = lerp(cam.x, target.x, CAMEASE);
-    cam.y = lerp(cam.y, target.y, CAMEASE);
-    cam.w = lerp(cam.w, target.w, CAMEASE);
-    applyCamera();
-    if (playing) {
-      var next = Math.min(scrollY + PLAY_SPEED / 60, experience.offsetTop + DATA.timeline);
-      scrollTo(0, next);
-      if (next >= experience.offsetTop + DATA.timeline - 2) stopWalk();
-    }
     requestAnimationFrame(frame);
+    try {
+      readScroll();
+      update(progress);
+      cam.x = lerp(cam.x, target.x, CAMEASE);
+      cam.y = lerp(cam.y, target.y, CAMEASE);
+      cam.w = lerp(cam.w, target.w, CAMEASE);
+      applyCamera();
+      if (playing) {
+        var next = Math.min(scrollY + PLAY_SPEED / 60, experience.offsetTop + DATA.timeline);
+        scrollTo(0, next);
+        if (next >= experience.offsetTop + DATA.timeline - 2) stopWalk();
+      }
+    } catch (err) {}
   }
   cam = fitFull(); target = fitFull();
+  readScroll();
+  try { update(progress); cam = { x: target.x, y: target.y, w: target.w }; } catch (err) {}
   applyCamera();
   requestAnimationFrame(frame);
 

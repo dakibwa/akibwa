@@ -80,6 +80,7 @@ button{font:inherit;color:inherit}
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
 .stage{position:sticky;top:0;height:100svh;overflow:clip;background:var(--peat)}
+.atlas-scene{position:absolute;inset:0}
 #atlas{position:absolute;inset:0;width:100%;height:100%}
 .vignette{
   position:absolute;inset:0;pointer-events:none;
@@ -98,11 +99,25 @@ button{font:inherit;color:inherit}
 .restdot.seen{fill:none;stroke:var(--bone);opacity:.75}
 .stage[data-zoom="travel"] .daydot,.stage[data-zoom="close"] .daydot{opacity:.35}
 .stage[data-zoom="travel"] .daydot.seen,.stage[data-zoom="close"] .daydot.seen{opacity:1}
-#walker{fill:var(--bone)}
-#walker-halo{fill:none;stroke:var(--bone);stroke-opacity:.4;stroke-width:1.4}
+#walker-g{pointer-events:none}
+#walker-pin{fill:var(--bone)}
+#walker-shadow{fill:#000;opacity:.38}
+.walker-html{
+  position:absolute;left:0;top:0;z-index:5;
+  width:36px;height:54px;margin-left:-18px;margin-top:-50px;
+  pointer-events:none;opacity:0;transition:opacity .35s;
+}
+.stage[data-zoom="travel"] .walker-html,
+.stage[data-zoom="close"] .walker-html{opacity:1}
+.walker-html svg{width:100%;height:100%;overflow:visible;display:block}
+.walker-html .head{fill:var(--bone)}
+.walker-html .pack{fill:var(--tent);stroke:var(--bone);stroke-width:1.1}
+.walker-html line{stroke:var(--bone);stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
+.walker-html .arm,.walker-html .leg{transform-box:fill-box;transform-origin:50% 0%}
 @media (prefers-reduced-motion:no-preference){
-  #walker-halo{animation:halo 2.6s ease-out infinite}
-  @keyframes halo{0%{transform:scale(.4);transform-origin:center;transform-box:fill-box;stroke-opacity:.5}100%{transform:scale(1.6);transform-origin:center;transform-box:fill-box;stroke-opacity:0}}
+  .stage.is-walking .walker-html .leg-l,.stage.is-walking .walker-html .arm-r{animation:stride .52s ease-in-out infinite}
+  .stage.is-walking .walker-html .leg-r,.stage.is-walking .walker-html .arm-l{animation:stride .52s ease-in-out infinite reverse}
+  @keyframes stride{0%,100%{transform:rotate(28deg)}50%{transform:rotate(-28deg)}}
 }
 .town{opacity:0;transition:opacity .8s}
 .stage[data-zoom="travel"] .town,.stage[data-zoom="close"] .town{opacity:1}
@@ -150,6 +165,13 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .hud .day{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-cur,var(--dust))}
 .hud .kmline{font-size:13px;color:var(--dust);margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .hud .kmline b{color:var(--bone);font-weight:500;font-size:19px;letter-spacing:.01em}
+.hud .elev{display:flex;align-items:center;gap:10px;margin-top:10px}
+.hud .elev svg{width:132px;height:28px;display:block;flex:0 0 auto}
+.hud #elev-area{fill:color-mix(in srgb,var(--c-cur,var(--dust)) 22%,transparent)}
+.hud #elev-line{fill:none;stroke:var(--bone);stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round}
+.hud #elev-now{fill:var(--bone)}
+.hud .altline{font-size:11px;color:var(--dust);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.hud .altline b{color:var(--bone);font-weight:500;font-size:13px}
 
 /* ----------------------------------------------------------------- daycard */
 .daycard{
@@ -163,9 +185,9 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .daycard .dtitle{font-size:21px;font-weight:490;line-height:1.25;font-variation-settings:"opsz" 28,"SOFT" 60,"WONK" 0}
 .daycard .drow{display:flex;gap:14px;align-items:center;margin-top:12px}
 .daycard .drow:empty{display:none}
-.daycard .dsleeve{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:64px;flex:0 0 auto;transition:border-color .3s,transform .3s}
+.daycard .dsleeve{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:64px;height:64px;flex:0 0 auto;overflow:hidden;line-height:0;transition:border-color .3s,transform .3s}
 .daycard .dsleeve:hover{border-color:var(--c-cur,var(--dust));transform:translateY(-2px)}
-.daycard .dsleeve img{width:100%;aspect-ratio:1}
+.daycard .dsleeve img{width:64px;height:64px;aspect-ratio:1/1;object-fit:cover;display:block}
 .daycard .drec{color:var(--dust);font-size:14px;line-height:1.45}
 .daycard .drec em{font-variation-settings:"opsz" 16,"SOFT" 60,"WONK" 0}
 .daycard .dfacts{font-family:var(--mono);font-size:11px;color:var(--dust);margin-top:12px;letter-spacing:.06em;font-variant-numeric:tabular-nums;opacity:.85}
@@ -256,9 +278,9 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .shelf h2{font-size:clamp(24px,3.2vw,36px);font-weight:480;font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 0}
 .shelf-head p{font-family:var(--mono);font-size:11.5px;color:var(--dust);letter-spacing:.06em}
 .shelf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:13px;padding:0;list-style:none}
-.shelf-grid button{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:100%;transition:transform .3s,border-color .3s}
+.shelf-grid button{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:100%;aspect-ratio:1;overflow:hidden;line-height:0;transition:transform .3s,border-color .3s}
 .shelf-grid button:hover{transform:translateY(-3px);border-color:var(--sc,var(--dust))}
-.shelf-grid img{width:100%;aspect-ratio:1}
+.shelf-grid img{width:100%;height:100%;aspect-ratio:1/1;object-fit:cover;display:block}
 
 footer{
   border-top:1px solid var(--rule);position:relative;z-index:2;background:var(--peat);
@@ -275,7 +297,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 .spot-inner{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 24px;position:relative;color:var(--bone);font-family:var(--serif)}
 .spot-stage{position:relative;display:grid;place-items:center;padding:30px 60px 44px}
 .spot-stage::before{content:"";position:absolute;inset:auto 0 0 0;height:70%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--sc) 32%,transparent),transparent 72%);filter:blur(8px)}
-.spot-stage img{position:relative;width:min(58vw,330px);aspect-ratio:1;border:1px solid color-mix(in srgb,var(--bone) 22%,transparent);box-shadow:0 34px 70px -18px rgba(0,0,0,.75)}
+.spot-stage img{position:relative;width:min(58vw,330px);height:auto;aspect-ratio:1/1;object-fit:cover;display:block;border:1px solid color-mix(in srgb,var(--bone) 22%,transparent);box-shadow:0 34px 70px -18px rgba(0,0,0,.75)}
 .spot-facts{font-family:var(--mono);font-size:11.5px;color:var(--dust);letter-spacing:.08em;margin-top:24px;font-variant-numeric:tabular-nums;text-transform:uppercase}
 .spot-title{font-size:clamp(25px,3.8vw,38px);font-weight:490;margin-top:10px;text-align:center;max-width:24ch;line-height:1.15;font-variation-settings:"opsz" 60,"SOFT" 80,"WONK" 0}
 .spot-record{color:var(--dust);font-size:16px;margin-top:12px;text-align:center;max-width:52ch}
@@ -297,10 +319,15 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .masthead .site{display:none}
   .hud{top:58px;left:16px}
   .daycard{left:12px;right:12px;bottom:12px;max-width:none;padding:14px 16px 13px}
-  .photo{top:auto;bottom:calc(24px + 132px);right:12px;width:min(44vw,240px);transform:rotate(1.6deg)}
+  .photo{top:190px;bottom:auto;right:12px;width:min(34vw,220px);transform:rotate(1.6deg)}
   .photo.on{transform:rotate(-1deg)}
   h1{font-size:clamp(50px,13vw,90px)}
   .titlecard .facts{gap:10px 22px}
+}
+@media (max-width:900px) and (max-height:680px){
+  .photo{top:168px;width:min(28vw,132px)}
+  .photo figure{padding:6px}
+  .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .seg,.daydot,.town,.plate,.quote,.gapveil,.photo,.endcard,.daycard{transition-duration:.01s}
@@ -326,104 +353,106 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
 <div class="experience" id="experience">
   <div class="stage" id="stage" data-zoom="hero">
+    <div class="atlas-scene" id="atlas-scene">
     
 <svg id="atlas" viewBox="0 0 2789 1572" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <g id="camera">
-    <g id="rings"><path d="M213.6 -57.8L232.2 -8.6L400.8 91L392.4 129.4L468.6 104.8L522.6 199.6L845.4 310.6L794.4 404.2L764.4 557.8L712.2 576.4L595.8 766.6L684.6 743.2L724.2 916.6L667.8 940.6L712.8 985L702.6 1045.6L783.6 1091.2L755.4 1150.6L611.4 1262.2L490.2 1208.8L514.2 1189.6L466.2 1214.2L336 1209.4L271.2 1323.4L211.8 1368.4L6 1291.6L-130.8 1301.2L-219 1261.6L-252 1205.8L-193.8 879.4L-133.8 953.2L-190.8 757L-248.4 728.8L-316.8 613.6L-259.2 602.2L-340.2 593.2L-382.2 554.2L-369 538L-414.6 551.8L-418.8 520L-529.2 498.4L-571.8 467.2L-546.6 439L-589.8 375.4L-411 325.6L-358.8 380.8L-217.8 364L-283.8 188.2L-207.6 185.2L-192 245.2L-66 247L-58.8 216.4L94.8 110.8L213.6 -57.8ZM886.2 1386.4L902.4 1330.6L967.2 1316.2L981.6 1264L996.6 1399.6L959.4 1511.2L912 1484.2L925.8 1463.2L896.4 1455.4L912.6 1431.4L891.6 1432.6L886.2 1386.4Z" fill="#2EA3DC" fill-opacity=".045" stroke="#2EA3DC" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path d="M1470.6 343.6L1468.8 371.8L1364.4 439L1384.2 556L1315.8 523L1179 566.2L1093.8 542.2L1093.8 572.2L1055.4 578.2L1020 540.4L888.6 505L877.8 535L780 544L816 298L678.6 267.4L645.6 224.8L618.6 142.6L638.4 49L594 -48.2L622.2 -132.8L592.8 -188L691.2 -216.2L715.2 -264.2L683.4 -323L714 -335.6L741.6 -464.6L720.6 -467L721.8 -513.8L829.2 -522.8L846.6 -480.2L919.2 -559.4L1027.2 -505.4L925.2 -579.2L936.6 -609.8L895.8 -668.6L936 -687.8L897 -762.8L1047.6 -725.6L1062 -653L1150.2 -663.8L1167.6 -645.2L1143 -590.6L1281 -626L1334.4 -677.6L1314.6 -639.2L1347 -667.4L1388.4 -658.4L1434 -608.6L1458 -620.6L1515 -536L1534.8 -428.6L1509.6 -384.8L1559.4 -315.2L1576.2 -235.4L1556.4 -186.2L1598.4 -102.2L1577.4 -9.8L1523.4 -48.8L1517.4 -21.2L1302 104.8L1277.4 90.4L1324.2 198.4L1470.6 343.6Z" fill="#24709F" fill-opacity=".045" stroke="#24709F" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path d="M1819.2 370.6L1833.6 520.6L1759.2 528.4L1790.4 548.8L1762.2 571.6L1768.2 637L1654.2 699.4L1586.4 701.2L1551 737.8L1313.4 687.4L1288.8 622.6L1176.6 643L1155.6 674.8L999.6 627.4L996 549.4L1039.8 548.2L1080 587.2L1096.8 541.6L1166.4 572.8L1288.2 520.6L1384.2 556L1351.8 452.2L1468.8 371.8L1470.6 343.6L1499.4 373L1569.6 359.2L1600.8 302.8L1785.6 341.2L1819.2 370.6Z" fill="#7D6BB0" fill-opacity=".045" stroke="#7D6BB0" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path d="M1445.4 880L1479.6 856.6L1420.8 752.2L1458 715L1551 737.8L1587.6 701.2L1716 690.4L1710.6 665.8L1750.8 663.4L1771.2 717.4L1674 764.8L1677.6 823.6L1630.8 842.8L1638.6 886L1580.4 883.6L1555.8 851.2L1533 881.8L1445.4 880Z" fill="#12A19A" fill-opacity=".045" stroke="#12A19A" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path d="M1771.2 717.4L1915.2 827.8L2034 815.2L2037 866.8L2091.6 930.4L2061.6 926.2L2035.8 979L2004.6 941.2L1690.8 927.4L1682.4 988L1738.2 1081L1899 1271.8L1764.6 1183.6L1709.4 1189.6L1620.6 1080.4L1650 1072L1553.4 910.6L1525.8 902.8L1480.2 992.8L1446 934.6L1436.4 876.4L1533 881.8L1547.4 861.4L1638.6 886L1677.6 823.6L1674 764.8L1771.2 717.4ZM1985.4 1333.6L1991.4 1355.2L1825.2 1259.2L1915.8 1280.2L1985.4 1333.6ZM1791 1247.8L1755 1237L1846.8 1247.8L1791 1247.8ZM1769.4 1223.8L1761 1207L1813.2 1219L1769.4 1223.8ZM1588.8 1026.4L1572.6 1003.6L1627.2 1064.8L1588.8 1026.4ZM1571.4 966.4L1538.4 943.6L1552.2 917.8L1571.4 966.4Z" fill="#1FA45A" fill-opacity=".045" stroke="#1FA45A" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path d="M2185.8 781L2245.8 836.2L2244.6 881.8L2315.4 925.6L2308.8 983.8L2395.8 1035.4L2429.4 998.8L2467.2 1022.8L2436 1036L2458.8 1078L2421 1143.4L2491.2 1240L2438.4 1286.8L2428.8 1369L2333.4 1381L2350.2 1334.8L2255.4 1233.4L2226.6 1236.4L2197.8 1292.8L2067.6 1193.2L2104.2 1168L2073.6 1120L2116.8 1108L2059.8 1057L2089.8 977.2L2049.6 978.4L2053.2 935.8L2091.6 930.4L2046.6 897.4L2034 815.2L2109 772L2185.8 781Z" fill="#EFC319" fill-opacity=".045" stroke="#EFC319" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path d="M2864.4 1460.8L2833.8 1461.4L2846.4 1502.8L2814 1521.4L2742 1531L2661.6 1483L2484 1516.6L2494.2 1456.6L2419.8 1370.8L2442 1345.6L2429.4 1295.2L2491.2 1238.2L2421 1143.4L2449.2 1086.4L2496.6 1099L2480.4 1138L2760.6 1167.4L2941.2 1085.8L3114 1153L3112.2 1197.4L3063 1207L3037.8 1310.8L2988.6 1345.6L3051.6 1421.8L2999.4 1432.6L2943.6 1405.6L2864.4 1460.8Z" fill="#E97E18" fill-opacity=".045" stroke="#E97E18" stroke-opacity=".22" stroke-width="1.4" vector-effect="non-scaling-stroke"/></g>
-    <path id="gps" d="M231.1 295.2L260 311.1 M266.7 312.5L306.8 299.5 M306.7 299.5L342.3 273.6 M342.2 273.5L382.6 260 M385 259.9L418.7 312 M421.2 313.6L436 332.6L460.7 334.7 M460.9 334.7L507.7 340.6 M508.3 342.5L522.8 352.7L554.5 344.9 M554.3 343.5L570.1 357.7L608.4 366.9 M608.4 366.9L621.2 356.9 M623.9 359.4L651.3 363.6 M651.3 363.6L679.2 356.2 M679.4 356.1L746.9 351.2 M746.9 351.2L820.2 337.1 M823.5 337.8L868.4 314L901.6 322 M955 340.9L987.4 353.9 M987.3 353.8L986.6 364.3L1004.5 377.7 M1004.4 378L1070 396.6 M1090.9 399.9L1145.8 410.1 M1146.8 411.7L1157.8 429.6L1196.8 443 M1220.7 448.6L1280 466.6L1288.6 480.6 M1288.5 480.9L1307.4 496.8L1340.6 501.3 M1340.2 501.5L1353 552.1 M1353.2 552.3L1361.5 558.3L1360.3 589.7 M1360.4 589.8L1387.4 591.2L1391 608.4 M1391 608.4L1398.9 638.6 M1399.1 638.8L1434.1 670.9 M1434 670.9L1474.3 699.2 M1474.6 699.8L1496.2 699.8 M1526 700.3L1564.5 706.5 M1564.5 706.7L1598.4 711.6 M1598.3 711.5L1646.2 739.2 M1646.1 739L1700.4 730.2 M1700.3 731.1L1751.9 747.4 M1804.9 771.9L1832.8 791.8 M1832.8 792L1850.6 807.5 M1969.4 871.6L2011.9 868.6 M2013.9 870.1L2042.5 873.6 M2043.3 874.1L2068.7 876.6L2073.1 895.5 M2073.2 896.1L2104 907.9L2120.3 902.5L2140.6 918.4 M2142 917L2165.2 932.8L2176.7 959.4 M2178.6 959L2210.8 987.1 M2211.1 987L2218.5 992.9 M2218.5 993.2L2239.2 1039.6L2264 1055.7 M2264.1 1055.7L2286 1060.6L2293 1078.7 M2293.1 1078.7L2312.7 1122.4 M2311.8 1123.6L2316.4 1134.4 M2370.7 1218.1L2383.1 1222.1 M2382.9 1221.9L2440.3 1242.4 M2447.1 1243.1L2468.1 1264.6 M2468.4 1264.9L2485.4 1278.6 M2486.1 1279L2513.4 1291.8L2529.2 1311.7" fill="none" stroke="#EFE6D4" stroke-opacity=".14" stroke-width="1" vector-effect="non-scaling-stroke"/>
-    <line id="seg-2" x1="260" y1="311.1" x2="306.8" y2="299.5" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-3" x1="306.8" y1="299.5" x2="342.3" y2="273.6" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-4" x1="342.3" y1="273.6" x2="382.6" y2="260" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-5" x1="382.6" y1="260" x2="382.6" y2="260" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-6" x1="382.6" y1="260" x2="418.7" y2="312" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-7" x1="418.7" y1="312" x2="460.7" y2="334.7" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-8" x1="460.7" y1="334.7" x2="507.7" y2="340.6" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-9" x1="507.7" y1="340.6" x2="554.5" y2="344.9" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-10" x1="554.5" y1="344.9" x2="608.4" y2="366.9" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-11" x1="608.4" y1="366.9" x2="621.2" y2="356.9" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-12" x1="621.2" y1="356.9" x2="621.2" y2="356.9" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-13" x1="621.2" y1="356.9" x2="679.2" y2="356.2" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-14" x1="679.2" y1="356.2" x2="746.9" y2="351.2" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-15" x1="746.9" y1="351.2" x2="820.2" y2="337.1" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-16" x1="820.2" y1="337.1" x2="823.5" y2="337.8" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-17" x1="823.5" y1="337.8" x2="901.6" y2="322" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-18" x1="901.6" y1="322" x2="987.4" y2="353.9" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-19" x1="987.4" y1="353.9" x2="1004.5" y2="377.7" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-20" x1="1004.5" y1="377.7" x2="1070" y2="396.6" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-21" x1="1070" y1="396.6" x2="1145.8" y2="410.1" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-22" x1="1145.8" y1="410.1" x2="1196.8" y2="443" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-23" x1="1196.8" y1="443" x2="1196.8" y2="443" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-24" x1="1196.8" y1="443" x2="1196.8" y2="443" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-25" x1="1196.8" y1="443" x2="1288.6" y2="480.6" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-26" x1="1288.6" y1="480.6" x2="1340.6" y2="501.3" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-27" x1="1340.6" y1="501.3" x2="1353" y2="552.1" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-28" x1="1353" y1="552.1" x2="1360.3" y2="589.7" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-29" x1="1360.3" y1="589.7" x2="1391" y2="608.4" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-30" x1="1391" y1="608.4" x2="1398.9" y2="638.6" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-31" x1="1398.9" y1="638.6" x2="1434.1" y2="670.9" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-32" x1="1434.1" y1="670.9" x2="1474.3" y2="699.2" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-33" x1="1474.3" y1="699.2" x2="1496.2" y2="699.8" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-34" x1="1496.2" y1="699.8" x2="1564.5" y2="706.5" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-35" x1="1564.5" y1="706.5" x2="1598.4" y2="711.6" stroke="#12A19A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-36" x1="1598.4" y1="711.6" x2="1646.2" y2="739.2" stroke="#12A19A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-37" x1="1646.2" y1="739.2" x2="1700.4" y2="730.2" stroke="#12A19A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-38" x1="1700.4" y1="730.2" x2="1751.9" y2="747.4" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-39" x1="1751.9" y1="747.4" x2="1751.9" y2="747.4" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-40" x1="1751.9" y1="747.4" x2="1832.8" y2="791.8" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-41" x1="1832.8" y1="791.8" x2="1850.6" y2="807.5" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-42" x1="1850.6" y1="807.5" x2="2011.9" y2="868.6" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-43" x1="2011.9" y1="868.6" x2="2011.9" y2="868.6" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-44" x1="2011.9" y1="868.6" x2="2011.9" y2="868.6" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-45" x1="2011.9" y1="868.6" x2="2011.9" y2="868.6" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-46" x1="2011.9" y1="868.6" x2="2011.9" y2="868.6" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-47" x1="2011.9" y1="868.6" x2="2042.5" y2="873.6" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-48" x1="2042.5" y1="873.6" x2="2073.1" y2="895.5" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-49" x1="2073.1" y1="895.5" x2="2140.6" y2="918.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-50" x1="2140.6" y1="918.4" x2="2140.6" y2="918.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-51" x1="2140.6" y1="918.4" x2="2140.6" y2="918.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-52" x1="2140.6" y1="918.4" x2="2176.7" y2="959.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-53" x1="2176.7" y1="959.4" x2="2210.8" y2="987.1" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-54" x1="2210.8" y1="987.1" x2="2210.8" y2="987.1" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-55" x1="2210.8" y1="987.1" x2="2218.5" y2="992.9" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-56" x1="2218.5" y1="992.9" x2="2264" y2="1055.7" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-57" x1="2264" y1="1055.7" x2="2293" y2="1078.7" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-58" x1="2293" y1="1078.7" x2="2312.7" y2="1122.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-59" x1="2312.7" y1="1122.4" x2="2316.4" y2="1134.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-60" x1="2316.4" y1="1134.4" x2="2316.4" y2="1134.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-61" x1="2316.4" y1="1134.4" x2="2316.4" y2="1134.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <line id="seg-62" x1="2316.4" y1="1134.4" x2="2383.1" y2="1222.1" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-63" x1="2383.1" y1="1222.1" x2="2440.3" y2="1242.4" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-64" x1="2440.3" y1="1242.4" x2="2468.1" y2="1264.6" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-65" x1="2468.1" y1="1264.6" x2="2485.4" y2="1278.6" stroke="#E97E18" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-66" x1="2485.4" y1="1278.6" x2="2529.2" y2="1311.7" stroke="#E97E18" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
-    <line id="seg-67" x1="2529.2" y1="1311.7" x2="2529.2" y2="1311.7" stroke="#E97E18" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <g id="rings"><path d="M213.6 -57.8L232.2 -8.6L400.8 91L392.4 129.4L468.6 104.8L522.6 199.6L845.4 310.6L794.4 404.2L764.4 557.8L712.2 576.4L595.8 766.6L684.6 743.2L724.2 916.6L667.8 940.6L712.8 985L702.6 1045.6L783.6 1091.2L755.4 1150.6L611.4 1262.2L490.2 1208.8L514.2 1189.6L466.2 1214.2L336 1209.4L271.2 1323.4L211.8 1368.4L6 1291.6L-130.8 1301.2L-219 1261.6L-252 1205.8L-193.8 879.4L-133.8 953.2L-190.8 757L-248.4 728.8L-316.8 613.6L-259.2 602.2L-340.2 593.2L-382.2 554.2L-369 538L-414.6 551.8L-418.8 520L-529.2 498.4L-571.8 467.2L-546.6 439L-589.8 375.4L-411 325.6L-358.8 380.8L-217.8 364L-283.8 188.2L-207.6 185.2L-192 245.2L-66 247L-58.8 216.4L94.8 110.8L213.6 -57.8ZM886.2 1386.4L902.4 1330.6L967.2 1316.2L981.6 1264L996.6 1399.6L959.4 1511.2L912 1484.2L925.8 1463.2L896.4 1455.4L912.6 1431.4L891.6 1432.6L886.2 1386.4Z" fill="#2EA3DC" fill-opacity=".05" stroke="#2EA3DC" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M1470.6 343.6L1468.8 371.8L1364.4 439L1384.2 556L1315.8 523L1179 566.2L1093.8 542.2L1093.8 572.2L1055.4 578.2L1020 540.4L888.6 505L877.8 535L780 544L816 298L678.6 267.4L645.6 224.8L618.6 142.6L638.4 49L594 -48.2L622.2 -132.8L592.8 -188L691.2 -216.2L715.2 -264.2L683.4 -323L714 -335.6L741.6 -464.6L720.6 -467L721.8 -513.8L829.2 -522.8L846.6 -480.2L919.2 -559.4L1027.2 -505.4L925.2 -579.2L936.6 -609.8L895.8 -668.6L936 -687.8L897 -762.8L1047.6 -725.6L1062 -653L1150.2 -663.8L1167.6 -645.2L1143 -590.6L1281 -626L1334.4 -677.6L1314.6 -639.2L1347 -667.4L1388.4 -658.4L1434 -608.6L1458 -620.6L1515 -536L1534.8 -428.6L1509.6 -384.8L1559.4 -315.2L1576.2 -235.4L1556.4 -186.2L1598.4 -102.2L1577.4 -9.8L1523.4 -48.8L1517.4 -21.2L1302 104.8L1277.4 90.4L1324.2 198.4L1470.6 343.6Z" fill="#24709F" fill-opacity=".05" stroke="#24709F" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M1819.2 370.6L1833.6 520.6L1759.2 528.4L1790.4 548.8L1762.2 571.6L1768.2 637L1654.2 699.4L1586.4 701.2L1551 737.8L1313.4 687.4L1288.8 622.6L1176.6 643L1155.6 674.8L999.6 627.4L996 549.4L1039.8 548.2L1080 587.2L1096.8 541.6L1166.4 572.8L1288.2 520.6L1384.2 556L1351.8 452.2L1468.8 371.8L1470.6 343.6L1499.4 373L1569.6 359.2L1600.8 302.8L1785.6 341.2L1819.2 370.6Z" fill="#7D6BB0" fill-opacity=".05" stroke="#7D6BB0" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M1445.4 880L1479.6 856.6L1420.8 752.2L1458 715L1551 737.8L1587.6 701.2L1716 690.4L1710.6 665.8L1750.8 663.4L1771.2 717.4L1674 764.8L1677.6 823.6L1630.8 842.8L1638.6 886L1580.4 883.6L1555.8 851.2L1533 881.8L1445.4 880Z" fill="#12A19A" fill-opacity=".05" stroke="#12A19A" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M1771.2 717.4L1915.2 827.8L2034 815.2L2037 866.8L2091.6 930.4L2061.6 926.2L2035.8 979L2004.6 941.2L1690.8 927.4L1682.4 988L1738.2 1081L1899 1271.8L1764.6 1183.6L1709.4 1189.6L1620.6 1080.4L1650 1072L1553.4 910.6L1525.8 902.8L1480.2 992.8L1446 934.6L1436.4 876.4L1533 881.8L1547.4 861.4L1638.6 886L1677.6 823.6L1674 764.8L1771.2 717.4ZM1985.4 1333.6L1991.4 1355.2L1825.2 1259.2L1915.8 1280.2L1985.4 1333.6ZM1791 1247.8L1755 1237L1846.8 1247.8L1791 1247.8ZM1769.4 1223.8L1761 1207L1813.2 1219L1769.4 1223.8ZM1588.8 1026.4L1572.6 1003.6L1627.2 1064.8L1588.8 1026.4ZM1571.4 966.4L1538.4 943.6L1552.2 917.8L1571.4 966.4Z" fill="#1FA45A" fill-opacity=".05" stroke="#1FA45A" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M2185.8 781L2245.8 836.2L2244.6 881.8L2315.4 925.6L2308.8 983.8L2395.8 1035.4L2429.4 998.8L2467.2 1022.8L2436 1036L2458.8 1078L2421 1143.4L2491.2 1240L2438.4 1286.8L2428.8 1369L2333.4 1381L2350.2 1334.8L2255.4 1233.4L2226.6 1236.4L2197.8 1292.8L2067.6 1193.2L2104.2 1168L2073.6 1120L2116.8 1108L2059.8 1057L2089.8 977.2L2049.6 978.4L2053.2 935.8L2091.6 930.4L2046.6 897.4L2034 815.2L2109 772L2185.8 781Z" fill="#EFC319" fill-opacity=".05" stroke="#EFC319" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path d="M2864.4 1460.8L2833.8 1461.4L2846.4 1502.8L2814 1521.4L2742 1531L2661.6 1483L2484 1516.6L2494.2 1456.6L2419.8 1370.8L2442 1345.6L2429.4 1295.2L2491.2 1238.2L2421 1143.4L2449.2 1086.4L2496.6 1099L2480.4 1138L2760.6 1167.4L2941.2 1085.8L3114 1153L3112.2 1197.4L3063 1207L3037.8 1310.8L2988.6 1345.6L3051.6 1421.8L2999.4 1432.6L2943.6 1405.6L2864.4 1460.8Z" fill="#E97E18" fill-opacity=".05" stroke="#E97E18" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/></g>
+    <path id="gps" d="M231.1 295.2L260 311.1L266.7 312.5L306.8 299.5L342.3 273.6L342.2 273.5L381.4 259.7L385 259.9L418.7 312L421.2 313.6L436 332.6L460.7 334.7L460.9 334.7L507.7 340.6L508.3 342.5L522.8 352.7L554.5 344.9L554.3 343.5L570.1 357.7L608.4 366.9L620.8 356.3L623.9 359.4L651.3 363.6L679.2 356.2L679.4 356.1L746.9 351.2L752.1 347.9L820.2 337.1L823.5 337.8L868.4 314L901.3 322.5L954.7 341.1L987.4 353.9L987.3 353.8L986.6 364.3L1004.5 377.7L1004.4 378L1070 396.6L1090.9 399.9L1146.2 410.1L1157.8 429.6L1196.8 443L1221.9 448.6L1280 466.6L1288.6 480.6L1288.5 480.9L1307.4 496.8L1340.6 501.3L1340.2 501.5L1353 552.1L1353.2 552.3L1361.5 558.3L1357.7 584.3L1360.3 589.7L1360.4 589.8L1387.4 591.2L1391 608.4L1398.9 638.6L1399.1 638.8L1434.1 670.9L1474.3 699.2L1474.6 699.8L1496.2 699.8L1525.8 698.5L1564.5 706.5L1564.5 706.7L1598.4 711.6L1646.2 739.2L1646.1 739L1699.4 730.8L1751.9 747.4L1804.9 771.9L1832.8 791.8L1832.8 792L1850.6 807.5L1969.4 871.6L2013.4 870.2L2042.5 873.6L2043.3 874.1L2068.7 876.6L2073.1 895.5L2073.2 896.1L2104 907.9L2120.3 902.5L2142.5 917.8L2165.2 932.8L2176.7 959.4L2178.6 959L2210.4 985.5L2218.5 992.9L2218.5 993.2L2239.2 1039.6L2264 1055.7L2286 1060.6L2293 1078.7L2312.7 1122.4L2311.8 1123.6L2316.4 1134.4L2370.7 1218L2383.1 1222.1L2382.9 1221.9L2440.3 1242.4L2447.1 1243.1L2468.1 1264.6L2468.4 1264.9L2485.4 1278.6L2486.1 1279L2513.4 1291.8L2528.8 1312.3" fill="none" stroke="#EFE6D4" stroke-opacity=".14" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <path id="seg-1" d="M231.1 295.2L260 311.1" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-2" d="M260 311.1L266.7 312.5L306.8 299.5" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-3" d="M306.8 299.5L342.3 273.6" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-4" d="M342.3 273.6L342.2 273.5L381.4 259.7" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-5" d="M381.4 259.7L381.4 259.7" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-6" d="M381.4 259.7L385 259.9L418.7 312" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-7" d="M418.7 312L421.2 313.6L436 332.6L460.7 334.7" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-8" d="M460.7 334.7L460.9 334.7L507.7 340.6" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-9" d="M507.7 340.6L508.3 342.5L522.8 352.7L554.5 344.9" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-10" d="M554.5 344.9L554.3 343.5L570.1 357.7L608.4 366.9" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-11" d="M608.4 366.9L620.8 356.3" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-12" d="M620.8 356.3L620.8 356.3" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-13" d="M620.8 356.3L623.9 359.4L651.3 363.6L679.2 356.2" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-14" d="M679.2 356.2L679.4 356.1L746.9 351.2" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-15" d="M746.9 351.2L752.1 347.9L820.2 337.1" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-16" d="M820.2 337.1L823.5 337.8" fill="none" stroke="#2EA3DC" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-17" d="M823.5 337.8L868.4 314L901.3 322.5" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-18" d="M901.3 322.5L954.7 341.1L987.4 353.9" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-19" d="M987.4 353.9L987.3 353.8L986.6 364.3L1004.5 377.7" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-20" d="M1004.5 377.7L1004.4 378L1070 396.6" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-21" d="M1070 396.6L1090.9 399.9L1146.2 410.1" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-22" d="M1146.2 410.1L1157.8 429.6L1196.8 443" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-23" d="M1196.8 443L1196.8 443" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-24" d="M1196.8 443L1196.8 443" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-25" d="M1196.8 443L1221.9 448.6L1280 466.6L1288.6 480.6" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-26" d="M1288.6 480.6L1288.5 480.9L1307.4 496.8L1340.6 501.3" fill="none" stroke="#24709F" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-27" d="M1340.6 501.3L1340.2 501.5L1353 552.1" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-28" d="M1353 552.1L1353.2 552.3L1361.5 558.3L1357.7 584.3L1360.3 589.7" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-29" d="M1360.3 589.7L1360.4 589.8L1387.4 591.2L1391 608.4" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-30" d="M1391 608.4L1398.9 638.6" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-31" d="M1398.9 638.6L1399.1 638.8L1434.1 670.9" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-32" d="M1434.1 670.9L1474.3 699.2" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-33" d="M1474.3 699.2L1474.6 699.8L1496.2 699.8" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-34" d="M1496.2 699.8L1525.8 698.5L1564.5 706.5" fill="none" stroke="#7D6BB0" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-35" d="M1564.5 706.5L1564.5 706.7L1598.4 711.6" fill="none" stroke="#12A19A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-36" d="M1598.4 711.6L1646.2 739.2" fill="none" stroke="#12A19A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-37" d="M1646.2 739.2L1646.1 739L1699.4 730.8" fill="none" stroke="#12A19A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-38" d="M1699.4 730.8L1751.9 747.4" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-39" d="M1751.9 747.4L1751.9 747.4" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-40" d="M1751.9 747.4L1804.9 771.9L1832.8 791.8" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-41" d="M1832.8 791.8L1832.8 792L1850.6 807.5" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-42" d="M1850.6 807.5L1969.4 871.6L2013.4 870.2" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-43" d="M2013.4 870.2L2013.4 870.2" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-44" d="M2013.4 870.2L2013.4 870.2" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-45" d="M2013.4 870.2L2013.4 870.2" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-46" d="M2013.4 870.2L2013.4 870.2" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-47" d="M2013.4 870.2L2042.5 873.6" fill="none" stroke="#1FA45A" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-48" d="M2042.5 873.6L2043.3 874.1L2068.7 876.6L2073.1 895.5" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-49" d="M2073.1 895.5L2073.2 896.1L2104 907.9L2120.3 902.5L2142.5 917.8" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-50" d="M2142.5 917.8L2142.5 917.8" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-51" d="M2142.5 917.8L2142.5 917.8" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-52" d="M2142.5 917.8L2165.2 932.8L2176.7 959.4" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-53" d="M2176.7 959.4L2178.6 959L2210.4 985.5" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-54" d="M2210.4 985.5L2210.4 985.5" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-55" d="M2210.4 985.5L2218.5 992.9" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-56" d="M2218.5 992.9L2218.5 993.2L2239.2 1039.6L2264 1055.7" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-57" d="M2264 1055.7L2286 1060.6L2293 1078.7" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-58" d="M2293 1078.7L2312.7 1122.4" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-59" d="M2312.7 1122.4L2311.8 1123.6L2316.4 1134.4" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-60" d="M2316.4 1134.4L2316.4 1134.4" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-61" d="M2316.4 1134.4L2316.4 1134.4" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-62" d="M2316.4 1134.4L2370.7 1218L2383.1 1222.1" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-63" d="M2383.1 1222.1L2382.9 1221.9L2440.3 1242.4" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-64" d="M2440.3 1242.4L2447.1 1243.1L2468.1 1264.6" fill="none" stroke="#EFC319" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-65" d="M2468.1 1264.6L2468.4 1264.9L2485.4 1278.6" fill="none" stroke="#E97E18" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-66" d="M2485.4 1278.6L2486.1 1279L2513.4 1291.8L2528.8 1312.3" fill="none" stroke="#E97E18" stroke-width="2.6" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-67" d="M2528.8 1312.3L2528.8 1312.3" fill="none" stroke="#E97E18" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
     <circle id="dot-1" class="daydot" cx="260" cy="311.1" r="2.2" data-day="1"/>
     <circle id="dot-2" class="daydot" cx="306.8" cy="299.5" r="2.2" data-day="2"/>
     <circle id="dot-3" class="daydot" cx="342.3" cy="273.6" r="2.2" data-day="3"/>
-    <circle id="dot-4" class="daydot" cx="382.6" cy="260" r="2.2" data-day="4"/>
-    <circle id="dot-5" class="daydot restdot" cx="382.6" cy="260" r="2.2" data-day="5"/>
+    <circle id="dot-4" class="daydot" cx="381.4" cy="259.7" r="2.2" data-day="4"/>
+    <circle id="dot-5" class="daydot restdot" cx="381.4" cy="259.7" r="2.2" data-day="5"/>
     <circle id="dot-6" class="daydot hasrec" cx="418.7" cy="312" r="3.2" data-day="6"/>
     <circle id="dot-7" class="daydot" cx="460.7" cy="334.7" r="2.2" data-day="7"/>
     <circle id="dot-8" class="daydot" cx="507.7" cy="340.6" r="2.2" data-day="8"/>
     <circle id="dot-9" class="daydot" cx="554.5" cy="344.9" r="2.2" data-day="9"/>
     <circle id="dot-10" class="daydot" cx="608.4" cy="366.9" r="2.2" data-day="10"/>
-    <circle id="dot-11" class="daydot" cx="621.2" cy="356.9" r="2.2" data-day="11"/>
-    <circle id="dot-12" class="daydot restdot" cx="621.2" cy="356.9" r="2.2" data-day="12"/>
+    <circle id="dot-11" class="daydot" cx="620.8" cy="356.3" r="2.2" data-day="11"/>
+    <circle id="dot-12" class="daydot restdot" cx="620.8" cy="356.3" r="2.2" data-day="12"/>
     <circle id="dot-13" class="daydot" cx="679.2" cy="356.2" r="2.2" data-day="13"/>
     <circle id="dot-14" class="daydot hasrec" cx="746.9" cy="351.2" r="3.2" data-day="14"/>
     <circle id="dot-15" class="daydot" cx="820.2" cy="337.1" r="2.2" data-day="15"/>
     <circle id="dot-16" class="daydot hasrec" cx="823.5" cy="337.8" r="3.2" data-day="16"/>
-    <circle id="dot-17" class="daydot hasrec" cx="901.6" cy="322" r="3.2" data-day="17"/>
+    <circle id="dot-17" class="daydot hasrec" cx="901.3" cy="322.5" r="3.2" data-day="17"/>
     <circle id="dot-18" class="daydot" cx="987.4" cy="353.9" r="2.2" data-day="18"/>
     <circle id="dot-19" class="daydot" cx="1004.5" cy="377.7" r="2.2" data-day="19"/>
     <circle id="dot-20" class="daydot" cx="1070" cy="396.6" r="2.2" data-day="20"/>
-    <circle id="dot-21" class="daydot" cx="1145.8" cy="410.1" r="2.2" data-day="21"/>
+    <circle id="dot-21" class="daydot" cx="1146.2" cy="410.1" r="2.2" data-day="21"/>
     <circle id="dot-22" class="daydot" cx="1196.8" cy="443" r="2.2" data-day="22"/>
     <circle id="dot-23" class="daydot restdot" cx="1196.8" cy="443" r="2.2" data-day="23"/>
     <circle id="dot-24" class="daydot restdot" cx="1196.8" cy="443" r="2.2" data-day="24"/>
@@ -439,24 +468,24 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <circle id="dot-34" class="daydot" cx="1564.5" cy="706.5" r="2.2" data-day="34"/>
     <circle id="dot-35" class="daydot" cx="1598.4" cy="711.6" r="2.2" data-day="35"/>
     <circle id="dot-36" class="daydot hasrec" cx="1646.2" cy="739.2" r="3.2" data-day="36"/>
-    <circle id="dot-37" class="daydot" cx="1700.4" cy="730.2" r="2.2" data-day="37"/>
+    <circle id="dot-37" class="daydot" cx="1699.4" cy="730.8" r="2.2" data-day="37"/>
     <circle id="dot-38" class="daydot hasrec" cx="1751.9" cy="747.4" r="3.2" data-day="38"/>
     <circle id="dot-39" class="daydot restdot" cx="1751.9" cy="747.4" r="2.2" data-day="39"/>
     <circle id="dot-40" class="daydot hasrec" cx="1832.8" cy="791.8" r="3.2" data-day="40"/>
     <circle id="dot-41" class="daydot hasrec" cx="1850.6" cy="807.5" r="3.2" data-day="41"/>
-    <circle id="dot-42" class="daydot hasrec" cx="2011.9" cy="868.6" r="3.2" data-day="42"/>
-    <circle id="dot-43" class="daydot restdot" cx="2011.9" cy="868.6" r="2.2" data-day="43"/>
-    <circle id="dot-44" class="daydot restdot" cx="2011.9" cy="868.6" r="2.2" data-day="44"/>
-    <circle id="dot-45" class="daydot restdot" cx="2011.9" cy="868.6" r="2.2" data-day="45"/>
-    <circle id="dot-46" class="daydot restdot" cx="2011.9" cy="868.6" r="2.2" data-day="46"/>
+    <circle id="dot-42" class="daydot hasrec" cx="2013.4" cy="870.2" r="3.2" data-day="42"/>
+    <circle id="dot-43" class="daydot restdot" cx="2013.4" cy="870.2" r="2.2" data-day="43"/>
+    <circle id="dot-44" class="daydot restdot" cx="2013.4" cy="870.2" r="2.2" data-day="44"/>
+    <circle id="dot-45" class="daydot restdot" cx="2013.4" cy="870.2" r="2.2" data-day="45"/>
+    <circle id="dot-46" class="daydot restdot" cx="2013.4" cy="870.2" r="2.2" data-day="46"/>
     <circle id="dot-47" class="daydot" cx="2042.5" cy="873.6" r="2.2" data-day="47"/>
     <circle id="dot-48" class="daydot hasrec" cx="2073.1" cy="895.5" r="3.2" data-day="48"/>
-    <circle id="dot-49" class="daydot hasrec" cx="2140.6" cy="918.4" r="3.2" data-day="49"/>
-    <circle id="dot-50" class="daydot restdot" cx="2140.6" cy="918.4" r="2.2" data-day="50"/>
-    <circle id="dot-51" class="daydot restdot" cx="2140.6" cy="918.4" r="2.2" data-day="51"/>
+    <circle id="dot-49" class="daydot hasrec" cx="2142.5" cy="917.8" r="3.2" data-day="49"/>
+    <circle id="dot-50" class="daydot restdot" cx="2142.5" cy="917.8" r="2.2" data-day="50"/>
+    <circle id="dot-51" class="daydot restdot" cx="2142.5" cy="917.8" r="2.2" data-day="51"/>
     <circle id="dot-52" class="daydot hasrec" cx="2176.7" cy="959.4" r="3.2" data-day="52"/>
-    <circle id="dot-53" class="daydot hasrec" cx="2210.8" cy="987.1" r="3.2" data-day="53"/>
-    <circle id="dot-54" class="daydot restdot" cx="2210.8" cy="987.1" r="2.2" data-day="54"/>
+    <circle id="dot-53" class="daydot hasrec" cx="2210.4" cy="985.5" r="3.2" data-day="53"/>
+    <circle id="dot-54" class="daydot restdot" cx="2210.4" cy="985.5" r="2.2" data-day="54"/>
     <circle id="dot-55" class="daydot hasrec" cx="2218.5" cy="992.9" r="3.2" data-day="55"/>
     <circle id="dot-56" class="daydot hasrec" cx="2264" cy="1055.7" r="3.2" data-day="56"/>
     <circle id="dot-57" class="daydot hasrec" cx="2293" cy="1078.7" r="3.2" data-day="57"/>
@@ -468,76 +497,96 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <circle id="dot-63" class="daydot" cx="2440.3" cy="1242.4" r="2.2" data-day="63"/>
     <circle id="dot-64" class="daydot hasrec" cx="2468.1" cy="1264.6" r="3.2" data-day="64"/>
     <circle id="dot-65" class="daydot hasrec" cx="2485.4" cy="1278.6" r="3.2" data-day="65"/>
-    <circle id="dot-66" class="daydot hasrec" cx="2529.2" cy="1311.7" r="3.2" data-day="66"/>
-    <circle id="dot-67" class="daydot restdot" cx="2529.2" cy="1311.7" r="2.2" data-day="67"/>
+    <circle id="dot-66" class="daydot hasrec" cx="2528.8" cy="1312.3" r="3.2" data-day="66"/>
+    <circle id="dot-67" class="daydot restdot" cx="2528.8" cy="1312.3" r="2.2" data-day="67"/>
     <g class="town" id="town-paris">
-      <circle cx="231.3" cy="295.2" r="2" class="towndot"/>
-      <text x="221.3" y="283.2" text-anchor="end" class="townlabel">Paris</text>
+      <circle cx="231.1" cy="295.2" r="2" class="towndot"/>
+      <text x="221.1" y="283.2" text-anchor="end" class="townlabel">Paris</text>
     </g>
     <g class="town" id="town-reims">
-      <circle cx="395.1" cy="252.4" r="2" class="towndot"/>
-      <text x="395.1" y="238.4" text-anchor="middle" class="townlabel">Reims</text>
+      <circle cx="381.4" cy="259.7" r="2" class="towndot"/>
+      <text x="381.4" y="245.7" text-anchor="middle" class="townlabel">Reims</text>
     </g>
     <g class="town" id="town-nancy">
-      <circle cx="632.9" cy="349.6" r="2" class="towndot"/>
-      <text x="632.9" y="371.6" text-anchor="middle" class="townlabel">Nancy</text>
+      <circle cx="620.8" cy="356.3" r="2" class="towndot"/>
+      <text x="620.8" y="378.3" text-anchor="middle" class="townlabel">Nancy</text>
     </g>
-    <g class="town" id="town-strasbourg">
-      <circle cx="806.6" cy="368.3" r="2" class="towndot"/>
-      <text x="806.6" y="354.3" text-anchor="middle" class="townlabel">Strasbourg</text>
+    <g class="town" id="town-saverne">
+      <circle cx="752.1" cy="347.9" r="2" class="towndot"/>
+      <text x="752.1" y="333.9" text-anchor="middle" class="townlabel">Saverne</text>
+    </g>
+    <g class="town" id="town-pforzheim">
+      <circle cx="901.3" cy="322.5" r="2" class="towndot"/>
+      <text x="901.3" y="308.5" text-anchor="middle" class="townlabel">Pforzheim</text>
     </g>
     <g class="town" id="town-stuttgart">
-      <circle cx="964.8" cy="334.4" r="2" class="towndot"/>
-      <text x="964.8" y="320.4" text-anchor="middle" class="townlabel">Stuttgart</text>
+      <circle cx="954.7" cy="341.1" r="2" class="towndot"/>
+      <text x="954.7" y="363.1" text-anchor="middle" class="townlabel">Stuttgart</text>
     </g>
     <g class="town" id="town-augsburg">
-      <circle cx="1155.1" cy="403.8" r="2" class="towndot"/>
-      <text x="1155.1" y="389.8" text-anchor="middle" class="townlabel">Augsburg</text>
+      <circle cx="1146.2" cy="410.1" r="2" class="towndot"/>
+      <text x="1146.2" y="396.1" text-anchor="middle" class="townlabel">Augsburg</text>
     </g>
     <g class="town" id="town-munich">
-      <circle cx="1230.3" cy="442.4" r="2" class="towndot"/>
-      <text x="1242.3" y="432.4" text-anchor="start" class="townlabel">Munich</text>
+      <circle cx="1221.9" cy="448.6" r="2" class="towndot"/>
+      <text x="1233.9" y="438.6" text-anchor="start" class="townlabel">Munich</text>
     </g>
-    <g class="town" id="town-salzburg">
-      <circle cx="1393" cy="499.3" r="2" class="towndot"/>
-      <text x="1405" y="491.3" text-anchor="start" class="townlabel">Salzburg</text>
+    <g class="town" id="town-zell-am-see">
+      <circle cx="1357.7" cy="584.3" r="2" class="towndot"/>
+      <text x="1369.7" y="576.3" text-anchor="start" class="townlabel">Zell am See</text>
     </g>
     <g class="town pass" id="town-the-tauern">
-      <circle cx="1404" cy="607" r="2" class="towndot"/>
-      <text x="1418" y="611" text-anchor="start" class="townlabel">the Tauern</text>
+      <circle cx="1392.3" cy="613.3" r="2" class="towndot"/>
+      <text x="1406.3" y="617.3" text-anchor="start" class="townlabel">the Tauern</text>
     </g>
     <g class="town" id="town-klagenfurt">
-      <circle cx="1532.4" cy="693.8" r="2" class="towndot"/>
-      <text x="1532.4" y="715.8" text-anchor="middle" class="townlabel">Klagenfurt</text>
+      <circle cx="1525.8" cy="698.5" r="2" class="towndot"/>
+      <text x="1525.8" y="720.5" text-anchor="middle" class="townlabel">Klagenfurt</text>
     </g>
-    <g class="town" id="town-maribor">
-      <circle cx="1680.6" cy="705.2" r="2" class="towndot"/>
-      <text x="1680.6" y="691.2" text-anchor="middle" class="townlabel">Maribor</text>
+    <g class="town" id="town-ptuj">
+      <circle cx="1699.4" cy="730.8" r="2" class="towndot"/>
+      <text x="1699.4" y="716.8" text-anchor="middle" class="townlabel">Ptuj</text>
     </g>
     <g class="town" id="town-osijek">
-      <circle cx="2016.9" cy="866.5" r="2" class="towndot"/>
-      <text x="2016.9" y="852.5" text-anchor="middle" class="townlabel">Osijek</text>
+      <circle cx="2013.4" cy="870.2" r="2" class="towndot"/>
+      <text x="2013.4" y="856.2" text-anchor="middle" class="townlabel">Osijek</text>
     </g>
     <g class="town" id="town-novi-sad">
-      <circle cx="2145.3" cy="914.4" r="2" class="towndot"/>
-      <text x="2145.3" y="900.4" text-anchor="middle" class="townlabel">Novi Sad</text>
+      <circle cx="2142.5" cy="917.8" r="2" class="towndot"/>
+      <text x="2142.5" y="903.8" text-anchor="middle" class="townlabel">Novi Sad</text>
     </g>
     <g class="town" id="town-belgrade">
-      <circle cx="2212.8" cy="982.5" r="2" class="towndot"/>
-      <text x="2226.8" y="988.5" text-anchor="start" class="townlabel">Belgrade</text>
+      <circle cx="2210.4" cy="985.5" r="2" class="towndot"/>
+      <text x="2224.4" y="991.5" text-anchor="start" class="townlabel">Belgrade</text>
     </g>
     <g class="town" id="town-ni-">
-      <circle cx="2372.1" cy="1216.3" r="2" class="towndot"/>
-      <text x="2386.1" y="1216.3" text-anchor="start" class="townlabel">Niš</text>
+      <circle cx="2370.7" cy="1218" r="2" class="towndot"/>
+      <text x="2384.7" y="1218" text-anchor="start" class="townlabel">Niš</text>
     </g>
     <g class="town" id="town-sofia">
-      <circle cx="2529.2" cy="1311.2" r="2" class="towndot"/>
-      <text x="2529.2" y="1335.2" text-anchor="middle" class="townlabel">Sofia</text>
+      <circle cx="2528.8" cy="1312.3" r="2" class="towndot"/>
+      <text x="2528.8" y="1336.3" text-anchor="middle" class="townlabel">Sofia</text>
     </g>
-    <circle id="walker" cx="260" cy="311.1" r="4"/>
-    <circle id="walker-halo" cx="260" cy="311.1" r="10"/>
+    <g id="walker-g" transform="translate(260,311.1)">
+      <ellipse id="walker-shadow" cx="0" cy="1.1" rx="5.2" ry="1.7"/>
+      <circle id="walker-pin" cx="0" cy="0" r="2.3"/>
+    </g>
   </g>
 </svg>
+    </div>
+    <div class="walker-html" id="walker-html" aria-hidden="true">
+      <svg viewBox="-7 -16 16 24">
+        <g id="stick">
+          <circle class="head" cx="0" cy="-12.2" r="2.35"/>
+          <rect class="pack" x="1.3" y="-9.4" width="2.8" height="3.4" rx=".5"/>
+          <line x1="0" y1="-9.8" x2="0" y2="-3.1"/>
+          <g class="arm arm-l" transform="translate(0,-8.5) rotate(-22)"><line x1="0" y1="0" x2="0" y2="5.8"/></g>
+          <g class="arm arm-r" transform="translate(0,-8.5) rotate(22)"><line x1="0" y1="0" x2="0" y2="5.8"/></g>
+          <g class="leg leg-l" transform="translate(0,-3.1) rotate(24)"><line x1="0" y1="0" x2="0" y2="7.4"/></g>
+          <g class="leg leg-r" transform="translate(0,-3.1) rotate(-24)"><line x1="0" y1="0" x2="0" y2="7.4"/></g>
+        </g>
+      </svg>
+    </div>
     <div class="vignette"></div>
 
     <div class="titlecard" id="titlecard">
@@ -556,6 +605,14 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <div class="hud" id="hud">
       <p class="day" id="hud-day">day 1 · 24 sep</p>
       <p class="kmline"><b id="hud-km">0.0</b> <span id="hud-total">of 1,982 km</span></p>
+      <div class="elev">
+        <svg viewBox="0 0 132 28" aria-hidden="true">
+          <path id="elev-area"></path>
+          <path id="elev-line"></path>
+          <circle id="elev-now" r="2.2" cx="3" cy="20"></circle>
+        </svg>
+        <p class="altline"><b id="hud-alt">—</b> m</p>
+      </div>
     </div>
 
     <div class="daycard" id="daycard">
@@ -696,7 +753,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <li><button data-day="53" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="The Who — A Quick One, day 53"><img src="covers/a-quick-one-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
     <li><button data-day="55" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Summer Years — You Can’t Live There Forever, day 55"><img src="covers/you-cant-live-there-forever-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
     <li><button data-day="56" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Jens Lekman — Night Falls Over Kortedala, day 56"><img src="covers/night-falls-over-kortedala-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
-    <li><button data-day="57" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Dump — A Plea for Tenderness, day 57"><img src="covers/a-plea-for-tenderness-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
+    <li><button data-day="57" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Jonathan Richman — A Plea for Tenderness, day 57"><img src="covers/a-plea-for-tenderness-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
     <li><button data-day="58" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="James Blake — Assume Form, day 58"><img src="covers/assume-form-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
     <li><button data-day="59" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Kid Carpet — Dogmeat, day 59"><img src="covers/dogmeat-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
     <li><button data-day="64" style="--sc:#EFC319" aria-haspopup="dialog" aria-label="Animal Collective — Feels, day 64"><img src="covers/feels-thumb.webp" alt="" width="160" height="160" loading="lazy" decoding="async"></button></li>
@@ -785,7 +842,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       <li>Day 54 · — · rest</li>
       <li>Day 55 · You Can't Live There Forever · 17 Nov · 7.6 km · Summer Years — You Can’t Live There Forever</li>
       <li>Day 56 · A Postcard to Nina · 18 Nov · 69.8 km · Jens Lekman — Night Falls Over Kortedala</li>
-      <li>Day 57 · A Plea For Tenderness · 19 Nov · 37.0 km · Dump — A Plea for Tenderness</li>
+      <li>Day 57 · A Plea For Tenderness · 19 Nov · 37.0 km · Jonathan Richman — A Plea for Tenderness</li>
       <li>Day 58 · I'll Come Too · 20 Nov · 43.1 km · James Blake — Assume Form</li>
       <li>Day 59 · Dogmeat · 21 Nov · 10.0 km · Kid Carpet — Dogmeat</li>
       <li>Day 60 · — · rest</li>
@@ -803,7 +860,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 <script>
 (function(){
   "use strict";
-  var DATA = {"days":[{"n":1,"t":"And We're Off!","date":"2019-09-24","km":29.1,"min":335,"elev":835,"w":1,"c":"France","x":260,"y":311.1,"s":null,"cum":29.1},{"n":2,"t":"After the Storm","date":"2019-09-25","km":35.5,"min":430,"elev":1313,"w":1,"c":"France","x":306.8,"y":299.5,"s":null,"cum":64.6},{"n":3,"t":"Reservoirs of Untapped Potential","date":"2019-09-26","km":35.9,"min":421,"elev":1225,"w":1,"c":"France","x":342.3,"y":273.6,"s":null,"cum":100.5},{"n":4,"t":"On the 5th day, Dan rested","date":"2019-09-27","km":34.6,"min":431,"elev":1621,"w":1,"c":"France","x":382.6,"y":260,"s":null,"cum":135.1},{"n":5,"t":"Köln River Run (12 miles)","date":"2019-03-27","km":16.8,"min":97,"elev":93,"w":0,"c":"France","x":382.6,"y":260,"s":null,"cum":135.1},{"n":6,"t":"One way to lose them walking blues!","date":"2019-09-29","km":50,"min":512,"elev":1415,"w":1,"c":"France","x":418.7,"y":312,"s":{"slug":"graceland","kind":"lyrics","song":"Diamonds on the Soles of Her Shoes","album":"Graceland","artist":"Paul Simon","note":"Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."},"cum":185.1},{"n":7,"t":"Now I'm on my way","date":"2019-09-30","km":37,"min":358,"elev":973,"w":1,"c":"France","x":460.7,"y":334.7,"s":null,"cum":222.1},{"n":8,"t":"Getting the Hang of It","date":"2019-10-01","km":35.7,"min":309,"elev":933,"w":1,"c":"France","x":507.7,"y":340.6,"s":null,"cum":257.8},{"n":9,"t":"Lilac!","date":"2019-10-02","km":36,"min":268,"elev":999,"w":1,"c":"France","x":554.5,"y":344.9,"s":null,"cum":293.8},{"n":10,"t":"Sure is a Hot One!","date":"2019-10-03","km":50,"min":425,"elev":1365,"w":1,"c":"France","x":608.4,"y":366.9,"s":null,"cum":343.8},{"n":11,"t":"Short Walk to Nancy","date":"2019-10-04","km":12.6,"min":159,"elev":634,"w":1,"c":"France","x":621.2,"y":356.9,"s":null,"cum":356.4},{"n":12,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"France","x":621.2,"y":356.9,"s":null,"cum":356.4},{"n":13,"t":"The Long Canal","date":"2019-10-06","km":21.1,"min":235,"elev":471,"w":1,"c":"France","x":679.2,"y":356.2,"s":null,"cum":377.5},{"n":14,"t":"Witchi Tai To","date":"2019-10-07","km":56.8,"min":569,"elev":1901,"w":1,"c":"France","x":746.9,"y":351.2,"s":{"slug":"everything-is-everything","kind":"song","song":"Witchi Tai To","album":"Everything Is Everything","artist":"Everything Is Everything","note":"Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on."},"cum":434.3},{"n":15,"t":"Tapping Into Flow","date":"2019-10-08","km":59.9,"min":573,"elev":1472,"w":1,"c":"France","x":820.2,"y":337.1,"s":null,"cum":494.2},{"n":16,"t":"Hey Moon","date":"2019-10-09","km":70.9,"min":986,"elev":3306,"w":1,"c":"France","x":823.5,"y":337.8,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"cum":565.1},{"n":17,"t":"Hey Moon","date":"2019-10-09","km":0,"min":0,"elev":0,"w":1,"c":"Germany","x":901.6,"y":322,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"cum":565.1},{"n":18,"t":"Recovery","date":"2019-10-11","km":27.8,"min":325,"elev":1609,"w":1,"c":"Germany","x":987.4,"y":353.9,"s":null,"cum":592.9},{"n":19,"t":"Easy Day Turned Hill Sprints","date":"2019-10-12","km":26.6,"min":232,"elev":1309,"w":1,"c":"Germany","x":1004.5,"y":377.7,"s":null,"cum":619.5},{"n":20,"t":"Scorching","date":"2019-10-13","km":53,"min":558,"elev":1515,"w":1,"c":"Germany","x":1070,"y":396.6,"s":null,"cum":672.5},{"n":21,"t":"Slowly Does It","date":"2019-10-14","km":41.3,"min":508,"elev":1453,"w":1,"c":"Germany","x":1145.8,"y":410.1,"s":null,"cum":713.8},{"n":22,"t":"Negative Split","date":"2019-10-15","km":48.8,"min":565,"elev":1354,"w":1,"c":"Germany","x":1196.8,"y":443,"s":null,"cum":762.6},{"n":23,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Germany","x":1196.8,"y":443,"s":null,"cum":762.6},{"n":24,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Germany","x":1196.8,"y":443,"s":null,"cum":762.6},{"n":25,"t":"Another One Goes By","date":"2019-10-18","km":59,"min":513,"elev":2194,"w":1,"c":"Germany","x":1288.6,"y":480.6,"s":{"slug":"another-one-goes-by","kind":"album","song":"Another One Goes By","album":"Another One Goes By","artist":"Mazarin","note":null},"cum":821.6},{"n":26,"t":"One Of Those Days","date":"2019-10-19","km":29.1,"min":319,"elev":1357,"w":1,"c":"Germany","x":1340.6,"y":501.3,"s":null,"cum":850.7},{"n":27,"t":"Arrival","date":"2019-10-20","km":47.8,"min":439,"elev":3468,"w":1,"c":"Austria","x":1353,"y":552.1,"s":null,"cum":898.5},{"n":28,"t":"The Predatory Wasp","date":"2019-10-21","km":34.5,"min":365,"elev":1540,"w":1,"c":"Austria","x":1360.3,"y":589.7,"s":{"slug":"illinois","kind":"song","song":"The Predatory Wasp of the Palisades Is Out to Get Us!","album":"Illinois","artist":"Sufjan Stevens","note":null},"cum":933},{"n":29,"t":"Taking Tiger Mountain","date":"2019-10-22","km":39.5,"min":444,"elev":2100,"w":1,"c":"Austria","x":1391,"y":608.4,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"GPS split the album title across two days. Same sleeve as “(By Strategy)”."},"cum":972.5},{"n":30,"t":"(By Strategy)","date":"2019-10-23","km":33.5,"min":480,"elev":2895,"w":1,"c":"Austria","x":1398.9,"y":638.6,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"Second half of the Eno title. Same sleeve as day 29."},"cum":1006},{"n":31,"t":"Business As Usual","date":"2019-10-24","km":44.8,"min":435,"elev":1374,"w":1,"c":"Austria","x":1434.1,"y":670.9,"s":null,"cum":1050.8},{"n":32,"t":"I'll Come Running To Tie Your Shoes","date":"2019-10-25","km":40.6,"min":353,"elev":1233,"w":1,"c":"Austria","x":1474.3,"y":699.2,"s":{"slug":"another-green-world","kind":"lyrics","song":"I'll Come Running","album":"Another Green World","artist":"Brian Eno","note":"Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."},"cum":1091.4},{"n":33,"t":"Katy Song","date":"2019-10-26","km":17.5,"min":229,"elev":577,"w":1,"c":"Austria","x":1496.2,"y":699.8,"s":{"slug":"red-house-painters","kind":"song","song":"Katy Song","album":"Red House Painters","artist":"Red House Painters","note":"The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."},"cum":1108.9},{"n":34,"t":"Sing Me To Sleep","date":"2019-10-27","km":33.6,"min":309,"elev":958,"w":1,"c":"Austria","x":1564.5,"y":706.5,"s":null,"cum":1142.5},{"n":35,"t":"The Process","date":"2019-10-28","km":31,"min":354,"elev":206,"w":1,"c":"Slovenia","x":1598.4,"y":711.6,"s":null,"cum":1173.5},{"n":36,"t":"Beyond Me, Beyond You","date":"2019-10-29","km":55,"min":632,"elev":1203,"w":1,"c":"Slovenia","x":1646.2,"y":739.2,"s":{"slug":"a-moon-shaped-pool","kind":"lyrics","song":"Daydreaming","album":"A Moon Shaped Pool","artist":"Radiohead","note":"Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."},"cum":1228.5},{"n":37,"t":"Skipper","date":"2019-10-30","km":50.3,"min":496,"elev":369,"w":1,"c":"Slovenia","x":1700.4,"y":730.2,"s":null,"cum":1278.8},{"n":38,"t":"Everything That Happens","date":"2019-10-31","km":44.5,"min":475,"elev":252,"w":1,"c":"Croatia","x":1751.9,"y":747.4,"s":{"slug":"everything-that-happens-will-happen-today","kind":"album","song":null,"album":"Everything That Happens Will Happen Today","artist":"David Byrne & Brian Eno","note":null},"cum":1323.3},{"n":39,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Croatia","x":1751.9,"y":747.4,"s":null,"cum":1323.3},{"n":40,"t":"Distant Sky","date":"2019-11-02","km":31.3,"min":230,"elev":49,"w":1,"c":"Croatia","x":1832.8,"y":791.8,"s":{"slug":"skeleton-tree","kind":"song","song":"Distant Sky","album":"Skeleton Tree","artist":"Nick Cave & the Bad Seeds","note":"Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."},"cum":1354.6},{"n":41,"t":"Biscuit Town","date":"2019-11-03","km":21.4,"min":236,"elev":56,"w":1,"c":"Croatia","x":1850.6,"y":807.5,"s":{"slug":"the-ooz","kind":"song","song":"Biscuit Town","album":"The OOZ","artist":"King Krule","note":"Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."},"cum":1376},{"n":42,"t":"Sweet Road","date":"2019-11-04","km":41.9,"min":461,"elev":124,"w":1,"c":"Croatia","x":2011.9,"y":868.6,"s":{"slug":"sung-tongs","kind":"song","song":"Sweet Road","album":"Sung Tongs","artist":"Animal Collective","note":null},"cum":1417.9},{"n":43,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Croatia","x":2011.9,"y":868.6,"s":null,"cum":1417.9},{"n":44,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Croatia","x":2011.9,"y":868.6,"s":null,"cum":1417.9},{"n":45,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Croatia","x":2011.9,"y":868.6,"s":null,"cum":1417.9},{"n":46,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Croatia","x":2011.9,"y":868.6,"s":null,"cum":1417.9},{"n":47,"t":"Eyes Open Wide","date":"2019-11-09","km":25,"min":170,"elev":60,"w":1,"c":"Croatia","x":2042.5,"y":873.6,"s":null,"cum":1442.9},{"n":48,"t":"In Between Dreams","date":"2019-11-10","km":41.9,"min":413,"elev":137,"w":1,"c":"Serbia","x":2073.1,"y":895.5,"s":{"slug":"in-between-dreams","kind":"album","song":null,"album":"In Between Dreams","artist":"Jack Johnson","note":null},"cum":1484.8},{"n":49,"t":"Build A Rocket Boys!","date":"2019-11-11","km":69,"min":770,"elev":148,"w":1,"c":"Serbia","x":2140.6,"y":918.4,"s":{"slug":"build-a-rocket-boys","kind":"album","song":null,"album":"Build a Rocket Boys!","artist":"Elbow","note":null},"cum":1553.8},{"n":50,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Serbia","x":2140.6,"y":918.4,"s":null,"cum":1553.8},{"n":51,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Serbia","x":2140.6,"y":918.4,"s":null,"cum":1553.8},{"n":52,"t":"Disorder","date":"2019-11-14","km":46.7,"min":382,"elev":250,"w":1,"c":"Serbia","x":2176.7,"y":959.4,"s":{"slug":"unknown-pleasures","kind":"song","song":"Disorder","album":"Unknown Pleasures","artist":"Joy Division","note":null},"cum":1600.5},{"n":53,"t":"A Quick One While She's Away","date":"2019-11-15","km":34.8,"min":364,"elev":141,"w":1,"c":"Serbia","x":2210.8,"y":987.1,"s":{"slug":"a-quick-one","kind":"song","song":"A Quick One, While He's Away","album":"A Quick One","artist":"The Who","note":"GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."},"cum":1635.3},{"n":54,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Serbia","x":2210.8,"y":987.1,"s":null,"cum":1635.3},{"n":55,"t":"You Can't Live There Forever","date":"2019-11-17","km":7.6,"min":65,"elev":130,"w":1,"c":"Serbia","x":2218.5,"y":992.9,"s":{"slug":"you-cant-live-there-forever","kind":"album","song":null,"album":"You Can’t Live There Forever","artist":"Summer Years","note":null},"cum":1642.9},{"n":56,"t":"A Postcard to Nina","date":"2019-11-18","km":69.8,"min":488,"elev":1014,"w":1,"c":"Serbia","x":2264,"y":1055.7,"s":{"slug":"night-falls-over-kortedala","kind":"song","song":"A Postcard to Nina","album":"Night Falls Over Kortedala","artist":"Jens Lekman","note":null},"cum":1712.7},{"n":57,"t":"A Plea For Tenderness","date":"2019-11-19","km":37,"min":506,"elev":121,"w":1,"c":"Serbia","x":2293,"y":1078.7,"s":{"slug":"a-plea-for-tenderness","kind":"album","song":null,"album":"A Plea for Tenderness","artist":"Dump","note":"James McNew (Yo La Tengo). Cover Art Archive has no front; Last.fm has the pink-bunny sleeve."},"cum":1749.7},{"n":58,"t":"I'll Come Too","date":"2019-11-20","km":43.1,"min":324,"elev":485,"w":1,"c":"Serbia","x":2312.7,"y":1122.4,"s":{"slug":"assume-form","kind":"song","song":"I'll Come Too","album":"Assume Form","artist":"James Blake","note":"Assume Form was released January 2019. 13 plays in the collection."},"cum":1792.8},{"n":59,"t":"Dogmeat","date":"2019-11-21","km":10,"min":134,"elev":38,"w":1,"c":"Serbia","x":2316.4,"y":1134.4,"s":{"slug":"dogmeat","kind":"album","song":null,"album":"Dogmeat","artist":"Kid Carpet","note":null},"cum":1802.8},{"n":60,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Serbia","x":2316.4,"y":1134.4,"s":null,"cum":1802.8},{"n":61,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Serbia","x":2316.4,"y":1134.4,"s":null,"cum":1802.8},{"n":62,"t":"Walk to Niska","date":"2019-11-24","km":10.3,"min":106,"elev":70,"w":1,"c":"Serbia","x":2383.1,"y":1222.1,"s":null,"cum":1813.1},{"n":63,"t":"The Two Towers","date":"2019-11-25","km":52.3,"min":474,"elev":984,"w":1,"c":"Serbia","x":2440.3,"y":1242.4,"s":null,"cum":1865.4},{"n":64,"t":"Banshee Beat","date":"2019-11-26","km":26,"min":282,"elev":117,"w":1,"c":"Serbia","x":2468.1,"y":1264.6,"s":{"slug":"feels","kind":"song","song":"Banshee Beat","album":"Feels","artist":"Animal Collective","note":null},"cum":1891.4},{"n":65,"t":"Infant Dressing Table","date":"2019-11-27","km":21.2,"min":275,"elev":419,"w":1,"c":"Bulgaria","x":2485.4,"y":1278.6,"s":{"slug":"here-comes-the-indian","kind":"song","song":"Infant Dressing Table","album":"Here Comes the Indian","artist":"Animal Collective","note":"Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."},"cum":1912.6},{"n":66,"t":"Allelujah! Don't Bend! Ascend!","date":"2019-11-28","km":47.5,"min":556,"elev":182,"w":1,"c":"Bulgaria","x":2529.2,"y":1311.7,"s":{"slug":"allelujah-dont-bend-ascend","kind":"album","song":null,"album":"’ALLELUJAH! DON’T BEND! ASCEND!","artist":"Godspeed You! Black Emperor","note":null},"cum":1960.1},{"n":67,"t":null,"date":null,"km":0,"min":0,"elev":0,"w":0,"c":"Bulgaria","x":2529.2,"y":1311.7,"s":null,"cum":1960.1}],"colors":{"France":"#2EA3DC","Germany":"#24709F","Austria":"#7D6BB0","Slovenia":"#12A19A","Croatia":"#1FA45A","Serbia":"#EFC319","Bulgaria":"#E97E18"},"total":1982,"scenes":[{"t":"start","len":620,"at":0},{"t":"enter","country":"France","len":760,"at":620},{"t":"walk","day":1,"len":262,"at":1380},{"t":"walk","day":2,"len":320,"at":1642},{"t":"walk","day":3,"len":323,"at":1962},{"t":"walk","day":4,"len":311,"at":2285},{"t":"walk","day":5,"len":150,"at":2596},{"t":"walk","day":6,"len":450,"at":2746},{"t":"walk","day":7,"len":333,"at":3196},{"t":"walk","day":8,"len":321,"at":3529},{"t":"walk","day":9,"len":324,"at":3850},{"t":"walk","day":10,"len":450,"at":4174},{"t":"walk","day":11,"len":180,"at":4624},{"t":"walk","day":12,"len":150,"at":4804},{"t":"walk","day":13,"len":190,"at":4954},{"t":"walk","day":14,"len":511,"at":5144},{"t":"walk","day":15,"len":539,"at":5655},{"t":"walk","day":16,"len":638,"at":6194},{"t":"enter","country":"Germany","len":760,"at":6832},{"t":"walk","day":17,"len":270,"at":7592},{"t":"walk","day":18,"len":250,"at":7862},{"t":"walk","day":19,"len":239,"at":8112},{"t":"walk","day":20,"len":477,"at":8351},{"t":"walk","day":21,"len":372,"at":8828},{"t":"walk","day":22,"len":439,"at":9200},{"t":"walk","day":23,"len":150,"at":9639},{"t":"walk","day":24,"len":150,"at":9789},{"t":"walk","day":25,"len":531,"at":9939},{"t":"walk","day":26,"len":262,"at":10470},{"t":"enter","country":"Austria","len":760,"at":10732},{"t":"walk","day":27,"len":430,"at":11492},{"t":"walk","day":28,"len":311,"at":11922},{"t":"walk","day":29,"len":356,"at":12233},{"t":"walk","day":30,"len":302,"at":12589},{"t":"beat","day":30,"len":720,"at":12891},{"t":"walk","day":31,"len":403,"at":13611},{"t":"walk","day":32,"len":365,"at":14014},{"t":"beat","day":32,"len":720,"at":14379},{"t":"walk","day":33,"len":180,"at":15099},{"t":"beat","day":33,"len":720,"at":15279},{"t":"walk","day":34,"len":302,"at":15999},{"t":"enter","country":"Slovenia","len":760,"at":16301},{"t":"walk","day":35,"len":279,"at":17061},{"t":"walk","day":36,"len":495,"at":17340},{"t":"walk","day":37,"len":453,"at":17835},{"t":"enter","country":"Croatia","len":760,"at":18288},{"t":"walk","day":38,"len":401,"at":19048},{"t":"gap","day":39,"len":1150,"at":19449},{"t":"walk","day":40,"len":282,"at":20599},{"t":"walk","day":41,"len":193,"at":20881},{"t":"walk","day":42,"len":377,"at":21074},{"t":"walk","day":43,"len":150,"at":21451},{"t":"walk","day":44,"len":150,"at":21601},{"t":"walk","day":45,"len":150,"at":21751},{"t":"walk","day":46,"len":150,"at":21901},{"t":"walk","day":47,"len":225,"at":22051},{"t":"enter","country":"Serbia","len":760,"at":22276},{"t":"walk","day":48,"len":377,"at":23036},{"t":"beat","day":48,"len":720,"at":23413},{"t":"walk","day":49,"len":621,"at":24133},{"t":"beat","day":49,"len":720,"at":24754},{"t":"walk","day":50,"len":150,"at":25474},{"t":"walk","day":51,"len":150,"at":25624},{"t":"walk","day":52,"len":420,"at":25774},{"t":"walk","day":53,"len":313,"at":26194},{"t":"walk","day":54,"len":150,"at":26507},{"t":"walk","day":55,"len":180,"at":26657},{"t":"walk","day":56,"len":628,"at":26837},{"t":"walk","day":57,"len":333,"at":27465},{"t":"walk","day":58,"len":388,"at":27798},{"t":"walk","day":59,"len":180,"at":28186},{"t":"walk","day":60,"len":150,"at":28366},{"t":"walk","day":61,"len":150,"at":28516},{"t":"walk","day":62,"len":180,"at":28666},{"t":"walk","day":63,"len":471,"at":28846},{"t":"walk","day":64,"len":234,"at":29317},{"t":"beat","day":64,"len":720,"at":29551},{"t":"enter","country":"Bulgaria","len":760,"at":30271},{"t":"walk","day":65,"len":191,"at":31031},{"t":"walk","day":66,"len":428,"at":31222},{"t":"walk","day":67,"len":150,"at":31650},{"t":"beat","day":67,"len":720,"at":31800},{"t":"end","len":900,"at":32520}],"timeline":33420,"beats":{"30":{"label":"the high point","quote":"Today's seen me climb over the Austrian Alps to a peak height of 2500m. The climb involved a variety of terrains spanning from walking up streams, technical scrambles and narrow ridge trails."},"32":{"label":"the routine","quote":"It's occurred to me that this is now my everyday life. Today, like yesterday, I've gone through the motions of my morning routine, lacing up my shoes, heading for the trails."},"33":{"label":"the first sign","quote":"Out here I'm living on the bare minimum and I often think what am I missing… human interaction is essential for me to feel energised and keep the motivation flowing."},"48":{"label":"steadied","quote":"After a flurry of anxiety following losing my purse with cards and cash in, I've calmed myself and back to a still state."},"49":{"label":"the furthest day","quote":"Today I have set a new personal record, not for speed but instead for the furthest I've ever travelled on foot. My ankles feel shot but surprisingly the rest of my body feels full of vigor."},"64":{"label":"the purpose","quote":"We all should have a purpose in our lives. If someone asks you why you get up in the morning you should be able to quip a single sentence — for me that is to encourage others to find what makes them happy and pursue it."},"67":{"label":"the decision","quote":"Problems melt away when the heart rate is jacked up… yet it's more than likely the problems will return when I get on the road. I'll sit with this for at least another day."}},"gap39":"The build up of fatigue, anxiety and loneliness all came to a tipping point. After dragging my feet along a main road for hours with cars speeding past me, I began to think why am I doing this?","vb":[2789,1572],"start":[231.1,295.2],"photos":[{"day":1,"src":"day01.webp","w":620,"h":1100},{"day":2,"src":"day02.webp","w":1100,"h":825},{"day":13,"src":"day13.webp","w":825,"h":1100},{"day":14,"src":"day14.webp","w":825,"h":1100},{"day":20,"src":"day20.webp","w":825,"h":1100},{"day":23,"src":"day23.webp","w":825,"h":1100},{"day":27,"src":"day27.webp","w":825,"h":1100},{"day":29,"src":"day29.webp","w":825,"h":1100},{"day":30,"src":"day30.webp","w":825,"h":1100},{"day":32,"src":"day32.webp","w":825,"h":1100},{"day":35,"src":"day35.webp","w":825,"h":1100},{"day":38,"src":"day38.webp","w":825,"h":1100},{"day":42,"src":"day42.webp","w":825,"h":1100},{"day":48,"src":"day48.webp","w":825,"h":1100},{"day":49,"src":"day49.webp","w":825,"h":1100},{"day":63,"src":"day63.webp","w":1100,"h":825},{"day":65,"src":"day65.webp","w":825,"h":1100},{"day":67,"src":"day67.webp","w":825,"h":1100}]};
+  var DATA = {"days":[{"n":1,"t":"And We're Off!","date":"2019-09-24","km":29.1,"min":335,"elev":835,"alt":111,"w":1,"c":"France","x":260,"y":311.1,"s":null,"cum":29.1},{"n":2,"t":"After the Storm","date":"2019-09-25","km":35.5,"min":430,"elev":1313,"alt":126,"w":1,"c":"France","x":306.8,"y":299.5,"s":null,"cum":64.6},{"n":3,"t":"Reservoirs of Untapped Potential","date":"2019-09-26","km":35.9,"min":421,"elev":1225,"alt":107,"w":1,"c":"France","x":342.3,"y":273.6,"s":null,"cum":100.5},{"n":4,"t":"On the 5th day, Dan rested","date":"2019-09-27","km":34.6,"min":431,"elev":1621,"alt":116,"w":1,"c":"France","x":381.4,"y":259.7,"s":null,"cum":135.1},{"n":5,"t":"Köln River Run (12 miles)","date":"2019-03-27","km":16.8,"min":97,"elev":93,"alt":116,"w":0,"c":"France","x":381.4,"y":259.7,"s":null,"cum":135.1},{"n":6,"t":"One way to lose them walking blues!","date":"2019-09-29","km":50,"min":512,"elev":1415,"alt":143,"w":1,"c":"France","x":418.7,"y":312,"s":{"slug":"graceland","kind":"lyrics","song":"Diamonds on the Soles of Her Shoes","album":"Graceland","artist":"Paul Simon","note":"Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."},"cum":185.1},{"n":7,"t":"Now I'm on my way","date":"2019-09-30","km":37,"min":358,"elev":973,"alt":179,"w":1,"c":"France","x":460.7,"y":334.7,"s":null,"cum":222.1},{"n":8,"t":"Getting the Hang of It","date":"2019-10-01","km":35.7,"min":309,"elev":933,"alt":228,"w":1,"c":"France","x":507.7,"y":340.6,"s":null,"cum":257.8},{"n":9,"t":"Lilac!","date":"2019-10-02","km":36,"min":268,"elev":999,"alt":276,"w":1,"c":"France","x":554.5,"y":344.9,"s":null,"cum":293.8},{"n":10,"t":"Sure is a Hot One!","date":"2019-10-03","km":50,"min":425,"elev":1365,"alt":340,"w":1,"c":"France","x":608.4,"y":366.9,"s":null,"cum":343.8},{"n":11,"t":"Short Walk to Nancy","date":"2019-10-04","km":12.6,"min":159,"elev":634,"alt":327,"w":1,"c":"France","x":620.8,"y":356.3,"s":null,"cum":356.4},{"n":12,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":327,"w":0,"c":"France","x":620.8,"y":356.3,"s":null,"cum":356.4},{"n":13,"t":"The Long Canal","date":"2019-10-06","km":21.1,"min":235,"elev":471,"alt":314,"w":1,"c":"France","x":679.2,"y":356.2,"s":null,"cum":377.5},{"n":14,"t":"Witchi Tai To","date":"2019-10-07","km":56.8,"min":569,"elev":1901,"alt":246,"w":1,"c":"France","x":746.9,"y":351.2,"s":{"slug":"everything-is-everything","kind":"song","song":"Witchi Tai To","album":"Everything Is Everything","artist":"Everything Is Everything","note":"Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on."},"cum":434.3},{"n":15,"t":"Tapping Into Flow","date":"2019-10-08","km":59.9,"min":573,"elev":1472,"alt":301,"w":1,"c":"France","x":820.2,"y":337.1,"s":null,"cum":494.2},{"n":16,"t":"Hey Moon","date":"2019-10-09","km":70.9,"min":986,"elev":3306,"alt":312,"w":1,"c":"France","x":823.5,"y":337.8,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"cum":565.1},{"n":17,"t":"Hey Moon","date":"2019-10-09","km":0,"min":0,"elev":0,"alt":426,"w":1,"c":"Germany","x":901.3,"y":322.5,"s":{"slug":"we-must-become-the-pitiless-censors-of-ourselves","kind":"song","song":"Hey Moon","album":"We Must Become the Pitiless Censors of Ourselves","artist":"John Maus","note":"Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."},"cum":565.1},{"n":18,"t":"Recovery","date":"2019-10-11","km":27.8,"min":325,"elev":1609,"alt":455,"w":1,"c":"Germany","x":987.4,"y":353.9,"s":null,"cum":592.9},{"n":19,"t":"Easy Day Turned Hill Sprints","date":"2019-10-12","km":26.6,"min":232,"elev":1309,"alt":559,"w":1,"c":"Germany","x":1004.5,"y":377.7,"s":null,"cum":619.5},{"n":20,"t":"Scorching","date":"2019-10-13","km":53,"min":558,"elev":1515,"alt":515,"w":1,"c":"Germany","x":1070,"y":396.6,"s":null,"cum":672.5},{"n":21,"t":"Slowly Does It","date":"2019-10-14","km":41.3,"min":508,"elev":1453,"alt":506,"w":1,"c":"Germany","x":1146.2,"y":410.1,"s":null,"cum":713.8},{"n":22,"t":"Negative Split","date":"2019-10-15","km":48.8,"min":565,"elev":1354,"alt":568,"w":1,"c":"Germany","x":1196.8,"y":443,"s":null,"cum":762.6},{"n":23,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":568,"w":0,"c":"Germany","x":1196.8,"y":443,"s":null,"cum":762.6},{"n":24,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":568,"w":0,"c":"Germany","x":1196.8,"y":443,"s":null,"cum":762.6},{"n":25,"t":"Another One Goes By","date":"2019-10-18","km":59,"min":513,"elev":2194,"alt":687,"w":1,"c":"Germany","x":1288.6,"y":480.6,"s":{"slug":"another-one-goes-by","kind":"album","song":"Another One Goes By","album":"Another One Goes By","artist":"Mazarin","note":null},"cum":821.6},{"n":26,"t":"One Of Those Days","date":"2019-10-19","km":29.1,"min":319,"elev":1357,"alt":696,"w":1,"c":"Germany","x":1340.6,"y":501.3,"s":null,"cum":850.7},{"n":27,"t":"Arrival","date":"2019-10-20","km":47.8,"min":439,"elev":3468,"alt":1386,"w":1,"c":"Austria","x":1353,"y":552.1,"s":null,"cum":898.5},{"n":28,"t":"The Predatory Wasp","date":"2019-10-21","km":34.5,"min":365,"elev":1540,"alt":1967,"w":1,"c":"Austria","x":1360.3,"y":589.7,"s":{"slug":"illinois","kind":"song","song":"The Predatory Wasp of the Palisades Is Out to Get Us!","album":"Illinois","artist":"Sufjan Stevens","note":null},"cum":933},{"n":29,"t":"Taking Tiger Mountain","date":"2019-10-22","km":39.5,"min":444,"elev":2100,"alt":2063,"w":1,"c":"Austria","x":1391,"y":608.4,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"GPS split the album title across two days. Same sleeve as “(By Strategy)”."},"cum":972.5},{"n":30,"t":"(By Strategy)","date":"2019-10-23","km":33.5,"min":480,"elev":2895,"alt":1994,"w":1,"c":"Austria","x":1398.9,"y":638.6,"s":{"slug":"taking-tiger-mountain-by-strategy","kind":"album","song":null,"album":"Taking Tiger Mountain (By Strategy)","artist":"Brian Eno","note":"Second half of the Eno title. Same sleeve as day 29."},"cum":1006},{"n":31,"t":"Business As Usual","date":"2019-10-24","km":44.8,"min":435,"elev":1374,"alt":1815,"w":1,"c":"Austria","x":1434.1,"y":670.9,"s":null,"cum":1050.8},{"n":32,"t":"I'll Come Running To Tie Your Shoes","date":"2019-10-25","km":40.6,"min":353,"elev":1233,"alt":1159,"w":1,"c":"Austria","x":1474.3,"y":699.2,"s":{"slug":"another-green-world","kind":"lyrics","song":"I'll Come Running","album":"Another Green World","artist":"Brian Eno","note":"Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."},"cum":1091.4},{"n":33,"t":"Katy Song","date":"2019-10-26","km":17.5,"min":229,"elev":577,"alt":908,"w":1,"c":"Austria","x":1496.2,"y":699.8,"s":{"slug":"red-house-painters","kind":"song","song":"Katy Song","album":"Red House Painters","artist":"Red House Painters","note":"The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."},"cum":1108.9},{"n":34,"t":"Sing Me To Sleep","date":"2019-10-27","km":33.6,"min":309,"elev":958,"alt":637,"w":1,"c":"Austria","x":1564.5,"y":706.5,"s":null,"cum":1142.5},{"n":35,"t":"The Process","date":"2019-10-28","km":31,"min":354,"elev":206,"alt":788,"w":1,"c":"Slovenia","x":1598.4,"y":711.6,"s":null,"cum":1173.5},{"n":36,"t":"Beyond Me, Beyond You","date":"2019-10-29","km":55,"min":632,"elev":1203,"alt":757,"w":1,"c":"Slovenia","x":1646.2,"y":739.2,"s":{"slug":"a-moon-shaped-pool","kind":"lyrics","song":"Daydreaming","album":"A Moon Shaped Pool","artist":"Radiohead","note":"Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."},"cum":1228.5},{"n":37,"t":"Skipper","date":"2019-10-30","km":50.3,"min":496,"elev":369,"alt":392,"w":1,"c":"Slovenia","x":1699.4,"y":730.8,"s":null,"cum":1278.8},{"n":38,"t":"Everything That Happens","date":"2019-10-31","km":44.5,"min":475,"elev":252,"alt":255,"w":1,"c":"Croatia","x":1751.9,"y":747.4,"s":{"slug":"everything-that-happens-will-happen-today","kind":"album","song":null,"album":"Everything That Happens Will Happen Today","artist":"David Byrne & Brian Eno","note":null},"cum":1323.3},{"n":39,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":255,"w":0,"c":"Croatia","x":1751.9,"y":747.4,"s":null,"cum":1323.3},{"n":40,"t":"Distant Sky","date":"2019-11-02","km":31.3,"min":230,"elev":49,"alt":223,"w":1,"c":"Croatia","x":1832.8,"y":791.8,"s":{"slug":"skeleton-tree","kind":"song","song":"Distant Sky","album":"Skeleton Tree","artist":"Nick Cave & the Bad Seeds","note":"Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."},"cum":1354.6},{"n":41,"t":"Biscuit Town","date":"2019-11-03","km":21.4,"min":236,"elev":56,"alt":205,"w":1,"c":"Croatia","x":1850.6,"y":807.5,"s":{"slug":"the-ooz","kind":"song","song":"Biscuit Town","album":"The OOZ","artist":"King Krule","note":"Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."},"cum":1376},{"n":42,"t":"Sweet Road","date":"2019-11-04","km":41.9,"min":461,"elev":124,"alt":89,"w":1,"c":"Croatia","x":2013.4,"y":870.2,"s":{"slug":"sung-tongs","kind":"song","song":"Sweet Road","album":"Sung Tongs","artist":"Animal Collective","note":null},"cum":1417.9},{"n":43,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":870.2,"s":null,"cum":1417.9},{"n":44,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":870.2,"s":null,"cum":1417.9},{"n":45,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":870.2,"s":null,"cum":1417.9},{"n":46,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":89,"w":0,"c":"Croatia","x":2013.4,"y":870.2,"s":null,"cum":1417.9},{"n":47,"t":"Eyes Open Wide","date":"2019-11-09","km":25,"min":170,"elev":60,"alt":86,"w":1,"c":"Croatia","x":2042.5,"y":873.6,"s":null,"cum":1442.9},{"n":48,"t":"In Between Dreams","date":"2019-11-10","km":41.9,"min":413,"elev":137,"alt":83,"w":1,"c":"Serbia","x":2073.1,"y":895.5,"s":{"slug":"in-between-dreams","kind":"album","song":null,"album":"In Between Dreams","artist":"Jack Johnson","note":null},"cum":1484.8},{"n":49,"t":"Build A Rocket Boys!","date":"2019-11-11","km":69,"min":770,"elev":148,"alt":83,"w":1,"c":"Serbia","x":2142.5,"y":917.8,"s":{"slug":"build-a-rocket-boys","kind":"album","song":null,"album":"Build a Rocket Boys!","artist":"Elbow","note":null},"cum":1553.8},{"n":50,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":83,"w":0,"c":"Serbia","x":2142.5,"y":917.8,"s":null,"cum":1553.8},{"n":51,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":83,"w":0,"c":"Serbia","x":2142.5,"y":917.8,"s":null,"cum":1553.8},{"n":52,"t":"Disorder","date":"2019-11-14","km":46.7,"min":382,"elev":250,"alt":90,"w":1,"c":"Serbia","x":2176.7,"y":959.4,"s":{"slug":"unknown-pleasures","kind":"song","song":"Disorder","album":"Unknown Pleasures","artist":"Joy Division","note":null},"cum":1600.5},{"n":53,"t":"A Quick One While She's Away","date":"2019-11-15","km":34.8,"min":364,"elev":141,"alt":99,"w":1,"c":"Serbia","x":2210.4,"y":985.5,"s":{"slug":"a-quick-one","kind":"song","song":"A Quick One, While He's Away","album":"A Quick One","artist":"The Who","note":"GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."},"cum":1635.3},{"n":54,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":99,"w":0,"c":"Serbia","x":2210.4,"y":985.5,"s":null,"cum":1635.3},{"n":55,"t":"You Can't Live There Forever","date":"2019-11-17","km":7.6,"min":65,"elev":130,"alt":102,"w":1,"c":"Serbia","x":2218.5,"y":992.9,"s":{"slug":"you-cant-live-there-forever","kind":"album","song":null,"album":"You Can’t Live There Forever","artist":"Summer Years","note":null},"cum":1642.9},{"n":56,"t":"A Postcard to Nina","date":"2019-11-18","km":69.8,"min":488,"elev":1014,"alt":179,"w":1,"c":"Serbia","x":2264,"y":1055.7,"s":{"slug":"night-falls-over-kortedala","kind":"song","song":"A Postcard to Nina","album":"Night Falls Over Kortedala","artist":"Jens Lekman","note":null},"cum":1712.7},{"n":57,"t":"A Plea For Tenderness","date":"2019-11-19","km":37,"min":506,"elev":121,"alt":285,"w":1,"c":"Serbia","x":2293,"y":1078.7,"s":{"slug":"a-plea-for-tenderness","kind":"album","song":null,"album":"A Plea for Tenderness","artist":"Jonathan Richman","note":null},"cum":1749.7},{"n":58,"t":"I'll Come Too","date":"2019-11-20","km":43.1,"min":324,"elev":485,"alt":479,"w":1,"c":"Serbia","x":2312.7,"y":1122.4,"s":{"slug":"assume-form","kind":"song","song":"I'll Come Too","album":"Assume Form","artist":"James Blake","note":"Assume Form was released January 2019. 13 plays in the collection."},"cum":1792.8},{"n":59,"t":"Dogmeat","date":"2019-11-21","km":10,"min":134,"elev":38,"alt":481,"w":1,"c":"Serbia","x":2316.4,"y":1134.4,"s":{"slug":"dogmeat","kind":"album","song":null,"album":"Dogmeat","artist":"Kid Carpet","note":null},"cum":1802.8},{"n":60,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":481,"w":0,"c":"Serbia","x":2316.4,"y":1134.4,"s":null,"cum":1802.8},{"n":61,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":481,"w":0,"c":"Serbia","x":2316.4,"y":1134.4,"s":null,"cum":1802.8},{"n":62,"t":"Walk to Niska","date":"2019-11-24","km":10.3,"min":106,"elev":70,"alt":583,"w":1,"c":"Serbia","x":2383.1,"y":1222.1,"s":null,"cum":1813.1},{"n":63,"t":"The Two Towers","date":"2019-11-25","km":52.3,"min":474,"elev":984,"alt":1201,"w":1,"c":"Serbia","x":2440.3,"y":1242.4,"s":null,"cum":1865.4},{"n":64,"t":"Banshee Beat","date":"2019-11-26","km":26,"min":282,"elev":117,"alt":1181,"w":1,"c":"Serbia","x":2468.1,"y":1264.6,"s":{"slug":"feels","kind":"song","song":"Banshee Beat","album":"Feels","artist":"Animal Collective","note":null},"cum":1891.4},{"n":65,"t":"Infant Dressing Table","date":"2019-11-27","km":21.2,"min":275,"elev":419,"alt":1007,"w":1,"c":"Bulgaria","x":2485.4,"y":1278.6,"s":{"slug":"here-comes-the-indian","kind":"song","song":"Infant Dressing Table","album":"Here Comes the Indian","artist":"Animal Collective","note":"Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."},"cum":1912.6},{"n":66,"t":"Allelujah! Don't Bend! Ascend!","date":"2019-11-28","km":47.5,"min":556,"elev":182,"alt":923,"w":1,"c":"Bulgaria","x":2528.8,"y":1312.3,"s":{"slug":"allelujah-dont-bend-ascend","kind":"album","song":null,"album":"’ALLELUJAH! DON’T BEND! ASCEND!","artist":"Godspeed You! Black Emperor","note":null},"cum":1960.1},{"n":67,"t":null,"date":null,"km":0,"min":0,"elev":0,"alt":923,"w":0,"c":"Bulgaria","x":2528.8,"y":1312.3,"s":null,"cum":1960.1}],"colors":{"France":"#2EA3DC","Germany":"#24709F","Austria":"#7D6BB0","Slovenia":"#12A19A","Croatia":"#1FA45A","Serbia":"#EFC319","Bulgaria":"#E97E18"},"total":1982,"scenes":[{"t":"start","len":620,"at":0},{"t":"enter","country":"France","len":760,"at":620},{"t":"walk","day":1,"len":262,"at":1380},{"t":"walk","day":2,"len":320,"at":1642},{"t":"walk","day":3,"len":323,"at":1962},{"t":"walk","day":4,"len":311,"at":2285},{"t":"walk","day":5,"len":150,"at":2596},{"t":"walk","day":6,"len":450,"at":2746},{"t":"walk","day":7,"len":333,"at":3196},{"t":"walk","day":8,"len":321,"at":3529},{"t":"walk","day":9,"len":324,"at":3850},{"t":"walk","day":10,"len":450,"at":4174},{"t":"walk","day":11,"len":180,"at":4624},{"t":"walk","day":12,"len":150,"at":4804},{"t":"walk","day":13,"len":190,"at":4954},{"t":"walk","day":14,"len":511,"at":5144},{"t":"walk","day":15,"len":539,"at":5655},{"t":"walk","day":16,"len":638,"at":6194},{"t":"enter","country":"Germany","len":760,"at":6832},{"t":"walk","day":17,"len":270,"at":7592},{"t":"walk","day":18,"len":250,"at":7862},{"t":"walk","day":19,"len":239,"at":8112},{"t":"walk","day":20,"len":477,"at":8351},{"t":"walk","day":21,"len":372,"at":8828},{"t":"walk","day":22,"len":439,"at":9200},{"t":"walk","day":23,"len":150,"at":9639},{"t":"walk","day":24,"len":150,"at":9789},{"t":"walk","day":25,"len":531,"at":9939},{"t":"walk","day":26,"len":262,"at":10470},{"t":"enter","country":"Austria","len":760,"at":10732},{"t":"walk","day":27,"len":430,"at":11492},{"t":"walk","day":28,"len":311,"at":11922},{"t":"walk","day":29,"len":356,"at":12233},{"t":"walk","day":30,"len":302,"at":12589},{"t":"beat","day":30,"len":720,"at":12891},{"t":"walk","day":31,"len":403,"at":13611},{"t":"walk","day":32,"len":365,"at":14014},{"t":"beat","day":32,"len":720,"at":14379},{"t":"walk","day":33,"len":180,"at":15099},{"t":"beat","day":33,"len":720,"at":15279},{"t":"walk","day":34,"len":302,"at":15999},{"t":"enter","country":"Slovenia","len":760,"at":16301},{"t":"walk","day":35,"len":279,"at":17061},{"t":"walk","day":36,"len":495,"at":17340},{"t":"walk","day":37,"len":453,"at":17835},{"t":"enter","country":"Croatia","len":760,"at":18288},{"t":"walk","day":38,"len":401,"at":19048},{"t":"gap","day":39,"len":1150,"at":19449},{"t":"walk","day":40,"len":282,"at":20599},{"t":"walk","day":41,"len":193,"at":20881},{"t":"walk","day":42,"len":377,"at":21074},{"t":"walk","day":43,"len":150,"at":21451},{"t":"walk","day":44,"len":150,"at":21601},{"t":"walk","day":45,"len":150,"at":21751},{"t":"walk","day":46,"len":150,"at":21901},{"t":"walk","day":47,"len":225,"at":22051},{"t":"enter","country":"Serbia","len":760,"at":22276},{"t":"walk","day":48,"len":377,"at":23036},{"t":"beat","day":48,"len":720,"at":23413},{"t":"walk","day":49,"len":621,"at":24133},{"t":"beat","day":49,"len":720,"at":24754},{"t":"walk","day":50,"len":150,"at":25474},{"t":"walk","day":51,"len":150,"at":25624},{"t":"walk","day":52,"len":420,"at":25774},{"t":"walk","day":53,"len":313,"at":26194},{"t":"walk","day":54,"len":150,"at":26507},{"t":"walk","day":55,"len":180,"at":26657},{"t":"walk","day":56,"len":628,"at":26837},{"t":"walk","day":57,"len":333,"at":27465},{"t":"walk","day":58,"len":388,"at":27798},{"t":"walk","day":59,"len":180,"at":28186},{"t":"walk","day":60,"len":150,"at":28366},{"t":"walk","day":61,"len":150,"at":28516},{"t":"walk","day":62,"len":180,"at":28666},{"t":"walk","day":63,"len":471,"at":28846},{"t":"walk","day":64,"len":234,"at":29317},{"t":"beat","day":64,"len":720,"at":29551},{"t":"enter","country":"Bulgaria","len":760,"at":30271},{"t":"walk","day":65,"len":191,"at":31031},{"t":"walk","day":66,"len":428,"at":31222},{"t":"walk","day":67,"len":150,"at":31650},{"t":"beat","day":67,"len":720,"at":31800},{"t":"end","len":900,"at":32520}],"timeline":33420,"beats":{"30":{"label":"the high point","quote":"Today's seen me climb over the Austrian Alps to a peak height of 2500m. The climb involved a variety of terrains spanning from walking up streams, technical scrambles and narrow ridge trails."},"32":{"label":"the routine","quote":"It's occurred to me that this is now my everyday life. Today, like yesterday, I've gone through the motions of my morning routine, lacing up my shoes, heading for the trails."},"33":{"label":"the first sign","quote":"Out here I'm living on the bare minimum and I often think what am I missing… human interaction is essential for me to feel energised and keep the motivation flowing."},"48":{"label":"steadied","quote":"After a flurry of anxiety following losing my purse with cards and cash in, I've calmed myself and back to a still state."},"49":{"label":"the furthest day","quote":"Today I have set a new personal record, not for speed but instead for the furthest I've ever travelled on foot. My ankles feel shot but surprisingly the rest of my body feels full of vigor."},"64":{"label":"the purpose","quote":"We all should have a purpose in our lives. If someone asks you why you get up in the morning you should be able to quip a single sentence — for me that is to encourage others to find what makes them happy and pursue it."},"67":{"label":"the decision","quote":"Problems melt away when the heart rate is jacked up… yet it's more than likely the problems will return when I get on the road. I'll sit with this for at least another day."}},"gap39":"The build up of fatigue, anxiety and loneliness all came to a tipping point. After dragging my feet along a main road for hours with cars speeding past me, I began to think why am I doing this?","vb":[2789,1572],"start":[231.1,295.2],"startAlt":93,"walkPaths":{"1":[{"x":231.1,"y":295.2,"alt":93},{"x":260,"y":311.1,"alt":111}],"2":[{"x":260,"y":311.1,"alt":111},{"x":266.7,"y":312.5,"alt":116},{"x":306.8,"y":299.5,"alt":126}],"3":[{"x":306.8,"y":299.5,"alt":126},{"x":342.3,"y":273.6,"alt":107}],"4":[{"x":342.3,"y":273.6,"alt":107},{"x":342.2,"y":273.5,"alt":107},{"x":381.4,"y":259.7,"alt":116}],"5":[{"x":381.4,"y":259.7,"alt":116},{"x":381.4,"y":259.7,"alt":116}],"6":[{"x":381.4,"y":259.7,"alt":116},{"x":385,"y":259.9,"alt":118},{"x":418.7,"y":312,"alt":143}],"7":[{"x":418.7,"y":312,"alt":143},{"x":421.2,"y":313.6,"alt":144},{"x":436,"y":332.6,"alt":156},{"x":460.7,"y":334.7,"alt":179}],"8":[{"x":460.7,"y":334.7,"alt":179},{"x":460.9,"y":334.7,"alt":179},{"x":507.7,"y":340.6,"alt":228}],"9":[{"x":507.7,"y":340.6,"alt":228},{"x":508.3,"y":342.5,"alt":231},{"x":522.8,"y":352.7,"alt":259},{"x":554.5,"y":344.9,"alt":276}],"10":[{"x":554.5,"y":344.9,"alt":276},{"x":554.3,"y":343.5,"alt":274},{"x":570.1,"y":357.7,"alt":304},{"x":608.4,"y":366.9,"alt":340}],"11":[{"x":608.4,"y":366.9,"alt":340},{"x":620.8,"y":356.3,"alt":327}],"12":[{"x":620.8,"y":356.3,"alt":327},{"x":620.8,"y":356.3,"alt":327}],"13":[{"x":620.8,"y":356.3,"alt":327},{"x":623.9,"y":359.4,"alt":331},{"x":651.3,"y":363.6,"alt":336},{"x":679.2,"y":356.2,"alt":314}],"14":[{"x":679.2,"y":356.2,"alt":314},{"x":679.4,"y":356.1,"alt":314},{"x":746.9,"y":351.2,"alt":246}],"15":[{"x":746.9,"y":351.2,"alt":246},{"x":752.1,"y":347.9,"alt":238},{"x":820.2,"y":337.1,"alt":301}],"16":[{"x":820.2,"y":337.1,"alt":301},{"x":823.5,"y":337.8,"alt":312}],"17":[{"x":823.5,"y":337.8,"alt":312},{"x":868.4,"y":314,"alt":391},{"x":901.3,"y":322.5,"alt":426}],"18":[{"x":901.3,"y":322.5,"alt":426},{"x":954.7,"y":341.1,"alt":408},{"x":987.4,"y":353.9,"alt":455}],"19":[{"x":987.4,"y":353.9,"alt":455},{"x":987.3,"y":353.8,"alt":455},{"x":986.6,"y":364.3,"alt":505},{"x":1004.5,"y":377.7,"alt":559}],"20":[{"x":1004.5,"y":377.7,"alt":559},{"x":1004.4,"y":378,"alt":560},{"x":1070,"y":396.6,"alt":515}],"21":[{"x":1070,"y":396.6,"alt":515},{"x":1090.9,"y":399.9,"alt":513},{"x":1146.2,"y":410.1,"alt":506}],"22":[{"x":1146.2,"y":410.1,"alt":506},{"x":1157.8,"y":429.6,"alt":534},{"x":1196.8,"y":443,"alt":568}],"23":[{"x":1196.8,"y":443,"alt":568},{"x":1196.8,"y":443,"alt":568}],"24":[{"x":1196.8,"y":443,"alt":568},{"x":1196.8,"y":443,"alt":568}],"25":[{"x":1196.8,"y":443,"alt":568},{"x":1221.9,"y":448.6,"alt":587},{"x":1280,"y":466.6,"alt":644},{"x":1288.6,"y":480.6,"alt":687}],"26":[{"x":1288.6,"y":480.6,"alt":687},{"x":1288.5,"y":480.9,"alt":688},{"x":1307.4,"y":496.8,"alt":722},{"x":1340.6,"y":501.3,"alt":696}],"27":[{"x":1340.6,"y":501.3,"alt":696},{"x":1340.2,"y":501.5,"alt":697},{"x":1353,"y":552.1,"alt":1386}],"28":[{"x":1353,"y":552.1,"alt":1386},{"x":1353.2,"y":552.3,"alt":1390},{"x":1361.5,"y":558.3,"alt":1485},{"x":1357.7,"y":584.3,"alt":1885},{"x":1360.3,"y":589.7,"alt":1967}],"29":[{"x":1360.3,"y":589.7,"alt":1967},{"x":1360.4,"y":589.8,"alt":1968},{"x":1387.4,"y":591.2,"alt":1970},{"x":1391,"y":608.4,"alt":2063}],"30":[{"x":1391,"y":608.4,"alt":2063},{"x":1398.9,"y":638.6,"alt":1994}],"31":[{"x":1398.9,"y":638.6,"alt":1994},{"x":1399.1,"y":638.8,"alt":1993},{"x":1434.1,"y":670.9,"alt":1815}],"32":[{"x":1434.1,"y":670.9,"alt":1815},{"x":1474.3,"y":699.2,"alt":1159}],"33":[{"x":1474.3,"y":699.2,"alt":1159},{"x":1474.6,"y":699.8,"alt":1150},{"x":1496.2,"y":699.8,"alt":908}],"34":[{"x":1496.2,"y":699.8,"alt":908},{"x":1525.8,"y":698.5,"alt":577},{"x":1564.5,"y":706.5,"alt":637}],"35":[{"x":1564.5,"y":706.5,"alt":637},{"x":1564.5,"y":706.7,"alt":637},{"x":1598.4,"y":711.6,"alt":788}],"36":[{"x":1598.4,"y":711.6,"alt":788},{"x":1646.2,"y":739.2,"alt":757}],"37":[{"x":1646.2,"y":739.2,"alt":757},{"x":1646.1,"y":739,"alt":758},{"x":1699.4,"y":730.8,"alt":392}],"38":[{"x":1699.4,"y":730.8,"alt":392},{"x":1751.9,"y":747.4,"alt":255}],"39":[{"x":1751.9,"y":747.4,"alt":255},{"x":1751.9,"y":747.4,"alt":255}],"40":[{"x":1751.9,"y":747.4,"alt":255},{"x":1804.9,"y":771.9,"alt":254},{"x":1832.8,"y":791.8,"alt":223}],"41":[{"x":1832.8,"y":791.8,"alt":223},{"x":1832.8,"y":792,"alt":223},{"x":1850.6,"y":807.5,"alt":205}],"42":[{"x":1850.6,"y":807.5,"alt":205},{"x":1969.4,"y":871.6,"alt":129},{"x":2013.4,"y":870.2,"alt":89}],"43":[{"x":2013.4,"y":870.2,"alt":89},{"x":2013.4,"y":870.2,"alt":89}],"44":[{"x":2013.4,"y":870.2,"alt":89},{"x":2013.4,"y":870.2,"alt":89}],"45":[{"x":2013.4,"y":870.2,"alt":89},{"x":2013.4,"y":870.2,"alt":89}],"46":[{"x":2013.4,"y":870.2,"alt":89},{"x":2013.4,"y":870.2,"alt":89}],"47":[{"x":2013.4,"y":870.2,"alt":89},{"x":2042.5,"y":873.6,"alt":86}],"48":[{"x":2042.5,"y":873.6,"alt":86},{"x":2043.3,"y":874.1,"alt":86},{"x":2068.7,"y":876.6,"alt":84},{"x":2073.1,"y":895.5,"alt":83}],"49":[{"x":2073.1,"y":895.5,"alt":83},{"x":2073.2,"y":896.1,"alt":83},{"x":2104,"y":907.9,"alt":82},{"x":2120.3,"y":902.5,"alt":82},{"x":2142.5,"y":917.8,"alt":83}],"50":[{"x":2142.5,"y":917.8,"alt":83},{"x":2142.5,"y":917.8,"alt":83}],"51":[{"x":2142.5,"y":917.8,"alt":83},{"x":2142.5,"y":917.8,"alt":83}],"52":[{"x":2142.5,"y":917.8,"alt":83},{"x":2165.2,"y":932.8,"alt":86},{"x":2176.7,"y":959.4,"alt":90}],"53":[{"x":2176.7,"y":959.4,"alt":90},{"x":2178.6,"y":959,"alt":90},{"x":2210.4,"y":985.5,"alt":99}],"54":[{"x":2210.4,"y":985.5,"alt":99},{"x":2210.4,"y":985.5,"alt":99}],"55":[{"x":2210.4,"y":985.5,"alt":99},{"x":2218.5,"y":992.9,"alt":102}],"56":[{"x":2218.5,"y":992.9,"alt":102},{"x":2218.5,"y":993.2,"alt":102},{"x":2239.2,"y":1039.6,"alt":119},{"x":2264,"y":1055.7,"alt":179}],"57":[{"x":2264,"y":1055.7,"alt":179},{"x":2286,"y":1060.6,"alt":215},{"x":2293,"y":1078.7,"alt":285}],"58":[{"x":2293,"y":1078.7,"alt":285},{"x":2312.7,"y":1122.4,"alt":479}],"59":[{"x":2312.7,"y":1122.4,"alt":479},{"x":2311.8,"y":1123.6,"alt":475},{"x":2316.4,"y":1134.4,"alt":481}],"60":[{"x":2316.4,"y":1134.4,"alt":481},{"x":2316.4,"y":1134.4,"alt":481}],"61":[{"x":2316.4,"y":1134.4,"alt":481},{"x":2316.4,"y":1134.4,"alt":481}],"62":[{"x":2316.4,"y":1134.4,"alt":481},{"x":2370.7,"y":1218,"alt":414},{"x":2383.1,"y":1222.1,"alt":583}],"63":[{"x":2383.1,"y":1222.1,"alt":583},{"x":2382.9,"y":1221.9,"alt":580},{"x":2440.3,"y":1242.4,"alt":1201}],"64":[{"x":2440.3,"y":1242.4,"alt":1201},{"x":2447.1,"y":1243.1,"alt":1270},{"x":2468.1,"y":1264.6,"alt":1181}],"65":[{"x":2468.1,"y":1264.6,"alt":1181},{"x":2468.4,"y":1264.9,"alt":1176},{"x":2485.4,"y":1278.6,"alt":1007}],"66":[{"x":2485.4,"y":1278.6,"alt":1007},{"x":2486.1,"y":1279,"alt":1003},{"x":2513.4,"y":1291.8,"alt":933},{"x":2528.8,"y":1312.3,"alt":923}],"67":[{"x":2528.8,"y":1312.3,"alt":923},{"x":2528.8,"y":1312.3,"alt":923}]},"photos":[{"day":1,"src":"day01.webp","w":620,"h":1100},{"day":2,"src":"day02.webp","w":1100,"h":825},{"day":11,"src":"day11.webp","w":825,"h":1100},{"day":14,"src":"day14.webp","w":825,"h":1100},{"day":20,"src":"day20.webp","w":825,"h":1100},{"day":23,"src":"day23.webp","w":825,"h":1100},{"day":25,"src":"day25.webp","w":825,"h":1100},{"day":26,"src":"day26.webp","w":825,"h":1100},{"day":27,"src":"day27.webp","w":825,"h":1100},{"day":28,"src":"day28.webp","w":825,"h":1100},{"day":29,"src":"day29.webp","w":825,"h":1100},{"day":30,"src":"day30.webp","w":825,"h":1100},{"day":31,"src":"day31.webp","w":825,"h":1100},{"day":32,"src":"day32.webp","w":825,"h":1100},{"day":34,"src":"day34.webp","w":825,"h":1100},{"day":35,"src":"day35.webp","w":825,"h":1100},{"day":36,"src":"day36.webp","w":825,"h":1100},{"day":38,"src":"day38.webp","w":825,"h":1100},{"day":40,"src":"day40.webp","w":825,"h":1100},{"day":42,"src":"day42.webp","w":825,"h":1100},{"day":48,"src":"day48.webp","w":825,"h":1100},{"day":49,"src":"day49.webp","w":825,"h":1100},{"day":56,"src":"day56.webp","w":825,"h":1100},{"day":63,"src":"day63.webp","w":825,"h":1100},{"day":67,"src":"day67.webp","w":825,"h":1100}]};
   var days = DATA.days;
   var scenes = DATA.scenes;
   var byN = {}; days.forEach(function(d){ byN[d.n] = d; });
@@ -814,8 +871,13 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var stage = document.getElementById("stage");
   var atlas = document.getElementById("atlas");
   var camera = document.getElementById("camera");
-  var walker = document.getElementById("walker");
-  var walkerHalo = document.getElementById("walker-halo");
+  var walkerG = document.getElementById("walker-g");
+  var stick = document.getElementById("stick");
+  var walkerHtml = document.getElementById("walker-html");
+  var hudAlt = document.getElementById("hud-alt");
+  var elevNow = document.getElementById("elev-now");
+  var elevLine = document.getElementById("elev-line");
+  var elevArea = document.getElementById("elev-area");
   var titlecard = document.getElementById("titlecard");
   var hint = document.getElementById("hint");
   var hud = document.getElementById("hud");
@@ -836,6 +898,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var photoBox = document.getElementById("photo");
   var photoImg = document.getElementById("photo-img");
   var photoCap = document.getElementById("photo-cap");
+  var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var walkbtn = document.getElementById("walkbtn");
   document.getElementById("gap-quote").textContent = "“" + DATA.gap39 + "”";
@@ -852,7 +915,9 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   // ---------------------------------------------------------------- camera
   var VBW = DATA.vb[0], VBH = DATA.vb[1];
   var FULLW = VBW;
-  var TRAVELW = 300, CLOSEW = 205;
+  var TRAVELW = 500, CLOSEW = 340;
+  var lastWalk = null;
+  var walkFace = 1;
   var cam = { x: days[0].x, y: days[0].y, w: FULLW };
   var target = { x: days[0].x, y: days[0].y, w: FULLW };
 
@@ -890,27 +955,87 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   function lerp(a, b, t){ return a + (b - a) * t; }
 
+  function altOf(d){ return (d && d.alt != null) ? d.alt : 0; }
+  function liftY(y){ return y; }
+
+  function alongPath(pts, t){
+    if (!pts || !pts.length) return null;
+    if (pts.length === 1) return { x: pts[0].x, y: pts[0].y, alt: pts[0].alt || 0 };
+    var lens = [0];
+    for (var i = 1; i < pts.length; i++) {
+      lens.push(lens[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+    }
+    var target = Math.max(0, Math.min(1, t)) * lens[lens.length - 1];
+    for (var i = 1; i < pts.length; i++) {
+      if (target <= lens[i]) {
+        var span = lens[i] - lens[i - 1] || 1;
+        var u = (target - lens[i - 1]) / span;
+        return {
+          x: lerp(pts[i - 1].x, pts[i].x, u),
+          y: lerp(pts[i - 1].y, pts[i].y, u),
+          alt: lerp(pts[i - 1].alt || 0, pts[i].alt || 0, u)
+        };
+      }
+    }
+    var last = pts[pts.length - 1];
+    return { x: last.x, y: last.y, alt: last.alt || 0 };
+  }
+
   function walkerPosAt(scene, p){
     if (scene.t === "walk") {
       var d = byN[scene.day];
-      var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1] } : (byN[scene.day - 1] || d);
       var t = Math.min(1, Math.max(0, (p - scene.at) / scene.len));
-      return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), day: d, t: t };
+      var along = alongPath((DATA.walkPaths || {})[d.n], t);
+      if (along) return { x: along.x, y: along.y, alt: along.alt, day: d, t: t };
+      var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0 } : (byN[scene.day - 1] || d);
+      return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), alt: lerp(altOf(prev), altOf(d), t), day: d, t: t };
     }
     if (scene.t === "gap") {
       var d39 = byN[39], d38 = byN[38];
       var tg = Math.min(1, Math.max(0, (p - scene.at) / scene.len));
-      return { x: lerp(d38.x, d39.x, tg), y: lerp(d38.y, d39.y, tg), day: d39, t: tg };
+      return { x: lerp(d38.x, d39.x, tg), y: lerp(d38.y, d39.y, tg), alt: lerp(altOf(d38), altOf(d39), tg), day: d39, t: tg };
     }
-    if (scene.t === "beat") { var db = byN[scene.day]; return { x: db.x, y: db.y, day: db, t: 1 }; }
+    if (scene.t === "beat") { var db = byN[scene.day]; return { x: db.x, y: db.y, alt: altOf(db), day: db, t: 1 }; }
     if (scene.t === "enter") {
       var idx = days.findIndex(function(d){ return d.c === scene.country; });
-      if (idx === 0) return { x: DATA.start[0], y: DATA.start[1], day: days[0], t: 0 };
+      if (idx === 0) return { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0, day: days[0], t: 0 };
       var da = days[Math.max(0, idx - 1)];
-      return { x: da.x, y: da.y, day: da, t: 1 };
+      return { x: da.x, y: da.y, alt: altOf(da), day: da, t: 1 };
     }
-    if (scene.t === "end") { var dl = days[days.length - 1]; return { x: dl.x, y: dl.y, day: dl, t: 1 }; }
-    return { x: days[0].x, y: days[0].y, day: days[0], t: 0 };
+    if (scene.t === "end") { var dl = days[days.length - 1]; return { x: dl.x, y: dl.y, alt: altOf(dl), day: dl, t: 1 }; }
+    return { x: days[0].x, y: days[0].y, alt: altOf(days[0]), day: days[0], t: 0 };
+  }
+
+  (function initSpark(){
+    if (!elevLine) return;
+    var alts = days.map(function(d){ return altOf(d); });
+    var mn = Math.min.apply(null, alts), mx = Math.max.apply(null, alts);
+    if (!(mx > mn)) { mx = mn + 80; }
+    DATA._altMin = mn; DATA._altMax = mx;
+    var w = 132, h = 28, pad = 3;
+    var pts = alts.map(function(a, i){
+      var x = pad + i * (w - pad * 2) / Math.max(1, alts.length - 1);
+      var y = h - pad - (a - mn) / (mx - mn) * (h - pad * 2);
+      return [x, y];
+    });
+    var line = pts.map(function(pt, i){ return (i ? "L" : "M") + pt[0].toFixed(1) + " " + pt[1].toFixed(1); }).join(" ");
+    elevLine.setAttribute("d", line);
+    if (elevArea) {
+      var last = pts[pts.length - 1], first = pts[0];
+      elevArea.setAttribute("d", line + " L" + last[0].toFixed(1) + " " + (h - pad) + " L" + first[0].toFixed(1) + " " + (h - pad) + " Z");
+    }
+  })();
+
+  function sparkAt(alt, dayN, t){
+    if (!elevNow) return;
+    var mn = DATA._altMin, mx = DATA._altMax;
+    var w = 132, h = 28, pad = 3;
+    var u = (dayN - 1 + (t || 0)) / Math.max(1, days.length - 1);
+    var x = pad + u * (w - pad * 2);
+    var y = h - pad - ((alt || 0) - mn) / Math.max(1, mx - mn) * (h - pad * 2);
+    elevNow.setAttribute("cx", x.toFixed(1));
+    elevNow.setAttribute("cy", y.toFixed(1));
+    if (hudAlt) hudAlt.textContent = Math.round(alt || 0).toLocaleString("en-GB");
   }
 
   // --------------------------------------------------------------- daycard
@@ -924,7 +1049,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     dcTitle.textContent = d.t || (d.w ? "—" : "rest — numbered, not walked");
     if (d.s) {
       dcRow.innerHTML = '<button class="dsleeve" data-day="' + d.n + '" aria-haspopup="dialog" aria-label="' +
-        esc(d.s.artist + " — " + d.s.album) + '"><img src="covers/' + d.s.slug + '-thumb.webp" alt="" width="160" height="160" loading="lazy"></button>' +
+        esc(d.s.artist + " — " + d.s.album) + '"><img src="covers/' + d.s.slug + '-thumb.webp" alt="" width="64" height="64" loading="lazy"></button>' +
         '<p class="drec">' + esc(d.s.artist) + " — <em>" + esc(d.s.album) + "</em></p>";
     } else {
       dcRow.innerHTML = "";
@@ -932,13 +1057,21 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     var facts = [
       d.w ? d.km.toFixed(1) + " km" : "no walk recorded",
       hours(d.min),
+      altOf(d) ? Math.round(altOf(d)).toLocaleString("en-GB") + " m" : null,
       d.elev > 900 ? "+" + d.elev + " m climbed" : null
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
     hudDay.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "");
     hudKm.textContent = d.cum.toFixed(1);
     navLinks.forEach(function(a){
-      a.classList.toggle("current", a.getAttribute("href") === "#" + d.c.toLowerCase());
+      var isCurrent = a.getAttribute("href") === "#" + d.c.toLowerCase();
+      a.classList.toggle("current", isCurrent);
+      if (isCurrent && countryNav && innerWidth <= 900) {
+        var navRect = countryNav.getBoundingClientRect();
+        var linkRect = a.getBoundingClientRect();
+        var left = countryNav.scrollLeft + linkRect.left + linkRect.width / 2 - navRect.left - navRect.width / 2;
+        countryNav.scrollTo({ left: Math.max(0, left), behavior: REDUCED ? "auto" : "smooth" });
+      }
     });
   }
 
@@ -998,14 +1131,37 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW }; }
 
     // walker + trail
-    walker.setAttribute("cx", wp.x); walker.setAttribute("cy", wp.y);
-    walkerHalo.setAttribute("cx", wp.x); walkerHalo.setAttribute("cy", wp.y);
+    var wy = wp.y;
+    if (lastWalk) {
+      var dxw = wp.x - lastWalk.x;
+      if (Math.abs(dxw) > 0.04) walkFace = dxw < 0 ? -1 : 1;
+    }
+    lastWalk = { x: wp.x, y: wp.y };
+    if (walkerG) walkerG.setAttribute("transform", "translate(" + wp.x.toFixed(2) + "," + wy.toFixed(2) + ")");
+    if (stick) stick.setAttribute("transform", walkFace < 0 ? "scale(-1,1)" : "");
+    try {
+      if (walkerHtml && atlas && atlas.createSVGPoint) {
+        var pt = atlas.createSVGPoint();
+        pt.x = wp.x; pt.y = wy;
+        var ctm = atlas.getScreenCTM();
+        if (ctm) {
+          var sp = pt.matrixTransform(ctm);
+          var box = stage.getBoundingClientRect();
+          walkerHtml.style.transform = "translate(" + (sp.x - box.left).toFixed(1) + "px," + (sp.y - box.top).toFixed(1) + "px)";
+        }
+      }
+    } catch (e) {}
+    stage.classList.toggle("is-walking", !REDUCED && (scene.t === "walk" || scene.t === "gap") && !!wp.day.w);
+    sparkAt(wp.alt, wp.day.n, wp.t);
     days.forEach(function(d){
       if (d.n === 1) return;
       var seg = document.getElementById("seg-" + d.n);
       var dot = document.getElementById("dot-" + d.n);
       var passed = (scene.t === "walk" || scene.t === "gap") ? d.n < wp.day.n : d.n <= wp.day.n;
-      if (seg) seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
+      if (seg) {
+        seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
+        if (passed) seg.removeAttribute("stroke-dasharray");
+      }
       if (dot) dot.classList.toggle("seen", passed || wp.day.n === d.n && wp.t > .96);
     });
     var dot1 = document.getElementById("dot-1");
@@ -1015,15 +1171,19 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       var segNow = document.getElementById("seg-" + wp.day.n);
       if (segNow) {
         var prev = byN[wp.day.n - 1] || wp.day;
-        var len = Math.hypot(wp.day.x - prev.x, wp.day.y - prev.y);
+        var len = (segNow.getTotalLength ? segNow.getTotalLength() : Math.hypot(wp.day.x - prev.x, wp.day.y - prev.y)) || 1;
         segNow.classList.add("lit");
-        segNow.setAttribute("stroke-dasharray", (len * wp.t).toFixed(1) + " " + (len + 2).toFixed(1));
+        if (wp.t >= .98) segNow.removeAttribute("stroke-dasharray");
+        else segNow.setAttribute("stroke-dasharray", (len * wp.t).toFixed(1) + " " + (len + 2).toFixed(1));
       }
     }
 
     // day content
     if (scene.t === "walk" || scene.t === "beat" || scene.t === "gap") { showDay(wp.day); showPhoto(wp.day); }
-    else if (scene.t === "enter") { showDay(wp.day); showPhoto(wp.day); }
+    else if (scene.t === "enter") {
+      showDay(wp.day);
+      photoBox.classList.remove("on"); photoShown = null;
+    }
     if (scene.t === "walk" && wp.day.w) {
       var prevDay = byN[wp.day.n - 1];
       var liveKm = (prevDay ? prevDay.cum : 0) + wp.day.km * wp.t;
@@ -1079,22 +1239,26 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     var top = experience.getBoundingClientRect().top;
     progress = Math.max(0, Math.min(DATA.timeline, -top));
   }
-  var CAMEASE = REDUCED ? 1 : 0.085;
+  var CAMEASE = REDUCED ? 1 : (FORCED_P != null ? 1 : 0.085);
   function frame(){
-    readScroll();
-    update(progress);
-    cam.x = lerp(cam.x, target.x, CAMEASE);
-    cam.y = lerp(cam.y, target.y, CAMEASE);
-    cam.w = lerp(cam.w, target.w, CAMEASE);
-    applyCamera();
-    if (playing) {
-      var next = Math.min(scrollY + PLAY_SPEED / 60, experience.offsetTop + DATA.timeline);
-      scrollTo(0, next);
-      if (next >= experience.offsetTop + DATA.timeline - 2) stopWalk();
-    }
     requestAnimationFrame(frame);
+    try {
+      readScroll();
+      update(progress);
+      cam.x = lerp(cam.x, target.x, CAMEASE);
+      cam.y = lerp(cam.y, target.y, CAMEASE);
+      cam.w = lerp(cam.w, target.w, CAMEASE);
+      applyCamera();
+      if (playing) {
+        var next = Math.min(scrollY + PLAY_SPEED / 60, experience.offsetTop + DATA.timeline);
+        scrollTo(0, next);
+        if (next >= experience.offsetTop + DATA.timeline - 2) stopWalk();
+      }
+    } catch (err) {}
   }
   cam = fitFull(); target = fitFull();
+  readScroll();
+  try { update(progress); cam = { x: target.x, y: target.y, w: target.w }; } catch (err) {}
   applyCamera();
   requestAnimationFrame(frame);
 

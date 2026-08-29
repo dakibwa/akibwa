@@ -182,14 +182,14 @@
       "kind": "album",
       "song": null,
       "album": "A Plea for Tenderness",
-      "artist": "Dump",
-      "source": "https://www.discogs.com/release/2470175-Dump-A-Plea-For-Tenderness",
-      "mbid": "b2d0a054-9294-3645-abd2-c39d38a20024",
+      "artist": "Jonathan Richman",
+      "source": "https://musicbrainz.org/release-group/b454b23d-f8aa-4d2c-bab1-5639cbcdd58a",
+      "mbid": "b454b23d-f8aa-4d2c-bab1-5639cbcdd58a",
       "coverUrls": [
-        "https://lastfm.freetls.fastly.net/i/u/300x300/abf788ea76cf484593033095afbcd3bf.jpg",
-        "https://coverartarchive.org/release/33952942-b855-4427-8039-60206965ed4f/front-500"
+        "https://coverartarchive.org/release/a8b17bd4-01eb-4450-a723-e5872021fb75/front-500",
+        "https://media.cdr.nl/COVER/MEDIUM/FRONT/JK77941/A-plea-for-tenderness.jpg"
       ],
-      "note": "James McNew (Yo La Tengo). Cover Art Archive has no front; Last.fm has the pink-bunny sleeve."
+      "note": null
     },
     "I'll Come Too": {
       "kind": "song",
