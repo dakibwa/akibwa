@@ -51,6 +51,7 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
    stilled page — the same face, the same detail, just brought forward. It
    arrives FROM its place on the wall and returns TO it. */
 function Spotlight({ lit, onClose }) {
+  const closeRef = useRef(null);
   /* The CARD is the shared element, not the figure that wraps it. The figure
      is a flex column holding the card AND the caption, so centring it on the
      wall tile put the card half a caption too high — measured at 21.3px above
@@ -122,6 +123,44 @@ function Spotlight({ lit, onClose }) {
 
   useEffect(() => () => window.clearTimeout(bailRef.current), []);
 
+  /* Focus has to come with the card. Scroll was locked here but focus was
+     not, so a keyboard visitor who opened a card tabbed straight out of the
+     dialog into hundreds of invisible cards behind an 88%-opaque scrim —
+     measured: eight presses, eight landings outside. The close button is the
+     one control that is always present, so it takes the first focus. */
+  useEffect(() => {
+    closeRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  /* Keep Tab inside the dialog. Nothing behind it is reachable while it is
+     open, and cycling is what tells a keyboard user they are enclosed. */
+  useEffect(() => {
+    const onTab = (event) => {
+      if (event.key !== "Tab") return;
+      const root = closeRef.current?.closest(".spotlight");
+      if (!root) return;
+      const stops = root.querySelectorAll("button, a[href]");
+      if (!stops.length) return;
+      const first = stops[0];
+      const last = stops[stops.length - 1];
+      const active = document.activeElement;
+      if (!root.contains(active)) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+        return;
+      }
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus({ preventScroll: true });
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+      }
+    };
+    document.addEventListener("keydown", onTab);
+    return () => document.removeEventListener("keydown", onTab);
+  }, []);
+
   /* The wall's faces load lazily, and a face replayed inside this overlay
      keeps that attribute — where, mid-FLIP, the lazy gate never fires and the
      image simply never fetches. The spotlight is the one place the visitor
@@ -170,6 +209,9 @@ function Spotlight({ lit, onClose }) {
   const { card } = lit;
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={card.label}
       className={`spotlight${entered ? " is-entered" : ""}${closing ? " is-closing" : ""}`}
       onClick={(event) =>
         (event.target === event.currentTarget ||
@@ -222,7 +264,7 @@ function Spotlight({ lit, onClose }) {
           ) : null}
         </figcaption>
       </figure>
-      <button type="button" className="spotlight-close" onClick={close} aria-label="Close">
+      <button type="button" ref={closeRef} className="spotlight-close" onClick={close} aria-label="Close">
         Close
       </button>
     </div>
@@ -540,7 +582,19 @@ export function HomePage() {
   }, []);
 
   const closeLit = useCallback(() => {
-    if (litOriginRef.current) litOriginRef.current.style.visibility = "";
+    const origin = litOriginRef.current;
+    if (origin) {
+      origin.style.visibility = "";
+      /* Lift inert BEFORE focusing. The effect below clears it on cleanup,
+         which runs after this — and focus() on a still-inert element is
+         silently a no-op, which is exactly how the restore looked like it
+         worked and landed on <body> instead. */
+      if (deckRef.current) deckRef.current.inert = false;
+      /* Back to the card they opened. Without this, focus fell to wherever
+         the browser last had it — measured landing on a card the visitor had
+         never touched, several rows away, with nothing on screen to say so. */
+      origin.focus({ preventScroll: true });
+    }
     litOriginRef.current = null;
     setLit(null);
   }, []);
@@ -625,8 +679,14 @@ export function HomePage() {
   useEffect(() => {
     if (!lit) return undefined;
     document.body.style.overflow = "hidden";
+    /* Scroll was locked and focus was not, which is only half a modal. inert
+       takes the wall out of the tab order and out of the accessibility tree
+       for as long as a card is up. */
+    const deck = deckRef.current;
+    if (deck) deck.inert = true;
     return () => {
       document.body.style.overflow = "";
+      if (deck) deck.inert = false;
     };
   }, [lit]);
 

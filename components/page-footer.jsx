@@ -29,7 +29,7 @@ export function PageFooter() {
   const emailPointer = usePointerResponse();
 
   return (
-    <footer className="page-grid page-footer">
+    <footer className="page-grid page-footer" id="site-footer" tabIndex={-1}>
       <div className="page-footer-panel">
         <div className="page-footer-signoff">
           <strong {...signoffPointer}>
