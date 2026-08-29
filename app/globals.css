@@ -6124,29 +6124,38 @@ button {
 
 /* The hero is not a card — it is the sentence the wall hangs under. A plain
    grid item spanning the full row, and during a fold it holds perfectly
-   still: its own view-transition name pins it while the wall morphs. */
+   still: its own view-transition name pins it while the wall morphs.
+
+   Padding is deliberately tight: the sentence sits at the top-left of the
+   frame, on the same left edge as the cards. Pulling it to the viewport
+   corner would hang it off the wall — the 24px page gutter is the frame,
+   not leftover margin to eat. */
 
 .deck-hero {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-end;
-  gap: clamp(12px, 1.4vw, 20px);
-  padding: clamp(14px, 1.6vw, 22px);
+  gap: clamp(8px, 0.8vw, 12px);
+  padding: 8px 0 10px;
   view-transition-name: akibwa-hero;
 }
 
-/* The menu IS the sentence, under one rule: a coloured word is a door,
-   plain text is just the sentence. Nothing else is decorated. */
+/* A coloured noun in the sentence is a door. The cycling word is the only
+   one now: a shortcut into three buckets. The seven collections sit beneath
+   the sentence as the page menu. */
 .hero-index-word {
   --index-accent-rgb: 47, 136, 255;
   appearance: none;
+  position: relative;
+  display: inline-block;
   border: 0;
   background: transparent;
-  padding: 0;
+  padding: 0 0 0.1em;
   color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
   cursor: pointer;
   font: inherit;
+  white-space: nowrap;
+  vertical-align: baseline;
   transition: color 220ms ease;
 }
 
@@ -6156,28 +6165,64 @@ button {
   outline: 0;
 }
 
-/* The roving light: one word at a time lifts to full strength, the same flick
-   the words above use, so the whole headline flickers as one instrument. */
-.hero-index-word.is-spot {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 74%, var(--black));
-}
-
-/* The held word is the one place on the page saying what is open. */
 .hero-index-word.is-held {
   color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 80%, var(--black));
-  text-decoration: underline;
-  text-decoration-thickness: 3px;
-  text-decoration-color: rgba(var(--index-accent-rgb), 0.5);
-  text-underline-offset: 6px;
+}
+
+/* Same measured slot as the name flip, so "projects" ↔ "taste" does not
+   shove the full stop around. The underline is the name's own mark, in
+   this word's ink — a text-decoration sat on the button and missed the
+   visible span, so taste had colour and no rule. */
+.hero-index-word .hero-word-cycle-value {
+  position: relative;
+  grid-area: 1 / 1;
+  justify-self: start;
+  width: max-content;
+}
+
+.hero-index-word .hero-word-cycle-value::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -0.08em;
+  left: 0;
+  height: 0.11em;
+  border-radius: 0.055em;
+  background: rgba(var(--index-accent-rgb), 0.62);
+  pointer-events: none;
+}
+
+.hero-index-word.is-held .hero-word-cycle-value::after {
+  background: rgba(var(--index-accent-rgb), 0.85);
+}
+
+.rail-word {
+  --index-accent-rgb: 61, 90, 128;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
+  font-weight: 540;
+  letter-spacing: -0.012em;
+  transition: color 160ms ease, opacity 460ms var(--ease-out);
+}
+.rail-word:hover,
+.rail-word:focus-visible {
+  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
+  outline: 0;
 }
 
 .deck-hero h1 {
+  display: block;
   margin: 0;
   color: var(--black);
-  /* Sized so the one sentence runs the width of the page. */
   font-size: clamp(1.6rem, 3.2vw, 3.2rem);
   font-weight: 540;
-  line-height: 1.1;
+  line-height: 1.2;
   letter-spacing: -0.012em;
 }
 
@@ -6263,7 +6308,26 @@ button {
 .deck .deck-hero {
   grid-column: 1 / -1;
   grid-row: auto;
-  margin: 0 0 clamp(8px, 1vw, 14px);
+  margin: 0 0 clamp(6px, 0.7vw, 10px);
+}
+
+/* The key sits directly below the sentence again. It is a compact wrapped
+   row, not a second headline, but keeping it on its own line makes the seven
+   collection doors scan as the page menu instead of sentence fragments. */
+.deck-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.28em 0.78em;
+  margin: 0;
+}
+
+.deck-legend .rail-word {
+  display: block;
+  margin: 0;
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  line-height: 1.2;
+  vertical-align: baseline;
 }
 
 /* ── The key ────────────────────────────────────────────────────────────
@@ -6289,8 +6353,9 @@ button {
 
 /* Holding a lens: everything the lens does not name leaves the collage, and
    the view transition morphs the survivors into their closed-up places. The
-   hero sentence stays; it holds the words that let go. */
-.deck.is-lensed .card:not(.is-lit) {
+   hero sentence stays; unlit legend words leave with the unlit cards. */
+.deck.is-lensed .card:not(.is-lit),
+.deck.is-lensed .rail-word:not(.is-lit) {
   display: none;
 }
 

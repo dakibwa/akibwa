@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { HeroFlipName } from "@/components/hero-word-cycle";
+import { HeroCycleWord, HeroFlipName } from "@/components/hero-word-cycle";
 import { InkPaper } from "@/components/ink-paper";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
@@ -60,12 +60,29 @@ function clearFoil(el) {
 }
 
 const LENS_WORDS = ["sites", "jobs", "life", "music", "films", "games", "tv"];
+const TASTE = ["music", "films", "games", "tv"];
+
+/* The sentence's three buckets. The legend names every collection; these
+   three are the headline's pulse, and a shortcut into the wall. #projects
+   aliases to sites; #taste opens the four taste collections. Existing
+   #sites / #music (etc.) hashes still open a single set. */
+const BUCKETS = [
+  { id: "projects", label: "projects", accent: "27, 148, 125", lens: ["sites"] },
+  { id: "career", label: "career", accent: "203, 66, 94", lens: ["jobs"] },
+  { id: "taste", label: "taste", accent: "115, 112, 255", lens: TASTE }
+];
+
+function resolveLens(hash) {
+  if (!hash) return null;
+  const bucket = BUCKETS.find((entry) => entry.id === hash);
+  if (bucket) return { held: bucket.id, lens: bucket.lens };
+  if (LENS_WORDS.includes(hash)) return { held: `set:${hash}`, lens: [hash] };
+  return null;
+}
 
 function lensFromLocation() {
   const hash = window.location.hash.replace(/^#/, "");
-  if (LENS_WORDS.includes(hash)) return hash;
-  const set = new URLSearchParams(window.location.search).get("set");
-  return LENS_WORDS.includes(set) ? set : null;
+  return resolveLens(hash) ?? resolveLens(new URLSearchParams(window.location.search).get("set"));
 }
 
 function lensHref(id) {
@@ -386,40 +403,14 @@ function blend(lists) {
     .map((dealt) => dealt.card);
 }
 
-/* The sentence owns its own pulse. The roving light used to be HomePage
-   state, which re-rendered the entire 366-card wall every 1.4 seconds — a
-   metronome of jank. Isolated here, the pulse re-renders one heading. */
-function HeroSentence({ lens, heldBucket, focusSet }) {
-  const [spot, setSpot] = useState(-1);
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const id = window.setInterval(() => setSpot((v) => (v + 1) % SPOT_ORDER.length), 1400);
-    return () => window.clearInterval(id);
-  }, []);
-
-  /* The sentence's own words are its menu: each coloured noun opens its
-     collection; plain text is just the sentence. */
-  const SetWord = ({ set, children }) => (
-    <button
-      type="button"
-      className={`hero-index-word${heldBucket === `set:${set.id}` ? " is-held" : ""}${
-        !lens && SPOT_ORDER[spot] === set.id ? " is-spot" : ""
-      }`}
-      style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-      aria-expanded={heldBucket === `set:${set.id}`}
-      onClick={() => focusSet(set.id)}
-    >
-      {children}
-    </button>
-  );
-
+/* The sentence has one moving noun — projects, career, taste — a pulse and
+   a shortcut into those three buckets. The seven collections sit immediately
+   beneath it as the menu. Isolated here so the cycle cannot re-render the wall. */
+function HeroSentence({ heldBucket, openBucket }) {
   return (
     <h1 className="hero-sentence">
-      <HeroFlipName /> — the things I built:{" "}
-      <SetWord set={SET.sites}>projects</SetWord>, a <SetWord set={SET.jobs}>career</SetWord>, a{" "}
-      <SetWord set={SET.life}>life</SetWord>. The things I love:{" "}
-      <SetWord set={SET.music}>music</SetWord>, <SetWord set={SET.films}>films</SetWord>,{" "}
-      <SetWord set={SET.games}>games</SetWord>, <SetWord set={SET.tv}>TV</SetWord>.
+      <HeroFlipName /> — here you can see my{" "}
+      <HeroCycleWord phrases={BUCKETS} heldId={heldBucket} onActivate={openBucket} />.
     </h1>
   );
 }
@@ -828,9 +819,7 @@ export function HomePage() {
     });
   }, []);
 
-  /* A rail name holds a lens over its own row — the same machinery as the
-     sentence's bucket words, one interaction language across the site.
-     Clicking again lets go. */
+  /* A legend word holds a lens over its own collection. Clicking again lets go. */
   const focusSet = useCallback(
     (id) => {
       const opening = heldBucket !== `set:${id}`;
@@ -842,6 +831,27 @@ export function HomePage() {
         () => {
           setHeldBucket(next ? `set:${next}` : null);
           setLens(next ? [next] : null);
+        },
+        { toTop: opening }
+      );
+    },
+    [withMorph, heldBucket]
+  );
+
+  /* The sentence's cycling noun opens a bucket: one collection, or taste's
+     four. Same fold as a legend word; clicking the same bucket lets go.
+     Click does not advance the word — that would fight opening it. */
+  const openBucket = useCallback(
+    (bucket) => {
+      const opening = heldBucket !== bucket.id;
+      const next = opening ? bucket.id : null;
+      const href = lensHref(next);
+      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      if (href !== current) history.pushState({ lens: next }, "", href);
+      withMorph(
+        () => {
+          setHeldBucket(next);
+          setLens(next ? bucket.lens : null);
         },
         { toTop: opening }
       );
@@ -882,17 +892,17 @@ export function HomePage() {
   useEffect(() => {
     const boot = lensFromLocation();
     if (boot) {
-      setHeldBucket(`set:${boot}`);
-      setLens([boot]);
+      setHeldBucket(boot.held);
+      setLens(boot.lens);
     }
     const onPop = () => {
-      const id = lensFromLocation();
+      const loc = lensFromLocation();
       withMorph(
         () => {
-          setHeldBucket(id ? `set:${id}` : null);
-          setLens(id ? [id] : null);
+          setHeldBucket(loc ? loc.held : null);
+          setLens(loc ? loc.lens : null);
         },
-        { toTop: Boolean(id) }
+        { toTop: Boolean(loc) }
       );
     };
     window.addEventListener("popstate", onPop);
@@ -1315,7 +1325,25 @@ export function HomePage() {
       >
 
         <div className="deck-hero">
-          <HeroSentence lens={lens} heldBucket={heldBucket} focusSet={focusSet} />
+          <HeroSentence heldBucket={heldBucket} openBucket={openBucket} />
+          {/* Seven smaller words directly beneath the sentence, in the same
+              ink the cards wear, so the wall still reads at a glance. Each
+              is an opener. */}
+          <nav className="deck-legend" aria-label="The key — each word folds the wall to its collection">
+            {LEGEND.map((set) => (
+              <button
+                key={set.id}
+                id={`set-${set.id}`}
+                type="button"
+                className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
+                style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
+                aria-expanded={heldBucket === `set:${set.id}`}
+                onClick={() => focusSet(set.id)}
+              >
+                {set.label}
+              </button>
+            ))}
+          </nav>
         </div>
 
         {wall}
@@ -1328,8 +1356,8 @@ export function HomePage() {
   );
 }
 
-/* One accent per set for the hero index — drawn from the same families the
-   cycling words use, so the index reads as part of the sentence above it. */
+/* One accent per set for the legend — the same ink each card wears on its
+   baseline, so the key and the wall agree. */
 /* The name flip owns blue and orange outright; nothing else repeats them.
    Down the rail the hues alternate warm and cool, each a clear step from
    its neighbours: teal, rose, amber, olive, violet, sky. */
@@ -1347,13 +1375,6 @@ const INDEX_ACCENT = {
    career, then the taste collections. Life is not one of the data sets — its
    cards ride in the sites flow — but it is very much one of the keys. */
 const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
-
-
-/* The seven collection words, addressable by id for the sentence. */
-const SET = Object.fromEntries(LEGEND.map((entry) => [entry.id, entry]));
-
-/* The roving light passes over the coloured nouns only. */
-const SPOT_ORDER = ["sites", "jobs", "life", "music", "films", "games", "tv"];
 
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for

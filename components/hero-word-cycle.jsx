@@ -163,6 +163,8 @@ const heroNames = [
   { label: "Akibwa", accent: "235, 92, 8" }
 ];
 const NAME_INITIAL_DELAY = 3200;
+/* Staggered from the name flip so the two flicks do not land together. */
+const SEE_WORD_INITIAL_DELAY = 1600;
 
 export function HeroFlipName() {
   const [index, setIndex] = useState(0);
@@ -222,6 +224,65 @@ export function HeroFlipName() {
         </span>
       </button>
     </>
+  );
+}
+
+/* One noun in the homepage sentence — projects, career, taste — cycling in
+   the same measured slot the name uses, so the full stop does not jump.
+   Click opens that bucket; it does not advance the word. The name is a
+   flip; this is a door. */
+export function HeroCycleWord({ phrases, heldId, onActivate }) {
+  const [index, setIndex] = useState(0);
+  const [widths, setWidths] = useState(null);
+  const stackRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+
+  const advance = useCallback(() => setIndex((i) => (i + 1) % phrases.length), [phrases.length]);
+
+  useEffect(() => {
+    if (reducedMotion) return undefined;
+    return startOffsetCycle(advance, SEE_WORD_INITIAL_DELAY, REST_INTERVAL);
+  }, [reducedMotion, advance]);
+
+  useEffect(() => {
+    const measure = () => {
+      const sizers = stackRef.current?.querySelectorAll(".hero-name-sizer");
+      if (!sizers?.length) return;
+      setWidths([...sizers].map((el) => el.offsetWidth));
+    };
+    measure();
+    document.fonts?.ready.then(measure).catch(() => {});
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [phrases]);
+
+  const current = phrases[index];
+  const held = heldId === current.id;
+
+  return (
+    <button
+      type="button"
+      className={`hero-index-word${held ? " is-held" : ""}`}
+      style={{ "--index-accent-rgb": current.accent }}
+      aria-label={current.label}
+      aria-expanded={held}
+      onClick={() => onActivate(current)}
+    >
+      <span
+        className="hero-name-stack"
+        ref={stackRef}
+        style={widths ? { width: `${widths[index]}px` } : undefined}
+      >
+        {phrases.map((phrase) => (
+          <span key={phrase.label} className="hero-name-sizer" aria-hidden="true">
+            {phrase.label}
+          </span>
+        ))}
+        <span key={current.label} className="hero-word-cycle-value">
+          {current.label}
+        </span>
+      </span>
+    </button>
   );
 }
 

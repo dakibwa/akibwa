@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 
-/* The site retired its navigation: no header, no wordmark, no menu. What
+/* The site retired its navigation: no header, no wordmark, no menu bar. What
    replaced each piece is what this contract now guards — the name flip in the
-   headline carries the brand strip, the hero index of set names is the menu,
+   headline carries the brand strip, the legend under the sentence is the menu,
    and the footer is the one fixed route to contact. A regression on any of
    these quietly strands a visitor, which is exactly the class of bug this
    check exists to stop at build time. */
@@ -56,7 +56,7 @@ const requireRuleText = (selector, declarations) => {
 /* The shell is just the page. Any header creeping back in should be a
    deliberate decision, not a drive-by. */
 forbidText(shell, "site-header", "the header was retired — the hero carries the identity");
-forbidText(shell, "nav-", "the menu was retired into the hero index");
+forbidText(shell, "nav-", "the menu was retired into the legend");
 forbidText(shell, "brand__", "the wordmark was retired into the hero name flip");
 
 /* The name flip carries its accent underline on the visible name itself. */
@@ -66,10 +66,16 @@ requireRuleText(".hero-name-value::after {", [
   "background: rgba(var(--name-accent-rgb)"
 ]);
 
-/* The menu IS the sentence: its seven coloured collection words are the
-   only navigation on the page, each opening its collection's lens. */
-requireText(home, "hero-index-word", "the hero sentence must carry its collection words");
-requireText(home, "onClick={() => focusSet(set.id)}", "each sentence word must open its set");
+/* The legend under the sentence is the menu: seven collection words, each
+   opening its lens. The sentence keeps one cycling noun as a shortcut into
+   three buckets — a door, not a flip. */
+requireText(home, "deck-legend", "the homepage must keep the collection legend");
+requireText(home, "rail-word", "legend words must use the rail-word control");
+requireText(home, "onClick={() => focusSet(set.id)}", "each legend word must open its set");
+requireRuleText(".deck-hero {", ["display: flex", "flex-direction: column"]);
+requireRuleText(".deck-legend {", ["display: flex", "flex-wrap: wrap"]);
+requireText(hero, "export function HeroCycleWord", "the hero sentence must cycle a single bucket word");
+requireText(hero, "onClick={() => onActivate(current)}", "the cycling word must open a bucket rather than advance");
 
 /* The footer is the one fixed route to contact — the contact row is gone. */
 requireText(footer, 'href="mailto:', "the footer must keep an email route");
