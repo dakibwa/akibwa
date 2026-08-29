@@ -1860,7 +1860,15 @@
    "country": "France",
    "km": 35.5,
    "movingMin": 430,
-   "elevM": 1313
+   "elevM": 1313,
+   "sleeve": {
+    "slug": "isolation",
+    "kind": "song",
+    "song": "After the Storm",
+    "album": "Isolation",
+    "artist": "Kali Uchis",
+    "note": "Featuring Tyler, the Creator and Bootsy Collins."
+   }
   },
   {
    "n": 3,
@@ -1960,7 +1968,15 @@
    "country": "France",
    "km": 36,
    "movingMin": 268,
-   "elevM": 999
+   "elevM": 999,
+   "sleeve": {
+    "slug": "high-life",
+    "kind": "song",
+    "song": "Lilac",
+    "album": "High Life",
+    "artist": "Brian Eno & Karl Hyde",
+    "note": "The Eno · Hyde collaboration from High Life (2014)."
+   }
   },
   {
    "n": 10,
@@ -2025,12 +2041,12 @@
    "movingMin": 569,
    "elevM": 1901,
    "sleeve": {
-    "slug": "everything-is-everything",
+    "slug": "harpers-bizarre-4",
     "kind": "song",
     "song": "Witchi Tai To",
-    "album": "Everything Is Everything",
-    "artist": "Everything Is Everything",
-    "note": "Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on."
+    "album": "Harpers Bizarre 4",
+    "artist": "Harpers Bizarre",
+    "note": "The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song."
    }
   },
   {
@@ -2352,7 +2368,15 @@
    "country": "Austria",
    "km": 33.6,
    "movingMin": 309,
-   "elevM": 958
+   "elevM": 958,
+   "sleeve": {
+    "slug": "louder-than-bombs",
+    "kind": "lyrics",
+    "song": "Asleep",
+    "album": "Louder Than Bombs",
+    "artist": "The Smiths",
+    "note": "The GPS title takes its phrase from “Asleep”."
+   }
   },
   {
    "n": 35,
@@ -2400,7 +2424,15 @@
    "country": "Slovenia",
    "km": 50.3,
    "movingMin": 496,
-   "elevM": 369
+   "elevM": 369,
+   "sleeve": {
+    "slug": "dsu",
+    "kind": "song",
+    "song": "Skipper",
+    "album": "DSU",
+    "artist": "Alex G",
+    "note": null
+   }
   },
   {
    "n": 38,
@@ -2426,12 +2458,20 @@
   {
    "n": 39,
    "date": null,
-   "title": null,
-   "raw": null,
+   "title": "Zoo Eyes",
+   "raw": "Day 39 - Zoo Eyes",
    "x": 1819060,
    "y": -5831400,
    "walked": false,
-   "country": "Croatia"
+   "country": "Croatia",
+   "sleeve": {
+    "slug": "designer",
+    "kind": "song",
+    "song": "Zoo Eyes",
+    "album": "Designer",
+    "artist": "Aldous Harding",
+    "note": null
+   }
   },
   {
    "n": 40,

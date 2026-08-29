@@ -1,8 +1,24 @@
 {
  "source": "curated lyrics/song/album matches; Cover Art Archive fronts, printed wall cards as fallback",
  "rule": "A sleeve is only the real front of a verified record. Titles without a verified match stay blank jackets.",
- "resolvedAt": "2026-08-29T09:05:48.254Z",
+ "resolvedAt": "2026-08-29T16:24:19.642Z",
  "titles": {
+  "After the Storm": {
+   "slug": "isolation",
+   "kind": "song",
+   "song": "After the Storm",
+   "album": "Isolation",
+   "artist": "Kali Uchis",
+   "note": "Featuring Tyler, the Creator and Bootsy Collins."
+  },
+  "Lilac!": {
+   "slug": "high-life",
+   "kind": "song",
+   "song": "Lilac",
+   "album": "High Life",
+   "artist": "Brian Eno & Karl Hyde",
+   "note": "The Eno · Hyde collaboration from High Life (2014)."
+  },
   "One way to lose them walking blues!": {
    "slug": "graceland",
    "kind": "lyrics",
@@ -12,12 +28,12 @@
    "note": "Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."
   },
   "Witchi Tai To": {
-   "slug": "everything-is-everything",
+   "slug": "harpers-bizarre-4",
    "kind": "song",
    "song": "Witchi Tai To",
-   "album": "Everything Is Everything",
-   "artist": "Everything Is Everything",
-   "note": "Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on."
+   "album": "Harpers Bizarre 4",
+   "artist": "Harpers Bizarre",
+   "note": "The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song."
   },
   "Hey Moon": {
    "slug": "we-must-become-the-pitiless-censors-of-ourselves",
@@ -75,6 +91,14 @@
    "artist": "Red House Painters",
    "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."
   },
+  "Sing Me To Sleep": {
+   "slug": "louder-than-bombs",
+   "kind": "lyrics",
+   "song": "Asleep",
+   "album": "Louder Than Bombs",
+   "artist": "The Smiths",
+   "note": "The GPS title takes its phrase from “Asleep”."
+  },
   "Beyond Me, Beyond You": {
    "slug": "a-moon-shaped-pool",
    "kind": "lyrics",
@@ -89,6 +113,14 @@
    "song": null,
    "album": "Everything That Happens Will Happen Today",
    "artist": "David Byrne & Brian Eno",
+   "note": null
+  },
+  "Skipper": {
+   "slug": "dsu",
+   "kind": "song",
+   "song": "Skipper",
+   "album": "DSU",
+   "artist": "Alex G",
    "note": null
   },
   "Distant Sky": {
@@ -193,6 +225,14 @@
    "song": "Banshee Beat",
    "album": "Feels",
    "artist": "Animal Collective",
+   "note": null
+  },
+  "Zoo Eyes": {
+   "slug": "designer",
+   "kind": "song",
+   "song": "Zoo Eyes",
+   "album": "Designer",
+   "artist": "Aldous Harding",
    "note": null
   },
   "Infant Dressing Table": {

@@ -3,8 +3,8 @@
 //
 // The page is one full-screen atlas. Scroll walks the line: the camera
 // follows a walker along the GPS day points, towns arrive and pass, each
-// country opens with its Imagine ground, records and journal beats surface
-// at their days, and day 39 — the day Strava holds nothing — goes dark.
+// country opens with its Imagine ground, and records and journal beats surface
+// at their walked days. Rest points remain on the line but pass silently.
 //
 //   data/trek-days.json          ← regenerated: days + distances + sleeves + geometry
 //   public/trek/index.html       ← rendered from scripts/trek-page-template.html
@@ -139,9 +139,6 @@ const BEATS = {
       "Having crossed the border, something seems to have clicked and it has occurred to me how close I am to achieving what I set out to do. Tomorrow I will be arriving in Sofia.",
   },
 };
-const GAP39 =
-  "After nearly fifteen days consecutively on the road, I spent hours on a Croatian main road with cars passing close before finding a quieter canal path.";
-
 // -------------------------------------------------------------------- towns
 // Staging posts. These are the anchors: the line visits each city, and the
 // GPS fills the journey between them. Coordinates are Web Mercator (same
@@ -222,6 +219,16 @@ function nearestOnVerts(px, py, verts) {
 
 const UA = "akibwa.com trek page builder";
 const terrainCachePath = path.join(root, "data/trek-terrain.json");
+const waterCachePath = path.join(root, "data/trek-water.json");
+const WATER_SOURCES = {
+  lakes: "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_lakes.geojson",
+  rivers:
+    "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson",
+};
+const WATER_NAMES = {
+  lakes: new Set(["Lake Geneva", "Bodensee", "Lake Balaton"]),
+  rivers: new Set(["Marne", "Rhine", "Danube", "Sava"]),
+};
 
 async function fetchElevBatch(lats, lons) {
   const url =
@@ -315,6 +322,103 @@ async function loadTerrain(bbox) {
   return grid;
 }
 
+function pointSegmentDistance(point, start, end) {
+  const dx = end[0] - start[0];
+  const dy = end[1] - start[1];
+  if (!dx && !dy) return Math.hypot(point[0] - start[0], point[1] - start[1]);
+  const t = Math.max(
+    0,
+    Math.min(1, ((point[0] - start[0]) * dx + (point[1] - start[1]) * dy) / (dx * dx + dy * dy))
+  );
+  return Math.hypot(point[0] - (start[0] + t * dx), point[1] - (start[1] + t * dy));
+}
+
+function simplifyLine(points, tolerance = 0.018) {
+  if (points.length < 3) return points;
+  let furthest = 0;
+  let index = 0;
+  for (let i = 1; i < points.length - 1; i++) {
+    const distance = pointSegmentDistance(points[i], points[0], points[points.length - 1]);
+    if (distance > furthest) {
+      furthest = distance;
+      index = i;
+    }
+  }
+  if (furthest <= tolerance) return [points[0], points[points.length - 1]];
+  const left = simplifyLine(points.slice(0, index + 1), tolerance);
+  const right = simplifyLine(points.slice(index), tolerance);
+  return left.slice(0, -1).concat(right);
+}
+
+function geometryLines(geometry) {
+  if (!geometry) return [];
+  if (geometry.type === "LineString") return [geometry.coordinates];
+  if (geometry.type === "MultiLineString") return geometry.coordinates;
+  return [];
+}
+
+function geometryRings(geometry) {
+  if (!geometry) return [];
+  if (geometry.type === "Polygon") return geometry.coordinates;
+  if (geometry.type === "MultiPolygon") return geometry.coordinates.flat();
+  return [];
+}
+
+function trimToBbox(points, bbox) {
+  const pad = 0.8;
+  const inside = ([lon, lat]) =>
+    lon >= bbox.west - pad && lon <= bbox.east + pad && lat >= bbox.south - pad && lat <= bbox.north + pad;
+  const indexes = points.map((point, i) => (inside(point) ? i : -1)).filter((i) => i >= 0);
+  if (!indexes.length) return [];
+  const first = Math.max(0, indexes[0] - 1);
+  const last = Math.min(points.length, indexes[indexes.length - 1] + 2);
+  return points.slice(first, last);
+}
+
+async function fetchGeoJson(url) {
+  const response = await fetch(url, { headers: { "user-agent": UA } });
+  if (!response.ok) throw new Error(`water ${response.status}`);
+  return response.json();
+}
+
+async function loadWater(bbox) {
+  if (fs.existsSync(waterCachePath)) {
+    try {
+      const cached = JSON.parse(fs.readFileSync(waterCachePath, "utf8"));
+      if (Array.isArray(cached.lakes) && Array.isArray(cached.rivers)) return cached;
+    } catch {}
+  }
+  const [lakeData, riverData] = await Promise.all([
+    fetchGeoJson(WATER_SOURCES.lakes),
+    fetchGeoJson(WATER_SOURCES.rivers),
+  ]);
+  const lakes = lakeData.features
+    .filter((feature) => WATER_NAMES.lakes.has(feature.properties?.name))
+    .map((feature) => ({
+      name: feature.properties.name,
+      rings: geometryRings(feature.geometry).map((ring) => simplifyLine(ring, 0.012)),
+    }));
+  const rivers = riverData.features
+    .filter((feature) => WATER_NAMES.rivers.has(feature.properties?.name))
+    .map((feature) => ({
+      name: feature.properties.name,
+      lines: geometryLines(feature.geometry)
+        .map((line) => trimToBbox(line, bbox))
+        .filter((line) => line.length > 1)
+        .map((line) => simplifyLine(line, 0.025)),
+    }))
+    .filter((feature) => feature.lines.length);
+  const water = {
+    source: "Natural Earth 1:10m physical vectors",
+    sourceUrls: WATER_SOURCES,
+    fetchedAt: new Date().toISOString(),
+    lakes,
+    rivers,
+  };
+  fs.writeFileSync(waterCachePath, JSON.stringify(water, null, 1) + "\n");
+  return water;
+}
+
 try {
   await buildAtlas();
 } catch (err) {
@@ -359,10 +463,27 @@ try {
   console.warn("elevation skipped:", err.message);
 }
 
+let water = { lakes: [], rivers: [] };
+try {
+  water = await loadWater(bbox);
+} catch (err) {
+  console.warn("water skipped:", err.message);
+}
+
 const altAt = (x, y) => {
   if (!grid) return 0;
   const { lon, lat } = unproj(x, y);
   return sampleGrid(grid, lon, lat);
+};
+const RELIEF_SCALE = 0.038;
+const mapPoint = (x, y, altitude = altAt(x, y)) => ({
+  x: sx(x),
+  y: +(sy(y) - Math.max(0, altitude) * RELIEF_SCALE).toFixed(1),
+  alt: altitude,
+});
+const mapLonLat = ({ lon, lat }, altitude) => {
+  const [x, y] = mercProj({ lon, lat });
+  return mapPoint(x, y, altitude == null ? altAt(x, y) : altitude);
 };
 
 const gpsVerts = flattenTracks(data.tracks);
@@ -428,11 +549,104 @@ const COUNTRY_COLOR = Object.fromEntries(data.countries.map((c) => [c.name, c.co
 const ringPaths = data.countryRings
   .map((c) => {
     const d = c.rings
-      .map((ring) => "M" + ring.map(([x, y]) => `${sx(x)} ${sy(y)}`).join("L") + "Z")
+      .map(
+        (ring) =>
+          "M" +
+          ring
+            .map(([x, y]) => {
+              const point = mapPoint(x, y);
+              return `${point.x} ${point.y}`;
+            })
+            .join("L") +
+          "Z"
+      )
       .join("");
     return `<path d="${d}" fill="${c.color}" fill-opacity=".05" stroke="${c.color}" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
   })
   .join("\n    ");
+
+function terrainCellColor(points) {
+  const altitude = points.reduce((sum, point) => sum + point.alt, 0) / points.length;
+  const eastSlope = (points[1].alt + points[2].alt - points[0].alt - points[3].alt) / 1150;
+  const southSlope = (points[2].alt + points[3].alt - points[0].alt - points[1].alt) / 1150;
+  const normalLength = Math.hypot(eastSlope, southSlope, 1);
+  const nx = -eastSlope / normalLength;
+  const ny = -southSlope / normalLength;
+  const nz = 1 / normalLength;
+  const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
+  const high = Math.max(0, Math.min(1, altitude / 2400));
+  const luminance = Math.round(13 + high * 8 + light * 2.2);
+  const saturation = Math.round(12 + high * 8);
+  return `hsl(36 ${saturation}% ${luminance}%)`;
+}
+
+const terrainBuckets = new Map();
+if (grid) {
+  const gridPoint = (row, column) => {
+    const lon = grid.west + (column * (grid.east - grid.west)) / (grid.cols - 1);
+    const lat = grid.north - (row * (grid.north - grid.south)) / (grid.rows - 1);
+    const altitude = grid.elev[row * grid.cols + column] || 0;
+    return mapLonLat({ lon, lat }, altitude);
+  };
+  for (let row = 0; row < grid.rows - 1; row++) {
+    for (let column = 0; column < grid.cols - 1; column++) {
+      const points = [
+        gridPoint(row, column),
+        gridPoint(row, column + 1),
+        gridPoint(row + 1, column + 1),
+        gridPoint(row + 1, column),
+      ];
+      const color = terrainCellColor(points);
+      const cellPath = `M${points.map((point) => `${point.x},${point.y}`).join("L")}Z`;
+      terrainBuckets.set(color, (terrainBuckets.get(color) || "") + cellPath);
+    }
+  }
+}
+const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
+  `<path class="terrain-cell" d="${d}" fill="${color}" stroke="${color}"/>`
+);
+
+function linePath(points, altitude) {
+  return points
+    .map(([lon, lat], index) => {
+      const point = mapLonLat({ lon, lat }, altitude);
+      return `${index ? "L" : "M"}${point.x} ${point.y}`;
+    })
+    .join("");
+}
+
+const lakePaths = water.lakes
+  .map((lake) => {
+    const all = lake.rings.flat();
+    const centre = all.reduce(
+      (sum, point) => ({ lon: sum.lon + point[0] / all.length, lat: sum.lat + point[1] / all.length }),
+      { lon: 0, lat: 0 }
+    );
+    const [cx, cy] = mercProj(centre);
+    const altitude = Math.max(0, altAt(cx, cy));
+    const d = lake.rings.map((ring) => linePath(ring, altitude) + "Z").join("");
+    const label = mapLonLat(centre, altitude);
+    return `<g class="lake"><path d="${d}"/><text x="${label.x}" y="${label.y}" class="waterlabel">${lake.name}</text></g>`;
+  })
+  .join("\n      ");
+
+const riverPaths = water.rivers
+  .flatMap((river) => river.lines.map((line) => `<path class="river" data-name="${river.name}" d="${linePath(line)}"/>`))
+  .join("\n      ");
+
+const MOUNTAINS = [
+  { name: "Vosges", lon: 7.05, lat: 48.22 },
+  { name: "the Alps", lon: 13.05, lat: 47.05 },
+  { name: "Dinaric Alps", lon: 15.25, lat: 45.72 },
+  { name: "Balkan Mountains", lon: 22.72, lat: 43.18 },
+];
+const mountainMarks = MOUNTAINS.map((mountain) => {
+  const point = mapLonLat(mountain);
+  return `<g class="mountain" transform="translate(${point.x} ${point.y})">
+      <path d="M-7 4L0-5L7 4M-2.8 4L2-1L6.5 4"/>
+      <text x="0" y="13" text-anchor="middle">${mountain.name}</text>
+    </g>`;
+}).join("\n    ");
 
 function contourPath(level) {
   if (!grid) return "";
@@ -440,7 +654,9 @@ function contourPath(level) {
     const lon = grid.west + (c * (grid.east - grid.west)) / (grid.cols - 1);
     const lat = grid.north - (r * (grid.north - grid.south)) / (grid.rows - 1);
     const [x, y] = mercProj({ lon, lat });
-    return { x: sx(x), y: sy(y), z: grid.elev[r * grid.cols + c] || 0 };
+    const z = grid.elev[r * grid.cols + c] || 0;
+    const mapped = mapPoint(x, y, z);
+    return { x: mapped.x, y: mapped.y, z };
   };
   const crossing = (a, b) => {
     if (!((a.z < level && b.z >= level) || (a.z >= level && b.z < level))) return null;
@@ -489,7 +705,14 @@ const contourPaths = grid
       .join("\n      ")
   : "";
 
-const trackPath = "M" + route.map((p) => `${sx(p.x)} ${sy(p.y)}`).join("L");
+const trackPath =
+  "M" +
+  route
+    .map((p) => {
+      const point = mapPoint(p.x, p.y);
+      return `${point.x} ${point.y}`;
+    })
+    .join("L");
 
 function nearestRouteIdx(x, y, from = 0) {
   let best = from;
@@ -517,12 +740,19 @@ for (let i = 0; i < pts.length; i++) {
     slice = [a, b];
   }
   routeAt = i1;
-  walkPaths[d.n] = slice.map((p) => ({
-    x: sx(p.x),
-    y: sy(p.y),
-    alt: Math.round(altAt(p.x, p.y)),
-  }));
-  const pathD = "M" + slice.map((p) => `${sx(p.x)} ${sy(p.y)}`).join("L");
+  walkPaths[d.n] = slice.map((p) => {
+    const altitude = altAt(p.x, p.y);
+    const point = mapPoint(p.x, p.y, altitude);
+    return { x: point.x, y: point.y, alt: Math.round(altitude) };
+  });
+  const pathD =
+    "M" +
+    slice
+      .map((p) => {
+        const point = mapPoint(p.x, p.y);
+        return `${point.x} ${point.y}`;
+      })
+      .join("L");
   segs.push(
     `<path id="seg-${d.n}" d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-width="2.6" vector-effect="non-scaling-stroke" ${d.walked ? "" : 'stroke-dasharray="3 6"'} class="seg"/>`
   );
@@ -541,14 +771,16 @@ function placeOnTown(x, y) {
 const dayDots = pts
   .map((d) => {
     const at = placeOnTown(d.x, d.y);
-    return `<circle id="dot-${d.n}" class="daydot${d.walked ? "" : " restdot"}${d.sleeve ? " hasrec" : ""}" cx="${sx(at.x)}" cy="${sy(at.y)}" r="${d.sleeve ? 3.2 : 2.2}" data-day="${d.n}"/>`;
+    const point = mapPoint(at.x, at.y);
+    return `<circle id="dot-${d.n}" class="daydot${d.walked ? "" : " restdot"}${d.sleeve ? " hasrec" : ""}" cx="${point.x}" cy="${point.y}" r="${d.sleeve ? 3.2 : 2.2}" data-day="${d.n}"/>`;
   })
   .join("\n    ");
 
 const townMarks = townsPlaced
   .map((t) => {
-    const X = sx(t.x);
-    const Y = sy(t.y);
+    const point = mapPoint(t.x, t.y, t.alt);
+    const X = point.x;
+    const Y = point.y;
     const anchor = t.anchor === "start" ? "start" : t.anchor === "end" ? "end" : "middle";
     return `<g class="town${t.pass ? " pass" : ""}" id="town-${t.name.toLowerCase().replace(/[^a-z]+/g, "-")}">
 ${t.pass ? "" : `      <circle cx="${X}" cy="${Y}" r="5" class="townhalo"/>\n`}
@@ -559,17 +791,24 @@ ${t.pass ? "" : `      <circle cx="${X}" cy="${Y}" r="5" class="townhalo"/>\n`}
   .join("\n    ");
 
 const startAlt = altAt(start[0], start[1]);
+const startPoint = mapPoint(start[0], start[1], startAlt);
 
 const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <g id="camera">
+    <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
+    <g id="water">
+      ${lakePaths}
+      ${riverPaths}
+    </g>
     <g id="rings">${ringPaths}</g>
     <g id="relief">${contourPaths}</g>
+    <g id="mountains">${mountainMarks}</g>
     <path id="gps" d="${trackPath}" fill="none" stroke="#EFE6D4" stroke-opacity=".14" stroke-width="1" vector-effect="non-scaling-stroke"/>
     ${segs.join("\n    ")}
     ${dayDots}
     ${townMarks}
-    <g id="walker-g" transform="translate(${sx(pts[0].x)},${sy(pts[0].y)})">
+    <g id="walker-g" transform="translate(${startPoint.x},${startPoint.y})">
       <ellipse id="walker-shadow" cx="0" cy="1.1" rx="5.2" ry="1.7"/>
       <circle id="walker-pin" cx="0" cy="0" r="2.3"/>
     </g>
@@ -578,7 +817,7 @@ const atlasSvg = `
 
 // ----------------------------------------------------------------- timeline
 // Scroll scenes, in order: walk legs day by day, a held plate at each border,
-// held quotes at the beats, and the long dark for day 39.
+// and held quotes at the beats. Rest points pass quickly and silently.
 const PX_PER_KM = 9;
 const scenes = [];
 scenes.push({ t: "start", len: 620 });
@@ -590,11 +829,7 @@ for (let i = 1; i < pts.length; i++) {
   if (d.country !== prev.country) {
     scenes.push({ t: "enter", country: d.country, len: 760 });
   }
-  if (d.n === 39) {
-    scenes.push({ t: "gap", day: 39, len: 1150 });
-    continue;
-  }
-  const walkLen = d.walked ? Math.max(180, Math.round((d.km || 30) * PX_PER_KM)) : 150;
+  const walkLen = d.walked ? Math.max(180, Math.round((d.km || 30) * PX_PER_KM)) : 36;
   scenes.push({ t: "walk", day: d.n, len: walkLen });
   if (BEATS[d.n]) scenes.push({ t: "beat", day: d.n, len: 720 });
 }
@@ -609,6 +844,8 @@ const TIMELINE_TOTAL = acc;
 // ----------------------------------------------------------- data for the JS
 const jsDays = pts.map((d) => {
   const at = placeOnTown(d.x, d.y);
+  const altitude = altAt(at.x, at.y);
+  const point = mapPoint(at.x, at.y, altitude);
   return {
     n: d.n,
     t: d.title,
@@ -616,11 +853,11 @@ const jsDays = pts.map((d) => {
     km: d.km || 0,
     min: d.movingMin || 0,
     elev: d.elevM || 0,
-    alt: Math.round(altAt(at.x, at.y)),
+    alt: Math.round(altitude),
     w: d.walked ? 1 : 0,
     c: d.country,
-    x: sx(at.x),
-    y: sy(at.y),
+    x: point.x,
+    y: point.y,
     s: d.sleeve || null,
     j: JOURNAL[d.n] || null,
   };
@@ -644,9 +881,8 @@ const jsData = {
   scenes,
   timeline: TIMELINE_TOTAL,
   beats: BEATS,
-  gap39: GAP39,
   vb: [VBW, VBH],
-  start: [sx(start[0]), sy(start[1])],
+  start: [startPoint.x, startPoint.y],
   startAlt: Math.round(startAlt),
   walkPaths,
   photos,

@@ -1,6 +1,26 @@
 {
   "rule": "GPS titles are searched as lyrics, then as song titles, then as albums. A sleeve is only the real front of a verified record he could have been walking to in 2019 (indie / folk / post-rock / classic songwriters, and his printed or heavily played collection). Walking-day puns, geography, weather, and common titles without a unique match stay blank. Imagine art is never used as a fake sleeve.",
   "matches": {
+    "After the Storm": {
+      "kind": "song",
+      "song": "After the Storm",
+      "album": "Isolation",
+      "artist": "Kali Uchis",
+      "source": "https://shopkaliuchis.com/collections/isolation/products/isolation-digital-album",
+      "mbid": "57561634-f7bb-4e27-aa14-16d0ff79a001",
+      "note": "Featuring Tyler, the Creator and Bootsy Collins."
+    },
+    "Lilac!": {
+      "kind": "song",
+      "song": "Lilac",
+      "album": "High Life",
+      "artist": "Brian Eno & Karl Hyde",
+      "source": "https://www.enohyde.com/",
+      "coverUrls": [
+        "https://i.scdn.co/image/ab67616d0000b2736dd70875c0bedf92d94ced83"
+      ],
+      "note": "The Eno · Hyde collaboration from High Life (2014)."
+    },
     "One way to lose them walking blues!": {
       "kind": "lyrics",
       "song": "Diamonds on the Soles of Her Shoes",
@@ -13,14 +33,11 @@
     "Witchi Tai To": {
       "kind": "song",
       "song": "Witchi Tai To",
-      "album": "Everything Is Everything",
-      "artist": "Everything Is Everything",
-      "source": "https://en.wikipedia.org/wiki/Jim_Pepper",
-      "note": "Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on.",
-      "mbid": "f83079d3-0712-4160-a871-69a0e2ecdbb4",
-      "coverUrls": [
-        "https://coverartarchive.org/release-group/da8f54e3-2f50-4b6f-bb2d-87affbf47520/front-500"
-      ]
+      "album": "Harpers Bizarre 4",
+      "artist": "Harpers Bizarre",
+      "source": "https://musicbrainz.org/release-group/9dcedc62-e2ab-3d37-ba34-e7e90c3d59da",
+      "note": "The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song.",
+      "mbid": "9dcedc62-e2ab-3d37-ba34-e7e90c3d59da"
     },
     "Hey Moon": {
       "kind": "song",
@@ -85,6 +102,15 @@
       "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection.",
       "mbid": "04a0a433-80bc-3b55-91cd-322a0d644c95"
     },
+    "Sing Me To Sleep": {
+      "kind": "lyrics",
+      "song": "Asleep",
+      "album": "Louder Than Bombs",
+      "artist": "The Smiths",
+      "source": "https://www.youtube.com/watch?v=5mF4pKSi2SU",
+      "wallId": "078",
+      "note": "The GPS title takes its phrase from “Asleep”."
+    },
     "Beyond Me, Beyond You": {
       "kind": "lyrics",
       "song": "Daydreaming",
@@ -101,6 +127,14 @@
       "artist": "David Byrne & Brian Eno",
       "source": "https://en.wikipedia.org/wiki/Everything_That_Happens_Will_Happen_Today",
       "mbid": "c9cf80df-db8f-34b4-9b86-012edfa6180f"
+    },
+    "Skipper": {
+      "kind": "song",
+      "song": "Skipper",
+      "album": "DSU",
+      "artist": "Alex G",
+      "source": "https://musicbrainz.org/release-group/63387e7e-aa4f-4ac3-8327-04e44e48cb49",
+      "mbid": "63387e7e-aa4f-4ac3-8327-04e44e48cb49"
     },
     "Distant Sky": {
       "kind": "song",
@@ -216,6 +250,14 @@
       "source": "https://en.wikipedia.org/wiki/Feels_(Animal_Collective_album)",
       "wallId": "125"
     },
+    "Zoo Eyes": {
+      "kind": "song",
+      "song": "Zoo Eyes",
+      "album": "Designer",
+      "artist": "Aldous Harding",
+      "source": "https://aldousharding.bandcamp.com/track/zoo-eyes",
+      "wallId": "120"
+    },
     "Infant Dressing Table": {
       "kind": "song",
       "song": "Infant Dressing Table",
@@ -236,12 +278,10 @@
   },
   "unmatched": {
     "And We're Off!": "Walking diary. No verified lyric, song, or album.",
-    "After the Storm": "Common title (Kali Uchis Isolation is a song in the collection at 2 plays; Crosby, Stills & Nash have an album). Day 2 of the walk reads as weather. Left blank rather than guess.",
     "Reservoirs of Untapped Potential": "No verified lyric, song, or album.",
     "On the 5th day, Dan rested": "Genesis joke / rest note, not a record.",
     "Now I'm on my way": "Too many songs share \u201cI'm on my way\u201d; GPS reads as a walking note.",
     "Getting the Hang of It": "Idiom. Dan Israel\u2019s \u201cThe Hang of It\u201d is 2021, after the walk.",
-    "Lilac!": "Common title. Arushi Jain Under the Lilac Sky is 2021, after the walk.",
     "Sure is a Hot One!": "Weather diary.",
     "Short Walk to Nancy": "Geography (Nancy, France).",
     "The Long Canal": "Geography.",
@@ -254,9 +294,7 @@
     "One Of Those Days": "Common title. John Martyn and Lal Waterson songs exist; neither is a unique collection match.",
     "Arrival": "Common title; also arriving in Austria.",
     "Business As Usual": "Walking note. Men at Work\u2019s album is not in the collection.",
-    "Sing Me To Sleep": "Common title. Alan Walker\u2019s 2015 track is not his taste.",
     "The Process": "Common title / walking note.",
-    "Skipper": "Common short title. No collection match.",
     "Eyes Open Wide": "Common phrase. Toad the Wet Sprocket have a song; not in the collection. A 2025 trance single is after the walk.",
     "Walk to Niska": "Geography (Ni\u0161 / Ni\u0161ka, Serbia).",
     "The Two Towers": "Tolkien. Would not put an audiobook or film-score sleeve on a walked day."

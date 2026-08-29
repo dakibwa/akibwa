@@ -13,6 +13,7 @@
 <meta property="og:description" content="1,982 km on foot across seven countries, autumn 2019. Scroll or press walk, and travel the line town by town.">
 <meta property="og:url" content="https://akibwa.com/trek/">
 <link rel="preload" href="fonts/Fraunces-normal-100-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Fraunces-italic-100-900.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/IBMPlexMono-normal-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312100C'/%3E%3Ccircle cx='6' cy='22' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='12' cy='16' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='18' cy='18' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%23EFE6D4'/%3E%3Cpath d='M6 22 L12 16 L18 18 L26 10' fill='none' stroke='%23EFC319' stroke-width='1.6'/%3E%3Crect y='26' width='8' height='6' fill='%232EA3DC'/%3E%3Crect x='8' y='26' width='8' height='6' fill='%23EFC319'/%3E%3Crect x='16' y='26' width='8' height='6' fill='%231FA45A'/%3E%3Crect x='24' y='26' width='8' height='6' fill='%23E97E18'/%3E%3C/svg%3E">
 <style>
@@ -82,14 +83,24 @@ button{font:inherit;color:inherit}
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
 .stage{position:sticky;top:0;height:100svh;overflow:clip;background:var(--peat)}
-.atlas-scene{position:absolute;inset:0}
-#atlas{position:absolute;inset:0;width:100%;height:100%}
+.atlas-scene{position:absolute;inset:0;contain:layout paint style}
+#atlas{position:absolute;inset:0;width:100%;height:100%;shape-rendering:geometricPrecision;will-change:contents}
 .vignette{
   position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(120% 90% at 50% 42%,transparent 52%,color-mix(in srgb,var(--peat) 86%,transparent) 100%);
 }
 
 /* atlas drawing */
+#terrain-mesh{opacity:.54;filter:blur(4px);transform:scale(1.008);transform-origin:center;transition:opacity .5s}
+.terrain-cell{stroke-width:.7;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.82}
+#water{pointer-events:none}
+.lake path{fill:#21495A;fill-opacity:.72;stroke:#77A6B4;stroke-opacity:.55;stroke-width:.8;vector-effect:non-scaling-stroke}
+.river{fill:none;stroke:#4E8799;stroke-opacity:.42;stroke-width:1.05;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.waterlabel{
+  fill:#75A1AE;fill-opacity:.8;font-family:var(--mono);font-size:7px;letter-spacing:.1em;
+  text-anchor:middle;text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:2px;stroke-linejoin:round;
+}
 #relief{opacity:.78;transition:opacity .5s}
 .contour{
   fill:none;stroke:var(--bone);stroke-opacity:.075;stroke-width:.8;
@@ -98,6 +109,11 @@ button{font:inherit;color:inherit}
 }
 .contour.major{stroke-opacity:.13;stroke-width:1.1}
 .stage[data-zoom="travel"] #relief,.stage[data-zoom="close"] #relief{opacity:1}
+#mountains{pointer-events:none}
+.mountain{opacity:.36;transition:opacity .5s}
+.stage[data-zoom="travel"] .mountain,.stage[data-zoom="close"] .mountain{opacity:.82}
+.mountain path{fill:none;stroke:var(--dust);stroke-width:.9;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.mountain text{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;fill:var(--dust);text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:2.5px;stroke-linejoin:round}
 #gps{filter:drop-shadow(0 2px 0 rgba(0,0,0,.62))}
 .seg{opacity:.28;transition:opacity .5s;filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.72))}
 .seg.lit{opacity:1}
@@ -115,7 +131,7 @@ button{font:inherit;color:inherit}
 .walker-html{
   position:absolute;left:0;top:0;z-index:5;
   width:30px;height:48px;margin-left:-15px;margin-top:-45px;
-  pointer-events:none;opacity:0;transition:opacity .35s;
+  pointer-events:none;opacity:0;transition:opacity .35s;will-change:transform,opacity;
 }
 .stage[data-zoom="travel"] .walker-html,
 .stage[data-zoom="close"] .walker-html{opacity:1}
@@ -197,7 +213,7 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
   position:absolute;left:22px;bottom:22px;z-index:7;max-width:420px;
   padding:18px 20px 16px;border:1px solid var(--rule);
   background:color-mix(in srgb,var(--peat) 84%,transparent);backdrop-filter:blur(10px);
-  opacity:0;transform:translateY(8px);transition:opacity .18s,transform .18s;
+  opacity:0;transform:translate3d(0,8px,0);transition:opacity .14s,transform .14s;will-change:transform,opacity;
 }
 .daycard.on{opacity:1;transform:none}
 .daycard .dline{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-cur,var(--dust));margin-bottom:8px}
@@ -249,40 +265,18 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 }
 .quote-src{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--dust);margin-top:24px;text-transform:uppercase}
 
-/* --------------------------------------------------------------------- gap */
-.gapveil{
-  position:absolute;inset:0;z-index:9;display:grid;place-items:center;text-align:center;
-  padding:0 24px;opacity:0;pointer-events:none;transition:opacity .4s;
-  background:#0B0906;
-}
-.gap-inner{max-width:640px}
-.gap-day{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dust)}
-.gap-title{font-size:clamp(32px,5vw,54px);font-style:italic;font-weight:430;margin-top:26px;font-variation-settings:"opsz" 60,"SOFT" 85,"WONK" 0}
-.gap-quote{margin:34px auto 0;max-width:44ch;font-style:italic;color:var(--dust);font-size:clamp(17px,2vw,21px);line-height:1.6;font-variation-settings:"opsz" 24,"SOFT" 70,"WONK" 0}
-.gap-note{max-width:52ch;margin:40px auto 0;font-family:var(--mono);font-size:11.5px;line-height:1.8;color:var(--dust);letter-spacing:.03em}
-
 /* ------------------------------------------------------------------ photos */
 .photo{
   position:absolute;right:clamp(18px,4vw,54px);top:50%;z-index:7;
   width:min(30vw,330px);
   transform:translateY(-46%) rotate(1.6deg);
-  opacity:0;transition:opacity .22s,transform .22s;
+  opacity:0;transition:opacity .18s,transform .18s;will-change:transform,opacity;
   pointer-events:none;
 }
 .photo.on{opacity:1;transform:translateY(-50%) rotate(-1.2deg)}
 .photo figure{background:var(--bone);padding:10px 10px 12px;box-shadow:0 30px 60px -18px rgba(0,0,0,.7)}
 .photo img{width:100%;aspect-ratio:var(--ar,4/3);object-fit:cover}
 .photo figcaption{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:#4c4438;margin-top:9px;text-transform:uppercase}
-
-/* --------------------------------------------------------------------- end */
-.endcard{
-  position:absolute;inset:0;z-index:8;display:grid;place-items:center;text-align:center;
-  padding:0 24px;opacity:0;pointer-events:none;transition:opacity .4s;
-}
-.endcard-inner{max-width:640px;background:radial-gradient(closest-side,color-mix(in srgb,var(--peat) 80%,transparent),transparent);padding:60px 30px}
-.end-facts{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dust)}
-.end-line{font-size:clamp(34px,5.4vw,60px);line-height:1.1;font-weight:510;margin-top:24px;font-variation-settings:"opsz" 100,"SOFT" 85,"WONK" 1}
-.end-sub{font-style:italic;color:var(--dust);font-size:clamp(20px,2.6vw,27px);margin-top:18px;font-variation-settings:"opsz" 32,"SOFT" 80,"WONK" 0}
 
 /* -------------------------------------------------------------- spotlight */
 dialog.spot{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%}
@@ -323,7 +317,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.gapveil,.photo,.endcard,.daycard{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.daycard{transition-duration:.01s}
 }
 </style>
 </head>
@@ -424,22 +418,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       </div>
     </div>
 
-    <div class="gapveil" id="gapveil">
-      <div class="gap-inner">
-        <p class="gap-day">day 39 — zoo eyes · 1 november</p>
-        <p class="gap-title">No activity recorded.</p>
-        <p class="gap-quote" id="gap-quote"></p>
-        <p class="gap-note">Strava holds no activity for this day. The route resumes east across Croatia the following morning.</p>
-      </div>
-    </div>
-
-    <div class="endcard" id="endcard">
-      <div class="endcard-inner">
-        <p class="end-facts">sofia · 28 november 2019</p>
-        <p class="end-line">1,982 km, walked.</p>
-        <p class="end-sub">One whole autumn on foot.</p>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -504,21 +482,20 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var quoteLabel = document.getElementById("quote-label");
   var quoteText = document.getElementById("quote-text");
   var quoteSrc = document.getElementById("quote-src");
-  var gapveil = document.getElementById("gapveil");
-  var endcard = document.getElementById("endcard");
   var photoBox = document.getElementById("photo");
   var photoImg = document.getElementById("photo-img");
   var photoCap = document.getElementById("photo-cap");
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var walkbtn = document.getElementById("walkbtn");
-  document.getElementById("gap-quote").textContent = "“" + DATA.gap39 + "”";
-
+  var currentWalker = null;
   // experience height drives the journey
   var VH = innerHeight || 900;
+  var experienceTop = experience.offsetTop;
   experience.style.height = (DATA.timeline + VH) + "px";
   addEventListener("resize", function(){
     VH = innerHeight || VH;
+    experienceTop = experience.offsetTop;
     experience.style.height = (DATA.timeline + VH) + "px";
     scrollDirty = true;
     requestFrame();
@@ -550,8 +527,18 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!isFinite(cam.x + cam.y + cam.w)) { cam.x = target.x; cam.y = target.y; cam.w = target.w; }
     if (!isFinite(cam.x + cam.y + cam.w)) return;
     var w = cam.w, h = w / viewAspect();
-    atlas.setAttribute("viewBox",
-      (cam.x - w/2).toFixed(1) + " " + (cam.y - h/2).toFixed(1) + " " + w.toFixed(1) + " " + h.toFixed(1));
+    var viewBox = (cam.x - w/2).toFixed(2) + " " + (cam.y - h/2).toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2);
+    if (atlas._trekViewBox !== viewBox) {
+      atlas._trekViewBox = viewBox;
+      atlas.setAttribute("viewBox", viewBox);
+    }
+  }
+  function positionWalker(wp){
+    if (!walkerHtml || !wp) return;
+    var cameraScale = innerWidth / Math.max(1, cam.w);
+    var walkerX = innerWidth / 2 + (wp.x - cam.x) * cameraScale;
+    var walkerY = innerHeight / 2 + (wp.y - cam.y) * cameraScale;
+    walkerHtml.style.transform = "translate3d(" + walkerX.toFixed(1) + "px," + walkerY.toFixed(1) + "px,0)";
   }
   atlas.setAttribute("preserveAspectRatio", "xMidYMid slice");
 
@@ -572,8 +559,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function lerp(a, b, t){ return a + (b - a) * t; }
 
   function altOf(d){ return (d && d.alt != null) ? d.alt : 0; }
-  function liftY(y){ return y; }
-
   var pathMeta = {};
   Object.keys(DATA.walkPaths || {}).forEach(function(day){
     var pts = DATA.walkPaths[day];
@@ -612,11 +597,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       if (along) return { x: along.x, y: along.y, alt: along.alt, day: d, t: t };
       var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0 } : (byN[scene.day - 1] || d);
       return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), alt: lerp(altOf(prev), altOf(d), t), day: d, t: t };
-    }
-    if (scene.t === "gap") {
-      var d39 = byN[39], d38 = byN[38];
-      var tg = Math.min(1, Math.max(0, (p - scene.at) / scene.len));
-      return { x: lerp(d38.x, d39.x, tg), y: lerp(d38.y, d39.y, tg), alt: lerp(altOf(d38), altOf(d39), tg), day: d39, t: tg };
     }
     if (scene.t === "beat") { var db = byN[scene.day]; return { x: db.x, y: db.y, alt: altOf(db), day: db, t: 1 }; }
     if (scene.t === "enter") {
@@ -751,7 +731,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       days.forEach(function(d){
         var item = trailByDay[d.n];
         if (!item) return;
-        var passed = (scene.t === "walk" || scene.t === "gap") ? d.n < wp.day.n : d.n <= wp.day.n;
+        var passed = scene.t === "walk" ? d.n < wp.day.n : d.n <= wp.day.n;
         if (item.seg) {
           item.seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
           if (passed) item.seg.removeAttribute("stroke-dasharray");
@@ -762,7 +742,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     }
     var first = trailByDay[1];
     if (first && first.dot) first.dot.classList.toggle("seen", inJourney);
-    if (scene.t === "walk" || scene.t === "gap") {
+    if (scene.t === "walk") {
       var active = trailByDay[wp.day.n];
       if (!active || !active.seg) return;
       active.seg.classList.add("lit");
@@ -777,14 +757,16 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function update(p){
     var scene = sceneAt(p);
     var wp = walkerPosAt(scene, p);
+    currentWalker = wp;
     var inJourney = scene.t !== "start";
+    var silentRest = scene.t === "walk" && !wp.day.w;
 
     // chrome
     fade(titlecard, scene.t === "start" ? String(1 - Math.min(1, (p - scene.at) / (scene.len * .7))) : "0");
     titlecard.style.visibility = (scene.t === "start" && p < scene.at + scene.len) ? "visible" : "hidden";
     fade(hint, p < 40 ? "1" : "0");
-    hud.classList.toggle("on", inJourney && scene.t !== "end" && scene.t !== "enter");
-    daycard.classList.toggle("on", (scene.t === "walk" || scene.t === "beat") && p > 500);
+    hud.classList.toggle("on", inJourney && scene.t !== "end" && scene.t !== "enter" && !silentRest);
+    daycard.classList.toggle("on", ((scene.t === "walk" && wp.day.w) || scene.t === "beat") && p > 500);
 
     // zoom regime
     if (scene.t === "start") {
@@ -798,7 +780,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       var full = fitFull();
       target = { x: lerp(wp.x, full.x, tEnd), y: lerp(wp.y, full.y, tEnd), w: lerp(TRAVELW, full.w, tEnd) };
     }
-    else if (scene.t === "beat" || scene.t === "gap") { setZoom("close"); target = { x: wp.x, y: wp.y, w: CLOSEW }; }
+    else if (scene.t === "beat") { setZoom("close"); target = { x: wp.x, y: wp.y, w: CLOSEW }; }
     else if (scene.t === "enter") { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW * 1.5 }; }
     else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW }; }
 
@@ -811,24 +793,13 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     lastWalk = { x: wp.x, y: wp.y };
     if (walkerG) walkerG.setAttribute("transform", "translate(" + wp.x.toFixed(2) + "," + wy.toFixed(2) + ")");
     if (walkerMark) walkerMark.setAttribute("transform", walkFace < 0 ? "scale(-1,1)" : "");
-    try {
-      if (walkerHtml && atlas && atlas.createSVGPoint) {
-        var pt = atlas.createSVGPoint();
-        pt.x = wp.x; pt.y = wy;
-        var ctm = atlas.getScreenCTM();
-        if (ctm) {
-          var sp = pt.matrixTransform(ctm);
-          var box = stage.getBoundingClientRect();
-          walkerHtml.style.transform = "translate(" + (sp.x - box.left).toFixed(1) + "px," + (sp.y - box.top).toFixed(1) + "px)";
-        }
-      }
-    } catch (e) {}
-    stage.classList.toggle("is-walking", !REDUCED && (scene.t === "walk" || scene.t === "gap") && !!wp.day.w);
+    stage.classList.toggle("is-walking", !REDUCED && scene.t === "walk" && !!wp.day.w);
     sparkAt(wp.alt, wp.day.n, wp.t);
     updateTrail(scene, wp, inJourney);
 
     // day content
-    if (scene.t === "walk" || scene.t === "beat" || scene.t === "gap") { showDay(wp.day); showPhoto(wp.day, wp.t); }
+    if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showDay(wp.day); showPhoto(wp.day, wp.t); }
+    else if (silentRest) { photoBox.classList.remove("on"); photoShown = null; }
     else if (scene.t === "enter") {
       showDay(wp.day);
       photoBox.classList.remove("on"); photoShown = null;
@@ -862,31 +833,19 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       fade(quote, String(Math.max(0, op)));
     } else fade(quote, "0");
 
-    // the gap
-    if (scene.t === "gap") {
-      var tg = (p - scene.at) / scene.len;
-      var og = Math.min(1, Math.min(tg / .16, (1 - tg) / .16)) * .995;
-      fade(gapveil, String(Math.max(0, og)));
-      if (tg > .16 && tg < .84) { hudKm.textContent = "—"; hudTotal.textContent = "no record"; }
-      else { hudTotal.textContent = "of " + DATA.total.toLocaleString("en-GB") + " km"; }
-    } else { fade(gapveil, "0"); hudTotal.textContent = "of " + DATA.total.toLocaleString("en-GB") + " km"; }
-
-    // the end
+    // Let the route itself be the ending: no separate closing card.
     if (scene.t === "end") {
-      var te = (p - scene.at) / scene.len;
-      fade(endcard, String(Math.min(1, Math.max(0, (te - .35) / .3))));
       daycard.classList.remove("on");
       photoBox.classList.remove("on"); photoShown = null;
-    } else fade(endcard, "0");
+    }
   }
 
   // ------------------------------------------------------------- main loop
   var progress = 0;
   function readScroll(){
-    var top = experience.getBoundingClientRect().top;
-    progress = Math.max(0, Math.min(DATA.timeline, -top));
+    progress = Math.max(0, Math.min(DATA.timeline, scrollY - experienceTop));
   }
-  var CAMEASE = REDUCED ? 1 : 0.085;
+  var CAMERA_TAU = 90;
   var framePending = false;
   var scrollDirty = true;
   var lastRenderedProgress = -1;
@@ -902,6 +861,13 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function frame(now){
     framePending = false;
     try {
+      var elapsed = lastFrameTime ? Math.min(50, now - lastFrameTime) : 16.7;
+      if (playing) {
+        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, experienceTop + DATA.timeline);
+        scrollTo(0, next);
+        scrollDirty = true;
+        if (next >= experienceTop + DATA.timeline - 2) stopWalk();
+      }
       if (scrollDirty) {
         readScroll();
         scrollDirty = false;
@@ -910,17 +876,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
           lastRenderedProgress = progress;
         }
       }
-      cam.x = lerp(cam.x, target.x, CAMEASE);
-      cam.y = lerp(cam.y, target.y, CAMEASE);
-      cam.w = lerp(cam.w, target.w, CAMEASE);
+      var cameraEase = REDUCED ? 1 : 1 - Math.exp(-elapsed / CAMERA_TAU);
+      cam.x = lerp(cam.x, target.x, cameraEase);
+      cam.y = lerp(cam.y, target.y, cameraEase);
+      cam.w = lerp(cam.w, target.w, cameraEase);
       applyCamera();
-      if (playing) {
-        var elapsed = lastFrameTime ? Math.min(50, now - lastFrameTime) : 16.7;
-        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, experience.offsetTop + DATA.timeline);
-        scrollTo(0, next);
-        scrollDirty = true;
-        if (next >= experience.offsetTop + DATA.timeline - 2) stopWalk();
-      }
+      positionWalker(currentWalker);
     } catch (err) {}
     lastFrameTime = now;
     if (playing || scrollDirty || cameraMoving()) requestFrame();
@@ -931,6 +892,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   readScroll();
   try { update(progress); lastRenderedProgress = progress; cam = { x: target.x, y: target.y, w: target.w }; } catch (err) {}
   applyCamera();
+  positionWalker(currentWalker);
 
   // ------------------------------------------------------------- walk mode
   var playing = false;
@@ -968,20 +930,20 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       if (enterAt[slug] == null) return;
       e.preventDefault();
       stopWalk();
-      scrollTo({ top: experience.offsetTop + enterAt[slug] + 10, behavior: REDUCED ? "auto" : "smooth" });
+      scrollTo({ top: experienceTop + enterAt[slug] + 10, behavior: REDUCED ? "auto" : "smooth" });
       history.replaceState(null, "", "#" + slug);
     });
   });
   if (location.hash) {
     var slug0 = location.hash.slice(1);
-    if (enterAt[slug0] != null) setTimeout(function(){ scrollTo(0, experience.offsetTop + enterAt[slug0] + 10); }, 60);
+    if (enterAt[slug0] != null) setTimeout(function(){ scrollTo(0, experienceTop + enterAt[slug0] + 10); }, 60);
   }
   var query = new URLSearchParams(location.search);
   var legacyPParam = query.get("p");
   var atParam = query.get("at");
   if (atParam == null) atParam = legacyPParam;
   if (atParam != null) setTimeout(function(){
-    scrollTo(0, experience.offsetTop + (+atParam || 0));
+    scrollTo(0, experienceTop + (+atParam || 0));
     // Older visual-QA links used `p` to freeze the renderer. Preserve their
     // starting point, then discard the lock so the journey keeps scrolling.
     if (legacyPParam != null) {
