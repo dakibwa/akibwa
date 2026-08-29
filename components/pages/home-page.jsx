@@ -369,11 +369,16 @@ export function HomePage() {
   }, []);
 
 
+  /* Which word's lens is held, if any. Declared above focusSet, which reads
+     it: a useCallback dependency is evaluated during render, so a state
+     declared below would sit in the temporal dead zone and throw. */
+  const [heldBucket, setHeldBucket] = useState(null);
+
   /* Grid reflows snap; a view transition morphs them — and a morph is only
      as good as its names. See nameVisible above for why this runs in two
      passes rather than one. Progressive: browsers without the API, and
      anyone who asked for less motion, get the plain state change. */
-  const withMorph = useCallback((apply) => {
+  const withMorph = useCallback((apply, { toTop = false } = {}) => {
     const deck = deckRef.current;
     if (
       !deck ||
@@ -381,6 +386,7 @@ export function HomePage() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       apply();
+      if (toTop) window.scrollTo({ top: 0, behavior: "instant" });
       return;
     }
 
@@ -393,6 +399,14 @@ export function HomePage() {
          ordering explicit: without it the fold worked only because React's
          scheduler happened to land in the right place. */
       flushSync(apply);
+      /* Scroll inside the callback, before the new state is captured. A
+         fold can remove 300 cards, so the document collapses and the
+         browser clamps scrollTop on its own; doing it here — rather than
+         in an effect that may land after the capture — keeps every group's
+         destination fixed instead of moving under the animation. */
+      if (toTop) window.scrollTo({ top: 0, behavior: "instant" });
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      if (window.scrollY > max) window.scrollTo({ top: max, behavior: "instant" });
       nameVisible(deck, named, afterPassOne, TOTAL_NAMES);
     });
 
@@ -409,20 +423,21 @@ export function HomePage() {
      Clicking again lets go. */
   const focusSet = useCallback(
     (id) => {
-      withMorph(() => {
-      setHeldBucket((current) => {
-        const key = `set:${id}`;
-        const next = current === key ? null : key;
-        setLens(next ? [id] : null);
-        return next;
-      });
-      });
+      const opening = heldBucket !== `set:${id}`;
+      withMorph(
+        () => {
+          setHeldBucket((current) => {
+            const key = `set:${id}`;
+            const next = current === key ? null : key;
+            setLens(next ? [id] : null);
+            return next;
+          });
+        },
+        { toTop: opening }
+      );
     },
-    [withMorph]
+    [withMorph, heldBucket]
   );
-
-  /* Which word's lens is held, if any. */
-  const [heldBucket, setHeldBucket] = useState(null);
 
 
   useEffect(() => {
@@ -443,12 +458,9 @@ export function HomePage() {
       });
     };
     document.addEventListener("keydown", onKey);
-    /* The stream has folded to the lit collection — jump to the top of the
-       wall inside the morph. The view transition is the motion: the named
-       cards glide from their old viewport positions into the packed fold. A
-       smooth scroll here ran a second animation UNDER the morph and the two
-       fought — that was the clunk. */
-    window.scrollTo({ top: 0, behavior: "instant" });
+    /* The scroll itself happens inside the morph (see withMorph): doing it
+       here meant it landed after the new state was captured, which drags
+       every group's destination while it is animating. */
     return () => document.removeEventListener("keydown", onKey);
   }, [lens]);
 
