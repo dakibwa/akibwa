@@ -541,6 +541,90 @@ function useCardPress(deckRef) {
   }, [deckRef]);
 }
 
+/* A grid of 366 buttons is not navigable one Tab at a time, so the wall gets
+   the grammar every other grid has: Tab reaches it once, arrows move inside
+   it, Home and End go to the ends of a row, and Ctrl with them goes to the
+   ends of the wall.
+
+   Roving tabindex, written straight to the DOM rather than through state:
+   the wall is memoised on the lens precisely so that 366 cards do not
+   re-render, and routing focus bookkeeping through React would undo that on
+   every keypress. Membership is rebuilt on each press because a fold changes
+   which cards exist. No role="grid": grid-auto-flow: dense means there are
+   no row elements to describe, and inventing wrappers to satisfy the pattern
+   would break the layout it exists to describe. The key map is borrowed; the
+   semantics are not. */
+function useCardKeys(deckRef) {
+  useEffect(() => {
+    const deck = deckRef.current;
+    if (!deck) return undefined;
+
+    const cards = () => [...deck.querySelectorAll(".card:not([hidden])")].filter(
+      (el) => getComputedStyle(el).display !== "none"
+    );
+
+    /* Read the column count off the grid itself, so it survives
+       repeat(auto-fill, ...) at every width with no media queries in JS. */
+    const columns = () =>
+      Math.max(1, getComputedStyle(deck).gridTemplateColumns.split(" ").filter(Boolean).length);
+
+    const move = (list, from, to) => {
+      const next = list[Math.max(0, Math.min(list.length - 1, to))];
+      if (!next || next === list[from]) return false;
+      list[from]?.setAttribute("tabindex", "-1");
+      next.setAttribute("tabindex", "0");
+      next.focus({ preventScroll: false });
+      return true;
+    };
+
+    const onKey = (event) => {
+      if (event.altKey || event.metaKey) return;
+      const active = document.activeElement;
+      if (!deck.contains(active) || !active.classList.contains("card")) return;
+      const list = cards();
+      const i = list.indexOf(active);
+      if (i === -1) return;
+
+      /* A card spans two grid tracks and a small one spans one, so a visual
+         row is not a fixed number of cards. Stepping by the track count is
+         the closest honest approximation, and it lands on a real card. */
+      const perRow = Math.max(1, Math.round(columns() / 2));
+      let target = null;
+      switch (event.key) {
+        case "ArrowRight": target = i + 1; break;
+        case "ArrowLeft": target = i - 1; break;
+        case "ArrowDown": target = i + perRow; break;
+        case "ArrowUp": target = i - perRow; break;
+        case "Home": target = event.ctrlKey ? 0 : i - (i % perRow); break;
+        case "End":
+          target = event.ctrlKey ? list.length - 1 : i - (i % perRow) + perRow - 1;
+          break;
+        default: return;
+      }
+      /* preventDefault only when the key actually did something, or page
+         scrolling breaks for anyone who has focus inside the wall. */
+      if (move(list, i, target)) event.preventDefault();
+    };
+
+    /* One card is the wall's single tab stop; the rest are reachable by
+       arrow. Seeded here and moved by the handler. */
+    const seed = () => {
+      const list = cards();
+      if (!list.length) return;
+      if (!list.some((el) => el.getAttribute("tabindex") === "0")) {
+        list[0].setAttribute("tabindex", "0");
+      }
+      for (const el of list) {
+        if (el.getAttribute("tabindex") !== "0") el.setAttribute("tabindex", "-1");
+      }
+    };
+    seed();
+
+    deck.addEventListener("keydown", onKey);
+    return () => deck.removeEventListener("keydown", onKey);
+  }, [deckRef]);
+}
+
 function Mark({ src, tile }) {
   if (!src) return null;
   return (
@@ -566,6 +650,7 @@ export function HomePage() {
 
   useCardPointer(deckRef);
   useCardPress(deckRef);
+  useCardKeys(deckRef);
 
   const openLit = useCallback((card, element) => {
     /* The card is mid-tilt under the cursor — measure it at rest, or the
