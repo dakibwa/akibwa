@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-y6dACFNcMKV/vjnjk64NIdtY1xaRukW7wxYdmx0pPrQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-dzykIEmGRySlsLCiqNtO3o0sqBxtyGH1TMihNeHxZf4=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -1045,11 +1045,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors .help.here{background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors .help.here:active{transform:none}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
-  .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
   .intro-doors .door-close{margin-left:auto}
   .door-auth{display:inline-flex}
   .mastauth{display:contents}
-  .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
@@ -2185,25 +2183,16 @@ async function apiCall(path,opts){
   return body;
 }
 
-async function fillIntroAuth(){
+const AUTH_GLYPH=`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
+  +`<circle cx="12" cy="8.6" r="3.6"/><path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
+  +`</g></svg>`;
+const authDoorButton=signedIn=>`<button class="help" aria-label="${signedIn?'your account':'sign in'}">${AUTH_GLYPH}</button>`;
+function fillIntroAuth(){
   if(!document.querySelector('.door-auth')) return;
-  const ins=await askSignIns();
+  const signedIn=!!(account&&account.signedIn);
   document.querySelectorAll('.door-auth').forEach(el=>{   // re-queried: a sheet may have re-rendered
-    if(account && account.signedIn){
-      el.innerHTML=`<button class="help" aria-label="your account">`
-        +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
-        +`<circle cx="12" cy="8.6" r="3.6"/>`
-        +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
-        +`</g></svg></button>`;
-      el.firstChild.onclick=()=>openAccount();
-    }else if(ins.length){
-      el.innerHTML=`<button class="help" aria-label="sign in">`
-        +`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
-        +`<circle cx="12" cy="8.6" r="3.6"/>`
-        +`<path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
-        +`</g></svg></button>`;
-      el.firstChild.onclick=()=>openAccount('sign');
-    }else el.innerHTML='';
+    el.innerHTML=authDoorButton(signedIn);
+    el.firstChild.onclick=()=>openAccount(signedIn?undefined:'sign');
   });
   markHere();
 }
@@ -2222,8 +2211,8 @@ function doorsInner(){
     +`<button class="help door-rules" aria-label="how to play">?</button>`
     +`<button class="help groundbtn" aria-label="ground">`
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-    +`<span class="door-auth"></span>`
-    +`<button class="help label door-buy"></button>`
+    +`<span class="door-auth">${authDoorButton(!!(account&&account.signedIn))}</span>`
+    +`<button class="help door-buy"></button>`
     +`<button class="help door-close" aria-label="close">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`;
 }
@@ -2315,7 +2304,6 @@ function renderRulesPane(){
 function paintDoors(){
   document.querySelectorAll('.intro-doors .door-buy').forEach(el=>{
     paintTill(el);
-    if(!POLICY.premium) el.insertAdjacentHTML('beforeend','<span class="tillword">full version</span>');
     el.onclick=()=>{
       if(menuShown() && menuView==='pay') return;
       if(!POLICY.premium){ openMenu('pay'); beginUnlock() }
@@ -2436,6 +2424,7 @@ async function doSignOut(){
   try{ await apiCall('/signout',{method:'POST'}) }catch(e){}
   account={signedIn:false};
   syncSay='';
+  fillIntroAuth();
   if(menuShown()&&menuView==='profile') renderAcct();
   toast('signed out · this device keeps its own record');
 }
@@ -2462,7 +2451,7 @@ async function syncNow(){
     else if(j&&j.state){ adoptState(j.state); syncSay='saved' }
   }catch(e){
     syncSay = /^http 401/.test(e.message) ? '' : 'offline';
-    if(/^http 401/.test(e.message)) account={signedIn:false};
+    if(/^http 401/.test(e.message)){ account={signedIn:false}; fillIntroAuth() }
   }
   syncing=false;
   if(menuShown()&&menuView==='profile') renderAcct();
@@ -2532,6 +2521,7 @@ async function wakeAccount(){
       try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
     }
   }
+  fillIntroAuth();
   if(menuShown()&&menuView==='profile') renderAcct();
 }
 
@@ -2604,7 +2594,15 @@ function renderAcct(){
       askSignIns().then(()=>{ if(menuShown()&&menuView==='profile'&&!(account&&account.signedIn)) renderAcct() });
       return;
     }
-    if(!signIns.length){ closeAccount(); return }
+    if(!signIns.length){
+      body.innerHTML=`<div class="acct-ask">${DEV
+          ? 'this preview has no account service.'
+          : 'sign in is unavailable just now.'}</div>`
+        +`<div class="acct-note">${DEV
+          ? 'google and email are available in the published game.'
+          : 'your record stays in this browser. nothing is lost.'}</div>`;
+      return;
+    }
     body.innerHTML=err
       +`<div class="acct-ask">your record is in this browser. sign in and it follows you anywhere.</div>`
       +`<div class="acct-row">${signIns.map((p,i)=>
@@ -2734,7 +2732,7 @@ async function verifyCode(){
       body:JSON.stringify({email:acctEmail,code})});
     acctBusy=false; account={...me,signedIn:true,mail:true};
     store.signedInOnce=true; save();
-    await syncNow(); tellClock();
+    await syncNow(); tellClock(); fillIntroAuth();
     acctMode='hello'; acctErr=''; renderAcct();
   }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
 }
