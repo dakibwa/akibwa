@@ -24,6 +24,7 @@ import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
+import { PRESS_VERSION, press } from "./press-curve.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const publicDir = path.join(root, "public");
@@ -33,6 +34,17 @@ const manifestPath = path.join(root, "components", "image-variants.json");
 const checkOnly = process.argv.includes("--check");
 
 const DPR_CAP = 1.5;
+
+/*
+ * The card wall is a printed page, so its plates go through the press — see
+ * press-curve.mjs for what that does and why. Nothing else here does: the area
+ * tiles and hero panels are photographs sitting in a layout, not ink on the
+ * wall's paper, and the same source serves both (the clouds and the meadow are
+ * each a wall tile AND a page panel). Keying on the slot rather than the file
+ * is what lets one source come out pressed in one place and untouched in the
+ * other; the slot is already in the variant filename, so the two never collide.
+ */
+const PRESSED_SLOTS = new Set(["deckTile", "grandTile"]);
 
 /*
  * Slots, measured against the live CSS rather than assumed. `css` is the widest
@@ -352,10 +364,15 @@ async function build() {
     }
 
     const key = `${source.slot}:/${source.file}`;
+    const pressed = PRESSED_SLOTS.has(source.slot);
     const entries = [];
 
     for (const width of ladderFor(slot, meta.width)) {
       const height = Math.round(width / slot.ratio);
+      /* Pressed once per rung and cloned into both codecs, rather than once
+         per file: the ramp is the same either side and AVIF and WebP are two
+         encodings of one plate, not two plates. */
+      let plate = null;
 
       for (const format of ["avif", "webp"]) {
         const rel = variantName(source.file, source.slot, width, format);
@@ -370,9 +387,10 @@ async function build() {
         } else {
           await mkdir(path.dirname(target), { recursive: true });
           const crop = coverCrop(meta.width, meta.height, slot.ratio, source.position ?? [50, 50]);
-          await sharp(absolute)
-            .extract(crop)
-            .resize(width, height, { fit: "fill" })
+          const cut = () =>
+            sharp(absolute).extract(crop).resize(width, height, { fit: "fill" });
+          if (pressed && !plate) plate = await press(sharp, cut());
+          await (plate ? plate.clone() : cut())
             [format](codecOptions(source.file, format))
             .toFile(target);
         }
@@ -397,6 +415,11 @@ async function build() {
       sourceWidth: meta.width,
       sourceHeight: meta.height,
       sourceHash: await hashFile(absolute),
+      /* Recorded per entry, not once at the top of the file: the checks below
+         hash SOURCES, so a change to the press would otherwise leave every
+         committed plate stale while `--check` reported everything current —
+         a green build serving a generation-old wall. */
+      press: pressed ? PRESS_VERSION : undefined,
       variants: entries
     };
   }
@@ -461,11 +484,16 @@ async function build() {
     }
     // One source can back several slots, so report each changed file once.
     const changed = new Set();
+    const repressed = new Set();
     for (const [key, entry] of Object.entries(manifest)) {
       if (previous[key]?.sourceHash !== entry.sourceHash) changed.add(entry.source);
+      if ((previous[key]?.press ?? null) !== (entry.press ?? null)) repressed.add(entry.source);
     }
     for (const source of changed) {
       problems.push(`source changed since variants were generated: ${source}`);
+    }
+    for (const source of repressed) {
+      problems.push(`press curve changed since variants were generated: ${source}`);
     }
     for (const key of Object.keys(previous)) {
       if (!manifest[key]) problems.push(`stale manifest entry (source no longer listed): ${key}`);

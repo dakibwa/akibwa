@@ -23,6 +23,7 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
 import { normaliseKey, stripEdition } from "../lib/album-key.mjs";
+import { PRESS_VERSION, press } from "./press-curve.mjs";
 
 const root = new URL("../", import.meta.url).pathname;
 const outDir = path.join(root, "public", "album-art");
@@ -41,6 +42,10 @@ if (!apiKey) throw new Error("LASTFM_API_KEY is required.");
 const PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
 
 const WALL_WIDTH = 198;
+
+/* These sleeves share the album wall with the printed 249, so they share the
+   press — see press-curve.mjs. Half a wall pressed and half of it not is worse
+   than neither, because the eye reads the seam rather than either treatment. */
 const AVIF = { quality: 52, effort: 6 };
 const WEBP = { quality: 74 };
 
@@ -169,7 +174,10 @@ for (const [index, row] of candidates.entries()) {
   try {
     const meta = await sharp(source).metadata();
     const width = Math.min(WALL_WIDTH, Math.min(meta.width, meta.height));
-    const base = sharp(source).resize(width, width, { fit: "cover", position: "centre" });
+    const base = await press(
+      sharp,
+      sharp(source).resize(width, width, { fit: "cover", position: "centre" })
+    );
     const avif = await base.clone().avif(AVIF).toBuffer();
     const webp = await base.clone().webp(WEBP).toBuffer();
     await writeFile(path.join(outDir, `${id}-wall.avif`), avif);
@@ -178,7 +186,10 @@ for (const [index, row] of candidates.entries()) {
     // The card rung is whatever the source actually has, which for Last.fm is
     // 300px. Encoded once so an opened sleeve is not a scaled-up wall tile.
     const cardWidth = Math.min(meta.width, meta.height);
-    const card = sharp(source).resize(cardWidth, cardWidth, { fit: "cover", position: "centre" });
+    const card = await press(
+      sharp,
+      sharp(source).resize(cardWidth, cardWidth, { fit: "cover", position: "centre" })
+    );
     // AVIF only for the card rung — see AlbumArtImage in components/site-image.jsx.
     const cardAvif = await card.clone().avif(AVIF).toBuffer();
     await writeFile(path.join(outDir, `${id}-card.avif`), cardAvif);
@@ -208,6 +219,9 @@ for (const [index, row] of candidates.entries()) {
 
 wall.played = played;
 wall.playedMinPlays = MIN_PLAYS;
+/* Stamped for the same reason the other two ladders stamp it: nothing else in
+   this file changes when the curve does, so without it a re-press is invisible. */
+wall.pressVersion = PRESS_VERSION;
 await writeFile(dataPath, `${JSON.stringify(wall, null, 2)}\n`);
 
 console.log(
