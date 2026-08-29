@@ -68,12 +68,21 @@ export function preloadBackground(src, slot) {
   ReactDOM.preload(resolveBackground(src, slot), { as: "image", fetchPriority: "high" });
 }
 
+/*
+ * `priority` and `above` answer two different questions. `priority` means
+ * "this is the big rung behind a click that may never happen" — the
+ * spotlight's artwork. `above` means "this tile is on the first screen".
+ * Conflating them put fetchpriority="high" on images nobody had asked for
+ * while every visible tile waited behind lazy loading.
+ */
 export function SiteImage({
   src,
   slot,
   sizes,
   alt = "",
   priority = false,
+  above = false,
+  aboveSync = false,
   className,
   style,
   draggable,
@@ -89,9 +98,19 @@ export function SiteImage({
       // box either way — it keeps the aspect ratio reserved before bytes land.
       width={entry?.sourceWidth}
       height={entry?.sourceHeight}
-      loading={priority ? "eager" : "lazy"}
+      // A lazy image above the fold is late twice over: the preload scanner
+      // skips lazy images entirely, so the request is not even issued until
+      // the HTML has parsed and the element's position is known.
+      loading={above || priority ? "eager" : "lazy"}
+      // Deliberately NOT fetchpriority="high" on the wall: fifty high-priority
+      // tiles flatten the priority curve and starve the CSS. Eager alone is
+      // the win. The spotlight rung keeps it — there is only ever one.
       fetchPriority={priority ? "high" : undefined}
-      decoding="async"
+      // Synchronous decode presents the tile on the frame it lands rather
+      // than whenever an off-thread decode happens to finish — which is what
+      // turned one printed sheet into forty independent pops. Main-thread
+      // work, so it is capped well below the eager count.
+      decoding={aboveSync ? "sync" : "async"}
       className={className}
       style={style}
       draggable={draggable}
@@ -132,7 +151,16 @@ export function SiteImage({
  * dialog, but present, and free. The wall rung keeps its WebP, because that is
  * the one every visitor actually loads.
  */
-export function AlbumArtImage({ id, rung = "wall", alt = "", priority = false, className, ...rest }) {
+export function AlbumArtImage({
+  id,
+  rung = "wall",
+  alt = "",
+  priority = false,
+  above = false,
+  aboveSync = false,
+  className,
+  ...rest
+}) {
   // The wall rung's WebP is both the wall's own fallback and the card's, so it
   // is the <img> src either way.
   const wallWebp = `/album-art/${id}-wall.webp`;
@@ -142,9 +170,9 @@ export function AlbumArtImage({ id, rung = "wall", alt = "", priority = false, c
       <img
         src={wallWebp}
         alt={alt}
-        loading={priority ? "eager" : "lazy"}
+        loading={above || priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : undefined}
-        decoding="async"
+        decoding={aboveSync ? "sync" : "async"}
         draggable="false"
         className={className}
         {...rest}

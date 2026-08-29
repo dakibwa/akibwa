@@ -148,7 +148,12 @@ function Spotlight({ lit, onClose }) {
     const rest = card.getBoundingClientRect();
     restRef.current = rest;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setEntered(true);
+      /* Still across two frames. Layout effects run before paint, so setting
+         this synchronously made the paper veil appear across the whole
+         viewport in one frame with no opacity: 0 frame to transition from —
+         a hard flash, which is precisely what reduce is meant to avoid. The
+         card does not travel; only the veil fades. */
+      requestAnimationFrame(() => requestAnimationFrame(() => setEntered(true)));
       return;
     }
     card.style.transition = "none";
@@ -230,6 +235,15 @@ function Spotlight({ lit, onClose }) {
    every other, deterministically. φ staggers the collections so equal-length
    lists do not zipper, and the leads (low i) still surface near the top. */
 const PHASE = { music: 0.5, films: 0.23, games: 0.71, tv: 0.37, jobs: 0.81, tools: 0.11, creations: 0.61 };
+
+/* The same deal, over counts rather than elements, so the first screen can
+   be known before a single card is built. Identical maths and identical
+   list order, and Array.sort is stable, so the two agree exactly. */
+function blendOrder(lists) {
+  return lists
+    .flatMap(([id, n]) => Array.from({ length: n }, (_, i) => ({ id, i, at: (i + PHASE[id]) / n })))
+    .sort((a, b) => a.at - b.at);
+}
 
 function blend(lists) {
   return lists
@@ -543,18 +557,23 @@ export function HomePage() {
      anyone who asked for less motion, get the plain state change. */
   const withMorph = useCallback((apply, { toTop = false } = {}) => {
     const deck = deckRef.current;
-    if (
-      !deck ||
-      !document.startViewTransition ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (!deck || !document.startViewTransition) {
       apply();
       if (toTop) window.scrollTo({ top: 0, behavior: "instant" });
       return;
     }
 
+    /* Reduced motion gets a different transition, not none. Bailing to a bare
+       apply() meant ~300 cards vanished in a single frame — a full-viewport
+       discontinuity, which is worse for a vestibular visitor than the thing
+       it was avoiding. Skipping only the NAMES leaves one group, the root,
+       whose snapshot is the viewport in both states: the browser's own
+       keyframes are then an identity animation and the whole fold collapses
+       to a flat cross-fade with no geometry in it at all. */
+    const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const named = [];
-    const afterPassOne = nameVisible(deck, named, 0, PASS_ONE_NAMES);
+    const afterPassOne = quiet ? 0 : nameVisible(deck, named, 0, PASS_ONE_NAMES);
 
     const transition = document.startViewTransition(() => {
       /* Commit synchronously, so pass two measures the wall that is about to
@@ -570,7 +589,7 @@ export function HomePage() {
       if (toTop) window.scrollTo({ top: 0, behavior: "instant" });
       const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
       if (window.scrollY > max) window.scrollTo({ top: max, behavior: "instant" });
-      nameVisible(deck, named, afterPassOne, TOTAL_NAMES);
+      if (!quiet) nameVisible(deck, named, afterPassOne, TOTAL_NAMES);
     });
 
     transition.finished.finally(() => {
@@ -640,6 +659,31 @@ export function HomePage() {
     return (index - LEAD[id]) % BEAT[id] === BEAT[id] - 1 ? undefined : "small";
   };
 
+  const ABOVE_FOLD = 52;
+  const SYNC_FOLD = 24;
+  /* The eight cards at the front of the wall are always on the first screen;
+     the rest of the budget is spent on whatever the blend deals first. */
+  const FRONT = 8;
+  const aboveOrder = blendOrder([
+    ["music", deck.music.length],
+    ["films", deck.films.length],
+    ["games", games.length],
+    ["tv", tv.length],
+    ["jobs", Math.max(0, deck.jobs.length - 2)],
+    ["tools", deck.tools.length],
+    ["creations", deck.creations.length]
+  ]);
+  const aboveKeys = new Set(
+    aboveOrder.slice(0, Math.max(0, ABOVE_FOLD - FRONT)).map((o) => `${o.id}:${o.i}`)
+  );
+  const syncKeys = new Set(
+    aboveOrder.slice(0, Math.max(0, SYNC_FOLD - FRONT)).map((o) => `${o.id}:${o.i}`)
+  );
+  const firstScreen = (id, index) => ({
+    above: aboveKeys.has(`${id}:${index}`),
+    aboveSync: syncKeys.has(`${id}:${index}`)
+  });
+
   const cardsFor = (id, { all = false, as } = {}) => {
     /* `as` renders one collection inside another set's row — the toolkit
        rides with Jobs, so its cards dim, light and open as Jobs does. */
@@ -703,7 +747,7 @@ export function HomePage() {
           ground={TOOL_GROUND[tool.name]}
           label={tool.name}
           spotFace={
-            tool.art ? <SiteImage src={tool.art} priority alt="" className="c-art" /> : undefined
+            tool.art ? <SiteImage src={tool.art} alt="" className="c-art" /> : undefined
           }
           face={
             <>
@@ -741,9 +785,9 @@ export function HomePage() {
           href={site.href ?? undefined}
           label={site.name}
           face={
-            <SiteImage src={site.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+            <SiteImage src={site.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" above aboveSync />
           }
-          spotFace={<SiteImage src={site.art} priority alt="" className="c-art" />}
+          spotFace={<SiteImage src={site.art} alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{site.name}</span>
@@ -766,9 +810,9 @@ export function HomePage() {
           href={piece.href ?? undefined}
           label={piece.name}
           face={
-            <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+            <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" above aboveSync />
           }
-          spotFace={<SiteImage src={piece.art} priority alt="" className="c-art" />}
+          spotFace={<SiteImage src={piece.art} alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{piece.name}</span>
@@ -788,7 +832,7 @@ export function HomePage() {
           dim={isDim}
           {...shared}
           label={`${album.artist} — ${album.album}`}
-          face={<AlbumArtImage id={album.id} rung="wall" className="c-art" />}
+          face={<AlbumArtImage id={album.id} rung="wall" className="c-art" {...firstScreen("music", index)} />}
           spotFace={<AlbumArtImage id={album.id} rung="card" priority className="c-art" />}
           back={
             <>
@@ -816,9 +860,9 @@ export function HomePage() {
             {...shared}
             label={`Cover Collision ${post.number}: ${post.title}`}
             face={
-              <SiteImage src={post.image} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+              <SiteImage src={post.image} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("creations", index)} />
             }
-            spotFace={<SiteImage src={post.image} priority alt="" className="c-art" />}
+            spotFace={<SiteImage src={post.image} alt="" className="c-art" />}
             back={
               <>
                 <span className="b-eyebrow">No. {post.number}</span>
@@ -844,9 +888,9 @@ export function HomePage() {
           {...shared}
           label={film.title}
           face={
-            <SiteImage src={film.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+            <SiteImage src={film.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("films", index)} />
           }
-          spotFace={<SiteImage src={film.poster} priority alt="" className="c-art" />}
+          spotFace={<SiteImage src={film.poster} alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{film.title}</span>
@@ -872,9 +916,9 @@ export function HomePage() {
           {...shared}
           label={game.title}
           face={
-            <SiteImage src={game.cover} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+            <SiteImage src={game.cover} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("games", index)} />
           }
-          spotFace={<SiteImage src={game.cover} priority alt="" className="c-art" />}
+          spotFace={<SiteImage src={game.cover} alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{game.studio}</span>
@@ -895,9 +939,9 @@ export function HomePage() {
           {...shared}
           label={show.title}
           face={
-            <SiteImage src={show.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
+            <SiteImage src={show.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("tv", index)} />
           }
-          spotFace={<SiteImage src={show.poster} priority alt="" className="c-art" />}
+          spotFace={<SiteImage src={show.poster} alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{show.year}{show.creator ? ` · ${show.creator}` : ""}</span>
@@ -927,6 +971,10 @@ export function HomePage() {
 
   /* The wall itself only changes when a lens changes — 366 cards need no
      rebuilding when the spotlight opens or the sentence pulses. */
+  /* The first screen, resolved before anything renders. Thirteen columns by
+     four rows at the widest frame; the front of the wall always leads, and
+     the rest comes off the blend in DOM order. Sync decoding is main-thread
+     work, so it is capped well below the eager count. */
   const wall = useMemo(() => {
     /* Career leads the front of the wall with its two current roles; the
        six past ones are dealt through the blend below with everything
@@ -951,9 +999,11 @@ export function HomePage() {
               sizes="(max-width: 560px) calc(60vw - 16px), 250px"
               alt=""
               className="c-art"
+              above
+              aboveSync
             />
           }
-          spotFace={<SiteImage src={graceland.art} priority alt="" className="c-art" />}
+          spotFace={<SiteImage src={graceland.art} alt="" className="c-art" />}
           back={
             <>
               <span className="b-eyebrow">{graceland.artist}</span>

@@ -4890,7 +4890,7 @@ button {
      real milliseconds on load. contain-intrinsic-size keeps the scrollbar honest
      while they are skipped. */
   content-visibility: auto;
-  contain-intrinsic-size: 104px;
+  contain-intrinsic-size: auto 104px;
 }
 
 /*
@@ -5213,7 +5213,7 @@ button {
   }
 
   .album-card {
-    contain-intrinsic-size: 84px;
+    contain-intrinsic-size: auto 84px;
   }
 
   /* No cursor to tilt away from, and a lift would put the card under the thumb
@@ -6176,8 +6176,12 @@ button {
   aspect-ratio: auto;
   /* Offscreen cards skip paint and style entirely — the grid fixes every
      card's box, so skipped contents cannot shift layout. With 366 cards,
-     this is the difference between painting a wall and painting a window. */
+     this is the difference between painting a wall and painting a window.
+     The estimate keeps the scrollbar honest before first render; `auto`
+     lets the real measurement replace it, where a bare length would pin
+     the guess forever. */
   content-visibility: auto;
+  contain-intrinsic-size: auto 133px;
 }
 
 .deck .card--small {
@@ -6297,6 +6301,44 @@ button {
 /* The sentence holds perfectly still while the wall moves beneath it. */
 ::view-transition-group(akibwa-hero) {
   animation-duration: 0ms;
+}
+
+/* Reduced motion is a designed variant here, not a deletion. No cards are
+   named, so the only group left is the root — and its snapshot is the
+   viewport in both states, which makes the browser's generated keyframes an
+   identity animation. What remains is a flat cross-fade with no travel,
+   no scale and no blur in it.
+
+   animation-NAME: none, never `animation: none`. The shorthand resets
+   animation-duration to 0s, and these pseudo-elements inherit their
+   duration from the UA sheet — so the shorthand silently hands back the
+   hard cut it was written to fix. That is the trap in the recipe everyone
+   copies. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation-name: none;
+    animation-duration: 300ms;
+    animation-delay: 0ms;
+    animation-timing-function: linear;
+  }
+
+  /* The banded wave collapses; leavers and arrivers dissolve where they are
+     rather than running keyframes that carry translate, scale and blur. */
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-name: -ua-view-transition-fade-out, -ua-view-transition-fade-in;
+    animation-duration: 300ms;
+    animation-delay: 0ms;
+    animation-timing-function: linear;
+  }
+
+  ::view-transition-old(*):only-child {
+    animation: -ua-view-transition-fade-out 300ms linear both;
+  }
+
+  ::view-transition-new(*):only-child {
+    animation: -ua-view-transition-fade-in 300ms linear both;
+  }
 }
 
 /* The collectible press: the top-left corner gives, the bottom-right lifts,
