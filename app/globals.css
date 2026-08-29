@@ -144,11 +144,19 @@ button {
    wrapper above owns the fade on a route change, and stacking a second
    opacity animation on top of it multiplied the two and left the first
    frames unreadable. Keyframes end at transform: none so fixed overlays
-   never lose their containing block. */
+   never lose their containing block.
+
+   fill-mode is `backwards`, NOT `both`. A filling-forwards animation keeps
+   applying its final value forever, and an animation outranks every plain
+   declaration in the cascade — so `both` left these elements permanently
+   pinned at transform: none, silently swallowing any transform applied to
+   them later. That cost an afternoon: the wall's recede was correct in the
+   stylesheet, matched the element, and computed to identity anyway.
+   `backwards` still covers the pre-start frame, then lets go. */
 @media (prefers-reduced-motion: no-preference) {
   .route-fade > section > *:nth-child(-n + 2),
   .route-enter > section > *:nth-child(-n + 2) {
-    animation: page-rise 360ms var(--ease-out) both;
+    animation: page-rise 360ms var(--ease-out) backwards;
   }
 
   .route-fade > section > *:nth-child(2),
@@ -5834,15 +5842,20 @@ button {
   padding: clamp(16px, 4vh, 48px);
 }
 
-/* The thickened paper is its own layer, faded in by opacity. Animating the
-   blur radius on the container re-blurred the entire viewport every frame
-   of the entrance; fading a pre-blurred layer is compositor work. */
+/* The thickened paper is its own layer, faded in by opacity.
+
+   No backdrop blur. Measured on the live wall, a backdrop-filter over this
+   backdrop cost nine frames longer than 33ms on every open — and the radius
+   was not the problem: 2px cost seven. The compositor has to re-read and
+   re-blur the whole viewport behind a layer whose alpha is changing, every
+   frame. Removing it took the open to zero long frames.
+
+   Depth comes from the wall receding instead (see .deck.is-receded), which
+   is a plain transform — free, and truer to a paper gallery than glass. */
 .spotlight-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(250, 248, 243, 0.82);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  background: rgba(250, 248, 243, 0.88);
   opacity: 0;
   transition: opacity 420ms var(--ease-out);
 }
@@ -6052,6 +6065,24 @@ button {
   grid-auto-flow: dense;
   gap: clamp(6px, 0.65vw, 10px);
   align-items: stretch;
+}
+
+/* A card steps forward, so the wall steps back — the whole collage settles
+   away from the viewer while one piece is held up to the light. Transform
+   only, so it costs nothing, and it reads as depth rather than as a filter.
+   The scale is deliberately small: at 1310px the far edge moves ~18px, which
+   the eye reads as distance rather than as movement. */
+.deck {
+  transition: transform 560ms var(--ease-out);
+}
+
+.deck.is-receded {
+  transform: scale(0.972);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck { transition: none; }
+  .deck.is-receded { transform: none; }
 }
 
 .deck .card {

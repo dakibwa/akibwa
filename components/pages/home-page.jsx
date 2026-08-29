@@ -293,19 +293,26 @@ export function HomePage() {
       apply();
       return;
     }
+    /* Only what the eye can actually see gets a name. Every named element is
+       a snapshot the compositor must capture before the transition starts,
+       and that capture is the whole cost of the fold: measured on the live
+       wall, naming 120 cards spent one frame of 100ms; naming the visible
+       ~50 spends 50ms, and dropping view transitions entirely spends none.
+       A quarter-viewport of margin keeps cards just past the fold gliding
+       in properly rather than popping. */
     const cards = [...(deckRef.current?.querySelectorAll(".card") ?? [])];
     const near = [];
     for (const el of cards) {
-      if (near.length >= 120) break;
+      if (near.length >= 56) break;
       const r = el.getBoundingClientRect();
-      if (r.bottom > -window.innerHeight && r.top < window.innerHeight * 2.5) near.push(el);
+      if (r.bottom > window.innerHeight * -0.25 && r.top < window.innerHeight * 1.25) near.push(el);
     }
     /* The wave: each card is banded by how far down the screen it sits, and
        the bands start their glide a beat apart — the fold sweeps down the
        wall instead of every card lurching in lockstep. (view-transition-class
        is simply ignored where unsupported; the morph still runs.) */
     const bandOf = (top) =>
-      Math.min(7, Math.max(0, Math.floor(top / (window.innerHeight / 6))));
+      Math.min(7, Math.max(0, Math.floor((top + window.innerHeight * 0.25) / (window.innerHeight / 5))));
     near.forEach((el, i) => {
       el.style.viewTransitionName = `deck-${i}`;
       el.style.viewTransitionClass = `vt-band-${bandOf(el.getBoundingClientRect().top)}`;
@@ -726,7 +733,7 @@ export function HomePage() {
     <section className="akibwa-home" onClick={releaseOnPaper}>
       {inkOn ? <InkPaper /> : null}
       <div
-        className={`page-grid deck${lens ? " is-lensed" : ""}`}
+        className={`page-grid deck${lens ? " is-lensed" : ""}${lit ? " is-receded" : ""}`}
         ref={deckRef}
         aria-label="Everything on one wall"
       >
