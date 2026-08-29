@@ -1,0 +1,215 @@
+{
+ "source": "curated lyrics/song/album matches; Cover Art Archive fronts, printed wall cards as fallback",
+ "rule": "A sleeve is only the real front of a verified record. Titles without a verified match stay blank jackets.",
+ "resolvedAt": "2026-08-29T07:07:48.607Z",
+ "titles": {
+  "One way to lose them walking blues!": {
+   "slug": "graceland",
+   "kind": "lyrics",
+   "song": "Diamonds on the Soles of Her Shoes",
+   "album": "Graceland",
+   "artist": "Paul Simon",
+   "note": "Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."
+  },
+  "Witchi Tai To": {
+   "slug": "everything-is-everything",
+   "kind": "song",
+   "song": "Witchi Tai To",
+   "album": "Everything Is Everything",
+   "artist": "Everything Is Everything",
+   "note": "Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on."
+  },
+  "Hey Moon": {
+   "slug": "we-must-become-the-pitiless-censors-of-ourselves",
+   "kind": "song",
+   "song": "Hey Moon",
+   "album": "We Must Become the Pitiless Censors of Ourselves",
+   "artist": "John Maus",
+   "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."
+  },
+  "Another One Goes By": {
+   "slug": "another-one-goes-by",
+   "kind": "album",
+   "song": "Another One Goes By",
+   "album": "Another One Goes By",
+   "artist": "Mazarin",
+   "note": null
+  },
+  "The Predatory Wasp": {
+   "slug": "illinois",
+   "kind": "song",
+   "song": "The Predatory Wasp of the Palisades Is Out to Get Us!",
+   "album": "Illinois",
+   "artist": "Sufjan Stevens",
+   "note": null
+  },
+  "Taking Tiger Mountain": {
+   "slug": "taking-tiger-mountain-by-strategy",
+   "kind": "album",
+   "song": null,
+   "album": "Taking Tiger Mountain (By Strategy)",
+   "artist": "Brian Eno",
+   "note": "GPS split the album title across two days. Same sleeve as “(By Strategy)”."
+  },
+  "(By Strategy)": {
+   "slug": "taking-tiger-mountain-by-strategy",
+   "kind": "album",
+   "song": null,
+   "album": "Taking Tiger Mountain (By Strategy)",
+   "artist": "Brian Eno",
+   "note": "Second half of the Eno title. Same sleeve as day 29."
+  },
+  "I'll Come Running To Tie Your Shoes": {
+   "slug": "another-green-world",
+   "kind": "lyrics",
+   "song": "I'll Come Running",
+   "album": "Another Green World",
+   "artist": "Brian Eno",
+   "note": "Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."
+  },
+  "Katy Song": {
+   "slug": "red-house-painters",
+   "kind": "song",
+   "song": "Katy Song",
+   "album": "Red House Painters",
+   "artist": "Red House Painters",
+   "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."
+  },
+  "Beyond Me, Beyond You": {
+   "slug": "a-moon-shaped-pool",
+   "kind": "lyrics",
+   "song": "Daydreaming",
+   "album": "A Moon Shaped Pool",
+   "artist": "Radiohead",
+   "note": "Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."
+  },
+  "Everything That Happens": {
+   "slug": "everything-that-happens-will-happen-today",
+   "kind": "album",
+   "song": null,
+   "album": "Everything That Happens Will Happen Today",
+   "artist": "David Byrne & Brian Eno",
+   "note": null
+  },
+  "Distant Sky": {
+   "slug": "skeleton-tree",
+   "kind": "song",
+   "song": "Distant Sky",
+   "album": "Skeleton Tree",
+   "artist": "Nick Cave & the Bad Seeds",
+   "note": "Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."
+  },
+  "Biscuit Town": {
+   "slug": "the-ooz",
+   "kind": "song",
+   "song": "Biscuit Town",
+   "album": "The OOZ",
+   "artist": "King Krule",
+   "note": "Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."
+  },
+  "Sweet Road": {
+   "slug": "sung-tongs",
+   "kind": "song",
+   "song": "Sweet Road",
+   "album": "Sung Tongs",
+   "artist": "Animal Collective",
+   "note": null
+  },
+  "In Between Dreams": {
+   "slug": "in-between-dreams",
+   "kind": "album",
+   "song": null,
+   "album": "In Between Dreams",
+   "artist": "Jack Johnson",
+   "note": null
+  },
+  "Build A Rocket Boys!": {
+   "slug": "build-a-rocket-boys",
+   "kind": "album",
+   "song": null,
+   "album": "Build a Rocket Boys!",
+   "artist": "Elbow",
+   "note": null
+  },
+  "Disorder": {
+   "slug": "unknown-pleasures",
+   "kind": "song",
+   "song": "Disorder",
+   "album": "Unknown Pleasures",
+   "artist": "Joy Division",
+   "note": null
+  },
+  "A Quick One While She's Away": {
+   "slug": "a-quick-one",
+   "kind": "song",
+   "song": "A Quick One, While He's Away",
+   "album": "A Quick One",
+   "artist": "The Who",
+   "note": "GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."
+  },
+  "You Can't Live There Forever": {
+   "slug": "you-cant-live-there-forever",
+   "kind": "album",
+   "song": null,
+   "album": "You Can’t Live There Forever",
+   "artist": "Summer Years",
+   "note": null
+  },
+  "A Postcard to Nina": {
+   "slug": "night-falls-over-kortedala",
+   "kind": "song",
+   "song": "A Postcard to Nina",
+   "album": "Night Falls Over Kortedala",
+   "artist": "Jens Lekman",
+   "note": null
+  },
+  "A Plea For Tenderness": {
+   "slug": "a-plea-for-tenderness",
+   "kind": "album",
+   "song": null,
+   "album": "A Plea for Tenderness",
+   "artist": "Dump",
+   "note": "James McNew (Yo La Tengo). Cover Art Archive has no front; Last.fm has the pink-bunny sleeve."
+  },
+  "I'll Come Too": {
+   "slug": "assume-form",
+   "kind": "song",
+   "song": "I'll Come Too",
+   "album": "Assume Form",
+   "artist": "James Blake",
+   "note": "Assume Form was released January 2019. 13 plays in the collection."
+  },
+  "Dogmeat": {
+   "slug": "dogmeat",
+   "kind": "album",
+   "song": null,
+   "album": "Dogmeat",
+   "artist": "Kid Carpet",
+   "note": null
+  },
+  "Banshee Beat": {
+   "slug": "feels",
+   "kind": "song",
+   "song": "Banshee Beat",
+   "album": "Feels",
+   "artist": "Animal Collective",
+   "note": null
+  },
+  "Infant Dressing Table": {
+   "slug": "here-comes-the-indian",
+   "kind": "song",
+   "song": "Infant Dressing Table",
+   "album": "Here Comes the Indian",
+   "artist": "Animal Collective",
+   "note": "Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."
+  },
+  "Allelujah! Don't Bend! Ascend!": {
+   "slug": "allelujah-dont-bend-ascend",
+   "kind": "album",
+   "song": null,
+   "album": "’ALLELUJAH! DON’T BEND! ASCEND!",
+   "artist": "Godspeed You! Black Emperor",
+   "note": null
+  }
+ }
+}

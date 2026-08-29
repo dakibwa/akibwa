@@ -1,0 +1,2900 @@
+{
+ "facts": {
+  "km": 1982,
+  "walked": 52,
+  "numbered": 67,
+  "countries": 7,
+  "kmPerWalkedDay": 38,
+  "from": "Paris",
+  "to": "Sofia",
+  "start": "2019-09-24",
+  "end": "2019-11-28",
+  "alone": true,
+  "tauern": "~2,500 m",
+  "after": "He got the coach from Sofia to Istanbul. He was done."
+ },
+ "countries": [
+  {
+   "name": "France",
+   "color": "#2EA3DC"
+  },
+  {
+   "name": "Germany",
+   "color": "#24709F"
+  },
+  {
+   "name": "Austria",
+   "color": "#7D6BB0"
+  },
+  {
+   "name": "Slovenia",
+   "color": "#12A19A"
+  },
+  {
+   "name": "Croatia",
+   "color": "#1FA45A"
+  },
+  {
+   "name": "Serbia",
+   "color": "#EFC319"
+  },
+  {
+   "name": "Bulgaria",
+   "color": "#E97E18"
+  }
+ ],
+ "countryRings": [
+  {
+   "name": "France",
+   "color": "#2EA3DC",
+   "rings": [
+    [
+     [
+      280800,
+      -6636600
+     ],
+     [
+      299400,
+      -6587400
+     ],
+     [
+      468000,
+      -6487800
+     ],
+     [
+      459600,
+      -6449400
+     ],
+     [
+      535800,
+      -6474000
+     ],
+     [
+      589800,
+      -6379200
+     ],
+     [
+      912600,
+      -6268200
+     ],
+     [
+      861600,
+      -6174600
+     ],
+     [
+      831600,
+      -6021000
+     ],
+     [
+      779400,
+      -6002400
+     ],
+     [
+      663000,
+      -5812200
+     ],
+     [
+      751800,
+      -5835600
+     ],
+     [
+      791400,
+      -5662200
+     ],
+     [
+      735000,
+      -5638200
+     ],
+     [
+      780000,
+      -5593800
+     ],
+     [
+      769800,
+      -5533200
+     ],
+     [
+      850800,
+      -5487600
+     ],
+     [
+      822600,
+      -5428200
+     ],
+     [
+      678600,
+      -5316600
+     ],
+     [
+      557400,
+      -5370000
+     ],
+     [
+      581400,
+      -5389200
+     ],
+     [
+      533400,
+      -5364600
+     ],
+     [
+      403200,
+      -5369400
+     ],
+     [
+      338400,
+      -5255400
+     ],
+     [
+      279000,
+      -5210400
+     ],
+     [
+      73200,
+      -5287200
+     ],
+     [
+      -63600,
+      -5277600
+     ],
+     [
+      -151800,
+      -5317200
+     ],
+     [
+      -184800,
+      -5373000
+     ],
+     [
+      -126600,
+      -5699400
+     ],
+     [
+      -66600,
+      -5625600
+     ],
+     [
+      -123600,
+      -5821800
+     ],
+     [
+      -181200,
+      -5850000
+     ],
+     [
+      -249600,
+      -5965200
+     ],
+     [
+      -192000,
+      -5976600
+     ],
+     [
+      -273000,
+      -5985600
+     ],
+     [
+      -315000,
+      -6024600
+     ],
+     [
+      -301800,
+      -6040800
+     ],
+     [
+      -347400,
+      -6027000
+     ],
+     [
+      -351600,
+      -6058800
+     ],
+     [
+      -462000,
+      -6080400
+     ],
+     [
+      -504600,
+      -6111600
+     ],
+     [
+      -479400,
+      -6139800
+     ],
+     [
+      -522600,
+      -6203400
+     ],
+     [
+      -343800,
+      -6253200
+     ],
+     [
+      -291600,
+      -6198000
+     ],
+     [
+      -150600,
+      -6214800
+     ],
+     [
+      -216600,
+      -6390600
+     ],
+     [
+      -140400,
+      -6393600
+     ],
+     [
+      -124800,
+      -6333600
+     ],
+     [
+      1200,
+      -6331800
+     ],
+     [
+      8400,
+      -6362400
+     ],
+     [
+      162000,
+      -6468000
+     ],
+     [
+      280800,
+      -6636600
+     ]
+    ],
+    [
+     [
+      953400,
+      -5192400
+     ],
+     [
+      969600,
+      -5248200
+     ],
+     [
+      1034400,
+      -5262600
+     ],
+     [
+      1048800,
+      -5314800
+     ],
+     [
+      1063800,
+      -5179200
+     ],
+     [
+      1026600,
+      -5067600
+     ],
+     [
+      979200,
+      -5094600
+     ],
+     [
+      993000,
+      -5115600
+     ],
+     [
+      963600,
+      -5123400
+     ],
+     [
+      979800,
+      -5147400
+     ],
+     [
+      958800,
+      -5146200
+     ],
+     [
+      953400,
+      -5192400
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "Germany",
+   "color": "#24709F",
+   "rings": [
+    [
+     [
+      1537800,
+      -6235200
+     ],
+     [
+      1536000,
+      -6207000
+     ],
+     [
+      1431600,
+      -6139800
+     ],
+     [
+      1451400,
+      -6022800
+     ],
+     [
+      1383000,
+      -6055800
+     ],
+     [
+      1246200,
+      -6012600
+     ],
+     [
+      1161000,
+      -6036600
+     ],
+     [
+      1161000,
+      -6006600
+     ],
+     [
+      1122600,
+      -6000600
+     ],
+     [
+      1087200,
+      -6038400
+     ],
+     [
+      955800,
+      -6073800
+     ],
+     [
+      945000,
+      -6043800
+     ],
+     [
+      847200,
+      -6034800
+     ],
+     [
+      883200,
+      -6280800
+     ],
+     [
+      745800,
+      -6311400
+     ],
+     [
+      712800,
+      -6354000
+     ],
+     [
+      685800,
+      -6436200
+     ],
+     [
+      705600,
+      -6529800
+     ],
+     [
+      661200,
+      -6627000
+     ],
+     [
+      689400,
+      -6711600
+     ],
+     [
+      660000,
+      -6766800
+     ],
+     [
+      758400,
+      -6795000
+     ],
+     [
+      782400,
+      -6843000
+     ],
+     [
+      750600,
+      -6901800
+     ],
+     [
+      781200,
+      -6914400
+     ],
+     [
+      808800,
+      -7043400
+     ],
+     [
+      787800,
+      -7045800
+     ],
+     [
+      789000,
+      -7092600
+     ],
+     [
+      896400,
+      -7101600
+     ],
+     [
+      913800,
+      -7059000
+     ],
+     [
+      986400,
+      -7138200
+     ],
+     [
+      1094400,
+      -7084200
+     ],
+     [
+      992400,
+      -7158000
+     ],
+     [
+      1003800,
+      -7188600
+     ],
+     [
+      963000,
+      -7247400
+     ],
+     [
+      1003200,
+      -7266600
+     ],
+     [
+      964200,
+      -7341600
+     ],
+     [
+      1114800,
+      -7304400
+     ],
+     [
+      1129200,
+      -7231800
+     ],
+     [
+      1217400,
+      -7242600
+     ],
+     [
+      1234800,
+      -7224000
+     ],
+     [
+      1210200,
+      -7169400
+     ],
+     [
+      1348200,
+      -7204800
+     ],
+     [
+      1401600,
+      -7256400
+     ],
+     [
+      1381800,
+      -7218000
+     ],
+     [
+      1414200,
+      -7246200
+     ],
+     [
+      1455600,
+      -7237200
+     ],
+     [
+      1501200,
+      -7187400
+     ],
+     [
+      1525200,
+      -7199400
+     ],
+     [
+      1582200,
+      -7114800
+     ],
+     [
+      1602000,
+      -7007400
+     ],
+     [
+      1576800,
+      -6963600
+     ],
+     [
+      1626600,
+      -6894000
+     ],
+     [
+      1643400,
+      -6814200
+     ],
+     [
+      1623600,
+      -6765000
+     ],
+     [
+      1665600,
+      -6681000
+     ],
+     [
+      1644600,
+      -6588600
+     ],
+     [
+      1590600,
+      -6627600
+     ],
+     [
+      1584600,
+      -6600000
+     ],
+     [
+      1369200,
+      -6474000
+     ],
+     [
+      1344600,
+      -6488400
+     ],
+     [
+      1391400,
+      -6380400
+     ],
+     [
+      1537800,
+      -6235200
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "Austria",
+   "color": "#7D6BB0",
+   "rings": [
+    [
+     [
+      1886400,
+      -6208200
+     ],
+     [
+      1900800,
+      -6058200
+     ],
+     [
+      1826400,
+      -6050400
+     ],
+     [
+      1857600,
+      -6030000
+     ],
+     [
+      1829400,
+      -6007200
+     ],
+     [
+      1835400,
+      -5941800
+     ],
+     [
+      1721400,
+      -5879400
+     ],
+     [
+      1653600,
+      -5877600
+     ],
+     [
+      1618200,
+      -5841000
+     ],
+     [
+      1380600,
+      -5891400
+     ],
+     [
+      1356000,
+      -5956200
+     ],
+     [
+      1243800,
+      -5935800
+     ],
+     [
+      1222800,
+      -5904000
+     ],
+     [
+      1066800,
+      -5951400
+     ],
+     [
+      1063200,
+      -6029400
+     ],
+     [
+      1107000,
+      -6030600
+     ],
+     [
+      1147200,
+      -5991600
+     ],
+     [
+      1164000,
+      -6037200
+     ],
+     [
+      1233600,
+      -6006000
+     ],
+     [
+      1355400,
+      -6058200
+     ],
+     [
+      1451400,
+      -6022800
+     ],
+     [
+      1419000,
+      -6126600
+     ],
+     [
+      1536000,
+      -6207000
+     ],
+     [
+      1537800,
+      -6235200
+     ],
+     [
+      1566600,
+      -6205800
+     ],
+     [
+      1636800,
+      -6219600
+     ],
+     [
+      1668000,
+      -6276000
+     ],
+     [
+      1852800,
+      -6237600
+     ],
+     [
+      1886400,
+      -6208200
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "Slovenia",
+   "color": "#12A19A",
+   "rings": [
+    [
+     [
+      1512600,
+      -5698800
+     ],
+     [
+      1546800,
+      -5722200
+     ],
+     [
+      1488000,
+      -5826600
+     ],
+     [
+      1525200,
+      -5863800
+     ],
+     [
+      1618200,
+      -5841000
+     ],
+     [
+      1654800,
+      -5877600
+     ],
+     [
+      1783200,
+      -5888400
+     ],
+     [
+      1777800,
+      -5913000
+     ],
+     [
+      1818000,
+      -5915400
+     ],
+     [
+      1838400,
+      -5861400
+     ],
+     [
+      1741200,
+      -5814000
+     ],
+     [
+      1744800,
+      -5755200
+     ],
+     [
+      1698000,
+      -5736000
+     ],
+     [
+      1705800,
+      -5692800
+     ],
+     [
+      1647600,
+      -5695200
+     ],
+     [
+      1623000,
+      -5727600
+     ],
+     [
+      1600200,
+      -5697000
+     ],
+     [
+      1512600,
+      -5698800
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "Croatia",
+   "color": "#1FA45A",
+   "rings": [
+    [
+     [
+      1838400,
+      -5861400
+     ],
+     [
+      1982400,
+      -5751000
+     ],
+     [
+      2101200,
+      -5763600
+     ],
+     [
+      2104200,
+      -5712000
+     ],
+     [
+      2158800,
+      -5648400
+     ],
+     [
+      2128800,
+      -5652600
+     ],
+     [
+      2103000,
+      -5599800
+     ],
+     [
+      2071800,
+      -5637600
+     ],
+     [
+      1758000,
+      -5651400
+     ],
+     [
+      1749600,
+      -5590800
+     ],
+     [
+      1805400,
+      -5497800
+     ],
+     [
+      1966200,
+      -5307000
+     ],
+     [
+      1831800,
+      -5395200
+     ],
+     [
+      1776600,
+      -5389200
+     ],
+     [
+      1687800,
+      -5498400
+     ],
+     [
+      1717200,
+      -5506800
+     ],
+     [
+      1620600,
+      -5668200
+     ],
+     [
+      1593000,
+      -5676000
+     ],
+     [
+      1547400,
+      -5586000
+     ],
+     [
+      1513200,
+      -5644200
+     ],
+     [
+      1503600,
+      -5702400
+     ],
+     [
+      1600200,
+      -5697000
+     ],
+     [
+      1614600,
+      -5717400
+     ],
+     [
+      1705800,
+      -5692800
+     ],
+     [
+      1744800,
+      -5755200
+     ],
+     [
+      1741200,
+      -5814000
+     ],
+     [
+      1838400,
+      -5861400
+     ]
+    ],
+    [
+     [
+      2052600,
+      -5245200
+     ],
+     [
+      2058600,
+      -5223600
+     ],
+     [
+      1892400,
+      -5319600
+     ],
+     [
+      1983000,
+      -5298600
+     ],
+     [
+      2052600,
+      -5245200
+     ]
+    ],
+    [
+     [
+      1858200,
+      -5331000
+     ],
+     [
+      1822200,
+      -5341800
+     ],
+     [
+      1914000,
+      -5331000
+     ],
+     [
+      1858200,
+      -5331000
+     ]
+    ],
+    [
+     [
+      1836600,
+      -5355000
+     ],
+     [
+      1828200,
+      -5371800
+     ],
+     [
+      1880400,
+      -5359800
+     ],
+     [
+      1836600,
+      -5355000
+     ]
+    ],
+    [
+     [
+      1656000,
+      -5552400
+     ],
+     [
+      1639800,
+      -5575200
+     ],
+     [
+      1694400,
+      -5514000
+     ],
+     [
+      1656000,
+      -5552400
+     ]
+    ],
+    [
+     [
+      1638600,
+      -5612400
+     ],
+     [
+      1605600,
+      -5635200
+     ],
+     [
+      1619400,
+      -5661000
+     ],
+     [
+      1638600,
+      -5612400
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "Serbia",
+   "color": "#EFC319",
+   "rings": [
+    [
+     [
+      2253000,
+      -5797800
+     ],
+     [
+      2313000,
+      -5742600
+     ],
+     [
+      2311800,
+      -5697000
+     ],
+     [
+      2382600,
+      -5653200
+     ],
+     [
+      2376000,
+      -5595000
+     ],
+     [
+      2463000,
+      -5543400
+     ],
+     [
+      2496600,
+      -5580000
+     ],
+     [
+      2534400,
+      -5556000
+     ],
+     [
+      2503200,
+      -5542800
+     ],
+     [
+      2526000,
+      -5500800
+     ],
+     [
+      2488200,
+      -5435400
+     ],
+     [
+      2558400,
+      -5338800
+     ],
+     [
+      2505600,
+      -5292000
+     ],
+     [
+      2496000,
+      -5209800
+     ],
+     [
+      2400600,
+      -5197800
+     ],
+     [
+      2417400,
+      -5244000
+     ],
+     [
+      2322600,
+      -5345400
+     ],
+     [
+      2293800,
+      -5342400
+     ],
+     [
+      2265000,
+      -5286000
+     ],
+     [
+      2134800,
+      -5385600
+     ],
+     [
+      2171400,
+      -5410800
+     ],
+     [
+      2140800,
+      -5458800
+     ],
+     [
+      2184000,
+      -5470800
+     ],
+     [
+      2127000,
+      -5521800
+     ],
+     [
+      2157000,
+      -5601600
+     ],
+     [
+      2116800,
+      -5600400
+     ],
+     [
+      2120400,
+      -5643000
+     ],
+     [
+      2158800,
+      -5648400
+     ],
+     [
+      2113800,
+      -5681400
+     ],
+     [
+      2101200,
+      -5763600
+     ],
+     [
+      2176200,
+      -5806800
+     ],
+     [
+      2253000,
+      -5797800
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "Bulgaria",
+   "color": "#E97E18",
+   "rings": [
+    [
+     [
+      2931600,
+      -5118000
+     ],
+     [
+      2901000,
+      -5117400
+     ],
+     [
+      2913600,
+      -5076000
+     ],
+     [
+      2881200,
+      -5057400
+     ],
+     [
+      2809200,
+      -5047800
+     ],
+     [
+      2728800,
+      -5095800
+     ],
+     [
+      2551200,
+      -5062200
+     ],
+     [
+      2561400,
+      -5122200
+     ],
+     [
+      2487000,
+      -5208000
+     ],
+     [
+      2509200,
+      -5233200
+     ],
+     [
+      2496600,
+      -5283600
+     ],
+     [
+      2558400,
+      -5340600
+     ],
+     [
+      2488200,
+      -5435400
+     ],
+     [
+      2516400,
+      -5492400
+     ],
+     [
+      2563800,
+      -5479800
+     ],
+     [
+      2547600,
+      -5440800
+     ],
+     [
+      2827800,
+      -5411400
+     ],
+     [
+      3008400,
+      -5493000
+     ],
+     [
+      3181200,
+      -5425800
+     ],
+     [
+      3179400,
+      -5381400
+     ],
+     [
+      3130200,
+      -5371800
+     ],
+     [
+      3105000,
+      -5268000
+     ],
+     [
+      3055800,
+      -5233200
+     ],
+     [
+      3118800,
+      -5157000
+     ],
+     [
+      3066600,
+      -5146200
+     ],
+     [
+      3010800,
+      -5173200
+     ],
+     [
+      2931600,
+      -5118000
+     ]
+    ]
+   ]
+  }
+ ],
+ "tracks": [
+  [
+   [
+    298320,
+    -6283560
+   ],
+   [
+    327200,
+    -6267680
+   ]
+  ],
+  [
+   [
+    333860,
+    -6266240
+   ],
+   [
+    373980,
+    -6279280
+   ]
+  ],
+  [
+   [
+    373940,
+    -6279300
+   ],
+   [
+    409480,
+    -6305180
+   ]
+  ],
+  [
+   [
+    409440,
+    -6305260
+   ],
+   [
+    449820,
+    -6318760
+   ]
+  ],
+  [
+   [
+    452200,
+    -6318880
+   ],
+   [
+    485940,
+    -6266780
+   ]
+  ],
+  [
+   [
+    488380,
+    -6265160
+   ],
+   [
+    503160,
+    -6246120
+   ],
+   [
+    527900,
+    -6244020
+   ]
+  ],
+  [
+   [
+    528060,
+    -6244080
+   ],
+   [
+    574940,
+    -6238180
+   ]
+  ],
+  [
+   [
+    575520,
+    -6236300
+   ],
+   [
+    589960,
+    -6226100
+   ],
+   [
+    621680,
+    -6233900
+   ]
+  ],
+  [
+   [
+    621500,
+    -6235220
+   ],
+   [
+    637340,
+    -6221100
+   ],
+   [
+    675560,
+    -6211880
+   ]
+  ],
+  [
+   [
+    675560,
+    -6211880
+   ],
+   [
+    688400,
+    -6221820
+   ]
+  ],
+  [
+   [
+    691100,
+    -6219400
+   ],
+   [
+    718460,
+    -6215120
+   ]
+  ],
+  [
+   [
+    718460,
+    -6215140
+   ],
+   [
+    746360,
+    -6222600
+   ]
+  ],
+  [
+   [
+    746620,
+    -6222700
+   ],
+   [
+    814120,
+    -6227580
+   ]
+  ],
+  [
+   [
+    814140,
+    -6227580
+   ],
+   [
+    887400,
+    -6241680
+   ]
+  ],
+  [
+   [
+    890740,
+    -6240980
+   ],
+   [
+    935600,
+    -6264780
+   ],
+   [
+    968800,
+    -6256800
+   ]
+  ],
+  [
+   [
+    1022220,
+    -6237820
+   ],
+   [
+    1054580,
+    -6224880
+   ]
+  ],
+  [
+   [
+    1054540,
+    -6224960
+   ],
+   [
+    1053780,
+    -6214500
+   ],
+   [
+    1071660,
+    -6201060
+   ]
+  ],
+  [
+   [
+    1071560,
+    -6200760
+   ],
+   [
+    1137180,
+    -6182120
+   ]
+  ],
+  [
+   [
+    1158140,
+    -6178820
+   ],
+   [
+    1212960,
+    -6168660
+   ]
+  ],
+  [
+   [
+    1214020,
+    -6167080
+   ],
+   [
+    1225000,
+    -6149120
+   ],
+   [
+    1264000,
+    -6135720
+   ]
+  ],
+  [
+   [
+    1287860,
+    -6130180
+   ],
+   [
+    1347240,
+    -6112120
+   ],
+   [
+    1355820,
+    -6098180
+   ]
+  ],
+  [
+   [
+    1355740,
+    -6097840
+   ],
+   [
+    1374620,
+    -6081920
+   ],
+   [
+    1407820,
+    -6077500
+   ]
+  ],
+  [
+   [
+    1407400,
+    -6077260
+   ],
+   [
+    1420240,
+    -6026700
+   ]
+  ],
+  [
+   [
+    1420440,
+    -6026440
+   ],
+   [
+    1428720,
+    -6020480
+   ],
+   [
+    1427540,
+    -5989080
+   ]
+  ],
+  [
+   [
+    1427640,
+    -5988980
+   ],
+   [
+    1454580,
+    -5987560
+   ],
+   [
+    1458240,
+    -5970360
+   ]
+  ],
+  [
+   [
+    1458180,
+    -5970320
+   ],
+   [
+    1466140,
+    -5940120
+   ]
+  ],
+  [
+   [
+    1466280,
+    -5940000
+   ],
+   [
+    1501300,
+    -5907840
+   ]
+  ],
+  [
+   [
+    1501240,
+    -5907880
+   ],
+   [
+    1541480,
+    -5879520
+   ]
+  ],
+  [
+   [
+    1541760,
+    -5878960
+   ],
+   [
+    1563380,
+    -5878960
+   ]
+  ],
+  [
+   [
+    1593180,
+    -5878420
+   ],
+   [
+    1631740,
+    -5872240
+   ]
+  ],
+  [
+   [
+    1631740,
+    -5872060
+   ],
+   [
+    1665600,
+    -5867200
+   ]
+  ],
+  [
+   [
+    1665540,
+    -5867220
+   ],
+   [
+    1713360,
+    -5839600
+   ]
+  ],
+  [
+   [
+    1713300,
+    -5839720
+   ],
+   [
+    1767640,
+    -5848540
+   ]
+  ],
+  [
+   [
+    1767480,
+    -5847680
+   ],
+   [
+    1819060,
+    -5831400
+   ]
+  ],
+  [
+   [
+    1872120,
+    -5806900
+   ],
+   [
+    1899960,
+    -5787000
+   ]
+  ],
+  [
+   [
+    1900020,
+    -5786760
+   ],
+   [
+    1917760,
+    -5771260
+   ]
+  ],
+  [
+   [
+    2036600,
+    -5707180
+   ],
+   [
+    2079080,
+    -5710180
+   ]
+  ],
+  [
+   [
+    2081080,
+    -5708680
+   ],
+   [
+    2109680,
+    -5705120
+   ]
+  ],
+  [
+   [
+    2110540,
+    -5704700
+   ],
+   [
+    2135920,
+    -5702180
+   ],
+   [
+    2140300,
+    -5683300
+   ]
+  ],
+  [
+   [
+    2140420,
+    -5682660
+   ],
+   [
+    2171160,
+    -5670820
+   ],
+   [
+    2187480,
+    -5676300
+   ],
+   [
+    2207820,
+    -5660400
+   ]
+  ],
+  [
+   [
+    2209160,
+    -5661760
+   ],
+   [
+    2232360,
+    -5645940
+   ],
+   [
+    2243900,
+    -5619360
+   ]
+  ],
+  [
+   [
+    2245780,
+    -5619760
+   ],
+   [
+    2278020,
+    -5591640
+   ]
+  ],
+  [
+   [
+    2278280,
+    -5591780
+   ],
+   [
+    2285660,
+    -5585900
+   ]
+  ],
+  [
+   [
+    2285740,
+    -5585540
+   ],
+   [
+    2306400,
+    -5539160
+   ],
+   [
+    2331240,
+    -5523080
+   ]
+  ],
+  [
+   [
+    2331280,
+    -5523040
+   ],
+   [
+    2353180,
+    -5518140
+   ],
+   [
+    2360240,
+    -5500080
+   ]
+  ],
+  [
+   [
+    2360260,
+    -5500060
+   ],
+   [
+    2379860,
+    -5456340
+   ]
+  ],
+  [
+   [
+    2379000,
+    -5455160
+   ],
+   [
+    2383580,
+    -5444360
+   ]
+  ],
+  [
+   [
+    2437880,
+    -5360680
+   ],
+   [
+    2450280,
+    -5356640
+   ]
+  ],
+  [
+   [
+    2450060,
+    -5356820
+   ],
+   [
+    2507540,
+    -5336380
+   ]
+  ],
+  [
+   [
+    2514260,
+    -5335660
+   ],
+   [
+    2535260,
+    -5314180
+   ]
+  ],
+  [
+   [
+    2535640,
+    -5313880
+   ],
+   [
+    2552580,
+    -5300140
+   ]
+  ],
+  [
+   [
+    2553260,
+    -5299740
+   ],
+   [
+    2580600,
+    -5286940
+   ],
+   [
+    2596360,
+    -5267100
+   ]
+  ]
+ ],
+ "days": [
+  {
+   "n": 1,
+   "date": "2019-09-24",
+   "title": "And We're Off!",
+   "raw": "Day 1 - And We're Off!",
+   "x": 327200,
+   "y": -6267680,
+   "walked": true,
+   "country": "France",
+   "km": 29.1,
+   "movingMin": 335,
+   "elevM": 835
+  },
+  {
+   "n": 2,
+   "date": "2019-09-25",
+   "title": "After the Storm",
+   "raw": "Day 2 - After the Storm",
+   "x": 373980,
+   "y": -6279280,
+   "walked": true,
+   "country": "France",
+   "km": 35.5,
+   "movingMin": 430,
+   "elevM": 1313
+  },
+  {
+   "n": 3,
+   "date": "2019-09-26",
+   "title": "Reservoirs of Untapped Potential",
+   "raw": "Day 3 - Reservoirs of Untapped Potential",
+   "x": 409480,
+   "y": -6305180,
+   "walked": true,
+   "country": "France",
+   "km": 35.9,
+   "movingMin": 421,
+   "elevM": 1225
+  },
+  {
+   "n": 4,
+   "date": "2019-09-27",
+   "title": "On the 5th day, Dan rested",
+   "raw": "Day 4 - On the 5th day, Dan rested",
+   "x": 449820,
+   "y": -6318760,
+   "walked": true,
+   "country": "France",
+   "km": 34.6,
+   "movingMin": 431,
+   "elevM": 1621
+  },
+  {
+   "n": 5,
+   "date": "2019-03-27",
+   "title": "Köln River Run (12 miles)",
+   "raw": null,
+   "x": 449820,
+   "y": -6318760,
+   "walked": false,
+   "country": "France",
+   "km": 16.8,
+   "movingMin": 97,
+   "elevM": 93
+  },
+  {
+   "n": 6,
+   "date": "2019-09-29",
+   "title": "One way to lose them walking blues!",
+   "raw": "Day 6 - One way to lose them walking blues!",
+   "x": 485940,
+   "y": -6266780,
+   "walked": true,
+   "country": "France",
+   "coverSong": "Diamonds on the Soles of Her Shoes",
+   "km": 50,
+   "movingMin": 512,
+   "elevM": 1415,
+   "sleeve": {
+    "slug": "graceland",
+    "kind": "lyrics",
+    "song": "Diamonds on the Soles of Her Shoes",
+    "album": "Graceland",
+    "artist": "Paul Simon",
+    "note": "Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."
+   }
+  },
+  {
+   "n": 7,
+   "date": "2019-09-30",
+   "title": "Now I'm on my way",
+   "raw": "Day 7 - Now I'm on my way",
+   "x": 527900,
+   "y": -6244020,
+   "walked": true,
+   "country": "France",
+   "km": 37,
+   "movingMin": 358,
+   "elevM": 973
+  },
+  {
+   "n": 8,
+   "date": "2019-10-01",
+   "title": "Getting the Hang of It",
+   "raw": "Day 8 - Getting the Hang of It",
+   "x": 574940,
+   "y": -6238180,
+   "walked": true,
+   "country": "France",
+   "km": 35.7,
+   "movingMin": 309,
+   "elevM": 933
+  },
+  {
+   "n": 9,
+   "date": "2019-10-02",
+   "title": "Lilac!",
+   "raw": "Day 9 - Lilac!",
+   "x": 621680,
+   "y": -6233900,
+   "walked": true,
+   "country": "France",
+   "km": 36,
+   "movingMin": 268,
+   "elevM": 999
+  },
+  {
+   "n": 10,
+   "date": "2019-10-03",
+   "title": "Sure is a Hot One!",
+   "raw": "Day 10 - Sure is a Hot One!",
+   "x": 675560,
+   "y": -6211880,
+   "walked": true,
+   "country": "France",
+   "km": 50,
+   "movingMin": 425,
+   "elevM": 1365
+  },
+  {
+   "n": 11,
+   "date": "2019-10-04",
+   "title": "Short Walk to Nancy",
+   "raw": "Day 11 - Short Walk to Nancy",
+   "x": 688400,
+   "y": -6221820,
+   "walked": true,
+   "country": "France",
+   "km": 12.6,
+   "movingMin": 159,
+   "elevM": 634
+  },
+  {
+   "n": 12,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 688400,
+   "y": -6221820,
+   "walked": false,
+   "country": "France"
+  },
+  {
+   "n": 13,
+   "date": "2019-10-06",
+   "title": "The Long Canal",
+   "raw": "Day 13 (2nd half) - The Long Canal",
+   "x": 746360,
+   "y": -6222600,
+   "walked": true,
+   "country": "France",
+   "km": 21.1,
+   "movingMin": 235,
+   "elevM": 471
+  },
+  {
+   "n": 14,
+   "date": "2019-10-07",
+   "title": "Witchi Tai To",
+   "raw": "Day 14 - Witchi Tai To",
+   "x": 814120,
+   "y": -6227580,
+   "walked": true,
+   "country": "France",
+   "coverSong": "Witchi Tai To",
+   "km": 56.8,
+   "movingMin": 569,
+   "elevM": 1901,
+   "sleeve": {
+    "slug": "everything-is-everything",
+    "kind": "song",
+    "song": "Witchi Tai To",
+    "album": "Everything Is Everything",
+    "artist": "Everything Is Everything",
+    "note": "Jim Pepper wrote and sang the 1969 original with Everything Is Everything. Harpers Bizarre covered it; the sleeve is the record Pepper recorded it on."
+   }
+  },
+  {
+   "n": 15,
+   "date": "2019-10-08",
+   "title": "Tapping Into Flow",
+   "raw": "Day 15 - Tapping Into Flow",
+   "x": 887400,
+   "y": -6241680,
+   "walked": true,
+   "country": "France",
+   "km": 59.9,
+   "movingMin": 573,
+   "elevM": 1472
+  },
+  {
+   "n": 16,
+   "date": "2019-10-09",
+   "title": "Hey Moon",
+   "raw": "Day 16 & 17 - Hey Moon",
+   "x": 890740,
+   "y": -6240980,
+   "walked": true,
+   "country": "France",
+   "coverSong": "Hey Moon",
+   "km": 70.9,
+   "movingMin": 986,
+   "elevM": 3306,
+   "sleeve": {
+    "slug": "we-must-become-the-pitiless-censors-of-ourselves",
+    "kind": "song",
+    "song": "Hey Moon",
+    "album": "We Must Become the Pitiless Censors of Ourselves",
+    "artist": "John Maus",
+    "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."
+   }
+  },
+  {
+   "n": 17,
+   "date": "2019-10-09",
+   "title": "Hey Moon",
+   "raw": "Day 16 & 17 - Hey Moon",
+   "x": 968800,
+   "y": -6256800,
+   "walked": true,
+   "country": "Germany",
+   "coverSong": "Hey Moon",
+   "sleeve": {
+    "slug": "we-must-become-the-pitiless-censors-of-ourselves",
+    "kind": "song",
+    "song": "Hey Moon",
+    "album": "We Must Become the Pitiless Censors of Ourselves",
+    "artist": "John Maus",
+    "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."
+   }
+  },
+  {
+   "n": 18,
+   "date": "2019-10-11",
+   "title": "Recovery",
+   "raw": "Day 18 - Recovery",
+   "x": 1054580,
+   "y": -6224880,
+   "walked": true,
+   "country": "Germany",
+   "km": 27.8,
+   "movingMin": 325,
+   "elevM": 1609
+  },
+  {
+   "n": 19,
+   "date": "2019-10-12",
+   "title": "Easy Day Turned Hill Sprints",
+   "raw": "Day 19 - Easy Day Turned Hill Sprints",
+   "x": 1071660,
+   "y": -6201060,
+   "walked": true,
+   "country": "Germany",
+   "km": 26.6,
+   "movingMin": 232,
+   "elevM": 1309
+  },
+  {
+   "n": 20,
+   "date": "2019-10-13",
+   "title": "Scorching",
+   "raw": "Day 20 - Scorching",
+   "x": 1137180,
+   "y": -6182120,
+   "walked": true,
+   "country": "Germany",
+   "km": 53,
+   "movingMin": 558,
+   "elevM": 1515
+  },
+  {
+   "n": 21,
+   "date": "2019-10-14",
+   "title": "Slowly Does It",
+   "raw": "Day 21 - Slowly Does It",
+   "x": 1212960,
+   "y": -6168660,
+   "walked": true,
+   "country": "Germany",
+   "km": 41.3,
+   "movingMin": 508,
+   "elevM": 1453
+  },
+  {
+   "n": 22,
+   "date": "2019-10-15",
+   "title": "Negative Split",
+   "raw": "Day 22 - Negative Split",
+   "x": 1264000,
+   "y": -6135720,
+   "walked": true,
+   "country": "Germany",
+   "km": 48.8,
+   "movingMin": 565,
+   "elevM": 1354
+  },
+  {
+   "n": 23,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 1264000,
+   "y": -6135720,
+   "walked": false,
+   "country": "Germany"
+  },
+  {
+   "n": 24,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 1264000,
+   "y": -6135720,
+   "walked": false,
+   "country": "Germany"
+  },
+  {
+   "n": 25,
+   "date": "2019-10-18",
+   "title": "Another One Goes By",
+   "raw": "Day 25 - Another One Goes By",
+   "x": 1355820,
+   "y": -6098180,
+   "walked": true,
+   "country": "Germany",
+   "coverSong": "Another One Goes By",
+   "km": 59,
+   "movingMin": 513,
+   "elevM": 2194,
+   "sleeve": {
+    "slug": "another-one-goes-by",
+    "kind": "album",
+    "song": "Another One Goes By",
+    "album": "Another One Goes By",
+    "artist": "Mazarin",
+    "note": null
+   }
+  },
+  {
+   "n": 26,
+   "date": "2019-10-19",
+   "title": "One Of Those Days",
+   "raw": "Day 26 -  One Of Those Days",
+   "x": 1407820,
+   "y": -6077500,
+   "walked": true,
+   "country": "Germany",
+   "km": 29.1,
+   "movingMin": 319,
+   "elevM": 1357
+  },
+  {
+   "n": 27,
+   "date": "2019-10-20",
+   "title": "Arrival",
+   "raw": "Day 27 - Arrival",
+   "x": 1420240,
+   "y": -6026700,
+   "walked": true,
+   "country": "Austria",
+   "km": 47.8,
+   "movingMin": 439,
+   "elevM": 3468
+  },
+  {
+   "n": 28,
+   "date": "2019-10-21",
+   "title": "The Predatory Wasp",
+   "raw": "Day 28 - The Predatory Wasp",
+   "x": 1427540,
+   "y": -5989080,
+   "walked": true,
+   "country": "Austria",
+   "coverSong": "The Predatory Wasp of the Palisades Is Out to Get Us!",
+   "km": 34.5,
+   "movingMin": 365,
+   "elevM": 1540,
+   "sleeve": {
+    "slug": "illinois",
+    "kind": "song",
+    "song": "The Predatory Wasp of the Palisades Is Out to Get Us!",
+    "album": "Illinois",
+    "artist": "Sufjan Stevens",
+    "note": null
+   }
+  },
+  {
+   "n": 29,
+   "date": "2019-10-22",
+   "title": "Taking Tiger Mountain",
+   "raw": "Day 29 - Taking Tiger Mountain",
+   "x": 1458240,
+   "y": -5970360,
+   "walked": true,
+   "country": "Austria",
+   "km": 39.5,
+   "movingMin": 444,
+   "elevM": 2100,
+   "sleeve": {
+    "slug": "taking-tiger-mountain-by-strategy",
+    "kind": "album",
+    "song": null,
+    "album": "Taking Tiger Mountain (By Strategy)",
+    "artist": "Brian Eno",
+    "note": "GPS split the album title across two days. Same sleeve as “(By Strategy)”."
+   }
+  },
+  {
+   "n": 30,
+   "date": "2019-10-23",
+   "title": "(By Strategy)",
+   "raw": "Day 30 - (By Strategy)",
+   "x": 1466140,
+   "y": -5940120,
+   "walked": true,
+   "country": "Austria",
+   "km": 33.5,
+   "movingMin": 480,
+   "elevM": 2895,
+   "sleeve": {
+    "slug": "taking-tiger-mountain-by-strategy",
+    "kind": "album",
+    "song": null,
+    "album": "Taking Tiger Mountain (By Strategy)",
+    "artist": "Brian Eno",
+    "note": "Second half of the Eno title. Same sleeve as day 29."
+   }
+  },
+  {
+   "n": 31,
+   "date": "2019-10-24",
+   "title": "Business As Usual",
+   "raw": "Day 31 - Business As Usual",
+   "x": 1501300,
+   "y": -5907840,
+   "walked": true,
+   "country": "Austria",
+   "km": 44.8,
+   "movingMin": 435,
+   "elevM": 1374
+  },
+  {
+   "n": 32,
+   "date": "2019-10-25",
+   "title": "I'll Come Running To Tie Your Shoes",
+   "raw": "Day 32 - I'll Come Running To Tie Your Shoes",
+   "x": 1541480,
+   "y": -5879520,
+   "walked": true,
+   "country": "Austria",
+   "coverSong": "I'll Come Running",
+   "km": 40.6,
+   "movingMin": 353,
+   "elevM": 1233,
+   "sleeve": {
+    "slug": "another-green-world",
+    "kind": "lyrics",
+    "song": "I'll Come Running",
+    "album": "Another Green World",
+    "artist": "Brian Eno",
+    "note": "Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."
+   }
+  },
+  {
+   "n": 33,
+   "date": "2019-10-26",
+   "title": "Katy Song",
+   "raw": "Day 33 - Katy Song",
+   "x": 1563380,
+   "y": -5878960,
+   "walked": true,
+   "country": "Austria",
+   "coverSong": "Katy Song",
+   "km": 17.5,
+   "movingMin": 229,
+   "elevM": 577,
+   "sleeve": {
+    "slug": "red-house-painters",
+    "kind": "song",
+    "song": "Katy Song",
+    "album": "Red House Painters",
+    "artist": "Red House Painters",
+    "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."
+   }
+  },
+  {
+   "n": 34,
+   "date": "2019-10-27",
+   "title": "Sing Me To Sleep",
+   "raw": "Day 34 - Sing Me To Sleep",
+   "x": 1631740,
+   "y": -5872240,
+   "walked": true,
+   "country": "Austria",
+   "km": 33.6,
+   "movingMin": 309,
+   "elevM": 958
+  },
+  {
+   "n": 35,
+   "date": "2019-10-28",
+   "title": "The Process",
+   "raw": "Day 35 - The Process",
+   "x": 1665600,
+   "y": -5867200,
+   "walked": true,
+   "country": "Slovenia",
+   "km": 31,
+   "movingMin": 354,
+   "elevM": 206
+  },
+  {
+   "n": 36,
+   "date": "2019-10-29",
+   "title": "Beyond Me, Beyond You",
+   "raw": "Day 36 - Beyond Me, Beyond You",
+   "x": 1713360,
+   "y": -5839600,
+   "walked": true,
+   "country": "Slovenia",
+   "coverSong": "Daydreaming",
+   "km": 55,
+   "movingMin": 632,
+   "elevM": 1203,
+   "sleeve": {
+    "slug": "a-moon-shaped-pool",
+    "kind": "lyrics",
+    "song": "Daydreaming",
+    "album": "A Moon Shaped Pool",
+    "artist": "Radiohead",
+    "note": "Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."
+   }
+  },
+  {
+   "n": 37,
+   "date": "2019-10-30",
+   "title": "Skipper",
+   "raw": "Day 37 - Skipper",
+   "x": 1767640,
+   "y": -5848540,
+   "walked": true,
+   "country": "Slovenia",
+   "km": 50.3,
+   "movingMin": 496,
+   "elevM": 369
+  },
+  {
+   "n": 38,
+   "date": "2019-10-31",
+   "title": "Everything That Happens",
+   "raw": "Day 38 - Everything That Happens",
+   "x": 1819060,
+   "y": -5831400,
+   "walked": true,
+   "country": "Croatia",
+   "km": 44.5,
+   "movingMin": 475,
+   "elevM": 252,
+   "sleeve": {
+    "slug": "everything-that-happens-will-happen-today",
+    "kind": "album",
+    "song": null,
+    "album": "Everything That Happens Will Happen Today",
+    "artist": "David Byrne & Brian Eno",
+    "note": null
+   }
+  },
+  {
+   "n": 39,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 1819060,
+   "y": -5831400,
+   "walked": false,
+   "country": "Croatia"
+  },
+  {
+   "n": 40,
+   "date": "2019-11-02",
+   "title": "Distant Sky",
+   "raw": "Day 40 - Distant Sky",
+   "x": 1899960,
+   "y": -5787000,
+   "walked": true,
+   "country": "Croatia",
+   "coverSong": "Distant Sky",
+   "km": 31.3,
+   "movingMin": 230,
+   "elevM": 49,
+   "sleeve": {
+    "slug": "skeleton-tree",
+    "kind": "song",
+    "song": "Distant Sky",
+    "album": "Skeleton Tree",
+    "artist": "Nick Cave & the Bad Seeds",
+    "note": "Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."
+   }
+  },
+  {
+   "n": 41,
+   "date": "2019-11-03",
+   "title": "Biscuit Town",
+   "raw": "Day 41 - Biscuit Town",
+   "x": 1917760,
+   "y": -5771260,
+   "walked": true,
+   "country": "Croatia",
+   "coverSong": "Biscuit Town",
+   "km": 21.4,
+   "movingMin": 236,
+   "elevM": 56,
+   "sleeve": {
+    "slug": "the-ooz",
+    "kind": "song",
+    "song": "Biscuit Town",
+    "album": "The OOZ",
+    "artist": "King Krule",
+    "note": "Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."
+   }
+  },
+  {
+   "n": 42,
+   "date": "2019-11-04",
+   "title": "Sweet Road",
+   "raw": "Day 42 - Sweet Road",
+   "x": 2079080,
+   "y": -5710180,
+   "walked": true,
+   "country": "Croatia",
+   "coverSong": "Sweet Road",
+   "km": 41.9,
+   "movingMin": 461,
+   "elevM": 124,
+   "sleeve": {
+    "slug": "sung-tongs",
+    "kind": "song",
+    "song": "Sweet Road",
+    "album": "Sung Tongs",
+    "artist": "Animal Collective",
+    "note": null
+   }
+  },
+  {
+   "n": 43,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
+  },
+  {
+   "n": 44,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
+  },
+  {
+   "n": 45,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
+  },
+  {
+   "n": 46,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
+  },
+  {
+   "n": 47,
+   "date": "2019-11-09",
+   "title": "Eyes Open Wide",
+   "raw": "Day 47 - Eyes Open Wide",
+   "x": 2109680,
+   "y": -5705120,
+   "walked": true,
+   "country": "Croatia",
+   "km": 25,
+   "movingMin": 170,
+   "elevM": 60
+  },
+  {
+   "n": 48,
+   "date": "2019-11-10",
+   "title": "In Between Dreams",
+   "raw": "Day 48 - In Between Dreams",
+   "x": 2140300,
+   "y": -5683300,
+   "walked": true,
+   "country": "Serbia",
+   "km": 41.9,
+   "movingMin": 413,
+   "elevM": 137,
+   "sleeve": {
+    "slug": "in-between-dreams",
+    "kind": "album",
+    "song": null,
+    "album": "In Between Dreams",
+    "artist": "Jack Johnson",
+    "note": null
+   }
+  },
+  {
+   "n": 49,
+   "date": "2019-11-11",
+   "title": "Build A Rocket Boys!",
+   "raw": "Day 49 - Build A Rocket Boys!",
+   "x": 2207820,
+   "y": -5660400,
+   "walked": true,
+   "country": "Serbia",
+   "km": 69,
+   "movingMin": 770,
+   "elevM": 148,
+   "sleeve": {
+    "slug": "build-a-rocket-boys",
+    "kind": "album",
+    "song": null,
+    "album": "Build a Rocket Boys!",
+    "artist": "Elbow",
+    "note": null
+   }
+  },
+  {
+   "n": 50,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2207820,
+   "y": -5660400,
+   "walked": false,
+   "country": "Serbia"
+  },
+  {
+   "n": 51,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2207820,
+   "y": -5660400,
+   "walked": false,
+   "country": "Serbia"
+  },
+  {
+   "n": 52,
+   "date": "2019-11-14",
+   "title": "Disorder",
+   "raw": "Day 52 - Disorder",
+   "x": 2243900,
+   "y": -5619360,
+   "walked": true,
+   "country": "Serbia",
+   "coverSong": "Disorder",
+   "km": 46.7,
+   "movingMin": 382,
+   "elevM": 250,
+   "sleeve": {
+    "slug": "unknown-pleasures",
+    "kind": "song",
+    "song": "Disorder",
+    "album": "Unknown Pleasures",
+    "artist": "Joy Division",
+    "note": null
+   }
+  },
+  {
+   "n": 53,
+   "date": "2019-11-15",
+   "title": "A Quick One While She's Away",
+   "raw": "Day 53 - A Quick One While She's Away",
+   "x": 2278020,
+   "y": -5591640,
+   "walked": true,
+   "country": "Serbia",
+   "coverSong": "A Quick One, While He's Away",
+   "km": 34.8,
+   "movingMin": 364,
+   "elevM": 141,
+   "sleeve": {
+    "slug": "a-quick-one",
+    "kind": "song",
+    "song": "A Quick One, While He's Away",
+    "album": "A Quick One",
+    "artist": "The Who",
+    "note": "GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."
+   }
+  },
+  {
+   "n": 54,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2278020,
+   "y": -5591640,
+   "walked": false,
+   "country": "Serbia"
+  },
+  {
+   "n": 55,
+   "date": "2019-11-17",
+   "title": "You Can't Live There Forever",
+   "raw": "Day 55 - You Can't Live There Forever",
+   "x": 2285660,
+   "y": -5585900,
+   "walked": true,
+   "country": "Serbia",
+   "km": 7.6,
+   "movingMin": 65,
+   "elevM": 130,
+   "sleeve": {
+    "slug": "you-cant-live-there-forever",
+    "kind": "album",
+    "song": null,
+    "album": "You Can’t Live There Forever",
+    "artist": "Summer Years",
+    "note": null
+   }
+  },
+  {
+   "n": 56,
+   "date": "2019-11-18",
+   "title": "A Postcard to Nina",
+   "raw": "Day 56 - A Postcard to Nina",
+   "x": 2331240,
+   "y": -5523080,
+   "walked": true,
+   "country": "Serbia",
+   "coverSong": "A Postcard to Nina",
+   "km": 69.8,
+   "movingMin": 488,
+   "elevM": 1014,
+   "sleeve": {
+    "slug": "night-falls-over-kortedala",
+    "kind": "song",
+    "song": "A Postcard to Nina",
+    "album": "Night Falls Over Kortedala",
+    "artist": "Jens Lekman",
+    "note": null
+   }
+  },
+  {
+   "n": 57,
+   "date": "2019-11-19",
+   "title": "A Plea For Tenderness",
+   "raw": "Day 57 - A Plea For Tenderness",
+   "x": 2360240,
+   "y": -5500080,
+   "walked": true,
+   "country": "Serbia",
+   "km": 37,
+   "movingMin": 506,
+   "elevM": 121,
+   "sleeve": {
+    "slug": "a-plea-for-tenderness",
+    "kind": "album",
+    "song": null,
+    "album": "A Plea for Tenderness",
+    "artist": "Dump",
+    "note": "James McNew (Yo La Tengo). Cover Art Archive has no front; Last.fm has the pink-bunny sleeve."
+   }
+  },
+  {
+   "n": 58,
+   "date": "2019-11-20",
+   "title": "I'll Come Too",
+   "raw": "Day 58 - I'll Come Too",
+   "x": 2379860,
+   "y": -5456340,
+   "walked": true,
+   "country": "Serbia",
+   "coverSong": "I'll Come Too",
+   "km": 43.1,
+   "movingMin": 324,
+   "elevM": 485,
+   "sleeve": {
+    "slug": "assume-form",
+    "kind": "song",
+    "song": "I'll Come Too",
+    "album": "Assume Form",
+    "artist": "James Blake",
+    "note": "Assume Form was released January 2019. 13 plays in the collection."
+   }
+  },
+  {
+   "n": 59,
+   "date": "2019-11-21",
+   "title": "Dogmeat",
+   "raw": "Day 59 - Dogmeat",
+   "x": 2383580,
+   "y": -5444360,
+   "walked": true,
+   "country": "Serbia",
+   "km": 10,
+   "movingMin": 134,
+   "elevM": 38,
+   "sleeve": {
+    "slug": "dogmeat",
+    "kind": "album",
+    "song": null,
+    "album": "Dogmeat",
+    "artist": "Kid Carpet",
+    "note": null
+   }
+  },
+  {
+   "n": 60,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2383580,
+   "y": -5444360,
+   "walked": false,
+   "country": "Serbia"
+  },
+  {
+   "n": 61,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2383580,
+   "y": -5444360,
+   "walked": false,
+   "country": "Serbia"
+  },
+  {
+   "n": 62,
+   "date": "2019-11-24",
+   "title": "Walk to Niska",
+   "raw": "Day 62 - Walk to Niska",
+   "x": 2450280,
+   "y": -5356640,
+   "walked": true,
+   "country": "Serbia",
+   "km": 10.3,
+   "movingMin": 106,
+   "elevM": 70
+  },
+  {
+   "n": 63,
+   "date": "2019-11-25",
+   "title": "The Two Towers",
+   "raw": "Day 63 - The Two Towers",
+   "x": 2507540,
+   "y": -5336380,
+   "walked": true,
+   "country": "Serbia",
+   "km": 52.3,
+   "movingMin": 474,
+   "elevM": 984
+  },
+  {
+   "n": 64,
+   "date": "2019-11-26",
+   "title": "Banshee Beat",
+   "raw": "Day 64 - Banshee Beat",
+   "x": 2535260,
+   "y": -5314180,
+   "walked": true,
+   "country": "Serbia",
+   "coverSong": "Banshee Beat",
+   "km": 26,
+   "movingMin": 282,
+   "elevM": 117,
+   "sleeve": {
+    "slug": "feels",
+    "kind": "song",
+    "song": "Banshee Beat",
+    "album": "Feels",
+    "artist": "Animal Collective",
+    "note": null
+   }
+  },
+  {
+   "n": 65,
+   "date": "2019-11-27",
+   "title": "Infant Dressing Table",
+   "raw": "Day 65 - Infant Dressing Table",
+   "x": 2552580,
+   "y": -5300140,
+   "walked": true,
+   "country": "Bulgaria",
+   "coverSong": "Infant Dressing Table",
+   "km": 21.2,
+   "movingMin": 275,
+   "elevM": 419,
+   "sleeve": {
+    "slug": "here-comes-the-indian",
+    "kind": "song",
+    "song": "Infant Dressing Table",
+    "album": "Here Comes the Indian",
+    "artist": "Animal Collective",
+    "note": "Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."
+   }
+  },
+  {
+   "n": 66,
+   "date": "2019-11-28",
+   "title": "Allelujah! Don't Bend! Ascend!",
+   "raw": "Day 66 - 'Allelujah! Don't Bend! Ascend!",
+   "x": 2596360,
+   "y": -5267100,
+   "walked": true,
+   "country": "Bulgaria",
+   "km": 47.5,
+   "movingMin": 556,
+   "elevM": 182,
+   "sleeve": {
+    "slug": "allelujah-dont-bend-ascend",
+    "kind": "album",
+    "song": null,
+    "album": "’ALLELUJAH! DON’T BEND! ASCEND!",
+    "artist": "Godspeed You! Black Emperor",
+    "note": null
+   }
+  },
+  {
+   "n": 67,
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2596360,
+   "y": -5267100,
+   "walked": false,
+   "country": "Bulgaria"
+  }
+ ]
+}
