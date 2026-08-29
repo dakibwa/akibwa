@@ -561,7 +561,7 @@ const ringPaths = data.countryRings
           "Z"
       )
       .join("");
-    return `<path d="${d}" fill="${c.color}" fill-opacity=".05" stroke="${c.color}" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
+    return `<path class="country-ring" data-country="${c.name.toLowerCase()}" d="${d}" fill="${c.color}" fill-opacity=".05" stroke="${c.color}" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
   })
   .join("\n    ");
 
@@ -868,9 +868,7 @@ let cum = 0;
 let cumElev = 0;
 let cumMin = 0;
 let footDays = 0;
-const countriesSeen = new Set();
 for (const d of jsDays) {
-  countriesSeen.add(d.c);
   if (d.w) {
     cum += d.km * distanceScale;
     cumElev += d.elev;
@@ -881,7 +879,6 @@ for (const d of jsDays) {
   d.cumElev = cumElev;
   d.cumMin = cumMin;
   d.footDays = footDays;
-  d.countries = countriesSeen.size;
 }
 const countryDistances = data.countries.map((country) => ({
   name: country.name,

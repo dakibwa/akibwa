@@ -104,9 +104,9 @@ button{font:inherit;color:inherit}
   background:color-mix(in srgb,var(--bone) 10%,transparent);
 }
 .journey-progress i{
-  display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left center;
+  display:block;width:100%;height:100%;clip-path:inset(0 100% 0 0);
   background:linear-gradient(90deg,__ROUTE_GRADIENT__);
-  transition:transform .12s linear;
+  transition:clip-path .12s linear;
 }
 .walkbtn{
   background:transparent;border:1px solid color-mix(in srgb,var(--bone) 24%,transparent);color:var(--bone);cursor:pointer;
@@ -133,6 +133,16 @@ button{font:inherit;color:inherit}
 #terrain-mesh{opacity:.54;filter:blur(4px);transform:scale(1.008);transform-origin:center;transition:opacity .5s}
 .terrain-cell{stroke-width:.7;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.82}
+#rings{pointer-events:none}
+.country-ring{
+  fill-opacity:.018;stroke-opacity:.12;
+  transition:fill-opacity .65s ease,stroke-opacity .65s ease,filter .65s ease;
+}
+.country-ring.passed{fill-opacity:.025;stroke-opacity:.18}
+.country-ring.current{
+  fill-opacity:.11;stroke-opacity:.72;
+  filter:drop-shadow(0 0 7px color-mix(in srgb,var(--c-cur) 28%,transparent));
+}
 #water{pointer-events:none}
 .lake path{fill:#21495A;fill-opacity:.72;stroke:#77A6B4;stroke-opacity:.55;stroke-width:.8;vector-effect:non-scaling-stroke}
 .river{fill:none;stroke:#4E8799;stroke-opacity:.42;stroke-width:1.05;vector-effect:non-scaling-stroke;stroke-linecap:round}
@@ -144,15 +154,15 @@ button{font:inherit;color:inherit}
 .contour{
   fill:none;stroke:var(--bone);stroke-opacity:.075;stroke-width:.8;
   vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;
-  filter:drop-shadow(0 2px 0 rgba(0,0,0,.72));
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,.72));transition:stroke .65s ease,stroke-opacity .65s ease;
 }
-.contour.major{stroke-opacity:.13;stroke-width:1.1}
+.contour.major{stroke:color-mix(in srgb,var(--c-cur,var(--bone)) 54%,var(--bone));stroke-opacity:.2;stroke-width:1.1}
 .stage[data-zoom="travel"] #relief,.stage[data-zoom="close"] #relief{opacity:1}
 #mountains{pointer-events:none}
 .mountain{opacity:.36;transition:opacity .5s}
 .stage[data-zoom="travel"] .mountain,.stage[data-zoom="close"] .mountain{opacity:.82}
-.mountain path{fill:none;stroke:var(--dust);stroke-width:.9;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
-.mountain text{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;fill:var(--dust);text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:2.5px;stroke-linejoin:round}
+.mountain path{fill:none;stroke:color-mix(in srgb,var(--c-cur,var(--dust)) 48%,var(--dust));stroke-width:.9;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;transition:stroke .65s ease}
+.mountain text{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;fill:color-mix(in srgb,var(--c-cur,var(--dust)) 48%,var(--dust));text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:2.5px;stroke-linejoin:round;transition:fill .65s ease}
 #gps{filter:drop-shadow(0 2px 0 rgba(0,0,0,.62))}
 .seg{opacity:.28;transition:opacity .5s;filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.72))}
 .seg.lit{opacity:1}
@@ -232,26 +242,30 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .hud{
   position:absolute;top:60px;left:22px;z-index:7;pointer-events:none;
   font-family:var(--mono);opacity:0;transition:opacity .5s;
-  width:246px;padding:14px 16px 13px;border:1px solid var(--rule);
-  background:color-mix(in srgb,var(--peat) 82%,transparent);backdrop-filter:blur(8px);
+  width:286px;padding:12px 15px 13px 0;
+  background:linear-gradient(100deg,color-mix(in srgb,var(--peat) 94%,transparent) 0 66%,transparent 100%);
 }
 .hud.on{opacity:1}
-.hud .journey{font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--c-cur,var(--dust))}
-.hud .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:12px;font-variant-numeric:tabular-nums}
-.hud .metric{min-width:0}
-.hud .metric.primary{grid-column:1/-1;padding-bottom:11px;border-bottom:1px solid var(--rule)}
+.hud .journey{display:flex;align-items:center;gap:11px;font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur,var(--dust)) 68%,var(--bone))}
+.hud .journey::after{content:"";height:3px;flex:1;background:var(--c-cur,var(--dust));transition:background-color .65s ease}
+.hud .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:10px;border-top:1px solid color-mix(in srgb,var(--bone) 17%,transparent);border-bottom:1px solid color-mix(in srgb,var(--bone) 17%,transparent);font-variant-numeric:tabular-nums}
+.hud .metric{min-width:0;padding:10px 9px 9px}
+.hud .metric:first-child{padding-left:0}
+.hud .metric.primary{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 0 11px;border-bottom:1px solid color-mix(in srgb,var(--bone) 17%,transparent)}
+.hud .metric:nth-child(n+3){border-left:1px solid color-mix(in srgb,var(--bone) 17%,transparent)}
 .hud .metric b{display:block;color:var(--bone);font-weight:500;font-size:18px;line-height:1;letter-spacing:-.02em;white-space:nowrap}
 .hud .metric.primary b{font-size:31px;letter-spacing:-.045em}
 .hud .metric span{display:block;margin-top:5px;color:var(--dust);font-size:8.5px;line-height:1.25;letter-spacing:.13em;text-transform:uppercase}
-.hud .elev{display:grid;grid-template-columns:132px 1fr;align-items:end;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid var(--rule)}
+.hud .metric.primary span{margin:0;text-align:right}
+.hud .elev{display:grid;grid-template-columns:132px 1fr;align-items:end;gap:10px;margin-top:12px}
 .hud .elev svg{width:132px;height:28px;display:block}
 .hud #elev-area{fill:color-mix(in srgb,var(--c-cur,var(--dust)) 22%,transparent)}
 .hud #elev-line{fill:none;stroke:var(--bone);stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round}
 .hud #elev-now{fill:var(--bone)}
 .hud .altline{font-size:9px;color:var(--dust);line-height:1.2;letter-spacing:.06em;font-variant-numeric:tabular-nums;text-transform:uppercase}
 .hud .altline b{display:block;color:var(--bone);font-weight:500;font-size:14px;letter-spacing:-.02em;white-space:nowrap;text-transform:none}
-.hud .progress{height:2px;margin-top:13px;background:var(--rule);overflow:hidden}
-.hud .progress i{display:block;width:0;height:100%;background:var(--c-cur,var(--bone));transform-origin:left center;transition:background-color .3s}
+.hud .progress{height:6px;margin-top:12px;background:color-mix(in srgb,var(--bone) 11%,transparent);overflow:hidden}
+.hud .progress i{display:block;width:100%;height:100%;background:linear-gradient(90deg,__ROUTE_GRADIENT__);clip-path:inset(0 100% 0 0);transition:clip-path .12s linear}
 
 /* ---------------------------------------------------------- collections */
 .collector{
@@ -316,13 +330,15 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .plate{
   position:absolute;inset:0;z-index:8;display:grid;place-items:center;
   opacity:0;pointer-events:none;transition:opacity .3s;
-  background:color-mix(in srgb,var(--peat) 55%,transparent);
+  background:color-mix(in srgb,var(--peat) 28%,transparent);
 }
 .plate img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:.42;filter:saturate(.9);
+  opacity:.16;filter:grayscale(.34) saturate(.58) contrast(.94);transform:scale(1.035);
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 8%,rgba(0,0,0,.72) 42%,transparent 82%);
+  mask-image:radial-gradient(ellipse at center,#000 8%,rgba(0,0,0,.72) 42%,transparent 82%);
 }
-.plate::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 50%,transparent 30%,var(--peat) 100%)}
+.plate::after{content:"";position:absolute;inset:0;background:radial-gradient(72% 58% at 50% 50%,transparent 18%,color-mix(in srgb,var(--peat) 88%,transparent) 100%)}
 .plate-text{position:relative;z-index:2;text-align:center;padding:0 24px}
 .plate-count{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 55%,var(--bone))}
 .plate-name{
@@ -433,12 +449,15 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .countries li{gap:8px}
   .countries a{font-size:14px}
   .walkbtn{padding:7px 10px;font-size:10px}
-  .hud{top:58px;left:12px;width:min(226px,calc(100vw - 24px));padding:11px 13px 10px}
-  .hud .metrics{gap:9px 12px;margin-top:9px}
-  .hud .metric.primary{padding-bottom:8px}
+  .hud{top:58px;left:12px;width:min(250px,calc(100vw - 24px));padding:10px 11px 10px 0}
+  .hud .metrics{margin-top:8px}
+  .hud .metric{padding:8px 7px 7px}
+  .hud .metric.primary{padding:8px 0 9px}
   .hud .metric.primary b{font-size:26px}
   .hud .metric b{font-size:16px}
-  .hud .elev{margin-top:9px;padding-top:8px}
+  .hud .metric span{font-size:7.5px;letter-spacing:.1em}
+  .hud .elev{grid-template-columns:118px 1fr;gap:8px;margin-top:8px;padding-top:0}
+  .hud .elev svg{width:118px;height:25px}
   .hud .progress{margin-top:9px}
   .daycard{left:12px;right:12px;bottom:12px;max-width:none;padding:14px 16px 13px}
   .photo{top:190px;bottom:auto;right:12px;width:min(34vw,220px);transform:rotate(1.6deg)}
@@ -462,7 +481,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i,.hud .progress i{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -537,7 +556,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       <div class="metrics">
         <p class="metric primary"><b id="hud-km">0.0</b><span>kilometres walked</span></p>
         <p class="metric"><b id="hud-days">0</b><span>days on foot</span></p>
-        <p class="metric"><b id="hud-countries">0 / 7</b><span>countries</span></p>
         <p class="metric"><b id="hud-ascent">0</b><span>metres climbed</span></p>
         <p class="metric"><b id="hud-hours">0.0</b><span>hours moving</span></p>
       </div>
@@ -671,7 +689,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var hud = document.getElementById("hud");
   var hudKm = document.getElementById("hud-km");
   var hudDays = document.getElementById("hud-days");
-  var hudCountries = document.getElementById("hud-countries");
   var hudAscent = document.getElementById("hud-ascent");
   var hudHours = document.getElementById("hud-hours");
   var hudProgress = document.getElementById("hud-progress");
@@ -691,6 +708,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var countryMenu = document.querySelector(".country-menu");
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
+  var countryRings = Array.prototype.slice.call(document.querySelectorAll(".country-ring"));
   var journeyProgress = document.getElementById("journey-progress");
   var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
@@ -860,6 +878,8 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!country || country === lastCountryShown) return;
     lastCountryShown = country;
     var currentIndex = navLinks.findIndex(function(a){ return a.getAttribute("href") === "#" + country.toLowerCase(); });
+    stage.style.setProperty("--c-cur", DATA.colors[country]);
+    stage.setAttribute("data-country", country.toLowerCase());
     navLinks.forEach(function(a, index){
       var isCurrent = index === currentIndex;
       var isPassed = index < currentIndex;
@@ -877,6 +897,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
         countryNav.scrollTo({ left: Math.max(0, left), behavior: REDUCED ? "auto" : "smooth" });
       }
     });
+    countryRings.forEach(function(ring){
+      var slug = ring.getAttribute("data-country");
+      var ringIndex = navLinks.findIndex(function(a){ return a.getAttribute("href") === "#" + slug; });
+      ring.classList.toggle("current", ringIndex === currentIndex);
+      ring.classList.toggle("passed", ringIndex > -1 && ringIndex < currentIndex);
+    });
   }
   function updateStats(scene, wp){
     var d = wp.day;
@@ -893,11 +919,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (scene.t === "start") { km = 0; climbed = 0; moving = 0; footDays = 0; }
     setText(hudKm, km.toFixed(1));
     setText(hudDays, String(footDays));
-    setText(hudCountries, (scene.t === "start" ? 0 : d.countries) + " / " + DATA.stats.countries);
     setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
     setText(hudHours, (moving / 60).toFixed(1));
-    if (hudProgress) hudProgress.style.width = Math.max(0, Math.min(100, km / DATA.total * 100)).toFixed(2) + "%";
-    if (journeyProgressFill) journeyProgressFill.style.transform = "scaleX(" + Math.max(0, Math.min(1, km / DATA.total)).toFixed(4) + ")";
+    var routeReveal = Math.max(0, Math.min(1, km / DATA.total));
+    var routeClip = "inset(0 " + ((1 - routeReveal) * 100).toFixed(2) + "% 0 0)";
+    if (hudProgress) hudProgress.style.clipPath = routeClip;
+    if (journeyProgressFill) journeyProgressFill.style.clipPath = routeClip;
     if (journeyProgress) {
       journeyProgress.setAttribute("aria-valuenow", String(Math.round(km)));
       journeyProgress.setAttribute("aria-valuetext", Math.round(km).toLocaleString("en-GB") + " of " + DATA.total.toLocaleString("en-GB") + " kilometres");
@@ -909,8 +936,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function showDay(d){
     if (lastDayShown === d.n) return;
     lastDayShown = d.n;
-    var color = DATA.colors[d.c];
-    stage.style.setProperty("--c-cur", color);
     dcLine.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + d.c.toLowerCase();
     dcTitle.textContent = d.t || (d.w ? "—" : "rest — numbered, not walked");
     if (d.s) {
