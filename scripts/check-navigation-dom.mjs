@@ -1,14 +1,7 @@
-/* Navigation DOM regression check.
- *
- * Drives the built static export (out/) in headless Chrome over the DevTools
- * protocol with real mouse and keyboard input, and asserts the navigation
- * contract holds in the rendered page: bar containment, active-route state,
- * hover reveal/hide, rapid-sweep recovery, keyboard focus, click transitions,
- * mobile leakage, and reduced motion.
+/* Rendered regression check for Akibwa's unified visual index.
  *
  * Usage: npm run build && npm run check:navigation:dom
- * Optional: CHROME_BIN=/path/to/chrome, CHECK_NAV_URL=https://... to run
- * against a deployed origin instead of out/.
+ * Optional: CHECK_NAV_URL=https://akibwa.com to exercise the deployed site.
  */
 
 import { spawn, execSync } from "node:child_process";
@@ -20,9 +13,9 @@ import { fileURLToPath } from "node:url";
 
 const outDir = fileURLToPath(new URL("../out", import.meta.url));
 const externalOrigin = process.env.CHECK_NAV_URL || null;
-
 const failures = [];
 let currentSection = "setup";
+
 const section = (name) => {
   currentSection = name;
   process.stdout.write(`\n■ ${name}\n`);
@@ -33,34 +26,31 @@ const check = (ok, message) => {
 };
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/* ---------- static server for out/ ---------- */
-
 const mime = {
   ".html": "text/html", ".css": "text/css", ".js": "text/javascript",
   ".mjs": "text/javascript", ".json": "application/json", ".svg": "image/svg+xml",
-  ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg", ".ico": "image/x-icon", ".txt": "text/plain",
-  ".xml": "application/xml", ".woff2": "font/woff2"
+  ".webp": "image/webp", ".avif": "image/avif", ".png": "image/png",
+  ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".ico": "image/x-icon",
+  ".txt": "text/plain", ".xml": "application/xml", ".woff2": "font/woff2"
 };
 
 const startServer = () => new Promise((resolve) => {
   const server = createServer((req, res) => {
-    const path = decodeURIComponent(new URL(req.url, "http://x").pathname);
+    const path = decodeURIComponent(new URL(req.url, "http://local").pathname);
     const candidates = [
       join(outDir, path),
       join(outDir, path, "index.html"),
       join(outDir, `${path.replace(/\/$/, "")}.html`)
     ];
     for (const file of candidates) {
-      if (existsSync(file) && !file.endsWith("/") && !file.endsWith("out")) {
-        try {
-          const body = readFileSync(file);
-          res.writeHead(200, { "content-type": mime[extname(file)] ?? "application/octet-stream" });
-          res.end(body);
-          return;
-        } catch {
-          /* directory hit; try next candidate */
-        }
+      if (!existsSync(file) || file.endsWith("/") || file.endsWith("out")) continue;
+      try {
+        const body = readFileSync(file);
+        res.writeHead(200, { "content-type": mime[extname(file)] ?? "application/octet-stream" });
+        res.end(body);
+        return;
+      } catch {
+        /* Directory candidate; try the next form. */
       }
     }
     res.writeHead(404);
@@ -68,8 +58,6 @@ const startServer = () => new Promise((resolve) => {
   });
   server.listen(0, "127.0.0.1", () => resolve(server));
 });
-
-/* ---------- minimal CDP client ---------- */
 
 const findChrome = () => {
   if (process.env.CHROME_BIN) return process.env.CHROME_BIN;
@@ -82,7 +70,7 @@ const findChrome = () => {
     try {
       return execSync(`command -v ${name}`, { encoding: "utf8" }).trim();
     } catch {
-      /* keep looking */
+      /* Keep looking. */
     }
   }
   return null;
@@ -101,17 +89,23 @@ const launchChrome = (chromeBin, profileDir) => new Promise((resolve, reject) =>
     "about:blank"
   ], { stdio: ["ignore", "ignore", "pipe"] });
   let stderr = "";
+  const timer = setTimeout(
+    () => reject(new Error("Chrome DevTools endpoint did not appear within 15s")),
+    15000
+  );
   const onData = (chunk) => {
     stderr += chunk;
     const match = stderr.match(/DevTools listening on ws:\/\/127\.0\.0\.1:(\d+)/);
-    if (match) {
-      proc.stderr.off("data", onData);
-      resolve({ proc, port: Number(match[1]) });
-    }
+    if (!match) return;
+    clearTimeout(timer);
+    proc.stderr.off("data", onData);
+    resolve({ proc, port: Number(match[1]) });
   };
   proc.stderr.on("data", onData);
-  proc.on("exit", () => reject(new Error(`Chrome exited before DevTools was ready:\n${stderr}`)));
-  setTimeout(() => reject(new Error("Chrome DevTools endpoint did not appear within 15s")), 15000);
+  proc.on("exit", () => {
+    clearTimeout(timer);
+    reject(new Error(`Chrome exited before DevTools was ready:\n${stderr}`));
+  });
 });
 
 class Cdp {
@@ -119,20 +113,21 @@ class Cdp {
     this.ws = ws;
     this.nextId = 1;
     this.pending = new Map();
-    this.eventWaiters = [];
+    this.waiters = [];
     ws.addEventListener("message", (event) => {
       const message = JSON.parse(event.data);
       if (message.id && this.pending.has(message.id)) {
         const { resolve, reject } = this.pending.get(message.id);
         this.pending.delete(message.id);
         message.error ? reject(new Error(message.error.message)) : resolve(message.result);
-      } else if (message.method) {
-        this.eventWaiters = this.eventWaiters.filter((waiter) => {
-          if (waiter.method !== message.method) return true;
-          waiter.resolve(message.params);
-          return false;
-        });
+        return;
       }
+      if (!message.method) return;
+      this.waiters = this.waiters.filter((waiter) => {
+        if (waiter.method !== message.method) return true;
+        waiter.resolve(message.params);
+        return false;
+      });
     });
   }
 
@@ -154,19 +149,25 @@ class Cdp {
   waitFor(method, timeoutMs = 15000) {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error(`timed out waiting for ${method}`)), timeoutMs);
-      this.eventWaiters.push({ method, resolve: (params) => { clearTimeout(timer); resolve(params); } });
+      this.waiters.push({
+        method,
+        resolve: (params) => {
+          clearTimeout(timer);
+          resolve(params);
+        }
+      });
     });
   }
 }
-
-/* ---------- page helpers ---------- */
 
 let cdp;
 let origin;
 
 const evaluate = async (expression) => {
   const { result, exceptionDetails } = await cdp.send("Runtime.evaluate", {
-    expression, returnByValue: true, awaitPromise: true
+    expression,
+    returnByValue: true,
+    awaitPromise: true
   });
   if (exceptionDetails) {
     throw new Error(`page evaluation failed: ${exceptionDetails.text} ${exceptionDetails.exception?.description ?? ""}`);
@@ -174,261 +175,234 @@ const evaluate = async (expression) => {
   return result.value;
 };
 
-const goto = async (path) => {
+const goto = async (path = "/") => {
   const loaded = cdp.waitFor("Page.loadEventFired");
   await cdp.send("Page.navigate", { url: `${origin}${path}` });
   await loaded;
-  await sleep(350); /* hydration + initial transitions */
+  await sleep(300);
 };
 
-const setDesktop = (width = 1440) => cdp.send("Emulation.setDeviceMetricsOverride", {
-  width, height: 900, deviceScaleFactor: 1, mobile: false
+const setDesktop = (width = 1440, height = 900) => cdp.send("Emulation.setDeviceMetricsOverride", {
+  width, height, deviceScaleFactor: 1, mobile: false
 });
 const setMobile = () => cdp.send("Emulation.setDeviceMetricsOverride", {
   width: 390, height: 844, deviceScaleFactor: 2, mobile: true
 });
-
-const mouseMove = (x, y) => cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y });
-const mouseClick = async (x, y) => {
-  await mouseMove(x, y);
-  await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", x, y, button: "left", buttons: 1, clickCount: 1 });
-  await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", x, y, button: "left", buttons: 0, clickCount: 1 });
+const mouseMove = (x, y) => cdp.send("Input.dispatchMouseEvent", {
+  type: "mouseMoved", x, y
+});
+const pressEscape = async () => {
+  await cdp.send("Input.dispatchKeyEvent", {
+    type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27
+  });
+  await cdp.send("Input.dispatchKeyEvent", {
+    type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27
+  });
 };
-const pressTab = async () => {
-  await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 });
-  await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 });
-};
-
-/* Snapshot every desktop nav link and its bar. */
-const navState = () => evaluate(`
-  [...document.querySelectorAll(".nav-desktop .nav-link")].map((link) => {
-    const bar = link.querySelector(".nav-link__bar");
-    const linkRect = link.getBoundingClientRect();
-    const barRect = bar ? bar.getBoundingClientRect() : null;
-    const barStyle = bar ? getComputedStyle(bar) : null;
-    return {
-      href: (link.getAttribute("href") || "").replace(/\\/$/, ""),
-      active: link.classList.contains("active"),
-      focusVisible: link.matches(":focus-visible"),
-      link: { left: linkRect.left, right: linkRect.right, top: linkRect.top, width: linkRect.width },
-      bar: bar ? {
-        left: barRect.left, right: barRect.right, top: barRect.top,
-        width: barRect.width, height: barRect.height,
-        opacity: Number(barStyle.opacity),
-        transitionDuration: barStyle.transitionDuration
-      } : null
-    };
-  })
-`);
-
 const pollUntil = async (probe, predicate, timeoutMs = 1200) => {
   const deadline = Date.now() + timeoutMs;
   let last;
   do {
     last = await probe();
     if (predicate(last)) return last;
-    await sleep(60);
+    await sleep(40);
   } while (Date.now() < deadline);
   return last;
 };
 
-const strandedClasses = () => evaluate(
-  `document.querySelectorAll(".site-header .is-hovering, .site-header .is-pressing").length`
-);
+const pageState = () => evaluate(`(() => {
+  const cards = [...document.querySelectorAll(".deck .card")];
+  const visible = cards.filter((card) => {
+    const style = getComputedStyle(card);
+    return style.display !== "none" && card.getClientRects().length > 0;
+  });
+  const rect = (el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+  };
+  return {
+    headline: document.querySelector(".hero-sentence")?.textContent.trim().replace(/\\s+/g, " "),
+    filters: [...document.querySelectorAll(".deck-legend .rail-word")].map((button) => ({
+      text: button.textContent.trim(),
+      pressed: button.getAttribute("aria-pressed"),
+      display: getComputedStyle(button).display
+    })),
+    cards: cards.length,
+    visible: visible.length,
+    visibleKeys: [...new Set(visible.map((card) => card.dataset.key))],
+    links: document.querySelectorAll("a.card").length,
+    passive: document.querySelectorAll("div.card[role=img]").length,
+    cardButtons: document.querySelectorAll("button.card").length,
+    hasSpotlight: Boolean(document.querySelector(".spotlight")),
+    sampleStandard: rect(visible.find((card) => !card.classList.contains("card--small"))),
+    sampleSmall: rect(visible.find((card) => card.classList.contains("card--small"))),
+    squareFailures: visible.slice(0, 100).filter((card) => {
+      const r = card.getBoundingClientRect();
+      return Math.abs(r.width - r.height) > 1.5;
+    }).length,
+    inViewport: visible.filter((card) => {
+      const r = card.getBoundingClientRect();
+      return r.bottom > 0 && r.top < innerHeight;
+    }).length,
+    footer: [...document.querySelector(".page-footer-line").children]
+      .map((item) => item.textContent.trim()).join(" / "),
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    hash: location.hash
+  };
+})()`);
 
-const visibleBars = (state) => state.filter((item) => item.bar && item.bar.opacity > 0.01);
-
-/* ---------- test sections ---------- */
-
-const routes = [
-  { path: "/projects/", href: "/projects" },
-  { path: "/professional/", href: "/professional" },
-  { path: "/about/", href: "/about" },
-  { path: "/contact/", href: "/contact" }
-];
-
-const checkContainmentAndActive = async (width) => {
-  section(`containment + active state at ${width}px`);
-  await setDesktop(width);
-  for (const route of routes) {
-    await goto(route.path);
-    const state = await navState();
-    check(state.length === 4, `${route.path}: renders 4 desktop links`);
-    const active = state.filter((item) => item.active);
-    check(active.length === 1 && active[0].href === route.href,
-      `${route.path}: exactly one active link and it is ${route.href}`);
-    for (const item of state) {
-      if (!item.bar) {
-        check(false, `${route.path}: ${item.href} has a bar element`);
-        continue;
-      }
-      const contained = Math.abs(item.bar.left - item.link.left) <= 1.5
-        && Math.abs(item.bar.right - item.link.right) <= 1.5
-        && Math.abs(item.bar.height - 6) <= 0.5
-        && item.bar.top > item.link.top
-        && item.bar.top - item.link.top < 20;
-      check(contained, `${route.path}: ${item.href} bar sits inside its own link (` +
-        `dx ${Math.abs(item.bar.left - item.link.left).toFixed(1)}/${Math.abs(item.bar.right - item.link.right).toFixed(1)}, h ${item.bar.height})`);
-      check(item.bar.width < item.link.width + 3, `${route.path}: ${item.href} bar is not wider than its link`);
-      const shouldShow = item.active;
-      check(shouldShow ? item.bar.opacity > 0.99 : item.bar.opacity < 0.01,
-        `${route.path}: ${item.href} bar ${shouldShow ? "visible (active)" : "hidden"} [opacity ${item.bar.opacity}]`);
-    }
-  }
+const selectFilter = async (name) => {
+  await evaluate(`(() => {
+    const button = [...document.querySelectorAll(".deck-legend .rail-word")]
+      .find((item) => item.textContent.trim() === ${JSON.stringify(name)});
+    if (!button) throw new Error("missing filter: " + ${JSON.stringify(name)});
+    button.click();
+  })()`);
+  await sleep(80);
 };
 
-const linkCenter = (item) => ({
-  x: (item.link.left + item.link.right) / 2,
-  y: item.link.top + 30
-});
-
-const checkHover = async () => {
-  section("hover reveal and hide (on /about/)");
+const checkDesktop = async () => {
+  section("desktop structure and semantics");
   await setDesktop();
-  await goto("/about/");
-  let state = await navState();
-  const projects = state.find((item) => item.href === "/projects");
-  const target = linkCenter(projects);
-
-  await mouseMove(target.x, target.y);
-  state = await pollUntil(navState, (s) => s.find((i) => i.href === "/projects").bar.opacity > 0.99);
-  check(state.find((i) => i.href === "/projects").bar.opacity > 0.99, "hovering Projects reveals its bar");
-  check(state.find((i) => i.href === "/about").bar.opacity > 0.99, "active About bar stays visible during hover");
-  check(visibleBars(state).length === 2, "only the active and hovered bars are visible");
-
-  await mouseMove(720, 500);
-  state = await pollUntil(navState, (s) => s.find((i) => i.href === "/projects").bar.opacity < 0.01);
-  check(state.find((i) => i.href === "/projects").bar.opacity < 0.01, "leaving Projects hides its bar completely");
-  check(state.find((i) => i.href === "/about").bar.opacity > 0.99, "active About bar survives pointer exit");
-
-  /* interrupt: enter then leave mid-transition */
-  await mouseMove(target.x, target.y);
-  await sleep(60);
-  await mouseMove(720, 500);
-  state = await pollUntil(navState, (s) => visibleBars(s).length === 1);
-  check(visibleBars(state).length === 1 && visibleBars(state)[0].href === "/about",
-    "interrupted hover settles back to only the active bar");
-};
-
-const checkRapidSweep = async () => {
-  section("rapid sweep (on /professional/)");
-  await setDesktop();
-  await goto("/professional/");
-  const state = await navState();
-  const first = state[0];
-  const last = state[state.length - 1];
-  const y = first.link.top + 30;
-  const from = first.link.left - 25;
-  const to = last.link.right + 25;
-
-  for (let pass = 0; pass < 6; pass++) {
-    const [start, end] = pass % 2 === 0 ? [from, to] : [to, from];
-    for (let step = 0; step <= 12; step++) {
-      await mouseMove(start + ((end - start) * step) / 12, y);
-    }
-  }
-  await mouseMove(720, 500);
-  const settled = await pollUntil(navState, (s) => visibleBars(s).length === 1, 1500);
-  const visible = visibleBars(settled);
-  check(visible.length === 1 && visible[0].href === "/professional",
-    `after 6 fast sweeps only the active bar remains [visible: ${visible.map((v) => v.href).join(", ")}]`);
-  check((await strandedClasses()) === 0, "no is-hovering/is-pressing classes stranded in the header");
-};
-
-const checkKeyboardFocus = async () => {
-  section("keyboard focus (on /projects/)");
-  await setDesktop();
-  await goto("/projects/");
-  let focusedNav = null;
-  for (let presses = 0; presses < 20 && !focusedNav; presses++) {
-    await pressTab();
-    const state = await navState();
-    focusedNav = state.find((item) => item.focusVisible && !item.active) ?? null;
-  }
-  check(Boolean(focusedNav), "tabbing reaches an inactive desktop nav link with :focus-visible");
-  if (focusedNav) {
-    const state = await pollUntil(navState,
-      (s) => s.find((i) => i.href === focusedNav.href).bar.opacity > 0.99);
-    check(state.find((i) => i.href === focusedNav.href).bar.opacity > 0.99,
-      `keyboard focus reveals the ${focusedNav.href} bar`);
-    check(state.find((i) => i.href === "/projects").bar.opacity > 0.99,
-      "active bar stays visible while a sibling is focused");
-  }
-};
-
-const checkClickTransition = async () => {
-  section("click transition /about/ → /contact/");
-  await setDesktop();
-  await goto("/about/");
-  const state = await navState();
-  const contact = state.find((item) => item.href === "/contact");
-  const target = linkCenter(contact);
-  await mouseClick(target.x, target.y);
-  const landed = await pollUntil(
-    () => evaluate("location.pathname"),
-    (pathname) => pathname.startsWith("/contact"),
-    4000
+  await goto("/");
+  const state = await pageState();
+  check(
+    state.headline === "I’m Daniel — this is what I’ve made, done and loved.",
+    `static headline is exact [${state.headline}]`
   );
-  check(String(landed).startsWith("/contact"), `click navigates to /contact/ [pathname ${landed}]`);
-  let after = await pollUntil(navState, (s) => {
-    const item = s.find((i) => i.href === "/contact");
-    return item && item.active && item.bar.opacity > 0.99;
-  }, 3000);
-  check(after.find((i) => i.href === "/contact")?.active === true, "Contact link becomes active");
-  check(after.find((i) => i.href === "/contact")?.bar.opacity > 0.99, "Contact bar visible after click with no gap");
+  check(
+    state.filters.map((item) => item.text).join(" / ") ===
+      "Everything / Projects / Career / Music / Films / Games / TV",
+    `seven plain filters render in order [${state.filters.map((item) => item.text).join(" / ")}]`
+  );
+  check(
+    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Everything",
+    "Everything is the sole initial filter"
+  );
+  check(state.cards > 300, `the full visual archive renders [${state.cards} cards]`);
+  check(state.links > 0, `genuine destinations render as links [${state.links}]`);
+  check(state.passive > state.links, `taste and career cards remain passive visual objects [${state.passive}]`);
+  check(state.cardButtons === 0, "no wall card renders as a button");
+  check(state.hasSpotlight === false, "no modal viewer exists");
+  check(state.squareFailures === 0, "the sampled cards are square");
+  check(state.sampleStandard.width > state.sampleSmall.width * 1.9, "standard cards are exactly the larger of two scales");
+  check(state.sampleStandard.width < state.sampleSmall.width * 2.2, "the two scales share one grid unit");
+  check(state.inViewport >= 30, `the first screen stays dense [${state.inViewport} cards]`);
+  check(state.footer === "Manchester / Email / X / Instagram", `footer is one plain line [${state.footer}]`);
+  check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
 
-  await mouseMove(720, 500);
-  after = await pollUntil(navState, (s) => visibleBars(s).length === 1, 1500);
-  const visible = visibleBars(after);
-  check(visible.length === 1 && visible[0].href === "/contact",
-    "after pointer exit only the new active bar remains");
-  check((await strandedClasses()) === 0, "no interaction classes stranded after the click");
+  const linkSemantics = await evaluate(`[...document.querySelectorAll("a.card")].every((card) =>
+    Boolean(card.getAttribute("href")) &&
+    Boolean(card.getAttribute("aria-label")) &&
+    Boolean(card.querySelector(".card-label"))
+  )`);
+  check(linkSemantics, "every interactive card has a destination, name, and visible-label element");
+};
+
+const checkLinkHover = async () => {
+  section("restrained link feedback");
+  await setDesktop();
+  await goto("/");
+  const before = await evaluate(`(() => {
+    const card = document.querySelector("a.card");
+    const r = card.getBoundingClientRect();
+    return {
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2,
+      opacity: Number(getComputedStyle(card.querySelector(".card-label")).opacity)
+    };
+  })()`);
+  check(before.opacity === 0, "linked-card label starts quiet on desktop");
+  await mouseMove(before.x, before.y);
+  const hovered = await pollUntil(
+    () => evaluate(`(() => {
+      const card = document.querySelector("a.card");
+      return {
+        opacity: Number(getComputedStyle(card.querySelector(".card-label")).opacity),
+        transform: getComputedStyle(card).transform,
+        shadow: getComputedStyle(card).boxShadow
+      };
+    })()`),
+    (value) => value.opacity > 0.99
+  );
+  check(hovered.opacity > 0.99, "hover reveals the linked card title");
+  check(hovered.transform === "none", "hover does not tilt, lift, or scale the card");
+  check(hovered.shadow === "none", "hover does not add a theatrical shadow");
+  await mouseMove(1200, 40);
+  const settled = await pollUntil(
+    () => evaluate(`Number(getComputedStyle(document.querySelector("a.card .card-label")).opacity)`),
+    (opacity) => opacity < 0.01
+  );
+  check(settled < 0.01, "the label leaves cleanly after hover");
+};
+
+const checkFilters = async () => {
+  section("plain instant filtering");
+  await setDesktop();
+  await goto("/");
+  await selectFilter("Music");
+  let state = await pageState();
+  check(state.hash === "#music", `Music owns the shareable hash [${state.hash}]`);
+  check(state.visibleKeys.length === 1 && state.visibleKeys[0] === "music", "Music shows only music cards");
+  check(
+    state.filters.every((item) => item.display !== "none"),
+    "all filter words remain visible while a filter is active"
+  );
+  check(
+    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Music",
+    "Music is the sole pressed word"
+  );
+
+  await selectFilter("Projects");
+  state = await pageState();
+  check(state.hash === "#projects", `Projects owns the merged hash [${state.hash}]`);
+  check(
+    state.visibleKeys.every((key) => key === "sites" || key === "life"),
+    `Projects merges project and life cards [${state.visibleKeys.join(", ")}]`
+  );
+  check(state.visibleKeys.includes("life"), "the former Life cards are present inside Projects");
+
+  await pressEscape();
+  await sleep(80);
+  state = await pageState();
+  check(state.hash === "", "Escape returns to the unfiltered wall");
+  check(
+    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Everything",
+    "Everything is restored without a second interaction mode"
+  );
+  check(state.visible === state.cards, "all cards return immediately");
 };
 
 const checkMobile = async () => {
-  section("mobile leakage at 390px");
+  section("compact mobile wall at 390px");
   await setMobile();
-  await goto("/projects/");
-  const desktopHidden = await evaluate(
-    `getComputedStyle(document.querySelector(".nav-desktop")).display`
+  await goto("/");
+  const state = await pageState();
+  check(state.squareFailures === 0, "mobile cards preserve square artwork");
+  check(
+    state.sampleStandard.width >= 92 && state.sampleStandard.width <= 104,
+    `standard cards stay compact [${state.sampleStandard.width.toFixed(1)}px]`
   );
-  check(desktopHidden === "none", "desktop navigation is display:none");
-  const barRects = await evaluate(
-    `[...document.querySelectorAll(".nav-link__bar")].filter((bar) => bar.getClientRects().length > 0).length`
+  check(
+    state.sampleSmall.width >= 44 && state.sampleSmall.width <= 51,
+    `small cards retain useful resolution [${state.sampleSmall.width.toFixed(1)}px]`
   );
-  check(barRects === 0, "no desktop patterned bar renders a box at mobile width");
-  const footerVisible = await evaluate(`(() => {
-    const footer = document.querySelector(".page-footer");
-    if (!footer) return false;
-    const style = getComputedStyle(footer);
-    return style.display !== "none" && footer.getClientRects().length > 0;
+  check(state.inViewport >= 24, `at least 24 cards fit in the first mobile screen [${state.inViewport}]`);
+  check(state.overflow <= 1, `mobile has no horizontal overflow [${state.overflow}px]`);
+
+  const touch = await evaluate(`(() => {
+    const label = document.querySelector("a.card .card-label");
+    const nav = document.querySelector(".deck-legend");
+    const footer = document.querySelector(".page-footer-line").getBoundingClientRect();
+    return {
+      labelOpacity: Number(getComputedStyle(label).opacity),
+      navHeight: nav.getBoundingClientRect().height,
+      footerInside: footer.left >= 0 && footer.right <= innerWidth + 1
+    };
   })()`);
-  check(footerVisible, "shared footer is visible on mobile");
-
-  await evaluate(`document.querySelector(".nav-mobile-toggle").click()`);
-  const opened = await pollUntil(
-    () => evaluate(`document.querySelector(".nav-mobile").classList.contains("is-open")`),
-    (open) => open === true
-  );
-  check(opened === true, "menu opens");
-  const openBarRects = await evaluate(
-    `[...document.querySelectorAll(".nav-link__bar")].filter((bar) => bar.getClientRects().length > 0).length`
-  );
-  check(openBarRects === 0, "desktop bars stay absent while the menu is open");
-
-  await evaluate(`[...document.querySelectorAll(".nav-mobile .nav-link")].find((a) => (a.getAttribute("href") || "").replace(/\\/$/, "") === "/about").click()`);
-  const landed = await pollUntil(
-    () => evaluate("location.pathname"),
-    (pathname) => pathname.startsWith("/about"),
-    4000
-  );
-  check(String(landed).startsWith("/about"), "tapping a row navigates immediately");
-  const closed = await pollUntil(
-    () => evaluate(`document.querySelector(".nav-mobile").classList.contains("is-open")`),
-    (open) => open === false,
-    1500
-  );
-  check(closed === false, "menu closes with the navigation, not on a delayed timer");
+  check(touch.labelOpacity > 0.99, "linked titles are permanently legible without hover");
+  check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
+  check(touch.footerInside, "the footer line stays inside the mobile frame");
 };
 
 const checkReducedMotion = async () => {
@@ -437,18 +411,20 @@ const checkReducedMotion = async () => {
     features: [{ name: "prefers-reduced-motion", value: "reduce" }]
   });
   await setDesktop();
-  await goto("/about/");
-  const state = await navState();
-  const about = state.find((item) => item.href === "/about");
-  check(about.bar.opacity > 0.99, "active bar still visible under reduced motion");
-  const zeroed = state.every((item) => item.bar.transitionDuration.split(",").every((part) => parseFloat(part) === 0));
-  check(zeroed, `bar transition durations are zero [${about.bar.transitionDuration}]`);
-  const inactiveHidden = state.filter((item) => !item.active).every((item) => item.bar.opacity < 0.01);
-  check(inactiveHidden, "inactive bars remain hidden under reduced motion");
-  await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "" }] });
+  await goto("/");
+  const durations = await evaluate(`(() => {
+    const label = document.querySelector("a.card .card-label");
+    const card = document.querySelector("a.card");
+    return [getComputedStyle(label).transitionDuration, getComputedStyle(card).transitionDuration];
+  })()`);
+  check(
+    durations.every((value) => value.split(",").every((part) => parseFloat(part) === 0)),
+    `index transitions are zero [${durations.join(" / ")}]`
+  );
+  await cdp.send("Emulation.setEmulatedMedia", {
+    features: [{ name: "prefers-reduced-motion", value: "" }]
+  });
 };
-
-/* ---------- run ---------- */
 
 const main = async () => {
   if (!externalOrigin && !existsSync(join(outDir, "index.html"))) {
@@ -462,9 +438,9 @@ const main = async () => {
   }
 
   const watchdog = setTimeout(() => {
-    console.error("\nNavigation DOM check timed out after 180s.");
+    console.error("\nNavigation DOM check timed out after 120s.");
     process.exit(1);
-  }, 180000);
+  }, 120000);
   watchdog.unref();
 
   let server = null;
@@ -474,14 +450,14 @@ const main = async () => {
     server = await startServer();
     origin = `http://127.0.0.1:${server.address().port}`;
   }
-  process.stdout.write(`Checking navigation against ${origin}\n`);
+  process.stdout.write(`Checking Akibwa index against ${origin}\n`);
 
-  const profileDir = mkdtempSync(join(tmpdir(), "nav-check-"));
+  const profileDir = mkdtempSync(join(tmpdir(), "akibwa-index-check-"));
   const { proc, port } = await launchChrome(chromeBin, profileDir);
 
   try {
     let pageTarget = null;
-    for (let attempt = 0; attempt < 20 && !pageTarget; attempt++) {
+    for (let attempt = 0; attempt < 20 && !pageTarget; attempt += 1) {
       const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
       pageTarget = targets.find((target) => target.type === "page") ?? null;
       if (!pageTarget) await sleep(150);
@@ -491,26 +467,23 @@ const main = async () => {
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
 
-    await checkContainmentAndActive(1440);
-    await checkContainmentAndActive(1024);
-    await checkHover();
-    await checkRapidSweep();
-    await checkKeyboardFocus();
-    await checkClickTransition();
+    await checkDesktop();
+    await checkLinkHover();
+    await checkFilters();
     await checkMobile();
     await checkReducedMotion();
   } finally {
-    try { proc.kill(); } catch { /* already gone */ }
+    try { proc.kill(); } catch { /* Already gone. */ }
     server?.close();
-    try { rmSync(profileDir, { recursive: true, force: true }); } catch { /* best effort */ }
+    try { rmSync(profileDir, { recursive: true, force: true }); } catch { /* Best effort. */ }
   }
 
   if (failures.length > 0) {
-    console.error(`\n${failures.length} navigation check(s) failed:`);
+    console.error(`\n${failures.length} index check(s) failed:`);
     for (const failure of failures) console.error(`  - ${failure}`);
     process.exit(1);
   }
-  console.log("\nNavigation DOM checks passed.");
+  console.log("\nAkibwa index DOM checks passed.");
   process.exit(0);
 };
 

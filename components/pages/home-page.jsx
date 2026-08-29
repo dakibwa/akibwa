@@ -1,95 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
-import { HeroCycleWord, HeroFlipName } from "@/components/hero-word-cycle";
-import { InkPaper } from "@/components/ink-paper";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
-import { deck, sites, life, games, tv, sets, graceland, instagramUrl } from "@/components/deck-data";
-
-const nf = new Intl.NumberFormat("en-GB");
+import { deck, sites, life, games, tv, sets, graceland } from "@/components/deck-data";
 
 /* Every set counts something, and its title card says how many. Counted off the
    arrays at render rather than written into the data, so the figure on the wall
    cannot outlive what is behind it. */
 
-/* The whole site is one wall of identically sized cards. Every card shows one
-   thing face up and turns over to say how — hover on a pointer, tap on touch. */
-/* Payload lives on the element so the spotlight can walk to a neighbour
-   without re-rendering the wall. The deck is inert while a card is open,
-   so the next card cannot be clicked; this is the door. */
-const CARD_PAYLOAD = new WeakMap();
-
-function walkableCards(deck) {
-  return [...deck.querySelectorAll(".card.is-lit")].filter((el) => {
-    if (el.hidden) return false;
-    if (getComputedStyle(el).display === "none") return false;
-    return CARD_PAYLOAD.has(el);
-  });
-}
-
-/* Degrees at the corner. Steeper than a thumbnail hover, quieter than the
-   album wall's 30° — these tiles are larger, so the same angle over-reads. */
-const TILT = 7;
-const PRESS_TILT = 6;
-const FOIL_PROPS = [
-  "--pointer-x",
-  "--pointer-y",
-  "--background-x",
-  "--background-y",
-  "--pointer-from-center",
-  "--tilt-x",
-  "--tilt-y",
-  "--art-x",
-  "--art-y"
-];
-
-function applyFoil(el, px, py) {
-  el.style.setProperty("--tilt-x", `${(TILT * (1 - 2 * py)).toFixed(2)}deg`);
-  el.style.setProperty("--tilt-y", `${(TILT * (2 * px - 1)).toFixed(2)}deg`);
-  el.style.setProperty("--pointer-x", `${(px * 100).toFixed(1)}%`);
-  el.style.setProperty("--pointer-y", `${(py * 100).toFixed(1)}%`);
-  el.style.setProperty("--background-x", `${(37 + px * 26).toFixed(1)}%`);
-  el.style.setProperty("--background-y", `${(33 + py * 34).toFixed(1)}%`);
-  const away = Math.min(1, Math.hypot(px - 0.5, py - 0.5) * 2);
-  el.style.setProperty("--pointer-from-center", away.toFixed(3));
-  /* The face moves against the hand by only a few pixels: enough to separate
-     print from card stock, not enough to feel like an image panning. */
-  el.style.setProperty("--art-x", `${((0.5 - px) * 5).toFixed(2)}px`);
-  el.style.setProperty("--art-y", `${((0.5 - py) * 5).toFixed(2)}px`);
-}
-
-function clearFoil(el) {
-  if (!el) return;
-  for (const prop of FOIL_PROPS) el.style.removeProperty(prop);
-}
-
 const PROJECTS_LENS = ["sites", "life"];
 const CAREER_LENS = ["jobs"];
-const TASTE = ["music", "films", "games", "tv"];
-
-/* The sentence's three buckets. The legend names every collection; these
-   three are the headline's pulse, and a shortcut into the wall. #projects
-   opens both the things made and the life pieces; #taste opens the four taste
-   collections. Existing collection hashes resolve to their merged menu item. */
-const BUCKETS = [
-  { id: "projects", label: "projects", accent: "27, 148, 125", lens: PROJECTS_LENS },
-  { id: "career", label: "career", accent: "203, 66, 94", lens: CAREER_LENS },
-  { id: "taste", label: "taste", accent: "115, 112, 255", lens: TASTE }
-];
-
-function bucketIdForLens(activeLens) {
-  if (!activeLens) return null;
-  return BUCKETS.find((bucket) => bucket.lens.some((id) => activeLens.includes(id)))?.id ?? null;
-}
 
 function resolveLens(hash) {
   if (!hash) return null;
-  const bucket = BUCKETS.find((entry) => entry.id === hash);
-  if (bucket) return { held: bucket.id, lens: bucket.lens };
-  const item = LEGEND.find((entry) => entry.id === hash || entry.lens.includes(hash));
-  if (item) return { held: item.id, lens: item.lens };
+  if (hash === "everything") return null;
+  const item = LEGEND.find((entry) => entry.id === hash || entry.lens?.includes(hash));
+  if (item) return { id: item.id, lens: item.lens };
   return null;
 }
 
@@ -100,236 +27,53 @@ function lensFromLocation() {
 
 function lensHref(id) {
   const url = new URL(window.location.href);
-  return `${url.pathname}${url.search}${id ? `#${id}` : ""}`;
+  url.searchParams.delete("set");
+  const search = url.searchParams.toString();
+  return `${url.pathname}${search ? `?${search}` : ""}${id ? `#${id}` : ""}`;
 }
 
-function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace, back, held, dim, size, onActivate }) {
-  const payload = { suit, keySet, ground, accent, crop, label, face, spotFace, back, href };
+function Card({ suit, keySet, ground, accent, crop, href, label, face, held, dim, size }) {
   const props = {
-    className: `card card--${suit}${size === "small" ? " card--small" : ""}${size === "grand" ? " card--grand" : ""}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${size === "small" ? " card--small" : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
-    /* The key: which legend word this card answers to. Its colour is worn
-       as the card's baseline, so a blended wall still reads at a glance. */
     "data-key": keySet ?? suit,
-    "aria-label": label,
     hidden: held || undefined,
     style:
       ground || accent || crop
         ? { "--ground": ground, "--accent": accent, "--crop": crop }
         : undefined
   };
-  /* Every card steps forward when pressed — one grammar for the whole wall.
-     A card with somewhere to go carries its door into the spotlight. */
-  return (
-    <button
-      {...props}
-      type="button"
-      ref={(el) => {
-        if (el) CARD_PAYLOAD.set(el, payload);
-      }}
-      onClick={(event) => onActivate?.(payload, event.currentTarget)}
-    >
+
+  const content = (
+    <>
       <span className="card-face">{face}</span>
-      <span className="card-back">{back}</span>
-      <span className="card-sheen" aria-hidden="true" />
-    </button>
+      {href ? (
+        <span className="card-label" aria-hidden="true">
+          <span>{label}</span>
+          <span className="card-label-arrow">↗</span>
+        </span>
+      ) : null}
+    </>
   );
-}
 
-/* The spotlight: the picked card, played large in the middle of a quiet,
-   stilled page. It appears in place rather than flying out of the wall; the
-   click already establishes where it came from, so extra travel is theatre. */
-function Spotlight({ lit, onClose, onStep }) {
-  const closeRef = useRef(null);
-  const cardRef = useRef(null);
-  const [entered, setEntered] = useState(false);
-  const [closing, setClosing] = useState(false);
-  const closingRef = useRef(false);
-  const closeTimerRef = useRef(0);
+  if (href) {
+    const external = /^https?:/.test(href);
+    return (
+      <a
+        {...props}
+        href={href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+        aria-label={label}
+      >
+        {content}
+      </a>
+    );
+  }
 
-  /* Closing is the same quiet dissolve as opening. There is no return flight:
-     restoring focus to the originating card is enough to preserve context. */
-  const close = useCallback(() => {
-    if (closingRef.current) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      onClose();
-      return;
-    }
-    closingRef.current = true;
-    setClosing(true);
-    setEntered(false);
-    window.clearTimeout(closeTimerRef.current);
-    closeTimerRef.current = window.setTimeout(onClose, 150);
-  }, [onClose]);
-
-  useEffect(() => {
-    const onKey = (event) => {
-      if (event.key === "Escape") {
-        close();
-        return;
-      }
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        onStep?.(1);
-        return;
-      }
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        onStep?.(-1);
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [close, onStep]);
-
-  useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
-
-  /* Focus has to come with the card. Scroll was locked here but focus was
-     not, so a keyboard visitor who opened a card tabbed straight out of the
-     dialog into hundreds of invisible cards behind an 88%-opaque scrim —
-     measured: eight presses, eight landings outside. The close button is the
-     one control that is always present, so it takes the first focus. */
-  useEffect(() => {
-    closeRef.current?.focus({ preventScroll: true });
-  }, []);
-
-  /* Keep Tab inside the dialog. Nothing behind it is reachable while it is
-     open, and cycling is what tells a keyboard user they are enclosed. */
-  useEffect(() => {
-    const onTab = (event) => {
-      if (event.key !== "Tab") return;
-      const root = closeRef.current?.closest(".spotlight");
-      if (!root) return;
-      const stops = root.querySelectorAll("button, a[href]");
-      if (!stops.length) return;
-      const first = stops[0];
-      const last = stops[stops.length - 1];
-      const active = document.activeElement;
-      if (!root.contains(active)) {
-        event.preventDefault();
-        first.focus({ preventScroll: true });
-        return;
-      }
-      if (event.shiftKey && active === first) {
-        event.preventDefault();
-        last.focus({ preventScroll: true });
-      } else if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus({ preventScroll: true });
-      }
-    };
-    document.addEventListener("keydown", onTab);
-    return () => document.removeEventListener("keydown", onTab);
-  }, []);
-
-  /* The wall's faces load lazily, and a face replayed inside this overlay
-     keeps that attribute — where, mid-FLIP, the lazy gate never fires and the
-     image simply never fetches. The spotlight is the one place the visitor
-     has explicitly asked for the picture, so everything in it loads now —
-     and the full-size layer announces itself the moment it has pixels. */
-  useLayoutEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    card.querySelectorAll('img[loading="lazy"]').forEach((img) => {
-      img.loading = "eager";
-    });
-    card.querySelectorAll(".card-face--hi img").forEach((img) => {
-      const ready = () => img.classList.add("is-ready");
-      if (img.complete && img.naturalWidth > 0) ready();
-      else img.addEventListener("load", ready, { once: true });
-    });
-  }, [lit]);
-
-  useLayoutEffect(() => {
-    /* A step inside the spotlight swaps the face in place, without replaying
-       the entrance. On first open, one painted frame establishes opacity: 0
-       before the overlay dissolves in. */
-    if (lit.travel === false) {
-      setEntered(true);
-      return;
-    }
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setEntered(true);
-      return;
-    }
-    const frame = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(frame);
-  }, [lit]);
-
-  const { card } = lit;
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={card.label}
-      className={`spotlight${entered ? " is-entered" : ""}${closing ? " is-closing" : ""}`}
-      onClick={(event) =>
-        (event.target === event.currentTarget ||
-          event.target.classList?.contains("spotlight-scrim")) &&
-        close()
-      }
-    >
-      {/* The paper thickens on its own layer: fading a pre-blurred scrim is
-          compositor work, where animating the blur radius itself re-blurred
-          the whole viewport every frame. */}
-      <span className="spotlight-scrim" aria-hidden="true" />
-      <figure className="spotlight-figure">
-        <div
-          ref={cardRef}
-          className={`card card--${card.suit} card--spotlight`}
-          data-suit={card.suit}
-          style={
-            card.ground || card.accent || card.crop
-              ? { "--ground": card.ground, "--accent": card.accent, "--crop": card.crop }
-              : undefined
-          }
-        >
-          {/* The wall face opens the spotlight — its file is already in
-              cache, so the card is never blank — and the full-size artwork
-              fades in over it. Without the base layer, suits whose large
-              face is a fresh fetch opened dark and popped in late, while
-              the sleeves arrived instantly: one suit seemed to animate
-              differently from the rest. */}
-          <span className="card-face">{card.face}</span>
-          {card.spotFace ? (
-            <span className="card-face card-face--hi" aria-hidden="true">
-              {card.spotFace}
-            </span>
-          ) : null}
-        </div>
-        {/* The caption never travels and never scales: it sits at its final
-            place and arrives, like a label set down under a poster that has
-            just been hung. */}
-        <figcaption className="spotlight-caption" data-suit={card.suit}>
-          {card.back}
-          {card.href ? (
-            <a
-              className="spotlight-visit"
-              href={card.href}
-              target={/^https?:/.test(card.href) ? "_blank" : undefined}
-              rel={/^https?:/.test(card.href) ? "noopener noreferrer" : undefined}
-            >
-              Open it ↗
-            </a>
-          ) : null}
-          {lit.total > 1 ? (
-            <div className="spotlight-steps">
-              <button type="button" onClick={() => onStep?.(-1)} aria-label="Previous card">
-                ←
-              </button>
-              <span>
-                {nf.format(lit.index + 1)} / {nf.format(lit.total)}
-              </span>
-              <button type="button" onClick={() => onStep?.(1)} aria-label="Next card">
-                →
-              </button>
-            </div>
-          ) : null}
-        </figcaption>
-      </figure>
-      <button type="button" ref={closeRef} className="spotlight-close" onClick={close} aria-label="Close">
-        Close
-      </button>
+    <div {...props} role="img" aria-label={label}>
+      {content}
     </div>
   );
 }
@@ -357,281 +101,15 @@ function blend(lists) {
     .map((dealt) => dealt.card);
 }
 
-/* The sentence has one moving noun — projects, career, taste — a pulse and
-   a shortcut into those three buckets. The six collections sit immediately
-   beneath it as the menu. Isolated here so the cycle cannot re-render the wall. */
-function HeroSentence({ heldBucket, openBucket }) {
+/* The interface makes one promise and keeps it still: the wall is Daniel.
+   The filters beneath it are the only controls the archive needs. */
+function HeroSentence() {
   return (
     <h1 className="hero-sentence">
-      <HeroFlipName /> — here you can see my{" "}
-      <HeroCycleWord phrases={BUCKETS} heldId={heldBucket} onActivate={openBucket} />.
+      I’m <span>Daniel</span> — this is what I’ve made, done and loved.
     </h1>
   );
 }
-
-/* Snapshot capture is the whole cost of a fold — measured on this wall at
-   roughly 0.85ms per named card — so the budget gets spent deliberately.
-
-   Two passes, because the wall that leaves and the wall that arrives are
-   different sets of cards. Pass one runs before the update and names what is
-   on screen now: the survivors and the leavers. Pass two runs inside the
-   update, after a synchronous commit, and names what exists only in the new
-   state: the arrivers, which then carry a `new` snapshot and no `old` one —
-   precisely what ::view-transition-new(*):only-child is written to animate.
-
-   Without pass two, every release and every switch between words spent its
-   entire budget before the change, and a measured 22 of 56 names went to
-   display:none cards — whose zero-size boxes pass any viewport test while
-   producing no snapshot at all. So the half of the interaction that hands
-   300 cards back to the wall was falling through to the browser's flat
-   default crossfade. */
-/* Tuned by measurement, three runs per candidate: 32/52 gave 0.3 long
-   frames on a fold where 40/64 gave 2.7, and raising the budget to 80 made
-   both directions worse. Pass one is deliberately the smaller share — the
-   arrivers are what the eye follows when a word is released. */
-const PASS_ONE_NAMES = 32;
-const TOTAL_NAMES = 52;
-
-function nameVisible(deck, named, start, limit) {
-  const vh = window.innerHeight;
-  const cards = deck.querySelectorAll(".card");
-  /* Read every box, then write every name. Interleaving the two forced a
-     synchronous layout per card, inside the click's own frame. */
-  const rects = new Array(cards.length);
-  for (let i = 0; i < cards.length; i += 1) rects[i] = cards[i].getBoundingClientRect();
-
-  let n = start;
-  for (let i = 0; i < cards.length && n < limit; i += 1) {
-    const el = cards[i];
-    const r = rects[i];
-    if (el.style.viewTransitionName) continue;
-    /* Not rendered: a name here buys an inert group and wastes the budget. */
-    if (r.width === 0 || r.height === 0) continue;
-    if (r.bottom <= vh * -0.25 || r.top >= vh * 1.25) continue;
-    el.style.viewTransitionName = `deck-${n}`;
-    /* The wave: banded by where the card sits, each band a beat behind. */
-    const band = Math.min(7, Math.max(0, Math.floor((r.top + vh * 0.25) / (vh / 5))));
-    el.style.viewTransitionClass = `vt-band-${band}`;
-    named.push(el);
-    n += 1;
-  }
-  return n;
-}
-
-/* The wall answers the hand.
-
-   This mirrors the tilt already running on /albums (album-wall-page.jsx) —
-   one delegated listener, rAF-throttled, gated on a fine pointer — because
-   that implementation is proven and this is the flagship wall. The card the
-   cursor is over sinks under it and the opposite corner rises, and the foil
-   highlight is pinned to the pointer rather than replaying a canned sweep.
-
-   The asymmetry is the whole trick: the material's travel is compressed to
-   a narrow band while the light's travel is full range. Map them 1:1 and it
-   reads as a sliding texture rather than as light moving over a surface. */
-function useCardPointer(deckRef) {
-  useEffect(() => {
-    const deck = deckRef.current;
-    if (!deck) return undefined;
-
-    let frame = 0;
-    let lit = null;
-
-    const clear = () => {
-      if (!lit) return;
-      clearFoil(lit);
-      lit = null;
-    };
-
-    /* mousemove rather than pointermove: both fire for a real mouse, and
-       mousemove is the one every browser and automation layer agrees on.
-       Touch is gated on the hover query, not on pointerType, so a coarse
-       pointer never glints rather than glinting once per tap. */
-    const onMove = (event) => {
-      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-      const card = event.target.closest(".card");
-      if (!card || !deck.contains(card)) {
-        clear();
-        return;
-      }
-      const { clientX, clientY } = event;
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        const box = card.getBoundingClientRect();
-        if (!box.width || !box.height) return;
-        const px = (clientX - box.left) / box.width;
-        const py = (clientY - box.top) / box.height;
-        if (lit && lit !== card) clear();
-        lit = card;
-        applyFoil(card, px, py);
-      });
-    };
-
-    const onLeave = () => {
-      if (frame) cancelAnimationFrame(frame);
-      frame = 0;
-      clear();
-    };
-
-    deck.addEventListener("mousemove", onMove);
-    deck.addEventListener("mouseleave", onLeave);
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      deck.removeEventListener("mousemove", onMove);
-      deck.removeEventListener("mouseleave", onLeave);
-      clear();
-    };
-  }, [deckRef]);
-}
-
-/* A phone has no hover at all, so everything the tilt and the glint carry is
-   simply missing there — and worse than missing: a tapped <button> keeps a
-   synthesised hover until you tap somewhere else, which left a card sitting
-   at an angle with its glint lit long after the spotlight had closed. On a
-   wall whose whole aesthetic is grid alignment that reads as a bug, not as
-   an effect. The hover is gated to fine pointers in CSS; touch gets a real
-   press instead, tilted by where the finger actually landed. */
-function useCardPress(deckRef) {
-  useEffect(() => {
-    const deck = deckRef.current;
-    if (!deck) return undefined;
-    if (window.matchMedia("(hover: hover)").matches) return undefined;
-
-    let pressed = null;
-    let startX = 0;
-    let startY = 0;
-
-    const release = () => {
-      if (!pressed) return;
-      pressed.classList.remove("is-pressed");
-      pressed.style.removeProperty("--press-x");
-      pressed.style.removeProperty("--press-y");
-      pressed = null;
-    };
-
-    const onStart = (event) => {
-      const touch = event.touches ? event.touches[0] : event;
-      if (!touch) return;
-      const card = event.target.closest(".card");
-      if (!card || !deck.contains(card)) return;
-      const box = card.getBoundingClientRect();
-      if (!box.width || !box.height) return;
-      startX = touch.clientX;
-      startY = touch.clientY;
-      const px = (touch.clientX - box.left) / box.width;
-      const py = (touch.clientY - box.top) / box.height;
-      release();
-      pressed = card;
-      card.style.setProperty("--press-x", `${(PRESS_TILT * (1 - 2 * py)).toFixed(2)}deg`);
-      card.style.setProperty("--press-y", `${(PRESS_TILT * (2 * px - 1)).toFixed(2)}deg`);
-      card.classList.add("is-pressed");
-    };
-
-    /* Past a few pixels the finger is scrolling, not pressing — let go, or
-       the wall scrolls away with a card still held down. */
-    const onMove = (event) => {
-      if (!pressed) return;
-      const touch = event.touches ? event.touches[0] : event;
-      if (!touch) return;
-      if (Math.hypot(touch.clientX - startX, touch.clientY - startY) > 10) release();
-    };
-
-    deck.addEventListener("touchstart", onStart, { passive: true });
-    deck.addEventListener("touchmove", onMove, { passive: true });
-    deck.addEventListener("touchend", release, { passive: true });
-    deck.addEventListener("touchcancel", release, { passive: true });
-    window.addEventListener("scroll", release, { passive: true });
-    return () => {
-      deck.removeEventListener("touchstart", onStart);
-      deck.removeEventListener("touchmove", onMove);
-      deck.removeEventListener("touchend", release);
-      deck.removeEventListener("touchcancel", release);
-      window.removeEventListener("scroll", release);
-      release();
-    };
-  }, [deckRef]);
-}
-
-/* A grid of 366 buttons is not navigable one Tab at a time, so the wall gets
-   the grammar every other grid has: Tab reaches it once, arrows move inside
-   it, Home and End go to the ends of a row, and Ctrl with them goes to the
-   ends of the wall.
-
-   Roving tabindex, written straight to the DOM rather than through state:
-   the wall is memoised on the lens precisely so that 366 cards do not
-   re-render, and routing focus bookkeeping through React would undo that on
-   every keypress. Membership is rebuilt on each press because a fold changes
-   which cards exist. No role="grid": grid-auto-flow: dense means there are
-   no row elements to describe, and inventing wrappers to satisfy the pattern
-   would break the layout it exists to describe. The key map is borrowed; the
-   semantics are not. */
-function useCardKeys(deckRef, lens) {
-  useEffect(() => {
-    const deck = deckRef.current;
-    if (!deck) return undefined;
-
-    const cards = () => [...deck.querySelectorAll(".card:not([hidden])")].filter(
-      (el) => getComputedStyle(el).display !== "none"
-    );
-
-    /* Read the column count off the grid itself, so it survives
-       repeat(auto-fill, ...) at every width with no media queries in JS. */
-    const columns = () =>
-      Math.max(1, getComputedStyle(deck).gridTemplateColumns.split(" ").filter(Boolean).length);
-
-    const move = (list, from, to) => {
-      const next = list[Math.max(0, Math.min(list.length - 1, to))];
-      if (!next || next === list[from]) return false;
-      list[from]?.setAttribute("tabindex", "-1");
-      next.setAttribute("tabindex", "0");
-      next.focus({ preventScroll: false });
-      return true;
-    };
-
-    const onKey = (event) => {
-      if (event.altKey || event.metaKey) return;
-      const active = document.activeElement;
-      if (!deck.contains(active) || !active.classList.contains("card")) return;
-      const list = cards();
-      const i = list.indexOf(active);
-      if (i === -1) return;
-
-      /* A card spans two grid tracks and a small one spans one, so a visual
-         row is not a fixed number of cards. Stepping by the track count is
-         the closest honest approximation, and it lands on a real card. */
-      const perRow = Math.max(1, Math.round(columns() / 2));
-      let target = null;
-      switch (event.key) {
-        case "ArrowRight": target = i + 1; break;
-        case "ArrowLeft": target = i - 1; break;
-        case "ArrowDown": target = i + perRow; break;
-        case "ArrowUp": target = i - perRow; break;
-        case "Home": target = event.ctrlKey ? 0 : i - (i % perRow); break;
-        case "End":
-          target = event.ctrlKey ? list.length - 1 : i - (i % perRow) + perRow - 1;
-          break;
-        default: return;
-      }
-      /* preventDefault only when the key actually did something, or page
-         scrolling breaks for anyone who has focus inside the wall. */
-      if (move(list, i, target)) event.preventDefault();
-    };
-
-    /* One card is the wall's single tab stop; the rest are reachable by
-       arrow. Seeded here and moved by the handler. */
-    const seed = () => {
-      const list = cards();
-      for (const el of deck.querySelectorAll(".card")) el.setAttribute("tabindex", "-1");
-      if (list[0]) list[0].setAttribute("tabindex", "0");
-    };
-    seed();
-
-    deck.addEventListener("keydown", onKey);
-    return () => deck.removeEventListener("keydown", onKey);
-  }, [deckRef, lens]);
-}
-
 function Mark({ src, tile }) {
   if (!src) return null;
   return (
@@ -642,232 +120,38 @@ function Mark({ src, tile }) {
 }
 
 export function HomePage() {
-  const [lens, setLens] = useState(null);
-  /* One set opened out into the page — the row rides to the top and the whole
-     collection unfolds beneath it, detail showing. */
-  /* The ink prototype rides behind ?ink only — off for everyone else. */
-  const [inkOn, setInkOn] = useState(false);
-  useEffect(() => {
-    setInkOn(new URLSearchParams(window.location.search).has("ink"));
-  }, []);
-  /* One card, brought forward: everything else dims and comes to rest. */
-  const [lit, setLit] = useState(null);
-  const litOriginRef = useRef(null);
-  const deckRef = useRef(null);
+  const [activeId, setActiveId] = useState("everything");
+  const activeFilter = LEGEND.find((item) => item.id === activeId) ?? LEGEND[0];
+  const lens = activeFilter.lens;
 
-  useCardPointer(deckRef);
-  useCardPress(deckRef);
-  useCardKeys(deckRef, lens);
-
-  const placeLit = useCallback((card, element, { travel = true } = {}) => {
-    element.style.visibility = "hidden";
-    const previous = litOriginRef.current;
-    if (previous && previous !== element) previous.style.visibility = "";
-    litOriginRef.current = element;
-    const list = deckRef.current ? walkableCards(deckRef.current) : [element];
-    const index = Math.max(0, list.indexOf(element));
-    setLit({
-      card,
-      travel,
-      index,
-      total: Math.max(1, list.length)
-    });
-  }, []);
-
-  const openLit = useCallback((card, element) => {
-    placeLit(card, element, { travel: true });
-  }, [placeLit]);
-
-  const stepLit = useCallback((delta) => {
-    const origin = litOriginRef.current;
-    const deck = deckRef.current;
-    if (!origin || !deck) return;
-    const list = walkableCards(deck);
-    const i = list.indexOf(origin);
-    if (i === -1 || list.length < 2) return;
-    const next = list[(i + delta + list.length) % list.length];
-    const payload = CARD_PAYLOAD.get(next);
-    if (!payload) return;
-    placeLit(payload, next, { travel: false });
-  }, [placeLit]);
-
-  const closeLit = useCallback(() => {
-    const origin = litOriginRef.current;
-    if (origin) {
-      origin.style.visibility = "";
-      /* Lift inert BEFORE focusing. The effect below clears it on cleanup,
-         which runs after this — and focus() on a still-inert element is
-         silently a no-op, which is exactly how the restore looked like it
-         worked and landed on <body> instead. */
-      if (deckRef.current) deckRef.current.inert = false;
-      /* Back to the card they opened. Without this, focus fell to wherever
-         the browser last had it — measured landing on a card the visitor had
-         never touched, several rows away, with nothing on screen to say so. */
-      origin.focus({ preventScroll: true });
-    }
-    litOriginRef.current = null;
-    setLit(null);
-  }, []);
-
-
-  /* Which word's lens is held, if any. Declared above focusSet, which reads
-     it: a useCallback dependency is evaluated during render, so a state
-     declared below would sit in the temporal dead zone and throw. */
-  const [heldBucket, setHeldBucket] = useState(null);
-
-  /* Grid reflows snap; a view transition morphs them — and a morph is only
-     as good as its names. See nameVisible above for why this runs in two
-     passes rather than one. Progressive: browsers without the API, and
-     anyone who asked for less motion, get the plain state change. */
-  const withMorph = useCallback((apply, { toTop = false } = {}) => {
-    const deck = deckRef.current;
-    if (!deck || !document.startViewTransition) {
-      apply();
-      if (toTop) window.scrollTo({ top: 0, behavior: "instant" });
-      return;
-    }
-
-    /* Reduced motion gets a different transition, not none. Bailing to a bare
-       apply() meant ~300 cards vanished in a single frame — a full-viewport
-       discontinuity, which is worse for a vestibular visitor than the thing
-       it was avoiding. Skipping only the NAMES leaves one group, the root,
-       whose snapshot is the viewport in both states: the browser's own
-       keyframes are then an identity animation and the whole fold collapses
-       to a flat cross-fade with no geometry in it at all. */
-    const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const named = [];
-    const afterPassOne = quiet ? 0 : nameVisible(deck, named, 0, PASS_ONE_NAMES);
-
-    const transition = document.startViewTransition(() => {
-      /* Commit synchronously, so pass two measures the wall that is about to
-         be captured rather than the one that just left. It also makes the
-         ordering explicit: without it the fold worked only because React's
-         scheduler happened to land in the right place. */
-      flushSync(apply);
-      /* Scroll inside the callback, before the new state is captured. A
-         fold can remove 300 cards, so the document collapses and the
-         browser clamps scrollTop on its own; doing it here — rather than
-         in an effect that may land after the capture — keeps every group's
-         destination fixed instead of moving under the animation. */
-      if (toTop) window.scrollTo({ top: 0, behavior: "instant" });
-      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      if (window.scrollY > max) window.scrollTo({ top: max, behavior: "instant" });
-      if (!quiet) nameVisible(deck, named, afterPassOne, TOTAL_NAMES);
-    });
-
-    transition.finished.finally(() => {
-      for (const el of named) {
-        el.style.viewTransitionName = "";
-        el.style.viewTransitionClass = "";
-      }
-    });
-  }, []);
-
-  /* A legend word holds a lens over its own collection. Clicking again lets go. */
-  const focusSet = useCallback(
-    (item) => {
-      const opening = heldBucket !== item.id;
-      const next = opening ? item.id : null;
-      const href = lensHref(next);
-      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-      if (href !== current) history.pushState({ lens: next }, "", href);
-      withMorph(
-        () => {
-          setHeldBucket(next);
-          setLens(next ? item.lens : null);
-        },
-        { toTop: opening }
-      );
-    },
-    [withMorph, heldBucket]
-  );
-
-  /* The sentence's cycling noun opens a bucket: one collection, or taste's
-     four. Same fold as a legend word; clicking the same bucket lets go.
-     Click does not advance the word — that would fight opening it. */
-  const openBucket = useCallback(
-    (bucket) => {
-      const opening = heldBucket !== bucket.id;
-      const next = opening ? bucket.id : null;
-      const href = lensHref(next);
-      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-      if (href !== current) history.pushState({ lens: next }, "", href);
-      withMorph(
-        () => {
-          setHeldBucket(next);
-          setLens(next ? bucket.lens : null);
-        },
-        { toTop: opening }
-      );
-    },
-    [withMorph, heldBucket]
-  );
-
-
-  useEffect(() => {
-    if (!lit) return undefined;
-    document.body.style.overflow = "hidden";
-    /* Scroll was locked and focus was not, which is only half a modal. inert
-       takes the wall out of the tab order and out of the accessibility tree
-       for as long as a card is up. */
-    const deck = deckRef.current;
-    if (deck) deck.inert = true;
-    return () => {
-      document.body.style.overflow = "";
-      if (deck) deck.inert = false;
-    };
-  }, [lit]);
-
-  /* Escape releases the lens — but only when the lens is the top layer. The
-     spotlight has its own Escape, and while both were listening one press ran
-     both: the card closed and the lens went with it, so a visitor who opened a
-     game from the games lens was returned to the entire wall. Layers dismiss
-     one at a time, nearest first. */
-  const dropLens = useCallback(() => {
-    const href = lensHref(null);
+  const selectFilter = useCallback((item, { replace = false } = {}) => {
+    const nextId = item?.id ?? "everything";
+    const href = lensHref(nextId === "everything" ? null : nextId);
     const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    if (href !== current) history.pushState({ lens: null }, "", href);
-    withMorph(() => {
-      setHeldBucket(null);
-      setLens(null);
-    });
-  }, [withMorph]);
-
-  useEffect(() => {
-    const boot = lensFromLocation();
-    if (boot) {
-      setHeldBucket(boot.held);
-      setLens(boot.lens);
+    if (href !== current) {
+      history[replace ? "replaceState" : "pushState"]({ lens: nextId }, "", href);
     }
-    const onPop = () => {
-      const loc = lensFromLocation();
-      withMorph(
-        () => {
-          setHeldBucket(loc ? loc.held : null);
-          setLens(loc ? loc.lens : null);
-        },
-        { toTop: Boolean(loc) }
-      );
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, [withMorph]);
+    setActiveId(nextId);
+  }, []);
 
-  /* Escape releases the lens — but only when the lens is the top layer. The
-     spotlight has its own Escape, and while both were listening one press ran
-     both: the card closed and the lens went with it, so a visitor who opened a
-     game from the games lens was returned to the entire wall. Layers dismiss
-     one at a time, nearest first. */
   useEffect(() => {
-    if (!lens || lit) return undefined;
+    const applyLocation = () => {
+      const locationFilter = lensFromLocation();
+      setActiveId(locationFilter?.id ?? "everything");
+    };
+    applyLocation();
+    window.addEventListener("popstate", applyLocation);
+    return () => window.removeEventListener("popstate", applyLocation);
+  }, []);
+
+  useEffect(() => {
+    if (activeId === "everything") return undefined;
     const onKey = (event) => {
-      if (event.key !== "Escape") return;
-      dropLens();
+      if (event.key === "Escape") selectFilter(LEGEND[0]);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [lens, lit, dropLens]);
+  }, [activeId, selectFilter]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
 
@@ -914,27 +198,16 @@ export function HomePage() {
     const set = sets.find((s) => s.id === owner);
     const isDim = dim(owner);
     const cap = all ? Infinity : set?.cap ?? Infinity;
-    /* A card steps into the spotlight — itself, large, with the page dimmed
-       and stilled behind it. One interaction for every card on the site. */
-    const shared = { onActivate: openLit };
-
     if (id === "jobs") {
-      /* A job card is the company's mark on the company's colour — the
-         logo IS the face, white where a silhouette exists, kept as its own
-         tile where the logo is a filled block (Sky). Freelance is Dan's own
-         practice with no mark to wear, so its generated art carries it.
-         The name waits in the spotlight, like everywhere else. */
+      /* Career is context rather than navigation, so these marks are visual
+         objects with an accessible label, not 8 buttons that go nowhere. */
       return deck.jobs.map((job) => (
         <Card
           key={`job-${job.name}`}
           suit="jobs"
           dim={isDim}
-          {...shared}
           accent={job.accent}
           label={`${job.name}, ${job.role}`}
-          spotFace={
-            job.logo ? undefined : <SiteImage src={job.art} priority alt="" className="c-art" />
-          }
           face={
             job.logo ? (
               <span className="card-face-stack card-face-stack--solo">
@@ -943,16 +216,6 @@ export function HomePage() {
             ) : (
               <SiteImage src={job.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" />
             )
-          }
-          back={
-            <>
-              <span className="b-eyebrow">{job.name}</span>
-              <span className="b-body">{job.back}</span>
-              <span className="b-figure">
-                {job.role}
-                {job.span ? ` · ${job.span}` : ""}
-              </span>
-            </>
           }
         />
       ));
@@ -966,12 +229,8 @@ export function HomePage() {
           suit="tools"
           keySet="jobs"
           dim={isDim}
-          {...shared}
           ground={TOOL_GROUND[tool.name]}
           label={tool.name}
-          spotFace={
-            tool.art ? <SiteImage src={tool.art} alt="" className="c-art" /> : undefined
-          }
           face={
             <>
               {tool.art ? (
@@ -981,16 +240,10 @@ export function HomePage() {
                 </>
               ) : (
                 <span className="card-face-stack card-face-stack--solo">
-                  {/* Just the mark — the name waits in the spotlight. */}
+                  {/* The mark is the card; its accessible name supplies the rest. */}
                   <Mark src={tool.mark} tile={tool.mark?.endsWith(".png")} />
                 </span>
               )}
-            </>
-          }
-          back={
-            <>
-              <span className="b-eyebrow">{tool.group} · {tool.name}</span>
-              <span className="b-body">{tool.line}</span>
             </>
           }
         />
@@ -1003,19 +256,11 @@ export function HomePage() {
           key={`site-${site.name}`}
           suit="sites"
           dim={isDim}
-          {...shared}
           ground={site.ground}
           href={site.href ?? undefined}
           label={site.name}
           face={
             <SiteImage src={site.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" above aboveSync />
-          }
-          spotFace={<SiteImage src={site.art} alt="" className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{site.name}</span>
-              <span className="b-body">{site.note}</span>
-            </>
           }
         />
       ));
@@ -1028,19 +273,11 @@ export function HomePage() {
           suit="sites"
           keySet="life"
           dim={isDim}
-          {...shared}
           ground={piece.ground}
           href={piece.href ?? undefined}
           label={piece.name}
           face={
             <SiteImage src={piece.art} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" above aboveSync />
-          }
-          spotFace={<SiteImage src={piece.art} alt="" className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{piece.name}</span>
-              <span className="b-body">{piece.note}</span>
-            </>
           }
         />
       ));
@@ -1053,26 +290,14 @@ export function HomePage() {
           key={`album-${album.id}`}
           suit="music"
           dim={isDim}
-          {...shared}
           label={`${album.artist} — ${album.album}`}
           face={<AlbumArtImage id={album.id} rung="wall" className="c-art" {...firstScreen("music", index)} />}
-          spotFace={<AlbumArtImage id={album.id} rung="card" priority className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{album.artist}</span>
-              <span className="b-body b-body--tight">{album.album}</span>
-              <span className="b-figure">
-                <strong>{nf.format(album.plays)}</strong> plays{album.year ? ` · ${album.year}` : ""}
-              </span>
-            </>
-          }
         />
       ));
     }
 
     if (id === "creations") {
       return deck.creations.slice(0, cap === Infinity ? deck.creations.length : cap).map((post, index) => {
-        const [a, b] = post.title.split(" × ");
         return (
           <Card
             size={sizeFor("creations", index)}
@@ -1080,21 +305,9 @@ export function HomePage() {
             suit="creations"
             keySet="sites"
             dim={isDim}
-            {...shared}
             label={`Cover Collision ${post.number}: ${post.title}`}
             face={
               <SiteImage src={post.image} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("creations", index)} />
-            }
-            spotFace={<SiteImage src={post.image} alt="" className="c-art" />}
-            back={
-              <>
-                <span className="b-eyebrow">No. {post.number}</span>
-                <span className="b-body b-body--tight">
-                  {a}
-                  <br />
-                  <span className="b-x">×</span> {b ?? ""}
-                </span>
-              </>
             }
           />
         );
@@ -1108,22 +321,9 @@ export function HomePage() {
           key={`film-${film.title}`}
           suit="films"
           dim={isDim}
-          {...shared}
           label={film.title}
           face={
             <SiteImage src={film.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("films", index)} />
-          }
-          spotFace={<SiteImage src={film.poster} alt="" className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{film.title}</span>
-              <span className="b-body b-body--tight">{film.director}</span>
-              {film.sameDirector > 1 ? (
-                <span className="b-figure">
-                  <strong>{film.sameDirector}</strong> of their films here
-                </span>
-              ) : null}
-            </>
           }
         />
       ));
@@ -1136,17 +336,9 @@ export function HomePage() {
           key={`game-${game.title}`}
           suit="games"
           dim={isDim}
-          {...shared}
           label={game.title}
           face={
             <SiteImage src={game.cover} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("games", index)} />
-          }
-          spotFace={<SiteImage src={game.cover} alt="" className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{game.studio}</span>
-              <span className="b-body">{game.note}</span>
-            </>
           }
         />
       ));
@@ -1159,17 +351,9 @@ export function HomePage() {
           key={`tv-${show.title}`}
           suit="tv"
           dim={isDim}
-          {...shared}
           label={show.title}
           face={
             <SiteImage src={show.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("tv", index)} />
-          }
-          spotFace={<SiteImage src={show.poster} alt="" className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{show.year}{show.creator ? ` · ${show.creator}` : ""}</span>
-              <span className="b-body b-body--tight">{show.title}</span>
-            </>
           }
         />
       ));
@@ -1178,27 +362,7 @@ export function HomePage() {
     return null;
   };
 
-  /* While a lens is held, any press on open paper — anything that is not a
-     button or a link — lets the site back in.
-
-     Except while a card is open. The spotlight renders inside this section, so
-     a press on its scrim bubbles up here, and "the scrim is not a button" was
-     true enough to drop the lens on the way out: open games, open a game,
-     dismiss it, and the whole wall came back instead of the games. Dismissing
-     the top layer must not dismiss the one under it. Guarded twice on purpose —
-     `lit` says a card is open, and the DOM test survives any future reordering
-     that lets this run after the close has already committed. */
-  const releaseOnPaper = useCallback(
-    (event) => {
-      if (!lens || lit) return;
-      if (event.target.closest("button, a, .spotlight")) return;
-      dropLens();
-    },
-    [lens, lit, dropLens]
-  );
-
-  /* The wall itself only changes when a lens changes — 366 cards need no
-     rebuilding when the spotlight opens or the sentence pulses. */
+  /* The wall only changes when the selected word changes. */
   /* The first screen, resolved before anything renders. Thirteen columns by
      four rows at the widest frame; the front of the wall always leads, and
      the rest comes off the blend in DOM order. Sync decoding is main-thread
@@ -1211,33 +375,23 @@ export function HomePage() {
     return (
       <>
         {/* The front of the wall: the things made, the life pieces, the two
-            current roles — and Graceland, grand, because it matters most. */}
+            current roles — and Graceland, important without breaking scale. */}
         {cardsFor("sites")}
         <Card
           key="graceland"
           suit="music"
-          size="grand"
           dim={dim("music")}
-          onActivate={openLit}
           label={`${graceland.artist} — ${graceland.album}`}
           face={
             <SiteImage
               src={graceland.art}
-              slot="grandTile"
-              sizes="(max-width: 560px) calc(60vw - 16px), 250px"
+              slot="deckTile"
+              sizes={SLOT_SIZES.deckTile}
               alt=""
               className="c-art"
               above
               aboveSync
             />
-          }
-          spotFace={<SiteImage src={graceland.art} alt="" className="c-art" />}
-          back={
-            <>
-              <span className="b-eyebrow">{graceland.artist}</span>
-              <span className="b-body b-body--tight">{graceland.album}</span>
-              <span className="b-figure">{graceland.year} · the one that matters most</span>
-            </>
           }
         />
         {cardsFor("life")}
@@ -1261,29 +415,20 @@ export function HomePage() {
   }, [lens]);
 
   return (
-    <section className="akibwa-home" onClick={releaseOnPaper}>
-      {inkOn ? <InkPaper /> : null}
-      <div
-        className={`page-grid deck${lens ? " is-lensed" : ""}`}
-        ref={deckRef}
-        aria-label="Everything on one wall"
-      >
-
+    <section className="akibwa-home">
+      <div className={`page-grid deck${lens ? " is-lensed" : ""}`} aria-label="Everything on one wall">
         <div className="deck-hero">
-          <HeroSentence heldBucket={bucketIdForLens(lens)} openBucket={openBucket} />
-          {/* Six smaller words directly beneath the sentence, in the same
-              ink the cards wear, so the wall still reads at a glance. Each
-              is an opener. */}
-          <nav className="deck-legend" aria-label="The key — each word folds the wall to its collection">
+          <HeroSentence />
+          <nav className="deck-legend" aria-label="Filter the wall">
             {LEGEND.map((set) => (
               <button
                 key={set.id}
                 id={`set-${set.id}`}
                 type="button"
-                className={`rail-word${lens && !set.lens.some((id) => lens.includes(id)) ? "" : " is-lit"}`}
+                className={`rail-word${activeId === set.id ? " is-active" : ""}`}
                 style={{ "--index-accent-rgb": set.accent }}
-                aria-expanded={heldBucket === set.id}
-                onClick={() => focusSet(set)}
+                aria-pressed={activeId === set.id}
+                onClick={() => selectFilter(set)}
               >
                 {set.label}
               </button>
@@ -1293,8 +438,6 @@ export function HomePage() {
 
         {wall}
       </div>
-
-      {lit ? <Spotlight lit={lit} onClose={closeLit} onStep={stepLit} /> : null}
 
       <PageFooter />
     </section>
@@ -1316,9 +459,11 @@ const INDEX_ACCENT = {
   tv: "0, 154, 205"
 };
 
-/* Projects is the broad first lens: things made and life pieces together.
-   Career and the four taste collections keep their own doors. */
+/* Projects is the one word for the work and life pieces Dan has made. The
+   unfiltered wall stays explicit, so a selected word never has to double as
+   a hidden reset control. */
 const LEGEND = [
+  { id: "everything", label: "Everything", lens: null, accent: "32, 32, 30" },
   { id: "projects", label: "Projects", lens: PROJECTS_LENS, accent: INDEX_ACCENT.sites },
   { id: "career", label: "Career", lens: CAREER_LENS, accent: INDEX_ACCENT.jobs },
   ...sets.slice(2).map((set) => ({ ...set, lens: [set.id], accent: INDEX_ACCENT[set.id] }))
