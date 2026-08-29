@@ -93,19 +93,22 @@ requireText(hero, "onClick={() => onActivate(current)}", "the cycling word must 
 requireText(hero, "const visibleIndex = heldIndex >= 0 ? heldIndex : index", "the cycling word must hold the selected bucket");
 requireText(home, "heldBucket={bucketIdForLens(lens)}", "the sentence must follow the selected menu lens");
 
-/* Cards should keep the small-object interaction that makes the wall feel
-   handled rather than hovered: the stock lifts, the printed face counters the
-   pointer, and the spotlight's label resolves after the object lands. */
+/* Cards keep their small-object hover on a pointer, while opening one stays
+   deliberately quieter: the whole spotlight dissolves in together rather
+   than flying, blurring or pulling the wall backwards. On phones the wall
+   uses smaller square units so more of the collection remains visible. */
 requireText(home, 'el.style.setProperty("--art-x"', "card artwork must keep its pointer parallax");
 requireText(home, 'el.style.setProperty("--art-y"', "card artwork must keep its pointer parallax");
 requireText(css, "translate(var(--art-x, 0), var(--art-y, 0))", "card faces must render their pointer parallax");
 requireText(css, "transform 440ms var(--ease-out)", "card faces must settle rather than snap");
 requireText(css, "translateZ(18px) scale(1.012)", "hovered cards must lift toward the visitor");
-requireRuleText(".spotlight-caption {", [
-  "filter: blur(3px)",
-  "filter 280ms"
-]);
-requireText(css, "radial-gradient(circle at 50% 45%", "the spotlight must keep its soft paper pool");
+requireRuleText(".spotlight-scrim {", ["background: rgba(250, 248, 243, 0.94)", "transition: opacity 160ms ease-out"]);
+requireRuleText(".spotlight-figure {", ["opacity: 0", "transition: opacity 170ms ease-out"]);
+forbidRuleText(".spotlight-caption {", ["filter:", "transform:", "transition:"]);
+forbidText(css, ".deck.is-receded", "opening a card must not pull the wall backwards");
+forbidText(home, "from: { x:", "the spotlight must not measure a flight path from the wall");
+requireText(css, "--u: 44px", "the mobile wall must keep its smaller unit");
+requireText(css, "aspect-ratio: 1", "mobile cards must preserve square artwork");
 
 /* The homepage behaves as a wall of controls, not selectable prose. Only
    actual buttons and links should answer the pointer. */

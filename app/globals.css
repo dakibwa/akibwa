@@ -5963,49 +5963,40 @@ button {
   padding: clamp(16px, 4vh, 48px);
 }
 
-/* The thickened paper is its own layer, faded in by opacity.
-
-   No backdrop blur. Measured on the live wall, a backdrop-filter over this
-   backdrop cost nine frames longer than 33ms on every open — and the radius
-   was not the problem: 2px cost seven. The compositor has to re-read and
-   re-blur the whole viewport behind a layer whose alpha is changing, every
-   frame. Removing it took the open to zero long frames.
-
-   Depth comes from the wall receding instead (see .deck.is-receded), which
-   is a plain transform — free, and truer to a paper gallery than glass. */
+/* The paper veil only dissolves. No blur, gradient bloom, zoom or staged
+   depth: the chosen work is already the event. */
 .spotlight-scrim {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.97) 0, rgba(250, 248, 243, 0.92) 30%, rgba(247, 244, 238, 0.9) 74%);
+  background: rgba(250, 248, 243, 0.94);
   opacity: 0;
-  transition: opacity 420ms var(--ease-out);
+  transition: opacity 160ms ease-out;
 }
 
 .spotlight.is-entered .spotlight-scrim {
   opacity: 1;
 }
 
-/* The figure no longer moves. It only stacks the card and its caption; the
-   card alone is the shared element that flies, so nothing about the
-   caption's height can offset where the card launches from. */
+/* Card and caption arrive as one object, with opacity only. */
 .spotlight-figure {
   position: relative;
   margin: 0;
   display: flex;
   flex-direction: column;
   width: min(80vw, 44vh, 360px);
+  opacity: 0;
+  transition: opacity 170ms ease-out;
 }
+
+.spotlight.is-entered .spotlight-figure { opacity: 1; }
 
 .spotlight .card--spotlight {
   position: relative;
   aspect-ratio: 1;
   width: 100%;
   cursor: default;
-  /* 0 0 keeps the inversion a plain affine composition. */
-  transform-origin: 0 0;
-  transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
+  transform: none;
+  transition: none;
   border-radius: calc(var(--radius) * 1.4) calc(var(--radius) * 1.4) 0 0;
   box-shadow: none;
 }
@@ -6015,11 +6006,7 @@ button {
   box-shadow: none;
 }
 
-/* The lift belongs to the figure, not the card. On the card it would be
-   clipped away by the card's own overflow: hidden, and it would ride the
-   scale — the old drop-shadow was re-rasterised at every step from 0.39 to
-   1 and drawn far too tight at the launch frame. Here it never transforms
-   and never re-rasterises: it simply blooms as the card lands. */
+/* A fixed paper shadow separates the object without animating its depth. */
 .spotlight-figure::before {
   content: "";
   position: absolute;
@@ -6029,51 +6016,21 @@ button {
     0 3px 9px rgba(75, 59, 39, 0.1),
     0 28px 72px rgba(35, 28, 20, 0.22),
     0 0 0 1px rgba(255, 255, 255, 0.68);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 280ms cubic-bezier(0, 0.55, 0.45, 1) 180ms;
-}
-
-.spotlight.is-entered .spotlight-figure::before { opacity: 1; }
-
-/* The caption does not travel with the card. It waits at its final place
-   and arrives just behind it, the way a label is set down under a poster
-   that has only just been hung. */
-.spotlight-caption {
-  opacity: 0;
-  transform: translateY(6px);
-  filter: blur(3px);
-  transition:
-    opacity 260ms cubic-bezier(0, 0.55, 0.45, 1) 200ms,
-    transform 300ms cubic-bezier(0, 0.55, 0.45, 1) 200ms,
-    filter 280ms cubic-bezier(0, 0.55, 0.45, 1) 200ms;
-}
-
-.spotlight.is-entered .spotlight-caption {
   opacity: 1;
-  transform: none;
-  filter: none;
+  pointer-events: none;
+  transition: none;
 }
 
-/* Going is quicker than coming, and the close button's lead-in delay —
-   right on the way in — is wrong on the way out. */
-.spotlight.is-closing .card--spotlight { transition-duration: 380ms; }
-.spotlight.is-closing .spotlight-figure::before { transition: opacity 140ms linear; }
-.spotlight.is-closing .spotlight-scrim { transition: opacity 260ms linear; }
-.spotlight.is-closing .spotlight-caption {
-  filter: blur(2px);
-  transition: opacity 140ms linear, transform 140ms linear, filter 140ms linear;
-}
-.spotlight.is-closing .spotlight-close {
-  transform: translateY(-3px);
-  transition: opacity 120ms linear 0ms, transform 120ms linear 0ms;
-}
+/* Dismissal is a slightly quicker version of the same dissolve. */
+.spotlight.is-closing .spotlight-figure,
+.spotlight.is-closing .spotlight-scrim { transition-duration: 120ms; }
+.spotlight.is-closing .spotlight-close { transition-duration: 100ms; }
 
 @media (prefers-reduced-motion: reduce) {
-  .spotlight .card--spotlight,
+  .spotlight-scrim,
+  .spotlight-figure,
   .spotlight-figure::before,
-  .spotlight-caption { transition: none; }
-  .spotlight-caption { opacity: 1; transform: none; filter: none; }
+  .spotlight-close { transition: none; }
 }
 
 /* The spotlight opens on the wall's own art — already in cache, so the card
@@ -6081,7 +6038,7 @@ button {
    pixels. One arrival for every suit; no suit pops in late. */
 .spotlight .card-face--hi img {
   opacity: 0;
-  transition: opacity 260ms var(--ease-out);
+  transition: opacity 160ms ease-out;
 }
 
 .spotlight .card-face--hi img.is-ready {
@@ -6176,11 +6133,10 @@ button {
   font-size: 0.78rem;
   font-weight: 560;
   opacity: 0;
-  transform: translateY(-5px);
-  transition: opacity 300ms ease 200ms, transform 300ms var(--ease-out) 200ms;
+  transition: opacity 150ms ease-out;
 }
 
-.spotlight.is-entered .spotlight-close { opacity: 1; transform: none; }
+.spotlight.is-entered .spotlight-close { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .spotlight, .spotlight-figure { transition: none; }
@@ -6333,30 +6289,13 @@ button {
    screen, and the wall reads as a collage rather than rows. */
 .deck {
   --u: clamp(56px, 4.5vw, 78px);
+  --g: clamp(6px, 0.65vw, 10px);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(var(--u), 1fr));
   grid-auto-rows: minmax(var(--u), auto);
   grid-auto-flow: dense;
-  gap: clamp(6px, 0.65vw, 10px);
+  gap: var(--g);
   align-items: stretch;
-}
-
-/* A card steps forward, so the wall steps back — the whole collage settles
-   away from the viewer while one piece is held up to the light. Transform
-   only, so it costs nothing, and it reads as depth rather than as a filter.
-   The scale is deliberately small: at 1310px the far edge moves ~18px, which
-   the eye reads as distance rather than as movement. */
-.deck {
-  transition: transform 560ms var(--ease-out);
-}
-
-.deck.is-receded {
-  transform: scale(0.972);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .deck { transition: none; }
-  .deck.is-receded { transform: none; }
 }
 
 .deck .card {
@@ -6384,6 +6323,36 @@ button {
 .deck .card--grand {
   grid-column: span 3;
   grid-row: span 3;
+}
+
+/* Phones keep the collage dense: six or seven small units across, making a
+   normal card about 93–100px rather than 140px. The card's
+   aspect ratio grows the implicit rows to the same size as the stretched
+   columns, so artwork is square instead of being pulled wider than its file. */
+@media (max-width: 560px) {
+  .deck {
+    --u: 44px;
+    --g: 4px;
+    align-items: start;
+  }
+
+  .deck .card {
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    aspect-ratio: 1;
+    align-self: start;
+    contain-intrinsic-size: auto calc(2 * var(--u) + var(--g));
+  }
+
+  .deck .card--small {
+    contain-intrinsic-size: auto var(--u);
+  }
+
+  .deck .card--grand {
+    contain-intrinsic-size: auto calc(3 * var(--u) + 2 * var(--g));
+  }
 }
 
 .deck .deck-hero {
