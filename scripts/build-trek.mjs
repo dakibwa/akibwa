@@ -862,10 +862,26 @@ const jsDays = pts.map((d) => {
     j: JOURNAL[d.n] || null,
   };
 });
+const rawWalkKm = jsDays.reduce((sum, d) => sum + (d.w ? d.km : 0), 0);
+const distanceScale = rawWalkKm > 0 ? data.facts.km / rawWalkKm : 1;
 let cum = 0;
+let cumElev = 0;
+let cumMin = 0;
+let footDays = 0;
+const countriesSeen = new Set();
 for (const d of jsDays) {
-  if (d.w) cum += d.km;
+  countriesSeen.add(d.c);
+  if (d.w) {
+    cum += d.km * distanceScale;
+    cumElev += d.elev;
+    cumMin += d.min;
+    footDays += 1;
+  }
   d.cum = +cum.toFixed(1);
+  d.cumElev = cumElev;
+  d.cumMin = cumMin;
+  d.footDays = footDays;
+  d.countries = countriesSeen.size;
 }
 // Photographs from the road: public/trek/photos/manifest.json, written by the
 // curation step — [{ day, src, w, h }] with files sitting alongside it.
@@ -878,6 +894,12 @@ const jsData = {
   days: jsDays,
   colors: COUNTRY_COLOR,
   total: data.facts.km,
+  stats: {
+    days: data.facts.walked,
+    ascent: cumElev,
+    minutes: cumMin,
+    countries: data.facts.countries,
+  },
   scenes,
   timeline: TIMELINE_TOTAL,
   beats: BEATS,

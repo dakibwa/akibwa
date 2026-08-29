@@ -193,20 +193,26 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .hud{
   position:absolute;top:60px;left:22px;z-index:7;pointer-events:none;
   font-family:var(--mono);opacity:0;transition:opacity .5s;
-  padding:12px 16px;border:1px solid var(--rule);
+  width:246px;padding:14px 16px 13px;border:1px solid var(--rule);
   background:color-mix(in srgb,var(--peat) 82%,transparent);backdrop-filter:blur(8px);
 }
 .hud.on{opacity:1}
-.hud .day{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c-cur,var(--dust))}
-.hud .kmline{font-size:13px;color:var(--dust);margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:.04em}
-.hud .kmline b{color:var(--bone);font-weight:500;font-size:19px;letter-spacing:.01em}
-.hud .elev{display:flex;align-items:center;gap:10px;margin-top:10px}
-.hud .elev svg{width:132px;height:28px;display:block;flex:0 0 auto}
+.hud .journey{font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--c-cur,var(--dust))}
+.hud .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:12px;font-variant-numeric:tabular-nums}
+.hud .metric{min-width:0}
+.hud .metric.primary{grid-column:1/-1;padding-bottom:11px;border-bottom:1px solid var(--rule)}
+.hud .metric b{display:block;color:var(--bone);font-weight:500;font-size:18px;line-height:1;letter-spacing:-.02em;white-space:nowrap}
+.hud .metric.primary b{font-size:31px;letter-spacing:-.045em}
+.hud .metric span{display:block;margin-top:5px;color:var(--dust);font-size:8.5px;line-height:1.25;letter-spacing:.13em;text-transform:uppercase}
+.hud .elev{display:grid;grid-template-columns:132px 1fr;align-items:end;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid var(--rule)}
+.hud .elev svg{width:132px;height:28px;display:block}
 .hud #elev-area{fill:color-mix(in srgb,var(--c-cur,var(--dust)) 22%,transparent)}
 .hud #elev-line{fill:none;stroke:var(--bone);stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round}
 .hud #elev-now{fill:var(--bone)}
-.hud .altline{font-size:11px;color:var(--dust);letter-spacing:.04em;font-variant-numeric:tabular-nums}
-.hud .altline b{color:var(--bone);font-weight:500;font-size:13px}
+.hud .altline{font-size:9px;color:var(--dust);line-height:1.2;letter-spacing:.06em;font-variant-numeric:tabular-nums;text-transform:uppercase}
+.hud .altline b{display:block;color:var(--bone);font-weight:500;font-size:14px;letter-spacing:-.02em;white-space:nowrap;text-transform:none}
+.hud .progress{height:2px;margin-top:13px;background:var(--rule);overflow:hidden}
+.hud .progress i{display:block;width:0;height:100%;background:var(--c-cur,var(--bone));transform-origin:left center;transition:background-color .3s}
 
 /* ----------------------------------------------------------------- daycard */
 .daycard{
@@ -304,7 +310,13 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 @media (max-width:900px){
   .masthead{gap:14px;padding:12px 16px}
   .masthead .site{display:none}
-  .hud{top:58px;left:16px}
+  .hud{top:58px;left:12px;width:min(226px,calc(100vw - 24px));padding:11px 13px 10px}
+  .hud .metrics{gap:9px 12px;margin-top:9px}
+  .hud .metric.primary{padding-bottom:8px}
+  .hud .metric.primary b{font-size:26px}
+  .hud .metric b{font-size:16px}
+  .hud .elev{margin-top:9px;padding-top:8px}
+  .hud .progress{margin-top:9px}
   .daycard{left:12px;right:12px;bottom:12px;max-width:none;padding:14px 16px 13px}
   .photo{top:190px;bottom:auto;right:12px;width:min(34vw,220px);transform:rotate(1.6deg)}
   .photo.on{transform:rotate(-1deg)}
@@ -381,16 +393,23 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <p class="hint" id="hint">walk ↓</p>
 
     <div class="hud" id="hud">
-      <p class="day" id="hud-day">day 1 · 24 sep</p>
-      <p class="kmline"><b id="hud-km">0.0</b> <span id="hud-total">of 1,982 km</span></p>
+      <p class="journey">the journey so far</p>
+      <div class="metrics">
+        <p class="metric primary"><b id="hud-km">0.0</b><span>kilometres walked</span></p>
+        <p class="metric"><b id="hud-days">0</b><span>days on foot</span></p>
+        <p class="metric"><b id="hud-countries">0 / 7</b><span>countries</span></p>
+        <p class="metric"><b id="hud-ascent">0</b><span>metres climbed</span></p>
+        <p class="metric"><b id="hud-hours">0.0</b><span>hours moving</span></p>
+      </div>
       <div class="elev">
         <svg viewBox="0 0 132 28" aria-hidden="true">
           <path id="elev-area"></path>
           <path id="elev-line"></path>
           <circle id="elev-now" r="2.2" cx="3" cy="20"></circle>
         </svg>
-        <p class="altline"><b id="hud-alt">—</b> m</p>
+        <p class="altline"><b><span id="hud-alt">—</span> m</b>map elevation</p>
       </div>
+      <div class="progress" aria-hidden="true"><i id="hud-progress"></i></div>
     </div>
 
     <div class="daycard" id="daycard">
@@ -469,9 +488,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var titlecard = document.getElementById("titlecard");
   var hint = document.getElementById("hint");
   var hud = document.getElementById("hud");
-  var hudDay = document.getElementById("hud-day");
   var hudKm = document.getElementById("hud-km");
-  var hudTotal = document.getElementById("hud-total");
+  var hudDays = document.getElementById("hud-days");
+  var hudCountries = document.getElementById("hud-countries");
+  var hudAscent = document.getElementById("hud-ascent");
+  var hudHours = document.getElementById("hud-hours");
+  var hudProgress = document.getElementById("hud-progress");
   var daycard = document.getElementById("daycard");
   var dcLine = document.getElementById("dc-line");
   var dcTitle = document.getElementById("dc-title");
@@ -641,6 +663,28 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (hudAlt) hudAlt.textContent = Math.round(alt || 0).toLocaleString("en-GB");
   }
 
+  function setText(el, value){ if (el && el._trekText !== value) { el._trekText = value; el.textContent = value; } }
+  function updateStats(scene, wp){
+    var d = wp.day;
+    var prev = byN[d.n - 1];
+    var baseKm = prev ? prev.cum : 0;
+    var baseElev = prev ? prev.cumElev : 0;
+    var baseMin = prev ? prev.cumMin : 0;
+    var baseDays = prev ? prev.footDays : 0;
+    var t = (scene.t === "walk" && d.w) ? Math.max(0, Math.min(1, wp.t)) : 1;
+    var km = lerp(baseKm, d.cum, t);
+    var climbed = lerp(baseElev, d.cumElev, t);
+    var moving = lerp(baseMin, d.cumMin, t);
+    var footDays = baseDays + (d.w && t > .01 ? 1 : 0);
+    if (scene.t === "start") { km = 0; climbed = 0; moving = 0; footDays = 0; }
+    setText(hudKm, km.toFixed(1));
+    setText(hudDays, String(footDays));
+    setText(hudCountries, (scene.t === "start" ? 0 : d.countries) + " / " + DATA.stats.countries);
+    setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
+    setText(hudHours, (moving / 60).toFixed(1));
+    if (hudProgress) hudProgress.style.width = Math.max(0, Math.min(100, km / DATA.total * 100)).toFixed(2) + "%";
+  }
+
   // --------------------------------------------------------------- daycard
   function esc(s){ var el = document.createElement("span"); el.textContent = s; return el.innerHTML; }
   function showDay(d){
@@ -665,8 +709,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
     dcJournal.textContent = d.j || "";
-    hudDay.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "");
-    hudKm.textContent = d.cum.toFixed(1);
     navLinks.forEach(function(a){
       var isCurrent = a.getAttribute("href") === "#" + d.c.toLowerCase();
       a.classList.toggle("current", isCurrent);
@@ -765,7 +807,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     fade(titlecard, scene.t === "start" ? String(1 - Math.min(1, (p - scene.at) / (scene.len * .7))) : "0");
     titlecard.style.visibility = (scene.t === "start" && p < scene.at + scene.len) ? "visible" : "hidden";
     fade(hint, p < 40 ? "1" : "0");
-    hud.classList.toggle("on", inJourney && scene.t !== "end" && scene.t !== "enter" && !silentRest);
+    hud.classList.toggle("on", inJourney && scene.t !== "enter");
     daycard.classList.toggle("on", ((scene.t === "walk" && wp.day.w) || scene.t === "beat") && p > 500);
 
     // zoom regime
@@ -795,6 +837,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (walkerMark) walkerMark.setAttribute("transform", walkFace < 0 ? "scale(-1,1)" : "");
     stage.classList.toggle("is-walking", !REDUCED && scene.t === "walk" && !!wp.day.w);
     sparkAt(wp.alt, wp.day.n, wp.t);
+    updateStats(scene, wp);
     updateTrail(scene, wp, inJourney);
 
     // day content
@@ -804,19 +847,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       showDay(wp.day);
       photoBox.classList.remove("on"); photoShown = null;
     }
-    if (scene.t === "walk" && wp.day.w) {
-      var prevDay = byN[wp.day.n - 1];
-      var liveKm = (prevDay ? prevDay.cum : 0) + wp.day.km * wp.t;
-      hudKm.textContent = liveKm.toFixed(1);
-    }
-
     // plates
     var wantPlate = null, plateOp = 0;
     if (scene.t === "enter") {
       wantPlate = plates[scene.country];
       var tp = (p - scene.at) / scene.len;
       plateOp = Math.min(1, Math.min(tp / .22, (1 - tp) / .22));
-      hudDay.textContent = scene.country.toLowerCase();
     }
     if (activePlate && activePlate !== wantPlate) fade(activePlate, 0);
     if (wantPlate) fade(wantPlate, String(Math.max(0, plateOp)));
