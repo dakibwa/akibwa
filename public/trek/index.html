@@ -60,11 +60,13 @@ button{font:inherit;color:inherit}
   position:fixed;inset:0 0 auto 0;z-index:50;
   display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:22px;
   min-height:58px;padding:8px 22px 9px;
-  color:var(--black);background:var(--canvas);border-bottom:1px solid var(--site-line);
-  box-shadow:0 7px 20px rgba(0,0,0,.14);
+  color:var(--bone);background:rgba(18,16,12,.94);
+  border-bottom:1px solid color-mix(in srgb,var(--bone) 13%,transparent);
+  box-shadow:0 8px 26px rgba(0,0,0,.34);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
 }
 .masthead .mark{
-  display:flex;align-items:baseline;gap:11px;color:var(--black);text-decoration:none;white-space:nowrap;
+  display:flex;align-items:baseline;gap:11px;color:var(--bone);text-decoration:none;white-space:nowrap;
 }
 .masthead .mark-word{
   display:block;font-family:var(--sans);font-size:25px;font-weight:700;line-height:1;
@@ -78,7 +80,7 @@ button{font:inherit;color:inherit}
 }
 .masthead .mark-date{
   font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.11em;
-  color:color-mix(in srgb,var(--black) 64%,var(--canvas));text-transform:lowercase;
+  color:var(--dust);text-transform:lowercase;
 }
 .country-menu{position:relative;min-width:0;padding:4px 0 9px}
 .countries{display:flex;justify-content:center;gap:10px;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
@@ -86,20 +88,20 @@ button{font:inherit;color:inherit}
 .countries li{display:flex;align-items:center;gap:10px;flex:0 0 auto}
 .countries li+li::before{
   content:"→";font-family:var(--mono);font-size:10px;line-height:1;
-  color:color-mix(in srgb,var(--black) 24%,var(--canvas));transition:color .25s ease;
+  color:color-mix(in srgb,var(--dust) 50%,transparent);transition:color .25s ease;
 }
-.countries li.passed::before,.countries li.current::before{color:color-mix(in srgb,var(--w) 54%,var(--black))}
+.countries li.passed::before,.countries li.current::before{color:color-mix(in srgb,var(--w) 58%,var(--bone))}
 .countries a{
   display:block;font-family:var(--sans);font-size:15px;font-weight:540;letter-spacing:-.012em;
-  color:color-mix(in srgb,var(--w) 30%,var(--black));text-decoration:none;white-space:nowrap;
+  color:color-mix(in srgb,var(--w) 34%,var(--dust));text-decoration:none;white-space:nowrap;
   transition:color .16s ease,opacity .25s ease;
 }
-.countries a:hover{color:color-mix(in srgb,var(--w) 84%,var(--black))}
-.countries a.passed{color:color-mix(in srgb,var(--w) 58%,var(--black))}
-.countries a.current{color:color-mix(in srgb,var(--w) 88%,var(--black));font-weight:650}
+.countries a:hover{color:color-mix(in srgb,var(--w) 82%,var(--bone))}
+.countries a.passed{color:color-mix(in srgb,var(--w) 60%,var(--bone))}
+.countries a.current{color:color-mix(in srgb,var(--w) 86%,var(--bone));font-weight:650}
 .journey-progress{
   position:absolute;inset:auto 0 0;height:3px;overflow:hidden;
-  background:color-mix(in srgb,var(--black) 10%,var(--canvas));
+  background:color-mix(in srgb,var(--bone) 10%,transparent);
 }
 .journey-progress i{
   display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left center;
@@ -107,15 +109,15 @@ button{font:inherit;color:inherit}
   transition:transform .12s linear;
 }
 .walkbtn{
-  background:transparent;border:1px solid var(--site-line);color:var(--black);cursor:pointer;
+  background:transparent;border:1px solid color-mix(in srgb,var(--bone) 24%,transparent);color:var(--bone);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   padding:8px 15px;white-space:nowrap;transition:border-color .18s,background .18s,color .18s;
 }
-.walkbtn:hover{border-color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
-.walkbtn.playing{background:var(--black);color:var(--canvas);border-color:var(--black)}
-.masthead .site{font-family:var(--mono);font-size:11px;color:color-mix(in srgb,var(--black) 62%,var(--canvas));text-decoration:none;white-space:nowrap}
-.masthead .site:hover{color:var(--black)}
-.masthead :focus-visible{outline-color:var(--black)}
+.walkbtn:hover{border-color:color-mix(in srgb,var(--bone) 62%,transparent)}
+.walkbtn.playing{background:var(--bone);color:var(--peat);border-color:var(--bone)}
+.masthead .site{font-family:var(--mono);font-size:11px;color:var(--dust);text-decoration:none;white-space:nowrap}
+.masthead .site:hover{color:var(--bone)}
+.masthead :focus-visible{outline-color:var(--bone)}
 
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
