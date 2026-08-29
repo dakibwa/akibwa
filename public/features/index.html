@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-JVP+Ey9ykv+3j9hUd9lStc3hYRIjhdgaPzCyKjH0ntI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-CVE/s7rhaOvZpBaoh1bngfb4FqjZUKqJIfWz5/mzkaU=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -5327,8 +5327,8 @@ function resetDescent(){
 
 const TUTNETS=[
   {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
-  {threads:2, nodes:5, shared:1, pinned:0, minX:2, maxX:5},
-  {threads:2, nodes:5, shared:0, pinned:2, minX:2, maxX:6}
+  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3},
+  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3}
 ];
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
 function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !R().over}
@@ -5421,7 +5421,7 @@ function tutFind(){
   if(best.freeable<=now.freeable && best.total>=now.total) return null;
   return {n:best.n, x:best.x, y:best.y, marks:tutCross(null,best.n).mine};
 }
-const TUT_JOIN=2400;
+const TUT_JOIN=1500;
 let tutJoinT=null, tutJoinKey='', tutJoined=false;
 function tutSpotClear(){
   if(gTut){ gTut.remove(); gTut=null }
@@ -5542,14 +5542,14 @@ const TUTSTEPS_BY_NET=[
     'one crossing left. <b>clear it.</b>'
   ],
   [ // net 1 — superposition. the one move the game turns on
-    'the <b>double ring</b> holds two features.',
-    '<b>tap it to split.</b> neither line can leave until you do.',
-    '<b>clear the crossings.</b> both come free.'
+    '<b>tap the double ring.</b> it is one neuron shared by both colours.',
+    '<b>split it into two.</b> each colour can then move on its own.',
+    'the colours are separate. <b>clear the crossings.</b>'
   ],
   [ // net 2 — the pins. a constraint rather than an action
-    'the <b>square</b> neurons are pinned — they cannot move.',
-    '<b>move the others around them.</b>',
-    'last crossing. <b>clear it</b> and you know the game.'
+    'the <b>square stays fixed.</b> drag the pulsing circle instead.',
+    '<b>move a circle around the square.</b> pins never move.',
+    'the pins stay put. <b>clear the crossings with any circle.</b>'
   ]
 ];
 const TUTSTEPS=TUTSTEPS_BY_NET[0];   // the shape older code still reads
@@ -5589,8 +5589,15 @@ function renderTutorial(){
     d.classList.toggle('now',i+1===step);
   });
   const key=$('coachkey');
-  if(!key.firstChild) key.innerHTML=['feature','neuron','crossing']
-    .map(k=>`<span>${rmark(k)}${k}</span>`).join('');
+  const keySets=[
+    [['feature','feature'],['neuron','neuron'],['crossing','crossing']],
+    [['shared','double ring · shared'],['split','after tap · two neurons']],
+    [['pinned','square · fixed'],['neuron','circle · moves']]
+  ];
+  if(key.dataset.lesson!==String(net)){
+    key.dataset.lesson=String(net);
+    key.innerHTML=keySets[net].map(([mark,label])=>`<span>${rmark(mark)}${label}</span>`).join('');
+  }
   key.style.display = step===1 ? '' : 'none';
   positionCoach();
 }
@@ -6638,6 +6645,10 @@ const RMARK={
               ...neuronParts(34,22,[a||THREADPAL[2],b||THREADPAL[3]])],
   pinned:()=>[threadPart([[2,22],[66,22]],THREADPAL[4]),
               ...neuronParts(34,22,[THREADPAL[4]],{pinned:true})],
+  split:()=>[threadPart([[2,12],[66,12]],THREADPAL[2]),
+             ...neuronParts(24,12,[THREADPAL[2]]),
+             threadPart([[2,34],[66,34]],THREADPAL[3]),
+             ...neuronParts(44,34,[THREADPAL[3]])],
   crossing:()=>[threadPart([[14,2],[54,42]],THREADPAL[5]),
                 threadPart([[54,2],[14,42]],THREADPAL[0]),
                 ...crossParts([[34,22]])]
