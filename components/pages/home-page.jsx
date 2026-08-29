@@ -775,8 +775,13 @@ export function HomePage() {
     };
   }, [lit]);
 
+  /* Escape releases the lens — but only when the lens is the top layer. The
+     spotlight has its own Escape, and while both were listening one press ran
+     both: the card closed and the lens went with it, so a visitor who opened a
+     game from the games lens was returned to the entire wall. Layers dismiss
+     one at a time, nearest first. */
   useEffect(() => {
-    if (!lens) return undefined;
+    if (!lens || lit) return undefined;
     const onKey = (event) => {
       if (event.key !== "Escape") return;
       withMorph(() => {
@@ -789,7 +794,7 @@ export function HomePage() {
        here meant it landed after the new state was captured, which drags
        every group's destination while it is animating. */
     return () => document.removeEventListener("keydown", onKey);
-  }, [lens]);
+  }, [lens, lit]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
 
@@ -1101,17 +1106,25 @@ export function HomePage() {
   };
 
   /* While a lens is held, any press on open paper — anything that is not a
-     button or a link — lets the site back in. */
+     button or a link — lets the site back in.
+
+     Except while a card is open. The spotlight renders inside this section, so
+     a press on its scrim bubbles up here, and "the scrim is not a button" was
+     true enough to drop the lens on the way out: open games, open a game,
+     dismiss it, and the whole wall came back instead of the games. Dismissing
+     the top layer must not dismiss the one under it. Guarded twice on purpose —
+     `lit` says a card is open, and the DOM test survives any future reordering
+     that lets this run after the close has already committed. */
   const releaseOnPaper = useCallback(
     (event) => {
-      if (!lens) return;
-      if (event.target.closest("button, a")) return;
+      if (!lens || lit) return;
+      if (event.target.closest("button, a, .spotlight")) return;
       withMorph(() => {
         setHeldBucket(null);
         setLens(null);
       });
     },
-    [lens, withMorph]
+    [lens, lit, withMorph]
   );
 
   /* The wall itself only changes when a lens changes — 366 cards need no
