@@ -66,12 +66,14 @@ requireRuleText(".hero-name-value::after {", [
   "background: rgba(var(--name-accent-rgb)"
 ]);
 
-/* The legend under the sentence is the menu: seven collection words, each
+/* The legend under the sentence is the menu: six collection words, each
    opening its lens. The sentence keeps one cycling noun as a shortcut into
    three buckets — a door, not a flip. */
 requireText(home, "deck-legend", "the homepage must keep the collection legend");
 requireText(home, "rail-word", "legend words must use the rail-word control");
-requireText(home, "onClick={() => focusSet(set.id)}", "each legend word must open its set");
+requireText(home, 'id: "projects", label: "Projects", lens: PROJECTS_LENS', "projects must own the merged projects and life lens");
+requireText(home, 'const PROJECTS_LENS = ["sites", "life"]', "projects must include both project and life cards");
+requireText(home, "onClick={() => focusSet(set)}", "each legend word must open its lens");
 requireRuleText(".deck-hero {", ["display: flex", "flex-direction: column"]);
 requireRuleText(".deck-legend {", ["display: flex", "flex-wrap: wrap"]);
 requireText(hero, "export function HeroCycleWord", "the hero sentence must cycle a single bucket word");

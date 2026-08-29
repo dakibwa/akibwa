@@ -59,16 +59,17 @@ function clearFoil(el) {
   for (const prop of FOIL_PROPS) el.style.removeProperty(prop);
 }
 
-const LENS_WORDS = ["sites", "jobs", "life", "music", "films", "games", "tv"];
+const PROJECTS_LENS = ["sites", "life"];
+const CAREER_LENS = ["jobs"];
 const TASTE = ["music", "films", "games", "tv"];
 
 /* The sentence's three buckets. The legend names every collection; these
    three are the headline's pulse, and a shortcut into the wall. #projects
-   aliases to sites; #taste opens the four taste collections. Existing
-   #sites / #music (etc.) hashes still open a single set. */
+   opens both the things made and the life pieces; #taste opens the four taste
+   collections. Existing collection hashes resolve to their merged menu item. */
 const BUCKETS = [
-  { id: "projects", label: "projects", accent: "27, 148, 125", lens: ["sites"] },
-  { id: "career", label: "career", accent: "203, 66, 94", lens: ["jobs"] },
+  { id: "projects", label: "projects", accent: "27, 148, 125", lens: PROJECTS_LENS },
+  { id: "career", label: "career", accent: "203, 66, 94", lens: CAREER_LENS },
   { id: "taste", label: "taste", accent: "115, 112, 255", lens: TASTE }
 ];
 
@@ -76,7 +77,8 @@ function resolveLens(hash) {
   if (!hash) return null;
   const bucket = BUCKETS.find((entry) => entry.id === hash);
   if (bucket) return { held: bucket.id, lens: bucket.lens };
-  if (LENS_WORDS.includes(hash)) return { held: `set:${hash}`, lens: [hash] };
+  const item = LEGEND.find((entry) => entry.id === hash || entry.lens.includes(hash));
+  if (item) return { held: item.id, lens: item.lens };
   return null;
 }
 
@@ -821,16 +823,16 @@ export function HomePage() {
 
   /* A legend word holds a lens over its own collection. Clicking again lets go. */
   const focusSet = useCallback(
-    (id) => {
-      const opening = heldBucket !== `set:${id}`;
-      const next = opening ? id : null;
+    (item) => {
+      const opening = heldBucket !== item.id;
+      const next = opening ? item.id : null;
       const href = lensHref(next);
       const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
       if (href !== current) history.pushState({ lens: next }, "", href);
       withMorph(
         () => {
-          setHeldBucket(next ? `set:${next}` : null);
-          setLens(next ? [next] : null);
+          setHeldBucket(next);
+          setLens(next ? item.lens : null);
         },
         { toTop: opening }
       );
@@ -1326,7 +1328,7 @@ export function HomePage() {
 
         <div className="deck-hero">
           <HeroSentence heldBucket={heldBucket} openBucket={openBucket} />
-          {/* Seven smaller words directly beneath the sentence, in the same
+          {/* Six smaller words directly beneath the sentence, in the same
               ink the cards wear, so the wall still reads at a glance. Each
               is an opener. */}
           <nav className="deck-legend" aria-label="The key — each word folds the wall to its collection">
@@ -1335,10 +1337,10 @@ export function HomePage() {
                 key={set.id}
                 id={`set-${set.id}`}
                 type="button"
-                className={`rail-word${dim(set.id) ? "" : " is-lit"}`}
-                style={{ "--index-accent-rgb": INDEX_ACCENT[set.id] }}
-                aria-expanded={heldBucket === `set:${set.id}`}
-                onClick={() => focusSet(set.id)}
+                className={`rail-word${lens && !set.lens.some((id) => lens.includes(id)) ? "" : " is-lit"}`}
+                style={{ "--index-accent-rgb": set.accent }}
+                aria-expanded={heldBucket === set.id}
+                onClick={() => focusSet(set)}
               >
                 {set.label}
               </button>
@@ -1371,10 +1373,13 @@ const INDEX_ACCENT = {
   tv: "0, 154, 205"
 };
 
-/* The legend's order mirrors the wall: the things made, the life pieces, the
-   career, then the taste collections. Life is not one of the data sets — its
-   cards ride in the sites flow — but it is very much one of the keys. */
-const LEGEND = [sets[0], { id: "life", label: "Life" }, ...sets.slice(1)];
+/* Projects is the broad first lens: things made and life pieces together.
+   Career and the four taste collections keep their own doors. */
+const LEGEND = [
+  { id: "projects", label: "Projects", lens: PROJECTS_LENS, accent: INDEX_ACCENT.sites },
+  { id: "career", label: "Career", lens: CAREER_LENS, accent: INDEX_ACCENT.jobs },
+  ...sets.slice(2).map((set) => ({ ...set, lens: [set.id], accent: INDEX_ACCENT[set.id] }))
+];
 
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for
