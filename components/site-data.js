@@ -17,10 +17,17 @@ export const albumPlaysDataUrl = (
   "https://akibwa-albums-refresh.dakibwa.workers.dev/albums"
 ).trim();
 
+/* The refresh worker behind this was deleted on 27 August 2026 with the rest of
+   the stale ones, and the url outlived it: every visit to /projects/cover-collision/
+   still fetched a workers.dev host that answers 404, which the browser reports as
+   a CORS failure and two red lines in the console. The series has a committed
+   snapshot in data/cover-collision-data.json and reads from that; an empty url
+   makes useCoverCollisionData return before it fetches anything. Set the env var
+   or put a refresh block back in public-surfaces.json if it is ever live again. */
 export const coverCollisionDataUrl = (
   process.env.NEXT_PUBLIC_COVER_COLLISION_DATA_URL ||
   coverCollisionSurface?.refresh?.dataUrl ||
-  "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision"
+  ""
 ).trim();
 
 export const areaTiles = [

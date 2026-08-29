@@ -52,16 +52,10 @@
       "id": "cover-collision",
       "title": "Cover Collision",
       "route": "/projects#cover-collision",
-      "kind": "public-series-refresh",
+      "kind": "public-series",
       "visibility": "public",
       "externalUrlEnv": "NEXT_PUBLIC_COVER_COLLISION_URL",
-      "fallbackData": "data/cover-collision-data.json",
-      "refresh": {
-        "worker": "akibwa-cover-collision-refresh",
-        "schedule": "42 6 * * *",
-        "dataUrl": "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision",
-        "statusUrl": "https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status"
-      }
+      "fallbackData": "data/cover-collision-data.json"
     }
   ]
 }
