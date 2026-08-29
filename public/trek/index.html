@@ -1254,13 +1254,11 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   // ------------------------------------------------------------- main loop
   var progress = 0;
-  var FORCED_P = new URLSearchParams(location.search).get("p");
   function readScroll(){
-    if (FORCED_P != null) { progress = Math.max(0, Math.min(DATA.timeline, +FORCED_P || 0)); return; }
     var top = experience.getBoundingClientRect().top;
     progress = Math.max(0, Math.min(DATA.timeline, -top));
   }
-  var CAMEASE = REDUCED ? 1 : (FORCED_P != null ? 1 : 0.085);
+  var CAMEASE = REDUCED ? 1 : 0.085;
   function frame(){
     requestAnimationFrame(frame);
     try {
@@ -1325,8 +1323,20 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     var slug0 = location.hash.slice(1);
     if (enterAt[slug0] != null) setTimeout(function(){ scrollTo(0, experience.offsetTop + enterAt[slug0] + 10); }, 60);
   }
-  var atParam = new URLSearchParams(location.search).get("at");
-  if (atParam != null) setTimeout(function(){ scrollTo(0, experience.offsetTop + (+atParam || 0)); }, 60);
+  var query = new URLSearchParams(location.search);
+  var legacyPParam = query.get("p");
+  var atParam = query.get("at");
+  if (atParam == null) atParam = legacyPParam;
+  if (atParam != null) setTimeout(function(){
+    scrollTo(0, experience.offsetTop + (+atParam || 0));
+    // Older visual-QA links used `p` to freeze the renderer. Preserve their
+    // starting point, then discard the lock so the journey keeps scrolling.
+    if (legacyPParam != null) {
+      query.delete("p");
+      var rest = query.toString();
+      history.replaceState(null, "", location.pathname + (rest ? "?" + rest : "") + location.hash);
+    }
+  }, 60);
   var recParam = new URLSearchParams(location.search).get("rec");
   if (recParam != null) setTimeout(function(){
     var i = matched.findIndex(function(d){ return d.n === +recParam; });
