@@ -16,7 +16,67 @@ const nf = new Intl.NumberFormat("en-GB");
 
 /* The whole site is one wall of identically sized cards. Every card shows one
    thing face up and turns over to say how — hover on a pointer, tap on touch. */
+/* Payload lives on the element so the spotlight can walk to a neighbour
+   without re-rendering the wall. The deck is inert while a card is open,
+   so the next card cannot be clicked; this is the door. */
+const CARD_PAYLOAD = new WeakMap();
+
+function walkableCards(deck) {
+  return [...deck.querySelectorAll(".card.is-lit")].filter((el) => {
+    if (el.hidden) return false;
+    if (getComputedStyle(el).display === "none") return false;
+    return CARD_PAYLOAD.has(el);
+  });
+}
+
+/* Degrees at the corner. Steeper than a thumbnail hover, quieter than the
+   album wall's 30° — these tiles are larger, and the shared perspective on
+   the deck does the rest of the depth. */
+const TILT = 9;
+const SPOT_TILT = 5;
+const PRESS_TILT = 6;
+const FOIL_PROPS = [
+  "--pointer-x",
+  "--pointer-y",
+  "--background-x",
+  "--background-y",
+  "--pointer-from-center",
+  "--tilt-x",
+  "--tilt-y"
+];
+
+function applyFoil(el, px, py, tilt = TILT) {
+  el.style.setProperty("--tilt-x", `${(tilt * (1 - 2 * py)).toFixed(2)}deg`);
+  el.style.setProperty("--tilt-y", `${(tilt * (2 * px - 1)).toFixed(2)}deg`);
+  el.style.setProperty("--pointer-x", `${(px * 100).toFixed(1)}%`);
+  el.style.setProperty("--pointer-y", `${(py * 100).toFixed(1)}%`);
+  el.style.setProperty("--background-x", `${(37 + px * 26).toFixed(1)}%`);
+  el.style.setProperty("--background-y", `${(33 + py * 34).toFixed(1)}%`);
+  const away = Math.min(1, Math.hypot(px - 0.5, py - 0.5) * 2);
+  el.style.setProperty("--pointer-from-center", away.toFixed(3));
+}
+
+function clearFoil(el) {
+  if (!el) return;
+  for (const prop of FOIL_PROPS) el.style.removeProperty(prop);
+}
+
+const LENS_WORDS = ["sites", "jobs", "life", "music", "films", "games", "tv"];
+
+function lensFromLocation() {
+  const hash = window.location.hash.replace(/^#/, "");
+  if (LENS_WORDS.includes(hash)) return hash;
+  const set = new URLSearchParams(window.location.search).get("set");
+  return LENS_WORDS.includes(set) ? set : null;
+}
+
+function lensHref(id) {
+  const url = new URL(window.location.href);
+  return `${url.pathname}${url.search}${id ? `#${id}` : ""}`;
+}
+
 function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace, back, held, dim, size, onActivate }) {
+  const payload = { suit, keySet, ground, accent, crop, label, face, spotFace, back, href };
   const props = {
     className: `card card--${suit}${size === "small" ? " card--small" : ""}${size === "grand" ? " card--grand" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
@@ -36,9 +96,10 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
     <button
       {...props}
       type="button"
-      onClick={(event) =>
-        onActivate?.({ suit, ground, accent, crop, label, face, spotFace, back, href }, event.currentTarget)
-      }
+      ref={(el) => {
+        if (el) CARD_PAYLOAD.set(el, payload);
+      }}
+      onClick={(event) => onActivate?.(payload, event.currentTarget)}
     >
       <span className="card-face">{face}</span>
       <span className="card-back">{back}</span>
@@ -50,13 +111,14 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, spotFace,
 /* The spotlight: the picked card, played large in the middle of a dimmed,
    stilled page — the same face, the same detail, just brought forward. It
    arrives FROM its place on the wall and returns TO it. */
-function Spotlight({ lit, onClose }) {
+function Spotlight({ lit, onClose, onStep }) {
   const closeRef = useRef(null);
   /* The CARD is the shared element, not the figure that wraps it. The figure
      is a flex column holding the card AND the caption, so centring it on the
      wall tile put the card half a caption too high — measured at 21.3px above
      its own slot, so it launched from thin air and slid down as it grew. */
   const cardRef = useRef(null);
+  const figureRef = useRef(null);
   const restRef = useRef(null);
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -115,11 +177,23 @@ function Spotlight({ lit, onClose }) {
 
   useEffect(() => {
     const onKey = (event) => {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape") {
+        close();
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        onStep?.(1);
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        onStep?.(-1);
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [close]);
+  }, [close, onStep]);
 
   useEffect(() => () => window.clearTimeout(bailRef.current), []);
 
@@ -182,6 +256,14 @@ function Spotlight({ lit, onClose }) {
   useLayoutEffect(() => {
     const card = cardRef.current;
     if (!card) return;
+    /* A step inside the spotlight swaps the face in place — no travel.
+       Re-running the inversion would launch the new sleeve from the old
+       card's rest box and read as a jump. */
+    if (lit.travel === false) {
+      restRef.current = card.getBoundingClientRect();
+      setEntered(true);
+      return;
+    }
     /* Cache the card's own untransformed box once: every later inversion
        measures against this, so nothing ever reads a moving element. */
     const rest = card.getBoundingClientRect();
@@ -223,11 +305,38 @@ function Spotlight({ lit, onClose }) {
           compositor work, where animating the blur radius itself re-blurred
           the whole viewport every frame. */}
       <span className="spotlight-scrim" aria-hidden="true" />
-      <figure className="spotlight-figure">
+      <figure
+        ref={figureRef}
+        className="spotlight-figure"
+        onMouseMove={(event) => {
+          if (!entered) return;
+          if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+          const cardEl = cardRef.current;
+          const figure = figureRef.current;
+          if (!cardEl || !figure) return;
+          const box = cardEl.getBoundingClientRect();
+          if (!box.width || !box.height) return;
+          const px = (event.clientX - box.left) / box.width;
+          const py = (event.clientY - box.top) / box.height;
+          applyFoil(cardEl, px, py, SPOT_TILT);
+          figure.style.setProperty("--spot-tilt-x", `${(SPOT_TILT * (1 - 2 * py)).toFixed(2)}deg`);
+          figure.style.setProperty("--spot-tilt-y", `${(SPOT_TILT * (2 * px - 1)).toFixed(2)}deg`);
+        }}
+        onMouseLeave={() => {
+          const cardEl = cardRef.current;
+          const figure = figureRef.current;
+          if (cardEl) clearFoil(cardEl);
+          if (figure) {
+            figure.style.removeProperty("--spot-tilt-x");
+            figure.style.removeProperty("--spot-tilt-y");
+          }
+        }}
+      >
         <div
           ref={cardRef}
           className={`card card--${card.suit} card--spotlight`}
           data-suit={card.suit}
+          data-key={card.keySet ?? card.suit}
           style={
             card.ground || card.accent || card.crop
               ? { "--ground": card.ground, "--accent": card.accent, "--crop": card.crop }
@@ -246,6 +355,7 @@ function Spotlight({ lit, onClose }) {
               {card.spotFace}
             </span>
           ) : null}
+          <span className="card-sheen" aria-hidden="true" />
         </div>
         {/* The caption never travels and never scales: it sits at its final
             place and arrives, like a label set down under a poster that has
@@ -261,6 +371,19 @@ function Spotlight({ lit, onClose }) {
             >
               Open it ↗
             </a>
+          ) : null}
+          {lit.total > 1 ? (
+            <div className="spotlight-steps">
+              <button type="button" onClick={() => onStep?.(-1)} aria-label="Previous card">
+                ←
+              </button>
+              <span>
+                {nf.format(lit.index + 1)} / {nf.format(lit.total)}
+              </span>
+              <button type="button" onClick={() => onStep?.(1)} aria-label="Next card">
+                →
+              </button>
+            </div>
           ) : null}
         </figcaption>
       </figure>
@@ -392,18 +515,6 @@ function nameVisible(deck, named, start, limit) {
    The asymmetry is the whole trick: the material's travel is compressed to
    a narrow band while the light's travel is full range. Map them 1:1 and it
    reads as a sliding texture rather than as light moving over a surface. */
-const TILT = 7;
-const PRESS_TILT = 6;
-const FOIL_PROPS = [
-  "--pointer-x",
-  "--pointer-y",
-  "--background-x",
-  "--background-y",
-  "--pointer-from-center",
-  "--tilt-x",
-  "--tilt-y"
-];
-
 function useCardPointer(deckRef) {
   useEffect(() => {
     const deck = deckRef.current;
@@ -414,7 +525,7 @@ function useCardPointer(deckRef) {
 
     const clear = () => {
       if (!lit) return;
-      for (const prop of FOIL_PROPS) lit.style.removeProperty(prop);
+      clearFoil(lit);
       lit = null;
     };
 
@@ -439,20 +550,7 @@ function useCardPointer(deckRef) {
         const py = (clientY - box.top) / box.height;
         if (lit && lit !== card) clear();
         lit = card;
-        /* rotateX(+) pushes the top edge away and rotateY(+) the right edge,
-           both inverted so the point under the cursor is the one that sinks. */
-        card.style.setProperty("--tilt-x", `${(TILT * (1 - 2 * py)).toFixed(2)}deg`);
-        card.style.setProperty("--tilt-y", `${(TILT * (2 * px - 1)).toFixed(2)}deg`);
-        card.style.setProperty("--pointer-x", `${(px * 100).toFixed(1)}%`);
-        card.style.setProperty("--pointer-y", `${(py * 100).toFixed(1)}%`);
-        /* Compressed travel for the material... */
-        card.style.setProperty("--background-x", `${(37 + px * 26).toFixed(1)}%`);
-        card.style.setProperty("--background-y", `${(33 + py * 34).toFixed(1)}%`);
-        /* ...and the restraint dial: strongest across the middle of the card,
-           gone by the corners, so it reads as something in the paper rather
-           than as a shiny card. */
-        const away = Math.min(1, Math.hypot(px - 0.5, py - 0.5) * 2);
-        card.style.setProperty("--pointer-from-center", away.toFixed(3));
+        applyFoil(card, px, py);
       });
     };
 
@@ -554,7 +652,7 @@ function useCardPress(deckRef) {
    no row elements to describe, and inventing wrappers to satisfy the pattern
    would break the layout it exists to describe. The key map is borrowed; the
    semantics are not. */
-function useCardKeys(deckRef) {
+function useCardKeys(deckRef, lens) {
   useEffect(() => {
     const deck = deckRef.current;
     if (!deck) return undefined;
@@ -610,19 +708,14 @@ function useCardKeys(deckRef) {
        arrow. Seeded here and moved by the handler. */
     const seed = () => {
       const list = cards();
-      if (!list.length) return;
-      if (!list.some((el) => el.getAttribute("tabindex") === "0")) {
-        list[0].setAttribute("tabindex", "0");
-      }
-      for (const el of list) {
-        if (el.getAttribute("tabindex") !== "0") el.setAttribute("tabindex", "-1");
-      }
+      for (const el of deck.querySelectorAll(".card")) el.setAttribute("tabindex", "-1");
+      if (list[0]) list[0].setAttribute("tabindex", "0");
     };
     seed();
 
     deck.addEventListener("keydown", onKey);
     return () => deck.removeEventListener("keydown", onKey);
-  }, [deckRef]);
+  }, [deckRef, lens]);
 }
 
 function Mark({ src, tile }) {
@@ -650,11 +743,9 @@ export function HomePage() {
 
   useCardPointer(deckRef);
   useCardPress(deckRef);
-  useCardKeys(deckRef);
+  useCardKeys(deckRef, lens);
 
-  const openLit = useCallback((card, element) => {
-    /* The card is mid-tilt under the cursor — measure it at rest, or the
-       zoom launches from a skewed box. */
+  const placeLit = useCallback((card, element, { travel = true } = {}) => {
     const priorTransition = element.style.transition;
     element.style.transition = "none";
     element.style.transform = "none";
@@ -662,9 +753,38 @@ export function HomePage() {
     element.style.visibility = "hidden";
     element.style.transition = priorTransition;
     element.style.transform = "";
+    const previous = litOriginRef.current;
+    if (previous && previous !== element) previous.style.visibility = "";
     litOriginRef.current = element;
-    setLit({ card, from: { x: from.left, y: from.top, w: from.width, h: from.height } });
+    const list = deckRef.current ? walkableCards(deckRef.current) : [element];
+    const index = Math.max(0, list.indexOf(element));
+    setLit({
+      card,
+      from: { x: from.left, y: from.top, w: from.width, h: from.height },
+      travel,
+      index,
+      total: Math.max(1, list.length)
+    });
   }, []);
+
+  const openLit = useCallback((card, element) => {
+    /* The card is mid-tilt under the cursor — measure it at rest, or the
+       zoom launches from a skewed box. */
+    placeLit(card, element, { travel: true });
+  }, [placeLit]);
+
+  const stepLit = useCallback((delta) => {
+    const origin = litOriginRef.current;
+    const deck = deckRef.current;
+    if (!origin || !deck) return;
+    const list = walkableCards(deck);
+    const i = list.indexOf(origin);
+    if (i === -1 || list.length < 2) return;
+    const next = list[(i + delta + list.length) % list.length];
+    const payload = CARD_PAYLOAD.get(next);
+    if (!payload) return;
+    placeLit(payload, next, { travel: false });
+  }, [placeLit]);
 
   const closeLit = useCallback(() => {
     const origin = litOriginRef.current;
@@ -745,14 +865,14 @@ export function HomePage() {
   const focusSet = useCallback(
     (id) => {
       const opening = heldBucket !== `set:${id}`;
+      const next = opening ? id : null;
+      const href = lensHref(next);
+      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      if (href !== current) history.pushState({ lens: next }, "", href);
       withMorph(
         () => {
-          setHeldBucket((current) => {
-            const key = `set:${id}`;
-            const next = current === key ? null : key;
-            setLens(next ? [id] : null);
-            return next;
-          });
+          setHeldBucket(next ? `set:${next}` : null);
+          setLens(next ? [next] : null);
         },
         { toTop: opening }
       );
@@ -780,21 +900,50 @@ export function HomePage() {
      both: the card closed and the lens went with it, so a visitor who opened a
      game from the games lens was returned to the entire wall. Layers dismiss
      one at a time, nearest first. */
+  const dropLens = useCallback(() => {
+    const href = lensHref(null);
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (href !== current) history.pushState({ lens: null }, "", href);
+    withMorph(() => {
+      setHeldBucket(null);
+      setLens(null);
+    });
+  }, [withMorph]);
+
+  useEffect(() => {
+    const boot = lensFromLocation();
+    if (boot) {
+      setHeldBucket(`set:${boot}`);
+      setLens([boot]);
+    }
+    const onPop = () => {
+      const id = lensFromLocation();
+      withMorph(
+        () => {
+          setHeldBucket(id ? `set:${id}` : null);
+          setLens(id ? [id] : null);
+        },
+        { toTop: Boolean(id) }
+      );
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [withMorph]);
+
+  /* Escape releases the lens — but only when the lens is the top layer. The
+     spotlight has its own Escape, and while both were listening one press ran
+     both: the card closed and the lens went with it, so a visitor who opened a
+     game from the games lens was returned to the entire wall. Layers dismiss
+     one at a time, nearest first. */
   useEffect(() => {
     if (!lens || lit) return undefined;
     const onKey = (event) => {
       if (event.key !== "Escape") return;
-      withMorph(() => {
-        setHeldBucket(null);
-        setLens(null);
-      });
+      dropLens();
     };
     document.addEventListener("keydown", onKey);
-    /* The scroll itself happens inside the morph (see withMorph): doing it
-       here meant it landed after the new state was captured, which drags
-       every group's destination while it is animating. */
     return () => document.removeEventListener("keydown", onKey);
-  }, [lens, lit]);
+  }, [lens, lit, dropLens]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
 
@@ -1119,12 +1268,9 @@ export function HomePage() {
     (event) => {
       if (!lens || lit) return;
       if (event.target.closest("button, a, .spotlight")) return;
-      withMorph(() => {
-        setHeldBucket(null);
-        setLens(null);
-      });
+      dropLens();
     },
-    [lens, lit, withMorph]
+    [lens, lit, dropLens]
   );
 
   /* The wall itself only changes when a lens changes — 366 cards need no
@@ -1206,7 +1352,7 @@ export function HomePage() {
         {wall}
       </div>
 
-      {lit ? <Spotlight lit={lit} onClose={closeLit} /> : null}
+      {lit ? <Spotlight lit={lit} onClose={closeLit} onStep={stepLit} /> : null}
 
       <PageFooter />
     </section>

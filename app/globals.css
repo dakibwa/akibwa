@@ -5937,6 +5937,14 @@ button {
   width: min(80vw, 44vh, 360px);
 }
 
+.spotlight.is-entered .spotlight-figure {
+  transform: perspective(900px)
+    rotateX(var(--spot-tilt-x, 0deg))
+    rotateY(var(--spot-tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 170ms var(--ease-out);
+}
+
 .spotlight .card--spotlight {
   position: relative;
   aspect-ratio: 1;
@@ -6063,6 +6071,44 @@ button {
   outline: 0;
 }
 
+.spotlight-steps {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.spotlight-steps button {
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--white);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.spotlight-steps button:hover,
+.spotlight-steps button:focus-visible {
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  outline: 0;
+}
+
+.spotlight.is-entered .card--spotlight .card-sheen {
+  mix-blend-mode: soft-light;
+  opacity: calc(1.05 - var(--pointer-from-center, 1) * 0.85);
+}
+
+.spotlight.is-entered .card--spotlight .card-sheen::before,
+.spotlight.is-entered .card--spotlight .card-sheen::after {
+  opacity: 1;
+}
+
 .spotlight-close {
   position: fixed;
   top: 18px;
@@ -6085,6 +6131,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .spotlight, .spotlight-figure { transition: none; }
+  .spotlight.is-entered .spotlight-figure { transform: none; }
 }
 
 .card {
@@ -6185,6 +6232,11 @@ button {
   grid-auto-flow: dense;
   gap: clamp(6px, 0.65vw, 10px);
   align-items: stretch;
+  /* One vanishing point for the whole wall, the way /albums already does.
+     Per-card perspective made every tile tilt identically; a shared one
+     fans them toward the centre of the room. */
+  perspective: 880px;
+  perspective-origin: 50% 22%;
 }
 
 /* A card steps forward, so the wall steps back — the whole collage settles
@@ -6242,13 +6294,13 @@ button {
    The wall is blended, so every card wears its collection's ink along its
    bottom edge — the same ink its legend word is printed in. The edge is the
    whole key: no badges, no labels, just a coloured baseline. */
-.deck .card[data-key="sites"] { --key-rgb: 27, 148, 125; }
-.deck .card[data-key="jobs"] { --key-rgb: 203, 66, 94; }
-.deck .card[data-key="life"] { --key-rgb: 61, 90, 128; }
-.deck .card[data-key="music"] { --key-rgb: 224, 122, 26; }
-.deck .card[data-key="films"] { --key-rgb: 94, 142, 103; }
-.deck .card[data-key="games"] { --key-rgb: 115, 112, 255; }
-.deck .card[data-key="tv"] { --key-rgb: 0, 154, 205; }
+.card[data-key="sites"] { --key-rgb: 27, 148, 125; }
+.card[data-key="jobs"] { --key-rgb: 203, 66, 94; }
+.card[data-key="life"] { --key-rgb: 61, 90, 128; }
+.card[data-key="music"] { --key-rgb: 224, 122, 26; }
+.card[data-key="films"] { --key-rgb: 94, 142, 103; }
+.card[data-key="games"] { --key-rgb: 115, 112, 255; }
+.card[data-key="tv"] { --key-rgb: 0, 154, 205; }
 
 /* The key is a quiet baseline: each card underlined in its collection's
    ink, the frame staying the neutral line. (A full coloured frame was
@@ -6402,9 +6454,9 @@ button {
 @media (hover: hover) and (pointer: fine) {
   .deck .card:hover {
     transform:
-      perspective(640px)
       rotateX(var(--tilt-x, 3deg))
       rotateY(var(--tilt-y, -3deg))
+      translateZ(22px)
       scale(1.035);
     border-color: var(--line-strong);
     /* Warm, and in two parts. The ground is warm paper, so the light it
@@ -6420,7 +6472,7 @@ button {
 }
 
 .deck .card:focus-visible {
-  transform: perspective(640px) rotate3d(1, -1, 0, 7deg) scale(1.035);
+  transform: rotate3d(1, -1, 0, 7deg) translateZ(22px) scale(1.035);
   border-color: var(--line-strong);
   box-shadow:
     -2px 3px 6px hsl(32 24% 26% / 0.13),
@@ -6437,6 +6489,7 @@ button {
   position: absolute;
   inset: 0;
   z-index: 5;
+  overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
   background-image:
@@ -6464,6 +6517,28 @@ button {
     --background-x 140ms linear,
     --background-y 140ms linear,
     --pointer-from-center 120ms linear;
+}
+
+/* A warm specular stripe that rides the pointer — light raking the paper,
+   not a rainbow foil. Separate from the material so the two can travel at
+   different speeds. */
+.card-sheen::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  border-radius: inherit;
+  background: linear-gradient(
+    118deg,
+    transparent 44%,
+    hsl(40 45% 100% / 0.34) 50%,
+    transparent 56%
+  );
+  background-size: 220% 220%;
+  background-position: var(--pointer-x, 50%) var(--pointer-y, 50%);
+  mix-blend-mode: overlay;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 190ms var(--ease-out);
 }
 
 /* The specular highlight rides above the material. */
@@ -6495,6 +6570,7 @@ button {
   }
 
   .deck .card:hover .card-sheen::after { opacity: 1; }
+  .deck .card:hover .card-sheen::before { opacity: 1; }
 }
 
 .deck .card:focus-visible .card-sheen { opacity: 0.45; }
@@ -6553,9 +6629,9 @@ button {
 @media (hover: none) {
   .deck .card.is-pressed {
     transform:
-      perspective(640px)
       rotateX(var(--press-x, 0deg))
       rotateY(var(--press-y, 0deg))
+      translateZ(14px)
       scale(1.03);
     box-shadow:
       -2px 3px 6px hsl(32 24% 26% / 0.13),
@@ -6571,6 +6647,7 @@ button {
   }
 
   .deck .card.is-pressed .card-sheen::after { opacity: 1; }
+  .deck .card.is-pressed .card-sheen::before { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -6582,6 +6659,7 @@ button {
   .deck .card.is-pressed { transform: scale(0.985); }
 
   .card-sheen,
+  .card-sheen::before,
   .card-sheen::after { transition: none; }
 }
 
