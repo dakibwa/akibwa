@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-xMyYKPmIyvuG2SxWEP8DfCMZZgml3CvN2Ntk2ODmUhw=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-9mHV5PKynaMXuKqE5/QAy5o0zbyCWOOBb6wG13xtOPk=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -4943,8 +4943,13 @@ function boardScale(){
   const w=$('netsvg').getBoundingClientRect().width; return w?w/BW:1;
 }
 let tutAct=null, tutLights=[];
+function tutorialFreePlay(){
+  if(!inTutorial()) return false;
+  const steps=TUTSTEPS_BY_NET[R().netIndex];
+  return !!steps && Math.min(tutStepAt,steps.length)===steps.length;
+}
 const grabbable=n=>!n.pinned && !n.threads.every(t=>t.freed)
-  && (!inTutorial() || n===tutAct);
+  && (!inTutorial() || tutorialFreePlay() || n===tutAct);
 function syncTutorialTargets(){
   members.forEach(n=>{
     if(!n.g) return;
@@ -5419,7 +5424,7 @@ function tutSpotClear(){
   syncTutorialTargets();
 }
 function positionCoach(){
-  if(!inTutorial()||!tutLights.length) return;
+  if(!inTutorial()) return;
   const field=$('field'), svg=$('netsvg'), coach=$('coach');
   if(!field||!svg||!coach||!coach.offsetWidth||!coach.offsetHeight) return;
   const fr=field.getBoundingClientRect(), sr=svg.getBoundingClientRect();
@@ -5433,12 +5438,17 @@ function positionCoach(){
   };
   const pad=matchMedia('(max-width:700px)').matches?10:16;
   const w=coach.offsetWidth, h=coach.offsetHeight;
-  const xs=[plate.left+pad, plate.left+plate.width-pad-w];
-  const ys=[plate.top+pad, plate.top+plate.height-pad-h];
+  const slots=(a,b,n)=>b<=a ? [(a+b)/2]
+    : Array.from({length:n},(_,i)=>a+(b-a)*i/(n-1));
+  const xs=slots(plate.left+pad,plate.left+plate.width-pad-w,5);
+  const ys=slots(plate.top+pad,plate.top+plate.height-pad-h,9);
   const m=boardCTM(), scale=boardScale();
   if(!m) return;
+  const anchors=tutLights.length ? tutLights
+    : members.filter(grabbable).map(n=>({n,marks:[]}));
+  if(!anchors.length) return;
   const points=[];
-  tutLights.forEach(l=>{
+  anchors.forEach(l=>{
     const add=(x,y,r)=>{
       const p=new DOMPoint(x,y).matrixTransform(m);
       points.push({x:p.x,y:p.y,r});
@@ -5463,6 +5473,7 @@ function positionCoach(){
 }
 function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
+  if(tutorialFreePlay()){ tutSpotClear(); return }
   readMarkSizes();                 // the aperture is in neuron radii, and those move
   const named=tutNamed();
   let move=null;
