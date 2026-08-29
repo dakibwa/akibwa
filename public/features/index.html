@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-dzykIEmGRySlsLCiqNtO3o0sqBxtyGH1TMihNeHxZf4=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-bXsTBciusGhLQf1QvVWDDJnN+rTGdvj2z/3RO4rolFo=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -5754,8 +5754,10 @@ function clearNet(){
   if(setDone) r.over=true;
   else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false;
          r.log=[]; r.assists=0; r.logGap=false }
+  const finalTutorial=wasTutorial && r.netIndex>=TUTNETS.length;
   const read={run:r, num:r.netIndex, turns:r.turns||0,
               depth:r.cleared.length,
+              finalTutorial,
               assisted:!!r.cleared[r.cleared.length-1].assisted,
               clean:r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length};
   resetDescent();
@@ -5766,14 +5768,14 @@ function clearNet(){
   stampToday(depth,feats,tier);
   if(wasTutorial){
     tutReach(3);
-    if(r.netIndex>=TUTNETS.length) endTutorial();
+    if(finalTutorial) endTutorial();
     else { tutStepAt=1; }
   }
   save();
   holdGauge();
   boardCleared();
   if(setDone) renderHud();
-  const tutMidway = wasTutorial && !store.tutorialDone;
+  const tutMidway = wasTutorial && !finalTutorial;
   const card = setDone ? showRunOver
              : tutMidway ? nextNet
              : (()=>showNetCleared(feats,tier,wasTutorial,read));
@@ -5891,7 +5893,7 @@ function fillSignInInvite(){
   });
 }
 function showNetCleared(feats,tier,wasTutorial,read){
-  if(!read || read.run!==R()) return;
+  if(!read || (read.run!==R() && !read.finalTutorial)) return;
   const dedup=[...new Map(feats.map(k=>[k,0])).keys()].map(k=>({k,n:feats.filter(f=>f===k).length}));
   const mint=`<div class="minted">${dedup.map(({k,n},i)=>{
     const b=store.collection.badges[k];
@@ -5915,7 +5917,7 @@ function showNetCleared(feats,tier,wasTutorial,read){
   });
   showVeil('netveil');
   if(wasTutorial) fillSignInInvite();
-  $('netveil').dataset.returnView=(wasTutorial && store.tutorialDone)?'rules':'';
+  $('netveil').dataset.returnView=read.finalTutorial?'rules':'';
   $('contbtn').onclick=leaveNetCard;
 }
 function runOverOffer(trial,depth){
