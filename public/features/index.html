@@ -2296,14 +2296,19 @@ function paintDoors(){
   });
   fillIntroAuth();
 }
+let signInsAsk=null;     // the flight, not just the answer — see below
 async function askSignIns(){
   if(signIns) return signIns;
   if(!API) return (signIns=[]);
-  try{
-    const j=await apiCall('/providers');
-    signIns=Array.isArray(j.providers)?j.providers:[];
-  }catch(e){ signIns=[] }
-  return signIns;
+  if(signInsAsk) return signInsAsk;
+  signInsAsk=(async()=>{
+    try{
+      const j=await apiCall('/providers');
+      signIns=Array.isArray(j.providers)?j.providers:[];
+    }catch(e){ signIns=[] }
+    return signIns;
+  })();
+  return signInsAsk;
 }
 
 function tellClock(){
