@@ -28,8 +28,12 @@
   --bone:#EFE6D4;
   --dust:#A2967F;
   --rule:#2E2820;
+  --canvas:#FAF8F3;
+  --black:#030405;
+  --site-line:rgba(16,18,23,.18);
   --serif:"Fraunces",Georgia,"Iowan Old Style",serif;
   --mono:"Plex Mono","SF Mono",ui-monospace,Menlo,monospace;
+  --sans:"Avenir Next","Inter","Helvetica Neue",Arial,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0}
@@ -54,31 +58,49 @@ button{font:inherit;color:inherit}
 /* ---------------------------------------------------------------- masthead */
 .masthead{
   position:fixed;inset:0 0 auto 0;z-index:50;
-  display:flex;align-items:center;gap:22px;
-  padding:13px 22px;
-  background:linear-gradient(color-mix(in srgb,var(--peat) 82%,transparent),transparent);
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:22px;
+  min-height:58px;padding:8px 22px 9px;
+  color:var(--black);background:var(--canvas);border-bottom:1px solid var(--site-line);
+  box-shadow:0 7px 20px rgba(0,0,0,.14);
 }
-.masthead .mark{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--dust);text-decoration:none;white-space:nowrap}
-.masthead .mark b{color:var(--bone);font-weight:500}
-.countries{display:flex;gap:17px;margin:0 auto;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
+.masthead .mark{
+  display:flex;align-items:baseline;gap:11px;color:var(--black);text-decoration:none;white-space:nowrap;
+}
+.masthead .mark-word{
+  display:block;font-family:var(--sans);font-size:25px;font-weight:700;line-height:1;
+  letter-spacing:-.02em;text-transform:lowercase;
+}
+.masthead .mark-rule{
+  display:block;height:3px;margin-top:4px;
+  background:linear-gradient(90deg,
+    #2EA3DC 0 14.28%,#24709F 14.28% 28.56%,#7D6BB0 28.56% 42.84%,
+    #12A19A 42.84% 57.12%,#1FA45A 57.12% 71.4%,#EFC319 71.4% 85.68%,#E97E18 85.68% 100%);
+}
+.masthead .mark-date{
+  font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.11em;
+  color:color-mix(in srgb,var(--black) 64%,var(--canvas));text-transform:lowercase;
+}
+.country-menu{min-width:0}
+.countries{display:flex;justify-content:center;gap:17px;margin:0;padding:2px 0 3px;list-style:none;overflow-x:auto;scrollbar-width:none}
 .countries::-webkit-scrollbar{display:none}
 .countries a{
-  font-family:var(--serif);font-size:15.5px;font-variation-settings:"opsz" 20,"SOFT" 60,"WONK" 0;
-  color:var(--w);text-decoration:none;white-space:nowrap;opacity:.6;
-  border-bottom:1px solid transparent;padding-bottom:1px;
-  transition:opacity .25s,border-color .25s;
+  display:block;font-family:var(--sans);font-size:15px;font-weight:540;letter-spacing:-.012em;
+  color:color-mix(in srgb,var(--w) 58%,var(--black));text-decoration:none;white-space:nowrap;
+  border-bottom:2px solid transparent;padding-bottom:2px;
+  transition:color .16s ease,border-color .25s ease;
 }
-.countries a:hover{opacity:1}
-.countries a.current{opacity:1;border-color:var(--w)}
+.countries a:hover{color:color-mix(in srgb,var(--w) 84%,var(--black))}
+.countries a.current{color:color-mix(in srgb,var(--w) 84%,var(--black));border-color:color-mix(in srgb,var(--w) 78%,var(--black))}
 .walkbtn{
-  background:none;border:1px solid var(--rule);color:var(--bone);cursor:pointer;
+  background:transparent;border:1px solid var(--site-line);color:var(--black);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  padding:8px 16px;white-space:nowrap;transition:border-color .25s,background .25s;
+  padding:8px 15px;white-space:nowrap;transition:border-color .18s,background .18s,color .18s;
 }
-.walkbtn:hover{border-color:var(--dust)}
-.walkbtn.playing{background:var(--bone);color:var(--peat);border-color:var(--bone)}
-.masthead .site{font-family:var(--mono);font-size:12px;color:var(--dust);text-decoration:none;white-space:nowrap}
-.masthead .site:hover{color:var(--bone)}
+.walkbtn:hover{border-color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
+.walkbtn.playing{background:var(--black);color:var(--canvas);border-color:var(--black)}
+.masthead .site{font-family:var(--mono);font-size:11px;color:color-mix(in srgb,var(--black) 62%,var(--canvas));text-decoration:none;white-space:nowrap}
+.masthead .site:hover{color:var(--black)}
+.masthead :focus-visible{outline-color:var(--black)}
 
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
@@ -308,8 +330,14 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
 /* ------------------------------------------------------------- responsive */
 @media (max-width:900px){
-  .masthead{gap:14px;padding:12px 16px}
+  .masthead{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;min-height:56px;padding:8px 12px}
   .masthead .site{display:none}
+  .masthead .mark{gap:8px}
+  .masthead .mark-word{font-size:22px}
+  .masthead .mark-date{font-size:9px}
+  .countries{justify-content:flex-start;gap:13px}
+  .countries a{font-size:14px}
+  .walkbtn{padding:7px 10px;font-size:10px}
   .hud{top:58px;left:12px;width:min(226px,calc(100vw - 24px));padding:11px 13px 10px}
   .hud .metrics{gap:9px 12px;margin-top:9px}
   .hud .metric.primary{padding-bottom:8px}
@@ -336,16 +364,21 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 <body>
 
 <header class="masthead" id="masthead">
-  <a class="mark" href="https://akibwa.com/"><b>the trek</b> · 2019</a>
-  <ul class="countries" id="country-nav">
-    <li><a href="#france" style="--w:#2EA3DC">France</a></li>
-    <li><a href="#germany" style="--w:#24709F">Germany</a></li>
-    <li><a href="#austria" style="--w:#7D6BB0">Austria</a></li>
-    <li><a href="#slovenia" style="--w:#12A19A">Slovenia</a></li>
-    <li><a href="#croatia" style="--w:#1FA45A">Croatia</a></li>
-    <li><a href="#serbia" style="--w:#EFC319">Serbia</a></li>
-    <li><a href="#bulgaria" style="--w:#E97E18">Bulgaria</a></li>
-  </ul>
+  <a class="mark" href="https://akibwa.com/" aria-label="Akibwa home">
+    <span class="mark-word">trek<i class="mark-rule" aria-hidden="true"></i></span>
+    <span class="mark-date">2019</span>
+  </a>
+  <nav class="country-menu" aria-label="Countries on the trek">
+    <ul class="countries" id="country-nav">
+      <li><a href="#france" style="--w:#2EA3DC">France</a></li>
+      <li><a href="#germany" style="--w:#24709F">Germany</a></li>
+      <li><a href="#austria" style="--w:#7D6BB0">Austria</a></li>
+      <li><a href="#slovenia" style="--w:#12A19A">Slovenia</a></li>
+      <li><a href="#croatia" style="--w:#1FA45A">Croatia</a></li>
+      <li><a href="#serbia" style="--w:#EFC319">Serbia</a></li>
+      <li><a href="#bulgaria" style="--w:#E97E18">Bulgaria</a></li>
+    </ul>
+  </nav>
   <button class="walkbtn" id="walkbtn" aria-pressed="false">▶ walk it</button>
   <a class="site" href="https://akibwa.com/">akibwa.com</a>
 </header>
@@ -664,6 +697,21 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   }
 
   function setText(el, value){ if (el && el._trekText !== value) { el._trekText = value; el.textContent = value; } }
+  var lastCountryShown = "";
+  function showCountry(country){
+    if (!country || country === lastCountryShown) return;
+    lastCountryShown = country;
+    navLinks.forEach(function(a){
+      var isCurrent = a.getAttribute("href") === "#" + country.toLowerCase();
+      a.classList.toggle("current", isCurrent);
+      if (isCurrent && countryNav && innerWidth <= 900) {
+        var navRect = countryNav.getBoundingClientRect();
+        var linkRect = a.getBoundingClientRect();
+        var left = countryNav.scrollLeft + linkRect.left + linkRect.width / 2 - navRect.left - navRect.width / 2;
+        countryNav.scrollTo({ left: Math.max(0, left), behavior: REDUCED ? "auto" : "smooth" });
+      }
+    });
+  }
   function updateStats(scene, wp){
     var d = wp.day;
     var prev = byN[d.n - 1];
@@ -709,16 +757,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
     dcJournal.textContent = d.j || "";
-    navLinks.forEach(function(a){
-      var isCurrent = a.getAttribute("href") === "#" + d.c.toLowerCase();
-      a.classList.toggle("current", isCurrent);
-      if (isCurrent && countryNav && innerWidth <= 900) {
-        var navRect = countryNav.getBoundingClientRect();
-        var linkRect = a.getBoundingClientRect();
-        var left = countryNav.scrollLeft + linkRect.left + linkRect.width / 2 - navRect.left - navRect.width / 2;
-        countryNav.scrollTo({ left: Math.max(0, left), behavior: REDUCED ? "auto" : "smooth" });
-      }
-    });
   }
 
   // ---------------------------------------------------------------- photos
@@ -839,6 +877,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     sparkAt(wp.alt, wp.day.n, wp.t);
     updateStats(scene, wp);
     updateTrail(scene, wp, inJourney);
+    showCountry(scene.t === "enter" ? scene.country : wp.day.c);
 
     // day content
     if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showDay(wp.day); showPhoto(wp.day, wp.t); }
