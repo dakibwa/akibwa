@@ -63,7 +63,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-9sEFJEO6CcJQ6FK9hhaYetpZHH2LCQGx+AX2V+6zi3M=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-DcB12n6XToM/lAFbJGlpq8ijzaYI37/LIKcUXnLoCUE=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -2826,6 +2826,16 @@ function closeCheckout(){
   $('paybody').innerHTML='';
   if(menuShown()&&menuView==='pay'){ menuView='home'; renderMenu() }
 }
+function tillSaid(words,retry){
+  toast(words);
+  if(!(menuShown() && menuView==='pay')) return;
+  $('paybody').innerHTML=`<p class="acct-ask">${esc(words)}</p>`
+    +(retry===false?'':`<button class="intro-start intro-alt" id="tillretry">try again</button>`);
+  if($('tillretry')) $('tillretry').onclick=()=>{
+    $('paybody').innerHTML='<p class="colcap">opening the till&hellip;</p>';
+    beginUnlock();
+  };
+}
 async function beginUnlock(){
   if(POLICY.premium) return;
   if(API) await ensurePrice();       // the mode decision needs the key, not a guess
@@ -2837,14 +2847,14 @@ async function beginUnlock(){
       POLICY.premium=true; save(); entitlementChanged();
       return toast('unlocked locally · dev build, nothing was charged');
     }
-    return toast(r && r.error && r.error.code==='rate_limited'
+    return tillSaid(r && r.error && r.error.code==='rate_limited'
       ? 'too many tries · give it a minute'
       : 'the till is not answering · try again shortly');
   }
   if(r.token){ acct.token=r.token; saveAcct() }
   if(r.already){
     applyEntitlement(Object.assign({full:true},r)); entitlementChanged();
-    return toast('you already own the full version');
+    return tillSaid('you already own the full version',false);
   }
   if(r.client_secret && await mountCheckout(r.client_secret, priceInfo && priceInfo.pk)) return;
   if(r.url) return void(location.href=r.url);
@@ -2852,7 +2862,7 @@ async function beginUnlock(){
     const again=await api('unlock/checkout',{return_path:location.pathname,embedded:false});
     if(again && again.url) return void(location.href=again.url);
   }
-  toast('the till is not answering · try again shortly');
+  tillSaid('the till is not answering · try again shortly');
 }
 async function restoreUnlock(){
   if(!API) return toast('restoring needs the game served over the web');
