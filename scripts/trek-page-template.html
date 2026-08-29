@@ -12,6 +12,8 @@
 <meta property="og:title" content="The trek — Paris to Sofia">
 <meta property="og:description" content="1,982 km on foot across seven countries, autumn 2019. Scroll or press walk, and travel the line town by town.">
 <meta property="og:url" content="https://akibwa.com/trek/">
+<link rel="preload" href="fonts/Fraunces-normal-100-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/IBMPlexMono-normal-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312100C'/%3E%3Ccircle cx='6' cy='22' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='12' cy='16' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='18' cy='18' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%23EFE6D4'/%3E%3Cpath d='M6 22 L12 16 L18 18 L26 10' fill='none' stroke='%23EFC319' stroke-width='1.6'/%3E%3Crect y='26' width='8' height='6' fill='%232EA3DC'/%3E%3Crect x='8' y='26' width='8' height='6' fill='%23EFC319'/%3E%3Crect x='16' y='26' width='8' height='6' fill='%231FA45A'/%3E%3Crect x='24' y='26' width='8' height='6' fill='%23E97E18'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:"Fraunces";src:url("fonts/Fraunces-normal-100-900.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
@@ -195,7 +197,7 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
   position:absolute;left:22px;bottom:22px;z-index:7;max-width:420px;
   padding:18px 20px 16px;border:1px solid var(--rule);
   background:color-mix(in srgb,var(--peat) 84%,transparent);backdrop-filter:blur(10px);
-  opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s;
+  opacity:0;transform:translateY(8px);transition:opacity .18s,transform .18s;
 }
 .daycard.on{opacity:1;transform:none}
 .daycard .dline{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-cur,var(--dust));margin-bottom:8px}
@@ -208,6 +210,9 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
 .daycard .drec{color:var(--dust);font-size:14px;line-height:1.45}
 .daycard .drec em{font-variation-settings:"opsz" 16,"SOFT" 60,"WONK" 0}
 .daycard .dfacts{font-family:var(--mono);font-size:11px;color:var(--dust);margin-top:12px;letter-spacing:.06em;font-variant-numeric:tabular-nums;opacity:.85}
+.daycard .djournal{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule);color:var(--bone);font-size:14px;line-height:1.48;font-style:italic;font-variation-settings:"opsz" 18,"SOFT" 62,"WONK" 0}
+.daycard .djournal:empty{display:none}
+.daycard .djournal::before{content:"from the journal";display:block;margin-bottom:5px;font-family:var(--mono);font-size:9.5px;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:var(--c-cur,var(--dust));font-style:normal}
 
 /* ------------------------------------------------------------------ plates */
 .plate{
@@ -261,7 +266,7 @@ h1 .to{display:block;color:var(--dust);font-size:.4em;font-weight:380;font-varia
   position:absolute;right:clamp(18px,4vw,54px);top:50%;z-index:7;
   width:min(30vw,330px);
   transform:translateY(-46%) rotate(1.6deg);
-  opacity:0;transition:opacity .5s,transform .5s;
+  opacity:0;transition:opacity .22s,transform .22s;
   pointer-events:none;
 }
 .photo.on{opacity:1;transform:translateY(-50%) rotate(-1.2deg)}
@@ -414,11 +419,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       <p class="dtitle" id="dc-title"></p>
       <div class="drow" id="dc-row"></div>
       <p class="dfacts" id="dc-facts"></p>
+      <p class="djournal" id="dc-journal"></p>
     </div>
 
     <div class="photo" id="photo">
       <figure>
-        <img id="photo-img" alt="" loading="lazy" decoding="async">
+        <img id="photo-img" alt="" decoding="async">
         <figcaption id="photo-cap"></figcaption>
       </figure>
     </div>
@@ -438,7 +444,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
         <p class="gap-day">day 39 — zoo eyes · 1 november</p>
         <p class="gap-title">No activity recorded.</p>
         <p class="gap-quote" id="gap-quote"></p>
-        <p class="gap-note">Strava holds nothing for this day. The gap in the data is the event — fifteen consecutive days on the road ended here, on the hard shoulder of a Croatian main road. What the record shows next is that he kept going.</p>
+        <p class="gap-note">Strava holds no activity for this day. The route resumes east across Croatia the following morning.</p>
       </div>
     </div>
 
@@ -453,7 +459,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 </div>
 
 <section class="after">
-  <p class="eyebrow">after sixty-seven days</p>
+  <p class="eyebrow">after the walk</p>
   <h2>He got the coach from Sofia to Istanbul.</h2>
   <p class="done">He was done.</p>
 </section>
@@ -519,6 +525,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var dcTitle = document.getElementById("dc-title");
   var dcRow = document.getElementById("dc-row");
   var dcFacts = document.getElementById("dc-facts");
+  var dcJournal = document.getElementById("dc-journal");
   var quote = document.getElementById("quote");
   var quoteLabel = document.getElementById("quote-label");
   var quoteText = document.getElementById("quote-text");
@@ -536,7 +543,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   // experience height drives the journey
   var VH = innerHeight || 900;
   experience.style.height = (DATA.timeline + VH) + "px";
-  addEventListener("resize", function(){ VH = innerHeight || VH; experience.style.height = (DATA.timeline + VH) + "px"; });
+  addEventListener("resize", function(){
+    VH = innerHeight || VH;
+    experience.style.height = (DATA.timeline + VH) + "px";
+    scrollDirty = true;
+    requestFrame();
+  });
 
   var MONTHS = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
   function shortDate(iso){ if (!iso) return null; var p = iso.split("-"); return (+p[2]) + " " + MONTHS[+p[1]-1]; }
@@ -588,18 +600,25 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function altOf(d){ return (d && d.alt != null) ? d.alt : 0; }
   function liftY(y){ return y; }
 
-  function alongPath(pts, t){
-    if (!pts || !pts.length) return null;
-    if (pts.length === 1) return { x: pts[0].x, y: pts[0].y, alt: pts[0].alt || 0 };
+  var pathMeta = {};
+  Object.keys(DATA.walkPaths || {}).forEach(function(day){
+    var pts = DATA.walkPaths[day];
     var lens = [0];
     for (var i = 1; i < pts.length; i++) {
       lens.push(lens[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
     }
-    var target = Math.max(0, Math.min(1, t)) * lens[lens.length - 1];
+    pathMeta[day] = { pts: pts, lens: lens, total: lens[lens.length - 1] || 0 };
+  });
+
+  function alongPath(meta, t){
+    if (!meta || !meta.pts.length) return null;
+    var pts = meta.pts, lens = meta.lens;
+    if (pts.length === 1) return { x: pts[0].x, y: pts[0].y, alt: pts[0].alt || 0 };
+    var distance = Math.max(0, Math.min(1, t)) * meta.total;
     for (var i = 1; i < pts.length; i++) {
-      if (target <= lens[i]) {
+      if (distance <= lens[i]) {
         var span = lens[i] - lens[i - 1] || 1;
-        var u = (target - lens[i - 1]) / span;
+        var u = (distance - lens[i - 1]) / span;
         return {
           x: lerp(pts[i - 1].x, pts[i].x, u),
           y: lerp(pts[i - 1].y, pts[i].y, u),
@@ -615,7 +634,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (scene.t === "walk") {
       var d = byN[scene.day];
       var t = Math.min(1, Math.max(0, (p - scene.at) / scene.len));
-      var along = alongPath((DATA.walkPaths || {})[d.n], t);
+      var along = alongPath(pathMeta[d.n], t);
       if (along) return { x: along.x, y: along.y, alt: along.alt, day: d, t: t };
       var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0 } : (byN[scene.day - 1] || d);
       return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), alt: lerp(altOf(prev), altOf(d), t), day: d, t: t };
@@ -691,6 +710,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       d.elev > 900 ? "+" + d.elev + " m climbed" : null
     ].filter(Boolean).join(" · ");
     dcFacts.textContent = facts;
+    dcJournal.textContent = d.j || "";
     hudDay.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "");
     hudKm.textContent = d.cum.toFixed(1);
     navLinks.forEach(function(a){
@@ -708,18 +728,29 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   // ---------------------------------------------------------------- photos
   var photos = DATA.photos || [];
   var photoByDay = {};
-  photos.forEach(function(ph){ photoByDay[ph.day] = ph; });
+  photos.forEach(function(ph){ (photoByDay[ph.day] || (photoByDay[ph.day] = [])).push(ph); });
   var photoShown = null;
-  function showPhoto(d){
-    var ph = photoByDay[d.n];
-    if (!ph) { if (photoShown) { photoBox.classList.remove("on"); photoShown = null; } return; }
+  var photoPreloaded = {};
+  function preloadPhoto(ph){
+    if (!ph || photoPreloaded[ph.src]) return;
+    photoPreloaded[ph.src] = 1;
+    var img = new Image();
+    img.src = "photos/" + ph.src;
+  }
+  function showPhoto(d, t){
+    var set = photoByDay[d.n];
+    if (!set || !set.length) { if (photoShown) { photoBox.classList.remove("on"); photoShown = null; } return; }
+    var u = Math.max(0, Math.min(.999, t == null ? 0 : t));
+    var i = Math.min(set.length - 1, Math.floor(u * set.length));
+    var ph = set[i];
     if (photoShown === ph.src) return;
     photoShown = ph.src;
     photoImg.src = "photos/" + ph.src;
-    photoImg.alt = "Photograph from day " + d.n + (d.t ? " — " + d.t : "");
+    photoImg.alt = ph.alt || ("Photograph from day " + d.n + (d.t ? " — " + d.t : ""));
     photoBox.style.setProperty("--ar", ph.w + "/" + ph.h);
-    photoCap.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + d.c.toLowerCase();
+    photoCap.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + (ph.caption || d.c.toLowerCase()) + (set.length > 1 ? " · " + (i + 1) + "/" + set.length : "");
     photoBox.classList.add("on");
+    preloadPhoto(set[i + 1]);
   }
 
   // ------------------------------------------------------------ scene layers
@@ -730,7 +761,44 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   });
   var activePlate = null;
 
-  function fade(el, v){ el.style.opacity = v; }
+  var trailByDay = {};
+  days.forEach(function(d){
+    var seg = document.getElementById("seg-" + d.n);
+    var dot = document.getElementById("dot-" + d.n);
+    var prev = byN[d.n - 1] || d;
+    var len = seg && seg.getTotalLength ? seg.getTotalLength() : Math.hypot(d.x - prev.x, d.y - prev.y);
+    trailByDay[d.n] = { seg: seg, dot: dot, len: len || 1 };
+  });
+  var lastTrailState = "";
+
+  function updateTrail(scene, wp, inJourney){
+    var state = scene.t + ":" + wp.day.n;
+    if (state !== lastTrailState) {
+      days.forEach(function(d){
+        var item = trailByDay[d.n];
+        if (!item) return;
+        var passed = (scene.t === "walk" || scene.t === "gap") ? d.n < wp.day.n : d.n <= wp.day.n;
+        if (item.seg) {
+          item.seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
+          if (passed) item.seg.removeAttribute("stroke-dasharray");
+        }
+        if (item.dot) item.dot.classList.toggle("seen", passed || (wp.day.n === d.n && wp.t > .96));
+      });
+      lastTrailState = state;
+    }
+    var first = trailByDay[1];
+    if (first && first.dot) first.dot.classList.toggle("seen", inJourney);
+    if (scene.t === "walk" || scene.t === "gap") {
+      var active = trailByDay[wp.day.n];
+      if (!active || !active.seg) return;
+      active.seg.classList.add("lit");
+      if (active.dot) active.dot.classList.toggle("seen", wp.day.n === 1 ? inJourney : wp.t > .96);
+      if (wp.t >= .98) active.seg.removeAttribute("stroke-dasharray");
+      else active.seg.setAttribute("stroke-dasharray", (active.len * wp.t).toFixed(1) + " " + (active.len + 2).toFixed(1));
+    }
+  }
+
+  function fade(el, v){ if (el._trekOpacity !== v) { el._trekOpacity = v; el.style.opacity = v; } }
 
   function update(p){
     var scene = sceneAt(p);
@@ -783,33 +851,10 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     } catch (e) {}
     stage.classList.toggle("is-walking", !REDUCED && (scene.t === "walk" || scene.t === "gap") && !!wp.day.w);
     sparkAt(wp.alt, wp.day.n, wp.t);
-    days.forEach(function(d){
-      if (d.n === 1) return;
-      var seg = document.getElementById("seg-" + d.n);
-      var dot = document.getElementById("dot-" + d.n);
-      var passed = (scene.t === "walk" || scene.t === "gap") ? d.n < wp.day.n : d.n <= wp.day.n;
-      if (seg) {
-        seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
-        if (passed) seg.removeAttribute("stroke-dasharray");
-      }
-      if (dot) dot.classList.toggle("seen", passed || wp.day.n === d.n && wp.t > .96);
-    });
-    var dot1 = document.getElementById("dot-1");
-    if (dot1) dot1.classList.toggle("seen", inJourney);
-    // partial reveal of the active segment
-    if (scene.t === "walk" || scene.t === "gap") {
-      var segNow = document.getElementById("seg-" + wp.day.n);
-      if (segNow) {
-        var prev = byN[wp.day.n - 1] || wp.day;
-        var len = (segNow.getTotalLength ? segNow.getTotalLength() : Math.hypot(wp.day.x - prev.x, wp.day.y - prev.y)) || 1;
-        segNow.classList.add("lit");
-        if (wp.t >= .98) segNow.removeAttribute("stroke-dasharray");
-        else segNow.setAttribute("stroke-dasharray", (len * wp.t).toFixed(1) + " " + (len + 2).toFixed(1));
-      }
-    }
+    updateTrail(scene, wp, inJourney);
 
     // day content
-    if (scene.t === "walk" || scene.t === "beat" || scene.t === "gap") { showDay(wp.day); showPhoto(wp.day); }
+    if (scene.t === "walk" || scene.t === "beat" || scene.t === "gap") { showDay(wp.day); showPhoto(wp.day, wp.t); }
     else if (scene.t === "enter") {
       showDay(wp.day);
       photoBox.classList.remove("on"); photoShown = null;
@@ -868,27 +913,50 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     progress = Math.max(0, Math.min(DATA.timeline, -top));
   }
   var CAMEASE = REDUCED ? 1 : 0.085;
-  function frame(){
+  var framePending = false;
+  var scrollDirty = true;
+  var lastRenderedProgress = -1;
+  var lastFrameTime = 0;
+  function requestFrame(){
+    if (framePending) return;
+    framePending = true;
     requestAnimationFrame(frame);
+  }
+  function cameraMoving(){
+    return Math.abs(cam.x - target.x) > .03 || Math.abs(cam.y - target.y) > .03 || Math.abs(cam.w - target.w) > .03;
+  }
+  function frame(now){
+    framePending = false;
     try {
-      readScroll();
-      update(progress);
+      if (scrollDirty) {
+        readScroll();
+        scrollDirty = false;
+        if (Math.abs(progress - lastRenderedProgress) > .01) {
+          update(progress);
+          lastRenderedProgress = progress;
+        }
+      }
       cam.x = lerp(cam.x, target.x, CAMEASE);
       cam.y = lerp(cam.y, target.y, CAMEASE);
       cam.w = lerp(cam.w, target.w, CAMEASE);
       applyCamera();
       if (playing) {
-        var next = Math.min(scrollY + PLAY_SPEED / 60, experience.offsetTop + DATA.timeline);
+        var elapsed = lastFrameTime ? Math.min(50, now - lastFrameTime) : 16.7;
+        var next = Math.min(scrollY + PLAY_SPEED * elapsed / 1000, experience.offsetTop + DATA.timeline);
         scrollTo(0, next);
+        scrollDirty = true;
         if (next >= experience.offsetTop + DATA.timeline - 2) stopWalk();
       }
     } catch (err) {}
+    lastFrameTime = now;
+    if (playing || scrollDirty || cameraMoving()) requestFrame();
+    else lastFrameTime = 0;
   }
+  addEventListener("scroll", function(){ scrollDirty = true; requestFrame(); }, { passive: true });
   cam = fitFull(); target = fitFull();
   readScroll();
-  try { update(progress); cam = { x: target.x, y: target.y, w: target.w }; } catch (err) {}
+  try { update(progress); lastRenderedProgress = progress; cam = { x: target.x, y: target.y, w: target.w }; } catch (err) {}
   applyCamera();
-  requestAnimationFrame(frame);
 
   // ------------------------------------------------------------- walk mode
   var playing = false;
@@ -899,6 +967,8 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     walkbtn.textContent = "❚❚ pause";
     walkbtn.setAttribute("aria-pressed", "true");
     if (scrollY < 10) scrollTo(0, 10);
+    scrollDirty = true;
+    requestFrame();
   }
   function stopWalk(){
     playing = false;

@@ -12,6 +12,22 @@
   "h": 825
  },
  {
+  "day": 3,
+  "src": "day03-vineyards.webp",
+  "w": 480,
+  "h": 360,
+  "caption": "champagne vineyards",
+  "alt": "Vineyards and green fields beneath a grey Champagne sky"
+ },
+ {
+  "day": 3,
+  "src": "day03-road.webp",
+  "w": 360,
+  "h": 480,
+  "caption": "the road east",
+  "alt": "A long empty road crossing farmland east of Château-Thierry"
+ },
+ {
   "day": 11,
   "src": "day11.webp",
   "w": 825,
@@ -70,6 +86,30 @@
   "src": "day30.webp",
   "w": 825,
   "h": 1100
+ },
+ {
+  "day": 30,
+  "src": "day30-tauern-ridges.webp",
+  "w": 825,
+  "h": 1100,
+  "caption": "tauern ridges",
+  "alt": "Layered mountain ridges seen from the high Tauern crossing"
+ },
+ {
+  "day": 30,
+  "src": "day30-tauern-trail.webp",
+  "w": 825,
+  "h": 1100,
+  "caption": "the high trail",
+  "alt": "A narrow trail traversing a steep Austrian mountainside above the valley"
+ },
+ {
+  "day": 30,
+  "src": "day30-tauern-bowl.webp",
+  "w": 825,
+  "h": 1100,
+  "caption": "the alpine bowl",
+  "alt": "An alpine bowl lit by late-afternoon sun during the Tauern crossing"
  },
  {
   "day": 31,
@@ -132,6 +172,22 @@
   "h": 1100
  },
  {
+  "day": 53,
+  "src": "day53-aircraft-monument.webp",
+  "w": 360,
+  "h": 480,
+  "caption": "belgrade aircraft monument",
+  "alt": "A Yugoslav jet displayed as a roadside monument near Belgrade"
+ },
+ {
+  "day": 53,
+  "src": "day53-friendship-monument.webp",
+  "w": 360,
+  "h": 480,
+  "caption": "park of friendship",
+  "alt": "The pale stone Eternal Flame monument in Belgrade's Park of Friendship"
+ },
+ {
   "day": 56,
   "src": "day56.webp",
   "w": 825,
@@ -142,6 +198,30 @@
   "src": "day63.webp",
   "w": 825,
   "h": 1100
+ },
+ {
+  "day": 66,
+  "src": "day66-final-road.webp",
+  "w": 360,
+  "h": 480,
+  "caption": "the final road",
+  "alt": "An empty wet Bulgarian road running beneath a broken grey sky"
+ },
+ {
+  "day": 66,
+  "src": "day66-bulgarian-hills.webp",
+  "w": 360,
+  "h": 480,
+  "caption": "hills before sofia",
+  "alt": "A narrow grass path crossing open hills beneath cloud before Sofia"
+ },
+ {
+  "day": 66,
+  "src": "day66-roadside-frame.webp",
+  "w": 360,
+  "h": 480,
+  "caption": "roadside remains",
+  "alt": "Two weathered concrete wall frames standing alone in Bulgarian grassland"
  },
  {
   "day": 67,

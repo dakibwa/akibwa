@@ -68,7 +68,45 @@ for (const day of data.days) {
 }
 
 // -------------------------------------------------------------- story beats
-// Short excerpts from the 2019 journal (A Generous Slice), surfaced at their days.
+// Public-safe excerpts from the 2019 journal (A Generous Slice). The day-card
+// notes keep the travel, weather, landscape and practical experience while
+// deliberately leaving relationships, health, money and identifying third-
+// party details in the private source journal.
+const JOURNAL = {
+  1: "My navigation immediately took me through beautiful farmland and forest — the first hint of what beauty was yet to be seen.",
+  2: "A quiet, peaceful path ran beside a clear green river. I had imagined motorways; instead I kept finding fields.",
+  3: "I followed the green river for 20 km, then stopped in a church in Château-Thierry before returning to the wooded paths.",
+  7: "The canal left Châlons-en-Champagne between vineyards and orchards, under a boiling late-September sun.",
+  8: "A monumental thunderstorm broke over the route into Bar-le-Duc: pouring rain, lightning and a pause beneath the trees.",
+  9: "In the woods the wind went still and the sun came through. For a moment, everything in the air was calm.",
+  11: "The path to Nancy ran through a national park in hard rain, with the trees rising high overhead.",
+  14: "Cliff faces stood on both sides of the path, blue flies fluttering between them as Witchi Tai To played.",
+  15: "Back on the canal out of Saverne, heading towards the Rhine and the German border.",
+  25: "The best running rhythm of the journey so far, with the Austrian mountains finally visible ahead.",
+  27: "The Austrian border began with a sharp climb and a small waterfall — mountains all around, country three underfoot.",
+  28: "A cold, crisp morning turned into glaring sun. The route was beginning to rise towards the Ankogel mountains.",
+  29: "A whole new terrain of steep mountain paths, each climb opening another view across Austria.",
+  30: "At 2,500 metres it was almost silent: only my breath and footsteps, then a race down the empty ski slopes before dark.",
+  31: "The sun kept beaming down despite it being almost November; another 50 km had begun to feel methodical.",
+  32: "Lacing my shoes, heading for the trails and covering the next stretch had become ordinary everyday life.",
+  35: "I stopped tracking every kilometre so closely and tried to pay more attention to the day-to-day details as they appeared.",
+  36: "More than 50 km through drizzle, rain, wind chill, flooded paths and fog, ending with a wooded climb in darkness.",
+  37: "Another 50 km in rain and low temperatures, followed by a warm arrival in Ptuj.",
+  38: "Croatia arrived after nearly fifteen consecutive days on the road: first the main road, then the welcome quiet of a canal path.",
+  40: "Grey roads and monotonous trails headed east across Croatia, with Osijek the next clear point on the horizon.",
+  41: "A warm, sunny day across the sparse northern Croatian plain — a startling contrast with the Austrian mountains.",
+  42: "Trains bridged the unsafe main-road sections; after the last stop, 40 km of flat farms stretched to Osijek.",
+  47: "New shoes, a half-marathon run and, beside the Croatian road, the unexpected sight of a warning sign for mines.",
+  48: "The last muddy fields of Croatia led to passport control, then river paths and fishing huts on the Serbian side.",
+  49: "Seventy kilometres to Novi Sad, finishing after dark through technical paths, brambles and whatever route the app could find.",
+  53: "Walking into Belgrade in perfect weather, I decided to take my time before the final push towards Sofia.",
+  57: "A farm track, small tractors chugging past and one farmer tipping his hat in acknowledgement.",
+  58: "A pipeline construction made an unexpectedly direct path; the guesthouse welcome was tea, wafers and home-brewed raki.",
+  59: "A short day with a stray dog for company — named Dogmeat in the journal — following part of the route.",
+  65: "Country seven. Crossing into Bulgaria made the end feel suddenly close: Sofia was one more day away.",
+  66: "Sofia, at last. The arrival closed this part of the road and opened a few quiet days to take it all in.",
+};
+
 const BEATS = {
   30: {
     label: "the high point",
@@ -80,34 +118,29 @@ const BEATS = {
     quote:
       "It's occurred to me that this is now my everyday life. Today, like yesterday, I've gone through the motions of my morning routine, lacing up my shoes, heading for the trails.",
   },
-  33: {
-    label: "the first sign",
+  36: {
+    label: "rain over Slovenia",
     quote:
-      "Out here I'm living on the bare minimum and I often think what am I missing… human interaction is essential for me to feel energised and keep the motivation flowing.",
+      "After navigating the many hills, the busy roadsides and the waterlogged footpaths, I arrived at what I thought was a short walk — only to find another steep wooded climb in the darkness.",
   },
-  48: {
-    label: "steadied",
+  42: {
+    label: "the safer line",
     quote:
-      "After a flurry of anxiety following losing my purse with cards and cash in, I've calmed myself and back to a still state.",
+      "I caught a few trains to avoid travelling on main roads. Jumping off the train saw 40 km ahead of me, which proved to be a linear eight-hour walk through the flat Croatian farms.",
   },
   49: {
     label: "the furthest day",
     quote:
       "Today I have set a new personal record, not for speed but instead for the furthest I've ever travelled on foot. My ankles feel shot but surprisingly the rest of my body feels full of vigor.",
   },
-  64: {
-    label: "the purpose",
+  65: {
+    label: "country seven",
     quote:
-      "We all should have a purpose in our lives. If someone asks you why you get up in the morning you should be able to quip a single sentence — for me that is to encourage others to find what makes them happy and pursue it.",
-  },
-  67: {
-    label: "the decision",
-    quote:
-      "Problems melt away when the heart rate is jacked up… yet it's more than likely the problems will return when I get on the road. I'll sit with this for at least another day.",
+      "Having crossed the border, something seems to have clicked and it has occurred to me how close I am to achieving what I set out to do. Tomorrow I will be arriving in Sofia.",
   },
 };
 const GAP39 =
-  "The build up of fatigue, anxiety and loneliness all came to a tipping point. After dragging my feet along a main road for hours with cars speeding past me, I began to think why am I doing this?";
+  "After nearly fifteen days consecutively on the road, I spent hours on a Croatian main road with cars passing close before finding a quieter canal path.";
 
 // -------------------------------------------------------------------- towns
 // Staging posts. These are the anchors: the line visits each city, and the
@@ -589,6 +622,7 @@ const jsDays = pts.map((d) => {
     x: sx(at.x),
     y: sy(at.y),
     s: d.sleeve || null,
+    j: JOURNAL[d.n] || null,
   };
 });
 let cum = 0;
