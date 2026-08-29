@@ -942,7 +942,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   #introbody{grid-column:2;grid-row:2}
   .menupane{grid-row:2;grid-column:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
   .menupane[hidden]{display:none}
-  .collection.menupane{padding:14px 18px 18px;grid-template-columns:repeat(5,1fr);border-right:1px solid var(--rule);background:var(--paper)}
+  .collection.menupane{padding:20px 22px 18px;grid-template-columns:repeat(5,1fr);border-right:1px solid var(--rule);background:var(--paper)}
   .panerules{display:flex;flex-direction:column;padding:20px 22px 24px;border-right:1px solid var(--rule);background:var(--paper)}
   .paneside{grid-column:2;display:flex;flex-direction:column;gap:12px;padding:16px 22px 20px}
   .paneside .pay-body{flex:1 1 auto;min-height:0;overflow-y:auto}
@@ -952,6 +952,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   #menudoors{grid-column:1/-1;grid-row:3}
   #introcard.view-coll .intro-art,#introcard.view-rules .intro-art{display:none}
   #introcard.view-profile #introbody,#introcard.view-pay #introbody{display:none}
+  #introcard.view-coll #introbody > .intro-title,#introcard.view-coll #introbody > .intro-sub,
+  #introcard.view-rules #introbody > .intro-title,#introcard.view-rules #introbody > .intro-sub{display:none}
+  .panehd{grid-column:1/-1;margin:0 0 2px}
   .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px))}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
@@ -1037,7 +1040,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors .help.here:active{transform:none}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .help.label{width:auto;min-width:0;display:inline-flex;align-items:center;gap:7px;padding:0 11px}
-  .doorside{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
+  .intro-doors .door-close{margin-left:auto}
   .door-auth{display:inline-flex}
   .mastauth{display:contents}
   .intro-doors .tillword{font-size:10.5px;letter-spacing:.09em;text-transform:lowercase}
@@ -1135,7 +1138,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
     .rec-right{gap:7px}
-    .collection{padding:11px 13px 14px;gap:6px;grid-template-columns:repeat(5,1fr)}
+    .collection{padding:16px 14px 14px;gap:6px;grid-template-columns:repeat(5,1fr)}
+    .panerules{padding:16px 14px 20px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:0}
@@ -2194,12 +2198,10 @@ function doorsInner(){
     +`<button class="help door-rules" aria-label="how to play">?</button>`
     +`<button class="help groundbtn" aria-label="ground">`
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-    +`<span class="doorside">`
     +`<span class="door-auth"></span>`
     +`<button class="help label door-buy"></button>`
     +`<button class="help door-close" aria-label="close">`
-    +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`
-    +`</span>`;
+    +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`;
 }
 function wireDoors(row){
   row.onclick=e=>{
@@ -2227,10 +2229,6 @@ function renderMenu(){
   }
   if(menuView==='pay' && !$('paybody').firstChild)
     $('paybody').innerHTML='<p class="colcap">opening the till&hellip;</p>';
-  if(menuView==='coll'||menuView==='rules'){
-    const t=$('introbody').querySelector('.intro-title');
-    if(t) t.textContent = menuView==='coll' ? 'the collection' : 'how to play';
-  }
   renderPanes();
   paintDoors();
 }
@@ -2258,9 +2256,11 @@ function renderPanes(){
 function renderCollection(){
   const badges=store.collection.badges||{};
   const named=FKEYS.filter(k=>badges[k]).length, left=FKEYS.length-named;
-  $('panecoll').innerHTML=`<p class="colcap">${left
-      ? `${left} of ${FKEYS.length} still to identify`
-      : `all ${FKEYS.length} identified`}</p>`
+  $('panecoll').innerHTML=`<div class="panehd">
+      <div class="intro-title">the collection</div>
+      <div class="intro-sub">${left
+        ? `${left} of ${FKEYS.length} still to identify`
+        : `all ${FKEYS.length} identified`}</div></div>`
     +FKEYS.map(k=>{
       const b=badges[k];
       return b
@@ -2271,8 +2271,9 @@ function renderCollection(){
     }).join('');
 }
 function renderRulesPane(){
-  $('panerules').innerHTML=`<div class="intro-title">how to play</div>
-      <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div>
+  $('panerules').innerHTML=`<div class="panehd">
+        <div class="intro-title">how to play</div>
+        <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div></div>
       <div class="rkey">
         ${rmark('feature')}<span><b>feature</b> &middot; free it</span>
         ${rmark('neuron')}<span><b>neuron</b> &middot; drag it</span>
