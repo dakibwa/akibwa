@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-X8xJ0UQWejzgZAEF3s1+/wMO3nx42E3hrSo3++9P3ak=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-2avKfrNMJJLhCLfZkmVlz/pB5mhnckmlisi8HSsCBGA=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -1257,7 +1257,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
         </g></svg>
       </button>
       
-      <!-- ---- the guided nets are NOT here ----
+      <!-- ---- the guided net is NOT here ----
            a mark for the lessons stood in this slot, hidden until `tutorialDone`
            and shown from then on as the only way back to them. it moved to the
            foot of the day card on the owner's call (17 Aug 2026): the lessons are
@@ -4967,11 +4967,15 @@ function nodeSay(n){
   const crossing = x===1 ? '1 crossing' : x+' crossings';
   return `${what} · ${keys.join(' and ')} · ${crossing}`;
 }
-function pick(x,y){
+function nearestNode(x,y,ok){
   const scale=1/boardScale();
   let best=null,bd=Math.max(20,26*scale);
-  members.forEach(n=>{if(!grabbable(n))return;
+  members.forEach(n=>{if(!ok(n))return;
     const d=Math.hypot(n.x0-x,n.y0-y); if(d<bd){bd=d;best=n}}); return best}
+function pick(x,y){return nearestNode(x,y,grabbable)}
+function pinnedAt(x,y){
+  return nearestNode(x,y,n=>n.pinned&&!n.threads.every(t=>t.freed));
+}
 $('netsvg').addEventListener('pointerdown',e=>{
   if(R().over)return;
   if(dragN)return;
@@ -4979,6 +4983,16 @@ $('netsvg').addEventListener('pointerdown',e=>{
   bumpIdle();
   sayNudge();          // you are back on the board; the game stops talking
   const p=svgPt(e); dragN=pick(p.x,p.y);
+  if(!dragN){
+    const pin=pinnedAt(p.x,p.y);
+    if(pin){
+      flashMsg('pinned neuron · the square stays fixed · move the circles around it',
+        {tight:true,hold:true,
+         mark:markSVG(RMARK.pinned(),'0 0 68 44','saymark')});
+      e.preventDefault();
+    }
+    return;
+  }
   if(dragN){dragId=e.pointerId; dragMoved=false;dragStart={x:dragN.x0,y:dragN.y0};
     dragLast={x:dragN.x0,y:dragN.y0};
     $('field').classList.add('dragging');
@@ -5325,17 +5339,15 @@ function resetDescent(){
 
 
 const TUTNETS=[
-  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
-  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3},
-  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3}
+  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5}
 ];
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
 function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !R().over}
 let tutStepAt=1;
 function tutorialResumeStep(){
-  const r=R(), split=(r.splitNodes||[]).length;
-  if((r.freed||[]).length || (r.netIndex===1 && split)) return 3;
-  if((r.netMoves||0)>0 || split || Object.keys(r.positions||{}).length) return 2;
+  const r=R();
+  if((r.freed||[]).length) return 3;
+  if((r.netMoves||0)>0 || Object.keys(r.positions||{}).length) return 2;
   return 1;
 }
 
@@ -5420,11 +5432,8 @@ function tutFind(){
   if(best.freeable<=now.freeable && best.total>=now.total) return null;
   return {n:best.n, x:best.x, y:best.y, marks:tutCross(null,best.n).mine};
 }
-const TUT_JOIN=1500;
-let tutJoinT=null, tutJoinKey='', tutJoined=false;
 function tutSpotClear(){
   if(gTut){ gTut.remove(); gTut=null }
-  clearTimeout(tutJoinT); tutJoinT=null; tutJoinKey=''; tutJoined=false;
   tutLit=null; tutAct=null; tutLights=[];
   syncTutorialTargets();
 }
@@ -5480,22 +5489,12 @@ function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
   if(tutorialFreePlay()){ tutSpotClear(); return }
   readMarkSizes();                 // the aperture is in neuron radii, and those move
-  const named=tutNamed();
-  let move=null;
-  if(!named) move=tutFind();
-  else if(named.join){
-    const key=R().netIndex+':'+tutStepAt;
-    if(key!==tutJoinKey){
-      tutJoinKey=key; tutJoined=!!reduceMotion; clearTimeout(tutJoinT);
-      if(!tutJoined) tutJoinT=setTimeout(()=>{tutJoined=true; tutSpotlight()},TUT_JOIN);
-    }
-    if(tutJoined) move=tutFind();
-  }
-  const lights=[named,move].filter(Boolean);
+  const move=tutFind();
+  const lights=[move].filter(Boolean);
   const t=tutLit=lights[0];
   if(!t){ tutSpotClear(); return }
   tutLights=lights;
-  tutAct=move ? move.n : (named&&!named.n.pinned ? named.n : null);
+  tutAct=move.n;
   syncTutorialTargets();
   const k=NR/10, hole=46*k, xhole=24*k, ringR=TUT_RING*k;
   const f=(v)=>v.toFixed(1);
@@ -5539,16 +5538,6 @@ const TUTSTEPS_BY_NET=[
     '<b>drag a neuron.</b> the lines follow.',
     '<b>clear every crossing off one line.</b> it comes free.',
     'one crossing left. <b>clear it.</b>'
-  ],
-  [ // net 1 — superposition. the one move the game turns on
-    '<b>tap the double ring.</b> it is one neuron shared by both colours.',
-    '<b>split it into two.</b> each colour can then move on its own.',
-    'the colours are separate. <b>clear the crossings.</b>'
-  ],
-  [ // net 2 — the pins. a constraint rather than an action
-    'the <b>square stays fixed.</b> drag the pulsing circle instead.',
-    '<b>move a circle around the square.</b> pins never move.',
-    'the pins stay put. <b>clear the crossings with any circle.</b>'
   ]
 ];
 const TUTSTEPS=TUTSTEPS_BY_NET[0];   // the shape older code still reads
@@ -5556,15 +5545,6 @@ const TUTLIT=[
   '<b>drag the lit neuron.</b> the lines follow.',
   null, null
 ];
-function tutNamed(){
-  const net=R().netIndex, steps=TUTSTEPS_BY_NET[net];
-  if(!steps) return null;
-  const step=Math.min(tutStepAt,steps.length);
-  const n = net===1 && step<=2 ? members.find(m=>m.merged)
-    : net===2 && step===1 ? members.find(m=>m.pinned)
-    : null;
-  return n ? {n,marks:[],look:true,join:net===2} : null;
-}
 let coachSig='';
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
@@ -5589,9 +5569,7 @@ function renderTutorial(){
   });
   const key=$('coachkey');
   const keySets=[
-    [['feature','feature'],['neuron','neuron'],['crossing','crossing']],
-    [['shared','double ring · shared'],['split','after tap · two neurons']],
-    [['pinned','square · fixed'],['neuron','circle · moves']]
+    [['feature','feature'],['neuron','neuron'],['crossing','crossing']]
   ];
   if(key.dataset.lesson!==String(net)){
     key.dataset.lesson=String(net);
@@ -5602,7 +5580,7 @@ function renderTutorial(){
 }
 function tutReach(step){
   if(!inTutorial())return;
-  if(step>=tutStepAt){tutStepAt=step+1; renderTutorial(); renderHud()}
+  if(step>=tutStepAt){tutStepAt=step+1; renderTutorial()}
   else tutSpotlight();
 }
 function endTutorial(){
@@ -5611,7 +5589,6 @@ function endTutorial(){
     store.run=store.parked; store.parked=null;
     builtFor=-1; resetDescent(); save();
     renderAll();
-    flashMsg('back to today\'s set');
     if(R().over) showRunOver();
   }else{
     const r=R();
@@ -5758,6 +5735,7 @@ function clearNet(){
   const read={run:r, num:r.netIndex, turns:r.turns||0,
               depth:r.cleared.length,
               finalTutorial,
+              returning:!!store.parked,
               assisted:!!r.cleared[r.cleared.length-1].assisted,
               clean:r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length};
   resetDescent();
@@ -5769,15 +5747,12 @@ function clearNet(){
   if(wasTutorial){
     tutReach(3);
     if(finalTutorial) endTutorial();
-    else { tutStepAt=1; }
   }
   save();
   holdGauge();
   boardCleared();
   if(setDone) renderHud();
-  const tutMidway = wasTutorial && !finalTutorial;
   const card = setDone ? showRunOver
-             : tutMidway ? nextNet
              : (()=>showNetCleared(feats,tier,wasTutorial,read));
   if(reduceMotion) setTimeout(card,260);
   else holdCleared(card);
@@ -5899,25 +5874,31 @@ function showNetCleared(feats,tier,wasTutorial,read){
     const b=store.collection.badges[k];
     return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
   }).join('')}</div>`;
-  const quiet=`<p class="bquiet">${feats.length} features freed: `+
-    `${feats.join(', ')}. `+
-    `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
+  const tutorialResult=wasTutorial&&read.finalTutorial;
+  const quiet=tutorialResult
+    ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. tutorial complete.</p>`
+    : `<p class="bquiet">${feats.length} features freed: ${feats.join(', ')}. `+
+      `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
-    strip:TIERCOL[tier],
-    title:tierSay(tier),
-    sub:(wasTutorial?'you untangled it':'net cleared')
+    strip:tutorialResult?FLAG:TIERCOL[tier],
+    title:tutorialResult?'features drawn':tierSay(tier),
+    sub:(tutorialResult?'you untangled your first net':'net cleared')
         +(read.assisted?' · settled with descent':''),
-    num:String(read.num).padStart(2,'0'),
+    num:tutorialResult?'01':String(read.num).padStart(2,'0'),
     rows:[],
     body:mint+quiet,
-    note:read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
+    note:tutorialResult
+      ? 'the shapes you left became these features. fewer turns earns a better rung.'
+      : read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
-    actions:`<button class="wbtn solid" id="contbtn">continue →</button>`,
+    actions:`<button class="wbtn solid" id="contbtn">${tutorialResult
+      ? (read.returning?"back to today's set →":"start today's set →")
+      : 'continue →'}</button>`,
     foot:wasTutorial?signInInvite():''
   });
   showVeil('netveil');
   if(wasTutorial) fillSignInInvite();
-  $('netveil').dataset.returnView=read.finalTutorial?'rules':'';
+  $('netveil').dataset.returnView='';
   $('contbtn').onclick=leaveNetCard;
 }
 function runOverOffer(trial,depth){
@@ -6468,10 +6449,9 @@ function renderHud(){
   const D=POLICY.dailyNets, tut=inTutorial();
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
   if(tut){
-    const les=Math.min(R().netIndex,2);
-    const LCOL=[TIERCOL.perfect,TIERCOL.clean,TIERCOL.flawless];
-    paintCells('setmeter',Array.from({length:3},(_,i)=>'var('+(i<les?LCOL[i]:SETAHEAD)+')'),
-      'tutorial '+Math.min(les+1,3)+' of 3');
+    const les=Math.min(R().netIndex,TUTNETS.length);
+    paintCells('setmeter',Array.from({length:TUTNETS.length},()=>`var(${SETAHEAD})`),
+      'tutorial '+Math.min(les+1,TUTNETS.length)+' of '+TUTNETS.length);
   } else
   paintCells('setmeter',Array.from({length:D},(_,i)=>'var('+(cells[i]?tierCol(cells[i].tier):SETAHEAD)+')'),
     cells.length+' of '+D+' nets cleared');
@@ -6481,7 +6461,7 @@ function renderHud(){
   if(cur && !r.over) cur.classList.add('now');
   const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   $('setlabel').textContent=tut?'tutorial':(trial?'time trial':"today's set");
-  $('setnum').textContent=tut?Math.min(R().netIndex+1,3)
+  $('setnum').textContent=tut?Math.min(R().netIndex+1,TUTNETS.length)
     :(trial?r.cleared.length:Math.min(r.cleared.length+1,D));
 
   const t=r.netMoves, over=t>par;
