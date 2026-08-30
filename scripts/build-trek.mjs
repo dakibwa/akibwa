@@ -867,7 +867,7 @@ for (let i = 0; i < pts.length; i++) {
       })
       .join("L");
   segs.push(
-    `<path id="seg-${d.n}" d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" ${d.walked ? "" : 'stroke-dasharray="3 6"'} class="seg"/>`
+    `<path id="seg-${d.n}" d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" ${d.walked ? "" : 'stroke-dasharray="3 6"'} class="seg"/>`
   );
 }
 
@@ -887,7 +887,7 @@ const dayDots = pts
   .map((d) => {
     const at = placeOnTown(d.x, d.y, d.n);
     const point = mapPoint(at.x, at.y);
-    return `<circle id="dot-${d.n}" class="daydot${d.walked ? "" : " restdot"}${d.sleeve ? " hasrec" : ""}" cx="${point.x}" cy="${point.y}" r="${d.sleeve ? 3.2 : 2.2}" data-day="${d.n}"/>`;
+    return `<circle id="dot-${d.n}" class="daydot${d.walked ? "" : " restdot"}${d.sleeve ? " hasrec" : ""}" cx="${point.x}" cy="${point.y}" r="${d.sleeve ? 1.8 : 1.15}" data-day="${d.n}"/>`;
   })
   .join("\n    ");
 
@@ -898,8 +898,8 @@ const townMarks = townsPlaced
     const Y = point.y;
     const anchor = t.anchor === "start" ? "start" : t.anchor === "end" ? "end" : "middle";
     return `<g class="town${t.pass ? " pass" : ""}" id="town-${t.name.toLowerCase().replace(/[^a-z]+/g, "-")}">
-${t.pass ? "" : `      <circle cx="${X}" cy="${Y}" r="5" class="townhalo"/>\n`}
-      <circle cx="${X}" cy="${Y}" r="2" class="towndot"/>
+${t.pass ? "" : `      <circle cx="${X}" cy="${Y}" r="3.15" class="townhalo"/>\n`}
+      <circle cx="${X}" cy="${Y}" r="1.05" class="towndot"/>
       <text x="${X + (t.dx || 0)}" y="${Y + (t.dy || 0)}" text-anchor="${anchor}" class="townlabel">${t.name}</text>
     </g>`;
   })
@@ -939,8 +939,7 @@ const atlasSvg = `
     </g>
     <g id="mountains">${mountainMarks}</g>
     <g id="landmarks">${landmarkMarks}</g>
-    <path id="route-casing" d="${trackPath}" fill="none" stroke="#0D0C09" stroke-opacity=".76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    <path id="gps" d="${trackPath}" fill="none" stroke="#EFE6D4" stroke-opacity=".3" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <path id="route-base" d="${trackPath}" fill="none" stroke="#E9F1DF" stroke-opacity=".82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
     ${segs.join("\n    ")}
     ${dayDots}
     ${townMarks}

@@ -115,7 +115,7 @@ button{font:inherit;color:inherit}
 .statbar{
   position:fixed;left:0;right:0;top:var(--mast-h);z-index:49;height:var(--stats-h);
   display:grid;grid-template-columns:minmax(180px,1.3fr) repeat(4,minmax(96px,.72fr)) minmax(220px,1.2fr);
-  font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--bone);
+  font-family:var(--sans);font-variant-numeric:tabular-nums;color:var(--bone);
   background:rgba(18,16,12,.9);border-bottom:1px solid color-mix(in srgb,var(--bone) 17%,transparent);
   box-shadow:0 11px 30px rgba(0,0,0,.24);
   -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
@@ -125,12 +125,12 @@ button{font:inherit;color:inherit}
 }
 .stat-position{
   display:flex;align-items:center;color:color-mix(in srgb,var(--c-cur) 52%,var(--bone));
-  font-size:10px;line-height:1.25;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:10px;font-weight:600;line-height:1.25;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .stat{display:grid;align-content:center;gap:3px}
-.stat b{font-size:18px;font-weight:500;line-height:1;letter-spacing:-.035em;white-space:nowrap}
-.stat b small{margin-left:4px;color:var(--dust);font-size:.58em;font-weight:400;letter-spacing:.06em;text-transform:uppercase}
-.stat em{font-style:normal;color:var(--dust);font-size:7.5px;line-height:1.1;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.stat b{font-size:19px;font-weight:650;line-height:1;letter-spacing:-.035em;white-space:nowrap}
+.stat b small{margin-left:4px;color:var(--dust);font-size:.54em;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.stat em{font-style:normal;color:var(--dust);font-size:7.5px;font-weight:600;line-height:1.1;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
 .stat-elevation{grid-template-columns:minmax(90px,132px) auto;align-items:center;align-content:stretch;gap:12px;border-right:0}
 .stat-elevation svg{width:100%;height:28px;overflow:visible}
 .stat-elevation p{display:grid;align-content:center;gap:3px}
@@ -212,15 +212,15 @@ button{font:inherit;color:inherit}
 .lake path{fill:#48A9C6;fill-opacity:.86;stroke:#D4F4F7;stroke-opacity:.78;stroke-width:.8;vector-effect:non-scaling-stroke}
 .river{fill:none;stroke:#57BBD3;stroke-opacity:.68;stroke-width:1.05;vector-effect:non-scaling-stroke;stroke-linecap:round}
 .waterlabel{
-  fill:#15566D;fill-opacity:.9;font-family:var(--mono);font-size:7px;letter-spacing:.1em;
-  text-anchor:middle;text-transform:uppercase;paint-order:stroke;stroke:#D5E8D2;stroke-width:2px;stroke-linejoin:round;
+  fill:#15566D;fill-opacity:.9;font-family:var(--sans);font-size:5.8px;font-weight:650;letter-spacing:.01em;
+  text-anchor:middle;paint-order:stroke;stroke:#D5E8D2;stroke-width:1.25px;stroke-linejoin:round;
 }
 #mountains{pointer-events:none}
 .mountain{opacity:.28;transition:opacity .5s}
 .stage[data-zoom="travel"] .mountain,.stage[data-zoom="close"] .mountain{opacity:.68}
 .stage[data-landmark="lake"] .mountain,.stage[data-landmark="peaks"] .mountain{opacity:.08}
 .mountain path{fill:none;stroke:color-mix(in srgb,var(--c-cur) 42%,#274638);stroke-width:.9;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;transition:stroke .65s ease}
-.mountain text{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;fill:#274638;text-transform:uppercase;paint-order:stroke;stroke:#DCE6C8;stroke-width:2.5px;stroke-linejoin:round;transition:fill .65s ease}
+.mountain text{font-family:var(--sans);font-size:6px;font-weight:650;letter-spacing:.01em;fill:#274638;paint-order:stroke;stroke:#DCE6C8;stroke-width:1.35px;stroke-linejoin:round;transition:fill .65s ease}
 #landmarks{pointer-events:none}
 .landmark{opacity:.06;transition:opacity .42s ease;--landmark-color:#FFF3D0}
 .landmark-shadow{fill:#000;opacity:0;transform:scaleX(.35);transform-origin:center;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
@@ -234,8 +234,8 @@ button{font:inherit;color:inherit}
 .landmark-snow{stroke:#FFF9E8;stroke-width:1.2}
 .landmark-water{fill:#3DA8C8;fill-opacity:.92;stroke:#E3FAFA;stroke-width:.8;vector-effect:non-scaling-stroke}
 .landmark-label{
-  font-family:var(--mono);font-size:6.5px;letter-spacing:.09em;text-transform:uppercase;
-  fill:#243128;paint-order:stroke;stroke:#F1EBD4;stroke-width:2px;stroke-linejoin:round;
+  font-family:var(--sans);font-size:5.8px;font-weight:650;letter-spacing:.01em;
+  fill:#243128;paint-order:stroke;stroke:#F1EBD4;stroke-width:1.25px;stroke-linejoin:round;
   opacity:0;transition:opacity .28s ease;
 }
 .landmark.seen{opacity:.38}
@@ -246,12 +246,11 @@ button{font:inherit;color:inherit}
 .landmark.current .landmark-label{opacity:1}
 .stage[data-zoom="hero"] .landmark.seen{opacity:.36}
 .stage[data-zoom="hero"] .landmark-label{opacity:0}
-#route-casing{filter:drop-shadow(0 1px 1px rgba(255,255,255,.5))}
-#gps{filter:drop-shadow(0 1px 0 rgba(255,255,255,.7))}
-.seg{opacity:.34;transition:opacity .5s;filter:drop-shadow(0 1px 0 rgba(255,255,255,.72))}
+#route-base{opacity:.72}
+.seg{opacity:0;transition:opacity .35s}
 .seg.lit{opacity:1}
-.stage[data-zoom="hero"] .seg{opacity:.55}
-.stage[data-zoom="hero"] #gps{stroke-opacity:.22}
+.stage[data-zoom="hero"] .seg.lit{opacity:.72}
+.stage[data-zoom="hero"] #route-base{opacity:.46}
 .daydot{fill:#536052;opacity:0;transition:opacity .6s,fill .6s}
 .daydot.seen{opacity:.9;fill:#FFF5D8}
 .restdot{fill:none;stroke:#536052;stroke-width:1}
@@ -260,15 +259,15 @@ button{font:inherit;color:inherit}
 .stage[data-zoom="travel"] .daydot.seen,.stage[data-zoom="close"] .daydot.seen{opacity:1}
 .town{opacity:0;transition:opacity .8s}
 .stage[data-zoom="travel"] .town,.stage[data-zoom="close"] .town{opacity:1}
-.townhalo{fill:#FFF8E4;stroke:#263126;stroke-opacity:.5;stroke-width:1;vector-effect:non-scaling-stroke}
+.townhalo{fill:#FFF8E4;stroke:#263126;stroke-opacity:.62;stroke-width:.72;vector-effect:non-scaling-stroke}
 .towndot{fill:#263126}
 .townlabel{
-  font-family:var(--mono);font-size:8.2px;letter-spacing:.11em;fill:#18231D;
-  text-transform:uppercase;paint-order:stroke;stroke:#E8E6CF;stroke-width:2.7px;stroke-linejoin:round;
+  font-family:var(--sans);font-size:6.3px;font-weight:680;letter-spacing:-.012em;fill:#18231D;
+  paint-order:stroke;stroke:#EEE9D5;stroke-width:1.35px;stroke-linejoin:round;
   transition:opacity .25s ease;
 }
 .town.has-current-landmark .townlabel{opacity:0}
-.town.pass .townlabel{fill:#5D6658;font-style:italic;text-transform:none;letter-spacing:.06em}
+.town.pass .townlabel{fill:#5D6658;font-style:italic;font-weight:560;letter-spacing:0}
 .town.pass .towndot{fill:none;stroke:#5D6658;stroke-width:.8}
 
 /* ------------------------------------------------------------------- title */
@@ -296,7 +295,7 @@ h1 .to{color:#5B6757;font-family:var(--mono);font-size:.3em;font-weight:400;line
 .collector{
   position:absolute;top:calc(var(--chrome-h) + 17px);right:18px;bottom:18px;z-index:7;width:224px;
   display:flex;flex-direction:column;align-items:stretch;gap:18px;
-  font-family:var(--mono);opacity:0;transform:translateX(8px);pointer-events:none;
+  font-family:var(--sans);opacity:0;transform:translateX(8px);pointer-events:none;
   transition:opacity .35s,transform .35s;
 }
 .collector.on{opacity:1;transform:none}
@@ -306,17 +305,17 @@ h1 .to{color:#5B6757;font-family:var(--mono);font-size:.3em;font-weight:400;line
   backdrop-filter:blur(8px);
 }
 .collector-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
-.collector-head span{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#6A6458}
-.collector-head b{font-size:12px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.collector-head span{font-size:9px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:#6A6458}
+.collector-head b{font-size:13px;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
 .collector-places{overflow:hidden}
 .collector-places ol,.collector-albums ol{margin:0;padding:0;list-style:none}
 .collector-places ol{display:flex;flex-direction:column;gap:4px}
 .collector-place{
-  display:flex;align-items:baseline;gap:7px;color:#615E55;font-size:10px;line-height:1.35;
+  display:flex;align-items:baseline;gap:7px;color:#615E55;font-size:11px;font-weight:500;line-height:1.35;
   animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
 }
 .collector-place::before{content:"";width:5px;height:5px;background:var(--w);flex:0 0 auto;transform:rotate(45deg)}
-.collector-place.latest{color:var(--ink)}
+.collector-place.latest{color:var(--ink);font-weight:650}
 .collector-place.pass{font-style:italic}
 .collector-albums ol{display:flex;flex-direction:column;gap:8px}
 .collector-album{
@@ -325,9 +324,9 @@ h1 .to{color:#5B6757;font-family:var(--mono);font-size:.3em;font-weight:400;line
   animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
 }
 .collector-album img{width:34px;height:34px;object-fit:cover;border:1px solid rgba(27,28,22,.24)}
-.collector-album p{min-width:0;color:#615E55;font-size:8.5px;line-height:1.25}
+.collector-album p{min-width:0;color:#615E55;font-size:9.5px;line-height:1.25;letter-spacing:-.005em}
 .collector-album b,.collector-album span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.collector-album b{color:var(--ink);font-weight:500;margin-bottom:2px}
+.collector-album b{color:var(--ink);font-weight:650;margin-bottom:2px}
 .collector-album:hover img,.collector-album:focus-visible img{border-color:color-mix(in srgb,var(--c-cur) 72%,var(--ink));transform:translateY(-1px)}
 @keyframes collect-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
@@ -908,241 +907,240 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       </g>
       <text class="landmark-label" x="0" y="11" text-anchor="middle">Alexander Nevsky</text>
     </g></g>
-    <path id="route-casing" d="M231.1 456.3L260 462.2L266.7 462.1L306.8 450L342.3 432.2L342.2 432.3L381.4 425.9L385 426.3L418.7 460.9L421.2 461.9L436 474.4L460.7 476.6L460.9 476.6L507.7 470.2L508.3 471.3L522.8 472.8L554.5 466.2L554.3 465.3L570.1 474L608.4 481.6L620.8 476.1L623.9 478.4L651.3 482.2L679.2 477.1L679.4 477.1L746.9 459L752.1 460.8L820.2 474L823.5 474.9L868.4 454.8L901.3 446L954.7 461.7L987.4 458.6L987.3 458.6L986.6 459.4L1004.5 449.2L1004.4 449.1L1070 477L1090.9 482.4L1146.2 489.3L1157.8 500.4L1196.8 510.4L1221.9 515.4L1280 528.5L1288.6 536.9L1288.5 537.1L1307.4 528.1L1340.6 518.2L1340.2 517.7L1353 483.2L1353.2 483.8L1361.5 499.2L1357.7 555.7L1360.3 570.9L1360.4 571.3L1387.4 554.5L1391 529L1398.9 491.4L1399.1 491.2L1434.1 588.8L1474.3 655.8L1474.6 655.5L1496.2 669.8L1525.8 688.1L1564.5 680.5L1564.5 680.5L1598.4 680.5L1646.2 708.9L1646.1 708.8L1699.4 721.7L1751.9 742.6L1804.9 762.2L1832.8 776.2L1832.8 776.5L1850.6 787.1L1969.4 830.3L2013.4 833.2L2042.5 835.9L2043.3 836.2L2068.7 837.7L2073.1 850.5L2073.2 850.9L2104 858.6L2120.3 855.1L2142.5 864.1L2165.2 873.5L2176.7 891.2L2178.6 891.1L2210.4 908.4L2218.5 913.3L2218.5 913.5L2239.2 939.4L2264 946.3L2286 951.4L2293 961.1L2312.7 991.6L2311.8 993.3L2316.4 999.7L2370.7 1040.7L2383.1 1035.1L2382.9 1035.1L2440.3 1015.6L2447.1 1014L2468.1 1017.6L2468.4 1017.9L2485.4 1030.5L2486.1 1031L2513.4 1043.5L2528.8 1037.3" fill="none" stroke="#0D0C09" stroke-opacity=".76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    <path id="gps" d="M231.1 456.3L260 462.2L266.7 462.1L306.8 450L342.3 432.2L342.2 432.3L381.4 425.9L385 426.3L418.7 460.9L421.2 461.9L436 474.4L460.7 476.6L460.9 476.6L507.7 470.2L508.3 471.3L522.8 472.8L554.5 466.2L554.3 465.3L570.1 474L608.4 481.6L620.8 476.1L623.9 478.4L651.3 482.2L679.2 477.1L679.4 477.1L746.9 459L752.1 460.8L820.2 474L823.5 474.9L868.4 454.8L901.3 446L954.7 461.7L987.4 458.6L987.3 458.6L986.6 459.4L1004.5 449.2L1004.4 449.1L1070 477L1090.9 482.4L1146.2 489.3L1157.8 500.4L1196.8 510.4L1221.9 515.4L1280 528.5L1288.6 536.9L1288.5 537.1L1307.4 528.1L1340.6 518.2L1340.2 517.7L1353 483.2L1353.2 483.8L1361.5 499.2L1357.7 555.7L1360.3 570.9L1360.4 571.3L1387.4 554.5L1391 529L1398.9 491.4L1399.1 491.2L1434.1 588.8L1474.3 655.8L1474.6 655.5L1496.2 669.8L1525.8 688.1L1564.5 680.5L1564.5 680.5L1598.4 680.5L1646.2 708.9L1646.1 708.8L1699.4 721.7L1751.9 742.6L1804.9 762.2L1832.8 776.2L1832.8 776.5L1850.6 787.1L1969.4 830.3L2013.4 833.2L2042.5 835.9L2043.3 836.2L2068.7 837.7L2073.1 850.5L2073.2 850.9L2104 858.6L2120.3 855.1L2142.5 864.1L2165.2 873.5L2176.7 891.2L2178.6 891.1L2210.4 908.4L2218.5 913.3L2218.5 913.5L2239.2 939.4L2264 946.3L2286 951.4L2293 961.1L2312.7 991.6L2311.8 993.3L2316.4 999.7L2370.7 1040.7L2383.1 1035.1L2382.9 1035.1L2440.3 1015.6L2447.1 1014L2468.1 1017.6L2468.4 1017.9L2485.4 1030.5L2486.1 1031L2513.4 1043.5L2528.8 1037.3" fill="none" stroke="#EFE6D4" stroke-opacity=".3" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    <path id="seg-1" d="M231.1 456.3L260 462.2" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-2" d="M260 462.2L266.7 462.1L306.8 450" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-3" d="M306.8 450L342.3 432.2" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-4" d="M342.3 432.2L342.2 432.3L381.4 425.9" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-5" d="M381.4 425.9L381.4 425.9" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-6" d="M381.4 425.9L385 426.3L418.7 460.9" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-7" d="M418.7 460.9L421.2 461.9L436 474.4L460.7 476.6" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-8" d="M460.7 476.6L460.9 476.6L507.7 470.2" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-9" d="M507.7 470.2L508.3 471.3L522.8 472.8L554.5 466.2" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-10" d="M554.5 466.2L554.3 465.3L570.1 474L608.4 481.6" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-11" d="M608.4 481.6L620.8 476.1" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-12" d="M620.8 476.1L620.8 476.1" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-13" d="M620.8 476.1L623.9 478.4L651.3 482.2L679.2 477.1" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-14" d="M679.2 477.1L679.4 477.1L746.9 459L752.1 460.8" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-15" d="M752.1 460.8L820.2 474" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-16" d="M820.2 474L823.5 474.9" fill="none" stroke="#2EA3DC" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-17" d="M823.5 474.9L868.4 454.8L901.3 446" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-18" d="M901.3 446L954.7 461.7L987.4 458.6" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-19" d="M987.4 458.6L987.3 458.6L986.6 459.4L1004.5 449.2" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-20" d="M1004.5 449.2L1004.4 449.1L1070 477" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-21" d="M1070 477L1090.9 482.4L1146.2 489.3" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-22" d="M1146.2 489.3L1157.8 500.4L1196.8 510.4" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-23" d="M1196.8 510.4L1196.8 510.4" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-24" d="M1196.8 510.4L1196.8 510.4" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-25" d="M1196.8 510.4L1221.9 515.4L1280 528.5L1288.6 536.9" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-26" d="M1288.6 536.9L1288.5 537.1L1307.4 528.1L1340.6 518.2" fill="none" stroke="#D75B4A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-27" d="M1340.6 518.2L1340.2 517.7L1353 483.2" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-28" d="M1353 483.2L1353.2 483.8L1361.5 499.2L1357.7 555.7L1360.3 570.9" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-29" d="M1360.3 570.9L1360.4 571.3L1387.4 554.5L1391 529" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-30" d="M1391 529L1398.9 491.4" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-31" d="M1398.9 491.4L1399.1 491.2L1434.1 588.8" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-32" d="M1434.1 588.8L1474.3 655.8" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-33" d="M1474.3 655.8L1474.6 655.5L1496.2 669.8" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-34" d="M1496.2 669.8L1525.8 688.1L1564.5 680.5" fill="none" stroke="#7D6BB0" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-35" d="M1564.5 680.5L1564.5 680.5L1598.4 680.5" fill="none" stroke="#12A19A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-36" d="M1598.4 680.5L1646.2 708.9" fill="none" stroke="#12A19A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-37" d="M1646.2 708.9L1646.1 708.8L1699.4 721.7" fill="none" stroke="#12A19A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-38" d="M1699.4 721.7L1751.9 742.6" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-39" d="M1751.9 742.6L1751.9 742.6" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-40" d="M1751.9 742.6L1804.9 762.2L1832.8 776.2" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-41" d="M1832.8 776.2L1832.8 776.5L1850.6 787.1" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-42" d="M1850.6 787.1L1969.4 830.3L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-43" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-44" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-45" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-46" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-47" d="M2013.4 833.2L2042.5 835.9" fill="none" stroke="#1FA45A" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-48" d="M2042.5 835.9L2043.3 836.2L2068.7 837.7L2073.1 850.5" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-49" d="M2073.1 850.5L2073.2 850.9L2104 858.6L2120.3 855.1L2142.5 864.1" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-50" d="M2142.5 864.1L2142.5 864.1" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-51" d="M2142.5 864.1L2142.5 864.1" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-52" d="M2142.5 864.1L2165.2 873.5L2176.7 891.2" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-53" d="M2176.7 891.2L2178.6 891.1L2210.4 908.4" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-54" d="M2210.4 908.4L2210.4 908.4" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-55" d="M2210.4 908.4L2218.5 913.3" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-56" d="M2218.5 913.3L2218.5 913.5L2239.2 939.4L2264 946.3" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-57" d="M2264 946.3L2286 951.4L2293 961.1" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-58" d="M2293 961.1L2312.7 991.6" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-59" d="M2312.7 991.6L2311.8 993.3L2316.4 999.7" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-60" d="M2316.4 999.7L2316.4 999.7" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-61" d="M2316.4 999.7L2316.4 999.7" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <path id="seg-62" d="M2316.4 999.7L2370.7 1040.7L2383.1 1035.1" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-63" d="M2383.1 1035.1L2382.9 1035.1L2440.3 1015.6" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-64" d="M2440.3 1015.6L2447.1 1014L2468.1 1017.6" fill="none" stroke="#EFC319" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-65" d="M2468.1 1017.6L2468.4 1017.9L2485.4 1030.5" fill="none" stroke="#E97E18" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-66" d="M2485.4 1030.5L2486.1 1031L2513.4 1043.5L2528.8 1037.3" fill="none" stroke="#E97E18" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
-    <path id="seg-67" d="M2528.8 1037.3L2528.8 1037.3" fill="none" stroke="#E97E18" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
-    <circle id="dot-1" class="daydot" cx="260" cy="462.2" r="2.2" data-day="1"/>
-    <circle id="dot-2" class="daydot hasrec" cx="306.8" cy="450" r="3.2" data-day="2"/>
-    <circle id="dot-3" class="daydot" cx="342.3" cy="432.2" r="2.2" data-day="3"/>
-    <circle id="dot-4" class="daydot" cx="381.4" cy="425.9" r="2.2" data-day="4"/>
-    <circle id="dot-5" class="daydot restdot" cx="381.4" cy="425.9" r="2.2" data-day="5"/>
-    <circle id="dot-6" class="daydot hasrec" cx="418.7" cy="460.9" r="3.2" data-day="6"/>
-    <circle id="dot-7" class="daydot" cx="460.7" cy="476.6" r="2.2" data-day="7"/>
-    <circle id="dot-8" class="daydot" cx="507.7" cy="470.2" r="2.2" data-day="8"/>
-    <circle id="dot-9" class="daydot hasrec" cx="554.5" cy="466.2" r="3.2" data-day="9"/>
-    <circle id="dot-10" class="daydot" cx="608.4" cy="481.6" r="2.2" data-day="10"/>
-    <circle id="dot-11" class="daydot" cx="620.8" cy="476.1" r="2.2" data-day="11"/>
-    <circle id="dot-12" class="daydot restdot" cx="620.8" cy="476.1" r="2.2" data-day="12"/>
-    <circle id="dot-13" class="daydot" cx="679.2" cy="477.1" r="2.2" data-day="13"/>
-    <circle id="dot-14" class="daydot hasrec" cx="752.1" cy="460.8" r="3.2" data-day="14"/>
-    <circle id="dot-15" class="daydot" cx="820.2" cy="474" r="2.2" data-day="15"/>
-    <circle id="dot-16" class="daydot hasrec" cx="823.5" cy="474.9" r="3.2" data-day="16"/>
-    <circle id="dot-17" class="daydot hasrec" cx="901.3" cy="446" r="3.2" data-day="17"/>
-    <circle id="dot-18" class="daydot" cx="987.4" cy="458.6" r="2.2" data-day="18"/>
-    <circle id="dot-19" class="daydot" cx="1004.5" cy="449.2" r="2.2" data-day="19"/>
-    <circle id="dot-20" class="daydot" cx="1070" cy="477" r="2.2" data-day="20"/>
-    <circle id="dot-21" class="daydot" cx="1146.2" cy="489.3" r="2.2" data-day="21"/>
-    <circle id="dot-22" class="daydot" cx="1196.8" cy="510.4" r="2.2" data-day="22"/>
-    <circle id="dot-23" class="daydot restdot" cx="1196.8" cy="510.4" r="2.2" data-day="23"/>
-    <circle id="dot-24" class="daydot restdot" cx="1196.8" cy="510.4" r="2.2" data-day="24"/>
-    <circle id="dot-25" class="daydot hasrec" cx="1288.6" cy="536.9" r="3.2" data-day="25"/>
-    <circle id="dot-26" class="daydot" cx="1340.6" cy="518.2" r="2.2" data-day="26"/>
-    <circle id="dot-27" class="daydot" cx="1353" cy="483.2" r="2.2" data-day="27"/>
-    <circle id="dot-28" class="daydot hasrec" cx="1360.3" cy="570.9" r="3.2" data-day="28"/>
-    <circle id="dot-29" class="daydot hasrec" cx="1391" cy="529" r="3.2" data-day="29"/>
-    <circle id="dot-30" class="daydot hasrec" cx="1398.9" cy="491.4" r="3.2" data-day="30"/>
-    <circle id="dot-31" class="daydot" cx="1434.1" cy="588.8" r="2.2" data-day="31"/>
-    <circle id="dot-32" class="daydot hasrec" cx="1474.3" cy="655.8" r="3.2" data-day="32"/>
-    <circle id="dot-33" class="daydot hasrec" cx="1496.2" cy="669.8" r="3.2" data-day="33"/>
-    <circle id="dot-34" class="daydot hasrec" cx="1564.5" cy="680.5" r="3.2" data-day="34"/>
-    <circle id="dot-35" class="daydot" cx="1598.4" cy="680.5" r="2.2" data-day="35"/>
-    <circle id="dot-36" class="daydot hasrec" cx="1646.2" cy="708.9" r="3.2" data-day="36"/>
-    <circle id="dot-37" class="daydot hasrec" cx="1699.4" cy="721.7" r="3.2" data-day="37"/>
-    <circle id="dot-38" class="daydot hasrec" cx="1751.9" cy="742.6" r="3.2" data-day="38"/>
-    <circle id="dot-39" class="daydot restdot hasrec" cx="1751.9" cy="742.6" r="3.2" data-day="39"/>
-    <circle id="dot-40" class="daydot hasrec" cx="1832.8" cy="776.2" r="3.2" data-day="40"/>
-    <circle id="dot-41" class="daydot hasrec" cx="1850.6" cy="787.1" r="3.2" data-day="41"/>
-    <circle id="dot-42" class="daydot hasrec" cx="2013.4" cy="833.2" r="3.2" data-day="42"/>
-    <circle id="dot-43" class="daydot restdot" cx="2013.4" cy="833.2" r="2.2" data-day="43"/>
-    <circle id="dot-44" class="daydot restdot" cx="2013.4" cy="833.2" r="2.2" data-day="44"/>
-    <circle id="dot-45" class="daydot restdot" cx="2013.4" cy="833.2" r="2.2" data-day="45"/>
-    <circle id="dot-46" class="daydot restdot" cx="2013.4" cy="833.2" r="2.2" data-day="46"/>
-    <circle id="dot-47" class="daydot" cx="2042.5" cy="835.9" r="2.2" data-day="47"/>
-    <circle id="dot-48" class="daydot hasrec" cx="2073.1" cy="850.5" r="3.2" data-day="48"/>
-    <circle id="dot-49" class="daydot hasrec" cx="2142.5" cy="864.1" r="3.2" data-day="49"/>
-    <circle id="dot-50" class="daydot restdot" cx="2142.5" cy="864.1" r="2.2" data-day="50"/>
-    <circle id="dot-51" class="daydot restdot" cx="2142.5" cy="864.1" r="2.2" data-day="51"/>
-    <circle id="dot-52" class="daydot hasrec" cx="2176.7" cy="891.2" r="3.2" data-day="52"/>
-    <circle id="dot-53" class="daydot hasrec" cx="2210.4" cy="908.4" r="3.2" data-day="53"/>
-    <circle id="dot-54" class="daydot restdot" cx="2210.4" cy="908.4" r="2.2" data-day="54"/>
-    <circle id="dot-55" class="daydot hasrec" cx="2218.5" cy="913.3" r="3.2" data-day="55"/>
-    <circle id="dot-56" class="daydot hasrec" cx="2264" cy="946.3" r="3.2" data-day="56"/>
-    <circle id="dot-57" class="daydot hasrec" cx="2293" cy="961.1" r="3.2" data-day="57"/>
-    <circle id="dot-58" class="daydot hasrec" cx="2312.7" cy="991.6" r="3.2" data-day="58"/>
-    <circle id="dot-59" class="daydot hasrec" cx="2316.4" cy="999.7" r="3.2" data-day="59"/>
-    <circle id="dot-60" class="daydot restdot" cx="2316.4" cy="999.7" r="2.2" data-day="60"/>
-    <circle id="dot-61" class="daydot restdot" cx="2316.4" cy="999.7" r="2.2" data-day="61"/>
-    <circle id="dot-62" class="daydot" cx="2383.1" cy="1035.1" r="2.2" data-day="62"/>
-    <circle id="dot-63" class="daydot" cx="2440.3" cy="1015.6" r="2.2" data-day="63"/>
-    <circle id="dot-64" class="daydot hasrec" cx="2468.1" cy="1017.6" r="3.2" data-day="64"/>
-    <circle id="dot-65" class="daydot hasrec" cx="2485.4" cy="1030.5" r="3.2" data-day="65"/>
-    <circle id="dot-66" class="daydot hasrec" cx="2528.8" cy="1037.3" r="3.2" data-day="66"/>
-    <circle id="dot-67" class="daydot restdot" cx="2528.8" cy="1037.3" r="2.2" data-day="67"/>
+    <path id="route-base" d="M231.1 456.3L260 462.2L266.7 462.1L306.8 450L342.3 432.2L342.2 432.3L381.4 425.9L385 426.3L418.7 460.9L421.2 461.9L436 474.4L460.7 476.6L460.9 476.6L507.7 470.2L508.3 471.3L522.8 472.8L554.5 466.2L554.3 465.3L570.1 474L608.4 481.6L620.8 476.1L623.9 478.4L651.3 482.2L679.2 477.1L679.4 477.1L746.9 459L752.1 460.8L820.2 474L823.5 474.9L868.4 454.8L901.3 446L954.7 461.7L987.4 458.6L987.3 458.6L986.6 459.4L1004.5 449.2L1004.4 449.1L1070 477L1090.9 482.4L1146.2 489.3L1157.8 500.4L1196.8 510.4L1221.9 515.4L1280 528.5L1288.6 536.9L1288.5 537.1L1307.4 528.1L1340.6 518.2L1340.2 517.7L1353 483.2L1353.2 483.8L1361.5 499.2L1357.7 555.7L1360.3 570.9L1360.4 571.3L1387.4 554.5L1391 529L1398.9 491.4L1399.1 491.2L1434.1 588.8L1474.3 655.8L1474.6 655.5L1496.2 669.8L1525.8 688.1L1564.5 680.5L1564.5 680.5L1598.4 680.5L1646.2 708.9L1646.1 708.8L1699.4 721.7L1751.9 742.6L1804.9 762.2L1832.8 776.2L1832.8 776.5L1850.6 787.1L1969.4 830.3L2013.4 833.2L2042.5 835.9L2043.3 836.2L2068.7 837.7L2073.1 850.5L2073.2 850.9L2104 858.6L2120.3 855.1L2142.5 864.1L2165.2 873.5L2176.7 891.2L2178.6 891.1L2210.4 908.4L2218.5 913.3L2218.5 913.5L2239.2 939.4L2264 946.3L2286 951.4L2293 961.1L2312.7 991.6L2311.8 993.3L2316.4 999.7L2370.7 1040.7L2383.1 1035.1L2382.9 1035.1L2440.3 1015.6L2447.1 1014L2468.1 1017.6L2468.4 1017.9L2485.4 1030.5L2486.1 1031L2513.4 1043.5L2528.8 1037.3" fill="none" stroke="#E9F1DF" stroke-opacity=".82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <path id="seg-1" d="M231.1 456.3L260 462.2" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-2" d="M260 462.2L266.7 462.1L306.8 450" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-3" d="M306.8 450L342.3 432.2" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-4" d="M342.3 432.2L342.2 432.3L381.4 425.9" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-5" d="M381.4 425.9L381.4 425.9" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-6" d="M381.4 425.9L385 426.3L418.7 460.9" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-7" d="M418.7 460.9L421.2 461.9L436 474.4L460.7 476.6" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-8" d="M460.7 476.6L460.9 476.6L507.7 470.2" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-9" d="M507.7 470.2L508.3 471.3L522.8 472.8L554.5 466.2" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-10" d="M554.5 466.2L554.3 465.3L570.1 474L608.4 481.6" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-11" d="M608.4 481.6L620.8 476.1" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-12" d="M620.8 476.1L620.8 476.1" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-13" d="M620.8 476.1L623.9 478.4L651.3 482.2L679.2 477.1" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-14" d="M679.2 477.1L679.4 477.1L746.9 459L752.1 460.8" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-15" d="M752.1 460.8L820.2 474" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-16" d="M820.2 474L823.5 474.9" fill="none" stroke="#2EA3DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-17" d="M823.5 474.9L868.4 454.8L901.3 446" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-18" d="M901.3 446L954.7 461.7L987.4 458.6" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-19" d="M987.4 458.6L987.3 458.6L986.6 459.4L1004.5 449.2" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-20" d="M1004.5 449.2L1004.4 449.1L1070 477" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-21" d="M1070 477L1090.9 482.4L1146.2 489.3" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-22" d="M1146.2 489.3L1157.8 500.4L1196.8 510.4" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-23" d="M1196.8 510.4L1196.8 510.4" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-24" d="M1196.8 510.4L1196.8 510.4" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-25" d="M1196.8 510.4L1221.9 515.4L1280 528.5L1288.6 536.9" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-26" d="M1288.6 536.9L1288.5 537.1L1307.4 528.1L1340.6 518.2" fill="none" stroke="#D75B4A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-27" d="M1340.6 518.2L1340.2 517.7L1353 483.2" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-28" d="M1353 483.2L1353.2 483.8L1361.5 499.2L1357.7 555.7L1360.3 570.9" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-29" d="M1360.3 570.9L1360.4 571.3L1387.4 554.5L1391 529" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-30" d="M1391 529L1398.9 491.4" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-31" d="M1398.9 491.4L1399.1 491.2L1434.1 588.8" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-32" d="M1434.1 588.8L1474.3 655.8" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-33" d="M1474.3 655.8L1474.6 655.5L1496.2 669.8" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-34" d="M1496.2 669.8L1525.8 688.1L1564.5 680.5" fill="none" stroke="#7D6BB0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-35" d="M1564.5 680.5L1564.5 680.5L1598.4 680.5" fill="none" stroke="#12A19A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-36" d="M1598.4 680.5L1646.2 708.9" fill="none" stroke="#12A19A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-37" d="M1646.2 708.9L1646.1 708.8L1699.4 721.7" fill="none" stroke="#12A19A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-38" d="M1699.4 721.7L1751.9 742.6" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-39" d="M1751.9 742.6L1751.9 742.6" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-40" d="M1751.9 742.6L1804.9 762.2L1832.8 776.2" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-41" d="M1832.8 776.2L1832.8 776.5L1850.6 787.1" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-42" d="M1850.6 787.1L1969.4 830.3L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-43" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-44" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-45" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-46" d="M2013.4 833.2L2013.4 833.2" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-47" d="M2013.4 833.2L2042.5 835.9" fill="none" stroke="#1FA45A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-48" d="M2042.5 835.9L2043.3 836.2L2068.7 837.7L2073.1 850.5" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-49" d="M2073.1 850.5L2073.2 850.9L2104 858.6L2120.3 855.1L2142.5 864.1" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-50" d="M2142.5 864.1L2142.5 864.1" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-51" d="M2142.5 864.1L2142.5 864.1" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-52" d="M2142.5 864.1L2165.2 873.5L2176.7 891.2" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-53" d="M2176.7 891.2L2178.6 891.1L2210.4 908.4" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-54" d="M2210.4 908.4L2210.4 908.4" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-55" d="M2210.4 908.4L2218.5 913.3" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-56" d="M2218.5 913.3L2218.5 913.5L2239.2 939.4L2264 946.3" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-57" d="M2264 946.3L2286 951.4L2293 961.1" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-58" d="M2293 961.1L2312.7 991.6" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-59" d="M2312.7 991.6L2311.8 993.3L2316.4 999.7" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-60" d="M2316.4 999.7L2316.4 999.7" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-61" d="M2316.4 999.7L2316.4 999.7" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <path id="seg-62" d="M2316.4 999.7L2370.7 1040.7L2383.1 1035.1" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-63" d="M2383.1 1035.1L2382.9 1035.1L2440.3 1015.6" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-64" d="M2440.3 1015.6L2447.1 1014L2468.1 1017.6" fill="none" stroke="#EFC319" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-65" d="M2468.1 1017.6L2468.4 1017.9L2485.4 1030.5" fill="none" stroke="#E97E18" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-66" d="M2485.4 1030.5L2486.1 1031L2513.4 1043.5L2528.8 1037.3" fill="none" stroke="#E97E18" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"  class="seg"/>
+    <path id="seg-67" d="M2528.8 1037.3L2528.8 1037.3" fill="none" stroke="#E97E18" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="3 6" class="seg"/>
+    <circle id="dot-1" class="daydot" cx="260" cy="462.2" r="1.15" data-day="1"/>
+    <circle id="dot-2" class="daydot hasrec" cx="306.8" cy="450" r="1.8" data-day="2"/>
+    <circle id="dot-3" class="daydot" cx="342.3" cy="432.2" r="1.15" data-day="3"/>
+    <circle id="dot-4" class="daydot" cx="381.4" cy="425.9" r="1.15" data-day="4"/>
+    <circle id="dot-5" class="daydot restdot" cx="381.4" cy="425.9" r="1.15" data-day="5"/>
+    <circle id="dot-6" class="daydot hasrec" cx="418.7" cy="460.9" r="1.8" data-day="6"/>
+    <circle id="dot-7" class="daydot" cx="460.7" cy="476.6" r="1.15" data-day="7"/>
+    <circle id="dot-8" class="daydot" cx="507.7" cy="470.2" r="1.15" data-day="8"/>
+    <circle id="dot-9" class="daydot hasrec" cx="554.5" cy="466.2" r="1.8" data-day="9"/>
+    <circle id="dot-10" class="daydot" cx="608.4" cy="481.6" r="1.15" data-day="10"/>
+    <circle id="dot-11" class="daydot" cx="620.8" cy="476.1" r="1.15" data-day="11"/>
+    <circle id="dot-12" class="daydot restdot" cx="620.8" cy="476.1" r="1.15" data-day="12"/>
+    <circle id="dot-13" class="daydot" cx="679.2" cy="477.1" r="1.15" data-day="13"/>
+    <circle id="dot-14" class="daydot hasrec" cx="752.1" cy="460.8" r="1.8" data-day="14"/>
+    <circle id="dot-15" class="daydot" cx="820.2" cy="474" r="1.15" data-day="15"/>
+    <circle id="dot-16" class="daydot hasrec" cx="823.5" cy="474.9" r="1.8" data-day="16"/>
+    <circle id="dot-17" class="daydot hasrec" cx="901.3" cy="446" r="1.8" data-day="17"/>
+    <circle id="dot-18" class="daydot" cx="987.4" cy="458.6" r="1.15" data-day="18"/>
+    <circle id="dot-19" class="daydot" cx="1004.5" cy="449.2" r="1.15" data-day="19"/>
+    <circle id="dot-20" class="daydot" cx="1070" cy="477" r="1.15" data-day="20"/>
+    <circle id="dot-21" class="daydot" cx="1146.2" cy="489.3" r="1.15" data-day="21"/>
+    <circle id="dot-22" class="daydot" cx="1196.8" cy="510.4" r="1.15" data-day="22"/>
+    <circle id="dot-23" class="daydot restdot" cx="1196.8" cy="510.4" r="1.15" data-day="23"/>
+    <circle id="dot-24" class="daydot restdot" cx="1196.8" cy="510.4" r="1.15" data-day="24"/>
+    <circle id="dot-25" class="daydot hasrec" cx="1288.6" cy="536.9" r="1.8" data-day="25"/>
+    <circle id="dot-26" class="daydot" cx="1340.6" cy="518.2" r="1.15" data-day="26"/>
+    <circle id="dot-27" class="daydot" cx="1353" cy="483.2" r="1.15" data-day="27"/>
+    <circle id="dot-28" class="daydot hasrec" cx="1360.3" cy="570.9" r="1.8" data-day="28"/>
+    <circle id="dot-29" class="daydot hasrec" cx="1391" cy="529" r="1.8" data-day="29"/>
+    <circle id="dot-30" class="daydot hasrec" cx="1398.9" cy="491.4" r="1.8" data-day="30"/>
+    <circle id="dot-31" class="daydot" cx="1434.1" cy="588.8" r="1.15" data-day="31"/>
+    <circle id="dot-32" class="daydot hasrec" cx="1474.3" cy="655.8" r="1.8" data-day="32"/>
+    <circle id="dot-33" class="daydot hasrec" cx="1496.2" cy="669.8" r="1.8" data-day="33"/>
+    <circle id="dot-34" class="daydot hasrec" cx="1564.5" cy="680.5" r="1.8" data-day="34"/>
+    <circle id="dot-35" class="daydot" cx="1598.4" cy="680.5" r="1.15" data-day="35"/>
+    <circle id="dot-36" class="daydot hasrec" cx="1646.2" cy="708.9" r="1.8" data-day="36"/>
+    <circle id="dot-37" class="daydot hasrec" cx="1699.4" cy="721.7" r="1.8" data-day="37"/>
+    <circle id="dot-38" class="daydot hasrec" cx="1751.9" cy="742.6" r="1.8" data-day="38"/>
+    <circle id="dot-39" class="daydot restdot hasrec" cx="1751.9" cy="742.6" r="1.8" data-day="39"/>
+    <circle id="dot-40" class="daydot hasrec" cx="1832.8" cy="776.2" r="1.8" data-day="40"/>
+    <circle id="dot-41" class="daydot hasrec" cx="1850.6" cy="787.1" r="1.8" data-day="41"/>
+    <circle id="dot-42" class="daydot hasrec" cx="2013.4" cy="833.2" r="1.8" data-day="42"/>
+    <circle id="dot-43" class="daydot restdot" cx="2013.4" cy="833.2" r="1.15" data-day="43"/>
+    <circle id="dot-44" class="daydot restdot" cx="2013.4" cy="833.2" r="1.15" data-day="44"/>
+    <circle id="dot-45" class="daydot restdot" cx="2013.4" cy="833.2" r="1.15" data-day="45"/>
+    <circle id="dot-46" class="daydot restdot" cx="2013.4" cy="833.2" r="1.15" data-day="46"/>
+    <circle id="dot-47" class="daydot" cx="2042.5" cy="835.9" r="1.15" data-day="47"/>
+    <circle id="dot-48" class="daydot hasrec" cx="2073.1" cy="850.5" r="1.8" data-day="48"/>
+    <circle id="dot-49" class="daydot hasrec" cx="2142.5" cy="864.1" r="1.8" data-day="49"/>
+    <circle id="dot-50" class="daydot restdot" cx="2142.5" cy="864.1" r="1.15" data-day="50"/>
+    <circle id="dot-51" class="daydot restdot" cx="2142.5" cy="864.1" r="1.15" data-day="51"/>
+    <circle id="dot-52" class="daydot hasrec" cx="2176.7" cy="891.2" r="1.8" data-day="52"/>
+    <circle id="dot-53" class="daydot hasrec" cx="2210.4" cy="908.4" r="1.8" data-day="53"/>
+    <circle id="dot-54" class="daydot restdot" cx="2210.4" cy="908.4" r="1.15" data-day="54"/>
+    <circle id="dot-55" class="daydot hasrec" cx="2218.5" cy="913.3" r="1.8" data-day="55"/>
+    <circle id="dot-56" class="daydot hasrec" cx="2264" cy="946.3" r="1.8" data-day="56"/>
+    <circle id="dot-57" class="daydot hasrec" cx="2293" cy="961.1" r="1.8" data-day="57"/>
+    <circle id="dot-58" class="daydot hasrec" cx="2312.7" cy="991.6" r="1.8" data-day="58"/>
+    <circle id="dot-59" class="daydot hasrec" cx="2316.4" cy="999.7" r="1.8" data-day="59"/>
+    <circle id="dot-60" class="daydot restdot" cx="2316.4" cy="999.7" r="1.15" data-day="60"/>
+    <circle id="dot-61" class="daydot restdot" cx="2316.4" cy="999.7" r="1.15" data-day="61"/>
+    <circle id="dot-62" class="daydot" cx="2383.1" cy="1035.1" r="1.15" data-day="62"/>
+    <circle id="dot-63" class="daydot" cx="2440.3" cy="1015.6" r="1.15" data-day="63"/>
+    <circle id="dot-64" class="daydot hasrec" cx="2468.1" cy="1017.6" r="1.8" data-day="64"/>
+    <circle id="dot-65" class="daydot hasrec" cx="2485.4" cy="1030.5" r="1.8" data-day="65"/>
+    <circle id="dot-66" class="daydot hasrec" cx="2528.8" cy="1037.3" r="1.8" data-day="66"/>
+    <circle id="dot-67" class="daydot restdot" cx="2528.8" cy="1037.3" r="1.15" data-day="67"/>
     <g class="town" id="town-paris">
-      <circle cx="231.1" cy="456.3" r="5" class="townhalo"/>
+      <circle cx="231.1" cy="456.3" r="3.15" class="townhalo"/>
 
-      <circle cx="231.1" cy="456.3" r="2" class="towndot"/>
+      <circle cx="231.1" cy="456.3" r="1.05" class="towndot"/>
       <text x="221.1" y="444.3" text-anchor="end" class="townlabel">Paris</text>
     </g>
     <g class="town" id="town-reims">
-      <circle cx="381.4" cy="425.9" r="5" class="townhalo"/>
+      <circle cx="381.4" cy="425.9" r="3.15" class="townhalo"/>
 
-      <circle cx="381.4" cy="425.9" r="2" class="towndot"/>
+      <circle cx="381.4" cy="425.9" r="1.05" class="towndot"/>
       <text x="381.4" y="411.9" text-anchor="middle" class="townlabel">Reims</text>
     </g>
     <g class="town" id="town-nancy">
-      <circle cx="620.8" cy="476.1" r="5" class="townhalo"/>
+      <circle cx="620.8" cy="476.1" r="3.15" class="townhalo"/>
 
-      <circle cx="620.8" cy="476.1" r="2" class="towndot"/>
+      <circle cx="620.8" cy="476.1" r="1.05" class="towndot"/>
       <text x="620.8" y="498.1" text-anchor="middle" class="townlabel">Nancy</text>
     </g>
     <g class="town" id="town-saverne">
-      <circle cx="752.1" cy="460.8" r="5" class="townhalo"/>
+      <circle cx="752.1" cy="460.8" r="3.15" class="townhalo"/>
 
-      <circle cx="752.1" cy="460.8" r="2" class="towndot"/>
+      <circle cx="752.1" cy="460.8" r="1.05" class="towndot"/>
       <text x="752.1" y="446.8" text-anchor="middle" class="townlabel">Saverne</text>
     </g>
     <g class="town" id="town-pforzheim">
-      <circle cx="901.3" cy="446" r="5" class="townhalo"/>
+      <circle cx="901.3" cy="446" r="3.15" class="townhalo"/>
 
-      <circle cx="901.3" cy="446" r="2" class="towndot"/>
+      <circle cx="901.3" cy="446" r="1.05" class="towndot"/>
       <text x="901.3" y="432" text-anchor="middle" class="townlabel">Pforzheim</text>
     </g>
     <g class="town" id="town-stuttgart">
-      <circle cx="954.7" cy="461.7" r="5" class="townhalo"/>
+      <circle cx="954.7" cy="461.7" r="3.15" class="townhalo"/>
 
-      <circle cx="954.7" cy="461.7" r="2" class="towndot"/>
+      <circle cx="954.7" cy="461.7" r="1.05" class="towndot"/>
       <text x="954.7" y="483.7" text-anchor="middle" class="townlabel">Stuttgart</text>
     </g>
     <g class="town" id="town-augsburg">
-      <circle cx="1146.2" cy="489.3" r="5" class="townhalo"/>
+      <circle cx="1146.2" cy="489.3" r="3.15" class="townhalo"/>
 
-      <circle cx="1146.2" cy="489.3" r="2" class="towndot"/>
+      <circle cx="1146.2" cy="489.3" r="1.05" class="towndot"/>
       <text x="1146.2" y="475.3" text-anchor="middle" class="townlabel">Augsburg</text>
     </g>
     <g class="town" id="town-munich">
-      <circle cx="1221.9" cy="515.4" r="5" class="townhalo"/>
+      <circle cx="1221.9" cy="515.4" r="3.15" class="townhalo"/>
 
-      <circle cx="1221.9" cy="515.4" r="2" class="towndot"/>
+      <circle cx="1221.9" cy="515.4" r="1.05" class="towndot"/>
       <text x="1233.9" y="505.4" text-anchor="start" class="townlabel">Munich</text>
     </g>
     <g class="town" id="town-zell-am-see">
-      <circle cx="1357.7" cy="555.7" r="5" class="townhalo"/>
+      <circle cx="1357.7" cy="555.7" r="3.15" class="townhalo"/>
 
-      <circle cx="1357.7" cy="555.7" r="2" class="towndot"/>
+      <circle cx="1357.7" cy="555.7" r="1.05" class="towndot"/>
       <text x="1369.7" y="547.7" text-anchor="start" class="townlabel">Zell am See</text>
     </g>
     <g class="town pass" id="town-the-tauern">
 
-      <circle cx="1392.3" cy="522.1" r="2" class="towndot"/>
+      <circle cx="1392.3" cy="522.1" r="1.05" class="towndot"/>
       <text x="1406.3" y="526.1" text-anchor="start" class="townlabel">the Tauern</text>
     </g>
     <g class="town" id="town-klagenfurt">
-      <circle cx="1525.8" cy="688.1" r="5" class="townhalo"/>
+      <circle cx="1525.8" cy="688.1" r="3.15" class="townhalo"/>
 
-      <circle cx="1525.8" cy="688.1" r="2" class="towndot"/>
+      <circle cx="1525.8" cy="688.1" r="1.05" class="towndot"/>
       <text x="1525.8" y="710.1" text-anchor="middle" class="townlabel">Klagenfurt</text>
     </g>
     <g class="town" id="town-ptuj">
-      <circle cx="1699.4" cy="721.7" r="5" class="townhalo"/>
+      <circle cx="1699.4" cy="721.7" r="3.15" class="townhalo"/>
 
-      <circle cx="1699.4" cy="721.7" r="2" class="towndot"/>
+      <circle cx="1699.4" cy="721.7" r="1.05" class="towndot"/>
       <text x="1699.4" y="707.7" text-anchor="middle" class="townlabel">Ptuj</text>
     </g>
     <g class="town" id="town-osijek">
-      <circle cx="2013.4" cy="833.2" r="5" class="townhalo"/>
+      <circle cx="2013.4" cy="833.2" r="3.15" class="townhalo"/>
 
-      <circle cx="2013.4" cy="833.2" r="2" class="towndot"/>
+      <circle cx="2013.4" cy="833.2" r="1.05" class="towndot"/>
       <text x="2013.4" y="819.2" text-anchor="middle" class="townlabel">Osijek</text>
     </g>
     <g class="town" id="town-novi-sad">
-      <circle cx="2142.5" cy="864.1" r="5" class="townhalo"/>
+      <circle cx="2142.5" cy="864.1" r="3.15" class="townhalo"/>
 
-      <circle cx="2142.5" cy="864.1" r="2" class="towndot"/>
+      <circle cx="2142.5" cy="864.1" r="1.05" class="towndot"/>
       <text x="2142.5" y="850.1" text-anchor="middle" class="townlabel">Novi Sad</text>
     </g>
     <g class="town" id="town-belgrade">
-      <circle cx="2210.4" cy="908.4" r="5" class="townhalo"/>
+      <circle cx="2210.4" cy="908.4" r="3.15" class="townhalo"/>
 
-      <circle cx="2210.4" cy="908.4" r="2" class="towndot"/>
+      <circle cx="2210.4" cy="908.4" r="1.05" class="towndot"/>
       <text x="2224.4" y="914.4" text-anchor="start" class="townlabel">Belgrade</text>
     </g>
     <g class="town" id="town-ni-">
-      <circle cx="2370.7" cy="1040.7" r="5" class="townhalo"/>
+      <circle cx="2370.7" cy="1040.7" r="3.15" class="townhalo"/>
 
-      <circle cx="2370.7" cy="1040.7" r="2" class="towndot"/>
+      <circle cx="2370.7" cy="1040.7" r="1.05" class="towndot"/>
       <text x="2384.7" y="1040.7" text-anchor="start" class="townlabel">Niš</text>
     </g>
     <g class="town" id="town-sofia">
-      <circle cx="2528.8" cy="1037.3" r="5" class="townhalo"/>
+      <circle cx="2528.8" cy="1037.3" r="3.15" class="townhalo"/>
 
-      <circle cx="2528.8" cy="1037.3" r="2" class="towndot"/>
+      <circle cx="2528.8" cy="1037.3" r="1.05" class="towndot"/>
       <text x="2528.8" y="1061.3" text-anchor="middle" class="townlabel">Sofia</text>
     </g>
   </g>
