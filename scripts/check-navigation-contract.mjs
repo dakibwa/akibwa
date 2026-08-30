@@ -12,6 +12,7 @@ const editorial = readFileSync(
   new URL("../components/pages/editorial-home-concept.jsx", import.meta.url),
   "utf8"
 );
+const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 
@@ -94,6 +95,9 @@ for (const name of [
 }
 requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable");
 requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
+requireText(deckData, "electrical work with my brother", "Electrical Work must remain the period with Dan's brother");
+requireText(deckData, "Joinery with my dad", "Joinery Work must remain the period with Dan's dad");
+forbidText(deckData, "my dad and my brother", "the two family-work periods must not be conflated");
 requireRuleText(".concept-career-stop {", ["grid-template-rows: 32px 36px 68px"]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireText(

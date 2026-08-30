@@ -45,7 +45,7 @@ export const deck = {
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
       "tile": false,
-      "back": "A year on the tools with my dad and my brother, between two office jobs. Nothing sharpens an estimate like being the one who has to carry it."
+      "back": "A year doing electrical work with my brother, between two office jobs. Nothing sharpens an estimate like being the one who has to carry it."
     },
     {
       "name": "Sky Betting & Gaming",
@@ -65,7 +65,7 @@ export const deck = {
       "accent": "#9a6038",
       "logo": "/brand-logos/joinery.svg",
       "tile": false,
-      "back": "Family joinery, the year I got back from India. Measure twice is not a saying when the timber is already cut."
+      "back": "Joinery with my dad, the year I got back from India. Measure twice is not a saying when the timber is already cut."
     },
     {
       "name": "Vanquis Bank",
