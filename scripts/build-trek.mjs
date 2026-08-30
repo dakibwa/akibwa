@@ -591,25 +591,25 @@ function terrainCellColor(points, facet = 0) {
   const ny = -southSlope / normalLength;
   const nz = 1 / normalLength;
   const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
-  let hue = 74;
-  let saturation = 14;
-  let luminance = 17;
+  let hue = 143;
+  let saturation = 20;
+  let luminance = 18;
   if (altitude > 1750) {
-    hue = 39;
-    saturation = 12;
-    luminance = 36 + Math.min(18, ((altitude - 1750) / 900) * 18);
+    hue = 37;
+    saturation = 13;
+    luminance = 40 + Math.min(18, ((altitude - 1750) / 900) * 18);
   } else if (altitude > 1050) {
-    hue = 44;
-    saturation = 14;
-    luminance = 27 + ((altitude - 1050) / 700) * 8;
+    hue = 48;
+    saturation = 18;
+    luminance = 30 + ((altitude - 1050) / 700) * 10;
   } else if (altitude > 360) {
-    hue = 66;
-    saturation = 15;
-    luminance = 20 + ((altitude - 360) / 690) * 7;
+    hue = 92;
+    saturation = 19;
+    luminance = 22 + ((altitude - 360) / 690) * 8;
   } else {
-    luminance = 16 + Math.max(0, altitude) / 90;
+    luminance = 17 + Math.max(0, altitude) / 75;
   }
-  luminance = Math.round(Math.max(10, Math.min(62, luminance + light * 7.5 + facet)));
+  luminance = Math.round(Math.max(11, Math.min(64, luminance + light * 8.5 + facet)));
   return `hsl(${Math.round(hue)} ${Math.round(saturation)}% ${luminance}%)`;
 }
 
@@ -951,7 +951,7 @@ for (let i = 0; i < pts.length; i++) {
       })
       .join("L");
   segs.push(
-    `<path id="seg-${d.n}" d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-width="2.6" vector-effect="non-scaling-stroke" ${d.walked ? "" : 'stroke-dasharray="3 6"'} class="seg"/>`
+    `<path id="seg-${d.n}" d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" ${d.walked ? "" : 'stroke-dasharray="3 6"'} class="seg"/>`
   );
 }
 
@@ -1026,7 +1026,8 @@ const atlasSvg = `
     <g id="relief">${contourPaths}</g>
     <g id="mountains">${mountainMarks}</g>
     <g id="landmarks">${landmarkMarks}</g>
-    <path id="gps" d="${trackPath}" fill="none" stroke="#EFE6D4" stroke-opacity=".14" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <path id="route-casing" d="${trackPath}" fill="none" stroke="#0D0C09" stroke-opacity=".76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <path id="gps" d="${trackPath}" fill="none" stroke="#EFE6D4" stroke-opacity=".3" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
     ${segs.join("\n    ")}
     ${dayDots}
     ${townMarks}
