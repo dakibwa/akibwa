@@ -31,6 +31,7 @@
   --mast-h:58px;
   --stats-h:58px;
   --chrome-h:116px;
+  --story-h:88px;
   --c-cur:#2EA3DC;
   --mono:"Plex Mono","SF Mono",ui-monospace,Menlo,monospace;
   --sans:"Avenir Next","Inter","Helvetica Neue",Arial,sans-serif;
@@ -127,15 +128,26 @@ button{font:inherit;color:inherit}
   display:flex;align-items:center;color:color-mix(in srgb,var(--c-cur) 52%,var(--bone));
   font-size:10px;font-weight:600;line-height:1.25;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.stat{display:grid;align-content:center;gap:3px}
-.stat b{font-size:19px;font-weight:650;line-height:1;letter-spacing:-.035em;white-space:nowrap}
-.stat b small{margin-left:4px;color:var(--dust);font-size:.54em;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.stat em{font-style:normal;color:var(--dust);font-size:7.5px;font-weight:600;line-height:1.1;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
+.stat{
+  --stat-color:var(--c-cur);position:relative;display:grid;align-content:center;gap:3px;overflow:hidden;
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--stat-color) 19%,transparent),transparent 72%),
+    linear-gradient(90deg,color-mix(in srgb,var(--stat-color) 8%,transparent),transparent 58%);
+  box-shadow:inset 0 2px 0 color-mix(in srgb,var(--stat-color) 72%,var(--bone));
+}
+.stat-distance{--stat-color:#3FA8D8}
+.stat-ascent{--stat-color:#E27659}
+.stat-days{--stat-color:#E2B63E}
+.stat-hours{--stat-color:#58A978}
+.stat-elevation{--stat-color:#9B7BC4}
+.stat b{color:color-mix(in srgb,var(--stat-color) 34%,var(--bone));font-size:19px;font-weight:650;line-height:1;letter-spacing:-.035em;white-space:nowrap}
+.stat b small{margin-left:4px;color:color-mix(in srgb,var(--stat-color) 22%,var(--dust));font-size:.54em;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.stat em{font-style:normal;color:color-mix(in srgb,var(--stat-color) 25%,var(--dust));font-size:7.5px;font-weight:600;line-height:1.1;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
 .stat-elevation{grid-template-columns:minmax(90px,132px) auto;align-items:center;align-content:stretch;gap:12px;border-right:0}
 .stat-elevation svg{width:100%;height:28px;overflow:visible}
 .stat-elevation p{display:grid;align-content:center;gap:3px}
-.stat-elevation #elev-area{fill:color-mix(in srgb,var(--c-cur) 20%,transparent)}
-.stat-elevation #elev-line{fill:none;stroke:color-mix(in srgb,var(--c-cur) 55%,var(--bone));stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+.stat-elevation #elev-area{fill:color-mix(in srgb,var(--stat-color) 48%,transparent)}
+.stat-elevation #elev-line{fill:none;stroke:color-mix(in srgb,var(--stat-color) 76%,var(--bone));stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
 .stat-elevation #elev-now{fill:var(--bone);stroke:var(--peat);stroke-width:1}
 
 /* -------------------------------------------------------------- experience */
@@ -150,9 +162,24 @@ button{font:inherit;color:inherit}
   content:"";position:absolute;inset:var(--chrome-h) 0 0;pointer-events:none;opacity:.22;
   background:radial-gradient(55% 40% at 50% 18%,rgba(255,255,255,.72),transparent 100%);
 }
+.story-rail{
+  position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + 10px);height:var(--story-h);z-index:9;
+  display:grid;grid-template-columns:minmax(0,1fr) 0;grid-template-rows:minmax(0,var(--story-h));align-items:stretch;gap:0;pointer-events:none;
+  transition:grid-template-columns .25s ease,gap .25s ease;
+}
+.story-rail.has-photo{grid-template-columns:minmax(0,1fr) min(190px,25vw);gap:10px}
+.story-copy{position:relative;min-width:0;min-height:0;height:var(--story-h);max-height:var(--story-h);overflow:hidden}
+.story-current{
+  position:absolute;inset:0;display:grid;align-content:center;gap:6px;min-width:0;padding:12px 16px 11px 18px;
+  color:var(--ink);border:1px solid rgba(43,50,37,.2);border-left:3px solid var(--c-cur);
+  background:linear-gradient(100deg,rgba(255,249,231,.92),rgba(235,231,208,.72));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:opacity .2s ease;
+}
+.story-label{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 56%,#4D5749)}
+.story-text{max-width:92ch;font-size:13px;font-weight:560;line-height:1.35;color:#353B32;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .map-shell{
   --map-shape:inset(0 round 2px);
-  position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + 16px);bottom:18px;z-index:2;
+  position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + var(--story-h) + 20px);bottom:18px;z-index:2;
 }
 .atlas-scene{
   position:absolute;inset:0;contain:layout paint style;clip-path:var(--map-shape);
@@ -235,21 +262,6 @@ button{font:inherit;color:inherit}
 .town.pass .townlabel{fill:#5D6658;font-style:italic;font-weight:560;letter-spacing:0}
 .town.pass .towndot{fill:none;stroke:#5D6658;stroke-width:.8}
 
-/* ------------------------------------------------------------------- title */
-.titlecard{
-  position:absolute;inset:0;display:grid;align-content:center;
-  padding:0 clamp(28px,6vw,92px);pointer-events:none;z-index:6;
-  transition:opacity .5s;
-}
-.titlecard .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:#4F5C4C;margin-bottom:22px}
-h1{
-  display:flex;align-items:baseline;gap:clamp(12px,2vw,30px);white-space:nowrap;
-  font-family:var(--sans);font-size:clamp(52px,7.6vw,116px);
-  color:var(--ink);line-height:.9;letter-spacing:-.065em;font-weight:700;max-width:none;
-}
-h1 .to{color:#5B6757;font-family:var(--mono);font-size:.3em;font-weight:400;line-height:1;letter-spacing:.04em}
-.titlecard .sub{max-width:38ch;color:#4F574B;font-family:var(--sans);font-size:clamp(15px,1.35vw,18px);line-height:1.48;margin-top:28px}
-.titlecard .sub em{color:var(--ink);font-style:normal}
 .hint{
   position:absolute;bottom:32px;left:calc((100% - 242px)/2);transform:translateX(-50%);z-index:6;
   font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#495548;
@@ -297,51 +309,53 @@ h1 .to{color:#5B6757;font-family:var(--mono);font-size:.3em;font-weight:400;line
 
 /* ------------------------------------------------------------------ plates */
 .plate{
-  position:absolute;inset:0;z-index:8;display:grid;place-items:center;
-  opacity:0;pointer-events:none;transition:opacity .3s;
-  color:var(--ink);background:rgba(232,224,207,.18);
+  position:absolute;inset:0;z-index:3;display:grid;grid-template-columns:82px minmax(0,1fr);align-items:center;
+  opacity:0;pointer-events:none;overflow:hidden;transition:opacity .25s;
+  color:var(--ink);border:1px solid color-mix(in srgb,var(--c) 28%,rgba(43,50,37,.18));border-left:3px solid var(--c);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--c) 17%,rgba(255,249,231,.94)),rgba(235,231,208,.78));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
 }
 .plate img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:.2;filter:saturate(.86) contrast(.92) brightness(1.12);transform:scale(1.025);
-  -webkit-mask-image:radial-gradient(ellipse at center,#000 8%,rgba(0,0,0,.72) 42%,transparent 82%);
-  mask-image:radial-gradient(ellipse at center,#000 8%,rgba(0,0,0,.72) 42%,transparent 82%);
+  width:82px;height:100%;object-fit:cover;opacity:.5;filter:saturate(.82) contrast(.92) brightness(1.08);
+  -webkit-mask-image:linear-gradient(90deg,#000 52%,transparent 100%);mask-image:linear-gradient(90deg,#000 52%,transparent 100%);
 }
-.plate::after{content:"";position:absolute;inset:0;background:radial-gradient(72% 58% at 50% 50%,rgba(255,250,231,.05) 18%,rgba(225,216,190,.76) 100%)}
-.plate-text{position:relative;z-index:2;text-align:center;padding:0 24px}
-.plate-count{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 62%,var(--ink))}
+.plate-text{position:relative;z-index:2;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;gap:14px;padding:10px 16px 10px 0}
+.plate-count{font-family:var(--mono);font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 64%,var(--ink));white-space:nowrap}
 .plate-name{
-  font-family:var(--sans);font-size:clamp(48px,8vw,112px);line-height:1;font-weight:720;letter-spacing:-.055em;
-  margin-top:16px;text-shadow:0 3px 40px rgba(255,250,232,.9);
+  font-family:var(--sans);font-size:clamp(24px,3vw,34px);line-height:1;font-weight:720;letter-spacing:-.045em;white-space:nowrap;
 }
-.plate-facts{font-family:var(--mono);font-size:12.5px;color:#353D32;margin-top:20px;letter-spacing:.06em;font-variant-numeric:tabular-nums;opacity:.9}
+.plate-facts{font-family:var(--mono);font-size:9px;color:#4A5147;letter-spacing:.06em;font-variant-numeric:tabular-nums;white-space:nowrap}
 
 /* ------------------------------------------------------------------ quotes */
 .quote{
-  position:absolute;inset:0;z-index:8;display:grid;place-items:center;
-  padding:0 clamp(24px,8vw,120px);pointer-events:none;opacity:0;transition:opacity .3s;
-  color:var(--ink);background:radial-gradient(80% 60% at 50% 50%,rgba(245,238,215,.91),rgba(228,220,195,.2) 68%,transparent);
+  position:absolute;inset:0;z-index:4;display:grid;align-items:center;
+  padding:9px 16px 10px 18px;pointer-events:none;opacity:0;transition:opacity .22s;
+  color:var(--ink);border:1px solid rgba(43,50,37,.2);border-left:3px solid var(--c-cur);
+  background:linear-gradient(100deg,rgba(255,249,231,.96),rgba(235,231,208,.82));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
 }
-.quote-inner{max-width:620px;text-align:center}
-.quote-label{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 55%,#343D31)}
+.quote-inner{position:relative;min-width:0;text-align:left}
+.quote-label{font-family:var(--mono);font-size:8.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 58%,#343D31)}
 .quote-text{
-  margin-top:22px;font-family:var(--sans);font-style:italic;font-size:clamp(21px,3vw,30px);font-weight:500;line-height:1.45;
-  text-shadow:0 2px 30px rgba(255,250,232,.9);
+  margin-top:4px;font-family:var(--sans);font-style:italic;font-size:13px;font-weight:530;line-height:1.32;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
 }
-.quote-src{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:#5C6258;margin-top:24px;text-transform:uppercase}
+.quote-src{position:absolute;right:0;top:0;font-family:var(--mono);font-size:8px;letter-spacing:.11em;color:#6A6D63;text-transform:uppercase}
 
 /* ------------------------------------------------------------------ photos */
 .photo{
-  position:absolute;right:calc(260px + clamp(18px,3vw,42px));top:54%;z-index:7;
-  width:min(23vw,286px);
-  transform:translateY(-46%) rotate(1.6deg);
-  opacity:0;transition:opacity .18s,transform .18s;will-change:transform,opacity;
-  pointer-events:none;
+  position:relative;z-index:5;grid-column:2;width:100%;height:var(--story-h);max-height:var(--story-h);min-width:0;min-height:0;overflow:hidden;
+  transform:translateY(5px);opacity:0;transition:opacity .2s,transform .25s;will-change:transform,opacity;pointer-events:none;
 }
-.photo.on{opacity:1;transform:translateY(-50%) rotate(-1.2deg)}
-.photo figure{background:color-mix(in srgb,var(--bone) 93%,#8d816c);padding:8px 8px 10px;box-shadow:0 28px 60px -18px rgba(0,0,0,.76)}
-.photo img{width:100%;aspect-ratio:var(--ar,4/3);object-fit:cover}
-.photo figcaption{font-family:var(--mono);font-size:9px;letter-spacing:.09em;color:#4c4438;margin-top:7px;text-transform:uppercase}
+.photo.on{opacity:1;transform:none}
+.photo figure{position:relative;width:100%;height:100%;overflow:hidden;border:1px solid rgba(42,49,37,.24);background:#D7DCC5}
+.photo img{width:100%;height:100%;object-fit:cover}
+.photo figcaption{
+  position:absolute;left:0;right:0;bottom:0;padding:18px 8px 6px;
+  color:#F7F0E2;background:linear-gradient(transparent,rgba(25,27,22,.76));
+  font-family:var(--mono);font-size:7.5px;line-height:1.25;letter-spacing:.07em;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 
 /* -------------------------------------------------------------- spotlight */
 dialog.spot{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%}
@@ -365,17 +379,14 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 .noscript-days li{margin:6px 0}
 
 /* ------------------------------------------------------------- responsive */
-@media (min-width:1181px){
-  .photo{right:calc(260px + clamp(18px,2vw,30px))}
-}
 @media (max-width:1180px){
   .collector{display:none}
+  .story-rail{right:18px}
   .map-shell{right:18px}
-  .photo{right:clamp(20px,4vw,46px)}
   .hint{left:50%}
 }
 @media (max-width:900px){
-  :root{--mast-h:56px;--stats-h:58px;--chrome-h:114px}
+  :root{--mast-h:56px;--stats-h:58px;--chrome-h:114px;--story-h:76px}
   .masthead{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;min-height:56px;padding:8px 12px}
   .masthead .site{display:none}
   .masthead .mark{gap:8px}
@@ -393,30 +404,35 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .stat b small{display:none}
   .stat em{font-size:clamp(5.8px,1.6vw,7px);letter-spacing:.08em;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .stat-elevation{position:relative;display:grid;grid-template-columns:1fr;padding:8px 4px 7px;border-right:0;overflow:hidden}
-  .stat-elevation svg{position:absolute;inset:0;width:100%;height:100%;opacity:.18}
+  .stat-elevation svg{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
   .stat-elevation p{position:relative;z-index:1;justify-items:center}
-  .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + 8px);bottom:8px}
-  .photo{top:calc(var(--chrome-h) + 64px);bottom:auto;right:12px;width:min(34vw,174px);transform:rotate(1.6deg)}
-  .photo.on{transform:rotate(-1deg)}
-  .photo figure{padding:5px 5px 6px}
+  .story-rail{left:7px;right:7px;top:calc(var(--chrome-h) + 7px)}
+  .story-rail.has-photo{grid-template-columns:minmax(0,1fr) min(116px,31vw);gap:6px}
+  .story-current{padding:9px 10px 8px 11px;gap:4px}
+  .story-label{font-size:7px;letter-spacing:.11em}
+  .story-text{font-size:10.5px;line-height:1.28;-webkit-line-clamp:3}
+  .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + var(--story-h) + 14px);bottom:8px}
   .photo figcaption{display:none}
-  .titlecard{padding:0 22px;align-content:end;padding-bottom:15vh}
-  .titlecard .eyebrow{font-size:8.5px;margin-bottom:14px;line-height:1.5;max-width:34ch}
-  h1{gap:9px;font-size:clamp(39px,11.8vw,64px)}
-  .titlecard .sub{font-size:13px;margin-top:18px;max-width:31ch}
   .hint{bottom:21px;font-size:9px}
-  .plate-name{font-size:clamp(44px,17vw,76px)}
-  .plate-facts{font-size:9.5px;margin-top:14px}
-  .quote{padding:0 20px}
-  .quote-text{font-size:clamp(18px,5.3vw,24px)}
+  .plate{grid-template-columns:58px minmax(0,1fr)}
+  .plate img{width:58px}
+  .plate-text{grid-template-columns:1fr auto;gap:4px 8px;padding:7px 8px 7px 0}
+  .plate-count{grid-column:1 / -1;font-size:6.5px;letter-spacing:.1em}
+  .plate-name{font-size:20px}
+  .plate-facts{font-size:7px}
+  .quote{padding:7px 9px 7px 11px}
+  .quote-label{font-size:6.5px;letter-spacing:.1em}
+  .quote-text{margin-top:3px;font-size:10px;line-height:1.25;-webkit-line-clamp:4}
+  .quote-src{display:none}
   .landmark-rise{transform:scale(1.35,.035)}
   .landmark.seen .landmark-rise{transform:scale(1.35)}
   .landmark-floor{transform:scale(1.35)}
   .landmark-label{font-size:8px}
 }
 @media (max-width:900px) and (max-height:680px){
-  .photo{top:calc(var(--chrome-h) + 42px);width:min(25vw,126px)}
-  .titlecard{padding-bottom:10vh}
+  :root{--story-h:64px}
+  .story-text{-webkit-line-clamp:2}
+  .quote-text{-webkit-line-clamp:3}
 }
 @media (prefers-reduced-motion:reduce){
   .seg,.daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
@@ -449,10 +465,10 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <section class="statbar" id="statbar" aria-label="Journey statistics">
   <p class="stat-position" id="hud-position">Paris · 24 sep 2019</p>
-  <div class="stat"><b><span id="hud-km">0.0</span><small>km</small></b><em>distance</em></div>
-  <div class="stat"><b id="hud-ascent">0</b><em>metres climbed</em></div>
-  <div class="stat"><b id="hud-days">0</b><em>days on foot</em></div>
-  <div class="stat"><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving</em></div>
+  <div class="stat stat-distance"><b><span id="hud-km">0.0</span><small>km</small></b><em>distance</em></div>
+  <div class="stat stat-ascent"><b id="hud-ascent">0</b><em>metres climbed</em></div>
+  <div class="stat stat-days"><b id="hud-days">0</b><em>days on foot</em></div>
+  <div class="stat stat-hours"><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving</em></div>
   <div class="stat stat-elevation">
     <svg viewBox="0 0 132 28" aria-hidden="true">
       <path id="elev-area"></path>
@@ -465,27 +481,37 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <div class="experience" id="experience">
   <div class="stage" id="stage" data-zoom="hero">
+    <div class="story-rail" id="story-rail" aria-label="Journey notes and photographs">
+      <div class="story-copy">
+        <div class="story-current" id="story-current">
+          <p class="story-label" id="story-label">24 september – 28 november 2019</p>
+          <p class="story-text" id="story-text">Paris → Sofia · 1,982 kilometres on foot</p>
+        </div>
+
+<!--__PLATES__-->
+
+        <div class="quote" id="quote">
+          <div class="quote-inner">
+            <p class="quote-label" id="quote-label"></p>
+            <p class="quote-text" id="quote-text"></p>
+            <p class="quote-src" id="quote-src"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo" id="photo">
+        <figure>
+          <img id="photo-img" alt="" decoding="async">
+          <figcaption id="photo-cap"></figcaption>
+        </figure>
+      </div>
+    </div>
+
     <div class="map-shell" id="map-shell">
       <div class="atlas-scene" id="atlas-scene">
 <!--__ATLAS__-->
       </div>
       <div class="vignette"></div>
-
-      <div class="titlecard" id="titlecard">
-        <p class="eyebrow">24 september – 28 november 2019 · on foot · alone</p>
-        <h1 aria-label="Paris to Sofia">Paris<span class="to" aria-hidden="true">→</span>Sofia</h1>
-        <p class="sub"><em>1,982 kilometres on foot.</em> Scroll, or press walk it, and travel the line.</p>
-      </div>
-
-<!--__PLATES__-->
-
-      <div class="quote" id="quote">
-        <div class="quote-inner">
-          <p class="quote-label" id="quote-label"></p>
-          <p class="quote-text" id="quote-text"></p>
-          <p class="quote-src" id="quote-src"></p>
-        </div>
-      </div>
     </div>
     <p class="hint" id="hint">walk ↓</p>
 
@@ -499,13 +525,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         <ol id="collector-album-list"></ol>
       </section>
     </aside>
-
-    <div class="photo" id="photo">
-      <figure>
-        <img id="photo-img" alt="" decoding="async">
-        <figcaption id="photo-cap"></figcaption>
-      </figure>
-    </div>
 
   </div>
 </div>
@@ -553,8 +572,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var elevNow = document.getElementById("elev-now");
   var elevLine = document.getElementById("elev-line");
   var elevArea = document.getElementById("elev-area");
-  var titlecard = document.getElementById("titlecard");
   var hint = document.getElementById("hint");
+  var storyRail = document.getElementById("story-rail");
+  var storyCurrent = document.getElementById("story-current");
+  var storyLabel = document.getElementById("story-label");
+  var storyText = document.getElementById("story-text");
   var hudPosition = document.getElementById("hud-position");
   var hudKm = document.getElementById("hud-km");
   var hudDays = document.getElementById("hud-days");
@@ -739,6 +761,27 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   }
 
   function setText(el, value){ if (el && el._trekText !== value) { el._trekText = value; el.textContent = value; } }
+  function updateStory(scene, wp){
+    var d = wp.day;
+    var label = "";
+    var text = "";
+    if (scene.t === "start") {
+      label = "24 sep – 28 nov 2019";
+      text = "Paris → Sofia · 1,982 kilometres on foot · alone";
+    } else if (scene.t === "end") {
+      label = "Sofia · 28 nov 2019";
+      text = "Paris → Sofia · 1,982 kilometres on foot";
+    } else if (scene.t === "enter") {
+      label = "border crossing";
+      text = scene.country;
+    } else {
+      label = (d.w ? "day " : "rest day ") + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + d.c.toLowerCase();
+      text = d.j || d.t || (d.w ? "On the road." : "A day off the route.");
+      if (!d.j && d.s && d.s.artist) text += " · " + d.s.artist;
+    }
+    setText(storyLabel, label);
+    setText(storyText, text);
+  }
   var lastCountryShown = "";
   function showCountry(country){
     if (!country || country === lastCountryShown) return;
@@ -831,9 +874,14 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     var img = new Image();
     img.src = "photos/" + ph.src;
   }
+  function hidePhoto(){
+    photoBox.classList.remove("on");
+    storyRail.classList.remove("has-photo");
+    photoShown = null;
+  }
   function showPhoto(d, t){
     var set = photoByDay[d.n];
-    if (!set || !set.length) { if (photoShown) { photoBox.classList.remove("on"); photoShown = null; } return; }
+    if (!set || !set.length) { hidePhoto(); return; }
     var u = Math.max(0, Math.min(.999, t == null ? 0 : t));
     var i = Math.min(set.length - 1, Math.floor(u * set.length));
     var ph = set[i];
@@ -844,6 +892,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     photoBox.style.setProperty("--ar", ph.w + "/" + ph.h);
     photoCap.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + (ph.caption || d.c.toLowerCase()) + (set.length > 1 ? " · " + (i + 1) + "/" + set.length : "");
     photoBox.classList.add("on");
+    storyRail.classList.add("has-photo");
     preloadPhoto(set[i + 1]);
   }
 
@@ -912,8 +961,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     var inJourney = scene.t !== "start";
     var silentRest = scene.t === "walk" && !wp.day.w;
     // chrome
-    fade(titlecard, scene.t === "start" ? String(1 - Math.min(1, (p - scene.at) / (scene.len * .7))) : "0");
-    titlecard.style.visibility = (scene.t === "start" && p < scene.at + scene.len) ? "visible" : "hidden";
     fade(hint, p < 40 ? "1" : "0");
     stage.classList.toggle("is-finished", scene.t === "end");
 
@@ -942,13 +989,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     updateTrail(scene, wp, inJourney);
     showCountry(scene.t === "enter" ? scene.country : wp.day.c);
     updateCollections(scene, wp, inJourney);
+    updateStory(scene, wp);
 
     // day content
     if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showPhoto(wp.day, wp.t); }
-    else if (silentRest) { photoBox.classList.remove("on"); photoShown = null; }
-    else if (scene.t === "enter") {
-      photoBox.classList.remove("on"); photoShown = null;
-    }
+    else if (silentRest || scene.t === "enter") hidePhoto();
     // plates
     var wantPlate = null, plateOp = 0;
     if (scene.t === "enter") {
@@ -959,6 +1004,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     if (activePlate && activePlate !== wantPlate) fade(activePlate, 0);
     if (wantPlate) fade(wantPlate, String(Math.max(0, plateOp)));
     activePlate = wantPlate;
+    var storyOp = Math.max(0, 1 - plateOp);
 
     // beats
     if (scene.t === "beat") {
@@ -969,11 +1015,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       quoteText.textContent = "“" + b.quote + "”";
       quoteSrc.textContent = "from the journal · day " + scene.day;
       fade(quote, String(Math.max(0, op)));
+      storyOp = Math.min(storyOp, Math.max(0, 1 - op));
     } else fade(quote, "0");
+    fade(storyCurrent, String(storyOp));
 
-    if (scene.t === "end") {
-      photoBox.classList.remove("on"); photoShown = null;
-    }
+    if (scene.t === "end") hidePhoto();
   }
 
   // ------------------------------------------------------------- main loop
