@@ -6615,7 +6615,7 @@ button {
 
 .concept-lead-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(330px, 0.95fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr);
   gap: clamp(28px, 4.5vw, 64px);
   align-items: stretch;
   padding: var(--concept-rule-gap) 0 clamp(40px, 5vw, 70px);
