@@ -83,9 +83,11 @@ export function ClientSitePreviews({ projects }) {
             </div>
             <footer className="concept-client-preview-foot">
               <p>{active.summary}</p>
-              <a href={active.href} target="_blank" rel="noopener noreferrer">
-                Open full site <span aria-hidden="true">↗</span>
-              </a>
+              {active.href ? (
+                <a href={active.href} target="_blank" rel="noopener noreferrer">
+                  Open full site <span aria-hidden="true">↗</span>
+                </a>
+              ) : null}
             </footer>
           </div>
         ) : null}

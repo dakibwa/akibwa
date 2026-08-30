@@ -6,7 +6,10 @@ import { SiteImage } from "@/components/site-image";
 const clientNames = ["Butterfly Rose", "Português com a Inês"];
 const clientPresentation = {
   "Butterfly Rose": {
-    preview: "/project-art/client-sites/butterfly-rose-home.jpg",
+    preview: "/project-art/client-sites/butterfly-rose-redesign-home.jpg",
+    /* The redesign is not public yet. Keep its preview inside Akibwa rather
+       than sending people to the salon's older live site. */
+    href: null,
     summary: "A new website for an independent hair salon in [place removed]."
   },
   "Português com a Inês": {

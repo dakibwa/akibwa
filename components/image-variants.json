@@ -947,60 +947,60 @@
       }
     ]
   },
-  "clientSite:/project-art/client-sites/butterfly-rose-home.jpg": {
-    "source": "/project-art/client-sites/butterfly-rose-home.jpg",
+  "clientSite:/project-art/client-sites/butterfly-rose-redesign-home.jpg": {
+    "source": "/project-art/client-sites/butterfly-rose-redesign-home.jpg",
     "slot": "clientSite",
     "ratio": 1.7778,
     "sourceWidth": 1280,
     "sourceHeight": 720,
-    "sourceHash": "c617e37b3f8df91d",
+    "sourceHash": "9a0215b9b6b9f46c",
     "variants": [
       {
         "width": 234,
         "height": 132,
         "avif": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-234.avif",
-          "bytes": 4021
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-234.avif",
+          "bytes": 2774
         },
         "webp": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-234.webp",
-          "bytes": 4480
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-234.webp",
+          "bytes": 3022
         }
       },
       {
         "width": 360,
         "height": 203,
         "avif": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-360.avif",
-          "bytes": 7338
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-360.avif",
+          "bytes": 5154
         },
         "webp": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-360.webp",
-          "bytes": 8422
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-360.webp",
+          "bytes": 6126
         }
       },
       {
         "width": 525,
         "height": 295,
         "avif": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-525.avif",
-          "bytes": 11548
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-525.avif",
+          "bytes": 8431
         },
         "webp": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-525.webp",
-          "bytes": 14134
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-525.webp",
+          "bytes": 10680
         }
       },
       {
         "width": 1280,
         "height": 720,
         "avif": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-1280.avif",
-          "bytes": 36016
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-1280.avif",
+          "bytes": 26875
         },
         "webp": {
-          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-1280.webp",
-          "bytes": 46238
+          "src": "/_img/project-art/client-sites/butterfly-rose-redesign-home-clientSite-1280.webp",
+          "bytes": 35350
         }
       }
     ]

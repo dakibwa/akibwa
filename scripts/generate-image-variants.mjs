@@ -179,7 +179,7 @@ const sources = [
   { file: "project-art/personal/cover-collision-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
-  { file: "project-art/client-sites/butterfly-rose-home.jpg", slot: "clientSite" },
+  { file: "project-art/client-sites/butterfly-rose-redesign-home.jpg", slot: "clientSite" },
   { file: "project-art/client-sites/portuguese-with-ines-home.jpg", slot: "clientSite" },
   { file: "area-art/contact-blue-clouds.webp", slot: "deckTile" },
   { file: "area-art/about-meadow-flowers.jpg", slot: "deckTile" },

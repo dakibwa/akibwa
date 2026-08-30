@@ -6629,7 +6629,9 @@ button {
 
 .concept-lead-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr);
+  /* Features is the lead project, not the whole page. Cap its desktop track
+     so the current client work gets the room it deserves on wider screens. */
+  grid-template-columns: clamp(420px, 40vw, 760px) minmax(0, 1fr);
   gap: clamp(28px, 4.5vw, 64px);
   align-items: stretch;
   padding: var(--concept-rule-gap) 0 clamp(40px, 5vw, 70px);
@@ -7572,6 +7574,10 @@ button {
 }
 
 @media (max-width: 560px) {
+  .concept-feature {
+    width: 94%;
+  }
+
   .concept-client-project {
     column-gap: 6px;
   }

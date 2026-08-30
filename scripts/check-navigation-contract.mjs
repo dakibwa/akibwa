@@ -91,11 +91,13 @@ requireText(
 );
 requireText(editorial, 'const clientNames = ["Butterfly Rose", "Português com a Inês"]', "the two current clients must lead");
 requireText(editorial, "<ClientSitePreviews projects={clientProjects} />", "the two clients must use the visual preview component");
+requireText(editorial, "href: null", "the unpublished Butterfly Rose redesign must not link to the older live site");
 forbidText(editorial, "project.eyebrow", "client cards must not print a Live label");
 forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
 forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
 requireText(clientPreviews, 'aria-haspopup="dialog"', "each client still must open an in-page preview");
 requireText(clientPreviews, "Website preview", "the temporary site view must describe itself as a preview");
+requireText(clientPreviews, "active.href ?", "only published client sites should offer an external destination");
 requireText(clientPreviews, "Open full site", "the preview must retain an optional full-site destination");
 requireText(clientPreviews, 'target="_blank"', "the optional full-site destination must open separately");
 forbidText(clientPreviews, "Live", "the retired Live label must stay out of client previews");

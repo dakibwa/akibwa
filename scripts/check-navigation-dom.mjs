@@ -243,6 +243,10 @@ const pageState = () => evaluate(`(() => {
       lede: rect(document.querySelector(".concept-lede")),
       nav: rect(document.querySelector(".concept-nav"))
     },
+    leadLayout: {
+      feature: rect(document.querySelector(".concept-feature")),
+      clients: rect(document.querySelector(".concept-freelance"))
+    },
     featureHref: document.querySelector(".concept-feature")?.getAttribute("href"),
     clients: [...document.querySelectorAll(".concept-client-project strong")]
       .map((item) => item.textContent.trim()),
@@ -358,6 +362,10 @@ const checkDesktop = async () => {
     `the wide masthead uses its width instead of empty height [${state.heroLayout.hero.height.toFixed(1)}px]`
   );
   check(state.featureHref === "/features/", `Features links directly to the game [${state.featureHref}]`);
+  check(
+    state.leadLayout.feature.width <= state.leadLayout.clients.width * 0.9,
+    `Features stays visibly smaller than the client column [${state.leadLayout.feature.width.toFixed(1)}px / ${state.leadLayout.clients.width.toFixed(1)}px]`
+  );
   check(
     state.clients.join(" / ") === "Butterfly Rose / Português com a Inês",
     `the two client projects lead [${state.clients.join(" / ")}]`
@@ -492,25 +500,38 @@ const checkClientPreviews = async () => {
   check(first.open, "the Butterfly Rose preview opens without navigation");
   check(first.title === "Butterfly Rose", `the first preview is Butterfly Rose [${first.title}]`);
   check(first.imageAlt === "Butterfly Rose homepage preview", "the first website still has useful alternative text");
-  check(first.linkText === "Open full site ↗", `the optional destination is plainly labelled [${first.linkText}]`);
-  check(first.linkHref === "https://www.butterflyrosehairsalon.co.uk/", "the full Butterfly Rose site remains reachable by choice");
-  check(first.linkTarget === "_blank", "the optional site opens separately from Akibwa");
+  check(first.linkText == null && first.linkHref == null && first.linkTarget == null, "the unpublished redesign does not lead to the salon's older site");
   check(!/butterflyrosehairsalon\.co\.uk/i.test(first.visibleText), "the preview does not print the Butterfly Rose URL");
   check(first.insideViewport, "the desktop preview stays inside the viewport");
 
   await pressEscape();
   const closed = await pollUntil(
-    () => evaluate(`!document.querySelector(".concept-client-dialog").open`),
+    () => evaluate(`(() => {
+      const dialog = document.querySelector(".concept-client-dialog");
+      return !dialog.open && !dialog.querySelector("#concept-client-preview-title");
+    })()`),
     Boolean
   );
-  check(closed, "Escape closes the temporary preview");
+  check(closed, "Escape closes and clears the temporary preview");
 
   await evaluate(`document.querySelectorAll(".concept-client-project")[1].click()`);
-  const secondTitle = await pollUntil(
-    () => evaluate(`document.querySelector(".concept-client-dialog[open] #concept-client-preview-title")?.textContent.trim() ?? ""`),
-    (value) => value === "Português com a Inês"
+  const second = await pollUntil(
+    () => evaluate(`(() => {
+      const dialog = document.querySelector(".concept-client-dialog[open]");
+      const link = dialog?.querySelector(".concept-client-preview-foot a");
+      return {
+        title: dialog?.querySelector("#concept-client-preview-title")?.textContent.trim() ?? "",
+        linkText: link?.textContent.trim().replace(/\\s+/g, " "),
+        linkHref: link?.getAttribute("href"),
+        linkTarget: link?.getAttribute("target")
+      };
+    })()`),
+    (value) => value.title === "Português com a Inês"
   );
-  check(secondTitle === "Português com a Inês", "the second client opens in the same preview treatment");
+  check(second.title === "Português com a Inês", "the second client opens in the same preview treatment");
+  check(second.linkText === "Open full site ↗", `the published destination is plainly labelled [${second.linkText}]`);
+  check(second.linkHref === "https://portuguesewithines.com/", "the published Portuguese site remains reachable by choice");
+  check(second.linkTarget === "_blank", "the optional published site opens separately from Akibwa");
   await pressEscape();
 };
 
@@ -595,6 +616,10 @@ const checkMobile = async () => {
     initial.heroLayout.lede.top > initial.heroLayout.identity.bottom &&
       initial.heroLayout.nav.top > initial.heroLayout.lede.bottom,
     "the phone keeps identity, proposition and menu in reading order"
+  );
+  check(
+    initial.leadLayout.feature.width <= initial.leadLayout.clients.width * 0.95,
+    `Features leaves a little mobile breathing room [${initial.leadLayout.feature.width.toFixed(1)}px / ${initial.leadLayout.clients.width.toFixed(1)}px]`
   );
   const clientLayout = await evaluate(`(() => {
     const cards = [...document.querySelectorAll(".concept-client-project")]
