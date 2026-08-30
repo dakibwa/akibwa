@@ -53,7 +53,7 @@ export function EditorialHomeConcept() {
           aria-label="Play Features, the daily untangling puzzle"
         >
           <SiteImage
-            src="/features/og.png"
+            src="/features/features-game-light-og-1200x630.png"
             slot="conceptFeature"
             width={1200}
             height={630}

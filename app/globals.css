@@ -6590,7 +6590,7 @@ button {
 
 .concept-hero {
   padding: clamp(18px, 4vw, 54px) 0 clamp(28px, 4.4vw, 62px);
-  border-bottom: 1px solid var(--line-strong);
+  border-bottom: 4px solid var(--concept-work);
 }
 
 .concept-identity {
@@ -6680,7 +6680,6 @@ button {
   align-self: start;
   overflow: clip;
   border: 1px solid rgba(12, 17, 19, 0.72);
-  border-top: 4px solid var(--concept-work);
   border-radius: 4px;
   background: var(--concept-dark);
   color: #f7f5ed;
