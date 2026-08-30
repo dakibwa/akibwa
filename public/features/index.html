@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-3IWAwfcPxT1BXL/AJyiBxEHkstO+9uvjc+sUUZ1RS5M=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-lMNbTToPnRD0hBHpHodGsgL7eNkDGwbglGxzppvjqP4=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -521,13 +521,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     border:1px solid var(--silver);box-shadow:var(--shadow-float);z-index:6;
     -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
   }
-  .play.tutorial .coach{display:block;pointer-events:none;
-    animation:coachin .42s var(--ease-out) both, coachsettle .9s var(--ease-in) 3.4s forwards}
-  @keyframes coachsettle{to{opacity:.45}}
-  @keyframes coachinflat{from{opacity:0}to{opacity:1}}
+  .play.tutorial .coach{display:block;pointer-events:none;opacity:1}
+  .play.tutorial .coach.entering{animation:coachin .42s var(--ease-out) both}
   @keyframes coachin{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
   .play.tutorial .coach.leaving{animation:coachout .24s var(--ease-in) forwards}
-  @keyframes coachout{to{opacity:0}}
+  @keyframes coachout{from{opacity:1}to{opacity:0}}
   .coach-strip{height:5px;display:flex}
   .coach-strip i{flex:1}
   .coach-body{padding:10px 13px 11px}
@@ -5348,6 +5346,34 @@ function repairOutOfRangeTutorialRun(){
 repairOutOfRangeTutorialRun();
 function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !R().over}
 let tutStepAt=1;
+const TUT_BRIDGE_HOLD=3600;
+let tutorialBridge=null, tutorialBridgeT=null, tutorialBridgeSkip=null;
+function cancelTutorialBridge(){
+  clearTimeout(tutorialBridgeT); tutorialBridgeT=null;
+  if(tutorialBridgeSkip){
+    removeEventListener('pointerdown',tutorialBridgeSkip,true);
+    removeEventListener('keydown',tutorialBridgeSkip,true);
+    tutorialBridgeSkip=null;
+  }
+}
+function finishTutorialBridge(e){
+  if(e&&e.type==='pointerdown') swallowNextDown=true;
+  const bridge=tutorialBridge;
+  cancelTutorialBridge(); tutorialBridge=null;
+  if(!bridge || bridge.run!==R() || !inTutorialRun()) return;
+  nextNet();
+}
+function showTutorialBridge(net){
+  cancelTutorialBridge();
+  tutorialBridge={net,run:R()};
+  tutStepAt=1;
+  tutSpotClear();
+  renderTutorial();
+  tutorialBridgeSkip=finishTutorialBridge;
+  addEventListener('pointerdown',tutorialBridgeSkip,true);
+  addEventListener('keydown',tutorialBridgeSkip,true);
+  tutorialBridgeT=setTimeout(finishTutorialBridge,TUT_BRIDGE_HOLD);
+}
 function tutorialResumeStep(){
   const r=R(), split=(r.splitNodes||[]).length;
   if((r.freed||[]).length || (r.netIndex===1 && split)) return 3;
@@ -5480,7 +5506,7 @@ function positionCoach(){
   const m=boardCTM(), scale=boardScale();
   if(!m) return;
   const anchors=tutLights.length ? tutLights
-    : members.filter(grabbable).map(n=>({n,marks:[]}));
+    : members.filter(tutorialBridge?()=>true:grabbable).map(n=>({n,marks:[]}));
   if(!anchors.length) return;
   const points=[];
   anchors.forEach(l=>{
@@ -5595,40 +5621,84 @@ function tutNamed(){
     : null;
   return n ? {n,marks:[],look:true,join:net===2} : null;
 }
-let coachSig='';
-function renderTutorial(){
-  $('play').classList.toggle('tutorial',inTutorial());
-  if(!inTutorial()){ tutSpotClear(); return }
-  const net=Math.min(R().netIndex, TUTSTEPS_BY_NET.length-1);
-  const steps=TUTSTEPS_BY_NET[net];
-  tutStepAt=Math.max(tutStepAt,tutorialResumeStep());
-  const step=Math.min(tutStepAt,steps.length);
-  const sig=net+':'+step;
-  if(sig!==coachSig){
-    coachSig=sig;
-    const c=$('coach');
-    c.style.animation='none'; void c.offsetWidth; c.style.animation='';
+const COACH_OUT_MS=240, COACH_IN_MS=420;
+let coachSig='', coachQueuedSig='', coachSwapT=null, coachEnterT=null;
+const COACH_KEYS=[
+  [['feature','feature'],['neuron','neuron'],['crossing','crossing']],
+  [['shared','double ring · shared'],['split','after tap · two neurons']],
+  [['pinned','square · fixed'],['neuron','circle · moves']]
+];
+function coachEnter(c){
+  clearTimeout(coachEnterT); coachEnterT=null;
+  c.classList.remove('leaving','entering');
+  if(reduceMotion) return;
+  void c.offsetWidth;
+  c.classList.add('entering');
+  coachEnterT=setTimeout(()=>{c.classList.remove('entering');coachEnterT=null},COACH_IN_MS);
+}
+function paintTutorial(d){
+  if(coachQueuedSig!==d.sig || !inTutorial()) return;
+  coachSig=d.sig; coachQueuedSig=''; coachSwapT=null;
+  const c=$('coach'), key=$('coachkey');
+  if(d.bridge){
+    tutSpotClear();
+    $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · lesson complete`;
+    $('coachtext').innerHTML='<b>the lines became features.</b> fewer turns earns a better rung.';
+    [...$('coachdots').children].forEach(dot=>{
+      dot.classList.add('done'); dot.classList.remove('now');
+    });
+    key.style.display='none';
+  }else{
+    tutSpotlight();
+    $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · step ${d.step} of ${d.steps.length}`;
+    $('coachtext').innerHTML = (!tutLit || d.net>0) ? d.steps[d.step-1]
+      : (TUTLIT[d.step-1] || d.steps[d.step-1]);
+    [...$('coachdots').children].forEach((dot,i)=>{
+      dot.classList.toggle('done',i+1<d.step);
+      dot.classList.toggle('now',i+1===d.step);
+    });
+    if(key.dataset.lesson!==String(d.net)){
+      key.dataset.lesson=String(d.net);
+      key.innerHTML=COACH_KEYS[d.net].map(([mark,label])=>`<span>${rmark(mark)}${label}</span>`).join('');
+    }
+    key.style.display = d.step===1 ? '' : 'none';
   }
-  tutSpotlight();
-  $('coachlabel').textContent=`tutorial ${net+1} of ${TUTNETS.length} · step ${step} of ${steps.length}`;
-  $('coachtext').innerHTML = (!tutLit || net>0) ? steps[step-1]
-    : (TUTLIT[step-1] || steps[step-1]);
-  [...$('coachdots').children].forEach((d,i)=>{
-    d.classList.toggle('done',i+1<step);
-    d.classList.toggle('now',i+1===step);
-  });
-  const key=$('coachkey');
-  const keySets=[
-    [['feature','feature'],['neuron','neuron'],['crossing','crossing']],
-    [['shared','double ring · shared'],['split','after tap · two neurons']],
-    [['pinned','square · fixed'],['neuron','circle · moves']]
-  ];
-  if(key.dataset.lesson!==String(net)){
-    key.dataset.lesson=String(net);
-    key.innerHTML=keySets[net].map(([mark,label])=>`<span>${rmark(mark)}${label}</span>`).join('');
-  }
-  key.style.display = step===1 ? '' : 'none';
   positionCoach();
+  coachEnter(c);
+}
+function renderTutorial(){
+  const active=inTutorial();
+  $('play').classList.toggle('tutorial',active);
+  if(!active){
+    clearTimeout(coachSwapT); coachSwapT=null; coachQueuedSig='';
+    tutSpotClear();
+    return;
+  }
+  const bridge=tutorialBridge;
+  let d;
+  if(bridge){
+    d={sig:`bridge:${bridge.net}`,net:bridge.net,bridge:true};
+  }else{
+    const net=Math.min(R().netIndex,TUTSTEPS_BY_NET.length-1);
+    const steps=TUTSTEPS_BY_NET[net];
+    tutStepAt=Math.max(tutStepAt,tutorialResumeStep());
+    const step=Math.min(tutStepAt,steps.length);
+    d={sig:net+':'+step,net,steps,step,bridge:false};
+  }
+  if(d.sig===coachSig){
+    if(d.bridge) tutSpotClear(); else tutSpotlight();
+    positionCoach();
+    return;
+  }
+  if(d.sig===coachQueuedSig) return;
+  coachQueuedSig=d.sig;
+  clearTimeout(coachSwapT); coachSwapT=null;
+  const c=$('coach');
+  tutAct=null; tutLights=[]; syncTutorialTargets();
+  if(!coachSig || reduceMotion){ paintTutorial(d); return }
+  clearTimeout(coachEnterT); coachEnterT=null;
+  c.classList.remove('entering'); c.classList.add('leaving');
+  coachSwapT=setTimeout(()=>paintTutorial(d),COACH_OUT_MS);
 }
 function tutReach(step){
   if(!inTutorial())return;
@@ -5636,6 +5706,7 @@ function tutReach(step){
   else tutSpotlight();
 }
 function endTutorial(){
+  cancelTutorialBridge(); tutorialBridge=null;
   store.tutorialDone=true;
   if(store.parked){
     store.run=store.parked; store.parked=null;
@@ -5653,12 +5724,17 @@ function endTutorial(){
   renderHud();
   tutSpotClear();
   const c=$('coach');
-  if(reduceMotion){ $('play').classList.remove('tutorial'); c.style.display=''; return }
+  if(reduceMotion){
+    $('play').classList.remove('tutorial'); c.style.display='';
+    coachSig=''; coachQueuedSig='';
+    return;
+  }
   c.classList.add('leaving');
   setTimeout(()=>{
     c.classList.remove('leaving');
     $('play').classList.remove('tutorial');
     c.style.display='';
+    coachSig=''; coachQueuedSig='';
   },240);
 }
 
@@ -5797,7 +5873,6 @@ function clearNet(){
   netPairs.forEach(p=>{ if(!store.collection.pairs[p]) store.collection.pairs[p]=r.day });
   stampToday(depth,feats,tier);
   if(wasTutorial){
-    tutReach(3);
     if(finalTutorial) endTutorial();
     else tutStepAt=1;
   }
@@ -5808,7 +5883,8 @@ function clearNet(){
   const firstTutorial = wasTutorial && read.num===1;
   const tutorialMidway = wasTutorial && !finalTutorial;
   const card = setDone ? showRunOver
-             : tutorialMidway && !firstTutorial ? nextNet
+             : firstTutorial ? (()=>showTutorialBridge(0))
+             : tutorialMidway ? nextNet
              : (()=>showNetCleared(feats,tier,wasTutorial,read));
   if(reduceMotion) setTimeout(card,260);
   else holdCleared(card);
@@ -5849,6 +5925,7 @@ function boardCleared(){
 }
 let swapT=null, swapSkip=null;
 function nextNet(){
+  if(tutorialBridge){ cancelTutorialBridge(); tutorialBridge=null }
   hideVeils();
   cancelHold();
   const f=$('field');
@@ -5905,35 +5982,29 @@ function bulletinHTML(o){
 }
 function showNetCleared(feats,tier,wasTutorial,read){
   if(!read || (read.run!==R() && !read.finalTutorial)) return;
-  const tutorialFirst=wasTutorial && read.num===1 && !read.finalTutorial;
   const tutorialFinal=wasTutorial && read.finalTutorial;
-  const tutorialCard=tutorialFirst||tutorialFinal;
   const dedup=[...new Map(feats.map(k=>[k,0])).keys()].map(k=>({k,n:feats.filter(f=>f===k).length}));
   const mint=tutorialFinal?'':`<div class="minted">${dedup.map(({k,n},i)=>{
     const b=store.collection.badges[k];
     return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
   }).join('')}</div>`;
-  const quiet=tutorialCard
-    ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. ${tutorialFinal?'tutorial complete':'first lesson complete'}.</p>`
+  const quiet=tutorialFinal
+    ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. tutorial complete.</p>`
     : `<p class="bquiet">${feats.length} features freed: ${feats.join(', ')}. `+
       `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
-    strip:tutorialCard?FLAG:TIERCOL[tier],
-    title:tutorialFirst?'features drawn':tutorialFinal?'tutorial complete':tierSay(tier),
-    sub:(tutorialFirst?'you untangled your first net'
-        :tutorialFinal?'':'net cleared')
+    strip:tutorialFinal?FLAG:TIERCOL[tier],
+    title:tutorialFinal?'tutorial complete':tierSay(tier),
+    sub:(tutorialFinal?'':'net cleared')
         +(!tutorialFinal&&read.assisted?' · settled with descent':''),
     num:String(read.num).padStart(2,'0'),
     rows:[],
     body:mint+quiet,
-    note:tutorialFirst
-      ? 'the shapes you left became these features. fewer turns earns a better rung.'
-      : tutorialFinal ? ''
+    note:tutorialFinal ? ''
       : read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
-    actions:`<button class="wbtn solid" id="contbtn">${tutorialFirst
-      ? 'next: a shared neuron →'
-      : tutorialFinal ? 'back to how to play →'
+    actions:`<button class="wbtn solid" id="contbtn">${tutorialFinal
+      ? 'back to how to play →'
       : 'continue →'}</button>`,
   });
   showVeil('netveil');
@@ -6779,6 +6850,10 @@ function renderIntro(){
   };
 }
 function startLessons(){
+  cancelTutorialBridge(); tutorialBridge=null;
+  clearTimeout(coachSwapT); coachSwapT=null;
+  clearTimeout(coachEnterT); coachEnterT=null;
+  coachSig=''; coachQueuedSig='';
   const cur=R();
   if(cur && cur.mode!=='trial' && !cur.archive && !store.parked
      && (cur.netMoves || (cur.cleared||[]).length || cur.over))
