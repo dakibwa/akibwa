@@ -1,13 +1,15 @@
 import { readFileSync } from "node:fs";
 
 /* Build-time contract for Akibwa's deliberately small interface. The public
-   index has no site header, modal viewer, card buttons, or motion system. It
-   is one static sentence, seven plain filters, a square visual wall, and one
-   quiet footer. This check makes that restraint harder to accidentally undo. */
+   index has no site header, modal viewer, card buttons, or general motion
+   system. It is one fixed sentence with a single identity cycle, seven plain
+   filters, a square visual wall, and one quiet footer. This check makes that
+   restraint harder to accidentally undo. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 const shell = readFileSync(new URL("../components/site-shell.jsx", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
+const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 
 const fail = (message) => {
@@ -41,11 +43,21 @@ const requireRuleText = (selector, declarations) => {
 forbidText(shell, "site-header", "the retired site header must stay retired");
 requireText(
   home,
-  "I’m <span>Daniel</span> — this is what I’ve made, done and loved.",
-  "the homepage must keep its static first-principles sentence"
+  "<HeroFlipName /> — this is what I’ve made, done and loved.",
+  "the homepage must keep its fixed first-principles sentence and identity cycle"
 );
-forbidText(home, "HeroCycleWord", "the headline must not cycle");
-forbidText(home, "HeroFlipName", "the name must not flip");
+forbidText(home, "HeroCycleWord", "the proposition must not cycle");
+const nameCycleStart = heroCycle.indexOf("export function HeroFlipName()");
+const nameCycleEnd = heroCycle.indexOf("export function HeroCycleWord", nameCycleStart);
+if (nameCycleStart === -1 || nameCycleEnd === -1) fail("the Daniel/Akibwa cycle must exist");
+const nameCycle = heroCycle.slice(nameCycleStart, nameCycleEnd);
+requireText(nameCycle, "NAME_INITIAL_DELAY", "the name cycle must advance automatically");
+requireText(nameCycle, "if (reducedMotion) return undefined", "the name cycle must respect reduced motion");
+requireText(nameCycle, 'className="hero-name"', "the current name needs its stable visual slot");
+forbidText(nameCycle, "<button", "the cycling name must remain display-only");
+forbidText(nameCycle, "onClick", "the cycling name must not pretend to be a link");
+forbidText(rule(".hero-name {"), "cursor:", "the cycling name must not carry a click cursor");
+requireRuleText(".hero-name-stack {", ["display: inline-grid", "white-space: nowrap"]);
 
 /* Seven plain words are the complete filter model. Projects owns both the
    shipped work and the former Life pieces; Everything is the explicit reset. */

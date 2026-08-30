@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
 import { deck, sites, life, games, tv, sets, graceland } from "@/components/deck-data";
@@ -101,12 +102,12 @@ function blend(lists) {
     .map((dealt) => dealt.card);
 }
 
-/* The interface makes one promise and keeps it still: the wall is Daniel.
-   The filters beneath it are the only controls the archive needs. */
+/* The proposition stays still; only the personal name alternates, preserving
+   the small Daniel/Akibwa signature without bringing back a changing pitch. */
 function HeroSentence() {
   return (
     <h1 className="hero-sentence">
-      I’m <span>Daniel</span> — this is what I’ve made, done and loved.
+      <HeroFlipName /> — this is what I’ve made, done and loved.
     </h1>
   );
 }

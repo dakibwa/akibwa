@@ -212,6 +212,9 @@ const pollUntil = async (probe, predicate, timeoutMs = 1200) => {
 
 const pageState = () => evaluate(`(() => {
   const cards = [...document.querySelectorAll(".deck .card")];
+  const headline = document.querySelector(".hero-sentence");
+  const readableHeadline = headline?.cloneNode(true);
+  readableHeadline?.querySelectorAll(".hero-name-sizer").forEach((node) => node.remove());
   const visible = cards.filter((card) => {
     const style = getComputedStyle(card);
     return style.display !== "none" && card.getClientRects().length > 0;
@@ -221,7 +224,10 @@ const pageState = () => evaluate(`(() => {
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
   };
   return {
-    headline: document.querySelector(".hero-sentence")?.textContent.trim().replace(/\\s+/g, " "),
+    headline: readableHeadline?.textContent.trim().replace(/\\s+/g, " "),
+    name: document.querySelector(".hero-name-value")?.textContent.trim(),
+    nameTag: document.querySelector(".hero-name")?.tagName,
+    nameFocusable: document.querySelector(".hero-name")?.tabIndex >= 0,
     filters: [...document.querySelectorAll(".deck-legend .rail-word")].map((button) => ({
       text: button.textContent.trim(),
       pressed: button.getAttribute("aria-pressed"),
@@ -264,12 +270,17 @@ const selectFilter = async (name) => {
 const checkDesktop = async () => {
   section("desktop structure and semantics");
   await setDesktop();
+  await cdp.send("Emulation.setEmulatedMedia", {
+    features: [{ name: "prefers-reduced-motion", value: "no-preference" }]
+  });
   await goto("/");
   const state = await pageState();
   check(
     state.headline === "I’m Daniel — this is what I’ve made, done and loved.",
-    `static headline is exact [${state.headline}]`
+    `fixed headline starts with Daniel [${state.headline}]`
   );
+  check(state.nameTag === "SPAN", "the cycling name is display text, not a button or link");
+  check(state.nameFocusable === false, "the cycling name does not enter the tab order");
   check(
     state.filters.map((item) => item.text).join(" / ") ===
       "Everything / Projects / Career / Music / Films / Games / TV",
@@ -290,6 +301,18 @@ const checkDesktop = async () => {
   check(state.inViewport >= 30, `the first screen stays dense [${state.inViewport} cards]`);
   check(state.footer === "Manchester / Email / X / Instagram", `footer is one plain line [${state.footer}]`);
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
+
+  const cycledName = await pollUntil(
+    () => evaluate(`document.querySelector(".hero-name-value")?.textContent.trim()`),
+    (name) => name === "Akibwa",
+    3800
+  );
+  check(cycledName === "Akibwa", `the one identity flourish cycles to Akibwa [${cycledName}]`);
+  const cycledState = await pageState();
+  check(
+    cycledState.headline === "I’m Akibwa — this is what I’ve made, done and loved.",
+    `the proposition stays fixed while the name changes [${cycledState.headline}]`
+  );
 
   const linkSemantics = await evaluate(`[...document.querySelectorAll("a.card")].every((card) =>
     Boolean(card.getAttribute("href")) &&

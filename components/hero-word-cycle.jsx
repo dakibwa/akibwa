@@ -153,11 +153,11 @@ function HeroWordCycle({ phrases, label, index, onEngage, onRelease, onStep }) {
   );
 }
 
-/* The header wordmark folded into the headline: "I'm " holds still while the
-   name flips between Daniel and Akibwa, coloured the way the other flipping
-   words are and with the brand's accent strip run under it as an underline.
-   Both names are laid up in the same grid cell so the slot holds the width of
-   the wider one — the flip never moves the dash after it. */
+/* One restrained identity flourish in an otherwise fixed sentence. The name
+   alternates between Daniel and Akibwa, but it is display text rather than a
+   control: the interface should only invite a click where clicking does
+   something useful. Invisible sizers reserve the wider name, so the rest of
+   the sentence never moves when the word changes. */
 const heroNames = [
   { label: "Daniel", accent: "47, 136, 255" },
   { label: "Akibwa", accent: "235, 92, 8" }
@@ -168,11 +168,6 @@ const SEE_WORD_INITIAL_DELAY = 1600;
 
 export function HeroFlipName() {
   const [index, setIndex] = useState(0);
-  /* The measured width of each name, so the slot can close up around the
-     one showing — the dash glides in behind a short name instead of holding
-     the widest name's distance. */
-  const [widths, setWidths] = useState(null);
-  const stackRef = useRef(null);
   const reducedMotion = usePrefersReducedMotion();
 
   const advance = useCallback(() => setIndex((i) => (i + 1) % heroNames.length), []);
@@ -182,35 +177,16 @@ export function HeroFlipName() {
     return startOffsetCycle(advance, NAME_INITIAL_DELAY, REST_INTERVAL);
   }, [reducedMotion, advance]);
 
-  useEffect(() => {
-    const measure = () => {
-      const sizers = stackRef.current?.querySelectorAll(".hero-name-sizer");
-      if (!sizers?.length) return;
-      setWidths([...sizers].map((el) => el.offsetWidth));
-    };
-    measure();
-    document.fonts?.ready.then(measure).catch(() => {});
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
   const current = heroNames[index];
 
   return (
     <>
       {"I\u2019m "}
-      <button
-        type="button"
+      <span
         className="hero-name"
-        aria-label={`I\u2019m ${current.label}. Activate to change.`}
-        onClick={advance}
         style={{ "--name-accent-rgb": current.accent }}
       >
-        <span
-          className="hero-name-stack"
-          ref={stackRef}
-          style={widths ? { width: `${widths[index]}px` } : undefined}
-        >
+        <span className="hero-name-stack">
           {heroNames.map((name) => (
             <span key={name.label} className="hero-name-sizer" aria-hidden="true">
               {name.label}
@@ -222,7 +198,7 @@ export function HeroFlipName() {
             {current.label}
           </span>
         </span>
-      </button>
+      </span>
     </>
   );
 }

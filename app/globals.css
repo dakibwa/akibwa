@@ -307,49 +307,24 @@ button {
   display: inline;
 }
 
-/* The site's name, folded into the first words of the headline. A button like
-   the other flipping words — same flick, same cadence, click to step — with
-   the brand's accent strip run underneath as its underline. Both names sit in
-   one grid cell so the slot keeps the wider width and the dash after it never
-   moves. */
+/* The site's two names, folded into the fixed headline. This is deliberately
+   display-only: it changes on a quiet cadence but carries no false click cue.
+   Both names sit in one grid cell so the dash after them never moves. */
 .hero-name {
   --name-accent-rgb: 47, 136, 255;
-  appearance: none;
   position: relative;
   display: inline-block;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
   padding: 0 0 0.1em;
-  /* The same treatment as the other flipping words, weighted for the black
-     line it sits in rather than the grey one they sit in. */
   color: color-mix(in srgb, rgb(var(--name-accent-rgb)) 58%, var(--black));
-  cursor: pointer;
   font: inherit;
   letter-spacing: inherit;
-  text-align: left;
   vertical-align: baseline;
-  transition:
-    color 180ms ease,
-    text-shadow 240ms var(--ease-out),
-    transform 240ms var(--ease-out);
-}
-
-.hero-name:hover,
-.hero-name:focus-visible {
-  color: var(--black);
-  outline: 0;
-}
-
-.hero-name:focus-visible {
-  box-shadow: 0 0 0 3px rgba(var(--name-accent-rgb), 0.22);
 }
 
 .hero-name-stack {
   display: inline-grid;
   white-space: nowrap;
-  /* Closes up around the visible name; the dash after it rides along. */
-  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Both hidden sizers contribute to the grid's intrinsic width. */
   overflow: visible;
 }
 
@@ -371,8 +346,6 @@ button {
   justify-self: start;
   width: max-content;
   animation: word-flick 220ms ease both;
-  scale: 1;
-  transition: filter 260ms var(--ease-out), scale 260ms var(--ease-out);
 }
 
 /* The underline lives on the visible name, so it is exactly as wide as the
@@ -389,10 +362,6 @@ button {
   background: rgba(var(--name-accent-rgb), 0.62);
   pointer-events: none;
   transform-origin: center;
-  transition:
-    box-shadow 260ms var(--ease-out),
-    opacity 180ms ease,
-    transform 320ms var(--ease-out);
 }
 
 .hero-word-cycle {
@@ -6179,19 +6148,16 @@ button {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .hero-name:hover,
   .hero-index-word:hover {
     text-shadow: 0 8px 20px rgba(var(--name-accent-rgb, var(--index-accent-rgb)), 0.16);
     transform: translateY(-0.045em);
   }
 
-  .hero-name:hover .hero-name-value,
   .hero-index-word:hover .hero-word-cycle-value {
     filter: saturate(1.1);
     scale: 1.018;
   }
 
-  .hero-name:hover .hero-name-value::after,
   .hero-index-word:hover .hero-word-cycle-value::after {
     box-shadow: 0 4px 12px rgba(var(--name-accent-rgb, var(--index-accent-rgb)), 0.2);
     opacity: 0.94;
@@ -6316,7 +6282,7 @@ button {
   text-wrap: balance;
 }
 
-.akibwa-home .hero-sentence span {
+.akibwa-home .hero-name {
   font-weight: 650;
 }
 
