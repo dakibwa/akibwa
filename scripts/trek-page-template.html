@@ -272,10 +272,8 @@ button{font:inherit;color:inherit}
 .collector{
   position:absolute;top:calc(var(--chrome-h) + 17px);right:18px;bottom:18px;z-index:7;width:224px;
   display:flex;flex-direction:column;align-items:stretch;gap:18px;
-  font-family:var(--sans);opacity:0;transform:translateX(8px);pointer-events:none;
-  transition:opacity .35s,transform .35s;
+  font-family:var(--sans);opacity:1;transform:none;pointer-events:none;
 }
-.collector.on{opacity:1;transform:none}
 .collector-section{
   min-height:0;padding:11px 13px 13px;border:1px solid rgba(41,49,37,.24);
   background:linear-gradient(180deg,rgba(255,249,231,.93),rgba(232,224,201,.88));
@@ -286,20 +284,24 @@ button{font:inherit;color:inherit}
 .collector-head b{font-size:13px;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums}
 .collector-places{overflow:hidden}
 .collector-places ol,.collector-albums ol{margin:0;padding:0;list-style:none}
-.collector-places ol{display:flex;flex-direction:column;gap:4px}
+.collector-places ol{display:flex;flex-direction:column;gap:1px}
 .collector-place{
-  display:flex;align-items:baseline;gap:7px;color:#615E55;font-size:11px;font-weight:500;line-height:1.35;
-  animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
+  display:flex;align-items:baseline;gap:7px;min-height:12px;color:#615E55;font-size:10px;font-weight:500;line-height:1.22;
 }
-.collector-place::before{content:"";width:5px;height:5px;background:var(--w);flex:0 0 auto;transform:rotate(45deg)}
+.collector-place::before{content:"";width:4px;height:4px;background:var(--w);flex:0 0 auto;transform:rotate(45deg)}
 .collector-place.latest{color:var(--ink);font-weight:650}
+.collector-place.latest:not(.future){animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both}
 .collector-place.pass{font-style:italic}
+.collector-place.future{color:#6E6A60;opacity:.38}
+.collector-place.future::before{background:transparent;border:1px solid var(--w)}
 .collector-albums ol{display:flex;flex-direction:column;gap:8px}
 .collector-album{
   display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:9px;
   width:100%;padding:0;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer;pointer-events:auto;
-  animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
 }
+.collector-album.latest{animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both}
+.collector-album.future{opacity:.32;cursor:default;pointer-events:none}
+.collector-album.future img{filter:grayscale(1) saturate(.2) contrast(.85)}
 .collector-album img{width:34px;height:34px;object-fit:cover;border:1px solid rgba(27,28,22,.24)}
 .collector-album p{min-width:0;color:#615E55;font-size:9.5px;line-height:1.25;letter-spacing:-.005em}
 .collector-album b,.collector-album span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -845,20 +847,32 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
   function esc(s){ var el = document.createElement("span"); el.textContent = s; return el.innerHTML; }
   var lastCollectionDay = -1;
-  function updateCollections(scene, wp, inJourney){
-    if (collector) collector.classList.toggle("on", inJourney);
+  function updateCollections(scene, wp){
     var dayN = scene.t === "start" ? 0 : wp.day.n;
     if (dayN === lastCollectionDay) return;
     lastCollectionDay = dayN;
-    var places = (DATA.places || []).filter(function(place){ return place.day <= dayN; });
-    var albums = (DATA.albums || []).filter(function(album){ return album.day <= dayN; });
-    setText(collectorPlaceCount, places.length + " / " + (DATA.places || []).length);
-    setText(collectorAlbumCount, albums.length + " / " + (DATA.albums || []).length);
-    if (collectorPlaceList) collectorPlaceList.innerHTML = places.map(function(place, index){
-      return '<li class="collector-place' + (index === places.length - 1 ? ' latest' : '') + (place.pass ? ' pass' : '') + '" style="--w:' + DATA.colors[place.country] + '"><span>' + esc(place.name) + '</span></li>';
+    var allPlaces = DATA.places || [];
+    var allAlbums = DATA.albums || [];
+    var places = allPlaces.filter(function(place){ return place.day <= dayN; });
+    var albums = allAlbums.filter(function(album){ return album.day <= dayN; });
+    setText(collectorPlaceCount, places.length + " / " + allPlaces.length);
+    setText(collectorAlbumCount, albums.length + " / " + allAlbums.length);
+    if (collectorPlaceList) collectorPlaceList.innerHTML = allPlaces.map(function(place){
+      var seen = place.day <= dayN;
+      var latest = seen && place === places[places.length - 1];
+      return '<li class="collector-place' + (latest ? ' latest' : '') + (!seen ? ' future' : '') + (place.pass ? ' pass' : '') + '" style="--w:' + DATA.colors[place.country] + '"' + (!seen ? ' aria-hidden="true"' : '') + '><span>' + esc(place.name) + '</span></li>';
     }).join("");
-    if (collectorAlbumList) collectorAlbumList.innerHTML = albums.slice(-4).map(function(album){
-      return '<li><button class="collector-album album-open" data-day="' + album.day + '" aria-haspopup="dialog" aria-label="' + esc(album.artist + " — " + album.album) + '"><img src="covers/' + album.slug + '-thumb.webp" alt="" width="34" height="34"><p><b>' + esc(album.artist) + '</b><span>' + esc(album.album) + '</span></p></button></li>';
+    var shownAlbums = albums.slice(-4);
+    if (shownAlbums.length < 4) {
+      shownAlbums = shownAlbums.concat(allAlbums.filter(function(album){ return album.day > dayN; }).slice(0, 4 - shownAlbums.length));
+    }
+    if (collectorAlbumList) collectorAlbumList.innerHTML = shownAlbums.map(function(album){
+      var heard = album.day <= dayN;
+      var latest = heard && album === albums[albums.length - 1];
+      var content = '<img src="covers/' + album.slug + '-thumb.webp" alt="" width="34" height="34" loading="lazy"><p><b>' + esc(album.artist) + '</b><span>' + esc(album.album) + '</span></p>';
+      return heard
+        ? '<li><button class="collector-album album-open' + (latest ? ' latest' : '') + '" data-day="' + album.day + '" aria-haspopup="dialog" aria-label="' + esc(album.artist + " — " + album.album) + '">' + content + '</button></li>'
+        : '<li aria-hidden="true"><div class="collector-album future">' + content + '</div></li>';
     }).join("");
   }
 
@@ -988,7 +1002,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     updateStats(scene, wp);
     updateTrail(scene, wp, inJourney);
     showCountry(scene.t === "enter" ? scene.country : wp.day.c);
-    updateCollections(scene, wp, inJourney);
+    updateCollections(scene, wp);
     updateStory(scene, wp);
 
     // day content
