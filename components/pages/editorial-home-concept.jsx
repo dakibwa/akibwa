@@ -49,15 +49,17 @@ export function EditorialHomeConcept() {
             </span>
           </span>
         </h1>
-        <p className="concept-lede">
-          Building in the age of AI.
-        </p>
-        <nav className="concept-nav" aria-label="On this page">
-          <a href="#now">Now</a>
-          <a href="#work">Work</a>
-          <a href="#career">Career</a>
-          <a href="#taste">Taste</a>
-        </nav>
+        <div className="concept-hero-copy">
+          <p className="concept-lede">
+            Building in the age of AI.
+          </p>
+          <nav className="concept-nav" aria-label="On this page">
+            <a href="#now">Now</a>
+            <a href="#work">Work</a>
+            <a href="#career">Career</a>
+            <a href="#taste">Taste</a>
+          </nav>
+        </div>
       </header>
 
       <section className="page-grid concept-lead-grid" aria-label="Current work">

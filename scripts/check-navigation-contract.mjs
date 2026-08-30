@@ -61,6 +61,7 @@ forbidText(shell, "site-header", "the retired site header must stay retired");
 requireText(editorial, "I’m{\" \"}", "the homepage must open with the first-person identity");
 requireText(editorial, '<span className="hero-name-value">Akibwa</span>', "Akibwa must be the visible name");
 requireText(editorial, "Building in the age of AI.", "the approved one-line proposition must remain");
+requireText(editorial, '<div className="concept-hero-copy">', "the proposition and menu must share the right-hand hero column");
 for (const [href, label] of [
   ["#now", "Now"],
   ["#work", "Work"],
@@ -70,6 +71,8 @@ for (const [href, label] of [
   requireText(editorial, `<a href="${href}">${label}</a>`, `${label} must remain a plain anchor link`);
 }
 requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap"]);
+requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns", "align-items: center"]);
+requireRuleText(".concept-hero-copy {", ["min-width: 0"]);
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
 
 /* Features stays direct. Client work opens as a quiet, visual in-page preview;

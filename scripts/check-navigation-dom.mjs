@@ -236,6 +236,13 @@ const pageState = () => evaluate(`(() => {
       text: link.textContent.trim(),
       href: link.getAttribute("href")
     })),
+    heroLayout: {
+      hero: rect(document.querySelector(".concept-hero")),
+      identity: rect(document.querySelector(".concept-identity")),
+      copy: rect(document.querySelector(".concept-hero-copy")),
+      lede: rect(document.querySelector(".concept-lede")),
+      nav: rect(document.querySelector(".concept-nav"))
+    },
     featureHref: document.querySelector(".concept-feature")?.getAttribute("href"),
     clients: [...document.querySelectorAll(".concept-client-project strong")]
       .map((item) => item.textContent.trim()),
@@ -334,6 +341,22 @@ const checkDesktop = async () => {
       "Now:#now / Work:#work / Career:#career / Taste:#taste",
     `four direct section links render in order [${state.nav.map((item) => item.text).join(" / ")}]`
   );
+  check(
+    state.heroLayout.lede.left >= state.heroLayout.identity.right + 24,
+    `the proposition uses the right-hand hero column [${state.heroLayout.identity.right.toFixed(1)}px → ${state.heroLayout.lede.left.toFixed(1)}px]`
+  );
+  check(
+    Math.abs(state.heroLayout.nav.left - state.heroLayout.lede.left) <= 1,
+    "the menu stays aligned directly below the proposition"
+  );
+  check(
+    state.heroLayout.nav.top >= state.heroLayout.lede.bottom + 16,
+    `the proposition keeps a clean gap above its menu [${(state.heroLayout.nav.top - state.heroLayout.lede.bottom).toFixed(1)}px]`
+  );
+  check(
+    state.heroLayout.hero.height <= 250,
+    `the wide masthead uses its width instead of empty height [${state.heroLayout.hero.height.toFixed(1)}px]`
+  );
   check(state.featureHref === "/features/", `Features links directly to the game [${state.featureHref}]`);
   check(
     state.clients.join(" / ") === "Butterfly Rose / Português com a Inês",
@@ -414,6 +437,32 @@ const checkLinkHover = async () => {
     (transform) => transform === "none"
   );
   check(settled === "none", "the arrow settles cleanly after hover");
+};
+
+const checkHeroBreakpoint = async () => {
+  section("balanced hero breakpoint");
+  await setDesktop(820, 720);
+  await goto("/");
+  let state = await pageState();
+  check(
+    state.heroLayout.lede.left >= state.heroLayout.identity.right + 24,
+    "the two-column masthead still fits just above its breakpoint"
+  );
+  check(state.heroLayout.identity.height < 80, "the compact two-column identity remains on one line");
+  check(state.overflow <= 1, `the compact two-column masthead has no overflow [${state.overflow}px]`);
+
+  await setDesktop(800, 720);
+  await goto("/");
+  state = await pageState();
+  check(
+    Math.abs(state.heroLayout.identity.left - state.heroLayout.lede.left) <= 1,
+    "the masthead switches cleanly to one column at 800px"
+  );
+  check(
+    state.heroLayout.lede.top > state.heroLayout.identity.bottom,
+    "the stacked proposition follows the identity without overlap"
+  );
+  check(state.overflow <= 1, `the stacked breakpoint has no overflow [${state.overflow}px]`);
 };
 
 const checkClientPreviews = async () => {
@@ -537,6 +586,16 @@ const checkMobile = async () => {
   await goto("/");
   const initial = await pageState();
   check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
+  check(
+    Math.abs(initial.heroLayout.identity.left - initial.heroLayout.lede.left) <= 1 &&
+      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.nav.left) <= 1,
+    "the phone hero returns to one clean left-aligned column"
+  );
+  check(
+    initial.heroLayout.lede.top > initial.heroLayout.identity.bottom &&
+      initial.heroLayout.nav.top > initial.heroLayout.lede.bottom,
+    "the phone keeps identity, proposition and menu in reading order"
+  );
   const clientLayout = await evaluate(`(() => {
     const cards = [...document.querySelectorAll(".concept-client-project")]
       .map((item) => item.getBoundingClientRect())
@@ -670,6 +729,7 @@ const main = async () => {
     await cdp.send("Runtime.enable");
 
     await checkDesktop();
+    await checkHeroBreakpoint();
     await checkLinkHover();
     await checkClientPreviews();
     await checkCareerTimeline();
