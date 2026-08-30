@@ -239,6 +239,13 @@ const pageState = () => evaluate(`(() => {
     featureHref: document.querySelector(".concept-feature")?.getAttribute("href"),
     clients: [...document.querySelectorAll(".concept-client-project strong")]
       .map((item) => item.textContent.trim()),
+    clientText: document.querySelector("#now")?.innerText.replace(/\\s+/g, " ").trim(),
+    clientButtons: [...document.querySelectorAll(".concept-client-project")].map((item) => ({
+      tag: item.tagName,
+      popup: item.getAttribute("aria-haspopup"),
+      href: item.getAttribute("href"),
+      images: item.querySelectorAll("img").length
+    })),
     career: [...document.querySelectorAll(".concept-career-stop")]
       .map((item) => item.getAttribute("aria-label")),
     careerDetailsHidden: [...document.querySelectorAll(".concept-career-popover")]
@@ -332,6 +339,9 @@ const checkDesktop = async () => {
     state.clients.join(" / ") === "Butterfly Rose / Português com a Inês",
     `the two client projects lead [${state.clients.join(" / ")}]`
   );
+  check(!/\bLIVE\b/.test(state.clientText), `client previews do not print a Live label [${state.clientText}]`);
+  check(!/booking system/i.test(state.clientText), "Butterfly Rose no longer claims a booking system");
+  check(!/butterflyrosehairsalon|portuguesewithines/i.test(state.clientText), "client URLs stay out of the visible index");
   check(state.career.length === 7, `the complete career sequence renders [${state.career.length} stops]`);
   check(state.careerDetailsHidden, "career descriptions stay quiet until hover or focus");
   check(
@@ -360,10 +370,10 @@ const checkDesktop = async () => {
   );
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
 
-  const linkSemantics = await evaluate(`[...document.querySelectorAll(".concept-feature, .concept-client-project")].every((link) =>
-    Boolean(link.getAttribute("href")) && link.tagName === "A"
-  )`);
-  check(linkSemantics, "every interactive project is a direct anchor with a real destination");
+  check(
+    state.clientButtons.every((item) => item.tag === "BUTTON" && item.popup === "dialog" && item.href === null && item.images === 1),
+    "each client is a visual preview button rather than an immediate external link"
+  );
 };
 
 const checkLinkHover = async () => {
@@ -404,6 +414,55 @@ const checkLinkHover = async () => {
     (transform) => transform === "none"
   );
   check(settled === "none", "the arrow settles cleanly after hover");
+};
+
+const checkClientPreviews = async () => {
+  section("in-page client previews");
+  await setDesktop();
+  await goto("/");
+
+  await evaluate(`document.querySelectorAll(".concept-client-project")[0].click()`);
+  const first = await pollUntil(
+    () => evaluate(`(() => {
+      const dialog = document.querySelector(".concept-client-dialog");
+      if (!dialog?.open) return { open: false };
+      const box = dialog.getBoundingClientRect();
+      return {
+        open: true,
+        title: dialog.querySelector("#concept-client-preview-title")?.textContent.trim(),
+        imageAlt: dialog.querySelector(".concept-client-preview-screen img")?.getAttribute("alt"),
+        linkText: dialog.querySelector(".concept-client-preview-foot a")?.textContent.trim().replace(/\\s+/g, " "),
+        linkHref: dialog.querySelector(".concept-client-preview-foot a")?.getAttribute("href"),
+        linkTarget: dialog.querySelector(".concept-client-preview-foot a")?.getAttribute("target"),
+        visibleText: dialog.innerText.replace(/\\s+/g, " ").trim(),
+        insideViewport: box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight
+      };
+    })()`),
+    (value) => value.open
+  );
+  check(first.open, "the Butterfly Rose preview opens without navigation");
+  check(first.title === "Butterfly Rose", `the first preview is Butterfly Rose [${first.title}]`);
+  check(first.imageAlt === "Butterfly Rose homepage preview", "the first website still has useful alternative text");
+  check(first.linkText === "Open full site ↗", `the optional destination is plainly labelled [${first.linkText}]`);
+  check(first.linkHref === "https://www.butterflyrosehairsalon.co.uk/", "the full Butterfly Rose site remains reachable by choice");
+  check(first.linkTarget === "_blank", "the optional site opens separately from Akibwa");
+  check(!/butterflyrosehairsalon\.co\.uk/i.test(first.visibleText), "the preview does not print the Butterfly Rose URL");
+  check(first.insideViewport, "the desktop preview stays inside the viewport");
+
+  await pressEscape();
+  const closed = await pollUntil(
+    () => evaluate(`!document.querySelector(".concept-client-dialog").open`),
+    Boolean
+  );
+  check(closed, "Escape closes the temporary preview");
+
+  await evaluate(`document.querySelectorAll(".concept-client-project")[1].click()`);
+  const secondTitle = await pollUntil(
+    () => evaluate(`document.querySelector(".concept-client-dialog[open] #concept-client-preview-title")?.textContent.trim() ?? ""`),
+    (value) => value === "Português com a Inês"
+  );
+  check(secondTitle === "Português com a Inês", "the second client opens in the same preview treatment");
+  await pressEscape();
 };
 
 const checkCareerTimeline = async () => {
@@ -478,6 +537,35 @@ const checkMobile = async () => {
   await goto("/");
   const initial = await pageState();
   check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
+  const clientLayout = await evaluate(`(() => {
+    const cards = [...document.querySelectorAll(".concept-client-project")]
+      .map((item) => item.getBoundingClientRect())
+      .map((rect) => ({ left: rect.left, top: rect.top, width: rect.width }));
+    return { cards };
+  })()`);
+  check(
+    clientLayout.cards.length === 2 &&
+      Math.abs(clientLayout.cards[0].top - clientLayout.cards[1].top) <= 1 &&
+      clientLayout.cards.every((card) => card.width >= 150 && card.width <= 175),
+    `the two visual clients stay compact and side by side [${clientLayout.cards.map((card) => card.width.toFixed(1)).join(" / ")}px]`
+  );
+  await evaluate(`document.querySelector(".concept-client-project").click()`);
+  const mobilePreview = await pollUntil(
+    () => evaluate(`(() => {
+      const dialog = document.querySelector(".concept-client-dialog");
+      if (!dialog?.open) return { open: false };
+      const rect = dialog.getBoundingClientRect();
+      return {
+        open: true,
+        inside: rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight,
+        overflow: dialog.scrollWidth - dialog.clientWidth
+      };
+    })()`),
+    (value) => value.open
+  );
+  check(mobilePreview.inside, "the temporary website preview fits the phone viewport");
+  check(mobilePreview.overflow <= 1, `the temporary website preview has no phone overflow [${mobilePreview.overflow}px]`);
+  await pressEscape();
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     document.querySelector("#taste").scrollIntoView({ block: "start" });
@@ -525,7 +613,7 @@ const checkReducedMotion = async () => {
   const durations = await evaluate(`(() => {
     const selectors = [
       ".concept-arrow",
-      ".concept-client-arrow",
+      ".concept-client-expand",
       ".concept-career-node",
       ".concept-career-popover"
     ];
@@ -583,6 +671,7 @@ const main = async () => {
 
     await checkDesktop();
     await checkLinkHover();
+    await checkClientPreviews();
     await checkCareerTimeline();
     await checkFilters();
     await checkMobile();

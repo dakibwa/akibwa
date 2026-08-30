@@ -12,6 +12,10 @@ const editorial = readFileSync(
   new URL("../components/pages/editorial-home-concept.jsx", import.meta.url),
   "utf8"
 );
+const clientPreviews = readFileSync(
+  new URL("../components/client-site-previews.jsx", import.meta.url),
+  "utf8"
+);
 const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
@@ -68,7 +72,8 @@ for (const [href, label] of [
 requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap"]);
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
 
-/* Current work is direct: one Features link and two real client destinations. */
+/* Features stays direct. Client work opens as a quiet, visual in-page preview;
+   leaving Akibwa is a second, explicit choice from inside that preview. */
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
@@ -76,7 +81,15 @@ requireText(
   "Features must keep the approved light artwork"
 );
 requireText(editorial, 'const clientNames = ["Butterfly Rose", "Português com a Inês"]', "the two current clients must lead");
-requireText(editorial, 'target="_blank"', "external client sites must open as external destinations");
+requireText(editorial, "<ClientSitePreviews projects={clientProjects} />", "the two clients must use the visual preview component");
+forbidText(editorial, "project.eyebrow", "client cards must not print a Live label");
+forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
+forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
+requireText(clientPreviews, 'aria-haspopup="dialog"', "each client still must open an in-page preview");
+requireText(clientPreviews, "Website preview", "the temporary site view must describe itself as a preview");
+requireText(clientPreviews, "Open full site", "the preview must retain an optional full-site destination");
+requireText(clientPreviews, 'target="_blank"', "the optional full-site destination must open separately");
+forbidText(clientPreviews, "Live", "the retired Live label must stay out of client previews");
 forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
 

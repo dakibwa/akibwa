@@ -947,6 +947,122 @@
       }
     ]
   },
+  "clientSite:/project-art/client-sites/butterfly-rose-home.jpg": {
+    "source": "/project-art/client-sites/butterfly-rose-home.jpg",
+    "slot": "clientSite",
+    "ratio": 1.7778,
+    "sourceWidth": 1280,
+    "sourceHeight": 720,
+    "sourceHash": "c617e37b3f8df91d",
+    "variants": [
+      {
+        "width": 234,
+        "height": 132,
+        "avif": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-234.avif",
+          "bytes": 4021
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-234.webp",
+          "bytes": 4480
+        }
+      },
+      {
+        "width": 360,
+        "height": 203,
+        "avif": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-360.avif",
+          "bytes": 7338
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-360.webp",
+          "bytes": 8422
+        }
+      },
+      {
+        "width": 525,
+        "height": 295,
+        "avif": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-525.avif",
+          "bytes": 11548
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-525.webp",
+          "bytes": 14134
+        }
+      },
+      {
+        "width": 1280,
+        "height": 720,
+        "avif": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-1280.avif",
+          "bytes": 36016
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/butterfly-rose-home-clientSite-1280.webp",
+          "bytes": 46238
+        }
+      }
+    ]
+  },
+  "clientSite:/project-art/client-sites/portuguese-with-ines-home.jpg": {
+    "source": "/project-art/client-sites/portuguese-with-ines-home.jpg",
+    "slot": "clientSite",
+    "ratio": 1.7778,
+    "sourceWidth": 1280,
+    "sourceHeight": 720,
+    "sourceHash": "470e432a34003649",
+    "variants": [
+      {
+        "width": 234,
+        "height": 132,
+        "avif": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-234.avif",
+          "bytes": 4068
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-234.webp",
+          "bytes": 5176
+        }
+      },
+      {
+        "width": 360,
+        "height": 203,
+        "avif": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-360.avif",
+          "bytes": 6461
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-360.webp",
+          "bytes": 9528
+        }
+      },
+      {
+        "width": 525,
+        "height": 295,
+        "avif": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-525.avif",
+          "bytes": 10121
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-525.webp",
+          "bytes": 14988
+        }
+      },
+      {
+        "width": 1280,
+        "height": 720,
+        "avif": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-1280.avif",
+          "bytes": 26397
+        },
+        "webp": {
+          "src": "/_img/project-art/client-sites/portuguese-with-ines-home-clientSite-1280.webp",
+          "bytes": 39192
+        }
+      }
+    ]
+  },
   "deckTile:/area-art/contact-blue-clouds.webp": {
     "source": "/area-art/contact-blue-clouds.webp",
     "slot": "deckTile",

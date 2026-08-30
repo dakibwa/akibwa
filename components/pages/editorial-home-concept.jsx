@@ -1,16 +1,17 @@
 import { deck, sites } from "@/components/deck-data";
+import { ClientSitePreviews } from "@/components/client-site-previews";
 import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
 const clientNames = ["Butterfly Rose", "Português com a Inês"];
 const clientPresentation = {
   "Butterfly Rose": {
-    meta: "Hair salon + booking · [place removed]",
-    summary: "A tailored booking system with stylist-specific prices and colour-development time built in."
+    preview: "/project-art/client-sites/butterfly-rose-home.jpg",
+    summary: "A new website for an independent hair salon in [place removed]."
   },
   "Português com a Inês": {
-    meta: "Portuguese lessons + booking · Porto",
-    summary: "European Portuguese lessons, prices and a custom booking engine built for Portugal."
+    preview: "/project-art/client-sites/portuguese-with-ines-home.jpg",
+    summary: "A hand-built home for European Portuguese lessons in Porto and online."
   }
 };
 const clientProjects = clientNames
@@ -87,37 +88,7 @@ export function EditorialHomeConcept() {
         <article className="concept-freelance" id="now" aria-labelledby="clients-title">
           <h2 id="clients-title">Clients</h2>
 
-          <div className="concept-client-projects" aria-label="Current client projects">
-            {clientProjects.map((project) => (
-              <a
-                className="concept-client-project"
-                key={project.name}
-                href={project.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ "--client-accent": project.accent }}
-              >
-                <span className="concept-client-visual" aria-hidden="true">
-                  <SiteImage
-                    src={project.art}
-                    slot="deckTile"
-                    sizes="72px"
-                    alt=""
-                    above
-                  />
-                </span>
-                <span className="concept-client-body">
-                  <span className="concept-client-meta">
-                    <span>{project.eyebrow}</span>
-                    <span>{project.meta}</span>
-                  </span>
-                  <strong>{project.name}</strong>
-                  <span className="concept-client-note">{project.summary}</span>
-                </span>
-                <span className="concept-client-arrow" aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </div>
+          <ClientSitePreviews projects={clientProjects} />
 
         </article>
       </section>

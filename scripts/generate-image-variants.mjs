@@ -61,6 +61,10 @@ const SLOTS = {
   // row at ~202 CSS px on desktop and one full-bleed card at ~327 on mobile.
   projectCard: { ratio: 1.5, css: [202, 260, 327] },
 
+  // Client-site stills render as two small 16:9 previews in the homepage
+  // column, then expand into a wide in-page dialog only when requested.
+  clientSite: { ratio: 16 / 9, css: [156, 240, 350, 960] },
+
   // .deck .card — the square tile the whole card wall is built from. Roughly
   // 92 CSS px where the picture sets run dense, 133 where the text cards sit,
   // and 176 on the widest frames.
@@ -175,6 +179,8 @@ const sources = [
   { file: "project-art/personal/cover-collision-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
+  { file: "project-art/client-sites/butterfly-rose-home.jpg", slot: "clientSite" },
+  { file: "project-art/client-sites/portuguese-with-ines-home.jpg", slot: "clientSite" },
   { file: "area-art/contact-blue-clouds.webp", slot: "deckTile" },
   { file: "area-art/about-meadow-flowers.jpg", slot: "deckTile" },
   { file: "tv-posters/arrested-development.webp", slot: "deckTile" },

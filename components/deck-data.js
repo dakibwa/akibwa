@@ -2583,14 +2583,15 @@ export const tv = [
   }
 ];
 
-/* The live sites — each card is the door to the real thing. */
+/* Project destinations. The homepage previews client sites before offering
+   the external link, while the Taste wall keeps its direct visual tiles. */
 export const sites = [
   { name: "Português com a Inês", short: "Português\ncom a Inês", href: "https://portuguesewithines.com/",
-    ground: "#1d3557", accent: "#1d3557", eyebrow: "Live", art: "/project-art/personal/ines-fan-splat.webp",
+    ground: "#1d3557", accent: "#1d3557", art: "/project-art/personal/ines-fan-splat.webp",
     note: "Lessons, prices and booking for a European Portuguese teacher in Porto — with a booking engine built from scratch, because Square can't serve Portugal." },
   { name: "Butterfly Rose", href: "https://www.butterflyrosehairsalon.co.uk/",
-    ground: "#8e4457", accent: "#8e4457", eyebrow: "Live", art: "/project-art/personal/butterfly-rose-card.webp",
-    note: "The website and booking system for a hair salon on Boroughgate in [place removed] — prices per stylist, colour development time handled properly." },
+    ground: "#8e4457", accent: "#8e4457", art: "/project-art/personal/butterfly-rose-card.webp",
+    note: "A new website for an independent hair salon on Boroughgate in [place removed]." },
   { name: "features", href: "https://akibwa.com/features/",
     ground: "#f4f1e8", accent: "#6e5da8", eyebrow: "Live", art: "/project-art/personal/features-card.webp",
     note: "A daily puzzle: pull tangled features apart, ten nets a day. Lives right here on Akibwa." }
