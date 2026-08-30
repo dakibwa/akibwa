@@ -151,7 +151,7 @@ const TOWNS = [
   { name: "Paris", lon: 2.55, lat: 49.01, dx: -10, dy: -12, anchor: "end", start: true },
   { name: "Reims", lon: 4.03, lat: 49.26, dx: 0, dy: -14 },
   { name: "Nancy", lon: 6.18, lat: 48.69, dx: 0, dy: 22 },
-  { name: "Saverne", lon: 7.36, lat: 48.74, dx: 0, dy: -14 },
+  { name: "Saverne", lon: 7.36, lat: 48.74, dx: 0, dy: -14, day: 14 },
   { name: "Pforzheim", lon: 8.7, lat: 48.89, dx: 0, dy: -14 },
   { name: "Stuttgart", lon: 9.18, lat: 48.78, dx: 0, dy: 22 },
   { name: "Augsburg", lon: 10.9, lat: 48.37, dx: 0, dy: -14 },
@@ -286,8 +286,8 @@ function sampleGrid(grid, lon, lat) {
 }
 
 async function loadTerrain(bbox) {
-  const cols = 32;
-  const rows = 20;
+  const cols = 56;
+  const rows = 34;
   const meta = { ...bbox, cols, rows };
   let cached = null;
   if (fs.existsSync(terrainCachePath)) {
@@ -478,8 +478,8 @@ const altAt = (x, y) => {
 // The atlas is drawn as an oblique paper diorama rather than a flat plan.
 // Geographic north/south is foreshortened into the "floor" and elevation
 // rises vertically from it, so the Alps visibly stand up as the camera nears.
-const FLOOR_TILT = 0.78;
-const RELIEF_SCALE = 0.06;
+const FLOOR_TILT = 0.66;
+const RELIEF_SCALE = 0.092;
 const groundPoint = (x, y) => ({
   x: sx(x),
   y: +(((sy(y) - VBH / 2) * FLOOR_TILT + VBH / 2)).toFixed(1),
@@ -582,7 +582,7 @@ const ringPaths = data.countryRings
   })
   .join("\n    ");
 
-function terrainCellColor(points) {
+function terrainCellColor(points, facet = 0) {
   const altitude = points.reduce((sum, point) => sum + point.alt, 0) / points.length;
   const eastSlope = (points[1].alt + points[2].alt - points[0].alt - points[3].alt) / 1150;
   const southSlope = (points[2].alt + points[3].alt - points[0].alt - points[1].alt) / 1150;
@@ -591,37 +591,56 @@ function terrainCellColor(points) {
   const ny = -southSlope / normalLength;
   const nz = 1 / normalLength;
   const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
-  const high = Math.max(0, Math.min(1, altitude / 2400));
-  const luminance = Math.round(12 + high * 12 + light * 4.2);
-  const saturation = Math.round(11 + high * 12);
-  return `hsl(36 ${saturation}% ${luminance}%)`;
+  let hue = 74;
+  let saturation = 14;
+  let luminance = 17;
+  if (altitude > 1750) {
+    hue = 39;
+    saturation = 12;
+    luminance = 36 + Math.min(18, ((altitude - 1750) / 900) * 18);
+  } else if (altitude > 1050) {
+    hue = 44;
+    saturation = 14;
+    luminance = 27 + ((altitude - 1050) / 700) * 8;
+  } else if (altitude > 360) {
+    hue = 66;
+    saturation = 15;
+    luminance = 20 + ((altitude - 360) / 690) * 7;
+  } else {
+    luminance = 16 + Math.max(0, altitude) / 90;
+  }
+  luminance = Math.round(Math.max(10, Math.min(62, luminance + light * 7.5 + facet)));
+  return `hsl(${Math.round(hue)} ${Math.round(saturation)}% ${luminance}%)`;
 }
 
 const terrainBuckets = new Map();
 const terrainRisers = [];
+const addTerrainFacet = (bucket, color, points) => {
+  const d = `M${points.map((point) => `${point.x},${point.y}`).join("L")}Z`;
+  bucket.set(color, (bucket.get(color) || "") + d);
+};
+const terrainGridPoint = (row, column) => {
+  const lon = grid.west + (column * (grid.east - grid.west)) / (grid.cols - 1);
+  const lat = grid.north - (row * (grid.north - grid.south)) / (grid.rows - 1);
+  const altitude = grid.elev[row * grid.cols + column] || 0;
+  return mapLonLat({ lon, lat }, altitude);
+};
 if (grid) {
-  const gridPoint = (row, column) => {
-    const lon = grid.west + (column * (grid.east - grid.west)) / (grid.cols - 1);
-    const lat = grid.north - (row * (grid.north - grid.south)) / (grid.rows - 1);
-    const altitude = grid.elev[row * grid.cols + column] || 0;
-    return mapLonLat({ lon, lat }, altitude);
-  };
   for (let row = 0; row < grid.rows - 1; row++) {
     for (let column = 0; column < grid.cols - 1; column++) {
       const points = [
-        gridPoint(row, column),
-        gridPoint(row, column + 1),
-        gridPoint(row + 1, column + 1),
-        gridPoint(row + 1, column),
+        terrainGridPoint(row, column),
+        terrainGridPoint(row, column + 1),
+        terrainGridPoint(row + 1, column + 1),
+        terrainGridPoint(row + 1, column),
       ];
-      const color = terrainCellColor(points);
-      const cellPath = `M${points.map((point) => `${point.x},${point.y}`).join("L")}Z`;
-      terrainBuckets.set(color, (terrainBuckets.get(color) || "") + cellPath);
+      addTerrainFacet(terrainBuckets, terrainCellColor(points, -1.1), [points[0], points[1], points[2]]);
+      addTerrainFacet(terrainBuckets, terrainCellColor(points, 1.1), [points[0], points[2], points[3]]);
     }
   }
   for (let row = 0; row < grid.rows; row += 2) {
     for (let column = 0; column < grid.cols; column += 2) {
-      const point = gridPoint(row, column);
+      const point = terrainGridPoint(row, column);
       if (point.alt < 260 || point.groundY - point.y < 8) continue;
       terrainRisers.push(`M${point.x},${point.y}L${point.x},${point.groundY}`);
     }
@@ -630,6 +649,90 @@ if (grid) {
 const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
   `<path class="terrain-cell" d="${d}" fill="${color}" stroke="${color}"/>`
 );
+
+// The high-ground sections become literal map specimens: actual sampled
+// elevation on top, with a shallow geological cutaway beneath. They sit in
+// the atlas all along, then lift into full contrast as the walker reaches them.
+const TERRAIN_BLOCKS = [
+  { name: "vosges", start: 13, end: 16, west: 6.15, east: 7.85, south: 47.75, north: 49.35, depth: 23 },
+  { name: "alps", start: 25, end: 34, west: 11.45, east: 14.85, south: 46.15, north: 48.45, depth: 43 },
+  { name: "dinaric", start: 35, end: 38, west: 14.05, east: 16.75, south: 45.25, north: 47.05, depth: 31 },
+  { name: "balkan", start: 62, end: 66, west: 20.9, east: 23.85, south: 42.05, north: 44.35, depth: 36 },
+];
+
+function terrainBlock(region) {
+  if (!grid) return "";
+  const columns = 15;
+  const rows = 11;
+  const points = [];
+  for (let row = 0; row < rows; row++) {
+    const lat = region.north - (row * (region.north - region.south)) / (rows - 1);
+    const line = [];
+    for (let column = 0; column < columns; column++) {
+      const lon = region.west + (column * (region.east - region.west)) / (columns - 1);
+      const altitude = Math.max(0, sampleGrid(grid, lon, lat));
+      line.push(mapLonLat({ lon, lat }, altitude));
+    }
+    points.push(line);
+  }
+
+  const facets = new Map();
+  for (let row = 0; row < rows - 1; row++) {
+    for (let column = 0; column < columns - 1; column++) {
+      const cell = [
+        points[row][column],
+        points[row][column + 1],
+        points[row + 1][column + 1],
+        points[row + 1][column],
+      ];
+      addTerrainFacet(facets, terrainCellColor(cell, -2), [cell[0], cell[1], cell[2]]);
+      addTerrainFacet(facets, terrainCellColor(cell, 2), [cell[0], cell[2], cell[3]]);
+    }
+  }
+
+  const north = points[0];
+  const east = points.map((line) => line[line.length - 1]).slice(1);
+  const south = points[points.length - 1].slice().reverse().slice(1);
+  const west = points.map((line) => line[0]).reverse().slice(1, -1);
+  const perimeter = north.concat(east, south, west);
+  const topD = `M${perimeter.map((point) => `${point.x},${point.y}`).join("L")}Z`;
+  const southernEdge = points[points.length - 1];
+  const easternEdge = points.map((line) => line[line.length - 1]);
+  const westernEdge = points.map((line) => line[0]);
+  const side = (edge, depth) =>
+    `M${edge.map((point) => `${point.x},${point.y}`).join("L")}L${edge
+      .slice()
+      .reverse()
+      .map((point) => `${point.x},${point.y + depth}`)
+      .join("L")}Z`;
+  const stratum = (edge, offset) =>
+    `M${edge.map((point) => `${point.x},${point.y + offset}`).join("L")}`;
+  const minX = Math.min(...perimeter.map((point) => point.x));
+  const maxX = Math.max(...perimeter.map((point) => point.x));
+  const minY = Math.min(...perimeter.map((point) => point.y));
+  const maxY = Math.max(...perimeter.map((point) => point.y)) + region.depth;
+  const facetPaths = Array.from(facets, ([color, d]) =>
+    `<path class="terrain-block-facet" d="${d}" fill="${color}" stroke="${color}"/>`
+  ).join("\n        ");
+
+  return `<g class="terrain-block" data-name="${region.name}" data-start="${region.start}" data-end="${region.end}" data-cx="${((minX + maxX) / 2).toFixed(1)}" data-cy="${((minY + maxY) / 2).toFixed(1)}" data-width="${(maxX - minX).toFixed(1)}" data-height="${(maxY - minY).toFixed(1)}">
+      <path class="terrain-block-shadow" d="${topD}" transform="translate(0 ${region.depth + 8})"/>
+      <path class="terrain-block-side terrain-block-side-west" d="${side(westernEdge, region.depth * .72)}"/>
+      <path class="terrain-block-side terrain-block-side-east" d="${side(easternEdge, region.depth * .84)}"/>
+      <path class="terrain-block-front" d="${side(southernEdge, region.depth)}"/>
+      <path class="terrain-block-stratum" d="${stratum(southernEdge, region.depth * .28)}"/>
+      <path class="terrain-block-stratum terrain-block-stratum-mid" d="${stratum(southernEdge, region.depth * .57)}"/>
+      <path class="terrain-block-stratum terrain-block-stratum-deep" d="${stratum(southernEdge, region.depth * .82)}"/>
+      <path class="terrain-block-bed" d="${topD}"/>
+      <g class="terrain-block-top">
+        ${facetPaths}
+      </g>
+      <path class="terrain-block-grain" d="${topD}"/>
+      <path class="terrain-block-outline" d="${topD}"/>
+    </g>`;
+}
+
+const terrainBlocks = TERRAIN_BLOCKS.map(terrainBlock).join("\n    ");
 
 function linePath(points, altitude) {
   return points
@@ -823,7 +926,10 @@ const segs = [];
 let routeAt = 0;
 for (let i = 0; i < pts.length; i++) {
   const d = pts[i];
-  const i1 = Math.max(routeAt, nearestRouteIdx(d.x, d.y, routeAt));
+  const arrivalTown = townsPlaced.find((town) => town.day === d.n);
+  const endX = arrivalTown ? arrivalTown.x : d.x;
+  const endY = arrivalTown ? arrivalTown.y : d.y;
+  const i1 = Math.max(routeAt, nearestRouteIdx(endX, endY, routeAt));
   let slice = route.slice(routeAt, i1 + 1);
   if (slice.length < 2) {
     const a = route[routeAt] || route[0];
@@ -849,7 +955,9 @@ for (let i = 0; i < pts.length; i++) {
   );
 }
 
-function placeOnTown(x, y) {
+function placeOnTown(x, y, day) {
+  const assigned = townsPlaced.find((town) => town.day === day);
+  if (assigned) return { x: assigned.x, y: assigned.y };
   let best = null;
   for (const t of townsPlaced) {
     if (t.pass) continue;
@@ -861,7 +969,7 @@ function placeOnTown(x, y) {
 
 const dayDots = pts
   .map((d) => {
-    const at = placeOnTown(d.x, d.y);
+    const at = placeOnTown(d.x, d.y, d.n);
     const point = mapPoint(at.x, at.y);
     return `<circle id="dot-${d.n}" class="daydot${d.walked ? "" : " restdot"}${d.sleeve ? " hasrec" : ""}" cx="${point.x}" cy="${point.y}" r="${d.sleeve ? 3.2 : 2.2}" data-day="${d.n}"/>`;
   })
@@ -886,9 +994,30 @@ const startPoint = mapPoint(start[0], start[1], startAlt);
 
 const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <defs>
+    <linearGradient id="terrain-front-gradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6D5135"/>
+      <stop offset=".3" stop-color="#4B3525"/>
+      <stop offset=".64" stop-color="#302118"/>
+      <stop offset="1" stop-color="#17110D"/>
+    </linearGradient>
+    <linearGradient id="terrain-side-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4D3828"/>
+      <stop offset="1" stop-color="#19120E"/>
+    </linearGradient>
+    <filter id="terrain-grain-filter" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency=".027 .11" numOctaves="2" seed="23" result="noise"/>
+      <feColorMatrix in="noise" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .34 0" result="grain"/>
+      <feComposite in="grain" in2="SourceGraphic" operator="in"/>
+    </filter>
+    <filter id="terrain-shadow-filter" x="-25%" y="-25%" width="150%" height="170%">
+      <feGaussianBlur stdDeviation="11"/>
+    </filter>
+  </defs>
   <g id="camera">
     <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
     <path id="terrain-risers" d="${terrainRisers.join("")}"/>
+    <g id="terrain-blocks">${terrainBlocks}</g>
     <g id="water">
       ${lakePaths}
       ${riverPaths}
@@ -936,7 +1065,7 @@ const TIMELINE_TOTAL = acc;
 
 // ----------------------------------------------------------- data for the JS
 const jsDays = pts.map((d) => {
-  const at = placeOnTown(d.x, d.y);
+  const at = placeOnTown(d.x, d.y, d.n);
   const altitude = altAt(at.x, at.y);
   const point = mapPoint(at.x, at.y, altitude);
   return {
@@ -1000,7 +1129,7 @@ const places = townsPlaced.map((town) => {
   );
   return {
     name: town.name,
-    day: town.start ? 0 : nearestDay.day,
+    day: town.start ? 0 : town.day || nearestDay.day,
     country: nearestDay.country,
     pass: town.pass ? 1 : 0,
   };

@@ -129,16 +129,43 @@ button{font:inherit;color:inherit}
 }
 
 /* atlas drawing */
-#terrain-mesh{opacity:.64;transform:scale(1.006);transform-origin:center;transition:opacity .5s}
-.terrain-cell{stroke-width:.48;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#terrain-mesh{opacity:.46;transform:scale(1.006);transform-origin:center;transition:opacity .5s;filter:saturate(.9) contrast(1.08)}
+.terrain-cell{stroke-width:.22;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 #terrain-risers{
-  fill:none;stroke:color-mix(in srgb,var(--bone) 29%,var(--peat));stroke-opacity:.2;stroke-width:.58;
+  fill:none;stroke:color-mix(in srgb,var(--bone) 34%,var(--peat));stroke-opacity:.22;stroke-width:.54;
   vector-effect:non-scaling-stroke;transition:stroke .65s ease,stroke-opacity .5s;
 }
-.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.9}
+.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.68}
 .stage[data-zoom="travel"] #terrain-risers,.stage[data-zoom="close"] #terrain-risers{
-  stroke:color-mix(in srgb,var(--c-cur,var(--bone)) 28%,var(--bone));stroke-opacity:.3;
+  stroke:color-mix(in srgb,var(--c-cur,var(--bone)) 28%,var(--bone));stroke-opacity:.34;
 }
+#terrain-blocks{pointer-events:none}
+.terrain-block{
+  opacity:.035;transition:opacity .72s ease,filter .72s ease;
+  transform-box:fill-box;transform-origin:center;
+}
+.terrain-block.seen{opacity:.16}
+.terrain-block.current{
+  opacity:1;filter:saturate(1.18) contrast(1.08) drop-shadow(0 13px 13px rgba(0,0,0,.56));
+}
+.stage[data-zoom="hero"] .terrain-block{opacity:.2}
+.stage[data-zoom="hero"] .terrain-block.seen{opacity:.3}
+.terrain-block-shadow{fill:#000;opacity:.52;filter:url(#terrain-shadow-filter)}
+.terrain-block-side{fill:url(#terrain-side-gradient);stroke:#0E0B09;stroke-opacity:.8;stroke-width:.7;vector-effect:non-scaling-stroke}
+.terrain-block-side-west{opacity:.6}
+.terrain-block-side-east{opacity:.88}
+.terrain-block-front{fill:url(#terrain-front-gradient);stroke:#0E0B09;stroke-opacity:.9;stroke-width:.8;vector-effect:non-scaling-stroke}
+.terrain-block-stratum{
+  fill:none;stroke:#C19A69;stroke-opacity:.38;stroke-width:.72;vector-effect:non-scaling-stroke;
+}
+.terrain-block-stratum-mid{stroke:#8D6846;stroke-opacity:.48}
+.terrain-block-stratum-deep{stroke:#2A1B13;stroke-opacity:.9}
+.terrain-block-bed{fill:#24241D;stroke:#0B0907;stroke-width:1;vector-effect:non-scaling-stroke}
+.terrain-block-facet{stroke-width:.22;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.terrain-block-grain{display:none;fill:#E8DDC6;opacity:.14;filter:url(#terrain-grain-filter);mix-blend-mode:soft-light}
+.terrain-block.current .terrain-block-grain{display:block}
+.terrain-block-outline{fill:none;stroke:var(--bone);stroke-opacity:.38;stroke-width:.9;vector-effect:non-scaling-stroke}
+.terrain-block.current .terrain-block-outline{stroke:color-mix(in srgb,var(--c-cur,var(--bone)) 55%,var(--bone));stroke-opacity:.72}
 #rings{pointer-events:none}
 .country-ring{
   fill-opacity:.018;stroke-opacity:.12;
@@ -146,7 +173,7 @@ button{font:inherit;color:inherit}
 }
 .country-ring.passed{fill-opacity:.025;stroke-opacity:.18}
 .country-ring.current{
-  fill-opacity:.11;stroke-opacity:.72;
+  fill-opacity:.07;stroke-opacity:.72;
   filter:drop-shadow(0 0 7px color-mix(in srgb,var(--c-cur) 28%,transparent));
 }
 #water{pointer-events:none}
@@ -517,7 +544,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i,.hud .progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i,.hud .progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow,.terrain-block{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -741,6 +768,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var countryRings = Array.prototype.slice.call(document.querySelectorAll(".country-ring"));
   var landmarks = Array.prototype.slice.call(document.querySelectorAll(".landmark"));
+  var terrainBlocks = Array.prototype.slice.call(document.querySelectorAll(".terrain-block"));
   var journeyProgress = document.getElementById("journey-progress");
   var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
@@ -1075,6 +1103,13 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
         var town = townId && document.getElementById("town-" + townId);
         if (town) town.classList.toggle("has-current-landmark", isCurrent);
       });
+      terrainBlocks.forEach(function(block){
+        var startDay = +(block.getAttribute("data-start") || 0);
+        var endDay = +(block.getAttribute("data-end") || startDay);
+        var isCurrent = inJourney && wp.day.n >= startDay && wp.day.n <= endDay;
+        block.classList.toggle("current", isCurrent);
+        block.classList.toggle("seen", inJourney && wp.day.n > endDay);
+      });
       stage.setAttribute("data-landmark", currentLandmarkKind);
       lastTrailState = state;
     }
@@ -1098,6 +1133,20 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     currentWalker = wp;
     var inJourney = scene.t !== "start";
     var silentRest = scene.t === "walk" && !wp.day.w;
+    var terrainFrame = inJourney && terrainBlocks.find(function(block){
+      var startDay = +(block.getAttribute("data-start") || 0);
+      var endDay = +(block.getAttribute("data-end") || startDay);
+      return wp.day.n >= startDay && wp.day.n <= endDay;
+    });
+    var terrainTarget = null;
+    if (terrainFrame) {
+      var blockX = +(terrainFrame.getAttribute("data-cx") || wp.x);
+      var blockY = +(terrainFrame.getAttribute("data-cy") || wp.y);
+      var blockW = +(terrainFrame.getAttribute("data-width") || TRAVELW);
+      var blockH = +(terrainFrame.getAttribute("data-height") || TRAVELW / viewAspect());
+      var framedW = Math.min(780, Math.max(TRAVELW * 1.08, blockW * 1.16, blockH * viewAspect() * 1.16));
+      terrainTarget = { x: lerp(wp.x, blockX, .66), y: lerp(wp.y, blockY, .72), w: framedW };
+    }
 
     // chrome
     fade(titlecard, scene.t === "start" ? String(1 - Math.min(1, (p - scene.at) / (scene.len * .7))) : "0");
@@ -1118,9 +1167,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       var full = fitFull();
       target = { x: lerp(wp.x, full.x, tEnd), y: lerp(wp.y, full.y, tEnd), w: lerp(TRAVELW, full.w, tEnd) };
     }
-    else if (scene.t === "beat") { setZoom("close"); target = { x: wp.x, y: wp.y, w: CLOSEW }; }
+    else if (scene.t === "beat") {
+      setZoom(terrainTarget ? "travel" : "close");
+      target = terrainTarget || { x: wp.x, y: wp.y, w: CLOSEW };
+    }
     else if (scene.t === "enter") { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW * 1.5 }; }
-    else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW }; }
+    else { setZoom("travel"); target = terrainTarget || { x: wp.x, y: wp.y, w: TRAVELW }; }
 
     // walker + trail
     var wy = wp.y;

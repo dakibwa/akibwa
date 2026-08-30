@@ -1,11 +1,5 @@
 [
  {
-  "day": 1,
-  "src": "day01.webp",
-  "w": 620,
-  "h": 1100
- },
- {
   "day": 2,
   "src": "day02.webp",
   "w": 1100,
@@ -26,18 +20,6 @@
   "h": 480,
   "caption": "the road east",
   "alt": "A long empty road crossing farmland east of Château-Thierry"
- },
- {
-  "day": 11,
-  "src": "day11.webp",
-  "w": 825,
-  "h": 1100
- },
- {
-  "day": 14,
-  "src": "day14.webp",
-  "w": 825,
-  "h": 1100
  },
  {
   "day": 20,
@@ -188,18 +170,6 @@
   "alt": "The pale stone Eternal Flame monument in Belgrade's Park of Friendship"
  },
  {
-  "day": 56,
-  "src": "day56.webp",
-  "w": 825,
-  "h": 1100
- },
- {
-  "day": 63,
-  "src": "day63.webp",
-  "w": 825,
-  "h": 1100
- },
- {
   "day": 66,
   "src": "day66-final-road.webp",
   "w": 360,
@@ -222,11 +192,5 @@
   "h": 480,
   "caption": "roadside remains",
   "alt": "Two weathered concrete wall frames standing alone in Bulgarian grassland"
- },
- {
-  "day": 67,
-  "src": "day67.webp",
-  "w": 825,
-  "h": 1100
  }
 ]
