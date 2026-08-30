@@ -1095,7 +1095,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
 
   @media (max-width:700px){
-    .sheet{padding:14px calc(10px + env(safe-area-inset-right,0px)) calc(36px + env(safe-area-inset-bottom,0px)) calc(10px + env(safe-area-inset-left,0px))}
+    .sheet{padding:14px calc(10px + env(safe-area-inset-right,0px)) 0 calc(10px + env(safe-area-inset-left,0px))}
     h1{font-size:21px}
     .hud-head{gap:11px;padding:11px 13px 12px}
     .instruments{padding:9px 11px 8px}
@@ -1137,7 +1137,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .panerules{padding:16px 14px 20px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
-    .field{padding-bottom:0}
+    .field{padding-bottom:env(safe-area-inset-bottom,0px)}
     .coach{top:10px;min-width:0;max-width:calc(100% - 20px)}
     .sayrow{gap:11px;padding:10px 12px}
     .sayline{font-size:13px}
