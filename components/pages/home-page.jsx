@@ -371,13 +371,38 @@ export function HomePage({ tasteOnly = false }) {
      the rest comes off the blend in DOM order. Sync decoding is main-thread
      work, so it is capped well below the eager count. */
   const wall = useMemo(() => {
+    const gracelandCard = (
+      <Card
+        key="graceland"
+        suit="music"
+        dim={dim("music")}
+        label={`${graceland.artist} — ${graceland.album}`}
+        face={
+          <SiteImage
+            src={graceland.art}
+            slot="deckTile"
+            sizes={SLOT_SIZES.deckTile}
+            alt=""
+            className="c-art"
+            above
+            aboveSync
+          />
+        }
+      />
+    );
+
     if (tasteOnly) {
-      return blend([
-        ["music", cardsFor("music")],
-        ["films", cardsFor("films")],
-        ["games", cardsFor("games")],
-        ["tv", cardsFor("tv")]
-      ]);
+      return (
+        <>
+          {gracelandCard}
+          {blend([
+            ["music", cardsFor("music")],
+            ["films", cardsFor("films")],
+            ["games", cardsFor("games")],
+            ["tv", cardsFor("tv")]
+          ])}
+        </>
+      );
     }
 
     /* Career leads the front of the wall with its two current roles; the
@@ -389,23 +414,7 @@ export function HomePage({ tasteOnly = false }) {
         {/* The front of the wall: the things made, the life pieces, the two
             current roles — and Graceland, important without breaking scale. */}
         {cardsFor("sites")}
-        <Card
-          key="graceland"
-          suit="music"
-          dim={dim("music")}
-          label={`${graceland.artist} — ${graceland.album}`}
-          face={
-            <SiteImage
-              src={graceland.art}
-              slot="deckTile"
-              sizes={SLOT_SIZES.deckTile}
-              alt=""
-              className="c-art"
-              above
-              aboveSync
-            />
-          }
-        />
+        {gracelandCard}
         {cardsFor("life")}
         {jobCards.slice(0, 2)}
 

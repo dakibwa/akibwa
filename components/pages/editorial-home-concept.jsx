@@ -64,9 +64,8 @@ export function EditorialHomeConcept() {
           </span>
         </a>
 
-        <article className="concept-freelance" id="now">
-          <p className="concept-kicker">Freelance</p>
-          <h2>Going independent.</h2>
+        <article className="concept-freelance" id="now" aria-labelledby="clients-title">
+          <h2 id="clients-title">Clients</h2>
 
           <div className="concept-client-projects" aria-label="Current client projects">
             {clientProjects.map((project) => (
@@ -131,28 +130,6 @@ export function EditorialHomeConcept() {
 
       <section className="concept-archive" id="archive" aria-labelledby="archive-title">
         <div className="page-grid concept-taste-head">
-          <article
-            className="concept-graceland"
-            tabIndex={0}
-            aria-label="Paul Simon — Graceland, 1986. Focus to read why it is here."
-          >
-            <SiteImage
-              src="/music-art/graceland.webp"
-              slot="grandTile"
-              sizes="(max-width: 560px) 116px, (max-width: 980px) 220px, 280px"
-              alt="Paul Simon — Graceland album cover"
-            />
-            <div className="concept-graceland-info">
-              <p className="concept-kicker">The record at the front</p>
-              <h2>Graceland</h2>
-              <p className="concept-meta-line">Paul Simon · 1986</p>
-              <p>
-                The record that sits above the rest of the archive. It gets room for a proper story
-                here, rather than being reduced to another cover and play count.
-              </p>
-            </div>
-          </article>
-
           <header className="concept-archive-head">
             <h2 id="archive-title">Taste</h2>
           </header>

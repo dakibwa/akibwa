@@ -6729,7 +6729,6 @@ button {
 
 .concept-freelance h2,
 .concept-career h2,
-.concept-graceland h2,
 .concept-archive-head h2 {
   margin: 0;
   color: var(--black);
@@ -6852,51 +6851,10 @@ button {
   border-top: 1px solid var(--line-strong);
 }
 
-.concept-graceland {
-  display: grid;
-  grid-template-columns: minmax(190px, 300px) minmax(0, 1fr);
-  gap: clamp(24px, 3.3vw, 48px);
-  align-items: start;
-}
-
-.concept-graceland img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-  border: 1px solid color-mix(in srgb, var(--ink) 10%, var(--canvas));
-  border-radius: 3px;
-  object-fit: cover;
-}
-
-.concept-graceland h2 {
-  margin-top: 0.36em;
-  font-family: var(--serif);
-  font-size: clamp(2.15rem, 4vw, 4.25rem);
-  font-weight: 500;
-  line-height: 0.96;
-}
-
-.concept-meta-line {
-  margin: 0.72em 0 0;
-  color: color-mix(in srgb, var(--ink) 55%, var(--canvas));
-  font-size: 0.72rem;
-  font-weight: 620;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.concept-graceland div > p:last-child,
 .concept-career > p:not(.concept-kicker),
 .concept-archive-head > p:last-child {
   color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
   line-height: 1.55;
-}
-
-.concept-graceland div > p:last-child {
-  max-width: 37ch;
-  margin: 1.4em 0 0;
-  font-family: var(--serif);
-  font-size: clamp(0.98rem, 1.3vw, 1.18rem);
 }
 
 .concept-career {
@@ -7081,20 +7039,6 @@ button {
     padding: 52px 0 62px;
   }
 
-  .concept-graceland {
-    grid-template-columns: 116px minmax(0, 1fr);
-    gap: 18px;
-  }
-
-  .concept-graceland h2 {
-    font-size: 2.1rem;
-  }
-
-  .concept-graceland div > p:last-child {
-    margin-top: 1em;
-    font-size: 0.93rem;
-  }
-
   .concept-career h2 {
     font-size: 2.45rem;
   }
@@ -7132,8 +7076,8 @@ button {
 /* ── Editorial concept, compact pass ────────────────────────────────────
    The coloured index is back, but it remains four plain words. Current
    client work now sits inside the freelance story; the former "Also making"
-   strip has gone. Career and Graceland keep their detail in small hover/focus
-   popovers, leaving only the visual index and taste archive at rest. */
+   strip has gone. Clients, Career and Taste use one section hierarchy; career
+   detail stays in small hover/focus popovers. */
 .concept-nav a:nth-child(1) {
   --concept-nav-accent: 224, 122, 26;
 }
@@ -7261,8 +7205,11 @@ button {
   padding-bottom: clamp(28px, 3vw, 40px);
 }
 
-.concept-career-head h2 {
+.concept-freelance h2,
+.concept-career-head h2,
+.concept-taste-head .concept-archive-head h2 {
   margin: 0;
+  max-width: none;
   color: var(--black);
   font-family: var(--serif);
   font-size: clamp(3rem, 5vw, 5.2rem);
@@ -7426,77 +7373,14 @@ button {
   outline-offset: 3px;
 }
 
-/* The archive keeps one physical anchor. Graceland's story occupies the same
-   visual space as the Taste title only while the cover is being explored. */
+/* Taste now uses the same single-heading distinction as Clients and Career;
+   Graceland leads the wall itself instead of becoming a separate feature. */
 .concept-taste-head {
-  display: grid;
-  grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
-  gap: clamp(34px, 5vw, 72px);
-  align-items: center;
-}
-
-.concept-taste-head .concept-graceland {
-  position: relative;
   display: block;
-  width: 100%;
-  outline: none;
-}
-
-.concept-taste-head .concept-graceland img {
-  display: block;
-  width: 100%;
-}
-
-.concept-graceland-info {
-  position: absolute;
-  top: 0;
-  left: calc(100% + 14px);
-  z-index: 20;
-  width: min(340px, calc(100vw - 360px));
-  min-width: 250px;
-  padding: 18px;
-  border: 1px solid color-mix(in srgb, var(--concept-green) 38%, var(--line-strong));
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
-  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-5px);
-  transition: opacity 100ms ease, transform 100ms ease;
-}
-
-.concept-graceland:hover .concept-graceland-info,
-.concept-graceland:focus .concept-graceland-info {
-  opacity: 1;
-  transform: none;
-}
-
-.concept-graceland:focus-visible img {
-  outline: 2px solid var(--concept-green);
-  outline-offset: 3px;
-}
-
-.concept-graceland-info h2 {
-  margin-top: 0.34em;
-  font-size: clamp(2rem, 3vw, 3.15rem);
-}
-
-.concept-graceland-info div > p:last-child,
-.concept-graceland-info > p:last-child {
-  margin-top: 1em;
-  font-size: 0.94rem;
-  line-height: 1.46;
 }
 
 .concept-taste-head .concept-archive-head {
-  align-self: center;
-}
-
-.concept-taste-head .concept-archive-head h2 {
-  max-width: none;
-  margin: 0;
-  font-size: clamp(4rem, 8vw, 8rem);
-  line-height: 0.86;
+  display: block;
 }
 
 .akibwa-home--taste .deck-legend {
@@ -7572,7 +7456,9 @@ button {
     padding-bottom: 24px;
   }
 
-  .concept-career-head h2 {
+  .concept-freelance h2,
+  .concept-career-head h2,
+  .concept-taste-head .concept-archive-head h2 {
     font-size: 2.65rem;
   }
 
@@ -7584,35 +7470,6 @@ button {
     margin-top: 6px;
     font-size: 0.76rem;
     line-height: 1.36;
-  }
-
-  .concept-taste-head {
-    grid-template-columns: 116px minmax(0, 1fr);
-    gap: 18px;
-  }
-
-  .concept-graceland-info {
-    left: calc(100% + 12px);
-    width: calc(100vw - 160px);
-    min-width: 0;
-    padding: 14px;
-  }
-
-  .concept-graceland-info h2 {
-    font-size: 2rem;
-  }
-
-  .concept-graceland-info > p:last-child {
-    display: -webkit-box;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.38;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
-  }
-
-  .concept-taste-head .concept-archive-head h2 {
-    font-size: clamp(3.2rem, 17vw, 4.6rem);
   }
 
   .akibwa-home--taste .deck-legend {
@@ -7682,8 +7539,7 @@ button {
   .concept-client-card,
   .concept-career-node,
   .concept-career-card,
-  .concept-career-popover,
-  .concept-graceland-info {
+  .concept-career-popover {
     transition: none;
   }
 }
