@@ -1,15 +1,18 @@
 import { readFileSync } from "node:fs";
 
-/* Build-time contract for Akibwa's deliberately small interface. The public
-   index has no site header, modal viewer, card buttons, or general motion
-   system. It is one fixed sentence with a single identity cycle, seven plain
-   filters, a square visual wall, and the restored coloured sign-off footer. This check makes that
-   restraint harder to accidentally undo. */
+/* Build-time contract for Akibwa's public editorial index. The homepage is a
+   short introduction to current work, clients and career, followed by the
+   complete taste wall. Its navigation is four plain anchor links; information
+   appears on focus or hover only where a compact index needs the detail. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+const index = readFileSync(new URL("../app/page.jsx", import.meta.url), "utf8");
 const shell = readFileSync(new URL("../components/site-shell.jsx", import.meta.url), "utf8");
+const editorial = readFileSync(
+  new URL("../components/pages/editorial-home-concept.jsx", import.meta.url),
+  "utf8"
+);
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
-const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 
 const fail = (message) => {
@@ -39,85 +42,86 @@ const requireRuleText = (selector, declarations) => {
   }
 };
 
-/* The identity and menu live in the index, never in a separate header. */
-forbidText(shell, "site-header", "the retired site header must stay retired");
+/* The approved editorial route is the public index, with no separate header. */
 requireText(
-  home,
-  "<HeroFlipName /> — this is what I’ve made, done and loved.",
-  "the homepage must keep its fixed first-principles sentence and identity cycle"
+  index,
+  'import { EditorialHomeConcept } from "@/components/pages/editorial-home-concept"',
+  "the public index must render the editorial homepage"
 );
-forbidText(home, "HeroCycleWord", "the proposition must not cycle");
-const nameCycleStart = heroCycle.indexOf("export function HeroFlipName()");
-const nameCycleEnd = heroCycle.indexOf("export function HeroCycleWord", nameCycleStart);
-if (nameCycleStart === -1 || nameCycleEnd === -1) fail("the Daniel/Akibwa cycle must exist");
-const nameCycle = heroCycle.slice(nameCycleStart, nameCycleEnd);
-requireText(nameCycle, "NAME_INITIAL_DELAY", "the name cycle must advance automatically");
-requireText(nameCycle, "if (reducedMotion) return undefined", "the name cycle must respect reduced motion");
-requireText(nameCycle, 'className="hero-name"', "the current name needs its stable visual slot");
-forbidText(nameCycle, "<button", "the cycling name must remain display-only");
-forbidText(nameCycle, "onClick", "the cycling name must not pretend to be a link");
-forbidText(rule(".hero-name {"), "cursor:", "the cycling name must not carry a click cursor");
-requireRuleText(".hero-name-stack {", ["display: inline-grid", "white-space: nowrap"]);
+requireText(index, "return <EditorialHomeConcept />", "the editorial homepage must own the root route");
+forbidText(index, "<HomePage", "the retired all-in-one wall must not return as the root route");
+forbidText(shell, "site-header", "the retired site header must stay retired");
 
-/* Seven plain words are the complete filter model. Projects owns both the
-   shipped work and the former Life pieces; Everything is the explicit reset. */
-requireText(home, 'const PROJECTS_LENS = ["sites", "life"]', "Projects must include Life");
-requireText(home, '{ id: "everything", label: "Everything", lens: null', "Everything must be explicit");
-requireText(home, '{ id: "projects", label: "Projects", lens: PROJECTS_LENS', "Projects must be one merged filter");
-requireText(home, 'aria-pressed={activeId === set.id}', "filters must expose their selected state");
-requireText(home, 'onClick={() => selectFilter(set)}', "each word must select its filter");
-forbidText(home, "aria-expanded=", "plain filters must not pretend to open panels");
-requireRuleText(".akibwa-home .deck-legend .rail-word {", [
-  "font-size",
-  "text-decoration-line: none"
-]);
+/* Identity and navigation stay brief, static and directly useful. */
+requireText(editorial, "I’m{\" \"}", "the homepage must open with the first-person identity");
+requireText(editorial, '<span className="hero-name-value">Akibwa</span>', "Akibwa must be the visible name");
+requireText(editorial, "Building in the age of AI.", "the approved one-line proposition must remain");
+for (const [href, label] of [
+  ["#now", "Now"],
+  ["#work", "Work"],
+  ["#career", "Career"],
+  ["#taste", "Taste"]
+]) {
+  requireText(editorial, `<a href="${href}">${label}</a>`, `${label} must remain a plain anchor link`);
+}
+requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap"]);
+requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
+
+/* Current work is direct: one Features link and two real client destinations. */
+requireText(editorial, 'href="/features/"', "Features must link directly to the game");
+requireText(
+  editorial,
+  'src="/features/features-game-light-og-1200x630.png"',
+  "Features must keep the approved light artwork"
+);
+requireText(editorial, 'const clientNames = ["Butterfly Rose", "Português com a Inês"]', "the two current clients must lead");
+requireText(editorial, 'target="_blank"', "external client sites must open as external destinations");
+forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
+forbidText(editorial, "Also making", "the retired making strip must stay removed");
+
+/* Career is a horizontal seven-stop index. Copy remains behind hover/focus,
+   and the expanded dot halo keeps a real gap to dates and logo cards. */
+for (const name of [
+  "National Wealth Fund",
+  "Leeds Building Society",
+  "Electrical Work",
+  "Sky Betting & Gaming",
+  "Joinery Work",
+  "Vanquis Bank",
+  "Lloyds Banking Group"
+]) {
+  requireText(editorial, `"${name}"`, `${name} must remain in the career sequence`);
+}
+requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable");
+requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
+requireRuleText(".concept-career-stop {", ["grid-template-rows: 32px 36px 68px"]);
+requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireText(
   css,
-  ".akibwa-home .deck-legend .rail-word.is-active {\n  text-decoration-line: underline",
-  "the selected word must use a plain underline"
+  "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",
+  "career focus must keep the restrained dot halo"
 );
+requireText(css, "grid-template-rows: 32px 36px 56px", "mobile career dots must keep their clearance lane");
 
-/* Cards are visual objects unless they genuinely go somewhere. Linked cards
-   are anchors, not buttons that first open another layer. */
-requireText(home, "if (href) {", "Card must branch only when it has a destination");
-requireText(home, "<a", "linked cards must render as anchors");
-requireText(home, 'role="img" aria-label={label}', "passive cards must be labelled visual objects");
-requireText(home, "href={site.href ?? undefined}", "project cards must keep their direct links");
-requireText(home, "href={piece.href ?? undefined}", "Life Map and Trek cards must keep their direct links");
-forbidText(home, "function Spotlight", "the modal viewer must stay removed");
-forbidText(home, "card-back", "cards must not have backs");
-forbidText(home, "card-sheen", "cards must not carry foil");
-forbidText(home, "startViewTransition", "filtering must remain immediate");
-forbidText(home, "translateZ", "cards must not tilt toward the visitor");
-forbidText(home, 'size="grand"', "the wall must keep only standard and small cards");
-
-/* The wall stays compact and square on every viewport. Link feedback is a
-   quiet label reveal; touch keeps the label visible because hover is absent. */
+/* Taste reuses the compact square wall, led by Graceland and only the four
+   collections that describe personal taste. */
+requireText(editorial, "<HomePage tasteOnly />", "Taste must render the complete compact archive");
+requireText(home, "if (tasteOnly)", "the wall must keep its taste-only mode");
+requireText(home, "{gracelandCard}", "Graceland must lead the taste wall");
+requireText(
+  home,
+  '["everything", "music", "films", "games", "tv"].includes(item.id)',
+  "Taste must expose only Everything, Music, Films, Games and TV"
+);
 requireRuleText(".akibwa-home .deck .card {", [
   "aspect-ratio: 1",
   "border-radius: 5px",
   "box-shadow: none",
   "transform: none"
 ]);
-requireText(css, "--u: 44px", "the mobile wall must keep its compact unit");
-requireRuleText(".akibwa-home .card-label {", [
-  "opacity: 0",
-  "transition: opacity 120ms ease"
-]);
-requireRuleText(".akibwa-home .card--link:hover .card-label,", ["opacity: 1"]);
-requireRuleText(".akibwa-home .card--link .card-label {", ["opacity: 1"]);
-requireText(
-  css,
-  ".akibwa-home .deck.is-lensed .card:not(.is-lit)",
-  "filters must hide only non-matching cards"
-);
-
-/* The homepage is an object wall, not selectable prose. */
-requireRuleText(".akibwa-home {", ["user-select: none", "-webkit-user-select: none"]);
 
 /* The shared footer keeps the original sign-off and colour-coded routes. */
 requireText(footer, 'className="page-footer-panel"', "the footer must keep its panel");
-requireText(footer, 'className="page-footer-signoff"', "the footer must keep its sign-off");
 requireText(footer, "Fewer things done by hand.", "the footer must keep its original wording");
 requireText(footer, "<span>Manchester</span>", "the footer must keep the location");
 requireText(footer, 'href="mailto:', "the footer must keep email");
@@ -126,6 +130,6 @@ requireText(footer, 'href="https://www.instagram.com/', "the footer must keep In
 requireText(footer, '"--handle-accent": "#c05212"', "Manchester must keep its orange accent");
 requireText(footer, '"--handle-accent": "#d63a7a"', "Instagram must keep its pink accent");
 requireText(footer, '"--handle-accent": "#2f88ff"', "email must keep its blue accent");
-requireText(home, "<PageFooter", "the home page must render the footer");
+requireText(home, "<PageFooter", "the taste wall must finish with the shared footer");
 
 console.log("Navigation contract passed.");

@@ -1,4 +1,4 @@
-/* Rendered regression check for Akibwa's unified visual index.
+/* Rendered regression check for Akibwa's editorial homepage and taste index.
  *
  * Usage: npm run build && npm run check:navigation:dom
  * Optional: CHECK_NAV_URL=https://akibwa.com to exercise the deployed site.
@@ -191,6 +191,15 @@ const setMobile = () => cdp.send("Emulation.setDeviceMetricsOverride", {
 const mouseMove = (x, y) => cdp.send("Input.dispatchMouseEvent", {
   type: "mouseMoved", x, y
 });
+const clickAt = async (x, y) => {
+  await mouseMove(x, y);
+  await cdp.send("Input.dispatchMouseEvent", {
+    type: "mousePressed", x, y, button: "left", clickCount: 1
+  });
+  await cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseReleased", x, y, button: "left", clickCount: 1
+  });
+};
 const pressEscape = async () => {
   await cdp.send("Input.dispatchKeyEvent", {
     type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27
@@ -212,9 +221,6 @@ const pollUntil = async (probe, predicate, timeoutMs = 1200) => {
 
 const pageState = () => evaluate(`(() => {
   const cards = [...document.querySelectorAll(".deck .card")];
-  const headline = document.querySelector(".hero-sentence");
-  const readableHeadline = headline?.cloneNode(true);
-  readableHeadline?.querySelectorAll(".hero-name-sizer").forEach((node) => node.remove());
   const visible = cards.filter((card) => {
     const style = getComputedStyle(card);
     return style.display !== "none" && card.getClientRects().length > 0;
@@ -224,10 +230,19 @@ const pageState = () => evaluate(`(() => {
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
   };
   return {
-    headline: readableHeadline?.textContent.trim().replace(/\\s+/g, " "),
-    name: document.querySelector(".hero-name-value")?.textContent.trim(),
-    nameTag: document.querySelector(".hero-name")?.tagName,
-    nameFocusable: document.querySelector(".hero-name")?.tabIndex >= 0,
+    identity: document.querySelector(".concept-identity")?.textContent.trim().replace(/\\s+/g, " "),
+    lede: document.querySelector(".concept-lede")?.textContent.trim(),
+    nav: [...document.querySelectorAll(".concept-nav a")].map((link) => ({
+      text: link.textContent.trim(),
+      href: link.getAttribute("href")
+    })),
+    featureHref: document.querySelector(".concept-feature")?.getAttribute("href"),
+    clients: [...document.querySelectorAll(".concept-client-project strong")]
+      .map((item) => item.textContent.trim()),
+    career: [...document.querySelectorAll(".concept-career-stop")]
+      .map((item) => item.getAttribute("aria-label")),
+    careerDetailsHidden: [...document.querySelectorAll(".concept-career-popover")]
+      .every((item) => Number(getComputedStyle(item).opacity) === 0),
     filters: [...document.querySelectorAll(".deck-legend .rail-word")].map((button) => ({
       text: button.textContent.trim(),
       pressed: button.getAttribute("aria-pressed"),
@@ -263,6 +278,30 @@ const pageState = () => evaluate(`(() => {
   };
 })()`);
 
+const careerState = () => evaluate(`(() => {
+  const stops = [...document.querySelectorAll(".concept-career-stop")];
+  const haloRadius = 12;
+  const clearances = stops.map((stop) => {
+    const time = stop.querySelector(".concept-career-time").getBoundingClientRect();
+    const node = stop.querySelector(".concept-career-node").getBoundingClientRect();
+    const card = stop.querySelector(".concept-career-card").getBoundingClientRect();
+    const center = node.top + node.height / 2;
+    return {
+      above: (center - haloRadius) - time.bottom,
+      below: card.top - (center + haloRadius)
+    };
+  });
+  const first = stops[0];
+  return {
+    count: stops.length,
+    focused: first === document.activeElement,
+    popoverOpacity: Number(getComputedStyle(first.querySelector(".concept-career-popover")).opacity),
+    minAbove: Math.min(...clearances.map((item) => item.above)),
+    minBelow: Math.min(...clearances.map((item) => item.below)),
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+})()`);
+
 const selectFilter = async (name) => {
   await evaluate(`(() => {
     const button = [...document.querySelectorAll(".deck-legend .rail-word")]
@@ -281,30 +320,37 @@ const checkDesktop = async () => {
   });
   await goto("/");
   const state = await pageState();
+  check(state.identity === "I’m Akibwa", `the public identity is concise [${state.identity}]`);
+  check(state.lede === "Building in the age of AI.", `the proposition stays concise [${state.lede}]`);
   check(
-    state.headline === "I’m Daniel — this is what I’ve made, done and loved.",
-    `fixed headline starts with Daniel [${state.headline}]`
+    state.nav.map((item) => `${item.text}:${item.href}`).join(" / ") ===
+      "Now:#now / Work:#work / Career:#career / Taste:#taste",
+    `four direct section links render in order [${state.nav.map((item) => item.text).join(" / ")}]`
   );
-  check(state.nameTag === "SPAN", "the cycling name is display text, not a button or link");
-  check(state.nameFocusable === false, "the cycling name does not enter the tab order");
+  check(state.featureHref === "/features/", `Features links directly to the game [${state.featureHref}]`);
+  check(
+    state.clients.join(" / ") === "Butterfly Rose / Português com a Inês",
+    `the two client projects lead [${state.clients.join(" / ")}]`
+  );
+  check(state.career.length === 7, `the complete career sequence renders [${state.career.length} stops]`);
+  check(state.careerDetailsHidden, "career descriptions stay quiet until hover or focus");
   check(
     state.filters.map((item) => item.text).join(" / ") ===
-      "Everything / Projects / Career / Music / Films / Games / TV",
-    `seven plain filters render in order [${state.filters.map((item) => item.text).join(" / ")}]`
+      "Everything / Music / Films / Games / TV",
+    `five taste filters render in order [${state.filters.map((item) => item.text).join(" / ")}]`
   );
   check(
     state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Everything",
     "Everything is the sole initial filter"
   );
-  check(state.cards > 300, `the full visual archive renders [${state.cards} cards]`);
-  check(state.links > 0, `genuine destinations render as links [${state.links}]`);
-  check(state.passive > state.links, `taste and career cards remain passive visual objects [${state.passive}]`);
+  check(state.cards > 250, `the full taste archive renders [${state.cards} cards]`);
+  check(state.links === 0, "taste cards remain visual objects rather than false destinations");
+  check(state.passive === state.cards, `every taste card is a labelled visual object [${state.passive}]`);
   check(state.cardButtons === 0, "no wall card renders as a button");
   check(state.hasSpotlight === false, "no modal viewer exists");
   check(state.squareFailures === 0, "the sampled cards are square");
   check(state.sampleStandard.width > state.sampleSmall.width * 1.9, "standard cards are exactly the larger of two scales");
   check(state.sampleStandard.width < state.sampleSmall.width * 2.2, "the two scales share one grid unit");
-  check(state.inViewport >= 30, `the first screen stays dense [${state.inViewport} cards]`);
   check(state.footerSignoff === "Fewer things done by hand.", `footer restores its sign-off [${state.footerSignoff}]`);
   check(state.footerLocation === "Manchester", `footer keeps Manchester [${state.footerLocation}]`);
   check(state.footerLinks === "dakibwa / dakibwa / Email", `footer keeps its three routes [${state.footerLinks}]`);
@@ -314,24 +360,10 @@ const checkDesktop = async () => {
   );
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
 
-  const cycledName = await pollUntil(
-    () => evaluate(`document.querySelector(".hero-name-value")?.textContent.trim()`),
-    (name) => name === "Akibwa",
-    3800
-  );
-  check(cycledName === "Akibwa", `the one identity flourish cycles to Akibwa [${cycledName}]`);
-  const cycledState = await pageState();
-  check(
-    cycledState.headline === "I’m Akibwa — this is what I’ve made, done and loved.",
-    `the proposition stays fixed while the name changes [${cycledState.headline}]`
-  );
-
-  const linkSemantics = await evaluate(`[...document.querySelectorAll("a.card")].every((card) =>
-    Boolean(card.getAttribute("href")) &&
-    Boolean(card.getAttribute("aria-label")) &&
-    Boolean(card.querySelector(".card-label"))
+  const linkSemantics = await evaluate(`[...document.querySelectorAll(".concept-feature, .concept-client-project")].every((link) =>
+    Boolean(link.getAttribute("href")) && link.tagName === "A"
   )`);
-  check(linkSemantics, "every interactive card has a destination, name, and visible-label element");
+  check(linkSemantics, "every interactive project is a direct anchor with a real destination");
 };
 
 const checkLinkHover = async () => {
@@ -339,36 +371,77 @@ const checkLinkHover = async () => {
   await setDesktop();
   await goto("/");
   const before = await evaluate(`(() => {
-    const card = document.querySelector("a.card");
-    const r = card.getBoundingClientRect();
+    const link = document.querySelector(".concept-feature");
+    link.scrollIntoView({ block: "center" });
+    const r = link.getBoundingClientRect();
     return {
       x: r.left + r.width / 2,
       y: r.top + r.height / 2,
-      opacity: Number(getComputedStyle(card.querySelector(".card-label")).opacity)
+      arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
+      transform: getComputedStyle(link).transform,
+      shadow: getComputedStyle(link).boxShadow
     };
   })()`);
-  check(before.opacity === 0, "linked-card label starts quiet on desktop");
+  check(before.arrow === "none", "the Features arrow starts still");
   await mouseMove(before.x, before.y);
   const hovered = await pollUntil(
     () => evaluate(`(() => {
-      const card = document.querySelector("a.card");
+      const link = document.querySelector(".concept-feature");
       return {
-        opacity: Number(getComputedStyle(card.querySelector(".card-label")).opacity),
-        transform: getComputedStyle(card).transform,
-        shadow: getComputedStyle(card).boxShadow
+        arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
+        transform: getComputedStyle(link).transform,
+        shadow: getComputedStyle(link).boxShadow
       };
     })()`),
-    (value) => value.opacity > 0.99
+    (value) => value.arrow !== "none"
   );
-  check(hovered.opacity > 0.99, "hover reveals the linked card title");
-  check(hovered.transform === "none", "hover does not tilt, lift, or scale the card");
+  check(hovered.arrow !== "none", "hover gives the direct link one small directional response");
+  check(hovered.transform === "none", "hover does not tilt, lift, or scale the feature");
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");
   await mouseMove(1200, 40);
   const settled = await pollUntil(
-    () => evaluate(`Number(getComputedStyle(document.querySelector("a.card .card-label")).opacity)`),
-    (opacity) => opacity < 0.01
+    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-arrow")).transform`),
+    (transform) => transform === "none"
   );
-  check(settled < 0.01, "the label leaves cleanly after hover");
+  check(settled === "none", "the arrow settles cleanly after hover");
+};
+
+const checkCareerTimeline = async () => {
+  section("career detail and dot clearance");
+  await setDesktop(1100, 760);
+  await goto("/");
+  let point = await evaluate(`(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    const first = document.querySelector(".concept-career-stop");
+    first.scrollIntoView({ block: "center" });
+    const rect = first.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  })()`);
+  await clickAt(point.x, point.y);
+  let state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
+  check(state.count === 7, `seven career stops remain visible [${state.count}]`);
+  check(state.focused, "a career stop can receive keyboard focus");
+  check(state.popoverOpacity > 0.99, `focus reveals the career description [${state.popoverOpacity}]`);
+  check(state.minAbove >= 5.5, `the halo clears every date [${state.minAbove.toFixed(1)}px]`);
+  check(state.minBelow >= 5.5, `the halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
+  check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
+
+  await setMobile();
+  await goto("/");
+  point = await evaluate(`(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    const first = document.querySelector(".concept-career-stop");
+    first.scrollIntoView({ block: "center" });
+    const rect = first.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  })()`);
+  await clickAt(point.x, point.y);
+  state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
+  check(state.focused, "the phone timeline retains keyboard focus semantics");
+  check(state.popoverOpacity > 0.99, `the phone timeline reveals the same concise detail [${state.popoverOpacity}]`);
+  check(state.minAbove >= 5.5, `the phone halo clears every date [${state.minAbove.toFixed(1)}px]`);
+  check(state.minBelow >= 5.5, `the phone halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
+  check(state.overflow <= 1, `the phone timeline has no horizontal overflow [${state.overflow}px]`);
 };
 
 const checkFilters = async () => {
@@ -388,15 +461,6 @@ const checkFilters = async () => {
     "Music is the sole pressed word"
   );
 
-  await selectFilter("Projects");
-  state = await pageState();
-  check(state.hash === "#projects", `Projects owns the merged hash [${state.hash}]`);
-  check(
-    state.visibleKeys.every((key) => key === "sites" || key === "life"),
-    `Projects merges project and life cards [${state.visibleKeys.join(", ")}]`
-  );
-  check(state.visibleKeys.includes("life"), "the former Life cards are present inside Projects");
-
   await pressEscape();
   await sleep(80);
   state = await pageState();
@@ -412,6 +476,13 @@ const checkMobile = async () => {
   section("compact mobile wall at 390px");
   await setMobile();
   await goto("/");
+  const initial = await pageState();
+  check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
+  await evaluate(`(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    document.querySelector("#taste").scrollIntoView({ block: "start" });
+  })()`);
+  await sleep(100);
   const state = await pageState();
   check(state.squareFailures === 0, "mobile cards preserve square artwork");
   check(
@@ -426,14 +497,12 @@ const checkMobile = async () => {
   check(state.overflow <= 1, `mobile has no horizontal overflow [${state.overflow}px]`);
 
   const touch = await evaluate(`(() => {
-    const label = document.querySelector("a.card .card-label");
     const nav = document.querySelector(".deck-legend");
     const footer = document.querySelector(".page-footer").getBoundingClientRect();
     const panel = document.querySelector(".page-footer-panel").getBoundingClientRect();
     const signoff = document.querySelector(".page-footer-signoff").getBoundingClientRect();
     const meta = document.querySelector(".page-footer-meta").getBoundingClientRect();
     return {
-      labelOpacity: Number(getComputedStyle(label).opacity),
       navHeight: nav.getBoundingClientRect().height,
       footerInside: footer.left >= 0 && footer.right <= innerWidth + 1 &&
         panel.left >= 0 && panel.right <= innerWidth + 1 &&
@@ -441,7 +510,6 @@ const checkMobile = async () => {
       footerStacked: signoff.bottom <= meta.top + 1
     };
   })()`);
-  check(touch.labelOpacity > 0.99, "linked titles are permanently legible without hover");
   check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
   check(touch.footerInside, "the restored footer stays inside the mobile frame");
   check(touch.footerStacked, "the footer sign-off stacks above its mobile contact row");
@@ -455,13 +523,17 @@ const checkReducedMotion = async () => {
   await setDesktop();
   await goto("/");
   const durations = await evaluate(`(() => {
-    const label = document.querySelector("a.card .card-label");
-    const card = document.querySelector("a.card");
-    return [getComputedStyle(label).transitionDuration, getComputedStyle(card).transitionDuration];
+    const selectors = [
+      ".concept-arrow",
+      ".concept-client-arrow",
+      ".concept-career-node",
+      ".concept-career-popover"
+    ];
+    return selectors.map((selector) => getComputedStyle(document.querySelector(selector)).transitionDuration);
   })()`);
   check(
     durations.every((value) => value.split(",").every((part) => parseFloat(part) === 0)),
-    `index transitions are zero [${durations.join(" / ")}]`
+    `editorial transitions are zero [${durations.join(" / ")}]`
   );
   await cdp.send("Emulation.setEmulatedMedia", {
     features: [{ name: "prefers-reduced-motion", value: "" }]
@@ -511,6 +583,7 @@ const main = async () => {
 
     await checkDesktop();
     await checkLinkHover();
+    await checkCareerTimeline();
     await checkFilters();
     await checkMobile();
     await checkReducedMotion();

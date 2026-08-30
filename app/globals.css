@@ -6503,11 +6503,10 @@ button {
   }
 }
 
-/* ── Editorial homepage concept ─────────────────────────────────────────
-   A local comparison route, deliberately isolated from the live homepage.
-   The opening is an edit: current identity and work first, complete archive
-   second. Artwork carries the colour; structure comes from type and rules,
-   not a second system of cards, drawers or animated reveals. */
+/* ── Editorial homepage ─────────────────────────────────────────────────
+   The opening is an edit: current identity and work first, complete taste
+   archive second. Artwork carries the colour; structure comes from type and
+   rules, not a second system of cards, drawers or animated reveals. */
 .concept-page {
   --concept-dark: #0c1113;
   --concept-now-rgb: 224, 122, 26;
