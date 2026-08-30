@@ -8,12 +8,14 @@ const clientProjects = clientNames
   .map((name) => sites.find((site) => site.name === name))
   .filter(Boolean);
 
-/* This is the same five-stop professional timeline the previous About page
-   used, now backed by the fuller career copy already held in the wall data. */
+/* Keep the whole working history in sequence, including the two stretches on
+   the tools between office roles. The fuller copy stays behind interaction. */
 const careerNames = [
   "National Wealth Fund",
   "Leeds Building Society",
+  "Electrical Work",
   "Sky Betting & Gaming",
+  "Joinery Work",
   "Vanquis Bank",
   "Lloyds Banking Group"
 ];
@@ -91,9 +93,6 @@ export function EditorialHomeConcept() {
             ))}
           </div>
 
-          <a className="concept-text-link" href="mailto:***REMOVED***">
-            Talk about a project <span aria-hidden="true">↗</span>
-          </a>
         </article>
       </section>
 
@@ -102,7 +101,10 @@ export function EditorialHomeConcept() {
           <h2 id="career-title">Career</h2>
         </header>
 
-        <ol className="concept-career-timeline">
+        <ol
+          className="concept-career-timeline"
+          style={{ "--career-count": career.length }}
+        >
           {career.map((job) => (
             <li
               className="concept-career-stop"

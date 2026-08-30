@@ -6928,7 +6928,6 @@ button {
 
 .concept-archive-wall .akibwa-home {
   min-height: 0;
-  padding-bottom: 0;
 }
 
 @media (max-width: 900px) {
@@ -7184,11 +7183,6 @@ button {
   outline-offset: 3px;
 }
 
-.concept-freelance .concept-text-link {
-  margin-top: auto;
-  padding-top: 20px;
-}
-
 .concept-client-card-foot {
   min-height: 46px;
   align-items: center;
@@ -7198,7 +7192,7 @@ button {
    deliberately transient so the page stays scannable on every viewport. */
 .concept-career-section {
   padding: clamp(58px, 6.5vw, 88px) 0 clamp(112px, 9vw, 140px);
-  border-top: 1px solid var(--line-strong);
+  border-top: 4px solid var(--concept-orange);
 }
 
 .concept-career-head {
@@ -7221,7 +7215,7 @@ button {
 .concept-career-timeline {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--career-count), minmax(0, 1fr));
   gap: clamp(9px, 1.4vw, 18px);
   margin: 0;
   padding: 0;
@@ -7254,13 +7248,14 @@ button {
   font-weight: 650;
   letter-spacing: 0.055em;
   line-height: 1.2;
+  text-align: center;
   text-transform: uppercase;
 }
 
 .concept-career-node {
   z-index: 1;
   align-self: center;
-  justify-self: start;
+  justify-self: center;
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -7383,6 +7378,10 @@ button {
   display: block;
 }
 
+.concept-archive {
+  border-top-color: var(--concept-orange);
+}
+
 .akibwa-home--taste .deck-legend {
   gap: 0.4em 1em;
 }
@@ -7426,15 +7425,26 @@ button {
     min-width: 0;
   }
 
-  .concept-career-stop:nth-child(3) .concept-career-popover {
+  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5) .concept-career-popover {
     right: auto;
     left: 50%;
     transform: translate(-50%, -4px);
   }
 
-  .concept-career-stop:nth-child(3):hover .concept-career-popover,
-  .concept-career-stop:nth-child(3):focus .concept-career-popover {
+  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):focus .concept-career-popover {
     transform: translateX(-50%);
+  }
+
+  .concept-career-stop:nth-child(n + 6) .concept-career-popover {
+    right: 0;
+    left: auto;
+    transform: translateY(-4px);
+  }
+
+  .concept-career-stop:nth-child(n + 6):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n + 6):focus .concept-career-popover {
+    transform: none;
   }
 }
 
