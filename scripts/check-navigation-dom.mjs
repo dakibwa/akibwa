@@ -269,6 +269,10 @@ const pageState = () => evaluate(`(() => {
     cards: cards.length,
     visible: visible.length,
     visibleKeys: [...new Set(visible.map((card) => card.dataset.key))],
+    visibleCounts: Object.fromEntries(
+      [...new Set(visible.map((card) => card.dataset.key))]
+        .map((key) => [key, visible.filter((card) => card.dataset.key === key).length])
+    ),
     links: document.querySelectorAll("a.card").length,
     passive: document.querySelectorAll("div.card[role=img]").length,
     cardButtons: document.querySelectorAll("button.card").length,
@@ -377,14 +381,20 @@ const checkDesktop = async () => {
   check(state.careerDetailsHidden, "career descriptions stay quiet until hover or focus");
   check(
     state.filters.map((item) => item.text).join(" / ") ===
-      "Everything / Music / Films / Games / TV",
+      "Highlights / Music / Films / Games / TV",
     `five taste filters render in order [${state.filters.map((item) => item.text).join(" / ")}]`
   );
   check(
-    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Everything",
-    "Everything is the sole initial filter"
+    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Highlights",
+    "Highlights is the sole initial filter"
   );
-  check(state.cards > 250, `the full taste archive renders [${state.cards} cards]`);
+  check(state.cards === 41, `the opening edit stays finite [${state.cards} cards]`);
+  check(
+    [...state.visibleKeys].sort().join(" / ") === "films / games / music / tv" &&
+      state.visibleCounts.music === 11 &&
+      ["films", "games", "tv"].every((key) => state.visibleCounts[key] === 10),
+    `the opening edit is balanced across four sections [${JSON.stringify(state.visibleCounts)}]`
+  );
   check(state.links === 0, "taste cards remain visual objects rather than false destinations");
   check(state.passive === state.cards, `every taste card is a labelled visual object [${state.passive}]`);
   check(state.cardButtons === 0, "no wall card renders as a button");
@@ -581,6 +591,7 @@ const checkFilters = async () => {
   let state = await pageState();
   check(state.hash === "#music", `Music owns the shareable hash [${state.hash}]`);
   check(state.visibleKeys.length === 1 && state.visibleKeys[0] === "music", "Music shows only music cards");
+  check(state.cards > 200, `Music reveals its complete shelf [${state.cards} cards]`);
   check(
     state.filters.every((item) => item.display !== "none"),
     "all filter words remain visible while a filter is active"
@@ -595,10 +606,10 @@ const checkFilters = async () => {
   state = await pageState();
   check(state.hash === "", "Escape returns to the unfiltered wall");
   check(
-    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Everything",
-    "Everything is restored without a second interaction mode"
+    state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Highlights",
+    "Highlights is restored without a second interaction mode"
   );
-  check(state.visible === state.cards, "all cards return immediately");
+  check(state.cards === 41 && state.visible === 41, "the balanced Highlights edit returns immediately");
 };
 
 const checkMobile = async () => {

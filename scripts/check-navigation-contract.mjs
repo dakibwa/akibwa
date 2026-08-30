@@ -131,16 +131,18 @@ requireText(
 );
 requireText(css, "grid-template-rows: 32px 36px 56px", "mobile career dots must keep their clearance lane");
 
-/* Taste reuses the compact square wall, led by Graceland and only the four
-   collections that describe personal taste. */
-requireText(editorial, "<HomePage tasteOnly />", "Taste must render the complete compact archive");
+/* Taste opens on a balanced edit, then exposes the complete archive one
+   medium at a time. */
+requireText(editorial, "<HomePage tasteOnly />", "Taste must render the categorised compact archive");
 requireText(home, "if (tasteOnly)", "the wall must keep its taste-only mode");
 requireText(home, "{gracelandCard}", "Graceland must lead the taste wall");
 requireText(
   home,
   '["everything", "music", "films", "games", "tv"].includes(item.id)',
-  "Taste must expose only Everything, Music, Films, Games and TV"
+  "Taste must expose only Highlights, Music, Films, Games and TV"
 );
+requireText(home, 'label: "Highlights"', "Taste must open on a concise Highlights edit");
+requireText(home, "const TASTE_HIGHLIGHTS_PER_SECTION = 10", "each medium must contribute ten opening highlights");
 requireRuleText(".akibwa-home .deck .card {", [
   "aspect-ratio: 1",
   "border-radius: 5px",
@@ -148,6 +150,16 @@ requireRuleText(".akibwa-home .deck .card {", [
   "transform: none"
 ]);
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
+
+/* Each client preview owns its frame; the former shared underline must not
+   make the pair look like one unfinished row. */
+forbidText(rule(".concept-freelance {"), "border-bottom", "Clients must not retain the shared underline");
+requireRuleText(".concept-client-project {", [
+  "border: 2px solid",
+  "border-top-width: 4px",
+  "border-radius: 5px"
+]);
+requireRuleText(".concept-client-visual picture,", ["saturate(1.1)", "contrast(1.03)"]);
 
 /* Taste artwork must resolve to real Retina-sized files rather than stretching
    the old 198px album rung or falling back to the full Graceland source. */

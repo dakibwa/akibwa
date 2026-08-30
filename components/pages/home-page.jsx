@@ -194,13 +194,13 @@ export function HomePage({ tasteOnly = false }) {
     aboveSync: syncKeys.has(`${id}:${index}`)
   });
 
-  const cardsFor = (id, { all = false, as } = {}) => {
+  const cardsFor = (id, { all = false, as, limit } = {}) => {
     /* `as` renders one collection inside another set's row — the toolkit
        rides with Jobs, so its cards dim, light and open as Jobs does. */
     const owner = as ?? id;
     const set = sets.find((s) => s.id === owner);
     const isDim = dim(owner);
-    const cap = all ? Infinity : set?.cap ?? Infinity;
+    const cap = limit ?? (all ? Infinity : set?.cap ?? Infinity);
     if (id === "jobs") {
       /* Career is context rather than navigation, so these marks are visual
          objects with an accessible label, not 8 buttons that go nowhere. */
@@ -392,15 +392,24 @@ export function HomePage({ tasteOnly = false }) {
     );
 
     if (tasteOnly) {
+      /* The opening edit is deliberately finite: ten favourites from each
+         medium, with Graceland first. Choosing a medium replaces that edit
+         with its complete shelf, so the archive remains intact without
+         asking every visitor to load and scan all 330 pieces at once. */
+      const selectedTaste = activeId === "everything" ? null : activeId;
+      const tasteLists = selectedTaste
+        ? [[selectedTaste, cardsFor(selectedTaste, { all: true })]]
+        : [
+            ["music", cardsFor("music", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
+            ["films", cardsFor("films", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
+            ["games", cardsFor("games", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
+            ["tv", cardsFor("tv", { limit: TASTE_HIGHLIGHTS_PER_SECTION })]
+          ];
+
       return (
         <>
-          {gracelandCard}
-          {blend([
-            ["music", cardsFor("music")],
-            ["films", cardsFor("films")],
-            ["games", cardsFor("games")],
-            ["tv", cardsFor("tv")]
-          ])}
+          {!selectedTaste || selectedTaste === "music" ? gracelandCard : null}
+          {blend(tasteLists)}
         </>
       );
     }
@@ -433,7 +442,7 @@ export function HomePage({ tasteOnly = false }) {
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lens, tasteOnly]);
+  }, [activeId, lens, tasteOnly]);
 
   return (
     <section className={`akibwa-home${tasteOnly ? " akibwa-home--taste" : ""}`}>
@@ -452,6 +461,13 @@ export function HomePage({ tasteOnly = false }) {
                 className={`rail-word${activeId === set.id ? " is-active" : ""}`}
                 style={{ "--index-accent-rgb": set.accent }}
                 aria-pressed={activeId === set.id}
+                aria-label={
+                  tasteOnly
+                    ? set.id === "everything"
+                      ? "Show Taste highlights"
+                      : `Show all ${set.label}`
+                    : undefined
+                }
                 onClick={() => selectFilter(set)}
               >
                 {set.label}
@@ -495,7 +511,9 @@ const LEGEND = [
 
 const TASTE_LEGEND = LEGEND.filter((item) =>
   ["everything", "music", "films", "games", "tv"].includes(item.id)
-);
+).map((item) => (item.id === "everything" ? { ...item, label: "Highlights" } : item));
+
+const TASTE_HIGHLIGHTS_PER_SECTION = 10;
 
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for
