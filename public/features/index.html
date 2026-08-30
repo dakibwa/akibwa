@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-Y1ulGd0RzRXizfpKPcBFzwjD5JiyvMc0d1PFP2p4wuQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-qCgCEugofa9YLNjSWi9LqZMke+AFdNreSa/bvrjPDfo=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -5339,23 +5339,25 @@ function resetDescent(){
 
 
 const TUTNETS=[
-  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5}
+  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
+  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3},
+  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3}
 ];
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
-function repairRetiredTutorialRun(){
+function repairOutOfRangeTutorialRun(){
   if(!inTutorialRun() || R().netIndex<TUTNETS.length) return false;
   newRun('daily',today());
   builtFor=-1;
   save();
   return true;
 }
-repairRetiredTutorialRun();
+repairOutOfRangeTutorialRun();
 function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !R().over}
 let tutStepAt=1;
 function tutorialResumeStep(){
-  const r=R();
-  if((r.freed||[]).length) return 3;
-  if((r.netMoves||0)>0 || Object.keys(r.positions||{}).length) return 2;
+  const r=R(), split=(r.splitNodes||[]).length;
+  if((r.freed||[]).length || (r.netIndex===1 && split)) return 3;
+  if((r.netMoves||0)>0 || split || Object.keys(r.positions||{}).length) return 2;
   return 1;
 }
 
@@ -5363,17 +5365,31 @@ let gTut=null, tutLit=null;
 function tutCross(sub,want){
   const pt=n=>(sub&&n===sub.n)?{x:sub.x,y:sub.y}:{x:n.x0,y:n.y0};
   const act=threads.filter(t=>!t.freed);
+  const S=act.map(t=>segList(t.nodes.length,t.chord)), self=GEN_RULES.selfX==='count';
   const per=act.map(()=>0);
   let total=0; const mine=[];
-  for(let i=0;i<act.length;i++)for(let j=i+1;j<act.length;j++){
-    const A=act[i],B=act[j];
-    for(let a=0;a<A.nodes.length-1;a++)for(let b=0;b<B.nodes.length-1;b++){
-      const n1=A.nodes[a],n2=A.nodes[a+1],n3=B.nodes[b],n4=B.nodes[b+1];
+  for(let i=0;i<act.length;i++){
+    const A=act[i], SA=S[i];
+    if(self) for(let a=0;a<SA.length;a++)for(let b=a+1;b<SA.length;b++){
+      const n1=A.nodes[SA[a][0]],n2=A.nodes[SA[a][1]],
+            n3=A.nodes[SA[b][0]],n4=A.nodes[SA[b][1]];
       if(n1===n3||n1===n4||n2===n3||n2===n4)continue;
       const x=segX(pt(n1),pt(n2),pt(n3),pt(n4));
       if(!x)continue;
-      total++; per[i]++; per[j]++;
+      total++; per[i]+=2;
       if(want&&(n1===want||n2===want||n3===want||n4===want)) mine.push(x);
+    }
+    for(let j=i+1;j<act.length;j++){
+      const B=act[j], SB=S[j];
+      for(let a=0;a<SA.length;a++)for(let b=0;b<SB.length;b++){
+        const n1=A.nodes[SA[a][0]],n2=A.nodes[SA[a][1]],
+              n3=B.nodes[SB[b][0]],n4=B.nodes[SB[b][1]];
+        if(n1===n3||n1===n4||n2===n3||n2===n4)continue;
+        const x=segX(pt(n1),pt(n2),pt(n3),pt(n4));
+        if(!x)continue;
+        total++; per[i]++; per[j]++;
+        if(want&&(n1===want||n2===want||n3===want||n4===want)) mine.push(x);
+      }
     }
   }
   let freeable=0;
@@ -5440,8 +5456,11 @@ function tutFind(){
   if(best.freeable<=now.freeable && best.total>=now.total) return null;
   return {n:best.n, x:best.x, y:best.y, marks:tutCross(null,best.n).mine};
 }
+const TUT_JOIN=1500;
+let tutJoinT=null, tutJoinKey='', tutJoined=false;
 function tutSpotClear(){
   if(gTut){ gTut.remove(); gTut=null }
+  clearTimeout(tutJoinT); tutJoinT=null; tutJoinKey=''; tutJoined=false;
   tutLit=null; tutAct=null; tutLights=[];
   syncTutorialTargets();
 }
@@ -5497,12 +5516,22 @@ function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
   if(tutorialFreePlay()){ tutSpotClear(); return }
   readMarkSizes();                 // the aperture is in neuron radii, and those move
-  const move=tutFind();
-  const lights=[move].filter(Boolean);
+  const named=tutNamed();
+  let move=null;
+  if(!named) move=tutFind();
+  else if(named.join){
+    const key=R().netIndex+':'+tutStepAt;
+    if(key!==tutJoinKey){
+      tutJoinKey=key; tutJoined=!!reduceMotion; clearTimeout(tutJoinT);
+      if(!tutJoined) tutJoinT=setTimeout(()=>{tutJoined=true; tutSpotlight()},TUT_JOIN);
+    }
+    if(tutJoined) move=tutFind();
+  }
+  const lights=[named,move].filter(Boolean);
   const t=tutLit=lights[0];
   if(!t){ tutSpotClear(); return }
   tutLights=lights;
-  tutAct=move.n;
+  tutAct=move ? move.n : (named&&!named.n.pinned ? named.n : null);
   syncTutorialTargets();
   const k=NR/10, hole=46*k, xhole=24*k, ringR=TUT_RING*k;
   const f=(v)=>v.toFixed(1);
@@ -5546,6 +5575,16 @@ const TUTSTEPS_BY_NET=[
     '<b>drag a neuron.</b> the lines follow.',
     '<b>clear every crossing off one line.</b> it comes free.',
     'one crossing left. <b>clear it.</b>'
+  ],
+  [ // net 1 — the joint/shared neuron
+    '<b>tap the double ring.</b> it is one neuron shared by both colours.',
+    '<b>split it into two.</b> each colour can then move on its own.',
+    'the colours are separate. <b>clear the crossings.</b>'
+  ],
+  [ // net 2 — fixed neurons
+    'the <b>square stays fixed.</b> drag the pulsing circle instead.',
+    '<b>move a circle around the square.</b> squares never move.',
+    'the squares stay put. <b>clear the crossings with any circle.</b>'
   ]
 ];
 const TUTSTEPS=TUTSTEPS_BY_NET[0];   // the shape older code still reads
@@ -5553,6 +5592,15 @@ const TUTLIT=[
   '<b>drag the lit neuron.</b> the lines follow.',
   null, null
 ];
+function tutNamed(){
+  const net=R().netIndex, steps=TUTSTEPS_BY_NET[net];
+  if(!steps) return null;
+  const step=Math.min(tutStepAt,steps.length);
+  const n = net===1 && step<=2 ? members.find(m=>m.merged)
+    : net===2 && step===1 ? members.find(m=>m.pinned)
+    : null;
+  return n ? {n,marks:[],look:true,join:net===2} : null;
+}
 let coachSig='';
 function renderTutorial(){
   $('play').classList.toggle('tutorial',inTutorial());
@@ -5577,7 +5625,9 @@ function renderTutorial(){
   });
   const key=$('coachkey');
   const keySets=[
-    [['feature','feature'],['neuron','neuron'],['crossing','crossing']]
+    [['feature','feature'],['neuron','neuron'],['crossing','crossing']],
+    [['shared','double ring · shared'],['split','after tap · two neurons']],
+    [['pinned','square · fixed'],['neuron','circle · moves']]
   ];
   if(key.dataset.lesson!==String(net)){
     key.dataset.lesson=String(net);
@@ -5588,7 +5638,7 @@ function renderTutorial(){
 }
 function tutReach(step){
   if(!inTutorial())return;
-  if(step>=tutStepAt){tutStepAt=step+1; renderTutorial()}
+  if(step>=tutStepAt){tutStepAt=step+1; renderTutorial(); renderHud()}
   else tutSpotlight();
 }
 function endTutorial(){
@@ -5755,12 +5805,16 @@ function clearNet(){
   if(wasTutorial){
     tutReach(3);
     if(finalTutorial) endTutorial();
+    else tutStepAt=1;
   }
   save();
   holdGauge();
   boardCleared();
   if(setDone) renderHud();
+  const firstTutorial = wasTutorial && read.num===1;
+  const tutorialMidway = wasTutorial && !finalTutorial;
   const card = setDone ? showRunOver
+             : tutorialMidway && !firstTutorial ? nextNet
              : (()=>showNetCleared(feats,tier,wasTutorial,read));
   if(reduceMotion) setTimeout(card,260);
   else holdCleared(card);
@@ -5882,30 +5936,36 @@ function showNetCleared(feats,tier,wasTutorial,read){
     const b=store.collection.badges[k];
     return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
   }).join('')}</div>`;
-  const tutorialResult=wasTutorial&&read.finalTutorial;
-  const quiet=tutorialResult
-    ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. tutorial complete.</p>`
+  const tutorialFirst=wasTutorial && read.num===1 && !read.finalTutorial;
+  const tutorialFinal=wasTutorial && read.finalTutorial;
+  const tutorialCard=tutorialFirst||tutorialFinal;
+  const quiet=tutorialCard
+    ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. ${tutorialFinal?'tutorial complete':'first lesson complete'}.</p>`
     : `<p class="bquiet">${feats.length} features freed: ${feats.join(', ')}. `+
       `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
-    strip:tutorialResult?FLAG:TIERCOL[tier],
-    title:tutorialResult?'features drawn':tierSay(tier),
-    sub:(tutorialResult?'you untangled your first net':'net cleared')
+    strip:tutorialCard?FLAG:TIERCOL[tier],
+    title:tutorialFirst?'features drawn':tutorialFinal?'tutorial complete':tierSay(tier),
+    sub:(tutorialFirst?'you untangled your first net'
+        :tutorialFinal?'you have seen every kind of neuron':'net cleared')
         +(read.assisted?' · settled with descent':''),
-    num:tutorialResult?'01':String(read.num).padStart(2,'0'),
+    num:String(read.num).padStart(2,'0'),
     rows:[],
     body:mint+quiet,
-    note:tutorialResult
+    note:tutorialFirst
       ? 'the shapes you left became these features. fewer turns earns a better rung.'
+      : tutorialFinal
+      ? 'circles move. tap a double ring to split it. squares stay fixed.'
       : read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
-    actions:`<button class="wbtn solid" id="contbtn">${tutorialResult
-      ? (read.returning?"back to today's set →":"start today's set →")
+    actions:`<button class="wbtn solid" id="contbtn">${tutorialFirst
+      ? 'next: a shared neuron →'
+      : tutorialFinal ? (read.returning?"back to today's set →":"start today's set →")
       : 'continue →'}</button>`,
-    foot:wasTutorial?signInInvite():''
+    foot:tutorialFinal?signInInvite():''
   });
   showVeil('netveil');
-  if(wasTutorial) fillSignInInvite();
+  if(tutorialFinal) fillSignInInvite();
   $('netveil').dataset.returnView='';
   $('contbtn').onclick=leaveNetCard;
 }
@@ -6457,8 +6517,10 @@ function renderHud(){
   const D=POLICY.dailyNets, tut=inTutorial();
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
   if(tut){
-    const les=Math.min(R().netIndex,TUTNETS.length);
-    paintCells('setmeter',Array.from({length:TUTNETS.length},()=>`var(${SETAHEAD})`),
+    const les=Math.min(R().netIndex,TUTNETS.length-1);
+    const LCOL=[TIERCOL.perfect,TIERCOL.clean,TIERCOL.flawless];
+    paintCells('setmeter',Array.from({length:TUTNETS.length},(_,i)=>
+      'var('+(i<les?LCOL[i]:SETAHEAD)+')'),
       'tutorial '+Math.min(les+1,TUTNETS.length)+' of '+TUTNETS.length);
   } else
   paintCells('setmeter',Array.from({length:D},(_,i)=>'var('+(cells[i]?tierCol(cells[i].tier):SETAHEAD)+')'),
