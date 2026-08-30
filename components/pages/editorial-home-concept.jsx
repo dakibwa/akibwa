@@ -29,7 +29,7 @@ export function EditorialHomeConcept() {
           <HeroFlipName />
         </h1>
         <p className="concept-lede">
-          I’m moving into freelance work, building useful apps and practical data and AI systems.
+          I build useful things, end to end.
         </p>
         <nav className="concept-nav" aria-label="On this page">
           <a href="#now">Now</a>
@@ -65,12 +65,8 @@ export function EditorialHomeConcept() {
         </a>
 
         <article className="concept-freelance" id="now">
-          <p className="concept-kicker">Going independent</p>
-          <h2>Building the whole thing.</h2>
-          <p>
-            Sites, booking systems, games, data pipelines and AI tools — from the first rough idea
-            to the live product.
-          </p>
+          <p className="concept-kicker">Freelance</p>
+          <h2>Going independent.</h2>
 
           <div className="concept-client-projects" aria-label="Current client projects">
             {clientProjects.map((project) => (
@@ -89,10 +85,7 @@ export function EditorialHomeConcept() {
                   above
                 />
                 <span className="concept-client-card-foot">
-                  <span>
-                    <small>Live client work</small>
-                    <strong>{project.name}</strong>
-                  </span>
+                  <strong>{project.name}</strong>
                   <span className="concept-arrow" aria-hidden="true">↗</span>
                 </span>
               </a>
@@ -107,14 +100,7 @@ export function EditorialHomeConcept() {
 
       <section className="page-grid concept-career-section" id="career" aria-labelledby="career-title">
         <header className="concept-career-head">
-          <div>
-            <p className="concept-kicker">Career, compressed</p>
-            <h2 id="career-title">From credit risk to data platforms.</h2>
-          </div>
-          <p>
-            I’ve spent my career turning complex data into systems people can use — from credit
-            risk and BI leadership to building the National Wealth Fund’s data environment.
-          </p>
+          <h2 id="career-title">Career</h2>
         </header>
 
         <ol className="concept-career-timeline">
@@ -124,18 +110,19 @@ export function EditorialHomeConcept() {
               key={job.name}
               style={{ "--company-accent": job.accent }}
               tabIndex={0}
+              aria-label={`${job.name}, ${job.role}, ${job.span}. ${job.back}`}
             >
               <span className="concept-career-time">{job.span}</span>
               <span className="concept-career-node" aria-hidden="true" />
               <div className="concept-career-card">
-                <div className="concept-career-summary">
-                  <span className={`concept-career-logo${job.tile ? " is-tile" : ""}`} aria-hidden="true">
-                    <SiteImage src={job.logo} slot="logo" sizes="28px" alt="" />
-                  </span>
-                  <strong>{job.name}</strong>
-                  <span>{job.role}</span>
-                </div>
-                <p className="concept-career-note">{job.back}</p>
+                <span className={`concept-career-logo${job.tile ? " is-tile" : ""}`} aria-hidden="true">
+                  <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
+                </span>
+              </div>
+              <div className="concept-career-popover" aria-hidden="true">
+                <strong>{job.name}</strong>
+                <span>{job.role}</span>
+                <p>{job.back}</p>
               </div>
             </li>
           ))}
@@ -144,14 +131,18 @@ export function EditorialHomeConcept() {
 
       <section className="concept-archive" id="archive" aria-labelledby="archive-title">
         <div className="page-grid concept-taste-head">
-          <article className="concept-graceland">
+          <article
+            className="concept-graceland"
+            tabIndex={0}
+            aria-label="Paul Simon — Graceland, 1986. Focus to read why it is here."
+          >
             <SiteImage
               src="/music-art/graceland.webp"
               slot="grandTile"
               sizes="(max-width: 560px) 116px, (max-width: 980px) 220px, 280px"
               alt="Paul Simon — Graceland album cover"
             />
-            <div>
+            <div className="concept-graceland-info">
               <p className="concept-kicker">The record at the front</p>
               <h2>Graceland</h2>
               <p className="concept-meta-line">Paul Simon · 1986</p>
@@ -163,9 +154,7 @@ export function EditorialHomeConcept() {
           </article>
 
           <header className="concept-archive-head">
-            <p className="concept-kicker">Taste</p>
-            <h2 id="archive-title">The things I keep coming back to.</h2>
-            <p>Music, films, games and television — collected here when somebody wants the full picture.</p>
+            <h2 id="archive-title">Taste</h2>
           </header>
         </div>
 

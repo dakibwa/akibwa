@@ -7129,11 +7129,11 @@ button {
   }
 }
 
-/* ── Editorial concept, second pass ─────────────────────────────────────
+/* ── Editorial concept, compact pass ────────────────────────────────────
    The coloured index is back, but it remains four plain words. Current
    client work now sits inside the freelance story; the former "Also making"
-   strip has gone. Career reuses the earlier horizontal timeline idea, with a
-   fixed cross-fade instead of an expanding card, and the archive is taste only. */
+   strip has gone. Career and Graceland keep their detail in small hover/focus
+   popovers, leaving only the visual index and taste archive at rest. */
 .concept-nav a:nth-child(1) {
   --concept-nav-accent: 224, 122, 26;
 }
@@ -7241,39 +7241,34 @@ button {
 }
 
 .concept-freelance .concept-text-link {
-  margin-top: 0;
+  margin-top: auto;
   padding-top: 20px;
 }
 
+.concept-client-card-foot {
+  min-height: 46px;
+  align-items: center;
+}
+
+/* Career is an index at rest: date, mark, nothing else. The fuller story is
+   deliberately transient so the page stays scannable on every viewport. */
 .concept-career-section {
-  padding: clamp(62px, 7vw, 96px) 0 clamp(68px, 8vw, 108px);
+  padding: clamp(58px, 6.5vw, 88px) 0 clamp(112px, 9vw, 140px);
   border-top: 1px solid var(--line-strong);
 }
 
 .concept-career-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(290px, 0.72fr);
-  gap: clamp(34px, 6vw, 88px);
-  align-items: end;
-  padding-bottom: clamp(36px, 4vw, 56px);
+  padding-bottom: clamp(28px, 3vw, 40px);
 }
 
 .concept-career-head h2 {
-  max-width: 12ch;
-  margin: 0.42em 0 0;
+  margin: 0;
   color: var(--black);
-  font-size: clamp(2.7rem, 5vw, 5.45rem);
-  font-weight: 620;
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  font-weight: 500;
   line-height: 0.92;
   letter-spacing: -0.055em;
-}
-
-.concept-career-head > p {
-  max-width: 45ch;
-  margin: 0 0 0.2em;
-  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
-  font-size: clamp(0.94rem, 1.12vw, 1.08rem);
-  line-height: 1.55;
 }
 
 .concept-career-timeline {
@@ -7300,7 +7295,7 @@ button {
   position: relative;
   z-index: 0;
   display: grid;
-  grid-template-rows: 28px 25px 1fr;
+  grid-template-rows: 28px 25px 68px;
   min-width: 0;
   outline: none;
 }
@@ -7324,44 +7319,31 @@ button {
   border-radius: 50%;
   background: var(--company-accent);
   box-shadow: 0 0 0 4px var(--canvas);
-  transition: box-shadow 120ms ease;
+  transition: box-shadow 100ms ease;
 }
 
 .concept-career-card {
   position: relative;
-  overflow: hidden;
-  min-height: 148px;
-  padding: 14px;
+  display: grid;
+  min-height: 0;
+  place-items: center;
   border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
   border-radius: 3px;
   background: color-mix(in srgb, var(--white) 68%, var(--canvas));
-  transition: border-color 120ms ease, background 120ms ease;
-}
-
-.concept-career-summary,
-.concept-career-note {
-  transition: opacity 110ms ease;
-}
-
-.concept-career-summary {
-  display: grid;
-  align-content: start;
-  justify-items: start;
-  gap: 5px;
+  transition: border-color 100ms ease, background 100ms ease;
 }
 
 .concept-career-logo {
   display: grid;
-  width: 30px;
-  height: 30px;
-  margin-bottom: 7px;
+  width: 34px;
+  height: 34px;
   place-items: center;
 }
 
 .concept-career-logo img {
   display: block;
-  width: 27px;
-  height: 27px;
+  width: 31px;
+  height: 31px;
   object-fit: contain;
 }
 
@@ -7369,53 +7351,74 @@ button {
   border-radius: 4px;
 }
 
-.concept-career-summary strong {
-  max-width: 16ch;
-  color: var(--black);
-  font-size: clamp(0.83rem, 1vw, 0.96rem);
-  font-weight: 680;
-  line-height: 1.12;
-  letter-spacing: -0.025em;
+.concept-career-popover {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  width: min(280px, calc(100vw - 32px));
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
+  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 100ms ease, transform 100ms ease;
 }
 
-.concept-career-summary > span:last-child {
+.concept-career-stop:nth-child(n + 4) .concept-career-popover {
+  right: 0;
+  left: auto;
+}
+
+.concept-career-popover strong {
+  color: var(--black);
+  font-size: 0.86rem;
+  font-weight: 690;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.concept-career-popover > span {
   color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
   font-size: 0.66rem;
   line-height: 1.3;
 }
 
-.concept-career-note {
-  position: absolute;
-  inset: 13px 14px;
-  margin: 0;
+.concept-career-popover p {
+  margin: 8px 0 0;
   color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
   font-family: var(--serif);
-  font-size: clamp(0.74rem, 0.84vw, 0.84rem);
+  font-size: 0.82rem;
   line-height: 1.42;
-  opacity: 0;
+}
+
+.concept-career-stop:hover,
+.concept-career-stop:focus {
+  z-index: 30;
 }
 
 .concept-career-stop:hover .concept-career-card,
-.concept-career-stop:focus-visible .concept-career-card {
-  border-color: color-mix(in srgb, var(--company-accent) 40%, var(--line-strong));
+.concept-career-stop:focus .concept-career-card {
+  border-color: color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
   background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
 }
 
 .concept-career-stop:hover .concept-career-node,
-.concept-career-stop:focus-visible .concept-career-node {
+.concept-career-stop:focus .concept-career-node {
   box-shadow:
     0 0 0 4px var(--canvas),
     0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent);
 }
 
-.concept-career-stop:hover .concept-career-summary,
-.concept-career-stop:focus-visible .concept-career-summary {
-  opacity: 0;
-}
-
-.concept-career-stop:hover .concept-career-note,
-.concept-career-stop:focus-visible .concept-career-note {
+.concept-career-stop:hover .concept-career-popover,
+.concept-career-stop:focus .concept-career-popover {
   opacity: 1;
+  transform: none;
 }
 
 .concept-career-stop:focus-visible .concept-career-card {
@@ -7423,62 +7426,88 @@ button {
   outline-offset: 3px;
 }
 
+/* The archive keeps one physical anchor. Graceland's story occupies the same
+   visual space as the Taste title only while the cover is being explored. */
 .concept-taste-head {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.7fr);
-  gap: clamp(46px, 6.5vw, 94px);
-  align-items: stretch;
+  grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
+  gap: clamp(34px, 5vw, 72px);
+  align-items: center;
 }
 
 .concept-taste-head .concept-graceland {
-  grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
+  position: relative;
+  display: block;
+  width: 100%;
+  outline: none;
+}
+
+.concept-taste-head .concept-graceland img {
+  display: block;
+  width: 100%;
+}
+
+.concept-graceland-info {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 14px);
+  z-index: 20;
+  width: min(340px, calc(100vw - 360px));
+  min-width: 250px;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--concept-green) 38%, var(--line-strong));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
+  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-5px);
+  transition: opacity 100ms ease, transform 100ms ease;
+}
+
+.concept-graceland:hover .concept-graceland-info,
+.concept-graceland:focus .concept-graceland-info {
+  opacity: 1;
+  transform: none;
+}
+
+.concept-graceland:focus-visible img {
+  outline: 2px solid var(--concept-green);
+  outline-offset: 3px;
+}
+
+.concept-graceland-info h2 {
+  margin-top: 0.34em;
+  font-size: clamp(2rem, 3vw, 3.15rem);
+}
+
+.concept-graceland-info div > p:last-child,
+.concept-graceland-info > p:last-child {
+  margin-top: 1em;
+  font-size: 0.94rem;
+  line-height: 1.46;
 }
 
 .concept-taste-head .concept-archive-head {
-  display: block;
-  align-self: stretch;
-  padding-left: clamp(28px, 3.4vw, 48px);
-  border-left: 1px solid var(--line-strong);
-}
-
-.concept-taste-head .concept-archive-head .concept-kicker {
-  display: block;
+  align-self: center;
 }
 
 .concept-taste-head .concept-archive-head h2 {
-  max-width: 9ch;
-  margin-top: 0.45em;
-  font-size: clamp(2.7rem, 4.6vw, 5rem);
-  line-height: 0.91;
-}
-
-.concept-taste-head .concept-archive-head > p:last-child {
-  max-width: 34ch;
-  margin: 1.45em 0 0;
+  max-width: none;
+  margin: 0;
+  font-size: clamp(4rem, 8vw, 8rem);
+  line-height: 0.86;
 }
 
 .akibwa-home--taste .deck-legend {
   gap: 0.4em 1em;
 }
 
-@media (max-width: 900px) {
-  .concept-career-head,
-  .concept-taste-head {
-    grid-template-columns: 1fr;
-  }
-
-  .concept-career-head {
-    gap: 24px;
-  }
-
-  .concept-taste-head .concept-archive-head {
-    padding: 36px 0 0;
-    border-top: 1px solid var(--line-strong);
-    border-left: 0;
-  }
-}
-
 @media (max-width: 760px) {
+  .concept-career-section {
+    padding-bottom: 72px;
+  }
+
   .concept-career-timeline {
     grid-template-columns: 1fr;
     gap: 0;
@@ -7494,39 +7523,38 @@ button {
   }
 
   .concept-career-stop {
-    grid-template-columns: 55px minmax(0, 1fr);
-    grid-template-rows: auto;
+    grid-template-columns: 55px 56px minmax(0, 1fr);
+    grid-template-rows: 56px;
     gap: 18px;
+    min-height: 76px;
     padding: 10px 0;
   }
 
   .concept-career-time {
     grid-column: 1;
-    padding-top: 13px;
+    align-self: center;
   }
 
   .concept-career-node {
     position: absolute;
-    top: 27px;
+    top: 50%;
     left: 55px;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   }
 
   .concept-career-card {
     grid-column: 2;
-    min-height: 0;
+    width: 56px;
+    height: 56px;
   }
 
-  .concept-career-summary {
-    opacity: 1 !important;
-  }
-
-  .concept-career-note {
-    position: static;
-    margin-top: 12px;
-    padding-top: 11px;
-    border-top: 1px solid color-mix(in srgb, var(--ink) 10%, var(--canvas));
-    opacity: 1 !important;
+  .concept-career-popover,
+  .concept-career-stop:nth-child(n + 4) .concept-career-popover {
+    top: 10px;
+    right: auto;
+    left: 147px;
+    width: calc(100% - 147px);
+    min-width: 0;
   }
 }
 
@@ -7536,29 +7564,59 @@ button {
   }
 
   .concept-client-card-foot {
-    min-height: 58px;
+    min-height: 44px;
     padding: 8px;
   }
 
   .concept-career-section {
-    padding: 52px 0 62px;
+    padding: 48px 0 58px;
   }
 
   .concept-career-head {
-    padding-bottom: 28px;
+    padding-bottom: 24px;
   }
 
   .concept-career-head h2 {
     font-size: 2.65rem;
   }
 
-  .concept-taste-head .concept-graceland {
+  .concept-career-popover {
+    padding: 11px 12px;
+  }
+
+  .concept-career-popover p {
+    margin-top: 6px;
+    font-size: 0.76rem;
+    line-height: 1.36;
+  }
+
+  .concept-taste-head {
     grid-template-columns: 116px minmax(0, 1fr);
     gap: 18px;
   }
 
+  .concept-graceland-info {
+    left: calc(100% + 12px);
+    width: calc(100vw - 160px);
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .concept-graceland-info h2 {
+    font-size: 2rem;
+  }
+
+  .concept-graceland-info > p:last-child {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.38;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+  }
+
   .concept-taste-head .concept-archive-head h2 {
-    font-size: 3.05rem;
+    font-size: clamp(3.2rem, 17vw, 4.6rem);
   }
 
   .akibwa-home--taste .deck-legend {
@@ -7566,30 +7624,12 @@ button {
   }
 }
 
-@media (hover: none), (pointer: coarse) {
-  .concept-career-card {
-    min-height: 0;
-  }
-
-  .concept-career-summary {
-    opacity: 1 !important;
-  }
-
-  .concept-career-note {
-    position: static;
-    margin-top: 12px;
-    padding-top: 11px;
-    border-top: 1px solid color-mix(in srgb, var(--ink) 10%, var(--canvas));
-    opacity: 1 !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .concept-client-card,
   .concept-career-node,
   .concept-career-card,
-  .concept-career-summary,
-  .concept-career-note {
+  .concept-career-popover,
+  .concept-graceland-info {
     transition: none;
   }
 }
