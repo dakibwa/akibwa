@@ -1,5 +1,4 @@
 import { deck, sites } from "@/components/deck-data";
-import { HeroFlipName } from "@/components/hero-word-cycle";
 import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
@@ -28,16 +27,21 @@ export function EditorialHomeConcept() {
     <div className="concept-page">
       <header className="page-grid concept-hero">
         <h1 className="concept-identity">
-          <HeroFlipName />
+          I’m{" "}
+          <span className="hero-name" style={{ "--name-accent-rgb": "235, 92, 8" }}>
+            <span className="hero-name-stack">
+              <span className="hero-name-value">Akibwa</span>
+            </span>
+          </span>
         </h1>
         <p className="concept-lede">
-          I build useful things, end to end.
+          Building in the age of AI.
         </p>
         <nav className="concept-nav" aria-label="On this page">
           <a href="#now">Now</a>
           <a href="#work">Work</a>
           <a href="#career">Career</a>
-          <a href="#archive">Archive</a>
+          <a href="#taste">Taste</a>
         </nav>
       </header>
 
@@ -130,10 +134,10 @@ export function EditorialHomeConcept() {
         </ol>
       </section>
 
-      <section className="concept-archive" id="archive" aria-labelledby="archive-title">
+      <section className="concept-archive" id="taste" aria-labelledby="taste-title">
         <div className="page-grid concept-taste-head">
           <header className="concept-archive-head">
-            <h2 id="archive-title">Taste</h2>
+            <h2 id="taste-title">Taste</h2>
           </header>
         </div>
 
