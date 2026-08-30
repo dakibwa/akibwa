@@ -7509,52 +7509,48 @@ button {
   }
 
   .concept-career-timeline {
-    grid-template-columns: 1fr;
-    gap: 0;
+    gap: clamp(5px, 1.5vw, 10px);
   }
 
   .concept-career-timeline::before {
-    top: 16px;
-    right: auto;
-    bottom: 16px;
-    left: 55px;
-    width: 1px;
-    height: auto;
+    top: 43px;
   }
 
   .concept-career-stop {
-    grid-template-columns: 55px 56px minmax(0, 1fr);
-    grid-template-rows: 56px;
-    gap: 18px;
-    min-height: 76px;
-    padding: 10px 0;
+    grid-template-rows: 32px 22px 56px;
   }
 
   .concept-career-time {
-    grid-column: 1;
-    align-self: center;
-  }
-
-  .concept-career-node {
-    position: absolute;
-    top: 50%;
-    left: 55px;
-    transform: translate(-50%, -50%);
+    padding-right: 2px;
+    font-size: clamp(0.5rem, 1.45vw, 0.6rem);
+    letter-spacing: 0.025em;
   }
 
   .concept-career-card {
-    grid-column: 2;
-    width: 56px;
-    height: 56px;
+    min-width: 0;
   }
 
-  .concept-career-popover,
-  .concept-career-stop:nth-child(n + 4) .concept-career-popover {
-    top: 10px;
-    right: auto;
-    left: 147px;
-    width: calc(100% - 147px);
+  .concept-career-logo,
+  .concept-career-logo img {
+    width: 29px;
+    height: 29px;
+  }
+
+  .concept-career-popover {
+    top: calc(100% + 8px);
+    width: min(260px, calc(100vw - 32px));
     min-width: 0;
+  }
+
+  .concept-career-stop:nth-child(3) .concept-career-popover {
+    right: auto;
+    left: 50%;
+    transform: translate(-50%, -4px);
+  }
+
+  .concept-career-stop:nth-child(3):hover .concept-career-popover,
+  .concept-career-stop:nth-child(3):focus .concept-career-popover {
+    transform: translateX(-50%);
   }
 }
 
@@ -7621,6 +7617,64 @@ button {
 
   .akibwa-home--taste .deck-legend {
     gap: 0.35em 0.72em;
+  }
+}
+
+/* The horizontal index still fits every supported phone. This is only a
+   last-resort fallback for unusually narrow embedded viewports. */
+@media (max-width: 300px) {
+  .concept-career-timeline {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .concept-career-timeline::before {
+    top: 14px;
+    right: auto;
+    bottom: 14px;
+    left: 48px;
+    width: 1px;
+    height: auto;
+  }
+
+  .concept-career-stop {
+    grid-template-columns: 48px 52px minmax(0, 1fr);
+    grid-template-rows: 52px;
+    gap: 14px;
+    min-height: 68px;
+    padding: 8px 0;
+  }
+
+  .concept-career-time {
+    grid-column: 1;
+    align-self: center;
+  }
+
+  .concept-career-node {
+    position: absolute;
+    top: 50%;
+    left: 48px;
+    transform: translate(-50%, -50%);
+  }
+
+  .concept-career-card {
+    grid-column: 2;
+    width: 52px;
+    height: 52px;
+  }
+
+  .concept-career-popover,
+  .concept-career-stop:nth-child(n) .concept-career-popover {
+    top: calc(100% + 4px);
+    right: auto;
+    left: 0;
+    width: 100%;
+    transform: translateY(-4px);
+  }
+
+  .concept-career-stop:nth-child(n):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n):focus .concept-career-popover {
+    transform: none;
   }
 }
 
