@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-Y9O3l/ffCGUvrO0SWGXM0shifvZNL0iRYqbmfaYPwRU=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-i+pniXod73MO8FWWPE3b+KiK9wkDk9RhEL6zCYy3Rhc=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -645,15 +645,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     resize:none;white-space:pre}
   .shareout[hidden]{display:none}
   .bactions{display:flex;gap:9px;padding:0 22px 20px}
-  .bfoot{
-    display:flex;flex-direction:column;align-items:flex-start;gap:7px;
-    padding:10px 22px 12px;border-top:1px solid var(--rule);background:var(--surface-2);
-    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
-  }
-  .bfoot[hidden]{display:none}
-  .bfoot-say{line-height:1.5}
-  .bfoot-ins{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
-  .bfoot-ins .acctlink{margin-left:0}
   .wbtn{
     border:1px solid var(--silver);background:transparent;font:inherit;font-size:12px;
     letter-spacing:.1em;padding:8px 15px;cursor:pointer;color:var(--ink);text-transform:lowercase;
@@ -5912,36 +5903,16 @@ function bulletinHTML(o){
   <div class="bactions">${o.actions}</div>
   ${o.foot||''}`;
 }
-function signInInvite(){
-  return `<div class="bfoot" id="binvite" hidden></div>`;
-}
-function fillSignInInvite(){
-  const el=$('binvite');
-  if(!el||!API) return;
-  askSignIns().then(list=>{
-    if(!$('binvite')||!list.length||(account&&account.signedIn)) return;
-    const el2=$('binvite');
-    el2.hidden=false;
-    el2.innerHTML=`<span class="bfoot-say">saved in this browser · sign in and it follows you anywhere</span>`
-      +`<span class="bfoot-ins">${list.map((p,i)=>{const nm=esc(p);
-          return `<a href="#" class="acctlink" id="binv-${i}" aria-label="sign in with ${nm}">${nm}</a>`}).join('')}</span>`;
-    list.forEach((p,i)=>{
-      const a=$('binv-'+i);
-      if(a) a.onclick=e=>{e.preventDefault(); if(p==='email') hideVeils(); goSignIn(p)};
-    });
-    if(list.includes('google')) ensureGooglePrep();
-  });
-}
 function showNetCleared(feats,tier,wasTutorial,read){
   if(!read || (read.run!==R() && !read.finalTutorial)) return;
-  const dedup=[...new Map(feats.map(k=>[k,0])).keys()].map(k=>({k,n:feats.filter(f=>f===k).length}));
-  const mint=`<div class="minted">${dedup.map(({k,n},i)=>{
-    const b=store.collection.badges[k];
-    return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
-  }).join('')}</div>`;
   const tutorialFirst=wasTutorial && read.num===1 && !read.finalTutorial;
   const tutorialFinal=wasTutorial && read.finalTutorial;
   const tutorialCard=tutorialFirst||tutorialFinal;
+  const dedup=[...new Map(feats.map(k=>[k,0])).keys()].map(k=>({k,n:feats.filter(f=>f===k).length}));
+  const mint=tutorialFinal?'':`<div class="minted">${dedup.map(({k,n},i)=>{
+    const b=store.collection.badges[k];
+    return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
+  }).join('')}</div>`;
   const quiet=tutorialCard
     ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. ${tutorialFinal?'tutorial complete':'first lesson complete'}.</p>`
     : `<p class="bquiet">${feats.length} features freed: ${feats.join(', ')}. `+
@@ -5950,26 +5921,22 @@ function showNetCleared(feats,tier,wasTutorial,read){
     strip:tutorialCard?FLAG:TIERCOL[tier],
     title:tutorialFirst?'features drawn':tutorialFinal?'tutorial complete':tierSay(tier),
     sub:(tutorialFirst?'you untangled your first net'
-        :tutorialFinal?'you have seen every kind of neuron':'net cleared')
+        :tutorialFinal?'':'net cleared')
         +(read.assisted?' · settled with descent':''),
     num:String(read.num).padStart(2,'0'),
     rows:[],
     body:mint+quiet,
     note:tutorialFirst
       ? 'the shapes you left became these features. fewer turns earns a better rung.'
-      : tutorialFinal
-      ? 'circles move. tap a double ring to split it. squares stay fixed.'
       : read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
     actions:`<button class="wbtn solid" id="contbtn">${tutorialFirst
       ? 'next: a shared neuron →'
-      : tutorialFinal ? (read.returning?"back to today's set →":"start today's set →")
+      : tutorialFinal ? 'back to how to play →'
       : 'continue →'}</button>`,
-    foot:tutorialFinal?signInInvite():''
   });
   showVeil('netveil');
-  if(tutorialFinal) fillSignInInvite();
-  $('netveil').dataset.returnView='';
+  $('netveil').dataset.returnView=tutorialFinal?'rules':'';
   $('contbtn').onclick=leaveNetCard;
 }
 function runOverOffer(trial,depth){
