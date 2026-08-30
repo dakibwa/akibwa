@@ -945,11 +945,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .menupane[hidden]{display:none}
   .collection.menupane{padding:20px 22px 18px;grid-template-columns:repeat(5,1fr);border-right:1px solid var(--rule);background:var(--paper)}
   .panerules{display:flex;flex-direction:column;padding:20px 22px 24px;border-right:1px solid var(--rule);background:var(--paper)}
-  .paneside{grid-column:2;display:flex;flex-direction:column;gap:12px;padding:16px 22px 20px}
+  .paneside{grid-column:2;display:flex;flex-direction:column;gap:12px;padding:20px 22px}
   .paneside .pay-body{flex:1 1 auto;min-height:0;overflow-y:auto}
   .paneside .acct-body{flex:1 1 auto;min-height:0;overflow-y:auto}
   .pane-head[hidden],.paneside .pay-body[hidden],.paneside .acct-body[hidden],.rec-arch[hidden]{display:none}
-  .pane-head .rec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase}
   #menudoors{grid-column:1/-1;grid-row:3}
   #introcard.view-coll .intro-art,#introcard.view-rules .intro-art{display:none}
   #introcard.view-profile #introbody,#introcard.view-pay #introbody{display:none}
@@ -1125,8 +1124,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
     .rec-right{gap:7px}
-    .collection{padding:16px 14px 14px;gap:6px;grid-template-columns:repeat(5,1fr)}
-    .panerules{padding:16px 14px 20px}
+    .collection.menupane{padding:16px 14px 14px;gap:6px;grid-template-columns:repeat(5,1fr)}
+    .panerules,.paneside{padding:16px 14px 20px}
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1378,7 +1377,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     <div class="menupane collection" id="panecoll" hidden></div>
     <div class="menupane panerules" id="panerules" hidden></div>
     <div class="menupane paneside" id="paneside" hidden>
-      <div class="pane-head" id="panehead"><strong class="rec-title" id="accttitle">your account</strong></div>
+      <!-- Every menu destination uses the same heading token. This used to be
+           `.rec-title` (15px), so Profile shrank when Collection or How to Play
+           handed the sheet over even though it occupied the same position. -->
+      <div class="pane-head" id="panehead"><div class="intro-title" id="accttitle">your account</div></div>
       <div class="acct-body" id="acctbody"></div>
       <!-- the restore line lives with the profile: a buyer on a new phone is
            exactly who is standing here -->
