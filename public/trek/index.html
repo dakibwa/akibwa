@@ -28,9 +28,6 @@
   --bone:#EFE6D4;
   --dust:#A2967F;
   --rule:#2E2820;
-  --canvas:#FAF8F3;
-  --black:#030405;
-  --site-line:rgba(16,18,23,.18);
   --serif:"Fraunces",Georgia,"Iowan Old Style",serif;
   --mono:"Plex Mono","SF Mono",ui-monospace,Menlo,monospace;
   --sans:"Avenir Next","Inter","Helvetica Neue",Arial,sans-serif;
@@ -297,18 +294,19 @@ h1 .to{color:var(--dust);font-family:var(--mono);font-size:.3em;font-weight:400;
 
 /* --------------------------------------------------------------------- hud */
 .hud{
-  position:absolute;top:60px;left:22px;z-index:7;pointer-events:none;
+  position:absolute;top:82px;left:22px;z-index:7;pointer-events:none;
   font-family:var(--mono);opacity:0;transition:opacity .5s;
-  width:286px;padding:13px 15px 14px;
-  border:1px solid color-mix(in srgb,var(--bone) 23%,transparent);
-  background:color-mix(in srgb,var(--peat) 90%,transparent);
-  box-shadow:0 18px 42px -24px rgba(0,0,0,.82);
-  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+  width:286px;padding:0;
+  filter:drop-shadow(0 2px 12px rgba(0,0,0,.64));
+}
+.hud::before{
+  content:"";position:absolute;z-index:-1;inset:-18px -46px -18px -22px;
+  background:linear-gradient(90deg,rgba(18,16,12,.92) 0%,rgba(18,16,12,.72) 64%,transparent 100%);
+  pointer-events:none;
 }
 .hud.on{opacity:1}
-.hud .journey{display:flex;align-items:center;gap:11px;font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur,var(--dust)) 68%,var(--bone))}
-.hud .journey::after{content:"";height:3px;flex:1;background:var(--c-cur,var(--dust));transition:background-color .65s ease}
-.hud .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:10px;border-top:1px solid color-mix(in srgb,var(--bone) 23%,transparent);border-bottom:1px solid color-mix(in srgb,var(--bone) 23%,transparent);font-variant-numeric:tabular-nums}
+.hud .position{font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur,var(--dust)) 72%,var(--bone));min-height:1.2em}
+.hud .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:9px;border-top:1px solid color-mix(in srgb,var(--bone) 27%,transparent);border-bottom:1px solid color-mix(in srgb,var(--bone) 27%,transparent);font-variant-numeric:tabular-nums}
 .hud .metric{min-width:0;padding:10px 9px 9px}
 .hud .metric:first-child{padding-left:0}
 .hud .metric.primary{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 0 11px;border-bottom:1px solid color-mix(in srgb,var(--bone) 23%,transparent)}
@@ -324,8 +322,6 @@ h1 .to{color:var(--dust);font-family:var(--mono);font-size:.3em;font-weight:400;
 .hud #elev-now{fill:var(--bone)}
 .hud .altline{font-size:9px;color:var(--dust);line-height:1.2;letter-spacing:.06em;font-variant-numeric:tabular-nums;text-transform:uppercase}
 .hud .altline b{display:block;color:var(--bone);font-weight:500;font-size:14px;letter-spacing:-.02em;white-space:nowrap;text-transform:none}
-.hud .progress{height:6px;margin-top:12px;background:color-mix(in srgb,var(--bone) 11%,transparent);overflow:hidden}
-.hud .progress i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#2EA3DC 0.00% 28.83%,#D75B4A 28.83% 43.40%,#7D6BB0 43.40% 58.29%,#12A19A 58.29% 65.24%,#1FA45A 65.24% 73.61%,#EFC319 73.61% 96.50%,#E97E18 96.50% 100.00%);clip-path:inset(0 100% 0 0);transition:clip-path .12s linear}
 
 /* ---------------------------------------------------------- collections */
 .collector{
@@ -356,35 +352,15 @@ h1 .to{color:var(--dust);font-family:var(--mono);font-size:.3em;font-weight:400;
 .collector-albums ol{display:flex;flex-direction:column;gap:8px}
 .collector-album{
   display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:9px;
+  width:100%;padding:0;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer;pointer-events:auto;
   animation:collect-in .35s cubic-bezier(.2,.72,.2,1) both;
 }
 .collector-album img{width:34px;height:34px;object-fit:cover;border:1px solid color-mix(in srgb,var(--bone) 18%,transparent)}
 .collector-album p{min-width:0;color:var(--dust);font-size:8.5px;line-height:1.25}
 .collector-album b,.collector-album span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .collector-album b{color:var(--bone);font-weight:500;margin-bottom:2px}
+.collector-album:hover img,.collector-album:focus-visible img{border-color:color-mix(in srgb,var(--c-cur,var(--bone)) 72%,var(--bone));transform:translateY(-1px)}
 @keyframes collect-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-
-/* ----------------------------------------------------------------- daycard */
-.daycard{
-  position:absolute;left:22px;bottom:22px;z-index:7;max-width:420px;
-  padding:18px 20px 16px;border:1px solid var(--rule);
-  background:color-mix(in srgb,var(--peat) 84%,transparent);backdrop-filter:blur(10px);
-  opacity:0;transform:translate3d(0,8px,0);transition:opacity .14s,transform .14s;will-change:transform,opacity;
-}
-.daycard.on{opacity:1;transform:none}
-.daycard .dline{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-cur,var(--dust));margin-bottom:8px}
-.daycard .dtitle{font-size:21px;font-weight:490;line-height:1.25;font-variation-settings:"opsz" 28,"SOFT" 60,"WONK" 0}
-.daycard .drow{display:flex;gap:14px;align-items:center;margin-top:12px}
-.daycard .drow:empty{display:none}
-.daycard .dsleeve{padding:0;border:1px solid var(--rule);background:var(--tent);cursor:pointer;width:64px;height:64px;flex:0 0 auto;overflow:hidden;line-height:0;transition:border-color .3s,transform .3s}
-.daycard .dsleeve:hover{border-color:var(--c-cur,var(--dust));transform:translateY(-2px)}
-.daycard .dsleeve img{width:64px;height:64px;aspect-ratio:1/1;object-fit:cover;display:block}
-.daycard .drec{color:var(--dust);font-size:14px;line-height:1.45}
-.daycard .drec em{font-variation-settings:"opsz" 16,"SOFT" 60,"WONK" 0}
-.daycard .dfacts{font-family:var(--mono);font-size:11px;color:var(--dust);margin-top:12px;letter-spacing:.06em;font-variant-numeric:tabular-nums;opacity:.85}
-.daycard .djournal{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule);color:var(--bone);font-size:14px;line-height:1.48;font-style:italic;font-variation-settings:"opsz" 18,"SOFT" 62,"WONK" 0}
-.daycard .djournal:empty{display:none}
-.daycard .djournal::before{content:"from the journal";display:block;margin-bottom:5px;font-family:var(--mono);font-size:9.5px;line-height:1.2;letter-spacing:.14em;text-transform:uppercase;color:var(--c-cur,var(--dust));font-style:normal}
 
 /* ------------------------------------------------------------------ plates */
 .plate{
@@ -458,41 +434,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 .noscript-days{max-width:760px;margin:0 auto;padding:40px 24px;color:var(--dust)}
 .noscript-days li{margin:6px 0}
 
-/* -------------------------------------------------------------- data wall */
-.archive-wall{
-  position:relative;z-index:20;min-height:100svh;padding:clamp(92px,9vw,138px) clamp(24px,6vw,92px) 88px;
-  color:var(--black);background:var(--canvas);font-family:var(--sans);
-}
-.archive-wall :focus-visible{outline-color:var(--black)}
-.archive-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
-.archive-stats{
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin-top:24px;
-  background:var(--site-line);border-block:1px solid var(--site-line);
-}
-.archive-stat{min-width:0;padding:clamp(18px,2.5vw,34px) clamp(12px,2vw,26px);background:var(--canvas)}
-.archive-stat:first-child{padding-left:0}
-.archive-stat b{
-  display:block;font-size:clamp(34px,5vw,74px);font-weight:540;line-height:.94;letter-spacing:-.055em;
-  font-variant-numeric:tabular-nums;
-}
-.archive-stat span{display:block;margin-top:10px;font-family:var(--mono);font-size:9px;line-height:1.35;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
-.archive-section{padding-top:clamp(54px,7vw,100px)}
-.archive-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--site-line)}
-.archive-section-head h2{font-size:clamp(29px,4.2vw,58px);font-weight:540;line-height:1;letter-spacing:-.035em}
-.archive-section-head p{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
-.archive-route{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:24px 0 0;padding:0;list-style:none}
-.archive-route li{display:flex;align-items:center;gap:12px;color:color-mix(in srgb,var(--w) 72%,var(--black));font-size:clamp(17px,2.1vw,28px);font-weight:540;letter-spacing:-.018em}
-.archive-route li+li::before{content:"→";font-family:var(--mono);font-size:.54em;color:color-mix(in srgb,var(--black) 30%,var(--canvas))}
-.album-wall{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(18px,2vw,30px) clamp(10px,1.4vw,20px);margin-top:28px}
-.album-card{min-width:0;border-top:3px solid var(--w);padding-top:7px}
-.album-open{appearance:none;display:block;width:100%;padding:0;border:0;background:transparent;cursor:pointer}
-.album-open img{width:100%;aspect-ratio:1/1;object-fit:cover;filter:saturate(.92);transition:filter .25s,transform .35s cubic-bezier(.2,.72,.2,1)}
-.album-open:hover img,.album-open:focus-visible img{filter:saturate(1.08);transform:translateY(-3px)}
-.album-day{margin-top:9px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--w) 66%,var(--black))}
-.album-name{margin-top:5px;font-size:12px;line-height:1.3}
-.album-name b,.album-name span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.album-name b{font-weight:600}.album-name span{color:color-mix(in srgb,var(--black) 58%,var(--canvas))}
-
 /* ------------------------------------------------------------- responsive */
 @media (min-width:1181px){
   .photo{right:calc(250px + clamp(18px,2vw,32px));width:min(24vw,300px)}
@@ -509,7 +450,8 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .countries li{gap:8px}
   .countries a{font-size:14px}
   .walkbtn{padding:7px 10px;font-size:10px}
-  .hud{top:58px;left:12px;width:min(250px,calc(100vw - 24px));padding:10px 11px}
+  .hud{top:72px;left:12px;width:min(250px,calc(100vw - 24px))}
+  .hud::before{inset:-12px -32px -12px -12px}
   .hud .metrics{margin-top:8px}
   .hud .metric{padding:8px 7px 7px}
   .hud .metric.primary{padding:8px 0 9px}
@@ -518,8 +460,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .hud .metric span{font-size:7.5px;letter-spacing:.1em}
   .hud .elev{grid-template-columns:118px 1fr;gap:8px;margin-top:8px;padding-top:0}
   .hud .elev svg{width:118px;height:25px}
-  .hud .progress{margin-top:9px}
-  .daycard{left:12px;right:12px;bottom:12px;max-width:none;padding:14px 16px 13px}
   .photo{top:190px;bottom:auto;right:12px;width:min(34vw,220px);transform:rotate(1.6deg)}
   .photo.on{transform:rotate(-1deg)}
   h1{gap:10px;font-size:clamp(42px,12.4vw,70px)}
@@ -527,16 +467,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .landmark.seen .landmark-rise{transform:scale(1.35)}
   .landmark-floor{transform:scale(1.35)}
   .landmark-label{font-size:8px}
-  .archive-wall{padding:80px 16px 54px}
-  .archive-stats{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px}
-  .archive-stat{padding:18px 12px}.archive-stat:first-child{padding-left:12px}
-  .archive-stat:last-child{grid-column:1/-1}
-  .archive-section{padding-top:54px}
-  .archive-section-head{align-items:flex-end}
-  .archive-section-head h2{font-size:34px}
-  .archive-route{gap:8px 9px;margin-top:20px}
-  .archive-route li{gap:9px;font-size:17px}
-  .album-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px;margin-top:20px}
 }
 @media (max-width:900px) and (max-height:680px){
   .photo{top:168px;width:min(28vw,132px)}
@@ -544,7 +474,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i,.hud .progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow,.terrain-block{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow,.terrain-block{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -1238,7 +1168,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     <p class="hint" id="hint">walk ↓</p>
 
     <div class="hud" id="hud">
-      <p class="journey">the journey so far</p>
+      <p class="position" id="hud-position"></p>
       <div class="metrics">
         <p class="metric primary"><b id="hud-km">0.0</b><span>kilometres walked</span></p>
         <p class="metric"><b id="hud-days">0</b><span>days on foot</span></p>
@@ -1253,7 +1183,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
         </svg>
         <p class="altline"><b><span id="hud-alt">—</span> m</b>map elevation</p>
       </div>
-      <div class="progress" aria-hidden="true"><i id="hud-progress"></i></div>
     </div>
 
     <aside class="collector" id="collector" aria-label="Collected along the journey">
@@ -1266,14 +1195,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
         <ol id="collector-album-list"></ol>
       </section>
     </aside>
-
-    <div class="daycard" id="daycard">
-      <p class="dline" id="dc-line"></p>
-      <p class="dtitle" id="dc-title"></p>
-      <div class="drow" id="dc-row"></div>
-      <p class="dfacts" id="dc-facts"></p>
-      <p class="djournal" id="dc-journal"></p>
-    </div>
 
     <div class="photo" id="photo">
       <figure>
@@ -1356,290 +1277,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   </div>
 </div>
-
-<section class="archive-wall" id="archive-wall" aria-labelledby="archive-places-title">
-  <p class="archive-kicker">Paris → Sofia · 24 sep → 28 nov 2019</p>
-  <div class="archive-stats" aria-label="Final journey totals">
-    <p class="archive-stat"><b>1,982</b><span>kilometres walked</span></p>
-    <p class="archive-stat"><b>52</b><span>days on foot</span></p>
-    <p class="archive-stat"><b>7</b><span>countries crossed</span></p>
-    <p class="archive-stat"><b>49,954</b><span>metres climbed</span></p>
-    <p class="archive-stat"><b>338</b><span>hours moving</span></p>
-  </div>
-  <section class="archive-section">
-    <header class="archive-section-head">
-      <h2 id="archive-places-title">places passed</h2>
-      <p>17 collected</p>
-    </header>
-    <ol class="archive-route">
-      <li style="--w:#2EA3DC"><span>Paris</span></li>
-      <li style="--w:#2EA3DC"><span>Reims</span></li>
-      <li style="--w:#2EA3DC"><span>Nancy</span></li>
-      <li style="--w:#2EA3DC"><span>Saverne</span></li>
-      <li style="--w:#D75B4A"><span>Pforzheim</span></li>
-      <li style="--w:#D75B4A"><span>Stuttgart</span></li>
-      <li style="--w:#D75B4A"><span>Augsburg</span></li>
-      <li style="--w:#D75B4A"><span>Munich</span></li>
-      <li style="--w:#7D6BB0"><span>Zell am See</span></li>
-      <li style="--w:#7D6BB0"><span>the Tauern</span></li>
-      <li style="--w:#7D6BB0"><span>Klagenfurt</span></li>
-      <li style="--w:#12A19A"><span>Ptuj</span></li>
-      <li style="--w:#1FA45A"><span>Osijek</span></li>
-      <li style="--w:#EFC319"><span>Novi Sad</span></li>
-      <li style="--w:#EFC319"><span>Belgrade</span></li>
-      <li style="--w:#EFC319"><span>Niš</span></li>
-      <li style="--w:#E97E18"><span>Sofia</span></li>
-    </ol>
-  </section>
-  <section class="archive-section" aria-labelledby="archive-albums-title">
-    <header class="archive-section-head">
-      <h2 id="archive-albums-title">albums heard</h2>
-      <p>30 collected</p>
-    </header>
-    <div class="album-wall">
-
-      <article class="album-card" style="--w:#2EA3DC">
-        <button class="album-open" data-day="2" aria-haspopup="dialog" aria-label="Kali Uchis — Isolation">
-          <img src="covers/isolation-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 02</p>
-        <p class="album-name"><b>Kali Uchis</b><span>Isolation</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#2EA3DC">
-        <button class="album-open" data-day="6" aria-haspopup="dialog" aria-label="Paul Simon — Graceland">
-          <img src="covers/graceland-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 06</p>
-        <p class="album-name"><b>Paul Simon</b><span>Graceland</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#2EA3DC">
-        <button class="album-open" data-day="9" aria-haspopup="dialog" aria-label="Brian Eno &amp; Karl Hyde — High Life">
-          <img src="covers/high-life-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 09</p>
-        <p class="album-name"><b>Brian Eno &amp; Karl Hyde</b><span>High Life</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#2EA3DC">
-        <button class="album-open" data-day="14" aria-haspopup="dialog" aria-label="Harpers Bizarre — Harpers Bizarre 4">
-          <img src="covers/harpers-bizarre-4-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 14</p>
-        <p class="album-name"><b>Harpers Bizarre</b><span>Harpers Bizarre 4</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#2EA3DC">
-        <button class="album-open" data-day="16" aria-haspopup="dialog" aria-label="John Maus — We Must Become the Pitiless Censors of Ourselves">
-          <img src="covers/we-must-become-the-pitiless-censors-of-ourselves-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 16</p>
-        <p class="album-name"><b>John Maus</b><span>We Must Become the Pitiless Censors of Ourselves</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#D75B4A">
-        <button class="album-open" data-day="25" aria-haspopup="dialog" aria-label="Mazarin — Another One Goes By">
-          <img src="covers/another-one-goes-by-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 25</p>
-        <p class="album-name"><b>Mazarin</b><span>Another One Goes By</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#7D6BB0">
-        <button class="album-open" data-day="28" aria-haspopup="dialog" aria-label="Sufjan Stevens — Illinois">
-          <img src="covers/illinois-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 28</p>
-        <p class="album-name"><b>Sufjan Stevens</b><span>Illinois</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#7D6BB0">
-        <button class="album-open" data-day="29" aria-haspopup="dialog" aria-label="Brian Eno — Taking Tiger Mountain (By Strategy)">
-          <img src="covers/taking-tiger-mountain-by-strategy-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 29</p>
-        <p class="album-name"><b>Brian Eno</b><span>Taking Tiger Mountain (By Strategy)</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#7D6BB0">
-        <button class="album-open" data-day="32" aria-haspopup="dialog" aria-label="Brian Eno — Another Green World">
-          <img src="covers/another-green-world-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 32</p>
-        <p class="album-name"><b>Brian Eno</b><span>Another Green World</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#7D6BB0">
-        <button class="album-open" data-day="33" aria-haspopup="dialog" aria-label="Red House Painters — Red House Painters">
-          <img src="covers/red-house-painters-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 33</p>
-        <p class="album-name"><b>Red House Painters</b><span>Red House Painters</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#7D6BB0">
-        <button class="album-open" data-day="34" aria-haspopup="dialog" aria-label="The Smiths — Louder Than Bombs">
-          <img src="covers/louder-than-bombs-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 34</p>
-        <p class="album-name"><b>The Smiths</b><span>Louder Than Bombs</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#12A19A">
-        <button class="album-open" data-day="36" aria-haspopup="dialog" aria-label="Radiohead — A Moon Shaped Pool">
-          <img src="covers/a-moon-shaped-pool-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 36</p>
-        <p class="album-name"><b>Radiohead</b><span>A Moon Shaped Pool</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#12A19A">
-        <button class="album-open" data-day="37" aria-haspopup="dialog" aria-label="Alex G — DSU">
-          <img src="covers/dsu-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 37</p>
-        <p class="album-name"><b>Alex G</b><span>DSU</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#1FA45A">
-        <button class="album-open" data-day="38" aria-haspopup="dialog" aria-label="David Byrne &amp; Brian Eno — Everything That Happens Will Happen Today">
-          <img src="covers/everything-that-happens-will-happen-today-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 38</p>
-        <p class="album-name"><b>David Byrne &amp; Brian Eno</b><span>Everything That Happens Will Happen Today</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#1FA45A">
-        <button class="album-open" data-day="39" aria-haspopup="dialog" aria-label="Aldous Harding — Designer">
-          <img src="covers/designer-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 39</p>
-        <p class="album-name"><b>Aldous Harding</b><span>Designer</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#1FA45A">
-        <button class="album-open" data-day="40" aria-haspopup="dialog" aria-label="Nick Cave &amp; the Bad Seeds — Skeleton Tree">
-          <img src="covers/skeleton-tree-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 40</p>
-        <p class="album-name"><b>Nick Cave &amp; the Bad Seeds</b><span>Skeleton Tree</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#1FA45A">
-        <button class="album-open" data-day="41" aria-haspopup="dialog" aria-label="King Krule — The OOZ">
-          <img src="covers/the-ooz-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 41</p>
-        <p class="album-name"><b>King Krule</b><span>The OOZ</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#1FA45A">
-        <button class="album-open" data-day="42" aria-haspopup="dialog" aria-label="Animal Collective — Sung Tongs">
-          <img src="covers/sung-tongs-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 42</p>
-        <p class="album-name"><b>Animal Collective</b><span>Sung Tongs</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="48" aria-haspopup="dialog" aria-label="Jack Johnson — In Between Dreams">
-          <img src="covers/in-between-dreams-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 48</p>
-        <p class="album-name"><b>Jack Johnson</b><span>In Between Dreams</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="49" aria-haspopup="dialog" aria-label="Elbow — Build a Rocket Boys!">
-          <img src="covers/build-a-rocket-boys-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 49</p>
-        <p class="album-name"><b>Elbow</b><span>Build a Rocket Boys!</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="52" aria-haspopup="dialog" aria-label="Joy Division — Unknown Pleasures">
-          <img src="covers/unknown-pleasures-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 52</p>
-        <p class="album-name"><b>Joy Division</b><span>Unknown Pleasures</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="53" aria-haspopup="dialog" aria-label="The Who — A Quick One">
-          <img src="covers/a-quick-one-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 53</p>
-        <p class="album-name"><b>The Who</b><span>A Quick One</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="55" aria-haspopup="dialog" aria-label="Summer Years — You Can’t Live There Forever">
-          <img src="covers/you-cant-live-there-forever-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 55</p>
-        <p class="album-name"><b>Summer Years</b><span>You Can’t Live There Forever</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="56" aria-haspopup="dialog" aria-label="Jens Lekman — Night Falls Over Kortedala">
-          <img src="covers/night-falls-over-kortedala-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 56</p>
-        <p class="album-name"><b>Jens Lekman</b><span>Night Falls Over Kortedala</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="57" aria-haspopup="dialog" aria-label="Jonathan Richman — A Plea for Tenderness">
-          <img src="covers/a-plea-for-tenderness-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 57</p>
-        <p class="album-name"><b>Jonathan Richman</b><span>A Plea for Tenderness</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="58" aria-haspopup="dialog" aria-label="James Blake — Assume Form">
-          <img src="covers/assume-form-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 58</p>
-        <p class="album-name"><b>James Blake</b><span>Assume Form</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="59" aria-haspopup="dialog" aria-label="Kid Carpet — Dogmeat">
-          <img src="covers/dogmeat-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 59</p>
-        <p class="album-name"><b>Kid Carpet</b><span>Dogmeat</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#EFC319">
-        <button class="album-open" data-day="64" aria-haspopup="dialog" aria-label="Animal Collective — Feels">
-          <img src="covers/feels-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 64</p>
-        <p class="album-name"><b>Animal Collective</b><span>Feels</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#E97E18">
-        <button class="album-open" data-day="65" aria-haspopup="dialog" aria-label="Animal Collective — Here Comes the Indian">
-          <img src="covers/here-comes-the-indian-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 65</p>
-        <p class="album-name"><b>Animal Collective</b><span>Here Comes the Indian</span></p>
-      </article>
-
-      <article class="album-card" style="--w:#E97E18">
-        <button class="album-open" data-day="66" aria-haspopup="dialog" aria-label="Godspeed You! Black Emperor — ’ALLELUJAH! DON’T BEND! ASCEND!">
-          <img src="covers/allelujah-dont-bend-ascend-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day 66</p>
-        <p class="album-name"><b>Godspeed You! Black Emperor</b><span>’ALLELUJAH! DON’T BEND! ASCEND!</span></p>
-      </article>
-    </div>
-  </section>
-</section>
 
 <dialog class="spot" id="spot" aria-label="Record">
   <div class="spot-inner">
@@ -1743,9 +1380,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
 
   var experience = document.getElementById("experience");
   var stage = document.getElementById("stage");
-  var archiveWall = document.getElementById("archive-wall");
   var atlas = document.getElementById("atlas");
-  var camera = document.getElementById("camera");
   var walkerG = document.getElementById("walker-g");
   var walkerMark = document.getElementById("walker-mark");
   var walkerHtml = document.getElementById("walker-html");
@@ -1756,17 +1391,11 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var titlecard = document.getElementById("titlecard");
   var hint = document.getElementById("hint");
   var hud = document.getElementById("hud");
+  var hudPosition = document.getElementById("hud-position");
   var hudKm = document.getElementById("hud-km");
   var hudDays = document.getElementById("hud-days");
   var hudAscent = document.getElementById("hud-ascent");
   var hudHours = document.getElementById("hud-hours");
-  var hudProgress = document.getElementById("hud-progress");
-  var daycard = document.getElementById("daycard");
-  var dcLine = document.getElementById("dc-line");
-  var dcTitle = document.getElementById("dc-title");
-  var dcRow = document.getElementById("dc-row");
-  var dcFacts = document.getElementById("dc-facts");
-  var dcJournal = document.getElementById("dc-journal");
   var quote = document.getElementById("quote");
   var quoteLabel = document.getElementById("quote-label");
   var quoteText = document.getElementById("quote-text");
@@ -1793,12 +1422,12 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var VH = innerHeight || 900;
   var experienceTop = experience.offsetTop;
   experience.style.height = (DATA.timeline + VH) + "px";
-  var PLAY_END = archiveWall ? archiveWall.offsetTop : experienceTop + DATA.timeline;
+  var PLAY_END = experienceTop + DATA.timeline;
   addEventListener("resize", function(){
     VH = innerHeight || VH;
     experienceTop = experience.offsetTop;
     experience.style.height = (DATA.timeline + VH) + "px";
-    PLAY_END = archiveWall ? archiveWall.offsetTop : experienceTop + DATA.timeline;
+    PLAY_END = experienceTop + DATA.timeline;
     scrollDirty = true;
     requestFrame();
   });
@@ -1808,21 +1437,32 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   function hours(min){ return min ? Math.floor(min/60) + "h" + ("0"+(min%60)).slice(-2) : null; }
 
   // ---------------------------------------------------------------- camera
-  var VBW = DATA.vb[0], VBH = DATA.vb[1];
-  var FULLW = VBW;
+  var VBW = DATA.vb[0];
   var TRAVELW = 500, CLOSEW = 340;
   var lastWalk = null;
   var walkFace = 1;
-  var cam = { x: days[0].x, y: days[0].y, w: FULLW };
-  var target = { x: days[0].x, y: days[0].y, w: FULLW };
+  var cam = { x: days[0].x, y: days[0].y, w: VBW };
+  var target = { x: days[0].x, y: days[0].y, w: VBW };
 
   function viewAspect(){
     return (innerWidth > 0 && innerHeight > 0) ? innerWidth / innerHeight : 16 / 10;
   }
   function fitFull(){
-    // frame the whole route regardless of viewport aspect
-    var w = Math.max(VBW, VBH * viewAspect()) * 1.02;
-    return { x: VBW/2, y: VBH/2, w: w };
+    var xs = [DATA.start[0]], ys = [DATA.start[1]];
+    days.forEach(function(d){ xs.push(d.x); ys.push(d.y); });
+    var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+    var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+    var routeW = Math.max(1, maxX - minX), routeH = Math.max(1, maxY - minY);
+    var aspect = viewAspect();
+    if (aspect < .82) {
+      return {
+        x: DATA.start[0] + Math.min(235, routeW * .12),
+        y: minY + routeH * .22,
+        w: Math.min(760, routeW * .34)
+      };
+    }
+    var w = Math.max(routeW * 1.08, (routeH + 460) * aspect);
+    return { x: (minX + maxX) / 2, y: (minY + maxY) / 2, w: w };
   }
 
   function applyCamera(){
@@ -1854,7 +1494,6 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     return scenes[lo];
   }
 
-  var lastDayShown = -1;
   var lastZoom = "";
   function setZoom(z){ if (z !== lastZoom) { stage.setAttribute("data-zoom", z); lastZoom = z; } }
 
@@ -1988,13 +1627,14 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     var moving = lerp(baseMin, d.cumMin, t);
     var footDays = baseDays + (d.w && t > .01 ? 1 : 0);
     if (scene.t === "start") { km = 0; climbed = 0; moving = 0; footDays = 0; }
+    var positionBits = scene.t === "start" ? [] : ["day " + d.n, d.date ? shortDate(d.date) : null, d.c.toLowerCase()];
+    setText(hudPosition, positionBits.filter(Boolean).join(" · "));
     setText(hudKm, km.toFixed(1));
     setText(hudDays, String(footDays));
     setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
     setText(hudHours, (moving / 60).toFixed(1));
     var routeReveal = Math.max(0, Math.min(1, km / DATA.total));
     var routeClip = "inset(0 " + ((1 - routeReveal) * 100).toFixed(2) + "% 0 0)";
-    if (hudProgress) hudProgress.style.clipPath = routeClip;
     if (journeyProgressFill) journeyProgressFill.style.clipPath = routeClip;
     if (journeyProgress) {
       journeyProgress.setAttribute("aria-valuenow", String(Math.round(km)));
@@ -2002,30 +1642,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     }
   }
 
-  // --------------------------------------------------------------- daycard
   function esc(s){ var el = document.createElement("span"); el.textContent = s; return el.innerHTML; }
-  function showDay(d){
-    if (lastDayShown === d.n) return;
-    lastDayShown = d.n;
-    dcLine.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + d.c.toLowerCase();
-    dcTitle.textContent = d.t || (d.w ? "—" : "rest — numbered, not walked");
-    if (d.s) {
-      dcRow.innerHTML = '<button class="dsleeve" data-day="' + d.n + '" aria-haspopup="dialog" aria-label="' +
-        esc(d.s.artist + " — " + d.s.album) + '"><img src="covers/' + d.s.slug + '-thumb.webp" alt="" width="64" height="64" loading="lazy"></button>' +
-        '<p class="drec">' + esc(d.s.artist) + " — <em>" + esc(d.s.album) + "</em></p>";
-    } else {
-      dcRow.innerHTML = "";
-    }
-    var facts = [
-      d.w ? d.km.toFixed(1) + " km" : "no walk recorded",
-      hours(d.min),
-      altOf(d) ? Math.round(altOf(d)).toLocaleString("en-GB") + " m" : null,
-      d.elev > 900 ? "+" + d.elev + " m climbed" : null
-    ].filter(Boolean).join(" · ");
-    dcFacts.textContent = facts;
-    dcJournal.textContent = d.j || "";
-  }
-
   var lastCollectionDay = -1;
   function updateCollections(scene, wp, inJourney){
     if (collector) collector.classList.toggle("on", inJourney);
@@ -2040,7 +1657,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       return '<li class="collector-place' + (index === places.length - 1 ? ' latest' : '') + (place.pass ? ' pass' : '') + '" style="--w:' + DATA.colors[place.country] + '"><span>' + esc(place.name) + '</span></li>';
     }).join("");
     if (collectorAlbumList) collectorAlbumList.innerHTML = albums.slice(-4).map(function(album){
-      return '<li class="collector-album"><img src="covers/' + album.slug + '-thumb.webp" alt="" width="34" height="34"><p><b>' + esc(album.artist) + '</b><span>' + esc(album.album) + '</span></p></li>';
+      return '<li><button class="collector-album album-open" data-day="' + album.day + '" aria-haspopup="dialog" aria-label="' + esc(album.artist + " — " + album.album) + '"><img src="covers/' + album.slug + '-thumb.webp" alt="" width="34" height="34"><p><b>' + esc(album.artist) + '</b><span>' + esc(album.album) + '</span></p></button></li>';
     }).join("");
   }
 
@@ -2164,7 +1781,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     titlecard.style.visibility = (scene.t === "start" && p < scene.at + scene.len) ? "visible" : "hidden";
     fade(hint, p < 40 ? "1" : "0");
     hud.classList.toggle("on", inJourney && scene.t !== "enter");
-    daycard.classList.toggle("on", ((scene.t === "walk" && wp.day.w) || scene.t === "beat") && p > 500);
+    stage.classList.toggle("is-finished", scene.t === "end");
 
     // zoom regime
     if (scene.t === "start") {
@@ -2173,10 +1790,10 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       if (innerWidth > 900) target = { x: target.x + target.w * .115, y: target.y, w: target.w };
     }
     else if (scene.t === "end") {
-      setZoom("hero");
-      var tEnd = Math.min(1, (p - scene.at) / (scene.len * .8));
-      var full = fitFull();
-      target = { x: lerp(wp.x, full.x, tEnd), y: lerp(wp.y, full.y, tEnd), w: lerp(TRAVELW, full.w, tEnd) };
+      setZoom("travel");
+      target = viewAspect() < .82
+        ? { x: wp.x - 60, y: wp.y - 185, w: TRAVELW }
+        : (terrainTarget || { x: wp.x, y: wp.y, w: TRAVELW });
     }
     else if (scene.t === "beat") {
       setZoom(terrainTarget ? "travel" : "close");
@@ -2202,10 +1819,9 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     updateCollections(scene, wp, inJourney);
 
     // day content
-    if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showDay(wp.day); showPhoto(wp.day, wp.t); }
+    if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showPhoto(wp.day, wp.t); }
     else if (silentRest) { photoBox.classList.remove("on"); photoShown = null; }
     else if (scene.t === "enter") {
-      showDay(wp.day);
       photoBox.classList.remove("on"); photoShown = null;
     }
     // plates
@@ -2230,9 +1846,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
       fade(quote, String(Math.max(0, op)));
     } else fade(quote, "0");
 
-    // The map stays visible through the finish, then hands off to the data wall.
     if (scene.t === "end") {
-      daycard.classList.remove("on");
       photoBox.classList.remove("on"); photoShown = null;
     }
   }
@@ -2382,7 +1996,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
     if (!spot.open) { stopWalk(); spot.showModal(); }
   }
   document.addEventListener("click", function(e){
-    var b = e.target.closest(".dsleeve, .album-open");
+    var b = e.target.closest(".album-open");
     if (!b) return;
     var n = +b.getAttribute("data-day");
     var i = matched.findIndex(function(d){ return d.n === n; });

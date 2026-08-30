@@ -1119,9 +1119,9 @@ const routeGradient = countryDistances
   })
   .join(",");
 
-// The collecting rail and final wall follow the same journey clock as the
-// walker. Places inherit the nearest numbered day along the GPS trace; albums
-// are unique records, collected on the first day they appear.
+// The collecting rail follows the same journey clock as the walker. Places
+// inherit the nearest numbered day along the GPS trace; albums are unique
+// records, collected on the first day they appear.
 const places = townsPlaced.map((town) => {
   const nearestDay = dayPositions.reduce(
     (best, day) => (Math.abs(day.s - town.s) < Math.abs(best.s - town.s) ? day : best),
@@ -1183,27 +1183,6 @@ const jsData = {
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-const wallPlacesHtml = places
-  .map(
-    (place) =>
-      `<li style="--w:${COUNTRY_COLOR[place.country]}"><span>${esc(place.name)}</span></li>`
-  )
-  .join("\n      ");
-const wallAlbumsHtml = albums
-  .map(
-    (album) => `
-      <article class="album-card" style="--w:${COUNTRY_COLOR[album.country]}">
-        <button class="album-open" data-day="${album.day}" aria-haspopup="dialog" aria-label="${esc(
-          `${album.artist} — ${album.album}`
-        )}">
-          <img src="covers/${album.slug}-thumb.webp" alt="" width="240" height="240" loading="lazy" decoding="async">
-        </button>
-        <p class="album-day">day ${String(album.day).padStart(2, "0")}</p>
-        <p class="album-name"><b>${esc(album.artist)}</b><span>${esc(album.album)}</span></p>
-      </article>`
-  )
-  .join("\n");
-
 // -------------------------------------------------- country entry plates
 const ordinals = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh"];
 const actsMeta = [];
@@ -1258,12 +1237,8 @@ const fill = (token, value) => {
 fill("<!--__ATLAS__-->", atlasSvg);
 fill("<!--__PLATES__-->", platesHtml);
 fill("<!--__NOSCRIPT_DAYS__-->", noscriptHtml);
-fill("<!--__WALL_PLACES__-->", wallPlacesHtml);
-fill("<!--__WALL_ALBUMS__-->", wallAlbumsHtml);
 fill("__WALL_PLACE_COUNT__", places.length);
 fill("__WALL_ALBUM_COUNT__", albums.length);
-fill("__WALL_ASCENT__", Math.round(cumElev).toLocaleString("en-GB"));
-fill("__WALL_HOURS__", Math.round(cumMin / 60).toLocaleString("en-GB"));
 fill("__ROUTE_GRADIENT__", routeGradient);
 fill("__DATA_JSON__", JSON.stringify(jsData));
 
