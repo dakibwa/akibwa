@@ -2,7 +2,7 @@
 // Build /trek — the 2019 walk, Paris to Sofia, travelled through the map.
 //
 // The page is one full-screen atlas. Scroll walks the line: the camera
-// follows a walker along the GPS day points, towns arrive and pass, each
+// follows the GPS day points, towns arrive and pass, each
 // country opens with its Imagine ground, and records and journal beats surface
 // at their walked days. Rest points remain on the line but pass silently.
 //
@@ -563,25 +563,6 @@ for (let i = 0; i < anchors.length; i++) {
 
 const COUNTRY_COLOR = Object.fromEntries(data.countries.map((c) => [c.name, c.color]));
 
-const ringPaths = data.countryRings
-  .map((c) => {
-    const d = c.rings
-      .map(
-        (ring) =>
-          "M" +
-          ring
-            .map(([x, y]) => {
-              const point = mapPoint(x, y);
-              return `${point.x} ${point.y}`;
-            })
-            .join("L") +
-          "Z"
-      )
-      .join("");
-    return `<path class="country-ring" data-country="${c.name.toLowerCase()}" d="${d}" fill="${c.color}" fill-opacity=".05" stroke="${c.color}" stroke-opacity=".28" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
-  })
-  .join("\n    ");
-
 function terrainCellColor(points, facet = 0) {
   const altitude = points.reduce((sum, point) => sum + point.alt, 0) / points.length;
   const eastSlope = (points[1].alt + points[2].alt - points[0].alt - points[3].alt) / 1150;
@@ -591,30 +572,29 @@ function terrainCellColor(points, facet = 0) {
   const ny = -southSlope / normalLength;
   const nz = 1 / normalLength;
   const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
-  let hue = 143;
-  let saturation = 20;
-  let luminance = 18;
+  let hue = 145;
+  let saturation = 28;
+  let luminance = 32;
   if (altitude > 1750) {
-    hue = 37;
-    saturation = 13;
-    luminance = 40 + Math.min(18, ((altitude - 1750) / 900) * 18);
+    hue = 38;
+    saturation = 20;
+    luminance = 58 + Math.min(14, ((altitude - 1750) / 900) * 14);
   } else if (altitude > 1050) {
-    hue = 48;
-    saturation = 18;
-    luminance = 30 + ((altitude - 1050) / 700) * 10;
+    hue = 50;
+    saturation = 28;
+    luminance = 44 + ((altitude - 1050) / 700) * 12;
   } else if (altitude > 360) {
-    hue = 92;
-    saturation = 19;
-    luminance = 22 + ((altitude - 360) / 690) * 8;
+    hue = 98;
+    saturation = 27;
+    luminance = 36 + ((altitude - 360) / 690) * 10;
   } else {
-    luminance = 17 + Math.max(0, altitude) / 75;
+    luminance = 31 + Math.max(0, altitude) / 70;
   }
-  luminance = Math.round(Math.max(11, Math.min(64, luminance + light * 8.5 + facet)));
+  luminance = Math.round(Math.max(22, Math.min(76, luminance + light * 9 + facet)));
   return `hsl(${Math.round(hue)} ${Math.round(saturation)}% ${luminance}%)`;
 }
 
 const terrainBuckets = new Map();
-const terrainRisers = [];
 const addTerrainFacet = (bucket, color, points) => {
   const d = `M${points.map((point) => `${point.x},${point.y}`).join("L")}Z`;
   bucket.set(color, (bucket.get(color) || "") + d);
@@ -638,13 +618,6 @@ if (grid) {
       addTerrainFacet(terrainBuckets, terrainCellColor(points, 1.1), [points[0], points[2], points[3]]);
     }
   }
-  for (let row = 0; row < grid.rows; row += 2) {
-    for (let column = 0; column < grid.cols; column += 2) {
-      const point = terrainGridPoint(row, column);
-      if (point.alt < 260 || point.groundY - point.y < 8) continue;
-      terrainRisers.push(`M${point.x},${point.y}L${point.x},${point.groundY}`);
-    }
-  }
 }
 const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
   `<path class="terrain-cell" d="${d}" fill="${color}" stroke="${color}"/>`
@@ -652,7 +625,7 @@ const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
 
 // The high-ground sections become literal map specimens: actual sampled
 // elevation on top, with a shallow geological cutaway beneath. They sit in
-// the atlas all along, then lift into full contrast as the walker reaches them.
+// the atlas all along, then lift into full contrast as the route reaches them.
 const TERRAIN_BLOCKS = [
   { name: "vosges", start: 13, end: 16, west: 6.15, east: 7.85, south: 47.75, north: 49.35, depth: 23 },
   { name: "alps", start: 25, end: 34, west: 11.45, east: 14.85, south: 46.15, north: 48.45, depth: 43 },
@@ -842,63 +815,6 @@ const landmarkMarks = LANDMARKS.map((landmark) => {
     </g>`;
 }).join("\n    ");
 
-function contourPath(level) {
-  if (!grid) return "";
-  const point = (r, c) => {
-    const lon = grid.west + (c * (grid.east - grid.west)) / (grid.cols - 1);
-    const lat = grid.north - (r * (grid.north - grid.south)) / (grid.rows - 1);
-    const [x, y] = mercProj({ lon, lat });
-    const z = grid.elev[r * grid.cols + c] || 0;
-    const mapped = mapPoint(x, y, z);
-    return { x: mapped.x, y: mapped.y, z };
-  };
-  const crossing = (a, b) => {
-    if (!((a.z < level && b.z >= level) || (a.z >= level && b.z < level))) return null;
-    const u = (level - a.z) / (b.z - a.z || 1);
-    return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
-  };
-  const segments = [];
-  for (let r = 0; r < grid.rows - 1; r++) {
-    for (let c = 0; c < grid.cols - 1; c++) {
-      const corners = [point(r, c), point(r, c + 1), point(r + 1, c + 1), point(r + 1, c)];
-      const hits = [
-        crossing(corners[0], corners[1]),
-        crossing(corners[1], corners[2]),
-        crossing(corners[2], corners[3]),
-        crossing(corners[3], corners[0]),
-      ].filter(Boolean);
-      const add = (a, b) => {
-        segments.push(`M${a.x.toFixed(1)} ${a.y.toFixed(1)}L${b.x.toFixed(1)} ${b.y.toFixed(1)}`);
-      };
-      if (hits.length === 2) add(hits[0], hits[1]);
-      else if (hits.length === 4) {
-        const centre = corners.reduce((sum, p) => sum + p.z, 0) / 4;
-        if (centre >= level) {
-          add(hits[0], hits[3]);
-          add(hits[1], hits[2]);
-        } else {
-          add(hits[0], hits[1]);
-          add(hits[2], hits[3]);
-        }
-      }
-    }
-  }
-  return segments.join("");
-}
-
-const contourLevels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400];
-const contourPaths = grid
-  ? contourLevels
-      .map((level) => {
-        const d = contourPath(level);
-        if (!d) return "";
-        const major = level % 800 === 0 ? " major" : "";
-        return `<path class="contour${major}" data-elevation="${level}" d="${d}"/>`;
-      })
-      .filter(Boolean)
-      .join("\n      ")
-  : "";
-
 const trackPath =
   "M" +
   route
@@ -996,14 +912,14 @@ const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <defs>
     <linearGradient id="terrain-front-gradient" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#6D5135"/>
-      <stop offset=".3" stop-color="#4B3525"/>
-      <stop offset=".64" stop-color="#302118"/>
-      <stop offset="1" stop-color="#17110D"/>
+      <stop offset="0" stop-color="#D6A06A"/>
+      <stop offset=".3" stop-color="#B97B4F"/>
+      <stop offset=".64" stop-color="#8B573D"/>
+      <stop offset="1" stop-color="#5A382D"/>
     </linearGradient>
     <linearGradient id="terrain-side-gradient" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#4D3828"/>
-      <stop offset="1" stop-color="#19120E"/>
+      <stop offset="0" stop-color="#BE895F"/>
+      <stop offset="1" stop-color="#684332"/>
     </linearGradient>
     <filter id="terrain-grain-filter" x="-8%" y="-8%" width="116%" height="116%">
       <feTurbulence type="fractalNoise" baseFrequency=".027 .11" numOctaves="2" seed="23" result="noise"/>
@@ -1016,14 +932,11 @@ const atlasSvg = `
   </defs>
   <g id="camera">
     <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
-    <path id="terrain-risers" d="${terrainRisers.join("")}"/>
     <g id="terrain-blocks">${terrainBlocks}</g>
     <g id="water">
       ${lakePaths}
       ${riverPaths}
     </g>
-    <g id="rings">${ringPaths}</g>
-    <g id="relief">${contourPaths}</g>
     <g id="mountains">${mountainMarks}</g>
     <g id="landmarks">${landmarkMarks}</g>
     <path id="route-casing" d="${trackPath}" fill="none" stroke="#0D0C09" stroke-opacity=".76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
@@ -1031,10 +944,6 @@ const atlasSvg = `
     ${segs.join("\n    ")}
     ${dayDots}
     ${townMarks}
-    <g id="walker-g" transform="translate(${startPoint.x},${startPoint.y})">
-      <ellipse id="walker-shadow" cx="0" cy="1.1" rx="5.2" ry="1.7"/>
-      <circle id="walker-pin" cx="0" cy="0" r="2.3"/>
-    </g>
   </g>
 </svg>`;
 
@@ -1120,7 +1029,7 @@ const routeGradient = countryDistances
   })
   .join(",");
 
-// The collecting rail follows the same journey clock as the walker. Places
+// The collecting rail follows the same journey clock as the route. Places
 // inherit the nearest numbered day along the GPS trace; albums are unique
 // records, collected on the first day they appear.
 const places = townsPlaced.map((town) => {
