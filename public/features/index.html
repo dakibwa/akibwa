@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-qCgCEugofa9YLNjSWi9LqZMke+AFdNreSa/bvrjPDfo=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-Y9O3l/ffCGUvrO0SWGXM0shifvZNL0iRYqbmfaYPwRU=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -372,6 +372,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .field .mnode{fill:var(--node-fill);r:calc(var(--nr) * 1px);stroke-width:var(--nw);
     transition:opacity .4s,r var(--t-lift) var(--ease-out),stroke-width var(--t-lift) var(--ease-out)}
   .field.overnode{cursor:grab}
+  .field.overpin{cursor:not-allowed}
   .field.dragging,.field.dragging .mnode{cursor:grabbing}
   .field .mnode.done{cursor:default;opacity:.4}
   .field.over .mnode{cursor:default}
@@ -5005,12 +5006,14 @@ $('netsvg').addEventListener('pointerdown',e=>{
 });
 function hoverNode(e){
   const f=$('field');
-  if(dragN || R().over){ f.classList.remove('overnode'); return }
+  if(dragN || R().over){ f.classList.remove('overnode','overpin'); return }
   const p=svgPt(e);
-  f.classList.toggle('overnode', !!pick(p.x,p.y));
+  const movable=pick(p.x,p.y);
+  f.classList.toggle('overnode', !!movable);
+  f.classList.toggle('overpin', !movable && !!pinnedAt(p.x,p.y));
 }
 $('netsvg').addEventListener('pointermove',hoverNode);
-$('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('overnode'));
+$('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('overnode','overpin'));
 $('netsvg').addEventListener('pointermove',e=>{
   if(!dragN || e.pointerId!==dragId)return;   // only the finger that grabbed it moves it
   const p=svgPt(e);
