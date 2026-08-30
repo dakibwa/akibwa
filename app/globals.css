@@ -6456,57 +6456,6 @@ button {
   display: block;
 }
 
-.page-footer {
-  margin-top: clamp(44px, 5vw, 64px);
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  color: color-mix(in srgb, var(--ink) 66%, var(--canvas));
-  font-size: 0.76rem;
-}
-
-.page-footer-line {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4em 0.62em;
-}
-
-.page-footer-line > * + *::before {
-  margin-right: 0.62em;
-  color: color-mix(in srgb, var(--ink) 28%, var(--canvas));
-  content: "·";
-}
-
-.page-footer-line a {
-  display: inline-flex;
-  min-height: 0;
-  align-items: baseline;
-  gap: 0;
-  color: inherit;
-  cursor: pointer;
-  font-weight: 560;
-  transition: color 120ms ease;
-}
-
-.page-footer-line a::after {
-  content: none;
-}
-
-.page-footer-line a:hover,
-.page-footer-line a:focus-visible {
-  color: var(--black);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  transform: none;
-}
-
-.page-footer-line a:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 3px;
-}
-
 @media (hover: none), (pointer: coarse) {
   .akibwa-home .card--link .card-label {
     padding: 5px 7px 4px;
@@ -6543,18 +6492,13 @@ button {
     font-size: 0.78rem;
   }
 
-  .page-footer {
-    margin-top: 40px;
-    padding-top: 15px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .akibwa-home .deck .card,
   .akibwa-home .card-label,
   .akibwa-home .card-label-arrow,
-  .akibwa-home .deck-legend .rail-word,
-  .page-footer-line a {
+  .akibwa-home .deck-legend .rail-word {
     transition: none;
   }
 }
