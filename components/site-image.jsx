@@ -94,8 +94,8 @@ export function SiteImage({
     <img
       src={src}
       alt={alt}
-      // The ladder tops out at 1.5x DPR, so let the browser know the intrinsic
-      // box either way — it keeps the aspect ratio reserved before bytes land.
+      // The slot ladder tops out at 1.5x DPR, so let the browser know the
+      // intrinsic dimensions either way — it keeps the aspect ratio reserved.
       width={entry?.sourceWidth}
       height={entry?.sourceHeight}
       // A lazy image above the fold is late twice over: the preload scanner
@@ -141,7 +141,7 @@ export function SiteImage({
  * They still belong in this module rather than as a bare <img> in the page, so
  * that every piece of artwork on the site is served from one place.
  *
- * `rung` is "wall" (198px, the grid) or "card" (the opened sleeve — 570px for a
+ * `rung` is "wall" (264px, the grid) or "card" (the opened sleeve — 760px for a
  * printed master, 300px for Last.fm art, which is all Last.fm has). One rung
  * each, no srcset: both are already sized for exactly one box.
  *

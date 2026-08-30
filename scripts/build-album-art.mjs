@@ -51,18 +51,16 @@ const checkOnly = process.argv.includes("--check");
  * Two rungs, because the wall and the opened card are the only two sizes that
  * ever render and they are far apart.
  *
- * `wall` — .album-card is auto-fill minmax(104px), so ~112 CSS px at the top of
- * the frame and ~132 on the widest single-column mobile row. 198 = 132 x the
- * 1.5 DPR cap the rest of the site uses. Hover scales the card to 1.42, which
- * takes 112 to 159 CSS px — still under 198, so the lift stays sharp without a
- * second request.
+ * `wall` — the live Taste wall reaches ~130 CSS px, and the dedicated album
+ * wall reaches ~132. 264 covers both at 2x DPR, keeping sleeve typography and
+ * fine edges crisp instead of asking a 198px file to fill a Retina tile.
  *
- * `card` — the opened detail view is capped at 380 CSS px. 570 = 380 x 1.5.
+ * `card` — the opened detail view is capped at 380 CSS px. 760 = 380 x 2.
  * It is fetched only when a card is opened, so it costs nothing on load.
  */
 const RUNGS = [
-  { name: "wall", width: 198 },
-  { name: "card", width: 570 }
+  { name: "wall", width: 264 },
+  { name: "card", width: 760 }
 ];
 
 /* Both rungs go through the press — see press-curve.mjs. Both, not just the

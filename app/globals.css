@@ -6364,6 +6364,13 @@ button {
   transition: none;
 }
 
+/* Taste is a wall of small printed images, not muted interface chrome. A
+   restrained screen-side lift restores the colour lost to the shared press
+   curve without changing the source artwork or turning every cover neon. */
+.akibwa-home--taste .deck .c-art {
+  filter: saturate(1.08) contrast(1.02);
+}
+
 .akibwa-home .deck .c-mark {
   transform: none;
   transition: none;

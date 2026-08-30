@@ -41,7 +41,9 @@ if (!apiKey) throw new Error("LASTFM_API_KEY is required.");
 // wall of them would look like a loading failure.
 const PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
 
-const WALL_WIDTH = 198;
+/* Last.fm's source tops out at 300px. Keep nearly all of those real pixels in
+   the 2x wall rung rather than shrinking them to the old 198px ceiling. */
+const WALL_WIDTH = 264;
 
 /* These sleeves share the album wall with the printed 249, so they share the
    press — see press-curve.mjs. Half a wall pressed and half of it not is worse

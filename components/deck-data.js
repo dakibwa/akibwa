@@ -2667,13 +2667,14 @@ export const life = [
 
 /* Graceland is not one of the 246 printed sleeves, and it will not join them:
    the album-art ids are positional over the masters folder, so a new master
-   renumbers every sleeve after it. It carries its own artwork instead — and it
-   sits at the front of the wall because Dan says it matters most. */
+   renumbers every sleeve after it. It carries the clean official Apple Music
+   digital cover (collection 529574560) instead of a photographed/scan-derived
+   sleeve, and sits at the front of the wall because Dan says it matters most. */
 export const graceland = {
   artist: "Paul Simon",
   album: "Graceland",
   year: "1986",
-  art: "/music-art/graceland.webp"
+  art: "/music-art/graceland.jpg"
 };
 
 export const sets = [

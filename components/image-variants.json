@@ -3695,37 +3695,49 @@
       }
     ]
   },
-  "grandTile:/music-art/graceland.webp": {
-    "source": "/music-art/graceland.webp",
-    "slot": "grandTile",
+  "deckTile:/music-art/graceland.jpg": {
+    "source": "/music-art/graceland.jpg",
+    "slot": "deckTile",
     "ratio": 1,
-    "sourceWidth": 1200,
-    "sourceHeight": 1200,
-    "sourceHash": "53d57df08f76fc1d",
+    "sourceWidth": 3000,
+    "sourceHeight": 3000,
+    "sourceHash": "05dcd3c8909912b0",
     "press": "press-1",
     "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/music-art/graceland-deckTile-138.avif",
+          "bytes": 1341
+        },
+        "webp": {
+          "src": "/_img/music-art/graceland-deckTile-138.webp",
+          "bytes": 1276
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/music-art/graceland-deckTile-200.avif",
+          "bytes": 2332
+        },
+        "webp": {
+          "src": "/_img/music-art/graceland-deckTile-200.webp",
+          "bytes": 2268
+        }
+      },
       {
         "width": 264,
         "height": 264,
         "avif": {
-          "src": "/_img/music-art/graceland-grandTile-264.avif",
-          "bytes": 3869
+          "src": "/_img/music-art/graceland-deckTile-264.avif",
+          "bytes": 3534
         },
         "webp": {
-          "src": "/_img/music-art/graceland-grandTile-264.webp",
-          "bytes": 4192
-        }
-      },
-      {
-        "width": 375,
-        "height": 375,
-        "avif": {
-          "src": "/_img/music-art/graceland-grandTile-375.avif",
-          "bytes": 6855
-        },
-        "webp": {
-          "src": "/_img/music-art/graceland-grandTile-375.webp",
-          "bytes": 7522
+          "src": "/_img/music-art/graceland-deckTile-264.webp",
+          "bytes": 3766
         }
       }
     ]

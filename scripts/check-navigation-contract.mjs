@@ -19,6 +19,12 @@ const clientPreviews = readFileSync(
 const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
+const imageVariants = JSON.parse(
+  readFileSync(new URL("../components/image-variants.json", import.meta.url), "utf8")
+);
+const albumArtManifest = JSON.parse(
+  readFileSync(new URL("../data/album-art-manifest.json", import.meta.url), "utf8")
+);
 
 const fail = (message) => {
   throw new Error(`Navigation contract failed: ${message}`);
@@ -139,6 +145,35 @@ requireRuleText(".akibwa-home .deck .card {", [
   "box-shadow: none",
   "transform: none"
 ]);
+requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
+
+/* Taste artwork must resolve to real Retina-sized files rather than stretching
+   the old 198px album rung or falling back to the full Graceland source. */
+const wallRung = albumArtManifest.rungs.find((entry) => entry.name === "wall")?.width;
+const cardRung = albumArtManifest.rungs.find((entry) => entry.name === "card")?.width;
+if (wallRung < 264) fail("album wall artwork must keep its 264px Retina rung");
+if (cardRung < 760) fail("opened album artwork must keep its 760px Retina rung");
+
+const gracelandVariant = imageVariants["deckTile:/music-art/graceland.jpg"];
+if (!gracelandVariant) fail("Graceland must use the clean digital cover through the deck tile ladder");
+if (gracelandVariant.sourceWidth < 3000 || gracelandVariant.sourceHeight < 3000) {
+  fail("Graceland must keep its 3000px digital master");
+}
+if (Math.max(...gracelandVariant.variants.map((entry) => entry.width)) < 264) {
+  fail("Graceland must keep a 264px Taste tile");
+}
+
+for (const prefix of [
+  "deckTile:/film-posters/",
+  "deckTile:/game-covers/",
+  "deckTile:/tv-posters/"
+]) {
+  const entries = Object.entries(imageVariants).filter(([key]) => key.startsWith(prefix));
+  if (!entries.length) fail(`${prefix} must remain bound to the responsive artwork ladder`);
+  if (entries.some(([, value]) => Math.max(...value.variants.map((entry) => entry.width)) < 264)) {
+    fail(`${prefix} artwork must keep a 264px Retina tile`);
+  }
+}
 
 /* The shared footer keeps the original sign-off and colour-coded routes. */
 requireText(footer, 'className="page-footer-panel"', "the footer must keep its panel");

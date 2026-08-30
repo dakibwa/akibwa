@@ -27,8 +27,9 @@ are therefore pre-rendered at build time and committed.
   `public/_img/` and `components/image-variants.json` with it.
 - `npm run check:images` (part of `publish:ready`) fails if a source has changed
   since its variants were generated.
-- The ladder caps at 1.5x DPR. The artwork is grain-heavy, and grain hides the
-  difference between 1.5x and 2x while costing about 1.8x the bytes.
+- The general slot ladder caps at 1.5x DPR. Taste still reaches a 264px top
+  rung for its measured ~130px live tiles, while the separate album ladder
+  emits 264px wall and 760px opened-card files for true 2x sleeve detail.
 - **Export artwork once, at final size.** Re-encoding an already-lossy WebP
   keeps the previous generation's artefacts as detail and inflates the file:
   `contact-blue-clouds.webp` costs 437K for 899x1198 that way, and no amount of

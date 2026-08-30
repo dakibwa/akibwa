@@ -4,11 +4,11 @@
   "rungs": [
     {
       "name": "wall",
-      "width": 198
+      "width": 264
     },
     {
       "name": "card",
-      "width": 570
+      "width": 760
     }
   ],
   "entries": [

@@ -237,7 +237,7 @@ const sources = [
   { file: "project-art/personal/ines-fan-splat.webp", slot: "deckTile" },
   { file: "project-art/personal/features-card.webp", slot: "deckTile" },
   { file: "project-art/personal/features-symbol.webp", slot: "deckTile" },
-  { file: "music-art/graceland.webp", slot: "grandTile" },
+  { file: "music-art/graceland.jpg", slot: "deckTile" },
   { file: "project-art/tools/claude.webp", slot: "deckTile" },
   { file: "project-art/tools/cloudflare.webp", slot: "deckTile" },
   { file: "project-art/tools/excel.webp", slot: "deckTile" },
