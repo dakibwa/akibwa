@@ -7128,3 +7128,468 @@ button {
     transition: none;
   }
 }
+
+/* ── Editorial concept, second pass ─────────────────────────────────────
+   The coloured index is back, but it remains four plain words. Current
+   client work now sits inside the freelance story; the former "Also making"
+   strip has gone. Career reuses the earlier horizontal timeline idea, with a
+   fixed cross-fade instead of an expanding card, and the archive is taste only. */
+.concept-nav a:nth-child(1) {
+  --concept-nav-accent: 224, 122, 26;
+}
+
+.concept-nav a:nth-child(2) {
+  --concept-nav-accent: 27, 148, 125;
+}
+
+.concept-nav a:nth-child(3) {
+  --concept-nav-accent: 203, 66, 94;
+}
+
+.concept-nav a:nth-child(4) {
+  --concept-nav-accent: 0, 154, 205;
+}
+
+.concept-nav a {
+  color: color-mix(in srgb, rgb(var(--concept-nav-accent)) 76%, var(--black));
+  font-weight: 680;
+}
+
+.concept-client-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  width: 100%;
+  max-width: 380px;
+  margin-top: clamp(22px, 2.5vw, 30px);
+}
+
+.concept-client-card {
+  overflow: clip;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, var(--canvas));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 72%, var(--canvas));
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.concept-client-card picture {
+  display: block;
+}
+
+.concept-client-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.concept-client-card-foot {
+  display: flex;
+  min-height: 62px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 7px;
+  padding: 9px 9px 10px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 12%, var(--canvas));
+}
+
+.concept-client-card-foot > span:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.concept-client-card-foot small {
+  color: color-mix(in srgb, var(--ink) 50%, var(--canvas));
+  font-size: 0.54rem;
+  font-weight: 660;
+  letter-spacing: 0.07em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.concept-client-card-foot strong {
+  font-size: clamp(0.68rem, 0.85vw, 0.78rem);
+  font-weight: 680;
+  line-height: 1.14;
+}
+
+.concept-client-card .concept-arrow {
+  font-size: 0.76rem;
+}
+
+.concept-client-card:hover,
+.concept-client-card:focus-visible {
+  border-color: color-mix(in srgb, var(--concept-orange) 58%, var(--line-strong));
+  background: color-mix(in srgb, var(--concept-orange) 3%, var(--canvas));
+}
+
+.concept-client-card:hover .concept-arrow,
+.concept-client-card:focus-visible .concept-arrow {
+  transform: translate(2px, -1px);
+}
+
+.concept-client-card:focus-visible {
+  outline: 2px solid var(--concept-orange);
+  outline-offset: 3px;
+}
+
+.concept-freelance .concept-text-link {
+  margin-top: 0;
+  padding-top: 20px;
+}
+
+.concept-career-section {
+  padding: clamp(62px, 7vw, 96px) 0 clamp(68px, 8vw, 108px);
+  border-top: 1px solid var(--line-strong);
+}
+
+.concept-career-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(290px, 0.72fr);
+  gap: clamp(34px, 6vw, 88px);
+  align-items: end;
+  padding-bottom: clamp(36px, 4vw, 56px);
+}
+
+.concept-career-head h2 {
+  max-width: 12ch;
+  margin: 0.42em 0 0;
+  color: var(--black);
+  font-size: clamp(2.7rem, 5vw, 5.45rem);
+  font-weight: 620;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.concept-career-head > p {
+  max-width: 45ch;
+  margin: 0 0 0.2em;
+  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
+  font-size: clamp(0.94rem, 1.12vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.concept-career-timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(9px, 1.4vw, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.concept-career-timeline::before {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--ink) 16%, var(--canvas));
+  content: "";
+}
+
+.concept-career-stop {
+  position: relative;
+  z-index: 0;
+  display: grid;
+  grid-template-rows: 28px 25px 1fr;
+  min-width: 0;
+  outline: none;
+}
+
+.concept-career-time {
+  color: color-mix(in srgb, var(--ink) 50%, var(--canvas));
+  font-size: 0.61rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: 0.055em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.concept-career-node {
+  z-index: 1;
+  align-self: center;
+  justify-self: start;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--company-accent);
+  box-shadow: 0 0 0 4px var(--canvas);
+  transition: box-shadow 120ms ease;
+}
+
+.concept-career-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 148px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 68%, var(--canvas));
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.concept-career-summary,
+.concept-career-note {
+  transition: opacity 110ms ease;
+}
+
+.concept-career-summary {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 5px;
+}
+
+.concept-career-logo {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 7px;
+  place-items: center;
+}
+
+.concept-career-logo img {
+  display: block;
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+}
+
+.concept-career-logo.is-tile img {
+  border-radius: 4px;
+}
+
+.concept-career-summary strong {
+  max-width: 16ch;
+  color: var(--black);
+  font-size: clamp(0.83rem, 1vw, 0.96rem);
+  font-weight: 680;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+.concept-career-summary > span:last-child {
+  color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
+  font-size: 0.66rem;
+  line-height: 1.3;
+}
+
+.concept-career-note {
+  position: absolute;
+  inset: 13px 14px;
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
+  font-family: var(--serif);
+  font-size: clamp(0.74rem, 0.84vw, 0.84rem);
+  line-height: 1.42;
+  opacity: 0;
+}
+
+.concept-career-stop:hover .concept-career-card,
+.concept-career-stop:focus-visible .concept-career-card {
+  border-color: color-mix(in srgb, var(--company-accent) 40%, var(--line-strong));
+  background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
+}
+
+.concept-career-stop:hover .concept-career-node,
+.concept-career-stop:focus-visible .concept-career-node {
+  box-shadow:
+    0 0 0 4px var(--canvas),
+    0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent);
+}
+
+.concept-career-stop:hover .concept-career-summary,
+.concept-career-stop:focus-visible .concept-career-summary {
+  opacity: 0;
+}
+
+.concept-career-stop:hover .concept-career-note,
+.concept-career-stop:focus-visible .concept-career-note {
+  opacity: 1;
+}
+
+.concept-career-stop:focus-visible .concept-career-card {
+  outline: 2px solid var(--company-accent);
+  outline-offset: 3px;
+}
+
+.concept-taste-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.7fr);
+  gap: clamp(46px, 6.5vw, 94px);
+  align-items: stretch;
+}
+
+.concept-taste-head .concept-graceland {
+  grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
+}
+
+.concept-taste-head .concept-archive-head {
+  display: block;
+  align-self: stretch;
+  padding-left: clamp(28px, 3.4vw, 48px);
+  border-left: 1px solid var(--line-strong);
+}
+
+.concept-taste-head .concept-archive-head .concept-kicker {
+  display: block;
+}
+
+.concept-taste-head .concept-archive-head h2 {
+  max-width: 9ch;
+  margin-top: 0.45em;
+  font-size: clamp(2.7rem, 4.6vw, 5rem);
+  line-height: 0.91;
+}
+
+.concept-taste-head .concept-archive-head > p:last-child {
+  max-width: 34ch;
+  margin: 1.45em 0 0;
+}
+
+.akibwa-home--taste .deck-legend {
+  gap: 0.4em 1em;
+}
+
+@media (max-width: 900px) {
+  .concept-career-head,
+  .concept-taste-head {
+    grid-template-columns: 1fr;
+  }
+
+  .concept-career-head {
+    gap: 24px;
+  }
+
+  .concept-taste-head .concept-archive-head {
+    padding: 36px 0 0;
+    border-top: 1px solid var(--line-strong);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .concept-career-timeline {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .concept-career-timeline::before {
+    top: 16px;
+    right: auto;
+    bottom: 16px;
+    left: 55px;
+    width: 1px;
+    height: auto;
+  }
+
+  .concept-career-stop {
+    grid-template-columns: 55px minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 18px;
+    padding: 10px 0;
+  }
+
+  .concept-career-time {
+    grid-column: 1;
+    padding-top: 13px;
+  }
+
+  .concept-career-node {
+    position: absolute;
+    top: 27px;
+    left: 55px;
+    transform: translateX(-50%);
+  }
+
+  .concept-career-card {
+    grid-column: 2;
+    min-height: 0;
+  }
+
+  .concept-career-summary {
+    opacity: 1 !important;
+  }
+
+  .concept-career-note {
+    position: static;
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 10%, var(--canvas));
+    opacity: 1 !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .concept-client-projects {
+    gap: 8px;
+  }
+
+  .concept-client-card-foot {
+    min-height: 58px;
+    padding: 8px;
+  }
+
+  .concept-career-section {
+    padding: 52px 0 62px;
+  }
+
+  .concept-career-head {
+    padding-bottom: 28px;
+  }
+
+  .concept-career-head h2 {
+    font-size: 2.65rem;
+  }
+
+  .concept-taste-head .concept-graceland {
+    grid-template-columns: 116px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .concept-taste-head .concept-archive-head h2 {
+    font-size: 3.05rem;
+  }
+
+  .akibwa-home--taste .deck-legend {
+    gap: 0.35em 0.72em;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .concept-career-card {
+    min-height: 0;
+  }
+
+  .concept-career-summary {
+    opacity: 1 !important;
+  }
+
+  .concept-career-note {
+    position: static;
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 10%, var(--canvas));
+    opacity: 1 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-client-card,
+  .concept-career-node,
+  .concept-career-card,
+  .concept-career-summary,
+  .concept-career-note {
+    transition: none;
+  }
+}
