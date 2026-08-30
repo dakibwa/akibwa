@@ -3,9 +3,23 @@ import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
 const clientNames = ["Butterfly Rose", "Português com a Inês"];
+const clientPresentation = {
+  "Butterfly Rose": {
+    meta: "Hair salon + booking · [place removed]",
+    summary: "A tailored booking system with stylist-specific prices and colour-development time built in."
+  },
+  "Português com a Inês": {
+    meta: "Portuguese lessons + booking · Porto",
+    summary: "European Portuguese lessons, prices and a custom booking engine built for Portugal."
+  }
+};
 const clientProjects = clientNames
   .map((name) => sites.find((site) => site.name === name))
-  .filter(Boolean);
+  .filter(Boolean)
+  .map((site) => ({
+    ...site,
+    ...clientPresentation[site.name]
+  }));
 
 /* Keep the whole working history in sequence, including the two stretches on
    the tools between office roles. The fuller copy stays behind interaction. */
@@ -76,23 +90,31 @@ export function EditorialHomeConcept() {
           <div className="concept-client-projects" aria-label="Current client projects">
             {clientProjects.map((project) => (
               <a
-                className="concept-client-card"
+                className="concept-client-project"
                 key={project.name}
                 href={project.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                style={{ "--client-accent": project.accent }}
               >
-                <SiteImage
-                  src={project.art}
-                  slot="deckTile"
-                  sizes="(max-width: 560px) calc(50vw - 24px), 170px"
-                  alt=""
-                  above
-                />
-                <span className="concept-client-card-foot">
-                  <strong>{project.name}</strong>
-                  <span className="concept-arrow" aria-hidden="true">↗</span>
+                <span className="concept-client-visual" aria-hidden="true">
+                  <SiteImage
+                    src={project.art}
+                    slot="deckTile"
+                    sizes="72px"
+                    alt=""
+                    above
+                  />
                 </span>
+                <span className="concept-client-body">
+                  <span className="concept-client-meta">
+                    <span>{project.eyebrow}</span>
+                    <span>{project.meta}</span>
+                  </span>
+                  <strong>{project.name}</strong>
+                  <span className="concept-client-note">{project.summary}</span>
+                </span>
+                <span className="concept-client-arrow" aria-hidden="true">↗</span>
               </a>
             ))}
           </div>
