@@ -6456,57 +6456,6 @@ button {
   display: block;
 }
 
-.page-footer {
-  margin-top: clamp(44px, 5vw, 64px);
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  color: color-mix(in srgb, var(--ink) 66%, var(--canvas));
-  font-size: 0.76rem;
-}
-
-.page-footer-line {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4em 0.62em;
-}
-
-.page-footer-line > * + *::before {
-  margin-right: 0.62em;
-  color: color-mix(in srgb, var(--ink) 28%, var(--canvas));
-  content: "·";
-}
-
-.page-footer-line a {
-  display: inline-flex;
-  min-height: 0;
-  align-items: baseline;
-  gap: 0;
-  color: inherit;
-  cursor: pointer;
-  font-weight: 560;
-  transition: color 120ms ease;
-}
-
-.page-footer-line a::after {
-  content: none;
-}
-
-.page-footer-line a:hover,
-.page-footer-line a:focus-visible {
-  color: var(--black);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  transform: none;
-}
-
-.page-footer-line a:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 3px;
-}
-
 @media (hover: none), (pointer: coarse) {
   .akibwa-home .card--link .card-label {
     padding: 5px 7px 4px;
@@ -6543,18 +6492,1055 @@ button {
     font-size: 0.78rem;
   }
 
-  .page-footer {
-    margin-top: 40px;
-    padding-top: 15px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .akibwa-home .deck .card,
   .akibwa-home .card-label,
   .akibwa-home .card-label-arrow,
-  .akibwa-home .deck-legend .rail-word,
-  .page-footer-line a {
+  .akibwa-home .deck-legend .rail-word {
+    transition: none;
+  }
+}
+
+/* ── Editorial homepage concept ─────────────────────────────────────────
+   A local comparison route, deliberately isolated from the live homepage.
+   The opening is an edit: current identity and work first, complete archive
+   second. Artwork carries the colour; structure comes from type and rules,
+   not a second system of cards, drawers or animated reveals. */
+.concept-page {
+  --concept-dark: #0c1113;
+  --concept-now-rgb: 224, 122, 26;
+  --concept-work-rgb: 27, 148, 125;
+  --concept-career-rgb: 203, 66, 94;
+  --concept-archive-rgb: 0, 154, 205;
+  --concept-now: rgb(var(--concept-now-rgb));
+  --concept-work: rgb(var(--concept-work-rgb));
+  --concept-career: rgb(var(--concept-career-rgb));
+  --concept-archive: rgb(var(--concept-archive-rgb));
+  --concept-blue: var(--concept-archive);
+  --concept-yellow: #efc319;
+  --concept-green: var(--concept-work);
+  --concept-orange: var(--concept-now);
+  --concept-rule-gap: clamp(18px, 2vw, 28px);
+  min-height: 100vh;
+  padding-top: clamp(14px, 2vw, 28px);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.concept-page [id] {
+  scroll-margin-top: 24px;
+}
+
+.concept-hero {
+  padding: clamp(18px, 4vw, 54px) 0 clamp(28px, 4.4vw, 62px);
+  border-bottom: 4px solid var(--concept-work);
+}
+
+.concept-identity {
+  max-width: 11ch;
+  margin: 0;
+  color: var(--black);
+  font-size: clamp(3.4rem, 7.6vw, 7rem);
+  font-weight: 540;
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+.concept-identity .hero-name {
+  font-weight: 660;
+}
+
+.concept-identity .hero-name-value {
+  animation: none;
+}
+
+.concept-lede {
+  max-width: 27ch;
+  margin: clamp(22px, 3vw, 38px) 0 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 3.2vw, 3.35rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.concept-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45em 1.15em;
+  margin-top: clamp(24px, 3.4vw, 46px);
+  color: color-mix(in srgb, var(--ink) 68%, var(--canvas));
+  font-size: clamp(0.82rem, 1vw, 0.96rem);
+  font-weight: 610;
+}
+
+.concept-nav a,
+.concept-text-link,
+.concept-inline-links a {
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+  transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+
+.concept-nav a:hover,
+.concept-nav a:focus-visible,
+.concept-text-link:hover,
+.concept-text-link:focus-visible,
+.concept-inline-links a:hover,
+.concept-inline-links a:focus-visible {
+  color: var(--black);
+  text-decoration-color: currentColor;
+}
+
+.concept-nav a:focus-visible,
+.concept-text-link:focus-visible,
+.concept-inline-links a:focus-visible,
+.concept-feature:focus-visible {
+  outline: 2px solid var(--concept-blue);
+  outline-offset: 4px;
+}
+
+.concept-nav a:focus-visible {
+  outline-color: currentColor;
+}
+
+.concept-feature:focus-visible {
+  outline-color: var(--concept-work);
+}
+
+.concept-lead-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(360px, 1fr);
+  gap: clamp(28px, 4.5vw, 64px);
+  align-items: stretch;
+  padding: var(--concept-rule-gap) 0 clamp(40px, 5vw, 70px);
+}
+
+.concept-feature {
+  align-self: start;
+  overflow: clip;
+  border: 1px solid rgba(12, 17, 19, 0.72);
+  border-radius: 4px;
+  background: var(--concept-dark);
+  color: #f7f5ed;
+  cursor: pointer;
+}
+
+.concept-feature img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+}
+
+.concept-feature-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 13px 15px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: clamp(0.76rem, 1vw, 0.92rem);
+}
+
+.concept-feature-foot > span:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em 0.65em;
+}
+
+.concept-feature-foot strong {
+  font-weight: 670;
+}
+
+.concept-feature-foot > span:first-child > span {
+  color: rgba(247, 245, 237, 0.62);
+}
+
+.concept-arrow {
+  flex: none;
+  color: #f7f5ed;
+  transition: transform 120ms ease;
+}
+
+.concept-feature:hover .concept-arrow,
+.concept-feature:focus-visible .concept-arrow {
+  transform: translate(2px, -1px);
+}
+
+.concept-freelance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--concept-rule-gap) 0 0;
+  border-top: 4px solid var(--concept-now);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.concept-kicker {
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
+  font-size: 0.7rem;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: 0.095em;
+  text-transform: uppercase;
+}
+
+.concept-freelance h2,
+.concept-career h2,
+.concept-archive-head h2 {
+  margin: 0;
+  color: var(--black);
+  letter-spacing: -0.045em;
+}
+
+.concept-freelance h2 {
+  max-width: 10ch;
+  margin-top: 0.55em;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3vw, 3.25rem);
+  font-weight: 500;
+  line-height: 0.98;
+}
+
+.concept-freelance > p:not(.concept-kicker) {
+  max-width: 33ch;
+  margin: 1.1em 0 0;
+  color: color-mix(in srgb, var(--ink) 76%, var(--canvas));
+  font-size: clamp(0.94rem, 1.15vw, 1.08rem);
+  line-height: 1.48;
+}
+
+.concept-text-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  margin-top: auto;
+  padding: 30px 0 18px;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.concept-making {
+  padding-bottom: clamp(58px, 7vw, 96px);
+}
+
+.concept-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.concept-section-head h2,
+.concept-section-head p {
+  margin: 0;
+}
+
+.concept-section-head h2 {
+  color: var(--black);
+  font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+.concept-section-head p {
+  color: color-mix(in srgb, var(--ink) 52%, var(--canvas));
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.concept-making-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(22px, 3vw, 42px);
+}
+
+.concept-making-item {
+  padding: 16px 0 0;
+}
+
+.concept-making-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  color: color-mix(in srgb, var(--ink) 47%, var(--canvas));
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.concept-making-item h3 {
+  margin: 1.5em 0 0;
+  color: var(--black);
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+.concept-making-item > p {
+  max-width: 39ch;
+  margin: 0.65em 0 0;
+  color: color-mix(in srgb, var(--ink) 70%, var(--canvas));
+  font-size: 0.84rem;
+  line-height: 1.48;
+}
+
+.concept-inline-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 1em;
+  margin-top: 1.05em;
+  font-size: 0.73rem;
+  font-weight: 630;
+}
+
+.concept-story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.78fr);
+  gap: clamp(42px, 6vw, 86px);
+  padding: clamp(58px, 7.8vw, 108px) 0;
+  border-top: 1px solid var(--line-strong);
+}
+
+.concept-career > p:not(.concept-kicker),
+.concept-archive-head > p:last-child {
+  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
+  line-height: 1.55;
+}
+
+.concept-career {
+  align-self: stretch;
+  padding-left: clamp(26px, 3.5vw, 50px);
+  border-left: 1px solid var(--line-strong);
+}
+
+.concept-career h2 {
+  max-width: 12ch;
+  margin-top: 0.5em;
+  font-size: clamp(2rem, 3.3vw, 3.5rem);
+  font-weight: 610;
+  line-height: 0.98;
+}
+
+.concept-career > p:not(.concept-kicker) {
+  max-width: 41ch;
+  margin: 1.35em 0 0;
+  font-size: clamp(0.9rem, 1.08vw, 1.02rem);
+}
+
+.concept-career .concept-text-link {
+  margin-top: 1.2em;
+  padding-top: 12px;
+}
+
+.concept-archive {
+  padding-top: var(--concept-rule-gap);
+  border-top: 4px solid var(--black);
+}
+
+.concept-archive-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.45fr);
+  gap: 0 44px;
+  align-items: end;
+}
+
+.concept-archive-head .concept-kicker {
+  grid-column: 1 / -1;
+}
+
+.concept-archive-head h2 {
+  max-width: 10ch;
+  margin-top: 0.42em;
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 5.4vw, 5.8rem);
+  font-weight: 500;
+  line-height: 0.91;
+}
+
+.concept-archive-head > p:last-child {
+  max-width: 49ch;
+  margin: 0 0 0.2em;
+  font-size: clamp(0.92rem, 1.16vw, 1.08rem);
+}
+
+.concept-archive-wall {
+  margin-top: clamp(24px, 3.5vw, 44px);
+}
+
+.concept-archive-wall .akibwa-home .hero-sentence {
+  display: none;
+}
+
+.concept-archive-wall .akibwa-home .deck-hero {
+  gap: 0;
+  padding-top: 0;
+}
+
+.concept-archive-wall .akibwa-home {
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .concept-lead-grid,
+  .concept-story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .concept-freelance {
+    min-height: 330px;
+  }
+
+  .concept-making-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .concept-making-item:last-child {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 11px);
+  }
+
+  .concept-career {
+    padding: 38px 0 0;
+    border-top: 1px solid var(--line-strong);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .concept-page {
+    padding-top: 0;
+  }
+
+  .concept-hero {
+    padding-top: 26px;
+  }
+
+  .concept-identity {
+    font-size: clamp(3rem, 15vw, 4rem);
+  }
+
+  .concept-lede {
+    max-width: 22ch;
+    font-size: clamp(1.45rem, 7.3vw, 1.9rem);
+    line-height: 1.08;
+  }
+
+  .concept-nav {
+    gap: 0.45em 0.85em;
+    margin-top: 24px;
+  }
+
+  .concept-lead-grid {
+    gap: 30px;
+    padding: var(--concept-rule-gap) 0 44px;
+  }
+
+  .concept-feature-foot {
+    padding: 10px 11px 11px;
+    font-size: 0.69rem;
+  }
+
+  .concept-feature-foot > span:first-child > span {
+    display: none;
+  }
+
+  .concept-freelance {
+    min-height: 0;
+    padding-top: var(--concept-rule-gap);
+  }
+
+  .concept-freelance h2 {
+    max-width: none;
+    font-size: 2.35rem;
+  }
+
+  .concept-text-link {
+    padding-top: 24px;
+  }
+
+  .concept-making {
+    padding-bottom: 52px;
+  }
+
+  .concept-section-head p {
+    display: none;
+  }
+
+  .concept-making-list {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .concept-making-item,
+  .concept-making-item:last-child {
+    grid-column: auto;
+    max-width: none;
+    padding: 14px 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .concept-making-item h3 {
+    margin-top: 0.85em;
+  }
+
+  .concept-story-grid {
+    gap: 46px;
+    padding: 52px 0 62px;
+  }
+
+  .concept-career h2 {
+    font-size: 2.45rem;
+  }
+
+  .concept-archive {
+    padding-top: var(--concept-rule-gap);
+  }
+
+  .concept-archive-head {
+    grid-template-columns: 1fr;
+  }
+
+  .concept-archive-head h2 {
+    font-size: 3.15rem;
+  }
+
+  .concept-archive-head > p:last-child {
+    margin-top: 1.2em;
+  }
+
+  .concept-archive-wall {
+    margin-top: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-nav a,
+  .concept-text-link,
+  .concept-inline-links a,
+  .concept-arrow {
+    transition: none;
+  }
+}
+
+/* ── Editorial concept, compact pass ────────────────────────────────────
+   The coloured index is back, but it remains four plain words. Current
+   client work now sits inside the freelance story; the former "Also making"
+   strip has gone. Clients, Career and Taste use one section hierarchy; career
+   detail stays in small hover/focus popovers. */
+.concept-nav a:nth-child(1) {
+  --concept-nav-accent: var(--concept-now-rgb);
+}
+
+.concept-nav a:nth-child(2) {
+  --concept-nav-accent: var(--concept-work-rgb);
+}
+
+.concept-nav a:nth-child(3) {
+  --concept-nav-accent: var(--concept-career-rgb);
+}
+
+.concept-nav a:nth-child(4) {
+  --concept-nav-accent: var(--concept-archive-rgb);
+}
+
+.concept-nav a {
+  color: color-mix(in srgb, rgb(var(--concept-nav-accent)) 76%, var(--black));
+  font-weight: 680;
+}
+
+.concept-client-projects {
+  display: grid;
+  width: 100%;
+  max-width: 720px;
+  margin-top: clamp(22px, 2.5vw, 30px);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 20%, var(--canvas));
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, var(--canvas));
+}
+
+.concept-client-project {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+  padding: 14px 2px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.concept-client-project + .concept-client-project {
+  border-top: 1px solid color-mix(in srgb, var(--ink) 12%, var(--canvas));
+}
+
+.concept-client-visual {
+  overflow: clip;
+  display: block;
+  width: 72px;
+  height: 58px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--white) 62%, var(--canvas));
+}
+
+.concept-client-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 120ms ease;
+}
+
+.concept-client-body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.concept-client-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2em 0.65em;
+  color: color-mix(in srgb, var(--ink) 46%, var(--canvas));
+  font-size: 0.58rem;
+  font-weight: 660;
+  letter-spacing: 0.07em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.concept-client-meta > span:first-child {
+  color: color-mix(in srgb, var(--client-accent) 76%, var(--black));
+}
+
+.concept-client-body strong {
+  color: var(--black);
+  font-size: clamp(0.82rem, 1vw, 0.94rem);
+  font-weight: 690;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+.concept-client-note {
+  color: color-mix(in srgb, var(--ink) 67%, var(--canvas));
+  font-family: var(--serif);
+  font-size: clamp(0.72rem, 0.9vw, 0.8rem);
+  line-height: 1.34;
+}
+
+.concept-client-arrow {
+  align-self: start;
+  margin-top: 1px;
+  color: color-mix(in srgb, var(--client-accent) 76%, var(--black));
+  font-size: 0.78rem;
+  transition: transform 120ms ease;
+}
+
+.concept-client-project:hover .concept-client-body strong,
+.concept-client-project:focus-visible .concept-client-body strong {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.concept-client-project:hover .concept-client-visual img,
+.concept-client-project:focus-visible .concept-client-visual img {
+  opacity: 0.86;
+}
+
+.concept-client-project:hover .concept-client-arrow,
+.concept-client-project:focus-visible .concept-client-arrow {
+  transform: translate(2px, -1px);
+}
+
+.concept-client-project:focus-visible {
+  outline: 2px solid var(--client-accent);
+  outline-offset: 3px;
+}
+
+/* Career is an index at rest: date, mark, nothing else. The fuller story is
+   deliberately transient so the page stays scannable on every viewport. */
+.concept-career-section {
+  padding: var(--concept-rule-gap) 0 clamp(112px, 9vw, 140px);
+  border-top: 4px solid var(--concept-career);
+}
+
+.concept-career-head {
+  padding-bottom: clamp(28px, 3vw, 40px);
+}
+
+.concept-freelance h2,
+.concept-career-head h2,
+.concept-taste-head .concept-archive-head h2 {
+  margin: 0;
+  max-width: none;
+  color: var(--black);
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.concept-career-timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--career-count), minmax(0, 1fr));
+  gap: clamp(9px, 1.4vw, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.concept-career-timeline::before {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--ink) 16%, var(--canvas));
+  content: "";
+}
+
+.concept-career-stop {
+  position: relative;
+  z-index: 0;
+  display: grid;
+  /* The middle lane keeps the animated halo clear of both copy and card. */
+  grid-template-rows: 32px 36px 68px;
+  min-width: 0;
+  outline: none;
+}
+
+.concept-career-time {
+  color: color-mix(in srgb, var(--ink) 50%, var(--canvas));
+  font-size: 0.61rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: 0.055em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.concept-career-node {
+  z-index: 1;
+  align-self: center;
+  justify-self: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--company-accent);
+  box-shadow: 0 0 0 4px var(--canvas);
+  transition: box-shadow 100ms ease;
+}
+
+.concept-career-card {
+  position: relative;
+  display: grid;
+  min-height: 0;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 68%, var(--canvas));
+  transition: border-color 100ms ease, background 100ms ease;
+}
+
+.concept-career-logo {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+}
+
+.concept-career-logo img {
+  display: block;
+  width: 31px;
+  height: 31px;
+  object-fit: contain;
+}
+
+.concept-career-logo.is-tile img {
+  border-radius: 4px;
+}
+
+.concept-career-popover {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  width: min(280px, calc(100vw - 32px));
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
+  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 100ms ease, transform 100ms ease;
+}
+
+.concept-career-stop:nth-child(n + 4) .concept-career-popover {
+  right: 0;
+  left: auto;
+}
+
+.concept-career-popover strong {
+  color: var(--black);
+  font-size: 0.86rem;
+  font-weight: 690;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.concept-career-popover > span {
+  color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
+  font-size: 0.66rem;
+  line-height: 1.3;
+}
+
+.concept-career-popover p {
+  margin: 8px 0 0;
+  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
+  font-family: var(--serif);
+  font-size: 0.82rem;
+  line-height: 1.42;
+}
+
+.concept-career-stop:hover,
+.concept-career-stop:focus {
+  z-index: 30;
+}
+
+.concept-career-stop:hover .concept-career-card,
+.concept-career-stop:focus .concept-career-card {
+  border-color: color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
+  background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
+}
+
+.concept-career-stop:hover .concept-career-node,
+.concept-career-stop:focus .concept-career-node {
+  box-shadow:
+    0 0 0 4px var(--canvas),
+    0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent);
+}
+
+.concept-career-stop:hover .concept-career-popover,
+.concept-career-stop:focus .concept-career-popover {
+  opacity: 1;
+  transform: none;
+}
+
+.concept-career-stop:focus-visible .concept-career-card {
+  outline: 2px solid var(--company-accent);
+  outline-offset: 3px;
+}
+
+/* Taste now uses the same single-heading distinction as Clients and Career;
+   Graceland leads the wall itself instead of becoming a separate feature. */
+.concept-taste-head {
+  display: block;
+}
+
+.concept-taste-head .concept-archive-head {
+  display: block;
+}
+
+.concept-archive {
+  border-top-color: var(--concept-archive);
+}
+
+.akibwa-home--taste .deck-legend {
+  gap: 0.4em 1em;
+}
+
+@media (max-width: 760px) {
+  .concept-career-section {
+    padding-bottom: 72px;
+  }
+
+  .concept-career-timeline {
+    gap: clamp(5px, 1.5vw, 10px);
+  }
+
+  .concept-career-timeline::before {
+    top: 50px;
+  }
+
+  .concept-career-stop {
+    grid-template-rows: 32px 36px 56px;
+  }
+
+  .concept-career-time {
+    padding-right: 2px;
+    font-size: clamp(0.5rem, 1.45vw, 0.6rem);
+    letter-spacing: 0.025em;
+  }
+
+  .concept-career-card {
+    min-width: 0;
+  }
+
+  .concept-career-logo,
+  .concept-career-logo img {
+    width: 29px;
+    height: 29px;
+  }
+
+  .concept-career-popover {
+    top: calc(100% + 8px);
+    width: min(260px, calc(100vw - 32px));
+    min-width: 0;
+  }
+
+  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5) .concept-career-popover {
+    right: auto;
+    left: 50%;
+    transform: translate(-50%, -4px);
+  }
+
+  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):focus .concept-career-popover {
+    transform: translateX(-50%);
+  }
+
+  .concept-career-stop:nth-child(n + 6) .concept-career-popover {
+    right: 0;
+    left: auto;
+    transform: translateY(-4px);
+  }
+
+  .concept-career-stop:nth-child(n + 6):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n + 6):focus .concept-career-popover {
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .concept-client-project {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 11px;
+    padding: 12px 1px;
+  }
+
+  .concept-client-visual {
+    width: 64px;
+    height: 52px;
+  }
+
+  .concept-client-note {
+    font-size: 0.74rem;
+  }
+
+  .concept-career-section {
+    padding: var(--concept-rule-gap) 0 58px;
+  }
+
+  .concept-career-head {
+    padding-bottom: 24px;
+  }
+
+  .concept-freelance h2,
+  .concept-career-head h2,
+  .concept-taste-head .concept-archive-head h2 {
+    font-size: 2.65rem;
+  }
+
+  .concept-career-popover {
+    padding: 11px 12px;
+  }
+
+  .concept-career-popover p {
+    margin-top: 6px;
+    font-size: 0.76rem;
+    line-height: 1.36;
+  }
+
+  .akibwa-home--taste .deck-legend {
+    gap: 0.35em 0.72em;
+  }
+}
+
+/* The horizontal index still fits every supported phone. This is only a
+   last-resort fallback for unusually narrow embedded viewports. */
+@media (max-width: 300px) {
+  .concept-career-timeline {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .concept-career-timeline::before {
+    top: 14px;
+    right: auto;
+    bottom: 14px;
+    left: 48px;
+    width: 1px;
+    height: auto;
+  }
+
+  .concept-career-stop {
+    grid-template-columns: 48px 52px minmax(0, 1fr);
+    grid-template-rows: 52px;
+    gap: 14px;
+    min-height: 68px;
+    padding: 8px 0;
+  }
+
+  .concept-career-time {
+    grid-column: 1;
+    align-self: center;
+  }
+
+  .concept-career-node {
+    position: absolute;
+    top: 50%;
+    left: 48px;
+    transform: translate(-50%, -50%);
+  }
+
+  .concept-career-card {
+    grid-column: 2;
+    width: 52px;
+    height: 52px;
+  }
+
+  .concept-career-popover,
+  .concept-career-stop:nth-child(n) .concept-career-popover {
+    top: calc(100% + 4px);
+    right: auto;
+    left: 0;
+    width: 100%;
+    transform: translateY(-4px);
+  }
+
+  .concept-career-stop:nth-child(n):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n):focus .concept-career-popover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-client-visual img,
+  .concept-client-arrow,
+  .concept-career-node,
+  .concept-career-card,
+  .concept-career-popover {
     transition: none;
   }
 }

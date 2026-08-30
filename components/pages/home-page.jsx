@@ -120,9 +120,10 @@ function Mark({ src, tile }) {
   );
 }
 
-export function HomePage() {
+export function HomePage({ tasteOnly = false }) {
+  const legend = tasteOnly ? TASTE_LEGEND : LEGEND;
   const [activeId, setActiveId] = useState("everything");
-  const activeFilter = LEGEND.find((item) => item.id === activeId) ?? LEGEND[0];
+  const activeFilter = legend.find((item) => item.id === activeId) ?? legend[0];
   const lens = activeFilter.lens;
 
   const selectFilter = useCallback((item, { replace = false } = {}) => {
@@ -138,21 +139,22 @@ export function HomePage() {
   useEffect(() => {
     const applyLocation = () => {
       const locationFilter = lensFromLocation();
-      setActiveId(locationFilter?.id ?? "everything");
+      const available = locationFilter && legend.some((item) => item.id === locationFilter.id);
+      setActiveId(available ? locationFilter.id : "everything");
     };
     applyLocation();
     window.addEventListener("popstate", applyLocation);
     return () => window.removeEventListener("popstate", applyLocation);
-  }, []);
+  }, [legend]);
 
   useEffect(() => {
     if (activeId === "everything") return undefined;
     const onKey = (event) => {
-      if (event.key === "Escape") selectFilter(LEGEND[0]);
+      if (event.key === "Escape") selectFilter(legend[0]);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [activeId, selectFilter]);
+  }, [activeId, legend, selectFilter]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
 
@@ -369,6 +371,40 @@ export function HomePage() {
      the rest comes off the blend in DOM order. Sync decoding is main-thread
      work, so it is capped well below the eager count. */
   const wall = useMemo(() => {
+    const gracelandCard = (
+      <Card
+        key="graceland"
+        suit="music"
+        dim={dim("music")}
+        label={`${graceland.artist} — ${graceland.album}`}
+        face={
+          <SiteImage
+            src={graceland.art}
+            slot="deckTile"
+            sizes={SLOT_SIZES.deckTile}
+            alt=""
+            className="c-art"
+            above
+            aboveSync
+          />
+        }
+      />
+    );
+
+    if (tasteOnly) {
+      return (
+        <>
+          {gracelandCard}
+          {blend([
+            ["music", cardsFor("music")],
+            ["films", cardsFor("films")],
+            ["games", cardsFor("games")],
+            ["tv", cardsFor("tv")]
+          ])}
+        </>
+      );
+    }
+
     /* Career leads the front of the wall with its two current roles; the
        six past ones are dealt through the blend below with everything
        else. */
@@ -378,23 +414,7 @@ export function HomePage() {
         {/* The front of the wall: the things made, the life pieces, the two
             current roles — and Graceland, important without breaking scale. */}
         {cardsFor("sites")}
-        <Card
-          key="graceland"
-          suit="music"
-          dim={dim("music")}
-          label={`${graceland.artist} — ${graceland.album}`}
-          face={
-            <SiteImage
-              src={graceland.art}
-              slot="deckTile"
-              sizes={SLOT_SIZES.deckTile}
-              alt=""
-              className="c-art"
-              above
-              aboveSync
-            />
-          }
-        />
+        {gracelandCard}
         {cardsFor("life")}
         {jobCards.slice(0, 2)}
 
@@ -413,15 +433,18 @@ export function HomePage() {
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lens]);
+  }, [lens, tasteOnly]);
 
   return (
-    <section className="akibwa-home">
-      <div className={`page-grid deck${lens ? " is-lensed" : ""}`} aria-label="Everything on one wall">
+    <section className={`akibwa-home${tasteOnly ? " akibwa-home--taste" : ""}`}>
+      <div
+        className={`page-grid deck${lens ? " is-lensed" : ""}`}
+        aria-label={tasteOnly ? "Music, films, games and television" : "Everything on one wall"}
+      >
         <div className="deck-hero">
           <HeroSentence />
           <nav className="deck-legend" aria-label="Filter the wall">
-            {LEGEND.map((set) => (
+            {legend.map((set) => (
               <button
                 key={set.id}
                 id={`set-${set.id}`}
@@ -469,6 +492,10 @@ const LEGEND = [
   { id: "career", label: "Career", lens: CAREER_LENS, accent: INDEX_ACCENT.jobs },
   ...sets.slice(2).map((set) => ({ ...set, lens: [set.id], accent: INDEX_ACCENT[set.id] }))
 ];
+
+const TASTE_LEGEND = LEGEND.filter((item) =>
+  ["everything", "music", "films", "games", "tv"].includes(item.id)
+);
 
 
 /* Each tool card fills with its own brand ground. Picked for accuracy and for

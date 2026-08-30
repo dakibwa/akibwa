@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 /* Build-time contract for Akibwa's deliberately small interface. The public
    index has no site header, modal viewer, card buttons, or general motion
    system. It is one fixed sentence with a single identity cycle, seven plain
-   filters, a square visual wall, and one quiet footer. This check makes that
+   filters, a square visual wall, and the restored coloured sign-off footer. This check makes that
    restraint harder to accidentally undo. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
@@ -115,14 +115,17 @@ requireText(
 /* The homepage is an object wall, not selectable prose. */
 requireRuleText(".akibwa-home {", ["user-select: none", "-webkit-user-select: none"]);
 
-/* The footer is one unadorned line: location plus the three real routes. */
-requireText(footer, 'className="page-footer-line"', "the footer must be a single line");
+/* The shared footer keeps the original sign-off and colour-coded routes. */
+requireText(footer, 'className="page-footer-panel"', "the footer must keep its panel");
+requireText(footer, 'className="page-footer-signoff"', "the footer must keep its sign-off");
+requireText(footer, "Fewer things done by hand.", "the footer must keep its original wording");
 requireText(footer, "<span>Manchester</span>", "the footer must keep the location");
 requireText(footer, 'href="mailto:', "the footer must keep email");
 requireText(footer, 'href="https://x.com/', "the footer must keep X");
 requireText(footer, 'href="https://www.instagram.com/', "the footer must keep Instagram");
-forbidText(footer, "lucide-react", "the footer must not bring back icon chrome");
-forbidText(footer, "page-footer-signoff", "the footer must not bring back a signoff panel");
+requireText(footer, '"--handle-accent": "#c05212"', "Manchester must keep its orange accent");
+requireText(footer, '"--handle-accent": "#d63a7a"', "Instagram must keep its pink accent");
+requireText(footer, '"--handle-accent": "#2f88ff"', "email must keep its blue accent");
 requireText(home, "<PageFooter", "the home page must render the footer");
 
 console.log("Navigation contract passed.");

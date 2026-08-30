@@ -43,7 +43,8 @@ headless Chrome with real input) before visual QA.
 - Tapping a row closes the menu and navigates in the same interaction — no
   deferred `setTimeout` navigation. The menu's collapse animates alongside the
   route change.
-- The shared page footer is hidden at mobile widths.
+- The shared page footer remains visible at mobile widths, stacking the
+  “Fewer things done by hand.” sign-off above its colour-coded contact row.
 
 ## Reduced motion
 
@@ -64,5 +65,5 @@ headless Chrome with real input) before visual QA.
   at 1440px and 1024px, exactly-one-active state, hover reveal/hide including
   interrupted hovers, six rapid sweeps leaving no ghost bars or stranded
   classes, keyboard-focus reveal, click transitions with no gap, no bar boxes
-  and no footer at 390px, immediate mobile-menu navigation, and zeroed
+  and a contained stacked footer at 390px, immediate mobile-menu navigation, and zeroed
   durations under reduced motion.

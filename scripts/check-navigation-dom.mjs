@@ -250,8 +250,14 @@ const pageState = () => evaluate(`(() => {
       const r = card.getBoundingClientRect();
       return r.bottom > 0 && r.top < innerHeight;
     }).length,
-    footer: [...document.querySelector(".page-footer-line").children]
+    footerSignoff: document.querySelector(".page-footer-signoff strong")?.textContent.trim(),
+    footerLocation: document.querySelector(".footer-location")?.textContent.trim(),
+    footerLinks: [...document.querySelectorAll(".page-footer-details a")]
       .map((item) => item.textContent.trim()).join(" / "),
+    footerAccents: [
+      document.querySelector(".footer-location"),
+      ...document.querySelectorAll(".page-footer-details a")
+    ].map((item) => item?.style.getPropertyValue("--handle-accent").trim()).join(" / "),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     hash: location.hash
   };
@@ -299,7 +305,13 @@ const checkDesktop = async () => {
   check(state.sampleStandard.width > state.sampleSmall.width * 1.9, "standard cards are exactly the larger of two scales");
   check(state.sampleStandard.width < state.sampleSmall.width * 2.2, "the two scales share one grid unit");
   check(state.inViewport >= 30, `the first screen stays dense [${state.inViewport} cards]`);
-  check(state.footer === "Manchester / Email / X / Instagram", `footer is one plain line [${state.footer}]`);
+  check(state.footerSignoff === "Fewer things done by hand.", `footer restores its sign-off [${state.footerSignoff}]`);
+  check(state.footerLocation === "Manchester", `footer keeps Manchester [${state.footerLocation}]`);
+  check(state.footerLinks === "dakibwa / dakibwa / Email", `footer keeps its three routes [${state.footerLinks}]`);
+  check(
+    state.footerAccents === "#c05212 / #0f1114 / #d63a7a / #2f88ff",
+    `footer restores its colour accents [${state.footerAccents}]`
+  );
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
 
   const cycledName = await pollUntil(
@@ -416,16 +428,23 @@ const checkMobile = async () => {
   const touch = await evaluate(`(() => {
     const label = document.querySelector("a.card .card-label");
     const nav = document.querySelector(".deck-legend");
-    const footer = document.querySelector(".page-footer-line").getBoundingClientRect();
+    const footer = document.querySelector(".page-footer").getBoundingClientRect();
+    const panel = document.querySelector(".page-footer-panel").getBoundingClientRect();
+    const signoff = document.querySelector(".page-footer-signoff").getBoundingClientRect();
+    const meta = document.querySelector(".page-footer-meta").getBoundingClientRect();
     return {
       labelOpacity: Number(getComputedStyle(label).opacity),
       navHeight: nav.getBoundingClientRect().height,
-      footerInside: footer.left >= 0 && footer.right <= innerWidth + 1
+      footerInside: footer.left >= 0 && footer.right <= innerWidth + 1 &&
+        panel.left >= 0 && panel.right <= innerWidth + 1 &&
+        meta.left >= 0 && meta.right <= innerWidth + 1,
+      footerStacked: signoff.bottom <= meta.top + 1
     };
   })()`);
   check(touch.labelOpacity > 0.99, "linked titles are permanently legible without hover");
   check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
-  check(touch.footerInside, "the footer line stays inside the mobile frame");
+  check(touch.footerInside, "the restored footer stays inside the mobile frame");
+  check(touch.footerStacked, "the footer sign-off stacks above its mobile contact row");
 };
 
 const checkReducedMotion = async () => {
