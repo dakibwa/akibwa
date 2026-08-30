@@ -7207,7 +7207,7 @@ button {
 
 .concept-career-timeline::before {
   position: absolute;
-  top: 40px;
+  top: 50px;
   right: 0;
   left: 0;
   height: 1px;
@@ -7219,7 +7219,8 @@ button {
   position: relative;
   z-index: 0;
   display: grid;
-  grid-template-rows: 28px 25px 68px;
+  /* The middle lane keeps the animated halo clear of both copy and card. */
+  grid-template-rows: 32px 36px 68px;
   min-width: 0;
   outline: none;
 }
@@ -7379,11 +7380,11 @@ button {
   }
 
   .concept-career-timeline::before {
-    top: 43px;
+    top: 50px;
   }
 
   .concept-career-stop {
-    grid-template-rows: 32px 22px 56px;
+    grid-template-rows: 32px 36px 56px;
   }
 
   .concept-career-time {
