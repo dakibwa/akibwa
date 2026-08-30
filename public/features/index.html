@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-lMNbTToPnRD0hBHpHodGsgL7eNkDGwbglGxzppvjqP4=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-Q/fqrg8/JZbxeP9Ky1W/jjcPJkD4/nvl4ImpBUS91TE=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -348,10 +348,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .help:hover{border-color:var(--ink);color:var(--ink)}
   .help:active{transform:scale(.93);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-press)}
-  .help .caltext{
-    font-size:10px;letter-spacing:.11em;text-transform:lowercase;
-    font-variant-numeric:tabular-nums;white-space:nowrap
-  }
   .themeglyph{width:16px;height:16px;color:currentColor;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
   :root[data-theme="light"] .themeglyph{transform:rotate(180deg)}
 
@@ -1037,7 +1033,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .door-close{margin-left:auto}
   .door-auth{display:inline-flex}
-  .mastauth{display:contents}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
@@ -1097,7 +1092,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .unit-name{margin-left:0;flex-basis:100%;margin-top:2px}
     .btns{gap:4px;flex-wrap:wrap;justify-content:flex-end}
     .btns .help{min-width:34px;padding:0 6px}
-    #histbtn .caltext{display:none}
     .rail{gap:15px 20px;padding:14px 13px 15px}
     .rail .gauge{flex:1 1 128px}
     .railactions{flex-wrap:wrap}
@@ -1225,80 +1219,24 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       <span class="msg" id="msg" role="status" aria-live="polite"></span>
     </div>
     <div class="btns">
-      <!-- one button, because there is one screen: the collection and the record
-           were two readings of the same history and are now one list. it is also
-           the fourth button the phone head never had 48px spare for. -->
-      <button class="help" id="histbtn" aria-label="your days">
+      <!-- The masthead is not a second menu. This one door opens the persistent
+           menu, where Collection, How to Play and Profile live; only the two
+           global state marks stay beside it. Equal icon boxes keep the readings
+           legible instead of spending their width on duplicated destinations. -->
+      <button class="help" id="histbtn" aria-label="the menu">
         <svg class="recglyph" viewBox="0 0 24 24" aria-hidden="true">
           <g fill="currentColor"><rect x="3" y="5" width="4" height="4"/><rect x="3" y="11" width="4" height="4"/><rect x="3" y="17" width="4" height="4"/></g>
           <g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 7h11M10 13h11M10 19h11"/></g>
         </svg>
-        <span class="caltext" id="statusdate"></span>
       </button>
-      <!-- THE ORDER IS THE DOORS ROW'S (28 Aug 2026, the owner's call: "the
-           order should always be the same") — home, collection, ?, ground,
-           who-you-are, till. the collection's mark returns for exactly that
-           parity: the sheets carry it, so the bar does too. -->
-      <button class="help" id="collbtn" aria-label="the collection">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor">
-        <rect x="4" y="4" width="4.5" height="4.5"/><rect x="9.75" y="4" width="4.5" height="4.5"/><rect x="15.5" y="4" width="4.5" height="4.5"/>
-        <rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>
-        <rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>
-        </g></svg>
-      </button>
-      
-      <!-- ---- the guided net is NOT here ----
-           a mark for the lessons stood in this slot, hidden until `tutorialDone`
-           and shown from then on as the only way back to them. it moved to the
-           foot of the day card on the owner's call (17 Aug 2026): the lessons are
-           a thing you decide to do before a day starts, not a control you reach
-           for mid-net, and the card that opens the day is where that decision is
-           already being made. it has since moved once more, to the `?` card
-           (28 Aug) — see `ruleslessons` in renderIntro — where help lives.
-           what the bar keeps is what belongs to a net in progress — the ground,
-           the record, the collection, the till and `?` — and the cluster gets a
-           sixth slot back, which it needed: a seventh mark overflows a phone. -->
-      <!-- ---- the full version ----
-           a PLUS, because that is what it is: the game's own framing is that the
-           free tier is complete and money adds the archive, the replay and the
-           trial — "an addition drawn as an addition" (see the note on the record's
-           played row). a circle, a horizontal and a vertical, which is as plain as
-           this palette gets.
-           `hidden` until `canBuy()` says there is a till AND the player does not
-           already hold it, which is the same gate the record's line and the
-           cleared card's offer read. a shop button that answers "the till is not
-           answering" is worse than none, and a buyer must never see one at all.
-           it stays in the QUIET ink of every other control here rather than taking
-           the purchase violet: a saturated field in the masthead is a badge, and
-           a badge is the one form this interface does not use. -->
-      <button class="help" id="helpbtn" aria-label="how to play">?</button>
       <!-- `groundbtn` is what applyTheme writes and what the click is wired to,
-           so this one and the sheets' are found together and cannot drift. -->
+           so this one and the menu's are found together and cannot drift. -->
       <button class="help groundbtn" id="themebtn" aria-label="ground">
         <svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg>
       </button>
-      <!-- who you are, in the bar too — filled by fillIntroAuth with the same
-           mark every doors row gets; display:contents so the button inside is
-           the cluster's own flex item. -->
-      <span class="door-auth mastauth"></span>
-      <!-- ---- THE TILL HOLDS THIS CORNER TOO ---- (17 Aug 2026, the owner's call)
-           it stood between the collection and `?` and was drawn only to somebody
-           who could still buy — so the one mark in this row that reports WHO YOU
-           ARE sat among the doors and disappeared the moment you bought it. it is
-           last now, at the end of the row, which is the same corner the day card
-           gives it, and it is drawn in BOTH states: a plus while it is for sale,
-           a tick once it is yours. `paintTill` draws both, in one place, so the
-           two corners cannot end up disagreeing about what a purchase looks like.
-           the old `hidden` gate on `canBuy()` has gone with it — see paintTill for
-           what replaced it and why. it stays in the QUIET ink of every other
-           control here rather than taking the purchase violet: a saturated field
-           in the masthead is a badge, and a badge is the one form this interface
-           does not use.
-           the `>_` solve button was the last mark in this row and is now in the
-           controls drawer with every other dev affordance. it never reached a
-           player — it was `hidden` off a DEV host — but it was in the masthead on
-           every screenshot taken during development, which is the row this game
-           is judged on. -->
+      <!-- `paintTill` draws both purchase and owned states here and in the menu;
+           this is the one destination important enough to remain immediately
+           visible, and the one whose state is useful without opening a card. -->
       <button class="help" id="buybtn" hidden></button>
       </div>
   </header>
@@ -6618,9 +6556,6 @@ function renderHud(){
   $('parof').textContent=unit;
 
   $('field').classList.toggle('over',!!r.over);
-  const d=new Date(), mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-  $('statusdate').textContent=`${d.getDate()} ${mo[d.getMonth()]}`;
-  $('histbtn').setAttribute('aria-label',`your days · ${d.getDate()} ${mo[d.getMonth()]}`);
 }
 function renderAll(){
   buildNet(); renderHud(); refresh(); startPhysics(); renderTutorial();
@@ -6686,7 +6621,6 @@ const WORDMARK='features';
   });
 })();
 $('histbtn').onclick=()=>openMenu('home');
-$('collbtn').onclick=()=>openMenu('coll');
 function closeArchiveLook(){
   $('archveil').classList.remove('show');
   if(archFrom){ renderMenu(); showVeil('introveil') }
@@ -6864,7 +6798,6 @@ function startLessons(){
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
 }
-$('helpbtn').onclick=()=>openMenu('rules');
 $('buybtn').onclick=()=>{ if(!POLICY.premium){ openMenu('pay'); beginUnlock() } };
 const FLAGSTRIP='<i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>'
   +'<i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>';
