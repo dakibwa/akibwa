@@ -116,7 +116,12 @@ button{font:inherit;color:inherit}
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
 .stage{position:sticky;top:0;height:100svh;overflow:clip;background:var(--peat)}
-.atlas-scene{position:absolute;inset:0;contain:layout paint style}
+.atlas-scene{
+  position:absolute;inset:0;contain:layout paint style;
+  background:
+    linear-gradient(180deg,rgba(239,230,212,.025),transparent 26%),
+    radial-gradient(90% 55% at 50% 70%,rgba(239,230,212,.035),transparent 74%);
+}
 #atlas{position:absolute;inset:0;width:100%;height:100%;shape-rendering:geometricPrecision;will-change:contents}
 .vignette{
   position:absolute;inset:0;pointer-events:none;
@@ -124,9 +129,16 @@ button{font:inherit;color:inherit}
 }
 
 /* atlas drawing */
-#terrain-mesh{opacity:.54;filter:blur(4px);transform:scale(1.008);transform-origin:center;transition:opacity .5s}
-.terrain-cell{stroke-width:.7;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.82}
+#terrain-mesh{opacity:.64;transform:scale(1.006);transform-origin:center;transition:opacity .5s}
+.terrain-cell{stroke-width:.48;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+#terrain-risers{
+  fill:none;stroke:color-mix(in srgb,var(--bone) 29%,var(--peat));stroke-opacity:.2;stroke-width:.58;
+  vector-effect:non-scaling-stroke;transition:stroke .65s ease,stroke-opacity .5s;
+}
+.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.9}
+.stage[data-zoom="travel"] #terrain-risers,.stage[data-zoom="close"] #terrain-risers{
+  stroke:color-mix(in srgb,var(--c-cur,var(--bone)) 28%,var(--bone));stroke-opacity:.3;
+}
 #rings{pointer-events:none}
 .country-ring{
   fill-opacity:.018;stroke-opacity:.12;
@@ -155,8 +167,34 @@ button{font:inherit;color:inherit}
 #mountains{pointer-events:none}
 .mountain{opacity:.36;transition:opacity .5s}
 .stage[data-zoom="travel"] .mountain,.stage[data-zoom="close"] .mountain{opacity:.82}
+.stage[data-landmark="lake"] .mountain,.stage[data-landmark="peaks"] .mountain{opacity:.08}
 .mountain path{fill:none;stroke:color-mix(in srgb,var(--c-cur,var(--dust)) 48%,var(--dust));stroke-width:.9;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;transition:stroke .65s ease}
 .mountain text{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;fill:color-mix(in srgb,var(--c-cur,var(--dust)) 48%,var(--dust));text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:2.5px;stroke-linejoin:round;transition:fill .65s ease}
+#landmarks{pointer-events:none}
+.landmark{opacity:.06;transition:opacity .42s ease;--landmark-color:var(--bone)}
+.landmark-shadow{fill:#000;opacity:0;transform:scaleX(.35);transform-origin:center;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.landmark-floor,.landmark-rise{opacity:.08;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.landmark-floor{transform-box:fill-box;transform-origin:center}
+.landmark-rise{transform-box:fill-box;transform-origin:center bottom;transform:scaleY(.035)}
+.landmark-paper{fill:color-mix(in srgb,var(--landmark-color) 22%,var(--bone));stroke:var(--peat);stroke-width:.75;stroke-linejoin:round}
+.landmark-accent{fill:var(--landmark-color);stroke:var(--peat);stroke-width:.65;stroke-linejoin:round}
+.landmark-cut{fill:var(--peat)}
+.landmark-line,.landmark-snow{fill:none;stroke:color-mix(in srgb,var(--landmark-color) 66%,var(--bone));stroke-width:1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.landmark-snow{stroke:var(--bone);stroke-width:1.2}
+.landmark-water{fill:#245E70;fill-opacity:.88;stroke:#86C4CF;stroke-width:.8;vector-effect:non-scaling-stroke}
+.landmark-label{
+  font-family:var(--mono);font-size:6.5px;letter-spacing:.09em;text-transform:uppercase;
+  fill:var(--bone);paint-order:stroke;stroke:var(--peat);stroke-width:2px;stroke-linejoin:round;
+  opacity:0;transition:opacity .28s ease;
+}
+.landmark.seen{opacity:.38}
+.landmark.seen .landmark-floor,.landmark.seen .landmark-rise{opacity:1}
+.landmark.seen .landmark-rise{transform:scaleY(1)}
+.landmark.seen .landmark-shadow{opacity:.48;transform:scaleX(1)}
+.landmark.current{opacity:1;filter:drop-shadow(0 4px 5px rgba(0,0,0,.64))}
+.landmark.current .landmark-label{opacity:1}
+.stage[data-zoom="hero"] .landmark.seen{opacity:.36}
+.stage[data-zoom="hero"] .landmark-label{opacity:0}
 #gps{filter:drop-shadow(0 2px 0 rgba(0,0,0,.62))}
 .seg{opacity:.28;transition:opacity .5s;filter:drop-shadow(0 1.5px 0 rgba(0,0,0,.72))}
 .seg.lit{opacity:1}
@@ -203,7 +241,9 @@ button{font:inherit;color:inherit}
 .townlabel{
   font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;fill:var(--bone);
   text-transform:uppercase;paint-order:stroke;stroke:var(--peat);stroke-width:3px;stroke-linejoin:round;
+  transition:opacity .25s ease;
 }
+.town.has-current-landmark .townlabel{opacity:0}
 .town.pass .townlabel{fill:var(--dust);font-style:italic;text-transform:none;letter-spacing:.06em}
 .town.pass .towndot{fill:none;stroke:var(--dust);stroke-width:.8}
 
@@ -456,6 +496,10 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo{top:190px;bottom:auto;right:12px;width:min(34vw,220px);transform:rotate(1.6deg)}
   .photo.on{transform:rotate(-1deg)}
   h1{gap:10px;font-size:clamp(42px,12.4vw,70px)}
+  .landmark-rise{transform:scale(1.35,.035)}
+  .landmark.seen .landmark-rise{transform:scale(1.35)}
+  .landmark-floor{transform:scale(1.35)}
+  .landmark-label{font-size:8px}
   .archive-wall{padding:80px 16px 54px}
   .archive-stats{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px}
   .archive-stat{padding:18px 12px}.archive-stat:first-child{padding-left:12px}
@@ -473,7 +517,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   .photo figcaption{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i,.hud .progress i{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.daycard,.collector,.journey-progress i,.hud .progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -696,6 +740,7 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var countryRings = Array.prototype.slice.call(document.querySelectorAll(".country-ring"));
+  var landmarks = Array.prototype.slice.call(document.querySelectorAll(".landmark"));
   var journeyProgress = document.getElementById("journey-progress");
   var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
@@ -1019,6 +1064,18 @@ dialog.spot::backdrop{background:rgba(11,9,6,.9);backdrop-filter:blur(14px)}
         }
         if (item.dot) item.dot.classList.toggle("seen", passed || (wp.day.n === d.n && wp.t > .96));
       });
+      var currentLandmarkKind = "";
+      landmarks.forEach(function(landmark){
+        var landmarkDay = +(landmark.getAttribute("data-day") || 0);
+        var isCurrent = inJourney && landmarkDay === wp.day.n;
+        if (isCurrent) currentLandmarkKind = landmark.getAttribute("data-kind") || "";
+        landmark.classList.toggle("seen", inJourney && landmarkDay <= wp.day.n);
+        landmark.classList.toggle("current", isCurrent);
+        var townId = landmark.getAttribute("data-town");
+        var town = townId && document.getElementById("town-" + townId);
+        if (town) town.classList.toggle("has-current-landmark", isCurrent);
+      });
+      stage.setAttribute("data-landmark", currentLandmarkKind);
       lastTrailState = state;
     }
     var first = trailByDay[1];

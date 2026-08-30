@@ -475,18 +475,35 @@ const altAt = (x, y) => {
   const { lon, lat } = unproj(x, y);
   return sampleGrid(grid, lon, lat);
 };
-const RELIEF_SCALE = 0.038;
-const mapPoint = (x, y, altitude = altAt(x, y)) => ({
+// The atlas is drawn as an oblique paper diorama rather than a flat plan.
+// Geographic north/south is foreshortened into the "floor" and elevation
+// rises vertically from it, so the Alps visibly stand up as the camera nears.
+const FLOOR_TILT = 0.78;
+const RELIEF_SCALE = 0.06;
+const groundPoint = (x, y) => ({
   x: sx(x),
-  y: +(sy(y) - Math.max(0, altitude) * RELIEF_SCALE).toFixed(1),
-  alt: altitude,
+  y: +(((sy(y) - VBH / 2) * FLOOR_TILT + VBH / 2)).toFixed(1),
 });
+const mapPoint = (x, y, altitude = altAt(x, y)) => {
+  const ground = groundPoint(x, y);
+  return {
+    x: ground.x,
+    y: +(ground.y - Math.max(0, altitude) * RELIEF_SCALE).toFixed(1),
+    groundY: ground.y,
+    alt: altitude,
+  };
+};
 const mapLonLat = ({ lon, lat }, altitude) => {
   const [x, y] = mercProj({ lon, lat });
   return mapPoint(x, y, altitude == null ? altAt(x, y) : altitude);
 };
 
 const gpsVerts = flattenTracks(data.tracks);
+const dayPositions = pts.map((d) => ({
+  day: d.n,
+  country: d.country,
+  s: nearestOnVerts(d.x, d.y, gpsVerts).s,
+}));
 const MERGE_M = 3000;
 const townsPlaced = [];
 for (const t of TOWNS) {
@@ -575,12 +592,13 @@ function terrainCellColor(points) {
   const nz = 1 / normalLength;
   const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
   const high = Math.max(0, Math.min(1, altitude / 2400));
-  const luminance = Math.round(13 + high * 8 + light * 2.2);
-  const saturation = Math.round(12 + high * 8);
+  const luminance = Math.round(12 + high * 12 + light * 4.2);
+  const saturation = Math.round(11 + high * 12);
   return `hsl(36 ${saturation}% ${luminance}%)`;
 }
 
 const terrainBuckets = new Map();
+const terrainRisers = [];
 if (grid) {
   const gridPoint = (row, column) => {
     const lon = grid.west + (column * (grid.east - grid.west)) / (grid.cols - 1);
@@ -599,6 +617,13 @@ if (grid) {
       const color = terrainCellColor(points);
       const cellPath = `M${points.map((point) => `${point.x},${point.y}`).join("L")}Z`;
       terrainBuckets.set(color, (terrainBuckets.get(color) || "") + cellPath);
+    }
+  }
+  for (let row = 0; row < grid.rows; row += 2) {
+    for (let column = 0; column < grid.cols; column += 2) {
+      const point = gridPoint(row, column);
+      if (point.alt < 260 || point.groundY - point.y < 8) continue;
+      terrainRisers.push(`M${point.x},${point.y}L${point.x},${point.groundY}`);
     }
   }
 }
@@ -645,6 +670,72 @@ const mountainMarks = MOUNTAINS.map((mountain) => {
   return `<g class="mountain" transform="translate(${point.x} ${point.y})">
       <path d="M-7 4L0-5L7 4M-2.8 4L2-1L6.5 4"/>
       <text x="0" y="13" text-anchor="middle">${mountain.name}</text>
+    </g>`;
+}).join("\n    ");
+
+// Upright paper landmarks. These are deliberately illustrative silhouettes,
+// not generic map pins: they unfold as the route reaches each place and make
+// the atlas read like a travelling pop-up book.
+const LANDMARKS = [
+  { name: "Champagne country", short: "Champagne", lon: 4.45, lat: 49.05, kind: "vines", color: "#C7A35A" },
+  { name: "Munich Frauenkirche", short: "Frauenkirche", lon: 11.58, lat: 48.14, kind: "frauenkirche", town: "munich" },
+  { name: "Lake Zell", short: "Zeller See", lon: 12.8, lat: 47.32, kind: "lake", town: "zell-am-see" },
+  { name: "the High Tauern", short: "High Tauern", lon: 13.32, lat: 47.05, kind: "peaks", town: "the-tauern", labelX: 13, labelAnchor: "end" },
+  { name: "the Victor, Belgrade", short: "the Victor", lon: 20.46, lat: 44.82, kind: "victor", town: "belgrade" },
+  { name: "Alexander Nevsky Cathedral", short: "Alexander Nevsky", lon: 23.32, lat: 42.7, kind: "domes", town: "sofia" },
+];
+
+function landmarkIcon(kind) {
+  if (kind === "vines") return `
+      <path class="landmark-floor landmark-line" d="M-19 1L-10-7M-11 2L-3-7M-3 2L5-7M5 2L13-7M13 2L20-5"/>
+      <g class="landmark-rise">
+        <path class="landmark-line" d="M-13 0V-14M-3 0V-17M7 0V-13M16 0V-10"/>
+        <path class="landmark-accent" d="M-17-9c4-5 8-5 12 0-4 4-8 4-12 0Zm10-5c4-5 8-5 12 0-4 4-8 4-12 0Zm10 3c4-5 8-5 12 0-4 4-8 4-12 0Z"/>
+      </g>`;
+  if (kind === "frauenkirche") return `
+      <g class="landmark-rise">
+        <path class="landmark-paper" d="M-15 0v-18h30V0Zm3-18v-12h7v12Zm17 0v-12h7v12Z"/>
+        <path class="landmark-accent" d="M-13-30c0-4 2-7 4.5-9 2.5 2 4.5 5 4.5 9Zm17 0c0-4 2-7 4.5-9 2.5 2 4.5 5 4.5 9Z"/>
+        <path class="landmark-cut" d="M-2 0v-9c0-4 4-4 4 0V0"/>
+      </g>`;
+  if (kind === "lake") return `
+      <path class="landmark-floor landmark-water" d="M-23-1c5-7 15-10 26-8 8 1 15 5 20 10-7 5-17 7-28 6-8-1-14-4-18-8Z"/>
+      <g class="landmark-rise">
+        <path class="landmark-paper" d="M-19-6-10-23-2-13 6-30 17-7 11-12 5-5-7-10-12 7Z"/>
+        <path class="landmark-snow" d="m-10-23 3 4 5 6m8-17 4 7 4-3"/>
+      </g>`;
+  if (kind === "peaks") return `
+      <g class="landmark-rise">
+        <path class="landmark-paper" d="M-23 0-12-19-5-10 4-34 14-17 21-25 29 0Z"/>
+        <path class="landmark-snow" d="m-12-19 3 5 4-4M4-34l4 8 4-4m9 5 3 7 3-3"/>
+      </g>`;
+  if (kind === "victor") return `
+      <g class="landmark-rise">
+        <path class="landmark-paper" d="M-8 0h16L5-4H-5Zm3-4h10v-23H-5Z"/>
+        <path class="landmark-accent" d="M0-37c2 0 3 2 2 4l3 7-4 2-2-5-4 5-2-2 5-7c-1-2 0-4 2-4Z"/>
+        <path class="landmark-line" d="M2-32l7-4M-3-31l-6-3"/>
+      </g>`;
+  return `
+      <g class="landmark-rise">
+        <path class="landmark-paper" d="M-19 0v-13h7v-8h8v8h8v-11h7v11h8V0Z"/>
+        <path class="landmark-accent" d="M-15-21c0-5 6-5 6 0Zm14-3c0-7 10-7 10 0Zm13 3c0-5 6-5 6 0Z"/>
+        <path class="landmark-line" d="M0-31v7m15-4v7m-27-7v7"/>
+      </g>`;
+}
+
+const landmarkMarks = LANDMARKS.map((landmark) => {
+  const [x, y] = mercProj(landmark);
+  const point = mapPoint(x, y);
+  const routePosition = nearestOnVerts(x, y, gpsVerts).s;
+  const nearestDay = dayPositions.reduce(
+    (best, day) => (Math.abs(day.s - routePosition) < Math.abs(best.s - routePosition) ? day : best),
+    dayPositions[0]
+  );
+  return `<g class="landmark" data-day="${nearestDay.day}" data-kind="${landmark.kind}"${landmark.town ? ` data-town="${landmark.town}"` : ""} style="--landmark-color:${landmark.color || COUNTRY_COLOR[nearestDay.country]}" transform="translate(${point.x} ${point.y})">
+      <title>${landmark.name}</title>
+      <ellipse class="landmark-shadow" cx="0" cy="2" rx="18" ry="4"/>
+      ${landmarkIcon(landmark.kind).trim()}
+      <text class="landmark-label" x="${landmark.labelX || 0}" y="11" text-anchor="${landmark.labelAnchor || "middle"}">${landmark.short}</text>
     </g>`;
 }).join("\n    ");
 
@@ -797,6 +888,7 @@ const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <g id="camera">
     <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
+    <path id="terrain-risers" d="${terrainRisers.join("")}"/>
     <g id="water">
       ${lakePaths}
       ${riverPaths}
@@ -804,6 +896,7 @@ const atlasSvg = `
     <g id="rings">${ringPaths}</g>
     <g id="relief">${contourPaths}</g>
     <g id="mountains">${mountainMarks}</g>
+    <g id="landmarks">${landmarkMarks}</g>
     <path id="gps" d="${trackPath}" fill="none" stroke="#EFE6D4" stroke-opacity=".14" stroke-width="1" vector-effect="non-scaling-stroke"/>
     ${segs.join("\n    ")}
     ${dayDots}
@@ -900,11 +993,6 @@ const routeGradient = countryDistances
 // The collecting rail and final wall follow the same journey clock as the
 // walker. Places inherit the nearest numbered day along the GPS trace; albums
 // are unique records, collected on the first day they appear.
-const dayPositions = pts.map((d) => ({
-  day: d.n,
-  country: d.country,
-  s: nearestOnVerts(d.x, d.y, gpsVerts).s,
-}));
 const places = townsPlaced.map((town) => {
   const nearestDay = dayPositions.reduce(
     (best, day) => (Math.abs(day.s - town.s) < Math.abs(best.s - town.s) ? day : best),
