@@ -6566,10 +6566,18 @@ button {
    not a second system of cards, drawers or animated reveals. */
 .concept-page {
   --concept-dark: #0c1113;
-  --concept-blue: #2f88ff;
+  --concept-now-rgb: 224, 122, 26;
+  --concept-work-rgb: 27, 148, 125;
+  --concept-career-rgb: 203, 66, 94;
+  --concept-archive-rgb: 0, 154, 205;
+  --concept-now: rgb(var(--concept-now-rgb));
+  --concept-work: rgb(var(--concept-work-rgb));
+  --concept-career: rgb(var(--concept-career-rgb));
+  --concept-archive: rgb(var(--concept-archive-rgb));
+  --concept-blue: var(--concept-archive);
   --concept-yellow: #efc319;
-  --concept-green: #1d9c62;
-  --concept-orange: #ef7622;
+  --concept-green: var(--concept-work);
+  --concept-orange: var(--concept-now);
   min-height: 100vh;
   padding-top: clamp(14px, 2vw, 28px);
   user-select: none;
@@ -6648,6 +6656,14 @@ button {
   outline-offset: 4px;
 }
 
+.concept-nav a:focus-visible {
+  outline-color: currentColor;
+}
+
+.concept-feature:focus-visible {
+  outline-color: var(--concept-work);
+}
+
 .concept-lead-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.78fr) minmax(270px, 0.72fr);
@@ -6660,6 +6676,7 @@ button {
   align-self: start;
   overflow: clip;
   border: 1px solid rgba(12, 17, 19, 0.72);
+  border-top: 4px solid var(--concept-work);
   border-radius: 4px;
   background: var(--concept-dark);
   color: #f7f5ed;
@@ -6713,7 +6730,7 @@ button {
   flex-direction: column;
   align-items: flex-start;
   padding: clamp(18px, 2vw, 28px) 0 0;
-  border-top: 4px solid var(--concept-orange);
+  border-top: 4px solid var(--concept-now);
   border-bottom: 1px solid var(--line-strong);
 }
 
@@ -7078,19 +7095,19 @@ button {
    strip has gone. Clients, Career and Taste use one section hierarchy; career
    detail stays in small hover/focus popovers. */
 .concept-nav a:nth-child(1) {
-  --concept-nav-accent: 224, 122, 26;
+  --concept-nav-accent: var(--concept-now-rgb);
 }
 
 .concept-nav a:nth-child(2) {
-  --concept-nav-accent: 27, 148, 125;
+  --concept-nav-accent: var(--concept-work-rgb);
 }
 
 .concept-nav a:nth-child(3) {
-  --concept-nav-accent: 203, 66, 94;
+  --concept-nav-accent: var(--concept-career-rgb);
 }
 
 .concept-nav a:nth-child(4) {
-  --concept-nav-accent: 0, 154, 205;
+  --concept-nav-accent: var(--concept-archive-rgb);
 }
 
 .concept-nav a {
@@ -7192,7 +7209,7 @@ button {
    deliberately transient so the page stays scannable on every viewport. */
 .concept-career-section {
   padding: clamp(58px, 6.5vw, 88px) 0 clamp(112px, 9vw, 140px);
-  border-top: 4px solid var(--concept-orange);
+  border-top: 4px solid var(--concept-career);
 }
 
 .concept-career-head {
@@ -7379,7 +7396,7 @@ button {
 }
 
 .concept-archive {
-  border-top-color: var(--concept-orange);
+  border-top-color: var(--concept-archive);
 }
 
 .akibwa-home--taste .deck-legend {
