@@ -151,16 +151,8 @@ button{font:inherit;color:inherit}
   background:radial-gradient(55% 40% at 50% 18%,rgba(255,255,255,.72),transparent 100%);
 }
 .map-shell{
-  --map-shape:polygon(1.8% 1%,98.2% 1%,100% 87%,94.8% 98%,5.2% 98%,0 87%);
+  --map-shape:inset(0 round 2px);
   position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + 16px);bottom:18px;z-index:2;
-  filter:drop-shadow(0 24px 28px rgba(56,45,29,.38));
-}
-.map-depth{
-  position:absolute;inset:13px 0 -12px;clip-path:var(--map-shape);
-  background:
-    linear-gradient(180deg,transparent 0 77%,#D89E62 77.2% 81%,#B67643 81.2% 86%,#815039 86.2% 91%,#493029 91.2% 100%),
-    #493029;
-  transform:translateY(8px);
 }
 .atlas-scene{
   position:absolute;inset:0;contain:layout paint style;clip-path:var(--map-shape);
@@ -178,36 +170,9 @@ button{font:inherit;color:inherit}
 }
 
 /* atlas drawing */
-#terrain-mesh{opacity:.92;transform:scale(1.006);transform-origin:center;transition:opacity .5s;filter:saturate(1.2) contrast(1.02)}
-.terrain-cell{stroke-width:.16;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:1}
-#terrain-blocks{pointer-events:none}
-.terrain-block{
-  opacity:.035;transition:opacity .72s ease,filter .72s ease;
-  transform-box:fill-box;transform-origin:center;
-}
-.terrain-block.seen{opacity:.13}
-.terrain-block.current{
-  opacity:1;filter:saturate(1.18) contrast(1.02) drop-shadow(0 15px 13px rgba(62,43,26,.42));
-}
-.stage[data-zoom="hero"] .terrain-block{opacity:.2}
-.stage[data-zoom="hero"] .terrain-block.seen{opacity:.3}
-.terrain-block-shadow{fill:#4D3522;opacity:.34;filter:url(#terrain-shadow-filter)}
-.terrain-block-side{fill:url(#terrain-side-gradient);stroke:#5B3A29;stroke-opacity:.68;stroke-width:.7;vector-effect:non-scaling-stroke}
-.terrain-block-side-west{opacity:.6}
-.terrain-block-side-east{opacity:.88}
-.terrain-block-front{fill:url(#terrain-front-gradient);stroke:#5B3A29;stroke-opacity:.76;stroke-width:.8;vector-effect:non-scaling-stroke}
-.terrain-block-stratum{
-  fill:none;stroke:#C19A69;stroke-opacity:.38;stroke-width:.72;vector-effect:non-scaling-stroke;
-}
-.terrain-block-stratum-mid{stroke:#8D6846;stroke-opacity:.48}
-.terrain-block-stratum-deep{stroke:#67402F;stroke-opacity:.76}
-.terrain-block-bed{fill:#997154;stroke:#5B3A29;stroke-width:1;vector-effect:non-scaling-stroke}
-.terrain-block-facet{stroke-width:.22;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.terrain-block-grain{display:none;fill:#E8DDC6;opacity:.14;filter:url(#terrain-grain-filter);mix-blend-mode:soft-light}
-.terrain-block.current .terrain-block-grain{display:block}
-.terrain-block-outline{fill:none;stroke:#FFF5D8;stroke-opacity:.32;stroke-width:.8;vector-effect:non-scaling-stroke}
-.terrain-block.current .terrain-block-outline{stroke:color-mix(in srgb,var(--c-cur) 48%,#FFF5D8);stroke-opacity:.76}
+#terrain-mesh{opacity:.84;transform:scale(1.006);transform-origin:center;transition:opacity .5s;filter:url(#terrain-soften-filter) saturate(.98) contrast(.97)}
+.terrain-cell{stroke-width:.08;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.9}
 #water{pointer-events:none}
 .lake path{fill:#48A9C6;fill-opacity:.86;stroke:#D4F4F7;stroke-opacity:.78;stroke-width:.8;vector-effect:non-scaling-stroke}
 .river{fill:none;stroke:#57BBD3;stroke-opacity:.68;stroke-width:1.05;vector-effect:non-scaling-stroke;stroke-linecap:round}
@@ -430,8 +395,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .stat-elevation{position:relative;display:grid;grid-template-columns:1fr;padding:8px 4px 7px;border-right:0;overflow:hidden}
   .stat-elevation svg{position:absolute;inset:0;width:100%;height:100%;opacity:.18}
   .stat-elevation p{position:relative;z-index:1;justify-items:center}
-  .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + 8px);bottom:8px;filter:drop-shadow(0 17px 20px rgba(62,45,27,.38))}
-  .map-depth{inset:9px 0 -8px;transform:translateY(5px)}
+  .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + 8px);bottom:8px}
   .photo{top:calc(var(--chrome-h) + 64px);bottom:auto;right:12px;width:min(34vw,174px);transform:rotate(1.6deg)}
   .photo.on{transform:rotate(-1deg)}
   .photo figure{padding:5px 5px 6px}
@@ -455,7 +419,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .titlecard{padding-bottom:10vh}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow,.terrain-block{transition-duration:.01s}
+  .seg,.daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -502,7 +466,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 <div class="experience" id="experience">
   <div class="stage" id="stage" data-zoom="hero">
     <div class="map-shell" id="map-shell">
-      <div class="map-depth" aria-hidden="true"></div>
       <div class="atlas-scene" id="atlas-scene">
 <!--__ATLAS__-->
       </div>
@@ -608,7 +571,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var landmarks = Array.prototype.slice.call(document.querySelectorAll(".landmark"));
-  var terrainBlocks = Array.prototype.slice.call(document.querySelectorAll(".terrain-block"));
   var journeyProgress = document.getElementById("journey-progress");
   var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
@@ -927,13 +889,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         var town = townId && document.getElementById("town-" + townId);
         if (town) town.classList.toggle("has-current-landmark", isCurrent);
       });
-      terrainBlocks.forEach(function(block){
-        var startDay = +(block.getAttribute("data-start") || 0);
-        var endDay = +(block.getAttribute("data-end") || startDay);
-        var isCurrent = inJourney && wp.day.n >= startDay && wp.day.n <= endDay;
-        block.classList.toggle("current", isCurrent);
-        block.classList.toggle("seen", inJourney && wp.day.n > endDay);
-      });
       stage.setAttribute("data-landmark", currentLandmarkKind);
       lastTrailState = state;
     }
@@ -956,21 +911,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     var wp = routePointAt(scene, p);
     var inJourney = scene.t !== "start";
     var silentRest = scene.t === "walk" && !wp.day.w;
-    var terrainFrame = inJourney && terrainBlocks.find(function(block){
-      var startDay = +(block.getAttribute("data-start") || 0);
-      var endDay = +(block.getAttribute("data-end") || startDay);
-      return wp.day.n >= startDay && wp.day.n <= endDay;
-    });
-    var terrainTarget = null;
-    if (terrainFrame) {
-      var blockX = +(terrainFrame.getAttribute("data-cx") || wp.x);
-      var blockY = +(terrainFrame.getAttribute("data-cy") || wp.y);
-      var blockW = +(terrainFrame.getAttribute("data-width") || TRAVELW);
-      var blockH = +(terrainFrame.getAttribute("data-height") || TRAVELW / viewAspect());
-      var framedW = Math.min(780, Math.max(TRAVELW * 1.08, blockW * 1.16, blockH * viewAspect() * 1.16));
-      terrainTarget = { x: lerp(wp.x, blockX, .66), y: lerp(wp.y, blockY, .72), w: framedW };
-    }
-
     // chrome
     fade(titlecard, scene.t === "start" ? String(1 - Math.min(1, (p - scene.at) / (scene.len * .7))) : "0");
     titlecard.style.visibility = (scene.t === "start" && p < scene.at + scene.len) ? "visible" : "hidden";
@@ -987,14 +927,14 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       setZoom("travel");
       target = viewAspect() < .82
         ? { x: wp.x - 60, y: wp.y - 185, w: TRAVELW }
-        : (terrainTarget || { x: wp.x, y: wp.y, w: TRAVELW });
+        : { x: wp.x, y: wp.y, w: TRAVELW };
     }
     else if (scene.t === "beat") {
-      setZoom(terrainTarget ? "travel" : "close");
-      target = terrainTarget || { x: wp.x, y: wp.y, w: CLOSEW };
+      setZoom("close");
+      target = { x: wp.x, y: wp.y, w: CLOSEW };
     }
     else if (scene.t === "enter") { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW * 1.5 }; }
-    else { setZoom("travel"); target = terrainTarget || { x: wp.x, y: wp.y, w: TRAVELW }; }
+    else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW }; }
 
     // route + trail
     sparkAt(wp.alt, wp.day.n, wp.t);

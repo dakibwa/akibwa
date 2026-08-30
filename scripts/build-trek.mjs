@@ -475,11 +475,11 @@ const altAt = (x, y) => {
   const { lon, lat } = unproj(x, y);
   return sampleGrid(grid, lon, lat);
 };
-// The atlas is drawn as an oblique paper diorama rather than a flat plan.
-// Geographic north/south is foreshortened into the "floor" and elevation
-// rises vertically from it, so the Alps visibly stand up as the camera nears.
+// The atlas keeps a gentle oblique perspective. Geographic north/south is
+// foreshortened into the floor and real elevation lifts the terrain, but the
+// scale stays shallow enough for the relief to feel embedded in the map.
 const FLOOR_TILT = 0.66;
-const RELIEF_SCALE = 0.092;
+const RELIEF_SCALE = 0.038;
 const groundPoint = (x, y) => ({
   x: sx(x),
   y: +(((sy(y) - VBH / 2) * FLOOR_TILT + VBH / 2)).toFixed(1),
@@ -572,25 +572,10 @@ function terrainCellColor(points, facet = 0) {
   const ny = -southSlope / normalLength;
   const nz = 1 / normalLength;
   const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
-  let hue = 145;
-  let saturation = 28;
-  let luminance = 32;
-  if (altitude > 1750) {
-    hue = 38;
-    saturation = 20;
-    luminance = 58 + Math.min(14, ((altitude - 1750) / 900) * 14);
-  } else if (altitude > 1050) {
-    hue = 50;
-    saturation = 28;
-    luminance = 44 + ((altitude - 1050) / 700) * 12;
-  } else if (altitude > 360) {
-    hue = 98;
-    saturation = 27;
-    luminance = 36 + ((altitude - 360) / 690) * 10;
-  } else {
-    luminance = 31 + Math.max(0, altitude) / 70;
-  }
-  luminance = Math.round(Math.max(22, Math.min(76, luminance + light * 9 + facet)));
+  const elevation = Math.max(0, Math.min(1, altitude / 2500));
+  const hue = 132 - elevation * 82;
+  const saturation = 22 - elevation * 3;
+  const luminance = Math.round(Math.max(34, Math.min(72, 39 + elevation * 27 + light * 5 + facet)));
   return `hsl(${Math.round(hue)} ${Math.round(saturation)}% ${luminance}%)`;
 }
 
@@ -614,98 +599,14 @@ if (grid) {
         terrainGridPoint(row + 1, column + 1),
         terrainGridPoint(row + 1, column),
       ];
-      addTerrainFacet(terrainBuckets, terrainCellColor(points, -1.1), [points[0], points[1], points[2]]);
-      addTerrainFacet(terrainBuckets, terrainCellColor(points, 1.1), [points[0], points[2], points[3]]);
+      addTerrainFacet(terrainBuckets, terrainCellColor(points, -.18), [points[0], points[1], points[2]]);
+      addTerrainFacet(terrainBuckets, terrainCellColor(points, .18), [points[0], points[2], points[3]]);
     }
   }
 }
 const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
   `<path class="terrain-cell" d="${d}" fill="${color}" stroke="${color}"/>`
 );
-
-// The high-ground sections become literal map specimens: actual sampled
-// elevation on top, with a shallow geological cutaway beneath. They sit in
-// the atlas all along, then lift into full contrast as the route reaches them.
-const TERRAIN_BLOCKS = [
-  { name: "vosges", start: 13, end: 16, west: 6.15, east: 7.85, south: 47.75, north: 49.35, depth: 23 },
-  { name: "alps", start: 25, end: 34, west: 11.45, east: 14.85, south: 46.15, north: 48.45, depth: 43 },
-  { name: "dinaric", start: 35, end: 38, west: 14.05, east: 16.75, south: 45.25, north: 47.05, depth: 31 },
-  { name: "balkan", start: 62, end: 66, west: 20.9, east: 23.85, south: 42.05, north: 44.35, depth: 36 },
-];
-
-function terrainBlock(region) {
-  if (!grid) return "";
-  const columns = 15;
-  const rows = 11;
-  const points = [];
-  for (let row = 0; row < rows; row++) {
-    const lat = region.north - (row * (region.north - region.south)) / (rows - 1);
-    const line = [];
-    for (let column = 0; column < columns; column++) {
-      const lon = region.west + (column * (region.east - region.west)) / (columns - 1);
-      const altitude = Math.max(0, sampleGrid(grid, lon, lat));
-      line.push(mapLonLat({ lon, lat }, altitude));
-    }
-    points.push(line);
-  }
-
-  const facets = new Map();
-  for (let row = 0; row < rows - 1; row++) {
-    for (let column = 0; column < columns - 1; column++) {
-      const cell = [
-        points[row][column],
-        points[row][column + 1],
-        points[row + 1][column + 1],
-        points[row + 1][column],
-      ];
-      addTerrainFacet(facets, terrainCellColor(cell, -2), [cell[0], cell[1], cell[2]]);
-      addTerrainFacet(facets, terrainCellColor(cell, 2), [cell[0], cell[2], cell[3]]);
-    }
-  }
-
-  const north = points[0];
-  const east = points.map((line) => line[line.length - 1]).slice(1);
-  const south = points[points.length - 1].slice().reverse().slice(1);
-  const west = points.map((line) => line[0]).reverse().slice(1, -1);
-  const perimeter = north.concat(east, south, west);
-  const topD = `M${perimeter.map((point) => `${point.x},${point.y}`).join("L")}Z`;
-  const southernEdge = points[points.length - 1];
-  const easternEdge = points.map((line) => line[line.length - 1]);
-  const westernEdge = points.map((line) => line[0]);
-  const side = (edge, depth) =>
-    `M${edge.map((point) => `${point.x},${point.y}`).join("L")}L${edge
-      .slice()
-      .reverse()
-      .map((point) => `${point.x},${point.y + depth}`)
-      .join("L")}Z`;
-  const stratum = (edge, offset) =>
-    `M${edge.map((point) => `${point.x},${point.y + offset}`).join("L")}`;
-  const minX = Math.min(...perimeter.map((point) => point.x));
-  const maxX = Math.max(...perimeter.map((point) => point.x));
-  const minY = Math.min(...perimeter.map((point) => point.y));
-  const maxY = Math.max(...perimeter.map((point) => point.y)) + region.depth;
-  const facetPaths = Array.from(facets, ([color, d]) =>
-    `<path class="terrain-block-facet" d="${d}" fill="${color}" stroke="${color}"/>`
-  ).join("\n        ");
-
-  return `<g class="terrain-block" data-name="${region.name}" data-start="${region.start}" data-end="${region.end}" data-cx="${((minX + maxX) / 2).toFixed(1)}" data-cy="${((minY + maxY) / 2).toFixed(1)}" data-width="${(maxX - minX).toFixed(1)}" data-height="${(maxY - minY).toFixed(1)}">
-      <path class="terrain-block-shadow" d="${topD}" transform="translate(0 ${region.depth + 8})"/>
-      <path class="terrain-block-side terrain-block-side-west" d="${side(westernEdge, region.depth * .72)}"/>
-      <path class="terrain-block-side terrain-block-side-east" d="${side(easternEdge, region.depth * .84)}"/>
-      <path class="terrain-block-front" d="${side(southernEdge, region.depth)}"/>
-      <path class="terrain-block-stratum" d="${stratum(southernEdge, region.depth * .28)}"/>
-      <path class="terrain-block-stratum terrain-block-stratum-mid" d="${stratum(southernEdge, region.depth * .57)}"/>
-      <path class="terrain-block-stratum terrain-block-stratum-deep" d="${stratum(southernEdge, region.depth * .82)}"/>
-      <path class="terrain-block-bed" d="${topD}"/>
-      <g class="terrain-block-top">
-        ${facetPaths}
-      </g>
-      <path class="terrain-block-grain" d="${topD}"/>
-      <path class="terrain-block-outline" d="${topD}"/>
-    </g>`;
-}
-
-const terrainBlocks = TERRAIN_BLOCKS.map(terrainBlock).join("\n    ");
 
 function linePath(points, altitude) {
   return points
@@ -911,28 +812,12 @@ const startPoint = mapPoint(start[0], start[1], startAlt);
 const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <defs>
-    <linearGradient id="terrain-front-gradient" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#D6A06A"/>
-      <stop offset=".3" stop-color="#B97B4F"/>
-      <stop offset=".64" stop-color="#8B573D"/>
-      <stop offset="1" stop-color="#5A382D"/>
-    </linearGradient>
-    <linearGradient id="terrain-side-gradient" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#BE895F"/>
-      <stop offset="1" stop-color="#684332"/>
-    </linearGradient>
-    <filter id="terrain-grain-filter" x="-8%" y="-8%" width="116%" height="116%">
-      <feTurbulence type="fractalNoise" baseFrequency=".027 .11" numOctaves="2" seed="23" result="noise"/>
-      <feColorMatrix in="noise" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .34 0" result="grain"/>
-      <feComposite in="grain" in2="SourceGraphic" operator="in"/>
-    </filter>
-    <filter id="terrain-shadow-filter" x="-25%" y="-25%" width="150%" height="170%">
-      <feGaussianBlur stdDeviation="11"/>
+    <filter id="terrain-soften-filter" x="-4%" y="-6%" width="108%" height="112%">
+      <feGaussianBlur stdDeviation="2.4"/>
     </filter>
   </defs>
   <g id="camera">
     <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
-    <g id="terrain-blocks">${terrainBlocks}</g>
     <g id="water">
       ${lakePaths}
       ${riverPaths}
