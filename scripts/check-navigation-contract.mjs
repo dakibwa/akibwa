@@ -161,12 +161,9 @@ requireRuleText(".concept-project-foot {", [
   "background: var(--project-card-panel)",
   "box-shadow: inset 0 3px 0 var(--project-card-accent)"
 ]);
-requireRuleText("\n.concept-arrow {", [
-  "width: 29px",
-  "height: 29px",
-  "border-radius: 50%",
-  "font-family: var(--serif)"
-]);
+requireRuleText("\n.concept-arrow {", ["display: block", "font-family: var(--serif)", "opacity: 0.62"]);
+forbidText(rule("\n.concept-arrow {"), "border", "the project arrow must not look like a framed button");
+forbidText(rule("\n.concept-arrow {"), "background", "the project arrow must not look like a filled button");
 requireText(editorial, '<span className="concept-arrow" aria-hidden="true">↗</span>', "project links use a quiet arrow-only mark");
 forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
 forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");

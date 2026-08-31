@@ -17,13 +17,14 @@ publishing homepage changes.
   empty white tail.
 - Projects is one compact editorial block on wide screens: Features spans the
   left column while Português com a Inês and The Trek share its height as two
-  horizontal panels on the right. Narrow screens return to the descending
+  horizontal panels on the right. Narrow screens return to one full-width
   stack. The Portuguese card uses a text-free conversation illustration; Trek
   uses a route-led topographic illustration drawn from the live atlas.
 - Project captions are slim editorial rails with one accent edge. Features is
   anchored by a compact dark rail; the two narrow side captions use the page's
-  warm paper so their artwork keeps the colour. Each card uses a static
-  arrow-only mark rather than a wordy call to action or moving-arrow effect.
+  warm paper so their artwork keeps the colour. Each card uses a static,
+  unframed arrow mark rather than a button-like control, wordy call to action
+  or moving-arrow effect.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.

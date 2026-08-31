@@ -516,7 +516,7 @@ const checkLinkHover = async () => {
       x: r.left + r.width / 2,
       y: r.top + r.height / 2,
       arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
-      arrowBackground: getComputedStyle(link.querySelector(".concept-arrow")).backgroundColor,
+      arrowOpacity: getComputedStyle(link.querySelector(".concept-arrow")).opacity,
       arrowTransition: getComputedStyle(link.querySelector(".concept-arrow")).transitionDuration,
       transform: getComputedStyle(link).transform,
       shadow: getComputedStyle(link).boxShadow
@@ -529,16 +529,16 @@ const checkLinkHover = async () => {
       const link = document.querySelector(".concept-feature");
       return {
         arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
-        arrowBackground: getComputedStyle(link.querySelector(".concept-arrow")).backgroundColor,
+        arrowOpacity: getComputedStyle(link.querySelector(".concept-arrow")).opacity,
         arrowTransition: getComputedStyle(link.querySelector(".concept-arrow")).transitionDuration,
         transform: getComputedStyle(link).transform,
         shadow: getComputedStyle(link).boxShadow
       };
     })()`),
-    (value) => value.arrowBackground !== before.arrowBackground
+    (value) => value.arrowOpacity !== before.arrowOpacity
   );
   check(
-    hovered.arrowBackground !== before.arrowBackground &&
+    parseFloat(hovered.arrowOpacity) === 1 &&
       hovered.arrow === "none" &&
       parseFloat(hovered.arrowTransition) === 0,
     "hover changes the arrow mark without moving or animating it"
@@ -547,10 +547,10 @@ const checkLinkHover = async () => {
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");
   await mouseMove(1200, 40);
   const settled = await pollUntil(
-    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-arrow")).backgroundColor`),
-    (background) => background === before.arrowBackground
+    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-arrow")).opacity`),
+    (opacity) => opacity === before.arrowOpacity
   );
-  check(settled === before.arrowBackground, "the static arrow mark clears when hover ends");
+  check(settled === before.arrowOpacity, "the static arrow mark clears when hover ends");
 };
 
 const checkHeroBreakpoint = async () => {
@@ -747,11 +747,10 @@ const checkMobile = async () => {
     initial.projects.length === 3 &&
       initial.projects[1].rect.top >= initial.projects[0].rect.bottom + 13 &&
       initial.projects[2].rect.top >= initial.projects[1].rect.bottom + 13 &&
-      initial.projects[0].rect.width > initial.projects[1].rect.width &&
-      initial.projects[1].rect.width > initial.projects[2].rect.width &&
+      initial.projects.every((item) => Math.abs(item.rect.width - initial.projects[0].rect.width) <= 1) &&
       Math.abs(initial.projects[0].rect.left - initial.projects[1].rect.left) <= 1 &&
       Math.abs(initial.projects[1].rect.left - initial.projects[2].rect.left) <= 1,
-    `the phone project stack keeps the descending left-aligned hierarchy [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
+    `all three phone projects fill the shared content width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
   );
   check(
     !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[2].rect.bottom + 40,
