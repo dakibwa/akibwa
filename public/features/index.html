@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-MJ/utJ8ZjigW6rtUs7uE47J0QjNdcJQ4EUzkR83r0SI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-oBqjkg+oX++1UsPR40jSfS9MgoS2/hnXNvwIPbEZu5o=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -592,6 +592,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     right:auto;bottom:auto;
     max-width:min(220px,calc(100% - 2 * var(--plate-x,0px) - 24px));
   }
+  .say.centered{
+    left:50%;top:50%;right:auto;bottom:auto;
+    translate:-50% -50%;
+    max-width:min(408px,calc(100% - 36px));
+  }
   .say.anchored .saystrip{height:5px}
   .say.anchored .sayrow.tight{padding:8px 11px}
   .say.anchored .sayline b{font-weight:700}
@@ -827,7 +832,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
     gap:7px;align-content:start;
   }
-  .collection[hidden],.recboard[hidden]{display:none}
+  .collection[hidden]{display:none}
   .collection,.acct-body,.pay-body,.arch-grid,.boardcard > .bulletin,.veil{overscroll-behavior:contain}
   .colcap{
     grid-column:1/-1;margin:0 0 3px;
@@ -935,33 +940,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .acct-field::placeholder{color:var(--ink-soft);opacity:.75;font-size:13px}
   .acct-field:focus{outline:none;border-bottom-color:var(--ink)}
-  .acct-field.tagfield{font-size:22px;letter-spacing:.28em;text-transform:uppercase;
-    color:var(--tc,var(--ink));font-weight:600}
-  .acct-field.tagfield::placeholder{color:var(--ink-soft);font-weight:400;letter-spacing:.28em}
-  .tagcols{display:flex;gap:9px;margin-top:11px}
-  .tagcol{
-    appearance:none;width:24px;height:24px;padding:0;border:0;cursor:pointer;
-    background:var(--tc);box-shadow:0 0 0 1px var(--rule);
-    transition:box-shadow var(--t-ui),transform var(--t-lift) var(--ease-out);
-  }
-  .tagcol:hover{box-shadow:0 0 0 1px var(--ink-soft)}
-  .tagcol.on{box-shadow:0 0 0 2px var(--paper),0 0 0 3px var(--ink)}
-  .tagcol:active{transform:scale(.92)}
-  .tagcol:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
-
-  .recboard{border-top:1px solid var(--rule);padding:12px 18px 16px;display:grid;gap:5px}
-  .recboard .bd-lab{font-size:11px;letter-spacing:.16em;text-transform:lowercase;color:var(--ink-soft)}
-  .bd-row{
-    display:grid;grid-template-columns:22px 3.4em minmax(0,1fr) auto;gap:10px;
-    align-items:center;min-height:24px;font-size:12px;letter-spacing:.04em;
-    color:var(--ink-soft);
-  }
-  .bd-row .bd-place{font-variant-numeric:tabular-nums;color:var(--rule);text-align:right}
-  .bd-row .bd-tag{color:var(--tc);letter-spacing:.18em;font-weight:600;font-size:13px}
-  .bd-row .bd-fig{font-variant-numeric:tabular-nums;color:var(--ink)}
-  .bd-row.mine .bd-place,.bd-row.mine{color:var(--ink)}
-  .bd-open{color:var(--rule);font-size:14px;line-height:1}
-  .recboard .bd-note{font-size:10.5px;letter-spacing:.06em;color:var(--ink-soft);margin-top:4px}
   .acct-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .acct-row .wbtn{flex:0 0 auto}
   .acct-check{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45}
@@ -2281,7 +2259,11 @@ function wireDoors(row){
 }
 let menuView='home';
 const menuShown=()=>$('introveil').classList.contains('show');
-function openMenu(v){ menuView=v||'home'; renderMenu(); showVeil('introveil'); }
+function openMenu(v){
+  if(tutorialFinishT) clearTimeout(tutorialFinishT);
+  tutorialFinishT=null;
+  menuView=v||'home'; renderMenu(); showVeil('introveil');
+}
 function renderMenu(){
   renderIntro();
   if(menuView==='coll') renderCollection();
@@ -2577,7 +2559,7 @@ async function wakeAccount(){
   if(menuShown()&&menuView==='profile') renderAcct();
 }
 
-let acctMode='hello', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
+let acctMode='sign', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
 
 function openAccount(mode){
   if(!mode) mode=(account&&account.signedIn)?'manage':'sign';
@@ -2589,10 +2571,7 @@ const closeAccount=()=>{ if(menuShown()&&menuView==='profile') openMenu('home') 
 
 function afterSignIn(){
   if(!account||!account.signedIn) return;
-  const unasked=account.mail && account.email && account.emailOk && !account.dailyEmail && !store.askedDaily;
-  if(!unasked) return;
-  if(document.querySelector('.veil.show')) return;   // never on top of another card
-  openAccount('hello');
+  openMenu('home');
 }
 
 function acctBtn(id,label,solid){
@@ -2719,23 +2698,6 @@ function renderAcct(){
   const canMail=!!account.mail;
   const canDaily=canMail&&!!mail&&!!account.emailOk;
 
-  if(acctMode==='hello'){
-    title.textContent='the daily';
-    body.innerHTML=err
-      +(canDaily?`<div class="acct-ask">one line each morning, when the day's ten are up.</div>`
-        +`<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
-        +`<span>send me the daily · to ${esc(mail)}</span></label>`
-      :`<div class="acct-ask">${canMail
-          ? 'the daily needs a confirmed account email.'
-          : 'this deployment cannot send mail, so there is nothing to ask you.'}</div>`)
-      +`<div class="acct-row">${acctBtn('acctdone',acctBusy?'saving…':'done',true)}`
-      +`<a href="#" class="acctlink" id="acctskip">not now</a></div>`
-      +`<div class="acct-note">optional, and it changes later from your account.</div>`;
-    $('acctdone').onclick=()=>saveHello();
-    $('acctskip').onclick=e=>{e.preventDefault();store.askedDaily=true;save();closeAccount()};
-    return;
-  }
-
   title.textContent='your account';
   const idLine = mail
     ? `<b>${esc(mail)}</b>${account.emailOk?'':' · not confirmed'}`
@@ -2754,37 +2716,25 @@ function renderAcct(){
       +`<div class="acct-note">${identityNote}</div>`
     +`</div>`
     +`<div class="acct-sec">`
-      +`<div class="acct-lab">the daily</div>`
+      +`<div class="acct-lab">daily email subscription</div>`
       +(canDaily
         ? `<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
-          +`<span>one line each morning, when the day's ten are up</span></label>`
-          +`<div class="acct-note">it goes to the confirmed address above. one link in it turns it off again.</div>`
+          +`<span>email me when each day's ten puzzles are ready</span></label>`
+          +`<div class="acct-note">sent to ${esc(mail)}. unsubscribe here or from any daily email.</div>`
         : `<div class="acct-note">${canMail
-            ? 'a confirmed account email is needed before the daily can be switched on.'
-            : 'this deployment cannot send mail, so there is no daily to offer.'}</div>`)
-    +`</div>`
-    +`<div class="acct-sec">`
-      +`<div class="acct-lab">the board</div>`
-      +`<div class="acct-ask">${account.tag?'on the board':'you are not on it'}</div>`
-      +`<input class="acct-field tagfield" id="accttag" maxlength="3" spellcheck="false"
-              autocapitalize="characters" autocomplete="off" placeholder="AAA"
-              style="--tc:var(--${TAGCOLS.includes(tagPick||account.tagCol)?(tagPick||account.tagCol):'ink'})"
-              value="${esc(account.tag||'')}">`
-      +`<div class="tagcols" id="tagcols">${TAGCOLS.map(c=>
-          `<button type="button" class="tagcol${c===(tagPick||account.tagCol)?' on':''}" data-col="${c}"
-                   style="--tc:var(--${c})" aria-label="${c}"></button>`).join('')}</div>`
-      +`<div class="acct-note">three letters or numbers, and one colour. it is what a score is posted under, and it is the whole of what the board shows — no name, no address, nothing that can be looked up. clear it and you come off.</div>`
+            ? 'confirm the account email before subscribing.'
+            : 'email subscriptions are unavailable here.'}</div>`)
     +`</div>`
     +`<div class="acct-sec">`
       +`<div class="acct-lab">the full version</div>`
       +`<div class="acct-ask">${POLICY.premium
-          ? 'yours · another run at a day you have played'
-          : 'not yours yet · another run at a day you have played'}</div>`
+          ? 'you own the full version'
+          : 'you do not own the full version'}</div>`
       +`<div class="acct-note">${POLICY.premium
-          ? 'it rides on this account, so it follows you to any device you sign in on.'
+          ? 'replay any day you have played. sign in with this account on another device and it unlocks there too.'
           : ((mail&&account.emailOk)
-              ? 'a purchase made with this email appears automatically.'
-              : 'a purchase appears automatically once its receipt email is confirmed.')
+              ? 'buy with this email and it unlocks on this account automatically.'
+              : 'a purchase unlocks automatically after its receipt email is confirmed.')
             +` <a href="#" class="acctlink" id="acctrestore">use a code instead</a>`}</div>`
     +`</div>`
     +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
@@ -2795,14 +2745,7 @@ function renderAcct(){
     +(acctArmed?`<div class="acct-note">this erases the record held for you. this browser keeps its own copy, so nothing on this device is lost.`
        +(POLICY.premium?' the full version goes with the account and cannot be restored afterwards.':'')
        +`</div>`:'');
-  $('acctsave').onclick=()=>saveHello(true);
-  if($('tagcols')) $('tagcols').onclick=e=>{
-    const b=e.target.closest&&e.target.closest('.tagcol');
-    if(!b) return;
-    tagPick=b.dataset.col;
-    [...$('tagcols').children].forEach(c=>c.classList.toggle('on',c===b));
-    if($('accttag')) $('accttag').style.setProperty('--tc','var(--'+tagPick+')');
-  };
+  $('acctsave').onclick=saveAccount;
   $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
   $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
   if($('acctsetpassword')) $('acctsetpassword').onclick=e=>{
@@ -2856,26 +2799,17 @@ async function requestPasswordReset(){
   }catch(e){acctBusy=false;acctErr=e.message;renderAcct()}
 }
 
-async function saveHello(stay){
+async function saveAccount(){
   if(acctBusy) return;
   const patch={tzOffset:new Date().getTimezoneOffset()};
   const daily=$('acctdaily');
   const wantDaily=!!(daily&&daily.checked);
-  const tagEl=$('accttag');
-  if(tagEl){
-    const t=tagEl.value.trim().toUpperCase();
-    if(t && !/^[A-Z0-9]{3}$/.test(t)){ acctErr='three letters or numbers'; return renderAcct() }
-    patch.tag=t;
-    patch.tagCol=t ? (tagPick||account.tagCol||TAGCOLS[1]) : '';
-  }
   acctBusy=true; acctErr=''; renderAcct();
   try{
     if(daily) patch.dailyEmail=wantDaily;
     await saveProfile(patch);
-    store.askedDaily=true; save();
     acctBusy=false;
-    if(stay){ acctErr=''; renderAcct(); toast('saved') }
-    else closeAccount();
+    acctErr=''; renderAcct(); toast('saved');
   }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
 }
 
@@ -6255,8 +6189,6 @@ function endTutorial(){
   if(store.parked){
     store.run=store.parked; store.parked=null;
     builtFor=-1; resetDescent(); save();
-    renderAll();
-    if(R().over) showRunOver();
   }else{
     const r=R();
     r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
@@ -6265,6 +6197,7 @@ function endTutorial(){
     builtFor=-1;
     save();
   }
+  renderAll();
   renderHud();
   tutSpotClear();
   const c=$('coach');
@@ -6280,6 +6213,19 @@ function endTutorial(){
     c.style.display='';
     coachSig=''; coachQueuedSig='';
   },240);
+}
+
+let tutorialFinishT=null;
+function finishTutorialNotice(){
+  if(tutorialFinishT) clearTimeout(tutorialFinishT);
+  tutorialFinishT=null;
+  sayHide(true);
+  openMenu('home');
+}
+function showTutorialComplete(){
+  if(tutorialFinishT) clearTimeout(tutorialFinishT);
+  const hold=flashMsg('tutorial complete',{cols:FLAG,big:true,plain:true,center:true});
+  tutorialFinishT=setTimeout(finishTutorialNotice,(hold||2200)+80);
 }
 
 const RETANGLE_BASE=7000, RETANGLE_FLOOR=2600;
@@ -6426,8 +6372,9 @@ function clearNet(){
   if(setDone) renderHud();
   const tutorialBridgeAfter=wasTutorial && read.num<=2;
   const card = setDone ? showRunOver
+             : finalTutorial ? showTutorialComplete
              : tutorialBridgeAfter ? (()=>showTutorialBridge(read.num-1,tier))
-             : (()=>showNetCleared(feats,tier,wasTutorial,read));
+             : (()=>showNetCleared(feats,tier,read));
   if(reduceMotion) setTimeout(card,260);
   else holdCleared(card);
 }
@@ -6497,10 +6444,7 @@ function nextNet(){
   swapT=setTimeout(skip,190);
 }
 function leaveNetCard(){
-  const returnView=$('netveil').dataset.returnView||'';
-  $('netveil').dataset.returnView='';
   nextNet();
-  if(returnView) openMenu(returnView);
 }
 function endRun(){
   const r=R(); if(r.over)return;
@@ -6522,35 +6466,27 @@ function bulletinHTML(o){
   <div class="bactions">${o.actions}</div>
   ${o.foot||''}`;
 }
-function showNetCleared(feats,tier,wasTutorial,read){
-  if(!read || (read.run!==R() && !read.finalTutorial)) return;
-  const tutorialFinal=wasTutorial && read.finalTutorial;
+function showNetCleared(feats,tier,read){
+  if(!read || read.run!==R()) return;
   const dedup=[...new Map(feats.map(k=>[k,0])).keys()].map(k=>({k,n:feats.filter(f=>f===k).length}));
-  const mint=tutorialFinal?'':`<div class="minted">${dedup.map(({k,n},i)=>{
+  const mint=`<div class="minted">${dedup.map(({k,n},i)=>{
     const b=store.collection.badges[k];
     return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}${n>1?' ×'+n:''}</span></div>`;
   }).join('')}</div>`;
-  const quiet=tutorialFinal
-    ? `<p class="bquiet">${feats.length} features drawn: ${feats.join(', ')}. tutorial complete.</p>`
-    : `<p class="bquiet">${feats.length} features freed: ${feats.join(', ')}. `+
-      `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
+  const quiet=`<p class="bquiet">${feats.length} features freed: ${feats.join(', ')}. `+
+    `${read.clean} of ${read.depth} clean so far. ${read.turns} turns today.</p>`;
   $('netbulletin').innerHTML=bulletinHTML({
-    strip:tutorialFinal?FLAG:TIERCOL[tier],
-    title:tutorialFinal?'tutorial complete':tierSay(tier),
-    sub:(tutorialFinal?'':'net cleared')
-        +(!tutorialFinal&&read.assisted?' · settled with descent':''),
+    strip:TIERCOL[tier],
+    title:tierSay(tier),
+    sub:'net cleared'+(read.assisted?' · settled with descent':''),
     num:String(read.num).padStart(2,'0'),
     rows:[],
     body:mint+quiet,
-    note:tutorialFinal ? ''
-      : read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
+    note:read.assisted ? 'untangle the next one unaided for a clean badge.' : '',
     sun:false,
-    actions:`<button class="wbtn solid" id="contbtn">${tutorialFinal
-      ? 'back to how to play →'
-      : 'continue →'}</button>`,
+    actions:`<button class="wbtn solid" id="contbtn">continue →</button>`,
   });
   showVeil('netveil');
-  $('netveil').dataset.returnView=tutorialFinal?'rules':'';
   $('contbtn').onclick=leaveNetCard;
 }
 function runOverOffer(trial,depth){
@@ -6603,7 +6539,6 @@ function showRunOver(){
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
   showVeil('runveil');
-  postBoard();
   $('recordbtn2').onclick=()=>{hideVeils();openMenu('home')};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
@@ -6768,8 +6703,6 @@ function rungCount(list,of){
   const good=n.perfect+n.clean;
   return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
 }
-const TAGCOLS=['hellblau','gruen','orange','dunkelblau'];
-let tagPick=null;              // the swatch under the pointer's last press
 const RUNGMOJI={perfect:'🟨', clean:'🟩', done:'🟪'};
 function dayStrip(tiers){
   const s=typeof tiers==='string'?tiers:'';
@@ -6798,57 +6731,6 @@ async function copyText(t){
     ta.remove();
     return !!ok;
   }catch(e){ return false }
-}
-let boardRows=null, boardFor=null, boardBusy=false;
-async function askBoard(day){
-  if(!API || boardBusy || boardFor===day) return;
-  boardBusy=true;
-  try{
-    const j=await apiCall(`/day/${day}/board`);
-    boardRows=(j&&Array.isArray(j.rows))?j.rows:[];
-    boardFor=day;
-  }catch(e){ boardRows=null; boardFor=day }      // asked and answered with nothing
-  boardBusy=false;
-  if(menuShown()) drawBoard();
-}
-function drawBoard(){
-  const el=$('recboard');
-  if(!el) return;
-  if(!boardRows || !boardRows.length){ el.hidden=true; el.innerHTML=''; return }
-  const mine=(account&&account.tag)||'';
-  const open=boardRows.some(r=>!r.checked);
-  el.hidden=false;
-  el.innerHTML=`<div class="bd-lab">today's board</div>`
-    +boardRows.map(r=>{
-      const col=TAGCOLS.includes(r.col)?r.col:'gruen';
-      return `<div class="bd-row${r.tag===mine?' mine':''}" style="--tc:var(--${col})">`
-        +`<span class="bd-place">${r.place}</span>`
-        +`<span class="bd-tag">${esc(r.tag)}</span>`
-        +`<span class="bd-fig">${r.good} of ${POLICY.dailyNets}</span>`
-        +`<span>${r.turns} turns${r.checked?'':' <i class="bd-open" aria-label="not replayed yet">·</i>'}</span>`
-      +`</div>`;
-    }).join('')
-    +(open?`<div class="bd-note">· not replayed yet. a score stays until its move log has been re-run.</div>`:'');
-}
-let boardSent=null;
-async function postBoard(){
-  const r=R();
-  if(!API || !account || !account.signedIn || !account.tag) return;
-  if(isTrial() || r.archive || r.cleared.length<POLICY.dailyNets) return;
-  if(boardSent===r.day) return;
-  const nets=r.cleared.map(c=>({idx:c.idx, moves:c.moves, log:c.log})).filter(n=>Array.isArray(n.log));
-  if(nets.length!==r.cleared.length) return;
-  boardSent=r.day;
-  const send=()=>apiCall(`/day/${r.day}/board`,{method:'POST',
-    headers:{'content-type':'application/json'}, body:JSON.stringify({nets})});
-  try{
-    await syncNow();
-    await send();
-  }catch(e){
-    if(e.status===409){
-      try{ await syncNow(); await send() }catch(e2){ boardSent=null }
-    } else boardSent=null;
-  }
 }
 const rungsOf=tiers=>(typeof tiers==='string' && tiers)
   ? rungCount([...tiers.slice(0,POLICY.dailyNets)].map(ch=>TIEROF[ch]), POLICY.dailyNets)
@@ -7026,7 +6908,7 @@ const FLAG=['--flag-1','--flag-2','--flag-3','--flag-4'];
 
 function flashMsg(txt,o){
   $('msg').textContent=txt;
-  sayShow(txt,o||{});
+  return sayShow(txt,o||{});
 }
 function sayParts(txt,o){
   if(o.plain) return {kick:'',line:txt};
@@ -7036,7 +6918,7 @@ function sayParts(txt,o){
 function sayResetPlacement(){
   const el=$('say');
   sayAnchor=null;
-  el.classList.remove('anchored');
+  el.classList.remove('anchored','centered');
   el.style.removeProperty('left');
   el.style.removeProperty('top');
 }
@@ -7107,12 +6989,14 @@ function sayHide(now){
 }
 function sayShow(txt,o){
   const el=$('say');
-  if(document.querySelector('.veil.show')){ toast(txt); return }
+  if(document.querySelector('.veil.show')){ toast(txt); return SAY_MIN }
   const now=performance.now();
   const nextAnchor=o.anchor||null;
+  const nextCenter=!!o.center;
   const row=Object.assign({txt}, sayParts(txt,o), o);
   delete row.anchor;
-  const merging = !nextAnchor && !sayAnchor && sayRows.length
+  const merging = !nextAnchor && !nextCenter && !sayAnchor
+    && !el.classList.contains('centered') && sayRows.length
     && sayRows.length<SAY_ROWS && (now-sayAt)<SAY_MERGE;
   if(merging) sayRows.push(row);
   else { sayRows=[row]; sayAt=now; sayAnchor=nextAnchor }
@@ -7133,7 +7017,11 @@ function sayShow(txt,o){
         +`<div class="sayline${r.big?' big':''}">${r.line}</div></div></div>`;
     }).join('')
     +'</div>';
-  if(sayAnchor) positionSayAnchor(); else sayResetPlacement();
+  const anchor=sayAnchor;
+  sayResetPlacement();
+  sayAnchor=anchor;
+  if(sayAnchor) positionSayAnchor();
+  else if(nextCenter) el.classList.add('centered');
   el.classList.add('on');
 
   const chars=sayRows.reduce((a,r)=>a+r.txt.length,0);
@@ -7143,6 +7031,7 @@ function sayShow(txt,o){
   sayT=setTimeout(()=>{
     sayRows=[];sayAt=0;sayT=null;sayAnchor=null;el.classList.remove('on');
   },hold);
+  return hold;
 }
 function sayNudge(){
   if(!sayRows.length || performance.now()-sayAt<420) return;
@@ -7262,7 +7151,7 @@ const WORDMARK='features';
       if(!badged.length){ toast('nothing minted yet · clear a net first'); return false }
       const feats=badged.slice(0,2);
       hideVeils();
-      showNetCleared(feats, store.collection.badges[feats[0]].tier||'clean', false,
+      showNetCleared(feats, store.collection.badges[feats[0]].tier||'clean',
         {run:R(), clean:R().cleared.length, depth:R().cleared.length,
          turns:R().turns||0, assisted:false});
     }],
@@ -7434,8 +7323,7 @@ function renderIntro(){
       <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${fresh?'start untangling'
         :firstDay?'start your first ten':"start today's run"}</button>`
-      +`<div class="recboard" id="recboard" hidden></div>`;
-    drawBoard();
+;
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         $('introveil').classList.remove('show'); return openDay(d) }
@@ -7460,6 +7348,8 @@ function renderIntro(){
   };
 }
 function startLessons(){
+  if(tutorialFinishT) clearTimeout(tutorialFinishT);
+  tutorialFinishT=null;
   cancelTutorialBridge(); tutorialBridge=null;
   clearTimeout(coachSwapT); coachSwapT=null;
   clearTimeout(coachEnterT); coachEnterT=null;
