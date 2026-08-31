@@ -255,6 +255,8 @@ const pageState = () => evaluate(`(() => {
       text: item.innerText.replace(/\\s+/g, " ").trim(),
       href: item.getAttribute("href"),
       rect: rect(item),
+      imageRect: rect(item.querySelector("img")),
+      footRect: rect(item.querySelector(".concept-project-foot")),
       imageComplete: item.querySelector("img")?.complete,
       imageWidth: item.querySelector("img")?.naturalWidth,
       currentSrc: item.querySelector("img")?.currentSrc
@@ -417,12 +419,20 @@ const checkDesktop = async () => {
     `Features, Português com a Inês and The Trek render in order [${state.projects.map((item) => item.text).join(" / ")}]`
   );
   check(
-    Math.max(...state.projects.map((item) => item.rect.top)) - Math.min(...state.projects.map((item) => item.rect.top)) <= 1 &&
+    Math.abs(state.projects[0].rect.top - state.projects[1].rect.top) <= 1 &&
       state.projects[0].rect.width > state.projects[1].rect.width &&
-      state.projects[1].rect.width > state.projects[2].rect.width &&
-      state.projects[0].rect.height > state.projects[1].rect.height &&
-      state.projects[1].rect.height > state.projects[2].rect.height,
-    `the desktop project hierarchy descends Features → Português → Trek [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
+      Math.abs(state.projects[1].rect.width - state.projects[2].rect.width) <= 1 &&
+      state.projects[2].rect.top >= state.projects[1].rect.bottom + 13 &&
+      Math.abs(state.projects[0].rect.bottom - state.projects[2].rect.bottom) <= 1,
+    `the wide project edit closes into one compact block [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
+  );
+  check(
+    state.projects.slice(1).every((item) =>
+      item.imageRect.width / item.imageRect.height >= 1.75 &&
+      item.imageRect.width / item.imageRect.height <= 2.05 &&
+      Math.abs(item.imageRect.right - item.footRect.left) <= 1
+    ),
+    "the supporting project artwork keeps its landscape frame beside the caption"
   );
   check(
     state.projects.every((item) => item.imageComplete && item.imageWidth >= item.rect.width && /conceptProject/.test(item.currentSrc)),
@@ -541,6 +551,30 @@ const checkHeroBreakpoint = async () => {
     "the stacked proposition follows the identity without overlap"
   );
   check(state.overflow <= 1, `the stacked breakpoint has no overflow [${state.overflow}px]`);
+};
+
+const checkProjectBreakpoint = async () => {
+  section("project composition breakpoint");
+  await setDesktop(1051, 900);
+  await goto("/");
+  let state = await pageState();
+  check(
+    Math.abs(state.projects[0].rect.top - state.projects[1].rect.top) <= 1 &&
+      Math.abs(state.projects[0].rect.bottom - state.projects[2].rect.bottom) <= 1,
+    "the compact project block holds through its narrowest wide layout"
+  );
+  check(state.overflow <= 1, `the compact project block has no overflow [${state.overflow}px]`);
+
+  await setDesktop(1050, 900);
+  await goto("/");
+  state = await pageState();
+  check(
+    state.projects[1].rect.top >= state.projects[0].rect.bottom + 13 &&
+      Math.abs(state.projects[1].rect.top - state.projects[2].rect.top) <= 1 &&
+      state.projects[1].rect.right < state.projects[2].rect.left,
+    "the supporting projects move cleanly below Features at 1050px"
+  );
+  check(state.overflow <= 1, `the intermediate project layout has no overflow [${state.overflow}px]`);
 };
 
 const checkCareerTimeline = async () => {
@@ -801,6 +835,7 @@ const main = async () => {
 
     await checkDesktop();
     await checkHeroBreakpoint();
+    await checkProjectBreakpoint();
     await checkLinkHover();
     await checkCareerTimeline();
     await checkFilters();
