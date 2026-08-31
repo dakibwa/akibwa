@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-L5x4yHGR2Dgc2jiJt447/n2XfhB8I1nJtSrTISps2MQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-3jwKMLtyr6Fcy7AzPum/C8Sig/xQaDIsm1RSLlAU/HM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -296,9 +296,30 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .unit:last-child{padding-right:0}
   .unit + .unit{border-left:1px solid var(--rule)}
   .unit-cross,.unit-set,.unit-par{flex:1 1 0}
-  .unit-par{--par-perfect:var(--gelb);
+  .unit-par{position:relative;--track-stack:18px;
+            --par-perfect:var(--gelb);
             --par-par:var(--tuerkis);
             --par-over:var(--violett)}
+  .tutorial-score-label{display:none}
+  .unit-par.tut-score{
+    --tut-score:var(--tuerkis);z-index:7;
+    outline:2px solid var(--tut-score);outline-offset:4px;
+    animation:tutscorein .52s var(--ease-out) both
+  }
+  @keyframes tutscorein{
+    from{outline-offset:10px;filter:brightness(1.45)}
+    to{outline-offset:4px;filter:none}
+  }
+  .unit-par.tut-score .unit-top{opacity:.12}
+  .unit-par.tut-score .tutorial-score-label{
+    position:absolute;inset:0 0 var(--track-stack);display:flex;
+    align-items:center;justify-content:center;
+    color:var(--tut-score);font-size:10px;font-weight:800;line-height:1;
+    letter-spacing:.13em;text-transform:lowercase;white-space:nowrap
+  }
+  .unit-par.tut-score .parmeter{
+    box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--tut-score)
+  }
   .track.parmeter{background:var(--lap-under,var(--rule))}
   .unit-top{display:flex;flex-wrap:nowrap;align-items:baseline;gap:0 12px;min-width:0}
   .unit-name{margin-left:auto;display:flex;align-items:baseline;gap:4px;min-width:0}
@@ -327,6 +348,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            transition:flex-grow var(--t-ui) var(--ease-out),background var(--t-ui)}
   .track > i{flex:1 1 0;min-width:0;transition:background .45s var(--ease-out)}
   .track > i.on{background:var(--fill)}
+  .setmeter.tutorial-meter > i{opacity:.22;transition:background .45s var(--ease-out),opacity .3s var(--ease-out)}
+  .setmeter.tutorial-meter > i.done,
+  .setmeter.tutorial-meter > i.now{opacity:1}
+  .setmeter.tutorial-meter > i.now{box-shadow:inset 0 -2px 0 var(--ink)}
   .track > i.on, .run > *:not(.clear){box-shadow:.5px 0 0 0 var(--fill)}
 
   .tval{
@@ -544,6 +569,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .coach-key{display:flex;gap:12px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--silver);flex-wrap:wrap}
   .coach-key span{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink-soft);letter-spacing:.04em}
   .coach-key .rmark{width:38px;height:24px}
+  .coach-key.score{display:block;min-width:min(300px,calc(100vw - 72px))}
+  .coach-key.score .rladder{width:100%;margin:0}
+  .coach-key.score .rladder .track{align-items:stretch;gap:0}
+  .coach-key.score .rladder .track > i{height:100%}
+  .coach-key.score .rlnames{display:grid;grid-template-columns:repeat(4,1fr);align-items:initial;gap:0}
+  .coach-key.score .rlnames > i{font-size:9px;letter-spacing:.03em}
 
   .say{
     position:absolute;
@@ -1120,6 +1151,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .gauge-row{gap:9px}
     .gauge-row b{font-size:26px}
     .track{height:8px;margin-top:7px}
+    .unit-par{--track-stack:15px}
 
     .veil{padding:12px}
     .arch-card{max-height:calc(100dvh - 24px)}
@@ -1165,7 +1197,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .minted .mb,.veil.show .bulletin .brow,.field .tlabel2.tin,
     .field .mhalo,
     .field .tutping,.field .tutlead,
-    .field .mnode.landed,.field .mnode.retraining,.field .mnode.settling{animation:none}
+    .field .mnode.landed,.field .mnode.retraining,.field .mnode.settling,
+    .unit-par.tut-score{animation:none}
     .field.swap-out > svg,.field.swap-in > svg,
     .field.swap-out .netnum,.field.swap-in .netnum{animation:none;opacity:1;transform:none}
     .freerun,.clearsweep{display:none}
@@ -1212,6 +1245,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
           <div class="track crossbar" id="crossbar"><span class="run" id="threadrow"></span></div>
         </div>
         <div class="unit unit-par">
+          <span class="tutorial-score-label" id="tutorialscore" aria-hidden="true"></span>
           <div class="unit-top">
             <b class="unit-fig" id="parnum">0</b>
             <!-- "turns" is what is counted and "to perfect" is which line it is
@@ -1262,8 +1296,8 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
     <div class="coach" id="coach">
       <div class="coach-strip" aria-hidden="true">
-        <i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>
-        <i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>
+        <i data-col="--sig-hellblau" style="background:var(--sig-hellblau)"></i>
+        <i data-col="--sig-orange" style="background:var(--sig-orange)"></i>
       </div>
       <div class="coach-body">
         <div class="coach-head">
@@ -4367,7 +4401,8 @@ function buildNet(force){
     members=[];
     threads=chosen.map((k,i)=>{
       const strength=1+(fnv(genDay+':str:'+idx+':'+k)%3);   // 1 faint, 2 clear, 3 dominant
-      return {key:k,def:FEATURES[k],col:THREADPAL[i%THREADPAL.length],
+      return {key:k,def:FEATURES[k],
+              col:(lesson?TUT_COLORS[idx][i]:THREADPAL[i%THREADPAL.length]),
               strength, nodeCount:spec.nodes+(strength-1),
               width:4.5,
               nodes:[],freed:false,crossings:0};
@@ -5693,10 +5728,11 @@ function resetDescent(){
 
 
 const TUTNETS=[
-  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
-  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3},
-  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3}
+  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5, palette:[0,1]},
+  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3, palette:[2,3]},
+  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3, palette:[4,5]}
 ];
+const TUT_COLORS=TUTNETS.map(net=>net.palette.map(i=>THREADPAL[i]));
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
 function repairOutOfRangeTutorialRun(){
   if(!inTutorialRun() || R().netIndex<TUTNETS.length) return false;
@@ -5710,8 +5746,32 @@ function inTutorial(){return inTutorialRun() && R().netIndex<TUTNETS.length && !
 let tutStepAt=1;
 const TUT_BRIDGE_HOLD=3600;
 let tutorialBridge=null, tutorialBridgeT=null, tutorialBridgeSkip=null;
+let tutorialScoreAria=null;
+function paintCoachStrip(cols){
+  const strip=$('coach').querySelector('.coach-strip');
+  strip.innerHTML=cols.map(col=>`<i data-col="${col}" style="background:var(${col})"></i>`).join('');
+}
+function hideTutorialScore(){
+  const bay=document.querySelector('.unit-par'), meter=$('parmeter'), label=$('tutorialscore');
+  bay.classList.remove('tut-score'); bay.style.removeProperty('--tut-score');
+  label.textContent='';
+  if(tutorialScoreAria!==null){
+    meter.setAttribute('aria-label',tutorialScoreAria);
+    tutorialScoreAria=null;
+  }
+}
+function showTutorialScore(tier){
+  const bay=document.querySelector('.unit-par'), meter=$('parmeter'), label=$('tutorialscore');
+  const word=tierSay(tier);
+  if(tutorialScoreAria===null) tutorialScoreAria=meter.getAttribute('aria-label')||'turns against par';
+  bay.style.setProperty('--tut-score',`var(${tierCol(tier)})`);
+  bay.classList.add('tut-score');
+  label.textContent=word+' rung';
+  meter.setAttribute('aria-label',`tutorial score · ${word} rung`);
+}
 function cancelTutorialBridge(){
   clearTimeout(tutorialBridgeT); tutorialBridgeT=null;
+  hideTutorialScore();
   if(tutorialBridgeSkip){
     removeEventListener('pointerdown',tutorialBridgeSkip,true);
     removeEventListener('keydown',tutorialBridgeSkip,true);
@@ -5725,9 +5785,9 @@ function finishTutorialBridge(e){
   if(!bridge || bridge.run!==R() || !inTutorialRun()) return;
   nextNet();
 }
-function showTutorialBridge(net){
+function showTutorialBridge(net,tier){
   cancelTutorialBridge();
-  tutorialBridge={net,run:R()};
+  tutorialBridge={net,tier,run:R()};
   tutStepAt=1;
   tutSpotClear();
   renderTutorial();
@@ -5987,9 +6047,9 @@ function tutNamed(){
 const COACH_OUT_MS=240, COACH_IN_MS=420;
 let coachSig='', coachQueuedSig='', coachSwapT=null, coachEnterT=null;
 const COACH_KEYS=[
-  [['feature','feature'],['neuron','neuron'],['crossing','crossing']],
-  [['shared','double ring · shared'],['split','after tap · two neurons']],
-  [['pinned','square · fixed'],['neuron','circle · moves']]
+  [['feature','feature',[0]],['neuron','neuron',[1]],['crossing','crossing',[0,1]]],
+  [['shared','double ring · shared',[0,1]],['split','after tap · two neurons',[0,1]]],
+  [['pinned','square · fixed',[0]],['neuron','circle · moves',[1]]]
 ];
 function coachEnter(c){
   clearTimeout(coachEnterT); coachEnterT=null;
@@ -6005,13 +6065,26 @@ function paintTutorial(d){
   const c=$('coach'), key=$('coachkey');
   if(d.bridge){
     tutSpotClear();
-    $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · lesson complete`;
-    $('coachtext').innerHTML='<b>the lines became features.</b> fewer turns earns a better rung.';
+    const score=d.net===1;
+    $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · ${score?'rung score':'features'}`;
+    $('coachtext').innerHTML=score
+      ? `<b>that earned ${tierSay(d.tier)}.</b> fewer turns earns a higher rung.`
+      : '<b>the lines became features.</b> each is one thing the net learned.';
     [...$('coachdots').children].forEach(dot=>{
       dot.classList.add('done'); dot.classList.remove('now');
     });
-    key.style.display='none';
+    key.classList.toggle('score',score);
+    key.dataset.lesson=score?'score':'';
+    key.innerHTML=score?rungLadder():'';
+    key.style.display=score?'':'none';
+    paintCoachStrip(score
+      ? ['done','clean','perfect','flawless'].map(t=>tierCol(t))
+      : TUT_COLORS[d.net]);
+    if(score) showTutorialScore(d.tier); else hideTutorialScore();
   }else{
+    hideTutorialScore();
+    paintCoachStrip(TUT_COLORS[d.net]);
+    key.classList.remove('score');
     tutSpotlight();
     $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · step ${d.step} of ${d.steps.length}`;
     $('coachtext').innerHTML = (!tutLit || d.net>0) ? d.steps[d.step-1]
@@ -6022,7 +6095,10 @@ function paintTutorial(d){
     });
     if(key.dataset.lesson!==String(d.net)){
       key.dataset.lesson=String(d.net);
-      key.innerHTML=COACH_KEYS[d.net].map(([mark,label])=>`<span>${rmark(mark)}${label}</span>`).join('');
+      key.innerHTML=COACH_KEYS[d.net].map(([mark,label,slots])=>{
+        const cols=slots.map(i=>TUT_COLORS[d.net][i]);
+        return `<span data-cols="${cols.join(' ')}">${rmark(mark,cols)}${label}</span>`;
+      }).join('');
     }
     key.style.display = d.step===1 ? '' : 'none';
   }
@@ -6034,13 +6110,14 @@ function renderTutorial(){
   $('play').classList.toggle('tutorial',active);
   if(!active){
     clearTimeout(coachSwapT); coachSwapT=null; coachQueuedSig='';
+    hideTutorialScore();
     tutSpotClear();
     return;
   }
   const bridge=tutorialBridge;
   let d;
   if(bridge){
-    d={sig:`bridge:${bridge.net}`,net:bridge.net,bridge:true};
+    d={sig:`bridge:${bridge.net}:${bridge.tier}`,net:bridge.net,tier:bridge.tier,bridge:true};
   }else{
     const net=Math.min(R().netIndex,TUTSTEPS_BY_NET.length-1);
     const steps=TUTSTEPS_BY_NET[net];
@@ -6243,11 +6320,9 @@ function clearNet(){
   holdGauge();
   boardCleared();
   if(setDone) renderHud();
-  const firstTutorial = wasTutorial && read.num===1;
-  const tutorialMidway = wasTutorial && !finalTutorial;
+  const tutorialBridgeAfter=wasTutorial && read.num<=2;
   const card = setDone ? showRunOver
-             : firstTutorial ? (()=>showTutorialBridge(0))
-             : tutorialMidway ? nextNet
+             : tutorialBridgeAfter ? (()=>showTutorialBridge(read.num-1,tier))
              : (()=>showNetCleared(feats,tier,wasTutorial,read));
   if(reduceMotion) setTimeout(card,260);
   else holdCleared(card);
@@ -6921,19 +6996,30 @@ function renderHud(){
 
   const D=POLICY.dailyNets, tut=inTutorial();
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
+  const strip=$('setmeter');
   if(tut){
     const les=Math.min(R().netIndex,TUTNETS.length-1);
-    const LCOL=[TIERCOL.perfect,TIERCOL.clean,TIERCOL.flawless];
-    paintCells('setmeter',Array.from({length:TUTNETS.length},(_,i)=>
-      'var('+(i<les?LCOL[i]:SETAHEAD)+')'),
+    paintCells('setmeter',TUT_COLORS.map(([a,b])=>
+      `linear-gradient(90deg,var(${a}) 0 50%,var(${b}) 50% 100%)`),
       'tutorial '+Math.min(les+1,TUTNETS.length)+' of '+TUTNETS.length);
+    strip.classList.add('tutorial-meter');
+    [...strip.children].forEach((cell,i)=>{
+      cell.classList.toggle('done',i<les);
+      cell.classList.toggle('now',i===les);
+      cell.dataset.cols=TUT_COLORS[i].join(' ');
+    });
   } else
-  paintCells('setmeter',Array.from({length:D},(_,i)=>'var('+(cells[i]?tierCol(cells[i].tier):SETAHEAD)+')'),
-    cells.length+' of '+D+' nets cleared');
-  const strip=$('setmeter');
-  [...strip.children].forEach(c=>c.classList.remove('now'));
-  const cur=strip.children[cells.length];
-  if(cur && !r.over) cur.classList.add('now');
+  {
+    strip.classList.remove('tutorial-meter');
+    paintCells('setmeter',Array.from({length:D},(_,i)=>'var('+(cells[i]?tierCol(cells[i].tier):SETAHEAD)+')'),
+      cells.length+' of '+D+' nets cleared');
+    [...strip.children].forEach(cell=>{
+      cell.classList.remove('done','now');
+      delete cell.dataset.cols;
+    });
+    const cur=strip.children[cells.length];
+    if(cur && !r.over) cur.classList.add('now');
+  }
   const cleanN=r.cleared.filter(c=>TIERRANK[c.tier]>=TIERRANK.clean).length;
   $('setlabel').textContent=tut?'tutorial':(trial?'time trial':"today's set");
   $('setnum').textContent=tut?Math.min(R().netIndex+1,TUTNETS.length)
@@ -7094,23 +7180,23 @@ if(DEV){
   $('newrun').onclick=e=>{e.preventDefault();startAnotherRun()};
 }
 const RMARK={
-  feature:()=>[threadPart([[4,32],[24,12],[44,32],[64,12]],THREADPAL[0])],
-  neuron:()=>[threadPart([[2,22],[66,22]],THREADPAL[1]),
-              ...neuronParts(34,22,[THREADPAL[1]])],
+  feature:(a)=>[threadPart([[4,32],[24,12],[44,32],[64,12]],a||THREADPAL[0])],
+  neuron:(a)=>[threadPart([[2,22],[66,22]],a||THREADPAL[1]),
+              ...neuronParts(34,22,[a||THREADPAL[1]])],
   shared:(a,b)=>[threadPart([[2,22],[34,22],[66,22]],a||THREADPAL[2]),
               threadPart([[16,4],[34,22],[52,40]],b||THREADPAL[3]),
               ...neuronParts(34,22,[a||THREADPAL[2],b||THREADPAL[3]])],
-  pinned:()=>[threadPart([[2,22],[66,22]],THREADPAL[4]),
-              ...neuronParts(34,22,[THREADPAL[4]],{pinned:true})],
-  split:()=>[threadPart([[2,12],[66,12]],THREADPAL[2]),
-             ...neuronParts(24,12,[THREADPAL[2]]),
-             threadPart([[2,34],[66,34]],THREADPAL[3]),
-             ...neuronParts(44,34,[THREADPAL[3]])],
-  crossing:()=>[threadPart([[14,2],[54,42]],THREADPAL[5]),
-                threadPart([[54,2],[14,42]],THREADPAL[0]),
+  pinned:(a)=>[threadPart([[2,22],[66,22]],a||THREADPAL[4]),
+              ...neuronParts(34,22,[a||THREADPAL[4]],{pinned:true})],
+  split:(a,b)=>[threadPart([[2,12],[66,12]],a||THREADPAL[2]),
+             ...neuronParts(24,12,[a||THREADPAL[2]]),
+             threadPart([[2,34],[66,34]],b||THREADPAL[3]),
+             ...neuronParts(44,34,[b||THREADPAL[3]])],
+  crossing:(a,b)=>[threadPart([[14,2],[54,42]],a||THREADPAL[5]),
+                threadPart([[54,2],[14,42]],b||THREADPAL[0]),
                 ...crossParts([[34,22]])]
 };
-const rmark=k=>markSVG(RMARK[k](),'0 0 68 44','rmark');
+const rmark=(k,cols=[])=>markSVG(RMARK[k](...cols),'0 0 68 44','rmark');
 
 function introPlate(){
   const A=THREADPAL[0], B=THREADPAL[1], C=THREADPAL[2];
