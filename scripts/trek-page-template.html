@@ -878,15 +878,19 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   function showPhotos(d, t){
     var set = photoByDay[d.n];
     if (!set || !set.length) { hidePhotos(); return; }
+    var u = Math.max(0, Math.min(1, t == null ? 0 : t));
+    var focusIndex = Math.min(set.length - 1, Math.floor(Math.min(.999, u) * set.length));
     storyRail.classList.add("has-photos");
     photoStrip.classList.add("on");
     if (activePhotoDay !== d.n) {
       activePhotoDay = d.n;
       photoLayoutWidth = -1;
-      photoTrack.innerHTML = set.map(function(ph){
+      photoTrack.innerHTML = set.map(function(ph, index){
         var ratio = Math.max(.65, Math.min(2.15, (ph.w || 1) / Math.max(1, ph.h || 1)));
         var alt = ph.alt || ("Photograph from day " + d.n + (d.t ? " — " + d.t : ""));
-        return '<figure class="photo-frame" style="--ratio:' + ratio.toFixed(3) + '"><img src="photos/' + esc(ph.src) + '" alt="' + esc(alt) + '" width="' + (ph.w || 720) + '" height="' + (ph.h || 720) + '" decoding="async"></figure>';
+        var nearView = Math.abs(index - focusIndex) <= 8 || set.length <= 12;
+        var highPriority = Math.abs(index - focusIndex) <= 4;
+        return '<figure class="photo-frame" style="--ratio:' + ratio.toFixed(3) + '"><img src="photos/' + esc(ph.src) + '" alt="' + esc(alt) + '" width="' + (ph.w || 720) + '" height="' + (ph.h || 720) + '" loading="' + (nearView ? 'eager' : 'lazy') + '" fetchpriority="' + (highPriority ? 'high' : 'auto') + '" decoding="async"></figure>';
       }).join("");
       photoStrip.setAttribute("aria-label", set.length + " photographs from day " + d.n + (d.t ? ", " + d.t : ""));
     }
@@ -896,7 +900,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       photoTrack.style.setProperty("--photo-count", set.length);
       if (photoTrack.scrollWidth <= photoStrip.clientWidth + 1) photoTrack.classList.add("fits");
     }
-    var u = Math.max(0, Math.min(1, t == null ? 0 : t));
+    var photoImages = photoTrack.querySelectorAll("img");
+    for (var loadIndex = Math.max(0, focusIndex - 5); loadIndex <= Math.min(photoImages.length - 1, focusIndex + 8); loadIndex++) {
+      photoImages[loadIndex].loading = "eager";
+      photoImages[loadIndex].fetchPriority = "high";
+    }
     var eased = REDUCED ? (u < .5 ? 0 : 1) : u * u * (3 - 2 * u);
     var travel = Math.max(0, photoTrack.scrollWidth - photoStrip.clientWidth);
     photoTrack.style.transform = "translate3d(" + (-travel * eased).toFixed(2) + "px,0,0)";
