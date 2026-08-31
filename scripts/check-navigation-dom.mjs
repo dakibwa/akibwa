@@ -338,6 +338,9 @@ const careerState = () => evaluate(`(() => {
   const first = stops[0];
   const popovers = stops.map((stop) => stop.querySelector(".concept-career-popover").getBoundingClientRect());
   const dateLabels = stops.map((stop) => stop.querySelector(".concept-career-time").textContent.trim());
+  const cardBorders = stops.map((stop) =>
+    getComputedStyle(stop.querySelector(".concept-career-card")).borderTopColor
+  );
   return {
     count: stops.length,
     complete: stops.every((stop) => {
@@ -363,6 +366,8 @@ const careerState = () => evaluate(`(() => {
       .filter((stop) => Number(getComputedStyle(stop.querySelector(".concept-career-popover")).opacity) > 0.99)
       .map((stop) => stop.querySelector(".concept-career-popover strong")?.textContent.trim()),
     dateLabels: dateLabels.join(" / "),
+    cardBorders,
+    distinctCardBorders: new Set(cardBorders).size,
     datesSingleLine: stops.every((stop) => {
       const time = stop.querySelector(".concept-career-time");
       const range = document.createRange();
@@ -650,6 +655,10 @@ const checkCareerTimeline = async () => {
   check(
     state.dateLabels === "Now / ’24–now / ’23–24 / ’22–23 / ’20–22 / 2020 / ’18–19 / ’16–17",
     `the date rail uses quiet compact ranges [${state.dateLabels}]`
+  );
+  check(
+    state.distinctCardBorders === state.count,
+    `every resting logo card carries its own darker company-colour border [${state.cardBorders.join(" / ")}]`
   );
   check(state.datesSingleLine, "every desktop date stays on one line");
   check(state.popoverOpacity === 0, "career detail is hidden at rest");

@@ -44,7 +44,8 @@ publishing homepage changes.
 - At rest it shows compact, single-line year ranges and marks. Hover or
   keyboard focus reveals the full range, job title and one short
   action-to-purpose sentence, with tools and sector language selectively
-  bolded. These sentences are direct verb-led lines, not first-person copy.
+  bolded. Each logo card keeps a darker border derived from its own timeline
+  colour. These sentences are direct verb-led lines, not first-person copy.
 - Focus is exclusive: after a role is clicked or reached by keyboard, hovering
   another mark cannot open a second detail over it. Moving focus switches the
   one open detail.
