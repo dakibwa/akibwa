@@ -20,6 +20,10 @@ publishing homepage changes.
   horizontal panels on the right. Narrow screens return to the descending
   stack. The Portuguese card uses a text-free conversation illustration; Trek
   uses a route-led topographic illustration drawn from the live atlas.
+- Project captions are slim editorial rails with one accent edge. Features is
+  anchored by a compact dark rail; the two narrow side captions use the page's
+  warm paper so their artwork keeps the colour. Each card uses a static
+  arrow-only mark rather than a wordy call to action or moving-arrow effect.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
@@ -52,8 +56,9 @@ publishing homepage changes.
 
 ## Motion
 
-- Motion is limited to short link feedback and the identity cycle. It must not
-  lift, tilt or add theatrical shadows to the project or taste wall.
+- Motion is reserved for the identity cycle. Project links use a static colour
+  change for feedback; they must not move their arrows, lift, tilt or add
+  theatrical shadows to the project or taste wall.
 - `prefers-reduced-motion: reduce` removes non-essential transitions while
   preserving the same information and focus states.
 

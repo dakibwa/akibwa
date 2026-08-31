@@ -156,10 +156,26 @@ requireRuleText(".concept-project-grid {", [
   "align-items: stretch"
 ]);
 requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
-requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "background: #253a30"]);
+requireRuleText(".concept-project-foot {", [
+  "min-height: 50px",
+  "background: var(--project-card-panel)",
+  "box-shadow: inset 0 3px 0 var(--project-card-accent)"
+]);
+requireRuleText("\n.concept-arrow {", [
+  "width: 29px",
+  "height: 29px",
+  "border-radius: 50%",
+  "font-family: var(--serif)"
+]);
+requireText(editorial, '<span className="concept-arrow" aria-hidden="true">↗</span>', "project links use a quiet arrow-only mark");
+forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
+forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");
+forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed");
+forbidText(css, "transform: translate(2px, -1px)", "project arrows must not animate spatially");
+requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "--project-card-panel: #f2efe7"]);
 requireText(
   css,
-  ".concept-feature {\n    grid-row: 1 / 3;",
+  ".concept-feature {\n    display: grid;\n    grid-row: 1 / 3;",
   "Features must span both wide-screen project rows"
 );
 requireText(

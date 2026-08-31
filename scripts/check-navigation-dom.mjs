@@ -257,6 +257,7 @@ const pageState = () => evaluate(`(() => {
       rect: rect(item),
       imageRect: rect(item.querySelector("img")),
       footRect: rect(item.querySelector(".concept-project-foot")),
+      arrowText: item.querySelector(".concept-arrow")?.textContent.trim(),
       imageComplete: item.querySelector("img")?.complete,
       imageWidth: item.querySelector("img")?.naturalWidth,
       currentSrc: item.querySelector("img")?.currentSrc
@@ -428,11 +429,25 @@ const checkDesktop = async () => {
   );
   check(
     state.projects.slice(1).every((item) =>
-      item.imageRect.width / item.imageRect.height >= 1.75 &&
-      item.imageRect.width / item.imageRect.height <= 2.05 &&
+      item.imageRect.width / item.imageRect.height >= 1.85 &&
+      item.imageRect.width / item.imageRect.height <= 2.2 &&
       Math.abs(item.imageRect.right - item.footRect.left) <= 1
     ),
     "the supporting project artwork keeps its landscape frame beside the caption"
+  );
+  check(
+    Math.abs(state.projects[0].footRect.bottom - state.projects[0].rect.bottom) <= 1 &&
+      state.projects[0].footRect.height <= 56,
+    `the Features caption closes as a slim bottom rail [${state.projects[0].footRect.height.toFixed(1)}px]`
+  );
+  check(
+    state.projects.slice(1).every((item) => item.footRect.width / item.rect.width <= 0.3),
+    `the supporting caption rails stay narrow [${state.projects.slice(1).map((item) => `${(item.footRect.width / item.rect.width * 100).toFixed(1)}%`).join(" / ")}]`
+  );
+  check(
+    state.projects.every((item) => item.arrowText === "↗") &&
+      state.projects.every((item) => !/(play today|visit site|explore)/i.test(item.text)),
+    "project cards use one quiet arrow instead of wordy CTA copy"
   );
   check(
     state.projects.every((item) => item.imageComplete && item.imageWidth >= item.rect.width && /conceptProject/.test(item.currentSrc)),
@@ -488,7 +503,7 @@ const checkDesktop = async () => {
 };
 
 const checkLinkHover = async () => {
-  section("restrained link feedback");
+  section("static link feedback");
   await setDesktop();
   await goto("/");
   const before = await evaluate(`(() => {
@@ -499,32 +514,41 @@ const checkLinkHover = async () => {
       x: r.left + r.width / 2,
       y: r.top + r.height / 2,
       arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
+      arrowBackground: getComputedStyle(link.querySelector(".concept-arrow")).backgroundColor,
+      arrowTransition: getComputedStyle(link.querySelector(".concept-arrow")).transitionDuration,
       transform: getComputedStyle(link).transform,
       shadow: getComputedStyle(link).boxShadow
     };
   })()`);
-  check(before.arrow === "none", "the Features arrow starts still");
+  check(before.arrow === "none" && parseFloat(before.arrowTransition) === 0, "the Features arrow has no motion at rest");
   await mouseMove(before.x, before.y);
   const hovered = await pollUntil(
     () => evaluate(`(() => {
       const link = document.querySelector(".concept-feature");
       return {
         arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
+        arrowBackground: getComputedStyle(link.querySelector(".concept-arrow")).backgroundColor,
+        arrowTransition: getComputedStyle(link.querySelector(".concept-arrow")).transitionDuration,
         transform: getComputedStyle(link).transform,
         shadow: getComputedStyle(link).boxShadow
       };
     })()`),
-    (value) => value.arrow !== "none"
+    (value) => value.arrowBackground !== before.arrowBackground
   );
-  check(hovered.arrow !== "none", "hover gives the direct link one small directional response");
+  check(
+    hovered.arrowBackground !== before.arrowBackground &&
+      hovered.arrow === "none" &&
+      parseFloat(hovered.arrowTransition) === 0,
+    "hover changes the arrow mark without moving or animating it"
+  );
   check(hovered.transform === "none", "hover does not tilt, lift, or scale the feature");
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");
   await mouseMove(1200, 40);
   const settled = await pollUntil(
-    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-arrow")).transform`),
-    (transform) => transform === "none"
+    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-arrow")).backgroundColor`),
+    (background) => background === before.arrowBackground
   );
-  check(settled === "none", "the arrow settles cleanly after hover");
+  check(settled === before.arrowBackground, "the static arrow mark clears when hover ends");
 };
 
 const checkHeroBreakpoint = async () => {
