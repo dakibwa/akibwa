@@ -424,7 +424,10 @@ const altAt = (x, y) => {
 // foreshortened into the floor and real elevation lifts the terrain, but the
 // scale stays shallow enough for the relief to feel embedded in the map.
 const FLOOR_TILT = 0.66;
-const RELIEF_SCALE = 0.038;
+// The paper atlas keeps geography readable and lets the separate cut-paper
+// mountains carry the drama. A small lift still lets the walker rise through
+// the Alps without bending the route into a perspective illustration.
+const RELIEF_SCALE = 0.014;
 const groundPoint = (x, y) => ({
   x: sx(x),
   y: +(((sy(y) - VBH / 2) * FLOOR_TILT + VBH / 2)).toFixed(1),
@@ -508,6 +511,13 @@ for (let i = 0; i < anchors.length; i++) {
 
 const COUNTRY_COLOR = Object.fromEntries(data.countries.map((c) => [c.name, c.color]));
 
+const TERRAIN_PAPER = [
+  ["#D7CEAA", "#C9C19C", "#BBB58F"],
+  ["#A5A47C", "#95966F", "#858A66"],
+  ["#747C5D", "#657052", "#59654B"],
+  ["#4E5B45", "#414E3D", "#354239"],
+];
+
 function terrainCellColor(points, facet = 0) {
   const altitude = points.reduce((sum, point) => sum + point.alt, 0) / points.length;
   const eastSlope = (points[1].alt + points[2].alt - points[0].alt - points[3].alt) / 1150;
@@ -517,11 +527,9 @@ function terrainCellColor(points, facet = 0) {
   const ny = -southSlope / normalLength;
   const nz = 1 / normalLength;
   const light = Math.max(-1, Math.min(1, nx * -0.48 + ny * -0.62 + nz * 0.62));
-  const elevation = Math.max(0, Math.min(1, altitude / 2500));
-  const hue = 132 - elevation * 82;
-  const saturation = 22 - elevation * 3;
-  const luminance = Math.round(Math.max(34, Math.min(72, 39 + elevation * 27 + light * 5 + facet)));
-  return `hsl(${Math.round(hue)} ${Math.round(saturation)}% ${luminance}%)`;
+  const band = altitude < 240 ? 0 : altitude < 520 ? 1 : altitude < 980 ? 2 : 3;
+  const shade = Math.max(0, Math.min(2, Math.round(1 - light * .8 + facet)));
+  return TERRAIN_PAPER[band][shade];
 }
 
 const terrainBuckets = new Map();
@@ -533,7 +541,8 @@ const terrainGridPoint = (row, column) => {
   const lon = grid.west + (column * (grid.east - grid.west)) / (grid.cols - 1);
   const lat = grid.north - (row * (grid.north - grid.south)) / (grid.rows - 1);
   const altitude = grid.elev[row * grid.cols + column] || 0;
-  return mapLonLat({ lon, lat }, altitude);
+  const [x, y] = mercProj({ lon, lat });
+  return { ...groundPoint(x, y), alt: altitude };
 };
 if (grid) {
   for (let row = 0; row < grid.rows - 1; row++) {
@@ -553,19 +562,83 @@ const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
   `<path class="terrain-cell" d="${d}" fill="${color}" stroke="${color}"/>`
 );
 
-// The relief is deliberately illustrative, but the borders remain real
-// geography. Quiet outlines under the route make each leg legible without
-// turning the page into a conventional road map.
+const ringPath = (ring) => {
+  const points = ring.map(([x, y]) => {
+    const point = groundPoint(x, y);
+    return `${point.x} ${point.y}`;
+  });
+  return points.length ? `M${points.join("L")}Z` : "";
+};
+const landShape = (data.countryRings || [])
+  .flatMap((country) => country.rings.map(ringPath))
+  .join("");
+
+// Real elevation becomes a field of deliberately graphic paper peaks rather
+// than a conventional shaded-relief texture. The placement and scale are
+// deterministic and derived from the cached terrain grid.
+const PEAK_PAPER = {
+  low: ["#7B8160", "#677050", "#525F47"],
+  mid: ["#59654B", "#46543F", "#354238"],
+  high: ["#495344", "#354139", "#27322F"],
+  dusk: ["#706B6B", "#5E5862", "#484653"],
+};
+const peakHash = (row, column) => ((row + 11) * 73856093) ^ ((column + 17) * 19349663);
+const paperPeaks = [];
+if (grid) {
+  for (let row = 1; row < grid.rows - 1; row += 2) {
+    for (let column = 1; column < grid.cols - 1; column += 2) {
+      const altitude = (
+        (grid.elev[row * grid.cols + column] || 0) +
+        (grid.elev[(row - 1) * grid.cols + column] || 0) +
+        (grid.elev[(row + 1) * grid.cols + column] || 0)
+      ) / 3;
+      const hash = Math.abs(peakHash(row, column));
+      if (altitude < 230 || (altitude < 430 && hash % 4 !== 0)) continue;
+      const lonStep = (grid.east - grid.west) / (grid.cols - 1);
+      const latStep = (grid.north - grid.south) / (grid.rows - 1);
+      const lon = grid.west + (column * lonStep) + (((hash % 17) - 8) / 34) * lonStep;
+      const lat = grid.north - (row * latStep) + ((((hash >> 5) % 13) - 6) / 30) * latStep;
+      const [x, y] = mercProj({ lon, lat });
+      const base = groundPoint(x, y);
+      const width = Math.max(84, Math.min(246, 72 + altitude * .058));
+      const height = Math.max(25, Math.min(80, 20 + altitude * .019));
+      const peakX = base.x + (((hash >> 9) % 15) - 7) * width * .012;
+      const peakY = base.y - height;
+      const left = base.x - width * .56;
+      const right = base.x + width * .56;
+      const centre = base.x + width * .04;
+      const leftShoulder = peakX - width * (.16 + (hash % 5) * .012);
+      const rightShoulder = peakX + width * (.18 + ((hash >> 4) % 5) * .012);
+      const palette = hash % 13 === 0 && altitude > 520
+        ? PEAK_PAPER.dusk
+        : altitude > 1350
+          ? PEAK_PAPER.high
+          : altitude > 620
+            ? PEAK_PAPER.mid
+            : PEAK_PAPER.low;
+      const snow = altitude > 1750
+        ? `\n          <path class="paper-snow" d="M${peakX},${peakY} L${peakX - width * .13},${peakY + height * .23} L${peakX - width * .03},${peakY + height * .2} L${peakX + width * .07},${peakY + height * .28} L${peakX + width * .16},${peakY + height * .22}Z"/>`
+        : "";
+      paperPeaks.push({
+        y: base.y,
+        svg: `<g class="paper-peak" data-alt="${Math.round(altitude)}">
+          <path class="peak-back" fill="${palette[1]}" d="M${left},${base.y} L${leftShoulder},${peakY + height * .34} L${peakX},${peakY} L${rightShoulder},${peakY + height * .38} L${right},${base.y}Z"/>
+          <path class="peak-light" fill="${palette[0]}" d="M${left},${base.y} L${leftShoulder},${peakY + height * .34} L${peakX},${peakY} L${centre},${base.y}Z"/>
+          <path class="peak-shade" fill="${palette[2]}" d="M${peakX},${peakY} L${rightShoulder},${peakY + height * .38} L${right},${base.y} L${centre},${base.y}Z"/>${snow}
+        </g>`,
+      });
+    }
+  }
+}
+paperPeaks.sort((a, b) => a.y - b.y);
+const mountainRanges = paperPeaks.map((peak) => peak.svg).join("\n      ");
+
+// The cut-paper silhouette is real route-country geography. Quiet seams keep
+// the seven-country structure legible without reverting to a road-map look.
 const countryBoundaries = (data.countryRings || [])
   .map((country) => {
     const d = country.rings
-      .map((ring) => {
-        const points = ring.map(([x, y]) => {
-          const point = mapPoint(x, y);
-          return `${point.x} ${point.y}`;
-        });
-        return points.length ? `M${points.join("L")}Z` : "";
-      })
+      .map(ringPath)
       .join("");
     return `<path class="country-boundary" data-country="${country.name.toLowerCase()}" style="--country:${country.color}" d="${d}"/>`;
   })
@@ -696,27 +769,53 @@ const startPoint = mapPoint(start[0], start[1], startAlt);
 const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <defs>
-    <filter id="terrain-soften-filter" x="-4%" y="-6%" width="108%" height="112%">
-      <feGaussianBlur stdDeviation="1.15"/>
+    <filter id="paper-grain-filter" x="-3%" y="-3%" width="106%" height="106%">
+      <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="29" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" values=".25 0 0 0 .63  0 .24 0 0 .59  0 0 .2 0 .48  0 0 0 .16 0" result="grain"/>
+      <feBlend in="SourceGraphic" in2="grain" mode="multiply"/>
     </filter>
+    <filter id="land-shadow-filter" x="-8%" y="-8%" width="116%" height="124%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#080A09" flood-opacity=".48"/>
+    </filter>
+    <clipPath id="land-clip"><path d="${landShape}"/></clipPath>
+    <pattern id="contour-pattern" width="210" height="176" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#D5CBAE" stroke-opacity=".075" stroke-width="1.1">
+        <path d="M-18 88C18 34 72 25 111 61s69 41 117-4"/>
+        <path d="M-23 102C20 48 70 43 105 76s76 43 132-5"/>
+        <path d="M-28 117C20 64 68 60 100 91s81 44 146-7"/>
+        <path d="M35 159C54 124 101 116 128 143s52 28 84 5"/>
+      </g>
+    </pattern>
     <mask id="route-progress-mask" maskUnits="userSpaceOnUse" x="-100" y="-100" width="${VBW + 200}" height="${VBH + 200}">
-      <path id="route-progress-mask-path" d="${trackPath}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0 99999"/>
+      <path id="route-progress-mask-path" d="${trackPath}" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0 99999"/>
     </mask>
   </defs>
   <g id="camera">
-    <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
+    <rect class="sea-contours" x="-900" y="-900" width="${VBW + 1800}" height="${VBH + 1800}" fill="url(#contour-pattern)"/>
+    <path class="land-shadow" d="${landShape}" filter="url(#land-shadow-filter)"/>
+    <path class="land-paper" d="${landShape}" filter="url(#paper-grain-filter)"/>
+    <g clip-path="url(#land-clip)">
+      <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
+      <g id="mountain-ranges">${mountainRanges}</g>
+      <rect class="land-grain" x="-120" y="-120" width="${VBW + 240}" height="${VBH + 240}" filter="url(#paper-grain-filter)"/>
+    </g>
     <g id="country-boundaries">${countryBoundaries}</g>
     <g id="water">
       ${lakePaths}
       ${riverPaths}
     </g>
-    <path id="route-base" d="${trackPath}" fill="none" stroke="#263126" stroke-opacity=".72" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <path id="route-base" d="${trackPath}" fill="none" stroke="#171B19" stroke-opacity=".62" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
     <g id="route-ahead">${routeAheadSegs.join("\n      ")}</g>
     <g id="route-travelled" mask="url(#route-progress-mask)">${segs.join("\n      ")}</g>
     ${dayDots}
     <g id="route-now" transform="translate(${startPoint.x} ${startPoint.y})">
-      <circle class="route-now-halo" r="5.2"/>
-      <circle class="route-now-dot" r="2.15"/>
+      <ellipse class="walker-shadow" cx="0" cy="3.5" rx="8" ry="2.8"/>
+      <g class="walker-figure" transform="translate(0 -4)">
+        <circle class="walker-head" cx="0" cy="-8.7" r="2.5"/>
+        <path class="walker-pack" d="M-5 -6.6h4.2v8.4h-4.8z"/>
+        <path class="walker-body" d="M-.9 -6.4L3.1-3.1 1.5 3.7-2.8 3.3-3-2.4Z"/>
+        <path class="walker-limbs" d="M-1.8 2.5L-4.2 9M1.1 2.8L4.1 8.7M1.4-3L5.2.3M5.2.3L6.4 8.8"/>
+      </g>
     </g>
     ${townMarks}
   </g>

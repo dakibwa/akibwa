@@ -16,31 +16,31 @@
  "countries": [
   {
    "name": "France",
-   "color": "#2EA3DC"
+   "color": "#D35B2A"
   },
   {
    "name": "Germany",
-   "color": "#D75B4A"
+   "color": "#DDA51F"
   },
   {
    "name": "Austria",
-   "color": "#7D6BB0"
+   "color": "#657A45"
   },
   {
    "name": "Slovenia",
-   "color": "#12A19A"
+   "color": "#4F7065"
   },
   {
    "name": "Croatia",
-   "color": "#1FA45A"
+   "color": "#536F8A"
   },
   {
    "name": "Serbia",
-   "color": "#EFC319"
+   "color": "#8B6DB3"
   },
   {
    "name": "Bulgaria",
-   "color": "#E97E18"
+   "color": "#C9532D"
   }
  ],
  "countryRings": [
