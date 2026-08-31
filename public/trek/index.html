@@ -105,7 +105,8 @@ button{font:inherit;color:inherit}
   position:fixed;left:0;right:0;top:var(--mast-h);z-index:49;height:var(--stats-h);
   display:grid;grid-template-columns:minmax(180px,1.3fr) repeat(4,minmax(96px,.72fr)) minmax(220px,1.2fr);
   font-family:var(--sans);font-variant-numeric:tabular-nums;color:var(--ink);
-  background:#F7F3E8;border-bottom:1px solid rgba(35,37,30,.26);
+  background:rgba(247,243,232,.78);border-bottom:1px solid rgba(35,37,30,.32);
+  -webkit-backdrop-filter:blur(9px) saturate(1.08);backdrop-filter:blur(9px) saturate(1.08);
 }
 .stat-position,.stat{
   min-width:0;padding:8px 16px 7px;border-right:1px solid rgba(35,37,30,.16);
@@ -117,34 +118,43 @@ button{font:inherit;color:inherit}
 }
 .stat{
   --stat-color:var(--c-cur);position:relative;display:grid;align-content:center;gap:3px;overflow:hidden;
-  background:#F7F3E8;box-shadow:inset 0 3px 0 var(--stat-color);
+  background:rgba(247,243,232,.36);box-shadow:inset 0 3px 0 var(--stat-color);
 }
 .stat-distance{--stat-color:#3FA8D8}
 .stat-ascent{--stat-color:#E27659}
 .stat-days{--stat-color:#E2B63E}
 .stat-hours{--stat-color:#58A978}
 .stat-elevation{--stat-color:#9B7BC4}
-.stat b{color:var(--ink);font-size:19px;font-weight:650;line-height:1;letter-spacing:-.035em;white-space:nowrap}
+.stat-meter{position:absolute;inset:3px 0 0;z-index:0;overflow:hidden;pointer-events:none}
+.stat-meter-track,.stat-meter-fill{
+  position:absolute;inset:5px;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:2px;
+}
+.stat-meter-track i,.stat-meter-fill i{display:block;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.stat-meter-track i{background:color-mix(in srgb,var(--stat-color) 11%,transparent)}
+.stat-meter-fill{clip-path:inset(0 100% 0 0);transition:clip-path .12s linear}
+.stat-meter-fill i{background:color-mix(in srgb,var(--stat-color) 34%,#F7F3E8)}
+.stat-meter-front{
+  position:absolute;top:4px;bottom:4px;left:0;width:2px;z-index:1;opacity:0;transform:translateX(-1px);
+  background:var(--stat-color);box-shadow:0 0 0 1px rgba(247,243,232,.5);transition:left .12s linear,opacity .12s linear;
+}
+.stat b,.stat em,.stat-elevation svg,.stat-elevation p{position:relative;z-index:2}
+.stat b{color:var(--ink);font-size:19px;font-weight:650;line-height:1;letter-spacing:-.035em;white-space:nowrap;text-shadow:0 1px 0 rgba(247,243,232,.88)}
 .stat b small{margin-left:4px;color:color-mix(in srgb,var(--stat-color) 72%,var(--ink));font-size:.54em;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 .stat em{font-style:normal;color:#656459;font-size:7.5px;font-weight:600;line-height:1.1;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
 .stat-elevation{grid-template-columns:minmax(90px,132px) auto;align-items:center;align-content:stretch;gap:12px;border-right:0}
 .stat-elevation svg{width:100%;height:28px;overflow:visible}
 .stat-elevation p{display:grid;align-content:center;gap:3px}
-.stat-elevation #elev-area{fill:color-mix(in srgb,var(--stat-color) 48%,transparent)}
-.stat-elevation #elev-line{fill:none;stroke:color-mix(in srgb,var(--stat-color) 76%,var(--bone));stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.stat-elevation #elev-area{fill:color-mix(in srgb,var(--stat-color) 46%,transparent)}
+.stat-elevation #elev-line{fill:none;stroke:color-mix(in srgb,var(--stat-color) 86%,var(--ink));stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
 .stat-elevation #elev-now{fill:#F7F3E8;stroke:var(--ink);stroke-width:1}
 
 /* -------------------------------------------------------------- experience */
 .experience{position:relative}
 .stage{
-  position:sticky;top:0;height:100svh;overflow:clip;background:
-    radial-gradient(75% 88% at 18% 28%,rgba(255,235,150,.8),transparent 63%),
-    radial-gradient(70% 80% at 86% 18%,rgba(100,188,213,.56),transparent 66%),
-    linear-gradient(150deg,#E7DCBC 0%,#BFD5CA 48%,#D8C7A7 100%);
+  position:sticky;top:0;height:100svh;overflow:clip;background:#93AF8F;
 }
 .stage::before{
-  content:"";position:absolute;inset:var(--chrome-h) 0 0;pointer-events:none;opacity:.22;
-  background:radial-gradient(55% 40% at 50% 18%,rgba(255,255,255,.72),transparent 100%);
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.08;background:#F7F3E8;
 }
 .story-rail{
   position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + 10px);height:var(--story-h);z-index:9;
@@ -157,40 +167,35 @@ button{font:inherit;color:inherit}
 .story-current{
   position:absolute;inset:0;display:grid;align-content:center;gap:3px;min-width:0;padding:8px 14px 7px 15px;
   color:var(--ink);border:1px solid rgba(43,50,37,.2);border-left:3px solid var(--c-cur);
-  background:rgba(249,246,236,.94);
+  background:rgba(249,246,236,.86);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:opacity .2s ease;
 }
 .story-label{font-family:var(--mono);font-size:9px;font-weight:600;line-height:1.2;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 56%,#4D5749);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .story-text{max-width:92ch;font-size:12.5px;font-weight:560;line-height:1.28;color:#353B32;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .map-shell{
-  --map-shape:inset(0 round 2px);
-  position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + var(--story-h) + 20px);bottom:18px;z-index:2;
+  --map-shape:none;
+  position:absolute;inset:0;z-index:2;
 }
 .atlas-scene{
   position:absolute;inset:0;contain:layout paint style;clip-path:var(--map-shape);
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.34),transparent 34%),
-    radial-gradient(92% 70% at 50% 52%,#A6BE8E 0%,#7FA783 52%,#628D7D 100%);
-  box-shadow:inset 0 0 0 1px rgba(34,42,29,.3);
+  background:#739377;box-shadow:inset 0 0 0 1px rgba(34,42,29,.22);
 }
 #atlas{position:absolute;inset:0;width:100%;height:100%;shape-rendering:geometricPrecision;will-change:contents}
 .vignette{
   position:absolute;inset:0;pointer-events:none;clip-path:var(--map-shape);z-index:4;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.18),transparent 22%),
-    radial-gradient(115% 88% at 50% 45%,transparent 63%,rgba(67,50,29,.28) 100%);
+  box-shadow:inset 0 0 90px rgba(53,48,34,.18);
 }
 
 /* atlas drawing */
-#terrain-mesh{opacity:.84;transform:scale(1.006);transform-origin:center;transition:opacity .5s;filter:url(#terrain-soften-filter) saturate(.98) contrast(.97)}
+#terrain-mesh{opacity:.96;transform:scale(1.006);transform-origin:center;transition:opacity .5s;filter:saturate(1.04) contrast(1.04)}
 .terrain-cell{stroke-width:.08;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.9}
+.stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:1}
 #country-boundaries{pointer-events:none}
 .country-boundary{
-  fill:none;stroke:color-mix(in srgb,var(--country) 56%,#334239);stroke-width:.72;stroke-opacity:.44;
+  fill:none;stroke:color-mix(in srgb,var(--country) 62%,#29382F);stroke-width:.8;stroke-opacity:.58;
   stroke-dasharray:2 2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;
 }
-.stage[data-zoom="travel"] .country-boundary,.stage[data-zoom="close"] .country-boundary{stroke-opacity:.66}
+.stage[data-zoom="travel"] .country-boundary,.stage[data-zoom="close"] .country-boundary{stroke-opacity:.76}
 #water{pointer-events:none}
 .lake path{fill:#48A9C6;fill-opacity:.86;stroke:#D4F4F7;stroke-opacity:.78;stroke-width:.8;vector-effect:non-scaling-stroke}
 .river{fill:none;stroke:#57BBD3;stroke-opacity:.68;stroke-width:1.05;vector-effect:non-scaling-stroke;stroke-linecap:round}
@@ -242,7 +247,8 @@ button{font:inherit;color:inherit}
 .route-context{
   --leg-color:var(--c-cur);position:absolute;left:15px;bottom:15px;z-index:6;min-width:210px;max-width:min(330px,calc(100% - 30px));
   padding:10px 13px 9px;border:1px solid rgba(39,48,36,.3);border-left:4px solid var(--leg-color);
-  background:#F7F3E8;color:var(--ink);pointer-events:none;
+  background:rgba(247,243,232,.88);color:var(--ink);pointer-events:none;
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
 }
 .route-context-label,.route-context-detail{font-family:var(--mono);text-transform:uppercase;font-variant-numeric:tabular-nums}
 .route-context-label{font-size:7.5px;font-weight:650;letter-spacing:.15em;color:#6B675C}
@@ -257,7 +263,7 @@ button{font:inherit;color:inherit}
 }
 .collector-section{
   min-height:0;padding:11px 13px 13px;border:1px solid rgba(41,49,37,.24);
-  background:rgba(249,246,236,.94);
+  background:rgba(249,246,236,.86);
   backdrop-filter:blur(8px);
 }
 .collector-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
@@ -349,7 +355,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 @media (max-width:1180px){
   .collector{display:none}
   .story-rail{right:18px}
-  .map-shell{right:18px}
+  .map-shell{right:0}
   .hint{left:50%}
 }
 @media (max-width:900px){
@@ -377,7 +383,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .story-current{padding:6px 7px;gap:2px}
   .story-label{font-size:6.8px;letter-spacing:.1em}
   .story-text{font-size:9.8px;line-height:1.25;-webkit-line-clamp:4}
-  .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + var(--story-h) + 14px);bottom:8px}
+  .map-shell{inset:0}
   .photo-track{gap:3px}
   .photo-count{right:3px;bottom:3px;font-size:6px}
   .journey-start{padding:10px 15px;font-size:13px}
@@ -398,7 +404,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .story-text{-webkit-line-clamp:2}
 }
 @media (prefers-reduced-motion:reduce){
-  .daydot,.town,.plate,.photo-strip,.collector,.journey-progress i,.journey-start{transition-duration:.01s}
+  .daydot,.town,.plate,.photo-strip,.collector,.journey-progress i,.journey-start,.stat-meter-fill,.stat-meter-front{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -427,11 +433,12 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <section class="statbar" id="statbar" aria-label="Journey statistics">
   <p class="stat-position" id="hud-position">Paris · 24 sep 2019</p>
-  <div class="stat stat-distance"><b><span id="hud-km">0.0</span><small>km</small></b><em>distance</em></div>
-  <div class="stat stat-ascent"><b id="hud-ascent">0</b><em>metres climbed</em></div>
-  <div class="stat stat-days"><b id="hud-days">0</b><em>days on foot</em></div>
-  <div class="stat stat-hours"><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving</em></div>
+  <div class="stat stat-distance"><span class="stat-meter" aria-hidden="true"></span><b><span id="hud-km">0.0</span><small>km</small></b><em>distance</em></div>
+  <div class="stat stat-ascent"><span class="stat-meter" aria-hidden="true"></span><b id="hud-ascent">0</b><em>metres climbed</em></div>
+  <div class="stat stat-days"><span class="stat-meter" aria-hidden="true"></span><b id="hud-days">0</b><em>days on foot</em></div>
+  <div class="stat stat-hours"><span class="stat-meter" aria-hidden="true"></span><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving</em></div>
   <div class="stat stat-elevation">
+    <span class="stat-meter" aria-hidden="true"></span>
     <svg viewBox="0 0 132 28" aria-hidden="true">
       <path id="elev-area"></path>
       <path id="elev-line"></path>
@@ -1366,6 +1373,18 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var hudDays = document.getElementById("hud-days");
   var hudAscent = document.getElementById("hud-ascent");
   var hudHours = document.getElementById("hud-hours");
+  var statDistanceMeter = document.querySelector(".stat-distance .stat-meter");
+  var statAscentMeter = document.querySelector(".stat-ascent .stat-meter");
+  var statDaysMeter = document.querySelector(".stat-days .stat-meter");
+  var statHoursMeter = document.querySelector(".stat-hours .stat-meter");
+  var statElevationMeter = document.querySelector(".stat-elevation .stat-meter");
+  var statMeters = [statDistanceMeter, statAscentMeter, statDaysMeter, statHoursMeter, statElevationMeter].filter(Boolean);
+  var meterCells = new Array(31).join("<i></i>");
+  statMeters.forEach(function(meter){
+    meter.innerHTML = '<span class="stat-meter-track">' + meterCells + '</span><span class="stat-meter-fill">' + meterCells + '</span><span class="stat-meter-front"></span>';
+    meter._trekFill = meter.querySelector(".stat-meter-fill");
+    meter._trekFront = meter.querySelector(".stat-meter-front");
+  });
   var photoStrip = document.getElementById("photo-strip");
   var photoTrack = document.getElementById("photo-track");
   var photoCount = document.getElementById("photo-count");
@@ -1547,6 +1566,19 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   }
 
   function setText(el, value){ if (el && el._trekText !== value) { el._trekText = value; el.textContent = value; } }
+  function setStatMeter(meter, ratio){
+    if (!meter) return;
+    var pct = Math.max(0, Math.min(100, (ratio || 0) * 100));
+    if (meter._trekPct != null && Math.abs(meter._trekPct - pct) < .05) return;
+    meter._trekPct = pct;
+    var fill = meter._trekFill;
+    var front = meter._trekFront;
+    if (fill) fill.style.clipPath = "inset(0 " + (100 - pct).toFixed(2) + "% 0 0)";
+    if (front) {
+      front.style.left = pct.toFixed(2) + "%";
+      front.style.opacity = pct > .15 && pct < 99.85 ? ".72" : "0";
+    }
+  }
   function updateStory(scene, wp){
     var d = wp.day;
     var label = "";
@@ -1631,6 +1663,12 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     setText(hudDays, String(footDays));
     setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
     setText(hudHours, (moving / 60).toFixed(1));
+    var finalDay = days[days.length - 1] || d;
+    setStatMeter(statDistanceMeter, km / Math.max(1, DATA.total));
+    setStatMeter(statAscentMeter, climbed / Math.max(1, finalDay.cumElev || 0));
+    setStatMeter(statDaysMeter, footDays / Math.max(1, finalDay.footDays || 0));
+    setStatMeter(statHoursMeter, moving / Math.max(1, finalDay.cumMin || 0));
+    setStatMeter(statElevationMeter, ((wp.alt || 0) - (DATA._altMin || 0)) / Math.max(1, (DATA._altMax || 1) - (DATA._altMin || 0)));
     var routeReveal = Math.max(0, Math.min(1, km / DATA.total));
     var routeClip = "inset(0 " + ((1 - routeReveal) * 100).toFixed(2) + "% 0 0)";
     if (journeyProgressFill) journeyProgressFill.style.clipPath = routeClip;
