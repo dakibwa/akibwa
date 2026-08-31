@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-nBle1rolWJEM3L0YUdHc/V0vkK04eHRZ8qvl0zlPKbI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-il0xmtDKpUC0N7y6ot5MdNwihDkaoGaDccd8fFO5m8A=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -588,6 +588,13 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     opacity:1;visibility:visible;transform:none;
     transition:opacity var(--t-card) var(--ease-out),transform var(--t-card) var(--ease-out),visibility 0s;
   }
+  .say.anchored{
+    right:auto;bottom:auto;
+    max-width:min(220px,calc(100% - 2 * var(--plate-x,0px) - 24px));
+  }
+  .say.anchored .saystrip{height:5px}
+  .say.anchored .sayrow.tight{padding:8px 11px}
+  .say.anchored .sayline b{font-weight:700}
   .saycard{background:var(--surface);border:1px solid var(--silver);box-shadow:var(--shadow-float)}
   .saystrip{height:7px;display:flex}
   .saystrip i{flex:1;display:block}
@@ -4333,6 +4340,7 @@ function publishPlateInset(){
   const plateR=sr.left+(sr.width+vb.width*k)/2, plateB=sr.top+(sr.height+vb.height*k)/2;
   f.style.setProperty('--plate-x', Math.max(0,padR-plateR).toFixed(2)+'px');
   f.style.setProperty('--plate-y', Math.max(0,padB-plateB).toFixed(2)+'px');
+  if(sayAnchor) positionSayAnchor();
 }
 
 function buildNet(force){
@@ -5358,9 +5366,11 @@ $('netsvg').addEventListener('pointerdown',e=>{
     }
     const pin=pinnedAt(p.x,p.y);
     if(pin){
-      flashMsg('pinned neuron · the square stays fixed · move the circles around it',
-        {tight:true,hold:true,
-         mark:markSVG(RMARK.pinned(),'0 0 68 44','saymark')});
+      flashMsg('pinned neuron · the square stays fixed · drag a circle instead',
+        {tight:true,hold:true,anchor:{x:pin.x0,y:pin.y0},
+         cols:[...new Set(pin.threads.map(t=>t.col))],
+         kick:'',
+         line:'<b>the square stays fixed.</b><br>drag a circle instead.'});
       e.preventDefault();
     }
     return;
@@ -5959,6 +5969,7 @@ function positionCoach(){
   const best=candidates[0];
   coach.style.left=(best.x-fr.left)+'px';
   coach.style.top=(best.y-fr.top)+'px';
+  if(sayAnchor) positionSayAnchor();
 }
 function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
@@ -6936,7 +6947,7 @@ function renderThreads(){
   });
 }
 const SAY_BASE=1400, SAY_PER=55, SAY_MIN=2200, SAY_MAX=5600, SAY_MERGE=650, SAY_ROWS=3;
-let sayT=null, sayRows=[], sayAt=0;
+let sayT=null, sayRows=[], sayAt=0, sayAnchor=null;
 const FLAG=['--flag-1','--flag-2','--flag-3','--flag-4'];
 
 function flashMsg(txt,o){
@@ -6948,20 +6959,89 @@ function sayParts(txt,o){
   const i=txt.indexOf(' · ');
   return (i>0 && i<=22) ? {kick:txt.slice(0,i), line:txt.slice(i+3)} : {kick:'',line:txt};
 }
+function sayResetPlacement(){
+  const el=$('say');
+  sayAnchor=null;
+  el.classList.remove('anchored');
+  el.style.removeProperty('left');
+  el.style.removeProperty('top');
+}
+function positionSayAnchor(){
+  if(!sayAnchor) return;
+  const field=$('field'), svg=$('netsvg'), el=$('say'), m=boardCTM();
+  if(!field||!svg||!el||!m) return;
+  el.classList.add('anchored');
+  const fr=field.getBoundingClientRect(), sr=svg.getBoundingClientRect();
+  const vb=svg.viewBox.baseVal;
+  if(!fr.width||!fr.height||!sr.width||!sr.height||!vb.width||!vb.height) return;
+  const k=Math.min(sr.width/vb.width,sr.height/vb.height);
+  const plate={
+    left:sr.left-fr.left+(sr.width-vb.width*k)/2,
+    top:sr.top-fr.top+(sr.height-vb.height*k)/2,
+    width:vb.width*k,height:vb.height*k,
+  };
+  const p=new DOMPoint(sayAnchor.x,sayAnchor.y).matrixTransform(m);
+  const ax=p.x-fr.left, ay=p.y-fr.top;
+  const w=el.offsetWidth, h=el.offsetHeight;
+  if(!w||!h) return;
+  const pad=matchMedia('(max-width:700px)').matches?10:14;
+  const minX=plate.left+pad, minY=plate.top+pad;
+  const maxX=Math.max(minX,plate.left+plate.width-pad-w);
+  const maxY=Math.max(minY,plate.top+plate.height-pad-h);
+  const reach=Math.max(26,NR*boardScale()+12), gap=10;
+  const around=reach+gap;
+  const raw=[
+    {x:ax+around,y:ay-h/2}, {x:ax-around-w,y:ay-h/2},
+    {x:ax-w/2,y:ay+around}, {x:ax-w/2,y:ay-around-h},
+    {x:ax+around,y:ay+around}, {x:ax-around-w,y:ay+around},
+    {x:ax+around,y:ay-around-h}, {x:ax-around-w,y:ay-around-h},
+  ];
+  const coach=$('coach');
+  const coachBox=coach&&coach.offsetParent===field ? {
+    left:coach.offsetLeft-10,top:coach.offsetTop-10,
+    right:coach.offsetLeft+coach.offsetWidth+10,
+    bottom:coach.offsetTop+coach.offsetHeight+10,
+  } : null;
+  const target={left:ax-reach,top:ay-reach,right:ax+reach,bottom:ay+reach};
+  const overlap=(a,b)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))
+    *Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+  const pointGap=r=>Math.hypot(Math.max(r.left-ax,0,ax-r.right),
+    Math.max(r.top-ay,0,ay-r.bottom));
+  const candidates=raw.map((c,i)=>{
+    const x=Math.min(maxX,Math.max(minX,c.x));
+    const y=Math.min(maxY,Math.max(minY,c.y));
+    const r={left:x,top:y,right:x+w,bottom:y+h};
+    return {x,y,i,
+      coachHit:coachBox&&overlap(r,coachBox)>0?1:0,
+      targetHit:overlap(r,target)>0?1:0,
+      distance:pointGap(r),shift:Math.hypot(x-c.x,y-c.y)};
+  });
+  candidates.sort((a,b)=>a.coachHit-b.coachHit || a.targetHit-b.targetHit
+    || a.distance-b.distance || a.shift-b.shift || a.i-b.i);
+  el.style.left=candidates[0].x.toFixed(2)+'px';
+  el.style.top=candidates[0].y.toFixed(2)+'px';
+}
 function sayHide(now){
   const el=$('say');
   if(sayT){clearTimeout(sayT); sayT=null}
   sayRows=[]; sayAt=0;
   el.classList.remove('on');
-  if(now){ el.style.transition='none'; el.offsetHeight; el.style.transition='' }
+  if(now){
+    el.style.transition='none'; el.offsetHeight; el.style.transition='';
+    sayResetPlacement();
+  }else sayAnchor=null;
 }
 function sayShow(txt,o){
   const el=$('say');
   if(document.querySelector('.veil.show')){ toast(txt); return }
   const now=performance.now();
+  const nextAnchor=o.anchor||null;
   const row=Object.assign({txt}, sayParts(txt,o), o);
-  const merging = sayRows.length && sayRows.length<SAY_ROWS && (now-sayAt)<SAY_MERGE;
-  if(merging) sayRows.push(row); else { sayRows=[row]; sayAt=now }
+  delete row.anchor;
+  const merging = !nextAnchor && !sayAnchor && sayRows.length
+    && sayRows.length<SAY_ROWS && (now-sayAt)<SAY_MERGE;
+  if(merging) sayRows.push(row);
+  else { sayRows=[row]; sayAt=now; sayAnchor=nextAnchor }
 
   const cols=[]; sayRows.forEach(r=>(r.cols||['--silver']).forEach(c=>{if(!cols.includes(c))cols.push(c)}));
   el.innerHTML='<div class="saycard">'
@@ -6979,18 +7059,21 @@ function sayShow(txt,o){
         +`<div class="sayline${r.big?' big':''}">${r.line}</div></div></div>`;
     }).join('')
     +'</div>';
+  if(sayAnchor) positionSayAnchor(); else sayResetPlacement();
   el.classList.add('on');
 
   const chars=sayRows.reduce((a,r)=>a+r.txt.length,0);
   const mult=sayRows.some(r=>r.hold)?1.3:1;
   const hold=Math.min(SAY_MAX,Math.max(SAY_MIN,(SAY_BASE+SAY_PER*chars)*mult));
   if(sayT)clearTimeout(sayT);
-  sayT=setTimeout(()=>{sayRows=[];sayAt=0;sayT=null;el.classList.remove('on')},hold);
+  sayT=setTimeout(()=>{
+    sayRows=[];sayAt=0;sayT=null;sayAnchor=null;el.classList.remove('on');
+  },hold);
 }
 function sayNudge(){
   if(!sayRows.length || performance.now()-sayAt<420) return;
   if(sayT){clearTimeout(sayT); sayT=null}
-  sayRows=[]; sayAt=0; $('say').classList.remove('on');
+  sayRows=[]; sayAt=0; sayAnchor=null; $('say').classList.remove('on');
 }
 function showVeil(id){ sayHide(true); $(id).classList.add('show') }
 function renderHud(){
