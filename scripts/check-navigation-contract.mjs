@@ -140,6 +140,9 @@ requireText(editorial, "{job.mission}", "each career stop must print the organis
 requireText(deckData, '"logo": "/favicon.svg"', "Freelance must use the Akibwa favicon mark");
 requireText(editorial, 'job.logo === "/favicon.svg" ? " is-akibwa"', "the Akibwa mark must keep its own full-frame treatment");
 requireRuleText(".concept-career-logo.is-akibwa img {", ["width: 100%", "height: 100%"]);
+requireRuleText(".concept-career-logo.is-akibwa {", ["border: 0"]);
+requireText(editorial, 'job.logo === "/brand-logos/national-wealth-fund-icon.png" ? " is-nwf"', "the NWF mark must keep its optical-alignment treatment");
+requireRuleText(".concept-career-logo.is-nwf img {", ["transform: translate(-5%, -14%)"]);
 forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
 requireText(deckData, "electrical work with my brother", "Electrical Work must remain the period with Dan's brother");
 requireText(deckData, "Joinery with my dad", "Joinery Work must remain the period with Dan's dad");

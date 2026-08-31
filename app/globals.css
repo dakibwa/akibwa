@@ -7420,7 +7420,7 @@ button {
 }
 
 .concept-career-logo.is-akibwa {
-  border-color: transparent;
+  border: 0;
   background: transparent;
 }
 
@@ -7428,6 +7428,10 @@ button {
   width: 100%;
   height: 100%;
   border-radius: 9px;
+}
+
+.concept-career-logo.is-nwf img {
+  transform: translate(-5%, -14%);
 }
 
 .concept-career-name {

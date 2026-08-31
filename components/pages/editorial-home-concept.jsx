@@ -113,7 +113,7 @@ export function EditorialHomeConcept() {
               <span className="concept-career-node" aria-hidden="true" />
               <div className="concept-career-identity">
                 <span
-                  className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}`}
+                  className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo === "/brand-logos/national-wealth-fund-icon.png" ? " is-nwf" : ""}`}
                   aria-hidden="true"
                 >
                   <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
