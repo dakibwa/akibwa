@@ -7347,7 +7347,7 @@ button {
 
 .concept-career-timeline::before {
   position: absolute;
-  top: 50px;
+  top: 42px;
   right: 0;
   left: 0;
   height: 1px;
@@ -7360,20 +7360,22 @@ button {
   z-index: 0;
   display: grid;
   /* The middle lane keeps the animated halo clear of both copy and card. */
-  grid-template-rows: 32px 36px 68px;
+  grid-template-rows: 24px 36px 68px;
   min-width: 0;
   outline: none;
 }
 
 .concept-career-time {
+  align-self: end;
+  padding-bottom: 4px;
   color: color-mix(in srgb, var(--ink) 50%, var(--canvas));
-  font-size: 0.61rem;
+  font-size: clamp(0.54rem, 0.75vw, 0.61rem);
   font-variant-numeric: tabular-nums;
-  font-weight: 650;
-  letter-spacing: 0.055em;
-  line-height: 1.2;
+  font-weight: 590;
+  letter-spacing: 0.01em;
+  line-height: 1;
   text-align: center;
-  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .concept-career-node {
@@ -7532,6 +7534,33 @@ button {
   transform: none;
 }
 
+/* A click or keyboard focus locks the open detail. Pointer movement across the
+   remaining marks must not create a second, overlapping popover. */
+.concept-career-timeline:focus-within
+  .concept-career-stop:not(:focus):not(:focus-within):hover {
+  z-index: 0;
+}
+
+.concept-career-timeline:focus-within
+  .concept-career-stop:not(:focus):not(:focus-within):hover
+  .concept-career-card {
+  border-color: color-mix(in srgb, var(--ink) 14%, var(--canvas));
+  background: color-mix(in srgb, var(--white) 68%, var(--canvas));
+}
+
+.concept-career-timeline:focus-within
+  .concept-career-stop:not(:focus):not(:focus-within):hover
+  .concept-career-node {
+  box-shadow: 0 0 0 4px var(--canvas);
+}
+
+.concept-career-timeline:focus-within
+  .concept-career-stop:not(:focus):not(:focus-within):hover
+  .concept-career-popover {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 .concept-career-stop:focus-visible .concept-career-card {
   outline: 2px solid var(--company-accent);
   outline-offset: 3px;
@@ -7564,18 +7593,13 @@ button {
     gap: clamp(5px, 1.5vw, 10px);
   }
 
-  .concept-career-timeline::before {
-    top: 50px;
-  }
-
   .concept-career-stop {
-    grid-template-rows: 32px 36px 56px;
+    grid-template-rows: 24px 36px 56px;
   }
 
   .concept-career-time {
-    padding-right: 2px;
-    font-size: clamp(0.5rem, 1.45vw, 0.6rem);
-    letter-spacing: 0.025em;
+    padding: 0 1px 4px;
+    font-size: clamp(0.48rem, 1.5vw, 0.56rem);
   }
 
   .concept-career-card {

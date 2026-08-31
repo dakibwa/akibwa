@@ -164,6 +164,8 @@ requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable"
 requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
 requireText(editorial, "{job.role}", "each popover must print the job title");
 requireText(editorial, 'className="concept-career-statement"', "each popover must hold one combined sentence");
+requireText(editorial, "compactCareerSpan(job.span)", "the timeline must use compact one-line date ranges");
+requireText(editorial, "{job.role} · {job.span}", "the open detail must keep the full date range");
 requireText(
   editorial,
   "<CareerStatement statement={job.statement} emphasis={job.emphasis} />",
@@ -208,14 +210,20 @@ for (const emphasis of [
 forbidText(deckData, '"back":', "career data must not keep a separate action field");
 forbidText(deckData, '"mission":', "career data must not keep a separate mission field");
 requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
-requireRuleText(".concept-career-stop {", ["grid-template-rows: 32px 36px 68px"]);
+requireRuleText(".concept-career-stop {", ["grid-template-rows: 24px 36px 68px"]);
+requireRuleText(".concept-career-time {", ["white-space: nowrap", "text-align: center"]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireText(
   css,
   "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",
   "career focus must keep the restrained dot halo"
 );
-requireText(css, "grid-template-rows: 32px 36px 56px", "mobile career dots must keep their clearance lane");
+requireText(
+  css,
+  ".concept-career-timeline:focus-within",
+  "a focused career role must lock out competing hover detail"
+);
+requireText(css, "grid-template-rows: 24px 36px 56px", "mobile career dots must keep their clearance lane");
 
 /* Taste opens on a balanced edit, then exposes the complete archive one
    medium at a time. */

@@ -33,6 +33,14 @@ function CareerStatement({ statement, emphasis }) {
   );
 }
 
+function compactCareerSpan(span) {
+  const [start, end] = span.toLowerCase().split(" — ");
+
+  if (!end) return start === "now" ? "Now" : start;
+
+  return `’${start.slice(-2)}–${end === "present" ? "now" : end.slice(-2)}`;
+}
+
 export function EditorialHomeConcept() {
   return (
     <div className="concept-page">
@@ -135,7 +143,9 @@ export function EditorialHomeConcept() {
               tabIndex={0}
               aria-label={`${job.name}, ${job.role}, ${job.span}. ${job.statement}`}
             >
-              <span className="concept-career-time">{job.span}</span>
+              <span className="concept-career-time" aria-label={job.span}>
+                {compactCareerSpan(job.span)}
+              </span>
               <span className="concept-career-node" aria-hidden="true" />
               <div className="concept-career-card">
                 <span
@@ -147,7 +157,7 @@ export function EditorialHomeConcept() {
               </div>
               <div className="concept-career-popover" aria-hidden="true">
                 <strong>{job.name}</strong>
-                <span>{job.role}</span>
+                <span>{job.role} · {job.span}</span>
                 <p className="concept-career-statement">
                   <CareerStatement statement={job.statement} emphasis={job.emphasis} />
                 </p>

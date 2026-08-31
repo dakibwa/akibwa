@@ -322,6 +322,7 @@ const careerState = () => evaluate(`(() => {
   });
   const first = stops[0];
   const popovers = stops.map((stop) => stop.querySelector(".concept-career-popover").getBoundingClientRect());
+  const dateLabels = stops.map((stop) => stop.querySelector(".concept-career-time").textContent.trim());
   return {
     count: stops.length,
     complete: stops.every((stop) => {
@@ -337,10 +338,23 @@ const careerState = () => evaluate(`(() => {
       return statement?.length <= 100;
     }),
     focused: first === document.activeElement,
+    focusedName: stops.find((stop) => stop === document.activeElement)
+      ?.querySelector(".concept-career-popover strong")?.textContent.trim() ?? null,
     focusMatch: first.matches(":focus"),
     focusWithinMatch: first.matches(":focus-within"),
     zIndex: getComputedStyle(first).zIndex,
     popoverOpacity: Number(getComputedStyle(first.querySelector(".concept-career-popover")).opacity),
+    visibleNames: stops
+      .filter((stop) => Number(getComputedStyle(stop.querySelector(".concept-career-popover")).opacity) > 0.99)
+      .map((stop) => stop.querySelector(".concept-career-popover strong")?.textContent.trim()),
+    dateLabels: dateLabels.join(" / "),
+    datesSingleLine: stops.every((stop) => {
+      const time = stop.querySelector(".concept-career-time");
+      const range = document.createRange();
+      range.selectNodeContents(time);
+      return range.getClientRects().length === 1 &&
+        range.getBoundingClientRect().width <= time.getBoundingClientRect().width + 0.5;
+    }),
     firstName: first?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     lastName: stops.at(-1)?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     minAbove: Math.min(...clearances.map((item) => item.above)),
@@ -542,15 +556,31 @@ const checkCareerTimeline = async () => {
     state.firstName === "Freelance" && state.lastName === "Lloyds Banking Group",
     `career order runs from Freelance to Lloyds [${state.firstName} → ${state.lastName}]`
   );
+  check(
+    state.dateLabels === "Now / ’24–now / ’23–24 / ’22–23 / ’20–22 / 2020 / ’18–19 / ’16–17",
+    `the date rail uses quiet compact ranges [${state.dateLabels}]`
+  );
+  check(state.datesSingleLine, "every desktop date stays on one line");
   check(state.popoverOpacity === 0, "career detail is hidden at rest");
-  let point = await evaluate(`(() => {
+  let points = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
-    const first = document.querySelector(".concept-career-stop");
+    const stops = [...document.querySelectorAll(".concept-career-stop")];
+    const first = stops[0];
     first.scrollIntoView({ block: "center" });
-    const rect = first.getBoundingClientRect();
-    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    return stops.slice(0, 2).map((stop) => {
+      const rect = stop.getBoundingClientRect();
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    });
   })()`);
-  await clickAt(point.x, point.y);
+  await mouseMove(points[1].x, points[1].y);
+  state = await pollUntil(careerState, (value) => value.visibleNames.length === 1);
+  check(
+    state.visibleNames.join() === "National Wealth Fund",
+    `hover opens one role at rest [${state.visibleNames.join() || "none"}]`
+  );
+  await mouseMove(0, 0);
+  await pollUntil(careerState, (value) => value.visibleNames.length === 0);
+  await clickAt(points[0].x, points[0].y);
   state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
   check(state.focused, "a career stop can receive keyboard focus");
   check(
@@ -561,13 +591,30 @@ const checkCareerTimeline = async () => {
   check(state.minBelow >= 5.5, `the halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
   check(state.popoversContained, "every desktop career popover stays inside the viewport");
   check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
+  await mouseMove(points[1].x, points[1].y);
+  await sleep(140);
+  state = await careerState();
+  check(
+    state.focusedName === "Freelance" && state.visibleNames.join() === "Freelance",
+    `focus suppresses competing hover detail [focus ${state.focusedName}; open ${state.visibleNames.join() || "none"}]`
+  );
+  await clickAt(points[1].x, points[1].y);
+  state = await pollUntil(
+    careerState,
+    (value) => value.focusedName === "National Wealth Fund" && value.visibleNames.join() === "National Wealth Fund"
+  );
+  check(
+    state.visibleNames.join() === "National Wealth Fund",
+    `click switches the single open role [${state.visibleNames.join() || "none"}]`
+  );
 
   await setMobile();
   await goto("/");
   state = await careerState();
   check(state.complete && state.concise, "the phone timeline keeps the same short combined detail");
+  check(state.datesSingleLine, `every phone date stays on one line [${state.dateLabels}]`);
   check(state.popoverOpacity === 0, "phone career detail is hidden at rest");
-  point = await evaluate(`(() => {
+  const point = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     const first = document.querySelector(".concept-career-stop");
     first.scrollIntoView({ block: "center" });

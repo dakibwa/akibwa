@@ -27,9 +27,13 @@ publishing homepage changes.
 
 - Career is the original horizontal eight-stop index with Freelance first.
   Its short combined sentence identifies Butterfly Rose as a client.
-- At rest it shows only dates and marks. Hover or keyboard focus reveals the
-  job title and one short action-to-purpose sentence, with tools and sector
-  language selectively bolded.
+- At rest it shows compact, single-line year ranges and marks. Hover or
+  keyboard focus reveals the full range, job title and one short
+  action-to-purpose sentence, with tools and sector language selectively
+  bolded.
+- Focus is exclusive: after a role is clicked or reached by keyboard, hovering
+  another mark cannot open a second detail over it. Moving focus switches the
+  one open detail.
 - The same compact interaction and horizontal rhythm remain on phones.
 
 ## Taste and footer
