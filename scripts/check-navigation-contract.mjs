@@ -163,13 +163,19 @@ requireRuleText(".concept-project-foot {", [
   "transition: none"
 ]);
 requireRuleText(".concept-project-card:hover .concept-project-foot,", [
+  "var(--project-card-accent) 18%",
+  "var(--project-card-panel)"
+]);
+forbidText(
+  rule(".concept-project-card:hover .concept-project-foot,"),
   "background: var(--project-card-accent)",
-  "box-shadow: none",
-  "color: var(--concept-dark)"
-]);
-requireRuleText(".concept-project-card:hover .concept-project-foot > span:first-child > span,", [
-  "color: rgba(12, 17, 19, 0.9)"
-]);
+  "project hover must remain a subtle tint rather than a full colour flood"
+);
+forbidText(
+  css,
+  ".concept-feature .concept-project-foot",
+  "Features must inherit the same stacked caption typography as the other projects"
+);
 requireText(
   css,
   ".concept-project-card:active .concept-project-foot",

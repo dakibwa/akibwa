@@ -22,9 +22,10 @@ publishing homepage changes.
   uses a route-led topographic illustration drawn from the live atlas.
 - Project captions are slim editorial rails with one accent edge. Features is
   anchored by a compact dark rail; the two narrow side captions use the page's
-  warm paper so their artwork keeps the colour. There is no separate arrow or
-  wordy call to action: the whole rail changes to its project colour instantly
-  on hover, keyboard focus and touch press.
+  warm paper so their artwork keeps the colour. All three use the same stacked
+  title-and-subtitle typography. There is no separate arrow or wordy call to
+  action: the whole rail takes on a subtle project-colour tint on hover,
+  keyboard focus and touch press.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
@@ -57,8 +58,8 @@ publishing homepage changes.
 
 ## Motion
 
-- Motion is reserved for the identity cycle. Project links use an immediate
-  caption-rail colour change for feedback; they must not lift, tilt or add
+- Motion is reserved for the identity cycle. Project links use an immediate,
+  restrained caption-rail tint for feedback; they must not lift, tilt or add
   theatrical shadows to the project or taste wall.
 - `prefers-reduced-motion: reduce` removes non-essential transitions while
   preserving the same information and focus states.
