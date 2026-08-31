@@ -159,16 +159,27 @@ requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", 
 requireRuleText(".concept-project-foot {", [
   "min-height: 50px",
   "background: var(--project-card-panel)",
-  "box-shadow: inset 0 3px 0 var(--project-card-accent)"
+  "box-shadow: inset 0 3px 0 var(--project-card-accent)",
+  "transition: none"
 ]);
-requireRuleText("\n.concept-arrow {", ["display: block", "font-family: var(--serif)", "opacity: 0.62"]);
-forbidText(rule("\n.concept-arrow {"), "border", "the project arrow must not look like a framed button");
-forbidText(rule("\n.concept-arrow {"), "background", "the project arrow must not look like a filled button");
-requireText(editorial, '<span className="concept-arrow" aria-hidden="true">↗</span>', "project links use a quiet arrow-only mark");
+requireRuleText(".concept-project-card:hover .concept-project-foot,", [
+  "background: var(--project-card-accent)",
+  "box-shadow: none",
+  "color: var(--concept-dark)"
+]);
+requireRuleText(".concept-project-card:hover .concept-project-foot > span:first-child > span,", [
+  "color: rgba(12, 17, 19, 0.9)"
+]);
+requireText(
+  css,
+  ".concept-project-card:active .concept-project-foot",
+  "touch press must colour the project caption rail"
+);
+forbidText(editorial, "concept-arrow", "project links must not show a separate arrow control");
+forbidText(css, ".concept-arrow", "the retired project arrow styling must stay removed");
 forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
 forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");
 forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed");
-forbidText(css, "transform: translate(2px, -1px)", "project arrows must not animate spatially");
 requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "--project-card-panel: #f2efe7"]);
 requireText(
   css,
