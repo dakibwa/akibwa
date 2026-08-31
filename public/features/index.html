@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-Kn5r+lo30sfuyufDEfJLRY6iphyrQ2fFUfaA3qETJdY=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-MJ/utJ8ZjigW6rtUs7uE47J0QjNdcJQ4EUzkR83r0SI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -876,8 +876,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-who:hover{color:var(--ink);border-bottom-color:var(--rule)}
 
   .acct-body{display:flex;flex-direction:column;gap:13px;overflow-y:auto}
-  .acct-auth{display:flex;flex:1 0 auto;min-height:100%;flex-direction:column;gap:11px}
-  .acct-auth-intro{display:flex;flex-direction:column;gap:5px}
+  .acct-auth{display:flex;flex:1 0 auto;min-height:100%;flex-direction:column;gap:12px}
   .acct-google{
     width:100%;min-height:44px;display:grid;grid-template-columns:24px 1fr 24px;
     align-items:center;padding:10px 14px;text-align:center;border-color:var(--ink-soft)
@@ -888,18 +887,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-auth-divider{display:flex;align-items:center;gap:10px;
     font-size:9px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .acct-auth-divider::before,.acct-auth-divider::after{content:'';height:1px;background:var(--rule);flex:1 1 auto}
-  .acct-auth-forms{display:grid;grid-template-columns:1fr;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-  .acct-auth-form{display:flex;min-width:0;flex-direction:column;gap:8px;padding:12px 0 14px}
-  .acct-auth-form + .acct-auth-form{border-top:1px solid var(--rule)}
-  .acct-auth-form .wbtn{min-height:40px;flex:1 1 auto}
-  .acct-auth-form .acct-row{margin-top:2px;align-items:center}
-  .acct-auth-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-  .acct-auth-head strong{font-size:13px;font-weight:650;color:var(--ink)}
-  @media (min-width:580px){
-    .acct-auth-forms{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .acct-auth-form{padding:12px 14px 14px 0}
-    .acct-auth-form + .acct-auth-form{border-top:0;border-left:1px solid var(--rule);padding-left:14px;padding-right:0}
-  }
+  .acct-auth-form{display:flex;min-width:0;flex-direction:column;gap:9px}
+  .acct-auth-form > .wbtn{width:100%;min-height:40px}
+  .acct-auth-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:2px}
+  .acct-auth-switch{display:flex;align-items:center;gap:8px;
+    font-size:9px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
   .acct-auth-other{display:flex;flex-direction:column;gap:9px}
   .acct-auth-other .acct-row .wbtn{flex:1 1 auto}
 
@@ -1198,9 +1190,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .arch-body{padding:12px 13px 15px}
     .acct-body{padding:10px 13px 12px}
     .acct-auth{gap:8px}
-    .acct-auth-form{gap:6px;padding:10px 0 11px}
-    .acct-auth-form + .acct-auth-form{padding-top:10px}
-    .acct-auth-form .acct-row{margin-top:0}
+    .acct-auth-form{gap:7px}
     .acct-auth-form .wbtn{min-height:38px}
     .acct-field{font-size:16px}
     .rec-foot{padding:9px 13px 11px}
@@ -2307,7 +2297,7 @@ function renderMenu(){
 }
 function fillRecArch(){
   const el=$('recarch'); el.innerHTML='';
-  const a=(POLICY.premium||API)?archiveLineEl():null;
+  const a=POLICY.premium?archiveLineEl():null;
   el.hidden=!a; if(a) el.appendChild(a);
 }
 function renderPanes(){
@@ -2644,7 +2634,8 @@ function renderAcct(){
   }
 
   if(!signedIn){
-    title.textContent='sign in or sign up';
+    const creating=acctMode==='signup';
+    title.textContent=creating?'create an account':'sign in';
     if(signIns==null){
       body.innerHTML=`<div class="acct-ask">…</div>`;
       askSignIns().then(()=>{ if(menuShown()&&menuView==='profile'&&!(account&&account.signedIn)) renderAcct() });
@@ -2664,55 +2655,61 @@ function renderAcct(){
     const email=providers.find(x=>x.p==='email');
     const others=providers.filter(x=>x.p!=='google'&&x.p!=='email');
     body.innerHTML=err+`<div class="acct-auth">
-        <div class="acct-auth-intro">
-          <div class="acct-ask">save your record and take it anywhere.</div>
-        </div>
         ${google?`<button class="wbtn acct-google" id="acctin-${google.i}"
-            aria-label="continue with google — sign in or sign up">
+            aria-label="continue with google">
             ${GOOGLE_GLYPH}<span>continue with google</span></button>`:''}
-        ${email?`<div class="acct-auth-divider"><span>${google?'or use email':'use email'}</span></div>
-          <div class="acct-auth-forms">
-            <section class="acct-auth-form" aria-labelledby="acctsigninhead">
-              <div class="acct-auth-head"><strong id="acctsigninhead">sign in</strong><span class="acct-lab">already have one</span></div>
-              <label class="acct-lab" for="acctsigninemail">email address</label>
+        ${email?`<div class="acct-auth-divider"><span>${google?'or':'email'}</span></div>
+          <section class="acct-auth-form" aria-labelledby="accttitle">
+            ${creating?`
+              <label class="acct-lab" for="acctsignupemail">email</label>
+              <input class="acct-field" id="acctsignupemail" type="email" inputmode="email" autocomplete="email"
+                spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
+              <label class="acct-lab" for="acctsignuppassword">password</label>
+              <input class="acct-field" id="acctsignuppassword" type="password" autocomplete="new-password"
+                minlength="15" maxlength="128" placeholder="15 characters or more">
+              ${acctBtn('acctsignup',acctBusy?'creating…':'create account',true)}
+              <div class="acct-auth-actions"><div class="acct-auth-switch"><span>already have an account?</span>
+                <a href="#" class="acctlink" id="accthave">sign in</a></div></div>`:`
+              <label class="acct-lab" for="acctsigninemail">email</label>
               <input class="acct-field" id="acctsigninemail" type="email" inputmode="email" autocomplete="email"
                 spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
               <label class="acct-lab" for="acctsigninpassword">password</label>
               <input class="acct-field" id="acctsigninpassword" type="password" autocomplete="current-password"
                 maxlength="128" placeholder="your password">
-              <div class="acct-row">${acctBtn('acctsignin',acctBusy?'signing in…':'sign in',true)}
-                <a href="#" class="acctlink" id="acctforgot">forgot password?</a></div>
-            </section>
-            <section class="acct-auth-form" aria-labelledby="acctsignuphead">
-              <div class="acct-auth-head"><strong id="acctsignuphead">sign up</strong><span class="acct-lab">first time</span></div>
-              <label class="acct-lab" for="acctsignupemail">email address</label>
-              <input class="acct-field" id="acctsignupemail" type="email" inputmode="email" autocomplete="email"
-                spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
-              <label class="acct-lab" for="acctsignuppassword">choose a password</label>
-              <input class="acct-field" id="acctsignuppassword" type="password" autocomplete="new-password"
-                minlength="15" maxlength="128" placeholder="15 characters or more">
-              ${acctBtn('acctsignup',acctBusy?'creating…':'create account',true)}
-              <div class="acct-note">we send one link to confirm the address. the password is already chosen.</div>
-            </section>
-          </div>`:''}
+              ${acctBtn('acctsignin',acctBusy?'signing in…':'sign in',true)}
+              <div class="acct-auth-actions"><a href="#" class="acctlink" id="acctforgot">forgot password?</a>
+                <div class="acct-auth-switch"><span>new here?</span>
+                  <a href="#" class="acctlink" id="acctcreate">create an account</a></div></div>`}
+          </section>`:''}
         ${others.length?`<div class="acct-auth-other">
           <div class="acct-auth-divider"><span>other ways</span></div>
           <div class="acct-row">${others.map(({p,i})=>
-            `<button class="wbtn" id="acctin-${i}" aria-label="continue with ${esc(p)} — sign in or sign up">continue with ${esc(p)}</button>`
+            `<button class="wbtn" id="acctin-${i}" aria-label="continue with ${esc(p)}">continue with ${esc(p)}</button>`
           ).join('')}</div></div>`:''}
       </div>`;
     if(google){ $('acctin-'+google.i).onclick=()=>goSignIn('google'); ensureGooglePrep() }
     if(email){
-      $('acctsignin').onclick=passwordSignIn;
-      $('acctsignup').onclick=passwordSignUp;
-      $('acctforgot').onclick=e=>{
-        e.preventDefault();acctEmail=($('acctsigninemail').value||'').trim().toLowerCase();
-        acctMode='reset';acctErr='';renderAcct();
-      };
-      $('acctsigninemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('acctsigninpassword').focus()}};
-      $('acctsigninpassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();passwordSignIn()}};
-      $('acctsignupemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('acctsignuppassword').focus()}};
-      $('acctsignuppassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();passwordSignUp()}};
+      if(creating){
+        $('acctsignup').onclick=passwordSignUp;
+        $('accthave').onclick=e=>{
+          e.preventDefault();acctEmail=($('acctsignupemail').value||'').trim().toLowerCase();
+          acctMode='sign';acctErr='';renderAcct();
+        };
+        $('acctsignupemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('acctsignuppassword').focus()}};
+        $('acctsignuppassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();passwordSignUp()}};
+      }else{
+        $('acctsignin').onclick=passwordSignIn;
+        $('acctforgot').onclick=e=>{
+          e.preventDefault();acctEmail=($('acctsigninemail').value||'').trim().toLowerCase();
+          acctMode='reset';acctErr='';renderAcct();
+        };
+        $('acctcreate').onclick=e=>{
+          e.preventDefault();acctEmail=($('acctsigninemail').value||'').trim().toLowerCase();
+          acctMode='signup';acctErr='';renderAcct();
+        };
+        $('acctsigninemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('acctsigninpassword').focus()}};
+        $('acctsigninpassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();passwordSignIn()}};
+      }
     }
     others.forEach(({p,i})=>{ const b=$('acctin-'+i); if(b) b.onclick=()=>goSignIn(p) });
     return;
@@ -2785,7 +2782,10 @@ function renderAcct(){
           : 'not yours yet · another run at a day you have played'}</div>`
       +`<div class="acct-note">${POLICY.premium
           ? 'it rides on this account, so it follows you to any device you sign in on.'
-          : 'buying it here is once only, and signing in is what carries it between devices.'}</div>`
+          : ((mail&&account.emailOk)
+              ? 'a purchase made with this email appears automatically.'
+              : 'a purchase appears automatically once its receipt email is confirmed.')
+            +` <a href="#" class="acctlink" id="acctrestore">use a code instead</a>`}</div>`
     +`</div>`
     +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
     +`<div class="acct-foot">`
@@ -2808,6 +2808,7 @@ function renderAcct(){
   if($('acctsetpassword')) $('acctsetpassword').onclick=e=>{
     e.preventDefault();acctEmail=mail;acctMode='reset';acctErr='';renderAcct();
   };
+  if($('acctrestore')) $('acctrestore').onclick=e=>{e.preventDefault();restoreUnlock()};
 }
 
 const accountEmailOk=(email)=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
@@ -6972,24 +6973,11 @@ function dayReading(r){
 }
 
 function archiveLineEl(){
-  ensurePrice();     // redraws this card if the answer arrives after it
-  if(POLICY.premium && !acct.code) return null;
+  if(!acct.code) return null;
   const el=document.createElement('div');
-  el.className='dayarch'+(POLICY.premium?' held':'');
-  if(POLICY.premium){
-    el.innerHTML='<span class="datext">on another device</span>'
-      +`<span class="dacode" aria-label="type this on another device to open it there">${esc(acct.code)}</span>`;
-  } else {
-    el.innerHTML='<span class="datext">bought the full version already?</span>'
-      +(API
-        ? `<a href="#" class="archlink" data-restore="1"`
-          +` aria-label="enter the code from the device you bought it on">restore</a>`
-        : '');
-  }
-  el.onclick=e=>{
-    if(e.target.closest('[data-buy]')){ e.preventDefault(); openMenu('pay'); beginUnlock() }
-    else if(e.target.closest('[data-restore]')){ e.preventDefault(); restoreUnlock() }
-  };
+  el.className='dayarch held';
+  el.innerHTML='<span class="datext">on another device</span>'
+    +`<span class="dacode" aria-label="type this on another device to open it there">${esc(acct.code)}</span>`;
   return el;
 }
 
