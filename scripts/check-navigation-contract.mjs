@@ -110,8 +110,8 @@ requireText(
   "shared images must opt out of native dragging by default"
 );
 
-/* Projects is one compact editorial composition: Dan's game leads on the
-   left, with the two supporting projects sharing its height on the right. */
+/* Projects uses one card anatomy at every size: a wide three-card row, a
+   two-row tablet composition, then one full-width phone stack. */
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
@@ -156,11 +156,15 @@ forbidText(editorial, "Talk about a project", "the retired project CTA must stay
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
 requireRuleText(".concept-project-grid {", [
   "display: grid",
-  "minmax(0, 1.2fr)",
-  "minmax(0, 1fr)",
+  "grid-template-columns: repeat(3, minmax(0, 1fr))",
   "align-items: stretch"
 ]);
-requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
+requireRuleText(".concept-project-card {", [
+  "display: grid",
+  "grid-template-rows: auto auto",
+  "overflow: clip",
+  "border: 1px solid"
+]);
 requireRuleText(".concept-project-foot {", [
   "min-height: 50px",
   "background: var(--project-card-panel)",
@@ -169,7 +173,7 @@ requireRuleText(".concept-project-foot {", [
 ]);
 requireRuleText(".concept-project-label {", [
   "width: 100%",
-  "grid-template-columns: max-content minmax(0, 1fr)",
+  "grid-template-columns: minmax(0, max-content) minmax(0, 1fr)",
   "align-items: baseline"
 ]);
 requireRuleText(".concept-project-label > span {", ["justify-self: end", "text-align: right"]);
@@ -182,10 +186,6 @@ forbidText(
   "background: var(--project-card-accent)",
   "project hover must remain a subtle tint rather than a full colour flood"
 );
-requireRuleText(".concept-portuguese .concept-project-label,", [
-  "height: 100%",
-  "grid-template-rows: auto 1fr auto"
-]);
 requireText(
   css,
   ".concept-project-card:active .concept-project-foot",
@@ -199,14 +199,20 @@ forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed")
 requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "--project-card-panel: #f2efe7"]);
 requireText(
   css,
-  ".concept-feature {\n    display: grid;\n    grid-row: 1 / 3;",
-  "Features must span both wide-screen project rows"
+  "@media (max-width: 1050px)",
+  "the project cards must keep their tablet composition breakpoint"
 );
 requireText(
   css,
-  ".concept-portuguese,\n  .concept-trek {\n    display: grid;\n    grid-column: 2;",
-  "the supporting projects must form the compact right-hand column"
+  ".concept-feature {\n    grid-column: 1 / -1;",
+  "Features must take the full first tablet row"
 );
+forbidText(
+  css,
+  ".concept-project-grid {\n    grid-template-rows: repeat(2, minmax(0, 1fr))",
+  "the fragile wide two-row project matrix must stay removed"
+);
+forbidText(css, "box-shadow: inset 3px 0 0 var(--project-card-accent)", "project captions must not return to narrow side rails");
 
 /* Career keeps the approved horizontal eight-stop index. The title and one
    action-to-purpose sentence remain available through hover and keyboard focus. */

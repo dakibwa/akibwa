@@ -956,27 +956,27 @@
     "sourceHash": "c18438f504e4d35e",
     "variants": [
       {
-        "width": 491,
-        "height": 258,
+        "width": 537,
+        "height": 282,
         "avif": {
-          "src": "/_img/features/og-conceptProject-491.avif",
-          "bytes": 7183
+          "src": "/_img/features/og-conceptProject-537.avif",
+          "bytes": 7869
         },
         "webp": {
-          "src": "/_img/features/og-conceptProject-491.webp",
-          "bytes": 9264
+          "src": "/_img/features/og-conceptProject-537.webp",
+          "bytes": 10284
         }
       },
       {
-        "width": 780,
-        "height": 410,
+        "width": 720,
+        "height": 378,
         "avif": {
-          "src": "/_img/features/og-conceptProject-780.avif",
-          "bytes": 11951
+          "src": "/_img/features/og-conceptProject-720.avif",
+          "bytes": 10510
         },
         "webp": {
-          "src": "/_img/features/og-conceptProject-780.webp",
-          "bytes": 15928
+          "src": "/_img/features/og-conceptProject-720.webp",
+          "bytes": 14348
         }
       },
       {
@@ -990,6 +990,18 @@
           "src": "/_img/features/og-conceptProject-948.webp",
           "bytes": 19946
         }
+      },
+      {
+        "width": 1200,
+        "height": 630,
+        "avif": {
+          "src": "/_img/features/og-conceptProject-1200.avif",
+          "bytes": 16681
+        },
+        "webp": {
+          "src": "/_img/features/og-conceptProject-1200.webp",
+          "bytes": 25288
+        }
       }
     ]
   },
@@ -1002,27 +1014,27 @@
     "sourceHash": "cd571f267cb42a9c",
     "variants": [
       {
-        "width": 491,
-        "height": 258,
+        "width": 537,
+        "height": 282,
         "avif": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-491.avif",
-          "bytes": 6398
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-537.avif",
+          "bytes": 6933
         },
         "webp": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-491.webp",
-          "bytes": 9306
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-537.webp",
+          "bytes": 10246
         }
       },
       {
-        "width": 780,
-        "height": 410,
+        "width": 720,
+        "height": 378,
         "avif": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-780.avif",
-          "bytes": 9695
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-720.avif",
+          "bytes": 9095
         },
         "webp": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-780.webp",
-          "bytes": 16002
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-720.webp",
+          "bytes": 14400
         }
       },
       {
@@ -1036,6 +1048,18 @@
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-948.webp",
           "bytes": 20128
         }
+      },
+      {
+        "width": 1440,
+        "height": 756,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-1440.avif",
+          "bytes": 18622
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-1440.webp",
+          "bytes": 35184
+        }
       }
     ]
   },
@@ -1048,27 +1072,27 @@
     "sourceHash": "745dea516df29c00",
     "variants": [
       {
-        "width": 491,
-        "height": 258,
+        "width": 537,
+        "height": 282,
         "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-491.avif",
-          "bytes": 9493
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-537.avif",
+          "bytes": 10401
         },
         "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-491.webp",
-          "bytes": 11470
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-537.webp",
+          "bytes": 13018
         }
       },
       {
-        "width": 780,
-        "height": 410,
+        "width": 720,
+        "height": 378,
         "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-780.avif",
-          "bytes": 16913
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-720.avif",
+          "bytes": 15114
         },
         "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-780.webp",
-          "bytes": 23974
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-720.webp",
+          "bytes": 20830
         }
       },
       {
@@ -1081,6 +1105,18 @@
         "webp": {
           "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-948.webp",
           "bytes": 35182
+        }
+      },
+      {
+        "width": 1440,
+        "height": 756,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-1440.avif",
+          "bytes": 54032
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-1440.webp",
+          "bytes": 83028
         }
       }
     ]

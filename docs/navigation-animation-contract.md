@@ -15,18 +15,18 @@ publishing homepage changes.
   proposition's left edge on wide screens and when the masthead stacks on
   mobile; the two headline rows use the phone measure rather than leaving an
   empty white tail.
-- Projects is one compact editorial block on wide screens: Features spans the
-  left column while Português com a Inês and The Trek share its height as two
-  horizontal panels on the right. Narrow screens return to one full-width
-  stack. The Portuguese card uses a text-free conversation illustration; Trek
-  uses a route-led topographic illustration drawn from the live atlas; and
-  Features uses the game's own dark board language: its exact wordmark and
-  four-colour rule, live thread palette, crossings, nodes and feature controls.
-- Project captions are slim editorial rails with one accent edge. Features is
-  anchored by a compact dark rail; the two narrow side captions use the page's
-  warm paper so their artwork keeps the colour. All three use the same title
-  and subtitle typography while occupying the rail fully: bottom captions run
-  from left to right, and wide-screen side captions run from top to bottom.
+- Projects is one stable card system: three equal cards form a single row on a
+  wide screen, Features takes the first full tablet row above two equal cards,
+  and phones use one full-width stack. Every card keeps its artwork above the
+  same bottom caption rail; there are no narrow side captions. The Portuguese
+  card uses a text-free conversation illustration; Trek uses a route-led
+  topographic illustration drawn from the live atlas; and Features uses the
+  game's own dark board language: its exact wordmark and four-colour rule,
+  live thread palette, crossings, nodes and feature controls.
+- Project captions are slim bottom rails with one accent edge. Features keeps
+  its compact dark rail; the other two use the page's warm paper so their
+  artwork keeps the colour. All three use the same title and subtitle
+  typography, running from the left and right ends without clipping.
   There is no separate arrow or wordy call to action: the whole rail takes on
   a subtle project-colour tint on hover, keyboard focus and touch press.
 - Freelance is not a separate pitch in this section.

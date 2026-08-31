@@ -432,24 +432,29 @@ const checkDesktop = async () => {
   );
   check(
     Math.abs(state.projects[0].rect.top - state.projects[1].rect.top) <= 1 &&
-      state.projects[0].rect.width > state.projects[1].rect.width &&
+      Math.abs(state.projects[0].rect.top - state.projects[2].rect.top) <= 1 &&
+      Math.abs(state.projects[0].rect.width - state.projects[1].rect.width) <= 1 &&
       Math.abs(state.projects[1].rect.width - state.projects[2].rect.width) <= 1 &&
-      state.projects[2].rect.top >= state.projects[1].rect.bottom + 13 &&
-      Math.abs(state.projects[0].rect.bottom - state.projects[2].rect.bottom) <= 1,
-    `the wide project edit closes into one compact block [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
+      Math.abs(state.projects[0].rect.bottom - state.projects[1].rect.bottom) <= 1 &&
+      Math.abs(state.projects[1].rect.bottom - state.projects[2].rect.bottom) <= 1,
+    `the wide project edit is one balanced row [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
   );
   check(
-    state.projects.slice(1).every((item) =>
+    state.projects.every((item) =>
       item.imageRect.width / item.imageRect.height >= 1.85 &&
-      item.imageRect.width / item.imageRect.height <= 2.2 &&
-      Math.abs(item.imageRect.right - item.footRect.left) <= 1
+      item.imageRect.width / item.imageRect.height <= 1.95 &&
+      Math.abs(item.imageRect.bottom - item.footRect.top) <= 1
     ),
-    "the supporting project artwork keeps its landscape frame beside the caption"
+    "every project keeps its landscape artwork above the caption"
   );
   check(
-    Math.abs(state.projects[0].footRect.bottom - state.projects[0].rect.bottom) <= 1 &&
-      state.projects[0].footRect.height <= 56,
-    `the Features caption closes as a slim bottom rail [${state.projects[0].footRect.height.toFixed(1)}px]`
+    state.projects.every((item) =>
+      Math.abs(item.footRect.left - item.rect.left) <= 1 &&
+      Math.abs(item.footRect.right - item.rect.right) <= 1 &&
+      Math.abs(item.footRect.bottom - item.rect.bottom) <= 1 &&
+      item.footRect.height <= 60
+    ),
+    `all project captions close as full-width bottom rails [${state.projects.map((item) => item.footRect.height.toFixed(1)).join(" / ")}px]`
   );
   check(
     state.projects.every((item) => item.titleStyle === state.projects[0].titleStyle) &&
@@ -457,19 +462,16 @@ const checkDesktop = async () => {
     "all project captions share the same title and subtitle typography"
   );
   check(
-    state.projects[0].titleRect.left - state.projects[0].footRect.left <= 16 &&
-      state.projects[0].footRect.right - state.projects[0].subtitleRect.right <= 16 &&
-      Math.abs(state.projects[0].titleRect.bottom - state.projects[0].subtitleRect.bottom) <= 3,
-    "the Features caption uses both ends of its bottom rail"
-  );
-  check(
-    state.projects.slice(1).every((item) => item.titleRect.top - item.footRect.top <= 20) &&
-      state.projects.slice(1).every((item) => item.footRect.bottom - item.subtitleRect.bottom <= 20),
-    "the supporting captions use the full height of their side rails"
-  );
-  check(
-    state.projects.slice(1).every((item) => item.footRect.width / item.rect.width <= 0.3),
-    `the supporting caption rails stay narrow [${state.projects.slice(1).map((item) => `${(item.footRect.width / item.rect.width * 100).toFixed(1)}%`).join(" / ")}]`
+    state.projects.every((item) =>
+      item.titleRect.left - item.footRect.left <= 16 &&
+      item.footRect.right - item.subtitleRect.right <= 16 &&
+      item.titleRect.right + 8 <= item.subtitleRect.left &&
+      item.titleRect.top >= item.footRect.top &&
+      item.titleRect.bottom <= item.footRect.bottom &&
+      item.subtitleRect.top >= item.footRect.top &&
+      item.subtitleRect.bottom <= item.footRect.bottom
+    ),
+    "every caption uses both ends of its rail without overlap or clipping"
   );
   check(
     state.projects.every((item) => !item.hasArrow) &&
@@ -613,8 +615,10 @@ const checkProjectBreakpoint = async () => {
   let state = await pageState();
   check(
     Math.abs(state.projects[0].rect.top - state.projects[1].rect.top) <= 1 &&
-      Math.abs(state.projects[0].rect.bottom - state.projects[2].rect.bottom) <= 1,
-    "the compact project block holds through its narrowest wide layout"
+      Math.abs(state.projects[1].rect.top - state.projects[2].rect.top) <= 1 &&
+      Math.abs(state.projects[0].rect.width - state.projects[1].rect.width) <= 1 &&
+      Math.abs(state.projects[1].rect.width - state.projects[2].rect.width) <= 1,
+    "the balanced three-card row holds through its wide breakpoint"
   );
   check(state.overflow <= 1, `the compact project block has no overflow [${state.overflow}px]`);
 
@@ -624,8 +628,9 @@ const checkProjectBreakpoint = async () => {
   check(
     state.projects[1].rect.top >= state.projects[0].rect.bottom + 13 &&
       Math.abs(state.projects[1].rect.top - state.projects[2].rect.top) <= 1 &&
-      state.projects[1].rect.right < state.projects[2].rect.left,
-    "the supporting projects move cleanly below Features at 1050px"
+      state.projects[1].rect.right < state.projects[2].rect.left &&
+      Math.abs(state.projects[0].rect.width - (state.projects[1].rect.width + state.projects[2].rect.width + (state.projects[2].rect.left - state.projects[1].rect.right))) <= 2,
+    "Features takes a full tablet row above two equal supporting cards"
   );
   check(state.overflow <= 1, `the intermediate project layout has no overflow [${state.overflow}px]`);
 };
@@ -780,9 +785,12 @@ const checkMobile = async () => {
     `all three phone projects fill the shared content width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
   );
   check(
-    initial.projects.every((item) => item.titleRect.right < item.subtitleRect.left) &&
-      initial.projects.every((item) => item.footRect.right - item.subtitleRect.right <= 12),
-    "every phone caption uses the full rail from title to subtitle"
+    initial.projects.every((item) => item.titleRect.right + 8 <= item.subtitleRect.left) &&
+      initial.projects.every((item) => item.titleRect.left - item.footRect.left <= 12) &&
+      initial.projects.every((item) => item.footRect.right - item.subtitleRect.right <= 12) &&
+      initial.projects.every((item) => item.titleRect.top >= item.footRect.top && item.titleRect.bottom <= item.footRect.bottom) &&
+      initial.projects.every((item) => item.subtitleRect.top >= item.footRect.top && item.subtitleRect.bottom <= item.footRect.bottom),
+    "every phone caption uses the full rail without overlap or clipping"
   );
   check(
     !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[2].rect.bottom + 40,
