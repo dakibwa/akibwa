@@ -15,10 +15,11 @@ publishing homepage changes.
   proposition's left edge on wide screens and when the masthead stacks on
   mobile; the two headline rows use the phone measure rather than leaving an
   empty white tail.
-- Projects is a descending three-card edit: Features first and largest,
-  Português com a Inês second, and The Trek third. The Portuguese card uses a
-  text-free conversation illustration; Trek uses a route-led topographic
-  illustration drawn from the visual language of the live atlas.
+- Projects is one compact editorial block on wide screens: Features spans the
+  left column while Português com a Inês and The Trek share its height as two
+  horizontal panels on the right. Narrow screens return to the descending
+  stack. The Portuguese card uses a text-free conversation illustration; Trek
+  uses a route-led topographic illustration drawn from the live atlas.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.

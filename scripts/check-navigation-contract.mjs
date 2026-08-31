@@ -93,8 +93,8 @@ requireText(
 );
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
 
-/* Projects is a deliberate three-step hierarchy: Dan's game, the client
-   project he is proud to feature, then his Paris-to-Sofia trek. */
+/* Projects is one compact editorial composition: Dan's game leads on the
+   left, with the two supporting projects sharing its height on the right. */
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
@@ -134,12 +134,22 @@ forbidText(editorial, "Talk about a project", "the retired project CTA must stay
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
 requireRuleText(".concept-project-grid {", [
   "display: grid",
-  "minmax(0, 1.5fr)",
-  "minmax(0, 1.05fr)",
-  "minmax(0, 0.75fr)"
+  "minmax(0, 1.2fr)",
+  "minmax(0, 1fr)",
+  "align-items: stretch"
 ]);
 requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
 requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "background: #253a30"]);
+requireText(
+  css,
+  ".concept-feature {\n    grid-row: 1 / 3;",
+  "Features must span both wide-screen project rows"
+);
+requireText(
+  css,
+  ".concept-portuguese,\n  .concept-trek {\n    display: grid;\n    grid-column: 2;",
+  "the supporting projects must form the compact right-hand column"
+);
 
 /* Career keeps the approved horizontal eight-stop index. The title and one
    action-to-purpose sentence remain available through hover and keyboard focus. */
