@@ -199,6 +199,12 @@ forbidText(css, ".concept-arrow", "the retired project arrow styling must stay r
 forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
 forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");
 forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed");
+requireRuleText(".concept-feature {", [
+  "--project-card-panel: #e2ece7",
+  "--project-card-ink: #163e36",
+  "--project-card-muted: #4d7067",
+  "border-color: #205b4f"
+]);
 requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "--project-card-panel: #f2efe7"]);
 requireText(
   css,

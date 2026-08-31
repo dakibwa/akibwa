@@ -6667,6 +6667,13 @@ button {
   cursor: pointer;
 }
 
+.concept-feature {
+  --project-card-panel: #e2ece7;
+  --project-card-ink: #163e36;
+  --project-card-muted: #4d7067;
+  border-color: #205b4f;
+}
+
 .concept-portuguese {
   --project-card-accent: #7faaff;
   --project-card-panel: #f2efe7;

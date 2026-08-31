@@ -26,10 +26,11 @@ publishing homepage changes.
   controls, with no explanatory copy in the art. The five feature stamps form
   a slim vertical rail against the right edge, balancing the wordmark without
   taking space from the puzzle.
-- Project captions are slim bottom rails with one accent edge. Features keeps
-  its compact dark rail; the other two use the page's warm paper so their
-  artwork keeps the colour. All three use the same title and subtitle
-  typography, running from the left and right ends without clipping.
+- Project captions are slim bottom rails with one accent edge. Features uses
+  a pale sea-glass rail with deep green type and frame; the other two use the
+  page's warm paper so their artwork keeps the colour. All three use the same
+  title and subtitle typography, running from the left and right ends without
+  clipping.
   There is no separate arrow or wordy call to action: the whole rail takes on
   a subtle project-colour tint on hover, keyboard focus and touch press.
 - Freelance is not a separate pitch in this section.
