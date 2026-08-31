@@ -6516,18 +6516,15 @@ button {
    rules, not a second system of cards, drawers or animated reveals. */
 .concept-page {
   --concept-dark: #0c1113;
-  --concept-now-rgb: 224, 122, 26;
   --concept-work-rgb: 27, 148, 125;
   --concept-career-rgb: 203, 66, 94;
   --concept-archive-rgb: 0, 154, 205;
-  --concept-now: rgb(var(--concept-now-rgb));
   --concept-work: rgb(var(--concept-work-rgb));
   --concept-career: rgb(var(--concept-career-rgb));
   --concept-archive: rgb(var(--concept-archive-rgb));
   --concept-blue: var(--concept-archive);
   --concept-yellow: #efc319;
   --concept-green: var(--concept-work);
-  --concept-orange: var(--concept-now);
   --concept-rule-gap: clamp(18px, 2vw, 28px);
   min-height: 100vh;
   padding-top: clamp(14px, 2vw, 28px);
@@ -6567,6 +6564,8 @@ button {
 }
 
 .concept-hero-copy {
+  width: fit-content;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -6584,7 +6583,9 @@ button {
 .concept-nav {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.45em 1.15em;
+  width: 100%;
   margin-top: clamp(20px, 2.3vw, 32px);
   color: color-mix(in srgb, var(--ink) 68%, var(--canvas));
   font-size: clamp(0.82rem, 1vw, 0.96rem);
@@ -6693,8 +6694,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: var(--concept-rule-gap) 0 0;
-  border-top: 4px solid var(--concept-now);
+  padding: 0;
 }
 
 .concept-kicker {
@@ -6992,7 +6992,7 @@ button {
 
   .concept-freelance {
     min-height: 0;
-    padding-top: var(--concept-rule-gap);
+    padding-top: 0;
   }
 
   .concept-freelance h2 {
@@ -7069,23 +7069,19 @@ button {
 }
 
 /* ── Editorial concept, compact pass ────────────────────────────────────
-   The coloured index is back, but it remains four plain words. Current
-   client work now sits inside the freelance story; the former "Also making"
-   strip has gone. Clients, Career and Taste use one section hierarchy; career
-   detail stays in small hover/focus popovers. */
+   The coloured index is three plain destinations. Client work sits beside
+   Features inside Projects, Freelance leads Career, and the former "Also
+   making" strip stays gone. Career detail remains in small hover/focus
+   popovers. */
 .concept-nav a:nth-child(1) {
-  --concept-nav-accent: var(--concept-now-rgb);
-}
-
-.concept-nav a:nth-child(2) {
   --concept-nav-accent: var(--concept-work-rgb);
 }
 
-.concept-nav a:nth-child(3) {
+.concept-nav a:nth-child(2) {
   --concept-nav-accent: var(--concept-career-rgb);
 }
 
-.concept-nav a:nth-child(4) {
+.concept-nav a:nth-child(3) {
   --concept-nav-accent: var(--concept-archive-rgb);
 }
 
@@ -7104,31 +7100,30 @@ button {
 
 .concept-client-project {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
-  column-gap: 8px;
+  gap: 9px;
   min-width: 0;
   padding: 0;
-  overflow: hidden;
-  border: 2px solid color-mix(in srgb, var(--client-accent) 58%, var(--canvas));
-  border-top-width: 4px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--client-accent) 4%, var(--canvas));
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--ink);
   cursor: pointer;
   font: inherit;
   text-align: left;
-  transition: border-color 140ms ease, background-color 140ms ease;
 }
 
 .concept-client-visual {
   overflow: clip;
   display: block;
-  grid-column: 1 / -1;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  border-bottom: 1px solid color-mix(in srgb, var(--client-accent) 38%, var(--canvas));
-  background: color-mix(in srgb, var(--white) 62%, var(--canvas));
+  aspect-ratio: 4 / 3;
+  border: 1px solid color-mix(in srgb, var(--client-accent) 28%, var(--canvas));
+  border-radius: 4px;
+  background: var(--client-ground);
+  transition: border-color 140ms ease;
 }
 
 .concept-client-visual picture,
@@ -7137,16 +7132,22 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(1.1) contrast(1.03);
-  transition: filter 140ms ease, transform 140ms ease;
+  transition: transform 140ms ease;
+}
+
+.concept-client-visual.is-contained img {
+  box-sizing: border-box;
+  padding: clamp(18px, 2.3vw, 34px);
+  object-fit: contain;
 }
 
 .concept-client-body {
-  display: grid;
-  grid-column: 1;
-  gap: 6px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
   min-width: 0;
-  padding: 11px 2px 13px 11px;
+  padding: 0 2px;
 }
 
 .concept-client-body strong {
@@ -7157,22 +7158,13 @@ button {
   letter-spacing: -0.025em;
 }
 
-.concept-client-note {
-  color: color-mix(in srgb, var(--ink) 67%, var(--canvas));
-  font-family: var(--serif);
-  font-size: clamp(0.7rem, 0.86vw, 0.79rem);
-  line-height: 1.36;
-}
-
-.concept-client-expand {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
-  margin: 11px 10px 0 0;
+.concept-client-open {
+  flex: none;
   color: color-mix(in srgb, var(--client-accent) 76%, var(--black));
-  font-size: 0.9rem;
-  line-height: 1;
-  transition: transform 140ms ease;
+  font-size: 0.67rem;
+  font-weight: 670;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .concept-client-project:hover .concept-client-body strong,
@@ -7182,19 +7174,12 @@ button {
 
 .concept-client-project:hover .concept-client-visual img,
 .concept-client-project:focus-visible .concept-client-visual img {
-  filter: saturate(1.16) contrast(1.04);
-  transform: scale(1.012);
+  transform: scale(1.018);
 }
 
-.concept-client-project:hover,
-.concept-client-project:focus-visible {
+.concept-client-project:hover .concept-client-visual,
+.concept-client-project:focus-visible .concept-client-visual {
   border-color: color-mix(in srgb, var(--client-accent) 82%, var(--black));
-  background: color-mix(in srgb, var(--client-accent) 7%, var(--canvas));
-}
-
-.concept-client-project:hover .concept-client-expand,
-.concept-client-project:focus-visible .concept-client-expand {
-  transform: rotate(45deg);
 }
 
 .concept-client-project:focus-visible {
@@ -7425,6 +7410,21 @@ button {
   border-radius: 4px;
 }
 
+.concept-career-freelance-mark {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--company-accent);
+  color: var(--canvas);
+  font-family: var(--serif);
+  font-size: 1.18rem;
+  font-style: italic;
+  font-weight: 650;
+  line-height: 1;
+}
+
 .concept-career-popover {
   position: absolute;
   top: calc(100% + 9px);
@@ -7500,7 +7500,7 @@ button {
   outline-offset: 3px;
 }
 
-/* Taste now uses the same single-heading distinction as Clients and Career;
+/* Taste Library uses the same single-heading distinction as Client work and Career;
    Graceland leads the wall itself instead of becoming a separate feature. */
 .concept-taste-head {
   display: block;
@@ -7585,16 +7585,20 @@ button {
     width: 94%;
   }
 
-  .concept-client-project {
-    column-gap: 6px;
-  }
-
   .concept-client-projects {
     gap: 14px;
   }
 
-  .concept-client-note {
-    font-size: 0.69rem;
+  .concept-client-body strong {
+    font-size: 0.76rem;
+  }
+
+  .concept-client-open {
+    display: none;
+  }
+
+  .concept-client-visual.is-contained img {
+    padding: 18px;
   }
 
   .concept-client-dialog {
@@ -7705,7 +7709,6 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .concept-client-visual img,
-  .concept-client-expand,
   .concept-career-node,
   .concept-career-card,
   .concept-career-popover {

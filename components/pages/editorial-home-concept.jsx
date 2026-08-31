@@ -7,6 +7,7 @@ const clientNames = ["Butterfly Rose", "Português com a Inês"];
 const clientPresentation = {
   "Butterfly Rose": {
     preview: "/project-art/client-sites/butterfly-rose-redesign-home.jpg",
+    markTreatment: "is-full-bleed",
     /* The redesign is not public yet. Keep its preview inside Akibwa rather
        than sending people to the salon's older live site. */
     href: null,
@@ -14,6 +15,7 @@ const clientPresentation = {
   },
   "Português com a Inês": {
     preview: "/project-art/client-sites/portuguese-with-ines-home.jpg",
+    markTreatment: "is-contained",
     summary: "A hand-built home for European Portuguese lessons in Porto and online."
   }
 };
@@ -28,6 +30,7 @@ const clientProjects = clientNames
 /* Keep the whole working history in sequence, including the two stretches on
    the tools between office roles. The fuller copy stays behind interaction. */
 const careerNames = [
+  "Freelance",
   "National Wealth Fund",
   "Leeds Building Society",
   "Electrical Work",
@@ -57,15 +60,14 @@ export function EditorialHomeConcept() {
             Building in the age of AI.
           </p>
           <nav className="concept-nav" aria-label="On this page">
-            <a href="#now">Now</a>
-            <a href="#work">Work</a>
+            <a href="#projects">Projects</a>
             <a href="#career">Career</a>
-            <a href="#taste">Taste</a>
+            <a href="#taste">Taste Library</a>
           </nav>
         </div>
       </header>
 
-      <section className="page-grid concept-lead-grid" aria-label="Current work">
+      <section className="page-grid concept-lead-grid" id="projects" aria-label="Projects">
         <a
           className="concept-feature"
           id="work"
@@ -91,7 +93,7 @@ export function EditorialHomeConcept() {
         </a>
 
         <article className="concept-freelance" id="now" aria-labelledby="clients-title">
-          <h2 id="clients-title">Clients</h2>
+          <h2 id="clients-title">Client work</h2>
 
           <ClientSitePreviews projects={clientProjects} />
 
@@ -119,7 +121,11 @@ export function EditorialHomeConcept() {
               <span className="concept-career-node" aria-hidden="true" />
               <div className="concept-career-card">
                 <span className={`concept-career-logo${job.tile ? " is-tile" : ""}`} aria-hidden="true">
-                  <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
+                  {job.logo ? (
+                    <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
+                  ) : (
+                    <span className="concept-career-freelance-mark">A</span>
+                  )}
                 </span>
               </div>
               <div className="concept-career-popover" aria-hidden="true">
@@ -135,7 +141,7 @@ export function EditorialHomeConcept() {
       <section className="concept-archive" id="taste" aria-labelledby="taste-title">
         <div className="page-grid concept-taste-head">
           <header className="concept-archive-head">
-            <h2 id="taste-title">Taste</h2>
+            <h2 id="taste-title">Taste Library</h2>
           </header>
         </div>
 

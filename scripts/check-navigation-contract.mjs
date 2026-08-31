@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 /* Build-time contract for Akibwa's public editorial index. The homepage is a
    short introduction to current work, clients and career, followed by the
-   complete taste wall. Its navigation is four plain anchor links; information
+   complete taste wall. Its navigation is three plain anchor links; information
    appears on focus or hover only where a compact index needs the detail. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
@@ -69,14 +69,13 @@ requireText(editorial, '<span className="hero-name-value">Akibwa</span>', "Akibw
 requireText(editorial, "Building in the age of AI.", "the approved one-line proposition must remain");
 requireText(editorial, '<div className="concept-hero-copy">', "the proposition and menu must share the right-hand hero column");
 for (const [href, label] of [
-  ["#now", "Now"],
-  ["#work", "Work"],
+  ["#projects", "Projects"],
   ["#career", "Career"],
-  ["#taste", "Taste"]
+  ["#taste", "Taste Library"]
 ]) {
   requireText(editorial, `<a href="${href}">${label}</a>`, `${label} must remain a plain anchor link`);
 }
-requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap"]);
+requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap", "justify-content: center"]);
 requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns", "align-items: center"]);
 requireRuleText(".concept-hero-copy {", ["min-width: 0"]);
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
@@ -96,6 +95,8 @@ forbidText(editorial, "project.eyebrow", "client cards must not print a Live lab
 forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
 forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
 requireText(clientPreviews, 'aria-haspopup="dialog"', "each client still must open an in-page preview");
+requireText(clientPreviews, "src={project.art}", "client buttons must lead with their brand artwork");
+requireText(clientPreviews, 'slot="clientMark"', "client artwork must use its dedicated responsive slot");
 requireText(clientPreviews, "Website preview", "the temporary site view must describe itself as a preview");
 requireText(clientPreviews, "active.href ?", "only published client sites should offer an external destination");
 requireText(clientPreviews, "Open full site", "the preview must retain an optional full-site destination");
@@ -104,9 +105,10 @@ forbidText(clientPreviews, "Live", "the retired Live label must stay out of clie
 forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
 
-/* Career is a horizontal seven-stop index. Copy remains behind hover/focus,
+/* Career is a horizontal eight-stop index. Copy remains behind hover/focus,
    and the expanded dot halo keeps a real gap to dates and logo cards. */
 for (const name of [
+  "Freelance",
   "National Wealth Fund",
   "Leeds Building Society",
   "Electrical Work",
@@ -154,12 +156,17 @@ requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contra
 /* Each client preview owns its frame; the former shared underline must not
    make the pair look like one unfinished row. */
 forbidText(rule(".concept-freelance {"), "border-bottom", "Clients must not retain the shared underline");
-requireRuleText(".concept-client-project {", [
-  "border: 2px solid",
-  "border-top-width: 4px",
-  "border-radius: 5px"
-]);
-requireRuleText(".concept-client-visual picture,", ["saturate(1.1)", "contrast(1.03)"]);
+requireRuleText(".concept-client-project {", ["border: 0", "background: transparent"]);
+forbidText(rule(".concept-client-project {"), "border-top-width", "client buttons must not regain top banners");
+requireRuleText(".concept-client-visual {", ["aspect-ratio: 4 / 3", "border: 1px solid"]);
+requireRuleText(".concept-client-visual picture,", ["object-fit: cover"]);
+forbidText(clientPreviews, "concept-client-expand", "client buttons must not regain the old plus control");
+for (const source of [
+  "/project-art/personal/butterfly-rose-card.webp",
+  "/project-art/personal/ines-fan-splat.webp"
+]) {
+  if (!imageVariants[`clientMark:${source}`]) fail(`${source} must have a clientMark image ladder`);
+}
 
 /* Taste artwork must resolve to real Retina-sized files rather than stretching
    the old 198px album rung or falling back to the full Graceland source. */

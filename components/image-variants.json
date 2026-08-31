@@ -1063,6 +1063,98 @@
       }
     ]
   },
+  "clientMark:/project-art/personal/butterfly-rose-card.webp": {
+    "source": "/project-art/personal/butterfly-rose-card.webp",
+    "slot": "clientMark",
+    "ratio": 1.3333,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "5bdf6bf90bb6e799",
+    "variants": [
+      {
+        "width": 234,
+        "height": 176,
+        "avif": {
+          "src": "/_img/project-art/personal/butterfly-rose-card-clientMark-234.avif",
+          "bytes": 1242
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/butterfly-rose-card-clientMark-234.webp",
+          "bytes": 1484
+        }
+      },
+      {
+        "width": 360,
+        "height": 270,
+        "avif": {
+          "src": "/_img/project-art/personal/butterfly-rose-card-clientMark-360.avif",
+          "bytes": 1708
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/butterfly-rose-card-clientMark-360.webp",
+          "bytes": 2496
+        }
+      },
+      {
+        "width": 525,
+        "height": 394,
+        "avif": {
+          "src": "/_img/project-art/personal/butterfly-rose-card-clientMark-525.avif",
+          "bytes": 2505
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/butterfly-rose-card-clientMark-525.webp",
+          "bytes": 3976
+        }
+      }
+    ]
+  },
+  "clientMark:/project-art/personal/ines-fan-splat.webp": {
+    "source": "/project-art/personal/ines-fan-splat.webp",
+    "slot": "clientMark",
+    "ratio": 1.3333,
+    "sourceWidth": 1254,
+    "sourceHeight": 1254,
+    "sourceHash": "72cff9ffe56e4962",
+    "variants": [
+      {
+        "width": 234,
+        "height": 176,
+        "avif": {
+          "src": "/_img/project-art/personal/ines-fan-splat-clientMark-234.avif",
+          "bytes": 8338
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/ines-fan-splat-clientMark-234.webp",
+          "bytes": 10244
+        }
+      },
+      {
+        "width": 360,
+        "height": 270,
+        "avif": {
+          "src": "/_img/project-art/personal/ines-fan-splat-clientMark-360.avif",
+          "bytes": 10708
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/ines-fan-splat-clientMark-360.webp",
+          "bytes": 15878
+        }
+      },
+      {
+        "width": 525,
+        "height": 394,
+        "avif": {
+          "src": "/_img/project-art/personal/ines-fan-splat-clientMark-525.avif",
+          "bytes": 15543
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/ines-fan-splat-clientMark-525.webp",
+          "bytes": 23398
+        }
+      }
+    ]
+  },
   "deckTile:/area-art/contact-blue-clouds.webp": {
     "source": "/area-art/contact-blue-clouds.webp",
     "slot": "deckTile",

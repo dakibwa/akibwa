@@ -35,12 +35,15 @@ export function ClientSitePreviews({ projects }) {
             aria-haspopup="dialog"
             aria-label={`Preview the ${project.name} website`}
             onClick={() => setActive(project)}
-            style={{ "--client-accent": project.accent }}
+            style={{ "--client-accent": project.accent, "--client-ground": project.ground }}
           >
-            <span className="concept-client-visual" aria-hidden="true">
+            <span
+              className={`concept-client-visual ${project.markTreatment}`}
+              aria-hidden="true"
+            >
               <SiteImage
-                src={project.preview}
-                slot="clientSite"
+                src={project.art}
+                slot="clientMark"
                 sizes={thumbnailSizes}
                 alt=""
                 above
@@ -48,9 +51,8 @@ export function ClientSitePreviews({ projects }) {
             </span>
             <span className="concept-client-body">
               <strong>{project.name}</strong>
-              <span className="concept-client-note">{project.summary}</span>
+              <span className="concept-client-open" aria-hidden="true">view ↗</span>
             </span>
-            <span className="concept-client-expand" aria-hidden="true">＋</span>
           </button>
         ))}
       </div>

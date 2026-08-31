@@ -10,17 +10,18 @@ publishing homepage changes.
 - `/` renders `EditorialHomeConcept` directly. `/concept/` remains a no-index
   comparison URL, but it is not a second implementation.
 - There is no site header. The opening is the static identity “I’m Akibwa”, the
-  sentence “Building in the age of AI.” and four plain anchors: Now, Work,
-  Career and Taste.
-- Features and both client projects are direct links. Nothing opens an
-  intermediate card, drawer or modal.
+  sentence “Building in the age of AI.” and three centred plain anchors:
+  Projects, Career and Taste Library.
+- Features is a direct link. The two client projects lead with brand artwork
+  rather than miniature browser screenshots; each opens a quiet full-site
+  preview, and only the published Portuguese site offers an external link.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
 
 ## Career
 
-- Career is a seven-stop horizontal timeline wherever a supported viewport has
-  room. Only the dates and company marks show at rest.
+- Career is an eight-stop horizontal timeline wherever a supported viewport has
+  room. Freelance leads the sequence; only dates and marks show at rest.
 - Each stop is keyboard focusable. Hover or focus reveals the role and concise
   description in a popover; the same information remains in the stop's
   accessible label.

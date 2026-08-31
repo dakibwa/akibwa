@@ -346,16 +346,19 @@ const checkDesktop = async () => {
   check(state.lede === "Building in the age of AI.", `the proposition stays concise [${state.lede}]`);
   check(
     state.nav.map((item) => `${item.text}:${item.href}`).join(" / ") ===
-      "Now:#now / Work:#work / Career:#career / Taste:#taste",
-    `four direct section links render in order [${state.nav.map((item) => item.text).join(" / ")}]`
+      "Projects:#projects / Career:#career / Taste Library:#taste",
+    `three direct section links render in order [${state.nav.map((item) => item.text).join(" / ")}]`
   );
   check(
     state.heroLayout.lede.left >= state.heroLayout.identity.right + 24,
     `the proposition uses the right-hand hero column [${state.heroLayout.identity.right.toFixed(1)}px → ${state.heroLayout.lede.left.toFixed(1)}px]`
   );
   check(
-    Math.abs(state.heroLayout.nav.left - state.heroLayout.lede.left) <= 1,
-    "the menu stays aligned directly below the proposition"
+    Math.abs(
+      (state.heroLayout.nav.left + state.heroLayout.nav.width / 2) -
+      (state.heroLayout.lede.left + state.heroLayout.lede.width / 2)
+    ) <= 1,
+    "the menu is centred directly below the proposition"
   );
   check(
     state.heroLayout.nav.top >= state.heroLayout.lede.bottom + 16,
@@ -371,13 +374,20 @@ const checkDesktop = async () => {
     `Features stays visibly smaller than the client column [${state.leadLayout.feature.width.toFixed(1)}px / ${state.leadLayout.clients.width.toFixed(1)}px]`
   );
   check(
+    Math.abs(state.leadLayout.feature.top - state.leadLayout.clients.top) <= 1,
+    "Features and Client work share one clean top edge"
+  );
+  check(
     state.clients.join(" / ") === "Butterfly Rose / Português com a Inês",
     `the two client projects lead [${state.clients.join(" / ")}]`
   );
   check(!/\bLIVE\b/.test(state.clientText), `client previews do not print a Live label [${state.clientText}]`);
   check(!/booking system/i.test(state.clientText), "Butterfly Rose no longer claims a booking system");
   check(!/butterflyrosehairsalon|portuguesewithines/i.test(state.clientText), "client URLs stay out of the visible index");
-  check(state.career.length === 7, `the complete career sequence renders [${state.career.length} stops]`);
+  check(
+    state.career.length === 8 && state.career[0].startsWith("Freelance,"),
+    `the complete career sequence begins with freelance [${state.career.length} stops]`
+  );
   check(state.careerDetailsHidden, "career descriptions stay quiet until hover or focus");
   check(
     state.filters.map((item) => item.text).join(" / ") ===
@@ -558,7 +568,7 @@ const checkCareerTimeline = async () => {
   })()`);
   await clickAt(point.x, point.y);
   let state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
-  check(state.count === 7, `seven career stops remain visible [${state.count}]`);
+  check(state.count === 8, `eight career stops remain visible [${state.count}]`);
   check(state.focused, "a career stop can receive keyboard focus");
   check(state.popoverOpacity > 0.99, `focus reveals the career description [${state.popoverOpacity}]`);
   check(state.minAbove >= 5.5, `the halo clears every date [${state.minAbove.toFixed(1)}px]`);
@@ -620,8 +630,11 @@ const checkMobile = async () => {
   check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
   check(
     Math.abs(initial.heroLayout.identity.left - initial.heroLayout.lede.left) <= 1 &&
-      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.nav.left) <= 1,
-    "the phone hero returns to one clean left-aligned column"
+      Math.abs(
+        (initial.heroLayout.nav.left + initial.heroLayout.nav.width / 2) -
+        (initial.heroLayout.lede.left + initial.heroLayout.lede.width / 2)
+      ) <= 1,
+    "the phone hero keeps the menu centred beneath its left-aligned proposition"
   );
   check(
     initial.heroLayout.lede.top > initial.heroLayout.identity.bottom &&
@@ -708,7 +721,7 @@ const checkReducedMotion = async () => {
   const durations = await evaluate(`(() => {
     const selectors = [
       ".concept-arrow",
-      ".concept-client-expand",
+      ".concept-client-visual img",
       ".concept-career-node",
       ".concept-career-popover"
     ];

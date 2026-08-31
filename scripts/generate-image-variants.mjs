@@ -65,6 +65,11 @@ const SLOTS = {
   // column, then expand into a wide in-page dialog only when requested.
   clientSite: { ratio: 16 / 9, css: [156, 240, 350, 960] },
 
+  // Client marks replace miniature browser screenshots in the homepage index.
+  // They sit in quiet 4:3 brand plates; the full 16:9 site still is deferred
+  // until someone asks to preview it.
+  clientMark: { ratio: 4 / 3, css: [156, 240, 350] },
+
   // .deck .card — the square tile the whole card wall is built from. Roughly
   // 92 CSS px where the picture sets run dense, 133 where the text cards sit,
   // and 176 on the widest frames.
@@ -181,6 +186,8 @@ const sources = [
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
   { file: "project-art/client-sites/butterfly-rose-redesign-home.jpg", slot: "clientSite" },
   { file: "project-art/client-sites/portuguese-with-ines-home.jpg", slot: "clientSite" },
+  { file: "project-art/personal/butterfly-rose-card.webp", slot: "clientMark" },
+  { file: "project-art/personal/ines-fan-splat.webp", slot: "clientMark" },
   { file: "area-art/contact-blue-clouds.webp", slot: "deckTile" },
   { file: "area-art/about-meadow-flowers.jpg", slot: "deckTile" },
   { file: "tv-posters/arrested-development.webp", slot: "deckTile" },
