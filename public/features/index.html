@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-JmfqvN4Qbtlf1TEbeZyCiTr3EpCpmuTZPlzsn6W8V4E=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-nBle1rolWJEM3L0YUdHc/V0vkK04eHRZ8qvl0zlPKbI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -987,12 +987,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   #introcard.view-profile #introbody,#introcard.view-pay #introbody{display:none}
   .panehd{grid-column:1/-1;margin:0 0 2px}
   .collhd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
-  .collcount{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;
-    color:var(--ink);line-height:1;text-align:right;white-space:nowrap}
-  .collcount-num{font-size:22px;font-weight:700;letter-spacing:-.035em;
+  .collcount{flex:0 0 auto;display:flex;align-items:baseline;color:var(--ink);
+    font-size:22px;font-weight:700;letter-spacing:-.035em;line-height:1;
+    text-align:right;white-space:nowrap;
     font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
-  .collcount-label{margin-top:4px;color:var(--ink-soft);font-size:8.5px;
-    letter-spacing:.14em;text-transform:lowercase}
+  .collcount-sep{padding:0 .06em;color:var(--silver)}
+  .collcount-left{color:var(--ink-soft)}
   .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px))}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
@@ -2286,14 +2286,13 @@ function markHere(){
 function renderCollection(){
   const badges=store.collection.badges||{};
   const named=FKEYS.filter(k=>badges[k]).length, left=FKEYS.length-named;
-  const count=left
-    ? {num:`${left}/${FKEYS.length}`,label:'unidentified',say:`${left} of ${FKEYS.length} figures unidentified`}
-    : {num:`${FKEYS.length}/${FKEYS.length}`,label:'identified',say:`all ${FKEYS.length} figures identified`};
+  const count={have:named,left,say:`${named} figures collected, ${left} not collected`};
   $('panecoll').innerHTML=`<div class="panehd collhd">
       <div class="intro-title">the collection</div>
       <div class="collcount" role="status" aria-label="${count.say}">
-        <span class="collcount-num" aria-hidden="true">${count.num}</span>
-        <span class="collcount-label" aria-hidden="true">${count.label}</span>
+        <span class="collcount-have" aria-hidden="true">${count.have}</span>
+        <span class="collcount-sep" aria-hidden="true">/</span>
+        <span class="collcount-left" aria-hidden="true">${count.left}</span>
       </div></div>`
     +FKEYS.map(k=>{
       const b=badges[k];
