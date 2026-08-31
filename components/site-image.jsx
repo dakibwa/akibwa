@@ -115,7 +115,7 @@ export function SiteImage({
       decoding={aboveSync ? "sync" : "async"}
       className={className}
       style={style}
-      draggable={draggable}
+      draggable={draggable ?? false}
       {...rest}
     />
   );

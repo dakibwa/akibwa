@@ -23,6 +23,9 @@ publishing homepage changes.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
+- Images disable native touch callouts and dragging. On touch devices and
+  narrow screens, artwork passes pointer targeting to its enclosing card or
+  link so taps still work without exposing the mobile Save Image menu.
 
 ## Career
 

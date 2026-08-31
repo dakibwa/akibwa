@@ -66,6 +66,10 @@ a {
 
 img {
   display: block;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* SiteImage wraps its <img> in a <picture> to offer AVIF before WebP. The
@@ -74,6 +78,17 @@ img {
    the img was a direct child. */
 picture {
   display: contents;
+}
+
+/* A held image on iOS otherwise opens the Save/Copy sheet; Chromium exposes
+   the same image menu on a long press. On touch devices (and narrow fallbacks)
+   let the enclosing link or card own the hit target instead. Ordinary taps,
+   keyboard focus and screen-reader semantics stay on that real control. */
+@media (hover: none), (max-width: 800px) {
+  picture,
+  img {
+    pointer-events: none;
+  }
 }
 
 button {
