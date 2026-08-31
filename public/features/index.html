@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-RMjdwvZGVD2jzPMbdqafo9vuuMo0xHQMGjhNFByK6LM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-L5x4yHGR2Dgc2jiJt447/n2XfhB8I1nJtSrTISps2MQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -928,12 +928,18 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .rec-arch{flex:0 0 auto;padding:2px 18px 10px}
   .rec-arch[hidden]{display:none}
 
-  .rkey{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;
-    margin-top:16px;padding-top:14px;border-top:1px dashed var(--rule);
-    font-size:12.5px;color:var(--ink-soft);line-height:1.4;
-    flex:1 0 auto;align-content:space-evenly}
-  .rkey b{color:var(--ink);font-weight:700}
-  .rmark{width:56px;height:36px;display:block;flex:0 0 auto}
+  .rkey{display:flex;flex-direction:column;
+    margin-top:14px;padding-top:8px;border-top:1px dashed var(--rule);
+    font-size:13.5px;color:var(--ink-soft);line-height:1.35;
+    flex:1 0 auto}
+  .rkey-row{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;
+    align-items:center;flex:1 0 58px;min-height:58px;padding:7px 0}
+  .rkey-row + .rkey-row{border-top:1px solid var(--rule)}
+  .rkey-copy{display:flex;align-items:baseline;justify-content:space-between;
+    gap:12px;min-width:0}
+  .rkey-copy b{color:var(--ink);font-weight:700;white-space:nowrap}
+  .rkey-copy span{text-align:right;white-space:nowrap}
+  .rmark{width:64px;height:42px;display:block;flex:0 0 auto}
   .intro-card{
     background:var(--surface);border:1px solid var(--ink);display:grid;
     grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);overflow:hidden;box-shadow:var(--shadow-card);
@@ -965,6 +971,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-body{padding:20px 22px 24px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
   .intro-title{font-size:19px;font-weight:700;text-transform:lowercase;letter-spacing:-.01em}
   .intro-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.12em;margin-top:3px;text-transform:lowercase}
+  .panerules .intro-sub{font-size:11.5px;letter-spacing:.055em;white-space:nowrap}
   .intro-note{margin-top:15px;padding-top:13px;border-top:1px dashed var(--silver);font-size:12px;color:var(--ink-soft);line-height:1.55}
   .intro-note b{color:var(--ink);font-weight:700}
   .rkey + .intro-note{border-top-color:var(--rule)}
@@ -1960,7 +1967,8 @@ const PACK={
 '2026-10-09':[{s:'bake:2026-10-09:0:9',d:'2026-10-10',v:18,o:2,c:3},{s:'bake:2026-10-09:1:25',d:'2026-10-24',v:18,o:2,c:3},{s:'bake:2026-10-09:2:5',d:'2026-10-15',v:18,o:2,c:3},{s:'bake:2026-10-09:3:14',d:'2026-10-19',v:18,o:4,c:5},{s:'bake:2026-10-09:4:19',d:'2026-10-13',v:18,o:4,c:5},{s:'bake:2026-10-09:5:3',d:'2026-10-09',v:18,o:5,c:7},{s:'bake:2026-10-09:6:3',d:'2026-10-09',v:18,o:7,c:9},{s:'bake:2026-10-09:7:1',d:'2026-10-09',v:18,o:7,c:9},{s:'bake:2026-10-09:8:6',d:'2026-10-09',v:18,o:8,c:10},{s:'bake:2026-10-09:9:0',d:'2026-10-09',v:18,o:9,c:12}],
 '2026-10-10':[{s:'bake:2026-10-10:0:5',d:'2026-10-12',v:18,o:2,c:3},{s:'bake:2026-10-10:1:7',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-10:2:6',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-10:3:29',d:'2026-10-10',v:18,o:4,c:5},{s:'bake:2026-10-10:4:21',d:'2026-10-26',v:18,o:4,c:5},{s:'bake:2026-10-10:5:5',d:'2026-10-15',v:18,o:5,c:7},{s:'bake:2026-10-10:6:3',d:'2026-10-10',v:18,o:6,c:8},{s:'bake:2026-10-10:7:9',d:'2026-10-10',v:18,o:6,c:8},{s:'bake:2026-10-10:8:6',d:'2026-10-10',v:18,o:9,c:12},{s:'bake:2026-10-10:9:0',d:'2026-10-10',v:18,o:9,c:12}],
 '2026-10-11':[{s:'bake:2026-10-11:0:30',d:'2026-10-14',v:18,o:2,c:3},{s:'bake:2026-10-11:1:2',d:'2026-10-14',v:18,o:3,c:4},{s:'bake:2026-10-11:2:78',d:'2026-10-20',v:18,o:3,c:4},{s:'bake:2026-10-11:3:1',d:'2026-10-14',v:18,o:4,c:5},{s:'bake:2026-10-11:4:1',d:'2026-10-21',v:18,o:4,c:5},{s:'bake:2026-10-11:5:10',d:'2026-10-12',v:18,o:4,c:5},{s:'bake:2026-10-11:6:5',d:'2026-10-14',v:18,o:6,c:8},{s:'bake:2026-10-11:7:2',d:'2026-10-11',v:18,o:8,c:10},{s:'bake:2026-10-11:8:14',d:'2026-10-11',v:18,o:8,c:10},{s:'bake:2026-10-11:9:4',d:'2026-10-11',v:18,o:9,c:12}],
-'2026-10-12':[{s:'bake:2026-10-12:0:28',d:'2026-10-20',v:18,o:2,c:3},{s:'bake:2026-10-12:1:7',d:'2026-10-27',v:18,o:3,c:4},{s:'bake:2026-10-12:2:5',d:'2026-10-15',v:18,o:3,c:4},{s:'bake:2026-10-12:3:13',d:'2026-10-19',v:18,o:4,c:5},{s:'bake:2026-10-12:4:6',d:'2026-10-19',v:18,o:5,c:7},{s:'bake:2026-10-12:5:14',d:'2026-10-13',v:18,o:5,c:7},{s:'bake:2026-10-12:6:0',d:'2026-10-12',v:18,o:6,c:8},{s:'bake:2026-10-12:7:12',d:'2026-10-12',v:18,o:7,c:9},{s:'bake:2026-10-12:8:7',d:'2026-10-12',v:18,o:8,c:10},{s:'bake:2026-10-12:9:4',d:'2026-10-12',v:18,o:9,c:12}]
+'2026-10-12':[{s:'bake:2026-10-12:0:28',d:'2026-10-20',v:18,o:2,c:3},{s:'bake:2026-10-12:1:7',d:'2026-10-27',v:18,o:3,c:4},{s:'bake:2026-10-12:2:5',d:'2026-10-15',v:18,o:3,c:4},{s:'bake:2026-10-12:3:13',d:'2026-10-19',v:18,o:4,c:5},{s:'bake:2026-10-12:4:6',d:'2026-10-19',v:18,o:5,c:7},{s:'bake:2026-10-12:5:14',d:'2026-10-13',v:18,o:5,c:7},{s:'bake:2026-10-12:6:0',d:'2026-10-12',v:18,o:6,c:8},{s:'bake:2026-10-12:7:12',d:'2026-10-12',v:18,o:7,c:9},{s:'bake:2026-10-12:8:7',d:'2026-10-12',v:18,o:8,c:10},{s:'bake:2026-10-12:9:4',d:'2026-10-12',v:18,o:9,c:12}],
+'2026-10-13':[{s:'bake:2026-10-13:0:12',d:'2026-10-19',v:18,o:2,c:3},{s:'bake:2026-10-13:1:25',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-13:2:18',d:'2026-10-24',v:18,o:3,c:4},{s:'bake:2026-10-13:3:21',d:'2026-10-23',v:18,o:4,c:5},{s:'bake:2026-10-13:4:5',d:'2026-10-14',v:18,o:4,c:5},{s:'bake:2026-10-13:5:10',d:'2026-10-20',v:18,o:5,c:7},{s:'bake:2026-10-13:6:6',d:'2026-10-16',v:18,o:5,c:7},{s:'bake:2026-10-13:7:13',d:'2026-10-14',v:18,o:7,c:9},{s:'bake:2026-10-13:8:4',d:'2026-10-13',v:18,o:8,c:10},{s:'bake:2026-10-13:9:53',d:'2026-10-13',v:18,o:9,c:12}]
 };
 const OPTIMA={
   '2026-08-01':[6,5,8,11,16,17,20,20,27,34],
@@ -2258,13 +2266,13 @@ function renderCollection(){
 function renderRulesPane(){
   $('panerules').innerHTML=`<div class="panehd">
         <div class="intro-title">how to play</div>
-        <div class="intro-sub">ten nets a day &middot; clearing the crossings reveals the feature</div></div>
+        <div class="intro-sub">10 nets &middot; clear crossings &middot; reveal features</div></div>
       <div class="rkey">
-        ${rmark('feature')}<span><b>feature</b> &middot; free it</span>
-        ${rmark('neuron')}<span><b>neuron</b> &middot; drag it</span>
-        ${rmark('shared')}<span><b>shared neuron</b> &middot; tap to split</span>
-        ${rmark('pinned')}<span><b>pinned</b> &middot; will not move</span>
-        ${rmark('crossing')}<span><b>crossing</b> &middot; clear it</span>
+        <div class="rkey-row">${rmark('feature')}<span class="rkey-copy"><b>feature</b><span>free it</span></span></div>
+        <div class="rkey-row">${rmark('neuron')}<span class="rkey-copy"><b>neuron</b><span>drag it</span></span></div>
+        <div class="rkey-row">${rmark('shared')}<span class="rkey-copy"><b>shared neuron</b><span>tap to split</span></span></div>
+        <div class="rkey-row">${rmark('pinned')}<span class="rkey-copy"><b>pinned</b><span>will not move</span></span></div>
+        <div class="rkey-row">${rmark('crossing')}<span class="rkey-copy"><b>crossing</b><span>clear it</span></span></div>
       </div>
       ${rungLadder()}
       ${store.tutorialDone?`<button class="intro-start intro-alt" id="ruleslessons">replay the tutorial</button>`:''}`;
@@ -5254,7 +5262,8 @@ let tutAct=null, tutLights=[];
 function tutorialFreePlay(){
   if(!inTutorial()) return false;
   const steps=TUTSTEPS_BY_NET[R().netIndex];
-  return !!steps && Math.min(tutStepAt,steps.length)===steps.length;
+  return !coachQueuedSig && !!steps
+    && Math.min(tutStepAt,steps.length)===steps.length;
 }
 function coupleHolds(n){
   const p=n&&n.coupled;
@@ -5390,7 +5399,7 @@ function endDrag(e){
     if(node.merged && !r.over){
       (r.splitNodes=r.splitNodes||[]).push(node.idx);
       splitNode(node,false);
-      recordDay(); tutReach(1);
+      recordDay(); tutReach(2);
       r.positions[node.idx]=[Math.round(node.x0*10)/10,Math.round(node.y0*10)/10];
       chargeTurn(r,[1,node.idx,...(r.positions[node.idx]||[]),...(r.positions[1000+node.idx]||[])]);
       afterMove(r);
@@ -5887,6 +5896,7 @@ function positionCoach(){
 }
 function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
+  if(coachQueuedSig){ tutSpotClear(); return }
   if(tutorialFreePlay()){ tutSpotClear(); return }
   readMarkSizes();                 // the aperture is in neuron radii, and those move
   const named=tutNamed();
@@ -6047,7 +6057,7 @@ function renderTutorial(){
   coachQueuedSig=d.sig;
   clearTimeout(coachSwapT); coachSwapT=null;
   const c=$('coach');
-  tutAct=null; tutLights=[]; syncTutorialTargets();
+  tutSpotClear();
   if(!coachSig || reduceMotion){ paintTutorial(d); return }
   clearTimeout(coachEnterT); coachEnterT=null;
   c.classList.remove('entering'); c.classList.add('leaving');
