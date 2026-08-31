@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-cY1Ag+DY/zkBGiKKxFwuvTWOZSlD1MOKuf4mSbvzG+0=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-lMsr0R6V8lGO3aD+4jCu0tUjt5zK1omcef8mbHRjx3U=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -5794,11 +5794,12 @@ function resetDescent(){
 
 
 const TUTNETS=[
-  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5, palette:[0,1]},
-  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3, palette:[2,3]},
-  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3, palette:[4,5]}
+  {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
+  {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3},
+  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3}
 ];
-const TUT_COLORS=TUTNETS.map(net=>net.palette.map(i=>THREADPAL[i]));
+const TUTORIAL_PAIR=[THREADPAL[0],THREADPAL[1]];
+const TUT_COLORS=TUTNETS.map(()=>[...TUTORIAL_PAIR]);
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
 function repairOutOfRangeTutorialRun(){
   if(!inTutorialRun() || R().netIndex<TUTNETS.length) return false;
