@@ -248,7 +248,8 @@ const pageState = () => evaluate(`(() => {
       copy: rect(document.querySelector(".concept-hero-copy")),
       lede: rect(document.querySelector(".concept-lede")),
       ledeText: contentRect(document.querySelector(".concept-lede")),
-      nav: rect(document.querySelector(".concept-nav"))
+      nav: rect(document.querySelector(".concept-nav")),
+      navFirst: rect(document.querySelector(".concept-nav a"))
     },
     projects: [...document.querySelectorAll(".concept-project-card")].map((item) => ({
       text: item.innerText.replace(/\\s+/g, " ").trim(),
@@ -394,11 +395,8 @@ const checkDesktop = async () => {
     `the proposition uses the right-hand hero column [${state.heroLayout.identity.right.toFixed(1)}px → ${state.heroLayout.lede.left.toFixed(1)}px]`
   );
   check(
-    Math.abs(
-      (state.heroLayout.nav.left + state.heroLayout.nav.width / 2) -
-      (state.heroLayout.lede.left + state.heroLayout.lede.width / 2)
-    ) <= 1,
-    "the menu is centred directly below the proposition"
+    Math.abs(state.heroLayout.navFirst.left - state.heroLayout.lede.left) <= 1,
+    "the menu shares the proposition's left edge"
   );
   check(
     state.heroLayout.nav.top >= state.heroLayout.lede.bottom + 16,
@@ -672,7 +670,7 @@ const checkMobile = async () => {
   check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
   check(
     Math.abs(initial.heroLayout.identity.left - initial.heroLayout.lede.left) <= 1 &&
-      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.nav.left) <= 1,
+      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.navFirst.left) <= 1,
     "the phone identity, proposition and menu share one left edge"
   );
   check(
