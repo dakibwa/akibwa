@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-lMsr0R6V8lGO3aD+4jCu0tUjt5zK1omcef8mbHRjx3U=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-Kn5r+lo30sfuyufDEfJLRY6iphyrQ2fFUfaA3qETJdY=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -888,16 +888,20 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-auth-divider{display:flex;align-items:center;gap:10px;
     font-size:9px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
   .acct-auth-divider::before,.acct-auth-divider::after{content:'';height:1px;background:var(--rule);flex:1 1 auto}
-  .acct-auth-email{display:flex;flex-direction:column;gap:8px}
-  .acct-auth-email .wbtn{width:100%;min-height:40px}
+  .acct-auth-forms{display:grid;grid-template-columns:1fr;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .acct-auth-form{display:flex;min-width:0;flex-direction:column;gap:8px;padding:12px 0 14px}
+  .acct-auth-form + .acct-auth-form{border-top:1px solid var(--rule)}
+  .acct-auth-form .wbtn{min-height:40px;flex:1 1 auto}
+  .acct-auth-form .acct-row{margin-top:2px;align-items:center}
+  .acct-auth-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .acct-auth-head strong{font-size:13px;font-weight:650;color:var(--ink)}
+  @media (min-width:580px){
+    .acct-auth-forms{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .acct-auth-form{padding:12px 14px 14px 0}
+    .acct-auth-form + .acct-auth-form{border-top:0;border-left:1px solid var(--rule);padding-left:14px;padding-right:0}
+  }
   .acct-auth-other{display:flex;flex-direction:column;gap:9px}
   .acct-auth-other .acct-row .wbtn{flex:1 1 auto}
-  .acct-auth-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-    margin-top:auto;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-  .acct-auth-fact{display:flex;min-width:0;flex-direction:column;gap:3px;padding:9px 10px 10px 0}
-  .acct-auth-fact + .acct-auth-fact{padding-left:10px;border-left:1px solid var(--rule)}
-  .acct-auth-fact strong{font-size:12px;line-height:1.4;font-weight:600;color:var(--ink)}
-  @media (max-width:700px) and (max-height:680px){.acct-auth-facts{display:none}}
 
   .arch-card{
     max-width:660px;width:100%;display:flex;flex-direction:column;
@@ -939,7 +943,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   }
   .acct-field::placeholder{color:var(--ink-soft);opacity:.75;font-size:13px}
   .acct-field:focus{outline:none;border-bottom-color:var(--ink)}
-  .acct-field.code{font-size:26px;font-weight:300;letter-spacing:.32em;font-variant-numeric:tabular-nums}
   .acct-field.tagfield{font-size:22px;letter-spacing:.28em;text-transform:uppercase;
     color:var(--tc,var(--ink));font-weight:600}
   .acct-field.tagfield::placeholder{color:var(--ink-soft);font-weight:400;letter-spacing:.28em}
@@ -1190,7 +1193,12 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .menusheet{height:calc(100dvh - 24px);max-width:none;width:100%}
     .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
     .arch-body{padding:12px 13px 15px}
-    .acct-body{padding:14px 13px 15px}
+    .acct-body{padding:10px 13px 12px}
+    .acct-auth{gap:8px}
+    .acct-auth-form{gap:6px;padding:10px 0 11px}
+    .acct-auth-form + .acct-auth-form{padding-top:10px}
+    .acct-auth-form .acct-row{margin-top:0}
+    .acct-auth-form .wbtn{min-height:38px}
     .acct-field{font-size:16px}
     .rec-foot{padding:9px 13px 11px}
     .rec-head{padding:11px 13px}
@@ -2205,7 +2213,7 @@ const API = (()=>{
 })();
 
 let account=null;        // null until asked. {signedIn:bool, provider, email}
-let signIns=null;        // which sign-ins this deployment offers; [] means none
+let signIns=null;
 let googleId=null;       // public OAuth client id, from /providers; null if google is off
 let googlePrep=null;     // {clientId, nonce, state, at} — one-use, prefetched so the press still has a gesture
 let syncSay='';          // what the record's foot says about the last sync
@@ -2394,7 +2402,6 @@ async function saveProfile(patch){
 }
 
 function goSignIn(p){
-  if(p==='email') return openAccount('email');
   if(p==='google'){
     tryGoogleHere().then(v=>{ if(v===true || v==='cancel') return; offsiteSignIn() });
     return;
@@ -2582,14 +2589,14 @@ let acctMode='hello', acctEmail='', acctErr='', acctBusy=false, acctArmed=false;
 function openAccount(mode){
   if(!mode) mode=(account&&account.signedIn)?'manage':'sign';
   acctMode=mode; acctErr=''; acctArmed=false;
-  if(mode!=='code') acctEmail=(account&&account.email)||'';
+  acctEmail=(account&&account.email)||acctEmail||'';
   openMenu('profile');
 }
 const closeAccount=()=>{ if(menuShown()&&menuView==='profile') openMenu('home') };
 
 function afterSignIn(){
   if(!account||!account.signedIn) return;
-  const unasked=account.mail && !account.dailyEmail && !store.askedDaily;
+  const unasked=account.mail && account.email && account.emailOk && !account.dailyEmail && !store.askedDaily;
   if(!unasked) return;
   if(document.querySelector('.veil.show')) return;   // never on top of another card
   openAccount('hello');
@@ -2604,38 +2611,32 @@ function renderAcct(){
   const err=acctErr?`<div class="acct-err">${esc(acctErr)}</div>`:'';
   const signedIn=!!(account&&account.signedIn);
 
-  if(acctMode==='email'||acctMode==='code'){
-    title.textContent='sign in with email';
-    if(acctMode==='email'){
-      body.innerHTML=err
-        +`<div class="acct-ask">where should the code go?</div>`
-        +`<input class="acct-field" id="acctemail" type="email" inputmode="email" autocomplete="email"
-                spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">`
-        +`<div class="acct-row">${acctBtn('acctsend',acctBusy?'sending…':'send the code',true)}`
-        +((signIns||[]).length>1?`<a href="#" class="acctlink" id="acctways">other ways</a>`:'')
-        +`</div>`
-        +`<div class="acct-note">no password, ever. six digits, and you are in.<br>
-            the only mails this game sends are that code and the daily, and the daily is off unless you ask.</div>`;
-      $('acctsend').onclick=sendCode;
-      if($('acctways')) $('acctways').onclick=e=>{e.preventDefault();acctMode='sign';acctErr='';renderAcct()};
-      $('acctemail').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();sendCode()} };
-      setTimeout(()=>$('acctemail')&&$('acctemail').focus(),40);
-    } else {
-      body.innerHTML=err
-        +`<div class="acct-ask">six digits, sent to <b>${esc(acctEmail)}</b>.</div>`
-        +`<input class="acct-field code" id="acctcode" type="text" inputmode="numeric"
-                autocomplete="one-time-code" maxlength="6" placeholder="000000">`
-        +`<div class="acct-row">${acctBtn('acctverify',acctBusy?'checking…':'sign in',true)}`
-        +`<a href="#" class="acctlink" id="acctagain">send another</a></div>`
-        +`<div class="acct-note">it lasts ten minutes. check the spam folder — a first mail from a new sender often lands there.</div>`;
-      const go=()=>verifyCode();
-      $('acctverify').onclick=go;
-      $('acctagain').onclick=e=>{e.preventDefault();acctMode='email';acctErr='';renderAcct()};
-      const f=$('acctcode');
-      f.oninput=()=>{ f.value=f.value.replace(/\D/g,'').slice(0,6); if(f.value.length===6) go() };
-      f.onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();go()} };
-      setTimeout(()=>f&&f.focus(),40);
-    }
+  if(acctMode==='reset'){
+    title.textContent='reset your password';
+    body.innerHTML=err
+      +`<div class="acct-ask">enter the email on the account.</div>`
+      +`<input class="acct-field" id="acctresetemail" type="email" inputmode="email" autocomplete="email"
+              spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">`
+      +`<div class="acct-row">${acctBtn('acctreset',acctBusy?'sending…':'send reset link',true)}`
+      +`<a href="#" class="acctlink" id="acctback">back to sign in</a></div>`
+      +`<div class="acct-note">if that address has an account, one private link arrives. the answer here is the same either way.</div>`;
+    $('acctreset').onclick=requestPasswordReset;
+    $('acctback').onclick=e=>{e.preventDefault();acctMode='sign';acctErr='';renderAcct()};
+    $('acctresetemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();requestPasswordReset()}};
+    setTimeout(()=>$('acctresetemail')&&$('acctresetemail').focus(),40);
+    return;
+  }
+
+  if(acctMode==='reset-sent'||acctMode==='signup-sent'){
+    const signup=acctMode==='signup-sent';
+    title.textContent='check your email';
+    body.innerHTML=err
+      +`<div class="acct-ask">${signup?'finish creating the account':'a reset link is on its way'}${acctEmail?` · <b>${esc(acctEmail)}</b>`:''}.</div>`
+      +`<div class="acct-note">${signup
+        ? 'open the link to confirm the address. the account is created and signed in there.'
+        : 'the link lets you choose a new password. if no account uses that address, no mail is sent.'}</div>`
+      +`<div class="acct-row"><a href="#" class="acctlink" id="acctback">back to sign in</a></div>`;
+    $('acctback').onclick=e=>{e.preventDefault();acctMode='sign';acctErr='';renderAcct()};
     return;
   }
 
@@ -2661,33 +2662,54 @@ function renderAcct(){
     const others=providers.filter(x=>x.p!=='google'&&x.p!=='email');
     body.innerHTML=err+`<div class="acct-auth">
         <div class="acct-auth-intro">
-          <div class="acct-ask">your record is in this browser. choose a route and it follows you anywhere.</div>
+          <div class="acct-ask">save your record and take it anywhere.</div>
         </div>
         ${google?`<button class="wbtn acct-google" id="acctin-${google.i}"
             aria-label="continue with google — sign in or sign up">
             ${GOOGLE_GLYPH}<span>continue with google</span></button>`:''}
         ${email?`<div class="acct-auth-divider"><span>${google?'or use email':'use email'}</span></div>
-          <div class="acct-auth-email">
-            <label class="acct-lab" for="acctemail">email address</label>
-            <input class="acct-field" id="acctemail" type="email" inputmode="email" autocomplete="email"
-              spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
-            ${acctBtn('acctsend',acctBusy?'sending…':'send a six-digit code',true)}
-            <div class="acct-note">no password. the code works for both signing in and signing up.</div>
+          <div class="acct-auth-forms">
+            <section class="acct-auth-form" aria-labelledby="acctsigninhead">
+              <div class="acct-auth-head"><strong id="acctsigninhead">sign in</strong><span class="acct-lab">already have one</span></div>
+              <label class="acct-lab" for="acctsigninemail">email address</label>
+              <input class="acct-field" id="acctsigninemail" type="email" inputmode="email" autocomplete="email"
+                spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
+              <label class="acct-lab" for="acctsigninpassword">password</label>
+              <input class="acct-field" id="acctsigninpassword" type="password" autocomplete="current-password"
+                maxlength="128" placeholder="your password">
+              <div class="acct-row">${acctBtn('acctsignin',acctBusy?'signing in…':'sign in',true)}
+                <a href="#" class="acctlink" id="acctforgot">forgot password?</a></div>
+            </section>
+            <section class="acct-auth-form" aria-labelledby="acctsignuphead">
+              <div class="acct-auth-head"><strong id="acctsignuphead">sign up</strong><span class="acct-lab">first time</span></div>
+              <label class="acct-lab" for="acctsignupemail">email address</label>
+              <input class="acct-field" id="acctsignupemail" type="email" inputmode="email" autocomplete="email"
+                spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
+              <label class="acct-lab" for="acctsignuppassword">choose a password</label>
+              <input class="acct-field" id="acctsignuppassword" type="password" autocomplete="new-password"
+                minlength="15" maxlength="128" placeholder="15 characters or more">
+              ${acctBtn('acctsignup',acctBusy?'creating…':'create account',true)}
+              <div class="acct-note">we send one link to confirm the address. the password is already chosen.</div>
+            </section>
           </div>`:''}
         ${others.length?`<div class="acct-auth-other">
           <div class="acct-auth-divider"><span>other ways</span></div>
           <div class="acct-row">${others.map(({p,i})=>
             `<button class="wbtn" id="acctin-${i}" aria-label="continue with ${esc(p)} — sign in or sign up">continue with ${esc(p)}</button>`
           ).join('')}</div></div>`:''}
-        <div class="acct-auth-facts" aria-label="what happens next">
-          <div class="acct-auth-fact"><span class="acct-lab">already have one?</span><strong>signs you in</strong></div>
-          <div class="acct-auth-fact"><span class="acct-lab">first time?</span><strong>creates your account</strong></div>
-        </div>
       </div>`;
     if(google){ $('acctin-'+google.i).onclick=()=>goSignIn('google'); ensureGooglePrep() }
     if(email){
-      $('acctsend').onclick=sendCode;
-      $('acctemail').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();sendCode()} };
+      $('acctsignin').onclick=passwordSignIn;
+      $('acctsignup').onclick=passwordSignUp;
+      $('acctforgot').onclick=e=>{
+        e.preventDefault();acctEmail=($('acctsigninemail').value||'').trim().toLowerCase();
+        acctMode='reset';acctErr='';renderAcct();
+      };
+      $('acctsigninemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('acctsigninpassword').focus()}};
+      $('acctsigninpassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();passwordSignIn()}};
+      $('acctsignupemail').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('acctsignuppassword').focus()}};
+      $('acctsignuppassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();passwordSignUp()}};
     }
     others.forEach(({p,i})=>{ const b=$('acctin-'+i); if(b) b.onclick=()=>goSignIn(p) });
     return;
@@ -2695,16 +2717,17 @@ function renderAcct(){
 
   const mail=account.email||'';
   const canMail=!!account.mail;
+  const canDaily=canMail&&!!mail&&!!account.emailOk;
 
   if(acctMode==='hello'){
     title.textContent='the daily';
     body.innerHTML=err
-      +(canMail?`<div class="acct-ask">one line each morning, when the day's ten are up.</div>`
+      +(canDaily?`<div class="acct-ask">one line each morning, when the day's ten are up.</div>`
         +`<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
-        +`<span>send me the daily${mail&&account.emailOk?` · to ${esc(mail)}`:''}</span></label>`
-        +(mail&&account.emailOk?'':`<input class="acct-field" id="acctaddr" type="email" inputmode="email"
-              autocomplete="email" spellcheck="false" placeholder="where to send it" value="${esc(mail)}">`)
-      :`<div class="acct-ask">this deployment cannot send mail, so there is nothing to ask you.</div>`)
+        +`<span>send me the daily · to ${esc(mail)}</span></label>`
+      :`<div class="acct-ask">${canMail
+          ? 'the daily needs a confirmed account email.'
+          : 'this deployment cannot send mail, so there is nothing to ask you.'}</div>`)
       +`<div class="acct-row">${acctBtn('acctdone',acctBusy?'saving…':'done',true)}`
       +`<a href="#" class="acctlink" id="acctskip">not now</a></div>`
       +`<div class="acct-note">optional, and it changes later from your account.</div>`;
@@ -2717,25 +2740,28 @@ function renderAcct(){
   const idLine = mail
     ? `<b>${esc(mail)}</b>${account.emailOk?'':' · not confirmed'}`
     : `signed in with ${esc(account.provider||'a linked account')}`;
+  const identityNote = account.provider==='email'
+    ? (account.hasPassword===false
+      ? `this account predates passwords. <a href="#" class="acctlink" id="acctsetpassword" style="margin-left:0">set a password</a>`
+      : 'use this email and your password to sign in on another device.')
+    : (mail
+      ? `this confirmed address came from ${esc(account.provider||'your sign-in provider')}.`
+      : 'this sign-in provider did not share an email address.');
   body.innerHTML=err
     +`<div class="acct-sec">`
       +`<div class="acct-lab">who you are</div>`
       +`<div class="acct-ask">${idLine}</div>`
-      +`<input class="acct-field" id="acctaddr" type="email" inputmode="email" spellcheck="false"
-              autocomplete="email" placeholder="${mail?'a different address':'add an address'}" value="">`
-      +`<div class="acct-note">this is what signs you in, and it is the only thing the record is held under.`
-        +(mail&&!account.emailOk
-          ? ` it is not confirmed yet. <a href="#" class="acctlink" id="acctconfirm" style="margin-left:0">send a code</a>`
-          : ' change it and the next code goes to the new one.')
-      +`</div>`
+      +`<div class="acct-note">${identityNote}</div>`
     +`</div>`
     +`<div class="acct-sec">`
       +`<div class="acct-lab">the daily</div>`
-      +(canMail
+      +(canDaily
         ? `<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
           +`<span>one line each morning, when the day's ten are up</span></label>`
-          +`<div class="acct-note">it goes to the address above, once that address is confirmed. one link in it turns it off again.</div>`
-        : `<div class="acct-note">this deployment cannot send mail, so there is no daily to offer.</div>`)
+          +`<div class="acct-note">it goes to the confirmed address above. one link in it turns it off again.</div>`
+        : `<div class="acct-note">${canMail
+            ? 'a confirmed account email is needed before the daily can be switched on.'
+            : 'this deployment cannot send mail, so there is no daily to offer.'}</div>`)
     +`</div>`
     +`<div class="acct-sec">`
       +`<div class="acct-lab">the board</div>`
@@ -2776,44 +2802,60 @@ function renderAcct(){
   };
   $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
   $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
-  if($('acctconfirm')) $('acctconfirm').onclick=e=>{
-    e.preventDefault();
-    acctEmail=(($('acctaddr')&&$('acctaddr').value.trim())||mail);
-    acctMode='email'; renderAcct();
+  if($('acctsetpassword')) $('acctsetpassword').onclick=e=>{
+    e.preventDefault();acctEmail=mail;acctMode='reset';acctErr='';renderAcct();
   };
 }
 
-async function sendCode(){
-  const el=$('acctemail'); if(!el) return;
-  acctEmail=el.value.trim().toLowerCase();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(acctEmail)){ acctErr='that address does not look like one'; return renderAcct() }
-  acctBusy=true; acctErr=''; renderAcct();
+const accountEmailOk=(email)=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+
+async function passwordSignIn(){
+  const emailEl=$('acctsigninemail'), passwordEl=$('acctsigninpassword');
+  if(!emailEl||!passwordEl||acctBusy) return;
+  acctEmail=emailEl.value.trim().toLowerCase();
+  const password=passwordEl.value;
+  if(!accountEmailOk(acctEmail)){acctErr='that address does not look like one';return renderAcct()}
+  if(!password){acctErr='enter your password';return renderAcct()}
+  acctBusy=true;acctErr='';renderAcct();
   try{
-    await apiCall('/auth/email/code',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({email:acctEmail})});
-    acctBusy=false; acctMode='code'; acctErr=''; renderAcct();
-  }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
+    const me=await apiCall('/auth/email/signin',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail,password})});
+    acctBusy=false;acctMode='manage';acctErr='';
+    await landedSignedIn(me);
+  }catch(e){acctBusy=false;acctErr=e.message;renderAcct()}
 }
 
-async function verifyCode(){
-  const el=$('acctcode'); if(!el||acctBusy) return;
-  const code=el.value.replace(/\D/g,'');
-  if(code.length!==6){ acctErr='that code is six digits'; return renderAcct() }
-  acctBusy=true; acctErr=''; renderAcct();
+async function passwordSignUp(){
+  const emailEl=$('acctsignupemail'), passwordEl=$('acctsignuppassword');
+  if(!emailEl||!passwordEl||acctBusy) return;
+  acctEmail=emailEl.value.trim().toLowerCase();
+  const password=passwordEl.value;
+  if(!accountEmailOk(acctEmail)){acctErr='that address does not look like one';return renderAcct()}
+  if(password.length<15||password.length>128){acctErr='use 15 to 128 characters for the password';return renderAcct()}
+  acctBusy=true;acctErr='';renderAcct();
   try{
-    const me=await apiCall('/auth/email/verify',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({email:acctEmail,code})});
-    acctBusy=false; account={...me,signedIn:true,mail:true};
-    store.signedInOnce=true; save();
-    await syncNow(); tellClock(); fillIntroAuth();
-    acctMode='hello'; acctErr=''; renderAcct();
-  }catch(e){ acctBusy=false; acctErr=e.message; renderAcct() }
+    await apiCall('/auth/email/signup',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail,password})});
+    acctBusy=false;acctMode='signup-sent';acctErr='';renderAcct();
+  }catch(e){acctBusy=false;acctErr=e.message;renderAcct()}
+}
+
+async function requestPasswordReset(){
+  const el=$('acctresetemail');if(!el||acctBusy)return;
+  acctEmail=el.value.trim().toLowerCase();
+  if(!accountEmailOk(acctEmail)){acctErr='that address does not look like one';return renderAcct()}
+  acctBusy=true;acctErr='';renderAcct();
+  try{
+    await apiCall('/auth/email/reset/start',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail})});
+    acctBusy=false;acctMode='reset-sent';acctErr='';renderAcct();
+  }catch(e){acctBusy=false;acctErr=e.message;renderAcct()}
 }
 
 async function saveHello(stay){
   if(acctBusy) return;
   const patch={tzOffset:new Date().getTimezoneOffset()};
-  const addr=$('acctaddr'); const daily=$('acctdaily');
+  const daily=$('acctdaily');
   const wantDaily=!!(daily&&daily.checked);
   const tagEl=$('accttag');
   if(tagEl){
@@ -2822,18 +2864,8 @@ async function saveHello(stay){
     patch.tag=t;
     patch.tagCol=t ? (tagPick||account.tagCol||TAGCOLS[1]) : '';
   }
-  const typed=addr?addr.value.trim().toLowerCase():'';
   acctBusy=true; acctErr=''; renderAcct();
   try{
-    if(addr && typed && typed!==(account.email||'')){
-      await saveProfile({email:typed});
-      if(wantDaily && !account.emailOk){
-        acctBusy=false; store.askedDaily=true; save();
-        acctEmail=typed; acctMode='email';
-        acctErr='one code to that address and the daily is on';
-        return renderAcct();
-      }
-    }
     if(daily) patch.dailyEmail=wantDaily;
     await saveProfile(patch);
     store.askedDaily=true; save();
