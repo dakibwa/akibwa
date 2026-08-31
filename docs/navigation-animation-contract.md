@@ -11,10 +11,10 @@ publishing homepage changes.
   comparison URL, but it is not a second implementation.
 - There is no site header. The opening identity cycles between “I’m Daniel” and
   “I’m Akibwa”, beside the sentence “Building in the age of AI.” and three
-  plain anchors: Projects, Career and Taste Library. The anchors are centred
-  below the proposition on wide screens, then share its left edge when the
-  masthead stacks on mobile; the two headline rows use the phone measure rather
-  than leaving an empty white tail.
+  plain anchors: Projects, Career and Taste Library. The anchors share the
+  proposition's left edge on wide screens and when the masthead stacks on
+  mobile; the two headline rows use the phone measure rather than leaving an
+  empty white tail.
 - Projects is a descending three-card edit: Features first and largest,
   Português com a Inês second, and The Trek third. The Portuguese card uses a
   text-free conversation illustration; Trek uses a route-led topographic

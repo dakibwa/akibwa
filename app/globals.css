@@ -6579,7 +6579,7 @@ button {
 .concept-nav {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.45em 1.15em;
   width: 100%;
   margin-top: clamp(20px, 2.3vw, 32px);
@@ -6947,7 +6947,6 @@ button {
   }
 
   .concept-nav {
-    justify-content: flex-start;
     margin-top: clamp(24px, 3.4vw, 34px);
   }
 

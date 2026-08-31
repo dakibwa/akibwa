@@ -83,14 +83,9 @@ for (const [href, label] of [
 ]) {
   requireText(editorial, `<a href="${href}">${label}</a>`, `${label} must remain a plain anchor link`);
 }
-requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap", "justify-content: center"]);
+requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap", "justify-content: flex-start"]);
 requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns", "align-items: center"]);
 requireRuleText(".concept-hero-copy {", ["min-width: 0"]);
-requireText(
-  css,
-  ".concept-nav {\n    justify-content: flex-start;\n    margin-top:",
-  "the stacked masthead menu must align left on mobile"
-);
 requireText(
   css,
   "font-size: clamp(3rem, min(18vw, calc(147.5px - 16.62vw)), 4.75rem);",
