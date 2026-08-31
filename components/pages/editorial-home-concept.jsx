@@ -69,9 +69,9 @@ export function EditorialHomeConcept() {
             aria-label="Play Features, the daily untangling puzzle"
           >
             <SiteImage
-              src="/project-art/personal/features-neural-threads.png"
+              src="/features/og.png"
               slot="conceptProject"
-              alt="Coloured neural threads converging through a field of geometric nodes"
+              alt="The dark Features puzzle board with coloured threads, crossings, nodes and the Features wordmark"
               above
               aboveSync
             />

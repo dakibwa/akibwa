@@ -20,7 +20,8 @@ publishing homepage changes.
   horizontal panels on the right. Narrow screens return to one full-width
   stack. The Portuguese card uses a text-free conversation illustration; Trek
   uses a route-led topographic illustration drawn from the live atlas; and
-  Features uses text-free neural-thread artwork rather than a social poster.
+  Features uses the game's own dark board language: its exact wordmark and
+  four-colour rule, live thread palette, crossings, nodes and feature controls.
 - Project captions are slim editorial rails with one accent edge. Features is
   anchored by a compact dark rail; the two narrow side captions use the page's
   warm paper so their artwork keeps the colour. All three use the same title
