@@ -282,6 +282,14 @@ requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font
 requireRuleText(".concept-career-stop {", ["grid-template-rows: 24px 36px 68px"]);
 requireRuleText(".concept-career-time {", ["white-space: nowrap", "text-align: center"]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
+requireRuleText(
+  ".concept-career-card {",
+  ["border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink))"]
+);
+requireRuleText(
+  ".concept-career-stop:hover .concept-career-card,",
+  ["border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink))"]
+);
 requireText(
   css,
   "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",

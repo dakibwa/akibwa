@@ -7424,7 +7424,7 @@ button {
   display: grid;
   min-height: 0;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
+  border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink));
   border-radius: 3px;
   background: color-mix(in srgb, var(--white) 68%, var(--canvas));
   transition: border-color 100ms ease, background 100ms ease;
@@ -7544,7 +7544,7 @@ button {
 .concept-career-stop:hover .concept-career-card,
 .concept-career-stop:focus .concept-career-card,
 .concept-career-stop:focus-within .concept-career-card {
-  border-color: color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
+  border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink));
   background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
 }
 
@@ -7573,7 +7573,7 @@ button {
 .concept-career-timeline:focus-within
   .concept-career-stop:not(:focus):not(:focus-within):hover
   .concept-career-card {
-  border-color: color-mix(in srgb, var(--ink) 14%, var(--canvas));
+  border-color: color-mix(in srgb, var(--company-accent) 68%, var(--ink));
   background: color-mix(in srgb, var(--white) 68%, var(--canvas));
 }
 
