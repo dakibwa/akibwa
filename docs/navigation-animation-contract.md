@@ -15,11 +15,11 @@ publishing homepage changes.
   below the proposition on wide screens, then share its left edge when the
   masthead stacks on mobile; the two headline rows use the phone measure rather
   than leaving an empty white tail.
-- Projects leads with two equal direct cards: Features and Português com a
-  Inês. The Portuguese card uses a text-free conversation illustration so the
-  service reads before its label does.
-- Projects ends after those two cards; Freelance is not a separate pitch in
-  this section.
+- Projects is a descending three-card edit: Features first and largest,
+  Português com a Inês second, and The Trek third. The Portuguese card uses a
+  text-free conversation illustration; Trek uses a route-led topographic
+  illustration drawn from the visual language of the live atlas.
+- Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
 

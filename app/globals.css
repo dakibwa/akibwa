@@ -6630,9 +6630,9 @@ button {
 
 .concept-project-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(18px, 2.5vw, 34px);
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.05fr) minmax(0, 0.75fr);
+  gap: clamp(14px, 2vw, 28px);
+  align-items: start;
 }
 
 .concept-project-card {
@@ -6651,6 +6651,12 @@ button {
   --project-card-accent: #2757aa;
   border-color: #173b72;
   background: #173b72;
+}
+
+.concept-trek {
+  --project-card-accent: #d96b32;
+  border-color: #1e3027;
+  background: #253a30;
 }
 
 .concept-project-card picture,
@@ -6915,6 +6921,16 @@ button {
   }
 }
 
+@media (max-width: 1050px) {
+  .concept-project-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr);
+  }
+
+  .concept-feature {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 800px) {
   .concept-hero {
     display: block;
@@ -6937,6 +6953,21 @@ button {
 
   .concept-project-grid {
     grid-template-columns: 1fr;
+  }
+
+  .concept-feature,
+  .concept-portuguese,
+  .concept-trek {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .concept-portuguese {
+    width: 86%;
+  }
+
+  .concept-trek {
+    width: 72%;
   }
 }
 

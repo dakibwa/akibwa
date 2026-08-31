@@ -98,8 +98,8 @@ requireText(
 );
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
 
-/* Projects is only the deliberate pair: Dan's own game and the client project
-   he is proud to feature. Freelance and Butterfly Rose belong in Career. */
+/* Projects is a deliberate three-step hierarchy: Dan's game, the client
+   project he is proud to feature, then his Paris-to-Sofia trek. */
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
@@ -114,6 +114,17 @@ requireText(
 );
 requireText(editorial, "Português com a Inês</strong>", "the Portuguese project must be visibly named");
 requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
+requireText(editorial, 'href="/trek/"', "The Trek must be the third direct project link");
+requireText(
+  editorial,
+  'src="/project-art/personal/trek-paris-sofia-project.png"',
+  "The Trek must use its route-led generated artwork"
+);
+requireText(editorial, "The Trek</strong>", "The Trek must be visibly named");
+requireText(editorial, "Paris → Sofia · 1,982 km", "The Trek must explain the journey succinctly");
+if (!imageVariants["conceptProject:/project-art/personal/trek-paris-sofia-project.png"]) {
+  fail("The Trek project artwork must have responsive variants");
+}
 forbidText(editorial, "concept-freelance", "Freelance must not render as a separate Projects row");
 forbidText(css, ".concept-freelance", "the retired standalone Freelance row must not keep dead styling");
 requireText(
@@ -126,8 +137,14 @@ forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be descri
 forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
 forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
-requireRuleText(".concept-project-grid {", ["display: grid", "repeat(2, minmax(0, 1fr))"]);
+requireRuleText(".concept-project-grid {", [
+  "display: grid",
+  "minmax(0, 1.5fr)",
+  "minmax(0, 1.05fr)",
+  "minmax(0, 0.75fr)"
+]);
 requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
+requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "background: #253a30"]);
 
 /* Career keeps the approved horizontal eight-stop index. The title and one
    action-to-purpose sentence remain available through hover and keyboard focus. */

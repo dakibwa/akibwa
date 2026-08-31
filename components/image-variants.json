@@ -1039,6 +1039,52 @@
       }
     ]
   },
+  "conceptProject:/project-art/personal/trek-paris-sofia-project.png": {
+    "source": "/project-art/personal/trek-paris-sofia-project.png",
+    "slot": "conceptProject",
+    "ratio": 1.9048,
+    "sourceWidth": 1729,
+    "sourceHeight": 910,
+    "sourceHash": "745dea516df29c00",
+    "variants": [
+      {
+        "width": 491,
+        "height": 258,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-491.avif",
+          "bytes": 9493
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-491.webp",
+          "bytes": 11470
+        }
+      },
+      {
+        "width": 780,
+        "height": 410,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-780.avif",
+          "bytes": 16913
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-780.webp",
+          "bytes": 23974
+        }
+      },
+      {
+        "width": 948,
+        "height": 498,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-948.avif",
+          "bytes": 23796
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-948.webp",
+          "bytes": 35182
+        }
+      }
+    ]
+  },
   "clientSite:/project-art/client-sites/butterfly-rose-redesign-home.jpg": {
     "source": "/project-art/client-sites/butterfly-rose-redesign-home.jpg",
     "slot": "clientSite",

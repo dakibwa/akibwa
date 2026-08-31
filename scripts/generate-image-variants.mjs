@@ -190,6 +190,7 @@ const sources = [
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
   { file: "features/features-game-light-og-1200x630.png", slot: "conceptProject" },
   { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject" },
+  { file: "project-art/personal/trek-paris-sofia-project.png", slot: "conceptProject" },
   { file: "project-art/client-sites/butterfly-rose-redesign-home.jpg", slot: "clientSite" },
   { file: "project-art/client-sites/portuguese-with-ines-home.jpg", slot: "clientSite" },
   { file: "project-art/personal/butterfly-rose-card.webp", slot: "clientMark" },

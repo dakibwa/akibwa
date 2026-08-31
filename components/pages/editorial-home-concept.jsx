@@ -96,6 +96,25 @@ export function EditorialHomeConcept() {
               <span className="concept-arrow">visit site ↗</span>
             </span>
           </a>
+
+          <a
+            className="concept-project-card concept-trek"
+            href="/trek/"
+            aria-label="Explore The Trek, 1,982 kilometres on foot from Paris to Sofia"
+          >
+            <SiteImage
+              src="/project-art/personal/trek-paris-sofia-project.png"
+              slot="conceptProject"
+              alt="An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre"
+            />
+            <span className="concept-project-foot">
+              <span>
+                <strong>The Trek</strong>
+                <span>Paris → Sofia · 1,982 km</span>
+              </span>
+              <span className="concept-arrow">explore ↗</span>
+            </span>
+          </a>
         </div>
       </section>
 

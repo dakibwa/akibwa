@@ -395,23 +395,26 @@ const checkDesktop = async () => {
     `the wide masthead uses its width instead of empty height [${state.heroLayout.hero.height.toFixed(1)}px]`
   );
   check(
-    state.projects.map((item) => item.href).join(" / ") === "/features/ / /portugal/",
-    `the two project cards link directly [${state.projects.map((item) => item.href).join(" / ")}]`
+    state.projects.map((item) => item.href).join(" / ") === "/features/ / /portugal/ / /trek/",
+    `the three project cards link directly [${state.projects.map((item) => item.href).join(" / ")}]`
   );
   check(
     state.projects[0].text.startsWith("features ") &&
-      state.projects[1].text.startsWith("Português com a Inês "),
-    `Features and Português com a Inês get the lead [${state.projects.map((item) => item.text).join(" / ")}]`
+      state.projects[1].text.startsWith("Português com a Inês ") &&
+      state.projects[2].text.startsWith("The Trek "),
+    `Features, Português com a Inês and The Trek render in order [${state.projects.map((item) => item.text).join(" / ")}]`
   );
   check(
-    Math.abs(state.projects[0].rect.top - state.projects[1].rect.top) <= 1 &&
-      Math.abs(state.projects[0].rect.width - state.projects[1].rect.width) <= 1 &&
-      Math.abs(state.projects[0].rect.height - state.projects[1].rect.height) <= 1,
-    `the two project cards have equal visual weight [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
+    Math.max(...state.projects.map((item) => item.rect.top)) - Math.min(...state.projects.map((item) => item.rect.top)) <= 1 &&
+      state.projects[0].rect.width > state.projects[1].rect.width &&
+      state.projects[1].rect.width > state.projects[2].rect.width &&
+      state.projects[0].rect.height > state.projects[1].rect.height &&
+      state.projects[1].rect.height > state.projects[2].rect.height,
+    `the desktop project hierarchy descends Features → Português → Trek [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
   );
   check(
-    state.projects.every((item) => item.imageComplete && item.imageWidth >= 900 && /conceptProject/.test(item.currentSrc)),
-    "both featured projects load their responsive artwork"
+    state.projects.every((item) => item.imageComplete && item.imageWidth >= item.rect.width && /conceptProject/.test(item.currentSrc)),
+    "all three featured projects load their responsive artwork"
   );
   check(!state.standaloneFreelance, "Freelance does not render as a separate Projects row");
   check(
@@ -635,14 +638,18 @@ const checkMobile = async () => {
     "the phone keeps identity, proposition and menu in reading order"
   );
   check(
-    initial.projects.length === 2 &&
-      initial.projects[1].rect.top >= initial.projects[0].rect.bottom + 16 &&
-      initial.projects.every((item) => item.rect.width >= 350 && item.rect.width <= 360),
-    `the two featured projects stack at full phone width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
+    initial.projects.length === 3 &&
+      initial.projects[1].rect.top >= initial.projects[0].rect.bottom + 13 &&
+      initial.projects[2].rect.top >= initial.projects[1].rect.bottom + 13 &&
+      initial.projects[0].rect.width > initial.projects[1].rect.width &&
+      initial.projects[1].rect.width > initial.projects[2].rect.width &&
+      Math.abs(initial.projects[0].rect.left - initial.projects[1].rect.left) <= 1 &&
+      Math.abs(initial.projects[1].rect.left - initial.projects[2].rect.left) <= 1,
+    `the phone project stack keeps the descending left-aligned hierarchy [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
   );
   check(
-    !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[1].rect.bottom + 40,
-    "the phone flows directly from the two Projects cards into Career"
+    !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[2].rect.bottom + 40,
+    "the phone flows directly from the three Projects cards into Career"
   );
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
