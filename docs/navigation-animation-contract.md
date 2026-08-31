@@ -23,7 +23,9 @@ publishing homepage changes.
   topographic illustration drawn from the live atlas; and Features uses a
   bright, image-led version of the game's own board language: one compact
   wordmark, the colour rule, live thread palette, crossings, nodes and feature
-  controls, with no explanatory copy in the art.
+  controls, with no explanatory copy in the art. The five feature stamps form
+  a slim vertical rail against the right edge, balancing the wordmark without
+  taking space from the puzzle.
 - Project captions are slim bottom rails with one accent edge. Features keeps
   its compact dark rail; the other two use the page's warm paper so their
   artwork keeps the colour. All three use the same title and subtitle
