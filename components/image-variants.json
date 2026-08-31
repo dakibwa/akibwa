@@ -947,60 +947,60 @@
       }
     ]
   },
-  "conceptProject:/features/og.png": {
-    "source": "/features/og.png",
+  "conceptProject:/features/home-card-bright.png": {
+    "source": "/features/home-card-bright.png",
     "slot": "conceptProject",
     "ratio": 1.9048,
-    "sourceWidth": 1200,
-    "sourceHeight": 630,
-    "sourceHash": "c18438f504e4d35e",
+    "sourceWidth": 1440,
+    "sourceHeight": 756,
+    "sourceHash": "63477230c71028dd",
     "variants": [
       {
         "width": 537,
         "height": 282,
         "avif": {
-          "src": "/_img/features/og-conceptProject-537.avif",
-          "bytes": 7869
+          "src": "/_img/features/home-card-bright-conceptProject-537.avif",
+          "bytes": 5010
         },
         "webp": {
-          "src": "/_img/features/og-conceptProject-537.webp",
-          "bytes": 10284
+          "src": "/_img/features/home-card-bright-conceptProject-537.webp",
+          "bytes": 7326
         }
       },
       {
         "width": 720,
         "height": 378,
         "avif": {
-          "src": "/_img/features/og-conceptProject-720.avif",
-          "bytes": 10510
+          "src": "/_img/features/home-card-bright-conceptProject-720.avif",
+          "bytes": 6486
         },
         "webp": {
-          "src": "/_img/features/og-conceptProject-720.webp",
-          "bytes": 14348
+          "src": "/_img/features/home-card-bright-conceptProject-720.webp",
+          "bytes": 10316
         }
       },
       {
         "width": 948,
         "height": 498,
         "avif": {
-          "src": "/_img/features/og-conceptProject-948.avif",
-          "bytes": 14592
+          "src": "/_img/features/home-card-bright-conceptProject-948.avif",
+          "bytes": 8829
         },
         "webp": {
-          "src": "/_img/features/og-conceptProject-948.webp",
-          "bytes": 19946
+          "src": "/_img/features/home-card-bright-conceptProject-948.webp",
+          "bytes": 14488
         }
       },
       {
-        "width": 1200,
-        "height": 630,
+        "width": 1440,
+        "height": 756,
         "avif": {
-          "src": "/_img/features/og-conceptProject-1200.avif",
-          "bytes": 16681
+          "src": "/_img/features/home-card-bright-conceptProject-1440.avif",
+          "bytes": 12351
         },
         "webp": {
-          "src": "/_img/features/og-conceptProject-1200.webp",
-          "bytes": 25288
+          "src": "/_img/features/home-card-bright-conceptProject-1440.webp",
+          "bytes": 23334
         }
       }
     ]

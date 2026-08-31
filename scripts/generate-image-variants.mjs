@@ -188,7 +188,7 @@ const sources = [
   { file: "project-art/personal/cover-collision-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
-  { file: "features/og.png", slot: "conceptProject" },
+  { file: "features/home-card-bright.png", slot: "conceptProject" },
   { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject" },
   { file: "project-art/personal/trek-paris-sofia-project.png", slot: "conceptProject" },
   { file: "project-art/client-sites/butterfly-rose-redesign-home.jpg", slot: "clientSite" },

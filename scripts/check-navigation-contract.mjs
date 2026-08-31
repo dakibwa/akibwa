@@ -115,9 +115,12 @@ requireText(
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
-  'src="/features/og.png"',
-  "Features must use the game's own dark board artwork"
+  'src="/features/home-card-bright.png"',
+  "Features must use its bright, image-led board artwork"
 );
+if (!imageVariants["conceptProject:/features/home-card-bright.png"]) {
+  fail("the bright Features project artwork must have responsive variants");
+}
 forbidText(
   editorial,
   'src="/project-art/personal/features-neural-threads.png"',
@@ -323,7 +326,7 @@ requireRuleText(".akibwa-home .deck .card {", [
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
 
 for (const source of [
-  "/features/og.png",
+  "/features/home-card-bright.png",
   "/project-art/personal/portuguese-with-ines-conversation.png"
 ]) {
   if (!imageVariants[`conceptProject:${source}`]) fail(`${source} must have a conceptProject image ladder`);
