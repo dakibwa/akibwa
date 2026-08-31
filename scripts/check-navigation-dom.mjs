@@ -229,6 +229,11 @@ const pageState = () => evaluate(`(() => {
     const r = el.getBoundingClientRect();
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
   };
+  const contentRect = (el) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    return rect(range);
+  };
   return {
     identity: "I’m " + document.querySelector(".concept-identity .hero-name-value")?.textContent.trim(),
     lede: document.querySelector(".concept-lede")?.textContent.trim(),
@@ -239,8 +244,10 @@ const pageState = () => evaluate(`(() => {
     heroLayout: {
       hero: rect(document.querySelector(".concept-hero")),
       identity: rect(document.querySelector(".concept-identity")),
+      identityText: contentRect(document.querySelector(".concept-identity")),
       copy: rect(document.querySelector(".concept-hero-copy")),
       lede: rect(document.querySelector(".concept-lede")),
+      ledeText: contentRect(document.querySelector(".concept-lede")),
       nav: rect(document.querySelector(".concept-nav"))
     },
     projects: [...document.querySelectorAll(".concept-project-card")].map((item) => ({
@@ -615,11 +622,13 @@ const checkMobile = async () => {
   check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
   check(
     Math.abs(initial.heroLayout.identity.left - initial.heroLayout.lede.left) <= 1 &&
-      Math.abs(
-        (initial.heroLayout.nav.left + initial.heroLayout.nav.width / 2) -
-        (initial.heroLayout.lede.left + initial.heroLayout.lede.width / 2)
-      ) <= 1,
-    "the phone hero keeps the menu centred beneath its left-aligned proposition"
+      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.nav.left) <= 1,
+    "the phone identity, proposition and menu share one left edge"
+  );
+  check(
+    initial.heroLayout.identityText.width >= initial.heroLayout.hero.width * 0.9 &&
+      initial.heroLayout.ledeText.width >= initial.heroLayout.hero.width * 0.9,
+    `the two mobile masthead lines use the full row [${initial.heroLayout.identityText.width.toFixed(1)} / ${initial.heroLayout.ledeText.width.toFixed(1)}px of ${initial.heroLayout.hero.width.toFixed(1)}px]`
   );
   check(
     initial.heroLayout.lede.top > initial.heroLayout.identity.bottom &&

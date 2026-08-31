@@ -6975,12 +6975,17 @@ button {
     padding: clamp(18px, 4vw, 32px) 0 clamp(28px, 4.4vw, 42px);
   }
 
+  .concept-hero-copy {
+    width: 100%;
+  }
+
   .concept-lede {
     max-width: 27ch;
     margin-top: clamp(22px, 3vw, 32px);
   }
 
   .concept-nav {
+    justify-content: flex-start;
     margin-top: clamp(24px, 3.4vw, 34px);
   }
 
@@ -7004,13 +7009,18 @@ button {
   }
 
   .concept-identity {
-    font-size: clamp(3rem, 15vw, 4rem);
+    max-width: none;
+    /* Fill a phone row, then taper back to the stacked-tablet scale so the
+       560px breakpoint does not create a sudden type jump. */
+    font-size: clamp(3rem, min(18vw, calc(147.5px - 16.62vw)), 4.75rem);
+    white-space: nowrap;
   }
 
   .concept-lede {
-    max-width: 22ch;
-    font-size: clamp(1.45rem, 7.3vw, 1.9rem);
+    max-width: none;
+    font-size: clamp(1.45rem, min(8.6vw, calc(61.66px - 6.154vw)), 2.2rem);
     line-height: 1.08;
+    white-space: nowrap;
   }
 
   .concept-nav {
