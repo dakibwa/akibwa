@@ -6825,25 +6825,19 @@ button {
 }
 
 .concept-arrow {
-  display: grid;
-  width: 29px;
-  height: 29px;
+  display: block;
   flex: none;
-  place-items: center;
   margin-left: auto;
-  border: 1px solid color-mix(in srgb, var(--project-card-ink) 42%, transparent);
-  border-radius: 50%;
   color: var(--project-card-ink);
   font-family: var(--serif);
-  font-size: 1.05em;
+  font-size: 1.25em;
   line-height: 1;
+  opacity: 0.62;
 }
 
 .concept-project-card:hover .concept-arrow,
 .concept-project-card:focus-visible .concept-arrow {
-  border-color: var(--project-card-accent);
-  background: var(--project-card-accent);
-  color: var(--concept-dark);
+  opacity: 1;
 }
 
 .concept-kicker {
@@ -7095,15 +7089,8 @@ button {
   .concept-portuguese,
   .concept-trek {
     grid-column: 1;
-    justify-self: start;
-  }
-
-  .concept-portuguese {
-    width: 86%;
-  }
-
-  .concept-trek {
-    width: 72%;
+    justify-self: stretch;
+    width: 100%;
   }
 }
 
@@ -7144,11 +7131,6 @@ button {
     min-height: 46px;
     padding: 8px 9px 9px;
     font-size: 0.69rem;
-  }
-
-  .concept-arrow {
-    width: 26px;
-    height: 26px;
   }
 
   .concept-text-link {
