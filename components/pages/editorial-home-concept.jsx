@@ -69,14 +69,14 @@ export function EditorialHomeConcept() {
             aria-label="Play Features, the daily untangling puzzle"
           >
             <SiteImage
-              src="/features/features-game-light-og-1200x630.png"
+              src="/project-art/personal/features-neural-threads.png"
               slot="conceptProject"
-              alt="Features daily puzzle: coloured threads woven through a neural network"
+              alt="Coloured neural threads converging through a field of geometric nodes"
               above
               aboveSync
             />
             <span className="concept-project-foot">
-              <span>
+              <span className="concept-project-label">
                 <strong>features</strong>
                 <span>daily untangling puzzle</span>
               </span>
@@ -96,7 +96,7 @@ export function EditorialHomeConcept() {
               aboveSync
             />
             <span className="concept-project-foot">
-              <span>
+              <span className="concept-project-label">
                 <strong>Português com a Inês</strong>
                 <span>European Portuguese lessons</span>
               </span>
@@ -114,7 +114,7 @@ export function EditorialHomeConcept() {
               alt="An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre"
             />
             <span className="concept-project-foot">
-              <span>
+              <span className="concept-project-label">
                 <strong>The Trek</strong>
                 <span>Paris → Sofia · 1,982 km</span>
               </span>

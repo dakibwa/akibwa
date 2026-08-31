@@ -257,14 +257,15 @@ const pageState = () => evaluate(`(() => {
       rect: rect(item),
       imageRect: rect(item.querySelector("img")),
       footRect: rect(item.querySelector(".concept-project-foot")),
+      labelRect: rect(item.querySelector(".concept-project-label")),
       titleRect: rect(item.querySelector(".concept-project-foot strong")),
-      subtitleRect: rect(item.querySelector(".concept-project-foot > span:first-child > span")),
+      subtitleRect: rect(item.querySelector(".concept-project-label > span")),
       titleStyle: (() => {
         const style = getComputedStyle(item.querySelector(".concept-project-foot strong"));
         return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join("/");
       })(),
       subtitleStyle: (() => {
-        const style = getComputedStyle(item.querySelector(".concept-project-foot > span:first-child > span"));
+        const style = getComputedStyle(item.querySelector(".concept-project-label > span"));
         return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join("/");
       })(),
       hasArrow: Boolean(item.querySelector(".concept-arrow")),
@@ -451,10 +452,20 @@ const checkDesktop = async () => {
     `the Features caption closes as a slim bottom rail [${state.projects[0].footRect.height.toFixed(1)}px]`
   );
   check(
-    state.projects.every((item) => item.subtitleRect.top >= item.titleRect.bottom - 1) &&
-      state.projects.every((item) => item.titleStyle === state.projects[0].titleStyle) &&
+    state.projects.every((item) => item.titleStyle === state.projects[0].titleStyle) &&
       state.projects.every((item) => item.subtitleStyle === state.projects[0].subtitleStyle),
-    "all project captions share the same stacked title and subtitle typography"
+    "all project captions share the same title and subtitle typography"
+  );
+  check(
+    state.projects[0].titleRect.left - state.projects[0].footRect.left <= 16 &&
+      state.projects[0].footRect.right - state.projects[0].subtitleRect.right <= 16 &&
+      Math.abs(state.projects[0].titleRect.bottom - state.projects[0].subtitleRect.bottom) <= 3,
+    "the Features caption uses both ends of its bottom rail"
+  );
+  check(
+    state.projects.slice(1).every((item) => item.titleRect.top - item.footRect.top <= 20) &&
+      state.projects.slice(1).every((item) => item.footRect.bottom - item.subtitleRect.bottom <= 20),
+    "the supporting captions use the full height of their side rails"
   );
   check(
     state.projects.slice(1).every((item) => item.footRect.width / item.rect.width <= 0.3),
@@ -767,6 +778,11 @@ const checkMobile = async () => {
       Math.abs(initial.projects[0].rect.left - initial.projects[1].rect.left) <= 1 &&
       Math.abs(initial.projects[1].rect.left - initial.projects[2].rect.left) <= 1,
     `all three phone projects fill the shared content width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
+  );
+  check(
+    initial.projects.every((item) => item.titleRect.right < item.subtitleRect.left) &&
+      initial.projects.every((item) => item.footRect.right - item.subtitleRect.right <= 12),
+    "every phone caption uses the full rail from title to subtitle"
   );
   check(
     !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[2].rect.bottom + 40,

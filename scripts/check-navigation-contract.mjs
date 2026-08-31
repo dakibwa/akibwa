@@ -115,8 +115,13 @@ requireText(
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
+  'src="/project-art/personal/features-neural-threads.png"',
+  "Features must use the text-free neural-thread headline artwork"
+);
+forbidText(
+  editorial,
   'src="/features/features-game-light-og-1200x630.png"',
-  "Features must keep the approved light artwork"
+  "the poster-style Features social card must not return to the homepage"
 );
 requireText(editorial, 'href="/portugal/"', "Português com a Inês must be the second direct project link");
 requireText(
@@ -162,6 +167,12 @@ requireRuleText(".concept-project-foot {", [
   "box-shadow: inset 0 3px 0 var(--project-card-accent)",
   "transition: none"
 ]);
+requireRuleText(".concept-project-label {", [
+  "width: 100%",
+  "grid-template-columns: max-content minmax(0, 1fr)",
+  "align-items: baseline"
+]);
+requireRuleText(".concept-project-label > span {", ["justify-self: end", "text-align: right"]);
 requireRuleText(".concept-project-card:hover .concept-project-foot,", [
   "var(--project-card-accent) 18%",
   "var(--project-card-panel)"
@@ -171,11 +182,10 @@ forbidText(
   "background: var(--project-card-accent)",
   "project hover must remain a subtle tint rather than a full colour flood"
 );
-forbidText(
-  css,
-  ".concept-feature .concept-project-foot",
-  "Features must inherit the same stacked caption typography as the other projects"
-);
+requireRuleText(".concept-portuguese .concept-project-label,", [
+  "height: 100%",
+  "grid-template-rows: auto 1fr auto"
+]);
 requireText(
   css,
   ".concept-project-card:active .concept-project-foot",
@@ -299,7 +309,7 @@ requireRuleText(".akibwa-home .deck .card {", [
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
 
 for (const source of [
-  "/features/features-game-light-og-1200x630.png",
+  "/project-art/personal/features-neural-threads.png",
   "/project-art/personal/portuguese-with-ines-conversation.png"
 ]) {
   if (!imageVariants[`conceptProject:${source}`]) fail(`${source} must have a conceptProject image ladder`);
