@@ -18,6 +18,7 @@ const clientPreviews = readFileSync(
 );
 const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.url), "utf8");
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
+const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 const imageVariants = JSON.parse(
   readFileSync(new URL("../components/image-variants.json", import.meta.url), "utf8")
@@ -63,9 +64,21 @@ requireText(index, "return <EditorialHomeConcept />", "the editorial homepage mu
 forbidText(index, "<HomePage", "the retired all-in-one wall must not return as the root route");
 forbidText(shell, "site-header", "the retired site header must stay retired");
 
-/* Identity and navigation stay brief, static and directly useful. */
-requireText(editorial, "I’m{\" \"}", "the homepage must open with the first-person identity");
-requireText(editorial, '<span className="hero-name-value">Akibwa</span>', "Akibwa must be the visible name");
+/* Identity stays brief but keeps the original Daniel/Akibwa flick; navigation
+   remains static and directly useful. */
+requireText(
+  editorial,
+  'import { HeroFlipName } from "@/components/hero-word-cycle"',
+  "the editorial homepage must use the shared identity cycle"
+);
+requireText(editorial, "<HeroFlipName />", "the visible masthead must render the identity cycle");
+requireText(heroCycle, '{ label: "Daniel"', "the identity cycle must include Daniel");
+requireText(heroCycle, '{ label: "Akibwa"', "the identity cycle must include Akibwa");
+forbidText(
+  css,
+  ".concept-identity .hero-name-value {\n  animation: none;",
+  "the editorial masthead must not disable the identity flick"
+);
 requireText(editorial, "Building in the age of AI.", "the approved one-line proposition must remain");
 requireText(editorial, '<div className="concept-hero-copy">', "the proposition and menu must share the right-hand hero column");
 for (const [href, label] of [

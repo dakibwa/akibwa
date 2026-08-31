@@ -6559,10 +6559,6 @@ button {
   font-weight: 660;
 }
 
-.concept-identity .hero-name-value {
-  animation: none;
-}
-
 .concept-hero-copy {
   width: fit-content;
   max-width: 100%;

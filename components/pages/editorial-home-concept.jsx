@@ -1,5 +1,6 @@
 import { deck, sites } from "@/components/deck-data";
 import { ClientSitePreviews } from "@/components/client-site-previews";
+import { HeroFlipName } from "@/components/hero-word-cycle";
 import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
@@ -49,12 +50,7 @@ export function EditorialHomeConcept() {
     <div className="concept-page">
       <header className="page-grid concept-hero">
         <h1 className="concept-identity">
-          I’m{" "}
-          <span className="hero-name" style={{ "--name-accent-rgb": "235, 92, 8" }}>
-            <span className="hero-name-stack">
-              <span className="hero-name-value">Akibwa</span>
-            </span>
-          </span>
+          <HeroFlipName />
         </h1>
         <div className="concept-hero-copy">
           <p className="concept-lede">
