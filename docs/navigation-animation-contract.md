@@ -21,11 +21,11 @@ publishing homepage changes.
   same bottom caption rail; there are no narrow side captions. The Portuguese
   card uses a text-free conversation illustration; Trek uses a route-led
   topographic illustration drawn from the live atlas; and Features uses a
-  bright, image-led version of the game's own board language: one compact
-  wordmark, the colour rule, live thread palette, crossings, nodes and feature
-  controls, with no explanatory copy in the art. The five feature stamps form
-  a slim vertical rail against the right edge, balancing the wordmark without
-  taking space from the puzzle.
+  bright, image-led version of an authentic four-thread game board: one compact
+  wordmark, the colour rule, continuous thread geometry, real crossings,
+  neurons and feature controls, with no explanatory copy in the art. The five
+  feature stamps form a slim vertical rail against the right edge, balancing
+  the wordmark without taking space from the puzzle.
 - Project captions are slim bottom rails with one accent edge. Features uses
   a pale sea-glass rail with deep green type and frame; the other two use the
   page's warm paper so their artwork keeps the colour. All three use the same
