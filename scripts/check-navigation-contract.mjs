@@ -115,13 +115,13 @@ requireText(
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
-  'src="/project-art/personal/features-neural-threads.png"',
-  "Features must use the text-free neural-thread headline artwork"
+  'src="/features/og.png"',
+  "Features must use the game's own dark board artwork"
 );
 forbidText(
   editorial,
-  'src="/features/features-game-light-og-1200x630.png"',
-  "the poster-style Features social card must not return to the homepage"
+  'src="/project-art/personal/features-neural-threads.png"',
+  "the generic neural-thread artwork must not return to the homepage"
 );
 requireText(editorial, 'href="/portugal/"', "Português com a Inês must be the second direct project link");
 requireText(
@@ -309,7 +309,7 @@ requireRuleText(".akibwa-home .deck .card {", [
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
 
 for (const source of [
-  "/project-art/personal/features-neural-threads.png",
+  "/features/og.png",
   "/project-art/personal/portuguese-with-ines-conversation.png"
 ]) {
   if (!imageVariants[`conceptProject:${source}`]) fail(`${source} must have a conceptProject image ladder`);

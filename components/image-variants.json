@@ -947,48 +947,48 @@
       }
     ]
   },
-  "conceptProject:/project-art/personal/features-neural-threads.png": {
-    "source": "/project-art/personal/features-neural-threads.png",
+  "conceptProject:/features/og.png": {
+    "source": "/features/og.png",
     "slot": "conceptProject",
     "ratio": 1.9048,
-    "sourceWidth": 1731,
-    "sourceHeight": 909,
-    "sourceHash": "1a0280bec8c5c343",
+    "sourceWidth": 1200,
+    "sourceHeight": 630,
+    "sourceHash": "c18438f504e4d35e",
     "variants": [
       {
         "width": 491,
         "height": 258,
         "avif": {
-          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-491.avif",
-          "bytes": 4676
+          "src": "/_img/features/og-conceptProject-491.avif",
+          "bytes": 7183
         },
         "webp": {
-          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-491.webp",
-          "bytes": 6976
+          "src": "/_img/features/og-conceptProject-491.webp",
+          "bytes": 9264
         }
       },
       {
         "width": 780,
         "height": 410,
         "avif": {
-          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-780.avif",
-          "bytes": 7414
+          "src": "/_img/features/og-conceptProject-780.avif",
+          "bytes": 11951
         },
         "webp": {
-          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-780.webp",
-          "bytes": 12628
+          "src": "/_img/features/og-conceptProject-780.webp",
+          "bytes": 15928
         }
       },
       {
         "width": 948,
         "height": 498,
         "avif": {
-          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-948.avif",
-          "bytes": 8956
+          "src": "/_img/features/og-conceptProject-948.avif",
+          "bytes": 14592
         },
         "webp": {
-          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-948.webp",
-          "bytes": 16464
+          "src": "/_img/features/og-conceptProject-948.webp",
+          "bytes": 19946
         }
       }
     ]
