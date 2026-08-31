@@ -257,6 +257,16 @@ const pageState = () => evaluate(`(() => {
       rect: rect(item),
       imageRect: rect(item.querySelector("img")),
       footRect: rect(item.querySelector(".concept-project-foot")),
+      titleRect: rect(item.querySelector(".concept-project-foot strong")),
+      subtitleRect: rect(item.querySelector(".concept-project-foot > span:first-child > span")),
+      titleStyle: (() => {
+        const style = getComputedStyle(item.querySelector(".concept-project-foot strong"));
+        return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join("/");
+      })(),
+      subtitleStyle: (() => {
+        const style = getComputedStyle(item.querySelector(".concept-project-foot > span:first-child > span"));
+        return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join("/");
+      })(),
       hasArrow: Boolean(item.querySelector(".concept-arrow")),
       imageComplete: item.querySelector("img")?.complete,
       imageWidth: item.querySelector("img")?.naturalWidth,
@@ -441,6 +451,12 @@ const checkDesktop = async () => {
     `the Features caption closes as a slim bottom rail [${state.projects[0].footRect.height.toFixed(1)}px]`
   );
   check(
+    state.projects.every((item) => item.subtitleRect.top >= item.titleRect.bottom - 1) &&
+      state.projects.every((item) => item.titleStyle === state.projects[0].titleStyle) &&
+      state.projects.every((item) => item.subtitleStyle === state.projects[0].subtitleStyle),
+    "all project captions share the same stacked title and subtitle typography"
+  );
+  check(
     state.projects.slice(1).every((item) => item.footRect.width / item.rect.width <= 0.3),
     `the supporting caption rails stay narrow [${state.projects.slice(1).map((item) => `${(item.footRect.width / item.rect.width * 100).toFixed(1)}%`).join(" / ")}]`
   );
@@ -539,9 +555,9 @@ const checkLinkHover = async () => {
   );
   check(
     hovered.footBackground !== before.footBackground &&
-      hovered.footColor !== before.footColor &&
+      hovered.footColor === before.footColor &&
       parseFloat(hovered.footTransition) === 0,
-    "hover changes the caption rail colour immediately"
+    "hover adds a subtle caption tint without changing its text"
   );
   check(hovered.transform === "none", "hover does not tilt, lift, or scale the feature");
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");

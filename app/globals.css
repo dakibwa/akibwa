@@ -6725,46 +6725,14 @@ button {
   line-height: 1.25;
 }
 
-.concept-feature .concept-project-foot > span:first-child {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25em 0.8em;
-}
-
-.concept-feature .concept-project-foot > span:first-child > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.8em;
-}
-
-.concept-feature .concept-project-foot > span:first-child > span::before {
-  width: 4px;
-  height: 4px;
-  flex: none;
-  background: var(--project-card-accent);
-  content: "";
-  rotate: 45deg;
-}
-
 .concept-project-card:hover .concept-project-foot,
 .concept-project-card:focus-visible .concept-project-foot,
 .concept-project-card:active .concept-project-foot {
-  background: var(--project-card-accent);
-  box-shadow: none;
-  color: var(--concept-dark);
-}
-
-.concept-project-card:hover .concept-project-foot > span:first-child > span,
-.concept-project-card:focus-visible .concept-project-foot > span:first-child > span,
-.concept-project-card:active .concept-project-foot > span:first-child > span {
-  color: rgba(12, 17, 19, 0.9);
-}
-
-.concept-feature:hover .concept-project-foot > span:first-child > span::before,
-.concept-feature:focus-visible .concept-project-foot > span:first-child > span::before,
-.concept-feature:active .concept-project-foot > span:first-child > span::before {
-  background: var(--concept-dark);
+  background: color-mix(
+    in srgb,
+    var(--project-card-accent) 18%,
+    var(--project-card-panel)
+  );
 }
 
 /* On a wide canvas the lead project occupies the full left column while the
