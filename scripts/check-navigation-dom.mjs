@@ -330,7 +330,7 @@ const careerState = () => evaluate(`(() => {
       const emphasis = [...stop.querySelectorAll(".concept-career-statement strong")];
       return Boolean(stop.querySelector(".concept-career-popover > strong")?.textContent.trim()) &&
         Boolean(stop.querySelector(".concept-career-popover > span")?.textContent.trim()) &&
-        statement?.startsWith("I ") && statement.includes(" to ") &&
+        /^(Built|Led|Assisted|Analysed) /.test(statement) && statement.includes(" to ") &&
         emphasis.length >= 2 && emphasis.every((item) => item.textContent.trim());
     }),
     concise: stops.every((stop) => {
@@ -436,14 +436,15 @@ const checkDesktop = async () => {
     `the complete career sequence remains intact [${state.career.length} stops]`
   );
   check(
-    state.career[0].statement === "I build client websites and practical AI tools, including Butterfly Rose, to make useful software.",
-    `Butterfly Rose lives within the Freelance offer [${state.career[0].statement}]`
+    state.career[0].statement === "Built client websites for Butterfly Rose and Português com a Inês to support their businesses.",
+    `both named client projects live within the Freelance offer [${state.career[0].statement}]`
   );
   check(
     state.career.every((item) =>
-      item.role && item.statement?.startsWith("I ") && item.statement.includes(" to ") && item.emphasis.length >= 2 && item.hidden
+      item.role && /^(Built|Led|Assisted|Analysed) /.test(item.statement) &&
+        item.statement.includes(" to ") && item.emphasis.length >= 2 && item.hidden
     ),
-    "every career stop keeps one selectively bolded action-to-purpose sentence inside the compact interaction"
+    "every career stop keeps one verb-led, selectively bolded action-to-purpose sentence inside the compact interaction"
   );
   check(
     state.filters.map((item) => item.text).join(" / ") ===

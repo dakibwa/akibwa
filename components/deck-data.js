@@ -15,8 +15,8 @@ export const deck = {
       "accent": "#c05212",
       "logo": "/favicon.svg",
       "tile": true,
-      "statement": "I build client websites and practical AI tools, including Butterfly Rose, to make useful software.",
-      "emphasis": ["client websites", "AI tools", "Butterfly Rose"]
+      "statement": "Built client websites for Butterfly Rose and Português com a Inês to support their businesses.",
+      "emphasis": ["client websites", "Butterfly Rose", "Português com a Inês", "support their businesses"]
     },
     {
       "name": "National Wealth Fund",
@@ -26,7 +26,7 @@ export const deck = {
       "accent": "#732740",
       "logo": "/brand-logos/national-wealth-fund-icon.png",
       "tile": false,
-      "statement": "I build the Microsoft Fabric data platform to support UK growth and clean energy.",
+      "statement": "Built the Microsoft Fabric data platform to support UK growth and clean energy.",
       "emphasis": ["Microsoft Fabric", "UK growth and clean energy"]
     },
     {
@@ -37,7 +37,7 @@ export const deck = {
       "accent": "#2f88ff",
       "logo": "/brand-logos/leeds-building-society-icon.svg",
       "tile": false,
-      "statement": "I led the BI team and improved its data tools to help more people own a home.",
+      "statement": "Led the BI team and improved its data tools to help more people own a home.",
       "emphasis": ["BI team", "data tools", "own a home"]
     },
     {
@@ -48,7 +48,7 @@ export const deck = {
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
       "tile": false,
-      "statement": "I assisted with electrical work to make homes safe and reliable.",
+      "statement": "Assisted with electrical work to make homes safe and reliable.",
       "emphasis": ["electrical work", "safe and reliable"]
     },
     {
@@ -59,7 +59,7 @@ export const deck = {
       "accent": "#d01fcb",
       "logo": "/brand-logos/sky-betting-gaming-logo.png",
       "tile": true,
-      "statement": "I built Power BI reports to analyse safer gambling and make betting and gaming safer.",
+      "statement": "Built Power BI reports to analyse safer gambling and make betting and gaming safer.",
       "emphasis": ["Power BI", "safer gambling", "betting and gaming safer"]
     },
     {
@@ -70,7 +70,7 @@ export const deck = {
       "accent": "#9a6038",
       "logo": "/brand-logos/joinery.svg",
       "tile": false,
-      "statement": "I assisted with joinery to build and fit homes well.",
+      "statement": "Assisted with joinery to build and fit homes well.",
       "emphasis": ["joinery", "build and fit homes well"]
     },
     {
@@ -81,7 +81,7 @@ export const deck = {
       "accent": "#f15a24",
       "logo": "/brand-logos/vanquis-icon.svg",
       "tile": false,
-      "statement": "I built cost and NPV models in SQL to make banking more accessible.",
+      "statement": "Built cost and NPV models in SQL to make banking more accessible.",
       "emphasis": ["cost and NPV models", "SQL", "banking more accessible"]
     },
     {
@@ -92,7 +92,7 @@ export const deck = {
       "accent": "#006747",
       "logo": "/brand-logos/lloyds-horse-icon.png",
       "tile": false,
-      "statement": "I analysed credit risk to help Britain prosper.",
+      "statement": "Analysed credit risk to help Britain prosper.",
       "emphasis": ["credit risk", "Britain prosper"]
     }
   ],

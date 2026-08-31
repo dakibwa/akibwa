@@ -129,8 +129,8 @@ forbidText(editorial, "concept-freelance", "Freelance must not render as a separ
 forbidText(css, ".concept-freelance", "the retired standalone Freelance row must not keep dead styling");
 requireText(
   deckData,
-  '"statement": "I build client websites and practical AI tools, including Butterfly Rose, to make useful software."',
-  "Butterfly Rose must stay inside the Freelance career detail"
+  '"statement": "Built client websites for Butterfly Rose and Português com a Inês to support their businesses."',
+  "Butterfly Rose and Português com a Inês must stay inside the Freelance career detail"
 );
 forbidText(editorial, "<ClientSitePreviews", "the retired equal-billing client preview grid must stay off the homepage");
 forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
@@ -184,19 +184,19 @@ requireText(editorial, 'job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is
 requireRuleText(".concept-career-logo.is-lloyds img {", ["transform: translate(6%, 2.5%)"]);
 forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
 for (const statement of [
-  "I build client websites and practical AI tools, including Butterfly Rose, to make useful software.",
-  "I build the Microsoft Fabric data platform to support UK growth and clean energy.",
-  "I led the BI team and improved its data tools to help more people own a home.",
-  "I assisted with electrical work to make homes safe and reliable.",
-  "I built Power BI reports to analyse safer gambling and make betting and gaming safer.",
-  "I assisted with joinery to build and fit homes well.",
-  "I built cost and NPV models in SQL to make banking more accessible.",
-  "I analysed credit risk to help Britain prosper."
+  "Built client websites for Butterfly Rose and Português com a Inês to support their businesses.",
+  "Built the Microsoft Fabric data platform to support UK growth and clean energy.",
+  "Led the BI team and improved its data tools to help more people own a home.",
+  "Assisted with electrical work to make homes safe and reliable.",
+  "Built Power BI reports to analyse safer gambling and make betting and gaming safer.",
+  "Assisted with joinery to build and fit homes well.",
+  "Built cost and NPV models in SQL to make banking more accessible.",
+  "Analysed credit risk to help Britain prosper."
 ]) {
   requireText(deckData, `"statement": "${statement}"`, `career statement must stay literal and short: ${statement}`);
 }
 for (const emphasis of [
-  '["client websites", "AI tools", "Butterfly Rose"]',
+  '["client websites", "Butterfly Rose", "Português com a Inês", "support their businesses"]',
   '["Microsoft Fabric", "UK growth and clean energy"]',
   '["BI team", "data tools", "own a home"]',
   '["electrical work", "safe and reliable"]',
@@ -209,6 +209,7 @@ for (const emphasis of [
 }
 forbidText(deckData, '"back":', "career data must not keep a separate action field");
 forbidText(deckData, '"mission":', "career data must not keep a separate mission field");
+forbidText(deckData, '"statement": "I ', "career statements must stay direct and verb-led");
 requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
 requireRuleText(".concept-career-stop {", ["grid-template-rows: 24px 36px 68px"]);
 requireRuleText(".concept-career-time {", ["white-space: nowrap", "text-align: center"]);
