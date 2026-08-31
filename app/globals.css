@@ -6703,16 +6703,6 @@ button {
   transform: translate(2px, -1px);
 }
 
-.concept-freelance {
-  display: grid;
-  grid-template-columns: minmax(180px, 0.72fr) minmax(0, 1.28fr);
-  gap: clamp(30px, 6vw, 96px);
-  align-items: start;
-  margin-top: clamp(28px, 4vw, 50px);
-  padding-top: clamp(22px, 2.8vw, 34px);
-  border-top: 1px solid var(--line-strong);
-}
-
 .concept-kicker {
   margin: 0;
   color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
@@ -6723,55 +6713,11 @@ button {
   text-transform: uppercase;
 }
 
-.concept-freelance h2,
 .concept-career h2,
 .concept-archive-head h2 {
   margin: 0;
   color: var(--black);
   letter-spacing: -0.045em;
-}
-
-.concept-freelance h2 {
-  max-width: 8ch;
-  margin-top: 0.35em;
-  font-family: var(--serif);
-  font-size: clamp(2rem, 3.4vw, 3.65rem);
-  font-weight: 500;
-  line-height: 0.94;
-}
-
-.concept-freelance-copy {
-  max-width: 66ch;
-}
-
-.concept-freelance-copy > p {
-  margin: 0;
-  color: color-mix(in srgb, var(--ink) 76%, var(--canvas));
-  font-size: clamp(1rem, 1.35vw, 1.2rem);
-  line-height: 1.52;
-}
-
-.concept-freelance-copy .concept-client-note {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35em 0.7em;
-  margin-top: clamp(18px, 2.2vw, 26px);
-  padding-top: 12px;
-  border-top: 1px solid color-mix(in srgb, var(--ink) 13%, var(--canvas));
-  font-size: 0.76rem;
-  line-height: 1.35;
-}
-
-.concept-client-note span {
-  color: color-mix(in srgb, var(--ink) 48%, var(--canvas));
-  font-weight: 650;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.concept-client-note strong {
-  color: color-mix(in srgb, var(--ink) 82%, var(--canvas));
-  font-weight: 670;
 }
 
 .concept-text-link {
@@ -6989,13 +6935,8 @@ button {
     margin-top: clamp(24px, 3.4vw, 34px);
   }
 
-  .concept-project-grid,
-  .concept-freelance {
+  .concept-project-grid {
     grid-template-columns: 1fr;
-  }
-
-  .concept-freelance {
-    gap: 22px;
   }
 }
 
@@ -7035,16 +6976,6 @@ button {
   .concept-project-foot {
     padding: 10px 11px 11px;
     font-size: 0.69rem;
-  }
-
-  .concept-freelance {
-    margin-top: 28px;
-    padding-top: 20px;
-  }
-
-  .concept-freelance h2 {
-    max-width: none;
-    font-size: 2.25rem;
   }
 
   .concept-text-link {

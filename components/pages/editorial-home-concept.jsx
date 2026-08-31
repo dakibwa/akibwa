@@ -3,8 +3,6 @@ import { HeroFlipName } from "@/components/hero-word-cycle";
 import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
-const freelance = deck.jobs.find((job) => job.name === "Freelance");
-
 /* Keep the whole working history in sequence, including the two stretches on
    the tools between office roles. Details stay inside the compact interaction
    so Career keeps the original horizontal rhythm. */
@@ -86,20 +84,6 @@ export function EditorialHomeConcept() {
             </span>
           </a>
         </div>
-
-        <aside className="concept-freelance" id="now" aria-labelledby="freelance-title">
-          <header>
-            <p className="concept-kicker">Freelance</p>
-            <h2 id="freelance-title">Built end to end.</h2>
-          </header>
-          <div className="concept-freelance-copy">
-            <p>{freelance.back}</p>
-            <p className="concept-client-note">
-              <span>Client work includes</span>
-              <strong>Butterfly Rose</strong>
-            </p>
-          </div>
-        </aside>
       </section>
 
       <section className="page-grid concept-career-section" id="career" aria-labelledby="career-title">

@@ -15,7 +15,7 @@ export const deck = {
       "accent": "#c05212",
       "logo": "/favicon.svg",
       "tile": true,
-      "back": "Build websites, booking systems and AI tools.",
+      "back": "Build client sites, including Butterfly Rose.",
       "mission": "Make useful software."
     },
     {

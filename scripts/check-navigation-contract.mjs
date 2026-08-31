@@ -98,9 +98,8 @@ requireText(
 );
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
 
-/* The Projects lead is a deliberate pair: Dan's own game and the client project
-   he is proud to feature. Butterfly Rose stays a small proof point in the
-   freelance offer rather than taking equal visual billing. */
+/* Projects is only the deliberate pair: Dan's own game and the client project
+   he is proud to feature. Freelance and Butterfly Rose belong in Career. */
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
@@ -115,9 +114,13 @@ requireText(
 );
 requireText(editorial, "Português com a Inês</strong>", "the Portuguese project must be visibly named");
 requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
-requireText(editorial, "{freelance.back}", "the current freelance offer must be visible in Projects");
-requireText(editorial, "Client work includes", "client proof must stay explicit but secondary");
-requireText(editorial, "Butterfly Rose</strong>", "Butterfly Rose must remain a small client proof point");
+forbidText(editorial, "concept-freelance", "Freelance must not render as a separate Projects row");
+forbidText(css, ".concept-freelance", "the retired standalone Freelance row must not keep dead styling");
+requireText(
+  deckData,
+  '"back": "Build client sites, including Butterfly Rose."',
+  "Butterfly Rose must stay inside the Freelance career detail"
+);
 forbidText(editorial, "<ClientSitePreviews", "the retired equal-billing client preview grid must stay off the homepage");
 forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
 forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
@@ -125,7 +128,6 @@ forbidText(editorial, "Talk about a project", "the retired project CTA must stay
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
 requireRuleText(".concept-project-grid {", ["display: grid", "repeat(2, minmax(0, 1fr))"]);
 requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
-requireRuleText(".concept-freelance {", ["display: grid", "border-top: 1px solid"]);
 
 /* Career keeps the approved horizontal eight-stop index. The title, short
    action and short mission remain available through hover and keyboard focus. */
@@ -160,7 +162,7 @@ requireText(editorial, 'job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is
 requireRuleText(".concept-career-logo.is-lloyds img {", ["transform: translate(6%, 2.5%)"]);
 forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
 for (const copy of [
-  "Build websites, booking systems and AI tools.",
+  "Build client sites, including Butterfly Rose.",
   "Build the Microsoft Fabric data platform.",
   "Led the BI team and improved its tools.",
   "Assisted with electrical work.",

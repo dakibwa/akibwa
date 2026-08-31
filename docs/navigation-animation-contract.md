@@ -18,14 +18,15 @@ publishing homepage changes.
 - Projects leads with two equal direct cards: Features and Português com a
   Inês. The Portuguese card uses a text-free conversation illustration so the
   service reads before its label does.
-- A compact Freelance row follows the cards. It states the current offer, with
-  Butterfly Rose retained only as a small client proof point.
+- Projects ends after those two cards; Freelance is not a separate pitch in
+  this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
 
 ## Career
 
 - Career is the original horizontal eight-stop index with Freelance first.
+  Its short “What I did” line identifies Butterfly Rose as a client.
 - At rest it shows only dates and marks. Hover or keyboard focus reveals the
   job title, one short line on what Dan did and one short line on the mission.
 - The same compact interaction and horizontal rhythm remain on phones.

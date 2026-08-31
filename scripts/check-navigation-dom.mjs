@@ -258,11 +258,8 @@ const pageState = () => evaluate(`(() => {
       imageWidth: item.querySelector("img")?.naturalWidth,
       currentSrc: item.querySelector("img")?.currentSrc
     })),
-    freelance: {
-      text: document.querySelector(".concept-freelance")?.innerText.replace(/\\s+/g, " ").trim(),
-      rect: rect(document.querySelector(".concept-freelance")),
-      butterflyImages: [...document.images].filter((image) => /butterfly/i.test(image.currentSrc)).length
-    },
+    standaloneFreelance: Boolean(document.querySelector(".concept-freelance")),
+    careerSection: rect(document.querySelector(".concept-career-section")),
     career: [...document.querySelectorAll(".concept-career-stop")].map((item) => ({
       name: item.querySelector(".concept-career-popover strong")?.textContent.trim(),
       role: item.querySelector(".concept-career-popover > span")?.textContent.trim(),
@@ -415,15 +412,14 @@ const checkDesktop = async () => {
     state.projects.every((item) => item.imageComplete && item.imageWidth >= 900 && /conceptProject/.test(item.currentSrc)),
     "both featured projects load their responsive artwork"
   );
-  check(
-    state.freelance.text.includes("Build websites, booking systems and AI tools.") &&
-      state.freelance.text.endsWith("CLIENT WORK INCLUDES Butterfly Rose"),
-    `the freelance offer carries the small Butterfly Rose proof point [${state.freelance.text}]`
-  );
-  check(state.freelance.butterflyImages === 0, "Butterfly Rose no longer gets a featured image");
+  check(!state.standaloneFreelance, "Freelance does not render as a separate Projects row");
   check(
     state.career.length === 8 && state.career[0].name === "Freelance" && state.career.at(-1).name === "Lloyds Banking Group",
     `the complete career sequence remains intact [${state.career.length} stops]`
+  );
+  check(
+    state.career[0].details[0] === "Build client sites, including Butterfly Rose.",
+    `Butterfly Rose lives in the Freelance career detail [${state.career[0].details[0]}]`
   );
   check(
     state.career.every((item) =>
@@ -642,11 +638,9 @@ const checkMobile = async () => {
     `the two featured projects stack at full phone width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
   );
   check(
-    initial.freelance.rect.top >= initial.projects[1].rect.bottom + 24 &&
-      initial.freelance.text.endsWith("CLIENT WORK INCLUDES Butterfly Rose"),
-    "the freelance offer follows the projects with Butterfly Rose kept secondary"
+    !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[1].rect.bottom + 40,
+    "the phone flows directly from the two Projects cards into Career"
   );
-  check(initial.freelance.butterflyImages === 0, "the phone does not promote Butterfly Rose with an image");
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     document.querySelector("#taste").scrollIntoView({ block: "start" });
