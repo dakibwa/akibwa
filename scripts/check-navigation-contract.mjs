@@ -16,6 +16,8 @@ const home = readFileSync(new URL("../components/pages/home-page.jsx", import.me
 const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 const siteImage = readFileSync(new URL("../components/site-image.jsx", import.meta.url), "utf8");
+const electricalLogo = readFileSync(new URL("../public/brand-logos/electrical.svg", import.meta.url), "utf8");
+const joineryLogo = readFileSync(new URL("../public/brand-logos/joinery.svg", import.meta.url), "utf8");
 const imageVariants = JSON.parse(
   readFileSync(new URL("../components/image-variants.json", import.meta.url), "utf8")
 );
@@ -289,16 +291,33 @@ forbidText(deckData, '"mission":', "career data must not keep a separate mission
 forbidText(deckData, '"statement": "I ', "career statements must stay direct and verb-led");
 requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
 requireRuleText(".concept-career-stop {", ["grid-template-rows: 24px 36px 68px"]);
-requireRuleText(".concept-career-time {", ["white-space: nowrap", "text-align: center"]);
+requireRuleText(".concept-career-time {", [
+  "color: color-mix(in srgb, var(--company-accent) 46%, var(--ink))",
+  "font-variant-numeric: tabular-nums",
+  "font-weight: 700",
+  "white-space: nowrap",
+  "text-align: center"
+]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireRuleText(
   ".concept-career-card {",
-  ["border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink))"]
+  [
+    "border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink))",
+    "background: color-mix(in srgb, var(--company-accent) 11%, var(--career-card-paper))"
+  ]
 );
 requireRuleText(
   ".concept-career-stop:hover .concept-career-card,",
-  ["border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink))"]
+  [
+    "border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink))",
+    "background: color-mix(in srgb, var(--company-accent) 17%, var(--career-card-paper))"
+  ]
 );
+requireText(electricalLogo, 'viewBox="0 0 64 64"', "Electrical must use the refined full-size vector mark");
+requireText(electricalLogo, "stroke-linecap=\"round\"", "Electrical must keep its rounded cable geometry");
+requireText(electricalLogo, "M17 20h30v4", "Electrical must keep the custom plug-and-cable silhouette");
+requireText(joineryLogo, 'viewBox="0 0 64 64"', "Joinery must use the refined full-size vector mark");
+requireText(joineryLogo, "M5 13h32L24 32l13 19H5Z", "Joinery must keep the custom dovetail joint");
 requireText(
   css,
   "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",

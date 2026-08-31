@@ -341,6 +341,10 @@ const careerState = () => evaluate(`(() => {
   const cardBorders = stops.map((stop) =>
     getComputedStyle(stop.querySelector(".concept-career-card")).borderTopColor
   );
+  const cardBackgrounds = stops.map((stop) =>
+    getComputedStyle(stop.querySelector(".concept-career-card")).backgroundColor
+  );
+  const dateStyles = stops.map((stop) => getComputedStyle(stop.querySelector(".concept-career-time")));
   return {
     count: stops.length,
     complete: stops.every((stop) => {
@@ -367,7 +371,11 @@ const careerState = () => evaluate(`(() => {
       .map((stop) => stop.querySelector(".concept-career-popover strong")?.textContent.trim()),
     dateLabels: dateLabels.join(" / "),
     cardBorders,
+    cardBackgrounds,
     distinctCardBorders: new Set(cardBorders).size,
+    distinctCardBackgrounds: new Set(cardBackgrounds).size,
+    distinctDateColors: new Set(dateStyles.map((style) => style.color)).size,
+    datesBold: dateStyles.every((style) => Number(style.fontWeight) >= 700),
     datesSingleLine: stops.every((stop) => {
       const time = stop.querySelector(".concept-career-time");
       const range = document.createRange();
@@ -660,6 +668,11 @@ const checkCareerTimeline = async () => {
     state.distinctCardBorders === state.count,
     `every resting logo card carries its own darker company-colour border [${state.cardBorders.join(" / ")}]`
   );
+  check(
+    state.distinctCardBackgrounds === state.count,
+    `every resting logo card carries its own quiet company-colour surface [${state.cardBackgrounds.join(" / ")}]`
+  );
+  check(state.distinctDateColors === state.count && state.datesBold, "career dates use dark, semibold company-toned type");
   check(state.datesSingleLine, "every desktop date stays on one line");
   check(state.popoverOpacity === 0, "career detail is hidden at rest");
   let points = await evaluate(`(() => {

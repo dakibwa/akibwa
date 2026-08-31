@@ -7404,11 +7404,11 @@ button {
 .concept-career-time {
   align-self: end;
   padding-bottom: 4px;
-  color: color-mix(in srgb, var(--ink) 50%, var(--canvas));
-  font-size: clamp(0.54rem, 0.75vw, 0.61rem);
+  color: color-mix(in srgb, var(--company-accent) 46%, var(--ink));
+  font-size: clamp(0.56rem, 0.78vw, 0.64rem);
   font-variant-numeric: tabular-nums;
-  font-weight: 590;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  letter-spacing: 0.018em;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
@@ -7427,13 +7427,14 @@ button {
 }
 
 .concept-career-card {
+  --career-card-paper: color-mix(in srgb, var(--ink) 5%, var(--canvas));
   position: relative;
   display: grid;
   min-height: 0;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink));
   border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 68%, var(--canvas));
+  background: color-mix(in srgb, var(--company-accent) 11%, var(--career-card-paper));
   transition: border-color 100ms ease, background 100ms ease;
 }
 
@@ -7552,7 +7553,7 @@ button {
 .concept-career-stop:focus .concept-career-card,
 .concept-career-stop:focus-within .concept-career-card {
   border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink));
-  background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
+  background: color-mix(in srgb, var(--company-accent) 17%, var(--career-card-paper));
 }
 
 .concept-career-stop:hover .concept-career-node,
@@ -7581,7 +7582,7 @@ button {
   .concept-career-stop:not(:focus):not(:focus-within):hover
   .concept-career-card {
   border-color: color-mix(in srgb, var(--company-accent) 68%, var(--ink));
-  background: color-mix(in srgb, var(--white) 68%, var(--canvas));
+  background: color-mix(in srgb, var(--company-accent) 11%, var(--career-card-paper));
 }
 
 .concept-career-timeline:focus-within
@@ -7635,7 +7636,7 @@ button {
 
   .concept-career-time {
     padding: 0 1px 4px;
-    font-size: clamp(0.48rem, 1.5vw, 0.56rem);
+    font-size: clamp(0.52rem, 1.55vw, 0.58rem);
   }
 
   .concept-career-card {

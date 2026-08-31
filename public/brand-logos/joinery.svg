@@ -1,6 +1,6 @@
-<svg role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <g transform="rotate(-35 16 16)">
-    <path fill="#9A6038" fill-rule="evenodd" d="M2 9h9v13H2Zm3 3v7h3v-7Z"/>
-    <path fill="#D2A06A" d="M10 11h20v7h-2l-1.5 2-1.5-2-1.5 2-1.5-2-1.5 2-1.5-2-1.5 2-1.5-2-1.5 2-1.5-2-1.5 2-1.5-2H10Z"/>
-  </g>
+<svg role="img" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <path fill="#75452B" d="M5 13h32L24 32l13 19H5Z"/>
+  <path fill="#C58A57" d="M59 13H37L24 32l13 19h22Z"/>
+  <path d="M11 23h16M11 42h15" fill="none" stroke="#A96D45" stroke-width="2" stroke-linecap="round"/>
+  <path d="M42 23h11M42 42h11" fill="none" stroke="#F0CAA0" stroke-width="2" stroke-linecap="round"/>
 </svg>
