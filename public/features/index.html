@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-UiF6NJ+dd+iOTnk4LKKVpMQ1bRIw7Zhi/ZnHRfuyt+c=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-cY1Ag+DY/zkBGiKKxFwuvTWOZSlD1MOKuf4mSbvzG+0=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -876,6 +876,28 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-who:hover{color:var(--ink);border-bottom-color:var(--rule)}
 
   .acct-body{display:flex;flex-direction:column;gap:13px;overflow-y:auto}
+  .acct-auth{display:flex;flex:1 0 auto;min-height:100%;flex-direction:column;gap:11px}
+  .acct-auth-intro{display:flex;flex-direction:column;gap:5px}
+  .acct-google{
+    width:100%;min-height:44px;display:grid;grid-template-columns:24px 1fr 24px;
+    align-items:center;padding:10px 14px;text-align:center;border-color:var(--ink-soft)
+  }
+  .acct-google .google-mark{grid-column:1;width:18px;height:18px;display:block}
+  .acct-google span{grid-column:2}
+  .google-mark path{stroke:none}
+  .acct-auth-divider{display:flex;align-items:center;gap:10px;
+    font-size:9px;letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
+  .acct-auth-divider::before,.acct-auth-divider::after{content:'';height:1px;background:var(--rule);flex:1 1 auto}
+  .acct-auth-email{display:flex;flex-direction:column;gap:8px}
+  .acct-auth-email .wbtn{width:100%;min-height:40px}
+  .acct-auth-other{display:flex;flex-direction:column;gap:9px}
+  .acct-auth-other .acct-row .wbtn{flex:1 1 auto}
+  .acct-auth-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    margin-top:auto;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .acct-auth-fact{display:flex;min-width:0;flex-direction:column;gap:3px;padding:9px 10px 10px 0}
+  .acct-auth-fact + .acct-auth-fact{padding-left:10px;border-left:1px solid var(--rule)}
+  .acct-auth-fact strong{font-size:12px;line-height:1.4;font-weight:600;color:var(--ink)}
+  @media (max-width:700px) and (max-height:680px){.acct-auth-facts{display:none}}
 
   .arch-card{
     max-width:660px;width:100%;display:flex;flex-direction:column;
@@ -2207,6 +2229,12 @@ async function apiCall(path,opts){
 const AUTH_GLYPH=`<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.8">`
   +`<circle cx="12" cy="8.6" r="3.6"/><path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0"/>`
   +`</g></svg>`;
+const GOOGLE_GLYPH=`<svg class="google-mark" viewBox="0 0 18 18" aria-hidden="true">`
+  +`<path fill="#4285f4" d="M17.64 9.205c0-.638-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.797 2.716v2.258h2.909c1.702-1.567 2.684-3.874 2.684-6.614z"/>`
+  +`<path fill="#34a853" d="M9 18c2.43 0 4.468-.806 5.956-2.181l-2.909-2.258c-.806.54-1.836.859-3.047.859-2.344 0-4.328-1.585-5.037-3.714H.956v2.332A9 9 0 0 0 9 18z"/>`
+  +`<path fill="#fbbc05" d="M3.963 10.706A5.41 5.41 0 0 1 3.682 9c0-.592.102-1.167.281-1.706V4.962H.956A9 9 0 0 0 0 9c0 1.452.347 2.827.956 4.038l3.007-2.332z"/>`
+  +`<path fill="#ea4335" d="M9 3.58c1.322 0 2.508.454 3.441 1.346l2.582-2.582C13.464.891 11.426 0 9 0A9 9 0 0 0 .956 4.962l3.007 2.332C4.672 5.165 6.656 3.58 9 3.58z"/>`
+  +`</svg>`;
 const authDoorButton=signedIn=>`<button class="help" aria-label="${signedIn?'your account':'sign in'}">${AUTH_GLYPH}</button>`;
 function fillIntroAuth(){
   if(!document.querySelector('.door-auth')) return;
@@ -2612,7 +2640,7 @@ function renderAcct(){
   }
 
   if(!signedIn){
-    title.textContent='sign in';
+    title.textContent='sign in or sign up';
     if(signIns==null){
       body.innerHTML=`<div class="acct-ask">…</div>`;
       askSignIns().then(()=>{ if(menuShown()&&menuView==='profile'&&!(account&&account.signedIn)) renderAcct() });
@@ -2627,20 +2655,41 @@ function renderAcct(){
           : 'your record stays in this browser. nothing is lost.'}</div>`;
       return;
     }
-    body.innerHTML=err
-      +`<div class="acct-ask">your record is in this browser. sign in and it follows you anywhere.</div>`
-      +`<div class="acct-row">${signIns.map((p,i)=>
-          `<button class="wbtn" id="acctin-${i}" aria-label="sign in with ${esc(p)}">${esc(p)}</button>`
-        ).join('')}</div>`
-      +`<div class="acct-note">${signIns.includes('email')
-          ? (signIns.includes('google')
-              ? 'email is a code, no password. google stays on this screen.'
-              : 'email is a code, no password.')
-          : signIns.includes('google')
-              ? 'google stays on this screen.'
-              : 'each one takes you off-site and back.'}</div>`;
-    signIns.forEach((p,i)=>{ const b=$('acctin-'+i); if(b) b.onclick=()=>goSignIn(p) });
-    if(signIns.includes('google')) ensureGooglePrep();
+    const providers=signIns.map((p,i)=>({p,i}));
+    const google=providers.find(x=>x.p==='google');
+    const email=providers.find(x=>x.p==='email');
+    const others=providers.filter(x=>x.p!=='google'&&x.p!=='email');
+    body.innerHTML=err+`<div class="acct-auth">
+        <div class="acct-auth-intro">
+          <div class="acct-ask">your record is in this browser. choose a route and it follows you anywhere.</div>
+        </div>
+        ${google?`<button class="wbtn acct-google" id="acctin-${google.i}"
+            aria-label="continue with google — sign in or sign up">
+            ${GOOGLE_GLYPH}<span>continue with google</span></button>`:''}
+        ${email?`<div class="acct-auth-divider"><span>${google?'or use email':'use email'}</span></div>
+          <div class="acct-auth-email">
+            <label class="acct-lab" for="acctemail">email address</label>
+            <input class="acct-field" id="acctemail" type="email" inputmode="email" autocomplete="email"
+              spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
+            ${acctBtn('acctsend',acctBusy?'sending…':'send a six-digit code',true)}
+            <div class="acct-note">no password. the code works for both signing in and signing up.</div>
+          </div>`:''}
+        ${others.length?`<div class="acct-auth-other">
+          <div class="acct-auth-divider"><span>other ways</span></div>
+          <div class="acct-row">${others.map(({p,i})=>
+            `<button class="wbtn" id="acctin-${i}" aria-label="continue with ${esc(p)} — sign in or sign up">continue with ${esc(p)}</button>`
+          ).join('')}</div></div>`:''}
+        <div class="acct-auth-facts" aria-label="what happens next">
+          <div class="acct-auth-fact"><span class="acct-lab">already have one?</span><strong>signs you in</strong></div>
+          <div class="acct-auth-fact"><span class="acct-lab">first time?</span><strong>creates your account</strong></div>
+        </div>
+      </div>`;
+    if(google){ $('acctin-'+google.i).onclick=()=>goSignIn('google'); ensureGooglePrep() }
+    if(email){
+      $('acctsend').onclick=sendCode;
+      $('acctemail').onkeydown=e=>{ if(e.key==='Enter'){e.preventDefault();sendCode()} };
+    }
+    others.forEach(({p,i})=>{ const b=$('acctin-'+i); if(b) b.onclick=()=>goSignIn(p) });
     return;
   }
 
