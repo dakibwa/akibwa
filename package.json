@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "check:fast": "npm run build",
+    "check:release": "npm run build",
     "check:navigation": "node scripts/check-navigation-contract.mjs",
     "check:navigation:dom": "node scripts/check-navigation-dom.mjs",
     "check:images": "node scripts/generate-image-variants.mjs --check",
