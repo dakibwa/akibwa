@@ -6707,10 +6707,13 @@ button {
   transition: none;
 }
 
-.concept-project-foot > span:first-child {
+.concept-project-label {
   display: grid;
-  gap: 0.2em;
+  width: 100%;
   min-width: 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: baseline;
+  gap: clamp(12px, 2vw, 28px);
 }
 
 .concept-project-foot strong {
@@ -6719,10 +6722,12 @@ button {
   letter-spacing: -0.015em;
 }
 
-.concept-project-foot > span:first-child > span {
+.concept-project-label > span {
+  justify-self: end;
   color: var(--project-card-muted);
   font-size: 0.88em;
   line-height: 1.25;
+  text-align: right;
 }
 
 .concept-project-card:hover .concept-project-foot,
@@ -6797,9 +6802,20 @@ button {
     box-shadow: inset 3px 0 0 var(--project-card-accent);
   }
 
-  .concept-portuguese .concept-project-foot > span:first-child,
-  .concept-trek .concept-project-foot > span:first-child {
-    margin-top: auto;
+  .concept-portuguese .concept-project-label,
+  .concept-trek .concept-project-label {
+    height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    align-items: start;
+    gap: 14px;
+  }
+
+  .concept-portuguese .concept-project-label > span,
+  .concept-trek .concept-project-label > span {
+    grid-row: 3;
+    justify-self: start;
+    text-align: left;
   }
 }
 

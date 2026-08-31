@@ -947,48 +947,48 @@
       }
     ]
   },
-  "conceptProject:/features/features-game-light-og-1200x630.png": {
-    "source": "/features/features-game-light-og-1200x630.png",
+  "conceptProject:/project-art/personal/features-neural-threads.png": {
+    "source": "/project-art/personal/features-neural-threads.png",
     "slot": "conceptProject",
     "ratio": 1.9048,
-    "sourceWidth": 1200,
-    "sourceHeight": 630,
-    "sourceHash": "3187b0ff89d87939",
+    "sourceWidth": 1731,
+    "sourceHeight": 909,
+    "sourceHash": "1a0280bec8c5c343",
     "variants": [
       {
         "width": 491,
         "height": 258,
         "avif": {
-          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-491.avif",
-          "bytes": 6442
+          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-491.avif",
+          "bytes": 4676
         },
         "webp": {
-          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-491.webp",
-          "bytes": 8474
+          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-491.webp",
+          "bytes": 6976
         }
       },
       {
         "width": 780,
         "height": 410,
         "avif": {
-          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-780.avif",
-          "bytes": 10302
+          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-780.avif",
+          "bytes": 7414
         },
         "webp": {
-          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-780.webp",
-          "bytes": 14976
+          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-780.webp",
+          "bytes": 12628
         }
       },
       {
         "width": 948,
         "height": 498,
         "avif": {
-          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-948.avif",
-          "bytes": 12490
+          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-948.avif",
+          "bytes": 8956
         },
         "webp": {
-          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-948.webp",
-          "bytes": 18422
+          "src": "/_img/project-art/personal/features-neural-threads-conceptProject-948.webp",
+          "bytes": 16464
         }
       }
     ]

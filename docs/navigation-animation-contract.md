@@ -19,13 +19,15 @@ publishing homepage changes.
   left column while Português com a Inês and The Trek share its height as two
   horizontal panels on the right. Narrow screens return to one full-width
   stack. The Portuguese card uses a text-free conversation illustration; Trek
-  uses a route-led topographic illustration drawn from the live atlas.
+  uses a route-led topographic illustration drawn from the live atlas; and
+  Features uses text-free neural-thread artwork rather than a social poster.
 - Project captions are slim editorial rails with one accent edge. Features is
   anchored by a compact dark rail; the two narrow side captions use the page's
-  warm paper so their artwork keeps the colour. All three use the same stacked
-  title-and-subtitle typography. There is no separate arrow or wordy call to
-  action: the whole rail takes on a subtle project-colour tint on hover,
-  keyboard focus and touch press.
+  warm paper so their artwork keeps the colour. All three use the same title
+  and subtitle typography while occupying the rail fully: bottom captions run
+  from left to right, and wide-screen side captions run from top to bottom.
+  There is no separate arrow or wordy call to action: the whole rail takes on
+  a subtle project-colour tint on hover, keyboard focus and touch press.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
