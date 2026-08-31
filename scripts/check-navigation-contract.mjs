@@ -142,6 +142,10 @@ requireRuleText(".concept-career-logo.is-akibwa img {", ["width: 100%", "height:
 requireRuleText(".concept-career-logo.is-akibwa {", ["border: 0"]);
 requireText(editorial, 'job.logo === "/brand-logos/national-wealth-fund-icon.png" ? " is-nwf"', "the NWF mark must keep its optical-alignment treatment");
 requireRuleText(".concept-career-logo.is-nwf img {", ["transform: translate(-5%, -14%)"]);
+requireRuleText(".concept-career-logo picture {", ["display: grid", "place-items: center", "line-height: 0"]);
+requireRuleText(".concept-career-logo picture source {", ["display: none"]);
+requireText(editorial, 'job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is-lloyds"', "the Lloyds horse must keep its optical-alignment treatment");
+requireRuleText(".concept-career-logo.is-lloyds img {", ["transform: translate(6%, 2.5%)"]);
 forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
 requireText(deckData, "electrical work with my brother", "Electrical Work must remain the period with Dan's brother");
 requireText(deckData, "Joinery with my dad", "Joinery Work must remain the period with Dan's dad");

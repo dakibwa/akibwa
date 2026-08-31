@@ -7454,6 +7454,18 @@ button {
   object-fit: contain;
 }
 
+.concept-career-logo picture {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  line-height: 0;
+}
+
+.concept-career-logo picture source {
+  display: none;
+}
+
 .concept-career-logo.is-tile img {
   border-radius: 4px;
 }
@@ -7471,6 +7483,10 @@ button {
 
 .concept-career-logo.is-nwf img {
   transform: translate(-5%, -14%);
+}
+
+.concept-career-logo.is-lloyds img {
+  transform: translate(6%, 2.5%);
 }
 
 .concept-career-name {
