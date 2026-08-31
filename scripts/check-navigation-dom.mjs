@@ -731,6 +731,23 @@ const checkMobile = async () => {
     !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[2].rect.bottom + 40,
     "the phone flows directly from the three Projects cards into Career"
   );
+  const projectImageProtection = await evaluate(`(() => {
+    const card = document.querySelector(".concept-feature");
+    const image = card.querySelector("img");
+    const rect = image.getBoundingClientRect();
+    const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    const style = getComputedStyle(image);
+    return {
+      pointerEvents: style.pointerEvents,
+      draggable: image.draggable,
+      enclosingLinkOwnsTap: hit === card || card.contains(hit)
+    };
+  })()`);
+  check(
+    projectImageProtection.pointerEvents === "none" && !projectImageProtection.draggable,
+    "project artwork cannot become a mobile image callout or drag target"
+  );
+  check(projectImageProtection.enclosingLinkOwnsTap, "the project link still owns taps on its artwork");
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     document.querySelector("#taste").scrollIntoView({ block: "start" });
@@ -748,6 +765,22 @@ const checkMobile = async () => {
   );
   check(state.inViewport >= 24, `at least 24 cards fit in the first mobile screen [${state.inViewport}]`);
   check(state.overflow <= 1, `mobile has no horizontal overflow [${state.overflow}px]`);
+
+  const tasteImageProtection = await evaluate(`(() => {
+    const image = document.querySelector(".concept-archive-wall img");
+    const card = image.closest(".card");
+    const rect = image.getBoundingClientRect();
+    const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    const allImages = [...document.images];
+    return {
+      allProtected: allImages.every((item) =>
+        getComputedStyle(item).pointerEvents === "none" && !item.draggable
+      ),
+      cardOwnsTap: hit === card || card.contains(hit)
+    };
+  })()`);
+  check(tasteImageProtection.allProtected, "every mobile image opts out of native callouts and dragging");
+  check(tasteImageProtection.cardOwnsTap, "Taste cards still own taps on their artwork");
 
   const touch = await evaluate(`(() => {
     const nav = document.querySelector(".deck-legend");

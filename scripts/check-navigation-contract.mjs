@@ -15,6 +15,7 @@ const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.
 const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
 const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
+const siteImage = readFileSync(new URL("../components/site-image.jsx", import.meta.url), "utf8");
 const imageVariants = JSON.parse(
   readFileSync(new URL("../components/image-variants.json", import.meta.url), "utf8")
 );
@@ -92,6 +93,22 @@ requireText(
   "the phone identity must use the available row"
 );
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
+requireRuleText("img {", [
+  "-webkit-touch-callout: none",
+  "-webkit-user-drag: none",
+  "-webkit-user-select: none",
+  "user-select: none"
+]);
+requireText(
+  css,
+  "@media (hover: none), (max-width: 800px) {\n  picture,\n  img {\n    pointer-events: none;",
+  "touch images must pass the hit target to their enclosing control"
+);
+requireText(
+  siteImage,
+  "draggable={draggable ?? false}",
+  "shared images must opt out of native dragging by default"
+);
 
 /* Projects is one compact editorial composition: Dan's game leads on the
    left, with the two supporting projects sharing its height on the right. */
