@@ -257,7 +257,7 @@ const pageState = () => evaluate(`(() => {
       rect: rect(item),
       imageRect: rect(item.querySelector("img")),
       footRect: rect(item.querySelector(".concept-project-foot")),
-      arrowText: item.querySelector(".concept-arrow")?.textContent.trim(),
+      hasArrow: Boolean(item.querySelector(".concept-arrow")),
       imageComplete: item.querySelector("img")?.complete,
       imageWidth: item.querySelector("img")?.naturalWidth,
       currentSrc: item.querySelector("img")?.currentSrc
@@ -445,9 +445,9 @@ const checkDesktop = async () => {
     `the supporting caption rails stay narrow [${state.projects.slice(1).map((item) => `${(item.footRect.width / item.rect.width * 100).toFixed(1)}%`).join(" / ")}]`
   );
   check(
-    state.projects.every((item) => item.arrowText === "↗") &&
+    state.projects.every((item) => !item.hasArrow) &&
       state.projects.every((item) => !/(play today|visit site|explore)/i.test(item.text)),
-    "project cards use one quiet arrow instead of wordy CTA copy"
+    "project cards rely on their caption rails rather than arrow or CTA controls"
   );
   check(
     state.projects.every((item) =>
@@ -515,42 +515,42 @@ const checkLinkHover = async () => {
     return {
       x: r.left + r.width / 2,
       y: r.top + r.height / 2,
-      arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
-      arrowOpacity: getComputedStyle(link.querySelector(".concept-arrow")).opacity,
-      arrowTransition: getComputedStyle(link.querySelector(".concept-arrow")).transitionDuration,
+      footBackground: getComputedStyle(link.querySelector(".concept-project-foot")).backgroundColor,
+      footColor: getComputedStyle(link.querySelector(".concept-project-foot")).color,
+      footTransition: getComputedStyle(link.querySelector(".concept-project-foot")).transitionDuration,
       transform: getComputedStyle(link).transform,
       shadow: getComputedStyle(link).boxShadow
     };
   })()`);
-  check(before.arrow === "none" && parseFloat(before.arrowTransition) === 0, "the Features arrow has no motion at rest");
+  check(parseFloat(before.footTransition) === 0, "the Features caption rail has no animated transition");
   await mouseMove(before.x, before.y);
   const hovered = await pollUntil(
     () => evaluate(`(() => {
       const link = document.querySelector(".concept-feature");
       return {
-        arrow: getComputedStyle(link.querySelector(".concept-arrow")).transform,
-        arrowOpacity: getComputedStyle(link.querySelector(".concept-arrow")).opacity,
-        arrowTransition: getComputedStyle(link.querySelector(".concept-arrow")).transitionDuration,
+        footBackground: getComputedStyle(link.querySelector(".concept-project-foot")).backgroundColor,
+        footColor: getComputedStyle(link.querySelector(".concept-project-foot")).color,
+        footTransition: getComputedStyle(link.querySelector(".concept-project-foot")).transitionDuration,
         transform: getComputedStyle(link).transform,
         shadow: getComputedStyle(link).boxShadow
       };
     })()`),
-    (value) => value.arrowOpacity !== before.arrowOpacity
+    (value) => value.footBackground !== before.footBackground
   );
   check(
-    parseFloat(hovered.arrowOpacity) === 1 &&
-      hovered.arrow === "none" &&
-      parseFloat(hovered.arrowTransition) === 0,
-    "hover changes the arrow mark without moving or animating it"
+    hovered.footBackground !== before.footBackground &&
+      hovered.footColor !== before.footColor &&
+      parseFloat(hovered.footTransition) === 0,
+    "hover changes the caption rail colour immediately"
   );
   check(hovered.transform === "none", "hover does not tilt, lift, or scale the feature");
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");
   await mouseMove(1200, 40);
   const settled = await pollUntil(
-    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-arrow")).opacity`),
-    (opacity) => opacity === before.arrowOpacity
+    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-project-foot")).backgroundColor`),
+    (background) => background === before.footBackground
   );
-  check(settled === before.arrowOpacity, "the static arrow mark clears when hover ends");
+  check(settled === before.footBackground, "the caption rail restores when hover ends");
 };
 
 const checkHeroBreakpoint = async () => {
@@ -835,7 +835,7 @@ const checkReducedMotion = async () => {
   await goto("/");
   const durations = await evaluate(`(() => {
     const selectors = [
-      ".concept-arrow",
+      ".concept-project-foot",
       ".hero-name",
       ".hero-name-value"
     ];

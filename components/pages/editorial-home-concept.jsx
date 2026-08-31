@@ -80,7 +80,6 @@ export function EditorialHomeConcept() {
                 <strong>features</strong>
                 <span>daily untangling puzzle</span>
               </span>
-              <span className="concept-arrow" aria-hidden="true">↗</span>
             </span>
           </a>
 
@@ -101,7 +100,6 @@ export function EditorialHomeConcept() {
                 <strong>Português com a Inês</strong>
                 <span>European Portuguese lessons</span>
               </span>
-              <span className="concept-arrow" aria-hidden="true">↗</span>
             </span>
           </a>
 
@@ -120,7 +118,6 @@ export function EditorialHomeConcept() {
                 <strong>The Trek</strong>
                 <span>Paris → Sofia · 1,982 km</span>
               </span>
-              <span className="concept-arrow" aria-hidden="true">↗</span>
             </span>
           </a>
         </div>

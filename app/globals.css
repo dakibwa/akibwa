@@ -6704,6 +6704,7 @@ button {
   background: var(--project-card-panel);
   box-shadow: inset 0 3px 0 var(--project-card-accent);
   font-size: clamp(0.76rem, 1vw, 0.92rem);
+  transition: none;
 }
 
 .concept-project-foot > span:first-child {
@@ -6744,6 +6745,26 @@ button {
   background: var(--project-card-accent);
   content: "";
   rotate: 45deg;
+}
+
+.concept-project-card:hover .concept-project-foot,
+.concept-project-card:focus-visible .concept-project-foot,
+.concept-project-card:active .concept-project-foot {
+  background: var(--project-card-accent);
+  box-shadow: none;
+  color: var(--concept-dark);
+}
+
+.concept-project-card:hover .concept-project-foot > span:first-child > span,
+.concept-project-card:focus-visible .concept-project-foot > span:first-child > span,
+.concept-project-card:active .concept-project-foot > span:first-child > span {
+  color: rgba(12, 17, 19, 0.9);
+}
+
+.concept-feature:hover .concept-project-foot > span:first-child > span::before,
+.concept-feature:focus-visible .concept-project-foot > span:first-child > span::before,
+.concept-feature:active .concept-project-foot > span:first-child > span::before {
+  background: var(--concept-dark);
 }
 
 /* On a wide canvas the lead project occupies the full left column while the
@@ -6800,7 +6821,6 @@ button {
 
   .concept-portuguese .concept-project-foot,
   .concept-trek .concept-project-foot {
-    position: relative;
     flex-direction: column;
     align-items: stretch;
     padding: 14px 13px 13px;
@@ -6809,35 +6829,10 @@ button {
     box-shadow: inset 3px 0 0 var(--project-card-accent);
   }
 
-  .concept-portuguese .concept-arrow,
-  .concept-trek .concept-arrow {
-    position: absolute;
-    top: 13px;
-    right: 12px;
-    margin: 0;
-  }
-
   .concept-portuguese .concept-project-foot > span:first-child,
   .concept-trek .concept-project-foot > span:first-child {
     margin-top: auto;
-    padding-top: 46px;
   }
-}
-
-.concept-arrow {
-  display: block;
-  flex: none;
-  margin-left: auto;
-  color: var(--project-card-ink);
-  font-family: var(--serif);
-  font-size: 1.25em;
-  line-height: 1;
-  opacity: 0.62;
-}
-
-.concept-project-card:hover .concept-arrow,
-.concept-project-card:focus-visible .concept-arrow {
-  opacity: 1;
 }
 
 .concept-kicker {
