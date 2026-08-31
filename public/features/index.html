@@ -1107,7 +1107,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .intro-alt{background:transparent;color:var(--ink)}
   .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
   .intro-alt + .intro-start{margin-top:8px}
-  .intro-doors{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;flex:0 0 auto}
+  .intro-doors{display:flex;flex-wrap:nowrap;gap:6px;margin-top:18px;flex:0 0 auto}
   .intro-doors .help.here{background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors .help.here:active{transform:none}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
@@ -1122,8 +1122,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
   .help.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
-  @media (max-width:340px){
+  @media (max-width:360px){
     .intro-doors{gap:5px}
+    .intro-doors .help{min-width:34px;padding:0 4px}
+  }
+  @media (max-width:340px){
     .intro-doors .help{min-width:30px;padding:0 3px}
     .intro-doors .help svg{width:18px;height:18px}
   }
