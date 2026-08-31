@@ -61,9 +61,9 @@ const SLOTS = {
   // row at ~202 CSS px on desktop and one full-bleed card at ~327 on mobile.
   projectCard: { ratio: 1.5, css: [202, 260, 327] },
 
-  // The two homepage project leads share a 1200:630 frame. They stack on a
-  // phone and split the 1310px editorial frame on larger screens.
-  conceptProject: { ratio: 1200 / 630, css: [327, 520, 632] },
+  // Homepage projects share a 1200:630 frame: three equal cards on a wide
+  // canvas, a full-row lead on tablet, then one full-width phone stack.
+  conceptProject: { ratio: 1200 / 630, css: [358, 480, 632, 960] },
 
   // Client-site stills render as two small 16:9 previews in the homepage
   // column, then expand into a wide in-page dialog only when requested.
