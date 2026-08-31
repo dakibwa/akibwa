@@ -15,8 +15,8 @@ export const deck = {
       "accent": "#c05212",
       "logo": "/favicon.svg",
       "tile": true,
-      "back": "I design and build websites, booking systems and practical AI tools for myself and for clients, from first sketch to live service.",
-      "mission": "Turn good ideas and repetitive work into useful software people can actually run."
+      "back": "Build websites, booking systems and AI tools.",
+      "mission": "Make useful software."
     },
     {
       "name": "National Wealth Fund",
@@ -26,8 +26,8 @@ export const deck = {
       "accent": "#732740",
       "logo": "/brand-logos/national-wealth-fund-icon.png",
       "tile": false,
-      "back": "Built the new Microsoft Fabric data estate, set the standards the team develops against and trained the business to use it.",
-      "mission": "Invest public money to unlock UK growth, clean energy and far more private finance."
+      "back": "Build the Microsoft Fabric data platform.",
+      "mission": "Invest in UK growth and clean energy."
     },
     {
       "name": "Leeds Building Society",
@@ -37,8 +37,8 @@ export const deck = {
       "accent": "#2f88ff",
       "logo": "/brand-logos/leeds-building-society-icon.svg",
       "tile": false,
-      "back": "Joined as an analyst, led the team five months later and brought in new tools, ways of working and upskilling.",
-      "mission": "Put home ownership within reach of more people, generation after generation."
+      "back": "Led the BI team and improved its tools.",
+      "mission": "Help more people own a home."
     },
     {
       "name": "Electrical Work",
@@ -48,8 +48,8 @@ export const deck = {
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
       "tile": false,
-      "back": "Spent a year doing electrical work with my brother and learned to estimate from the perspective of the person carrying it out.",
-      "mission": "Make homes safe, reliable and ready for everyday life."
+      "back": "Assisted with electrical work.",
+      "mission": "Make homes safe and reliable."
     },
     {
       "name": "Sky Betting & Gaming",
@@ -59,8 +59,8 @@ export const deck = {
       "accent": "#d01fcb",
       "logo": "/brand-logos/sky-betting-gaming-logo.png",
       "tile": true,
-      "back": "Rebuilt the Power BI suite for speed and accuracy, then used deep SQL to analyse safer-gambling measures.",
-      "mission": "Give customers a premium, safer betting and gaming experience without losing the thrill."
+      "back": "Built Power BI reports and analysed safer gambling.",
+      "mission": "Make betting and gaming safer."
     },
     {
       "name": "Joinery Work",
@@ -70,8 +70,8 @@ export const deck = {
       "accent": "#9a6038",
       "logo": "/brand-logos/joinery.svg",
       "tile": false,
-      "back": "Joinery with my dad after India, where every measurement had a visible consequence.",
-      "mission": "Build and fit homes carefully, accurately and to last."
+      "back": "Assisted with joinery.",
+      "mission": "Build and fit homes well."
     },
     {
       "name": "Vanquis Bank",
@@ -81,8 +81,8 @@ export const deck = {
       "accent": "#f15a24",
       "logo": "/brand-logos/vanquis-icon.svg",
       "tile": false,
-      "back": "Learned SQL on real banking structures, then built cost and NPV models people could actually act on.",
-      "mission": "Deliver caring banking so customers can make the most of life’s opportunities."
+      "back": "Built cost and NPV models using SQL.",
+      "mission": "Make banking more accessible."
     },
     {
       "name": "Lloyds Banking Group",
@@ -92,8 +92,8 @@ export const deck = {
       "accent": "#006747",
       "logo": "/brand-logos/lloyds-horse-icon.png",
       "tile": false,
-      "back": "Spent my Economics placement year in credit risk, learning how a large bank prices and manages risk.",
-      "mission": "Help Britain prosper by making finance a force for a more sustainable and inclusive future."
+      "back": "Analysed credit risk.",
+      "mission": "Help Britain prosper."
     }
   ],
   "tools": [

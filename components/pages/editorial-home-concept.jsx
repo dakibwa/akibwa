@@ -6,8 +6,8 @@ import { SiteImage } from "@/components/site-image";
 const freelance = deck.jobs.find((job) => job.name === "Freelance");
 
 /* Keep the whole working history in sequence, including the two stretches on
-   the tools between office roles. Each stop says what Dan did and what the
-   organisation exists to do, so career context never depends on hover. */
+   the tools between office roles. Details stay inside the compact interaction
+   so Career keeps the original horizontal rhythm. */
 const careerNames = [
   "Freelance",
   "National Wealth Fund",
@@ -107,35 +107,40 @@ export function EditorialHomeConcept() {
           <h2 id="career-title">Career</h2>
         </header>
 
-        <ol className="concept-career-timeline">
+        <ol
+          className="concept-career-timeline"
+          style={{ "--career-count": career.length }}
+        >
           {career.map((job) => (
             <li
               className="concept-career-stop"
               key={job.name}
               style={{ "--company-accent": job.accent }}
+              tabIndex={0}
+              aria-label={`${job.name}, ${job.role}, ${job.span}. What I did: ${job.back} Mission: ${job.mission}`}
             >
-              <time className="concept-career-time">{job.span}</time>
+              <span className="concept-career-time">{job.span}</span>
               <span className="concept-career-node" aria-hidden="true" />
-              <div className="concept-career-identity">
+              <div className="concept-career-card">
                 <span
                   className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo === "/brand-logos/national-wealth-fund-icon.png" ? " is-nwf" : ""}${job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is-lloyds" : ""}`}
                   aria-hidden="true"
                 >
-                  <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
-                </span>
-                <span className="concept-career-name">
-                  <strong>{job.name}</strong>
-                  <span>{job.role}</span>
+                  {job.logo ? <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" /> : null}
                 </span>
               </div>
-              <p className="concept-career-copy">
-                <span className="concept-career-label">What I did</span>
-                <span>{job.back}</span>
-              </p>
-              <p className="concept-career-copy concept-career-mission">
-                <span className="concept-career-label">Mission</span>
-                <span>{job.mission}</span>
-              </p>
+              <div className="concept-career-popover" aria-hidden="true">
+                <strong>{job.name}</strong>
+                <span>{job.role}</span>
+                <p>
+                  <span className="concept-career-label">What I did</span>
+                  <span>{job.back}</span>
+                </p>
+                <p>
+                  <span className="concept-career-label">Mission</span>
+                  <span>{job.mission}</span>
+                </p>
+              </div>
             </li>
           ))}
         </ol>

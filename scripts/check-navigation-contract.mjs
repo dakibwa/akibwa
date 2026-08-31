@@ -117,8 +117,8 @@ requireRuleText(".concept-project-grid {", ["display: grid", "repeat(2, minmax(0
 requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
 requireRuleText(".concept-freelance {", ["display: grid", "border-top: 1px solid"]);
 
-/* Career is an eight-stop editorial timeline. Every stop keeps the role,
-   Dan's contribution and the organisation's mission visible at rest. */
+/* Career keeps the approved horizontal eight-stop index. The title, short
+   action and short mission remain available through hover and keyboard focus. */
 for (const name of [
   "Freelance",
   "National Wealth Fund",
@@ -131,11 +131,13 @@ for (const name of [
 ]) {
   requireText(editorial, `"${name}"`, `${name} must remain in the career sequence`);
 }
-requireText(editorial, 'className="concept-career-label">What I did', "each career stop must label Dan's contribution");
-requireText(editorial, 'className="concept-career-label">Mission', "each career stop must label the organisation's mission");
-requireText(editorial, "{job.role}", "each career stop must print the job title");
-requireText(editorial, "{job.back}", "each career stop must print Dan's contribution");
-requireText(editorial, "{job.mission}", "each career stop must print the organisation's mission");
+requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable");
+requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
+requireText(editorial, 'className="concept-career-label">What I did', "each popover must label Dan's action");
+requireText(editorial, 'className="concept-career-label">Mission', "each popover must label the organisation's mission");
+requireText(editorial, "{job.role}", "each popover must print the job title");
+requireText(editorial, "{job.back}", "each popover must print Dan's action");
+requireText(editorial, "{job.mission}", "each popover must print the organisation's mission");
 requireText(deckData, '"logo": "/favicon.svg"', "Freelance must use the Akibwa favicon mark");
 requireText(editorial, 'job.logo === "/favicon.svg" ? " is-akibwa"', "the Akibwa mark must keep its own full-frame treatment");
 requireRuleText(".concept-career-logo.is-akibwa img {", ["width: 100%", "height: 100%"]);
@@ -147,13 +149,38 @@ requireRuleText(".concept-career-logo picture source {", ["display: none"]);
 requireText(editorial, 'job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is-lloyds"', "the Lloyds horse must keep its optical-alignment treatment");
 requireRuleText(".concept-career-logo.is-lloyds img {", ["transform: translate(6%, 2.5%)"]);
 forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
-requireText(deckData, "electrical work with my brother", "Electrical Work must remain the period with Dan's brother");
-requireText(deckData, "Joinery with my dad", "Joinery Work must remain the period with Dan's dad");
-forbidText(deckData, "my dad and my brother", "the two family-work periods must not be conflated");
-requireRuleText(".concept-career-stop {", ["grid-template-columns", "border-top"]);
+for (const copy of [
+  "Build websites, booking systems and AI tools.",
+  "Build the Microsoft Fabric data platform.",
+  "Led the BI team and improved its tools.",
+  "Assisted with electrical work.",
+  "Built Power BI reports and analysed safer gambling.",
+  "Assisted with joinery.",
+  "Built cost and NPV models using SQL.",
+  "Analysed credit risk."
+]) {
+  requireText(deckData, `"back": "${copy}"`, `career action must stay literal and short: ${copy}`);
+}
+for (const mission of [
+  "Make useful software.",
+  "Invest in UK growth and clean energy.",
+  "Help more people own a home.",
+  "Make homes safe and reliable.",
+  "Make betting and gaming safer.",
+  "Build and fit homes well.",
+  "Make banking more accessible.",
+  "Help Britain prosper."
+]) {
+  requireText(deckData, `"mission": "${mission}"`, `career mission must stay short: ${mission}`);
+}
+requireRuleText(".concept-career-stop {", ["grid-template-rows: 32px 36px 68px"]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
-requireRuleText(".concept-career-copy {", ["display: grid"]);
-requireText(css, "grid-column: 3 / -1", "narrow career copy must stay aligned with the job identity");
+requireText(
+  css,
+  "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",
+  "career focus must keep the restrained dot halo"
+);
+requireText(css, "grid-template-rows: 32px 36px 56px", "mobile career dots must keep their clearance lane");
 
 /* Taste opens on a balanced edit, then exposes the complete archive one
    medium at a time. */

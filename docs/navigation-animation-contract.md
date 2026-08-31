@@ -22,11 +22,10 @@ publishing homepage changes.
 
 ## Career
 
-- Career is an eight-stop annotated timeline with Freelance first.
-- Every stop visibly names the title, Dan's contribution and the firm's
-  mission; no essential career context depends on hover or focus.
-- At narrower widths, the copy stacks beneath the job identity while remaining
-  aligned to the timeline track.
+- Career is the original horizontal eight-stop index with Freelance first.
+- At rest it shows only dates and marks. Hover or keyboard focus reveals the
+  job title, one short line on what Dan did and one short line on the mission.
+- The same compact interaction and horizontal rhythm remain on phones.
 
 ## Taste and footer
 
@@ -50,5 +49,5 @@ publishing homepage changes.
   owns `/`, that its copy and direct links remain intact, and that Career, Taste
   and the footer retain the approved structure.
 - `scripts/check-navigation-dom.mjs` verifies the rendered hierarchy, project
-  links and restrained feedback, visible career detail, Taste filters, compact
-  mobile card density, footer containment, overflow and reduced motion.
+  links and restrained feedback, focus-revealed career detail, Taste filters,
+  compact mobile card density, footer containment, overflow and reduced motion.
