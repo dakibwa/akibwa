@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-il0xmtDKpUC0N7y6ot5MdNwihDkaoGaDccd8fFO5m8A=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-UiF6NJ+dd+iOTnk4LKKVpMQ1bRIw7Zhi/ZnHRfuyt+c=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -5341,14 +5341,15 @@ function nodeSay(n){
   const crossing = x===1 ? '1 crossing' : x+' crossings';
   return `${what} · ${keys.join(' and ')} · ${crossing}`;
 }
-function nearestNode(x,y,ok){
+const NODE_HIT_PX=26, PIN_HIT_PX=34;
+function nearestNode(x,y,ok,screenRadius=NODE_HIT_PX){
   const scale=1/boardScale();
-  let best=null,bd=Math.max(20,26*scale);
+  let best=null,bd=Math.max(20,screenRadius*scale);
   members.forEach(n=>{if(!ok(n))return;
     const d=Math.hypot(n.x0-x,n.y0-y); if(d<bd){bd=d;best=n}}); return best}
 function pick(x,y){return nearestNode(x,y,grabbable)}
 function pinnedAt(x,y){
-  return nearestNode(x,y,n=>n.pinned&&!n.threads.every(t=>t.freed));
+  return nearestNode(x,y,n=>n.pinned&&!n.threads.every(t=>t.freed),PIN_HIT_PX);
 }
 function relayAt(x,y){return nearestNode(x,y,n=>relayLocked(n))}
 $('netsvg').addEventListener('pointerdown',e=>{
