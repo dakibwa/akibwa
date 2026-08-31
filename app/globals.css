@@ -6611,7 +6611,7 @@ button {
 .concept-nav a:focus-visible,
 .concept-text-link:focus-visible,
 .concept-inline-links a:focus-visible,
-.concept-feature:focus-visible {
+.concept-project-card:focus-visible {
   outline: 2px solid var(--concept-blue);
   outline-offset: 4px;
 }
@@ -6620,22 +6620,25 @@ button {
   outline-color: currentColor;
 }
 
-.concept-feature:focus-visible {
-  outline-color: var(--concept-work);
+.concept-project-card:focus-visible {
+  outline-color: var(--project-card-accent);
 }
 
-.concept-lead-grid {
+.concept-projects {
+  padding: var(--concept-rule-gap) 0 clamp(48px, 6vw, 82px);
+}
+
+.concept-project-grid {
   display: grid;
-  /* Features is the lead project, not the whole page. Cap its desktop track
-     so the current client work gets the room it deserves on wider screens. */
-  grid-template-columns: clamp(420px, 40vw, 760px) minmax(0, 1fr);
-  gap: clamp(28px, 4.5vw, 64px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.5vw, 34px);
   align-items: stretch;
-  padding: var(--concept-rule-gap) 0 clamp(40px, 5vw, 70px);
 }
 
-.concept-feature {
-  align-self: start;
+.concept-project-card {
+  --project-card-accent: var(--concept-work);
+  display: block;
+  min-width: 0;
   overflow: clip;
   border: 1px solid rgba(12, 17, 19, 0.72);
   border-radius: 4px;
@@ -6644,16 +6647,27 @@ button {
   cursor: pointer;
 }
 
-.concept-feature img {
+.concept-portuguese {
+  --project-card-accent: #2757aa;
+  border-color: #173b72;
+  background: #173b72;
+}
+
+.concept-project-card picture,
+.concept-project-card img {
+  display: block;
   width: 100%;
+}
+
+.concept-project-card img {
   height: auto;
   aspect-ratio: 1200 / 630;
   object-fit: cover;
 }
 
-.concept-feature-foot {
+.concept-project-foot {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
   padding: 13px 15px 14px;
@@ -6661,18 +6675,21 @@ button {
   font-size: clamp(0.76rem, 1vw, 0.92rem);
 }
 
-.concept-feature-foot > span:first-child {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3em 0.65em;
+.concept-project-foot > span:first-child {
+  display: grid;
+  gap: 0.2em;
+  min-width: 0;
 }
 
-.concept-feature-foot strong {
+.concept-project-foot strong {
   font-weight: 670;
+  line-height: 1.15;
 }
 
-.concept-feature-foot > span:first-child > span {
+.concept-project-foot > span:first-child > span {
   color: rgba(247, 245, 237, 0.62);
+  font-size: 0.88em;
+  line-height: 1.25;
 }
 
 .concept-arrow {
@@ -6681,16 +6698,19 @@ button {
   transition: transform 120ms ease;
 }
 
-.concept-feature:hover .concept-arrow,
-.concept-feature:focus-visible .concept-arrow {
+.concept-project-card:hover .concept-arrow,
+.concept-project-card:focus-visible .concept-arrow {
   transform: translate(2px, -1px);
 }
 
 .concept-freelance {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(30px, 6vw, 96px);
+  align-items: start;
+  margin-top: clamp(28px, 4vw, 50px);
+  padding-top: clamp(22px, 2.8vw, 34px);
+  border-top: 1px solid var(--line-strong);
 }
 
 .concept-kicker {
@@ -6712,20 +6732,46 @@ button {
 }
 
 .concept-freelance h2 {
-  max-width: 10ch;
-  margin-top: 0.55em;
+  max-width: 8ch;
+  margin-top: 0.35em;
   font-family: var(--serif);
-  font-size: clamp(2rem, 3vw, 3.25rem);
+  font-size: clamp(2rem, 3.4vw, 3.65rem);
   font-weight: 500;
-  line-height: 0.98;
+  line-height: 0.94;
 }
 
-.concept-freelance > p:not(.concept-kicker) {
-  max-width: 33ch;
-  margin: 1.1em 0 0;
+.concept-freelance-copy {
+  max-width: 66ch;
+}
+
+.concept-freelance-copy > p {
+  margin: 0;
   color: color-mix(in srgb, var(--ink) 76%, var(--canvas));
-  font-size: clamp(0.94rem, 1.15vw, 1.08rem);
-  line-height: 1.48;
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.52;
+}
+
+.concept-freelance-copy .concept-client-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em 0.7em;
+  margin-top: clamp(18px, 2.2vw, 26px);
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 13%, var(--canvas));
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.concept-client-note span {
+  color: color-mix(in srgb, var(--ink) 48%, var(--canvas));
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.concept-client-note strong {
+  color: color-mix(in srgb, var(--ink) 82%, var(--canvas));
+  font-weight: 670;
 }
 
 .concept-text-link {
@@ -6907,15 +6953,6 @@ button {
 }
 
 @media (max-width: 900px) {
-  .concept-lead-grid,
-  .concept-story-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .concept-freelance {
-    min-height: 330px;
-  }
-
   .concept-making-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -6946,6 +6983,15 @@ button {
   .concept-nav {
     margin-top: clamp(24px, 3.4vw, 34px);
   }
+
+  .concept-project-grid,
+  .concept-freelance {
+    grid-template-columns: 1fr;
+  }
+
+  .concept-freelance {
+    gap: 22px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -6972,28 +7018,23 @@ button {
     margin-top: 24px;
   }
 
-  .concept-lead-grid {
-    gap: 30px;
-    padding: var(--concept-rule-gap) 0 44px;
+  .concept-projects {
+    padding: var(--concept-rule-gap) 0 48px;
   }
 
-  .concept-feature-foot {
+  .concept-project-foot {
     padding: 10px 11px 11px;
     font-size: 0.69rem;
   }
 
-  .concept-feature-foot > span:first-child > span {
-    display: none;
-  }
-
   .concept-freelance {
-    min-height: 0;
-    padding-top: 0;
+    margin-top: 28px;
+    padding-top: 20px;
   }
 
   .concept-freelance h2 {
     max-width: none;
-    font-size: 2.35rem;
+    font-size: 2.25rem;
   }
 
   .concept-text-link {
@@ -7065,10 +7106,9 @@ button {
 }
 
 /* ── Editorial concept, compact pass ────────────────────────────────────
-   The coloured index is three plain destinations. Client work sits beside
-   Features inside Projects, Freelance leads Career, and the former "Also
-   making" strip stays gone. Career detail remains in small hover/focus
-   popovers. */
+   The coloured index is three plain destinations. Features and Português com
+   a Inês share the Projects lead, while client proof sits quietly inside the
+   freelance offer. */
 .concept-nav a:nth-child(1) {
   --concept-nav-accent: var(--concept-work-rgb);
 }
@@ -7312,7 +7352,6 @@ button {
   padding-bottom: clamp(24px, 2.8vw, 36px);
 }
 
-.concept-freelance h2,
 .concept-career-head h2,
 .concept-taste-head .concept-archive-head h2 {
   margin: 0;
@@ -7539,10 +7578,6 @@ button {
 }
 
 @media (max-width: 560px) {
-  .concept-feature {
-    width: 94%;
-  }
-
   .concept-client-projects {
     gap: 14px;
   }
@@ -7586,7 +7621,6 @@ button {
     padding-bottom: 24px;
   }
 
-  .concept-freelance h2,
   .concept-career-head h2,
   .concept-taste-head .concept-archive-head h2 {
     font-size: 2.65rem;

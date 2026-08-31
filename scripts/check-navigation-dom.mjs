@@ -191,15 +191,6 @@ const setMobile = () => cdp.send("Emulation.setDeviceMetricsOverride", {
 const mouseMove = (x, y) => cdp.send("Input.dispatchMouseEvent", {
   type: "mouseMoved", x, y
 });
-const clickAt = async (x, y) => {
-  await mouseMove(x, y);
-  await cdp.send("Input.dispatchMouseEvent", {
-    type: "mousePressed", x, y, button: "left", clickCount: 1
-  });
-  await cdp.send("Input.dispatchMouseEvent", {
-    type: "mouseReleased", x, y, button: "left", clickCount: 1
-  });
-};
 const pressEscape = async () => {
   await cdp.send("Input.dispatchKeyEvent", {
     type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27
@@ -230,7 +221,7 @@ const pageState = () => evaluate(`(() => {
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
   };
   return {
-    identity: document.querySelector(".concept-identity")?.textContent.trim().replace(/\\s+/g, " "),
+    identity: "I’m " + document.querySelector(".concept-identity .hero-name-value")?.textContent.trim(),
     lede: document.querySelector(".concept-lede")?.textContent.trim(),
     nav: [...document.querySelectorAll(".concept-nav a")].map((link) => ({
       text: link.textContent.trim(),
@@ -243,24 +234,26 @@ const pageState = () => evaluate(`(() => {
       lede: rect(document.querySelector(".concept-lede")),
       nav: rect(document.querySelector(".concept-nav"))
     },
-    leadLayout: {
-      feature: rect(document.querySelector(".concept-feature")),
-      clients: rect(document.querySelector(".concept-freelance"))
-    },
-    featureHref: document.querySelector(".concept-feature")?.getAttribute("href"),
-    clients: [...document.querySelectorAll(".concept-client-project strong")]
-      .map((item) => item.textContent.trim()),
-    clientText: document.querySelector("#now")?.innerText.replace(/\\s+/g, " ").trim(),
-    clientButtons: [...document.querySelectorAll(".concept-client-project")].map((item) => ({
-      tag: item.tagName,
-      popup: item.getAttribute("aria-haspopup"),
+    projects: [...document.querySelectorAll(".concept-project-card")].map((item) => ({
+      text: item.innerText.replace(/\\s+/g, " ").trim(),
       href: item.getAttribute("href"),
-      images: item.querySelectorAll("img").length
+      rect: rect(item),
+      imageComplete: item.querySelector("img")?.complete,
+      imageWidth: item.querySelector("img")?.naturalWidth,
+      currentSrc: item.querySelector("img")?.currentSrc
     })),
-    career: [...document.querySelectorAll(".concept-career-stop")]
-      .map((item) => item.getAttribute("aria-label")),
-    careerDetailsHidden: [...document.querySelectorAll(".concept-career-popover")]
-      .every((item) => Number(getComputedStyle(item).opacity) === 0),
+    freelance: {
+      text: document.querySelector(".concept-freelance")?.innerText.replace(/\\s+/g, " ").trim(),
+      rect: rect(document.querySelector(".concept-freelance")),
+      butterflyImages: [...document.images].filter((image) => /butterfly/i.test(image.currentSrc)).length
+    },
+    career: [...document.querySelectorAll(".concept-career-stop")].map((item) => ({
+      name: item.querySelector(".concept-career-name strong")?.textContent.trim(),
+      role: item.querySelector(".concept-career-name > span")?.textContent.trim(),
+      labels: [...item.querySelectorAll(".concept-career-label")].map((label) => label.textContent.trim()),
+      details: [...item.querySelectorAll(".concept-career-copy > span:last-child")]
+        .map((detail) => detail.textContent.trim())
+    })),
     filters: [...document.querySelectorAll(".deck-legend .rail-word")].map((button) => ({
       text: button.textContent.trim(),
       pressed: button.getAttribute("aria-pressed"),
@@ -302,24 +295,18 @@ const pageState = () => evaluate(`(() => {
 
 const careerState = () => evaluate(`(() => {
   const stops = [...document.querySelectorAll(".concept-career-stop")];
-  const haloRadius = 12;
-  const clearances = stops.map((stop) => {
-    const time = stop.querySelector(".concept-career-time").getBoundingClientRect();
-    const node = stop.querySelector(".concept-career-node").getBoundingClientRect();
-    const card = stop.querySelector(".concept-career-card").getBoundingClientRect();
-    const center = node.top + node.height / 2;
-    return {
-      above: (center - haloRadius) - time.bottom,
-      below: card.top - (center + haloRadius)
-    };
-  });
-  const first = stops[0];
   return {
     count: stops.length,
-    focused: first === document.activeElement,
-    popoverOpacity: Number(getComputedStyle(first.querySelector(".concept-career-popover")).opacity),
-    minAbove: Math.min(...clearances.map((item) => item.above)),
-    minBelow: Math.min(...clearances.map((item) => item.below)),
+    complete: stops.every((stop) => {
+      const labels = [...stop.querySelectorAll(".concept-career-label")].map((item) => item.textContent.trim());
+      const details = [...stop.querySelectorAll(".concept-career-copy > span:last-child")];
+      return Boolean(stop.querySelector(".concept-career-name strong")?.textContent.trim()) &&
+        Boolean(stop.querySelector(".concept-career-name > span")?.textContent.trim()) &&
+        labels.join(" / ") === "What I did / Mission" &&
+        details.length === 2 && details.every((item) => item.textContent.trim() && item.getClientRects().length > 0);
+    }),
+    firstName: stops[0]?.querySelector(".concept-career-name strong")?.textContent.trim(),
+    lastName: stops.at(-1)?.querySelector(".concept-career-name strong")?.textContent.trim(),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 })()`);
@@ -342,7 +329,7 @@ const checkDesktop = async () => {
   });
   await goto("/");
   const state = await pageState();
-  check(state.identity === "I’m Akibwa", `the public identity is concise [${state.identity}]`);
+  check(/^I’m (Daniel|Akibwa)$/.test(state.identity), `the public identity is concise [${state.identity}]`);
   check(state.lede === "Building in the age of AI.", `the proposition stays concise [${state.lede}]`);
   check(
     state.nav.map((item) => `${item.text}:${item.href}`).join(" / ") ===
@@ -368,27 +355,39 @@ const checkDesktop = async () => {
     state.heroLayout.hero.height <= 250,
     `the wide masthead uses its width instead of empty height [${state.heroLayout.hero.height.toFixed(1)}px]`
   );
-  check(state.featureHref === "/features/", `Features links directly to the game [${state.featureHref}]`);
   check(
-    state.leadLayout.feature.width <= state.leadLayout.clients.width * 0.9,
-    `Features stays visibly smaller than the client column [${state.leadLayout.feature.width.toFixed(1)}px / ${state.leadLayout.clients.width.toFixed(1)}px]`
+    state.projects.map((item) => item.href).join(" / ") === "/features/ / /portugal/",
+    `the two project cards link directly [${state.projects.map((item) => item.href).join(" / ")}]`
   );
   check(
-    Math.abs(state.leadLayout.feature.top - state.leadLayout.clients.top) <= 1,
-    "Features and Client work share one clean top edge"
+    state.projects[0].text.startsWith("features ") &&
+      state.projects[1].text.startsWith("Português com a Inês "),
+    `Features and Português com a Inês get the lead [${state.projects.map((item) => item.text).join(" / ")}]`
   );
   check(
-    state.clients.join(" / ") === "Butterfly Rose / Português com a Inês",
-    `the two client projects lead [${state.clients.join(" / ")}]`
+    Math.abs(state.projects[0].rect.top - state.projects[1].rect.top) <= 1 &&
+      Math.abs(state.projects[0].rect.width - state.projects[1].rect.width) <= 1 &&
+      Math.abs(state.projects[0].rect.height - state.projects[1].rect.height) <= 1,
+    `the two project cards have equal visual weight [${state.projects.map((item) => `${item.rect.width.toFixed(1)}×${item.rect.height.toFixed(1)}`).join(" / ")}]`
   );
-  check(!/\bLIVE\b/.test(state.clientText), `client previews do not print a Live label [${state.clientText}]`);
-  check(!/booking system/i.test(state.clientText), "Butterfly Rose no longer claims a booking system");
-  check(!/butterflyrosehairsalon|portuguesewithines/i.test(state.clientText), "client URLs stay out of the visible index");
   check(
-    state.career.length === 8 && state.career[0].startsWith("Freelance,"),
-    `the complete career sequence begins with freelance [${state.career.length} stops]`
+    state.projects.every((item) => item.imageComplete && item.imageWidth >= 900 && /conceptProject/.test(item.currentSrc)),
+    "both featured projects load their responsive artwork"
   );
-  check(state.careerDetailsHidden, "career descriptions stay quiet until hover or focus");
+  check(
+    state.freelance.text.includes("I design and build websites, booking systems and practical AI tools") &&
+      state.freelance.text.endsWith("CLIENT WORK INCLUDES Butterfly Rose"),
+    `the freelance offer carries the small Butterfly Rose proof point [${state.freelance.text}]`
+  );
+  check(state.freelance.butterflyImages === 0, "Butterfly Rose no longer gets a featured image");
+  check(
+    state.career.length === 8 && state.career[0].name === "Freelance" && state.career.at(-1).name === "Lloyds Banking Group",
+    `the complete career sequence remains intact [${state.career.length} stops]`
+  );
+  check(
+    state.career.every((item) => item.role && item.labels.join(" / ") === "What I did / Mission" && item.details.every(Boolean)),
+    "every career stop keeps title, contribution and mission visible"
+  );
   check(
     state.filters.map((item) => item.text).join(" / ") ===
       "Highlights / Music / Films / Games / TV",
@@ -420,11 +419,6 @@ const checkDesktop = async () => {
     `footer restores its colour accents [${state.footerAccents}]`
   );
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
-
-  check(
-    state.clientButtons.every((item) => item.tag === "BUTTON" && item.popup === "dialog" && item.href === null && item.images === 1),
-    "each client is a visual preview button rather than an immediate external link"
-  );
 };
 
 const checkLinkHover = async () => {
@@ -493,103 +487,23 @@ const checkHeroBreakpoint = async () => {
   check(state.overflow <= 1, `the stacked breakpoint has no overflow [${state.overflow}px]`);
 };
 
-const checkClientPreviews = async () => {
-  section("in-page client previews");
-  await setDesktop();
-  await goto("/");
-
-  await evaluate(`document.querySelectorAll(".concept-client-project")[0].click()`);
-  const first = await pollUntil(
-    () => evaluate(`(() => {
-      const dialog = document.querySelector(".concept-client-dialog");
-      if (!dialog?.open) return { open: false };
-      const box = dialog.getBoundingClientRect();
-      return {
-        open: true,
-        title: dialog.querySelector("#concept-client-preview-title")?.textContent.trim(),
-        imageAlt: dialog.querySelector(".concept-client-preview-screen img")?.getAttribute("alt"),
-        linkText: dialog.querySelector(".concept-client-preview-foot a")?.textContent.trim().replace(/\\s+/g, " "),
-        linkHref: dialog.querySelector(".concept-client-preview-foot a")?.getAttribute("href"),
-        linkTarget: dialog.querySelector(".concept-client-preview-foot a")?.getAttribute("target"),
-        visibleText: dialog.innerText.replace(/\\s+/g, " ").trim(),
-        insideViewport: box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight
-      };
-    })()`),
-    (value) => value.open
-  );
-  check(first.open, "the Butterfly Rose preview opens without navigation");
-  check(first.title === "Butterfly Rose", `the first preview is Butterfly Rose [${first.title}]`);
-  check(first.imageAlt === "Butterfly Rose homepage preview", "the first website still has useful alternative text");
-  check(first.linkText == null && first.linkHref == null && first.linkTarget == null, "the unpublished redesign does not lead to the salon's older site");
-  check(!/butterflyrosehairsalon\.co\.uk/i.test(first.visibleText), "the preview does not print the Butterfly Rose URL");
-  check(first.insideViewport, "the desktop preview stays inside the viewport");
-
-  await pressEscape();
-  const closed = await pollUntil(
-    () => evaluate(`(() => {
-      const dialog = document.querySelector(".concept-client-dialog");
-      return !dialog.open && !dialog.querySelector("#concept-client-preview-title");
-    })()`),
-    Boolean
-  );
-  check(closed, "Escape closes and clears the temporary preview");
-
-  await evaluate(`document.querySelectorAll(".concept-client-project")[1].click()`);
-  const second = await pollUntil(
-    () => evaluate(`(() => {
-      const dialog = document.querySelector(".concept-client-dialog[open]");
-      const link = dialog?.querySelector(".concept-client-preview-foot a");
-      return {
-        title: dialog?.querySelector("#concept-client-preview-title")?.textContent.trim() ?? "",
-        linkText: link?.textContent.trim().replace(/\\s+/g, " "),
-        linkHref: link?.getAttribute("href"),
-        linkTarget: link?.getAttribute("target")
-      };
-    })()`),
-    (value) => value.title === "Português com a Inês"
-  );
-  check(second.title === "Português com a Inês", "the second client opens in the same preview treatment");
-  check(second.linkText === "Open full site ↗", `the published destination is plainly labelled [${second.linkText}]`);
-  check(second.linkHref === "https://portuguesewithines.com/", "the published Portuguese site remains reachable by choice");
-  check(second.linkTarget === "_blank", "the optional published site opens separately from Akibwa");
-  await pressEscape();
-};
-
 const checkCareerTimeline = async () => {
-  section("career detail and dot clearance");
+  section("career detail stays visible");
   await setDesktop(1100, 760);
   await goto("/");
-  let point = await evaluate(`(() => {
-    document.documentElement.style.scrollBehavior = "auto";
-    const first = document.querySelector(".concept-career-stop");
-    first.scrollIntoView({ block: "center" });
-    const rect = first.getBoundingClientRect();
-    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-  })()`);
-  await clickAt(point.x, point.y);
-  let state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
+  let state = await careerState();
   check(state.count === 8, `eight career stops remain visible [${state.count}]`);
-  check(state.focused, "a career stop can receive keyboard focus");
-  check(state.popoverOpacity > 0.99, `focus reveals the career description [${state.popoverOpacity}]`);
-  check(state.minAbove >= 5.5, `the halo clears every date [${state.minAbove.toFixed(1)}px]`);
-  check(state.minBelow >= 5.5, `the halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
+  check(state.complete, "every desktop stop visibly contains title, contribution and mission");
+  check(
+    state.firstName === "Freelance" && state.lastName === "Lloyds Banking Group",
+    `career order runs from Freelance to Lloyds [${state.firstName} → ${state.lastName}]`
+  );
   check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
 
   await setMobile();
   await goto("/");
-  point = await evaluate(`(() => {
-    document.documentElement.style.scrollBehavior = "auto";
-    const first = document.querySelector(".concept-career-stop");
-    first.scrollIntoView({ block: "center" });
-    const rect = first.getBoundingClientRect();
-    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-  })()`);
-  await clickAt(point.x, point.y);
-  state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
-  check(state.focused, "the phone timeline retains keyboard focus semantics");
-  check(state.popoverOpacity > 0.99, `the phone timeline reveals the same concise detail [${state.popoverOpacity}]`);
-  check(state.minAbove >= 5.5, `the phone halo clears every date [${state.minAbove.toFixed(1)}px]`);
-  check(state.minBelow >= 5.5, `the phone halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
+  state = await careerState();
+  check(state.complete, "every phone stop keeps the same visible career detail");
   check(state.overflow <= 1, `the phone timeline has no horizontal overflow [${state.overflow}px]`);
 };
 
@@ -642,38 +556,17 @@ const checkMobile = async () => {
     "the phone keeps identity, proposition and menu in reading order"
   );
   check(
-    initial.leadLayout.feature.width <= initial.leadLayout.clients.width * 0.95,
-    `Features leaves a little mobile breathing room [${initial.leadLayout.feature.width.toFixed(1)}px / ${initial.leadLayout.clients.width.toFixed(1)}px]`
+    initial.projects.length === 2 &&
+      initial.projects[1].rect.top >= initial.projects[0].rect.bottom + 16 &&
+      initial.projects.every((item) => item.rect.width >= 350 && item.rect.width <= 360),
+    `the two featured projects stack at full phone width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
   );
-  const clientLayout = await evaluate(`(() => {
-    const cards = [...document.querySelectorAll(".concept-client-project")]
-      .map((item) => item.getBoundingClientRect())
-      .map((rect) => ({ left: rect.left, top: rect.top, width: rect.width }));
-    return { cards };
-  })()`);
   check(
-    clientLayout.cards.length === 2 &&
-      Math.abs(clientLayout.cards[0].top - clientLayout.cards[1].top) <= 1 &&
-      clientLayout.cards.every((card) => card.width >= 150 && card.width <= 175),
-    `the two visual clients stay compact and side by side [${clientLayout.cards.map((card) => card.width.toFixed(1)).join(" / ")}px]`
+    initial.freelance.rect.top >= initial.projects[1].rect.bottom + 24 &&
+      initial.freelance.text.endsWith("CLIENT WORK INCLUDES Butterfly Rose"),
+    "the freelance offer follows the projects with Butterfly Rose kept secondary"
   );
-  await evaluate(`document.querySelector(".concept-client-project").click()`);
-  const mobilePreview = await pollUntil(
-    () => evaluate(`(() => {
-      const dialog = document.querySelector(".concept-client-dialog");
-      if (!dialog?.open) return { open: false };
-      const rect = dialog.getBoundingClientRect();
-      return {
-        open: true,
-        inside: rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight,
-        overflow: dialog.scrollWidth - dialog.clientWidth
-      };
-    })()`),
-    (value) => value.open
-  );
-  check(mobilePreview.inside, "the temporary website preview fits the phone viewport");
-  check(mobilePreview.overflow <= 1, `the temporary website preview has no phone overflow [${mobilePreview.overflow}px]`);
-  await pressEscape();
+  check(initial.freelance.butterflyImages === 0, "the phone does not promote Butterfly Rose with an image");
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     document.querySelector("#taste").scrollIntoView({ block: "start" });
@@ -721,9 +614,8 @@ const checkReducedMotion = async () => {
   const durations = await evaluate(`(() => {
     const selectors = [
       ".concept-arrow",
-      ".concept-client-visual img",
-      ".concept-career-node",
-      ".concept-career-popover"
+      ".hero-name",
+      ".hero-name-value"
     ];
     return selectors.map((selector) => getComputedStyle(document.querySelector(selector)).transitionDuration);
   })()`);
@@ -780,7 +672,6 @@ const main = async () => {
     await checkDesktop();
     await checkHeroBreakpoint();
     await checkLinkHover();
-    await checkClientPreviews();
     await checkCareerTimeline();
     await checkFilters();
     await checkMobile();

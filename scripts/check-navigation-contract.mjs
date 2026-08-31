@@ -1,19 +1,14 @@
 import { readFileSync } from "node:fs";
 
 /* Build-time contract for Akibwa's public editorial index. The homepage is a
-   short introduction to current work, clients and career, followed by the
-   complete taste wall. Its navigation is three plain anchor links; information
-   appears on focus or hover only where a compact index needs the detail. */
+   short introduction to current work and career, followed by the complete
+   taste wall. Its navigation is three plain anchor links. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 const index = readFileSync(new URL("../app/page.jsx", import.meta.url), "utf8");
 const shell = readFileSync(new URL("../components/site-shell.jsx", import.meta.url), "utf8");
 const editorial = readFileSync(
   new URL("../components/pages/editorial-home-concept.jsx", import.meta.url),
-  "utf8"
-);
-const clientPreviews = readFileSync(
-  new URL("../components/client-site-previews.jsx", import.meta.url),
   "utf8"
 );
 const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.url), "utf8");
@@ -93,30 +88,34 @@ requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns", "a
 requireRuleText(".concept-hero-copy {", ["min-width: 0"]);
 requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
 
-/* Features stays direct. Client work opens as a quiet, visual in-page preview;
-   leaving Akibwa is a second, explicit choice from inside that preview. */
+/* The Projects lead is a deliberate pair: Dan's own game and the client project
+   he is proud to feature. Butterfly Rose stays a small proof point in the
+   freelance offer rather than taking equal visual billing. */
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
   'src="/features/features-game-light-og-1200x630.png"',
   "Features must keep the approved light artwork"
 );
-requireText(editorial, 'const clientNames = ["Butterfly Rose", "Português com a Inês"]', "the two current clients must lead");
-requireText(editorial, "<ClientSitePreviews projects={clientProjects} />", "the two clients must use the visual preview component");
-requireText(editorial, "href: null", "the unpublished Butterfly Rose redesign must not link to the older live site");
-forbidText(editorial, "project.eyebrow", "client cards must not print a Live label");
+requireText(editorial, 'href="/portugal/"', "Português com a Inês must be the second direct project link");
+requireText(
+  editorial,
+  'src="/project-art/personal/portuguese-with-ines-conversation.png"',
+  "Português com a Inês must keep its representative conversation artwork"
+);
+requireText(editorial, "Português com a Inês</strong>", "the Portuguese project must be visibly named");
+requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
+requireText(editorial, "{freelance.back}", "the current freelance offer must be visible in Projects");
+requireText(editorial, "Client work includes", "client proof must stay explicit but secondary");
+requireText(editorial, "Butterfly Rose</strong>", "Butterfly Rose must remain a small client proof point");
+forbidText(editorial, "<ClientSitePreviews", "the retired equal-billing client preview grid must stay off the homepage");
 forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
 forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
-requireText(clientPreviews, 'aria-haspopup="dialog"', "each client still must open an in-page preview");
-requireText(clientPreviews, "src={project.art}", "client buttons must lead with their brand artwork");
-requireText(clientPreviews, 'slot="clientMark"', "client artwork must use its dedicated responsive slot");
-requireText(clientPreviews, "Website preview", "the temporary site view must describe itself as a preview");
-requireText(clientPreviews, "active.href ?", "only published client sites should offer an external destination");
-requireText(clientPreviews, "Open full site", "the preview must retain an optional full-site destination");
-requireText(clientPreviews, 'target="_blank"', "the optional full-site destination must open separately");
-forbidText(clientPreviews, "Live", "the retired Live label must stay out of client previews");
 forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
+requireRuleText(".concept-project-grid {", ["display: grid", "repeat(2, minmax(0, 1fr))"]);
+requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
+requireRuleText(".concept-freelance {", ["display: grid", "border-top: 1px solid"]);
 
 /* Career is an eight-stop editorial timeline. Every stop keeps the role,
    Dan's contribution and the organisation's mission visible at rest. */
@@ -172,19 +171,11 @@ requireRuleText(".akibwa-home .deck .card {", [
 ]);
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
 
-/* Each client preview owns its frame; the former shared underline must not
-   make the pair look like one unfinished row. */
-forbidText(rule(".concept-freelance {"), "border-bottom", "Clients must not retain the shared underline");
-requireRuleText(".concept-client-project {", ["border: 0", "background: transparent"]);
-forbidText(rule(".concept-client-project {"), "border-top-width", "client buttons must not regain top banners");
-requireRuleText(".concept-client-visual {", ["aspect-ratio: 4 / 3", "border: 1px solid"]);
-requireRuleText(".concept-client-visual picture,", ["object-fit: cover"]);
-forbidText(clientPreviews, "concept-client-expand", "client buttons must not regain the old plus control");
 for (const source of [
-  "/project-art/personal/butterfly-rose-card.webp",
-  "/project-art/personal/ines-fan-splat.webp"
+  "/features/features-game-light-og-1200x630.png",
+  "/project-art/personal/portuguese-with-ines-conversation.png"
 ]) {
-  if (!imageVariants[`clientMark:${source}`]) fail(`${source} must have a clientMark image ladder`);
+  if (!imageVariants[`conceptProject:${source}`]) fail(`${source} must have a conceptProject image ladder`);
 }
 
 /* Taste artwork must resolve to real Retina-sized files rather than stretching

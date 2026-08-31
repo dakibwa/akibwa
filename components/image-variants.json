@@ -947,6 +947,98 @@
       }
     ]
   },
+  "conceptProject:/features/features-game-light-og-1200x630.png": {
+    "source": "/features/features-game-light-og-1200x630.png",
+    "slot": "conceptProject",
+    "ratio": 1.9048,
+    "sourceWidth": 1200,
+    "sourceHeight": 630,
+    "sourceHash": "3187b0ff89d87939",
+    "variants": [
+      {
+        "width": 491,
+        "height": 258,
+        "avif": {
+          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-491.avif",
+          "bytes": 6442
+        },
+        "webp": {
+          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-491.webp",
+          "bytes": 8474
+        }
+      },
+      {
+        "width": 780,
+        "height": 410,
+        "avif": {
+          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-780.avif",
+          "bytes": 10302
+        },
+        "webp": {
+          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-780.webp",
+          "bytes": 14976
+        }
+      },
+      {
+        "width": 948,
+        "height": 498,
+        "avif": {
+          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-948.avif",
+          "bytes": 12490
+        },
+        "webp": {
+          "src": "/_img/features/features-game-light-og-1200x630-conceptProject-948.webp",
+          "bytes": 18422
+        }
+      }
+    ]
+  },
+  "conceptProject:/project-art/personal/portuguese-with-ines-conversation.png": {
+    "source": "/project-art/personal/portuguese-with-ines-conversation.png",
+    "slot": "conceptProject",
+    "ratio": 1.9048,
+    "sourceWidth": 1731,
+    "sourceHeight": 909,
+    "sourceHash": "cd571f267cb42a9c",
+    "variants": [
+      {
+        "width": 491,
+        "height": 258,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-491.avif",
+          "bytes": 6398
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-491.webp",
+          "bytes": 9306
+        }
+      },
+      {
+        "width": 780,
+        "height": 410,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-780.avif",
+          "bytes": 9695
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-780.webp",
+          "bytes": 16002
+        }
+      },
+      {
+        "width": 948,
+        "height": 498,
+        "avif": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-948.avif",
+          "bytes": 12085
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-948.webp",
+          "bytes": 20128
+        }
+      }
+    ]
+  },
   "clientSite:/project-art/client-sites/butterfly-rose-redesign-home.jpg": {
     "source": "/project-art/client-sites/butterfly-rose-redesign-home.jpg",
     "slot": "clientSite",

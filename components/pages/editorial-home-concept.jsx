@@ -1,32 +1,9 @@
-import { deck, sites } from "@/components/deck-data";
-import { ClientSitePreviews } from "@/components/client-site-previews";
+import { deck } from "@/components/deck-data";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
-const clientNames = ["Butterfly Rose", "Português com a Inês"];
-const clientPresentation = {
-  "Butterfly Rose": {
-    preview: "/project-art/client-sites/butterfly-rose-redesign-home.jpg",
-    markTreatment: "is-full-bleed",
-    /* The redesign is not public yet. Keep its preview inside Akibwa rather
-       than sending people to the salon's older live site. */
-    href: null,
-    summary: "A new website for an independent hair salon in [place removed]."
-  },
-  "Português com a Inês": {
-    preview: "/project-art/client-sites/portuguese-with-ines-home.jpg",
-    markTreatment: "is-contained",
-    summary: "A hand-built home for European Portuguese lessons in Porto and online."
-  }
-};
-const clientProjects = clientNames
-  .map((name) => sites.find((site) => site.name === name))
-  .filter(Boolean)
-  .map((site) => ({
-    ...site,
-    ...clientPresentation[site.name]
-  }));
+const freelance = deck.jobs.find((job) => job.name === "Freelance");
 
 /* Keep the whole working history in sequence, including the two stretches on
    the tools between office roles. Each stop says what Dan did and what the
@@ -64,37 +41,65 @@ export function EditorialHomeConcept() {
         </div>
       </header>
 
-      <section className="page-grid concept-lead-grid" id="projects" aria-label="Projects">
-        <a
-          className="concept-feature"
-          id="work"
-          href="/features/"
-          aria-label="Play Features, the daily untangling puzzle"
-        >
-          <SiteImage
-            src="/features/features-game-light-og-1200x630.png"
-            slot="conceptFeature"
-            width={1200}
-            height={630}
-            alt="Features daily puzzle: coloured threads woven through a neural network"
-            above
-            aboveSync
-          />
-          <span className="concept-feature-foot">
-            <span>
-              <strong>features</strong>
-              <span>daily untangling puzzle</span>
+      <section className="page-grid concept-projects" id="projects" aria-label="Projects">
+        <div className="concept-project-grid">
+          <a
+            className="concept-project-card concept-feature"
+            id="work"
+            href="/features/"
+            aria-label="Play Features, the daily untangling puzzle"
+          >
+            <SiteImage
+              src="/features/features-game-light-og-1200x630.png"
+              slot="conceptProject"
+              alt="Features daily puzzle: coloured threads woven through a neural network"
+              above
+              aboveSync
+            />
+            <span className="concept-project-foot">
+              <span>
+                <strong>features</strong>
+                <span>daily untangling puzzle</span>
+              </span>
+              <span className="concept-arrow">play today ↗</span>
             </span>
-            <span className="concept-arrow">play today ↗</span>
-          </span>
-        </a>
+          </a>
 
-        <article className="concept-freelance" id="now" aria-labelledby="clients-title">
-          <h2 id="clients-title">Client work</h2>
+          <a
+            className="concept-project-card concept-portuguese"
+            href="/portugal/"
+            aria-label="Visit Português com a Inês, European Portuguese lessons in Porto and online"
+          >
+            <SiteImage
+              src="/project-art/personal/portuguese-with-ines-conversation.png"
+              slot="conceptProject"
+              alt="Two people talking over coffee as colourful speech shapes meet between them"
+              above
+              aboveSync
+            />
+            <span className="concept-project-foot">
+              <span>
+                <strong>Português com a Inês</strong>
+                <span>European Portuguese lessons</span>
+              </span>
+              <span className="concept-arrow">visit site ↗</span>
+            </span>
+          </a>
+        </div>
 
-          <ClientSitePreviews projects={clientProjects} />
-
-        </article>
+        <aside className="concept-freelance" id="now" aria-labelledby="freelance-title">
+          <header>
+            <p className="concept-kicker">Freelance</p>
+            <h2 id="freelance-title">Built end to end.</h2>
+          </header>
+          <div className="concept-freelance-copy">
+            <p>{freelance.back}</p>
+            <p className="concept-client-note">
+              <span>Client work includes</span>
+              <strong>Butterfly Rose</strong>
+            </p>
+          </div>
+        </aside>
       </section>
 
       <section className="page-grid concept-career-section" id="career" aria-labelledby="career-title">

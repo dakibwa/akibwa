@@ -15,7 +15,7 @@ export const deck = {
       "accent": "#c05212",
       "logo": "/favicon.svg",
       "tile": true,
-      "back": "Build sites, booking systems, games and data pipelines for myself and for clients, from first sketch to live service.",
+      "back": "I design and build websites, booking systems and practical AI tools for myself and for clients, from first sketch to live service.",
       "mission": "Turn good ideas and repetitive work into useful software people can actually run."
     },
     {
