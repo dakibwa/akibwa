@@ -2,9 +2,9 @@
 // Build /trek — the 2019 walk, Paris to Sofia, travelled through the map.
 //
 // The page is one full-screen atlas. Scroll walks the line: the camera
-// follows the GPS day points, towns arrive and pass, each
-// country opens with its Imagine ground, and records and journal beats surface
-// at their walked days. Rest points remain on the line but pass silently.
+// follows the GPS day points, towns arrive and pass, each country opens with
+// its Imagine ground, and records, photographs and journal entries surface at
+// their walked days. Rest points remain on the line but pass silently.
 //
 //   data/trek-days.json          ← regenerated: days + distances + sleeves + geometry
 //   public/trek/index.html       ← rendered from scripts/trek-page-template.html
@@ -20,6 +20,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = path.join(root, "data/trek-days.json");
 const coversPath = path.join(root, "data/trek-covers.json");
+const journalPath = path.join(root, "data/trek-journal.json");
 const templatePath = path.join(root, "scripts/trek-page-template.html");
 const outPath = path.join(root, "public/trek/index.html");
 
@@ -28,6 +29,22 @@ const distancesPath = argIdx > -1 ? process.argv[argIdx + 1] : null;
 
 const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
 const covers = JSON.parse(fs.readFileSync(coversPath, "utf8"));
+const journal = JSON.parse(fs.readFileSync(journalPath, "utf8"));
+const JOURNAL = journal.days || {};
+const photosManifestPath = path.join(root, "public/trek/photos/manifest.json");
+const photos = fs.existsSync(photosManifestPath)
+  ? JSON.parse(fs.readFileSync(photosManifestPath, "utf8"))
+  : [];
+const walkedDays = data.days.filter((day) => day.walked).map((day) => day.n);
+const photoDisplayDay = (day) => {
+  if (walkedDays.includes(day)) return day;
+  return walkedDays.find((walkedDay) => walkedDay > day) || walkedDays[walkedDays.length - 1];
+};
+const storyPhotos = photos.map((photo) => ({ ...photo, displayDay: photoDisplayDay(photo.day) }));
+const photosByDay = storyPhotos.reduce((byDay, photo) => {
+  (byDay[photo.displayDay] || (byDay[photo.displayDay] = [])).push(photo);
+  return byDay;
+}, {});
 
 // ---------------------------------------------------------------- distances
 if (distancesPath) {
@@ -67,78 +84,6 @@ for (const day of data.days) {
   }
 }
 
-// -------------------------------------------------------------- story beats
-// Public-safe excerpts from the 2019 journal (A Generous Slice). The day-card
-// notes keep the travel, weather, landscape and practical experience while
-// deliberately leaving relationships, health, money and identifying third-
-// party details in the private source journal.
-const JOURNAL = {
-  1: "My navigation immediately took me through beautiful farmland and forest — the first hint of what beauty was yet to be seen.",
-  2: "A quiet, peaceful path ran beside a clear green river. I had imagined motorways; instead I kept finding fields.",
-  3: "I followed the green river for 20 km, then stopped in a church in Château-Thierry before returning to the wooded paths.",
-  7: "The canal left Châlons-en-Champagne between vineyards and orchards, under a boiling late-September sun.",
-  8: "A monumental thunderstorm broke over the route into Bar-le-Duc: pouring rain, lightning and a pause beneath the trees.",
-  9: "In the woods the wind went still and the sun came through. For a moment, everything in the air was calm.",
-  11: "The path to Nancy ran through a national park in hard rain, with the trees rising high overhead.",
-  14: "Cliff faces stood on both sides of the path, blue flies fluttering between them as Witchi Tai To played.",
-  15: "Back on the canal out of Saverne, heading towards the Rhine and the German border.",
-  25: "The best running rhythm of the journey so far, with the Austrian mountains finally visible ahead.",
-  27: "The Austrian border began with a sharp climb and a small waterfall — mountains all around, country three underfoot.",
-  28: "A cold, crisp morning turned into glaring sun. The route was beginning to rise towards the Ankogel mountains.",
-  29: "A whole new terrain of steep mountain paths, each climb opening another view across Austria.",
-  30: "At 2,500 metres it was almost silent: only my breath and footsteps, then a race down the empty ski slopes before dark.",
-  31: "The sun kept beaming down despite it being almost November; another 50 km had begun to feel methodical.",
-  32: "Lacing my shoes, heading for the trails and covering the next stretch had become ordinary everyday life.",
-  35: "I stopped tracking every kilometre so closely and tried to pay more attention to the day-to-day details as they appeared.",
-  36: "More than 50 km through drizzle, rain, wind chill, flooded paths and fog, ending with a wooded climb in darkness.",
-  37: "Another 50 km in rain and low temperatures, followed by a warm arrival in Ptuj.",
-  38: "Croatia arrived after nearly fifteen consecutive days on the road: first the main road, then the welcome quiet of a canal path.",
-  40: "Grey roads and monotonous trails headed east across Croatia, with Osijek the next clear point on the horizon.",
-  41: "A warm, sunny day across the sparse northern Croatian plain — a startling contrast with the Austrian mountains.",
-  42: "Trains bridged the unsafe main-road sections; after the last stop, 40 km of flat farms stretched to Osijek.",
-  47: "New shoes, a half-marathon run and, beside the Croatian road, the unexpected sight of a warning sign for mines.",
-  48: "The last muddy fields of Croatia led to passport control, then river paths and fishing huts on the Serbian side.",
-  49: "Seventy kilometres to Novi Sad, finishing after dark through technical paths, brambles and whatever route the app could find.",
-  53: "Walking into Belgrade in perfect weather, I decided to take my time before the final push towards Sofia.",
-  57: "A farm track, small tractors chugging past and one farmer tipping his hat in acknowledgement.",
-  58: "A pipeline construction made an unexpectedly direct path; the guesthouse welcome was tea, wafers and home-brewed raki.",
-  59: "A short day with a stray dog for company — named Dogmeat in the journal — following part of the route.",
-  65: "Country seven. Crossing into Bulgaria made the end feel suddenly close: Sofia was one more day away.",
-  66: "Sofia, at last. The arrival closed this part of the road and opened a few quiet days to take it all in.",
-};
-
-const BEATS = {
-  30: {
-    label: "the high point",
-    quote:
-      "Today's seen me climb over the Austrian Alps to a peak height of 2500m. The climb involved a variety of terrains spanning from walking up streams, technical scrambles and narrow ridge trails.",
-  },
-  32: {
-    label: "the routine",
-    quote:
-      "It's occurred to me that this is now my everyday life. Today, like yesterday, I've gone through the motions of my morning routine, lacing up my shoes, heading for the trails.",
-  },
-  36: {
-    label: "rain over Slovenia",
-    quote:
-      "After navigating the many hills, the busy roadsides and the waterlogged footpaths, I arrived at what I thought was a short walk — only to find another steep wooded climb in the darkness.",
-  },
-  42: {
-    label: "the safer line",
-    quote:
-      "I caught a few trains to avoid travelling on main roads. Jumping off the train saw 40 km ahead of me, which proved to be a linear eight-hour walk through the flat Croatian farms.",
-  },
-  49: {
-    label: "the furthest day",
-    quote:
-      "Today I have set a new personal record, not for speed but instead for the furthest I've ever travelled on foot. My ankles feel shot but surprisingly the rest of my body feels full of vigor.",
-  },
-  65: {
-    label: "country seven",
-    quote:
-      "Having crossed the border, something seems to have clicked and it has occurred to me how close I am to achieving what I set out to do. Tomorrow I will be arriving in Sofia.",
-  },
-};
 // -------------------------------------------------------------------- towns
 // Staging posts. These are the anchors: the line visits each city, and the
 // GPS fills the journey between them. Coordinates are Web Mercator (same
@@ -654,86 +599,6 @@ const riverPaths = water.rivers
   .flatMap((river) => river.lines.map((line) => `<path class="river" data-name="${river.name}" d="${linePath(line)}"/>`))
   .join("\n      ");
 
-const MOUNTAINS = [
-  { name: "Vosges", lon: 7.05, lat: 48.22 },
-  { name: "the Alps", lon: 13.05, lat: 47.05 },
-  { name: "Dinaric Alps", lon: 15.25, lat: 45.72 },
-  { name: "Balkan Mountains", lon: 22.72, lat: 43.18 },
-];
-const mountainMarks = MOUNTAINS.map((mountain) => {
-  const point = mapLonLat(mountain);
-  return `<g class="mountain" transform="translate(${point.x} ${point.y})">
-      <path d="M-7 4L0-5L7 4M-2.8 4L2-1L6.5 4"/>
-      <text x="0" y="13" text-anchor="middle">${mountain.name}</text>
-    </g>`;
-}).join("\n    ");
-
-// Upright paper landmarks. These are deliberately illustrative silhouettes,
-// not generic map pins: they unfold as the route reaches each place and make
-// the atlas read like a travelling pop-up book.
-const LANDMARKS = [
-  { name: "Champagne country", short: "Champagne", lon: 4.45, lat: 49.05, kind: "vines", color: "#C7A35A" },
-  { name: "Munich Frauenkirche", short: "Frauenkirche", lon: 11.58, lat: 48.14, kind: "frauenkirche", town: "munich" },
-  { name: "Lake Zell", short: "Zeller See", lon: 12.8, lat: 47.32, kind: "lake", town: "zell-am-see" },
-  { name: "the High Tauern", short: "High Tauern", lon: 13.32, lat: 47.05, kind: "peaks", town: "the-tauern", labelX: 13, labelAnchor: "end" },
-  { name: "the Victor, Belgrade", short: "the Victor", lon: 20.46, lat: 44.82, kind: "victor", town: "belgrade" },
-  { name: "Alexander Nevsky Cathedral", short: "Alexander Nevsky", lon: 23.32, lat: 42.7, kind: "domes", town: "sofia" },
-];
-
-function landmarkIcon(kind) {
-  if (kind === "vines") return `
-      <path class="landmark-floor landmark-line" d="M-19 1L-10-7M-11 2L-3-7M-3 2L5-7M5 2L13-7M13 2L20-5"/>
-      <g class="landmark-rise">
-        <path class="landmark-line" d="M-13 0V-14M-3 0V-17M7 0V-13M16 0V-10"/>
-        <path class="landmark-accent" d="M-17-9c4-5 8-5 12 0-4 4-8 4-12 0Zm10-5c4-5 8-5 12 0-4 4-8 4-12 0Zm10 3c4-5 8-5 12 0-4 4-8 4-12 0Z"/>
-      </g>`;
-  if (kind === "frauenkirche") return `
-      <g class="landmark-rise">
-        <path class="landmark-paper" d="M-15 0v-18h30V0Zm3-18v-12h7v12Zm17 0v-12h7v12Z"/>
-        <path class="landmark-accent" d="M-13-30c0-4 2-7 4.5-9 2.5 2 4.5 5 4.5 9Zm17 0c0-4 2-7 4.5-9 2.5 2 4.5 5 4.5 9Z"/>
-        <path class="landmark-cut" d="M-2 0v-9c0-4 4-4 4 0V0"/>
-      </g>`;
-  if (kind === "lake") return `
-      <path class="landmark-floor landmark-water" d="M-23-1c5-7 15-10 26-8 8 1 15 5 20 10-7 5-17 7-28 6-8-1-14-4-18-8Z"/>
-      <g class="landmark-rise">
-        <path class="landmark-paper" d="M-19-6-10-23-2-13 6-30 17-7 11-12 5-5-7-10-12 7Z"/>
-        <path class="landmark-snow" d="m-10-23 3 4 5 6m8-17 4 7 4-3"/>
-      </g>`;
-  if (kind === "peaks") return `
-      <g class="landmark-rise">
-        <path class="landmark-paper" d="M-23 0-12-19-5-10 4-34 14-17 21-25 29 0Z"/>
-        <path class="landmark-snow" d="m-12-19 3 5 4-4M4-34l4 8 4-4m9 5 3 7 3-3"/>
-      </g>`;
-  if (kind === "victor") return `
-      <g class="landmark-rise">
-        <path class="landmark-paper" d="M-8 0h16L5-4H-5Zm3-4h10v-23H-5Z"/>
-        <path class="landmark-accent" d="M0-37c2 0 3 2 2 4l3 7-4 2-2-5-4 5-2-2 5-7c-1-2 0-4 2-4Z"/>
-        <path class="landmark-line" d="M2-32l7-4M-3-31l-6-3"/>
-      </g>`;
-  return `
-      <g class="landmark-rise">
-        <path class="landmark-paper" d="M-19 0v-13h7v-8h8v8h8v-11h7v11h8V0Z"/>
-        <path class="landmark-accent" d="M-15-21c0-5 6-5 6 0Zm14-3c0-7 10-7 10 0Zm13 3c0-5 6-5 6 0Z"/>
-        <path class="landmark-line" d="M0-31v7m15-4v7m-27-7v7"/>
-      </g>`;
-}
-
-const landmarkMarks = LANDMARKS.map((landmark) => {
-  const [x, y] = mercProj(landmark);
-  const point = mapPoint(x, y);
-  const routePosition = nearestOnVerts(x, y, gpsVerts).s;
-  const nearestDay = dayPositions.reduce(
-    (best, day) => (Math.abs(day.s - routePosition) < Math.abs(best.s - routePosition) ? day : best),
-    dayPositions[0]
-  );
-  return `<g class="landmark" data-day="${nearestDay.day}" data-kind="${landmark.kind}"${landmark.town ? ` data-town="${landmark.town}"` : ""} style="--landmark-color:${landmark.color || COUNTRY_COLOR[nearestDay.country]}" transform="translate(${point.x} ${point.y})">
-      <title>${landmark.name}</title>
-      <ellipse class="landmark-shadow" cx="0" cy="2" rx="18" ry="4"/>
-      ${landmarkIcon(landmark.kind).trim()}
-      <text class="landmark-label" x="${landmark.labelX || 0}" y="11" text-anchor="${landmark.labelAnchor || "middle"}">${landmark.short}</text>
-    </g>`;
-}).join("\n    ");
-
 const trackPath =
   "M" +
   route
@@ -845,8 +710,6 @@ const atlasSvg = `
       ${lakePaths}
       ${riverPaths}
     </g>
-    <g id="mountains">${mountainMarks}</g>
-    <g id="landmarks">${landmarkMarks}</g>
     <path id="route-base" d="${trackPath}" fill="none" stroke="#263126" stroke-opacity=".72" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
     <g id="route-ahead">${routeAheadSegs.join("\n      ")}</g>
     <g id="route-travelled" mask="url(#route-progress-mask)">${segs.join("\n      ")}</g>
@@ -860,22 +723,29 @@ const atlasSvg = `
 </svg>`;
 
 // ----------------------------------------------------------------- timeline
-// Scroll scenes, in order: walk legs day by day, a held plate at each border,
-// and held quotes at the beats. Rest points pass quickly and silently.
+// Scroll scenes, in order: walk legs day by day and a held plate at each border.
+// Photo-rich and journal-rich days get enough length for their complete story;
+// rest points pass quickly and silently.
 const PX_PER_KM = 9;
+function walkSceneLength(d) {
+  if (!d.walked) return 36;
+  const base = Math.max(180, Math.round((d.km || 30) * PX_PER_KM));
+  const photoCount = (photosByDay[d.n] || []).length;
+  const journalCount = (JOURNAL[d.n] || []).length;
+  const photoLength = photoCount > 3 ? 260 + (photoCount - 3) * 70 : 0;
+  return Math.max(base, photoLength, journalCount * 360);
+}
 const scenes = [];
 scenes.push({ t: "start", len: 620 });
 scenes.push({ t: "enter", country: "France", len: 760 });
-scenes.push({ t: "walk", day: 1, len: Math.max(180, Math.round((pts[0].km || 30) * PX_PER_KM)) });
+scenes.push({ t: "walk", day: 1, len: walkSceneLength(pts[0]) });
 for (let i = 1; i < pts.length; i++) {
   const d = pts[i];
   const prev = pts[i - 1];
   if (d.country !== prev.country) {
     scenes.push({ t: "enter", country: d.country, len: 760 });
   }
-  const walkLen = d.walked ? Math.max(180, Math.round((d.km || 30) * PX_PER_KM)) : 36;
-  scenes.push({ t: "walk", day: d.n, len: walkLen });
-  if (BEATS[d.n]) scenes.push({ t: "beat", day: d.n, len: 720 });
+  scenes.push({ t: "walk", day: d.n, len: walkSceneLength(d) });
 }
 scenes.push({ t: "end", len: 900 });
 let acc = 0;
@@ -903,7 +773,7 @@ const jsDays = pts.map((d) => {
     x: point.x,
     y: point.y,
     s: d.sleeve || null,
-    j: JOURNAL[d.n] || null,
+    j: JOURNAL[d.n] || [],
   };
 });
 const rawWalkKm = jsDays.reduce((sum, d) => sum + (d.w ? d.km : 0), 0);
@@ -973,13 +843,6 @@ for (const day of jsDays) {
     country: day.c,
   });
 }
-// Photographs from the road: public/trek/photos/manifest.json, written by the
-// curation step — [{ day, src, w, h }] with files sitting alongside it.
-const photosManifestPath = path.join(root, "public/trek/photos/manifest.json");
-const photos = fs.existsSync(photosManifestPath)
-  ? JSON.parse(fs.readFileSync(photosManifestPath, "utf8"))
-  : [];
-
 const jsData = {
   days: jsDays,
   colors: COUNTRY_COLOR,
@@ -992,12 +855,11 @@ const jsData = {
   },
   scenes,
   timeline: TIMELINE_TOTAL,
-  beats: BEATS,
   vb: [VBW, VBH],
   start: [startPoint.x, startPoint.y],
   startAlt: Math.round(startAlt),
   walkPaths,
-  photos,
+  photos: storyPhotos,
   places,
   albums,
 };
@@ -1072,7 +934,7 @@ const townReport = townsPlaced
   .map((t) => `${t.name} ${(t.snapM / 1000).toFixed(1)}km`)
   .join(", ");
 console.log(
-  `built public/trek/index.html — ${pts.length} days, timeline ${TIMELINE_TOTAL}px, ${(html.length / 1024).toFixed(0)}K, route ${route.length} pts (${townsPlaced.length} cities)${grid ? ", elevation on" : ""}`
+  `built public/trek/index.html — ${pts.length} days, ${Object.values(JOURNAL).flat().length} journal excerpts, ${storyPhotos.length} photographs, timeline ${TIMELINE_TOTAL}px, ${(html.length / 1024).toFixed(0)}K, route ${route.length} pts (${townsPlaced.length} cities)${grid ? ", elevation on" : ""}`
 );
 console.log(`cities on the line: ${townReport}`);
 }

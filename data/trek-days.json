@@ -1898,16 +1898,16 @@
   },
   {
    "n": 5,
-   "date": "2019-03-27",
-   "title": "Köln River Run (12 miles)",
+   "date": "2019-09-28",
+   "title": null,
    "raw": null,
    "x": 449820,
    "y": -6318760,
    "walked": false,
    "country": "France",
-   "km": 16.8,
-   "movingMin": 97,
-   "elevM": 93
+   "km": null,
+   "movingMin": null,
+   "elevM": null
   },
   {
    "n": 6,

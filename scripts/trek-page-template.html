@@ -13,7 +13,6 @@
 <meta property="og:description" content="1,982 km on foot across seven countries, autumn 2019. Scroll or press walk, and travel the line town by town.">
 <meta property="og:url" content="https://akibwa.com/trek/">
 <link rel="preload" href="fonts/IBMPlexMono-normal-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312100C'/%3E%3Ccircle cx='6' cy='22' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='12' cy='16' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='18' cy='18' r='2.2' fill='%23EFE6D4'/%3E%3Ccircle cx='26' cy='10' r='2.2' fill='%23EFE6D4'/%3E%3Cpath d='M6 22 L12 16 L18 18 L26 10' fill='none' stroke='%23EFC319' stroke-width='1.6'/%3E%3Crect y='26' width='8' height='6' fill='%232EA3DC'/%3E%3Crect x='8' y='26' width='8' height='6' fill='%23EFC319'/%3E%3Crect x='16' y='26' width='8' height='6' fill='%231FA45A'/%3E%3Crect x='24' y='26' width='8' height='6' fill='%23E97E18'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:"Plex Mono";src:url("fonts/IBMPlexMono-normal-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"Plex Mono";src:url("fonts/IBMPlexMono-normal-500.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
@@ -44,10 +43,6 @@ body{
   font-size:17px;line-height:1.55;
   -webkit-font-smoothing:antialiased;
   overflow-x:clip;
-}
-body::after{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opacity:.05;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
 }
 a{color:inherit}
 img{max-width:100%;display:block}
@@ -154,18 +149,19 @@ button{font:inherit;color:inherit}
 .story-rail{
   position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + 10px);height:var(--story-h);z-index:9;
   display:grid;grid-template-columns:minmax(0,1fr) 0;grid-template-rows:minmax(0,var(--story-h));align-items:stretch;gap:0;pointer-events:none;
-  transition:grid-template-columns .25s ease,gap .25s ease;
+  transition:opacity .12s ease;
 }
-.story-rail.has-photo{grid-template-columns:minmax(0,1fr) min(190px,25vw);gap:10px}
+.story-rail.has-photos{grid-template-columns:minmax(260px,.76fr) minmax(0,1.24fr);gap:8px}
+.story-rail.silent{opacity:0}
 .story-copy{position:relative;min-width:0;min-height:0;height:var(--story-h);max-height:var(--story-h);overflow:hidden}
 .story-current{
-  position:absolute;inset:0;display:grid;align-content:center;gap:6px;min-width:0;padding:12px 16px 11px 18px;
+  position:absolute;inset:0;display:grid;align-content:center;gap:3px;min-width:0;padding:8px 14px 7px 15px;
   color:var(--ink);border:1px solid rgba(43,50,37,.2);border-left:3px solid var(--c-cur);
   background:rgba(249,246,236,.94);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:opacity .2s ease;
 }
-.story-label{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 56%,#4D5749)}
-.story-text{max-width:92ch;font-size:13px;font-weight:560;line-height:1.35;color:#353B32;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.story-label{font-family:var(--mono);font-size:9px;font-weight:600;line-height:1.2;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 56%,#4D5749);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.story-text{max-width:92ch;font-size:12.5px;font-weight:560;line-height:1.28;color:#353B32;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .map-shell{
   --map-shape:inset(0 round 2px);
   position:absolute;left:18px;right:260px;top:calc(var(--chrome-h) + var(--story-h) + 20px);bottom:18px;z-index:2;
@@ -202,44 +198,6 @@ button{font:inherit;color:inherit}
   fill:#15566D;fill-opacity:.9;font-family:var(--sans);font-size:5.8px;font-weight:650;letter-spacing:.01em;
   text-anchor:middle;paint-order:stroke;stroke:#D5E8D2;stroke-width:1.25px;stroke-linejoin:round;
 }
-#mountains{pointer-events:none}
-.mountain{opacity:.28;transition:opacity .5s}
-.stage[data-zoom="travel"] .mountain,.stage[data-zoom="close"] .mountain{opacity:.68}
-.stage[data-landmark="lake"] .mountain,.stage[data-landmark="peaks"] .mountain{opacity:.08}
-.mountain path{fill:none;stroke:color-mix(in srgb,var(--c-cur) 42%,#274638);stroke-width:.9;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;transition:stroke .65s ease}
-.mountain text{font-family:var(--sans);font-size:6px;font-weight:650;letter-spacing:.01em;fill:#274638;paint-order:stroke;stroke:#DCE6C8;stroke-width:1.35px;stroke-linejoin:round;transition:fill .65s ease}
-#landmarks{pointer-events:none}
-.landmark{opacity:.06;transition:opacity .42s ease;--landmark-color:#FFF3D0}
-.landmark-shadow{fill:#000;opacity:0;transform:scaleX(.35);transform-origin:center;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
-.landmark-floor,.landmark-rise{opacity:.08;transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
-.landmark-floor{transform-box:fill-box;transform-origin:center}
-.landmark-rise{transform-box:fill-box;transform-origin:center bottom;transform:scaleY(.035)}
-.landmark-paper{fill:color-mix(in srgb,var(--landmark-color) 32%,#FFF9E8);stroke:#2E3428;stroke-width:.75;stroke-linejoin:round}
-.landmark-accent{fill:var(--landmark-color);stroke:#2E3428;stroke-width:.65;stroke-linejoin:round}
-.landmark-cut{fill:#2E3428}
-.landmark-line,.landmark-snow{fill:none;stroke:color-mix(in srgb,var(--landmark-color) 55%,#2E3428);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.landmark-snow{stroke:#FFF9E8;stroke-width:1.2}
-.landmark-water{fill:#3DA8C8;fill-opacity:.92;stroke:#E3FAFA;stroke-width:.8;vector-effect:non-scaling-stroke}
-.landmark-label{
-  font-family:var(--sans);font-size:5.8px;font-weight:650;letter-spacing:.01em;
-  fill:#243128;paint-order:stroke;stroke:#F1EBD4;stroke-width:1.25px;stroke-linejoin:round;
-  opacity:0;transition:opacity .28s ease;
-}
-.landmark.seen{opacity:.38}
-.landmark.seen .landmark-floor,.landmark.seen .landmark-rise{opacity:1}
-.landmark.seen .landmark-rise{transform:scaleY(1)}
-.landmark.seen .landmark-shadow{opacity:.48;transform:scaleX(1)}
-.landmark.current{opacity:1;filter:drop-shadow(0 4px 5px rgba(62,43,26,.42))}
-.landmark.current .landmark-label{opacity:1}
-.landmark.upcoming{opacity:.7}
-.landmark.upcoming .landmark-floor,.landmark.upcoming .landmark-rise{opacity:.78}
-.landmark.upcoming .landmark-rise{transform:scaleY(.82)}
-.landmark.upcoming .landmark-shadow{opacity:.2;transform:scaleX(.82)}
-.landmark.upcoming .landmark-label{opacity:.82}
-.stage[data-zoom="hero"] .landmark.seen{opacity:.36}
-.stage[data-zoom="hero"] .landmark-label{opacity:0}
-.stage[data-zoom="hero"] .landmark.upcoming{opacity:.82}
-.stage[data-zoom="hero"] .landmark.upcoming .landmark-label{opacity:.88}
 #route-base{opacity:.48}
 .route-ahead-seg{stroke-width:2.35;opacity:.58}
 .seg{stroke-width:3.55;opacity:1}
@@ -264,7 +222,6 @@ button{font:inherit;color:inherit}
   paint-order:stroke;stroke:#EEE9D5;stroke-width:1.35px;stroke-linejoin:round;
   transition:opacity .25s ease;
 }
-.town.has-current-landmark .townlabel{opacity:0}
 .town.pass .townlabel{fill:#5D6658;font-style:italic;font-weight:560;letter-spacing:0}
 .town.pass .towndot{fill:none;stroke:#5D6658;stroke-width:.8}
 
@@ -348,35 +305,23 @@ button{font:inherit;color:inherit}
 }
 .plate-facts{font-family:var(--mono);font-size:9px;color:#4A5147;letter-spacing:.06em;font-variant-numeric:tabular-nums;white-space:nowrap}
 
-/* ------------------------------------------------------------------ quotes */
-.quote{
-  position:absolute;inset:0;z-index:4;display:grid;align-items:center;
-  padding:9px 16px 10px 18px;pointer-events:none;opacity:0;transition:opacity .22s;
-  color:var(--ink);border:1px solid rgba(43,50,37,.2);border-left:3px solid var(--c-cur);
-  background:rgba(249,246,236,.97);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-}
-.quote-inner{position:relative;min-width:0;text-align:left}
-.quote-label{font-family:var(--mono);font-size:8.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:color-mix(in srgb,var(--c-cur) 58%,#343D31)}
-.quote-text{
-  margin-top:4px;font-family:var(--sans);font-style:italic;font-size:13px;font-weight:530;line-height:1.32;
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;
-}
-.quote-src{position:absolute;right:0;top:0;font-family:var(--mono);font-size:8px;letter-spacing:.11em;color:#6A6D63;text-transform:uppercase}
-
 /* ------------------------------------------------------------------ photos */
-.photo{
-  position:relative;z-index:5;grid-column:2;width:100%;height:var(--story-h);max-height:var(--story-h);min-width:0;min-height:0;overflow:hidden;
-  transform:translateY(5px);opacity:0;transition:opacity .2s,transform .25s;will-change:transform,opacity;pointer-events:none;
+.photo-strip{
+  position:relative;z-index:5;grid-column:2;width:100%;height:var(--story-h);min-width:0;overflow:hidden;
+  opacity:0;border:1px solid rgba(42,49,37,.28);background:#D7DCC5;transition:opacity .12s ease;pointer-events:none;
 }
-.photo.on{opacity:1;transform:none}
-.photo figure{position:relative;width:100%;height:100%;overflow:hidden;border:1px solid rgba(42,49,37,.24);background:#D7DCC5}
-.photo img{width:100%;height:100%;object-fit:cover}
-.photo figcaption{
-  position:absolute;left:0;right:0;bottom:0;padding:6px 8px;
-  color:#F7F0E2;background:rgba(25,27,22,.78);
-  font-family:var(--mono);font-size:7.5px;line-height:1.25;letter-spacing:.07em;text-transform:uppercase;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.photo-strip.on{opacity:1}
+.photo-track{display:flex;align-items:stretch;gap:4px;width:max-content;height:100%;transform:translate3d(0,0,0);will-change:transform}
+.photo-track.fits{display:grid;grid-template-columns:repeat(var(--photo-count),minmax(0,1fr));gap:4px;width:100%}
+.photo-track.fits .photo-frame{min-width:0;width:auto}
+.photo-frame{
+  position:relative;flex:0 0 clamp(58px,calc(var(--ratio) * (var(--story-h) - 2px)),168px);height:100%;overflow:hidden;
+  border-right:1px solid rgba(42,49,37,.24);background:#C9CEBB;
+}
+.photo-frame img{width:100%;height:100%;object-fit:cover}
+.photo-count{
+  position:absolute;right:5px;bottom:5px;padding:2px 5px;background:#F7F3E8;color:#4D5048;border:1px solid rgba(42,49,37,.2);
+  font-family:var(--mono);font-size:7px;font-weight:600;line-height:1.25;letter-spacing:.08em;font-variant-numeric:tabular-nums;
 }
 
 /* -------------------------------------------------------------- spotlight */
@@ -428,12 +373,13 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .stat-elevation svg{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
   .stat-elevation p{position:relative;z-index:1;justify-items:center}
   .story-rail{left:7px;right:7px;top:calc(var(--chrome-h) + 7px)}
-  .story-rail.has-photo{grid-template-columns:minmax(0,1fr) min(116px,31vw);gap:6px}
-  .story-current{padding:9px 10px 8px 11px;gap:4px}
-  .story-label{font-size:7px;letter-spacing:.11em}
-  .story-text{font-size:10.5px;line-height:1.28;-webkit-line-clamp:3}
+  .story-rail.has-photos{grid-template-columns:minmax(155px,.9fr) minmax(0,1.1fr);gap:5px}
+  .story-current{padding:6px 7px;gap:2px}
+  .story-label{font-size:6.8px;letter-spacing:.1em}
+  .story-text{font-size:9.8px;line-height:1.25;-webkit-line-clamp:4}
   .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + var(--story-h) + 14px);bottom:8px}
-  .photo figcaption{display:none}
+  .photo-track{gap:3px}
+  .photo-count{right:3px;bottom:3px;font-size:6px}
   .journey-start{padding:10px 15px;font-size:13px}
   .route-context{left:9px;bottom:9px;min-width:0;max-width:calc(100% - 18px);padding:7px 9px 7px;border-left-width:3px}
   .route-context-label{font-size:6.5px}
@@ -446,22 +392,13 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .plate-count{grid-column:1 / -1;font-size:6.5px;letter-spacing:.1em}
   .plate-name{font-size:20px}
   .plate-facts{font-size:7px}
-  .quote{padding:7px 9px 7px 11px}
-  .quote-label{font-size:6.5px;letter-spacing:.1em}
-  .quote-text{margin-top:3px;font-size:10px;line-height:1.25;-webkit-line-clamp:4}
-  .quote-src{display:none}
-  .landmark-rise{transform:scale(1.35,.035)}
-  .landmark.seen .landmark-rise{transform:scale(1.35)}
-  .landmark-floor{transform:scale(1.35)}
-  .landmark-label{font-size:8px}
 }
 @media (max-width:900px) and (max-height:680px){
   :root{--story-h:64px}
   .story-text{-webkit-line-clamp:2}
-  .quote-text{-webkit-line-clamp:3}
 }
 @media (prefers-reduced-motion:reduce){
-  .daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.journey-start,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
+  .daydot,.town,.plate,.photo-strip,.collector,.journey-progress i,.journey-start{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -514,21 +451,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         </div>
 
 <!--__PLATES__-->
-
-        <div class="quote" id="quote">
-          <div class="quote-inner">
-            <p class="quote-label" id="quote-label"></p>
-            <p class="quote-text" id="quote-text"></p>
-            <p class="quote-src" id="quote-src"></p>
-          </div>
-        </div>
       </div>
 
-      <div class="photo" id="photo">
-        <figure>
-          <img id="photo-img" alt="" decoding="async">
-          <figcaption id="photo-cap"></figcaption>
-        </figure>
+      <div class="photo-strip" id="photo-strip" aria-label="Photographs from this part of the journey">
+        <div class="photo-track" id="photo-track"></div>
+        <span class="photo-count" id="photo-count" aria-hidden="true"></span>
       </div>
     </div>
 
@@ -613,17 +540,12 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var hudDays = document.getElementById("hud-days");
   var hudAscent = document.getElementById("hud-ascent");
   var hudHours = document.getElementById("hud-hours");
-  var quote = document.getElementById("quote");
-  var quoteLabel = document.getElementById("quote-label");
-  var quoteText = document.getElementById("quote-text");
-  var quoteSrc = document.getElementById("quote-src");
-  var photoBox = document.getElementById("photo");
-  var photoImg = document.getElementById("photo-img");
-  var photoCap = document.getElementById("photo-cap");
+  var photoStrip = document.getElementById("photo-strip");
+  var photoTrack = document.getElementById("photo-track");
+  var photoCount = document.getElementById("photo-count");
   var countryMenu = document.querySelector(".country-menu");
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
-  var landmarks = Array.prototype.slice.call(document.querySelectorAll(".landmark"));
   var routeProgressMaskPath = document.getElementById("route-progress-mask-path");
   var routeNow = document.getElementById("route-now");
   var routeContext = document.getElementById("route-context");
@@ -756,7 +678,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       var prev = scene.day === 1 ? { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0 } : (byN[scene.day - 1] || d);
       return { x: lerp(prev.x, d.x, t), y: lerp(prev.y, d.y, t), alt: lerp(altOf(prev), altOf(d), t), day: d, t: t };
     }
-    if (scene.t === "beat") { var db = byN[scene.day]; return { x: db.x, y: db.y, alt: altOf(db), day: db, t: 1 }; }
     if (scene.t === "enter") {
       var idx = days.findIndex(function(d){ return d.c === scene.country; });
       if (idx === 0) return { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0, day: days[0], t: 0 };
@@ -813,10 +734,17 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     } else if (scene.t === "enter") {
       label = "border crossing";
       text = scene.country;
+    } else if (!d.w) {
+      label = "";
+      text = "";
     } else {
-      label = (d.w ? "day " : "rest day ") + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + d.c.toLowerCase();
-      text = d.j || d.t || (d.w ? "On the road." : "A day off the route.");
-      if (!d.j && d.s && d.s.artist) text += " · " + d.s.artist;
+      var entries = Array.isArray(d.j) ? d.j : [];
+      var entryIndex = entries.length ? Math.min(entries.length - 1, Math.floor(Math.max(0, Math.min(.999, wp.t || 0)) * entries.length)) : -1;
+      var entry = entryIndex > -1 ? entries[entryIndex] : null;
+      var entryDate = d.date || (entry && entry.sourceDate);
+      label = "day " + d.n + (entryDate ? " · " + shortDate(entryDate) : "") + " · " + (entry ? entry.label : d.c.toLowerCase());
+      text = entry ? entry.text : (d.t || "On the road.");
+      if (!entry && d.s && d.s.artist) text += " · " + d.s.artist;
     }
     setText(storyLabel, label);
     setText(storyText, text);
@@ -937,35 +865,45 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   // ---------------------------------------------------------------- photos
   var photos = DATA.photos || [];
   var photoByDay = {};
-  photos.forEach(function(ph){ (photoByDay[ph.day] || (photoByDay[ph.day] = [])).push(ph); });
-  var photoShown = null;
-  var photoPreloaded = {};
-  function preloadPhoto(ph){
-    if (!ph || photoPreloaded[ph.src]) return;
-    photoPreloaded[ph.src] = 1;
-    var img = new Image();
-    img.src = "photos/" + ph.src;
+  photos.forEach(function(ph){
+    var displayDay = ph.displayDay || ph.day;
+    (photoByDay[displayDay] || (photoByDay[displayDay] = [])).push(ph);
+  });
+  var activePhotoDay = -1;
+  var photoLayoutWidth = -1;
+  function hidePhotos(){
+    photoStrip.classList.remove("on");
+    storyRail.classList.remove("has-photos");
   }
-  function hidePhoto(){
-    photoBox.classList.remove("on");
-    storyRail.classList.remove("has-photo");
-    photoShown = null;
-  }
-  function showPhoto(d, t){
+  function showPhotos(d, t){
     var set = photoByDay[d.n];
-    if (!set || !set.length) { hidePhoto(); return; }
-    var u = Math.max(0, Math.min(.999, t == null ? 0 : t));
-    var i = Math.min(set.length - 1, Math.floor(u * set.length));
-    var ph = set[i];
-    if (photoShown === ph.src) return;
-    photoShown = ph.src;
-    photoImg.src = "photos/" + ph.src;
-    photoImg.alt = ph.alt || ("Photograph from day " + d.n + (d.t ? " — " + d.t : ""));
-    photoBox.style.setProperty("--ar", ph.w + "/" + ph.h);
-    photoCap.textContent = "day " + d.n + (d.date ? " · " + shortDate(d.date) : "") + " · " + (ph.caption || d.c.toLowerCase()) + (set.length > 1 ? " · " + (i + 1) + "/" + set.length : "");
-    photoBox.classList.add("on");
-    storyRail.classList.add("has-photo");
-    preloadPhoto(set[i + 1]);
+    if (!set || !set.length) { hidePhotos(); return; }
+    storyRail.classList.add("has-photos");
+    photoStrip.classList.add("on");
+    if (activePhotoDay !== d.n) {
+      activePhotoDay = d.n;
+      photoLayoutWidth = -1;
+      photoTrack.innerHTML = set.map(function(ph){
+        var ratio = Math.max(.65, Math.min(2.15, (ph.w || 1) / Math.max(1, ph.h || 1)));
+        var alt = ph.alt || ("Photograph from day " + d.n + (d.t ? " — " + d.t : ""));
+        return '<figure class="photo-frame" style="--ratio:' + ratio.toFixed(3) + '"><img src="photos/' + esc(ph.src) + '" alt="' + esc(alt) + '" width="' + (ph.w || 720) + '" height="' + (ph.h || 720) + '" decoding="async"></figure>';
+      }).join("");
+      photoStrip.setAttribute("aria-label", set.length + " photographs from day " + d.n + (d.t ? ", " + d.t : ""));
+    }
+    if (photoLayoutWidth !== photoStrip.clientWidth) {
+      photoLayoutWidth = photoStrip.clientWidth;
+      photoTrack.classList.remove("fits");
+      photoTrack.style.setProperty("--photo-count", set.length);
+      if (photoTrack.scrollWidth <= photoStrip.clientWidth + 1) photoTrack.classList.add("fits");
+    }
+    var u = Math.max(0, Math.min(1, t == null ? 0 : t));
+    var eased = REDUCED ? (u < .5 ? 0 : 1) : u * u * (3 - 2 * u);
+    var travel = Math.max(0, photoTrack.scrollWidth - photoStrip.clientWidth);
+    photoTrack.style.transform = "translate3d(" + (-travel * eased).toFixed(2) + "px,0,0)";
+    var countText = photoTrack.classList.contains("fits")
+      ? set.length + (set.length === 1 ? " photo" : " photos")
+      : (Math.min(set.length, Math.floor(Math.min(.999, u) * set.length) + 1)) + " / " + set.length;
+    setText(photoCount, countText);
   }
 
   // ------------------------------------------------------------ scene layers
@@ -998,30 +936,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         var passed = scene.t === "walk" ? d.n < wp.day.n : d.n <= wp.day.n;
         if (item.dot) item.dot.classList.toggle("seen", passed || (wp.day.n === d.n && wp.t > .96));
       });
-      var currentLandmarkKind = "";
-      var journeyDay = scene.t === "start" ? 0 : wp.day.n;
-      var upcomingLandmark = null;
-      landmarks.some(function(landmark){
-        if (+(landmark.getAttribute("data-day") || 0) > journeyDay) {
-          upcomingLandmark = landmark;
-          return true;
-        }
-        return false;
-      });
-      landmarks.forEach(function(landmark){
-        var landmarkDay = +(landmark.getAttribute("data-day") || 0);
-        var isCurrent = inJourney && landmarkDay === wp.day.n;
-        var isUpcoming = landmark === upcomingLandmark;
-        if (isCurrent) currentLandmarkKind = landmark.getAttribute("data-kind") || "";
-        landmark.classList.toggle("seen", inJourney && landmarkDay <= wp.day.n);
-        landmark.classList.toggle("current", isCurrent);
-        landmark.classList.toggle("upcoming", isUpcoming);
-        var townId = landmark.getAttribute("data-town");
-        var town = townId && document.getElementById("town-" + townId);
-        if (town) town.classList.toggle("has-current-landmark", isCurrent || isUpcoming);
-      });
-      if (!currentLandmarkKind && upcomingLandmark) currentLandmarkKind = upcomingLandmark.getAttribute("data-kind") || "";
-      stage.setAttribute("data-landmark", currentLandmarkKind);
       lastTrailState = state;
     }
     var first = trailByDay[1];
@@ -1072,10 +986,6 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         ? { x: wp.x - 42, y: wp.y - travelW * .37, w: travelW }
         : { x: wp.x, y: wp.y, w: travelW };
     }
-    else if (scene.t === "beat") {
-      setZoom("close");
-      target = { x: wp.x, y: wp.y, w: closeWidth() };
-    }
     else if (scene.t === "enter") { setZoom("travel"); target = { x: wp.x, y: wp.y, w: travelW * 1.5 }; }
     else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: travelW }; }
 
@@ -1087,10 +997,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     showCountry(scene.t === "enter" ? scene.country : wp.day.c);
     updateCollections(scene, wp);
     updateStory(scene, wp);
+    storyRail.classList.toggle("silent", silentRest);
 
     // day content
-    if ((scene.t === "walk" && wp.day.w) || scene.t === "beat") { showPhoto(wp.day, wp.t); }
-    else if (silentRest || scene.t === "enter") hidePhoto();
+    if (scene.t === "walk" && wp.day.w) showPhotos(wp.day, wp.t);
+    else hidePhotos();
     // plates
     var wantPlate = null, plateOp = 0;
     if (scene.t === "enter") {
@@ -1103,20 +1014,9 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     activePlate = wantPlate;
     var storyOp = Math.max(0, 1 - plateOp);
 
-    // beats
-    if (scene.t === "beat") {
-      var b = DATA.beats[scene.day];
-      var tb = (p - scene.at) / scene.len;
-      var op = Math.min(1, Math.min(tb / .2, (1 - tb) / .2));
-      quoteLabel.textContent = b.label;
-      quoteText.textContent = "“" + b.quote + "”";
-      quoteSrc.textContent = "from the journal · day " + scene.day;
-      fade(quote, String(Math.max(0, op)));
-      storyOp = Math.min(storyOp, Math.max(0, 1 - op));
-    } else fade(quote, "0");
     fade(storyCurrent, String(storyOp));
 
-    if (scene.t === "end") hidePhoto();
+    if (scene.t === "end") hidePhotos();
   }
 
   // ------------------------------------------------------------- main loop
