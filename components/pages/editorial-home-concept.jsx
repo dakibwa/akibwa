@@ -69,9 +69,9 @@ export function EditorialHomeConcept() {
             aria-label="Play Features, the daily untangling puzzle"
           >
             <SiteImage
-              src="/features/home-card-bright-v2.png"
+              src="/features/home-card-bright-v3.png"
               slot="conceptProject"
-              alt="The bright Features puzzle board with coloured threads, crossings, nodes, the Features wordmark and a vertical column of five feature symbols"
+              alt="An authentic bright Features puzzle board with four tangled threads, crossings, neurons, the Features wordmark and a vertical column of five feature symbols"
               above
               aboveSync
             />
