@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-04fbOm9wDsS9gjo+YWtfeDqXtKSbA994BilyS02Co1E=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-JmfqvN4Qbtlf1TEbeZyCiTr3EpCpmuTZPlzsn6W8V4E=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -348,10 +348,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            transition:flex-grow var(--t-ui) var(--ease-out),background var(--t-ui)}
   .track > i{flex:1 1 0;min-width:0;transition:background .45s var(--ease-out)}
   .track > i.on{background:var(--fill)}
-  .setmeter.tutorial-meter > i{opacity:.22;transition:background .45s var(--ease-out),opacity .3s var(--ease-out)}
-  .setmeter.tutorial-meter > i.done,
-  .setmeter.tutorial-meter > i.now{opacity:1}
-  .setmeter.tutorial-meter > i.now{box-shadow:inset 0 -2px 0 var(--ink)}
   .track > i.on, .run > *:not(.clear){box-shadow:.5px 0 0 0 var(--fill)}
 
   .tval{
@@ -7010,15 +7006,17 @@ function renderHud(){
   const strip=$('setmeter');
   if(tut){
     const les=Math.min(R().netIndex,TUTNETS.length-1);
-    paintCells('setmeter',TUT_COLORS.map(([a,b])=>
-      `linear-gradient(90deg,var(${a}) 0 50%,var(${b}) 50% 100%)`),
+    const LCOL=[TIERCOL.perfect,TIERCOL.clean,TIERCOL.flawless];
+    paintCells('setmeter',Array.from({length:TUTNETS.length},(_,i)=>
+      'var('+(i<les?LCOL[i]:SETAHEAD)+')'),
       'tutorial '+Math.min(les+1,TUTNETS.length)+' of '+TUTNETS.length);
-    strip.classList.add('tutorial-meter');
-    [...strip.children].forEach((cell,i)=>{
-      cell.classList.toggle('done',i<les);
-      cell.classList.toggle('now',i===les);
-      cell.dataset.cols=TUT_COLORS[i].join(' ');
+    strip.classList.remove('tutorial-meter');
+    [...strip.children].forEach(cell=>{
+      cell.classList.remove('done','now');
+      delete cell.dataset.cols;
     });
+    const cur=strip.children[les];
+    if(cur && !r.over) cur.classList.add('now');
   } else
   {
     strip.classList.remove('tutorial-meter');
