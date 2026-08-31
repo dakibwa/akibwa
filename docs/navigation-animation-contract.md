@@ -26,9 +26,10 @@ publishing homepage changes.
 ## Career
 
 - Career is the original horizontal eight-stop index with Freelance first.
-  Its short “What I did” line identifies Butterfly Rose as a client.
+  Its short combined sentence identifies Butterfly Rose as a client.
 - At rest it shows only dates and marks. Hover or keyboard focus reveals the
-  job title, one short line on what Dan did and one short line on the mission.
+  job title and one short action-to-purpose sentence, with tools and sector
+  language selectively bolded.
 - The same compact interaction and horizontal rhythm remain on phones.
 
 ## Taste and footer

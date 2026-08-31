@@ -261,11 +261,11 @@ const pageState = () => evaluate(`(() => {
     standaloneFreelance: Boolean(document.querySelector(".concept-freelance")),
     careerSection: rect(document.querySelector(".concept-career-section")),
     career: [...document.querySelectorAll(".concept-career-stop")].map((item) => ({
-      name: item.querySelector(".concept-career-popover strong")?.textContent.trim(),
+      name: item.querySelector(".concept-career-popover > strong")?.textContent.trim(),
       role: item.querySelector(".concept-career-popover > span")?.textContent.trim(),
-      labels: [...item.querySelectorAll(".concept-career-label")].map((label) => label.textContent.trim()),
-      details: [...item.querySelectorAll(".concept-career-popover p > span:last-child")]
-        .map((detail) => detail.textContent.trim()),
+      statement: item.querySelector(".concept-career-statement")?.textContent.trim(),
+      emphasis: [...item.querySelectorAll(".concept-career-statement strong")]
+        .map((term) => term.textContent.trim()),
       hidden: Number(getComputedStyle(item.querySelector(".concept-career-popover")).opacity) === 0
     })),
     filters: [...document.querySelectorAll(".deck-legend .rail-word")].map((button) => ({
@@ -321,20 +321,20 @@ const careerState = () => evaluate(`(() => {
     };
   });
   const first = stops[0];
+  const popovers = stops.map((stop) => stop.querySelector(".concept-career-popover").getBoundingClientRect());
   return {
     count: stops.length,
     complete: stops.every((stop) => {
-      const labels = [...stop.querySelectorAll(".concept-career-label")].map((item) => item.textContent.trim());
-      const details = [...stop.querySelectorAll(".concept-career-popover p > span:last-child")];
-      return Boolean(stop.querySelector(".concept-career-popover strong")?.textContent.trim()) &&
+      const statement = stop.querySelector(".concept-career-statement")?.textContent.trim();
+      const emphasis = [...stop.querySelectorAll(".concept-career-statement strong")];
+      return Boolean(stop.querySelector(".concept-career-popover > strong")?.textContent.trim()) &&
         Boolean(stop.querySelector(".concept-career-popover > span")?.textContent.trim()) &&
-        labels.join(" / ") === "What I did / Mission" &&
-        details.length === 2 && details.every((item) => item.textContent.trim());
+        statement?.startsWith("I ") && statement.includes(" to ") &&
+        emphasis.length >= 2 && emphasis.every((item) => item.textContent.trim());
     }),
     concise: stops.every((stop) => {
-      const details = [...stop.querySelectorAll(".concept-career-popover p > span:last-child")]
-        .map((item) => item.textContent.trim());
-      return details[0]?.length <= 52 && details[1]?.length <= 40;
+      const statement = stop.querySelector(".concept-career-statement")?.textContent.trim();
+      return statement?.length <= 100;
     }),
     focused: first === document.activeElement,
     focusMatch: first.matches(":focus"),
@@ -345,6 +345,7 @@ const careerState = () => evaluate(`(() => {
     lastName: stops.at(-1)?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     minAbove: Math.min(...clearances.map((item) => item.above)),
     minBelow: Math.min(...clearances.map((item) => item.below)),
+    popoversContained: popovers.every((item) => item.left >= -0.5 && item.right <= innerWidth + 0.5),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 })()`);
@@ -418,14 +419,14 @@ const checkDesktop = async () => {
     `the complete career sequence remains intact [${state.career.length} stops]`
   );
   check(
-    state.career[0].details[0] === "Build client sites, including Butterfly Rose.",
-    `Butterfly Rose lives in the Freelance career detail [${state.career[0].details[0]}]`
+    state.career[0].statement === "I build client websites and practical AI tools, including Butterfly Rose, to make useful software.",
+    `Butterfly Rose lives within the Freelance offer [${state.career[0].statement}]`
   );
   check(
     state.career.every((item) =>
-      item.role && item.labels.join(" / ") === "What I did / Mission" && item.details.every(Boolean) && item.hidden
+      item.role && item.statement?.startsWith("I ") && item.statement.includes(" to ") && item.emphasis.length >= 2 && item.hidden
     ),
-    "every career stop keeps its short title, action and mission hidden inside the compact interaction"
+    "every career stop keeps one selectively bolded action-to-purpose sentence inside the compact interaction"
   );
   check(
     state.filters.map((item) => item.text).join(" / ") ===
@@ -532,8 +533,8 @@ const checkCareerTimeline = async () => {
   await goto("/");
   let state = await careerState();
   check(state.count === 8, `eight career stops remain visible [${state.count}]`);
-  check(state.complete, "every stop contains a title, action and mission");
-  check(state.concise, "every action and mission stays within the short-copy limits");
+  check(state.complete, "every stop contains a title and one selectively bolded action-to-purpose sentence");
+  check(state.concise, "every combined career sentence stays within the short-copy limit");
   check(
     state.firstName === "Freelance" && state.lastName === "Lloyds Banking Group",
     `career order runs from Freelance to Lloyds [${state.firstName} → ${state.lastName}]`
@@ -555,12 +556,13 @@ const checkCareerTimeline = async () => {
   );
   check(state.minAbove >= 5.5, `the halo clears every date [${state.minAbove.toFixed(1)}px]`);
   check(state.minBelow >= 5.5, `the halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
+  check(state.popoversContained, "every desktop career popover stays inside the viewport");
   check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
 
   await setMobile();
   await goto("/");
   state = await careerState();
-  check(state.complete && state.concise, "the phone timeline keeps the same short detail");
+  check(state.complete && state.concise, "the phone timeline keeps the same short combined detail");
   check(state.popoverOpacity === 0, "phone career detail is hidden at rest");
   point = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
@@ -578,6 +580,7 @@ const checkCareerTimeline = async () => {
   );
   check(state.minAbove >= 5.5, `the phone halo clears every date [${state.minAbove.toFixed(1)}px]`);
   check(state.minBelow >= 5.5, `the phone halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
+  check(state.popoversContained, "every phone career popover stays inside the viewport");
   check(state.overflow <= 1, `the phone timeline has no horizontal overflow [${state.overflow}px]`);
 };
 

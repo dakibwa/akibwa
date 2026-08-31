@@ -118,7 +118,7 @@ forbidText(editorial, "concept-freelance", "Freelance must not render as a separ
 forbidText(css, ".concept-freelance", "the retired standalone Freelance row must not keep dead styling");
 requireText(
   deckData,
-  '"back": "Build client sites, including Butterfly Rose."',
+  '"statement": "I build client websites and practical AI tools, including Butterfly Rose, to make useful software."',
   "Butterfly Rose must stay inside the Freelance career detail"
 );
 forbidText(editorial, "<ClientSitePreviews", "the retired equal-billing client preview grid must stay off the homepage");
@@ -129,8 +129,8 @@ forbidText(editorial, "Also making", "the retired making strip must stay removed
 requireRuleText(".concept-project-grid {", ["display: grid", "repeat(2, minmax(0, 1fr))"]);
 requireRuleText(".concept-project-card {", ["display: block", "overflow: clip", "border: 1px solid"]);
 
-/* Career keeps the approved horizontal eight-stop index. The title, short
-   action and short mission remain available through hover and keyboard focus. */
+/* Career keeps the approved horizontal eight-stop index. The title and one
+   action-to-purpose sentence remain available through hover and keyboard focus. */
 for (const name of [
   "Freelance",
   "National Wealth Fund",
@@ -145,11 +145,14 @@ for (const name of [
 }
 requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable");
 requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
-requireText(editorial, 'className="concept-career-label">What I did', "each popover must label Dan's action");
-requireText(editorial, 'className="concept-career-label">Mission', "each popover must label the organisation's mission");
 requireText(editorial, "{job.role}", "each popover must print the job title");
-requireText(editorial, "{job.back}", "each popover must print Dan's action");
-requireText(editorial, "{job.mission}", "each popover must print the organisation's mission");
+requireText(editorial, 'className="concept-career-statement"', "each popover must hold one combined sentence");
+requireText(
+  editorial,
+  "<CareerStatement statement={job.statement} emphasis={job.emphasis} />",
+  "each combined sentence must render its selected emphasis"
+);
+forbidText(editorial, "concept-career-label", "the retired What I did and Mission labels must stay removed");
 requireText(deckData, '"logo": "/favicon.svg"', "Freelance must use the Akibwa favicon mark");
 requireText(editorial, 'job.logo === "/favicon.svg" ? " is-akibwa"', "the Akibwa mark must keep its own full-frame treatment");
 requireRuleText(".concept-career-logo.is-akibwa img {", ["width: 100%", "height: 100%"]);
@@ -161,30 +164,33 @@ requireRuleText(".concept-career-logo picture source {", ["display: none"]);
 requireText(editorial, 'job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is-lloyds"', "the Lloyds horse must keep its optical-alignment treatment");
 requireRuleText(".concept-career-logo.is-lloyds img {", ["transform: translate(6%, 2.5%)"]);
 forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
-for (const copy of [
-  "Build client sites, including Butterfly Rose.",
-  "Build the Microsoft Fabric data platform.",
-  "Led the BI team and improved its tools.",
-  "Assisted with electrical work.",
-  "Built Power BI reports and analysed safer gambling.",
-  "Assisted with joinery.",
-  "Built cost and NPV models using SQL.",
-  "Analysed credit risk."
+for (const statement of [
+  "I build client websites and practical AI tools, including Butterfly Rose, to make useful software.",
+  "I build the Microsoft Fabric data platform to support UK growth and clean energy.",
+  "I led the BI team and improved its data tools to help more people own a home.",
+  "I assisted with electrical work to make homes safe and reliable.",
+  "I built Power BI reports to analyse safer gambling and make betting and gaming safer.",
+  "I assisted with joinery to build and fit homes well.",
+  "I built cost and NPV models in SQL to make banking more accessible.",
+  "I analysed credit risk to help Britain prosper."
 ]) {
-  requireText(deckData, `"back": "${copy}"`, `career action must stay literal and short: ${copy}`);
+  requireText(deckData, `"statement": "${statement}"`, `career statement must stay literal and short: ${statement}`);
 }
-for (const mission of [
-  "Make useful software.",
-  "Invest in UK growth and clean energy.",
-  "Help more people own a home.",
-  "Make homes safe and reliable.",
-  "Make betting and gaming safer.",
-  "Build and fit homes well.",
-  "Make banking more accessible.",
-  "Help Britain prosper."
+for (const emphasis of [
+  '["client websites", "AI tools", "Butterfly Rose"]',
+  '["Microsoft Fabric", "UK growth and clean energy"]',
+  '["BI team", "data tools", "own a home"]',
+  '["electrical work", "safe and reliable"]',
+  '["Power BI", "safer gambling", "betting and gaming safer"]',
+  '["joinery", "build and fit homes well"]',
+  '["cost and NPV models", "SQL", "banking more accessible"]',
+  '["credit risk", "Britain prosper"]'
 ]) {
-  requireText(deckData, `"mission": "${mission}"`, `career mission must stay short: ${mission}`);
+  requireText(deckData, `"emphasis": ${emphasis}`, `career emphasis must stay deliberate: ${emphasis}`);
 }
+forbidText(deckData, '"back":', "career data must not keep a separate action field");
+forbidText(deckData, '"mission":', "career data must not keep a separate mission field");
+requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
 requireRuleText(".concept-career-stop {", ["grid-template-rows: 32px 36px 68px"]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireText(

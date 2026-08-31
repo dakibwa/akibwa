@@ -15,8 +15,8 @@ export const deck = {
       "accent": "#c05212",
       "logo": "/favicon.svg",
       "tile": true,
-      "back": "Build client sites, including Butterfly Rose.",
-      "mission": "Make useful software."
+      "statement": "I build client websites and practical AI tools, including Butterfly Rose, to make useful software.",
+      "emphasis": ["client websites", "AI tools", "Butterfly Rose"]
     },
     {
       "name": "National Wealth Fund",
@@ -26,8 +26,8 @@ export const deck = {
       "accent": "#732740",
       "logo": "/brand-logos/national-wealth-fund-icon.png",
       "tile": false,
-      "back": "Build the Microsoft Fabric data platform.",
-      "mission": "Invest in UK growth and clean energy."
+      "statement": "I build the Microsoft Fabric data platform to support UK growth and clean energy.",
+      "emphasis": ["Microsoft Fabric", "UK growth and clean energy"]
     },
     {
       "name": "Leeds Building Society",
@@ -37,8 +37,8 @@ export const deck = {
       "accent": "#2f88ff",
       "logo": "/brand-logos/leeds-building-society-icon.svg",
       "tile": false,
-      "back": "Led the BI team and improved its tools.",
-      "mission": "Help more people own a home."
+      "statement": "I led the BI team and improved its data tools to help more people own a home.",
+      "emphasis": ["BI team", "data tools", "own a home"]
     },
     {
       "name": "Electrical Work",
@@ -48,8 +48,8 @@ export const deck = {
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
       "tile": false,
-      "back": "Assisted with electrical work.",
-      "mission": "Make homes safe and reliable."
+      "statement": "I assisted with electrical work to make homes safe and reliable.",
+      "emphasis": ["electrical work", "safe and reliable"]
     },
     {
       "name": "Sky Betting & Gaming",
@@ -59,8 +59,8 @@ export const deck = {
       "accent": "#d01fcb",
       "logo": "/brand-logos/sky-betting-gaming-logo.png",
       "tile": true,
-      "back": "Built Power BI reports and analysed safer gambling.",
-      "mission": "Make betting and gaming safer."
+      "statement": "I built Power BI reports to analyse safer gambling and make betting and gaming safer.",
+      "emphasis": ["Power BI", "safer gambling", "betting and gaming safer"]
     },
     {
       "name": "Joinery Work",
@@ -70,8 +70,8 @@ export const deck = {
       "accent": "#9a6038",
       "logo": "/brand-logos/joinery.svg",
       "tile": false,
-      "back": "Assisted with joinery.",
-      "mission": "Build and fit homes well."
+      "statement": "I assisted with joinery to build and fit homes well.",
+      "emphasis": ["joinery", "build and fit homes well"]
     },
     {
       "name": "Vanquis Bank",
@@ -81,8 +81,8 @@ export const deck = {
       "accent": "#f15a24",
       "logo": "/brand-logos/vanquis-icon.svg",
       "tile": false,
-      "back": "Built cost and NPV models using SQL.",
-      "mission": "Make banking more accessible."
+      "statement": "I built cost and NPV models in SQL to make banking more accessible.",
+      "emphasis": ["cost and NPV models", "SQL", "banking more accessible"]
     },
     {
       "name": "Lloyds Banking Group",
@@ -92,8 +92,8 @@ export const deck = {
       "accent": "#006747",
       "logo": "/brand-logos/lloyds-horse-icon.png",
       "tile": false,
-      "back": "Analysed credit risk.",
-      "mission": "Help Britain prosper."
+      "statement": "I analysed credit risk to help Britain prosper.",
+      "emphasis": ["credit risk", "Britain prosper"]
     }
   ],
   "tools": [

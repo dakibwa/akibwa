@@ -20,6 +20,19 @@ const career = careerNames
   .map((name) => deck.jobs.find((job) => job.name === name))
   .filter(Boolean);
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function CareerStatement({ statement, emphasis }) {
+  if (!emphasis?.length) return statement;
+
+  const terms = new Set(emphasis);
+  const matcher = new RegExp(`(${emphasis.map(escapeRegExp).join("|")})`, "g");
+
+  return statement.split(matcher).map((part, index) =>
+    terms.has(part) ? <strong key={`${part}-${index}`}>{part}</strong> : part
+  );
+}
+
 export function EditorialHomeConcept() {
   return (
     <div className="concept-page">
@@ -101,7 +114,7 @@ export function EditorialHomeConcept() {
               key={job.name}
               style={{ "--company-accent": job.accent }}
               tabIndex={0}
-              aria-label={`${job.name}, ${job.role}, ${job.span}. What I did: ${job.back} Mission: ${job.mission}`}
+              aria-label={`${job.name}, ${job.role}, ${job.span}. ${job.statement}`}
             >
               <span className="concept-career-time">{job.span}</span>
               <span className="concept-career-node" aria-hidden="true" />
@@ -116,13 +129,8 @@ export function EditorialHomeConcept() {
               <div className="concept-career-popover" aria-hidden="true">
                 <strong>{job.name}</strong>
                 <span>{job.role}</span>
-                <p>
-                  <span className="concept-career-label">What I did</span>
-                  <span>{job.back}</span>
-                </p>
-                <p>
-                  <span className="concept-career-label">Mission</span>
-                  <span>{job.mission}</span>
+                <p className="concept-career-statement">
+                  <CareerStatement statement={job.statement} emphasis={job.emphasis} />
                 </p>
               </div>
             </li>

@@ -7442,7 +7442,7 @@ button {
   left: auto;
 }
 
-.concept-career-popover strong {
+.concept-career-popover > strong {
   color: var(--black);
   font-size: 0.86rem;
   font-weight: 690;
@@ -7457,9 +7457,6 @@ button {
 }
 
 .concept-career-popover p {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
-  gap: 7px;
   margin: 7px 0 0;
   color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
   font-family: var(--serif);
@@ -7467,15 +7464,13 @@ button {
   line-height: 1.35;
 }
 
-.concept-career-label {
-  padding-top: 0.16em;
-  color: color-mix(in srgb, var(--ink) 47%, var(--canvas));
-  font-family: var(--sans);
-  font-size: 0.5rem;
-  font-weight: 690;
-  letter-spacing: 0.065em;
-  line-height: 1.2;
-  text-transform: uppercase;
+.concept-career-statement strong {
+  color: var(--black);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  letter-spacing: inherit;
+  line-height: inherit;
 }
 
 .concept-career-stop:hover,
@@ -7568,15 +7563,15 @@ button {
     min-width: 0;
   }
 
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5) .concept-career-popover {
+  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5) .concept-career-popover {
     right: auto;
     left: 50%;
     transform: translate(-50%, -4px);
   }
 
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):focus .concept-career-popover,
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):focus-within .concept-career-popover {
+  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):hover .concept-career-popover,
+  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):focus .concept-career-popover,
+  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):focus-within .concept-career-popover {
     transform: translateX(-50%);
   }
 
@@ -7647,8 +7642,6 @@ button {
   }
 
   .concept-career-popover p {
-    grid-template-columns: 48px minmax(0, 1fr);
-    gap: 6px;
     margin-top: 6px;
     font-size: 0.72rem;
     line-height: 1.34;
