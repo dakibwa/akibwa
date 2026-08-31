@@ -105,8 +105,8 @@ forbidText(clientPreviews, "Live", "the retired Live label must stay out of clie
 forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
 forbidText(editorial, "Also making", "the retired making strip must stay removed");
 
-/* Career is a horizontal eight-stop index. Copy remains behind hover/focus,
-   and the expanded dot halo keeps a real gap to dates and logo cards. */
+/* Career is an eight-stop editorial timeline. Every stop keeps the role,
+   Dan's contribution and the organisation's mission visible at rest. */
 for (const name of [
   "Freelance",
   "National Wealth Fund",
@@ -119,19 +119,18 @@ for (const name of [
 ]) {
   requireText(editorial, `"${name}"`, `${name} must remain in the career sequence`);
 }
-requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable");
-requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
+requireText(editorial, 'className="concept-career-label">What I did', "each career stop must label Dan's contribution");
+requireText(editorial, 'className="concept-career-label">Mission', "each career stop must label the organisation's mission");
+requireText(editorial, "{job.role}", "each career stop must print the job title");
+requireText(editorial, "{job.back}", "each career stop must print Dan's contribution");
+requireText(editorial, "{job.mission}", "each career stop must print the organisation's mission");
 requireText(deckData, "electrical work with my brother", "Electrical Work must remain the period with Dan's brother");
 requireText(deckData, "Joinery with my dad", "Joinery Work must remain the period with Dan's dad");
 forbidText(deckData, "my dad and my brother", "the two family-work periods must not be conflated");
-requireRuleText(".concept-career-stop {", ["grid-template-rows: 32px 36px 68px"]);
+requireRuleText(".concept-career-stop {", ["grid-template-columns", "border-top"]);
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
-requireText(
-  css,
-  "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",
-  "career focus must keep the restrained dot halo"
-);
-requireText(css, "grid-template-rows: 32px 36px 56px", "mobile career dots must keep their clearance lane");
+requireRuleText(".concept-career-copy {", ["display: grid"]);
+requireText(css, "grid-column: 3 / -1", "narrow career copy must stay aligned with the job identity");
 
 /* Taste opens on a balanced edit, then exposes the complete archive one
    medium at a time. */

@@ -28,7 +28,8 @@ const clientProjects = clientNames
   }));
 
 /* Keep the whole working history in sequence, including the two stretches on
-   the tools between office roles. The fuller copy stays behind interaction. */
+   the tools between office roles. Each stop says what Dan did and what the
+   organisation exists to do, so career context never depends on hover. */
 const careerNames = [
   "Freelance",
   "National Wealth Fund",
@@ -105,21 +106,16 @@ export function EditorialHomeConcept() {
           <h2 id="career-title">Career</h2>
         </header>
 
-        <ol
-          className="concept-career-timeline"
-          style={{ "--career-count": career.length }}
-        >
+        <ol className="concept-career-timeline">
           {career.map((job) => (
             <li
               className="concept-career-stop"
               key={job.name}
               style={{ "--company-accent": job.accent }}
-              tabIndex={0}
-              aria-label={`${job.name}, ${job.role}, ${job.span}. ${job.back}`}
             >
-              <span className="concept-career-time">{job.span}</span>
+              <time className="concept-career-time">{job.span}</time>
               <span className="concept-career-node" aria-hidden="true" />
-              <div className="concept-career-card">
+              <div className="concept-career-identity">
                 <span className={`concept-career-logo${job.tile ? " is-tile" : ""}`} aria-hidden="true">
                   {job.logo ? (
                     <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
@@ -127,12 +123,19 @@ export function EditorialHomeConcept() {
                     <span className="concept-career-freelance-mark">A</span>
                   )}
                 </span>
+                <span className="concept-career-name">
+                  <strong>{job.name}</strong>
+                  <span>{job.role}</span>
+                </span>
               </div>
-              <div className="concept-career-popover" aria-hidden="true">
-                <strong>{job.name}</strong>
-                <span>{job.role}</span>
-                <p>{job.back}</p>
-              </div>
+              <p className="concept-career-copy">
+                <span className="concept-career-label">What I did</span>
+                <span>{job.back}</span>
+              </p>
+              <p className="concept-career-copy concept-career-mission">
+                <span className="concept-career-label">Mission</span>
+                <span>{job.mission}</span>
+              </p>
             </li>
           ))}
         </ol>

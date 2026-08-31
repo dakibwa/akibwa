@@ -10,12 +10,13 @@ export const deck = {
     {
       "name": "Freelance",
       "art": "/project-art/jobs/freelance.webp",
-      "role": "AI systems, end to end",
+      "role": "Independent AI Systems Builder",
       "span": "Now",
       "accent": "#c05212",
       "logo": null,
       "tile": true,
-      "back": "Building for myself and for clients — sites, booking systems, games, pipelines. The toolkit on the next row is what it all runs on."
+      "back": "Build sites, booking systems, games and data pipelines for myself and for clients, from first sketch to live service.",
+      "mission": "Turn good ideas and repetitive work into useful software people can actually run."
     },
     {
       "name": "National Wealth Fund",
@@ -25,7 +26,8 @@ export const deck = {
       "accent": "#732740",
       "logo": "/brand-logos/national-wealth-fund-icon.png",
       "tile": false,
-      "back": "Primary architect of the new data environment. Built the Fabric estate, wrote the standards the team develops against, then trained the business onto it."
+      "back": "Built the new Microsoft Fabric data estate, set the standards the team develops against and trained the business to use it.",
+      "mission": "Invest public money to unlock UK growth, clean energy and far more private finance."
     },
     {
       "name": "Leeds Building Society",
@@ -35,7 +37,8 @@ export const deck = {
       "accent": "#2f88ff",
       "logo": "/brand-logos/leeds-building-society-icon.svg",
       "tile": false,
-      "back": "Joined as an analyst, leading the team five months later. Changed how it worked, brought the tooling in, and ran the upskilling that made it stick."
+      "back": "Joined as an analyst, led the team five months later and brought in new tools, ways of working and upskilling.",
+      "mission": "Put home ownership within reach of more people, generation after generation."
     },
     {
       "name": "Electrical Work",
@@ -45,7 +48,8 @@ export const deck = {
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
       "tile": false,
-      "back": "A year doing electrical work with my brother, between two office jobs. Nothing sharpens an estimate like being the one who has to carry it."
+      "back": "Spent a year doing electrical work with my brother and learned to estimate from the perspective of the person carrying it out.",
+      "mission": "Make homes safe, reliable and ready for everyday life."
     },
     {
       "name": "Sky Betting & Gaming",
@@ -55,7 +59,8 @@ export const deck = {
       "accent": "#d01fcb",
       "logo": "/brand-logos/sky-betting-gaming-logo.png",
       "tile": true,
-      "back": "Rebuilt the Power BI suite for accuracy and speed. Deep SQL on safer-gambling measures — what the regulations did to revenue, and to how people played."
+      "back": "Rebuilt the Power BI suite for speed and accuracy, then used deep SQL to analyse safer-gambling measures.",
+      "mission": "Give customers a premium, safer betting and gaming experience without losing the thrill."
     },
     {
       "name": "Joinery Work",
@@ -65,7 +70,8 @@ export const deck = {
       "accent": "#9a6038",
       "logo": "/brand-logos/joinery.svg",
       "tile": false,
-      "back": "Joinery with my dad, the year I got back from India. Measure twice is not a saying when the timber is already cut."
+      "back": "Joinery with my dad after India, where every measurement had a visible consequence.",
+      "mission": "Build and fit homes carefully, accurately and to last."
     },
     {
       "name": "Vanquis Bank",
@@ -75,7 +81,8 @@ export const deck = {
       "accent": "#f15a24",
       "logo": "/brand-logos/vanquis-icon.svg",
       "tile": false,
-      "back": "Where I learned to query. SQL against the real structures, then Excel and Power BI to make the cost and NPV models legible to people who had to act."
+      "back": "Learned SQL on real banking structures, then built cost and NPV models people could actually act on.",
+      "mission": "Deliver caring banking so customers can make the most of life’s opportunities."
     },
     {
       "name": "Lloyds Banking Group",
@@ -85,7 +92,8 @@ export const deck = {
       "accent": "#006747",
       "logo": "/brand-logos/lloyds-horse-icon.png",
       "tile": false,
-      "back": "A placement year in credit risk, halfway through an Economics degree. First sight of how much of a bank is a very large, very nervous spreadsheet."
+      "back": "Spent my Economics placement year in credit risk, learning how a large bank prices and manages risk.",
+      "mission": "Help Britain prosper by making finance a force for a more sustainable and inclusive future."
     }
   ],
   "tools": [

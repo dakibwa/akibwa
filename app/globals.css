@@ -7304,15 +7304,16 @@ button {
   font-weight: 680;
 }
 
-/* Career is an index at rest: date, mark, nothing else. The fuller story is
-   deliberately transient so the page stays scannable on every viewport. */
+/* Career reads like a compact annotated CV: the timeline keeps the chronology,
+   while each row makes the title, Dan's contribution and the organisation's
+   purpose visible at rest. Nothing essential is hidden behind hover. */
 .concept-career-section {
-  padding: var(--concept-rule-gap) 0 clamp(112px, 9vw, 140px);
+  padding: var(--concept-rule-gap) 0 clamp(72px, 7vw, 104px);
   border-top: 4px solid var(--concept-career);
 }
 
 .concept-career-head {
-  padding-bottom: clamp(28px, 3vw, 40px);
+  padding-bottom: clamp(24px, 2.8vw, 36px);
 }
 
 .concept-freelance h2,
@@ -7329,10 +7330,11 @@ button {
 }
 
 .concept-career-timeline {
+  --career-date: 82px;
+  --career-track: 22px;
+  --career-gap: clamp(12px, 1.6vw, 22px);
   position: relative;
   display: grid;
-  grid-template-columns: repeat(var(--career-count), minmax(0, 1fr));
-  gap: clamp(9px, 1.4vw, 18px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -7340,69 +7342,80 @@ button {
 
 .concept-career-timeline::before {
   position: absolute;
-  top: 50px;
-  right: 0;
-  left: 0;
-  height: 1px;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--career-date) + var(--career-gap) + (var(--career-track) / 2));
+  width: 1px;
   background: color-mix(in srgb, var(--ink) 16%, var(--canvas));
   content: "";
 }
 
 .concept-career-stop {
   position: relative;
-  z-index: 0;
   display: grid;
-  /* The middle lane keeps the animated halo clear of both copy and card. */
-  grid-template-rows: 32px 36px 68px;
+  grid-template-columns:
+    var(--career-date)
+    var(--career-track)
+    minmax(180px, 0.72fr)
+    minmax(230px, 1.2fr)
+    minmax(210px, 1fr);
+  gap: var(--career-gap);
+  align-items: start;
   min-width: 0;
-  outline: none;
+  padding: clamp(15px, 1.55vw, 21px) 0;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
+}
+
+.concept-career-stop:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
 }
 
 .concept-career-time {
+  padding-top: 3px;
   color: color-mix(in srgb, var(--ink) 50%, var(--canvas));
-  font-size: 0.61rem;
+  font-size: 0.62rem;
   font-variant-numeric: tabular-nums;
   font-weight: 650;
   letter-spacing: 0.055em;
   line-height: 1.2;
-  text-align: center;
+  text-align: right;
   text-transform: uppercase;
 }
 
 .concept-career-node {
   z-index: 1;
-  align-self: center;
+  align-self: start;
   justify-self: center;
   width: 10px;
   height: 10px;
+  margin-top: 4px;
   border-radius: 50%;
   background: var(--company-accent);
   box-shadow: 0 0 0 4px var(--canvas);
-  transition: box-shadow 100ms ease;
 }
 
-.concept-career-card {
-  position: relative;
+.concept-career-identity {
   display: grid;
-  min-height: 0;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--ink) 14%, var(--canvas));
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 68%, var(--canvas));
-  transition: border-color 100ms ease, background 100ms ease;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  min-width: 0;
 }
 
 .concept-career-logo {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   place-items: center;
+  border: 1px solid color-mix(in srgb, var(--company-accent) 24%, var(--line));
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
 }
 
 .concept-career-logo img {
   display: block;
-  width: 31px;
-  height: 31px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
 
@@ -7412,92 +7425,68 @@ button {
 
 .concept-career-freelance-mark {
   display: grid;
-  width: 31px;
-  height: 31px;
+  width: 28px;
+  height: 28px;
   place-items: center;
   border-radius: 50%;
   background: var(--company-accent);
   color: var(--canvas);
   font-family: var(--serif);
-  font-size: 1.18rem;
+  font-size: 1.05rem;
   font-style: italic;
   font-weight: 650;
   line-height: 1;
 }
 
-.concept-career-popover {
-  position: absolute;
-  top: calc(100% + 9px);
-  left: 0;
-  z-index: 20;
+.concept-career-name {
   display: grid;
-  width: min(280px, calc(100vw - 32px));
   gap: 4px;
-  padding: 14px;
-  border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
-  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-4px);
-  transition: opacity 100ms ease, transform 100ms ease;
+  min-width: 0;
 }
 
-.concept-career-stop:nth-child(n + 4) .concept-career-popover {
-  right: 0;
-  left: auto;
-}
-
-.concept-career-popover strong {
+.concept-career-name strong {
   color: var(--black);
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 690;
-  line-height: 1.15;
+  line-height: 1.18;
   letter-spacing: -0.02em;
 }
 
-.concept-career-popover > span {
+.concept-career-name > span {
   color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
   font-size: 0.66rem;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
-.concept-career-popover p {
-  margin: 8px 0 0;
+.concept-career-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
+  font-size: clamp(0.78rem, 0.92vw, 0.88rem);
+  line-height: 1.46;
+}
+
+.concept-career-label {
+  color: color-mix(in srgb, var(--ink) 47%, var(--canvas));
+  font-size: 0.58rem;
+  font-weight: 690;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.concept-career-mission {
+  padding-left: clamp(12px, 1.5vw, 20px);
+  border-left: 2px solid color-mix(in srgb, var(--company-accent) 72%, var(--canvas));
+}
+
+.concept-career-mission > span:last-child {
   color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
   font-family: var(--serif);
-  font-size: 0.82rem;
-  line-height: 1.42;
-}
-
-.concept-career-stop:hover,
-.concept-career-stop:focus {
-  z-index: 30;
-}
-
-.concept-career-stop:hover .concept-career-card,
-.concept-career-stop:focus .concept-career-card {
-  border-color: color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
-  background: color-mix(in srgb, var(--company-accent) 4%, var(--canvas));
-}
-
-.concept-career-stop:hover .concept-career-node,
-.concept-career-stop:focus .concept-career-node {
-  box-shadow:
-    0 0 0 4px var(--canvas),
-    0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent);
-}
-
-.concept-career-stop:hover .concept-career-popover,
-.concept-career-stop:focus .concept-career-popover {
-  opacity: 1;
-  transform: none;
-}
-
-.concept-career-stop:focus-visible .concept-career-card {
-  outline: 2px solid var(--company-accent);
-  outline-offset: 3px;
+  font-size: clamp(0.8rem, 0.96vw, 0.9rem);
+  line-height: 1.43;
 }
 
 /* Taste Library uses the same single-heading distinction as Client work and Career;
@@ -7518,65 +7507,38 @@ button {
   gap: 0.4em 1em;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 980px) {
   .concept-career-section {
-    padding-bottom: 72px;
+    padding-bottom: 68px;
   }
 
   .concept-career-timeline {
-    gap: clamp(5px, 1.5vw, 10px);
-  }
-
-  .concept-career-timeline::before {
-    top: 50px;
+    --career-date: 72px;
+    --career-track: 20px;
+    --career-gap: 14px;
   }
 
   .concept-career-stop {
-    grid-template-rows: 32px 36px 56px;
+    grid-template-columns: var(--career-date) var(--career-track) minmax(0, 1fr);
+    row-gap: 11px;
   }
 
-  .concept-career-time {
-    padding-right: 2px;
-    font-size: clamp(0.5rem, 1.45vw, 0.6rem);
-    letter-spacing: 0.025em;
+  .concept-career-identity {
+    grid-column: 3;
   }
 
-  .concept-career-card {
-    min-width: 0;
+  .concept-career-copy {
+    grid-column: 3 / -1;
   }
 
-  .concept-career-logo,
-  .concept-career-logo img {
-    width: 29px;
-    height: 29px;
+  .concept-career-mission {
+    margin-top: 2px;
   }
+}
 
-  .concept-career-popover {
-    top: calc(100% + 8px);
-    width: min(260px, calc(100vw - 32px));
-    min-width: 0;
-  }
-
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5) .concept-career-popover {
-    right: auto;
-    left: 50%;
-    transform: translate(-50%, -4px);
-  }
-
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n + 3):nth-child(-n + 5):focus .concept-career-popover {
-    transform: translateX(-50%);
-  }
-
-  .concept-career-stop:nth-child(n + 6) .concept-career-popover {
-    right: 0;
-    left: auto;
-    transform: translateY(-4px);
-  }
-
-  .concept-career-stop:nth-child(n + 6):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n + 6):focus .concept-career-popover {
-    transform: none;
+@media (max-width: 760px) {
+  .concept-career-copy {
+    font-size: 0.82rem;
   }
 }
 
@@ -7634,14 +7596,51 @@ button {
     font-size: 2.65rem;
   }
 
-  .concept-career-popover {
-    padding: 11px 12px;
+  .concept-career-timeline {
+    --career-date: 54px;
+    --career-track: 16px;
+    --career-gap: 10px;
   }
 
-  .concept-career-popover p {
-    margin-top: 6px;
-    font-size: 0.76rem;
-    line-height: 1.36;
+  .concept-career-stop {
+    padding: 15px 0 17px;
+    row-gap: 10px;
+  }
+
+  .concept-career-time {
+    padding-top: 2px;
+    font-size: 0.54rem;
+    letter-spacing: 0.02em;
+  }
+
+  .concept-career-node {
+    width: 9px;
+    height: 9px;
+    margin-top: 3px;
+  }
+
+  .concept-career-identity {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .concept-career-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .concept-career-logo img,
+  .concept-career-freelance-mark {
+    width: 25px;
+    height: 25px;
+  }
+
+  .concept-career-name strong {
+    font-size: 0.84rem;
+  }
+
+  .concept-career-mission {
+    padding-left: 11px;
   }
 
   .akibwa-home--taste .deck-legend {
@@ -7649,69 +7648,8 @@ button {
   }
 }
 
-/* The horizontal index still fits every supported phone. This is only a
-   last-resort fallback for unusually narrow embedded viewports. */
-@media (max-width: 300px) {
-  .concept-career-timeline {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .concept-career-timeline::before {
-    top: 14px;
-    right: auto;
-    bottom: 14px;
-    left: 48px;
-    width: 1px;
-    height: auto;
-  }
-
-  .concept-career-stop {
-    grid-template-columns: 48px 52px minmax(0, 1fr);
-    grid-template-rows: 52px;
-    gap: 14px;
-    min-height: 68px;
-    padding: 8px 0;
-  }
-
-  .concept-career-time {
-    grid-column: 1;
-    align-self: center;
-  }
-
-  .concept-career-node {
-    position: absolute;
-    top: 50%;
-    left: 48px;
-    transform: translate(-50%, -50%);
-  }
-
-  .concept-career-card {
-    grid-column: 2;
-    width: 52px;
-    height: 52px;
-  }
-
-  .concept-career-popover,
-  .concept-career-stop:nth-child(n) .concept-career-popover {
-    top: calc(100% + 4px);
-    right: auto;
-    left: 0;
-    width: 100%;
-    transform: translateY(-4px);
-  }
-
-  .concept-career-stop:nth-child(n):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n):focus .concept-career-popover {
-    transform: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .concept-client-visual img,
-  .concept-career-node,
-  .concept-career-card,
-  .concept-career-popover {
+  .concept-client-visual img {
     transition: none;
   }
 }
