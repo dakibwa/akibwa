@@ -450,8 +450,10 @@ const checkDesktop = async () => {
     "project cards use one quiet arrow instead of wordy CTA copy"
   );
   check(
-    state.projects.every((item) => item.imageComplete && item.imageWidth >= item.rect.width && /conceptProject/.test(item.currentSrc)),
-    "all three featured projects load their responsive artwork"
+    state.projects.every((item) =>
+      item.imageComplete && item.imageWidth >= item.imageRect.width && /conceptProject/.test(item.currentSrc)
+    ),
+    `all three featured projects load sufficient responsive artwork [${state.projects.map((item) => `${item.imageWidth}px source / ${item.imageRect.width.toFixed(1)}px render`).join(" / ")}]`
   );
   check(!state.standaloneFreelance, "Freelance does not render as a separate Projects row");
   check(
