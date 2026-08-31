@@ -6,7 +6,7 @@
 <title>The trek — Paris to Sofia</title>
 <meta name="description" content="Paris to Sofia on foot, 24 September to 28 November 2019. 1,982 km through seven countries, alone. Travel the GPS line city by city — every day named after a record.">
 <link rel="canonical" href="https://akibwa.com/trek/">
-<meta name="theme-color" content="#12100C">
+<meta name="theme-color" content="#E4D9BB">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="akibwa">
 <meta property="og:title" content="The trek — Paris to Sofia">
@@ -27,9 +27,9 @@
   --paper-deep:#242624;
   --ink:#1E211F;
   --muted:#68675C;
-  --mast-h:58px;
+  --mast-h:44px;
   --stats-h:58px;
-  --chrome-h:116px;
+  --chrome-h:102px;
   --story-h:88px;
   --c-cur:#D35B2A;
   --mono:"Plex Mono","SF Mono",ui-monospace,Menlo,monospace;
@@ -53,52 +53,52 @@ button{font:inherit;color:inherit}
 /* ---------------------------------------------------------------- masthead */
 .masthead{
   position:fixed;inset:0 0 auto 0;z-index:50;
-  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:22px;
-  min-height:58px;padding:8px 22px 9px;
-  color:var(--bone);background:rgba(30,32,30,.96);
-  border-bottom:1px solid color-mix(in srgb,var(--bone) 14%,transparent);
-  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:18px;
+  min-height:44px;padding:5px 18px 6px;
+  color:var(--ink);background:rgba(228,217,187,.72);
+  border-bottom:1px solid rgba(30,33,31,.25);
+  -webkit-backdrop-filter:blur(7px) saturate(1.08);backdrop-filter:blur(7px) saturate(1.08);
 }
 .masthead .mark{
-  display:flex;align-items:baseline;gap:11px;color:var(--bone);text-decoration:none;white-space:nowrap;
+  display:flex;align-items:baseline;gap:9px;color:var(--ink);text-decoration:none;white-space:nowrap;
 }
 .masthead .mark-word{
-  display:block;font-family:var(--sans);font-size:25px;font-weight:700;line-height:1;
+  display:block;font-family:var(--sans);font-size:21px;font-weight:700;line-height:1;
   letter-spacing:-.02em;text-transform:lowercase;
 }
 .masthead .mark-date{
-  font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.11em;
-  color:var(--dust);text-transform:lowercase;
+  font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;
+  color:var(--muted);text-transform:lowercase;
 }
-.country-menu{position:relative;min-width:0;padding:4px 0 9px}
-.countries{display:flex;justify-content:center;gap:10px;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
+.country-menu{position:relative;min-width:0;padding:2px 0 7px}
+.countries{display:flex;justify-content:center;gap:8px;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
 .countries::-webkit-scrollbar{display:none}
-.countries li{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.countries li{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .countries li+li::before{
   content:"→";font-family:var(--mono);font-size:10px;line-height:1;
-  color:color-mix(in srgb,var(--dust) 50%,transparent);transition:color .25s ease;
+  color:rgba(25,23,18,.24);transition:color .25s ease;
 }
-.countries li.passed::before,.countries li.current::before{color:color-mix(in srgb,var(--w) 58%,var(--bone))}
+.countries li.passed::before,.countries li.current::before{color:color-mix(in srgb,var(--w) 68%,var(--ink))}
 .countries a{
-  display:block;font-family:var(--sans);font-size:15px;font-weight:540;letter-spacing:-.012em;
-  color:color-mix(in srgb,var(--w) 34%,var(--dust));text-decoration:none;white-space:nowrap;
+  display:block;font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.012em;
+  color:color-mix(in srgb,var(--w) 45%,var(--ink));text-decoration:none;white-space:nowrap;
   transition:color .16s ease,opacity .25s ease;
 }
-.countries a:hover{color:color-mix(in srgb,var(--w) 82%,var(--bone))}
-.countries a.passed{color:color-mix(in srgb,var(--w) 60%,var(--bone))}
-.countries a.current{color:color-mix(in srgb,var(--w) 86%,var(--bone));font-weight:650}
+.countries a:hover{color:color-mix(in srgb,var(--w) 84%,var(--ink))}
+.countries a.passed{color:color-mix(in srgb,var(--w) 70%,var(--ink))}
+.countries a.current{color:color-mix(in srgb,var(--w) 90%,var(--ink));font-weight:750}
 .journey-progress{
   position:absolute;inset:auto 0 0;height:3px;overflow:hidden;
-  background:color-mix(in srgb,var(--bone) 10%,transparent);
+  background:rgba(25,23,18,.11);
 }
 .journey-progress i{
   display:block;width:100%;height:100%;clip-path:inset(0 100% 0 0);
   background:linear-gradient(90deg,#D35B2A 0.00% 28.83%,#DDA51F 28.83% 43.40%,#657A45 43.40% 58.29%,#4F7065 58.29% 65.24%,#536F8A 65.24% 73.61%,#8B6DB3 73.61% 96.50%,#C9532D 96.50% 100.00%);
   transition:clip-path .12s linear;
 }
-.masthead .site{font-family:var(--mono);font-size:11px;color:var(--dust);text-decoration:none;white-space:nowrap}
-.masthead .site:hover{color:var(--bone)}
-.masthead :focus-visible{outline-color:var(--bone)}
+.masthead .site{font-family:var(--mono);font-size:10px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.masthead .site:hover{color:var(--ink)}
+.masthead :focus-visible{outline-color:var(--ink)}
 
 /* --------------------------------------------------------------- statbar */
 .statbar{
@@ -384,16 +384,16 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .hint{left:50%}
 }
 @media (max-width:900px){
-  :root{--mast-h:56px;--stats-h:58px;--chrome-h:114px;--story-h:76px}
-  .masthead{grid-template-columns:auto minmax(0,1fr);gap:12px;min-height:56px;padding:8px 12px}
+  :root{--mast-h:42px;--stats-h:58px;--chrome-h:100px;--story-h:76px}
+  .masthead{grid-template-columns:auto minmax(0,1fr);gap:10px;min-height:42px;padding:4px 10px 5px}
   .masthead .site{display:none}
-  .masthead .mark{gap:8px}
-  .masthead .mark-word{font-size:22px}
-  .masthead .mark-date{font-size:9px}
-  .country-menu{padding-bottom:8px}
-  .countries{justify-content:flex-start;gap:8px}
-  .countries li{gap:8px}
-  .countries a{font-size:14px}
+  .masthead .mark{gap:7px}
+  .masthead .mark-word{font-size:19px}
+  .masthead .mark-date{font-size:8px}
+  .country-menu{padding-bottom:7px}
+  .countries{justify-content:flex-start;gap:7px}
+  .countries li{gap:7px}
+  .countries a{font-size:13px}
   .statbar{grid-template-columns:repeat(5,minmax(0,1fr));height:var(--stats-h)}
   .stat-position{display:none}
   .stat{padding:8px 5px 7px;text-align:center;justify-items:center;gap:4px}
