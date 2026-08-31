@@ -189,6 +189,12 @@ button{font:inherit;color:inherit}
 #terrain-mesh{opacity:.84;transform:scale(1.006);transform-origin:center;transition:opacity .5s;filter:url(#terrain-soften-filter) saturate(.98) contrast(.97)}
 .terrain-cell{stroke-width:.08;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .stage[data-zoom="travel"] #terrain-mesh,.stage[data-zoom="close"] #terrain-mesh{opacity:.9}
+#country-boundaries{pointer-events:none}
+.country-boundary{
+  fill:none;stroke:color-mix(in srgb,var(--country) 56%,#334239);stroke-width:.72;stroke-opacity:.44;
+  stroke-dasharray:2 2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;
+}
+.stage[data-zoom="travel"] .country-boundary,.stage[data-zoom="close"] .country-boundary{stroke-opacity:.66}
 #water{pointer-events:none}
 .lake path{fill:#48A9C6;fill-opacity:.86;stroke:#D4F4F7;stroke-opacity:.78;stroke-width:.8;vector-effect:non-scaling-stroke}
 .river{fill:none;stroke:#57BBD3;stroke-opacity:.68;stroke-width:1.05;vector-effect:non-scaling-stroke;stroke-linecap:round}
@@ -225,13 +231,24 @@ button{font:inherit;color:inherit}
 .landmark.seen .landmark-shadow{opacity:.48;transform:scaleX(1)}
 .landmark.current{opacity:1;filter:drop-shadow(0 4px 5px rgba(62,43,26,.42))}
 .landmark.current .landmark-label{opacity:1}
+.landmark.upcoming{opacity:.7}
+.landmark.upcoming .landmark-floor,.landmark.upcoming .landmark-rise{opacity:.78}
+.landmark.upcoming .landmark-rise{transform:scaleY(.82)}
+.landmark.upcoming .landmark-shadow{opacity:.2;transform:scaleX(.82)}
+.landmark.upcoming .landmark-label{opacity:.82}
 .stage[data-zoom="hero"] .landmark.seen{opacity:.36}
 .stage[data-zoom="hero"] .landmark-label{opacity:0}
-#route-base{opacity:.72}
-.seg{opacity:0;transition:opacity .35s}
-.seg.lit{opacity:1}
-.stage[data-zoom="hero"] .seg.lit{opacity:.72}
-.stage[data-zoom="hero"] #route-base{opacity:.46}
+.stage[data-zoom="hero"] .landmark.upcoming{opacity:.82}
+.stage[data-zoom="hero"] .landmark.upcoming .landmark-label{opacity:.88}
+#route-base{opacity:.48}
+.route-ahead-seg{stroke-width:2.35;opacity:.58}
+.seg{stroke-width:3.55;opacity:1}
+.stage[data-zoom="hero"] #route-base{opacity:.34}
+.stage[data-zoom="hero"] .route-ahead-seg{opacity:.7}
+.stage[data-zoom="hero"] .seg{opacity:.88}
+#route-now{pointer-events:none;filter:drop-shadow(0 1.5px 2px rgba(30,38,30,.38))}
+.route-now-halo{fill:#F8F2DF;stroke:#283328;stroke-width:.7;vector-effect:non-scaling-stroke}
+.route-now-dot{fill:var(--c-cur);stroke:#263126;stroke-width:.65;vector-effect:non-scaling-stroke;transition:fill .65s ease}
 .daydot{fill:#536052;opacity:0;transition:opacity .6s,fill .6s}
 .daydot.seen{opacity:.9;fill:#FFF5D8}
 .restdot{fill:none;stroke:#536052;stroke-width:1}
@@ -265,6 +282,15 @@ button{font:inherit;color:inherit}
 }
 .journey-start:hover{background:color-mix(in srgb,var(--c-cur) 12%,#F7F3E8)}
 .stage.has-started .journey-start{opacity:0;transform:translate(-50%,-58%);pointer-events:none}
+.route-context{
+  --leg-color:var(--c-cur);position:absolute;left:15px;bottom:15px;z-index:6;min-width:210px;max-width:min(330px,calc(100% - 30px));
+  padding:10px 13px 9px;border:1px solid rgba(39,48,36,.3);border-left:4px solid var(--leg-color);
+  background:#F7F3E8;color:var(--ink);pointer-events:none;
+}
+.route-context-label,.route-context-detail{font-family:var(--mono);text-transform:uppercase;font-variant-numeric:tabular-nums}
+.route-context-label{font-size:7.5px;font-weight:650;letter-spacing:.15em;color:#6B675C}
+.route-context-leg{margin-top:3px;font-family:var(--sans);font-size:15px;font-weight:690;line-height:1.15;letter-spacing:-.025em}
+.route-context-detail{margin-top:4px;font-size:7.5px;letter-spacing:.08em;color:#5E635A}
 
 /* ---------------------------------------------------------- collections */
 .collector{
@@ -409,6 +435,10 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .map-shell{left:7px;right:7px;top:calc(var(--chrome-h) + var(--story-h) + 14px);bottom:8px}
   .photo figcaption{display:none}
   .journey-start{padding:10px 15px;font-size:13px}
+  .route-context{left:9px;bottom:9px;min-width:0;max-width:calc(100% - 18px);padding:7px 9px 7px;border-left-width:3px}
+  .route-context-label{font-size:6.5px}
+  .route-context-leg{font-size:12px;margin-top:2px}
+  .route-context-detail{font-size:6.5px;margin-top:3px}
   .hint{bottom:21px;font-size:9px}
   .plate{grid-template-columns:58px minmax(0,1fr)}
   .plate img{width:58px}
@@ -431,7 +461,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .quote-text{-webkit-line-clamp:3}
 }
 @media (prefers-reduced-motion:reduce){
-  .seg,.daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.journey-start,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
+  .daydot,.town,.plate,.quote,.photo,.collector,.journey-progress i,.journey-start,.landmark,.landmark-rise,.landmark-floor,.landmark-shadow{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
 </style>
@@ -507,6 +537,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 <!--__ATLAS__-->
       </div>
       <div class="vignette"></div>
+      <div class="route-context" id="route-context">
+        <p class="route-context-label" id="route-context-label">next on foot</p>
+        <p class="route-context-leg" id="route-context-leg">Paris → Reims</p>
+        <p class="route-context-detail" id="route-context-detail"></p>
+      </div>
       <button class="journey-start" id="walkbtn" type="button">Begin the journey</button>
     </div>
     <p class="hint" id="hint">scroll ↓</p>
@@ -589,6 +624,12 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var countryNav = document.getElementById("country-nav");
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#country-nav a"));
   var landmarks = Array.prototype.slice.call(document.querySelectorAll(".landmark"));
+  var routeProgressMaskPath = document.getElementById("route-progress-mask-path");
+  var routeNow = document.getElementById("route-now");
+  var routeContext = document.getElementById("route-context");
+  var routeContextLabel = document.getElementById("route-context-label");
+  var routeContextLeg = document.getElementById("route-context-leg");
+  var routeContextDetail = document.getElementById("route-context-detail");
   var journeyProgress = document.getElementById("journey-progress");
   var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
@@ -628,6 +669,8 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     }
     return (innerWidth > 0 && innerHeight > 0) ? innerWidth / innerHeight : 16 / 10;
   }
+  function travelWidth(){ return viewAspect() < .82 ? 330 : TRAVELW; }
+  function closeWidth(){ return viewAspect() < .82 ? 245 : CLOSEW; }
   function fitFull(){
     var xs = [DATA.start[0]], ys = [DATA.start[1]];
     days.forEach(function(d){ xs.push(d.x); ys.push(d.y); });
@@ -721,7 +764,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       return { x: da.x, y: da.y, alt: altOf(da), day: da, t: 1 };
     }
     if (scene.t === "end") { var dl = days[days.length - 1]; return { x: dl.x, y: dl.y, alt: altOf(dl), day: dl, t: 1 }; }
-    return { x: days[0].x, y: days[0].y, alt: altOf(days[0]), day: days[0], t: 0 };
+    return { x: DATA.start[0], y: DATA.start[1], alt: DATA.startAlt || 0, day: days[0], t: 0 };
   }
 
   (function initSpark(){
@@ -812,7 +855,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     var baseElev = prev ? prev.cumElev : 0;
     var baseMin = prev ? prev.cumMin : 0;
     var baseDays = prev ? prev.footDays : 0;
-    var t = (scene.t === "walk" && d.w) ? Math.max(0, Math.min(1, wp.t)) : 1;
+    var t = scene.t === "walk" && d.w
+      ? Math.max(0, Math.min(1, wp.t))
+      : scene.t === "enter"
+        ? Math.max(0, Math.min(1, wp.t))
+        : 1;
     var km = lerp(baseKm, d.cum, t);
     var climbed = lerp(baseElev, d.cumElev, t);
     var moving = lerp(baseMin, d.cumMin, t);
@@ -837,6 +884,30 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       journeyProgress.setAttribute("aria-valuenow", String(Math.round(km)));
       journeyProgress.setAttribute("aria-valuetext", Math.round(km).toLocaleString("en-GB") + " of " + DATA.total.toLocaleString("en-GB") + " kilometres");
     }
+    return km;
+  }
+
+  function updateRouteContext(scene, km){
+    var allPlaces = DATA.places || [];
+    if (!routeContext || !allPlaces.length) return;
+    var from = allPlaces[0];
+    var next = null;
+    for (var i = 0; i < allPlaces.length; i++) {
+      if (allPlaces[i].km <= km + .5) from = allPlaces[i];
+      else { next = allPlaces[i]; break; }
+    }
+    if (scene.t === "end" || !next) {
+      setText(routeContextLabel, "journey complete");
+      setText(routeContextLeg, "Paris → Sofia");
+      setText(routeContextDetail, DATA.total.toLocaleString("en-GB") + " km on foot");
+      routeContext.style.setProperty("--leg-color", DATA.colors.Bulgaria);
+      return;
+    }
+    var remaining = Math.max(1, Math.round(next.km - km));
+    setText(routeContextLabel, "next on foot");
+    setText(routeContextLeg, from.name + " → " + next.name);
+    setText(routeContextDetail, remaining + " km ahead · " + next.country.toLowerCase());
+    routeContext.style.setProperty("--leg-color", DATA.colors[next.country]);
   }
 
   function esc(s){ var el = document.createElement("span"); el.textContent = s; return el.innerHTML; }
@@ -906,13 +977,16 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var activePlate = null;
 
   var trailByDay = {};
+  var trailTotal = 0;
   days.forEach(function(d){
     var seg = document.getElementById("seg-" + d.n);
     var dot = document.getElementById("dot-" + d.n);
     var prev = byN[d.n - 1] || d;
     var len = seg && seg.getTotalLength ? seg.getTotalLength() : Math.hypot(d.x - prev.x, d.y - prev.y);
-    trailByDay[d.n] = { seg: seg, dot: dot, len: len || 1 };
+    trailByDay[d.n] = { seg: seg, dot: dot, len: len || 1, from: trailTotal };
+    trailTotal += len || 1;
   });
+  var routeMaskLength = routeProgressMaskPath && routeProgressMaskPath.getTotalLength ? routeProgressMaskPath.getTotalLength() : trailTotal;
   var lastTrailState = "";
 
   function updateTrail(scene, wp, inJourney){
@@ -922,35 +996,51 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         var item = trailByDay[d.n];
         if (!item) return;
         var passed = scene.t === "walk" ? d.n < wp.day.n : d.n <= wp.day.n;
-        if (item.seg) {
-          item.seg.classList.toggle("lit", passed || (wp.day.n === d.n && wp.t > .98));
-          if (passed) item.seg.removeAttribute("stroke-dasharray");
-        }
         if (item.dot) item.dot.classList.toggle("seen", passed || (wp.day.n === d.n && wp.t > .96));
       });
       var currentLandmarkKind = "";
+      var journeyDay = scene.t === "start" ? 0 : wp.day.n;
+      var upcomingLandmark = null;
+      landmarks.some(function(landmark){
+        if (+(landmark.getAttribute("data-day") || 0) > journeyDay) {
+          upcomingLandmark = landmark;
+          return true;
+        }
+        return false;
+      });
       landmarks.forEach(function(landmark){
         var landmarkDay = +(landmark.getAttribute("data-day") || 0);
         var isCurrent = inJourney && landmarkDay === wp.day.n;
+        var isUpcoming = landmark === upcomingLandmark;
         if (isCurrent) currentLandmarkKind = landmark.getAttribute("data-kind") || "";
         landmark.classList.toggle("seen", inJourney && landmarkDay <= wp.day.n);
         landmark.classList.toggle("current", isCurrent);
+        landmark.classList.toggle("upcoming", isUpcoming);
         var townId = landmark.getAttribute("data-town");
         var town = townId && document.getElementById("town-" + townId);
-        if (town) town.classList.toggle("has-current-landmark", isCurrent);
+        if (town) town.classList.toggle("has-current-landmark", isCurrent || isUpcoming);
       });
+      if (!currentLandmarkKind && upcomingLandmark) currentLandmarkKind = upcomingLandmark.getAttribute("data-kind") || "";
       stage.setAttribute("data-landmark", currentLandmarkKind);
       lastTrailState = state;
     }
     var first = trailByDay[1];
     if (first && first.dot) first.dot.classList.toggle("seen", inJourney);
+    var active = trailByDay[wp.day.n];
     if (scene.t === "walk") {
-      var active = trailByDay[wp.day.n];
-      if (!active || !active.seg) return;
-      active.seg.classList.add("lit");
-      if (active.dot) active.dot.classList.toggle("seen", wp.day.n === 1 ? inJourney : wp.t > .96);
-      if (wp.t >= .98) active.seg.removeAttribute("stroke-dasharray");
-      else active.seg.setAttribute("stroke-dasharray", (active.len * wp.t).toFixed(1) + " " + (active.len + 2).toFixed(1));
+      if (active && active.dot) active.dot.classList.toggle("seen", wp.day.n === 1 ? inJourney : wp.t > .96);
+    }
+    var travelled = 0;
+    if (scene.t !== "start" && active) {
+      var legProgress = scene.t === "walk" || scene.t === "enter" ? Math.max(0, Math.min(1, wp.t)) : 1;
+      travelled = active.from + active.len * legProgress;
+    }
+    if (routeProgressMaskPath && routeMaskLength > 0 && trailTotal > 0) {
+      var revealed = routeMaskLength * Math.max(0, Math.min(1, travelled / trailTotal));
+      routeProgressMaskPath.setAttribute("stroke-dasharray", revealed.toFixed(2) + " " + (routeMaskLength + 2).toFixed(2));
+    }
+    if (routeNow) {
+      routeNow.setAttribute("transform", "translate(" + wp.x.toFixed(2) + " " + wp.y.toFixed(2) + ")");
     }
   }
 
@@ -959,6 +1049,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   function update(p){
     var scene = sceneAt(p);
     var wp = routePointAt(scene, p);
+    var travelW = travelWidth();
     var inJourney = scene.t !== "start";
     var silentRest = scene.t === "walk" && !wp.day.w;
     // chrome
@@ -978,19 +1069,20 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     else if (scene.t === "end") {
       setZoom("travel");
       target = viewAspect() < .82
-        ? { x: wp.x - 60, y: wp.y - 185, w: TRAVELW }
-        : { x: wp.x, y: wp.y, w: TRAVELW };
+        ? { x: wp.x - 42, y: wp.y - travelW * .37, w: travelW }
+        : { x: wp.x, y: wp.y, w: travelW };
     }
     else if (scene.t === "beat") {
       setZoom("close");
-      target = { x: wp.x, y: wp.y, w: CLOSEW };
+      target = { x: wp.x, y: wp.y, w: closeWidth() };
     }
-    else if (scene.t === "enter") { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW * 1.5 }; }
-    else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: TRAVELW }; }
+    else if (scene.t === "enter") { setZoom("travel"); target = { x: wp.x, y: wp.y, w: travelW * 1.5 }; }
+    else { setZoom("travel"); target = { x: wp.x, y: wp.y, w: travelW }; }
 
     // route + trail
     sparkAt(wp.alt, wp.day.n, wp.t);
-    updateStats(scene, wp);
+    var kmNow = updateStats(scene, wp);
+    updateRouteContext(scene, kmNow);
     updateTrail(scene, wp, inJourney);
     showCountry(scene.t === "enter" ? scene.country : wp.day.c);
     updateCollections(scene, wp);

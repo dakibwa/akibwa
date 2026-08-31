@@ -608,6 +608,24 @@ const terrainCells = Array.from(terrainBuckets, ([color, d]) =>
   `<path class="terrain-cell" d="${d}" fill="${color}" stroke="${color}"/>`
 );
 
+// The relief is deliberately illustrative, but the borders remain real
+// geography. Quiet outlines under the route make each leg legible without
+// turning the page into a conventional road map.
+const countryBoundaries = (data.countryRings || [])
+  .map((country) => {
+    const d = country.rings
+      .map((ring) => {
+        const points = ring.map(([x, y]) => {
+          const point = mapPoint(x, y);
+          return `${point.x} ${point.y}`;
+        });
+        return points.length ? `M${points.join("L")}Z` : "";
+      })
+      .join("");
+    return `<path class="country-boundary" data-country="${country.name.toLowerCase()}" style="--country:${country.color}" d="${d}"/>`;
+  })
+  .join("\n      ");
+
 function linePath(points, altitude) {
   return points
     .map(([lon, lat], index) => {
@@ -740,6 +758,7 @@ function nearestRouteIdx(x, y, from = 0) {
 
 const walkPaths = {};
 const segs = [];
+const routeAheadSegs = [];
 let routeAt = 0;
 for (let i = 0; i < pts.length; i++) {
   const d = pts[i];
@@ -767,9 +786,9 @@ for (let i = 0; i < pts.length; i++) {
         return `${point.x} ${point.y}`;
       })
       .join("L");
-  segs.push(
-    `<path id="seg-${d.n}" d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" ${d.walked ? "" : 'stroke-dasharray="3 6"'} class="seg"/>`
-  );
+  const routeAttrs = `d="${pathD}" fill="none" stroke="${COUNTRY_COLOR[d.country]}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"`;
+  routeAheadSegs.push(`<path ${routeAttrs} class="route-ahead-seg"/>`);
+  segs.push(`<path id="seg-${d.n}" ${routeAttrs} class="seg"/>`);
 }
 
 function placeOnTown(x, y, day) {
@@ -813,20 +832,29 @@ const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
   <defs>
     <filter id="terrain-soften-filter" x="-4%" y="-6%" width="108%" height="112%">
-      <feGaussianBlur stdDeviation="2.4"/>
+      <feGaussianBlur stdDeviation="1.15"/>
     </filter>
+    <mask id="route-progress-mask" maskUnits="userSpaceOnUse" x="-100" y="-100" width="${VBW + 200}" height="${VBH + 200}">
+      <path id="route-progress-mask-path" d="${trackPath}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0 99999"/>
+    </mask>
   </defs>
   <g id="camera">
     <g id="terrain-mesh">${terrainCells.join("\n      ")}</g>
+    <g id="country-boundaries">${countryBoundaries}</g>
     <g id="water">
       ${lakePaths}
       ${riverPaths}
     </g>
     <g id="mountains">${mountainMarks}</g>
     <g id="landmarks">${landmarkMarks}</g>
-    <path id="route-base" d="${trackPath}" fill="none" stroke="#E9F1DF" stroke-opacity=".82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-    ${segs.join("\n    ")}
+    <path id="route-base" d="${trackPath}" fill="none" stroke="#263126" stroke-opacity=".72" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <g id="route-ahead">${routeAheadSegs.join("\n      ")}</g>
+    <g id="route-travelled" mask="url(#route-progress-mask)">${segs.join("\n      ")}</g>
     ${dayDots}
+    <g id="route-now" transform="translate(${startPoint.x} ${startPoint.y})">
+      <circle class="route-now-halo" r="5.2"/>
+      <circle class="route-now-dot" r="2.15"/>
+    </g>
     ${townMarks}
   </g>
 </svg>`;
@@ -926,6 +954,7 @@ const places = townsPlaced.map((town) => {
     day: town.start ? 0 : town.day || nearestDay.day,
     country: nearestDay.country,
     pass: town.pass ? 1 : 0,
+    km: +((town.s / Math.max(1, gpsVerts[gpsVerts.length - 1].s)) * data.facts.km).toFixed(1),
   };
 });
 const albumKeys = new Set();
