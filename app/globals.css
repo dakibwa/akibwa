@@ -7419,19 +7419,15 @@ button {
   border-radius: 4px;
 }
 
-.concept-career-freelance-mark {
-  display: grid;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--company-accent);
-  color: var(--canvas);
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-style: italic;
-  font-weight: 650;
-  line-height: 1;
+.concept-career-logo.is-akibwa {
+  border-color: transparent;
+  background: transparent;
+}
+
+.concept-career-logo.is-akibwa img {
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
 }
 
 .concept-career-name {
@@ -7625,8 +7621,7 @@ button {
     height: 36px;
   }
 
-  .concept-career-logo img,
-  .concept-career-freelance-mark {
+  .concept-career-logo img {
     width: 25px;
     height: 25px;
   }

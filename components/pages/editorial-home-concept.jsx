@@ -112,12 +112,11 @@ export function EditorialHomeConcept() {
               <time className="concept-career-time">{job.span}</time>
               <span className="concept-career-node" aria-hidden="true" />
               <div className="concept-career-identity">
-                <span className={`concept-career-logo${job.tile ? " is-tile" : ""}`} aria-hidden="true">
-                  {job.logo ? (
-                    <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
-                  ) : (
-                    <span className="concept-career-freelance-mark">A</span>
-                  )}
+                <span
+                  className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}`}
+                  aria-hidden="true"
+                >
+                  <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
                 </span>
                 <span className="concept-career-name">
                   <strong>{job.name}</strong>

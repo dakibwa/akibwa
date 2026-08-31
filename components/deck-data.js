@@ -13,7 +13,7 @@ export const deck = {
       "role": "Independent AI Systems Builder",
       "span": "Now",
       "accent": "#c05212",
-      "logo": null,
+      "logo": "/favicon.svg",
       "tile": true,
       "back": "Build sites, booking systems, games and data pipelines for myself and for clients, from first sketch to live service.",
       "mission": "Turn good ideas and repetitive work into useful software people can actually run."

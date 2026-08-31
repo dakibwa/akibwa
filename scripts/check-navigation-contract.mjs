@@ -137,6 +137,10 @@ requireText(editorial, 'className="concept-career-label">Mission', "each career 
 requireText(editorial, "{job.role}", "each career stop must print the job title");
 requireText(editorial, "{job.back}", "each career stop must print Dan's contribution");
 requireText(editorial, "{job.mission}", "each career stop must print the organisation's mission");
+requireText(deckData, '"logo": "/favicon.svg"', "Freelance must use the Akibwa favicon mark");
+requireText(editorial, 'job.logo === "/favicon.svg" ? " is-akibwa"', "the Akibwa mark must keep its own full-frame treatment");
+requireRuleText(".concept-career-logo.is-akibwa img {", ["width: 100%", "height: 100%"]);
+forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
 requireText(deckData, "electrical work with my brother", "Electrical Work must remain the period with Dan's brother");
 requireText(deckData, "Joinery with my dad", "Joinery Work must remain the period with Dan's dad");
 forbidText(deckData, "my dad and my brother", "the two family-work periods must not be conflated");
