@@ -274,6 +274,9 @@ const pageState = () => evaluate(`(() => {
     projects: [...document.querySelectorAll(".concept-project-card")].map((item) => ({
       text: item.innerText.replace(/\\s+/g, " ").trim(),
       href: item.getAttribute("href"),
+      tagName: item.tagName,
+      controls: item.getAttribute("aria-controls"),
+      expanded: item.getAttribute("aria-expanded"),
       rect: rect(item),
       imageRect: rect(item.querySelector("img")),
       footRect: rect(item.querySelector(".concept-project-foot")),
@@ -293,6 +296,18 @@ const pageState = () => evaluate(`(() => {
       imageWidth: item.querySelector("img")?.naturalWidth,
       currentSrc: item.querySelector("img")?.currentSrc
     })),
+    projectDetail: (() => {
+      const shell = document.querySelector(".concept-project-detail-shell");
+      const action = shell?.querySelector(".concept-project-open");
+      return {
+        rect: rect(shell),
+        opacity: shell ? Number(getComputedStyle(shell).opacity) : -1,
+        hidden: shell?.getAttribute("aria-hidden"),
+        title: shell?.querySelector("h3")?.textContent.trim() ?? null,
+        action: action?.textContent.replace(/\\s+/g, " ").trim() ?? null,
+        actionHref: action?.getAttribute("href") ?? null
+      };
+    })(),
     standaloneFreelance: Boolean(document.querySelector(".concept-freelance")),
     careerSection: rect(document.querySelector(".concept-career-section")),
     career: [...document.querySelectorAll(".concept-career-stop")].map((item) => ({
@@ -322,6 +337,8 @@ const pageState = () => evaluate(`(() => {
     links: document.querySelectorAll("a.card").length,
     passive: document.querySelectorAll("div.card[role=img]").length,
     cardButtons: document.querySelectorAll("button.card").length,
+    namedCardButtons: [...document.querySelectorAll("button.card")]
+      .filter((button) => Boolean(button.getAttribute("aria-label")?.trim())).length,
     hasSpotlight: Boolean(document.querySelector(".spotlight")),
     sampleStandard: visible.some((card) => !card.classList.contains("card--small"))
       ? rect(visible.find((card) => !card.classList.contains("card--small"))) : null,
@@ -546,9 +563,10 @@ const checkDesktop = async () => {
     `Projects, Career and Taste use one chapter-heading system [${state.chapterHeadings.map((item) => item.text).join(" / ")}]`
   );
   check(
-    state.projects.map((item) => item.href).join(" / ") ===
-      "/features/?from=akibwa / https://portuguesewithines.com/?from=akibwa / /trek/?from=akibwa",
-    `the three project cards enter their real project pages [${state.projects.map((item) => item.href).join(" / ")}]`
+    state.projects.every((item) =>
+      item.tagName === "BUTTON" && item.controls === "project-detail" && item.expanded === "false"
+    ),
+    "the three project cards are accessible disclosure controls at rest"
   );
   check(
     state.projects[0].text.startsWith("features ") &&
@@ -652,8 +670,11 @@ const checkDesktop = async () => {
     `the opening edit is balanced across five sections [${JSON.stringify(state.visibleCounts)}]`
   );
   check(state.links === 0, "taste cards remain visual objects rather than false destinations");
-  check(state.passive === state.cards, `every taste card is a labelled visual object [${state.passive}]`);
-  check(state.cardButtons === 0, "no wall card renders as a button");
+  check(state.passive === 0, "Taste no longer uses passive pseudo-controls");
+  check(
+    state.cardButtons === state.cards && state.namedCardButtons === state.cards,
+    `every Taste cover is a named disclosure button [${state.namedCardButtons}/${state.cardButtons}]`
+  );
   check(state.hasSpotlight === false, "no modal viewer exists");
   check(
     state.cardShapes.join() === "square",
@@ -696,7 +717,7 @@ const checkDesktop = async () => {
 };
 
 const checkLinkHover = async () => {
-  section("static link feedback");
+  section("project reveal and explicit open action");
   await setDesktop();
   await goto("/");
   const before = await evaluate(`(() => {
@@ -710,7 +731,9 @@ const checkLinkHover = async () => {
       footColor: getComputedStyle(link.querySelector(".concept-project-foot")).color,
       footTransition: getComputedStyle(link.querySelector(".concept-project-foot")).transitionDuration,
       transform: getComputedStyle(link).transform,
-      shadow: getComputedStyle(link).boxShadow
+      shadow: getComputedStyle(link).boxShadow,
+      careerTop: document.querySelector(".concept-career-section").getBoundingClientRect().top,
+      detailOpacity: Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity)
     };
   })()`);
   check(parseFloat(before.footTransition) === 0, "the Features caption rail has no animated transition");
@@ -723,10 +746,15 @@ const checkLinkHover = async () => {
         footColor: getComputedStyle(link.querySelector(".concept-project-foot")).color,
         footTransition: getComputedStyle(link.querySelector(".concept-project-foot")).transitionDuration,
         transform: getComputedStyle(link).transform,
-        shadow: getComputedStyle(link).boxShadow
+        shadow: getComputedStyle(link).boxShadow,
+        careerTop: document.querySelector(".concept-career-section").getBoundingClientRect().top,
+        detailOpacity: Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity),
+        detailTitle: document.querySelector(".concept-project-detail h3")?.textContent.trim(),
+        action: document.querySelector(".concept-project-open")?.textContent.replace(/\\s+/g, " ").trim(),
+        actionHref: document.querySelector(".concept-project-open")?.getAttribute("href")
       };
     })()`),
-    (value) => value.footBackground !== before.footBackground
+    (value) => value.footBackground !== before.footBackground && value.detailOpacity > 0.99
   );
   check(
     hovered.footBackground !== before.footBackground &&
@@ -736,12 +764,54 @@ const checkLinkHover = async () => {
   );
   check(hovered.transform === "none", "hover does not tilt, lift, or scale the feature");
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");
-  await mouseMove(1200, 40);
-  const settled = await pollUntil(
-    () => evaluate(`getComputedStyle(document.querySelector(".concept-feature .concept-project-foot")).backgroundColor`),
-    (background) => background === before.footBackground
+  check(
+    hovered.detailTitle === "features" && hovered.action === "Open features↗" &&
+      hovered.actionHref === "/features/?from=akibwa",
+    `hover previews Features with its explicit open action [${hovered.detailTitle} / ${hovered.action}]`
   );
-  check(settled === before.footBackground, "the caption rail restores when hover ends");
+  check(
+    hovered.careerTop > before.careerTop + 60,
+    `the project reveal moves the rose Career rule down [${before.careerTop.toFixed(1)} → ${hovered.careerTop.toFixed(1)}px]`
+  );
+
+  await clickAt(before.x, before.y);
+  await mouseMove(1200, 40);
+  let locked = await pollUntil(
+    () => evaluate(`(() => ({
+      expanded: document.querySelector(".concept-feature").getAttribute("aria-expanded"),
+      opacity: Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity),
+      title: document.querySelector(".concept-project-detail h3")?.textContent.trim()
+    }))()`),
+    (value) => value.expanded === "true" && value.opacity > 0.99
+  );
+  check(locked.title === "features", "click locks the Features detail after the pointer leaves");
+
+  const projects = [
+    [".concept-portuguese", "Português com a Inês", "Open Português com a Inês↗", "https://portuguesewithines.com/?from=akibwa"],
+    [".concept-trek", "The Trek", "Open The Trek↗", "/trek/?from=akibwa"]
+  ];
+  for (const [selector, title, action, href] of projects) {
+    await evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+    locked = await pollUntil(
+      () => evaluate(`(() => ({
+        title: document.querySelector(".concept-project-detail h3")?.textContent.trim(),
+        action: document.querySelector(".concept-project-open")?.textContent.replace(/\\s+/g, " ").trim(),
+        href: document.querySelector(".concept-project-open")?.getAttribute("href")
+      }))()`),
+      (value) => value.title === title
+    );
+    check(
+      locked.title === title && locked.action === action && locked.href === href,
+      `${title} reveals the correct open action without navigating`
+    );
+  }
+
+  await pressEscape();
+  const settled = await pollUntil(
+    () => evaluate(`Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity)`),
+    (opacity) => opacity === 0
+  );
+  check(settled === 0, "Escape clears the locked project detail");
 };
 
 const checkTasteDetails = async () => {
@@ -777,14 +847,39 @@ const checkTasteDetails = async () => {
       return {
         opacity: Number(getComputedStyle(card.querySelector(".card-info")).opacity),
         transform: getComputedStyle(card).transform,
-        shadow: getComputedStyle(card).boxShadow
+        shadow: getComputedStyle(card).boxShadow,
+        panelOpacity: Number(getComputedStyle(document.querySelector(".taste-detail-shell")).opacity),
+        panelTitle: document.querySelector(".taste-detail > strong")?.textContent.trim(),
+        panelCreator: document.querySelector(".taste-detail > span:not(.taste-detail-kind)")?.textContent.trim(),
+        panelMeta: document.querySelector(".taste-detail small")?.textContent.trim()
       };
     })()`),
-    (value) => value.opacity > 0.99
+    (value) => value.opacity > 0.99 && value.panelOpacity > 0.99
   );
   check(hovered.opacity > 0.99, "hover reveals the Taste detail");
   check(hovered.transform === "none" && hovered.shadow === "none", "Taste hover adds no lift, scale or shadow");
+  check(
+    hovered.panelTitle === before.title && hovered.panelCreator === before.creator && hovered.panelMeta === before.plays,
+    "the blue panel repeats the selected cover's title, creator and available play count"
+  );
+
+  await clickAt(before.x, before.y);
   await mouseMove(1200, 40);
+  const lockedTaste = await pollUntil(
+    () => evaluate(`(() => ({
+      expanded: document.querySelector('.taste-wall .card[data-key="music"].is-selected')?.getAttribute("aria-expanded"),
+      opacity: Number(getComputedStyle(document.querySelector(".taste-detail-shell")).opacity)
+    }))()`),
+    (value) => value.expanded === "true" && value.opacity > 0.99
+  );
+  check(lockedTaste.expanded === "true", "click locks a Taste detail after the pointer leaves");
+  await pressEscape();
+  const closedTaste = await pollUntil(
+    () => evaluate(`Number(getComputedStyle(document.querySelector(".taste-detail-shell")).opacity)`),
+    (opacity) => opacity === 0
+  );
+  check(closedTaste === 0, "Escape clears the locked Taste detail");
+
   await evaluate(`document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card").focus()`);
   const focusedOpacity = await evaluate(`Number(getComputedStyle(document.activeElement.querySelector(".card-info")).opacity)`);
   check(focusedOpacity > 0.99, "keyboard focus reveals the same Taste detail");
@@ -1282,6 +1377,8 @@ const checkReducedMotion = async () => {
   const durations = await evaluate(`(() => {
     const selectors = [
       ".concept-project-foot",
+      ".concept-project-detail-shell",
+      ".taste-detail-shell",
       ".hero-name",
       ".hero-name-value",
       ".concept-career-section"

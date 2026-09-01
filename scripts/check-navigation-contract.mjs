@@ -125,12 +125,12 @@ requireText(editorial, 'aria-labelledby="projects-title"', "the Projects chapter
 requireRuleText(".concept-projects-head h2,", ["font-family: var(--serif)", "font-size: clamp(3rem, 5vw, 5.2rem)"]);
 requireText(
   editorial,
-  'href="/features/?from=akibwa"',
-  "Features must enter the real game through Akibwa project view"
+  'href: "/features/?from=akibwa"',
+  "Features detail must open the real game through Akibwa project view"
 );
 requireText(
   editorial,
-  'src="/features/home-card-bright-v4.png"',
+  'src: "/features/home-card-bright-v4.png"',
   "Features must use its bright, image-led board artwork"
 );
 if (!imageVariants["conceptProject:/features/home-card-bright-v4.png"]) {
@@ -138,32 +138,32 @@ if (!imageVariants["conceptProject:/features/home-card-bright-v4.png"]) {
 }
 forbidText(
   editorial,
-  'src="/project-art/personal/features-neural-threads.png"',
+  'src: "/project-art/personal/features-neural-threads.png"',
   "the generic neural-thread artwork must not return to the homepage"
 );
 requireText(
   editorial,
-  'href="https://portuguesewithines.com/?from=akibwa"',
-  "Português com a Inês must enter its real site through Akibwa project view"
+  'href: "https://portuguesewithines.com/?from=akibwa"',
+  "Português com a Inês detail must open its real site through Akibwa project view"
 );
 requireText(
   editorial,
-  'src="/project-art/personal/portuguese-with-ines-conversation.png"',
+  'src: "/project-art/personal/portuguese-with-ines-conversation.png"',
   "Português com a Inês must keep its representative conversation artwork"
 );
-requireText(editorial, "Português com a Inês</strong>", "the Portuguese project must be visibly named");
+requireText(editorial, 'title: "Português com a Inês"', "the Portuguese project must be visibly named");
 requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
 requireText(
   editorial,
-  'href="/trek/?from=akibwa"',
-  "The Trek must enter the real journey through Akibwa project view"
+  'href: "/trek/?from=akibwa"',
+  "The Trek detail must open the real journey through Akibwa project view"
 );
 requireText(
   editorial,
-  'src="/project-art/personal/trek-paris-sofia-project.png"',
+  'src: "/project-art/personal/trek-paris-sofia-project.png"',
   "The Trek must use its route-led generated artwork"
 );
-requireText(editorial, "The Trek</strong>", "The Trek must be visibly named");
+requireText(editorial, 'title: "The Trek"', "The Trek must be visibly named");
 requireText(editorial, "Paris → Sofia · 1,982 km", "The Trek must explain the journey succinctly");
 if (!imageVariants["conceptProject:/project-art/personal/trek-paris-sofia-project.png"]) {
   fail("The Trek project artwork must have responsive variants");
@@ -189,8 +189,22 @@ requireRuleText(".concept-project-card {", [
   "display: grid",
   "grid-template-rows: auto auto",
   "overflow: clip",
-  "border: 1px solid"
+  "border: 1px solid",
+  "appearance: none"
 ]);
+requireText(editorial, 'type="button"', "each project card must reveal detail instead of navigating immediately");
+requireText(editorial, 'aria-controls="project-detail"', "project cards must own the shared detail panel accessibly");
+requireText(editorial, 'className={`concept-project-detail-shell${activeProject ? " is-open" : ""}`}', "Projects must expose one shared expanding detail panel");
+for (const action of ["Open features", "Open Português com a Inês", "Open The Trek"]) {
+  requireText(editorial, `action: "${action}"`, `${action} must be the explicit destination action`);
+}
+requireRuleText(".concept-project-detail-shell {", [
+  "grid-template-rows: 0fr",
+  "transition:",
+  "grid-template-rows 340ms var(--ease-out)"
+]);
+requireRuleText(".concept-project-detail-shell.is-open {", ["grid-template-rows: 1fr"]);
+requireRuleText(".concept-project-detail {", ["border-top: 3px solid var(--project-detail-accent)"]);
 requireRuleText(".concept-project-foot {", [
   "min-height: 50px",
   "background: var(--project-card-panel)",
@@ -443,6 +457,13 @@ requireText(home, "function TasteVisual", "film, game and TV cards must keep an 
 requireText(home, 'slot="tasteArt"', "film, game and TV cards must use responsive editorial artwork at every scale");
 forbidText(home, "taste-visual__original", "Taste cards must not put inset poster covers over the artwork");
 requireText(home, 'className="card-info"', "Taste cards must expose title and creator detail");
+requireText(home, 'type="button"', "Taste covers must be real disclosure buttons");
+requireText(home, 'aria-label={accessibleLabel}', "Taste disclosure buttons must retain their computed accessible names");
+requireText(home, 'aria-controls="taste-detail"', "Taste covers must control the shared detail panel");
+requireText(home, 'className={`taste-detail-shell${activeTaste ? " is-open" : ""}`}', "Taste must expose one shared expanding detail panel");
+requireRuleText(".taste-detail-shell {", ["grid-template-rows: 0fr", "grid-template-rows 340ms var(--ease-out)"]);
+requireRuleText(".taste-detail-shell.is-open {", ["grid-template-rows: 1fr"]);
+requireRuleText(".taste-detail {", ["border-top: 3px solid var(--concept-archive)"]);
 requireText(home, "plays on Last.fm", "music detail must include a Last.fm count when one exists");
 requireRuleText(".akibwa-home .deck .card {", [
   "aspect-ratio: 1",

@@ -36,11 +36,11 @@ function lensHref(id) {
   return `${url.pathname}${search ? `?${search}` : ""}${id ? `#${id}` : ""}`;
 }
 
-function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, face, held, dim, size }) {
+function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, detail, onPreview, onSelect, selected, face, held, dim, size }) {
   const hasDetails = Boolean(title || creator);
   const accessibleLabel = hasDetails ? [title, creator, meta].filter(Boolean).join(", ") : label;
   const props = {
-    className: `card card--${suit}${size === "small" ? " card--small" : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${size === "small" ? " card--small" : ""}${href ? " card--link" : ""}${onSelect ? " card--detail" : ""}${selected ? " is-selected" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
     "data-key": keySet ?? suit,
     hidden: held || undefined,
@@ -84,6 +84,24 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
     );
   }
 
+  if (onSelect && detail) {
+    return (
+      <button
+        {...props}
+        type="button"
+        aria-label={accessibleLabel}
+        aria-expanded={selected}
+        aria-controls="taste-detail"
+        onMouseEnter={() => onPreview(detail)}
+        onFocus={() => onPreview(detail)}
+        onBlur={() => onPreview(null)}
+        onClick={() => onSelect(detail)}
+      >
+        {content}
+      </button>
+    );
+  }
+
   return (
     <div {...props} role="img" aria-label={accessibleLabel} tabIndex={hasDetails ? 0 : undefined}>
       {content}
@@ -94,7 +112,7 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
 /* Taste behaves like the Career index: one compact visual row rather than a
    second page-length composition. Native horizontal overflow keeps the rail
    directly swipeable, while a filter change returns its new list to the start. */
-function HorizontalTasteRail({ cards, activeId, label }) {
+function HorizontalTasteRail({ cards, activeId, label, onPreview }) {
   const railRef = useRef(null);
 
   useEffect(() => {
@@ -108,6 +126,7 @@ function HorizontalTasteRail({ cards, activeId, label }) {
       role="list"
       aria-label={`${label} taste list`}
       data-card-count={cards.length}
+      onMouseLeave={() => onPreview(null)}
     >
       {cards.map((card, index) => (
         <div className="taste-rail-item" role="listitem" key={card.key ?? `taste-${index}`}>
@@ -210,6 +229,8 @@ function TasteVisual({ source, above, aboveSync }) {
 export function HomePage({ tasteOnly = false }) {
   const legend = tasteOnly ? TASTE_LEGEND : LEGEND;
   const [activeId, setActiveId] = useState("everything");
+  const [previewTaste, setPreviewTaste] = useState(null);
+  const [selectedTaste, setSelectedTaste] = useState(null);
   const activeFilter = legend.find((item) => item.id === activeId) ?? legend[0];
   const lens = activeFilter.lens;
 
@@ -220,6 +241,8 @@ export function HomePage({ tasteOnly = false }) {
     if (href !== current) {
       history[replace ? "replaceState" : "pushState"]({ lens: nextId }, "", href);
     }
+    setPreviewTaste(null);
+    setSelectedTaste(null);
     setActiveId(nextId);
   }, []);
 
@@ -235,17 +258,36 @@ export function HomePage({ tasteOnly = false }) {
   }, [legend]);
 
   useEffect(() => {
-    if (activeId === "everything") return undefined;
     const onKey = (event) => {
-      if (event.key === "Escape") selectFilter(legend[0]);
+      if (event.key !== "Escape") return;
+      if (selectedTaste) {
+        setSelectedTaste(null);
+        setPreviewTaste(null);
+      } else if (activeId !== "everything") {
+        selectFilter(legend[0]);
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [activeId, legend, selectFilter]);
+  }, [activeId, legend, selectFilter, selectedTaste]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
-  const tasteDetails = (title, creator, meta) =>
-    tasteOnly ? { title, creator, meta } : {};
+  const selectTaste = useCallback((detail) => {
+    setSelectedTaste((current) => current?.id === detail.id ? current : detail);
+  }, []);
+  const activeTaste = selectedTaste ?? previewTaste;
+  const tasteDetails = (id, kind, title, creator, meta) =>
+    tasteOnly
+      ? {
+          title,
+          creator,
+          meta,
+          detail: { id, kind, title, creator, meta },
+          onPreview: setPreviewTaste,
+          onSelect: selectTaste,
+          selected: selectedTaste?.id === id
+        }
+      : {};
 
   /* How many of a collection lead at full size before the rest pack small —
      four small tiles to one large. The making sets stay large throughout.
@@ -385,6 +427,8 @@ export function HomePage({ tasteOnly = false }) {
           dim={isDim}
           label={`${album.artist} — ${album.album}`}
           {...tasteDetails(
+            `music-${album.id}`,
+            "Album",
             album.album || (album.artist ? "Untitled artwork" : "Unidentified sleeve"),
             album.artist || "Artist unknown",
             album.plays > 0 ? `${album.plays.toLocaleString("en-GB")} plays on Last.fm` : null
@@ -420,7 +464,7 @@ export function HomePage({ tasteOnly = false }) {
           suit="films"
           dim={isDim}
           label={film.title}
-          {...tasteDetails(film.title, film.director)}
+          {...tasteDetails(`film-${film.title}`, "Film", film.title, film.director)}
           face={() => <TasteVisual source={film.poster} {...firstScreen("films", index)} />}
         />
       ));
@@ -434,7 +478,7 @@ export function HomePage({ tasteOnly = false }) {
           suit="games"
           dim={isDim}
           label={game.title}
-          {...tasteDetails(game.title, game.studio)}
+          {...tasteDetails(`game-${game.title}`, "Game", game.title, game.studio)}
           face={() => <TasteVisual source={game.cover} {...firstScreen("games", index)} />}
         />
       ));
@@ -448,7 +492,7 @@ export function HomePage({ tasteOnly = false }) {
           suit="tv"
           dim={isDim}
           label={show.title}
-          {...tasteDetails(show.title, show.creator)}
+          {...tasteDetails(`tv-${show.title}`, "Television", show.title, show.creator)}
           face={() => <TasteVisual source={show.poster} {...firstScreen("tv", index)} />}
         />
       ));
@@ -462,7 +506,7 @@ export function HomePage({ tasteOnly = false }) {
           suit="podcasts"
           dim={isDim}
           label={`${podcast.title} — ${podcast.creator}`}
-          {...tasteDetails(podcast.title, podcast.creator)}
+          {...tasteDetails(`podcast-${podcast.title}`, "Podcast", podcast.title, podcast.creator)}
           face={
             <SiteImage
               src={podcast.cover}
@@ -491,7 +535,7 @@ export function HomePage({ tasteOnly = false }) {
         suit="music"
         dim={dim("music")}
         label={`${graceland.artist} — ${graceland.album}`}
-        {...tasteDetails(graceland.album, graceland.artist)}
+        {...tasteDetails("music-graceland", "Album", graceland.album, graceland.artist)}
         face={
           <SiteImage
             src={graceland.art}
@@ -556,7 +600,7 @@ export function HomePage({ tasteOnly = false }) {
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId, lens, tasteOnly]);
+  }, [activeId, lens, selectedTaste?.id, tasteOnly]);
 
   return (
     <section className={`akibwa-home${tasteOnly ? " akibwa-home--taste" : ""}`}>
@@ -591,7 +635,30 @@ export function HomePage({ tasteOnly = false }) {
         </div>
 
         {tasteOnly ? (
-          <HorizontalTasteRail cards={wall} activeId={activeId} label={activeFilter.label} />
+          <>
+            <HorizontalTasteRail
+              cards={wall}
+              activeId={activeId}
+              label={activeFilter.label}
+              onPreview={setPreviewTaste}
+            />
+            <div
+              className={`taste-detail-shell${activeTaste ? " is-open" : ""}`}
+              id="taste-detail"
+              aria-hidden={!activeTaste}
+            >
+              <div className="taste-detail-clip">
+                {activeTaste ? (
+                  <div className="taste-detail">
+                    <span className="taste-detail-kind">{activeTaste.kind}</span>
+                    <strong>{activeTaste.title}</strong>
+                    <span>{activeTaste.creator}</span>
+                    {activeTaste.meta ? <small>{activeTaste.meta}</small> : null}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </>
         ) : wall}
       </div>
 
