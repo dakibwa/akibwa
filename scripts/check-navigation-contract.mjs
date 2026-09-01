@@ -114,6 +114,11 @@ requireText(
   "draggable={draggable ?? false}",
   "shared images must opt out of native dragging by default"
 );
+requireText(
+  siteImage,
+  "versionedSrc(entry.variants[0].avif.src, entry.sourceHash)",
+  "responsive artwork must use its source hash to invalidate stale browser caches"
+);
 
 /* Projects uses one card anatomy at every size: a wide three-card row, a
    two-row tablet composition, then one full-width phone stack. */
