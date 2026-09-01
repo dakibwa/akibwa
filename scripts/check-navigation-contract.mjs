@@ -117,10 +117,10 @@ requireText(
 requireText(editorial, 'href="/features/"', "Features must link directly to the game");
 requireText(
   editorial,
-  'src="/features/home-card-bright-v3.png"',
+  'src="/features/home-card-bright-v4.png"',
   "Features must use its bright, image-led board artwork"
 );
-if (!imageVariants["conceptProject:/features/home-card-bright-v3.png"]) {
+if (!imageVariants["conceptProject:/features/home-card-bright-v4.png"]) {
   fail("the bright Features project artwork must have responsive variants");
 }
 forbidText(
@@ -351,7 +351,7 @@ requireRuleText(".akibwa-home .deck .card {", [
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
 
 for (const source of [
-  "/features/home-card-bright-v3.png",
+  "/features/home-card-bright-v4.png",
   "/project-art/personal/portuguese-with-ines-conversation.png"
 ]) {
   if (!imageVariants[`conceptProject:${source}`]) fail(`${source} must have a conceptProject image ladder`);
