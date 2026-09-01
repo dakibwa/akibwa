@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-V8MXzdlzoK2ghFQnSycGKteIk+eNl/f5Aq2xQXdMr2s=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-LAYs/XMFyjPGvfOmGIh6UmW26WSJGbR/ciGxTG9zmOg=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -561,30 +561,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 
   .hud-body{flex:1 1 auto;min-height:0;display:flex}
 
-  .rail{
-    border-left:1px solid var(--silver);padding:16px 18px 18px;
-    display:flex;flex-direction:column;gap:16px;background:var(--surface-2);
-  }
-  .gauge{display:flex;flex-direction:column;gap:7px}
-  .gauge-row{display:flex;align-items:center;gap:11px}
-  .gauge-glyph{flex:0 0 auto;width:44px;display:flex;align-items:center}
-  .gauge-glyph svg{width:100%;height:auto;display:block}
-  .gauge-row b{font-size:31px;font-weight:300;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;margin-left:auto}
-  .gauge-row .of{font-style:normal;font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
-  .gauge-foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .gauge-foot em{font-style:normal;font-size:9.5px;letter-spacing:.12em;color:var(--ink-soft);text-transform:lowercase}
-  .tierglyph rect{opacity:.28;transition:opacity .3s}
-  #gauge-par[data-tier="clean"] .t-clean,
-  #gauge-par[data-tier="par"] .t-par,
-  #gauge-par[data-tier="over"] .t-over{opacity:1}
-  .rail .stat-note{font-size:9.5px;letter-spacing:.1em;color:var(--ink-soft);text-transform:lowercase}
-  .railactions{
-    margin-top:0;padding-top:0;border-top:0;
-    display:flex;flex-direction:column;gap:8px;
-  }
-  .railactions .actionrow{display:grid;grid-template-columns:1fr;gap:2px}
-
-  .live-dot{width:16px;height:16px;border:2px solid var(--sig-hellblau);border-radius:50%;display:block;animation:pulse 2.4s ease-in-out infinite}
   .recglyph{width:16px;height:16px;color:currentColor}
   .actionrow{display:flex;align-items:center;gap:6px}
   .act{
@@ -1023,7 +999,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .acct-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .acct-row .wbtn{flex:0 0 auto}
   .acct-check{display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:12px;color:var(--ink);line-height:1.45}
-  .acct-check input{appearance:auto;accent-color:var(--sig-blau);margin:2px 0 0;flex:0 0 auto;width:14px;height:14px}
+  .acct-check input{appearance:auto;accent-color:var(--sig-hellblau);margin:2px 0 0;flex:0 0 auto;width:14px;height:14px}
   .acct-check span{min-width:0}
   .acct-sec{display:flex;flex-direction:column;gap:9px}
   .acct-sec + .acct-sec{padding-top:13px;border-top:1px solid var(--rule)}
@@ -1197,21 +1173,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .instruments{grid-column:1 / -1;grid-row:2;border:1px solid var(--rule);padding:9px 13px 8px}
   }
 
-  @media (max-width:760px){
-    .hud-body{grid-template-columns:minmax(0,1fr)}
-    .rail{
-      border-left:0;border-top:1px solid var(--silver);
-      flex-direction:row;flex-wrap:wrap;align-items:flex-start;
-      gap:16px 24px;padding:16px 22px 18px;
-    }
-    .rail .gauge-row{justify-content:flex-start;gap:12px}
-    .rail .gauge-row b{margin-left:0}
-    .railactions{
-      flex:1 1 100%;margin-top:4px;flex-direction:row;align-items:stretch;gap:8px;
-    }
-    .railactions .actionrow{flex:1 1 auto;display:flex;gap:4px}
-  }
-
   @media (max-width:700px){
     .sheet{padding:14px calc(10px + env(safe-area-inset-right,0px)) 0 calc(10px + env(safe-area-inset-left,0px))}
     h1{font-size:21px}
@@ -1225,19 +1186,10 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .unit-name{margin-left:0;flex-basis:100%;margin-top:2px}
     .btns{gap:4px;flex-wrap:wrap;justify-content:flex-end}
     .btns .help{min-width:34px;padding:0 6px}
-    .rail{gap:15px 20px;padding:14px 13px 15px}
-    .rail .gauge{flex:1 1 128px}
-    .railactions{flex-wrap:wrap}
-    .railactions .actionrow{flex:1 1 100%}
 
     .field{--nr:15;--nw:4.2}
     .field .tlabel2{font-size:28px;stroke-width:9}
 
-    .rail{gap:12px 16px;padding:12px 13px 13px}
-    .gauge{gap:5px}
-    .gauge-glyph{width:34px}
-    .gauge-row{gap:9px}
-    .gauge-row b{font-size:26px}
     .track{height:8px;margin-top:7px}
     .unit-par{--track-stack:15px}
 
@@ -1315,7 +1267,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
     .help.owned:hover .tickmark{animation:none}
-    .live-dot,.coach-dots i.now{animation:none;opacity:.85}
+    .coach-dots i.now{animation:none;opacity:.85}
     .veil,.veil.show,.veil > *,.veil.show > *{transform:none;transition-property:opacity,visibility}
     .say,.say.on{transform:none;
       transition-property:opacity,visibility}
@@ -1714,6 +1666,7 @@ function figRot(A,b){
 }
 const figMirror=pts=>pts.map(p=>[-p[0],p[1]]);
 function figDist(a,b){ return Math.min(figRot(a,b), figRot(figNorm(figMirror(a)),b)) }
+const figTarget=f=>f.np||(f.np=figNorm(f.p));
 const FITRANK={rough:1, clear:2, sharp:3};
 const fitFor=d=>d<0.10?'sharp':d<0.20?'clear':'rough';
 const chordSpan=(n,c)=>Math.abs(c[0]-c[1])/(n-1);
@@ -1725,16 +1678,18 @@ function classifyFigure(t){
   const list=want.length?want:(t.chord?band.open:band.closed);
   if(!list.length) return null;
   const n=t.nodes.length;
-  const s=figNorm(t.nodes.map(n=>[n.x0,n.y0]));
+  const pts=t.nodes.map(n=>[n.x0,n.y0]);
+  const s=figNorm(pts), sr=figNorm(pts.slice().reverse());
   const span=t.chord?chordSpan(n,t.chord):null;
-  let best=null,bd=Infinity,bshape=Infinity;
+  let best=null,bd=Infinity,bshape=Infinity,brev=false;
   for(const k of list){
-    const f=FIGURES[k];
-    const shape=figDist(s,f.p);
+    const f=FIGURES[k], tgt=figTarget(f);
+    const fwd=figDist(s,tgt), rev=figDist(sr,tgt);
+    const shape=Math.min(fwd,rev);
     const d=(span!=null&&f.chord)?shape+CHORD_W*Math.abs(span-chordSpan(n,f.chord)):shape;
-    if(d<bd){bd=d;best=k;bshape=shape}
+    if(d<bd){bd=d;best=k;bshape=shape;brev=rev<fwd}
   }
-  t.fitDist=bshape; t.fit=fitFor(bshape);
+  t.fitDist=bshape; t.fit=fitFor(bshape); t.figRev=brev;
   return best;
 }
 const FIG_WEIGHT={3:19,4:18,5:17,6:15,7:14};
@@ -2219,7 +2174,7 @@ function newRun(mode,day){
   store.run={day:d, mode:mode||'daily', archive:d!==today(),
              startedAt:new Date().toISOString(),
              turns:0, netIndex:0, netMoves:0,
-             positions:{}, freed:[], splitNodes:[], saeUsed:false, over:false, cleared:[], assisted:false,
+             positions:{}, freed:[], minted:{}, splitNodes:[], saeUsed:false, over:false, cleared:[], assisted:false,
              log:[], assists:0, logGap:false};
 }
 const isTrial=()=>R().mode==='trial';
@@ -3116,6 +3071,13 @@ function tillSaid(words,retry){
     beginUnlock();
   };
 }
+function checkoutUrl(raw){
+  try{
+    const u=new URL(raw);
+    return u.protocol==='https:' && u.hostname==='checkout.stripe.com'
+      && !u.port && !u.username && !u.password ? u.href : null;
+  }catch(e){ return null }
+}
 async function beginUnlock(){
   if(POLICY.premium) return;
   if(API) await ensurePrice();       // the mode decision needs the key, not a guess
@@ -3137,10 +3099,12 @@ async function beginUnlock(){
     return tillSaid('you already own the full version',false);
   }
   if(r.client_secret && await mountCheckout(r.client_secret, priceInfo && priceInfo.pk)) return;
-  if(r.url) return void(location.href=r.url);
+  const redirect=checkoutUrl(r.url);
+  if(redirect) return void(location.href=redirect);
   if(r.client_secret){
     const again=await api('unlock/checkout',{return_path:location.pathname,embedded:false});
-    if(again && again.url) return void(location.href=again.url);
+    const retryRedirect=checkoutUrl(again && again.url);
+    if(retryRedirect) return void(location.href=retryRedirect);
   }
   tillSaid('the till is not answering · try again shortly');
 }
@@ -4746,7 +4710,20 @@ function buildNet(force){
     const n=members.find(m=>m.idx===i && m.merged);
     if(n) splitNode(n,true);
   });
-  R().freed.forEach(k=>{const t=threads.find(x=>x.key===k); if(t) freeThread(t,true)});
+  const minted=R().minted&&typeof R().minted==='object'?R().minted:{};
+  const mintedEntries=Object.entries(minted);
+  if(mintedEntries.length){
+    mintedEntries.forEach(([i,m])=>{
+      const t=threads[Number(i)];
+      if(t){t.minted=m;freeThread(t,true)}
+    });
+  }else{
+    (R().freed||[]).forEach(k=>{
+      const t=threads.find(x=>!x.freed&&x.key===k);
+      if(t){freeThread(t,true);minted[threads.indexOf(t)]=mintedThread(t)}
+    });
+    R().minted=minted;
+  }
   if(threads.length && threads.every(t=>t.freed)) $('field').classList.add('cleared');
   physDirty=true;
   queueMicrotask(startBoardReveal);
@@ -5321,11 +5298,13 @@ function settleIntoShape(t){
     return [clampX(cx+dx*S), clampY(cy+dy*S)];
   };
   if(t.signWhole && !FIGURES[t.key]) pts=bestTurn(t.nodes.map(n=>movable.includes(n)?n:null), pts, at);
+  const rev=!!(t.figRev && FIGURES[t.key]);
   const now=performance.now();
   let k=0;                                            // stagger counter over the MOVABLE nodes
   t.nodes.forEach((n,i)=>{
     if(!movable.includes(n)) return;
-    const [bx,by]=at(pts[Math.min(i,pts.length-1)]);
+    const j=Math.min(i,pts.length-1);
+    const [bx,by]=at(pts[rev?pts.length-1-j:j]);
     n.tw={ax:n.xv, ay:n.yv, bx, by,
           t0:now+(reduceMotion?0:k*26), dur:reduceMotion?1:440,
           out:true, land:!reduceMotion};
@@ -5342,7 +5321,16 @@ function freeThread(t,silent){
   if(relayOpen)repaint.add(relayOpen);
   members.forEach(n=>{if(n.coupled&&!coupleHolds(n)){repaint.add(n);const p=n.coupled;repaint.add(p.a);repaint.add(p.b)}});
   repaint.forEach(n=>{if(n&&n.g)paintNode(n)});
-  t.key=classifyFigure(t)||t.key;
+  const m=t.minted;
+  if(m&&typeof m.key==='string'&&FIGURES[m.key]&&FIGURES[m.key].n===t.nodes.length){
+    t.key=m.key;
+    t.fit=FITRANK[m.fit]?m.fit:(typeof m.fitDist==='number'&&isFinite(m.fitDist)?fitFor(m.fitDist):'rough');
+    t.fitDist=typeof m.fitDist==='number'&&isFinite(m.fitDist)?m.fitDist:null;
+    t.figRev=!!m.rev;
+  }else{
+    t.minted=null;
+    t.key=classifyFigure(t)||t.key;
+  }
   t.def=FIGURES[t.key]||t.def;
   t.calm=threads.indexOf(t)*1.1;
   const whole=signWhole(t);
@@ -5387,6 +5375,16 @@ function freeThread(t,silent){
     t.signWhole=whole; t.settled=true;
     t.nodes.forEach(n=>{ if(n.pinned && n.threads.every(th=>th.freed)){ n.pinned=false; paintNode(n) } });
   }
+}
+
+function mintedThread(t){
+  return {key:t.key,fit:t.fit,fitDist:t.fitDist,rev:!!t.figRev};
+}
+function markFreed(t,silent){
+  freeThread(t,silent);
+  const r=R();
+  (r.freed||(r.freed=[])).push(t.key);
+  (r.minted||(r.minted={}))[threads.indexOf(t)]=mintedThread(t);
 }
 
 
@@ -5606,7 +5604,7 @@ function endDrag(e){
 function afterMove(r){
   countCross();
   const blocked=threads.filter(t=>!t.freed&&t.crossings===0&&t.nodes.some(n=>n.merged));
-  threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>{freeThread(t,false);r.freed.push(t.key)});
+  threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,false));
   save(); refresh(); renderHud();
   if(threads.every(t=>t.freed)) clearNet();
   else if(blocked.length){
@@ -5807,7 +5805,7 @@ function descentTick(){
   best.n.x0=best.nx; best.n.y0=best.ny;
   r.positions[best.n.idx]=[Math.round(best.n.x0*10)/10,Math.round(best.n.y0*10)/10];
   countCross();
-  threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>{freeThread(t,false);r.freed.push(t.key)});
+  threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,false));
   save(); refresh(); renderHud();
   if(threads.every(t=>t.freed)){
     if(settlingNode){settlingNode.el.classList.remove('settling');settlingNode=null}
@@ -6307,7 +6305,7 @@ function endTutorial(){
     builtFor=-1; resetDescent(); save();
   }else{
     const r=R();
-    r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[];
+    r.netIndex=0; r.netMoves=0; r.turns=0; r.positions={}; r.freed=[]; r.minted={};
     r.splitNodes=[]; r.assisted=false; r.cleared=[]; r.over=false;
     r.log=[]; r.assists=0; r.logGap=false;
     builtFor=-1;
@@ -6463,7 +6461,7 @@ function clearNet(){
     });
   }
   if(setDone) r.over=true;
-  else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false;
+  else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.minted={}; r.splitNodes=[]; r.assisted=false;
          r.log=[]; r.assists=0; r.logGap=false }
   const finalTutorial=wasTutorial && r.netIndex>=TUTNETS.length;
   const read={run:r, num:r.netIndex, turns:r.turns||0,
@@ -6876,7 +6874,7 @@ function archiveNets(iso){
   try{
     for(let i=0;i<POLICY.dailyNets;i++){
       store.run={...store.run, day:iso, netIndex:i, mode:'daily',
-                 positions:{}, freed:[], splitNodes:[]};
+                 positions:{}, freed:[], minted:{}, splitNodes:[]};
       builtFor=-1; buildNet(true);
       out.push({
         idx:i,
@@ -7328,7 +7326,7 @@ document.querySelectorAll('.veil').forEach(v=>v.addEventListener('click',e=>{
 $('skipnet').onclick=e=>{
   e.preventDefault();
   const r=R(); if(r.over)return;
-  r.turns=(r.turns||0)+5; r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.splitNodes=[]; r.assisted=false;
+  r.turns=(r.turns||0)+5; r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.minted={}; r.splitNodes=[]; r.assisted=false;
   r.log=[]; r.assists=0; r.logGap=false;
   resetDescent();
   save(); nextNet(); toast('net skipped · 5 turns');
@@ -7517,7 +7515,7 @@ window.__solveNet=()=>{
     const settleRoute=()=>{
       countCross();
       threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>{
-        freeThread(t,true);r.freed.push(t.key);
+        markFreed(t,true);
       });
     };
     for(const action of route){
@@ -7564,7 +7562,7 @@ window.__solveNet=()=>{
       }
     }
     recordDay(); countCross();
-    threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>{freeThread(t,true);r.freed.push(t.key)});
+    threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,true));
     save(); refresh(); renderHud();
     if(threads.every(t=>t.freed))clearNet();
     return;
@@ -7586,7 +7584,7 @@ window.__solveNet=()=>{
     splitNode(n,true); r.turns=(r.turns||0)+1; r.netMoves++; r.logGap=true;
   });
   recordDay(); countCross();
-  threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>{freeThread(t,true);r.freed.push(t.key)});
+  threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,true));
   save(); refresh(); renderHud();
   if(threads.every(t=>t.freed))clearNet();
 };
