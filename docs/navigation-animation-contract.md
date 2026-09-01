@@ -73,7 +73,10 @@ publishing homepage changes.
 - Focus is exclusive: after a role is clicked or reached by keyboard, hovering
   another mark cannot open a second detail over it. Moving focus switches the
   one open detail.
-- The same compact interaction and horizontal rhythm remain on phones.
+- The section closes shortly after the resting logo cards instead of reserving
+  a permanently open synopsis row. It temporarily makes room for the one open
+  detail so the next chapter stays unobscured. The same compact interaction
+  and horizontal rhythm remain on phones.
 
 ## Taste and footer
 
@@ -85,6 +88,8 @@ publishing homepage changes.
   proportion vary without a ragged final column or an empty cell.
 - Cards remain labelled visual objects, not false links. Hover or keyboard
   focus reveals title then creator; music adds Last.fm plays when available.
+- The short filter row sizes itself to its words and sits directly above the
+  quilt; it must not inherit a card-height grid row or leave a blank shelf.
 - Film, game and television tiles use their title-specific editorial scenes
   edge-to-edge at every scale. The consistent hover label carries title and
   creator, so commercial poster boxes, grey margins and text-heavy cover insets
