@@ -378,7 +378,7 @@ requireText(
 forbidText(css, "border-top: 4px solid var(--concept-career)", "Career must not keep a shorter page-grid border");
 forbidText(css, "border-top: 4px solid var(--black)", "Taste must not keep the retired black rule");
 
-/* Taste opens on a balanced edit, then exposes the complete archive one
+/* Taste opens on a mixed-scale quilt, then exposes the complete archive one
    medium at a time. */
 requireText(editorial, "<HomePage tasteOnly />", "Taste must render the categorised compact archive");
 requireText(home, "if (tasteOnly)", "the wall must keep its taste-only mode");
@@ -391,8 +391,12 @@ requireText(
 requireText(home, 'id: "podcasts", label: "Podcasts"', "Taste must expose the podcast shelf");
 requireText(home, 'label: "Highlights"', "Taste must open on a concise Highlights edit");
 requireText(home, "const TASTE_HIGHLIGHTS_PER_SECTION = 10", "each medium must contribute ten opening highlights");
-requireText(home, "function BalancedTasteWall", "Taste must rebalance its rows with the available width");
-requireText(home, "balancedRows(cards, maximumPerRow)", "Taste must distribute cards without a ragged final edge");
+requireText(home, "function ResponsiveTasteQuilt", "Taste must rebuild its quilt with the available width");
+requireText(home, "quiltBlockCounts(cards.length", "Taste must pack every card into complete two-by-two blocks");
+requireText(home, "cloneElement(card, { quiltScale:", "Taste must assign card scale from its packed position");
+requireText(home, "function TasteVisual", "film, game and TV cards must keep an art-directed visual treatment");
+requireText(home, 'slot="tasteArt"', "larger Taste cards must use responsive editorial artwork");
+requireText(home, 'slot="deckTile"', "Taste cards must retain the recognisable original cover");
 requireText(home, 'className="card-info"', "Taste cards must expose title and creator detail");
 requireText(home, "plays on Last.fm", "music detail must include a Last.fm count when one exists");
 requireRuleText(".akibwa-home .deck .card {", [
@@ -402,9 +406,18 @@ requireRuleText(".akibwa-home .deck .card {", [
   "transform: none"
 ]);
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
-requireRuleText(".akibwa-home--taste .taste-wall-row {", [
-  "repeat(var(--taste-row-count), minmax(0, 1fr))",
+requireRuleText(".akibwa-home--taste .taste-quilt-band {", [
+  "repeat(var(--taste-block-count), minmax(0, 1fr))",
   "width: 100%"
+]);
+requireRuleText(".akibwa-home--taste .taste-quilt-block {", [
+  "repeat(2, minmax(0, 1fr))",
+  "aspect-ratio: 1"
+]);
+requireRuleText(".akibwa-home--taste .taste-quilt-block--hero .card {", ["grid-area: 1 / 1 / 3 / 3"]);
+requireRuleText(".akibwa-home--taste .card--quilt-large .taste-visual__original {", [
+  "aspect-ratio: 1",
+  "border: 1px solid"
 ]);
 
 for (const title of [
@@ -453,6 +466,12 @@ for (const prefix of [
   if (entries.some(([, value]) => Math.max(...value.variants.map((entry) => entry.width)) < 264)) {
     fail(`${prefix} artwork must keep a 264px Retina tile`);
   }
+}
+
+const tasteArtEntries = Object.entries(imageVariants).filter(([key]) => key.startsWith("tasteArt:/taste-art/"));
+if (tasteArtEntries.length !== 83) fail(`Taste must keep all 83 art-directed film, game and TV scenes [${tasteArtEntries.length}]`);
+if (tasteArtEntries.some(([, value]) => Math.max(...value.variants.map((entry) => entry.width)) < 600)) {
+  fail("art-directed Taste scenes must keep a 600px-or-larger responsive rung");
 }
 
 /* The shared footer is only the three colour-coded handles. */

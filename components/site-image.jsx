@@ -21,9 +21,13 @@ export const SLOT_SIZES = {
   projectCard: "(max-width: 760px) calc(100vw - 48px), 202px",
   conceptProject:
     "(max-width: 800px) calc(100vw - 48px), (max-width: 1358px) calc(50vw - 41px), 632px",
-  // The Taste contact sheet balances four covers on a phone, then adds a
-  // column at roughly 172px intervals. Other deck uses share these rungs.
+  // The smallest Taste quilt pieces remain four across on a phone. Other deck
+  // uses share these compact square rungs.
   deckTile: "(max-width: 560px) calc(25vw - 11px), (max-width: 860px) calc(25vw - 14px), (max-width: 1200px) calc(20vw - 14px), 172px",
+  // A large quilt card occupies a complete two-by-two block. These editorial
+  // scenes are 3:2 and crop inside square, wide and tall cards at paint time.
+  tasteArt:
+    "(max-width: 520px) calc(50vw - 20px), (max-width: 800px) calc(33.33vw - 22px), (max-width: 1120px) calc(25vw - 24px), (max-width: 1540px) calc(20vw - 24px), 420px",
   heroPanel16: "(max-width: 760px) calc(100vw - 48px), (max-width: 1060px) 520px, 425px",
   heroPanel43: "(max-width: 760px) calc(100vw - 48px), (max-width: 1060px) 520px, 425px",
   portrait: "(max-width: 1060px) calc(100vw - 48px), 411px",

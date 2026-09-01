@@ -235,8 +235,15 @@ const pageState = () => evaluate(`(() => {
     return rect(range);
   };
   const wall = document.querySelector(".taste-wall");
-  const rows = [...document.querySelectorAll(".taste-wall-row")];
+  const bands = [...document.querySelectorAll(".taste-quilt-band")];
+  const blocks = [...document.querySelectorAll(".taste-quilt-block")];
   const cardWidths = visible.map((card) => card.getBoundingClientRect().width);
+  const cardShapes = [...new Set(visible.map((card) => {
+    const r = card.getBoundingClientRect();
+    if (r.width > r.height * 1.35) return "wide";
+    if (r.height > r.width * 1.35) return "tall";
+    return "square";
+  }))];
   return {
     identity: "I’m " + document.querySelector(".concept-identity .hero-name-value")?.textContent.trim(),
     lede: document.querySelector(".concept-lede")?.textContent.trim(),
@@ -306,14 +313,27 @@ const pageState = () => evaluate(`(() => {
       ? rect(visible.find((card) => !card.classList.contains("card--small"))) : null,
     sampleSmall: visible.some((card) => card.classList.contains("card--small"))
       ? rect(visible.find((card) => card.classList.contains("card--small"))) : null,
-    squareFailures: visible.slice(0, 100).filter((card) => {
-      const r = card.getBoundingClientRect();
-      return Math.abs(r.width - r.height) > 1.5;
-    }).length,
-    rowCounts: rows.map((row) => row.children.length),
-    rowFillFailures: wall ? rows.filter((row) =>
-      Math.abs(row.getBoundingClientRect().width - wall.getBoundingClientRect().width) > 1
+    cardShapes,
+    quiltScales: [...new Set(visible.map((card) => card.dataset.quiltScale).filter(Boolean))],
+    bandCounts: bands.map((band) => band.children.length),
+    bandFillFailures: wall ? bands.filter((band) =>
+      Math.abs(band.getBoundingClientRect().width - wall.getBoundingClientRect().width) > 1
     ).length : -1,
+    blockFillFailures: blocks.filter((block) => {
+      const box = block.getBoundingClientRect();
+      const cards = [...block.querySelectorAll(":scope > .card")].map((card) => card.getBoundingClientRect());
+      const points = [
+        [box.left + box.width * 0.25, box.top + box.height * 0.25],
+        [box.left + box.width * 0.75, box.top + box.height * 0.25],
+        [box.left + box.width * 0.25, box.top + box.height * 0.75],
+        [box.left + box.width * 0.75, box.top + box.height * 0.75]
+      ];
+      return Math.abs(box.width - box.height) > 1.5 || points.some(([x, y]) =>
+        !cards.some((card) => x >= card.left && x <= card.right && y >= card.top && y <= card.bottom)
+      );
+    }).length,
+    artDirectedCards: visible.filter((card) => card.querySelector(".taste-visual__scene")).length,
+    originalPrints: visible.filter((card) => card.querySelector(".taste-visual__original")).length,
     detailFailures: visible.filter((card) => {
       const info = card.querySelector(".card-info");
       return !info?.querySelector("strong")?.textContent.trim() ||
@@ -575,11 +595,21 @@ const checkDesktop = async () => {
   check(state.passive === state.cards, `every taste card is a labelled visual object [${state.passive}]`);
   check(state.cardButtons === 0, "no wall card renders as a button");
   check(state.hasSpotlight === false, "no modal viewer exists");
-  check(state.squareFailures === 0, "the sampled cards are square");
-  check(state.rowFillFailures === 0, "every Taste row fills the complete wall width");
   check(
-    Math.max(...state.rowCounts) - Math.min(...state.rowCounts) <= 1,
-    `Taste rows are balanced without a sparse final row [${state.rowCounts.join(" / ")}]`
+    state.cardShapes.sort().join(" / ") === "square / tall / wide",
+    `the Taste quilt uses square, tall and wide cards [${state.cardShapes.join(" / ")}]`
+  );
+  check(
+    state.quiltScales.length === 4,
+    `one large card, long cards and four-up cards all render [${state.quiltScales.sort().join(" / ")}]`
+  );
+  check(state.bandFillFailures === 0, "every Taste band fills the complete wall width");
+  check(state.blockFillFailures === 0, "every two-by-two quilt block fills all four cells");
+  check(new Set(state.bandCounts).size === 1, `every Taste band keeps a complete block row [${state.bandCounts.join(" / ")}]`);
+  check(state.artDirectedCards > 0, `large film, game and TV cards use editorial art [${state.artDirectedCards}]`);
+  check(
+    state.originalPrints === state.artDirectedCards,
+    `every editorial card retains its original identifying cover [${state.originalPrints}]`
   );
   check(state.detailFailures === 0, "every Taste card has title followed by creator detail");
   check(state.focusableDetails === state.cards, "every Taste detail can also be reached by keyboard focus");
@@ -926,7 +956,10 @@ const checkFilters = async () => {
     state.visibleKeys.join() === "podcasts" && state.cards === 7 && state.visible === 7,
     `Podcasts shows the seven verified shows [${state.cards} cards]`
   );
-  check(state.rowFillFailures === 0 && state.rowCounts.join() === "7", "the podcast row fills the frame without a remainder");
+  check(
+    state.bandFillFailures === 0 && state.blockFillFailures === 0 && state.bandCounts.length === 1,
+    "the seven podcasts pack into one complete full-width quilt band"
+  );
 
   await pressEscape();
   await sleep(80);
@@ -997,17 +1030,17 @@ const checkMobile = async () => {
   })()`);
   await sleep(100);
   const state = await pageState();
-  check(state.squareFailures === 0, "mobile cards preserve square artwork");
-  check(state.rowFillFailures === 0, "every mobile Taste row fills the complete content width");
   check(
-    Math.max(...state.rowCounts) - Math.min(...state.rowCounts) <= 1,
-    `mobile rows stay balanced [${state.rowCounts.join(" / ")}]`
+    state.cardShapes.sort().join(" / ") === "square / tall / wide",
+    `mobile keeps all three card proportions [${state.cardShapes.join(" / ")}]`
   );
+  check(state.bandFillFailures === 0, "every mobile Taste band fills the complete content width");
+  check(state.blockFillFailures === 0, "every mobile quilt block fills all four cells");
   check(
-    state.minCardWidth >= 72 && state.maxCardWidth <= 125,
-    `mobile cards readjust without becoming thumbnails or posters [${state.minCardWidth.toFixed(1)}–${state.maxCardWidth.toFixed(1)}px]`
+    state.minCardWidth >= 72 && state.maxCardWidth >= state.minCardWidth * 1.8,
+    `mobile deliberately mixes four-up and feature scales [${state.minCardWidth.toFixed(1)}–${state.maxCardWidth.toFixed(1)}px]`
   );
-  check(state.inViewport >= 20, `at least 20 cards fit in the first mobile screen [${state.inViewport}]`);
+  check(state.inViewport >= 10, `at least 10 mixed-scale cards fit in the first mobile screen [${state.inViewport}]`);
   check(state.overflow <= 1, `mobile has no horizontal overflow [${state.overflow}px]`);
 
   const tasteImageProtection = await evaluate(`(() => {
