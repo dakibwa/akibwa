@@ -322,6 +322,26 @@ const pageState = () => evaluate(`(() => {
   };
 })()`);
 
+const trekProjectState = () => evaluate(`(() => {
+  const rect = (el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+  };
+  const banner = document.querySelector(".akibwa-project-banner");
+  return {
+    visible: getComputedStyle(banner).display !== "none",
+    identity: banner.querySelector(".akibwa-project-banner__identity")?.textContent.trim(),
+    lede: banner.querySelector(".akibwa-project-banner__lede")?.textContent.trim(),
+    backText: banner.querySelector(".akibwa-project-banner__back")?.textContent.trim(),
+    backHref: banner.querySelector(".akibwa-project-banner__back")?.href,
+    banner: rect(banner),
+    masthead: rect(document.querySelector(".masthead")),
+    statbar: rect(document.querySelector(".statbar")),
+    stage: rect(document.querySelector(".stage")),
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+})()`);
+
 const careerState = () => evaluate(`(() => {
   const stops = [...document.querySelectorAll(".concept-career-stop")];
   const haloRadius = 12;
@@ -434,8 +454,9 @@ const checkDesktop = async () => {
     `the wide masthead uses its width instead of empty height [${state.heroLayout.hero.height.toFixed(1)}px]`
   );
   check(
-    state.projects.map((item) => item.href).join(" / ") === "/features/ / /portugal/ / /trek/",
-    `the three project cards link directly [${state.projects.map((item) => item.href).join(" / ")}]`
+    state.projects.map((item) => item.href).join(" / ") ===
+      "/features/?from=akibwa / https://portuguesewithines.com/?from=akibwa / /trek/?from=akibwa",
+    `the three project cards enter their real project pages [${state.projects.map((item) => item.href).join(" / ")}]`
   );
   check(
     state.projects[0].text.startsWith("features ") &&
@@ -646,6 +667,45 @@ const checkProjectBreakpoint = async () => {
     "Features takes a full tablet row above two equal supporting cards"
   );
   check(state.overflow <= 1, `the intermediate project layout has no overflow [${state.overflow}px]`);
+};
+
+const checkProjectView = async () => {
+  section("selected project view");
+  await setDesktop();
+  await goto("/trek/");
+  let state = await trekProjectState();
+  check(!state.visible, "a direct Trek visit remains standalone");
+
+  await goto("/trek/?from=akibwa");
+  state = await trekProjectState();
+  check(state.visible, "the Trek page shows Akibwa's masthead when selected from Projects");
+  check(state.identity === "I’m Daniel", `the selected-project identity stays concise [${state.identity}]`);
+  check(state.lede === "Building in the age of AI.", `the project masthead keeps the proposition [${state.lede}]`);
+  check(state.backText === "Back to projects", `the return action is plain text [${state.backText}]`);
+  check(
+    state.backHref === "https://akibwa.com/#projects",
+    `the return action targets the Projects section [${state.backHref}]`
+  );
+  check(
+    Math.abs(state.banner.bottom - state.masthead.top) <= 1 &&
+      Math.abs(state.masthead.bottom - state.statbar.top) <= 1,
+    "the Trek chrome begins cleanly below the green portfolio boundary"
+  );
+  check(
+    Math.abs(state.stage.top - state.banner.bottom) <= 1,
+    "the real project canvas starts immediately below the portfolio masthead"
+  );
+  check(state.overflow <= 1, `the desktop project view has no horizontal overflow [${state.overflow}px]`);
+
+  await setMobile();
+  await goto("/trek/?from=akibwa");
+  state = await trekProjectState();
+  check(state.visible && state.banner.height <= 88, `the phone masthead stays compact [${state.banner.height.toFixed(1)}px]`);
+  check(
+    state.backText === "Back to projects" && state.backHref === "https://akibwa.com/#projects",
+    "the phone project view keeps its explicit way back"
+  );
+  check(state.overflow <= 1, `the phone project view has no horizontal overflow [${state.overflow}px]`);
 };
 
 const checkCareerTimeline = async () => {
@@ -956,6 +1016,7 @@ const main = async () => {
     await checkDesktop();
     await checkHeroBreakpoint();
     await checkProjectBreakpoint();
+    await checkProjectView();
     await checkLinkHover();
     await checkCareerTimeline();
     await checkFilters();

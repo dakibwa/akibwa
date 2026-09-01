@@ -13,6 +13,10 @@
 <meta property="og:description" content="1,982 km on foot across seven countries, autumn 2019. Scroll or press walk, and travel the line town by town.">
 <meta property="og:url" content="https://akibwa.com/trek/">
 <link rel="preload" href="fonts/IBMPlexMono-normal-400.woff2" as="font" type="font/woff2" crossorigin>
+<!-- The portfolio flag is presentation-only. Read it before paint so the
+     Akibwa masthead occupies the top of the viewport before the trek's fixed
+     chrome and sticky stage are measured. -->
+<script>(function(){try{if(new URLSearchParams(location.search).get('from')==='akibwa')document.documentElement.setAttribute('data-akibwa-project','true')}catch(e){}})();</script>
 <style>
 @font-face{font-family:"Plex Mono";src:url("fonts/IBMPlexMono-normal-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"Plex Mono";src:url("fonts/IBMPlexMono-normal-500.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
@@ -49,6 +53,63 @@ img{max-width:100%;display:block}
 em{font-style:italic}
 :focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:2px}
 button{font:inherit;color:inherit}
+
+/* The portfolio shell is visible only when Akibwa sends the visitor here.
+   Its paper, typography and green rule deliberately sit outside the trek's
+   atlas language; the actual journey begins immediately below that boundary. */
+.akibwa-project-banner{display:none;position:sticky;top:0;z-index:100;width:100%;
+  background:#FAF8F3;color:#101217;
+  font-family:"Avenir Next","Inter","Helvetica Neue",Arial,sans-serif}
+html[data-akibwa-project="true"]{--akibwa-project-banner-height:92px}
+html[data-akibwa-project="true"] .akibwa-project-banner{display:block}
+.akibwa-project-banner__inner{width:min(calc(100% - 48px),1310px);min-height:92px;margin:0 auto;
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+  align-items:center;gap:clamp(34px,5vw,78px);padding:14px 0 13px;
+  border-bottom:4px solid #1B947D}
+.akibwa-project-banner__identity{margin:0;font-size:clamp(2rem,3.6vw,3.25rem);
+  font-weight:540;line-height:.95;letter-spacing:-.055em;white-space:nowrap}
+.akibwa-project-banner__identity strong{font-weight:660}
+.akibwa-project-banner__copy{display:flex;align-items:baseline;justify-content:space-between;
+  gap:clamp(20px,3vw,48px);min-width:0}
+.akibwa-project-banner__lede{margin:0;color:#101217;
+  font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  font-size:clamp(1.15rem,1.8vw,1.6rem);line-height:1.05;letter-spacing:-.03em;
+  white-space:nowrap}
+.akibwa-project-banner__back{flex:0 0 auto;color:#315D55;font-size:.82rem;font-weight:650;
+  line-height:1.2;text-decoration-line:underline;text-decoration-color:transparent;
+  text-decoration-thickness:1px;text-underline-offset:.3em;
+  transition:color 120ms ease,text-decoration-color 120ms ease}
+.akibwa-project-banner__back:hover,.akibwa-project-banner__back:focus-visible{
+  color:#101217;text-decoration-color:currentColor}
+.akibwa-project-banner__back:focus-visible{outline:2px solid #1B947D;outline-offset:4px}
+html[data-akibwa-project="true"] .masthead{top:var(--akibwa-project-banner-height)}
+html[data-akibwa-project="true"] .statbar{
+  top:calc(var(--akibwa-project-banner-height) + var(--mast-h))}
+html[data-akibwa-project="true"] .stage{
+  top:var(--akibwa-project-banner-height);
+  height:calc(100svh - var(--akibwa-project-banner-height))}
+@media(max-width:800px){
+  html[data-akibwa-project="true"]{--akibwa-project-banner-height:86px}
+  .akibwa-project-banner__inner{min-height:86px;grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"identity back" "lede lede";gap:6px 18px;padding:12px 0 10px}
+  .akibwa-project-banner__identity{grid-area:identity;font-size:clamp(2rem,10vw,2.8rem)}
+  .akibwa-project-banner__copy{display:contents}
+  .akibwa-project-banner__lede{grid-area:lede;font-size:1.05rem}
+  .akibwa-project-banner__back{grid-area:back;align-self:center}
+}
+@media(max-width:420px){
+  .akibwa-project-banner__inner{width:min(calc(100% - 32px),1310px)}
+  .akibwa-project-banner__identity{font-size:2rem}
+  .akibwa-project-banner__lede{font-size:.95rem}
+  .akibwa-project-banner__back{font-size:.72rem}
+}
+@media(max-height:560px) and (orientation:landscape){
+  html[data-akibwa-project="true"]{--akibwa-project-banner-height:58px}
+  .akibwa-project-banner__inner{min-height:58px;grid-template-areas:"identity back";
+    padding:8px 0;gap:18px}
+  .akibwa-project-banner__identity{font-size:1.7rem}
+  .akibwa-project-banner__lede{display:none}
+}
 
 /* ---------------------------------------------------------------- masthead */
 .masthead{
@@ -422,6 +483,16 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 </style>
 </head>
 <body>
+
+<header class="akibwa-project-banner" aria-label="Akibwa portfolio">
+  <div class="akibwa-project-banner__inner">
+    <p class="akibwa-project-banner__identity">I&rsquo;m <strong>Daniel</strong></p>
+    <div class="akibwa-project-banner__copy">
+      <p class="akibwa-project-banner__lede">Building in the age of AI.</p>
+      <a class="akibwa-project-banner__back" href="https://akibwa.com/#projects">Back to projects</a>
+    </div>
+  </div>
+</header>
 
 <header class="masthead" id="masthead">
   <a class="mark" href="https://akibwa.com/" aria-label="Akibwa home">
