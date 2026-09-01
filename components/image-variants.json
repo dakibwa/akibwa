@@ -7063,6 +7063,3824 @@
       }
     ]
   },
+  "tasteArt:/taste-art/films/a-clockwork-orange.webp": {
+    "source": "/taste-art/films/a-clockwork-orange.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "657a11c74b4a6a5e",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/a-clockwork-orange-tasteArt-270.avif",
+          "bytes": 3101
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/a-clockwork-orange-tasteArt-270.webp",
+          "bytes": 4972
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/a-clockwork-orange-tasteArt-420.avif",
+          "bytes": 6937
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/a-clockwork-orange-tasteArt-420.webp",
+          "bytes": 11576
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/a-clockwork-orange-tasteArt-630.avif",
+          "bytes": 16989
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/a-clockwork-orange-tasteArt-630.webp",
+          "bytes": 26070
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/adaptation.webp": {
+    "source": "/taste-art/films/adaptation.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3f08eecb71c5236a",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/adaptation-tasteArt-270.avif",
+          "bytes": 2662
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/adaptation-tasteArt-270.webp",
+          "bytes": 3284
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/adaptation-tasteArt-420.avif",
+          "bytes": 4811
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/adaptation-tasteArt-420.webp",
+          "bytes": 6580
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/adaptation-tasteArt-630.avif",
+          "bytes": 8419
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/adaptation-tasteArt-630.webp",
+          "bytes": 13652
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/american-beauty.webp": {
+    "source": "/taste-art/films/american-beauty.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "9b557c381c48aec7",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/american-beauty-tasteArt-270.avif",
+          "bytes": 3945
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/american-beauty-tasteArt-270.webp",
+          "bytes": 4894
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/american-beauty-tasteArt-420.avif",
+          "bytes": 6558
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/american-beauty-tasteArt-420.webp",
+          "bytes": 8744
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/american-beauty-tasteArt-630.avif",
+          "bytes": 10378
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/american-beauty-tasteArt-630.webp",
+          "bytes": 15308
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/anomalisa.webp": {
+    "source": "/taste-art/films/anomalisa.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7f53e2b299618968",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/anomalisa-tasteArt-270.avif",
+          "bytes": 1963
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/anomalisa-tasteArt-270.webp",
+          "bytes": 2454
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/anomalisa-tasteArt-420.avif",
+          "bytes": 4381
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/anomalisa-tasteArt-420.webp",
+          "bytes": 5954
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/anomalisa-tasteArt-630.avif",
+          "bytes": 9218
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/anomalisa-tasteArt-630.webp",
+          "bytes": 13272
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/before-trilogy.webp": {
+    "source": "/taste-art/films/before-trilogy.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1f1db9c9351cb582",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/before-trilogy-tasteArt-270.avif",
+          "bytes": 3644
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/before-trilogy-tasteArt-270.webp",
+          "bytes": 4866
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/before-trilogy-tasteArt-420.avif",
+          "bytes": 7141
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/before-trilogy-tasteArt-420.webp",
+          "bytes": 10022
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/before-trilogy-tasteArt-630.avif",
+          "bytes": 13756
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/before-trilogy-tasteArt-630.webp",
+          "bytes": 20228
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/blue-valentine.webp": {
+    "source": "/taste-art/films/blue-valentine.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "acecd6e2c072534c",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/blue-valentine-tasteArt-270.avif",
+          "bytes": 5037
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/blue-valentine-tasteArt-270.webp",
+          "bytes": 5584
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/blue-valentine-tasteArt-420.avif",
+          "bytes": 9554
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/blue-valentine-tasteArt-420.webp",
+          "bytes": 11496
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/blue-valentine-tasteArt-630.avif",
+          "bytes": 17400
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/blue-valentine-tasteArt-630.webp",
+          "bytes": 22332
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/boogie-nights.webp": {
+    "source": "/taste-art/films/boogie-nights.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7947016d5f75ba30",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/boogie-nights-tasteArt-270.avif",
+          "bytes": 9323
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/boogie-nights-tasteArt-270.webp",
+          "bytes": 9404
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/boogie-nights-tasteArt-420.avif",
+          "bytes": 19646
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/boogie-nights-tasteArt-420.webp",
+          "bytes": 21146
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/boogie-nights-tasteArt-630.avif",
+          "bytes": 35943
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/boogie-nights-tasteArt-630.webp",
+          "bytes": 40776
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/call-me-by-your-name.webp": {
+    "source": "/taste-art/films/call-me-by-your-name.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c26917301c08245a",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/call-me-by-your-name-tasteArt-270.avif",
+          "bytes": 8578
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/call-me-by-your-name-tasteArt-270.webp",
+          "bytes": 9854
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/call-me-by-your-name-tasteArt-420.avif",
+          "bytes": 18174
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/call-me-by-your-name-tasteArt-420.webp",
+          "bytes": 21752
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/call-me-by-your-name-tasteArt-630.avif",
+          "bytes": 35641
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/call-me-by-your-name-tasteArt-630.webp",
+          "bytes": 44594
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/drive.webp": {
+    "source": "/taste-art/films/drive.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "0974382d7925983a",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/drive-tasteArt-270.avif",
+          "bytes": 8668
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/drive-tasteArt-270.webp",
+          "bytes": 8278
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/drive-tasteArt-420.avif",
+          "bytes": 17388
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/drive-tasteArt-420.webp",
+          "bytes": 17520
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/drive-tasteArt-630.avif",
+          "bytes": 32497
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/drive-tasteArt-630.webp",
+          "bytes": 35186
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/eternal-sunshine-of-the-spotless-mind.webp": {
+    "source": "/taste-art/films/eternal-sunshine-of-the-spotless-mind.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "a381d2ee6a0598f9",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/eternal-sunshine-of-the-spotless-mind-tasteArt-270.avif",
+          "bytes": 2791
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/eternal-sunshine-of-the-spotless-mind-tasteArt-270.webp",
+          "bytes": 3288
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/eternal-sunshine-of-the-spotless-mind-tasteArt-420.avif",
+          "bytes": 5332
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/eternal-sunshine-of-the-spotless-mind-tasteArt-420.webp",
+          "bytes": 6764
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/eternal-sunshine-of-the-spotless-mind-tasteArt-630.avif",
+          "bytes": 10001
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/eternal-sunshine-of-the-spotless-mind-tasteArt-630.webp",
+          "bytes": 13496
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/everybody-wants-some.webp": {
+    "source": "/taste-art/films/everybody-wants-some.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "9ff11be2e4a1ef11",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/everybody-wants-some-tasteArt-270.avif",
+          "bytes": 3631
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/everybody-wants-some-tasteArt-270.webp",
+          "bytes": 4554
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/everybody-wants-some-tasteArt-420.avif",
+          "bytes": 5945
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/everybody-wants-some-tasteArt-420.webp",
+          "bytes": 8348
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/everybody-wants-some-tasteArt-630.avif",
+          "bytes": 10130
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/everybody-wants-some-tasteArt-630.webp",
+          "bytes": 16934
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/foxcatcher.webp": {
+    "source": "/taste-art/films/foxcatcher.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "b826470428c34dea",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/foxcatcher-tasteArt-270.avif",
+          "bytes": 1888
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/foxcatcher-tasteArt-270.webp",
+          "bytes": 2584
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/foxcatcher-tasteArt-420.avif",
+          "bytes": 3211
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/foxcatcher-tasteArt-420.webp",
+          "bytes": 5316
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/foxcatcher-tasteArt-630.avif",
+          "bytes": 6835
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/foxcatcher-tasteArt-630.webp",
+          "bytes": 14716
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/frances-ha.webp": {
+    "source": "/taste-art/films/frances-ha.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7358666d9ed71f18",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/frances-ha-tasteArt-270.avif",
+          "bytes": 2763
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/frances-ha-tasteArt-270.webp",
+          "bytes": 4036
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/frances-ha-tasteArt-420.avif",
+          "bytes": 7156
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/frances-ha-tasteArt-420.webp",
+          "bytes": 10186
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/frances-ha-tasteArt-630.avif",
+          "bytes": 21190
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/frances-ha-tasteArt-630.webp",
+          "bytes": 29128
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/good-will-hunting.webp": {
+    "source": "/taste-art/films/good-will-hunting.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4fdb80654e9b1cf3",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/good-will-hunting-tasteArt-270.avif",
+          "bytes": 3976
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/good-will-hunting-tasteArt-270.webp",
+          "bytes": 5036
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/good-will-hunting-tasteArt-420.avif",
+          "bytes": 8682
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/good-will-hunting-tasteArt-420.webp",
+          "bytes": 11580
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/good-will-hunting-tasteArt-630.avif",
+          "bytes": 18462
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/good-will-hunting-tasteArt-630.webp",
+          "bytes": 24870
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/her.webp": {
+    "source": "/taste-art/films/her.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "e75a7fb09143a14e",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/her-tasteArt-270.avif",
+          "bytes": 2096
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/her-tasteArt-270.webp",
+          "bytes": 3288
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/her-tasteArt-420.avif",
+          "bytes": 3748
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/her-tasteArt-420.webp",
+          "bytes": 6366
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/her-tasteArt-630.avif",
+          "bytes": 7290
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/her-tasteArt-630.webp",
+          "bytes": 13436
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/licorice-pizza.webp": {
+    "source": "/taste-art/films/licorice-pizza.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "139ef90b64ca1da7",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/licorice-pizza-tasteArt-270.avif",
+          "bytes": 5942
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/licorice-pizza-tasteArt-270.webp",
+          "bytes": 6702
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/licorice-pizza-tasteArt-420.avif",
+          "bytes": 12614
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/licorice-pizza-tasteArt-420.webp",
+          "bytes": 15304
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/licorice-pizza-tasteArt-630.avif",
+          "bytes": 26086
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/licorice-pizza-tasteArt-630.webp",
+          "bytes": 32988
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/lost-in-translation.webp": {
+    "source": "/taste-art/films/lost-in-translation.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "9805e3acdc23e46a",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/lost-in-translation-tasteArt-270.avif",
+          "bytes": 3116
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/lost-in-translation-tasteArt-270.webp",
+          "bytes": 3814
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/lost-in-translation-tasteArt-420.avif",
+          "bytes": 6767
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/lost-in-translation-tasteArt-420.webp",
+          "bytes": 9282
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/lost-in-translation-tasteArt-630.avif",
+          "bytes": 15544
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/lost-in-translation-tasteArt-630.webp",
+          "bytes": 21318
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/love-actually.webp": {
+    "source": "/taste-art/films/love-actually.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1c75fa3196cc9260",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/love-actually-tasteArt-270.avif",
+          "bytes": 5247
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/love-actually-tasteArt-270.webp",
+          "bytes": 5756
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/love-actually-tasteArt-420.avif",
+          "bytes": 9480
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/love-actually-tasteArt-420.webp",
+          "bytes": 11096
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/love-actually-tasteArt-630.avif",
+          "bytes": 16003
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/love-actually-tasteArt-630.webp",
+          "bytes": 20440
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/magnolia.webp": {
+    "source": "/taste-art/films/magnolia.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "909a3d77a6340472",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/magnolia-tasteArt-270.avif",
+          "bytes": 8235
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/magnolia-tasteArt-270.webp",
+          "bytes": 9940
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/magnolia-tasteArt-420.avif",
+          "bytes": 15910
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/magnolia-tasteArt-420.webp",
+          "bytes": 20414
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/magnolia-tasteArt-630.avif",
+          "bytes": 30109
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/magnolia-tasteArt-630.webp",
+          "bytes": 40686
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/moonrise-kingdom.webp": {
+    "source": "/taste-art/films/moonrise-kingdom.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "fd3b84ae22fa340c",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/moonrise-kingdom-tasteArt-270.avif",
+          "bytes": 4675
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/moonrise-kingdom-tasteArt-270.webp",
+          "bytes": 5530
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/moonrise-kingdom-tasteArt-420.avif",
+          "bytes": 9759
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/moonrise-kingdom-tasteArt-420.webp",
+          "bytes": 12642
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/moonrise-kingdom-tasteArt-630.avif",
+          "bytes": 20873
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/moonrise-kingdom-tasteArt-630.webp",
+          "bytes": 29948
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/mysterious-skin.webp": {
+    "source": "/taste-art/films/mysterious-skin.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "5cd0462b9d23c557",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/mysterious-skin-tasteArt-270.avif",
+          "bytes": 2302
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/mysterious-skin-tasteArt-270.webp",
+          "bytes": 2766
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/mysterious-skin-tasteArt-420.avif",
+          "bytes": 4365
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/mysterious-skin-tasteArt-420.webp",
+          "bytes": 5728
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/mysterious-skin-tasteArt-630.avif",
+          "bytes": 7780
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/mysterious-skin-tasteArt-630.webp",
+          "bytes": 10970
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/one-more-time-with-feeling.webp": {
+    "source": "/taste-art/films/one-more-time-with-feeling.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6bef36ecad98f815",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/one-more-time-with-feeling-tasteArt-270.avif",
+          "bytes": 1618
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/one-more-time-with-feeling-tasteArt-270.webp",
+          "bytes": 2184
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/one-more-time-with-feeling-tasteArt-420.avif",
+          "bytes": 2630
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/one-more-time-with-feeling-tasteArt-420.webp",
+          "bytes": 3986
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/one-more-time-with-feeling-tasteArt-630.avif",
+          "bytes": 4155
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/one-more-time-with-feeling-tasteArt-630.webp",
+          "bytes": 7364
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/paths-of-glory.webp": {
+    "source": "/taste-art/films/paths-of-glory.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "725eefa79e1eccd9",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/paths-of-glory-tasteArt-270.avif",
+          "bytes": 5007
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/paths-of-glory-tasteArt-270.webp",
+          "bytes": 6284
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/paths-of-glory-tasteArt-420.avif",
+          "bytes": 11379
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/paths-of-glory-tasteArt-420.webp",
+          "bytes": 15008
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/paths-of-glory-tasteArt-630.avif",
+          "bytes": 27999
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/paths-of-glory-tasteArt-630.webp",
+          "bytes": 37886
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/rushmore.webp": {
+    "source": "/taste-art/films/rushmore.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4cc0e2a293c8bb49",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/rushmore-tasteArt-270.avif",
+          "bytes": 2879
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/rushmore-tasteArt-270.webp",
+          "bytes": 3968
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/rushmore-tasteArt-420.avif",
+          "bytes": 4797
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/rushmore-tasteArt-420.webp",
+          "bytes": 6380
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/rushmore-tasteArt-630.avif",
+          "bytes": 7120
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/rushmore-tasteArt-630.webp",
+          "bytes": 10280
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/school-of-rock.webp": {
+    "source": "/taste-art/films/school-of-rock.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "31499ed3908c5324",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/school-of-rock-tasteArt-270.avif",
+          "bytes": 4856
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/school-of-rock-tasteArt-270.webp",
+          "bytes": 5892
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/school-of-rock-tasteArt-420.avif",
+          "bytes": 9565
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/school-of-rock-tasteArt-420.webp",
+          "bytes": 12470
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/school-of-rock-tasteArt-630.avif",
+          "bytes": 16970
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/school-of-rock-tasteArt-630.webp",
+          "bytes": 23182
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/submarine.webp": {
+    "source": "/taste-art/films/submarine.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "bb7b82465cd8a64a",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/submarine-tasteArt-270.avif",
+          "bytes": 4636
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/submarine-tasteArt-270.webp",
+          "bytes": 6138
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/submarine-tasteArt-420.avif",
+          "bytes": 9204
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/submarine-tasteArt-420.webp",
+          "bytes": 13284
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/submarine-tasteArt-630.avif",
+          "bytes": 18365
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/submarine-tasteArt-630.webp",
+          "bytes": 28250
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/superbad.webp": {
+    "source": "/taste-art/films/superbad.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "0df136679225073f",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/superbad-tasteArt-270.avif",
+          "bytes": 1910
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/superbad-tasteArt-270.webp",
+          "bytes": 2684
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/superbad-tasteArt-420.avif",
+          "bytes": 4364
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/superbad-tasteArt-420.webp",
+          "bytes": 6378
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/superbad-tasteArt-630.avif",
+          "bytes": 10021
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/superbad-tasteArt-630.webp",
+          "bytes": 25430
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/the-big-lebowski.webp": {
+    "source": "/taste-art/films/the-big-lebowski.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "45bc0b7ba1009eb7",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/the-big-lebowski-tasteArt-270.avif",
+          "bytes": 4330
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-big-lebowski-tasteArt-270.webp",
+          "bytes": 5740
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/the-big-lebowski-tasteArt-420.avif",
+          "bytes": 8594
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-big-lebowski-tasteArt-420.webp",
+          "bytes": 12714
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/the-big-lebowski-tasteArt-630.avif",
+          "bytes": 18118
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-big-lebowski-tasteArt-630.webp",
+          "bytes": 29872
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/the-holdovers.webp": {
+    "source": "/taste-art/films/the-holdovers.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "0e01127d36a34730",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/the-holdovers-tasteArt-270.avif",
+          "bytes": 3765
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-holdovers-tasteArt-270.webp",
+          "bytes": 4228
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/the-holdovers-tasteArt-420.avif",
+          "bytes": 9495
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-holdovers-tasteArt-420.webp",
+          "bytes": 11130
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/the-holdovers-tasteArt-630.avif",
+          "bytes": 22715
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-holdovers-tasteArt-630.webp",
+          "bytes": 27644
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/the-king-s-speech.webp": {
+    "source": "/taste-art/films/the-king-s-speech.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "39dc09cd4b8af9a0",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/the-king-s-speech-tasteArt-270.avif",
+          "bytes": 5011
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-king-s-speech-tasteArt-270.webp",
+          "bytes": 6618
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/the-king-s-speech-tasteArt-420.avif",
+          "bytes": 10769
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-king-s-speech-tasteArt-420.webp",
+          "bytes": 14040
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/the-king-s-speech-tasteArt-630.avif",
+          "bytes": 20514
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-king-s-speech-tasteArt-630.webp",
+          "bytes": 25468
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/the-lord-of-the-rings.webp": {
+    "source": "/taste-art/films/the-lord-of-the-rings.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "fd9b8831684d9e2b",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/the-lord-of-the-rings-tasteArt-270.avif",
+          "bytes": 8692
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-lord-of-the-rings-tasteArt-270.webp",
+          "bytes": 9640
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/the-lord-of-the-rings-tasteArt-420.avif",
+          "bytes": 18786
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-lord-of-the-rings-tasteArt-420.webp",
+          "bytes": 21398
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/the-lord-of-the-rings-tasteArt-630.avif",
+          "bytes": 37882
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-lord-of-the-rings-tasteArt-630.webp",
+          "bytes": 44808
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/the-master.webp": {
+    "source": "/taste-art/films/the-master.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "f0f1ab7e61a777d4",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/the-master-tasteArt-270.avif",
+          "bytes": 3898
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-master-tasteArt-270.webp",
+          "bytes": 5508
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/the-master-tasteArt-420.avif",
+          "bytes": 8815
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-master-tasteArt-420.webp",
+          "bytes": 13664
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/the-master-tasteArt-630.avif",
+          "bytes": 24032
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-master-tasteArt-630.webp",
+          "bytes": 37152
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/the-social-network.webp": {
+    "source": "/taste-art/films/the-social-network.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "25ff12a7b2245f0f",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/the-social-network-tasteArt-270.avif",
+          "bytes": 3175
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-social-network-tasteArt-270.webp",
+          "bytes": 4002
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/the-social-network-tasteArt-420.avif",
+          "bytes": 6138
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-social-network-tasteArt-420.webp",
+          "bytes": 7822
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/the-social-network-tasteArt-630.avif",
+          "bytes": 10428
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/the-social-network-tasteArt-630.webp",
+          "bytes": 14256
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/watchmen.webp": {
+    "source": "/taste-art/films/watchmen.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "56470987beb1c039",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/watchmen-tasteArt-270.avif",
+          "bytes": 6033
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/watchmen-tasteArt-270.webp",
+          "bytes": 7454
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/watchmen-tasteArt-420.avif",
+          "bytes": 11918
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/watchmen-tasteArt-420.webp",
+          "bytes": 15046
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/watchmen-tasteArt-630.avif",
+          "bytes": 21451
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/watchmen-tasteArt-630.webp",
+          "bytes": 27552
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/films/you-were-never-really-here.webp": {
+    "source": "/taste-art/films/you-were-never-really-here.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "270dfd8a0b408532",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/films/you-were-never-really-here-tasteArt-270.avif",
+          "bytes": 2487
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/you-were-never-really-here-tasteArt-270.webp",
+          "bytes": 3054
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/films/you-were-never-really-here-tasteArt-420.avif",
+          "bytes": 4938
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/you-were-never-really-here-tasteArt-420.webp",
+          "bytes": 6440
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/films/you-were-never-really-here-tasteArt-630.avif",
+          "bytes": 10134
+        },
+        "webp": {
+          "src": "/_img/taste-art/films/you-were-never-really-here-tasteArt-630.webp",
+          "bytes": 13554
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/bioshock.webp": {
+    "source": "/taste-art/games/bioshock.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3c54b9daea94be13",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/bioshock-tasteArt-270.avif",
+          "bytes": 9090
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/bioshock-tasteArt-270.webp",
+          "bytes": 9192
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/bioshock-tasteArt-420.avif",
+          "bytes": 19802
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/bioshock-tasteArt-420.webp",
+          "bytes": 20978
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/bioshock-tasteArt-630.avif",
+          "bytes": 39384
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/bioshock-tasteArt-630.webp",
+          "bytes": 43834
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/bloodborne.webp": {
+    "source": "/taste-art/games/bloodborne.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d20f6d37278e2055",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/bloodborne-tasteArt-270.avif",
+          "bytes": 6903
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/bloodborne-tasteArt-270.webp",
+          "bytes": 7904
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/bloodborne-tasteArt-420.avif",
+          "bytes": 18117
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/bloodborne-tasteArt-420.webp",
+          "bytes": 20278
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/bloodborne-tasteArt-630.avif",
+          "bytes": 41607
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/bloodborne-tasteArt-630.webp",
+          "bytes": 47280
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/call-of-duty-4.webp": {
+    "source": "/taste-art/games/call-of-duty-4.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c09ff2dc9a79e377",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/call-of-duty-4-tasteArt-270.avif",
+          "bytes": 2647
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/call-of-duty-4-tasteArt-270.webp",
+          "bytes": 4124
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/call-of-duty-4-tasteArt-420.avif",
+          "bytes": 4317
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/call-of-duty-4-tasteArt-420.webp",
+          "bytes": 7122
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/call-of-duty-4-tasteArt-630.avif",
+          "bytes": 6515
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/call-of-duty-4-tasteArt-630.webp",
+          "bytes": 11746
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/dark-souls-3.webp": {
+    "source": "/taste-art/games/dark-souls-3.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3b7e97bfa77216e0",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/dark-souls-3-tasteArt-270.avif",
+          "bytes": 15925
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/dark-souls-3-tasteArt-270.webp",
+          "bytes": 14640
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/dark-souls-3-tasteArt-420.avif",
+          "bytes": 33821
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/dark-souls-3-tasteArt-420.webp",
+          "bytes": 33212
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/dark-souls-3-tasteArt-630.avif",
+          "bytes": 67390
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/dark-souls-3-tasteArt-630.webp",
+          "bytes": 67586
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/devil-may-cry.webp": {
+    "source": "/taste-art/games/devil-may-cry.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7b93fac1a49d1f77",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/devil-may-cry-tasteArt-270.avif",
+          "bytes": 5085
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/devil-may-cry-tasteArt-270.webp",
+          "bytes": 7186
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/devil-may-cry-tasteArt-420.avif",
+          "bytes": 9369
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/devil-may-cry-tasteArt-420.webp",
+          "bytes": 12834
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/devil-may-cry-tasteArt-630.avif",
+          "bytes": 16497
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/devil-may-cry-tasteArt-630.webp",
+          "bytes": 22492
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/elder-scrolls.webp": {
+    "source": "/taste-art/games/elder-scrolls.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "924aafedaa956586",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/elder-scrolls-tasteArt-270.avif",
+          "bytes": 7112
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/elder-scrolls-tasteArt-270.webp",
+          "bytes": 7592
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/elder-scrolls-tasteArt-420.avif",
+          "bytes": 13915
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/elder-scrolls-tasteArt-420.webp",
+          "bytes": 16300
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/elder-scrolls-tasteArt-630.avif",
+          "bytes": 26009
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/elder-scrolls-tasteArt-630.webp",
+          "bytes": 32946
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/fallout.webp": {
+    "source": "/taste-art/games/fallout.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "dd7daf486fcfbb07",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/fallout-tasteArt-270.avif",
+          "bytes": 10677
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/fallout-tasteArt-270.webp",
+          "bytes": 10808
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/fallout-tasteArt-420.avif",
+          "bytes": 21965
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/fallout-tasteArt-420.webp",
+          "bytes": 23268
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/fallout-tasteArt-630.avif",
+          "bytes": 43458
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/fallout-tasteArt-630.webp",
+          "bytes": 46456
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/final-fantasy.webp": {
+    "source": "/taste-art/games/final-fantasy.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1e12351f6f148cd7",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/final-fantasy-tasteArt-270.avif",
+          "bytes": 9468
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/final-fantasy-tasteArt-270.webp",
+          "bytes": 10050
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/final-fantasy-tasteArt-420.avif",
+          "bytes": 17268
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/final-fantasy-tasteArt-420.webp",
+          "bytes": 19638
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/final-fantasy-tasteArt-630.avif",
+          "bytes": 32432
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/final-fantasy-tasteArt-630.webp",
+          "bytes": 38730
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/god-of-war.webp": {
+    "source": "/taste-art/games/god-of-war.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "274fe8a06b421003",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/god-of-war-tasteArt-270.avif",
+          "bytes": 13274
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/god-of-war-tasteArt-270.webp",
+          "bytes": 13380
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/god-of-war-tasteArt-420.avif",
+          "bytes": 29497
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/god-of-war-tasteArt-420.webp",
+          "bytes": 31600
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/god-of-war-tasteArt-630.avif",
+          "bytes": 64617
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/god-of-war-tasteArt-630.webp",
+          "bytes": 68742
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/half-life.webp": {
+    "source": "/taste-art/games/half-life.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "a77f0ecb4c4b360d",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/half-life-tasteArt-270.avif",
+          "bytes": 3596
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/half-life-tasteArt-270.webp",
+          "bytes": 5580
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/half-life-tasteArt-420.avif",
+          "bytes": 5618
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/half-life-tasteArt-420.webp",
+          "bytes": 8752
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/half-life-tasteArt-630.avif",
+          "bytes": 8230
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/half-life-tasteArt-630.webp",
+          "bytes": 13586
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/halo-3.webp": {
+    "source": "/taste-art/games/halo-3.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "f414909f421e08d6",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/halo-3-tasteArt-270.avif",
+          "bytes": 12004
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/halo-3-tasteArt-270.webp",
+          "bytes": 12254
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/halo-3-tasteArt-420.avif",
+          "bytes": 27931
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/halo-3-tasteArt-420.webp",
+          "bytes": 29188
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/halo-3-tasteArt-630.avif",
+          "bytes": 60027
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/halo-3-tasteArt-630.webp",
+          "bytes": 64138
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/hearthstone.webp": {
+    "source": "/taste-art/games/hearthstone.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "8744c84bf2ee3f9f",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/hearthstone-tasteArt-270.avif",
+          "bytes": 4577
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/hearthstone-tasteArt-270.webp",
+          "bytes": 7972
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/hearthstone-tasteArt-420.avif",
+          "bytes": 8597
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/hearthstone-tasteArt-420.webp",
+          "bytes": 15014
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/hearthstone-tasteArt-630.avif",
+          "bytes": 15484
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/hearthstone-tasteArt-630.webp",
+          "bytes": 27018
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/journey.webp": {
+    "source": "/taste-art/games/journey.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "9944642d06468370",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/journey-tasteArt-270.avif",
+          "bytes": 6177
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/journey-tasteArt-270.webp",
+          "bytes": 7104
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/journey-tasteArt-420.avif",
+          "bytes": 11811
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/journey-tasteArt-420.webp",
+          "bytes": 14612
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/journey-tasteArt-630.avif",
+          "bytes": 22297
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/journey-tasteArt-630.webp",
+          "bytes": 28314
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/last-of-us.webp": {
+    "source": "/taste-art/games/last-of-us.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6b673e41a5b60070",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/last-of-us-tasteArt-270.avif",
+          "bytes": 14298
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/last-of-us-tasteArt-270.webp",
+          "bytes": 13750
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/last-of-us-tasteArt-420.avif",
+          "bytes": 31832
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/last-of-us-tasteArt-420.webp",
+          "bytes": 32302
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/last-of-us-tasteArt-630.avif",
+          "bytes": 68508
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/last-of-us-tasteArt-630.webp",
+          "bytes": 71412
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/league-of-legends.webp": {
+    "source": "/taste-art/games/league-of-legends.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "ea46652c4a563a4e",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/league-of-legends-tasteArt-270.avif",
+          "bytes": 16276
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/league-of-legends-tasteArt-270.webp",
+          "bytes": 13784
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/league-of-legends-tasteArt-420.avif",
+          "bytes": 29143
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/league-of-legends-tasteArt-420.webp",
+          "bytes": 27174
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/league-of-legends-tasteArt-630.avif",
+          "bytes": 48116
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/league-of-legends-tasteArt-630.webp",
+          "bytes": 49236
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/pyre.webp": {
+    "source": "/taste-art/games/pyre.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2ad87e8b3125685b",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/pyre-tasteArt-270.avif",
+          "bytes": 4856
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/pyre-tasteArt-270.webp",
+          "bytes": 7570
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/pyre-tasteArt-420.avif",
+          "bytes": 10310
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/pyre-tasteArt-420.webp",
+          "bytes": 16224
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/pyre-tasteArt-630.avif",
+          "bytes": 21138
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/pyre-tasteArt-630.webp",
+          "bytes": 31566
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/saints-row.webp": {
+    "source": "/taste-art/games/saints-row.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "19a762cb3d2cb1b4",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/saints-row-tasteArt-270.avif",
+          "bytes": 11531
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/saints-row-tasteArt-270.webp",
+          "bytes": 12548
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/saints-row-tasteArt-420.avif",
+          "bytes": 24163
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/saints-row-tasteArt-420.webp",
+          "bytes": 28222
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/saints-row-tasteArt-630.avif",
+          "bytes": 50060
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/saints-row-tasteArt-630.webp",
+          "bytes": 59038
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/slay-the-spire.webp": {
+    "source": "/taste-art/games/slay-the-spire.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "fbb512a5bc07079b",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/slay-the-spire-tasteArt-270.avif",
+          "bytes": 9879
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/slay-the-spire-tasteArt-270.webp",
+          "bytes": 9650
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/slay-the-spire-tasteArt-420.avif",
+          "bytes": 16423
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/slay-the-spire-tasteArt-420.webp",
+          "bytes": 17340
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/slay-the-spire-tasteArt-630.avif",
+          "bytes": 25480
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/slay-the-spire-tasteArt-630.webp",
+          "bytes": 30598
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/terraria.webp": {
+    "source": "/taste-art/games/terraria.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "a51fe357861c86a0",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/terraria-tasteArt-270.avif",
+          "bytes": 13942
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/terraria-tasteArt-270.webp",
+          "bytes": 14208
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/terraria-tasteArt-420.avif",
+          "bytes": 30943
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/terraria-tasteArt-420.webp",
+          "bytes": 32504
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/terraria-tasteArt-630.avif",
+          "bytes": 65142
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/terraria-tasteArt-630.webp",
+          "bytes": 67368
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/games/warcraft-3.webp": {
+    "source": "/taste-art/games/warcraft-3.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "98599795469288c7",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/games/warcraft-3-tasteArt-270.avif",
+          "bytes": 12044
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/warcraft-3-tasteArt-270.webp",
+          "bytes": 11648
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/games/warcraft-3-tasteArt-420.avif",
+          "bytes": 25633
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/warcraft-3-tasteArt-420.webp",
+          "bytes": 26708
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/games/warcraft-3-tasteArt-630.avif",
+          "bytes": 52090
+        },
+        "webp": {
+          "src": "/_img/taste-art/games/warcraft-3-tasteArt-630.webp",
+          "bytes": 54558
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/arrested-development.webp": {
+    "source": "/taste-art/tv/arrested-development.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c2753a2692a17c14",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/arrested-development-tasteArt-270.avif",
+          "bytes": 3954
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/arrested-development-tasteArt-270.webp",
+          "bytes": 5506
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/arrested-development-tasteArt-420.avif",
+          "bytes": 6681
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/arrested-development-tasteArt-420.webp",
+          "bytes": 9740
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/arrested-development-tasteArt-630.avif",
+          "bytes": 10494
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/arrested-development-tasteArt-630.webp",
+          "bytes": 16062
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/atlanta.webp": {
+    "source": "/taste-art/tv/atlanta.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "01131a09ea75b012",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/atlanta-tasteArt-270.avif",
+          "bytes": 8526
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/atlanta-tasteArt-270.webp",
+          "bytes": 11034
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/atlanta-tasteArt-420.avif",
+          "bytes": 21261
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/atlanta-tasteArt-420.webp",
+          "bytes": 27382
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/atlanta-tasteArt-630.avif",
+          "bytes": 47692
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/atlanta-tasteArt-630.webp",
+          "bytes": 60280
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/better-call-saul.webp": {
+    "source": "/taste-art/tv/better-call-saul.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "8a3f130e2730c6ee",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/better-call-saul-tasteArt-270.avif",
+          "bytes": 3279
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/better-call-saul-tasteArt-270.webp",
+          "bytes": 4248
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/better-call-saul-tasteArt-420.avif",
+          "bytes": 5884
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/better-call-saul-tasteArt-420.webp",
+          "bytes": 8026
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/better-call-saul-tasteArt-630.avif",
+          "bytes": 11140
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/better-call-saul-tasteArt-630.webp",
+          "bytes": 15710
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/better-things.webp": {
+    "source": "/taste-art/tv/better-things.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "255d07b06d2b7e4c",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/better-things-tasteArt-270.avif",
+          "bytes": 12543
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/better-things-tasteArt-270.webp",
+          "bytes": 12902
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/better-things-tasteArt-420.avif",
+          "bytes": 25580
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/better-things-tasteArt-420.webp",
+          "bytes": 27310
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/better-things-tasteArt-630.avif",
+          "bytes": 50266
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/better-things-tasteArt-630.webp",
+          "bytes": 53202
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/black-mirror.webp": {
+    "source": "/taste-art/tv/black-mirror.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "cd4386afce18f1fb",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/black-mirror-tasteArt-270.avif",
+          "bytes": 5389
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/black-mirror-tasteArt-270.webp",
+          "bytes": 6766
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/black-mirror-tasteArt-420.avif",
+          "bytes": 11717
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/black-mirror-tasteArt-420.webp",
+          "bytes": 14770
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/black-mirror-tasteArt-630.avif",
+          "bytes": 23721
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/black-mirror-tasteArt-630.webp",
+          "bytes": 29822
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/breaking-bad.webp": {
+    "source": "/taste-art/tv/breaking-bad.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7edbce80bdfbc854",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/breaking-bad-tasteArt-270.avif",
+          "bytes": 11231
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/breaking-bad-tasteArt-270.webp",
+          "bytes": 11374
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/breaking-bad-tasteArt-420.avif",
+          "bytes": 22568
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/breaking-bad-tasteArt-420.webp",
+          "bytes": 24282
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/breaking-bad-tasteArt-630.avif",
+          "bytes": 43913
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/breaking-bad-tasteArt-630.webp",
+          "bytes": 49030
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/community.webp": {
+    "source": "/taste-art/tv/community.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "52609a5557a296a7",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/community-tasteArt-270.avif",
+          "bytes": 2089
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/community-tasteArt-270.webp",
+          "bytes": 2358
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/community-tasteArt-420.avif",
+          "bytes": 3097
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/community-tasteArt-420.webp",
+          "bytes": 3896
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/community-tasteArt-630.avif",
+          "bytes": 4391
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/community-tasteArt-630.webp",
+          "bytes": 6510
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/fargo.webp": {
+    "source": "/taste-art/tv/fargo.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "4dd2f90cf26c3806",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/fargo-tasteArt-270.avif",
+          "bytes": 3265
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fargo-tasteArt-270.webp",
+          "bytes": 4082
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/fargo-tasteArt-420.avif",
+          "bytes": 7756
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fargo-tasteArt-420.webp",
+          "bytes": 9562
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/fargo-tasteArt-630.avif",
+          "bytes": 17900
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fargo-tasteArt-630.webp",
+          "bytes": 22304
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/fawlty-towers.webp": {
+    "source": "/taste-art/tv/fawlty-towers.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "13ea20574dfdef19",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/fawlty-towers-tasteArt-270.avif",
+          "bytes": 5644
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fawlty-towers-tasteArt-270.webp",
+          "bytes": 6830
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/fawlty-towers-tasteArt-420.avif",
+          "bytes": 10981
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fawlty-towers-tasteArt-420.webp",
+          "bytes": 12528
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/fawlty-towers-tasteArt-630.avif",
+          "bytes": 15036
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fawlty-towers-tasteArt-630.webp",
+          "bytes": 18222
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/fleabag.webp": {
+    "source": "/taste-art/tv/fleabag.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "9265ae8225460a31",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/fleabag-tasteArt-270.avif",
+          "bytes": 2558
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fleabag-tasteArt-270.webp",
+          "bytes": 3458
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/fleabag-tasteArt-420.avif",
+          "bytes": 4122
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fleabag-tasteArt-420.webp",
+          "bytes": 6090
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/fleabag-tasteArt-630.avif",
+          "bytes": 6497
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/fleabag-tasteArt-630.webp",
+          "bytes": 10846
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/hannibal.webp": {
+    "source": "/taste-art/tv/hannibal.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "303453c4beb3fafb",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/hannibal-tasteArt-270.avif",
+          "bytes": 4134
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/hannibal-tasteArt-270.webp",
+          "bytes": 5506
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/hannibal-tasteArt-420.avif",
+          "bytes": 10068
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/hannibal-tasteArt-420.webp",
+          "bytes": 12604
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/hannibal-tasteArt-630.avif",
+          "bytes": 22098
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/hannibal-tasteArt-630.webp",
+          "bytes": 27440
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/im-alan-partridge.webp": {
+    "source": "/taste-art/tv/im-alan-partridge.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "435237a0f642c761",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/im-alan-partridge-tasteArt-270.avif",
+          "bytes": 2452
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/im-alan-partridge-tasteArt-270.webp",
+          "bytes": 4344
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/im-alan-partridge-tasteArt-420.avif",
+          "bytes": 4221
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/im-alan-partridge-tasteArt-420.webp",
+          "bytes": 6734
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/im-alan-partridge-tasteArt-630.avif",
+          "bytes": 6402
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/im-alan-partridge-tasteArt-630.webp",
+          "bytes": 9932
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/its-always-sunny.webp": {
+    "source": "/taste-art/tv/its-always-sunny.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "b4fa2fa9e7113a09",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/its-always-sunny-tasteArt-270.avif",
+          "bytes": 3183
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/its-always-sunny-tasteArt-270.webp",
+          "bytes": 4578
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/its-always-sunny-tasteArt-420.avif",
+          "bytes": 5859
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/its-always-sunny-tasteArt-420.webp",
+          "bytes": 9634
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/its-always-sunny-tasteArt-630.avif",
+          "bytes": 13344
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/its-always-sunny-tasteArt-630.webp",
+          "bytes": 21912
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/louie.webp": {
+    "source": "/taste-art/tv/louie.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "fb600a566c164e17",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/louie-tasteArt-270.avif",
+          "bytes": 9479
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/louie-tasteArt-270.webp",
+          "bytes": 11520
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/louie-tasteArt-420.avif",
+          "bytes": 24423
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/louie-tasteArt-420.webp",
+          "bytes": 29682
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/louie-tasteArt-630.avif",
+          "bytes": 57183
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/louie-tasteArt-630.webp",
+          "bytes": 68858
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/normal-people.webp": {
+    "source": "/taste-art/tv/normal-people.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "ee502754de129e70",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/normal-people-tasteArt-270.avif",
+          "bytes": 9116
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/normal-people-tasteArt-270.webp",
+          "bytes": 10910
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/normal-people-tasteArt-420.avif",
+          "bytes": 21188
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/normal-people-tasteArt-420.webp",
+          "bytes": 27908
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/normal-people-tasteArt-630.avif",
+          "bytes": 45230
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/normal-people-tasteArt-630.webp",
+          "bytes": 57352
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/parks-and-recreation.webp": {
+    "source": "/taste-art/tv/parks-and-recreation.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "1d69ddef6d1f9b70",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/parks-and-recreation-tasteArt-270.avif",
+          "bytes": 2651
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/parks-and-recreation-tasteArt-270.webp",
+          "bytes": 3978
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/parks-and-recreation-tasteArt-420.avif",
+          "bytes": 4751
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/parks-and-recreation-tasteArt-420.webp",
+          "bytes": 7428
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/parks-and-recreation-tasteArt-630.avif",
+          "bytes": 8732
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/parks-and-recreation-tasteArt-630.webp",
+          "bytes": 14244
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/peep-show.webp": {
+    "source": "/taste-art/tv/peep-show.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "66713fd560ba7018",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/peep-show-tasteArt-270.avif",
+          "bytes": 5786
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/peep-show-tasteArt-270.webp",
+          "bytes": 7266
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/peep-show-tasteArt-420.avif",
+          "bytes": 12353
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/peep-show-tasteArt-420.webp",
+          "bytes": 16548
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/peep-show-tasteArt-630.avif",
+          "bytes": 25506
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/peep-show-tasteArt-630.webp",
+          "bytes": 34592
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/phoenix-nights.webp": {
+    "source": "/taste-art/tv/phoenix-nights.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7d473b7488d679d8",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/phoenix-nights-tasteArt-270.avif",
+          "bytes": 3363
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/phoenix-nights-tasteArt-270.webp",
+          "bytes": 4920
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/phoenix-nights-tasteArt-420.avif",
+          "bytes": 5732
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/phoenix-nights-tasteArt-420.webp",
+          "bytes": 9026
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/phoenix-nights-tasteArt-630.avif",
+          "bytes": 9887
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/phoenix-nights-tasteArt-630.webp",
+          "bytes": 15906
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/severance.webp": {
+    "source": "/taste-art/tv/severance.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "420960bbfc917c0d",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/severance-tasteArt-270.avif",
+          "bytes": 5551
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/severance-tasteArt-270.webp",
+          "bytes": 6166
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/severance-tasteArt-420.avif",
+          "bytes": 9234
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/severance-tasteArt-420.webp",
+          "bytes": 10970
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/severance-tasteArt-630.avif",
+          "bytes": 14388
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/severance-tasteArt-630.webp",
+          "bytes": 18108
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/spaced.webp": {
+    "source": "/taste-art/tv/spaced.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "bc7a17e60946a6be",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/spaced-tasteArt-270.avif",
+          "bytes": 5563
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/spaced-tasteArt-270.webp",
+          "bytes": 6258
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/spaced-tasteArt-420.avif",
+          "bytes": 9395
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/spaced-tasteArt-420.webp",
+          "bytes": 12118
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/spaced-tasteArt-630.avif",
+          "bytes": 15943
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/spaced-tasteArt-630.webp",
+          "bytes": 23552
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/succession.webp": {
+    "source": "/taste-art/tv/succession.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "caf95c7c97ad7dac",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/succession-tasteArt-270.avif",
+          "bytes": 10848
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/succession-tasteArt-270.webp",
+          "bytes": 12108
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/succession-tasteArt-420.avif",
+          "bytes": 21221
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/succession-tasteArt-420.webp",
+          "bytes": 23814
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/succession-tasteArt-630.avif",
+          "bytes": 37600
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/succession-tasteArt-630.webp",
+          "bytes": 44918
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/the-leftovers.webp": {
+    "source": "/taste-art/tv/the-leftovers.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "d3e7f84ea0b311d6",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-leftovers-tasteArt-270.avif",
+          "bytes": 8627
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-leftovers-tasteArt-270.webp",
+          "bytes": 9210
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-leftovers-tasteArt-420.avif",
+          "bytes": 19314
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-leftovers-tasteArt-420.webp",
+          "bytes": 21542
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-leftovers-tasteArt-630.avif",
+          "bytes": 43613
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-leftovers-tasteArt-630.webp",
+          "bytes": 49082
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/the-office-uk.webp": {
+    "source": "/taste-art/tv/the-office-uk.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "7e860e73ab09042d",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-office-uk-tasteArt-270.avif",
+          "bytes": 2305
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-office-uk-tasteArt-270.webp",
+          "bytes": 4126
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-office-uk-tasteArt-420.avif",
+          "bytes": 3885
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-office-uk-tasteArt-420.webp",
+          "bytes": 6636
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-office-uk-tasteArt-630.avif",
+          "bytes": 5670
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-office-uk-tasteArt-630.webp",
+          "bytes": 10272
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/the-thick-of-it.webp": {
+    "source": "/taste-art/tv/the-thick-of-it.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "3a3810907bb164aa",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-thick-of-it-tasteArt-270.avif",
+          "bytes": 3813
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-thick-of-it-tasteArt-270.webp",
+          "bytes": 4498
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-thick-of-it-tasteArt-420.avif",
+          "bytes": 8312
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-thick-of-it-tasteArt-420.webp",
+          "bytes": 10128
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-thick-of-it-tasteArt-630.avif",
+          "bytes": 16712
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-thick-of-it-tasteArt-630.webp",
+          "bytes": 21974
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/the-trip.webp": {
+    "source": "/taste-art/tv/the-trip.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "c6b5c73cc9b0edba",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-trip-tasteArt-270.avif",
+          "bytes": 13177
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-trip-tasteArt-270.webp",
+          "bytes": 13214
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-trip-tasteArt-420.avif",
+          "bytes": 28313
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-trip-tasteArt-420.webp",
+          "bytes": 29544
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/the-trip-tasteArt-630.avif",
+          "bytes": 57180
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/the-trip-tasteArt-630.webp",
+          "bytes": 59778
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/true-detective.webp": {
+    "source": "/taste-art/tv/true-detective.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "2074a51f98ce870d",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/true-detective-tasteArt-270.avif",
+          "bytes": 5653
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/true-detective-tasteArt-270.webp",
+          "bytes": 6964
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/true-detective-tasteArt-420.avif",
+          "bytes": 12894
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/true-detective-tasteArt-420.webp",
+          "bytes": 16586
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/true-detective-tasteArt-630.avif",
+          "bytes": 28669
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/true-detective-tasteArt-630.webp",
+          "bytes": 36542
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/twin-peaks-the-return.webp": {
+    "source": "/taste-art/tv/twin-peaks-the-return.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "67b9ffe24bbda54c",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/twin-peaks-the-return-tasteArt-270.avif",
+          "bytes": 7078
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/twin-peaks-the-return-tasteArt-270.webp",
+          "bytes": 8922
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/twin-peaks-the-return-tasteArt-420.avif",
+          "bytes": 11452
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/twin-peaks-the-return-tasteArt-420.webp",
+          "bytes": 15970
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/twin-peaks-the-return-tasteArt-630.avif",
+          "bytes": 18713
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/twin-peaks-the-return-tasteArt-630.webp",
+          "bytes": 28496
+        }
+      }
+    ]
+  },
+  "tasteArt:/taste-art/tv/watchmen.webp": {
+    "source": "/taste-art/tv/watchmen.webp",
+    "slot": "tasteArt",
+    "ratio": 1.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 800,
+    "sourceHash": "6873b0870a95498d",
+    "variants": [
+      {
+        "width": 270,
+        "height": 180,
+        "avif": {
+          "src": "/_img/taste-art/tv/watchmen-tasteArt-270.avif",
+          "bytes": 12854
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/watchmen-tasteArt-270.webp",
+          "bytes": 15304
+        }
+      },
+      {
+        "width": 420,
+        "height": 280,
+        "avif": {
+          "src": "/_img/taste-art/tv/watchmen-tasteArt-420.avif",
+          "bytes": 25292
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/watchmen-tasteArt-420.webp",
+          "bytes": 32606
+        }
+      },
+      {
+        "width": 630,
+        "height": 420,
+        "avif": {
+          "src": "/_img/taste-art/tv/watchmen-tasteArt-630.avif",
+          "bytes": 46992
+        },
+        "webp": {
+          "src": "/_img/taste-art/tv/watchmen-tasteArt-630.webp",
+          "bytes": 62608
+        }
+      }
+    ]
+  },
   "logo:/brand-logos/sky-betting-gaming-logo.png": {
     "source": "/brand-logos/sky-betting-gaming-logo.png",
     "slot": "logo",

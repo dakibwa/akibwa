@@ -75,14 +75,17 @@ publishing homepage changes.
 ## Taste and footer
 
 - Taste reuses `HomePage` in `tasteOnly` mode: Graceland first, then Music,
-  Films, Games, TV and Podcasts in a compact square contact sheet.
-- Every row fills the complete available width. Its population is rebalanced
-  when the viewport changes, so there is no ragged final column or empty slot.
+  Films, Games, TV and Podcasts in one responsive editorial quilt.
+- Every band fills the complete available width. Equal two-by-two blocks hold
+  either one large card, two long cards, a long card with two small cards, or
+  four small cards. The number of blocks responds to the viewport, so scale and
+  proportion vary without a ragged final column or an empty cell.
 - Cards remain labelled visual objects, not false links. Hover or keyboard
   focus reveals title then creator; music adds Last.fm plays when available.
-- Film, game and television tiles use recognisable original poster or cover
-  artwork, passed through the wall's existing printed-ink treatment. They must
-  not regress to generic generated symbols that hide which title is which.
+- Film, game and television tiles pair title-specific editorial scenes with the
+  recognisable original poster or cover as an identifying print. Four-up cards
+  use the original directly; long and large cards keep both. They must not
+  regress to either generic symbols or an undifferentiated wall of plain covers.
   The six plain filter words change the wall immediately and Escape returns to
   Highlights.
 - The shared footer remains visible after the wall with only X, Instagram and

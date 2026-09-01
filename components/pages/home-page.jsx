@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { cloneElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
@@ -36,13 +36,14 @@ function lensHref(id) {
   return `${url.pathname}${search ? `?${search}` : ""}${id ? `#${id}` : ""}`;
 }
 
-function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, face, held, dim, size }) {
+function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, face, held, dim, size, quiltScale }) {
   const hasDetails = Boolean(title || creator);
   const accessibleLabel = hasDetails ? [title, creator, meta].filter(Boolean).join(", ") : label;
   const props = {
-    className: `card card--${suit}${size === "small" ? " card--small" : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${size === "small" ? " card--small" : ""}${quiltScale ? ` card--quilt-${quiltScale}` : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
     "data-key": keySet ?? suit,
+    "data-quilt-scale": quiltScale,
     hidden: held || undefined,
     style:
       ground || accent || crop
@@ -52,7 +53,7 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
 
   const content = (
     <>
-      <span className="card-face">{face}</span>
+      <span className="card-face">{typeof face === "function" ? face(quiltScale) : face}</span>
       {href ? (
         <span className="card-label" aria-hidden="true">
           <span>{label}</span>
@@ -91,33 +92,67 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
   );
 }
 
-/* A finite edit almost never divides cleanly by the number of covers a screen
-   can comfortably hold. Instead of leaving a ragged final edge, deal it into
-   the minimum number of balanced rows and let every row fill the same frame.
-   Adjacent rows differ by at most one cover, so the change of scale is quiet. */
-function balancedRows(cards, maximumPerRow) {
-  if (!cards.length) return [];
-  const rowCount = Math.ceil(cards.length / maximumPerRow);
-  const base = Math.floor(cards.length / rowCount);
-  const fullerRows = cards.length - base * rowCount;
-  const fullAt = new Set(
-    Array.from({ length: fullerRows }, (_, index) =>
-      fullerRows === 1 ? 0 : Math.round((index * (rowCount - 1)) / (fullerRows - 1))
-    )
-  );
-  let cursor = 0;
+/* Every square block occupies the same two-by-two unit. It can hold one large
+   card, two long cards, a long card plus two small ones, or four small cards.
+   The blocks therefore always tessellate into a complete rectangle while the
+   cards inside them keep changing scale and proportion. */
+const QUILT_CAPACITY_BEAT = [1, 4, 2, 3, 1, 3, 4, 2, 1, 4, 3, 2];
 
-  return Array.from({ length: rowCount }, (_, index) => {
-    const length = base + (fullAt.has(index) ? 1 : 0);
-    const row = cards.slice(cursor, cursor + length);
-    cursor += length;
-    return row;
-  });
+function quiltBlockCounts(cardCount, requestedBlocksPerBand) {
+  if (!cardCount) return { blocksPerBand: 0, counts: [] };
+
+  const blocksPerBand = Math.max(1, Math.min(requestedBlocksPerBand, cardCount));
+  const minimumBands = Math.ceil(cardCount / (blocksPerBand * 4));
+  const maximumBands = Math.max(1, Math.floor(cardCount / blocksPerBand));
+  const preferredBands = Math.max(1, Math.round(cardCount / (blocksPerBand * 2.3)));
+  const bandCount = Math.max(minimumBands, Math.min(maximumBands, preferredBands));
+  const blockCount = bandCount * blocksPerBand;
+  const counts = Array(blockCount).fill(1);
+  let extras = cardCount - blockCount;
+
+  for (let index = 0; index < blockCount && extras > 0; index += 1) {
+    const desired = QUILT_CAPACITY_BEAT[index % QUILT_CAPACITY_BEAT.length];
+    const addition = Math.min(desired - 1, extras);
+    counts[index] += addition;
+    extras -= addition;
+  }
+
+  /* The preferred beat averages 2.5 cards per block. Very short shelves can
+     occasionally need more; finish those deterministically without changing
+     any block's four-card ceiling. */
+  let cursor = 0;
+  while (extras > 0) {
+    const index = (cursor * 5 + 1) % blockCount;
+    if (counts[index] < 4) {
+      counts[index] += 1;
+      extras -= 1;
+    }
+    cursor += 1;
+  }
+
+  return { blocksPerBand, counts };
 }
 
-function BalancedTasteWall({ cards }) {
+function quiltLayout(count, index) {
+  if (count === 1) return "hero";
+  if (count === 2) return index % 2 ? "pair-columns" : "pair-rows";
+  if (count === 3) return ["trio-left", "trio-top", "trio-right", "trio-bottom"][index % 4];
+  return "quartet";
+}
+
+function quiltScale(count, layout, index) {
+  if (count === 1) return "large";
+  if (count === 4) return "small";
+  if (count === 2) return layout === "pair-columns" ? "tall" : "wide";
+  if (layout === "trio-left") return index === 0 ? "tall" : "small";
+  if (layout === "trio-right") return index === 2 ? "tall" : "small";
+  if (layout === "trio-top") return index === 0 ? "wide" : "small";
+  return index === 2 ? "wide" : "small";
+}
+
+function ResponsiveTasteQuilt({ cards }) {
   const wallRef = useRef(null);
-  const [maximumPerRow, setMaximumPerRow] = useState(7);
+  const [requestedBlocksPerBand, setRequestedBlocksPerBand] = useState(5);
 
   useEffect(() => {
     const wall = wallRef.current;
@@ -125,11 +160,10 @@ function BalancedTasteWall({ cards }) {
 
     const measure = () => {
       const width = wall.getBoundingClientRect().width;
-      /* Four readable covers on a phone; above that, add a cover whenever
-         there is roughly another 172px available. The cap protects very wide
-         screens from turning the archive back into a strip of thumbnails. */
-      const next = width < 560 ? 4 : Math.max(4, Math.min(11, Math.round(width / 172)));
-      setMaximumPerRow((current) => (current === next ? current : next));
+      /* A block is two base units wide. Two blocks give a phone four small
+         cards across; the wall adds whole blocks as space becomes available. */
+      const next = width < 520 ? 2 : width < 800 ? 3 : width < 1120 ? 4 : width < 1540 ? 5 : 6;
+      setRequestedBlocksPerBand((current) => (current === next ? current : next));
     };
 
     measure();
@@ -138,17 +172,43 @@ function BalancedTasteWall({ cards }) {
     return () => observer.disconnect();
   }, []);
 
-  const rows = useMemo(() => balancedRows(cards, maximumPerRow), [cards, maximumPerRow]);
+  const quilt = useMemo(
+    () => quiltBlockCounts(cards.length, requestedBlocksPerBand),
+    [cards.length, requestedBlocksPerBand]
+  );
+
+  let cardCursor = 0;
+  const blocks = quilt.counts.map((count, index) => {
+    const layout = quiltLayout(count, index);
+    const blockCards = cards.slice(cardCursor, cardCursor + count).map((card, cardIndex) =>
+      cloneElement(card, { quiltScale: quiltScale(count, layout, cardIndex) })
+    );
+    cardCursor += count;
+    return { layout, cards: blockCards };
+  });
+
+  const bands = Array.from(
+    { length: Math.ceil(blocks.length / quilt.blocksPerBand) },
+    (_, index) => blocks.slice(index * quilt.blocksPerBand, (index + 1) * quilt.blocksPerBand)
+  );
 
   return (
-    <div className="taste-wall" ref={wallRef} data-maximum-per-row={maximumPerRow}>
-      {rows.map((row, index) => (
+    <div className="taste-wall" ref={wallRef} data-blocks-per-band={quilt.blocksPerBand}>
+      {bands.map((band, bandIndex) => (
         <div
-          className="taste-wall-row"
-          key={`taste-row-${index}-${row.length}`}
-          style={{ "--taste-row-count": row.length }}
+          className="taste-quilt-band"
+          key={`taste-band-${bandIndex}-${band.length}`}
+          style={{ "--taste-block-count": quilt.blocksPerBand }}
         >
-          {row}
+          {band.map((block, blockIndex) => (
+            <div
+              className={`taste-quilt-block taste-quilt-block--${block.layout}`}
+              data-card-count={block.cards.length}
+              key={`taste-block-${bandIndex}-${blockIndex}-${block.cards.length}`}
+            >
+              {block.cards}
+            </div>
+          ))}
         </div>
       ))}
     </div>
@@ -192,6 +252,64 @@ function Mark({ src, tile }) {
   return (
     <span className={`c-mark${tile ? " c-mark--tile" : ""}`}>
       <img src={src} alt="" loading="lazy" decoding="async" />
+    </span>
+  );
+}
+
+const TASTE_ART_PATHS = [
+  ["/film-posters/", "/taste-art/films/"],
+  ["/game-covers/", "/taste-art/games/"],
+  ["/tv-posters/", "/taste-art/tv/"]
+];
+
+function tasteArtSource(source) {
+  const route = TASTE_ART_PATHS.find(([from]) => source.startsWith(from));
+  return route ? source.replace(route[0], route[1]) : null;
+}
+
+/* The smallest quilt pieces stay as the recognisable original cover. Larger
+   pieces become a little editorial print: the expressive title-specific art
+   fills the card and the original cover is kept as its identifying colophon. */
+function TasteVisual({ source, scale, above, aboveSync }) {
+  const art = tasteArtSource(source);
+  if (!art || !scale || scale === "small") {
+    return (
+      <SiteImage
+        src={source}
+        slot="deckTile"
+        sizes={SLOT_SIZES.deckTile}
+        alt=""
+        className="c-art"
+        above={above}
+        aboveSync={aboveSync}
+      />
+    );
+  }
+
+  return (
+    <span className="taste-visual" aria-hidden="true">
+      <span className="taste-visual__scene">
+        <SiteImage
+          src={art}
+          slot="tasteArt"
+          sizes={SLOT_SIZES.tasteArt}
+          alt=""
+          className="c-art"
+          above={above}
+          aboveSync={aboveSync}
+        />
+      </span>
+      <span className="taste-visual__original">
+        <SiteImage
+          src={source}
+          slot="deckTile"
+          sizes={SLOT_SIZES.deckTile}
+          alt=""
+          className="c-art"
+          above={above}
+          aboveSync={aboveSync}
+        />
+      </span>
     </span>
   );
 }
@@ -246,6 +364,7 @@ export function HomePage({ tasteOnly = false }) {
     if (index < LEAD[id]) return undefined;
     return (index - LEAD[id]) % BEAT[id] === BEAT[id] - 1 ? undefined : "small";
   };
+  const legacySizeFor = (id, index) => (tasteOnly ? undefined : sizeFor(id, index));
 
   const ABOVE_FOLD = 52;
   const SYNC_FOLD = 24;
@@ -367,7 +486,7 @@ export function HomePage({ tasteOnly = false }) {
     if (id === "music") {
       return deck.music.slice(0, cap === Infinity ? deck.music.length : cap).map((album, index) => (
         <Card
-          size={sizeFor("music", index)}
+          size={legacySizeFor("music", index)}
           key={`album-${album.id}`}
           suit="music"
           dim={isDim}
@@ -403,15 +522,13 @@ export function HomePage({ tasteOnly = false }) {
     if (id === "films") {
       return deck.films.slice(0, cap === Infinity ? deck.films.length : cap).map((film, index) => (
         <Card
-          size={sizeFor("films", index)}
+          size={legacySizeFor("films", index)}
           key={`film-${film.title}`}
           suit="films"
           dim={isDim}
           label={film.title}
           {...tasteDetails(film.title, film.director)}
-          face={
-            <SiteImage src={film.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("films", index)} />
-          }
+          face={(scale) => <TasteVisual source={film.poster} scale={scale} {...firstScreen("films", index)} />}
         />
       ));
     }
@@ -419,15 +536,13 @@ export function HomePage({ tasteOnly = false }) {
     if (id === "games") {
       return games.slice(0, cap === Infinity ? games.length : cap).map((game, index) => (
         <Card
-          size={sizeFor("games", index)}
+          size={legacySizeFor("games", index)}
           key={`game-${game.title}`}
           suit="games"
           dim={isDim}
           label={game.title}
           {...tasteDetails(game.title, game.studio)}
-          face={
-            <SiteImage src={game.cover} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("games", index)} />
-          }
+          face={(scale) => <TasteVisual source={game.cover} scale={scale} {...firstScreen("games", index)} />}
         />
       ));
     }
@@ -435,15 +550,13 @@ export function HomePage({ tasteOnly = false }) {
     if (id === "tv") {
       return tv.slice(0, cap === Infinity ? tv.length : cap).map((show, index) => (
         <Card
-          size={sizeFor("tv", index)}
+          size={legacySizeFor("tv", index)}
           key={`tv-${show.title}`}
           suit="tv"
           dim={isDim}
           label={show.title}
           {...tasteDetails(show.title, show.creator)}
-          face={
-            <SiteImage src={show.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("tv", index)} />
-          }
+          face={(scale) => <TasteVisual source={show.poster} scale={scale} {...firstScreen("tv", index)} />}
         />
       ));
     }
@@ -451,7 +564,7 @@ export function HomePage({ tasteOnly = false }) {
     if (id === "podcasts") {
       return podcasts.slice(0, cap === Infinity ? podcasts.length : cap).map((podcast, index) => (
         <Card
-          size={sizeFor("podcasts", index)}
+          size={legacySizeFor("podcasts", index)}
           key={`podcast-${podcast.title}`}
           suit="podcasts"
           dim={isDim}
@@ -584,7 +697,7 @@ export function HomePage({ tasteOnly = false }) {
           </nav>
         </div>
 
-        {tasteOnly ? <BalancedTasteWall cards={wall} /> : wall}
+        {tasteOnly ? <ResponsiveTasteQuilt cards={wall} /> : wall}
       </div>
 
       <PageFooter />

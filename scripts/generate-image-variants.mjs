@@ -20,7 +20,7 @@
  *   node scripts/generate-image-variants.mjs           regenerate
  *   node scripts/generate-image-variants.mjs --check   verify against sources
  */
-import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import sharp from "sharp";
@@ -78,6 +78,12 @@ const SLOTS = {
   // 92 CSS px where the picture sets run dense, 133 where the text cards sit,
   // and 176 on the widest frames.
   deckTile: { ratio: 1, css: [92, 133, 176] },
+
+  // Title-specific editorial art behind the original cover on the large,
+  // wide and tall Taste quilt cards. The source is 3:2 and remains 3:2 here;
+  // each card applies its final object-fit crop because one source serves all
+  // three proportions.
+  tasteArt: { ratio: 3 / 2, css: [180, 280, 420] },
 
   // .deck .card--grand — the three-unit card for the truly important.
   grandTile: { ratio: 1, css: [176, 250] },
@@ -318,6 +324,16 @@ const sources = [
   { file: "project-images/cover-collision/cover-collision-10.webp", slot: "deckTile" },
   { file: "project-images/cover-collision/cover-collision-11.webp", slot: "deckTile" }
 ];
+
+/* The art-directed Taste set mirrors the stable poster filenames. Discovering
+   the three committed folders keeps the source list exact without repeating
+   83 slugs beside the already-canonical deck data. */
+for (const directory of ["taste-art/films", "taste-art/games", "taste-art/tv"]) {
+  const files = (await readdir(path.join(publicDir, directory)))
+    .filter((file) => file.endsWith(".webp"))
+    .sort();
+  for (const file of files) sources.push({ file: `${directory}/${file}`, slot: "tasteArt" });
+}
 
 /*
  * Deliberately absent: albion-rose-card and albion-sunburst-hero. They survive
