@@ -42,10 +42,15 @@ export const SLOT_SIZES = {
  * degrades to today's behaviour rather than a broken image.
  */
 
-function srcSet(entries, format) {
+function versionedSrc(src, version) {
+  if (!version || src.includes("?")) return src;
+  return `${src}?v=${version}`;
+}
+
+function srcSet(entries, format, version) {
   return entries
     .filter((entry) => entry[format])
-    .map((entry) => `${entry[format].src} ${entry.width}w`)
+    .map((entry) => `${versionedSrc(entry[format].src, version)} ${entry.width}w`)
     .join(", ");
 }
 
@@ -58,7 +63,9 @@ function srcSet(entries, format) {
  */
 export function resolveBackground(src, slot) {
   const entry = variants[`${slot}:${src}`];
-  return entry?.variants[0]?.webp?.src ?? src;
+  return entry
+    ? versionedSrc(entry.variants[0].webp.src, entry.sourceHash)
+    : src;
 }
 
 /*
@@ -94,7 +101,7 @@ export function SiteImage({
 
   const img = (
     <img
-      src={src}
+      src={entry ? versionedSrc(src, entry.sourceHash) : src}
       alt={alt}
       // The slot ladder tops out at 1.5x DPR, so let the browser know the
       // intrinsic dimensions either way — it keeps the aspect ratio reserved.
@@ -124,8 +131,8 @@ export function SiteImage({
 
   return (
     <picture>
-      <source type="image/avif" srcSet={srcSet(entry.variants, "avif")} sizes={sizes} />
-      <source type="image/webp" srcSet={srcSet(entry.variants, "webp")} sizes={sizes} />
+      <source type="image/avif" srcSet={srcSet(entry.variants, "avif", entry.sourceHash)} sizes={sizes} />
+      <source type="image/webp" srcSet={srcSet(entry.variants, "webp", entry.sourceHash)} sizes={sizes} />
       {img}
     </picture>
   );
@@ -201,10 +208,10 @@ export function preloadSiteImage({ src, slot, sizes }) {
 
   // AVIF only: every browser that lacks AVIF also ignores the preload's
   // imagesrcset, so it would otherwise pull the original as a second copy.
-  ReactDOM.preload(entry.variants[0].avif.src, {
+  ReactDOM.preload(versionedSrc(entry.variants[0].avif.src, entry.sourceHash), {
     as: "image",
     type: "image/avif",
-    imageSrcSet: srcSet(entry.variants, "avif"),
+    imageSrcSet: srcSet(entry.variants, "avif", entry.sourceHash),
     imageSizes: sizes,
     fetchPriority: "high"
   });
