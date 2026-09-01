@@ -1283,9 +1283,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     #runveil .wbtn{letter-spacing:.04em;padding:8px 6px;white-space:nowrap}
   }
 
-  /* Project entry reserves the Akibwa masthead as real viewport space. The
-     game's fixed menu and archive layers used to remain pinned to y=0, so the
-     banner covered their headings and made the screen look cropped. */
   html[data-akibwa-project="true"] .veil{
     top:var(--akibwa-project-banner-height)
   }
@@ -1371,7 +1368,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
             <b class="unit-fig" id="crossnum">0</b>
             <span class="unit-name"><span class="unit-label">crossings left</span></span>
           </div>
-          <div class="track crossbar" id="crossbar"><span class="run" id="threadrow"></span></div>
+          <div class="track crossbar" id="crossbar" role="img"><span class="run" id="threadrow"></span></div>
         </div>
         <div class="unit unit-par">
           <span class="tutorial-score-label" id="tutorialscore" aria-hidden="true"></span>
@@ -1381,14 +1378,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
                  counted against, so they are one phrase and travel together -->
             <span class="unit-name"><span class="unit-label">turns</span><em class="unit-of" id="parof">to par</em></span>
           </div>
-          <div class="track parmeter" id="parmeter" aria-label="turns against par"><span class="run" id="parrow"></span></div>
+          <div class="track parmeter" id="parmeter" role="img" aria-label="turns against par"><span class="run" id="parrow"></span></div>
         </div>
         <div class="unit unit-set">
           <div class="unit-top">
             <b class="unit-fig" id="setnum">0</b>
             <span class="unit-name"><span class="unit-label" id="setlabel">today's set</span></span>
           </div>
-          <div class="track setmeter" id="setmeter" aria-label="today's set"></div>
+          <div class="track setmeter" id="setmeter" role="img" aria-label="today's set"></div>
         </div>
       </div>
       <!-- every piece of game feedback lands here, so it has to be announced.
