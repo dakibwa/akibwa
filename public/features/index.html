@@ -247,53 +247,77 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .akibwa-project-banner{display:none;position:sticky;top:0;z-index:80;flex:0 0 auto;
     width:100%;background:#FAF8F3;color:#101217;
     font-family:"Avenir Next","Inter","Helvetica Neue",Arial,sans-serif}
+  .akibwa-project-banner::after{content:"";position:absolute;right:0;bottom:0;left:0;height:4px;
+    background:#1B947D}
+  html[data-akibwa-project="true"]{--akibwa-project-banner-height:104px;overflow:hidden}
   html[data-akibwa-project="true"] .akibwa-project-banner{display:block}
-  .akibwa-project-banner__inner{width:min(calc(100% - 48px),1310px);min-height:92px;margin:0 auto;
+  .akibwa-project-banner__inner{width:min(calc(100% - 48px),1310px);min-height:104px;margin:0 auto;
     display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
-    align-items:center;gap:clamp(34px,5vw,78px);padding:14px 0 13px;
-    border-bottom:4px solid #1B947D}
-  .akibwa-project-banner__identity{margin:0;font-size:clamp(2rem,3.6vw,3.25rem);
-    font-weight:540;line-height:.95;letter-spacing:-.055em;white-space:nowrap}
-  .akibwa-project-banner__identity strong{font-weight:660}
-  .akibwa-project-banner__copy{display:flex;align-items:baseline;justify-content:space-between;
-    gap:clamp(20px,3vw,48px);min-width:0}
+    align-items:center;gap:clamp(34px,5vw,78px);padding:12px 0 15px}
+  .akibwa-project-banner__identity{margin:0;color:#030405;font-size:clamp(2.15rem,3.8vw,3.45rem);
+    font-weight:540;line-height:.92;letter-spacing:-.06em;white-space:nowrap}
+  .akibwa-project-banner__name-stack{display:inline-grid;white-space:nowrap}
+  .akibwa-project-banner__name{position:relative;grid-area:1/1;justify-self:start;width:max-content;
+    padding-bottom:.1em;font-weight:660}
+  .akibwa-project-banner__name::after{content:"";position:absolute;right:0;bottom:0;left:0;height:.1em;
+    border-radius:.05em;background:currentColor;opacity:.5}
+  .akibwa-project-banner__name--daniel{color:#236BB8;animation:akibwa-name-daniel 8.4s ease infinite}
+  .akibwa-project-banner__name--akibwa{color:#99451F;animation:akibwa-name-akibwa 8.4s ease infinite}
+  @keyframes akibwa-name-daniel{
+    0%,47%{opacity:1;transform:translateY(0)}
+    49%,98%{opacity:0;transform:translateY(.04em)}
+    100%{opacity:1;transform:translateY(0)}
+  }
+  @keyframes akibwa-name-akibwa{
+    0%,47%{opacity:0;transform:translateY(.04em)}
+    49%,98%{opacity:1;transform:translateY(0)}
+    100%{opacity:0;transform:translateY(.04em)}
+  }
+  .akibwa-project-banner__copy{display:grid;gap:10px;min-width:0;justify-items:start}
   .akibwa-project-banner__lede{margin:0;color:#101217;
     font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
-    font-size:clamp(1.15rem,1.8vw,1.6rem);line-height:1.05;letter-spacing:-.03em;
+    font-size:clamp(1.18rem,2vw,1.72rem);line-height:1.04;letter-spacing:-.035em;
     white-space:nowrap}
-  .akibwa-project-banner__back{flex:0 0 auto;color:#315d55;font-size:.82rem;font-weight:650;
-    line-height:1.2;text-decoration-line:underline;text-decoration-color:transparent;
-    text-decoration-thickness:1px;text-underline-offset:.3em;
+  .akibwa-project-banner__nav{display:flex;flex-wrap:wrap;gap:.35em 1em;align-items:baseline;
+    color:#596169;font-size:clamp(.7rem,.88vw,.82rem);font-weight:680;line-height:1.2}
+  .akibwa-project-banner__nav a{text-decoration-line:underline;text-decoration-color:transparent;
+    text-decoration-thickness:1px;text-underline-offset:.28em;
     transition:color 120ms ease,text-decoration-color 120ms ease}
-  .akibwa-project-banner__back:hover,.akibwa-project-banner__back:focus-visible{
+  .akibwa-project-banner__nav a:nth-child(1){color:#303438}
+  .akibwa-project-banner__nav a:nth-child(2){color:#247366}
+  .akibwa-project-banner__nav a:nth-child(3){color:#9E3B50}
+  .akibwa-project-banner__nav a:nth-child(4){color:#087997}
+  .akibwa-project-banner__nav a:hover,.akibwa-project-banner__nav a:focus-visible{
     color:#101217;text-decoration-color:currentColor}
-  .akibwa-project-banner__back:focus-visible{outline:2px solid #1B947D;outline-offset:4px}
-  html[data-akibwa-project="true"]{overflow:hidden}
+  .akibwa-project-banner__nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
   html[data-akibwa-project="true"] body{flex-direction:column;align-items:stretch;justify-content:flex-start}
   html[data-akibwa-project="true"] .sheet{flex:1 1 auto;height:auto;align-self:center}
   @media(max-width:800px){
-    .akibwa-project-banner__inner{min-height:86px;grid-template-columns:minmax(0,1fr) auto;
-      grid-template-areas:"identity back" "lede lede";gap:6px 18px;padding:12px 0 10px}
-    .akibwa-project-banner__identity{grid-area:identity;font-size:clamp(2rem,10vw,2.8rem)}
-    .akibwa-project-banner__copy{display:contents}
-    .akibwa-project-banner__lede{grid-area:lede;font-size:1.05rem}
-    .akibwa-project-banner__back{grid-area:back;align-self:center}
+    html[data-akibwa-project="true"]{--akibwa-project-banner-height:132px}
+    .akibwa-project-banner__inner{min-height:132px;grid-template-columns:1fr;gap:7px;padding:10px 0 14px}
+    .akibwa-project-banner__identity{font-size:clamp(2rem,10vw,2.8rem)}
+    .akibwa-project-banner__copy{gap:7px}
+    .akibwa-project-banner__lede{font-size:1.05rem}
+    .akibwa-project-banner__nav{gap:.3em .78em;font-size:.7rem}
   }
   @media(max-width:420px){
     .akibwa-project-banner__inner{width:min(calc(100% - 32px),1310px)}
     .akibwa-project-banner__identity{font-size:2rem}
     .akibwa-project-banner__lede{font-size:.95rem}
-    .akibwa-project-banner__back{font-size:.72rem}
   }
   @media(max-height:560px) and (orientation:landscape){
-    .akibwa-project-banner__inner{min-height:58px;
-      grid-template-columns:auto minmax(0,1fr) auto;
-      grid-template-areas:"identity lede back";padding:8px 0;gap:18px}
-    .akibwa-project-banner__identity{grid-area:identity;font-size:1.7rem}
-    .akibwa-project-banner__copy{display:contents}
-    .akibwa-project-banner__lede{display:block;grid-area:lede;font-size:clamp(.82rem,2.4vw,1rem);
+    html[data-akibwa-project="true"]{--akibwa-project-banner-height:58px}
+    .akibwa-project-banner__inner{min-height:58px;grid-template-columns:auto minmax(0,1fr);
+      padding:8px 0 10px;gap:18px}
+    .akibwa-project-banner__identity{font-size:1.7rem}
+    .akibwa-project-banner__copy{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px}
+    .akibwa-project-banner__lede{display:block;font-size:clamp(.78rem,2vw,.95rem);
       line-height:1;white-space:normal}
-    .akibwa-project-banner__back{grid-area:back}
+    .akibwa-project-banner__nav{flex-wrap:nowrap;gap:.72em;font-size:.62rem;white-space:nowrap}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .akibwa-project-banner__name--daniel{animation:none;opacity:1;transform:none}
+    .akibwa-project-banner__name--akibwa{animation:none;opacity:0;transform:none}
   }
   .pick,
   .bulletin .bsub,
@@ -1259,6 +1283,28 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     #runveil .wbtn{letter-spacing:.04em;padding:8px 6px;white-space:nowrap}
   }
 
+  /* Project entry reserves the Akibwa masthead as real viewport space. The
+     game's fixed menu and archive layers used to remain pinned to y=0, so the
+     banner covered their headings and made the screen look cropped. */
+  html[data-akibwa-project="true"] .veil{
+    top:var(--akibwa-project-banner-height)
+  }
+  html[data-akibwa-project="true"] .veil > *{
+    max-height:calc(100dvh - var(--akibwa-project-banner-height) - 40px)
+  }
+  html[data-akibwa-project="true"] .menusheet{
+    height:min(680px,calc(100dvh - var(--akibwa-project-banner-height) - 40px))
+  }
+  @media(max-width:700px){
+    html[data-akibwa-project="true"] .veil > *,
+    html[data-akibwa-project="true"] .arch-card{
+      max-height:calc(100dvh - var(--akibwa-project-banner-height) - 24px)
+    }
+    html[data-akibwa-project="true"] .menusheet{
+      height:calc(100dvh - var(--akibwa-project-banner-height) - 24px)
+    }
+  }
+
   @media (prefers-reduced-motion:reduce){
     .field,.coach,.play.tutorial .coach,.devdrawer:not([hidden]),
     .minted .mb,.veil.show .bulletin .brow,.field .tlabel2.tin,
@@ -1286,10 +1332,17 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 <body>
 <header class="akibwa-project-banner" aria-label="Akibwa portfolio">
   <div class="akibwa-project-banner__inner">
-    <p class="akibwa-project-banner__identity">I&rsquo;m <strong>Akibwa</strong></p>
+    <p class="akibwa-project-banner__identity" aria-label="I’m Daniel. I’m Akibwa.">
+      <span aria-hidden="true">I&rsquo;m <span class="akibwa-project-banner__name-stack"><strong class="akibwa-project-banner__name akibwa-project-banner__name--daniel">Daniel</strong><strong class="akibwa-project-banner__name akibwa-project-banner__name--akibwa">Akibwa</strong></span></span>
+    </p>
     <div class="akibwa-project-banner__copy">
-      <p class="akibwa-project-banner__lede">Building in the Intelligence Age.</p>
-      <a class="akibwa-project-banner__back" href="https://akibwa.com/#projects">Back to projects</a>
+      <p class="akibwa-project-banner__lede">Building in the age of AI.</p>
+      <nav class="akibwa-project-banner__nav" aria-label="Akibwa">
+        <a href="https://akibwa.com/">Home</a>
+        <a href="https://akibwa.com/#projects">Projects</a>
+        <a href="https://akibwa.com/#career">Career</a>
+        <a href="https://akibwa.com/#taste">Taste Library</a>
+      </nav>
     </div>
   </div>
 </header>

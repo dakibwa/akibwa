@@ -36,11 +36,14 @@ publishing homepage changes.
 - Selecting a project replaces the portfolio rather than opening a card,
   overlay or nested scrolling frame. The destination is the real Features,
   Português com a Inês or Trek page with `?from=akibwa`; only that entry mode
-  adds the compact pinned “I’m Akibwa” masthead with “Building in the
-  Intelligence Age.” above a green rule. Everything below the rule belongs to
-  the selected project, and a plain “Back to projects” link returns to
-  `/#projects`. Direct visits to any project remain standalone. Português com
-  a Inês owns its banner in its own repository; Features owns its banner in the
+  adds a compact version of the real homepage masthead: the Daniel/Akibwa
+  identity keeps flicking, “Building in the age of AI.” keeps its serif face,
+  and Home, Projects, Career and Taste Library remain available in their
+  original type and colours. Its green rule spans the complete viewport.
+  Everything below that rule belongs to the selected project and is sized to
+  the viewport left beneath the masthead; fixed project menus must not slip
+  behind it. Direct visits to any project remain standalone. Português com a
+  Inês owns its banner in its own repository; Features owns its banner in the
   source game and republishes it here; Trek owns it in
   `scripts/trek-page-template.html` and regenerates the public page.
 - Freelance is not a separate pitch in this section.
@@ -59,9 +62,9 @@ publishing homepage changes.
 - Career is the original horizontal eight-stop index with Freelance first.
   Its short combined sentence identifies Butterfly Rose and Português com a
   Inês as client work.
-- At rest it shows compact, single-line year ranges in dark, semibold,
-  company-toned tabular type, followed by each mark. Hover or
-  keyboard focus reveals the full range, job title and one short
+- At rest it shows the eight company marks and their coloured timeline only;
+  job dates do not compete with the marks. Hover or keyboard focus reveals the
+  full range, job title and one short
   action-to-purpose sentence, with tools and sector language selectively
   bolded. Each logo card keeps a darker border and a quiet tinted-paper surface
   derived from its own timeline colour. Electrical uses a rounded plug-and-cable
@@ -82,10 +85,11 @@ publishing homepage changes.
   proportion vary without a ragged final column or an empty cell.
 - Cards remain labelled visual objects, not false links. Hover or keyboard
   focus reveals title then creator; music adds Last.fm plays when available.
-- Film, game and television tiles pair title-specific editorial scenes with the
-  recognisable original poster or cover as an identifying print. Four-up cards
-  use the original directly; long and large cards keep both. They must not
-  regress to either generic symbols or an undifferentiated wall of plain covers.
+- Film, game and television tiles use their title-specific editorial scenes
+  edge-to-edge at every scale. The consistent hover label carries title and
+  creator, so commercial poster boxes, grey margins and text-heavy cover insets
+  do not interrupt the wall. They must not regress to generic symbols or an
+  undifferentiated wall of plain covers.
   The six plain filter words change the wall immediately and Escape returns to
   Highlights.
 - The shared footer remains visible after the wall with only X, Instagram and

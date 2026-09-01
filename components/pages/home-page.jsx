@@ -267,12 +267,13 @@ function tasteArtSource(source) {
   return route ? source.replace(route[0], route[1]) : null;
 }
 
-/* The smallest quilt pieces stay as the recognisable original cover. Larger
-   pieces become a little editorial print: the expressive title-specific art
-   fills the card and the original cover is kept as its identifying colophon. */
-function TasteVisual({ source, scale, above, aboveSync }) {
+/* Film, television and game cards use the title-specific editorial scene at
+   every quilt scale. The hover label supplies the literal title and creator;
+   the image can therefore stay expressive, edge-to-edge and free of poster
+   boxes, inset covers and unnecessary display text. */
+function TasteVisual({ source, above, aboveSync }) {
   const art = tasteArtSource(source);
-  if (!art || !scale || scale === "small") {
+  if (!art) {
     return (
       <SiteImage
         src={source}
@@ -293,17 +294,6 @@ function TasteVisual({ source, scale, above, aboveSync }) {
           src={art}
           slot="tasteArt"
           sizes={SLOT_SIZES.tasteArt}
-          alt=""
-          className="c-art"
-          above={above}
-          aboveSync={aboveSync}
-        />
-      </span>
-      <span className="taste-visual__original">
-        <SiteImage
-          src={source}
-          slot="deckTile"
-          sizes={SLOT_SIZES.deckTile}
           alt=""
           className="c-art"
           above={above}
@@ -528,7 +518,7 @@ export function HomePage({ tasteOnly = false }) {
           dim={isDim}
           label={film.title}
           {...tasteDetails(film.title, film.director)}
-          face={(scale) => <TasteVisual source={film.poster} scale={scale} {...firstScreen("films", index)} />}
+          face={() => <TasteVisual source={film.poster} {...firstScreen("films", index)} />}
         />
       ));
     }
@@ -542,7 +532,7 @@ export function HomePage({ tasteOnly = false }) {
           dim={isDim}
           label={game.title}
           {...tasteDetails(game.title, game.studio)}
-          face={(scale) => <TasteVisual source={game.cover} scale={scale} {...firstScreen("games", index)} />}
+          face={() => <TasteVisual source={game.cover} {...firstScreen("games", index)} />}
         />
       ));
     }
@@ -556,7 +546,7 @@ export function HomePage({ tasteOnly = false }) {
           dim={isDim}
           label={show.title}
           {...tasteDetails(show.title, show.creator)}
-          face={(scale) => <TasteVisual source={show.poster} scale={scale} {...firstScreen("tv", index)} />}
+          face={() => <TasteVisual source={show.poster} {...firstScreen("tv", index)} />}
         />
       ));
     }

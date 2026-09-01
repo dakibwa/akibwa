@@ -225,13 +225,34 @@ for (const [source, label] of [
   [trekPublished, "the generated Trek page"]
 ]) {
   requireText(source, "data-akibwa-project", `${label} must support conditional project view`);
-  requireText(source, "I&rsquo;m <strong>Akibwa</strong>", `${label} must retain the Akibwa identity`);
-  requireText(source, "Building in the Intelligence Age.", `${label} must retain the Akibwa proposition`);
+  requireText(source, "akibwa-project-banner__name--daniel", `${label} must retain Daniel in the identity flick`);
+  requireText(source, "akibwa-project-banner__name--akibwa", `${label} must retain Akibwa in the identity flick`);
+  requireText(source, "@keyframes akibwa-name-daniel", `${label} must retain the homepage identity rhythm`);
+  requireText(source, "Building in the age of AI.", `${label} must retain the exact Akibwa proposition`);
   requireText(source, "position:sticky;top:0", `${label} must keep the Akibwa banner pinned`);
   forbidText(source, ".akibwa-project-banner__lede{display:none}", `${label} must keep the proposition visible in short landscape layouts`);
-  requireText(source, "Back to projects", `${label} must provide a deterministic return`);
-  requireText(source, "https://akibwa.com/#projects", `${label} must return to the Projects section`);
+  requireText(source, ".akibwa-project-banner::after", `${label} must keep the full-width boundary rule`);
+  requireText(source, "height:4px", `${label} must keep the homepage rule weight`);
+  for (const [href, text] of [
+    ["https://akibwa.com/", "Home"],
+    ["https://akibwa.com/#projects", "Projects"],
+    ["https://akibwa.com/#career", "Career"],
+    ["https://akibwa.com/#taste", "Taste Library"]
+  ]) {
+    requireText(source, `href="${href}">${text}</a>`, `${label} must provide the ${text} route`);
+  }
+  forbidText(source, "Back to projects", `${label} must use the real homepage navigation instead of a one-off back control`);
 }
+requireText(
+  featuresPublished,
+  "html[data-akibwa-project=\"true\"] .veil{\n    top:var(--akibwa-project-banner-height)",
+  "Features overlays must begin below the Akibwa masthead"
+);
+requireText(
+  featuresPublished,
+  "max-height:calc(100dvh - var(--akibwa-project-banner-height)",
+  "Features overlays must fit inside the remaining project viewport"
+);
 forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
 forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");
 forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed");
@@ -277,8 +298,9 @@ requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable"
 requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
 requireText(editorial, "{job.role}", "each popover must print the job title");
 requireText(editorial, 'className="concept-career-statement"', "each popover must hold one combined sentence");
-requireText(editorial, "compactCareerSpan(job.span)", "the timeline must use compact one-line date ranges");
 requireText(editorial, "{job.role} · {job.span}", "the open detail must keep the full date range");
+forbidText(editorial, "compactCareerSpan", "career dates must not return to the resting index");
+forbidText(editorial, 'className="concept-career-time"', "career dates must remain inside the hover and focus synopsis");
 requireText(
   editorial,
   "<CareerStatement statement={job.statement} emphasis={job.emphasis} />",
@@ -324,14 +346,8 @@ forbidText(deckData, '"back":', "career data must not keep a separate action fie
 forbidText(deckData, '"mission":', "career data must not keep a separate mission field");
 forbidText(deckData, '"statement": "I ', "career statements must stay direct and verb-led");
 requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
-requireRuleText(".concept-career-stop {", ["grid-template-rows: 24px 36px 68px"]);
-requireRuleText(".concept-career-time {", [
-  "color: color-mix(in srgb, var(--company-accent) 46%, var(--ink))",
-  "font-variant-numeric: tabular-nums",
-  "font-weight: 700",
-  "white-space: nowrap",
-  "text-align: center"
-]);
+requireRuleText(".concept-career-stop {", ["grid-template-rows: 36px 68px"]);
+forbidText(css, ".concept-career-time {", "retired resting career-date styling must stay removed");
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireRuleText(
   ".concept-career-card {",
@@ -362,7 +378,7 @@ requireText(
   ".concept-career-timeline:focus-within",
   "a focused career role must lock out competing hover detail"
 );
-requireText(css, "grid-template-rows: 24px 36px 56px", "mobile career dots must keep their clearance lane");
+requireText(css, "grid-template-rows: 36px 56px", "mobile career dots must keep their clearance lane");
 requireRuleText(
   ".concept-hero::after,",
   ["left: 50%", "width: 100vw", "height: 4px", "transform: translateX(-50%)"],
@@ -395,8 +411,8 @@ requireText(home, "function ResponsiveTasteQuilt", "Taste must rebuild its quilt
 requireText(home, "quiltBlockCounts(cards.length", "Taste must pack every card into complete two-by-two blocks");
 requireText(home, "cloneElement(card, { quiltScale:", "Taste must assign card scale from its packed position");
 requireText(home, "function TasteVisual", "film, game and TV cards must keep an art-directed visual treatment");
-requireText(home, 'slot="tasteArt"', "larger Taste cards must use responsive editorial artwork");
-requireText(home, 'slot="deckTile"', "Taste cards must retain the recognisable original cover");
+requireText(home, 'slot="tasteArt"', "film, game and TV cards must use responsive editorial artwork at every scale");
+forbidText(home, "taste-visual__original", "Taste cards must not put inset poster covers over the artwork");
 requireText(home, 'className="card-info"', "Taste cards must expose title and creator detail");
 requireText(home, "plays on Last.fm", "music detail must include a Last.fm count when one exists");
 requireRuleText(".akibwa-home .deck .card {", [
@@ -415,10 +431,13 @@ requireRuleText(".akibwa-home--taste .taste-quilt-block {", [
   "aspect-ratio: 1"
 ]);
 requireRuleText(".akibwa-home--taste .taste-quilt-block--hero .card {", ["grid-area: 1 / 1 / 3 / 3"]);
-requireRuleText(".akibwa-home--taste .card--quilt-large .taste-visual__original {", [
-  "aspect-ratio: 1",
-  "border: 1px solid"
+requireRuleText(".akibwa-home--taste .taste-visual__scene,", [
+  "position: absolute",
+  "inset: 0",
+  "width: 100%",
+  "height: 100%"
 ]);
+requireRuleText(".akibwa-home--taste .taste-visual .c-art {", ["position: absolute", "inset: 0", "object-fit: cover"]);
 
 for (const title of [
   "Making Sense",

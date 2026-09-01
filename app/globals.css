@@ -6390,13 +6390,12 @@ button {
   grid-row: 2;
 }
 
-/* Film, game and television features use their art-directed scene as the
-   field and retain the original cover as a quiet identifying print. Wide and
-   tall cards turn that print into a side or foot strip; the four-up pieces use
-   the original cover alone, so recognition improves as the scale contracts. */
+/* Film, game and television features use the title-specific editorial scene
+   as the entire field at every size. Identification belongs to the consistent
+   hover label, leaving the resting wall free of grey poster boxes and display
+   copy baked into commercial covers. */
 .akibwa-home--taste .taste-visual,
 .akibwa-home--taste .taste-visual__scene,
-.akibwa-home--taste .taste-visual__original,
 .akibwa-home--taste .taste-visual picture {
   position: absolute;
   inset: 0;
@@ -6421,34 +6420,6 @@ button {
   position: absolute;
   inset: 0;
   object-fit: cover;
-}
-
-.akibwa-home--taste .card--quilt-large .taste-visual__original {
-  inset: auto auto clamp(8px, 0.8vw, 12px) clamp(8px, 0.8vw, 12px);
-  width: clamp(46px, 27%, 82px);
-  height: auto;
-  aspect-ratio: 1;
-  border: 1px solid rgba(250, 248, 243, 0.88);
-  border-radius: 2px;
-  box-shadow: 0 3px 14px rgba(8, 11, 13, 0.2);
-}
-
-.akibwa-home--taste .card--quilt-wide .taste-visual__scene {
-  right: 34%;
-}
-
-.akibwa-home--taste .card--quilt-wide .taste-visual__original {
-  left: 66%;
-  border-left: 1px solid rgba(250, 248, 243, 0.66);
-}
-
-.akibwa-home--taste .card--quilt-tall .taste-visual__scene {
-  bottom: 34%;
-}
-
-.akibwa-home--taste .card--quilt-tall .taste-visual__original {
-  top: 66%;
-  border-top: 1px solid rgba(250, 248, 243, 0.66);
 }
 
 .akibwa-home--taste .card-info {
@@ -7509,8 +7480,8 @@ button {
   font-weight: 680;
 }
 
-/* Career is a compact index at rest: date and mark only. The short title,
-   action and mission sit inside the original hover/focus detail. */
+/* Career is a compact visual index at rest. Role, dates and the short
+   action-to-purpose synopsis belong to the original hover/focus detail. */
 .concept-career-section {
   position: relative;
   padding: var(--concept-rule-gap) 0 clamp(112px, 9vw, 140px);
@@ -7544,7 +7515,7 @@ button {
 
 .concept-career-timeline::before {
   position: absolute;
-  top: 42px;
+  top: 18px;
   right: 0;
   left: 0;
   height: 1px;
@@ -7556,23 +7527,11 @@ button {
   position: relative;
   z-index: 0;
   display: grid;
-  /* The middle lane keeps the animated halo clear of both copy and card. */
-  grid-template-rows: 24px 36px 68px;
+  /* The node lane keeps the animated halo clear of the logo card. Dates live
+     in the opened detail, where they add context without crowding the index. */
+  grid-template-rows: 36px 68px;
   min-width: 0;
   outline: none;
-}
-
-.concept-career-time {
-  align-self: end;
-  padding-bottom: 4px;
-  color: color-mix(in srgb, var(--company-accent) 46%, var(--ink));
-  font-size: clamp(0.56rem, 0.78vw, 0.64rem);
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  letter-spacing: 0.018em;
-  line-height: 1;
-  text-align: center;
-  white-space: nowrap;
 }
 
 .concept-career-node {
@@ -7792,12 +7751,7 @@ button {
   }
 
   .concept-career-stop {
-    grid-template-rows: 24px 36px 56px;
-  }
-
-  .concept-career-time {
-    padding: 0 1px 4px;
-    font-size: clamp(0.52rem, 1.55vw, 0.58rem);
+    grid-template-rows: 36px 56px;
   }
 
   .concept-career-card {
@@ -7917,33 +7871,28 @@ button {
     top: 14px;
     right: auto;
     bottom: 14px;
-    left: 48px;
+    left: 26px;
     width: 1px;
     height: auto;
   }
 
   .concept-career-stop {
-    grid-template-columns: 48px 52px minmax(0, 1fr);
+    grid-template-columns: 52px minmax(0, 1fr);
     grid-template-rows: 52px;
     gap: 14px;
     min-height: 68px;
     padding: 8px 0;
   }
 
-  .concept-career-time {
-    grid-column: 1;
-    align-self: center;
-  }
-
   .concept-career-node {
     position: absolute;
     top: 50%;
-    left: 48px;
+    left: 26px;
     transform: translate(-50%, -50%);
   }
 
   .concept-career-card {
-    grid-column: 2;
+    grid-column: 1;
     width: 52px;
     height: 52px;
   }
