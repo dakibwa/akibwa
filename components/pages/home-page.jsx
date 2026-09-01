@@ -1,6 +1,6 @@
 "use client";
 
-import { cloneElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
@@ -36,14 +36,13 @@ function lensHref(id) {
   return `${url.pathname}${search ? `?${search}` : ""}${id ? `#${id}` : ""}`;
 }
 
-function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, face, held, dim, size, quiltScale }) {
+function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, face, held, dim, size }) {
   const hasDetails = Boolean(title || creator);
   const accessibleLabel = hasDetails ? [title, creator, meta].filter(Boolean).join(", ") : label;
   const props = {
-    className: `card card--${suit}${size === "small" ? " card--small" : ""}${quiltScale ? ` card--quilt-${quiltScale}` : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
+    className: `card card--${suit}${size === "small" ? " card--small" : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
     "data-key": keySet ?? suit,
-    "data-quilt-scale": quiltScale,
     hidden: held || undefined,
     style:
       ground || accent || crop
@@ -53,7 +52,7 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
 
   const content = (
     <>
-      <span className="card-face">{typeof face === "function" ? face(quiltScale) : face}</span>
+      <span className="card-face">{typeof face === "function" ? face() : face}</span>
       {href ? (
         <span className="card-label" aria-hidden="true">
           <span>{label}</span>
@@ -92,123 +91,27 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
   );
 }
 
-/* Every square block occupies the same two-by-two unit. It can hold one large
-   card, two long cards, a long card plus two small ones, or four small cards.
-   The blocks therefore always tessellate into a complete rectangle while the
-   cards inside them keep changing scale and proportion. */
-const QUILT_CAPACITY_BEAT = [1, 4, 2, 3, 1, 3, 4, 2, 1, 4, 3, 2];
-
-function quiltBlockCounts(cardCount, requestedBlocksPerBand) {
-  if (!cardCount) return { blocksPerBand: 0, counts: [] };
-
-  const blocksPerBand = Math.max(1, Math.min(requestedBlocksPerBand, cardCount));
-  const minimumBands = Math.ceil(cardCount / (blocksPerBand * 4));
-  const maximumBands = Math.max(1, Math.floor(cardCount / blocksPerBand));
-  const preferredBands = Math.max(1, Math.round(cardCount / (blocksPerBand * 2.3)));
-  const bandCount = Math.max(minimumBands, Math.min(maximumBands, preferredBands));
-  const blockCount = bandCount * blocksPerBand;
-  const counts = Array(blockCount).fill(1);
-  let extras = cardCount - blockCount;
-
-  for (let index = 0; index < blockCount && extras > 0; index += 1) {
-    const desired = QUILT_CAPACITY_BEAT[index % QUILT_CAPACITY_BEAT.length];
-    const addition = Math.min(desired - 1, extras);
-    counts[index] += addition;
-    extras -= addition;
-  }
-
-  /* The preferred beat averages 2.5 cards per block. Very short shelves can
-     occasionally need more; finish those deterministically without changing
-     any block's four-card ceiling. */
-  let cursor = 0;
-  while (extras > 0) {
-    const index = (cursor * 5 + 1) % blockCount;
-    if (counts[index] < 4) {
-      counts[index] += 1;
-      extras -= 1;
-    }
-    cursor += 1;
-  }
-
-  return { blocksPerBand, counts };
-}
-
-function quiltLayout(count, index) {
-  if (count === 1) return "hero";
-  if (count === 2) return index % 2 ? "pair-columns" : "pair-rows";
-  if (count === 3) return ["trio-left", "trio-top", "trio-right", "trio-bottom"][index % 4];
-  return "quartet";
-}
-
-function quiltScale(count, layout, index) {
-  if (count === 1) return "large";
-  if (count === 4) return "small";
-  if (count === 2) return layout === "pair-columns" ? "tall" : "wide";
-  if (layout === "trio-left") return index === 0 ? "tall" : "small";
-  if (layout === "trio-right") return index === 2 ? "tall" : "small";
-  if (layout === "trio-top") return index === 0 ? "wide" : "small";
-  return index === 2 ? "wide" : "small";
-}
-
-function ResponsiveTasteQuilt({ cards }) {
-  const wallRef = useRef(null);
-  const [requestedBlocksPerBand, setRequestedBlocksPerBand] = useState(5);
+/* Taste behaves like the Career index: one compact visual row rather than a
+   second page-length composition. Native horizontal overflow keeps the rail
+   directly swipeable, while a filter change returns its new list to the start. */
+function HorizontalTasteRail({ cards, activeId, label }) {
+  const railRef = useRef(null);
 
   useEffect(() => {
-    const wall = wallRef.current;
-    if (!wall) return undefined;
-
-    const measure = () => {
-      const width = wall.getBoundingClientRect().width;
-      /* A block is two base units wide. Two blocks give a phone four small
-         cards across; the wall adds whole blocks as space becomes available. */
-      const next = width < 520 ? 2 : width < 800 ? 3 : width < 1120 ? 4 : width < 1540 ? 5 : 6;
-      setRequestedBlocksPerBand((current) => (current === next ? current : next));
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(wall);
-    return () => observer.disconnect();
-  }, []);
-
-  const quilt = useMemo(
-    () => quiltBlockCounts(cards.length, requestedBlocksPerBand),
-    [cards.length, requestedBlocksPerBand]
-  );
-
-  let cardCursor = 0;
-  const blocks = quilt.counts.map((count, index) => {
-    const layout = quiltLayout(count, index);
-    const blockCards = cards.slice(cardCursor, cardCursor + count).map((card, cardIndex) =>
-      cloneElement(card, { quiltScale: quiltScale(count, layout, cardIndex) })
-    );
-    cardCursor += count;
-    return { layout, cards: blockCards };
-  });
-
-  const bands = Array.from(
-    { length: Math.ceil(blocks.length / quilt.blocksPerBand) },
-    (_, index) => blocks.slice(index * quilt.blocksPerBand, (index + 1) * quilt.blocksPerBand)
-  );
+    railRef.current?.scrollTo({ left: 0, behavior: "auto" });
+  }, [activeId]);
 
   return (
-    <div className="taste-wall" ref={wallRef} data-blocks-per-band={quilt.blocksPerBand}>
-      {bands.map((band, bandIndex) => (
-        <div
-          className="taste-quilt-band"
-          key={`taste-band-${bandIndex}-${band.length}`}
-          style={{ "--taste-block-count": quilt.blocksPerBand }}
-        >
-          {band.map((block, blockIndex) => (
-            <div
-              className={`taste-quilt-block taste-quilt-block--${block.layout}`}
-              data-card-count={block.cards.length}
-              key={`taste-block-${bandIndex}-${blockIndex}-${block.cards.length}`}
-            >
-              {block.cards}
-            </div>
-          ))}
+    <div
+      className="taste-wall"
+      ref={railRef}
+      role="list"
+      aria-label={`${label} taste list`}
+      data-card-count={cards.length}
+    >
+      {cards.map((card, index) => (
+        <div className="taste-rail-item" role="listitem" key={card.key ?? `taste-${index}`}>
+          {card}
         </div>
       ))}
     </div>
@@ -687,10 +590,12 @@ export function HomePage({ tasteOnly = false }) {
           </nav>
         </div>
 
-        {tasteOnly ? <ResponsiveTasteQuilt cards={wall} /> : wall}
+        {tasteOnly ? (
+          <HorizontalTasteRail cards={wall} activeId={activeId} label={activeFilter.label} />
+        ) : wall}
       </div>
 
-      <PageFooter />
+      {tasteOnly ? null : <PageFooter />}
     </section>
   );
 }

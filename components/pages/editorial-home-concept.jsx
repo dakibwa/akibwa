@@ -1,5 +1,6 @@
 import { deck } from "@/components/deck-data";
 import { HeroFlipName } from "@/components/hero-word-cycle";
+import { PageFooter } from "@/components/page-footer";
 import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
 
@@ -44,15 +45,14 @@ export function EditorialHomeConcept() {
           <p className="concept-lede">
             Building in the age of AI.
           </p>
-          <nav className="concept-nav" aria-label="On this page">
-            <a href="#projects">Projects</a>
-            <a href="#career">Career</a>
-            <a href="#taste">Taste Library</a>
-          </nav>
+          <PageFooter embedded />
         </div>
       </header>
 
-      <section className="page-grid concept-projects" id="projects" aria-label="Projects">
+      <section className="page-grid concept-projects" id="projects" aria-labelledby="projects-title">
+        <header className="concept-projects-head">
+          <h2 id="projects-title">Projects</h2>
+        </header>
         <div className="concept-project-grid">
           <a
             className="concept-project-card concept-feature"
