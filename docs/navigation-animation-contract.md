@@ -36,18 +36,23 @@ publishing homepage changes.
 - Selecting a project replaces the portfolio rather than opening a card,
   overlay or nested scrolling frame. The destination is the real Features,
   Português com a Inês or Trek page with `?from=akibwa`; only that entry mode
-  adds the same compact “I’m Daniel” masthead above a green rule. Everything
-  below the rule belongs to the selected project, and a plain “Back to
-  projects” link returns to `/#projects`. Direct visits to any project remain
-  standalone. Português com a Inês owns its banner in its own repository;
-  Features owns its banner in the source game and republishes it here; Trek
-  owns it in `scripts/trek-page-template.html` and regenerates the public page.
+  adds the compact pinned “I’m Akibwa” masthead with “Building in the
+  Intelligence Age.” above a green rule. Everything below the rule belongs to
+  the selected project, and a plain “Back to projects” link returns to
+  `/#projects`. Direct visits to any project remain standalone. Português com
+  a Inês owns its banner in its own repository; Features owns its banner in the
+  source game and republishes it here; Trek owns it in
+  `scripts/trek-page-template.html` and regenerates the public page.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.
 - Images disable native touch callouts and dragging. On touch devices and
   narrow screens, artwork passes pointer targeting to its enclosing card or
   link so taps still work without exposing the mobile Save Image menu.
+- The green rule below the opening, the rose Career rule and the blue Taste
+  Library rule are the same 4px, full-viewport chapter divider. Their headings
+  and content remain on the shared `page-grid`; only the rules bleed to the
+  screen edges.
 
 ## Career
 
@@ -75,6 +80,9 @@ publishing homepage changes.
   when the viewport changes, so there is no ragged final column or empty slot.
 - Cards remain labelled visual objects, not false links. Hover or keyboard
   focus reveals title then creator; music adds Last.fm plays when available.
+- Film, game and television tiles use recognisable original poster or cover
+  artwork, passed through the wall's existing printed-ink treatment. They must
+  not regress to generic generated symbols that hide which title is which.
   The six plain filter words change the wall immediately and Escape returns to
   Highlights.
 - The shared footer remains visible after the wall with only X, Instagram and
