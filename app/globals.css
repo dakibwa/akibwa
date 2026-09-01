@@ -7817,10 +7817,7 @@ button {
   box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-6px);
-  transition:
-    opacity 150ms ease,
-    transform 220ms var(--ease-out);
+  transition: opacity 120ms ease;
 }
 
 .concept-career-stop:nth-child(n + 4) .concept-career-popover {
@@ -7884,9 +7881,6 @@ button {
 .concept-career-stop:focus .concept-career-popover,
 .concept-career-stop:focus-within .concept-career-popover {
   opacity: 1;
-  transform: none;
-  transition-duration: 220ms, 360ms;
-  transition-delay: 70ms, 20ms;
 }
 
 /* A click or keyboard focus locks the open detail. Pointer movement across the
@@ -7913,8 +7907,6 @@ button {
   .concept-career-stop:not(:focus):not(:focus-within):hover
   .concept-career-popover {
   opacity: 0;
-  transform: translateY(-6px);
-  transition-delay: 0ms;
 }
 
 .concept-career-stop:focus-visible .concept-career-card {
@@ -7941,6 +7933,40 @@ button {
 }
 
 @media (max-width: 760px) {
+  /* Projects become one short, native swipe rail on phones. Keeping the
+     shared detail immediately after this single row means a selected card's
+     information never lands beneath two unrelated projects. */
+  .concept-project-swipe {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88%, 460px);
+    gap: 12px;
+    width: 100%;
+    padding: 5px 5px 9px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .concept-project-swipe::-webkit-scrollbar {
+    display: none;
+  }
+
+  .concept-project-swipe .concept-project-card {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .concept-project-detail-shell.is-open {
+    margin-top: 8px;
+  }
+
   .concept-career-section {
     --career-rest-space: 60px;
   }
@@ -7972,24 +7998,12 @@ button {
   .concept-career-stop:nth-child(n + 4):nth-child(-n + 5) .concept-career-popover {
     right: auto;
     left: 50%;
-    transform: translate(-50%, -6px);
-  }
-
-  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):focus .concept-career-popover,
-  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):focus-within .concept-career-popover {
     transform: translateX(-50%);
   }
 
   .concept-career-stop:nth-child(n + 6) .concept-career-popover {
     right: 0;
     left: auto;
-    transform: translateY(-6px);
-  }
-
-  .concept-career-stop:nth-child(n + 6):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n + 6):focus .concept-career-popover,
-  .concept-career-stop:nth-child(n + 6):focus-within .concept-career-popover {
     transform: none;
   }
 }
@@ -8117,12 +8131,6 @@ button {
     right: auto;
     left: 0;
     width: 100%;
-    transform: translateY(-6px);
-  }
-
-  .concept-career-stop:nth-child(n):hover .concept-career-popover,
-  .concept-career-stop:nth-child(n):focus .concept-career-popover,
-  .concept-career-stop:nth-child(n):focus-within .concept-career-popover {
     transform: none;
   }
 }

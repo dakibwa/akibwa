@@ -17,9 +17,12 @@ publishing homepage changes.
 - Projects has its own serif chapter heading, matching Career and Taste
   Library. Its stable card system keeps three equal cards in a single row on a
   wide screen, Features takes the first full tablet row above two equal cards,
-  and phones use one full-width stack. Every card keeps its artwork above the
-  same bottom caption rail; there are no narrow side captions. The Portuguese
-  card uses a text-free conversation illustration; Trek uses a route-led
+  and phones use one compact, horizontally swipeable row with the next card
+  peeking into view. The selected project's shared detail sits immediately
+  beneath that row rather than after a three-card stack. Every card keeps its
+  artwork above the same bottom caption rail; there are no narrow side
+  captions. The Portuguese card uses a text-free conversation illustration;
+  Trek uses a route-led
   topographic illustration drawn from the live atlas; and Features uses a
   bright, image-led version of the game's board language: one compact wordmark,
   the colour rule, an energetic five-colour weave, crossings, neurons and
@@ -116,7 +119,9 @@ publishing homepage changes.
 - Career reveals are one continuous layout movement: its section smoothly
   increases its bottom space while the detail eases in, physically pushing the
   blue Taste Library rule down. The section remains open while the pointer
-  crosses the small gaps between career marks, so the rule never stutters.
+  crosses the small gaps between career marks, so the rule never stutters. The
+  detail itself stays spatially fixed and only fades; switching rapidly between
+  marks must not send multiple panels sliding around the row.
 - `prefers-reduced-motion: reduce` removes non-essential transitions while
   preserving the same information and focus states.
 

@@ -194,6 +194,8 @@ requireRuleText(".concept-project-card {", [
 ]);
 requireText(editorial, 'type="button"', "each project card must reveal detail instead of navigating immediately");
 requireText(editorial, 'aria-controls="project-detail"', "project cards must own the shared detail panel accessibly");
+requireText(editorial, 'className="concept-project-grid concept-project-swipe"', "Projects must expose one dedicated mobile swipe rail");
+requireText(editorial, 'aria-label="Project carousel"', "the mobile project rail must retain an accessible name");
 requireText(editorial, 'className={`concept-project-detail-shell${activeProject ? " is-open" : ""}`}', "Projects must expose one shared expanding detail panel");
 for (const action of ["Open features", "Open Português com a Inês", "Open The Trek"]) {
   requireText(editorial, `action: "${action}"`, `${action} must be the explicit destination action`);
@@ -205,6 +207,17 @@ requireRuleText(".concept-project-detail-shell {", [
 ]);
 requireRuleText(".concept-project-detail-shell.is-open {", ["grid-template-rows: 1fr"]);
 requireRuleText(".concept-project-detail {", ["border-top: 3px solid var(--project-detail-accent)"]);
+requireRuleText(".concept-project-swipe {", [
+  "grid-auto-flow: column",
+  "grid-auto-columns: min(88%, 460px)",
+  "overflow-x: auto",
+  "scroll-snap-type: inline mandatory"
+]);
+requireRuleText(".concept-project-swipe .concept-project-card {", [
+  "grid-column: auto",
+  "scroll-snap-align: start",
+  "scroll-snap-stop: always"
+]);
 requireRuleText(".concept-project-foot {", [
   "min-height: 50px",
   "background: var(--project-card-panel)",
@@ -407,10 +420,17 @@ requireText(
   ".concept-career-timeline:focus-within",
   "a focused career role must lock out competing hover detail"
 );
-requireRuleText(".concept-career-stop:hover .concept-career-popover,", [
-  "transition-duration: 220ms, 360ms",
-  "transition-delay: 70ms, 20ms"
-]);
+requireRuleText(".concept-career-popover {", ["transition: opacity 120ms ease"]);
+forbidText(
+  rule(".concept-career-popover {"),
+  "transform:",
+  "desktop Career details must fade in place rather than slide under the pointer"
+);
+forbidText(
+  rule(".concept-career-stop:hover .concept-career-popover,"),
+  "transition-delay",
+  "Career detail changes must not queue delayed hover motion"
+);
 requireText(
   css,
   ".concept-client-visual img,\n  .concept-career-section,\n  .concept-career-node,",

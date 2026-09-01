@@ -106,7 +106,9 @@ function ProjectShowcase() {
   return (
     <>
       <div
-        className="concept-project-grid"
+        className="concept-project-grid concept-project-swipe"
+        role="group"
+        aria-label="Project carousel"
         onMouseLeave={() => setPreviewProject(null)}
       >
         {projects.map((project) => {

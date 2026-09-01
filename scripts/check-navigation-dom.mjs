@@ -238,6 +238,9 @@ const pageState = () => evaluate(`(() => {
   };
   const wall = document.querySelector(".taste-wall");
   const legend = document.querySelector(".deck-legend");
+  const projectRail = document.querySelector(".concept-project-swipe");
+  const projectRects = [...document.querySelectorAll(".concept-project-card")]
+    .map((item) => item.getBoundingClientRect());
   const railItems = [...document.querySelectorAll(".taste-rail-item")];
   const railRect = wall?.getBoundingClientRect();
   const railItemRects = railItems.map((item) => item.getBoundingClientRect());
@@ -296,6 +299,15 @@ const pageState = () => evaluate(`(() => {
       imageWidth: item.querySelector("img")?.naturalWidth,
       currentSrc: item.querySelector("img")?.currentSrc
     })),
+    projectRail: {
+      rect: rect(projectRail),
+      clientWidth: projectRail?.clientWidth ?? 0,
+      scrollWidth: projectRail?.scrollWidth ?? 0,
+      scrollLeft: projectRail?.scrollLeft ?? 0,
+      overflowX: projectRail ? getComputedStyle(projectRail).overflowX : null,
+      snap: projectRail ? getComputedStyle(projectRail).scrollSnapType : null,
+      oneRow: projectRects.every((item) => Math.abs(item.top - projectRects[0].top) <= 1)
+    },
     projectDetail: (() => {
       const shell = document.querySelector(".concept-project-detail-shell");
       const action = shell?.querySelector(".concept-project-open");
@@ -464,7 +476,9 @@ const careerState = () => evaluate(`(() => {
     };
   });
   const first = stops[0];
-  const popovers = stops.map((stop) => stop.querySelector(".concept-career-popover").getBoundingClientRect());
+  const popoverElements = stops.map((stop) => stop.querySelector(".concept-career-popover"));
+  const popovers = popoverElements.map((popover) => popover.getBoundingClientRect());
+  const popoverStyles = popoverElements.map((popover) => getComputedStyle(popover));
   const cardBorders = stops.map((stop) =>
     getComputedStyle(stop.querySelector(".concept-career-card")).borderTopColor
   );
@@ -509,6 +523,9 @@ const careerState = () => evaluate(`(() => {
     sectionTransitionProperty: sectionStyle.transitionProperty,
     sectionTransitionDuration: sectionStyle.transitionDuration,
     sectionTransitionTiming: sectionStyle.transitionTimingFunction,
+    popoverTransforms: popoverStyles.map((style) => style.transform),
+    popoverTransitionProperties: popoverStyles.map((style) => style.transitionProperty),
+    popoverTops: popovers.map((popover) => popover.top),
     sectionAfterCards: section.bottom - Math.max(...cards.map((card) => card.bottom)),
     popoversContained: popovers.every((item) => item.left >= -0.5 && item.right <= innerWidth + 0.5),
     activePopoversContainedBySection: popovers.every((item, index) =>
@@ -1088,6 +1105,12 @@ const checkCareerTimeline = async () => {
   state = await careerState();
   const restingTasteTop = state.tasteTop;
   const restingSpace = state.sectionAfterCards;
+  const restingPopoverTops = state.popoverTops;
+  check(
+    state.popoverTransforms.every((value) => value === "none") &&
+      state.popoverTransitionProperties.every((value) => value === "opacity"),
+    "desktop Career details fade in place without spatial hover motion"
+  );
   await mouseMove(points.stops[1].x, points.stops[1].y);
   await sleep(90);
   const moving = await careerState();
@@ -1104,6 +1127,21 @@ const checkCareerTimeline = async () => {
   check(
     state.visibleNames.join() === "National Wealth Fund",
     `hover opens one role at rest [${state.visibleNames.join() || "none"}]`
+  );
+  check(
+    Math.abs(state.popoverTops[1] - restingPopoverTops[1]) <= 0.5,
+    "the active Career detail stays fixed while it appears"
+  );
+  await mouseMove(points.stops[0].x, points.stops[0].y);
+  await sleep(35);
+  await mouseMove(points.stops[1].x, points.stops[1].y);
+  await sleep(160);
+  const sweptState = await careerState();
+  check(
+    sweptState.visibleNames.join() === "National Wealth Fund" &&
+      Math.abs(sweptState.tasteTop - state.tasteTop) <= 1 &&
+      Math.abs(sweptState.popoverTops[1] - restingPopoverTops[1]) <= 0.5,
+    "rapid pointer changes keep one fixed Career detail and a settled blue rule"
   );
   await mouseMove(points.gap.x, points.gap.y);
   await sleep(120);
@@ -1260,12 +1298,13 @@ const checkMobile = async () => {
   );
   check(
     initial.projects.length === 3 &&
-      initial.projects[1].rect.top >= initial.projects[0].rect.bottom + 13 &&
-      initial.projects[2].rect.top >= initial.projects[1].rect.bottom + 13 &&
-      initial.projects.every((item) => Math.abs(item.rect.width - initial.projects[0].rect.width) <= 1) &&
-      Math.abs(initial.projects[0].rect.left - initial.projects[1].rect.left) <= 1 &&
-      Math.abs(initial.projects[1].rect.left - initial.projects[2].rect.left) <= 1,
-    `all three phone projects fill the shared content width [${initial.projects.map((item) => item.rect.width.toFixed(1)).join(" / ")}px]`
+      initial.projectRail.oneRow &&
+      initial.projectRail.overflowX === "auto" &&
+      initial.projectRail.snap === "inline mandatory" &&
+      initial.projectRail.scrollWidth > initial.projectRail.clientWidth * 2 &&
+      initial.projects.every((item) => item.rect.width >= initial.projectRail.clientWidth * 0.8) &&
+      initial.projects.every((item) => item.rect.width <= initial.projectRail.clientWidth * 0.9),
+    `all three phone projects form one swipeable snap row [${initial.projectRail.clientWidth} / ${initial.projectRail.scrollWidth}px]`
   );
   check(
     initial.projects.every((item) => item.titleRect.right + 8 <= item.subtitleRect.left) &&
@@ -1276,8 +1315,13 @@ const checkMobile = async () => {
     "every phone caption uses the full rail without overlap or clipping"
   );
   check(
-    !initial.standaloneFreelance && initial.careerSection.top >= initial.projects[2].rect.bottom + 40,
-    "the phone flows directly from the three Projects cards into Career"
+    initial.projects[0].rect.right < initial.projectRail.rect.right &&
+      initial.projects[1].rect.left < initial.projectRail.rect.right,
+    "the phone carousel shows the next project as its swipe cue"
+  );
+  check(
+    !initial.standaloneFreelance && initial.careerSection.top >= initial.projectRail.rect.bottom + 40,
+    "the phone flows directly from the compact Projects rail into Career"
   );
   const projectImageProtection = await evaluate(`(() => {
     const card = document.querySelector(".concept-feature");
@@ -1288,14 +1332,37 @@ const checkMobile = async () => {
     return {
       pointerEvents: style.pointerEvents,
       draggable: image.draggable,
-      enclosingLinkOwnsTap: hit === card || card.contains(hit)
+      enclosingCardOwnsTap: hit === card || card.contains(hit)
     };
   })()`);
   check(
     projectImageProtection.pointerEvents === "none" && !projectImageProtection.draggable,
     "project artwork cannot become a mobile image callout or drag target"
   );
-  check(projectImageProtection.enclosingLinkOwnsTap, "the project link still owns taps on its artwork");
+  check(projectImageProtection.enclosingCardOwnsTap, "the project card still owns taps on its artwork");
+  await clickAt(
+    initial.projects[0].rect.left + initial.projects[0].rect.width / 2,
+    initial.projects[0].rect.top + initial.projects[0].rect.height / 2
+  );
+  const openProject = await pollUntil(
+    pageState,
+    (value) => value.projectDetail.opacity > 0.99 && value.projectDetail.title === "features"
+  );
+  check(
+    openProject.projectDetail.rect.top >= openProject.projectRail.rect.bottom &&
+      openProject.projectDetail.rect.top <= openProject.projectRail.rect.bottom + 10,
+    `the selected project's information opens directly beneath the swipe row [${openProject.projectRail.rect.bottom.toFixed(1)} → ${openProject.projectDetail.rect.top.toFixed(1)}px]`
+  );
+  await pressEscape();
+  await pollUntil(pageState, (value) => value.projectDetail.opacity === 0);
+  await evaluate(`document.querySelector(".concept-project-swipe").scrollLeft = document.querySelector(".concept-project-swipe").scrollWidth`);
+  await sleep(100);
+  const scrolledProjects = await pageState();
+  check(
+    scrolledProjects.projectRail.scrollLeft > scrolledProjects.projectRail.clientWidth,
+    `the project row accepts horizontal swipe-equivalent scrolling [${scrolledProjects.projectRail.scrollLeft.toFixed(1)}px]`
+  );
+  check(scrolledProjects.overflow <= 1, "the project rail never widens the phone page");
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     document.querySelector("#taste").scrollIntoView({ block: "start" });
