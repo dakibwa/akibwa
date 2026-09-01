@@ -105,6 +105,10 @@ publishing homepage changes.
 - Motion is reserved for the identity cycle. Project links use an immediate,
   restrained caption-rail tint for feedback; they must not lift, tilt or add
   theatrical shadows to the project or taste wall.
+- Career reveals are one continuous layout movement: its section smoothly
+  increases its bottom space while the detail eases in, physically pushing the
+  blue Taste Library rule down. The section remains open while the pointer
+  crosses the small gaps between career marks, so the rule never stutters.
 - `prefers-reduced-motion: reduce` removes non-essential transitions while
   preserving the same information and focus states.
 

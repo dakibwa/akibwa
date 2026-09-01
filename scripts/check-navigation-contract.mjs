@@ -348,6 +348,20 @@ forbidText(deckData, '"mission":', "career data must not keep a separate mission
 forbidText(deckData, '"statement": "I ', "career statements must stay direct and verb-led");
 requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
 requireRuleText(".concept-career-stop {", ["grid-template-rows: 36px 68px"]);
+requireRuleText(".concept-career-section {", [
+  "--career-rest-space: clamp(56px, 4vw, 68px)",
+  "--career-open-space: 140px",
+  "transition: padding-bottom 340ms var(--ease-out)"
+]);
+requireRuleText(".concept-career-section:has(.concept-career-timeline:hover),", [
+  "padding-bottom: var(--career-open-space)",
+  "transition-duration: 480ms"
+]);
+forbidText(
+  css,
+  ".concept-career-section:has(.concept-career-stop:hover),",
+  "Career spacing must remain open while the pointer crosses gaps between roles"
+);
 forbidText(css, ".concept-career-time {", "retired resting career-date styling must stay removed");
 requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
 requireRuleText(
@@ -378,6 +392,15 @@ requireText(
   css,
   ".concept-career-timeline:focus-within",
   "a focused career role must lock out competing hover detail"
+);
+requireRuleText(".concept-career-stop:hover .concept-career-popover,", [
+  "transition-duration: 220ms, 360ms",
+  "transition-delay: 70ms, 20ms"
+]);
+requireText(
+  css,
+  ".concept-client-visual img,\n  .concept-career-section,\n  .concept-career-node,",
+  "reduced motion must remove the Career layout push"
 );
 requireText(css, "grid-template-rows: 36px 56px", "mobile career dots must keep their clearance lane");
 requireRuleText(

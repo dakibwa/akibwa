@@ -7450,14 +7450,18 @@ button {
 /* Career is a compact visual index at rest. Role, dates and the short
    action-to-purpose synopsis belong to the original hover/focus detail. */
 .concept-career-section {
+  --career-rest-space: clamp(56px, 4vw, 68px);
+  --career-open-space: 140px;
   position: relative;
-  padding: var(--concept-rule-gap) 0 clamp(56px, 4vw, 68px);
+  padding: var(--concept-rule-gap) 0 var(--career-rest-space);
+  transition: padding-bottom 340ms var(--ease-out);
 }
 
-.concept-career-section:has(.concept-career-stop:hover),
+.concept-career-section:has(.concept-career-timeline:hover),
 .concept-career-section:has(.concept-career-stop:focus),
 .concept-career-section:has(.concept-career-stop:focus-within) {
-  padding-bottom: 140px;
+  padding-bottom: var(--career-open-space);
+  transition-duration: 480ms;
 }
 
 .concept-career-head {
@@ -7597,8 +7601,10 @@ button {
   box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-4px);
-  transition: opacity 100ms ease, transform 100ms ease;
+  transform: translateY(-6px);
+  transition:
+    opacity 150ms ease,
+    transform 220ms var(--ease-out);
 }
 
 .concept-career-stop:nth-child(n + 4) .concept-career-popover {
@@ -7663,6 +7669,8 @@ button {
 .concept-career-stop:focus-within .concept-career-popover {
   opacity: 1;
   transform: none;
+  transition-duration: 220ms, 360ms;
+  transition-delay: 70ms, 20ms;
 }
 
 /* A click or keyboard focus locks the open detail. Pointer movement across the
@@ -7689,7 +7697,8 @@ button {
   .concept-career-stop:not(:focus):not(:focus-within):hover
   .concept-career-popover {
   opacity: 0;
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  transition-delay: 0ms;
 }
 
 .concept-career-stop:focus-visible .concept-career-card {
@@ -7717,7 +7726,7 @@ button {
 
 @media (max-width: 760px) {
   .concept-career-section {
-    padding-bottom: 60px;
+    --career-rest-space: 60px;
   }
 
   .concept-career-timeline {
@@ -7747,7 +7756,7 @@ button {
   .concept-career-stop:nth-child(n + 4):nth-child(-n + 5) .concept-career-popover {
     right: auto;
     left: 50%;
-    transform: translate(-50%, -4px);
+    transform: translate(-50%, -6px);
   }
 
   .concept-career-stop:nth-child(n + 4):nth-child(-n + 5):hover .concept-career-popover,
@@ -7759,7 +7768,7 @@ button {
   .concept-career-stop:nth-child(n + 6) .concept-career-popover {
     right: 0;
     left: auto;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
   }
 
   .concept-career-stop:nth-child(n + 6):hover .concept-career-popover,
@@ -7806,7 +7815,7 @@ button {
   }
 
   .concept-career-section {
-    padding: var(--concept-rule-gap) 0 48px;
+    --career-rest-space: 48px;
   }
 
   .concept-career-head {
@@ -7878,7 +7887,7 @@ button {
     right: auto;
     left: 0;
     width: 100%;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
   }
 
   .concept-career-stop:nth-child(n):hover .concept-career-popover,
@@ -7890,6 +7899,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .concept-client-visual img,
+  .concept-career-section,
   .concept-career-node,
   .concept-career-card,
   .concept-career-popover {
