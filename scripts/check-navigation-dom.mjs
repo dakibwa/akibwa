@@ -334,6 +334,18 @@ const pageState = () => evaluate(`(() => {
     }).length,
     artDirectedCards: visible.filter((card) => card.querySelector(".taste-visual__scene")).length,
     originalPrints: visible.filter((card) => card.querySelector(".taste-visual__original")).length,
+    artFillFailures: visible.filter((card) => {
+      const scene = card.querySelector(".taste-visual__scene");
+      if (!scene) return false;
+      const cardRect = card.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      const art = scene.querySelector("img");
+      return !art || getComputedStyle(art).objectFit !== "cover" ||
+        Math.abs(cardRect.left - sceneRect.left) > 1 ||
+        Math.abs(cardRect.right - sceneRect.right) > 1 ||
+        Math.abs(cardRect.top - sceneRect.top) > 1 ||
+        Math.abs(cardRect.bottom - sceneRect.bottom) > 1;
+    }).length,
     detailFailures: visible.filter((card) => {
       const info = card.querySelector(".card-info");
       return !info?.querySelector("strong")?.textContent.trim() ||
@@ -366,14 +378,20 @@ const trekProjectState = () => evaluate(`(() => {
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
   };
   const banner = document.querySelector(".akibwa-project-banner");
+  const rule = getComputedStyle(banner, "::after");
   return {
     visible: getComputedStyle(banner).display !== "none",
-    identity: banner.querySelector(".akibwa-project-banner__identity")?.textContent.trim(),
+    names: [...banner.querySelectorAll(".akibwa-project-banner__name")].map((item) => item.textContent.trim()),
+    nameAnimations: [...banner.querySelectorAll(".akibwa-project-banner__name")].map((item) => getComputedStyle(item).animationName),
     lede: banner.querySelector(".akibwa-project-banner__lede")?.textContent.trim(),
     ledeDisplay: getComputedStyle(banner.querySelector(".akibwa-project-banner__lede")).display,
     position: getComputedStyle(banner).position,
-    backText: banner.querySelector(".akibwa-project-banner__back")?.textContent.trim(),
-    backHref: banner.querySelector(".akibwa-project-banner__back")?.href,
+    nav: [...banner.querySelectorAll(".akibwa-project-banner__nav a")].map((item) => ({
+      text: item.textContent.trim(), href: item.href
+    })),
+    ruleHeight: parseFloat(rule.height),
+    ruleWidth: parseFloat(rule.width),
+    ruleColor: rule.backgroundColor,
     banner: rect(banner),
     masthead: rect(document.querySelector(".masthead")),
     statbar: rect(document.querySelector(".statbar")),
@@ -382,29 +400,45 @@ const trekProjectState = () => evaluate(`(() => {
   };
 })()`);
 
+const featuresProjectState = () => evaluate(`(() => {
+  const rect = (el) => {
+    const r = el.getBoundingClientRect();
+    return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+  };
+  const banner = document.querySelector(".akibwa-project-banner");
+  const veil = document.querySelector("#introveil");
+  veil.classList.add("show");
+  const panel = veil.querySelector(":scope > *");
+  return {
+    visible: getComputedStyle(banner).display !== "none",
+    banner: rect(banner),
+    veil: rect(veil),
+    panel: rect(panel),
+    hud: rect(document.querySelector(".hud")),
+    panelMaxHeight: getComputedStyle(panel).maxHeight,
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
+  };
+})()`);
+
 const careerState = () => evaluate(`(() => {
   const stops = [...document.querySelectorAll(".concept-career-stop")];
   const haloRadius = 12;
   const clearances = stops.map((stop) => {
-    const time = stop.querySelector(".concept-career-time").getBoundingClientRect();
     const node = stop.querySelector(".concept-career-node").getBoundingClientRect();
     const card = stop.querySelector(".concept-career-card").getBoundingClientRect();
     const center = node.top + node.height / 2;
     return {
-      above: (center - haloRadius) - time.bottom,
       below: card.top - (center + haloRadius)
     };
   });
   const first = stops[0];
   const popovers = stops.map((stop) => stop.querySelector(".concept-career-popover").getBoundingClientRect());
-  const dateLabels = stops.map((stop) => stop.querySelector(".concept-career-time").textContent.trim());
   const cardBorders = stops.map((stop) =>
     getComputedStyle(stop.querySelector(".concept-career-card")).borderTopColor
   );
   const cardBackgrounds = stops.map((stop) =>
     getComputedStyle(stop.querySelector(".concept-career-card")).backgroundColor
   );
-  const dateStyles = stops.map((stop) => getComputedStyle(stop.querySelector(".concept-career-time")));
   return {
     count: stops.length,
     complete: stops.every((stop) => {
@@ -429,23 +463,14 @@ const careerState = () => evaluate(`(() => {
     visibleNames: stops
       .filter((stop) => Number(getComputedStyle(stop.querySelector(".concept-career-popover")).opacity) > 0.99)
       .map((stop) => stop.querySelector(".concept-career-popover strong")?.textContent.trim()),
-    dateLabels: dateLabels.join(" / "),
+    restingDates: document.querySelectorAll(".concept-career-time").length,
+    popoverDateRanges: stops.map((stop) => stop.querySelector(".concept-career-popover > span")?.textContent.trim()),
     cardBorders,
     cardBackgrounds,
     distinctCardBorders: new Set(cardBorders).size,
     distinctCardBackgrounds: new Set(cardBackgrounds).size,
-    distinctDateColors: new Set(dateStyles.map((style) => style.color)).size,
-    datesBold: dateStyles.every((style) => Number(style.fontWeight) >= 700),
-    datesSingleLine: stops.every((stop) => {
-      const time = stop.querySelector(".concept-career-time");
-      const range = document.createRange();
-      range.selectNodeContents(time);
-      return range.getClientRects().length === 1 &&
-        range.getBoundingClientRect().width <= time.getBoundingClientRect().width + 0.5;
-    }),
     firstName: first?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     lastName: stops.at(-1)?.querySelector(".concept-career-popover strong")?.textContent.trim(),
-    minAbove: Math.min(...clearances.map((item) => item.above)),
     minBelow: Math.min(...clearances.map((item) => item.below)),
     popoversContained: popovers.every((item) => item.left >= -0.5 && item.right <= innerWidth + 0.5),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
@@ -606,11 +631,12 @@ const checkDesktop = async () => {
   check(state.bandFillFailures === 0, "every Taste band fills the complete wall width");
   check(state.blockFillFailures === 0, "every two-by-two quilt block fills all four cells");
   check(new Set(state.bandCounts).size === 1, `every Taste band keeps a complete block row [${state.bandCounts.join(" / ")}]`);
-  check(state.artDirectedCards > 0, `large film, game and TV cards use editorial art [${state.artDirectedCards}]`);
+  check(state.artDirectedCards === 30, `all visible film, game and TV cards use editorial art [${state.artDirectedCards}]`);
   check(
-    state.originalPrints === state.artDirectedCards,
-    `every editorial card retains its original identifying cover [${state.originalPrints}]`
+    state.originalPrints === 0,
+    `no inset poster boxes interrupt the editorial artwork [${state.originalPrints}]`
   );
+  check(state.artFillFailures === 0, `every editorial scene fills its whole card [${state.artFillFailures} failures]`);
   check(state.detailFailures === 0, "every Taste card has title followed by creator detail");
   check(state.focusableDetails === state.cards, "every Taste detail can also be reached by keyboard focus");
   check(state.playDetails > 0, `Last.fm play counts appear where they exist [${state.playDetails} visible]`);
@@ -782,13 +808,21 @@ const checkProjectView = async () => {
   await goto("/trek/?from=akibwa");
   state = await trekProjectState();
   check(state.visible, "the Trek page shows Akibwa's masthead when selected from Projects");
-  check(state.identity === "I’m Akibwa", `the selected-project identity stays concise [${state.identity}]`);
-  check(state.lede === "Building in the Intelligence Age.", `the project masthead keeps the proposition [${state.lede}]`);
-  check(state.position === "sticky", `the selected-project masthead remains pinned [${state.position}]`);
-  check(state.backText === "Back to projects", `the return action is plain text [${state.backText}]`);
+  check(state.names.join(" / ") === "Daniel / Akibwa", `the selected-project identity keeps both flick states [${state.names.join(" / ")}]`);
   check(
-    state.backHref === "https://akibwa.com/#projects",
-    `the return action targets the Projects section [${state.backHref}]`
+    state.nameAnimations.every((name) => name !== "none"),
+    `both selected-project names keep the homepage flick [${state.nameAnimations.join(" / ")}]`
+  );
+  check(state.lede === "Building in the age of AI.", `the project masthead keeps the exact proposition [${state.lede}]`);
+  check(state.position === "sticky", `the selected-project masthead remains pinned [${state.position}]`);
+  check(
+    state.nav.map((item) => `${item.text}:${item.href}`).join(" / ") ===
+      "Home:https://akibwa.com/ / Projects:https://akibwa.com/#projects / Career:https://akibwa.com/#career / Taste Library:https://akibwa.com/#taste",
+    `the project masthead keeps Home and the three homepage routes [${state.nav.map((item) => item.text).join(" / ")}]`
+  );
+  check(
+    state.ruleHeight === 4 && Math.abs(state.ruleWidth - state.banner.width) <= 1 && state.ruleColor !== "rgba(0, 0, 0, 0)",
+    `the green boundary spans the whole selected-project masthead [${state.ruleWidth.toFixed(1)}×${state.ruleHeight.toFixed(1)}px]`
   );
   check(
     Math.abs(state.banner.bottom - state.masthead.top) <= 1 &&
@@ -804,26 +838,53 @@ const checkProjectView = async () => {
   await setMobile();
   await goto("/trek/?from=akibwa");
   state = await trekProjectState();
-  check(state.visible && state.banner.height <= 88, `the phone masthead stays compact [${state.banner.height.toFixed(1)}px]`);
+  check(state.visible && state.banner.height <= 134, `the phone masthead stays compact [${state.banner.height.toFixed(1)}px]`);
   check(
-    state.backText === "Back to projects" && state.backHref === "https://akibwa.com/#projects",
-    "the phone project view keeps its explicit way back"
+    state.nav.map((item) => item.text).join(" / ") === "Home / Projects / Career / Taste Library",
+    "the phone project view keeps the complete homepage navigation"
   );
   check(state.overflow <= 1, `the phone project view has no horizontal overflow [${state.overflow}px]`);
 
-  await setDesktop(740, 390);
+  await setDesktop(872, 525);
   await goto("/trek/?from=akibwa");
   state = await trekProjectState();
   check(
     state.visible && state.banner.height <= 60 && state.ledeDisplay !== "none" &&
-      state.lede === "Building in the Intelligence Age.",
+      state.lede === "Building in the age of AI.",
     `the short landscape masthead keeps the proposition without growing tall [${state.banner.height.toFixed(1)}px, ${state.ledeDisplay}]`
   );
   check(state.overflow <= 1, `the landscape project view has no horizontal overflow [${state.overflow}px]`);
+
+  await goto("/features/?from=akibwa");
+  await sleep(280);
+  let features = await featuresProjectState();
+  check(features.visible, "Features shows the same Akibwa masthead when selected from Projects");
+  check(
+    Math.abs(features.veil.top - features.banner.bottom) <= 1,
+    `the Features menu layer begins below the banner [${features.veil.top.toFixed(1)} / ${features.banner.bottom.toFixed(1)}px]`
+  );
+  check(
+    features.panel.top >= features.banner.bottom && features.panel.bottom <= 525.5,
+    `the complete Features menu fits inside the landscape screen [${features.panel.top.toFixed(1)}–${features.panel.bottom.toFixed(1)}px]`
+  );
+  check(features.hud.bottom <= 525.5, `the game canvas fits the remaining landscape screen [${features.hud.bottom.toFixed(1)}px]`);
+  check(features.overflow <= 1, `the landscape Features view has no horizontal overflow [${features.overflow}px]`);
+
+  await setMobile();
+  await goto("/features/?from=akibwa");
+  await sleep(280);
+  features = await featuresProjectState();
+  check(
+    Math.abs(features.veil.top - features.banner.bottom) <= 1 &&
+      features.panel.top >= features.banner.bottom && features.panel.bottom <= 844.5,
+    `the complete Features menu fits below the phone masthead [${features.banner.bottom.toFixed(1)}–${features.panel.bottom.toFixed(1)}px]`
+  );
+  check(features.hud.bottom <= 844.5, `the game canvas fits the remaining phone screen [${features.hud.bottom.toFixed(1)}px]`);
+  check(features.overflow <= 1, `the phone Features view has no horizontal overflow [${features.overflow}px]`);
 };
 
 const checkCareerTimeline = async () => {
-  section("compact career detail and dot clearance");
+  section("compact career detail, hover dates and dot clearance");
   await setDesktop(1100, 760);
   await goto("/");
   let state = await careerState();
@@ -834,9 +895,10 @@ const checkCareerTimeline = async () => {
     state.firstName === "Freelance" && state.lastName === "Lloyds Banking Group",
     `career order runs from Freelance to Lloyds [${state.firstName} → ${state.lastName}]`
   );
+  check(state.restingDates === 0, `career dates stay out of the resting highlight [${state.restingDates}]`);
   check(
-    state.dateLabels === "Now / ’24–now / ’23–24 / ’22–23 / ’20–22 / 2020 / ’18–19 / ’16–17",
-    `the date rail uses quiet compact ranges [${state.dateLabels}]`
+    state.popoverDateRanges.every((text) => / · (Now|\d{4}( — (present|\d{4}))?)$/.test(text)),
+    `every hover synopsis retains its full date [${state.popoverDateRanges.join(" / ")}]`
   );
   check(
     state.distinctCardBorders === state.count,
@@ -846,8 +908,6 @@ const checkCareerTimeline = async () => {
     state.distinctCardBackgrounds === state.count,
     `every resting logo card carries its own quiet company-colour surface [${state.cardBackgrounds.join(" / ")}]`
   );
-  check(state.distinctDateColors === state.count && state.datesBold, "career dates use dark, semibold company-toned type");
-  check(state.datesSingleLine, "every desktop date stays on one line");
   check(state.popoverOpacity === 0, "career detail is hidden at rest");
   let points = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
@@ -874,7 +934,6 @@ const checkCareerTimeline = async () => {
     state.popoverOpacity > 0.99,
     `focus reveals the concise career detail [opacity ${state.popoverOpacity}; focus ${state.focusMatch}; within ${state.focusWithinMatch}; z ${state.zIndex}]`
   );
-  check(state.minAbove >= 5.5, `the halo clears every date [${state.minAbove.toFixed(1)}px]`);
   check(state.minBelow >= 5.5, `the halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
   check(state.popoversContained, "every desktop career popover stays inside the viewport");
   check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
@@ -899,7 +958,11 @@ const checkCareerTimeline = async () => {
   await goto("/");
   state = await careerState();
   check(state.complete && state.concise, "the phone timeline keeps the same short combined detail");
-  check(state.datesSingleLine, `every phone date stays on one line [${state.dateLabels}]`);
+  check(state.restingDates === 0, "phone career dates also stay inside the synopsis");
+  check(
+    state.popoverDateRanges.every((text) => / · (Now|\d{4}( — (present|\d{4}))?)$/.test(text)),
+    "phone hover and focus detail keeps every full date"
+  );
   check(state.popoverOpacity === 0, "phone career detail is hidden at rest");
   const point = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
@@ -915,7 +978,6 @@ const checkCareerTimeline = async () => {
     state.popoverOpacity > 0.99,
     `the phone timeline reveals the concise detail [opacity ${state.popoverOpacity}; focus ${state.focusMatch}; within ${state.focusWithinMatch}; z ${state.zIndex}]`
   );
-  check(state.minAbove >= 5.5, `the phone halo clears every date [${state.minAbove.toFixed(1)}px]`);
   check(state.minBelow >= 5.5, `the phone halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
   check(state.popoversContained, "every phone career popover stays inside the viewport");
   check(state.overflow <= 1, `the phone timeline has no horizontal overflow [${state.overflow}px]`);
