@@ -221,11 +221,10 @@ const pollUntil = async (probe, predicate, timeoutMs = 1200) => {
 
 const pageState = () => evaluate(`(() => {
   const cards = [...document.querySelectorAll(".deck .card")];
-  const isVisible = (card) => {
+  const visible = cards.filter((card) => {
     const style = getComputedStyle(card);
     return style.display !== "none" && card.getClientRects().length > 0;
-  };
-  const visible = cards.filter(isVisible);
+  });
   const rect = (el) => {
     const r = el.getBoundingClientRect();
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
@@ -238,10 +237,8 @@ const pageState = () => evaluate(`(() => {
   const wall = document.querySelector(".taste-wall");
   const bands = [...document.querySelectorAll(".taste-quilt-band")];
   const blocks = [...document.querySelectorAll(".taste-quilt-block")];
-  const quiltCards = [...document.querySelectorAll(".taste-wall .card")].filter(isVisible);
-  const finaleCards = [...document.querySelectorAll(".taste-finale .card")].filter(isVisible);
-  const cardWidths = quiltCards.map((card) => card.getBoundingClientRect().width);
-  const cardShapes = [...new Set(quiltCards.map((card) => {
+  const cardWidths = visible.map((card) => card.getBoundingClientRect().width);
+  const cardShapes = [...new Set(visible.map((card) => {
     const r = card.getBoundingClientRect();
     if (r.width > r.height * 1.35) return "wide";
     if (r.height > r.width * 1.35) return "tall";
@@ -303,9 +300,7 @@ const pageState = () => evaluate(`(() => {
     })),
     cards: cards.length,
     visible: visible.length,
-    quiltCards: quiltCards.length,
-    finaleCards: finaleCards.length,
-    finaleLabels: finaleCards.map((card) => card.getAttribute("aria-label")),
+    hasFinale: Boolean(document.querySelector(".taste-finale")),
     visibleKeys: [...new Set(visible.map((card) => card.dataset.key))],
     visibleCounts: Object.fromEntries(
       [...new Set(visible.map((card) => card.dataset.key))]
@@ -320,7 +315,7 @@ const pageState = () => evaluate(`(() => {
     sampleSmall: visible.some((card) => card.classList.contains("card--small"))
       ? rect(visible.find((card) => card.classList.contains("card--small"))) : null,
     cardShapes,
-    quiltScales: [...new Set(quiltCards.map((card) => card.dataset.quiltScale).filter(Boolean))],
+    quiltScales: [...new Set(visible.map((card) => card.dataset.quiltScale).filter(Boolean))],
     bandCounts: bands.map((band) => band.children.length),
     bandFillFailures: wall ? bands.filter((band) =>
       Math.abs(band.getBoundingClientRect().width - wall.getBoundingClientRect().width) > 1
@@ -363,7 +358,7 @@ const pageState = () => evaluate(`(() => {
     ).length,
     minCardWidth: cardWidths.length ? Math.min(...cardWidths) : 0,
     maxCardWidth: cardWidths.length ? Math.max(...cardWidths) : 0,
-    inViewport: quiltCards.filter((card) => {
+    inViewport: visible.filter((card) => {
       const r = card.getBoundingClientRect();
       return r.bottom > 0 && r.top < innerHeight;
     }).length,
@@ -375,40 +370,6 @@ const pageState = () => evaluate(`(() => {
       .map((item) => item.style.getPropertyValue("--handle-accent").trim()).join(" / "),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     hash: location.hash
-  };
-})()`);
-
-const tasteFinaleState = () => evaluate(`(() => {
-  const stage = document.querySelector(".taste-finale");
-  const pieces = [...stage.querySelectorAll(".taste-finale-piece")];
-  const cards = pieces.map((piece) => piece.querySelector(".card"));
-  const rect = (element) => {
-    const value = element.getBoundingClientRect();
-    return {
-      left: value.left,
-      right: value.right,
-      top: value.top,
-      bottom: value.bottom,
-      width: value.width,
-      height: value.height,
-      centre: value.left + value.width / 2
-    };
-  };
-  const line = getComputedStyle(stage, "::before");
-  return {
-    stage: rect(stage),
-    count: cards.length,
-    labels: cards.map((card) => card.getAttribute("aria-label")),
-    cards: cards.map(rect),
-    pieceOpacity: pieces.map((piece) => Number(getComputedStyle(piece).opacity)),
-    focusOpacity: pieces.map((piece) => Number(getComputedStyle(piece.querySelector(".taste-finale-piece__focus")).opacity)),
-    focusTransforms: pieces.map((piece) => getComputedStyle(piece.querySelector(".taste-finale-piece__focus")).transform),
-    detailOpacity: cards.map((card) => Number(getComputedStyle(card.querySelector(".card-info")).opacity)),
-    zIndexes: pieces.map((piece) => Number(getComputedStyle(piece).zIndex) || 0),
-    focusedIndex: cards.indexOf(document.activeElement),
-    lineHeight: Number.parseFloat(line.height),
-    lineColor: line.backgroundColor,
-    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 })()`);
 
@@ -650,12 +611,8 @@ const checkDesktop = async () => {
   );
   check(state.cards === 48, `the opening edit stays finite [${state.cards} cards]`);
   check(
-    state.quiltCards === 43 && state.finaleCards === 5,
-    `five real highlights move from the quilt to its closing shelf [${state.quiltCards} + ${state.finaleCards}]`
-  );
-  check(
-    state.finaleLabels.length === new Set(state.finaleLabels).size && state.finaleLabels.every(Boolean),
-    `the closing shelf keeps five distinct labelled references [${state.finaleLabels.join(" / ")}]`
+    !state.hasFinale,
+    "Taste ends with the complete quilt rather than a separate closing shelf"
   );
   check(
     [...state.visibleKeys].sort().join(" / ") === "films / games / music / podcasts / tv" &&
@@ -791,75 +748,6 @@ const checkTasteDetails = async () => {
   await evaluate(`document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card").focus()`);
   const focusedOpacity = await evaluate(`Number(getComputedStyle(document.activeElement.querySelector(".card-info")).opacity)`);
   check(focusedOpacity > 0.99, "keyboard focus reveals the same Taste detail");
-};
-
-const checkTasteFinale = async () => {
-  section("Taste closing shelf");
-  await setDesktop(1400, 900);
-  await goto("/");
-  await mouseMove(8, 8);
-  await evaluate(`(() => {
-    document.documentElement.style.scrollBehavior = "auto";
-    document.querySelector(".taste-finale").scrollIntoView({ block: "end" });
-  })()`);
-  await sleep(260);
-
-  const resting = await tasteFinaleState();
-  check(resting.count === 5, `five real references form the closing shelf [${resting.count}]`);
-  check(
-    resting.labels.length === new Set(resting.labels).size && resting.labels.every(Boolean),
-    `the closing shelf keeps distinct accessible references [${resting.labels.join(" / ")}]`
-  );
-  check(
-    resting.cards.every((card, index) => index === 0 || card.centre > resting.cards[index - 1].centre),
-    "the closing prints settle in one left-to-right sequence"
-  );
-  check(
-    Math.max(...resting.cards.map((card) => card.top)) - Math.min(...resting.cards.map((card) => card.top)) >= 24,
-    "the closing shelf keeps a loose editorial rhythm instead of another rigid row"
-  );
-  check(
-    Math.min(...resting.pieceOpacity) > 0.8,
-    `the view-led arrival resolves every print before the footer [${resting.pieceOpacity.join(" / ")}]`
-  );
-  check(resting.lineHeight === 1 && resting.lineColor !== "rgba(0, 0, 0, 0)", "one quiet line grounds the closing prints");
-  check(
-    resting.stage.left >= 0 && resting.stage.right <= 1401 && resting.overflow <= 1,
-    `the closing composition stays inside the desktop frame [${resting.overflow}px overflow]`
-  );
-
-  const chosen = resting.cards[2];
-  await mouseMove(chosen.centre, chosen.top + chosen.height / 2);
-  const hovered = await pollUntil(
-    tasteFinaleState,
-    (state) => state.detailOpacity[2] > 0.99 && state.focusOpacity.filter((_, index) => index !== 2).every((value) => value < 0.3),
-    1600
-  );
-  check(
-    hovered.focusTransforms[2] !== "none" && hovered.cards[2].top < resting.cards[2].top - 10,
-    "one hovered print comes forward without moving the packed quilt"
-  );
-  check(
-    hovered.detailOpacity[2] > 0.99 && hovered.focusOpacity.filter((_, index) => index !== 2).every((value) => value < 0.3),
-    "hover reveals its label while the other closing prints recede"
-  );
-
-  await mouseMove(8, 8);
-  await evaluate(`document.querySelectorAll(".taste-finale .card")[4].focus()`);
-  const focused = await pollUntil(
-    tasteFinaleState,
-    (state) => state.focusedIndex === 4 && state.detailOpacity[4] > 0.99 &&
-      state.focusOpacity.slice(0, 4).every((value) => value < 0.3),
-    1600
-  );
-  check(
-    focused.focusedIndex === 4 && focused.focusTransforms[4] !== "none" && focused.detailOpacity[4] > 0.99,
-    "keyboard focus brings forward the same print and detail"
-  );
-  check(
-    focused.focusOpacity.slice(0, 4).every((value) => value < 0.3),
-    "keyboard focus also lets the surrounding closing prints recede"
-  );
 };
 
 const checkHeroBreakpoint = async () => {
@@ -1139,10 +1027,6 @@ const checkFilters = async () => {
     state.bandFillFailures === 0 && state.blockFillFailures === 0 && state.bandCounts.length === 1,
     "the seven podcasts pack into one complete full-width quilt band"
   );
-  check(
-    state.quiltCards === 4 && state.finaleCards === 3,
-    `the short podcast shelf still resolves into a main band and closing trio [${state.quiltCards} + ${state.finaleCards}]`
-  );
 
   await pressEscape();
   await sleep(80);
@@ -1247,12 +1131,10 @@ const checkMobile = async () => {
     const footer = document.querySelector(".page-footer").getBoundingClientRect();
     const panel = document.querySelector(".page-footer-panel").getBoundingClientRect();
     const meta = document.querySelector(".page-footer-meta").getBoundingClientRect();
-    const finale = document.querySelector(".taste-finale").getBoundingClientRect();
     const handles = [...document.querySelectorAll(".page-footer-details a")]
       .map((item) => item.getBoundingClientRect());
     return {
       navHeight: nav.getBoundingClientRect().height,
-      finaleInside: finale.left >= 0 && finale.right <= innerWidth + 1,
       footerInside: footer.left >= 0 && footer.right <= innerWidth + 1 &&
         panel.left >= 0 && panel.right <= innerWidth + 1 &&
         meta.left >= 0 && meta.right <= innerWidth + 1,
@@ -1261,7 +1143,6 @@ const checkMobile = async () => {
     };
   })()`);
   check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
-  check(touch.finaleInside, "the closing shelf stays inside the mobile frame");
   check(touch.footerInside, "the handles-only footer stays inside the mobile frame");
   check(touch.handleCount === 3 && touch.handlesOneRow, "the three handles share one quiet mobile row");
 };
@@ -1273,27 +1154,17 @@ const checkReducedMotion = async () => {
   });
   await setDesktop();
   await goto("/");
-  const motion = await evaluate(`(() => {
+  const durations = await evaluate(`(() => {
     const selectors = [
       ".concept-project-foot",
       ".hero-name",
       ".hero-name-value"
     ];
-    const piece = getComputedStyle(document.querySelector(".taste-finale-piece"));
-    const focus = getComputedStyle(document.querySelector(".taste-finale-piece__focus"));
-    return {
-      transitions: [...selectors.map((selector) => getComputedStyle(document.querySelector(selector)).transitionDuration), focus.transitionDuration],
-      finaleAnimation: piece.animationName,
-      finaleOpacity: Number(piece.opacity)
-    };
+    return selectors.map((selector) => getComputedStyle(document.querySelector(selector)).transitionDuration);
   })()`);
   check(
-    motion.transitions.every((value) => value.split(",").every((part) => parseFloat(part) === 0)),
-    `editorial transitions are zero [${motion.transitions.join(" / ")}]`
-  );
-  check(
-    motion.finaleAnimation === "none" && motion.finaleOpacity === 1,
-    `the closing shelf rests fully visible without animation [${motion.finaleAnimation} / ${motion.finaleOpacity}]`
+    durations.every((value) => value.split(",").every((part) => parseFloat(part) === 0)),
+    `editorial transitions are zero [${durations.join(" / ")}]`
   );
   await cdp.send("Emulation.setEmulatedMedia", {
     features: [{ name: "prefers-reduced-motion", value: "" }]
@@ -1347,7 +1218,6 @@ const main = async () => {
     await checkProjectView();
     await checkLinkHover();
     await checkTasteDetails();
-    await checkTasteFinale();
     await checkCareerTimeline();
     await checkFilters();
     await checkMobile();

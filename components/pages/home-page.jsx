@@ -150,68 +150,9 @@ function quiltScale(count, layout, index) {
   return index === 2 ? "wide" : "small";
 }
 
-/* The final few references leave the packed quilt and settle onto a quiet
-   gallery line. This borrows the spatial idea of a visual library resolving
-   into one sparse row, while keeping every piece a real item from the current
-   filter rather than adding a decorative duplicate. */
-const TASTE_FINALE_MAX = 5;
-const TASTE_FINALE_POSES = [
-  { width: "78%", y: "18px", rotate: "-1.6deg", focusRotate: "1.6deg", ratio: "1 / 1" },
-  { width: "96%", y: "-6px", rotate: "1.1deg", focusRotate: "-1.1deg", ratio: "4 / 3" },
-  { width: "100%", y: "-28px", rotate: "-0.4deg", focusRotate: "0.4deg", ratio: "1 / 1" },
-  { width: "92%", y: "7px", rotate: "1.4deg", focusRotate: "-1.4deg", ratio: "3 / 2" },
-  { width: "76%", y: "20px", rotate: "-1.2deg", focusRotate: "1.2deg", ratio: "6 / 5" }
-];
-
-function TasteFinale({ cards }) {
-  if (!cards.length) return null;
-
-  const poseStart = Math.floor((TASTE_FINALE_POSES.length - cards.length) / 2);
-  const centre = (cards.length - 1) / 2;
-
-  return (
-    <div
-      className="taste-finale"
-      role="group"
-      aria-label="Taste Library closing shelf"
-      style={{ "--taste-finale-count": cards.length }}
-    >
-      {cards.map((card, index) => {
-        const pose = TASTE_FINALE_POSES[poseStart + index];
-        const distance = centre - index;
-        return (
-          <div
-            className="taste-finale-piece"
-            key={`taste-finale-${card.key ?? index}`}
-            style={{
-              "--taste-finale-width": pose.width,
-              "--taste-finale-y": pose.y,
-              "--taste-finale-rotate": pose.rotate,
-              "--taste-finale-focus-rotate": pose.focusRotate,
-              "--taste-finale-ratio": pose.ratio,
-              "--taste-finale-entry-x": `${distance * 112}%`,
-              "--taste-finale-entry-rotate": `${distance * -2.4}deg`
-            }}
-          >
-            <div className="taste-finale-piece__focus">
-              {cloneElement(card, { quiltScale: "finale" })}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function ResponsiveTasteQuilt({ cards }) {
   const wallRef = useRef(null);
   const [requestedBlocksPerBand, setRequestedBlocksPerBand] = useState(5);
-
-  const finaleCount = cards.length >= 7
-    ? Math.min(TASTE_FINALE_MAX, Math.max(3, Math.floor(cards.length / 2)))
-    : 0;
-  const quiltCards = finaleCount ? cards.slice(0, -finaleCount) : cards;
-  const finaleCards = finaleCount ? cards.slice(-finaleCount) : [];
 
   useEffect(() => {
     const wall = wallRef.current;
@@ -232,14 +173,14 @@ function ResponsiveTasteQuilt({ cards }) {
   }, []);
 
   const quilt = useMemo(
-    () => quiltBlockCounts(quiltCards.length, requestedBlocksPerBand),
-    [quiltCards.length, requestedBlocksPerBand]
+    () => quiltBlockCounts(cards.length, requestedBlocksPerBand),
+    [cards.length, requestedBlocksPerBand]
   );
 
   let cardCursor = 0;
   const blocks = quilt.counts.map((count, index) => {
     const layout = quiltLayout(count, index);
-    const blockCards = quiltCards.slice(cardCursor, cardCursor + count).map((card, cardIndex) =>
+    const blockCards = cards.slice(cardCursor, cardCursor + count).map((card, cardIndex) =>
       cloneElement(card, { quiltScale: quiltScale(count, layout, cardIndex) })
     );
     cardCursor += count;
@@ -252,28 +193,25 @@ function ResponsiveTasteQuilt({ cards }) {
   );
 
   return (
-    <>
-      <div className="taste-wall" ref={wallRef} data-blocks-per-band={quilt.blocksPerBand}>
-        {bands.map((band, bandIndex) => (
-          <div
-            className="taste-quilt-band"
-            key={`taste-band-${bandIndex}-${band.length}`}
-            style={{ "--taste-block-count": quilt.blocksPerBand }}
-          >
-            {band.map((block, blockIndex) => (
-              <div
-                className={`taste-quilt-block taste-quilt-block--${block.layout}`}
-                data-card-count={block.cards.length}
-                key={`taste-block-${bandIndex}-${blockIndex}-${block.cards.length}`}
-              >
-                {block.cards}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-      <TasteFinale cards={finaleCards} />
-    </>
+    <div className="taste-wall" ref={wallRef} data-blocks-per-band={quilt.blocksPerBand}>
+      {bands.map((band, bandIndex) => (
+        <div
+          className="taste-quilt-band"
+          key={`taste-band-${bandIndex}-${band.length}`}
+          style={{ "--taste-block-count": quilt.blocksPerBand }}
+        >
+          {band.map((block, blockIndex) => (
+            <div
+              className={`taste-quilt-block taste-quilt-block--${block.layout}`}
+              data-card-count={block.cards.length}
+              key={`taste-block-${bandIndex}-${blockIndex}-${block.cards.length}`}
+            >
+              {block.cards}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
 

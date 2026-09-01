@@ -83,10 +83,6 @@ publishing homepage changes.
   either one large card, two long cards, a long card with two small cards, or
   four small cards. The number of blocks responds to the viewport, so scale and
   proportion vary without a ragged final column or an empty cell.
-- The final three to five real cards leave the packed quilt and resolve onto a
-  sparse gallery line before the footer. They are held out of the quilt rather
-  than duplicated. Pointer or keyboard focus brings one print forward and lets
-  the others recede, while retaining the same title and creator detail.
 - Cards remain labelled visual objects, not false links. Hover or keyboard
   focus reveals title then creator; music adds Last.fm plays when available.
 - Film, game and television tiles use their title-specific editorial scenes
@@ -96,20 +92,16 @@ publishing homepage changes.
   undifferentiated wall of plain covers.
   The six plain filter words change the wall immediately and Escape returns to
   Highlights.
-- The shared footer remains visible after the closing shelf with only X,
-  Instagram and email, in their established colours.
+- The shared footer remains visible after the wall with only X, Instagram and
+  email, in their established colours.
 
 ## Motion
 
-- The identity cycle remains the only looping motion. Project links use an
-  immediate, restrained caption-rail tint for feedback; they must not lift,
-  tilt or add theatrical shadows.
-- Taste's one non-looping spatial moment belongs at the very end: the closing
-  prints settle from a loose stack onto their gallery line as they enter view,
-  then one print may come forward on hover or focus. The packed quilt itself
-  remains still.
-- `prefers-reduced-motion: reduce` shows the shelf in its final arrangement and
-  removes its movement while preserving the same information and focus states.
+- Motion is reserved for the identity cycle. Project links use an immediate,
+  restrained caption-rail tint for feedback; they must not lift, tilt or add
+  theatrical shadows to the project or taste wall.
+- `prefers-reduced-motion: reduce` removes non-essential transitions while
+  preserving the same information and focus states.
 
 ## Regression checks
 
@@ -118,5 +110,4 @@ publishing homepage changes.
   and the footer retain the approved structure.
 - `scripts/check-navigation-dom.mjs` verifies the rendered hierarchy, project
   links and restrained feedback, focus-revealed career detail, Taste filters,
-  closing-shelf composition and focus, compact mobile card density, footer
-  containment, overflow and reduced motion.
+  compact mobile card density, footer containment, overflow and reduced motion.

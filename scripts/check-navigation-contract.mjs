@@ -408,12 +408,9 @@ requireText(home, 'id: "podcasts", label: "Podcasts"', "Taste must expose the po
 requireText(home, 'label: "Highlights"', "Taste must open on a concise Highlights edit");
 requireText(home, "const TASTE_HIGHLIGHTS_PER_SECTION = 10", "each medium must contribute ten opening highlights");
 requireText(home, "function ResponsiveTasteQuilt", "Taste must rebuild its quilt with the available width");
-requireText(home, "quiltBlockCounts(quiltCards.length", "Taste must pack the main edit into complete two-by-two blocks");
+requireText(home, "quiltBlockCounts(cards.length", "Taste must pack every card into complete two-by-two blocks");
 requireText(home, "cloneElement(card, { quiltScale:", "Taste must assign card scale from its packed position");
-requireText(home, "const TASTE_FINALE_MAX = 5", "Taste must reserve at most five real cards for its closing shelf");
-requireText(home, "function TasteFinale", "Taste must keep a distinct closing-shelf composition");
-requireText(home, "cards.slice(-finaleCount)", "the closing shelf must use real cards held out of the quilt");
-requireText(home, '<TasteFinale cards={finaleCards} />', "the closing shelf must follow the packed quilt");
+forbidText(home, "TasteFinale", "Taste must end with the complete quilt rather than a separate closing shelf");
 requireText(home, "function TasteVisual", "film, game and TV cards must keep an art-directed visual treatment");
 requireText(home, 'slot="tasteArt"', "film, game and TV cards must use responsive editorial artwork at every scale");
 forbidText(home, "taste-visual__original", "Taste cards must not put inset poster covers over the artwork");
@@ -435,22 +432,7 @@ requireRuleText(".akibwa-home--taste .taste-quilt-block {", [
   "aspect-ratio: 1"
 ]);
 requireRuleText(".akibwa-home--taste .taste-quilt-block--hero .card {", ["grid-area: 1 / 1 / 3 / 3"]);
-requireRuleText(".akibwa-home--taste .taste-finale {", [
-  "repeat(var(--taste-finale-count), minmax(0, 1fr))",
-  "min-height: clamp(250px, 29vw, 410px)"
-]);
-requireRuleText(".akibwa-home--taste .taste-finale::before {", ["height: 1px", "background: var(--taste-finale-line)"]);
-requireRuleText(".akibwa-home--taste .taste-finale-piece:hover .taste-finale-piece__focus,", [
-  "scale(1.34)",
-  "rotate(var(--taste-finale-focus-rotate))"
-]);
-requireText(css, "@keyframes taste-finale-arrive", "the closing shelf must have one non-looping arrival");
-requireText(css, "animation-timeline: view()", "the closing shelf arrival must be driven by viewport progress");
-requireText(
-  css,
-  ".taste-finale:has(.taste-finale-piece:focus-within)",
-  "keyboard focus must let the other closing prints recede"
-);
+forbidText(css, ".taste-finale", "Taste must not retain closing-shelf styling");
 requireRuleText(".akibwa-home--taste .taste-visual__scene,", [
   "position: absolute",
   "inset: 0",
