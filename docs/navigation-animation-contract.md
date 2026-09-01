@@ -33,6 +33,15 @@ publishing homepage changes.
   clipping.
   There is no separate arrow or wordy call to action: the whole rail takes on
   a subtle project-colour tint on hover, keyboard focus and touch press.
+- Selecting a project replaces the portfolio rather than opening a card,
+  overlay or nested scrolling frame. The destination is the real Features,
+  Português com a Inês or Trek page with `?from=akibwa`; only that entry mode
+  adds the same compact “I’m Daniel” masthead above a green rule. Everything
+  below the rule belongs to the selected project, and a plain “Back to
+  projects” link returns to `/#projects`. Direct visits to any project remain
+  standalone. Português com a Inês owns its banner in its own repository;
+  Features owns its banner in the source game and republishes it here; Trek
+  owns it in `scripts/trek-page-template.html` and regenerates the public page.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.

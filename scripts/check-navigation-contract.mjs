@@ -16,6 +16,8 @@ const home = readFileSync(new URL("../components/pages/home-page.jsx", import.me
 const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 const siteImage = readFileSync(new URL("../components/site-image.jsx", import.meta.url), "utf8");
+const trekTemplate = readFileSync(new URL("./trek-page-template.html", import.meta.url), "utf8");
+const trekPublished = readFileSync(new URL("../public/trek/index.html", import.meta.url), "utf8");
 const electricalLogo = readFileSync(new URL("../public/brand-logos/electrical.svg", import.meta.url), "utf8");
 const joineryLogo = readFileSync(new URL("../public/brand-logos/joinery.svg", import.meta.url), "utf8");
 const imageVariants = JSON.parse(
@@ -114,7 +116,11 @@ requireText(
 
 /* Projects uses one card anatomy at every size: a wide three-card row, a
    two-row tablet composition, then one full-width phone stack. */
-requireText(editorial, 'href="/features/"', "Features must link directly to the game");
+requireText(
+  editorial,
+  'href="/features/?from=akibwa"',
+  "Features must enter the real game through Akibwa project view"
+);
 requireText(
   editorial,
   'src="/features/home-card-bright-v4.png"',
@@ -128,7 +134,11 @@ forbidText(
   'src="/project-art/personal/features-neural-threads.png"',
   "the generic neural-thread artwork must not return to the homepage"
 );
-requireText(editorial, 'href="/portugal/"', "Português com a Inês must be the second direct project link");
+requireText(
+  editorial,
+  'href="https://portuguesewithines.com/?from=akibwa"',
+  "Português com a Inês must enter its real site through Akibwa project view"
+);
 requireText(
   editorial,
   'src="/project-art/personal/portuguese-with-ines-conversation.png"',
@@ -136,7 +146,11 @@ requireText(
 );
 requireText(editorial, "Português com a Inês</strong>", "the Portuguese project must be visibly named");
 requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
-requireText(editorial, 'href="/trek/"', "The Trek must be the third direct project link");
+requireText(
+  editorial,
+  'href="/trek/?from=akibwa"',
+  "The Trek must enter the real journey through Akibwa project view"
+);
 requireText(
   editorial,
   'src="/project-art/personal/trek-paris-sofia-project.png"',
@@ -198,6 +212,17 @@ requireText(
 );
 forbidText(editorial, "concept-arrow", "project links must not show a separate arrow control");
 forbidText(css, ".concept-arrow", "the retired project arrow styling must stay removed");
+forbidText(editorial, "iframe", "project selection must not create a nested browsing frame");
+for (const [source, label] of [
+  [trekTemplate, "the Trek source template"],
+  [trekPublished, "the generated Trek page"]
+]) {
+  requireText(source, "data-akibwa-project", `${label} must support conditional project view`);
+  requireText(source, "I&rsquo;m <strong>Daniel</strong>", `${label} must retain the Akibwa identity`);
+  requireText(source, "Building in the age of AI.", `${label} must retain the Akibwa proposition`);
+  requireText(source, "Back to projects", `${label} must provide a deterministic return`);
+  requireText(source, "https://akibwa.com/#projects", `${label} must return to the Projects section`);
+}
 forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
 forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");
 forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed");

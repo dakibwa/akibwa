@@ -65,7 +65,7 @@ export function EditorialHomeConcept() {
           <a
             className="concept-project-card concept-feature"
             id="work"
-            href="/features/"
+            href="/features/?from=akibwa"
             aria-label="Play Features, the daily untangling puzzle"
           >
             <SiteImage
@@ -85,7 +85,7 @@ export function EditorialHomeConcept() {
 
           <a
             className="concept-project-card concept-portuguese"
-            href="/portugal/"
+            href="https://portuguesewithines.com/?from=akibwa"
             aria-label="Visit Português com a Inês, European Portuguese lessons in Porto and online"
           >
             <SiteImage
@@ -105,7 +105,7 @@ export function EditorialHomeConcept() {
 
           <a
             className="concept-project-card concept-trek"
-            href="/trek/"
+            href="/trek/?from=akibwa"
             aria-label="Explore The Trek, 1,982 kilometres on foot from Paris to Sofia"
           >
             <SiteImage
