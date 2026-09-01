@@ -190,30 +190,39 @@ requireRuleText(".concept-project-card {", [
   "grid-template-rows: auto auto",
   "overflow: clip",
   "border: 1px solid",
-  "appearance: none"
+  "text-decoration: none"
 ]);
-requireText(editorial, 'type="button"', "each project card must reveal detail instead of navigating immediately");
-requireText(editorial, 'aria-controls="project-detail"', "project cards must own the shared detail panel accessibly");
+/* Projects share the Career interaction (Dan, 1 Sep 2026): the card is the
+   link and hover or focus opens a small popover beneath it, in place of the
+   old shared bottom panel whose three-column text spread read badly. */
+requireText(editorial, 'className="concept-project-card"', "each project card must be one element");
+requireText(editorial, "href={project.href}", "each project card must be the link to its destination");
+requireText(editorial, 'className="concept-project-popover"', "each project must carry its own Career-style popover");
 requireText(editorial, 'className="concept-project-grid concept-project-swipe"', "Projects must expose one dedicated mobile swipe rail");
-requireText(editorial, 'aria-label="Project carousel"', "the mobile project rail must retain an accessible name");
-requireText(editorial, 'className={`concept-project-detail-shell${activeProject ? " is-open" : ""}`}', "Projects must expose one shared expanding detail panel");
+requireText(editorial, 'aria-label="Projects"', "the project list must retain an accessible name");
+forbidText(editorial, "concept-project-detail-shell", "the retired shared project detail panel must stay removed");
+forbidText(css, ".concept-project-detail", "the retired shared project detail styling must stay removed");
 for (const action of ["Open features", "Open Português com a Inês", "Open The Trek"]) {
   requireText(editorial, `action: "${action}"`, `${action} must be the explicit destination action`);
 }
-requireRuleText(".concept-project-detail-shell {", [
-  "grid-template-rows: 0fr",
-  "transition:",
-  "grid-template-rows 340ms var(--ease-out)"
+requireRuleText(".concept-project-stop {", ["position: relative", "display: grid"]);
+requireRuleText(".concept-project-popover {", [
+  "position: absolute",
+  "top: calc(100% + 9px)",
+  "border-top: 3px solid var(--project-card-accent)",
+  "opacity: 0",
+  "pointer-events: none",
+  "transition: opacity 120ms ease"
 ]);
-requireRuleText(".concept-project-detail-shell.is-open {", ["grid-template-rows: 1fr"]);
-requireRuleText(".concept-project-detail {", ["border-top: 3px solid var(--project-detail-accent)"]);
+requireRuleText(".concept-project-stop:hover .concept-project-popover,", ["opacity: 1"]);
+requireRuleText(".concept-projects:has(.concept-project-grid:hover),", ["padding-bottom: var(--projects-open-space)"]);
 requireRuleText(".concept-project-swipe {", [
   "grid-auto-flow: column",
   "grid-auto-columns: min(88%, 460px)",
   "overflow-x: auto",
   "scroll-snap-type: inline mandatory"
 ]);
-requireRuleText(".concept-project-swipe .concept-project-card {", [
+requireRuleText(".concept-project-swipe .concept-project-stop {", [
   "grid-column: auto",
   "scroll-snap-align: start",
   "scroll-snap-stop: always"
@@ -288,9 +297,10 @@ requireRuleText(".concept-feature {", [
   "--project-card-panel: #e2ece7",
   "--project-card-ink: #163e36",
   "--project-card-muted: #4d7067",
-  "border-color: #205b4f"
+  "--project-card-border: #205b4f"
 ]);
-requireRuleText(".concept-trek {", ["--project-card-accent: #d96b32", "--project-card-panel: #f2efe7"]);
+requireRuleText(".concept-trek {", ["--project-card-panel: #f2efe7", "--project-card-border: #1e3027"]);
+requireText(editorial, 'accent: "#d96b32"', "The Trek must keep its orange accent");
 requireText(
   css,
   "@media (max-width: 1050px)",
@@ -479,11 +489,25 @@ forbidText(home, "taste-visual__original", "Taste cards must not put inset poste
 requireText(home, 'className="card-info"', "Taste cards must expose title and creator detail");
 requireText(home, 'type="button"', "Taste covers must be real disclosure buttons");
 requireText(home, 'aria-label={accessibleLabel}', "Taste disclosure buttons must retain their computed accessible names");
-requireText(home, 'aria-controls="taste-detail"', "Taste covers must control the shared detail panel");
-requireText(home, 'className={`taste-detail-shell${activeTaste ? " is-open" : ""}`}', "Taste must expose one shared expanding detail panel");
-requireRuleText(".taste-detail-shell {", ["grid-template-rows: 0fr", "grid-template-rows 340ms var(--ease-out)"]);
-requireRuleText(".taste-detail-shell.is-open {", ["grid-template-rows: 1fr"]);
-requireRuleText(".taste-detail {", ["border-top: 3px solid var(--concept-archive)"]);
+requireText(home, 'aria-controls="taste-detail"', "Taste covers must control the shared popover");
+/* The Taste detail is the Career popover (Dan, 1 Sep 2026), placed beneath the
+   hovered cover from a sibling shell because the rail clips its own overflow.
+   The old expanding bottom bar animated badly and spread its text across the
+   whole row. */
+requireText(home, 'className={`taste-popover${active ? " is-open" : ""}`}', "Taste must expose one shared popover");
+requireText(home, 'className="taste-rail-shell"', "the Taste popover must be positioned from a shell around the rail");
+requireText(home, "onScroll={onDismiss}", "scrolling the rail must dismiss the popover rather than let it drift");
+forbidText(home, "taste-detail-shell", "the retired expanding Taste bar must stay removed");
+forbidText(css, ".taste-detail", "the retired expanding Taste bar styling must stay removed");
+requireRuleText(".taste-popover {", [
+  "position: absolute",
+  "left: clamp(0px, var(--taste-anchor-x, 0px), calc(100% - var(--taste-popover-width)))",
+  "border-top: 3px solid var(--concept-archive)",
+  "opacity: 0",
+  "pointer-events: none",
+  "transition: opacity 120ms ease"
+]);
+requireRuleText(".taste-popover.is-open {", ["opacity: 1"]);
 requireText(home, "plays on Last.fm", "music detail must include a Last.fm count when one exists");
 requireRuleText(".akibwa-home .deck .card {", [
   "aspect-ratio: 1",

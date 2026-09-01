@@ -18,8 +18,8 @@ publishing homepage changes.
   Library. Its stable card system keeps three equal cards in a single row on a
   wide screen, Features takes the first full tablet row above two equal cards,
   and phones use one compact, horizontally swipeable row with the next card
-  peeking into view. The selected project's shared detail sits immediately
-  beneath that row rather than after a three-card stack. Every card keeps its
+  peeking into view, each card carrying its description as a plain caption
+  because there is no pointer to hover with. Every card keeps its
   artwork above the same bottom caption rail; there are no narrow side
   captions. The Portuguese card uses a text-free conversation illustration;
   Trek uses a route-led
@@ -36,11 +36,16 @@ publishing homepage changes.
   clipping.
   There is no arrow on the resting card: the whole rail takes on a subtle
   project-colour tint on hover, keyboard focus and touch press.
-- Hover and keyboard focus preview one short project detail beneath the three
-  cards; click or tap locks it. The panel expands inside Projects and therefore
-  pushes the rose Career rule down. It names the kind of project, adds one
-  concise explanatory sentence and provides the sole explicit open button.
-  Escape clears a locked panel. Only that button replaces the portfolio with
+- Each project card is the link to its destination, and hover or keyboard
+  focus opens the Career popover beneath it (Dan, 1 Sep 2026: the same hover
+  style as Career, replacing the shared bottom panel whose title, sentence and
+  button were spread across three columns). The popover hangs 9px under the
+  card, spans the card's width up to 360px, fades in over 120ms without moving
+  anything else, and names the kind of project, one concise explanatory
+  sentence and the open cue. The section grows its bottom space while a
+  popover is open so the rose Career rule steps down instead of being covered.
+  The Trek's popover aligns to its right edge so it never leaves the grid.
+  Clicking the card replaces the portfolio with
   the real Features, Português com a Inês or Trek page with `?from=akibwa`;
   only that entry mode
   adds a compact version of the real homepage masthead: the Daniel/Akibwa
@@ -94,15 +99,21 @@ publishing homepage changes.
   touch screens and keeps a subtle coloured scrollbar as its desktop cue. A
   category change returns the new list to its first item.
 - Cards are disclosure buttons rather than false destination links. Hover or
-  keyboard focus previews title then creator both on the cover and in one
-  compact panel beneath the rail; click or tap locks that detail, and Escape
-  clears it. Music adds Last.fm plays when available.
+  keyboard focus rings the cover in its key colour and opens the Career popover
+  beneath it with kind, title, creator and, for music, the Last.fm play count;
+  click or tap locks that detail, and Escape clears it. The rail clips its own
+  overflow, so the popover lives in a shell around the rail and is placed from
+  the measured cover, clamped inside the rail's edges; it keeps the last
+  cover's text while it fades, and scrolling the rail dismisses it rather than
+  letting it drift away from its cover. (1 Sep 2026: this replaced an expanding
+  bottom bar whose height animation misfired and whose text spread across the
+  whole row.)
 - The short filter row sizes itself to its words and sits directly above the
   rail; it must not inherit a card-height grid row or leave a blank shelf.
 - Film, game and television tiles use their title-specific editorial scenes
-  edge-to-edge at every scale. The consistent hover label carries title and
-  creator, so commercial poster boxes, grey margins and text-heavy cover insets
-  do not interrupt the wall. They must not regress to generic symbols or an
+  edge-to-edge at every scale. The popover carries title and creator, so
+  commercial poster boxes, grey margins and text-heavy cover insets do not
+  interrupt the wall. They must not regress to generic symbols or an
   undifferentiated wall of plain covers.
   The six plain filter words change the rail immediately and Escape returns to
   Highlights.
@@ -114,8 +125,9 @@ publishing homepage changes.
 - Motion is reserved for the identity cycle and the three shared layout
   reveals. Project cards use an immediate, restrained caption-rail tint for
   feedback; neither project nor Taste cards lift, tilt or add theatrical
-  shadows. Their detail panels use the same continuous height change as
-  Career, with the selected chapter's rule colour carried into the panel.
+  shadows. Their popovers are the Career popover — spatially fixed, a 120ms
+  fade, the chapter's rule colour on the top edge — and only the section's
+  bottom space moves, on Career's timing, to make room.
 - Career reveals are one continuous layout movement: its section smoothly
   increases its bottom space while the detail eases in, physically pushing the
   blue Taste Library rule down. The section remains open while the pointer

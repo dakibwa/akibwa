@@ -6324,9 +6324,15 @@ button {
 /* Taste is a compact native scroll rail. Its small square covers echo the
    Career index above while horizontal overflow keeps the full archive one
    gesture away without turning the homepage into a second long page. */
-.akibwa-home--taste .taste-wall {
+.akibwa-home--taste .taste-rail-shell {
   --taste-rail-size: clamp(104px, 9.2vw, 136px);
+  --taste-popover-width: min(280px, calc(100vw - 32px));
+  position: relative;
   grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.akibwa-home--taste .taste-wall {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: var(--taste-rail-size);
@@ -6475,10 +6481,13 @@ button {
   line-height: 1.15;
 }
 
-.akibwa-home--taste .taste-wall .card:hover .card-info,
-.akibwa-home--taste .taste-wall .card:focus .card-info,
-.akibwa-home--taste .taste-wall .card.is-selected .card-info {
-  opacity: 1;
+/* Identification moved into the popover beneath the rail, so the cover itself
+   answers hover the way a Career mark does: a ring in its own key colour
+   rather than small type laid over the artwork. */
+.akibwa-home--taste .taste-wall .card:hover,
+.akibwa-home--taste .taste-wall .card:focus {
+  outline: 2px solid color-mix(in srgb, rgb(var(--key-rgb)) 72%, var(--canvas));
+  outline-offset: 2px;
 }
 
 .akibwa-home--taste .taste-wall .card:focus-visible {
@@ -6493,76 +6502,81 @@ button {
   outline-offset: 2px;
 }
 
-/* A cover can now open the same kind of quiet, page-moving detail used by
-   Career and Projects. The horizontal rail stays untouched; the reveal grows
-   underneath it, so there is still only one compact archive row. */
-.taste-detail-shell {
-  grid-column: 1 / -1;
+/* A cover opens the Career popover: a small card beneath the cover under the
+   pointer, faded in over 120ms, nothing else on the page moving except the
+   section's bottom space. The rail clips its overflow, so the popover sits in
+   the rail shell and is placed from the measured cover; its left edge is kept
+   inside the shell so the last covers on the row do not push it off the page. */
+.taste-popover {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: clamp(0px, var(--taste-anchor-x, 0px), calc(100% - var(--taste-popover-width)));
+  z-index: 20;
   display: grid;
-  width: 100%;
-  grid-template-rows: 0fr;
-  margin-top: 0;
+  width: var(--taste-popover-width);
+  gap: 4px;
+  padding: 13px 14px 14px;
+  border: 1px solid color-mix(in srgb, var(--concept-archive) 44%, var(--line-strong));
+  border-top: 3px solid var(--concept-archive);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
+  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
   opacity: 0;
-  transition:
-    grid-template-rows 340ms var(--ease-out),
-    margin-top 340ms var(--ease-out),
-    opacity 150ms ease;
+  pointer-events: none;
+  transition: opacity 120ms ease;
 }
 
-.taste-detail-shell.is-open {
-  grid-template-rows: 1fr;
-  margin-top: clamp(4px, 0.6vw, 8px);
+.taste-popover.is-open {
   opacity: 1;
 }
 
-.taste-detail-clip {
-  min-height: 0;
-  overflow: hidden;
-}
-
-.taste-detail {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1.4fr) minmax(0, 1fr) auto;
-  gap: clamp(8px, 1.2vw, 18px);
-  align-items: baseline;
-  min-height: 58px;
-  padding: 13px 14px 14px;
-  border: 1px solid color-mix(in srgb, var(--concept-archive) 40%, var(--line));
-  border-top: 3px solid var(--concept-archive);
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--concept-archive) 6%, var(--canvas));
-}
-
-.taste-detail-kind {
+.taste-popover-kind {
   color: color-mix(in srgb, var(--concept-archive) 70%, var(--ink));
   font-size: 0.65rem;
   font-weight: 700;
+  line-height: 1.2;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.taste-detail > strong {
+.taste-popover > strong {
   min-width: 0;
   color: var(--black);
   font-family: var(--serif);
-  font-size: clamp(1rem, 1.5vw, 1.28rem);
+  font-size: 1.12rem;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.025em;
 }
 
-.taste-detail > span:not(.taste-detail-kind),
-.taste-detail > small {
+.taste-popover > span:not(.taste-popover-kind) {
   min-width: 0;
   color: color-mix(in srgb, var(--ink) 68%, var(--canvas));
   font-size: 0.72rem;
   line-height: 1.3;
 }
 
-.taste-detail > small {
-  justify-self: end;
+.taste-popover > small {
+  margin-top: 5px;
   color: color-mix(in srgb, var(--concept-archive) 72%, var(--ink));
+  font-size: 0.68rem;
   font-weight: 650;
+  line-height: 1.3;
+}
+
+/* Like Career, the section grows while a popover is open so the page's end
+   steps down beneath it instead of the card hanging past the last rule. */
+.concept-archive {
+  --taste-rest-space: 0px;
+  --taste-open-space: 96px;
+  padding-bottom: var(--taste-rest-space);
+  transition: padding-bottom 340ms var(--ease-out);
+}
+
+.concept-archive:has(.taste-wall:hover),
+.concept-archive:has(.taste-popover.is-open) {
+  padding-bottom: var(--taste-open-space);
+  transition-duration: 480ms;
 }
 
 .akibwa-home .deck .c-mark {
@@ -6844,7 +6858,20 @@ button {
 }
 
 .concept-projects {
-  padding: var(--concept-rule-gap) 0 clamp(48px, 6vw, 82px);
+  --projects-rest-space: clamp(48px, 6vw, 82px);
+  --projects-open-space: clamp(190px, 14vw, 206px);
+  position: relative;
+  padding: var(--concept-rule-gap) 0 var(--projects-rest-space);
+  transition: padding-bottom 340ms var(--ease-out);
+}
+
+/* Hover or focus opens a project popover beneath its card. As in Career the
+   section grows to make room, so the rose rule steps down rather than being
+   covered. */
+.concept-projects:has(.concept-project-grid:hover),
+.concept-projects:has(.concept-project-card:focus-visible) {
+  padding-bottom: var(--projects-open-space);
+  transition-duration: 480ms;
 }
 
 .concept-projects-head {
@@ -6858,24 +6885,35 @@ button {
   align-items: stretch;
 }
 
-.concept-project-card {
+.concept-project-stop {
   --project-card-accent: var(--concept-work);
   --project-card-panel: var(--concept-dark);
   --project-card-ink: #f7f5ed;
   --project-card-muted: rgba(247, 245, 237, 0.62);
+  --project-card-border: rgba(12, 17, 19, 0.72);
+  position: relative;
+  display: grid;
+  min-width: 0;
+}
+
+.concept-project-stop:hover,
+.concept-project-stop:focus-within {
+  z-index: 30;
+}
+
+.concept-project-card {
   display: grid;
   min-width: 0;
   grid-template-rows: auto auto;
   align-content: start;
   overflow: clip;
-  border: 1px solid rgba(12, 17, 19, 0.72);
+  border: 1px solid var(--project-card-border);
   border-radius: 4px;
   background: var(--project-card-panel);
   color: var(--project-card-ink);
-  appearance: none;
-  padding: 0;
   font: inherit;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -6883,23 +6921,21 @@ button {
   --project-card-panel: #e2ece7;
   --project-card-ink: #163e36;
   --project-card-muted: #4d7067;
-  border-color: #205b4f;
+  --project-card-border: #205b4f;
 }
 
 .concept-portuguese {
-  --project-card-accent: #7faaff;
   --project-card-panel: #f2efe7;
   --project-card-ink: #173b72;
   --project-card-muted: rgba(23, 59, 114, 0.62);
-  border-color: #173b72;
+  --project-card-border: #173b72;
 }
 
 .concept-trek {
-  --project-card-accent: #d96b32;
   --project-card-panel: #f2efe7;
   --project-card-ink: #253a30;
   --project-card-muted: rgba(37, 58, 48, 0.62);
-  border-color: #1e3027;
+  --project-card-border: #1e3027;
 }
 
 .concept-project-card picture,
@@ -6957,8 +6993,7 @@ button {
 
 .concept-project-card:hover .concept-project-foot,
 .concept-project-card:focus-visible .concept-project-foot,
-.concept-project-card:active .concept-project-foot,
-.concept-project-card.is-active .concept-project-foot {
+.concept-project-card:active .concept-project-foot {
   background: color-mix(
     in srgb,
     var(--project-card-accent) 18%,
@@ -6966,46 +7001,41 @@ button {
   );
 }
 
-/* Hover and focus preview a project; click or tap locks it. The detail grows
-   inside Projects so the rose Career rule physically moves down with it. */
-.concept-project-detail-shell {
+/* The project popover is the Career popover, sized for a card: it hangs from
+   the card's bottom edge, fades in over 120ms, and never moves anything else.
+   It is presentational — the card itself is the link — so pointer events pass
+   straight through it to whatever sits beneath. */
+.concept-project-popover {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  z-index: 20;
   display: grid;
-  grid-template-rows: 0fr;
-  margin-top: 0;
+  width: min(100%, 360px);
+  gap: 4px;
+  padding: 14px 15px 15px;
+  border: 1px solid color-mix(in srgb, var(--project-card-accent) 44%, var(--line-strong));
+  border-top: 3px solid var(--project-card-accent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
+  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
   opacity: 0;
-  transition:
-    grid-template-rows 340ms var(--ease-out),
-    margin-top 340ms var(--ease-out),
-    opacity 150ms ease;
+  pointer-events: none;
+  transition: opacity 120ms ease;
 }
 
-.concept-project-detail-shell.is-open {
-  grid-template-rows: 1fr;
-  margin-top: clamp(14px, 1.8vw, 24px);
+.concept-project-stop:last-child .concept-project-popover {
+  right: 0;
+  left: auto;
+}
+
+.concept-project-stop:hover .concept-project-popover,
+.concept-project-stop:focus-within .concept-project-popover {
   opacity: 1;
 }
 
-.concept-project-detail-clip {
-  min-height: 0;
-  overflow: hidden;
-}
-
-.concept-project-detail {
-  display: grid;
-  grid-template-columns: minmax(150px, 0.62fr) minmax(260px, 1.45fr) auto;
-  gap: clamp(18px, 3vw, 46px);
-  align-items: end;
-  padding: clamp(17px, 2vw, 24px);
-  border: 1px solid color-mix(in srgb, var(--project-detail-accent) 46%, var(--line));
-  border-top: 3px solid var(--project-detail-accent);
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--project-detail-accent) 6%, var(--canvas));
-}
-
-.concept-project-detail-kind {
-  display: block;
-  margin-bottom: 7px;
-  color: color-mix(in srgb, var(--project-detail-accent) 76%, var(--ink));
+.concept-project-popover-kind {
+  color: color-mix(in srgb, var(--project-card-accent) 76%, var(--ink));
   font-size: 0.65rem;
   font-weight: 710;
   line-height: 1.2;
@@ -7013,50 +7043,34 @@ button {
   text-transform: uppercase;
 }
 
-.concept-project-detail h3 {
-  margin: 0;
+.concept-project-popover > strong {
   color: var(--black);
   font-family: var(--serif);
-  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-size: 1.22rem;
   font-weight: 560;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
 }
 
-.concept-project-detail p {
-  max-width: 58ch;
-  margin: 0;
+.concept-project-popover p {
+  max-width: 44ch;
+  margin: 7px 0 0;
   color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
   font-family: var(--serif);
-  font-size: clamp(0.86rem, 1.1vw, 1rem);
-  line-height: 1.42;
+  font-size: 0.82rem;
+  line-height: 1.4;
 }
 
-.concept-project-open {
+.concept-project-popover-open {
   display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65em;
-  padding: 10px 13px;
-  border: 1px solid color-mix(in srgb, var(--project-detail-accent) 72%, var(--ink));
-  border-radius: 3px;
-  background: var(--project-detail-accent);
-  color: #fff;
-  font-size: 0.74rem;
+  align-items: baseline;
+  gap: 0.45em;
+  margin-top: 9px;
+  color: color-mix(in srgb, var(--project-card-accent) 80%, var(--ink));
+  font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.2;
-  white-space: nowrap;
-}
-
-.concept-project-open:hover,
-.concept-project-open:focus-visible {
-  background: color-mix(in srgb, var(--project-detail-accent) 86%, var(--black));
-}
-
-.concept-project-open:focus-visible {
-  outline: 2px solid var(--project-detail-accent);
-  outline-offset: 3px;
+  letter-spacing: 0.01em;
 }
 
 .concept-kicker {
@@ -7310,19 +7324,6 @@ button {
     width: 100%;
   }
 
-  .concept-project-detail {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .concept-project-detail p {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  .concept-project-open {
-    grid-column: 2;
-    grid-row: 1;
-  }
 }
 
 @media (max-width: 560px) {
@@ -7361,23 +7362,6 @@ button {
     min-height: 46px;
     padding: 8px 9px 9px;
     font-size: 0.69rem;
-  }
-
-  .concept-project-detail {
-    grid-template-columns: 1fr;
-    gap: 13px;
-    align-items: start;
-    padding: 15px;
-  }
-
-  .concept-project-detail p,
-  .concept-project-open {
-    grid-column: 1;
-    grid-row: auto;
-  }
-
-  .concept-project-open {
-    width: 100%;
   }
 
   .concept-text-link {
@@ -7955,7 +7939,7 @@ button {
     display: none;
   }
 
-  .concept-project-swipe .concept-project-card {
+  .concept-project-swipe .concept-project-stop {
     grid-column: auto;
     justify-self: stretch;
     width: auto;
@@ -7963,8 +7947,24 @@ button {
     scroll-snap-stop: always;
   }
 
-  .concept-project-detail-shell.is-open {
+  /* The swipe rail clips overflow, so the popover cannot hang beneath a card
+     on phones. Each card carries its description as a plain caption instead;
+     hover has nothing to add where there is no pointer to hover with. */
+  .concept-projects {
+    --projects-open-space: var(--projects-rest-space);
+  }
+
+  .concept-project-popover {
+    position: static;
+    width: auto;
     margin-top: 8px;
+    box-shadow: none;
+    opacity: 1;
+    transition: none;
+  }
+
+  .concept-project-popover-open {
+    display: none;
   }
 
   .concept-career-section {
@@ -8072,19 +8072,6 @@ button {
     gap: 0.35em 0.72em;
   }
 
-  .taste-detail {
-    grid-template-columns: max-content minmax(0, 1fr);
-    gap: 6px 12px;
-  }
-
-  .taste-detail > span:not(.taste-detail-kind),
-  .taste-detail > small {
-    grid-column: 2;
-  }
-
-  .taste-detail > small {
-    justify-self: start;
-  }
 }
 
 /* The horizontal index still fits every supported phone. This is only a
@@ -8141,8 +8128,10 @@ button {
   .concept-career-node,
   .concept-career-card,
   .concept-career-popover,
-  .concept-project-detail-shell,
-  .taste-detail-shell {
+  .concept-projects,
+  .concept-project-popover,
+  .concept-archive,
+  .taste-popover {
     transition: none;
   }
 }

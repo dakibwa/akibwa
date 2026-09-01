@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { deck } from "@/components/deck-data";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
@@ -86,88 +85,51 @@ function CareerStatement({ statement, emphasis }) {
   );
 }
 
+/* Projects use the Career interaction: the card is the link, and hover or
+   focus opens a small popover beneath it with the kind, the description and
+   the open cue. Nothing else on the page moves except the section's bottom
+   space, which the CSS grows so the rose Career rule steps down with it. */
 function ProjectShowcase() {
-  const [previewProject, setPreviewProject] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const activeProject = selectedProject ?? previewProject;
-
-  useEffect(() => {
-    if (!selectedProject) return undefined;
-    const close = (event) => {
-      if (event.key === "Escape") {
-        setSelectedProject(null);
-        setPreviewProject(null);
-      }
-    };
-    document.addEventListener("keydown", close);
-    return () => document.removeEventListener("keydown", close);
-  }, [selectedProject]);
-
   return (
-    <>
-      <div
-        className="concept-project-grid concept-project-swipe"
-        role="group"
-        aria-label="Project carousel"
-        onMouseLeave={() => setPreviewProject(null)}
-      >
-        {projects.map((project) => {
-          const active = activeProject?.id === project.id;
-          return (
-            <button
-              className={`concept-project-card ${project.className}${active ? " is-active" : ""}`}
-              id={project.id === "features" ? "work" : undefined}
-              key={project.id}
-              type="button"
-              aria-label={`Find out more about ${project.title}`}
-              aria-controls="project-detail"
-              aria-expanded={active}
-              onMouseEnter={() => setPreviewProject(project)}
-              onFocus={() => setPreviewProject(project)}
-              onBlur={() => setPreviewProject(null)}
-              onClick={() => setSelectedProject(project)}
-            >
-              <SiteImage
-                src={project.src}
-                slot="conceptProject"
-                alt={project.alt}
-                above={project.above}
-                aboveSync={project.aboveSync}
-              />
-              <span className="concept-project-foot">
-                <span className="concept-project-label">
-                  <strong>{project.title}</strong>
-                  <span>{project.subtitle}</span>
-                </span>
+    <div className="concept-project-grid concept-project-swipe" role="list" aria-label="Projects">
+      {projects.map((project) => (
+        <div
+          className={`concept-project-stop ${project.className}`}
+          role="listitem"
+          key={project.id}
+          style={{ "--project-card-accent": project.accent }}
+        >
+          <a
+            className="concept-project-card"
+            id={project.id === "features" ? "work" : undefined}
+            href={project.href}
+            aria-label={`${project.title}, ${project.kind.toLowerCase()}. ${project.description}`}
+          >
+            <SiteImage
+              src={project.src}
+              slot="conceptProject"
+              alt={project.alt}
+              above={project.above}
+              aboveSync={project.aboveSync}
+            />
+            <span className="concept-project-foot">
+              <span className="concept-project-label">
+                <strong>{project.title}</strong>
+                <span>{project.subtitle}</span>
               </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div
-        className={`concept-project-detail-shell${activeProject ? " is-open" : ""}`}
-        id="project-detail"
-        aria-hidden={!activeProject}
-        style={{ "--project-detail-accent": activeProject?.accent }}
-      >
-        <div className="concept-project-detail-clip">
-          {activeProject ? (
-            <div className="concept-project-detail">
-              <div>
-                <span className="concept-project-detail-kind">{activeProject.kind}</span>
-                <h3>{activeProject.title}</h3>
-              </div>
-              <p>{activeProject.description}</p>
-              <a className="concept-project-open" href={activeProject.href}>
-                {activeProject.action}
-                <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-          ) : null}
+            </span>
+          </a>
+          <div className="concept-project-popover" aria-hidden="true">
+            <span className="concept-project-popover-kind">{project.kind}</span>
+            <strong>{project.title}</strong>
+            <p>{project.description}</p>
+            <span className="concept-project-popover-open">
+              {project.action} <span>↗</span>
+            </span>
+          </div>
         </div>
-      </div>
-    </>
+      ))}
+    </div>
   );
 }
 

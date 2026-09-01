@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
@@ -92,10 +92,10 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
         aria-label={accessibleLabel}
         aria-expanded={selected}
         aria-controls="taste-detail"
-        onMouseEnter={() => onPreview(detail)}
-        onFocus={() => onPreview(detail)}
+        onMouseEnter={(event) => onPreview(detail, event.currentTarget)}
+        onFocus={(event) => onPreview(detail, event.currentTarget)}
         onBlur={() => onPreview(null)}
-        onClick={() => onSelect(detail)}
+        onClick={(event) => onSelect(detail, event.currentTarget)}
       >
         {content}
       </button>
@@ -111,28 +111,66 @@ function Card({ suit, keySet, ground, accent, crop, href, label, title, creator,
 
 /* Taste behaves like the Career index: one compact visual row rather than a
    second page-length composition. Native horizontal overflow keeps the rail
-   directly swipeable, while a filter change returns its new list to the start. */
-function HorizontalTasteRail({ cards, activeId, label, onPreview }) {
+   directly swipeable, while a filter change returns its new list to the start.
+
+   The detail is the Career popover: a small card that hangs beneath the cover
+   under the pointer and fades in over 120ms. The rail clips its own overflow,
+   so the popover lives in a sibling shell and is placed by measuring the
+   cover; it keeps the last cover's text while it fades, and any rail scroll
+   dismisses it rather than letting it drift away from its cover. */
+function HorizontalTasteRail({ cards, activeId, label, active, onPreview, onDismiss }) {
   const railRef = useRef(null);
+  const shellRef = useRef(null);
+  const [shown, setShown] = useState(null);
+  const [anchor, setAnchor] = useState({ x: 0, width: 0 });
 
   useEffect(() => {
     railRef.current?.scrollTo({ left: 0, behavior: "auto" });
   }, [activeId]);
 
+  useLayoutEffect(() => {
+    if (!active) return;
+    setShown(active);
+    const shell = shellRef.current;
+    const cover = active.element;
+    if (!shell || !cover?.isConnected) return;
+    const shellBox = shell.getBoundingClientRect();
+    const coverBox = cover.getBoundingClientRect();
+    setAnchor({ x: coverBox.left - shellBox.left, width: coverBox.width });
+  }, [active]);
+
   return (
-    <div
-      className="taste-wall"
-      ref={railRef}
-      role="list"
-      aria-label={`${label} taste list`}
-      data-card-count={cards.length}
-      onMouseLeave={() => onPreview(null)}
-    >
-      {cards.map((card, index) => (
-        <div className="taste-rail-item" role="listitem" key={card.key ?? `taste-${index}`}>
-          {card}
-        </div>
-      ))}
+    <div className="taste-rail-shell" ref={shellRef}>
+      <div
+        className="taste-wall"
+        ref={railRef}
+        role="list"
+        aria-label={`${label} taste list`}
+        data-card-count={cards.length}
+        onMouseLeave={() => onPreview(null)}
+        onScroll={onDismiss}
+      >
+        {cards.map((card, index) => (
+          <div className="taste-rail-item" role="listitem" key={card.key ?? `taste-${index}`}>
+            {card}
+          </div>
+        ))}
+      </div>
+      <div
+        className={`taste-popover${active ? " is-open" : ""}`}
+        id="taste-detail"
+        aria-hidden="true"
+        style={{ "--taste-anchor-x": `${anchor.x}px`, "--taste-anchor-w": `${anchor.width}px` }}
+      >
+        {shown ? (
+          <>
+            <span className="taste-popover-kind">{shown.kind}</span>
+            <strong>{shown.title}</strong>
+            <span>{shown.creator}</span>
+            {shown.meta ? <small>{shown.meta}</small> : null}
+          </>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -272,8 +310,15 @@ export function HomePage({ tasteOnly = false }) {
   }, [activeId, legend, selectFilter, selectedTaste]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
-  const selectTaste = useCallback((detail) => {
-    setSelectedTaste((current) => current?.id === detail.id ? current : detail);
+  const previewTasteAt = useCallback((detail, element) => {
+    setPreviewTaste(detail ? { ...detail, element } : null);
+  }, []);
+  const selectTaste = useCallback((detail, element) => {
+    setSelectedTaste((current) => (current?.id === detail.id ? current : { ...detail, element }));
+  }, []);
+  const dismissTaste = useCallback(() => {
+    setPreviewTaste(null);
+    setSelectedTaste(null);
   }, []);
   const activeTaste = selectedTaste ?? previewTaste;
   const tasteDetails = (id, kind, title, creator, meta) =>
@@ -283,7 +328,7 @@ export function HomePage({ tasteOnly = false }) {
           creator,
           meta,
           detail: { id, kind, title, creator, meta },
-          onPreview: setPreviewTaste,
+          onPreview: previewTasteAt,
           onSelect: selectTaste,
           selected: selectedTaste?.id === id
         }
@@ -635,30 +680,14 @@ export function HomePage({ tasteOnly = false }) {
         </div>
 
         {tasteOnly ? (
-          <>
-            <HorizontalTasteRail
-              cards={wall}
-              activeId={activeId}
-              label={activeFilter.label}
-              onPreview={setPreviewTaste}
-            />
-            <div
-              className={`taste-detail-shell${activeTaste ? " is-open" : ""}`}
-              id="taste-detail"
-              aria-hidden={!activeTaste}
-            >
-              <div className="taste-detail-clip">
-                {activeTaste ? (
-                  <div className="taste-detail">
-                    <span className="taste-detail-kind">{activeTaste.kind}</span>
-                    <strong>{activeTaste.title}</strong>
-                    <span>{activeTaste.creator}</span>
-                    {activeTaste.meta ? <small>{activeTaste.meta}</small> : null}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </>
+          <HorizontalTasteRail
+            cards={wall}
+            activeId={activeId}
+            label={activeFilter.label}
+            active={activeTaste}
+            onPreview={previewTasteAt}
+            onDismiss={dismissTaste}
+          />
         ) : wall}
       </div>
 

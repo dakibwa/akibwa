@@ -278,9 +278,18 @@ const pageState = () => evaluate(`(() => {
       text: item.innerText.replace(/\\s+/g, " ").trim(),
       href: item.getAttribute("href"),
       tagName: item.tagName,
-      controls: item.getAttribute("aria-controls"),
-      expanded: item.getAttribute("aria-expanded"),
+      label: item.getAttribute("aria-label"),
       rect: rect(item),
+      popover: (() => {
+        const popover = item.parentElement.querySelector(".concept-project-popover");
+        return {
+          rect: rect(popover),
+          opacity: popover ? Number(getComputedStyle(popover).opacity) : -1,
+          position: popover ? getComputedStyle(popover).position : null,
+          title: popover?.querySelector("strong")?.textContent.trim() ?? null,
+          action: popover?.querySelector(".concept-project-popover-open")?.textContent.replace(/\\s+/g, " ").trim() ?? null
+        };
+      })(),
       imageRect: rect(item.querySelector("img")),
       footRect: rect(item.querySelector(".concept-project-foot")),
       labelRect: rect(item.querySelector(".concept-project-label")),
@@ -308,18 +317,6 @@ const pageState = () => evaluate(`(() => {
       snap: projectRail ? getComputedStyle(projectRail).scrollSnapType : null,
       oneRow: projectRects.every((item) => Math.abs(item.top - projectRects[0].top) <= 1)
     },
-    projectDetail: (() => {
-      const shell = document.querySelector(".concept-project-detail-shell");
-      const action = shell?.querySelector(".concept-project-open");
-      return {
-        rect: rect(shell),
-        opacity: shell ? Number(getComputedStyle(shell).opacity) : -1,
-        hidden: shell?.getAttribute("aria-hidden"),
-        title: shell?.querySelector("h3")?.textContent.trim() ?? null,
-        action: action?.textContent.replace(/\\s+/g, " ").trim() ?? null,
-        actionHref: action?.getAttribute("href") ?? null
-      };
-    })(),
     standaloneFreelance: Boolean(document.querySelector(".concept-freelance")),
     careerSection: rect(document.querySelector(".concept-career-section")),
     career: [...document.querySelectorAll(".concept-career-stop")].map((item) => ({
@@ -580,10 +577,12 @@ const checkDesktop = async () => {
     `Projects, Career and Taste use one chapter-heading system [${state.chapterHeadings.map((item) => item.text).join(" / ")}]`
   );
   check(
-    state.projects.every((item) =>
-      item.tagName === "BUTTON" && item.controls === "project-detail" && item.expanded === "false"
-    ),
-    "the three project cards are accessible disclosure controls at rest"
+    state.projects.every((item) => item.tagName === "A" && item.href && item.label?.includes(item.text.split(" ")[0])),
+    "the three project cards are links whose accessible name carries the popover description"
+  );
+  check(
+    state.projects.every((item) => item.popover.opacity === 0 && item.popover.position === "absolute"),
+    "every project popover hangs hidden beneath its card at rest"
   );
   check(
     state.projects[0].text.startsWith("features ") &&
@@ -734,30 +733,41 @@ const checkDesktop = async () => {
 };
 
 const checkLinkHover = async () => {
-  section("project reveal and explicit open action");
+  section("project popover and link");
   await setDesktop();
   await goto("/");
   const before = await evaluate(`(() => {
-    const link = document.querySelector(".concept-feature");
+    const link = document.querySelector(".concept-feature .concept-project-card");
     link.scrollIntoView({ block: "center" });
     const r = link.getBoundingClientRect();
+    const popover = document.querySelector(".concept-feature .concept-project-popover");
     return {
       x: r.left + r.width / 2,
       y: r.top + r.height / 2,
+      cardBottom: r.bottom,
       footBackground: getComputedStyle(link.querySelector(".concept-project-foot")).backgroundColor,
       footColor: getComputedStyle(link.querySelector(".concept-project-foot")).color,
       footTransition: getComputedStyle(link.querySelector(".concept-project-foot")).transitionDuration,
       transform: getComputedStyle(link).transform,
       shadow: getComputedStyle(link).boxShadow,
       careerTop: document.querySelector(".concept-career-section").getBoundingClientRect().top,
-      detailOpacity: Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity)
+      popoverOpacity: Number(getComputedStyle(popover).opacity),
+      popoverTransition: getComputedStyle(popover).transitionDuration,
+      careerPopoverTransition: getComputedStyle(document.querySelector(".concept-career-popover")).transitionDuration
     };
   })()`);
   check(parseFloat(before.footTransition) === 0, "the Features caption rail has no animated transition");
+  check(before.popoverOpacity === 0, "the Features popover is hidden at rest");
+  check(
+    before.popoverTransition === before.careerPopoverTransition,
+    `project popovers fade on the Career popover's timing [${before.popoverTransition} / ${before.careerPopoverTransition}]`
+  );
   await mouseMove(before.x, before.y);
   const hovered = await pollUntil(
     () => evaluate(`(() => {
-      const link = document.querySelector(".concept-feature");
+      const link = document.querySelector(".concept-feature .concept-project-card");
+      const popover = document.querySelector(".concept-feature .concept-project-popover");
+      const r = popover.getBoundingClientRect();
       return {
         footBackground: getComputedStyle(link.querySelector(".concept-project-foot")).backgroundColor,
         footColor: getComputedStyle(link.querySelector(".concept-project-foot")).color,
@@ -765,13 +775,19 @@ const checkLinkHover = async () => {
         transform: getComputedStyle(link).transform,
         shadow: getComputedStyle(link).boxShadow,
         careerTop: document.querySelector(".concept-career-section").getBoundingClientRect().top,
-        detailOpacity: Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity),
-        detailTitle: document.querySelector(".concept-project-detail h3")?.textContent.trim(),
-        action: document.querySelector(".concept-project-open")?.textContent.replace(/\\s+/g, " ").trim(),
-        actionHref: document.querySelector(".concept-project-open")?.getAttribute("href")
+        popoverOpacity: Number(getComputedStyle(popover).opacity),
+        popoverTop: r.top,
+        popoverBottom: r.bottom,
+        popoverLeft: r.left,
+        cardLeft: link.getBoundingClientRect().left,
+        cardBottom: link.getBoundingClientRect().bottom,
+        title: popover.querySelector("strong")?.textContent.trim(),
+        kind: popover.querySelector(".concept-project-popover-kind")?.textContent.trim(),
+        action: popover.querySelector(".concept-project-popover-open")?.textContent.replace(/\\s+/g, " ").trim(),
+        href: link.getAttribute("href")
       };
     })()`),
-    (value) => value.footBackground !== before.footBackground && value.detailOpacity > 0.99
+    (value) => value.footBackground !== before.footBackground && value.popoverOpacity > 0.99
   );
   check(
     hovered.footBackground !== before.footBackground &&
@@ -782,53 +798,66 @@ const checkLinkHover = async () => {
   check(hovered.transform === "none", "hover does not tilt, lift, or scale the feature");
   check(hovered.shadow === "none", "hover does not add a theatrical shadow");
   check(
-    hovered.detailTitle === "features" && hovered.action === "Open features↗" &&
-      hovered.actionHref === "/features/?from=akibwa",
-    `hover previews Features with its explicit open action [${hovered.detailTitle} / ${hovered.action}]`
+    hovered.title === "features" && hovered.kind === "Daily game" && hovered.action === "Open features ↗" &&
+      hovered.href === "/features/?from=akibwa",
+    `hover opens the Features popover and the card links to the game [${hovered.kind} / ${hovered.title} / ${hovered.action} / ${hovered.href}]`
   );
   check(
-    hovered.careerTop > before.careerTop + 60,
-    `the project reveal moves the rose Career rule down [${before.careerTop.toFixed(1)} → ${hovered.careerTop.toFixed(1)}px]`
+    hovered.popoverTop >= hovered.cardBottom + 6 && hovered.popoverTop <= hovered.cardBottom + 14 &&
+      Math.abs(hovered.popoverLeft - hovered.cardLeft) <= 1,
+    `the popover hangs from the hovered card like a Career detail [${hovered.cardBottom.toFixed(1)} → ${hovered.popoverTop.toFixed(1)}px]`
   );
-
-  await clickAt(before.x, before.y);
-  await mouseMove(1200, 40);
-  let locked = await pollUntil(
-    () => evaluate(`(() => ({
-      expanded: document.querySelector(".concept-feature").getAttribute("aria-expanded"),
-      opacity: Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity),
-      title: document.querySelector(".concept-project-detail h3")?.textContent.trim()
-    }))()`),
-    (value) => value.expanded === "true" && value.opacity > 0.99
+  check(
+    hovered.careerTop > before.careerTop + 60 && hovered.careerTop >= hovered.popoverBottom,
+    `the open popover moves the rose Career rule down and stays above it [${before.careerTop.toFixed(1)} → ${hovered.careerTop.toFixed(1)}px, popover ends ${hovered.popoverBottom.toFixed(1)}px]`
   );
-  check(locked.title === "features", "click locks the Features detail after the pointer leaves");
 
   const projects = [
-    [".concept-portuguese", "Português com a Inês", "Open Português com a Inês↗", "https://portuguesewithines.com/?from=akibwa"],
-    [".concept-trek", "The Trek", "Open The Trek↗", "/trek/?from=akibwa"]
+    [".concept-portuguese", "Português com a Inês", "Open Português com a Inês ↗", "https://portuguesewithines.com/?from=akibwa"],
+    [".concept-trek", "The Trek", "Open The Trek ↗", "/trek/?from=akibwa"]
   ];
   for (const [selector, title, action, href] of projects) {
-    await evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
-    locked = await pollUntil(
-      () => evaluate(`(() => ({
-        title: document.querySelector(".concept-project-detail h3")?.textContent.trim(),
-        action: document.querySelector(".concept-project-open")?.textContent.replace(/\\s+/g, " ").trim(),
-        href: document.querySelector(".concept-project-open")?.getAttribute("href")
-      }))()`),
-      (value) => value.title === title
+    const target = await evaluate(`(() => {
+      const r = document.querySelector(${JSON.stringify(selector)} + " .concept-project-card").getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2, right: r.right };
+    })()`);
+    await mouseMove(target.x, target.y);
+    const open = await pollUntil(
+      () => evaluate(`(() => {
+        const stop = document.querySelector(${JSON.stringify(selector)});
+        const popover = stop.querySelector(".concept-project-popover");
+        return {
+          opacity: Number(getComputedStyle(popover).opacity),
+          right: popover.getBoundingClientRect().right,
+          title: popover.querySelector("strong")?.textContent.trim(),
+          action: popover.querySelector(".concept-project-popover-open")?.textContent.replace(/\\s+/g, " ").trim(),
+          href: stop.querySelector(".concept-project-card").getAttribute("href"),
+          othersOpen: [...document.querySelectorAll(".concept-project-popover")]
+            .filter((item) => item !== popover && Number(getComputedStyle(item).opacity) > 0).length
+        };
+      })()`),
+      (value) => value.opacity > 0.99 && value.othersOpen === 0
     );
     check(
-      locked.title === title && locked.action === action && locked.href === href,
-      `${title} reveals the correct open action without navigating`
+      open.title === title && open.action === action && open.href === href,
+      `${title} opens its own popover and links to its destination`
     );
+    check(open.right <= target.right + 1, `${title}'s popover never runs past its card's right edge`);
   }
 
-  await pressEscape();
+  await mouseMove(1200, 40);
   const settled = await pollUntil(
-    () => evaluate(`Number(getComputedStyle(document.querySelector(".concept-project-detail-shell")).opacity)`),
-    (opacity) => opacity === 0
+    () => evaluate(`[...document.querySelectorAll(".concept-project-popover")].map((item) => Number(getComputedStyle(item).opacity)).join(",")`),
+    (value) => value === "0,0,0"
   );
-  check(settled === 0, "Escape clears the locked project detail");
+  check(settled === "0,0,0", "leaving the project row closes every popover");
+
+  await evaluate(`document.querySelector(".concept-feature .concept-project-card").focus()`);
+  const focused = await pollUntil(
+    () => evaluate(`Number(getComputedStyle(document.querySelector(".concept-feature .concept-project-popover")).opacity)`),
+    (opacity) => opacity > 0.99
+  );
+  check(focused > 0.99, "keyboard focus opens the same project popover");
 };
 
 const checkTasteDetails = async () => {
@@ -843,41 +872,60 @@ const checkTasteDetails = async () => {
     card.scrollIntoView({ block: "center" });
     const info = card.querySelector(".card-info");
     const rect = card.getBoundingClientRect();
+    const popover = document.querySelector(".taste-popover");
     return {
       x: rect.left + rect.width / 2,
       y: rect.top + rect.height / 2,
+      left: rect.left,
       title: info.querySelector("strong")?.textContent.trim(),
       creator: info.querySelector(":scope > span")?.textContent.trim(),
       plays: info.querySelector("small")?.textContent.trim(),
-      opacity: Number(getComputedStyle(info).opacity),
+      outline: getComputedStyle(card).outlineStyle,
       transform: getComputedStyle(card).transform,
-      shadow: getComputedStyle(card).boxShadow
+      shadow: getComputedStyle(card).boxShadow,
+      popoverOpacity: Number(getComputedStyle(popover).opacity),
+      popoverTransition: getComputedStyle(popover).transitionDuration,
+      careerPopoverTransition: getComputedStyle(document.querySelector(".concept-career-popover")).transitionDuration,
+      railBottom: document.querySelector(".taste-rail-shell").getBoundingClientRect().bottom
     };
   })()`);
   check(before.title && before.creator, `detail reads title then creator [${before.title} / ${before.creator}]`);
   check(/^\d[\d,]* plays on Last\.fm$/.test(before.plays), `music includes the verified Last.fm count [${before.plays}]`);
-  check(before.opacity === 0, "Taste detail stays quiet at rest");
+  check(before.popoverOpacity === 0 && before.outline === "none", "Taste detail stays quiet at rest");
+  check(
+    before.popoverTransition === before.careerPopoverTransition,
+    `the Taste popover fades on the Career popover's timing [${before.popoverTransition} / ${before.careerPopoverTransition}]`
+  );
   await mouseMove(before.x, before.y);
   const hovered = await pollUntil(
     () => evaluate(`(() => {
       const card = document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card");
+      const popover = document.querySelector(".taste-popover");
+      const r = popover.getBoundingClientRect();
       return {
-        opacity: Number(getComputedStyle(card.querySelector(".card-info")).opacity),
+        outline: getComputedStyle(card).outlineStyle,
         transform: getComputedStyle(card).transform,
         shadow: getComputedStyle(card).boxShadow,
-        panelOpacity: Number(getComputedStyle(document.querySelector(".taste-detail-shell")).opacity),
-        panelTitle: document.querySelector(".taste-detail > strong")?.textContent.trim(),
-        panelCreator: document.querySelector(".taste-detail > span:not(.taste-detail-kind)")?.textContent.trim(),
-        panelMeta: document.querySelector(".taste-detail small")?.textContent.trim()
+        panelOpacity: Number(getComputedStyle(popover).opacity),
+        panelTop: r.top,
+        panelLeft: r.left,
+        panelTitle: popover.querySelector("strong")?.textContent.trim(),
+        panelCreator: popover.querySelector("span:not(.taste-popover-kind)")?.textContent.trim(),
+        panelMeta: popover.querySelector("small")?.textContent.trim()
       };
     })()`),
-    (value) => value.opacity > 0.99 && value.panelOpacity > 0.99
+    (value) => value.panelOpacity > 0.99
   );
-  check(hovered.opacity > 0.99, "hover reveals the Taste detail");
+  check(hovered.outline !== "none", "hover rings the cover in its key colour");
   check(hovered.transform === "none" && hovered.shadow === "none", "Taste hover adds no lift, scale or shadow");
   check(
     hovered.panelTitle === before.title && hovered.panelCreator === before.creator && hovered.panelMeta === before.plays,
-    "the blue panel repeats the selected cover's title, creator and available play count"
+    "the popover carries the hovered cover's title, creator and available play count"
+  );
+  check(
+    hovered.panelTop >= before.railBottom && hovered.panelTop <= before.railBottom + 6 &&
+      Math.abs(hovered.panelLeft - before.left) <= 1,
+    `the popover hangs beneath the hovered cover [rail ${before.railBottom.toFixed(1)} → popover ${hovered.panelTop.toFixed(1)}px, left ${before.left.toFixed(1)} / ${hovered.panelLeft.toFixed(1)}]`
   );
 
   await clickAt(before.x, before.y);
@@ -885,21 +933,49 @@ const checkTasteDetails = async () => {
   const lockedTaste = await pollUntil(
     () => evaluate(`(() => ({
       expanded: document.querySelector('.taste-wall .card[data-key="music"].is-selected')?.getAttribute("aria-expanded"),
-      opacity: Number(getComputedStyle(document.querySelector(".taste-detail-shell")).opacity)
+      opacity: Number(getComputedStyle(document.querySelector(".taste-popover")).opacity)
     }))()`),
     (value) => value.expanded === "true" && value.opacity > 0.99
   );
   check(lockedTaste.expanded === "true", "click locks a Taste detail after the pointer leaves");
   await pressEscape();
   const closedTaste = await pollUntil(
-    () => evaluate(`Number(getComputedStyle(document.querySelector(".taste-detail-shell")).opacity)`),
+    () => evaluate(`Number(getComputedStyle(document.querySelector(".taste-popover")).opacity)`),
     (opacity) => opacity === 0
   );
   check(closedTaste === 0, "Escape clears the locked Taste detail");
 
-  await evaluate(`document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card").focus()`);
-  const focusedOpacity = await evaluate(`Number(getComputedStyle(document.activeElement.querySelector(".card-info")).opacity)`);
+  await evaluate(`document.activeElement?.blur(); document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card").focus()`);
+  const focusedOpacity = await pollUntil(
+    () => evaluate(`Number(getComputedStyle(document.querySelector(".taste-popover")).opacity)`),
+    (opacity) => opacity > 0.99
+  );
   check(focusedOpacity > 0.99, "keyboard focus reveals the same Taste detail");
+
+  const lastCover = await evaluate(`(() => {
+    const cards = [...document.querySelectorAll(".taste-wall .card--detail")];
+    const shell = document.querySelector(".taste-rail-shell").getBoundingClientRect();
+    const visible = cards.filter((card) => { const r = card.getBoundingClientRect(); return r.right <= shell.right + 1 && r.left >= shell.left; });
+    const card = visible[visible.length - 1];
+    card.focus();
+    const r = card.getBoundingClientRect();
+    return { left: r.left, shellRight: shell.right };
+  })()`);
+  const clamped = await pollUntil(
+    () => evaluate(`(() => { const r = document.querySelector(".taste-popover").getBoundingClientRect(); return { opacity: Number(getComputedStyle(document.querySelector(".taste-popover")).opacity), right: r.right, left: r.left }; })()`),
+    (value) => value.opacity > 0.99
+  );
+  check(
+    clamped.right <= lastCover.shellRight + 1 && clamped.left <= lastCover.left,
+    `the popover for the last visible cover stays inside the rail [${clamped.right.toFixed(1)} ≤ ${lastCover.shellRight.toFixed(1)}]`
+  );
+
+  await evaluate(`document.querySelector(".taste-wall").scrollLeft = 200`);
+  const dismissed = await pollUntil(
+    () => evaluate(`Number(getComputedStyle(document.querySelector(".taste-popover")).opacity)`),
+    (opacity) => opacity === 0
+  );
+  check(dismissed === 0, "scrolling the rail dismisses the popover instead of letting it drift");
 };
 
 const checkHeroBreakpoint = async () => {
@@ -1340,21 +1416,13 @@ const checkMobile = async () => {
     "project artwork cannot become a mobile image callout or drag target"
   );
   check(projectImageProtection.enclosingCardOwnsTap, "the project card still owns taps on its artwork");
-  await clickAt(
-    initial.projects[0].rect.left + initial.projects[0].rect.width / 2,
-    initial.projects[0].rect.top + initial.projects[0].rect.height / 2
-  );
-  const openProject = await pollUntil(
-    pageState,
-    (value) => value.projectDetail.opacity > 0.99 && value.projectDetail.title === "features"
-  );
   check(
-    openProject.projectDetail.rect.top >= openProject.projectRail.rect.bottom &&
-      openProject.projectDetail.rect.top <= openProject.projectRail.rect.bottom + 10,
-    `the selected project's information opens directly beneath the swipe row [${openProject.projectRail.rect.bottom.toFixed(1)} → ${openProject.projectDetail.rect.top.toFixed(1)}px]`
+    initial.projects.every((item) =>
+      item.popover.position === "static" && item.popover.opacity > 0.99 &&
+        item.popover.rect.top >= item.rect.bottom && item.popover.rect.top <= item.rect.bottom + 12
+    ),
+    "on phones each project's description sits as a plain caption directly beneath its card"
   );
-  await pressEscape();
-  await pollUntil(pageState, (value) => value.projectDetail.opacity === 0);
   await evaluate(`document.querySelector(".concept-project-swipe").scrollLeft = document.querySelector(".concept-project-swipe").scrollWidth`);
   await sleep(100);
   const scrolledProjects = await pageState();
@@ -1444,8 +1512,10 @@ const checkReducedMotion = async () => {
   const durations = await evaluate(`(() => {
     const selectors = [
       ".concept-project-foot",
-      ".concept-project-detail-shell",
-      ".taste-detail-shell",
+      ".concept-projects",
+      ".concept-project-popover",
+      ".concept-archive",
+      ".taste-popover",
       ".hero-name",
       ".hero-name-value",
       ".concept-career-section"
