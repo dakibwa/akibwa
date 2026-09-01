@@ -2579,7 +2579,7 @@ export const tv = [
   },
   {
     "title": "Normal People",
-    "creator": "",
+    "creator": "Sally Rooney, Alice Birch",
     "year": "2020",
     "poster": "/tv-posters/normal-people.webp"
   },
@@ -2588,6 +2588,54 @@ export const tv = [
     "creator": "David Lynch, Mark Frost",
     "year": "2017",
     "poster": "/tv-posters/twin-peaks-the-return.webp"
+  }
+];
+
+/* Current video and audio shows Dan named for the Taste Library. The public
+   title is kept short on the tile; the creator appears with it on hover and
+   keyboard focus. CosmicSkeptic's podcast now publishes as Within Reason. */
+export const podcasts = [
+  {
+    title: "Making Sense",
+    creator: "Sam Harris",
+    cover: "/podcast-covers/making-sense.webp",
+    href: "https://www.samharris.org/podcasts"
+  },
+  {
+    title: "Huberman Lab",
+    creator: "Andrew Huberman",
+    cover: "/podcast-covers/huberman-lab.webp",
+    href: "https://www.hubermanlab.com/podcast"
+  },
+  {
+    title: "Dwarkesh Podcast",
+    creator: "Dwarkesh Patel",
+    cover: "/podcast-covers/dwarkesh-podcast.webp",
+    href: "https://www.dwarkesh.com/"
+  },
+  {
+    title: "Lex Fridman Podcast",
+    creator: "Lex Fridman",
+    cover: "/podcast-covers/lex-fridman-podcast.webp",
+    href: "https://lexfridman.com/podcast/"
+  },
+  {
+    title: "All-In Podcast",
+    creator: "Chamath Palihapitiya, Jason Calacanis, David Sacks & David Friedberg",
+    cover: "/podcast-covers/all-in-podcast.webp",
+    href: "https://www.youtube.com/@allin"
+  },
+  {
+    title: "Within Reason",
+    creator: "Alex O'Connor",
+    cover: "/podcast-covers/within-reason.webp",
+    href: "https://www.alexoconnor.com/"
+  },
+  {
+    title: "Moonshots",
+    creator: "Peter Diamandis",
+    cover: "/podcast-covers/moonshots.webp",
+    href: "https://www.diamandis.com/podcast"
   }
 ];
 

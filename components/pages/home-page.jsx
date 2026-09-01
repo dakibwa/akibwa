@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage, SiteImage, SLOT_SIZES } from "@/components/site-image";
-import { deck, sites, life, games, tv, sets, graceland } from "@/components/deck-data";
+import { deck, sites, life, games, tv, podcasts, sets, graceland } from "@/components/deck-data";
 
 /* Every set counts something, and its title card says how many. Counted off the
    arrays at render rather than written into the data, so the figure on the wall
@@ -13,17 +13,20 @@ import { deck, sites, life, games, tv, sets, graceland } from "@/components/deck
 const PROJECTS_LENS = ["sites", "life"];
 const CAREER_LENS = ["jobs"];
 
-function resolveLens(hash) {
+function resolveLens(hash, legend = LEGEND) {
   if (!hash) return null;
   if (hash === "everything") return null;
-  const item = LEGEND.find((entry) => entry.id === hash || entry.lens?.includes(hash));
+  const item = legend.find((entry) => entry.id === hash || entry.lens?.includes(hash));
   if (item) return { id: item.id, lens: item.lens };
   return null;
 }
 
-function lensFromLocation() {
+function lensFromLocation(legend) {
   const hash = window.location.hash.replace(/^#/, "");
-  return resolveLens(hash) ?? resolveLens(new URLSearchParams(window.location.search).get("set"));
+  return (
+    resolveLens(hash, legend) ??
+    resolveLens(new URLSearchParams(window.location.search).get("set"), legend)
+  );
 }
 
 function lensHref(id) {
@@ -33,7 +36,9 @@ function lensHref(id) {
   return `${url.pathname}${search ? `?${search}` : ""}${id ? `#${id}` : ""}`;
 }
 
-function Card({ suit, keySet, ground, accent, crop, href, label, face, held, dim, size }) {
+function Card({ suit, keySet, ground, accent, crop, href, label, title, creator, meta, face, held, dim, size }) {
+  const hasDetails = Boolean(title || creator);
+  const accessibleLabel = hasDetails ? [title, creator, meta].filter(Boolean).join(", ") : label;
   const props = {
     className: `card card--${suit}${size === "small" ? " card--small" : ""}${href ? " card--link" : ""}${dim ? "" : " is-lit"}`,
     "data-suit": suit,
@@ -54,6 +59,13 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, held, dim
           <span className="card-label-arrow">↗</span>
         </span>
       ) : null}
+      {hasDetails ? (
+        <span className="card-info" aria-hidden="true">
+          <strong>{title}</strong>
+          <span>{creator}</span>
+          {meta ? <small>{meta}</small> : null}
+        </span>
+      ) : null}
     </>
   );
 
@@ -65,7 +77,7 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, held, dim
         href={href}
         target={external ? "_blank" : undefined}
         rel={external ? "noopener noreferrer" : undefined}
-        aria-label={label}
+        aria-label={accessibleLabel}
       >
         {content}
       </a>
@@ -73,8 +85,72 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, held, dim
   }
 
   return (
-    <div {...props} role="img" aria-label={label}>
+    <div {...props} role="img" aria-label={accessibleLabel} tabIndex={hasDetails ? 0 : undefined}>
       {content}
+    </div>
+  );
+}
+
+/* A finite edit almost never divides cleanly by the number of covers a screen
+   can comfortably hold. Instead of leaving a ragged final edge, deal it into
+   the minimum number of balanced rows and let every row fill the same frame.
+   Adjacent rows differ by at most one cover, so the change of scale is quiet. */
+function balancedRows(cards, maximumPerRow) {
+  if (!cards.length) return [];
+  const rowCount = Math.ceil(cards.length / maximumPerRow);
+  const base = Math.floor(cards.length / rowCount);
+  const fullerRows = cards.length - base * rowCount;
+  const fullAt = new Set(
+    Array.from({ length: fullerRows }, (_, index) =>
+      fullerRows === 1 ? 0 : Math.round((index * (rowCount - 1)) / (fullerRows - 1))
+    )
+  );
+  let cursor = 0;
+
+  return Array.from({ length: rowCount }, (_, index) => {
+    const length = base + (fullAt.has(index) ? 1 : 0);
+    const row = cards.slice(cursor, cursor + length);
+    cursor += length;
+    return row;
+  });
+}
+
+function BalancedTasteWall({ cards }) {
+  const wallRef = useRef(null);
+  const [maximumPerRow, setMaximumPerRow] = useState(7);
+
+  useEffect(() => {
+    const wall = wallRef.current;
+    if (!wall) return undefined;
+
+    const measure = () => {
+      const width = wall.getBoundingClientRect().width;
+      /* Four readable covers on a phone; above that, add a cover whenever
+         there is roughly another 172px available. The cap protects very wide
+         screens from turning the archive back into a strip of thumbnails. */
+      const next = width < 560 ? 4 : Math.max(4, Math.min(11, Math.round(width / 172)));
+      setMaximumPerRow((current) => (current === next ? current : next));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(wall);
+    return () => observer.disconnect();
+  }, []);
+
+  const rows = useMemo(() => balancedRows(cards, maximumPerRow), [cards, maximumPerRow]);
+
+  return (
+    <div className="taste-wall" ref={wallRef} data-maximum-per-row={maximumPerRow}>
+      {rows.map((row, index) => (
+        <div
+          className="taste-wall-row"
+          key={`taste-row-${index}-${row.length}`}
+          style={{ "--taste-row-count": row.length }}
+        >
+          {row}
+        </div>
+      ))}
     </div>
   );
 }
@@ -84,7 +160,7 @@ function Card({ suit, keySet, ground, accent, crop, href, label, face, held, dim
    (i + φ) / n, and one sort by that position shuffles every collection through
    every other, deterministically. φ staggers the collections so equal-length
    lists do not zipper, and the leads (low i) still surface near the top. */
-const PHASE = { music: 0.5, films: 0.23, games: 0.71, tv: 0.37, jobs: 0.81, tools: 0.11, creations: 0.61 };
+const PHASE = { music: 0.5, films: 0.23, games: 0.71, tv: 0.37, podcasts: 0.88, jobs: 0.81, tools: 0.11, creations: 0.61 };
 
 /* The same deal, over counts rather than elements, so the first screen can
    be known before a single card is built. Identical maths and identical
@@ -138,7 +214,7 @@ export function HomePage({ tasteOnly = false }) {
 
   useEffect(() => {
     const applyLocation = () => {
-      const locationFilter = lensFromLocation();
+      const locationFilter = lensFromLocation(legend);
       const available = locationFilter && legend.some((item) => item.id === locationFilter.id);
       setActiveId(available ? locationFilter.id : "everything");
     };
@@ -157,13 +233,15 @@ export function HomePage({ tasteOnly = false }) {
   }, [activeId, legend, selectFilter]);
 
   const dim = useCallback((id) => Boolean(lens) && !lens.includes(id), [lens]);
+  const tasteDetails = (title, creator, meta) =>
+    tasteOnly ? { title, creator, meta } : {};
 
   /* How many of a collection lead at full size before the rest pack small —
      four small tiles to one large. The making sets stay large throughout.
      BEAT then lifts one tail card in every so many back to full size, so the
      deep wall keeps varying instead of settling into a uniform grain. */
-  const LEAD = { music: 12, films: 8, games: 6, tv: 6, creations: 2, tools: 0 };
-  const BEAT = { music: 24, films: 12, games: 9, tv: 11, creations: 6, tools: 7 };
+  const LEAD = { music: 12, films: 8, games: 6, tv: 6, podcasts: 5, creations: 2, tools: 0 };
+  const BEAT = { music: 24, films: 12, games: 9, tv: 11, podcasts: 5, creations: 6, tools: 7 };
   const sizeFor = (id, index) => {
     if (index < LEAD[id]) return undefined;
     return (index - LEAD[id]) % BEAT[id] === BEAT[id] - 1 ? undefined : "small";
@@ -294,6 +372,11 @@ export function HomePage({ tasteOnly = false }) {
           suit="music"
           dim={isDim}
           label={`${album.artist} — ${album.album}`}
+          {...tasteDetails(
+            album.album || (album.artist ? "Untitled artwork" : "Unidentified sleeve"),
+            album.artist || "Artist unknown",
+            album.plays > 0 ? `${album.plays.toLocaleString("en-GB")} plays on Last.fm` : null
+          )}
           face={<AlbumArtImage id={album.id} rung="wall" className="c-art" {...firstScreen("music", index)} />}
         />
       ));
@@ -325,6 +408,7 @@ export function HomePage({ tasteOnly = false }) {
           suit="films"
           dim={isDim}
           label={film.title}
+          {...tasteDetails(film.title, film.director)}
           face={
             <SiteImage src={film.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("films", index)} />
           }
@@ -340,6 +424,7 @@ export function HomePage({ tasteOnly = false }) {
           suit="games"
           dim={isDim}
           label={game.title}
+          {...tasteDetails(game.title, game.studio)}
           face={
             <SiteImage src={game.cover} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("games", index)} />
           }
@@ -355,8 +440,31 @@ export function HomePage({ tasteOnly = false }) {
           suit="tv"
           dim={isDim}
           label={show.title}
+          {...tasteDetails(show.title, show.creator)}
           face={
             <SiteImage src={show.poster} slot="deckTile" sizes={SLOT_SIZES.deckTile} alt="" className="c-art" {...firstScreen("tv", index)} />
+          }
+        />
+      ));
+    }
+
+    if (id === "podcasts") {
+      return podcasts.slice(0, cap === Infinity ? podcasts.length : cap).map((podcast, index) => (
+        <Card
+          size={sizeFor("podcasts", index)}
+          key={`podcast-${podcast.title}`}
+          suit="podcasts"
+          dim={isDim}
+          label={`${podcast.title} — ${podcast.creator}`}
+          {...tasteDetails(podcast.title, podcast.creator)}
+          face={
+            <SiteImage
+              src={podcast.cover}
+              slot="deckTile"
+              sizes={SLOT_SIZES.deckTile}
+              alt=""
+              className="c-art"
+            />
           }
         />
       ));
@@ -377,6 +485,7 @@ export function HomePage({ tasteOnly = false }) {
         suit="music"
         dim={dim("music")}
         label={`${graceland.artist} — ${graceland.album}`}
+        {...tasteDetails(graceland.album, graceland.artist)}
         face={
           <SiteImage
             src={graceland.art}
@@ -403,15 +512,14 @@ export function HomePage({ tasteOnly = false }) {
             ["music", cardsFor("music", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
             ["films", cardsFor("films", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
             ["games", cardsFor("games", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
-            ["tv", cardsFor("tv", { limit: TASTE_HIGHLIGHTS_PER_SECTION })]
+            ["tv", cardsFor("tv", { limit: TASTE_HIGHLIGHTS_PER_SECTION })],
+            ["podcasts", cardsFor("podcasts", { all: true })]
           ];
 
-      return (
-        <>
-          {!selectedTaste || selectedTaste === "music" ? gracelandCard : null}
-          {blend(tasteLists)}
-        </>
-      );
+      return [
+        !selectedTaste || selectedTaste === "music" ? gracelandCard : null,
+        ...blend(tasteLists)
+      ].filter(Boolean);
     }
 
     /* Career leads the front of the wall with its two current roles; the
@@ -448,7 +556,7 @@ export function HomePage({ tasteOnly = false }) {
     <section className={`akibwa-home${tasteOnly ? " akibwa-home--taste" : ""}`}>
       <div
         className={`page-grid deck${lens ? " is-lensed" : ""}`}
-        aria-label={tasteOnly ? "Music, films, games and television" : "Everything on one wall"}
+        aria-label={tasteOnly ? "Music, films, games, television and podcasts" : "Everything on one wall"}
       >
         <div className="deck-hero">
           <HeroSentence />
@@ -476,7 +584,7 @@ export function HomePage({ tasteOnly = false }) {
           </nav>
         </div>
 
-        {wall}
+        {tasteOnly ? <BalancedTasteWall cards={wall} /> : wall}
       </div>
 
       <PageFooter />
@@ -496,7 +604,8 @@ const INDEX_ACCENT = {
   music: "224, 122, 26",
   films: "94, 142, 103",
   games: "115, 112, 255",
-  tv: "0, 154, 205"
+  tv: "0, 154, 205",
+  podcasts: "164, 74, 126"
 };
 
 /* Projects is the one word for the work and life pieces Dan has made. The
@@ -511,7 +620,9 @@ const LEGEND = [
 
 const TASTE_LEGEND = LEGEND.filter((item) =>
   ["everything", "music", "films", "games", "tv"].includes(item.id)
-).map((item) => (item.id === "everything" ? { ...item, label: "Highlights" } : item));
+)
+  .map((item) => (item.id === "everything" ? { ...item, label: "Highlights" } : item))
+  .concat({ id: "podcasts", label: "Podcasts", lens: ["podcasts"], accent: INDEX_ACCENT.podcasts });
 
 const TASTE_HIGHLIGHTS_PER_SECTION = 10;
 
