@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, Mail, Navigation } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 import { usePointerResponse } from "@/components/pointer-response";
 
 function XLogo({ size = 14 }) {
@@ -29,14 +29,7 @@ export function PageFooter() {
   return (
     <footer className="page-grid page-footer" id="site-footer" tabIndex={-1}>
       <div className="page-footer-panel">
-        <div className="page-footer-signoff">
-          <strong>Fewer things done by hand.</strong>
-        </div>
         <div className="page-footer-meta">
-          <span className="footer-location" style={{ "--handle-accent": "#c05212" }}>
-            <Navigation size={14} strokeWidth={1.9} />
-            <span>Manchester</span>
-          </span>
           <nav className="page-footer-details" aria-label="Elsewhere and contact">
             <a
               {...xPointer}

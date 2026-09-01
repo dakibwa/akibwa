@@ -4008,6 +4008,335 @@
       }
     ]
   },
+  "deckTile:/podcast-covers/making-sense.webp": {
+    "source": "/podcast-covers/making-sense.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "30ac60743a3c6628",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/making-sense-deckTile-138.avif",
+          "bytes": 2049
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/making-sense-deckTile-138.webp",
+          "bytes": 2408
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/making-sense-deckTile-200.avif",
+          "bytes": 2679
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/making-sense-deckTile-200.webp",
+          "bytes": 3108
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/making-sense-deckTile-264.avif",
+          "bytes": 3318
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/making-sense-deckTile-264.webp",
+          "bytes": 3872
+        }
+      }
+    ]
+  },
+  "deckTile:/podcast-covers/huberman-lab.webp": {
+    "source": "/podcast-covers/huberman-lab.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "48c81c50c50a0d18",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/huberman-lab-deckTile-138.avif",
+          "bytes": 2249
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/huberman-lab-deckTile-138.webp",
+          "bytes": 2530
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/huberman-lab-deckTile-200.avif",
+          "bytes": 3369
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/huberman-lab-deckTile-200.webp",
+          "bytes": 4088
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/huberman-lab-deckTile-264.avif",
+          "bytes": 4762
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/huberman-lab-deckTile-264.webp",
+          "bytes": 5426
+        }
+      }
+    ]
+  },
+  "deckTile:/podcast-covers/dwarkesh-podcast.webp": {
+    "source": "/podcast-covers/dwarkesh-podcast.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "a83d0b8075be567d",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/dwarkesh-podcast-deckTile-138.avif",
+          "bytes": 3983
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/dwarkesh-podcast-deckTile-138.webp",
+          "bytes": 4148
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/dwarkesh-podcast-deckTile-200.avif",
+          "bytes": 6701
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/dwarkesh-podcast-deckTile-200.webp",
+          "bytes": 7592
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/dwarkesh-podcast-deckTile-264.avif",
+          "bytes": 10266
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/dwarkesh-podcast-deckTile-264.webp",
+          "bytes": 11916
+        }
+      }
+    ]
+  },
+  "deckTile:/podcast-covers/lex-fridman-podcast.webp": {
+    "source": "/podcast-covers/lex-fridman-podcast.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "25ced8889f3a70a2",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/lex-fridman-podcast-deckTile-138.avif",
+          "bytes": 1694
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/lex-fridman-podcast-deckTile-138.webp",
+          "bytes": 1832
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/lex-fridman-podcast-deckTile-200.avif",
+          "bytes": 2470
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/lex-fridman-podcast-deckTile-200.webp",
+          "bytes": 2890
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/lex-fridman-podcast-deckTile-264.avif",
+          "bytes": 3246
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/lex-fridman-podcast-deckTile-264.webp",
+          "bytes": 3898
+        }
+      }
+    ]
+  },
+  "deckTile:/podcast-covers/all-in-podcast.webp": {
+    "source": "/podcast-covers/all-in-podcast.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "229ec05e7c5e49d2",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/all-in-podcast-deckTile-138.avif",
+          "bytes": 2489
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/all-in-podcast-deckTile-138.webp",
+          "bytes": 2874
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/all-in-podcast-deckTile-200.avif",
+          "bytes": 3753
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/all-in-podcast-deckTile-200.webp",
+          "bytes": 4640
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/all-in-podcast-deckTile-264.avif",
+          "bytes": 5050
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/all-in-podcast-deckTile-264.webp",
+          "bytes": 6330
+        }
+      }
+    ]
+  },
+  "deckTile:/podcast-covers/within-reason.webp": {
+    "source": "/podcast-covers/within-reason.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "afe46e0c915fac44",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/within-reason-deckTile-138.avif",
+          "bytes": 2032
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/within-reason-deckTile-138.webp",
+          "bytes": 2210
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/within-reason-deckTile-200.avif",
+          "bytes": 2934
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/within-reason-deckTile-200.webp",
+          "bytes": 3530
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/within-reason-deckTile-264.avif",
+          "bytes": 3862
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/within-reason-deckTile-264.webp",
+          "bytes": 4942
+        }
+      }
+    ]
+  },
+  "deckTile:/podcast-covers/moonshots.webp": {
+    "source": "/podcast-covers/moonshots.webp",
+    "slot": "deckTile",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "9e59a901f473d6be",
+    "press": "press-1",
+    "variants": [
+      {
+        "width": 138,
+        "height": 138,
+        "avif": {
+          "src": "/_img/podcast-covers/moonshots-deckTile-138.avif",
+          "bytes": 2104
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/moonshots-deckTile-138.webp",
+          "bytes": 2184
+        }
+      },
+      {
+        "width": 200,
+        "height": 200,
+        "avif": {
+          "src": "/_img/podcast-covers/moonshots-deckTile-200.avif",
+          "bytes": 3410
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/moonshots-deckTile-200.webp",
+          "bytes": 3862
+        }
+      },
+      {
+        "width": 264,
+        "height": 264,
+        "avif": {
+          "src": "/_img/podcast-covers/moonshots-deckTile-264.avif",
+          "bytes": 4769
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/moonshots-deckTile-264.webp",
+          "bytes": 5608
+        }
+      }
+    ]
+  },
   "deckTile:/project-art/tools/claude.webp": {
     "source": "/project-art/tools/claude.webp",
     "slot": "deckTile",

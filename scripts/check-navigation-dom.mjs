@@ -234,6 +234,9 @@ const pageState = () => evaluate(`(() => {
     range.selectNodeContents(el);
     return rect(range);
   };
+  const wall = document.querySelector(".taste-wall");
+  const rows = [...document.querySelectorAll(".taste-wall-row")];
+  const cardWidths = visible.map((card) => card.getBoundingClientRect().width);
   return {
     identity: "I’m " + document.querySelector(".concept-identity .hero-name-value")?.textContent.trim(),
     lede: document.querySelector(".concept-lede")?.textContent.trim(),
@@ -299,12 +302,29 @@ const pageState = () => evaluate(`(() => {
     passive: document.querySelectorAll("div.card[role=img]").length,
     cardButtons: document.querySelectorAll("button.card").length,
     hasSpotlight: Boolean(document.querySelector(".spotlight")),
-    sampleStandard: rect(visible.find((card) => !card.classList.contains("card--small"))),
-    sampleSmall: rect(visible.find((card) => card.classList.contains("card--small"))),
+    sampleStandard: visible.some((card) => !card.classList.contains("card--small"))
+      ? rect(visible.find((card) => !card.classList.contains("card--small"))) : null,
+    sampleSmall: visible.some((card) => card.classList.contains("card--small"))
+      ? rect(visible.find((card) => card.classList.contains("card--small"))) : null,
     squareFailures: visible.slice(0, 100).filter((card) => {
       const r = card.getBoundingClientRect();
       return Math.abs(r.width - r.height) > 1.5;
     }).length,
+    rowCounts: rows.map((row) => row.children.length),
+    rowFillFailures: wall ? rows.filter((row) =>
+      Math.abs(row.getBoundingClientRect().width - wall.getBoundingClientRect().width) > 1
+    ).length : -1,
+    detailFailures: visible.filter((card) => {
+      const info = card.querySelector(".card-info");
+      return !info?.querySelector("strong")?.textContent.trim() ||
+        !info?.querySelector(":scope > span")?.textContent.trim();
+    }).length,
+    focusableDetails: visible.filter((card) => card.tabIndex === 0).length,
+    playDetails: visible.filter((card) =>
+      card.dataset.key === "music" && /plays on Last\\.fm$/.test(card.querySelector(".card-info small")?.textContent.trim() ?? "")
+    ).length,
+    minCardWidth: cardWidths.length ? Math.min(...cardWidths) : 0,
+    maxCardWidth: cardWidths.length ? Math.max(...cardWidths) : 0,
     inViewport: visible.filter((card) => {
       const r = card.getBoundingClientRect();
       return r.bottom > 0 && r.top < innerHeight;
@@ -313,10 +333,8 @@ const pageState = () => evaluate(`(() => {
     footerLocation: document.querySelector(".footer-location")?.textContent.trim(),
     footerLinks: [...document.querySelectorAll(".page-footer-details a")]
       .map((item) => item.textContent.trim()).join(" / "),
-    footerAccents: [
-      document.querySelector(".footer-location"),
-      ...document.querySelectorAll(".page-footer-details a")
-    ].map((item) => item?.style.getPropertyValue("--handle-accent").trim()).join(" / "),
+    footerAccents: [...document.querySelectorAll(".page-footer-details a")]
+      .map((item) => item.style.getPropertyValue("--handle-accent").trim()).join(" / "),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     hash: location.hash
   };
@@ -536,33 +554,40 @@ const checkDesktop = async () => {
   );
   check(
     state.filters.map((item) => item.text).join(" / ") ===
-      "Highlights / Music / Films / Games / TV",
-    `five taste filters render in order [${state.filters.map((item) => item.text).join(" / ")}]`
+      "Highlights / Music / Films / Games / TV / Podcasts",
+    `six taste filters render in order [${state.filters.map((item) => item.text).join(" / ")}]`
   );
   check(
     state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Highlights",
     "Highlights is the sole initial filter"
   );
-  check(state.cards === 41, `the opening edit stays finite [${state.cards} cards]`);
+  check(state.cards === 48, `the opening edit stays finite [${state.cards} cards]`);
   check(
-    [...state.visibleKeys].sort().join(" / ") === "films / games / music / tv" &&
+    [...state.visibleKeys].sort().join(" / ") === "films / games / music / podcasts / tv" &&
       state.visibleCounts.music === 11 &&
-      ["films", "games", "tv"].every((key) => state.visibleCounts[key] === 10),
-    `the opening edit is balanced across four sections [${JSON.stringify(state.visibleCounts)}]`
+      ["films", "games", "tv"].every((key) => state.visibleCounts[key] === 10) &&
+      state.visibleCounts.podcasts === 7,
+    `the opening edit is balanced across five sections [${JSON.stringify(state.visibleCounts)}]`
   );
   check(state.links === 0, "taste cards remain visual objects rather than false destinations");
   check(state.passive === state.cards, `every taste card is a labelled visual object [${state.passive}]`);
   check(state.cardButtons === 0, "no wall card renders as a button");
   check(state.hasSpotlight === false, "no modal viewer exists");
   check(state.squareFailures === 0, "the sampled cards are square");
-  check(state.sampleStandard.width > state.sampleSmall.width * 1.9, "standard cards are exactly the larger of two scales");
-  check(state.sampleStandard.width < state.sampleSmall.width * 2.2, "the two scales share one grid unit");
-  check(state.footerSignoff === "Fewer things done by hand.", `footer restores its sign-off [${state.footerSignoff}]`);
-  check(state.footerLocation === "Manchester", `footer keeps Manchester [${state.footerLocation}]`);
+  check(state.rowFillFailures === 0, "every Taste row fills the complete wall width");
+  check(
+    Math.max(...state.rowCounts) - Math.min(...state.rowCounts) <= 1,
+    `Taste rows are balanced without a sparse final row [${state.rowCounts.join(" / ")}]`
+  );
+  check(state.detailFailures === 0, "every Taste card has title followed by creator detail");
+  check(state.focusableDetails === state.cards, "every Taste detail can also be reached by keyboard focus");
+  check(state.playDetails > 0, `Last.fm play counts appear where they exist [${state.playDetails} visible]`);
+  check(state.footerSignoff == null, "the footer sign-off is removed");
+  check(state.footerLocation == null, "the footer location is removed");
   check(state.footerLinks === "dakibwa / dakibwa / Email", `footer keeps its three routes [${state.footerLinks}]`);
   check(
-    state.footerAccents === "#c05212 / #0f1114 / #d63a7a / #2f88ff",
-    `footer restores its colour accents [${state.footerAccents}]`
+    state.footerAccents === "#0f1114 / #d63a7a / #2f88ff",
+    `footer keeps the handle colour accents [${state.footerAccents}]`
   );
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
 };
@@ -614,6 +639,52 @@ const checkLinkHover = async () => {
     (background) => background === before.footBackground
   );
   check(settled === before.footBackground, "the caption rail restores when hover ends");
+};
+
+const checkTasteDetails = async () => {
+  section("Taste title, creator and Last.fm detail");
+  await setDesktop();
+  await goto("/");
+  const before = await evaluate(`(() => {
+    document.documentElement.style.scrollBehavior = "auto";
+    const playCount = document.querySelector('.taste-wall .card[data-key="music"] .card-info small');
+    const card = playCount?.closest(".card");
+    if (!card) throw new Error("missing music card with Last.fm plays");
+    card.scrollIntoView({ block: "center" });
+    const info = card.querySelector(".card-info");
+    const rect = card.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      title: info.querySelector("strong")?.textContent.trim(),
+      creator: info.querySelector(":scope > span")?.textContent.trim(),
+      plays: info.querySelector("small")?.textContent.trim(),
+      opacity: Number(getComputedStyle(info).opacity),
+      transform: getComputedStyle(card).transform,
+      shadow: getComputedStyle(card).boxShadow
+    };
+  })()`);
+  check(before.title && before.creator, `detail reads title then creator [${before.title} / ${before.creator}]`);
+  check(/^\d[\d,]* plays on Last\.fm$/.test(before.plays), `music includes the verified Last.fm count [${before.plays}]`);
+  check(before.opacity === 0, "Taste detail stays quiet at rest");
+  await mouseMove(before.x, before.y);
+  const hovered = await pollUntil(
+    () => evaluate(`(() => {
+      const card = document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card");
+      return {
+        opacity: Number(getComputedStyle(card.querySelector(".card-info")).opacity),
+        transform: getComputedStyle(card).transform,
+        shadow: getComputedStyle(card).boxShadow
+      };
+    })()`),
+    (value) => value.opacity > 0.99
+  );
+  check(hovered.opacity > 0.99, "hover reveals the Taste detail");
+  check(hovered.transform === "none" && hovered.shadow === "none", "Taste hover adds no lift, scale or shadow");
+  await mouseMove(1200, 40);
+  await evaluate(`document.querySelector('.taste-wall .card[data-key="music"] .card-info small').closest(".card").focus()`);
+  const focusedOpacity = await evaluate(`Number(getComputedStyle(document.activeElement.querySelector(".card-info")).opacity)`);
+  check(focusedOpacity > 0.99, "keyboard focus reveals the same Taste detail");
 };
 
 const checkHeroBreakpoint = async () => {
@@ -833,7 +904,19 @@ const checkFilters = async () => {
     state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Highlights",
     "Highlights is restored without a second interaction mode"
   );
-  check(state.cards === 41 && state.visible === 41, "the balanced Highlights edit returns immediately");
+  check(state.cards === 48 && state.visible === 48, "the balanced Highlights edit returns immediately");
+
+  await selectFilter("Podcasts");
+  state = await pageState();
+  check(state.hash === "#podcasts", `Podcasts owns the shareable hash [${state.hash}]`);
+  check(
+    state.visibleKeys.join() === "podcasts" && state.cards === 7 && state.visible === 7,
+    `Podcasts shows the seven verified shows [${state.cards} cards]`
+  );
+  check(state.rowFillFailures === 0 && state.rowCounts.join() === "7", "the podcast row fills the frame without a remainder");
+
+  await pressEscape();
+  await sleep(80);
 };
 
 const checkMobile = async () => {
@@ -902,15 +985,16 @@ const checkMobile = async () => {
   await sleep(100);
   const state = await pageState();
   check(state.squareFailures === 0, "mobile cards preserve square artwork");
+  check(state.rowFillFailures === 0, "every mobile Taste row fills the complete content width");
   check(
-    state.sampleStandard.width >= 92 && state.sampleStandard.width <= 104,
-    `standard cards stay compact [${state.sampleStandard.width.toFixed(1)}px]`
+    Math.max(...state.rowCounts) - Math.min(...state.rowCounts) <= 1,
+    `mobile rows stay balanced [${state.rowCounts.join(" / ")}]`
   );
   check(
-    state.sampleSmall.width >= 44 && state.sampleSmall.width <= 51,
-    `small cards retain useful resolution [${state.sampleSmall.width.toFixed(1)}px]`
+    state.minCardWidth >= 72 && state.maxCardWidth <= 125,
+    `mobile cards readjust without becoming thumbnails or posters [${state.minCardWidth.toFixed(1)}–${state.maxCardWidth.toFixed(1)}px]`
   );
-  check(state.inViewport >= 24, `at least 24 cards fit in the first mobile screen [${state.inViewport}]`);
+  check(state.inViewport >= 20, `at least 20 cards fit in the first mobile screen [${state.inViewport}]`);
   check(state.overflow <= 1, `mobile has no horizontal overflow [${state.overflow}px]`);
 
   const tasteImageProtection = await evaluate(`(() => {
@@ -933,19 +1017,21 @@ const checkMobile = async () => {
     const nav = document.querySelector(".deck-legend");
     const footer = document.querySelector(".page-footer").getBoundingClientRect();
     const panel = document.querySelector(".page-footer-panel").getBoundingClientRect();
-    const signoff = document.querySelector(".page-footer-signoff").getBoundingClientRect();
     const meta = document.querySelector(".page-footer-meta").getBoundingClientRect();
+    const handles = [...document.querySelectorAll(".page-footer-details a")]
+      .map((item) => item.getBoundingClientRect());
     return {
       navHeight: nav.getBoundingClientRect().height,
       footerInside: footer.left >= 0 && footer.right <= innerWidth + 1 &&
         panel.left >= 0 && panel.right <= innerWidth + 1 &&
         meta.left >= 0 && meta.right <= innerWidth + 1,
-      footerStacked: signoff.bottom <= meta.top + 1
+      handleCount: handles.length,
+      handlesOneRow: handles.every((item) => Math.abs(item.top - handles[0].top) <= 1)
     };
   })()`);
   check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
-  check(touch.footerInside, "the restored footer stays inside the mobile frame");
-  check(touch.footerStacked, "the footer sign-off stacks above its mobile contact row");
+  check(touch.footerInside, "the handles-only footer stays inside the mobile frame");
+  check(touch.handleCount === 3 && touch.handlesOneRow, "the three handles share one quiet mobile row");
 };
 
 const checkReducedMotion = async () => {
@@ -1018,6 +1104,7 @@ const main = async () => {
     await checkProjectBreakpoint();
     await checkProjectView();
     await checkLinkHover();
+    await checkTasteDetails();
     await checkCareerTimeline();
     await checkFilters();
     await checkMobile();

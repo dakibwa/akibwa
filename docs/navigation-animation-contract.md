@@ -70,11 +70,15 @@ publishing homepage changes.
 ## Taste and footer
 
 - Taste reuses `HomePage` in `tasteOnly` mode: Graceland first, then Music,
-  Films, Games and TV in the compact square wall.
-- Taste cards are labelled visual objects, not false links. The five plain
-  filter words change the wall immediately and Escape returns to Everything.
-- The shared footer remains visible after the wall, with “Fewer things done by
-  hand.”, Manchester, X, Instagram and email in their established colours.
+  Films, Games, TV and Podcasts in a compact square contact sheet.
+- Every row fills the complete available width. Its population is rebalanced
+  when the viewport changes, so there is no ragged final column or empty slot.
+- Cards remain labelled visual objects, not false links. Hover or keyboard
+  focus reveals title then creator; music adds Last.fm plays when available.
+  The six plain filter words change the wall immediately and Escape returns to
+  Highlights.
+- The shared footer remains visible after the wall with only X, Instagram and
+  email, in their established colours.
 
 ## Motion
 

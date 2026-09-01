@@ -361,14 +361,19 @@ requireText(css, "grid-template-rows: 24px 36px 56px", "mobile career dots must 
    medium at a time. */
 requireText(editorial, "<HomePage tasteOnly />", "Taste must render the categorised compact archive");
 requireText(home, "if (tasteOnly)", "the wall must keep its taste-only mode");
-requireText(home, "{gracelandCard}", "Graceland must lead the taste wall");
+requireText(home, "? gracelandCard : null", "Graceland must lead the taste wall");
 requireText(
   home,
   '["everything", "music", "films", "games", "tv"].includes(item.id)',
-  "Taste must expose only Highlights, Music, Films, Games and TV"
+  "Taste must keep Highlights, Music, Films, Games and TV"
 );
+requireText(home, 'id: "podcasts", label: "Podcasts"', "Taste must expose the podcast shelf");
 requireText(home, 'label: "Highlights"', "Taste must open on a concise Highlights edit");
 requireText(home, "const TASTE_HIGHLIGHTS_PER_SECTION = 10", "each medium must contribute ten opening highlights");
+requireText(home, "function BalancedTasteWall", "Taste must rebalance its rows with the available width");
+requireText(home, "balancedRows(cards, maximumPerRow)", "Taste must distribute cards without a ragged final edge");
+requireText(home, 'className="card-info"', "Taste cards must expose title and creator detail");
+requireText(home, "plays on Last.fm", "music detail must include a Last.fm count when one exists");
 requireRuleText(".akibwa-home .deck .card {", [
   "aspect-ratio: 1",
   "border-radius: 5px",
@@ -376,6 +381,22 @@ requireRuleText(".akibwa-home .deck .card {", [
   "transform: none"
 ]);
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
+requireRuleText(".akibwa-home--taste .taste-wall-row {", [
+  "repeat(var(--taste-row-count), minmax(0, 1fr))",
+  "width: 100%"
+]);
+
+for (const title of [
+  "Making Sense",
+  "Huberman Lab",
+  "Dwarkesh Podcast",
+  "Lex Fridman Podcast",
+  "All-In Podcast",
+  "Within Reason",
+  "Moonshots"
+]) {
+  requireText(deckData, `title: "${title}"`, `${title} must remain in the podcast shelf`);
+}
 
 for (const source of [
   "/features/home-card-bright-v4.png",
@@ -403,7 +424,8 @@ if (Math.max(...gracelandVariant.variants.map((entry) => entry.width)) < 264) {
 for (const prefix of [
   "deckTile:/film-posters/",
   "deckTile:/game-covers/",
-  "deckTile:/tv-posters/"
+  "deckTile:/tv-posters/",
+  "deckTile:/podcast-covers/"
 ]) {
   const entries = Object.entries(imageVariants).filter(([key]) => key.startsWith(prefix));
   if (!entries.length) fail(`${prefix} must remain bound to the responsive artwork ladder`);
@@ -412,14 +434,14 @@ for (const prefix of [
   }
 }
 
-/* The shared footer keeps the original sign-off and colour-coded routes. */
+/* The shared footer is only the three colour-coded handles. */
 requireText(footer, 'className="page-footer-panel"', "the footer must keep its panel");
-requireText(footer, "Fewer things done by hand.", "the footer must keep its original wording");
-requireText(footer, "<span>Manchester</span>", "the footer must keep the location");
+forbidText(footer, "Fewer things done by hand.", "the retired footer sign-off must stay removed");
+forbidText(footer, "Manchester", "the footer must not add location copy back beside the handles");
 requireText(footer, 'href="mailto:', "the footer must keep email");
 requireText(footer, 'href="https://x.com/', "the footer must keep X");
 requireText(footer, 'href="https://www.instagram.com/', "the footer must keep Instagram");
-requireText(footer, '"--handle-accent": "#c05212"', "Manchester must keep its orange accent");
+requireText(footer, '"--handle-accent": "#0f1114"', "X must keep its dark accent");
 requireText(footer, '"--handle-accent": "#d63a7a"', "Instagram must keep its pink accent");
 requireText(footer, '"--handle-accent": "#2f88ff"', "email must keep its blue accent");
 requireText(home, "<PageFooter", "the taste wall must finish with the shared footer");
