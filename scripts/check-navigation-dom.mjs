@@ -226,18 +226,21 @@ const pageState = () => evaluate(`(() => {
     return style.display !== "none" && card.getClientRects().length > 0;
   });
   const rect = (el) => {
+    if (!el) return null;
     const r = el.getBoundingClientRect();
     return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
   };
   const contentRect = (el) => {
+    if (!el) return null;
     const range = document.createRange();
     range.selectNodeContents(el);
     return rect(range);
   };
   const wall = document.querySelector(".taste-wall");
   const legend = document.querySelector(".deck-legend");
-  const bands = [...document.querySelectorAll(".taste-quilt-band")];
-  const blocks = [...document.querySelectorAll(".taste-quilt-block")];
+  const railItems = [...document.querySelectorAll(".taste-rail-item")];
+  const railRect = wall?.getBoundingClientRect();
+  const railItemRects = railItems.map((item) => item.getBoundingClientRect());
   const cardWidths = visible.map((card) => card.getBoundingClientRect().width);
   const cardShapes = [...new Set(visible.map((card) => {
     const r = card.getBoundingClientRect();
@@ -248,10 +251,7 @@ const pageState = () => evaluate(`(() => {
   return {
     identity: "I’m " + document.querySelector(".concept-identity .hero-name-value")?.textContent.trim(),
     lede: document.querySelector(".concept-lede")?.textContent.trim(),
-    nav: [...document.querySelectorAll(".concept-nav a")].map((link) => ({
-      text: link.textContent.trim(),
-      href: link.getAttribute("href")
-    })),
+    navCount: document.querySelectorAll(".concept-nav").length,
     heroLayout: {
       hero: rect(document.querySelector(".concept-hero")),
       identity: rect(document.querySelector(".concept-identity")),
@@ -259,9 +259,18 @@ const pageState = () => evaluate(`(() => {
       copy: rect(document.querySelector(".concept-hero-copy")),
       lede: rect(document.querySelector(".concept-lede")),
       ledeText: contentRect(document.querySelector(".concept-lede")),
-      nav: rect(document.querySelector(".concept-nav")),
-      navFirst: rect(document.querySelector(".concept-nav a"))
+      handles: rect(document.querySelector(".concept-hero-footer")),
+      firstHandle: rect(document.querySelector(".concept-hero-footer a"))
     },
+    chapterHeadings: [...document.querySelectorAll(".concept-projects-head h2, .concept-career-head h2, .concept-archive-head h2")]
+      .map((heading) => ({
+        text: heading.textContent.trim(),
+        rect: rect(heading),
+        style: (() => {
+          const style = getComputedStyle(heading);
+          return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join("/");
+        })()
+      })),
     projects: [...document.querySelectorAll(".concept-project-card")].map((item) => ({
       text: item.innerText.replace(/\\s+/g, " ").trim(),
       href: item.getAttribute("href"),
@@ -319,24 +328,18 @@ const pageState = () => evaluate(`(() => {
     sampleSmall: visible.some((card) => card.classList.contains("card--small"))
       ? rect(visible.find((card) => card.classList.contains("card--small"))) : null,
     cardShapes,
-    quiltScales: [...new Set(visible.map((card) => card.dataset.quiltScale).filter(Boolean))],
-    bandCounts: bands.map((band) => band.children.length),
-    bandFillFailures: wall ? bands.filter((band) =>
-      Math.abs(band.getBoundingClientRect().width - wall.getBoundingClientRect().width) > 1
-    ).length : -1,
-    blockFillFailures: blocks.filter((block) => {
-      const box = block.getBoundingClientRect();
-      const cards = [...block.querySelectorAll(":scope > .card")].map((card) => card.getBoundingClientRect());
-      const points = [
-        [box.left + box.width * 0.25, box.top + box.height * 0.25],
-        [box.left + box.width * 0.75, box.top + box.height * 0.25],
-        [box.left + box.width * 0.25, box.top + box.height * 0.75],
-        [box.left + box.width * 0.75, box.top + box.height * 0.75]
-      ];
-      return Math.abs(box.width - box.height) > 1.5 || points.some(([x, y]) =>
-        !cards.some((card) => x >= card.left && x <= card.right && y >= card.top && y <= card.bottom)
-      );
-    }).length,
+    rail: rect(wall),
+    railItemCount: railItems.length,
+    railClientWidth: wall?.clientWidth ?? 0,
+    railScrollWidth: wall?.scrollWidth ?? 0,
+    railScrollLeft: wall?.scrollLeft ?? 0,
+    railOverflowX: wall ? getComputedStyle(wall).overflowX : null,
+    railSnap: wall ? getComputedStyle(wall).scrollSnapType : null,
+    railOneRow: railItemRects.every((item) => Math.abs(item.top - railItemRects[0].top) <= 1),
+    railSquares: railItemRects.every((item) => Math.abs(item.width - item.height) <= 1),
+    railVisibleItems: railRect ? railItemRects.filter((item) =>
+      item.right > railRect.left && item.left < railRect.right
+    ).length : 0,
     artDirectedCards: visible.filter((card) => card.querySelector(".taste-visual__scene")).length,
     originalPrints: visible.filter((card) => card.querySelector(".taste-visual__original")).length,
     artFillFailures: visible.filter((card) => {
@@ -372,6 +375,9 @@ const pageState = () => evaluate(`(() => {
       .map((item) => item.textContent.trim()).join(" / "),
     footerAccents: [...document.querySelectorAll(".page-footer-details a")]
       .map((item) => item.style.getPropertyValue("--handle-accent").trim()).join(" / "),
+    footerCount: document.querySelectorAll(".page-footer").length,
+    footerInHero: Boolean(document.querySelector(".concept-hero > .concept-hero-copy > .concept-hero-footer")),
+    footerAfterTaste: Boolean(document.querySelector(".concept-archive .page-footer")),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     hash: location.hash
   };
@@ -509,26 +515,28 @@ const checkDesktop = async () => {
   const state = await pageState();
   check(/^I’m (Daniel|Akibwa)$/.test(state.identity), `the public identity is concise [${state.identity}]`);
   check(state.lede === "Building in the age of AI.", `the proposition stays concise [${state.lede}]`);
-  check(
-    state.nav.map((item) => `${item.text}:${item.href}`).join(" / ") ===
-      "Projects:#projects / Career:#career / Taste Library:#taste",
-    `three direct section links render in order [${state.nav.map((item) => item.text).join(" / ")}]`
-  );
+  check(state.navCount === 0, `the hero does not repeat chapter links [${state.navCount}]`);
   check(
     state.heroLayout.lede.left >= state.heroLayout.identity.right + 24,
     `the proposition uses the right-hand hero column [${state.heroLayout.identity.right.toFixed(1)}px → ${state.heroLayout.lede.left.toFixed(1)}px]`
   );
   check(
-    Math.abs(state.heroLayout.navFirst.left - state.heroLayout.lede.left) <= 1,
-    "the menu shares the proposition's left edge"
+    Math.abs(state.heroLayout.firstHandle.left - state.heroLayout.lede.left) <= 1,
+    "the handles share the proposition's left edge"
   );
   check(
-    state.heroLayout.nav.top >= state.heroLayout.lede.bottom + 16,
-    `the proposition keeps a clean gap above its menu [${(state.heroLayout.nav.top - state.heroLayout.lede.bottom).toFixed(1)}px]`
+    state.heroLayout.handles.top >= state.heroLayout.lede.bottom + 10 &&
+      state.heroLayout.handles.top <= state.heroLayout.lede.bottom + 28,
+    `the proposition keeps a compact gap above its handles [${(state.heroLayout.handles.top - state.heroLayout.lede.bottom).toFixed(1)}px]`
   );
   check(
-    state.heroLayout.hero.height <= 250,
+    state.heroLayout.hero.height <= 265,
     `the wide masthead uses its width instead of empty height [${state.heroLayout.hero.height.toFixed(1)}px]`
+  );
+  check(
+    state.chapterHeadings.map((item) => item.text).join(" / ") === "Projects / Career / Taste Library" &&
+      state.chapterHeadings.every((item) => item.style === state.chapterHeadings[0].style),
+    `Projects, Career and Taste use one chapter-heading system [${state.chapterHeadings.map((item) => item.text).join(" / ")}]`
   );
   check(
     state.projects.map((item) => item.href).join(" / ") ===
@@ -622,12 +630,12 @@ const checkDesktop = async () => {
   );
   check(
     state.filterToWallGap >= 10 && state.filterToWallGap <= 18,
-    `the Taste filters sit directly above the quilt [${state.filterToWallGap.toFixed(1)}px]`
+    `the Taste filters sit directly above the rail [${state.filterToWallGap.toFixed(1)}px]`
   );
   check(state.cards === 48, `the opening edit stays finite [${state.cards} cards]`);
   check(
     !state.hasFinale,
-    "Taste ends with the complete quilt rather than a separate closing shelf"
+    "Taste ends with the complete rail rather than a separate closing shelf"
   );
   check(
     [...state.visibleKeys].sort().join(" / ") === "films / games / music / podcasts / tv" &&
@@ -641,16 +649,22 @@ const checkDesktop = async () => {
   check(state.cardButtons === 0, "no wall card renders as a button");
   check(state.hasSpotlight === false, "no modal viewer exists");
   check(
-    state.cardShapes.sort().join(" / ") === "square / tall / wide",
-    `the Taste quilt uses square, tall and wide cards [${state.cardShapes.join(" / ")}]`
+    state.cardShapes.join() === "square",
+    `the Taste list uses one calm square-cover scale [${state.cardShapes.join(" / ")}]`
   );
   check(
-    state.quiltScales.length === 4,
-    `one large card, long cards and four-up cards all render [${state.quiltScales.sort().join(" / ")}]`
+    state.railItemCount === state.cards && state.railOneRow && state.railSquares,
+    `all ${state.railItemCount} Taste covers form one square row`
   );
-  check(state.bandFillFailures === 0, "every Taste band fills the complete wall width");
-  check(state.blockFillFailures === 0, "every two-by-two quilt block fills all four cells");
-  check(new Set(state.bandCounts).size === 1, `every Taste band keeps a complete block row [${state.bandCounts.join(" / ")}]`);
+  check(
+    state.railOverflowX === "auto" && ["inline", "inline proximity"].includes(state.railSnap) &&
+      state.railScrollWidth > state.railClientWidth * 3,
+    `Taste is a native horizontally scrollable list [${state.railClientWidth} / ${state.railScrollWidth}px; ${state.railSnap}]`
+  );
+  check(
+    state.railVisibleItems >= 8 && state.railVisibleItems <= 12,
+    `the desktop rail shows a useful edit while hinting at more [${state.railVisibleItems} covers]`
+  );
   check(state.artDirectedCards === 30, `all visible film, game and TV cards use editorial art [${state.artDirectedCards}]`);
   check(
     state.originalPrints === 0,
@@ -662,10 +676,14 @@ const checkDesktop = async () => {
   check(state.playDetails > 0, `Last.fm play counts appear where they exist [${state.playDetails} visible]`);
   check(state.footerSignoff == null, "the footer sign-off is removed");
   check(state.footerLocation == null, "the footer location is removed");
-  check(state.footerLinks === "dakibwa / dakibwa / Email", `footer keeps its three routes [${state.footerLinks}]`);
+  check(state.footerLinks === "dakibwa / dakibwa / Email", `the hero keeps its three routes [${state.footerLinks}]`);
   check(
     state.footerAccents === "#0f1114 / #d63a7a / #2f88ff",
-    `footer keeps the handle colour accents [${state.footerAccents}]`
+    `the hero keeps the handle colour accents [${state.footerAccents}]`
+  );
+  check(
+    state.footerCount === 1 && state.footerInHero && !state.footerAfterTaste,
+    `the handles appear once beneath the proposition [${state.footerCount} group]`
   );
   check(state.overflow <= 1, `the page has no horizontal overflow [${state.overflow}px]`);
 };
@@ -774,6 +792,10 @@ const checkHeroBreakpoint = async () => {
     state.heroLayout.lede.left >= state.heroLayout.identity.right + 24,
     "the two-column masthead still fits just above its breakpoint"
   );
+  check(
+    Math.abs(state.heroLayout.firstHandle.left - state.heroLayout.lede.left) <= 1,
+    "the handles remain aligned beneath the proposition above the breakpoint"
+  );
   check(state.heroLayout.identity.height < 80, "the compact two-column identity remains on one line");
   check(state.overflow <= 1, `the compact two-column masthead has no overflow [${state.overflow}px]`);
 
@@ -787,6 +809,11 @@ const checkHeroBreakpoint = async () => {
   check(
     state.heroLayout.lede.top > state.heroLayout.identity.bottom,
     "the stacked proposition follows the identity without overlap"
+  );
+  check(
+    Math.abs(state.heroLayout.firstHandle.left - state.heroLayout.lede.left) <= 1 &&
+      state.heroLayout.handles.top > state.heroLayout.lede.bottom,
+    "the stacked handles follow the proposition on its left edge"
   );
   check(state.overflow <= 1, `the stacked breakpoint has no overflow [${state.overflow}px]`);
 };
@@ -1030,6 +1057,16 @@ const checkFilters = async () => {
     state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Music",
     "Music is the sole pressed word"
   );
+  check(
+    state.railItemCount === state.cards && state.railOneRow && state.railSquares &&
+      state.railScrollWidth > state.railClientWidth,
+    `the complete Music archive remains one swipeable row [${state.railItemCount} covers]`
+  );
+
+  await evaluate(`document.querySelector(".taste-wall").scrollLeft = 520`);
+  await sleep(80);
+  state = await pageState();
+  check(state.railScrollLeft > 100, `the desktop rail moves horizontally [${state.railScrollLeft.toFixed(1)}px]`);
 
   await pressEscape();
   await sleep(80);
@@ -1040,6 +1077,7 @@ const checkFilters = async () => {
     "Highlights is restored without a second interaction mode"
   );
   check(state.cards === 48 && state.visible === 48, "the balanced Highlights edit returns immediately");
+  check(state.railScrollLeft <= 1, `changing the filter returns the rail to its start [${state.railScrollLeft.toFixed(1)}px]`);
 
   await selectFilter("Podcasts");
   state = await pageState();
@@ -1048,10 +1086,7 @@ const checkFilters = async () => {
     state.visibleKeys.join() === "podcasts" && state.cards === 7 && state.visible === 7,
     `Podcasts shows the seven verified shows [${state.cards} cards]`
   );
-  check(
-    state.bandFillFailures === 0 && state.blockFillFailures === 0 && state.bandCounts.length === 1,
-    "the seven podcasts pack into one complete full-width quilt band"
-  );
+  check(state.railItemCount === 7 && state.railOneRow && state.railSquares, "the seven podcasts remain one compact square list");
 
   await pressEscape();
   await sleep(80);
@@ -1065,8 +1100,8 @@ const checkMobile = async () => {
   check(initial.overflow <= 1, `the editorial opening fits the phone [${initial.overflow}px overflow]`);
   check(
     Math.abs(initial.heroLayout.identity.left - initial.heroLayout.lede.left) <= 1 &&
-      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.navFirst.left) <= 1,
-    "the phone identity, proposition and menu share one left edge"
+      Math.abs(initial.heroLayout.lede.left - initial.heroLayout.firstHandle.left) <= 1,
+    "the phone identity, proposition and handles share one left edge"
   );
   check(
     initial.heroLayout.identityText.width >= initial.heroLayout.hero.width * 0.9 &&
@@ -1075,8 +1110,8 @@ const checkMobile = async () => {
   );
   check(
     initial.heroLayout.lede.top > initial.heroLayout.identity.bottom &&
-      initial.heroLayout.nav.top > initial.heroLayout.lede.bottom,
-    "the phone keeps identity, proposition and menu in reading order"
+      initial.heroLayout.handles.top > initial.heroLayout.lede.bottom,
+    "the phone keeps identity, proposition and handles in reading order"
   );
   check(
     initial.projects.length === 3 &&
@@ -1123,16 +1158,18 @@ const checkMobile = async () => {
   await sleep(100);
   const state = await pageState();
   check(
-    state.cardShapes.sort().join(" / ") === "square / tall / wide",
-    `mobile keeps all three card proportions [${state.cardShapes.join(" / ")}]`
+    state.cardShapes.join() === "square" && state.railOneRow && state.railSquares,
+    `mobile keeps one calm row of square covers [${state.cardShapes.join(" / ")}]`
   );
-  check(state.bandFillFailures === 0, "every mobile Taste band fills the complete content width");
-  check(state.blockFillFailures === 0, "every mobile quilt block fills all four cells");
   check(
-    state.minCardWidth >= 72 && state.maxCardWidth >= state.minCardWidth * 1.8,
-    `mobile deliberately mixes four-up and feature scales [${state.minCardWidth.toFixed(1)}–${state.maxCardWidth.toFixed(1)}px]`
+    state.minCardWidth >= 100 && state.maxCardWidth - state.minCardWidth <= 1,
+    `mobile keeps the rail comfortably tappable and consistent [${state.minCardWidth.toFixed(1)}–${state.maxCardWidth.toFixed(1)}px]`
   );
-  check(state.inViewport >= 10, `at least 10 mixed-scale cards fit in the first mobile screen [${state.inViewport}]`);
+  check(
+    state.railVisibleItems >= 3 && state.railVisibleItems <= 5 &&
+      state.railScrollWidth > state.railClientWidth * 8,
+    `the phone shows a useful slice with the archive continuing sideways [${state.railVisibleItems} covers]`
+  );
   check(state.overflow <= 1, `mobile has no horizontal overflow [${state.overflow}px]`);
 
   const tasteImageProtection = await evaluate(`(() => {
@@ -1150,6 +1187,15 @@ const checkMobile = async () => {
   })()`);
   check(tasteImageProtection.allProtected, "every mobile image opts out of native callouts and dragging");
   check(tasteImageProtection.cardOwnsTap, "Taste cards still own taps on their artwork");
+
+  await evaluate(`document.querySelector(".taste-wall").scrollLeft = document.querySelector(".taste-wall").scrollWidth`);
+  await sleep(100);
+  const scrolled = await pageState();
+  check(
+    scrolled.railScrollLeft > scrolled.railClientWidth,
+    `the phone rail accepts horizontal swipe-equivalent scrolling [${scrolled.railScrollLeft.toFixed(1)}px]`
+  );
+  check(scrolled.overflow <= 1, `the internal rail does not widen the page [${scrolled.overflow}px]`);
 
   const touch = await evaluate(`(() => {
     const nav = document.querySelector(".deck-legend");
@@ -1170,10 +1216,10 @@ const checkMobile = async () => {
   check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
   check(
     state.filterToWallGap >= 8 && state.filterToWallGap <= 12,
-    `the phone filters sit directly above the quilt [${state.filterToWallGap.toFixed(1)}px]`
+    `the phone filters sit directly above the rail [${state.filterToWallGap.toFixed(1)}px]`
   );
-  check(touch.footerInside, "the handles-only footer stays inside the mobile frame");
-  check(touch.handleCount === 3 && touch.handlesOneRow, "the three handles share one quiet mobile row");
+  check(touch.footerInside, "the hero handles stay inside the mobile frame");
+  check(touch.handleCount === 3 && touch.handlesOneRow, "the three hero handles share one quiet mobile row");
 };
 
 const checkReducedMotion = async () => {

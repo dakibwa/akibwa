@@ -21,13 +21,18 @@ function XLogo({ size = 14 }) {
   );
 }
 
-export function PageFooter() {
+export function PageFooter({ embedded = false }) {
   const xPointer = usePointerResponse();
   const instagramPointer = usePointerResponse();
   const emailPointer = usePointerResponse();
+  const Root = embedded ? "div" : "footer";
 
   return (
-    <footer className="page-grid page-footer" id="site-footer" tabIndex={-1}>
+    <Root
+      className={`${embedded ? "concept-hero-footer" : "page-grid"} page-footer`}
+      id="site-footer"
+      tabIndex={-1}
+    >
       <div className="page-footer-panel">
         <div className="page-footer-meta">
           <nav className="page-footer-details" aria-label="Elsewhere and contact">
@@ -65,6 +70,6 @@ export function PageFooter() {
           </nav>
         </div>
       </div>
-    </footer>
+    </Root>
   );
 }

@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 
 /* Build-time contract for Akibwa's public editorial index. The homepage is a
-   short introduction to current work and career, followed by the complete
-   taste wall. Its navigation is three plain anchor links. */
+   short introduction to current work and career, followed by a compact,
+   horizontally browsable taste index. */
 
 const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
 const index = readFileSync(new URL("../app/page.jsx", import.meta.url), "utf8");
@@ -65,8 +65,8 @@ requireText(index, "return <EditorialHomeConcept />", "the editorial homepage mu
 forbidText(index, "<HomePage", "the retired all-in-one wall must not return as the root route");
 forbidText(shell, "site-header", "the retired site header must stay retired");
 
-/* Identity stays brief but keeps the original Daniel/Akibwa flick; navigation
-   remains static and directly useful. */
+/* Identity stays brief but keeps the original Daniel/Akibwa flick. The three
+   social handles now sit directly beneath the proposition. */
 requireText(
   editorial,
   'import { HeroFlipName } from "@/components/hero-word-cycle"',
@@ -81,15 +81,13 @@ forbidText(
   "the editorial masthead must not disable the identity flick"
 );
 requireText(editorial, "Building in the age of AI.", "the approved one-line proposition must remain");
-requireText(editorial, '<div className="concept-hero-copy">', "the proposition and menu must share the right-hand hero column");
-for (const [href, label] of [
-  ["#projects", "Projects"],
-  ["#career", "Career"],
-  ["#taste", "Taste Library"]
-]) {
-  requireText(editorial, `<a href="${href}">${label}</a>`, `${label} must remain a plain anchor link`);
-}
-requireRuleText(".concept-nav {", ["display: flex", "flex-wrap: wrap", "justify-content: flex-start"]);
+requireText(editorial, '<div className="concept-hero-copy">', "the proposition and handles must share the right-hand hero column");
+requireText(editorial, '<PageFooter embedded />', "the three handles must sit directly beneath the proposition");
+forbidText(editorial, 'className="concept-nav"', "the homepage hero must not repeat its three chapter names as a menu");
+requireText(footer, "embedded = false", "the shared handles must support their embedded hero position");
+requireText(footer, 'embedded ? "concept-hero-footer"', "embedded handles must use the hero treatment");
+requireRuleText(".concept-hero-footer {", ["width: 100%", "margin-top:"]);
+requireRuleText(".concept-hero-footer .page-footer-panel {", ["justify-content: flex-start", "padding-top: 0"]);
 requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns", "align-items: center"]);
 requireRuleText(".concept-hero-copy {", ["min-width: 0"]);
 requireText(
@@ -122,6 +120,9 @@ requireText(
 
 /* Projects uses one card anatomy at every size: a wide three-card row, a
    two-row tablet composition, then one full-width phone stack. */
+requireText(editorial, '<h2 id="projects-title">Projects</h2>', "Projects must have the same chapter-heading treatment as Career and Taste");
+requireText(editorial, 'aria-labelledby="projects-title"', "the Projects chapter must be labelled by its visible heading");
+requireRuleText(".concept-projects-head h2,", ["font-family: var(--serif)", "font-size: clamp(3rem, 5vw, 5.2rem)"]);
 requireText(
   editorial,
   'href="/features/?from=akibwa"',
@@ -394,8 +395,8 @@ requireText(
 forbidText(css, "border-top: 4px solid var(--concept-career)", "Career must not keep a shorter page-grid border");
 forbidText(css, "border-top: 4px solid var(--black)", "Taste must not keep the retired black rule");
 
-/* Taste opens on a mixed-scale quilt, then exposes the complete archive one
-   medium at a time. */
+/* Taste opens on one compact horizontal index, then exposes the complete
+   archive one medium at a time in the same swipeable row. */
 requireText(editorial, "<HomePage tasteOnly />", "Taste must render the categorised compact archive");
 requireText(home, "if (tasteOnly)", "the wall must keep its taste-only mode");
 requireText(home, "? gracelandCard : null", "Graceland must lead the taste wall");
@@ -407,10 +408,14 @@ requireText(
 requireText(home, 'id: "podcasts", label: "Podcasts"', "Taste must expose the podcast shelf");
 requireText(home, 'label: "Highlights"', "Taste must open on a concise Highlights edit");
 requireText(home, "const TASTE_HIGHLIGHTS_PER_SECTION = 10", "each medium must contribute ten opening highlights");
-requireText(home, "function ResponsiveTasteQuilt", "Taste must rebuild its quilt with the available width");
-requireText(home, "quiltBlockCounts(cards.length", "Taste must pack every card into complete two-by-two blocks");
-requireText(home, "cloneElement(card, { quiltScale:", "Taste must assign card scale from its packed position");
-forbidText(home, "TasteFinale", "Taste must end with the complete quilt rather than a separate closing shelf");
+requireText(home, "function HorizontalTasteRail", "Taste must use a dedicated horizontal list");
+requireText(home, 'role="list"', "the horizontal Taste row must expose list semantics");
+requireText(home, 'className="taste-rail-item" role="listitem"', "every Taste cover must be a list item");
+requireText(home, 'scrollTo({ left: 0, behavior: "auto" })', "a changed Taste filter must return the rail to its start");
+forbidText(home, "ResponsiveTasteQuilt", "Taste must not restore the page-length quilt");
+forbidText(home, "taste-quilt-band", "Taste must not restore quilt bands");
+forbidText(home, "taste-quilt-block", "Taste must not restore quilt blocks");
+forbidText(home, "TasteFinale", "Taste must end with the complete rail rather than a separate closing shelf");
 requireText(home, "function TasteVisual", "film, game and TV cards must keep an art-directed visual treatment");
 requireText(home, 'slot="tasteArt"', "film, game and TV cards must use responsive editorial artwork at every scale");
 forbidText(home, "taste-visual__original", "Taste cards must not put inset poster covers over the artwork");
@@ -423,15 +428,14 @@ requireRuleText(".akibwa-home .deck .card {", [
   "transform: none"
 ]);
 requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
-requireRuleText(".akibwa-home--taste .taste-quilt-band {", [
-  "repeat(var(--taste-block-count), minmax(0, 1fr))",
-  "width: 100%"
+requireRuleText(".akibwa-home--taste .taste-wall {", [
+  "grid-auto-flow: column",
+  "grid-auto-columns: var(--taste-rail-size)",
+  "overflow-x: auto",
+  "scroll-snap-type: inline proximity"
 ]);
-requireRuleText(".akibwa-home--taste .taste-quilt-block {", [
-  "repeat(2, minmax(0, 1fr))",
-  "aspect-ratio: 1"
-]);
-requireRuleText(".akibwa-home--taste .taste-quilt-block--hero .card {", ["grid-area: 1 / 1 / 3 / 3"]);
+requireRuleText(".akibwa-home--taste .taste-rail-item {", ["aspect-ratio: 1", "scroll-snap-align: start"]);
+requireRuleText(".akibwa-home--taste .taste-rail-item .card {", ["width: 100%", "height: 100%", "aspect-ratio: 1"]);
 forbidText(css, ".taste-finale", "Taste must not retain closing-shelf styling");
 requireRuleText(".akibwa-home--taste .taste-visual__scene,", [
   "position: absolute",
@@ -495,7 +499,7 @@ if (tasteArtEntries.some(([, value]) => Math.max(...value.variants.map((entry) =
   fail("art-directed Taste scenes must keep a 600px-or-larger responsive rung");
 }
 
-/* The shared footer is only the three colour-coded handles. */
+/* The shared handles move into the opening rather than repeating after Taste. */
 requireText(footer, 'className="page-footer-panel"', "the footer must keep its panel");
 forbidText(footer, "Fewer things done by hand.", "the retired footer sign-off must stay removed");
 forbidText(footer, "Manchester", "the footer must not add location copy back beside the handles");
@@ -505,6 +509,6 @@ requireText(footer, 'href="https://www.instagram.com/', "the footer must keep In
 requireText(footer, '"--handle-accent": "#0f1114"', "X must keep its dark accent");
 requireText(footer, '"--handle-accent": "#d63a7a"', "Instagram must keep its pink accent");
 requireText(footer, '"--handle-accent": "#2f88ff"', "email must keep its blue accent");
-requireText(home, "<PageFooter", "the taste wall must finish with the shared footer");
+requireText(home, "{tasteOnly ? null : <PageFooter />}", "Taste-only mode must not repeat the hero handles at the page end");
 
 console.log("Navigation contract passed.");

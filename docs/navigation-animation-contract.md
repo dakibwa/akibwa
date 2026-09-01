@@ -10,12 +10,12 @@ publishing homepage changes.
 - `/` renders `EditorialHomeConcept` directly. `/concept/` remains a no-index
   comparison URL, but it is not a second implementation.
 - There is no site header. The opening identity cycles between “I’m Daniel” and
-  “I’m Akibwa”, beside the sentence “Building in the age of AI.” and three
-  plain anchors: Projects, Career and Taste Library. The anchors share the
-  proposition's left edge on wide screens and when the masthead stacks on
-  mobile; the two headline rows use the phone measure rather than leaving an
-  empty white tail.
-- Projects is one stable card system: three equal cards form a single row on a
+  “I’m Akibwa”, beside the sentence “Building in the age of AI.” The X,
+  Instagram and email handles sit directly beneath that sentence; the hero no
+  longer repeats Projects, Career and Taste Library as a menu. The identity and
+  proposition use the phone measure rather than leaving an empty white tail.
+- Projects has its own serif chapter heading, matching Career and Taste
+  Library. Its stable card system keeps three equal cards in a single row on a
   wide screen, Features takes the first full tablet row above two equal cards,
   and phones use one full-width stack. Every card keeps its artwork above the
   same bottom caption rail; there are no narrow side captions. The Portuguese
@@ -78,27 +78,27 @@ publishing homepage changes.
   detail so the next chapter stays unobscured. The same compact interaction
   and horizontal rhythm remain on phones.
 
-## Taste and footer
+## Taste and handles
 
 - Taste reuses `HomePage` in `tasteOnly` mode: Graceland first, then Music,
-  Films, Games, TV and Podcasts in one responsive editorial quilt.
-- Every band fills the complete available width. Equal two-by-two blocks hold
-  either one large card, two long cards, a long card with two small cards, or
-  four small cards. The number of blocks responds to the viewport, so scale and
-  proportion vary without a ragged final column or an empty cell.
+  Films, Games, TV and Podcasts in one compact horizontal list.
+- The list is a single row of small square covers with native horizontal
+  overflow, scroll snapping and touch momentum. It swipes left and right on
+  touch screens and keeps a subtle coloured scrollbar as its desktop cue. A
+  category change returns the new list to its first item.
 - Cards remain labelled visual objects, not false links. Hover or keyboard
   focus reveals title then creator; music adds Last.fm plays when available.
 - The short filter row sizes itself to its words and sits directly above the
-  quilt; it must not inherit a card-height grid row or leave a blank shelf.
+  rail; it must not inherit a card-height grid row or leave a blank shelf.
 - Film, game and television tiles use their title-specific editorial scenes
   edge-to-edge at every scale. The consistent hover label carries title and
   creator, so commercial poster boxes, grey margins and text-heavy cover insets
   do not interrupt the wall. They must not regress to generic symbols or an
   undifferentiated wall of plain covers.
-  The six plain filter words change the wall immediately and Escape returns to
+  The six plain filter words change the rail immediately and Escape returns to
   Highlights.
-- The shared footer remains visible after the wall with only X, Instagram and
-  email, in their established colours.
+- The three shared handles live beneath “Building in the age of AI.” and are
+  not repeated after Taste. They retain their established colours.
 
 ## Motion
 
@@ -111,8 +111,9 @@ publishing homepage changes.
 ## Regression checks
 
 - `scripts/check-navigation-contract.mjs` asserts that the editorial component
-  owns `/`, that its copy and direct links remain intact, and that Career, Taste
-  and the footer retain the approved structure.
+  owns `/`, that its hero copy and handles remain intact, and that Projects,
+  Career and Taste retain the approved structure.
 - `scripts/check-navigation-dom.mjs` verifies the rendered hierarchy, project
   links and restrained feedback, focus-revealed career detail, Taste filters,
-  compact mobile card density, footer containment, overflow and reduced motion.
+  horizontal swipe/scroll behaviour, hero-handle containment, overflow and
+  reduced motion.

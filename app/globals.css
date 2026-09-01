@@ -6321,16 +6321,39 @@ button {
   filter: saturate(1.08) contrast(1.02);
 }
 
-/* Taste is one edge-to-edge quilt. Every band is made from equal square
-   blocks, and every block is a complete two-by-two composition: one large
-   card, two long cards, a long card with two small ones, or four small cards.
-   The page therefore changes rhythm without ever leaving an empty cell. */
+/* Taste is a compact native scroll rail. Its small square covers echo the
+   Career index above while horizontal overflow keeps the full archive one
+   gesture away without turning the homepage into a second long page. */
 .akibwa-home--taste .taste-wall {
-  --taste-gap: clamp(4px, 0.5vw, 8px);
+  --taste-rail-size: clamp(104px, 9.2vw, 136px);
   grid-column: 1 / -1;
   display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--taste-rail-size);
+  gap: clamp(7px, 0.65vw, 10px);
+  align-items: start;
   width: 100%;
-  gap: var(--taste-gap);
+  padding: 1px 0 11px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  scrollbar-color: color-mix(in srgb, var(--concept-archive) 58%, var(--canvas)) transparent;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.akibwa-home--taste .taste-wall::-webkit-scrollbar {
+  height: 5px;
+}
+
+.akibwa-home--taste .taste-wall::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.akibwa-home--taste .taste-wall::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--concept-archive) 58%, var(--canvas));
 }
 
 /* The general card wall reserves a card-sized implicit row for the Taste
@@ -6341,61 +6364,20 @@ button {
   row-gap: clamp(10px, 1.1vw, 16px);
 }
 
-.akibwa-home--taste .taste-quilt-band {
-  display: grid;
-  grid-template-columns: repeat(var(--taste-block-count), minmax(0, 1fr));
-  gap: var(--taste-gap);
-  width: 100%;
-}
-
-.akibwa-home--taste .taste-quilt-block {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: var(--taste-gap);
+.akibwa-home--taste .taste-rail-item {
   min-width: 0;
   aspect-ratio: 1;
+  scroll-snap-align: start;
 }
 
-.akibwa-home--taste .taste-quilt-block .card {
-  width: auto;
-  height: auto;
+.akibwa-home--taste .taste-rail-item .card {
+  width: 100%;
+  height: 100%;
   align-self: stretch;
   grid-column: auto;
   grid-row: auto;
-  aspect-ratio: auto;
-  contain-intrinsic-size: auto 132px;
-}
-
-.akibwa-home--taste .taste-quilt-block--hero .card {
-  grid-area: 1 / 1 / 3 / 3;
-}
-
-.akibwa-home--taste .taste-quilt-block--pair-rows .card {
-  grid-column: 1 / 3;
-}
-
-.akibwa-home--taste .taste-quilt-block--pair-columns .card {
-  grid-row: 1 / 3;
-}
-
-.akibwa-home--taste .taste-quilt-block--trio-left .card:first-child {
-  grid-column: 1;
-  grid-row: 1 / 3;
-}
-
-.akibwa-home--taste .taste-quilt-block--trio-right .card:last-child {
-  grid-column: 2;
-  grid-row: 1 / 3;
-}
-
-.akibwa-home--taste .taste-quilt-block--trio-top .card:first-child {
-  grid-column: 1 / 3;
-}
-
-.akibwa-home--taste .taste-quilt-block--trio-bottom .card:last-child {
-  grid-column: 1 / 3;
-  grid-row: 2;
+  aspect-ratio: 1;
+  contain-intrinsic-size: auto var(--taste-rail-size);
 }
 
 /* Film, game and television features use the title-specific editorial scene
@@ -6731,19 +6713,21 @@ button {
   text-wrap: balance;
 }
 
-.concept-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 0.45em 1.15em;
+.concept-hero-footer {
   width: 100%;
-  margin-top: clamp(20px, 2.3vw, 32px);
-  color: color-mix(in srgb, var(--ink) 68%, var(--canvas));
-  font-size: clamp(0.82rem, 1vw, 0.96rem);
-  font-weight: 610;
+  margin-top: clamp(16px, 1.8vw, 24px);
+  font-size: clamp(0.72rem, 0.9vw, 0.82rem);
 }
 
-.concept-nav a,
+.concept-hero-footer .page-footer-panel {
+  justify-content: flex-start;
+  padding-top: 0;
+}
+
+.concept-hero-footer .page-footer-details {
+  gap: clamp(11px, 1.2vw, 17px);
+}
+
 .concept-text-link,
 .concept-inline-links a {
   text-decoration-line: underline;
@@ -6753,8 +6737,6 @@ button {
   transition: color 120ms ease, text-decoration-color 120ms ease;
 }
 
-.concept-nav a:hover,
-.concept-nav a:focus-visible,
 .concept-text-link:hover,
 .concept-text-link:focus-visible,
 .concept-inline-links a:hover,
@@ -6763,16 +6745,11 @@ button {
   text-decoration-color: currentColor;
 }
 
-.concept-nav a:focus-visible,
 .concept-text-link:focus-visible,
 .concept-inline-links a:focus-visible,
 .concept-project-card:focus-visible {
   outline: 2px solid var(--concept-blue);
   outline-offset: 4px;
-}
-
-.concept-nav a:focus-visible {
-  outline-color: currentColor;
 }
 
 .concept-project-card:focus-visible {
@@ -6781,6 +6758,10 @@ button {
 
 .concept-projects {
   padding: var(--concept-rule-gap) 0 clamp(48px, 6vw, 82px);
+}
+
+.concept-projects-head {
+  padding-bottom: clamp(18px, 2vw, 28px);
 }
 
 .concept-project-grid {
@@ -7072,7 +7053,7 @@ button {
 }
 
 .concept-archive-wall {
-  margin-top: clamp(24px, 3.5vw, 44px);
+  margin-top: clamp(18px, 2.2vw, 30px);
 }
 
 .concept-archive-wall .akibwa-home .hero-sentence {
@@ -7132,10 +7113,6 @@ button {
     margin-top: clamp(22px, 3vw, 32px);
   }
 
-  .concept-nav {
-    margin-top: clamp(24px, 3.4vw, 34px);
-  }
-
   .concept-project-grid {
     grid-template-columns: 1fr;
   }
@@ -7173,13 +7150,12 @@ button {
     white-space: nowrap;
   }
 
-  .concept-nav {
-    gap: 0.45em 0.85em;
-    margin-top: 24px;
-  }
-
   .concept-projects {
     padding: var(--concept-rule-gap) 0 48px;
+  }
+
+  .concept-projects-head {
+    padding-bottom: 18px;
   }
 
   .concept-project-foot {
@@ -7243,12 +7219,11 @@ button {
   }
 
   .concept-archive-wall {
-    margin-top: 26px;
+    margin-top: 20px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .concept-nav a,
   .concept-text-link,
   .concept-inline-links a {
     transition: none;
@@ -7256,25 +7231,7 @@ button {
 }
 
 /* ── Editorial concept, compact pass ────────────────────────────────────
-   The coloured index is three plain destinations. Features and Português com
-   a Inês share the Projects lead, while client proof sits quietly inside the
-   freelance offer. */
-.concept-nav a:nth-child(1) {
-  --concept-nav-accent: var(--concept-work-rgb);
-}
-
-.concept-nav a:nth-child(2) {
-  --concept-nav-accent: var(--concept-career-rgb);
-}
-
-.concept-nav a:nth-child(3) {
-  --concept-nav-accent: var(--concept-archive-rgb);
-}
-
-.concept-nav a {
-  color: color-mix(in srgb, rgb(var(--concept-nav-accent)) 76%, var(--black));
-  font-weight: 680;
-}
+   Client proof sits quietly inside the freelance offer. */
 
 .concept-client-projects {
   display: grid;
@@ -7507,6 +7464,7 @@ button {
   padding-bottom: clamp(18px, 2vw, 28px);
 }
 
+.concept-projects-head h2,
 .concept-career-head h2,
 .concept-taste-head .concept-archive-head h2 {
   margin: 0;
@@ -7855,6 +7813,7 @@ button {
     padding-bottom: 18px;
   }
 
+  .concept-projects-head h2,
   .concept-career-head h2,
   .concept-taste-head .concept-archive-head h2 {
     font-size: 2.65rem;
