@@ -220,8 +220,10 @@ for (const [source, label] of [
   [trekPublished, "the generated Trek page"]
 ]) {
   requireText(source, "data-akibwa-project", `${label} must support conditional project view`);
-  requireText(source, "I&rsquo;m <strong>Daniel</strong>", `${label} must retain the Akibwa identity`);
-  requireText(source, "Building in the age of AI.", `${label} must retain the Akibwa proposition`);
+  requireText(source, "I&rsquo;m <strong>Akibwa</strong>", `${label} must retain the Akibwa identity`);
+  requireText(source, "Building in the Intelligence Age.", `${label} must retain the Akibwa proposition`);
+  requireText(source, "position:sticky;top:0", `${label} must keep the Akibwa banner pinned`);
+  forbidText(source, ".akibwa-project-banner__lede{display:none}", `${label} must keep the proposition visible in short landscape layouts`);
   requireText(source, "Back to projects", `${label} must provide a deterministic return`);
   requireText(source, "https://akibwa.com/#projects", `${label} must return to the Projects section`);
 }
@@ -293,11 +295,11 @@ for (const statement of [
   "Built client websites for Butterfly Rose and Português com a Inês to support their businesses.",
   "Built the Microsoft Fabric data platform to support UK growth and clean energy.",
   "Led the BI team and improved its data tools to help more people own a home.",
-  "Assisted with electrical work to make homes safe and reliable.",
+  "Assisted with electrical testing and warehouse fit-outs to keep commercial sites safe and ready.",
   "Built Power BI reports to analyse safer gambling and make betting and gaming safer.",
   "Assisted with joinery to build and fit homes well.",
   "Built cost and NPV models in SQL to make banking more accessible.",
-  "Analysed credit risk to help Britain prosper."
+  "Built default and cure models to support credit-risk decisions."
 ]) {
   requireText(deckData, `"statement": "${statement}"`, `career statement must stay literal and short: ${statement}`);
 }
@@ -305,11 +307,11 @@ for (const emphasis of [
   '["client websites", "Butterfly Rose", "Português com a Inês", "support their businesses"]',
   '["Microsoft Fabric", "UK growth and clean energy"]',
   '["BI team", "data tools", "own a home"]',
-  '["electrical work", "safe and reliable"]',
+  '["electrical testing", "warehouse fit-outs"]',
   '["Power BI", "safer gambling", "betting and gaming safer"]',
   '["joinery", "build and fit homes well"]',
   '["cost and NPV models", "SQL", "banking more accessible"]',
-  '["credit risk", "Britain prosper"]'
+  '["default and cure models", "credit-risk decisions"]'
 ]) {
   requireText(deckData, `"emphasis": ${emphasis}`, `career emphasis must stay deliberate: ${emphasis}`);
 }
@@ -356,6 +358,20 @@ requireText(
   "a focused career role must lock out competing hover detail"
 );
 requireText(css, "grid-template-rows: 24px 36px 56px", "mobile career dots must keep their clearance lane");
+requireRuleText(
+  ".concept-hero::after,",
+  ["left: 50%", "width: 100vw", "height: 4px", "transform: translateX(-50%)"],
+  "the editorial chapter rules must span the full viewport"
+);
+requireRuleText(".concept-hero::after {", ["background: var(--concept-work)"]);
+requireRuleText(".concept-career-section::before {", ["background: var(--concept-career)"]);
+requireText(
+  css,
+  ".concept-archive::before {\n  top: 0;\n  background: var(--concept-archive)",
+  "Taste must keep its blue full-width chapter rule"
+);
+forbidText(css, "border-top: 4px solid var(--concept-career)", "Career must not keep a shorter page-grid border");
+forbidText(css, "border-top: 4px solid var(--black)", "Taste must not keep the retired black rule");
 
 /* Taste opens on a balanced edit, then exposes the complete archive one
    medium at a time. */

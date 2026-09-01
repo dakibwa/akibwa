@@ -105,10 +105,14 @@ html[data-akibwa-project="true"] .stage{
 }
 @media(max-height:560px) and (orientation:landscape){
   html[data-akibwa-project="true"]{--akibwa-project-banner-height:58px}
-  .akibwa-project-banner__inner{min-height:58px;grid-template-areas:"identity back";
-    padding:8px 0;gap:18px}
-  .akibwa-project-banner__identity{font-size:1.7rem}
-  .akibwa-project-banner__lede{display:none}
+  .akibwa-project-banner__inner{min-height:58px;
+    grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:"identity lede back";padding:8px 0;gap:18px}
+  .akibwa-project-banner__identity{grid-area:identity;font-size:1.7rem}
+  .akibwa-project-banner__copy{display:contents}
+  .akibwa-project-banner__lede{display:block;grid-area:lede;font-size:clamp(.82rem,2.4vw,1rem);
+    line-height:1;white-space:normal}
+  .akibwa-project-banner__back{grid-area:back}
 }
 
 /* ---------------------------------------------------------------- masthead */
@@ -486,9 +490,9 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <header class="akibwa-project-banner" aria-label="Akibwa portfolio">
   <div class="akibwa-project-banner__inner">
-    <p class="akibwa-project-banner__identity">I&rsquo;m <strong>Daniel</strong></p>
+    <p class="akibwa-project-banner__identity">I&rsquo;m <strong>Akibwa</strong></p>
     <div class="akibwa-project-banner__copy">
-      <p class="akibwa-project-banner__lede">Building in the age of AI.</p>
+      <p class="akibwa-project-banner__lede">Building in the Intelligence Age.</p>
       <a class="akibwa-project-banner__back" href="https://akibwa.com/#projects">Back to projects</a>
     </div>
   </div>

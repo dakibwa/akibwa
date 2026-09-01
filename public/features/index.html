@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-oBqjkg+oX++1UsPR40jSfS9MgoS2/hnXNvwIPbEZu5o=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-V8MXzdlzoK2ghFQnSycGKteIk+eNl/f5Aq2xQXdMr2s=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -244,7 +244,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .sheet{position:relative;z-index:2;width:100%;max-width:1520px;
          padding:20px calc(20px + env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px));
          height:100%;display:flex;flex-direction:column;min-height:0}
-  .akibwa-project-banner{display:none;position:relative;z-index:80;flex:0 0 auto;
+  .akibwa-project-banner{display:none;position:sticky;top:0;z-index:80;flex:0 0 auto;
     width:100%;background:#FAF8F3;color:#101217;
     font-family:"Avenir Next","Inter","Helvetica Neue",Arial,sans-serif}
   html[data-akibwa-project="true"] .akibwa-project-banner{display:block}
@@ -286,10 +286,14 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .akibwa-project-banner__back{font-size:.72rem}
   }
   @media(max-height:560px) and (orientation:landscape){
-    .akibwa-project-banner__inner{min-height:58px;grid-template-areas:"identity back";
-      padding:8px 0;gap:18px}
-    .akibwa-project-banner__identity{font-size:1.7rem}
-    .akibwa-project-banner__lede{display:none}
+    .akibwa-project-banner__inner{min-height:58px;
+      grid-template-columns:auto minmax(0,1fr) auto;
+      grid-template-areas:"identity lede back";padding:8px 0;gap:18px}
+    .akibwa-project-banner__identity{grid-area:identity;font-size:1.7rem}
+    .akibwa-project-banner__copy{display:contents}
+    .akibwa-project-banner__lede{display:block;grid-area:lede;font-size:clamp(.82rem,2.4vw,1rem);
+      line-height:1;white-space:normal}
+    .akibwa-project-banner__back{grid-area:back}
   }
   .pick,
   .bulletin .bsub,
@@ -1282,9 +1286,9 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 <body>
 <header class="akibwa-project-banner" aria-label="Akibwa portfolio">
   <div class="akibwa-project-banner__inner">
-    <p class="akibwa-project-banner__identity">I&rsquo;m <strong>Daniel</strong></p>
+    <p class="akibwa-project-banner__identity">I&rsquo;m <strong>Akibwa</strong></p>
     <div class="akibwa-project-banner__copy">
-      <p class="akibwa-project-banner__lede">Building in the age of AI.</p>
+      <p class="akibwa-project-banner__lede">Building in the Intelligence Age.</p>
       <a class="akibwa-project-banner__back" href="https://akibwa.com/#projects">Back to projects</a>
     </div>
   </div>
@@ -2074,7 +2078,8 @@ const PACK={
 '2026-10-10':[{s:'bake:2026-10-10:0:5',d:'2026-10-12',v:18,o:2,c:3},{s:'bake:2026-10-10:1:7',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-10:2:6',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-10:3:29',d:'2026-10-10',v:18,o:4,c:5},{s:'bake:2026-10-10:4:21',d:'2026-10-26',v:18,o:4,c:5},{s:'bake:2026-10-10:5:5',d:'2026-10-15',v:18,o:5,c:7},{s:'bake:2026-10-10:6:3',d:'2026-10-10',v:18,o:6,c:8},{s:'bake:2026-10-10:7:9',d:'2026-10-10',v:18,o:6,c:8},{s:'bake:2026-10-10:8:6',d:'2026-10-10',v:18,o:9,c:12},{s:'bake:2026-10-10:9:0',d:'2026-10-10',v:18,o:9,c:12}],
 '2026-10-11':[{s:'bake:2026-10-11:0:30',d:'2026-10-14',v:18,o:2,c:3},{s:'bake:2026-10-11:1:2',d:'2026-10-14',v:18,o:3,c:4},{s:'bake:2026-10-11:2:78',d:'2026-10-20',v:18,o:3,c:4},{s:'bake:2026-10-11:3:1',d:'2026-10-14',v:18,o:4,c:5},{s:'bake:2026-10-11:4:1',d:'2026-10-21',v:18,o:4,c:5},{s:'bake:2026-10-11:5:10',d:'2026-10-12',v:18,o:4,c:5},{s:'bake:2026-10-11:6:5',d:'2026-10-14',v:18,o:6,c:8},{s:'bake:2026-10-11:7:2',d:'2026-10-11',v:18,o:8,c:10},{s:'bake:2026-10-11:8:14',d:'2026-10-11',v:18,o:8,c:10},{s:'bake:2026-10-11:9:4',d:'2026-10-11',v:18,o:9,c:12}],
 '2026-10-12':[{s:'bake:2026-10-12:0:28',d:'2026-10-20',v:18,o:2,c:3},{s:'bake:2026-10-12:1:7',d:'2026-10-27',v:18,o:3,c:4},{s:'bake:2026-10-12:2:5',d:'2026-10-15',v:18,o:3,c:4},{s:'bake:2026-10-12:3:13',d:'2026-10-19',v:18,o:4,c:5},{s:'bake:2026-10-12:4:6',d:'2026-10-19',v:18,o:5,c:7},{s:'bake:2026-10-12:5:14',d:'2026-10-13',v:18,o:5,c:7},{s:'bake:2026-10-12:6:0',d:'2026-10-12',v:18,o:6,c:8},{s:'bake:2026-10-12:7:12',d:'2026-10-12',v:18,o:7,c:9},{s:'bake:2026-10-12:8:7',d:'2026-10-12',v:18,o:8,c:10},{s:'bake:2026-10-12:9:4',d:'2026-10-12',v:18,o:9,c:12}],
-'2026-10-13':[{s:'bake:2026-10-13:0:12',d:'2026-10-19',v:18,o:2,c:3},{s:'bake:2026-10-13:1:25',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-13:2:18',d:'2026-10-24',v:18,o:3,c:4},{s:'bake:2026-10-13:3:21',d:'2026-10-23',v:18,o:4,c:5},{s:'bake:2026-10-13:4:5',d:'2026-10-14',v:18,o:4,c:5},{s:'bake:2026-10-13:5:10',d:'2026-10-20',v:18,o:5,c:7},{s:'bake:2026-10-13:6:6',d:'2026-10-16',v:18,o:5,c:7},{s:'bake:2026-10-13:7:13',d:'2026-10-14',v:18,o:7,c:9},{s:'bake:2026-10-13:8:4',d:'2026-10-13',v:18,o:8,c:10},{s:'bake:2026-10-13:9:53',d:'2026-10-13',v:18,o:9,c:12}]
+'2026-10-13':[{s:'bake:2026-10-13:0:12',d:'2026-10-19',v:18,o:2,c:3},{s:'bake:2026-10-13:1:25',d:'2026-10-17',v:18,o:3,c:4},{s:'bake:2026-10-13:2:18',d:'2026-10-24',v:18,o:3,c:4},{s:'bake:2026-10-13:3:21',d:'2026-10-23',v:18,o:4,c:5},{s:'bake:2026-10-13:4:5',d:'2026-10-14',v:18,o:4,c:5},{s:'bake:2026-10-13:5:10',d:'2026-10-20',v:18,o:5,c:7},{s:'bake:2026-10-13:6:6',d:'2026-10-16',v:18,o:5,c:7},{s:'bake:2026-10-13:7:13',d:'2026-10-14',v:18,o:7,c:9},{s:'bake:2026-10-13:8:4',d:'2026-10-13',v:18,o:8,c:10},{s:'bake:2026-10-13:9:53',d:'2026-10-13',v:18,o:9,c:12}],
+'2026-10-14':[{s:'bake:2026-10-14:0:6',d:'2026-10-15',v:18,o:2,c:3},{s:'bake:2026-10-14:1:12',d:'2026-10-25',v:18,o:3,c:4},{s:'bake:2026-10-14:2:19',d:'2026-10-14',v:18,o:3,c:4},{s:'bake:2026-10-14:3:37',d:'2026-10-14',v:18,o:4,c:5},{s:'bake:2026-10-14:4:33',d:'2026-10-23',v:18,o:4,c:5},{s:'bake:2026-10-14:5:16',d:'2026-10-18',v:18,o:4,c:5},{s:'bake:2026-10-14:6:8',d:'2026-10-18',v:18,o:7,c:9},{s:'bake:2026-10-14:7:53',d:'2026-10-14',v:18,o:7,c:9},{s:'bake:2026-10-14:8:23',d:'2026-10-15',v:18,o:9,c:12},{s:'bake:2026-10-14:9:25',d:'2026-10-15',v:18,o:9,c:12}]
 };
 const OPTIMA={
   '2026-08-01':[6,5,8,11,16,17,20,20,27,34],

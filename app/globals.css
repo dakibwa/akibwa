@@ -6579,12 +6579,41 @@ button {
 }
 
 .concept-hero {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
   gap: clamp(34px, 5vw, 78px);
   align-items: center;
   padding: clamp(28px, 4vw, 54px) 0;
-  border-bottom: 4px solid var(--concept-work);
+}
+
+/* The three editorial chapter rules are one piece of page furniture. They
+   run viewport-edge to viewport-edge while their headings and content keep
+   the shared page-grid measure. */
+.concept-hero::after,
+.concept-career-section::before,
+.concept-archive::before {
+  position: absolute;
+  left: 50%;
+  width: 100vw;
+  height: 4px;
+  transform: translateX(-50%);
+  content: "";
+}
+
+.concept-hero::after {
+  bottom: 0;
+  background: var(--concept-work);
+}
+
+.concept-career-section::before {
+  top: 0;
+  background: var(--concept-career);
+}
+
+.concept-archive::before {
+  top: 0;
+  background: var(--concept-archive);
 }
 
 .concept-identity {
@@ -6928,8 +6957,8 @@ button {
 }
 
 .concept-archive {
+  position: relative;
   padding-top: var(--concept-rule-gap);
-  border-top: 4px solid var(--black);
 }
 
 .concept-archive-head {
@@ -7378,8 +7407,8 @@ button {
 /* Career is a compact index at rest: date and mark only. The short title,
    action and mission sit inside the original hover/focus detail. */
 .concept-career-section {
+  position: relative;
   padding: var(--concept-rule-gap) 0 clamp(112px, 9vw, 140px);
-  border-top: 4px solid var(--concept-career);
 }
 
 .concept-career-head {

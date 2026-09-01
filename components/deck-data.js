@@ -48,8 +48,8 @@ export const deck = {
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
       "tile": false,
-      "statement": "Assisted with electrical work to make homes safe and reliable.",
-      "emphasis": ["electrical work", "safe and reliable"]
+      "statement": "Assisted with electrical testing and warehouse fit-outs to keep commercial sites safe and ready.",
+      "emphasis": ["electrical testing", "warehouse fit-outs"]
     },
     {
       "name": "Sky Betting & Gaming",
@@ -92,8 +92,8 @@ export const deck = {
       "accent": "#006747",
       "logo": "/brand-logos/lloyds-horse-icon.png",
       "tile": false,
-      "statement": "Analysed credit risk to help Britain prosper.",
-      "emphasis": ["credit risk", "Britain prosper"]
+      "statement": "Built default and cure models to support credit-risk decisions.",
+      "emphasis": ["default and cure models", "credit-risk decisions"]
     }
   ],
   "tools": [

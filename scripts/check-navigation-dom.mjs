@@ -350,6 +350,8 @@ const trekProjectState = () => evaluate(`(() => {
     visible: getComputedStyle(banner).display !== "none",
     identity: banner.querySelector(".akibwa-project-banner__identity")?.textContent.trim(),
     lede: banner.querySelector(".akibwa-project-banner__lede")?.textContent.trim(),
+    ledeDisplay: getComputedStyle(banner.querySelector(".akibwa-project-banner__lede")).display,
+    position: getComputedStyle(banner).position,
     backText: banner.querySelector(".akibwa-project-banner__back")?.textContent.trim(),
     backHref: banner.querySelector(".akibwa-project-banner__back")?.href,
     banner: rect(banner),
@@ -750,8 +752,9 @@ const checkProjectView = async () => {
   await goto("/trek/?from=akibwa");
   state = await trekProjectState();
   check(state.visible, "the Trek page shows Akibwa's masthead when selected from Projects");
-  check(state.identity === "I’m Daniel", `the selected-project identity stays concise [${state.identity}]`);
-  check(state.lede === "Building in the age of AI.", `the project masthead keeps the proposition [${state.lede}]`);
+  check(state.identity === "I’m Akibwa", `the selected-project identity stays concise [${state.identity}]`);
+  check(state.lede === "Building in the Intelligence Age.", `the project masthead keeps the proposition [${state.lede}]`);
+  check(state.position === "sticky", `the selected-project masthead remains pinned [${state.position}]`);
   check(state.backText === "Back to projects", `the return action is plain text [${state.backText}]`);
   check(
     state.backHref === "https://akibwa.com/#projects",
@@ -777,6 +780,16 @@ const checkProjectView = async () => {
     "the phone project view keeps its explicit way back"
   );
   check(state.overflow <= 1, `the phone project view has no horizontal overflow [${state.overflow}px]`);
+
+  await setDesktop(740, 390);
+  await goto("/trek/?from=akibwa");
+  state = await trekProjectState();
+  check(
+    state.visible && state.banner.height <= 60 && state.ledeDisplay !== "none" &&
+      state.lede === "Building in the Intelligence Age.",
+    `the short landscape masthead keeps the proposition without growing tall [${state.banner.height.toFixed(1)}px, ${state.ledeDisplay}]`
+  );
+  check(state.overflow <= 1, `the landscape project view has no horizontal overflow [${state.overflow}px]`);
 };
 
 const checkCareerTimeline = async () => {
