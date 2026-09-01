@@ -16,6 +16,7 @@ const home = readFileSync(new URL("../components/pages/home-page.jsx", import.me
 const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
 const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
 const siteImage = readFileSync(new URL("../components/site-image.jsx", import.meta.url), "utf8");
+const featuresPublished = readFileSync(new URL("../public/features/index.html", import.meta.url), "utf8");
 const trekTemplate = readFileSync(new URL("./trek-page-template.html", import.meta.url), "utf8");
 const trekPublished = readFileSync(new URL("../public/trek/index.html", import.meta.url), "utf8");
 const electricalLogo = readFileSync(new URL("../public/brand-logos/electrical.svg", import.meta.url), "utf8");
@@ -214,6 +215,7 @@ forbidText(editorial, "concept-arrow", "project links must not show a separate a
 forbidText(css, ".concept-arrow", "the retired project arrow styling must stay removed");
 forbidText(editorial, "iframe", "project selection must not create a nested browsing frame");
 for (const [source, label] of [
+  [featuresPublished, "the published Features page"],
   [trekTemplate, "the Trek source template"],
   [trekPublished, "the generated Trek page"]
 ]) {
