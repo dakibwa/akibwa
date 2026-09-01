@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { deck } from "@/components/deck-data";
 import { HeroFlipName } from "@/components/hero-word-cycle";
 import { PageFooter } from "@/components/page-footer";
@@ -21,6 +24,55 @@ const career = careerNames
   .map((name) => deck.jobs.find((job) => job.name === name))
   .filter(Boolean);
 
+const projects = [
+  {
+    id: "features",
+    className: "concept-feature",
+    href: "/features/?from=akibwa",
+    title: "features",
+    subtitle: "daily untangling puzzle",
+    kind: "Daily game",
+    description:
+      "Pull apart the features tangled through a neural net. Ten fresh puzzles a day turn interpretability into something you can play.",
+    action: "Open features",
+    src: "/features/home-card-bright-v4.png",
+    alt: "A bright Features puzzle board with five sweeping tangled threads, crossings, neurons, the Features wordmark and a vertical column of five feature symbols",
+    above: true,
+    aboveSync: true,
+    accent: "#1b947d"
+  },
+  {
+    id: "portuguese",
+    className: "concept-portuguese",
+    href: "https://portuguesewithines.com/?from=akibwa",
+    title: "Português com a Inês",
+    subtitle: "European Portuguese lessons",
+    kind: "Lessons and booking",
+    description:
+      "European Portuguese lessons in Porto and online, with prices, availability and booking brought together in one simple place.",
+    action: "Open Português com a Inês",
+    src: "/project-art/personal/portuguese-with-ines-conversation.png",
+    alt: "Two people talking over coffee as colourful speech shapes meet between them",
+    above: true,
+    aboveSync: true,
+    accent: "#7faaff"
+  },
+  {
+    id: "trek",
+    className: "concept-trek",
+    href: "/trek/?from=akibwa",
+    title: "The Trek",
+    subtitle: "Paris → Sofia · 1,982 km",
+    kind: "Interactive journey",
+    description:
+      "The 2019 walk from Paris to Sofia, told day by day through the real route, journal, records and 1,982 kilometres across seven countries.",
+    action: "Open The Trek",
+    src: "/project-art/personal/trek-paris-sofia-project.png",
+    alt: "An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre",
+    accent: "#d96b32"
+  }
+];
+
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 function CareerStatement({ statement, emphasis }) {
@@ -31,6 +83,89 @@ function CareerStatement({ statement, emphasis }) {
 
   return statement.split(matcher).map((part, index) =>
     terms.has(part) ? <strong key={`${part}-${index}`}>{part}</strong> : part
+  );
+}
+
+function ProjectShowcase() {
+  const [previewProject, setPreviewProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const activeProject = selectedProject ?? previewProject;
+
+  useEffect(() => {
+    if (!selectedProject) return undefined;
+    const close = (event) => {
+      if (event.key === "Escape") {
+        setSelectedProject(null);
+        setPreviewProject(null);
+      }
+    };
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [selectedProject]);
+
+  return (
+    <>
+      <div
+        className="concept-project-grid"
+        onMouseLeave={() => setPreviewProject(null)}
+      >
+        {projects.map((project) => {
+          const active = activeProject?.id === project.id;
+          return (
+            <button
+              className={`concept-project-card ${project.className}${active ? " is-active" : ""}`}
+              id={project.id === "features" ? "work" : undefined}
+              key={project.id}
+              type="button"
+              aria-label={`Find out more about ${project.title}`}
+              aria-controls="project-detail"
+              aria-expanded={active}
+              onMouseEnter={() => setPreviewProject(project)}
+              onFocus={() => setPreviewProject(project)}
+              onBlur={() => setPreviewProject(null)}
+              onClick={() => setSelectedProject(project)}
+            >
+              <SiteImage
+                src={project.src}
+                slot="conceptProject"
+                alt={project.alt}
+                above={project.above}
+                aboveSync={project.aboveSync}
+              />
+              <span className="concept-project-foot">
+                <span className="concept-project-label">
+                  <strong>{project.title}</strong>
+                  <span>{project.subtitle}</span>
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div
+        className={`concept-project-detail-shell${activeProject ? " is-open" : ""}`}
+        id="project-detail"
+        aria-hidden={!activeProject}
+        style={{ "--project-detail-accent": activeProject?.accent }}
+      >
+        <div className="concept-project-detail-clip">
+          {activeProject ? (
+            <div className="concept-project-detail">
+              <div>
+                <span className="concept-project-detail-kind">{activeProject.kind}</span>
+                <h3>{activeProject.title}</h3>
+              </div>
+              <p>{activeProject.description}</p>
+              <a className="concept-project-open" href={activeProject.href}>
+                {activeProject.action}
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -53,66 +188,7 @@ export function EditorialHomeConcept() {
         <header className="concept-projects-head">
           <h2 id="projects-title">Projects</h2>
         </header>
-        <div className="concept-project-grid">
-          <a
-            className="concept-project-card concept-feature"
-            id="work"
-            href="/features/?from=akibwa"
-            aria-label="Play Features, the daily untangling puzzle"
-          >
-            <SiteImage
-              src="/features/home-card-bright-v4.png"
-              slot="conceptProject"
-              alt="A bright Features puzzle board with five sweeping tangled threads, crossings, neurons, the Features wordmark and a vertical column of five feature symbols"
-              above
-              aboveSync
-            />
-            <span className="concept-project-foot">
-              <span className="concept-project-label">
-                <strong>features</strong>
-                <span>daily untangling puzzle</span>
-              </span>
-            </span>
-          </a>
-
-          <a
-            className="concept-project-card concept-portuguese"
-            href="https://portuguesewithines.com/?from=akibwa"
-            aria-label="Visit Português com a Inês, European Portuguese lessons in Porto and online"
-          >
-            <SiteImage
-              src="/project-art/personal/portuguese-with-ines-conversation.png"
-              slot="conceptProject"
-              alt="Two people talking over coffee as colourful speech shapes meet between them"
-              above
-              aboveSync
-            />
-            <span className="concept-project-foot">
-              <span className="concept-project-label">
-                <strong>Português com a Inês</strong>
-                <span>European Portuguese lessons</span>
-              </span>
-            </span>
-          </a>
-
-          <a
-            className="concept-project-card concept-trek"
-            href="/trek/?from=akibwa"
-            aria-label="Explore The Trek, 1,982 kilometres on foot from Paris to Sofia"
-          >
-            <SiteImage
-              src="/project-art/personal/trek-paris-sofia-project.png"
-              slot="conceptProject"
-              alt="An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre"
-            />
-            <span className="concept-project-foot">
-              <span className="concept-project-label">
-                <strong>The Trek</strong>
-                <span>Paris → Sofia · 1,982 km</span>
-              </span>
-            </span>
-          </a>
-        </div>
+        <ProjectShowcase />
       </section>
 
       <section className="page-grid concept-career-section" id="career" aria-labelledby="career-title">

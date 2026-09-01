@@ -31,11 +31,15 @@ publishing homepage changes.
   page's warm paper so their artwork keeps the colour. All three use the same
   title and subtitle typography, running from the left and right ends without
   clipping.
-  There is no separate arrow or wordy call to action: the whole rail takes on
-  a subtle project-colour tint on hover, keyboard focus and touch press.
-- Selecting a project replaces the portfolio rather than opening a card,
-  overlay or nested scrolling frame. The destination is the real Features,
-  Português com a Inês or Trek page with `?from=akibwa`; only that entry mode
+  There is no arrow on the resting card: the whole rail takes on a subtle
+  project-colour tint on hover, keyboard focus and touch press.
+- Hover and keyboard focus preview one short project detail beneath the three
+  cards; click or tap locks it. The panel expands inside Projects and therefore
+  pushes the rose Career rule down. It names the kind of project, adds one
+  concise explanatory sentence and provides the sole explicit open button.
+  Escape clears a locked panel. Only that button replaces the portfolio with
+  the real Features, Português com a Inês or Trek page with `?from=akibwa`;
+  only that entry mode
   adds a compact version of the real homepage masthead: the Daniel/Akibwa
   identity keeps flicking, “Building in the age of AI.” keeps its serif face,
   and Home, Projects, Career and Taste Library remain available in their
@@ -86,8 +90,10 @@ publishing homepage changes.
   overflow, scroll snapping and touch momentum. It swipes left and right on
   touch screens and keeps a subtle coloured scrollbar as its desktop cue. A
   category change returns the new list to its first item.
-- Cards remain labelled visual objects, not false links. Hover or keyboard
-  focus reveals title then creator; music adds Last.fm plays when available.
+- Cards are disclosure buttons rather than false destination links. Hover or
+  keyboard focus previews title then creator both on the cover and in one
+  compact panel beneath the rail; click or tap locks that detail, and Escape
+  clears it. Music adds Last.fm plays when available.
 - The short filter row sizes itself to its words and sits directly above the
   rail; it must not inherit a card-height grid row or leave a blank shelf.
 - Film, game and television tiles use their title-specific editorial scenes
@@ -102,9 +108,11 @@ publishing homepage changes.
 
 ## Motion
 
-- Motion is reserved for the identity cycle. Project links use an immediate,
-  restrained caption-rail tint for feedback; they must not lift, tilt or add
-  theatrical shadows to the project or taste wall.
+- Motion is reserved for the identity cycle and the three shared layout
+  reveals. Project cards use an immediate, restrained caption-rail tint for
+  feedback; neither project nor Taste cards lift, tilt or add theatrical
+  shadows. Their detail panels use the same continuous height change as
+  Career, with the selected chapter's rule colour carried into the panel.
 - Career reveals are one continuous layout movement: its section smoothly
   increases its bottom space while the detail eases in, physically pushing the
   blue Taste Library rule down. The section remains open while the pointer
