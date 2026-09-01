@@ -819,7 +819,7 @@ const checkLinkHover = async () => {
   for (const [selector, title, action, href] of projects) {
     const target = await evaluate(`(() => {
       const r = document.querySelector(${JSON.stringify(selector)} + " .concept-project-card").getBoundingClientRect();
-      return { x: r.left + r.width / 2, y: r.top + r.height / 2, right: r.right };
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2, left: r.left, right: r.right };
     })()`);
     await mouseMove(target.x, target.y);
     const open = await pollUntil(
@@ -828,6 +828,7 @@ const checkLinkHover = async () => {
         const popover = stop.querySelector(".concept-project-popover");
         return {
           opacity: Number(getComputedStyle(popover).opacity),
+          left: popover.getBoundingClientRect().left,
           right: popover.getBoundingClientRect().right,
           title: popover.querySelector("strong")?.textContent.trim(),
           action: popover.querySelector(".concept-project-popover-open")?.textContent.replace(/\\s+/g, " ").trim(),
@@ -842,7 +843,10 @@ const checkLinkHover = async () => {
       open.title === title && open.action === action && open.href === href,
       `${title} opens its own popover and links to its destination`
     );
-    check(open.right <= target.right + 1, `${title}'s popover never runs past its card's right edge`);
+    check(
+      Math.abs(open.right - target.right) <= 1 && Math.abs(open.left - target.left) <= 1,
+      `${title}'s popover is exactly as wide as its card [${open.left.toFixed(1)}–${open.right.toFixed(1)} vs ${target.left.toFixed(1)}–${target.right.toFixed(1)}]`
+    );
   }
 
   await mouseMove(1200, 40);

@@ -40,11 +40,10 @@ publishing homepage changes.
   focus opens the Career popover beneath it (Dan, 1 Sep 2026: the same hover
   style as Career, replacing the shared bottom panel whose title, sentence and
   button were spread across three columns). The popover hangs 9px under the
-  card, spans the card's width up to 360px, fades in over 120ms without moving
+  card, spans the card's full width, fades in over 120ms without moving
   anything else, and names the kind of project, one concise explanatory
   sentence and the open cue. The section grows its bottom space while a
   popover is open so the rose Career rule steps down instead of being covered.
-  The Trek's popover aligns to its right edge so it never leaves the grid.
   Clicking the card replaces the portfolio with
   the real Features, Português com a Inês or Trek page with `?from=akibwa`;
   only that entry mode

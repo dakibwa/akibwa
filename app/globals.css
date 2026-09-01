@@ -7001,17 +7001,18 @@ button {
   );
 }
 
-/* The project popover is the Career popover, sized for a card: it hangs from
-   the card's bottom edge, fades in over 120ms, and never moves anything else.
-   It is presentational — the card itself is the link — so pointer events pass
-   straight through it to whatever sits beneath. */
+/* The project popover is the Career popover, sized to its card: it hangs from
+   the card's bottom edge at the card's full width, fades in over 120ms, and
+   never moves anything else. It is presentational — the card itself is the
+   link — so pointer events pass straight through it to whatever sits beneath. */
 .concept-project-popover {
   position: absolute;
   top: calc(100% + 9px);
+  right: 0;
   left: 0;
   z-index: 20;
   display: grid;
-  width: min(100%, 360px);
+  width: 100%;
   gap: 4px;
   padding: 14px 15px 15px;
   border: 1px solid color-mix(in srgb, var(--project-card-accent) 44%, var(--line-strong));
@@ -7022,11 +7023,6 @@ button {
   opacity: 0;
   pointer-events: none;
   transition: opacity 120ms ease;
-}
-
-.concept-project-stop:last-child .concept-project-popover {
-  right: 0;
-  left: auto;
 }
 
 .concept-project-stop:hover .concept-project-popover,
@@ -7053,7 +7049,7 @@ button {
 }
 
 .concept-project-popover p {
-  max-width: 44ch;
+  max-width: 60ch;
   margin: 7px 0 0;
   color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
   font-family: var(--serif);

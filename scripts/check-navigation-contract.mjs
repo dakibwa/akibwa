@@ -209,6 +209,7 @@ requireRuleText(".concept-project-stop {", ["position: relative", "display: grid
 requireRuleText(".concept-project-popover {", [
   "position: absolute",
   "top: calc(100% + 9px)",
+  "width: 100%",
   "border-top: 3px solid var(--project-card-accent)",
   "opacity: 0",
   "pointer-events: none",
