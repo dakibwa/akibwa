@@ -434,7 +434,9 @@ const featuresProjectState = () => evaluate(`(() => {
 const careerState = () => evaluate(`(() => {
   const stops = [...document.querySelectorAll(".concept-career-stop")];
   const cards = stops.map((stop) => stop.querySelector(".concept-career-card").getBoundingClientRect());
-  const section = document.querySelector(".concept-career-section").getBoundingClientRect();
+  const sectionElement = document.querySelector(".concept-career-section");
+  const section = sectionElement.getBoundingClientRect();
+  const sectionStyle = getComputedStyle(sectionElement);
   const haloRadius = 12;
   const clearances = stops.map((stop, index) => {
     const node = stop.querySelector(".concept-career-node").getBoundingClientRect();
@@ -485,6 +487,11 @@ const careerState = () => evaluate(`(() => {
     firstName: first?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     lastName: stops.at(-1)?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     minBelow: Math.min(...clearances.map((item) => item.below)),
+    tasteTop: document.querySelector(".concept-archive").getBoundingClientRect().top,
+    sectionPaddingBottom: parseFloat(sectionStyle.paddingBottom),
+    sectionTransitionProperty: sectionStyle.transitionProperty,
+    sectionTransitionDuration: sectionStyle.transitionDuration,
+    sectionTransitionTiming: sectionStyle.transitionTimingFunction,
     sectionAfterCards: section.bottom - Math.max(...cards.map((card) => card.bottom)),
     popoversContained: popovers.every((item) => item.left >= -0.5 && item.right <= innerWidth + 0.5),
     activePopoversContainedBySection: popovers.every((item, index) =>
@@ -960,26 +967,66 @@ const checkCareerTimeline = async () => {
     state.sectionAfterCards >= 48 && state.sectionAfterCards <= 60,
     `Career closes with a compact resting margin [${state.sectionAfterCards.toFixed(1)}px]`
   );
+  check(
+    state.sectionTransitionProperty.includes("padding-bottom") &&
+      parseFloat(state.sectionTransitionDuration) >= 0.3 &&
+      state.sectionTransitionTiming.includes("0.22"),
+    `Career owns a deliberate layout transition [${state.sectionTransitionDuration}; ${state.sectionTransitionTiming}]`
+  );
   let points = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     const stops = [...document.querySelectorAll(".concept-career-stop")];
     const first = stops[0];
     first.scrollIntoView({ block: "center" });
-    return stops.slice(0, 2).map((stop) => {
-      const rect = stop.getBoundingClientRect();
-      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-    });
+    const boxes = stops.slice(0, 2).map((stop) => stop.getBoundingClientRect());
+    return {
+      stops: boxes.map((rect) => ({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      })),
+      gap: {
+        x: (boxes[0].right + boxes[1].left) / 2,
+        y: boxes[0].top + boxes[0].height / 2
+      }
+    };
   })()`);
-  await mouseMove(points[1].x, points[1].y);
-  state = await pollUntil(careerState, (value) => value.visibleNames.length === 1);
+  state = await careerState();
+  const restingTasteTop = state.tasteTop;
+  const restingSpace = state.sectionAfterCards;
+  await mouseMove(points.stops[1].x, points.stops[1].y);
+  await sleep(90);
+  const moving = await careerState();
+  await sleep(430);
+  state = await careerState();
+  check(
+    moving.tasteTop > restingTasteTop + 4 && moving.tasteTop < state.tasteTop - 4,
+    `the blue Taste rule moves through an intermediate position [${restingTasteTop.toFixed(1)} → ${moving.tasteTop.toFixed(1)} → ${state.tasteTop.toFixed(1)}px]`
+  );
+  check(
+    state.sectionAfterCards >= 138 && state.tasteTop >= restingTasteTop + 75,
+    `Career smoothly creates the full reveal space [${restingSpace.toFixed(1)} → ${state.sectionAfterCards.toFixed(1)}px]`
+  );
   check(
     state.visibleNames.join() === "National Wealth Fund",
     `hover opens one role at rest [${state.visibleNames.join() || "none"}]`
   );
+  await mouseMove(points.gap.x, points.gap.y);
+  await sleep(120);
+  const gapState = await careerState();
+  check(
+    gapState.sectionAfterCards >= 138 && Math.abs(gapState.tasteTop - state.tasteTop) <= 1,
+    "the blue rule stays settled while the pointer crosses between career marks"
+  );
   await mouseMove(0, 0);
-  await pollUntil(careerState, (value) => value.visibleNames.length === 0);
-  await clickAt(points[0].x, points[0].y);
-  state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
+  await pollUntil(
+    careerState,
+    (value) => value.visibleNames.length === 0 && value.sectionAfterCards <= restingSpace + 1
+  );
+  await clickAt(points.stops[0].x, points.stops[0].y);
+  state = await pollUntil(
+    careerState,
+    (value) => value.popoverOpacity > 0.99 && value.sectionAfterCards >= 138
+  );
   check(state.focused, "a career stop can receive keyboard focus");
   check(
     state.popoverOpacity > 0.99,
@@ -989,14 +1036,14 @@ const checkCareerTimeline = async () => {
   check(state.popoversContained, "every desktop career popover stays inside the viewport");
   check(state.activePopoversContainedBySection, "an open desktop detail makes room before Taste");
   check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
-  await mouseMove(points[1].x, points[1].y);
+  await mouseMove(points.stops[1].x, points.stops[1].y);
   await sleep(140);
   state = await careerState();
   check(
     state.focusedName === "Freelance" && state.visibleNames.join() === "Freelance",
     `focus suppresses competing hover detail [focus ${state.focusedName}; open ${state.visibleNames.join() || "none"}]`
   );
-  await clickAt(points[1].x, points[1].y);
+  await clickAt(points.stops[1].x, points.stops[1].y);
   state = await pollUntil(
     careerState,
     (value) => value.focusedName === "National Wealth Fund" && value.visibleNames.join() === "National Wealth Fund"
@@ -1028,7 +1075,10 @@ const checkCareerTimeline = async () => {
     return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   })()`);
   await clickAt(point.x, point.y);
-  state = await pollUntil(careerState, (value) => value.popoverOpacity > 0.99);
+  state = await pollUntil(
+    careerState,
+    (value) => value.popoverOpacity > 0.99 && value.sectionAfterCards >= 138
+  );
   check(state.focused, "the phone timeline retains focus semantics");
   check(
     state.popoverOpacity > 0.99,
@@ -1233,7 +1283,8 @@ const checkReducedMotion = async () => {
     const selectors = [
       ".concept-project-foot",
       ".hero-name",
-      ".hero-name-value"
+      ".hero-name-value",
+      ".concept-career-section"
     ];
     return selectors.map((selector) => getComputedStyle(document.querySelector(selector)).transitionDuration);
   })()`);
