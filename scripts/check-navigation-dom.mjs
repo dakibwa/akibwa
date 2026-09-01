@@ -235,6 +235,7 @@ const pageState = () => evaluate(`(() => {
     return rect(range);
   };
   const wall = document.querySelector(".taste-wall");
+  const legend = document.querySelector(".deck-legend");
   const bands = [...document.querySelectorAll(".taste-quilt-band")];
   const blocks = [...document.querySelectorAll(".taste-quilt-block")];
   const cardWidths = visible.map((card) => card.getBoundingClientRect().width);
@@ -298,6 +299,9 @@ const pageState = () => evaluate(`(() => {
       pressed: button.getAttribute("aria-pressed"),
       display: getComputedStyle(button).display
     })),
+    filterToWallGap: wall && legend
+      ? wall.getBoundingClientRect().top - legend.getBoundingClientRect().bottom
+      : -1,
     cards: cards.length,
     visible: visible.length,
     hasFinale: Boolean(document.querySelector(".taste-finale")),
@@ -423,10 +427,12 @@ const featuresProjectState = () => evaluate(`(() => {
 
 const careerState = () => evaluate(`(() => {
   const stops = [...document.querySelectorAll(".concept-career-stop")];
+  const cards = stops.map((stop) => stop.querySelector(".concept-career-card").getBoundingClientRect());
+  const section = document.querySelector(".concept-career-section").getBoundingClientRect();
   const haloRadius = 12;
-  const clearances = stops.map((stop) => {
+  const clearances = stops.map((stop, index) => {
     const node = stop.querySelector(".concept-career-node").getBoundingClientRect();
-    const card = stop.querySelector(".concept-career-card").getBoundingClientRect();
+    const card = cards[index];
     const center = node.top + node.height / 2;
     return {
       below: card.top - (center + haloRadius)
@@ -473,7 +479,12 @@ const careerState = () => evaluate(`(() => {
     firstName: first?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     lastName: stops.at(-1)?.querySelector(".concept-career-popover strong")?.textContent.trim(),
     minBelow: Math.min(...clearances.map((item) => item.below)),
+    sectionAfterCards: section.bottom - Math.max(...cards.map((card) => card.bottom)),
     popoversContained: popovers.every((item) => item.left >= -0.5 && item.right <= innerWidth + 0.5),
+    activePopoversContainedBySection: popovers.every((item, index) =>
+      Number(getComputedStyle(stops[index].querySelector(".concept-career-popover")).opacity) < 0.99 ||
+        item.bottom <= section.bottom + 0.5
+    ),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 })()`);
@@ -608,6 +619,10 @@ const checkDesktop = async () => {
   check(
     state.filters.filter((item) => item.pressed === "true").map((item) => item.text).join() === "Highlights",
     "Highlights is the sole initial filter"
+  );
+  check(
+    state.filterToWallGap >= 10 && state.filterToWallGap <= 18,
+    `the Taste filters sit directly above the quilt [${state.filterToWallGap.toFixed(1)}px]`
   );
   check(state.cards === 48, `the opening edit stays finite [${state.cards} cards]`);
   check(
@@ -914,6 +929,10 @@ const checkCareerTimeline = async () => {
     `every resting logo card carries its own quiet company-colour surface [${state.cardBackgrounds.join(" / ")}]`
   );
   check(state.popoverOpacity === 0, "career detail is hidden at rest");
+  check(
+    state.sectionAfterCards >= 48 && state.sectionAfterCards <= 60,
+    `Career closes with a compact resting margin [${state.sectionAfterCards.toFixed(1)}px]`
+  );
   let points = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     const stops = [...document.querySelectorAll(".concept-career-stop")];
@@ -941,6 +960,7 @@ const checkCareerTimeline = async () => {
   );
   check(state.minBelow >= 5.5, `the halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
   check(state.popoversContained, "every desktop career popover stays inside the viewport");
+  check(state.activePopoversContainedBySection, "an open desktop detail makes room before Taste");
   check(state.overflow <= 1, `the desktop timeline has no horizontal overflow [${state.overflow}px]`);
   await mouseMove(points[1].x, points[1].y);
   await sleep(140);
@@ -969,6 +989,10 @@ const checkCareerTimeline = async () => {
     "phone hover and focus detail keeps every full date"
   );
   check(state.popoverOpacity === 0, "phone career detail is hidden at rest");
+  check(
+    state.sectionAfterCards >= 40 && state.sectionAfterCards <= 52,
+    `phone Career keeps only a compact resting margin [${state.sectionAfterCards.toFixed(1)}px]`
+  );
   const point = await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = "auto";
     const first = document.querySelector(".concept-career-stop");
@@ -985,6 +1009,7 @@ const checkCareerTimeline = async () => {
   );
   check(state.minBelow >= 5.5, `the phone halo clears every logo card [${state.minBelow.toFixed(1)}px]`);
   check(state.popoversContained, "every phone career popover stays inside the viewport");
+  check(state.activePopoversContainedBySection, "an open phone detail makes room before Taste");
   check(state.overflow <= 1, `the phone timeline has no horizontal overflow [${state.overflow}px]`);
 };
 
@@ -1143,6 +1168,10 @@ const checkMobile = async () => {
     };
   })()`);
   check(touch.navHeight < 40, `the plain word menu stays compact [${touch.navHeight.toFixed(1)}px]`);
+  check(
+    state.filterToWallGap >= 8 && state.filterToWallGap <= 12,
+    `the phone filters sit directly above the quilt [${state.filterToWallGap.toFixed(1)}px]`
+  );
   check(touch.footerInside, "the handles-only footer stays inside the mobile frame");
   check(touch.handleCount === 3 && touch.handlesOneRow, "the three handles share one quiet mobile row");
 };

@@ -6333,6 +6333,14 @@ button {
   gap: var(--taste-gap);
 }
 
+/* The general card wall reserves a card-sized implicit row for the Taste
+   filter, leaving a conspicuous blank shelf underneath its short words. Let
+   the filter and quilt size their structural rows to their contents instead. */
+.akibwa-home--taste .deck {
+  grid-auto-rows: auto;
+  row-gap: clamp(10px, 1.1vw, 16px);
+}
+
 .akibwa-home--taste .taste-quilt-band {
   display: grid;
   grid-template-columns: repeat(var(--taste-block-count), minmax(0, 1fr));
@@ -7073,7 +7081,9 @@ button {
 
 .concept-archive-wall .akibwa-home .deck-hero {
   gap: 0;
+  margin-bottom: 0;
   padding-top: 0;
+  padding-bottom: 0;
 }
 
 .concept-archive-wall .akibwa-home {
@@ -7484,11 +7494,17 @@ button {
    action-to-purpose synopsis belong to the original hover/focus detail. */
 .concept-career-section {
   position: relative;
-  padding: var(--concept-rule-gap) 0 clamp(112px, 9vw, 140px);
+  padding: var(--concept-rule-gap) 0 clamp(56px, 4vw, 68px);
+}
+
+.concept-career-section:has(.concept-career-stop:hover),
+.concept-career-section:has(.concept-career-stop:focus),
+.concept-career-section:has(.concept-career-stop:focus-within) {
+  padding-bottom: 140px;
 }
 
 .concept-career-head {
-  padding-bottom: clamp(28px, 3vw, 40px);
+  padding-bottom: clamp(18px, 2vw, 28px);
 }
 
 .concept-career-head h2,
@@ -7743,7 +7759,7 @@ button {
 
 @media (max-width: 760px) {
   .concept-career-section {
-    padding-bottom: 72px;
+    padding-bottom: 60px;
   }
 
   .concept-career-timeline {
@@ -7832,11 +7848,11 @@ button {
   }
 
   .concept-career-section {
-    padding: var(--concept-rule-gap) 0 58px;
+    padding: var(--concept-rule-gap) 0 48px;
   }
 
   .concept-career-head {
-    padding-bottom: 24px;
+    padding-bottom: 18px;
   }
 
   .concept-career-head h2,
