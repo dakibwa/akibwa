@@ -105,7 +105,7 @@ for (const [source, label] of [
   requireText(source, "noimageindex", `${label} must opt out of image indexing`);
   forbidText(source, "data-akibwa-project", `${label} must remain standalone`);
   forbidText(source, "akibwa-project-banner", `${label} must not expose the portfolio identity`);
-  requireText(source, "abstracted public route", `${label} must explain its privacy-preserving route`);
+  requireText(source, "24 September to 28 November 2019", `${label} must retain the exact journey date range`);
 }
 
 requireText(features, '<p class="akibwa-project-banner__identity">Akibwa</p>', "Features project view must use only the Akibwa brand");

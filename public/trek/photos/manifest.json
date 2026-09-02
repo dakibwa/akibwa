@@ -4,6 +4,8 @@
   "src": "d01-01.webp",
   "w": 480,
   "h": 360,
+  "taken": "08:59",
+  "caption": "france · 1 of 4",
   "alt": "Photograph from day 1 of the walk through France"
  },
  {
@@ -11,6 +13,8 @@
   "src": "d01-02.webp",
   "w": 480,
   "h": 360,
+  "taken": "09:03",
+  "caption": "france · 2 of 4",
   "alt": "Photograph from day 1 of the walk through France"
  },
  {
@@ -18,6 +22,8 @@
   "src": "d01-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:13",
+  "caption": "france · 3 of 4",
   "alt": "Photograph from day 1 of the walk through France"
  },
  {
@@ -25,6 +31,8 @@
   "src": "d01-04.webp",
   "w": 480,
   "h": 360,
+  "taken": "18:41",
+  "caption": "france · 4 of 4",
   "alt": "Photograph from day 1 of the walk through France"
  },
  {
@@ -32,6 +40,8 @@
   "src": "d02-01.webp",
   "w": 312,
   "h": 554,
+  "taken": "07:44",
+  "caption": "france · 1 of 5",
   "alt": "Photograph from day 2 of the walk through France"
  },
  {
@@ -39,6 +49,8 @@
   "src": "d02-02.webp",
   "w": 480,
   "h": 360,
+  "taken": "14:00",
+  "caption": "france · 2 of 5",
   "alt": "Photograph from day 2 of the walk through France"
  },
  {
@@ -46,6 +58,8 @@
   "src": "d02-03.webp",
   "w": 720,
   "h": 540,
+  "taken": "14:07",
+  "caption": "france · 3 of 5",
   "alt": "Photograph from day 2 of the walk through France"
  },
  {
@@ -53,6 +67,8 @@
   "src": "d02-04.webp",
   "w": 480,
   "h": 360,
+  "taken": "17:12",
+  "caption": "france · 4 of 5",
   "alt": "Photograph from day 2 of the walk through France"
  },
  {
@@ -60,13 +76,26 @@
   "src": "d02-05.webp",
   "w": 480,
   "h": 360,
+  "taken": "17:12",
+  "caption": "france · 5 of 5",
   "alt": "Photograph from day 2 of the walk through France"
+ },
+ {
+  "day": 3,
+  "src": "d03-01.webp",
+  "w": 480,
+  "h": 360,
+  "taken": "09:52",
+  "caption": "france · 1 of 4",
+  "alt": "Photograph from day 3 of the walk through France"
  },
  {
   "day": 3,
   "src": "d03-02.webp",
   "w": 480,
   "h": 360,
+  "taken": "12:26",
+  "caption": "france · 2 of 4",
   "alt": "Photograph from day 3 of the walk through France"
  },
  {
@@ -74,6 +103,8 @@
   "src": "d03-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:27",
+  "caption": "france · 3 of 4",
   "alt": "Photograph from day 3 of the walk through France"
  },
  {
@@ -81,6 +112,8 @@
   "src": "d03-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:22",
+  "caption": "france · 4 of 4",
   "alt": "Photograph from day 3 of the walk through France"
  },
  {
@@ -88,6 +121,8 @@
   "src": "d04-01.webp",
   "w": 480,
   "h": 360,
+  "taken": "08:27",
+  "caption": "france · 1 of 6",
   "alt": "Photograph from day 4 of the walk through France"
  },
  {
@@ -95,6 +130,8 @@
   "src": "d04-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:07",
+  "caption": "france · 2 of 6",
   "alt": "Photograph from day 4 of the walk through France"
  },
  {
@@ -102,6 +139,8 @@
   "src": "d04-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:11",
+  "caption": "france · 3 of 6",
   "alt": "Photograph from day 4 of the walk through France"
  },
  {
@@ -109,6 +148,8 @@
   "src": "d04-04.webp",
   "w": 480,
   "h": 360,
+  "taken": "14:08",
+  "caption": "france · 4 of 6",
   "alt": "Photograph from day 4 of the walk through France"
  },
  {
@@ -116,6 +157,17 @@
   "src": "d04-05.webp",
   "w": 290,
   "h": 592,
+  "taken": "16:28",
+  "caption": "france · 5 of 6",
+  "alt": "Photograph from day 4 of the walk through France"
+ },
+ {
+  "day": 4,
+  "src": "d04-06.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "17:37",
+  "caption": "france · 6 of 6",
   "alt": "Photograph from day 4 of the walk through France"
  },
  {
@@ -123,6 +175,8 @@
   "src": "d05-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:24",
+  "caption": "france · 1 of 3",
   "alt": "Photograph from day 5 of the walk through France"
  },
  {
@@ -130,6 +184,8 @@
   "src": "d05-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:24",
+  "caption": "france · 2 of 3",
   "alt": "Photograph from day 5 of the walk through France"
  },
  {
@@ -137,6 +193,8 @@
   "src": "d05-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:24",
+  "caption": "france · 3 of 3",
   "alt": "Photograph from day 5 of the walk through France"
  },
  {
@@ -144,6 +202,8 @@
   "src": "d06-01.webp",
   "w": 480,
   "h": 360,
+  "taken": "08:12",
+  "caption": "france · 1 of 4",
   "alt": "Photograph from day 6 of the walk through France"
  },
  {
@@ -151,6 +211,8 @@
   "src": "d06-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:05",
+  "caption": "france · 2 of 4",
   "alt": "Photograph from day 6 of the walk through France"
  },
  {
@@ -158,6 +220,8 @@
   "src": "d06-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:05",
+  "caption": "france · 3 of 4",
   "alt": "Photograph from day 6 of the walk through France"
  },
  {
@@ -165,6 +229,8 @@
   "src": "d06-04.webp",
   "w": 480,
   "h": 360,
+  "taken": "17:14",
+  "caption": "france · 4 of 4",
   "alt": "Photograph from day 6 of the walk through France"
  },
  {
@@ -172,6 +238,17 @@
   "src": "d07-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:01",
+  "caption": "france · 1 of 2",
+  "alt": "Photograph from day 7 of the walk through France"
+ },
+ {
+  "day": 7,
+  "src": "d07-02.webp",
+  "w": 312,
+  "h": 554,
+  "taken": "14:06",
+  "caption": "france · 2 of 2",
   "alt": "Photograph from day 7 of the walk through France"
  },
  {
@@ -179,6 +256,8 @@
   "src": "d10-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:17",
+  "caption": "france · 1 of 2",
   "alt": "Photograph from day 10 of the walk through France"
  },
  {
@@ -186,6 +265,8 @@
   "src": "d10-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:39",
+  "caption": "france · 2 of 2",
   "alt": "Photograph from day 10 of the walk through France"
  },
  {
@@ -193,6 +274,8 @@
   "src": "d11-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:43",
+  "caption": "france · 1 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -200,6 +283,8 @@
   "src": "d11-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:03",
+  "caption": "france · 2 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -207,6 +292,8 @@
   "src": "d11-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:21",
+  "caption": "france · 3 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -214,6 +301,8 @@
   "src": "d11-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:28",
+  "caption": "france · 4 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -221,6 +310,8 @@
   "src": "d11-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:28",
+  "caption": "france · 5 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -228,6 +319,8 @@
   "src": "d11-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:36",
+  "caption": "france · 6 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -235,6 +328,8 @@
   "src": "d11-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:36",
+  "caption": "france · 7 of 7",
   "alt": "Photograph from day 11 of the walk through France"
  },
  {
@@ -242,6 +337,8 @@
   "src": "d12-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:48",
+  "caption": "france · 1 of 2",
   "alt": "Photograph from day 12 of the walk through France"
  },
  {
@@ -249,6 +346,8 @@
   "src": "d12-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:49",
+  "caption": "france · 2 of 2",
   "alt": "Photograph from day 12 of the walk through France"
  },
  {
@@ -256,6 +355,8 @@
   "src": "d13-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:53",
+  "caption": "france · 1 of 1",
   "alt": "Photograph from day 13 of the walk through France"
  },
  {
@@ -263,6 +364,8 @@
   "src": "d14-01.webp",
   "w": 312,
   "h": 554,
+  "taken": "10:20",
+  "caption": "france · 1 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -270,6 +373,8 @@
   "src": "d14-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:53",
+  "caption": "france · 2 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -277,6 +382,8 @@
   "src": "d14-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:13",
+  "caption": "france · 3 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -284,6 +391,8 @@
   "src": "d14-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:05",
+  "caption": "france · 4 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -291,6 +400,8 @@
   "src": "d14-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:05",
+  "caption": "france · 5 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -298,6 +409,8 @@
   "src": "d14-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:24",
+  "caption": "france · 6 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -305,6 +418,8 @@
   "src": "d14-07.webp",
   "w": 480,
   "h": 360,
+  "taken": "17:25",
+  "caption": "france · 7 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -312,6 +427,8 @@
   "src": "d14-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:39",
+  "caption": "france · 8 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -319,6 +436,8 @@
   "src": "d14-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:45",
+  "caption": "france · 9 of 9",
   "alt": "Photograph from day 14 of the walk through France"
  },
  {
@@ -326,6 +445,8 @@
   "src": "d15-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:55",
+  "caption": "france · 1 of 1",
   "alt": "Photograph from day 15 of the walk through France"
  },
  {
@@ -333,6 +454,8 @@
   "src": "d16-01.webp",
   "w": 312,
   "h": 554,
+  "taken": "09:11",
+  "caption": "france · 1 of 3",
   "alt": "Photograph from day 16 of the walk through France"
  },
  {
@@ -340,6 +463,8 @@
   "src": "d16-02.webp",
   "w": 312,
   "h": 554,
+  "taken": "09:12",
+  "caption": "france · 2 of 3",
   "alt": "Photograph from day 16 of the walk through France"
  },
  {
@@ -347,6 +472,8 @@
   "src": "d16-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:36",
+  "caption": "france · 3 of 3",
   "alt": "Photograph from day 16 of the walk through France"
  },
  {
@@ -354,6 +481,8 @@
   "src": "d19-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:30",
+  "caption": "germany · 1 of 2",
   "alt": "Photograph from day 19 of the walk through Germany"
  },
  {
@@ -361,6 +490,8 @@
   "src": "d19-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:45",
+  "caption": "germany · 2 of 2",
   "alt": "Photograph from day 19 of the walk through Germany"
  },
  {
@@ -368,6 +499,8 @@
   "src": "d20-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:14",
+  "caption": "germany · 1 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -375,6 +508,8 @@
   "src": "d20-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:15",
+  "caption": "germany · 2 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -382,6 +517,8 @@
   "src": "d20-03.webp",
   "w": 540,
   "h": 720,
+  "taken": "11:15",
+  "caption": "germany · 3 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -389,6 +526,8 @@
   "src": "d20-04.webp",
   "w": 478,
   "h": 358,
+  "taken": "12:22",
+  "caption": "germany · 4 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -396,6 +535,8 @@
   "src": "d20-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:08",
+  "caption": "germany · 5 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -403,6 +544,17 @@
   "src": "d20-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:08",
+  "caption": "germany · 6 of 9",
+  "alt": "Photograph from day 20 of the walk through Germany"
+ },
+ {
+  "day": 20,
+  "src": "d20-07.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "17:32",
+  "caption": "germany · 7 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -410,6 +562,8 @@
   "src": "d20-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:33",
+  "caption": "germany · 8 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -417,6 +571,8 @@
   "src": "d20-09.webp",
   "w": 540,
   "h": 720,
+  "taken": "19:22",
+  "caption": "germany · 9 of 9",
   "alt": "Photograph from day 20 of the walk through Germany"
  },
  {
@@ -424,6 +580,8 @@
   "src": "d21-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:36",
+  "caption": "germany · 1 of 3",
   "alt": "Photograph from day 21 of the walk through Germany"
  },
  {
@@ -431,6 +589,8 @@
   "src": "d21-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:47",
+  "caption": "germany · 2 of 3",
   "alt": "Photograph from day 21 of the walk through Germany"
  },
  {
@@ -438,6 +598,8 @@
   "src": "d21-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "19:45",
+  "caption": "germany · 3 of 3",
   "alt": "Photograph from day 21 of the walk through Germany"
  },
  {
@@ -445,6 +607,8 @@
   "src": "d22-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:10",
+  "caption": "germany · 1 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -452,6 +616,8 @@
   "src": "d22-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:22",
+  "caption": "germany · 2 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -459,6 +625,8 @@
   "src": "d22-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:23",
+  "caption": "germany · 3 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -466,6 +634,8 @@
   "src": "d22-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:05",
+  "caption": "germany · 4 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -473,6 +643,8 @@
   "src": "d22-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:09",
+  "caption": "germany · 5 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -480,6 +652,8 @@
   "src": "d22-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:39",
+  "caption": "germany · 6 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -487,6 +661,8 @@
   "src": "d22-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "19:09",
+  "caption": "germany · 7 of 7",
   "alt": "Photograph from day 22 of the walk through Germany"
  },
  {
@@ -494,6 +670,8 @@
   "src": "d23-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:29",
+  "caption": "germany · 1 of 7",
   "alt": "Photograph from day 23 of the walk through Germany"
  },
  {
@@ -501,6 +679,8 @@
   "src": "d23-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:52",
+  "caption": "germany · 2 of 7",
   "alt": "Photograph from day 23 of the walk through Germany"
  },
  {
@@ -508,6 +688,8 @@
   "src": "d23-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:10",
+  "caption": "germany · 3 of 7",
   "alt": "Photograph from day 23 of the walk through Germany"
  },
  {
@@ -515,6 +697,17 @@
   "src": "d23-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:16",
+  "caption": "germany · 4 of 7",
+  "alt": "Photograph from day 23 of the walk through Germany"
+ },
+ {
+  "day": 23,
+  "src": "d23-05.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "16:27",
+  "caption": "germany · 5 of 7",
   "alt": "Photograph from day 23 of the walk through Germany"
  },
  {
@@ -522,6 +715,8 @@
   "src": "d23-06.webp",
   "w": 540,
   "h": 720,
+  "taken": "16:39",
+  "caption": "germany · 6 of 7",
   "alt": "Photograph from day 23 of the walk through Germany"
  },
  {
@@ -529,13 +724,26 @@
   "src": "d23-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:54",
+  "caption": "germany · 7 of 7",
   "alt": "Photograph from day 23 of the walk through Germany"
+ },
+ {
+  "day": 25,
+  "src": "d25-01.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "09:44",
+  "caption": "germany · 1 of 7",
+  "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
   "day": 25,
   "src": "d25-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:49",
+  "caption": "germany · 2 of 7",
   "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
@@ -543,6 +751,8 @@
   "src": "d25-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:45",
+  "caption": "germany · 3 of 7",
   "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
@@ -550,6 +760,8 @@
   "src": "d25-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:32",
+  "caption": "germany · 4 of 7",
   "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
@@ -557,6 +769,8 @@
   "src": "d25-05.webp",
   "w": 540,
   "h": 720,
+  "taken": "15:56",
+  "caption": "germany · 5 of 7",
   "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
@@ -564,6 +778,8 @@
   "src": "d25-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:08",
+  "caption": "germany · 6 of 7",
   "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
@@ -571,6 +787,8 @@
   "src": "d25-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:07",
+  "caption": "germany · 7 of 7",
   "alt": "Photograph from day 25 of the walk through Germany"
  },
  {
@@ -578,6 +796,8 @@
   "src": "d26-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:41",
+  "caption": "germany · 1 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -585,6 +805,8 @@
   "src": "d26-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:10",
+  "caption": "germany · 2 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -592,6 +814,8 @@
   "src": "d26-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:32",
+  "caption": "germany · 3 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -599,6 +823,8 @@
   "src": "d26-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:32",
+  "caption": "germany · 4 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -606,6 +832,8 @@
   "src": "d26-05.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:44",
+  "caption": "germany · 5 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -613,6 +841,8 @@
   "src": "d26-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:23",
+  "caption": "germany · 6 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -620,6 +850,8 @@
   "src": "d26-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:23",
+  "caption": "germany · 7 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -627,6 +859,8 @@
   "src": "d26-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:24",
+  "caption": "germany · 8 of 8",
   "alt": "Photograph from day 26 of the walk through Germany"
  },
  {
@@ -634,6 +868,8 @@
   "src": "d27-01.webp",
   "w": 540,
   "h": 720,
+  "taken": "08:31",
+  "caption": "austria · 1 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -641,6 +877,8 @@
   "src": "d27-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:46",
+  "caption": "austria · 2 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -648,6 +886,8 @@
   "src": "d27-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:58",
+  "caption": "austria · 3 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -655,6 +895,8 @@
   "src": "d27-04.webp",
   "w": 478,
   "h": 358,
+  "taken": "09:42",
+  "caption": "austria · 4 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -662,6 +904,8 @@
   "src": "d27-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:22",
+  "caption": "austria · 5 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -669,6 +913,8 @@
   "src": "d27-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:00",
+  "caption": "austria · 6 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -676,6 +922,8 @@
   "src": "d27-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:12",
+  "caption": "austria · 7 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -683,6 +931,8 @@
   "src": "d27-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:13",
+  "caption": "austria · 8 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -690,6 +940,8 @@
   "src": "d27-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:25",
+  "caption": "austria · 9 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -697,6 +949,8 @@
   "src": "d27-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:25",
+  "caption": "austria · 10 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -704,6 +958,8 @@
   "src": "d27-11.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:34",
+  "caption": "austria · 11 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -711,6 +967,8 @@
   "src": "d27-12.webp",
   "w": 540,
   "h": 720,
+  "taken": "12:37",
+  "caption": "austria · 12 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -718,6 +976,8 @@
   "src": "d27-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:39",
+  "caption": "austria · 13 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -725,6 +985,8 @@
   "src": "d27-14.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:40",
+  "caption": "austria · 14 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -732,6 +994,8 @@
   "src": "d27-15.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:40",
+  "caption": "austria · 15 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -739,6 +1003,8 @@
   "src": "d27-16.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:30",
+  "caption": "austria · 16 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -746,6 +1012,8 @@
   "src": "d27-17.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:35",
+  "caption": "austria · 17 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -753,6 +1021,8 @@
   "src": "d27-18.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:35",
+  "caption": "austria · 18 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -760,6 +1030,8 @@
   "src": "d27-19.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:12",
+  "caption": "austria · 19 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -767,6 +1039,8 @@
   "src": "d27-20.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:21",
+  "caption": "austria · 20 of 20",
   "alt": "Photograph from day 27 of the walk through Austria"
  },
  {
@@ -774,6 +1048,8 @@
   "src": "d28-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:28",
+  "caption": "austria · 1 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -781,6 +1057,8 @@
   "src": "d28-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:31",
+  "caption": "austria · 2 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -788,6 +1066,8 @@
   "src": "d28-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:32",
+  "caption": "austria · 3 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -795,6 +1075,8 @@
   "src": "d28-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:15",
+  "caption": "austria · 4 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -802,6 +1084,8 @@
   "src": "d28-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:26",
+  "caption": "austria · 5 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -809,6 +1093,8 @@
   "src": "d28-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:44",
+  "caption": "austria · 6 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -816,6 +1102,8 @@
   "src": "d28-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:20",
+  "caption": "austria · 7 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -823,6 +1111,8 @@
   "src": "d28-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:29",
+  "caption": "austria · 8 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -830,6 +1120,8 @@
   "src": "d28-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:33",
+  "caption": "austria · 9 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -837,6 +1129,8 @@
   "src": "d28-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:16",
+  "caption": "austria · 10 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -844,6 +1138,8 @@
   "src": "d28-11.webp",
   "w": 540,
   "h": 720,
+  "taken": "16:16",
+  "caption": "austria · 11 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -851,6 +1147,8 @@
   "src": "d28-12.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:53",
+  "caption": "austria · 12 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -858,6 +1156,8 @@
   "src": "d28-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:53",
+  "caption": "austria · 13 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -865,6 +1165,8 @@
   "src": "d28-14.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:56",
+  "caption": "austria · 14 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -872,6 +1174,8 @@
   "src": "d28-15.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:56",
+  "caption": "austria · 15 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -879,6 +1183,8 @@
   "src": "d28-16.webp",
   "w": 540,
   "h": 720,
+  "taken": "17:10",
+  "caption": "austria · 16 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -886,6 +1192,8 @@
   "src": "d28-17.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:10",
+  "caption": "austria · 17 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -893,6 +1201,8 @@
   "src": "d28-18.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:10",
+  "caption": "austria · 18 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -900,6 +1210,8 @@
   "src": "d28-19.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:11",
+  "caption": "austria · 19 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -907,6 +1219,8 @@
   "src": "d28-20.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:59",
+  "caption": "austria · 20 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -914,6 +1228,8 @@
   "src": "d28-21.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:00",
+  "caption": "austria · 21 of 21",
   "alt": "Photograph from day 28 of the walk through Austria"
  },
  {
@@ -921,6 +1237,8 @@
   "src": "d29-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:28",
+  "caption": "austria · 1 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -928,6 +1246,8 @@
   "src": "d29-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:28",
+  "caption": "austria · 2 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -935,6 +1255,8 @@
   "src": "d29-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:29",
+  "caption": "austria · 3 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -942,6 +1264,8 @@
   "src": "d29-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:47",
+  "caption": "austria · 4 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -949,6 +1273,8 @@
   "src": "d29-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:47",
+  "caption": "austria · 5 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -956,6 +1282,8 @@
   "src": "d29-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:05",
+  "caption": "austria · 6 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -963,6 +1291,8 @@
   "src": "d29-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:08",
+  "caption": "austria · 7 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -970,6 +1300,8 @@
   "src": "d29-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:10",
+  "caption": "austria · 8 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -977,6 +1309,8 @@
   "src": "d29-09.webp",
   "w": 480,
   "h": 360,
+  "taken": "11:10",
+  "caption": "austria · 9 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -984,6 +1318,8 @@
   "src": "d29-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:53",
+  "caption": "austria · 10 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -991,6 +1327,8 @@
   "src": "d29-11.webp",
   "w": 540,
   "h": 720,
+  "taken": "11:53",
+  "caption": "austria · 11 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -998,6 +1336,8 @@
   "src": "d29-12.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:58",
+  "caption": "austria · 12 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1005,6 +1345,8 @@
   "src": "d29-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:58",
+  "caption": "austria · 13 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1012,6 +1354,8 @@
   "src": "d29-14.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:12",
+  "caption": "austria · 14 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1019,6 +1363,8 @@
   "src": "d29-15.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:12",
+  "caption": "austria · 15 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1026,6 +1372,8 @@
   "src": "d29-16.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:13",
+  "caption": "austria · 16 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1033,6 +1381,8 @@
   "src": "d29-17.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:15",
+  "caption": "austria · 17 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1040,6 +1390,8 @@
   "src": "d29-18.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:15",
+  "caption": "austria · 18 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1047,6 +1399,8 @@
   "src": "d29-19.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 19 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1054,6 +1408,8 @@
   "src": "d29-20.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 20 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1061,6 +1417,8 @@
   "src": "d29-21.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:31",
+  "caption": "austria · 21 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1068,6 +1426,8 @@
   "src": "d29-22.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:41",
+  "caption": "austria · 22 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1075,6 +1435,8 @@
   "src": "d29-23.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:41",
+  "caption": "austria · 23 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1082,6 +1444,8 @@
   "src": "d29-24.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:42",
+  "caption": "austria · 24 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1089,6 +1453,8 @@
   "src": "d29-25.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:42",
+  "caption": "austria · 25 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1096,6 +1462,8 @@
   "src": "d29-26.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:43",
+  "caption": "austria · 26 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1103,6 +1471,8 @@
   "src": "d29-27.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:53",
+  "caption": "austria · 27 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1110,6 +1480,8 @@
   "src": "d29-28.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:15",
+  "caption": "austria · 28 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1117,6 +1489,8 @@
   "src": "d29-29.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:50",
+  "caption": "austria · 29 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1124,6 +1498,8 @@
   "src": "d29-30.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:55",
+  "caption": "austria · 30 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1131,6 +1507,8 @@
   "src": "d29-31.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:58",
+  "caption": "austria · 31 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1138,6 +1516,8 @@
   "src": "d29-32.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:02",
+  "caption": "austria · 32 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1145,6 +1525,8 @@
   "src": "d29-33.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:02",
+  "caption": "austria · 33 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1152,6 +1534,8 @@
   "src": "d29-34.webp",
   "w": 540,
   "h": 720,
+  "taken": "15:15",
+  "caption": "austria · 34 of 34",
   "alt": "Photograph from day 29 of the walk through Austria"
  },
  {
@@ -1159,6 +1543,8 @@
   "src": "d30-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:00",
+  "caption": "austria · 1 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1166,6 +1552,8 @@
   "src": "d30-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:00",
+  "caption": "austria · 2 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1173,6 +1561,8 @@
   "src": "d30-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:43",
+  "caption": "austria · 3 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1180,6 +1570,8 @@
   "src": "d30-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:47",
+  "caption": "austria · 4 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1187,6 +1579,8 @@
   "src": "d30-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:06",
+  "caption": "austria · 5 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1194,6 +1588,8 @@
   "src": "d30-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:06",
+  "caption": "austria · 6 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1201,6 +1597,8 @@
   "src": "d30-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:32",
+  "caption": "austria · 7 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1208,6 +1606,8 @@
   "src": "d30-08.webp",
   "w": 540,
   "h": 720,
+  "taken": "13:35",
+  "caption": "austria · 8 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1215,6 +1615,8 @@
   "src": "d30-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:53",
+  "caption": "austria · 9 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1222,6 +1624,8 @@
   "src": "d30-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:23",
+  "caption": "austria · 10 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1229,6 +1633,8 @@
   "src": "d30-11.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:23",
+  "caption": "austria · 11 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1236,6 +1642,8 @@
   "src": "d30-12.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:23",
+  "caption": "austria · 12 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1243,6 +1651,8 @@
   "src": "d30-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:23",
+  "caption": "austria · 13 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1250,6 +1660,8 @@
   "src": "d30-14.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:25",
+  "caption": "austria · 14 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1257,6 +1669,8 @@
   "src": "d30-15.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:33",
+  "caption": "austria · 15 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1264,6 +1678,8 @@
   "src": "d30-16.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:37",
+  "caption": "austria · 16 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1271,6 +1687,8 @@
   "src": "d30-17.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:42",
+  "caption": "austria · 17 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1278,6 +1696,8 @@
   "src": "d30-18.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:42",
+  "caption": "austria · 18 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1285,6 +1705,8 @@
   "src": "d30-19.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:50",
+  "caption": "austria · 19 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1292,6 +1714,8 @@
   "src": "d30-20.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:55",
+  "caption": "austria · 20 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1299,6 +1723,8 @@
   "src": "d30-21.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:55",
+  "caption": "austria · 21 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1306,6 +1732,8 @@
   "src": "d30-22.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:58",
+  "caption": "austria · 22 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1313,6 +1741,8 @@
   "src": "d30-23.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:58",
+  "caption": "austria · 23 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1320,6 +1750,8 @@
   "src": "d30-24.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:58",
+  "caption": "austria · 24 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1327,6 +1759,8 @@
   "src": "d30-25.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:02",
+  "caption": "austria · 25 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1334,6 +1768,8 @@
   "src": "d30-26.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:05",
+  "caption": "austria · 26 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1341,6 +1777,8 @@
   "src": "d30-27.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:20",
+  "caption": "austria · 27 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1348,6 +1786,8 @@
   "src": "d30-28.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:21",
+  "caption": "austria · 28 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1355,6 +1795,8 @@
   "src": "d30-29.webp",
   "w": 540,
   "h": 720,
+  "taken": "15:32",
+  "caption": "austria · 29 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1362,6 +1804,8 @@
   "src": "d30-30.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:32",
+  "caption": "austria · 30 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1369,6 +1813,8 @@
   "src": "d30-31.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:32",
+  "caption": "austria · 31 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1376,6 +1822,8 @@
   "src": "d30-32.webp",
   "w": 540,
   "h": 720,
+  "taken": "15:42",
+  "caption": "austria · 32 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1383,6 +1831,8 @@
   "src": "d30-33.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:42",
+  "caption": "austria · 33 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1390,6 +1840,8 @@
   "src": "d30-34.webp",
   "w": 540,
   "h": 720,
+  "taken": "16:12",
+  "caption": "austria · 34 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1397,6 +1849,8 @@
   "src": "d30-35.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:12",
+  "caption": "austria · 35 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1404,6 +1858,8 @@
   "src": "d30-36.webp",
   "w": 540,
   "h": 720,
+  "taken": "17:30",
+  "caption": "austria · 36 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1411,6 +1867,8 @@
   "src": "d30-37.webp",
   "w": 540,
   "h": 720,
+  "taken": "17:32",
+  "caption": "austria · 37 of 37",
   "alt": "Photograph from day 30 of the walk through Austria"
  },
  {
@@ -1418,6 +1876,8 @@
   "src": "d31-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:02",
+  "caption": "austria · 1 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1425,6 +1885,8 @@
   "src": "d31-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:02",
+  "caption": "austria · 2 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1432,6 +1894,8 @@
   "src": "d31-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:18",
+  "caption": "austria · 3 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1439,6 +1903,8 @@
   "src": "d31-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:20",
+  "caption": "austria · 4 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1446,6 +1912,8 @@
   "src": "d31-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:22",
+  "caption": "austria · 5 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1453,6 +1921,8 @@
   "src": "d31-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 6 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1460,6 +1930,8 @@
   "src": "d31-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 7 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1467,6 +1939,8 @@
   "src": "d31-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 8 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1474,6 +1948,8 @@
   "src": "d31-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 9 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1481,6 +1957,8 @@
   "src": "d31-10.webp",
   "w": 540,
   "h": 720,
+  "taken": "13:23",
+  "caption": "austria · 10 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1488,6 +1966,8 @@
   "src": "d31-11.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "austria · 11 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1495,6 +1975,8 @@
   "src": "d31-12.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:24",
+  "caption": "austria · 12 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1502,6 +1984,8 @@
   "src": "d31-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:32",
+  "caption": "austria · 13 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1509,6 +1993,8 @@
   "src": "d31-14.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:32",
+  "caption": "austria · 14 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1516,6 +2002,8 @@
   "src": "d31-15.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:29",
+  "caption": "austria · 15 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1523,6 +2011,8 @@
   "src": "d31-16.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:38",
+  "caption": "austria · 16 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1530,6 +2020,8 @@
   "src": "d31-17.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:42",
+  "caption": "austria · 17 of 17",
   "alt": "Photograph from day 31 of the walk through Austria"
  },
  {
@@ -1537,6 +2029,8 @@
   "src": "d32-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:02",
+  "caption": "austria · 1 of 6",
   "alt": "Photograph from day 32 of the walk through Austria"
  },
  {
@@ -1544,6 +2038,8 @@
   "src": "d32-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:10",
+  "caption": "austria · 2 of 6",
   "alt": "Photograph from day 32 of the walk through Austria"
  },
  {
@@ -1551,6 +2047,8 @@
   "src": "d32-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:33",
+  "caption": "austria · 3 of 6",
   "alt": "Photograph from day 32 of the walk through Austria"
  },
  {
@@ -1558,6 +2056,8 @@
   "src": "d32-04.webp",
   "w": 540,
   "h": 720,
+  "taken": "13:39",
+  "caption": "austria · 4 of 6",
   "alt": "Photograph from day 32 of the walk through Austria"
  },
  {
@@ -1565,6 +2065,17 @@
   "src": "d32-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:42",
+  "caption": "austria · 5 of 6",
+  "alt": "Photograph from day 32 of the walk through Austria"
+ },
+ {
+  "day": 32,
+  "src": "d32-06.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "17:02",
+  "caption": "austria · 6 of 6",
   "alt": "Photograph from day 32 of the walk through Austria"
  },
  {
@@ -1572,6 +2083,8 @@
   "src": "d33-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:41",
+  "caption": "austria · 1 of 5",
   "alt": "Photograph from day 33 of the walk through Austria"
  },
  {
@@ -1579,6 +2092,8 @@
   "src": "d33-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:47",
+  "caption": "austria · 2 of 5",
   "alt": "Photograph from day 33 of the walk through Austria"
  },
  {
@@ -1586,6 +2101,8 @@
   "src": "d33-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:28",
+  "caption": "austria · 3 of 5",
   "alt": "Photograph from day 33 of the walk through Austria"
  },
  {
@@ -1593,6 +2110,17 @@
   "src": "d33-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:31",
+  "caption": "austria · 4 of 5",
+  "alt": "Photograph from day 33 of the walk through Austria"
+ },
+ {
+  "day": 33,
+  "src": "d33-05.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "17:43",
+  "caption": "austria · 5 of 5",
   "alt": "Photograph from day 33 of the walk through Austria"
  },
  {
@@ -1600,6 +2128,8 @@
   "src": "d34-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:28",
+  "caption": "austria · 1 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1607,6 +2137,8 @@
   "src": "d34-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:18",
+  "caption": "austria · 2 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1614,6 +2146,8 @@
   "src": "d34-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:53",
+  "caption": "austria · 3 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1621,6 +2155,8 @@
   "src": "d34-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:08",
+  "caption": "austria · 4 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1628,6 +2164,8 @@
   "src": "d34-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:11",
+  "caption": "austria · 5 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1635,6 +2173,8 @@
   "src": "d34-06.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:39",
+  "caption": "austria · 6 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1642,6 +2182,8 @@
   "src": "d34-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:44",
+  "caption": "austria · 7 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1649,6 +2191,8 @@
   "src": "d34-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:18",
+  "caption": "austria · 8 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1656,6 +2200,8 @@
   "src": "d34-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:59",
+  "caption": "austria · 9 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1663,6 +2209,8 @@
   "src": "d34-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:03",
+  "caption": "austria · 10 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1670,6 +2218,8 @@
   "src": "d34-11.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:53",
+  "caption": "austria · 11 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1677,6 +2227,8 @@
   "src": "d34-12.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:28",
+  "caption": "austria · 12 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1684,6 +2236,8 @@
   "src": "d34-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "18:12",
+  "caption": "austria · 13 of 13",
   "alt": "Photograph from day 34 of the walk through Austria"
  },
  {
@@ -1691,6 +2245,8 @@
   "src": "d35-01.webp",
   "w": 540,
   "h": 720,
+  "taken": "09:30",
+  "caption": "slovenia · 1 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1698,6 +2254,8 @@
   "src": "d35-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:42",
+  "caption": "slovenia · 2 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1705,6 +2263,8 @@
   "src": "d35-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:43",
+  "caption": "slovenia · 3 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1712,6 +2272,8 @@
   "src": "d35-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:17",
+  "caption": "slovenia · 4 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1719,6 +2281,8 @@
   "src": "d35-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:52",
+  "caption": "slovenia · 5 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1726,6 +2290,8 @@
   "src": "d35-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:41",
+  "caption": "slovenia · 6 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1733,6 +2299,8 @@
   "src": "d35-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:56",
+  "caption": "slovenia · 7 of 7",
   "alt": "Photograph from day 35 of the walk through Slovenia"
  },
  {
@@ -1740,6 +2308,8 @@
   "src": "d36-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:00",
+  "caption": "slovenia · 1 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1747,6 +2317,8 @@
   "src": "d36-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:55",
+  "caption": "slovenia · 2 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1754,6 +2326,8 @@
   "src": "d36-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:06",
+  "caption": "slovenia · 3 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1761,6 +2335,8 @@
   "src": "d36-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:27",
+  "caption": "slovenia · 4 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1768,6 +2344,8 @@
   "src": "d36-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:32",
+  "caption": "slovenia · 5 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1775,6 +2353,8 @@
   "src": "d36-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:49",
+  "caption": "slovenia · 6 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1782,6 +2362,8 @@
   "src": "d36-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:49",
+  "caption": "slovenia · 7 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1789,6 +2371,8 @@
   "src": "d36-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:49",
+  "caption": "slovenia · 8 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1796,6 +2380,8 @@
   "src": "d36-09.webp",
   "w": 540,
   "h": 720,
+  "taken": "13:04",
+  "caption": "slovenia · 9 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1803,6 +2389,8 @@
   "src": "d36-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:37",
+  "caption": "slovenia · 10 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1810,6 +2398,8 @@
   "src": "d36-11.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:23",
+  "caption": "slovenia · 11 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1817,6 +2407,8 @@
   "src": "d36-12.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:27",
+  "caption": "slovenia · 12 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1824,6 +2416,8 @@
   "src": "d36-13.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:39",
+  "caption": "slovenia · 13 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1831,6 +2425,8 @@
   "src": "d36-14.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:45",
+  "caption": "slovenia · 14 of 14",
   "alt": "Photograph from day 36 of the walk through Slovenia"
  },
  {
@@ -1838,6 +2434,8 @@
   "src": "d37-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:04",
+  "caption": "slovenia · 1 of 4",
   "alt": "Photograph from day 37 of the walk through Slovenia"
  },
  {
@@ -1845,6 +2443,8 @@
   "src": "d37-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:02",
+  "caption": "slovenia · 2 of 4",
   "alt": "Photograph from day 37 of the walk through Slovenia"
  },
  {
@@ -1852,6 +2452,8 @@
   "src": "d37-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:50",
+  "caption": "slovenia · 3 of 4",
   "alt": "Photograph from day 37 of the walk through Slovenia"
  },
  {
@@ -1859,6 +2461,8 @@
   "src": "d37-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:28",
+  "caption": "slovenia · 4 of 4",
   "alt": "Photograph from day 37 of the walk through Slovenia"
  },
  {
@@ -1866,6 +2470,8 @@
   "src": "d38-01.webp",
   "w": 480,
   "h": 358,
+  "taken": "09:54",
+  "caption": "croatia · 1 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1873,6 +2479,8 @@
   "src": "d38-02.webp",
   "w": 540,
   "h": 720,
+  "taken": "11:46",
+  "caption": "croatia · 2 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1880,6 +2488,8 @@
   "src": "d38-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:02",
+  "caption": "croatia · 3 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1887,6 +2497,8 @@
   "src": "d38-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:10",
+  "caption": "croatia · 4 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1894,6 +2506,8 @@
   "src": "d38-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:11",
+  "caption": "croatia · 5 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1901,6 +2515,8 @@
   "src": "d38-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:11",
+  "caption": "croatia · 6 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1908,6 +2524,8 @@
   "src": "d38-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:29",
+  "caption": "croatia · 7 of 7",
   "alt": "Photograph from day 38 of the walk through Croatia"
  },
  {
@@ -1915,6 +2533,8 @@
   "src": "d39-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:04",
+  "caption": "croatia · 1 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1922,6 +2542,8 @@
   "src": "d39-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:07",
+  "caption": "croatia · 2 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1929,6 +2551,8 @@
   "src": "d39-03.webp",
   "w": 540,
   "h": 720,
+  "taken": "13:10",
+  "caption": "croatia · 3 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1936,6 +2560,8 @@
   "src": "d39-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:15",
+  "caption": "croatia · 4 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1943,6 +2569,8 @@
   "src": "d39-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:15",
+  "caption": "croatia · 5 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1950,6 +2578,8 @@
   "src": "d39-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:19",
+  "caption": "croatia · 6 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1957,6 +2587,8 @@
   "src": "d39-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:20",
+  "caption": "croatia · 7 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1964,6 +2596,8 @@
   "src": "d39-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:23",
+  "caption": "croatia · 8 of 8",
   "alt": "Photograph from day 39 of the walk through Croatia"
  },
  {
@@ -1971,6 +2605,8 @@
   "src": "d40-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:58",
+  "caption": "croatia · 1 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -1978,6 +2614,8 @@
   "src": "d40-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:04",
+  "caption": "croatia · 2 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -1985,6 +2623,8 @@
   "src": "d40-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:15",
+  "caption": "croatia · 3 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -1992,6 +2632,8 @@
   "src": "d40-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:40",
+  "caption": "croatia · 4 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -1999,6 +2641,8 @@
   "src": "d40-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:50",
+  "caption": "croatia · 5 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -2006,6 +2650,8 @@
   "src": "d40-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:57",
+  "caption": "croatia · 6 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -2013,6 +2659,17 @@
   "src": "d40-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "17:54",
+  "caption": "croatia · 7 of 8",
+  "alt": "Photograph from day 40 of the walk through Croatia"
+ },
+ {
+  "day": 40,
+  "src": "d40-08.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "17:59",
+  "caption": "croatia · 8 of 8",
   "alt": "Photograph from day 40 of the walk through Croatia"
  },
  {
@@ -2020,6 +2677,8 @@
   "src": "d41-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:58",
+  "caption": "croatia · 1 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2027,6 +2686,8 @@
   "src": "d41-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:29",
+  "caption": "croatia · 2 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2034,6 +2695,8 @@
   "src": "d41-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:43",
+  "caption": "croatia · 3 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2041,6 +2704,8 @@
   "src": "d41-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:44",
+  "caption": "croatia · 4 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2048,6 +2713,8 @@
   "src": "d41-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:44",
+  "caption": "croatia · 5 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2055,6 +2722,8 @@
   "src": "d41-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:52",
+  "caption": "croatia · 6 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2062,6 +2731,8 @@
   "src": "d41-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:52",
+  "caption": "croatia · 7 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
  },
  {
@@ -2069,13 +2740,26 @@
   "src": "d41-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:33",
+  "caption": "croatia · 8 of 8",
   "alt": "Photograph from day 41 of the walk through Croatia"
+ },
+ {
+  "day": 42,
+  "src": "d42-01.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "09:23",
+  "caption": "croatia · 1 of 15",
+  "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
   "day": 42,
   "src": "d42-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:32",
+  "caption": "croatia · 2 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2083,6 +2767,8 @@
   "src": "d42-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:32",
+  "caption": "croatia · 3 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2090,6 +2776,8 @@
   "src": "d42-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:32",
+  "caption": "croatia · 4 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2097,6 +2785,8 @@
   "src": "d42-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:41",
+  "caption": "croatia · 5 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2104,6 +2794,8 @@
   "src": "d42-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:55",
+  "caption": "croatia · 6 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2111,6 +2803,8 @@
   "src": "d42-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:09",
+  "caption": "croatia · 7 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2118,6 +2812,8 @@
   "src": "d42-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:15",
+  "caption": "croatia · 8 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2125,6 +2821,8 @@
   "src": "d42-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:05",
+  "caption": "croatia · 9 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2132,6 +2830,8 @@
   "src": "d42-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:49",
+  "caption": "croatia · 10 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2139,6 +2839,8 @@
   "src": "d42-11.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:03",
+  "caption": "croatia · 11 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2146,6 +2848,8 @@
   "src": "d42-12.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:04",
+  "caption": "croatia · 12 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2153,6 +2857,8 @@
   "src": "d42-13.webp",
   "w": 540,
   "h": 720,
+  "taken": "16:07",
+  "caption": "croatia · 13 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2160,6 +2866,8 @@
   "src": "d42-14.webp",
   "w": 540,
   "h": 720,
+  "taken": "16:14",
+  "caption": "croatia · 14 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
  },
  {
@@ -2167,13 +2875,26 @@
   "src": "d42-15.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:28",
+  "caption": "croatia · 15 of 15",
   "alt": "Photograph from day 42 of the walk through Croatia"
+ },
+ {
+  "day": 46,
+  "src": "d46-01.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "10:16",
+  "caption": "croatia · 1 of 3",
+  "alt": "Photograph from day 46 of the walk through Croatia"
  },
  {
   "day": 46,
   "src": "d46-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:32",
+  "caption": "croatia · 2 of 3",
   "alt": "Photograph from day 46 of the walk through Croatia"
  },
  {
@@ -2181,6 +2902,8 @@
   "src": "d46-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:35",
+  "caption": "croatia · 3 of 3",
   "alt": "Photograph from day 46 of the walk through Croatia"
  },
  {
@@ -2188,6 +2911,8 @@
   "src": "d47-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:32",
+  "caption": "croatia · 1 of 2",
   "alt": "Photograph from day 47 of the walk through Croatia"
  },
  {
@@ -2195,6 +2920,8 @@
   "src": "d47-02.webp",
   "w": 446,
   "h": 359,
+  "taken": "12:58",
+  "caption": "croatia · 2 of 2",
   "alt": "Photograph from day 47 of the walk through Croatia"
  },
  {
@@ -2202,6 +2929,8 @@
   "src": "d48-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:10",
+  "caption": "serbia · 1 of 7",
   "alt": "Photograph from day 48 of the walk through Serbia"
  },
  {
@@ -2209,6 +2938,8 @@
   "src": "d48-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:22",
+  "caption": "serbia · 2 of 7",
   "alt": "Photograph from day 48 of the walk through Serbia"
  },
  {
@@ -2216,6 +2947,26 @@
   "src": "d48-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:48",
+  "caption": "serbia · 3 of 7",
+  "alt": "Photograph from day 48 of the walk through Serbia"
+ },
+ {
+  "day": 48,
+  "src": "d48-04.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "12:57",
+  "caption": "serbia · 4 of 7",
+  "alt": "Photograph from day 48 of the walk through Serbia"
+ },
+ {
+  "day": 48,
+  "src": "d48-05.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "12:57",
+  "caption": "serbia · 5 of 7",
   "alt": "Photograph from day 48 of the walk through Serbia"
  },
  {
@@ -2223,6 +2974,8 @@
   "src": "d48-06.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:09",
+  "caption": "serbia · 6 of 7",
   "alt": "Photograph from day 48 of the walk through Serbia"
  },
  {
@@ -2230,6 +2983,8 @@
   "src": "d48-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:38",
+  "caption": "serbia · 7 of 7",
   "alt": "Photograph from day 48 of the walk through Serbia"
  },
  {
@@ -2237,6 +2992,8 @@
   "src": "d49-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:13",
+  "caption": "serbia · 1 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2244,6 +3001,8 @@
   "src": "d49-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:34",
+  "caption": "serbia · 2 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2251,6 +3010,8 @@
   "src": "d49-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:04",
+  "caption": "serbia · 3 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2258,6 +3019,8 @@
   "src": "d49-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:07",
+  "caption": "serbia · 4 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2265,6 +3028,8 @@
   "src": "d49-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:46",
+  "caption": "serbia · 5 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2272,6 +3037,8 @@
   "src": "d49-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:46",
+  "caption": "serbia · 6 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2279,6 +3046,8 @@
   "src": "d49-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:03",
+  "caption": "serbia · 7 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2286,6 +3055,8 @@
   "src": "d49-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:50",
+  "caption": "serbia · 8 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2293,6 +3064,8 @@
   "src": "d49-09.webp",
   "w": 540,
   "h": 720,
+  "taken": "14:39",
+  "caption": "serbia · 9 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2300,6 +3073,8 @@
   "src": "d49-10.webp",
   "w": 360,
   "h": 480,
+  "taken": "16:32",
+  "caption": "serbia · 10 of 10",
   "alt": "Photograph from day 49 of the walk through Serbia"
  },
  {
@@ -2307,6 +3082,8 @@
   "src": "d52-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:08",
+  "caption": "serbia · 1 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2314,6 +3091,8 @@
   "src": "d52-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:08",
+  "caption": "serbia · 2 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2321,6 +3100,8 @@
   "src": "d52-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:13",
+  "caption": "serbia · 3 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2328,6 +3109,8 @@
   "src": "d52-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:13",
+  "caption": "serbia · 4 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2335,6 +3118,8 @@
   "src": "d52-05.webp",
   "w": 390,
   "h": 359,
+  "taken": "10:34",
+  "caption": "serbia · 5 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2342,6 +3127,8 @@
   "src": "d52-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:25",
+  "caption": "serbia · 6 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2349,6 +3136,8 @@
   "src": "d52-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:39",
+  "caption": "serbia · 7 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2356,6 +3145,8 @@
   "src": "d52-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:22",
+  "caption": "serbia · 8 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2363,6 +3154,8 @@
   "src": "d52-09.webp",
   "w": 360,
   "h": 480,
+  "taken": "15:24",
+  "caption": "serbia · 9 of 9",
   "alt": "Photograph from day 52 of the walk through Serbia"
  },
  {
@@ -2370,6 +3163,8 @@
   "src": "d53-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:32",
+  "caption": "serbia · 1 of 6",
   "alt": "Photograph from day 53 of the walk through Serbia"
  },
  {
@@ -2377,6 +3172,8 @@
   "src": "d53-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:36",
+  "caption": "serbia · 2 of 6",
   "alt": "Photograph from day 53 of the walk through Serbia"
  },
  {
@@ -2384,6 +3181,8 @@
   "src": "d53-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:00",
+  "caption": "serbia · 3 of 6",
   "alt": "Photograph from day 53 of the walk through Serbia"
  },
  {
@@ -2391,6 +3190,8 @@
   "src": "d53-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:10",
+  "caption": "serbia · 4 of 6",
   "alt": "Photograph from day 53 of the walk through Serbia"
  },
  {
@@ -2398,6 +3199,8 @@
   "src": "d53-05.webp",
   "w": 358,
   "h": 478,
+  "taken": "14:11",
+  "caption": "serbia · 5 of 6",
   "alt": "Photograph from day 53 of the walk through Serbia"
  },
  {
@@ -2405,13 +3208,26 @@
   "src": "d53-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:23",
+  "caption": "serbia · 6 of 6",
   "alt": "Photograph from day 53 of the walk through Serbia"
+ },
+ {
+  "day": 54,
+  "src": "d54-01.webp",
+  "w": 540,
+  "h": 720,
+  "taken": "07:23",
+  "caption": "serbia · 1 of 1",
+  "alt": "Photograph from day 54 of the walk through Serbia"
  },
  {
   "day": 55,
   "src": "d55-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:55",
+  "caption": "serbia · 1 of 3",
   "alt": "Photograph from day 55 of the walk through Serbia"
  },
  {
@@ -2419,6 +3235,8 @@
   "src": "d55-02.webp",
   "w": 358,
   "h": 478,
+  "taken": "12:55",
+  "caption": "serbia · 2 of 3",
   "alt": "Photograph from day 55 of the walk through Serbia"
  },
  {
@@ -2426,6 +3244,8 @@
   "src": "d55-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:58",
+  "caption": "serbia · 3 of 3",
   "alt": "Photograph from day 55 of the walk through Serbia"
  },
  {
@@ -2433,6 +3253,8 @@
   "src": "d56-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:07",
+  "caption": "serbia · 1 of 6",
   "alt": "Photograph from day 56 of the walk through Serbia"
  },
  {
@@ -2440,6 +3262,8 @@
   "src": "d56-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:18",
+  "caption": "serbia · 2 of 6",
   "alt": "Photograph from day 56 of the walk through Serbia"
  },
  {
@@ -2447,6 +3271,8 @@
   "src": "d56-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:20",
+  "caption": "serbia · 3 of 6",
   "alt": "Photograph from day 56 of the walk through Serbia"
  },
  {
@@ -2454,6 +3280,8 @@
   "src": "d56-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:20",
+  "caption": "serbia · 4 of 6",
   "alt": "Photograph from day 56 of the walk through Serbia"
  },
  {
@@ -2461,6 +3289,8 @@
   "src": "d56-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:25",
+  "caption": "serbia · 5 of 6",
   "alt": "Photograph from day 56 of the walk through Serbia"
  },
  {
@@ -2468,6 +3298,8 @@
   "src": "d56-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:10",
+  "caption": "serbia · 6 of 6",
   "alt": "Photograph from day 56 of the walk through Serbia"
  },
  {
@@ -2475,6 +3307,8 @@
   "src": "d57-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "09:48",
+  "caption": "serbia · 1 of 4",
   "alt": "Photograph from day 57 of the walk through Serbia"
  },
  {
@@ -2482,6 +3316,8 @@
   "src": "d57-02.webp",
   "w": 540,
   "h": 720,
+  "taken": "09:57",
+  "caption": "serbia · 2 of 4",
   "alt": "Photograph from day 57 of the walk through Serbia"
  },
  {
@@ -2489,6 +3325,8 @@
   "src": "d57-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:16",
+  "caption": "serbia · 3 of 4",
   "alt": "Photograph from day 57 of the walk through Serbia"
  },
  {
@@ -2496,6 +3334,8 @@
   "src": "d57-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:16",
+  "caption": "serbia · 4 of 4",
   "alt": "Photograph from day 57 of the walk through Serbia"
  },
  {
@@ -2503,6 +3343,8 @@
   "src": "d58-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:39",
+  "caption": "serbia · 1 of 3",
   "alt": "Photograph from day 58 of the walk through Serbia"
  },
  {
@@ -2510,6 +3352,17 @@
   "src": "d58-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "10:38",
+  "caption": "serbia · 2 of 3",
+  "alt": "Photograph from day 58 of the walk through Serbia"
+ },
+ {
+  "day": 58,
+  "src": "d58-03.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "14:19",
+  "caption": "serbia · 3 of 3",
   "alt": "Photograph from day 58 of the walk through Serbia"
  },
  {
@@ -2517,6 +3370,8 @@
   "src": "d63-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:30",
+  "caption": "serbia · 1 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2524,6 +3379,8 @@
   "src": "d63-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:39",
+  "caption": "serbia · 2 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2531,6 +3388,8 @@
   "src": "d63-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:39",
+  "caption": "serbia · 3 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2538,6 +3397,8 @@
   "src": "d63-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:40",
+  "caption": "serbia · 4 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2545,6 +3406,8 @@
   "src": "d63-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:25",
+  "caption": "serbia · 5 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2552,6 +3415,8 @@
   "src": "d63-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "13:47",
+  "caption": "serbia · 6 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2559,6 +3424,8 @@
   "src": "d63-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "14:11",
+  "caption": "serbia · 7 of 7",
   "alt": "Photograph from day 63 of the walk through Serbia"
  },
  {
@@ -2566,13 +3433,26 @@
   "src": "d64-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "12:07",
+  "caption": "serbia · 1 of 1",
   "alt": "Photograph from day 64 of the walk through Serbia"
+ },
+ {
+  "day": 65,
+  "src": "d65-01.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "07:31",
+  "caption": "bulgaria · 1 of 8",
+  "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
   "day": 65,
   "src": "d65-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:39",
+  "caption": "bulgaria · 2 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2580,6 +3460,8 @@
   "src": "d65-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:42",
+  "caption": "bulgaria · 3 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2587,6 +3469,8 @@
   "src": "d65-04.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:51",
+  "caption": "bulgaria · 4 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2594,6 +3478,8 @@
   "src": "d65-05.webp",
   "w": 360,
   "h": 480,
+  "taken": "08:20",
+  "caption": "bulgaria · 5 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2601,6 +3487,8 @@
   "src": "d65-06.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:02",
+  "caption": "bulgaria · 6 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2608,6 +3496,8 @@
   "src": "d65-07.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:18",
+  "caption": "bulgaria · 7 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2615,6 +3505,8 @@
   "src": "d65-08.webp",
   "w": 360,
   "h": 480,
+  "taken": "11:18",
+  "caption": "bulgaria · 8 of 8",
   "alt": "Photograph from day 65 of the walk through Bulgaria"
  },
  {
@@ -2622,6 +3514,8 @@
   "src": "d66-01.webp",
   "w": 360,
   "h": 480,
+  "taken": "06:31",
+  "caption": "bulgaria · 1 of 4",
   "alt": "Photograph from day 66 of the walk through Bulgaria"
  },
  {
@@ -2629,6 +3523,8 @@
   "src": "d66-02.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:20",
+  "caption": "bulgaria · 2 of 4",
   "alt": "Photograph from day 66 of the walk through Bulgaria"
  },
  {
@@ -2636,6 +3532,17 @@
   "src": "d66-03.webp",
   "w": 360,
   "h": 480,
+  "taken": "07:35",
+  "caption": "bulgaria · 3 of 4",
+  "alt": "Photograph from day 66 of the walk through Bulgaria"
+ },
+ {
+  "day": 66,
+  "src": "d66-04.webp",
+  "w": 360,
+  "h": 480,
+  "taken": "09:29",
+  "caption": "bulgaria · 4 of 4",
   "alt": "Photograph from day 66 of the walk through Bulgaria"
  }
 ]

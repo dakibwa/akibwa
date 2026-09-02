@@ -4,9 +4,14 @@
   "walked": 52,
   "numbered": 67,
   "countries": 7,
+  "kmPerWalkedDay": 38,
   "from": "Paris",
   "to": "Sofia",
-  "tauern": "~2,500 m"
+  "start": "2019-09-24",
+  "end": "2019-11-28",
+  "alone": true,
+  "tauern": "~2,500 m",
+  "after": "He got the coach from Sofia to Istanbul. He was done."
  },
  "countries": [
   {
@@ -1240,373 +1245,1696 @@
    ]
   }
  ],
+ "tracks": [
+  [
+   [
+    298320,
+    -6283560
+   ],
+   [
+    327200,
+    -6267680
+   ]
+  ],
+  [
+   [
+    333860,
+    -6266240
+   ],
+   [
+    373980,
+    -6279280
+   ]
+  ],
+  [
+   [
+    373940,
+    -6279300
+   ],
+   [
+    409480,
+    -6305180
+   ]
+  ],
+  [
+   [
+    409440,
+    -6305260
+   ],
+   [
+    449820,
+    -6318760
+   ]
+  ],
+  [
+   [
+    452200,
+    -6318880
+   ],
+   [
+    485940,
+    -6266780
+   ]
+  ],
+  [
+   [
+    488380,
+    -6265160
+   ],
+   [
+    503160,
+    -6246120
+   ],
+   [
+    527900,
+    -6244020
+   ]
+  ],
+  [
+   [
+    528060,
+    -6244080
+   ],
+   [
+    574940,
+    -6238180
+   ]
+  ],
+  [
+   [
+    575520,
+    -6236300
+   ],
+   [
+    589960,
+    -6226100
+   ],
+   [
+    621680,
+    -6233900
+   ]
+  ],
+  [
+   [
+    621500,
+    -6235220
+   ],
+   [
+    637340,
+    -6221100
+   ],
+   [
+    675560,
+    -6211880
+   ]
+  ],
+  [
+   [
+    675560,
+    -6211880
+   ],
+   [
+    688400,
+    -6221820
+   ]
+  ],
+  [
+   [
+    691100,
+    -6219400
+   ],
+   [
+    718460,
+    -6215120
+   ]
+  ],
+  [
+   [
+    718460,
+    -6215140
+   ],
+   [
+    746360,
+    -6222600
+   ]
+  ],
+  [
+   [
+    746620,
+    -6222700
+   ],
+   [
+    814120,
+    -6227580
+   ]
+  ],
+  [
+   [
+    814140,
+    -6227580
+   ],
+   [
+    887400,
+    -6241680
+   ]
+  ],
+  [
+   [
+    890740,
+    -6240980
+   ],
+   [
+    935600,
+    -6264780
+   ],
+   [
+    968800,
+    -6256800
+   ]
+  ],
+  [
+   [
+    1022220,
+    -6237820
+   ],
+   [
+    1054580,
+    -6224880
+   ]
+  ],
+  [
+   [
+    1054540,
+    -6224960
+   ],
+   [
+    1053780,
+    -6214500
+   ],
+   [
+    1071660,
+    -6201060
+   ]
+  ],
+  [
+   [
+    1071560,
+    -6200760
+   ],
+   [
+    1137180,
+    -6182120
+   ]
+  ],
+  [
+   [
+    1158140,
+    -6178820
+   ],
+   [
+    1212960,
+    -6168660
+   ]
+  ],
+  [
+   [
+    1214020,
+    -6167080
+   ],
+   [
+    1225000,
+    -6149120
+   ],
+   [
+    1264000,
+    -6135720
+   ]
+  ],
+  [
+   [
+    1287860,
+    -6130180
+   ],
+   [
+    1347240,
+    -6112120
+   ],
+   [
+    1355820,
+    -6098180
+   ]
+  ],
+  [
+   [
+    1355740,
+    -6097840
+   ],
+   [
+    1374620,
+    -6081920
+   ],
+   [
+    1407820,
+    -6077500
+   ]
+  ],
+  [
+   [
+    1407400,
+    -6077260
+   ],
+   [
+    1420240,
+    -6026700
+   ]
+  ],
+  [
+   [
+    1420440,
+    -6026440
+   ],
+   [
+    1428720,
+    -6020480
+   ],
+   [
+    1427540,
+    -5989080
+   ]
+  ],
+  [
+   [
+    1427640,
+    -5988980
+   ],
+   [
+    1454580,
+    -5987560
+   ],
+   [
+    1458240,
+    -5970360
+   ]
+  ],
+  [
+   [
+    1458180,
+    -5970320
+   ],
+   [
+    1466140,
+    -5940120
+   ]
+  ],
+  [
+   [
+    1466280,
+    -5940000
+   ],
+   [
+    1501300,
+    -5907840
+   ]
+  ],
+  [
+   [
+    1501240,
+    -5907880
+   ],
+   [
+    1541480,
+    -5879520
+   ]
+  ],
+  [
+   [
+    1541760,
+    -5878960
+   ],
+   [
+    1563380,
+    -5878960
+   ]
+  ],
+  [
+   [
+    1593180,
+    -5878420
+   ],
+   [
+    1631740,
+    -5872240
+   ]
+  ],
+  [
+   [
+    1631740,
+    -5872060
+   ],
+   [
+    1665600,
+    -5867200
+   ]
+  ],
+  [
+   [
+    1665540,
+    -5867220
+   ],
+   [
+    1713360,
+    -5839600
+   ]
+  ],
+  [
+   [
+    1713300,
+    -5839720
+   ],
+   [
+    1767640,
+    -5848540
+   ]
+  ],
+  [
+   [
+    1767480,
+    -5847680
+   ],
+   [
+    1819060,
+    -5831400
+   ]
+  ],
+  [
+   [
+    1872120,
+    -5806900
+   ],
+   [
+    1899960,
+    -5787000
+   ]
+  ],
+  [
+   [
+    1900020,
+    -5786760
+   ],
+   [
+    1917760,
+    -5771260
+   ]
+  ],
+  [
+   [
+    2036600,
+    -5707180
+   ],
+   [
+    2079080,
+    -5710180
+   ]
+  ],
+  [
+   [
+    2081080,
+    -5708680
+   ],
+   [
+    2109680,
+    -5705120
+   ]
+  ],
+  [
+   [
+    2110540,
+    -5704700
+   ],
+   [
+    2135920,
+    -5702180
+   ],
+   [
+    2140300,
+    -5683300
+   ]
+  ],
+  [
+   [
+    2140420,
+    -5682660
+   ],
+   [
+    2171160,
+    -5670820
+   ],
+   [
+    2187480,
+    -5676300
+   ],
+   [
+    2207820,
+    -5660400
+   ]
+  ],
+  [
+   [
+    2209160,
+    -5661760
+   ],
+   [
+    2232360,
+    -5645940
+   ],
+   [
+    2243900,
+    -5619360
+   ]
+  ],
+  [
+   [
+    2245780,
+    -5619760
+   ],
+   [
+    2278020,
+    -5591640
+   ]
+  ],
+  [
+   [
+    2278280,
+    -5591780
+   ],
+   [
+    2285660,
+    -5585900
+   ]
+  ],
+  [
+   [
+    2285740,
+    -5585540
+   ],
+   [
+    2306400,
+    -5539160
+   ],
+   [
+    2331240,
+    -5523080
+   ]
+  ],
+  [
+   [
+    2331280,
+    -5523040
+   ],
+   [
+    2353180,
+    -5518140
+   ],
+   [
+    2360240,
+    -5500080
+   ]
+  ],
+  [
+   [
+    2360260,
+    -5500060
+   ],
+   [
+    2379860,
+    -5456340
+   ]
+  ],
+  [
+   [
+    2379000,
+    -5455160
+   ],
+   [
+    2383580,
+    -5444360
+   ]
+  ],
+  [
+   [
+    2437880,
+    -5360680
+   ],
+   [
+    2450280,
+    -5356640
+   ]
+  ],
+  [
+   [
+    2450060,
+    -5356820
+   ],
+   [
+    2507540,
+    -5336380
+   ]
+  ],
+  [
+   [
+    2514260,
+    -5335660
+   ],
+   [
+    2535260,
+    -5314180
+   ]
+  ],
+  [
+   [
+    2535640,
+    -5313880
+   ],
+   [
+    2552580,
+    -5300140
+   ]
+  ],
+  [
+   [
+    2553260,
+    -5299740
+   ],
+   [
+    2580600,
+    -5286940
+   ],
+   [
+    2596360,
+    -5267100
+   ]
+  ]
+ ],
  "days": [
   {
    "n": 1,
+   "date": "2019-09-24",
+   "title": "And We're Off!",
+   "raw": "Day 1 - And We're Off!",
+   "x": 327200,
+   "y": -6267680,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 29.1,
+   "movingMin": 335,
+   "elevM": 835
   },
   {
    "n": 2,
-   "country": "France",
+   "date": "2019-09-25",
+   "title": "After the Storm",
+   "raw": "Day 2 - After the Storm",
+   "x": 373980,
+   "y": -6279280,
    "walked": true,
-   "recordKey": "After the Storm"
+   "country": "France",
+   "km": 35.5,
+   "movingMin": 430,
+   "elevM": 1313,
+   "sleeve": {
+    "slug": "isolation",
+    "kind": "song",
+    "song": "After the Storm",
+    "album": "Isolation",
+    "artist": "Kali Uchis",
+    "note": "Featuring Tyler, the Creator and Bootsy Collins."
+   }
   },
   {
    "n": 3,
+   "date": "2019-09-26",
+   "title": "Reservoirs of Untapped Potential",
+   "raw": "Day 3 - Reservoirs of Untapped Potential",
+   "x": 409480,
+   "y": -6305180,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 35.9,
+   "movingMin": 421,
+   "elevM": 1225
   },
   {
    "n": 4,
+   "date": "2019-09-27",
+   "title": "On the 5th day, Dan rested",
+   "raw": "Day 4 - On the 5th day, Dan rested",
+   "x": 449820,
+   "y": -6318760,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 34.6,
+   "movingMin": 431,
+   "elevM": 1621
   },
   {
    "n": 5,
+   "date": "2019-09-28",
+   "title": null,
+   "raw": null,
+   "x": 449820,
+   "y": -6318760,
+   "walked": false,
    "country": "France",
-   "walked": false
+   "km": null,
+   "movingMin": null,
+   "elevM": null
   },
   {
    "n": 6,
-   "country": "France",
+   "date": "2019-09-29",
+   "title": "One way to lose them walking blues!",
+   "raw": "Day 6 - One way to lose them walking blues!",
+   "x": 485940,
+   "y": -6266780,
    "walked": true,
-   "recordKey": "One way to lose them walking blues!"
+   "country": "France",
+   "coverSong": "Diamonds on the Soles of Her Shoes",
+   "km": 50,
+   "movingMin": 512,
+   "elevM": 1415,
+   "sleeve": {
+    "slug": "graceland",
+    "kind": "lyrics",
+    "song": "Diamonds on the Soles of Her Shoes",
+    "album": "Graceland",
+    "artist": "Paul Simon",
+    "note": "Official lyric: “Well, that’s one way to lose these walking blues.” 123 Last.fm plays on Graceland."
+   }
   },
   {
    "n": 7,
+   "date": "2019-09-30",
+   "title": "Now I'm on my way",
+   "raw": "Day 7 - Now I'm on my way",
+   "x": 527900,
+   "y": -6244020,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 37,
+   "movingMin": 358,
+   "elevM": 973
   },
   {
    "n": 8,
+   "date": "2019-10-01",
+   "title": "Getting the Hang of It",
+   "raw": "Day 8 - Getting the Hang of It",
+   "x": 574940,
+   "y": -6238180,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 35.7,
+   "movingMin": 309,
+   "elevM": 933
   },
   {
    "n": 9,
-   "country": "France",
+   "date": "2019-10-02",
+   "title": "Lilac!",
+   "raw": "Day 9 - Lilac!",
+   "x": 621680,
+   "y": -6233900,
    "walked": true,
-   "recordKey": "Lilac!"
+   "country": "France",
+   "km": 36,
+   "movingMin": 268,
+   "elevM": 999,
+   "sleeve": {
+    "slug": "high-life",
+    "kind": "song",
+    "song": "Lilac",
+    "album": "High Life",
+    "artist": "Brian Eno & Karl Hyde",
+    "note": "The Eno · Hyde collaboration from High Life (2014)."
+   }
   },
   {
    "n": 10,
+   "date": "2019-10-03",
+   "title": "Sure is a Hot One!",
+   "raw": "Day 10 - Sure is a Hot One!",
+   "x": 675560,
+   "y": -6211880,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 50,
+   "movingMin": 425,
+   "elevM": 1365
   },
   {
    "n": 11,
+   "date": "2019-10-04",
+   "title": "Short Walk to Nancy",
+   "raw": "Day 11 - Short Walk to Nancy",
+   "x": 688400,
+   "y": -6221820,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 12.6,
+   "movingMin": 159,
+   "elevM": 634
   },
   {
    "n": 12,
-   "country": "France",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 688400,
+   "y": -6221820,
+   "walked": false,
+   "country": "France"
   },
   {
    "n": 13,
+   "date": "2019-10-06",
+   "title": "The Long Canal",
+   "raw": "Day 13 (2nd half) - The Long Canal",
+   "x": 746360,
+   "y": -6222600,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 21.1,
+   "movingMin": 235,
+   "elevM": 471
   },
   {
    "n": 14,
-   "country": "France",
+   "date": "2019-10-07",
+   "title": "Witchi Tai To",
+   "raw": "Day 14 - Witchi Tai To",
+   "x": 814120,
+   "y": -6227580,
    "walked": true,
-   "recordKey": "Witchi Tai To"
+   "country": "France",
+   "coverSong": "Witchi Tai To",
+   "km": 56.8,
+   "movingMin": 569,
+   "elevM": 1901,
+   "sleeve": {
+    "slug": "harpers-bizarre-4",
+    "kind": "song",
+    "song": "Witchi Tai To",
+    "album": "Harpers Bizarre 4",
+    "artist": "Harpers Bizarre",
+    "note": "The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song."
+   }
   },
   {
    "n": 15,
+   "date": "2019-10-08",
+   "title": "Tapping Into Flow",
+   "raw": "Day 15 - Tapping Into Flow",
+   "x": 887400,
+   "y": -6241680,
+   "walked": true,
    "country": "France",
-   "walked": true
+   "km": 59.9,
+   "movingMin": 573,
+   "elevM": 1472
   },
   {
    "n": 16,
-   "country": "France",
+   "date": "2019-10-09",
+   "title": "Hey Moon",
+   "raw": "Day 16 & 17 - Hey Moon",
+   "x": 890740,
+   "y": -6240980,
    "walked": true,
-   "recordKey": "Hey Moon"
+   "country": "France",
+   "coverSong": "Hey Moon",
+   "km": 70.9,
+   "movingMin": 986,
+   "elevM": 3306,
+   "sleeve": {
+    "slug": "we-must-become-the-pitiless-censors-of-ourselves",
+    "kind": "song",
+    "song": "Hey Moon",
+    "album": "We Must Become the Pitiless Censors of Ourselves",
+    "artist": "John Maus",
+    "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."
+   }
   },
   {
    "n": 17,
-   "country": "Germany",
+   "date": "2019-10-09",
+   "title": "Hey Moon",
+   "raw": "Day 16 & 17 - Hey Moon",
+   "x": 968800,
+   "y": -6256800,
    "walked": true,
-   "recordKey": "Hey Moon"
+   "country": "Germany",
+   "coverSong": "Hey Moon",
+   "sleeve": {
+    "slug": "we-must-become-the-pitiless-censors-of-ourselves",
+    "kind": "song",
+    "song": "Hey Moon",
+    "album": "We Must Become the Pitiless Censors of Ourselves",
+    "artist": "John Maus",
+    "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days."
+   }
   },
   {
    "n": 18,
+   "date": "2019-10-11",
+   "title": "Recovery",
+   "raw": "Day 18 - Recovery",
+   "x": 1054580,
+   "y": -6224880,
+   "walked": true,
    "country": "Germany",
-   "walked": true
+   "km": 27.8,
+   "movingMin": 325,
+   "elevM": 1609
   },
   {
    "n": 19,
+   "date": "2019-10-12",
+   "title": "Easy Day Turned Hill Sprints",
+   "raw": "Day 19 - Easy Day Turned Hill Sprints",
+   "x": 1071660,
+   "y": -6201060,
+   "walked": true,
    "country": "Germany",
-   "walked": true
+   "km": 26.6,
+   "movingMin": 232,
+   "elevM": 1309
   },
   {
    "n": 20,
+   "date": "2019-10-13",
+   "title": "Scorching",
+   "raw": "Day 20 - Scorching",
+   "x": 1137180,
+   "y": -6182120,
+   "walked": true,
    "country": "Germany",
-   "walked": true
+   "km": 53,
+   "movingMin": 558,
+   "elevM": 1515
   },
   {
    "n": 21,
+   "date": "2019-10-14",
+   "title": "Slowly Does It",
+   "raw": "Day 21 - Slowly Does It",
+   "x": 1212960,
+   "y": -6168660,
+   "walked": true,
    "country": "Germany",
-   "walked": true
+   "km": 41.3,
+   "movingMin": 508,
+   "elevM": 1453
   },
   {
    "n": 22,
+   "date": "2019-10-15",
+   "title": "Negative Split",
+   "raw": "Day 22 - Negative Split",
+   "x": 1264000,
+   "y": -6135720,
+   "walked": true,
    "country": "Germany",
-   "walked": true
+   "km": 48.8,
+   "movingMin": 565,
+   "elevM": 1354
   },
   {
    "n": 23,
-   "country": "Germany",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 1264000,
+   "y": -6135720,
+   "walked": false,
+   "country": "Germany"
   },
   {
    "n": 24,
-   "country": "Germany",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 1264000,
+   "y": -6135720,
+   "walked": false,
+   "country": "Germany"
   },
   {
    "n": 25,
-   "country": "Germany",
+   "date": "2019-10-18",
+   "title": "Another One Goes By",
+   "raw": "Day 25 - Another One Goes By",
+   "x": 1355820,
+   "y": -6098180,
    "walked": true,
-   "recordKey": "Another One Goes By"
+   "country": "Germany",
+   "coverSong": "Another One Goes By",
+   "km": 59,
+   "movingMin": 513,
+   "elevM": 2194,
+   "sleeve": {
+    "slug": "another-one-goes-by",
+    "kind": "album",
+    "song": "Another One Goes By",
+    "album": "Another One Goes By",
+    "artist": "Mazarin",
+    "note": null
+   }
   },
   {
    "n": 26,
+   "date": "2019-10-19",
+   "title": "One Of Those Days",
+   "raw": "Day 26 -  One Of Those Days",
+   "x": 1407820,
+   "y": -6077500,
+   "walked": true,
    "country": "Germany",
-   "walked": true
+   "km": 29.1,
+   "movingMin": 319,
+   "elevM": 1357
   },
   {
    "n": 27,
+   "date": "2019-10-20",
+   "title": "Arrival",
+   "raw": "Day 27 - Arrival",
+   "x": 1420240,
+   "y": -6026700,
+   "walked": true,
    "country": "Austria",
-   "walked": true
+   "km": 47.8,
+   "movingMin": 439,
+   "elevM": 3468
   },
   {
    "n": 28,
-   "country": "Austria",
+   "date": "2019-10-21",
+   "title": "The Predatory Wasp",
+   "raw": "Day 28 - The Predatory Wasp",
+   "x": 1427540,
+   "y": -5989080,
    "walked": true,
-   "recordKey": "The Predatory Wasp"
+   "country": "Austria",
+   "coverSong": "The Predatory Wasp of the Palisades Is Out to Get Us!",
+   "km": 34.5,
+   "movingMin": 365,
+   "elevM": 1540,
+   "sleeve": {
+    "slug": "illinois",
+    "kind": "song",
+    "song": "The Predatory Wasp of the Palisades Is Out to Get Us!",
+    "album": "Illinois",
+    "artist": "Sufjan Stevens",
+    "note": null
+   }
   },
   {
    "n": 29,
-   "country": "Austria",
+   "date": "2019-10-22",
+   "title": "Taking Tiger Mountain",
+   "raw": "Day 29 - Taking Tiger Mountain",
+   "x": 1458240,
+   "y": -5970360,
    "walked": true,
-   "recordKey": "Taking Tiger Mountain"
+   "country": "Austria",
+   "km": 39.5,
+   "movingMin": 444,
+   "elevM": 2100,
+   "sleeve": {
+    "slug": "taking-tiger-mountain-by-strategy",
+    "kind": "album",
+    "song": null,
+    "album": "Taking Tiger Mountain (By Strategy)",
+    "artist": "Brian Eno",
+    "note": "GPS split the album title across two days. Same sleeve as “(By Strategy)”."
+   }
   },
   {
    "n": 30,
-   "country": "Austria",
+   "date": "2019-10-23",
+   "title": "(By Strategy)",
+   "raw": "Day 30 - (By Strategy)",
+   "x": 1466140,
+   "y": -5940120,
    "walked": true,
-   "recordKey": "(By Strategy)"
+   "country": "Austria",
+   "km": 33.5,
+   "movingMin": 480,
+   "elevM": 2895,
+   "sleeve": {
+    "slug": "taking-tiger-mountain-by-strategy",
+    "kind": "album",
+    "song": null,
+    "album": "Taking Tiger Mountain (By Strategy)",
+    "artist": "Brian Eno",
+    "note": "Second half of the Eno title. Same sleeve as day 29."
+   }
   },
   {
    "n": 31,
+   "date": "2019-10-24",
+   "title": "Business As Usual",
+   "raw": "Day 31 - Business As Usual",
+   "x": 1501300,
+   "y": -5907840,
+   "walked": true,
    "country": "Austria",
-   "walked": true
+   "km": 44.8,
+   "movingMin": 435,
+   "elevM": 1374
   },
   {
    "n": 32,
-   "country": "Austria",
+   "date": "2019-10-25",
+   "title": "I'll Come Running To Tie Your Shoes",
+   "raw": "Day 32 - I'll Come Running To Tie Your Shoes",
+   "x": 1541480,
+   "y": -5879520,
    "walked": true,
-   "recordKey": "I'll Come Running To Tie Your Shoes"
+   "country": "Austria",
+   "coverSong": "I'll Come Running",
+   "km": 40.6,
+   "movingMin": 353,
+   "elevM": 1233,
+   "sleeve": {
+    "slug": "another-green-world",
+    "kind": "lyrics",
+    "song": "I'll Come Running",
+    "album": "Another Green World",
+    "artist": "Brian Eno",
+    "note": "Chorus: “I’ll come running to tie your shoe.” The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."
+   }
   },
   {
    "n": 33,
-   "country": "Austria",
+   "date": "2019-10-26",
+   "title": "Katy Song",
+   "raw": "Day 33 - Katy Song",
+   "x": 1563380,
+   "y": -5878960,
    "walked": true,
-   "recordKey": "Katy Song"
+   "country": "Austria",
+   "coverSong": "Katy Song",
+   "km": 17.5,
+   "movingMin": 229,
+   "elevM": 577,
+   "sleeve": {
+    "slug": "red-house-painters",
+    "kind": "song",
+    "song": "Katy Song",
+    "album": "Red House Painters",
+    "artist": "Red House Painters",
+    "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection."
+   }
   },
   {
    "n": 34,
-   "country": "Austria",
+   "date": "2019-10-27",
+   "title": "Sing Me To Sleep",
+   "raw": "Day 34 - Sing Me To Sleep",
+   "x": 1631740,
+   "y": -5872240,
    "walked": true,
-   "recordKey": "Sing Me To Sleep"
+   "country": "Austria",
+   "km": 33.6,
+   "movingMin": 309,
+   "elevM": 958,
+   "sleeve": {
+    "slug": "louder-than-bombs",
+    "kind": "lyrics",
+    "song": "Asleep",
+    "album": "Louder Than Bombs",
+    "artist": "The Smiths",
+    "note": "The GPS title takes its phrase from “Asleep”."
+   }
   },
   {
    "n": 35,
+   "date": "2019-10-28",
+   "title": "The Process",
+   "raw": "Day 35 - The Process",
+   "x": 1665600,
+   "y": -5867200,
+   "walked": true,
    "country": "Slovenia",
-   "walked": true
+   "km": 31,
+   "movingMin": 354,
+   "elevM": 206
   },
   {
    "n": 36,
-   "country": "Slovenia",
+   "date": "2019-10-29",
+   "title": "Beyond Me, Beyond You",
+   "raw": "Day 36 - Beyond Me, Beyond You",
+   "x": 1713360,
+   "y": -5839600,
    "walked": true,
-   "recordKey": "Beyond Me, Beyond You"
+   "country": "Slovenia",
+   "coverSong": "Daydreaming",
+   "km": 55,
+   "movingMin": 632,
+   "elevM": 1203,
+   "sleeve": {
+    "slug": "a-moon-shaped-pool",
+    "kind": "lyrics",
+    "song": "Daydreaming",
+    "album": "A Moon Shaped Pool",
+    "artist": "Radiohead",
+    "note": "Lyric: “This goes / beyond me / beyond you.” Printed sleeve 208."
+   }
   },
   {
    "n": 37,
-   "country": "Slovenia",
+   "date": "2019-10-30",
+   "title": "Skipper",
+   "raw": "Day 37 - Skipper",
+   "x": 1767640,
+   "y": -5848540,
    "walked": true,
-   "recordKey": "Skipper"
+   "country": "Slovenia",
+   "km": 50.3,
+   "movingMin": 496,
+   "elevM": 369,
+   "sleeve": {
+    "slug": "dsu",
+    "kind": "song",
+    "song": "Skipper",
+    "album": "DSU",
+    "artist": "Alex G",
+    "note": null
+   }
   },
   {
    "n": 38,
-   "country": "Croatia",
+   "date": "2019-10-31",
+   "title": "Everything That Happens",
+   "raw": "Day 38 - Everything That Happens",
+   "x": 1819060,
+   "y": -5831400,
    "walked": true,
-   "recordKey": "Everything That Happens"
+   "country": "Croatia",
+   "km": 44.5,
+   "movingMin": 475,
+   "elevM": 252,
+   "sleeve": {
+    "slug": "everything-that-happens-will-happen-today",
+    "kind": "album",
+    "song": null,
+    "album": "Everything That Happens Will Happen Today",
+    "artist": "David Byrne & Brian Eno",
+    "note": null
+   }
   },
   {
    "n": 39,
-   "country": "Croatia",
+   "date": null,
+   "title": "Zoo Eyes",
+   "raw": "Day 39 - Zoo Eyes",
+   "x": 1819060,
+   "y": -5831400,
    "walked": false,
-   "recordKey": "Zoo Eyes"
+   "country": "Croatia",
+   "sleeve": {
+    "slug": "designer",
+    "kind": "song",
+    "song": "Zoo Eyes",
+    "album": "Designer",
+    "artist": "Aldous Harding",
+    "note": null
+   }
   },
   {
    "n": 40,
-   "country": "Croatia",
+   "date": "2019-11-02",
+   "title": "Distant Sky",
+   "raw": "Day 40 - Distant Sky",
+   "x": 1899960,
+   "y": -5787000,
    "walked": true,
-   "recordKey": "Distant Sky"
+   "country": "Croatia",
+   "coverSong": "Distant Sky",
+   "km": 31.3,
+   "movingMin": 230,
+   "elevM": 49,
+   "sleeve": {
+    "slug": "skeleton-tree",
+    "kind": "song",
+    "song": "Distant Sky",
+    "album": "Skeleton Tree",
+    "artist": "Nick Cave & the Bad Seeds",
+    "note": "Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."
+   }
   },
   {
    "n": 41,
-   "country": "Croatia",
+   "date": "2019-11-03",
+   "title": "Biscuit Town",
+   "raw": "Day 41 - Biscuit Town",
+   "x": 1917760,
+   "y": -5771260,
    "walked": true,
-   "recordKey": "Biscuit Town"
+   "country": "Croatia",
+   "coverSong": "Biscuit Town",
+   "km": 21.4,
+   "movingMin": 236,
+   "elevM": 56,
+   "sleeve": {
+    "slug": "the-ooz",
+    "kind": "song",
+    "song": "Biscuit Town",
+    "album": "The OOZ",
+    "artist": "King Krule",
+    "note": "Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk)."
+   }
   },
   {
    "n": 42,
-   "country": "Croatia",
+   "date": "2019-11-04",
+   "title": "Sweet Road",
+   "raw": "Day 42 - Sweet Road",
+   "x": 2079080,
+   "y": -5710180,
    "walked": true,
-   "recordKey": "Sweet Road"
+   "country": "Croatia",
+   "coverSong": "Sweet Road",
+   "km": 41.9,
+   "movingMin": 461,
+   "elevM": 124,
+   "sleeve": {
+    "slug": "sung-tongs",
+    "kind": "song",
+    "song": "Sweet Road",
+    "album": "Sung Tongs",
+    "artist": "Animal Collective",
+    "note": null
+   }
   },
   {
    "n": 43,
-   "country": "Croatia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
   },
   {
    "n": 44,
-   "country": "Croatia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
   },
   {
    "n": 45,
-   "country": "Croatia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
   },
   {
    "n": 46,
-   "country": "Croatia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2079080,
+   "y": -5710180,
+   "walked": false,
+   "country": "Croatia"
   },
   {
    "n": 47,
+   "date": "2019-11-09",
+   "title": "Eyes Open Wide",
+   "raw": "Day 47 - Eyes Open Wide",
+   "x": 2109680,
+   "y": -5705120,
+   "walked": true,
    "country": "Croatia",
-   "walked": true
+   "km": 25,
+   "movingMin": 170,
+   "elevM": 60
   },
   {
    "n": 48,
-   "country": "Serbia",
+   "date": "2019-11-10",
+   "title": "In Between Dreams",
+   "raw": "Day 48 - In Between Dreams",
+   "x": 2140300,
+   "y": -5683300,
    "walked": true,
-   "recordKey": "In Between Dreams"
+   "country": "Serbia",
+   "km": 41.9,
+   "movingMin": 413,
+   "elevM": 137,
+   "sleeve": {
+    "slug": "in-between-dreams",
+    "kind": "album",
+    "song": null,
+    "album": "In Between Dreams",
+    "artist": "Jack Johnson",
+    "note": null
+   }
   },
   {
    "n": 49,
-   "country": "Serbia",
+   "date": "2019-11-11",
+   "title": "Build A Rocket Boys!",
+   "raw": "Day 49 - Build A Rocket Boys!",
+   "x": 2207820,
+   "y": -5660400,
    "walked": true,
-   "recordKey": "Build A Rocket Boys!"
+   "country": "Serbia",
+   "km": 69,
+   "movingMin": 770,
+   "elevM": 148,
+   "sleeve": {
+    "slug": "build-a-rocket-boys",
+    "kind": "album",
+    "song": null,
+    "album": "Build a Rocket Boys!",
+    "artist": "Elbow",
+    "note": null
+   }
   },
   {
    "n": 50,
-   "country": "Serbia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2207820,
+   "y": -5660400,
+   "walked": false,
+   "country": "Serbia"
   },
   {
    "n": 51,
-   "country": "Serbia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2207820,
+   "y": -5660400,
+   "walked": false,
+   "country": "Serbia"
   },
   {
    "n": 52,
-   "country": "Serbia",
+   "date": "2019-11-14",
+   "title": "Disorder",
+   "raw": "Day 52 - Disorder",
+   "x": 2243900,
+   "y": -5619360,
    "walked": true,
-   "recordKey": "Disorder"
+   "country": "Serbia",
+   "coverSong": "Disorder",
+   "km": 46.7,
+   "movingMin": 382,
+   "elevM": 250,
+   "sleeve": {
+    "slug": "unknown-pleasures",
+    "kind": "song",
+    "song": "Disorder",
+    "album": "Unknown Pleasures",
+    "artist": "Joy Division",
+    "note": null
+   }
   },
   {
    "n": 53,
-   "country": "Serbia",
+   "date": "2019-11-15",
+   "title": "A Quick One While She's Away",
+   "raw": "Day 53 - A Quick One While She's Away",
+   "x": 2278020,
+   "y": -5591640,
    "walked": true,
-   "recordKey": "A Quick One While She's Away"
+   "country": "Serbia",
+   "coverSong": "A Quick One, While He's Away",
+   "km": 34.8,
+   "movingMin": 364,
+   "elevM": 141,
+   "sleeve": {
+    "slug": "a-quick-one",
+    "kind": "song",
+    "song": "A Quick One, While He's Away",
+    "album": "A Quick One",
+    "artist": "The Who",
+    "note": "GPS has “She’s”; the 1966 mini-opera is “He’s.” Same song."
+   }
   },
   {
    "n": 54,
-   "country": "Serbia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2278020,
+   "y": -5591640,
+   "walked": false,
+   "country": "Serbia"
   },
   {
    "n": 55,
-   "country": "Serbia",
+   "date": "2019-11-17",
+   "title": "You Can't Live There Forever",
+   "raw": "Day 55 - You Can't Live There Forever",
+   "x": 2285660,
+   "y": -5585900,
    "walked": true,
-   "recordKey": "You Can't Live There Forever"
+   "country": "Serbia",
+   "km": 7.6,
+   "movingMin": 65,
+   "elevM": 130,
+   "sleeve": {
+    "slug": "you-cant-live-there-forever",
+    "kind": "album",
+    "song": null,
+    "album": "You Can’t Live There Forever",
+    "artist": "Summer Years",
+    "note": null
+   }
   },
   {
    "n": 56,
-   "country": "Serbia",
+   "date": "2019-11-18",
+   "title": "A Postcard to Nina",
+   "raw": "Day 56 - A Postcard to Nina",
+   "x": 2331240,
+   "y": -5523080,
    "walked": true,
-   "recordKey": "A Postcard to Nina"
+   "country": "Serbia",
+   "coverSong": "A Postcard to Nina",
+   "km": 69.8,
+   "movingMin": 488,
+   "elevM": 1014,
+   "sleeve": {
+    "slug": "night-falls-over-kortedala",
+    "kind": "song",
+    "song": "A Postcard to Nina",
+    "album": "Night Falls Over Kortedala",
+    "artist": "Jens Lekman",
+    "note": null
+   }
   },
   {
    "n": 57,
-   "country": "Serbia",
+   "date": "2019-11-19",
+   "title": "A Plea For Tenderness",
+   "raw": "Day 57 - A Plea For Tenderness",
+   "x": 2360240,
+   "y": -5500080,
    "walked": true,
-   "recordKey": "A Plea For Tenderness"
+   "country": "Serbia",
+   "km": 37,
+   "movingMin": 506,
+   "elevM": 121,
+   "sleeve": {
+    "slug": "a-plea-for-tenderness",
+    "kind": "album",
+    "song": null,
+    "album": "A Plea for Tenderness",
+    "artist": "Jonathan Richman",
+    "note": null
+   }
   },
   {
    "n": 58,
-   "country": "Serbia",
+   "date": "2019-11-20",
+   "title": "I'll Come Too",
+   "raw": "Day 58 - I'll Come Too",
+   "x": 2379860,
+   "y": -5456340,
    "walked": true,
-   "recordKey": "I'll Come Too"
+   "country": "Serbia",
+   "coverSong": "I'll Come Too",
+   "km": 43.1,
+   "movingMin": 324,
+   "elevM": 485,
+   "sleeve": {
+    "slug": "assume-form",
+    "kind": "song",
+    "song": "I'll Come Too",
+    "album": "Assume Form",
+    "artist": "James Blake",
+    "note": "Assume Form was released January 2019. 13 plays in the collection."
+   }
   },
   {
    "n": 59,
-   "country": "Serbia",
+   "date": "2019-11-21",
+   "title": "Dogmeat",
+   "raw": "Day 59 - Dogmeat",
+   "x": 2383580,
+   "y": -5444360,
    "walked": true,
-   "recordKey": "Dogmeat"
+   "country": "Serbia",
+   "km": 10,
+   "movingMin": 134,
+   "elevM": 38,
+   "sleeve": {
+    "slug": "dogmeat",
+    "kind": "album",
+    "song": null,
+    "album": "Dogmeat",
+    "artist": "Kid Carpet",
+    "note": null
+   }
   },
   {
    "n": 60,
-   "country": "Serbia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2383580,
+   "y": -5444360,
+   "walked": false,
+   "country": "Serbia"
   },
   {
    "n": 61,
-   "country": "Serbia",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2383580,
+   "y": -5444360,
+   "walked": false,
+   "country": "Serbia"
   },
   {
    "n": 62,
+   "date": "2019-11-24",
+   "title": "Walk to Niska",
+   "raw": "Day 62 - Walk to Niska",
+   "x": 2450280,
+   "y": -5356640,
+   "walked": true,
    "country": "Serbia",
-   "walked": true
+   "km": 10.3,
+   "movingMin": 106,
+   "elevM": 70
   },
   {
    "n": 63,
+   "date": "2019-11-25",
+   "title": "The Two Towers",
+   "raw": "Day 63 - The Two Towers",
+   "x": 2507540,
+   "y": -5336380,
+   "walked": true,
    "country": "Serbia",
-   "walked": true
+   "km": 52.3,
+   "movingMin": 474,
+   "elevM": 984
   },
   {
    "n": 64,
-   "country": "Serbia",
+   "date": "2019-11-26",
+   "title": "Banshee Beat",
+   "raw": "Day 64 - Banshee Beat",
+   "x": 2535260,
+   "y": -5314180,
    "walked": true,
-   "recordKey": "Banshee Beat"
+   "country": "Serbia",
+   "coverSong": "Banshee Beat",
+   "km": 26,
+   "movingMin": 282,
+   "elevM": 117,
+   "sleeve": {
+    "slug": "feels",
+    "kind": "song",
+    "song": "Banshee Beat",
+    "album": "Feels",
+    "artist": "Animal Collective",
+    "note": null
+   }
   },
   {
    "n": 65,
-   "country": "Bulgaria",
+   "date": "2019-11-27",
+   "title": "Infant Dressing Table",
+   "raw": "Day 65 - Infant Dressing Table",
+   "x": 2552580,
+   "y": -5300140,
    "walked": true,
-   "recordKey": "Infant Dressing Table"
+   "country": "Bulgaria",
+   "coverSong": "Infant Dressing Table",
+   "km": 21.2,
+   "movingMin": 275,
+   "elevM": 419,
+   "sleeve": {
+    "slug": "here-comes-the-indian",
+    "kind": "song",
+    "song": "Infant Dressing Table",
+    "album": "Here Comes the Indian",
+    "artist": "Animal Collective",
+    "note": "Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."
+   }
   },
   {
    "n": 66,
-   "country": "Bulgaria",
+   "date": "2019-11-28",
+   "title": "Allelujah! Don't Bend! Ascend!",
+   "raw": "Day 66 - 'Allelujah! Don't Bend! Ascend!",
+   "x": 2596360,
+   "y": -5267100,
    "walked": true,
-   "recordKey": "Allelujah! Don't Bend! Ascend!"
+   "country": "Bulgaria",
+   "km": 47.5,
+   "movingMin": 556,
+   "elevM": 182,
+   "sleeve": {
+    "slug": "allelujah-dont-bend-ascend",
+    "kind": "album",
+    "song": null,
+    "album": "’ALLELUJAH! DON’T BEND! ASCEND!",
+    "artist": "Godspeed You! Black Emperor",
+    "note": null
+   }
   },
   {
    "n": 67,
-   "country": "Bulgaria",
-   "walked": false
+   "date": null,
+   "title": null,
+   "raw": null,
+   "x": 2596360,
+   "y": -5267100,
+   "walked": false,
+   "country": "Bulgaria"
   }
  ]
 }

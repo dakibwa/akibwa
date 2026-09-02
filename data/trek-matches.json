@@ -1,5 +1,5 @@
 {
-  "rule": "Public record keys are matched to verified lyrics, songs or albums. Ambiguous keys are omitted, and generated artwork is never used as a record front.",
+  "rule": "GPS titles are searched as lyrics, then as song titles, then as albums. A sleeve is only the real front of a verified record he could have been walking to in 2019 (indie / folk / post-rock / classic songwriters, and his printed or heavily played collection). Walking-day puns, geography, weather, and common titles without a unique match stay blank. Imagine art is never used as a fake sleeve.",
   "matches": {
     "After the Storm": {
       "kind": "song",
@@ -7,7 +7,8 @@
       "album": "Isolation",
       "artist": "Kali Uchis",
       "source": "https://shopkaliuchis.com/collections/isolation/products/isolation-digital-album",
-      "mbid": "57561634-f7bb-4e27-aa14-16d0ff79a001"
+      "mbid": "57561634-f7bb-4e27-aa14-16d0ff79a001",
+      "note": "Featuring Tyler, the Creator and Bootsy Collins."
     },
     "Lilac!": {
       "kind": "song",
@@ -17,7 +18,8 @@
       "source": "https://www.enohyde.com/",
       "coverUrls": [
         "https://i.scdn.co/image/ab67616d0000b2736dd70875c0bedf92d94ced83"
-      ]
+      ],
+      "note": "The Eno · Hyde collaboration from High Life (2014)."
     },
     "One way to lose them walking blues!": {
       "kind": "lyrics",
@@ -25,6 +27,7 @@
       "album": "Graceland",
       "artist": "Paul Simon",
       "source": "https://www.paulsimon.com/track/diamonds-on-the-soles-of-her-shoes/",
+      "note": "Official lyric: \u201cWell, that\u2019s one way to lose these walking blues.\u201d 123 Last.fm plays on Graceland.",
       "mbid": "19847822-1430-3380-9cf1-bc45545b34ac"
     },
     "Witchi Tai To": {
@@ -33,6 +36,7 @@
       "album": "Harpers Bizarre 4",
       "artist": "Harpers Bizarre",
       "source": "https://musicbrainz.org/release-group/9dcedc62-e2ab-3d37-ba34-e7e90c3d59da",
+      "note": "The 1969 sunshine-pop cover Dan remembered; Jim Pepper wrote the song.",
       "mbid": "9dcedc62-e2ab-3d37-ba34-e7e90c3d59da"
     },
     "Hey Moon": {
@@ -41,6 +45,7 @@
       "album": "We Must Become the Pitiless Censors of Ourselves",
       "artist": "John Maus",
       "source": "https://johnmaus.bandcamp.com/track/hey-moon",
+      "note": "Maus covering Molly Nilsson. 21 plays on this album in the collection. GPS used the title on two consecutive days.",
       "mbid": "cc2f0368-1b4a-47a1-8c3d-f727f85f707a"
     },
     "Another One Goes By": {
@@ -66,7 +71,8 @@
       "artist": "Brian Eno",
       "source": "https://en.wikipedia.org/wiki/Taking_Tiger_Mountain_(By_Strategy)",
       "wallId": "142",
-      "file": "taking-tiger-mountain-by-strategy.webp"
+      "file": "taking-tiger-mountain-by-strategy.webp",
+      "note": "GPS split the album title across two days. Same sleeve as \u201c(By Strategy)\u201d."
     },
     "(By Strategy)": {
       "kind": "album",
@@ -75,7 +81,8 @@
       "artist": "Brian Eno",
       "source": "https://en.wikipedia.org/wiki/Taking_Tiger_Mountain_(By_Strategy)",
       "wallId": "142",
-      "file": "taking-tiger-mountain-by-strategy.webp"
+      "file": "taking-tiger-mountain-by-strategy.webp",
+      "note": "Second half of the Eno title. Same sleeve as day 29."
     },
     "I'll Come Running To Tie Your Shoes": {
       "kind": "lyrics",
@@ -83,7 +90,8 @@
       "album": "Another Green World",
       "artist": "Brian Eno",
       "source": "https://genius.com/Brian-eno-ill-come-running-lyrics",
-      "wallId": "139"
+      "wallId": "139",
+      "note": "Chorus: \u201cI\u2019ll come running to tie your shoe.\u201d The song is on Another Green World (1975), not Taking Tiger Mountain (By Strategy)."
     },
     "Katy Song": {
       "kind": "song",
@@ -91,6 +99,7 @@
       "album": "Red House Painters",
       "artist": "Red House Painters",
       "source": "https://en.wikipedia.org/wiki/Red_House_Painters_(Rollercoaster)",
+      "note": "The 1993 self-titled album nicknamed Rollercoaster / Red House Painters I. 10 plays in the collection.",
       "mbid": "04a0a433-80bc-3b55-91cd-322a0d644c95"
     },
     "Sing Me To Sleep": {
@@ -99,7 +108,8 @@
       "album": "Louder Than Bombs",
       "artist": "The Smiths",
       "source": "https://www.youtube.com/watch?v=5mF4pKSi2SU",
-      "wallId": "078"
+      "wallId": "078",
+      "note": "The GPS title takes its phrase from “Asleep”."
     },
     "Beyond Me, Beyond You": {
       "kind": "lyrics",
@@ -107,7 +117,8 @@
       "album": "A Moon Shaped Pool",
       "artist": "Radiohead",
       "source": "https://genius.com/Radiohead-daydreaming-lyrics",
-      "wallId": "208"
+      "wallId": "208",
+      "note": "Lyric: \u201cThis goes / beyond me / beyond you.\u201d Printed sleeve 208."
     },
     "Everything That Happens": {
       "kind": "album",
@@ -131,7 +142,8 @@
       "album": "Skeleton Tree",
       "artist": "Nick Cave & the Bad Seeds",
       "source": "https://www.nickcave.com/lyric/distant-sky-2/",
-      "wallId": "193"
+      "wallId": "193",
+      "note": "Track 7 of Skeleton Tree. He also has the Distant Sky Live EP printed (056); the studio album is the walking-era record."
     },
     "Biscuit Town": {
       "kind": "song",
@@ -139,6 +151,7 @@
       "album": "The OOZ",
       "artist": "King Krule",
       "source": "https://genius.com/King-krule-biscuit-town-lyrics",
+      "note": "Opener of The OOZ (2017), 67 plays. Not Man Alive! (printed 001, 2020, after the walk).",
       "mbid": "6ee668b0-8d9b-490b-bdf2-1c68cf197891"
     },
     "Sweet Road": {
@@ -180,12 +193,13 @@
       "album": "A Quick One",
       "artist": "The Who",
       "source": "https://en.wikipedia.org/wiki/A_Quick_One,_While_He%27s_Away",
+      "note": "GPS has \u201cShe\u2019s\u201d; the 1966 mini-opera is \u201cHe\u2019s.\u201d Same song.",
       "mbid": "475af630-84df-3243-9888-c03c67d54d1a"
     },
     "You Can't Live There Forever": {
       "kind": "album",
       "song": null,
-      "album": "You Can’t Live There Forever",
+      "album": "You Can\u2019t Live There Forever",
       "artist": "Summer Years",
       "source": "https://musicbrainz.org/release-group/eccfaff0-d16d-45db-b11f-c28ba083cfa3",
       "mbid": "eccfaff0-d16d-45db-b11f-c28ba083cfa3"
@@ -208,7 +222,8 @@
       "coverUrls": [
         "https://coverartarchive.org/release/a8b17bd4-01eb-4450-a723-e5872021fb75/front-500",
         "https://media.cdr.nl/COVER/MEDIUM/FRONT/JK77941/A-plea-for-tenderness.jpg"
-      ]
+      ],
+      "note": null
     },
     "I'll Come Too": {
       "kind": "song",
@@ -216,6 +231,7 @@
       "album": "Assume Form",
       "artist": "James Blake",
       "source": "https://en.wikipedia.org/wiki/I%27ll_Come_Too",
+      "note": "Assume Form was released January 2019. 13 plays in the collection.",
       "mbid": "8fceea87-5273-408b-a2f3-723d9b64800a"
     },
     "Dogmeat": {
@@ -248,15 +264,39 @@
       "album": "Here Comes the Indian",
       "artist": "Animal Collective",
       "source": "https://en.wikipedia.org/wiki/Here_Comes_the_Indian",
-      "wallId": "126"
+      "wallId": "126",
+      "note": "Track 3. Later reissued as Ark; the printed card is Here Comes the Indian."
     },
     "Allelujah! Don't Bend! Ascend!": {
       "kind": "album",
       "song": null,
-      "album": "’ALLELUJAH! DON’T BEND! ASCEND!",
+      "album": "\u2019ALLELUJAH! DON\u2019T BEND! ASCEND!",
       "artist": "Godspeed You! Black Emperor",
       "source": "https://en.wikipedia.org/wiki/%27Allelujah!_Don%27t_Bend!_Ascend!",
       "mbid": "62959180-8405-41f9-8fb8-1e18a5e8902d"
     }
+  },
+  "unmatched": {
+    "And We're Off!": "Walking diary. No verified lyric, song, or album.",
+    "Reservoirs of Untapped Potential": "No verified lyric, song, or album.",
+    "On the 5th day, Dan rested": "Genesis joke / rest note, not a record.",
+    "Now I'm on my way": "Too many songs share \u201cI'm on my way\u201d; GPS reads as a walking note.",
+    "Getting the Hang of It": "Idiom. Dan Israel\u2019s \u201cThe Hang of It\u201d is 2021, after the walk.",
+    "Sure is a Hot One!": "Weather diary.",
+    "Short Walk to Nancy": "Geography (Nancy, France).",
+    "The Long Canal": "Geography.",
+    "Tapping Into Flow": "Walking note.",
+    "Recovery": "Common title; also a walking recovery day.",
+    "Easy Day Turned Hill Sprints": "Walking note.",
+    "Scorching": "Weather diary.",
+    "Slowly Does It": "Idiom.",
+    "Negative Split": "Running term.",
+    "One Of Those Days": "Common title. John Martyn and Lal Waterson songs exist; neither is a unique collection match.",
+    "Arrival": "Common title; also arriving in Austria.",
+    "Business As Usual": "Walking note. Men at Work\u2019s album is not in the collection.",
+    "The Process": "Common title / walking note.",
+    "Eyes Open Wide": "Common phrase. Toad the Wet Sprocket have a song; not in the collection. A 2025 trance single is after the walk.",
+    "Walk to Niska": "Geography (Ni\u0161 / Ni\u0161ka, Serbia).",
+    "The Two Towers": "Tolkien. Would not put an audiobook or film-score sleeve on a walked day."
   }
 }

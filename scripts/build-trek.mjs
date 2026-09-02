@@ -1,14 +1,17 @@
 #!/usr/bin/env node
-// Build /trek — the public, privacy-minimised Paris-to-Sofia atlas.
+// Build /trek — the 2019 walk, Paris to Sofia, travelled through the map.
 //
 // The page is one full-screen atlas. Scroll walks the line: the camera
-// follows an intentionally abstracted city-to-city route, towns arrive and
-// pass, each country opens with its Imagine ground, and records plus reviewed
-// landscape photographs surface by numbered day. Exact dates, daily tracks,
-// private writing and raw activity metrics do not enter this public build.
+// follows the GPS day points, towns arrive and pass, each country opens with
+// its Imagine ground, and records, photographs and journal entries surface at
+// their walked days. Rest points remain on the line but pass silently.
 //
-//   data/trek-days.json          ← aggregate facts + abstract day sequence
+//   data/trek-days.json          ← regenerated: days + distances + sleeves + geometry
 //   public/trek/index.html       ← rendered from scripts/trek-page-template.html
+//
+// Optional: --distances <json> with { "<dayN>": { km, movingMin, elevM, date } }
+// bakes per-day distances into data/trek-days.json once; afterwards the data
+// travels with the repo.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -17,11 +20,17 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = path.join(root, "data/trek-days.json");
 const coversPath = path.join(root, "data/trek-covers.json");
+const journalPath = path.join(root, "data/trek-journal.json");
 const templatePath = path.join(root, "scripts/trek-page-template.html");
 const outPath = path.join(root, "public/trek/index.html");
 
+const argIdx = process.argv.indexOf("--distances");
+const distancesPath = argIdx > -1 ? process.argv[argIdx + 1] : null;
+
 const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
 const covers = JSON.parse(fs.readFileSync(coversPath, "utf8"));
+const journal = JSON.parse(fs.readFileSync(journalPath, "utf8"));
+const JOURNAL = journal.days || {};
 const photosManifestPath = path.join(root, "public/trek/photos/manifest.json");
 const photos = fs.existsSync(photosManifestPath)
   ? JSON.parse(fs.readFileSync(photosManifestPath, "utf8"))
@@ -37,9 +46,30 @@ const photosByDay = storyPhotos.reduce((byDay, photo) => {
   return byDay;
 }, {});
 
+// ---------------------------------------------------------------- distances
+if (distancesPath) {
+  const dist = JSON.parse(fs.readFileSync(distancesPath, "utf8"));
+  for (const day of data.days) {
+    const d = dist[String(day.n)];
+    if (d) {
+      day.km = d.km ?? null;
+      day.movingMin = d.movingMin ?? null;
+      day.elevM = d.elevM ?? null;
+      if (!day.date && d.date) day.date = d.date;
+      if (!day.title && d.name) {
+        day.title = d.name.replace(/^Day\s+\d+\s*[-–—]\s*/, "").trim() || null;
+      }
+    }
+  }
+}
+
 // ------------------------------------------------------------------ sleeves
 for (const day of data.days) {
-  const m = day.recordKey && covers.titles[day.recordKey];
+  delete day.cover;
+  delete day.coverArtist;
+  delete day.coverAlbum;
+  delete day.coverKind;
+  const m = day.title && covers.titles[day.title];
   if (m) {
     day.sleeve = {
       slug: m.slug,
@@ -47,76 +77,72 @@ for (const day of data.days) {
       song: m.song,
       album: m.album,
       artist: m.artist,
+      note: m.note || null,
     };
+  } else {
+    delete day.sleeve;
   }
 }
 
 // -------------------------------------------------------------------- towns
-// These public city centres are the only route anchors. Straight interpolated
-// legs deliberately avoid reproducing the recorded daily route.
+// Staging posts. These are the anchors: the line visits each city, and the
+// GPS fills the journey between them. Coordinates are Web Mercator (same
+// CRS as the Strava tracks). Paris is the walk start at Charles de Gaulle,
+// not the city centre.
+// Every non-pass entry is a visited stop and therefore a hard route anchor:
+// the rendered line must meet its city marker exactly. The raw GPS supplies
+// the shape between those anchors. Paris stays at the CDG start, not Notre-Dame.
 const TOWNS = [
-  { name: "Paris", country: "France", lon: 2.35, lat: 48.86, dx: -10, dy: -12, anchor: "end", start: true },
-  { name: "Reims", country: "France", lon: 4.03, lat: 49.26, dx: 0, dy: -14 },
-  { name: "Nancy", country: "France", lon: 6.18, lat: 48.69, dx: 0, dy: 22 },
-  { name: "Saverne", country: "France", lon: 7.36, lat: 48.74, dx: 0, dy: -14 },
-  { name: "Pforzheim", country: "Germany", lon: 8.7, lat: 48.89, dx: 0, dy: -14 },
-  { name: "Stuttgart", country: "Germany", lon: 9.18, lat: 48.78, dx: 0, dy: 22 },
-  { name: "Augsburg", country: "Germany", lon: 10.9, lat: 48.37, dx: 0, dy: -14 },
-  { name: "Munich", country: "Germany", lon: 11.58, lat: 48.14, dx: 12, dy: -10, anchor: "start" },
-  { name: "Zell am See", country: "Austria", lon: 12.8, lat: 47.32, dx: 12, dy: -8, anchor: "start" },
-  { name: "the Tauern", country: "Austria", lon: 13.15, lat: 47.15, dx: 14, dy: 4, anchor: "start", pass: true },
-  { name: "Klagenfurt", country: "Austria", lon: 14.31, lat: 46.62, dx: 0, dy: 22 },
-  { name: "Ptuj", country: "Slovenia", lon: 15.87, lat: 46.42, dx: 0, dy: -14 },
-  { name: "Osijek", country: "Croatia", lon: 18.69, lat: 45.55, dx: 0, dy: -14 },
-  { name: "Novi Sad", country: "Serbia", lon: 19.85, lat: 45.25, dx: 0, dy: -14 },
-  { name: "Belgrade", country: "Serbia", lon: 20.46, lat: 44.82, dx: 14, dy: 6, anchor: "start" },
-  { name: "Niš", country: "Serbia", lon: 21.9, lat: 43.32, dx: 14, dy: 0, anchor: "start" },
-  { name: "Sofia", country: "Bulgaria", lon: 23.32, lat: 42.7, dx: 0, dy: 24 },
+  { name: "Paris", lon: 2.55, lat: 49.01, dx: -10, dy: -12, anchor: "end", start: true },
+  { name: "Reims", lon: 4.03, lat: 49.26, dx: 0, dy: -14 },
+  { name: "Nancy", lon: 6.18, lat: 48.69, dx: 0, dy: 22 },
+  { name: "Saverne", lon: 7.36, lat: 48.74, dx: 0, dy: -14, day: 14 },
+  { name: "Pforzheim", lon: 8.7, lat: 48.89, dx: 0, dy: -14 },
+  { name: "Stuttgart", lon: 9.18, lat: 48.78, dx: 0, dy: 22 },
+  { name: "Augsburg", lon: 10.9, lat: 48.37, dx: 0, dy: -14 },
+  { name: "Munich", lon: 11.58, lat: 48.14, dx: 12, dy: -10, anchor: "start" },
+  { name: "Zell am See", lon: 12.8, lat: 47.32, dx: 12, dy: -8, anchor: "start" },
+  { name: "the Tauern", lon: 13.15, lat: 47.15, dx: 14, dy: 4, anchor: "start", pass: true },
+  { name: "Klagenfurt", lon: 14.31, lat: 46.62, dx: 0, dy: 22 },
+  { name: "Ptuj", lon: 15.87, lat: 46.42, dx: 0, dy: -14 },
+  { name: "Osijek", lon: 18.69, lat: 45.55, dx: 0, dy: -14 },
+  { name: "Novi Sad", lon: 19.85, lat: 45.25, dx: 0, dy: -14 },
+  { name: "Belgrade", lon: 20.46, lat: 44.82, dx: 14, dy: 6, anchor: "start" },
+  { name: "Niš", lon: 21.9, lat: 43.32, dx: 14, dy: 0, anchor: "start" },
+  { name: "Sofia", lon: 23.32, lat: 42.7, dx: 0, dy: 24 },
 ];
+
+const mercDeg = (lat) => (Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360)) * 180) / Math.PI;
+const start = data.tracks[0][0];
+const sofia = data.days.find((d) => d.n === 67);
+const A0 = { lon: 2.548, lat: 49.01, x: start[0], y: start[1] };
+const A1 = { lon: 23.32, lat: 42.697, x: sofia.x, y: sofia.y };
+const ax = (A1.x - A0.x) / (A1.lon - A0.lon);
+const bx = A0.x - ax * A0.lon;
+const ay = (A1.y - A0.y) / (mercDeg(A1.lat) - mercDeg(A0.lat));
+const by = A0.y - ay * mercDeg(A0.lat);
+const proj = ({ lon, lat }) => [ax * lon + bx, ay * mercDeg(lat) + by];
+const invMercDeg = (m) => (Math.atan(Math.sinh((m * Math.PI) / 180)) * 180) / Math.PI;
+const unproj = (x, y) => ({ lon: (x - bx) / ax, lat: invMercDeg((y - by) / ay) });
 
 const EARTH = 6378137;
 const mercProj = ({ lon, lat }) => [
   EARTH * ((lon * Math.PI) / 180),
   -(EARTH * Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360))),
 ];
-const unproj = (x, y) => ({
-  lon: (x / EARTH) * (180 / Math.PI),
-  lat: (2 * Math.atan(Math.exp(-y / EARTH)) - Math.PI / 2) * (180 / Math.PI),
-});
 
-function buildPublicRoute(towns, stepsPerLeg = 12) {
+function flattenTracks(tracks) {
   const verts = [];
   let s = 0;
   let prev = null;
-  for (let index = 0; index < towns.length - 1; index += 1) {
-    const [x0, y0] = mercProj(towns[index]);
-    const [x1, y1] = mercProj(towns[index + 1]);
-    for (let step = index === 0 ? 0 : 1; step <= stepsPerLeg; step += 1) {
-      const progress = step / stepsPerLeg;
-      const x = x0 + (x1 - x0) * progress;
-      const y = y0 + (y1 - y0) * progress;
+  for (const t of tracks) {
+    for (const [x, y] of t) {
       if (prev) s += Math.hypot(x - prev[0], y - prev[1]);
       verts.push({ x, y, s });
       prev = [x, y];
     }
   }
   return verts;
-}
-
-function pointAtDistance(verts, target) {
-  const distance = Math.max(0, Math.min(target, verts[verts.length - 1].s));
-  for (let index = 1; index < verts.length; index += 1) {
-    const a = verts[index - 1];
-    const b = verts[index];
-    if (distance > b.s) continue;
-    const progress = (distance - a.s) / Math.max(1, b.s - a.s);
-    return {
-      x: a.x + (b.x - a.x) * progress,
-      y: a.y + (b.y - a.y) * progress,
-      s: distance,
-    };
-  }
-  return verts[verts.length - 1];
 }
 
 function nearestOnVerts(px, py, verts) {
@@ -347,10 +373,9 @@ try {
 
 async function buildAtlas() {
 // ------------------------------------------------------------- SVG geometry
-const sourceDays = data.days;
-const route = buildPublicRoute(TOWNS);
-const xs = route.map((point) => point.x);
-const ys = route.map((point) => point.y);
+const pts = data.days;
+const xs = pts.map((d) => d.x);
+const ys = pts.map((d) => d.y);
 const pad = 260000;
 const minX = Math.min(...xs) - pad;
 const maxX = Math.max(...xs) + pad;
@@ -421,36 +446,68 @@ const mapLonLat = ({ lon, lat }, altitude) => {
   return mapPoint(x, y, altitude == null ? altAt(x, y) : altitude);
 };
 
-const townsPlaced = TOWNS.map((town) => {
-  const [x, y] = mercProj(town);
-  const position = nearestOnVerts(x, y, route);
-  return { ...town, x, y, s: position.s, alt: altAt(x, y) };
-});
-
-const townByName = Object.fromEntries(townsPlaced.map((town) => [town.name, town]));
-const countrySpanNames = {
-  France: ["Paris", "Saverne"],
-  Germany: ["Saverne", "Munich"],
-  Austria: ["Munich", "Klagenfurt"],
-  Slovenia: ["Klagenfurt", "Ptuj"],
-  Croatia: ["Ptuj", "Osijek"],
-  Serbia: ["Osijek", "Niš"],
-  Bulgaria: ["Niš", "Sofia"],
-};
-const dayPositions = [];
-for (const [country, [fromName, toName]] of Object.entries(countrySpanNames)) {
-  const countryDays = sourceDays.filter((day) => day.country === country);
-  const from = townByName[fromName].s;
-  const to = townByName[toName].s;
-  countryDays.forEach((day, index) => {
-    const progress = countryDays.length === 1 ? 1 : index / (countryDays.length - 1);
-    const point = pointAtDistance(route, from + (to - from) * progress);
-    dayPositions.push({ day: day.n, country, ...point });
+const gpsVerts = flattenTracks(data.tracks);
+const dayPositions = pts.map((d) => ({
+  day: d.n,
+  country: d.country,
+  s: nearestOnVerts(d.x, d.y, gpsVerts).s,
+}));
+const MERGE_M = 3000;
+const townsPlaced = [];
+for (const t of TOWNS) {
+  if (t.start) {
+    const [px, py] = [gpsVerts[0].x, gpsVerts[0].y];
+    townsPlaced.push({ ...t, x: px, y: py, s: 0, alt: altAt(px, py), snapM: 0 });
+    continue;
+  }
+  const [px, py] = mercProj(t);
+  const snap = nearestOnVerts(px, py, gpsVerts);
+  if (t.pass) {
+    townsPlaced.push({
+      ...t,
+      x: snap.x,
+      y: snap.y,
+      s: snap.s,
+      alt: altAt(snap.x, snap.y),
+      snapM: snap.d,
+    });
+    continue;
+  }
+  townsPlaced.push({
+    ...t,
+    x: px,
+    y: py,
+    s: snap.s,
+    alt: altAt(px, py),
+    snapM: snap.d,
   });
 }
-dayPositions.sort((a, b) => a.day - b.day);
-const positionByDay = Object.fromEntries(dayPositions.map((position) => [position.day, position]));
-const pts = sourceDays.map((day) => ({ ...day, ...positionByDay[day.n] }));
+for (let i = 1; i < townsPlaced.length; i++) {
+  if (townsPlaced[i].s <= townsPlaced[i - 1].s) {
+    townsPlaced[i].s = townsPlaced[i - 1].s + 1;
+  }
+}
+
+const route = [];
+const pushRoute = (p) => {
+  const last = route[route.length - 1];
+  if (last && Math.hypot(last.x - p.x, last.y - p.y) < 80) return;
+  route.push(p);
+};
+const anchors = townsPlaced.filter((t) => !t.pass);
+for (let i = 0; i < anchors.length; i++) {
+  const town = anchors[i];
+  if (i > 0) {
+    const prev = anchors[i - 1];
+    for (const v of gpsVerts) {
+      if (v.s <= prev.s + 80 || v.s >= town.s - 80) continue;
+      if (Math.hypot(v.x - prev.x, v.y - prev.y) < MERGE_M) continue;
+      if (Math.hypot(v.x - town.x, v.y - town.y) < MERGE_M) continue;
+      pushRoute({ x: v.x, y: v.y, s: v.s, kind: "gps" });
+    }
+  }
+  pushRoute({ x: town.x, y: town.y, s: town.s, kind: "town", name: town.name });
+}
 
 const COUNTRY_COLOR = Object.fromEntries(data.countries.map((c) => [c.name, c.color]));
 
@@ -643,7 +700,10 @@ const routeAheadSegs = [];
 let routeAt = 0;
 for (let i = 0; i < pts.length; i++) {
   const d = pts[i];
-  const i1 = Math.max(routeAt, nearestRouteIdx(d.x, d.y, routeAt));
+  const arrivalTown = townsPlaced.find((town) => town.day === d.n);
+  const endX = arrivalTown ? arrivalTown.x : d.x;
+  const endY = arrivalTown ? arrivalTown.y : d.y;
+  const i1 = Math.max(routeAt, nearestRouteIdx(endX, endY, routeAt));
   let slice = route.slice(routeAt, i1 + 1);
   if (slice.length < 2) {
     const a = route[routeAt] || route[0];
@@ -669,9 +729,22 @@ for (let i = 0; i < pts.length; i++) {
   segs.push(`<path id="seg-${d.n}" ${routeAttrs} class="seg"/>`);
 }
 
+function placeOnTown(x, y, day) {
+  const assigned = townsPlaced.find((town) => town.day === day);
+  if (assigned) return { x: assigned.x, y: assigned.y };
+  let best = null;
+  for (const t of townsPlaced) {
+    if (t.pass) continue;
+    const d = Math.hypot(x - t.x, y - t.y);
+    if (d < MERGE_M && (!best || d < best.d)) best = { t, d };
+  }
+  return best ? { x: best.t.x, y: best.t.y } : { x, y };
+}
+
 const dayDots = pts
   .map((d) => {
-    const point = mapPoint(d.x, d.y);
+    const at = placeOnTown(d.x, d.y, d.n);
+    const point = mapPoint(at.x, at.y);
     return `<circle id="dot-${d.n}" class="daydot${d.walked ? "" : " restdot"}${d.sleeve ? " hasrec" : ""}" cx="${point.x}" cy="${point.y}" r="${d.sleeve ? 1.8 : 1.15}" data-day="${d.n}"/>`;
   })
   .join("\n    ");
@@ -690,8 +763,8 @@ ${t.pass ? "" : `      <circle cx="${X}" cy="${Y}" r="3.15" class="townhalo"/>\n
   })
   .join("\n    ");
 
-const startAlt = altAt(route[0].x, route[0].y);
-const startPoint = mapPoint(route[0].x, route[0].y, startAlt);
+const startAlt = altAt(start[0], start[1]);
+const startPoint = mapPoint(start[0], start[1], startAlt);
 
 const atlasSvg = `
 <svg id="atlas" viewBox="0 0 ${VBW} ${VBH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -750,13 +823,16 @@ const atlasSvg = `
 
 // ----------------------------------------------------------------- timeline
 // Scroll scenes, in order: walk legs day by day and a held plate at each border.
-// Photo-rich days get enough length for the reviewed landscape sequence;
+// Photo-rich and journal-rich days get enough length for their complete story;
 // rest points pass quickly and silently.
+const PX_PER_KM = 9;
 function walkSceneLength(d) {
   if (!d.walked) return 36;
+  const base = Math.max(180, Math.round((d.km || 30) * PX_PER_KM));
   const photoCount = (photosByDay[d.n] || []).length;
+  const journalCount = (JOURNAL[d.n] || []).length;
   const photoLength = photoCount > 3 ? 260 + (photoCount - 3) * 70 : 0;
-  return Math.max(240, photoLength);
+  return Math.max(base, photoLength, journalCount * 360);
 }
 const scenes = [];
 scenes.push({ t: "start", len: 620 });
@@ -779,37 +855,50 @@ for (const s of scenes) {
 const TIMELINE_TOTAL = acc;
 
 // ----------------------------------------------------------- data for the JS
-const routeLength = route[route.length - 1].s;
 const jsDays = pts.map((d) => {
-  const altitude = altAt(d.x, d.y);
-  const point = mapPoint(d.x, d.y, altitude);
+  const at = placeOnTown(d.x, d.y, d.n);
+  const altitude = altAt(at.x, at.y);
+  const point = mapPoint(at.x, at.y, altitude);
   return {
     n: d.n,
-    t: d.sleeve ? d.sleeve.song || d.sleeve.album : null,
+    t: d.title,
+    date: d.date,
+    km: d.km || 0,
+    min: d.movingMin || 0,
+    elev: d.elevM || 0,
     alt: Math.round(altitude),
     w: d.walked ? 1 : 0,
     c: d.country,
     x: point.x,
     y: point.y,
     s: d.sleeve || null,
-    routeProgress: +(d.s / Math.max(1, routeLength)).toFixed(6),
+    j: JOURNAL[d.n] || [],
   };
 });
+const rawWalkKm = jsDays.reduce((sum, d) => sum + (d.w ? d.km : 0), 0);
+const distanceScale = rawWalkKm > 0 ? data.facts.km / rawWalkKm : 1;
+let cum = 0;
+let cumElev = 0;
+let cumMin = 0;
 let footDays = 0;
 for (const d of jsDays) {
-  if (d.w) footDays += 1;
-  d.cum = +(d.routeProgress * data.facts.km).toFixed(1);
+  if (d.w) {
+    cum += d.km * distanceScale;
+    cumElev += d.elev;
+    cumMin += d.min;
+    footDays += 1;
+  }
+  d.cum = +cum.toFixed(1);
+  d.cumElev = cumElev;
+  d.cumMin = cumMin;
   d.footDays = footDays;
-  delete d.routeProgress;
 }
 const countryDistances = data.countries.map((country) => ({
   name: country.name,
   color: country.color,
-  km:
-    ((townByName[countrySpanNames[country.name][1]].s -
-      townByName[countrySpanNames[country.name][0]].s) /
-      Math.max(1, routeLength)) *
-    data.facts.km,
+  km: jsDays
+    .filter((day) => day.c === country.name && day.w)
+    .reduce((sum, day) => sum + day.km * distanceScale, 0),
 }));
 let countryDistanceAt = 0;
 const routeGradient = countryDistances
@@ -822,7 +911,7 @@ const routeGradient = countryDistances
   .join(",");
 
 // The collecting rail follows the same journey clock as the route. Places
-// inherit the nearest numbered position along the abstract route; albums are unique
+// inherit the nearest numbered day along the GPS trace; albums are unique
 // records, collected on the first day they appear.
 const places = townsPlaced.map((town) => {
   const nearestDay = dayPositions.reduce(
@@ -834,7 +923,7 @@ const places = townsPlaced.map((town) => {
     day: town.start ? 0 : town.day || nearestDay.day,
     country: nearestDay.country,
     pass: town.pass ? 1 : 0,
-    km: +((town.s / Math.max(1, routeLength)) * data.facts.km).toFixed(1),
+    km: +((town.s / Math.max(1, gpsVerts[gpsVerts.length - 1].s)) * data.facts.km).toFixed(1),
   };
 });
 const albumKeys = new Set();
@@ -859,8 +948,9 @@ const jsData = {
   total: data.facts.km,
   stats: {
     days: data.facts.walked,
+    ascent: cumElev,
+    minutes: cumMin,
     countries: data.facts.countries,
-    places: townsPlaced.length,
   },
   scenes,
   timeline: TIMELINE_TOTAL,
@@ -889,25 +979,33 @@ for (const day of data.days) {
 }
 const platesHtml = actsMeta
   .map((act, i) => {
+    const km = Math.round(act.days.reduce((s, d) => s + (d.walked ? d.km || 0 : 0), 0));
     return `
   <div class="plate" id="plate-${act.name.toLowerCase()}" style="--c:${COUNTRY_COLOR[act.name]}">
     <img src="grounds/${act.name.toLowerCase()}.webp" alt="" width="640" height="640" loading="lazy" decoding="async">
     <div class="plate-text">
       <p class="plate-count">the ${ordinals[i]} country</p>
       <h2 class="plate-name">${act.name}</h2>
-      <p class="plate-facts">${act.days.length} numbered days</p>
+      <p class="plate-facts">${km} km on foot</p>
     </div>
   </div>`;
   })
   .join("\n");
 
 // -------------------------------------------------------- noscript fallback
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const shortDate = (iso) => {
+  if (!iso) return null;
+  const [, m, d] = iso.split("-").map(Number);
+  return `${d} ${MONTHS[m - 1]}`;
+};
 const noscriptHtml = data.days
   .map((d) => {
     const bits = [
       `Day ${d.n}`,
-      d.country,
-      d.walked ? "walking day" : "route pause",
+      d.title || "—",
+      d.date ? shortDate(d.date) : null,
+      d.walked ? `${(d.km || 0).toFixed(1)} km` : "rest",
       d.sleeve ? `${d.sleeve.artist} — ${d.sleeve.album}` : null,
     ].filter(Boolean);
     return `<li>${esc(bits.join(" · "))}</li>`;
@@ -928,10 +1026,14 @@ fill("__WALL_ALBUM_COUNT__", albums.length);
 fill("__ROUTE_GRADIENT__", routeGradient);
 fill("__DATA_JSON__", JSON.stringify(jsData));
 
+fs.writeFileSync(dataPath, JSON.stringify(data, null, 1) + "\n");
 fs.writeFileSync(outPath, html);
 
+const townReport = townsPlaced
+  .map((t) => `${t.name} ${(t.snapM / 1000).toFixed(1)}km`)
+  .join(", ");
 console.log(
-  `built public/trek/index.html — ${pts.length} abstract day positions, ${storyPhotos.length} reviewed photographs, timeline ${TIMELINE_TOTAL}px, ${(html.length / 1024).toFixed(0)}K, route ${route.length} points (${townsPlaced.length} public city anchors)${grid ? ", elevation on" : ""}`
+  `built public/trek/index.html — ${pts.length} days, ${Object.values(JOURNAL).flat().length} journal excerpts, ${storyPhotos.length} photographs, timeline ${TIMELINE_TOTAL}px, ${(html.length / 1024).toFixed(0)}K, route ${route.length} pts (${townsPlaced.length} cities)${grid ? ", elevation on" : ""}`
 );
-console.log(`cities on the line: ${townsPlaced.map((town) => town.name).join(", ")}`);
+console.log(`cities on the line: ${townReport}`);
 }

@@ -79,14 +79,15 @@ let ok = 0;
 let miss = 0;
 const bySlug = new Map();
 
-for (const [publicKey, rec] of Object.entries(matches)) {
-  const slug = slugify(rec.album || rec.song || publicKey);
-  manifest.titles[publicKey] = {
+for (const [gpsTitle, rec] of Object.entries(matches)) {
+  const slug = slugify(rec.album || rec.song || gpsTitle);
+  manifest.titles[gpsTitle] = {
     slug,
     kind: rec.kind,
     song: rec.song || null,
     album: rec.album,
     artist: rec.artist,
+    note: rec.note || null,
   };
   if (bySlug.has(slug)) continue; // shared sleeve (e.g. the split album title)
   bySlug.set(slug, true);
@@ -109,13 +110,13 @@ for (const [publicKey, rec] of Object.entries(matches)) {
     if (buf) src = `wall ${rec.wallId}`;
   }
   if (!buf) {
-    console.warn(`! no front for ${publicKey} (${rec.artist} — ${rec.album})`);
+    console.warn(`! no front for ${gpsTitle} (${rec.artist} — ${rec.album})`);
     miss += 1;
     continue;
   }
   await sharp(buf).resize(SIZE, SIZE, { fit: "cover" }).webp({ quality: 82 }).toFile(path.join(outDir, `${slug}.webp`));
   await sharp(buf).resize(THUMB, THUMB, { fit: "cover" }).webp({ quality: 80 }).toFile(path.join(outDir, `${slug}-thumb.webp`));
-  console.log(`= ${publicKey}  [${src}]  ${rec.artist} — ${rec.album}`);
+  console.log(`= ${gpsTitle}  [${src}]  ${rec.artist} — ${rec.album}`);
   ok += 1;
 }
 

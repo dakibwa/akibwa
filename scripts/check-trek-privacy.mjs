@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const fail = (message) => {
-  throw new Error(`Trek privacy check failed: ${message}`);
+  throw new Error(`Trek journal check failed: ${message}`);
 };
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const json = (relative) => JSON.parse(read(relative));
@@ -14,21 +14,10 @@ const exists = (relative) => fs.existsSync(path.join(root, relative));
 const sorted = (values) => [...values].sort();
 const sameKeys = (value, allowed) =>
   JSON.stringify(sorted(Object.keys(value))) === JSON.stringify(sorted(allowed));
-const findKey = (value, blocked, trail = "") => {
-  if (!value || typeof value !== "object") return null;
-  for (const [key, child] of Object.entries(value)) {
-    const location = trail ? `${trail}.${key}` : key;
-    if (blocked.has(key)) return location;
-    const found = findKey(child, blocked, location);
-    if (found) return found;
-  }
-  return null;
-};
 
 for (const relative of [
   "public/life-map",
   "public/project-art/personal/life-map-card.webp",
-  "data/trek-journal.json",
 ]) {
   if (exists(relative)) fail(`${relative} must not exist`);
 }
@@ -50,81 +39,85 @@ for (const relative of lifeMapSources) {
 }
 
 const routeData = json("data/trek-days.json");
-if (!sameKeys(routeData, ["facts", "countries", "countryRings", "days"])) {
-  fail("data/trek-days.json must contain only aggregate facts, country geometry and abstract days");
+if (!sameKeys(routeData, ["facts", "countries", "countryRings", "tracks", "days"])) {
+  fail("data/trek-days.json must retain the complete public route dataset");
 }
-if (!sameKeys(routeData.facts, ["km", "walked", "numbered", "countries", "from", "to", "tauern"])) {
-  fail("Trek facts must stay aggregate-only");
+if (routeData.facts.start !== "2019-09-24" || routeData.facts.end !== "2019-11-28") {
+  fail("the exact Trek date range must remain available");
 }
-for (const day of routeData.days) {
-  const allowed = ["n", "country", "walked", ...(day.recordKey ? ["recordKey"] : [])];
-  if (!sameKeys(day, allowed)) fail(`day ${day.n} contains a non-public field`);
+if (routeData.days.length !== 67 || Object.keys(routeData.tracks).length !== 52) {
+  fail("the 67 numbered days and 52 recorded tracks must remain available");
 }
-const blockedRouteField = findKey(routeData.days, new Set([
-  "date",
-  "raw",
-  "title",
-  "km",
-  "x",
-  "y",
-  "movingMin",
-  "elevM",
-  "tracks",
-  "note",
-]));
-if (blockedRouteField) fail(`private route field remains at ${blockedRouteField}`);
-
-for (const relative of ["data/trek-matches.json", "data/trek-covers.json"]) {
-  const value = json(relative);
-  const blocked = findKey(value, new Set(["note", "unmatched"]));
-  if (blocked) fail(`${relative} retains private or unverified material at ${blocked}`);
+for (const [index, day] of routeData.days.entries()) {
+  const required = ["n", "date", "title", "raw", "x", "y", "walked", "country"];
+  if (!required.every((key) => Object.hasOwn(day, key))) {
+    fail(`day ${day.n ?? index + 1} is missing route data`);
+  }
+  if (day.n !== index + 1 || !Number.isFinite(day.x) || !Number.isFinite(day.y)) {
+    fail(`day ${day.n ?? index + 1} has altered route coordinates or numbering`);
+  }
+  if (day.date !== null && !/^2019-\d{2}-\d{2}$/.test(day.date)) {
+    fail(`day ${day.n} has lost its exact calendar date`);
+  }
+  if (Object.hasOwn(day, "km") &&
+      (!Object.hasOwn(day, "movingMin") || !Object.hasOwn(day, "elevM"))) {
+    fail(`day ${day.n} has an incomplete metrics record`);
+  }
 }
 
 const photos = json("public/trek/photos/manifest.json");
-const blockedPhotos = new Set([
-  "d03-01.webp", "d04-06.webp", "d07-02.webp", "d20-07.webp", "d23-05.webp",
-  "d25-01.webp", "d32-06.webp", "d33-05.webp", "d40-08.webp", "d42-01.webp",
-  "d46-01.webp", "d48-04.webp", "d48-05.webp", "d54-01.webp", "d58-03.webp",
-  "d65-01.webp", "d66-04.webp",
-]);
+if (photos.length !== 394) fail(`expected all 394 dated Trek photographs, found ${photos.length}`);
 for (const photo of photos) {
-  if (!sameKeys(photo, ["day", "src", "w", "h", "alt"])) {
-    fail(`${photo.src || "photo"} contains capture metadata or private copy`);
+  if (!sameKeys(photo, ["day", "src", "w", "h", "taken", "caption", "alt"])) {
+    fail(`${photo.src || "photo"} is missing its date grouping or capture time`);
   }
-  if (blockedPhotos.has(photo.src)) fail(`${photo.src} failed the identifying-image review`);
-}
-const photoDir = path.join(root, "public/trek/photos");
-const servedPhotos = fs.readdirSync(photoDir).filter((name) => name.endsWith(".webp")).sort();
-const listedPhotos = photos.map((photo) => photo.src).sort();
-if (JSON.stringify(servedPhotos) !== JSON.stringify(listedPhotos)) {
-  fail("public/trek/photos must contain only manifest-reviewed photographs");
+  if (!/^\d{2}:\d{2}$/.test(photo.taken)) fail(`${photo.src} is missing an exact capture time`);
+  if (!exists(path.join("public/trek/photos", photo.src))) fail(`${photo.src} is missing from the public photo set`);
 }
 
-const publicTrekSources = [
-  "data/trek-days.json",
-  "data/trek-matches.json",
-  "public/trek/photos/manifest.json",
-  "scripts/trek-page-template.html",
-];
-if (exists("public/trek/index.html")) publicTrekSources.push("public/trek/index.html");
-for (const relative of publicTrekSources) {
-  const source = read(relative);
-  const privateName = String.fromCharCode(100, 97, 110, 105, 101, 108, 32, 97, 116, 107, 105, 110, 115, 111, 110);
-  const privateMailbox = ["da", "kibwa", "@", "gmail"].join("");
-  if (/\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b/i.test(source)) fail(`${relative} contains an email address`);
-  if (/\b20\d{2}-\d{2}-\d{2}\b/.test(source)) fail(`${relative} contains an exact calendar date`);
-  if (
-    source.toLowerCase().includes(privateName) ||
-    source.toLowerCase().includes(privateMailbox) ||
-    /\b(?:24 sep|28 nov)\b/i.test(source)
-  ) {
-    fail(`${relative} contains identifying or dated Trek copy`);
+const journal = json("data/trek-journal.json");
+if (!journal.editorialPolicy.includes("first-person reflection")) {
+  fail("the journal must state its factual-only public boundary");
+}
+const firstPerson = /\b(?:i|me|my|myself|we|us|our|ours|ourselves)\b/i;
+const personalDetail = /\b(?:meditat\w*|transcenden\w*|relationship\w*|money|guesthouse|raki|beard|reborn|purpose|happ\w*|anxiety|doubt|stranger|invited|welcome|cold bath\w*|human interaction|fear|wolves|health)\b/i;
+let journalEntries = 0;
+for (const [day, entries] of Object.entries(journal.days)) {
+  for (const entry of entries) {
+    journalEntries += 1;
+    if (!sameKeys(entry, ["sourceDate", "label", "text"])) {
+      fail(`journal day ${day} contains an unexpected field`);
+    }
+    if (!/^2019-\d{2}-\d{2}$/.test(entry.sourceDate)) {
+      fail(`journal day ${day} must retain its exact source date`);
+    }
+    const prose = `${entry.label} ${entry.text}`;
+    if (firstPerson.test(prose)) fail(`journal day ${day} still contains first-person detail`);
+    if (personalDetail.test(prose)) fail(`journal day ${day} still contains personal narrative detail`);
   }
-  if (/data-akibwa-project|akibwa-project-banner/i.test(source)) {
-    fail(`${relative} exposes the personal portfolio identity on Trek`);
+}
+if (journalEntries < 40) fail(`too little factual route context remains (${journalEntries} entries)`);
+
+const generated = read("public/trek/index.html");
+if (!/<meta name="robots" content="[^"]*noindex[^"]*noimageindex[^"]*">/.test(generated)) {
+  fail("generated Trek must remain outside search and image indexes");
+}
+if (/data-akibwa-project|akibwa-project-banner/i.test(generated)) {
+  fail("generated Trek must not expose the former personal portfolio identity");
+}
+for (const required of ["2019-09-24", '"taken":"08:59"', "hud-hours", "hud-ascent"]) {
+  if (!generated.includes(required)) fail(`generated Trek is missing restored data: ${required}`);
+}
+const generatedDataMatch = generated.match(/  var DATA = (.+);\n  var days = DATA\.days;/);
+if (!generatedDataMatch) fail("generated Trek data could not be inspected");
+const generatedData = JSON.parse(generatedDataMatch[1]);
+for (const day of generatedData.days) {
+  const expected = journal.days[String(day.n)] || [];
+  if (JSON.stringify(day.j) !== JSON.stringify(expected)) {
+    fail(`generated Trek has stale or unsanitized journal text for day ${day.n}`);
   }
 }
 
 console.log(
-  `Trek privacy check passed: abstract route data, ${photos.length} reviewed photographs, no Life in Maps surface`
+  `Trek journal check passed: ${journalEntries} factual notes, exact dates/times and ${photos.length} photos retained, no Life in Maps surface`
 );

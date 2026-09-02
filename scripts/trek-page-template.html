@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The trek — Paris to Sofia</title>
-<meta name="description" content="An interactive atlas of an abstracted 1,982 km Paris-to-Sofia route across seven countries, with reviewed landscape photography and record artwork.">
+<meta name="description" content="Paris to Sofia on foot, 24 September to 28 November 2019. 1,982 km through seven countries. Travel the GPS line city by city — every day named after a record.">
 <meta name="robots" content="noindex, nofollow, noimageindex">
 <link rel="canonical" href="https://akibwa.com/trek/">
 <meta name="theme-color" content="#E4D9BB">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="akibwa">
 <meta property="og:title" content="The trek — Paris to Sofia">
-<meta property="og:description" content="An abstracted Paris-to-Sofia route across seven countries, illustrated with reviewed landscapes and record artwork.">
+<meta property="og:description" content="1,982 km on foot across seven countries, autumn 2019. Scroll or press walk, and travel the line town by town.">
 <meta property="og:url" content="https://akibwa.com/trek/">
 <link rel="preload" href="fonts/IBMPlexMono-normal-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -66,6 +66,10 @@ button{font:inherit;color:inherit}
 .masthead .mark-word{
   display:block;font-family:var(--sans);font-size:21px;font-weight:700;line-height:1;
   letter-spacing:-.02em;text-transform:lowercase;
+}
+.masthead .mark-date{
+  font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;
+  color:var(--muted);text-transform:lowercase;
 }
 .country-menu{position:relative;min-width:0;padding:2px 0 7px}
 .countries{display:flex;justify-content:center;gap:8px;margin:0;padding:0;list-style:none;overflow-x:auto;scrollbar-width:none}
@@ -350,6 +354,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 .spot-facts{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.08em;margin-top:24px;font-variant-numeric:tabular-nums;text-transform:uppercase}
 .spot-title{font-size:clamp(25px,3.8vw,38px);font-weight:700;letter-spacing:-.035em;margin-top:10px;text-align:center;max-width:24ch;line-height:1.15}
 .spot-record{color:var(--muted);font-size:16px;margin-top:12px;text-align:center;max-width:52ch}
+.spot-note{max-width:52ch;text-align:center;color:var(--muted);font-family:var(--mono);font-size:11px;line-height:1.7;margin-top:20px;letter-spacing:.02em;opacity:.9}
 .spot-close{position:absolute;top:20px;right:24px;background:none;border:1px solid rgba(25,23,18,.32);color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.14em;padding:8px 14px;cursor:pointer;text-transform:uppercase}
 .spot-close:hover{color:var(--ink);border-color:var(--ink)}
 .spot-nav{position:absolute;inset:50% 0 auto;display:flex;justify-content:space-between;padding:0 24px;transform:translateY(-50%)}
@@ -372,6 +377,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .masthead .site{display:none}
   .masthead .mark{gap:7px}
   .masthead .mark-word{font-size:19px}
+  .masthead .mark-date{font-size:8px}
   .country-menu{padding-bottom:7px}
   .countries{justify-content:flex-start;gap:7px}
   .countries li{gap:7px}
@@ -421,6 +427,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 <header class="masthead" id="masthead">
   <a class="mark" href="https://akibwa.com/" aria-label="Akibwa home">
     <span class="mark-word">trek</span>
+    <span class="mark-date">2019</span>
   </a>
   <nav class="country-menu" aria-label="Countries on the trek">
     <ul class="countries" id="country-nav">
@@ -438,11 +445,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 </header>
 
 <section class="statbar" id="statbar" aria-label="Journey statistics">
-  <p class="stat-position" id="hud-position">Paris → Sofia</p>
+  <p class="stat-position" id="hud-position">Paris · 24 sep 2019</p>
   <div class="stat stat-distance"><b><span id="hud-km">0.0</span><small>km</small></b><em>distance</em></div>
-  <div class="stat stat-countries"><b>7</b><em>countries</em></div>
+  <div class="stat stat-ascent"><b id="hud-ascent">0</b><em>metres climbed</em></div>
   <div class="stat stat-days"><b id="hud-days">0</b><em>days on foot</em></div>
-  <div class="stat stat-places"><b>17</b><em>public places</em></div>
+  <div class="stat stat-hours"><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving</em></div>
   <div class="stat stat-elevation">
     <svg viewBox="0 0 132 28" aria-hidden="true">
       <path id="elev-area"></path>
@@ -455,11 +462,11 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <div class="experience" id="experience">
   <div class="stage" id="stage" data-zoom="hero">
-    <div class="story-rail" id="story-rail" aria-label="Route details and photographs">
+    <div class="story-rail" id="story-rail" aria-label="Journey notes and photographs">
       <div class="story-copy">
         <div class="story-current" id="story-current">
-          <p class="story-label" id="story-label">Paris → Sofia</p>
-          <p class="story-text" id="story-text">1,982 kilometres · seven countries · abstracted public route</p>
+          <p class="story-label" id="story-label">24 september – 28 november 2019</p>
+          <p class="story-text" id="story-text">Paris → Sofia · 1,982 kilometres on foot</p>
         </div>
 
 <!--__PLATES__-->
@@ -506,6 +513,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     <p class="spot-facts" id="spot-facts"></p>
     <p class="spot-title" id="spot-title"></p>
     <p class="spot-record" id="spot-record"></p>
+    <p class="spot-note" id="spot-note"></p>
     <div class="spot-nav">
       <button id="spot-prev" aria-label="Previous record">‹</button>
       <button id="spot-next" aria-label="Next record">›</button>
@@ -515,7 +523,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <noscript>
   <div class="noscript-days">
-    <p>The interactive atlas needs JavaScript. Public route markers:</p>
+    <p>The travelling map needs JavaScript. The days themselves:</p>
     <ol>
       <!--__NOSCRIPT_DAYS__-->
     </ol>
@@ -549,6 +557,8 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var hudPosition = document.getElementById("hud-position");
   var hudKm = document.getElementById("hud-km");
   var hudDays = document.getElementById("hud-days");
+  var hudAscent = document.getElementById("hud-ascent");
+  var hudHours = document.getElementById("hud-hours");
   var photoStrip = document.getElementById("photo-strip");
   var photoTrack = document.getElementById("photo-track");
   var photoCount = document.getElementById("photo-count");
@@ -582,6 +592,10 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     scrollDirty = true;
     requestFrame();
   });
+
+  var MONTHS = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+  function shortDate(iso){ if (!iso) return null; var p = iso.split("-"); return (+p[2]) + " " + MONTHS[+p[1]-1]; }
+  function hours(min){ return min ? Math.floor(min/60) + "h" + ("0"+(min%60)).slice(-2) : null; }
 
   // ---------------------------------------------------------------- camera
   var VBW = DATA.vb[0];
@@ -731,22 +745,25 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     var label = "";
     var text = "";
     if (scene.t === "start") {
-      label = "Paris → Sofia";
-      text = "1,982 kilometres · seven countries · abstracted public route";
+      label = "24 sep – 28 nov 2019";
+      text = "Paris → Sofia · 1,982 kilometres on foot · alone";
     } else if (scene.t === "end") {
-      label = "Sofia";
-      text = "Paris → Sofia · 1,982 kilometres across seven countries";
+      label = "Sofia · 28 nov 2019";
+      text = "Paris → Sofia · 1,982 kilometres on foot";
     } else if (scene.t === "enter") {
-      label = "route section";
+      label = "border crossing";
       text = scene.country;
     } else if (!d.w) {
-      label = "day " + d.n + " · " + d.c.toLowerCase();
-      text = "Route pause";
+      label = "";
+      text = "";
     } else {
-      label = "day " + d.n + " · " + d.c.toLowerCase();
-      text = d.s && d.s.artist
-        ? (d.t || d.s.album) + " · " + d.s.artist
-        : "Abstracted route position";
+      var entries = Array.isArray(d.j) ? d.j : [];
+      var entryIndex = entries.length ? Math.min(entries.length - 1, Math.floor(Math.max(0, Math.min(.999, wp.t || 0)) * entries.length)) : -1;
+      var entry = entryIndex > -1 ? entries[entryIndex] : null;
+      var entryDate = d.date || (entry && entry.sourceDate);
+      label = "day " + d.n + (entryDate ? " · " + shortDate(entryDate) : "") + " · " + (entry ? entry.label : d.c.toLowerCase());
+      text = entry ? entry.text : (d.t || "On the road.");
+      if (!entry && d.s && d.s.artist) text += " · " + d.s.artist;
     }
     setText(storyLabel, label);
     setText(storyText, text);
@@ -782,6 +799,8 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     var d = wp.day;
     var prev = byN[d.n - 1];
     var baseKm = prev ? prev.cum : 0;
+    var baseElev = prev ? prev.cumElev : 0;
+    var baseMin = prev ? prev.cumMin : 0;
     var baseDays = prev ? prev.footDays : 0;
     var t = scene.t === "walk" && d.w
       ? Math.max(0, Math.min(1, wp.t))
@@ -789,18 +808,22 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
         ? Math.max(0, Math.min(1, wp.t))
         : 1;
     var km = lerp(baseKm, d.cum, t);
+    var climbed = lerp(baseElev, d.cumElev, t);
+    var moving = lerp(baseMin, d.cumMin, t);
     var footDays = baseDays + (d.w && t > .01 ? 1 : 0);
-    if (scene.t === "start") { km = 0; footDays = 0; }
+    if (scene.t === "start") { km = 0; climbed = 0; moving = 0; footDays = 0; }
     var positionBits = scene.t === "start"
-      ? ["Paris"]
+      ? ["Paris", "24 sep 2019"]
       : scene.t === "end"
-        ? ["Sofia", "Bulgaria"]
+        ? ["Sofia", "28 nov 2019", "Bulgaria"]
         : scene.t === "enter"
-          ? [scene.country + " route section"]
-          : ["day " + d.n, d.c.toLowerCase()];
+          ? ["crossing into " + scene.country]
+          : ["day " + d.n, d.date ? shortDate(d.date) : null, d.c.toLowerCase()];
     setText(hudPosition, positionBits.filter(Boolean).join(" · "));
     setText(hudKm, km.toFixed(1));
     setText(hudDays, String(footDays));
+    setText(hudAscent, (Math.round(climbed / 10) * 10).toLocaleString("en-GB"));
+    setText(hudHours, (moving / 60).toFixed(1));
     var routeReveal = Math.max(0, Math.min(1, km / DATA.total));
     var routeClip = "inset(0 " + ((1 - routeReveal) * 100).toFixed(2) + "% 0 0)";
     if (journeyProgressFill) journeyProgressFill.style.clipPath = routeClip;
@@ -1143,6 +1166,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var sFacts = document.getElementById("spot-facts");
   var sTitle = document.getElementById("spot-title");
   var sRecord = document.getElementById("spot-record");
+  var sNote = document.getElementById("spot-note");
   var sPrev = document.getElementById("spot-prev");
   var sNext = document.getElementById("spot-next");
   var idx = -1;
@@ -1154,9 +1178,10 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     spot.style.setProperty("--sc", DATA.colors[d.c]);
     sImg.src = "covers/" + s.slug + ".webp";
     sImg.alt = s.artist + " — " + s.album + ", the record front";
-    sFacts.textContent = ["day " + d.n, d.c].join(" · ");
+    sFacts.textContent = ["day " + d.n, d.date ? shortDate(d.date) : null, d.w ? d.km.toFixed(1) + " km" : null, hours(d.min), d.elev > 900 ? "+" + d.elev + " m" : null, d.c].filter(Boolean).join(" · ");
     sTitle.textContent = d.t;
     sRecord.innerHTML = (s.kind === "lyrics" ? "a lyric from <em>" + esc(s.song) + "</em> — " : s.kind === "song" ? "the song, on " : "the album — ") + esc(s.artist) + ", <em>" + esc(s.album) + "</em>";
+    sNote.textContent = s.note || "";
     sPrev.disabled = i === 0;
     sNext.disabled = i === matched.length - 1;
     if (!spot.open) { stopWalk(); spot.showModal(); }

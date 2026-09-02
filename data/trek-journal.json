@@ -1,0 +1,306 @@
+{
+  "source": "Trek route log, 24 September to 28 November 2019",
+  "editorialPolicy": "Public factual route notes. Exact dates, route conditions, places, distances and music remain; first-person reflection and personal, health, relationship, financial, accommodation and identifying third-party details are omitted.",
+  "days": {
+    "1": [
+      {
+        "sourceDate": "2019-09-24",
+        "label": "farmland east of Paris",
+        "text": "The route left Paris through farmland and forest."
+      }
+    ],
+    "2": [
+      {
+        "sourceDate": "2019-09-25",
+        "label": "green river path",
+        "text": "A quiet path followed a clear green river through fields."
+      }
+    ],
+    "3": [
+      {
+        "sourceDate": "2019-09-26",
+        "label": "river path",
+        "text": "The route followed the river for about twenty kilometres before Château-Thierry."
+      },
+      {
+        "sourceDate": "2019-09-26",
+        "label": "château-thierry",
+        "text": "The route passed through Château-Thierry and continued on wooded paths."
+      }
+    ],
+    "4": [
+      {
+        "sourceDate": "2019-09-27",
+        "label": "overnight rain",
+        "text": "Heavy rain arrived overnight before the route resumed in daylight."
+      }
+    ],
+    "6": [
+      {
+        "sourceDate": "2019-09-29",
+        "label": "running section",
+        "text": "A two-kilometre running section marked the return to the route after a rest."
+      }
+    ],
+    "7": [
+      {
+        "sourceDate": "2019-09-30",
+        "label": "canal and vineyards",
+        "text": "The route left Châlons-en-Champagne along a canal between vineyards and orchards in hot sun."
+      }
+    ],
+    "8": [
+      {
+        "sourceDate": "2019-10-01",
+        "label": "thunderstorm",
+        "text": "A major thunderstorm brought heavy rain and lightning on the route into Bar-le-Duc."
+      }
+    ],
+    "9": [
+      {
+        "sourceDate": "2019-10-02",
+        "label": "still woodland",
+        "text": "Still conditions and sunlight appeared through the woods."
+      }
+    ],
+    "11": [
+      {
+        "sourceDate": "2019-10-04",
+        "label": "towards nancy",
+        "text": "The route to Nancy crossed a national park in persistent rain beneath tall trees."
+      }
+    ],
+    "13": [
+      {
+        "sourceDate": "2019-10-05",
+        "label": "courtyard music",
+        "text": "Live music was playing in a courtyard along the route."
+      },
+      {
+        "sourceDate": "2019-10-06",
+        "label": "canal section",
+        "text": "The route continued along the canal, alternating walking and running."
+      }
+    ],
+    "14": [
+      {
+        "sourceDate": "2019-10-07",
+        "label": "cliff path",
+        "text": "Cliff faces flanked the path, with blue flies moving between them; Witchi Tai To played during this section."
+      }
+    ],
+    "15": [
+      {
+        "sourceDate": "2019-10-08",
+        "label": "saverne to the rhine",
+        "text": "The canal route left Saverne toward the Rhine and the German border."
+      }
+    ],
+    "16": [
+      {
+        "sourceDate": "2019-10-09",
+        "label": "german border",
+        "text": "The route reached the German border fifteen days after Paris."
+      }
+    ],
+    "22": [
+      {
+        "sourceDate": "2019-10-15",
+        "label": "towards munich",
+        "text": "Nine consecutive route days ended with a faster final section toward Munich after dark."
+      }
+    ],
+    "25": [
+      {
+        "sourceDate": "2019-10-17",
+        "label": "munich rest",
+        "text": "Two days off route preceded the Austrian section."
+      },
+      {
+        "sourceDate": "2019-10-18",
+        "label": "austria approach",
+        "text": "A long mixed walking and running day covered about sixty kilometres toward the Austrian mountains."
+      }
+    ],
+    "26": [
+      {
+        "sourceDate": "2019-10-19",
+        "label": "short of austria",
+        "text": "The day ended about twenty kilometres before Austria."
+      }
+    ],
+    "27": [
+      {
+        "sourceDate": "2019-10-20",
+        "label": "entering austria",
+        "text": "Austria began with a sharp climb and a small waterfall, with mountains surrounding the road."
+      }
+    ],
+    "28": [
+      {
+        "sourceDate": "2019-10-21",
+        "label": "towards ankogel",
+        "text": "A cold, crisp morning became bright sun as the route rose toward the Ankogel mountains."
+      }
+    ],
+    "29": [
+      {
+        "sourceDate": "2019-10-22",
+        "label": "mountain paths",
+        "text": "Steep mountain paths opened views across Austria, with a large bird circling through the valley below."
+      }
+    ],
+    "30": [
+      {
+        "sourceDate": "2019-10-23",
+        "label": "the tauern",
+        "text": "Streams, scrambles and narrow ridges crossed the Tauern at about 2,500 metres before descending empty ski slopes after dark."
+      }
+    ],
+    "31": [
+      {
+        "sourceDate": "2019-10-24",
+        "label": "sunny long section",
+        "text": "Bright sun continued into late October during another route section of about fifty kilometres."
+      }
+    ],
+    "32": [
+      {
+        "sourceDate": "2019-10-25",
+        "label": "trail section",
+        "text": "The day covered about forty kilometres of trails."
+      }
+    ],
+    "34": [
+      {
+        "sourceDate": "2019-10-28",
+        "label": "quiet roads",
+        "text": "The route passed goats on roofs, scarecrows and quiet roads."
+      }
+    ],
+    "36": [
+      {
+        "sourceDate": "2019-10-29",
+        "label": "fog and wooded climb",
+        "text": "More than fifty kilometres through drizzle, wind chill, waterlogged paths and fog ended with a steep wooded climb after dark."
+      }
+    ],
+    "37": [
+      {
+        "sourceDate": "2019-10-30",
+        "label": "slovenia to ptuj",
+        "text": "Another fifty kilometres in rain and low temperatures completed the brief Slovenian section at Ptuj."
+      }
+    ],
+    "38": [
+      {
+        "sourceDate": "2019-10-31",
+        "label": "entering croatia",
+        "text": "Croatia began on a busy main road before the route moved onto a quiet canal path."
+      }
+    ],
+    "40": [
+      {
+        "sourceDate": "2019-11-01",
+        "label": "rest day",
+        "text": "After fifteen consecutive route days, this date became a rest day before the route resumed."
+      },
+      {
+        "sourceDate": "2019-11-02",
+        "label": "towards osijek",
+        "text": "Grey roads and flat trails continued east across Croatia toward Osijek."
+      }
+    ],
+    "41": [
+      {
+        "sourceDate": "2019-11-03",
+        "label": "croatian plain",
+        "text": "A warm, sunny day crossed the sparse northern Croatian plain."
+      }
+    ],
+    "42": [
+      {
+        "sourceDate": "2019-11-05",
+        "label": "farms to osijek",
+        "text": "Trains bridged unsafe main-road sections before about forty kilometres of flat farmland to Osijek."
+      }
+    ],
+    "47": [
+      {
+        "sourceDate": "2019-11-09",
+        "label": "half-marathon section",
+        "text": "A half-marathon running section ended beside a Croatian road marked with a mine warning."
+      }
+    ],
+    "48": [
+      {
+        "sourceDate": "2019-11-10",
+        "label": "entering serbia",
+        "text": "Muddy Croatian fields led to passport control, followed by river paths, fishermen and small huts on the Serbian side under a dark grey sky."
+      }
+    ],
+    "49": [
+      {
+        "sourceDate": "2019-11-11",
+        "label": "to novi sad",
+        "text": "The seventy-kilometre route to Novi Sad continued onto technical paths and through bushes after dark."
+      }
+    ],
+    "52": [
+      {
+        "sourceDate": "2019-11-14",
+        "label": "mud before sunset",
+        "text": "The final five kilometres crossed muddy, uneven ground after dark."
+      }
+    ],
+    "53": [
+      {
+        "sourceDate": "2019-11-15",
+        "label": "belgrade",
+        "text": "A long, straightforward route reached Belgrade in clear weather."
+      }
+    ],
+    "56": [
+      {
+        "sourceDate": "2019-11-18",
+        "label": "leaving belgrade",
+        "text": "An early start from Belgrade crossed brambles, a small mountain and later darkness."
+      }
+    ],
+    "57": [
+      {
+        "sourceDate": "2019-11-19",
+        "label": "farm tracks",
+        "text": "The route followed farm tracks used by small tractors."
+      }
+    ],
+    "58": [
+      {
+        "sourceDate": "2019-11-20",
+        "label": "pipeline route",
+        "text": "Pipeline construction created an unexpectedly direct section of route."
+      }
+    ],
+    "59": [
+      {
+        "sourceDate": "2019-11-21",
+        "label": "stray dog",
+        "text": "A stray dog followed part of the short route section."
+      }
+    ],
+    "65": [
+      {
+        "sourceDate": "2019-11-27",
+        "label": "entering bulgaria",
+        "text": "The route crossed into Bulgaria with Sofia one day away."
+      }
+    ],
+    "66": [
+      {
+        "sourceDate": "2019-11-28",
+        "label": "sofia",
+        "text": "The route reached Sofia, completing the Paris-to-Sofia trek."
+      }
+    ]
+  }
+}

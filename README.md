@@ -8,7 +8,7 @@ The indexed homepage is deliberately brand-led: Akibwa, three current projects a
 
 - Features is a playable daily untangling puzzle.
 - Português com a Inês links to its own lesson and booking site.
-- `/trek/` is a privacy-minimised static atlas. It uses an abstracted city-to-city route rather than a recorded daily trace and excludes exact dates, daily distances, activity metrics, personal writing, identity details and unreviewed files. Its photograph manifest is an explicit allow-list.
+- `/trek/` is a `noindex` static atlas of the original Paris-to-Sofia journey. It retains the exact dated route, daily distances, activity metrics, photo capture times and full photograph set. Journal excerpts are limited to neutral route observations: first-person reflection and personal, health, relationship, financial, accommodation and identifying third-party details are excluded.
 
 ## Checks and publishing
 
@@ -16,6 +16,6 @@ The indexed homepage is deliberately brand-led: Akibwa, three current projects a
 - `npm run check:navigation:dom`: exercise the rendered public boundary in Chrome.
 - `npm run publish:check`: verify registered public surfaces and exported routes.
 - `npm run publish:ready`: run the full publication gate.
-- `npm run trek:build`: rebuild the Trek from its privacy-reduced public data.
+- `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.
 
 Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md) and [Publication Workflow](docs/publication-workflow.md).
