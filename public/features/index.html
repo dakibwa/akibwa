@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-WVDS3Vupw311s8TzKK7EAeFUioLb5rH/JD7BG+7uW5w=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-VkO+ynmpl3yBsDRDTKA47tIWROV6cd1y6wpTXgyx2AM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -2466,6 +2466,28 @@ function ensureGooglePrep(){
     return googlePrep;
   }).catch(()=>null);
 }
+function googleFedCMOptions(prep, origin){
+  return {
+    mediation:'required',
+    identity:{
+      context:'signin',
+      mode:'active',
+      providers:[{
+        configURL:'https://accounts.google.com/gsi/fedcm.json',
+        clientId:prep.clientId,
+        nonce:prep.nonce,
+        fields:['name','email','picture'],
+        params:{
+          response_type:'id_token',
+          scope:'email profile openid',
+          nonce:prep.nonce,
+          state:prep.state,
+          ss_domain:origin||location.origin,
+        },
+      }],
+    },
+  };
+}
 async function landedSignedIn(me){
   account={...me,signedIn:true};
   store.signedInOnce=true; save();
@@ -2484,17 +2506,7 @@ async function tryGoogleHere(){
   if(!prep) return false;
   let cred;
   try{
-    cred=await navigator.credentials.get({
-      identity:{
-        context:'signin',
-        mode:'active',
-        providers:[{
-          configURL:'https://accounts.google.com/gsi/fedcm.json',
-          clientId:prep.clientId,
-          params:{nonce:prep.nonce},
-        }],
-      },
-    });
+    cred=await navigator.credentials.get(googleFedCMOptions(prep));
   }catch(e){
     if(e && e.name==='NotAllowedError') return 'cancel';
     return false;
