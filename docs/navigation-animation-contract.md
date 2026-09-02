@@ -44,19 +44,18 @@ publishing homepage changes.
   anything else, and names the kind of project, one concise explanatory
   sentence and the open cue. The section grows its bottom space while a
   popover is open so the rose Career rule steps down instead of being covered.
-  Clicking the card replaces the portfolio with
-  the real Features, Português com a Inês or Trek page with `?from=akibwa`;
-  only that entry mode
+  Clicking the card replaces the portfolio with the real project. Features and
+  Português com a Inês use `?from=akibwa`; only that entry mode
   adds a compact version of the real homepage masthead: the Daniel/Akibwa
   identity keeps flicking, “Building in the age of AI.” keeps its serif face,
   and Home, Projects, Career and Taste Library remain available in their
   original type and colours. Its green rule spans the complete viewport.
   Everything below that rule belongs to the selected project and is sized to
   the viewport left beneath the masthead; fixed project menus must not slip
-  behind it. Direct visits to any project remain standalone. Português com a
-  Inês owns its banner in its own repository; Features owns its banner in the
-  source game and republishes it here; Trek owns it in
-  `scripts/trek-page-template.html` and regenerates the public page.
+  behind it. Direct visits remain standalone. Português com a Inês owns its
+  banner in its own repository, and Features owns its banner in the source game
+  and republishes it here. Trek always opens directly as a standalone,
+  privacy-minimised atlas generated from `scripts/trek-page-template.html`.
 - Freelance is not a separate pitch in this section.
 - The page is not text-selectable. Links, buttons and keyboard focus retain
   their normal interaction semantics.

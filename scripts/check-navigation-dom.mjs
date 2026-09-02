@@ -410,29 +410,9 @@ const pageState = () => evaluate(`(() => {
 })()`);
 
 const trekProjectState = () => evaluate(`(() => {
-  const rect = (el) => {
-    const r = el.getBoundingClientRect();
-    return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
-  };
   const banner = document.querySelector(".akibwa-project-banner");
-  const rule = getComputedStyle(banner, "::after");
   return {
-    visible: getComputedStyle(banner).display !== "none",
-    names: [...banner.querySelectorAll(".akibwa-project-banner__name")].map((item) => item.textContent.trim()),
-    nameAnimations: [...banner.querySelectorAll(".akibwa-project-banner__name")].map((item) => getComputedStyle(item).animationName),
-    lede: banner.querySelector(".akibwa-project-banner__lede")?.textContent.trim(),
-    ledeDisplay: getComputedStyle(banner.querySelector(".akibwa-project-banner__lede")).display,
-    position: getComputedStyle(banner).position,
-    nav: [...banner.querySelectorAll(".akibwa-project-banner__nav a")].map((item) => ({
-      text: item.textContent.trim(), href: item.href
-    })),
-    ruleHeight: parseFloat(rule.height),
-    ruleWidth: parseFloat(rule.width),
-    ruleColor: rule.backgroundColor,
-    banner: rect(banner),
-    masthead: rect(document.querySelector(".masthead")),
-    statbar: rect(document.querySelector(".statbar")),
-    stage: rect(document.querySelector(".stage")),
+    visible: Boolean(banner) && getComputedStyle(banner).display !== "none",
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 })()`);
@@ -814,7 +794,7 @@ const checkLinkHover = async () => {
 
   const projects = [
     [".concept-portuguese", "Português com a Inês", "Open Português com a Inês ↗", "https://portuguesewithines.com/?from=akibwa"],
-    [".concept-trek", "The Trek", "Open The Trek ↗", "/trek/?from=akibwa"]
+    [".concept-trek", "The Trek", "Open The Trek ↗", "/trek/"]
   ];
   for (const [selector, title, action, href] of projects) {
     const target = await evaluate(`(() => {
@@ -1053,54 +1033,10 @@ const checkProjectView = async () => {
 
   await goto("/trek/?from=akibwa");
   state = await trekProjectState();
-  check(state.visible, "the Trek page shows Akibwa's masthead when selected from Projects");
-  check(state.names.join(" / ") === "Daniel / Akibwa", `the selected-project identity keeps both flick states [${state.names.join(" / ")}]`);
-  check(
-    state.nameAnimations.every((name) => name !== "none"),
-    `both selected-project names keep the homepage flick [${state.nameAnimations.join(" / ")}]`
-  );
-  check(state.lede === "Building in the age of AI.", `the project masthead keeps the exact proposition [${state.lede}]`);
-  check(state.position === "sticky", `the selected-project masthead remains pinned [${state.position}]`);
-  check(
-    state.nav.map((item) => `${item.text}:${item.href}`).join(" / ") ===
-      "Home:https://akibwa.com/ / Projects:https://akibwa.com/#projects / Career:https://akibwa.com/#career / Taste Library:https://akibwa.com/#taste",
-    `the project masthead keeps Home and the three homepage routes [${state.nav.map((item) => item.text).join(" / ")}]`
-  );
-  check(
-    state.ruleHeight === 4 && Math.abs(state.ruleWidth - state.banner.width) <= 1 && state.ruleColor !== "rgba(0, 0, 0, 0)",
-    `the green boundary spans the whole selected-project masthead [${state.ruleWidth.toFixed(1)}×${state.ruleHeight.toFixed(1)}px]`
-  );
-  check(
-    Math.abs(state.banner.bottom - state.masthead.top) <= 1 &&
-      Math.abs(state.masthead.bottom - state.statbar.top) <= 1,
-    "the Trek chrome begins cleanly below the green portfolio boundary"
-  );
-  check(
-    Math.abs(state.stage.top - state.banner.bottom) <= 1,
-    "the real project canvas starts immediately below the portfolio masthead"
-  );
-  check(state.overflow <= 1, `the desktop project view has no horizontal overflow [${state.overflow}px]`);
-
-  await setMobile();
-  await goto("/trek/?from=akibwa");
-  state = await trekProjectState();
-  check(state.visible && state.banner.height <= 134, `the phone masthead stays compact [${state.banner.height.toFixed(1)}px]`);
-  check(
-    state.nav.map((item) => item.text).join(" / ") === "Home / Projects / Career / Taste Library",
-    "the phone project view keeps the complete homepage navigation"
-  );
-  check(state.overflow <= 1, `the phone project view has no horizontal overflow [${state.overflow}px]`);
+  check(!state.visible, "the Trek page remains standalone when an old project-view query is present");
+  check(state.overflow <= 1, `the standalone Trek has no horizontal overflow [${state.overflow}px]`);
 
   await setDesktop(872, 525);
-  await goto("/trek/?from=akibwa");
-  state = await trekProjectState();
-  check(
-    state.visible && state.banner.height <= 60 && state.ledeDisplay !== "none" &&
-      state.lede === "Building in the age of AI.",
-    `the short landscape masthead keeps the proposition without growing tall [${state.banner.height.toFixed(1)}px, ${state.ledeDisplay}]`
-  );
-  check(state.overflow <= 1, `the landscape project view has no horizontal overflow [${state.overflow}px]`);
-
   await goto("/features/?from=akibwa");
   await sleep(280);
   let features = await featuresProjectState();

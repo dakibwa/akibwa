@@ -253,7 +253,6 @@ const sources = [
   { file: "game-covers/warcraft-3.webp", slot: "deckTile" },
   { file: "project-art/personal/butterfly-rose-card.webp", slot: "deckTile" },
   { file: "project-art/personal/trek-card.webp", slot: "deckTile" },
-  { file: "project-art/personal/life-map-card.webp", slot: "deckTile" },
   { file: "project-art/personal/ines-fan-splat.webp", slot: "deckTile" },
   { file: "project-art/personal/features-card.webp", slot: "deckTile" },
   { file: "project-art/personal/features-symbol.webp", slot: "deckTile" },

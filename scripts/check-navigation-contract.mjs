@@ -155,8 +155,8 @@ requireText(editorial, 'title: "Português com a Inês"', "the Portuguese projec
 requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
 requireText(
   editorial,
-  'href: "/trek/?from=akibwa"',
-  "The Trek detail must open the real journey through Akibwa project view"
+  'href: "/trek/"',
+  "The Trek detail must open the standalone public atlas"
 );
 requireText(
   editorial,
@@ -257,11 +257,7 @@ requireText(
 forbidText(editorial, "concept-arrow", "project links must not show a separate arrow control");
 forbidText(css, ".concept-arrow", "the retired project arrow styling must stay removed");
 forbidText(editorial, "iframe", "project selection must not create a nested browsing frame");
-for (const [source, label] of [
-  [featuresPublished, "the published Features page"],
-  [trekTemplate, "the Trek source template"],
-  [trekPublished, "the generated Trek page"]
-]) {
+for (const [source, label] of [[featuresPublished, "the published Features page"]]) {
   requireText(source, "data-akibwa-project", `${label} must support conditional project view`);
   requireText(source, "akibwa-project-banner__name--daniel", `${label} must retain Daniel in the identity flick`);
   requireText(source, "akibwa-project-banner__name--akibwa", `${label} must retain Akibwa in the identity flick`);
@@ -280,6 +276,21 @@ for (const [source, label] of [
     requireText(source, `href="${href}">${text}</a>`, `${label} must provide the ${text} route`);
   }
   forbidText(source, "Back to projects", `${label} must use the real homepage navigation instead of a one-off back control`);
+}
+for (const [source, label] of [
+  [trekTemplate, "the Trek source template"],
+  [trekPublished, "the generated Trek page"]
+]) {
+  forbidText(source, "data-akibwa-project", `${label} must stay standalone even when a query string is present`);
+  forbidText(source, "akibwa-project-banner", `${label} must not expose the personal portfolio identity`);
+  forbidText(source, "Daniel", `${label} must not name the site owner`);
+  if (/\b2019\b/.test(source)) fail(`${label} must not expose the journey year`);
+  forbidText(source, "24 sep", `${label} must not expose the journey start date`);
+  forbidText(source, "28 nov", `${label} must not expose the journey end date`);
+  forbidText(source, "journal", `${label} must not include private writing`);
+  forbidText(source, "GPS", `${label} must not describe a precise recorded route`);
+  requireText(source, "abstracted public route", `${label} must explain the privacy-preserving route`);
+  requireText(source, 'href="https://akibwa.com/" aria-label="Akibwa home"', `${label} must still link back home`);
 }
 requireText(
   featuresPublished,

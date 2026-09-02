@@ -3773,53 +3773,6 @@
       }
     ]
   },
-  "deckTile:/project-art/personal/life-map-card.webp": {
-    "source": "/project-art/personal/life-map-card.webp",
-    "slot": "deckTile",
-    "ratio": 1,
-    "sourceWidth": 1200,
-    "sourceHeight": 800,
-    "sourceHash": "5c0269fd20002b85",
-    "press": "press-1",
-    "variants": [
-      {
-        "width": 138,
-        "height": 138,
-        "avif": {
-          "src": "/_img/project-art/personal/life-map-card-deckTile-138.avif",
-          "bytes": 3809
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/life-map-card-deckTile-138.webp",
-          "bytes": 4110
-        }
-      },
-      {
-        "width": 200,
-        "height": 200,
-        "avif": {
-          "src": "/_img/project-art/personal/life-map-card-deckTile-200.avif",
-          "bytes": 5673
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/life-map-card-deckTile-200.webp",
-          "bytes": 6924
-        }
-      },
-      {
-        "width": 264,
-        "height": 264,
-        "avif": {
-          "src": "/_img/project-art/personal/life-map-card-deckTile-264.avif",
-          "bytes": 8526
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/life-map-card-deckTile-264.webp",
-          "bytes": 10372
-        }
-      }
-    ]
-  },
   "deckTile:/project-art/personal/ines-fan-splat.webp": {
     "source": "/project-art/personal/ines-fan-splat.webp",
     "slot": "deckTile",

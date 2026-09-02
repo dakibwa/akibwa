@@ -2290,13 +2290,6 @@ export const lived = [
   { name: "Porto", span: "From Oct 2026", note: "The next one. Booked, and the reason the Portuguese is not a hobby." }
 ];
 
-/* The 2019 walk, Paris to Sofia. Per-country figures below are a GPS-in-border
-   split and do not sum to the walk total shown on /life-map/ and /trek/
-   (1,982 km, 52 days walked of 67 numbered). Do not put those country km on
-   the public walk surfaces.
-
-   Order is the order walked. Countries reached other than on foot carry no
-   distance. This is not yet a complete travel history — Dan's to extend. */
 export const games = [
   {
     "title": "Bloodborne",
@@ -2654,26 +2647,25 @@ export const sites = [
 ];
 
 export const visited = [
-  /* The seven trek countries first, in walking order, then the rest of the
-     2019 journey, then everywhere since, roughly in the order it happened.
+  /* The seven public route countries come first, then the wider travel list.
      The list follows the travel record's own convention: the documented
      index plus the UK as home, minus transfer-only Switzerland. */
   { flag: "🇬🇧", name: "United Kingdom", walked: 0, km: null, miles: null, when: "Home",
     note: "Home — the constant between every trip below." },
-  { flag: "🇫🇷", name: "France", walked: 1, km: 524, miles: 325,
-    note: "Day one, from Charles de Gaulle. Reims, Nancy, then Strasbourg and the border." },
-  { flag: "🇩🇪", name: "Germany", walked: 2, km: 366, miles: 227,
+  { flag: "🇫🇷", name: "France", walked: 1, km: null, miles: null,
+    note: "Paris, Reims, Nancy and the eastern border." },
+  { flag: "🇩🇪", name: "Germany", walked: 2, km: null, miles: null,
     note: "Stuttgart, Augsburg, Munich." },
-  { flag: "🇦🇹", name: "Austria", walked: 3, km: 291, miles: 181,
-    note: "Salzburg, then over the Tauern at 2,500 m — the physical high point of the whole walk." },
-  { flag: "🇸🇮", name: "Slovenia", walked: 4, km: 143, miles: 89,
-    note: "Down out of the Alps, Klagenfurt to Maribor." },
-  { flag: "🇭🇷", name: "Croatia", walked: 5, km: 167, miles: 104,
-    note: "The fifth country, counted out loud on day 38. Back in 2025 by way of Dubrovnik." },
-  { flag: "🇷🇸", name: "Serbia", walked: 6, km: 439, miles: 273,
-    note: "The longest stretch of the lot — Osijek, Novi Sad, Belgrade, Niš. A 69 km day in there." },
-  { flag: "🇧🇬", name: "Bulgaria", walked: 7, km: 88, miles: 55,
-    note: "The last leg into Sofia, and the end of two months on foot." },
+  { flag: "🇦🇹", name: "Austria", walked: 3, km: null, miles: null,
+    note: "Munich to Klagenfurt, crossing the Tauern." },
+  { flag: "🇸🇮", name: "Slovenia", walked: 4, km: null, miles: null,
+    note: "Klagenfurt to Ptuj." },
+  { flag: "🇭🇷", name: "Croatia", walked: 5, km: null, miles: null,
+    note: "Ptuj to Osijek." },
+  { flag: "🇷🇸", name: "Serbia", walked: 6, km: null, miles: null,
+    note: "Osijek, Novi Sad, Belgrade and Niš." },
+  { flag: "🇧🇬", name: "Bulgaria", walked: 7, km: null, miles: null,
+    note: "Niš to Sofia." },
   { flag: "🇹🇷", name: "Turkey", walked: 0, km: null, miles: null, when: "2019",
     note: "Istanbul for a fortnight in December 2019. Done with walking, not with running — 157 km of it, both sides of the Bosphorus." },
   { flag: "🇮🇳", name: "India", walked: 0, km: null, miles: null, when: "2019–20",
@@ -2711,14 +2703,11 @@ export const walkTotal = { km: 1982, miles: 1232, countries: 7, days: 52 };
 /* `noun` is the unit a set counts in. The count itself is read off the arrays
    above when the card renders rather than written down here, so the figure on
    the wall cannot drift from the data behind it. */
-/* The life pieces — the walk, and the map of all of it. */
+/* The public journey project. */
 export const life = [
   { name: "The Trek", href: "/trek/",
     ground: "#2c5d46", accent: "#2c5d46", eyebrow: "Live", art: "/project-art/personal/trek-card.webp",
-    note: "Paris to Sofia on foot — 1,982 km, fifty-two days walked of sixty-seven numbered, seven countries. Then the coach to Istanbul, because he was done." },
-  { name: "A Life in Maps", href: "/life-map/",
-    ground: "#1d4f63", accent: "#1d4f63", eyebrow: "Live", art: "/project-art/personal/life-map-card.webp",
-    note: "Paris to Sofia on foot is the thread — 1,982 km, seven countries, from the real GPS. The thirty years around it stay on the map, quieter." }
+    note: "An interactive atlas tracing 1,982 km from Paris to Sofia across seven countries." }
 ];
 
 /* Graceland is not one of the 246 printed sleeves, and it will not join them:
@@ -2734,7 +2723,7 @@ export const graceland = {
 };
 
 export const sets = [
-  { id: "sites", label: "Projects", noun: "of them", note: "Sites, a game, one long walk, and a map of all of it" },
+  { id: "sites", label: "Projects", noun: "of them", note: "Sites, a game, and one long walk" },
   { id: "jobs", label: "Career", noun: "roles", note: "Freelance now, on the toolkit below — before that, banks, building societies and building sites" },
   { id: "music", label: "Music", noun: "sleeves", note: "246 sleeves, printed as cards, ranked by plays" },
   { id: "films", label: "Films", noun: "picked", note: "In his own order, not ranked" },

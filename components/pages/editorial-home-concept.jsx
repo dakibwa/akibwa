@@ -59,12 +59,12 @@ const projects = [
   {
     id: "trek",
     className: "concept-trek",
-    href: "/trek/?from=akibwa",
+    href: "/trek/",
     title: "The Trek",
     subtitle: "Paris → Sofia · 1,982 km",
     kind: "Interactive journey",
     description:
-      "The 2019 walk from Paris to Sofia, told day by day through the real route, journal, records and 1,982 kilometres across seven countries.",
+      "An interactive atlas tracing 1,982 kilometres from Paris to Sofia through route geometry, landscapes and records across seven countries.",
     action: "Open The Trek",
     src: "/project-art/personal/trek-paris-sofia-project.png",
     alt: "An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre",

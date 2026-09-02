@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-28",
+  "updated": "2026-09-02",
   "surfaces": [
     {
       "id": "albums",
@@ -22,14 +22,6 @@
       "kind": "static-directory",
       "visibility": "public",
       "staticPath": "public/features/index.html"
-    },
-    {
-      "id": "life-map",
-      "title": "A Life in Maps",
-      "route": "/life-map",
-      "kind": "static-directory",
-      "visibility": "public",
-      "staticPath": "public/life-map/index.html"
     },
     {
       "id": "trek",
