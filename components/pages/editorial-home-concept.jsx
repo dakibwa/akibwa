@@ -1,27 +1,8 @@
 "use client";
 
-import { deck } from "@/components/deck-data";
-import { HeroFlipName } from "@/components/hero-word-cycle";
+import { HeroBrandName } from "@/components/hero-brand-name";
 import { PageFooter } from "@/components/page-footer";
-import { HomePage } from "@/components/pages/home-page";
 import { SiteImage } from "@/components/site-image";
-
-/* Keep the whole working history in sequence, including the two stretches on
-   the tools between office roles. Details stay inside the compact interaction
-   so Career keeps the original horizontal rhythm. */
-const careerNames = [
-  "Freelance",
-  "National Wealth Fund",
-  "Leeds Building Society",
-  "Electrical Work",
-  "Sky Betting & Gaming",
-  "Joinery Work",
-  "Vanquis Bank",
-  "Lloyds Banking Group"
-];
-const career = careerNames
-  .map((name) => deck.jobs.find((job) => job.name === name))
-  .filter(Boolean);
 
 const projects = [
   {
@@ -72,18 +53,26 @@ const projects = [
   }
 ];
 
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-function CareerStatement({ statement, emphasis }) {
-  if (!emphasis?.length) return statement;
-
-  const terms = new Set(emphasis);
-  const matcher = new RegExp(`(${emphasis.map(escapeRegExp).join("|")})`, "g");
-
-  return statement.split(matcher).map((part, index) =>
-    terms.has(part) ? <strong key={`${part}-${index}`}>{part}</strong> : part
-  );
-}
+const capabilities = [
+  {
+    label: "Data",
+    title: "Make the mess legible.",
+    copy: "Turn scattered reporting and brittle processes into a model people can understand and trust.",
+    accent: "#1b947d"
+  },
+  {
+    label: "Systems",
+    title: "Build the useful thing.",
+    copy: "Create small AI-assisted tools and automations around the real job, without unnecessary machinery.",
+    accent: "#2f88ff"
+  },
+  {
+    label: "Delivery",
+    title: "Leave it in good hands.",
+    copy: "Ship something operable, documented and owned by the people who will keep using it.",
+    accent: "#c05212"
+  }
+];
 
 /* Projects use the Career interaction: the card is the link, and hover or
    focus opens a small popover beneath it with the kind, the description and
@@ -138,7 +127,7 @@ export function EditorialHomeConcept() {
     <div className="concept-page">
       <header className="page-grid concept-hero">
         <h1 className="concept-identity">
-          <HeroFlipName />
+          <HeroBrandName />
         </h1>
         <div className="concept-hero-copy">
           <p className="concept-lede">
@@ -155,54 +144,24 @@ export function EditorialHomeConcept() {
         <ProjectShowcase />
       </section>
 
-      <section className="page-grid concept-career-section" id="career" aria-labelledby="career-title">
-        <header className="concept-career-head">
-          <h2 id="career-title">Career</h2>
+      <section className="page-grid concept-capabilities" id="capabilities" aria-labelledby="capabilities-title">
+        <header className="concept-capabilities-head">
+          <h2 id="capabilities-title">What Akibwa does</h2>
+          <p>Small enough to understand. Solid enough to use.</p>
         </header>
 
-        <ol
-          className="concept-career-timeline"
-          style={{ "--career-count": career.length }}
-        >
-          {career.map((job) => (
-            <li
-              className="concept-career-stop"
-              key={job.name}
-              style={{ "--company-accent": job.accent }}
-              tabIndex={0}
-              aria-label={`${job.name}, ${job.role}, ${job.span}. ${job.statement}`}
-            >
-              <span className="concept-career-node" aria-hidden="true" />
-              <div className="concept-career-card">
-                <span
-                  className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo === "/brand-logos/national-wealth-fund-icon.png" ? " is-nwf" : ""}${job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is-lloyds" : ""}`}
-                  aria-hidden="true"
-                >
-                  {job.logo ? <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" /> : null}
-                </span>
-              </div>
-              <div className="concept-career-popover" aria-hidden="true">
-                <strong>{job.name}</strong>
-                <span>{job.role} · {job.span}</span>
-                <p className="concept-career-statement">
-                  <CareerStatement statement={job.statement} emphasis={job.emphasis} />
-                </p>
-              </div>
+        <ol className="concept-capability-list">
+          {capabilities.map((capability, index) => (
+            <li key={capability.label} style={{ "--capability-accent": capability.accent }}>
+              <span className="concept-capability-index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="concept-capability-label">{capability.label}</span>
+              <h3>{capability.title}</h3>
+              <p>{capability.copy}</p>
             </li>
           ))}
         </ol>
-      </section>
-
-      <section className="concept-archive" id="taste" aria-labelledby="taste-title">
-        <div className="page-grid concept-taste-head">
-          <header className="concept-archive-head">
-            <h2 id="taste-title">Taste Library</h2>
-          </header>
-        </div>
-
-        <div className="concept-archive-wall">
-          <HomePage tasteOnly />
-        </div>
       </section>
     </div>
   );

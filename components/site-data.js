@@ -1,8 +1,6 @@
 import coverCollisionData from "@/data/cover-collision-data.json";
 import publicSurfaceConfig from "@/data/public-surfaces.json";
 
-export const contactEmail = "***REMOVED***";
-
 export const publicSurfaces = publicSurfaceConfig.surfaces;
 
 export function getPublicSurface(id) {

@@ -575,40 +575,6 @@
       }
     ]
   },
-  "portrait:/about-portrait-smiling.webp": {
-    "source": "/about-portrait-smiling.webp",
-    "slot": "portrait",
-    "ratio": 1.253,
-    "sourceWidth": 1000,
-    "sourceHeight": 1000,
-    "sourceHash": "a4121af5bc1f9c4c",
-    "variants": [
-      {
-        "width": 491,
-        "height": 392,
-        "avif": {
-          "src": "/_img/about-portrait-smiling-portrait-491.avif",
-          "bytes": 14595
-        },
-        "webp": {
-          "src": "/_img/about-portrait-smiling-portrait-491.webp",
-          "bytes": 17704
-        }
-      },
-      {
-        "width": 617,
-        "height": 492,
-        "avif": {
-          "src": "/_img/about-portrait-smiling-portrait-617.avif",
-          "bytes": 21362
-        },
-        "webp": {
-          "src": "/_img/about-portrait-smiling-portrait-617.webp",
-          "bytes": 26038
-        }
-      }
-    ]
-  },
   "navStrip:/brand-art/nav/personal.webp": {
     "source": "/brand-art/nav/personal.webp",
     "slot": "navStrip",

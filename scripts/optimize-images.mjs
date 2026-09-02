@@ -11,7 +11,6 @@ const groups = [
   { dir: "project-art/personal", maxWidth: 1600, quality: 78 },
   { dir: "area-art", maxWidth: 1200, quality: 80 },
   { dir: "project-images/cover-collision", maxWidth: 720, quality: 78 },
-  { dir: ".", files: ["about-portrait-smiling.jpg"], maxWidth: 1000, quality: 78 }
 ];
 
 const convertible = /\.(jpe?g|png)$/i;

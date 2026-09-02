@@ -10,7 +10,7 @@ export const metadata = {
     template: "Akibwa | %s"
   },
   description:
-    "Daniel builds small AI-assisted systems — dashboards, automations and internal tools that replace work still being done by hand.",
+    "Akibwa builds small AI-assisted systems — dashboards, automations and internal tools that replace work still being done by hand.",
   openGraph: {
     title: "Akibwa",
     description:

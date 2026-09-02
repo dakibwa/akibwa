@@ -1,31 +1,21 @@
 # Akibwa Core Site
 
-Public portfolio site for `akibwa.com`.
+Public site for [akibwa.com](https://akibwa.com), exported statically with Next.js and deployed from `main` through GitHub Pages.
 
-The site is a static Next.js export deployed by GitHub Pages from `main`.
+The indexed homepage is deliberately brand-led: Akibwa, three current projects and three broad capabilities. It does not publish a personal biography, employment timeline, residential history, taste archive, direct social links or a static email address. Detailed archive routes remain available only by direct link and use `noindex`; only `/` is advertised in the sitemap.
 
-The homepage is one visual index rather than a conventional portfolio: a fixed
-sentence with one restrained Daniel/Akibwa name cycle, plain word filters, and
-a dense two-size mosaic. `Projects` includes Features, Português com a Inês and
-the Trek, while
-Career, Music, Films, Games, and TV remain their own lenses. Only tiles with a
-real destination are links; the rest are labelled visual objects, and there is
-no modal viewer or card-back interaction.
+## Projects
 
-Data refreshes that can run from API credentials or public seeds should run in Cloudflare Workers, not local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md).
+- Features is a playable daily untangling puzzle.
+- Português com a Inês links to its own lesson and booking site.
+- `/trek/` is a privacy-minimised static atlas. It uses an abstracted city-to-city route rather than a recorded daily trace and excludes exact dates, daily distances, activity metrics, personal writing, identity details and unreviewed files. Its photograph manifest is an explicit allow-list.
 
-## Publishing
+## Checks and publishing
 
-- `npm run build`: build the static export into `out/`.
-- `npm run publish:check`: verify registered public surfaces, fallback data, public projection data, and exported routes when `out/` exists.
-- `npm run refresh:status`: read live Cloudflare refresh status endpoints from `data/public-surfaces.json`.
-- `npm run publish:ready`: run build, publication checks, and live refresh-status checks before pushing `main`.
-- Markdown and `docs/**`-only changes intentionally do not start a Pages build or deployment.
+- `npm run build`: run the public-boundary and Trek privacy contracts, then export to `out/`.
+- `npm run check:navigation:dom`: exercise the rendered public boundary in Chrome.
+- `npm run publish:check`: verify registered public surfaces and exported routes.
+- `npm run publish:ready`: run the full publication gate.
+- `npm run trek:build`: rebuild the Trek from its privacy-reduced public data.
 
-Public project metadata lives in `data/public-surfaces.json`. Add new website surfaces there first, then wire the route/component/data seed around that registry entry.
-
-The Personal project overlays are user-facing product surfaces, not decorative screenshots. The wall ranks the whole record collection by play count and says plainly what its counts do and do not cover, Cover Collision presents the series as a numbered exhibition with a direct Instagram route, and embedded apps retain their own live behaviour.
-
-`/trek/` is a privacy-minimised static surface at `public/trek/index.html`. It uses a deliberately abstracted city-to-city line through 17 public place anchors from Paris to Sofia rather than a recorded daily trace. The cached Open-Meteo elevation grid in `data/trek-terrain.json` drives the cut-paper terrain, and selected Natural Earth lakes and rivers keep the seven-country geography legible without a mapping runtime. The interface retains aggregate route distance, country sequence, numbered route markers, reviewed landscape photographs and verified record artwork.
-
-The public Trek data excludes exact dates, daily coordinates and distances, activity metrics, personal writing, identity details and unreviewed files. `public/trek/photos/manifest.json` is the allow-list for every served route photograph; images showing people, bodies, accommodation or identifying text are excluded. Sleeves remain real fronts of verified records (Cover Art Archive, printed wall cards as fallback — `npm run trek:covers`), and unverified titles stay blank. `?rec=<day>` deep-links a record and country names jump to their generalized route sections. Build with `npm run trek:build`; `npm run check:trek-privacy` enforces the public-data boundary.
+Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md) and [Publication Workflow](docs/publication-workflow.md).

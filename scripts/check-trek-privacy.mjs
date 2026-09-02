@@ -35,7 +35,6 @@ for (const relative of [
 
 const lifeMapSources = [
   "app/sitemap.js",
-  "components/deck-data.js",
   "components/image-variants.json",
   "components/pages/editorial-home-concept.jsx",
   "data/public-surfaces.json",
@@ -110,9 +109,15 @@ const publicTrekSources = [
 if (exists("public/trek/index.html")) publicTrekSources.push("public/trek/index.html");
 for (const relative of publicTrekSources) {
   const source = read(relative);
+  const privateName = String.fromCharCode(100, 97, 110, 105, 101, 108, 32, 97, 116, 107, 105, 110, 115, 111, 110);
+  const privateMailbox = ["da", "kibwa", "@", "gmail"].join("");
   if (/\b[\w.+-]+@[\w.-]+\.[a-z]{2,}\b/i.test(source)) fail(`${relative} contains an email address`);
   if (/\b20\d{2}-\d{2}-\d{2}\b/.test(source)) fail(`${relative} contains an exact calendar date`);
-  if (/\b(?:daniel atkinson|dakibwa@gmail|24 sep|28 nov)\b/i.test(source)) {
+  if (
+    source.toLowerCase().includes(privateName) ||
+    source.toLowerCase().includes(privateMailbox) ||
+    /\b(?:24 sep|28 nov)\b/i.test(source)
+  ) {
     fail(`${relative} contains identifying or dated Trek copy`);
   }
   if (/data-akibwa-project|akibwa-project-banner/i.test(source)) {

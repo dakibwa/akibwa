@@ -254,25 +254,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .akibwa-project-banner__inner{width:min(calc(100% - 48px),1310px);min-height:104px;margin:0 auto;
     display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
     align-items:center;gap:clamp(34px,5vw,78px);padding:12px 0 15px}
-  .akibwa-project-banner__identity{margin:0;color:#030405;font-size:clamp(2.15rem,3.8vw,3.45rem);
-    font-weight:540;line-height:.92;letter-spacing:-.06em;white-space:nowrap}
-  .akibwa-project-banner__name-stack{display:inline-grid;white-space:nowrap}
-  .akibwa-project-banner__name{position:relative;grid-area:1/1;justify-self:start;width:max-content;
-    padding-bottom:.1em;font-weight:660}
-  .akibwa-project-banner__name::after{content:"";position:absolute;right:0;bottom:0;left:0;height:.1em;
+  .akibwa-project-banner__identity{position:relative;width:max-content;margin:0;padding-bottom:.1em;
+    color:#99451F;font-size:clamp(2.15rem,3.8vw,3.45rem);
+    font-weight:660;line-height:.92;letter-spacing:-.06em;white-space:nowrap}
+  .akibwa-project-banner__identity::after{content:"";position:absolute;right:0;bottom:0;left:0;height:.1em;
     border-radius:.05em;background:currentColor;opacity:.5}
-  .akibwa-project-banner__name--daniel{color:#236BB8;animation:akibwa-name-daniel 8.4s ease infinite}
-  .akibwa-project-banner__name--akibwa{color:#99451F;animation:akibwa-name-akibwa 8.4s ease infinite}
-  @keyframes akibwa-name-daniel{
-    0%,47%{opacity:1;transform:translateY(0)}
-    49%,98%{opacity:0;transform:translateY(.04em)}
-    100%{opacity:1;transform:translateY(0)}
-  }
-  @keyframes akibwa-name-akibwa{
-    0%,47%{opacity:0;transform:translateY(.04em)}
-    49%,98%{opacity:1;transform:translateY(0)}
-    100%{opacity:0;transform:translateY(.04em)}
-  }
   .akibwa-project-banner__copy{display:grid;gap:10px;min-width:0;justify-items:start}
   .akibwa-project-banner__lede{margin:0;color:#101217;
     font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
@@ -314,10 +300,6 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
     .akibwa-project-banner__lede{display:block;font-size:clamp(.78rem,2vw,.95rem);
       line-height:1;white-space:normal}
     .akibwa-project-banner__nav{flex-wrap:nowrap;gap:.72em;font-size:.62rem;white-space:nowrap}
-  }
-  @media(prefers-reduced-motion:reduce){
-    .akibwa-project-banner__name--daniel{animation:none;opacity:1;transform:none}
-    .akibwa-project-banner__name--akibwa{animation:none;opacity:0;transform:none}
   }
   .pick,
   .bulletin .bsub,
@@ -1281,9 +1263,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 <body>
 <header class="akibwa-project-banner" aria-label="Akibwa portfolio">
   <div class="akibwa-project-banner__inner">
-    <p class="akibwa-project-banner__identity" aria-label="I’m Daniel. I’m Akibwa.">
-      <span aria-hidden="true">I&rsquo;m <span class="akibwa-project-banner__name-stack"><strong class="akibwa-project-banner__name akibwa-project-banner__name--daniel">Daniel</strong><strong class="akibwa-project-banner__name akibwa-project-banner__name--akibwa">Akibwa</strong></span></span>
-    </p>
+    <p class="akibwa-project-banner__identity">Akibwa</p>
     <div class="akibwa-project-banner__copy">
       <p class="akibwa-project-banner__lede">Building in the age of AI.</p>
       <nav class="akibwa-project-banner__nav" aria-label="Akibwa">

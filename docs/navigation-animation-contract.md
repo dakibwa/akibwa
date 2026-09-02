@@ -1,146 +1,24 @@
-# Homepage interaction contract
+# Homepage interaction and privacy contract
 
-Akibwa is one editorial index rather than a conventional portfolio menu. Keep
-these rules true, run `npm run check:navigation` (static, included in every
-build) and `npm run check:navigation:dom` (rendered Chrome checks) before
-publishing homepage changes.
+Akibwa is a short editorial index, not a personal profile. Run `npm run check:navigation` on every build and `npm run check:navigation:dom` before publication.
 
 ## Public index
 
-- `/` renders `EditorialHomeConcept` directly. `/concept/` remains a no-index
-  comparison URL, but it is not a second implementation.
-- There is no site header. The opening identity cycles between “I’m Daniel” and
-  “I’m Akibwa”, beside the sentence “Building in the age of AI.” The X,
-  Instagram and email handles sit directly beneath that sentence; the hero no
-  longer repeats Projects, Career and Taste Library as a menu. The identity and
-  proposition use the phone measure rather than leaving an empty white tail.
-- Projects has its own serif chapter heading, matching Career and Taste
-  Library. Its stable card system keeps three equal cards in a single row on a
-  wide screen, Features takes the first full tablet row above two equal cards,
-  and phones use one compact, horizontally swipeable row with the next card
-  peeking into view, each card carrying its description as a plain caption
-  because there is no pointer to hover with. Every card keeps its
-  artwork above the same bottom caption rail; there are no narrow side
-  captions. The Portuguese card uses a text-free conversation illustration;
-  Trek uses a route-led
-  topographic illustration drawn from the live atlas; and Features uses a
-  bright, image-led version of the game's board language: one compact wordmark,
-  the colour rule, an energetic five-colour weave, crossings, neurons and
-  feature controls, with no explanatory copy in the art. The five feature
-  stamps form a slim vertical rail against the right edge, balancing the
-  wordmark without taking space from the puzzle.
-- Project captions are slim bottom rails with one accent edge. Features uses
-  a pale sea-glass rail with deep green type and frame; the other two use the
-  page's warm paper so their artwork keeps the colour. All three use the same
-  title and subtitle typography, running from the left and right ends without
-  clipping.
-  There is no arrow on the resting card: the whole rail takes on a subtle
-  project-colour tint on hover, keyboard focus and touch press.
-- Each project card is the link to its destination, and hover or keyboard
-  focus opens the Career popover beneath it (Dan, 1 Sep 2026: the same hover
-  style as Career, replacing the shared bottom panel whose title, sentence and
-  button were spread across three columns). The popover hangs 9px under the
-  card, spans the card's full width, fades in over 120ms without moving
-  anything else, and names the kind of project, one concise explanatory
-  sentence and the open cue. The section grows its bottom space while a
-  popover is open so the rose Career rule steps down instead of being covered.
-  Clicking the card replaces the portfolio with the real project. Features and
-  Português com a Inês use `?from=akibwa`; only that entry mode
-  adds a compact version of the real homepage masthead: the Daniel/Akibwa
-  identity keeps flicking, “Building in the age of AI.” keeps its serif face,
-  and Home, Projects, Career and Taste Library remain available in their
-  original type and colours. Its green rule spans the complete viewport.
-  Everything below that rule belongs to the selected project and is sized to
-  the viewport left beneath the masthead; fixed project menus must not slip
-  behind it. Direct visits remain standalone. Português com a Inês owns its
-  banner in its own repository, and Features owns its banner in the source game
-  and republishes it here. Trek always opens directly as a standalone,
-  privacy-minimised atlas generated from `scripts/trek-page-template.html`.
-- Freelance is not a separate pitch in this section.
-- The page is not text-selectable. Links, buttons and keyboard focus retain
-  their normal interaction semantics.
-- Images disable native touch callouts and dragging. On touch devices and
-  narrow screens, artwork passes pointer targeting to its enclosing card or
-  link so taps still work without exposing the mobile Save Image menu.
-- The green rule below the opening, the rose Career rule and the blue Taste
-  Library rule are the same 4px, full-viewport chapter divider. Their headings
-  and content remain on the shared `page-grid`; only the rules bleed to the
-  screen edges.
+- `/` renders the Akibwa brand, the proposition “Building in the age of AI.”, three current projects and three capability blocks.
+- The page contains no personal name, career timeline, residential history, taste archive or direct social links.
+- The email control is available to people using the page but the address is assembled only after activation; it must not appear in static HTML.
+- The root may be indexed, but image indexing and long search snippets are restricted. It is the only sitemap entry.
+- Detailed archives and project-detail routes use `noindex`. Crawlers remain allowed in `robots.txt` so they can read those directives.
 
-## Career
+## Layout and interaction
 
-- Career is the original horizontal eight-stop index with Freelance first.
-  Its short combined sentence identifies Butterfly Rose and Português com a
-  Inês as client work.
-- At rest it shows the eight company marks and their coloured timeline only;
-  job dates do not compete with the marks. Hover or keyboard focus reveals the
-  full range, job title and one short
-  action-to-purpose sentence, with tools and sector language selectively
-  bolded. Each logo card keeps a darker border and a quiet tinted-paper surface
-  derived from its own timeline colour. Electrical uses a rounded plug-and-cable
-  mark; Joinery uses an interlocking dovetail mark. These sentences are direct
-  verb-led lines, not first-person copy.
-- Focus is exclusive: after a role is clicked or reached by keyboard, hovering
-  another mark cannot open a second detail over it. Moving focus switches the
-  one open detail.
-- The section closes shortly after the resting logo cards instead of reserving
-  a permanently open synopsis row. It temporarily makes room for the one open
-  detail so the next chapter stays unobscured. The same compact interaction
-  and horizontal rhythm remain on phones.
+- The hero uses a two-column editorial composition on wide screens and one reading column on narrow screens.
+- Project cards share one image-above-caption anatomy. On pointer devices, the explanatory detail opens beneath the active card. On phones, projects form a native horizontal snap rail and their descriptions remain visible without hover.
+- Capabilities are three restrained editorial slabs on wide screens and a single column on phones. Their motion is disabled when reduced motion is requested.
+- The green hero rule and rose capability rule run to the viewport edges while content remains on the shared grid.
+- Images disable native dragging and touch callouts without stealing the enclosing link or button target.
 
-## Taste and handles
+## Standalone project surfaces
 
-- Taste reuses `HomePage` in `tasteOnly` mode: Graceland first, then Music,
-  Films, Games, TV and Podcasts in one compact horizontal list.
-- The list is a single row of small square covers with native horizontal
-  overflow, scroll snapping and touch momentum. It swipes left and right on
-  touch screens and keeps a subtle coloured scrollbar as its desktop cue. A
-  category change returns the new list to its first item.
-- Cards are disclosure buttons rather than false destination links. Hover or
-  keyboard focus rings the cover in its key colour and opens the Career popover
-  beneath it with kind, title, creator and, for music, the Last.fm play count;
-  click or tap locks that detail, and Escape clears it. The rail clips its own
-  overflow, so the popover lives in a shell around the rail and is placed from
-  the measured cover, clamped inside the rail's edges; it keeps the last
-  cover's text while it fades, and scrolling the rail dismisses it rather than
-  letting it drift away from its cover. (1 Sep 2026: this replaced an expanding
-  bottom bar whose height animation misfired and whose text spread across the
-  whole row.)
-- The short filter row sizes itself to its words and sits directly above the
-  rail; it must not inherit a card-height grid row or leave a blank shelf.
-- Film, game and television tiles use their title-specific editorial scenes
-  edge-to-edge at every scale. The popover carries title and creator, so
-  commercial poster boxes, grey margins and text-heavy cover insets do not
-  interrupt the wall. They must not regress to generic symbols or an
-  undifferentiated wall of plain covers.
-  The six plain filter words change the rail immediately and Escape returns to
-  Highlights.
-- The three shared handles live beneath “Building in the age of AI.” and are
-  not repeated after Taste. They retain their established colours.
-
-## Motion
-
-- Motion is reserved for the identity cycle and the three shared layout
-  reveals. Project cards use an immediate, restrained caption-rail tint for
-  feedback; neither project nor Taste cards lift, tilt or add theatrical
-  shadows. Their popovers are the Career popover — spatially fixed, a 120ms
-  fade, the chapter's rule colour on the top edge — and only the section's
-  bottom space moves, on Career's timing, to make room.
-- Career reveals are one continuous layout movement: its section smoothly
-  increases its bottom space while the detail eases in, physically pushing the
-  blue Taste Library rule down. The section remains open while the pointer
-  crosses the small gaps between career marks, so the rule never stutters. The
-  detail itself stays spatially fixed and only fades; switching rapidly between
-  marks must not send multiple panels sliding around the row.
-- `prefers-reduced-motion: reduce` removes non-essential transitions while
-  preserving the same information and focus states.
-
-## Regression checks
-
-- `scripts/check-navigation-contract.mjs` asserts that the editorial component
-  owns `/`, that its hero copy and handles remain intact, and that Projects,
-  Career and Taste retain the approved structure.
-- `scripts/check-navigation-dom.mjs` verifies the rendered hierarchy, project
-  links and restrained feedback, focus-revealed career detail, Taste filters,
-  horizontal swipe/scroll behaviour, hero-handle containment, overflow and
-  reduced motion.
+- Features may show a compact Akibwa banner when entered from the homepage. That banner stays brand-only.
+- The Trek is always standalone and excluded from search and image indexes. Its route is abstracted; the separate Trek privacy contract owns its data and image allow-lists.

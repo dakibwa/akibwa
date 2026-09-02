@@ -815,7 +815,7 @@ button {
   gap: 18px;
 }
 
-.page-footer a {
+.page-footer :is(a, button) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -825,7 +825,12 @@ button {
   flex: 0 0 auto;
 }
 
-.page-footer a {
+.page-footer :is(a, button) {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
   min-height: 32px;
   color: color-mix(in srgb, var(--handle-accent, #343a42) 22%, #30363e);
   cursor: pointer;
@@ -835,11 +840,11 @@ button {
     transform 300ms var(--ease-out);
 }
 
-.page-footer a {
+.page-footer :is(a, button) {
   position: relative;
 }
 
-.page-footer a::after {
+.page-footer :is(a, button)::after {
   content: "";
   position: absolute;
   right: 0;
@@ -854,28 +859,28 @@ button {
   transition: transform 260ms var(--ease-out);
 }
 
-.page-footer a svg {
+.page-footer :is(a, button) svg {
   color: var(--handle-accent, currentColor);
   transition: transform 260ms var(--ease-out);
 }
 
-.page-footer a.is-hovering,
-.page-footer a.is-pressing,
-.page-footer a:focus-visible:not(.is-pointer-focus) {
+.page-footer :is(a, button).is-hovering,
+.page-footer :is(a, button).is-pressing,
+.page-footer :is(a, button):focus-visible:not(.is-pointer-focus) {
   color: color-mix(in srgb, var(--handle-accent, var(--black)) 76%, var(--black));
   outline: 0;
   transform: translateY(-2px);
 }
 
-.page-footer a.is-hovering::after,
-.page-footer a.is-pressing::after,
-.page-footer a:focus-visible:not(.is-pointer-focus)::after {
+.page-footer :is(a, button).is-hovering::after,
+.page-footer :is(a, button).is-pressing::after,
+.page-footer :is(a, button):focus-visible:not(.is-pointer-focus)::after {
   transform: scaleX(1);
 }
 
-.page-footer a.is-hovering svg,
-.page-footer a.is-pressing svg,
-.page-footer a:focus-visible:not(.is-pointer-focus) svg {
+.page-footer :is(a, button).is-hovering svg,
+.page-footer :is(a, button).is-pressing svg,
+.page-footer :is(a, button):focus-visible:not(.is-pointer-focus) svg {
   transform: translateY(-1px) rotate(-7deg) scale(1.12);
 }
 
@@ -4303,7 +4308,7 @@ button {
     gap: 0 12px;
   }
 
-  .page-footer a {
+  .page-footer :is(a, button) {
     gap: 5px;
   }
 
@@ -5524,10 +5529,8 @@ button {
     filter 440ms var(--ease-out);
 }
 
-/* The logo used to be absolutely positioned while the title grew upward from
-   the bottom of the card, so a three-line name slid straight underneath it —
-   "Leeds Building Society" sat on top of its own mark. Both are in normal flow
-   now, pushed apart, so they cannot meet however long the name gets. */
+/* Keep the mark and a long multi-line title in normal flow so they cannot
+   overlap inside the square card. */
 
 .card-face-stack {
   display: flex;
@@ -5538,9 +5541,8 @@ button {
   min-height: 0;
 }
 
-/* The foot must not be squeezed: as a shrinkable flex child it was compressed
-   to about a line and a half, so "Leeds Building Society" lost its third line
-   to the card's overflow rather than to the clamp. */
+/* The foot must not shrink, or long labels are clipped by the card rather than
+   by the intended line clamp. */
 
 .c-foot {
   flex: none;
@@ -6121,20 +6123,20 @@ button {
   .hero-word-cycle-value,
   .hero-name-value::after,
   .hero-index-word .hero-word-cycle-value::after,
-  .page-footer a,
-  .page-footer a::after,
-  .page-footer a svg {
+  .page-footer :is(a, button),
+  .page-footer :is(a, button)::after,
+  .page-footer :is(a, button) svg {
     transition: none;
   }
 
   .hero-name:hover,
   .hero-index-word:hover,
-  .page-footer a.is-hovering,
-  .page-footer a.is-pressing,
-  .page-footer a:focus-visible:not(.is-pointer-focus),
-  .page-footer a.is-hovering svg,
-  .page-footer a.is-pressing svg,
-  .page-footer a:focus-visible:not(.is-pointer-focus) svg {
+  .page-footer :is(a, button).is-hovering,
+  .page-footer :is(a, button).is-pressing,
+  .page-footer :is(a, button):focus-visible:not(.is-pointer-focus),
+  .page-footer :is(a, button).is-hovering svg,
+  .page-footer :is(a, button).is-pressing svg,
+  .page-footer :is(a, button):focus-visible:not(.is-pointer-focus) svg {
     transform: none;
   }
 
@@ -6758,6 +6760,7 @@ button {
    run viewport-edge to viewport-edge while their headings and content keep
    the shared page-grid measure. */
 .concept-hero::after,
+.concept-capabilities::before,
 .concept-career-section::before,
 .concept-archive::before {
   position: absolute;
@@ -6771,6 +6774,11 @@ button {
 .concept-hero::after {
   bottom: 0;
   background: var(--concept-work);
+}
+
+.concept-capabilities::before {
+  top: 0;
+  background: var(--concept-career);
 }
 
 .concept-career-section::before {
@@ -6794,6 +6802,11 @@ button {
 }
 
 .concept-identity .hero-name {
+  font-weight: 660;
+}
+
+.concept-identity .hero-brand-name {
+  color: var(--black);
   font-weight: 660;
 }
 
@@ -7069,6 +7082,110 @@ button {
   letter-spacing: 0.01em;
 }
 
+.concept-capabilities {
+  position: relative;
+  padding: var(--concept-rule-gap) 0 clamp(64px, 8vw, 108px);
+}
+
+.concept-capabilities-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: end;
+  padding-bottom: clamp(26px, 3.2vw, 44px);
+}
+
+.concept-capabilities-head h2 {
+  max-width: 10ch;
+  margin: 0;
+  color: var(--black);
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+.concept-capabilities-head p {
+  max-width: 27ch;
+  margin: 0 0 0.12em;
+  justify-self: end;
+  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
+  font-family: var(--serif);
+  font-size: clamp(1.05rem, 1.55vw, 1.45rem);
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+.concept-capability-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 2vw, 28px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.concept-capability-list li {
+  display: grid;
+  min-height: clamp(220px, 23vw, 286px);
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+  padding: clamp(18px, 2vw, 26px);
+  border: 1px solid color-mix(in srgb, var(--capability-accent) 28%, var(--line-strong));
+  border-top: 4px solid var(--capability-accent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--capability-accent) 5%, var(--canvas));
+  transition: background 160ms ease, transform 160ms var(--ease-out);
+}
+
+.concept-capability-list li:hover {
+  background: color-mix(in srgb, var(--capability-accent) 9%, var(--canvas));
+  transform: translateY(-2px);
+}
+
+.concept-capability-index,
+.concept-capability-label {
+  color: color-mix(in srgb, var(--capability-accent) 78%, var(--ink));
+  font-size: 0.68rem;
+  font-weight: 720;
+  line-height: 1.2;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.concept-capability-index {
+  font-variant-numeric: tabular-nums;
+}
+
+.concept-capability-label {
+  text-align: right;
+}
+
+.concept-capability-list h3 {
+  grid-column: 1 / -1;
+  align-self: end;
+  max-width: 12ch;
+  margin: 0;
+  color: var(--black);
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 2.8vw, 2.75rem);
+  font-weight: 520;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.concept-capability-list p {
+  grid-column: 1 / -1;
+  max-width: 42ch;
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
+  font-size: clamp(0.8rem, 1vw, 0.92rem);
+  line-height: 1.48;
+}
+
 .concept-kicker {
   margin: 0;
   color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
@@ -7320,6 +7437,23 @@ button {
     width: 100%;
   }
 
+  .concept-capabilities-head {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .concept-capabilities-head p {
+    justify-self: start;
+  }
+
+  .concept-capability-list {
+    grid-template-columns: 1fr;
+  }
+
+  .concept-capability-list li {
+    min-height: 210px;
+  }
+
 }
 
 @media (max-width: 560px) {
@@ -7421,8 +7555,13 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .concept-text-link,
-  .concept-inline-links a {
+  .concept-inline-links a,
+  .concept-capability-list li {
     transition: none;
+  }
+
+  .concept-capability-list li:hover {
+    transform: none;
   }
 }
 

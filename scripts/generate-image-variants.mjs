@@ -176,7 +176,6 @@ const sources = [
   // differently in each: 50% 54% on the tile, center 12% behind the intro.
   { file: "about-mountain-meadow.webp", slot: "aboutIntro", position: [50, 12] },
   { file: "about-mountain-meadow.webp", slot: "areaTile", position: [50, 54] },
-  { file: "about-portrait-smiling.webp", slot: "portrait" },
 
   // Nav artwork — CSS backgrounds, one rung each.
   { file: "brand-art/nav/personal.webp", slot: "navStrip" },

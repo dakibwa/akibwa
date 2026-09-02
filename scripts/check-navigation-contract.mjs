@@ -1,32 +1,23 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
-/* Build-time contract for Akibwa's public editorial index. The homepage is a
-   short introduction to current work and career, followed by a compact,
-   horizontally browsable taste index. */
+/* Build-time contract for Akibwa's public boundary. The brand and its current
+   projects are discoverable; personal identity, history and archives are not. */
 
-const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
-const index = readFileSync(new URL("../app/page.jsx", import.meta.url), "utf8");
-const shell = readFileSync(new URL("../components/site-shell.jsx", import.meta.url), "utf8");
-const editorial = readFileSync(
-  new URL("../components/pages/editorial-home-concept.jsx", import.meta.url),
-  "utf8"
-);
-const deckData = readFileSync(new URL("../components/deck-data.js", import.meta.url), "utf8");
-const home = readFileSync(new URL("../components/pages/home-page.jsx", import.meta.url), "utf8");
-const heroCycle = readFileSync(new URL("../components/hero-word-cycle.jsx", import.meta.url), "utf8");
-const footer = readFileSync(new URL("../components/page-footer.jsx", import.meta.url), "utf8");
-const siteImage = readFileSync(new URL("../components/site-image.jsx", import.meta.url), "utf8");
-const featuresPublished = readFileSync(new URL("../public/features/index.html", import.meta.url), "utf8");
-const trekTemplate = readFileSync(new URL("./trek-page-template.html", import.meta.url), "utf8");
-const trekPublished = readFileSync(new URL("../public/trek/index.html", import.meta.url), "utf8");
-const electricalLogo = readFileSync(new URL("../public/brand-logos/electrical.svg", import.meta.url), "utf8");
-const joineryLogo = readFileSync(new URL("../public/brand-logos/joinery.svg", import.meta.url), "utf8");
-const imageVariants = JSON.parse(
-  readFileSync(new URL("../components/image-variants.json", import.meta.url), "utf8")
-);
-const albumArtManifest = JSON.parse(
-  readFileSync(new URL("../data/album-art-manifest.json", import.meta.url), "utf8")
-);
+const read = (relativePath) =>
+  readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
+
+const css = read("app/globals.css");
+const index = read("app/page.jsx");
+const layout = read("app/layout.jsx");
+const sitemap = read("app/sitemap.js");
+const albums = read("app/albums/page.jsx");
+const projectDetail = read("app/projects/[slug]/page.jsx");
+const editorial = read("components/pages/editorial-home-concept.jsx");
+const hero = read("components/hero-brand-name.jsx");
+const footer = read("components/page-footer.jsx");
+const features = read("public/features/index.html");
+const trekTemplate = read("scripts/trek-page-template.html");
+const trekPublished = read("public/trek/index.html");
 
 const fail = (message) => {
   throw new Error(`Navigation contract failed: ${message}`);
@@ -55,560 +46,71 @@ const requireRuleText = (selector, declarations) => {
   }
 };
 
-/* The approved editorial route is the public index, with no separate header. */
 requireText(
   index,
   'import { EditorialHomeConcept } from "@/components/pages/editorial-home-concept"',
   "the public index must render the editorial homepage"
 );
 requireText(index, "return <EditorialHomeConcept />", "the editorial homepage must own the root route");
-forbidText(index, "<HomePage", "the retired all-in-one wall must not return as the root route");
-forbidText(shell, "site-header", "the retired site header must stay retired");
+requireText(index, "noimageindex: true", "the public index must opt out of image indexing");
+requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
+requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");
 
-/* Identity stays brief but keeps the original Daniel/Akibwa flick. The three
-   social handles now sit directly beneath the proposition. */
-requireText(
-  editorial,
-  'import { HeroFlipName } from "@/components/hero-word-cycle"',
-  "the editorial homepage must use the shared identity cycle"
-);
-requireText(editorial, "<HeroFlipName />", "the visible masthead must render the identity cycle");
-requireText(heroCycle, '{ label: "Daniel"', "the identity cycle must include Daniel");
-requireText(heroCycle, '{ label: "Akibwa"', "the identity cycle must include Akibwa");
-forbidText(
-  css,
-  ".concept-identity .hero-name-value {\n  animation: none;",
-  "the editorial masthead must not disable the identity flick"
-);
-requireText(editorial, "Building in the age of AI.", "the approved one-line proposition must remain");
-requireText(editorial, '<div className="concept-hero-copy">', "the proposition and handles must share the right-hand hero column");
-requireText(editorial, '<PageFooter embedded />', "the three handles must sit directly beneath the proposition");
-forbidText(editorial, 'className="concept-nav"', "the homepage hero must not repeat its three chapter names as a menu");
-requireText(footer, "embedded = false", "the shared handles must support their embedded hero position");
-requireText(footer, 'embedded ? "concept-hero-footer"', "embedded handles must use the hero treatment");
-requireRuleText(".concept-hero-footer {", ["width: 100%", "margin-top:"]);
-requireRuleText(".concept-hero-footer .page-footer-panel {", ["justify-content: flex-start", "padding-top: 0"]);
-requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns", "align-items: center"]);
-requireRuleText(".concept-hero-copy {", ["min-width: 0"]);
-requireText(
-  css,
-  "font-size: clamp(3rem, min(18vw, calc(147.5px - 16.62vw)), 4.75rem);",
-  "the phone identity must use the available row"
-);
-requireRuleText(".concept-page {", ["user-select: none", "-webkit-user-select: none"]);
-requireRuleText("img {", [
-  "-webkit-touch-callout: none",
-  "-webkit-user-drag: none",
-  "-webkit-user-select: none",
-  "user-select: none"
-]);
-requireText(
-  css,
-  "@media (hover: none), (max-width: 800px) {\n  picture,\n  img {\n    pointer-events: none;",
-  "touch images must pass the hit target to their enclosing control"
-);
-requireText(
-  siteImage,
-  "draggable={draggable ?? false}",
-  "shared images must opt out of native dragging by default"
-);
-requireText(
-  siteImage,
-  "versionedSrc(entry.variants[0].avif.src, entry.sourceHash)",
-  "responsive artwork must use its source hash to invalidate stale browser caches"
-);
+requireText(editorial, "<HeroBrandName />", "the visible masthead must use the shared Akibwa identity");
+requireText(hero, ">Akibwa</span>", "the masthead must identify Akibwa");
+forbidText(editorial, 'from "@/components/deck-data"', "the indexed homepage must not load the personal archive");
+forbidText(editorial, 'from "@/components/pages/home-page"', "the indexed homepage must not load the retired personal wall");
+requireText(editorial, "Building in the age of AI.", "the public proposition must remain concise");
 
-/* Projects uses one card anatomy at every size: a wide three-card row, a
-   two-row tablet composition, then one full-width phone stack. */
-requireText(editorial, '<h2 id="projects-title">Projects</h2>', "Projects must have the same chapter-heading treatment as Career and Taste");
-requireText(editorial, 'aria-labelledby="projects-title"', "the Projects chapter must be labelled by its visible heading");
-requireRuleText(".concept-projects-head h2,", ["font-family: var(--serif)", "font-size: clamp(3rem, 5vw, 5.2rem)"]);
-requireText(
-  editorial,
-  'href: "/features/?from=akibwa"',
-  "Features detail must open the real game through Akibwa project view"
-);
-requireText(
-  editorial,
-  'src: "/features/home-card-bright-v4.png"',
-  "Features must use its bright, image-led board artwork"
-);
-if (!imageVariants["conceptProject:/features/home-card-bright-v4.png"]) {
-  fail("the bright Features project artwork must have responsive variants");
+requireText(editorial, '<h2 id="projects-title">Projects</h2>', "the public projects chapter must remain");
+for (const title of ["features", "Português com a Inês", "The Trek"]) {
+  requireText(editorial, `title: "${title}"`, `${title} must remain on the project index`);
 }
-forbidText(
-  editorial,
-  'src: "/project-art/personal/features-neural-threads.png"',
-  "the generic neural-thread artwork must not return to the homepage"
-);
-requireText(
-  editorial,
-  'href: "https://portuguesewithines.com/?from=akibwa"',
-  "Português com a Inês detail must open its real site through Akibwa project view"
-);
-requireText(
-  editorial,
-  'src: "/project-art/personal/portuguese-with-ines-conversation.png"',
-  "Português com a Inês must keep its representative conversation artwork"
-);
-requireText(editorial, 'title: "Português com a Inês"', "the Portuguese project must be visibly named");
-requireText(editorial, "European Portuguese lessons", "the Portuguese project must explain what it is");
-requireText(
-  editorial,
-  'href: "/trek/"',
-  "The Trek detail must open the standalone public atlas"
-);
-requireText(
-  editorial,
-  'src: "/project-art/personal/trek-paris-sofia-project.png"',
-  "The Trek must use its route-led generated artwork"
-);
-requireText(editorial, 'title: "The Trek"', "The Trek must be visibly named");
-requireText(editorial, "Paris → Sofia · 1,982 km", "The Trek must explain the journey succinctly");
-if (!imageVariants["conceptProject:/project-art/personal/trek-paris-sofia-project.png"]) {
-  fail("The Trek project artwork must have responsive variants");
+requireText(editorial, 'href: "/trek/"', "the Trek card must open the privacy-reduced atlas");
+requireText(editorial, 'id="capabilities"', "the public capability chapter must remain");
+for (const label of ["Data", "Systems", "Delivery"]) {
+  requireText(editorial, `label: "${label}"`, `${label} must remain in the capability chapter`);
 }
-forbidText(editorial, "concept-freelance", "Freelance must not render as a separate Projects row");
-forbidText(css, ".concept-freelance", "the retired standalone Freelance row must not keep dead styling");
-requireText(
-  deckData,
-  '"statement": "Built client websites for Butterfly Rose and Português com a Inês to support their businesses."',
-  "Butterfly Rose and Português com a Inês must stay inside the Freelance career detail"
-);
-forbidText(editorial, "<ClientSitePreviews", "the retired equal-billing client preview grid must stay off the homepage");
-forbidText(editorial, "Hair salon + booking", "Butterfly Rose must not be described as a booking project");
-forbidText(editorial, "tailored booking system", "Butterfly Rose must not claim a booking system");
-forbidText(editorial, "Talk about a project", "the retired project CTA must stay removed");
-forbidText(editorial, "Also making", "the retired making strip must stay removed");
-requireRuleText(".concept-project-grid {", [
-  "display: grid",
-  "grid-template-columns: repeat(3, minmax(0, 1fr))",
-  "align-items: stretch"
-]);
-requireRuleText(".concept-project-card {", [
-  "display: grid",
-  "grid-template-rows: auto auto",
-  "overflow: clip",
-  "border: 1px solid",
-  "text-decoration: none"
-]);
-/* Projects share the Career interaction (Dan, 1 Sep 2026): the card is the
-   link and hover or focus opens a small popover beneath it, in place of the
-   old shared bottom panel whose three-column text spread read badly. */
-requireText(editorial, 'className="concept-project-card"', "each project card must be one element");
-requireText(editorial, "href={project.href}", "each project card must be the link to its destination");
-requireText(editorial, 'className="concept-project-popover"', "each project must carry its own Career-style popover");
-requireText(editorial, 'className="concept-project-grid concept-project-swipe"', "Projects must expose one dedicated mobile swipe rail");
-requireText(editorial, 'aria-label="Projects"', "the project list must retain an accessible name");
-forbidText(editorial, "concept-project-detail-shell", "the retired shared project detail panel must stay removed");
-forbidText(css, ".concept-project-detail", "the retired shared project detail styling must stay removed");
-for (const action of ["Open features", "Open Português com a Inês", "Open The Trek"]) {
-  requireText(editorial, `action: "${action}"`, `${action} must be the explicit destination action`);
+forbidText(editorial, "concept-career", "the indexed homepage must not expose a career timeline");
+forbidText(editorial, "Taste Library", "the indexed homepage must not expose the personal taste archive");
+
+requireText(footer, 'aria-label="Email Akibwa"', "the homepage must retain a private-by-default contact action");
+const personalEmail = ["da", "kibwa", "@", "gmail", ".com"].join("");
+forbidText(footer, personalEmail, "the contact address must not be present in static HTML");
+forbidText(footer, "instagram.com", "the indexed homepage must not link a personal Instagram account");
+forbidText(footer, "x.com", "the indexed homepage must not link a personal X account");
+
+for (const source of [albums, projectDetail]) {
+  requireText(source, "index: false", "personal archive routes must be noindex");
+  requireText(source, "follow: false", "personal archive routes must be nofollow");
+  requireText(source, "noimageindex: true", "personal archive routes must opt out of image indexing");
 }
-requireRuleText(".concept-project-stop {", ["position: relative", "display: grid"]);
-requireRuleText(".concept-project-popover {", [
-  "position: absolute",
-  "top: calc(100% + 9px)",
-  "width: 100%",
-  "border-top: 3px solid var(--project-card-accent)",
-  "opacity: 0",
-  "pointer-events: none",
-  "transition: opacity 120ms ease"
-]);
-requireRuleText(".concept-project-stop:hover .concept-project-popover,", ["opacity: 1"]);
-requireRuleText(".concept-projects:has(.concept-project-grid:hover),", ["padding-bottom: var(--projects-open-space)"]);
-requireRuleText(".concept-project-swipe {", [
-  "grid-auto-flow: column",
-  "grid-auto-columns: min(88%, 460px)",
-  "overflow-x: auto",
-  "scroll-snap-type: inline mandatory"
-]);
-requireRuleText(".concept-project-swipe .concept-project-stop {", [
-  "grid-column: auto",
-  "scroll-snap-align: start",
-  "scroll-snap-stop: always"
-]);
-requireRuleText(".concept-project-foot {", [
-  "min-height: 50px",
-  "background: var(--project-card-panel)",
-  "box-shadow: inset 0 3px 0 var(--project-card-accent)",
-  "transition: none"
-]);
-requireRuleText(".concept-project-label {", [
-  "width: 100%",
-  "grid-template-columns: minmax(0, max-content) minmax(0, 1fr)",
-  "align-items: baseline"
-]);
-requireRuleText(".concept-project-label > span {", ["justify-self: end", "text-align: right"]);
-requireRuleText(".concept-project-card:hover .concept-project-foot,", [
-  "var(--project-card-accent) 18%",
-  "var(--project-card-panel)"
-]);
-forbidText(
-  rule(".concept-project-card:hover .concept-project-foot,"),
-  "background: var(--project-card-accent)",
-  "project hover must remain a subtle tint rather than a full colour flood"
-);
-requireText(
-  css,
-  ".concept-project-card:active .concept-project-foot",
-  "touch press must colour the project caption rail"
-);
-forbidText(editorial, "concept-arrow", "project links must not show a separate arrow control");
-forbidText(css, ".concept-arrow", "the retired project arrow styling must stay removed");
-forbidText(editorial, "iframe", "project selection must not create a nested browsing frame");
-for (const [source, label] of [[featuresPublished, "the published Features page"]]) {
-  requireText(source, "data-akibwa-project", `${label} must support conditional project view`);
-  requireText(source, "akibwa-project-banner__name--daniel", `${label} must retain Daniel in the identity flick`);
-  requireText(source, "akibwa-project-banner__name--akibwa", `${label} must retain Akibwa in the identity flick`);
-  requireText(source, "@keyframes akibwa-name-daniel", `${label} must retain the homepage identity rhythm`);
-  requireText(source, "Building in the age of AI.", `${label} must retain the exact Akibwa proposition`);
-  requireText(source, "position:sticky;top:0", `${label} must keep the Akibwa banner pinned`);
-  forbidText(source, ".akibwa-project-banner__lede{display:none}", `${label} must keep the proposition visible in short landscape layouts`);
-  requireText(source, ".akibwa-project-banner::after", `${label} must keep the full-width boundary rule`);
-  requireText(source, "height:4px", `${label} must keep the homepage rule weight`);
-  for (const [href, text] of [
-    ["https://akibwa.com/", "Home"],
-    ["https://akibwa.com/#projects", "Projects"],
-    ["https://akibwa.com/#career", "Career"],
-    ["https://akibwa.com/#taste", "Taste Library"]
-  ]) {
-    requireText(source, `href="${href}">${text}</a>`, `${label} must provide the ${text} route`);
-  }
-  forbidText(source, "Back to projects", `${label} must use the real homepage navigation instead of a one-off back control`);
+requireText(sitemap, 'const routes = [{ path: "/", priority: 1 }]', "only the Akibwa index belongs in the sitemap");
+
+requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns"]);
+requireRuleText(".concept-project-grid {", ["grid-template-columns: repeat(3, minmax(0, 1fr))"]);
+requireRuleText(".concept-capabilities {", ["position: relative", "padding:"]);
+requireRuleText(".concept-capability-list {", ["display: grid", "grid-template-columns: repeat(3, minmax(0, 1fr))"]);
+requireRuleText(".concept-capability-list li {", ["border-top: 4px solid var(--capability-accent)", "min-height:"]);
+
+if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
+  fail("the detailed Life in Maps page must not ship");
 }
+
 for (const [source, label] of [
   [trekTemplate, "the Trek source template"],
   [trekPublished, "the generated Trek page"]
 ]) {
-  forbidText(source, "data-akibwa-project", `${label} must stay standalone even when a query string is present`);
-  forbidText(source, "akibwa-project-banner", `${label} must not expose the personal portfolio identity`);
-  forbidText(source, "Daniel", `${label} must not name the site owner`);
-  if (/\b2019\b/.test(source)) fail(`${label} must not expose the journey year`);
-  forbidText(source, "24 sep", `${label} must not expose the journey start date`);
-  forbidText(source, "28 nov", `${label} must not expose the journey end date`);
-  forbidText(source, "journal", `${label} must not include private writing`);
-  forbidText(source, "GPS", `${label} must not describe a precise recorded route`);
-  requireText(source, "abstracted public route", `${label} must explain the privacy-preserving route`);
-  requireText(source, 'href="https://akibwa.com/" aria-label="Akibwa home"', `${label} must still link back home`);
-}
-requireText(
-  featuresPublished,
-  "html[data-akibwa-project=\"true\"] .veil{\n    top:var(--akibwa-project-banner-height)",
-  "Features overlays must begin below the Akibwa masthead"
-);
-requireText(
-  featuresPublished,
-  "max-height:calc(100dvh - var(--akibwa-project-banner-height)",
-  "Features overlays must fit inside the remaining project viewport"
-);
-forbidText(editorial, "play today ↗", "the oversized Features CTA must stay removed");
-forbidText(editorial, "visit site ↗", "the oversized Portuguese CTA must stay removed");
-forbidText(editorial, "explore ↗", "the oversized Trek CTA must stay removed");
-requireRuleText(".concept-feature {", [
-  "--project-card-panel: #e2ece7",
-  "--project-card-ink: #163e36",
-  "--project-card-muted: #4d7067",
-  "--project-card-border: #205b4f"
-]);
-requireRuleText(".concept-trek {", ["--project-card-panel: #f2efe7", "--project-card-border: #1e3027"]);
-requireText(editorial, 'accent: "#d96b32"', "The Trek must keep its orange accent");
-requireText(
-  css,
-  "@media (max-width: 1050px)",
-  "the project cards must keep their tablet composition breakpoint"
-);
-requireText(
-  css,
-  ".concept-feature {\n    grid-column: 1 / -1;",
-  "Features must take the full first tablet row"
-);
-forbidText(
-  css,
-  ".concept-project-grid {\n    grid-template-rows: repeat(2, minmax(0, 1fr))",
-  "the fragile wide two-row project matrix must stay removed"
-);
-forbidText(css, "box-shadow: inset 3px 0 0 var(--project-card-accent)", "project captions must not return to narrow side rails");
-
-/* Career keeps the approved horizontal eight-stop index. The title and one
-   action-to-purpose sentence remain available through hover and keyboard focus. */
-for (const name of [
-  "Freelance",
-  "National Wealth Fund",
-  "Leeds Building Society",
-  "Electrical Work",
-  "Sky Betting & Gaming",
-  "Joinery Work",
-  "Vanquis Bank",
-  "Lloyds Banking Group"
-]) {
-  requireText(editorial, `"${name}"`, `${name} must remain in the career sequence`);
-}
-requireText(editorial, "tabIndex={0}", "career stops must be keyboard focusable");
-requireText(editorial, 'className="concept-career-popover" aria-hidden="true"', "career detail must stay hidden at rest");
-requireText(editorial, "{job.role}", "each popover must print the job title");
-requireText(editorial, 'className="concept-career-statement"', "each popover must hold one combined sentence");
-requireText(editorial, "{job.role} · {job.span}", "the open detail must keep the full date range");
-forbidText(editorial, "compactCareerSpan", "career dates must not return to the resting index");
-forbidText(editorial, 'className="concept-career-time"', "career dates must remain inside the hover and focus synopsis");
-requireText(
-  editorial,
-  "<CareerStatement statement={job.statement} emphasis={job.emphasis} />",
-  "each combined sentence must render its selected emphasis"
-);
-forbidText(editorial, "concept-career-label", "the retired What I did and Mission labels must stay removed");
-requireText(deckData, '"logo": "/favicon.svg"', "Freelance must use the Akibwa favicon mark");
-requireText(editorial, 'job.logo === "/favicon.svg" ? " is-akibwa"', "the Akibwa mark must keep its own full-frame treatment");
-requireRuleText(".concept-career-logo.is-akibwa img {", ["width: 100%", "height: 100%"]);
-requireRuleText(".concept-career-logo.is-akibwa {", ["border: 0"]);
-requireText(editorial, 'job.logo === "/brand-logos/national-wealth-fund-icon.png" ? " is-nwf"', "the NWF mark must keep its optical-alignment treatment");
-requireRuleText(".concept-career-logo.is-nwf img {", ["transform: translate(-5%, -14%)"]);
-requireRuleText(".concept-career-logo picture {", ["display: grid", "place-items: center", "line-height: 0"]);
-requireRuleText(".concept-career-logo picture source {", ["display: none"]);
-requireText(editorial, 'job.logo === "/brand-logos/lloyds-horse-icon.png" ? " is-lloyds"', "the Lloyds horse must keep its optical-alignment treatment");
-requireRuleText(".concept-career-logo.is-lloyds img {", ["transform: translate(6%, 2.5%)"]);
-forbidText(editorial, "concept-career-freelance-mark", "the temporary Freelance lettermark must stay removed");
-for (const statement of [
-  "Built client websites for Butterfly Rose and Português com a Inês to support their businesses.",
-  "Built the Microsoft Fabric data platform to support UK growth and clean energy.",
-  "Led the BI team and improved its data tools to help more people own a home.",
-  "Assisted with electrical testing and warehouse fit-outs to keep commercial sites safe and ready.",
-  "Built Power BI reports to analyse safer gambling and make betting and gaming safer.",
-  "Assisted with joinery to build and fit homes well.",
-  "Built cost and NPV models in SQL to make banking more accessible.",
-  "Built default and cure models to support credit-risk decisions."
-]) {
-  requireText(deckData, `"statement": "${statement}"`, `career statement must stay literal and short: ${statement}`);
-}
-for (const emphasis of [
-  '["client websites", "Butterfly Rose", "Português com a Inês", "support their businesses"]',
-  '["Microsoft Fabric", "UK growth and clean energy"]',
-  '["BI team", "data tools", "own a home"]',
-  '["electrical testing", "warehouse fit-outs"]',
-  '["Power BI", "safer gambling", "betting and gaming safer"]',
-  '["joinery", "build and fit homes well"]',
-  '["cost and NPV models", "SQL", "banking more accessible"]',
-  '["default and cure models", "credit-risk decisions"]'
-]) {
-  requireText(deckData, `"emphasis": ${emphasis}`, `career emphasis must stay deliberate: ${emphasis}`);
-}
-forbidText(deckData, '"back":', "career data must not keep a separate action field");
-forbidText(deckData, '"mission":', "career data must not keep a separate mission field");
-forbidText(deckData, '"statement": "I ', "career statements must stay direct and verb-led");
-requireRuleText(".concept-career-statement strong {", ["font-weight: 700", "font-family: inherit"]);
-requireRuleText(".concept-career-stop {", ["grid-template-rows: 36px 68px"]);
-requireRuleText(".concept-career-section {", [
-  "--career-rest-space: clamp(56px, 4vw, 68px)",
-  "--career-open-space: 140px",
-  "transition: padding-bottom 340ms var(--ease-out)"
-]);
-requireRuleText(".concept-career-section:has(.concept-career-timeline:hover),", [
-  "padding-bottom: var(--career-open-space)",
-  "transition-duration: 480ms"
-]);
-forbidText(
-  css,
-  ".concept-career-section:has(.concept-career-stop:hover),",
-  "Career spacing must remain open while the pointer crosses gaps between roles"
-);
-forbidText(css, ".concept-career-time {", "retired resting career-date styling must stay removed");
-requireRuleText(".concept-career-node {", ["width: 10px", "height: 10px"]);
-requireRuleText(
-  ".concept-career-card {",
-  [
-    "border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink))",
-    "background: color-mix(in srgb, var(--company-accent) 11%, var(--career-card-paper))"
-  ]
-);
-requireRuleText(
-  ".concept-career-stop:hover .concept-career-card,",
-  [
-    "border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink))",
-    "background: color-mix(in srgb, var(--company-accent) 17%, var(--career-card-paper))"
-  ]
-);
-requireText(electricalLogo, 'viewBox="0 0 64 64"', "Electrical must use the refined full-size vector mark");
-requireText(electricalLogo, "stroke-linecap=\"round\"", "Electrical must keep its rounded cable geometry");
-requireText(electricalLogo, "M17 20h30v4", "Electrical must keep the custom plug-and-cable silhouette");
-requireText(joineryLogo, 'viewBox="0 0 64 64"', "Joinery must use the refined full-size vector mark");
-requireText(joineryLogo, "M5 13h32L24 32l13 19H5Z", "Joinery must keep the custom dovetail joint");
-requireText(
-  css,
-  "0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent)",
-  "career focus must keep the restrained dot halo"
-);
-requireText(
-  css,
-  ".concept-career-timeline:focus-within",
-  "a focused career role must lock out competing hover detail"
-);
-requireRuleText(".concept-career-popover {", ["transition: opacity 120ms ease"]);
-forbidText(
-  rule(".concept-career-popover {"),
-  "transform:",
-  "desktop Career details must fade in place rather than slide under the pointer"
-);
-forbidText(
-  rule(".concept-career-stop:hover .concept-career-popover,"),
-  "transition-delay",
-  "Career detail changes must not queue delayed hover motion"
-);
-requireText(
-  css,
-  ".concept-client-visual img,\n  .concept-career-section,\n  .concept-career-node,",
-  "reduced motion must remove the Career layout push"
-);
-requireText(css, "grid-template-rows: 36px 56px", "mobile career dots must keep their clearance lane");
-requireRuleText(
-  ".concept-hero::after,",
-  ["left: 50%", "width: 100vw", "height: 4px", "transform: translateX(-50%)"],
-  "the editorial chapter rules must span the full viewport"
-);
-requireRuleText(".concept-hero::after {", ["background: var(--concept-work)"]);
-requireRuleText(".concept-career-section::before {", ["background: var(--concept-career)"]);
-requireText(
-  css,
-  ".concept-archive::before {\n  top: 0;\n  background: var(--concept-archive)",
-  "Taste must keep its blue full-width chapter rule"
-);
-forbidText(css, "border-top: 4px solid var(--concept-career)", "Career must not keep a shorter page-grid border");
-forbidText(css, "border-top: 4px solid var(--black)", "Taste must not keep the retired black rule");
-
-/* Taste opens on one compact horizontal index, then exposes the complete
-   archive one medium at a time in the same swipeable row. */
-requireText(editorial, "<HomePage tasteOnly />", "Taste must render the categorised compact archive");
-requireText(home, "if (tasteOnly)", "the wall must keep its taste-only mode");
-requireText(home, "? gracelandCard : null", "Graceland must lead the taste wall");
-requireText(
-  home,
-  '["everything", "music", "films", "games", "tv"].includes(item.id)',
-  "Taste must keep Highlights, Music, Films, Games and TV"
-);
-requireText(home, 'id: "podcasts", label: "Podcasts"', "Taste must expose the podcast shelf");
-requireText(home, 'label: "Highlights"', "Taste must open on a concise Highlights edit");
-requireText(home, "const TASTE_HIGHLIGHTS_PER_SECTION = 10", "each medium must contribute ten opening highlights");
-requireText(home, "function HorizontalTasteRail", "Taste must use a dedicated horizontal list");
-requireText(home, 'role="list"', "the horizontal Taste row must expose list semantics");
-requireText(home, 'className="taste-rail-item" role="listitem"', "every Taste cover must be a list item");
-requireText(home, 'scrollTo({ left: 0, behavior: "auto" })', "a changed Taste filter must return the rail to its start");
-forbidText(home, "ResponsiveTasteQuilt", "Taste must not restore the page-length quilt");
-forbidText(home, "taste-quilt-band", "Taste must not restore quilt bands");
-forbidText(home, "taste-quilt-block", "Taste must not restore quilt blocks");
-forbidText(home, "TasteFinale", "Taste must end with the complete rail rather than a separate closing shelf");
-requireText(home, "function TasteVisual", "film, game and TV cards must keep an art-directed visual treatment");
-requireText(home, 'slot="tasteArt"', "film, game and TV cards must use responsive editorial artwork at every scale");
-forbidText(home, "taste-visual__original", "Taste cards must not put inset poster covers over the artwork");
-requireText(home, 'className="card-info"', "Taste cards must expose title and creator detail");
-requireText(home, 'type="button"', "Taste covers must be real disclosure buttons");
-requireText(home, 'aria-label={accessibleLabel}', "Taste disclosure buttons must retain their computed accessible names");
-requireText(home, 'aria-controls="taste-detail"', "Taste covers must control the shared popover");
-/* The Taste detail is the Career popover (Dan, 1 Sep 2026), placed beneath the
-   hovered cover from a sibling shell because the rail clips its own overflow.
-   The old expanding bottom bar animated badly and spread its text across the
-   whole row. */
-requireText(home, 'className={`taste-popover${active ? " is-open" : ""}`}', "Taste must expose one shared popover");
-requireText(home, 'className="taste-rail-shell"', "the Taste popover must be positioned from a shell around the rail");
-requireText(home, "onScroll={onDismiss}", "scrolling the rail must dismiss the popover rather than let it drift");
-forbidText(home, "taste-detail-shell", "the retired expanding Taste bar must stay removed");
-forbidText(css, ".taste-detail", "the retired expanding Taste bar styling must stay removed");
-requireRuleText(".taste-popover {", [
-  "position: absolute",
-  "left: clamp(0px, var(--taste-anchor-x, 0px), calc(100% - var(--taste-popover-width)))",
-  "border-top: 3px solid var(--concept-archive)",
-  "opacity: 0",
-  "pointer-events: none",
-  "transition: opacity 120ms ease"
-]);
-requireRuleText(".taste-popover.is-open {", ["opacity: 1"]);
-requireText(home, "plays on Last.fm", "music detail must include a Last.fm count when one exists");
-requireRuleText(".akibwa-home .deck .card {", [
-  "aspect-ratio: 1",
-  "border-radius: 5px",
-  "box-shadow: none",
-  "transform: none"
-]);
-requireRuleText(".akibwa-home--taste .deck .c-art {", ["saturate(1.08)", "contrast(1.02)"]);
-requireRuleText(".akibwa-home--taste .taste-wall {", [
-  "grid-auto-flow: column",
-  "grid-auto-columns: var(--taste-rail-size)",
-  "overflow-x: auto",
-  "scroll-snap-type: inline proximity"
-]);
-requireRuleText(".akibwa-home--taste .taste-rail-item {", ["aspect-ratio: 1", "scroll-snap-align: start"]);
-requireRuleText(".akibwa-home--taste .taste-rail-item .card {", ["width: 100%", "height: 100%", "aspect-ratio: 1"]);
-forbidText(css, ".taste-finale", "Taste must not retain closing-shelf styling");
-requireRuleText(".akibwa-home--taste .taste-visual__scene,", [
-  "position: absolute",
-  "inset: 0",
-  "width: 100%",
-  "height: 100%"
-]);
-requireRuleText(".akibwa-home--taste .taste-visual .c-art {", ["position: absolute", "inset: 0", "object-fit: cover"]);
-
-for (const title of [
-  "Making Sense",
-  "Huberman Lab",
-  "Dwarkesh Podcast",
-  "Lex Fridman Podcast",
-  "All-In Podcast",
-  "Within Reason",
-  "Moonshots"
-]) {
-  requireText(deckData, `title: "${title}"`, `${title} must remain in the podcast shelf`);
+  requireText(source, "noindex", `${label} must be excluded from search indexing`);
+  requireText(source, "noimageindex", `${label} must opt out of image indexing`);
+  forbidText(source, "data-akibwa-project", `${label} must remain standalone`);
+  forbidText(source, "akibwa-project-banner", `${label} must not expose the portfolio identity`);
+  requireText(source, "abstracted public route", `${label} must explain its privacy-preserving route`);
 }
 
-for (const source of [
-  "/features/home-card-bright-v4.png",
-  "/project-art/personal/portuguese-with-ines-conversation.png"
-]) {
-  if (!imageVariants[`conceptProject:${source}`]) fail(`${source} must have a conceptProject image ladder`);
-}
+requireText(features, '<p class="akibwa-project-banner__identity">Akibwa</p>', "Features project view must use only the Akibwa brand");
+const retiredPersonalClass = ["name--", String.fromCharCode(100, 97, 110, 105, 101, 108)].join("");
+forbidText(features, retiredPersonalClass, "Features project view must not carry a personal identity state");
+requireText(features, "Building in the age of AI.", "Features must retain the Akibwa proposition");
 
-/* Taste artwork must resolve to real Retina-sized files rather than stretching
-   the old 198px album rung or falling back to the full Graceland source. */
-const wallRung = albumArtManifest.rungs.find((entry) => entry.name === "wall")?.width;
-const cardRung = albumArtManifest.rungs.find((entry) => entry.name === "card")?.width;
-if (wallRung < 264) fail("album wall artwork must keep its 264px Retina rung");
-if (cardRung < 760) fail("opened album artwork must keep its 760px Retina rung");
-
-const gracelandVariant = imageVariants["deckTile:/music-art/graceland.jpg"];
-if (!gracelandVariant) fail("Graceland must use the clean digital cover through the deck tile ladder");
-if (gracelandVariant.sourceWidth < 3000 || gracelandVariant.sourceHeight < 3000) {
-  fail("Graceland must keep its 3000px digital master");
-}
-if (Math.max(...gracelandVariant.variants.map((entry) => entry.width)) < 264) {
-  fail("Graceland must keep a 264px Taste tile");
-}
-
-for (const prefix of [
-  "deckTile:/film-posters/",
-  "deckTile:/game-covers/",
-  "deckTile:/tv-posters/",
-  "deckTile:/podcast-covers/"
-]) {
-  const entries = Object.entries(imageVariants).filter(([key]) => key.startsWith(prefix));
-  if (!entries.length) fail(`${prefix} must remain bound to the responsive artwork ladder`);
-  if (entries.some(([, value]) => Math.max(...value.variants.map((entry) => entry.width)) < 264)) {
-    fail(`${prefix} artwork must keep a 264px Retina tile`);
-  }
-}
-
-const tasteArtEntries = Object.entries(imageVariants).filter(([key]) => key.startsWith("tasteArt:/taste-art/"));
-if (tasteArtEntries.length !== 83) fail(`Taste must keep all 83 art-directed film, game and TV scenes [${tasteArtEntries.length}]`);
-if (tasteArtEntries.some(([, value]) => Math.max(...value.variants.map((entry) => entry.width)) < 600)) {
-  fail("art-directed Taste scenes must keep a 600px-or-larger responsive rung");
-}
-
-/* The shared handles move into the opening rather than repeating after Taste. */
-requireText(footer, 'className="page-footer-panel"', "the footer must keep its panel");
-forbidText(footer, "Fewer things done by hand.", "the retired footer sign-off must stay removed");
-forbidText(footer, "Manchester", "the footer must not add location copy back beside the handles");
-requireText(footer, 'href="mailto:', "the footer must keep email");
-requireText(footer, 'href="https://x.com/', "the footer must keep X");
-requireText(footer, 'href="https://www.instagram.com/', "the footer must keep Instagram");
-requireText(footer, '"--handle-accent": "#0f1114"', "X must keep its dark accent");
-requireText(footer, '"--handle-accent": "#d63a7a"', "Instagram must keep its pink accent");
-requireText(footer, '"--handle-accent": "#2f88ff"', "email must keep its blue accent");
-requireText(home, "{tasteOnly ? null : <PageFooter />}", "Taste-only mode must not repeat the hero handles at the page end");
-
-console.log("Navigation contract passed.");
+console.log("Akibwa public-boundary contract passed.");

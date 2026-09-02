@@ -22,7 +22,17 @@ export async function generateMetadata({ params }) {
 
   return {
     title: siteSectionTitles.projects,
-    description: project.summary
+    description: project.summary,
+    robots: {
+      index: false,
+      follow: false,
+      nocache: true,
+      googleBot: {
+        index: false,
+        follow: false,
+        noimageindex: true
+      }
+    }
   };
 }
 

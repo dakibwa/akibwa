@@ -1,31 +1,16 @@
 "use client";
 
-import { Instagram, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { usePointerResponse } from "@/components/pointer-response";
 
-function XLogo({ size = 14 }) {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      className="x-logo"
-    >
-      <path
-        fill="currentColor"
-        d="M18.9 2h3.3l-7.3 8.3L23.5 22h-6.7l-5.2-6.8L5.6 22H2.3l7.8-8.9L1.9 2h6.8l4.7 6.2L18.9 2Zm-1.2 17.9h1.8L7.7 4H5.8l11.9 15.9Z"
-      />
-    </svg>
-  );
-}
-
 export function PageFooter({ embedded = false }) {
-  const xPointer = usePointerResponse();
-  const instagramPointer = usePointerResponse();
   const emailPointer = usePointerResponse();
   const Root = embedded ? "div" : "footer";
+  const openEmail = () => {
+    const local = ["da", "kibwa"].join("");
+    const domain = ["gm", "ail", ".com"].join("");
+    window.location.assign(`mailto:${local}@${domain}`);
+  };
 
   return (
     <Root
@@ -35,39 +20,18 @@ export function PageFooter({ embedded = false }) {
     >
       <div className="page-footer-panel">
         <div className="page-footer-meta">
-          <nav className="page-footer-details" aria-label="Elsewhere and contact">
-            <a
-              {...xPointer}
-              href="https://x.com/dakibwa"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="dakibwa on X"
-              style={{ "--handle-accent": "#0f1114" }}
-            >
-              <XLogo />
-              <span>dakibwa</span>
-            </a>
-            <a
-              {...instagramPointer}
-              href="https://www.instagram.com/dakibwa"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="dakibwa on Instagram"
-              style={{ "--handle-accent": "#d63a7a" }}
-            >
-              <Instagram size={14} strokeWidth={1.8} />
-              <span>dakibwa</span>
-            </a>
-            <a
+          <div className="page-footer-details" aria-label="Contact Akibwa">
+            <button
+              type="button"
               {...emailPointer}
-              href="mailto:***REMOVED***"
-              aria-label="Email ***REMOVED***"
+              onClick={openEmail}
+              aria-label="Email Akibwa"
               style={{ "--handle-accent": "#2f88ff" }}
             >
               <Mail size={14} strokeWidth={1.8} />
-              <span>Email</span>
-            </a>
-          </nav>
+              <span>Email Akibwa</span>
+            </button>
+          </div>
         </div>
       </div>
     </Root>

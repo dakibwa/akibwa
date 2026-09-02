@@ -4,7 +4,17 @@ import { siteSectionTitles } from "@/app/site-metadata";
 export const metadata = {
   title: siteSectionTitles.albums,
   description:
-    "Every album I've played, ranked by how often — including the 249 sleeves I had printed as cards and carry around instead of a record shelf."
+    "A personal album archive.",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true
+    }
+  }
 };
 
 export default function AlbumsRoute() {
