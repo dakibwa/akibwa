@@ -275,7 +275,7 @@ const checkPublicLanding = async () => {
   const mainHeading=ax.nodes.find(node=>node.role?.value==='heading' && node.properties?.some(property=>property.name==='level'&&property.value.value===1));
   check(mainHeading?.name?.value === "I'm Daniel. Online as Akibwa.", `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
   check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the approved introduction reserves both names");
-  check(state.lede === "Building in the Intelligence Age", "the masthead preserves Dan's requested proposition");
+  check(state.lede === "Building in the age of AI", "the masthead preserves Dan's requested proposition");
   check(await evaluate('[...document.querySelectorAll(".page-footer-details a, .page-footer-details button")].every(item => item.querySelector("span:last-child")?.textContent === "dakibwa")'), "all three contact labels read dakibwa");
   check(await evaluate('!document.querySelector(".taste-source-note") && !document.querySelector(".concept-taste-head .archive-link")'), "the closing sentence and browse-all album link are removed");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
@@ -297,10 +297,15 @@ const checkPublicLanding = async () => {
     state.hero && state.career && state.taste && state.career.top > state.projects.first.bottom && state.taste.top >= state.career.bottom - 1,
     "the editorial chapters remain in reading order"
   );
-  for(const width of [320,390,560,800,1024,1440]){
+  for(const width of [320,390,560,800,820,1024,1440,1920]){
     await setDesktop(width);
+    check(await evaluate(`(() => {
+      const lede=document.querySelector('.concept-lede');
+      const range=document.createRange();range.selectNodeContents(lede);
+      return range.getClientRects().length===1 && lede.scrollWidth<=lede.clientWidth+1;
+    })()`), `the proposition fits on one line at ${width}px`);
     await evaluate('document.querySelector(".concept-project-card").focus(); document.querySelector(".concept-project-card").click()');
-    await sleep(280);
+    await sleep(400);
     const bounds=await evaluate(`(() => {
       const career=document.querySelector('.personal-career').getBoundingClientRect();
       const detail=document.querySelector('.concept-project-detail');
@@ -308,17 +313,38 @@ const checkPublicLanding = async () => {
     })()`);
     check(!bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/?from=akibwa', `the project dropdown and destination fit above Career at ${width}px`);
     await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
-    await sleep(280);
+    await sleep(400);
   }
-  const tasteTop=await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY');
-  await evaluate('document.querySelectorAll(".concept-career-timeline button")[1].focus(); document.querySelectorAll(".concept-career-timeline button")[1].click()');
-  await sleep(100);
+  await setDesktop(1440);
+  const dividerMotion = (divider, action) => evaluate(`new Promise(resolve => {
+    const target=document.querySelector(${JSON.stringify(divider)});
+    const position=()=>target.getBoundingClientRect().top+scrollY;
+    const samples=[position()];
+    ${action}
+    const until=performance.now()+560;
+    const sample=()=>{
+      samples.push(position());
+      if(performance.now()>=until) resolve(samples);
+      else requestAnimationFrame(sample);
+    };
+    requestAnimationFrame(sample);
+  })`);
+  const opensSmoothly = (samples) => samples.at(-1)>samples[0]+20 && samples.some(y=>y>samples[0]+2 && y<samples.at(-1)-2);
+  const closesSmoothly = (samples) => samples.at(-1)<samples[0]-20 && samples.some(y=>y<samples[0]-2 && y>samples.at(-1)+2);
+  const projectControl = 'document.querySelector(".concept-project-card")';
+  check(opensSmoothly(await dividerMotion('#career', `${projectControl}.focus(); ${projectControl}.click();`)), "opening a project smoothly pushes the Career divider down");
+  check(closesSmoothly(await dividerMotion('#career', `${projectControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "closing a project smoothly brings the Career divider back");
+  check(await evaluate('document.querySelector("#project-detail").inert && document.querySelector("#project-detail").getAttribute("aria-hidden")==="true"'), "closed project links stay out of keyboard and screen-reader navigation");
+  const careerControl = 'document.querySelectorAll(".concept-career-timeline button")[1]';
+  check(opensSmoothly(await dividerMotion('#taste', `${careerControl}.focus(); ${careerControl}.click();`)), "opening a career statement smoothly pushes the Taste divider down");
   check(await evaluate('(document.querySelector("#career-detail").textContent.includes("Senior BI Developer") && getComputedStyle(document.querySelector("#career-detail")).opacity !== "0" && getComputedStyle(document.querySelector("#career-detail")).visibility === "visible")'), "career activation displays the selected public role");
   check(await evaluate('document.querySelector(".concept-career-statement").textContent.includes("UK growth and clean energy")'), "career detail restores the original mission statement");
-  check(await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY') === tasteTop, "career details do not move the taste chapter");
-
-  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
-  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  check(await evaluate(`(() => {
+    const statement=document.querySelector('.concept-career-statement');
+    const detail=document.querySelector('#career-detail').getBoundingClientRect();
+    return getComputedStyle(statement).fontFamily.includes('Iowan') && statement.querySelector('strong') && detail.bottom<document.querySelector('#taste').getBoundingClientRect().top;
+  })()`), "the original serif statement and emphasis fit above the moving divider");
+  check(closesSmoothly(await dividerMotion('#taste', `${careerControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "closing a career statement smoothly restores the compact spacing");
   check(await evaluate('!document.querySelector(".concept-career-stop[aria-expanded=true]")'), "Escape dismisses held career detail");
   await evaluate('document.querySelectorAll(".concept-career-stop")[2].focus()');
   check(await evaluate('document.querySelector("#career-detail").textContent.includes("BI Team Lead")'), "keyboard focus previews the next career role");
@@ -485,6 +511,8 @@ const checkPublicLanding = async () => {
     nameTransition.split(",").every((part) => parseFloat(part) === 0),
     `name motion is disabled [${nameTransition}]`
   );
+  await evaluate('document.querySelector(".concept-career-stop").focus(); document.querySelector(".concept-career-stop").click()');
+  check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".concept-career-popover")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion opens the career detail without animation or delay");
 };
 
 const checkTrek = async () => {

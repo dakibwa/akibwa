@@ -59,7 +59,10 @@ const projects = [
 function ProjectShowcase() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
+  const [lastProject, setLastProject] = useState(projects[0]);
   const active = held ?? preview;
+  // Keep the last detail mounted so its height can animate closed as well.
+  const detail = active ?? lastProject;
   const dismiss = () => { setHeld(null); setPreview(null); };
   return (
     <div
@@ -90,12 +93,16 @@ function ProjectShowcase() {
             aria-expanded={active?.id === project.id}
             aria-controls="project-detail"
             onMouseEnter={() => {
-              if (matchMedia("(hover: hover)").matches) setPreview(project);
+              if (matchMedia("(hover: hover)").matches) {
+                setPreview(project);
+                if (!held) setLastProject(project);
+              }
             }}
-            onFocus={() => { setHeld(null); setPreview(project); }}
+            onFocus={() => { setHeld(null); setPreview(project); setLastProject(project); }}
             onClick={() => {
               setHeld(held?.id === project.id ? null : project);
               setPreview(null);
+              setLastProject(project);
             }}
           >
             <SiteImage
@@ -120,21 +127,20 @@ function ProjectShowcase() {
         className={`concept-project-detail-shell${active ? " is-open" : ""}`}
         id="project-detail"
         aria-hidden={!active}
-        style={{ "--project-detail-accent": active?.accent }}
+        inert={!active}
+        style={{ "--project-detail-accent": detail.accent }}
       >
         <div className="concept-project-detail-clip">
-          {active ? (
-            <div className="concept-project-detail">
-              <div>
-                <span className="concept-project-detail-kind">{active.kind}</span>
-                <h3>{active.title}</h3>
-              </div>
-              <p>{active.description}</p>
-              <a className="concept-project-open" href={active.href}>
-                {active.action} <span aria-hidden="true">↗</span>
-              </a>
+          <div className="concept-project-detail">
+            <div>
+              <span className="concept-project-detail-kind">{detail.kind}</span>
+              <h3>{detail.title}</h3>
             </div>
-          ) : null}
+            <p>{detail.description}</p>
+            <a className="concept-project-open" href={detail.href}>
+              {detail.action} <span aria-hidden="true">↗</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -150,7 +156,7 @@ export function EditorialHomeConcept({ initialCatalogue, refreshedAt }) {
         </h1>
         <div className="concept-hero-copy">
           <p className="concept-lede">
-            Building in the Intelligence Age
+            Building in the age of AI
           </p>
           <PageFooter embedded />
         </div>

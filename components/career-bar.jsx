@@ -17,11 +17,14 @@ function CareerStatement({ statement, emphasis = [] }) {
 export function CareerBar() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
+  const [lastRole, setLastRole] = useState(0);
   const active = held ?? preview;
+  const detailIndex = active ?? lastRole;
+  const detail = career[detailIndex];
   const dismiss = () => { setHeld(null); setPreview(null); };
   return (
     <section
-      className="page-grid concept-career-section personal-career"
+      className={`page-grid concept-career-section personal-career${active !== null ? " is-open" : ""}`}
       id="career"
       aria-labelledby="career-title"
       onKeyDown={(event) => { if (event.key === "Escape") dismiss(); }}
@@ -43,10 +46,13 @@ export function CareerBar() {
               aria-expanded={active === index}
               aria-controls="career-detail"
               onMouseEnter={() => {
-                if (matchMedia("(hover: hover)").matches) setPreview(index);
+                if (matchMedia("(hover: hover)").matches) {
+                  setPreview(index);
+                  if (held === null) setLastRole(index);
+                }
               }}
-              onFocus={() => { setHeld(null); setPreview(index); }}
-              onClick={() => { setHeld(held === index ? null : index); setPreview(null); }}
+              onFocus={() => { setHeld(null); setPreview(index); setLastRole(index); }}
+              onClick={() => { setHeld(held === index ? null : index); setPreview(null); setLastRole(index); }}
             >
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
@@ -63,18 +69,17 @@ export function CareerBar() {
           className={`concept-career-popover${active !== null ? " is-open" : ""}`}
           id="career-detail"
           aria-live="polite"
-          style={active !== null ? {
-            "--company-accent": career[active].accent,
-            "--career-detail-offset": `${active * 100 / career.length}%`,
-          } : undefined}
+          aria-hidden={active === null}
+          style={{
+            "--company-accent": detail.accent,
+            "--career-detail-offset": `${detailIndex * 100 / career.length}%`,
+          }}
         >
-          {active !== null ? <>
-            <strong>{career[active].name}</strong>
-            <span>{career[active].role} · {career[active].span}</span>
-            <p className="concept-career-statement">
-              <CareerStatement {...career[active]} />
-            </p>
-          </> : null}
+          <strong>{detail.name}</strong>
+          <span>{detail.role} · {detail.span}</span>
+          <p className="concept-career-statement">
+            <CareerStatement {...detail} />
+          </p>
         </div>
       </div>
     </section>

@@ -62,7 +62,7 @@ forbidText(editorial, 'from "@/components/deck-data"', "the indexed homepage mus
 forbidText(editorial, 'from "@/components/pages/home-page"', "the indexed homepage must not load the retired personal wall");
 requireText(hero, "Daniel", "the approved introduction must include Daniel");
 requireText(hero, "prefers-reduced-motion", "the name animation must respect reduced motion");
-requireText(editorial, "Building in the Intelligence Age", "the masthead must preserve Dan's requested proposition");
+requireText(editorial, "Building in the age of AI", "the masthead must preserve Dan's requested proposition");
 requireRuleText(".concept-lede {", ["font-family: var(--serif)", "font-size: clamp(1.7rem, 3vw, 3.2rem)", "line-height: 1.04", "letter-spacing: -0.035em"]);
 
 requireText(editorial, '<h2 id="projects-title">Projects</h2>', "the public projects chapter must remain");
@@ -93,7 +93,7 @@ requireRuleText(".concept-project-grid {", ["grid-template-columns: repeat(3, mi
 requireRuleText(".hero-name-stack {", ["display: inline-grid"]);
 requireText(hero, "3200", "the historical name flip keeps its initial timing");
 requireText(hero, "visibilitychange", "the name timer must pause in hidden tabs");
-requireRuleText(".concept-career-detail-lane {", ["min-height: 164px"]);
+requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: 140px"]);
 requireRuleText(".personal-taste-rail {", ["grid-auto-flow: column", "overflow-x: auto"]);
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
