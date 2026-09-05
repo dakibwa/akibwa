@@ -16,7 +16,7 @@ const editorial = read("components/pages/editorial-home-concept.jsx");
 const hero = read("components/hero-brand-name.jsx");
 const footer = read("components/page-footer.jsx");
 const features = read("public/features/index.html");
-const trekTemplate = read("scripts/trek-page-template.html");
+const trekTemplate = read("scripts/trek-journey-template.html");
 const trekPublished = read("public/trek/index.html");
 
 const fail = (message) => {
@@ -69,7 +69,7 @@ requireText(editorial, '<h2 id="projects-title">Projects</h2>', "the public proj
 for (const title of ["features", "Português com a Inês", "The Trek"]) {
   requireText(editorial, `title: "${title}"`, `${title} must remain on the project index`);
 }
-requireText(editorial, 'href: "/trek/"', "the Trek card must open the privacy-reduced atlas");
+requireText(editorial, 'href: "/trek/"', "the Trek card must open the approved journey");
 requireText(editorial, "<CareerBar />", "the approved career bar must remain");
 requireText(editorial, "<TasteLibrary", "the approved taste library must remain");
 if (!(editorial.indexOf('<ProjectShowcase />') < editorial.indexOf('<CareerBar />') && editorial.indexOf('<CareerBar />') < editorial.indexOf('<TasteLibrary'))) fail('reading order must be Projects, Career, Taste');

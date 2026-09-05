@@ -10,6 +10,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { extname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
+import { checkTrekPaths } from "./check-trek-paths-dom.mjs";
 
 const outDir = fileURLToPath(new URL("../out", import.meta.url));
 const externalOrigin = process.env.CHECK_NAV_URL || null;
@@ -606,7 +607,7 @@ const main = async () => {
     cdp = await Cdp.connect(pageTarget.webSocketDebuggerUrl);
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
-    if (process.env.CHECK_TREK_ONLY) await checkTrek();
+    if (process.env.CHECK_TREK_ONLY) await checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section});
     else await checkPublicLanding();
   } finally {
     try {

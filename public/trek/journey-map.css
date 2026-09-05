@@ -1,0 +1,99 @@
+/* The journey is an illustrated travelogue; the map remains the main surface. */
+#path-map{position:absolute;inset:0;background:#e9e8d8}
+#path-map[hidden],#journey-card[hidden],#path-tools[hidden]{display:none}
+.is-detail:not(.has-started) .journey-start{display:block}
+.map-tools{bottom:116px;z-index:22;flex-wrap:wrap}
+.journey-chapters{position:absolute;left:22px;right:22px;bottom:18px;z-index:20;display:grid;grid-template-columns:repeat(6,minmax(155px,1fr));gap:1px;overflow-x:auto;padding:0 0 4px;border-top:1px solid #656d5640;scrollbar-width:thin;scrollbar-color:#7a8663 transparent}
+.journey-chapters>button{display:flex;gap:12px;align-items:center;min-width:0;padding:13px 12px;background:#f3f0e4eb;text-align:left;cursor:pointer;border:0;border-right:1px solid #68715425;color:#344731}
+.journey-chapters>button:first-child{padding-left:0}
+.journey-chapters img{width:56px;height:54px;object-fit:cover;filter:saturate(.7)}
+.journey-chapters small{display:block;font:8px/1.4 var(--mono);letter-spacing:.05em;color:#727962;margin-bottom:5px;white-space:nowrap}
+.journey-chapters b{font:470 15px/1.15 'Trek Serif',Georgia,serif;display:block}
+.journey-chapters button:hover,.journey-chapters button[aria-current="true"]{background:#e2e7d5}
+.journey-chapters button[aria-current="true"]{box-shadow:inset 0 3px #d76336}
+.journey-card{position:absolute;z-index:15;top:calc(var(--chrome-h) + 22px);left:24px;width:342px;padding:19px 20px 16px;background:#f8f5eaeF;border:1px solid #53604635;box-shadow:0 10px 40px #293a2620;color:#34422f;max-height:calc(100% - var(--chrome-h) - 150px);overflow:auto;scrollbar-width:thin;border-radius:2px}
+.journey-day-nav{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #46543e35;padding-bottom:11px;gap:6px;margin-bottom:16px}
+.journey-day-nav select{min-width:0;max-width:calc(100% - 75px);background:transparent;border:0;font:11px/1.4 var(--mono);text-transform:uppercase;color:#536046;cursor:pointer;appearance:auto}
+.journey-day-nav button{background:none;border:0;cursor:pointer;min-width:32px;min-height:30px;font-size:20px;color:#526647}
+.journey-day-nav button:disabled{opacity:.25;cursor:default}
+.journey-chapter{font:9px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:#8a684f;margin:0 0 7px}
+.journey-title{font:470 32px/1.05 'Trek Serif',Georgia,serif;letter-spacing:-.045em;margin:0 0 11px;max-width:290px}
+.journey-note{font:14px/1.5 var(--sans);color:#5b6653;margin-bottom:12px}
+.journey-day-facts{font:10px/1.5 var(--mono);color:#637051;margin:0 0 15px}
+.journey-photo-wrap{position:relative;margin:0 0 12px}
+.journey-photo-open{display:block;width:100%;padding:0;border:0;background:#d6dac4;cursor:zoom-in}
+.journey-photo-open img{display:block;width:100%;height:190px;object-fit:cover;filter:saturate(.92)}
+.journey-photo-controls{display:flex;align-items:center;justify-content:space-between;padding-top:6px;font:9px/1.3 var(--mono);color:#687156}
+.journey-photo-controls button{border:0;min-width:28px;min-height:27px;background:transparent;font-size:18px;cursor:pointer}
+.journey-photo-controls button:disabled{opacity:.25}
+.day-progress-label{font:9px var(--mono);color:#7d806c;display:flex;align-items:center;gap:10px;margin:10px 0 4px}
+.day-progress-label input{flex:1;min-width:0;accent-color:#d76336;cursor:pointer;height:20px}
+.day-recording-note{font:9px/1.4 var(--mono);color:#777969}
+.day-recording-note:empty{display:none}
+.day-moments{display:grid;gap:5px}
+.day-moment{width:100%;padding:8px 10px;border:1px solid #82916a60;color:#475f3d;background:#e6e9d977;font-size:12px;text-align:left;cursor:pointer}
+.day-moment:hover{background:#dfe5ce}
+.journey-record-button{display:block;border:0;border-top:1px solid #66725035;background:transparent;padding:10px 0 0;margin-top:11px;color:#657d4b;font:10px/1.4 var(--mono);text-align:left;cursor:pointer}
+.journey-record-button:before{content:'♫ ';color:#bc683f}
+.path-tools{position:absolute;right:22px;top:calc(var(--chrome-h) + 18px);z-index:20;display:flex;align-items:center;gap:5px;color:#425338}
+.path-tools button{background:#f8f5eaf5;border:1px solid #64745355;min-height:36px;min-width:36px;padding:6px 10px;font:11px var(--mono);cursor:pointer;border-radius:2px}
+.path-tools button:hover{background:#e2e7d5}
+.path-status{position:absolute;right:26px;top:calc(var(--chrome-h) + 70px);z-index:20;background:#f7f2df;padding:10px 13px;max-width:285px;font:12px/1.4 var(--sans);color:#596750}
+.path-status[hidden]{display:none}
+.route-source{display:none;position:absolute;left:24px;bottom:99px;z-index:8;font:9px/1.4 var(--mono);color:#58694b;background:#f7f3e7df;padding:5px 7px;max-width:340px}
+.is-detail .route-source{display:block}
+.maplibregl-ctrl-bottom-right{bottom:158px!important;right:18px!important}
+.maplibregl-ctrl-attrib{font-size:10px!important;background:#f7f3e7cf!important}
+.maplibregl-ctrl-scale{border-color:#58694b!important;color:#58694b!important;background:#f7f3e7df!important;font:9px var(--mono)!important}
+.moment-dialog{width:min(860px,calc(100vw - 36px));max-height:calc(100dvh - 40px);padding:0;border:0;border-radius:3px;margin:auto;background:#f7f3e8;color:#3f5036;box-shadow:0 25px 100px #151e1166;overflow:auto}
+.moment-dialog::backdrop{background:#20321a99;backdrop-filter:blur(5px)}
+.moment-inner{display:grid;grid-template-columns:1.15fr 1fr;position:relative}
+.moment-photo{width:100%;height:100%;min-height:400px;max-height:75dvh;object-fit:contain;background:#dce0d1}
+.moment-copy{padding:46px 28px 32px}
+.moment-place{font:10px var(--mono);letter-spacing:.06em;color:#8b6b50;margin-bottom:14px}
+.moment-title{font:480 38px/1.05 'Trek Serif',Georgia,serif;letter-spacing:-.04em;margin:0 0 20px}
+.moment-text{font:15px/1.6 var(--sans);margin-bottom:28px}
+.moment-evidence,.moment-position{font:10px/1.5 var(--mono);color:#747d67;margin-bottom:9px}
+.moment-close{position:absolute;right:12px;top:10px;border:0;min-height:32px;padding:4px 10px;z-index:2;background:#f8f5ebdf;cursor:pointer;color:#45563b;font:11px var(--mono)}
+@media(max-width:1000px){
+ .journey-chapters{grid-template-columns:repeat(6,175px)}
+ .journey-card{width:306px;left:16px;padding:16px}
+ .journey-title{font-size:29px}.journey-note{font-size:13px}
+ .journey-photo-open img{height:160px}
+}
+@media(max-width:759px){
+ .journey-chapters{left:12px;right:12px;bottom:11px;grid-template-columns:repeat(6,166px)}
+ .journey-chapters>button{padding:10px;gap:9px}
+ .journey-chapters img{width:44px;height:43px}
+ .journey-chapters b{font-size:13px}
+ .journey-chapters small{font-size:7px}
+ .map-tools{left:12px;right:12px;bottom:90px;gap:4px;justify-content:flex-end}
+ .map-tools button{min-height:34px;font-size:10px;padding:6px 8px}
+ .journey-card{top:calc(var(--chrome-h) + 10px);left:12px;right:12px;width:auto;padding:12px;max-height:304px;display:grid;grid-template-columns:minmax(0,1fr) 102px;grid-template-rows:auto;column-gap:12px;overflow:auto;align-content:start;overscroll-behavior:contain}
+ .journey-day-nav{grid-column:1/-1;padding-bottom:6px;margin-bottom:9px}
+ .journey-day-nav select{font-size:10px}
+ .journey-title{font-size:24px;margin-bottom:6px;grid-column:1}
+ .journey-chapter{font-size:8px;margin-bottom:5px;grid-column:1}
+ .journey-note{font-size:11px;line-height:1.4;grid-column:1;margin-bottom:7px;max-height:78px;overflow:auto}
+ .journey-day-facts{font-size:8px;grid-column:1;margin-bottom:7px}
+ .journey-photo-wrap{grid-column:2;grid-row:2/6;align-self:start;margin:0}
+ .journey-photo-open img{height:108px}
+ .journey-photo-controls{flex-wrap:wrap;justify-content:center;padding:2px 0 0;font-size:8px}
+ .journey-photo-controls span{width:100%;text-align:center;order:-1;margin-top:5px}
+ .journey-photo-controls button{min-width:44px;min-height:24px}
+ .day-moments{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:4px}
+ .day-moment{font-size:10px;padding:6px 7px;min-height:30px}
+ .day-progress-label{grid-column:1/-1;margin:5px 0 0;font-size:8px}
+ .journey-record-button{grid-column:1/-1;font-size:8px;padding:6px 0 0;margin:5px 0 0}
+ .day-recording-note{grid-column:1/-1;font-size:8px}
+ .path-tools{top:auto;bottom:139px;right:12px;gap:4px;max-width:calc(100% - 24px)}
+ .path-tools button{min-height:33px;min-width:33px;padding:5px 8px;font-size:10px}
+ .route-source{left:12px;right:auto;bottom:182px;max-width:calc(100% - 24px);font-size:7px;padding:3px 5px;pointer-events:none}
+ .path-status{top:calc(var(--chrome-h) + 310px);left:18px;right:18px;max-width:none;font-size:11px}
+ .maplibregl-ctrl-bottom-right{bottom:205px!important;right:6px!important}
+ .maplibregl-ctrl-attrib{font-size:8px!important}
+ .maplibregl-ctrl-scale{font-size:8px!important}
+ .moment-inner{display:block}.moment-photo{height:43dvh;min-height:0;max-height:360px}
+ .moment-copy{padding:22px}.moment-title{font-size:30px;margin-bottom:13px}.moment-text{font-size:13px;margin-bottom:17px}
+}
+@media(min-width:760px) and (max-height:800px){.journey-card{padding:14px 16px}.journey-day-nav{padding-bottom:6px;margin-bottom:10px}.journey-title{font-size:28px}.journey-note{font-size:12px;line-height:1.4;max-height:68px;overflow:auto;margin-bottom:8px}.journey-day-facts{margin-bottom:9px}.journey-photo-open img{height:115px}.journey-photo-wrap{margin-bottom:7px}.day-moment{padding:6px 8px}.journey-record-button{padding-top:6px;margin-top:7px}}

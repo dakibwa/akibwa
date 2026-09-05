@@ -5,6 +5,7 @@ This repository is the public `akibwa.com` website.
 - Treat everything committed here as public.
 - Do not add credentials, tokens, `.env` files, booking references, account numbers, raw source exports, identifiers, or similar secrets.
 - Dan explicitly approved the Daniel/Akibwa introduction, the selectively restored public career roles/dates and taste curation in `data/taste-curation.json`, and Instagram/X at `@dakibwa`. This is not permission to restore other removed personal data. Do not publish the owner's full name, residential history, future-move dates, personal email in static HTML, daily GPS traces, health details, family details, or identifying third-party information.
+- Scoped GPS exception (Dan, 2026-09-05): Dan explicitly answered “Yes, publish this 2019 GPS route” to publication of the detailed route from the 52 Paris-to-Sofia recordings on public akibwa.com. `public/trek/route-detail.json` contains only that 2019 route's simplified coordinates and day/segment grouping. This exception excludes sample timestamps, biometrics, private identifiers, raw source files and every other journey.
 - `data/listening-summary.json` contains the approved Spotify aggregate only. Raw events, account identifiers and private source paths stay outside this public repository. Recorded music duration is not attention, complete plays, or commercial artist streams; never add it to Last.fm scrobbles or invent per-album Spotify matches.
 - Keep only `/` in the sitemap unless a route has been explicitly approved for search. Detailed archives must use `noindex`, and `robots.txt` must continue allowing crawlers to read that directive.
 - The site is a static Next.js export (`output: "export"`) deployed to GitHub Pages from `main`.
@@ -52,6 +53,6 @@ are therefore pre-rendered at build time and committed.
 
 ## Documentation
 
-- Trek presentation, existing public data projection and graphics fallback: [docs/trek-design.md](docs/trek-design.md).
+- Trek presentation, approved route projection and graphics fallback: [docs/trek-design.md](docs/trek-design.md).
 
 - Git and the live site own implementation and delivery truth. Update the relevant repository documentation in the same commit whenever a material change alters public behaviour, architecture, publishing, or the next product milestone.

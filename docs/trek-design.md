@@ -1,64 +1,81 @@
 # Trek: Paris to Sofia
 
-This is a friend's view of a long walk: first understand the shape of the
-journey, then follow its places, photographs and music. The route is the main
-surface; its controls and supporting facts should stay quiet and readable.
+This is a friend's view of a long walk: follow the real paths through rivers,
+mountains and towns, with the day's photographs, route notes and music beside
+the landscape. Dan selected Paths as the only map view on 5 September 2026.
 
 ## Presentation
 
-- Warm paper, sage terrain, country-coloured route lines and a restrained
-  Fraunces title establish a small carved landscape. The orange marker locates
-  the traveller. Avoid floating dashboard cards, dark game chrome and invented
-  geographic detail.
-- The opening fits the whole model on desktop and phone. Scroll or Begin moves
-  through the actual numbered days and brings the landscape closer. Countries
-  and town labels jump to their associated point in the journey.
-- Horizontal dragging rotates the relief; the two turn buttons provide a
-  keyboard alternative. Vertical touch movement continues scrolling the journey.
-  Pause, Resume, Replay and Reset are explicit controls. Manual scrolling and
-  Escape pause playback. Hidden pages pause, and a settled view stops rendering.
-- The current note and photographic strip stay near the top. Collection lists
-  occupy spare desktop space; a compact current-record button preserves access
-  to music on narrower screens. The record dialog supports previous/next,
-  keyboard navigation and closing without losing the journey position.
-- Keep labels within the canvas, suppress collisions and preserve the country
-  navigation's native horizontal scrolling on phones. Do not shrink desktop
-  collection columns into the mobile route.
+- Keep one 3D map across all seven countries. The opening shows the whole
+  journey; walking brings the camera to the current recorded path. No Atlas
+  or coarse relief selector appears in the page.
+- Warm paper, sage terrain, a Fraunces title and orange progress establish the
+  visual foundation. The current path has a pale outline; upcoming recordings
+  are grey. Keep roads, trails, mountains and towns readable behind the route.
+- The day card owns the note, photo browser, moments, day slider and record.
+  Six photographic chapters provide useful starting points. On phones the card
+  places a small photo beside the note and the chapter strip scrolls horizontally.
+- The map stage is fixed. A sticky stage can make focusing a control change
+  page scroll and accidentally jump to another day. Camera padding reserves
+  space for the card without moving the geographic centre onto another hill.
+- Scroll, the day picker, country links, chapters and playback share one clock.
+  Explicit Pause, Resume, Replay and Reset remain available. Dragging or zooming
+  pauses following and exposes Follow again; Whole day fits the selected track.
+  Manual input, Escape and hidden pages pause playback. Respect reduced motion.
+- Photos and records open in keyboard-accessible dialogs and remain available
+  if the map cannot load. A map error must explain the loss without replacing
+  the user's day. Keep photo-day markers qualified when exact location is unknown.
 
 ## Geography and source ownership
 
 `data/trek-days.json`, `data/trek-journal.json`, the existing photo manifest and
-cover assets own the published journey. Retain all 67 days, 52 recorded tracks,
-394 photographs with their approved dates/times, and the factual journal
-projection. No new private route, narrative or image source is introduced.
-The existing journal checker owns the field allow-list and excluded subjects.
-Trek stays standalone, `noindex` and `noimageindex`.
+cover assets own the original public narrative. Preserve all 67 numbered days,
+394 photographs with their approved date/time grouping, and 44 factual notes.
+The existing journal privacy checker still owns its field allow-list and
+excluded subjects. Trek remains standalone, `noindex` and `noimageindex`.
 
-`data/trek-terrain.json` supplies the cached Open-Meteo grid: 56 by 34 samples
-covering the journey. The relief builds 3,630 triangles from these 1,904 heights.
-Country silhouettes are clipped to that coverage; never extrapolate mountains
-into unsampled country regions. Route ribbons and labels use the same terrain
-triangles so they meet the surface. This coarse, exaggerated model illustrates
-the journey; it is not a navigation map or a survey of individual mountains.
-The visible source caption must retain that distinction.
+Dan explicitly approved publishing the 2019 GPS route on 5 September 2026.
+`public/trek/route-detail.json` is the reviewed coordinate-only projection of
+52 original recordings: 14,338 points across 57 separate lines. The local
+conversion split discontinuities over 1 km before simplification to about 8 m
+and five coordinate decimals. It excludes sample times, biometrics, activity
+identifiers and private source paths. Do not broaden this scoped exception to
+other activities or copy raw exports into the public repository.
 
-`scripts/build-trek.mjs` generates the approved public projection and
-`public/trek/index.html` from `scripts/trek-page-template.html`.
-`public/trek/relief-map.js` is the small WebGL renderer; it adds no framework,
-remote map service or new dependency. The existing SVG Atlas is a selectable
-alternative. Missing WebGL, initialization failure or graphics context loss
-must select Atlas, disable unavailable controls and preserve the route position.
+Never connect separate recordings or recording gaps. Unrecorded days hold the
+last recorded endpoint. Days 16–17 share one recording; the approximate division
+and combined metrics are labelled. Cumulative progress divides that record
+between both displayed days, while preserving the original aggregate totals.
+
+`data/trek-moments.json` owns six chapters and nine photo/note-backed moments.
+Monument markers identify a photographed day, not a verified monument coordinate.
+Do not invent summit names or exact landmark locations from photographs.
+
+## Runtime and builds
+
+`npm run trek:build` runs `scripts/build-trek-paths.mjs` and the
+`scripts/trek-journey-template.html` template. It regenerates
+`public/trek/index.html` and `public/trek/moments.json`. The older Atlas/relief
+source files are retained but are not the active build or a reachable view.
+
+`journey-clock.js` handles timeline and dialogs. `journey-map.js` handles the
+MapLibre map, route interpolation, camera and day card. MapLibre 5.6.2 and its
+licence are vendored locally. `journey-style.json` derives from
+[OpenFreeMap Liberty](https://openfreemap.org/quick_start/), with muted colours;
+its vector tiles supply real roads, trails, names and building geometry.
+[Terrarium elevation tiles](https://www.mapzen.com/rights/) supply continuous
+terrain at 1.35× exaggeration using [MapLibre terrain](https://maplibre.org/maplibre-gl-js/docs/examples/3d-terrain/).
+Keep the map-provider attribution visible. The remote basemap needs network
+access; the day records and photographs remain local static assets.
 
 ## Verification
 
-Use `npm run trek:build` during iteration. `npm run check:trek-privacy` also
-checks the generated geometry against source elevations, sampled coverage,
-finite route projections and city/day targets. `npm run check:trek:dom` reuses
-the isolated browser harness for actual rendered interaction: town and country
-jumps, playback, keyboard Pause, reset, end/replay, mobile music/photos,
-320/390px fit, idle rendering and unavailable/lost graphics contexts.
+`npm run check:trek-privacy` checks the original factual projection plus the
+approved coordinate schema, all recording segments, unconnected gaps and
+evidenced moments. `npm run check:trek:dom` uses the isolated browser harness
+and `scripts/check-trek-paths-dom.mjs` for day/chapter/country jumps, playback,
+reset and replay, photo/music dialogs, 320/390px fit and graphics loss.
 
-Run `npm run publish:ready` once at the publication boundary, then both rendered
-checks against the export. After Pages succeeds, use `CHECK_NAV_URL=https://akibwa.com`
-with the affected rendered check and inspect the live desktop and phone views.
+Run `npm run publish:ready` once before publishing. After Pages succeeds, check
+the live page and approved route asset and inspect desktop and phone views.
 Compilation and DOM checks alone do not establish visual acceptance.
