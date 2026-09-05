@@ -17,6 +17,21 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   }))()`);
   const until=async(predicate,limit=15000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(100);}return false;};
   const day=async n=>until(async()=>((await state()).day===n));
+  if(process.env.CHECK_TREK_OPENING_ONLY){
+    section('Trek opening route fit');
+    for(const width of [1440,390,320]){
+      const height=width===1440?900:844;
+      await cdp.send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<760});
+      await goto('/trek/');await until(async()=>(await state()).ready,25000);await until(async()=>(await state()).moving===false);let s=await state();
+      const fits=()=>s.overviewBounds&&s.overviewBounds.left>(width<760?8:s.card.right)&&s.overviewBounds.right<width-8&&s.overviewBounds.top>(width<760?s.card.bottom:110)&&s.overviewBounds.bottom<height-110;
+      check(fits(),`the complete route fits ${width}px [${JSON.stringify(s.overviewBounds)}]`);
+      await click('#walkbtn');await until(async()=>(await state()).playing);await sleep(200);s=await state();
+      check(s.playing&&s.day===1,`the ${width}px opening starts the recorded walk`);
+      await click('#journey-reset');await until(async()=>(await state()).type==='start');await until(async()=>(await state()).moving===false);s=await state();
+      check(fits(),`Reset keeps the complete route visible at ${width}px`);
+    }
+    return;
+  }
   await setDesktop(1440,900);
   await goto('/trek/?day=30');
   section('Trek paths and day navigation');
@@ -51,8 +66,9 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   check(await evaluate('document.querySelector("#day-recording-note").textContent.includes("No separate recording")'),'unrecorded days are labelled');
 
   section('Trek playback and finish');
-  await click('#journey-reset');await until(async()=>(await state()).type==='start');current=await state();
+  await click('#journey-reset');await until(async()=>(await state()).type==='start');await until(async()=>(await state()).moving===false);current=await state();
   check(current.scroll===0&&current.km===0,'Reset restores the opening journey');
+  check(current.overviewBounds.left>current.card.right&&current.overviewBounds.right<1430&&current.overviewBounds.top>110&&current.overviewBounds.bottom<790,'the complete opening route fits clear of the desktop card and controls');
   await click('#walkbtn');await until(async()=>(await state()).playing);await sleep(300);current=await state();
   check(current.playing&&current.scroll>300,'Walk from Paris begins playback');
   await click('#journey-pause');const paused=await state();await sleep(300);current=await state();
@@ -76,6 +92,8 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     check(await evaluate('document.querySelector("#spot").open'),`the record remains reachable at ${width}px`);await click('#spot-close');
     await click('#journey-photo-open');
     check(await evaluate('document.querySelector("#moment-dialog").open'),`the photo opens at ${width}px`);await click('#moment-close');
+    await click('#journey-reset');await until(async()=>(await state()).type==='start');await until(async()=>(await state()).moving===false);current=await state();
+    check(current.overviewBounds.left>8&&current.overviewBounds.right<width-8&&current.overviewBounds.top>current.card.bottom&&current.overviewBounds.bottom<670,`the complete opening route fits ${width}px`);
   }
   const errors=cdp.events.filter(e=>e.method==='Runtime.exceptionThrown'||(e.method==='Runtime.consoleAPICalled'&&e.params.type==='error'));
   check(errors.length===0,`healthy journeys report no runtime errors [${errors.length}]`);

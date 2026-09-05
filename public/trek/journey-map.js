@@ -69,7 +69,7 @@
       await loadScript('vendor/maplibre-gl.js');
       if(removed)return;
       const style=await fetch('journey-style.json').then(r=>{if(!r.ok)throw Error('Map style unavailable');return r.json();});
-      map=new maplibregl.Map({container,style,center:[13.18,47.05],zoom:9,pitch:58,bearing:-12,attributionControl:false,maxPitch:75,maxZoom:17,minZoom:4,renderWorldCopies:false,dragPan:true,scrollZoom:false,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0});
+      map=new maplibregl.Map({container,style,center:[13.18,47.05],zoom:9,pitch:58,bearing:-12,attributionControl:false,maxPitch:75,maxZoom:17,minZoom:2,renderWorldCopies:false,dragPan:true,scrollZoom:false,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0});
       map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
       map.addControl(new maplibregl.ScaleControl({maxWidth:110,unit:'metric'}),'bottom-right');
       map.on('dragstart',e=>{if(e.originalEvent){options.pause();setFollowing(false);}});
@@ -163,7 +163,14 @@
       if(state.type==='start'){
         if(cameraKey!=='overview'){
           const bounds=new maplibregl.LngLatBounds();route.features.forEach(f=>f.geometry.coordinates.forEach(p=>bounds.extend(p)));
-          map.fitBounds(bounds,{padding:cameraPadding(),pitch:40,bearing:-8,duration:options.reduced?0:1000});
+          // Fit from a neutral camera so padding from a close day cannot be
+          // applied twice. Leave room for the perspective at the eastern end.
+          map.setPadding({top:0,bottom:0,left:0,right:0});
+          const camera=map.cameraForBounds(bounds,{padding:cameraPadding(),bearing:-8});
+          map.easeTo({...camera,zoom:camera.zoom-.3,pitch:30,elevation:0,duration:options.reduced?0:1000});
+          map.setPaintProperty('route-all','line-color','#b6603f');
+          map.setPaintProperty('route-all','line-width',3);
+          map.setPaintProperty('route-all','line-opacity',1);
           for(const source of ['journey-active','journey-walked','journey-position','journey-moments','journey-passed'])map.getSource(source).setData(empty());
           cameraKey='overview';renderState=null;
         }
@@ -171,6 +178,9 @@
       }
       const day=state.day,fs=dayFeatures(day),t=sharedFraction(day,state.t),at=pathAt(fs,t);
       if(renderState!==day){
+        map.setPaintProperty('route-all','line-color','#8f8c7b');
+        map.setPaintProperty('route-all','line-width',2.2);
+        map.setPaintProperty('route-all','line-opacity',.65);
         renderState=day;map.getSource('journey-active').setData({type:'FeatureCollection',features:fs});
         map.getSource('journey-passed').setData({type:'FeatureCollection',features:route.features.filter(f=>f.properties.throughDay<day)});
         map.getSource('journey-moments').setData({type:'FeatureCollection',features:moments.filter(m=>m.day===day).map(m=>({type:'Feature',properties:{id:m.id,label:m.title+' · day '+m.day},geometry:{type:'Point',coordinates:pathAt(dayFeatures(m.day),sharedFraction(m.day,m.at)).point}}))});
@@ -229,6 +239,15 @@
       const bounds=new maplibregl.LngLatBounds();points.forEach(p=>bounds.extend(p));map.fitBounds(bounds,{padding:cameraPadding(),pitch:45,bearing:-8,duration:options.reduced?0:900,maxZoom:13});
     });
     addEventListener('resize',()=>{if(map&&enabled){map.resize();cameraKey='';draw(true);}});
-    return {open,follow(){setFollowing(true);cameraKey='';},update(value){const changed=state.day!==value.day||state.type!==value.type;state=value;updateCard();draw(changed);clearTimeout(settleTimer);settleTimer=setTimeout(()=>draw(true),90);},getState(){return {ready,enabled,following,day:state.day,fraction:state.t,precision:route?.precision,zoom:map?.getZoom(),pitch:map?.getPitch(),center:map?.getCenter(),elevation:map?.getCenterElevation(),padding:map?.getPadding(),pointScreen:lastPoint&&map?.project(lastPoint),moving:map?.isMoving(),routeLines:route?.features.length};}};
+    let overviewCache=null,overviewKey='';
+    function overviewBounds(){
+      if(!ready||state.type!=='start'||map.isMoving())return null;
+      const center=map.getCenter(),key=[innerWidth,innerHeight,center.lng,center.lat,map.getZoom(),map.getPitch(),map.getBearing(),map.getCenterElevation()].join(':');
+      if(key===overviewKey)return overviewCache;
+      const box={left:Infinity,right:-Infinity,top:Infinity,bottom:-Infinity};
+      for(const f of route.features)for(const p of f.geometry.coordinates){const point=map.project(p);box.left=Math.min(box.left,point.x);box.right=Math.max(box.right,point.x);box.top=Math.min(box.top,point.y);box.bottom=Math.max(box.bottom,point.y);}
+      overviewKey=key;overviewCache=box;return box;
+    }
+    return {open,follow(){setFollowing(true);cameraKey='';},update(value){const changed=state.day!==value.day||state.type!==value.type;state=value;updateCard();draw(changed);clearTimeout(settleTimer);settleTimer=setTimeout(()=>draw(true),90);},getState(){return {ready,enabled,following,day:state.day,fraction:state.t,precision:route?.precision,zoom:map?.getZoom(),pitch:map?.getPitch(),center:map?.getCenter(),elevation:map?.getCenterElevation(),padding:map?.getPadding(),pointScreen:lastPoint&&map?.project(lastPoint),moving:map?.isMoving(),routeLines:route?.features.length,overviewBounds:overviewBounds()};}};
   };
 })(typeof window!=='undefined'?window:globalThis);
