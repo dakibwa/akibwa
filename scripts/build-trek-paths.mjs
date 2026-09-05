@@ -32,7 +32,7 @@ const data={days,photos,scenes,timeline,total:source.facts.km,colors:Object.from
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const list=days.map(d=>`<li>Day ${d.n} · ${esc(d.c)}${d.date?' · '+d.date:''}${d.w?' · '+d.km.toFixed(1)+' km':''}${d.j.length?'<p>'+esc(d.j.map(j=>j.text).join(' '))+'</p>':''}</li>`).join('\n');
 const html=readFileSync(new URL('scripts/trek-journey-template.html',root),'utf8').replace('__DATA_JSON__',JSON.stringify(data)).replace('<!--__NOSCRIPT_DAYS__-->',list)
-  .replace(/(href|src)="(journey-(?:map|shell|story|clock)\.(?:css|js))"/g,(_,attribute,file)=>{
+  .replace(/(href|src)="(journey-[a-z-]+\.(?:css|js))"/g,(_,attribute,file)=>{
     const version=createHash('sha256').update(readFileSync(new URL('public/trek/'+file,root))).digest('hex').slice(0,12);
     return `${attribute}="${file}?v=${version}"`;
   });

@@ -1,16 +1,9 @@
+import './check-trek-continuity.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
-import {createRequire} from 'node:module';
 import {createHash} from 'node:crypto';
-const require=createRequire(import.meta.url);
-const {pathAt}=require('../public/trek/journey-map.js');
 const read=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url),'utf8'));
 const route=read('public/trek/route-detail.json'),source=read('data/trek-days.json'),moments=read('public/trek/moments.json');
-const f=points=>({geometry:{coordinates:points}});
-const separated=[f([[0,0],[1,0]]),f([[10,0],[11,0]])];
-assert.deepEqual(pathAt(separated,0).point,[0,0]);
-assert.deepEqual(pathAt(separated,1).point,[11,0]);
-for(let t=0;t<=1;t+=.001){const p=pathAt(separated,t).point;assert(p[0]<=1||p[0]>=10,'the walking point must not bridge unrecorded gaps');}
 // Dan explicitly approved publication of this 2019 route on 5 September 2026.
 // Keep the exception confined to coordinates and recording/day grouping.
 assert.deepEqual(Object.keys(route).sort(),['features','originalPoints','precision','recordings','source','type']);
@@ -52,13 +45,13 @@ for(let i=0;i<source.tracks.length;i++){
 }
 const generated=readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8');
 const runtimeAssets=[...generated.matchAll(/(?:href|src)="(journey-[\w-]+\.(?:css|js))(?:\?v=([a-f0-9]+))?"/g)];
-assert(runtimeAssets.length>=6,'the generated page references its runtime assets');
+assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-route.js','journey-traveller.css','journey-traveller.js'],'the generated page references the complete traveller runtime');
 for(const [,file,version] of runtimeAssets){
   const expected=createHash('sha256').update(readFileSync(new URL('../public/trek/'+file,import.meta.url))).digest('hex').slice(0,12);
   assert.equal(version,expected,`Run npm run trek:build after changing ${file}; cached controls must match the page`);
 }
 assert(!/id="(?:view-atlas|view-relief|relief-map|atlas)"/.test(generated),'only the Paths view is reachable');
-const mapSource=readFileSync(new URL('../public/trek/journey-map.js',import.meta.url),'utf8');
+const mapSource=readFileSync(new URL('../public/trek/journey-traveller.js',import.meta.url),'utf8');
 assert(mapSource.includes("map.setTerrain({source:'dem',exaggeration:1.35})"),'3D terrain applies to the whole map');
 assert.equal(moments.chapters.length,6);
 assert.deepEqual(moments,read('data/trek-moments.json'),'the generated chapter and moment projection is current');
@@ -68,4 +61,4 @@ for(const m of [...moments.chapters,...moments.moments]){
   assert(existsSync(new URL('../public/trek/photos/'+m.photo,import.meta.url)),m.photo);
 }
 for(const m of moments.moments){assert(m.evidence&&m.position,'every landmark needs evidence and an honest location qualification');assert(m.at>=0&&m.at<=1);}
-console.log('Journey checks passed: 52 approved recordings, 57 separate paths, 14338 coordinates, no invented gap links, six chapters and nine evidenced moments');
+console.log('Journey checks passed: 52 approved recordings, 57 separate paths, 14338 coordinates, unaltered source gaps, six chapters and nine evidenced moments');

@@ -105,12 +105,15 @@ if (!/<meta name="robots" content="[^"]*noindex[^"]*noimageindex[^"]*">/.test(ge
 if (/data-akibwa-project|akibwa-project-banner/i.test(generated)) {
   fail("generated Trek must not expose the former personal portfolio identity");
 }
-for (const required of ["2019-09-24", '"taken":"08:59"', "hud-hours", "hud-ascent"]) {
+for (const required of ["2019-09-24", '"taken":"08:59"']) {
   if (!generated.includes(required)) fail(`generated Trek is missing restored data: ${required}`);
 }
 const generatedDataMatch = generated.match(/  var DATA = (.+);\n  var days = DATA\.days;/);
 if (!generatedDataMatch) fail("generated Trek data could not be inspected");
 const generatedData = JSON.parse(generatedDataMatch[1]);
+if (JSON.stringify(generatedData.photos) !== JSON.stringify(photos)) fail("all original photograph metadata must remain available");
+const lastDay = generatedData.days.at(-1);
+if (!(generatedData.stats.ascent > 0 && generatedData.stats.minutes > 0) || generatedData.stats.ascent !== lastDay.cumElev || generatedData.stats.minutes !== lastDay.cumMin) fail("the journey must retain its ascent and moving-time totals");
 for (const day of generatedData.days) {
   const expected = journal.days[String(day.n)] || [];
   if (JSON.stringify(day.j) !== JSON.stringify(expected)) {
