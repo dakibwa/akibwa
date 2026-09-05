@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-VkO+ynmpl3yBsDRDTKA47tIWROV6cd1y6wpTXgyx2AM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-voCf+Rq4Z3QYe2ma/fU6K1uzOztVeYuXlz+c4AZbZcM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -1566,55 +1566,56 @@ const FEATURES={
   tiles:{c:'--hellblau',p:`<path d="M2 2H94V94H2ZM10 86H86V10H10Z"/><path d="M14 14H82V82H14Z"/><g fill="var(--emblem)"><path d="M29 14A19 19 0 0 0 67 14ZM82 29A19 19 0 0 0 82 67ZM67 82A19 19 0 0 0 29 82ZM14 67A19 19 0 0 0 14 29Z"/></g>`}
 };
 const FIGURES={
-  nail:{n:3,c:'--hellblau',p:[[0,0],[1,0],[2,0]],art:'<path d="M26 10h44v10H56v58l-8 8-8-8V20H26z"/>'},
-  roof:{n:3,c:'--hellblau',p:[[0,0],[1,-1],[2,0]],art:'<path d="M48 20 86 58H10z"/><rect x="18" y="64" width="60" height="12"/>'},
-  staple:{n:4,c:'--gruen',p:[[0,0],[0,1],[2,1],[2,0]],art:'<path d="M8 68V28h80v40L74 54V42H22v12z"/>'},
-  crank:{n:4,c:'--gruen',p:[[0,0],[1,0],[1,1],[2,1]],art:'<circle cx="20" cy="69" r="11"/><rect x="26" y="62" width="20" height="14"/><rect x="44" y="20" width="14" height="56"/><rect x="44" y="20" width="26" height="14"/><circle cx="76" cy="27" r="11"/><circle cx="20" cy="69" r="4" fill="var(--emblem)"/>'},
-  hook:{n:4,c:'--gruen',p:[[0,0],[0,2],[1,3],[2,2]],art:'<circle cx="30" cy="20" r="12"/><circle cx="30" cy="20" r="6" fill="var(--emblem)"/><path d="M23 27h14v34a13 13 0 0 0 26 0V41h14v20a27 27 0 0 1-54 0z"/>'},
-  flag:{n:4,c:'--gruen',p:[[0,3],[0,0],[2,0],[0,2]],chord:[1,3],art:'<rect x="13" y="8" width="10" height="80"/><path d="M23 8h60L23 68z"/>'},
-  window:{n:4,c:'--gruen',p:[[0,0],[2,0],[2,2],[0,2]],chord:[0,3],art:'<path d="M8 8h80v80H8z"/><rect x="20" y="20" width="24" height="24" fill="var(--emblem)"/><rect x="52" y="20" width="24" height="24" fill="var(--emblem)"/><rect x="20" y="52" width="24" height="24" fill="var(--emblem)"/><rect x="52" y="52" width="24" height="24" fill="var(--emblem)"/>'},
-  trowel:{n:5,c:'--gelb',p:[[0,0],[3,0],[3,1],[2,2],[1,1]],art:'<rect x="39" y="16" width="18" height="22" rx="9"/><path d="M44 34h8v16h-8z"/><path d="M28 48h40v12L48 80 28 60z"/>'},
-  stair:{n:5,c:'--gelb',p:[[0,0],[1,0],[1,1],[2,1],[2,2]],art:'<path d="M8 88V68H28V48H48V28H68V8H88V88Z"/>'},
-  house:{n:5,c:'--gelb',p:[[0,2],[0,0],[1,-1],[2,0],[2,2]],chord:[0,4],art:'<path d="M48 10 88 50H8z"/><path d="M16 50h64v36H16z"/><rect x="40" y="60" width="16" height="26" fill="var(--emblem)"/>'},
-  clip:{n:5,c:'--gelb',p:[[2,0],[0,0],[0,3],[2,3],[2,2]],art:'<path d="M25 34A23 23 0 0 1 71 34V71A14 14 0 0 1 43 71V44A5 5 0 0 1 53 44V71A4 4 0 0 0 61 71V34A13 13 0 0 0 35 34V72A5 5 0 0 1 25 72z"/>'},
-  wishbone:{n:5,c:'--gelb',p:[[0,0],[0,3],[1,4],[2,3],[2,2]],art:'<path d="M48 62L26 40L26 52L48 74Z"/><path d="M48 62L70 40L70 52L48 74Z"/><rect x="26" y="28" width="12" height="24"/><rect x="58" y="28" width="12" height="24"/><circle cx="32" cy="26" r="8"/><circle cx="64" cy="26" r="8"/><circle cx="48" cy="68" r="9"/>'},
-  post:{n:5,c:'--gelb',p:[[1,0],[1,2],[0,3],[2,3],[2,2]],art:'<rect x="12" y="8" width="14" height="80"/><path d="M26 18h46l12 12-12 12H26z"/>'},
-  cup:{n:5,c:'--gelb',p:[[0,0],[0,2],[1,3],[2,2],[2,0]],art:'<path d="M16 18h48v36l-8 8H24l-8-8z"/><path d="M64 22a16 16 0 0 1 0 32v-8a8 8 0 0 0 0-16v-8z"/><rect x="16" y="70" width="56" height="8"/>'},
-  tent:{n:5,c:'--gelb',p:[[0,0],[-1,-1],[-3,-3],[-5,-1],[-6,0]],chord:[0,4],art:'<path d="M48 28 88 68H8z"/><path d="M48 50 66 68H30z" fill="var(--emblem)"/>'},
-  nut:{n:6,c:'--violett',p:[[1,0],[2,0],[3,1],[2,2],[1,2],[0,1]],chord:[0,5],art:'<path d="M36 20h24l28 28-28 28H36L8 48z"/><circle cx="48" cy="48" r="18" fill="var(--emblem)"/>'},
-  tag:{n:6,c:'--violett',p:[[0,0],[2,0],[3,1],[2,2],[0,2],[0,1]],chord:[0,5],art:'<path d="M8 20h52l28 28-28 28H8z"/><circle cx="26" cy="48" r="9" fill="var(--emblem)"/>'},
-  saw:{n:6,c:'--violett',p:[[0,1],[1,0],[2,1],[3,0],[4,1],[5,0]],art:'<rect x="56" y="24" width="32" height="48" rx="12"/><path d="M8 32h48v20l-8 8-8-8-8 8-8-8-8 8-8-8z"/><circle cx="72" cy="48" r="8" fill="var(--emblem)"/>'},
-  snail:{n:6,c:'--violett',p:[[0,0],[3,0],[3,3],[0,3],[0,1],[2,1]],art:'<path d="M36 20a24 24 0 1 0 24 24h-10a14 14 0 1 1-14-14z"/><path d="M36 36a8 8 0 1 0 8 8H36z"/><rect x="12" y="64" width="72" height="12"/><path d="M72 76V44a6 6 0 0 1 12 0V76z"/>'},
-  spanner:{n:6,c:'--violett',p:[[0,1],[0,0],[3,0],[4,-1],[5,0],[4,1]],art:'<path d="M22 66 30 74 70 34 62 26z"/><circle cx="26" cy="70" r="13"/><circle cx="66" cy="30" r="17"/><circle cx="26" cy="70" r="6" fill="var(--emblem)"/><path d="M62 26 70 34 83 21 75 13z" fill="var(--emblem)"/>'},
-  bolt:{n:6,c:'--violett',p:[[1,0],[0,1],[1,1],[0,2],[1,2],[0,3]],art:'<path d="M65 8H83L51 40h10L13 88V70l24-24H27z"/>'},
-  bucket:{n:6,c:'--violett',p:[[0,0],[0,3],[1,4],[2,4],[3,3],[3,0]],art:'<path d="M22 42A26 26 0 0 1 74 42L66 42A18 18 0 0 0 30 42Z"/><rect x="18" y="42" width="60" height="10"/><path d="M22 52h52v16l-12 12h-28l-12-12z"/>'},
-  key:{n:6,c:'--violett',p:[[0,0],[3,0],[3,1],[4,1],[4,0],[5,0]],art:'<circle cx="26" cy="48" r="18"/><circle cx="26" cy="48" r="8" fill="var(--emblem)"/><rect x="40" y="42" width="48" height="12"/><rect x="60" y="54" width="10" height="12"/><rect x="78" y="54" width="10" height="12"/>'},
-  ramp:{n:6,c:'--violett',p:[[0,0],[3,0],[3,1],[2,2],[2,3],[0,3]],art:'<path d="M76 10v64H12z"/><rect x="8" y="74" width="80" height="12"/>'},
-  fork:{n:6,c:'--violett',p:[[0,0],[-1,1],[-1,3],[-2,3],[-2,1],[-3,0]],art:'<path d="M18 14a6 6 0 0 1 12 0v30a6 6 0 0 0 12 0v-30a6 6 0 0 1 12 0v30a6 6 0 0 0 12 0v-30a6 6 0 0 1 12 0v28a24 24 0 0 1-24 24v16a6 6 0 0 1-12 0v-16a24 24 0 0 1-24-24z"/>'},
-  funnel:{n:6,c:'--violett',p:[[0,0],[3,3],[3,4],[4,4],[4,3],[7,0]],art:'<path d="M8 10h80L56 42v44H40V42z"/>'},
-  dumbbell:{n:6,c:'--violett',p:[[0,0],[0,3],[-1,2],[-4,2],[-5,3],[-5,0]],art:'<rect x="12" y="34" width="8" height="28"/><rect x="20" y="26" width="12" height="44"/><rect x="64" y="26" width="12" height="44"/><rect x="76" y="34" width="8" height="28"/><rect x="32" y="42" width="32" height="12"/>'},
-  sbend:{n:6,c:'--violett',p:[[0,0],[-3,0],[0,-3],[0,-5],[-3,-8],[0,-8]],art:'<path d="M48 8a24 24 0 0 0 0 48a8 8 0 0 1 0 16v16a24 24 0 0 0 0 -48a8 8 0 0 1 0 -16z"/><rect x="48" y="8" width="28" height="16"/><rect x="20" y="72" width="28" height="16"/>'},
-  box:{n:6,c:'--violett',p:[[0,0],[0,-1],[0,-2],[-2,-2],[-2,-1],[-2,0]],chord:[0,5],art:'<rect x="24" y="38" width="48" height="44"/><rect x="34" y="38" width="28" height="34" fill="var(--emblem)"/><path d="M24 42 L8 26 V14 L36 42 Z"/><path d="M72 42 L88 26 V14 L60 42 Z"/>'},
-  glass:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[-1,3],[-2,4],[-3,3],[-4,2],[-4,0]],art:'<path d="M20 12h56v12a28 28 0 0 1-56 0z"/><rect x="43" y="48" width="10" height="28"/><rect x="28" y="76" width="40" height="8"/>'},
-  bowl:{n:7,c:'--tuerkis',p:[[0,0],[2,2],[4,4],[6,2],[8,4],[10,2],[12,0]],art:'<path d="M8 24h80a40 40 0 0 1-80 0z"/><rect x="32" y="60" width="32" height="12"/>'},
-  frame:{n:7,c:'--tuerkis',p:[[0,0],[0,-2],[-3,-2],[-6,-2],[-6,1],[-6,4],[-4,4]],art:'<path d="M18 10h60v76H18z"/><rect x="28" y="20" width="40" height="56" fill="var(--emblem)"/><rect x="36" y="28" width="24" height="40"/>'},
-  hose:{n:7,c:'--tuerkis',p:[[0,0],[2,0],[5,-3],[3,-5],[1,-7],[4,-10],[6,-10]],art:'<circle cx="39" cy="58" r="30"/><circle cx="39" cy="58" r="15" fill="var(--emblem)"/><path d="M52 33 67 18 77 28 62 43z"/><path d="M61 14 67 8 87 28 81 34z"/>'},
-  anchor:{n:7,c:'--tuerkis',p:[[0,0],[-1,-1],[-2,-1],[-2,2],[-2,5],[-3,5],[-4,4]],art:'<rect x="42" y="28" width="12" height="56"/><rect x="26" y="36" width="44" height="10"/><path d="M14 54A34 34 0 0 0 82 54L70 54A22 22 0 0 1 26 54Z"/><path d="M14 54L14 42L26 54Z"/><path d="M82 54L82 42L70 54Z"/><circle cx="48" cy="19" r="11"/><circle cx="48" cy="19" r="5" fill="var(--emblem)"/>'},
-  arrow:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[3,-1],[3,-4],[0,-4],[-3,-1],[-1,-1]],art:'<path d="M48 8l32 32H60v48H36V40H16z"/>'},
-  steps:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[3,2],[3,5],[6,5],[6,8],[8,8]],art:'<path d="M9 84V60h26V36h26V12h26v72z"/>'},
-  cane:{n:7,c:'--tuerkis',p:[[0,0],[2,-2],[2,-3],[2,-5],[1,-6],[0,-7],[-3,-7]],art:'<path d="M72 88V32a24 24 0 0 0-48 0v12h14V32a10 10 0 0 1 20 0v56z"/>'},
-  pennant:{n:7,c:'--tuerkis',p:[[0,0],[-3,0],[-1,-2],[-1,-3],[0,-4],[0,-7],[2,-5]],art:'<rect x="14" y="8" width="11" height="80"/><path d="M25 12H81L25 68Z"/>'},
-  hammer:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[0,4],[1,4],[0,5],[0,8],[3,8]],art:'<path d="M12 12h56l8 8h8v8h-8l-8 8H12z"/><path d="M33 36h14v48H33z"/>'},
-  dart:{n:7,c:'--tuerkis',p:[[0,0],[-1,1],[-1,3],[1,5],[-2,5],[-3,6],[-3,8]],art:'<path d="M16 80H26L49 57L39 47L16 70z"/><path d="M47 55L61 41L55 35L41 49z"/><path d="M52 44H80L52 16z"/><path d="M71 35L61 25V35z" fill="var(--emblem)"/>'},
-  horseshoe:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[-4,0],[-4,-3],[-4,-5],[-2,-7],[0,-5]],art:'<path d="M12 82V50A36 36 0 0 1 84 50V82H64V50A16 16 0 0 0 32 50V82Z"/><circle cx="22" cy="58" r="3" fill="var(--emblem)"/><circle cx="22" cy="71" r="3" fill="var(--emblem)"/><circle cx="74" cy="58" r="3" fill="var(--emblem)"/><circle cx="74" cy="71" r="3" fill="var(--emblem)"/><circle cx="30" cy="32" r="3" fill="var(--emblem)"/><circle cx="66" cy="32" r="3" fill="var(--emblem)"/>'},
-  comb:{n:7,c:'--tuerkis',p:[[0,0],[3,3],[0,3],[0,6],[0,9],[2,9],[-1,12]],art:'<rect x="9" y="12" width="78" height="20" rx="6"/><path d="M9 24h10v55a5 5 0 0 1-10 0zM26 24h10v55a5 5 0 0 1-10 0zM43 24h10v55a5 5 0 0 1-10 0zM60 24h10v55a5 5 0 0 1-10 0zM77 24h10v55a5 5 0 0 1-10 0z"/>'},
-  spring:{n:7,c:'--tuerkis',p:[[0,0],[-3,0],[-3,2],[0,5],[-3,8],[-3,11],[0,11]],art:'<path d="M14 10h68v14H40l42 20v14H40l42 20v8H14V72h42L14 52V38h42L14 18z"/>'},
-  hourglass:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[1,-2],[0,-3],[1,-3],[-1,-5],[2,-5]],art:'<path d="M14 8h68v10H14z"/><path d="M14 78h68v10H14z"/><path d="M20 24h56L56 44v8l20 20H20l20-20v-8z"/>'},
-  ring:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[-2,-5],[1,-8],[4,-5],[4,-2],[2,0]],chord:[0,6],art:'<circle cx="48" cy="55" r="31"/><path d="M40 10h16l6 6-14 14-14-14z"/><circle cx="48" cy="55" r="19" fill="var(--emblem)"/>'},
-  shield:{n:7,c:'--tuerkis',p:[[0,0],[3,0],[5,2],[3,4],[1,6],[-1,4],[-1,1]],chord:[0,6],art:'<path d="M14 10h68v42L48 86 14 52z"/><path d="M48 18h26v28L48 72z" fill="var(--emblem)"/>'},
-  pill:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[-4,0],[-4,-3],[-4,-5],[-2,-7],[0,-5]],chord:[0,6],art:'<path d="M23 53A14.142 14.142 0 0 0 43 73L73 43A14.142 14.142 0 0 0 53 23L23 53Z"/><path d="M35 29L67 61L61 67L29 35Z" fill="var(--emblem)"/>'},
-  apple:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[-2,-5],[0,-5],[2,-7],[4,-5],[4,-2]],chord:[0,6],art:'<circle cx="48" cy="56" r="30"/><rect x="44" y="10" width="8" height="20"/><path d="M50 28a16 16 0 0 1 16-16a16 16 0 0 1-16 16z"/>'},
-  wedge:{n:7,c:'--tuerkis',p:[[0,0],[-1,1],[-1,4],[-1,5],[-2,4],[-4,2],[-5,2]],chord:[0,6],art:'<path d="M8 88V82L82 8h6v80z"/>'},
+  nail:{n:3,c:'--hellblau',p:[[0,0],[1,0],[2,0]]},
+  roof:{n:3,c:'--hellblau',p:[[0,0],[1,-1],[2,0]]},
+  triangle:{n:3,c:'--hellblau',p:[[0,0],[1,-1],[2,0]],chord:[0,2]},
+  staple:{n:4,c:'--gruen',p:[[0,0],[0,1],[2,1],[2,0]]},
+  crank:{n:4,c:'--gruen',p:[[0,0],[1,0],[1,1],[2,1]]},
+  hook:{n:4,c:'--gruen',p:[[0,0],[0,2],[1,3],[2,2]]},
+  flag:{n:4,c:'--gruen',p:[[0,3],[0,0],[2,0],[0,2]],chord:[1,3]},
+  window:{n:4,c:'--gruen',p:[[0,0],[2,0],[2,2],[0,2]],chord:[0,3]},
+  trowel:{n:5,c:'--gelb',p:[[0,0],[3,0],[3,1],[2,2],[1,1]]},
+  stair:{n:5,c:'--gelb',p:[[0,0],[1,0],[1,1],[2,1],[2,2]]},
+  house:{n:5,c:'--gelb',p:[[0,2],[0,0],[1,-1],[2,0],[2,2]],chord:[0,4]},
+  clip:{n:5,c:'--gelb',p:[[2,0],[0,0],[0,3],[2,3],[2,2]]},
+  wishbone:{n:5,c:'--gelb',p:[[0,0],[0,3],[1,4],[2,3],[2,2]]},
+  post:{n:5,c:'--gelb',p:[[1,0],[1,2],[0,3],[2,3],[2,2]]},
+  cup:{n:5,c:'--gelb',p:[[0,0],[0,2],[1,3],[2,2],[2,0]]},
+  tent:{n:5,c:'--gelb',p:[[0,0],[-1,-1],[-3,-3],[-5,-1],[-6,0]],chord:[0,4]},
+  nut:{n:6,c:'--violett',p:[[1,0],[2,0],[3,1],[2,2],[1,2],[0,1]],chord:[0,5]},
+  tag:{n:6,c:'--violett',p:[[0,0],[2,0],[3,1],[2,2],[0,2],[0,1]],chord:[0,5]},
+  saw:{n:6,c:'--violett',p:[[0,1],[1,0],[2,1],[3,0],[4,1],[5,0]]},
+  snail:{n:6,c:'--violett',p:[[0,0],[3,0],[3,3],[0,3],[0,1],[2,1]]},
+  spanner:{n:6,c:'--violett',p:[[0,1],[0,0],[3,0],[4,-1],[5,0],[4,1]]},
+  bolt:{n:6,c:'--violett',p:[[1,0],[0,1],[1,1],[0,2],[1,2],[0,3]]},
+  bucket:{n:6,c:'--violett',p:[[0,0],[0,3],[1,4],[2,4],[3,3],[3,0]]},
+  key:{n:6,c:'--violett',p:[[0,0],[3,0],[3,1],[4,1],[4,0],[5,0]]},
+  ramp:{n:6,c:'--violett',p:[[0,0],[3,0],[3,1],[2,2],[2,3],[0,3]]},
+  fork:{n:6,c:'--violett',p:[[0,0],[-1,1],[-1,3],[-2,3],[-2,1],[-3,0]]},
+  funnel:{n:6,c:'--violett',p:[[0,0],[3,3],[3,4],[4,4],[4,3],[7,0]]},
+  dumbbell:{n:6,c:'--violett',p:[[0,0],[0,3],[-1,2],[-4,2],[-5,3],[-5,0]]},
+  sbend:{n:6,c:'--violett',p:[[0,0],[-3,0],[0,-3],[0,-5],[-3,-8],[0,-8]]},
+  box:{n:6,c:'--violett',p:[[0,0],[0,-1],[0,-2],[-2,-2],[-2,-1],[-2,0]],chord:[0,5]},
+  glass:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[-1,3],[-2,4],[-3,3],[-4,2],[-4,0]]},
+  bowl:{n:7,c:'--tuerkis',p:[[0,0],[2,2],[4,4],[6,2],[8,4],[10,2],[12,0]]},
+  frame:{n:7,c:'--tuerkis',p:[[0,0],[0,-2],[-3,-2],[-6,-2],[-6,1],[-6,4],[-4,4]]},
+  hose:{n:7,c:'--tuerkis',p:[[0,0],[2,0],[5,-3],[3,-5],[1,-7],[4,-10],[6,-10]]},
+  anchor:{n:7,c:'--tuerkis',p:[[0,0],[-1,-1],[-2,-1],[-2,2],[-2,5],[-3,5],[-4,4]]},
+  arrow:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[3,-1],[3,-4],[0,-4],[-3,-1],[-1,-1]]},
+  steps:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[3,2],[3,5],[6,5],[6,8],[8,8]]},
+  cane:{n:7,c:'--tuerkis',p:[[0,0],[2,-2],[2,-3],[2,-5],[1,-6],[0,-7],[-3,-7]]},
+  pennant:{n:7,c:'--tuerkis',p:[[0,0],[-3,0],[-1,-2],[-1,-3],[0,-4],[0,-7],[2,-5]]},
+  hammer:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[0,4],[1,4],[0,5],[0,8],[3,8]]},
+  dart:{n:7,c:'--tuerkis',p:[[0,0],[-1,1],[-1,3],[1,5],[-2,5],[-3,6],[-3,8]]},
+  horseshoe:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[-4,0],[-4,-3],[-4,-5],[-2,-7],[0,-5]]},
+  comb:{n:7,c:'--tuerkis',p:[[0,0],[3,3],[0,3],[0,6],[0,9],[2,9],[-1,12]]},
+  spring:{n:7,c:'--tuerkis',p:[[0,0],[-3,0],[-3,2],[0,5],[-3,8],[-3,11],[0,11]]},
+  hourglass:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[1,-2],[0,-3],[1,-3],[-1,-5],[2,-5]]},
+  ring:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[-2,-5],[1,-8],[4,-5],[4,-2],[2,0]],chord:[0,6]},
+  shield:{n:7,c:'--tuerkis',p:[[0,0],[3,0],[5,2],[3,4],[1,6],[-1,4],[-1,1]],chord:[0,6]},
+  pill:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[-4,0],[-4,-3],[-4,-5],[-2,-7],[0,-5]],chord:[0,6]},
+  apple:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[-2,-5],[0,-5],[2,-7],[4,-5],[4,-2]],chord:[0,6]},
+  wedge:{n:7,c:'--tuerkis',p:[[0,0],[-1,1],[-1,4],[-1,5],[-2,4],[-4,2],[-5,2]],chord:[0,6]},
 };
 const FIG_BAND={};
 for(const k in FIGURES){const f=FIGURES[k];
@@ -1670,65 +1671,40 @@ function classifyFigure(t){
     if(d<bd){bd=d;best=k;bshape=shape;brev=rev<fwd}
   }
   t.fitDist=bshape; t.fit=fitFor(bshape); t.figRev=brev;
+  t.figDrawn=s;
   return best;
 }
-const FIG_WEIGHT={3:19,4:18,5:17,6:15,7:14};
-const FIG_FLAT=0.12;
-const figFlatness=f=>{
-  const p=f.p, a=p[0], b=p[p.length-1];
-  const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
-  let dev=0;
-  for(const q of p) dev=Math.max(dev, Math.abs((b[0]-a[0])*(a[1]-q[1])-(a[0]-q[0])*(b[1]-a[1]))/L);
-  return dev/L;
-};
-let _figAngle=null;
-function figFlatAngle(f){
-  if(!_figAngle){
-    _figAngle=new Map(); let i=0;
-    for(const k of Object.keys(FIGURES))
-      if(figFlatness(FIGURES[k])<FIG_FLAT) _figAngle.set(FIGURES[k], (i++%4)*Math.PI/4);
-  }
-  return _figAngle.get(f)||0;
-}
-const FIT_WEIGHT={rough:0.78, clear:1, sharp:1.18};
+const FIG_WEIGHT={3:14,4:13,5:12,6:10,7:9};
+const FIT_WEIGHT={rough:0.86,clear:1,sharp:1.12};
 function figEmblem(k,{ink=EMBLEM_INK,fit=null}={}){
-  const f=FIGURES[k];
-  if(f&&f.art) return `<g fill="${ink}" color="${ink}">${f.art}</g>`;
   return figMarkup(k,{ink,fit});
 }
-function figMarkup(k,{ink='currentColor',ghost=false,pad=20,fit=null}={}){
+function figMarkup(k,{ink='currentColor',ghost=false,pad=18,fit=null}={}){
   const f=FIGURES[k]; if(!f) return '';
-  const th=figFlatAngle(f);
-  const pts = th
-    ? f.p.map(q=>[Math.cos(th)*q[0]-Math.sin(th)*q[1], Math.sin(th)*q[0]+Math.cos(th)*q[1]])
-    : f.p;
-  const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
-  const mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);
-  const bw=mxx-mnx||1, bh=mxy-mny||1, S=Math.min((96-2*pad)/bw,(96-2*pad)/bh);
-  const ox=pad+((96-2*pad)-bw*S)/2, oy=pad+((96-2*pad)-bh*S)/2;
-  const P=pts.map(p=>[ox+(p[0]-mnx)*S, oy+(p[1]-mny)*S]);
-  const w=(FIG_WEIGHT[f.n]||15)*(ghost?0.82:1)*(fit&&FIT_WEIGHT[fit]||1);
-  const m=P.length-1, TAPER=0.45;
-  const body = f.chord
-    ? (()=>{ const [a,b]=f.chord, lo=Math.min(a,b), hi=Math.max(a,b);
-             return P.slice(lo,hi+1).map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+'Z' })()
-    : P.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ')+'Z';
-  const poly=body;
-  let out=`<path d="${poly}" fill="${ink}" fill-rule="evenodd" stroke="none"/>`;
-  for(let i=0;i<m;i++){
-    const sw=w*(1-TAPER*(i/Math.max(1,m-1)));
-    out+=`<path d="M${P[i][0].toFixed(1)} ${P[i][1].toFixed(1)}L${P[i+1][0].toFixed(1)} ${P[i+1][1].toFixed(1)}" `
-      +`fill="none" stroke="${ink}" stroke-width="${sw.toFixed(2)}" stroke-linecap="round"/>`;
-  }
-  if(f.chord){
-    const [a,b]=f.chord;
-    out+=`<path d="M${P[a][0].toFixed(1)} ${P[a][1].toFixed(1)}L${P[b][0].toFixed(1)} ${P[b][1].toFixed(1)}" `
-      +`fill="none" stroke="${ink}" stroke-width="${w.toFixed(2)}" stroke-linecap="round"/>`;
-  }
-  out+=`<circle cx="${P[0][0].toFixed(1)}" cy="${P[0][1].toFixed(1)}" r="${(w*0.62).toFixed(2)}" fill="${ink}"/>`;
-  return ghost ? `<g opacity=".5">${out}</g>` : out;
+  const xs=f.p.map(p=>p[0]),ys=f.p.map(p=>p[1]);
+  const loX=Math.min(...xs),hiX=Math.max(...xs),loY=Math.min(...ys),hiY=Math.max(...ys);
+  const scale=(96-2*pad)/Math.max(hiX-loX,hiY-loY,1);
+  const P=f.p.map(p=>[48+(p[0]-(loX+hiX)/2)*scale,48+(p[1]-(loY+hiY)/2)*scale]);
+  const at=i=>P[i].map(v=>v.toFixed(2)).join(' ');
+  let path='M'+P.map((_,i)=>at(i)).join('L');
+  if(f.chord) path+='M'+at(f.chord[0])+'L'+at(f.chord[1]);
+  const w=(FIG_WEIGHT[f.n]||10)*(fit&&FIT_WEIGHT[fit]||1);
+  return `<path d="${path}" fill="none" stroke="${ink}" stroke-width="${w.toFixed(2)}" stroke-linecap="round" stroke-linejoin="round"${ghost?' opacity=".5"':''}/>`;
 }
-const FKEYS=Object.keys(FIGURES);
+const FIG_ALIASES={box:'window',tent:'triangle'};
+const figureKey=k=>FIG_ALIASES[k]||k;
+const FKEYS=Object.keys(FIGURES).filter(k=>!FIG_ALIASES[k]);
+function figureBadge(key){
+  const badges=store.collection.badges||{};
+  let result=null;
+  for(const k of [key,...Object.keys(FIG_ALIASES).filter(k=>figureKey(k)===key)]){
+    const b=badges[k]; if(!b)continue;
+    if(!result){result={...b};continue}
+    if(TIERRANK[b.tier]>TIERRANK[result.tier]){result.tier=b.tier;result.day=b.day}
+    if((FITRANK[b.fit]||0)>(FITRANK[result.fit]||0)){result.fit=b.fit;result.fitDay=b.fitDay}
+  }
+  return result;
+}
 
 const GEN_VERSIONS=[
   { v:1, from:'2000-01-01', par:'recipe', layout:'scatter',
@@ -2078,7 +2054,10 @@ const PACK={
 '2026-10-12':[{s:'bake:2026-10-12:0:28',d:'2026-10-20',v:19,o:2,c:3},{s:'bake:2026-10-12:1:7',d:'2026-10-27',v:19,o:3,c:4},{s:'bake:2026-10-12:2:5',d:'2026-10-15',v:19,o:3,c:4},{s:'bake:2026-10-12:3:13',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-12:4:6',d:'2026-10-19',v:19,o:5,c:7},{s:'bake:2026-10-12:5:14',d:'2026-10-13',v:19,o:5,c:7},{s:'bake:2026-10-12:6:0',d:'2026-10-12',v:19,o:6,c:8},{s:'bake:2026-10-12:7:12',d:'2026-10-12',v:19,o:8,c:10},{s:'bake:2026-10-12:8:7',d:'2026-10-12',v:19,o:8,c:10},{s:'bake:2026-10-12:9:4',d:'2026-10-12',v:19,o:9,c:12}],
 '2026-10-13':[{s:'bake:2026-10-13:0:12',d:'2026-10-19',v:19,o:2,c:3},{s:'bake:2026-10-13:1:25',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-13:2:18',d:'2026-10-24',v:19,o:3,c:4},{s:'bake:2026-10-13:3:21',d:'2026-10-23',v:19,o:4,c:5},{s:'bake:2026-10-13:4:5',d:'2026-10-14',v:19,o:4,c:5},{s:'bake:2026-10-13:5:10',d:'2026-10-20',v:19,o:5,c:7},{s:'bake:2026-10-13:6:6',d:'2026-10-16',v:19,o:5,c:7},{s:'bake:2026-10-13:7:13',d:'2026-10-14',v:19,o:7,c:9},{s:'bake:2026-10-13:8:4',d:'2026-10-13',v:19,o:8,c:10},{s:'bake:2026-10-13:9:53',d:'2026-10-13',v:19,o:9,c:12}],
 '2026-10-14':[{s:'bake:2026-10-14:0:6',d:'2026-10-15',v:19,o:2,c:3},{s:'bake:2026-10-14:1:12',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-14:2:19',d:'2026-10-14',v:19,o:3,c:4},{s:'bake:2026-10-14:3:37',d:'2026-10-14',v:19,o:4,c:5},{s:'bake:2026-10-14:4:33',d:'2026-10-23',v:19,o:4,c:5},{s:'bake:2026-10-14:5:16',d:'2026-10-18',v:19,o:4,c:5},{s:'bake:2026-10-14:6:8',d:'2026-10-18',v:19,o:7,c:9},{s:'bake:2026-10-14:7:53',d:'2026-10-14',v:19,o:7,c:9},{s:'bake:2026-10-14:8:23',d:'2026-10-15',v:19,o:9,c:12},{s:'bake:2026-10-14:9:25',d:'2026-10-15',v:19,o:9,c:12}],
-'2026-10-15':[{s:'bake:2026-10-15:0:34',d:'2026-10-23',v:19,o:2,c:3},{s:'bake:2026-10-15:1:15',d:'2026-10-24',v:19,o:2,c:3},{s:'bake:2026-10-15:2:23',d:'2026-10-15',v:19,o:2,c:3},{s:'bake:2026-10-15:3:2',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-15:4:8',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-15:5:3',d:'2026-10-15',v:19,o:4,c:5},{s:'bake:2026-10-15:6:1',d:'2026-10-20',v:19,o:6,c:8},{s:'bake:2026-10-15:7:25',d:'2026-10-18',v:19,o:7,c:9},{s:'bake:2026-10-15:8:23',d:'2026-10-17',v:19,o:8,c:10},{s:'bake:2026-10-15:9:65',d:'2026-10-15',v:19,o:9,c:12}]
+'2026-10-15':[{s:'bake:2026-10-15:0:34',d:'2026-10-23',v:19,o:2,c:3},{s:'bake:2026-10-15:1:15',d:'2026-10-24',v:19,o:2,c:3},{s:'bake:2026-10-15:2:23',d:'2026-10-15',v:19,o:2,c:3},{s:'bake:2026-10-15:3:2',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-15:4:8',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-15:5:3',d:'2026-10-15',v:19,o:4,c:5},{s:'bake:2026-10-15:6:1',d:'2026-10-20',v:19,o:6,c:8},{s:'bake:2026-10-15:7:25',d:'2026-10-18',v:19,o:7,c:9},{s:'bake:2026-10-15:8:23',d:'2026-10-17',v:19,o:8,c:10},{s:'bake:2026-10-15:9:65',d:'2026-10-15',v:19,o:9,c:12}],
+'2026-10-16':[{s:'bake:2026-10-16:0:9',d:'2026-10-21',v:19,o:2,c:3},{s:'bake:2026-10-16:1:25',d:'2026-10-17',v:19,o:2,c:3},{s:'bake:2026-10-16:2:4',d:'2026-10-20',v:19,o:3,c:4},{s:'bake:2026-10-16:3:1',d:'2026-10-21',v:19,o:3,c:4},{s:'bake:2026-10-16:4:1',d:'2026-10-16',v:19,o:4,c:5},{s:'bake:2026-10-16:5:2',d:'2026-10-23',v:19,o:4,c:5},{s:'bake:2026-10-16:6:4',d:'2026-10-22',v:19,o:6,c:8},{s:'bake:2026-10-16:7:19',d:'2026-10-18',v:19,o:6,c:8},{s:'bake:2026-10-16:8:32',d:'2026-10-19',v:19,o:7,c:9},{s:'bake:2026-10-16:9:106',d:'2026-10-18',v:19,o:9,c:12}],
+'2026-10-17':[{s:'bake:2026-10-17:0:19',d:'2026-10-29',v:19,o:2,c:3},{s:'bake:2026-10-17:1:5',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-17:2:6',d:'2026-11-05',v:19,o:3,c:4},{s:'bake:2026-10-17:3:12',d:'2026-10-19',v:19,o:3,c:4},{s:'bake:2026-10-17:4:19',d:'2026-10-23',v:19,o:3,c:4},{s:'bake:2026-10-17:5:12',d:'2026-10-17',v:19,o:5,c:7},{s:'bake:2026-10-17:6:8',d:'2026-10-18',v:19,o:6,c:8},{s:'bake:2026-10-17:7:20',d:'2026-10-19',v:19,o:8,c:10},{s:'bake:2026-10-17:8:5',d:'2026-10-18',v:19,o:8,c:10},{s:'bake:2026-10-17:9:94',d:'2026-10-19',v:19,o:9,c:12}],
+'2026-10-18':[{s:'bake:2026-10-18:0:4',d:'2026-10-20',v:19,o:2,c:3},{s:'bake:2026-10-18:1:13',d:'2026-10-24',v:19,o:3,c:4},{s:'bake:2026-10-18:2:30',d:'2026-10-27',v:19,o:3,c:4},{s:'bake:2026-10-18:3:31',d:'2026-10-18',v:19,o:4,c:5},{s:'bake:2026-10-18:4:7',d:'2026-10-20',v:19,o:4,c:5},{s:'bake:2026-10-18:5:9',d:'2026-10-20',v:19,o:5,c:7},{s:'bake:2026-10-18:6:23',d:'2026-10-25',v:19,o:6,c:8},{s:'bake:2026-10-18:7:9',d:'2026-10-19',v:19,o:9,c:12},{s:'bake:2026-10-18:8:45',d:'2026-10-24',v:19,o:9,c:12},{s:'bake:2026-10-18:9:108',d:'2026-10-20',v:19,o:9,c:12}]
 };
 const OPTIMA={
   '2026-08-01':[6,5,8,11,16,17,20,20,27,34],
@@ -2368,7 +2347,7 @@ function markHere(){
 }
 function renderCollection(){
   const badges=store.collection.badges||{};
-  const named=FKEYS.filter(k=>badges[k]).length, left=FKEYS.length-named;
+  const named=FKEYS.filter(k=>figureBadge(k)).length, left=FKEYS.length-named;
   const count={have:named,left,say:`${named} figures collected, ${left} not collected`};
   $('panecoll').innerHTML=`<div class="panehd collhd">
       <div class="intro-title">the collection</div>
@@ -2378,7 +2357,7 @@ function renderCollection(){
         <span class="collcount-left" aria-hidden="true">${count.left}</span>
       </div></div>`
     +FKEYS.map(k=>{
-      const b=badges[k];
+      const b=figureBadge(k);
       return b
         ? `<span class="fcell" style="--tc:var(${tierCol(b.tier)})" aria-label="${k}, ${tierSay(b.tier)}${b.fit?', '+b.fit:''}">${featIcon(k,b.tier,b.fit)}</span>`
         : `<span class="fcell none" aria-label="an undiscovered figure">`
@@ -4730,7 +4709,7 @@ function buildNet(force){
   if(mintedEntries.length){
     mintedEntries.forEach(([i,m])=>{
       const t=threads[Number(i)];
-      if(t){t.minted=m;freeThread(t,true)}
+      if(t){t.minted=m;freeThread(t,true);minted[i]=mintedThread(t)}
     });
   }else{
     (R().freed||[]).forEach(k=>{
@@ -5029,14 +5008,14 @@ function countCross(vis){
 }
 function threadPoints(t,get){
   const n=t.nodes.length;
-  if(t.chord && !t.settled && n>2){
+  if(t.chord && (!t.settled||FIGURES[t.key]) && n>2){
     const [a,b]=t.chord, p=[];
     if(a===0){ for(let i=n-1;i>=0;i--) p.push(get(t.nodes[i])); p.push(get(t.nodes[b])) }
     else     { for(let i=0;i<n;i++)    p.push(get(t.nodes[i])); p.push(get(t.nodes[a])) }
     return p.join(' ');
   }
   const p=t.nodes.map(get);
-  if(t.signWhole && p.length>2) p.push(get(t.nodes[0]));
+  if(t.signWhole && !FIGURES[t.key] && p.length>2) p.push(get(t.nodes[0]));
   return p.join(' ');
 }
 const atRendered=n=>`${n.xr.toFixed(1)},${n.yr.toFixed(1)}`;
@@ -5274,10 +5253,16 @@ function claimSlot(t){
   const cx=mean(t.nodes,n=>n.x0), cy=mean(t.nodes,n=>n.y0);
   const occ=boardOccupancy(t);
   let best=open[0], bv=Infinity;
-  open.forEach(s=>{
-    let v=slotCost(s,occ);
-    v+=HOME_W*Math.hypot(s.cx-cx,s.cy-cy)/BW;                  // ties go to where it already was
-    if(v<bv){bv=v;best=s}
+  open.forEach(cell=>{
+    const dx=Math.max(0,(cell.cw-cell.r-2*SIGN_GAP-SIGN_LEAD)/2);
+    const dy=Math.max(0,(cell.ch-cell.r-2*SIGN_GAP-SIGN_LEAD)/2);
+    for(const x of [-1,-.5,0,.5,1])for(const y of [-1,-.5,0,.5,1]){
+      const s={...cell,cx:cell.cx+x*dx,cy:cell.cy+y*dy};
+      let v=slotCost(s,occ);
+      v+=HOME_W*Math.hypot(s.cx-cx,s.cy-cy)/BW;
+      v+=.7*(x*x+y*y); // equally clear space favours a balanced composition
+      if(v<bv){bv=v;best=s}
+    }
   });
   return (t.signSlot=best);
 }
@@ -5296,11 +5281,12 @@ function bestTurn(nodes, pts, at){
   }
   return best.map(i=>pts[i]);
 }
-function settleIntoShape(t){
+function settleIntoShape(t,instant=false){
   const held=heldNodes(t);
   const movable=t.nodes.filter(n=>!held.includes(n));
   if(movable.length<3) return;                        // claim no slot it cannot draw in
-  let pts=featureShape(t.key, t.nodes.length);
+  const drawn=validDrawn(t.figDrawn,t.nodes.length);
+  let pts=drawn||featureShape(t.key, t.nodes.length);
   if(!pts) return;
   const slot=claimSlot(t);
   const cx=slot.cx, cy=slot.cy;
@@ -5309,11 +5295,11 @@ function settleIntoShape(t){
   const span=Math.max(Math.max(...xs)-Math.min(...xs), Math.max(...ys)-Math.min(...ys), 1);
   const S=slot.r/span;
   const at=([px,py])=>{
-    const dx=portrait?(py-oy):(px-ox), dy=portrait?-(px-ox):(py-oy);
+    const dx=portrait&&!drawn?(py-oy):(px-ox), dy=portrait&&!drawn?-(px-ox):(py-oy);
     return [clampX(cx+dx*S), clampY(cy+dy*S)];
   };
   if(t.signWhole && !FIGURES[t.key]) pts=bestTurn(t.nodes.map(n=>movable.includes(n)?n:null), pts, at);
-  const rev=!!(t.figRev && FIGURES[t.key]);
+  const rev=!!(!drawn && t.figRev && FIGURES[t.key]);
   const now=performance.now();
   let k=0;                                            // stagger counter over the MOVABLE nodes
   t.nodes.forEach((n,i)=>{
@@ -5321,13 +5307,17 @@ function settleIntoShape(t){
     const j=Math.min(i,pts.length-1);
     const [bx,by]=at(pts[rev?pts.length-1-j:j]);
     n.tw={ax:n.xv, ay:n.yv, bx, by,
-          t0:now+(reduceMotion?0:k*26), dur:reduceMotion?1:440,
-          out:true, land:!reduceMotion};
+          t0:now+(reduceMotion||instant?0:k*26), dur:reduceMotion||instant?1:440,
+          out:true, land:!reduceMotion&&!instant};
     k++;
     n.x0=bx; n.y0=by;
     if(n.pinned){ n.pinned=false; paintNode(n) }
   });
   physDirty=true;
+}
+function validDrawn(p,n){
+  return Array.isArray(p)&&p.length===n&&p.every(q=>Array.isArray(q)&&q.length===2
+    &&q.every(v=>typeof v==='number'&&Number.isFinite(v)&&Math.abs(v)<=10))?p:null;
 }
 function freeThread(t,silent){
   t.freed=true; t.el.classList.add('freedt');
@@ -5342,11 +5332,22 @@ function freeThread(t,silent){
     t.fit=FITRANK[m.fit]?m.fit:(typeof m.fitDist==='number'&&isFinite(m.fitDist)?fitFor(m.fitDist):'rough');
     t.fitDist=typeof m.fitDist==='number'&&isFinite(m.fitDist)?m.fitDist:null;
     t.figRev=!!m.rev;
+    t.figDrawn=validDrawn(m.drawn,t.nodes.length);
   }else{
     t.minted=null;
     t.key=classifyFigure(t)||t.key;
   }
   t.def=FIGURES[t.key]||t.def;
+  if(!t.figDrawn&&FIGURES[t.key]) t.figDrawn=figNorm(t.nodes.map(n=>[n.x0,n.y0]));
+  if(t.figDrawn){
+    const saved=m&&m.slot, cell=saved&&signSlots().find(s=>s.i===saved.i);
+    if(cell&&Number.isFinite(saved.cx)&&Number.isFinite(saved.cy)
+      &&Math.abs(saved.cx-cell.cx)<=(cell.cw-cell.r-2*SIGN_GAP-SIGN_LEAD)/2+.01
+      &&Math.abs(saved.cy-cell.cy)<=(cell.ch-cell.r-2*SIGN_GAP-SIGN_LEAD)/2+.01
+      &&!threads.some(o=>o!==t&&o.signSlot&&o.signSlot.i===cell.i))
+      t.signSlot={...cell,cx:saved.cx,cy:saved.cy};
+    claimSlot(t);
+  }
   t.calm=threads.indexOf(t)*1.1;
   const whole=signWhole(t);
   const twin=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===t.key);
@@ -5388,12 +5389,15 @@ function freeThread(t,silent){
     setTimeout(()=>{ t.signWhole=whole; t.settled=true; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
   }else{
     t.signWhole=whole; t.settled=true;
+    if(t.figDrawn){settleIntoShape(t,true);repositionLabel(t)}
     t.nodes.forEach(n=>{ if(n.pinned && n.threads.every(th=>th.freed)){ n.pinned=false; paintNode(n) } });
   }
 }
 
 function mintedThread(t){
-  return {key:t.key,fit:t.fit,fitDist:t.fitDist,rev:!!t.figRev};
+  return {key:t.key,fit:t.fit,fitDist:t.fitDist,rev:!!t.figRev,
+    ...(t.figDrawn?{drawn:t.figDrawn}: {}),
+    ...(t.signSlot?{slot:{i:t.signSlot.i,cx:t.signSlot.cx,cy:t.signSlot.cy}}:{})};
 }
 function markFreed(t,silent){
   freeThread(t,silent);
@@ -7566,7 +7570,7 @@ window.__solveNet=()=>{
         chargeTurn(r,[3,n.idx,mate.idx,...r.positions[n.idx],...r.positions[mate.idx]]);
         settleRoute();
       } else {
-        if(n.pinned||n.hx==null||n.merged) continue;
+        if(n.pinned||n.hx==null||n.merged||n.threads.every(t=>t.freed)) continue;
         if(relayLocked(n)) throw new Error('mechanic witness reached a locked relay');
         if(n.coupled&&coupleHolds(n)) throw new Error('mechanic witness split a coupled action');
         if(Math.hypot(n.x0-n.hx,n.y0-n.hy)<=MIN_SEP*.7) continue;
