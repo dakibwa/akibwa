@@ -29,8 +29,9 @@ export function ListeningSummary() {
           lasted at least 30 seconds. Recorded duration is not proof of
           attention or complete listens. There are gaps, including 2013 and
           2015, so this is not a lifetime total. Podcasts and video are
-          excluded. Verified 5 September 2026. These totals are separate from
-          the Last.fm album catalogue below.
+          excluded. Verified 5 September 2026. The album counts below combine
+          the available Spotify, YouTube and Last.fm records; this duration
+          remains Spotify-only because the other sources supply no listening time.
         </p>
       </details>
     </div>

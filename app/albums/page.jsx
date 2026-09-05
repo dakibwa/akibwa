@@ -1,7 +1,7 @@
 import { AlbumWallPage } from "@/components/pages/album-wall-page";
 import { siteSectionTitles } from "@/app/site-metadata";
-import data from "@/data/album-wall.json";
-import { albumCatalogue } from "@/components/album-catalogue.mjs";
+import listening from "@/public/listening-catalogue.json";
+import { listeningSeed } from "@/components/listening-catalogue.mjs";
 
 export const metadata = {
   title: siteSectionTitles.albums,
@@ -21,9 +21,10 @@ export const metadata = {
 export default function AlbumsRoute() {
   return (
     <AlbumWallPage
-      initialCatalogue={albumCatalogue(data)}
-      refreshedAt={data.refreshedAt}
-      scrobblingSince={data.scrobblingSince}
+      initialCatalogue={listeningSeed(listening, [])}
+      refreshedAt={listening.asOf}
+      method={listening.method}
+      totals={{ albums: listening.albums.length, artists: new Set(listening.albums.map((album) => album.artist).filter(Boolean)).size, printed: listening.albums.filter((album) => album.printed).length }}
     />
   );
 }

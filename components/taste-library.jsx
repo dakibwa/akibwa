@@ -1,17 +1,13 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlbumArtImage, SiteImage } from "./site-image";
-import { MediaDialog } from "./media-dialog";
+import { SiteImage } from "./site-image";
+import { AlbumCover } from "./album-cover";
 import curation from "@/data/taste-curation.json";
 import { browseAlbums } from "./album-catalogue.mjs";
 import { useAlbumCatalogue } from "./use-album-catalogue";
 import { rankPodcasts } from "./listening-label.mjs";
 import { ListeningHover, listeningDescription } from "./listening-hover";
-import {
-  tasteItemKey,
-  tasteItemHash,
-  resolveTasteItem,
-} from "./taste-identity.mjs";
+import { tasteItemKey } from "./taste-identity.mjs";
 
 const groups = [
   ["all", "Highlights", "32, 32, 30"],
@@ -26,15 +22,15 @@ const editorialArt = (src) =>
     .replace("/film-posters/", "/taste-art/films/")
     .replace("/game-covers/", "/taste-art/games/")
     .replace("/tv-posters/", "/taste-art/tv/");
-function TasteArtwork({ item, large = false }) {
+function TasteArtwork({ item }) {
   if (item.kind === "music") {
-    return <AlbumArtImage id={item.id} rung={large ? "card" : "wall"} alt="" priority={large} />;
+    return <AlbumCover album={item} />;
   }
   if (item.art) {
     return <SiteImage
       src={editorialArt(item.art)}
       slot={item.kind === "podcasts" ? "podcastArt" : "tasteArt"}
-      sizes={large ? "(max-width:600px) 320px, 442px" : "(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"}
+      sizes="(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"
       alt=""
     />;
   }
@@ -46,13 +42,12 @@ function TasteArtwork({ item, large = false }) {
   </span>;
 }
 
-export function TasteLibrary({ initialCatalogue, refreshedAt }) {
+export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const [category, setCategory] = useState("all"),
-    [selectedHash, setSelectedHash] = useState(""),
     [visibleCount, setVisibleCount] = useState(36);
   const rail = useRef(null);
   const more = useRef(null);
-  const catalogue = useAlbumCatalogue(initialCatalogue, refreshedAt);
+  const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt, category === "music");
   const music = useMemo(() => browseAlbums(catalogue).map((album) => ({
     ...album,
     title: album.album,
@@ -67,7 +62,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt }) {
         curation[kind].map((item) => ({ ...item, kind })),
       ]),
     ),
-    podcasts: rankPodcasts(curation.podcasts).map((item) => ({ ...item, kind: "podcasts" })),
+    podcasts: rankPodcasts(podcasts).map((item) => ({ ...item, kind: "podcasts" })),
   };
   // Highlights retains the mixed editorial selection. Within each listening
   // medium its chosen records follow the same descending counts as the shelf.
@@ -87,7 +82,6 @@ export function TasteLibrary({ initialCatalogue, refreshedAt }) {
   }).filter(Boolean);
   const list = category === "all" ? mixed : lists[category];
   const visible = list.slice(0, visibleCount);
-  const selected = resolveTasteItem(selectedHash, catalogue, curation);
   useEffect(() => {
     if (!more.current) return;
     const observer = new IntersectionObserver(([entry]) => {
@@ -96,33 +90,6 @@ export function TasteLibrary({ initialCatalogue, refreshedAt }) {
     observer.observe(more.current);
     return () => observer.disconnect();
   }, [category, visibleCount]);
-  useEffect(() => {
-    const sync = () => {
-      setSelectedHash(location.hash);
-    };
-    sync();
-    window.addEventListener("popstate", sync);
-    window.addEventListener("hashchange", sync);
-    return () => {
-      window.removeEventListener("popstate", sync);
-      window.removeEventListener("hashchange", sync);
-    };
-  }, []);
-  const open = (item) => {
-    history.pushState(
-      { ...history.state, tasteDialog: true },
-      "",
-      tasteItemHash(item),
-    );
-    setSelectedHash(tasteItemHash(item));
-  };
-  const close = () => {
-    if (history.state?.tasteDialog) history.back();
-    else {
-      history.replaceState(history.state, "", "#taste");
-      setSelectedHash("");
-    }
-  };
   return (
     <section
       className="page-grid concept-archive personal-taste"
@@ -154,13 +121,13 @@ export function TasteLibrary({ initialCatalogue, refreshedAt }) {
       </nav>
       <div className="personal-taste-rail" ref={rail}>
         {visible.map((item) => (
-          <button
+          <article
             className="personal-taste-card"
-            type="button"
+            tabIndex={item.kind === "music" || item.kind === "podcasts" ? 0 : undefined}
             key={`${item.kind}-${tasteItemKey(item)}`}
-            onClick={() => open(item)}
-            aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)} Open details`}
-            data-listens={item.kind === "music" ? item.plays : item.listens}
+            aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)}`}
+            data-listens={item.plays}
+            data-album-id={item.kind === "music" ? item.id : undefined}
             onKeyDown={(event) => {
               if (event.key === "Escape") event.currentTarget.dataset.countDismissed = "true";
             }}
@@ -173,7 +140,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt }) {
             </span>
             <span className="personal-taste-title">{item.title}</span>
             {item.creator ? <span className="personal-taste-creator">{item.creator}</span> : null}
-          </button>
+          </article>
         ))}
         {visible.length < list.length ? (
           <button className="taste-load-more" type="button" ref={more} onClick={() => setVisibleCount((count) => count + 36)}>
@@ -181,35 +148,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt }) {
           </button>
         ) : null}
       </div>
-      {selected ? (
-        <MediaDialog
-          title={`${selected.title}${selected.creator ? ` — ${selected.creator}` : ""}`}
-          onClose={close}
-        >
-          <div className="archive-detail-art">
-            <TasteArtwork item={selected} large />
-          </div>
-          <div className="archive-detail-copy">
-            <p className="archive-eyebrow">
-              {groups.find(([id]) => id === selected.kind)?.[1]}
-            </p>
-            <h2>{selected.title}</h2>
-            <p>
-              {selected.creator}
-              {selected.year ? ` · ${selected.year}` : ""}
-            </p>
-            {selected.note ? <p>{selected.note}</p> : null}
-            {selected.kind === "music" ? (
-              <a href={`/albums/#album=${encodeURIComponent(selected.id)}`}>
-                Find this in the album archive ↗
-              </a>
-            ) : null}
-            {selected.href ? (
-              <a href={selected.href}>Visit the podcast ↗</a>
-            ) : null}
-          </div>
-        </MediaDialog>
-      ) : null}
+      {category === "music" && (loading || loadError) ? <p className="taste-load-status" role="status">
+        {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
+      </p> : null}
     </section>
   );
 }

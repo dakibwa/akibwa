@@ -6,7 +6,7 @@
     "dev": "next dev",
     "check:fast": "npm run build",
     "check:release": "npm run build",
-    "check:navigation": "node scripts/check-navigation-contract.mjs && node scripts/check-album-catalogue.mjs",
+    "check:navigation": "node scripts/check-navigation-contract.mjs && node scripts/check-album-catalogue.mjs && node scripts/check-listening-counts.mjs",
     "check:trek-privacy": "node scripts/check-trek-privacy.mjs && node scripts/check-trek-journey.mjs",
     "check:navigation:dom": "node scripts/check-navigation-dom.mjs",
     "check:images": "node scripts/generate-image-variants.mjs --check",
@@ -20,6 +20,7 @@
     "albums:art:check": "node scripts/build-album-art.mjs --check",
     "albums:lastfm-art": "node scripts/fetch-lastfm-art.mjs",
     "refresh:albums:local": "node scripts/refresh-album-plays.mjs",
+    "listening:build": "node scripts/build-listening-counts.mjs",
     "trek:build": "node scripts/build-trek-paths.mjs",
     "trek:covers": "node scripts/resolve-trek-covers.mjs",
     "check:trek:dom": "CHECK_TREK_ONLY=1 node scripts/check-navigation-dom.mjs"

@@ -1,36 +1,14 @@
 const number = (value) => value.toLocaleString("en-GB");
 export function listeningLabel(item) {
-  if (item.kind === "music") {
-    const date = new Date(item.countAsOf);
-    const asOf = Number.isFinite(date.getTime())
-      ? date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
-      : "saved snapshot";
-    return {
-      value: item.plays === null ? "—" : number(item.plays),
-      label: item.plays === null ? "No matched count" : `track listen${item.plays === 1 ? "" : "s"}`,
-      source: `Last.fm · ${asOf}`,
-      explanation: "Recorded track scrobbles, not complete album listens.",
-    };
-  }
-  if (item.kind !== "podcasts") return null;
-  if (item.listens === null) {
-    return {
-      value: item.appleEpisodes ? number(item.appleEpisodes) : "—",
-      label: item.appleEpisodes ? `episode${item.appleEpisodes === 1 ? "" : "s"} recorded` : "No recorded count",
-      source: item.appleEpisodes ? "Apple Podcasts · 2023–25" : "Available history",
-      explanation: "Apple episode records are separate from Spotify playback starts.",
-    };
-  }
+  if (!["music", "podcasts"].includes(item.kind)) return null;
+  const known = Number.isSafeInteger(item.plays) && item.plays >= 0;
   return {
-    value: number(item.listens),
-    label: `listen${item.listens === 1 ? "" : "s"}`,
-    source: "Spotify · 30+ seconds",
-    extra: item.appleEpisodes ? `Apple: ${number(item.appleEpisodes)} episode${item.appleEpisodes === 1 ? "" : "s"}` : null,
-    explanation: "Spotify starts lasting at least 30 seconds, not completed episodes. Partial history through August 2026.",
+    value: known ? `${number(item.plays)}${item.atLeast ? "+" : ""}` : "—",
+    label: !known ? "No recorded count" : item.kind === "music" ? `track play${item.plays === 1 ? "" : "s"}` : item.sources?.youtube > 0 ? "plays & views" : `recorded play${item.plays === 1 ? "" : "s"}`,
+    explanation: `${item.atLeast ? "At least this many recorded plays; some records cannot be reconciled exactly. " : ""}${item.kind === "music" ? "Track records, not complete album listens." : "Recorded starts and show views, including clips, not completed episodes."}`,
   };
 }
 
 export const rankPodcasts = (items) => [...items].sort((a, b) =>
-  (b.listens ?? -1) - (a.listens ?? -1) ||
-  b.appleEpisodes - a.appleEpisodes || a.title.localeCompare(b.title, "en"),
+  (b.plays ?? -1) - (a.plays ?? -1) || a.title.localeCompare(b.title, "en"),
 );

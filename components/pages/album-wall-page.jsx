@@ -1,14 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
-import { AlbumArtImage } from "@/components/site-image";
-import { MediaDialog } from "@/components/media-dialog";
+import { AlbumCover } from "@/components/album-cover";
 import { ListeningSummary } from "@/components/listening-summary";
-import {
-  browseAlbums,
-  snapshotCoverage,
-} from "@/components/album-catalogue.mjs";
+import { browseAlbums } from "@/components/album-catalogue.mjs";
 import { useAlbumCatalogue } from "@/components/use-album-catalogue";
 import { ListeningHover, listeningDescription } from "@/components/listening-hover";
 
@@ -28,25 +24,14 @@ function dateLabel(value) {
 export function AlbumWallPage({
   initialCatalogue,
   refreshedAt,
-  scrobblingSince,
+  method,
+  totals,
 }) {
   const [query, setQuery] = useState(""),
     [filter, setFilter] = useState("all"),
     [sort, setSort] = useState("plays"),
     [page, setPage] = useState(0);
-  const [openId, setOpenId] = useState(null);
-  const catalogue = useAlbumCatalogue(initialCatalogue, refreshedAt);
-  const coverage = snapshotCoverage(catalogue);
-  const sources = Object.entries(coverage).filter(([, count]) => count > 0);
-  const originLabel = {
-    saved: "Saved catalogue",
-    session: "Session snapshot",
-    network: "Fetched snapshot",
-  };
-  const coverageLabel =
-    sources.length > 1
-      ? `Mixed snapshots · ${sources.map(([source, count]) => `${number(count)} ${source === "network" ? "fetched" : source === "session" ? "cached" : "saved"}`).join(" / ")}`
-      : `${originLabel[sources[0]?.[0] || "saved"]} · ${dateLabel(catalogue[0]?.countAsOf || refreshedAt)}`;
+  const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt);
   const results = useMemo(
     () => browseAlbums(catalogue, { query, filter, sort }),
     [catalogue, query, filter, sort],
@@ -57,60 +42,7 @@ export function AlbumWallPage({
     currentPage * PAGE_SIZE,
     (currentPage + 1) * PAGE_SIZE,
   );
-  const selected = catalogue.find((album) => album.id === openId);
-  const selectedIndex = results.findIndex((album) => album.id === openId);
-  const printedCount = catalogue.filter((album) => album.printed).length;
-  const artists = new Set(
-    catalogue.map((album) => album.artist).filter(Boolean),
-  ).size;
 
-  useEffect(() => {
-    const sync = () => {
-      const match = location.hash.match(/^#album=(.+)$/);
-      let id = null;
-      try {
-        id = match ? decodeURIComponent(match[1]) : null;
-      } catch {}
-      setOpenId(initialCatalogue.some((album) => album.id === id) ? id : null);
-    };
-    sync();
-    window.addEventListener("popstate", sync);
-    window.addEventListener("hashchange", sync);
-    return () => {
-      window.removeEventListener("popstate", sync);
-      window.removeEventListener("hashchange", sync);
-    };
-  }, [initialCatalogue]);
-  const open = useCallback((id) => {
-    history.pushState(
-      { ...history.state, albumDialog: true },
-      "",
-      `#album=${encodeURIComponent(id)}`,
-    );
-    setOpenId(id);
-  }, []);
-  const close = useCallback(() => {
-    if (history.state?.albumDialog) history.back();
-    else {
-      history.replaceState(
-        history.state,
-        "",
-        location.pathname + location.search,
-      );
-      setOpenId(null);
-    }
-  }, []);
-  const step = (delta) => {
-    if (!results.length) return;
-    const item =
-      results[(selectedIndex + delta + results.length) % results.length];
-    history.replaceState(
-      history.state,
-      "",
-      `#album=${encodeURIComponent(item.id)}`,
-    );
-    setOpenId(item.id);
-  };
   const changePage = (next) => {
     setPage(next);
     document
@@ -128,26 +60,30 @@ export function AlbumWallPage({
           <h1>The album archive</h1>
           <p>
             Printed sleeves and a much larger listening history. Search by
-            artist or album, or just follow a cover.
+            artist or album, or browse the covers.
           </p>
         </header>
         <div className="album-catalogue-summary">
           <span>
-            <strong>{number(catalogue.length)}</strong> albums in the catalogue
+            <strong>{number(totals.albums)}</strong> albums in the catalogue
           </span>
           <span>
-            <strong>{number(artists)}</strong> artists
+            <strong>{number(totals.artists)}</strong> artists
           </span>
           <span>
-            <strong>{number(printedCount)}</strong> printed cards
+            <strong>{number(totals.printed)}</strong> printed cards
           </span>
         </div>
         <ListeningSummary />
+        {loading || loadError ? <p className="taste-load-status" role="status">
+          {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
+        </p> : null}
         <div className="album-browser-controls">
           <label className="album-search">
             Find a record
             <input
               type="search"
+              disabled={loading || loadError}
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -160,6 +96,7 @@ export function AlbumWallPage({
             Collection
             <select
               aria-label="Collection"
+              disabled={loading || loadError}
               value={filter}
               onChange={(event) => {
                 setFilter(event.target.value);
@@ -168,20 +105,21 @@ export function AlbumWallPage({
             >
               <option value="all">All albums</option>
               <option value="printed">Printed cards</option>
-              <option value="recorded">With recorded scrobbles</option>
+              <option value="recorded">With recorded plays</option>
             </select>
           </label>
           <label>
             Order
             <select
               aria-label="Order"
+              disabled={loading || loadError}
               value={sort}
               onChange={(event) => {
                 setSort(event.target.value);
                 setPage(0);
               }}
             >
-              <option value="plays">Most scrobbled</option>
+              <option value="plays">Most played</option>
               <option value="artist">Artist A–Z</option>
               <option value="year">Release year, newest first</option>
             </select>
@@ -193,30 +131,30 @@ export function AlbumWallPage({
               ? `${number(currentPage * PAGE_SIZE + 1)}–${number(Math.min((currentPage + 1) * PAGE_SIZE, results.length))} of ${number(results.length)} albums`
               : "No matching albums"}
           </p>
-          <span>{coverageLabel}</span>
+          <span>Available history · {dateLabel(refreshedAt)}</span>
         </div>
         {results.length ? (
           <div className="album-browser-grid">
             {visible.map((album) => (
-              <button
-                type="button"
+              <article
+                tabIndex={0}
                 className="album-browser-card"
                 key={album.id}
-                onClick={() => open(album.id)}
+                data-album-id={album.id}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") event.currentTarget.dataset.countDismissed = "true";
                 }}
                 onMouseLeave={(event) => { delete event.currentTarget.dataset.countDismissed; }}
                 onBlur={(event) => { delete event.currentTarget.dataset.countDismissed; }}
-                aria-label={`${album.artist} — ${album.album}. ${listeningDescription({ ...album, kind: "music" })} Open details`}
+                aria-label={`${album.artist} — ${album.album}. ${listeningDescription({ ...album, kind: "music" })}`}
               >
                 <span className="album-browser-art">
-                  <AlbumArtImage id={album.id} rung="wall" alt="" />
+                  <AlbumCover album={album} />
                   <ListeningHover item={{ ...album, kind: "music" }} />
                 </span>
                 <strong>{album.album}</strong>
                 <span>{album.artist || "Artist unknown"}</span>
-              </button>
+              </article>
             ))}
           </div>
         ) : (
@@ -260,62 +198,12 @@ export function AlbumWallPage({
         ) : null}
         <details className="album-source">
           <summary>Sources, coverage and missing records</summary>
-          <p>
-            The catalogue counts are Last.fm track scrobbles from{" "}
-            {dateLabel(scrobblingSince)}, not full-album listens. Zero means no
-            scrobbles in that record; an unmatched sleeve has no reliable count.
-            The saved catalogue excludes unprinted albums with fewer than two
-            scrobbles, so it is not every album ever heard. A live refresh
-            updates counts for these catalogue entries; if it cannot answer, the
-            saved snapshot stays usable.
-          </p>
-          <p>
-            The separate Spotify summary above includes older history and actual
-            recorded duration. Album matching between those sources is not
-            complete: their counts are not combined, and no listening time is
-            guessed for an album.
-          </p>
+          <p>{method.music}</p>
+          <p>{method.overlap}</p>
+          <p>{method.coverage}</p>
+          <p>{method.unknown}</p>
         </details>
       </section>
-      {selected ? (
-        <MediaDialog
-          title={`${selected.album} — ${selected.artist}`}
-          onClose={close}
-        >
-          <div className="archive-detail-art">
-            <AlbumArtImage id={selected.id} rung="card" alt="" priority />
-          </div>
-          <div className="archive-detail-copy">
-            <p className="archive-eyebrow">
-              {selected.printed
-                ? "From the printed card collection"
-                : "From the listening catalogue"}
-            </p>
-            <h2>{selected.album}</h2>
-            <p>
-              {selected.artist || "Artist unknown"}
-              {selected.year ? ` · ${selected.year}` : ""}
-            </p>
-            {selected.lastfmUrl ? (
-              <a
-                href={selected.lastfmUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Album on Last.fm ↗
-              </a>
-            ) : null}
-            <nav className="album-detail-nav" aria-label="Browse album details">
-              <button type="button" onClick={() => step(-1)}>
-                ← Previous
-              </button>
-              <button type="button" onClick={() => step(1)}>
-                Next →
-              </button>
-            </nav>
-          </div>
-        </MediaDialog>
-      ) : null}
       <PageFooter />
     </>
   );

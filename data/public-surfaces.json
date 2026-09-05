@@ -5,15 +5,9 @@
       "id": "albums",
       "title": "The album archive",
       "route": "/albums",
-      "kind": "public-series-refresh",
+      "kind": "public-series",
       "visibility": "public",
-      "fallbackData": "data/album-wall.json",
-      "refresh": {
-        "worker": "akibwa-albums-refresh",
-        "schedule": "23 * * * *",
-        "dataUrl": "https://akibwa-albums-refresh.dakibwa.workers.dev/albums",
-        "statusUrl": "https://akibwa-albums-refresh.dakibwa.workers.dev/status"
-      }
+      "fallbackData": "public/listening-catalogue.json"
     },
     {
       "id": "features",

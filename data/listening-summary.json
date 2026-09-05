@@ -1,8 +1,19 @@
 {
   "source": "Spotify extended streaming history",
   "asOf": "2026-09-05",
-  "coverage": {"fromYear": 2012, "throughMonth": "2026-08", "missingYears": [2013, 2015]},
-  "musicAudio": {"playbackEvents": 250327, "eventsAtLeast30Seconds": 187592, "millisecondsPlayed": 49147249496},
+  "coverage": {
+    "fromYear": 2012,
+    "throughMonth": "2026-08",
+    "missingYears": [
+      2013,
+      2015
+    ]
+  },
+  "musicAudio": {
+    "playbackEvents": 249700,
+    "eventsAtLeast30Seconds": 187047,
+    "millisecondsPlayed": 48827014344
+  },
   "scope": "Music audio across two personal accounts. Podcasts and music video are excluded.",
-  "method": "Recorded playback includes short and skipped events. Listening time is the provider's recorded duration, not proof of attention or completed tracks. Coverage has gaps and is not a complete lifetime total. Same-account exact duplicate records were removed. Last.fm counts are separate and are not added to this summary."
+  "method": "Recorded playback includes short and skipped events. Listening time is the provider's recorded duration, not proof of attention or completed tracks. Coverage has gaps and is not a complete lifetime total. Same-account playbacks with identical track, platform, stop time and duration are counted once, including records whose offline/shuffle/reason flags differ. YouTube and Last.fm supply no duration and are not added to this time summary."
 }

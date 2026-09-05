@@ -147,7 +147,7 @@ function ProjectShowcase() {
   );
 }
 
-export function EditorialHomeConcept({ initialCatalogue, refreshedAt }) {
+export function EditorialHomeConcept({ initialCatalogue, refreshedAt, podcasts }) {
   return (
     <div className="concept-page">
       <header className="page-grid concept-hero">
@@ -174,7 +174,7 @@ export function EditorialHomeConcept({ initialCatalogue, refreshedAt }) {
       </section>
 
       <CareerBar />
-      <TasteLibrary initialCatalogue={initialCatalogue} refreshedAt={refreshedAt} />
+      <TasteLibrary initialCatalogue={initialCatalogue} refreshedAt={refreshedAt} podcasts={podcasts} />
     </div>
   );
 }

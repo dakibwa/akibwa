@@ -15,7 +15,6 @@ import {
   tasteItemHash,
   resolveTasteItem,
 } from "../components/taste-identity.mjs";
-import { listeningLabel, rankPodcasts } from "../components/listening-label.mjs";
 // The application is not a Node ESM package; load this self-contained browser
 // helper as ESM without changing the repository's package module convention.
 const { readSessionJson, fetchSessionJson } = await import(
@@ -305,24 +304,11 @@ for (const category of ["career", "films", "games", "tv", "podcasts"])
   }
 assert(curation.career.every((job) => job.statement && job.emphasis.every((term) => job.statement.includes(term))));
 assert(new Set(curation.podcasts.map((show) => show.title)).size === curation.podcasts.length);
-assert(curation.podcasts.every((show) => (show.listens === null || validCount(show.listens) !== null) && validCount(show.appleEpisodes) !== null));
-const podcastFixture = [
-  { title: "Unknown", listens: null, appleEpisodes: 0 },
-  { title: "Apple only", listens: null, appleEpisodes: 5 },
-  { title: "Zero", listens: 0, appleEpisodes: 0 },
-  { title: "Most", listens: 8, appleEpisodes: 2 },
-];
-assert.deepEqual(rankPodcasts(podcastFixture).map((row) => row.title), ["Most", "Zero", "Apple only", "Unknown"]);
-assert.equal(listeningLabel({ kind: "music", plays: 0 }).value, "0");
-assert.equal(listeningLabel({ kind: "music", plays: null }).label, "No matched count");
-const bothProviders = listeningLabel({ kind: "podcasts", listens: 8, appleEpisodes: 2 });
-assert.equal(bothProviders.value, "8", "Apple episodes are not added to Spotify starts");
-assert.equal(bothProviders.extra, "Apple: 2 episodes");
-assert.equal(listeningLabel({ kind: "podcasts", listens: null, appleEpisodes: 0 }).label, "No recorded count");
+assert(curation.podcasts.every((show) => !("listens" in show) && !("appleEpisodes" in show)), "curation must not retain stale provider-only counts");
 assert.deepEqual(summary.musicAudio, {
-  playbackEvents: 250327,
-  eventsAtLeast30Seconds: 187592,
-  millisecondsPlayed: 49147249496,
+  playbackEvents: 249700,
+  eventsAtLeast30Seconds: 187047,
+  millisecondsPlayed: 48827014344,
 });
 assert.deepEqual(summary.coverage.missingYears, [2013, 2015]);
 console.log(

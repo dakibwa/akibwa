@@ -6,7 +6,7 @@
 
 import { execSync, spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -30,6 +30,12 @@ const check = (ok, message) => {
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const capture = async (name) => {
+  if (!process.env.CHECK_NAV_CAPTURE_DIR) return;
+  mkdirSync(process.env.CHECK_NAV_CAPTURE_DIR, { recursive: true });
+  const { data } = await cdp.send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(process.env.CHECK_NAV_CAPTURE_DIR, `${name}.png`), Buffer.from(data, "base64"));
+};
 
 const mime = {
   ".html": "text/html",
@@ -201,26 +207,31 @@ const evaluate = async (expression) => {
 
 const goto = async (path = "/") => {
   const loaded = cdp.waitFor("Page.loadEventFired");
-  await cdp.send("Page.navigate", { url: `${origin}${path}` });
+  const navigation = await cdp.send("Page.navigate", { url: `${origin}${path}` });
+  if (!navigation.loaderId) await cdp.send("Page.reload");
   await loaded;
   await sleep(300);
 };
 
-const setDesktop = (width = 1440, height = 900) =>
-  cdp.send("Emulation.setDeviceMetricsOverride", {
+const setDesktop = async (width = 1440, height = 900) => {
+  await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
     width,
     height,
     deviceScaleFactor: 1,
     mobile: false
   });
+};
 
-const setMobile = () =>
-  cdp.send("Emulation.setDeviceMetricsOverride", {
+const setMobile = async () => {
+  await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 1 });
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
     width: 390,
     height: 844,
     deviceScaleFactor: 2,
     mobile: true
   });
+};
 
 const publicLandingState = () =>
   evaluate(`(() => {
@@ -390,7 +401,8 @@ const checkPublicLanding = async () => {
   })()`);
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...pointer});
   await sleep(180);
-  check(await evaluate('getComputedStyle(document.querySelector(".listening-hover")).visibility === "visible" && !document.querySelector("dialog[open]")'), "hover reveals a sourced count without opening the album");
+  check(await evaluate('getComputedStyle(document.querySelector(".listening-hover")).visibility === "visible" && !document.querySelector("dialog[open]")'), "hover reveals the combined count without opening the album");
+  await capture("music-hover-desktop");
   await evaluate('document.querySelector(".taste-load-more").click()');
   await sleep(200);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
@@ -401,9 +413,12 @@ const checkPublicLanding = async () => {
     await evaluate('document.querySelector(".taste-load-more").click()');
     await sleep(120);
   }
-  const expectedPodcasts = JSON.parse(readFileSync(new URL('../data/taste-curation.json', import.meta.url))).podcasts.length;
+  const listeningPacket = JSON.parse(readFileSync(new URL('../public/listening-catalogue.json', import.meta.url)));
+  const expectedPodcasts = listeningPacket.podcasts.length;
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length') === expectedPodcasts, "the complete podcast shelf is reachable");
   check(await ranked(), "podcasts are ranked by their recorded listens");
+  await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=0;document.querySelector("#taste").scrollIntoView({block:"center",behavior:"instant"});');
+  await capture("podcasts-desktop");
   await goto('/');
 
   section("mobile public boundary");
@@ -426,23 +441,31 @@ const checkPublicLanding = async () => {
     state.directEmailLinks.length === 0 && state.socialLinks.length === 2,
     "mobile HTML preserves private email handling and approved social links"
   );
+  await evaluate('document.querySelectorAll(".taste-filters button")[5].click();document.querySelector("#taste").scrollIntoView({block:"end",behavior:"instant"});');
+  await sleep(180);
+  check(await evaluate('matchMedia("(hover:none)").matches && getComputedStyle(document.querySelector(".listening-hover")).visibility === "visible"'), "touch devices show counts without needing hover or a detail panel");
+  await capture("podcasts-mobile");
 
   section("collection interaction");
   await setDesktop();
   await goto("/");
+  await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
+  await sleep(250);
+  const expectedFirst = listeningPacket.albums[0];
+  check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === expectedFirst.plays, "the shelf uses the combined history count instead of the Last.fm snapshot");
+  check(await evaluate('[...document.querySelectorAll(".listening-hover")].every(el=>!/last[.]?fm|spotify|apple|youtube/i.test(el.textContent))'), "album hover labels contain no provider branding");
   await evaluate('document.querySelector(".personal-taste-card").focus(); document.querySelector(".personal-taste-card").click()');
   await sleep(100);
-  check(await evaluate('!!document.querySelector("dialog[open]") && document.body.style.overflow === "hidden"'), "taste detail opens as a modal and locks background scrolling");
-  check(await evaluate('!document.querySelector("dialog .listening-hover, dialog .archive-count")'), "listening counts stay on hover and out of the opened detail");
-  const tasteIdentity=await evaluate(`(() => ({hash:location.hash,title:document.querySelector('dialog h2').textContent,albumId:decodeURIComponent(new URL(document.querySelector('dialog a').href).hash.slice(7))}))()`);
-  check(tasteIdentity.hash === '#taste-item=music:'+encodeURIComponent(tasteIdentity.albumId), 'taste music deep links use the catalogue ID rather than the title');
-  await evaluate('history.back()');
-  await sleep(200);
-  check(await evaluate('!document.querySelector("dialog[open]") && document.activeElement.matches(".personal-taste-card")'), "browser back closes taste details and restores focus");
-  await goto("/albums/");
-  await goto('/'+tasteIdentity.hash);
-  const reloaded=cdp.waitFor('Page.loadEventFired');await cdp.send('Page.reload');await reloaded;await sleep(200);
-  check(await evaluate('document.querySelector("dialog h2")?.textContent') === tasteIdentity.title, 'reloading a stable-ID taste link restores the same album');
+  check(await evaluate('!document.querySelector("dialog") && !location.hash && document.body.style.overflow !== "hidden" && document.querySelector(".personal-taste-card").tagName === "ARTICLE"'), "album cards have no click-through, modal, URL change or scroll lock");
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
+  check(await evaluate('!document.querySelector("dialog") && !location.hash'), "Enter reads the focused count without opening details");
+  await evaluate('document.querySelectorAll(".taste-filters button")[5].click(); document.querySelector(".personal-taste-card").click()');
+  await sleep(100);
+  check(await evaluate('!document.querySelector("dialog") && !location.hash'), "podcast cards also have no click-through");
+  check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === listeningPacket.podcasts[0].plays, "podcast counts include the available YouTube and Apple evidence");
+  await goto('/#taste-item=music:043');
+  check(await evaluate('!document.querySelector("dialog")'), "old Taste detail links cannot reopen the removed modal");
   await goto('/albums/');
   check(await evaluate('document.querySelectorAll(".album-browser-card").length === 36'), "the archive mounts only one page of covers");
   check(await evaluate('document.querySelector(\'meta[name="robots"]\').content.includes("noindex")'), "the full archive remains noindex");
@@ -450,34 +473,33 @@ const checkPublicLanding = async () => {
     await evaluate(`(() => { const input=document.querySelector('input[type="search"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)}); input.dispatchEvent(new Event('input',{bubbles:true})); })()`);
     await sleep(100);
   };
-  await setSearch('Graceland');
-  check(await evaluate('document.querySelectorAll(".album-browser-card").length === 1 && document.querySelector(".album-browser-card").textContent.includes("Paul Simon")'), "artist and album search selects the correct record");
+  await setSearch('Paul Simon Graceland');
+  check(await evaluate('[...document.querySelectorAll(".album-browser-card")].every(card=>card.textContent.includes("Paul Simon") && card.querySelector(":scope > strong").textContent.includes("Graceland")) && document.querySelector(".album-browser-card > strong").textContent === "Graceland"'), "artist and album search finds Graceland and keeps its remix release distinct");
   await setSearch('no such record qzx');
   check(await evaluate('!document.querySelector(".album-browser-card") && !!document.querySelector(".album-empty")'), "an empty search has a usable recovery state");
   await evaluate('document.querySelector(".album-empty button").click()');
   await sleep(100);
   check(await evaluate('document.querySelectorAll(".album-browser-card").length === 36'), "clearing an empty search restores the catalogue");
   await evaluate('document.querySelector(".album-browser-card").focus(); document.querySelector(".album-browser-card").click()');
-  await sleep(100);
-  const initialAlbum = await evaluate('location.hash');
-  check(await evaluate('!!document.querySelector("dialog[open]") && document.activeElement.matches(".archive-close")'), "album detail moves focus to its close control");
-  check(await evaluate('!document.querySelector("dialog .archive-count, dialog .archive-count-note")'), "the full archive also keeps counts out of clicked details");
-  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Tab",code:"Tab",windowsVirtualKeyCode:9,modifiers:8});
-  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Tab",code:"Tab",windowsVirtualKeyCode:9,modifiers:8});
-  check(await evaluate('!!document.activeElement.closest("dialog")'), "backward keyboard focus stays inside the modal");
-  await evaluate('document.querySelectorAll(".album-detail-nav button")[1].click()');
-  await sleep(100);
-  check(await evaluate('location.hash') !== initialAlbum, "next detail changes the stable album identifier");
-  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
-  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
-  await sleep(200);
-  check(await evaluate('!document.querySelector("dialog[open]") && !location.hash && document.activeElement.matches(".album-browser-card")'), "Escape closes the album and restores its opener");
-  await goto("/");
-  await goto(`/albums/${initialAlbum}`);
-  await evaluate('document.querySelectorAll(".album-detail-nav button")[1].click()');
-  await evaluate('document.querySelector(".archive-close").click()');
-  await sleep(200);
-  check(await evaluate('location.pathname === "/albums/" && !location.hash && !document.querySelector("dialog[open]")'), "closing a stepped direct link stays in the archive");
+  check(await evaluate('!document.querySelector("dialog") && !location.hash && document.activeElement.matches(".album-browser-card")'), "archive cards retain readable keyboard focus without opening details");
+  await goto('/albums/#album=043');
+  check(await evaluate('!document.querySelector("dialog")'), "old album hashes cannot reopen details");
+  const unpictured = listeningPacket.albums.find(album=>!album.artwork && album.artist && album.album && !album.album.includes("'"));
+  await setSearch(unpictured.artist + ' ' + unpictured.album);
+  check(await evaluate('!!document.querySelector(".album-browser-card .podcast-type-cover")'), "an older album without a verified cover uses a readable typographic sleeve");
+
+  section("catalogue loading failure");
+  await cdp.send("Network.enable");
+  await cdp.send("Network.setBlockedURLs", { urls: [`${origin}/listening-catalogue.json`] });
+  await evaluate('sessionStorage.removeItem("akibwa:remote:/listening-catalogue.json")');
+  await goto('/');
+  await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
+  await sleep(300);
+  check(await evaluate('document.querySelector(".taste-load-status")?.textContent.includes("couldn’t load") && document.querySelectorAll(".personal-taste-card").length >= 36'), "a failed full-history fetch retains the opening shelf and offers a retry");
+  await cdp.send("Network.setBlockedURLs", { urls: [] });
+  await evaluate('document.querySelector(".taste-load-status button").click()');
+  for (let attempt=0;attempt<30 && await evaluate('!!document.querySelector(".taste-load-status")');attempt++) await sleep(100);
+  check(await evaluate('!document.querySelector(".taste-load-status")'), "retry recovers the full album catalogue");
 
   section("detailed routes");
   await setDesktop();

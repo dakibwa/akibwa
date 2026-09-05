@@ -1,6 +1,7 @@
 import { EditorialHomeConcept } from "@/components/pages/editorial-home-concept";
-import { albumCatalogue } from "@/components/album-catalogue.mjs";
-import albums from "@/data/album-wall.json";
+import { listeningSeed } from "@/components/listening-catalogue.mjs";
+import listening from "@/public/listening-catalogue.json";
+import curation from "@/data/taste-curation.json";
 
 export const metadata = {
   title: { absolute: "Akibwa" },
@@ -22,11 +23,12 @@ export const metadata = {
 };
 
 export default function IndexPage() {
-  const catalogue = albumCatalogue(albums);
+  const catalogue = listeningSeed(listening, curation.albumIds);
   return (
     <EditorialHomeConcept
       initialCatalogue={catalogue}
-      refreshedAt={albums.refreshedAt}
+      refreshedAt={listening.asOf}
+      podcasts={listening.podcasts}
     />
   );
 }

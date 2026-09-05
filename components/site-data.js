@@ -9,12 +9,6 @@ export function getPublicSurface(id) {
 
 const coverCollisionSurface = getPublicSurface("cover-collision");
 
-export const albumPlaysDataUrl = (
-  process.env.NEXT_PUBLIC_ALBUM_PLAYS_DATA_URL ||
-  getPublicSurface("albums")?.refresh?.dataUrl ||
-  "https://akibwa-albums-refresh.dakibwa.workers.dev/albums"
-).trim();
-
 /* The refresh worker behind this was deleted on 27 August 2026 with the rest of
    the stale ones, and the url outlived it: every visit to /projects/cover-collision/
    still fetched a workers.dev host that answers 404, which the browser reports as
