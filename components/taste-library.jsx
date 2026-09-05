@@ -1,8 +1,12 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlbumArtImage, SiteImage } from "./site-image";
 import { MediaDialog } from "./media-dialog";
 import curation from "@/data/taste-curation.json";
+import { browseAlbums } from "./album-catalogue.mjs";
+import { useAlbumCatalogue } from "./use-album-catalogue";
+import { rankPodcasts } from "./listening-label.mjs";
+import { ListeningHover, listeningDescription } from "./listening-hover";
 import {
   tasteItemKey,
   tasteItemHash,
@@ -22,37 +26,79 @@ const editorialArt = (src) =>
     .replace("/film-posters/", "/taste-art/films/")
     .replace("/game-covers/", "/taste-art/games/")
     .replace("/tv-posters/", "/taste-art/tv/");
-export function TasteLibrary({ albumPreview, albumCount }) {
+function TasteArtwork({ item, large = false }) {
+  if (item.kind === "music") {
+    return <AlbumArtImage id={item.id} rung={large ? "card" : "wall"} alt="" priority={large} />;
+  }
+  if (item.art) {
+    return <SiteImage
+      src={editorialArt(item.art)}
+      slot={item.kind === "podcasts" ? "podcastArt" : "tasteArt"}
+      sizes={large ? "(max-width:600px) 320px, 442px" : "(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"}
+      alt=""
+    />;
+  }
+  const tint = [...item.title].reduce((sum, letter) => sum + letter.charCodeAt(0), 0) % 6;
+  return <span className={`podcast-type-cover podcast-type-cover-${tint}`} aria-hidden="true">
+    <small>Podcast</small>
+    <strong>{item.title}</strong>
+    <span>◉</span>
+  </span>;
+}
+
+export function TasteLibrary({ initialCatalogue, refreshedAt }) {
   const [category, setCategory] = useState("all"),
-    [selected, setSelected] = useState(null);
+    [selectedHash, setSelectedHash] = useState(""),
+    [visibleCount, setVisibleCount] = useState(36);
   const rail = useRef(null);
-  const music = albumPreview.map((album) => ({
+  const more = useRef(null);
+  const catalogue = useAlbumCatalogue(initialCatalogue, refreshedAt);
+  const music = useMemo(() => browseAlbums(catalogue).map((album) => ({
     ...album,
     title: album.album,
     creator: album.artist,
     kind: "music",
-  }));
+  })), [catalogue]);
   const lists = {
     music,
     ...Object.fromEntries(
-      ["films", "games", "tv", "podcasts"].map((kind) => [
+      ["films", "games", "tv"].map((kind) => [
         kind,
         curation[kind].map((item) => ({ ...item, kind })),
       ]),
     ),
+    podcasts: rankPodcasts(curation.podcasts).map((item) => ({ ...item, kind: "podcasts" })),
+  };
+  // Highlights retains the mixed editorial selection. Within each listening
+  // medium its chosen records follow the same descending counts as the shelf.
+  const highlights = {
+    ...lists,
+    music: music.filter((item) => curation.albumIds.includes(item.id)).slice(0, 4),
   };
   const mixed = Array.from({ length: 12 }, (_, index) => {
     const kind = ["music", "films", "music", "games", "tv", "podcasts"][
       index % 6
     ];
-    return lists[kind][
-      Math.floor(index / 6) + (kind === "music" && index % 6 === 2 ? 2 : 0)
+    return highlights[kind][
+      kind === "music"
+        ? Math.floor(index / 6) * 2 + (index % 6 === 2 ? 1 : 0)
+        : Math.floor(index / 6)
     ];
   }).filter(Boolean);
   const list = category === "all" ? mixed : lists[category];
+  const visible = list.slice(0, visibleCount);
+  const selected = resolveTasteItem(selectedHash, catalogue, curation);
+  useEffect(() => {
+    if (!more.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setVisibleCount((count) => count + 36);
+    }, { root: rail.current, rootMargin: "0px 240px 0px 0px" });
+    observer.observe(more.current);
+    return () => observer.disconnect();
+  }, [category, visibleCount]);
   useEffect(() => {
     const sync = () => {
-      setSelected(resolveTasteItem(location.hash, albumPreview, curation));
+      setSelectedHash(location.hash);
     };
     sync();
     window.addEventListener("popstate", sync);
@@ -61,20 +107,20 @@ export function TasteLibrary({ albumPreview, albumCount }) {
       window.removeEventListener("popstate", sync);
       window.removeEventListener("hashchange", sync);
     };
-  }, [albumPreview]);
+  }, []);
   const open = (item) => {
     history.pushState(
       { ...history.state, tasteDialog: true },
       "",
       tasteItemHash(item),
     );
-    setSelected(item);
+    setSelectedHash(tasteItemHash(item));
   };
   const close = () => {
     if (history.state?.tasteDialog) history.back();
     else {
       history.replaceState(history.state, "", "#taste");
-      setSelected(null);
+      setSelectedHash("");
     }
   };
   return (
@@ -87,10 +133,6 @@ export function TasteLibrary({ albumPreview, albumCount }) {
         <div className="concept-archive-head">
           <h2 id="taste-title">Taste Library</h2>
         </div>
-        <a className="archive-link" href="/albums/">
-          Browse all {albumCount.toLocaleString("en-GB")} albums{" "}
-          <span aria-hidden="true">↗</span>
-        </a>
       </header>
       <nav className="taste-filters deck-legend" aria-label="Browse the taste library">
         {groups.map(([id, label, accent]) => (
@@ -102,6 +144,7 @@ export function TasteLibrary({ albumPreview, albumCount }) {
             aria-pressed={category === id}
             onClick={() => {
               setCategory(id);
+              setVisibleCount(36);
               if (rail.current) rail.current.scrollLeft = 0;
             }}
           >
@@ -110,51 +153,41 @@ export function TasteLibrary({ albumPreview, albumCount }) {
         ))}
       </nav>
       <div className="personal-taste-rail" ref={rail}>
-        {list.map((item) => (
+        {visible.map((item) => (
           <button
             className="personal-taste-card"
             type="button"
             key={`${item.kind}-${tasteItemKey(item)}`}
             onClick={() => open(item)}
-            aria-label={`${item.title}, ${item.creator}. Open details`}
+            aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)} Open details`}
+            data-listens={item.kind === "music" ? item.plays : item.listens}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") event.currentTarget.dataset.countDismissed = "true";
+            }}
+            onMouseLeave={(event) => { delete event.currentTarget.dataset.countDismissed; }}
+            onBlur={(event) => { delete event.currentTarget.dataset.countDismissed; }}
           >
             <span className="personal-taste-art">
-              {item.kind === "music" ? (
-                <AlbumArtImage id={item.id} rung="wall" alt="" />
-              ) : (
-                <SiteImage
-                  src={editorialArt(item.art)}
-                  slot={item.kind === "podcasts" ? "deckTile" : "tasteArt"}
-                  sizes="(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"
-                  alt=""
-                />
-              )}
+              <TasteArtwork item={item} />
+              <ListeningHover item={item} />
             </span>
             <span className="personal-taste-title">{item.title}</span>
-            <span className="personal-taste-creator">{item.creator}</span>
+            {item.creator ? <span className="personal-taste-creator">{item.creator}</span> : null}
           </button>
         ))}
+        {visible.length < list.length ? (
+          <button className="taste-load-more" type="button" ref={more} onClick={() => setVisibleCount((count) => count + 36)}>
+            More {category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
+          </button>
+        ) : null}
       </div>
-      <p className="taste-source-note">
-        {category === "music"
-          ? "A few favourites. The album archive has the full collection and listening history."
-          : "A few things I keep coming back to. Scroll to explore, or open a cover."}
-      </p>
       {selected ? (
         <MediaDialog
-          title={`${selected.title} — ${selected.creator}`}
+          title={`${selected.title}${selected.creator ? ` — ${selected.creator}` : ""}`}
           onClose={close}
         >
           <div className="archive-detail-art">
-            {selected.kind === "music" ? (
-              <AlbumArtImage id={selected.id} rung="card" alt="" priority />
-            ) : (
-              <SiteImage
-                src={editorialArt(selected.art)}
-                slot={selected.kind === "podcasts" ? "deckTile" : "tasteArt"}
-                alt=""
-              />
-            )}
+            <TasteArtwork item={selected} large />
           </div>
           <div className="archive-detail-copy">
             <p className="archive-eyebrow">

@@ -79,6 +79,10 @@ const SLOTS = {
   // and 176 on the widest frames.
   deckTile: { ratio: 1, css: [92, 133, 176] },
 
+  // The horizontal podcast rail and its opened artwork share an identity,
+  // with a larger rung reserved for the dialog.
+  podcastArt: { ratio: 1, css: [104, 136, 442] },
+
   // Title-specific editorial art behind the original cover on the large,
   // wide and tall Taste quilt cards. The source is 3:2 and remains 3:2 here;
   // each card applies its final object-fit crop because one source serves all
@@ -331,6 +335,10 @@ for (const directory of ["taste-art/films", "taste-art/games", "taste-art/tv"]) 
     .filter((file) => file.endsWith(".webp"))
     .sort();
   for (const file of files) sources.push({ file: `${directory}/${file}`, slot: "tasteArt" });
+}
+
+for (const file of (await readdir(path.join(publicDir, "podcast-covers"))).filter((file) => file.endsWith(".webp")).sort()) {
+  sources.push({ file: `podcast-covers/${file}`, slot: "podcastArt" });
 }
 
 /*

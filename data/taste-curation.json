@@ -1,5 +1,5 @@
 {
-  "source": "Curated choices and public career restored selectively from 78e3ec8a parent; no private life data.",
+  "source": "Career roles and statements restored from the previously public site at Dan’s request. Cultural choices and per-show listening aggregates only; no raw events or private life data.",
   "career": [
     {
       "name": "Freelance",
@@ -7,7 +7,14 @@
       "span": "Now",
       "accent": "#c05212",
       "logo": "/favicon.svg",
-      "tile": true
+      "tile": true,
+      "statement": "Built client websites for Butterfly Rose and Português com a Inês to support their businesses.",
+      "emphasis": [
+        "client websites",
+        "Butterfly Rose",
+        "Português com a Inês",
+        "support their businesses"
+      ]
     },
     {
       "name": "National Wealth Fund",
@@ -15,7 +22,12 @@
       "span": "2024 — present",
       "accent": "#732740",
       "logo": "/brand-logos/national-wealth-fund-icon.png",
-      "tile": false
+      "tile": false,
+      "statement": "Built the Microsoft Fabric data platform to support UK growth and clean energy.",
+      "emphasis": [
+        "Microsoft Fabric",
+        "UK growth and clean energy"
+      ]
     },
     {
       "name": "Leeds Building Society",
@@ -23,7 +35,13 @@
       "span": "2023 — 2024",
       "accent": "#2f88ff",
       "logo": "/brand-logos/leeds-building-society-icon.svg",
-      "tile": false
+      "tile": false,
+      "statement": "Led the BI team and improved its data tools to help more people own a home.",
+      "emphasis": [
+        "BI team",
+        "data tools",
+        "own a home"
+      ]
     },
     {
       "name": "Electrical Work",
@@ -31,7 +49,12 @@
       "span": "2022 — 2023",
       "accent": "#7657d5",
       "logo": "/brand-logos/electrical.svg",
-      "tile": false
+      "tile": false,
+      "statement": "Assisted with electrical testing and warehouse fit-outs to keep commercial sites safe and ready.",
+      "emphasis": [
+        "electrical testing",
+        "warehouse fit-outs"
+      ]
     },
     {
       "name": "Sky Betting & Gaming",
@@ -39,7 +62,13 @@
       "span": "2020 — 2022",
       "accent": "#d01fcb",
       "logo": "/brand-logos/sky-betting-gaming-logo.png",
-      "tile": true
+      "tile": true,
+      "statement": "Built Power BI reports to analyse safer gambling and make betting and gaming safer.",
+      "emphasis": [
+        "Power BI",
+        "safer gambling",
+        "betting and gaming safer"
+      ]
     },
     {
       "name": "Joinery Work",
@@ -47,7 +76,12 @@
       "span": "2020",
       "accent": "#9a6038",
       "logo": "/brand-logos/joinery.svg",
-      "tile": false
+      "tile": false,
+      "statement": "Assisted with joinery to build and fit homes well.",
+      "emphasis": [
+        "joinery",
+        "build and fit homes well"
+      ]
     },
     {
       "name": "Vanquis Bank",
@@ -55,7 +89,13 @@
       "span": "2018 — 2019",
       "accent": "#f15a24",
       "logo": "/brand-logos/vanquis-icon.svg",
-      "tile": false
+      "tile": false,
+      "statement": "Built cost and NPV models in SQL to make banking more accessible.",
+      "emphasis": [
+        "cost and NPV models",
+        "SQL",
+        "banking more accessible"
+      ]
     },
     {
       "name": "Lloyds Banking Group",
@@ -63,7 +103,12 @@
       "span": "2016 — 2017",
       "accent": "#006747",
       "logo": "/brand-logos/lloyds-horse-icon.png",
-      "tile": false
+      "tile": false,
+      "statement": "Built default and cure models to support credit-risk decisions.",
+      "emphasis": [
+        "default and cure models",
+        "credit-risk decisions"
+      ]
     }
   ],
   "albumIds": [
@@ -775,46 +820,896 @@
   ],
   "podcasts": [
     {
+      "title": "The Joe Rogan Experience",
+      "listens": 1076,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-e1d9c972bccb.webp",
+      "creator": "Joe Rogan",
+      "href": "https://podcasts.apple.com/gb/podcast/the-joe-rogan-experience/id360084272?uo=4"
+    },
+    {
       "title": "Making Sense",
       "creator": "Sam Harris",
       "art": "/podcast-covers/making-sense.webp",
-      "href": "https://www.samharris.org/podcasts"
-    },
-    {
-      "title": "Huberman Lab",
-      "creator": "Andrew Huberman",
-      "art": "/podcast-covers/huberman-lab.webp",
-      "href": "https://www.hubermanlab.com/podcast"
-    },
-    {
-      "title": "Dwarkesh Podcast",
-      "creator": "Dwarkesh Patel",
-      "art": "/podcast-covers/dwarkesh-podcast.webp",
-      "href": "https://www.dwarkesh.com/"
+      "href": "https://www.samharris.org/podcasts",
+      "listens": 375,
+      "appleEpisodes": 1
     },
     {
       "title": "Lex Fridman Podcast",
       "creator": "Lex Fridman",
       "art": "/podcast-covers/lex-fridman-podcast.webp",
-      "href": "https://lexfridman.com/podcast/"
+      "href": "https://lexfridman.com/podcast/",
+      "listens": 342,
+      "appleEpisodes": 7
     },
     {
-      "title": "All-In Podcast",
-      "creator": "Chamath Palihapitiya, Jason Calacanis, David Sacks & David Friedberg",
-      "art": "/podcast-covers/all-in-podcast.webp",
-      "href": "https://www.youtube.com/@allin"
+      "title": "The Rich Roll Podcast",
+      "listens": 320,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-72dd5bd5bea6.webp",
+      "creator": "Rich Roll",
+      "href": "https://podcasts.apple.com/gb/podcast/the-rich-roll-podcast/id582272991?uo=4"
     },
     {
-      "title": "Within Reason",
-      "creator": "Alex O'Connor",
-      "art": "/podcast-covers/within-reason.webp",
-      "href": "https://www.alexoconnor.com/"
+      "title": "The Energy Balance Podcast",
+      "listens": 136,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-4ee146126bf0.webp",
+      "creator": "Jay Feldman Wellness",
+      "href": "https://podcasts.apple.com/gb/podcast/the-energy-balance-podcast/id1506669723?uo=4"
+    },
+    {
+      "title": "Game Scoop!",
+      "listens": 131,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-3942727b66e0.webp",
+      "creator": "IGN & Geek Media",
+      "href": "https://podcasts.apple.com/gb/podcast/game-scoop/id276268226?uo=4"
+    },
+    {
+      "title": "Huberman Lab",
+      "creator": "Andrew Huberman",
+      "art": "/podcast-covers/huberman-lab.webp",
+      "href": "https://www.hubermanlab.com/podcast",
+      "listens": 97,
+      "appleEpisodes": 1
+    },
+    {
+      "title": "Generative Energy Podcast",
+      "listens": 62,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-bce42cbae396.webp",
+      "creator": "Danny Roddy",
+      "href": "https://podcasts.apple.com/gb/podcast/generative-energy-podcast/id1525148857?uo=4"
+    },
+    {
+      "title": "Podcast Beyond - IGN's PlayStation Show",
+      "listens": 59,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-71e1378b9bb4.webp",
+      "creator": "IGN & Geek Media",
+      "href": "https://podcasts.apple.com/gb/podcast/beyond/id276268070"
+    },
+    {
+      "title": "Human Performance Outliers Podcast",
+      "listens": 49,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-2e6737e629e8.webp",
+      "creator": "Zach Bitter",
+      "href": "https://podcasts.apple.com/gb/podcast/human-performance-outliers-podcast-with-zach-bitter/id1363389413?uo=4"
+    },
+    {
+      "title": "Paul Saladino MD podcast",
+      "listens": 48,
+      "appleEpisodes": 3,
+      "art": "/podcast-covers/pod-9ed60f3cfce4.webp",
+      "creator": "Paul Saladino, MD",
+      "href": "https://podcasts.apple.com/gb/podcast/paul-saladino-md-podcast/id1461771083?uo=4"
+    },
+    {
+      "title": "Ben Greenfield Life",
+      "listens": 40,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-ba9f3c7362ec.webp",
+      "creator": "Ben Greenfield",
+      "href": "https://podcasts.apple.com/gb/podcast/boundless-life/id283908977?uo=4"
+    },
+    {
+      "title": "Athletico Mince",
+      "listens": 38,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-03799b37dfa3.webp",
+      "creator": "Bob Mortimer & Andy Dawson",
+      "href": "https://podcasts.apple.com/gb/podcast/athletico-mince/id1091337608?uo=4"
+    },
+    {
+      "title": "Dwarkesh Podcast",
+      "creator": "Dwarkesh Patel",
+      "art": "/podcast-covers/dwarkesh-podcast.webp",
+      "href": "https://www.dwarkesh.com/",
+      "listens": 34,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "The Minimalists",
+      "listens": 33,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-7db04b421bac.webp",
+      "creator": "Joshua Fields Millburn, Ryan Nicodemus, T.K. Coleman",
+      "href": "https://podcasts.apple.com/gb/podcast/the-minimalists/id1069757084?uo=4"
+    },
+    {
+      "title": "Mark Bell's Power Project",
+      "listens": 28,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-6112be32b526.webp",
+      "creator": "Power Project Studios",
+      "href": "https://podcasts.apple.com/gb/podcast/mark-bells-power-project/id1341346059?uo=4"
+    },
+    {
+      "title": "The Jordan B. Peterson Podcast",
+      "listens": 28,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-2dfdf37e63c2.webp",
+      "creator": "Dr. Jordan B. Peterson",
+      "href": "https://podcasts.apple.com/gb/podcast/the-jordan-b-peterson-podcast/id1184022695?uo=4"
+    },
+    {
+      "title": "Weight Loss For Women: empowering health, strength and nourishment",
+      "listens": 27,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-45fd72f76c22.webp",
+      "creator": "Kitty Blomfield",
+      "href": "https://podcasts.apple.com/gb/podcast/weight-loss-for-women-empowering-health-strength-and/id1488713797?uo=4"
+    },
+    {
+      "title": "2 Bears, 1 Cave with Tom Segura & Bert Kreischer",
+      "listens": 25,
+      "appleEpisodes": 2,
+      "art": "/podcast-covers/pod-ba256206d4d8.webp",
+      "creator": "YMH Studios",
+      "href": "https://podcasts.apple.com/gb/podcast/2-bears-1-cave-with-tom-segura-bert-kreischer/id1468013270?uo=4"
+    },
+    {
+      "title": "The Peter Attia Drive",
+      "listens": 24,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-d5694230d2b5.webp",
+      "creator": "Peter Attia, MD",
+      "href": "https://podcasts.apple.com/gb/podcast/the-peter-attia-drive/id1400828889?uo=4"
     },
     {
       "title": "Moonshots",
       "creator": "Peter Diamandis",
       "art": "/podcast-covers/moonshots.webp",
-      "href": "https://www.diamandis.com/podcast"
+      "href": "https://www.diamandis.com/podcast",
+      "listens": 20,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Nothing much happens: bedtime stories to help you sleep",
+      "listens": 20,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-6db1897f2579.webp",
+      "creator": "Wellness Loud",
+      "href": "https://podcasts.apple.com/gb/podcast/nothing-much-happens-bedtime-stories-to-help-you-sleep/id1378040733?uo=4"
+    },
+    {
+      "title": "Under The Skin with Russell Brand",
+      "listens": 13,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-5927e1ca4bb1.webp",
+      "creator": "Russell Brand",
+      "href": "https://podcasts.apple.com/gb/podcast/under-the-skin-with-russell-brand/id1212064750?uo=4"
+    },
+    {
+      "title": "Fast Keto with Ketogenic Girl",
+      "listens": 11,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-7a81639084f0.webp",
+      "creator": "Vanessa Spina",
+      "href": "https://podcasts.apple.com/gb/podcast/optimal-protein-podcast-with-vanessa-spina/id1344681226"
+    },
+    {
+      "title": "Mitolife Radio",
+      "listens": 11,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-db254cf1666c.webp",
+      "creator": "Matt Blackburn",
+      "href": "https://podcasts.apple.com/gb/podcast/mitolife-radio/id1454068609?uo=4"
+    },
+    {
+      "title": "Modern Wisdom",
+      "listens": 10,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-7f3bd6de6938.webp",
+      "creator": "Chris Williamson",
+      "href": "https://podcasts.apple.com/gb/podcast/modern-wisdom/id1347973549?uo=4"
+    },
+    {
+      "title": "The Scott Mys Show",
+      "listens": 10,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-e3e8dab21b56.webp",
+      "creator": "Scott Mys",
+      "href": "https://podcasts.apple.com/gb/podcast/the-scott-mys-show/id1431449603?uo=4"
+    },
+    {
+      "title": "The Louis Theroux Podcast",
+      "listens": 9,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-3c023d5e94eb.webp",
+      "creator": "Spotify Studios",
+      "href": "https://podcasts.apple.com/gb/podcast/the-louis-theroux-podcast/id1725833532?uo=4"
+    },
+    {
+      "title": "Grounded with Louis Theroux",
+      "listens": 7,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-0fc6ac6b52c5.webp",
+      "creator": "BBC Radio 4",
+      "href": "https://podcasts.apple.com/gb/podcast/grounded-with-louis-theroux/id1508985962?uo=4"
+    },
+    {
+      "title": "High Intensity Health with Mike Mutzel, MS",
+      "listens": 7,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-6ed0cfa771c7.webp",
+      "creator": "Mike Mutzel",
+      "href": "https://podcasts.apple.com/gb/podcast/high-intensity-health-with-mike-mutzel-ms/id910048041?uo=4"
+    },
+    {
+      "title": "Naval",
+      "listens": 7,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-e86ad8c989c1.webp",
+      "creator": "Naval",
+      "href": "https://podcasts.apple.com/gb/podcast/naval/id1454097755?uo=4"
+    },
+    {
+      "title": "The Intellectual Dark Web Podcast",
+      "listens": 7,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-5e065566b3ed.webp",
+      "creator": "Tri",
+      "href": "https://podcasts.apple.com/gb/podcast/intellectual-dark-web-podcast/id1377138010?uo=4"
+    },
+    {
+      "title": "Duncan Trussell Family Hour",
+      "listens": 6,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-009860ac0a83.webp",
+      "creator": "Duncan Trussell Family Hour",
+      "href": "https://podcasts.apple.com/gb/podcast/duncan-trussell-family-hour/id350580455?uo=4"
+    },
+    {
+      "title": "Song Exploder",
+      "listens": 6,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-d95ec965f180.webp",
+      "creator": "Hrishikesh Hirway",
+      "href": "https://podcasts.apple.com/gb/podcast/song-exploder/id788236947?uo=4"
+    },
+    {
+      "title": "The Candidate Lounge Podcast",
+      "listens": 6,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-19d24e5d3218.webp",
+      "creator": "Sky Betting & Gaming",
+      "href": "https://podcasts.apple.com/gb/podcast/the-candidate-lounge-podcast/id1534731073?uo=4"
+    },
+    {
+      "title": "Cheeky Pint",
+      "listens": 5,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-33804ab73313.webp",
+      "creator": "Stripe",
+      "href": "https://podcasts.apple.com/gb/podcast/cheeky-pint/id1821055332?uo=4"
+    },
+    {
+      "title": "Dr. Shawn Baker Podcast",
+      "listens": 5,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-8e2b75ede2da.webp",
+      "creator": "Dr. Shawn Baker",
+      "href": "https://podcasts.apple.com/gb/podcast/dr-shawn-baker-podcast/id1495714614?uo=4"
+    },
+    {
+      "title": "Podcast Unlocked",
+      "listens": 5,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-2fe681d88bb2.webp",
+      "creator": "IGN & Geek Media",
+      "href": "https://podcasts.apple.com/gb/podcast/unlocked/id276268454"
+    },
+    {
+      "title": "The Always Sunny Podcast",
+      "listens": 5,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Tom Bilyeu's Impact Theory",
+      "listens": 5,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-27eae38c03c6.webp",
+      "creator": "Impact Theory",
+      "href": "https://podcasts.apple.com/gb/podcast/tom-bilyeus-impact-theory/id1191775648?uo=4"
+    },
+    {
+      "title": "Broken Record with Rick Rubin, Malcolm Gladwell, Bruce Headlam and Justin Richmond",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-d36a9dd8b32e.webp",
+      "creator": "Pushkin Industries",
+      "href": "https://podcasts.apple.com/gb/podcast/broken-record-with-rick-rubin-malcolm-gladwell-bruce/id1311004083?uo=4"
+    },
+    {
+      "title": "Core Memory",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-7404f4111fe1.webp",
+      "creator": "Ashlee Vance",
+      "href": "https://podcasts.apple.com/gb/podcast/core-memory/id1789397163?uo=4"
+    },
+    {
+      "title": "David Gornoski",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-01aaf25e633a.webp",
+      "creator": "David Gornoski",
+      "href": "https://podcasts.apple.com/gb/podcast/david-gornoski/id1481399105?uo=4"
+    },
+    {
+      "title": "Feel Better, Live More with Dr Rangan Chatterjee",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-b8c6428ea7ed.webp",
+      "creator": "Dr Rangan Chatterjee: GP & Author",
+      "href": "https://podcasts.apple.com/gb/podcast/feel-better-live-more-with-dr-rangan-chatterjee/id1333552422?uo=4"
+    },
+    {
+      "title": "Knees Over Toes 15-Minute Lecture Series",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-5dba647264fb.webp",
+      "creator": "Ben Patrick",
+      "href": "https://podcasts.apple.com/gb/podcast/knees-over-toes-15-minute-lecture-series/id1515539384"
+    },
+    {
+      "title": "Low Carb MD Podcast",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-92d67e06fdb2.webp",
+      "creator": "Dr. Brian Lenzkes, Dr. Tro",
+      "href": "https://podcasts.apple.com/gb/podcast/low-carb-md-podcast/id1441557261?uo=4"
+    },
+    {
+      "title": "Red Scare",
+      "listens": 4,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-57a22e2b7cef.webp",
+      "creator": "Red Scare",
+      "href": "https://podcasts.apple.com/gb/podcast/red-scare/id1364798971?uo=4"
+    },
+    {
+      "title": "The Tim Ferriss Show",
+      "listens": 3,
+      "appleEpisodes": 1,
+      "art": "/podcast-covers/pod-6a6f48242ed8.webp",
+      "creator": "Tim Ferriss",
+      "href": "https://podcasts.apple.com/gb/podcast/the-tim-ferriss-show/id863897795?uo=4"
+    },
+    {
+      "title": "DECODED - Alfie Whattam Podcast",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-618ee48e5e6e.webp",
+      "creator": "Alfie Whattam",
+      "href": "https://podcasts.apple.com/gb/podcast/decoded-alfie-whattam-podcast/id1682763269?uo=4"
+    },
+    {
+      "title": "Fire In A Bottle, the Podcast",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-2f186c9f3c32.webp",
+      "creator": "Brad Marshall",
+      "href": "https://podcasts.apple.com/gb/podcast/fire-in-a-bottle-the-podcast/id1583828636?uo=4"
+    },
+    {
+      "title": "Members of Technical Staff",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-7bb22cb694a9.webp",
+      "creator": "Atlas Media Labs",
+      "href": "https://podcasts.apple.com/gb/podcast/members-of-technical-staff/id1840470192?uo=4"
+    },
+    {
+      "title": "One Radio Network",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-d867fcc200d0.webp",
+      "creator": "Patrick Timpone",
+      "href": "https://podcasts.apple.com/gb/podcast/one-radio-network/id410751941?uo=4"
+    },
+    {
+      "title": "Ram Dass Here And Now",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-4a700269c6f3.webp",
+      "creator": "Ram Dass / Love Serve Remember",
+      "href": "https://podcasts.apple.com/gb/podcast/ram-dass-here-and-now/id518366323?uo=4"
+    },
+    {
+      "title": "The Healthy Rebellion Radio",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-ea63bb515972.webp",
+      "creator": "Robb Wolf",
+      "href": "https://podcasts.apple.com/gb/podcast/the-healthy-rebellion-radio/id1485056754"
+    },
+    {
+      "title": "The Noah Ryan Podcast",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-08beb2e4e0da.webp",
+      "creator": "Noah Ryan",
+      "href": "https://podcasts.apple.com/gb/podcast/the-noah-ryan-show/id1720589481?uo=4"
+    },
+    {
+      "title": "This Past Weekend w/ Theo Von",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-1ccc9132f311.webp",
+      "creator": "Theo Von",
+      "href": "https://podcasts.apple.com/gb/podcast/this-past-weekend-w%2F-theo-von/id1190981360"
+    },
+    {
+      "title": "a16z Podcast",
+      "listens": 3,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-00d2a809c22e.webp",
+      "creator": "Andreessen Horowitz",
+      "href": "https://podcasts.apple.com/gb/podcast/the-a16z-show/id842818711"
+    },
+    {
+      "title": "ToKCast",
+      "listens": 2,
+      "appleEpisodes": 6,
+      "art": "/podcast-covers/pod-b497f25a4f73.webp",
+      "creator": "Brett Hall",
+      "href": "https://podcasts.apple.com/gb/podcast/tokcast/id1447087694"
+    },
+    {
+      "title": "BG2Pod with Brad Gerstner and Bill Gurley",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-8d8626e68b03.webp",
+      "creator": "BG2Pod",
+      "href": "https://podcasts.apple.com/gb/podcast/bg2pod-with-brad-gerstner-and-bill-gurley/id1727278168"
+    },
+    {
+      "title": "Climbing Gold",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-bd98bef3a571.webp",
+      "creator": "Duct Tape Then Beer",
+      "href": "https://podcasts.apple.com/gb/podcast/climbing-gold/id1559139153?uo=4"
+    },
+    {
+      "title": "Inform, Educate, Entertain",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-3f29b643f906.webp",
+      "creator": "IEE",
+      "href": "https://podcasts.apple.com/gb/podcast/inform-educate-entertain/id1551318800?uo=4"
+    },
+    {
+      "title": "Lightcone Podcast",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-9e46160513ee.webp",
+      "creator": "Y Combinator",
+      "href": "https://podcasts.apple.com/gb/podcast/lightcone-podcast/id1743860177"
+    },
+    {
+      "title": "MD MEETS",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-b71112208317.webp",
+      "creator": "Mathias Döpfner",
+      "href": "https://podcasts.apple.com/gb/podcast/md-meets/id1843043635?uo=4"
+    },
+    {
+      "title": "Marathon Talk",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-24934a1775c8.webp",
+      "creator": "Deena Kastor & Martin Yelling",
+      "href": "https://podcasts.apple.com/gb/podcast/marathon-talk/id350035346?uo=4"
+    },
+    {
+      "title": "Peak Human - Unbiased Nutrition Info for Optimum Health, Fitness & Living",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-9df5aeba571c.webp",
+      "creator": "Brian Sanders",
+      "href": "https://podcasts.apple.com/gb/podcast/peak-human---unbiased-nutrition-info-for-optimum-health%2C-fitness-%26-living/id1393265937"
+    },
+    {
+      "title": "Possible",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-2909f3f4d191.webp",
+      "creator": "Reid Hoffman",
+      "href": "https://podcasts.apple.com/gb/podcast/possible/id1677184070?uo=4"
+    },
+    {
+      "title": "Spotify Presents",
+      "listens": 2,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "The A24 Podcast",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-ef0edee94fe8.webp",
+      "creator": "A24",
+      "href": "https://podcasts.apple.com/gb/podcast/the-a24-podcast/id1351044991"
+    },
+    {
+      "title": "The Checkup with Doctor Mike",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-72d5627ebe53.webp",
+      "creator": "DM Operations Inc.",
+      "href": "https://podcasts.apple.com/gb/podcast/the-checkup-with-doctor-mike/id1646695974"
+    },
+    {
+      "title": "The Daily Stoic",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-cccca4ffa3df.webp",
+      "creator": "Daily Stoic | Backyard Ventures",
+      "href": "https://podcasts.apple.com/gb/podcast/the-daily-stoic/id1430315931?uo=4"
+    },
+    {
+      "title": "The MAD Podcast with Matt Turck",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-e6b2faceab7a.webp",
+      "creator": "Matt Turck",
+      "href": "https://podcasts.apple.com/gb/podcast/the-mad-podcast-with-matt-turck/id1686238724?uo=4"
+    },
+    {
+      "title": "The Rest Is Money",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-b94b688b979b.webp",
+      "creator": "Goalhanger",
+      "href": "https://podcasts.apple.com/gb/podcast/the-rest-is-money/id1703785141"
+    },
+    {
+      "title": "The School of Greatness",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-960d98e64c85.webp",
+      "creator": "Lewis Howes",
+      "href": "https://podcasts.apple.com/gb/podcast/the-school-of-greatness/id596047499?uo=4"
+    },
+    {
+      "title": "UnHerd with Freddie Sayers",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-8bbd348c1ca4.webp",
+      "creator": "UnHerd",
+      "href": "https://podcasts.apple.com/gb/podcast/unherd-with-freddie-sayers/id1540134798"
+    },
+    {
+      "title": "Uncomfortable Conversations with Josh Szeps",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-f432cc2e888b.webp",
+      "creator": "Josh Szeps",
+      "href": "https://podcasts.apple.com/gb/podcast/uncomfortable-conversations-with-josh-szeps/id1002920114"
+    },
+    {
+      "title": "What Now? with Trevor Noah",
+      "listens": 2,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-69ca810c70d9.webp",
+      "creator": "Trevor Noah",
+      "href": "https://podcasts.apple.com/gb/podcast/what-now%3F-with-trevor-noah/id1710609544"
+    },
+    {
+      "title": "All-In Podcast",
+      "creator": "Chamath Palihapitiya, Jason Calacanis, David Sacks & David Friedberg",
+      "art": "/podcast-covers/all-in-podcast.webp",
+      "href": "https://www.youtube.com/@allin",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Bite",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Conversations with Tyler",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-f30cb5049780.webp",
+      "creator": "Mercatus Center at George Mason University",
+      "href": "https://podcasts.apple.com/gb/podcast/conversations-with-tyler/id983795625"
+    },
+    {
+      "title": "DISCovery with Eric Senich",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "DarkHorse Podcast | Bret Weinstein and Heather Heying",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-2c9c3b701626.webp",
+      "creator": "Bret Weinstein & Heather Heying",
+      "href": "https://podcasts.apple.com/gb/podcast/darkhorse-podcast/id1471581521?uo=4"
+    },
+    {
+      "title": "Hard Fork",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-ffa6483ae3b6.webp",
+      "creator": "The New York Times",
+      "href": "https://podcasts.apple.com/gb/podcast/hard-fork/id1528594034"
+    },
+    {
+      "title": "How to Take Over the World",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-05d6f69ac96c.webp",
+      "creator": "Ben Wilson",
+      "href": "https://podcasts.apple.com/gb/podcast/how-to-take-over-the-world/id1333158713"
+    },
+    {
+      "title": "JRE Clips",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Jordan Peterson Archive",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Kermode and Mayo's Film Review",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-0ece5bd5b011.webp",
+      "creator": "BBC Radio 5 Live",
+      "href": "https://podcasts.apple.com/gb/podcast/kermode-and-mayo's-film-review/id73802698"
+    },
+    {
+      "title": "Keto In the UK - The Podcast",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Kyle Meredith With...",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-b7ec7db8e3c5.webp",
+      "creator": "Consequence Podcast Network",
+      "href": "https://podcasts.apple.com/gb/podcast/kyle-meredith-with.../id1381546475"
+    },
+    {
+      "title": "Leo Wik Podcast",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-e23d8ceec304.webp",
+      "creator": "Leo Wik",
+      "href": "https://podcasts.apple.com/gb/podcast/leo-wik-podcast/id1525981813"
+    },
+    {
+      "title": "Mind Pump: Raw Fitness Truth",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-e3313641f03a.webp",
+      "creator": "Sal Di Stefano, Adam Schafer, Justin Andrews, Doug Egge",
+      "href": "https://podcasts.apple.com/gb/podcast/mind-pump%3A-raw-fitness-truth/id954100822"
+    },
+    {
+      "title": "Nutrition Facts with Dr. Greger",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-93560f071d39.webp",
+      "creator": "Michael Greger",
+      "href": "https://podcasts.apple.com/gb/podcast/nutrition-facts-with-dr.-greger/id1183093544"
+    },
+    {
+      "title": "Podcast Secrets of the Pharaohs - a Peep Show podcast",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-b8059c7ee1c1.webp",
+      "creator": "Tom Harrison & Rob Graham",
+      "href": "https://podcasts.apple.com/gb/podcast/podcast-secrets-of-the-pharaohs---a-peep-show-podcast/id1445150030"
+    },
+    {
+      "title": "Syntax - Tasty Web Development Treats",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-890194f60651.webp",
+      "creator": "Wes Bos & Scott Tolinski",
+      "href": "https://podcasts.apple.com/gb/podcast/syntax---tasty-web-development-treats/id1253186678"
+    },
+    {
+      "title": "TBPN",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-eb9df39cf34d.webp",
+      "creator": "John Coogan & Jordi Hays",
+      "href": "https://podcasts.apple.com/gb/podcast/tbpn/id1772360235"
+    },
+    {
+      "title": "Talking Counter",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-6bc587cfa7e3.webp",
+      "creator": "Talking Counter",
+      "href": "https://podcasts.apple.com/gb/podcast/talking-counter/id1839800206"
+    },
+    {
+      "title": "Tetragrammaton with Rick Rubin",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-ad65f0dbc2f8.webp",
+      "creator": "Rick Rubin",
+      "href": "https://podcasts.apple.com/gb/podcast/tetragrammaton-with-rick-rubin/id1671669052"
+    },
+    {
+      "title": "The AI Daily Brief (Formerly The AI Breakdown): Artificial Intelligence News and Analysis",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-40466783bf3e.webp",
+      "creator": "Nathaniel Whittemore",
+      "href": "https://podcasts.apple.com/gb/podcast/the-ai-daily-brief%3A-artificial-intelligence-news-and-analysis/id1680633614"
+    },
+    {
+      "title": "The Compound and Friends",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-c611d0c079b5.webp",
+      "creator": "The Compound",
+      "href": "https://podcasts.apple.com/gb/podcast/the-compound-and-friends/id1456467014?uo=4"
+    },
+    {
+      "title": "The Diary Of A CEO with Steven Bartlett",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-5aded9102c19.webp",
+      "creator": "DOAC",
+      "href": "https://podcasts.apple.com/gb/podcast/the-diary-of-a-ceo-with-steven-bartlett/id1291423644"
+    },
+    {
+      "title": "The Keto Chapters: UK Podcast",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-201a5c12d5aa.webp",
+      "creator": "Keto Fitness Club",
+      "href": "https://podcasts.apple.com/gb/podcast/the-keto-chapters%3A-uk-podcast/id1525745984"
+    },
+    {
+      "title": "The Mikhaila Peterson Podcast",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-c1dced174fb3.webp",
+      "creator": "Mikhaila Peterson",
+      "href": "https://podcasts.apple.com/gb/podcast/the-mikhaila-peterson-podcast/id1514043751"
+    },
+    {
+      "title": "The Natural State Podcast",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-27233546d0f0.webp",
+      "creator": "Dr. Anthony Gustin",
+      "href": "https://podcasts.apple.com/gb/podcast/the-natural-state-with-dr.-anthony-gustin/id1341848099"
+    },
+    {
+      "title": "The Polygon Show",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-d6b59c20c251.webp",
+      "creator": "Polygon",
+      "href": "https://podcasts.apple.com/gb/podcast/the-polygon-show/id1245385418"
+    },
+    {
+      "title": "The Ripple Effect with James Lawrence Allcott",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-70adb8787196.webp",
+      "creator": "The Ringer",
+      "href": "https://podcasts.apple.com/gb/podcast/the-ripple-effect-with-james-lawrence-allcott/id1670185595"
+    },
+    {
+      "title": "The Saad Truth with Dr. Saad",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-7673367fe343.webp",
+      "creator": "thesaadtruthwithdrsaad",
+      "href": "https://podcasts.apple.com/gb/podcast/the-saad-truth-with-dr.-saad/id1516343565"
+    },
+    {
+      "title": "The TEFL and TESOL Podcast by ITTT",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "The TestoNation Podcast",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-3498d89469b2.webp",
+      "creator": "Hans Amato",
+      "href": "https://podcasts.apple.com/gb/podcast/the-testonation-podcast/id1575553656"
+    },
+    {
+      "title": "The Tim Dillon Show",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-f20916b96fc1.webp",
+      "creator": "The Tim Dillon Show",
+      "href": "https://podcasts.apple.com/gb/podcast/the-tim-dillon-show/id1135137367"
+    },
+    {
+      "title": "This Week in Startups",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-ad22790d4b74.webp",
+      "creator": "Jason Calacanis",
+      "href": "https://podcasts.apple.com/gb/podcast/this-week-in-startups/id315114957"
+    },
+    {
+      "title": "Veritasium",
+      "listens": 1,
+      "appleEpisodes": 0
+    },
+    {
+      "title": "Your Mom's House with Christina P. and Tom Segura",
+      "listens": 1,
+      "appleEpisodes": 0,
+      "art": "/podcast-covers/pod-fe9b0bb6fa49.webp",
+      "creator": "YMH Studios",
+      "href": "https://podcasts.apple.com/gb/podcast/your-mom's-house-with-christina-p.-and-tom-segura/id503482646"
+    },
+    {
+      "title": "The Witch Trials of J.K. Rowling",
+      "listens": null,
+      "appleEpisodes": 2,
+      "art": "/podcast-covers/pod-8d73faad2b6c.webp",
+      "creator": "The Free Press",
+      "href": "https://podcasts.apple.com/gb/podcast/the-witch-trials-of-j.k.-rowling/id1842502506"
+    },
+    {
+      "title": "ReThinking",
+      "listens": null,
+      "appleEpisodes": 1,
+      "art": "/podcast-covers/pod-dd55a05692fe.webp",
+      "creator": "TED",
+      "href": "https://podcasts.apple.com/gb/podcast/rethinking/id1554567118"
+    },
+    {
+      "title": "Within Reason",
+      "creator": "Alex O'Connor",
+      "art": "/podcast-covers/within-reason.webp",
+      "href": "https://www.alexoconnor.com/",
+      "listens": null,
+      "appleEpisodes": 0
     }
-  ]
+  ],
+  "podcastListening": {
+    "asOf": "2026-09-05",
+    "spotifyCoverage": "2012–August 2026, partial history",
+    "spotifyDefinition": "Podcast audio and video playback events lasting at least 30 seconds. Repeat starts can count again; these are not completed episodes. Same-account exact duplicate events were removed before aggregation. Making Sense public and subscriber feeds are grouped as one show.",
+    "appleDefinition": "Episodes with playback evidence in the Apple Podcasts snapshot, 2023–2025. This is a count of episode records, not playback starts, and is shown separately.",
+    "coverage": "Shows with qualifying Spotify listens or Apple playback evidence, plus the existing curation. Explicit music-upload collections are excluded. Podcasts are ordered by Spotify listens, then Apple episode records where Spotify has no matched history. Missing counts are not zero."
+  }
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { HeroBrandName } from "@/components/hero-brand-name";
 import { PageFooter } from "@/components/page-footer";
 import { SiteImage } from "@/components/site-image";
@@ -55,10 +56,20 @@ const projects = [
   },
 ];
 
-/* Captions stay in normal flow: every input mode gets the same description,
-   and the following Career chapter never competes with an overlay. */
 function ProjectShowcase() {
+  const [preview, setPreview] = useState(null);
+  const [held, setHeld] = useState(null);
+  const active = held ?? preview;
+  const dismiss = () => { setHeld(null); setPreview(null); };
   return (
+    <div
+      className="concept-project-showcase"
+      onMouseLeave={() => setPreview(null)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) dismiss();
+      }}
+      onKeyDown={(event) => { if (event.key === "Escape") dismiss(); }}
+    >
     <div
       className="concept-project-grid concept-project-swipe"
       role="list"
@@ -71,11 +82,21 @@ function ProjectShowcase() {
           key={project.id}
           style={{ "--project-card-accent": project.accent }}
         >
-          <a
+          <button
             className="concept-project-card"
             id={project.id === "features" ? "work" : undefined}
-            href={project.href}
-            aria-label={`${project.title}, ${project.kind.toLowerCase()}. ${project.description}`}
+            type="button"
+            aria-label={`Find out more about ${project.title}`}
+            aria-expanded={active?.id === project.id}
+            aria-controls="project-detail"
+            onMouseEnter={() => {
+              if (matchMedia("(hover: hover)").matches) setPreview(project);
+            }}
+            onFocus={() => { setHeld(null); setPreview(project); }}
+            onClick={() => {
+              setHeld(held?.id === project.id ? null : project);
+              setPreview(null);
+            }}
           >
             <SiteImage
               src={project.src}
@@ -91,17 +112,36 @@ function ProjectShowcase() {
                 <span>{project.subtitle}</span>
               </span>
             </span>
-          </a>
-          <div className="concept-project-popover">
-            <p>{project.description}</p>
-          </div>
+          </button>
         </div>
       ))}
+    </div>
+      <div
+        className={`concept-project-detail-shell${active ? " is-open" : ""}`}
+        id="project-detail"
+        aria-hidden={!active}
+        style={{ "--project-detail-accent": active?.accent }}
+      >
+        <div className="concept-project-detail-clip">
+          {active ? (
+            <div className="concept-project-detail">
+              <div>
+                <span className="concept-project-detail-kind">{active.kind}</span>
+                <h3>{active.title}</h3>
+              </div>
+              <p>{active.description}</p>
+              <a className="concept-project-open" href={active.href}>
+                {active.action} <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
 
-export function EditorialHomeConcept({ albumPreview, albumCount }) {
+export function EditorialHomeConcept({ initialCatalogue, refreshedAt }) {
   return (
     <div className="concept-page">
       <header className="page-grid concept-hero">
@@ -110,7 +150,7 @@ export function EditorialHomeConcept({ albumPreview, albumCount }) {
         </h1>
         <div className="concept-hero-copy">
           <p className="concept-lede">
-            Building in the AI age
+            Building in the Intelligence Age
           </p>
           <PageFooter embedded />
         </div>
@@ -128,7 +168,7 @@ export function EditorialHomeConcept({ albumPreview, albumCount }) {
       </section>
 
       <CareerBar />
-      <TasteLibrary albumPreview={albumPreview} albumCount={albumCount} />
+      <TasteLibrary initialCatalogue={initialCatalogue} refreshedAt={refreshedAt} />
     </div>
   );
 }

@@ -7,15 +7,10 @@ import { MediaDialog } from "@/components/media-dialog";
 import { ListeningSummary } from "@/components/listening-summary";
 import {
   browseAlbums,
-  albumSnapshot,
-  acceptsAlbumPacket,
   snapshotCoverage,
 } from "@/components/album-catalogue.mjs";
-import {
-  fetchSessionJson,
-  readSessionJson,
-} from "@/components/remote-data-cache";
-import { albumPlaysDataUrl } from "@/components/site-data";
+import { useAlbumCatalogue } from "@/components/use-album-catalogue";
+import { ListeningHover, listeningDescription } from "@/components/listening-hover";
 
 const PAGE_SIZE = 36;
 const number = (value) => value.toLocaleString("en-GB");
@@ -30,56 +25,17 @@ function dateLabel(value) {
       })
     : "the saved snapshot";
 }
-function scrobbles(value) {
-  return value === null
-    ? "No matched count"
-    : value === 0
-      ? "No scrobbles recorded"
-      : `${number(value)} track scrobble${value === 1 ? "" : "s"}`;
-}
 export function AlbumWallPage({
   initialCatalogue,
   refreshedAt,
   scrobblingSince,
 }) {
-  const [snapshots, setSnapshots] = useState([]);
   const [query, setQuery] = useState(""),
     [filter, setFilter] = useState("all"),
     [sort, setSort] = useState("plays"),
     [page, setPage] = useState(0);
   const [openId, setOpenId] = useState(null);
-  useEffect(() => {
-    let cancelled = false;
-    const cached = readSessionJson(albumPlaysDataUrl);
-    const cachedIsUsable = acceptsAlbumPacket(
-      cached,
-      initialCatalogue,
-      refreshedAt,
-    );
-    // Revalidation may fail or lag the session snapshot. Never replace that
-    // newer usable cache packet with an older successful HTTP response.
-    const cacheFloor = cachedIsUsable ? cached.refreshedAt : refreshedAt;
-    const accept = (data) =>
-      acceptsAlbumPacket(data, initialCatalogue, cacheFloor);
-    const apply = (data, origin) => {
-      if (cancelled || !accept(data)) return;
-      setSnapshots((current) => [
-        ...current.filter((item) => item.origin !== origin),
-        { data, origin },
-      ]);
-    };
-    if (cachedIsUsable) apply(cached, "session");
-    fetchSessionJson(albumPlaysDataUrl, { accept })
-      .then((data) => apply(data, "network"))
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [initialCatalogue, refreshedAt]);
-  const catalogue = useMemo(
-    () => albumSnapshot(initialCatalogue, refreshedAt, snapshots),
-    [initialCatalogue, refreshedAt, snapshots],
-  );
+  const catalogue = useAlbumCatalogue(initialCatalogue, refreshedAt);
   const coverage = snapshotCoverage(catalogue);
   const sources = Object.entries(coverage).filter(([, count]) => count > 0);
   const originLabel = {
@@ -247,14 +203,19 @@ export function AlbumWallPage({
                 className="album-browser-card"
                 key={album.id}
                 onClick={() => open(album.id)}
-                aria-label={`${album.artist} — ${album.album}. ${scrobbles(album.plays)}. Open details`}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") event.currentTarget.dataset.countDismissed = "true";
+                }}
+                onMouseLeave={(event) => { delete event.currentTarget.dataset.countDismissed; }}
+                onBlur={(event) => { delete event.currentTarget.dataset.countDismissed; }}
+                aria-label={`${album.artist} — ${album.album}. ${listeningDescription({ ...album, kind: "music" })} Open details`}
               >
                 <span className="album-browser-art">
                   <AlbumArtImage id={album.id} rung="wall" alt="" />
+                  <ListeningHover item={{ ...album, kind: "music" }} />
                 </span>
                 <strong>{album.album}</strong>
                 <span>{album.artist || "Artist unknown"}</span>
-                <small>{scrobbles(album.plays)}</small>
               </button>
             ))}
           </div>
@@ -334,14 +295,6 @@ export function AlbumWallPage({
             <p>
               {selected.artist || "Artist unknown"}
               {selected.year ? ` · ${selected.year}` : ""}
-            </p>
-            <p className="archive-count">{scrobbles(selected.plays)}</p>
-            <p className="archive-count-note">
-              Last.fm recorded tracks, not complete album listens.
-            </p>
-            <p className="archive-count-note">
-              {originLabel[selected.countOrigin]} ·{" "}
-              {dateLabel(selected.countAsOf)}
             </p>
             {selected.lastfmUrl ? (
               <a

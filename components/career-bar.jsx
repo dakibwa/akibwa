@@ -6,6 +6,14 @@ import curation from "@/data/taste-curation.json";
 
 const { career } = curation;
 
+function CareerStatement({ statement, emphasis = [] }) {
+  const escaped = emphasis.map((text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (!escaped.length) return statement;
+  return statement.split(new RegExp(`(${escaped.join("|")})`, "g")).map((part, index) =>
+    emphasis.includes(part) ? <strong key={index}>{part}</strong> : part,
+  );
+}
+
 export function CareerBar() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
@@ -63,6 +71,9 @@ export function CareerBar() {
           {active !== null ? <>
             <strong>{career[active].name}</strong>
             <span>{career[active].role} · {career[active].span}</span>
+            <p className="concept-career-statement">
+              <CareerStatement {...career[active]} />
+            </p>
           </> : null}
         </div>
       </div>

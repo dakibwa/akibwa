@@ -259,8 +259,8 @@ const publicLandingState = () =>
         tops: projectStops.map((stop) => stop.getBoundingClientRect().top),
         first: rect(".concept-project-stop"),
         copyFits: projectStops.every((stop) => {
-          const copy = stop.querySelector(".concept-project-popover p");
-          return copy.scrollWidth <= copy.clientWidth + 1;
+          const copy = document.querySelector(".concept-project-detail p");
+          return !copy || copy.scrollWidth <= copy.clientWidth + 1;
         })
       }
     };
@@ -275,7 +275,9 @@ const checkPublicLanding = async () => {
   const mainHeading=ax.nodes.find(node=>node.role?.value==='heading' && node.properties?.some(property=>property.name==='level'&&property.value.value===1));
   check(mainHeading?.name?.value === "I'm Daniel. Online as Akibwa.", `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
   check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the approved introduction reserves both names");
-  check(state.lede === "Building in the AI age", "the masthead preserves Dan's requested proposition");
+  check(state.lede === "Building in the Intelligence Age", "the masthead preserves Dan's requested proposition");
+  check(await evaluate('[...document.querySelectorAll(".page-footer-details a, .page-footer-details button")].every(item => item.querySelector("span:last-child")?.textContent === "dakibwa")'), "all three contact labels read dakibwa");
+  check(await evaluate('!document.querySelector(".taste-source-note") && !document.querySelector(".concept-taste-head .archive-link")'), "the closing sentence and browse-all album link are removed");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
   check(state.careerCount === 8, `the approved compact career bar has eight roles [${state.careerCount}]`);
   check(state.tasteCount === 12, `the initial curation is bounded to twelve covers [${state.tasteCount}]`);
@@ -297,16 +299,22 @@ const checkPublicLanding = async () => {
   );
   for(const width of [320,390,560,800,1024,1440]){
     await setDesktop(width);
+    await evaluate('document.querySelector(".concept-project-card").focus(); document.querySelector(".concept-project-card").click()');
+    await sleep(280);
     const bounds=await evaluate(`(() => {
       const career=document.querySelector('.personal-career').getBoundingClientRect();
-      return {overlap:[...document.querySelectorAll('.concept-project-popover')].some(item=>item.getBoundingClientRect().bottom>career.top),overflow:document.documentElement.scrollWidth-innerWidth};
+      const detail=document.querySelector('.concept-project-detail');
+      return {overlap:!detail || detail.getBoundingClientRect().bottom>career.top,overflow:document.documentElement.scrollWidth-innerWidth,link:document.querySelector('.concept-project-open')?.getAttribute('href')};
     })()`);
-    check(!bounds.overlap && bounds.overflow<=1, `project captions cannot overlap Career at ${width}px`);
+    check(!bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/?from=akibwa', `the project dropdown and destination fit above Career at ${width}px`);
+    await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+    await sleep(280);
   }
   const tasteTop=await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY');
   await evaluate('document.querySelectorAll(".concept-career-timeline button")[1].focus(); document.querySelectorAll(".concept-career-timeline button")[1].click()');
   await sleep(100);
   check(await evaluate('(document.querySelector("#career-detail").textContent.includes("Senior BI Developer") && getComputedStyle(document.querySelector("#career-detail")).opacity !== "0" && getComputedStyle(document.querySelector("#career-detail")).visibility === "visible")'), "career activation displays the selected public role");
+  check(await evaluate('document.querySelector(".concept-career-statement").textContent.includes("UK growth and clean energy")'), "career detail restores the original mission statement");
   check(await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY') === tasteTop, "career details do not move the taste chapter");
 
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
@@ -317,7 +325,7 @@ const checkPublicLanding = async () => {
 
   section("historical composition and motion");
   await goto("/");
-  check(await evaluate('document.querySelector(".personal-taste-card").textContent.includes("Graceland")'), "Graceland leads the restored Taste rail");
+  check(await evaluate('document.querySelector(".personal-taste-card").textContent.includes("Music for Psychedelic Therapy")'), "the most-listened curated album leads the Taste rail");
   const railState = await evaluate(`(() => {
     const rail=document.querySelector('.personal-taste-rail');
     const lede=getComputedStyle(document.querySelector('.concept-lede'));
@@ -341,6 +349,36 @@ const checkPublicLanding = async () => {
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 35'), "the Films filter keeps the whole approved shelf reachable");
   await evaluate('document.querySelectorAll(".taste-filters button")[0].click()');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 12'), "Highlights restores the short mixed edit");
+
+  section("ranked listening shelves");
+  await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
+  await sleep(200);
+  const ranked = () => evaluate(`(() => {
+    const counts=[...document.querySelectorAll('.personal-taste-card')].map(card=>card.hasAttribute('data-listens') ? Number(card.dataset.listens) : -1);
+    return counts.length >= 36 && counts.every((count,index)=>!index || count<=counts[index-1]);
+  })()`);
+  check(await ranked(), "Music exposes the full catalogue in descending listening order");
+  const pointer = await evaluate(`(() => {
+    const card=document.querySelector('.personal-taste-card');card.scrollIntoView({block:'center',behavior:'instant'});
+    const box=card.getBoundingClientRect();return {x:box.left+20,y:box.top+20};
+  })()`);
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...pointer});
+  await sleep(180);
+  check(await evaluate('getComputedStyle(document.querySelector(".listening-hover")).visibility === "visible" && !document.querySelector("dialog[open]")'), "hover reveals a sourced count without opening the album");
+  await evaluate('document.querySelector(".taste-load-more").click()');
+  await sleep(200);
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
+  check(await ranked(), "descending order is preserved across loaded batches");
+  await evaluate('document.querySelectorAll(".taste-filters button")[5].click()');
+  await sleep(200);
+  for (let batch=0;batch<4 && await evaluate('!!document.querySelector(".taste-load-more")');batch++) {
+    await evaluate('document.querySelector(".taste-load-more").click()');
+    await sleep(120);
+  }
+  const expectedPodcasts = JSON.parse(readFileSync(new URL('../data/taste-curation.json', import.meta.url))).podcasts.length;
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length') === expectedPodcasts, "the complete podcast shelf is reachable");
+  check(await ranked(), "podcasts are ranked by their recorded listens");
+  await goto('/');
 
   section("mobile public boundary");
   await setMobile();
@@ -369,6 +407,7 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelector(".personal-taste-card").focus(); document.querySelector(".personal-taste-card").click()');
   await sleep(100);
   check(await evaluate('!!document.querySelector("dialog[open]") && document.body.style.overflow === "hidden"'), "taste detail opens as a modal and locks background scrolling");
+  check(await evaluate('!document.querySelector("dialog .listening-hover, dialog .archive-count")'), "listening counts stay on hover and out of the opened detail");
   const tasteIdentity=await evaluate(`(() => ({hash:location.hash,title:document.querySelector('dialog h2').textContent,albumId:decodeURIComponent(new URL(document.querySelector('dialog a').href).hash.slice(7))}))()`);
   check(tasteIdentity.hash === '#taste-item=music:'+encodeURIComponent(tasteIdentity.albumId), 'taste music deep links use the catalogue ID rather than the title');
   await evaluate('history.back()');
@@ -396,6 +435,7 @@ const checkPublicLanding = async () => {
   await sleep(100);
   const initialAlbum = await evaluate('location.hash');
   check(await evaluate('!!document.querySelector("dialog[open]") && document.activeElement.matches(".archive-close")'), "album detail moves focus to its close control");
+  check(await evaluate('!document.querySelector("dialog .archive-count, dialog .archive-count-note")'), "the full archive also keeps counts out of clicked details");
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Tab",code:"Tab",windowsVirtualKeyCode:9,modifiers:8});
   await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Tab",code:"Tab",windowsVirtualKeyCode:9,modifiers:8});
   check(await evaluate('!!document.activeElement.closest("dialog")'), "backward keyboard focus stays inside the modal");

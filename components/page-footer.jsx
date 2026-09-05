@@ -27,7 +27,7 @@ export function PageFooter({ embedded = false }) {
               style={{ "--handle-accent": "#c05270" }}
             >
               <Instagram size={14} aria-hidden="true" />
-              <span>Instagram</span>
+              <span>dakibwa</span>
             </a>
             <a
               href="https://x.com/dakibwa"
@@ -37,7 +37,7 @@ export function PageFooter({ embedded = false }) {
               <span className="social-x" aria-hidden="true">
                 𝕏
               </span>
-              <span>X</span>
+              <span>dakibwa</span>
             </a>
             <button
               type="button"
@@ -47,7 +47,7 @@ export function PageFooter({ embedded = false }) {
               style={{ "--handle-accent": "#2f88ff" }}
             >
               <Mail size={14} strokeWidth={1.8} />
-              <span>Email Akibwa</span>
+              <span>dakibwa</span>
             </button>
           </div>
         </div>

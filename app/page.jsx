@@ -1,7 +1,6 @@
 import { EditorialHomeConcept } from "@/components/pages/editorial-home-concept";
 import { albumCatalogue } from "@/components/album-catalogue.mjs";
 import albums from "@/data/album-wall.json";
-import curation from "@/data/taste-curation.json";
 
 export const metadata = {
   title: { absolute: "Akibwa" },
@@ -24,14 +23,10 @@ export const metadata = {
 
 export default function IndexPage() {
   const catalogue = albumCatalogue(albums);
-  const preview = curation.albumIds
-    .slice(0, 12)
-    .map((id) => catalogue.find((album) => album.id === id))
-    .filter(Boolean);
   return (
     <EditorialHomeConcept
-      albumPreview={preview}
-      albumCount={catalogue.length}
+      initialCatalogue={catalogue}
+      refreshedAt={albums.refreshedAt}
     />
   );
 }
