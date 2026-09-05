@@ -101,7 +101,7 @@
         map.addSource('journey-position',{type:'geojson',data:empty()});
         map.addSource('journey-moments',{type:'geojson',data:empty()});
         map.addLayer({id:'moment-dots',type:'circle',source:'journey-moments',paint:{'circle-radius':8,'circle-color':'#f8f3e5','circle-stroke-color':'#9a734c','circle-stroke-width':2}});
-        map.addLayer({id:'moment-labels',type:'symbol',source:'journey-moments',layout:{'text-field':['get','label'],'text-font':['Noto Sans Regular'],'text-size':12,'text-anchor':'bottom','text-offset':[0,-1.3],'text-max-width':16},paint:{'text-color':'#536148','text-halo-color':'#faf5e6','text-halo-width':2}});
+        map.addLayer({id:'moment-labels',type:'symbol',source:'journey-moments',layout:{'text-field':['get','label'],'text-font':['Noto Sans Regular'],'text-size':12,'text-anchor':'top','text-offset':[0,1.3],'text-max-width':16,'text-pitch-alignment':'viewport','text-rotation-alignment':'viewport'},paint:{'text-color':'#536148','text-halo-color':'#faf5e6','text-halo-width':2}});
         map.addLayer({id:'walking-position',type:'circle',source:'journey-position',paint:{'circle-radius':6,'circle-color':'#ed713c','circle-stroke-color':'#fff9e9','circle-stroke-width':3}});
         for(const layer of ['moment-dots','moment-labels']){
           map.on('click',layer,e=>{const moment=moments.find(m=>m.id===e.features?.[0]?.properties.id);if(moment)showMoment(moment);});
