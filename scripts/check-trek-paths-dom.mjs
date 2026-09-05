@@ -17,6 +17,38 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   }))()`);
   const until=async(predicate,limit=15000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(100);}return false;};
   const day=async n=>until(async()=>((await state()).day===n));
+  if(process.env.CHECK_TREK_STORY_ONLY){
+    section('Trek journal and photographs');
+    await setDesktop(1440,900);await goto('/trek/?day=30');check(await until(async()=>(await state()).ready,25000),'the journal map is ready');check(await day(30),'the journal retains the requested day');
+    const initial=await state();if(initial.day!==30){process.stdout.write(JSON.stringify(initial)+'\n');return;}await click('#journey-photo-open');
+    check(await evaluate('document.querySelector("#moment-dialog").open&&document.querySelectorAll("#moment-filmstrip button").length===37'),'the mountain day opens all 37 original photographs');
+    const imageBefore=await evaluate('document.querySelector("#moment-photo").getAttribute("src")');await click('#moment-photo-forward');
+    check(await evaluate(`document.querySelector('#moment-photo').getAttribute('src')!==${JSON.stringify(imageBefore)}`)&&(await state()).scroll===initial.scroll,'enlarged photographs change without moving the walk');
+    await click('#moment-filmstrip button');
+    check(await evaluate('document.querySelector("#moment-photo-count").textContent==="01 / 37"'),'the contact strip selects the first photograph');
+    await cdp.send('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowRight',code:'ArrowRight',windowsVirtualKeyCode:39});
+    check(await evaluate('document.querySelector("#moment-photo-count").textContent==="02 / 37"'),'the enlarged photographs support arrow keys');await click('#moment-close');
+    await click('#journey-about');
+    check(await evaluate('document.querySelector("#walk-summary").open&&document.querySelector("#summary-totals").textContent.includes("394")'),'the whole-walk view retains the full photo count and totals');await click('#summary-close');
+    await evaluate('document.querySelector("#journey-scrub").value=53;document.querySelector("#journey-scrub").dispatchEvent(new Event("input",{bubbles:true}))');
+    check(await day(53),'scrubbing the distance marks reaches the selected recorded day');
+    const beforeResize=await state();
+    for(const width of [390,320]){
+      await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(500);
+      const s=await state();check(s.day===53&&s.scroll===beforeResize.scroll&&s.overflow<=1,`resizing to ${width}px preserves the exact journey position`);
+      await click('#journal-expand');
+      check(await evaluate('document.querySelector("#journal-expand").getAttribute("aria-expanded")==="true"&&getComputedStyle(document.querySelector("#journey-note")).webkitLineClamp==="none"'),`the complete journal opens at ${width}px`);
+      await click('#journey-record-button');check(await evaluate('document.querySelector("#spot").open&&document.querySelector("#spot-record").textContent.includes("The Who")'),`the original record opens from the ${width}px journal`);await click('#spot-close');
+      await click('#journal-expand');check((await state()).scroll===beforeResize.scroll,`returning to the ${width}px landscape preserves the walk`);
+      const box=await evaluate('document.querySelector("#journey-record-button").getBoundingClientRect().toJSON()');check(box.left>=0&&box.right<=width&&box.bottom<844,`the record sleeve is visible beside the ${width}px landscape`);
+    }
+    await cdp.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await goto('/trek/?day=30');await day(30);
+    check(await evaluate('document.getAnimations().filter(a=>a.playState==="running").length===0'),'reduced motion removes journal entrance animations');
+    const errors=cdp.events.filter(e=>e.method==='Runtime.exceptionThrown'||(e.method==='Runtime.consoleAPICalled'&&e.params.type==='error'));
+    check(errors.length===0,`the new journal interactions report no runtime errors [${errors.length}]`);
+    if(errors.length)process.stdout.write(JSON.stringify(errors.map(e=>e.params))+'\n');
+    return;
+  }
   if(process.env.CHECK_TREK_OPENING_ONLY){
     section('Trek opening route fit');
     for(const width of [1440,390,320]){

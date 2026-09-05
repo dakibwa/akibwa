@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="vendor/maplibre-gl.css">
 <link rel="stylesheet" href="journey-shell.css">
 <link rel="stylesheet" href="journey-map.css">
+<link rel="stylesheet" href="journey-story.css">
 </head>
 <body>
 <header class="masthead">
@@ -25,38 +26,38 @@
   <nav class="country-menu" aria-label="Countries on the trek"><ul class="countries" id="country-nav">
     <li><a href="#france">France</a></li><li><a href="#germany">Germany</a></li><li><a href="#austria">Austria</a></li><li><a href="#slovenia">Slovenia</a></li><li><a href="#croatia">Croatia</a></li><li><a href="#serbia">Serbia</a></li><li><a href="#bulgaria">Bulgaria</a></li>
   </ul></nav>
-  <a class="site" href="https://akibwa.com/">akibwa.com</a>
+  <button class="journey-about" id="journey-about" type="button" aria-haspopup="dialog">The whole walk <span>↗</span></button>
   <div class="journey-progress" id="journey-progress" role="progressbar" aria-label="Journey progress" aria-valuemin="0" aria-valuemax="1982" aria-valuenow="0"><i></i></div>
 </header>
-<section class="statbar" aria-label="Journey statistics">
-  <p class="stat-position" id="hud-position">Paris · 24 Sep 2019</p>
-  <div class="stat"><b><span id="hud-km">0.0</span><small>km</small></b><em>Distance walked</em></div>
-  <div class="stat"><b id="hud-ascent">0</b><em>Ascent · m</em></div>
-  <div class="stat"><b id="hud-days">0</b><em>Walking days</em></div>
-  <div class="stat"><b><span id="hud-hours">0.0</span><small>h</small></b><em>Moving time</em></div>
-</section>
 <main id="experience" class="experience">
   <div id="stage" class="stage is-detail">
     <div class="map-shell"><div id="path-map" aria-label="The recorded trek paths in three-dimensional terrain"></div></div>
     <div class="map-tools" aria-label="Journey playback"><button id="journey-pause" type="button" hidden>Resume</button><button id="journey-reset" type="button" aria-label="Back to the start">Reset</button></div>
     <div class="path-tools" id="path-tools" aria-label="Explore the terrain"><button type="button" id="path-follow" hidden>Follow again</button><button type="button" id="path-day-fit">Whole day</button><button type="button" id="path-zoom-in" aria-label="Zoom into the paths">+</button><button type="button" id="path-zoom-out" aria-label="Zoom out of the paths">−</button></div>
     <p id="path-status" class="path-status" role="status">Opening the journey…</p><p id="route-source" class="route-source"></p>
-    <button class="journey-start" id="walkbtn" type="button">Walk from Paris →</button>
     <article id="journey-card" class="journey-card" aria-label="This day on the trek">
       <div class="journey-day-nav"><button id="day-back" type="button" aria-label="Previous day">‹</button><select id="journey-day" aria-label="Choose a day"></select><button id="day-forward" type="button" aria-label="Next day">›</button></div>
       <p id="journey-chapter" class="journey-chapter">24 September – 28 November 2019</p>
-      <h1 id="journey-title" class="journey-title">Paris to Sofia.</h1><p id="journey-note" class="journey-note">River paths. Mountain ridges. The long roads between. Follow 1,982 kilometres across seven countries.</p><p id="journey-day-facts" class="journey-day-facts"></p>
+      <h1 id="journey-title" class="journey-title">Paris to Sofia.</h1><p id="journey-date" class="journey-date"></p>
+      <button id="journal-expand" class="journal-expand" type="button" aria-expanded="false">Read the day ↗</button>
       <figure class="journey-photo-wrap"><button type="button" id="journey-photo-open" class="journey-photo-open" aria-label="Open this journey photograph"><img id="journey-photo" alt="" width="600" height="400"></button><figcaption class="journey-photo-controls"><button id="photo-back" type="button" aria-label="Previous photograph">‹</button><span id="journey-photo-caption"></span><button id="photo-forward" type="button" aria-label="Next photograph">›</button></figcaption></figure>
+      <p id="journey-note" class="journey-note">River paths. Mountain ridges. The long roads between. Follow 1,982 kilometres across seven countries.</p><p id="journey-day-facts" class="journey-day-facts"></p>
       <div id="day-moments" class="day-moments" aria-label="Moments along this day"></div><label class="day-progress-label">Along the day <input id="day-progress" type="range" min="0" max="100" value="0" aria-label="Position along this day"></label><p id="day-recording-note" class="day-recording-note"></p>
-      <button type="button" id="journey-record-button" class="journey-record-button album-open" aria-haspopup="dialog" hidden><span id="journey-record-label"></span></button>
+      <button class="journey-start" id="walkbtn" type="button">Begin the journey <span>↗</span></button>
     </article>
-    <nav id="journey-chapters" class="journey-chapters" aria-label="Chapters of the trek"></nav>
+    <button type="button" id="journey-record-button" class="journey-record-button album-open" aria-haspopup="dialog" hidden><span class="record-sleeve"><img id="journey-record-cover" alt="" width="64" height="64"></span><span class="record-copy"><small>The music in the day’s title</small><b id="journey-record-title"></b><span id="journey-record-label"></span></span><span class="record-arrow">↗</span></button>
+    <footer class="journey-footer">
+      <div class="journey-distance"><span><b id="hud-km">0.0</b> <small>km walked</small></span><p id="distance-remaining">1,982 km ahead</p><p id="hud-position">Paris · 24 Sep 2019</p></div>
+      <nav id="journey-chapters" class="journey-chapters" aria-label="Chapters of the trek"></nav>
+      <div class="journey-rhythm"><div class="rhythm-bars" id="rhythm-bars" aria-hidden="true"></div><input id="journey-scrub" type="range" min="1" max="67" step="1" value="1" aria-label="Move through all 67 days"><output id="rhythm-caption" for="journey-scrub">67 numbered days · the height of each mark is a day’s distance</output><span class="rhythm-end">Paris <i>→</i> Sofia</span></div>
+    </footer>
   </div>
 </main>
-<dialog id="moment-dialog" class="moment-dialog" aria-label="A moment on the trek"><div class="moment-inner"><button id="moment-close" class="moment-close" type="button">Close ×</button><img id="moment-photo" class="moment-photo" alt="" width="600" height="800"><div class="moment-copy"><p id="moment-place" class="moment-place"></p><h2 id="moment-title" class="moment-title"></h2><p id="moment-text" class="moment-text"></p><p id="moment-evidence" class="moment-evidence"></p><p id="moment-position" class="moment-position"></p></div></div></dialog>
+<dialog id="moment-dialog" class="moment-dialog" aria-label="A moment on the trek"><div class="moment-inner"><button id="moment-close" class="moment-close" type="button">Close ×</button><img id="moment-photo" class="moment-photo" alt="" width="600" height="800"><div class="moment-copy"><p id="moment-place" class="moment-place"></p><h2 id="moment-title" class="moment-title"></h2><p id="moment-text" class="moment-text"></p><p id="moment-evidence" class="moment-evidence"></p><p id="moment-position" class="moment-position"></p><div class="photo-dialog-nav" id="photo-dialog-nav" hidden><button id="moment-photo-back" type="button" aria-label="Previous enlarged photograph">←</button><span id="moment-photo-count"></span><button id="moment-photo-forward" type="button" aria-label="Next enlarged photograph">→</button></div></div><div id="moment-filmstrip" class="moment-filmstrip" aria-label="Photographs from this day" hidden></div></div></dialog>
 <dialog class="spot" id="spot" aria-label="Record"><div class="spot-inner"><button class="spot-close" id="spot-close" type="button">Close ×</button><div class="spot-stage"><img id="spot-img" alt="" width="480" height="480"></div><p class="spot-facts" id="spot-facts"></p><p class="spot-title" id="spot-title"></p><p class="spot-record" id="spot-record"></p><p class="spot-note" id="spot-note"></p><div class="spot-nav"><button id="spot-prev" type="button" aria-label="Previous record">‹</button><button id="spot-next" type="button" aria-label="Next record">›</button></div></div></dialog>
+<dialog class="walk-summary" id="walk-summary" aria-label="The whole walk"><button id="summary-close" class="moment-close" type="button">Close ×</button><p class="summary-kicker">Paris → Sofia · autumn 2019</p><h2>One long walk.</h2><p class="summary-distance">1,982<span>kilometres across seven countries</span></p><div class="summary-countries">France <i>→</i> Germany <i>→</i> Austria <i>→</i> Slovenia <i>→</i> Croatia <i>→</i> Serbia <i>→</i> Bulgaria</div><div class="summary-totals" id="summary-totals"></div><div class="summary-progress"><p>At this point in the journey</p><div><span><b id="hud-ascent">0</b> m climbed</span><span><b id="hud-hours">0.0</b> hours moving</span><span><b id="hud-days">0</b> walking days</span></div></div><p class="summary-footnote">24 September – 28 November 2019. The original day numbers include pauses and gaps between recordings.</p></dialog>
 <noscript><div class="noscript-days"><p>The 3D map needs JavaScript. Follow the journey here:</p><ol><!--__NOSCRIPT_DAYS__--></ol></div></noscript>
-<script src="journey-map.js"></script><script src="journey-clock.js"></script>
+<script src="journey-map.js"></script><script src="journey-story.js"></script><script src="journey-clock.js"></script>
 <script>
 (function(){
   var DATA = __DATA_JSON__;

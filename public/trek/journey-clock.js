@@ -15,6 +15,7 @@
       if(scene){scrollTo({top:scene.at+scene.len*Math.max(.002,Math.min(.998,t)),behavior:'auto'});invalidate();}
     }
     const journey=host.createTrekJourney(data,{reduced,pause:pauseWalk,visit});
+    const story=host.createTrekStory(data,{pause:pauseWalk,visit,follow:()=>journey.follow()});
     // A read-only status accessor is also used by the rendered regression check.
     host.trekStatus=()=>({...journey.getState(),playing,position,type});
     function update(){
@@ -35,6 +36,7 @@
       progress.setAttribute('aria-valuenow',String(Math.round(km)));progress.querySelector('i').style.width=(km/data.total*100)+'%';
       for(const a of document.querySelectorAll('#country-nav a'))a.setAttribute('aria-current',String(a.hash.slice(1)===current.c.toLowerCase()));
       journey.update({day,t:fraction,type});
+      story.update({day,km,type});
     }
     function tick(time){
       frame=0;
@@ -53,7 +55,7 @@
     addEventListener('wheel',pauseWalk,{passive:true});addEventListener('touchstart',pauseWalk,{passive:true});
     addEventListener('keydown',e=>{if(e.key==='Escape'){pauseWalk();}else if(e.key===' '&&!e.target.closest('button,a,input,select,textarea')){e.preventDefault();playing?pauseWalk():play();}});
     document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseWalk();else invalidate();});
-    function resize(){experience.style.height=(data.timeline+innerHeight)+'px';position=-1;invalidate();}
+    function resize(){const held=position;experience.style.height=(data.timeline+innerHeight)+'px';if(held>=0)scrollTo(0,held);position=-1;invalidate();}
     addEventListener('resize',resize);resize();
     document.querySelectorAll('#country-nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();pauseWalk();journey.follow();const target=days.find(d=>d.c.toLowerCase()===a.hash.slice(1));if(target)visit(target.n,.15);history.replaceState(null,'',a.hash);}));
     const query=new URLSearchParams(location.search),initialDay=+query.get('day');

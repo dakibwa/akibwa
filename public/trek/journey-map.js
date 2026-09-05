@@ -43,8 +43,9 @@
     let cameraKey='',lastDraw=-1,renderState=null,settleTimer=0;
     const byDay=new Map();
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
-    const cameraPadding=()=>innerWidth<760?{top:Math.min(430,innerHeight*.52),bottom:180,left:24,right:24}:{top:130,bottom:150,left:innerWidth<1000?345:405,right:40};
+    const cameraPadding=()=>innerWidth<760?{top:Math.min(card.getBoundingClientRect().bottom+22,innerHeight*.52),bottom:244,left:20,right:20}:{top:100,bottom:185,left:card.getBoundingClientRect().right+38,right:45};
     const photoSet=n=>data.photos.filter(p=>p.day===n);
+    const photoDay=()=>state.type==='end'?66:state.day;
     const text=(id,value)=>{const el=document.getElementById(id);if(el.textContent!==value)el.textContent=value;};
     const allDays=data.days;
     picker.replaceChildren(...allDays.map(d=>{const o=document.createElement('option');o.value=d.n;o.textContent='Day '+d.n+' · '+(d.w?d.c:'off the route');return o;}));
@@ -127,23 +128,28 @@
     }
     async function initializeLibrary(){await readyData;await initialize();}
     function photoAt(index){
-      const photos=photoSet(state.day);picture.closest('figure').hidden=!photos.length;if(!photos.length)return;
+      const photos=photoSet(photoDay());picture.closest('figure').hidden=!photos.length;if(!photos.length)return;
       index=((index%photos.length)+photos.length)%photos.length;
       if(index===lastPhoto)return;lastPhoto=index;photoOffset=index;
-      const photo=photos[index];picture.src='photos/'+photo.src;picture.alt=photo.alt||'Photograph from day '+state.day;
-      caption.textContent=(index+1)+' / '+photos.length+' · day '+state.day;
+      const photo=photos[index];picture.src='photos/'+photo.src;picture.alt=photo.alt||'Photograph from day '+photoDay();
+      if(!options.reduced)picture.animate([{opacity:.35,transform:'scale(1.025)'},{opacity:1,transform:'scale(1)'}],{duration:450,easing:'ease-out'});
+      caption.textContent=String(index+1).padStart(2,'0')+' / '+String(photos.length).padStart(2,'0')+' · DAY '+photoDay();
       document.getElementById('photo-back').disabled=document.getElementById('photo-forward').disabled=photos.length<2;
     }
     function updateCard(){
-      const day=namedDay(state.day),chapter=chapters.find(c=>day.n>=c.from&&day.n<=c.to)||chapters[0];
+      const day=namedDay(photoDay()),chapter=chapters.find(c=>day.n>=c.from&&day.n<=c.to)||chapters[0];
       if(!chapter)return;
-      const cardKey=day.n+(state.type==='start'?100:0);
+      const cardKey=day.n+(state.type==='start'?100:state.type==='end'?200:0);
       if(lastDay!==cardKey){
         lastDay=cardKey;lastPhoto=-1;manualPhoto=false;picker.value=day.n;
-        text('journey-chapter',state.type==='start'?'24 September – 28 November 2019':chapter.place);text('journey-title',state.type==='start'?'Paris to Sofia.':chapter.title);
-        text('journey-note',state.type==='start'?'River paths. Mountain ridges. The long roads between. Follow 1,982 kilometres across seven countries.':day.j.length?day.j.map(j=>j.text).join(' '):chapter.text);
+        text('journey-chapter',state.type==='start'?'A WALK ACROSS EUROPE · AUTUMN 2019':state.type==='end'?'THE LAST PAGE · BULGARIA':String(chapters.indexOf(chapter)+1).padStart(2,'0')+' / '+chapter.place);
+        text('journey-title',state.type==='start'?'Paris\nto Sofia.':state.type==='end'?'Sofia.\nAt last.':chapter.title);
+        text('journey-date',day.date?new Date(day.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'Between the recorded days');
+        text('journey-note',state.type==='start'?'River paths, mountain ridges and the long roads between. 1,982 kilometres on foot, through seven countries.':state.type==='end'?'On 28 November, the route reached Sofia. The walk from Paris was complete.':day.j.length?day.j.map(j=>j.text).join(' '):chapter.text);
         text('journey-day-facts',day.w?[day.km.toFixed(1)+' km',day.elev?'↑ '+day.elev.toLocaleString()+' m':null,day.min?Math.floor(day.min/60)+'h '+String(day.min%60).padStart(2,'0')+'m':null].filter(Boolean).join(' · '):'A pause in the journey');
+        text('journey-record-title',day.t||'');
         text('journey-record-label',day.s?day.s.artist+' · '+day.s.album:'');
+        if(day.s)document.getElementById('journey-record-cover').src='covers/'+day.s.slug+'.webp';
         document.getElementById('journey-record-button').hidden=!day.s;document.getElementById('journey-record-button').dataset.day=day.n;
         const fs=dayFeatures(day.n);const shared=fs[0]?.properties.throughDay>fs[0]?.properties.day;
         if(shared){const recorded=namedDay(fs[0].properties.day);text('journey-day-facts',recorded.km.toFixed(1)+' km across days 16–17 · ↑ '+recorded.elev.toLocaleString()+' m');}
@@ -153,6 +159,7 @@
         const selected=chaptersEl.querySelector('[aria-current="true"]');
         if(selected){const r=selected.getBoundingClientRect(),p=chaptersEl.getBoundingClientRect();if(r.left<p.left||r.right>p.right)chaptersEl.scrollLeft=selected.offsetLeft-chaptersEl.clientWidth/2+selected.clientWidth/2;}
         document.getElementById('day-back').disabled=day.n===1;document.getElementById('day-forward').disabled=day.n===67;
+        if(!options.reduced){for(const id of ['journey-title','journey-note'])document.getElementById(id).animate([{opacity:.25,transform:'translateY(5px)'},{opacity:1,transform:'translateY(0)'}],{duration:350,easing:'ease-out'});}
       }
       const range=document.getElementById('day-progress');if(document.activeElement!==range)range.value=Math.round(state.t*100);
       if(!manualPhoto)photoAt(Math.floor(clamp(state.t,0,.999)*photoSet(day.n).length));
@@ -200,6 +207,8 @@
     }
     function showMoment(moment){
       options.pause();jump(moment.day,moment.at);
+      momentDialog.classList.remove('is-photo');
+      document.getElementById('photo-dialog-nav').hidden=true;document.getElementById('moment-filmstrip').hidden=true;
       const img=document.getElementById('moment-photo');img.src='photos/'+moment.photo;img.alt=moment.title;
       text('moment-place',moment.place+' · day '+moment.day);text('moment-title',moment.title);text('moment-text',moment.text);text('moment-evidence',moment.evidence);text('moment-position',moment.position);
       if(!momentDialog.open)momentDialog.showModal();
@@ -225,10 +234,31 @@
     document.getElementById('day-progress').addEventListener('input',e=>jump(state.day,+e.target.value/100));
     document.getElementById('photo-back').addEventListener('click',()=>{manualPhoto=true;photoAt(photoOffset-1);});
     document.getElementById('photo-forward').addEventListener('click',()=>{manualPhoto=true;photoAt(photoOffset+1);});
+    let galleryDay=1;
+    function showPhoto(){
+      const photos=photoSet(galleryDay),p=photos[photoOffset];if(!p)return;
+      const day=namedDay(galleryDay),img=document.getElementById('moment-photo');img.src='photos/'+p.src;img.alt=p.alt||'Photograph from day '+galleryDay;
+      text('moment-place',day.c+' · day '+galleryDay);text('moment-title',chapters.find(c=>day.n>=c.from&&day.n<=c.to)?.title||'From the walk.');
+      text('moment-text',day.j.map(j=>j.text).join(' ')||p.caption||'A photograph from this day of the trek.');
+      text('moment-evidence',day.date?new Date(day.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'From the original photographs');
+      text('moment-position','Grouped by day; no precise photo location is recorded.');text('moment-photo-count',String(photoOffset+1).padStart(2,'0')+' / '+String(photos.length).padStart(2,'0'));
+      document.getElementById('moment-photo-back').disabled=photoOffset===0;document.getElementById('moment-photo-forward').disabled=photoOffset===photos.length-1;
+      document.getElementById('moment-filmstrip').querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===photoOffset)));
+      if(!momentDialog.open)momentDialog.showModal();
+      const strip=document.getElementById('moment-filmstrip'),selected=strip.querySelector('[aria-current="true"]');
+      if(selected)strip.scrollLeft=selected.offsetLeft-strip.offsetLeft-strip.clientWidth/2+selected.clientWidth/2;
+    }
     document.getElementById('journey-photo-open').addEventListener('click',()=>{
-      const photos=photoSet(state.day),p=photos[photoOffset];if(!p)return;
-      showMoment({day:state.day,at:state.t,title:'On the way · day '+state.day,place:namedDay(state.day).c,text:p.caption||'A photograph from this day of the trek.',photo:p.src,evidence:'Existing trek photograph',position:'Grouped by day; no precise photo location is recorded.'});
+      options.pause();galleryDay=photoDay();const photos=photoSet(galleryDay);if(!photos.length)return;
+      momentDialog.classList.add('is-photo');document.getElementById('photo-dialog-nav').hidden=false;
+      const filmstrip=document.getElementById('moment-filmstrip');filmstrip.hidden=false;
+      filmstrip.replaceChildren(...photos.map((p,index)=>{const b=document.createElement('button'),img=document.createElement('img');b.type='button';b.setAttribute('aria-label','Photograph '+(index+1)+' of '+photos.length);img.src='photos/'+p.src;img.alt='';img.loading='lazy';b.append(img);b.addEventListener('click',()=>{manualPhoto=true;photoAt(index);showPhoto();});return b;}));
+      showPhoto();
     });
+    const browsePhoto=delta=>{const photos=photoSet(galleryDay),next=clamp(photoOffset+delta,0,photos.length-1);manualPhoto=true;photoAt(next);showPhoto();};
+    document.getElementById('moment-photo-back').addEventListener('click',()=>browsePhoto(-1));
+    document.getElementById('moment-photo-forward').addEventListener('click',()=>browsePhoto(1));
+    momentDialog.addEventListener('keydown',e=>{if(!momentDialog.classList.contains('is-photo'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();browsePhoto(e.key==='ArrowLeft'?-1:1);}});
     document.getElementById('moment-close').addEventListener('click',()=>momentDialog.close());
     momentDialog.addEventListener('click',e=>{if(e.target===momentDialog)momentDialog.close();});
     follow.addEventListener('click',()=>{setFollowing(true);cameraKey='';draw(true);});

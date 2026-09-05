@@ -12,9 +12,23 @@ the landscape. Dan selected Paths as the only map view on 5 September 2026.
 - Warm paper, sage terrain, a Fraunces title and orange progress establish the
   visual foundation. The current path has a pale outline; upcoming recordings
   are grey. Keep roads, trails, mountains and towns readable behind the route.
-- The day card owns the note, photo browser, moments, day slider and record.
-  Six photographic chapters provide useful starting points. On phones the card
-  places a small photo beside the note and the chapter strip scrolls horizontally.
+- Present the route as an open field journal. Give the chapter title a strong
+  serif hierarchy, date the page, frame the day's photograph and set its factual
+  note in readable editorial type. A quiet record sleeve sits beside the map;
+  describe its link to the original day's title without implying audio playback.
+- Six chapter tabs provide useful starting points, with photograph previews on
+  desktop hover and keyboard focus. The distance marks below them show the rhythm
+  of all 67 numbered days. Mark heights use daily kilometres, not elevation;
+  days 16–17 share their recording and unrecorded days remain visible gaps.
+  An accessible range control scrubs to a day. Keep exact metrics in the day and
+  a whole-walk dialog, with cumulative distance and remaining kilometres beside
+  the timeline. Avoid bringing back a dashboard of equally weighted stat tiles.
+- Enlarged photographs include the day's note, arrow-key navigation and a
+  contact strip. Browsing photos must preserve the exact route position. On
+  phones, a compact journal leaves the terrain visible; Read the day expands
+  the complete note, photograph and record. Returning restores the landscape.
+  Resize must preserve the journey clock. Respect reduced motion for photo,
+  journal and record transitions; do not animate the whole surface continuously.
 - The map stage is fixed. A sticky stage can make focusing a control change
   page scroll and accidentally jump to another day. Camera padding reserves
   space for the card without moving the geographic centre onto another hill.
@@ -58,8 +72,11 @@ Do not invent summit names or exact landmark locations from photographs.
 `public/trek/index.html` and `public/trek/moments.json`. The older Atlas/relief
 source files are retained but are not the active build or a reachable view.
 
-`journey-clock.js` handles timeline and dialogs. `journey-map.js` handles the
-MapLibre map, route interpolation, camera and day card. MapLibre 5.6.2 and its
+`journey-clock.js` handles timeline and record dialogs. `journey-story.js` owns
+the distance marks, whole-walk summary and mobile journal expansion.
+`journey-story.css` applies the journal presentation over the map's base styles.
+`journey-map.js` handles MapLibre, route interpolation, camera, day card and
+photograph dialogs. MapLibre 5.6.2 and its
 licence are vendored locally. `journey-style.json` derives from
 [OpenFreeMap Liberty](https://openfreemap.org/quick_start/), with muted colours;
 its vector tiles supply real roads, trails, names and building geometry.
@@ -75,6 +92,9 @@ approved coordinate schema, all recording segments, unconnected gaps and
 evidenced moments. `npm run check:trek:dom` uses the isolated browser harness
 and `scripts/check-trek-paths-dom.mjs` for day/chapter/country jumps, playback,
 reset and replay, photo/music dialogs, 320/390px fit and graphics loss.
+`CHECK_TREK_STORY_ONLY=1 npm run check:trek:dom` targets the photograph contact
+strip, keyboard browsing, exact position preservation, distance scrubbing,
+full phone journal, responsive record sleeve and reduced motion.
 
 Run `npm run publish:ready` once before publishing. After Pages succeeds, check
 the live page and approved route asset and inspect desktop and phone views.

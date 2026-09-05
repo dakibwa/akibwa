@@ -646,10 +646,11 @@ const main = async () => {
     process.exit(2);
   }
 
+  const timeoutMs = process.env.CHECK_TREK_ONLY ? 240000 : 120000;
   const watchdog = setTimeout(() => {
-    console.error("\nNavigation DOM check timed out after 120s.");
+    console.error(`\nNavigation DOM check timed out after ${timeoutMs / 1000}s.`);
     process.exit(1);
-  }, 120000);
+  }, timeoutMs);
   watchdog.unref();
 
   let server = null;
