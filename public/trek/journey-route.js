@@ -70,7 +70,18 @@
       let n=1;while(n<dayCount&&distance>=boundaries[n])n++;
       const span=boundaries[n]-boundaries[n-1];return {day:n,t:span?clamp((distance-boundaries[n-1])/span,0,1):1};
     }
+    const recordedPieces=pieces.filter(p=>p.kind==='recorded');
+    const recordedBefore=distance=>recordedPieces.reduce((sum,p)=>sum+clamp(distance-p.start,0,p.end-p.start),0);
+    const recordedBoundaries=boundaries.map(recordedBefore);
+    function recordedFraction(n,distance){
+      n=clamp(n,1,dayCount);
+      const from=recordedBoundaries[n-1],span=recordedBoundaries[n]-from;
+      // Presentation links never accrue walking distance or ascent. Daily
+      // measurements are interpolated only over that day's recorded portions.
+      return span?clamp((recordedBefore(distance)-from)/span,0,1):1;
+    }
     return {total,pieces,boundaries,recorded:collection(records),connections:collection(links),sample,dayAt,
+      recordedFraction,
       dayDistance:(n,t=0)=>mix(boundaries[clamp(n,1,dayCount)-1],boundaries[clamp(n,1,dayCount)],clamp(t,0,1))};
   }
   const api={buildJourneyPath,metres,length,headingDelta};

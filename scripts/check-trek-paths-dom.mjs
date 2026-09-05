@@ -14,6 +14,31 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_PROGRESS_ONLY==='1'){
+    section('Journey progress overlay');
+    const data=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);
+    const readout=()=>evaluate(`({day:document.querySelector('#readout-day').textContent,km:document.querySelector('#readout-distance').textContent,ascent:document.querySelector('#readout-ascent').textContent,fit:[...document.querySelectorAll('.journey-readout dd,.journey-readout dt')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&e.scrollWidth<=e.clientWidth+1}),top:document.querySelector('.journey-readout').getBoundingClientRect().top})`);
+    await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the mountain view loads with visible progress');
+    let values=await readout(),s=await state();
+    const expected=path.recordedFraction(30,s.distance),before=data.days[28],after=data.days[29];
+    check(values.day==='30'&&Math.abs(Number(values.km.replaceAll(',',''))-(before.cum+(after.cum-before.cum)*expected))<.06,'distance uses the original daily totals and recorded progress');
+    check(Number(values.ascent.replaceAll(',',''))===Math.round(before.cumElev+(after.cumElev-before.cumElev)*expected),'ascent is the original accumulated climb, independent of camera height');
+    check(values.fit&&values.top>900*.75,'the desktop readout leaves the landscape open');
+    const link=path.pieces.filter(p=>p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
+    await scrub((link.start+link.end)/2);await settled();const first=await readout();await click('#play');await sleep(900);await click('#play');values=await readout();
+    check(values.km===first.km&&values.ascent===first.ascent,'the long visual connection adds neither distance nor ascent');
+    await scrub(path.dayDistance(30,.5));await settled();
+    for(const width of [390,320]){
+      const beforeResize=await state();
+      await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(180);
+      values=await readout();s=await state();
+      check(values.fit&&values.top>844*.75&&s.controlsFit&&s.overflow<=1&&s.distance===beforeResize.distance,`${width}px fits the numbers and controls without moving the route`);
+    }
+    await scrub(path.total);values=await readout();
+    check(values.day==='67'&&values.km==='1,982'&&values.ascent===Math.round(data.stats.ascent).toLocaleString('en-GB'),'Sofia shows the exact journey totals');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the progress overlay reports no runtime errors');
+    return;
+  }
   section('Traveller landscape and quiet controls');
   await setDesktop(1440,900);await goto('/trek/?day=30');
   check(await settled(),'the mountain camera loads its destination elevation');

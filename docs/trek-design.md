@@ -14,8 +14,10 @@ perspective and much less text and interface on 5 September 2026.
   Retain real roads, trails, rivers and buildings, while removing map labels
   from the moving view. Avoid a fixed compass direction or an overhead overview
   as the main experience.
-- Keep only the small mark, day/country, menu, play control, progress line and
-  photograph button on the landscape. The opening has one start action; Sofia
+- Keep the small mark, country, menu, play control, progress line, date and
+  photograph button on the landscape. A quiet row above the progress line shows
+  day out of 67, kilometres covered and total metres climbed, as Dan requested
+  on 5 September 2026. Use open typography, not cards. The opening has one start action; Sofia
   has one replay action. Map credits remain in a visible compact disclosure.
 - The menu owns all 67 days, six chapters, pace, the photograph-interlude toggle,
   original notes and day metrics, actual record artwork and journey context.
@@ -62,6 +64,12 @@ Playback traverses one continuous distance including those visual connections.
 Every numbered day's end meets the next day's start. Missing days share the
 connection to the next recording; days 16–17 divide their shared record
 approximately. The menu preserves that qualification and the combined metrics.
+
+The visible counters use the approved daily cumulative totals. Within-day values
+are estimates interpolated over recorded portions only; visual connections never
+advance distance or ascent. The finish must read 1,982 km and the original total
+ascent. "Metres climbed" is accumulated ascent, not camera altitude or a live
+measurement of the traveller's elevation.
 
 `data/trek-moments.json` owns six chapters and nine photo/note-backed moments.
 Photographs belong to a day, not a verified coordinate. Retain the location

@@ -18,6 +18,7 @@
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
+    const number=new Intl.NumberFormat('en-GB',{maximumFractionDigits:1});
     $('journey-day').replaceChildren(...data.days.map(d=>{const o=document.createElement('option');o.value=d.n;o.textContent='Day '+String(d.n).padStart(2,'0')+' · '+d.c;return o;}));
     $('photo-interludes').checked=!reduced;
     text('walk-totals','1,982 km · 67 numbered days · '+data.photos.length+' photographs · '+Math.round(data.stats.ascent).toLocaleString()+' m of ascent.');
@@ -54,8 +55,14 @@
       const d=namedDay(day),percent=path?distance/path.total*100:0;
       progress.value=percent*10;progress.style.setProperty('--progress',percent+'%');
       progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c);
-      text('progress-day',String(day).padStart(2,'0')+' / 67');text('where',started?d.c+' · day '+String(day).padStart(2,'0'):'Paris → Sofia');
+      const previous=data.days.find(record=>record.n===day-1);
+      const measured=path?path.recordedFraction(day,distance):0;
+      const km=mix(previous?.cum||0,d.cum,measured),ascent=mix(previous?.cumElev||0,d.cumElev,measured);
+      text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(km));
+      text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
+      text('where',started?d.c:'Paris → Sofia');
       if(!force&&lastUI===day)return;lastUI=day;
+      text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
       $('journey-day').value=day;$('day-back').disabled=day===1;$('day-forward').disabled=day===67;
       const photos=photosFor(day);$('photos-open').disabled=false;$('menu-photos').hidden=!photos.length;
       if(photos.length){$('menu-photo').src='photos/'+photos[Math.floor(photos.length*.45)].src;text('menu-photo-count',photos.length+' photographs ↗');}

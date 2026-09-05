@@ -20,6 +20,15 @@ for(let n=1;n<67;n++){
   assert(path.boundaries[n]>=path.boundaries[n-1],'day order must remain monotonic');
   assert.equal(path.dayDistance(n,1),path.dayDistance(n+1,0),'day boundaries must be continuous');
 }
+for(let n=1;n<=67;n++){
+  const start=path.dayDistance(n,0),end=path.dayDistance(n,1);
+  const recorded=path.pieces.filter(p=>p.kind==='recorded').reduce((sum,p)=>sum+Math.max(0,Math.min(end,p.end)-Math.max(start,p.start)),0);
+  if(recorded>0){assert.equal(path.recordedFraction(n,start),0);assert.equal(path.recordedFraction(n,end),1);}
+  for(const p of path.pieces.filter(p=>p.kind==='connection')){
+    const a=Math.max(start,p.start),b=Math.min(end,p.end);
+    if(b>a)assert.equal(path.recordedFraction(n,a),path.recordedFraction(n,b),'visual connections must never advance walking metrics');
+  }
+}
 assert.equal(path.dayDistance(1,0),0);assert.equal(path.dayDistance(67,1),path.total);
 assert.equal(headingDelta(179,-179),2,'crossing north must not turn the camera through a full circle');
 assert.equal(headingDelta(725,10),5,'accumulated turns must still choose the shortest direction');
