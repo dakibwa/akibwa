@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
+import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url);
 const {pathAt}=require('../public/trek/journey-map.js');
 const read=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url),'utf8'));
@@ -50,6 +51,12 @@ for(let i=0;i<source.tracks.length;i++){
   });
 }
 const generated=readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8');
+const runtimeAssets=[...generated.matchAll(/(?:href|src)="(journey-[\w-]+\.(?:css|js))(?:\?v=([a-f0-9]+))?"/g)];
+assert(runtimeAssets.length>=6,'the generated page references its runtime assets');
+for(const [,file,version] of runtimeAssets){
+  const expected=createHash('sha256').update(readFileSync(new URL('../public/trek/'+file,import.meta.url))).digest('hex').slice(0,12);
+  assert.equal(version,expected,`Run npm run trek:build after changing ${file}; cached controls must match the page`);
+}
 assert(!/id="(?:view-atlas|view-relief|relief-map|atlas)"/.test(generated),'only the Paths view is reachable');
 const mapSource=readFileSync(new URL('../public/trek/journey-map.js',import.meta.url),'utf8');
 assert(mapSource.includes("map.setTerrain({source:'dem',exaggeration:1.35})"),'3D terrain applies to the whole map');

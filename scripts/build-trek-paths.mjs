@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Build the paths-only journey from approved public records and coordinates.
 import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 const root=new URL('../',import.meta.url);
 const read=p=>JSON.parse(readFileSync(new URL(p,root),'utf8'));
 const source=read('data/trek-days.json'),journal=read('data/trek-journal.json');
@@ -30,6 +31,10 @@ let timeline=0;for(const s of scenes){s.at=timeline;timeline+=s.len;}
 const data={days,photos,scenes,timeline,total:source.facts.km,colors:Object.fromEntries(source.countries.map(c=>[c.name,c.color])),stats:{days:walked,ascent,minutes,countries:source.facts.countries}};
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const list=days.map(d=>`<li>Day ${d.n} · ${esc(d.c)}${d.date?' · '+d.date:''}${d.w?' · '+d.km.toFixed(1)+' km':''}${d.j.length?'<p>'+esc(d.j.map(j=>j.text).join(' '))+'</p>':''}</li>`).join('\n');
-const html=readFileSync(new URL('scripts/trek-journey-template.html',root),'utf8').replace('__DATA_JSON__',JSON.stringify(data)).replace('<!--__NOSCRIPT_DAYS__-->',list);
+const html=readFileSync(new URL('scripts/trek-journey-template.html',root),'utf8').replace('__DATA_JSON__',JSON.stringify(data)).replace('<!--__NOSCRIPT_DAYS__-->',list)
+  .replace(/(href|src)="(journey-(?:map|shell|story|clock)\.(?:css|js))"/g,(_,attribute,file)=>{
+    const version=createHash('sha256').update(readFileSync(new URL('public/trek/'+file,root))).digest('hex').slice(0,12);
+    return `${attribute}="${file}?v=${version}"`;
+  });
 writeFileSync(new URL('public/trek/index.html',root),html);
 console.log(`Built the 3D paths journey: ${days.length} days, ${photos.length} photos, ${Object.values(journal.days).flat().length} factual notes; ${Math.round(html.length/1024)} KB HTML`);

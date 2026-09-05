@@ -75,6 +75,8 @@ source files are retained but are not the active build or a reachable view.
 `journey-clock.js` handles timeline and record dialogs. `journey-story.js` owns
 the distance marks, whole-walk summary and mobile journal expansion.
 `journey-story.css` applies the journal presentation over the map's base styles.
+The builder versions each runtime stylesheet and script URL with its content
+hash so cached controls cannot be mixed with a newer generated page.
 `journey-map.js` handles MapLibre, route interpolation, camera, day card and
 photograph dialogs. MapLibre 5.6.2 and its
 licence are vendored locally. `journey-style.json` derives from
