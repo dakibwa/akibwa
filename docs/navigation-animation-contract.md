@@ -43,8 +43,8 @@ Projects → Career → Taste or the original character of the page.
 ## Standalone project surfaces
 
 - Features may show a compact Akibwa banner when entered from the homepage. That banner stays brand-only.
-- The Trek is always standalone and excluded from search and image indexes. Its route is abstracted; the separate Trek privacy contract owns its data and image allow-lists.
-- After the homepage restoration, improve the Trek's presentation and explore a beautiful 3D/isometric map within those existing privacy boundaries. That requested overhaul is outstanding, not delivered by the homepage work.
+- The Trek is always standalone and excluded from search and image indexes. Its existing exact public route and factual-only journal remain governed by the Trek privacy checker; the [Trek contract](trek-design.md) owns presentation, geographic limits and source allow-lists.
+- Trek opens as an interactive terrain relief with an SVG Atlas alternative, explicit playback controls and reachable photo/music context on phones and desktop. It uses the existing public geography and cached elevation.
 
 ## Verification — 5 September 2026
 
@@ -55,4 +55,5 @@ the native Taste rail, Graceland-first identity, modal focus/back/reload, the
 complete paginated album catalogue, reduced motion and the public boundary.
 Desktop and phone inspection retains the historical composition with readable
 project captions and cover labels. Features' published payload is unchanged.
-The 3D/isometric Trek overhaul remains the next Akibwa outcome.
+The separate Trek change implements the requested 3D/isometric presentation;
+its design and focused checks are recorded in [trek-design.md](trek-design.md).

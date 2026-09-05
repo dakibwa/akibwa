@@ -10,7 +10,7 @@ The archive has searchable, source-specific album counts and paginated artwork. 
 
 - Features is a playable daily untangling puzzle.
 - Português com a Inês links to its own lesson and booking site.
-- `/trek/` is a `noindex` static atlas of the original Paris-to-Sofia journey. It retains the exact dated route, daily distances, activity metrics, photo capture times and full photograph set. Journal excerpts are limited to neutral route observations: first-person reflection and personal, health, relationship, financial, accommodation and identifying third-party details are excluded.
+- `/trek/` is a `noindex` interactive relief of the original Paris-to-Sofia journey, with the original SVG Atlas as a selectable graphics fallback. It retains the exact dated route, daily distances, activity metrics, photo capture times and full photograph set. Journal excerpts are limited to neutral route observations: first-person reflection and personal, health, relationship, financial, accommodation and identifying third-party details are excluded.
 
 ## Checks and publishing
 
@@ -19,5 +19,6 @@ The archive has searchable, source-specific album counts and paginated artwork. 
 - `npm run publish:check`: verify registered public surfaces and exported routes.
 - `npm run publish:ready`: run the full publication gate.
 - `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.
+- `npm run check:trek:dom`: exercise relief, playback, phone layouts and graphics failure paths. See [the Trek design and source contract](docs/trek-design.md).
 
 Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md) and [Publication Workflow](docs/publication-workflow.md).

@@ -52,4 +52,6 @@ are therefore pre-rendered at build time and committed.
 
 ## Documentation
 
+- Trek presentation, existing public data projection and graphics fallback: [docs/trek-design.md](docs/trek-design.md).
+
 - Git and the live site own implementation and delivery truth. Update the relevant repository documentation in the same commit whenever a material change alters public behaviour, architecture, publishing, or the next product milestone.

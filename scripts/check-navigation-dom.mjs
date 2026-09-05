@@ -102,7 +102,7 @@ const launchChrome = (chromeBin, profileDir) =>
         `--user-data-dir=${profileDir}`,
         "--no-first-run",
         "--no-default-browser-check",
-        "--disable-gpu",
+        ...(process.env.CHECK_TREK_ONLY ? ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader"] : ["--disable-gpu"]),
         "--hide-scrollbars",
         "--window-size=1440,900",
         "about:blank"
@@ -136,6 +136,7 @@ class Cdp {
     this.nextId = 1;
     this.pending = new Map();
     this.waiters = [];
+    this.events = [];
     socket.addEventListener("message", (event) => {
       const message = JSON.parse(event.data);
       if (message.id && this.pending.has(message.id)) {
@@ -145,6 +146,7 @@ class Cdp {
         return;
       }
       if (!message.method) return;
+      this.events.push(message);
       this.waiters = this.waiters.filter((waiter) => {
         if (waiter.method !== message.method) return true;
         waiter.resolve(message.params);
@@ -444,6 +446,126 @@ const checkPublicLanding = async () => {
   );
 };
 
+const checkTrek = async () => {
+  const html = readFileSync(new URL('../public/trek/index.html', import.meta.url), 'utf8');
+  const data = JSON.parse(html.match(/  var DATA = (.+);\n  var days = DATA\.days;/)[1]);
+  const click = selector => evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+  const waitFor = async predicate => {
+    for(let i=0;i<100;i++){
+      if(await predicate())return;
+      await sleep(100);
+    }
+  };
+  const waitForScroll = async position => {
+    for(let i=0;i<80;i++){
+      if(await evaluate(`Math.abs(scrollY-${position})<2`))return;
+      await sleep(50);
+    }
+  };
+  const state = () => evaluate(`(() => ({
+    relief: document.querySelector('#stage').classList.contains('is-relief'),
+    canvas: !document.querySelector('#relief-map').hidden,
+    atlas: getComputedStyle(document.querySelector('#atlas')).visibility,
+    selected: document.querySelector('#view-atlas').getAttribute('aria-pressed'),
+    disabled: document.querySelector('#view-relief').disabled,
+    turnsDisabled: document.querySelector('#turn-left').disabled && document.querySelector('#turn-right').disabled,
+    position: document.querySelector('#hud-position').textContent,
+    km: Number(document.querySelector('#hud-km').textContent),
+    labels: [...document.querySelectorAll('.relief-town:not([hidden])')].map(e => e.style.transform).join('|'),
+    pause: document.querySelector('#journey-pause').textContent,
+    scroll: scrollY,
+    frames: window.__trekFrames,
+    overflow: document.documentElement.scrollWidth-innerWidth,
+    photos: [...document.querySelectorAll('#photo-track img')].filter(e=>e.complete && e.naturalWidth>0).length,
+    note: document.querySelector('#story-text').textContent,
+    controlsFit: [...document.querySelectorAll('.map-tools button')].filter(e=>!e.hidden).every(e=>{
+      const r=e.getBoundingClientRect();return r.left>=0 && r.right<=innerWidth+1 && r.top>=0 && r.bottom<=innerHeight+1;
+    })
+  }))()`);
+  await cdp.send('Page.addScriptToEvaluateOnNewDocument', {source: `window.__trekFrames=0; const raf=window.requestAnimationFrame; window.requestAnimationFrame=function(callback){return raf.call(window,time=>{window.__trekFrames++;callback(time);});};`});
+  await setDesktop(1440,960);
+  cdp.events=[];
+  await goto('/trek/');
+  await sleep(1200);
+  section('Trek relief and interaction');
+  let current=await state();
+  check(current.relief && current.canvas && current.labels.length>20, 'the relief initializes and projects town labels');
+  check(current.km===0 && current.controlsFit && current.overflow<=1, 'the opening journey and controls fit the desktop');
+  const before=current.labels;
+  await click('#turn-right'); await sleep(150); current=await state();
+  check(current.labels!==before, 'the keyboard-accessible turn control rotates the map');
+  await click('#journey-reset'); await sleep(250);
+  await click('.relief-town[aria-label="Visit Zell am See"]'); await sleep(1300); current=await state();
+  check(current.position.includes('day 28') && current.km>900 && current.km<950, `town selection jumps to its actual journey day [${current.position}]`);
+  check(current.photos>0 && current.note.includes('Ankogel'), 'the selected route day retains its real photos and factual note');
+  const beforeAtlas=current.scroll;
+  await click('#view-atlas'); current=await state();
+  check(!current.relief && !current.canvas && current.atlas==='visible' && current.selected==='true' && current.scroll===beforeAtlas, 'Atlas preserves the current day and exposes the existing map');
+  await click('#view-relief');
+  await click('#journey-pause'); await waitFor(async()=>{const s=await state();return s.pause==='Pause'&&s.scroll>beforeAtlas;}); current=await state();
+  check(current.pause==='Pause' && current.scroll>beforeAtlas, `Resume advances the journey [${current.pause}, ${current.scroll}/${beforeAtlas}]`);
+  await click('#journey-pause'); const paused=await state(); await sleep(450); current=await state();
+  check(current.pause==='Resume' && current.scroll===paused.scroll, 'Pause holds the current route position');
+  await click('#journey-pause');
+  await evaluate('document.querySelector("#journey-pause").focus()');
+  await cdp.send('Input.dispatchKeyEvent',{type:'keyDown',key:' ',code:'Space',windowsVirtualKeyCode:32});
+  await cdp.send('Input.dispatchKeyEvent',{type:'keyUp',key:' ',code:'Space',windowsVirtualKeyCode:32});
+  await sleep(100); current=await state();
+  check(current.pause==='Resume','Space activates the focused Pause button once');
+  let stable=0,previousFrames=-1;
+  for(let i=0;i<40&&stable<3;i++){
+    await sleep(250);const frames=(await state()).frames;
+    stable=frames===previousFrames?stable+1:0;previousFrames=frames;
+  }
+  const idle=await state(); await sleep(500); current=await state();
+  check(current.frames-idle.frames<=1, `the paused, settled map stops scheduling animation frames [${current.frames-idle.frames}]`);
+  await click('#journey-reset'); await sleep(1100); current=await state();
+  check(current.scroll===0 && current.km===0 && current.labels===before, 'Reset returns to the opening camera, rotation and route');
+  await click('#country-nav a[href="#bulgaria"]'); await waitForScroll(data.scenes.find(s=>s.t==='enter'&&s.country==='Bulgaria').at+10); await sleep(150); current=await state();
+  check(current.position.toLowerCase().includes('bulgaria') && current.km>1800, `country navigation reaches the last country [${current.position}, ${current.km}km, scroll ${current.scroll}]`);
+  await evaluate(`scrollTo(0,${data.timeline})`); await sleep(1100); current=await state();
+  check(current.position.includes('Sofia') && Math.abs(current.km-data.total)<.2 && current.pause==='Replay', 'the complete journey reaches Sofia and offers Replay');
+  check(await evaluate('document.querySelector("#collector-place-count").textContent.trim()==="17 / 17"'), 'all 17 route places remain collected at the finish');
+  await click('#journey-pause'); await sleep(350); current=await state();
+  check(current.scroll<1000 && current.pause==='Pause', 'Replay starts the journey again');
+  await click('#journey-pause');
+
+  section('Trek phone layout and music');
+  for(const width of [390,320]){
+    await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:2,mobile:true});
+    await goto('/trek/'); await click('#journey-reset'); await sleep(1200); current=await state();
+    check(current.relief && current.controlsFit && current.overflow<=1, `opening relief and controls fit ${width}px`);
+    const scene=data.scenes.find(s=>s.t==='walk' && s.day===28);
+    await evaluate(`scrollTo(0,${scene.at+scene.len*.72})`); await sleep(1200); current=await state();
+    check(current.controlsFit && current.photos>0 && current.overflow<=1, `day 28 photos, map and controls fit ${width}px`);
+    const music=await evaluate(`(() => {const e=document.querySelector('#current-album'),r=e.getBoundingClientRect();return {visible:!e.hidden&&r.width>0&&r.left>=0&&r.right<=innerWidth,label:e.getAttribute('aria-label')};})()`);
+    check(music.visible && music.label.includes('Illinois'), `the current record is reachable at ${width}px`);
+    await click('#current-album'); await sleep(150);
+    check(await evaluate('document.querySelector("#spot").open && document.querySelector("#spot-record").textContent.includes("Sufjan Stevens")'), 'the record button opens the correct music details');
+    await click('#spot-close');
+    await click('#view-atlas'); current=await state();
+    check(current.atlas==='visible' && !current.canvas && current.controlsFit,'the phone Atlas remains usable at the same point');
+  }
+  const runtimeErrors=cdp.events.filter(e=>e.method==='Runtime.exceptionThrown' || (e.method==='Runtime.consoleAPICalled' && ['error','warning'].includes(e.params.type)));
+  check(runtimeErrors.length===0, `healthy journeys report no runtime errors or warnings [${runtimeErrors.length}]`);
+  if(runtimeErrors.length) process.stdout.write(JSON.stringify(runtimeErrors.map(e=>e.params))+'\n');
+
+  section('Trek graphics failure paths');
+  await setDesktop();
+  await goto('/trek/');
+  await click('#country-nav a[href="#germany"]'); await waitForScroll(data.scenes.find(s=>s.t==='enter'&&s.country==='Germany').at+10); await sleep(150); const contextPosition=(await state()).scroll;
+  await evaluate('document.querySelector("#relief-map").getContext("webgl").getExtension("WEBGL_lose_context").loseContext()');
+  await sleep(200); current=await state();
+  check(!current.relief && current.disabled && current.turnsDisabled && current.atlas==='visible' && current.scroll===contextPosition, `a lost graphics context falls back to Atlas without losing the route position [${current.scroll}/${contextPosition}; relief ${current.relief}, disabled ${current.disabled}, turns ${current.turnsDisabled}, atlas ${current.atlas}]`);
+  const hook=await cdp.send('Page.addScriptToEvaluateOnNewDocument',{source:`const getContext=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){return /webgl/.test(kind)?null:getContext.call(this,kind,...args);};`});
+  await goto('/trek/'); await click('#journey-reset'); current=await state();
+  check(!current.relief && current.disabled && current.turnsDisabled && current.selected==='true' && current.atlas==='visible','devices without WebGL start with a correctly selected, usable Atlas');
+  await click('#walkbtn'); await sleep(400); current=await state();
+  check(current.scroll>0 && current.pause==='Pause','the Atlas-only journey still plays');
+  await click('#journey-pause');
+  await cdp.send('Page.removeScriptToEvaluateOnNewDocument',{identifier:hook.identifier});
+};
+
 const main = async () => {
   if (!externalOrigin && !existsSync(join(outDir, "index.html"))) {
     console.error("out/index.html not found — run `npm run build` first.");
@@ -484,7 +606,8 @@ const main = async () => {
     cdp = await Cdp.connect(pageTarget.webSocketDebuggerUrl);
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
-    await checkPublicLanding();
+    if (process.env.CHECK_TREK_ONLY) await checkTrek();
+    else await checkPublicLanding();
   } finally {
     try {
       processHandle.kill();

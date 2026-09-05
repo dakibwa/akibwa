@@ -14,6 +14,7 @@
 <meta property="og:description" content="1,982 km on foot across seven countries, autumn 2019. Scroll or press walk, and travel the line town by town.">
 <meta property="og:url" content="https://akibwa.com/trek/">
 <link rel="preload" href="fonts/IBMPlexMono-normal-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Fraunces-normal-100-900.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{font-family:"Plex Mono";src:url("fonts/IBMPlexMono-normal-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"Plex Mono";src:url("fonts/IBMPlexMono-normal-500.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
@@ -387,7 +388,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .stat{padding:8px 5px 7px;text-align:center;justify-items:center;gap:4px}
   .stat b{font-size:clamp(13px,3.6vw,17px);letter-spacing:-.055em}
   .stat b small{display:none}
-  .stat em{font-size:clamp(5.8px,1.6vw,7px);letter-spacing:.08em;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .stat em{font-size:clamp(7px,1.9vw,8px);letter-spacing:.025em;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .stat-elevation{position:relative;display:grid;grid-template-columns:1fr;padding:8px 4px 7px;border-right:0;overflow:hidden}
   .stat-elevation svg{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
   .stat-elevation p{position:relative;z-index:1;justify-items:center}
@@ -420,6 +421,68 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   .daydot,.town,.plate,.photo-strip,.collector,.journey-progress i,.journey-start{transition-duration:.01s}
   .collector-place,.collector-album{animation:none}
 }
+
+.journey-record{display:none}
+@media(max-width:1180px){
+ .journey-record:not([hidden]){position:absolute;z-index:16;left:20px;bottom:138px;display:flex;align-items:center;gap:9px;max-width:min(260px,calc(100% - 40px));padding:7px 10px 7px 7px;text-align:left;color:#354331;background:#f9f7edf0;border:1px solid #bfc1ad;border-radius:3px;box-shadow:0 3px 14px #41493210;cursor:pointer}
+ .journey-record img{width:34px;height:34px;object-fit:cover}
+ .journey-record span{min-width:0;font:11px/1.35 var(--sans)}
+ .journey-record b,.journey-record em{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .journey-record em{font-size:10px;font-style:normal;color:#626957}
+}
+/* A carved relief model on warm paper; the original SVG is the flat atlas. */
+@font-face{font-family:"Trek Serif";src:url("fonts/Fraunces-normal-100-900.woff2") format("woff2");font-weight:100 900;font-display:swap}
+#relief-map{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:grab}
+#relief-map:active{cursor:grabbing}
+#relief-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.relief-town{position:absolute;top:0;left:0;pointer-events:auto;border:0;background:rgba(246,244,234,.86);border-radius:3px;padding:3px 6px 3px 13px;color:#354331;font:600 11px/1.25 var(--sans);white-space:nowrap;box-shadow:0 2px 5px #51584518}
+.relief-town::before{content:"";position:absolute;left:3px;top:7px;width:5px;height:5px;background:#657253;border:1px solid #f7f5eb;border-radius:50%}
+.relief-walker{position:absolute;left:0;top:0;width:0;height:0}
+.relief-walker::before{content:"";position:absolute;left:-6px;top:-15px;width:12px;height:15px;background:#d36638;border:2px solid #fff8e8;border-radius:7px 7px 7px 0;rotate:-45deg;box-shadow:0 3px 7px #33432b55}
+.stage.is-relief{background:#ecebdf}
+.is-relief .atlas-scene{background:radial-gradient(ellipse at 50% 44%,#f4f2e8,#e5e6d8)}
+.is-relief #atlas{visibility:hidden}
+.is-relief .vignette{display:none}
+.is-relief .story-current,.is-relief .plate,.is-relief .collector-section,.is-relief .route-context{background:rgba(249,247,237,.94);clip-path:none;border-radius:3px;box-shadow:0 3px 14px #41493210}
+.is-relief .story-copy{filter:none}
+.is-relief .story-current{border-left-width:3px}
+.is-relief .collector{filter:none}
+.is-relief .collector-section,.is-relief .route-context{filter:none}
+.is-relief .story-text{font-size:13px;line-height:1.4}
+.is-relief .route-context{border-left-width:3px;bottom:25px}
+.map-tools{position:absolute;bottom:24px;right:24px;z-index:12;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 32px)}
+.map-tools button{min-height:40px;min-width:40px;border:1px solid #99a38e;background:#f5f3e8;color:#384b36;border-radius:3px;padding:7px 11px;font:600 12px/1.2 var(--sans);cursor:pointer}
+.map-tools button[aria-pressed="true"]{background:#384b36;color:#f5f3e8;border-color:#384b36}
+.map-tools button:disabled{opacity:.5;cursor:default}
+.map-credit{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);font:9px/1.35 var(--mono);color:#6e7864;z-index:6;white-space:nowrap}
+.trek-intro{position:absolute;left:32px;top:calc(var(--chrome-h) + 30px);z-index:8;color:#344731;pointer-events:none;max-width:550px}
+.trek-intro .intro-kicker{font:10px/1.3 var(--mono);letter-spacing:.13em;text-transform:uppercase;margin-bottom:14px}
+.trek-intro h1{font:460 clamp(42px,5vw,78px)/1.02 "Trek Serif",Georgia,serif;letter-spacing:-.065em;margin:0 0 14px}
+.trek-intro>p:last-child{font-size:15px;line-height:1.5;color:#63735b}
+.stage.has-started .trek-intro{display:none}
+.stage:not(.is-relief) .trek-intro,.stage:not(.is-relief) .map-credit{display:none}
+.is-relief[data-zoom="hero"] .story-rail{visibility:hidden}
+.is-relief:not(.has-started) .journey-start{top:auto;left:32px;bottom:30px;transform:none;background:#384b36;border:1px solid #384b36;color:#f8f5e9;border-radius:3px;box-shadow:0 6px 16px #41503620;font-size:14px;padding:14px 22px}
+.is-relief:not(.has-started) .route-context,.is-relief:not(.has-started) .hint{display:none}
+@media(max-width:900px){
+ .trek-intro{left:20px;top:calc(var(--chrome-h) + 24px);max-width:calc(100% - 40px)}
+ .trek-intro h1{font-size:clamp(42px,7vw,62px)}
+ .map-tools{right:16px;bottom:18px;gap:4px}
+ .map-tools button{min-height:40px;padding:7px 9px;font-size:11px}
+ .map-credit{bottom:3px;font-size:7px;max-width:calc(100% - 24px)}
+ .is-relief:not(.has-started) .journey-start{left:20px;bottom:75px}
+ .is-relief .route-context{bottom:69px}
+ .relief-town{font-size:10px}
+ .is-relief .story-text{font-size:10px;line-height:1.3}
+}
+@media(max-width:560px){
+ .map-tools{left:16px;right:16px;justify-content:flex-end}
+ .map-tools button{min-width:38px;padding:7px 8px}
+ .trek-intro .intro-kicker{font-size:9px;margin-bottom:10px}
+ .trek-intro>p:last-child{font-size:13px}
+ .is-relief:not(.has-started) .journey-start{min-height:44px;font-size:12px;padding:12px 16px}
+}
+
 </style>
 </head>
 <body>
@@ -446,17 +509,17 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
 <section class="statbar" id="statbar" aria-label="Journey statistics">
   <p class="stat-position" id="hud-position">Paris · 24 sep 2019</p>
-  <div class="stat stat-distance"><b><span id="hud-km">0.0</span><small>km</small></b><em>distance</em></div>
-  <div class="stat stat-ascent"><b id="hud-ascent">0</b><em>metres climbed</em></div>
-  <div class="stat stat-days"><b id="hud-days">0</b><em>days on foot</em></div>
-  <div class="stat stat-hours"><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving</em></div>
+  <div class="stat stat-distance"><b><span id="hud-km">0.0</span><small>km</small></b><em>distance · km</em></div>
+  <div class="stat stat-ascent"><b id="hud-ascent">0</b><em>ascent · m</em></div>
+  <div class="stat stat-days"><b id="hud-days">0</b><em>walking days</em></div>
+  <div class="stat stat-hours"><b><span id="hud-hours">0.0</span><small>h</small></b><em>moving · h</em></div>
   <div class="stat stat-elevation">
     <svg viewBox="0 0 132 28" aria-hidden="true">
       <path id="elev-area"></path>
       <path id="elev-line"></path>
       <circle id="elev-now" r="2.2" cx="3" cy="20"></circle>
     </svg>
-    <p><b><span id="hud-alt">—</span><small>m</small></b><em>map elevation</em></p>
+    <p><b><span id="hud-alt">—</span><small>m</small></b><em>elevation · m</em></p>
   </div>
 </section>
 
@@ -481,8 +544,24 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     <div class="map-shell" id="map-shell">
       <div class="atlas-scene" id="atlas-scene">
 <!--__ATLAS__-->
+        <canvas id="relief-map" hidden aria-label="Interactive terrain relief of the Paris to Sofia journey"></canvas>
+        <div id="relief-labels" hidden></div>
       </div>
       <div class="vignette"></div>
+      <div class="trek-intro">
+        <p class="intro-kicker">24 September to 28 November 2019</p>
+        <h1>Paris to Sofia.</h1>
+        <p>1,982 kilometres. Seven countries.<br>One long walk.</p>
+      </div>
+      <div class="map-tools" aria-label="Map and journey controls">
+        <button id="view-relief" type="button" aria-pressed="false">3D relief</button>
+        <button id="view-atlas" type="button" aria-pressed="true">Atlas</button>
+        <button id="turn-left" type="button" aria-label="Turn map left" disabled>↶</button>
+        <button id="turn-right" type="button" aria-label="Turn map right" disabled>↷</button>
+        <button id="journey-pause" type="button" hidden>Pause</button>
+        <button id="journey-reset" type="button" aria-label="Back to the start">Reset</button>
+      </div>
+      <p class="map-credit">Open-Meteo elevation · illustrated relief, heights exaggerated</p>
       <div class="route-context" id="route-context">
         <p class="route-context-label" id="route-context-label">next on foot</p>
         <p class="route-context-leg" id="route-context-leg">Paris → Reims</p>
@@ -492,6 +571,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     </div>
     <p class="hint" id="hint">scroll ↓</p>
 
+    <button id="current-album" class="journey-record album-open" type="button" aria-haspopup="dialog" hidden></button>
     <aside class="collector" id="collector" aria-label="Collected along the journey">
       <section class="collector-section collector-places">
         <p class="collector-head"><span>places passed</span><b id="collector-place-count">1 / __WALL_PLACE_COUNT__</b></p>
@@ -530,6 +610,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   </div>
 </noscript>
 
+<script src="relief-map.js"></script>
 <script>
 (function(){
   "use strict";
@@ -575,6 +656,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   var journeyProgressFill = journeyProgress && journeyProgress.querySelector("i");
   var walkbtn = document.getElementById("walkbtn");
   var collector = document.getElementById("collector");
+  var currentAlbum = document.getElementById("current-album");
   var collectorPlaceCount = document.getElementById("collector-place-count");
   var collectorPlaceList = document.getElementById("collector-place-list");
   var collectorAlbumCount = document.getElementById("collector-album-count");
@@ -589,6 +671,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     experienceTop = experience.offsetTop;
     experience.style.height = (DATA.timeline + VH) + "px";
     PLAY_END = experienceTop + DATA.timeline;
+    lastRenderedProgress = -1;
     scrollDirty = true;
     requestFrame();
   });
@@ -599,6 +682,43 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
 
   // ---------------------------------------------------------------- camera
   var VBW = DATA.vb[0];
+  var relief = null, reliefPoint = null;
+  var reliefButton = document.getElementById("view-relief"), atlasButton = document.getElementById("view-atlas");
+  var turnLeft = document.getElementById("turn-left"), turnRight = document.getElementById("turn-right");
+  var pauseButton = document.getElementById("journey-pause");
+  function useRelief(enabled) {
+    enabled = !!(enabled && relief && relief.available);
+    stage.classList.toggle("is-relief", enabled);
+    reliefButton.setAttribute("aria-pressed", String(enabled));
+    atlasButton.setAttribute("aria-pressed", String(!enabled));
+    turnLeft.disabled = turnRight.disabled = !enabled;
+    if (relief) relief.setEnabled(enabled);
+    requestFrame();
+  }
+  try {
+    if (window.createTrekRelief) relief = window.createTrekRelief(DATA, {
+      invalidate: function(){ requestFrame(); },
+      pause: function(){ stopWalk(); },
+      fallback: function(){ useRelief(false); reliefButton.disabled = true; },
+      visit: function(day){
+        stopWalk();
+        var scene = scenes.find(function(s){ return s.t === "walk" && s.day === Math.max(1, day); });
+        if (scene) scrollTo({top: experienceTop + scene.at + scene.len * .72, behavior: "auto"});
+      }
+    });
+  } catch (error) { console.warn(error); relief = null; }
+  reliefButton.disabled = !relief;
+  reliefButton.addEventListener("click", function(){ useRelief(true); });
+  atlasButton.addEventListener("click", function(){ useRelief(false); });
+  turnLeft.addEventListener("click", function(){ if(relief)relief.turn(-.22); });
+  turnRight.addEventListener("click", function(){ if(relief)relief.turn(.22); });
+  document.getElementById("journey-reset").addEventListener("click", function(){
+    stopWalk();if(relief)relief.reset();scrollTo({top:0,behavior:"auto"});history.replaceState(null,"",location.pathname);
+  });
+  pauseButton.addEventListener("click", function(){
+    if(playing)stopWalk();else {if(progress >= DATA.timeline - 4)scrollTo(0,0);startWalk();}
+  });
+  useRelief(!!relief);
   var TRAVELW = 500, CLOSEW = 340;
   var cam = { x: days[0].x, y: days[0].y, w: VBW };
   var target = { x: days[0].x, y: days[0].y, w: VBW };
@@ -639,6 +759,7 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
       atlas._trekViewBox = viewBox;
       atlas.setAttribute("viewBox", viewBox);
     }
+    if (relief) relief.draw({cam:cam, point:reliefPoint, overview:lastZoom === "hero"});
   }
   atlas.setAttribute("preserveAspectRatio", "xMidYMid slice");
 
@@ -865,6 +986,15 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     lastCollectionDay = dayN;
     var allPlaces = DATA.places || [];
     var allAlbums = DATA.albums || [];
+    var heard = matched.filter(function(d){ return d.n <= dayN; });
+    var currentRecord = heard[heard.length - 1];
+    currentAlbum.hidden = !currentRecord;
+    if(currentRecord){
+      var record = currentRecord.s;
+      currentAlbum.setAttribute("data-day", currentRecord.n);
+      currentAlbum.setAttribute("aria-label", "Open record: " + record.artist + " — " + record.album);
+      currentAlbum.innerHTML = '<img src="covers/' + esc(record.slug) + '.webp" width="34" height="34" alt=""><span><b>' + esc(record.album) + '</b><em>' + esc(record.artist) + '</em></span>';
+    }
     var places = allPlaces.filter(function(place){ return place.day <= dayN; });
     var albums = allAlbums.filter(function(album){ return album.day <= dayN; });
     setText(collectorPlaceCount, places.length + " / " + allPlaces.length);
@@ -985,11 +1115,12 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     }
   }
 
-  function fade(el, v){ if (el._trekOpacity !== v) { el._trekOpacity = v; el.style.opacity = v; } }
+  function fade(el, v){ if (el._trekOpacity !== v) { el._trekOpacity = v; el.style.opacity = v; el.setAttribute("aria-hidden", +v < .05 ? "true" : "false"); } }
 
   function update(p){
     var scene = sceneAt(p);
     var wp = routePointAt(scene, p);
+    reliefPoint = wp;
     var travelW = travelWidth();
     var inJourney = scene.t !== "start";
     var silentRest = scene.t === "walk" && !wp.day.w;
@@ -997,6 +1128,8 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
     fade(hint, p < 40 ? "1" : "0");
     stage.classList.toggle("is-finished", scene.t === "end");
     var hasStarted = p > 20;
+    pauseButton.hidden = !hasStarted;
+    if(!playing)pauseButton.textContent = scene.t === "end" ? "Replay" : "Resume";
     stage.classList.toggle("has-started", hasStarted);
     walkbtn.setAttribute("aria-hidden", hasStarted ? "true" : "false");
     walkbtn.tabIndex = hasStarted ? -1 : 0;
@@ -1107,20 +1240,25 @@ dialog.spot::backdrop{background:rgba(30,27,21,.72);backdrop-filter:blur(14px)}
   function startWalk(){
     if (playing) return;
     playing = true;
+    pauseButton.hidden = false;
+    pauseButton.textContent = "Pause";
     if (scrollY < 10) scrollTo(0, 10);
     scrollDirty = true;
     requestFrame();
   }
   function stopWalk(){
     playing = false;
+    pauseButton.textContent = "Resume";
   }
   walkbtn.addEventListener("click", startWalk);
+  document.addEventListener("visibilitychange", function(){ if(document.hidden)stopWalk(); else requestFrame(); });
   ["wheel", "touchstart", "keydown"].forEach(function(ev){
     addEventListener(ev, function(e){
       if (!playing) return;
-      if (ev === "keydown" && (e.key === " " || e.key === "Escape")) { stopWalk(); return; }
+      if (ev === "keydown" && e.key === "Escape") { stopWalk(); return; }
+      if (ev === "keydown" && e.key === " " && !e.target.closest("button,a,input,select,textarea")) { e.preventDefault(); stopWalk(); return; }
       if (ev !== "keydown") stopWalk();
-    }, { passive: true });
+    }, { passive: ev !== "keydown" });
   });
 
   // country jumps

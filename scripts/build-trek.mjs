@@ -942,8 +942,48 @@ for (const day of jsDays) {
     country: day.c,
   });
 }
+// The 3D view consumes the same public geography and cached elevation as the
+// atlas. No additional route, journal, photo or private source is introduced.
+const reliefPoint = (x, y) => [sx(x), Math.round(altAt(x, y)), sy(y)];
+// Crop the illustration to the cached elevation coverage. Do not extrapolate
+// mountain heights into the unsampled ends of France or northern Germany.
+function clipReliefRing(ring) {
+  const [west,north]=mercProj({lon:grid.west,lat:grid.north});
+  const [east,south]=mercProj({lon:grid.east,lat:grid.south});
+  let polygon=ring;
+  for(const [axis,bound,sign] of [[0,west,1],[0,east,-1],[1,north,1],[1,south,-1]]) {
+    const result=[];
+    for(let i=0;i<polygon.length;i++) {
+      const a=polygon[i],b=polygon[(i+1)%polygon.length];
+      const insideA=(a[axis]-bound)*sign>=0,insideB=(b[axis]-bound)*sign>=0;
+      if(insideA)result.push(a);
+      if(insideA!==insideB){const t=(bound-a[axis])/(b[axis]-a[axis]);result.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);}
+    }
+    polygon=result;
+  }
+  if(polygon.length)polygon.push(polygon[0]);
+  return polygon.map(([x,y])=>reliefPoint(x,y));
+}
+const relief = grid ? {
+  cols: grid.cols,
+  rows: grid.rows,
+  points: Array.from({ length: grid.rows * grid.cols }, (_, index) => {
+    const row = Math.floor(index / grid.cols), column = index % grid.cols;
+    const lon = grid.west + column * (grid.east - grid.west) / (grid.cols - 1);
+    const lat = grid.north - row * (grid.north - grid.south) / (grid.rows - 1);
+    const [x, y] = mercProj({ lon, lat });
+    return [sx(x), Math.round(grid.elev[index] || 0), sy(y)];
+  }),
+  rings: data.countryRings.flatMap(country => country.rings.map(clipReliefRing).filter(ring => ring.length > 3)),
+  rivers: water.rivers.flatMap(river => river.lines.map(line => line.map(([lon, lat]) => reliefPoint(...mercProj({lon, lat}))))),
+  towns: townsPlaced.map((town, index) => ({name: town.name, point: reliefPoint(town.x, town.y), day: places[index].day})),
+  atlasTilt: FLOOR_TILT,
+  atlasLift: RELIEF_SCALE,
+  source: "Cached Open-Meteo elevation and the existing public route-country geography. Relief is exaggerated; this is a journey illustration, not a navigation map.",
+} : null;
 const jsData = {
   days: jsDays,
+  relief,
   colors: COUNTRY_COLOR,
   total: data.facts.km,
   stats: {
@@ -981,7 +1021,7 @@ const platesHtml = actsMeta
   .map((act, i) => {
     const km = Math.round(act.days.reduce((s, d) => s + (d.walked ? d.km || 0 : 0), 0));
     return `
-  <div class="plate" id="plate-${act.name.toLowerCase()}" style="--c:${COUNTRY_COLOR[act.name]}">
+  <div class="plate" aria-hidden="true" id="plate-${act.name.toLowerCase()}" style="--c:${COUNTRY_COLOR[act.name]}">
     <img src="grounds/${act.name.toLowerCase()}.webp" alt="" width="640" height="640" loading="lazy" decoding="async">
     <div class="plate-text">
       <p class="plate-count">the ${ordinals[i]} country</p>
