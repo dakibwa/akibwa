@@ -3,6 +3,8 @@
 import { HeroBrandName } from "@/components/hero-brand-name";
 import { PageFooter } from "@/components/page-footer";
 import { SiteImage } from "@/components/site-image";
+import { CareerBar } from "@/components/career-bar";
+import { TasteLibrary } from "@/components/taste-library";
 
 const projects = [
   {
@@ -13,13 +15,13 @@ const projects = [
     subtitle: "daily untangling puzzle",
     kind: "Daily game",
     description:
-      "Pull apart the features tangled through a neural net. Ten fresh puzzles a day turn interpretability into something you can play.",
+      "Untangle ten small networks each day and discover shapes in the threads. The daily game is free.",
     action: "Open features",
     src: "/features/home-card-bright-v4.png",
-    alt: "A bright Features puzzle board with five sweeping tangled threads, crossings, neurons, the Features wordmark and a vertical column of five feature symbols",
+    alt: "Colourful threads and neurons on a Features puzzle board",
     above: true,
     aboveSync: true,
-    accent: "#1b947d"
+    accent: "#1b947d",
   },
   {
     id: "portuguese",
@@ -29,13 +31,13 @@ const projects = [
     subtitle: "European Portuguese lessons",
     kind: "Lessons and booking",
     description:
-      "European Portuguese lessons in Porto and online, with prices, availability and booking brought together in one simple place.",
+      "A website for Inês’s European Portuguese lessons, bringing her teaching, availability and booking into one place.",
     action: "Open Português com a Inês",
     src: "/project-art/personal/portuguese-with-ines-conversation.png",
     alt: "Two people talking over coffee as colourful speech shapes meet between them",
     above: true,
     aboveSync: true,
-    accent: "#7faaff"
+    accent: "#7faaff",
   },
   {
     id: "trek",
@@ -45,42 +47,23 @@ const projects = [
     subtitle: "Paris → Sofia · 1,982 km",
     kind: "Interactive journey",
     description:
-      "An interactive atlas tracing 1,982 kilometres from Paris to Sofia through route geometry, landscapes and records across seven countries.",
+      "A walk from Paris to Sofia, told through the route, photographs and notes from along the way.",
     action: "Open The Trek",
     src: "/project-art/personal/trek-paris-sofia-project.png",
     alt: "An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre",
-    accent: "#d96b32"
-  }
+    accent: "#d96b32",
+  },
 ];
 
-const capabilities = [
-  {
-    label: "Data",
-    title: "Make the mess legible.",
-    copy: "Turn scattered reporting and brittle processes into a model people can understand and trust.",
-    accent: "#1b947d"
-  },
-  {
-    label: "Systems",
-    title: "Build the useful thing.",
-    copy: "Create small AI-assisted tools and automations around the real job, without unnecessary machinery.",
-    accent: "#2f88ff"
-  },
-  {
-    label: "Delivery",
-    title: "Leave it in good hands.",
-    copy: "Ship something operable, documented and owned by the people who will keep using it.",
-    accent: "#c05212"
-  }
-];
-
-/* Projects use the Career interaction: the card is the link, and hover or
-   focus opens a small popover beneath it with the kind, the description and
-   the open cue. Nothing else on the page moves except the section's bottom
-   space, which the CSS grows so the rose Career rule steps down with it. */
+/* Captions stay in normal flow: every input mode gets the same description,
+   and the following Career chapter never competes with an overlay. */
 function ProjectShowcase() {
   return (
-    <div className="concept-project-grid concept-project-swipe" role="list" aria-label="Projects">
+    <div
+      className="concept-project-grid concept-project-swipe"
+      role="list"
+      aria-label="Projects"
+    >
       {projects.map((project) => (
         <div
           className={`concept-project-stop ${project.className}`}
@@ -97,6 +80,7 @@ function ProjectShowcase() {
             <SiteImage
               src={project.src}
               slot="conceptProject"
+              sizes="(max-width:800px) 88vw, (max-width:1358px) calc(32vw - 16px), 418px"
               alt={project.alt}
               above={project.above}
               aboveSync={project.aboveSync}
@@ -108,13 +92,8 @@ function ProjectShowcase() {
               </span>
             </span>
           </a>
-          <div className="concept-project-popover" aria-hidden="true">
-            <span className="concept-project-popover-kind">{project.kind}</span>
-            <strong>{project.title}</strong>
+          <div className="concept-project-popover">
             <p>{project.description}</p>
-            <span className="concept-project-popover-open">
-              {project.action} <span>↗</span>
-            </span>
           </div>
         </div>
       ))}
@@ -122,7 +101,7 @@ function ProjectShowcase() {
   );
 }
 
-export function EditorialHomeConcept() {
+export function EditorialHomeConcept({ albumPreview, albumCount }) {
   return (
     <div className="concept-page">
       <header className="page-grid concept-hero">
@@ -131,38 +110,25 @@ export function EditorialHomeConcept() {
         </h1>
         <div className="concept-hero-copy">
           <p className="concept-lede">
-            Building in the age of AI.
+            Building in the AI age
           </p>
           <PageFooter embedded />
         </div>
       </header>
 
-      <section className="page-grid concept-projects" id="projects" aria-labelledby="projects-title">
+      <section
+        className="page-grid concept-projects"
+        id="projects"
+        aria-labelledby="projects-title"
+      >
         <header className="concept-projects-head">
           <h2 id="projects-title">Projects</h2>
         </header>
         <ProjectShowcase />
       </section>
 
-      <section className="page-grid concept-capabilities" id="capabilities" aria-labelledby="capabilities-title">
-        <header className="concept-capabilities-head">
-          <h2 id="capabilities-title">What Akibwa does</h2>
-          <p>Small enough to understand. Solid enough to use.</p>
-        </header>
-
-        <ol className="concept-capability-list">
-          {capabilities.map((capability, index) => (
-            <li key={capability.label} style={{ "--capability-accent": capability.accent }}>
-              <span className="concept-capability-index" aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <span className="concept-capability-label">{capability.label}</span>
-              <h3>{capability.title}</h3>
-              <p>{capability.copy}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <CareerBar />
+      <TasteLibrary albumPreview={albumPreview} albumCount={albumCount} />
     </div>
   );
 }

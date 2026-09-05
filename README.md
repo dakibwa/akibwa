@@ -2,7 +2,9 @@
 
 Public site for [akibwa.com](https://akibwa.com), exported statically with Next.js and deployed from `main` through GitHub Pages.
 
-The indexed homepage is deliberately brand-led: Akibwa, three current projects and three broad capabilities. It does not publish a personal biography, employment timeline, residential history, taste archive, direct social links or a static email address. Detailed archive routes remain available only by direct link and use `noindex`; only `/` is advertised in the sitemap.
+The homepage introduces Daniel/Akibwa, then presents Projects → an airy Career timeline → a horizontal Taste Library. The approved career roles, cultural curation and Instagram/X links are restored selectively, not by reverting privacy work. Residential and private life history stay out; the email address is assembled only after activation. The full album archive remains `noindex`; only `/` is advertised in the sitemap.
+
+The archive has searchable, source-specific album counts and paginated artwork. The archive keeps the Spotify summary, leaving the homepage as a light editorial index. That summary is an approved aggregate of recorded music audio, not a lifetime total or an estimate of attention. Last.fm track scrobbles remain separate. See [the interaction and privacy contract](docs/navigation-animation-contract.md).
 
 ## Projects
 

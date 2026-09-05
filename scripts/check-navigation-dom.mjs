@@ -1,4 +1,4 @@
-/* Rendered regression check for Akibwa's public, brand-led homepage.
+/* Rendered regression check for Akibwa's approved personal homepage.
  *
  * Usage: npm run build && npm run check:navigation:dom
  * Optional: CHECK_NAV_URL=https://akibwa.com npm run check:navigation:dom
@@ -230,15 +230,14 @@ const publicLandingState = () =>
     const forbiddenIdentity = String.fromCharCode(68, 97, 110, 105, 101, 108, 32, 65, 116, 107, 105, 110, 115, 111, 110);
     const bodyText = document.body.innerText;
     const links = [...document.querySelectorAll("a[href]")].map((link) => link.href);
-    const capabilityList = document.querySelector(".concept-capability-list");
     const projectRail = document.querySelector(".concept-project-swipe");
     const projectStops = [...document.querySelectorAll(".concept-project-stop")];
     return {
       identity: document.querySelector(".concept-identity")?.textContent.trim(),
       lede: document.querySelector(".concept-lede")?.textContent.trim(),
       projectCount: document.querySelectorAll(".concept-project-card").length,
-      capabilityCount: document.querySelectorAll(".concept-capability-list > li").length,
-      capabilityColumns: getComputedStyle(capabilityList).gridTemplateColumns.split(" ").length,
+      careerCount: document.querySelectorAll(".concept-career-timeline button").length,
+      tasteCount: document.querySelectorAll(".personal-taste-card").length,
       hasPersonalIdentity: bodyText.includes(forbiddenIdentity),
       hasCareer: [...document.querySelectorAll("h1, h2, h3")].some((heading) => heading.textContent.trim() === "Career"),
       hasTasteLibrary: bodyText.includes("Taste Library"),
@@ -248,7 +247,8 @@ const publicLandingState = () =>
       googlebot: document.querySelector('meta[name="googlebot"]')?.content ?? "",
       overflow: document.documentElement.scrollWidth - innerWidth,
       hero: rect(".concept-hero"),
-      capabilities: rect(".concept-capabilities"),
+      career: rect(".personal-career"),
+      taste: rect(".personal-taste"),
       projects: {
         railWidth: projectRail.clientWidth,
         railScrollWidth: projectRail.scrollWidth,
@@ -268,14 +268,17 @@ const checkPublicLanding = async () => {
   await setDesktop();
   await goto("/");
   let state = await publicLandingState();
-  check(state.identity === "Akibwa", `the masthead exposes only Akibwa [${state.identity}]`);
-  check(state.lede === "Building in the age of AI.", "the public proposition is concise");
+  const ax=await cdp.send('Accessibility.getFullAXTree');
+  const mainHeading=ax.nodes.find(node=>node.role?.value==='heading' && node.properties?.some(property=>property.name==='level'&&property.value.value===1));
+  check(mainHeading?.name?.value === "I'm Daniel. Online as Akibwa.", `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
+  check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the approved introduction reserves both names");
+  check(state.lede === "Building in the AI age", "the masthead preserves Dan's requested proposition");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
-  check(state.capabilityCount === 3, `the homepage shows three broad capabilities [${state.capabilityCount}]`);
-  check(state.capabilityColumns === 3, `capabilities form a three-column desktop composition [${state.capabilityColumns}]`);
+  check(state.careerCount === 8, `the approved compact career bar has eight roles [${state.careerCount}]`);
+  check(state.tasteCount === 12, `the initial curation is bounded to twelve covers [${state.tasteCount}]`);
   check(!state.hasPersonalIdentity, "the indexed page does not contain the personal full name");
-  check(!state.hasCareer && !state.hasTasteLibrary, "career and taste archives stay off the indexed page");
-  check(state.socialLinks.length === 0, "the indexed page has no personal social links");
+  check(state.hasCareer && state.hasTasteLibrary, "the approved career and taste chapters are restored");
+  check(state.socialLinks.length === 2 && state.socialLinks.every(href=>href.includes('/dakibwa')), "only the two approved social profiles are linked");
   check(
     state.directEmailLinks.length === 0 && state.emailButtonCount === 1,
     "contact is available without publishing the address in HTML"
@@ -286,16 +289,61 @@ const checkPublicLanding = async () => {
   );
   check(state.overflow <= 1, `the desktop page stays inside the viewport [${state.overflow}px]`);
   check(
-    state.hero && state.capabilities && state.capabilities.top > state.hero.bottom,
+    state.hero && state.career && state.taste && state.career.top > state.projects.first.bottom && state.taste.top >= state.career.bottom - 1,
     "the editorial chapters remain in reading order"
   );
+  for(const width of [320,390,560,800,1024,1440]){
+    await setDesktop(width);
+    const bounds=await evaluate(`(() => {
+      const career=document.querySelector('.personal-career').getBoundingClientRect();
+      return {overlap:[...document.querySelectorAll('.concept-project-popover')].some(item=>item.getBoundingClientRect().bottom>career.top),overflow:document.documentElement.scrollWidth-innerWidth};
+    })()`);
+    check(!bounds.overlap && bounds.overflow<=1, `project captions cannot overlap Career at ${width}px`);
+  }
+  const tasteTop=await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY');
+  await evaluate('document.querySelectorAll(".concept-career-timeline button")[1].focus(); document.querySelectorAll(".concept-career-timeline button")[1].click()');
+  await sleep(100);
+  check(await evaluate('(document.querySelector("#career-detail").textContent.includes("Senior BI Developer") && getComputedStyle(document.querySelector("#career-detail")).opacity !== "0" && getComputedStyle(document.querySelector("#career-detail")).visibility === "visible")'), "career activation displays the selected public role");
+  check(await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY') === tasteTop, "career details do not move the taste chapter");
+
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  check(await evaluate('!document.querySelector(".concept-career-stop[aria-expanded=true]")'), "Escape dismisses held career detail");
+  await evaluate('document.querySelectorAll(".concept-career-stop")[2].focus()');
+  check(await evaluate('document.querySelector("#career-detail").textContent.includes("BI Team Lead")'), "keyboard focus previews the next career role");
+
+  section("historical composition and motion");
+  await goto("/");
+  check(await evaluate('document.querySelector(".personal-taste-card").textContent.includes("Graceland")'), "Graceland leads the restored Taste rail");
+  const railState = await evaluate(`(() => {
+    const rail=document.querySelector('.personal-taste-rail');
+    const lede=getComputedStyle(document.querySelector('.concept-lede'));
+    return {scrolls:rail.scrollWidth>rail.clientWidth,flow:getComputedStyle(rail).gridAutoFlow,serif:lede.fontFamily};
+  })()`);
+  check(railState.scrolls && railState.flow === 'column', "Taste uses one native horizontal cover rail");
+  check(/Iowan|Palatino|Georgia/.test(railState.serif), "the proposition keeps its historical serif");
+  const nameBefore=await evaluate(`(() => {
+    const name=document.querySelector('.hero-name-value');
+    const rect=document.querySelector('.concept-hero').getBoundingClientRect();
+    return {name:name.textContent,animation:getComputedStyle(name).animationName,top:rect.top,height:rect.height};
+  })()`);
+  await sleep(3350);
+  const nameAfter=await evaluate(`(() => {
+    const rect=document.querySelector('.concept-hero').getBoundingClientRect();
+    return {name:document.querySelector('.hero-name-value').textContent,top:rect.top,height:rect.height};
+  })()`);
+  check(nameBefore.name === 'Daniel' && nameAfter.name === 'Akibwa' && nameBefore.animation === 'word-flick', "the original flick changes the name after its initial rest");
+  check(nameBefore.top === nameAfter.top && nameBefore.height === nameAfter.height, "the name flip does not move the surrounding composition");
+  await evaluate('document.querySelectorAll(".taste-filters button")[2].click()');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 35'), "the Films filter keeps the whole approved shelf reachable");
+  await evaluate('document.querySelectorAll(".taste-filters button")[0].click()');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 12'), "Highlights restores the short mixed edit");
 
   section("mobile public boundary");
   await setMobile();
   await goto("/");
   state = await publicLandingState();
-  check(state.identity === "Akibwa", "the mobile masthead remains brand-only");
-  check(state.capabilityColumns === 1, `capabilities become one mobile column [${state.capabilityColumns}]`);
+  check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the mobile masthead reserves both names");
   check(state.overflow <= 1, `the mobile page stays inside the viewport [${state.overflow}px]`);
   check(
     state.projects.widths.every((width) => width >= state.projects.railWidth * 0.8 && width <= state.projects.railWidth * 0.9) &&
@@ -308,9 +356,59 @@ const checkPublicLanding = async () => {
     "the first mobile project and every description fit without text clipping"
   );
   check(
-    state.directEmailLinks.length === 0 && state.socialLinks.length === 0,
-    "mobile HTML carries no direct personal contact links"
+    state.directEmailLinks.length === 0 && state.socialLinks.length === 2,
+    "mobile HTML preserves private email handling and approved social links"
   );
+
+  section("collection interaction");
+  await setDesktop();
+  await goto("/");
+  await evaluate('document.querySelector(".personal-taste-card").focus(); document.querySelector(".personal-taste-card").click()');
+  await sleep(100);
+  check(await evaluate('!!document.querySelector("dialog[open]") && document.body.style.overflow === "hidden"'), "taste detail opens as a modal and locks background scrolling");
+  const tasteIdentity=await evaluate(`(() => ({hash:location.hash,title:document.querySelector('dialog h2').textContent,albumId:decodeURIComponent(new URL(document.querySelector('dialog a').href).hash.slice(7))}))()`);
+  check(tasteIdentity.hash === '#taste-item=music:'+encodeURIComponent(tasteIdentity.albumId), 'taste music deep links use the catalogue ID rather than the title');
+  await evaluate('history.back()');
+  await sleep(200);
+  check(await evaluate('!document.querySelector("dialog[open]") && document.activeElement.matches(".personal-taste-card")'), "browser back closes taste details and restores focus");
+  await goto("/albums/");
+  await goto('/'+tasteIdentity.hash);
+  const reloaded=cdp.waitFor('Page.loadEventFired');await cdp.send('Page.reload');await reloaded;await sleep(200);
+  check(await evaluate('document.querySelector("dialog h2")?.textContent') === tasteIdentity.title, 'reloading a stable-ID taste link restores the same album');
+  await goto('/albums/');
+  check(await evaluate('document.querySelectorAll(".album-browser-card").length === 36'), "the archive mounts only one page of covers");
+  check(await evaluate('document.querySelector(\'meta[name="robots"]\').content.includes("noindex")'), "the full archive remains noindex");
+  const setSearch=async value=>{
+    await evaluate(`(() => { const input=document.querySelector('input[type="search"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)}); input.dispatchEvent(new Event('input',{bubbles:true})); })()`);
+    await sleep(100);
+  };
+  await setSearch('Graceland');
+  check(await evaluate('document.querySelectorAll(".album-browser-card").length === 1 && document.querySelector(".album-browser-card").textContent.includes("Paul Simon")'), "artist and album search selects the correct record");
+  await setSearch('no such record qzx');
+  check(await evaluate('!document.querySelector(".album-browser-card") && !!document.querySelector(".album-empty")'), "an empty search has a usable recovery state");
+  await evaluate('document.querySelector(".album-empty button").click()');
+  await sleep(100);
+  check(await evaluate('document.querySelectorAll(".album-browser-card").length === 36'), "clearing an empty search restores the catalogue");
+  await evaluate('document.querySelector(".album-browser-card").focus(); document.querySelector(".album-browser-card").click()');
+  await sleep(100);
+  const initialAlbum = await evaluate('location.hash');
+  check(await evaluate('!!document.querySelector("dialog[open]") && document.activeElement.matches(".archive-close")'), "album detail moves focus to its close control");
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Tab",code:"Tab",windowsVirtualKeyCode:9,modifiers:8});
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Tab",code:"Tab",windowsVirtualKeyCode:9,modifiers:8});
+  check(await evaluate('!!document.activeElement.closest("dialog")'), "backward keyboard focus stays inside the modal");
+  await evaluate('document.querySelectorAll(".album-detail-nav button")[1].click()');
+  await sleep(100);
+  check(await evaluate('location.hash') !== initialAlbum, "next detail changes the stable album identifier");
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  await sleep(200);
+  check(await evaluate('!document.querySelector("dialog[open]") && !location.hash && document.activeElement.matches(".album-browser-card")'), "Escape closes the album and restores its opener");
+  await goto("/");
+  await goto(`/albums/${initialAlbum}`);
+  await evaluate('document.querySelectorAll(".album-detail-nav button")[1].click()');
+  await evaluate('document.querySelector(".archive-close").click()');
+  await sleep(200);
+  check(await evaluate('location.pathname === "/albums/" && !location.hash && !document.querySelector("dialog[open]")'), "closing a stepped direct link stays in the archive");
 
   section("detailed routes");
   await setDesktop();
@@ -337,12 +435,12 @@ const checkPublicLanding = async () => {
     features: [{ name: "prefers-reduced-motion", value: "reduce" }]
   });
   await goto("/");
-  const capabilityTransition = await evaluate(
-    'getComputedStyle(document.querySelector(".concept-capability-list li")).transitionDuration'
+  const nameTransition = await evaluate(
+    'getComputedStyle(document.querySelector(".hero-name-value")).animationDuration'
   );
   check(
-    capabilityTransition.split(",").every((part) => parseFloat(part) === 0),
-    `capability motion is disabled [${capabilityTransition}]`
+    nameTransition.split(",").every((part) => parseFloat(part) === 0),
+    `name motion is disabled [${nameTransition}]`
   );
 };
 

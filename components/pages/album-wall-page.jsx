@@ -1,385 +1,369 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageFooter } from "@/components/page-footer";
 import { AlbumArtImage } from "@/components/site-image";
-import { fetchSessionJson, readSessionJson } from "@/components/remote-data-cache";
+import { MediaDialog } from "@/components/media-dialog";
+import { ListeningSummary } from "@/components/listening-summary";
+import {
+  browseAlbums,
+  albumSnapshot,
+  acceptsAlbumPacket,
+  snapshotCoverage,
+} from "@/components/album-catalogue.mjs";
+import {
+  fetchSessionJson,
+  readSessionJson,
+} from "@/components/remote-data-cache";
 import { albumPlaysDataUrl } from "@/components/site-data";
-import wallData from "@/data/album-wall.json";
 
-const numberFormat = new Intl.NumberFormat("en-GB");
-
-// Degrees at the very corner of a card. Steep on purpose: at 104px a timid tilt
-// is invisible, and the whole point of the wall is that the cards feel like
-// physical objects you are pressing on rather than thumbnails that scale.
-const TILT = 30;
-
-/*
- * Last.fm has only been running on this account since April 2025, so a sleeve at
- * zero has almost certainly been played — just not inside the window Last.fm can
- * see. Saying "never played" would be a plain lie about a record collection, so
- * the wall says only what it actually knows.
- */
-function playLabel(plays, since) {
-  if (plays === null || plays === undefined) return { value: null, unit: "not on Last.fm" };
-  if (plays === 0) return { value: null, unit: since ? `not since ${since}` : "no plays recorded" };
-  return { value: numberFormat.format(plays), unit: plays === 1 ? "play" : "plays" };
+const PAGE_SIZE = 36;
+const number = (value) => value.toLocaleString("en-GB");
+function dateLabel(value) {
+  const date = new Date(value);
+  return value && !Number.isNaN(date.getTime())
+    ? date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    : "the saved snapshot";
 }
-
-function monthYear(iso) {
-  if (!iso) return null;
-  const date = new Date(`${iso}T00:00:00Z`);
-  if (Number.isNaN(date.getTime())) return null;
-  return date.toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+function scrobbles(value) {
+  return value === null
+    ? "No matched count"
+    : value === 0
+      ? "No scrobbles recorded"
+      : `${number(value)} track scrobble${value === 1 ? "" : "s"}`;
 }
-
-export function AlbumWallPage() {
-  // { index, left, top, width } — the label is positioned from the card's own
-  // box, so it follows the wall through resizes and reflows without measuring
-  // anything on every mouse move.
-  const [hovered, setHovered] = useState(null);
-  const [openIndex, setOpenIndex] = useState(null);
-  const [livePlays, setLivePlays] = useState(null);
-  const wallRef = useRef(null);
-  const tiltedRef = useRef(null);
-  const frameRef = useRef(0);
-
-  // The baked counts ship with the page so the wall is never blank; the Worker's
-  // hourly refresh overlays them when it answers.
+export function AlbumWallPage({
+  initialCatalogue,
+  refreshedAt,
+  scrobblingSince,
+}) {
+  const [snapshots, setSnapshots] = useState([]);
+  const [query, setQuery] = useState(""),
+    [filter, setFilter] = useState("all"),
+    [sort, setSort] = useState("plays"),
+    [page, setPage] = useState(0);
+  const [openId, setOpenId] = useState(null);
   useEffect(() => {
-    if (!albumPlaysDataUrl) return undefined;
     let cancelled = false;
-    const apply = (data) => {
-      if (!cancelled && data?.plays && typeof data.plays === "object") setLivePlays(data);
+    const cached = readSessionJson(albumPlaysDataUrl);
+    const cachedIsUsable = acceptsAlbumPacket(
+      cached,
+      initialCatalogue,
+      refreshedAt,
+    );
+    // Revalidation may fail or lag the session snapshot. Never replace that
+    // newer usable cache packet with an older successful HTTP response.
+    const cacheFloor = cachedIsUsable ? cached.refreshedAt : refreshedAt;
+    const accept = (data) =>
+      acceptsAlbumPacket(data, initialCatalogue, cacheFloor);
+    const apply = (data, origin) => {
+      if (cancelled || !accept(data)) return;
+      setSnapshots((current) => [
+        ...current.filter((item) => item.origin !== origin),
+        { data, origin },
+      ]);
     };
-    apply(readSessionJson(albumPlaysDataUrl));
-    fetchSessionJson(albumPlaysDataUrl).then(apply).catch(() => {});
+    if (cachedIsUsable) apply(cached, "session");
+    fetchSessionJson(albumPlaysDataUrl, { accept })
+      .then((data) => apply(data, "network"))
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, []);
-
-  const scrobblingSince = monthYear(livePlays?.scrobblingSince ?? wallData.scrobblingSince);
-
-  /*
-   * One wall, two populations: the sleeves Dan had printed as cards, and
-   * everything else he has actually played. They are ranked together, so a
-   * record he plays constantly sits above one he printed and never returned to.
-   */
-  const tiles = useMemo(() => {
-    const overlay = livePlays?.plays ?? null;
-    // A few records were saved into the folder twice under different filenames.
-    // refresh-album-plays.mjs marks the lower-resolution copy rather than
-    // deleting it, so the folder stays the source of truth; the wall shows one.
-    const printed = wallData.sleeves
-      .filter((sleeve) => !sleeve.duplicateOf)
-      .map((sleeve) => ({
-        id: sleeve.id,
-        artist: sleeve.artist,
-        album: sleeve.album,
-        year: sleeve.year,
-        lastfmUrl: sleeve.lastfmUrl,
-        printed: true,
-        plays: overlay && overlay[sleeve.id] !== undefined ? overlay[sleeve.id] : sleeve.plays
-      }));
-    const played = (wallData.played ?? []).map((album) => ({
-      id: album.id,
-      artist: album.artist,
-      album: album.album,
-      year: album.year,
-      lastfmUrl: album.lastfmUrl,
-      printed: false,
-      plays: overlay && overlay[album.id] !== undefined ? overlay[album.id] : album.plays
-    }));
-
-    return [...printed, ...played].sort(
-      (a, b) =>
-        (b.plays ?? 0) - (a.plays ?? 0) ||
-        // Ties at zero are the whole bottom of the wall, so fall through to the
-        // artist rather than leaving a third of it in arbitrary order.
-        (a.artist || a.album || "").localeCompare(b.artist || b.album || "", "en") ||
-        (a.album || "").localeCompare(b.album || "", "en")
-    );
-  }, [livePlays]);
-
-  const printedCount = wallData.sleeves.filter((sleeve) => !sleeve.duplicateOf).length;
-  const open = openIndex === null ? null : tiles[openIndex];
-  const readout = hovered ? tiles[hovered.index] : null;
-
-  /*
-   * The label is placed from the card's offset box rather than fixed to the
-   * viewport, so it scrolls with the wall and needs no work on scroll. Measured
-   * once per card entered, not per mouse move.
-   */
-  const anchorLabel = useCallback((index, element) => {
-    const grid = wallRef.current;
-    const centre = element.offsetLeft + element.offsetWidth / 2;
-    // Half the widest the label is allowed to get. Clamping the centre by this
-    // keeps a first- or last-column label inside the frame instead of hanging
-    // off the page.
-    const margin = 125;
-    const limit = grid ? grid.offsetWidth : centre + margin;
-    setHovered({
-      index,
-      x: Math.min(Math.max(centre, margin), Math.max(margin, limit - margin)),
-      top: element.offsetTop,
-      height: element.offsetHeight
-    });
-  }, []);
-
-  /*
-   * The tilt. The card is pressed away from the viewer at whatever point the
-   * cursor is on it, so the far corner rises — cursor top-left, top-left corner
-   * sinks, bottom-right lifts. Dragging across the wall leaves each card easing
-   * back to flat behind you, which is what makes the sweep read as a wave rather
-   * than a row of independent hovers.
-   *
-   * One listener on the grid, and the transform is written to CSS variables on a
-   * single element per frame. Attaching pointermove to ~1,700 cards, or holding
-   * the angles in React state, would re-render the whole wall on every mouse
-   * move.
-   */
-  const clearTilt = useCallback(() => {
-    const previous = tiltedRef.current;
-    if (previous) {
-      for (const name of ["--tilt-x", "--tilt-y", "--glare-x", "--glare-y", "--shadow-x", "--shadow-y"]) {
-        previous.style.removeProperty(name);
-      }
-      tiltedRef.current = null;
-    }
-  }, []);
-
-  /*
-   * mousemove rather than pointermove. Both fire for a real mouse, but mousemove
-   * is the one every browser and automation layer agrees on, and the tilt is the
-   * whole interaction — it is not worth losing on a technicality. Touch is gated
-   * on the hover media query instead of on pointerType, so a device that reports
-   * a coarse pointer never tilts at all rather than tilting once per tap.
-   */
-  const onMouseMove = useCallback(
-    (event) => {
-      if (typeof window !== "undefined" && !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-      const card = event.target.closest(".album-card");
-      if (!card) {
-        clearTilt();
-        return;
-      }
-      // React pools nothing in 18+, but the coordinates are read a frame later and
-      // the card may have scrolled by then, so both are captured now.
-      const { clientX, clientY } = event;
-      if (frameRef.current) return;
-      frameRef.current = requestAnimationFrame(() => {
-        frameRef.current = 0;
-        const box = card.getBoundingClientRect();
-        const px = (clientX - box.left) / box.width;
-        const py = (clientY - box.top) / box.height;
-        if (tiltedRef.current && tiltedRef.current !== card) clearTilt();
-        tiltedRef.current = card;
-        // rotateX(+) pushes the top edge away; rotateY(+) pushes the right edge
-        // away. Both are inverted against the cursor so the point under it sinks.
-        card.style.setProperty("--tilt-x", `${(TILT * (1 - 2 * py)).toFixed(2)}deg`);
-        card.style.setProperty("--tilt-y", `${(TILT * (2 * px - 1)).toFixed(2)}deg`);
-        // The sheen sits on the corner that has risen — opposite the cursor —
-        // because that is the face now angled towards the light. Without it the
-        // card reads as a flat image being skewed rather than a lit object.
-        card.style.setProperty("--glare-x", `${((1 - px) * 100).toFixed(1)}%`);
-        card.style.setProperty("--glare-y", `${((1 - py) * 100).toFixed(1)}%`);
-        // The drop shadow leans the way the card leans, so the light stays in
-        // one place across the whole wall.
-        card.style.setProperty("--shadow-x", `${((px - 0.5) * -26).toFixed(1)}px`);
-        card.style.setProperty("--shadow-y", `${((py - 0.5) * -26 + 20).toFixed(1)}px`);
-      });
-    },
-    [clearTilt]
+  }, [initialCatalogue, refreshedAt]);
+  const catalogue = useMemo(
+    () => albumSnapshot(initialCatalogue, refreshedAt, snapshots),
+    [initialCatalogue, refreshedAt, snapshots],
   );
-
-  useEffect(
-    () => () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    },
-    []
+  const coverage = snapshotCoverage(catalogue);
+  const sources = Object.entries(coverage).filter(([, count]) => count > 0);
+  const originLabel = {
+    saved: "Saved catalogue",
+    session: "Session snapshot",
+    network: "Fetched snapshot",
+  };
+  const coverageLabel =
+    sources.length > 1
+      ? `Mixed snapshots · ${sources.map(([source, count]) => `${number(count)} ${source === "network" ? "fetched" : source === "session" ? "cached" : "saved"}`).join(" / ")}`
+      : `${originLabel[sources[0]?.[0] || "saved"]} · ${dateLabel(catalogue[0]?.countAsOf || refreshedAt)}`;
+  const results = useMemo(
+    () => browseAlbums(catalogue, { query, filter, sort }),
+    [catalogue, query, filter, sort],
   );
-
-  const step = useCallback(
-    (delta) => {
-      setOpenIndex((current) => (current === null ? current : (current + delta + tiles.length) % tiles.length));
-    },
-    [tiles.length]
+  const pages = Math.max(1, Math.ceil(results.length / PAGE_SIZE)),
+    currentPage = Math.min(page, pages - 1);
+  const visible = results.slice(
+    currentPage * PAGE_SIZE,
+    (currentPage + 1) * PAGE_SIZE,
   );
+  const selected = catalogue.find((album) => album.id === openId);
+  const selectedIndex = results.findIndex((album) => album.id === openId);
+  const printedCount = catalogue.filter((album) => album.printed).length;
+  const artists = new Set(
+    catalogue.map((album) => album.artist).filter(Boolean),
+  ).size;
 
   useEffect(() => {
-    if (openIndex === null) return undefined;
-    const onKey = (event) => {
-      if (event.key === "Escape") setOpenIndex(null);
-      else if (event.key === "ArrowRight") step(1);
-      else if (event.key === "ArrowLeft") step(-1);
+    const sync = () => {
+      const match = location.hash.match(/^#album=(.+)$/);
+      let id = null;
+      try {
+        id = match ? decodeURIComponent(match[1]) : null;
+      } catch {}
+      setOpenId(initialCatalogue.some((album) => album.id === id) ? id : null);
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [openIndex, step]);
-
-  // Arrow keys walk the wall itself, which is the only sane way through
-  // seventeen hundred cards with a keyboard. Tab order stays untouched.
-  const onWallKeyDown = (event) => {
-    const columns = getColumnCount(wallRef.current);
-    const deltas = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: columns, ArrowUp: -columns };
-    const delta = deltas[event.key];
-    if (!delta) return;
-    const from = Number(event.target.dataset.index);
-    if (Number.isNaN(from)) return;
-    const to = from + delta;
-    if (to < 0 || to >= tiles.length) return;
-    event.preventDefault();
-    wallRef.current?.querySelector(`[data-index="${to}"]`)?.focus();
+    sync();
+    window.addEventListener("popstate", sync);
+    window.addEventListener("hashchange", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("hashchange", sync);
+    };
+  }, [initialCatalogue]);
+  const open = useCallback((id) => {
+    history.pushState(
+      { ...history.state, albumDialog: true },
+      "",
+      `#album=${encodeURIComponent(id)}`,
+    );
+    setOpenId(id);
+  }, []);
+  const close = useCallback(() => {
+    if (history.state?.albumDialog) history.back();
+    else {
+      history.replaceState(
+        history.state,
+        "",
+        location.pathname + location.search,
+      );
+      setOpenId(null);
+    }
+  }, []);
+  const step = (delta) => {
+    if (!results.length) return;
+    const item =
+      results[(selectedIndex + delta + results.length) % results.length];
+    history.replaceState(
+      history.state,
+      "",
+      `#album=${encodeURIComponent(item.id)}`,
+    );
+    setOpenId(item.id);
   };
-
+  const changePage = (next) => {
+    setPage(next);
+    document
+      .getElementById("album-results")
+      ?.scrollIntoView({ block: "start", behavior: "instant" });
+  };
   return (
     <>
-      <section className="album-wall" aria-label="Album wall">
-        <h1 className="album-wall-accessible-title">
-          Every album I&apos;ve played, ranked by how often
-        </h1>
-
-        <div
-          ref={wallRef}
-          className="album-wall-grid"
-          onMouseMove={onMouseMove}
-          onPointerLeave={() => {
-            clearTilt();
-            setHovered(null);
-          }}
-          onKeyDown={onWallKeyDown}
-        >
-          {tiles.map((tile, index) => {
-            const label = tile.artist ? `${tile.artist} — ${tile.album}` : tile.album || "Unidentified sleeve";
-            return (
+      <section className="page-grid album-library" aria-label="Album archive">
+        <a className="archive-back" href="/#taste">
+          ← Back to Taste Library
+        </a>
+        <header className="album-library-head">
+          <p className="archive-eyebrow">Music / the collection</p>
+          <h1>The album archive</h1>
+          <p>
+            Printed sleeves and a much larger listening history. Search by
+            artist or album, or just follow a cover.
+          </p>
+        </header>
+        <div className="album-catalogue-summary">
+          <span>
+            <strong>{number(catalogue.length)}</strong> albums in the catalogue
+          </span>
+          <span>
+            <strong>{number(artists)}</strong> artists
+          </span>
+          <span>
+            <strong>{number(printedCount)}</strong> printed cards
+          </span>
+        </div>
+        <ListeningSummary />
+        <div className="album-browser-controls">
+          <label className="album-search">
+            Find a record
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(0);
+              }}
+              placeholder="Artist, album or year"
+            />
+          </label>
+          <label>
+            Collection
+            <select
+              aria-label="Collection"
+              value={filter}
+              onChange={(event) => {
+                setFilter(event.target.value);
+                setPage(0);
+              }}
+            >
+              <option value="all">All albums</option>
+              <option value="printed">Printed cards</option>
+              <option value="recorded">With recorded scrobbles</option>
+            </select>
+          </label>
+          <label>
+            Order
+            <select
+              aria-label="Order"
+              value={sort}
+              onChange={(event) => {
+                setSort(event.target.value);
+                setPage(0);
+              }}
+            >
+              <option value="plays">Most scrobbled</option>
+              <option value="artist">Artist A–Z</option>
+              <option value="year">Release year, newest first</option>
+            </select>
+          </label>
+        </div>
+        <div className="album-results-heading" id="album-results">
+          <p aria-live="polite">
+            {results.length
+              ? `${number(currentPage * PAGE_SIZE + 1)}–${number(Math.min((currentPage + 1) * PAGE_SIZE, results.length))} of ${number(results.length)} albums`
+              : "No matching albums"}
+          </p>
+          <span>{coverageLabel}</span>
+        </div>
+        {results.length ? (
+          <div className="album-browser-grid">
+            {visible.map((album) => (
               <button
-                key={tile.id}
                 type="button"
-                data-index={index}
-                className="album-card"
-                aria-label={`${label}, ${tile.plays ? `${tile.plays} plays` : "no plays recorded"}`}
-                onPointerEnter={(event) => anchorLabel(index, event.currentTarget)}
-                onFocus={(event) => anchorLabel(index, event.currentTarget)}
-                onBlur={() => setHovered(null)}
-                onClick={() => setOpenIndex(index)}
+                className="album-browser-card"
+                key={album.id}
+                onClick={() => open(album.id)}
+                aria-label={`${album.artist} — ${album.album}. ${scrobbles(album.plays)}. Open details`}
               >
-                <span className="album-card-face">
-                  <AlbumArtImage id={tile.id} rung="wall" alt="" priority={index < 32} />
-                  <span className="album-card-glare" aria-hidden="true" />
+                <span className="album-browser-art">
+                  <AlbumArtImage id={album.id} rung="wall" alt="" />
                 </span>
+                <strong>{album.album}</strong>
+                <span>{album.artist || "Artist unknown"}</span>
+                <small>{scrobbles(album.plays)}</small>
               </button>
-            );
-          })}
-        </div>
-
-        {readout ? (
-          <figcaption
-            className="album-wall-label"
-            style={{
-              "--label-x": `${hovered.x}px`,
-              "--label-y": `${hovered.top + hovered.height}px`
-            }}
-            aria-hidden="true"
-          >
-            <span className="album-wall-label-artist">{readout.artist || "Artist unknown"}</span>
-            <span className="album-wall-label-album">{readout.album || "Unidentified"}</span>
-            <span className="album-wall-label-plays">
-              {(() => {
-                const { value, unit } = playLabel(readout.plays, scrobblingSince);
-                return value ? (
-                  <>
-                    {value} <span>{unit}</span>
-                  </>
-                ) : (
-                  <span>{unit}</span>
-                );
-              })()}
-            </span>
-          </figcaption>
-        ) : null}
-
-        <p className="album-wall-note">
-          {numberFormat.format(tiles.length)} albums, {printedCount} of them printed as cards. Counts are
-          Last.fm scrobbles since {scrobblingSince ?? "April 2025"}, so a record at zero is one I have not
-          played since then rather than one I have never played. Albums played only once are left off.
-        </p>
-      </section>
-
-      {open ? (
-        <div
-          className="album-sleeve"
-          role="dialog"
-          aria-modal="true"
-          aria-label={open.artist ? `${open.artist} — ${open.album}` : open.album || "Unidentified sleeve"}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) setOpenIndex(null);
-          }}
-        >
-          <div className="album-sleeve-inner">
-            <button type="button" className="album-sleeve-close" onClick={() => setOpenIndex(null)} aria-label="Close">
-              <X size={18} aria-hidden="true" />
-            </button>
-
-            <div className="album-sleeve-art">
-              <AlbumArtImage id={open.id} rung="card" alt="" priority />
-            </div>
-
-            <div className="album-sleeve-meta">
-              <p className="album-sleeve-artist">{open.artist || "Artist unknown"}</p>
-              <h2 className="album-sleeve-title">{open.album || "Unidentified"}</h2>
-              {open.year ? <p className="album-sleeve-year">{open.year}</p> : null}
-
-              <p className="album-sleeve-plays">
-                {(() => {
-                  const { value, unit } = playLabel(open.plays, scrobblingSince);
-                  return value ? (
-                    <>
-                      <strong>{value}</strong> {unit}
-                    </>
-                  ) : (
-                    unit
-                  );
-                })()}
-              </p>
-
-              {open.printed ? <p className="album-sleeve-printed">In the card wallet</p> : null}
-
-              {open.lastfmUrl ? (
-                <a className="album-sleeve-link" href={open.lastfmUrl} target="_blank" rel="noreferrer">
-                  On Last.fm
-                </a>
-              ) : null}
-
-              <div className="album-sleeve-steps">
-                <button type="button" onClick={() => step(-1)} aria-label="Previous album">
-                  ←
-                </button>
-                <span>
-                  {numberFormat.format(openIndex + 1)} / {numberFormat.format(tiles.length)}
-                </span>
-                <button type="button" onClick={() => step(1)} aria-label="Next album">
-                  →
-                </button>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
+        ) : (
+          <div className="album-empty">
+            <h2>Nothing on this shelf yet.</h2>
+            <p>
+              Try a shorter title, another spelling, or the full collection.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setFilter("all");
+                setPage(0);
+              }}
+            >
+              Clear the search
+            </button>
+          </div>
+        )}
+        {pages > 1 ? (
+          <nav className="album-pagination" aria-label="Album pages">
+            <button
+              type="button"
+              disabled={currentPage === 0}
+              onClick={() => changePage(currentPage - 1)}
+            >
+              ← Previous
+            </button>
+            <span>
+              Page {currentPage + 1} of {pages}
+            </span>
+            <button
+              type="button"
+              disabled={currentPage === pages - 1}
+              onClick={() => changePage(currentPage + 1)}
+            >
+              Next →
+            </button>
+          </nav>
+        ) : null}
+        <details className="album-source">
+          <summary>Sources, coverage and missing records</summary>
+          <p>
+            The catalogue counts are Last.fm track scrobbles from{" "}
+            {dateLabel(scrobblingSince)}, not full-album listens. Zero means no
+            scrobbles in that record; an unmatched sleeve has no reliable count.
+            The saved catalogue excludes unprinted albums with fewer than two
+            scrobbles, so it is not every album ever heard. A live refresh
+            updates counts for these catalogue entries; if it cannot answer, the
+            saved snapshot stays usable.
+          </p>
+          <p>
+            The separate Spotify summary above includes older history and actual
+            recorded duration. Album matching between those sources is not
+            complete: their counts are not combined, and no listening time is
+            guessed for an album.
+          </p>
+        </details>
+      </section>
+      {selected ? (
+        <MediaDialog
+          title={`${selected.album} — ${selected.artist}`}
+          onClose={close}
+        >
+          <div className="archive-detail-art">
+            <AlbumArtImage id={selected.id} rung="card" alt="" priority />
+          </div>
+          <div className="archive-detail-copy">
+            <p className="archive-eyebrow">
+              {selected.printed
+                ? "From the printed card collection"
+                : "From the listening catalogue"}
+            </p>
+            <h2>{selected.album}</h2>
+            <p>
+              {selected.artist || "Artist unknown"}
+              {selected.year ? ` · ${selected.year}` : ""}
+            </p>
+            <p className="archive-count">{scrobbles(selected.plays)}</p>
+            <p className="archive-count-note">
+              Last.fm recorded tracks, not complete album listens.
+            </p>
+            <p className="archive-count-note">
+              {originLabel[selected.countOrigin]} ·{" "}
+              {dateLabel(selected.countAsOf)}
+            </p>
+            {selected.lastfmUrl ? (
+              <a
+                href={selected.lastfmUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Album on Last.fm ↗
+              </a>
+            ) : null}
+            <nav className="album-detail-nav" aria-label="Browse album details">
+              <button type="button" onClick={() => step(-1)}>
+                ← Previous
+              </button>
+              <button type="button" onClick={() => step(1)}>
+                Next →
+              </button>
+            </nav>
+          </div>
+        </MediaDialog>
       ) : null}
-
       <PageFooter />
     </>
   );
-}
-
-/*
- * The grid is auto-fill, so the column count is whatever the browser resolved
- * rather than anything the component chose. Reading it back is the only way for
- * ArrowUp/ArrowDown to land on the card directly above or below.
- */
-function getColumnCount(grid) {
-  if (!grid) return 1;
-  const columns = window.getComputedStyle(grid).gridTemplateColumns;
-  return columns ? columns.split(" ").filter(Boolean).length : 1;
 }

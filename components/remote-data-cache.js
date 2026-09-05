@@ -11,11 +11,14 @@ export function readSessionJson(url) {
   }
 }
 
-export async function fetchSessionJson(url) {
+export async function fetchSessionJson(url, { accept = () => true } = {}) {
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) return null;
 
   const data = await response.json();
+  // Consumers with a source/coverage contract can reject a packet before it
+  // overwrites the last usable cache entry. HTTP success alone is not freshness.
+  if (!accept(data)) return null;
   try {
     window.sessionStorage.setItem(SESSION_PREFIX + url, JSON.stringify(data));
   } catch {

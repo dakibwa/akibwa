@@ -4,7 +4,8 @@ This repository is the public `akibwa.com` website.
 
 - Treat everything committed here as public.
 - Do not add credentials, tokens, `.env` files, booking references, account numbers, raw source exports, identifiers, or similar secrets.
-- Akibwa is the only public identity. Do not publish the owner's full name, exact employment or residential history, future-move dates, direct social profile links, personal email in static HTML, daily GPS traces, health details, family details, or identifying third-party information.
+- Dan explicitly approved the Daniel/Akibwa introduction, the selectively restored public career roles/dates and taste curation in `data/taste-curation.json`, and Instagram/X at `@dakibwa`. This is not permission to restore other removed personal data. Do not publish the owner's full name, residential history, future-move dates, personal email in static HTML, daily GPS traces, health details, family details, or identifying third-party information.
+- `data/listening-summary.json` contains the approved Spotify aggregate only. Raw events, account identifiers and private source paths stay outside this public repository. Recorded music duration is not attention, complete plays, or commercial artist streams; never add it to Last.fm scrobbles or invent per-album Spotify matches.
 - Keep only `/` in the sitemap unless a route has been explicitly approved for search. Detailed archives must use `noindex`, and `robots.txt` must continue allowing crawlers to read that directive.
 - The site is a static Next.js export (`output: "export"`) deployed to GitHub Pages from `main`.
 - Fast pre-push check: `npm run check:fast`.

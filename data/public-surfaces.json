@@ -1,9 +1,9 @@
 {
-  "updated": "2026-09-02",
+  "updated": "2026-09-05",
   "surfaces": [
     {
       "id": "albums",
-      "title": "The wall",
+      "title": "The album archive",
       "route": "/albums",
       "kind": "public-series-refresh",
       "visibility": "public",

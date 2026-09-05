@@ -1,17 +1,12 @@
 "use client";
 
-/* The shell used to carry the whole apparatus of a multi-page site — wordmark,
-   four-item navigation, a projects dropdown, a mobile menu. The wall retired
-   all of it: the name lives in the headline, the menu became the hero index of
-   set names, and the footer is the fixed route to contact. What remains is
-   just the page. */
+/* The personal index owns its introduction and navigation. The shared shell
+   provides one main landmark and a direct keyboard route to contact. */
 export function SiteShell({ children }) {
   return (
     <div className="site-shell">
-      {/* The wall is 366 buttons deep, so reaching contact by keyboard cost
-          366 presses of Tab. This is the first stop on the page. */}
       <a className="skip-link" href="#site-footer">
-        Skip the wall, go to contact
+        Skip to contact
       </a>
       <main className="page-transition" id="main-content" tabIndex={-1}>
         {children}

@@ -1,4 +1,4 @@
-import { EditorialHomeConcept } from "@/components/pages/editorial-home-concept";
+import IndexPage from "@/app/page";
 
 export const metadata = {
   title: "Editorial homepage concept",
@@ -9,5 +9,5 @@ export const metadata = {
 };
 
 export default function ConceptPage() {
-  return <EditorialHomeConcept />;
+  return <IndexPage />;
 }

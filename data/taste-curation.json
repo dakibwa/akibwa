@@ -1,0 +1,820 @@
+{
+  "source": "Curated choices and public career restored selectively from 78e3ec8a parent; no private life data.",
+  "career": [
+    {
+      "name": "Freelance",
+      "role": "Independent AI Systems Builder",
+      "span": "Now",
+      "accent": "#c05212",
+      "logo": "/favicon.svg",
+      "tile": true
+    },
+    {
+      "name": "National Wealth Fund",
+      "role": "Senior BI Developer",
+      "span": "2024 — present",
+      "accent": "#732740",
+      "logo": "/brand-logos/national-wealth-fund-icon.png",
+      "tile": false
+    },
+    {
+      "name": "Leeds Building Society",
+      "role": "BI Team Lead",
+      "span": "2023 — 2024",
+      "accent": "#2f88ff",
+      "logo": "/brand-logos/leeds-building-society-icon.svg",
+      "tile": false
+    },
+    {
+      "name": "Electrical Work",
+      "role": "Labourer",
+      "span": "2022 — 2023",
+      "accent": "#7657d5",
+      "logo": "/brand-logos/electrical.svg",
+      "tile": false
+    },
+    {
+      "name": "Sky Betting & Gaming",
+      "role": "Business Intelligence Analyst",
+      "span": "2020 — 2022",
+      "accent": "#d01fcb",
+      "logo": "/brand-logos/sky-betting-gaming-logo.png",
+      "tile": true
+    },
+    {
+      "name": "Joinery Work",
+      "role": "Labourer",
+      "span": "2020",
+      "accent": "#9a6038",
+      "logo": "/brand-logos/joinery.svg",
+      "tile": false
+    },
+    {
+      "name": "Vanquis Bank",
+      "role": "Strategic Insight Analyst",
+      "span": "2018 — 2019",
+      "accent": "#f15a24",
+      "logo": "/brand-logos/vanquis-icon.svg",
+      "tile": false
+    },
+    {
+      "name": "Lloyds Banking Group",
+      "role": "Credit Risk Analyst",
+      "span": "2016 — 2017",
+      "accent": "#006747",
+      "logo": "/brand-logos/lloyds-horse-icon.png",
+      "tile": false
+    }
+  ],
+  "albumIds": [
+    "lf-9a73a1e5602a994d",
+    "043",
+    "199",
+    "201",
+    "111",
+    "216",
+    "191",
+    "105",
+    "182",
+    "163",
+    "001",
+    "230",
+    "008",
+    "099",
+    "151",
+    "241",
+    "080",
+    "049",
+    "108",
+    "206",
+    "067",
+    "032",
+    "176",
+    "133",
+    "190",
+    "044",
+    "193",
+    "110",
+    "232",
+    "236",
+    "117",
+    "125",
+    "175",
+    "188",
+    "239",
+    "156",
+    "135",
+    "162",
+    "212",
+    "123",
+    "134",
+    "178",
+    "200",
+    "127",
+    "144",
+    "170",
+    "185",
+    "219",
+    "249",
+    "005",
+    "139",
+    "195",
+    "244",
+    "002",
+    "034",
+    "059",
+    "112",
+    "020",
+    "102",
+    "006",
+    "036",
+    "048",
+    "057",
+    "098",
+    "119",
+    "056",
+    "138",
+    "189",
+    "045",
+    "078",
+    "203",
+    "021",
+    "037",
+    "109",
+    "142",
+    "164",
+    "173",
+    "179",
+    "202",
+    "218",
+    "009",
+    "053",
+    "082",
+    "088",
+    "095",
+    "136",
+    "141",
+    "147",
+    "148",
+    "177",
+    "180",
+    "186",
+    "207",
+    "220",
+    "221",
+    "224",
+    "017",
+    "025",
+    "030",
+    "075",
+    "131",
+    "149",
+    "240",
+    "013",
+    "019",
+    "027",
+    "028",
+    "039",
+    "040",
+    "060",
+    "073",
+    "081",
+    "089",
+    "118",
+    "128",
+    "150",
+    "159",
+    "169",
+    "198",
+    "204",
+    "208",
+    "237",
+    "242",
+    "004",
+    "011",
+    "018",
+    "047",
+    "054",
+    "055",
+    "064",
+    "065",
+    "071",
+    "072",
+    "079",
+    "084",
+    "092",
+    "116",
+    "120",
+    "137",
+    "161",
+    "165",
+    "181",
+    "187",
+    "192",
+    "205",
+    "209",
+    "214",
+    "217",
+    "229",
+    "003",
+    "007",
+    "010",
+    "014",
+    "015",
+    "016",
+    "022",
+    "023",
+    "024",
+    "029",
+    "031",
+    "033",
+    "035",
+    "038",
+    "041",
+    "042",
+    "046",
+    "050",
+    "051",
+    "052",
+    "058",
+    "061",
+    "062",
+    "063",
+    "066",
+    "068",
+    "069",
+    "070",
+    "074",
+    "076",
+    "077",
+    "083",
+    "085",
+    "086",
+    "087",
+    "090",
+    "091",
+    "093",
+    "094",
+    "096",
+    "097",
+    "100",
+    "101",
+    "103",
+    "104",
+    "106",
+    "107",
+    "113",
+    "114",
+    "121",
+    "122",
+    "124",
+    "126",
+    "129",
+    "130",
+    "132",
+    "140",
+    "143",
+    "145",
+    "146",
+    "152",
+    "153",
+    "154",
+    "155",
+    "157",
+    "158",
+    "160",
+    "166",
+    "167",
+    "168",
+    "171",
+    "172",
+    "174",
+    "183",
+    "184",
+    "194",
+    "196",
+    "197",
+    "210",
+    "211",
+    "213",
+    "215",
+    "222",
+    "223",
+    "225",
+    "226",
+    "227",
+    "228",
+    "231",
+    "233",
+    "234",
+    "235",
+    "238",
+    "243",
+    "245",
+    "246",
+    "247",
+    "248"
+  ],
+  "films": [
+    {
+      "title": "The Master",
+      "creator": "Paul Thomas Anderson",
+      "art": "/film-posters/the-master.webp"
+    },
+    {
+      "title": "You Were Never Really Here",
+      "creator": "Lynne Ramsay",
+      "art": "/film-posters/you-were-never-really-here.webp"
+    },
+    {
+      "title": "Call Me by Your Name",
+      "creator": "Luca Guadagnino",
+      "art": "/film-posters/call-me-by-your-name.webp"
+    },
+    {
+      "title": "One More Time with Feeling",
+      "creator": "Andrew Dominik",
+      "art": "/film-posters/one-more-time-with-feeling.webp"
+    },
+    {
+      "title": "Watchmen",
+      "creator": "Zack Snyder",
+      "art": "/film-posters/watchmen.webp"
+    },
+    {
+      "title": "Anomalisa",
+      "creator": "Charlie Kaufman & Duke Johnson",
+      "art": "/film-posters/anomalisa.webp"
+    },
+    {
+      "title": "Adaptation.",
+      "creator": "Spike Jonze",
+      "art": "/film-posters/adaptation.webp"
+    },
+    {
+      "title": "Mysterious Skin",
+      "creator": "Gregg Araki",
+      "art": "/film-posters/mysterious-skin.webp"
+    },
+    {
+      "title": "Magnolia",
+      "creator": "Paul Thomas Anderson",
+      "art": "/film-posters/magnolia.webp"
+    },
+    {
+      "title": "Foxcatcher",
+      "creator": "Bennett Miller",
+      "art": "/film-posters/foxcatcher.webp"
+    },
+    {
+      "title": "The Social Network",
+      "creator": "David Fincher",
+      "art": "/film-posters/the-social-network.webp"
+    },
+    {
+      "title": "Before Trilogy",
+      "creator": "Richard Linklater",
+      "art": "/film-posters/before-trilogy.webp"
+    },
+    {
+      "title": "Boogie Nights",
+      "creator": "Paul Thomas Anderson",
+      "art": "/film-posters/boogie-nights.webp"
+    },
+    {
+      "title": "Her",
+      "creator": "Spike Jonze",
+      "art": "/film-posters/her.webp"
+    },
+    {
+      "title": "A Clockwork Orange",
+      "creator": "Stanley Kubrick",
+      "art": "/film-posters/a-clockwork-orange.webp"
+    },
+    {
+      "title": "Paths of Glory",
+      "creator": "Stanley Kubrick",
+      "art": "/film-posters/paths-of-glory.webp"
+    },
+    {
+      "title": "Blue Valentine",
+      "creator": "Derek Cianfrance",
+      "art": "/film-posters/blue-valentine.webp"
+    },
+    {
+      "title": "The King's Speech",
+      "creator": "Tom Hooper",
+      "art": "/film-posters/the-king-s-speech.webp"
+    },
+    {
+      "title": "Drive",
+      "creator": "Nicolas Winding Refn",
+      "art": "/film-posters/drive.webp"
+    },
+    {
+      "title": "Lost in Translation",
+      "creator": "Sofia Coppola",
+      "art": "/film-posters/lost-in-translation.webp"
+    },
+    {
+      "title": "Eternal Sunshine of the Spotless Mind",
+      "creator": "Michel Gondry",
+      "art": "/film-posters/eternal-sunshine-of-the-spotless-mind.webp"
+    },
+    {
+      "title": "The Lord of the Rings",
+      "creator": "Peter Jackson",
+      "art": "/film-posters/the-lord-of-the-rings.webp"
+    },
+    {
+      "title": "Good Will Hunting",
+      "creator": "Gus Van Sant",
+      "art": "/film-posters/good-will-hunting.webp"
+    },
+    {
+      "title": "American Beauty",
+      "creator": "Sam Mendes",
+      "art": "/film-posters/american-beauty.webp"
+    },
+    {
+      "title": "The Holdovers",
+      "creator": "Alexander Payne",
+      "art": "/film-posters/the-holdovers.webp"
+    },
+    {
+      "title": "Licorice Pizza",
+      "creator": "Paul Thomas Anderson",
+      "art": "/film-posters/licorice-pizza.webp"
+    },
+    {
+      "title": "Love Actually",
+      "creator": "Richard Curtis",
+      "art": "/film-posters/love-actually.webp"
+    },
+    {
+      "title": "Rushmore",
+      "creator": "Wes Anderson",
+      "art": "/film-posters/rushmore.webp"
+    },
+    {
+      "title": "Submarine",
+      "creator": "Richard Ayoade",
+      "art": "/film-posters/submarine.webp"
+    },
+    {
+      "title": "Superbad",
+      "creator": "Greg Mottola",
+      "art": "/film-posters/superbad.webp"
+    },
+    {
+      "title": "School of Rock",
+      "creator": "Richard Linklater",
+      "art": "/film-posters/school-of-rock.webp"
+    },
+    {
+      "title": "Frances Ha",
+      "creator": "Noah Baumbach",
+      "art": "/film-posters/frances-ha.webp"
+    },
+    {
+      "title": "Everybody Wants Some!!",
+      "creator": "Richard Linklater",
+      "art": "/film-posters/everybody-wants-some.webp"
+    },
+    {
+      "title": "The Big Lebowski",
+      "creator": "Joel & Ethan Coen",
+      "art": "/film-posters/the-big-lebowski.webp"
+    },
+    {
+      "title": "Moonrise Kingdom",
+      "creator": "Wes Anderson",
+      "art": "/film-posters/moonrise-kingdom.webp"
+    }
+  ],
+  "games": [
+    {
+      "title": "Bloodborne",
+      "creator": "FromSoftware",
+      "art": "/game-covers/bloodborne.webp",
+      "note": "O Kos, or some say Kosm… the one that still gets quoted."
+    },
+    {
+      "title": "League of Legends",
+      "creator": "Riot Games",
+      "art": "/game-covers/league-of-legends.webp"
+    },
+    {
+      "title": "Journey",
+      "creator": "thatgamecompany",
+      "art": "/game-covers/journey.webp"
+    },
+    {
+      "title": "Halo 3",
+      "creator": "Bungie",
+      "art": "/game-covers/halo-3.webp"
+    },
+    {
+      "title": "Call of Duty 4",
+      "creator": "Infinity Ward",
+      "art": "/game-covers/call-of-duty-4.webp",
+      "note": "Call of Duty 4: Modern Warfare"
+    },
+    {
+      "title": "Dark Souls III",
+      "creator": "FromSoftware",
+      "art": "/game-covers/dark-souls-3.webp"
+    },
+    {
+      "title": "Hearthstone",
+      "creator": "Blizzard Entertainment",
+      "art": "/game-covers/hearthstone.webp"
+    },
+    {
+      "title": "Warcraft III",
+      "creator": "Blizzard Entertainment",
+      "art": "/game-covers/warcraft-3.webp",
+      "note": "Warcraft III: Reign of Chaos"
+    },
+    {
+      "title": "Fallout",
+      "creator": "Bethesda & Obsidian",
+      "art": "/game-covers/fallout.webp",
+      "note": "Fallout 3, New Vegas and 4."
+    },
+    {
+      "title": "Half-Life",
+      "creator": "Valve",
+      "art": "/game-covers/half-life.webp"
+    },
+    {
+      "title": "Devil May Cry",
+      "creator": "Capcom",
+      "art": "/game-covers/devil-may-cry.webp",
+      "note": "Devil May Cry 1, 3 and 4."
+    },
+    {
+      "title": "Final Fantasy",
+      "creator": "Square Enix",
+      "art": "/game-covers/final-fantasy.webp",
+      "note": "Final Fantasy IX, X and XV."
+    },
+    {
+      "title": "God of War",
+      "creator": "Santa Monica Studio",
+      "art": "/game-covers/god-of-war.webp",
+      "note": "God of War I through IV — the game, then Raising Kratos, the documentary about making it."
+    },
+    {
+      "title": "Oblivion & Skyrim",
+      "creator": "Bethesda Game Studios",
+      "art": "/game-covers/elder-scrolls.webp",
+      "note": "The Elder Scrolls IV and V."
+    },
+    {
+      "title": "BioShock",
+      "creator": "Irrational Games",
+      "art": "/game-covers/bioshock.webp",
+      "note": "BioShock 1, 2 and Infinite."
+    },
+    {
+      "title": "The Last of Us",
+      "creator": "Naughty Dog",
+      "art": "/game-covers/last-of-us.webp"
+    },
+    {
+      "title": "Pyre",
+      "creator": "Supergiant Games",
+      "art": "/game-covers/pyre.webp"
+    },
+    {
+      "title": "Slay the Spire",
+      "creator": "Mega Crit",
+      "art": "/game-covers/slay-the-spire.webp"
+    },
+    {
+      "title": "Saints Row",
+      "creator": "Volition",
+      "art": "/game-covers/saints-row.webp"
+    },
+    {
+      "title": "Terraria",
+      "creator": "Re-Logic",
+      "art": "/game-covers/terraria.webp"
+    }
+  ],
+  "tv": [
+    {
+      "title": "The Office",
+      "creator": "Stephen Merchant, Ricky Gervais",
+      "year": "2001",
+      "art": "/tv-posters/the-office-uk.webp"
+    },
+    {
+      "title": "I'm Alan Partridge",
+      "creator": "Armando Iannucci, Peter Baynham",
+      "year": "1997",
+      "art": "/tv-posters/im-alan-partridge.webp"
+    },
+    {
+      "title": "Phoenix Nights",
+      "creator": "Peter Kay, Dave Spikey",
+      "year": "2001",
+      "art": "/tv-posters/phoenix-nights.webp"
+    },
+    {
+      "title": "Peep Show",
+      "creator": "Sam Bain, Andrew O'Connor",
+      "year": "2003",
+      "art": "/tv-posters/peep-show.webp"
+    },
+    {
+      "title": "Fawlty Towers",
+      "creator": "Connie Booth, John Cleese",
+      "year": "1975",
+      "art": "/tv-posters/fawlty-towers.webp"
+    },
+    {
+      "title": "Spaced",
+      "creator": "Simon Pegg, Jessica Hynes",
+      "year": "1999",
+      "art": "/tv-posters/spaced.webp"
+    },
+    {
+      "title": "The Thick of It",
+      "creator": "Armando Iannucci",
+      "year": "2005",
+      "art": "/tv-posters/the-thick-of-it.webp"
+    },
+    {
+      "title": "The Trip",
+      "creator": "Michael Winterbottom",
+      "year": "2010",
+      "art": "/tv-posters/the-trip.webp"
+    },
+    {
+      "title": "Fleabag",
+      "creator": "Phoebe Waller-Bridge",
+      "year": "2016",
+      "art": "/tv-posters/fleabag.webp"
+    },
+    {
+      "title": "It's Always Sunny in Philadelphia",
+      "creator": "Rob Mac",
+      "year": "2005",
+      "art": "/tv-posters/its-always-sunny.webp"
+    },
+    {
+      "title": "Parks and Recreation",
+      "creator": "Michael Schur, Greg Daniels",
+      "year": "2009",
+      "art": "/tv-posters/parks-and-recreation.webp"
+    },
+    {
+      "title": "Arrested Development",
+      "creator": "Mitchell Hurwitz",
+      "year": "2003",
+      "art": "/tv-posters/arrested-development.webp"
+    },
+    {
+      "title": "Community",
+      "creator": "Dan Harmon",
+      "year": "2009",
+      "art": "/tv-posters/community.webp"
+    },
+    {
+      "title": "Louie",
+      "creator": "Louis C.K.",
+      "year": "2010",
+      "art": "/tv-posters/louie.webp"
+    },
+    {
+      "title": "Atlanta",
+      "creator": "Donald Glover",
+      "year": "2016",
+      "art": "/tv-posters/atlanta.webp"
+    },
+    {
+      "title": "Better Things",
+      "creator": "Pamela Adlon, Louis C.K.",
+      "year": "2016",
+      "art": "/tv-posters/better-things.webp"
+    },
+    {
+      "title": "Succession",
+      "creator": "Jesse Armstrong",
+      "year": "2018",
+      "art": "/tv-posters/succession.webp"
+    },
+    {
+      "title": "Breaking Bad",
+      "creator": "Vince Gilligan",
+      "year": "2008",
+      "art": "/tv-posters/breaking-bad.webp"
+    },
+    {
+      "title": "Better Call Saul",
+      "creator": "Vince Gilligan, Peter Gould",
+      "year": "2015",
+      "art": "/tv-posters/better-call-saul.webp"
+    },
+    {
+      "title": "The Leftovers",
+      "creator": "Damon Lindelof, Tom Perrotta",
+      "year": "2014",
+      "art": "/tv-posters/the-leftovers.webp"
+    },
+    {
+      "title": "Severance",
+      "creator": "Dan Erickson",
+      "year": "2022",
+      "art": "/tv-posters/severance.webp"
+    },
+    {
+      "title": "Black Mirror",
+      "creator": "Charlie Brooker",
+      "year": "2011",
+      "art": "/tv-posters/black-mirror.webp"
+    },
+    {
+      "title": "Fargo",
+      "creator": "Noah Hawley",
+      "year": "2014",
+      "art": "/tv-posters/fargo.webp"
+    },
+    {
+      "title": "True Detective",
+      "creator": "Nic Pizzolatto, Issa López",
+      "year": "2014",
+      "art": "/tv-posters/true-detective.webp"
+    },
+    {
+      "title": "Hannibal",
+      "creator": "Bryan Fuller",
+      "year": "2013",
+      "art": "/tv-posters/hannibal.webp"
+    },
+    {
+      "title": "Watchmen",
+      "creator": "Damon Lindelof",
+      "year": "2019",
+      "art": "/tv-posters/watchmen.webp"
+    },
+    {
+      "title": "Normal People",
+      "creator": "Sally Rooney, Alice Birch",
+      "year": "2020",
+      "art": "/tv-posters/normal-people.webp"
+    },
+    {
+      "title": "Twin Peaks: The Return",
+      "creator": "David Lynch, Mark Frost",
+      "year": "2017",
+      "art": "/tv-posters/twin-peaks-the-return.webp"
+    }
+  ],
+  "podcasts": [
+    {
+      "title": "Making Sense",
+      "creator": "Sam Harris",
+      "art": "/podcast-covers/making-sense.webp",
+      "href": "https://www.samharris.org/podcasts"
+    },
+    {
+      "title": "Huberman Lab",
+      "creator": "Andrew Huberman",
+      "art": "/podcast-covers/huberman-lab.webp",
+      "href": "https://www.hubermanlab.com/podcast"
+    },
+    {
+      "title": "Dwarkesh Podcast",
+      "creator": "Dwarkesh Patel",
+      "art": "/podcast-covers/dwarkesh-podcast.webp",
+      "href": "https://www.dwarkesh.com/"
+    },
+    {
+      "title": "Lex Fridman Podcast",
+      "creator": "Lex Fridman",
+      "art": "/podcast-covers/lex-fridman-podcast.webp",
+      "href": "https://lexfridman.com/podcast/"
+    },
+    {
+      "title": "All-In Podcast",
+      "creator": "Chamath Palihapitiya, Jason Calacanis, David Sacks & David Friedberg",
+      "art": "/podcast-covers/all-in-podcast.webp",
+      "href": "https://www.youtube.com/@allin"
+    },
+    {
+      "title": "Within Reason",
+      "creator": "Alex O'Connor",
+      "art": "/podcast-covers/within-reason.webp",
+      "href": "https://www.alexoconnor.com/"
+    },
+    {
+      "title": "Moonshots",
+      "creator": "Peter Diamandis",
+      "art": "/podcast-covers/moonshots.webp",
+      "href": "https://www.diamandis.com/podcast"
+    }
+  ]
+}

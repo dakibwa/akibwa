@@ -5993,10 +5993,7 @@ button {
 
 @media (max-width: 760px) {
 .deck-hero { grid-column: 1 / -1; }
-}
-
-@media (max-width: 560px) {
-  }/* The foot is pushed to the bottom of the card in its own right. Relying on
+}/* The foot is pushed to the bottom of the card in its own right. Relying on
    space-between only worked while something sat between the head and the foot;
    on a card with just a name, both collapsed to the top and overlapped. */
 
@@ -7036,11 +7033,13 @@ button {
   opacity: 0;
   pointer-events: none;
   transition: opacity 120ms ease;
+  visibility: hidden;
 }
 
 .concept-project-stop:hover .concept-project-popover,
 .concept-project-stop:focus-within .concept-project-popover {
   opacity: 1;
+  visibility: visible;
 }
 
 .concept-project-popover-kind {
@@ -7784,21 +7783,245 @@ button {
 
 /* Career is a compact visual index at rest. Role, dates and the short
    action-to-purpose synopsis belong to the original hover/focus detail. */
-.concept-career-section {
-  --career-rest-space: clamp(56px, 4vw, 68px);
-  --career-open-space: 140px;
-  position: relative;
-  padding: var(--concept-rule-gap) 0 var(--career-rest-space);
-  transition: padding-bottom 340ms var(--ease-out);
+
+.concept-projects-head h2,
+.concept-taste-head .concept-archive-head h2 {
+  margin: 0;
+  max-width: none;
+  color: var(--black);
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
 }
 
-.concept-career-section:has(.concept-career-timeline:hover),
-.concept-career-section:has(.concept-career-stop:focus),
-.concept-career-section:has(.concept-career-stop:focus-within) {
-  padding-bottom: var(--career-open-space);
-  transition-duration: 480ms;
+/* A click or keyboard focus locks the open detail. Pointer movement across the
+   remaining marks must not create a second, overlapping popover. */
+
+/* Taste Library uses the same single-heading distinction as Client work and Career;
+   Graceland leads the wall itself instead of becoming a separate feature. */
+.concept-taste-head {
+  display: block;
 }
 
+.concept-taste-head .concept-archive-head {
+  display: block;
+}
+
+.concept-archive {
+  border-top-color: var(--concept-archive);
+}
+
+.akibwa-home--taste .deck-legend {
+  gap: 0.4em 1em;
+}
+
+@media (max-width: 760px) {
+  /* Projects become one short, native swipe rail on phones. Keeping the
+     shared detail immediately after this single row means a selected card's
+     information never lands beneath two unrelated projects. */
+  .concept-project-swipe {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88%, 460px);
+    gap: 12px;
+    width: 100%;
+    padding: 5px 5px 9px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .concept-project-swipe::-webkit-scrollbar {
+    display: none;
+  }
+
+  .concept-project-swipe .concept-project-stop {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* The swipe rail clips overflow, so the popover cannot hang beneath a card
+     on phones. Each card carries its description as a plain caption instead;
+     hover has nothing to add where there is no pointer to hover with. */
+  .concept-projects {
+    --projects-open-space: var(--projects-rest-space);
+  }
+
+  .concept-project-popover {
+    position: static;
+    width: auto;
+    margin-top: 8px;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+  }
+
+  .concept-project-popover-open {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .concept-client-projects {
+    gap: 14px;
+  }
+
+  .concept-client-body strong {
+    font-size: 0.76rem;
+  }
+
+  .concept-client-open {
+    display: none;
+  }
+
+  .concept-client-visual.is-contained img {
+    padding: 18px;
+  }
+
+  .concept-client-dialog {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+
+  .concept-client-preview-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 10px;
+  }
+
+  .concept-client-preview-head > span {
+    display: none;
+  }
+
+  .concept-client-preview-foot {
+    display: grid;
+    padding: 11px 10px 13px;
+  }
+
+  .concept-projects-head h2,
+  .concept-taste-head .concept-archive-head h2 {
+    font-size: 2.65rem;
+  }
+
+  .akibwa-home--taste .deck-legend {
+    gap: 0.35em 0.72em;
+  }
+
+}
+
+/* The horizontal index still fits every supported phone. This is only a
+   last-resort fallback for unusually narrow embedded viewports. */
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-client-visual img,
+  .concept-projects,
+  .concept-project-popover,
+  .concept-archive,
+  .taste-popover {
+    transition: none;
+  }
+}
+
+/* Public collection controls and the separate album gallery. */
+.concept-page .concept-projects{--projects-rest-space:36px;--projects-open-space:36px;padding-bottom:36px;transition:none}
+.concept-page .concept-project-stop{align-content:start}
+.concept-page .concept-project-popover{position:static;width:auto;margin-top:12px;padding:0 2px;border:0;background:none;box-shadow:none;opacity:1;visibility:visible;transition:none}
+.concept-page .concept-project-popover p{max-width:52ch;font:400 .85rem/1.5 var(--sans);color:var(--muted)}
+.personal-intro{white-space:nowrap}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.page-footer-details a,.page-footer-details button{min-height:36px}
+.social-x{font-size:17px;line-height:1}
+.archive-link,.archive-back{font-size:.83rem;line-height:1.4;text-decoration:underline;text-underline-offset:4px}
+.archive-link{flex-shrink:0;padding-bottom:4px}
+.listening-summary{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:24px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0 28px}
+.listening-provenance{grid-column:1/-1;margin:0;font-size:.74rem;line-height:1.4;color:var(--muted)}
+.listening-summary>div{display:grid;gap:5px;align-content:start}
+.listening-summary strong{font-size:clamp(1.7rem,3vw,2.8rem);font-weight:520;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+.listening-summary span,.listening-summary summary{font-size:.79rem;line-height:1.5}
+.listening-summary details{align-self:center}
+.listening-summary details p,.album-source p{font-size:.82rem;line-height:1.6;color:var(--muted);max-width:76ch}
+.listening-summary summary,.album-source summary{cursor:pointer;text-underline-offset:4px;text-decoration:underline;min-height:32px;align-content:center}
+.archive-more,.album-pagination button,.album-empty button,.album-detail-nav button{font:inherit;font-size:.82rem;background:transparent;border:1px solid var(--line-strong);padding:10px 14px;min-height:44px;cursor:pointer;color:var(--ink)}
+.personal-taste-card,.album-browser-card{border:0;background:none;padding:0;text-align:left;min-width:0;color:var(--ink);font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:stretch}
+.personal-taste-art,.album-browser-art{display:block;aspect-ratio:1;overflow:hidden;background:#dedcd3;margin-bottom:12px}
+.personal-taste-art picture,.album-browser-art picture,.archive-detail-art picture{display:block;width:100%;height:100%}
+.personal-taste-art img,.album-browser-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 180ms ease}
+.personal-taste-card:hover img,.album-browser-card:hover img{transform:scale(1.035)}
+.personal-taste-title,.album-browser-card>strong{font-size:.86rem;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
+.personal-taste-creator,.album-browser-card>span:not(.album-browser-art){font-size:.77rem;line-height:1.4;margin-top:4px;color:var(--muted)}
+.archive-more{margin-top:24px}
+.archive-more span{color:var(--muted);margin-left:5px}
+.taste-source-note{font-size:.84rem;line-height:1.5;margin-top:22px;max-width:72ch;color:var(--muted)}
+.taste-source-note a{text-decoration:underline;text-underline-offset:3px}
+.archive-dialog{border:1px solid var(--line-strong);padding:0;width:min(940px,calc(100% - 40px));max-height:calc(100dvh - 40px);color:var(--ink);background:var(--canvas);overflow:auto;box-shadow:0 24px 100px #0005}
+.archive-dialog::backdrop{background:#171d25aa}
+.archive-dialog-content{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);padding:32px;gap:32px}
+.archive-close{position:absolute;right:8px;top:6px;width:44px;height:44px;font-size:28px;color:var(--ink);border:0;background:var(--canvas);cursor:pointer;z-index:1}
+.archive-detail-art{aspect-ratio:1;align-self:center;min-width:0;background:#dedcd3}
+.archive-detail-art img{width:100%;height:100%;object-fit:contain;display:block}
+.archive-detail-copy{align-self:center;min-width:0;padding:24px 0}
+.archive-detail-copy h2{font:500 clamp(1.7rem,3vw,2.7rem)/1.1 var(--serif);letter-spacing:-.035em;margin:16px 0;overflow-wrap:anywhere}
+.archive-detail-copy>p{line-height:1.5}
+.archive-detail-copy a{display:inline-block;margin-top:12px;text-decoration:underline;text-underline-offset:4px;font-size:.85rem}
+.archive-eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.album-library{padding-top:32px;padding-bottom:40px}
+.album-library-head{max-width:760px;padding:44px 0 26px}
+.album-library-head h1{font:500 clamp(3rem,6vw,5.5rem)/1 var(--serif);letter-spacing:-.06em;margin:12px 0 20px}
+.album-library-head>p:last-child{max-width:52ch;font-size:1.05rem;line-height:1.5;color:var(--muted)}
+.album-catalogue-summary{display:flex;flex-wrap:wrap;gap:12px 32px;font-size:.82rem}
+.album-catalogue-summary strong{font-weight:650;font-size:1.1rem}
+.album-browser-controls{display:grid;grid-template-columns:minmax(220px,2fr) 1fr 1fr;gap:18px;margin-top:36px}
+.album-browser-controls label{display:grid;gap:8px;font-size:.72rem;font-weight:600}
+.album-browser-controls input,.album-browser-controls select{min-width:0;width:100%;height:46px;border:1px solid var(--line-strong);border-radius:0;padding:10px 12px;background:var(--canvas);font:inherit;font-size:.9rem;color:var(--ink)}
+.album-results-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:24px 0 16px;scroll-margin-top:20px}
+.album-results-heading p{margin:0;font-size:.83rem}
+.album-results-heading>span{font-size:.7rem;color:var(--muted)}
+.album-browser-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:30px 20px}
+.album-browser-card>small{font-size:.67rem;line-height:1.5;margin-top:8px;color:var(--muted)}
+.album-pagination{display:flex;align-items:center;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);gap:10px;font-size:.8rem}
+.album-pagination button:disabled{opacity:.35;cursor:default}
+.album-source{border-top:1px solid var(--line);padding:24px 0;margin-top:28px;font-size:.83rem}
+.album-empty{padding:54px 20px;text-align:center;border:1px solid var(--line);background:color-mix(in srgb,var(--canvas) 95%,var(--ink))}
+.album-empty h2{font-family:var(--serif);font-size:2rem;font-weight:500}
+.album-empty p{color:var(--muted);line-height:1.5}
+.album-detail-nav{display:flex;gap:12px;margin-top:28px}
+.archive-count{font-size:1.2rem}
+.archive-count-note{font-size:.75rem;color:var(--muted)}
+:is(.personal-career,.personal-taste,.album-library,.archive-dialog) :is(button,a,input,select,summary):focus-visible{outline:2px solid #2f88ff;outline-offset:4px}
+@media(max-width:1000px){
+ .album-browser-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .listening-summary{grid-template-columns:1fr 1fr}
+ .listening-summary details{grid-column:1/-1}
+}
+@media(max-width:600px){
+ .album-browser-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}
+ .listening-summary{gap:14px;padding:18px 0}
+ .listening-summary span{font-size:.73rem}
+ .archive-dialog{width:calc(100% - 24px);max-height:calc(100dvh - 24px)}
+ .archive-dialog-content{display:block;padding:38px 18px 18px}
+ .archive-detail-art{max-width:320px;margin:auto}
+ .archive-detail-copy{padding:8px 0 0}
+ .album-library-head{padding-top:32px}
+ .album-browser-controls{grid-template-columns:1fr 1fr;gap:14px}
+ .album-search{grid-column:1/-1}
+ .album-browser-controls select{font-size:.79rem;padding:8px}
+ .album-results-heading{display:block}
+ .album-results-heading>span{display:block;margin-top:7px}
+ .album-catalogue-summary{gap:8px 22px;line-height:1.5}
+}
+@media(prefers-reduced-motion:reduce){
+ .personal-taste-art img,.album-browser-art img{transition:none!important;transform:none!important}
+}
+
+/* Faithful homepage restoration: historical type, timeline and native rail. */
 .concept-career-head {
   padding-bottom: clamp(18px, 2vw, 28px);
 }
@@ -7921,352 +8144,48 @@ button {
   transform: translate(6%, 2.5%);
 }
 
-.concept-career-popover {
-  position: absolute;
-  top: calc(100% + 9px);
-  left: 0;
-  z-index: 20;
-  display: grid;
-  width: min(280px, calc(100vw - 32px));
-  gap: 4px;
-  padding: 14px;
-  border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong));
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
-  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease;
+
+.concept-page { --concept-archive: #1b947d; }
+.concept-career-section { position: relative; padding: var(--concept-rule-gap) 0 12px; }
+.concept-career-timeline { overflow-x: auto; padding: 3px 0; scrollbar-width: thin; }
+.concept-career-timeline > li { min-width: 0; }
+.concept-career-stop { width: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.concept-career-stop[aria-expanded="true"] .concept-career-card { background: color-mix(in srgb, var(--company-accent) 17%, var(--canvas)); border-color: var(--company-accent); }
+.concept-career-stop[aria-expanded="true"] .concept-career-node { box-shadow: 0 0 0 4px var(--canvas), 0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent); }
+.concept-career-stop:focus-visible .concept-career-card { outline: 2px solid var(--company-accent); outline-offset: -4px; }
+.concept-career-detail-lane { position: relative; min-height: 94px; }
+.concept-career-popover { position: absolute; top: 8px; left: clamp(0px, var(--career-detail-offset, 0%), max(0px, calc(100% - 280px))); width: min(280px, 100%); display: grid; gap: 5px; padding: 14px; border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: 0 14px 32px #0c111317; visibility: hidden; }
+.concept-career-popover.is-open { visibility: visible; }
+.concept-career-popover > strong { font-size: .86rem; line-height: 1.15; letter-spacing: -.02em; }
+.concept-career-popover > span { color: var(--muted); font-size: .73rem; line-height: 1.4; }
+.personal-taste { padding-bottom: clamp(40px, 5vw, 70px); }
+.concept-taste-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; padding-bottom: 14px; }
+.concept-taste-head .concept-archive-head { display: block; }
+.taste-filters { gap: 4px clamp(16px, 2vw, 28px); margin: 0 0 14px; }
+.taste-filters .rail-word { padding: 10px 0; min-height: 44px; font-size: clamp(.9rem, 1.15vw, 1.08rem); }
+.taste-filters .rail-word[aria-pressed="true"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 7px; }
+.personal-taste-rail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(104px, 9.2vw, 136px); gap: clamp(9px, .85vw, 13px); align-items: start; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-color: #83ad99 transparent; scrollbar-width: thin; padding: 4px 2px 14px; }
+.personal-taste-card { scroll-snap-align: start; }
+.personal-taste-art { border-radius: 4px; border: 1px solid #20201e20; margin-bottom: 9px; }
+.personal-taste-art img { filter: saturate(1.08) contrast(1.02); }
+.personal-taste-title { font-size: .76rem; line-height: 1.35; }
+.personal-taste-creator { font-size: .68rem; line-height: 1.4; }
+.taste-source-note { margin: 16px 0 0; font-size: .78rem; }
+@media (max-width: 800px) {
+  .concept-career-timeline { grid-template-columns: repeat(var(--career-count), minmax(48px, 1fr)); gap: clamp(5px, 1.5vw, 10px); }
+  .concept-career-stop { grid-template-rows: 36px 56px; }
+  .concept-career-logo, .concept-career-logo img { width: 29px; height: 29px; }
+  .concept-career-popover { left: 0; }
 }
-
-.concept-career-stop:nth-child(n + 4) .concept-career-popover {
-  right: 0;
-  left: auto;
-}
-
-.concept-career-popover > strong {
-  color: var(--black);
-  font-size: 0.86rem;
-  font-weight: 690;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-
-.concept-career-popover > span {
-  color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
-  font-size: 0.66rem;
-  line-height: 1.3;
-}
-
-.concept-career-popover p {
-  margin: 7px 0 0;
-  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
-  font-family: var(--serif);
-  font-size: 0.76rem;
-  line-height: 1.35;
-}
-
-.concept-career-statement strong {
-  color: var(--black);
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: 700;
-  letter-spacing: inherit;
-  line-height: inherit;
-}
-
-.concept-career-stop:hover,
-.concept-career-stop:focus,
-.concept-career-stop:focus-within {
-  z-index: 30;
-}
-
-.concept-career-stop:hover .concept-career-card,
-.concept-career-stop:focus .concept-career-card,
-.concept-career-stop:focus-within .concept-career-card {
-  border-color: color-mix(in srgb, var(--company-accent) 82%, var(--ink));
-  background: color-mix(in srgb, var(--company-accent) 17%, var(--career-card-paper));
-}
-
-.concept-career-stop:hover .concept-career-node,
-.concept-career-stop:focus .concept-career-node,
-.concept-career-stop:focus-within .concept-career-node {
-  box-shadow:
-    0 0 0 4px var(--canvas),
-    0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent);
-}
-
-.concept-career-stop:hover .concept-career-popover,
-.concept-career-stop:focus .concept-career-popover,
-.concept-career-stop:focus-within .concept-career-popover {
-  opacity: 1;
-}
-
-/* A click or keyboard focus locks the open detail. Pointer movement across the
-   remaining marks must not create a second, overlapping popover. */
-.concept-career-timeline:focus-within
-  .concept-career-stop:not(:focus):not(:focus-within):hover {
-  z-index: 0;
-}
-
-.concept-career-timeline:focus-within
-  .concept-career-stop:not(:focus):not(:focus-within):hover
-  .concept-career-card {
-  border-color: color-mix(in srgb, var(--company-accent) 68%, var(--ink));
-  background: color-mix(in srgb, var(--company-accent) 11%, var(--career-card-paper));
-}
-
-.concept-career-timeline:focus-within
-  .concept-career-stop:not(:focus):not(:focus-within):hover
-  .concept-career-node {
-  box-shadow: 0 0 0 4px var(--canvas);
-}
-
-.concept-career-timeline:focus-within
-  .concept-career-stop:not(:focus):not(:focus-within):hover
-  .concept-career-popover {
-  opacity: 0;
-}
-
-.concept-career-stop:focus-visible .concept-career-card {
-  outline: 2px solid var(--company-accent);
-  outline-offset: 3px;
-}
-
-/* Taste Library uses the same single-heading distinction as Client work and Career;
-   Graceland leads the wall itself instead of becoming a separate feature. */
-.concept-taste-head {
-  display: block;
-}
-
-.concept-taste-head .concept-archive-head {
-  display: block;
-}
-
-.concept-archive {
-  border-top-color: var(--concept-archive);
-}
-
-.akibwa-home--taste .deck-legend {
-  gap: 0.4em 1em;
-}
-
-@media (max-width: 760px) {
-  /* Projects become one short, native swipe rail on phones. Keeping the
-     shared detail immediately after this single row means a selected card's
-     information never lands beneath two unrelated projects. */
-  .concept-project-swipe {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: min(88%, 460px);
-    gap: 12px;
-    width: 100%;
-    padding: 5px 5px 9px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .concept-project-swipe::-webkit-scrollbar {
-    display: none;
-  }
-
-  .concept-project-swipe .concept-project-stop {
-    grid-column: auto;
-    justify-self: stretch;
-    width: auto;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-
-  /* The swipe rail clips overflow, so the popover cannot hang beneath a card
-     on phones. Each card carries its description as a plain caption instead;
-     hover has nothing to add where there is no pointer to hover with. */
-  .concept-projects {
-    --projects-open-space: var(--projects-rest-space);
-  }
-
-  .concept-project-popover {
-    position: static;
-    width: auto;
-    margin-top: 8px;
-    box-shadow: none;
-    opacity: 1;
-    transition: none;
-  }
-
-  .concept-project-popover-open {
-    display: none;
-  }
-
-  .concept-career-section {
-    --career-rest-space: 60px;
-  }
-
-  .concept-career-timeline {
-    gap: clamp(5px, 1.5vw, 10px);
-  }
-
-  .concept-career-stop {
-    grid-template-rows: 36px 56px;
-  }
-
-  .concept-career-card {
-    min-width: 0;
-  }
-
-  .concept-career-logo,
-  .concept-career-logo img {
-    width: 29px;
-    height: 29px;
-  }
-
-  .concept-career-popover {
-    top: calc(100% + 8px);
-    width: min(260px, calc(100vw - 32px));
-    min-width: 0;
-  }
-
-  .concept-career-stop:nth-child(n + 4):nth-child(-n + 5) .concept-career-popover {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .concept-career-stop:nth-child(n + 6) .concept-career-popover {
-    right: 0;
-    left: auto;
-    transform: none;
-  }
-}
-
 @media (max-width: 560px) {
-  .concept-client-projects {
-    gap: 14px;
-  }
-
-  .concept-client-body strong {
-    font-size: 0.76rem;
-  }
-
-  .concept-client-open {
-    display: none;
-  }
-
-  .concept-client-visual.is-contained img {
-    padding: 18px;
-  }
-
-  .concept-client-dialog {
-    width: calc(100vw - 16px);
-    max-height: calc(100dvh - 16px);
-  }
-
-  .concept-client-preview-head {
-    grid-template-columns: minmax(0, 1fr) auto;
-    padding: 10px;
-  }
-
-  .concept-client-preview-head > span {
-    display: none;
-  }
-
-  .concept-client-preview-foot {
-    display: grid;
-    padding: 11px 10px 13px;
-  }
-
-  .concept-career-section {
-    --career-rest-space: 48px;
-  }
-
-  .concept-career-head {
-    padding-bottom: 18px;
-  }
-
-  .concept-projects-head h2,
-  .concept-career-head h2,
-  .concept-taste-head .concept-archive-head h2 {
-    font-size: 2.65rem;
-  }
-
-  .concept-career-popover {
-    padding: 11px 12px;
-  }
-
-  .concept-career-popover p {
-    margin-top: 6px;
-    font-size: 0.72rem;
-    line-height: 1.34;
-  }
-
-  .akibwa-home--taste .deck-legend {
-    gap: 0.35em 0.72em;
-  }
-
+  .concept-career-head h2, .concept-taste-head .concept-archive-head h2 { font-size: 2.65rem; }
+  .concept-career-head { padding-bottom: 18px; }
+  .concept-taste-head { display: block; padding-bottom: 4px; }
+  .concept-taste-head .archive-link { display: inline-block; margin-top: 18px; }
+  .taste-filters { gap: 0 17px; }
+  .taste-filters .rail-word { font-size: .85rem; }
 }
-
-/* The horizontal index still fits every supported phone. This is only a
-   last-resort fallback for unusually narrow embedded viewports. */
-@media (max-width: 300px) {
-  .concept-career-timeline {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .concept-career-timeline::before {
-    top: 14px;
-    right: auto;
-    bottom: 14px;
-    left: 26px;
-    width: 1px;
-    height: auto;
-  }
-
-  .concept-career-stop {
-    grid-template-columns: 52px minmax(0, 1fr);
-    grid-template-rows: 52px;
-    gap: 14px;
-    min-height: 68px;
-    padding: 8px 0;
-  }
-
-  .concept-career-node {
-    position: absolute;
-    top: 50%;
-    left: 26px;
-    transform: translate(-50%, -50%);
-  }
-
-  .concept-career-card {
-    grid-column: 1;
-    width: 52px;
-    height: 52px;
-  }
-
-  .concept-career-popover,
-  .concept-career-stop:nth-child(n) .concept-career-popover {
-    top: calc(100% + 4px);
-    right: auto;
-    left: 0;
-    width: 100%;
-    transform: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .concept-client-visual img,
-  .concept-career-section,
-  .concept-career-node,
-  .concept-career-card,
-  .concept-career-popover,
-  .concept-projects,
-  .concept-project-popover,
-  .concept-archive,
-  .taste-popover {
-    transition: none;
-  }
+  .hero-name-value { animation: none; }
+  .concept-career-node, .concept-career-card { transition: none; }
 }

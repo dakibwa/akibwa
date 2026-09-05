@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 
-/* Build-time contract for Akibwa's public boundary. The brand and its current
-   projects are discoverable; personal identity, history and archives are not. */
+/* Build-time contract for the explicitly restored personal index. Named public
+   choices do not relax the remaining private-data and search boundaries. */
 
 const read = (relativePath) =>
   readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
@@ -51,34 +51,35 @@ requireText(
   'import { EditorialHomeConcept } from "@/components/pages/editorial-home-concept"',
   "the public index must render the editorial homepage"
 );
-requireText(index, "return <EditorialHomeConcept />", "the editorial homepage must own the root route");
+requireText(index, "<EditorialHomeConcept", "the editorial homepage must own the root route");
 requireText(index, "noimageindex: true", "the public index must opt out of image indexing");
 requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
 requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");
 
 requireText(editorial, "<HeroBrandName />", "the visible masthead must use the shared Akibwa identity");
-requireText(hero, ">Akibwa</span>", "the masthead must identify Akibwa");
+requireText(hero, 'label: "Akibwa"', "the masthead must identify Akibwa");
 forbidText(editorial, 'from "@/components/deck-data"', "the indexed homepage must not load the personal archive");
 forbidText(editorial, 'from "@/components/pages/home-page"', "the indexed homepage must not load the retired personal wall");
-requireText(editorial, "Building in the age of AI.", "the public proposition must remain concise");
+requireText(hero, "Daniel", "the approved introduction must include Daniel");
+requireText(hero, "prefers-reduced-motion", "the name animation must respect reduced motion");
+requireText(editorial, "Building in the AI age", "the masthead must preserve Dan's requested proposition");
+requireRuleText(".concept-lede {", ["font-family: var(--serif)", "font-size: clamp(1.7rem, 3vw, 3.2rem)", "line-height: 1.04", "letter-spacing: -0.035em"]);
 
 requireText(editorial, '<h2 id="projects-title">Projects</h2>', "the public projects chapter must remain");
 for (const title of ["features", "Português com a Inês", "The Trek"]) {
   requireText(editorial, `title: "${title}"`, `${title} must remain on the project index`);
 }
 requireText(editorial, 'href: "/trek/"', "the Trek card must open the privacy-reduced atlas");
-requireText(editorial, 'id="capabilities"', "the public capability chapter must remain");
-for (const label of ["Data", "Systems", "Delivery"]) {
-  requireText(editorial, `label: "${label}"`, `${label} must remain in the capability chapter`);
-}
-forbidText(editorial, "concept-career", "the indexed homepage must not expose a career timeline");
-forbidText(editorial, "Taste Library", "the indexed homepage must not expose the personal taste archive");
+requireText(editorial, "<CareerBar />", "the approved career bar must remain");
+requireText(editorial, "<TasteLibrary", "the approved taste library must remain");
+if (!(editorial.indexOf('<ProjectShowcase />') < editorial.indexOf('<CareerBar />') && editorial.indexOf('<CareerBar />') < editorial.indexOf('<TasteLibrary'))) fail('reading order must be Projects, Career, Taste');
+for (const text of ['id="capabilities"', 'What Akibwa does', 'Make the mess legible']) forbidText(editorial,text,'rejected capability content must not return');
 
 requireText(footer, 'aria-label="Email Akibwa"', "the homepage must retain a private-by-default contact action");
 const personalEmail = ["da", "kibwa", "@", "gmail", ".com"].join("");
 forbidText(footer, personalEmail, "the contact address must not be present in static HTML");
-forbidText(footer, "instagram.com", "the indexed homepage must not link a personal Instagram account");
-forbidText(footer, "x.com", "the indexed homepage must not link a personal X account");
+requireText(footer, "https://www.instagram.com/dakibwa/", "the approved Instagram profile must remain");
+requireText(footer, "https://x.com/dakibwa", "the approved X profile must remain");
 
 for (const source of [albums, projectDetail]) {
   requireText(source, "index: false", "personal archive routes must be noindex");
@@ -89,9 +90,11 @@ requireText(sitemap, 'const routes = [{ path: "/", priority: 1 }]', "only the Ak
 
 requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns"]);
 requireRuleText(".concept-project-grid {", ["grid-template-columns: repeat(3, minmax(0, 1fr))"]);
-requireRuleText(".concept-capabilities {", ["position: relative", "padding:"]);
-requireRuleText(".concept-capability-list {", ["display: grid", "grid-template-columns: repeat(3, minmax(0, 1fr))"]);
-requireRuleText(".concept-capability-list li {", ["border-top: 4px solid var(--capability-accent)", "min-height:"]);
+requireRuleText(".hero-name-stack {", ["display: inline-grid"]);
+requireText(hero, "3200", "the historical name flip keeps its initial timing");
+requireText(hero, "visibilitychange", "the name timer must pause in hidden tabs");
+requireRuleText(".concept-career-detail-lane {", ["min-height: 94px"]);
+requireRuleText(".personal-taste-rail {", ["grid-auto-flow: column", "overflow-x: auto"]);
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
   fail("the detailed Life in Maps page must not ship");
