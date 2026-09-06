@@ -38,6 +38,15 @@ perspective and much less text and interface on 5 September 2026.
 - A distant jump first loads local elevation with a ground-clamped camera, then
   places the travelling camera above that ground. Never use a sea-level guess
   for an alpine viewpoint. A graphics failure leaves days and photographs usable.
+- Following Dan's 6 September feedback, keep a gently changing 42–60° camera
+  pitch, real terrain height and a broad view of the path. The camera glides on a separately
+  smoothed rail and anticipates bends; it must not copy each GPS zigzag. Ease
+  rotation in and out, slow down before tight turns and ease into movement after
+  pauses or photographs. Look ahead for rising ground and descend gently.
+  On steep descents, gradually look down to retain the route. Widen the vertical
+  field of view from 38° to 55° in portrait layouts so the path remains visible.
+  Keep background trail strokes faint and solid so their dashes do not compete
+  with the recorded route or the explicitly dashed connections.
 
 ## Geography and source ownership
 
@@ -83,14 +92,16 @@ identifications from the images.
 `public/trek/moments.json`. Content hashes version every active runtime asset.
 
 `journey-route.js` owns bounded display smoothing, distinct connection geometry,
-continuous distance sampling and day boundaries. `journey-traveller.js` owns
-the map, camera, clock, menu and photographs; `journey-traveller.css` owns the
-presentation. Earlier map, journal and clock files are inactive.
+continuous distance sampling and day boundaries. `journey-camera.js` owns the
+camera rail, forward heading, turn acceleration and bend-aware pace.
+`journey-traveller.js` owns the map, terrain clearance, clock, menu and photographs;
+`journey-traveller.css` owns the presentation. Earlier map, journal and clock
+files are inactive.
 
 MapLibre 5.6.2 and its licence are vendored. `journey-style.json` derives from
 [OpenFreeMap Liberty](https://openfreemap.org/quick_start/); its vector tiles
 supply roads, trails and building geometry. [Mapzen elevation
-tiles](https://www.mapzen.com/rights/) supply continuous terrain at 1.35× height.
+tiles](https://www.mapzen.com/rights/) supply continuous terrain at real height.
 Keep all provider credits accessible from the map. Remote tiles require network
 access; the original day records and photographs are local static assets.
 
@@ -98,10 +109,23 @@ access; the original day records and photographs are local static assets.
 metadata, original metrics, generated asset hashes and the continuous route.
 `scripts/check-trek-continuity.mjs` covers all joins and day boundaries, the
 largest gap, bounded rounding and source non-mutation.
+`scripts/check-trek-camera.mjs` checks camera continuity across the whole route,
+proximity to the path and difficult turns at every pace. The camera uses a
+weighted 880 m neighbourhood, a 1.1 km heading chord, a 9°/s turning limit and
+6°/s² acceleration limit. Pitch changes by at most 3°/s. Playback brakes before
+upcoming bends. The normal clearance is 720 m above the highest sampled ground in the next kilometre,
+with a 420 m floor during movement. Solve the complete camera transform from
+the eye and a target at local ground height; changing pitch after solving zoom
+and centre changes the eye position and can cause clipping. Update the reference
+elevation with the ground at every frame. Retaining an old mountain reference
+after descending can force a distant zoom and enlarge the draped roads and route.
 `npm run check:trek:dom` covers actual terrain readiness, quiet controls,
-photographs, original records, continuous playback and heading changes, interlude
+steep viewpoints and sustained camera movement, photographs, original records,
+continuous playback and heading changes, interlude
 timing, phone fit, resize, replay, reduced motion and graphics loss.
 
 Run the site's fast gate before release. After Pages succeeds, compare the live
 HTML and versioned runtime assets and inspect the desktop and phone landscape.
+Include a sustained descent into a valley without changing days: resetting the
+camera between viewpoints can hide the stale elevation and enlarged texture bug.
 Compilation and DOM checks do not replace visual acceptance.

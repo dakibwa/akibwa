@@ -1,4 +1,5 @@
 import './check-trek-continuity.mjs';
+import './check-trek-camera.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -45,14 +46,14 @@ for(let i=0;i<source.tracks.length;i++){
 }
 const generated=readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8');
 const runtimeAssets=[...generated.matchAll(/(?:href|src)="(journey-[\w-]+\.(?:css|js))(?:\?v=([a-f0-9]+))?"/g)];
-assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-route.js','journey-traveller.css','journey-traveller.js'],'the generated page references the complete traveller runtime');
+assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-camera.js','journey-route.js','journey-traveller.css','journey-traveller.js'],'the generated page references the complete traveller runtime');
 for(const [,file,version] of runtimeAssets){
   const expected=createHash('sha256').update(readFileSync(new URL('../public/trek/'+file,import.meta.url))).digest('hex').slice(0,12);
   assert.equal(version,expected,`Run npm run trek:build after changing ${file}; cached controls must match the page`);
 }
 assert(!/id="(?:view-atlas|view-relief|relief-map|atlas)"/.test(generated),'only the Paths view is reachable');
 const mapSource=readFileSync(new URL('../public/trek/journey-traveller.js',import.meta.url),'utf8');
-assert(mapSource.includes("map.setTerrain({source:'dem',exaggeration:1.35})"),'3D terrain applies to the whole map');
+assert(mapSource.includes("map.setTerrain({source:'dem',exaggeration:1})"),'real-scale 3D terrain applies to the whole map');
 assert.equal(moments.chapters.length,6);
 assert.deepEqual(moments,read('data/trek-moments.json'),'the generated chapter and moment projection is current');
 assert.equal(moments.moments.length,9);

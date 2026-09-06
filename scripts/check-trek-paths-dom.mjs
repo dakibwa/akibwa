@@ -10,7 +10,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
   const choose=n=>evaluate(`(() => {const e=document.querySelector('#journey-day');e.value=${n};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   const scrub=distance=>evaluate(`(() => {const e=document.querySelector('#journey-progress');e.value=${distance/path.total*1000};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
-  const state=()=>evaluate(`({...window.trekStatus?.(),overflow:document.documentElement.scrollWidth-innerWidth,menu:document.querySelector('#journey-menu').open,gallery:document.querySelector('#photo-gallery').open,photo:document.querySelector('#gallery-image').getAttribute('src'),photoLoaded:document.querySelector('#gallery-image').naturalWidth>0,creditsExpanded:document.querySelector('.maplibregl-ctrl-attrib')?.classList.contains('maplibregl-compact-show'),controlsFit:[...document.querySelectorAll('.masthead button,.journey-controls button,.journey-controls input')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1;})})`);
+  const state=()=>evaluate(`({...window.trekStatus?.(),sampleTime:performance.now(),overflow:document.documentElement.scrollWidth-innerWidth,menu:document.querySelector('#journey-menu').open,gallery:document.querySelector('#photo-gallery').open,photo:document.querySelector('#gallery-image').getAttribute('src'),photoLoaded:document.querySelector('#gallery-image').naturalWidth>0,creditsExpanded:document.querySelector('.maplibregl-ctrl-attrib')?.classList.contains('maplibregl-compact-show'),controlsFit:[...document.querySelectorAll('.masthead button,.journey-controls button,.journey-controls input')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1;})})`);
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
@@ -43,9 +43,38 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   await setDesktop(1440,900);await goto('/trek/?day=30');
   check(await settled(),'the mountain camera loads its destination elevation');
   let s=await state();
-  check(s.day===30&&s.routeLines===57&&s.connections===56&&s.pitch>=52&&s.eyeHeight>1000,'the traveller is above the mountain terrain with all recordings and connections');
+  check(s.day===30&&s.routeLines===57&&s.connections===56&&s.pitch>=42&&s.eyeHeight>1000,'the traveller is above the mountain terrain with all recordings and connections');
   check(!s.creditsExpanded&&s.controlsFit&&s.overflow<=1,'credits are collapsed and desktop controls fit');
   check(await evaluate('!document.querySelector("#journey-card,#journey-reset,#path-tools,#journey-footer")'),'the landscape has no permanent photo card or redundant map controls');
+  section('Calm camera through steep terrain');
+  for(const fraction of [.25,.5,.74,.9]){
+    await scrub(path.dayDistance(30,fraction));check(await settled(),`the Alpine camera loads at ${(fraction*100).toFixed(0)}% of the day`);
+    s=await state();check(s.pitch<=60.05&&s.pitch>=41.95&&s.cameraClearance>=419.9,'the view keeps a controlled tilt and clears the actual mountain ground');
+  }
+  await scrub(path.dayDistance(30,.74));await settled();
+  await click('#menu-open');await click('#photo-interludes');await click('#menu-close');await click('#play');
+  const mountainSamples=[await state()];
+  for(let i=0;i<20;i++){await sleep(500);mountainSamples.push(await state());}
+  await click('#play');
+  check(mountainSamples.at(-1).distance>mountainSamples[0].distance,'playback advances from the mountain viewpoint');
+  check(mountainSamples.every(s=>s.cameraClearance>=419.9&&s.pitch>=41.95&&s.pitch<=60.05),'playback keeps the camera out of the terrain without pitching toward the horizon');
+  check(mountainSamples.every(s=>Math.abs(s.mapElevation-(s.eyeHeight-s.cameraClearance))<.01),'the zoom reference follows local ground rather than retaining the old mountain altitude');
+  const turns=mountainSamples.slice(1).map((s,i)=>Math.abs(((s.bearing-mountainSamples[i].bearing+540)%360)-180)/((s.sampleTime-mountainSamples[i].sampleTime)/1000));
+  check(Math.max(...turns)<9.5,'actual rendered turns stay below 9.5 degrees per second');
+  const tilts=mountainSamples.slice(1).map((s,i)=>Math.abs(s.pitch-mountainSamples[i].pitch)/((s.sampleTime-mountainSamples[i].sampleTime)/1000));
+  check(Math.max(...tilts)<3.5,'the camera tilts gradually as the ground falls away');
+  process.stdout.write(`  measured maximum turn ${Math.max(...turns).toFixed(2)}°/s; minimum ground clearance ${Math.min(...mountainSamples.map(s=>s.cameraClearance)).toFixed(0)} m; travelled ${(mountainSamples.at(-1).distance-mountainSamples[0].distance).toFixed(1)} m\n`);
+  await click('#menu-open');await click('#photo-interludes');await click('#menu-close');
+  await scrub(path.dayDistance(30,.5));await settled();
+  if(process.env.CHECK_TREK_CAMERA_ONLY==='1'){
+    for(const width of [390,320]){
+      const before=(await state()).distance;
+      await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(250);s=await state();
+      check(s.distance===before&&s.controlsFit&&s.overflow<=1&&s.pitch<=60.05&&s.cameraClearance>=419.9,`${width}px preserves the route and safe camera framing`);
+    }
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the camera reports no runtime errors');
+    return;
+  }
   await click('#menu-open');check((await state()).menu,'the additional controls open in one menu');
   check(await evaluate('document.querySelectorAll("#journey-day option").length===67&&document.querySelectorAll("#chapters button").length===6'),'all days and chapters remain reachable');
   check(await evaluate('document.querySelector("#day-note").textContent.includes("Tauern")&&document.querySelector("#record-artist").textContent.includes("Brian Eno")'),'the original mountain note and its actual record remain available');
