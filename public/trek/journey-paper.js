@@ -79,8 +79,8 @@
       if (id === 'landcover_sand') paint['fill-color'] = '#dbca9b';
       if (id === 'landcover_wetland') { delete paint['fill-pattern']; paint['fill-color'] = '#afbea2'; }
       if (/landuse_/.test(id)) paint['fill-color'] = /residential|hospital|school/.test(id) ? '#e0d8be' : '#c5cba6';
-      if (id === 'water') paint['fill-color'] = '#9dbab0';
-      if (layer['source-layer'] === 'waterway' && layer.type === 'line') paint['line-color'] = '#94b5aa';
+      if (id === 'water') Object.assign(paint, {'fill-color': '#8bb6bd', 'fill-outline-color': '#70999e'});
+      if (layer['source-layer'] === 'waterway' && layer.type === 'line') paint['line-color'] = '#7aa7b3';
       if (layer['source-layer'] === 'transportation' && layer.type === 'line') {
         const small = /path_pedestrian|service_track/.test(id), casing = /casing/.test(id);
         delete paint['line-dasharray']; delete paint['line-gap-width'];
@@ -96,7 +96,28 @@
         Object.assign(paint, {'fill-extrusion-color': '#eee4c9', 'fill-extrusion-height': ['max', 9, ['*', 1.2, ['coalesce', ['get', 'render_height'], 6]]], 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1, 'fill-extrusion-vertical-gradient': false});
       }
     }
-    copy.layers.splice(copy.layers.findIndex(l => l.id === 'water'), 0, {
+    // Keep streams above all paper ground treatments. Their width is a visual
+    // aid at the travelling camera height, not a surveyed channel measurement.
+    copy.layers = copy.layers.flatMap(layer => {
+      if (layer['source-layer'] !== 'waterway' || layer.type !== 'line' || layer.id.includes('tunnel')) return [layer];
+      const river = layer.id === 'waterway_river';
+      const width = (scale = 1, margin = 0) => ['interpolate', ['linear'], ['zoom'],
+        10, (river ? 1 : .5) * scale + margin,
+        13, (river ? 3.8 : 2.2) * scale + margin,
+        15, (river ? 7 : 4.4) * scale + margin,
+        18, (river ? 14 : 8) * scale + margin];
+      layer.layout = {...layer.layout, 'line-cap': 'round', 'line-join': 'round'};
+      Object.assign(layer.paint, {'line-color': '#7aa7b3', 'line-opacity': 1, 'line-width': width()});
+      const bank = {...layer, id: 'paper-' + layer.id + '-bank', paint: {'line-color': '#d4cfb1', 'line-opacity': .95, 'line-width': width(1, 2.2)}};
+      const light = {...layer, id: 'paper-' + layer.id + '-light', paint: {'line-color': '#c3ddda', 'line-opacity': .5, 'line-width': width(.22)}};
+      return [bank, layer, light];
+    });
+    const lake = copy.layers.find(l => l.id === 'water');
+    copy.layers.splice(copy.layers.indexOf(lake), 0, {
+      id: 'paper-water-bank', type: 'line', source: lake.source, 'source-layer': lake['source-layer'], filter: lake.filter,
+      layout: {'line-join': 'round'}, paint: {'line-color': '#d4cfb1', 'line-width': ['interpolate', ['linear'], ['zoom'], 10, .7, 15, 3, 18, 5], 'line-opacity': .85}
+    });
+    copy.layers.splice(copy.layers.findIndex(l => l.id === 'waterway_tunnel'), 0, {
       id: 'paper-fields', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover',
       filter: ['match', ['get', 'class'], ['farmland', 'farm', 'orchard', 'vineyard'], true, false],
       paint: {'fill-color': ['match', patch, 0, '#cab886', 1, '#d8c798', 2, '#b5bf8d', 3, '#e0ce9e', '#c5c599'], 'fill-opacity': .85, 'fill-outline-color': '#e9dec0'}
@@ -180,7 +201,8 @@
       const woodland = map.querySourceFeatures('openmaptiles', {sourceLayer: 'landcover', filter: ['==', ['get', 'class'], 'wood']});
       const buildings = map.querySourceFeatures('openmaptiles', {sourceLayer: 'building'});
       const nearRoad = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'transportation'})));
-      const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32)), houses = new Map();
+      const nearWater = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'waterway', filter: ['!=', ['get', 'brunnel'], 'tunnel']})));
+      const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32)), houses = new Map();
       for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
         if (polygon.length !== 1) continue;
         const ring = polygon[0].slice(0, -1).map(project);
@@ -315,9 +337,9 @@
     // terrain tile retention can request four children from an overscaled tile
     // when a lower GeoJSON cap is crossed during a viewport resize.
     map.addSource('paper-folds', {type: 'geojson', data: collection([]), tolerance: 0, maxzoom: 18});
-    map.addLayer({id: 'paper-folds', type: 'fill', source: 'paper-folds', paint: {'fill-color': ['get', 'color'], 'fill-opacity': ['get', 'opacity'], 'fill-antialias': false}}, 'water');
+    map.addLayer({id: 'paper-folds', type: 'fill', source: 'paper-folds', paint: {'fill-color': ['get', 'color'], 'fill-opacity': ['get', 'opacity'], 'fill-antialias': false}}, 'waterway_tunnel');
     map.addImage('paper-fibre', ink.getImageData(0, 0, 128, 128));
-    map.addLayer({id: 'paper-fibre', type: 'background', paint: {'background-pattern': 'paper-fibre', 'background-opacity': .6}}, 'water');
+    map.addLayer({id: 'paper-fibre', type: 'background', paint: {'background-pattern': 'paper-fibre', 'background-opacity': .6}}, 'waterway_tunnel');
     map.addSource('paper-shadows', {type: 'geojson', data: collection([]), tolerance: 1, maxzoom: 18});
     map.addLayer({id: 'paper-tree-shadows', type: 'fill', source: 'paper-shadows', paint: {'fill-color': '#425c38', 'fill-opacity': .17, 'fill-antialias': true}}, 'route-outline');
     map.addLayer(layer);

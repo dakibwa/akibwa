@@ -34,6 +34,11 @@ route.features.forEach(f=>{
     for(const v of point)assert(Math.abs(v*1e5-Math.round(v*1e5))<1e-6,'five-decimal coordinate projection');
   });
 });
+// Day 13 has two source activities. A day-key overwrite previously kept only
+// the second activity's metrics even though both routes were drawn.
+const splitDay=source.days.find(d=>d.n===13);
+assert.equal(new Set(route.features.filter(f=>f.properties.day===13).map(f=>f.properties.recording)).size,2);
+assert.deepEqual([splitDay.km,splitDay.movingMin,splitDay.elevM],[42.9,372,856],'day 13 includes both recorded halves');
 const shared=route.features.filter(f=>f.properties.day===16);
 assert(shared.length&&shared.every(f=>f.properties.throughDay===17),'preserve the shared days 16–17 recording');
 for(let i=0;i<source.tracks.length;i++){

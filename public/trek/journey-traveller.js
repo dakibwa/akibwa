@@ -181,7 +181,7 @@
           if(failed)return;clearTimeout(readyTimeout);
           map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14,attribution:'Terrain © <a href="https://www.mapzen.com/rights/">Mapzen</a>'});
           map.addSource('shade-dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14});
-          map.addLayer({id:'terrain-shade',type:'hillshade',source:'shade-dem',paint:{'hillshade-exaggeration':.65,'hillshade-illumination-direction':315,'hillshade-illumination-anchor':'map','hillshade-shadow-color':'#536b43','hillshade-highlight-color':'#fff2d2','hillshade-accent-color':'#849365'}},'water');
+          map.addLayer({id:'terrain-shade',type:'hillshade',source:'shade-dem',paint:{'hillshade-exaggeration':.65,'hillshade-illumination-direction':315,'hillshade-illumination-anchor':'map','hillshade-shadow-color':'#536b43','hillshade-highlight-color':'#fff2d2','hillshade-accent-color':'#849365'}},'waterway_tunnel');
           map.setTerrain({source:'dem',exaggeration:1});map.setCenterClampedToGround(false);
           map.setSky({'sky-color':'#e9e6d3','horizon-color':'#eee9d6','fog-color':'#e1dfc5','sky-horizon-blend':.7,'horizon-fog-blend':.6,'fog-ground-blend':.45});
           map.addSource('journey-recorded',{type:'geojson',data:path.recorded,tolerance:0});

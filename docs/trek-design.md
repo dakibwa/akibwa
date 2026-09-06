@@ -25,6 +25,11 @@ perspective and much less text and interface on 5 September 2026.
   the quality bar on 6 September 2026. Judge the finished rendering against its
   richness, material detail and depth. Its individual trees, houses and field
   divisions remain illustrative; the reference does not replace mapped geography.
+- Streams and rivers have full muted-blue channels, a pale paper bank and a
+  subtle light centre. Their displayed width is stylised for legibility. Keep
+  lakes visibly blue and respect mapped shorelines. Draw every ground material,
+  field fill and hillshade before the first waterway layer, so paper treatments
+  cannot wash out streams. Leave mapped surface waterways free of tree trunks.
 - Keep the small mark, country, menu, play control, progress line, date and
   photograph button on the landscape. A quiet row above the progress line shows
   day out of 67, kilometres covered and total metres climbed, as Dan requested
@@ -115,9 +120,17 @@ Every numbered day's end meets the next day's start. Missing days share the
 connection to the next recording; days 16–17 divide their shared record
 approximately. The menu preserves that qualification and the combined metrics.
 
+The 6 September 2026 audit of the saved 29 July 2026 Strava export matched all
+52 numbered walk recordings to the public route. Day 13 has two recordings:
+its distance, moving time and ascent must aggregate both halves (42.9 km,
+372 minutes and 856 m at the public rounding), rather than keep the last row.
+The shared days 16–17 recording remains counted only once. The source has a
+20.5 km straight-line gap between the end of day 33 and the start of day 34;
+showing a connection there does not establish the route or mode of travel.
+
 The visible counters use the approved daily cumulative totals. Within-day values
 are estimates interpolated over recorded portions only; visual connections never
-advance distance or ascent. The finish must read 1,982 km and the original total
+advance distance or ascent. The finish must read 1,982 km and the reconciled source total
 ascent. "Metres climbed" is accumulated ascent, not camera altitude or a live
 measurement of the traveller's elevation.
 
