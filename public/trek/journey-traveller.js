@@ -3,17 +3,17 @@
   'use strict';
   const $=id=>document.getElementById(id),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
   const mix=(a,b,t)=>a+(b-a)*t,angle=TrekRoute.headingDelta;
-  const loadJSON=async src=>{const r=await fetch(src);if(!r.ok)throw Error(src);return r.json();};
-  const loadLibrary=()=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='vendor/maplibre-gl.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s);});
+  const loadJSON=async (src,version)=>{const r=await fetch(src+(version?'?v='+version:''),{cache:version?'force-cache':'default',signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error(src);return r.json();};
+  const loadLibrary=()=>new Promise((resolve,reject)=>{const s=document.createElement('script'),timer=setTimeout(()=>reject(Error('Map library timeout')),20000);s.src='vendor/maplibre-gl.js';s.onload=()=>{clearTimeout(timer);resolve();};s.onerror=()=>{clearTimeout(timer);reject(Error('Map library unavailable'));};document.head.appendChild(s);});
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,wayfinding=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,wayfinding=null,elevation=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=450,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
     let flashTime=0,flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,chapters=[],moments=[];
-    let readyTimeout=0,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
+    let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
@@ -44,7 +44,7 @@
     function invalidate(){if(!frame&&!document.hidden)frame=requestAnimationFrame(tick);}
     function setPlaying(value){
       if(!value&&flashPending){flashGeneration++;flashPending=false;}
-      if(!value)travelSpeed=0;
+      if(!value){travelSpeed=0;autoBegin=false;}
       playing=value;document.body.classList.toggle('is-playing',value);$('play').setAttribute('aria-label',value?'Pause journey':'Play journey');
       lastTime=0;invalidate();
     }
@@ -53,8 +53,9 @@
       const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:950);
     }
     function begin(){
+      if(!ready||failed)return;
       if(!started)wayfinding?.resetPlace();
-      if(path&&distance>=path.total-.01)distance=0;
+      if(path&&distance>=path.total-.01){reset();autoBegin=true;return;}
       started=true;following=true;$('journey-minimap').hidden=false;$('opening').hidden=true;$('ending').hidden=true;$('journey-controls').hidden=false;
       document.body.classList.remove('is-exploring');setPlaying(true);updateUI(true);
     }
@@ -72,6 +73,7 @@
       history.replaceState(null,'',location.pathname+'?day='+n);updateUI(true);prepareCamera();invalidate();
     }
     function updateUI(force=false){
+      const now=performance.now();if(!force&&now-uiTime<90)return;uiTime=now;
       if(path&&started){const at=path.dayAt(distance);day=at.day;fraction=at.t;}
       const d=namedDay(day),percent=path?distance/path.total*100:0;
       progress.value=percent*10;progress.style.setProperty('--progress',percent+'%');
@@ -83,7 +85,7 @@
       text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
       text('where',started?d.c:'Paris → Sofia');text('country-flag',started?(TrekWayfinding.flags[d.c]||''):'');
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
-      wayfindingUI(force);
+      wayfindingUI(force);elevation?.update(distance,force);
       if(!force&&lastUI===day)return;lastUI=day;
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
       $('journey-day').value=day;$('day-back').disabled=day===1;$('day-forward').disabled=day===67;
@@ -121,18 +123,54 @@
         requestAnimationFrame(()=>{if(generation===flashGeneration){flash.classList.add('visible');document.body.classList.add('in-memory');}});
       };img.onerror=()=>{if(generation===flashGeneration){flashPending=false;lastFlashDay=photoDay;}};img.src='photos/'+p.src;
     }
-    function prepareCamera(){
+    function mapIdle(generation,limit=18000){
+      return new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>{map.off('idle',done);reject(Error('Landscape loading timed out'));},limit);
+        function done(){clearTimeout(timer);map.off('idle',done);resolve(generation===warmGeneration&&!failed);}
+        if(map.loaded()&&map.areTilesLoaded())done();else map.on('idle',done);
+      });
+    }
+    async function prepareCamera(){
       if(!terrainReady||failed)return;
       const generation=++warmGeneration,eye=TrekCamera.pointAt(path,distance);
-      ready=false;map.setCenterClampedToGround(true);
-      // Load the destination's elevation with a ground-clamped camera before
-      // placing the travelling camera there. Sea-level guesses can put it inside a mountain.
-      map.jumpTo({center:eye,zoom:11.5,pitch:35,bearing:TrekCamera.headingAt(path,distance)});
-      map.once('idle',()=>{
-        if(generation!==warmGeneration||failed)return;
+      ready=false;travelSpeed=0;$('begin').disabled=true;$('play').disabled=true;
+      $('map-status').hidden=false;$('retry-load').hidden=true;$('loading-progress').hidden=false;
+      $('loading-progress').value=5;text('load-message','Preparing this stretch of landscape…');
+      let preparationTimer;
+      try{
+        // Start with known ground before solving the travelling camera. Tile
+        // prefetch runs beside the visible map, without another WebGL renderer.
+        map.setCenterClampedToGround(true);
+        map.jumpTo({center:eye,zoom:11.5,pitch:35,bearing:TrekCamera.headingAt(path,distance)});
+        const warm=tileCache.warm(TrekCache.corridor(path,distance-1000,distance+6500,vectorTemplate,13,1200),p=>{
+          if(generation!==warmGeneration)return;
+          $('loading-progress').value=10+65*p.done/p.total;
+          text('load-message','Loading the landscape · '+Math.round(10+65*p.done/p.total)+'%');
+        });
+        if(!await mapIdle(generation))return;
         eyeHeight=null;heading=null;headingVelocity=0;viewPitch=null;
-        map.setCenterClampedToGround(false);ready=true;camera(.016,true);$('map-status').hidden=true;invalidate();
-      });
+        map.setCenterClampedToGround(false);ready=true;camera(.016,true);ready=false;
+        await Promise.race([warm,new Promise((_,reject)=>{preparationTimer=setTimeout(()=>reject(Error('Preparation timeout')),25000);})]);
+        clearTimeout(preparationTimer);if(generation!==warmGeneration||failed)return;
+        text('load-message','Settling the paper landscape…');$('loading-progress').value=90;
+        if(!await mapIdle(generation))return;
+        // Give the custom scenery's short build chunks a chance to upload.
+        const deadline=performance.now()+4000;
+        while(!paper?.status().failed&&(!paper?.status().updates||paper?.status().pending||paper?.status().building)&&performance.now()<deadline){
+          await new Promise(resolve=>setTimeout(resolve,80));if(generation!==warmGeneration)return;
+        }
+        if(!Number.isFinite(map.queryTerrainElevation(eye)))throw Error('Terrain is not ready');
+        if(generation!==warmGeneration||failed)return;
+        ready=true;$('begin').disabled=false;$('play').disabled=false;$('loading-progress').value=100;
+        $('map-status').hidden=true;document.body.classList.remove('is-loading');
+        lastTime=0;updateUI(true);invalidate();
+        tileCache.ahead(path,distance,vectorTemplate,map.getZoom());
+        if(autoBegin){autoBegin=false;begin();}
+      }catch(error){
+        if(generation!==warmGeneration||failed)return;
+        tileCache.cancel();ready=false;setPlaying(false);text('load-message','This stretch could not finish loading. Your photographs are still in the menu.');
+        $('loading-progress').hidden=true;$('retry-load').hidden=false;
+      }finally{clearTimeout(preparationTimer);}
     }
     function camera(dt,snap=false){
       if(!ready||!following||!path||failed)return;
@@ -181,25 +219,31 @@
           if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
         }
       }
-      updateUI();const unsettled=camera(dt);wayfindingUI();
+      updateUI();const unsettled=camera(dt);
+      if(ready&&playing&&following&&!flashShown)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom());
       if(playing||unsettled)invalidate();
     }
-    function unavailable(message){failed=true;ready=false;$('map-status').hidden=false;text('map-status',message);setPlaying(false);}
+    function unavailable(message){failed=true;ready=false;$('begin').disabled=true;$('play').disabled=true;$('loading-progress').hidden=true;$('retry-load').hidden=false;$('map-status').hidden=false;text('load-message',message);setPlaying(false);}
     async function initialize(){
       document.body.classList.add('is-loading');
       try{
-        const [r,m,style]=await Promise.all([loadJSON('route-detail.json'),loadJSON('moments.json'),loadJSON('journey-style.json'),loadLibrary()]);
+        const json=file=>loadJSON(file,data.assets[file]);
+        const [r,m,style,profile]=await Promise.all([json('route-detail.json'),json('moments.json'),json('journey-style.json'),json('elevation-profile.json'),loadLibrary()]);
+        tileCache=TrekCache.create();tileCache.install(maplibregl);
+        const tiles=await loadJSON(style.sources.openmaptiles.url);
+        vectorTemplate=tiles.tiles[0];style.sources.openmaptiles={...style.sources.openmaptiles,...tiles};delete style.sources.openmaptiles.url;
+        elevation=TrekElevation.create({profile,canvas:$('elevation-canvas'),label:$('elevation-current')});
         route=r;path=TrekRoute.buildJourneyPath(route);chapters=m.chapters;moments=m.moments;
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
         if(positionPending){distance=path.dayDistance(positionPending.day,positionPending.t);renderedDistance=distance;positionPending=null;}
         // Roads and topography remain; label furniture belongs in the drawer.
-        map=new maplibregl.Map({container:'path-map',style:TrekPaper.style(style),center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0});
+        map=new maplibregl.Map({container:'path-map',style:TrekPaper.style(style),center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0,maxTileCacheSize:128,pixelRatio:Math.min(devicePixelRatio||1,1.5),transformRequest:tileCache.transformRequest});
         map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);
         map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
         for(const event of ['dragstart','zoomstart','rotatestart','pitchstart'])map.on(event,e=>{if(e.originalEvent){setPlaying(false);following=false;document.body.classList.add('is-exploring');}});
         map.on('webglcontextlost',()=>unavailable('The landscape is unavailable. The photographs and days are still here.'));
-        map.on('error',()=>{if(!ready)text('map-status','The landscape is taking a little longer. Photographs are ready in the menu.');});
-        readyTimeout=setTimeout(()=>{if(!ready)text('map-status','The landscape could not finish loading. Photographs are ready in the menu.');},18000);
+        map.on('error',()=>{if(!ready)text('load-message','The landscape is taking a little longer. Photographs are ready in the menu.');});
+        readyTimeout=setTimeout(()=>{if(!ready){text('load-message','The landscape could not finish loading. Photographs are ready in the menu.');$('retry-load').hidden=false;}},18000);
         map.on('load',()=>{
           if(failed)return;clearTimeout(readyTimeout);
           map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14,attribution:'Terrain © <a href="https://www.mapzen.com/rights/">Mapzen</a>'});
@@ -219,15 +263,16 @@
           map.on('idle',()=>wayfindingUI(true));
           // Sources have now populated MapLibre's initially expanded disclosure.
           document.querySelector('.maplibregl-ctrl-attrib').classList.remove('maplibregl-compact-show');
-          terrainReady=true;prepareCamera();text('map-status','Opening this stretch of landscape…');
+          terrainReady=true;prepareCamera();text('load-message','Opening this stretch of landscape…');
           // Elevation arriving after the vector map gets a short settling pass.
           map.on('sourcedata',e=>{if(e.sourceId==='dem'&&e.isSourceLoaded)invalidate();});
-          document.body.classList.remove('is-loading');updateUI(true);invalidate();
+          updateUI(true);invalidate();
         });
         updateUI(true);
       }catch(error){unavailable('The landscape could not load. You can still open the photographs and days.');}
     }
-    $('begin').addEventListener('click',begin);$('replay').addEventListener('click',()=>{reset();begin();});
+    $('retry-load').addEventListener('click',()=>{if(terrainReady&&!failed)prepareCamera();else location.reload();});
+    $('begin').addEventListener('click',begin);$('replay').addEventListener('click',()=>{reset();autoBegin=true;});
     $('play').addEventListener('click',()=>{if(flashShown){dismissFlash();setPlaying(false);}else if(playing)setPlaying(false);else begin();});
     $('menu-open').addEventListener('click',()=>{setPlaying(false);dismissFlash();menu.showModal();});$('menu-close').addEventListener('click',()=>menu.close());
     menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left)menu.close();}});
@@ -245,7 +290,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

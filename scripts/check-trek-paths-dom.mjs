@@ -14,6 +14,44 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_ELEVATION_ONLY==='1'){
+    section('Elevation profile, prepared playback and persistent tiles');
+    await setDesktop(1440,900);const coldStart=Date.now();await goto('/trek/?day=30');
+    check(await evaluate("document.querySelector('#play').disabled&&!window.trekStatus().playing"),'a cold journey waits for its landscape before allowing playback');
+    check(await settled(),'the mountain scene and look-ahead tiles finish preparing');
+    const coldMs=Date.now()-coldStart;let s=await state();
+    check(s.elevation?.samples===9820&&s.elevation.metres>1100&&s.elevation.metres<1400,'the entire mapped elevation profile is loaded and the Alpine position matches');
+    check(s.cache?.persistent&&s.cache.network>0,'the map uses a persistent cache on the first visit');
+    await until(async()=>(await state()).cache.pending===0,30000);const coldCache=(await state()).cache;
+    const oldCanvas=await evaluate("document.querySelector('#elevation-canvas').toDataURL()");
+    await evaluate(`window.__trekPerf={intervals:[],longTasks:[],last:0,running:true};window.__trekPerf.observe=new PerformanceObserver(l=>window.__trekPerf.longTasks.push(...l.getEntries().map(e=>e.duration)));window.__trekPerf.observe.observe({entryTypes:['longtask']});requestAnimationFrame(function sample(t){const p=window.__trekPerf;if(!p?.running)return;if(p.last)p.intervals.push(t-p.last);p.last=t;requestAnimationFrame(sample);});document.querySelector('#photo-interludes').checked=false;`);
+    await evaluate("document.querySelector('#pace').value='1000';document.querySelector('#pace').dispatchEvent(new Event('change',{bubbles:true}));");
+    await click('#play');await sleep(25000);await click('#play');
+    const perf=await evaluate(`(()=>{const p=window.__trekPerf;p.running=false;p.observe.disconnect();const a=p.intervals.slice(2).sort((x,y)=>x-y);const value={frames:a.length,p50:a[Math.floor(a.length*.5)],p95:a[Math.floor(a.length*.95)],over100:a.filter(x=>x>100).length,longTasks:p.longTasks};delete window.__trekPerf;return value;})()`);
+    s=await state();check(s.distance>1109065+200,'playback moves along the terrain after preparation');
+    check((await evaluate("document.querySelector('#elevation-canvas').toDataURL()"))!==oldCanvas,'the elevation marker follows playback');
+    check(perf.frames>500&&perf.p95<80&&perf.over100<=5,'sustained playback avoids recurring long frames');
+    console.log('  measurements '+JSON.stringify({coldMs,coldCache,playback:{...perf,travelled:s.distance-1109065.0493459906,cache:s.cache}}));
+    const warmStart=Date.now();await goto('/trek/?day=30');check(await settled(),'a return visit opens the cached landscape');
+    await until(async()=>(await state()).cache.pending===0,30000);const warmCache=(await state()).cache;
+    check(warmCache.hits>40&&warmCache.network<coldCache.network*.4,'a new page reuses stored tiles instead of downloading the landscape again');
+    console.log('  cache revisit '+JSON.stringify({warmMs:Date.now()-warmStart,cache:warmCache}));
+    for(const width of [390,320]){
+      const before=(await state()).distance;await setDesktop(width,844);await sleep(350);
+      const fit=await evaluate(`(()=>{const p=document.querySelector('.elevation-profile').getBoundingClientRect(),r=document.querySelector('.journey-readout').getBoundingClientRect();return {width:p.width,height:p.height,inside:p.left>=0&&p.right<=innerWidth&&p.bottom<innerHeight,above:r.bottom<=p.top}})()`);
+      s=await state();check(fit.inside&&fit.above&&fit.width>160&&fit.height>=50&&s.controlsFit&&s.overflow<=1&&s.distance===before,`${width}px keeps the elevation, larger totals and controls legible without moving the route`);
+    }
+    const link=path.pieces.filter(p=>p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
+    await scrub((link.start+link.end)/2);check(await settled(),'an unrecorded connection can be prepared');
+    check((await state()).elevation.metres===null&&await evaluate("document.querySelector('#elevation-current').textContent.includes('Connection')"),'a connection never invents a recorded elevation');
+    await cdp.send('Network.enable');await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:100,downloadThroughput:3000000,uploadThroughput:1000000});
+    await choose(17);await choose(49);await choose(30);check(await settled(),'rapid day changes discard superseded preparation work');
+    check((await state()).day===30&&!await evaluate("document.querySelector('#play').disabled"),'only the final chosen destination becomes ready');
+    await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1});
+    await click('#photos-open');check(await until(async()=>(await state()).photoLoaded),'photographs still open over the cached map');await click('#gallery-close');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'loading, cached returns, playback and resizes have no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_WAYFINDING_ONLY==='1'){
     section('Minimap, town names and landmark models');
     await setDesktop(1440,900);await goto('/trek/?day=25');check(await settled(),'the updated journey loads');
@@ -175,7 +213,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   }
   section('Finish, replay and reduced motion');
   await scrub(path.total);check(await evaluate('!document.querySelector("#ending").hidden'),'the continuous journey ends in Sofia');
-  await click('#replay');check((await state()).playing&&(await state()).day===1,'Replay starts again from Paris');
+  await click('#replay');check(await settled()&&(await state()).playing&&(await state()).day===1,'Replay prepares Paris and then starts automatically');
   await click('#menu-open');await click('#restart');check(!(await state()).started&&!(await state()).playing,'Back to Paris returns to the quiet opening');
   await cdp.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await goto('/trek/?day=30');await settled();
   check((await state()).reduced&&!(await state()).photoInterludes,'reduced motion disables automatic photographic interludes');

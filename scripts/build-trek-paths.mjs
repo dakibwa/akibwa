@@ -28,7 +28,8 @@ const scenes=[{t:'start',len:300}];
 for(const day of days){const count=photos.filter(p=>p.day===day.n).length;scenes.push({t:'walk',day:day.n,len:day.w?Math.max(600,day.km*16,count*60):260});}
 scenes.push({t:'end',day:67,len:500});
 let timeline=0;for(const s of scenes){s.at=timeline;timeline+=s.len;}
-const data={landmarks,countryRings:source.countryRings.map(({name,rings})=>({name,rings})),days,photos,scenes,timeline,total:source.facts.km,colors:Object.fromEntries(source.countries.map(c=>[c.name,c.color])),stats:{days:walked,ascent,minutes,countries:source.facts.countries}};
+const assets=Object.fromEntries(['route-detail.json','moments.json','journey-style.json','elevation-profile.json'].map(file=>[file,createHash('sha256').update(readFileSync(new URL('public/trek/'+file,root))).digest('hex').slice(0,12)]));
+const data={assets,landmarks,countryRings:source.countryRings.map(({name,rings})=>({name,rings})),days,photos,scenes,timeline,total:source.facts.km,colors:Object.fromEntries(source.countries.map(c=>[c.name,c.color])),stats:{days:walked,ascent,minutes,countries:source.facts.countries}};
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const list=days.map(d=>`<li>Day ${d.n} · ${esc(d.c)}${d.date?' · '+d.date:''}${d.w?' · '+d.km.toFixed(1)+' km':''}${d.j.length?'<p>'+esc(d.j.map(j=>j.text).join(' '))+'</p>':''}</li>`).join('\n');
 const html=readFileSync(new URL('scripts/trek-journey-template.html',root),'utf8').replace('__DATA_JSON__',JSON.stringify(data)).replace('<!--__NOSCRIPT_DAYS__-->',list)

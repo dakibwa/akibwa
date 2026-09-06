@@ -138,7 +138,7 @@
 
   function create(map, route, landmarks = []) {
     const nearRoute = routeIndex(route), radius = 4600;
-    let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, destroyed = false;
+    let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, building = false, destroyed = false;
     let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d');
     let buffer, shader, vao, matrixLocation, centerLocation, opacityLocation, appeared = 0, count = 0, treeCount = 0, roofCount = 0, updates = 0, buildMs = 0;
     const shaderSource = {
@@ -205,7 +205,7 @@
       if (destroyed) return;
       if (!map.getTerrain() || !map.isSourceLoaded('openmaptiles') || !map.isSourceLoaded('dem')) { pending = true; return; }
       const started = performance.now(), center = project(map.getCenter().toArray()), nextGeneration = ++generation;
-      lastCenter = center; pending = false;
+      lastCenter = center; pending = false; building = true;
       const woodland = map.querySourceFeatures('openmaptiles', {sourceLayer: 'landcover', filter: ['==', ['get', 'class'], 'wood']});
       const buildings = map.querySourceFeatures('openmaptiles', {sourceLayer: 'building'});
       const nearRoad = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'transportation'})));
@@ -302,7 +302,7 @@
           map.setFilter('building-3d', originalBuildingFilter ? ['all', originalBuildingFilter, outside] : outside);
         }
         map.getSource('paper-shadows').setData(collection(shadows));
-        makeFolds(center); buildMs = performance.now() - started; map.triggerRepaint();
+        makeFolds(center); building = false; buildMs = performance.now() - started; map.triggerRepaint();
       }
       chunk();
     }
@@ -373,7 +373,7 @@
     function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('idle', settled); map.off('remove', destroy); }
     map.on('moveend', moved); map.on('sourcedata', loaded); map.on('idle', settled); map.on('remove', destroy); schedule();
     return {
-      status: () => ({trees: treeCount, roofs: roofCount, vertices: count, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending}),
+      status: () => ({trees: treeCount, roofs: roofCount, vertices: count, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending, building}),
       refresh: schedule,
       destroy
     };

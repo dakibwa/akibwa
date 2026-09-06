@@ -26,3 +26,22 @@
 @media(max-width:650px){.country-heading{gap:7px}#country-flag{font-size:21px}.journey-minimap{width:143px;right:19px;top:79px}.journey-minimap p{font-size:6px;padding:5px 2px;letter-spacing:.11em}.place-arrival{left:23px;top:201px;max-width:calc(100% - 46px)}.place-arrival p{font-size:35px;max-width:300px}.place-arrival>span{font-size:7px}.landmark-caption{bottom:194px;width:calc(100% - 44px)}.landmark-caption span{font-size:20px}.journey-readout dd small{font-family:Plex,monospace;font-size:11px}}
 @media(max-width:350px){.journey-minimap{width:127px;right:18px}.place-arrival{top:188px}.place-arrival p{font-size:31px}.journey-readout dd{font-size:27px}.journey-readout dt{font-size:7px}}
 @media(max-height:520px){.journey-minimap{width:140px;top:76px}.place-arrival{top:110px;left:27px;max-width:45%}.place-arrival p{font-size:30px}.journey-readout{margin-bottom:10px}.journey-readout dd{font-size:26px}.landmark-caption{bottom:157px}}
+
+/* An elevation silhouette sits immediately above the existing journey scrubber. */
+.elevation-profile{position:relative;margin:0 0 7px;height:68px;pointer-events:none}
+.elevation-profile canvas{display:block;width:100%;height:100%}
+.elevation-profile p{position:absolute;right:0;top:0;margin:0;font-size:8px;letter-spacing:.025em;color:#405039;text-shadow:0 1px 5px #fff9ea}
+.journey-readout{margin-bottom:12px}
+.control-row{align-items:flex-end}.control-row>button{margin-bottom:0}
+.landmark-caption{bottom:265px}
+.map-status{width:260px;border-radius:4px;padding:12px 17px;box-shadow:0 5px 18px #253c2814}
+#loading-progress{appearance:none;display:block;width:100%;height:3px;border:0;margin-top:9px;background:#86936b26;border-radius:3px;overflow:hidden;accent-color:#73825d}
+#loading-progress::-webkit-progress-bar{background:#86936b26}
+#loading-progress::-webkit-progress-value{background:#73825d;transition:width .2s}
+#loading-progress::-moz-progress-bar{background:#73825d}
+#retry-load{display:block;margin:8px auto 0;font-size:10px;color:#984c2d;text-decoration:underline;text-underline-offset:3px}
+.in-memory .elevation-profile{visibility:hidden}
+@media(max-width:650px){.elevation-profile{height:55px;margin-bottom:6px}.elevation-profile p{font-size:7px}.journey-readout{margin-bottom:10px}.landmark-caption{bottom:245px}.map-status{top:128px;width:220px}.atmosphere{background:linear-gradient(180deg,rgba(245,244,228,.28),transparent 24%,transparent 66%,rgba(247,243,227,.9))}}
+@media(max-height:520px){.elevation-profile{height:37px}.landmark-caption{bottom:196px}.journey-readout{margin-bottom:7px}}
+
+.elevation-profile{background:linear-gradient(180deg,#f4f1e500,#f4f1e5b3 65%,#f4f1e5d1)}
