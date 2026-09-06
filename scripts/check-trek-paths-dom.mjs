@@ -46,6 +46,17 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   check(s.day===30&&s.routeLines===57&&s.connections===56&&s.pitch>=42&&s.eyeHeight>1000,'the traveller is above the mountain terrain with all recordings and connections');
   check(!s.creditsExpanded&&s.controlsFit&&s.overflow<=1,'credits are collapsed and desktop controls fit');
   check(await evaluate('!document.querySelector("#journey-card,#journey-reset,#path-tools,#journey-footer")'),'the landscape has no permanent photo card or redundant map controls');
+  section('Mapped paper landscape');
+  await choose(17);check(await settled(),'the German woodland and village stretch loads');
+  check(await until(async()=>{const p=(await state()).paper;return p?.trees>0&&p?.roofs>0;},30000),'mapped woods have paper canopies and small buildings have folded roofs');
+  s=await state();
+  check(s.paper.trees<=6500&&s.paper.roofs<=1800&&s.paper.vertices<405000,'paper scenery keeps a bounded geometry budget');
+  const paperBefore=s.distance;
+  await cdp.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await sleep(250);
+  s=await state();check(s.overflow<=1&&s.controlsFit&&s.distance===paperBefore,'the paper landscape and original progress controls fit the phone without moving the route');
+  await click('#photos-open');check(await until(async()=>(await state()).photoLoaded),'original photographs still open over the paper landscape');await click('#gallery-close');
+  await setDesktop(1440,900);await choose(30);check(await settled(),'the Alpine landscape loads after the woodland view');
+  check(await until(async()=>(await state()).paper?.updates>0,30000),'paper detail also renders in the Alpine terrain');
   section('Calm camera through steep terrain');
   for(const fraction of [.25,.5,.74,.9]){
     await scrub(path.dayDistance(30,fraction));check(await settled(),`the Alpine camera loads at ${(fraction*100).toFixed(0)}% of the day`);

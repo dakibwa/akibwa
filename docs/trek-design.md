@@ -14,6 +14,15 @@ perspective and much less text and interface on 5 September 2026.
   Retain real roads, trails, rivers and buildings, while removing map labels
   from the moving view. Avoid a fixed compass direction or an overhead overview
   as the main experience.
+- On 6 September 2026 Dan approved a landscape made from layered paper. Use
+  cut and folded tree canopies, pale village walls with warm pitched roofs,
+  distinct sage and ochre fields, fine paper fibres and a consistent light from
+  the northwest. Keep the actual landforms; printed facets follow their slopes.
+  Secondary roads are fine cream lines. Avoid bright yellow road networks,
+  floating decorative islands, invented settlements, a screen of giant trees,
+  or texture that makes the route and ground look blurred.
+  The [approved visual reference](trek-paper-concept.png) is an art-direction
+  sketch; its individual trees, houses and field divisions are illustrative.
 - Keep the small mark, country, menu, play control, progress line, date and
   photograph button on the landscape. A quiet row above the progress line shows
   day out of 67, kilometres covered and total metres climbed, as Dan requested
@@ -98,6 +107,28 @@ camera rail, forward heading, turn acceleration and bend-aware pace.
 `journey-traveller.css` owns the presentation. Earlier map, journal and clock
 files are inactive.
 
+`journey-paper.js` owns the paper palette, mapped field and rock fills, printed
+ground material, slope facets, tree shadows and the custom WebGL scenery layer.
+It uses the map's existing vector tiles and elevation; no additional account,
+imagery service or credentials are required. Individual trees illustrate mapped
+woodland. Their positions are deterministically seeded in geographic space,
+respect polygon holes and leave the journey and mapped roads open. They must
+not shuffle when a tile reloads or the camera moves. Trees are not a survey of
+individual specimens. Field boundaries and building footprints come from current
+OpenStreetMap, not a reconstruction of their 2019 appearance. Simple rectangular
+buildings get illustrative gables; other buildings retain their mapped outlines
+and flat tops. Scenery heights and roof forms are stylised for legibility.
+
+Scenery is limited to 6,500 trees and 1,800 roofs near the view, with a distant
+fade. Geometry is rebuilt in short chunks after movement or source changes,
+never by querying every feature on every frame. Reuse the map's WebGL context,
+use a local coordinate origin for precision and discard stale in-flight builds
+after a new destination. The material and facets stay attached to the ground.
+If the extra scenery cannot initialise, retain the terrain, days and photographs.
+Keep dynamic GeoJSON sources at zoom 18, above the view cap of 17. Lower source
+caps exposed a MapLibre 5.6.2 child-tile retention error when resizing between
+phone and desktop while terrain was active. Include those resizes in browser QA.
+
 MapLibre 5.6.2 and its licence are vendored. `journey-style.json` derives from
 [OpenFreeMap Liberty](https://openfreemap.org/quick_start/); its vector tiles
 supply roads, trails and building geometry. [Mapzen elevation
@@ -129,3 +160,12 @@ HTML and versioned runtime assets and inspect the desktop and phone landscape.
 Include a sustained descent into a valley without changing days: resetting the
 camera between viewpoints can hide the stale elevation and enlarged texture bug.
 Compilation and DOM checks do not replace visual acceptance.
+
+`scripts/check-trek-paper.mjs` covers geographic projection, woodland holes,
+route clearance, deterministic placement across view changes, duplicate tiles,
+geometry budgets and valid mapped layer styling. The browser journey checks
+include the day-17 woodland and village, Alpine detail and photographs on phone.
+On a Mac with a working GPU, `CHECK_TREK_HARDWARE_GPU=1` runs those browser
+checks with hardware graphics. The default remains software rendering for
+environments without a GPU. Measure playback separately with hardware graphics;
+software rendering is not evidence of phone performance.

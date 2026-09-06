@@ -109,7 +109,7 @@ const launchChrome = (chromeBin, profileDir) =>
         `--user-data-dir=${profileDir}`,
         "--no-first-run",
         "--no-default-browser-check",
-        ...(process.env.CHECK_TREK_ONLY ? ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader"] : ["--disable-gpu"]),
+        ...(process.env.CHECK_TREK_ONLY ? process.env.CHECK_TREK_HARDWARE_GPU === "1" ? [] : ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader"] : ["--disable-gpu"]),
         "--hide-scrollbars",
         "--window-size=1440,900",
         "about:blank"

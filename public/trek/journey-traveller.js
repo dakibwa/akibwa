@@ -8,7 +8,7 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=450,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
@@ -170,13 +170,7 @@
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
         if(positionPending){distance=path.dayDistance(positionPending.day,positionPending.t);renderedDistance=distance;positionPending=null;}
         // Roads and topography remain; label furniture belongs in the drawer.
-        for(const layer of style.layers){
-          if(layer.type==='symbol')layer.layout={...layer.layout,visibility:'none'};
-          if(/path_pedestrian|service_track/.test(layer.id)){
-            layer.paint={...layer.paint,'line-width':1,'line-opacity':.18};delete layer.paint['line-dasharray'];
-          }
-        }
-        map=new maplibregl.Map({container:'path-map',style,center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0});
+        map=new maplibregl.Map({container:'path-map',style:TrekPaper.style(style),center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0});
         map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);
         map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
         for(const event of ['dragstart','zoomstart','rotatestart','pitchstart'])map.on(event,e=>{if(e.originalEvent){setPlaying(false);following=false;document.body.classList.add('is-exploring');}});
@@ -187,15 +181,17 @@
           if(failed)return;clearTimeout(readyTimeout);
           map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14,attribution:'Terrain © <a href="https://www.mapzen.com/rights/">Mapzen</a>'});
           map.addSource('shade-dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14});
-          map.addLayer({id:'terrain-shade',type:'hillshade',source:'shade-dem',paint:{'hillshade-exaggeration':.45,'hillshade-shadow-color':'#62765c','hillshade-highlight-color':'#f4eedb','hillshade-accent-color':'#819076'}},'water');
+          map.addLayer({id:'terrain-shade',type:'hillshade',source:'shade-dem',paint:{'hillshade-exaggeration':.65,'hillshade-illumination-direction':315,'hillshade-illumination-anchor':'map','hillshade-shadow-color':'#536b43','hillshade-highlight-color':'#fff2d2','hillshade-accent-color':'#849365'}},'water');
           map.setTerrain({source:'dem',exaggeration:1});map.setCenterClampedToGround(false);
-          map.setSky({'sky-color':'#dce7df','horizon-color':'#eff0dc','fog-color':'#e6e8d6','sky-horizon-blend':.7,'horizon-fog-blend':.6,'fog-ground-blend':.8});
+          map.setSky({'sky-color':'#e9e6d3','horizon-color':'#eee9d6','fog-color':'#e1dfc5','sky-horizon-blend':.7,'horizon-fog-blend':.6,'fog-ground-blend':.45});
           map.addSource('journey-recorded',{type:'geojson',data:path.recorded,tolerance:0});
           map.addSource('journey-connections',{type:'geojson',data:path.connections,tolerance:0});
           for(const [id,source,color,width,opacity,dash] of [['route-outline','journey-recorded','#fff3d8',4.5,.7],['route-recorded','journey-recorded','#c2693d',2.5,1],['route-connections','journey-connections','#b99461',2,.7,[2,3]]]){
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
             map.addLayer({id,type:'line',source,layout:{'line-cap':'round','line-join':'round'},paint});
           }
+          try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]});}
+          catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
           // Sources have now populated MapLibre's initially expanded disclosure.
           document.querySelector('.maplibregl-ctrl-attrib').classList.remove('maplibregl-compact-show');
           terrainReady=true;prepareCamera();text('map-status','Opening this stretch of landscape…');
@@ -224,7 +220,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight]});
+    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],paper:paper?.status()});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();
