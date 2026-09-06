@@ -39,6 +39,19 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the progress overlay reports no runtime errors');
     return;
   }
+  section('Paper details on a fresh, paused visit');
+  await setDesktop(390,844);await goto('/trek/?day=17');
+  check(await settled(),'a fresh woodland visit loads its terrain');
+  check(await until(async()=>{const s=await state();return s.paper?.trees>0&&s.paper?.roofs>0;},30000),'paper details appear without playing or changing days');
+  const cold=await state();await sleep(1200);
+  const still=await state();
+  check(!still.playing&&still.distance===cold.distance&&still.paper.updates<=cold.paper.updates+1,'the paused view settles without rebuilding its scenery in an idle loop');
+  if(process.env.CHECK_TREK_PAPER_ONLY==='1'){
+    for(const width of [1440,320,390]){await setDesktop(width,width>650?900:844);await sleep(650);}
+    check((await state()).paper.trees>0,'paper scenery survives desktop and phone resizes');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the fresh paper view and resizes have no JavaScript errors');
+    return;
+  }
   section('Traveller landscape and quiet controls');
   await setDesktop(1440,900);await goto('/trek/?day=30');
   check(await settled(),'the mountain camera loads its destination elevation');

@@ -124,6 +124,9 @@ fade. Geometry is rebuilt in short chunks after movement or source changes,
 never by querying every feature on every frame. Reuse the map's WebGL context,
 use a local coordinate origin for precision and discard stale in-flight builds
 after a new destination. The material and facets stay attached to the ground.
+Retry pending scenery when the map becomes idle: source events can arrive before
+the destination camera finishes loading, and a paused first visit must populate
+without needing Play or a day change. Do not let that retry become an idle loop.
 If the extra scenery cannot initialise, retain the terrain, days and photographs.
 Keep dynamic GeoJSON sources at zoom 18, above the view cap of 17. Lower source
 caps exposed a MapLibre 5.6.2 child-tile retention error when resizing between

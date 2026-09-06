@@ -173,7 +173,8 @@
     };
 
     function build() {
-      if (destroyed || !map.getTerrain() || !map.isStyleLoaded()) return;
+      if (destroyed) return;
+      if (!map.getTerrain() || !map.isSourceLoaded('openmaptiles') || !map.isSourceLoaded('dem')) { pending = true; return; }
       const started = performance.now(), center = project(map.getCenter().toArray()), nextGeneration = ++generation;
       lastCenter = center; pending = false;
       const woodland = map.querySourceFeatures('openmaptiles', {sourceLayer: 'landcover', filter: ['==', ['get', 'class'], 'wood']});
@@ -297,6 +298,9 @@
       if (!lastCenter || Math.hypot(center[0] - lastCenter[0], center[1] - lastCenter[1]) > 500) schedule();
     };
     const loaded = event => { if (['dem', 'openmaptiles'].includes(event.sourceId) && event.isSourceLoaded) { pending = true; schedule(); } };
+    // Source events can precede the destination camera's last tile request.
+    // Retry at idle rather than leaving a paused, first visit without scenery.
+    const settled = () => { if (pending || !updates) schedule(); };
     // Transparent fibres are printed onto the land, so they travel with the map.
     // This is a small procedural material, independent of imagery or credentials.
     const texture = document.createElement('canvas'); texture.width = texture.height = 128;
@@ -317,8 +321,8 @@
     map.addSource('paper-shadows', {type: 'geojson', data: collection([]), tolerance: 1, maxzoom: 18});
     map.addLayer({id: 'paper-tree-shadows', type: 'fill', source: 'paper-shadows', paint: {'fill-color': '#425c38', 'fill-opacity': .17, 'fill-antialias': true}}, 'route-outline');
     map.addLayer(layer);
-    function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('remove', destroy); }
-    map.on('moveend', moved); map.on('sourcedata', loaded); map.on('remove', destroy); schedule();
+    function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('idle', settled); map.off('remove', destroy); }
+    map.on('moveend', moved); map.on('sourcedata', loaded); map.on('idle', settled); map.on('remove', destroy); schedule();
     return {
       status: () => ({trees: treeCount, roofs: roofCount, vertices: count, updates, buildMs: Math.round(buildMs), pending}),
       refresh: schedule,
