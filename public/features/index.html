@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-O2EXMuUQocqwWnW7Upef+sFuyc2sNr4PhKAMaz76KCU=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-aBjmCPob11LiDezJBpOcE4BW50+lboL7Z8DrBUzO1M8=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -1565,67 +1565,210 @@ const FEATURES={
   gravity:{c:'--orange',p:`<path d="M4 16H92V28H76L48 56 20 28H4Z"/><circle cx="48" cy="54" r="20"/>`},
   tiles:{c:'--hellblau',p:`<path d="M2 2H94V94H2ZM10 86H86V10H10Z"/><path d="M14 14H82V82H14Z"/><g fill="var(--emblem)"><path d="M29 14A19 19 0 0 0 67 14ZM82 29A19 19 0 0 0 82 67ZM67 82A19 19 0 0 0 29 82ZM14 67A19 19 0 0 0 14 29Z"/></g>`}
 };
+const STAMPS={
+"house":{"label":"house","colour":"#E97E18","art":"<path fill=\"currentColor\" d=\"M44 18Q48 14 52 18L83 46Q87 50 82 52H76V78Q76 82 72 82H56V60H40V82H24Q20 82 20 78V52H14Q9 50 13 46Z\"/>"},
+"key":{"label":"key","colour":"#EFC319","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M48 48A19 19 0 1 1 10 48A19 19 0 1 1 48 48ZM37 48A8 8 0 1 0 21 48A8 8 0 1 0 37 48Z\"/><path d=\"M44 42H84V68H74V54H64V68H54V54H44Z\"/></g>"},
+"cup":{"label":"cup","colour":"#2EA3DC","art":"<g fill=\"currentColor\" transform=\"translate(-2 -3)\"><path d=\"M58 30H68C79 30 85 38 85 48S77 66 66 66H57V55H65C71 55 75 53 75 48S72 41 67 41H58Z\"/><path d=\"M16 27H62V51C62 65 52 74 39 74S16 65 16 51Z\"/></g>"},
+"tree":{"label":"tree","colour":"#1FA45A","art":"<path fill=\"currentColor\" d=\"M48 12L70 40H60L80 65H56V83H40V65H16L36 40H26Z\"/>"},
+"fish":{"label":"fish","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M28 46C42 27 66 28 85 48C66 68 42 69 28 50L12 65V31ZM71 44A4 4 0 1 0 63 44A4 4 0 1 0 71 44Z\"/></g>"},
+"bird":{"label":"bird","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M12 49L32 57C38 55 41 49 42 40C44 25 52 16 64 16C75 16 82 25 78 36L89 41L77 47C75 65 63 76 47 76C32 76 21 66 12 49ZM71 31A3.5 3.5 0 1 0 64 31A3.5 3.5 0 1 0 71 31ZM38 58C48 64 58 59 64 49C63 64 54 70 45 67C41 65 39 62 38 58Z\"/><rect x=\"45\" y=\"71\" width=\"7\" height=\"15\"/><rect x=\"32\" y=\"83\" width=\"35\" height=\"6\" rx=\"3\"/></g>"},
+"heart":{"label":"heart","colour":"#DE3C75","art":"<path fill=\"currentColor\" d=\"M48 82C42 76 14 55 14 35C14 16 36 10 48 28C60 10 82 16 82 35C82 55 54 76 48 82Z\"/>"},
+"sun":{"label":"sun","colour":"#EFC319","art":"<g fill=\"currentColor\"><circle cx=\"48\" cy=\"48\" r=\"17\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(45 48 48)\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(90 48 48)\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(135 48 48)\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(180 48 48)\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(225 48 48)\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(270 48 48)\"/><rect x=\"44\" y=\"8\" width=\"8\" height=\"15\" rx=\"4\" transform=\"rotate(315 48 48)\"/></g>"},
+"boat":{"label":"boat","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path d=\"M44 13V58H14ZM53 27L79 58H53Z\"/><path d=\"M11 67H85L74 82Q72 84 68 84H28Q24 84 22 82Z\"/></g>"},
+"leaf":{"label":"leaf","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path d=\"M21 79C24 74 27 70 29 69\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/><path fill-rule=\"evenodd\" d=\"M28 68C16 45 34 21 77 17C79 48 62 76 35 70ZM32 63C40 53 51 42 65 32C54 45 45 57 36 66Z\"/></g>"},
+"moon":{"label":"moon","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path d=\"M62 13C36 7 15 24 15 47C15 69 32 84 52 84C67 84 80 75 85 62C59 70 35 45 47 23C51 18 56 15 62 13Z\"/></g>"},
+"star":{"label":"star","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M48 11L59 35L85 38L65 57L70 84L48 71L26 84L31 57L11 38L37 35Z\"/></g>"},
+"cloud":{"label":"cloud","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M27 71C13 71 8 63 8 53C8 44 14 36 23 35C25 20 40 14 53 21C59 24 63 29 65 35C78 32 88 41 88 53C88 63 81 71 68 71Z\"/></g>"},
+"rain":{"label":"rain","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M25 53C13 53 9 46 11 38C12 30 19 27 25 27C27 15 39 10 50 15C57 18 60 22 61 28C73 24 85 32 85 42C85 50 79 53 70 53Z\"/><path d=\"M28 61C26 65 20 73 20 77A8 8 0 0 0 36 77C36 73 30 65 28 61ZM50 61C48 65 42 73 42 77A8 8 0 0 0 58 77C58 73 52 65 50 61ZM72 61C70 65 64 73 64 77A8 8 0 0 0 80 77C80 73 74 65 72 61Z\"/></g>"},
+"snowflake":{"label":"snowflake","colour":"#12A19A","art":"<g fill=\"currentColor\"><g fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke-width=\"8\" d=\"M48 12V84M17 30L79 66M17 66L79 30\"/><path stroke-width=\"6\" d=\"M36 20L48 30L60 20M36 76L48 66L60 76M18 44L30 38L29 24M67 72L66 58L78 52M18 52L30 58L29 72M67 24L66 38L78 44\"/></g></g>"},
+"lightning":{"label":"lightning","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M52 9L20 53H42L36 87L77 38H53L64 9Z\"/></g>"},
+"flame":{"label":"flame","colour":"#E97E18","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M53 10C58 33 79 37 79 57C79 75 66 86 48 86C30 86 17 74 17 58C17 43 27 31 33 25C32 41 38 43 40 40C47 34 43 19 53 10ZM49 48C47 57 37 60 37 69C37 76 42 79 48 79C54 79 60 75 60 68C60 60 54 55 49 48Z\"/></g>"},
+"mountain":{"label":"mountain","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M48 14L89 80H7ZM48 32L35 53L44 49L51 55L61 53Z\"/></g>"},
+"flower":{"label":"flower","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M48 22C58 7 77 17 70 35C89 37 91 58 72 63C77 81 58 90 48 75C38 90 19 81 24 63C5 58 7 37 26 35C19 17 38 7 48 22ZM57 48A9 9 0 1 0 39 48A9 9 0 1 0 57 48Z\"/></g>"},
+"mushroom":{"label":"mushroom","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M11 51C14 28 29 14 48 14C67 14 82 28 85 51Q85 56 80 56H16Q11 56 11 51Z\"/><path d=\"M36 64H60L64 77Q65 84 56 84H40Q31 84 32 77Z\"/></g>"},
+"cat":{"label":"cat","colour":"#E97E18","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M18 16L36 30Q48 26 60 30L78 16V57C78 75 66 85 48 85C30 85 18 75 18 57ZM38 50A4 4 0 1 0 30 50A4 4 0 1 0 38 50ZM66 50A4 4 0 1 0 58 50A4 4 0 1 0 66 50ZM41 65L48 73L55 65Z\"/></g>"},
+"dog":{"label":"dog","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M29 24C14 15 7 30 9 51C10 65 21 70 28 59ZM67 24C82 15 89 30 87 51C86 65 75 70 68 59Z\"/><path fill-rule=\"evenodd\" d=\"M48 17C65 17 72 30 72 51V65C72 79 62 85 48 85C34 85 24 79 24 65V51C24 30 31 17 48 17ZM39 46A3.5 3.5 0 1 0 32 46A3.5 3.5 0 1 0 39 46ZM64 46A3.5 3.5 0 1 0 57 46A3.5 3.5 0 1 0 64 46ZM38 61Q48 56 58 61Q56 72 48 74Q40 72 38 61Z\"/></g>"},
+"rabbit":{"label":"rabbit","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M29 40C24 30 20 8 30 7C41 6 42 27 42 36H54C54 27 55 6 66 7C76 8 72 30 67 40C79 48 82 62 75 73C69 83 58 86 48 86C38 86 27 83 21 73C14 62 17 48 29 40ZM39 57A4 4 0 1 0 31 57A4 4 0 1 0 39 57ZM65 57A4 4 0 1 0 57 57A4 4 0 1 0 65 57ZM42 70L48 76L54 70Z\"/></g>"},
+"butterfly":{"label":"butterfly","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path d=\"M43 42C30 15 10 14 10 35C10 46 19 53 29 55C14 59 16 77 28 79C37 80 42 70 44 60H52C54 70 59 80 68 79C80 77 82 59 67 55C77 53 86 46 86 35C86 14 66 15 53 42Z\"/><rect x=\"44\" y=\"30\" width=\"8\" height=\"43\" rx=\"4\"/><path d=\"M46 34L38 22M50 34L58 22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>"},
+"turtle":{"label":"turtle","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M16 58C16 38 28 25 46 25C61 25 72 33 75 47C79 42 84 43 87 47C96 59 83 65 70 65L72 78H59L54 66H37L33 78H21L24 66H8ZM38 35L48 45L58 35L63 40L52 51V59H44V51L33 40Z\"/></g>"},
+"snail":{"label":"snail","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M62 48A24 24 0 1 1 14 48A24 24 0 1 1 62 48ZM49 48C49 41 44 36 38 36C31 36 26 42 26 49C26 58 33 63 41 63V56C36 56 33 53 33 49C33 45 35 43 38 43C41 43 43 45 43 48Z\"/><path d=\"M12 69H62C70 69 73 64 73 54V47H83V59C83 77 73 81 60 81H21Q12 81 12 72Z\"/><path d=\"M77 51L71 34M79 51L86 35\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>"},
+"whale":{"label":"whale","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M10 45C10 30 25 23 42 29C55 34 60 46 57 58C66 60 73 54 75 47C65 43 64 32 66 27C74 27 79 31 81 36C83 28 87 24 90 23C92 36 88 48 83 52C78 73 59 83 38 79C22 76 10 63 10 45ZM30 46A4 4 0 1 0 22 46A4 4 0 1 0 30 46Z\"/><path d=\"M29 24V13M29 17Q18 10 17 19M29 17Q40 10 41 19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>"},
+"octopus":{"label":"octopus","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"8\" stroke-linecap=\"round\"><path d=\"M28 47C17 51 12 46 14 39M30 55C19 62 10 59 10 53M35 61C29 76 17 77 15 70M43 64C44 83 36 89 30 83M68 47C79 51 84 46 82 39M66 55C77 62 86 59 86 53M61 61C67 76 79 77 81 70M53 64C52 83 60 89 66 83\"/></g><path fill-rule=\"evenodd\" d=\"M26 48V36C26 20 35 12 48 12C61 12 70 20 70 36V48C70 64 59 69 48 69C37 69 26 64 26 48ZM41 36A4 4 0 1 0 33 36A4 4 0 1 0 41 36ZM63 36A4 4 0 1 0 55 36A4 4 0 1 0 63 36Z\"/></g>"},
+"elephant":{"label":"elephant","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M17 42C17 27 28 19 45 19H59C75 19 82 29 82 43V64Q82 69 87 66L90 75C78 85 70 79 70 67V58H62V80H49V61H34V80H21V57L12 66L7 59L17 48ZM60 39C60 29 43 27 37 35C31 43 36 55 45 56V47C40 47 40 39 45 38C49 36 52 37 52 42ZM73 37A3 3 0 1 0 67 37A3 3 0 1 0 73 37Z\"/></g>"},
+"duck":{"label":"duck","colour":"#EFC319","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M10 49L28 57C38 58 48 53 50 45C42 39 44 23 52 18C62 12 73 19 74 29H87V39H74C72 65 60 78 40 78C24 78 14 67 10 49ZM65 29A3.5 3.5 0 1 0 58 29A3.5 3.5 0 1 0 65 29Z\"/></g>"},
+"apple":{"label":"apple","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path d=\"M48 33C34 22 16 31 16 47C16 64 25 85 38 85Q48 80 58 85C71 85 80 64 80 47C80 31 62 22 48 33Z\"/><path d=\"M46 30Q40 22 43 12H51Q47 20 52 27ZM54 25Q53 10 72 10Q69 25 54 25Z\"/></g>"},
+"pear":{"label":"pear","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path d=\"M47 25C57 25 61 34 64 43C67 51 79 61 77 70C75 82 64 87 48 87C32 87 21 82 19 70C17 61 29 51 32 43C35 34 38 25 47 25Z\"/><path d=\"M43 23Q44 13 51 8L57 13Q50 16 50 24ZM57 26Q62 12 78 16Q71 29 57 26Z\"/></g>"},
+"banana":{"label":"banana","colour":"#EFC319","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M22 18L32 14C31 36 44 58 70 58L81 51L87 59C75 83 55 89 36 78C14 65 10 40 22 18ZM26 38C26 59 40 74 59 73C43 68 31 55 26 38Z\"/></g>"},
+"cherries":{"label":"cherries","colour":"#DE3C75","art":"<g fill=\"currentColor\"><circle cx=\"29\" cy=\"65\" r=\"17\"/><circle cx=\"67\" cy=\"69\" r=\"17\"/><path d=\"M29 50Q34 24 55 13Q57 42 67 54\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/><path d=\"M55 16Q70 7 81 22Q65 28 55 16Z\"/></g>"},
+"lemon":{"label":"lemon","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M14 38C15 34 21 34 24 31C38 14 61 14 75 32C78 36 81 35 83 40C86 45 83 50 80 54C75 76 48 85 30 70C25 66 21 63 17 61C10 58 9 49 14 38Z\"/></g>"},
+"carrot":{"label":"carrot","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M29 33Q46 24 65 33L42 84Q37 92 34 82Z\"/><path d=\"M38 25L22 15L28 8L44 19L45 7H54L54 19L68 9L74 17L59 26Z\"/></g>"},
+"strawberry":{"label":"strawberry","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M18 39C18 26 32 25 48 32C64 25 78 26 78 39C78 57 58 79 48 87C38 79 18 57 18 39ZM35 42A3 3 0 1 0 29 42A3 3 0 1 0 35 42ZM67 42A3 3 0 1 0 61 42A3 3 0 1 0 67 42ZM51 61A3 3 0 1 0 45 61A3 3 0 1 0 51 61Z\"/><path d=\"M48 12L54 23L71 17L65 32L48 27L31 32L25 17L42 23Z\"/></g>"},
+"pineapple":{"label":"pineapple","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M38 32L26 16L40 22L40 8L49 19L58 7L58 22L71 16L58 32Z\"/><path fill-rule=\"evenodd\" d=\"M48 35C64 35 73 45 73 62C73 80 63 89 48 89C33 89 23 80 23 62C23 45 32 35 48 35ZM48 42L42 49L48 56L54 49ZM35 55L29 62L35 69L41 62ZM61 55L55 62L61 69L67 62ZM48 68L42 75L48 82L54 75Z\"/></g>"},
+"watermelon":{"label":"watermelon","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M10 29H86C85 58 68 79 48 79C28 79 11 58 10 29ZM25 36Q31 40 29 46Q23 47 25 36ZM42 35Q47 41 42 46Q37 41 42 35ZM56 35Q61 41 56 46Q51 41 56 35ZM71 36Q73 47 67 46Q65 40 71 36ZM49 49Q54 55 49 61Q44 55 49 49Z\"/></g>"},
+"ice-cream":{"label":"ice cream","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path d=\"M22 43C22 24 32 12 48 12C64 12 74 24 74 43Q81 54 69 55Q61 55 59 50Q54 57 48 57Q42 57 37 50Q35 55 27 55Q15 54 22 43Z\"/><path d=\"M29 64H67L51 87Q48 91 45 87Z\"/></g>"},
+"teapot":{"label":"teapot","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M23 41C5 38 5 67 26 66L29 76H65Q73 75 76 65L89 37H77L69 51C67 39 59 33 47 33C37 33 29 36 23 41ZM21 50C14 48 15 58 24 59Z\"/><path d=\"M31 26Q34 18 42 18V11H53V18Q61 18 64 26Z\"/></g>"},
+"bottle":{"label":"bottle","colour":"#12A19A","art":"<g fill=\"currentColor\"><rect x=\"37\" y=\"9\" width=\"22\" height=\"9\" rx=\"2\"/><path d=\"M38 24H58V35C58 42 73 43 73 53V80Q73 86 67 86H29Q23 86 23 80V53C23 43 38 42 38 35Z\"/></g>"},
+"jug":{"label":"jug","colour":"#E97E18","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M26 20H61V31H69C83 31 88 41 88 51C88 65 77 72 64 70V78Q64 83 58 83H26Q20 83 20 78V33L11 20ZM64 42V59C72 60 78 56 78 50C78 44 73 41 64 42Z\"/></g>"},
+"bowl":{"label":"bowl","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M11 34H85C84 56 72 72 55 74H41C24 72 12 56 11 34Z\"/></g>"},
+"spoon":{"label":"spoon","colour":"#12A19A","art":"<g fill=\"currentColor\"><path d=\"M48 9C61 9 68 23 67 35C66 44 61 48 54 50L56 80Q56 88 48 88Q40 88 40 80L42 50C35 48 30 44 29 35C28 23 35 9 48 9Z\"/></g>"},
+"fork":{"label":"fork","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M25 11H35V34H43V11H53V34H61V11H71V37C71 49 65 55 55 58L56 79Q56 87 48 87Q40 87 40 79L41 58C31 55 25 49 25 37Z\"/></g>"},
+"knife":{"label":"knife","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M53 9C32 11 29 36 29 54H46V79Q46 87 54 87Q62 87 62 79V16Q62 9 53 9Z\"/></g>"},
+"bread":{"label":"bread","colour":"#EFC319","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M20 47C8 42 12 27 25 21C38 14 58 14 71 21C84 27 88 42 76 47V77Q76 82 71 82H25Q20 82 20 77ZM31 41V69H65V41C75 37 70 31 62 29C53 26 43 26 34 29C26 31 21 37 31 41Z\"/></g>"},
+"egg":{"label":"egg","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M48 10C35 10 19 41 19 58C19 75 32 86 48 86C64 86 77 75 77 58C77 41 61 10 48 10Z\"/></g>"},
+"cheese":{"label":"cheese","colour":"#E97E18","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M13 44L67 17L85 42V77H13ZM32 55A5 5 0 1 0 22 55A5 5 0 1 0 32 55ZM58 64A5 5 0 1 0 48 64A5 5 0 1 0 58 64ZM76 49A4 4 0 1 0 68 49A4 4 0 1 0 76 49Z\"/></g>"},
+"chair":{"label":"chair","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M23 14Q23 10 28 10H36V48H74Q79 48 79 54V62H72V85H61V62H34V85H23Z\"/></g>"},
+"table":{"label":"table","colour":"#12A19A","art":"<g fill=\"currentColor\"><rect x=\"10\" y=\"29\" width=\"76\" height=\"13\" rx=\"3\"/><path d=\"M19 40H31V79H19ZM65 40H77V79H65Z\"/></g>"},
+"bed":{"label":"bed","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M12 23H22V57H84V80H74V69H22V80H12Z\"/><rect x=\"28\" y=\"39\" width=\"19\" height=\"13\" rx=\"5\"/><path d=\"M53 32H65Q84 32 84 50V52H53Z\"/></g>"},
+"sofa":{"label":"sofa","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path d=\"M23 44V34Q23 24 33 24H44V55H31V44ZM52 24H63Q73 24 73 34V44H65V55H52Z\"/><path d=\"M10 43Q10 39 15 39H23V59H73V39H81Q86 39 86 43V70H77V78H66V70H30V78H19V70H10Z\"/></g>"},
+"lamp":{"label":"lamp","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M30 15H66L82 52H14Z\"/><path d=\"M43 59H53V74H65Q70 74 70 80V83H26V80Q26 74 31 74H43Z\"/></g>"},
+"clock":{"label":"clock","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M85 48A37 37 0 1 1 11 48A37 37 0 1 1 85 48ZM74 48A26 26 0 1 0 22 48A26 26 0 1 0 74 48Z\"/><path d=\"M48 29V49L62 57\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g>"},
+"umbrella":{"label":"umbrella","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path d=\"M9 48C11 27 27 14 44 13V9H52V13C69 14 85 27 87 48Q74 38 61 48Q48 38 35 48Q22 38 9 48Z\"/><path d=\"M44 52H52V73C52 90 29 91 27 76L35 73C36 81 44 80 44 73Z\"/></g>"},
+"door":{"label":"door","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M18 12H76V83H65V23H29V83H18Z\"/><path fill-rule=\"evenodd\" d=\"M31 25L61 32V87L31 79ZM55 55A3 3 0 1 0 49 55A3 3 0 1 0 55 55Z\"/></g>"},
+"window":{"label":"window","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M15 15H81V81H15ZM25 25V43H43V25ZM53 25V43H71V25ZM25 53V71H43V53ZM53 53V71H71V53Z\"/></g>"},
+"plant":{"label":"plant","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path d=\"M45 56V40C27 42 16 31 16 17C33 15 44 23 48 34C50 19 63 9 80 12C80 29 68 39 53 39V56Z\"/><path d=\"M25 60H71L65 84H31Z\"/></g>"},
+"book":{"label":"book","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M11 20C23 15 34 17 44 24V81C33 73 23 71 11 75ZM52 24C62 17 73 15 85 20V75C73 71 63 73 52 81Z\"/></g>"},
+"pencil":{"label":"pencil","colour":"#EFC319","art":"<g fill=\"currentColor\"><g transform=\"rotate(42 48 48)\"><path d=\"M37 27H59V66H37ZM37 72H59L48 88Z\"/><path d=\"M37 12Q37 8 42 8H54Q59 8 59 12V21H37Z\"/></g></g>"},
+"scissors":{"label":"scissors","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M42 66C43 78 35 87 24 87C12 87 7 78 10 69C13 58 25 55 35 61L42 50L20 15L27 10L48 39L69 10L76 15L54 50L61 61C71 55 83 58 86 69C89 78 84 87 72 87C61 87 53 78 54 66L48 57ZM32 72A7 7 0 1 0 18 72A7 7 0 1 0 32 72ZM78 72A7 7 0 1 0 64 72A7 7 0 1 0 78 72Z\"/></g>"},
+"paintbrush":{"label":"paintbrush","colour":"#DE3C75","art":"<g fill=\"currentColor\"><g transform=\"rotate(38 48 48)\"><path d=\"M42 11Q48 5 54 11L56 50H40Z\"/><path d=\"M36 56H60V71C60 81 51 88 37 86C42 80 35 78 36 71Z\"/></g></g>"},
+"bag":{"label":"bag","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M17 35H29V27C29 15 36 10 48 10C60 10 67 15 67 27V35H79L84 84H12ZM38 35H58V27C58 21 54 19 48 19C42 19 38 21 38 27Z\"/></g>"},
+"glasses":{"label":"glasses","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M9 34H37L42 39H54L59 34H87V44H83V51C83 65 73 72 62 67C56 64 53 58 52 49H44C43 58 40 64 34 67C23 72 13 65 13 51V44H9ZM22 44V51C22 57 26 61 31 59C35 57 35 49 35 44ZM61 44C61 49 61 57 65 59C70 61 74 57 74 51V44Z\"/></g>"},
+"hat":{"label":"hat","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M28 23Q35 17 48 27Q61 17 68 23L73 57H23Z\"/><path d=\"M11 64Q48 72 85 64V73Q48 87 11 73Z\"/></g>"},
+"shoe":{"label":"shoe","colour":"#12A19A","art":"<g fill=\"currentColor\"><path d=\"M13 34H28C30 45 39 49 48 42L65 54C77 58 87 63 87 74V79H10V51Z\"/></g>"},
+"t-shirt":{"label":"t-shirt","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path d=\"M30 17L13 29L7 45L24 53L29 42V82H67V42L72 53L89 45L83 29L66 17H59C57 28 39 28 37 17Z\"/></g>"},
+"watch":{"label":"watch","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path d=\"M36 9H60L62 24H34ZM34 72H62L60 87H36Z\"/><path fill-rule=\"evenodd\" d=\"M76 48A28 28 0 1 1 20 48A28 28 0 1 1 76 48ZM66 48A18 18 0 1 0 30 48A18 18 0 1 0 66 48Z\"/><path d=\"M48 37V49L57 54\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></g>"},
+"bell":{"label":"bell","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M43 12H53V19C66 21 72 31 72 47V59L81 70H15L24 59V47C24 31 30 21 43 19Z\"/><path d=\"M36 77H60C59 91 37 91 36 77Z\"/></g>"},
+"guitar":{"label":"guitar","colour":"#E97E18","art":"<g fill=\"currentColor\"><g transform=\"translate(4.8 4.8) scale(.9) rotate(32 48 48)\"><path d=\"M41 8H55V25H52V48H44V25H41Z\"/><path fill-rule=\"evenodd\" d=\"M48 37C60 37 65 47 60 56C72 62 74 81 61 88C53 93 43 93 35 88C22 81 24 62 36 56C31 47 36 37 48 37ZM55 58A7 7 0 1 0 41 58A7 7 0 1 0 55 58Z\"/></g></g>"},
+"piano":{"label":"piano","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M13 18H83V71H74V83H64V71H32V83H22V71H13ZM23 44V62H73V44Z\"/><path d=\"M29 44H35V54H29ZM39 44H45V54H39ZM59 44H65V54H59Z\"/><path d=\"M33 53V62M43 53V62M53 44V62M63 53V62\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/></g>"},
+"headphones":{"label":"headphones","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M15 62V43C15 21 28 10 48 10C68 10 81 21 81 43V62H70V43C70 28 62 21 48 21C34 21 26 28 26 43V62Z\"/><rect x=\"12\" y=\"49\" width=\"21\" height=\"34\" rx=\"9\"/><rect x=\"63\" y=\"49\" width=\"21\" height=\"34\" rx=\"9\"/></g>"},
+"camera":{"label":"camera","colour":"#12A19A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M15 29H29L35 19H61L67 29H81Q87 29 87 35V73Q87 79 81 79H15Q9 79 9 73V35Q9 29 15 29ZM68 53A20 20 0 1 0 28 53A20 20 0 1 0 68 53Z\"/><circle cx=\"48\" cy=\"53\" r=\"10\"/></g>"},
+"football":{"label":"football","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M85 48A37 37 0 1 1 11 48A37 37 0 1 1 85 48ZM76 48A28 28 0 1 0 20 48A28 28 0 1 0 76 48Z\"/><path d=\"M48 30L65 42L59 61H37L31 42Z\"/><path d=\"M48 33V16M62 43L80 38M58 58L69 76M38 58L27 76M34 43L16 38\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\"/></g>"},
+"kite":{"label":"kite","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path d=\"M45 10L70 30L47 61L19 30Z\"/><path d=\"M47 60C47 73 73 65 69 79C67 86 54 80 55 89\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>"},
+"balloon":{"label":"balloon","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M48 9C64 9 75 20 75 35C75 50 64 62 52 65L55 72H41L44 65C32 62 21 50 21 35C21 20 32 9 48 9Z\"/><path d=\"M48 72Q55 82 45 88\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"/></g>"},
+"dice":{"label":"dice","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M25 14H71Q82 14 82 25V71Q82 82 71 82H25Q14 82 14 71V25Q14 14 25 14ZM36 31A5 5 0 1 0 26 31A5 5 0 1 0 36 31ZM70 31A5 5 0 1 0 60 31A5 5 0 1 0 70 31ZM53 48A5 5 0 1 0 43 48A5 5 0 1 0 53 48ZM36 65A5 5 0 1 0 26 65A5 5 0 1 0 36 65ZM70 65A5 5 0 1 0 60 65A5 5 0 1 0 70 65Z\"/></g>"},
+"puzzle":{"label":"puzzle","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path d=\"M15 27H37C29 13 39 7 48 7C57 7 67 13 59 27H78V46C92 38 95 48 95 56C95 64 92 74 78 66V84H58C66 70 56 65 48 65C40 65 30 70 38 84H15V64C29 72 34 62 34 54C34 46 29 36 15 44Z\" transform=\"translate(-3 0)\"/></g>"},
+"car":{"label":"car","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M9 46L21 42L33 26H58L72 43L83 46Q88 48 88 54V66H8V52Q8 49 9 46ZM37 35L31 44H47V35ZM54 35V44H63L56 35Z\"/><circle cx=\"27\" cy=\"69\" r=\"11\"/><circle cx=\"70\" cy=\"69\" r=\"11\"/></g>"},
+"bus":{"label":"bus","colour":"#EFC319","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M15 22H77Q86 22 86 33V69H10V28Q10 22 15 22ZM20 33V47H34V33ZM42 33V47H56V33ZM64 33V47H76V33Z\"/><circle cx=\"28\" cy=\"72\" r=\"10\"/><circle cx=\"70\" cy=\"72\" r=\"10\"/></g>"},
+"bicycle":{"label":"bicycle","colour":"#12A19A","art":"<g fill=\"currentColor\"><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" transform=\"translate(48 48) scale(.94) translate(-48 -48)\"><circle cx=\"23\" cy=\"65\" r=\"16\"/><circle cx=\"74\" cy=\"65\" r=\"16\"/><path d=\"M23 65L39 36L52 65H23L65 36L74 65M33 28H45M39 36V29M65 36L61 23H73\"/></g></g>"},
+"train":{"label":"train","colour":"#E97E18","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M32 10H64Q77 10 77 23V64Q77 74 66 74H30Q19 74 19 64V23Q19 10 32 10ZM29 26V45H67V26ZM36 60A5 5 0 1 0 26 60A5 5 0 1 0 36 60ZM70 60A5 5 0 1 0 60 60A5 5 0 1 0 70 60Z\"/><path d=\"M31 72H42L26 88H14ZM54 72H65L82 88H70Z\"/></g>"},
+"plane":{"label":"plane","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M43 13Q48 4 53 13L56 36L88 54V65L56 56L54 74L65 83V90L48 85L31 90V83L42 74L40 56L8 65V54L40 36Z\"/></g>"},
+"helicopter":{"label":"helicopter","colour":"#12A19A","art":"<g fill=\"currentColor\"><path d=\"M34 12H85V20H64V29H54V20H34Z\"/><path fill-rule=\"evenodd\" d=\"M45 32H60C76 32 87 43 87 56Q87 64 78 64H49C39 64 34 58 32 52L11 47V25H20L24 40L37 41ZM62 41V53H77C74 45 69 42 62 41Z\"/><path d=\"M47 70V77H77V70M36 79H87\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/></g>"},
+"rocket":{"label":"rocket","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M48 8C66 20 67 40 63 62H33C29 40 30 20 48 8ZM55 33A7 7 0 1 0 41 33A7 7 0 1 0 55 33Z\"/><path d=\"M28 42L16 57V74L29 66ZM68 42L80 57V74L67 66ZM38 70H58L48 90Z\"/></g>"},
+"tent":{"label":"tent","colour":"#E97E18","art":"<g fill=\"currentColor\"><path d=\"M45 16L13 77H38L48 51L58 77H83L51 16L57 8L51 4L48 9L45 4L39 8Z\"/></g>"},
+"lighthouse":{"label":"lighthouse","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M48 9L73 29H23Z\"/><path fill-rule=\"evenodd\" d=\"M28 34H68V49H28ZM38 38V45H58V38Z\"/><path d=\"M32 55H64L72 87H24Z\"/><path d=\"M17 38H7M89 38H79\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"6\" stroke-linecap=\"round\"/></g>"},
+"anchor":{"label":"anchor","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M62 22A14 14 0 1 1 34 22A14 14 0 1 1 62 22ZM53 22A5 5 0 1 0 43 22A5 5 0 1 0 53 22Z\"/><path d=\"M43 33H53V69C65 67 71 59 71 51L64 54L76 35L89 54H81C80 71 65 82 48 88C31 82 16 71 15 54H7L20 35L32 54L25 51C25 59 31 67 43 69Z\"/><rect x=\"31\" y=\"40\" width=\"34\" height=\"9\" rx=\"2\"/></g>"},
+"lock":{"label":"lock","colour":"#EFC319","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M24 44V31C24 16 34 9 48 9C62 9 72 16 72 31V44H78V84H18V44ZM35 44H61V31C61 23 56 20 48 20C40 20 35 23 35 31ZM54 61A6 6 0 1 0 44 66L42 75H54L52 66A6 6 0 0 0 54 61Z\"/></g>"},
+"magnet":{"label":"magnet","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path d=\"M17 40H33V58C33 79 63 79 63 58V40H79V58C79 99 17 99 17 58Z\"/><path d=\"M17 14H33V32H17ZM63 14H79V32H63Z\"/></g>"},
+"hammer":{"label":"hammer","colour":"#E97E18","art":"<g fill=\"currentColor\"><g transform=\"translate(4.8 4.8) scale(.9) rotate(32 48 48)\"><path d=\"M19 16H57C66 16 74 24 77 33L65 31L57 25V36H19Z\"/><path d=\"M39 34H54V81Q54 88 46 88Q39 88 39 81Z\"/></g></g>"},
+"spanner":{"label":"spanner","colour":"#12A19A","art":"<g fill=\"currentColor\"><g transform=\"rotate(38 48 48)\"><path fill-rule=\"evenodd\" d=\"M38 9V26L48 32L58 26V9C72 17 73 38 59 47L59 77C59 93 37 93 37 77L37 47C23 38 24 17 38 9ZM54 77A6 6 0 1 0 42 77A6 6 0 1 0 54 77Z\"/></g></g>"},
+"gear":{"label":"gear","colour":"#7D6BB0","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M76 48A28 28 0 1 1 20 48A28 28 0 1 1 76 48ZM61 48A13 13 0 1 0 35 48A13 13 0 1 0 61 48Z\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(45 48 48)\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(90 48 48)\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(135 48 48)\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(180 48 48)\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(225 48 48)\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(270 48 48)\"/><rect x=\"40\" y=\"8\" width=\"16\" height=\"17\" rx=\"2\" transform=\"rotate(315 48 48)\"/></g>"},
+"battery":{"label":"battery","colour":"#1FA45A","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M14 26H75Q79 26 79 31V37H87V59H79V65Q79 70 75 70H14Q9 70 9 65V31Q9 26 14 26ZM44 32L30 52H43L40 66L60 43H47L53 32Z\"/></g>"},
+"plug":{"label":"plug","colour":"#2EA3DC","art":"<g fill=\"currentColor\"><path d=\"M28 10H39V32H57V10H68V32H76V48C76 62 66 72 54 73V81Q54 87 62 85L65 91C51 98 43 89 43 82V73C30 72 20 62 20 48V32H28Z\" transform=\"translate(0 -3)\"/></g>"},
+"envelope":{"label":"envelope","colour":"#12A19A","art":"<g fill=\"currentColor\"><path d=\"M10 25H86L48 52ZM10 35L45 61Q48 63 51 61L86 35V75H10Z\"/></g>"},
+"gift":{"label":"gift","colour":"#DE3C75","art":"<g fill=\"currentColor\"><path fill-rule=\"evenodd\" d=\"M47 31C25 35 18 28 21 18C24 6 41 11 48 27C55 11 72 6 75 18C78 28 71 35 49 31ZM40 25C35 17 27 16 28 22C29 26 35 26 40 25ZM56 25C61 17 69 16 68 22C67 26 61 26 56 25Z\"/><path d=\"M12 37H43V51H12ZM53 37H84V51H53ZM17 57H43V85H17ZM53 57H79V85H53Z\"/></g>"},
+"crown":{"label":"crown","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M13 25L34 43L48 15L62 43L83 25L75 65H21Z\"/><path d=\"M22 72H74V83H22Z\"/></g>"}
+};
+
 const FIGURES={
-  nail:{n:3,c:'--hellblau',p:[[0,0],[1,0],[2,0]]},
-  roof:{n:3,c:'--hellblau',p:[[0,0],[1,-1],[2,0]]},
-  triangle:{n:3,c:'--hellblau',p:[[0,0],[1,-1],[2,0]],chord:[0,2]},
-  staple:{n:4,c:'--gruen',p:[[0,0],[0,1],[2,1],[2,0]]},
-  crank:{n:4,c:'--gruen',p:[[0,0],[1,0],[1,1],[2,1]]},
-  hook:{n:4,c:'--gruen',p:[[0,0],[0,2],[1,3],[2,2]]},
-  flag:{n:4,c:'--gruen',p:[[0,3],[0,0],[2,0],[0,2]],chord:[1,3]},
-  window:{n:4,c:'--gruen',p:[[0,0],[2,0],[2,2],[0,2]],chord:[0,3]},
-  zigzag:{n:4,c:'--gruen',p:[[0,0],[2,0],[0,2],[2,2]]},
-  slab:{n:4,c:'--gruen',p:[[0,0],[2,0],[3,1],[1,1]],chord:[0,3]},
-  trowel:{n:5,c:'--gelb',p:[[0,0],[3,0],[3,1],[2,2],[1,1]]},
-  stair:{n:5,c:'--gelb',p:[[0,0],[1,0],[1,1],[2,1],[2,2]]},
-  house:{n:5,c:'--gelb',p:[[0,2],[0,0],[1,-1],[2,0],[2,2]],chord:[0,4]},
-  clip:{n:5,c:'--gelb',p:[[2,0],[0,0],[0,3],[2,3],[2,2]]},
-  wishbone:{n:5,c:'--gelb',p:[[0,0],[0,3],[1,4],[2,3],[2,2]]},
-  post:{n:5,c:'--gelb',p:[[1,0],[1,2],[0,3],[2,3],[2,2]]},
-  cup:{n:5,c:'--gelb',p:[[0,0],[0,2],[1,3],[2,2],[2,0]]},
-  tent:{n:5,c:'--gelb',p:[[0,0],[-1,-1],[-3,-3],[-5,-1],[-6,0]],chord:[0,4]},
-  notch:{n:5,c:'--gelb',p:[[0,0],[1,0],[1.707107,0.707107],[2.414214,0],[3.414214,0]]},
-  crown:{n:5,c:'--gelb',p:[[0,0],[1,1],[2,0],[2,2],[0,2]],chord:[0,4]},
-  kite:{n:5,c:'--gelb',p:[[0,0],[1,-1],[2,0],[1,1],[1,3]],chord:[0,3]},
-  nut:{n:6,c:'--violett',p:[[1,0],[2,0],[3,1],[2,2],[1,2],[0,1]],chord:[0,5]},
-  tag:{n:6,c:'--violett',p:[[0,0],[2,0],[3,1],[2,2],[0,2],[0,1]],chord:[0,5]},
-  saw:{n:6,c:'--violett',p:[[0,1],[1,0],[2,1],[3,0],[4,1],[5,0]]},
-  snail:{n:6,c:'--violett',p:[[0,0],[3,0],[3,3],[0,3],[0,1],[2,1]]},
-  spanner:{n:6,c:'--violett',p:[[0,1],[0,0],[3,0],[4,-1],[5,0],[4,1]]},
-  bolt:{n:6,c:'--violett',p:[[1,0],[0,1],[1,1],[0,2],[1,2],[0,3]]},
-  bucket:{n:6,c:'--violett',p:[[0,0],[0,3],[1,4],[2,4],[3,3],[3,0]]},
-  key:{n:6,c:'--violett',p:[[0,0],[3,0],[3,1],[4,1],[4,0],[5,0]]},
-  ramp:{n:6,c:'--violett',p:[[0,0],[3,0],[3,1],[2,2],[2,3],[0,3]]},
-  fork:{n:6,c:'--violett',p:[[0,0],[-1,1],[-1,3],[-2,3],[-2,1],[-3,0]]},
-  funnel:{n:6,c:'--violett',p:[[0,0],[3,3],[3,4],[4,4],[4,3],[7,0]]},
-  dumbbell:{n:6,c:'--violett',p:[[0,0],[0,3],[-1,2],[-4,2],[-5,3],[-5,0]]},
-  sbend:{n:6,c:'--violett',p:[[0,0],[-3,0],[0,-3],[0,-5],[-3,-8],[0,-8]]},
-  box:{n:6,c:'--violett',p:[[0,0],[0,-1],[0,-2],[-2,-2],[-2,-1],[-2,0]],chord:[0,5]},
-  heart:{n:6,c:'--violett',p:[[-2,-1],[-1,-2],[0,-1],[1,-2],[2,-1],[0,1]],chord:[0,5]},
-  chevron:{n:6,c:'--violett',p:[[0,0],[2,0],[4,2],[2,4],[0,4],[2,2]],chord:[0,5]},
-  flask:{n:6,c:'--violett',p:[[0,0],[0,1],[-1,2],[2,2],[1,1],[1,0]]},
-  ribbon:{n:6,c:'--violett',p:[[0,0],[1,0],[1,1],[0,1],[0,2],[1,2]]},
-  paddle:{n:6,c:'--violett',p:[[0,3],[0,1],[-1,1],[-1,0],[1,0],[1,1]],chord:[1,5]},
-  glass:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[-1,3],[-2,4],[-3,3],[-4,2],[-4,0]]},
-  bowl:{n:7,c:'--tuerkis',p:[[0,0],[2,2],[4,4],[6,2],[8,4],[10,2],[12,0]]},
-  frame:{n:7,c:'--tuerkis',p:[[0,0],[0,-2],[-3,-2],[-6,-2],[-6,1],[-6,4],[-4,4]]},
-  hose:{n:7,c:'--tuerkis',p:[[0,0],[2,0],[5,-3],[3,-5],[1,-7],[4,-10],[6,-10]]},
-  anchor:{n:7,c:'--tuerkis',p:[[0,0],[-1,-1],[-2,-1],[-2,2],[-2,5],[-3,5],[-4,4]]},
-  arrow:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[3,-1],[3,-4],[0,-4],[-3,-1],[-1,-1]]},
-  steps:{n:7,c:'--tuerkis',p:[[0,0],[0,2],[3,2],[3,5],[6,5],[6,8],[8,8]]},
-  cane:{n:7,c:'--tuerkis',p:[[0,0],[2,-2],[2,-3],[2,-5],[1,-6],[0,-7],[-3,-7]]},
-  pennant:{n:7,c:'--tuerkis',p:[[0,0],[-3,0],[-1,-2],[-1,-3],[0,-4],[0,-7],[2,-5]]},
-  hammer:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[0,4],[1,4],[0,5],[0,8],[3,8]]},
-  dart:{n:7,c:'--tuerkis',p:[[0,0],[-1,1],[-1,3],[1,5],[-2,5],[-3,6],[-3,8]]},
-  horseshoe:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[-4,0],[-4,-3],[-4,-5],[-2,-7],[0,-5]]},
-  comb:{n:7,c:'--tuerkis',p:[[0,0],[3,3],[0,3],[0,6],[0,9],[2,9],[-1,12]]},
-  spring:{n:7,c:'--tuerkis',p:[[0,0],[-3,0],[-3,2],[0,5],[-3,8],[-3,11],[0,11]]},
-  hourglass:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[1,-2],[0,-3],[1,-3],[-1,-5],[2,-5]]},
-  ring:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[-2,-5],[1,-8],[4,-5],[4,-2],[2,0]],chord:[0,6]},
-  shield:{n:7,c:'--tuerkis',p:[[0,0],[3,0],[5,2],[3,4],[1,6],[-1,4],[-1,1]],chord:[0,6]},
-  pill:{n:7,c:'--tuerkis',p:[[0,0],[-2,2],[-4,0],[-4,-3],[-4,-5],[-2,-7],[0,-5]],chord:[0,6]},
-  apple:{n:7,c:'--tuerkis',p:[[0,0],[-2,-2],[-2,-5],[0,-5],[2,-7],[4,-5],[4,-2]],chord:[0,6]},
-  wedge:{n:7,c:'--tuerkis',p:[[0,0],[-1,1],[-1,4],[-1,5],[-2,4],[-4,2],[-5,2]],chord:[0,6]},
+  "house":{"n":5,"c":"--orange","p":[[-0.85749,0.68599],[-0.85749,-0.1715],[0,-1.02899],[0.85749,-0.1715],[0.85749,0.68599]],"chord":[0,4]},
+  "key":{"n":7,"c":"--gelb","p":[[1.24149,-0.00148],[0.44982,-0.00148],[0.45953,0.78472],[-0.7356,0.78988],[-1.13352,-0.00148],[-0.73547,-0.78402],[0.45376,-0.78615]],"chord":[1,6]},
+  "cup":{"n":5,"c":"--hellblau","p":[[-0.66815,-0.93541],[-0.66815,0.40089],[0,1.06904],[0.66815,0.40089],[0.66815,-0.93541]]},
+  "tree":{"n":7,"c":"--gruen","p":[[0.16166,1.32674],[0.17445,0.52513],[-0.63798,0.52925],[-0.04344,-0.28438],[-0.8184,-0.29336],[0.1756,-1.51341],[0.98812,-0.28998]]},
+  "fish":{"n":7,"c":"--tuerkis","p":[[-1.3613,-0.02635],[-0.47278,-0.84222],[0.22688,-0.42125],[0.97439,-0.64522],[0.9565,0.69088],[0.21113,0.3752],[-0.53481,0.86895]],"chord":[0,6]},
+  "bird":{"n":3,"c":"--hellblau","p":[[-1.1767,0.19612],[0,-0.39223],[1.1767,0.19612]]},
+  "heart":{"n":6,"c":"--rosa","p":[[-1.22474,0],[-0.61237,-0.61237],[0,0],[0.61237,-0.61237],[1.22474,0],[0,1.22474]],"chord":[0,5]},
+  "sun":{"n":6,"c":"--gelb","p":[[-0.98056,-0.17245],[-0.4981,-0.78125],[0.47017,-0.76065],[1.01418,-0.19476],[0.47739,0.93833],[-0.48308,0.97079]],"chord":[0,5]},
+  "boat":{"n":4,"c":"--violett","p":[[-1.09434,-0.54839],[1.1078,-0.52223],[0.45608,0.5445],[-0.46953,0.52612]],"chord":[0,3]},
+  "leaf":{"n":4,"c":"--gruen","p":[[-0.80072,0.83826],[-0.66793,-0.22811],[0.99122,-0.92209],[0.47743,0.31193]],"chord":[0,3]},
+  "moon":{"n":5,"c":"--violett","p":[[0.38833,-1.20105],[-0.1683,-0.6465],[-0.75987,0.19074],[-0.01381,1.40606],[0.55365,0.25074]]},
+  "star":{"n":7,"c":"--gelb","p":[[-1.34585,-0.22431],[-0.56077,-0.22431],[-0.16823,-1.00939],[0.22431,-0.22431],[1.00939,-0.22431],[0.22431,0.56077],[0.61685,1.34585]]},
+  "cloud":{"n":5,"c":"--hellblau","p":[[-1.15839,0.33001],[-0.63398,-0.24139],[-0.09887,0.3201],[0.41439,-0.72419],[1.47685,0.31546]]},
+  "rain":{"n":4,"c":"--hellblau","p":[[-0.54855,-0.64845],[0.35725,-0.82569],[0.34352,-0.05081],[-0.15221,1.52495]]},
+  "snowflake":{"n":6,"c":"--tuerkis","p":[[-0.54112,-1.0785],[-0.02782,-0.49711],[0.57831,-0.99462],[-0.00345,0.47389],[0.52169,1.04811],[-0.52762,1.04822]]},
+  "lightning":{"n":6,"c":"--gelb","p":[[0.28406,-1.1087],[-0.97691,0.13487],[-0.20767,0.23201],[-0.53805,1.3463],[1.10664,-0.2795],[0.33193,-0.32498]]},
+  "flame":{"n":6,"c":"--orange","p":[[-0.34682,-1.2809],[0.2134,-0.05086],[0.9862,0.00941],[0.47458,1.27289],[-0.86237,0.47839],[-0.46499,-0.42893]],"chord":[0,5]},
+  "mountain":{"n":3,"c":"--tuerkis","p":[[-0.92582,0.46291],[0,-0.92582],[0.92582,0.46291]],"chord":[0,2]},
+  "flower":{"n":7,"c":"--rosa","p":[[-0.73894,-0.76784],[0.03541,-0.48341],[0.83186,-0.88185],[0.43244,0.27056],[0.93559,1.08303],[-0.32254,0.57083],[-1.17383,0.20868]],"chord":[0,6]},
+  "mushroom":{"n":7,"c":"--orange","p":[[-0.93924,-0.0427],[-0.46645,-0.97787],[0.56366,-0.92588],[1.0382,0.09845],[0.16116,-0.24267],[0.23437,0.99891],[-0.5917,1.09177]],"chord":[0,6]},
+  "cat":{"n":7,"c":"--orange","p":[[-1.35422,-0.62461],[0.03189,-0.1551],[0.58683,-0.73918],[0.87249,-0.0029],[1.07723,0.74738],[-0.46852,0.77734],[-0.74571,-0.00293]],"chord":[0,6]},
+  "dog":{"n":7,"c":"--gelb","p":[[-1.00059,-1.12577],[-0.57327,-0.25857],[0.23845,-0.74779],[0.79086,-0.20398],[0.82572,0.58386],[0.2682,1.12233],[-0.54935,0.62993]]},
+  "rabbit":{"n":7,"c":"--rosa","p":[[-0.76003,0.7799],[-0.81487,-0.2437],[-0.41639,-0.91108],[-0.00401,0.40661],[0.35924,-0.92073],[0.86395,-0.33249],[0.7721,1.22149]]},
+  "butterfly":{"n":6,"c":"--violett","p":[[-1.07396,-0.81882],[-0.00475,-0.44682],[1.05031,-0.79736],[0.56528,0.87616],[0.01524,0.32792],[-0.55211,0.85892]],"chord":[0,5]},
+  "turtle":{"n":6,"c":"--gruen","p":[[-0.85877,-0.1116],[-0.3101,-0.6618],[0.49348,-0.73038],[1.23031,0.49972],[0.52759,0.16935],[-1.0825,0.8347]],"chord":[0,5]},
+  "snail":{"n":6,"c":"--tuerkis","p":[[-1.09627,0.69518],[0.92791,0.67614],[0.91518,-0.82898],[-0.57151,-0.81188],[-0.5537,0.14179],[0.37841,0.12774]]},
+  "whale":{"n":6,"c":"--hellblau","p":[[-1.32796,-0.19727],[-0.92893,0.59233],[0.18225,0.67183],[0.73825,0.13186],[0.26482,-0.59712],[1.07156,-0.60163]]},
+  "octopus":{"n":7,"c":"--violett","p":[[-0.86619,0.94181],[-0.90436,-0.29174],[-0.41005,-0.89005],[0.38774,-0.84756],[0.93006,-0.29388],[0.78978,0.90991],[0.07302,0.47151]]},
+  "elephant":{"n":7,"c":"--tuerkis","p":[[-0.98953,0.53302],[-1.28563,-0.534],[-0.12393,-0.37378],[0.4206,-0.92629],[0.78446,-0.09251],[0.98409,0.67159],[0.20995,0.72198]]},
+  "duck":{"n":6,"c":"--gelb","p":[[-1.16166,0.48255],[-0.28979,0.4275],[-0.34478,-0.8211],[0.42059,-0.64882],[1.18433,-0.48296],[0.19131,1.04283]],"chord":[0,5]},
+  "apple":{"n":7,"c":"--rosa","p":[[-0.80987,0.03237],[-0.34401,-0.92181],[0.05146,-0.25376],[0.46841,-0.91792],[0.82733,-0.23066],[0.45672,1.50017],[-0.65004,0.79161]],"chord":[0,6]},
+  "pear":{"n":6,"c":"--gruen","p":[[0.00473,-1.42997],[0.39613,-0.57443],[0.53738,0.63541],[0.02901,1.2345],[-0.57173,0.6831],[-0.39553,-0.54861]],"chord":[0,5]},
+  "banana":{"n":5,"c":"--gelb","p":[[-0.64986,-1.1877],[-0.64821,-0.40292],[-0.29153,0.28592],[0.40543,0.65722],[1.18416,0.64748]]},
+  "cherries":{"n":6,"c":"--rosa","p":[[-1.17355,0.62177],[-0.74944,-0.20346],[-0.01415,0.26872],[0.07667,-1.04397],[0.5523,-0.26023],[1.30817,0.61718]]},
+  "lemon":{"n":5,"c":"--gelb","p":[[-1.39466,-0.40563],[-0.54704,-0.29381],[0.67931,-0.22267],[1.24242,0.35014],[0.01997,0.57197]],"chord":[0,4]},
+  "carrot":{"n":4,"c":"--orange","p":[[-0.57979,-0.91893],[0.81209,-0.46413],[-0.12074,1.38473],[-0.11156,-0.00167]],"chord":[0,3]},
+  "strawberry":{"n":5,"c":"--rosa","p":[[-0.76609,-0.13844],[-0.32622,-0.78541],[0.44814,-0.70719],[0.65825,0.03896],[-0.01408,1.59208]],"chord":[0,4]},
+  "pineapple":{"n":7,"c":"--gelb","p":[[-0.25213,1.15392],[-1.00712,0.19604],[-0.31051,-0.15461],[-0.63348,-0.8642],[0.46445,-0.17873],[0.75453,-0.93829],[0.98426,0.78588]],"chord":[0,6]},
+  "watermelon":{"n":4,"c":"--gruen","p":[[-0.96869,-0.65668],[0.98855,-0.5953],[0.37849,0.29955],[-0.39835,0.95243]]},
+  "ice-cream":{"n":6,"c":"--rosa","p":[[-0.79804,-0.15641],[-0.48504,-0.9284],[0.37603,-0.80262],[0.76202,-0.11814],[0.15065,0.35961],[-0.00563,1.64596]],"chord":[0,5]},
+  "teapot":{"n":7,"c":"--hellblau","p":[[-1.12844,-0.46915],[-0.7002,0.17768],[-0.16527,-0.76908],[0.60613,-0.88645],[0.97151,0.02124],[0.61239,0.94484],[-0.19612,0.98092]],"chord":[2,6]},
+  "bottle":{"n":7,"c":"--tuerkis","p":[[-0.43734,-1.12984],[0.34005,-1.07624],[0.07142,-0.31344],[0.39564,0.40529],[0.95,0.95607],[-0.6753,1.0667],[-0.64447,0.09145]],"chord":[0,6]},
+  "jug":{"n":6,"c":"--orange","p":[[-0.35727,-0.79487],[0.78756,-0.78928],[0.92654,0.29365],[0.37772,0.84116],[-0.76519,0.76145],[-0.96936,-0.31211]]},
+  "bowl":{"n":4,"c":"--gelb","p":[[-1.21182,-0.34947],[-0.38946,0.31933],[0.40889,0.54717],[1.19239,-0.51703]]},
+  "spoon":{"n":5,"c":"--tuerkis","p":[[-0.02032,1.29498],[0.05918,0.05941],[-1.13724,-0.33915],[-0.04449,-0.71227],[1.14288,-0.30296]],"chord":[1,4]},
+  "fork":{"n":6,"c":"--hellblau","p":[[-0.93463,-0.70009],[-0.93463,0.23355],[-0.00054,1.1672],[0.93356,0.23355],[0.93424,-0.70233],[0.00199,-0.23187]]},
+  "knife":{"n":3,"c":"--orange","p":[[-1.05702,0],[-0.28514,0],[1.34216,0]]},
+  "bread":{"n":6,"c":"--gelb","p":[[-1.14952,0.6251],[-1.06461,-0.14618],[-0.1978,-0.35352],[0.5093,-0.67103],[1.04251,-0.10388],[0.86013,0.64951]],"chord":[0,5]},
+  "egg":{"n":5,"c":"--gelb","p":[[-0.04879,-1.11014],[0.54935,-0.43848],[0.63898,1.02854],[-0.67564,0.96645],[-0.46391,-0.44636]],"chord":[0,4]},
+  "cheese":{"n":5,"c":"--orange","p":[[-0.9875,-1.13143],[0.76002,-0.23278],[0.8826,0.61419],[0.04406,0.07115],[-0.69917,0.67887]],"chord":[0,4]},
+  "chair":{"n":4,"c":"--orange","p":[[-0.64327,-1.17932],[-0.64327,0.10721],[0.64327,0.10721],[0.64327,0.9649]]},
+  "table":{"n":5,"c":"--tuerkis","p":[[-0.79874,0.66833],[-0.82262,-0.81323],[0.77064,-0.8209],[0.796,0.80426],[0.05471,0.16154]]},
+  "bed":{"n":5,"c":"--hellblau","p":[[-0.94941,-0.60878],[-0.93992,0.52569],[1.03923,0.54756],[1.02469,-0.22851],[-0.1746,-0.23597]]},
+  "sofa":{"n":7,"c":"--violett","p":[[-1.31076,-0.18619],[-0.70676,0.30007],[-0.70041,-0.66591],[0.41917,-0.61909],[0.39421,0.28242],[1.03799,-0.1499],[0.86655,1.03862]]},
+  "lamp":{"n":6,"c":"--gelb","p":[[-0.0001,1.19782],[0.0221,0.28957],[-0.89434,0.31419],[-0.45626,-1.06716],[0.44386,-1.0693],[0.88473,0.33487]],"chord":[1,5]},
+  "clock":{"n":5,"c":"--tuerkis","p":[[-0.34198,-0.19133],[-0.36429,0.78298],[0.77519,0.96347],[0.78914,-0.73684],[-0.85805,-0.81828]],"chord":[0,4]},
+  "umbrella":{"n":7,"c":"--rosa","p":[[-0.99678,-0.10491],[-0.29569,-0.89087],[0.48454,-0.88193],[1.22162,-0.0938],[0.10242,-0.09985],[0.13034,1.03603],[-0.64645,1.03532]]},
+  "door":{"n":4,"c":"--orange","p":[[-0.55943,1.00528],[-0.54347,-0.79802],[0.55469,-0.85015],[0.5482,0.64289]]},
+  "window":{"n":4,"c":"--hellblau","p":[[-0.39194,-0.91439],[0.39626,-0.91714],[0.40701,0.9122],[-0.41133,0.91932]],"chord":[0,3]},
+  "plant":{"n":6,"c":"--gruen","p":[[-0.48034,1.2851],[-0.92528,0.28729],[-0.09529,0.38658],[0.00708,-1.11847],[1.02284,-0.69254],[0.471,-0.14796]]},
+  "book":{"n":7,"c":"--orange","p":[[-0.96337,0.88408],[-1.13923,-0.5076],[-0.36415,-0.52134],[-0.02311,0.1803],[0.40882,-0.46462],[1.17681,-0.34207],[0.90423,0.77126]]},
+  "pencil":{"n":5,"c":"--gelb","p":[[-1.18926,-0.3349],[0.65302,-0.26796],[1.41168,0.03233],[0.0175,0.18286],[-0.89294,0.38768]],"chord":[0,4]},
+  "scissors":{"n":6,"c":"--tuerkis","p":[[-0.68885,-0.96454],[0.11581,-0.20832],[-0.74813,0.58128],[-0.20333,1.13605],[0.58183,0.41093],[0.94268,-0.95538]]},
+  "paintbrush":{"n":6,"c":"--rosa","p":[[-1.06555,1.22246],[-0.40471,0.36269],[-0.27921,-0.43363],[0.26617,-0.98765],[1.11278,-0.5141],[0.37053,0.35024]]},
+  "bag":{"n":6,"c":"--violett","p":[[-0.46633,-0.08478],[-0.40474,-0.8608],[0.363,-0.98569],[0.45894,-0.21489],[0.80103,1.05838],[-0.7519,1.08778]],"chord":[0,5]},
+  "glasses":{"n":7,"c":"--hellblau","p":[[-1.13077,-0.49313],[-1.12044,0.49261],[-0.21058,0.53762],[-0.17193,-0.52675],[0.37164,0.02601],[0.9043,-0.5373],[1.35778,0.50093]]},
+  "hat":{"n":6,"c":"--orange","p":[[-1.264,0.46065],[-0.55514,0.14497],[-0.37704,-0.83148],[0.41199,-0.71975],[0.57462,0.24998],[1.20956,0.69564]],"chord":[0,5]},
+  "shoe":{"n":6,"c":"--tuerkis","p":[[-0.93589,-1.12572],[-0.454,-0.30912],[0.29137,0.06895],[1.09961,0.02008],[0.81803,0.74458],[-0.81913,0.60123]],"chord":[0,5]},
+  "t-shirt":{"n":7,"c":"--rosa","p":[[-1.5426,-0.07977],[-0.7767,-0.64065],[-0.23201,-0.08711],[0.35668,-0.59445],[0.99262,-0.04572],[0.87096,1.00211],[0.33105,0.4456]]},
+  "watch":{"n":7,"c":"--violett","p":[[-0.10713,-1.46192],[0.40621,-0.87706],[0.0329,-0.1977],[0.69409,0.22552],[0.33844,1.15011],[-0.32778,0.73979],[-1.03674,0.42125]],"chord":[0,6]},
+  "bell":{"n":6,"c":"--gelb","p":[[-0.98412,0.70954],[-0.30903,0.32709],[-0.57491,-0.41251],[-0.05655,-0.98977],[0.75238,-0.46332],[1.17222,0.82897]],"chord":[0,5]},
+  "guitar":{"n":7,"c":"--orange","p":[[-0.91332,0.80666],[-0.97765,0.0032],[-0.20848,-0.09677],[0.66286,-1.23378],[1.10277,-0.59221],[0.45856,0.2986],[-0.12474,0.81431]]},
+  "piano":{"n":7,"c":"--violett","p":[[-1.09923,0.18087],[-1.00506,-0.8738],[0.88002,-0.94237],[0.96634,0.66786],[0.46615,0.07532],[0.11375,0.76659],[-0.32196,0.12553]]},
+  "headphones":{"n":5,"c":"--hellblau","p":[[-0.85561,0.50567],[-1.23223,-0.19531],[0.16517,-0.28995],[0.91114,-0.50556],[1.01153,0.48516]]},
+  "camera":{"n":7,"c":"--tuerkis","p":[[-1.28232,0.08736],[-0.50459,0.13924],[-0.45886,-0.63534],[0.27885,-0.92056],[0.2396,-0.14648],[1.02117,0.09548],[0.70614,1.3803]],"chord":[0,6]},
+  "football":{"n":7,"c":"--gruen","p":[[-1.39432,0.08348],[-0.77789,-0.38859],[0.01877,-0.72228],[0.7667,-0.28129],[1.4218,0.13899],[0.41554,0.62448],[-0.45061,0.54522]],"chord":[0,6]},
+  "kite":{"n":5,"c":"--rosa","p":[[-0.87511,-0.47733],[-0.07956,-0.87511],[0.716,-0.47733],[-0.07956,0.31822],[0.31822,1.51156]],"chord":[0,3]},
+  "balloon":{"n":6,"c":"--orange","p":[[0.19475,1.4055],[-0.31895,0.34556],[-0.99192,-0.08339],[-0.46989,-0.75892],[0.5477,-0.76011],[1.0383,-0.14863]],"chord":[1,5]},
+  "dice":{"n":4,"c":"--violett","p":[[-0.70711,-0.70711],[0.70711,-0.70711],[0.70711,0.70711],[-0.70711,0.70711]],"chord":[0,3]},
+  "puzzle":{"n":7,"c":"--gruen","p":[[-0.94927,1.26175],[-1.01828,-0.00847],[-0.12859,0.24328],[-0.14301,-0.53162],[0.47223,-1.00297],[0.53954,-0.15968],[1.22738,0.1977]]},
+  "car":{"n":7,"c":"--hellblau","p":[[-1.2603,0.45135],[-1.1128,-0.31093],[-0.33852,-0.35931],[0.34243,-0.7304],[0.36656,0.22473],[1.04874,-0.14827],[0.9539,0.87285]],"chord":[0,6]},
+  "bus":{"n":6,"c":"--gelb","p":[[-1.2211,-0.64804],[0.47792,-0.64184],[0.65954,0.11236],[1.22123,0.64753],[-0.48699,0.64539],[-0.6506,-0.1154]],"chord":[0,5]},
+  "bicycle":{"n":7,"c":"--tuerkis","p":[[-1.42104,-0.04481],[-0.31226,-0.90398],[0.4934,0.0799],[-0.64631,-0.07623],[0.11343,0.76048],[1.06239,0.85029],[0.71039,-0.66565]]},
+  "train":{"n":6,"c":"--orange","p":[[-1.19615,0.55528],[-0.42117,0.54679],[-0.61611,-0.68685],[0.20386,-0.68276],[0.60853,0.13366],[1.42104,0.13389]]},
+  "plane":{"n":7,"c":"--hellblau","p":[[-1.43417,0.1547],[-0.56631,0.01223],[-0.0425,-1.07502],[0.51203,-0.529],[1.29382,0.19431],[0.29118,0.21691],[-0.05405,1.02587]]},
+  "helicopter":{"n":7,"c":"--tuerkis","p":[[-1.37811,-0.66252],[-0.11783,-0.63941],[-0.12225,0.18192],[0.64833,-0.28898],[1.26735,0.17883],[0.641,0.6353],[-0.93849,0.59485]]},
+  "rocket":{"n":6,"c":"--rosa","p":[[-0.61962,0.93241],[-0.63108,-0.55125],[0.11049,-1.35905],[0.61305,-0.5112],[0.52476,1.03096],[0.0024,0.45815]],"chord":[0,5]},
+  "tent":{"n":4,"c":"--orange","p":[[-1.20604,0.1005],[-0.40202,-0.70352],[0.40202,0.1005],[1.20604,0.50252]],"chord":[0,2]},
+  "lighthouse":{"n":7,"c":"--gelb","p":[[-1.36773,0.64153],[-0.27063,0.26779],[-0.57078,-0.45745],[0.01655,-0.9635],[0.72235,-0.63345],[0.50508,0.15791],[0.96515,0.98718]],"chord":[0,6]},
+  "anchor":{"n":7,"c":"--hellblau","p":[[-1.22473,0.41577],[-0.67153,0.95866],[-0.02402,0.45612],[-0.06898,-0.58887],[0.40928,-1.19892],[0.82264,-0.54144],[0.75733,0.49868]]},
+  "lock":{"n":6,"c":"--gelb","p":[[0.27643,1.45853],[0.36627,0.44083],[-0.64219,0.34495],[-0.64162,-0.4948],[-0.15104,-1.09744],[0.79215,-0.65207]],"chord":[1,5]},
+  "magnet":{"n":6,"c":"--rosa","p":[[-0.71707,-1.08169],[-0.58064,0.05096],[-0.33652,0.78751],[0.40021,1.03983],[0.52641,0.27477],[0.70761,-1.07139]]},
+  "hammer":{"n":7,"c":"--orange","p":[[-1.28431,-0.54538],[-0.5929,-0.92331],[0.80111,-0.43683],[0.10313,-0.09986],[1.10043,0.70876],[0.34318,0.87491],[-0.47063,0.42171]]},
+  "spanner":{"n":6,"c":"--tuerkis","p":[[-1.04305,0.51122],[-1.37896,-0.18723],[0.11043,-0.08148],[0.60168,-0.6809],[1.10428,-0.08684],[0.60562,0.52524]]},
+  "gear":{"n":7,"c":"--violett","p":[[-0.98026,-0.89631],[0.15131,-0.31979],[0.3151,-1.08019],[0.87943,0.34192],[0.55572,1.26558],[-0.06846,0.53726],[-0.85285,0.15153]],"chord":[0,6]},
+  "battery":{"n":6,"c":"--gruen","p":[[-1.21862,-0.51636],[0.41185,-0.65041],[0.21642,0.12222],[0.96142,-0.10254],[0.79346,0.66134],[-1.16454,0.48576]],"chord":[0,5]},
+  "plug":{"n":6,"c":"--hellblau","p":[[-0.86604,-0.86934],[-0.8455,0.00262],[0.33847,-0.02933],[0.4456,-0.86333],[0.92304,0.47952],[0.00443,1.27987]]},
+  "envelope":{"n":6,"c":"--tuerkis","p":[[-0.85948,-0.95381],[0.0196,0.09036],[0.83589,-0.94854],[0.8767,0.45258],[0.00114,0.88403],[-0.87385,0.47538]],"chord":[0,5]},
+  "gift":{"n":7,"c":"--rosa","p":[[-0.86537,0.10434],[-0.38618,-0.69818],[0.26723,-0.15695],[0.53361,-0.88723],[1.02362,0.0509],[0.70392,0.79577],[-1.27683,0.79135]],"chord":[0,6]},
+  "crown":{"n":5,"c":"--gelb","p":[[-0.68119,-0.85278],[-0.08019,0.22129],[0.76145,-0.9135],[0.75678,0.77255],[-0.75686,0.77244]],"chord":[0,4]},
 };
 const FIG_BAND={};
 for(const k in FIGURES){const f=FIGURES[k];
@@ -1694,6 +1837,7 @@ function classifyFigure(t){
 const FIG_WEIGHT={3:14,4:13,5:12,6:10,7:9};
 const FIT_WEIGHT={rough:0.86,clear:1,sharp:1.12};
 function figEmblem(k,{ink=EMBLEM_INK,fit=null}={}){
+  if(STAMPS[k]) return `<svg width="96" height="96" viewBox="0 0 96 96" overflow="hidden" style="color:${ink}">${STAMPS[k].art}</svg>`;
   return figMarkup(k,{ink,fit});
 }
 function figMarkup(k,{ink='currentColor',ghost=false,pad=18,fit=null}={}){
@@ -1708,7 +1852,7 @@ function figMarkup(k,{ink='currentColor',ghost=false,pad=18,fit=null}={}){
   const w=(FIG_WEIGHT[f.n]||10)*(fit&&FIT_WEIGHT[fit]||1);
   return `<path d="${path}" fill="none" stroke="${ink}" stroke-width="${w.toFixed(2)}" stroke-linecap="round" stroke-linejoin="round"${ghost?' opacity=".5"':''}/>`;
 }
-const FIG_ALIASES={box:'window',tent:'triangle'};
+const FIG_ALIASES={};
 const figureKey=k=>FIG_ALIASES[k]||k;
 const FKEYS=Object.keys(FIGURES).filter(k=>!FIG_ALIASES[k]);
 function figureBadge(key){
@@ -1868,6 +2012,11 @@ const GEN_VERSIONS=[
            'holes','corners','keys','labyrinth','flowers','constellation','cthulhu',
            'stillness','running','flags','boats','symmetry','nesting','clocks',
            'branching','letters','column','singularity','languages','gravity','tiles'] }
+  ,{v:20,from:'2026-09-05',par:'family',layout:'families',
+    split:'vertical',merge:'widen',pinFill:true,parMode:'greedy',parSlack:3,
+    splitPart:'clear',optimum:'free',rung:'earned',chord:'clues',selfX:'count',
+    ramp:'mosaic',dense:'cap',weave:'pattern',mix:'contig',open:'stamps',
+    ink:'poster16',mechanic:'classic',reveal:'plot',feats:Object.keys(FIGURES)}
 ];
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
                  splitPart:'fixed', optimum:'table', rung:'flat',
@@ -1999,9 +2148,10 @@ const RAMP_VISUAL=[
   {threads:4, nodes:7, shared:3, pinned:2, coupled:0, relay:1, minX:12, maxX:16},
   {threads:4, nodes:6, shared:4, pinned:0, coupled:0, relay:0, minX:10, maxX:16}
 ];
+const RAMP_MOSAIC=RAMP_MECH.map(s=>({...s,maxX:Math.min(16,s.maxX)}));
 const rampFor=r=>{
   const m=(r||GEN_RULES).ramp;
-  return m==='visual'?RAMP_VISUAL : m==='mech2'?RAMP_MECH2
+  return m==='mosaic'?RAMP_MOSAIC : m==='visual'?RAMP_VISUAL : m==='mech2'?RAMP_MECH2
        : m==='mech'?RAMP_MECH : m==='even'?RAMP_EVEN : RAMP;
 };
 function mixLens(threads, nodes){
@@ -2020,61 +2170,51 @@ function netSpec(i, rules){
 }
 
 const PACK={
-'2026-08-25':[{s:'bake:2026-08-25:0:26',d:'2026-10-03',v:17},{s:'bake:2026-08-25:1:9',d:'2026-09-24',v:17},{s:'bake:2026-08-25:2:20',d:'2026-10-11',v:17},{s:'bake:2026-08-25:3:32',d:'2026-10-14',v:17},{s:'bake:2026-08-25:4:20',d:'2026-10-01',v:17},{s:'bake:2026-08-25:5:30',d:'2026-10-12',v:17},{s:'bake:2026-08-25:6:7',d:'2026-10-06',v:17},{s:'bake:2026-08-25:7:28',d:'2026-10-02',v:17},{s:'bake:2026-08-25:8:14',d:'2026-10-06',v:17},{s:'bake:2026-08-25:9:24',d:'2026-10-04',v:17}],
-'2026-08-26':[{s:'bake:2026-08-26:0:42',d:'2026-10-01',v:17},{s:'bake:2026-08-26:1:16',d:'2026-09-29',v:17},{s:'bake:2026-08-26:2:6',d:'2026-09-25',v:17},{s:'bake:2026-08-26:3:19',d:'2026-10-06',v:17},{s:'bake:2026-08-26:4:16',d:'2026-09-29',v:17},{s:'bake:2026-08-26:5:0',d:'2026-09-25',v:17},{s:'bake:2026-08-26:6:4',d:'2026-09-29',v:17},{s:'bake:2026-08-26:7:0',d:'2026-10-08',v:17},{s:'bake:2026-08-26:8:4',d:'2026-09-30',v:17},{s:'bake:2026-08-26:9:41',d:'2026-10-14',v:17}],
-'2026-08-27':[{s:'bake:2026-08-27:0:24',d:'2026-09-06',v:17},{s:'bake:2026-08-27:1:24',d:'2026-09-15',v:17},{s:'bake:2026-08-27:2:8',d:'2026-08-29',v:17},{s:'bake:2026-08-27:3:18',d:'2026-09-08',v:17},{s:'bake:2026-08-27:4:6',d:'2026-09-01',v:17},{s:'bake:2026-08-27:5:31',d:'2026-09-10',v:17},{s:'bake:2026-08-27:6:4',d:'2026-08-30',v:17},{s:'bake:2026-08-27:7:1',d:'2026-09-07',v:17},{s:'bake:2026-08-27:8:44',d:'2026-09-07',v:17},{s:'bake:2026-08-27:9:38',d:'2026-09-12',v:17}],
-'2026-08-28':[{s:'bake:2026-08-28:0:37',d:'2026-09-07',v:17},{s:'bake:2026-08-28:1:22',d:'2026-08-30',v:17},{s:'bake:2026-08-28:2:35',d:'2026-09-02',v:17},{s:'bake:2026-08-28:3:1',d:'2026-08-31',v:17},{s:'bake:2026-08-28:4:10',d:'2026-08-31',v:17},{s:'bake:2026-08-28:5:1',d:'2026-09-11',v:17},{s:'bake:2026-08-28:6:10',d:'2026-09-03',v:17},{s:'bake:2026-08-28:7:26',d:'2026-09-16',v:17},{s:'bake:2026-08-28:8:10',d:'2026-09-02',v:17},{s:'bake:2026-08-28:9:22',d:'2026-09-13',v:17}],
-'2026-08-29':[{s:'bake:2026-08-29:0:12',d:'2026-09-02',v:17},{s:'bake:2026-08-29:1:18',d:'2026-08-31',v:17},{s:'bake:2026-08-29:2:1',d:'2026-09-05',v:17},{s:'bake:2026-08-29:3:20',d:'2026-09-03',v:17},{s:'bake:2026-08-29:4:8',d:'2026-09-18',v:17},{s:'bake:2026-08-29:5:45',d:'2026-09-08',v:17},{s:'bake:2026-08-29:6:36',d:'2026-09-10',v:17},{s:'bake:2026-08-29:7:35',d:'2026-09-10',v:17},{s:'bake:2026-08-29:8:8',d:'2026-09-14',v:17},{s:'bake:2026-08-29:9:24',d:'2026-09-15',v:17}],
-'2026-08-30':[{s:'bake:2026-08-30:0:2',d:'2026-09-01',v:17,o:2,c:3},{s:'bake:2026-08-30:1:21',d:'2026-08-31',v:17,o:3,c:4},{s:'recompose:2026-08-30:2:9:30',d:'2026-09-08',v:17,o:3,c:4},{s:'bake:2026-08-30:3:15',d:'2026-09-08',v:17,o:4,c:5},{s:'bake:2026-08-30:4:5',d:'2026-09-01',v:17,o:4,c:5},{s:'bake:2026-08-30:5:0',d:'2026-09-01',v:17,o:4,c:5},{s:'bake:2026-08-30:6:17',d:'2026-09-01',v:17,o:6,c:8},{s:'bake:2026-08-30:7:9',d:'2026-09-02',v:17,o:7,c:9},{s:'bake:2026-08-30:8:17',d:'2026-09-10',v:17,o:9,c:12},{s:'recompose2:2026-08-30:9:8:63',d:'2026-09-07',v:17,o:10,c:13}],
-'2026-08-31':[{s:'bake:2026-08-31:0:15',d:'2026-08-31',v:19,o:2,c:3},{s:'bake:2026-08-31:1:1',d:'2026-09-01',v:19,o:3,c:4},{s:'bake:2026-08-31:2:6',d:'2026-09-04',v:19,o:3,c:4},{s:'bake:2026-08-31:3:33',d:'2026-09-16',v:19,o:3,c:4},{s:'bake:2026-08-31:4:30',d:'2026-09-05',v:19,o:4,c:5},{s:'bake:2026-08-31:5:11',d:'2026-09-03',v:19,o:4,c:5},{s:'bake:2026-08-31:6:26',d:'2026-09-13',v:19,o:6,c:8},{s:'bake:2026-08-31:7:61',d:'2026-08-31',v:19,o:7,c:9},{s:'bake:2026-08-31:8:24',d:'2026-08-31',v:19,o:7,c:9},{s:'bake:2026-08-31:9:4',d:'2026-08-31',v:19,o:9,c:12}],
-'2026-09-01':[{s:'bake:2026-09-01:0:8',d:'2026-09-01',v:19,o:2,c:3},{s:'bake:2026-09-01:1:0',d:'2026-09-03',v:19,o:3,c:4},{s:'bake:2026-09-01:2:58',d:'2026-09-01',v:19,o:3,c:4},{s:'bake:2026-09-01:3:1',d:'2026-09-09',v:19,o:3,c:4},{s:'bake:2026-09-01:4:21',d:'2026-09-10',v:19,o:3,c:4},{s:'bake:2026-09-01:5:31',d:'2026-09-07',v:19,o:5,c:7},{s:'bake:2026-09-01:6:4',d:'2026-09-07',v:19,o:6,c:8},{s:'bake:2026-09-01:7:29',d:'2026-09-01',v:19,o:7,c:9},{s:'bake:2026-09-01:8:6',d:'2026-09-01',v:19,o:7,c:9},{s:'bake:2026-09-01:9:31',d:'2026-09-01',v:19,o:9,c:12}],
-'2026-09-02':[{s:'bake:2026-09-02:0:34',d:'2026-09-07',v:19,o:2,c:3},{s:'bake:2026-09-02:1:22',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-02:2:73',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-02:3:42',d:'2026-09-07',v:19,o:3,c:4},{s:'bake:2026-09-02:4:8',d:'2026-09-15',v:19,o:4,c:5},{s:'bake:2026-09-02:5:4',d:'2026-09-14',v:19,o:4,c:5},{s:'bake:2026-09-02:6:24',d:'2026-09-15',v:19,o:6,c:8},{s:'bake:2026-09-02:7:41',d:'2026-09-02',v:19,o:7,c:9},{s:'bake:2026-09-02:8:16',d:'2026-09-02',v:19,o:8,c:10},{s:'bake:2026-09-02:9:60',d:'2026-09-02',v:19,o:9,c:12}],
-'2026-09-03':[{s:'bake:2026-09-03:0:4',d:'2026-09-03',v:19,o:2,c:3},{s:'bake:2026-09-03:1:10',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-03:2:31',d:'2026-09-06',v:19,o:3,c:4},{s:'bake:2026-09-03:3:9',d:'2026-09-04',v:19,o:3,c:4},{s:'bake:2026-09-03:4:2',d:'2026-09-04',v:19,o:5,c:7},{s:'bake:2026-09-03:5:3',d:'2026-09-03',v:19,o:5,c:7},{s:'bake:2026-09-03:6:6',d:'2026-09-03',v:19,o:6,c:8},{s:'bake:2026-09-03:7:0',d:'2026-09-03',v:19,o:8,c:10},{s:'bake:2026-09-03:8:10',d:'2026-09-03',v:19,o:8,c:10},{s:'bake:2026-09-03:9:23',d:'2026-09-03',v:19,o:9,c:12}],
-'2026-09-04':[{s:'bake:2026-09-04:0:5',d:'2026-09-05',v:19,o:1,c:2},{s:'bake:2026-09-04:1:42',d:'2026-09-05',v:19,o:3,c:4},{s:'bake:2026-09-04:2:0',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-04:3:2',d:'2026-09-16',v:19,o:4,c:5},{s:'bake:2026-09-04:4:14',d:'2026-09-06',v:19,o:4,c:5},{s:'bake:2026-09-04:5:4',d:'2026-09-04',v:19,o:5,c:7},{s:'bake:2026-09-04:6:43',d:'2026-09-10',v:19,o:6,c:8},{s:'bake:2026-09-04:7:43',d:'2026-09-05',v:19,o:8,c:10},{s:'bake:2026-09-04:8:2',d:'2026-09-04',v:19,o:9,c:12},{s:'bake:2026-09-04:9:27',d:'2026-09-04',v:19,o:9,c:12}],
-'2026-09-05':[{s:'bake:2026-09-05:0:1',d:'2026-09-06',v:19,o:2,c:3},{s:'bake:2026-09-05:1:36',d:'2026-09-24',v:19,o:2,c:3},{s:'bake:2026-09-05:2:50',d:'2026-09-07',v:19,o:2,c:3},{s:'bake:2026-09-05:3:17',d:'2026-09-08',v:19,o:4,c:5},{s:'bake:2026-09-05:4:13',d:'2026-09-20',v:19,o:4,c:5},{s:'bake:2026-09-05:5:5',d:'2026-09-09',v:19,o:5,c:7},{s:'bake:2026-09-05:6:13',d:'2026-09-12',v:19,o:5,c:7},{s:'bake:2026-09-05:7:53',d:'2026-09-05',v:19,o:7,c:9},{s:'bake:2026-09-05:8:52',d:'2026-09-05',v:19,o:8,c:10},{s:'bake:2026-09-05:9:3',d:'2026-09-05',v:19,o:9,c:12}],
-'2026-09-06':[{s:'bake:2026-09-06:0:1',d:'2026-09-08',v:19,o:1,c:2},{s:'bake:2026-09-06:1:6',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-06:2:45',d:'2026-09-09',v:19,o:3,c:4},{s:'bake:2026-09-06:3:34',d:'2026-09-09',v:19,o:4,c:5},{s:'bake:2026-09-06:4:4',d:'2026-09-18',v:19,o:4,c:5},{s:'bake:2026-09-06:5:9',d:'2026-09-12',v:19,o:4,c:5},{s:'bake:2026-09-06:6:7',d:'2026-09-13',v:19,o:6,c:8},{s:'bake:2026-09-06:7:8',d:'2026-09-06',v:19,o:8,c:10},{s:'bake:2026-09-06:8:7',d:'2026-09-06',v:19,o:8,c:10},{s:'bake:2026-09-06:9:1',d:'2026-09-06',v:19,o:9,c:12}],
-'2026-09-07':[{s:'bake:2026-09-07:0:6',d:'2026-09-10',v:19,o:2,c:3},{s:'bake:2026-09-07:1:7',d:'2026-09-09',v:19,o:3,c:4},{s:'bake:2026-09-07:2:12',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-07:3:5',d:'2026-09-07',v:19,o:4,c:5},{s:'bake:2026-09-07:4:19',d:'2026-09-09',v:19,o:4,c:5},{s:'bake:2026-09-07:5:11',d:'2026-09-18',v:19,o:5,c:7},{s:'bake:2026-09-07:6:43',d:'2026-09-20',v:19,o:6,c:8},{s:'bake:2026-09-07:7:16',d:'2026-09-07',v:19,o:8,c:10},{s:'bake:2026-09-07:8:3',d:'2026-09-07',v:19,o:9,c:12},{s:'bake:2026-09-07:9:12',d:'2026-09-07',v:19,o:9,c:12}],
-'2026-09-08':[{s:'bake:2026-09-08:0:1',d:'2026-09-09',v:19,o:2,c:3},{s:'bake:2026-09-08:1:5',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-08:2:5',d:'2026-09-08',v:19,o:3,c:4},{s:'bake:2026-09-08:3:9',d:'2026-09-14',v:19,o:4,c:5},{s:'bake:2026-09-08:4:7',d:'2026-09-10',v:19,o:4,c:5},{s:'bake:2026-09-08:5:1',d:'2026-09-16',v:19,o:5,c:7},{s:'bake:2026-09-08:6:5',d:'2026-09-19',v:19,o:6,c:8},{s:'bake:2026-09-08:7:7',d:'2026-09-08',v:19,o:7,c:9},{s:'bake:2026-09-08:8:16',d:'2026-09-08',v:19,o:9,c:12},{s:'bake:2026-09-08:9:55',d:'2026-09-08',v:19,o:9,c:12}],
-'2026-09-09':[{s:'bake:2026-09-09:0:0',d:'2026-09-11',v:19,o:2,c:3},{s:'bake:2026-09-09:1:0',d:'2026-09-13',v:19,o:3,c:4},{s:'bake:2026-09-09:2:57',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-09:3:1',d:'2026-09-09',v:19,o:4,c:5},{s:'bake:2026-09-09:4:25',d:'2026-09-17',v:19,o:4,c:5},{s:'bake:2026-09-09:5:0',d:'2026-09-11',v:19,o:4,c:5},{s:'bake:2026-09-09:6:2',d:'2026-09-13',v:19,o:6,c:8},{s:'bake:2026-09-09:7:0',d:'2026-09-09',v:19,o:7,c:9},{s:'bake:2026-09-09:8:16',d:'2026-09-09',v:19,o:9,c:12},{s:'bake:2026-09-09:9:11',d:'2026-09-09',v:19,o:9,c:12}],
-'2026-09-10':[{s:'bake:2026-09-10:0:14',d:'2026-09-15',v:19,o:2,c:3},{s:'bake:2026-09-10:1:5',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-10:2:43',d:'2026-09-27',v:19,o:3,c:4},{s:'bake:2026-09-10:3:5',d:'2026-09-10',v:19,o:4,c:5},{s:'bake:2026-09-10:4:36',d:'2026-09-22',v:19,o:4,c:5},{s:'bake:2026-09-10:5:4',d:'2026-09-14',v:19,o:4,c:5},{s:'bake:2026-09-10:6:3',d:'2026-09-11',v:19,o:6,c:8},{s:'bake:2026-09-10:7:3',d:'2026-09-10',v:19,o:8,c:10},{s:'bake:2026-09-10:8:0',d:'2026-09-10',v:19,o:9,c:12},{s:'bake:2026-09-10:9:0',d:'2026-09-10',v:19,o:9,c:12}],
-'2026-09-11':[{s:'bake:2026-09-11:0:12',d:'2026-09-18',v:19,o:2,c:3},{s:'bake:2026-09-11:1:22',d:'2026-09-24',v:19,o:3,c:4},{s:'bake:2026-09-11:2:97',d:'2026-09-12',v:19,o:3,c:4},{s:'bake:2026-09-11:3:5',d:'2026-09-16',v:19,o:3,c:4},{s:'bake:2026-09-11:4:42',d:'2026-09-17',v:19,o:3,c:4},{s:'bake:2026-09-11:5:2',d:'2026-09-12',v:19,o:5,c:7},{s:'bake:2026-09-11:6:23',d:'2026-09-15',v:19,o:5,c:7},{s:'bake:2026-09-11:7:4',d:'2026-09-11',v:19,o:8,c:10},{s:'bake:2026-09-11:8:5',d:'2026-09-11',v:19,o:9,c:12},{s:'bake:2026-09-11:9:8',d:'2026-09-11',v:19,o:9,c:12}],
-'2026-09-12':[{s:'bake:2026-09-12:0:4',d:'2026-09-12',v:19,o:2,c:3},{s:'bake:2026-09-12:1:19',d:'2026-09-24',v:19,o:3,c:4},{s:'bake:2026-09-12:2:3',d:'2026-10-02',v:19,o:3,c:4},{s:'bake:2026-09-12:3:35',d:'2026-09-13',v:19,o:3,c:4},{s:'bake:2026-09-12:4:3',d:'2026-09-15',v:19,o:4,c:5},{s:'bake:2026-09-12:5:16',d:'2026-09-15',v:19,o:4,c:5},{s:'bake:2026-09-12:6:7',d:'2026-09-13',v:19,o:6,c:8},{s:'bake:2026-09-12:7:47',d:'2026-09-12',v:19,o:7,c:9},{s:'bake:2026-09-12:8:6',d:'2026-09-12',v:19,o:9,c:12},{s:'bake:2026-09-12:9:15',d:'2026-09-12',v:19,o:9,c:12}],
-'2026-09-13':[{s:'bake:2026-09-13:0:3',d:'2026-09-15',v:19,o:2,c:3},{s:'bake:2026-09-13:1:7',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-13:2:57',d:'2026-09-30',v:19,o:3,c:4},{s:'bake:2026-09-13:3:9',d:'2026-09-14',v:19,o:4,c:5},{s:'bake:2026-09-13:4:4',d:'2026-09-15',v:19,o:5,c:7},{s:'bake:2026-09-13:5:23',d:'2026-09-30',v:19,o:5,c:7},{s:'bake:2026-09-13:6:2',d:'2026-09-17',v:19,o:6,c:8},{s:'bake:2026-09-13:7:55',d:'2026-09-13',v:19,o:8,c:10},{s:'bake:2026-09-13:8:9',d:'2026-09-13',v:19,o:8,c:10},{s:'bake:2026-09-13:9:8',d:'2026-09-13',v:19,o:9,c:12}],
-'2026-09-14':[{s:'bake:2026-09-14:0:13',d:'2026-09-16',v:19,o:2,c:3},{s:'bake:2026-09-14:1:10',d:'2026-09-24',v:19,o:3,c:4},{s:'bake:2026-09-14:2:54',d:'2026-09-22',v:19,o:3,c:4},{s:'bake:2026-09-14:3:1',d:'2026-09-15',v:19,o:4,c:5},{s:'bake:2026-09-14:4:27',d:'2026-09-17',v:19,o:5,c:7},{s:'bake:2026-09-14:5:10',d:'2026-09-22',v:19,o:6,c:8},{s:'bake:2026-09-14:6:17',d:'2026-09-29',v:19,o:6,c:8},{s:'bake:2026-09-14:7:2',d:'2026-09-14',v:19,o:8,c:10},{s:'bake:2026-09-14:8:20',d:'2026-09-14',v:19,o:8,c:10},{s:'bake:2026-09-14:9:9',d:'2026-09-14',v:19,o:9,c:12}],
-'2026-09-15':[{s:'bake:2026-09-15:0:36',d:'2026-09-27',v:19,o:1,c:2},{s:'bake:2026-09-15:1:0',d:'2026-09-16',v:19,o:2,c:3},{s:'bake:2026-09-15:2:8',d:'2026-09-15',v:19,o:2,c:3},{s:'bake:2026-09-15:3:9',d:'2026-09-24',v:19,o:4,c:5},{s:'bake:2026-09-15:4:7',d:'2026-09-26',v:19,o:5,c:7},{s:'bake:2026-09-15:5:29',d:'2026-09-26',v:19,o:5,c:7},{s:'bake:2026-09-15:6:10',d:'2026-09-16',v:19,o:6,c:8},{s:'bake:2026-09-15:7:32',d:'2026-09-15',v:19,o:6,c:8},{s:'bake:2026-09-15:8:13',d:'2026-09-15',v:19,o:8,c:10},{s:'bake:2026-09-15:9:10',d:'2026-09-15',v:19,o:9,c:12}],
-'2026-09-16':[{s:'bake:2026-09-16:0:24',d:'2026-09-27',v:19,o:2,c:3},{s:'bake:2026-09-16:1:36',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-16:2:6',d:'2026-09-27',v:19,o:3,c:4},{s:'bake:2026-09-16:3:10',d:'2026-09-18',v:19,o:4,c:5},{s:'bake:2026-09-16:4:8',d:'2026-09-18',v:19,o:4,c:5},{s:'bake:2026-09-16:5:4',d:'2026-09-25',v:19,o:4,c:5},{s:'bake:2026-09-16:6:5',d:'2026-09-19',v:19,o:6,c:8},{s:'bake:2026-09-16:7:7',d:'2026-09-16',v:19,o:7,c:9},{s:'bake:2026-09-16:8:11',d:'2026-09-16',v:19,o:8,c:10},{s:'bake:2026-09-16:9:13',d:'2026-09-16',v:19,o:9,c:12}],
-'2026-09-17':[{s:'bake:2026-09-17:0:0',d:'2026-09-18',v:19,o:2,c:3},{s:'bake:2026-09-17:1:21',d:'2026-09-24',v:19,o:3,c:4},{s:'bake:2026-09-17:2:0',d:'2026-10-02',v:19,o:3,c:4},{s:'bake:2026-09-17:3:21',d:'2026-09-22',v:19,o:4,c:5},{s:'bake:2026-09-17:4:9',d:'2026-09-19',v:19,o:4,c:5},{s:'bake:2026-09-17:5:1',d:'2026-09-18',v:19,o:4,c:5},{s:'bake:2026-09-17:6:4',d:'2026-09-22',v:19,o:6,c:8},{s:'bake:2026-09-17:7:14',d:'2026-09-17',v:19,o:8,c:10},{s:'bake:2026-09-17:8:9',d:'2026-09-17',v:19,o:8,c:10},{s:'bake:2026-09-17:9:21',d:'2026-09-17',v:19,o:10,c:13}],
-'2026-09-18':[{s:'bake:2026-09-18:0:15',d:'2026-09-19',v:19,o:2,c:3},{s:'bake:2026-09-18:1:4',d:'2026-09-18',v:19,o:3,c:4},{s:'bake:2026-09-18:2:54',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-18:3:10',d:'2026-10-01',v:19,o:4,c:5},{s:'bake:2026-09-18:4:34',d:'2026-10-03',v:19,o:4,c:5},{s:'bake:2026-09-18:5:2',d:'2026-09-20',v:19,o:5,c:7},{s:'bake:2026-09-18:6:2',d:'2026-09-21',v:19,o:7,c:9},{s:'bake:2026-09-18:7:4',d:'2026-09-18',v:19,o:8,c:10},{s:'bake:2026-09-18:8:4',d:'2026-09-18',v:19,o:8,c:10},{s:'bake:2026-09-18:9:1',d:'2026-09-18',v:19,o:10,c:13}],
-'2026-09-19':[{s:'bake:2026-09-19:0:14',d:'2026-09-27',v:19,o:2,c:3},{s:'bake:2026-09-19:1:35',d:'2026-10-06',v:19,o:3,c:4},{s:'bake:2026-09-19:2:23',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-19:3:9',d:'2026-09-19',v:19,o:4,c:5},{s:'bake:2026-09-19:4:15',d:'2026-09-26',v:19,o:4,c:5},{s:'bake:2026-09-19:5:7',d:'2026-09-25',v:19,o:5,c:7},{s:'bake:2026-09-19:6:5',d:'2026-09-19',v:19,o:6,c:8},{s:'bake:2026-09-19:7:3',d:'2026-09-19',v:19,o:7,c:9},{s:'bake:2026-09-19:8:1',d:'2026-09-19',v:19,o:8,c:10},{s:'bake:2026-09-19:9:4',d:'2026-09-19',v:19,o:9,c:12}],
-'2026-09-20':[{s:'bake:2026-09-20:0:11',d:'2026-09-22',v:19,o:2,c:3},{s:'bake:2026-09-20:1:11',d:'2026-09-24',v:19,o:2,c:3},{s:'bake:2026-09-20:2:10',d:'2026-09-26',v:19,o:2,c:3},{s:'bake:2026-09-20:3:5',d:'2026-09-24',v:19,o:3,c:4},{s:'bake:2026-09-20:4:24',d:'2026-09-25',v:19,o:5,c:7},{s:'bake:2026-09-20:5:11',d:'2026-09-24',v:19,o:5,c:7},{s:'bake:2026-09-20:6:5',d:'2026-09-22',v:19,o:6,c:8},{s:'bake:2026-09-20:7:17',d:'2026-09-20',v:19,o:8,c:10},{s:'bake:2026-09-20:8:0',d:'2026-09-20',v:19,o:8,c:10},{s:'bake:2026-09-20:9:8',d:'2026-09-20',v:19,o:9,c:12}],
-'2026-09-21':[{s:'bake:2026-09-21:0:17',d:'2026-09-22',v:19,o:2,c:3},{s:'bake:2026-09-21:1:22',d:'2026-09-24',v:19,o:3,c:4},{s:'bake:2026-09-21:2:19',d:'2026-10-02',v:19,o:3,c:4},{s:'bake:2026-09-21:3:2',d:'2026-10-01',v:19,o:4,c:5},{s:'bake:2026-09-21:4:14',d:'2026-10-05',v:19,o:4,c:5},{s:'bake:2026-09-21:5:15',d:'2026-09-26',v:19,o:5,c:7},{s:'bake:2026-09-21:6:0',d:'2026-09-26',v:19,o:6,c:8},{s:'bake:2026-09-21:7:5',d:'2026-09-21',v:19,o:8,c:10},{s:'bake:2026-09-21:8:12',d:'2026-09-21',v:19,o:8,c:10},{s:'bake:2026-09-21:9:24',d:'2026-09-21',v:19,o:9,c:12}],
-'2026-09-22':[{s:'bake:2026-09-22:0:32',d:'2026-09-30',v:19,o:2,c:3},{s:'bake:2026-09-22:1:10',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-22:2:72',d:'2026-09-27',v:19,o:3,c:4},{s:'bake:2026-09-22:3:12',d:'2026-09-25',v:19,o:4,c:5},{s:'bake:2026-09-22:4:12',d:'2026-09-26',v:19,o:5,c:7},{s:'bake:2026-09-22:5:9',d:'2026-09-30',v:19,o:5,c:7},{s:'bake:2026-09-22:6:8',d:'2026-09-25',v:19,o:5,c:7},{s:'bake:2026-09-22:7:9',d:'2026-09-22',v:19,o:7,c:9},{s:'bake:2026-09-22:8:2',d:'2026-09-22',v:19,o:7,c:9},{s:'bake:2026-09-22:9:16',d:'2026-09-22',v:19,o:9,c:12}],
-'2026-09-23':[{s:'bake:2026-09-23:0:4',d:'2026-09-25',v:19,o:2,c:3},{s:'bake:2026-09-23:1:27',d:'2026-10-07',v:19,o:3,c:4},{s:'bake:2026-09-23:2:9',d:'2026-10-07',v:19,o:3,c:4},{s:'bake:2026-09-23:3:6',d:'2026-10-06',v:19,o:3,c:4},{s:'bake:2026-09-23:4:7',d:'2026-09-27',v:19,o:4,c:5},{s:'bake:2026-09-23:5:1',d:'2026-09-27',v:19,o:5,c:7},{s:'bake:2026-09-23:6:2',d:'2026-09-23',v:19,o:5,c:7},{s:'bake:2026-09-23:7:2',d:'2026-09-23',v:19,o:8,c:10},{s:'bake:2026-09-23:8:8',d:'2026-09-23',v:19,o:9,c:12},{s:'bake:2026-09-23:9:9',d:'2026-09-23',v:19,o:9,c:12}],
-'2026-09-24':[{s:'bake:2026-09-24:0:5',d:'2026-09-29',v:19,o:2,c:3},{s:'bake:2026-09-24:1:43',d:'2026-10-03',v:19,o:3,c:4},{s:'bake:2026-09-24:2:6',d:'2026-09-27',v:19,o:3,c:4},{s:'bake:2026-09-24:3:0',d:'2026-10-03',v:19,o:4,c:5},{s:'bake:2026-09-24:4:15',d:'2026-10-04',v:19,o:4,c:5},{s:'bake:2026-09-24:5:0',d:'2026-09-24',v:19,o:5,c:7},{s:'bake:2026-09-24:6:15',d:'2026-10-01',v:19,o:6,c:8},{s:'bake:2026-09-24:7:7',d:'2026-09-24',v:19,o:7,c:9},{s:'bake:2026-09-24:8:14',d:'2026-09-24',v:19,o:9,c:12},{s:'bake:2026-09-24:9:1',d:'2026-09-24',v:19,o:9,c:12}],
-'2026-09-25':[{s:'bake:2026-09-25:0:40',d:'2026-10-01',v:19,o:2,c:3},{s:'bake:2026-09-25:1:42',d:'2026-09-29',v:19,o:3,c:4},{s:'bake:2026-09-25:2:12',d:'2026-09-27',v:19,o:3,c:4},{s:'bake:2026-09-25:3:13',d:'2026-10-05',v:19,o:4,c:5},{s:'bake:2026-09-25:4:8',d:'2026-09-26',v:19,o:5,c:7},{s:'bake:2026-09-25:5:15',d:'2026-10-02',v:19,o:5,c:7},{s:'bake:2026-09-25:6:6',d:'2026-09-27',v:19,o:7,c:9},{s:'bake:2026-09-25:7:8',d:'2026-09-25',v:19,o:8,c:10},{s:'bake:2026-09-25:8:9',d:'2026-09-25',v:19,o:8,c:10},{s:'bake:2026-09-25:9:55',d:'2026-09-25',v:19,o:9,c:12}],
-'2026-09-26':[{s:'bake:2026-09-26:0:46',d:'2026-09-26',v:19,o:2,c:3},{s:'bake:2026-09-26:1:10',d:'2026-10-05',v:19,o:3,c:4},{s:'bake:2026-09-26:2:137',d:'2026-10-14',v:19,o:3,c:4},{s:'bake:2026-09-26:3:10',d:'2026-09-27',v:19,o:4,c:5},{s:'bake:2026-09-26:4:12',d:'2026-10-10',v:19,o:4,c:5},{s:'bake:2026-09-26:5:5',d:'2026-09-29',v:19,o:6,c:8},{s:'bake:2026-09-26:6:2',d:'2026-09-29',v:19,o:6,c:8},{s:'bake:2026-09-26:7:8',d:'2026-09-26',v:19,o:8,c:10},{s:'bake:2026-09-26:8:12',d:'2026-09-26',v:19,o:9,c:12},{s:'bake:2026-09-26:9:14',d:'2026-09-26',v:19,o:9,c:12}],
-'2026-09-27':[{s:'bake:2026-09-27:0:31',d:'2026-10-08',v:19,o:2,c:3},{s:'bake:2026-09-27:1:36',d:'2026-10-01',v:19,o:3,c:4},{s:'bake:2026-09-27:2:42',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-27:3:10',d:'2026-10-01',v:19,o:4,c:5},{s:'bake:2026-09-27:4:7',d:'2026-10-05',v:19,o:4,c:5},{s:'bake:2026-09-27:5:5',d:'2026-10-02',v:19,o:5,c:7},{s:'bake:2026-09-27:6:2',d:'2026-10-01',v:19,o:6,c:8},{s:'bake:2026-09-27:7:4',d:'2026-09-27',v:19,o:8,c:10},{s:'bake:2026-09-27:8:3',d:'2026-09-27',v:19,o:8,c:10},{s:'bake:2026-09-27:9:8',d:'2026-09-27',v:19,o:9,c:12}],
-'2026-09-28':[{s:'bake:2026-09-28:0:9',d:'2026-09-29',v:19,o:2,c:3},{s:'bake:2026-09-28:1:11',d:'2026-09-28',v:19,o:3,c:4},{s:'bake:2026-09-28:2:11',d:'2026-09-30',v:19,o:3,c:4},{s:'bake:2026-09-28:3:1',d:'2026-10-05',v:19,o:3,c:4},{s:'bake:2026-09-28:4:7',d:'2026-10-02',v:19,o:3,c:4},{s:'bake:2026-09-28:5:6',d:'2026-10-03',v:19,o:5,c:7},{s:'bake:2026-09-28:6:9',d:'2026-09-28',v:19,o:6,c:8},{s:'bake:2026-09-28:7:4',d:'2026-09-28',v:19,o:7,c:9},{s:'bake:2026-09-28:8:3',d:'2026-09-28',v:19,o:9,c:12},{s:'bake:2026-09-28:9:2',d:'2026-09-28',v:19,o:9,c:12}],
-'2026-09-29':[{s:'bake:2026-09-29:0:34',d:'2026-10-08',v:19,o:2,c:3},{s:'bake:2026-09-29:1:13',d:'2026-10-07',v:19,o:2,c:3},{s:'bake:2026-09-29:2:1',d:'2026-10-05',v:19,o:2,c:3},{s:'bake:2026-09-29:3:29',d:'2026-10-07',v:19,o:4,c:5},{s:'bake:2026-09-29:4:22',d:'2026-09-30',v:19,o:4,c:5},{s:'bake:2026-09-29:5:0',d:'2026-09-29',v:19,o:5,c:7},{s:'bake:2026-09-29:6:2',d:'2026-10-02',v:19,o:7,c:9},{s:'bake:2026-09-29:7:11',d:'2026-09-29',v:19,o:8,c:10},{s:'bake:2026-09-29:8:3',d:'2026-09-29',v:19,o:8,c:10},{s:'bake:2026-09-29:9:54',d:'2026-09-29',v:19,o:9,c:12}],
-'2026-09-30':[{s:'bake:2026-09-30:0:6',d:'2026-10-03',v:19,o:2,c:3},{s:'bake:2026-09-30:1:2',d:'2026-10-05',v:19,o:3,c:4},{s:'bake:2026-09-30:2:23',d:'2026-10-07',v:19,o:3,c:4},{s:'bake:2026-09-30:3:7',d:'2026-10-01',v:19,o:3,c:4},{s:'bake:2026-09-30:4:11',d:'2026-10-09',v:19,o:5,c:7},{s:'bake:2026-09-30:5:3',d:'2026-10-02',v:19,o:6,c:8},{s:'bake:2026-09-30:6:15',d:'2026-10-11',v:19,o:7,c:9},{s:'bake:2026-09-30:7:2',d:'2026-09-30',v:19,o:8,c:10},{s:'bake:2026-09-30:8:12',d:'2026-09-30',v:19,o:8,c:10},{s:'bake:2026-09-30:9:22',d:'2026-09-30',v:19,o:9,c:12}],
-'2026-10-01':[{s:'bake:2026-10-01:0:9',d:'2026-10-01',v:19,o:2,c:3},{s:'bake:2026-10-01:1:50',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-01:2:16',d:'2026-10-20',v:19,o:3,c:4},{s:'bake:2026-10-01:3:3',d:'2026-10-03',v:19,o:4,c:5},{s:'bake:2026-10-01:4:25',d:'2026-10-14',v:19,o:4,c:5},{s:'bake:2026-10-01:5:4',d:'2026-10-03',v:19,o:5,c:7},{s:'bake:2026-10-01:6:4',d:'2026-10-06',v:19,o:7,c:9},{s:'bake:2026-10-01:7:10',d:'2026-10-01',v:19,o:7,c:9},{s:'bake:2026-10-01:8:3',d:'2026-10-01',v:19,o:9,c:12},{s:'bake:2026-10-01:9:37',d:'2026-10-01',v:19,o:9,c:12}],
-'2026-10-02':[{s:'bake:2026-10-02:0:15',d:'2026-10-03',v:19,o:2,c:3},{s:'bake:2026-10-02:1:23',d:'2026-10-07',v:19,o:2,c:3},{s:'bake:2026-10-02:2:31',d:'2026-10-05',v:19,o:2,c:3},{s:'bake:2026-10-02:3:16',d:'2026-10-07',v:19,o:4,c:5},{s:'bake:2026-10-02:4:21',d:'2026-10-11',v:19,o:4,c:5},{s:'bake:2026-10-02:5:7',d:'2026-10-04',v:19,o:5,c:7},{s:'bake:2026-10-02:6:15',d:'2026-10-02',v:19,o:7,c:9},{s:'bake:2026-10-02:7:0',d:'2026-10-02',v:19,o:9,c:12},{s:'bake:2026-10-02:8:23',d:'2026-10-03',v:19,o:9,c:12},{s:'bake:2026-10-02:9:13',d:'2026-10-02',v:19,o:9,c:12}],
-'2026-10-03':[{s:'bake:2026-10-03:0:12',d:'2026-10-03',v:19,o:2,c:3},{s:'bake:2026-10-03:1:20',d:'2026-10-07',v:19,o:3,c:4},{s:'bake:2026-10-03:2:40',d:'2026-10-04',v:19,o:3,c:4},{s:'bake:2026-10-03:3:12',d:'2026-10-08',v:19,o:4,c:5},{s:'bake:2026-10-03:4:25',d:'2026-10-16',v:19,o:4,c:5},{s:'bake:2026-10-03:5:7',d:'2026-10-07',v:19,o:5,c:7},{s:'bake:2026-10-03:6:9',d:'2026-10-06',v:19,o:6,c:8},{s:'bake:2026-10-03:7:12',d:'2026-10-03',v:19,o:7,c:9},{s:'bake:2026-10-03:8:6',d:'2026-10-03',v:19,o:7,c:9},{s:'bake:2026-10-03:9:41',d:'2026-10-03',v:19,o:9,c:12}],
-'2026-10-04':[{s:'bake:2026-10-04:0:8',d:'2026-10-04',v:19,o:2,c:3},{s:'bake:2026-10-04:1:26',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-04:2:26',d:'2026-10-06',v:19,o:3,c:4},{s:'bake:2026-10-04:3:7',d:'2026-10-09',v:19,o:4,c:5},{s:'bake:2026-10-04:4:15',d:'2026-10-06',v:19,o:5,c:7},{s:'bake:2026-10-04:5:6',d:'2026-10-10',v:19,o:6,c:8},{s:'bake:2026-10-04:6:0',d:'2026-10-14',v:19,o:7,c:9},{s:'bake:2026-10-04:7:9',d:'2026-10-04',v:19,o:7,c:9},{s:'bake:2026-10-04:8:9',d:'2026-10-04',v:19,o:8,c:10},{s:'bake:2026-10-04:9:2',d:'2026-10-04',v:19,o:9,c:12}],
-'2026-10-05':[{s:'bake:2026-10-05:0:37',d:'2026-10-10',v:19,o:2,c:3},{s:'bake:2026-10-05:1:6',d:'2026-10-05',v:19,o:3,c:4},{s:'bake:2026-10-05:2:75',d:'2026-10-11',v:19,o:3,c:4},{s:'bake:2026-10-05:3:8',d:'2026-10-06',v:19,o:4,c:5},{s:'bake:2026-10-05:4:4',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-05:5:0',d:'2026-10-06',v:19,o:5,c:7},{s:'bake:2026-10-05:6:2',d:'2026-10-05',v:19,o:6,c:8},{s:'bake:2026-10-05:7:12',d:'2026-10-05',v:19,o:8,c:10},{s:'bake:2026-10-05:8:11',d:'2026-10-05',v:19,o:8,c:10},{s:'bake:2026-10-05:9:8',d:'2026-10-05',v:19,o:9,c:12}],
-'2026-10-06':[{s:'bake:2026-10-06:0:2',d:'2026-10-08',v:19,o:2,c:3},{s:'bake:2026-10-06:1:22',d:'2026-10-24',v:19,o:3,c:4},{s:'bake:2026-10-06:2:85',d:'2026-10-11',v:19,o:3,c:4},{s:'bake:2026-10-06:3:12',d:'2026-10-11',v:19,o:4,c:5},{s:'bake:2026-10-06:4:22',d:'2026-10-25',v:19,o:4,c:5},{s:'bake:2026-10-06:5:7',d:'2026-10-07',v:19,o:6,c:8},{s:'bake:2026-10-06:6:10',d:'2026-10-08',v:19,o:6,c:8},{s:'bake:2026-10-06:7:15',d:'2026-10-06',v:19,o:7,c:9},{s:'bake:2026-10-06:8:3',d:'2026-10-06',v:19,o:8,c:10},{s:'bake:2026-10-06:9:12',d:'2026-10-06',v:19,o:9,c:12}],
-'2026-10-07':[{s:'bake:2026-10-07:0:38',d:'2026-10-14',v:19,o:2,c:3},{s:'bake:2026-10-07:1:26',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-07:2:2',d:'2026-10-10',v:19,o:3,c:4},{s:'bake:2026-10-07:3:6',d:'2026-10-08',v:19,o:4,c:5},{s:'bake:2026-10-07:4:6',d:'2026-10-10',v:19,o:4,c:5},{s:'bake:2026-10-07:5:1',d:'2026-10-07',v:19,o:5,c:7},{s:'bake:2026-10-07:6:4',d:'2026-10-11',v:19,o:7,c:9},{s:'bake:2026-10-07:7:0',d:'2026-10-07',v:19,o:8,c:10},{s:'bake:2026-10-07:8:1',d:'2026-10-07',v:19,o:8,c:10},{s:'bake:2026-10-07:9:11',d:'2026-10-07',v:19,o:9,c:12}],
-'2026-10-08':[{s:'bake:2026-10-08:0:33',d:'2026-10-11',v:19,o:2,c:3},{s:'bake:2026-10-08:1:4',d:'2026-10-24',v:19,o:3,c:4},{s:'bake:2026-10-08:2:5',d:'2026-10-08',v:19,o:3,c:4},{s:'bake:2026-10-08:3:3',d:'2026-10-20',v:19,o:4,c:5},{s:'bake:2026-10-08:4:1',d:'2026-10-21',v:19,o:4,c:5},{s:'bake:2026-10-08:5:2',d:'2026-10-10',v:19,o:6,c:8},{s:'bake:2026-10-08:6:5',d:'2026-10-15',v:19,o:7,c:9},{s:'bake:2026-10-08:7:1',d:'2026-10-08',v:19,o:7,c:9},{s:'bake:2026-10-08:8:1',d:'2026-10-08',v:19,o:9,c:12},{s:'bake:2026-10-08:9:4',d:'2026-10-08',v:19,o:9,c:12}],
-'2026-10-09':[{s:'bake:2026-10-09:0:9',d:'2026-10-10',v:19,o:2,c:3},{s:'bake:2026-10-09:1:25',d:'2026-10-24',v:19,o:2,c:3},{s:'bake:2026-10-09:2:5',d:'2026-10-15',v:19,o:2,c:3},{s:'bake:2026-10-09:3:14',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-09:4:19',d:'2026-10-13',v:19,o:4,c:5},{s:'bake:2026-10-09:5:3',d:'2026-10-09',v:19,o:5,c:7},{s:'bake:2026-10-09:6:3',d:'2026-10-09',v:19,o:7,c:9},{s:'bake:2026-10-09:7:4',d:'2026-10-09',v:19,o:7,c:9},{s:'bake:2026-10-09:8:6',d:'2026-10-09',v:19,o:8,c:10},{s:'bake:2026-10-09:9:0',d:'2026-10-09',v:19,o:9,c:12}],
-'2026-10-10':[{s:'bake:2026-10-10:0:5',d:'2026-10-12',v:19,o:2,c:3},{s:'bake:2026-10-10:1:7',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-10:2:6',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-10:3:29',d:'2026-10-10',v:19,o:4,c:5},{s:'bake:2026-10-10:4:21',d:'2026-10-26',v:19,o:4,c:5},{s:'bake:2026-10-10:5:5',d:'2026-10-15',v:19,o:5,c:7},{s:'bake:2026-10-10:6:3',d:'2026-10-10',v:19,o:6,c:8},{s:'bake:2026-10-10:7:5',d:'2026-10-10',v:19,o:7,c:9},{s:'bake:2026-10-10:8:2',d:'2026-10-10',v:19,o:9,c:12},{s:'bake:2026-10-10:9:0',d:'2026-10-10',v:19,o:9,c:12}],
-'2026-10-11':[{s:'bake:2026-10-11:0:30',d:'2026-10-14',v:19,o:2,c:3},{s:'bake:2026-10-11:1:2',d:'2026-10-14',v:19,o:3,c:4},{s:'bake:2026-10-11:2:78',d:'2026-10-20',v:19,o:3,c:4},{s:'bake:2026-10-11:3:1',d:'2026-10-14',v:19,o:4,c:5},{s:'bake:2026-10-11:4:1',d:'2026-10-21',v:19,o:4,c:5},{s:'bake:2026-10-11:5:10',d:'2026-10-12',v:19,o:4,c:5},{s:'bake:2026-10-11:6:5',d:'2026-10-14',v:19,o:6,c:8},{s:'bake:2026-10-11:7:2',d:'2026-10-11',v:19,o:8,c:10},{s:'bake:2026-10-11:8:14',d:'2026-10-11',v:19,o:8,c:10},{s:'bake:2026-10-11:9:4',d:'2026-10-11',v:19,o:9,c:12}],
-'2026-10-12':[{s:'bake:2026-10-12:0:28',d:'2026-10-20',v:19,o:2,c:3},{s:'bake:2026-10-12:1:7',d:'2026-10-27',v:19,o:3,c:4},{s:'bake:2026-10-12:2:5',d:'2026-10-15',v:19,o:3,c:4},{s:'bake:2026-10-12:3:13',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-12:4:6',d:'2026-10-19',v:19,o:5,c:7},{s:'bake:2026-10-12:5:14',d:'2026-10-13',v:19,o:5,c:7},{s:'bake:2026-10-12:6:0',d:'2026-10-12',v:19,o:6,c:8},{s:'bake:2026-10-12:7:12',d:'2026-10-12',v:19,o:8,c:10},{s:'bake:2026-10-12:8:7',d:'2026-10-12',v:19,o:8,c:10},{s:'bake:2026-10-12:9:4',d:'2026-10-12',v:19,o:9,c:12}],
-'2026-10-13':[{s:'bake:2026-10-13:0:12',d:'2026-10-19',v:19,o:2,c:3},{s:'bake:2026-10-13:1:25',d:'2026-10-17',v:19,o:3,c:4},{s:'bake:2026-10-13:2:18',d:'2026-10-24',v:19,o:3,c:4},{s:'bake:2026-10-13:3:21',d:'2026-10-23',v:19,o:4,c:5},{s:'bake:2026-10-13:4:5',d:'2026-10-14',v:19,o:4,c:5},{s:'bake:2026-10-13:5:10',d:'2026-10-20',v:19,o:5,c:7},{s:'bake:2026-10-13:6:6',d:'2026-10-16',v:19,o:5,c:7},{s:'bake:2026-10-13:7:13',d:'2026-10-14',v:19,o:7,c:9},{s:'bake:2026-10-13:8:4',d:'2026-10-13',v:19,o:8,c:10},{s:'bake:2026-10-13:9:53',d:'2026-10-13',v:19,o:9,c:12}],
-'2026-10-14':[{s:'bake:2026-10-14:0:6',d:'2026-10-15',v:19,o:2,c:3},{s:'bake:2026-10-14:1:12',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-14:2:19',d:'2026-10-14',v:19,o:3,c:4},{s:'bake:2026-10-14:3:37',d:'2026-10-14',v:19,o:4,c:5},{s:'bake:2026-10-14:4:33',d:'2026-10-23',v:19,o:4,c:5},{s:'bake:2026-10-14:5:16',d:'2026-10-18',v:19,o:4,c:5},{s:'bake:2026-10-14:6:8',d:'2026-10-18',v:19,o:7,c:9},{s:'bake:2026-10-14:7:53',d:'2026-10-14',v:19,o:7,c:9},{s:'bake:2026-10-14:8:23',d:'2026-10-15',v:19,o:9,c:12},{s:'bake:2026-10-14:9:25',d:'2026-10-15',v:19,o:9,c:12}],
-'2026-10-15':[{s:'bake:2026-10-15:0:34',d:'2026-10-23',v:19,o:2,c:3},{s:'bake:2026-10-15:1:15',d:'2026-10-24',v:19,o:2,c:3},{s:'bake:2026-10-15:2:23',d:'2026-10-15',v:19,o:2,c:3},{s:'bake:2026-10-15:3:2',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-15:4:8',d:'2026-10-19',v:19,o:4,c:5},{s:'bake:2026-10-15:5:3',d:'2026-10-15',v:19,o:4,c:5},{s:'bake:2026-10-15:6:1',d:'2026-10-20',v:19,o:6,c:8},{s:'bake:2026-10-15:7:25',d:'2026-10-18',v:19,o:7,c:9},{s:'bake:2026-10-15:8:23',d:'2026-10-17',v:19,o:8,c:10},{s:'bake:2026-10-15:9:65',d:'2026-10-15',v:19,o:9,c:12}],
-'2026-10-16':[{s:'bake:2026-10-16:0:9',d:'2026-10-21',v:19,o:2,c:3},{s:'bake:2026-10-16:1:25',d:'2026-10-17',v:19,o:2,c:3},{s:'bake:2026-10-16:2:4',d:'2026-10-20',v:19,o:3,c:4},{s:'bake:2026-10-16:3:1',d:'2026-10-21',v:19,o:3,c:4},{s:'bake:2026-10-16:4:1',d:'2026-10-16',v:19,o:4,c:5},{s:'bake:2026-10-16:5:2',d:'2026-10-23',v:19,o:4,c:5},{s:'bake:2026-10-16:6:4',d:'2026-10-22',v:19,o:6,c:8},{s:'bake:2026-10-16:7:19',d:'2026-10-18',v:19,o:6,c:8},{s:'bake:2026-10-16:8:32',d:'2026-10-19',v:19,o:7,c:9},{s:'bake:2026-10-16:9:106',d:'2026-10-18',v:19,o:9,c:12}],
-'2026-10-17':[{s:'bake:2026-10-17:0:19',d:'2026-10-29',v:19,o:2,c:3},{s:'bake:2026-10-17:1:5',d:'2026-10-25',v:19,o:3,c:4},{s:'bake:2026-10-17:2:6',d:'2026-11-05',v:19,o:3,c:4},{s:'bake:2026-10-17:3:12',d:'2026-10-19',v:19,o:3,c:4},{s:'bake:2026-10-17:4:19',d:'2026-10-23',v:19,o:3,c:4},{s:'bake:2026-10-17:5:12',d:'2026-10-17',v:19,o:5,c:7},{s:'bake:2026-10-17:6:8',d:'2026-10-18',v:19,o:6,c:8},{s:'bake:2026-10-17:7:20',d:'2026-10-19',v:19,o:8,c:10},{s:'bake:2026-10-17:8:5',d:'2026-10-18',v:19,o:8,c:10},{s:'bake:2026-10-17:9:94',d:'2026-10-19',v:19,o:9,c:12}],
-'2026-10-18':[{s:'bake:2026-10-18:0:4',d:'2026-10-20',v:19,o:2,c:3},{s:'bake:2026-10-18:1:13',d:'2026-10-24',v:19,o:3,c:4},{s:'bake:2026-10-18:2:30',d:'2026-10-27',v:19,o:3,c:4},{s:'bake:2026-10-18:3:31',d:'2026-10-18',v:19,o:4,c:5},{s:'bake:2026-10-18:4:7',d:'2026-10-20',v:19,o:4,c:5},{s:'bake:2026-10-18:5:9',d:'2026-10-20',v:19,o:5,c:7},{s:'bake:2026-10-18:6:23',d:'2026-10-25',v:19,o:6,c:8},{s:'bake:2026-10-18:7:9',d:'2026-10-19',v:19,o:9,c:12},{s:'bake:2026-10-18:8:45',d:'2026-10-24',v:19,o:9,c:12},{s:'bake:2026-10-18:9:108',d:'2026-10-20',v:19,o:9,c:12}]
+'2026-09-05':[{s:'bake:2026-09-05:0:2',d:'2026-09-13',v:20,o:1,c:3},{s:'bake:2026-09-05:1:9',d:'2026-09-11',v:20,o:2,c:4},{s:'bake:2026-09-05:2:9',d:'2026-09-05',v:20,o:3,c:5},{s:'bake:2026-09-05:3:10',d:'2026-09-08',v:20,o:4,c:6},{s:'bake:2026-09-05:4:4',d:'2026-09-05',v:20,o:5,c:7},{s:'bake:2026-09-05:5:57',d:'2026-09-10',v:20,o:5,c:7},{s:'bake:2026-09-05:6:21',d:'2026-09-07',v:20,o:6,c:8},{s:'bake:2026-09-05:7:8',d:'2026-09-18',v:20,o:6,c:8},{s:'bake:2026-09-05:8:9',d:'2026-09-05',v:20,o:8,c:10},{s:'bake:2026-09-05:9:7',d:'2026-09-05',v:20,o:8,c:10}],
+'2026-09-06':[{s:'bake:2026-09-06:0:2',d:'2026-09-06',v:20,o:1,c:3},{s:'bake:2026-09-06:1:22',d:'2026-09-06',v:20,o:3,c:5},{s:'bake:2026-09-06:2:11',d:'2026-09-09',v:20,o:4,c:6},{s:'bake:2026-09-06:3:33',d:'2026-09-06',v:20,o:4,c:6},{s:'bake:2026-09-06:4:37',d:'2026-09-08',v:20,o:4,c:6},{s:'bake:2026-09-06:5:0',d:'2026-09-15',v:20,o:4,c:6},{s:'bake:2026-09-06:6:9',d:'2026-09-19',v:20,o:6,c:8},{s:'bake:2026-09-06:7:12',d:'2026-09-10',v:20,o:8,c:10},{s:'bake:2026-09-06:8:40',d:'2026-09-08',v:20,o:8,c:10},{s:'bake:2026-09-06:9:28',d:'2026-09-08',v:20,o:8,c:10}],
+'2026-09-07':[{s:'bake:2026-09-07:0:11',d:'2026-09-10',v:20,o:1,c:3},{s:'bake:2026-09-07:1:2',d:'2026-09-07',v:20,o:2,c:4},{s:'bake:2026-09-07:2:10',d:'2026-09-22',v:20,o:3,c:5},{s:'bake:2026-09-07:3:4',d:'2026-09-12',v:20,o:3,c:5},{s:'bake:2026-09-07:4:1',d:'2026-09-10',v:20,o:4,c:6},{s:'bake:2026-09-07:5:0',d:'2026-09-07',v:20,o:4,c:6},{s:'bake:2026-09-07:6:9',d:'2026-09-17',v:20,o:5,c:7},{s:'bake:2026-09-07:7:15',d:'2026-09-17',v:20,o:7,c:9},{s:'bake:2026-09-07:8:13',d:'2026-09-10',v:20,o:8,c:10},{s:'bake:2026-09-07:9:6',d:'2026-09-07',v:20,o:8,c:10}],
+'2026-09-08':[{s:'bake:2026-09-08:0:44',d:'2026-09-14',v:20,o:1,c:3},{s:'bake:2026-09-08:1:13',d:'2026-09-22',v:20,o:2,c:4},{s:'bake:2026-09-08:2:4',d:'2026-09-12',v:20,o:3,c:5},{s:'bake:2026-09-08:3:0',d:'2026-09-08',v:20,o:4,c:6},{s:'bake:2026-09-08:4:7',d:'2026-09-11',v:20,o:4,c:6},{s:'bake:2026-09-08:5:3',d:'2026-09-08',v:20,o:4,c:6},{s:'bake:2026-09-08:6:6',d:'2026-09-13',v:20,o:6,c:8},{s:'bake:2026-09-08:7:1',d:'2026-09-09',v:20,o:8,c:10},{s:'bake:2026-09-08:8:4',d:'2026-09-14',v:20,o:8,c:10},{s:'bake:2026-09-08:9:0',d:'2026-09-15',v:20,o:9,c:12}],
+'2026-09-09':[{s:'bake:2026-09-09:0:19',d:'2026-09-15',v:20,o:1,c:3},{s:'bake:2026-09-09:1:6',d:'2026-09-09',v:20,o:2,c:4},{s:'bake:2026-09-09:2:17',d:'2026-09-09',v:20,o:4,c:6},{s:'bake:2026-09-09:3:6',d:'2026-09-09',v:20,o:4,c:6},{s:'bake:2026-09-09:4:36',d:'2026-09-09',v:20,o:4,c:6},{s:'bake:2026-09-09:5:3',d:'2026-09-19',v:20,o:5,c:7},{s:'bake:2026-09-09:6:11',d:'2026-09-19',v:20,o:5,c:7},{s:'bake:2026-09-09:7:8',d:'2026-09-11',v:20,o:6,c:8},{s:'bake:2026-09-09:8:5',d:'2026-09-13',v:20,o:8,c:10},{s:'bake:2026-09-09:9:0',d:'2026-09-11',v:20,o:8,c:10}],
+'2026-09-10':[{s:'bake:2026-09-10:0:25',d:'2026-09-10',v:20,o:1,c:3},{s:'bake:2026-09-10:1:4',d:'2026-09-13',v:20,o:2,c:4},{s:'bake:2026-09-10:2:23',d:'2026-09-10',v:20,o:3,c:5},{s:'bake:2026-09-10:3:15',d:'2026-09-13',v:20,o:4,c:6},{s:'bake:2026-09-10:4:6',d:'2026-09-30',v:20,o:5,c:7},{s:'bake:2026-09-10:5:21',d:'2026-09-10',v:20,o:5,c:7},{s:'bake:2026-09-10:6:15',d:'2026-09-21',v:20,o:5,c:7},{s:'bake:2026-09-10:7:6',d:'2026-09-17',v:20,o:7,c:9},{s:'bake:2026-09-10:8:10',d:'2026-09-15',v:20,o:7,c:9},{s:'bake:2026-09-10:9:17',d:'2026-09-10',v:20,o:8,c:10}],
+'2026-09-11':[{s:'bake:2026-09-11:0:20',d:'2026-09-13',v:20,o:1,c:3},{s:'bake:2026-09-11:1:5',d:'2026-09-12',v:20,o:2,c:4},{s:'bake:2026-09-11:2:9',d:'2026-09-22',v:20,o:3,c:5},{s:'bake:2026-09-11:3:14',d:'2026-09-17',v:20,o:4,c:6},{s:'bake:2026-09-11:4:23',d:'2026-09-11',v:20,o:4,c:6},{s:'bake:2026-09-11:5:13',d:'2026-09-14',v:20,o:5,c:7},{s:'bake:2026-09-11:6:5',d:'2026-09-13',v:20,o:6,c:8},{s:'bake:2026-09-11:7:9',d:'2026-09-17',v:20,o:7,c:9},{s:'bake:2026-09-11:8:2',d:'2026-09-16',v:20,o:8,c:10},{s:'bake:2026-09-11:9:11',d:'2026-09-13',v:20,o:8,c:10}],
+'2026-09-12':[{s:'bake:2026-09-12:0:1',d:'2026-09-15',v:20,o:1,c:3},{s:'bake:2026-09-12:1:12',d:'2026-09-15',v:20,o:2,c:4},{s:'bake:2026-09-12:2:12',d:'2026-09-16',v:20,o:3,c:5},{s:'bake:2026-09-12:3:10',d:'2026-09-19',v:20,o:4,c:6},{s:'bake:2026-09-12:4:7',d:'2026-09-12',v:20,o:4,c:6},{s:'bake:2026-09-12:5:3',d:'2026-09-12',v:20,o:5,c:7},{s:'bake:2026-09-12:6:25',d:'2026-09-12',v:20,o:5,c:7},{s:'bake:2026-09-12:7:0',d:'2026-09-25',v:20,o:8,c:10},{s:'bake:2026-09-12:8:21',d:'2026-09-14',v:20,o:8,c:10},{s:'bake:2026-09-12:9:10',d:'2026-09-19',v:20,o:9,c:12}],
+'2026-09-13':[{s:'bake:2026-09-13:0:33',d:'2026-09-17',v:20,o:1,c:3},{s:'bake:2026-09-13:1:14',d:'2026-09-18',v:20,o:2,c:4},{s:'bake:2026-09-13:2:11',d:'2026-09-14',v:20,o:3,c:5},{s:'bake:2026-09-13:3:30',d:'2026-09-14',v:20,o:4,c:6},{s:'bake:2026-09-13:4:2',d:'2026-09-30',v:20,o:4,c:6},{s:'bake:2026-09-13:5:14',d:'2026-09-21',v:20,o:4,c:6},{s:'bake:2026-09-13:6:11',d:'2026-09-19',v:20,o:7,c:9},{s:'bake:2026-09-13:7:18',d:'2026-09-13',v:20,o:7,c:9},{s:'bake:2026-09-13:8:9',d:'2026-09-28',v:20,o:8,c:10},{s:'bake:2026-09-13:9:16',d:'2026-09-16',v:20,o:9,c:12}],
+'2026-09-14':[{s:'bake:2026-09-14:0:33',d:'2026-09-14',v:20,o:1,c:3},{s:'bake:2026-09-14:1:3',d:'2026-09-22',v:20,o:2,c:4},{s:'bake:2026-09-14:2:12',d:'2026-09-26',v:20,o:4,c:6},{s:'bake:2026-09-14:3:12',d:'2026-10-01',v:20,o:4,c:6},{s:'bake:2026-09-14:4:16',d:'2026-09-15',v:20,o:5,c:7},{s:'bake:2026-09-14:5:0',d:'2026-09-15',v:20,o:5,c:7},{s:'bake:2026-09-14:6:7',d:'2026-09-15',v:20,o:6,c:8},{s:'bake:2026-09-14:7:4',d:'2026-09-17',v:20,o:8,c:10},{s:'bake:2026-09-14:8:41',d:'2026-09-18',v:20,o:8,c:10},{s:'bake:2026-09-14:9:10',d:'2026-09-28',v:20,o:8,c:10}],
+'2026-09-15':[{s:'bake:2026-09-15:0:17',d:'2026-09-15',v:20,o:1,c:3},{s:'bake:2026-09-15:1:11',d:'2026-09-17',v:20,o:2,c:4},{s:'bake:2026-09-15:2:59',d:'2026-09-17',v:20,o:3,c:5},{s:'bake:2026-09-15:3:3',d:'2026-09-18',v:20,o:4,c:6},{s:'bake:2026-09-15:4:42',d:'2026-09-18',v:20,o:4,c:6},{s:'bake:2026-09-15:5:2',d:'2026-09-22',v:20,o:5,c:7},{s:'bake:2026-09-15:6:2',d:'2026-09-17',v:20,o:6,c:8},{s:'bake:2026-09-15:7:6',d:'2026-09-25',v:20,o:8,c:10},{s:'bake:2026-09-15:8:31',d:'2026-09-15',v:20,o:8,c:10},{s:'bake:2026-09-15:9:32',d:'2026-09-19',v:20,o:8,c:10}],
+'2026-09-16':[{s:'bake:2026-09-16:0:10',d:'2026-09-19',v:20,o:1,c:3},{s:'bake:2026-09-16:1:1',d:'2026-09-16',v:20,o:2,c:4},{s:'bake:2026-09-16:2:19',d:'2026-09-16',v:20,o:4,c:6},{s:'bake:2026-09-16:3:14',d:'2026-09-24',v:20,o:4,c:6},{s:'bake:2026-09-16:4:8',d:'2026-09-30',v:20,o:4,c:6},{s:'bake:2026-09-16:5:7',d:'2026-09-17',v:20,o:4,c:6},{s:'bake:2026-09-16:6:1',d:'2026-10-01',v:20,o:6,c:8},{s:'bake:2026-09-16:7:1',d:'2026-09-18',v:20,o:7,c:9},{s:'bake:2026-09-16:8:3',d:'2026-09-17',v:20,o:8,c:10},{s:'bake:2026-09-16:9:26',d:'2026-09-17',v:20,o:8,c:10}],
+'2026-09-17':[{s:'bake:2026-09-17:0:0',d:'2026-09-23',v:20,o:1,c:3},{s:'bake:2026-09-17:1:11',d:'2026-09-27',v:20,o:2,c:4},{s:'bake:2026-09-17:2:1',d:'2026-09-22',v:20,o:3,c:5},{s:'bake:2026-09-17:3:13',d:'2026-10-01',v:20,o:4,c:6},{s:'bake:2026-09-17:4:4',d:'2026-09-30',v:20,o:5,c:7},{s:'bake:2026-09-17:5:2',d:'2026-09-19',v:20,o:6,c:8},{s:'bake:2026-09-17:6:16',d:'2026-09-17',v:20,o:6,c:8},{s:'bake:2026-09-17:7:3',d:'2026-09-18',v:20,o:8,c:10},{s:'bake:2026-09-17:8:48',d:'2026-09-22',v:20,o:8,c:10},{s:'bake:2026-09-17:9:15',d:'2026-09-21',v:20,o:9,c:12}],
+'2026-09-18':[{s:'bake:2026-09-18:0:43',d:'2026-09-20',v:20,o:1,c:3},{s:'bake:2026-09-18:1:12',d:'2026-09-24',v:20,o:2,c:4},{s:'bake:2026-09-18:2:54',d:'2026-09-21',v:20,o:4,c:6},{s:'bake:2026-09-18:3:26',d:'2026-09-21',v:20,o:4,c:6},{s:'bake:2026-09-18:4:63',d:'2026-09-24',v:20,o:4,c:6},{s:'bake:2026-09-18:5:16',d:'2026-09-18',v:20,o:5,c:7},{s:'bake:2026-09-18:6:7',d:'2026-10-01',v:20,o:5,c:7},{s:'bake:2026-09-18:7:11',d:'2026-09-27',v:20,o:6,c:8},{s:'bake:2026-09-18:8:12',d:'2026-10-06',v:20,o:8,c:10},{s:'bake:2026-09-18:9:11',d:'2026-09-26',v:20,o:9,c:12}],
+'2026-09-19':[{s:'bake:2026-09-19:0:31',d:'2026-09-19',v:20,o:1,c:3},{s:'bake:2026-09-19:1:28',d:'2026-09-19',v:20,o:2,c:4},{s:'bake:2026-09-19:2:23',d:'2026-09-19',v:20,o:2,c:4},{s:'bake:2026-09-19:3:7',d:'2026-09-19',v:20,o:3,c:5},{s:'bake:2026-09-19:4:8',d:'2026-09-20',v:20,o:4,c:6},{s:'bake:2026-09-19:5:6',d:'2026-09-22',v:20,o:4,c:6},{s:'bake:2026-09-19:6:2',d:'2026-09-19',v:20,o:5,c:7},{s:'bake:2026-09-19:7:1',d:'2026-09-19',v:20,o:8,c:10},{s:'bake:2026-09-19:8:21',d:'2026-09-21',v:20,o:8,c:10},{s:'bake:2026-09-19:9:3',d:'2026-09-28',v:20,o:8,c:10}],
+'2026-09-20':[{s:'bake:2026-09-20:0:28',d:'2026-09-25',v:20,o:1,c:3},{s:'bake:2026-09-20:1:6',d:'2026-09-20',v:20,o:2,c:4},{s:'bake:2026-09-20:2:4',d:'2026-09-22',v:20,o:4,c:6},{s:'bake:2026-09-20:3:15',d:'2026-09-25',v:20,o:4,c:6},{s:'bake:2026-09-20:4:0',d:'2026-09-23',v:20,o:4,c:6},{s:'bake:2026-09-20:5:1',d:'2026-09-24',v:20,o:5,c:7},{s:'bake:2026-09-20:6:19',d:'2026-09-21',v:20,o:5,c:7},{s:'bake:2026-09-20:7:2',d:'2026-09-25',v:20,o:6,c:8},{s:'bake:2026-09-20:8:2',d:'2026-10-03',v:20,o:8,c:10},{s:'bake:2026-09-20:9:20',d:'2026-09-20',v:20,o:8,c:10}],
+'2026-09-21':[{s:'bake:2026-09-21:0:39',d:'2026-10-01',v:20,o:1,c:3},{s:'bake:2026-09-21:1:15',d:'2026-09-24',v:20,o:2,c:4},{s:'bake:2026-09-21:2:34',d:'2026-09-21',v:20,o:3,c:5},{s:'bake:2026-09-21:3:2',d:'2026-09-21',v:20,o:4,c:6},{s:'bake:2026-09-21:4:16',d:'2026-09-21',v:20,o:4,c:6},{s:'bake:2026-09-21:5:4',d:'2026-09-21',v:20,o:5,c:7},{s:'bake:2026-09-21:6:10',d:'2026-09-22',v:20,o:6,c:8},{s:'bake:2026-09-21:7:15',d:'2026-09-27',v:20,o:8,c:10},{s:'bake:2026-09-21:8:15',d:'2026-09-22',v:20,o:8,c:10},{s:'bake:2026-09-21:9:24',d:'2026-09-21',v:20,o:8,c:10}],
+'2026-09-22':[{s:'bake:2026-09-22:0:23',d:'2026-09-23',v:20,o:1,c:3},{s:'bake:2026-09-22:1:14',d:'2026-09-27',v:20,o:2,c:4},{s:'bake:2026-09-22:2:6',d:'2026-09-29',v:20,o:3,c:5},{s:'bake:2026-09-22:3:35',d:'2026-09-23',v:20,o:3,c:5},{s:'bake:2026-09-22:4:7',d:'2026-09-22',v:20,o:3,c:5},{s:'bake:2026-09-22:5:27',d:'2026-09-22',v:20,o:4,c:6},{s:'bake:2026-09-22:6:0',d:'2026-09-24',v:20,o:7,c:9},{s:'bake:2026-09-22:7:14',d:'2026-09-24',v:20,o:8,c:10},{s:'bake:2026-09-22:8:55',d:'2026-09-25',v:20,o:9,c:12},{s:'bake:2026-09-22:9:54',d:'2026-10-07',v:20,o:9,c:12}],
+'2026-09-23':[{s:'bake:2026-09-23:0:63',d:'2026-09-26',v:20,o:1,c:3},{s:'bake:2026-09-23:1:7',d:'2026-09-23',v:20,o:3,c:5},{s:'bake:2026-09-23:2:17',d:'2026-09-23',v:20,o:4,c:6},{s:'bake:2026-09-23:3:15',d:'2026-10-02',v:20,o:4,c:6},{s:'bake:2026-09-23:4:11',d:'2026-09-23',v:20,o:4,c:6},{s:'bake:2026-09-23:5:26',d:'2026-09-24',v:20,o:4,c:6},{s:'bake:2026-09-23:6:1',d:'2026-10-01',v:20,o:6,c:8},{s:'bake:2026-09-23:7:3',d:'2026-09-28',v:20,o:7,c:9},{s:'bake:2026-09-23:8:6',d:'2026-09-28',v:20,o:8,c:10},{s:'bake:2026-09-23:9:41',d:'2026-09-24',v:20,o:8,c:10}],
+'2026-09-24':[{s:'bake:2026-09-24:0:23',d:'2026-09-30',v:20,o:1,c:3},{s:'bake:2026-09-24:1:0',d:'2026-09-24',v:20,o:2,c:4},{s:'bake:2026-09-24:2:0',d:'2026-10-11',v:20,o:4,c:6},{s:'bake:2026-09-24:3:10',d:'2026-09-24',v:20,o:4,c:6},{s:'bake:2026-09-24:4:33',d:'2026-09-25',v:20,o:4,c:6},{s:'bake:2026-09-24:5:19',d:'2026-09-26',v:20,o:5,c:7},{s:'bake:2026-09-24:6:6',d:'2026-09-27',v:20,o:6,c:8},{s:'bake:2026-09-24:7:6',d:'2026-09-25',v:20,o:7,c:9},{s:'bake:2026-09-24:8:1',d:'2026-10-03',v:20,o:8,c:10},{s:'bake:2026-09-24:9:6',d:'2026-09-27',v:20,o:8,c:10}],
+'2026-09-25':[{s:'bake:2026-09-25:0:54',d:'2026-10-07',v:20,o:1,c:3},{s:'bake:2026-09-25:1:3',d:'2026-09-26',v:20,o:2,c:4},{s:'bake:2026-09-25:2:8',d:'2026-09-25',v:20,o:4,c:6},{s:'bake:2026-09-25:3:2',d:'2026-10-01',v:20,o:4,c:6},{s:'bake:2026-09-25:4:15',d:'2026-10-01',v:20,o:4,c:6},{s:'bake:2026-09-25:5:28',d:'2026-09-27',v:20,o:5,c:7},{s:'bake:2026-09-25:6:10',d:'2026-09-25',v:20,o:6,c:8},{s:'bake:2026-09-25:7:8',d:'2026-10-01',v:20,o:8,c:10},{s:'bake:2026-09-25:8:10',d:'2026-10-08',v:20,o:8,c:10},{s:'bake:2026-09-25:9:32',d:'2026-09-26',v:20,o:8,c:10}],
+'2026-09-26':[{s:'bake:2026-09-26:0:18',d:'2026-09-26',v:20,o:1,c:3},{s:'bake:2026-09-26:1:13',d:'2026-10-01',v:20,o:2,c:4},{s:'bake:2026-09-26:2:10',d:'2026-10-15',v:20,o:3,c:5},{s:'bake:2026-09-26:3:33',d:'2026-09-28',v:20,o:3,c:5},{s:'bake:2026-09-26:4:3',d:'2026-09-26',v:20,o:4,c:6},{s:'bake:2026-09-26:5:8',d:'2026-10-01',v:20,o:5,c:7},{s:'bake:2026-09-26:6:15',d:'2026-10-15',v:20,o:6,c:8},{s:'bake:2026-09-26:7:11',d:'2026-09-27',v:20,o:7,c:9},{s:'bake:2026-09-26:8:4',d:'2026-09-26',v:20,o:9,c:12},{s:'bake:2026-09-26:9:42',d:'2026-10-01',v:20,o:9,c:12}],
+'2026-09-27':[{s:'bake:2026-09-27:0:38',d:'2026-09-30',v:20,o:1,c:3},{s:'bake:2026-09-27:1:39',d:'2026-09-29',v:20,o:2,c:4},{s:'bake:2026-09-27:2:1',d:'2026-10-02',v:20,o:3,c:5},{s:'bake:2026-09-27:3:7',d:'2026-09-27',v:20,o:4,c:6},{s:'bake:2026-09-27:4:13',d:'2026-10-06',v:20,o:5,c:7},{s:'bake:2026-09-27:5:54',d:'2026-09-30',v:20,o:5,c:7},{s:'bake:2026-09-27:6:18',d:'2026-09-27',v:20,o:6,c:8},{s:'bake:2026-09-27:7:15',d:'2026-10-04',v:20,o:6,c:8},{s:'bake:2026-09-27:8:11',d:'2026-10-04',v:20,o:7,c:9},{s:'bake:2026-09-27:9:10',d:'2026-09-28',v:20,o:8,c:10}],
+'2026-09-28':[{s:'bake:2026-09-28:0:63',d:'2026-09-30',v:20,o:1,c:3},{s:'bake:2026-09-28:1:9',d:'2026-10-01',v:20,o:2,c:4},{s:'bake:2026-09-28:2:22',d:'2026-09-29',v:20,o:3,c:5},{s:'bake:2026-09-28:3:5',d:'2026-09-30',v:20,o:4,c:6},{s:'bake:2026-09-28:4:0',d:'2026-09-30',v:20,o:4,c:6},{s:'bake:2026-09-28:5:13',d:'2026-10-01',v:20,o:5,c:7},{s:'bake:2026-09-28:6:6',d:'2026-09-29',v:20,o:6,c:8},{s:'bake:2026-09-28:7:5',d:'2026-10-02',v:20,o:7,c:9},{s:'bake:2026-09-28:8:11',d:'2026-10-05',v:20,o:7,c:9},{s:'bake:2026-09-28:9:31',d:'2026-09-29',v:20,o:7,c:9}],
+'2026-09-29':[{s:'bake:2026-09-29:0:27',d:'2026-09-29',v:20,o:1,c:3},{s:'bake:2026-09-29:1:7',d:'2026-09-29',v:20,o:3,c:5},{s:'bake:2026-09-29:2:13',d:'2026-10-05',v:20,o:3,c:5},{s:'bake:2026-09-29:3:16',d:'2026-09-29',v:20,o:3,c:5},{s:'bake:2026-09-29:4:27',d:'2026-09-29',v:20,o:4,c:6},{s:'bake:2026-09-29:5:11',d:'2026-09-29',v:20,o:5,c:7},{s:'bake:2026-09-29:6:7',d:'2026-09-30',v:20,o:6,c:8},{s:'bake:2026-09-29:7:15',d:'2026-10-07',v:20,o:7,c:9},{s:'bake:2026-09-29:8:32',d:'2026-09-30',v:20,o:8,c:10},{s:'bake:2026-09-29:9:35',d:'2026-10-02',v:20,o:9,c:12}],
+'2026-09-30':[{s:'bake:2026-09-30:0:48',d:'2026-10-06',v:20,o:1,c:3},{s:'bake:2026-09-30:1:17',d:'2026-09-30',v:20,o:2,c:4},{s:'bake:2026-09-30:2:16',d:'2026-09-30',v:20,o:3,c:5},{s:'bake:2026-09-30:3:9',d:'2026-10-03',v:20,o:4,c:6},{s:'bake:2026-09-30:4:34',d:'2026-10-01',v:20,o:4,c:6},{s:'bake:2026-09-30:5:2',d:'2026-10-08',v:20,o:5,c:7},{s:'bake:2026-09-30:6:10',d:'2026-10-05',v:20,o:6,c:8},{s:'bake:2026-09-30:7:2',d:'2026-09-30',v:20,o:8,c:10},{s:'bake:2026-09-30:8:8',d:'2026-10-01',v:20,o:8,c:10},{s:'bake:2026-09-30:9:30',d:'2026-10-03',v:20,o:8,c:10}],
+'2026-10-01':[{s:'bake:2026-10-01:0:48',d:'2026-10-01',v:20,o:1,c:3},{s:'bake:2026-10-01:1:3',d:'2026-10-01',v:20,o:2,c:4},{s:'bake:2026-10-01:2:13',d:'2026-10-15',v:20,o:3,c:5},{s:'bake:2026-10-01:3:1',d:'2026-10-06',v:20,o:4,c:6},{s:'bake:2026-10-01:4:29',d:'2026-10-05',v:20,o:4,c:6},{s:'bake:2026-10-01:5:18',d:'2026-10-01',v:20,o:4,c:6},{s:'bake:2026-10-01:6:20',d:'2026-10-01',v:20,o:5,c:7},{s:'bake:2026-10-01:7:7',d:'2026-10-08',v:20,o:7,c:9},{s:'bake:2026-10-01:8:13',d:'2026-10-08',v:20,o:8,c:10},{s:'bake:2026-10-01:9:7',d:'2026-10-08',v:20,o:9,c:12}],
+'2026-10-02':[{s:'bake:2026-10-02:0:32',d:'2026-10-02',v:20,o:1,c:3},{s:'bake:2026-10-02:1:7',d:'2026-10-11',v:20,o:2,c:4},{s:'bake:2026-10-02:2:12',d:'2026-10-05',v:20,o:4,c:6},{s:'bake:2026-10-02:3:3',d:'2026-10-05',v:20,o:4,c:6},{s:'bake:2026-10-02:4:19',d:'2026-10-07',v:20,o:4,c:6},{s:'bake:2026-10-02:5:14',d:'2026-10-10',v:20,o:5,c:7},{s:'bake:2026-10-02:6:20',d:'2026-10-02',v:20,o:6,c:8},{s:'bake:2026-10-02:7:3',d:'2026-10-20',v:20,o:6,c:8},{s:'bake:2026-10-02:8:11',d:'2026-10-03',v:20,o:8,c:10},{s:'bake:2026-10-02:9:8',d:'2026-10-10',v:20,o:8,c:10}],
+'2026-10-03':[{s:'bake:2026-10-03:0:2',d:'2026-10-06',v:20,o:1,c:3},{s:'bake:2026-10-03:1:4',d:'2026-10-13',v:20,o:2,c:4},{s:'bake:2026-10-03:2:3',d:'2026-10-11',v:20,o:4,c:6},{s:'bake:2026-10-03:3:27',d:'2026-10-04',v:20,o:4,c:6},{s:'bake:2026-10-03:4:4',d:'2026-10-06',v:20,o:4,c:6},{s:'bake:2026-10-03:5:14',d:'2026-10-09',v:20,o:5,c:7},{s:'bake:2026-10-03:6:14',d:'2026-10-04',v:20,o:6,c:8},{s:'bake:2026-10-03:7:1',d:'2026-10-11',v:20,o:7,c:9},{s:'bake:2026-10-03:8:1',d:'2026-10-04',v:20,o:9,c:12},{s:'bake:2026-10-03:9:29',d:'2026-10-05',v:20,o:9,c:12}],
+'2026-10-04':[{s:'bake:2026-10-04:0:0',d:'2026-10-08',v:20,o:1,c:3},{s:'bake:2026-10-04:1:24',d:'2026-10-04',v:20,o:2,c:4},{s:'bake:2026-10-04:2:0',d:'2026-10-05',v:20,o:3,c:5},{s:'bake:2026-10-04:3:12',d:'2026-10-08',v:20,o:4,c:6},{s:'bake:2026-10-04:4:24',d:'2026-10-04',v:20,o:4,c:6},{s:'bake:2026-10-04:5:3',d:'2026-10-15',v:20,o:4,c:6},{s:'bake:2026-10-04:6:4',d:'2026-10-15',v:20,o:7,c:9},{s:'bake:2026-10-04:7:1',d:'2026-10-04',v:20,o:7,c:9},{s:'bake:2026-10-04:8:1',d:'2026-10-08',v:20,o:8,c:10},{s:'bake:2026-10-04:9:8',d:'2026-10-07',v:20,o:8,c:10}],
+'2026-10-05':[{s:'bake:2026-10-05:0:31',d:'2026-10-09',v:20,o:1,c:3},{s:'bake:2026-10-05:1:8',d:'2026-10-09',v:20,o:2,c:4},{s:'bake:2026-10-05:2:24',d:'2026-10-06',v:20,o:4,c:6},{s:'bake:2026-10-05:3:4',d:'2026-10-06',v:20,o:4,c:6},{s:'bake:2026-10-05:4:23',d:'2026-10-05',v:20,o:4,c:6},{s:'bake:2026-10-05:5:8',d:'2026-10-06',v:20,o:4,c:6},{s:'bake:2026-10-05:6:5',d:'2026-10-06',v:20,o:5,c:7},{s:'bake:2026-10-05:7:8',d:'2026-10-06',v:20,o:7,c:9},{s:'bake:2026-10-05:8:1',d:'2026-10-07',v:20,o:8,c:10},{s:'bake:2026-10-05:9:10',d:'2026-10-11',v:20,o:8,c:10}],
+'2026-10-06':[{s:'bake:2026-10-06:0:5',d:'2026-10-10',v:20,o:1,c:3},{s:'bake:2026-10-06:1:59',d:'2026-10-07',v:20,o:2,c:4},{s:'bake:2026-10-06:2:48',d:'2026-10-08',v:20,o:2,c:4},{s:'bake:2026-10-06:3:14',d:'2026-10-20',v:20,o:4,c:6},{s:'bake:2026-10-06:4:10',d:'2026-10-10',v:20,o:4,c:6},{s:'bake:2026-10-06:5:0',d:'2026-10-11',v:20,o:5,c:7},{s:'bake:2026-10-06:6:12',d:'2026-10-26',v:20,o:5,c:7},{s:'bake:2026-10-06:7:2',d:'2026-10-11',v:20,o:7,c:9},{s:'bake:2026-10-06:8:12',d:'2026-10-06',v:20,o:7,c:9},{s:'bake:2026-10-06:9:18',d:'2026-10-06',v:20,o:7,c:9}],
+'2026-10-07':[{s:'bake:2026-10-07:0:19',d:'2026-10-07',v:20,o:1,c:3},{s:'bake:2026-10-07:1:2',d:'2026-10-11',v:20,o:2,c:4},{s:'bake:2026-10-07:2:13',d:'2026-10-12',v:20,o:3,c:5},{s:'bake:2026-10-07:3:4',d:'2026-10-08',v:20,o:3,c:5},{s:'bake:2026-10-07:4:25',d:'2026-10-07',v:20,o:5,c:7},{s:'bake:2026-10-07:5:21',d:'2026-10-08',v:20,o:5,c:7},{s:'bake:2026-10-07:6:22',d:'2026-10-07',v:20,o:7,c:9},{s:'bake:2026-10-07:7:5',d:'2026-10-20',v:20,o:7,c:9},{s:'bake:2026-10-07:8:12',d:'2026-10-22',v:20,o:8,c:10},{s:'bake:2026-10-07:9:30',d:'2026-10-14',v:20,o:9,c:12}],
+'2026-10-08':[{s:'bake:2026-10-08:0:50',d:'2026-10-09',v:20,o:1,c:3},{s:'bake:2026-10-08:1:5',d:'2026-10-08',v:20,o:2,c:4},{s:'bake:2026-10-08:2:4',d:'2026-10-26',v:20,o:4,c:6},{s:'bake:2026-10-08:3:22',d:'2026-10-09',v:20,o:4,c:6},{s:'bake:2026-10-08:4:15',d:'2026-10-18',v:20,o:4,c:6},{s:'bake:2026-10-08:5:2',d:'2026-10-10',v:20,o:5,c:7},{s:'bake:2026-10-08:6:10',d:'2026-10-08',v:20,o:6,c:8},{s:'bake:2026-10-08:7:12',d:'2026-10-16',v:20,o:6,c:8},{s:'bake:2026-10-08:8:2',d:'2026-10-18',v:20,o:8,c:10},{s:'bake:2026-10-08:9:19',d:'2026-10-11',v:20,o:8,c:10}],
+'2026-10-09':[{s:'bake:2026-10-09:0:10',d:'2026-10-10',v:20,o:1,c:3},{s:'bake:2026-10-09:1:21',d:'2026-10-10',v:20,o:2,c:4},{s:'bake:2026-10-09:2:22',d:'2026-10-09',v:20,o:3,c:5},{s:'bake:2026-10-09:3:1',d:'2026-10-09',v:20,o:4,c:6},{s:'bake:2026-10-09:4:13',d:'2026-10-11',v:20,o:4,c:6},{s:'bake:2026-10-09:5:4',d:'2026-10-10',v:20,o:4,c:6},{s:'bake:2026-10-09:6:6',d:'2026-10-10',v:20,o:5,c:7},{s:'bake:2026-10-09:7:9',d:'2026-10-09',v:20,o:7,c:9},{s:'bake:2026-10-09:8:5',d:'2026-10-14',v:20,o:8,c:10},{s:'bake:2026-10-09:9:13',d:'2026-10-10',v:20,o:8,c:10}],
+'2026-10-10':[{s:'bake:2026-10-10:0:5',d:'2026-10-18',v:20,o:1,c:3},{s:'bake:2026-10-10:1:5',d:'2026-10-11',v:20,o:2,c:4},{s:'bake:2026-10-10:2:3',d:'2026-10-11',v:20,o:3,c:5},{s:'bake:2026-10-10:3:20',d:'2026-10-11',v:20,o:4,c:6},{s:'bake:2026-10-10:4:21',d:'2026-10-10',v:20,o:4,c:6},{s:'bake:2026-10-10:5:5',d:'2026-10-13',v:20,o:5,c:7},{s:'bake:2026-10-10:6:15',d:'2026-10-17',v:20,o:6,c:8},{s:'bake:2026-10-10:7:9',d:'2026-10-12',v:20,o:6,c:8},{s:'bake:2026-10-10:8:23',d:'2026-10-10',v:20,o:8,c:10},{s:'bake:2026-10-10:9:32',d:'2026-10-13',v:20,o:8,c:10}],
+'2026-10-11':[{s:'bake:2026-10-11:0:61',d:'2026-10-13',v:20,o:1,c:3},{s:'bake:2026-10-11:1:4',d:'2026-10-15',v:20,o:2,c:4},{s:'bake:2026-10-11:2:14',d:'2026-10-22',v:20,o:3,c:5},{s:'bake:2026-10-11:3:44',d:'2026-10-12',v:20,o:4,c:6},{s:'bake:2026-10-11:4:13',d:'2026-10-12',v:20,o:4,c:6},{s:'bake:2026-10-11:5:25',d:'2026-10-11',v:20,o:5,c:7},{s:'bake:2026-10-11:6:24',d:'2026-10-11',v:20,o:6,c:8},{s:'bake:2026-10-11:7:10',d:'2026-10-18',v:20,o:6,c:8},{s:'bake:2026-10-11:8:15',d:'2026-10-22',v:20,o:7,c:9},{s:'bake:2026-10-11:9:0',d:'2026-10-18',v:20,o:7,c:9}],
+'2026-10-12':[{s:'bake:2026-10-12:0:54',d:'2026-10-20',v:20,o:1,c:3},{s:'bake:2026-10-12:1:3',d:'2026-10-12',v:20,o:2,c:4},{s:'bake:2026-10-12:2:13',d:'2026-11-01',v:20,o:2,c:4},{s:'bake:2026-10-12:3:3',d:'2026-10-20',v:20,o:4,c:6},{s:'bake:2026-10-12:4:14',d:'2026-10-13',v:20,o:4,c:6},{s:'bake:2026-10-12:5:4',d:'2026-10-14',v:20,o:4,c:6},{s:'bake:2026-10-12:6:10',d:'2026-10-28',v:20,o:5,c:7},{s:'bake:2026-10-12:7:14',d:'2026-10-22',v:20,o:8,c:10},{s:'bake:2026-10-12:8:39',d:'2026-10-16',v:20,o:8,c:10},{s:'bake:2026-10-12:9:15',d:'2026-10-15',v:20,o:9,c:12}],
+'2026-10-13':[{s:'bake:2026-10-13:0:11',d:'2026-10-18',v:20,o:1,c:3},{s:'bake:2026-10-13:1:9',d:'2026-10-27',v:20,o:2,c:4},{s:'bake:2026-10-13:2:12',d:'2026-10-21',v:20,o:4,c:6},{s:'bake:2026-10-13:3:20',d:'2026-10-13',v:20,o:4,c:6},{s:'bake:2026-10-13:4:14',d:'2026-10-21',v:20,o:4,c:6},{s:'bake:2026-10-13:5:22',d:'2026-10-13',v:20,o:5,c:7},{s:'bake:2026-10-13:6:0',d:'2026-10-17',v:20,o:6,c:8},{s:'bake:2026-10-13:7:10',d:'2026-10-17',v:20,o:6,c:8},{s:'bake:2026-10-13:8:2',d:'2026-10-15',v:20,o:7,c:9},{s:'bake:2026-10-13:9:28',d:'2026-10-13',v:20,o:8,c:10}],
+'2026-10-14':[{s:'bake:2026-10-14:0:56',d:'2026-10-21',v:20,o:1,c:3},{s:'bake:2026-10-14:1:12',d:'2026-10-16',v:20,o:1,c:3},{s:'bake:2026-10-14:2:6',d:'2026-10-14',v:20,o:3,c:5},{s:'bake:2026-10-14:3:23',d:'2026-10-14',v:20,o:3,c:5},{s:'bake:2026-10-14:4:19',d:'2026-10-15',v:20,o:3,c:5},{s:'bake:2026-10-14:5:27',d:'2026-10-15',v:20,o:5,c:7},{s:'bake:2026-10-14:6:3',d:'2026-10-15',v:20,o:7,c:9},{s:'bake:2026-10-14:7:3',d:'2026-10-16',v:20,o:7,c:9},{s:'bake:2026-10-14:8:5',d:'2026-10-19',v:20,o:7,c:9},{s:'bake:2026-10-14:9:6',d:'2026-10-18',v:20,o:8,c:10}],
+'2026-10-15':[{s:'bake:2026-10-15:0:62',d:'2026-10-20',v:20,o:1,c:3},{s:'bake:2026-10-15:1:6',d:'2026-10-17',v:20,o:2,c:4},{s:'bake:2026-10-15:2:26',d:'2026-10-16',v:20,o:3,c:5},{s:'bake:2026-10-15:3:2',d:'2026-10-20',v:20,o:4,c:6},{s:'bake:2026-10-15:4:7',d:'2026-10-16',v:20,o:4,c:6},{s:'bake:2026-10-15:5:6',d:'2026-10-26',v:20,o:5,c:7},{s:'bake:2026-10-15:6:7',d:'2026-10-20',v:20,o:6,c:8},{s:'bake:2026-10-15:7:5',d:'2026-10-15',v:20,o:6,c:8},{s:'bake:2026-10-15:8:6',d:'2026-10-21',v:20,o:7,c:9},{s:'bake:2026-10-15:9:6',d:'2026-10-17',v:20,o:8,c:10}],
+'2026-10-16':[{s:'bake:2026-10-16:0:27',d:'2026-10-18',v:20,o:1,c:3},{s:'bake:2026-10-16:1:3',d:'2026-10-27',v:20,o:2,c:4},{s:'bake:2026-10-16:2:2',d:'2026-10-26',v:20,o:3,c:5},{s:'bake:2026-10-16:3:10',d:'2026-10-17',v:20,o:4,c:6},{s:'bake:2026-10-16:4:13',d:'2026-10-18',v:20,o:4,c:6},{s:'bake:2026-10-16:5:14',d:'2026-10-19',v:20,o:6,c:8},{s:'bake:2026-10-16:6:2',d:'2026-10-17',v:20,o:7,c:9},{s:'bake:2026-10-16:7:6',d:'2026-10-17',v:20,o:8,c:10},{s:'bake:2026-10-16:8:0',d:'2026-10-18',v:20,o:8,c:10},{s:'bake:2026-10-16:9:27',d:'2026-10-16',v:20,o:8,c:10}],
+'2026-10-17':[{s:'bake:2026-10-17:0:6',d:'2026-10-21',v:20,o:1,c:3},{s:'bake:2026-10-17:1:1',d:'2026-10-28',v:20,o:2,c:4},{s:'bake:2026-10-17:2:13',d:'2026-10-27',v:20,o:3,c:5},{s:'bake:2026-10-17:3:15',d:'2026-10-31',v:20,o:4,c:6},{s:'bake:2026-10-17:4:11',d:'2026-10-23',v:20,o:4,c:6},{s:'bake:2026-10-17:5:9',d:'2026-10-23',v:20,o:5,c:7},{s:'bake:2026-10-17:6:5',d:'2026-10-19',v:20,o:6,c:8},{s:'bake:2026-10-17:7:10',d:'2026-10-29',v:20,o:6,c:8},{s:'bake:2026-10-17:8:13',d:'2026-10-26',v:20,o:8,c:10},{s:'bake:2026-10-17:9:10',d:'2026-10-18',v:20,o:8,c:10}],
+'2026-10-18':[{s:'bake:2026-10-18:0:13',d:'2026-10-19',v:20,o:1,c:3},{s:'bake:2026-10-18:1:21',d:'2026-10-18',v:20,o:3,c:5},{s:'bake:2026-10-18:2:26',d:'2026-10-18',v:20,o:3,c:5},{s:'bake:2026-10-18:3:4',d:'2026-10-19',v:20,o:4,c:6},{s:'bake:2026-10-18:4:7',d:'2026-10-21',v:20,o:4,c:6},{s:'bake:2026-10-18:5:6',d:'2026-10-20',v:20,o:4,c:6},{s:'bake:2026-10-18:6:23',d:'2026-10-18',v:20,o:6,c:8},{s:'bake:2026-10-18:7:14',d:'2026-10-24',v:20,o:7,c:9},{s:'bake:2026-10-18:8:6',d:'2026-10-21',v:20,o:8,c:10},{s:'bake:2026-10-18:9:1',d:'2026-10-19',v:20,o:8,c:10}],
+'2026-10-19':[{s:'bake:2026-10-19:0:6',d:'2026-10-25',v:20,o:1,c:3},{s:'bake:2026-10-19:1:5',d:'2026-10-27',v:20,o:2,c:4},{s:'bake:2026-10-19:2:0',d:'2026-10-22',v:20,o:3,c:5},{s:'bake:2026-10-19:3:1',d:'2026-10-21',v:20,o:4,c:6},{s:'bake:2026-10-19:4:10',d:'2026-10-22',v:20,o:4,c:6},{s:'bake:2026-10-19:5:28',d:'2026-10-19',v:20,o:5,c:7},{s:'bake:2026-10-19:6:14',d:'2026-10-27',v:20,o:5,c:7},{s:'bake:2026-10-19:7:6',d:'2026-10-19',v:20,o:7,c:9},{s:'bake:2026-10-19:8:0',d:'2026-10-27',v:20,o:9,c:12},{s:'bake:2026-10-19:9:4',d:'2026-11-04',v:20,o:9,c:12}]
 };
 const OPTIMA={
   '2026-08-01':[6,5,8,11,16,17,20,20,27,34],
@@ -2132,6 +2272,27 @@ function netTargets(){
 }
 
 
+const BOARD_EDITION = 20;
+const BOARD_LAUNCH = '2026-09-05';
+
+function migrateBoardState(value) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  const state = { ...source };
+  if (Number(state.boardEdition) >= BOARD_EDITION) return state;
+
+  const badges = source.collection?.badges;
+  state.retiredBadges = {
+    ...(state.retiredBadges && typeof state.retiredBadges === 'object' && !Array.isArray(state.retiredBadges) ? state.retiredBadges : {}),
+    ...(badges && typeof badges === 'object' && !Array.isArray(badges) ? badges : {}),
+  };
+  state.boardEdition = BOARD_EDITION;
+  state.collection = { badges: {}, playedDays: [], pairs: {} };
+  state.meta = { streak: 0, bestDepth: 0, bestTrialDepth: 0, lastPlayDay: null };
+  state.runsToday = 0;
+  for (const key of ['run', 'parked', 'runsDay', 'lastIntroDay']) delete state[key];
+  return state;
+}
+
 const KEY='probe-run-v3';
 function today(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 
@@ -2148,16 +2309,12 @@ try{
   const raw=JSON.parse(localStorage.getItem(KEY)||'{}');
   if(raw && typeof raw==='object' && !Array.isArray(raw)) store=raw;
 }catch(e){store={}}
-if(!store.collection || typeof store.collection!=='object'){
+store=migrateBoardState(store);
+if(!store.collection || typeof store.collection!=='object')
   store.collection={badges:{},playedDays:[],pairs:{}};
-  try{ // carry stamps forward from earlier prototypes
-    const old=JSON.parse(localStorage.getItem('probe-proto-v2')||'{}');
-    if(old.meta&&old.meta.playedDays) store.collection.playedDays=old.meta.playedDays;
-  }catch(e){}
-}
 if(!store.meta) store.meta={streak:0,bestDepth:0,lastPlayDay:null};
 if(!store.collection.pairs) store.collection.pairs={};   // added after first ship
-const LAUNCH='2026-08-14';
+const LAUNCH=BOARD_LAUNCH;
 const dayAdd=(iso,n)=>new Date(new Date(iso+'T00:00:00Z').getTime()+n*864e5).toISOString().slice(0,10);
 function newRun(mode,day){
   const d=day||today();
@@ -2557,8 +2714,8 @@ async function syncNow(){
     if(JSON.stringify(store.collection)!==sent){ syncQueued=true }
     else if(j&&j.state){ adoptState(j.state); syncSay='saved' }
   }catch(e){
-    syncSay = /^http 401/.test(e.message) ? '' : 'offline';
-    if(/^http 401/.test(e.message)){ account={signedIn:false}; fillIntroAuth() }
+    syncSay = e.status===409 ? 'refresh to update' : e.status===401 ? '' : 'offline';
+    if(e.status===401){ account={signedIn:false}; fillIntroAuth() }
   }
   syncing=false;
   if(menuShown()&&menuView==='profile') renderAcct();
@@ -2576,7 +2733,11 @@ function sanitizeCollection(c){
 }
 function adoptState(merged){
   if(!merged||typeof merged!=='object') return;
+  if(Number(merged.boardEdition)>BOARD_EDITION){ syncSay='refresh to update'; return }
+  merged=migrateBoardState(merged);
   const mine=R(), theirs=merged.run;
+  store.boardEdition=BOARD_EDITION;
+  if(merged.retiredBadges) store.retiredBadges=merged.retiredBadges;
   store.collection=sanitizeCollection(merged.collection)||store.collection;
   store.meta=merged.meta||store.meta;
   store.premium=!!merged.premium;
@@ -3379,7 +3540,80 @@ function trackPt(u){
   return arc(B.x0+B.r,B.y0+B.r,Math.PI);
 }
 
+function mosaicCells(style,T,rnd){
+  let cells;
+  if(T===2){
+    cells=style==='tiers'||style==='corners'
+      ? [[0,0,1,.5],[0,.5,1,.5]] : [[0,0,.5,1],[.5,0,.5,1]];
+    if(style==='wings')cells=[[0,0,.5,.84],[.5,.16,.5,.84]];
+    if(style==='steps')cells=[[0,.16,.5,.84],[.5,0,.5,.84]];
+  }else if(T===3){
+    cells=style==='panels' ? [[0,0,1/3,1],[1/3,0,1/3,1],[2/3,0,1/3,1]]
+      : style==='tiers' ? [[0,0,1,1/3],[0,1/3,1,1/3],[0,2/3,1,1/3]]
+      : style==='corners' ? [[0,0,1,.5],[0,.5,.5,.5],[.5,.5,.5,.5]]
+      : [[0,0,.5,1],[.5,0,.5,.5],[.5,.5,.5,.5]];
+  }else{
+    cells=style==='tiers' ? [[0,0,.25,1],[.25,0,.25,1],[.5,0,.25,1],[.75,0,.25,1]]
+      : style==='wings' ? [[0,0,.28,1],[.28,0,.44,.5],[.28,.5,.44,.5],[.72,0,.28,1]]
+      : style==='steps' ? [[0,0,.48,.60],[0,.60,.48,.40],[.48,0,.52,.40],[.48,.40,.52,.60]]
+      : style==='corners' ? [[0,0,.58,.5],[.58,0,.42,.5],[0,.5,.42,.5],[.42,.5,.58,.5]]
+      : [[0,0,.5,.5],[.5,0,.5,.5],[0,.5,.5,.5],[.5,.5,.5,.5]];
+  }
+  const flipX=rnd()<.5,flipY=rnd()<.5;
+  return cells.map(([x,y,w,h])=>({x:PADX+(flipX?1-x-w:x)*(BW-2*PADX),
+    y:PADY+(flipY?1-y-h:y)*(BH-2*PADY),w:w*(BW-2*PADX),h:h*(BH-2*PADY)}));
+}
+function mosaicSlots(style,T,L,rnd,lens){
+  const cells=mosaicCells(style,T,rnd),s=[],g=[],keys=[],chords=[],used=new Set();
+  const turn=Math.floor(rnd()*T);
+  const lengths=Array.from({length:T},(_,k)=>lens?lens[(k+turn)%lens.length]:L);
+  const order=lengths.map((n,k)=>({n,k,tie:rnd()})).sort((a,b)=>b.n-a.n||a.tie-b.tie);
+  const available=cells.map((cell,i)=>({...cell,i,tie:rnd()}));
+  for(const {n,k} of order){
+    available.sort((a,b)=>Math.min(b.w,b.h)-Math.min(a.w,a.h)||a.tie-b.tie);
+    let chosen=null;
+    for(const cell of available){
+      const pool=Object.keys(FIGURES).filter(key=>FIGURES[key].n===n&&!used.has(key));
+      for(let j=pool.length-1;j>0;j--){const z=Math.floor(rnd()*(j+1));[pool[j],pool[z]]=[pool[z],pool[j]]}
+      const angles=[0,Math.PI/2,Math.PI/4,-Math.PI/4];
+      const start=Math.floor(rnd()*angles.length),mirror=rnd()<.5?-1:1;
+      for(const key of pool){
+        const f=FIGURES[key];
+        for(let j=0;j<angles.length;j++){
+          const a=angles[(j+start)%angles.length],co=Math.cos(a),si=Math.sin(a);
+          const p=f.p.map(([x,y])=>[mirror*(x*co-y*si),x*si+y*co]);
+          const xs=p.map(v=>v[0]),ys=p.map(v=>v[1]);
+          const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+          const scale=Math.min((cell.w-48)/(x1-x0||1),(cell.h-48)/(y1-y0||1));
+          const spareX=cell.w-48-(x1-x0)*scale,spareY=cell.h-48-(y1-y0)*scale;
+          const sweep=T===3?[-.72,.72,0]:[-.65,.65,-.65,.65];
+          const cx=cell.x+cell.w/2+(cell.w>cell.h*1.6?sweep[cell.i]*spareX/2:0);
+          const cy=cell.y+cell.h/2+(cell.h>cell.w*1.6?sweep[cell.i]*spareY/2:0);
+          const points=p.map(([x,y])=>({x:cx+(x-(x0+x1)/2)*scale,
+            y:cy+(y-(y0+y1)/2)*scale}));
+          let gap=Infinity;
+          for(let u=0;u<points.length;u++)for(let v=u+1;v<points.length;v++)
+            gap=Math.min(gap,Math.hypot(points[u].x-points[v].x,points[u].y-points[v].y));
+          if(gap<FAM_SEP)continue;
+          chosen={key,points,cell,chord:f.chord?f.chord.slice():null};break;
+        }
+        if(chosen)break;
+      }
+      if(chosen)break;
+    }
+    if(!chosen)return {s:[],g:[]};
+    s[k]=chosen.points;g[k]=chosen.points.map((_,i)=>'c'+i);
+    keys[k]=chosen.key;chords[k]=chosen.chord;used.add(chosen.key);
+    available.splice(available.indexOf(chosen.cell),1);
+  }
+  return {s,g,keys,chords};
+}
 const FAMILIES={
+  mosaicPanels:{minT:2,minL:3,cyc:3,slots:(T,L,tut,rnd,lens)=>mosaicSlots('panels',T,L,rnd,lens)},
+  mosaicTiers:{minT:2,minL:3,cyc:3,slots:(T,L,tut,rnd,lens)=>mosaicSlots('tiers',T,L,rnd,lens)},
+  mosaicSteps:{minT:2,minL:3,cyc:3,slots:(T,L,tut,rnd,lens)=>mosaicSlots('steps',T,L,rnd,lens)},
+  mosaicWings:{minT:2,minL:3,cyc:3,slots:(T,L,tut,rnd,lens)=>mosaicSlots('wings',T,L,rnd,lens)},
+  mosaicCorners:{minT:2,minL:3,cyc:3,slots:(T,L,tut,rnd,lens)=>mosaicSlots('corners',T,L,rnd,lens)},
 
   layered:{ minT:2, minL:3, cyc:3, slots(T,L,tut){
     const x0=BW*.10,x1=BW*.90,ytop=BH*.14,ybot=BH*.88,s=[],g=[];
@@ -3568,9 +3802,10 @@ const FAMILIES={
   }}
 };
 
-const FAM_LIST=['layered','arcs','hourglass','lattice','ring','fan','residual','drift','meander'];
+const FAM_MOSAIC=['mosaicPanels','mosaicTiers','mosaicSteps','mosaicWings','mosaicCorners'];
+const FAM_LIST=['layered','arcs','hourglass','lattice','ring','fan','residual','drift','meander',...FAM_MOSAIC];
 const FAM_FROM={layered:0, arcs:1, hourglass:1, lattice:1, ring:3, fan:4, residual:5,
-                drift:0, meander:0};
+                drift:0, meander:0, ...Object.fromEntries(FAM_MOSAIC.map(k=>[k,0]))};
 const FAM_WIDE={drift:1, meander:1};
 const FAM_UNTIL={ring:8, fan:8};
 let _famDay=null,_famSeq=null;
@@ -3580,7 +3815,7 @@ function famSeq(day,rules=genRules(genFor(day))){
   const rnd=mulberry32(fnv(day+':layout')), seq=[], used={};
   for(let i=0;i<32;i++){
     const s=netSpec(i,rules), T=s.threads, L=Math.max(3,s.nodes);
-    const all=FAM_LIST.filter(f=>FAM_FROM[f]<=i && i<=(FAM_UNTIL[f]??99)
+    const all=FAM_LIST.filter(f=>FAM_MOSAIC.includes(f)===(rules.open==='stamps') && FAM_FROM[f]<=i && i<=(FAM_UNTIL[f]??99)
                                  && (!FAM_WIDE[f] || rules.open==='wide')
                                  && T>=FAMILIES[f].minT && L>=FAMILIES[f].minL);
     let pool=all.filter(f=>f!==seq[i-1] && (i>=10 || (used[f]||0)<2));
@@ -3697,9 +3932,9 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   if(!F || T<F.minT || L<F.minL) return null;
   const xCap = GEN_RULES.ink==='poster16' ? 16
              : GEN_RULES.dense==='cap' ? famCeil(want) : Infinity;
-  const {s,g}=F.slots(T,L,tut,rnd);
+  const {s,g,keys:clues,chords:clueChords}=F.slots(T,L,tut,rnd,lens);
   const rot = lens ? Math.floor(rnd()*T) : 0;
-  if(lens) for(let k=0;k<T;k++){
+  if(lens && !clues) for(let k=0;k<T;k++){
     if(!s[k]) continue;
     const want=Math.max(3, Math.min(lens[(k+rot)%lens.length], s[k].length));
     if(want>=s[k].length) continue;
@@ -3724,7 +3959,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
       minSep=Math.min(minSep, Math.hypot(A.hx-nodes[b].hx, A.hy-nodes[b].hy));
   }
   if(minSep<FAM_SEP) return null;
-  if(!famCrossFree(order.map(o=>o.map(n=>({x:n.hx,y:n.hy}))))) return null;
+  if(!famCrossFree(order.map(o=>o.map(n=>({x:n.hx,y:n.hy}))),clueChords)) return null;
 
   const pairs=[];
   for(let a=0;a<nodes.length;a++)for(let b=a+1;b<nodes.length;b++){
@@ -3750,8 +3985,8 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
     }
   }
 
-  let chords=null;
-  if(GEN_RULES.chord==='one' || GEN_RULES.chord==='late'){
+  let chords=clueChords||null;
+  if(!clues && (GEN_RULES.chord==='one' || GEN_RULES.chord==='late')){
     const fin=order.map((o,k)=>o.map(n=>
       (n.merged && n.t[1]===k && n.alt) ? {x:n.alt.x, y:n.alt.y}
                                         : {x:n.hx, y:n.hy}));
@@ -3776,7 +4011,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
   }
 
   live.forEach(n=>n.moved=false);
-  const plan={fam, nodes:live, order, chords, d:0, merges, minSep, par:0, x:0,
+  const plan={fam, nodes:live, order, chords, clues, d:0, merges, minSep, par:0, x:0,
               mechanic:mechanic||null};
 
 
@@ -4104,7 +4339,7 @@ function famGreedy(plan){
   }
   return {actions, log, left:X()};
 }
-function famLine(plan){
+function famLine(plan,trace=null){
   const walk=famGreedy(plan).log;
   const at=new Map(); plan.nodes.forEach((n,i)=>at.set(n,i));
   const T=plan.order.length;
@@ -4161,12 +4396,14 @@ function famLine(plan){
       const put=splitPlace(p.i, p.x, p.y, famProbe(seq,T,p,half,S));
       p.x=put.a.x; p.y=put.a.y; half.x=put.b.x; half.y=put.b.y;
       byI.set(half.i, half);
+      if(trace)trace.push([1,p.i,p.x,p.y,half.x,half.y]);
     } else {
       if(p.pinned || p.hx==null) continue;
       if(p.t.every(k=>freed[k])) continue;            // grabbable, in one line
       const nx=clampX(p.hx), ny=clampY(p.hy);
       if(Math.abs(p.x-nx)<.5 && Math.abs(p.y-ny)<.5) continue;
       p.x=nx; p.y=ny;
+      if(trace)trace.push([0,p.i,p.x,p.y]);
     }
     n++;
     if(sweep()) return n;
@@ -4174,7 +4411,7 @@ function famLine(plan){
   return n;
 }
 const FREE_GRID=[5,4], FREE_CLEAR=34, FREE_STEPS=90;
-function famFree(plan){
+function famFree(plan,trace=null){
   const at=new Map(); plan.nodes.forEach((n,i)=>at.set(n,i));
   const T=plan.order.length;
   const P=plan.nodes.map((n,i)=>({x:clampX(n.x), y:clampY(n.y), hx:n.hx, hy:n.hy,
@@ -4291,7 +4528,11 @@ function famFree(plan){
       const put=splitPlace(p.i, p.x, p.y, famProbe(seq,T,p,half,S));
       p.x=put.a.x; p.y=put.a.y; half.x=put.b.x; half.y=put.b.y;
       all.push(half);
-    } else { best.p.x=best.x; best.p.y=best.y }
+      if(trace)trace.push([1,p.i,p.x,p.y,half.x,half.y]);
+    } else {
+      best.p.x=best.x; best.p.y=best.y;
+      if(trace)trace.push([0,best.p.i,best.x,best.y]);
+    }
     moves++;
     const was=freed.filter(Boolean).length;
     s=sweep();
@@ -4377,7 +4618,7 @@ function famBest(plan){
   return f<w?f:w;
 }
 
-let gRoot,gPlay,gThreads,gMarkers,gMembers,gLabels,gFx,physRAF=null,physDirty=true;
+let gRoot,gPlay,gStamps,gThreads,gMarkers,gMembers,gLabels,gFx,physRAF=null,physDirty=true;
 
 const RMQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
 let reduceMotion = !!(RMQ && RMQ.matches);
@@ -4426,7 +4667,7 @@ function applyOrientation(force){
   $('field').classList.toggle('portrait', portrait);
   if(gRoot) gRoot.setAttribute('transform', portrait?`rotate(90) translate(0 ${-BH})`:'');
   if(gPlay) gPlay.setAttribute('transform','');
-  if(gLabels) threads.forEach(t=>{if(t.freed) repositionLabel(t)});
+  if(gLabels) threads.forEach(t=>{if(t.freed){repositionLabel(t);if(t.stampEl)placeStamp(t)}});
   publishPlateInset();
   return true;
 }
@@ -4459,7 +4700,8 @@ function buildNet(force){
   const GEN={...genForVersion(lesson ? TUTDAY : genDay, lesson ? null : pk?.v)};
   Object.assign(GEN_RULES, genRules(GEN));
   spec=netSpec(idx, GEN_RULES);
-  if(GEN_RULES.ramp==='visual')spec.visualMath=true;
+  if(GEN_RULES.ramp==='visual'||GEN_RULES.ramp==='mosaic')spec.visualMath=true;
+  if(GEN_RULES.ramp==='mosaic')spec.mosaic=true;
   if(inTutorialRun() && idx<TUTNETS.length) Object.assign(spec, TUTNETS[idx], {
     par: TUTNETS[idx].threads*2 + TUTNETS[idx].shared*3
        + (TUTNETS[idx].nodes-3)*2 + TUTNETS[idx].pinned*2 + 3
@@ -4576,6 +4818,7 @@ function buildNet(force){
       const T=threads.length, L=Math.max(3,spec.nodes);
       const TUTFAM=['layered','hourglass','layered'];
       const fam=tut?TUTFAM[idx]
+               : GEN.open==='stamps'?famFor(genDay,idx,GEN_RULES)
                : spec.coupled?'hourglass'       // the approved mirrored butterfly
                : spec.relay?'meander'           // the approved ordered stair
                : GEN.ink==='poster16'&&spec.shared>=4?'ring' // the approved deep rosette
@@ -4585,7 +4828,7 @@ function buildNet(force){
       const fixedVisual=!tut&&(!!spec.coupled||!!spec.relay||
         (GEN.ink==='poster16'&&spec.shared>=4));
       const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens,mech)
-              || (!fixedVisual&&fam!=='layered'
+              || (!fixedVisual&&GEN.open!=='stamps'&&fam!=='layered'
                 ? famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens,mech)
                 : null);
       if(!plan){ ok=false }
@@ -4600,7 +4843,8 @@ function buildNet(force){
           n.m=m; members.push(m);
         });
         threads.forEach((th,k)=>{ th.nodes=plan.order[k].map(n=>n.m);
-                                  th.chord=plan.chords?plan.chords[k]:null });
+                                  th.chord=plan.chords?plan.chords[k]:null;
+                                  if(plan.clues)th.target=plan.clues[k] });
         plan.nodes.forEach(n=>n.t.forEach(k=>{
           if(!n.m.threads.includes(threads[k])) n.m.threads.push(threads[k]);
         }));
@@ -4615,6 +4859,7 @@ function buildNet(force){
         }
         spec.minX=Math.max(2, Math.round(plan.par*0.5));
         spec.maxX=Math.max(spec.minX+3, Math.round(plan.par*5)+8);
+        if(GEN_RULES.ramp==='mosaic'){spec.minX=Math.min(10,spec.minX);spec.maxX=16;}
         if(tut){ spec.minX=TUTNETS[idx].minX; spec.maxX=TUTNETS[idx].maxX; }
         ok=threads.every(t=>t.nodes.length>=2);
       }
@@ -4706,6 +4951,7 @@ function buildNet(force){
   netPairs=[...new Set(members.filter(n=>n.threads.length>1)
     .map(n=>[n.threads[0].key,n.threads[1].key].sort().join('|')))];
 
+  gStamps=mk('g',{'class':'earned-stamps'},gPlay);
   gThreads=mk('g',{},gPlay);gMembers=mk('g',{},gPlay);gMarkers=mk('g',{},gPlay);
   gLabels=mk('g',{},gPlay);gFx=mk('g',{},gPlay);
   applyOrientation(true);
@@ -4913,6 +5159,9 @@ function paintNode(n){
   n.g.setAttribute('aria-label', nodeSay(n));
   n.g.classList.toggle('live', live);
   n.g.classList.toggle('relay-locked',relayLocked(n));
+  if(n.threads.every(t=>t.freed)&&n.threads.some(t=>t.stampEl)){
+    n.g.style.opacity='0';n.g.setAttribute('aria-hidden','true');
+  }
   placeNode(n);
 }
 function placeNode(n){
@@ -4970,7 +5219,7 @@ function splitNode(n,silent){
   if(bi>=0) b.nodes[bi]=n2; else return false;
   n.threads=[a]; n.merged=false;
   n.x0=pa.x; n.y0=pa.y;
-  const px=v=>Math.round(v*10)/10;
+  const px=v=>savedCoord(v);
   pos[n.idx]=[px(n.x0),px(n.y0)]; pos[n2.idx]=[px(n2.x0),px(n2.y0)];
   members.push(n2);
   paintNode(n); paintNode(n2);
@@ -5190,6 +5439,7 @@ function featureShape(k,n){
 }
 function labelAnchor(t){
   const s=t.signSlot;
+  if(s&&STAMPS[t.key]) return portrait?{x:s.cx-s.r/2-14,y:s.cy}:{x:s.cx,y:s.cy-s.r/2-14};
   const held=s?heldNodes(t):null;
   const src=s ? t.nodes.filter(n=>!held.includes(n)) : t.nodes;
   const xs=src.map(n=>n.x0), ys=src.map(n=>n.y0);
@@ -5207,7 +5457,7 @@ function placeLabel(lbl,p){
   lbl.setAttribute('transform', portrait?`rotate(-90 ${x} ${y})`:'');
 }
 function repositionLabel(t){
-  const lbl=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===t.key);
+  const lbl=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===String(threads.indexOf(t)));
   if(lbl) placeLabel(lbl,labelAnchor(t));
 }
 const SIGN_GAP=10;        // clear board kept around every sign's own box
@@ -5298,6 +5548,31 @@ function bestTurn(nodes, pts, at){
   }
   return best.map(i=>pts[i]);
 }
+function placeStamp(t){
+  if(!t.stampEl||!t.signSlot)return;
+  const s=t.signSlot;
+  t.stampEl.setAttribute('transform',`translate(${s.cx} ${s.cy}) rotate(${portrait?-90:0}) scale(${s.r/96}) translate(-48 -48)`);
+}
+function revealStamp(t,instant=false){
+  if(!STAMPS[t.key]||!gStamps)return;
+  if(!t.stampEl){
+    t.stampEl=document.createElementNS('http://www.w3.org/2000/svg','g');
+    t.stampEl.setAttribute('class','earned-stamp');
+    t.stampEl.setAttribute('role','img');
+    t.stampEl.setAttribute('aria-label',STAMPS[t.key].label+' collected');
+    t.stampEl.innerHTML=`<rect width="96" height="96" fill="${STAMPS[t.key].colour}"/>`+figEmblem(t.key,{ink:EMBLEM_INK});
+    t.stampEl.style.pointerEvents='none';
+    gStamps.appendChild(t.stampEl);
+  }
+  placeStamp(t);
+  t.el.style.opacity='0';
+  t.nodes.forEach(n=>{if(n.g&&n.threads.every(th=>th.freed)){
+    n.g.style.opacity='0';n.g.setAttribute('aria-hidden','true');n.g.setAttribute('tabindex','-1');
+  }});
+  if(!instant&&!reduceMotion){
+    t.stampEl.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease-out'});
+  }
+}
 function settleIntoShape(t,instant=false){
   const held=heldNodes(t);
   const movable=t.nodes.filter(n=>!held.includes(n));
@@ -5306,6 +5581,7 @@ function settleIntoShape(t,instant=false){
   let pts=drawn||featureShape(t.key, t.nodes.length);
   if(!pts) return;
   const slot=claimSlot(t);
+  if(STAMPS[t.key])revealStamp(t,instant);
   const cx=slot.cx, cy=slot.cy;
   const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
   const ox=(Math.min(...xs)+Math.max(...xs))/2, oy=(Math.min(...ys)+Math.max(...ys))/2;
@@ -5367,7 +5643,7 @@ function freeThread(t,silent){
   }
   t.calm=threads.indexOf(t)*1.1;
   const whole=signWhole(t);
-  const twin=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===t.key);
+  const twin=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===String(threads.indexOf(t)));
   let lbl=twin;
   if(twin){
     const n=(+twin.dataset.n||1)+1; twin.dataset.n=n;
@@ -5376,7 +5652,7 @@ function freeThread(t,silent){
     lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
     lbl.setAttribute('class','tlabel2');lbl.setAttribute('text-anchor','middle');
     lbl.textContent=t.key;
-    lbl.dataset.thread=t.key;
+    lbl.dataset.thread=String(threads.indexOf(t));
     gLabels.appendChild(lbl);
     placeLabel(lbl,labelAnchor(t));
   }
@@ -5403,7 +5679,7 @@ function freeThread(t,silent){
     flashMsg('feature identified · '+t.key+(relayOpen?' · relay open':''),{cols:[t.col],big:true});
     if(relayOpen)$('msg').textContent=`relay open · ${relayOpen.relay.after.key} neuron can move`;
     tutReach(2);
-    setTimeout(()=>{ t.signWhole=whole; t.settled=true; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:320);
+    setTimeout(()=>{ t.signWhole=whole; t.settled=true; settleIntoShape(t); repositionLabel(t); }, reduceMotion?0:180);
   }else{
     t.signWhole=whole; t.settled=true;
     if(t.figDrawn){settleIntoShape(t,true);repositionLabel(t)}
@@ -5499,7 +5775,7 @@ function syncTutorialTargets(){
   });
 }
 function nodeSay(n){
-  const keys=n.threads.map(t=>t.key);
+  const keys=n.threads.map(t=>t.freed?t.key:'thread '+(threads.indexOf(t)+1));
   const what = n.threads.every(t=>t.freed) ? 'identified'
              : n.pinned ? 'pinned neuron, will not move'
              : relayLocked(n) ? `relay neuron, unlocks when ${n.relay.before.key} is identified`
@@ -5590,6 +5866,7 @@ function logMove(r,e){
   if(r.log.length>=LOGCAP){ r.logGap=true; return }
   r.log.push(e);
 }
+function savedCoord(v){return GEN_RULES.open==='stamps'?v:Math.round(v*10)/10}
 function chargeTurn(r,e){
   countCross();
   if(e) logMove(r,e); else r.logGap=true;
@@ -5621,15 +5898,15 @@ function endDrag(e){
       (r.splitNodes=r.splitNodes||[]).push(node.idx);
       splitNode(node,false);
       recordDay(); tutReach(2);
-      r.positions[node.idx]=[Math.round(node.x0*10)/10,Math.round(node.y0*10)/10];
+      r.positions[node.idx]=[savedCoord(node.x0),savedCoord(node.y0)];
       chargeTurn(r,[1,node.idx,...(r.positions[node.idx]||[]),...(r.positions[1000+node.idx]||[])]);
       afterMove(r);
     }
     return;
   }
-  r.positions[node.idx]=[Math.round(node.x0*10)/10,Math.round(node.y0*10)/10];
+  r.positions[node.idx]=[savedCoord(node.x0),savedCoord(node.y0)];
   if(pair)r.positions[pair.mate.idx]=[
-    Math.round(pair.mate.x0*10)/10,Math.round(pair.mate.y0*10)/10];
+    savedCoord(pair.mate.x0),savedCoord(pair.mate.y0)];
   recordDay(); tutReach(1);
   chargeTurn(r,pair
     ? [3,node.idx,pair.mate.idx,r.positions[node.idx][0],r.positions[node.idx][1],
@@ -5833,13 +6110,13 @@ function descentTick(){
   descentStall=0;
   r.assisted=true;
   r.assists=(r.assists||0)+1;
-  logMove(r,[2,best.n.idx,Math.round(best.nx*10)/10,Math.round(best.ny*10)/10]);
+  logMove(r,[2,best.n.idx,savedCoord(best.nx),savedCoord(best.ny)]);
   if(settlingNode&&settlingNode!==best.n) settlingNode.el.classList.remove('settling');
   settlingNode=best.n; settlingNode.el.classList.add('settling');
   best.n.tw={ax:best.n.xv, ay:best.n.yv, bx:best.nx, by:best.ny,
              t0:performance.now(), dur:DESCENT_GLIDE};
   best.n.x0=best.nx; best.n.y0=best.ny;
-  r.positions[best.n.idx]=[Math.round(best.n.x0*10)/10,Math.round(best.n.y0*10)/10];
+  r.positions[best.n.idx]=[savedCoord(best.n.x0),savedCoord(best.n.y0)];
   countCross();
   threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,false));
   save(); refresh(); renderHud();
@@ -6205,7 +6482,7 @@ const TUTSTEPS_BY_NET=[
   [ // net 0 — the gesture, and what a crossing is
     '<b>drag a neuron.</b> the lines follow.',
     '<b>clear every crossing off one line.</b> it comes free.',
-    'one crossing left. <b>clear it.</b>'
+    '<b>clear the remaining crossings.</b>'
   ],
   [ // net 1 — the joint/shared neuron
     '<b>tap the double ring.</b> it is one neuron shared by both colours.',
@@ -6275,7 +6552,8 @@ function paintTutorial(d){
     key.classList.remove('score');
     tutSpotlight();
     $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · step ${d.step} of ${d.steps.length}`;
-    $('coachtext').innerHTML = (!tutLit || d.net>0) ? d.steps[d.step-1]
+    $('coachtext').innerHTML = threads.every(t=>t.freed) ? '<b>features found.</b>'
+      : (!tutLit || d.net>0) ? d.steps[d.step-1]
       : (TUTLIT[d.step-1] || d.steps[d.step-1]);
     [...$('coachdots').children].forEach((dot,i)=>{
       dot.classList.toggle('done',i+1<d.step);
@@ -6410,7 +6688,7 @@ function retangleTick(){
   if(!worst) return;
   r.assists=(r.assists||0)+1;          // spent on the nudge, not on the search
   worst.n.x0=worst.nx; worst.n.y0=worst.ny;
-  R().positions[worst.n.idx]=[Math.round(worst.n.x0*10)/10,Math.round(worst.n.y0*10)/10];
+  R().positions[worst.n.idx]=[savedCoord(worst.n.x0),savedCoord(worst.n.y0)];
   save();
   worst.n.el.classList.add('retraining');
   setTimeout(()=>worst.n.el.classList.remove('retraining'),900);
@@ -7582,8 +7860,8 @@ window.__solveNet=()=>{
           throw new Error('mechanic witness has no joint route home');
         n.x0=n.xv=pos.a.x;n.y0=n.yv=pos.a.y;
         mate.x0=mate.xv=pos.b.x;mate.y0=mate.yv=pos.b.y;
-        r.positions[n.idx]=[Math.round(n.x0*10)/10,Math.round(n.y0*10)/10];
-        r.positions[mate.idx]=[Math.round(mate.x0*10)/10,Math.round(mate.y0*10)/10];
+        r.positions[n.idx]=[savedCoord(n.x0),savedCoord(n.y0)];
+        r.positions[mate.idx]=[savedCoord(mate.x0),savedCoord(mate.y0)];
         chargeTurn(r,[3,n.idx,mate.idx,...r.positions[n.idx],...r.positions[mate.idx]]);
         settleRoute();
       } else {
@@ -7593,7 +7871,7 @@ window.__solveNet=()=>{
         if(Math.hypot(n.x0-n.hx,n.y0-n.hy)<=MIN_SEP*.7) continue;
         n.x0=clampX(n.hx); n.y0=clampY(n.hy);
         r.positions[n.idx]=[n.x0,n.y0];
-        chargeTurn(r,[0,n.idx,Math.round(n.x0*10)/10,Math.round(n.y0*10)/10]);
+        chargeTurn(r,[0,n.idx,savedCoord(n.x0),savedCoord(n.y0)]);
         settleRoute();
       }
     }
