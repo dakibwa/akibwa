@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-aBjmCPob11LiDezJBpOcE4BW50+lboL7Z8DrBUzO1M8=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-T00nX5IePvaNt5JXDfViZIMV6BokVT49pc7f3/3hF5c=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -3099,7 +3099,7 @@ function applyEntitlement(r){
   if(r.badToken) acct.token=null;
   if(r.token) acct.token=r.token;
   if('restoreCode' in r) acct.code=r.restoreCode||null;
-  if(r.price) priceInfo=r.price;
+  if('price' in r) priceInfo=r.price||null;
   if(typeof r.till==='boolean') till=r.till;
   saveAcct();
   if(typeof r.full!=='boolean') return false;
@@ -3139,7 +3139,7 @@ function ensurePrice(){
   pricePromise=(async()=>{
     const moved=applyEntitlement(await api('me'));
     if(priceInfo || moved) entitlementChanged();
-  })();
+  })().finally(()=>{pricePromise=null});
   return pricePromise;
 }
 async function linkUnlock(){
@@ -3244,6 +3244,9 @@ function checkoutUrl(raw){
 async function beginUnlock(){
   if(POLICY.premium) return;
   if(API) await ensurePrice();       // the mode decision needs the key, not a guess
+  if(POLICY.premium) return tillSaid('you already own the full version',false);
+  if(API && !DEV && till===false)
+    return tillSaid('purchases are currently unavailable',false);
   const Stripe=API ? await stripeJS() : null;
   const wantEmbedded=!!(Stripe && priceInfo && priceInfo.pk);
   const r=API ? await api('unlock/checkout',{return_path:location.pathname,embedded:wantEmbedded}) : null;
@@ -3251,6 +3254,10 @@ async function beginUnlock(){
     if(DEV){
       POLICY.premium=true; save(); entitlementChanged();
       return toast('unlocked locally · dev build, nothing was charged');
+    }
+    if(r?.error?.code==='not_configured'){
+      till=false; priceInfo=null;
+      return tillSaid('purchases are currently unavailable',false);
     }
     return tillSaid(r && r.error && r.error.code==='rate_limited'
       ? 'too many tries · give it a minute'
