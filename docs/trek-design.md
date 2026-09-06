@@ -21,8 +21,10 @@ perspective and much less text and interface on 5 September 2026.
   Secondary roads are fine cream lines. Avoid bright yellow road networks,
   floating decorative islands, invented settlements, a screen of giant trees,
   or texture that makes the route and ground look blurred.
-  The [approved visual reference](trek-paper-concept.png) is an art-direction
-  sketch; its individual trees, houses and field divisions are illustrative.
+  Dan reconfirmed the [approved visual reference](trek-paper-concept.png) as
+  the quality bar on 6 September 2026. Judge the finished rendering against its
+  richness, material detail and depth. Its individual trees, houses and field
+  divisions remain illustrative; the reference does not replace mapped geography.
 - Keep the small mark, country, menu, play control, progress line, date and
   photograph button on the landscape. A quiet row above the progress line shows
   day out of 67, kilometres covered and total metres climbed, as Dan requested
@@ -56,6 +58,36 @@ perspective and much less text and interface on 5 September 2026.
   field of view from 38° to 55° in portrait layouts so the path remains visible.
   Keep background trail strokes faint and solid so their dashes do not compete
   with the recorded route or the explicitly dashed connections.
+
+## Visual acceptance
+
+The paper reference sets the standard for the finished landscape. Adding a paper
+palette, texture and simple scenery establishes a first pass; it does not by
+itself meet that standard. Preserve these visible qualities as detail improves:
+
+- Dense woodland has varied tree silhouettes, heights and tones, with convincing
+  clusters, edges and clearings. Sparse repeated cones do not convey the reference's
+  miniature forest.
+- Villages read as detailed groups of buildings, with distinct walls, pitched
+  roofs, small facade details and grounding shadows. Keep settlement placement
+  and building footprints tied to the map.
+- Fields form a layered patchwork with legible boundaries, tactile paper edges,
+  fine fibres and subtle directional marks. Material detail stays crisp at the
+  travelled viewing distance without overwhelming the route.
+- One soft light unifies trees, buildings and terrain. Contact shadows ground
+  objects; foreground, middle distance and distant hills have clear depth.
+  Atmospheric softness belongs in the distance, with the nearby path readable.
+- The landscape fills the frame, with the rust route leading naturally through
+  the terrain. Fine cream roads, quiet typography and open controls preserve
+  the composition and leave the landscape primary.
+
+Compare the running German woodland and village, plus an Alpine pass, with the
+reference at phone and desktop sizes. Check both a paused frame and continuous
+movement: density, materials and shadows must remain stable without popping or
+camera distraction. Use actual phone evidence before claiming phone performance.
+Automated checks establish correctness; they cannot establish visual parity.
+Keep a working first pass distinct from a visually finished landscape until this
+comparison supports the latter.
 
 ## Geography and source ownership
 
