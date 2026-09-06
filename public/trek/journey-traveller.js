@@ -8,12 +8,12 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,wayfinding=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=450,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
     let flashTime=0,flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,chapters=[],moments=[];
-    let readyTimeout=0,positionPending=null,swipeX=null;
+    let readyTimeout=0,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
@@ -21,6 +21,26 @@
     $('journey-day').replaceChildren(...data.days.map(d=>{const o=document.createElement('option');o.value=d.n;o.textContent='Day '+String(d.n).padStart(2,'0')+' · '+d.c;return o;}));
     $('photo-interludes').checked=!reduced;
     text('walk-totals','1,982 km · 67 numbered days · '+data.photos.length+' photographs · '+Math.round(data.stats.ascent).toLocaleString()+' m of ascent.');
+    $('landmark-sources').replaceChildren(...data.landmarks.map(item=>{
+      const p=document.createElement('p'),link=document.createElement('a'),small=document.createElement('small');
+      link.href=item.source;link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.name+' ↗';
+      small.textContent=item.place+' · '+item.country;p.append(link,small);return p;
+    }));
+    function placeChanged(place){
+      clearTimeout(placeTimer);const generation=++placeGeneration,el=$('place-arrival');el.classList.remove('visible');el.setAttribute('aria-hidden','true');
+      if(place){text('place-name',place.name);if(started)requestAnimationFrame(()=>{if(generation===placeGeneration){el.classList.add('visible');el.setAttribute('aria-hidden','false');}});placeTimer=setTimeout(()=>{el.classList.remove('visible');el.setAttribute('aria-hidden','true');},10000);}
+    }
+    function wayfindingUI(force=false){
+      if(!wayfinding||!path)return;
+      wayfinding.update(distance,heading??TrekCamera.headingAt(path,distance),force);
+      const now=performance.now();if(!force&&now-lastLandmarkScan<220)return;lastLandmarkScan=now;
+      const at=path.sample(distance).point,shown=paper?.status().landmarks||[];
+      const nearby=started&&following&&ready?data.landmarks.filter(item=>shown.includes(item.id)).map(item=>{
+        const screen=map.project(item.point);return {item,d:TrekWayfinding.metres(at,item.point),screen};
+      }).filter(({d,screen})=>d<2300&&screen.x>12&&screen.x<innerWidth-12&&screen.y>72&&screen.y<innerHeight-150).sort((a,b)=>a.d-b.d)[0]:null;
+      $('landmark-caption').hidden=!nearby;
+      if(nearby){text('landmark-name',nearby.item.name);text('landmark-place',nearby.item.place+' · '+nearby.item.country);}
+    }
     function invalidate(){if(!frame&&!document.hidden)frame=requestAnimationFrame(tick);}
     function setPlaying(value){
       if(!value&&flashPending){flashGeneration++;flashPending=false;}
@@ -33,18 +53,19 @@
       const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:950);
     }
     function begin(){
+      if(!started)wayfinding?.resetPlace();
       if(path&&distance>=path.total-.01)distance=0;
-      started=true;following=true;$('opening').hidden=true;$('ending').hidden=true;$('journey-controls').hidden=false;
+      started=true;following=true;$('journey-minimap').hidden=false;$('opening').hidden=true;$('ending').hidden=true;$('journey-controls').hidden=false;
       document.body.classList.remove('is-exploring');setPlaying(true);updateUI(true);
     }
     function reset(){
-      setPlaying(false);dismissFlash();menu.close();started=false;distance=0;renderedDistance=0;heading=null;eyeHeight=null;
+      setPlaying(false);dismissFlash();menu.close();started=false;$('journey-minimap').hidden=true;placeChanged(null);wayfinding?.resetPlace();distance=0;renderedDistance=0;heading=null;eyeHeight=null;
       day=1;fraction=0;lastUI=-1;lastFlashDay=-1;photoCooldown=0;following=true;
       $('opening').hidden=false;$('ending').hidden=true;$('journey-controls').hidden=true;document.body.classList.remove('is-exploring');
       history.replaceState(null,'',location.pathname);updateUI(true);prepareCamera();invalidate();
     }
     function visit(n,t=.5){
-      n=clamp(n,1,67);setPlaying(false);dismissFlash();started=true;following=true;day=n;fraction=t;
+      n=clamp(n,1,67);setPlaying(false);dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;day=n;fraction=t;
       if(path)distance=path.dayDistance(n,t);else positionPending={day:n,t};
       renderedDistance=distance;heading=null;eyeHeight=null;lastFlashDay=-1;photoCooldown=0;
       $('opening').hidden=true;$('ending').hidden=true;$('journey-controls').hidden=false;document.body.classList.remove('is-exploring');
@@ -60,7 +81,9 @@
       const km=mix(previous?.cum||0,d.cum,measured),ascent=mix(previous?.cumElev||0,d.cumElev,measured);
       text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(km));
       text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
-      text('where',started?d.c:'Paris → Sofia');
+      text('where',started?d.c:'Paris → Sofia');text('country-flag',started?(TrekWayfinding.flags[d.c]||''):'');
+      $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
+      wayfindingUI(force);
       if(!force&&lastUI===day)return;lastUI=day;
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
       $('journey-day').value=day;$('day-back').disabled=day===1;$('day-forward').disabled=day===67;
@@ -158,7 +181,7 @@
           if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
         }
       }
-      updateUI();const unsettled=camera(dt);
+      updateUI();const unsettled=camera(dt);wayfindingUI();
       if(playing||unsettled)invalidate();
     }
     function unavailable(message){failed=true;ready=false;$('map-status').hidden=false;text('map-status',message);setPlaying(false);}
@@ -190,8 +213,10 @@
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
             map.addLayer({id,type:'line',source,layout:{'line-cap':'round','line-join':'round'},paint});
           }
-          try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]});}
+          try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
+          wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
+          map.on('idle',()=>wayfindingUI(true));
           // Sources have now populated MapLibre's initially expanded disclosure.
           document.querySelector('.maplibregl-ctrl-attrib').classList.remove('maplibregl-compact-show');
           terrainReady=true;prepareCamera();text('map-status','Opening this stretch of landscape…');
@@ -209,7 +234,7 @@
     $('journey-day').addEventListener('change',e=>visit(+e.target.value));
     $('day-back').addEventListener('click',()=>visit(day-1));$('day-forward').addEventListener('click',()=>visit(day+1));
     $('restart').addEventListener('click',reset);$('pace').addEventListener('change',e=>pace=+e.target.value);
-    progress.addEventListener('input',()=>{if(!path)return;setPlaying(false);dismissFlash();started=true;following=true;distance=+progress.value/1000*path.total;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('ending').hidden=distance<path.total;updateUI(true);prepareCamera();invalidate();});
+    progress.addEventListener('input',()=>{if(!path)return;setPlaying(false);dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;distance=+progress.value/1000*path.total;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('ending').hidden=distance<path.total;updateUI(true);prepareCamera();invalidate();});
     $('photos-open').addEventListener('click',()=>showGallery(Math.floor(photosFor(day).length*fraction)));
     $('menu-photos').addEventListener('click',()=>showGallery());$('gallery-close').addEventListener('click',()=>gallery.close());
     $('photo-back').addEventListener('click',()=>showGallery(galleryIndex-1));$('photo-forward').addEventListener('click',()=>showGallery(galleryIndex+1));
@@ -220,7 +245,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],paper:paper?.status()});
+    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

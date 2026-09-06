@@ -11,8 +11,9 @@ perspective and much less text and interface on 5 September 2026.
   the direction of travel from above the route, with a long look ahead and a
   gently turning camera. This is a terrain view, not street-level imagery.
 - Use muted sage terrain, warm paper, a rust path and Fraunces for the opening.
-  Retain real roads, trails, rivers and buildings, while removing map labels
-  from the moving view. Avoid a fixed compass direction or an overhead overview
+  Retain real roads, trails, rivers and buildings, while keeping ordinary map labels
+  out of the moving view. Let town names appear briefly as the route approaches
+  mapped settlements. Avoid a fixed compass direction or an overhead overview
   as the main experience.
 - On 6 September 2026 Dan approved a landscape made from layered paper. Use
   cut and folded tree canopies, pale village walls with warm pitched roofs,
@@ -31,10 +32,27 @@ perspective and much less text and interface on 5 September 2026.
   field fill and hillshade before the first waterway layer, so paper treatments
   cannot wash out streams. Leave mapped surface waterways free of tree trunks.
 - Keep the small mark, country, menu, play control, progress line, date and
-  photograph button on the landscape. A quiet row above the progress line shows
+  photograph button on the landscape. Put the current country’s flag beside its
+  name. A clearly readable row above the progress line shows
   day out of 67, kilometres covered and total metres climbed, as Dan requested
-  on 5 September 2026. Use open typography, not cards. The opening has one start action; Sofia
+  on 5 September 2026. Use large, dark Fraunces numerals and smaller Plex labels on the open landscape. The opening has one start action; Sofia
   has one replay action. Map credits remain in a visible compact disclosure.
+- The upper-right corner holds a small paper minimap of the full journey, with
+  the completed route, remaining route, dashed connections and a moving direction
+  marker. It uses the existing country outlines and a 2D canvas, with no second
+  terrain renderer. Keep it below the menu and compact on phone screens.
+- Settlement names come from the existing map tiles. Show one name briefly near
+  a city, town, village or hamlet, with a small geographic margin to avoid flicker.
+  Never announce passing a town on a visual connection. Names clear after leaving;
+  replay and scrubbing can reveal them again. Hide inset and place furniture
+  during photographic interludes.
+- Nine landmarks have small paper models anchored at verified public positions:
+  Reims cathedral, Château des Rohan, the Frauenkirche, St. Jakob in Villach,
+  Ptuj Castle, Osijek’s co-cathedral, the Name of Mary Church in Novi Sad, the
+  Temple of Saint Sava and Alexander Nevsky Cathedral. Towers, domes, gables,
+  cornices and facade details are architectural interpretations. Show a quiet
+  name when a model is in view. Keep the source links in the menu. These are
+  nearby landmarks, not evidence of entering a building.
 - The menu owns all 67 days, six chapters, pace, the photograph-interlude toggle,
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
@@ -149,7 +167,10 @@ identifications from the images.
 continuous distance sampling and day boundaries. `journey-camera.js` owns the
 camera rail, forward heading, turn acceleration and bend-aware pace.
 `journey-traveller.js` owns the map, terrain clearance, clock, menu and photographs;
-`journey-traveller.css` owns the presentation. Earlier map, journal and clock
+`journey-traveller.css` owns the presentation. `journey-wayfinding.js` owns the
+inset and settlement selection; `data/trek-landmarks.json` owns reviewed landmark
+positions and public source links, and `journey-landmarks.js` makes their meshes.
+Earlier map, journal and clock
 files are inactive.
 
 `journey-paper.js` owns the paper palette, mapped field and rock fills, printed
@@ -163,6 +184,12 @@ individual specimens. Field boundaries and building footprints come from current
 OpenStreetMap, not a reconstruction of their 2019 appearance. Simple rectangular
 buildings get illustrative gables; other buildings retain their mapped outlines
 and flat tops. Scenery heights and roof forms are stylised for legibility.
+
+Custom landmarks share the existing scenery buffer and terrain heights. After a
+model builds, remove only native building features fully inside its mapped bounds,
+including multi-part towers. Select those feature IDs with geographic containment:
+MapLibre 5.6.2’s `within` expression only tests point and line features, so it cannot
+exclude building polygons. A nearby building crossing the bounds stays untouched.
 
 Scenery is limited to 6,500 trees and 1,800 roofs near the view, with a distant
 fade. Geometry is rebuilt in short chunks after movement or source changes,
@@ -217,3 +244,9 @@ On a Mac with a working GPU, `CHECK_TREK_HARDWARE_GPU=1` runs those browser
 checks with hardware graphics. The default remains software rendering for
 environments without a GPU. Measure playback separately with hardware graphics;
 software rendering is not evidence of phone performance.
+
+`scripts/check-trek-wayfinding.mjs` covers source provenance, actual recording
+proximity, all model meshes, complete native building replacement and stable
+settlement selection. The focused browser check uses
+`CHECK_TREK_WAYFINDING_ONLY=1` to exercise the inset, place arrival, landmark
+replacement, playback, photographs and 390/320px layouts.

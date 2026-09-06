@@ -14,6 +14,36 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_WAYFINDING_ONLY==='1'){
+    section('Minimap, town names and landmark models');
+    await setDesktop(1440,900);await goto('/trek/?day=25');check(await settled(),'the updated journey loads');
+    await scrub(863400);check(await settled(),'the recorded Munich approach loads');
+    check(await until(async()=>(await state()).wayfinding?.place==='Munich'),'the current map tiles announce Munich beside the route');
+    check(await evaluate("document.querySelector('#country-flag').textContent==='🇩🇪'&&document.querySelector('#place-arrival').classList.contains('visible')"),'the German flag and place arrival appear');
+    check(await until(async()=>{const p=(await state()).paper;return p?.landmarks.includes('munich')&&p.hiddenBuildings>=4;},30000),'the Frauenkirche replaces the native body and multi-part towers');
+    const markerBefore=(await state()).wayfinding.point,canvasBefore=await evaluate("document.querySelector('#minimap-canvas').toDataURL()");
+    await click('#play');await sleep(900);await click('#play');
+    check(JSON.stringify((await state()).wayfinding.point)!==JSON.stringify(markerBefore),'the inset marker follows actual playback');
+    check((await evaluate("document.querySelector('#minimap-canvas').toDataURL()"))!==canvasBefore,'the visible inset updates as the traveller moves');
+    const at=(await state()).distance;await click('#photos-open');
+    check(await until(async()=>(await state()).photoLoaded),'the original photographs load over the updated landscape');
+    await click('#gallery-close');check((await state()).distance===at,'photographs preserve the exact route position');
+    for(const [name,distance,flag] of [['reims',136600,'🇫🇷'],['ptuj',1408700,'🇸🇮'],['sofia',path.total-600,'🇧🇬']]){
+      await scrub(distance);check(await settled(),`${name} approach loads`);
+      check(await until(async()=>(await state()).paper?.landmarks.includes(name),30000),`${name} has its distinct paper model`);
+      check(await evaluate(`document.querySelector('#country-flag').textContent===${JSON.stringify(flag)}`),`${name} shows its country flag`);
+    }
+    for(const width of [390,320]){
+      const before=(await state()).distance;
+      await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(500);
+      const fit=await evaluate(`(()=>{const mini=document.querySelector('#journey-minimap').getBoundingClientRect(),header=document.querySelector('.masthead').getBoundingClientRect();return {inside:mini.left>=0&&mini.right<=innerWidth&&mini.top>=header.bottom,small:mini.width<=150,stats:[...document.querySelectorAll('.journey-readout dd,.journey-readout dt')].every(e=>e.scrollWidth<=e.clientWidth+1),type:parseFloat(getComputedStyle(document.querySelector('.journey-readout dd')).fontSize)}})()`);
+      const s=await state();check(fit.inside&&fit.small&&fit.stats&&fit.type>=27&&s.controlsFit&&s.overflow<=1&&s.distance===before,`${width}px fits the inset, larger progress and controls without moving the route`);
+    }
+    const link=path.pieces.filter(p=>p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
+    await scrub((link.start+link.end)/2);await settled();check((await state()).wayfinding.place===null,'a visual connection never claims a town visit');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'wayfinding, model replacement and phone resizes have no runtime errors');
+    return;
+  }
   if(process.env.CHECK_TREK_PROGRESS_ONLY==='1'){
     section('Journey progress overlay');
     const data=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);

@@ -6,7 +6,7 @@ const root=new URL('../',import.meta.url);
 const read=p=>JSON.parse(readFileSync(new URL(p,root),'utf8'));
 const source=read('data/trek-days.json'),journal=read('data/trek-journal.json');
 const photos=read('public/trek/photos/manifest.json'),moments=read('data/trek-moments.json');
-const route=read('public/trek/route-detail.json');
+const route=read('public/trek/route-detail.json'),landmarks=read('data/trek-landmarks.json').landmarks;
 if(route.precision!=='recorded')throw Error('The approved recorded Trek paths are required');
 for(const chapter of moments.chapters){
   if(!existsSync(new URL('public/trek/photos/'+chapter.photo,root)))chapter.photo=chapter.fallbackPhoto;
@@ -28,7 +28,7 @@ const scenes=[{t:'start',len:300}];
 for(const day of days){const count=photos.filter(p=>p.day===day.n).length;scenes.push({t:'walk',day:day.n,len:day.w?Math.max(600,day.km*16,count*60):260});}
 scenes.push({t:'end',day:67,len:500});
 let timeline=0;for(const s of scenes){s.at=timeline;timeline+=s.len;}
-const data={days,photos,scenes,timeline,total:source.facts.km,colors:Object.fromEntries(source.countries.map(c=>[c.name,c.color])),stats:{days:walked,ascent,minutes,countries:source.facts.countries}};
+const data={landmarks,countryRings:source.countryRings.map(({name,rings})=>({name,rings})),days,photos,scenes,timeline,total:source.facts.km,colors:Object.fromEntries(source.countries.map(c=>[c.name,c.color])),stats:{days:walked,ascent,minutes,countries:source.facts.countries}};
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const list=days.map(d=>`<li>Day ${d.n} · ${esc(d.c)}${d.date?' · '+d.date:''}${d.w?' · '+d.km.toFixed(1)+' km':''}${d.j.length?'<p>'+esc(d.j.map(j=>j.text).join(' '))+'</p>':''}</li>`).join('\n');
 const html=readFileSync(new URL('scripts/trek-journey-template.html',root),'utf8').replace('__DATA_JSON__',JSON.stringify(data)).replace('<!--__NOSCRIPT_DAYS__-->',list)

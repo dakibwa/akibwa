@@ -129,9 +129,17 @@
     return copy;
   }
 
-  function create(map, route) {
+  function landmarkBuildingIds(features, landmarks) {
+    return features.filter(feature => feature.id !== undefined && landmarks.some(item => {
+      const parts = polygons(feature.geometry), ring = item.footprint.map(project);
+      return parts.length && parts.every(part => part[0].every(point => inPolygon(project(point), [ring])));
+    })).map(feature => feature.id);
+  }
+
+  function create(map, route, landmarks = []) {
     const nearRoute = routeIndex(route), radius = 4600;
     let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, destroyed = false;
+    let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d');
     let buffer, shader, vao, matrixLocation, centerLocation, opacityLocation, appeared = 0, count = 0, treeCount = 0, roofCount = 0, updates = 0, buildMs = 0;
     const shaderSource = {
       vertex: `#version 300 es
@@ -202,20 +210,22 @@
       const buildings = map.querySourceFeatures('openmaptiles', {sourceLayer: 'building'});
       const nearRoad = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'transportation'})));
       const nearWater = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'waterway', filter: ['!=', ['get', 'brunnel'], 'tunnel']})));
-      const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32)), houses = new Map();
+      const nearbyLandmarks = landmarks.filter(item => Math.hypot(...project(item.point).map((v, i) => v - center[i])) < radius - 250);
+      const withinLandmark = p => nearbyLandmarks.some(item => inPolygon(p, [item.footprint.map(project)]));
+      const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p)), houses = new Map();
       for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
         if (polygon.length !== 1) continue;
         const ring = polygon[0].slice(0, -1).map(project);
         if (ring.length !== 4) continue;
         const p = [ring.reduce((a, v) => a + v[0], 0) / 4, ring.reduce((a, v) => a + v[1], 0) / 4], d = Math.hypot(p[0] - center[0], p[1] - center[1]);
-        if (d > radius || ring.some((a, i) => Math.hypot(a[0] - ring[(i + 1) % 4][0], a[1] - ring[(i + 1) % 4][1]) > 90)) continue;
+        if (d > radius || withinLandmark(p) || ring.some((a, i) => Math.hypot(a[0] - ring[(i + 1) % 4][0], a[1] - ring[(i + 1) % 4][1]) > 90)) continue;
         const key = p.map(n => Math.round(n)).join(':');
         if (!houses.has(key)) houses.set(key, {ring, p, d, height: Math.max(9, 1.2 * (+feature.properties.render_height || 6))});
       }
       // Build in short chunks. No per-frame terrain sampling or feature queries.
       const roofCandidates = [...houses.values()].sort((a, b) => a.d - b.d).slice(0, 1800);
       const vertices = [], shadows = [], nextOrigin = center;
-      let madeTrees = 0, madeRoofs = 0, index = 0;
+      let madeTrees = 0, madeRoofs = 0, index = 0; const madeLandmarks = [];
       const heightAt = p => map.queryTerrainElevation(unproject(p));
       const vertex = (p, height) => {
         const cos = Math.cos(unproject(p)[1] * Math.PI / 180);
@@ -265,17 +275,32 @@
         triangle(av, dv, u, color); triangle(dv, v, u, color); triangle(bv, u, cv, color); triangle(cv, u, v, color);
         triangle(av, u, bv, rgb('#eee4c9')); triangle(dv, cv, v, rgb('#eee4c9')); madeRoofs++;
       }
+      function landmark(item) {
+        const p = project(item.point), ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        const scale = 1 / Math.cos(item.point[1] * Math.PI / 180);
+        const positioned = ([x, y, z]) => vertex([p[0] + x * scale, p[1] + y * scale], ground + z);
+        for (const face of TrekLandmarks.mesh(item)) triangle(positioned(face.a), positioned(face.b), positioned(face.c), rgb(face.color));
+        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [item.footprint]}});
+        madeLandmarks.push(item.id);
+      }
+      const totalCandidates = candidates.length + roofCandidates.length + nearbyLandmarks.length;
       function chunk() {
         if (destroyed || generation !== nextGeneration) return;
         const until = performance.now() + 6;
-        while (index < candidates.length + roofCandidates.length && performance.now() < until) {
-          if (index < candidates.length) tree(candidates[index]); else roof(roofCandidates[index - candidates.length]); index++;
+        while (index < totalCandidates && performance.now() < until) {
+          if (index < candidates.length) tree(candidates[index]); else if (index < candidates.length + roofCandidates.length) roof(roofCandidates[index - candidates.length]); else landmark(nearbyLandmarks[index - candidates.length - roofCandidates.length]); index++;
         }
-        if (index < candidates.length + roofCandidates.length) { setTimeout(chunk, 0); return; }
+        if (index < totalCandidates) { setTimeout(chunk, 0); return; }
         const gl = map.getCanvas().getContext('webgl2'); if (!gl || gl.isContextLost()) return;
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         if (!count || Math.hypot(nextOrigin[0] - origin[0], nextOrigin[1] - origin[1]) > radius) appeared = performance.now();
-        origin = nextOrigin; count = vertices.length / 6; treeCount = madeTrees; roofCount = madeRoofs; updates++;
+        origin = nextOrigin; count = vertices.length / 6; treeCount = madeTrees; roofCount = madeRoofs; landmarkNames = madeLandmarks; updates++;
+        const previousHidden = hiddenBuildings.size;
+        for (const id of landmarkBuildingIds(buildings, nearbyLandmarks.filter(item => madeLandmarks.includes(item.id)))) hiddenBuildings.add(id);
+        if (hiddenBuildings.size !== previousHidden) {
+          const outside = ['!', ['in', ['id'], ['literal', [...hiddenBuildings]]]];
+          map.setFilter('building-3d', originalBuildingFilter ? ['all', originalBuildingFilter, outside] : outside);
+        }
         map.getSource('paper-shadows').setData(collection(shadows));
         makeFolds(center); buildMs = performance.now() - started; map.triggerRepaint();
       }
@@ -342,16 +367,18 @@
     map.addLayer({id: 'paper-fibre', type: 'background', paint: {'background-pattern': 'paper-fibre', 'background-opacity': .6}}, 'waterway_tunnel');
     map.addSource('paper-shadows', {type: 'geojson', data: collection([]), tolerance: 1, maxzoom: 18});
     map.addLayer({id: 'paper-tree-shadows', type: 'fill', source: 'paper-shadows', paint: {'fill-color': '#425c38', 'fill-opacity': .17, 'fill-antialias': true}}, 'route-outline');
+    // Model builds replace only fully contained native building features by ID.
+    // MapLibre's `within` expression evaluates points and lines, not polygons.
     map.addLayer(layer);
     function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('idle', settled); map.off('remove', destroy); }
     map.on('moveend', moved); map.on('sourcedata', loaded); map.on('idle', settled); map.on('remove', destroy); schedule();
     return {
-      status: () => ({trees: treeCount, roofs: roofCount, vertices: count, updates, buildMs: Math.round(buildMs), pending}),
+      status: () => ({trees: treeCount, roofs: roofCount, vertices: count, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending}),
       refresh: schedule,
       destroy
     };
   }
-  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland};
+  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland, landmarkBuildingIds};
   if (typeof module !== 'undefined') module.exports = api;
   host.TrekPaper = api;
 })(typeof window === 'undefined' ? globalThis : window);

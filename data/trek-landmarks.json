@@ -1,0 +1,411 @@
+{
+  "checked": "2026-09-06",
+  "note": "Public landmark positions verified against OpenStreetMap and names against the linked local visitor or owning institutions. Paper models simplify architectural form, dimensions and orientation; proximity to the 2019 route is not evidence of entry or a visit inside.",
+  "landmarks": [
+    {
+      "id": "reims",
+      "name": "Notre-Dame de Reims",
+      "place": "Reims",
+      "country": "France",
+      "point": [
+        4.0339189,
+        49.2537696
+      ],
+      "footprint": [
+        [
+          4.032823700000001,
+          49.253262299999996
+        ],
+        [
+          4.0348223,
+          49.253262299999996
+        ],
+        [
+          4.0348223,
+          49.254274800000005
+        ],
+        [
+          4.032823700000001,
+          49.254274800000005
+        ],
+        [
+          4.032823700000001,
+          49.253262299999996
+        ]
+      ],
+      "kind": "gothic-twin",
+      "model": {
+        "width": 48,
+        "length": 139,
+        "height": 38,
+        "tower": 81
+      },
+      "bearing": 249,
+      "wall": "#ddd4b6",
+      "roof": "#778888",
+      "gold": false,
+      "source": "https://en.reims.fr/visit-reims/notre-dame-cathedral",
+      "mapSource": "https://www.openstreetmap.org/way/92294792"
+    },
+    {
+      "id": "saverne",
+      "name": "Château des Rohan",
+      "place": "Saverne",
+      "country": "France",
+      "point": [
+        7.3634917,
+        48.7422091
+      ],
+      "footprint": [
+        [
+          7.3625413,
+          48.7415667
+        ],
+        [
+          7.3642144,
+          48.7415667
+        ],
+        [
+          7.3642144,
+          48.742821400000004
+        ],
+        [
+          7.3625413,
+          48.742821400000004
+        ],
+        [
+          7.3625413,
+          48.7415667
+        ]
+      ],
+      "kind": "palace",
+      "model": {
+        "width": 135,
+        "length": 24,
+        "height": 24,
+        "tower": 30
+      },
+      "bearing": 144,
+      "wall": "#d6af89",
+      "roof": "#7e8176",
+      "gold": false,
+      "source": "https://www.tourisme-saverne.fr/a-voir-a-faire/chateau-des-rohan/221004749/",
+      "mapSource": "https://www.openstreetmap.org/way/62029007"
+    },
+    {
+      "id": "munich",
+      "name": "Frauenkirche",
+      "place": "Munich",
+      "country": "Germany",
+      "point": [
+        11.573592,
+        48.1385821
+      ],
+      "footprint": [
+        [
+          11.572821399999999,
+          48.138356599999995
+        ],
+        [
+          11.5743753,
+          48.138356599999995
+        ],
+        [
+          11.5743753,
+          48.1388444
+        ],
+        [
+          11.572821399999999,
+          48.1388444
+        ],
+        [
+          11.572821399999999,
+          48.138356599999995
+        ]
+      ],
+      "kind": "onion-twin",
+      "model": {
+        "width": 40,
+        "length": 109,
+        "height": 37,
+        "tower": 99
+      },
+      "bearing": 264,
+      "wall": "#c5a585",
+      "roof": "#71988b",
+      "gold": false,
+      "source": "https://www.muenchner-dom.de/die-kathedrale/bedeutung/dom-und-frauenkirche/",
+      "mapSource": "https://www.openstreetmap.org/way/225698612"
+    },
+    {
+      "id": "villach",
+      "name": "St. Jakob",
+      "place": "Villach",
+      "country": "Austria",
+      "point": [
+        13.8455581,
+        46.6132029
+      ],
+      "footprint": [
+        [
+          13.8451036,
+          46.613036699999995
+        ],
+        [
+          13.8460496,
+          46.613036699999995
+        ],
+        [
+          13.8460496,
+          46.6133741
+        ],
+        [
+          13.8451036,
+          46.6133741
+        ],
+        [
+          13.8451036,
+          46.613036699999995
+        ]
+      ],
+      "kind": "gothic-spire",
+      "model": {
+        "width": 26,
+        "length": 56,
+        "height": 24,
+        "tower": 94
+      },
+      "bearing": 274,
+      "wall": "#e3d6b5",
+      "roof": "#909381",
+      "gold": false,
+      "source": "https://www.visitvillach.at/en/villach-stadt/info/stadtpfarrkirche-st-jakob.html",
+      "mapSource": "https://www.openstreetmap.org/way/45493591"
+    },
+    {
+      "id": "ptuj",
+      "name": "Ptuj Castle",
+      "place": "Ptuj",
+      "country": "Slovenia",
+      "point": [
+        15.8674526,
+        46.4210063
+      ],
+      "footprint": [
+        [
+          15.8673103,
+          46.420666999999995
+        ],
+        [
+          15.868184600000001,
+          46.420666999999995
+        ],
+        [
+          15.868184600000001,
+          46.421302600000004
+        ],
+        [
+          15.8673103,
+          46.421302600000004
+        ],
+        [
+          15.8673103,
+          46.420666999999995
+        ]
+      ],
+      "kind": "castle",
+      "model": {
+        "width": 71,
+        "length": 55,
+        "height": 18,
+        "tower": 28
+      },
+      "bearing": 165,
+      "wall": "#e9d8b8",
+      "roof": "#b77851",
+      "gold": false,
+      "source": "https://visitptuj.eu/en/see-do/culture-heritage/sightseeing/ptuj-castle/",
+      "mapSource": "https://www.openstreetmap.org/way/173946368"
+    },
+    {
+      "id": "osijek",
+      "name": "St. Peter and St. Paul",
+      "place": "Osijek",
+      "country": "Croatia",
+      "point": [
+        18.6755856,
+        45.5608309
+      ],
+      "footprint": [
+        [
+          18.6750525,
+          45.560589799999995
+        ],
+        [
+          18.6760971,
+          45.560589799999995
+        ],
+        [
+          18.6760971,
+          45.5610427
+        ],
+        [
+          18.6750525,
+          45.5610427
+        ],
+        [
+          18.6750525,
+          45.560589799999995
+        ]
+      ],
+      "kind": "gothic-spire",
+      "model": {
+        "width": 32,
+        "length": 72,
+        "height": 30,
+        "tower": 90
+      },
+      "bearing": 262,
+      "wall": "#c59470",
+      "roof": "#798c7e",
+      "gold": false,
+      "source": "https://www.tzosijek.hr/stranica.php?id=853",
+      "mapSource": "https://www.openstreetmap.org/way/834820275"
+    },
+    {
+      "id": "novi-sad",
+      "name": "Name of Mary Church",
+      "place": "Novi Sad",
+      "country": "Serbia",
+      "point": [
+        19.8457088,
+        45.2556307
+      ],
+      "footprint": [
+        [
+          19.8453598,
+          45.2553826
+        ],
+        [
+          19.845988499999997,
+          45.2553826
+        ],
+        [
+          19.845988499999997,
+          45.2558792
+        ],
+        [
+          19.8453598,
+          45.2558792
+        ],
+        [
+          19.8453598,
+          45.2553826
+        ]
+      ],
+      "kind": "gothic-spire",
+      "model": {
+        "width": 26,
+        "length": 53,
+        "height": 26,
+        "tower": 73
+      },
+      "bearing": 229,
+      "wall": "#dfbf83",
+      "roof": "#708f88",
+      "gold": false,
+      "source": "https://novisad.travel/en/churches/rimokatolicka-zupna-crkva-imena-marijinog/",
+      "mapSource": "https://www.openstreetmap.org/way/317340241"
+    },
+    {
+      "id": "belgrade",
+      "name": "Temple of Saint Sava",
+      "place": "Belgrade",
+      "country": "Serbia",
+      "point": [
+        20.4691884,
+        44.7980453
+      ],
+      "footprint": [
+        [
+          20.468591,
+          44.797654699999995
+        ],
+        [
+          20.469807,
+          44.797654699999995
+        ],
+        [
+          20.469807,
+          44.7984372
+        ],
+        [
+          20.468591,
+          44.7984372
+        ],
+        [
+          20.468591,
+          44.797654699999995
+        ]
+      ],
+      "kind": "orthodox",
+      "model": {
+        "width": 81,
+        "length": 91,
+        "height": 48,
+        "tower": 79
+      },
+      "bearing": 270,
+      "wall": "#eee4cd",
+      "roof": "#91a592",
+      "gold": false,
+      "source": "https://www.beograd.rs/en/discover-belgrade/a80019/Sights.html",
+      "mapSource": "https://www.openstreetmap.org/way/89808919"
+    },
+    {
+      "id": "sofia",
+      "name": "Alexander Nevsky Cathedral",
+      "place": "Sofia",
+      "country": "Bulgaria",
+      "point": [
+        23.3327934,
+        42.6958124
+      ],
+      "footprint": [
+        [
+          23.3323231,
+          42.695521899999996
+        ],
+        [
+          23.3332677,
+          42.695521899999996
+        ],
+        [
+          23.3332677,
+          42.6961147
+        ],
+        [
+          23.3323231,
+          42.6961147
+        ],
+        [
+          23.3323231,
+          42.695521899999996
+        ]
+      ],
+      "kind": "orthodox",
+      "model": {
+        "width": 55,
+        "length": 72,
+        "height": 31,
+        "tower": 53
+      },
+      "bearing": 270,
+      "wall": "#e6d8b8",
+      "roof": "#8b9c76",
+      "gold": true,
+      "source": "https://visitsofia.bg/en/cityinfrastructure/what-to-see/temples/st-alexander-nevsky-cathedral",
+      "mapSource": "https://www.openstreetmap.org/way/155447771"
+    }
+  ]
+}
