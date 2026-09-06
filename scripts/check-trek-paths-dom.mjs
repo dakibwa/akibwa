@@ -25,7 +25,9 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await until(async()=>(await state()).cache.pending===0,30000);const coldCache=(await state()).cache;
     const oldCanvas=await evaluate("document.querySelector('#elevation-canvas').toDataURL()");
     await evaluate(`window.__trekPerf={intervals:[],longTasks:[],last:0,running:true};window.__trekPerf.observe=new PerformanceObserver(l=>window.__trekPerf.longTasks.push(...l.getEntries().map(e=>e.duration)));window.__trekPerf.observe.observe({entryTypes:['longtask']});requestAnimationFrame(function sample(t){const p=window.__trekPerf;if(!p?.running)return;if(p.last)p.intervals.push(t-p.last);p.last=t;requestAnimationFrame(sample);});document.querySelector('#photo-interludes').checked=false;`);
-    await evaluate("document.querySelector('#pace').value='1000';document.querySelector('#pace').dispatchEvent(new Event('change',{bubbles:true}));");
+    check(s.pace===675,'Flow starts at the quicker default pace');
+    await evaluate("document.querySelector('#pace').selectedIndex=2;document.querySelector('#pace').dispatchEvent(new Event('change',{bubbles:true}));");
+    check((await state()).pace===1400,'Fly selects the faster optional pace');
     await click('#play');await sleep(25000);await click('#play');
     const perf=await evaluate(`(()=>{const p=window.__trekPerf;p.running=false;p.observe.disconnect();const a=p.intervals.slice(2).sort((x,y)=>x-y);const value={frames:a.length,p50:a[Math.floor(a.length*.5)],p95:a[Math.floor(a.length*.95)],over100:a.filter(x=>x>100).length,longTasks:p.longTasks};delete window.__trekPerf;return value;})()`);
     s=await state();check(s.distance>1109065+200,'playback moves along the terrain after preparation');

@@ -7,13 +7,14 @@ const {buildJourneyPath,metres,headingDelta}=require('../public/trek/journey-rou
 const camera=require('../public/trek/journey-camera.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
 const original=JSON.stringify(route),path=buildJourneyPath(route);
+const paces=[180,675,1400];
 
 for(let d=0;d<=path.total;d+=250){
   const p=camera.pointAt(path,d),next=camera.pointAt(path,d+1),heading=camera.headingAt(path,d);
   assert(p.every(Number.isFinite)&&Number.isFinite(heading));
   assert(metres(p,path.sample(d).point)<=165.2,'the smoothed camera must stay near the recorded or connecting path');
   assert(metres(p,next)<1.01,'a GPS corner must not teleport the camera');
-  for(const pace of [180,450,1000]){
+  for(const pace of paces){
     const speed=camera.speedLimit(path,d,pace,heading);
     assert(speed>=20&&speed<=pace,'corners may slow travel but must not reverse, stall or accelerate it');
   }
@@ -23,15 +24,18 @@ for(const boundary of path.boundaries){
 }
 
 let worstLag=0,largestTurn=0;
-for(const [day,start,finish] of [[16,.45,.65],[30,.45,.99],[41,.45,.65],[67,.9,1]]){
-  for(const pace of [180,450,1000]){
-    let distance=path.dayDistance(day,start),heading=camera.headingAt(path,distance),velocity=0,speed=0,elapsed=0,step=0;
-    const end=path.dayDistance(day,finish);
+const stretches=[[16,.45,.65],[30,.45,.99],[41,.45,.65]].map(([day,start,finish])=>[path.dayDistance(day,start),path.dayDistance(day,finish)]);
+stretches.push([path.total-2000,path.total]);
+for(const [start,end] of stretches){
+  assert(end>start,'every difficult stretch must exercise a moving camera');
+  for(const pace of paces){
+    let distance=start,renderedDistance=start,heading=camera.headingAt(path,start),velocity=0,speed=0,elapsed=0,step=0;
     while(distance<end&&elapsed<1800){
       const dt=[1/60,1/30,.05][step++%3];
       speed+=(camera.speedLimit(path,distance,pace,heading)-speed)*(1-Math.exp(-dt/1.2));
       distance=Math.min(end,distance+speed*dt);
-      const wanted=camera.headingAt(path,distance),next=camera.turn(heading,velocity,wanted,dt);
+      renderedDistance+=(distance-renderedDistance)*(1-Math.exp(-dt/.6));
+      const wanted=camera.headingAt(path,renderedDistance),next=camera.turn(heading,velocity,wanted,dt);
       const turn=Math.abs(headingDelta(heading,next.heading))/dt;
       assert(turn<=9.001,'the view must not whip around at a tight turn');
       assert(Math.abs(next.velocity-velocity)<=6*dt+.0001,'turning must ease in and out');

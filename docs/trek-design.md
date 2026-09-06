@@ -57,6 +57,10 @@ perspective and much less text and interface on 5 September 2026.
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
+- Following Dan's 6 September request for quicker animation, default Flow has a
+  675 m/s presentation pace, with Wander at 180 m/s and Fly at 1,400 m/s. These
+  are playback speeds, not recorded walking speeds. Let gentler bends pass more
+  readily while retaining the smooth turn and acceleration limits below.
 - Photographic interludes fade through the whole viewport and hold the journey
   briefly. Preserve the image composition with `contain` and use a blurred copy
   to fill the remaining space. Timing uses elapsed time independently of map
@@ -257,7 +261,8 @@ largest gap, bounded rounding and source non-mutation.
 proximity to the path and difficult turns at every pace. The camera uses a
 weighted 880 m neighbourhood, a 1.1 km heading chord, a 9°/s turning limit and
 6°/s² acceleration limit. Pitch changes by at most 3°/s. Playback brakes before
-upcoming bends. The normal clearance is 720 m above the highest sampled ground in the next kilometre,
+upcoming bends using a 7°/s curvature budget, then slows further when the view
+needs to catch up. The normal clearance is 720 m above the highest sampled ground in the next kilometre,
 with a 420 m floor during movement. Solve the complete camera transform from
 the eye and a target at local ground height; changing pitch after solving zoom
 and centre changes the eye position and can cause clipping. Update the reference

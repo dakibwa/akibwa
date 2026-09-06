@@ -31,7 +31,7 @@
       curvature=Math.max(curvature,Math.abs(angle(previous,next))/180);previous=next;
     }
     // Brake before a bend, leaving room below the camera's maximum turn rate.
-    const corner=curvature>0?Math.min(pace,5.5/curvature):pace;
+    const corner=curvature>0?Math.min(pace,7/curvature):pace;
     const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/50,.08,1);
     return Math.max(20,corner*alignment);
   }
