@@ -2,7 +2,7 @@
  * Individual trees and roof forms are illustrative; the terrain and route stay real. */
 (function (host) {
   'use strict';
-  const WORLD = 40075016.68557849, TAU = Math.PI * 2;
+  const WORLD = 40075016.68557849, TAU = Math.PI * 2, MAX_VERTICES = 2400000;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   const collection = features => ({type: 'FeatureCollection', features});
   const project = ([lng, lat]) => [WORLD * (lng / 360 + .5), WORLD * (.5 - Math.asinh(Math.tan(lat * Math.PI / 180)) / TAU)];
@@ -45,7 +45,7 @@
     return (p, width) => (cells.get(Math.floor(p[0] / size) + ':' + Math.floor(p[1] / size)) || []).some(([a, b]) => segmentDistance(p, a, b) < width);
   }
   function plantWoodland(features, center, excluded, radius = 4600, limit = 6500) {
-    const trees = new Map(), step = 72;
+    const trees = new Map(), step = 32;
     for (const feature of features) for (const coordinates of polygons(feature.geometry)) {
       const rings = coordinates.map(r => r.map(project)), ring = rings[0]; if (!ring?.length) continue;
       const bounds = ring.reduce((b, p) => [Math.min(b[0], p[0]), Math.min(b[1], p[1]), Math.max(b[2], p[0]), Math.max(b[3], p[1])], [Infinity, Infinity, -Infinity, -Infinity]);
@@ -61,9 +61,71 @@
     return [...trees.values()].sort((a, b) => a.d - b.d).slice(0, limit);
   }
   const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255);
-  const greens = ['#73875c', '#819468', '#607a54', '#91a175', '#6c8258'].map(rgb);
+  const greens = ['#546d48', '#667d52', '#405e43', '#7c8d5f', '#4e6846'].map(rgb);
   const roofs = ['#af7353', '#a78868', '#bf8f6e', '#7e8774', '#b17b5f'].map(rgb);
   const patch = ['%', ['floor', ['/', ['to-number', ['id'], 0], 10]], 5];
+  const crops = ['match', ['get', 'class'], ['farmland', 'farm', 'orchard', 'vineyard'], true, false];
+
+  // Geometry is made in metres before placement. Each tree keeps its seeded
+  // silhouette and fold detail, even when the camera crosses a rebuild boundary.
+  function treeMesh(seed, detailed = true) {
+    const faces = [], pine = seed < .68, height = 18 + seed * 13, width = 10 + seed * 5.5;
+    const face = (a, b, c, tone = 1, bark = false) => faces.push({a, b, c, tone, bark});
+    const ring = (x, y, z, radius, sides, angle = seed * TAU) => Array.from({length: sides}, (_, i) => {
+      const a = angle + i * TAU / sides, varied = radius * (i % 2 ? .92 : 1.04);
+      return [x + Math.cos(a) * varied, y + Math.sin(a) * varied, z];
+    });
+    const trunk = ring(0, 0, 0, .65, 4), trunkTop = [0, 0, height * .8];
+    for (let i = 0; i < 4; i++) face(trunk[i], trunk[(i + 1) % 4], trunkTop, .78, true);
+    if (pine) {
+      const tiers = [[.13, .59, 1], [.31, .76, .88], [.49, .9, .69], [.67, 1, .46], [.83, 1.07, .25]];
+      const sides = detailed ? 7 : 5;
+      for (const [base, peak, spread] of tiers) {
+        const skirt = ring(0, 0, height * base, width * spread, sides), tip = [width * (seed - .34) * .16, 0, height * peak];
+        for (let i = 0; i < sides; i++) {
+          face(skirt[i], skirt[(i + 1) % sides], tip, 1);
+          if (detailed) face(skirt[(i + 1) % sides], skirt[i], [0, 0, height * (base + .06)], .66);
+        }
+      }
+    } else {
+      const lobes = [[0, 0, .71, 1], [-.43, .18, .62, .72], [.38, -.18, .85, .65]];
+      const sides = detailed ? 6 : 5;
+      for (const [x, y, z, scale] of lobes) {
+        const lower = ring(x * width, y * width, height * (z - .2 * scale), width * .55 * scale, sides);
+        const middle = ring(x * width, y * width, height * z, width * scale, sides);
+        const upper = ring(x * width, y * width, height * (z + .16 * scale), width * .6 * scale, sides);
+        for (let i = 0; i < sides; i++) {
+          const j = (i + 1) % sides;
+          face(lower[i], lower[j], middle[i], .85); face(lower[j], middle[j], middle[i], .85);
+          face(middle[i], middle[j], upper[i]); face(middle[j], upper[j], upper[i]);
+          face(upper[i], upper[j], [x * width, y * width, height * (z + .25 * scale)]);
+          if (detailed) face(lower[j], lower[i], [x * width, y * width, height * (z - .31 * scale)], .67);
+        }
+      }
+    }
+    return {faces, height, width, pine};
+  }
+
+  function cleanBuildingRing(points) {
+    const ring = points.map(p => [...p]);
+    if (ring.length > 1 && Math.hypot(ring[0][0] - ring.at(-1)[0], ring[0][1] - ring.at(-1)[1]) < .01) ring.pop();
+    let changed = true;
+    while (changed && ring.length > 3) {
+      changed = false;
+      for (let i = 0; i < ring.length; i++) {
+        if (segmentDistance(ring[i], ring[(i + ring.length - 1) % ring.length], ring[(i + 1) % ring.length]) < .18) {
+          ring.splice(i, 1); changed = true; break;
+        }
+      }
+    }
+    return ring;
+  }
+  function faceLight(a, b, c) {
+    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    if (nz < 0) { nx *= -1; ny *= -1; nz *= -1; }
+    return .68 + .35 * Math.max(0, (-nx * .45 - ny * .55 + nz * .7) / (Math.hypot(nx, ny, nz) || 1));
+  }
 
   function style(base) {
     const copy = JSON.parse(JSON.stringify(base));
@@ -73,7 +135,7 @@
       if (layer.type === 'symbol' || /boundary|park_outline|natural_earth/.test(id)) layer.layout = {...layer.layout, visibility: 'none'};
       if (id === 'background') paint['background-color'] = '#d6d7b6';
       if (id === 'park') Object.assign(paint, {'fill-color': '#a6b68b', 'fill-opacity': .25, 'fill-outline-color': '#a6b68b'});
-      if (id === 'landcover_wood') Object.assign(paint, {'fill-color': ['match', patch, 0, '#91a377', 1, '#9caa7e', 2, '#899f74', 3, '#a2ae81', '#91a477'], 'fill-opacity': .9, 'fill-antialias': true});
+      if (id === 'landcover_wood') Object.assign(paint, {'fill-color': ['match', patch, 0, '#7e9268', 1, '#89996e', 2, '#768d65', 3, '#91a176', '#80956b'], 'fill-opacity': .94, 'fill-antialias': true});
       if (id === 'landcover_grass') Object.assign(paint, {'fill-color': ['match', patch, 0, '#bcc79c', 1, '#c7caa0', 2, '#b5c292', 3, '#d1d0a7', '#c1c99b'], 'fill-opacity': .85, 'fill-antialias': true});
       if (id === 'landcover_ice') Object.assign(paint, {'fill-color': '#f1eddb', 'fill-opacity': .95});
       if (id === 'landcover_sand') paint['fill-color'] = '#dbca9b';
@@ -96,6 +158,14 @@
         Object.assign(paint, {'fill-extrusion-color': '#eee4c9', 'fill-extrusion-height': ['max', 9, ['*', 1.2, ['coalesce', ['get', 'render_height'], 6]]], 'fill-extrusion-base': 0, 'fill-extrusion-opacity': 1, 'fill-extrusion-vertical-gradient': false});
       }
     }
+    // The native extrusion pipeline anchors this thin roof material to exactly
+    // the same terrain samples as its walls, including complex outlines/holes.
+    const building = copy.layers.find(l => l.id === 'building-3d'), wallHeight = building.paint['fill-extrusion-height'];
+    copy.layers.splice(copy.layers.indexOf(building) + 1, 0, {
+      ...JSON.parse(JSON.stringify(building)), id: 'paper-building-caps',
+      paint: {...building.paint, 'fill-extrusion-color': ['match', patch, 0, '#af7353', 1, '#a78868', 2, '#bf8f6e', 3, '#7e8774', '#b17b5f'],
+        'fill-extrusion-base': wallHeight, 'fill-extrusion-height': ['+', wallHeight, .3]}
+    });
     // Keep streams above all paper ground treatments. Their width is a visual
     // aid at the travelling camera height, not a surveyed channel measurement.
     copy.layers = copy.layers.flatMap(layer => {
@@ -119,11 +189,19 @@
     });
     copy.layers.splice(copy.layers.findIndex(l => l.id === 'waterway_tunnel'), 0, {
       id: 'paper-fields', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover',
-      filter: ['match', ['get', 'class'], ['farmland', 'farm', 'orchard', 'vineyard'], true, false],
+      filter: crops,
       paint: {'fill-color': ['match', patch, 0, '#cab886', 1, '#d8c798', 2, '#b5bf8d', 3, '#e0ce9e', '#c5c599'], 'fill-opacity': .85, 'fill-outline-color': '#e9dec0'}
     }, {
       id: 'paper-rock', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: ['==', ['get', 'class'], 'rock'],
       paint: {'fill-color': ['match', patch, 0, '#c2be9f', 1, '#d3cdb3', 2, '#bcbda4', 3, '#ddd6bc', '#cec9ad'], 'fill-opacity': .95}
+    });
+    const fieldEdge = copy.layers.findIndex(l => l.id === 'paper-rock');
+    copy.layers.splice(fieldEdge, 0, {
+      id: 'paper-field-edge-shadow', type: 'line', source: 'openmaptiles', 'source-layer': 'landcover', filter: crops,
+      layout: {'line-join': 'round'}, paint: {'line-color': '#78805b', 'line-opacity': .24, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, .4, 15, 1.8, 18, 3], 'line-offset': .6}
+    }, {
+      id: 'paper-field-edge', type: 'line', source: 'openmaptiles', 'source-layer': 'landcover', filter: crops,
+      layout: {'line-join': 'round'}, paint: {'line-color': '#f2e5bc', 'line-opacity': .72, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, .3, 15, .85, 18, 1.6]}
     });
     copy.light = {anchor: 'map', color: '#fff5df', intensity: .35, position: [1.5, 315, 45]};
     return copy;
@@ -139,7 +217,7 @@
   function create(map, route, landmarks = []) {
     const nearRoute = routeIndex(route), radius = 4600;
     let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, building = false, destroyed = false;
-    let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d');
+    let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d'), treeModels = new Map();
     let buffer, shader, vao, matrixLocation, centerLocation, opacityLocation, appeared = 0, count = 0, treeCount = 0, roofCount = 0, updates = 0, buildMs = 0;
     const shaderSource = {
       vertex: `#version 300 es
@@ -214,69 +292,84 @@
       const withinLandmark = p => nearbyLandmarks.some(item => inPolygon(p, [item.footprint.map(project)]));
       const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p)), houses = new Map();
       for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
-        if (polygon.length !== 1) continue;
-        const ring = polygon[0].slice(0, -1).map(project);
-        if (ring.length !== 4) continue;
-        const p = [ring.reduce((a, v) => a + v[0], 0) / 4, ring.reduce((a, v) => a + v[1], 0) / 4], d = Math.hypot(p[0] - center[0], p[1] - center[1]);
-        if (d > radius || withinLandmark(p) || ring.some((a, i) => Math.hypot(a[0] - ring[(i + 1) % 4][0], a[1] - ring[(i + 1) % 4][1]) > 90)) continue;
+        const ring = cleanBuildingRing(polygon[0].map(project));
+        if (ring.length < 3 || ring.length > 80) continue;
+        const p = [ring.reduce((a, v) => a + v[0], 0) / ring.length, ring.reduce((a, v) => a + v[1], 0) / ring.length], d = Math.hypot(p[0] - center[0], p[1] - center[1]);
+        if (d > radius || withinLandmark(p) || ring.some(a => Math.hypot(a[0] - p[0], a[1] - p[1]) > 180)) continue;
         const key = p.map(n => Math.round(n)).join(':');
-        if (!houses.has(key)) houses.set(key, {ring, p, d, height: Math.max(9, 1.2 * (+feature.properties.render_height || 6))});
+        if (!houses.has(key)) houses.set(key, {ring, p, d, courtyard: polygon.length > 1, height: Math.max(9, 1.2 * (+feature.properties.render_height || 6))});
       }
       // Build in short chunks. No per-frame terrain sampling or feature queries.
       const roofCandidates = [...houses.values()].sort((a, b) => a.d - b.d).slice(0, 1800);
       const vertices = [], shadows = [], nextOrigin = center;
-      let madeTrees = 0, madeRoofs = 0, index = 0; const madeLandmarks = [];
+      let madeTrees = 0, madeRoofs = 0, index = 0, vertexLimit = (MAX_VERTICES - 30000) * 6; const madeLandmarks = [];
       const heightAt = p => map.queryTerrainElevation(unproject(p));
       const vertex = (p, height) => {
         const cos = Math.cos(unproject(p)[1] * Math.PI / 180);
         return [p[0] - nextOrigin[0], p[1] - nextOrigin[1], height / cos];
       };
       function triangle(a, b, c, color, fixedLight) {
-        const u = b.map((v, i) => v - a[i]), v = c.map((n, i) => n - a[i]);
-        const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
-        if (n[2] < 0) n.forEach((_, i) => n[i] *= -1);
-        const light = fixedLight || .68 + .35 * Math.max(0, (-n[0] * .45 - n[1] * .55 + n[2] * .7) / (Math.hypot(...n) || 1));
+        if (vertices.length + 18 > vertexLimit) return;
+        const light = fixedLight || faceLight(a, b, c);
         for (const p of [a, b, c]) vertices.push(...p, ...color.map(x => Math.min(1, x * light)));
       }
       function tree({p, seed}) {
         const ground = heightAt(p); if (!Number.isFinite(ground)) return;
-        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), size = 12 + seed * 8, h = 27 + seed * 17;
-        const color = greens[Math.floor(seed * greens.length)], pine = seed < .72;
-        const trunk = Array.from({length: 4}, (_, i) => vertex([p[0] + Math.cos(i * TAU / 4) * scale, p[1] + Math.sin(i * TAU / 4) * scale], ground));
-        const trunkTop = vertex(p, ground + h * .65);
-        for (let i = 0; i < 4; i++) triangle(trunk[i], trunk[(i + 1) % 4], trunkTop, rgb('#8d8160'), .78);
-        for (const [base, peak, width] of pine ? [[.17, .8, 1], [.4, .94, .79], [.64, 1.1, .52]] : [[.55, 1, 1]]) {
-          const tip = vertex(p, ground + h * peak), bottom = vertex(p, ground + h * .22);
-          const ring = Array.from({length: pine ? 5 : 6}, (_, i) => {
-            const a = i / (pine ? 5 : 6) * TAU + seed * TAU;
-            return vertex([p[0] + Math.cos(a) * size * width * scale, p[1] + Math.sin(a) * size * width * scale], ground + h * base);
-          });
-          for (let i = 0; i < ring.length; i++) {
-            triangle(ring[i], ring[(i + 1) % ring.length], tip, color);
-            if (!pine) triangle(ring[(i + 1) % ring.length], ring[i], bottom, color, .72);
+        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), variant = Math.floor(seed * 96), detailed = random(Math.floor(p[0]), Math.floor(p[1]), 119) > .5, key = variant * 2 + Number(detailed);
+        if (!treeModels.has(key)) {
+          const model = treeMesh((variant + .5) / 96, detailed), color = greens[Math.floor((variant + .5) / 96 * greens.length)], bark = rgb('#827557'), data = [];
+          for (const face of model.faces) {
+            const light = faceLight(face.a, face.b, face.c) * face.tone, tint = (face.bark ? bark : color).map(c => Math.min(1, c * light));
+            for (const v of [face.a, face.b, face.c]) data.push(...v, ...tint);
           }
+          treeModels.set(key, {width: model.width, height: model.height, data: new Float32Array(data)});
         }
+        const mesh = treeModels.get(key), size = mesh.width, h = mesh.height, data = mesh.data, x = p[0] - nextOrigin[0], y = p[1] - nextOrigin[1];
+        if (vertices.length + data.length > vertexLimit) return;
+        for (let i = 0; i < data.length; i += 6) vertices.push(x + data[i] * scale, y + data[i + 1] * scale, (ground + data[i + 2]) * scale, data[i + 3], data[i + 4], data[i + 5]);
         const shadow = [[p[0] - size * scale, p[1]], [p[0], p[1] - size * .5 * scale], [p[0] + h * .8 * scale, p[1] + h * .9 * scale], [p[0], p[1] + size * .6 * scale]];
         shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [[...shadow.map(unproject), unproject(shadow[0])]]}});
         madeTrees++;
       }
-      function roof({ring, p, height}) {
+      function roof({ring, p, height, d: distance, courtyard}) {
         const ground = heightAt(p); if (!Number.isFinite(ground)) return;
-        const sides = ring.map((a, i) => Math.hypot(a[0] - ring[(i + 1) % 4][0], a[1] - ring[(i + 1) % 4][1]));
-        if (Math.min(...sides) < 4 || Math.max(...sides) / Math.min(...sides) > 5) return;
-        // Reject skew/concavity: only simple, nearly rectangular footprints get gables.
-        const area = Math.abs(ring.reduce((a, v, i) => a + v[0] * ring[(i + 1) % 4][1] - v[1] * ring[(i + 1) % 4][0], 0)) / 2;
-        if (area / (sides[0] * sides[1]) < .86) return;
-        const start = sides[0] < sides[1] ? 0 : 1, a = ring[start], b = ring[(start + 1) % 4], c = ring[(start + 2) % 4], d = ring[(start + 3) % 4];
-        const top = ground + height, peak = top + clamp(Math.min(...sides) * Math.cos(unproject(p)[1] * Math.PI / 180) * .36, 3, 9);
-        const u = vertex([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], peak), v = vertex([(c[0] + d[0]) / 2, (c[1] + d[1]) / 2], peak);
-        const [av, bv, cv, dv] = [a, b, c, d].map(p => vertex(p, top));
+        const sides = ring.map((a, i) => Math.hypot(a[0] - ring[(i + 1) % ring.length][0], a[1] - ring[(i + 1) % ring.length][1]));
+        const local = ring.map(v => [v[0] - p[0], v[1] - p[1]]);
+        const area = local.reduce((n, v, i) => n + v[0] * local[(i + 1) % local.length][1] - v[1] * local[(i + 1) % local.length][0], 0) / 2;
+        if (Math.abs(area) < 16) return;
+        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), top = ground + height + .12;
         const color = roofs[Math.floor(random(Math.floor(p[0]), Math.floor(p[1])) * roofs.length)];
-        triangle(av, dv, u, color); triangle(dv, v, u, color); triangle(bv, u, cv, color); triangle(cv, u, v, color);
-        triangle(av, u, bv, rgb('#eee4c9')); triangle(dv, cv, v, rgb('#eee4c9')); madeRoofs++;
+        // A simplified rectangle can carry a gable. The native roof material
+        // follows every other mapped outline, including courtyard holes.
+        if (!courtyard && ring.length === 4 && height < 25 && Math.min(...sides) >= 4 && Math.max(...sides) / Math.min(...sides) <= 5 && Math.abs(area) / (sides[0] * sides[1]) >= .86) {
+          const start = sides[0] < sides[1] ? 0 : 1, a = ring[start], b = ring[(start + 1) % 4], c = ring[(start + 2) % 4], d = ring[(start + 3) % 4];
+          const peak = top + clamp(Math.min(...sides) / scale * .36, 3, 9);
+          const u = vertex([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], peak), v = vertex([(c[0] + d[0]) / 2, (c[1] + d[1]) / 2], peak);
+          const [av, bv, cv, dv] = [a, b, c, d].map(p => vertex(p, top));
+          triangle(av, dv, u, color); triangle(dv, v, u, color); triangle(bv, u, cv, color); triangle(cv, u, v, color);
+          triangle(av, u, bv, rgb('#eee4c9')); triangle(dv, cv, v, rgb('#eee4c9')); madeRoofs++;
+        }
+        if (distance > 1750) return;
+        const wall = rgb('#c0ae89'), window = rgb('#7e8b80');
+        for (let i = 0; i < ring.length; i++) {
+          const a = ring[i], b = ring[(i + 1) % ring.length], length = sides[i]; if (length < 3) continue;
+          const dx = (b[0] - a[0]) / length, dy = (b[1] - a[1]) / length, sign = area > 0 ? 1 : -1;
+          const at = (along, h) => vertex([a[0] + dx * along + dy * sign * .12 * scale, a[1] + dy * along - dx * sign * .12 * scale], ground + h);
+          const panel = (left, right, low, high, tint) => {
+            const v = [at(left, low), at(right, low), at(right, high), at(left, high)];
+            triangle(v[0], v[1], v[2], tint); triangle(v[0], v[2], v[3], tint);
+          };
+          panel(0, length, height - .4, height + .12, wall);
+          const bays = Math.min(8, Math.floor(length / scale / 5)), floors = Math.min(3, Math.floor(height / 4));
+          for (let row = 0; row < floors; row++) for (let bay = 0; bay < bays; bay++) {
+            const middle = (bay + .5) * length / bays, h = 2 + row * 3.1;
+            panel(middle - .55 * scale, middle + .55 * scale, h, h + 1.45, window);
+          }
+        }
       }
       function landmark(item) {
         const p = project(item.point), ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        vertexLimit = MAX_VERTICES * 6;
         const scale = 1 / Math.cos(item.point[1] * Math.PI / 180);
         const positioned = ([x, y, z]) => vertex([p[0] + x * scale, p[1] + y * scale], ground + z);
         for (const face of TrekLandmarks.mesh(item)) triangle(positioned(face.a), positioned(face.b), positioned(face.c), rgb(face.color));
@@ -299,7 +392,7 @@
         for (const id of landmarkBuildingIds(buildings, nearbyLandmarks.filter(item => madeLandmarks.includes(item.id)))) hiddenBuildings.add(id);
         if (hiddenBuildings.size !== previousHidden) {
           const outside = ['!', ['in', ['id'], ['literal', [...hiddenBuildings]]]];
-          map.setFilter('building-3d', originalBuildingFilter ? ['all', originalBuildingFilter, outside] : outside);
+          for (const id of ['building-3d', 'paper-building-caps']) map.setFilter(id, originalBuildingFilter ? ['all', originalBuildingFilter, outside] : outside);
         }
         map.getSource('paper-shadows').setData(collection(shadows));
         makeFolds(center); building = false; buildMs = performance.now() - started; map.triggerRepaint();
@@ -365,6 +458,34 @@
     map.addLayer({id: 'paper-folds', type: 'fill', source: 'paper-folds', paint: {'fill-color': ['get', 'color'], 'fill-opacity': ['get', 'opacity'], 'fill-antialias': false}}, 'waterway_tunnel');
     map.addImage('paper-fibre', ink.getImageData(0, 0, 128, 128));
     map.addLayer({id: 'paper-fibre', type: 'background', paint: {'background-pattern': 'paper-fibre', 'background-opacity': .6}}, 'waterway_tunnel');
+    // Directional paper grain is clipped to actual farm polygons. Woodland
+    // receives a fine canopy print so distant forest remains a continuous mass.
+    for (const material of ['crop-0', 'crop-1', 'canopy']) {
+      const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
+      const brush = canvas.getContext('2d');
+      if (material === 'canopy') {
+        for (let i = 0; i < 95; i++) {
+          const x = random(i, 301) * 128, y = random(i, 311) * 128, size = 2 + random(i, 317) * 5;
+          for (const sx of [-128, 0, 128]) for (const sy of [-128, 0, 128]) {
+            brush.fillStyle = i % 3 ? 'rgba(38,65,38,.20)' : 'rgba(229,226,173,.22)';
+            brush.beginPath(); brush.moveTo(x + sx, y + sy - size); brush.lineTo(x + sx + size, y + sy + size * .65); brush.lineTo(x + sx - size, y + sy + size * .65); brush.fill();
+          }
+        }
+      } else {
+        const direction = material === 'crop-0' ? 1 : -1;
+        for (let x = -128; x < 256; x += 8) {
+          brush.strokeStyle = 'rgba(92,94,50,.11)'; brush.lineWidth = .8;
+          brush.beginPath(); brush.moveTo(x, 0); brush.lineTo(x + direction * 128, 128); brush.stroke();
+          brush.strokeStyle = 'rgba(255,247,211,.17)';
+          brush.beginPath(); brush.moveTo(x + 1, 0); brush.lineTo(x + 1 + direction * 128, 128); brush.stroke();
+        }
+      }
+      map.addImage('paper-' + material, brush.getImageData(0, 0, 128, 128));
+    }
+    map.addLayer({id: 'paper-crop-grain', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: crops,
+      paint: {'fill-pattern': ['match', patch, 0, 'paper-crop-0', 2, 'paper-crop-0', 'paper-crop-1'], 'fill-opacity': .5}}, 'paper-field-edge-shadow');
+    map.addLayer({id: 'paper-canopy-grain', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: ['==', ['get', 'class'], 'wood'],
+      paint: {'fill-pattern': 'paper-canopy', 'fill-opacity': .55}}, 'waterway_tunnel');
     map.addSource('paper-shadows', {type: 'geojson', data: collection([]), tolerance: 1, maxzoom: 18});
     map.addLayer({id: 'paper-tree-shadows', type: 'fill', source: 'paper-shadows', paint: {'fill-color': '#425c38', 'fill-opacity': .17, 'fill-antialias': true}}, 'route-outline');
     // Model builds replace only fully contained native building features by ID.
@@ -378,7 +499,7 @@
       destroy
     };
   }
-  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland, landmarkBuildingIds};
+  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland, landmarkBuildingIds, treeMesh, cleanBuildingRing};
   if (typeof module !== 'undefined') module.exports = api;
   host.TrekPaper = api;
 })(typeof window === 'undefined' ? globalThis : window);

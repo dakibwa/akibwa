@@ -730,7 +730,7 @@ const main = async () => {
     cdp = await Cdp.connect(pageTarget.webSocketDebuggerUrl);
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
-    if (process.env.CHECK_TREK_ONLY) await checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section});
+    if (process.env.CHECK_TREK_ONLY) await checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture});
     else await checkPublicLanding();
   } finally {
     try {

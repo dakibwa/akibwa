@@ -26,6 +26,12 @@ perspective and much less text and interface on 5 September 2026.
   the quality bar on 6 September 2026. Judge the finished rendering against its
   richness, material detail and depth. Its individual trees, houses and field
   divisions remain illustrative; the reference does not replace mapped geography.
+- On 7 September 2026 Dan requested more detail using satellite views and
+  explicitly retained the paper model style. Use those views as visual reference
+  for landscape character; the rendered geometry still comes from reusable map
+  data. Do not reconstruct, extract or store a new dataset from Google imagery.
+  Give forest a continuous canopy with varied folded tiers and broadleaf crowns,
+  retain mapped clearings, and show grain and narrow cut edges on actual fields.
 - Streams and rivers have full muted-blue channels, a pale paper bank and a
   subtle light centre. Their displayed width is stylised for legibility. Keep
   lakes visibly blue and respect mapped shorelines. Draw every ground material,
@@ -223,9 +229,14 @@ woodland. Their positions are deterministically seeded in geographic space,
 respect polygon holes and leave the journey and mapped roads open. They must
 not shuffle when a tile reloads or the camera moves. Trees are not a survey of
 individual specimens. Field boundaries and building footprints come from current
-OpenStreetMap, not a reconstruction of their 2019 appearance. Simple rectangular
-buildings get illustrative gables; other buildings retain their mapped outlines
-and flat tops. Scenery heights and roof forms are stylised for legibility.
+OpenStreetMap, not a reconstruction of their 2019 appearance. Clean collinear
+vertices before choosing a roof, so extra map vertices do not suppress a gable.
+Simple rectangular buildings get illustrative gables. A thin native extrusion
+applies roof material to every mapped building using the same terrain anchoring
+as its walls, retaining complex outlines and courtyard holes. A custom flat cap
+sampled only at the centroid can sink into native roofs on slopes; do not use it.
+Nearby buildings receive narrow fascia and small window panels.
+Scenery heights, windows and roof forms are stylised, not surveyed architecture.
 
 Custom landmarks share the existing scenery buffer and terrain heights. After a
 model builds, remove only native building features fully inside its mapped bounds,
@@ -233,11 +244,17 @@ including multi-part towers. Select those feature IDs with geographic containmen
 MapLibre 5.6.2’s `within` expression only tests point and line features, so it cannot
 exclude building polygons. A nearby building crossing the bounds stays untouched.
 
-Scenery is limited to 6,500 trees and 1,800 roofs near the view, with a distant
-fade. Geometry is rebuilt in short chunks after movement or source changes,
+Scenery is limited to 6,500 trees, 1,800 custom roofs and 2.4 million custom
+vertices near the view, reserving 30,000 vertices for landmarks, with a distant
+fade. Woodland uses a 32 m grid in projected map space; the varying crown shapes
+and optional underside folds remain seeded per tree, without camera-dependent
+shape changes. Ground canopy print carries forest texture into the distance.
+Geometry is rebuilt in short chunks after movement or source changes,
 never by querying every feature on every frame. Reuse the map's WebGL context,
 use a local coordinate origin for precision and discard stale in-flight builds
-after a new destination. The material and facets stay attached to the ground.
+after a new destination. Cache the lit canopy vertices in 192 seeded variants
+so rebuilds only place them, without recalculating every fold and surface normal.
+The material and facets stay attached to the ground.
 Retry pending scenery when the map becomes idle: source events can arrive before
 the destination camera finishes loading, and a paused first visit must populate
 without needing Play or a day change. Do not let that retry become an idle loop.
@@ -281,7 +298,7 @@ Compilation and DOM checks do not replace visual acceptance.
 
 `scripts/check-trek-paper.mjs` covers geographic projection, woodland holes,
 route clearance, deterministic placement across view changes, duplicate tiles,
-geometry budgets and valid mapped layer styling. The browser journey checks
+geometry budgets, canopy bounds, roof-to-wall alignment and valid mapped layer styling. The browser journey checks
 include the day-17 woodland and village, Alpine detail and photographs on phone.
 On a Mac with a working GPU, `CHECK_TREK_HARDWARE_GPU=1` runs those browser
 checks with hardware graphics. The default remains software rendering for

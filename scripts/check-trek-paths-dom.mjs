@@ -6,7 +6,7 @@ const {buildJourneyPath}=require('../public/trek/journey-route.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
 const path=buildJourneyPath(route);
 
-export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section}){
+export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture}){
   const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
   const choose=n=>evaluate(`(() => {const e=document.querySelector('#journey-day');e.value=${n};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   const scrub=distance=>evaluate(`(() => {const e=document.querySelector('#journey-progress');e.value=${distance/path.total*1000};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
@@ -115,10 +115,22 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   check(await until(async()=>{const s=await state();return s.paper?.trees>0&&s.paper?.roofs>0;},30000),'paper details appear without playing or changing days');
   const cold=await state();await sleep(1200);
   const still=await state();
+  check(still.paper.trees<=6500&&still.paper.roofs<=1800&&still.paper.vertices<=2400000,'the detailed paper scene stays within its tree, roof and vertex limits');
   check(!still.playing&&still.distance===cold.distance&&still.paper.updates<=cold.paper.updates+1,'the paused view settles without rebuilding its scenery in an idle loop');
   if(process.env.CHECK_TREK_PAPER_ONLY==='1'){
-    for(const width of [1440,320,390]){await setDesktop(width,width>650?900:844);await sleep(650);}
+    for(const width of [1440,320,390]){
+      await setDesktop(width,width>650?900:844);await sleep(650);
+      const view=await state();check(view.overflow<=1&&view.controlsFit,`the paper view and controls fit at ${width}px`);
+      await capture?.(`trek-paper-woodland-${width}`);
+    }
     check((await state()).paper.trees>0,'paper scenery survives desktop and phone resizes');
+    await click('#photos-open');check(await until(async()=>(await state()).photoLoaded),'the original photographs open from the detailed paper view');await click('#gallery-close');
+    await choose(30);check(await settled(),'the detailed Alpine landscape prepares after leaving the woodland');
+    for(const width of [1440,390]){
+      await setDesktop(width,width>650?900:844);await sleep(650);
+      const view=await state();check(view.paper.trees>0&&view.cameraClearance>=419.9&&view.controlsFit&&view.overflow<=1,`the Alpine detail and ground clearance hold at ${width}px`);
+      await capture?.(`trek-paper-alps-${width}`);
+    }
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the fresh paper view and resizes have no JavaScript errors');
     return;
   }
@@ -133,7 +145,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   await choose(17);check(await settled(),'the German woodland and village stretch loads');
   check(await until(async()=>{const p=(await state()).paper;return p?.trees>0&&p?.roofs>0;},30000),'mapped woods have paper canopies and small buildings have folded roofs');
   s=await state();
-  check(s.paper.trees<=6500&&s.paper.roofs<=1800&&s.paper.vertices<405000,'paper scenery keeps a bounded geometry budget');
+  check(s.paper.trees<=6500&&s.paper.roofs<=1800&&s.paper.vertices<=2400000,'paper scenery keeps a bounded geometry budget');
   const paperBefore=s.distance;
   await cdp.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await sleep(250);
   s=await state();check(s.overflow<=1&&s.controlsFit&&s.distance===paperBefore,'the paper landscape and original progress controls fit the phone without moving the route');

@@ -31,6 +31,27 @@ const positions = list => list.map(t => t.p.join(':') + ':' + t.seed).sort();
 assert.deepEqual(positions(plant([woodland], [center[0] + 200, center[1] - 150])), positions(trees), 'moving the camera must not shuffle an existing forest');
 assert.equal(plant([woodland], center, 20).length, 20, 'honour the geometry budget even in a dense forest');
 assert.equal(JSON.stringify(woodland), source, 'never rewrite mapped source geometry');
+for (const seed of [.01, .35, .67, .7, .89, .99]) for (const detailed of [false, true]) {
+  const mesh = paper.treeMesh(seed, detailed);
+  assert(mesh.faces.length > 25 && mesh.faces.length <= 112, 'layered canopies must keep a bounded per-tree mesh');
+  for (const face of mesh.faces) for (const v of [face.a, face.b, face.c]) {
+    assert(v.every(Number.isFinite), 'canopy vertices must be finite');
+    assert(v[2] >= 0 && v[2] <= mesh.height * 1.1, 'canopies must stay grounded at their intended scale');
+    assert(Math.hypot(v[0], v[1]) <= mesh.width * 1.3, 'folds must stay within the canopy envelope');
+  }
+  assert.deepEqual(paper.treeMesh(seed, detailed), mesh, 'rebuilds must preserve each tree silhouette');
+}
+const detailedRectangle = [[0, 0], [10, 0], [20, 0], [20, 10], [0, 10], [0, 0]];
+const originalRectangle = JSON.stringify(detailedRectangle);
+assert.deepEqual(paper.cleanBuildingRing(detailedRectangle), [[0, 0], [20, 0], [20, 10], [0, 10]], 'collinear map vertices must not prevent rectangular roof modelling');
+assert.equal(JSON.stringify(detailedRectangle), originalRectangle, 'roof preparation must preserve its mapped source');
+const walls = style.layers.find(l => l.id === 'building-3d'), caps = style.layers.find(l => l.id === 'paper-building-caps');
+for (const key of ['source', 'source-layer', 'filter']) assert.deepEqual(caps[key], walls[key], 'roof material must use the exact native footprint, including courtyards');
+assert.deepEqual(caps.paint['fill-extrusion-base'], walls.paint['fill-extrusion-height'], 'roof material must meet the native walls at their terrain-adjusted top');
+assert.deepEqual(caps.paint['fill-extrusion-height'], ['+', walls.paint['fill-extrusion-height'], .3], 'roof material must remain a thin cap rather than a second building');
+for (const id of ['paper-fields', 'paper-field-edge-shadow', 'paper-field-edge', 'paper-rock']) {
+  assert(style.layers.findIndex(l => l.id === id) < style.layers.findIndex(l => l.id === 'waterway_tunnel'), 'paper ground detail must not paint over streams');
+}
 const lines = {type: 'FeatureCollection', features: [{type: 'Feature', properties: {}, geometry: {type: 'MultiLineString', coordinates: [[paper.unproject([center[0] - 500, center[1]]), paper.unproject([center[0] + 500, center[1]])]]}}]};
 const near = paper.routeIndex(lines);
 assert(near(center, 46) && near([center[0] + 501, center[1]], 46), 'include segment interiors and endpoints');
