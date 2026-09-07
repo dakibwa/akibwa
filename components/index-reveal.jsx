@@ -113,7 +113,9 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       setLayout((before) => {
         const width = fitAnchor && available ? visibleWidth : before.width;
         const position = floating && available ? placeBeside(cardBox, shelfBox, movingBox.offsetWidth, height, placementIndex, obstacles) : null;
-        const offset = position ? position.x - shelfBox.left : available ? fitAnchor ? left - shelfBox.left : clamp(cardBox.left - shelfBox.left, 0, shelfBox.width - movingBox.offsetWidth) : before.offset;
+        // A closed, off-screen box still contributes to scroll overflow. Keep
+        // its retained position inside the rail when the viewport narrows.
+        const offset = position ? position.x - shelfBox.left : available ? fitAnchor ? left - shelfBox.left : clamp(cardBox.left - shelfBox.left, 0, shelfBox.width - movingBox.offsetWidth) : clamp(before.offset, 0, Math.max(0, shelfBox.width - movingBox.offsetWidth));
         const top = position ? position.y - movingBox.parentElement.getBoundingClientRect().top - 9 : before.top;
         const placement = position?.placement ?? before.placement;
         const space = reserveBelow && position ? Math.max(0, position.y + height - shelfBox.bottom) : 0;

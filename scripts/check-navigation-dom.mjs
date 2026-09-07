@@ -565,6 +565,8 @@ const checkPublicLanding = async () => {
   })()`);
   check(nameBefore.name === 'Daniel' && nameAfter.name === 'Akibwa' && nameBefore.animation === 'word-flick', "the original flick changes the name after its initial rest");
   check(nameBefore.top === nameAfter.top && nameBefore.height === nameAfter.height, "the name flip does not move the surrounding composition");
+  await evaluate('document.querySelector("#taste").scrollIntoView({block:"start",behavior:"instant"})');
+  await sleep(380);
   const wallKeys=await evaluate('JSON.stringify([...document.querySelectorAll(".personal-taste-card")].map(card=>card.dataset.tasteKey).sort())');
   const wallCounts=[];
   for (const [width,height,touch] of [[815,774,false],[390,844,true],[320,740,true],[1440,900,false]]) {
@@ -580,6 +582,8 @@ const checkPublicLanding = async () => {
     wallCounts.push(balanced.count);
     check(balanced.keys===wallKeys && balanced.tops<1 && balanced.spread<(touch?12:2) && balanced.overflow<=1,
       `the same forty-eight covers rebalance with a close bottom edge at ${width}×${height}${touch?' with touch captions':''}`);
+    check(await evaluate('document.querySelector(".concept-career-detail-lane").inert && document.querySelector(".concept-career-detail-lane .index-reveal-track").getBoundingClientRect().right<=innerWidth+1'),
+      `the closed Career preview stays inside the ${width}px page while resizing below it`);
   }
   check(new Set(wallCounts).size>=3, "resizing recalculates the stacks instead of only shrinking the artwork");
   await evaluate('document.querySelectorAll(".taste-wall-column")[0].querySelectorAll("article")[1].focus()');
