@@ -157,7 +157,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         if (!event.currentTarget.contains(event.relatedTarget)) dismissDetail();
       }}
     >
-      <header className="concept-taste-head">
+      <header className={`concept-taste-head${searchOpen ? " is-searching" : ""}`}>
         <div className="concept-archive-head">
           <h2 id="taste-title">Taste Library</h2>
         </div>
@@ -175,7 +175,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
                 }
               }} />
             <button type="button" aria-label="Close taste search" onClick={() => { updateQuery(""); setSearchOpen(false); requestAnimationFrame(() => searchButton.current?.focus()); }}><X size={15} aria-hidden="true" /></button>
-          </div> : <button className="taste-search-toggle" type="button" ref={searchButton} onClick={() => setSearchOpen(true)}><Search size={15} aria-hidden="true" /><span>Search</span></button>}
+          </div> : <button className="taste-search-toggle" type="button" aria-label="Search" ref={searchButton} onClick={() => setSearchOpen(true)}><Search size={15} aria-hidden="true" /><span>Search</span></button>}
           <RailControls rail={rail} label="Taste" controls="taste-rail" />
         </div>
       </header>

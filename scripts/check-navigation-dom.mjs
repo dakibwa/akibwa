@@ -311,6 +311,12 @@ const checkPublicLanding = async () => {
   for(const width of [320,390,560,800,820,1024,1440,1920]){
     await setDesktop(width);
     check(await evaluate(`(() => {
+      const heading=document.querySelector('#taste-title').getBoundingClientRect();
+      const controls=document.querySelector('.taste-tools').getBoundingClientRect();
+      return Math.abs((heading.top+heading.bottom-controls.top-controls.bottom)/2)<1 &&
+        controls.left>=heading.right+7 && controls.right<=innerWidth && document.documentElement.scrollWidth<=innerWidth+1;
+    })()`), `Taste heading and controls stay on one clear line at ${width}px`);
+    check(await evaluate(`(() => {
       const lede=document.querySelector('.concept-lede');
       const range=document.createRange();range.selectNodeContents(lede);
       return range.getClientRects().length===1 && lede.scrollWidth<=lede.clientWidth+1;
@@ -518,6 +524,20 @@ const checkPublicLanding = async () => {
   await evaluate(`document.querySelector('button[aria-label="Close taste search"]').click()`);
   await sleep(100);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48 && document.activeElement.matches(".taste-search-toggle")'), "closing search restores the wall and keyboard focus");
+  for (const width of [320,390,560]) {
+    await setDesktop(width);
+    const headerHeight=await evaluate('document.querySelector(".concept-taste-head").getBoundingClientRect().height');
+    await evaluate('document.querySelector(".taste-search-toggle").click()');
+    check(await evaluate(`(() => {
+      const header=document.querySelector('.concept-taste-head').getBoundingClientRect();
+      const field=document.querySelector('.taste-search-field').getBoundingClientRect();
+      return Math.abs(header.height-${headerHeight})<1 && field.width>180 && field.left>=0 && field.right<=innerWidth && document.documentElement.scrollWidth<=innerWidth+1;
+    })()`), `phone search uses the same header row at ${width}px`);
+    await evaluate('document.querySelector(".taste-search-field input").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+    await sleep(30);
+    check(await evaluate('document.activeElement.matches(".taste-search-toggle") && !document.querySelector(".concept-taste-head.is-searching")'), "closing phone search restores the heading and keyboard focus");
+  }
+  await setDesktop(1440);
 
   section("ranked listening shelves");
   await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');

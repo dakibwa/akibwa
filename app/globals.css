@@ -8194,8 +8194,9 @@ button {
 .concept-career-statement { margin: 7px 0 0; color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); font: 400 .76rem/1.35 var(--serif); }
 .concept-career-statement strong { color: var(--black); font: inherit; font-weight: 700; letter-spacing: inherit; }
 .personal-taste { padding-bottom: clamp(40px, 5vw, 70px); }
-.concept-taste-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 20px; padding-bottom: 14px; }
+.concept-taste-head { position: relative; display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 14px; }
 .concept-taste-head .concept-archive-head { display: block; }
+.concept-taste-head .concept-archive-head h2 { white-space: nowrap; }
 .taste-tools { display: flex; align-items: center; gap: 18px; margin-left: auto; max-width: 100%; }
 .taste-search-toggle { display: flex; align-items: center; gap: 7px; min-height: 36px; border: 0; padding: 0; background: none; color: var(--muted); font: 500 .73rem/1.4 var(--sans); cursor: pointer; }
 .taste-search-toggle:hover { color: var(--ink); }
@@ -8239,11 +8240,19 @@ button {
   .index-hover-detail { padding: 11px 12px; }
   .index-reveal-content { padding: 11px 12px; }
   .concept-career-statement { margin-top: 6px; font-size: .72rem; line-height: 1.34; }
-  .concept-career-head h2, .concept-taste-head .concept-archive-head h2 { font-size: 2.65rem; }
+  .concept-career-head h2 { font-size: 2.65rem; }
+  .concept-taste-head .concept-archive-head h2 { font-size: clamp(2rem, 10.6vw, 2.65rem); }
   .concept-career-head { padding-bottom: 14px; }
-  .concept-taste-head { padding-bottom: 8px; }
+  .concept-taste-head { min-height: 48px; gap: 8px; padding-bottom: 8px; }
+  .taste-tools { flex-shrink: 0; gap: 6px; }
+  .taste-search-toggle { width: 32px; justify-content: center; }
+  .taste-search-toggle > span { display: none; }
+  .concept-taste-head.is-searching .concept-archive-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .concept-taste-head.is-searching .taste-tools { flex: 1; margin-left: 0; }
+  .concept-taste-head.is-searching .taste-search-field { flex: 1; min-width: 0; width: auto; }
   .taste-search-field input { font-size: 16px; }
   .rail-controls button { width: 40px; height: 40px; }
+  .taste-tools .rail-controls button { width: 32px; height: 32px; }
   .concept-taste-head .archive-link { display: inline-block; margin-top: 18px; }
   .taste-filters { gap: 0 17px; }
   .taste-filters .rail-word { font-size: .85rem; }
