@@ -7909,34 +7909,13 @@ button {
 .concept-project-detail-clip { min-height: 0; overflow: hidden; }
 .index-hover-detail.concept-project-detail {
   margin: 9px 0 0 clamp(0px, var(--project-detail-offset, 0px), max(0px, calc(100% - var(--hover-detail-width))));
-  box-shadow: none;
 }
 .concept-project-detail p {
   margin: 0;
   color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
   font: 400 .76rem/1.35 var(--serif);
 }
-.concept-project-open {
-  display: inline-flex;
-  align-items: center;
-  justify-self: start;
-  gap: .6em;
-  min-height: 44px;
-  padding: 4px 0;
-  color: var(--ink);
-  font: 620 .74rem/1.3 var(--sans);
-  white-space: nowrap;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--project-detail-accent) 65%, var(--line));
-  text-decoration-thickness: 1px;
-  text-underline-offset: .3em;
-}
-.concept-project-open:hover, .concept-project-open:focus-visible {
-  color: var(--black);
-  text-decoration-color: currentColor;
-}
 .concept-project-card { padding: 0; width: 100%; }
-.concept-project-open:focus-visible { outline: 2px solid var(--project-detail-accent); outline-offset: 4px; }
 .personal-intro{white-space:nowrap}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .page-footer-details a,.page-footer-details button{min-height:36px}
@@ -8185,7 +8164,7 @@ button {
 .concept-career-stop[aria-expanded="true"] .concept-career-node { box-shadow: 0 0 0 4px var(--canvas), 0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent); }
 .concept-career-stop:focus-visible .concept-career-card { outline: 2px solid var(--company-accent); outline-offset: -4px; }
 .concept-career-detail-lane { position: relative; height: 0; }
-.index-hover-detail { --hover-detail-width: 280px; width: min(var(--hover-detail-width), 100%); display: grid; gap: 4px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent, var(--company-accent)) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: 0 14px 32px #0c111317; overflow-wrap: anywhere; }
+.index-hover-detail { --hover-detail-width: 280px; width: min(var(--hover-detail-width), 100%); display: grid; gap: 4px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent, var(--company-accent)) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); overflow-wrap: anywhere; }
 .index-hover-detail { opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 150ms ease, transform 220ms var(--ease-out), visibility 0s linear 220ms; }
 .index-hover-detail.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease 70ms, transform 360ms var(--ease-out) 20ms, visibility 0s; }
 .index-hover-detail > strong { color: var(--black); font-size: .86rem; font-weight: 690; line-height: 1.15; letter-spacing: -.02em; }

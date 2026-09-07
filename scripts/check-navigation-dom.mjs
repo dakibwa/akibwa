@@ -315,14 +315,15 @@ const checkPublicLanding = async () => {
       const range=document.createRange();range.selectNodeContents(lede);
       return range.getClientRects().length===1 && lede.scrollWidth<=lede.clientWidth+1;
     })()`), `the proposition fits on one line at ${width}px`);
-    await evaluate('document.querySelector(".concept-project-card").focus(); document.querySelector(".concept-project-card").click()');
-    await sleep(400);
+    await evaluate('document.querySelector(".concept-project-card").blur(); document.querySelector(".concept-project-card").focus()');
+    await sleep(500);
     const bounds=await evaluate(`(() => {
       const career=document.querySelector('.personal-career').getBoundingClientRect();
       const detail=document.querySelector('.concept-project-detail');
-      return {overlap:!detail || detail.getBoundingClientRect().bottom>career.top,overflow:document.documentElement.scrollWidth-innerWidth,link:document.querySelector('.concept-project-open')?.getAttribute('href')};
+      return {open:document.querySelector('#project-detail').getAttribute('aria-hidden')==='false',overlap:!detail || detail.getBoundingClientRect().bottom>career.top,overflow:document.documentElement.scrollWidth-innerWidth,link:document.querySelector('a.concept-project-card')?.getAttribute('href')};
     })()`);
-    check(!bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/?from=akibwa', `the project dropdown and destination fit above Career at ${width}px`);
+    const fits = bounds.open && !bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/?from=akibwa';
+    check(fits, `the project description and direct card link fit above Career at ${width}px${fits ? '' : ` [${JSON.stringify(bounds)}]`}`);
     await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
     await sleep(400);
   }
@@ -343,9 +344,14 @@ const checkPublicLanding = async () => {
   const opensSmoothly = (samples) => samples.at(-1)>samples[0]+20 && samples.some(y=>y>samples[0]+2 && y<samples.at(-1)-2);
   const closesSmoothly = (samples) => samples.at(-1)<samples[0]-20 && samples.some(y=>y<samples[0]-2 && y>samples.at(-1)+2);
   const projectControl = 'document.querySelector(".concept-project-card")';
-  check(opensSmoothly(await dividerMotion('#career', `${projectControl}.focus(); ${projectControl}.click();`)), "opening a project smoothly pushes the Career divider down");
+  check(opensSmoothly(await dividerMotion('#career', `${projectControl}.blur(); ${projectControl}.focus();`)), "opening a project smoothly pushes the Career divider down");
   check(closesSmoothly(await dividerMotion('#career', `${projectControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "closing a project smoothly brings the Career divider back");
-  check(await evaluate('document.querySelector("#project-detail").inert && document.querySelector("#project-detail").getAttribute("aria-hidden")==="true"'), "closed project links stay out of keyboard and screen-reader navigation");
+  check(await evaluate('document.querySelector("#project-detail").inert && document.querySelector("#project-detail").getAttribute("aria-hidden")==="true"'), "closed project descriptions stay hidden from assistive technology");
+  check(await evaluate(`(() => {
+    const links=[...document.querySelectorAll('a.concept-project-card')];
+    return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['/features/?from=akibwa','https://portuguesewithines.com/?from=akibwa','/trek/']) &&
+      !document.querySelector('#project-detail a, #project-detail button');
+  })()`), "each project card links directly to its destination without a separate action button");
   const careerControl = 'document.querySelectorAll(".concept-career-timeline button")[1]';
   check(opensSmoothly(await dividerMotion('#taste', `${careerControl}.focus(); ${careerControl}.click();`)), "opening a career statement smoothly pushes the Taste divider down");
   check(await evaluate('(document.querySelector("#career-detail").textContent.includes("Senior BI Developer") && getComputedStyle(document.querySelector("#career-detail")).opacity !== "0" && getComputedStyle(document.querySelector("#career-detail")).visibility === "visible")'), "career activation displays the selected public role");
@@ -730,6 +736,8 @@ const main = async () => {
     cdp = await Cdp.connect(pageTarget.webSocketDebuggerUrl);
     await cdp.send("Page.enable");
     await cdp.send("Runtime.enable");
+    // Native focus events are suppressed while the headless page is inactive.
+    await cdp.send("Page.bringToFront");
     if (process.env.CHECK_TREK_ONLY) await checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture});
     else await checkPublicLanding();
   } finally {

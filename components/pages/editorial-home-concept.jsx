@@ -16,7 +16,6 @@ const projects = [
     subtitle: "daily untangling puzzle",
     description:
       "Ten small networks to untangle each day, with shapes to discover along the way. Free to play.",
-    action: "Play features",
     src: "/project-art/personal/features-discoveries.svg",
     alt: "Features wordmark beside colourful house, cup, heart and leaf stamps",
     above: true,
@@ -31,7 +30,6 @@ const projects = [
     subtitle: "European Portuguese lessons",
     description:
       "Inês’s European Portuguese lessons, with availability and booking in one place.",
-    action: "Visit the lesson site",
     src: "/project-art/personal/portuguese-with-ines-conversation.png",
     alt: "Two people talking over coffee as colourful speech shapes meet between them",
     above: true,
@@ -46,7 +44,6 @@ const projects = [
     subtitle: "Paris → Sofia · 1,982 km",
     description:
       "Paris to Sofia on foot, told through the route, photographs and notes.",
-    action: "Explore the trek",
     src: "/project-art/personal/trek-paris-sofia-project.png",
     alt: "An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre",
     accent: "#d96b32",
@@ -55,16 +52,15 @@ const projects = [
 
 function ProjectShowcase() {
   const [preview, setPreview] = useState(null);
-  const [held, setHeld] = useState(null);
   const [lastProject, setLastProject] = useState(projects[0]);
   const [detailOffset, setDetailOffset] = useState(0);
   const [detailWidth, setDetailWidth] = useState(null);
   const rail = useRef(null);
   const cards = useRef({});
-  const active = held ?? preview;
+  const active = preview;
   // Keep the last detail mounted so its height can animate closed as well.
   const detail = active ?? lastProject;
-  const dismiss = () => { setHeld(null); setPreview(null); };
+  const dismiss = () => setPreview(null);
   useEffect(() => {
     const shelf = rail.current;
     const positionDetail = () => {
@@ -86,7 +82,11 @@ function ProjectShowcase() {
   return (
     <div
       className="concept-project-showcase"
-      onMouseLeave={() => setPreview(null)}
+      onMouseLeave={(event) => {
+        const focused = projects.find((project) => cards.current[project.id] === event.currentTarget.ownerDocument.activeElement);
+        setPreview(focused ?? null);
+        if (focused) setLastProject(focused);
+      }}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) dismiss();
       }}
@@ -105,26 +105,20 @@ function ProjectShowcase() {
           key={project.id}
           style={{ "--project-card-accent": project.accent }}
         >
-          <button
+          <a
             className="concept-project-card"
             ref={(element) => { cards.current[project.id] = element; }}
             id={project.id === "features" ? "work" : undefined}
-            type="button"
-            aria-label={`Find out more about ${project.title}`}
-            aria-expanded={active?.id === project.id}
-            aria-controls="project-detail"
+            href={project.href}
+            aria-label={project.title}
+            aria-describedby={active?.id === project.id ? "project-description" : undefined}
             onMouseEnter={() => {
               if (matchMedia("(hover: hover)").matches) {
                 setPreview(project);
-                if (!held) setLastProject(project);
+                setLastProject(project);
               }
             }}
-            onFocus={() => { setHeld(null); setPreview(project); setLastProject(project); }}
-            onClick={() => {
-              setHeld(held?.id === project.id ? null : project);
-              setPreview(null);
-              setLastProject(project);
-            }}
+            onFocus={() => { setPreview(project); setLastProject(project); }}
           >
             <SiteImage
               src={project.src}
@@ -140,7 +134,7 @@ function ProjectShowcase() {
                 <span>{project.subtitle}</span>
               </span>
             </span>
-          </button>
+          </a>
         </div>
       ))}
     </div>
@@ -152,7 +146,6 @@ function ProjectShowcase() {
         aria-hidden={!active}
         inert={!active}
         style={{
-          "--project-detail-accent": detail.accent,
           "--hover-detail-accent": detail.accent,
           "--project-detail-offset": `${detailOffset}px`,
         }}
@@ -162,10 +155,7 @@ function ProjectShowcase() {
             className={`index-hover-detail concept-project-detail${active ? " is-open" : ""}`}
             style={{ "--hover-detail-width": detailWidth ? `${detailWidth}px` : undefined }}
           >
-            <p>{detail.description}</p>
-            <a className="concept-project-open" href={detail.href}>
-              {detail.action} <span aria-hidden="true">↗</span>
-            </a>
+            <p id="project-description">{detail.description}</p>
           </div>
         </div>
       </div>
