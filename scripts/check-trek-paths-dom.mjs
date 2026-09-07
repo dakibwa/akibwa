@@ -2,10 +2,13 @@
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
-const {buildJourneyPath}=require('../public/trek/journey-route.js');
+const {buildJourneyPath,metres}=require('../public/trek/journey-route.js');
 const {progressAt}=require('../public/trek/journey-elevation.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
-const path=buildJourneyPath(route);
+const path=buildJourneyPath(route,67,JSON.parse(readFileSync(new URL('../public/trek/route-links.json',import.meta.url),'utf8')));
+
+
+const atPoint=point=>{let best={metres:Infinity,distance:0};for(const p of path.pieces.filter(p=>p.kind==='recorded'))for(let i=0;i<p.points.length;i++){const m=metres(point,p.points[i]);if(m<best.metres)best={metres:m,distance:p.start+p.distances[i]};}return best.distance;};
 
 export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture}){
   const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
@@ -16,6 +19,60 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const settled=()=>until(async()=>(await state()).ready,30000);
   const openPhotos=async()=>{await click('#menu-open');if(await evaluate("document.querySelector('#menu-photos').hidden")){await choose(30);await settled();}await click('#menu-photos');};
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_FINISHES_ONLY==='1'){
+    section('Static atlas fills and smoothly contrasting shared wordmark');
+    await setDesktop(1440,900);await goto('/trek/?day=2');check(await settled(),'the finished presentation prepares');
+    for(const [day,country] of [[3,'France'],[17,'Germany'],[30,'Austria'],[36,'Slovenia'],[42,'Croatia'],[53,'Serbia'],[65,'Bulgaria']]){
+      await choose(day);check(await until(async()=>{const w=(await state()).wayfinding;return w?.country===country&&w.flagReady;},5000),`${country} retains its name and small flag`);
+      check(await evaluate(`(()=>{const c=document.querySelector('#minimap-canvas'),a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;for(let i=0;i<a.length;i+=4)if(a[i]===216&&a[i+1]===200&&a[i+2]===150)return false;return true;})()`),`${country} has no current-country highlight`);
+    }
+    await choose(31);check(await settled(),'the camera returns after all country changes');
+    // Simulate only the small pixel sample read by the mark. Do not change the
+    // graphics buffer or terrain reads; restore the method before leaving.
+    await evaluate(`(()=>{const gl=document.querySelector('.maplibregl-canvas').getContext('webgl2'),original=gl.readPixels;window.__markShade=.02;window.__restoreMark=()=>{gl.readPixels=original;delete window.__markShade;delete window.__restoreMark;};gl.readPixels=function(x,y,w,h,format,type,pixels,...rest){if(w>70&&h>20&&h<100){const shade=Math.round(window.__markShade*255);for(let i=0;i<pixels.length;i+=4){pixels[i]=pixels[i+1]=pixels[i+2]=shade;pixels[i+3]=255;}return;}return original.call(gl,x,y,w,h,format,type,pixels,...rest);};document.querySelector('#photo-interludes').checked=false;document.querySelector('#play').click();})()`);
+    for(const [shade,expected] of [[.02,'rgb(255, 249, 226)'],[.38,'rgb(255, 249, 226)'],[.95,'rgb(31, 49, 36)'],[.38,'rgb(31, 49, 36)']]){
+      await evaluate(`window.__markShade=${shade}`);
+      check(await until(()=>evaluate(`(()=>{const m=document.querySelector('.mark'),s=getComputedStyle(m),y=getComputedStyle(m.querySelector('small'));return s.color===${JSON.stringify(expected)}&&y.color===s.color&&y.fontFamily===s.fontFamily&&parseFloat(s.transitionDuration)>0;})()`),5000),'trek and 2019 ease together to readable ink, retaining contrast at middle brightness');
+    }
+    await evaluate(`window.__restoreMark();if(window.trekStatus().playing)document.querySelector('#play').click();`);
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');if(errors.length)console.error(errors.map(e=>e.params.exceptionDetails.exception?.description));check(!errors.length,'country and contrast updates have no JavaScript exceptions');
+    return;
+  }
+  if(process.env.CHECK_TREK_WALKING_ONLY==='1'){
+    section('Estimated walking paths, photographic prints and continuously visible route');
+    await setDesktop(1440,900);await goto('/trek/?day=2');check(await settled(),'the walking reconstruction prepares');
+    check(await until(async()=>(await state()).flash,10000),'the small photograph appears');
+    check(await evaluate(`(()=>{const p=document.querySelector('#memory-flash'),mark=document.querySelector('.mark'),year=mark.querySelector('small');return p.textContent.trim()===''&&!p.querySelector('.memory-location')&&p.querySelector('img').naturalWidth>0&&getComputedStyle(mark).fontFamily===getComputedStyle(year).fontFamily&&getComputedStyle(year).backgroundColor==='rgba(0, 0, 0, 0)';})()`),'the print has no caption and trek / 2019 share their typeface');
+    await capture?.('trek-walking-print-desktop');
+    const photo=await evaluate(`document.querySelector('#memory-flash img').getAttribute('src')`);
+    await click('#memory-flash');check(await until(async()=>(await state()).photoLoaded),'the caption-free print opens its original photo');
+    check(await evaluate(`document.querySelector('#gallery-image').src===${JSON.stringify(photo)}`),'the print preserves its original day and image');await click('#gallery-close');
+    await evaluate(`document.querySelector('#photo-interludes').checked=false;(()=>{const p=document.querySelector('#pace');p.value=12800;p.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    check((await state()).pace===12800,'8× is available in the running journey');
+    for(const [width,height,day,from,to] of [[1440,900,31,.64,.85],[390,844,31,.64,.85],[320,844,30,.23,.34],[844,390,17,.94,.99]]){
+      await setDesktop(width,height);await scrub(path.dayDistance(day,from));check(await settled(),`day ${day} prepares at ${width}×${height}`);
+      await evaluate(`window.__walkingSamples=[];window.__walkingCapture=true;document.querySelector('#play').click();requestAnimationFrame(function sample(t){if(!window.__walkingCapture)return;const s=window.trekStatus();window.__walkingSamples.push({distance:s.renderedDistance,visible:s.routeVisible,clearance:s.cameraTerrainClearance,zoom:s.cameraZoom,height:s.eyeHeight,pitch:s.pitch,bearing:s.bearing,t});requestAnimationFrame(sample);});`);
+      const completed=await until(async()=>(await state()).renderedDistance>=path.dayDistance(day,to),90000);
+      const samples=await evaluate(`(()=>{if(window.trekStatus().playing)document.querySelector('#play').click();window.__walkingCapture=false;return window.__walkingSamples;})()`);
+      check(completed&&samples.length>50,'the accelerated journey completes its bends');
+      check(samples.every(s=>s.visible>0),'some of the nearby travel line remains in the usable camera window on every frame');
+      check(samples.filter(s=>s.visible>=.5).length/samples.length>.95,'at least half the nearby line stays framed throughout almost all playback');
+      check(samples.every(s=>s.clearance>200),'the fitted camera remains clear of rendered terrain');
+      const changes=samples.slice(1).map((s,i)=>({zoom:Math.abs(s.zoom-samples[i].zoom),height:Math.abs(s.height-samples[i].height)/((s.t-samples[i].t)/1000)}));
+      check(Math.max(...changes.map(s=>s.zoom))<.18&&Math.max(...changes.map(s=>s.height))<181,'pulling out and returning remain smooth at 8×');
+      const held=await state();check(held.controlsFit&&held.overflow<=1,'camera framing retains the readable controls');
+      console.log('  fitted route '+JSON.stringify({width,height,day,minimumVisible:Math.min(...samples.map(s=>s.visible)),minimumClearance:Math.round(Math.min(...samples.map(s=>s.clearance))),maxZoomStep:Math.max(...changes.map(s=>s.zoom)).toFixed(4)}));
+      await capture?.(`trek-walking-bends-${width}`);
+    }
+    const walking=path.pieces.filter(p=>p.mode==='walk'&&p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
+    await setDesktop(1440,900);await scrub(walking.start+(walking.end-walking.start)*.45);check(await settled(),'the longest missing walking section follows its reconstructed path');
+    const before=await evaluate(`document.querySelector('#readout-distance').textContent+' / '+document.querySelector('#readout-ascent').textContent`);
+    await scrub(walking.start+(walking.end-walking.start)*.55);check(await settled(),'the reconstructed walk remains traversable');
+    check((await state()).kind==='connection'&&await evaluate(`document.querySelector('#readout-distance').textContent+' / '+document.querySelector('#readout-ascent').textContent`)===before,'walking estimates add no measured distance or ascent');
+    await capture?.('trek-walking-reconstruction');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the changed journey has no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_TERRAIN_CAMERA_ONLY==='1'){
     section('Stable terrain framing through day 31 and the Alpine descent');
     await setDesktop(1440,900);await goto('/trek/?day=31');check(await settled(),'day 31 prepares at its requested position');
@@ -36,7 +93,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       const variation=changes.reduce((sum,s)=>sum+s.turn,0),maxZoomStep=Math.max(...changes.map(s=>s.zoom));
       check(completed&&samples.length>100,'the camera completes the continuous replay');
       check(Math.max(...changes.map(s=>s.rise))<181&&maxZoomStep<.16,'DEM tile changes cannot cause a sudden camera lift or zoom');
-      check(samples.every(s=>s.clearance>750&&s.terrainClearance>200&&s.pitch>=35.95&&s.pitch<=60.05),'the camera clears both the planned profile and the rendered terrain throughout playback');
+      check(samples.every(s=>s.clearance>750&&s.terrainClearance>200&&s.pitch>=33.95&&s.pitch<=60.05),'the camera clears both the planned profile and the rendered terrain throughout playback');
       if(day===31&&from===.001)check(variation<330,'the full day-31 camera avoids circling with the tight local route');
       if(day===31)check(Math.max(...samples.map(s=>s.lift))>350,'the winding section receives extra camera height');
       const held=await state();check(held.controlsFit&&held.overflow<=1,'continuous camera movement preserves the timeline and controls');
@@ -52,7 +109,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     return;
   }
   if(process.env.CHECK_TREK_ZIGZAGS_ONLY==='1'){
-    section('Calmer switchbacks and a readable current country');
+    section('Calmer switchbacks and an unhighlighted atlas');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the Alpine comparison scene prepares');
     await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
     const wash=()=>evaluate(`(()=>{const c=document.querySelector('#minimap-canvas'),a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let pixels=0,x=0,y=0;for(let i=0;i<a.length;i+=4)if(a[i]===216&&a[i+1]===200&&a[i+2]===150){pixels++;x+=(i/4)%c.width;y+=Math.floor(i/4/c.width);}return {pixels,x:x/pixels/c.width,y:y/pixels/c.height};})()`);
@@ -61,15 +118,15 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       await choose(day);
       check(await until(async()=>{const w=(await state()).wayfinding;return w?.country===country&&w.flagReady;},5000),`${country} updates the country name and quiet flag`);
       const region=await wash();regions.push(region);
-      check(region.pixels>40&&Number.isFinite(region.x),`${country} is visibly highlighted on the canvas`);
+      check(region.pixels===0,`${country} leaves the atlas free of the removed highlight`);
     }
-    check(regions[0].x<.3&&regions[1].x<.55&&regions[2].x>.4&&regions[3].x>.5&&regions[4].x>.55&&regions[5].x>.7&&regions[6].x>.85,'the highlight follows the country geography across the atlas');
+    check(regions.every(r=>r.pixels===0),'country changes never repaint a highlighted region');
     await choose(30);check(await settled(),'the camera returns to Austria');
     const returned=await wash();check(Math.abs(returned.pixels-regions[2].pixels)<3,'seeking back clears the later country highlights');
     for(const width of [1440,390,320]){
       await setDesktop(width,width>650?900:844);await sleep(400);
       const fit=await evaluate(`(()=>{const c=document.querySelector('#minimap-canvas').getBoundingClientRect(),f=document.querySelector('#country-flag').getBoundingClientRect();return c.right<=innerWidth&&c.top>=0&&f.top>=c.bottom&&document.querySelectorAll('#journey-minimap img').length===1;})()`);
-      const s=await state();check(fit&&s.controlsFit&&s.overflow<=1,`${width}px fits the highlighted country, position marker and controls`);
+      const s=await state();check(fit&&s.controlsFit&&s.overflow<=1,`${width}px fits the country name, position marker and controls`);
       await capture?.(`trek-zigzag-country-${width}`);
     }
     await setDesktop(1440,900);
@@ -83,7 +140,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       const delta=(a,b)=>((b-a+540)%360)-180;
       const turns=samples.slice(1).map((s,i)=>Math.abs(delta(samples[i].bearing,s.bearing))/((s.sampleTime-samples[i].sampleTime)/1000));
       const variation=samples.slice(1).reduce((sum,s,i)=>sum+Math.abs(delta(samples[i].bearing,s.bearing)),0);
-      check(completed&&Math.max(...turns)<=12.5&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=35.95&&s.pitch<=60.05),`day ${day} traverses its bends with gradual turns and ground clearance`);
+      check(completed&&Math.max(...turns)<=12.5&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=33.95&&s.pitch<=60.05),`day ${day} traverses its bends with gradual turns and ground clearance`);
       if(day===30&&from===.23)check(variation<65,'the town zigzags do not make the rendered camera swing repeatedly');
       console.log('  rendered bends '+JSON.stringify({day,from,metres:Math.round(samples.at(-1).distance-samples[0].distance),seconds:((samples.at(-1).sampleTime-samples[0].sampleTime)/1000).toFixed(1),turning:variation.toFixed(1),peakRate:Math.max(...turns).toFixed(1)}));
       await capture?.(`trek-zigzag-day-${day}-${Math.round(from*100)}`);
@@ -113,7 +170,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await choose(30);check(await settled(),'the chosen day and date reset together');
     check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('1×')"),'the photograph button is replaced by a visible speed control');
     const held=(await state()).distance;
-    for(const [pace,label] of [[3200,'2×'],[400,'¼×'],[1600,'1×']]){
+    for(const [pace,label] of [[3200,'2×'],[6400,'4×'],[12800,'8×'],[400,'¼×'],[1600,'1×']]){
       await click('#speed-cycle');const s=await state();
       check(s.pace===pace&&!s.playing&&s.distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}&&+document.querySelector('#pace').value===${pace}`),`${label} updates both speed controls without moving a paused journey`);
     }
@@ -149,14 +206,14 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     check(await evaluate("document.querySelector('.maplibregl-ctrl-attrib').open&&document.querySelector('.maplibregl-ctrl-attrib-inner').textContent.includes('OpenStreetMap')&&document.querySelector('.maplibregl-ctrl-attrib-inner').textContent.includes('Mapzen')"),'Map credits opens the native provider attribution');
     await capture?.('trek-controls-credits');await click('.maplibregl-ctrl-attrib-button');await sleep(100);
     check(await evaluate("!document.querySelector('.maplibregl-ctrl-attrib').open"),'the text disclosure closes cleanly');
-    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the changed controls and responsive states have no JavaScript exceptions');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');if(errors.length)console.error(JSON.stringify(errors.map(e=>e.params.exceptionDetails),null,2));check(!errors.length,'the changed controls and responsive states have no JavaScript exceptions');
     return;
   }
   if(process.env.CHECK_TREK_LANDMARKS_ONLY==='1'){
     section('Oversized paper cathedrals along the real route');
     await setDesktop(1440,900);await goto('/trek/?day=4');await settled();
     await evaluate("document.querySelector('#photo-interludes').checked=false");
-    for(const [id,distance] of [['reims',136600],['nancy',365700]]){
+    for(const [id,distance] of [['reims',atPoint([4.02376,49.251785])],['nancy',atPoint([6.170667,48.682927])]]){
       await scrub(distance);check(await settled(),`${id} approach prepares`);
       check(await until(async()=>(await state()).paper?.landmarks.includes(id)),`${id} renders its architectural model beside the route`);
       for(const width of [1440,390,320]){
@@ -168,7 +225,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       const after=await state();check(after.distance>start.distance+500&&after.cameraClearance>=419.9&&after.paper.landmarks.includes(id),`${id} remains grounded and visible during continuous approach`);
       await capture?.(`trek-landmark-${id}-passing`);
     }
-    await choose(25);await settled();await scrub(863400);await settled();
+    await choose(25);await settled();await scrub(atPoint([11.569563,48.139847]));await settled();
     check(await until(async()=>(await state()).paper?.landmarks.includes('munich')),'the larger style also reaches the existing Munich landmark');
     await capture?.('trek-landmark-munich');
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the landmark approaches and phone resizes have no JavaScript exceptions');
@@ -204,12 +261,12 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await click('#play');
     const moved=samples.at(-1).distance-samples[0].distance;
     const turns=samples.slice(1).map((s,i)=>Math.abs(((s.bearing-samples[i].bearing+540)%360)-180)/((s.sampleTime-samples[i].sampleTime)/1000));
-    check(moved>1500&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=35.95&&s.pitch<=60.05)&&Math.max(...turns)<14.5,'sustained faster playback covers ground while retaining safe, gradual camera motion');
+    check(moved>1500&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=33.95&&s.pitch<=60.05)&&Math.max(...turns)<14.5,'sustained faster playback covers ground while retaining safe, gradual camera motion');
     console.log('  flow measurements '+JSON.stringify({metres:Math.round(moved),seconds:(samples.at(-1).sampleTime-samples[0].sampleTime)/1000,maxTurn:Math.max(...turns),minimumClearance:Math.min(...samples.map(s=>s.cameraClearance))}));
     for(const [day,country,flag] of [[3,'France','fr'],[17,'Germany','de'],[30,'Austria','at'],[36,'Slovenia','si'],[42,'Croatia','hr'],[54,'Serbia','rs'],[65,'Bulgaria','bg']]){
       await choose(day);check(await settled(),`${country} terrain prepares`);
       check(await until(async()=>{const s=await state();return s.wayfinding?.country===country&&s.wayfinding.flag===flag&&s.wayfinding.flagReady;},5000),`${country} has its flag beside the atlas country name`);
-      const s=await state();check(s.elevation.samples===11677&&Number.isFinite(s.elevation.metres)&&Number.isFinite(s.mapElevation)&&s.mapElevation>0&&s.cameraClearance>=419.9,`${country} has a mapped profile and rendered terrain height`);
+      const s=await state();check(s.elevation.samples===11861&&Number.isFinite(s.elevation.metres)&&Number.isFinite(s.mapElevation)&&s.mapElevation>0&&s.cameraClearance>=419.9,`${country} has a mapped profile and rendered terrain height`);
       console.log('  country terrain '+JSON.stringify({country,profile:s.elevation.metres,ground:s.mapElevation}));
     }
     const link=path.pieces.filter(p=>p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
@@ -228,7 +285,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     check(await evaluate("document.querySelector('#play').disabled&&!window.trekStatus().playing"),'a cold journey waits for its landscape before allowing playback');
     check(await settled(),'the mountain scene and look-ahead tiles finish preparing');
     const coldMs=Date.now()-coldStart;let s=await state();
-    check(s.elevation?.samples===11677&&s.elevation.metres>1100&&s.elevation.metres<1400,'the entire mapped elevation profile is loaded and the Alpine position matches');
+    check(s.elevation?.samples===11861&&s.elevation.metres>1100&&s.elevation.metres<1400,'the entire mapped elevation profile is loaded and the Alpine position matches');
     check(s.cache?.persistent&&s.cache.network>0,'the map uses a persistent cache on the first visit');
     await until(async()=>(await state()).cache.pending===0,30000);const coldCache=(await state()).cache;
     const oldCanvas=await evaluate("document.querySelector('#elevation-canvas').toDataURL()");
@@ -265,7 +322,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   if(process.env.CHECK_TREK_WAYFINDING_ONLY==='1'){
     section('Minimap, town names and landmark models');
     await setDesktop(1440,900);await goto('/trek/?day=25');check(await settled(),'the updated journey loads');
-    await scrub(863400);check(await settled(),'the recorded Munich approach loads');
+    await scrub(atPoint([11.569563,48.139847]));check(await settled(),'the recorded Munich approach loads');
     check(await until(async()=>(await state()).wayfinding?.place==='Munich'),'the current map tiles announce Munich beside the route');
     check(await evaluate("window.trekStatus().wayfinding.flag==='de'&&window.trekStatus().wayfinding.flagReady&&document.querySelector('#place-arrival').classList.contains('visible')"),'the German flag and place arrival appear');
     check(await until(async()=>{const p=(await state()).paper;return p?.landmarks.includes('munich')&&p.hiddenBuildings>=4;},30000),'the Frauenkirche replaces the native body and multi-part towers');
@@ -276,7 +333,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     const at=(await state()).distance;await openPhotos();
     check(await until(async()=>(await state()).photoLoaded),'the original photographs load over the updated landscape');
     await click('#gallery-close');check((await state()).distance===at,'photographs preserve the exact route position');
-    for(const [name,distance,flag] of [['reims',136600,'fr'],['ptuj',1408700,'si'],['sofia',path.total-600,'bg']]){
+    for(const [name,distance,flag] of [['reims',atPoint([4.02376,49.251785]),'fr'],['ptuj',atPoint([15.861039,46.413737]),'si'],['sofia',path.total-600,'bg']]){
       await scrub(distance);check(await settled(),`${name} approach loads`);
       check(await until(async()=>(await state()).paper?.landmarks.includes(name),30000),`${name} has its distinct paper model`);
       check(await until(async()=>{const w=(await state()).wayfinding;return w.flag===flag&&w.flagReady;}),`${name} shows its country flag on the minimap`);
@@ -363,7 +420,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   section('Calm camera through steep terrain');
   for(const fraction of [.25,.5,.74,.9]){
     await scrub(path.dayDistance(30,fraction));check(await settled(),`the Alpine camera loads at ${(fraction*100).toFixed(0)}% of the day`);
-    s=await state();check(s.pitch<=60.05&&s.pitch>=35.95&&s.cameraClearance>=419.9,'the view keeps a controlled tilt and clears the actual mountain ground');
+    s=await state();check(s.pitch<=60.05&&s.pitch>=33.95&&s.cameraClearance>=419.9,'the view keeps a controlled tilt and clears the actual mountain ground');
   }
   await scrub(path.dayDistance(30,.74));await settled();
   await click('#menu-open');await click('#photo-interludes');await click('#menu-close');await click('#play');
@@ -371,7 +428,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   for(let i=0;i<20;i++){await sleep(500);mountainSamples.push(await state());}
   await click('#play');
   check(mountainSamples.at(-1).distance>mountainSamples[0].distance,'playback advances from the mountain viewpoint');
-  check(mountainSamples.every(s=>s.cameraClearance>=419.9&&s.pitch>=35.95&&s.pitch<=60.05),'playback keeps the camera out of the terrain without pitching toward the horizon');
+  check(mountainSamples.every(s=>s.cameraClearance>=419.9&&s.pitch>=33.95&&s.pitch<=60.05),'playback keeps the camera out of the terrain without pitching toward the horizon');
   check(mountainSamples.every(s=>Math.abs(s.mapElevation-(s.eyeHeight-s.cameraClearance))<.01),'the zoom reference follows local ground rather than retaining the old mountain altitude');
   const turns=mountainSamples.slice(1).map((s,i)=>Math.abs(((s.bearing-mountainSamples[i].bearing+540)%360)-180)/((s.sampleTime-mountainSamples[i].sampleTime)/1000));
   check(Math.max(...turns)<14.5,'actual rendered turns stay below 14.5 degrees per second');

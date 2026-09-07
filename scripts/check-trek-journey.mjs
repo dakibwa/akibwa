@@ -1,3 +1,4 @@
+import './check-trek-maplibre.mjs';
 import './check-trek-continuity.mjs';
 import './check-trek-camera.mjs';
 import './check-trek-paper.mjs';

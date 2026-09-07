@@ -882,17 +882,30 @@ const main = async () => {
     if (process.env.CHECK_TREK_ONLY) await checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture});
     else await checkPublicLanding();
   } finally {
+    cdp?.socket.close();
     try {
-      processHandle.kill();
+      if (processHandle.exitCode === null && processHandle.signalCode === null) {
+        await new Promise((resolve) => {
+          const force = setTimeout(() => {
+            processHandle.kill('SIGKILL');
+            resolve();
+          }, 1500);
+          processHandle.once('exit', () => { clearTimeout(force); resolve(); });
+          processHandle.kill();
+        });
+      }
     } catch {
       /* Already gone. */
     }
+    processHandle.stderr?.destroy();
+    processHandle.unref();
     server?.close();
     try {
       rmSync(profileDir, { recursive: true, force: true });
     } catch {
       /* Best effort. */
     }
+    clearTimeout(watchdog);
   }
 
   if (failures.length > 0) {

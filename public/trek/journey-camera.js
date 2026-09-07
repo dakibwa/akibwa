@@ -25,15 +25,42 @@
     // The cached, fixed-resolution profile is independent of visible DEM tile
     // changes. A one-frame tile seam must never become a camera lift or zoom.
     const ground=(heightAt(distance-100)+2*heightAt(distance)+heightAt(distance+100))/4;
-    const heights=[ground,...[350,800,1400,2200,3200].map(offset=>heightAt(distance+offset))];
+    const heights=[ground,...[-2200,-1000,350,800,1400,2200,3200].map(offset=>heightAt(distance+offset))];
     let winding=0;
     for(const [offset,weight] of [[-500,.25],[250,.5],[1000,.25]]){
       const start=clamp(distance+offset-500,0,path.total),end=clamp(distance+offset+1800,0,path.total);
       const direct=end-start>1?metres(pointAt(path,start),pointAt(path,end))/(end-start):1;
       winding+=smooth((.94-direct)/.6)*weight;
     }
-    const lift=480*winding;
+    const lift=1100*winding;
     return {ground,lookHeight:heightAt(distance+1400),height:Math.max(...heights)+850+lift,lift,winding,lookAhead:1400-650*winding};
+  }
+  function routeFrame(path,distance,heightAt,heading,pitch,viewport,winding=0){
+    // Fit the nearby route in the actual viewing window, including the space
+    // occupied by the timeline. A loop widens this frame without steering into
+    // each zigzag. Work in metres; terrain samples keep steep paths in the fit.
+    const origin=pointAt(path,distance),radians=heading*Math.PI/180,s=Math.sin(radians),c=Math.cos(radians);
+    const samples=Array.from({length:13},(_,i)=>{
+      const d=clamp(distance-200-300*winding+i*(1400+1300*winding)/12,0,path.total),point=path.sample(d).point;
+      const x=(point[0]-origin[0])*111195*Math.cos(origin[1]*Math.PI/180),y=(point[1]-origin[1])*111195;
+      return {point,height:heightAt(d),side:x*c-y*s,forward:x*s+y*c};
+    });
+    const bounds=key=>[Math.min(...samples.map(p=>p[key])),Math.max(...samples.map(p=>p[key]))];
+    const side=bounds('side').reduce((a,b)=>a+b)/2,forward=bounds('forward').reduce((a,b)=>a+b)/2;
+    const focus=[origin[0]+(side*c+forward*s)/(111195*Math.cos(origin[1]*Math.PI/180)),origin[1]+(-side*s+forward*c)/111195];
+    const base=heightAt(distance),a=pitch*Math.PI/180,sa=Math.sin(a),ca=Math.cos(a);
+    const tan=Math.tan((viewport.width<viewport.height?55:38)*Math.PI/360),aspect=viewport.width/viewport.height;
+    const top=1-2*viewport.top/viewport.height,bottom=2*viewport.bottom/viewport.height-1;
+    const centre=(top+bottom)/2,bias=centre*tan/(ca*(ca-centre*tan*sa));
+    const depth=1/ca+bias*sa,right=Math.max(.45,1-48/viewport.width)*tan*aspect;
+    let clearance=850;
+    for(const p of samples){
+      const f=p.forward-forward,h=p.height-base,z=f*sa-h*ca,u=f*ca+h*sa;
+      clearance=Math.max(clearance,(Math.abs(p.side-side)/right-z)/depth,
+        (u-top*tan*z)/(top*tan*depth-bias*ca),
+        (bottom*tan*z-u)/(bias*ca-bottom*tan*depth));
+    }
+    return {focus,base,clearance:clearance*1.12,bias,samples};
   }
   function rise(current,velocity,wanted,dt){
     if(current===null)return {height:wanted,velocity:0};
@@ -69,15 +96,16 @@
   }
   function speedLimit(path,distance,pace,heading){
     const a=headingAt(path,distance);let previous=a,curvature=0;
-    for(const offset of [180,360,540,720]){
+    const step=Math.max(180,Math.min(1200,pace*.22));
+    for(const offset of [step,step*2,step*3,step*4]){
       const next=headingAt(path,distance+offset);
-      curvature=Math.max(curvature,Math.abs(angle(previous,next))/180);previous=next;
+      curvature=Math.max(curvature,Math.abs(angle(previous,next))/step);previous=next;
     }
     // Brake before a bend, leaving room below the camera's maximum turn rate.
     const corner=curvature>0?Math.min(pace,9/curvature):pace;
     const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/60,.16,1);
     return Math.max(35,corner*alignment);
   }
-  const api={pointAt,headingAt,terrainFrame,rise,landmarkFrame,turn,speedLimit,ahead};
+  const api={pointAt,headingAt,terrainFrame,routeFrame,rise,landmarkFrame,turn,speedLimit,ahead};
   if(typeof module!=='undefined')module.exports=api;else host.TrekCamera=api;
 })(typeof window==='undefined'?globalThis:window);

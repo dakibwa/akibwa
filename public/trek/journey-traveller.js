@@ -4,7 +4,7 @@
   const $=id=>document.getElementById(id),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
   const mix=(a,b,t)=>a+(b-a)*t,angle=TrekRoute.headingDelta;
   const loadJSON=async (src,version)=>{const r=await fetch(src+(version?'?v='+version:''),{cache:version?'force-cache':'default',signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error(src);return r.json();};
-  const loadLibrary=()=>new Promise((resolve,reject)=>{const s=document.createElement('script'),timer=setTimeout(()=>reject(Error('Map library timeout')),20000);s.src='vendor/maplibre-gl.js';s.onload=()=>{clearTimeout(timer);resolve();};s.onerror=()=>{clearTimeout(timer);reject(Error('Map library unavailable'));};document.head.appendChild(s);});
+  const loadLibrary=version=>new Promise((resolve,reject)=>{const s=document.createElement('script'),timer=setTimeout(()=>reject(Error('Map library timeout')),20000);s.src='vendor/maplibre-gl.js'+(version?'?v='+version:'');s.onload=()=>{clearTimeout(timer);resolve();};s.onerror=()=>{clearTimeout(timer);reject(Error('Map library unavailable'));};document.head.appendChild(s);});
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
@@ -12,7 +12,8 @@
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
-    let heightVelocity=0,cameraLift=0,cameraTerrainClearance=null;
+    let heightVelocity=0,cameraLift=0,cameraTerrainClearance=null,routeVisible=null;
+    let lastContrast=-Infinity,markLuminance=null,markOnDark=false;
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,flashIndex=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     let scrubbing=false,scrubChanged=false;
@@ -29,6 +30,27 @@
       $('speed-cycle').title='Speed '+label+' · click for '+next;
     }
     setPace(pace);
+    function updateMarkContrast(){
+      const now=performance.now();if(now-lastContrast<280)return;lastContrast=now;
+      // Read only the small patch beneath the wordmark, during the map render
+      // while its drawing buffer is valid. No second canvas or terrain renderer.
+      const canvas=map.getCanvas(),gl=canvas.getContext('webgl2')||canvas.getContext('webgl');
+      if(!gl||gl.isContextLost())return;
+      const rect=document.querySelector('.mark').getBoundingClientRect(),scale=canvas.width/canvas.clientWidth;
+      const x=Math.max(0,Math.floor(rect.left*scale)),y=Math.max(0,Math.floor((canvas.clientHeight-rect.bottom)*scale));
+      const width=Math.min(canvas.width-x,Math.ceil(rect.width*scale)),height=Math.min(canvas.height-y,Math.ceil(rect.height*scale));
+      if(width<1||height<1)return;
+      const pixels=new Uint8Array(width*height*4);gl.readPixels(x,y,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+      const light=[];for(let i=0;i<pixels.length;i+=32)if(pixels[i+3])light.push((.2126*pixels[i]+.7152*pixels[i+1]+.0722*pixels[i+2])/255);
+      if(!light.length)return;light.sort((a,b)=>a-b);
+      // Account for the pale atmospheric wash above the map at this position.
+      const wash=.28*Math.max(0,1-(rect.top+rect.height/2)/(innerHeight*.24));
+      markLuminance=light[Math.floor(light.length/2)]*(1-wash)+.95*wash;
+      // Hold a readable ink at middle brightness; blending the two inks in
+      // proportion to the background would leave grey type on grey terrain.
+      if(markLuminance<.49)markOnDark=true;else if(markLuminance>.55)markOnDark=false;
+      document.querySelector('.mark').style.setProperty('--mark-ink',markOnDark?'#fff9e2':'#1f3124');
+    }
     $('journey-day').replaceChildren(...data.days.map(d=>{const o=document.createElement('option');o.value=d.n;o.textContent='Day '+String(d.n).padStart(2,'0')+' · '+d.c;return o;}));
     $('photo-interludes').checked=!reduced;
     text('walk-totals','1,982 km · 67 numbered days · '+data.photos.length+' photographs · '+Math.round(data.stats.ascent).toLocaleString()+' m of ascent.');
@@ -63,7 +85,7 @@
     function dismissFlash(){
       clearTimeout(flashTimer);
       flashGeneration++;flashShown=false;flashPending=false;flash.classList.remove('visible');
-      const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:950);
+      const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:1150);
     }
     function begin(){
       if(!ready||failed)return;
@@ -100,7 +122,7 @@
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
       wayfindingUI(force);elevation?.update(distance,force);
       const ground=elevation?.status().metres;text('minimap-height',Number.isFinite(ground)?'≈ '+ground.toLocaleString('en-GB')+' m':'');
-      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?', visual connection':''));
+      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?(path.sample(distance).mode==='train'?', train connection':', estimated walking path'):''));
       if(!force&&lastUI===day)return;lastUI=day;
       if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
@@ -109,9 +131,9 @@
       if(photos.length){$('menu-photo').src='photos/'+photos[Math.floor(photos.length*.45)].src;text('menu-photo-count',photos.length+' photographs ↗');}
       text('day-date',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'No dated recording.');
       const shared=day===16||day===17;
-      text('day-facts',shared?'70.9 km across days 16–17':d.w?d.km.toFixed(1)+' km'+(d.elev?' · ↑ '+d.elev.toLocaleString()+' m':''):'A pause between recordings.');
+      text('day-facts',shared?'70.9 km across days 16–17':d.w?d.km.toFixed(1)+' km'+(d.elev?' · ↑ '+d.elev.toLocaleString()+' m':''):'No recorded daily distance.');
       text('day-note',d.j.map(j=>j.text).join(' '));
-      text('day-recording',shared?'One shared recording; the division between the two days is approximate.':route&&!route.features.some(f=>day>=f.properties.day&&day<=f.properties.throughDay)?'No separate recording. The moving view follows a visual connection.':'');
+      text('day-recording',shared?'One shared recording; the division between the two days is approximate.':route&&!route.features.some(f=>day>=f.properties.day&&day<=f.properties.throughDay)?'No separate recording. The view follows an estimated walking path; no measured distance or ascent is added.':'');
       $('day-moments').replaceChildren(...moments.filter(m=>m.day===day).map(m=>{const p=document.createElement('p');p.textContent=m.title+' — '+m.position;return p;}));
       $('day-record').hidden=!d.s;if(d.s){$('record-cover').src='covers/'+d.s.slug+'.webp';$('record-cover').alt=d.s.album;text('record-title',d.t);text('record-artist',d.s.artist+' · '+d.s.album);}
       document.querySelectorAll('#chapters button').forEach(b=>{const c=chapters.find(c=>c.id===b.dataset.chapter);b.setAttribute('aria-current',String(day>=c.from&&day<=c.to));});
@@ -135,7 +157,8 @@
         if(generation!==flashGeneration)return;flashPending=false;
         if(menu.open||gallery.open||day!==photoDay)return;
         const picture=flash.querySelector('.memory-image');picture.src=img.src;picture.alt=p.alt;
-        flashIndex=photos.indexOf(p);flash.querySelector('.memory-location').textContent='From day '+photoDay+' ↗';
+        flashIndex=photos.indexOf(p);
+        flash.style.setProperty('--print-angle',((photoDay%5)-2)*.6-2+'deg');
         flash.setAttribute('aria-label','Open this photograph from day '+photoDay);
         flash.hidden=false;flashShown=true;lastFlashDay=photoDay;photoCooldown=0;
         requestAnimationFrame(()=>{if(generation===flashGeneration)flash.classList.add('visible');});
@@ -198,34 +221,38 @@
       // easeTo animation at a GPS vertex or day boundary.
       const alpha=1-Math.exp(-dt/.6);
       renderedDistance=snap?distance:mix(renderedDistance,distance,alpha);
-      const eye=TrekCamera.pointAt(path,renderedDistance),wanted=TrekCamera.headingAt(path,renderedDistance);
+      const point=TrekCamera.pointAt(path,renderedDistance),wanted=TrekCamera.headingAt(path,renderedDistance);
       const rotation=TrekCamera.turn(heading,headingVelocity,wanted,dt);
       heading=rotation.heading;headingVelocity=rotation.velocity;
       // A gentle glance gives oversized landmarks room on a narrow screen.
       // Keep route heading separate so looking aside does not slow the journey.
-      const framing=TrekCamera.landmarkFrame(data.landmarks,eye,wanted),wantedLook=framing?.heading??wanted;
+      const framing=TrekCamera.landmarkFrame(data.landmarks,point,wanted),wantedLook=framing?.heading??wanted;
       const glance=TrekCamera.turn(lookHeading,lookVelocity,wantedLook,dt);
       lookHeading=glance.heading;lookVelocity=glance.velocity;cameraLandmark=framing?.id||null;
       const terrain=TrekCamera.terrainFrame(path,renderedDistance,terrainHeight),base=terrain.ground;
-      const wantedEye=terrain.height+(framing?.lift||0);
+      const wantedPitch=clamp(54-18*terrain.winding-12*(framing?.strength||0),34,60);
+      viewPitch=viewPitch===null?wantedPitch:viewPitch+clamp((wantedPitch-viewPitch)*(1-Math.exp(-dt/1.6)),-3*dt,3*dt);
+      const bottom=innerHeight-$('journey-controls').getBoundingClientRect().top+25;
+      const fit=TrekCamera.routeFrame(path,renderedDistance,terrainHeight,lookHeading,viewPitch,{width:innerWidth,height:innerHeight,top:90,bottom:started?bottom:240},terrain.winding);
+      const wantedEye=Math.max(terrain.height+(framing?.lift||0),fit.base+fit.clearance);
       const vertical=TrekCamera.rise(eyeHeight,heightVelocity,wantedEye,dt);
       eyeHeight=vertical.height;heightVelocity=vertical.velocity;cameraLift=terrain.lift;
       eyeHeight=Math.max(eyeHeight,base+420);
       // Look down gradually over a descent or tight loop, keeping the nearby
       // path in frame while the broad heading follows the valley beyond it.
-      const minimumPitch=Math.min(42-10*(framing?.strength||0),42-6*terrain.winding);
-      const lookAhead=framing?mix(terrain.lookAhead,framing.lookAhead,framing.strength):terrain.lookAhead;
-      const wantedPitch=clamp(Math.atan2(lookAhead,eyeHeight-terrain.lookHeight)*180/Math.PI,minimumPitch,60);
-      viewPitch=viewPitch===null?wantedPitch:viewPitch+clamp((wantedPitch-viewPitch)*(1-Math.exp(-dt/1.6)),-3*dt,3*dt);
       // Rebase every frame using the stable mapped profile. A stale mountain
       // reference or a transient visible DEM seam can make the draped map swell.
-      const target=TrekCamera.ahead(eye,lookHeading,(eyeHeight-base)*Math.tan(viewPitch*Math.PI/180));
-      const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,base);
+      const clearance=eyeHeight-fit.base;
+      const target=TrekCamera.ahead(fit.focus,lookHeading,-fit.bias*clearance);
+      const eye=TrekCamera.ahead(target,lookHeading,-clearance*Math.tan(viewPitch*Math.PI/180));
+      const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,fit.base);
       // Do not change pitch after solving zoom/centre: that moves the eye too.
       map.jumpTo(options);cameraHeading=lookHeading;cameraPitch=map.getPitch();
       cameraClearance=eyeHeight-base;cameraPoint=eye;
       const renderedGround=map.queryTerrainElevation(eye);
       cameraTerrainClearance=Number.isFinite(renderedGround)?eyeHeight-renderedGround:null;
+      const visible=fit.samples.map(p=>map.project(p.point)).filter(p=>p.x>12&&p.x<innerWidth-12&&p.y>75&&p.y<innerHeight-bottom);
+      routeVisible=visible.length/fit.samples.length;
       return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1||Math.abs(headingVelocity)>.02||Math.abs(angle(lookHeading,wantedLook))>.1||Math.abs(lookVelocity)>.02||Math.abs(eyeHeight-wantedEye)>.5||Math.abs(heightVelocity)>.05||Math.abs(viewPitch-wantedPitch)>.02;
     }
     function tick(time){
@@ -246,11 +273,11 @@
       document.body.classList.add('is-loading');
       try{
         const json=file=>loadJSON(file,data.assets[file]);
-        const [r,m,style,profile]=await Promise.all([json('route-detail.json'),json('moments.json'),json('journey-style.json'),json('elevation-profile.json'),loadLibrary()]);
+        const [r,m,style,profile,links]=await Promise.all([json('route-detail.json'),json('moments.json'),json('journey-style.json'),json('elevation-profile.json'),json('route-links.json'),loadLibrary(data.assets['vendor/maplibre-gl.js'])]);
         tileCache=TrekCache.create();tileCache.install(maplibregl);
         const tiles=await loadJSON(style.sources.openmaptiles.url);
         vectorTemplate=tiles.tiles[0];style.sources.openmaptiles={...style.sources.openmaptiles,...tiles};delete style.sources.openmaptiles.url;
-        route=r;path=TrekRoute.buildJourneyPath(route);chapters=m.chapters;moments=m.moments;
+        route=r;path=TrekRoute.buildJourneyPath(route,67,links);chapters=m.chapters;moments=m.moments;
         terrainHeight=distance=>TrekElevation.sample(profile,distance,false);
         elevation=TrekElevation.create({profile,path,days:data.days,colors:data.colors,canvas:$('elevation-canvas'),label:$('elevation-current')});
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
@@ -258,6 +285,7 @@
         // Roads and topography remain; label furniture belongs in the drawer.
         map=new maplibregl.Map({container:'path-map',style:TrekPaper.style(style),center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0,maxTileCacheSize:128,pixelRatio:Math.min(devicePixelRatio||1,1.5),transformRequest:tileCache.transformRequest});
         map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);
+        map.on('render',updateMarkContrast);
         map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
         // Keep the native, source-updated attribution above the landscape wash.
         $('map-credits').append(document.querySelector('.maplibregl-ctrl-attrib'));
@@ -277,10 +305,10 @@
           map.addSource('journey-recorded',{type:'geojson',data:path.recorded,tolerance:0});
           map.addSource('journey-connections',{type:'geojson',data:path.connections,tolerance:0});
           // A broad paper edge separates the deep red thread from roofs,
-          // streams and woodland. Keep inferred connections lighter and dashed.
-          for(const [id,source,color,width,opacity,dash] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-connections','journey-connections','#977c56',3,.9,[2,3]]]){
+          // streams and woodland. Walking estimates have a paler red; trains are dashed.
+          for(const [id,source,color,width,opacity,dash,mode] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-walking-outline','journey-connections','#fff5dc',8,1,null,'walk'],['route-walking','journey-connections','#bd6b71',4.5,1,null,'walk'],['route-transport-outline','journey-connections','#fff5dc',6,1,[2,3],'train'],['route-connections','journey-connections','#977c56',3,1,[2,3],'train']]){
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
-            map.addLayer({id,type:'line',source,layout:{'line-cap':'round','line-join':'round'},paint});
+            map.addLayer({id,type:'line',source,...(mode?{filter:['==',['get','mode'],mode]}:{}),layout:{'line-cap':'round','line-join':'round'},paint});
           }
           try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
@@ -337,7 +365,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

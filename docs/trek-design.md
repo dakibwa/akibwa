@@ -30,7 +30,8 @@ perspective and much less text and interface on 5 September 2026.
   dense towns as well as countryside: a deep red 5.5px stroke with a fully opaque
   9.5px warm-paper outline separates it from terracotta roofs, blue streams and
   green canopy. Use the same red for the minimap's completed route and direction
-  marker. Visual connections stay lighter, narrower and dashed.
+  marker. Estimated walking paths have a paler red 4.5px stroke with an 8px
+  paper edge. The two train connections stay narrower, warm brown and dashed.
 - On 7 September 2026 Dan requested more detail using satellite views and
   explicitly retained the paper model style. Use those views as visual reference
   for landscape character; the rendered geometry still comes from reusable map
@@ -42,7 +43,7 @@ perspective and much less text and interface on 5 September 2026.
   lakes visibly blue and respect mapped shorelines. Draw every ground material,
   field fill and hillshade before the first waterway layer, so paper treatments
   cannot wash out streams. Leave mapped surface waterways free of tree trunks.
-- Keep the small mark with a readable 2019 stamp, play control, speed button,
+- Keep the small trek / 2019 mark in the same Fraunces typeface, play control, speed button,
   combined day/elevation timeline and date on the landscape. Photographs appear automatically;
   the separate photograph button is removed. The current country and mapped
   height sit in the minimap. Above the timeline, two larger, dark Fraunces
@@ -68,9 +69,9 @@ perspective and much less text and interface on 5 September 2026.
   flagpole or flag covering the route. Use the existing country outlines and a
   2D canvas, with no second terrain renderer. Flags are local SVGs from
   flag-icons with its MIT licence alongside them, loaded only as needed.
-  A warm paper wash and defined border highlight the current country; a cream
-  halo separates the moving red arrow from the route. Repaint the atlas only
-  when the country changes, keeping the route above the wash. Do not spread
+  Following Dan’s later 7 September feedback, keep the country fills static,
+  without a current-country highlight. A cream halo separates the moving red
+  arrow from the route. Paint the base atlas once. Do not spread
   flags across the atlas: the single flag stays beside the country name.
   Following Dan’s 7 September feedback, remove the top-right menu button and
   place the compact atlas there; the day number above the ribbon opens journey options.
@@ -97,9 +98,9 @@ perspective and much less text and interface on 5 September 2026.
   [architecture reference](https://www.nancy.fr/fileadmin/NAN/culture/patrimoine/Ressources/patrimoine-parcours-germain-boffrand.pdf), page 28.
   Do not add a large external dome over Nancy’s nave: its painted cupola is inside.
   During the approach, give the silhouette more room with a gentle upward and
-  sideways camera adjustment. The pitch can ease down to 32 degrees for a close
-  landmark, keeping its base above the controls. Keep the eye on the route and use the same turn
-  limits. The independent route heading still controls speed and the minimap,
+  sideways camera adjustment. The pitch can ease down to 34 degrees for a close
+  landmark, keeping its base above the controls. Keep the route framed and use
+  the same turn limits. The independent route heading controls speed and the minimap,
   so looking at a landmark does not brake playback. Use short cathedral captions;
   keep full names in the sources and hide the duplicate town arrival while the
   landmark name is on screen.
@@ -108,17 +109,21 @@ perspective and much less text and interface on 5 September 2026.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
 - Following Dan's renewed 7 September request for faster travel, default Flow
-  has a 1,600 m/s presentation pace, with Wander at 400 m/s and Fly at 3,200 m/s.
-  The visible fast-forward button cycles 1×, 2× and ¼×; it stays in sync with the
+  has a 1,600 m/s presentation pace, with ¼× at 400 m/s, 2× at 3,200 m/s,
+  4× at 6,400 m/s and 8× at 12,800 m/s. The visible fast-forward button
+  cycles through all five; it stays in sync with the
   menu and preserves playback and position when changed. These are playback
   speeds, not recorded walking speeds. Let gentler bends pass more readily while
   retaining the smooth turn and acceleration limits below.
 - Original photographs appear as lightly angled paper prints beside the moving
   landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
   `contain`; do not interrupt playback or hide the route, atlas or elevation.
+  Use a balanced cream border, a fine inset edge, quiet paper grain and a
+  soft lifted shadow. Fade each print in with a small rising, rotating motion,
+  easing into its resting angle. Show only the image, with no visible caption.
   Clicking a print opens that photograph in the full-screen gallery and pauses
-  at the current position. Select from the actual day; the caption names the day,
-  because exact photo positions are unknown. Show at most one print per day in
+  at the current position. Select from the actual day; retain its provenance in
+  the accessible name and gallery because exact photo positions are unknown. Show at most one print per day in
   continuous playback, and on preparing a directly selected day. The option
   can be disabled and defaults off for reduced motion.
 - Manual photographs use a full-screen dialog with arrows, arrow keys and swipe.
@@ -138,10 +143,10 @@ perspective and much less text and interface on 5 September 2026.
   pauses or photographs. Look ahead for rising ground and descend gently.
   Frame dense bends from higher up so their shape remains readable. Use the
   stable mapped elevation profile to plan movement; streamed terrain tile
-  changes must not make the camera jump or change scale. Over the tightest
-  bends, gradually look down to 36° and shorten the viewing distance so the
-  nearby path remains visible on a narrow screen.
-  On steep descents, gradually look down to retain the route. Widen the vertical
+  changes must not make the camera jump or change scale. Fit the nearby path
+  within the usable viewport above the timeline, including its mapped heights.
+  Widen the route window and gradually look down to 36° over tight bends,
+  then return to the closer forward view as the path straightens. Widen the vertical
   field of view from 38° to 55° in portrait layouts so the path remains visible.
   Keep background trail strokes faint and solid so their dashes do not compete
   with the recorded route or the explicitly dashed connections.
@@ -191,13 +196,21 @@ split discontinuities over 1 km before simplification to about 8 m and five
 coordinate decimals. No sample times, biometrics, private identifiers or raw
 exports belong in this public repository. The approval covers this journey only.
 
-The later request to join the view authorises **presentation connections**:
-leave the reviewed route file unchanged, round displayed corners within 18 m
-of their original vertices, and create separate, labelled connection geometry
-between all 56 gaps. Draw connections as lighter dashed curves. They are not
-recorded walking and must never inflate the stated 1,982 km distance.
+On 7 September 2026 Dan confirmed walking the missing sections apart from
+two train transfers, after the overnight German walk (probably into Stuttgart)
+and in Croatia. Keep the reviewed recordings unchanged. `route-links.json`
+contains 54 estimated walking links and two illustrative train connections;
+`scripts/build-trek-links.mjs` regenerates them explicitly from the public
+recording endpoints using Valhalla pedestrian routing on current OpenStreetMap.
+The train boundaries are inferred as the gaps after days 16–17 and before day 42.
+Neither exact 2019 paths nor train endpoints are verified. Short joins under
+35 m connect the endpoints directly. Preserve the router provenance and source
+route hash. The maintenance script caches requests and respects FOSSGIS’s
+one-request-per-second limit; visitors never call the routing service.
+Round displayed corners within 18 m, including walking estimates. These
+presentation connections must never inflate the stated 1,982 km distance.
 
-Playback traverses one continuous distance including those visual connections.
+Playback traverses one continuous distance including estimated walking paths and train connections.
 Every numbered day's end meets the next day's start. Missing days share the
 connection to the next recording; days 16–17 divide their shared record
 approximately. The menu preserves that qualification and the combined metrics.
@@ -208,7 +221,7 @@ its distance, moving time and ascent must aggregate both halves (42.9 km,
 372 minutes and 856 m at the public rounding), rather than keep the last row.
 The shared days 16–17 recording remains counted only once. The source has a
 20.5 km straight-line gap between the end of day 33 and the start of day 34;
-showing a connection there does not establish the route or mode of travel.
+Dan now reports walking it; the reconstructed path remains an estimate.
 
 The visible counters use the approved daily cumulative totals. Within-day values
 are estimates interpolated over recorded portions only; visual connections never
@@ -231,14 +244,15 @@ on desktop and narrow phones. Hide the profile during full-screen photographs.
 
 `public/trek/elevation-profile.json` is generated by
 `scripts/build-trek-elevation.mjs` from the already-public route and Mapzen's
-Terrarium terrain tiles at zoom 11. It contains 11,677 mapped ground heights at
+Terrarium terrain tiles at zoom 11. It contains 11,861 mapped ground heights at
 roughly 200 m intervals. These are approximate terrain elevations, not private
 GPS altitude samples. Include every recorded section and presentation connection
 across all seven countries. Connection heights describe the mapped ground beneath
-the illustrative link; use a dashed, quieter profile and label them as connections.
+the estimated path or train connection; use a dashed, quieter profile and
+retain that distinction in the height label.
 These samples do not imply a recorded walking route. The horizontal axis follows the continuous journey;
 it does not redefine the 1,982 km walking total or accumulated ascent. Keep its
-route hash and the generation method with the data. Regeneration uses a temporary
+source route hash, estimated-link hash and generation method with the data. Regeneration uses a temporary
 DEM cache and is an explicit maintenance step, not a network-dependent site build.
 
 `journey-elevation.js` draws the full silhouette once per viewport size and updates
@@ -255,7 +269,7 @@ ordinary fetching if persistent storage is unavailable. Keep a 32-tile memory
 cache and prune the disk cache to 256 tiles in batches, with no stored tile above
 512 KiB. Look ahead along the next 16 km with three speculative requests at a
 time; do not download every zoom level of Europe or promise the entire journey
-works offline. Version the local route, moments, style and elevation JSON by
+works offline. Version the local recorded route, estimated links, moments, style and elevation JSON by
 content hash so a release cannot reuse mismatched data. Keep the existing
 provider credits. Cap map rendering at 1.5 device pixels per CSS pixel and
 update the numeric overlays about 11 times per second; the camera keeps its
@@ -322,7 +336,17 @@ Keep dynamic GeoJSON sources at zoom 18, above the view cap of 17. Lower source
 caps exposed a MapLibre 5.6.2 child-tile retention error when resizing between
 phone and desktop while terrain was active. Include those resizes in browser QA.
 
-MapLibre 5.6.2 and its licence are vendored. `journey-style.json` derives from
+MapLibre 5.6.2 and its licence are vendored. One scoped local fix in
+`_updateRetainedTiles` uses each tile’s `overscaledZ` to choose between a single
+overzoomed child and four normal children, matching `OverscaledTileID.children`.
+Terrain can supply a tile above the view’s covering zoom during a resize; the
+original covering-zoom test could read the key of a nonexistent second child.
+The upstream definitions are in
+[`source_cache.ts`](https://github.com/maplibre/maplibre-gl-js/blob/v5.6.2/src/source/source_cache.ts)
+and [`tile_id.ts`](https://github.com/maplibre/maplibre-gl-js/blob/v5.6.2/src/source/tile_id.ts).
+`check-trek-maplibre.mjs` reproduces the original crash with mixed zooms and
+checks both child counts. The vendored script has a content hash in the loader;
+retain the fix or verify it is resolved when upgrading the library. `journey-style.json` derives from
 [OpenFreeMap Liberty](https://openfreemap.org/quick_start/); its vector tiles
 supply roads, trails and building geometry. [Mapzen elevation
 tiles](https://www.mapzen.com/rights/) supply continuous terrain at real height.
@@ -335,17 +359,22 @@ metadata, original metrics, generated asset hashes and the continuous route.
 largest gap, bounded rounding and source non-mutation.
 `scripts/check-trek-camera.mjs` checks camera continuity across the whole route,
 proximity to the path and difficult turns at every pace. The camera uses a
-weighted 880 m neighbourhood for its position and a broader 4.5 km heading chord
+weighted 880 m neighbourhood for its reference point and a broader 4.5 km heading chord
 (1,125 m behind to 3,375 m ahead), following the valley through short zigzags
 and loops without circling with the local path.
 A damped turn settles without swinging back, bounded by 12°/s rotation and
-6°/s² acceleration. Pitch changes by at most 3°/s, with a 36° minimum over dense
-bends (the usual range is 42–60°; landmark glances can reach 32°). Playback brakes before
+6°/s² acceleration. Pitch changes by at most 3°/s, with a 36° target over dense
+bends and a 34° floor for combined landmark framing. Playback brakes before
 upcoming bends using a 9°/s curvature budget, then slows further when the view
 needs to catch up. Height planning uses continuous interpolation of the cached
 200 m elevation profile, with a 200 m neighbourhood for the ground reference
-and a 3.2 km look-ahead for rising terrain. Aim 850 m above that envelope, adding
-up to 480 m where the route folds back on itself. Ease vertical acceleration
+and an envelope from 2.2 km behind to 3.2 km ahead for rising terrain. Aim
+850 m above that envelope, adding
+up to 1,100 m where the route folds back on itself, with additional height where
+the viewport needs it to fit the nearby path. Fit 13 points along 1.4 km on
+straight sections, widening smoothly to 2.7 km around loops. Offset the eye
+behind that frame, with room above the controls in portrait and short landscape
+layouts. Ease vertical acceleration
 within 65 m/s² and movement within 180 m/s upward and 110 m/s downward; retain a
 420 m defensive floor. Continuous Alpine checks must clear the ground without
 needing that clamp. These are presentation camera speeds, not walking speeds.
@@ -362,7 +391,7 @@ steep viewpoints and sustained camera movement, photographs, original records,
 continuous playback and heading changes, automatic-photo
 timing, phone fit, resize, replay, reduced motion and graphics loss.
 `CHECK_TREK_ZIGZAGS_ONLY=1` focuses the browser check on repeated Alpine bends,
-the day-17 loop, all seven country highlights and the inset at phone widths.
+the day-17 loop, static country fills and the inset at phone widths.
 `CHECK_TREK_TERRAIN_CAMERA_ONLY=1` covers continuous day-31 playback through the
 reported tile seams, the Alpine descent, extra height around the tight loop,
 bounded height and scale changes, rendered terrain clearance and phone framing.
@@ -410,3 +439,13 @@ dragging, release preparation, keyboard endpoints and the visible speed cycle an
 paused and playing speed changes, ribbon fill through backward seeks and replay,
 unchanged distance on connections, automatic photos, native map credits, and
 readable controls at desktop, 390px, 320px and short landscape sizes.
+
+`CHECK_TREK_WALKING_ONLY=1` checks reconstructed walking paths, unchanged
+measured totals, the caption-free print and original photo, shared mark type,
+and continuously visible route samples through bends at 8× on desktop, narrow
+phones and short landscape viewports. The mark samples the small rendered patch
+beneath it at most every 280 ms and eases its shared colour between dark green
+and warm white. A small hysteresis band keeps it readable at middle brightness
+without flickering between the two inks. `CHECK_TREK_FINISHES_ONLY=1` exercises
+all seven static country fills and dark, light and middle-brightness contrast
+samples. No screenshot, second renderer or persistent image is retained.

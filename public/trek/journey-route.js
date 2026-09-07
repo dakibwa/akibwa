@@ -33,7 +33,7 @@
     }
     out[0]=a.slice();out[out.length-1]=b.slice();return out;
   }
-  function buildJourneyPath(route,dayCount=67){
+  function buildJourneyPath(route,dayCount=67,estimates=null){
     const pieces=[],records=[],links=[],groups=[];let total=0;
     function add(ps,properties){
       const distances=[0];for(let i=1;i<ps.length;i++)distances.push(distances.at(-1)+metres(ps[i-1],ps[i]));
@@ -42,7 +42,12 @@
     }
     route.features.forEach((f,i)=>{
       const p=f.properties;
-      if(i){const ps=connection(route.features[i-1].geometry.coordinates,f.geometry.coordinates);const properties={kind:'connection',day:p.day,fromDay:route.features[i-1].properties.throughDay};links.push(line(ps,properties));add(ps,properties);}
+      if(i){
+        const estimate=estimates?.features.find(f=>f.properties.gap===i-1);
+        const ps=estimate?rounded(estimate.geometry.coordinates):connection(route.features[i-1].geometry.coordinates,f.geometry.coordinates);
+        const properties={kind:'connection',day:p.day,fromDay:route.features[i-1].properties.throughDay,mode:estimate?.properties.mode||'unknown',estimated:true};
+        links.push(line(ps,properties));add(ps,properties);
+      }
       const ps=rounded(f.geometry.coordinates),properties={...p,kind:'recorded'};
       records.push(line(ps,properties));const part=add(ps,properties);
       let group=groups.at(-1);if(!group||group.recording!==p.recording){group={...p,start:part.start,end:part.end};groups.push(group);}else group.end=part.end;
@@ -64,7 +69,7 @@
       const p=pieces[lo],offset=distance-p.start;let a=1,b=p.distances.length-1;
       while(a<b){const m=(a+b)>>1;if(p.distances[m]<offset)a=m+1;else b=m;}
       const span=p.distances[a]-p.distances[a-1],t=span?clamp((offset-p.distances[a-1])/span,0,1):0;
-      return {point:point(p.points[a-1],p.points[a],t),kind:p.kind,day:p.day,distance};
+      return {point:point(p.points[a-1],p.points[a],t),kind:p.kind,mode:p.mode||'walk',day:p.day,distance};
     }
     function dayAt(distance){
       let n=1;while(n<dayCount&&distance>=boundaries[n])n++;

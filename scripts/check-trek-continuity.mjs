@@ -1,10 +1,31 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
+import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url);
 const {buildJourneyPath,metres,headingDelta}=require('../public/trek/journey-route.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
-const original=JSON.stringify(route),path=buildJourneyPath(route);
+const links=JSON.parse(readFileSync(new URL('../public/trek/route-links.json',import.meta.url),'utf8'));
+const original=JSON.stringify(route),originalLinks=JSON.stringify(links),path=buildJourneyPath(route,67,links);
+assert.equal(links.precision,'estimated');
+assert.deepEqual(Object.keys(links).sort(),['features','generated','method','precision','routeHash','source','sourceUrl','type','version']);
+assert.equal(links.routeHash,createHash('sha256').update(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url))).digest('hex'));
+assert.equal(links.features.length,56);
+assert.deepEqual(links.features.filter(f=>f.properties.mode==='train').map(f=>f.properties.gap),[15,38],'only the reported Stuttgart and Croatian transfers remain trains');
+for(let i=0;i<links.features.length;i++){
+  const f=links.features[i],p=f.properties,coordinates=f.geometry.coordinates;
+  assert.deepEqual(Object.keys(f).sort(),['geometry','properties','type']);
+  assert.deepEqual(Object.keys(f.geometry).sort(),['coordinates','type']);
+  assert.deepEqual(Object.keys(p).sort(),['day','estimated','fromDay','gap','method','mode']);
+  assert.equal(p.gap,i);assert.equal(p.estimated,true);assert(['walk','train'].includes(p.mode));
+  assert.equal(p.fromDay,route.features[i].properties.throughDay);assert.equal(p.day,route.features[i+1].properties.day);
+  assert.equal(f.geometry.type,'LineString');assert(coordinates.length>=2);
+  assert.deepEqual(coordinates[0],route.features[i].geometry.coordinates.at(-1));
+  assert.deepEqual(coordinates.at(-1),route.features[i+1].geometry.coordinates[0]);
+  assert(coordinates.every(p=>p.length===2&&p.every(Number.isFinite)&&p[0]>=2&&p[0]<=24&&p[1]>=42&&p[1]<=50),'estimates contain only public corridor coordinates, without private activity channels');
+  if(p.mode==='walk'&&metres(coordinates[0],coordinates.at(-1))>400)assert(coordinates.length>5,'long walking gaps must follow mapped paths rather than a straight connection');
+}
+assert.equal(JSON.stringify(links),originalLinks,'display rounding never edits the sourced estimates');
 assert.equal(JSON.stringify(route),original,'the visual route must never mutate the approved recordings');
 assert.equal(path.connections.features.length,56);
 assert.equal(path.recorded.features.length,57);
