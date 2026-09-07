@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { HeroBrandName } from "@/components/hero-brand-name";
 import { PageFooter } from "@/components/page-footer";
 import { SiteImage } from "@/components/site-image";
@@ -11,7 +11,7 @@ const projects = [
   {
     id: "features",
     className: "concept-feature",
-    href: "/features/?from=akibwa",
+    href: "/features/",
     title: "features",
     subtitle: "daily untangling puzzle",
     description:
@@ -25,7 +25,7 @@ const projects = [
   {
     id: "portuguese",
     className: "concept-portuguese",
-    href: "https://portuguesewithines.com/?from=akibwa",
+    href: "https://portuguesewithines.com/",
     title: "Português com a Inês",
     subtitle: "European Portuguese lessons",
     description:
@@ -55,24 +55,33 @@ function ProjectShowcase() {
   const [lastProject, setLastProject] = useState(projects[0]);
   const [detailOffset, setDetailOffset] = useState(0);
   const [detailWidth, setDetailWidth] = useState(null);
+  const [detailAvailable, setDetailAvailable] = useState(false);
   const rail = useRef(null);
   const cards = useRef({});
-  const active = preview;
+  const active = detailAvailable ? preview : null;
   // Keep the last detail mounted so its height can animate closed as well.
-  const detail = active ?? lastProject;
+  const detail = preview ?? lastProject;
   const dismiss = () => setPreview(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const shelf = rail.current;
+    const card = cards.current[detail.id];
+    if (!shelf || !card) return;
     const positionDetail = () => {
-      const card = cards.current[detail.id];
-      if (!card) return;
       const bounds = card.getBoundingClientRect();
-      setDetailOffset(Math.max(0, bounds.left - shelf.getBoundingClientRect().left));
-      setDetailWidth(bounds.width);
+      const shelfBounds = shelf.getBoundingClientRect();
+      const left = Math.max(bounds.left, shelfBounds.left);
+      const width = Math.max(0, Math.min(bounds.right, shelfBounds.right) - left);
+      // A sliver of a card cannot support a readable description box.
+      const available = width >= Math.min(200, bounds.width);
+      setDetailAvailable(available);
+      if (!available) return;
+      setDetailOffset(left - shelfBounds.left);
+      setDetailWidth(width);
     };
     positionDetail();
     const observer = new ResizeObserver(positionDetail);
     observer.observe(shelf);
+    observer.observe(card);
     shelf.addEventListener("scroll", positionDetail, { passive: true });
     return () => {
       observer.disconnect();

@@ -322,11 +322,42 @@ const checkPublicLanding = async () => {
       const detail=document.querySelector('.concept-project-detail');
       return {open:document.querySelector('#project-detail').getAttribute('aria-hidden')==='false',overlap:!detail || detail.getBoundingClientRect().bottom>career.top,overflow:document.documentElement.scrollWidth-innerWidth,link:document.querySelector('a.concept-project-card')?.getAttribute('href')};
     })()`);
-    const fits = bounds.open && !bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/?from=akibwa';
+    const fits = bounds.open && !bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/';
     check(fits, `the project description and direct card link fit above Career at ${width}px${fits ? '' : ` [${JSON.stringify(bounds)}]`}`);
     await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
     await sleep(400);
   }
+  section("responsive project previews");
+  await evaluate('document.activeElement.blur(); scrollTo({top:0,behavior:"instant"})');
+  for (const width of [560,700,820,1050,1051]) {
+    await setDesktop(width);
+    for (const edge of ["start","end"]) {
+      await cdp.send("Input.dispatchMouseEvent", {type:"mouseMoved",x:1,y:1});
+      await evaluate(`(() => {const rail=document.querySelector('.concept-project-swipe'); rail.scrollLeft=${edge === "start" ? "0" : "rail.scrollWidth"};})()`);
+      await sleep(100);
+      const visible = await evaluate(`(() => {
+        const rail=document.querySelector('.concept-project-swipe').getBoundingClientRect();
+        const card=document.querySelector('.concept-portuguese .concept-project-card').getBoundingClientRect();
+        const left=Math.max(card.left,rail.left), right=Math.min(card.right,rail.right);
+        return {left,right,width:Math.max(0,right-left),cardWidth:card.width,x:(left+right)/2,y:(card.top+card.bottom)/2};
+      })()`);
+      await cdp.send("Input.dispatchMouseEvent", {type:"mouseMoved",x:visible.x,y:visible.y});
+      await sleep(520);
+      const panel = await evaluate(`(() => {
+        const shell=document.querySelector('#project-detail');
+        const box=document.querySelector('.concept-project-detail').getBoundingClientRect();
+        return {open:shell.getAttribute('aria-hidden')==='false',left:box.left,right:box.right,overflow:document.documentElement.scrollWidth-innerWidth};
+      })()`);
+      const readable = visible.width >= Math.min(200,visible.cardWidth);
+      const aligned = readable
+        ? panel.open && Math.abs(panel.left-visible.left)<1 && Math.abs(panel.right-visible.right)<1
+        : !panel.open;
+      check(aligned && panel.overflow<=1, `the ${edge} of the project rail keeps its preview aligned and readable at ${width}px${aligned ? '' : ` [${JSON.stringify({visible,panel})}]`}`);
+    }
+  }
+  await cdp.send("Input.dispatchMouseEvent", {type:"mouseMoved",x:1,y:1});
+  await sleep(360);
+  section("project and career motion");
   await setDesktop(1440);
   const dividerMotion = (divider, action) => evaluate(`new Promise(resolve => {
     const target=document.querySelector(${JSON.stringify(divider)});
@@ -349,7 +380,7 @@ const checkPublicLanding = async () => {
   check(await evaluate('document.querySelector("#project-detail").inert && document.querySelector("#project-detail").getAttribute("aria-hidden")==="true"'), "closed project descriptions stay hidden from assistive technology");
   check(await evaluate(`(() => {
     const links=[...document.querySelectorAll('a.concept-project-card')];
-    return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['/features/?from=akibwa','https://portuguesewithines.com/?from=akibwa','/trek/']) &&
+    return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['/features/','https://portuguesewithines.com/','/trek/']) &&
       !document.querySelector('#project-detail a, #project-detail button');
   })()`), "each project card links directly to its destination without a separate action button");
   const careerControl = 'document.querySelectorAll(".concept-career-timeline button")[1]';
@@ -547,12 +578,12 @@ const checkPublicLanding = async () => {
   );
   const lifeMapResponse = await fetch(`${origin}/life-map/`, { redirect: "manual" });
   check(lifeMapResponse.status === 404, `Life in Maps no longer ships [HTTP ${lifeMapResponse.status}]`);
-  await goto("/features/?from=akibwa");
+  await goto("/features/");
   const featureState = await evaluate(`(() => ({
-    identity: document.querySelector(".akibwa-project-banner__identity")?.textContent.trim(),
+    bannerVisible: (document.querySelector(".akibwa-project-banner")?.getBoundingClientRect().height ?? 0) > 0,
     overflow: document.documentElement.scrollWidth - innerWidth
   }))()`);
-  check(featureState.identity === "Akibwa", `Features project view is brand-only [${featureState.identity}]`);
+  check(!featureState.bannerVisible, "Features opens directly without an Akibwa portfolio header");
   check(featureState.overflow <= 1, `Features stays inside the viewport [${featureState.overflow}px]`);
 
   section("reduced motion");
