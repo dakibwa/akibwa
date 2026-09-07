@@ -15,6 +15,46 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const settled=()=>until(async()=>(await state()).ready,30000);
   const openPhotos=async()=>{await click('#menu-open');if(await evaluate("document.querySelector('#menu-photos').hidden")){await choose(30);await settled();}await click('#menu-photos');};
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_ZIGZAGS_ONLY==='1'){
+    section('Calmer switchbacks and a readable current country');
+    await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the Alpine comparison scene prepares');
+    await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
+    const wash=()=>evaluate(`(()=>{const c=document.querySelector('#minimap-canvas'),a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let pixels=0,x=0,y=0;for(let i=0;i<a.length;i+=4)if(a[i]===216&&a[i+1]===200&&a[i+2]===150){pixels++;x+=(i/4)%c.width;y+=Math.floor(i/4/c.width);}return {pixels,x:x/pixels/c.width,y:y/pixels/c.height};})()`);
+    const regions=[];
+    for(const [day,country] of [[3,'France'],[17,'Germany'],[30,'Austria'],[36,'Slovenia'],[42,'Croatia'],[53,'Serbia'],[65,'Bulgaria']]){
+      await choose(day);
+      check(await until(async()=>{const w=(await state()).wayfinding;return w?.country===country&&w.flagReady;},5000),`${country} updates the country name and quiet flag`);
+      const region=await wash();regions.push(region);
+      check(region.pixels>40&&Number.isFinite(region.x),`${country} is visibly highlighted on the canvas`);
+    }
+    check(regions[0].x<.3&&regions[1].x<.55&&regions[2].x>.4&&regions[3].x>.5&&regions[4].x>.55&&regions[5].x>.7&&regions[6].x>.85,'the highlight follows the country geography across the atlas');
+    await choose(30);check(await settled(),'the camera returns to Austria');
+    const returned=await wash();check(Math.abs(returned.pixels-regions[2].pixels)<3,'seeking back clears the later country highlights');
+    for(const width of [1440,390,320]){
+      await setDesktop(width,width>650?900:844);await sleep(400);
+      const fit=await evaluate(`(()=>{const c=document.querySelector('#minimap-canvas').getBoundingClientRect(),f=document.querySelector('#country-flag').getBoundingClientRect();return c.right<=innerWidth&&c.top>=0&&f.top>=c.bottom&&document.querySelectorAll('#journey-minimap img').length===1;})()`);
+      const s=await state();check(fit&&s.controlsFit&&s.overflow<=1,`${width}px fits the highlighted country, position marker and controls`);
+      await capture?.(`trek-zigzag-country-${width}`);
+    }
+    await setDesktop(1440,900);
+    for(const [day,from,to] of [[30,.23,.34],[30,.45,.7],[17,.94,.999]]){
+      await scrub(path.dayDistance(day,from));check(await settled(),`day ${day} at ${Math.round(from*100)}% prepares`);
+      // Read after each animation frame, so a slow tile upload cannot make two
+      // off-frame CDP reads look like a sudden camera jump.
+      await evaluate(`window.__trekCameraSamples=[];window.__trekCaptureCamera=true;document.querySelector('#play').click();requestAnimationFrame(function sample(t){if(!window.__trekCaptureCamera)return;const s=window.trekStatus();window.__trekCameraSamples.push({distance:s.distance,bearing:s.bearing,cameraClearance:s.cameraClearance,pitch:s.pitch,sampleTime:t});requestAnimationFrame(sample);});`);
+      const completed=await until(async()=>(await state()).distance>=path.dayDistance(day,to),60000);
+      const samples=await evaluate(`(()=>{document.querySelector('#play').click();window.__trekCaptureCamera=false;const samples=window.__trekCameraSamples;delete window.__trekCameraSamples;return samples;})()`);
+      const delta=(a,b)=>((b-a+540)%360)-180;
+      const turns=samples.slice(1).map((s,i)=>Math.abs(delta(samples[i].bearing,s.bearing))/((s.sampleTime-samples[i].sampleTime)/1000));
+      const variation=samples.slice(1).reduce((sum,s,i)=>sum+Math.abs(delta(samples[i].bearing,s.bearing)),0);
+      check(completed&&Math.max(...turns)<=12.5&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=41.95&&s.pitch<=60.05),`day ${day} traverses its bends with gradual turns and ground clearance`);
+      if(day===30&&from===.23)check(variation<65,'the town zigzags do not make the rendered camera swing repeatedly');
+      console.log('  rendered bends '+JSON.stringify({day,from,metres:Math.round(samples.at(-1).distance-samples[0].distance),seconds:((samples.at(-1).sampleTime-samples[0].sampleTime)/1000).toFixed(1),turning:variation.toFixed(1),peakRate:Math.max(...turns).toFixed(1)}));
+      await capture?.(`trek-zigzag-day-${day}-${Math.round(from*100)}`);
+    }
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the changed camera and inset have no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_CONTROLS_ONLY==='1'){
     section('Clear progress, day blocks and user-controlled speed');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the updated journey prepares');

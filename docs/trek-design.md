@@ -61,6 +61,10 @@ perspective and much less text and interface on 5 September 2026.
   flagpole or flag covering the route. Use the existing country outlines and a
   2D canvas, with no second terrain renderer. Flags are local SVGs from
   flag-icons with its MIT licence alongside them, loaded only as needed.
+  A warm paper wash and defined border highlight the current country; a cream
+  halo separates the moving red arrow from the route. Repaint the atlas only
+  when the country changes, keeping the route above the wash. Do not spread
+  flags across the atlas: the single flag stays beside the country name.
   Following Dan’s 7 September feedback, remove the top-right menu button and
   place the compact atlas there; tapping the day-block row opens journey options.
 - Settlement names come from the existing map tiles. Show one name briefly near
@@ -319,9 +323,11 @@ metadata, original metrics, generated asset hashes and the continuous route.
 largest gap, bounded rounding and source non-mutation.
 `scripts/check-trek-camera.mjs` checks camera continuity across the whole route,
 proximity to the path and difficult turns at every pace. The camera uses a
-weighted 880 m neighbourhood, a 1.1 km heading chord, a 14°/s turning limit and
-9°/s² acceleration limit. Pitch changes by at most 3°/s. Playback brakes before
-upcoming bends using an 11°/s curvature budget, then slows further when the view
+weighted 880 m neighbourhood for its position and a broader 2.3 km heading chord
+(500 m behind to 1,800 m ahead), following the valley through short zigzags.
+A damped turn settles without swinging back, bounded by 12°/s rotation and
+6°/s² acceleration. Pitch changes by at most 3°/s. Playback brakes before
+upcoming bends using a 9°/s curvature budget, then slows further when the view
 needs to catch up. The normal clearance is 720 m above the highest sampled ground in the next kilometre,
 with a 420 m floor during movement. Solve the complete camera transform from
 the eye and a target at local ground height; changing pitch after solving zoom
@@ -332,6 +338,8 @@ after descending can force a distant zoom and enlarge the draped roads and route
 steep viewpoints and sustained camera movement, photographs, original records,
 continuous playback and heading changes, automatic-photo
 timing, phone fit, resize, replay, reduced motion and graphics loss.
+`CHECK_TREK_ZIGZAGS_ONLY=1` focuses the browser check on repeated Alpine bends,
+the day-17 loop, all seven country highlights and the inset at phone widths.
 
 Run the site's fast gate before release. After Pages succeeds, compare the live
 HTML and versioned runtime assets and inspect the desktop and phone landscape.

@@ -24,23 +24,34 @@
     const scale=Math.min((width-40)/(bounds[2]-bounds[0]),(height-42)/(bounds[3]-bounds[1]));
     const xy=p=>[(p[0]-(bounds[0]+bounds[2])/2)*scale+width/2,(p[1]-(bounds[1]+bounds[3])/2)*scale+height/2];
     const at=ll=>xy(project(ll));
+    const outlines=countries.map(country=>({...country,mini:country.rings.map(ring=>ring.map(xy))}));
     // Decimate only the inset drawing. Main route geometry and timing are untouched.
     const pieces=path.pieces.map(p=>({...p,mini:p.points.map((ll,i)=>({p:at(ll),d:p.start+p.distances[i]})).filter((v,i,a)=>!i||i===a.length-1||Math.hypot(v.p[0]-a[i-1].p[0],v.p[1]-a[i-1].p[1])>.08||i%12===0)}));
     const dpr=Math.min(2,devicePixelRatio||1);
     for(const c of [canvas,atlas]){c.width=width*dpr;c.height=height*dpr;}
     ctx.scale(dpr,dpr);ink.scale(dpr,dpr);
     function line(c,points){c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));}
-    ink.fillStyle='#edeedd';ink.fillRect(0,0,width,height);
-    countries.forEach((country,i)=>{
-      ink.fillStyle=['#d4ddc1','#dce0c8','#cbd7b9','#e0dfc6'][i%4];ink.strokeStyle='#8c9b7877';ink.lineWidth=.6;
-      for(const ring of country.rings){line(ink,ring.map(xy));ink.closePath();ink.fill();ink.stroke();}
-    });
-    ink.lineCap=ink.lineJoin='round';
-    for(const p of pieces){ink.setLineDash(p.kind==='connection'?[1.4,2.2]:[]);ink.strokeStyle=p.kind==='connection'?'#ad967b':'#ac79629c';ink.lineWidth=1.25;line(ink,p.mini.map(v=>v.p));ink.stroke();}
-    ink.setLineDash([]);ink.fillStyle='#536348';ink.font='9px Plex, monospace';
-    const first=at(path.sample(0).point),last=at(path.sample(path.total).point);
-    ink.fillText('Paris',first[0]-10,first[1]-9);ink.fillText('Sofia',last[0]-19,last[1]+15);
-    ink.font='8px Plex, monospace';ink.fillText('N',width-16,17);ink.beginPath();ink.moveTo(width-13,23);ink.lineTo(width-13,33);ink.moveTo(width-16,26);ink.lineTo(width-13,23);ink.lineTo(width-10,26);ink.strokeStyle='#536348';ink.stroke();
+    let atlasCountry=null;
+    function drawAtlas(activeCountry){
+      ink.fillStyle='#edeedd';ink.fillRect(0,0,width,height);ink.setLineDash([]);
+      outlines.forEach((country,i)=>{
+        ink.fillStyle=['#d4ddc1','#dce0c8','#cbd7b9','#e0dfc6'][i%4];ink.strokeStyle='#8c9b7877';ink.lineWidth=.6;
+        for(const ring of country.mini){line(ink,ring);ink.closePath();ink.fill();ink.stroke();}
+      });
+      // A warm wash makes the current country readable without covering its route.
+      const current=outlines.find(country=>country.name===activeCountry);
+      if(current){
+        ink.fillStyle='#d8c896';ink.strokeStyle='#a47842';ink.lineWidth=1;
+        for(const ring of current.mini){line(ink,ring);ink.closePath();ink.fill();ink.stroke();}
+      }
+      ink.lineCap=ink.lineJoin='round';
+      for(const p of pieces){ink.setLineDash(p.kind==='connection'?[1.4,2.2]:[]);ink.strokeStyle=p.kind==='connection'?'#ad967b':'#ac79629c';ink.lineWidth=1.25;line(ink,p.mini.map(v=>v.p));ink.stroke();}
+      ink.setLineDash([]);ink.fillStyle='#536348';ink.font='9px Plex, monospace';
+      const first=at(path.sample(0).point),last=at(path.sample(path.total).point);
+      ink.fillText('Paris',first[0]-10,first[1]-9);ink.fillText('Sofia',last[0]-19,last[1]+15);
+      ink.font='8px Plex, monospace';ink.fillText('N',width-16,17);ink.beginPath();ink.moveTo(width-13,23);ink.lineTo(width-13,33);ink.moveTo(width-16,26);ink.lineTo(width-13,23);ink.lineTo(width-10,26);ink.strokeStyle='#536348';ink.stroke();
+      atlasCountry=activeCountry;
+    }
     let place=null,cached=[],lastScan=-Infinity,lastDraw=-Infinity,lastDistance=0,lastHeading=0,lastCountry='',destroyed=false;
     function loadFlag(country){
       if(!flag)return;
@@ -64,6 +75,7 @@
       lastDistance=distance;lastHeading=heading;lastCountry=country;updatePlaces(distance);
       loadFlag(country);
       const now=performance.now();if(!force&&now-lastDraw<100)return;lastDraw=now;
+      if(country!==atlasCountry)drawAtlas(country);
       ctx.clearRect(0,0,width,height);ctx.drawImage(atlas,0,0,width,height);ctx.lineCap=ctx.lineJoin='round';
       for(const p of pieces){
         if(p.start>distance)break;
@@ -71,7 +83,9 @@
         if(distance<p.end)passed.push(at(path.sample(distance).point));
         line(ctx,passed);ctx.setLineDash(p.kind==='connection'?[1.4,2.2]:[]);ctx.strokeStyle=p.kind==='connection'?'#b78e61':'#a33443';ctx.lineWidth=1.8;ctx.stroke();
       }
-      ctx.setLineDash([]);const p=at(path.sample(distance).point);ctx.save();ctx.translate(...p);ctx.rotate(heading*Math.PI/180);
+      ctx.setLineDash([]);const p=at(path.sample(distance).point);ctx.save();ctx.translate(...p);
+      ctx.beginPath();ctx.arc(0,0,9.5,0,Math.PI*2);ctx.fillStyle='#fff9e9';ctx.fill();ctx.strokeStyle='#a3344359';ctx.lineWidth=1;ctx.stroke();
+      ctx.rotate(heading*Math.PI/180);
       ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(4.5,4.5);ctx.lineTo(0,2.5);ctx.lineTo(-4.5,4.5);ctx.closePath();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#a33443';ctx.fill();ctx.restore();
     }
     map.on('idle',refresh);update(0,0,true);

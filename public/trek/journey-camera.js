@@ -14,7 +14,9 @@
     return point;
   }
   function headingAt(path,distance){
-    const a=pointAt(path,distance-150),b=pointAt(path,distance+950);
+    // Follow the valley's overall direction instead of each short switchback.
+    // Keep the eye's tighter rail so the recorded path stays close by.
+    const a=pointAt(path,distance-500),b=pointAt(path,distance+1800);
     return bearing(a,b);
   }
   function landmarkFrame(landmarks,point,heading){
@@ -32,9 +34,11 @@
   }
   function turn(current,velocity,wanted,dt){
     if(current===null)return {heading:wanted,velocity:0};
-    const error=angle(current,wanted),desired=clamp(error/.9,-14,14);
+    const error=angle(current,wanted);
     if(Math.abs(error)<.015&&Math.abs(velocity)<.02)return {heading:wanted,velocity:0};
-    velocity+=clamp(desired-velocity,-9*dt,9*dt);
+    // Damping brakes the turn as the view aligns, without hunting left/right.
+    const acceleration=clamp(error*1.44-velocity*2.4,-6,6);
+    velocity=clamp(velocity+acceleration*dt,-12,12);
     return {heading:current+velocity*dt,velocity};
   }
   function speedLimit(path,distance,pace,heading){
@@ -44,7 +48,7 @@
       curvature=Math.max(curvature,Math.abs(angle(previous,next))/180);previous=next;
     }
     // Brake before a bend, leaving room below the camera's maximum turn rate.
-    const corner=curvature>0?Math.min(pace,11/curvature):pace;
+    const corner=curvature>0?Math.min(pace,9/curvature):pace;
     const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/60,.16,1);
     return Math.max(35,corner*alignment);
   }

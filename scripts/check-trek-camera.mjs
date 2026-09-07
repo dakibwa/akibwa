@@ -24,12 +24,12 @@ for(const boundary of path.boundaries){
 }
 
 let worstLag=0,largestTurn=0;
-const stretches=[[16,.45,.65],[30,.45,.99],[41,.45,.65]].map(([day,start,finish])=>[path.dayDistance(day,start),path.dayDistance(day,finish)]);
+const stretches=[[16,.4,.65],[17,.94,.999],[30,.23,.34],[30,.45,.99],[41,.45,.69],[53,0,.1]].map(([day,start,finish])=>[path.dayDistance(day,start),path.dayDistance(day,finish)]);
 stretches.push([path.total-2000,path.total]);
 for(const [start,end] of stretches){
   assert(end>start,'every difficult stretch must exercise a moving camera');
   for(const pace of paces){
-    let distance=start,renderedDistance=start,heading=camera.headingAt(path,start),velocity=0,speed=0,elapsed=0,step=0;
+    let distance=start,renderedDistance=start,heading=camera.headingAt(path,start),velocity=0,speed=0,elapsed=0,step=0,variation=0,reversals=0,turnSign=0;
     while(distance<end&&elapsed<1800){
       const dt=[1/60,1/30,.1][step++%3];
       speed+=(camera.speedLimit(path,distance,pace,heading)-speed)*(1-Math.exp(-dt/.85));
@@ -37,17 +37,33 @@ for(const [start,end] of stretches){
       renderedDistance+=(distance-renderedDistance)*(1-Math.exp(-dt/.6));
       const wanted=camera.headingAt(path,renderedDistance),next=camera.turn(heading,velocity,wanted,dt);
       const turn=Math.abs(headingDelta(heading,next.heading))/dt;
-      assert(turn<=14.001,'the view must not whip around at a tight turn');
-      assert(Math.abs(next.velocity-velocity)<=9*dt+.0001,'turning must ease in and out');
+      assert(turn<=12.001,'the view must not whip around at a tight turn');
+      assert(Math.abs(next.velocity-velocity)<=6*dt+.0001,'turning must ease in and out');
+      variation+=Math.abs(headingDelta(heading,next.heading));
+      if(Math.abs(next.velocity)>1){
+        if(turnSign&&Math.sign(next.velocity)!==turnSign)reversals++;
+        turnSign=Math.sign(next.velocity);
+      }
       largestTurn=Math.max(largestTurn,turn);worstLag=Math.max(worstLag,Math.abs(headingDelta(next.heading,wanted)));
       heading=next.heading;velocity=next.velocity;elapsed+=dt;
     }
     assert(distance===end,'even a tight bend must remain traversable at every pace');
+    if(pace===1600&&start===path.dayDistance(30,.23))assert(variation<50&&reversals<=1,'the camera looks along the valley instead of following each town zigzag');
+    if(pace===1600&&start===path.dayDistance(30,.45))assert(variation<230&&reversals<=8,'the Alpine descent must avoid repeated left-right corrections');
   }
 }
 assert(worstLag<22,'the view must keep up with the path through the tested switchbacks');
 const north=camera.turn(179,0,-179,1/30);
 assert(north.heading>179&&north.heading<180,'crossing north must choose the short turn');
+for(const wanted of [-90,-12,12,90]){
+  let heading=0,velocity=0;
+  for(let i=0;i<1800;i++){
+    const next=camera.turn(heading,velocity,wanted,1/60);
+    assert(Math.sign(wanted)*next.heading<=Math.abs(wanted)+.02,'a settled direction must not cause a correcting swing back');
+    heading=next.heading;velocity=next.velocity;
+  }
+  assert(Math.abs(headingDelta(heading,wanted))<.02,'damping must still settle on the intended heading');
+}
 const landmarks=JSON.parse(readFileSync(new URL('../data/trek-landmarks.json',import.meta.url),'utf8')).landmarks;
 for(const [id,d] of [['reims',136600],['nancy',365700]]){
   const p=camera.pointAt(path,d),heading=camera.headingAt(path,d),frame=camera.landmarkFrame(landmarks,p,heading);
@@ -59,11 +75,11 @@ for(const [id,d] of [['reims',136600],['nancy',365700]]){
     const dt=1/30,wanted=camera.headingAt(path,distance),framing=camera.landmarkFrame(landmarks,camera.pointAt(path,distance),wanted);
     const routeTurn=camera.turn(routeHeading,routeVelocity,wanted,dt);routeHeading=routeTurn.heading;routeVelocity=routeTurn.velocity;
     const viewTurn=camera.turn(look,velocity,framing?.heading??wanted,dt);
-    if(look!==null)assert(Math.abs(headingDelta(look,viewTurn.heading))/dt<=14.001,'continuous landmark framing never snaps the camera');
+    if(look!==null)assert(Math.abs(headingDelta(look,viewTurn.heading))/dt<=12.001,'continuous landmark framing never snaps the camera');
     look=viewTurn.heading;velocity=viewTurn.velocity;
     speed+=(camera.speedLimit(path,distance,1600,routeHeading)-speed)*(1-Math.exp(-dt/.85));distance+=speed*dt;
   }
   assert(distance>d+2000,'glancing at a landmark must not stall route playback');
 }
 assert.equal(JSON.stringify(route),original,'camera smoothing must never rewrite the approved GPS route');
-console.log(`Camera checks passed: whole-route continuity and proximity, four difficult stretches at all three paces, bounded cathedral glances, maximum route turn ${largestTurn.toFixed(1)}°/s and heading lag ${worstLag.toFixed(1)}°.`);
+console.log(`Camera checks passed: whole-route continuity and proximity, seven difficult stretches at all three paces, reduced Alpine zigzags, no overshoot, bounded cathedral glances, maximum route turn ${largestTurn.toFixed(1)}°/s and heading lag ${worstLag.toFixed(1)}°.`);
