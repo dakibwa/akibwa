@@ -14,6 +14,28 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_LANDMARKS_ONLY==='1'){
+    section('Oversized paper cathedrals along the real route');
+    await setDesktop(1440,900);await goto('/trek/?day=4');await settled();
+    await evaluate("document.querySelector('#photo-interludes').checked=false");
+    for(const [id,distance] of [['reims',136600],['nancy',365700]]){
+      await scrub(distance);check(await settled(),`${id} approach prepares`);
+      check(await until(async()=>(await state()).paper?.landmarks.includes(id)),`${id} renders its architectural model beside the route`);
+      for(const width of [1440,390,320]){
+        await setDesktop(width,width>650?900:844);await sleep(950);
+        const s=await state();check(s.landmark&&s.controlsFit&&s.overflow<=1&&s.paper.vertices<=2400000&&s.cameraClearance>=419.9,`${id} has a visible landmark caption and clear controls at ${width}px`);
+        await capture?.(`trek-landmark-${id}-${width}`);
+      }
+      await setDesktop(1440,900);await click('#play');const start=await state();await sleep(6500);await click('#play');
+      const after=await state();check(after.distance>start.distance+500&&after.cameraClearance>=419.9&&after.paper.landmarks.includes(id),`${id} remains grounded and visible during continuous approach`);
+      await capture?.(`trek-landmark-${id}-passing`);
+    }
+    await choose(25);await settled();await scrub(863400);await settled();
+    check(await until(async()=>(await state()).paper?.landmarks.includes('munich')),'the larger style also reaches the existing Munich landmark');
+    await capture?.('trek-landmark-munich');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the landmark approaches and phone resizes have no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_FLOW_ONLY==='1'){
     section('Faster flow, paper photographs and the country atlas');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the Alpine scene prepares');

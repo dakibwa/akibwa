@@ -63,3 +63,5 @@
 @media(max-height:520px){.journey-minimap{top:20px;width:137px}.memory-flash{bottom:170px;width:105px;padding-bottom:20px}.memory-flash .memory-image{max-height:95px}.memory-flash .memory-location{font-size:6px}}
 
 .opening-days{pointer-events:auto;font-size:9px;margin-top:7px;padding:8px 12px;opacity:.72;text-decoration:underline;text-underline-offset:4px}.opening-days:hover{opacity:1}
+
+.viewing-landmark .place-arrival{opacity:0}

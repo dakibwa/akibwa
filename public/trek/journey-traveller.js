@@ -11,7 +11,7 @@
     let path=null,route=null,map=null,paper=null,wayfinding=null,elevation=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
-    let headingVelocity=0,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
+    let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,flashIndex=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
@@ -39,7 +39,8 @@
         const screen=map.project(item.point);return {item,d:TrekWayfinding.metres(at,item.point),screen};
       }).filter(({d,screen})=>d<2300&&screen.x>12&&screen.x<innerWidth-12&&screen.y>72&&screen.y<innerHeight-150).sort((a,b)=>a.d-b.d)[0]:null;
       $('landmark-caption').hidden=!nearby;
-      if(nearby){text('landmark-name',nearby.item.name);text('landmark-place',nearby.item.place+' · '+nearby.item.country);}
+      document.body.classList.toggle('viewing-landmark',!!nearby);
+      if(nearby){text('landmark-name',nearby.item.caption||nearby.item.name);text('landmark-place',nearby.item.place+' · '+nearby.item.country);}
     }
     function invalidate(){if(!frame&&!document.hidden)frame=requestAnimationFrame(tick);}
     function setPlaying(value){
@@ -154,7 +155,7 @@
           text('load-message','Loading the landscape · '+Math.round(10+65*p.done/p.total)+'%');
         });
         if(!await mapIdle(generation))return;
-        eyeHeight=null;heading=null;headingVelocity=0;viewPitch=null;
+        eyeHeight=null;heading=null;headingVelocity=0;lookHeading=null;lookVelocity=0;viewPitch=null;
         map.setCenterClampedToGround(false);ready=true;camera(.016,true);ready=false;
         await Promise.race([warm,new Promise((_,reject)=>{preparationTimer=setTimeout(()=>reject(Error('Preparation timeout')),25000);})]);
         clearTimeout(preparationTimer);if(generation!==warmGeneration||failed)return;
@@ -188,6 +189,11 @@
       const eye=TrekCamera.pointAt(path,renderedDistance),wanted=TrekCamera.headingAt(path,renderedDistance);
       const rotation=TrekCamera.turn(heading,headingVelocity,wanted,dt);
       heading=rotation.heading;headingVelocity=rotation.velocity;
+      // A gentle glance gives oversized landmarks room on a narrow screen.
+      // Keep route heading separate so looking aside does not slow the journey.
+      const framing=TrekCamera.landmarkFrame(data.landmarks,eye,wanted),wantedLook=framing?.heading??wanted;
+      const glance=TrekCamera.turn(lookHeading,lookVelocity,wantedLook,dt);
+      lookHeading=glance.heading;lookVelocity=glance.velocity;cameraLandmark=framing?.id||null;
       const ground=map.queryTerrainElevation(eye);
       const base=Number.isFinite(ground)?ground:eyeHeight===null?(map.getCenterElevation()||0):eyeHeight-720;
       // See an approaching ridge before reaching it. A broad, higher camera
@@ -197,22 +203,22 @@
         const height=map.queryTerrainElevation(TrekCamera.pointAt(path,renderedDistance+offset));
         if(Number.isFinite(height)){heights.push(height);if(offset===1000)lookHeight=height;}
       }
-      const wantedEye=Math.max(...heights)+720;
+      const wantedEye=Math.max(...heights)+720+(framing?.lift||0);
       const zAlpha=1-Math.exp(-dt/(eyeHeight!==null&&wantedEye>eyeHeight?1.3:3));
       eyeHeight=eyeHeight===null?wantedEye:mix(eyeHeight,wantedEye,zAlpha);
       eyeHeight=Math.max(eyeHeight,base+420);
       // A descent needs a gradual downward glance to keep the path in view.
-      const wantedPitch=clamp(Math.atan2(1100,eyeHeight-lookHeight)*180/Math.PI,42,60);
+      const wantedPitch=clamp(Math.atan2(framing?.lookAhead||1100,eyeHeight-lookHeight)*180/Math.PI,42-10*(framing?.strength||0),60);
       viewPitch=viewPitch===null?wantedPitch:viewPitch+clamp((wantedPitch-viewPitch)*(1-Math.exp(-dt/1.6)),-3*dt,3*dt);
       // Rebase the zoom reference onto the local ground on every frame. A stale
       // mountain reference can end up above the camera during a descent and
       // make the draped map texture swell, even when the physical eye is right.
-      const target=TrekCamera.ahead(eye,heading,(eyeHeight-base)*Math.tan(viewPitch*Math.PI/180));
+      const target=TrekCamera.ahead(eye,lookHeading,(eyeHeight-base)*Math.tan(viewPitch*Math.PI/180));
       const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,base);
       // Do not change pitch after solving zoom/centre: that moves the eye too.
-      map.jumpTo(options);cameraHeading=heading;cameraPitch=map.getPitch();
+      map.jumpTo(options);cameraHeading=lookHeading;cameraPitch=map.getPitch();
       cameraClearance=eyeHeight-base;cameraPoint=eye;
-      return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1||Math.abs(headingVelocity)>.02||Math.abs(eyeHeight-wantedEye)>.5||Math.abs(viewPitch-wantedPitch)>.02;
+      return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1||Math.abs(headingVelocity)>.02||Math.abs(angle(lookHeading,wantedLook))>.1||Math.abs(lookVelocity)>.02||Math.abs(eyeHeight-wantedEye)>.5||Math.abs(viewPitch-wantedPitch)>.02;
     }
     function tick(time){
       frame=0;const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.1,elapsed);lastTime=time;
@@ -295,7 +301,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

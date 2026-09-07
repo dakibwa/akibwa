@@ -289,7 +289,8 @@
       const nearRoad = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'transportation'})));
       const nearWater = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'waterway', filter: ['!=', ['get', 'brunnel'], 'tunnel']})));
       const nearbyLandmarks = landmarks.filter(item => Math.hypot(...project(item.point).map((v, i) => v - center[i])) < radius - 250);
-      const withinLandmark = p => nearbyLandmarks.some(item => inPolygon(p, [item.footprint.map(project)]));
+      const landmarkGround = nearbyLandmarks.map(item => TrekLandmarks.displayFootprint(item).map(project));
+      const withinLandmark = p => landmarkGround.some(ring => inPolygon(p, [ring]));
       const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p)), houses = new Map();
       for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
         const ring = cleanBuildingRing(polygon[0].map(project));
@@ -373,7 +374,7 @@
         const scale = 1 / Math.cos(item.point[1] * Math.PI / 180);
         const positioned = ([x, y, z]) => vertex([p[0] + x * scale, p[1] + y * scale], ground + z);
         for (const face of TrekLandmarks.mesh(item)) triangle(positioned(face.a), positioned(face.b), positioned(face.c), rgb(face.color));
-        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [item.footprint]}});
+        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [TrekLandmarks.displayFootprint(item)]}});
         madeLandmarks.push(item.id);
       }
       const totalCandidates = candidates.length + roofCandidates.length + nearbyLandmarks.length;

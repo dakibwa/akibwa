@@ -17,6 +17,19 @@
     const a=pointAt(path,distance-150),b=pointAt(path,distance+950);
     return bearing(a,b);
   }
+  function landmarkFrame(landmarks,point,heading){
+    const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
+    let chosen=null;
+    for(const item of landmarks){
+      const distance=111195*Math.hypot((item.point[0]-point[0])*Math.cos((item.point[1]+point[1])*Math.PI/360),item.point[1]-point[1]);
+      const delta=angle(heading,bearing(point,item.point));
+      if(distance>3300||Math.abs(delta)>120)continue;
+      const strength=smooth((3300-distance)/1300)*(1-smooth((Math.abs(delta)-50)/70));
+      if(strength<.015||chosen&&chosen.strength>=strength)continue;
+      chosen={id:item.id,strength,heading:heading+clamp(delta,-42,42)*.85*strength,lift:360*strength,lookAhead:1100+(clamp(distance*.9,550,1500)-1100)*strength};
+    }
+    return chosen;
+  }
   function turn(current,velocity,wanted,dt){
     if(current===null)return {heading:wanted,velocity:0};
     const error=angle(current,wanted),desired=clamp(error/.9,-14,14);
@@ -35,6 +48,6 @@
     const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/60,.16,1);
     return Math.max(35,corner*alignment);
   }
-  const api={pointAt,headingAt,turn,speedLimit,ahead};
+  const api={pointAt,headingAt,landmarkFrame,turn,speedLimit,ahead};
   if(typeof module!=='undefined')module.exports=api;else host.TrekCamera=api;
 })(typeof window==='undefined'?globalThis:window);

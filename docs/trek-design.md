@@ -56,13 +56,30 @@ perspective and much less text and interface on 5 September 2026.
   Never announce passing a town on a visual connection. Names clear after leaving;
   replay and scrubbing can reveal them again. Small photo prints leave the atlas
   and landscape visible; the full-screen gallery covers the scene when opened.
-- Nine landmarks have small paper models anchored at verified public positions:
-  Reims cathedral, Château des Rohan, the Frauenkirche, St. Jakob in Villach,
+- Ten landmarks have paper models anchored at verified public positions:
+  Reims and Nancy cathedrals, Château des Rohan, the Frauenkirche, St. Jakob in Villach,
   Ptuj Castle, Osijek’s co-cathedral, the Name of Mary Church in Novi Sad, the
   Temple of Saint Sava and Alexander Nevsky Cathedral. Towers, domes, gables,
   cornices and facade details are architectural interpretations. Show a quiet
   name when a model is in view. Keep the source links in the menu. These are
   nearby landmarks, not evidence of entering a building.
+  On 7 September Dan explicitly asked for artistic liberties so the cathedrals
+  stand out along the route. Make these selected buildings deliberately oversized:
+  about three times the width and three to four times the height, with Reims and
+  Nancy especially prominent above the town. Compact the long naves and allow
+  a fixed display rotation to make the facade readable from the approach.
+  Preserve their geographic anchors, the real route and the surrounding terrain. Their scale is illustrative.
+  Reims has Gothic twin towers and a rose window; Nancy has the broad classical
+  facade, octagonal belfries, domes and lanterns described by the city’s
+  [architecture reference](https://www.nancy.fr/fileadmin/NAN/culture/patrimoine/Ressources/patrimoine-parcours-germain-boffrand.pdf), page 28.
+  Do not add a large external dome over Nancy’s nave: its painted cupola is inside.
+  During the approach, give the silhouette more room with a gentle upward and
+  sideways camera adjustment. The pitch can ease down to 32 degrees for a close
+  landmark, keeping its base above the controls. Keep the eye on the route and use the same turn
+  limits. The independent route heading still controls speed and the minimap,
+  so looking at a landmark does not brake playback. Use short cathedral captions;
+  keep full names in the sources and hide the duplicate town arrival while the
+  landmark name is on screen.
 - The menu owns all 67 days, six chapters, pace, the automatic-photo toggle,
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
@@ -247,7 +264,10 @@ sampled only at the centroid can sink into native roofs on slopes; do not use it
 Nearby buildings receive narrow fascia and small window panels.
 Scenery heights, windows and roof forms are stylised, not surveyed architecture.
 
-Custom landmarks share the existing scenery buffer and terrain heights. After a
+Custom landmarks share the existing scenery buffer and terrain heights. Their
+size exaggeration lives in the mesh transform, separate from sourced positions
+and native-building bounds. Expand their ground shadows and leave their enlarged
+footprints free of custom trees and roof details. After a
 model builds, remove only native building features fully inside its mapped bounds,
 including multi-part towers. Select those feature IDs with geographic containment:
 MapLibre 5.6.2’s `within` expression only tests point and line features, so it cannot
@@ -331,3 +351,7 @@ can change the result.
 `CHECK_TREK_FLOW_ONLY=1` exercises the faster default in the running landscape,
 all seven country flags and ground heights, the automatic print and its original
 gallery, connection profiles, the relocated day selector and 1440/390/320px fit.
+
+`CHECK_TREK_LANDMARKS_ONLY=1` exercises the Reims and Nancy approaches at
+1440/390/320px, continuous passage and the enlarged Munich model. Inspect the
+rendered towers and silhouette; a model name in the status alone is insufficient.

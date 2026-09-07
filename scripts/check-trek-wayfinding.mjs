@@ -2,13 +2,13 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
-const {mesh}=require('../public/trek/journey-landmarks.js');
+const {mesh,displayFootprint}=require('../public/trek/journey-landmarks.js');
 const {nearestPlace,metres,flags}=require('../public/trek/journey-wayfinding.js');
 const {landmarkBuildingIds}=require('../public/trek/journey-paper.js');
 const read=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url),'utf8'));
 const landmarks=read('data/trek-landmarks.json').landmarks,route=read('public/trek/route-detail.json');
 const before=JSON.stringify(landmarks);
-assert.equal(landmarks.length,9);
+assert.equal(landmarks.length,10);
 assert.deepEqual(new Set(landmarks.map(l=>l.country)),new Set(Object.keys(flags)),'landmarks cover the seven countries on this walk');
 for(const item of landmarks){
   assert(item.source.startsWith('https://')&&/^https:\/\/www.openstreetmap.org\/way\/\d+$/.test(item.mapSource),'retain public name and coordinate provenance');
@@ -18,8 +18,11 @@ for(const item of landmarks){
   assert(faces.length>80&&faces.length<2200,'recognisable models keep a small geometry budget');
   for(const face of faces){
     assert(/^#[0-9a-f]{6}$/i.test(face.color));
-    for(const p of [face.a,face.b,face.c])assert(p.length===3&&p.every(Number.isFinite)&&p[2]>=0&&Math.abs(p[0])<150&&Math.abs(p[1])<150&&p[2]<150,'geometry stays finite, grounded and at building scale');
+    for(const p of [face.a,face.b,face.c])assert(p.length===3&&p.every(Number.isFinite)&&p[2]>=0&&Math.abs(p[0])<260&&Math.abs(p[1])<260&&p[2]<400,'oversized landmarks stay finite, grounded and below the camera clearance floor');
   }
+  assert.equal(Math.min(...faces.flatMap(f=>[f.a[2],f.b[2],f.c[2]])),0,'enlarging a landmark must not lift its feet off the ground');
+  if(['reims','nancy'].includes(item.id))assert(Math.max(...faces.flatMap(f=>[f.a[2],f.b[2],f.c[2]]))>300,'the two French cathedrals must rise clearly above the surrounding town');
+  const footprint=displayFootprint(item);assert.equal(footprint.length,5);assert.deepEqual(footprint[0],footprint.at(-1));assert(footprint.every(p=>p.every(Number.isFinite)&&metres(p,item.point)<350),'the grounding shadow is closed and stays within the enlarged model budget');
 }
 assert.equal(JSON.stringify(landmarks),before,'rendering must not rewrite the source landmarks');
 const place=(name,kind,point)=>({properties:{name,class:kind},geometry:{type:'Point',coordinates:point}});
@@ -39,4 +42,4 @@ assert.deepEqual(landmarkBuildingIds(buildings,[bounds]),[1,2],'replace the comp
 const generated=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);
 assert.deepEqual(generated.landmarks,landmarks,'the published model positions and sources match the owning data');
 assert.deepEqual(generated.countryRings,read('data/trek-days.json').countryRings.map(({name,rings})=>({name,rings})),'the inset uses existing geographic outlines');
-console.log('Wayfinding checks passed: nine sourced landmarks, bounded meshes, true route proximity, native building replacement, stable town labels and the existing country outlines.');
+console.log('Wayfinding checks passed: ten sourced landmarks, enlarged grounded meshes, true route proximity, native building replacement, stable town labels and the existing country outlines.');

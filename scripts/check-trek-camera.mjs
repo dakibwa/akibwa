@@ -48,5 +48,22 @@ for(const [start,end] of stretches){
 assert(worstLag<22,'the view must keep up with the path through the tested switchbacks');
 const north=camera.turn(179,0,-179,1/30);
 assert(north.heading>179&&north.heading<180,'crossing north must choose the short turn');
+const landmarks=JSON.parse(readFileSync(new URL('../data/trek-landmarks.json',import.meta.url),'utf8')).landmarks;
+for(const [id,d] of [['reims',136600],['nancy',365700]]){
+  const p=camera.pointAt(path,d),heading=camera.headingAt(path,d),frame=camera.landmarkFrame(landmarks,p,heading);
+  assert.equal(frame.id,id);assert(frame.strength>.9&&frame.lift<=360,'the cathedral approach gains room for its enlarged silhouette');
+  assert(Math.abs(headingDelta(heading,frame.heading))<=35.701,'a landmark glance remains a bounded turn from the direction of travel');
+  assert.equal(camera.landmarkFrame(landmarks,p,heading+180),null,'the view must not turn back to chase a landmark behind the traveller');
+  let look=null,velocity=0,routeHeading=heading,routeVelocity=0,distance=d-1000,speed=0;
+  for(let i=0;i<1800;i++){
+    const dt=1/30,wanted=camera.headingAt(path,distance),framing=camera.landmarkFrame(landmarks,camera.pointAt(path,distance),wanted);
+    const routeTurn=camera.turn(routeHeading,routeVelocity,wanted,dt);routeHeading=routeTurn.heading;routeVelocity=routeTurn.velocity;
+    const viewTurn=camera.turn(look,velocity,framing?.heading??wanted,dt);
+    if(look!==null)assert(Math.abs(headingDelta(look,viewTurn.heading))/dt<=14.001,'continuous landmark framing never snaps the camera');
+    look=viewTurn.heading;velocity=viewTurn.velocity;
+    speed+=(camera.speedLimit(path,distance,1600,routeHeading)-speed)*(1-Math.exp(-dt/.85));distance+=speed*dt;
+  }
+  assert(distance>d+2000,'glancing at a landmark must not stall route playback');
+}
 assert.equal(JSON.stringify(route),original,'camera smoothing must never rewrite the approved GPS route');
-console.log(`Camera checks passed: whole-route continuity and proximity, four difficult stretches at all three paces, maximum turn ${largestTurn.toFixed(1)}°/s and heading lag ${worstLag.toFixed(1)}°.`);
+console.log(`Camera checks passed: whole-route continuity and proximity, four difficult stretches at all three paces, bounded cathedral glances, maximum route turn ${largestTurn.toFixed(1)}°/s and heading lag ${worstLag.toFixed(1)}°.`);

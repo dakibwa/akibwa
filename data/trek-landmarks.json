@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-06",
-  "note": "Public landmark positions verified against OpenStreetMap and names against the linked local visitor or owning institutions. Paper models simplify architectural form, dimensions and orientation; proximity to the 2019 route is not evidence of entry or a visit inside.",
+  "checked": "2026-09-07",
+  "note": "Public landmark positions verified against OpenStreetMap and names against the linked local visitor or owning institutions. At Dan’s request, paper landmarks are deliberately enlarged above the surrounding town, with illustrative proportions and detail. Their mapped positions and the 2019 route stay unchanged; proximity is not evidence of entry or a visit inside.",
   "landmarks": [
     {
       "id": "reims",
@@ -45,7 +45,65 @@
       "roof": "#778888",
       "gold": false,
       "source": "https://en.reims.fr/visit-reims/notre-dame-cathedral",
-      "mapSource": "https://www.openstreetmap.org/way/92294792"
+      "mapSource": "https://www.openstreetmap.org/way/92294792",
+      "presentation": {
+        "scale": 3,
+        "heightScale": 4,
+        "lengthScale": 2.2
+      },
+      "caption": "Reims Cathedral"
+    },
+    {
+      "id": "nancy",
+      "name": "Cathédrale Notre-Dame-de-l’Annonciation",
+      "place": "Nancy",
+      "country": "France",
+      "point": [
+        6.1860886,
+        48.6912349
+      ],
+      "footprint": [
+        [
+          6.1855268,
+          48.690808000000004
+        ],
+        [
+          6.1866503999999996,
+          48.690808000000004
+        ],
+        [
+          6.1866503999999996,
+          48.6916617
+        ],
+        [
+          6.1855268,
+          48.6916617
+        ],
+        [
+          6.1855268,
+          48.690808000000004
+        ]
+      ],
+      "kind": "baroque-twin",
+      "model": {
+        "width": 49,
+        "length": 95,
+        "height": 29,
+        "tower": 68
+      },
+      "presentation": {
+        "scale": 3.2,
+        "heightScale": 4.4,
+        "lengthScale": 2.6,
+        "bearing": 252
+      },
+      "bearing": 332,
+      "wall": "#e5d6b4",
+      "roof": "#72848b",
+      "gold": false,
+      "source": "https://www.destination-nancy.com/patrimoine-culturel/cathedrale-notre-dame-de-lannonciation/",
+      "mapSource": "https://www.openstreetmap.org/way/43474168",
+      "caption": "Nancy Cathedral"
     },
     {
       "id": "saverne",
