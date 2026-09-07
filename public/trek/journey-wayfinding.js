@@ -17,7 +17,7 @@
     const sorted=[...places.values()].sort((a,b)=>a.score-b.score),held=places.get(previous?.id);
     return held&&(!sorted[0]||held.score<sorted[0].score+.22)?held:sorted[0]||null;
   }
-  function create({canvas,path,countries,map,landmarks,onPlace}){
+  function create({canvas,flag,path,countries,map,landmarks,onPlace}){
     const ctx=canvas.getContext('2d'),atlas=document.createElement('canvas'),ink=atlas.getContext('2d');
     const width=240,height=148,points=path.pieces.flatMap(p=>[project(p.points[0]),project(p.points.at(-1))]);
     const bounds=points.reduce((b,p)=>[Math.min(b[0],p[0]),Math.min(b[1],p[1]),Math.max(b[2],p[0]),Math.max(b[3],p[1])],[Infinity,Infinity,-Infinity,-Infinity]);
@@ -42,10 +42,10 @@
     ink.fillText('Paris',first[0]-10,first[1]-9);ink.fillText('Sofia',last[0]-19,last[1]+15);
     ink.font='8px Plex, monospace';ink.fillText('N',width-16,17);ink.beginPath();ink.moveTo(width-13,23);ink.lineTo(width-13,33);ink.moveTo(width-16,26);ink.lineTo(width-13,23);ink.lineTo(width-10,26);ink.strokeStyle='#536348';ink.stroke();
     let place=null,cached=[],lastScan=-Infinity,lastDraw=-Infinity,lastDistance=0,lastHeading=0,lastCountry='',destroyed=false;
-    const flagImages=new Map();
     function loadFlag(country){
-      if(!flags[country]||flagImages.has(country))return;
-      const img=new Image();flagImages.set(country,img);img.onload=()=>{if(!destroyed)update(lastDistance,lastHeading,true,lastCountry);};img.src='flags/'+flags[country]+'.svg';
+      if(!flag)return;
+      flag.hidden=!flags[country];
+      if(flags[country]&&flag.dataset.country!==country){flag.dataset.country=country;flag.src='flags/'+flags[country]+'.svg';}
     }
     const fallback=landmarks.map(l=>({properties:{name:l.place,class:'city'},geometry:{type:'Point',coordinates:l.point}}));
     function refresh(){
@@ -73,17 +73,9 @@
       }
       ctx.setLineDash([]);const p=at(path.sample(distance).point);ctx.save();ctx.translate(...p);ctx.rotate(heading*Math.PI/180);
       ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(4.5,4.5);ctx.lineTo(0,2.5);ctx.lineTo(-4.5,4.5);ctx.closePath();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#a33443';ctx.fill();ctx.restore();
-      const flag=flagImages.get(country);
-      if(flag?.complete&&flag.naturalWidth){
-        const x=Math.min(width-28,Math.max(5,p[0]+5)),y=Math.max(4,p[1]-26);
-        ctx.strokeStyle='#5a674acc';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(p[0],p[1]-2);ctx.lineTo(x,y+16);ctx.lineTo(x,y);ctx.stroke();
-        ctx.fillStyle='#fbf4df';ctx.shadowColor='#34483144';ctx.shadowBlur=3;ctx.shadowOffsetY=1;ctx.fillRect(x-1,y-1,22,17);ctx.shadowBlur=0;ctx.shadowOffsetY=0;
-        ctx.globalAlpha=.84;ctx.drawImage(flag,x,y,20,15);ctx.globalAlpha=1;
-        ctx.fillStyle='#e8dbab22';ctx.fillRect(x,y,20,15);
-      }
     }
     map.on('idle',refresh);update(0,0,true);
-    return {update,refresh,resetPlace:()=>{place=null;lastScan=-Infinity;},status:()=>({place:place?.name||null,point:path.sample(lastDistance).point,heading:lastHeading,country:lastCountry,flag:flags[lastCountry]||null,flagReady:!!flagImages.get(lastCountry)?.naturalWidth}),destroy:()=>{destroyed=true;map.off('idle',refresh);}};
+    return {update,refresh,resetPlace:()=>{place=null;lastScan=-Infinity;},status:()=>({place:place?.name||null,point:path.sample(lastDistance).point,heading:lastHeading,country:lastCountry,flag:flags[lastCountry]||null,flagReady:!!flag?.complete&&!!flag?.naturalWidth}),destroy:()=>{destroyed=true;map.off('idle',refresh);}};
   }
   const api={create,nearestPlace,flags,project,metres};
   if(typeof module!=='undefined')module.exports=api;host.TrekWayfinding=api;

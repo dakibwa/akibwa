@@ -18,6 +18,17 @@
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
     const number=new Intl.NumberFormat('en-GB',{maximumFractionDigits:1});
+    const dayBlocks=Array.from({length:67},(_,i)=>{const block=document.createElement('span');block.dataset.day=i+1;return block;});
+    $('day-blocks').replaceChildren(...dayBlocks);
+    function setPace(value){
+      const options=[...$('pace').options],selected=options.findIndex(option=>+option.value===value);
+      if(selected<0)return;
+      pace=value;$('pace').value=value;
+      const label=options[selected].dataset.label,next=options[(selected+1)%options.length].dataset.label;
+      text('speed-label',label);$('speed-cycle').setAttribute('aria-label','Playback speed '+label+'. Change to '+next+'.');
+      $('speed-cycle').title='Speed '+label+' · click for '+next;
+    }
+    setPace(pace);
     $('journey-day').replaceChildren(...data.days.map(d=>{const o=document.createElement('option');o.value=d.n;o.textContent='Day '+String(d.n).padStart(2,'0')+' · '+d.c;return o;}));
     $('photo-interludes').checked=!reduced;
     text('walk-totals','1,982 km · 67 numbered days · '+data.photos.length+' photographs · '+Math.round(data.stats.ascent).toLocaleString()+' m of ascent.');
@@ -85,6 +96,13 @@
       const km=mix(previous?.cum||0,d.cum,measured),ascent=mix(previous?.cumElev||0,d.cumElev,measured);
       text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(km));
       text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
+      $('menu-open').setAttribute('aria-label','Day '+day+' of 67. Choose a day and journey options');
+      dayBlocks.forEach((block,i)=>{
+        const fill=i<day-1?100:i===day-1?Math.round(fraction*100):0;
+        if(block.dataset.fill!==String(fill)){block.dataset.fill=fill;block.style.setProperty('--fill',fill+'%');}
+        block.classList.toggle('complete',i<day-1||(day===67&&fraction===1));
+        block.classList.toggle('current',i===day-1);
+      });
       text('where',started?d.c:'Paris → Sofia');
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
       wayfindingUI(force);elevation?.update(distance,force);
@@ -93,7 +111,7 @@
       if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
       $('journey-day').value=day;$('day-back').disabled=day===1;$('day-forward').disabled=day===67;
-      const photos=photosFor(day);$('photos-open').disabled=false;$('menu-photos').hidden=!photos.length;
+      const photos=photosFor(day);$('menu-photos').hidden=!photos.length;
       if(photos.length){$('menu-photo').src='photos/'+photos[Math.floor(photos.length*.45)].src;text('menu-photo-count',photos.length+' photographs ↗');}
       text('day-date',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'No dated recording.');
       const shared=day===16||day===17;
@@ -250,6 +268,10 @@
         map=new maplibregl.Map({container:'path-map',style:TrekPaper.style(style),center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0,maxTileCacheSize:128,pixelRatio:Math.min(devicePixelRatio||1,1.5),transformRequest:tileCache.transformRequest});
         map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);
         map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
+        // Keep the native, source-updated attribution above the landscape wash.
+        $('map-credits').append(document.querySelector('.maplibregl-ctrl-attrib'));
+        const credits=document.querySelector('.maplibregl-ctrl-attrib-button');
+        credits.textContent='Map credits';credits.setAttribute('aria-label','Map credits');credits.title='Map credits';
         for(const event of ['dragstart','zoomstart','rotatestart','pitchstart'])map.on(event,e=>{if(e.originalEvent){setPlaying(false);following=false;document.body.classList.add('is-exploring');}});
         map.on('webglcontextlost',()=>unavailable('The landscape is unavailable. The photographs and days are still here.'));
         map.on('error',()=>{if(!ready)text('load-message','The landscape is taking a little longer. Photographs are ready in the menu.');});
@@ -271,10 +293,11 @@
           }
           try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
-          wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
+          wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),flag:$('country-flag'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
           map.on('idle',()=>wayfindingUI(true));
           // Sources have now populated MapLibre's initially expanded disclosure.
-          document.querySelector('.maplibregl-ctrl-attrib').classList.remove('maplibregl-compact-show');
+          const attribution=document.querySelector('.maplibregl-ctrl-attrib');
+          attribution.classList.remove('maplibregl-compact-show');attribution.removeAttribute('open');
           terrainReady=true;prepareCamera();text('load-message','Opening this stretch of landscape…');
           // Elevation arriving after the vector map gets a short settling pass.
           map.on('sourcedata',e=>{if(e.sourceId==='dem'&&e.isSourceLoaded)invalidate();});
@@ -290,9 +313,9 @@
     menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left)menu.close();}});
     $('journey-day').addEventListener('change',e=>visit(+e.target.value));
     $('day-back').addEventListener('click',()=>visit(day-1));$('day-forward').addEventListener('click',()=>visit(day+1));
-    $('restart').addEventListener('click',reset);$('pace').addEventListener('change',e=>pace=+e.target.value);
+    $('restart').addEventListener('click',reset);$('pace').addEventListener('change',e=>setPace(+e.target.value));
+    $('speed-cycle').addEventListener('click',()=>{const options=[...$('pace').options],current=options.findIndex(option=>+option.value===pace);setPace(+options[(current+1)%options.length].value);});
     progress.addEventListener('input',()=>{if(!path)return;setPlaying(false);dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;distance=+progress.value/1000*path.total;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('ending').hidden=distance<path.total;updateUI(true);prepareCamera();invalidate();});
-    $('photos-open').addEventListener('click',()=>showGallery(Math.floor(photosFor(day).length*fraction)));
     $('menu-photos').addEventListener('click',()=>showGallery());$('gallery-close').addEventListener('click',()=>gallery.close());
     $('photo-back').addEventListener('click',()=>showGallery(galleryIndex-1));$('photo-forward').addEventListener('click',()=>showGallery(galleryIndex+1));
     flash.addEventListener('click',()=>showGallery(flashIndex));

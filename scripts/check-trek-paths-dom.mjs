@@ -13,7 +13,47 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const state=()=>evaluate(`({...window.trekStatus?.(),sampleTime:performance.now(),overflow:document.documentElement.scrollWidth-innerWidth,menu:document.querySelector('#journey-menu').open,gallery:document.querySelector('#photo-gallery').open,photo:document.querySelector('#gallery-image').getAttribute('src'),photoLoaded:document.querySelector('#gallery-image').naturalWidth>0,creditsExpanded:document.querySelector('.maplibregl-ctrl-attrib')?.classList.contains('maplibregl-compact-show'),controlsFit:[...document.querySelectorAll('.masthead button,.journey-controls button,.journey-controls input')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1;})})`);
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
+  const openPhotos=async()=>{await click('#menu-open');if(await evaluate("document.querySelector('#menu-photos').hidden")){await choose(30);await settled();}await click('#menu-photos');};
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_CONTROLS_ONLY==='1'){
+    section('Clear progress, day blocks and user-controlled speed');
+    await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the updated journey prepares');
+    const blocks=()=>evaluate(`({count:document.querySelector('#day-blocks').children.length,complete:document.querySelectorAll('#day-blocks .complete').length,current:document.querySelector('#day-blocks .current')?.dataset.day,fill:+document.querySelector('#day-blocks .current')?.dataset.fill,future:[...document.querySelectorAll('#day-blocks .current~span')].every(e=>+e.dataset.fill===0)})`);
+    let b=await blocks();check(b.count===67&&b.complete===29&&b.current==='30'&&Math.abs(b.fill-50)<=1&&b.future,'the day strip shows completed days, current progress and empty future days');
+    check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('1×')"),'the photograph button is replaced by a visible speed control');
+    const held=(await state()).distance;
+    for(const [pace,label] of [[3200,'2×'],[400,'¼×'],[1600,'1×']]){
+      await click('#speed-cycle');const s=await state();
+      check(s.pace===pace&&!s.playing&&s.distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}&&+document.querySelector('#pace').value===${pace}`),`${label} updates both speed controls without moving a paused journey`);
+    }
+    await click('#menu-open');await evaluate("(()=>{const e=document.querySelector('#pace');e.value=400;e.dispatchEvent(new Event('change',{bubbles:true}));})()");
+    check((await state()).pace===400&&await evaluate("document.querySelector('#speed-label').textContent==='¼×'"),'changing speed in the menu updates the visible control');await click('#menu-close');await click('#speed-cycle');
+    await click('#play');await sleep(500);await click('#speed-cycle');const moving=await state();await sleep(1800);await click('#play');
+    check(moving.playing&&moving.pace===3200&&(await state()).distance>moving.distance,'fast-forward changes pace during playback without interrupting travel');
+    await choose(6);check(await settled(),'a backward day change prepares');b=await blocks();check(b.complete===5&&b.current==='6'&&b.future,'seeking backwards clears the later day blocks');
+    await scrub(187340);await settled();await capture?.('trek-controls-town');
+    await choose(5);await settled();const metrics=()=>evaluate("[document.querySelector('#readout-distance').textContent,document.querySelector('#readout-ascent').textContent]");
+    const before=await metrics();await click('#play');await sleep(800);await click('#play');
+    check((await state()).kind==='connection'&&JSON.stringify(await metrics())===JSON.stringify(before),'day progress across a missing recording adds no walking distance or climb');
+    await scrub(path.total);b=await blocks();check(b.complete===67&&b.current==='67'&&b.fill===100,'Sofia completes all 67 day blocks');
+    await click('#menu-open');await click('#restart');b=await blocks();check(b.complete===0&&b.current==='1'&&b.fill===0,'restarting clears the day strip');
+    await choose(30);check(await settled(),'the photo day prepares again');
+    const showPrint=async()=>{await evaluate("(()=>{const e=document.querySelector('#photo-interludes');e.checked=true;e.dispatchEvent(new Event('change',{bubbles:true}));})()");return until(async()=>(await state()).flash,5000);};
+    for(const [width,height] of [[1440,900],[390,844],[320,844],[844,390]]){
+      await setDesktop(width,height);check(await showPrint(),'an original photograph appears automatically');await sleep(500);
+      const fit=await evaluate(`(()=>{const box=s=>document.querySelector(s).getBoundingClientRect(),p=box('#memory-flash'),r=box('.journey-controls'),brand=box('.mark'),f=box('#country-flag'),m=box('#minimap-canvas'),year=getComputedStyle(document.querySelector('.mark small')),apart=(a,b)=>a.bottom<=b.top||a.top>=b.bottom||a.right<=b.left||a.left>=b.right;return {photo:p.top>=0&&apart(p,r)&&apart(p,brand),year:year.display!=='none'&&+year.opacity===1&&parseFloat(year.fontSize)>=10,labels:[...document.querySelectorAll('.journey-readout dt')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=9),flag:f.width<=16&&f.top>=m.bottom&&f.right<innerWidth,blocks:[...document.querySelectorAll('#day-blocks>span')].every(e=>e.getBoundingClientRect().width>=2),metricFit:[...document.querySelectorAll('.journey-readout dd')].every(e=>e.scrollWidth<=e.clientWidth+1)};})()`);
+      const s=await state();check(s.controlsFit&&s.overflow<=1&&Object.values(fit).every(Boolean),`${width}×${height} fits the counters, all day blocks, year, quiet flag, photograph and controls`);
+      await capture?.(`trek-controls-${width}-${height}`);
+    }
+    await setDesktop(390,844);await showPrint();await click('#memory-flash');check(await until(async()=>(await state()).photoLoaded),'tapping an automatic print opens its original photograph');
+    check((await state()).galleryCount===37&&!(await state()).playing,'the original day gallery remains reachable from the print');await click('#gallery-close');
+    await click('.maplibregl-ctrl-attrib-button');await sleep(100);
+    check(await evaluate("document.querySelector('.maplibregl-ctrl-attrib').open&&document.querySelector('.maplibregl-ctrl-attrib-inner').textContent.includes('OpenStreetMap')&&document.querySelector('.maplibregl-ctrl-attrib-inner').textContent.includes('Mapzen')"),'Map credits opens the native provider attribution');
+    await capture?.('trek-controls-credits');await click('.maplibregl-ctrl-attrib-button');await sleep(100);
+    check(await evaluate("!document.querySelector('.maplibregl-ctrl-attrib').open"),'the text disclosure closes cleanly');
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the changed controls and responsive states have no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_LANDMARKS_ONLY==='1'){
     section('Oversized paper cathedrals along the real route');
     await setDesktop(1440,900);await goto('/trek/?day=4');await settled();
@@ -39,7 +79,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   if(process.env.CHECK_TREK_FLOW_ONLY==='1'){
     section('Faster flow, paper photographs and the country atlas');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the Alpine scene prepares');
-    check(await evaluate("!document.querySelector('.masthead button')&&document.querySelector('.journey-readout #menu-open')"),'the day selector replaces the top-right menu button');
+    check(await evaluate("!document.querySelector('.masthead button')&&document.querySelector('.journey-controls #menu-open')"),'the day selector replaces the top-right menu button');
     check((await state()).pace===1600,'Flow starts at the new faster pace');
     const showPrint=async()=>{
       await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=true;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
@@ -70,7 +110,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     console.log('  flow measurements '+JSON.stringify({metres:Math.round(moved),seconds:(samples.at(-1).sampleTime-samples[0].sampleTime)/1000,maxTurn:Math.max(...turns),minimumClearance:Math.min(...samples.map(s=>s.cameraClearance))}));
     for(const [day,country,flag] of [[3,'France','fr'],[17,'Germany','de'],[30,'Austria','at'],[36,'Slovenia','si'],[42,'Croatia','hr'],[54,'Serbia','rs'],[65,'Bulgaria','bg']]){
       await choose(day);check(await settled(),`${country} terrain prepares`);
-      check(await until(async()=>{const s=await state();return s.wayfinding?.country===country&&s.wayfinding.flag===flag&&s.wayfinding.flagReady;},5000),`${country} has its flag on the atlas marker`);
+      check(await until(async()=>{const s=await state();return s.wayfinding?.country===country&&s.wayfinding.flag===flag&&s.wayfinding.flagReady;},5000),`${country} has its flag beside the atlas country name`);
       const s=await state();check(s.elevation.samples===11677&&Number.isFinite(s.elevation.metres)&&Number.isFinite(s.mapElevation)&&s.mapElevation>0&&s.cameraClearance>=419.9,`${country} has a mapped profile and rendered terrain height`);
       console.log('  country terrain '+JSON.stringify({country,profile:s.elevation.metres,ground:s.mapElevation}));
     }
@@ -120,7 +160,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await choose(17);await choose(49);await choose(30);check(await settled(),'rapid day changes discard superseded preparation work');
     check((await state()).day===30&&!await evaluate("document.querySelector('#play').disabled"),'only the final chosen destination becomes ready');
     await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1});
-    await click('#photos-open');check(await until(async()=>(await state()).photoLoaded),'photographs still open over the cached map');await click('#gallery-close');
+    await openPhotos();check(await until(async()=>(await state()).photoLoaded),'photographs still open over the cached map');await click('#gallery-close');
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'loading, cached returns, playback and resizes have no JavaScript exceptions');
     return;
   }
@@ -135,7 +175,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await click('#play');await sleep(900);await click('#play');
     check(JSON.stringify((await state()).wayfinding.point)!==JSON.stringify(markerBefore),'the inset marker follows actual playback');
     check((await evaluate("document.querySelector('#minimap-canvas').toDataURL()"))!==canvasBefore,'the visible inset updates as the traveller moves');
-    const at=(await state()).distance;await click('#photos-open');
+    const at=(await state()).distance;await openPhotos();
     check(await until(async()=>(await state()).photoLoaded),'the original photographs load over the updated landscape');
     await click('#gallery-close');check((await state()).distance===at,'photographs preserve the exact route position');
     for(const [name,distance,flag] of [['reims',136600,'fr'],['ptuj',1408700,'si'],['sofia',path.total-600,'bg']]){
@@ -163,7 +203,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     const expected=path.recordedFraction(30,s.distance),before=data.days[28],after=data.days[29];
     check(values.day==='30'&&Math.abs(Number(values.km.replaceAll(',',''))-(before.cum+(after.cum-before.cum)*expected))<.06,'distance uses the original daily totals and recorded progress');
     check(Number(values.ascent.replaceAll(',',''))===Math.round(before.cumElev+(after.cumElev-before.cumElev)*expected),'ascent is the original accumulated climb, independent of camera height');
-    check(values.fit&&values.top>900*.75,'the desktop readout leaves the landscape open');
+    check(values.fit&&values.top>900*.7,'the readable desktop counters and day strip stay in the lower part of the landscape');
     const link=path.pieces.filter(p=>p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
     await scrub((link.start+link.end)/2);await settled();const first=await readout();await click('#play');await sleep(900);await click('#play');values=await readout();
     check(values.km===first.km&&values.ascent===first.ascent,'the long visual connection adds neither distance nor ascent');
@@ -172,7 +212,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       const beforeResize=await state();
       await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(180);
       values=await readout();s=await state();
-      check(values.fit&&values.top>844*.75&&s.controlsFit&&s.overflow<=1&&s.distance===beforeResize.distance,`${width}px fits the numbers and controls without moving the route`);
+      check(values.fit&&values.top>844*.7&&s.controlsFit&&s.overflow<=1&&s.distance===beforeResize.distance,`${width}px fits the numbers and day strip without moving the route`);
     }
     await scrub(path.total);values=await readout();
     check(values.day==='67'&&values.km==='1,982'&&values.ascent===Math.round(data.stats.ascent).toLocaleString('en-GB'),'Sofia shows the exact journey totals');
@@ -194,7 +234,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       await capture?.(`trek-paper-woodland-${width}`);
     }
     check((await state()).paper.trees>0,'paper scenery survives desktop and phone resizes');
-    await click('#photos-open');check(await until(async()=>(await state()).photoLoaded),'the original photographs open from the detailed paper view');await click('#gallery-close');
+    await openPhotos();check(await until(async()=>(await state()).photoLoaded),'the original photographs open from the detailed paper view');await click('#gallery-close');
     await choose(30);check(await settled(),'the detailed Alpine landscape prepares after leaving the woodland');
     for(const width of [1440,390]){
       await setDesktop(width,width>650?900:844);await sleep(650);
@@ -219,7 +259,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const paperBefore=s.distance;
   await cdp.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await sleep(250);
   s=await state();check(s.overflow<=1&&s.controlsFit&&s.distance===paperBefore,'the paper landscape and original progress controls fit the phone without moving the route');
-  await click('#photos-open');check(await until(async()=>(await state()).photoLoaded),'original photographs still open over the paper landscape');await click('#gallery-close');
+  await openPhotos();check(await until(async()=>(await state()).photoLoaded),'original photographs still open over the paper landscape');await click('#gallery-close');
   await setDesktop(1440,900);await choose(30);check(await settled(),'the Alpine landscape loads after the woodland view');
   check(await until(async()=>(await state()).paper?.updates>0,30000),'paper detail also renders in the Alpine terrain');
   section('Calm camera through steep terrain');
@@ -291,7 +331,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     const before=(await state()).distance;
     await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(250);s=await state();
     check(s.distance===before&&s.controlsFit&&s.overflow<=1,`${width}px leaves the landscape clear and preserves the route position`);
-    await click('#photos-open');check((await state()).gallery,'the phone photograph opens');
+    await openPhotos();check((await state()).gallery,'the phone photograph opens');
     check(await evaluate('(()=>{const r=document.querySelector("#photo-gallery").getBoundingClientRect();return r.width===innerWidth&&r.height===innerHeight})()'),'the photograph fills the phone without an inset card');
     await click('#gallery-close');await click('#menu-open');check(await evaluate('document.querySelector("#journey-menu").getBoundingClientRect().width<=innerWidth'),'the day menu fits the phone');await click('#menu-close');
   }
@@ -305,7 +345,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   section('Graphics fallback and runtime errors');
   await evaluate('document.querySelector(".maplibregl-canvas").dispatchEvent(new Event("webglcontextlost"))');
   check((await state()).failed&&!(await state()).playing&&await evaluate('!document.querySelector("#map-status").hidden'),'graphics loss pauses and explains the unavailable landscape');
-  await click('#photos-open');check((await state()).gallery,'photographs remain available after graphics loss');
+  await openPhotos();check((await state()).gallery,'photographs remain available after graphics loss');
   const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');
   check(errors.length===0,`the traveller runtime reports no JavaScript errors [${errors.length}]`);
   if(errors.length)process.stdout.write(JSON.stringify(errors.map(e=>e.params))+'\n');

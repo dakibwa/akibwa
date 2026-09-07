@@ -7,7 +7,7 @@ const {buildJourneyPath,metres,headingDelta}=require('../public/trek/journey-rou
 const camera=require('../public/trek/journey-camera.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
 const original=JSON.stringify(route),path=buildJourneyPath(route);
-const paces=[300,1600,3200];
+const paces=[400,1600,3200];
 
 for(let d=0;d<=path.total;d+=250){
   const p=camera.pointAt(path,d),next=camera.pointAt(path,d+1),heading=camera.headingAt(path,d);

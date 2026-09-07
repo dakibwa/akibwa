@@ -42,20 +42,27 @@ perspective and much less text and interface on 5 September 2026.
   lakes visibly blue and respect mapped shorelines. Draw every ground material,
   field fill and hillshade before the first waterway layer, so paper treatments
   cannot wash out streams. Leave mapped surface waterways free of tree trunks.
-- Keep the small mark, play control, progress line, date and photograph button
-  on the landscape. The current country and mapped height sit in the minimap.
-  A clearly readable row above the progress line shows
-  day out of 67, kilometres covered and total metres climbed, as Dan requested
-  on 5 September 2026. Use large, dark Fraunces numerals and smaller Plex labels on the open landscape. The opening has a primary start action and a quiet link to browse days,
-  accessible while terrain loads or fails; Sofia
-  has one replay action. Map credits remain in a visible compact disclosure.
+- Keep the small mark with a readable 2019 stamp, play control, speed button,
+  progress line and date on the landscape. Photographs appear automatically;
+  the separate photograph button is removed. The current country and mapped
+  height sit in the minimap. Above the progress line, two larger, dark Fraunces
+  counters show kilometres covered and metres climbed, with readable Plex labels
+  on a soft paper wash. All 67 days appear as small blocks: completed days are
+  green, the current block fills as that day passes, and future days stay empty.
+  Tapping the row opens the day menu; the individual blocks are not tiny touch
+  targets. Seeking backwards clears the later blocks, and Sofia fills all 67.
+  The opening has a primary start action and a quiet link to browse days,
+  accessible while terrain loads or fails; Sofia has one replay action. Map
+  credits use a quiet text disclosure above the landscape wash, retaining the
+  native provider links and keyboard operation.
 - The upper-right corner holds a small paper minimap of the full journey, with
   the completed route, remaining route, dashed connections and a moving direction
-  marker carrying a small muted flag. Use the existing country outlines
-  and a 2D canvas, with no second terrain renderer. Flags are local SVGs from
+  marker. A small flag sits beside the country name beneath the atlas, with no
+  flagpole or flag covering the route. Use the existing country outlines and a
+  2D canvas, with no second terrain renderer. Flags are local SVGs from
   flag-icons with its MIT licence alongside them, loaded only as needed.
   Following Dan’s 7 September feedback, remove the top-right menu button and
-  place the compact atlas there; tapping the day number opens journey options.
+  place the compact atlas there; tapping the day-block row opens journey options.
 - Settlement names come from the existing map tiles. Show one name briefly near
   a city, town, village or hamlet, with a small geographic margin to avoid flicker.
   Never announce passing a town on a visual connection. Names clear after leaving;
@@ -90,9 +97,11 @@ perspective and much less text and interface on 5 September 2026.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
 - Following Dan's renewed 7 September request for faster travel, default Flow
-  has a 1,600 m/s presentation pace, with Wander at 300 m/s and Fly at 3,200 m/s. These
-  are playback speeds, not recorded walking speeds. Let gentler bends pass more
-  readily while retaining the smooth turn and acceleration limits below.
+  has a 1,600 m/s presentation pace, with Wander at 400 m/s and Fly at 3,200 m/s.
+  The visible fast-forward button cycles 1×, 2× and ¼×; it stays in sync with the
+  menu and preserves playback and position when changed. These are playback
+  speeds, not recorded walking speeds. Let gentler bends pass more readily while
+  retaining the smooth turn and acceleration limits below.
 - Original photographs appear as lightly angled paper prints beside the moving
   landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
   `contain`; do not interrupt playback or hide the route, atlas or elevation.
@@ -360,3 +369,8 @@ gallery, connection profiles, the relocated day selector and 1440/390/320px fit.
 `CHECK_TREK_LANDMARKS_ONLY=1` exercises the Reims and Nancy approaches at
 1440/390/320px, continuous passage and the enlarged Munich model. Inspect the
 rendered towers and silhouette; a model name in the status alone is insufficient.
+
+`CHECK_TREK_CONTROLS_ONLY=1` checks the visible speed cycle and menu sync,
+paused and playing speed changes, day blocks through backward seeks and replay,
+unchanged distance on connections, automatic photos, native map credits, and
+readable controls at desktop, 390px, 320px and short landscape sizes.
