@@ -601,6 +601,22 @@ const checkPublicLanding = async () => {
     const card=document.querySelector('.personal-taste-card');card.scrollIntoView({block:'center',behavior:'instant'});
     const box=card.getBoundingClientRect();return {x:box.left+20,y:box.top+20};
   })()`);
+  const tasteFrames = (action) => evaluate(`new Promise(resolve => {
+    const cards=[...document.querySelectorAll('.personal-taste-card')];
+    const sample=()=>({
+      first:cards[0].getBoundingClientRect().top,
+      below:cards[1].getBoundingClientRect().top,
+      neighbour:cards[4].getBoundingClientRect().top,
+      neighbourBelow:cards[5].getBoundingClientRect().top,
+      totalSpace:cards.reduce((height,card)=>height+card.querySelector('.personal-taste-detail-shell').getBoundingClientRect().height,0),
+      opacity:Number(getComputedStyle(document.querySelector('#taste-detail') || cards[0].querySelector('.personal-taste-detail')).opacity)
+    });
+    const frames=[sample()];
+    ${action}
+    const start=performance.now();
+    const frame=now=>{frames.push(sample());if(now-start<650)requestAnimationFrame(frame);else resolve(frames);};
+    requestAnimationFrame(frame);
+  })`);
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...pointer});
   await sleep(180);
   const tasteOpeningHeight = await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height');
@@ -609,42 +625,55 @@ const checkPublicLanding = async () => {
     const card=document.querySelector('.personal-taste-card');
     const detail=document.querySelector('#taste-detail');
     return detail && getComputedStyle(detail).visibility==='visible' &&
-      detail.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
+      detail.querySelector('.taste-detail-copy > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
       detail.querySelector('.personal-taste-detail-count').textContent.includes(Number(card.dataset.listens).toLocaleString('en-GB')) &&
       getComputedStyle(card.querySelector('.personal-taste-caption')).display==='none' && !card.querySelector('.listening-hover');
-  })()`), "hover reveals album, artist and combined plays beside the selected cover");
-  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste reveals the floating box gradually with the shared timing");
+  })()`), "hover reveals album, artist and combined plays beneath the selected cover");
+  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste unfolds real space gradually with the shared timing");
   await capture("music-hover-desktop");
-  const firstTastePlacement=await evaluate('document.querySelector(".personal-taste-detail-shell").dataset.placement');
-  const tasteHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[4].focus();');
-  check(passesThrough(tasteHandover,'left') && tasteHandover.every(sample=>sample.space>20), "Taste glides between covers without collapsing the open dropdown");
-  check(tasteHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "Taste crossfades incoming title, creator and count");
-  const verticalHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[5].focus();');
-  check(passesThrough(verticalHandover,'top'), "Taste details glide between rows as well as columns");
-  await evaluate('document.querySelectorAll(".personal-taste-card")[1].focus()');
-  await sleep(520);
-  check(await evaluate('document.querySelector(".personal-taste-detail-shell").dataset.placement') !== firstTastePlacement, "Taste varies its placement as the reader moves through the artwork");
+  const tasteHandover=await tasteFrames('cards[4].focus({preventScroll:true});');
+  check(passesThrough(tasteHandover,'below') && tasteHandover.at(-1).below<tasteHandover[0].below-30 &&
+    passesThrough(tasteHandover,'neighbourBelow') && tasteHandover.at(-1).neighbourBelow>tasteHandover[0].neighbourBelow+30,
+    "changing columns smoothly closes the old space and pushes down the new stack");
+  check(tasteHandover.every(frame=>Math.abs(frame.first-tasteHandover[0].first)<1 && Math.abs(frame.neighbour-tasteHandover[0].neighbour)<1),
+    "opening details keeps both selected covers and neighbouring column tops anchored");
+  check(tasteHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "the incoming Taste copy fades gently into the expanding space");
+  const sameColumn=await evaluate(`new Promise(resolve=>{
+    const cards=[...document.querySelectorAll('.taste-wall-column')[1].querySelectorAll('article')];
+    cards[1].focus({preventScroll:true});
+    setTimeout(()=>resolve({
+      title:document.querySelector('#taste-detail .taste-detail-copy > strong').textContent,
+      selected:cards[1].querySelector('.personal-taste-title').textContent,
+      visible:document.querySelectorAll('.personal-taste-detail-shell.is-open').length,
+      overlap:cards[2].getBoundingClientRect().top<cards[1].getBoundingClientRect().bottom}),550);
+  })`);
+  check(sameColumn.title===sameColumn.selected && sameColumn.visible===1 && !sameColumn.overlap,
+    "moving down a stack keeps one current detail and separates the following artwork");
+  await evaluate('document.querySelectorAll(".personal-taste-card")[0].focus({preventScroll:true}); document.querySelectorAll(".personal-taste-card")[7].focus({preventScroll:true}); document.querySelectorAll(".personal-taste-card")[1].focus({preventScroll:true})');
+  await sleep(550);
+  check(await evaluate('document.querySelectorAll(".personal-taste-detail-shell.is-open").length===1 && document.querySelector("#taste-detail").closest("article")===document.activeElement'),
+    "rapid changes settle on the latest cover without leaving stale open spaces");
   check(await evaluate(`(() => {
     const panel=document.querySelector('#taste-detail').getBoundingClientRect();
-    const card=document.activeElement.getBoundingClientRect();
-    return panel.top>=0 && panel.bottom<=innerHeight && (panel.top>=card.bottom || panel.bottom<=card.top || panel.left>=card.right || panel.right<=card.left);
-  })()`), "the wall detail stays on screen and clear of the selected artwork");
+    const card=document.activeElement.querySelector('.personal-taste-art').getBoundingClientRect();
+    return panel.top>=card.bottom+7 && Math.abs(panel.left-card.left)<1 && Math.abs(panel.width-card.width)<1;
+  })()`), "the detail sits directly beneath its cover with matching edges");
   const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
   check(await evaluate('document.querySelector("#taste").classList.contains("is-open")'), "the revealed text stays open while the pointer moves onto it");
-  await cdp.send('Input.dispatchKeyEvent', {type:'keyDown', key:'Escape', code:'Escape', windowsVirtualKeyCode:27});
-  await sleep(400);
-  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getAttribute("aria-hidden")==="true" && document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height<1'), "Escape dismisses the Taste panel and closes its space");
+  const tasteClosing=await tasteFrames('window.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));');
+  check(passesThrough(tasteClosing,'totalSpace') && tasteClosing.at(-1).totalSpace<1, "closing a Taste detail eases its reserved space back to zero");
+  check(await evaluate('[...document.querySelectorAll(".personal-taste-detail-shell")].every(panel=>panel.getAttribute("aria-hidden")==="true" && panel.inert && panel.getBoundingClientRect().height<1)'), "Escape dismisses Taste and restores every stack without reopening under a stationary pointer");
   await evaluate('document.querySelectorAll(".personal-taste-card")[7].focus()');
   await sleep(550);
   check(await evaluate(`(() => {
     const detail=document.querySelector('#taste-detail'), box=detail.getBoundingClientRect(), section=document.querySelector('#taste').getBoundingClientRect();
-    return detail.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent===document.activeElement.querySelector('.personal-taste-title').textContent &&
+    return detail.querySelector('.taste-detail-copy > strong').textContent===document.activeElement.querySelector('.personal-taste-title').textContent &&
       box.left>=section.left-1 && box.right<=section.right+1;
   })()`), "keyboard focus reveals the selected album and keeps the panel inside the page");
   await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=1800');
   await sleep(150);
-  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getAttribute("aria-hidden")==="true"'), "scrolling the active cover out of view dismisses its panel");
+  check(await evaluate('!document.querySelector(".personal-taste-detail-shell.is-open")'), "scrolling the active cover out of view dismisses its panel");
   await evaluate('document.querySelector(".taste-load-more").click()');
   await sleep(200);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
@@ -705,6 +734,8 @@ const checkPublicLanding = async () => {
   await sleep(200);
   const focusedCount = await evaluate('document.querySelector("#taste-detail .personal-taste-detail-count")?.textContent');
   check(focusedCount && !/last[.]?fm|spotify|apple|youtube/i.test(focusedCount), `album hover labels contain no provider branding [${focusedCount}]`);
+  await sleep(600);
+  check(await evaluate('document.querySelector("#taste-detail")?.closest("article")===document.activeElement'), "keyboard details stay open while a cover scrolls into view from below the fold");
   check(await evaluate('!document.querySelector("dialog") && !location.hash && document.body.style.overflow !== "hidden" && document.querySelector(".personal-taste-card").tagName === "ARTICLE"'), "album cards have no click-through, modal, URL change or scroll lock");
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
   await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
@@ -788,6 +819,7 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelector(".taste-search-toggle").click()');
   check(await evaluate('[document.querySelector(".taste-search"),document.querySelector(".taste-search-field"),document.querySelector(".index-reveal-reserve")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion makes the search and reserved detail space immediate");
   await evaluate('document.querySelector(".taste-search-field input").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+  await sleep(50);
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
   await evaluate('document.querySelector(".personal-taste-card").focus()');
   await sleep(50);

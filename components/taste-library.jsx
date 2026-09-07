@@ -8,7 +8,6 @@ import { useAlbumCatalogue } from "./use-album-catalogue";
 import { listeningLabel, rankPodcasts } from "./listening-label.mjs";
 import { listeningDescription } from "./listening-hover";
 import { tasteItemKey } from "./taste-identity.mjs";
-import { IndexReveal } from "./index-reveal";
 import { RailControls } from "./rail-controls";
 import { Search, X } from "lucide-react";
 
@@ -62,6 +61,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const rail = useRef(null);
   const more = useRef(null);
   const activeCard = useRef(null);
+  const enteredView = useRef(false);
   const pointerPosition = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -74,18 +74,42 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     activeCard.current = null;
     setDetailOpen(false);
   };
+  const cardVisible = (card) => {
+    const box = card?.getBoundingClientRect();
+    const bounds = rail.current?.getBoundingClientRect();
+    return box && bounds && Math.min(box.right, bounds.right) - Math.max(box.left, bounds.left) >= 24 &&
+      Math.min(box.bottom, innerHeight) - Math.max(box.top, 0) >= 24;
+  };
   const revealDetail = (item, card) => {
     if (!matchMedia("(hover: hover)").matches) return;
     if (activeCard.current === card) return;
     activeCard.current = card;
-    setDetail(item);
+    enteredView.current = cardVisible(card);
+    setDetail(`${item.kind}-${tasteItemKey(item)}`);
     setDetailOpen(true);
   };
   useEffect(() => {
     if (!detailOpen) return;
     const onEscape = (event) => { if (event.key === "Escape") dismissDetail(); };
+    const shelf = rail.current;
+    const keepVisible = () => {
+      const visible = cardVisible(activeCard.current);
+      // Keyboard focus can start a native smooth scroll. Let the card arrive
+      // before treating a later move out of view as dismissal.
+      if (visible) enteredView.current = true;
+      if (!activeCard.current || !matchMedia("(hover: hover)").matches ||
+          (!visible && enteredView.current)) dismissDetail();
+    };
     window.addEventListener("keydown", onEscape);
-    return () => window.removeEventListener("keydown", onEscape);
+    shelf?.addEventListener("scroll", keepVisible, { passive: true });
+    window.addEventListener("scroll", keepVisible, { passive: true });
+    window.addEventListener("resize", keepVisible, { passive: true });
+    return () => {
+      window.removeEventListener("keydown", onEscape);
+      shelf?.removeEventListener("scroll", keepVisible);
+      window.removeEventListener("scroll", keepVisible);
+      window.removeEventListener("resize", keepVisible);
+    };
   }, [detailOpen]);
   const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt, category === "music" || searchOpen);
   const music = useMemo(() => browseAlbums(catalogue).map((album) => ({
@@ -128,7 +152,6 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   }) : selection;
   const visible = list.slice(0, visibleCount);
   const columns = stackArtwork(visible);
-  const detailCount = detail ? listeningLabel(detail) : null;
   const updateQuery = (value) => {
     dismissDetail();
     setQuery(value);
@@ -209,12 +232,15 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         {columns.map((column) => <div className="taste-wall-column" key={`${column[0].kind}-${tasteItemKey(column[0])}`}>
         {column.map((item) => {
           const count = listeningLabel(item);
+          const itemKey = `${item.kind}-${tasteItemKey(item)}`;
+          const expanded = detailOpen && detail === itemKey;
           return (
             <article
               className="personal-taste-card"
               data-kind={item.kind}
+              data-detail-open={expanded}
               tabIndex={0}
-              key={`${item.kind}-${tasteItemKey(item)}`}
+              key={itemKey}
               aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)}`}
               data-listens={item.plays}
               data-album-id={item.kind === "music" ? item.id : undefined}
@@ -235,6 +261,18 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
               <span className="personal-taste-art">
                 <TasteArtwork item={item} />
               </span>
+              <div className={`personal-taste-detail-shell${expanded ? " is-open" : ""}`} aria-hidden={!expanded} inert={!expanded}
+                style={{ "--hover-detail-accent": `rgb(${groups.find(([id]) => id === item.kind)[2]})` }}>
+                <div className="taste-detail-clip">
+                  <div className="personal-taste-detail" id={expanded ? "taste-detail" : undefined}>
+                    <div className="taste-detail-copy">
+                      <strong>{item.title}</strong>
+                      {item.creator ? <span>{item.creator}</span> : null}
+                      {count ? <p className="personal-taste-detail-count"><strong>{count.value}</strong> {count.label}</p> : null}
+                    </div>
+                  </div>
+                </div>
+              </div>
               <span className="personal-taste-caption">
                 <span className="personal-taste-title">{item.title}</span>
                 {item.creator ? <span className="personal-taste-creator">{item.creator}</span> : null}
@@ -250,26 +288,6 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           </button>
         ) : null}
       </div>
-      <IndexReveal
-        open={detailOpen}
-        itemKey={detail ? `${detail.kind}-${tasteItemKey(detail)}` : "empty"}
-        rail={rail}
-        getAnchor={() => activeCard.current}
-        onUnavailable={dismissDetail}
-        accent={detail ? `rgb(${groups.find(([id]) => id === detail.kind)[2]})` : undefined}
-        id="taste-detail"
-        className="personal-taste-detail-shell"
-        panelClassName="personal-taste-detail"
-        floating
-        avoid=".concept-taste-head, .taste-filters"
-        placementIndex={detail ? visible.findIndex(item => item.kind === detail.kind && tasteItemKey(item) === tasteItemKey(detail)) : 0}
-      >
-        {detail ? <>
-          <strong>{detail.title}</strong>
-          {detail.creator ? <span>{detail.creator}</span> : null}
-          {detailCount ? <p className="personal-taste-detail-count"><strong>{detailCount.value}</strong> {detailCount.label}</p> : null}
-        </> : null}
-      </IndexReveal>
       </div>
       {(category === "music" || searchOpen) && (loading || loadError) ? <p className="taste-load-status" role="status">
         {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
