@@ -397,6 +397,58 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelectorAll(".concept-career-stop")[2].focus()');
   check(await evaluate('document.querySelector("#career-detail").textContent.includes("BI Team Lead")'), "keyboard focus previews the next career role");
 
+  const panelMotion = (selector, action) => evaluate(`new Promise(resolve => {
+    const panel=document.querySelector(${JSON.stringify(selector)});
+    const sample=()=>{
+      const box=panel.getBoundingClientRect();
+      return {left:box.left,height:box.height,space:panel.closest('.index-reveal-shell').getBoundingClientRect().height,
+        opacity:Number(getComputedStyle(panel.querySelector('.index-reveal-content:not(.is-outgoing)')).opacity)};
+    };
+    const samples=[sample()];
+    ${action}
+    const until=performance.now()+560;
+    const frame=()=>{samples.push(sample());if(performance.now()<until) requestAnimationFrame(frame);else resolve(samples);};
+    requestAnimationFrame(frame);
+  })`);
+  const passesThrough = (samples, property) => {
+    const start=samples[0][property], end=samples.at(-1)[property];
+    return Math.abs(end-start)>4 && samples.some(sample=>sample[property]>Math.min(start,end)+1 && sample[property]<Math.max(start,end)-1);
+  };
+  await evaluate('document.querySelectorAll(".concept-career-stop")[5].focus()');
+  await sleep(550);
+  const careerHandover=await panelMotion('#career-detail', 'document.querySelectorAll(".concept-career-stop")[4].focus();');
+  check(passesThrough(careerHandover,'left'), "career handover glides through intermediate positions beneath the selected role");
+  check(passesThrough(careerHandover,'height') && passesThrough(careerHandover,'space'), "career handover smoothly fits different text heights and moves the following content");
+  check(careerHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "incoming career text fades into the moving box");
+  const interrupted=await evaluate(`new Promise(resolve=>{
+    const buttons=document.querySelectorAll('.concept-career-stop');
+    buttons[0].focus();setTimeout(()=>buttons[7].focus(),70);setTimeout(()=>buttons[2].focus(),130);
+    setTimeout(()=>{const panel=document.querySelector('#career-detail');resolve({
+      title:panel.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent,
+      outgoing:panel.querySelectorAll('.is-outgoing').length,
+      open:!panel.closest('.index-reveal-shell').inert
+    });},700);
+  })`);
+  check(interrupted.title==='Leeds Building Society' && interrupted.outgoing===0 && interrupted.open, "rapid direction changes settle on the latest role without stale text");
+  for (const width of [320,390,820]) {
+    await setDesktop(width);
+    await goto('/');
+    await evaluate('document.querySelectorAll(".concept-career-stop")[7].focus()');
+    await sleep(550);
+    check(await evaluate(`(() => {
+      const panel=document.querySelector('#career-detail').getBoundingClientRect();
+      const section=document.querySelector('#career').getBoundingClientRect();
+      const gap=document.querySelector('#taste').getBoundingClientRect().top-panel.bottom;
+      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && gap<=37 && document.documentElement.scrollWidth<=innerWidth+1;
+    })()`), `the last career role fits the ${width}px page and keeps a close, clear divider`);
+    if(width===320){
+      await evaluate('document.querySelector(".concept-career-timeline").scrollLeft=0');
+      await sleep(380);
+      check(await evaluate('document.querySelector(".concept-career-detail-lane").inert && document.querySelector(".concept-career-detail-lane").getBoundingClientRect().height<1'), "scrolling a career role away closes its space and hides its text");
+    }
+  }
+  await setDesktop(1440);
+
   section("historical composition and motion");
   await goto("/");
   check(await evaluate('document.querySelector(".personal-taste-card").textContent.includes("Music for Psychedelic Therapy")'), "the most-listened curated album leads the Taste rail");
@@ -444,12 +496,15 @@ const checkPublicLanding = async () => {
     const card=document.querySelector('.personal-taste-card');
     const detail=document.querySelector('#taste-detail');
     return detail && getComputedStyle(detail).visibility==='visible' &&
-      detail.querySelector(':scope > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
+      detail.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
       detail.querySelector('.personal-taste-detail-count').textContent.includes(Number(card.dataset.listens).toLocaleString('en-GB')) &&
       getComputedStyle(card.querySelector('.personal-taste-caption')).display==='none' && !card.querySelector('.listening-hover');
   })()`), "hover reveals album, artist and combined plays beneath the clear cover");
   check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste opens space gradually with the career reveal timing");
   await capture("music-hover-desktop");
+  const tasteHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[4].focus();');
+  check(passesThrough(tasteHandover,'left') && tasteHandover.every(sample=>sample.space>20), "Taste glides between covers without collapsing the open dropdown");
+  check(tasteHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "Taste crossfades incoming title, creator and count");
   const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
   check(await evaluate('document.querySelector("#taste").classList.contains("is-open")'), "the revealed text stays open while the pointer moves onto it");
@@ -460,7 +515,7 @@ const checkPublicLanding = async () => {
   await sleep(550);
   check(await evaluate(`(() => {
     const detail=document.querySelector('#taste-detail'), box=detail.getBoundingClientRect(), section=document.querySelector('#taste').getBoundingClientRect();
-    return detail.querySelector(':scope > strong').textContent===document.activeElement.querySelector('.personal-taste-title').textContent &&
+    return detail.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent===document.activeElement.querySelector('.personal-taste-title').textContent &&
       box.left>=section.left-1 && box.right<=section.right+1;
   })()`), "keyboard focus reveals the selected album and keeps the panel inside the page");
   await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=1800');
@@ -599,11 +654,12 @@ const checkPublicLanding = async () => {
     `name motion is disabled [${nameTransition}]`
   );
   await evaluate('document.querySelector(".concept-career-stop").focus(); document.querySelector(".concept-career-stop").click()');
-  check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".concept-career-popover")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion opens the career detail without animation or delay");
+  check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".concept-career-detail-lane"),document.querySelector(".concept-career-detail-lane .index-reveal-track"),document.querySelector(".concept-career-popover")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion opens the career detail without animation or delay");
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
   await evaluate('document.querySelector(".personal-taste-card").focus()');
   await sleep(50);
   check(await evaluate('[document.querySelector(".personal-taste-detail-shell"),document.querySelector("#taste-detail")].every(item=>item && getComputedStyle(item).transitionProperty==="none")'), "reduced motion reveals album details without animation or delay");
+  check(await evaluate('[...document.querySelectorAll(".index-reveal-content:not(.is-outgoing)")].every(item=>getComputedStyle(item).animationName==="none")'), "reduced motion also disables the text handover");
 };
 
 const checkTrek = async () => {

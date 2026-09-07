@@ -8,6 +8,7 @@ import { useAlbumCatalogue } from "./use-album-catalogue";
 import { listeningLabel, rankPodcasts } from "./listening-label.mjs";
 import { listeningDescription } from "./listening-hover";
 import { tasteItemKey } from "./taste-identity.mjs";
+import { IndexReveal } from "./index-reveal";
 
 const groups = [
   ["all", "Highlights", "32, 32, 30"],
@@ -50,32 +51,16 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const activeCard = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [detailOffset, setDetailOffset] = useState(0);
   const dismissDetail = () => {
     activeCard.current = null;
     setDetailOpen(false);
   };
-  const positionDetail = () => {
-    if (!activeCard.current || !rail.current) return;
-    const cardBox = activeCard.current.getBoundingClientRect();
-    const railBox = rail.current.getBoundingClientRect();
-    if (cardBox.right <= railBox.left || cardBox.left >= railBox.right) {
-      dismissDetail();
-      return;
-    }
-    setDetailOffset(Math.max(0, cardBox.left - railBox.left));
-  };
   const revealDetail = (item, card) => {
+    if (!matchMedia("(hover: hover)").matches) return;
     activeCard.current = card;
-    setDetailOffset(Math.max(0, card.getBoundingClientRect().left - rail.current.getBoundingClientRect().left));
     setDetail(item);
     setDetailOpen(true);
   };
-  useEffect(() => {
-    const observer = new ResizeObserver(positionDetail);
-    observer.observe(rail.current);
-    return () => observer.disconnect();
-  }, []);
   useEffect(() => {
     if (!detailOpen) return;
     const onEscape = (event) => { if (event.key === "Escape") dismissDetail(); };
@@ -131,7 +116,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       className={`page-grid concept-archive personal-taste${detailOpen ? " is-open" : ""}`}
       id="taste"
       aria-labelledby="taste-title"
-      onMouseLeave={dismissDetail}
+      onMouseLeave={(event) => {
+        if (activeCard.current !== event.currentTarget.ownerDocument.activeElement) dismissDetail();
+      }}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) dismissDetail();
       }}
@@ -160,7 +147,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           </button>
         ))}
       </nav>
-      <div className="personal-taste-rail" ref={rail} onScroll={positionDetail}>
+      <div className="personal-taste-rail" ref={rail}>
         {visible.map((item) => {
           const count = listeningLabel(item);
           return (
@@ -175,7 +162,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
                 if (matchMedia("(hover: hover)").matches) revealDetail(item, event.currentTarget);
               }}
               onFocus={(event) => revealDetail(item, event.currentTarget)}
-              onBlur={dismissDetail}
+              onBlur={(event) => {
+                if (!rail.current?.contains(event.relatedTarget)) dismissDetail();
+              }}
             >
               <span className="personal-taste-art">
                 <TasteArtwork item={item} />
@@ -194,23 +183,23 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           </button>
         ) : null}
       </div>
-      <div className="personal-taste-detail-shell" aria-hidden={!detailOpen}>
-        <div className="personal-taste-detail-clip">
-          {detail ? <div
-            className={`index-hover-detail personal-taste-detail${detailOpen ? " is-open" : ""}`}
-            id="taste-detail"
-            aria-live="polite"
-            style={{
-              "--hover-detail-accent": `rgb(${groups.find(([id]) => id === detail.kind)[2]})`,
-              "--taste-detail-offset": `${detailOffset}px`,
-            }}
-          >
-            <strong>{detail.title}</strong>
-            {detail.creator ? <span>{detail.creator}</span> : null}
-            {detailCount ? <p className="personal-taste-detail-count"><strong>{detailCount.value}</strong> {detailCount.label}</p> : null}
-          </div> : null}
-        </div>
-      </div>
+      <IndexReveal
+        open={detailOpen}
+        itemKey={detail ? `${detail.kind}-${tasteItemKey(detail)}` : "empty"}
+        rail={rail}
+        getAnchor={() => activeCard.current}
+        onUnavailable={dismissDetail}
+        accent={detail ? `rgb(${groups.find(([id]) => id === detail.kind)[2]})` : undefined}
+        id="taste-detail"
+        className="personal-taste-detail-shell"
+        panelClassName="personal-taste-detail"
+      >
+        {detail ? <>
+          <strong>{detail.title}</strong>
+          {detail.creator ? <span>{detail.creator}</span> : null}
+          {detailCount ? <p className="personal-taste-detail-count"><strong>{detailCount.value}</strong> {detailCount.label}</p> : null}
+        </> : null}
+      </IndexReveal>
       {category === "music" && (loading || loadError) ? <p className="taste-load-status" role="status">
         {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
       </p> : null}

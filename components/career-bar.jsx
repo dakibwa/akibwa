@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SiteImage } from "./site-image";
+import { IndexReveal } from "./index-reveal";
 import curation from "@/data/taste-curation.json";
 
 const { career } = curation;
@@ -18,6 +19,8 @@ export function CareerBar() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
   const [lastRole, setLastRole] = useState(0);
+  const rail = useRef(null);
+  const cards = useRef([]);
   const active = held ?? preview;
   const detailIndex = active ?? lastRole;
   const detail = career[detailIndex];
@@ -31,16 +34,21 @@ export function CareerBar() {
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) dismiss();
       }}
-      onMouseLeave={() => setPreview(null)}
+      onMouseLeave={(event) => {
+        const focused = cards.current.indexOf(event.currentTarget.ownerDocument.activeElement);
+        setPreview(active === null || focused < 0 ? null : focused);
+        if (active !== null && held === null && focused >= 0) setLastRole(focused);
+      }}
     >
       <header className="concept-career-head">
         <h2 id="career-title">Career</h2>
       </header>
-      <ol className="concept-career-timeline" style={{ "--career-count": career.length }}>
+      <ol className="concept-career-timeline" ref={rail} style={{ "--career-count": career.length }}>
         {career.map((job, index) => (
           <li key={job.name} style={{ "--company-accent": job.accent }}>
             <button
               className="concept-career-stop"
+              ref={(element) => { cards.current[index] = element; }}
               type="button"
               aria-label={`${job.name}, ${job.role}, ${job.span}`}
               aria-expanded={active === index}
@@ -64,24 +72,23 @@ export function CareerBar() {
           </li>
         ))}
       </ol>
-      <div className="concept-career-detail-lane">
-        <div
-          className={`index-hover-detail concept-career-popover${active !== null ? " is-open" : ""}`}
-          id="career-detail"
-          aria-live="polite"
-          aria-hidden={active === null}
-          style={{
-            "--company-accent": detail.accent,
-            "--career-detail-offset": `${detailIndex * 100 / career.length}%`,
-          }}
-        >
-          <strong>{detail.name}</strong>
-          <span>{detail.role} · {detail.span}</span>
-          <p className="concept-career-statement">
-            <CareerStatement {...detail} />
-          </p>
-        </div>
-      </div>
+      <IndexReveal
+        open={active !== null}
+        itemKey={detail.name}
+        rail={rail}
+        getAnchor={() => cards.current[detailIndex]}
+        onUnavailable={dismiss}
+        accent={detail.accent}
+        id="career-detail"
+        className="concept-career-detail-lane"
+        panelClassName="concept-career-popover"
+      >
+        <strong>{detail.name}</strong>
+        <span>{detail.role} · {detail.span}</span>
+        <p className="concept-career-statement">
+          <CareerStatement {...detail} />
+        </p>
+      </IndexReveal>
     </section>
   );
 }

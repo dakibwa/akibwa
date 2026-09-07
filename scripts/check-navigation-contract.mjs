@@ -93,7 +93,7 @@ requireRuleText(".concept-project-grid {", ["grid-template-columns: repeat(3, mi
 requireRuleText(".hero-name-stack {", ["display: inline-grid"]);
 requireText(hero, "3200", "the historical name flip keeps its initial timing");
 requireText(hero, "visibilitychange", "the name timer must pause in hidden tabs");
-requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: 140px"]);
+requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: clamp(24px, 3vw, 36px)"]);
 requireRuleText(".personal-taste-rail {", ["grid-auto-flow: column", "overflow-x: auto"]);
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
