@@ -32,13 +32,46 @@ function placeBeside(card, bounds, width, height, index, obstacles) {
 
 // One moving box: the rail supplies its position, the text supplies its height.
 // Keeping both mounted lets an interrupted reveal continue from where it is.
-export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, placementIndex = 0, avoid, reserveBelow = false, className = "", panelClassName = "", children }) {
+export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, placementIndex = 0, avoid, reserveAbove = false, reserveBelow = false, className = "", panelClassName = "", children }) {
   const content = useRef(null);
   const track = useRef(null);
+  const above = useRef(null);
+  const anchorViewport = useRef(false);
   const previous = useRef(null);
   const glide = useRef(false);
   const [outgoing, setOutgoing] = useState(null);
-  const [layout, setLayout] = useState({ height: 0, offset: 0, top: 0, width: null, travel: false, placement: "bottom-start", space: 0 });
+  const [layout, setLayout] = useState({ height: 0, offset: 0, top: 0, width: null, travel: false, placement: "bottom-start", space: 0, above: 0 });
+
+  useLayoutEffect(() => {
+    const space = above.current;
+    const shelf = rail.current;
+    const shell = track.current?.parentElement;
+    if (!reserveAbove || !space || !shelf || !shell) return;
+    let previousHeight = space.getBoundingClientRect().height;
+    let scrollRemainder = 0;
+    const followSpace = () => {
+      const height = space.getBoundingClientRect().height;
+      const change = height - previousHeight;
+      previousHeight = height;
+      // Reveal only the space already opened, keeping the heading clear
+      // throughout the animation. Scroll with that space to anchor the role.
+      shell.style.setProperty("--reveal-above-space", `${height}px`);
+      const bounds = shelf.getBoundingClientRect();
+      if (change && anchorViewport.current && bounds.bottom > 0 && bounds.top < innerHeight) {
+        const beforeScroll = window.scrollY;
+        const distance = change + scrollRemainder;
+        window.scrollBy({ top: distance, behavior: "instant" });
+        const remainder = distance - (window.scrollY - beforeScroll);
+        scrollRemainder = Math.abs(remainder) < 1 ? remainder : 0;
+      } else {
+        scrollRemainder = 0;
+      }
+    };
+    followSpace();
+    const observer = new ResizeObserver(followSpace);
+    observer.observe(space);
+    return () => observer.disconnect();
+  }, [reserveAbove, rail]);
 
   useLayoutEffect(() => {
     const before = previous.current;
@@ -70,8 +103,11 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       const height = Math.ceil(body.getBoundingClientRect().height) + 2;
       const left = cardBox ? Math.max(cardBox.left, shelfBox.left) : 0;
       const visibleWidth = cardBox ? Math.max(0, Math.min(cardBox.right, shelfBox.right) - left) : 0;
+      const inViewport = cardBox && Math.min(cardBox.bottom, innerHeight) - Math.max(cardBox.top, 0) >= 24;
       const available = cardBox && visibleWidth >= Math.min(fitAnchor ? 200 : 24, cardBox.width) &&
-        (!floating || Math.min(cardBox.bottom, innerHeight) - Math.max(cardBox.top, 0) >= 24);
+        (!floating || inViewport);
+      if (!inViewport) anchorViewport.current = false;
+      else if (open) anchorViewport.current = true;
       const obstacles = avoid ? [...shelf.closest("section").querySelectorAll(avoid)].filter(node => node !== anchor).map(node => node.getBoundingClientRect()) : [];
       if (open && !available) onUnavailable();
       setLayout((before) => {
@@ -81,9 +117,10 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
         const top = position ? position.y - movingBox.parentElement.getBoundingClientRect().top - 9 : before.top;
         const placement = position?.placement ?? before.placement;
         const space = reserveBelow && position ? Math.max(0, position.y + height - shelfBox.bottom) : 0;
+        const above = reserveAbove && position ? Math.max(0, shelfBox.top - position.y + 12) : 0;
         const moved = before.offset !== offset || before.top !== top || before.width !== width;
-        return before.height === height && !moved && before.placement === placement && before.space === space
-          ? before : { height, offset, top, width, placement, space, travel: moved ? travel : before.travel };
+        return before.height === height && !moved && before.placement === placement && before.space === space && before.above === above
+          ? before : { height, offset, top, width, placement, space, above, travel: moved ? travel : before.travel };
       });
     };
     // Moving between cards glides; scrolling/resizing stays attached to the rail.
@@ -103,11 +140,13 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       window.removeEventListener("scroll", followRail);
       window.removeEventListener("resize", followRail);
     };
-  }, [itemKey, open, fitAnchor, floating, placementIndex, avoid, reserveBelow]);
+  }, [itemKey, open, fitAnchor, floating, placementIndex, avoid, reserveAbove, reserveBelow]);
 
   return (
-    <><div
-      className={`index-reveal-shell ${className}${floating ? " is-floating" : ""}${open ? " is-open" : ""}`}
+    <>
+    {reserveAbove ? <div ref={above} className={`index-reveal-reserve is-above${open ? " is-open" : ""}`} aria-hidden="true" style={{ "--reveal-space": `${layout.above}px` }} /> : null}
+    <div
+      className={`index-reveal-shell ${className}${floating ? " is-floating" : ""}${reserveAbove ? " reserves-above" : ""}${open ? " is-open" : ""}`}
       id={shellId}
       role={label ? "region" : undefined}
       aria-label={label}

@@ -467,10 +467,53 @@ const checkPublicLanding = async () => {
       const panel=document.querySelector('#career-detail').getBoundingClientRect();
       const heading=document.querySelector('#career-title').getBoundingClientRect();
       const next=document.querySelector('#taste').getBoundingClientRect();
-      return panel.bottom<next.top && (panel.bottom<=heading.top || panel.top>=heading.bottom || panel.left>=heading.right || panel.right<=heading.left);
+      return panel.bottom<next.top && panel.top>=heading.bottom;
     })()`), "the Career preview leaves both chapter headings clear");
   }
   check(careerPlacements.some(placement=>placement.startsWith('top')) && careerPlacements.some(placement=>placement.startsWith('bottom')), "Career varies above and below the roles according to available space");
+  await evaluate('document.activeElement.blur(); document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+  await sleep(380);
+  await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"})');
+  const upwardMotion = action => evaluate(`new Promise(resolve => {
+    const sample=()=>{
+      const rail=document.querySelector('#career-rail').getBoundingClientRect();
+      const head=document.querySelector('.concept-career-head').getBoundingClientRect();
+      const shell=document.querySelector('.concept-career-detail-lane');
+      const space=document.querySelector('.index-reveal-reserve.is-above').getBoundingClientRect().height;
+      return {rail:rail.top,heading:head.top,divider:document.querySelector('#career').getBoundingClientRect().top,
+        project:document.querySelector('#project-rail').getBoundingClientRect().bottom,space,
+        clipTop:shell.getBoundingClientRect().top-parseFloat(getComputedStyle(shell).getPropertyValue('--reveal-above-space')),
+        headBottom:head.bottom};
+    };
+    const samples=[sample()];
+    ${action}
+    const until=performance.now()+580;
+    const next=()=>requestAnimationFrame(()=>setTimeout(frame,0));
+    const frame=()=>{samples.push(sample());if(performance.now()<until) next();else resolve(samples);};
+    next();
+  })`);
+  const upwardOpen=await upwardMotion('document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true});');
+  check(passesThrough(upwardOpen,'space') && upwardOpen.at(-1).space>80 &&
+    ['heading','divider','project'].every(key=>passesThrough(upwardOpen,key) && upwardOpen.at(-1)[key]<upwardOpen[0][key]-80),
+    "an upward Career preview smoothly pushes its heading, divider and Projects up");
+  check(upwardOpen.every(sample=>Math.abs(sample.rail-upwardOpen[0].rail)<3), "the upward reveal keeps the timeline anchored under the pointer");
+  check(upwardOpen.every(sample=>sample.clipTop>=sample.headBottom-1), "the upward box stays clipped below the heading throughout its opening");
+  const upwardClose=await upwardMotion('document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));');
+  check(passesThrough(upwardClose,'space') && upwardClose.at(-1).space<1 &&
+    Math.abs(upwardClose.at(-1).divider-upwardOpen[0].divider)<3 && upwardClose.every(sample=>Math.abs(sample.rail-upwardClose[0].rail)<3),
+    "closing the upward preview returns the preceding content smoothly without moving the role");
+  await setDesktop(815,650);
+  await goto('/');
+  await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"}); document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true})');
+  await sleep(560);
+  const awayScroll=await evaluate(`(() => {
+    const rail=document.querySelector('#career-rail').getBoundingClientRect();
+    window.scrollTo({top:scrollY+rail.top-innerHeight-30,behavior:'instant'});
+    return scrollY;
+  })()`);
+  await sleep(420);
+  check(await evaluate(`Math.abs(scrollY-${awayScroll})<2 && document.querySelector('.concept-career-detail-lane').inert && document.querySelector('.index-reveal-reserve.is-above').getBoundingClientRect().height<1`),
+    "scrolling the role out of view closes its upward space without pulling the page back");
   for (const width of [320,390,820]) {
     await setDesktop(width);
     await goto('/');

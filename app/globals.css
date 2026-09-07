@@ -8125,7 +8125,12 @@ button {
 
 .concept-page { --concept-archive: #1b947d; }
 .concept-career-section { --career-rest-space: clamp(56px, 4vw, 68px); --career-open-space: clamp(24px, 3vw, 36px); position: relative; padding: var(--concept-rule-gap) 0 var(--career-rest-space); transition: padding-bottom 340ms var(--ease-out); }
-.career-reveal-stage { position: relative; }
+.career-reveal-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
+.career-reveal-stage > :is(.concept-career-timeline, .index-reveal-shell) { grid-area: 2 / 1; }
+.career-reveal-stage > .index-reveal-reserve { grid-area: 3 / 1; }
+.career-reveal-stage > .index-reveal-reserve.is-above { grid-area: 1 / 1; }
+/* The upward reveal handles its own scroll anchoring as its real space opens. */
+.concept-page:has(.index-reveal-reserve.is-above) { overflow-anchor: none; }
 .concept-career-section.is-open { z-index: 5; padding-bottom: var(--career-open-space); transition-duration: 480ms; }
 .concept-career-timeline { overflow-x: auto; padding: 3px 0 10px; scrollbar-width: thin; }
 .concept-career-timeline > li { min-width: 0; }
@@ -8148,6 +8153,7 @@ button {
 .index-reveal-track { width: min(var(--hover-detail-width), 100%); padding-top: 9px; transition: transform 480ms var(--ease-out), width 480ms var(--ease-out); }
 .index-reveal-track[data-follow-rail="true"] { transition: none; }
 .index-reveal-shell.is-floating { position: absolute; inset: 0 0 auto; z-index: 4; overflow: visible; pointer-events: none; }
+.index-reveal-shell.reserves-above { clip-path: inset(calc(-1 * var(--reveal-above-space, 0px)) 0 -100vh); }
 .index-reveal-reserve { height: 0; transition: height 340ms var(--ease-out); }
 .index-reveal-reserve.is-open { height: var(--reveal-space); transition-duration: 480ms; }
 .index-hover-detail.index-reveal-panel { position: relative; width: 100%; height: var(--reveal-content-height); display: block; padding: 0; overflow: clip; transform: translate(var(--reveal-enter-x, 0px), var(--reveal-enter-y, -6px)); transition: height 480ms var(--ease-out), border-color 360ms ease, opacity 150ms ease, transform 260ms var(--ease-out), visibility 0s linear 340ms; }
