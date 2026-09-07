@@ -972,11 +972,11 @@
         "height": 144,
         "avif": {
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-360.avif",
-          "bytes": 4069
+          "bytes": 3669
         },
         "webp": {
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-360.webp",
-          "bytes": 5816
+          "bytes": 5498
         }
       },
       {
@@ -984,11 +984,11 @@
         "height": 192,
         "avif": {
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-480.avif",
-          "bytes": 5649
+          "bytes": 5504
         },
         "webp": {
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-480.webp",
-          "bytes": 8126
+          "bytes": 7704
         }
       },
       {
@@ -996,57 +996,11 @@
         "height": 251,
         "avif": {
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-627.avif",
-          "bytes": 8212
+          "bytes": 7232
         },
         "webp": {
           "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-627.webp",
-          "bytes": 11260
-        }
-      }
-    ]
-  },
-  "conceptProject:/project-art/personal/trek-paris-sofia-project.png": {
-    "source": "/project-art/personal/trek-paris-sofia-project.png",
-    "slot": "conceptProject",
-    "ratio": 2.5,
-    "sourceWidth": 1729,
-    "sourceHeight": 910,
-    "sourceHash": "745dea516df29c00",
-    "variants": [
-      {
-        "width": 360,
-        "height": 144,
-        "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-360.avif",
-          "bytes": 5026
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-360.webp",
-          "bytes": 6410
-        }
-      },
-      {
-        "width": 480,
-        "height": 192,
-        "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-480.avif",
-          "bytes": 7553
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-480.webp",
-          "bytes": 9544
-        }
-      },
-      {
-        "width": 627,
-        "height": 251,
-        "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-627.avif",
-          "bytes": 11748
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-627.webp",
-          "bytes": 14442
+          "bytes": 10540
         }
       }
     ]
@@ -15654,6 +15608,4422 @@
         "webp": {
           "src": "/_img/brand-logos/lloyds-horse-icon-logo-56.webp",
           "bytes": 994
+        }
+      }
+    ]
+  },
+  "conceptProject:/project-art/personal/trek-paper-landscape.png": {
+    "source": "/project-art/personal/trek-paper-landscape.png",
+    "slot": "conceptProject",
+    "ratio": 2.5,
+    "sourceWidth": 1983,
+    "sourceHeight": 793,
+    "sourceHash": "a993629f5a4d9a48",
+    "variants": [
+      {
+        "width": 360,
+        "height": 144,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paper-landscape-conceptProject-360.avif",
+          "bytes": 8406
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paper-landscape-conceptProject-360.webp",
+          "bytes": 14050
+        }
+      },
+      {
+        "width": 480,
+        "height": 192,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paper-landscape-conceptProject-480.avif",
+          "bytes": 13605
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paper-landscape-conceptProject-480.webp",
+          "bytes": 23538
+        }
+      },
+      {
+        "width": 627,
+        "height": 251,
+        "avif": {
+          "src": "/_img/project-art/personal/trek-paper-landscape-conceptProject-627.avif",
+          "bytes": 23320
+        },
+        "webp": {
+          "src": "/_img/project-art/personal/trek-paper-landscape-conceptProject-627.webp",
+          "bytes": 39426
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/always-sunny-podcast.webp": {
+    "source": "/podcast-covers/always-sunny-podcast.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 640,
+    "sourceHeight": 640,
+    "sourceHash": "6c7e4b7dfa61f210",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/always-sunny-podcast-podcastArt-156.avif",
+          "bytes": 3568
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/always-sunny-podcast-podcastArt-156.webp",
+          "bytes": 4936
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/always-sunny-podcast-podcastArt-204.avif",
+          "bytes": 4645
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/always-sunny-podcast-podcastArt-204.webp",
+          "bytes": 7330
+        }
+      },
+      {
+        "width": 640,
+        "height": 640,
+        "avif": {
+          "src": "/_img/podcast-covers/always-sunny-podcast-podcastArt-640.avif",
+          "bytes": 21680
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/always-sunny-podcast-podcastArt-640.webp",
+          "bytes": 29738
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/bite.webp": {
+    "source": "/podcast-covers/bite.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 640,
+    "sourceHeight": 640,
+    "sourceHash": "144c9a7e45849253",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/bite-podcastArt-156.avif",
+          "bytes": 1722
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/bite-podcastArt-156.webp",
+          "bytes": 2466
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/bite-podcastArt-204.avif",
+          "bytes": 2162
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/bite-podcastArt-204.webp",
+          "bytes": 3354
+        }
+      },
+      {
+        "width": 640,
+        "height": 640,
+        "avif": {
+          "src": "/_img/podcast-covers/bite-podcastArt-640.avif",
+          "bytes": 7252
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/bite-podcastArt-640.webp",
+          "bytes": 11492
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/discovery-eric-senich.webp": {
+    "source": "/podcast-covers/discovery-eric-senich.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 800,
+    "sourceHeight": 800,
+    "sourceHash": "0fb18e1b35ea4d00",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/discovery-eric-senich-podcastArt-156.avif",
+          "bytes": 2178
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/discovery-eric-senich-podcastArt-156.webp",
+          "bytes": 3368
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/discovery-eric-senich-podcastArt-204.avif",
+          "bytes": 3047
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/discovery-eric-senich-podcastArt-204.webp",
+          "bytes": 4826
+        }
+      },
+      {
+        "width": 663,
+        "height": 663,
+        "avif": {
+          "src": "/_img/podcast-covers/discovery-eric-senich-podcastArt-663.avif",
+          "bytes": 9392
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/discovery-eric-senich-podcastArt-663.webp",
+          "bytes": 17468
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/dish.webp": {
+    "source": "/podcast-covers/dish.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "7f0b580d079fcb5b",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/dish-podcastArt-156.avif",
+          "bytes": 3552
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/dish-podcastArt-156.webp",
+          "bytes": 4678
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/dish-podcastArt-204.avif",
+          "bytes": 4697
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/dish-podcastArt-204.webp",
+          "bytes": 6572
+        }
+      },
+      {
+        "width": 600,
+        "height": 600,
+        "avif": {
+          "src": "/_img/podcast-covers/dish-podcastArt-600.avif",
+          "bytes": 21883
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/dish-podcastArt-600.webp",
+          "bytes": 28512
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/ezra-klein-show.webp": {
+    "source": "/podcast-covers/ezra-klein-show.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "46cf0abaa6c9e070",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/ezra-klein-show-podcastArt-156.avif",
+          "bytes": 3108
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/ezra-klein-show-podcastArt-156.webp",
+          "bytes": 4338
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/ezra-klein-show-podcastArt-204.avif",
+          "bytes": 4459
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/ezra-klein-show-podcastArt-204.webp",
+          "bytes": 6234
+        }
+      },
+      {
+        "width": 600,
+        "height": 600,
+        "avif": {
+          "src": "/_img/podcast-covers/ezra-klein-show-podcastArt-600.avif",
+          "bytes": 25139
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/ezra-klein-show-podcastArt-600.webp",
+          "bytes": 35800
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/ittt-podcast.webp": {
+    "source": "/podcast-covers/ittt-podcast.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 800,
+    "sourceHeight": 800,
+    "sourceHash": "b98a9297bd533897",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/ittt-podcast-podcastArt-156.avif",
+          "bytes": 2582
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/ittt-podcast-podcastArt-156.webp",
+          "bytes": 3630
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/ittt-podcast-podcastArt-204.avif",
+          "bytes": 3199
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/ittt-podcast-podcastArt-204.webp",
+          "bytes": 4908
+        }
+      },
+      {
+        "width": 663,
+        "height": 663,
+        "avif": {
+          "src": "/_img/podcast-covers/ittt-podcast-podcastArt-663.avif",
+          "bytes": 10941
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/ittt-podcast-podcastArt-663.webp",
+          "bytes": 17872
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/jre-clips.webp": {
+    "source": "/podcast-covers/jre-clips.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 640,
+    "sourceHeight": 640,
+    "sourceHash": "9250f3e719eea2ec",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/jre-clips-podcastArt-156.avif",
+          "bytes": 2797
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/jre-clips-podcastArt-156.webp",
+          "bytes": 4224
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/jre-clips-podcastArt-204.avif",
+          "bytes": 3936
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/jre-clips-podcastArt-204.webp",
+          "bytes": 6264
+        }
+      },
+      {
+        "width": 640,
+        "height": 640,
+        "avif": {
+          "src": "/_img/podcast-covers/jre-clips-podcastArt-640.avif",
+          "bytes": 17229
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/jre-clips-podcastArt-640.webp",
+          "bytes": 28758
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/openai-podcast.webp": {
+    "source": "/podcast-covers/openai-podcast.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "373f07ff0323a5dd",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/openai-podcast-podcastArt-156.avif",
+          "bytes": 1639
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/openai-podcast-podcastArt-156.webp",
+          "bytes": 1830
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/openai-podcast-podcastArt-204.avif",
+          "bytes": 1920
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/openai-podcast-podcastArt-204.webp",
+          "bytes": 2392
+        }
+      },
+      {
+        "width": 600,
+        "height": 600,
+        "avif": {
+          "src": "/_img/podcast-covers/openai-podcast-podcastArt-600.avif",
+          "bytes": 4100
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/openai-podcast-podcastArt-600.webp",
+          "bytes": 5584
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/peterson-archive.webp": {
+    "source": "/podcast-covers/peterson-archive.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 800,
+    "sourceHeight": 800,
+    "sourceHash": "c4898ededff4d99c",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/peterson-archive-podcastArt-156.avif",
+          "bytes": 2473
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/peterson-archive-podcastArt-156.webp",
+          "bytes": 3154
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/peterson-archive-podcastArt-204.avif",
+          "bytes": 3277
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/peterson-archive-podcastArt-204.webp",
+          "bytes": 4614
+        }
+      },
+      {
+        "width": 663,
+        "height": 663,
+        "avif": {
+          "src": "/_img/podcast-covers/peterson-archive-podcastArt-663.avif",
+          "bytes": 17010
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/peterson-archive-podcastArt-663.webp",
+          "bytes": 31902
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/spotify-presents.webp": {
+    "source": "/podcast-covers/spotify-presents.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 640,
+    "sourceHeight": 640,
+    "sourceHash": "7c1b55b7b817c3a5",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/spotify-presents-podcastArt-156.avif",
+          "bytes": 3388
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/spotify-presents-podcastArt-156.webp",
+          "bytes": 4520
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/spotify-presents-podcastArt-204.avif",
+          "bytes": 4844
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/spotify-presents-podcastArt-204.webp",
+          "bytes": 6696
+        }
+      },
+      {
+        "width": 640,
+        "height": 640,
+        "avif": {
+          "src": "/_img/podcast-covers/spotify-presents-podcastArt-640.avif",
+          "bytes": 24073
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/spotify-presents-podcastArt-640.webp",
+          "bytes": 29398
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/vampire-campfire.webp": {
+    "source": "/podcast-covers/vampire-campfire.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "75f39742fc90dbe4",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/vampire-campfire-podcastArt-156.avif",
+          "bytes": 2575
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/vampire-campfire-podcastArt-156.webp",
+          "bytes": 2920
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/vampire-campfire-podcastArt-204.avif",
+          "bytes": 3408
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/vampire-campfire-podcastArt-204.webp",
+          "bytes": 3892
+        }
+      },
+      {
+        "width": 600,
+        "height": 600,
+        "avif": {
+          "src": "/_img/podcast-covers/vampire-campfire-podcastArt-600.avif",
+          "bytes": 11625
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/vampire-campfire-podcastArt-600.webp",
+          "bytes": 11506
+        }
+      }
+    ]
+  },
+  "podcastArt:/podcast-covers/veritasium.webp": {
+    "source": "/podcast-covers/veritasium.webp",
+    "slot": "podcastArt",
+    "ratio": 1,
+    "sourceWidth": 640,
+    "sourceHeight": 640,
+    "sourceHash": "c3c164ca8249066c",
+    "variants": [
+      {
+        "width": 156,
+        "height": 156,
+        "avif": {
+          "src": "/_img/podcast-covers/veritasium-podcastArt-156.avif",
+          "bytes": 1236
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/veritasium-podcastArt-156.webp",
+          "bytes": 1598
+        }
+      },
+      {
+        "width": 204,
+        "height": 204,
+        "avif": {
+          "src": "/_img/podcast-covers/veritasium-podcastArt-204.avif",
+          "bytes": 1514
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/veritasium-podcastArt-204.webp",
+          "bytes": 2066
+        }
+      },
+      {
+        "width": 640,
+        "height": 640,
+        "avif": {
+          "src": "/_img/podcast-covers/veritasium-podcastArt-640.avif",
+          "bytes": 4462
+        },
+        "webp": {
+          "src": "/_img/podcast-covers/veritasium-podcastArt-640.webp",
+          "bytes": 6014
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/the-master.webp": {
+    "source": "/film-posters/the-master.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "e6e921758b147d7f",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/the-master-posterArt-156.avif",
+          "bytes": 4186
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-master-posterArt-156.webp",
+          "bytes": 5668
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/the-master-posterArt-204.avif",
+          "bytes": 6105
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-master-posterArt-204.webp",
+          "bytes": 8356
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/the-master-posterArt-264.avif",
+          "bytes": 8551
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-master-posterArt-264.webp",
+          "bytes": 12518
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/you-were-never-really-here.webp": {
+    "source": "/film-posters/you-were-never-really-here.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "3d44f4970a75b760",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/you-were-never-really-here-posterArt-156.avif",
+          "bytes": 4024
+        },
+        "webp": {
+          "src": "/_img/film-posters/you-were-never-really-here-posterArt-156.webp",
+          "bytes": 5304
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/you-were-never-really-here-posterArt-204.avif",
+          "bytes": 6057
+        },
+        "webp": {
+          "src": "/_img/film-posters/you-were-never-really-here-posterArt-204.webp",
+          "bytes": 7546
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/you-were-never-really-here-posterArt-264.avif",
+          "bytes": 8677
+        },
+        "webp": {
+          "src": "/_img/film-posters/you-were-never-really-here-posterArt-264.webp",
+          "bytes": 10370
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/call-me-by-your-name.webp": {
+    "source": "/film-posters/call-me-by-your-name.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "1e63e91410d04a11",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/call-me-by-your-name-posterArt-156.avif",
+          "bytes": 3820
+        },
+        "webp": {
+          "src": "/_img/film-posters/call-me-by-your-name-posterArt-156.webp",
+          "bytes": 4882
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/call-me-by-your-name-posterArt-204.avif",
+          "bytes": 5669
+        },
+        "webp": {
+          "src": "/_img/film-posters/call-me-by-your-name-posterArt-204.webp",
+          "bytes": 6890
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/call-me-by-your-name-posterArt-264.avif",
+          "bytes": 7234
+        },
+        "webp": {
+          "src": "/_img/film-posters/call-me-by-your-name-posterArt-264.webp",
+          "bytes": 9540
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/one-more-time-with-feeling.webp": {
+    "source": "/film-posters/one-more-time-with-feeling.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "a2332bf9ced303df",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/one-more-time-with-feeling-posterArt-156.avif",
+          "bytes": 1431
+        },
+        "webp": {
+          "src": "/_img/film-posters/one-more-time-with-feeling-posterArt-156.webp",
+          "bytes": 1110
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/one-more-time-with-feeling-posterArt-204.avif",
+          "bytes": 1928
+        },
+        "webp": {
+          "src": "/_img/film-posters/one-more-time-with-feeling-posterArt-204.webp",
+          "bytes": 1694
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/one-more-time-with-feeling-posterArt-264.avif",
+          "bytes": 2680
+        },
+        "webp": {
+          "src": "/_img/film-posters/one-more-time-with-feeling-posterArt-264.webp",
+          "bytes": 2334
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/watchmen.webp": {
+    "source": "/film-posters/watchmen.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "d4cad51131b6f400",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/watchmen-posterArt-156.avif",
+          "bytes": 5502
+        },
+        "webp": {
+          "src": "/_img/film-posters/watchmen-posterArt-156.webp",
+          "bytes": 7992
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/watchmen-posterArt-204.avif",
+          "bytes": 8471
+        },
+        "webp": {
+          "src": "/_img/film-posters/watchmen-posterArt-204.webp",
+          "bytes": 12110
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/watchmen-posterArt-264.avif",
+          "bytes": 12113
+        },
+        "webp": {
+          "src": "/_img/film-posters/watchmen-posterArt-264.webp",
+          "bytes": 18196
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/anomalisa.webp": {
+    "source": "/film-posters/anomalisa.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "5da2aaebcf680ae9",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/anomalisa-posterArt-156.avif",
+          "bytes": 2788
+        },
+        "webp": {
+          "src": "/_img/film-posters/anomalisa-posterArt-156.webp",
+          "bytes": 3082
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/anomalisa-posterArt-204.avif",
+          "bytes": 3993
+        },
+        "webp": {
+          "src": "/_img/film-posters/anomalisa-posterArt-204.webp",
+          "bytes": 4368
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/anomalisa-posterArt-264.avif",
+          "bytes": 5583
+        },
+        "webp": {
+          "src": "/_img/film-posters/anomalisa-posterArt-264.webp",
+          "bytes": 6068
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/adaptation.webp": {
+    "source": "/film-posters/adaptation.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "bdddc5e1eeb8e828",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/adaptation-posterArt-156.avif",
+          "bytes": 2425
+        },
+        "webp": {
+          "src": "/_img/film-posters/adaptation-posterArt-156.webp",
+          "bytes": 3002
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/adaptation-posterArt-204.avif",
+          "bytes": 3542
+        },
+        "webp": {
+          "src": "/_img/film-posters/adaptation-posterArt-204.webp",
+          "bytes": 4312
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/adaptation-posterArt-264.avif",
+          "bytes": 4817
+        },
+        "webp": {
+          "src": "/_img/film-posters/adaptation-posterArt-264.webp",
+          "bytes": 6056
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/mysterious-skin.webp": {
+    "source": "/film-posters/mysterious-skin.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "737326dcac80b21f",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/mysterious-skin-posterArt-156.avif",
+          "bytes": 2950
+        },
+        "webp": {
+          "src": "/_img/film-posters/mysterious-skin-posterArt-156.webp",
+          "bytes": 3602
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/mysterious-skin-posterArt-204.avif",
+          "bytes": 3694
+        },
+        "webp": {
+          "src": "/_img/film-posters/mysterious-skin-posterArt-204.webp",
+          "bytes": 4904
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/mysterious-skin-posterArt-264.avif",
+          "bytes": 5309
+        },
+        "webp": {
+          "src": "/_img/film-posters/mysterious-skin-posterArt-264.webp",
+          "bytes": 6414
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/magnolia.webp": {
+    "source": "/film-posters/magnolia.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "4a8e20cefcf64914",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/magnolia-posterArt-156.avif",
+          "bytes": 3962
+        },
+        "webp": {
+          "src": "/_img/film-posters/magnolia-posterArt-156.webp",
+          "bytes": 5268
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/magnolia-posterArt-204.avif",
+          "bytes": 5366
+        },
+        "webp": {
+          "src": "/_img/film-posters/magnolia-posterArt-204.webp",
+          "bytes": 7454
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/magnolia-posterArt-264.avif",
+          "bytes": 7588
+        },
+        "webp": {
+          "src": "/_img/film-posters/magnolia-posterArt-264.webp",
+          "bytes": 10382
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/foxcatcher.webp": {
+    "source": "/film-posters/foxcatcher.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "03b1435e68031636",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/foxcatcher-posterArt-156.avif",
+          "bytes": 3631
+        },
+        "webp": {
+          "src": "/_img/film-posters/foxcatcher-posterArt-156.webp",
+          "bytes": 4196
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/foxcatcher-posterArt-204.avif",
+          "bytes": 4930
+        },
+        "webp": {
+          "src": "/_img/film-posters/foxcatcher-posterArt-204.webp",
+          "bytes": 6104
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/foxcatcher-posterArt-264.avif",
+          "bytes": 7205
+        },
+        "webp": {
+          "src": "/_img/film-posters/foxcatcher-posterArt-264.webp",
+          "bytes": 8910
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/the-social-network.webp": {
+    "source": "/film-posters/the-social-network.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "eca9b74b5dbeb271",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/the-social-network-posterArt-156.avif",
+          "bytes": 3012
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-social-network-posterArt-156.webp",
+          "bytes": 3720
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/the-social-network-posterArt-204.avif",
+          "bytes": 4214
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-social-network-posterArt-204.webp",
+          "bytes": 5270
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/the-social-network-posterArt-264.avif",
+          "bytes": 6214
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-social-network-posterArt-264.webp",
+          "bytes": 7674
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/before-trilogy.webp": {
+    "source": "/film-posters/before-trilogy.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "97e35a19c789f0c0",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/before-trilogy-posterArt-156.avif",
+          "bytes": 2652
+        },
+        "webp": {
+          "src": "/_img/film-posters/before-trilogy-posterArt-156.webp",
+          "bytes": 2948
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/before-trilogy-posterArt-204.avif",
+          "bytes": 3885
+        },
+        "webp": {
+          "src": "/_img/film-posters/before-trilogy-posterArt-204.webp",
+          "bytes": 4122
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/before-trilogy-posterArt-264.avif",
+          "bytes": 5185
+        },
+        "webp": {
+          "src": "/_img/film-posters/before-trilogy-posterArt-264.webp",
+          "bytes": 6032
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/boogie-nights.webp": {
+    "source": "/film-posters/boogie-nights.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "6ea6bcaa5c0896f4",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/boogie-nights-posterArt-156.avif",
+          "bytes": 4530
+        },
+        "webp": {
+          "src": "/_img/film-posters/boogie-nights-posterArt-156.webp",
+          "bytes": 6296
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/boogie-nights-posterArt-204.avif",
+          "bytes": 6580
+        },
+        "webp": {
+          "src": "/_img/film-posters/boogie-nights-posterArt-204.webp",
+          "bytes": 9634
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/boogie-nights-posterArt-264.avif",
+          "bytes": 9515
+        },
+        "webp": {
+          "src": "/_img/film-posters/boogie-nights-posterArt-264.webp",
+          "bytes": 14344
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/her.webp": {
+    "source": "/film-posters/her.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "66797c6a2427a027",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/her-posterArt-156.avif",
+          "bytes": 3282
+        },
+        "webp": {
+          "src": "/_img/film-posters/her-posterArt-156.webp",
+          "bytes": 3498
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/her-posterArt-204.avif",
+          "bytes": 4541
+        },
+        "webp": {
+          "src": "/_img/film-posters/her-posterArt-204.webp",
+          "bytes": 4982
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/her-posterArt-264.avif",
+          "bytes": 6556
+        },
+        "webp": {
+          "src": "/_img/film-posters/her-posterArt-264.webp",
+          "bytes": 6932
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/a-clockwork-orange.webp": {
+    "source": "/film-posters/a-clockwork-orange.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "52394c76c2880af2",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/a-clockwork-orange-posterArt-156.avif",
+          "bytes": 3065
+        },
+        "webp": {
+          "src": "/_img/film-posters/a-clockwork-orange-posterArt-156.webp",
+          "bytes": 3972
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/a-clockwork-orange-posterArt-204.avif",
+          "bytes": 4278
+        },
+        "webp": {
+          "src": "/_img/film-posters/a-clockwork-orange-posterArt-204.webp",
+          "bytes": 5642
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/a-clockwork-orange-posterArt-264.avif",
+          "bytes": 5726
+        },
+        "webp": {
+          "src": "/_img/film-posters/a-clockwork-orange-posterArt-264.webp",
+          "bytes": 7756
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/paths-of-glory.webp": {
+    "source": "/film-posters/paths-of-glory.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "dbbabbd4e5f92eab",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/paths-of-glory-posterArt-156.avif",
+          "bytes": 5064
+        },
+        "webp": {
+          "src": "/_img/film-posters/paths-of-glory-posterArt-156.webp",
+          "bytes": 6546
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/paths-of-glory-posterArt-204.avif",
+          "bytes": 7459
+        },
+        "webp": {
+          "src": "/_img/film-posters/paths-of-glory-posterArt-204.webp",
+          "bytes": 9764
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/paths-of-glory-posterArt-264.avif",
+          "bytes": 10749
+        },
+        "webp": {
+          "src": "/_img/film-posters/paths-of-glory-posterArt-264.webp",
+          "bytes": 14282
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/blue-valentine.webp": {
+    "source": "/film-posters/blue-valentine.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "95ecfa65722142c3",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/blue-valentine-posterArt-156.avif",
+          "bytes": 4487
+        },
+        "webp": {
+          "src": "/_img/film-posters/blue-valentine-posterArt-156.webp",
+          "bytes": 5816
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/blue-valentine-posterArt-204.avif",
+          "bytes": 6396
+        },
+        "webp": {
+          "src": "/_img/film-posters/blue-valentine-posterArt-204.webp",
+          "bytes": 8828
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/blue-valentine-posterArt-264.avif",
+          "bytes": 9608
+        },
+        "webp": {
+          "src": "/_img/film-posters/blue-valentine-posterArt-264.webp",
+          "bytes": 13354
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/the-king-s-speech.webp": {
+    "source": "/film-posters/the-king-s-speech.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "b782331eda734772",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/the-king-s-speech-posterArt-156.avif",
+          "bytes": 4426
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-king-s-speech-posterArt-156.webp",
+          "bytes": 5910
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/the-king-s-speech-posterArt-204.avif",
+          "bytes": 5921
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-king-s-speech-posterArt-204.webp",
+          "bytes": 8450
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/the-king-s-speech-posterArt-264.avif",
+          "bytes": 8342
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-king-s-speech-posterArt-264.webp",
+          "bytes": 12052
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/drive.webp": {
+    "source": "/film-posters/drive.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "1490f02f35a7aa6f",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/drive-posterArt-156.avif",
+          "bytes": 2996
+        },
+        "webp": {
+          "src": "/_img/film-posters/drive-posterArt-156.webp",
+          "bytes": 3694
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/drive-posterArt-204.avif",
+          "bytes": 4248
+        },
+        "webp": {
+          "src": "/_img/film-posters/drive-posterArt-204.webp",
+          "bytes": 5180
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/drive-posterArt-264.avif",
+          "bytes": 5802
+        },
+        "webp": {
+          "src": "/_img/film-posters/drive-posterArt-264.webp",
+          "bytes": 7046
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/lost-in-translation.webp": {
+    "source": "/film-posters/lost-in-translation.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "c8f31c0b08cd7e20",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/lost-in-translation-posterArt-156.avif",
+          "bytes": 5981
+        },
+        "webp": {
+          "src": "/_img/film-posters/lost-in-translation-posterArt-156.webp",
+          "bytes": 8596
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/lost-in-translation-posterArt-204.avif",
+          "bytes": 8655
+        },
+        "webp": {
+          "src": "/_img/film-posters/lost-in-translation-posterArt-204.webp",
+          "bytes": 13378
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/lost-in-translation-posterArt-264.avif",
+          "bytes": 13151
+        },
+        "webp": {
+          "src": "/_img/film-posters/lost-in-translation-posterArt-264.webp",
+          "bytes": 20314
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/eternal-sunshine-of-the-spotless-mind.webp": {
+    "source": "/film-posters/eternal-sunshine-of-the-spotless-mind.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "f28079f94b060b62",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-posterArt-156.avif",
+          "bytes": 3317
+        },
+        "webp": {
+          "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-posterArt-156.webp",
+          "bytes": 4326
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-posterArt-204.avif",
+          "bytes": 5140
+        },
+        "webp": {
+          "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-posterArt-204.webp",
+          "bytes": 6536
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-posterArt-264.avif",
+          "bytes": 7610
+        },
+        "webp": {
+          "src": "/_img/film-posters/eternal-sunshine-of-the-spotless-mind-posterArt-264.webp",
+          "bytes": 9226
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/the-lord-of-the-rings.webp": {
+    "source": "/film-posters/the-lord-of-the-rings.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "25553e0de77feaa2",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/the-lord-of-the-rings-posterArt-156.avif",
+          "bytes": 4425
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-lord-of-the-rings-posterArt-156.webp",
+          "bytes": 6332
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/the-lord-of-the-rings-posterArt-204.avif",
+          "bytes": 6934
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-lord-of-the-rings-posterArt-204.webp",
+          "bytes": 9938
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/the-lord-of-the-rings-posterArt-264.avif",
+          "bytes": 10550
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-lord-of-the-rings-posterArt-264.webp",
+          "bytes": 15056
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/good-will-hunting.webp": {
+    "source": "/film-posters/good-will-hunting.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "e62689ac13504b85",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/good-will-hunting-posterArt-156.avif",
+          "bytes": 3771
+        },
+        "webp": {
+          "src": "/_img/film-posters/good-will-hunting-posterArt-156.webp",
+          "bytes": 5296
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/good-will-hunting-posterArt-204.avif",
+          "bytes": 5770
+        },
+        "webp": {
+          "src": "/_img/film-posters/good-will-hunting-posterArt-204.webp",
+          "bytes": 8004
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/good-will-hunting-posterArt-264.avif",
+          "bytes": 8463
+        },
+        "webp": {
+          "src": "/_img/film-posters/good-will-hunting-posterArt-264.webp",
+          "bytes": 11570
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/american-beauty.webp": {
+    "source": "/film-posters/american-beauty.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "2e95bf4f5d46b3b6",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/american-beauty-posterArt-156.avif",
+          "bytes": 2517
+        },
+        "webp": {
+          "src": "/_img/film-posters/american-beauty-posterArt-156.webp",
+          "bytes": 2752
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/american-beauty-posterArt-204.avif",
+          "bytes": 3498
+        },
+        "webp": {
+          "src": "/_img/film-posters/american-beauty-posterArt-204.webp",
+          "bytes": 3778
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/american-beauty-posterArt-264.avif",
+          "bytes": 4575
+        },
+        "webp": {
+          "src": "/_img/film-posters/american-beauty-posterArt-264.webp",
+          "bytes": 5092
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/the-holdovers.webp": {
+    "source": "/film-posters/the-holdovers.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "f701db7795515efd",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/the-holdovers-posterArt-156.avif",
+          "bytes": 4200
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-holdovers-posterArt-156.webp",
+          "bytes": 5816
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/the-holdovers-posterArt-204.avif",
+          "bytes": 6064
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-holdovers-posterArt-204.webp",
+          "bytes": 8672
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/the-holdovers-posterArt-264.avif",
+          "bytes": 8872
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-holdovers-posterArt-264.webp",
+          "bytes": 12398
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/licorice-pizza.webp": {
+    "source": "/film-posters/licorice-pizza.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "caf615697fef0141",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/licorice-pizza-posterArt-156.avif",
+          "bytes": 5981
+        },
+        "webp": {
+          "src": "/_img/film-posters/licorice-pizza-posterArt-156.webp",
+          "bytes": 8462
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/licorice-pizza-posterArt-204.avif",
+          "bytes": 8988
+        },
+        "webp": {
+          "src": "/_img/film-posters/licorice-pizza-posterArt-204.webp",
+          "bytes": 12800
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/licorice-pizza-posterArt-264.avif",
+          "bytes": 12733
+        },
+        "webp": {
+          "src": "/_img/film-posters/licorice-pizza-posterArt-264.webp",
+          "bytes": 19216
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/love-actually.webp": {
+    "source": "/film-posters/love-actually.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "bee4dfe7b21d00a6",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/love-actually-posterArt-156.avif",
+          "bytes": 6077
+        },
+        "webp": {
+          "src": "/_img/film-posters/love-actually-posterArt-156.webp",
+          "bytes": 8716
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/love-actually-posterArt-204.avif",
+          "bytes": 8343
+        },
+        "webp": {
+          "src": "/_img/film-posters/love-actually-posterArt-204.webp",
+          "bytes": 12584
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/love-actually-posterArt-264.avif",
+          "bytes": 11410
+        },
+        "webp": {
+          "src": "/_img/film-posters/love-actually-posterArt-264.webp",
+          "bytes": 17280
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/rushmore.webp": {
+    "source": "/film-posters/rushmore.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "c8fc3eddd11eafa0",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/rushmore-posterArt-156.avif",
+          "bytes": 3514
+        },
+        "webp": {
+          "src": "/_img/film-posters/rushmore-posterArt-156.webp",
+          "bytes": 5066
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/rushmore-posterArt-204.avif",
+          "bytes": 5281
+        },
+        "webp": {
+          "src": "/_img/film-posters/rushmore-posterArt-204.webp",
+          "bytes": 7980
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/rushmore-posterArt-264.avif",
+          "bytes": 7747
+        },
+        "webp": {
+          "src": "/_img/film-posters/rushmore-posterArt-264.webp",
+          "bytes": 12346
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/submarine.webp": {
+    "source": "/film-posters/submarine.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "ead74b2faa8b7e83",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/submarine-posterArt-156.avif",
+          "bytes": 2473
+        },
+        "webp": {
+          "src": "/_img/film-posters/submarine-posterArt-156.webp",
+          "bytes": 3016
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/submarine-posterArt-204.avif",
+          "bytes": 3521
+        },
+        "webp": {
+          "src": "/_img/film-posters/submarine-posterArt-204.webp",
+          "bytes": 3882
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/submarine-posterArt-264.avif",
+          "bytes": 4819
+        },
+        "webp": {
+          "src": "/_img/film-posters/submarine-posterArt-264.webp",
+          "bytes": 5536
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/superbad.webp": {
+    "source": "/film-posters/superbad.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "400f41f08c8aa098",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/superbad-posterArt-156.avif",
+          "bytes": 4292
+        },
+        "webp": {
+          "src": "/_img/film-posters/superbad-posterArt-156.webp",
+          "bytes": 5888
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/superbad-posterArt-204.avif",
+          "bytes": 6077
+        },
+        "webp": {
+          "src": "/_img/film-posters/superbad-posterArt-204.webp",
+          "bytes": 8498
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/superbad-posterArt-264.avif",
+          "bytes": 8741
+        },
+        "webp": {
+          "src": "/_img/film-posters/superbad-posterArt-264.webp",
+          "bytes": 12258
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/school-of-rock.webp": {
+    "source": "/film-posters/school-of-rock.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "98f6a9b7884bcf6c",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/school-of-rock-posterArt-156.avif",
+          "bytes": 5626
+        },
+        "webp": {
+          "src": "/_img/film-posters/school-of-rock-posterArt-156.webp",
+          "bytes": 7876
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/school-of-rock-posterArt-204.avif",
+          "bytes": 8293
+        },
+        "webp": {
+          "src": "/_img/film-posters/school-of-rock-posterArt-204.webp",
+          "bytes": 11720
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/school-of-rock-posterArt-264.avif",
+          "bytes": 11907
+        },
+        "webp": {
+          "src": "/_img/film-posters/school-of-rock-posterArt-264.webp",
+          "bytes": 17290
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/frances-ha.webp": {
+    "source": "/film-posters/frances-ha.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "cae30eeff8e8877e",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/frances-ha-posterArt-156.avif",
+          "bytes": 4376
+        },
+        "webp": {
+          "src": "/_img/film-posters/frances-ha-posterArt-156.webp",
+          "bytes": 6530
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/frances-ha-posterArt-204.avif",
+          "bytes": 6556
+        },
+        "webp": {
+          "src": "/_img/film-posters/frances-ha-posterArt-204.webp",
+          "bytes": 9340
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/frances-ha-posterArt-264.avif",
+          "bytes": 9570
+        },
+        "webp": {
+          "src": "/_img/film-posters/frances-ha-posterArt-264.webp",
+          "bytes": 13176
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/everybody-wants-some.webp": {
+    "source": "/film-posters/everybody-wants-some.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "5b436f69c873d050",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/everybody-wants-some-posterArt-156.avif",
+          "bytes": 5825
+        },
+        "webp": {
+          "src": "/_img/film-posters/everybody-wants-some-posterArt-156.webp",
+          "bytes": 8950
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/everybody-wants-some-posterArt-204.avif",
+          "bytes": 8765
+        },
+        "webp": {
+          "src": "/_img/film-posters/everybody-wants-some-posterArt-204.webp",
+          "bytes": 13674
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/everybody-wants-some-posterArt-264.avif",
+          "bytes": 12926
+        },
+        "webp": {
+          "src": "/_img/film-posters/everybody-wants-some-posterArt-264.webp",
+          "bytes": 21014
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/the-big-lebowski.webp": {
+    "source": "/film-posters/the-big-lebowski.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "62eecf50d705934a",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/the-big-lebowski-posterArt-156.avif",
+          "bytes": 3404
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-big-lebowski-posterArt-156.webp",
+          "bytes": 4608
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/the-big-lebowski-posterArt-204.avif",
+          "bytes": 5123
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-big-lebowski-posterArt-204.webp",
+          "bytes": 7100
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/the-big-lebowski-posterArt-264.avif",
+          "bytes": 8038
+        },
+        "webp": {
+          "src": "/_img/film-posters/the-big-lebowski-posterArt-264.webp",
+          "bytes": 10670
+        }
+      }
+    ]
+  },
+  "posterArt:/film-posters/moonrise-kingdom.webp": {
+    "source": "/film-posters/moonrise-kingdom.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "04965a0174215671",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/film-posters/moonrise-kingdom-posterArt-156.avif",
+          "bytes": 4938
+        },
+        "webp": {
+          "src": "/_img/film-posters/moonrise-kingdom-posterArt-156.webp",
+          "bytes": 6884
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/film-posters/moonrise-kingdom-posterArt-204.avif",
+          "bytes": 7570
+        },
+        "webp": {
+          "src": "/_img/film-posters/moonrise-kingdom-posterArt-204.webp",
+          "bytes": 10514
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/film-posters/moonrise-kingdom-posterArt-264.avif",
+          "bytes": 11385
+        },
+        "webp": {
+          "src": "/_img/film-posters/moonrise-kingdom-posterArt-264.webp",
+          "bytes": 15690
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/the-office-uk.webp": {
+    "source": "/tv-posters/the-office-uk.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "73d122033af42600",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/the-office-uk-posterArt-156.avif",
+          "bytes": 3947
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-office-uk-posterArt-156.webp",
+          "bytes": 5408
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/the-office-uk-posterArt-204.avif",
+          "bytes": 5491
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-office-uk-posterArt-204.webp",
+          "bytes": 7488
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/the-office-uk-posterArt-264.avif",
+          "bytes": 7696
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-office-uk-posterArt-264.webp",
+          "bytes": 10168
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/im-alan-partridge.webp": {
+    "source": "/tv-posters/im-alan-partridge.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "1519feca7dc4642e",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/im-alan-partridge-posterArt-156.avif",
+          "bytes": 4304
+        },
+        "webp": {
+          "src": "/_img/tv-posters/im-alan-partridge-posterArt-156.webp",
+          "bytes": 6124
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/im-alan-partridge-posterArt-204.avif",
+          "bytes": 6362
+        },
+        "webp": {
+          "src": "/_img/tv-posters/im-alan-partridge-posterArt-204.webp",
+          "bytes": 8736
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/im-alan-partridge-posterArt-264.avif",
+          "bytes": 8970
+        },
+        "webp": {
+          "src": "/_img/tv-posters/im-alan-partridge-posterArt-264.webp",
+          "bytes": 12604
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/phoenix-nights.webp": {
+    "source": "/tv-posters/phoenix-nights.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "3245459820590763",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/phoenix-nights-posterArt-156.avif",
+          "bytes": 6834
+        },
+        "webp": {
+          "src": "/_img/tv-posters/phoenix-nights-posterArt-156.webp",
+          "bytes": 9802
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/phoenix-nights-posterArt-204.avif",
+          "bytes": 9805
+        },
+        "webp": {
+          "src": "/_img/tv-posters/phoenix-nights-posterArt-204.webp",
+          "bytes": 14488
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/phoenix-nights-posterArt-264.avif",
+          "bytes": 13572
+        },
+        "webp": {
+          "src": "/_img/tv-posters/phoenix-nights-posterArt-264.webp",
+          "bytes": 20822
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/peep-show.webp": {
+    "source": "/tv-posters/peep-show.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "51205addb28bdff6",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/peep-show-posterArt-156.avif",
+          "bytes": 4600
+        },
+        "webp": {
+          "src": "/_img/tv-posters/peep-show-posterArt-156.webp",
+          "bytes": 6436
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/peep-show-posterArt-204.avif",
+          "bytes": 6760
+        },
+        "webp": {
+          "src": "/_img/tv-posters/peep-show-posterArt-204.webp",
+          "bytes": 9518
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/peep-show-posterArt-264.avif",
+          "bytes": 9730
+        },
+        "webp": {
+          "src": "/_img/tv-posters/peep-show-posterArt-264.webp",
+          "bytes": 14006
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/fawlty-towers.webp": {
+    "source": "/tv-posters/fawlty-towers.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "fc3b596e017b4808",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/fawlty-towers-posterArt-156.avif",
+          "bytes": 5838
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fawlty-towers-posterArt-156.webp",
+          "bytes": 8780
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/fawlty-towers-posterArt-204.avif",
+          "bytes": 8437
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fawlty-towers-posterArt-204.webp",
+          "bytes": 13188
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/fawlty-towers-posterArt-264.avif",
+          "bytes": 12024
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fawlty-towers-posterArt-264.webp",
+          "bytes": 19614
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/spaced.webp": {
+    "source": "/tv-posters/spaced.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "bfc54ee04b0e89d7",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/spaced-posterArt-156.avif",
+          "bytes": 5427
+        },
+        "webp": {
+          "src": "/_img/tv-posters/spaced-posterArt-156.webp",
+          "bytes": 7108
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/spaced-posterArt-204.avif",
+          "bytes": 7441
+        },
+        "webp": {
+          "src": "/_img/tv-posters/spaced-posterArt-204.webp",
+          "bytes": 10530
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/spaced-posterArt-264.avif",
+          "bytes": 10355
+        },
+        "webp": {
+          "src": "/_img/tv-posters/spaced-posterArt-264.webp",
+          "bytes": 15014
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/the-thick-of-it.webp": {
+    "source": "/tv-posters/the-thick-of-it.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "fd08bc96cf42c46e",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/the-thick-of-it-posterArt-156.avif",
+          "bytes": 3086
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-thick-of-it-posterArt-156.webp",
+          "bytes": 4014
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/the-thick-of-it-posterArt-204.avif",
+          "bytes": 4229
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-thick-of-it-posterArt-204.webp",
+          "bytes": 5626
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/the-thick-of-it-posterArt-264.avif",
+          "bytes": 6094
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-thick-of-it-posterArt-264.webp",
+          "bytes": 7994
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/the-trip.webp": {
+    "source": "/tv-posters/the-trip.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "5cc4e0185166a8ae",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/the-trip-posterArt-156.avif",
+          "bytes": 4199
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-trip-posterArt-156.webp",
+          "bytes": 5510
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/the-trip-posterArt-204.avif",
+          "bytes": 5880
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-trip-posterArt-204.webp",
+          "bytes": 7922
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/the-trip-posterArt-264.avif",
+          "bytes": 8211
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-trip-posterArt-264.webp",
+          "bytes": 11268
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/fleabag.webp": {
+    "source": "/tv-posters/fleabag.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "727305fc92c4d68e",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/fleabag-posterArt-156.avif",
+          "bytes": 5450
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fleabag-posterArt-156.webp",
+          "bytes": 7464
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/fleabag-posterArt-204.avif",
+          "bytes": 8073
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fleabag-posterArt-204.webp",
+          "bytes": 11214
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/fleabag-posterArt-264.avif",
+          "bytes": 11182
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fleabag-posterArt-264.webp",
+          "bytes": 16336
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/its-always-sunny.webp": {
+    "source": "/tv-posters/its-always-sunny.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "3e4aaf3723d2093d",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/its-always-sunny-posterArt-156.avif",
+          "bytes": 7143
+        },
+        "webp": {
+          "src": "/_img/tv-posters/its-always-sunny-posterArt-156.webp",
+          "bytes": 10176
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/its-always-sunny-posterArt-204.avif",
+          "bytes": 10221
+        },
+        "webp": {
+          "src": "/_img/tv-posters/its-always-sunny-posterArt-204.webp",
+          "bytes": 14830
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/its-always-sunny-posterArt-264.avif",
+          "bytes": 14548
+        },
+        "webp": {
+          "src": "/_img/tv-posters/its-always-sunny-posterArt-264.webp",
+          "bytes": 20844
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/parks-and-recreation.webp": {
+    "source": "/tv-posters/parks-and-recreation.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "233044f434659deb",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/parks-and-recreation-posterArt-156.avif",
+          "bytes": 5378
+        },
+        "webp": {
+          "src": "/_img/tv-posters/parks-and-recreation-posterArt-156.webp",
+          "bytes": 8008
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/parks-and-recreation-posterArt-204.avif",
+          "bytes": 8093
+        },
+        "webp": {
+          "src": "/_img/tv-posters/parks-and-recreation-posterArt-204.webp",
+          "bytes": 12248
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/parks-and-recreation-posterArt-264.avif",
+          "bytes": 11605
+        },
+        "webp": {
+          "src": "/_img/tv-posters/parks-and-recreation-posterArt-264.webp",
+          "bytes": 18284
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/arrested-development.webp": {
+    "source": "/tv-posters/arrested-development.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "fbdf5c4c86cabca9",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/arrested-development-posterArt-156.avif",
+          "bytes": 5870
+        },
+        "webp": {
+          "src": "/_img/tv-posters/arrested-development-posterArt-156.webp",
+          "bytes": 8000
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/arrested-development-posterArt-204.avif",
+          "bytes": 8385
+        },
+        "webp": {
+          "src": "/_img/tv-posters/arrested-development-posterArt-204.webp",
+          "bytes": 11950
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/arrested-development-posterArt-264.avif",
+          "bytes": 12201
+        },
+        "webp": {
+          "src": "/_img/tv-posters/arrested-development-posterArt-264.webp",
+          "bytes": 17540
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/community.webp": {
+    "source": "/tv-posters/community.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "15b9f705450917d4",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/community-posterArt-156.avif",
+          "bytes": 5774
+        },
+        "webp": {
+          "src": "/_img/tv-posters/community-posterArt-156.webp",
+          "bytes": 7808
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/community-posterArt-204.avif",
+          "bytes": 8593
+        },
+        "webp": {
+          "src": "/_img/tv-posters/community-posterArt-204.webp",
+          "bytes": 11688
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/community-posterArt-264.avif",
+          "bytes": 11929
+        },
+        "webp": {
+          "src": "/_img/tv-posters/community-posterArt-264.webp",
+          "bytes": 17508
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/louie.webp": {
+    "source": "/tv-posters/louie.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "49ec3780e6061bdc",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/louie-posterArt-156.avif",
+          "bytes": 3947
+        },
+        "webp": {
+          "src": "/_img/tv-posters/louie-posterArt-156.webp",
+          "bytes": 5328
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/louie-posterArt-204.avif",
+          "bytes": 5513
+        },
+        "webp": {
+          "src": "/_img/tv-posters/louie-posterArt-204.webp",
+          "bytes": 7952
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/louie-posterArt-264.avif",
+          "bytes": 8237
+        },
+        "webp": {
+          "src": "/_img/tv-posters/louie-posterArt-264.webp",
+          "bytes": 11968
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/atlanta.webp": {
+    "source": "/tv-posters/atlanta.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "d41d1315624738c5",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/atlanta-posterArt-156.avif",
+          "bytes": 3909
+        },
+        "webp": {
+          "src": "/_img/tv-posters/atlanta-posterArt-156.webp",
+          "bytes": 4888
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/atlanta-posterArt-204.avif",
+          "bytes": 5578
+        },
+        "webp": {
+          "src": "/_img/tv-posters/atlanta-posterArt-204.webp",
+          "bytes": 7024
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/atlanta-posterArt-264.avif",
+          "bytes": 7718
+        },
+        "webp": {
+          "src": "/_img/tv-posters/atlanta-posterArt-264.webp",
+          "bytes": 9766
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/better-things.webp": {
+    "source": "/tv-posters/better-things.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "dafb1333174e02da",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/better-things-posterArt-156.avif",
+          "bytes": 3532
+        },
+        "webp": {
+          "src": "/_img/tv-posters/better-things-posterArt-156.webp",
+          "bytes": 3960
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/better-things-posterArt-204.avif",
+          "bytes": 4860
+        },
+        "webp": {
+          "src": "/_img/tv-posters/better-things-posterArt-204.webp",
+          "bytes": 5818
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/better-things-posterArt-264.avif",
+          "bytes": 6898
+        },
+        "webp": {
+          "src": "/_img/tv-posters/better-things-posterArt-264.webp",
+          "bytes": 8486
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/succession.webp": {
+    "source": "/tv-posters/succession.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "df43fff6aa522b1d",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/succession-posterArt-156.avif",
+          "bytes": 5696
+        },
+        "webp": {
+          "src": "/_img/tv-posters/succession-posterArt-156.webp",
+          "bytes": 7906
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/succession-posterArt-204.avif",
+          "bytes": 8018
+        },
+        "webp": {
+          "src": "/_img/tv-posters/succession-posterArt-204.webp",
+          "bytes": 11778
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/succession-posterArt-264.avif",
+          "bytes": 11827
+        },
+        "webp": {
+          "src": "/_img/tv-posters/succession-posterArt-264.webp",
+          "bytes": 17860
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/breaking-bad.webp": {
+    "source": "/tv-posters/breaking-bad.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "ae019b757f40815a",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/breaking-bad-posterArt-156.avif",
+          "bytes": 4778
+        },
+        "webp": {
+          "src": "/_img/tv-posters/breaking-bad-posterArt-156.webp",
+          "bytes": 6768
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/breaking-bad-posterArt-204.avif",
+          "bytes": 7219
+        },
+        "webp": {
+          "src": "/_img/tv-posters/breaking-bad-posterArt-204.webp",
+          "bytes": 10244
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/breaking-bad-posterArt-264.avif",
+          "bytes": 10733
+        },
+        "webp": {
+          "src": "/_img/tv-posters/breaking-bad-posterArt-264.webp",
+          "bytes": 15808
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/better-call-saul.webp": {
+    "source": "/tv-posters/better-call-saul.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "98e674cdf65930ba",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/better-call-saul-posterArt-156.avif",
+          "bytes": 2818
+        },
+        "webp": {
+          "src": "/_img/tv-posters/better-call-saul-posterArt-156.webp",
+          "bytes": 3464
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/better-call-saul-posterArt-204.avif",
+          "bytes": 3835
+        },
+        "webp": {
+          "src": "/_img/tv-posters/better-call-saul-posterArt-204.webp",
+          "bytes": 5042
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/better-call-saul-posterArt-264.avif",
+          "bytes": 5323
+        },
+        "webp": {
+          "src": "/_img/tv-posters/better-call-saul-posterArt-264.webp",
+          "bytes": 7244
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/the-leftovers.webp": {
+    "source": "/tv-posters/the-leftovers.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "98492f59edfa8cf0",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/the-leftovers-posterArt-156.avif",
+          "bytes": 4964
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-leftovers-posterArt-156.webp",
+          "bytes": 8114
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/the-leftovers-posterArt-204.avif",
+          "bytes": 8071
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-leftovers-posterArt-204.webp",
+          "bytes": 13512
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/the-leftovers-posterArt-264.avif",
+          "bytes": 13488
+        },
+        "webp": {
+          "src": "/_img/tv-posters/the-leftovers-posterArt-264.webp",
+          "bytes": 22938
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/severance.webp": {
+    "source": "/tv-posters/severance.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "22b904351da93843",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/severance-posterArt-156.avif",
+          "bytes": 2596
+        },
+        "webp": {
+          "src": "/_img/tv-posters/severance-posterArt-156.webp",
+          "bytes": 3396
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/severance-posterArt-204.avif",
+          "bytes": 3759
+        },
+        "webp": {
+          "src": "/_img/tv-posters/severance-posterArt-204.webp",
+          "bytes": 4740
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/severance-posterArt-264.avif",
+          "bytes": 4760
+        },
+        "webp": {
+          "src": "/_img/tv-posters/severance-posterArt-264.webp",
+          "bytes": 6388
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/black-mirror.webp": {
+    "source": "/tv-posters/black-mirror.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "570b83b05a913266",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/black-mirror-posterArt-156.avif",
+          "bytes": 7121
+        },
+        "webp": {
+          "src": "/_img/tv-posters/black-mirror-posterArt-156.webp",
+          "bytes": 10720
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/black-mirror-posterArt-204.avif",
+          "bytes": 11225
+        },
+        "webp": {
+          "src": "/_img/tv-posters/black-mirror-posterArt-204.webp",
+          "bytes": 17658
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/black-mirror-posterArt-264.avif",
+          "bytes": 17283
+        },
+        "webp": {
+          "src": "/_img/tv-posters/black-mirror-posterArt-264.webp",
+          "bytes": 28106
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/fargo.webp": {
+    "source": "/tv-posters/fargo.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "f12b1f0a087ac646",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/fargo-posterArt-156.avif",
+          "bytes": 4908
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fargo-posterArt-156.webp",
+          "bytes": 6738
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/fargo-posterArt-204.avif",
+          "bytes": 6718
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fargo-posterArt-204.webp",
+          "bytes": 9884
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/fargo-posterArt-264.avif",
+          "bytes": 9761
+        },
+        "webp": {
+          "src": "/_img/tv-posters/fargo-posterArt-264.webp",
+          "bytes": 14342
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/true-detective.webp": {
+    "source": "/tv-posters/true-detective.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "f6e59febbf343b72",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/true-detective-posterArt-156.avif",
+          "bytes": 2750
+        },
+        "webp": {
+          "src": "/_img/tv-posters/true-detective-posterArt-156.webp",
+          "bytes": 2948
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/true-detective-posterArt-204.avif",
+          "bytes": 4163
+        },
+        "webp": {
+          "src": "/_img/tv-posters/true-detective-posterArt-204.webp",
+          "bytes": 4312
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/true-detective-posterArt-264.avif",
+          "bytes": 5462
+        },
+        "webp": {
+          "src": "/_img/tv-posters/true-detective-posterArt-264.webp",
+          "bytes": 6476
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/hannibal.webp": {
+    "source": "/tv-posters/hannibal.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "cec9e42a77142fa3",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/hannibal-posterArt-156.avif",
+          "bytes": 3855
+        },
+        "webp": {
+          "src": "/_img/tv-posters/hannibal-posterArt-156.webp",
+          "bytes": 5678
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/hannibal-posterArt-204.avif",
+          "bytes": 6203
+        },
+        "webp": {
+          "src": "/_img/tv-posters/hannibal-posterArt-204.webp",
+          "bytes": 9066
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/hannibal-posterArt-264.avif",
+          "bytes": 9880
+        },
+        "webp": {
+          "src": "/_img/tv-posters/hannibal-posterArt-264.webp",
+          "bytes": 15246
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/watchmen.webp": {
+    "source": "/tv-posters/watchmen.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "961fcbfb93b6509c",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/watchmen-posterArt-156.avif",
+          "bytes": 4587
+        },
+        "webp": {
+          "src": "/_img/tv-posters/watchmen-posterArt-156.webp",
+          "bytes": 6220
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/watchmen-posterArt-204.avif",
+          "bytes": 6473
+        },
+        "webp": {
+          "src": "/_img/tv-posters/watchmen-posterArt-204.webp",
+          "bytes": 9034
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/watchmen-posterArt-264.avif",
+          "bytes": 9179
+        },
+        "webp": {
+          "src": "/_img/tv-posters/watchmen-posterArt-264.webp",
+          "bytes": 12602
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/normal-people.webp": {
+    "source": "/tv-posters/normal-people.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "c85fb07404b8c108",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/normal-people-posterArt-156.avif",
+          "bytes": 3799
+        },
+        "webp": {
+          "src": "/_img/tv-posters/normal-people-posterArt-156.webp",
+          "bytes": 4806
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/normal-people-posterArt-204.avif",
+          "bytes": 5368
+        },
+        "webp": {
+          "src": "/_img/tv-posters/normal-people-posterArt-204.webp",
+          "bytes": 6898
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/normal-people-posterArt-264.avif",
+          "bytes": 7467
+        },
+        "webp": {
+          "src": "/_img/tv-posters/normal-people-posterArt-264.webp",
+          "bytes": 9600
+        }
+      }
+    ]
+  },
+  "posterArt:/tv-posters/twin-peaks-the-return.webp": {
+    "source": "/tv-posters/twin-peaks-the-return.webp",
+    "slot": "posterArt",
+    "ratio": 0.6667,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "39d9cb943272b246",
+    "variants": [
+      {
+        "width": 156,
+        "height": 234,
+        "avif": {
+          "src": "/_img/tv-posters/twin-peaks-the-return-posterArt-156.avif",
+          "bytes": 4053
+        },
+        "webp": {
+          "src": "/_img/tv-posters/twin-peaks-the-return-posterArt-156.webp",
+          "bytes": 5140
+        }
+      },
+      {
+        "width": 204,
+        "height": 306,
+        "avif": {
+          "src": "/_img/tv-posters/twin-peaks-the-return-posterArt-204.avif",
+          "bytes": 6282
+        },
+        "webp": {
+          "src": "/_img/tv-posters/twin-peaks-the-return-posterArt-204.webp",
+          "bytes": 8044
+        }
+      },
+      {
+        "width": 264,
+        "height": 396,
+        "avif": {
+          "src": "/_img/tv-posters/twin-peaks-the-return-posterArt-264.avif",
+          "bytes": 9264
+        },
+        "webp": {
+          "src": "/_img/tv-posters/twin-peaks-the-return-posterArt-264.webp",
+          "bytes": 11912
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/bloodborne.webp": {
+    "source": "/game-covers/bloodborne.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "64b8c12db41fa39c",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/bloodborne-gameArt-156.avif",
+          "bytes": 3896
+        },
+        "webp": {
+          "src": "/_img/game-covers/bloodborne-gameArt-156.webp",
+          "bytes": 5100
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/bloodborne-gameArt-204.avif",
+          "bytes": 5576
+        },
+        "webp": {
+          "src": "/_img/game-covers/bloodborne-gameArt-204.webp",
+          "bytes": 7744
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/bloodborne-gameArt-264.avif",
+          "bytes": 8394
+        },
+        "webp": {
+          "src": "/_img/game-covers/bloodborne-gameArt-264.webp",
+          "bytes": 11276
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/league-of-legends-key-art.webp": {
+    "source": "/game-covers/league-of-legends-key-art.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 837,
+    "sourceHeight": 469,
+    "sourceHash": "388008864763b9f6",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/league-of-legends-key-art-gameArt-156.avif",
+          "bytes": 2337
+        },
+        "webp": {
+          "src": "/_img/game-covers/league-of-legends-key-art-gameArt-156.webp",
+          "bytes": 2712
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/league-of-legends-key-art-gameArt-204.avif",
+          "bytes": 3127
+        },
+        "webp": {
+          "src": "/_img/game-covers/league-of-legends-key-art-gameArt-204.webp",
+          "bytes": 3852
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/league-of-legends-key-art-gameArt-264.avif",
+          "bytes": 4365
+        },
+        "webp": {
+          "src": "/_img/game-covers/league-of-legends-key-art-gameArt-264.webp",
+          "bytes": 5798
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/journey.webp": {
+    "source": "/game-covers/journey.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "4fc159a6f670d9dd",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/journey-gameArt-156.avif",
+          "bytes": 1315
+        },
+        "webp": {
+          "src": "/_img/game-covers/journey-gameArt-156.webp",
+          "bytes": 1180
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/journey-gameArt-204.avif",
+          "bytes": 1817
+        },
+        "webp": {
+          "src": "/_img/game-covers/journey-gameArt-204.webp",
+          "bytes": 1608
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/journey-gameArt-264.avif",
+          "bytes": 2378
+        },
+        "webp": {
+          "src": "/_img/game-covers/journey-gameArt-264.webp",
+          "bytes": 2170
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/halo-3.webp": {
+    "source": "/game-covers/halo-3.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "d50edc977868ffa1",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/halo-3-gameArt-156.avif",
+          "bytes": 3507
+        },
+        "webp": {
+          "src": "/_img/game-covers/halo-3-gameArt-156.webp",
+          "bytes": 4136
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/halo-3-gameArt-204.avif",
+          "bytes": 4871
+        },
+        "webp": {
+          "src": "/_img/game-covers/halo-3-gameArt-204.webp",
+          "bytes": 5764
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/halo-3-gameArt-264.avif",
+          "bytes": 6938
+        },
+        "webp": {
+          "src": "/_img/game-covers/halo-3-gameArt-264.webp",
+          "bytes": 7916
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/call-of-duty-4.webp": {
+    "source": "/game-covers/call-of-duty-4.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "324432b52e725a7f",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/call-of-duty-4-gameArt-156.avif",
+          "bytes": 3541
+        },
+        "webp": {
+          "src": "/_img/game-covers/call-of-duty-4-gameArt-156.webp",
+          "bytes": 4480
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/call-of-duty-4-gameArt-204.avif",
+          "bytes": 4731
+        },
+        "webp": {
+          "src": "/_img/game-covers/call-of-duty-4-gameArt-204.webp",
+          "bytes": 6396
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/call-of-duty-4-gameArt-264.avif",
+          "bytes": 6595
+        },
+        "webp": {
+          "src": "/_img/game-covers/call-of-duty-4-gameArt-264.webp",
+          "bytes": 8786
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/dark-souls-3.webp": {
+    "source": "/game-covers/dark-souls-3.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "a247acbea4cdfd9a",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/dark-souls-3-gameArt-156.avif",
+          "bytes": 4256
+        },
+        "webp": {
+          "src": "/_img/game-covers/dark-souls-3-gameArt-156.webp",
+          "bytes": 5934
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/dark-souls-3-gameArt-204.avif",
+          "bytes": 6226
+        },
+        "webp": {
+          "src": "/_img/game-covers/dark-souls-3-gameArt-204.webp",
+          "bytes": 8924
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/dark-souls-3-gameArt-264.avif",
+          "bytes": 9088
+        },
+        "webp": {
+          "src": "/_img/game-covers/dark-souls-3-gameArt-264.webp",
+          "bytes": 12908
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/hearthstone-key-art.webp": {
+    "source": "/game-covers/hearthstone-key-art.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 1920,
+    "sourceHeight": 840,
+    "sourceHash": "eb9d40cd67eb60ec",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/hearthstone-key-art-gameArt-156.avif",
+          "bytes": 3338
+        },
+        "webp": {
+          "src": "/_img/game-covers/hearthstone-key-art-gameArt-156.webp",
+          "bytes": 3714
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/hearthstone-key-art-gameArt-204.avif",
+          "bytes": 5408
+        },
+        "webp": {
+          "src": "/_img/game-covers/hearthstone-key-art-gameArt-204.webp",
+          "bytes": 5790
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/hearthstone-key-art-gameArt-264.avif",
+          "bytes": 7949
+        },
+        "webp": {
+          "src": "/_img/game-covers/hearthstone-key-art-gameArt-264.webp",
+          "bytes": 8728
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/warcraft-3.webp": {
+    "source": "/game-covers/warcraft-3.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "da823db0d19cedf9",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/warcraft-3-gameArt-156.avif",
+          "bytes": 5346
+        },
+        "webp": {
+          "src": "/_img/game-covers/warcraft-3-gameArt-156.webp",
+          "bytes": 7182
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/warcraft-3-gameArt-204.avif",
+          "bytes": 7502
+        },
+        "webp": {
+          "src": "/_img/game-covers/warcraft-3-gameArt-204.webp",
+          "bytes": 10958
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/warcraft-3-gameArt-264.avif",
+          "bytes": 10909
+        },
+        "webp": {
+          "src": "/_img/game-covers/warcraft-3-gameArt-264.webp",
+          "bytes": 15888
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/fallout.webp": {
+    "source": "/game-covers/fallout.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "1fc0a1e05c1d762d",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/fallout-gameArt-156.avif",
+          "bytes": 4682
+        },
+        "webp": {
+          "src": "/_img/game-covers/fallout-gameArt-156.webp",
+          "bytes": 6422
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/fallout-gameArt-204.avif",
+          "bytes": 7092
+        },
+        "webp": {
+          "src": "/_img/game-covers/fallout-gameArt-204.webp",
+          "bytes": 9862
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/fallout-gameArt-264.avif",
+          "bytes": 10063
+        },
+        "webp": {
+          "src": "/_img/game-covers/fallout-gameArt-264.webp",
+          "bytes": 14620
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/half-life.webp": {
+    "source": "/game-covers/half-life.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "b5b028d321a7dca5",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/half-life-gameArt-156.avif",
+          "bytes": 5368
+        },
+        "webp": {
+          "src": "/_img/game-covers/half-life-gameArt-156.webp",
+          "bytes": 5700
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/half-life-gameArt-204.avif",
+          "bytes": 8288
+        },
+        "webp": {
+          "src": "/_img/game-covers/half-life-gameArt-204.webp",
+          "bytes": 9776
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/half-life-gameArt-264.avif",
+          "bytes": 12913
+        },
+        "webp": {
+          "src": "/_img/game-covers/half-life-gameArt-264.webp",
+          "bytes": 15404
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/devil-may-cry.webp": {
+    "source": "/game-covers/devil-may-cry.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "dfece074dcdce6c7",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/devil-may-cry-gameArt-156.avif",
+          "bytes": 4701
+        },
+        "webp": {
+          "src": "/_img/game-covers/devil-may-cry-gameArt-156.webp",
+          "bytes": 5880
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/devil-may-cry-gameArt-204.avif",
+          "bytes": 6587
+        },
+        "webp": {
+          "src": "/_img/game-covers/devil-may-cry-gameArt-204.webp",
+          "bytes": 8488
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/devil-may-cry-gameArt-264.avif",
+          "bytes": 8797
+        },
+        "webp": {
+          "src": "/_img/game-covers/devil-may-cry-gameArt-264.webp",
+          "bytes": 11332
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/final-fantasy.webp": {
+    "source": "/game-covers/final-fantasy.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "8ef8b5274e2502d4",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/final-fantasy-gameArt-156.avif",
+          "bytes": 3963
+        },
+        "webp": {
+          "src": "/_img/game-covers/final-fantasy-gameArt-156.webp",
+          "bytes": 5482
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/final-fantasy-gameArt-204.avif",
+          "bytes": 5579
+        },
+        "webp": {
+          "src": "/_img/game-covers/final-fantasy-gameArt-204.webp",
+          "bytes": 8086
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/final-fantasy-gameArt-264.avif",
+          "bytes": 8142
+        },
+        "webp": {
+          "src": "/_img/game-covers/final-fantasy-gameArt-264.webp",
+          "bytes": 11642
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/god-of-war.webp": {
+    "source": "/game-covers/god-of-war.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "f032ea15a12be7f3",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/god-of-war-gameArt-156.avif",
+          "bytes": 3618
+        },
+        "webp": {
+          "src": "/_img/game-covers/god-of-war-gameArt-156.webp",
+          "bytes": 3968
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/god-of-war-gameArt-204.avif",
+          "bytes": 5309
+        },
+        "webp": {
+          "src": "/_img/game-covers/god-of-war-gameArt-204.webp",
+          "bytes": 6096
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/god-of-war-gameArt-264.avif",
+          "bytes": 7395
+        },
+        "webp": {
+          "src": "/_img/game-covers/god-of-war-gameArt-264.webp",
+          "bytes": 8872
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/elder-scrolls.webp": {
+    "source": "/game-covers/elder-scrolls.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "acb746af30a3da14",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/elder-scrolls-gameArt-156.avif",
+          "bytes": 3453
+        },
+        "webp": {
+          "src": "/_img/game-covers/elder-scrolls-gameArt-156.webp",
+          "bytes": 4790
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/elder-scrolls-gameArt-204.avif",
+          "bytes": 4926
+        },
+        "webp": {
+          "src": "/_img/game-covers/elder-scrolls-gameArt-204.webp",
+          "bytes": 6930
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/elder-scrolls-gameArt-264.avif",
+          "bytes": 7092
+        },
+        "webp": {
+          "src": "/_img/game-covers/elder-scrolls-gameArt-264.webp",
+          "bytes": 9970
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/bioshock.webp": {
+    "source": "/game-covers/bioshock.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "f3e12e1d8dbc1873",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/bioshock-gameArt-156.avif",
+          "bytes": 6382
+        },
+        "webp": {
+          "src": "/_img/game-covers/bioshock-gameArt-156.webp",
+          "bytes": 8444
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/bioshock-gameArt-204.avif",
+          "bytes": 9095
+        },
+        "webp": {
+          "src": "/_img/game-covers/bioshock-gameArt-204.webp",
+          "bytes": 13092
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/bioshock-gameArt-264.avif",
+          "bytes": 13490
+        },
+        "webp": {
+          "src": "/_img/game-covers/bioshock-gameArt-264.webp",
+          "bytes": 19422
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/last-of-us.webp": {
+    "source": "/game-covers/last-of-us.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "8ac635bf444a8a50",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/last-of-us-gameArt-156.avif",
+          "bytes": 3206
+        },
+        "webp": {
+          "src": "/_img/game-covers/last-of-us-gameArt-156.webp",
+          "bytes": 3832
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/last-of-us-gameArt-204.avif",
+          "bytes": 4485
+        },
+        "webp": {
+          "src": "/_img/game-covers/last-of-us-gameArt-204.webp",
+          "bytes": 5654
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/last-of-us-gameArt-264.avif",
+          "bytes": 6516
+        },
+        "webp": {
+          "src": "/_img/game-covers/last-of-us-gameArt-264.webp",
+          "bytes": 8042
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/pyre.webp": {
+    "source": "/game-covers/pyre.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "a24e75ae85bd4767",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/pyre-gameArt-156.avif",
+          "bytes": 4522
+        },
+        "webp": {
+          "src": "/_img/game-covers/pyre-gameArt-156.webp",
+          "bytes": 5128
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/pyre-gameArt-204.avif",
+          "bytes": 6428
+        },
+        "webp": {
+          "src": "/_img/game-covers/pyre-gameArt-204.webp",
+          "bytes": 7704
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/pyre-gameArt-264.avif",
+          "bytes": 9237
+        },
+        "webp": {
+          "src": "/_img/game-covers/pyre-gameArt-264.webp",
+          "bytes": 11166
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/slay-the-spire.webp": {
+    "source": "/game-covers/slay-the-spire.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "bbe673f453fa7689",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/slay-the-spire-gameArt-156.avif",
+          "bytes": 4344
+        },
+        "webp": {
+          "src": "/_img/game-covers/slay-the-spire-gameArt-156.webp",
+          "bytes": 5452
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/slay-the-spire-gameArt-204.avif",
+          "bytes": 6315
+        },
+        "webp": {
+          "src": "/_img/game-covers/slay-the-spire-gameArt-204.webp",
+          "bytes": 8044
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/slay-the-spire-gameArt-264.avif",
+          "bytes": 9070
+        },
+        "webp": {
+          "src": "/_img/game-covers/slay-the-spire-gameArt-264.webp",
+          "bytes": 11332
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/saints-row.webp": {
+    "source": "/game-covers/saints-row.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "455c74be72d88f09",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/saints-row-gameArt-156.avif",
+          "bytes": 3610
+        },
+        "webp": {
+          "src": "/_img/game-covers/saints-row-gameArt-156.webp",
+          "bytes": 4688
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/saints-row-gameArt-204.avif",
+          "bytes": 4956
+        },
+        "webp": {
+          "src": "/_img/game-covers/saints-row-gameArt-204.webp",
+          "bytes": 6682
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/saints-row-gameArt-264.avif",
+          "bytes": 6700
+        },
+        "webp": {
+          "src": "/_img/game-covers/saints-row-gameArt-264.webp",
+          "bytes": 9058
+        }
+      }
+    ]
+  },
+  "gameArt:/game-covers/terraria.webp": {
+    "source": "/game-covers/terraria.webp",
+    "slot": "gameArt",
+    "ratio": 0.75,
+    "sourceWidth": 600,
+    "sourceHeight": 600,
+    "sourceHash": "54b65340f9cb28c5",
+    "variants": [
+      {
+        "width": 156,
+        "height": 208,
+        "avif": {
+          "src": "/_img/game-covers/terraria-gameArt-156.avif",
+          "bytes": 5459
+        },
+        "webp": {
+          "src": "/_img/game-covers/terraria-gameArt-156.webp",
+          "bytes": 6988
+        }
+      },
+      {
+        "width": 204,
+        "height": 272,
+        "avif": {
+          "src": "/_img/game-covers/terraria-gameArt-204.avif",
+          "bytes": 7960
+        },
+        "webp": {
+          "src": "/_img/game-covers/terraria-gameArt-204.webp",
+          "bytes": 10542
+        }
+      },
+      {
+        "width": 264,
+        "height": 352,
+        "avif": {
+          "src": "/_img/game-covers/terraria-gameArt-264.avif",
+          "bytes": 11613
+        },
+        "webp": {
+          "src": "/_img/game-covers/terraria-gameArt-264.webp",
+          "bytes": 15796
         }
       }
     ]

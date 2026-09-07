@@ -9,6 +9,8 @@ import { listeningLabel, rankPodcasts } from "./listening-label.mjs";
 import { listeningDescription } from "./listening-hover";
 import { tasteItemKey } from "./taste-identity.mjs";
 import { IndexReveal } from "./index-reveal";
+import { RailControls } from "./rail-controls";
+import { Search, X } from "lucide-react";
 
 const groups = [
   ["all", "Highlights", "32, 32, 30"],
@@ -18,19 +20,15 @@ const groups = [
   ["tv", "TV", "0, 154, 205"],
   ["podcasts", "Podcasts", "164, 74, 126"],
 ];
-const editorialArt = (src) =>
-  src
-    .replace("/film-posters/", "/taste-art/films/")
-    .replace("/game-covers/", "/taste-art/games/")
-    .replace("/tv-posters/", "/taste-art/tv/");
+const searchable = (value) => value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase();
 function TasteArtwork({ item }) {
   if (item.kind === "music") {
     return <AlbumCover album={item} />;
   }
   if (item.art) {
     return <SiteImage
-      src={editorialArt(item.art)}
-      slot={item.kind === "podcasts" ? "podcastArt" : "tasteArt"}
+      src={item.art}
+      slot={item.kind === "podcasts" ? "podcastArt" : item.kind === "games" ? "gameArt" : "posterArt"}
       sizes="(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"
       alt=""
     />;
@@ -46,6 +44,9 @@ function TasteArtwork({ item }) {
 export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const [category, setCategory] = useState("all"),
     [visibleCount, setVisibleCount] = useState(36);
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchButton = useRef(null);
   const rail = useRef(null);
   const more = useRef(null);
   const activeCard = useRef(null);
@@ -67,7 +68,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     window.addEventListener("keydown", onEscape);
     return () => window.removeEventListener("keydown", onEscape);
   }, [detailOpen]);
-  const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt, category === "music");
+  const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt, category === "music" || searchOpen);
   const music = useMemo(() => browseAlbums(catalogue).map((album) => ({
     ...album,
     title: album.album,
@@ -100,9 +101,20 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         : Math.floor(index / 6)
     ];
   }).filter(Boolean);
-  const list = category === "all" ? mixed : lists[category];
+  const terms = searchable(query.trim()).split(/\s+/).filter(Boolean);
+  const selection = category === "all" ? (terms.length ? Object.values(lists).flat() : mixed) : lists[category];
+  const list = terms.length ? selection.filter((item) => {
+    const text = searchable(`${item.title} ${item.creator ?? ""}`);
+    return terms.every((term) => text.includes(term));
+  }) : selection;
   const visible = list.slice(0, visibleCount);
   const detailCount = detail ? listeningLabel(detail) : null;
+  const updateQuery = (value) => {
+    dismissDetail();
+    setQuery(value);
+    setVisibleCount(36);
+    if (rail.current) rail.current.scrollLeft = 0;
+  };
   useEffect(() => {
     if (!more.current) return;
     const observer = new IntersectionObserver(([entry]) => {
@@ -110,7 +122,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     }, { root: rail.current, rootMargin: "0px 240px 0px 0px" });
     observer.observe(more.current);
     return () => observer.disconnect();
-  }, [category, visibleCount]);
+  }, [category, query, visibleCount]);
   return (
     <section
       className={`page-grid concept-archive personal-taste${detailOpen ? " is-open" : ""}`}
@@ -126,6 +138,23 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       <header className="concept-taste-head">
         <div className="concept-archive-head">
           <h2 id="taste-title">Taste Library</h2>
+        </div>
+        <div className="taste-tools">
+          {searchOpen ? <div className="taste-search-field">
+            <Search size={15} aria-hidden="true" />
+            <input autoFocus type="search" aria-label="Search the taste library" placeholder="Search the library" value={query}
+              onChange={(event) => updateQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.stopPropagation();
+                  updateQuery("");
+                  setSearchOpen(false);
+                  requestAnimationFrame(() => searchButton.current?.focus());
+                }
+              }} />
+            <button type="button" aria-label="Close taste search" onClick={() => { updateQuery(""); setSearchOpen(false); requestAnimationFrame(() => searchButton.current?.focus()); }}><X size={15} aria-hidden="true" /></button>
+          </div> : <button className="taste-search-toggle" type="button" ref={searchButton} onClick={() => setSearchOpen(true)}><Search size={15} aria-hidden="true" /><span>Search</span></button>}
+          <RailControls rail={rail} label="Taste" controls="taste-rail" />
         </div>
       </header>
       <nav className="taste-filters deck-legend" aria-label="Browse the taste library">
@@ -147,12 +176,14 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           </button>
         ))}
       </nav>
-      <div className="personal-taste-rail" ref={rail}>
+      {terms.length ? <p className="taste-search-status" role="status">{list.length ? `${list.length.toLocaleString()} ${list.length === 1 ? "match" : "matches"}${category === "all" ? " across the library" : ""}` : "No matches. Try another title or creator."}</p> : null}
+      <div className="personal-taste-rail" id="taste-rail" ref={rail}>
         {visible.map((item) => {
           const count = listeningLabel(item);
           return (
             <article
               className="personal-taste-card"
+              data-kind={item.kind}
               tabIndex={0}
               key={`${item.kind}-${tasteItemKey(item)}`}
               aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)}`}
@@ -179,7 +210,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         })}
         {visible.length < list.length ? (
           <button className="taste-load-more" type="button" ref={more} onClick={() => setVisibleCount((count) => count + 36)}>
-            More {category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
+            More {terms.length ? "results" : category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
           </button>
         ) : null}
       </div>
@@ -200,7 +231,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           {detailCount ? <p className="personal-taste-detail-count"><strong>{detailCount.value}</strong> {detailCount.label}</p> : null}
         </> : null}
       </IndexReveal>
-      {category === "music" && (loading || loadError) ? <p className="taste-load-status" role="status">
+      {(category === "music" || searchOpen) && (loading || loadError) ? <p className="taste-load-status" role="status">
         {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
       </p> : null}
     </section>

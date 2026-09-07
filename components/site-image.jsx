@@ -91,6 +91,7 @@ export function preloadBackground(src, slot) {
 export function SiteImage({
   src,
   slot,
+  revision,
   sizes,
   alt = "",
   priority = false,
@@ -102,10 +103,13 @@ export function SiteImage({
   ...rest
 }) {
   const entry = variants[`${slot}:${src}`];
+  // A new crop can reuse the source bytes. Give those derived images an
+  // explicit revision so returning visitors receive the updated framing.
+  const version = [entry?.sourceHash, revision].filter(Boolean).join("-");
 
   const img = (
     <img
-      src={entry ? versionedSrc(src, entry.sourceHash) : src}
+      src={versionedSrc(src, version)}
       alt={alt}
       // The slot ladder tops out at 1.5x DPR, so let the browser know the
       // intrinsic dimensions either way — it keeps the aspect ratio reserved.
@@ -135,8 +139,8 @@ export function SiteImage({
 
   return (
     <picture>
-      <source type="image/avif" srcSet={srcSet(entry.variants, "avif", entry.sourceHash)} sizes={sizes} />
-      <source type="image/webp" srcSet={srcSet(entry.variants, "webp", entry.sourceHash)} sizes={sizes} />
+      <source type="image/avif" srcSet={srcSet(entry.variants, "avif", version)} sizes={sizes} />
+      <source type="image/webp" srcSet={srcSet(entry.variants, "webp", version)} sizes={sizes} />
       {img}
     </picture>
   );

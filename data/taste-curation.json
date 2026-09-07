@@ -547,7 +547,7 @@
     {
       "title": "League of Legends",
       "creator": "Riot Games",
-      "art": "/game-covers/league-of-legends.webp"
+      "art": "/game-covers/league-of-legends-key-art.webp"
     },
     {
       "title": "Journey",
@@ -573,7 +573,7 @@
     {
       "title": "Hearthstone",
       "creator": "Blizzard Entertainment",
-      "art": "/game-covers/hearthstone.webp"
+      "art": "/game-covers/hearthstone-key-art.webp"
     },
     {
       "title": "Warcraft III",
@@ -1048,7 +1048,9 @@
       "href": "https://podcasts.apple.com/gb/podcast/unlocked/id276268454"
     },
     {
-      "title": "The Always Sunny Podcast"
+      "title": "The Always Sunny Podcast",
+      "art": "/podcast-covers/always-sunny-podcast.webp",
+      "href": "https://open.spotify.com/show/0xDEeqWuoMNBUFGNrhIz6L"
     },
     {
       "title": "Tom Bilyeu's Impact Theory",
@@ -1213,7 +1215,9 @@
       "href": "https://podcasts.apple.com/gb/podcast/possible/id1677184070?uo=4"
     },
     {
-      "title": "Spotify Presents"
+      "title": "Spotify Presents",
+      "art": "/podcast-covers/spotify-presents.webp",
+      "href": "https://open.spotify.com/show/2K5tDp2QRuZy16KTWoWq6B"
     },
     {
       "title": "The A24 Podcast",
@@ -1276,7 +1280,9 @@
       "href": "https://www.youtube.com/@allin"
     },
     {
-      "title": "Bite"
+      "title": "Bite",
+      "art": "/podcast-covers/bite.webp",
+      "href": "https://open.spotify.com/show/0TNivCfDqUMOg02S7UIaIN"
     },
     {
       "title": "Conversations with Tyler",
@@ -1285,7 +1291,10 @@
       "href": "https://podcasts.apple.com/gb/podcast/conversations-with-tyler/id983795625"
     },
     {
-      "title": "DISCovery with Eric Senich"
+      "title": "DISCovery with Eric Senich",
+      "art": "/podcast-covers/discovery-eric-senich.webp",
+      "href": "https://www.listennotes.com/podcasts/discovery-with-eric-senich-eric-senich-GMm1FbC-EZU/",
+      "creator": "Eric Senich"
     },
     {
       "title": "DarkHorse Podcast | Bret Weinstein and Heather Heying",
@@ -1306,10 +1315,14 @@
       "href": "https://podcasts.apple.com/gb/podcast/how-to-take-over-the-world/id1333158713"
     },
     {
-      "title": "JRE Clips"
+      "title": "JRE Clips",
+      "art": "/podcast-covers/jre-clips.webp",
+      "href": "https://open.spotify.com/show/1LMmQF9PH8LjYrktU0Oq5Y"
     },
     {
-      "title": "Jordan Peterson Archive"
+      "title": "Jordan Peterson Archive",
+      "art": "/podcast-covers/peterson-archive.webp",
+      "href": "https://www.listennotes.com/podcasts/jordan-peterson-archive-lewis-convery-nTiDaZdXlvz/"
     },
     {
       "title": "Kermode and Mayo's Film Review",
@@ -1429,7 +1442,9 @@
       "href": "https://podcasts.apple.com/gb/podcast/the-saad-truth-with-dr.-saad/id1516343565"
     },
     {
-      "title": "The TEFL and TESOL Podcast by ITTT"
+      "title": "The TEFL and TESOL Podcast by ITTT",
+      "art": "/podcast-covers/ittt-podcast.webp",
+      "href": "https://www.listennotes.com/podcasts/the-tefl-and-tesol-podcast-by-ittt-ittt-EtXmyzAuRv4/"
     },
     {
       "title": "The TestoNation Podcast",
@@ -1450,7 +1465,9 @@
       "href": "https://podcasts.apple.com/gb/podcast/this-week-in-startups/id315114957"
     },
     {
-      "title": "Veritasium"
+      "title": "Veritasium",
+      "art": "/podcast-covers/veritasium.webp",
+      "href": "https://open.spotify.com/show/6EpB14Zj369GeJUKYXZ9e7"
     },
     {
       "title": "Your Mom's House with Christina P. and Tom Segura",
@@ -1475,6 +1492,30 @@
       "creator": "Alex O'Connor",
       "art": "/podcast-covers/within-reason.webp",
       "href": "https://www.alexoconnor.com/"
+    },
+    {
+      "title": "The OpenAI Podcast",
+      "art": "/podcast-covers/openai-podcast.webp",
+      "href": "https://podcasts.apple.com/gb/podcast/openai-podcast/id1820330260",
+      "creator": "OpenAI"
+    },
+    {
+      "title": "The Ezra Klein Show",
+      "art": "/podcast-covers/ezra-klein-show.webp",
+      "href": "https://podcasts.apple.com/gb/podcast/the-ezra-klein-show/id1548604447",
+      "creator": "New York Times Opinion"
+    },
+    {
+      "title": "Vampire Campfire",
+      "art": "/podcast-covers/vampire-campfire.webp",
+      "href": "https://podcasts.apple.com/gb/podcast/vampire-campfire/id1734510849",
+      "creator": "Vampire Weekend"
+    },
+    {
+      "title": "Dish",
+      "art": "/podcast-covers/dish.webp",
+      "href": "https://podcasts.apple.com/gb/podcast/dish/id1626354833",
+      "creator": "Cold Glass Productions"
     }
   ],
   "podcastListening": {

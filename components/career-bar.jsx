@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { SiteImage } from "./site-image";
 import { IndexReveal } from "./index-reveal";
+import { RailControls } from "./rail-controls";
 import curation from "@/data/taste-curation.json";
 
 const { career } = curation;
@@ -40,10 +41,12 @@ export function CareerBar() {
         if (active !== null && held === null && focused >= 0) setLastRole(focused);
       }}
     >
-      <header className="concept-career-head">
+      <header className="concept-career-head index-section-head">
         <h2 id="career-title">Career</h2>
+        <RailControls rail={rail} label="Career" controls="career-rail" />
       </header>
-      <ol className="concept-career-timeline" ref={rail} style={{ "--career-count": career.length }}>
+      <p className="concept-career-current"><span>Now</span> {career[0].role}</p>
+      <ol className="concept-career-timeline" id="career-rail" ref={rail} style={{ "--career-count": career.length }}>
         {career.map((job, index) => (
           <li key={job.name} style={{ "--company-accent": job.accent }}>
             <button
@@ -68,6 +71,7 @@ export function CareerBar() {
                   <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
                 </span>
               </span>
+              <span className="concept-career-year" aria-hidden="true">{job.span.replace(/ — /g, "–")}</span>
             </button>
           </li>
         ))}

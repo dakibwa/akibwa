@@ -292,12 +292,7 @@ const safeFields = [
 for (const category of ["career", "films", "games", "tv", "podcasts"])
   for (const row of curation[category]) {
     assert(Object.keys(row).every((key) => safeFields.includes(key)));
-    const path =
-      row.logo ||
-      row.art
-        ?.replace("/film-posters/", "/taste-art/films/")
-        .replace("/game-covers/", "/taste-art/games/")
-        .replace("/tv-posters/", "/taste-art/tv/");
+    const path = row.logo || row.art;
     if (path) assert(existsSync(new URL(`../public${path}`, import.meta.url)), `${category}: missing ${path}`);
     else assert.equal(category, "podcasts", "only a podcast may use a typographic cover");
     if (row.href) assert(row.href.startsWith("https://"));

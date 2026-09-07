@@ -287,7 +287,7 @@ const checkPublicLanding = async () => {
   check(mainHeading?.name?.value === "I'm Daniel. Online as Akibwa.", `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
   check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the approved introduction reserves both names");
   check(state.lede === "Building in the age of AI", "the masthead preserves Dan's requested proposition");
-  check(await evaluate('[...document.querySelectorAll(".page-footer-details a, .page-footer-details button")].every(item => item.querySelector("span:last-child")?.textContent === "dakibwa")'), "all three contact labels read dakibwa");
+  check(await evaluate('JSON.stringify([...document.querySelectorAll(".page-footer-details a, .page-footer-details button")].map(item => item.querySelector("span:last-child")?.textContent)) === JSON.stringify(["Instagram", "X", "Email"])'), "contact controls identify their platforms without repeated handles");
   check(await evaluate('!document.querySelector(".taste-source-note") && !document.querySelector(".concept-taste-head .archive-link")'), "the closing sentence and browse-all album link are removed");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
   check(state.careerCount === 8, `the approved compact career bar has eight roles [${state.careerCount}]`);
@@ -473,8 +473,37 @@ const checkPublicLanding = async () => {
   check(nameBefore.top === nameAfter.top && nameBefore.height === nameAfter.height, "the name flip does not move the surrounding composition");
   await evaluate('document.querySelectorAll(".taste-filters button")[2].click()');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 35'), "the Films filter keeps the whole approved shelf reachable");
+  check(await evaluate(`(() => {
+    const art=document.querySelector('.personal-taste-art'), img=art.querySelector('img'), box=art.getBoundingClientRect();
+    return img.src.includes('/film-posters/') && Math.abs(box.width/box.height-2/3)<.01;
+  })()`), "films show their real posters in an uncropped portrait frame");
   await evaluate('document.querySelectorAll(".taste-filters button")[0].click()');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 12'), "Highlights restores the short mixed edit");
+
+  section("browsing controls and taste search");
+  check(await evaluate('document.querySelectorAll(".concept-career-year").length === 8 && document.querySelector(".concept-career-current").textContent.includes("Independent AI Systems Builder")'), "career dates and the current role are readable without opening a card");
+  await evaluate(`document.querySelector('#taste button[aria-label="Next taste"]').click()`);
+  await sleep(700);
+  check(await evaluate(`document.querySelector('#taste-rail').scrollLeft > 100 && !document.querySelector('#taste button[aria-label="Previous taste"]').disabled`), "Taste arrows move the native rail and update the available direction");
+  await evaluate(`document.querySelector('#taste button[aria-label="Previous taste"]').click()`);
+  await sleep(700);
+  check(await evaluate(`document.querySelector('#taste-rail').scrollLeft <= 2 && document.querySelector('#taste button[aria-label="Previous taste"]').disabled`), "the back arrow returns to the start and disables at the edge");
+  await evaluate('document.querySelector(".taste-search-toggle").click()');
+  const tasteSearch = async (value) => {
+    await evaluate(`(() => { const input=document.querySelector('.taste-search-field input'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)}); input.dispatchEvent(new Event('input',{bubbles:true})); })()`);
+    await sleep(200);
+  };
+  await tasteSearch('Paul Thomas Anderson');
+  check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].length >= 4 && [...document.querySelectorAll(".personal-taste-card")].every(card => card.textContent.includes("Paul Thomas Anderson"))'), "Highlights search reaches the full film collection by creator");
+  await tasteSearch('Graceland');
+  check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].some(card => card.textContent.includes("Paul Simon"))'), "search finds albums beyond the twelve-cover Highlights selection");
+  await tasteSearch('veritasium');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 1 && document.querySelector(".personal-taste-card img").src.includes("veritasium")'), "search finds a podcast by title and shows its verified cover");
+  await tasteSearch('zzz-no-such-title-9184');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 0 && document.querySelector(".taste-search-status").textContent.includes("No matches")'), "an empty search gives a clear recoverable state");
+  await evaluate(`document.querySelector('button[aria-label="Close taste search"]').click()`);
+  await sleep(100);
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 12 && document.activeElement.matches(".taste-search-toggle")'), "closing search restores Highlights and keyboard focus");
 
   section("ranked listening shelves");
   await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');

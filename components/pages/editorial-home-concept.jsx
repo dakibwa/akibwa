@@ -6,6 +6,7 @@ import { PageFooter } from "@/components/page-footer";
 import { SiteImage } from "@/components/site-image";
 import { CareerBar } from "@/components/career-bar";
 import { TasteLibrary } from "@/components/taste-library";
+import { RailControls } from "@/components/rail-controls";
 
 const projects = [
   {
@@ -31,6 +32,7 @@ const projects = [
     description:
       "Inês’s European Portuguese lessons, with availability and booking in one place.",
     src: "/project-art/personal/portuguese-with-ines-conversation.png",
+    imageRevision: "left-crop",
     alt: "Two people talking over coffee as colourful speech shapes meet between them",
     above: true,
     aboveSync: true,
@@ -44,8 +46,8 @@ const projects = [
     subtitle: "Paris → Sofia · 1,982 km",
     description:
       "Paris to Sofia on foot, told through the route, photographs and notes.",
-    src: "/project-art/personal/trek-paris-sofia-project.png",
-    alt: "An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre",
+    src: "/project-art/personal/trek-paper-landscape.png",
+    alt: "A red walking route winding through a miniature paper landscape of villages, woodland and rolling fields",
     accent: "#d96b32",
   },
 ];
@@ -101,8 +103,13 @@ function ProjectShowcase() {
       }}
       onKeyDown={(event) => { if (event.key === "Escape") dismiss(); }}
     >
+    <header className="concept-projects-head index-section-head">
+      <h2 id="projects-title">Projects</h2>
+      <RailControls rail={rail} label="Projects" controls="project-rail" />
+    </header>
     <div
       className="concept-project-grid concept-project-swipe"
+      id="project-rail"
       ref={rail}
       role="list"
       aria-label="Projects"
@@ -131,6 +138,7 @@ function ProjectShowcase() {
           >
             <SiteImage
               src={project.src}
+              revision={project.imageRevision}
               slot="conceptProject"
               sizes="(max-width:480px) 88vw, (max-width:1050px) 400px, (max-width:1358px) calc(32vw - 16px), 418px"
               alt={project.alt}
@@ -192,9 +200,6 @@ export function EditorialHomeConcept({ initialCatalogue, refreshedAt, podcasts }
         id="projects"
         aria-labelledby="projects-title"
       >
-        <header className="concept-projects-head">
-          <h2 id="projects-title">Projects</h2>
-        </header>
         <ProjectShowcase />
       </section>
 

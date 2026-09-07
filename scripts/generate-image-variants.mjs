@@ -83,6 +83,11 @@ const SLOTS = {
   // with a larger rung reserved for the dialog.
   podcastArt: { ratio: 1, css: [104, 136, 442] },
 
+  // Real theatrical/TV posters and game boxes on the homepage bookshelf.
+  // Leave the square, colour-graded legacy wall bindings separate.
+  posterArt: { ratio: 2 / 3, css: [104, 136, 176] },
+  gameArt: { ratio: 3 / 4, css: [104, 136, 176] },
+
   // Title-specific editorial art behind the original cover on the large,
   // wide and tall Taste quilt cards. The source is 3:2 and remains 3:2 here;
   // each card applies its final object-fit crop because one source serves all
@@ -125,7 +130,7 @@ const SLOTS = {
  * CSS scales the source to cover the box, then slides the overflow according to
  * the position percentage — 0% flush to the start edge, 100% flush to the end.
  */
-function coverCrop(sourceWidth, sourceHeight, ratio, [xPct, yPct]) {
+function coverCrop(sourceWidth, sourceHeight, ratio, [xPct, yPct], zoom = 1) {
   const sourceRatio = sourceWidth / sourceHeight;
   let width = sourceWidth;
   let height = sourceHeight;
@@ -135,6 +140,8 @@ function coverCrop(sourceWidth, sourceHeight, ratio, [xPct, yPct]) {
   } else {
     height = Math.round(sourceWidth / ratio);
   }
+  width = Math.round(width / zoom);
+  height = Math.round(height / zoom);
 
   return {
     left: Math.round((sourceWidth - width) * (xPct / 100)),
@@ -198,8 +205,8 @@ const sources = [
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-discoveries.svg", slot: "conceptProject" },
-  { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject" },
-  { file: "project-art/personal/trek-paris-sofia-project.png", slot: "conceptProject" },
+  { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject", position: [0, 30], zoom: 1.3 },
+  { file: "project-art/personal/trek-paper-landscape.png", slot: "conceptProject" },
   { file: "project-art/client-sites/butterfly-rose-redesign-home.jpg", slot: "clientSite" },
   { file: "project-art/client-sites/portuguese-with-ines-home.jpg", slot: "clientSite" },
   { file: "project-art/personal/butterfly-rose-card.webp", slot: "clientMark" },
@@ -341,6 +348,15 @@ for (const file of (await readdir(path.join(publicDir, "podcast-covers"))).filte
   sources.push({ file: `podcast-covers/${file}`, slot: "podcastArt" });
 }
 
+const curation = JSON.parse(await readFile(path.join(root, "data/taste-curation.json"), "utf8"));
+for (const kind of ["films", "tv", "games"]) {
+  for (const item of curation[kind]) {
+    // The original square poster plates contain the full poster on a small
+    // blurred surround. This crop removes that surround without losing type.
+    sources.push({ file: item.art.slice(1), slot: kind === "games" ? "gameArt" : "posterArt", zoom: kind === "games" ? 1 : 1.09, ...(item.art.includes("hearthstone-key-art") ? { position: [85, 50] } : {}) });
+  }
+}
+
 /*
  * Deliberately absent: albion-rose-card and albion-sunburst-hero. They survive
  * in site-data.js as `image`/`shot` fields,
@@ -435,7 +451,7 @@ async function build() {
           }
         } else {
           await mkdir(path.dirname(target), { recursive: true });
-          const crop = coverCrop(meta.width, meta.height, slot.ratio, source.position ?? [50, 50]);
+          const crop = coverCrop(meta.width, meta.height, slot.ratio, source.position ?? [50, 50], source.zoom);
           const cut = () =>
             sharp(absolute).extract(crop).resize(width, height, { fit: "fill" });
           if (pressed && !plate) plate = await press(sharp, cut());
