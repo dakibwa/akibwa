@@ -4,7 +4,7 @@ export function listeningLabel(item) {
   const known = Number.isSafeInteger(item.plays) && item.plays >= 0;
   return {
     value: known ? `${number(item.plays)}${item.atLeast ? "+" : ""}` : "—",
-    label: !known ? "No recorded count" : item.kind === "music" ? `track play${item.plays === 1 ? "" : "s"}` : item.sources?.youtube > 0 ? "plays & views" : `recorded play${item.plays === 1 ? "" : "s"}`,
+    label: known ? "plays" : "No recorded count",
     explanation: `${item.atLeast ? "At least this many recorded plays; some records cannot be reconciled exactly. " : ""}${item.kind === "music" ? "Track records, not complete album listens." : "Recorded starts and show views, including clips, not completed episodes."}`,
   };
 }

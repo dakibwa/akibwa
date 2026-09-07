@@ -117,7 +117,7 @@ assert(!/(?:[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|\/Users\/|sourceArchiveId|acco
 assert(listeningSeed(packet, curation.albumIds).length < 400, "the full history does not bloat the initial homepage payload");
 assert.equal(listeningLabel({ kind: "music", plays: 125, atLeast: true }).value, "125+");
 assert.equal(listeningLabel({ kind: "music", plays: null }).label, "No recorded count");
-assert.equal(listeningLabel({ kind: "podcasts", plays: 12, sources: { youtube: 4 } }).label, "plays & views");
+assert.equal(listeningLabel({ kind: "podcasts", plays: 12, sources: { youtube: 4 } }).label, "plays");
 assert(!Object.hasOwn(listeningLabel({ kind: "music", plays: 12 }), "source"));
 assert.deepEqual(rankPodcasts([{ title: "Unknown", plays: null }, { title: "Low", plays: 2 }, { title: "High", plays: 10 }]).map((row) => row.title), ["High", "Low", "Unknown"]);
 console.log(`Listening history passed: ${packet.albums.length} albums, ${packet.podcasts.length} shows; overlap bounds, identity matching, source-safe schema and compact homepage seed.`);
