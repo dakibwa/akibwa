@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-7m5xrNTlnoUpWyNAAPCJOSrMvhDOv3niow7iYmHBejM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-6viPrHAPVmRPOqBpMbgdJnmRBbchr1JZzyfD1woamRM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -2776,6 +2776,7 @@ function stopMenuMotion(){
   if(pending&&menuShown()) renderMenu();
 }
 function openMenu(v){
+  if(tutorialCompleting()) endTutorial();
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   tutorialFinishT=null;
   const next=v||'home', changing=menuShown()&&menuView!==next;
@@ -4424,8 +4425,8 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
       plan.par=plan.mechanicRoute;
     }
   }
-  if(GEN_RULES.catalogueRevision===21 && mechanic?.sliding && !tut){
-    if(!authorSlide(plan)) return null;
+  if(mechanic?.sliding && (GEN_RULES.catalogueRevision===21 || tut)){
+    if(!authorSlide(plan,tut)) return null;
   }
   plan.route=plan.par;
   if(GEN_RULES.optimum==='line') plan.line=famLine(plan);
@@ -4965,24 +4966,30 @@ function slidePosition(n,x,y){
   const u=Math.max(0,Math.min(1,((x-s.ax)*dx+(y-s.ay)*dy)/(dx*dx+dy*dy)));
   return {x:s.ax+u*dx,y:s.ay+u*dy};
 }
-function authorSlide(plan){
+function authorSlide(plan,tut=false){
   const before=famX(plan);
   const candidates=plan.nodes.filter(n=>!n.pinned&&!n.merged&&n.t.length===1)
     .map(n=>({n,d:Math.hypot(n.x-n.hx,n.y-n.hy)}))
-    .filter(({d})=>d>=72&&d<=420).sort((a,b)=>a.d-b.d);
+    .filter(({d})=>d>=72&&d<=(tut?500:420)).sort((a,b)=>a.d-b.d);
   for(const {n,d} of candidates){
     const ox=n.x,oy=n.y;n.x=n.hx;n.y=n.hy;
     const helps=famX(plan)<before;n.x=ox;n.y=oy;
     if(!helps)continue;
     const dx=(n.hx-n.x)/d,dy=(n.hy-n.y)/d;
-    const extra=Math.min(18,...[n.x,n.hx].flatMap(x=>dx?
-      [(x-PADX)/Math.abs(dx),(BW-PADX-x)/Math.abs(dx)]:[18]),
-      ...[n.y,n.hy].flatMap(y=>dy?[(y-PADY)/Math.abs(dy),(BH-PADY-y)/Math.abs(dy)]:[18]));
+    const reach=tut?48:18;
+    const extra=Math.min(reach,...[n.x,n.hx].flatMap(x=>dx?
+      [(x-PADX)/Math.abs(dx),(BW-PADX-x)/Math.abs(dx)]:[reach]),
+      ...[n.y,n.hy].flatMap(y=>dy?[(y-PADY)/Math.abs(dy),(BH-PADY-y)/Math.abs(dy)]:[reach]));
     const slide={ax:n.x-dx*extra,ay:n.y-dy*extra,bx:n.hx+dx*extra,by:n.hy+dy*extra};
     if(plan.nodes.some(m=>m!==n&&(()=>{
       if(Math.hypot(m.x-n.hx,m.y-n.hy)<28)return false;
       const p=slidePosition({slide},m.x,m.y);return Math.hypot(m.x-p.x,m.y-p.y)<28;
     })()))continue;
+    if(tut&&!Array.from({length:33},(_,i)=>i/32).some(u=>{
+      const x=slide.ax+(slide.bx-slide.ax)*u,y=slide.ay+(slide.by-slide.ay)*u;
+      if(plan.nodes.some(m=>m!==n&&Math.hypot(m.x-x,m.y-y)<MIN_SEP))return false;
+      n.x=x;n.y=y;const useful=famX(plan)<before;n.x=ox;n.y=oy;return useful;
+    }))continue;
     n.slide=slide;plan.sliding=1;return true;
   }
   return false;
@@ -5085,7 +5092,8 @@ function buildNet(force){
   const genDay = pk ? pk.d : R().day;
   const lesson=inTutorialRun() && idx<TUTNETS.length;
   const version=pk?.v??(revision===21?21:Math.min(20,genFor(genDay).v));
-  const GEN={...genForVersion(lesson ? TUTDAY : genDay, lesson ? null : version)};
+  const GEN={...genForVersion(lesson ? (idx===3?'2026-09-07':TUTDAY) : genDay,
+    lesson ? (idx===3?21:null) : version)};
   if(lesson&&revision===21) GEN.chord='none';
   Object.assign(GEN_RULES, genRules(GEN),{outlineDay:genDay});
   spec=netSpec(idx, GEN_RULES);
@@ -5110,7 +5118,7 @@ function buildNet(force){
   gPlay=mk('g',{class:'boardplay'},gRoot);
 
   if(isTrial()) GEN.layout='scatter';   // the trial is the endless unstructured one
-  const seedKey=inTutorialRun() ? 'tutorial' : (pk ? pk.s : R().day);
+  const seedKey=inTutorialRun() ? (idx===3?'tutorial:track:6':'tutorial') : (pk ? pk.s : R().day);
   const fr=mulberry32(fnv(seedKey+':feat:'+idx));
   const pool=[...GEN.feats];
   const chosen=[];
@@ -5205,7 +5213,7 @@ function buildNet(force){
 
     if(GEN.layout==='families'){
       const T=threads.length, L=Math.max(3,spec.nodes);
-      const TUTFAM=revision===21?['layered','layered','layered']:['layered','hourglass','layered'];
+      const TUTFAM=revision===21?['layered','layered','layered','mosaicPanels']:['layered','hourglass','layered','mosaicPanels'];
       const fam=tut?TUTFAM[idx]
                : GEN.open==='stamps'?famFor(genDay,idx,GEN_RULES)
                : spec.coupled?'hourglass'       // the approved mirrored butterfly
@@ -5216,7 +5224,7 @@ function buildNet(force){
         deep:GEN.ink==='poster16'&&spec.shared>=4};
       const fixedVisual=!tut&&(!!spec.coupled||!!spec.relay||
         (GEN.ink==='poster16'&&spec.shared>=4));
-      const plan=famPlan(fam,T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens,mech)
+      const plan=famPlan(fam,T,L,spec.shared,spec.pinned,tut&&idx===3?3:famTarget(idx),tut,rnd,idx,spec.lens,mech)
               || (!fixedVisual&&GEN.open!=='stamps'&&fam!=='layered'
                 ? famPlan('layered',T,L,spec.shared,spec.pinned,famTarget(idx),tut,rnd,idx,spec.lens,mech)
                 : null);
@@ -5308,8 +5316,8 @@ function buildNet(force){
     separateNodes();
     const c0=countCross();
     const shortBy = (GEN.layout==='families' && spec.plan)
-      ? Math.max(0, famTarget(idx)-spec.plan.route,
-                    spec.plan.route-(famTarget(idx)+1)) : 0;
+      ? Math.max(0, (tut&&idx===3?3:famTarget(idx))-spec.plan.route,
+                    spec.plan.route-((tut&&idx===3?3:famTarget(idx))+1)) : 0;
     const sym = !tut || tutSym();
     if(pass===0){
       const miss=(c0.total<spec.minX ? (spec.minX-c0.total)*2
@@ -5384,9 +5392,8 @@ function buildNet(force){
   physDirty=true;
   queueMicrotask(()=>{
     startBoardReveal();
-    const slider=members.find(n=>n.slide&&!n.threads.every(t=>t.freed));
-    if(slider&&!R().netMoves&&!R().over)flashMsg('this neuron moves along this track',
-      {plain:true,tight:true,hold:true,anchor:{x:slider.x0,y:slider.y0}});
+    resetSlideHelp();
+    if(tutorialCompleting()) showTutorialComplete();
   });
   const resumedRun=R(), resumedNet=resumedRun.netIndex;
   if(inTutorial() && (resumedRun.netMoves || Object.keys(minted).length))
@@ -6329,6 +6336,7 @@ function endDrag(e){
 }
 function afterMove(r){
   countCross();
+  noteSlideHelp();
   const blocked=threads.filter(t=>!t.freed&&t.crossings===0&&t.nodes.some(n=>n.merged));
   threads.filter(t=>!t.freed&&canFree(t)).forEach(t=>markFreed(t,false));
   save(); refresh(); renderHud();
@@ -6440,6 +6448,25 @@ const DESCENT_OFFER_MS=8000, DESCENT_TICK_MS=380, DESCENT_GLIDE=520,
       DESCENT_RADII=[18,38,70,110], DESCENT_ANGLES=14;
 let idleAt=performance.now(), descentArmed=false, settlingNode=null, descentStall=0,
     descentStalledAt=null;
+let slideHelp=null;
+function resetSlideHelp(){
+  slideHelp={run:R(),net:R().netIndex,best:initialCross,stalled:0,shown:false};
+}
+function noteSlideHelp(){
+  if(!slideHelp||slideHelp.run!==R()||slideHelp.net!==R().netIndex) resetSlideHelp();
+  const cross=countCross().total;
+  slideHelp.stalled=cross<slideHelp.best?0:slideHelp.stalled+1;
+  slideHelp.best=Math.min(slideHelp.best,cross);
+}
+function offerSlideHelp(idle){
+  if(inTutorialRun()||idle<30000||!slideHelp||slideHelp.shown||slideHelp.stalled<3
+     ||slideHelp.run!==R()||slideHelp.net!==R().netIndex) return;
+  const n=members.find(n=>n.slide&&!n.threads.every(t=>t.freed));
+  if(!n) return;
+  slideHelp.shown=true;
+  flashMsg('this neuron moves along this track',
+    {plain:true,tight:true,hold:true,anchor:{x:n.x0,y:n.y0}});
+}
 
 function bumpIdle(){
   idleAt=performance.now();
@@ -6486,6 +6513,7 @@ function descentTick(){
     return;
   }
   const idle=performance.now()-idleAt;
+  offerSlideHelp(idle);
   if(!descentArmed){
     btn.classList.toggle('on', idle>DESCENT_OFFER_MS);
     return;
@@ -6607,11 +6635,15 @@ function resetDescent(){
 const TUTNETS=[
   {threads:2, nodes:4, shared:0, pinned:0, minX:2, maxX:5},
   {threads:2, nodes:4, shared:1, pinned:0, minX:2, maxX:3},
-  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3}
+  {threads:2, nodes:4, shared:0, pinned:2, minX:2, maxX:3},
+  {threads:2, nodes:4, lens:[4,4], shared:0, pinned:0, sliding:1, minX:2, maxX:3}
 ];
 const TUTORIAL_PAIR=[THREADPAL[0],THREADPAL[1]];
 const TUT_COLORS=TUTNETS.map(()=>[...TUTORIAL_PAIR]);
 function inTutorialRun(){return !store.tutorialDone && !isTrial() && R().mode!=='trial'}
+function tutorialCompleting(){
+  return inTutorialRun() && R().over && R().cleared.length===TUTNETS.length;
+}
 function repairOutOfRangeTutorialRun(){
   if(!inTutorialRun() || R().netIndex<TUTNETS.length) return false;
   newRun('daily',today());
@@ -6723,7 +6755,9 @@ function tutFind(){
   if(!members.length||!threads.length) return null;
   const now=tutCross(null,null);
   if(!now.total) return null;                  // nothing crossing: nothing to point at
-  const movable=members.filter(n=>!n.pinned && !n.threads.every(t=>t.freed));
+  const sliderLesson=inTutorial() && R().netIndex===3 && tutStepAt===1;
+  const movable=members.filter(n=>!n.pinned && !n.threads.every(t=>t.freed)
+    && (!sliderLesson||n.slide));
   if(!movable.length) return null;
   const xs=members.map(n=>n.x0), ys=members.map(n=>n.y0), pad=58;
   const bx0=clampX(Math.min(...xs)-pad), bx1=clampX(Math.max(...xs)+pad);
@@ -6744,6 +6778,7 @@ function tutFind(){
     }) ? 1 : 0;
   };
   const test=(n,x,y)=>{
+    ({x,y}=slidePosition(n,x,y));
     const d=Math.hypot(n.x0-x,n.y0-y);
     if(d<MIN_SEP) return;                      // not a move you could tell you made
     if(members.some(m=>m!==n&&Math.hypot(m.x0-x,m.y0-y)<MIN_SEP)) return;
@@ -6753,8 +6788,8 @@ function tutFind(){
     let solid=0;
     for(let a=0;a<8;a++){
       const th=a*Math.PI/4;
-      if(tutCross({n, x:clampX(x+Math.cos(th)*TUT_ROOM),
-                      y:clampY(y+Math.sin(th)*TUT_ROOM)},null).total<=r.total) solid++;
+      const p=slidePosition(n,x+Math.cos(th)*TUT_ROOM,y+Math.sin(th)*TUT_ROOM);
+      if(tutCross({n,x:p.x,y:p.y},null).total<=r.total) solid++;
     }
     const cand={n,x,y,total:r.total,freeable:r.freeable,solid,clear:clearPath(n,x,y),d};
     if(better(cand,best)) best=cand;
@@ -6762,6 +6797,11 @@ function tutFind(){
   const gx=Math.max(7,Math.round(TUT_GRID*Math.min(1,8/Math.max(1,movable.length))));
   const gy=Math.max(3,Math.round(gx*(by1-by0)/Math.max(1,bx1-bx0)));
   movable.forEach(n=>{
+    if(n.slide){
+      for(let i=0;i<gx;i++)test(n,n.slide.ax+(n.slide.bx-n.slide.ax)*i/(gx-1),
+        n.slide.ay+(n.slide.by-n.slide.ay)*i/(gx-1));
+      return;
+    }
     for(let i=0;i<gx;i++)for(let j=0;j<gy;j++)
       test(n, bx0+(bx1-bx0)*i/(gx-1), by0+(by1-by0)*j/(gy-1));
   });
@@ -6923,6 +6963,11 @@ const TUTSTEPS_BY_NET=[
     'the <b>square stays fixed.</b> drag the pulsing circle instead.',
     '<b>move a circle around the square.</b> squares never move.',
     'the squares stay put. <b>clear the crossings with any circle.</b>'
+  ],
+  [ // net 3 — movement constrained to a visible track
+    '<b>drag the sliding neuron along its track.</b>',
+    '<b>slide along the track, or move a circle.</b> clear the crossings.',
+    '<b>clear the remaining crossings.</b> the track stays in place.'
   ]
 ];
 const TUTSTEPS=TUTSTEPS_BY_NET[0];   // the shape older code still reads
@@ -6944,7 +6989,8 @@ let coachSig='', coachQueuedSig='', coachSwapT=null, coachEnterT=null;
 const COACH_KEYS=[
   [['feature','feature',[0]],['neuron','neuron',[1]],['crossing','crossing',[0,1]]],
   [['shared','double ring · shared',[0,1]],['split','after tap · two neurons',[0,1]]],
-  [['pinned','square · fixed',[0]],['neuron','circle · moves',[1]]]
+  [['pinned','square · fixed',[0]],['neuron','circle · moves',[1]]],
+  [['sliding','sliding · along its track',[0]],['neuron','circle · moves freely',[1]]]
 ];
 function coachEnter(c){
   clearTimeout(coachEnterT); coachEnterT=null;
@@ -6962,10 +7008,11 @@ function paintTutorial(d){
   if(d.bridge){
     tutSpotClear();
     const score=d.net===1;
-    $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · ${score?'rung score':'features'}`;
+    $('coachlabel').textContent=`tutorial ${d.net+1} of ${TUTNETS.length} · ${score?'rung score':d.net===0?'features':'fixed neurons'}`;
     $('coachtext').innerHTML=score
       ? `<b>that earned ${tierSay(d.tier)}.</b> fewer turns, a higher rung.`
-      : '<b>the lines became features.</b> each is one thing the net learned.';
+      : d.net===0 ? '<b>the lines became features.</b> each is one thing the net learned.'
+      : '<b>the squares stayed fixed.</b> next, try a neuron on a track.';
     [...$('coachdots').children].forEach(dot=>{
       dot.classList.add('done'); dot.classList.remove('now');
     });
@@ -7063,6 +7110,8 @@ function leaveTutorialPicture(el){
     .finished.finally(()=>copy.remove()).catch(()=>{});
 }
 function endTutorial(){
+  cancelHold();
+  clearTimeout(tutorialFinishT); tutorialFinishT=null;
   tutSpotClear();
   leaveTutorialPicture($('netsvg'));
   leaveTutorialPicture($('coach'));
@@ -7090,10 +7139,13 @@ let tutorialFinishT=null;
 function finishTutorialNotice(){
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   tutorialFinishT=null;
+  if(!tutorialCompleting()) return;
+  endTutorial();
   sayHide();
   openMenu('home');
 }
 function showTutorialComplete(){
+  if(!tutorialCompleting()) return;
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   const hold=flashMsg('tutorial complete',{cols:FLAG,big:true,plain:true,center:true});
   tutorialFinishT=setTimeout(finishTutorialNotice,(hold||2200)+420);
@@ -7198,6 +7250,7 @@ function stampToday(depth,feats,tier){
 }
 function clearNet(){
   const r=R(), par=netTargets().par, tier=tierFor(r.netMoves,par,r.assisted);
+  if(r.over) return;
   const wasTutorial=inTutorial();
   const feats=threads.map(t=>t.key);
   threads.forEach(t=>{
@@ -7210,7 +7263,8 @@ function clearNet(){
   r.cleared.push({feats,tier,moves:r.netMoves,par,idx:r.netIndex,assisted:!!r.assisted,
                   catalogueRevision:catalogueRevision(r.catalogueRevision),
                   log:(r.logGap||r.log.length!==r.netMoves)?null:r.log});
-  const setDone = !isTrial() && r.cleared.length>=POLICY.dailyNets;
+  const setDone = !wasTutorial && !isTrial() && r.cleared.length>=POLICY.dailyNets;
+  const finalTutorial=wasTutorial && r.cleared.length>=TUTNETS.length;
   if(setDone && flawlessTally(r.cleared.filter(c=>c.tier==='perfect').length,
                               r.cleared.filter(c=>c.tier!=='done').length,
                               r.cleared.length)){
@@ -7220,10 +7274,9 @@ function clearNet(){
       else if(TIERRANK.flawless>TIERRANK[cur.tier]){ cur.tier='flawless'; cur.day=r.day }
     });
   }
-  if(setDone) r.over=true;
+  if(setDone||finalTutorial) r.over=true;
   else { r.netIndex++; r.netMoves=0; r.positions={}; r.freed=[]; r.minted={}; r.splitNodes=[]; r.assisted=false;
          r.log=[]; r.assists=0; r.logGap=false }
-  const finalTutorial=wasTutorial && r.netIndex>=TUTNETS.length;
   const read={run:r, num:r.netIndex, turns:r.turns||0,
               depth:r.cleared.length,
               finalTutorial,
@@ -7237,14 +7290,14 @@ function clearNet(){
   netPairs.forEach(p=>{ if(!store.collection.pairs[p]) store.collection.pairs[p]=r.day });
   stampToday(depth,feats,tier);
   if(wasTutorial){
-    if(finalTutorial) endTutorial();
-    else tutStepAt=1;
+    if(!finalTutorial) tutStepAt=1;
+    else renderTutorial();
   }
   save();
   holdGauge();
   boardCleared();
-  if(setDone) renderHud();
-  const tutorialBridgeAfter=wasTutorial && read.num<=2;
+  if(setDone||finalTutorial) renderHud();
+  const tutorialBridgeAfter=wasTutorial && !finalTutorial;
   const card = setDone ? showRunOver
              : finalTutorial ? showTutorialComplete
              : tutorialBridgeAfter ? (()=>showTutorialBridge(read.num-1,tier))
@@ -7924,15 +7977,14 @@ function renderHud(){
   const {optimum,par}=netTargets();
   const tier=liveTier();
 
-  const D=POLICY.dailyNets, tut=inTutorial();
+  const D=POLICY.dailyNets, tut=inTutorialRun();
   const cells=trial?r.cleared.slice(r.cleared.length-r.cleared.length%D):r.cleared;
   const strip=$('setmeter');
   if(tut){
-    const les=Math.min(R().netIndex,TUTNETS.length-1);
-    const LCOL=[TIERCOL.perfect,TIERCOL.clean,TIERCOL.flawless];
+    const les=Math.min(r.cleared.length,TUTNETS.length);
     paintCells('setmeter',Array.from({length:TUTNETS.length},(_,i)=>
-      'var('+(i<les?LCOL[i]:SETAHEAD)+')'),
-      'tutorial '+Math.min(les+1,TUTNETS.length)+' of '+TUTNETS.length);
+      'var('+(r.cleared[i]?tierCol(r.cleared[i].tier):SETAHEAD)+')'),
+      'tutorial '+Math.min(r.netIndex+1,TUTNETS.length)+' of '+TUTNETS.length);
     strip.classList.remove('tutorial-meter');
     [...strip.children].forEach(cell=>{
       cell.classList.remove('done','now');
@@ -8234,6 +8286,7 @@ function renderIntro(){
   };
 }
 function startLessons(){
+  if(tutorialCompleting()) endTutorial();
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   tutorialFinishT=null;
   cancelTutorialBridge(); tutorialBridge=null;
