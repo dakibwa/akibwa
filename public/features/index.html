@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-EBG0kUZDlTwyEcARbe85YQrKhBOGkSocLuNktrMdhWI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-6TvozwRQsBxFc7vY0Z0bebBOnVREYugqmQqhVM4r9GY=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -2436,10 +2436,27 @@ function preserveLegacyRuns(...states) {
   const receipts = new Set();
   for (const state of states) {
     if (!object(state)) continue;
-    for (const run of [...(Array.isArray(state.legacyRuns) ? state.legacyRuns : []), state.run, state.parked])
+    for (const run of Array.isArray(state.legacyRuns) ? state.legacyRuns : [])
+      if (legacy(run) || (object(run) && run.catalogueRevision === 21)) receipts.add(stable(run));
+    for (const run of [state.run, state.parked])
       if (legacy(run)) receipts.add(stable(run));
   }
   return [...receipts].sort().map(text => JSON.parse(text));
+}
+
+function repairOutlineBoard(value, nodeIds) {
+  const r = value?.run;
+  if (Number(value?.boardEdition) !== BOARD_EDITION || r?.catalogueRevision !== 21
+      || r.over || !r.positions || typeof r.positions !== 'object'
+      || (Array.isArray(r.cleared) && r.cleared.some(c => c.idx === r.netIndex))) return value;
+  const known = new Set(nodeIds);
+  if (Object.keys(r.positions).every(id => known.has(Number(id)))) return value;
+  return { ...value,
+    legacyRuns: preserveLegacyRuns(value, { legacyRuns: [r] }),
+    run: { ...r, turns: Math.max(0, (r.turns || 0) - (r.netMoves || 0)), netMoves: 0,
+      positions: {}, freed: [], minted: {}, splitNodes: [], saeUsed: false,
+      assisted: false, log: [], assists: 0, logGap: false },
+  };
 }
 
 function upgradeOutlineRuns(value, at) {
@@ -5203,6 +5220,13 @@ function buildNet(force){
     }
   }
   if(accepted) break;
+  }
+  const restored=repairOutlineBoard(store,[...members.map(n=>n.idx),
+    ...members.filter(n=>n.merged&&(R().splitNodes||[]).includes(n.idx)).map(n=>1000+n.idx)]);
+  if(restored!==store){
+    store=restored; builtFor=-1; save();
+    toast('this board has been updated · your completed nets and original save are kept');
+    return buildNet(true);
   }
   netPairs=[...new Set(members.filter(n=>n.threads.length>1)
     .map(n=>[n.threads[0].key,n.threads[1].key].sort().join('|')))];
