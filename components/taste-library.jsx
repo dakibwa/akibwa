@@ -122,7 +122,8 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         curation[kind].map((item) => ({ ...item, kind })),
       ]),
     ),
-    podcasts: rankPodcasts(podcasts).map((item) => ({ ...item, kind: "podcasts" })),
+    podcasts: rankPodcasts(podcasts.filter((item) => item.plays >= 5 || item.title === "Within Reason"))
+      .map((item) => ({ ...item, kind: "podcasts" })),
   };
   // Highlights retains the mixed editorial selection. Within each listening
   // medium its chosen records follow the same descending counts as the shelf.
