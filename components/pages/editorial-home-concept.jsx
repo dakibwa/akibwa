@@ -58,6 +58,7 @@ function ProjectShowcase() {
   const [held, setHeld] = useState(null);
   const [lastProject, setLastProject] = useState(projects[0]);
   const [detailOffset, setDetailOffset] = useState(0);
+  const [detailWidth, setDetailWidth] = useState(null);
   const rail = useRef(null);
   const cards = useRef({});
   const active = held ?? preview;
@@ -69,7 +70,9 @@ function ProjectShowcase() {
     const positionDetail = () => {
       const card = cards.current[detail.id];
       if (!card) return;
-      setDetailOffset(Math.max(0, card.getBoundingClientRect().left - shelf.getBoundingClientRect().left));
+      const bounds = card.getBoundingClientRect();
+      setDetailOffset(Math.max(0, bounds.left - shelf.getBoundingClientRect().left));
+      setDetailWidth(bounds.width);
     };
     positionDetail();
     const observer = new ResizeObserver(positionDetail);
@@ -155,7 +158,10 @@ function ProjectShowcase() {
         }}
       >
         <div className="concept-project-detail-clip">
-          <div className={`index-hover-detail concept-project-detail${active ? " is-open" : ""}`}>
+          <div
+            className={`index-hover-detail concept-project-detail${active ? " is-open" : ""}`}
+            style={{ "--hover-detail-width": detailWidth ? `${detailWidth}px` : undefined }}
+          >
             <p>{detail.description}</p>
             <a className="concept-project-open" href={detail.href}>
               {detail.action} <span aria-hidden="true">↗</span>
