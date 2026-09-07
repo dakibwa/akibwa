@@ -61,9 +61,9 @@ const SLOTS = {
   // row at ~202 CSS px on desktop and one full-bleed card at ~327 on mobile.
   projectCard: { ratio: 1.5, css: [202, 260, 327] },
 
-  // Homepage projects share a 1200:630 frame: three equal cards on a wide
-  // canvas, a full-row lead on tablet, then one full-width phone stack.
-  conceptProject: { ratio: 1200 / 630, css: [358, 480, 632, 960] },
+  // Homepage projects share a compact 5:2 frame: three equal desktop cards,
+  // then a native swipe rail capped at 400 CSS px on phones and tablets.
+  conceptProject: { ratio: 5 / 2, css: [240, 320, 418] },
 
   // Client-site stills render as two small 16:9 previews in the homepage
   // column, then expand into a wide in-page dialog only when requested.
@@ -197,7 +197,7 @@ const sources = [
   { file: "project-art/personal/cover-collision-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/portuguese-with-ines-symbol.webp", slot: "projectCard" },
   { file: "project-art/personal/features-symbol.webp", slot: "projectCard" },
-  { file: "features/home-card-bright-v4.png", slot: "conceptProject" },
+  { file: "project-art/personal/features-discoveries.svg", slot: "conceptProject" },
   { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject" },
   { file: "project-art/personal/trek-paris-sofia-project.png", slot: "conceptProject" },
   { file: "project-art/client-sites/butterfly-rose-redesign-home.jpg", slot: "clientSite" },

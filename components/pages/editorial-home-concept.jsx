@@ -18,8 +18,8 @@ const projects = [
     description:
       "Untangle ten small networks each day and discover shapes in the threads. The daily game is free.",
     action: "Open features",
-    src: "/features/home-card-bright-v4.png",
-    alt: "Colourful threads and neurons on a Features puzzle board",
+    src: "/project-art/personal/features-discoveries.svg",
+    alt: "Features wordmark beside colourful house, cup, heart and leaf stamps",
     above: true,
     aboveSync: true,
     accent: "#1b947d",
@@ -108,7 +108,7 @@ function ProjectShowcase() {
             <SiteImage
               src={project.src}
               slot="conceptProject"
-              sizes="(max-width:800px) 88vw, (max-width:1358px) calc(32vw - 16px), 418px"
+              sizes="(max-width:480px) 88vw, (max-width:1050px) 400px, (max-width:1358px) calc(32vw - 16px), 418px"
               alt={project.alt}
               above={project.above}
               aboveSync={project.aboveSync}

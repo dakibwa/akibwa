@@ -29,6 +29,7 @@ Projects → Career → Taste or the original character of the page.
 
 ## Layout and interaction
 
+- Project images use a compact 5:2 frame. Keep three equal cards on desktop and a native swipe rail capped at 400px through tablet widths; Features must not expand into an oversized full-row image. The Features cover composes its existing wordmark and approved game stamps in `public/project-art/personal/features-discoveries.svg`. Hover and held details do not draw an outer ring around a card; keyboard focus remains visible.
 - The hero uses a two-column editorial composition on wide screens and one reading column on narrow screens.
 - Project cards share one image-above-caption anatomy. Hover or keyboard focus previews the shared dropdown below the row; click/tap holds it open, and a separate link opens the destination. Escape, another selection and leaving the section by keyboard dismiss it. The original serif description and lightly coloured panel expand in normal flow over 340ms, physically moving the Career divider. Keep the last content mounted during closing so the divider returns smoothly; the closed panel is inert and hidden from assistive technology. On phones, projects form a native horizontal snap rail, with the shared dropdown outside the clipped rail.
 - The Daniel/Akibwa name uses the original 220ms word flick: first at 3.2 seconds, then every 4.2 seconds. Invisible sizers hold surrounding text stable. Reduced motion displays Daniel without animation; hidden tabs suspend the timer.

@@ -20,7 +20,7 @@ export const SLOT_SIZES = {
     "(max-width: 760px) calc(100vw - 54px), (max-width: 1060px) calc(50vw - 59px), (max-width: 1358px) calc(25vw - 53.5px), 286px",
   projectCard: "(max-width: 760px) calc(100vw - 48px), 202px",
   conceptProject:
-    "(max-width: 800px) calc(100vw - 48px), (max-width: 1358px) calc(50vw - 41px), 632px",
+    "(max-width: 480px) 88vw, (max-width: 1050px) 400px, (max-width: 1358px) calc(32vw - 16px), 418px",
   // The smallest Taste quilt pieces remain four across on a phone. Other deck
   // uses share these compact square rungs.
   deckTile: "(max-width: 560px) calc(25vw - 11px), (max-width: 860px) calc(25vw - 14px), (max-width: 1200px) calc(20vw - 14px), 172px",

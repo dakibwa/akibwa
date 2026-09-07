@@ -913,60 +913,48 @@
       }
     ]
   },
-  "conceptProject:/features/home-card-bright-v4.png": {
-    "source": "/features/home-card-bright-v4.png",
+  "conceptProject:/project-art/personal/features-discoveries.svg": {
+    "source": "/project-art/personal/features-discoveries.svg",
     "slot": "conceptProject",
-    "ratio": 1.9048,
-    "sourceWidth": 1440,
-    "sourceHeight": 756,
-    "sourceHash": "63ae5fe10d62f6f0",
+    "ratio": 2.5,
+    "sourceWidth": 1200,
+    "sourceHeight": 480,
+    "sourceHash": "ab900a6872aeed75",
     "variants": [
       {
-        "width": 537,
-        "height": 282,
+        "width": 360,
+        "height": 144,
         "avif": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-537.avif",
-          "bytes": 7254
+          "src": "/_img/project-art/personal/features-discoveries-conceptProject-360.avif",
+          "bytes": 2500
         },
         "webp": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-537.webp",
-          "bytes": 10936
+          "src": "/_img/project-art/personal/features-discoveries-conceptProject-360.webp",
+          "bytes": 2978
         }
       },
       {
-        "width": 720,
-        "height": 378,
+        "width": 480,
+        "height": 192,
         "avif": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-720.avif",
-          "bytes": 9725
+          "src": "/_img/project-art/personal/features-discoveries-conceptProject-480.avif",
+          "bytes": 2883
         },
         "webp": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-720.webp",
-          "bytes": 15262
+          "src": "/_img/project-art/personal/features-discoveries-conceptProject-480.webp",
+          "bytes": 3980
         }
       },
       {
-        "width": 948,
-        "height": 498,
+        "width": 627,
+        "height": 251,
         "avif": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-948.avif",
-          "bytes": 12971
+          "src": "/_img/project-art/personal/features-discoveries-conceptProject-627.avif",
+          "bytes": 3398
         },
         "webp": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-948.webp",
-          "bytes": 21408
-        }
-      },
-      {
-        "width": 1440,
-        "height": 756,
-        "avif": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-1440.avif",
-          "bytes": 18467
-        },
-        "webp": {
-          "src": "/_img/features/home-card-bright-v4-conceptProject-1440.webp",
-          "bytes": 33602
+          "src": "/_img/project-art/personal/features-discoveries-conceptProject-627.webp",
+          "bytes": 4908
         }
       }
     ]
@@ -974,57 +962,45 @@
   "conceptProject:/project-art/personal/portuguese-with-ines-conversation.png": {
     "source": "/project-art/personal/portuguese-with-ines-conversation.png",
     "slot": "conceptProject",
-    "ratio": 1.9048,
+    "ratio": 2.5,
     "sourceWidth": 1731,
     "sourceHeight": 909,
     "sourceHash": "cd571f267cb42a9c",
     "variants": [
       {
-        "width": 537,
-        "height": 282,
+        "width": 360,
+        "height": 144,
         "avif": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-537.avif",
-          "bytes": 6933
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-360.avif",
+          "bytes": 4069
         },
         "webp": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-537.webp",
-          "bytes": 10246
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-360.webp",
+          "bytes": 5816
         }
       },
       {
-        "width": 720,
-        "height": 378,
+        "width": 480,
+        "height": 192,
         "avif": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-720.avif",
-          "bytes": 9095
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-480.avif",
+          "bytes": 5649
         },
         "webp": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-720.webp",
-          "bytes": 14400
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-480.webp",
+          "bytes": 8126
         }
       },
       {
-        "width": 948,
-        "height": 498,
+        "width": 627,
+        "height": 251,
         "avif": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-948.avif",
-          "bytes": 12085
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-627.avif",
+          "bytes": 8212
         },
         "webp": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-948.webp",
-          "bytes": 20128
-        }
-      },
-      {
-        "width": 1440,
-        "height": 756,
-        "avif": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-1440.avif",
-          "bytes": 18622
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-1440.webp",
-          "bytes": 35184
+          "src": "/_img/project-art/personal/portuguese-with-ines-conversation-conceptProject-627.webp",
+          "bytes": 11260
         }
       }
     ]
@@ -1032,57 +1008,45 @@
   "conceptProject:/project-art/personal/trek-paris-sofia-project.png": {
     "source": "/project-art/personal/trek-paris-sofia-project.png",
     "slot": "conceptProject",
-    "ratio": 1.9048,
+    "ratio": 2.5,
     "sourceWidth": 1729,
     "sourceHeight": 910,
     "sourceHash": "745dea516df29c00",
     "variants": [
       {
-        "width": 537,
-        "height": 282,
+        "width": 360,
+        "height": 144,
         "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-537.avif",
-          "bytes": 10401
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-360.avif",
+          "bytes": 5026
         },
         "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-537.webp",
-          "bytes": 13018
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-360.webp",
+          "bytes": 6410
         }
       },
       {
-        "width": 720,
-        "height": 378,
+        "width": 480,
+        "height": 192,
         "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-720.avif",
-          "bytes": 15114
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-480.avif",
+          "bytes": 7553
         },
         "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-720.webp",
-          "bytes": 20830
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-480.webp",
+          "bytes": 9544
         }
       },
       {
-        "width": 948,
-        "height": 498,
+        "width": 627,
+        "height": 251,
         "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-948.avif",
-          "bytes": 23796
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-627.avif",
+          "bytes": 11748
         },
         "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-948.webp",
-          "bytes": 35182
-        }
-      },
-      {
-        "width": 1440,
-        "height": 756,
-        "avif": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-1440.avif",
-          "bytes": 54032
-        },
-        "webp": {
-          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-1440.webp",
-          "bytes": 83028
+          "src": "/_img/project-art/personal/trek-paris-sofia-project-conceptProject-627.webp",
+          "bytes": 14442
         }
       }
     ]
@@ -10800,70 +10764,6 @@
       }
     ]
   },
-  "logo:/brand-logos/sky-betting-gaming-logo.png": {
-    "source": "/brand-logos/sky-betting-gaming-logo.png",
-    "slot": "logo",
-    "sourceWidth": 300,
-    "sourceHeight": 300,
-    "sourceHash": "cb6a05b10d6cbf75",
-    "variants": [
-      {
-        "width": 56,
-        "webp": {
-          "src": "/_img/brand-logos/sky-betting-gaming-logo-logo-56.webp",
-          "bytes": 1424
-        }
-      }
-    ]
-  },
-  "logo:/brand-logos/national-wealth-fund-icon.png": {
-    "source": "/brand-logos/national-wealth-fund-icon.png",
-    "slot": "logo",
-    "sourceWidth": 250,
-    "sourceHeight": 285,
-    "sourceHash": "7ac7256da01bb927",
-    "variants": [
-      {
-        "width": 56,
-        "webp": {
-          "src": "/_img/brand-logos/national-wealth-fund-icon-logo-56.webp",
-          "bytes": 1522
-        }
-      }
-    ]
-  },
-  "logo:/brand-logos/openai-codex-app.png": {
-    "source": "/brand-logos/openai-codex-app.png",
-    "slot": "logo",
-    "sourceWidth": 256,
-    "sourceHeight": 256,
-    "sourceHash": "3324c734272391ad",
-    "variants": [
-      {
-        "width": 56,
-        "webp": {
-          "src": "/_img/brand-logos/openai-codex-app-logo-56.webp",
-          "bytes": 686
-        }
-      }
-    ]
-  },
-  "logo:/brand-logos/lloyds-horse-icon.png": {
-    "source": "/brand-logos/lloyds-horse-icon.png",
-    "slot": "logo",
-    "sourceWidth": 54,
-    "sourceHeight": 50,
-    "sourceHash": "3d7fa84656dd595f",
-    "variants": [
-      {
-        "width": 56,
-        "webp": {
-          "src": "/_img/brand-logos/lloyds-horse-icon-logo-56.webp",
-          "bytes": 994
-        }
-      }
-    ]
-  },
   "podcastArt:/podcast-covers/all-in-podcast.webp": {
     "source": "/podcast-covers/all-in-podcast.webp",
     "slot": "podcastArt",
@@ -15690,6 +15590,70 @@
         "webp": {
           "src": "/_img/podcast-covers/within-reason-podcastArt-600.webp",
           "bytes": 15150
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/sky-betting-gaming-logo.png": {
+    "source": "/brand-logos/sky-betting-gaming-logo.png",
+    "slot": "logo",
+    "sourceWidth": 300,
+    "sourceHeight": 300,
+    "sourceHash": "cb6a05b10d6cbf75",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/sky-betting-gaming-logo-logo-56.webp",
+          "bytes": 1424
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/national-wealth-fund-icon.png": {
+    "source": "/brand-logos/national-wealth-fund-icon.png",
+    "slot": "logo",
+    "sourceWidth": 250,
+    "sourceHeight": 285,
+    "sourceHash": "7ac7256da01bb927",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/national-wealth-fund-icon-logo-56.webp",
+          "bytes": 1522
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/openai-codex-app.png": {
+    "source": "/brand-logos/openai-codex-app.png",
+    "slot": "logo",
+    "sourceWidth": 256,
+    "sourceHeight": 256,
+    "sourceHash": "3324c734272391ad",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/openai-codex-app-logo-56.webp",
+          "bytes": 686
+        }
+      }
+    ]
+  },
+  "logo:/brand-logos/lloyds-horse-icon.png": {
+    "source": "/brand-logos/lloyds-horse-icon.png",
+    "slot": "logo",
+    "sourceWidth": 54,
+    "sourceHeight": 50,
+    "sourceHash": "3d7fa84656dd595f",
+    "variants": [
+      {
+        "width": 56,
+        "webp": {
+          "src": "/_img/brand-logos/lloyds-horse-icon-logo-56.webp",
+          "bytes": 994
         }
       }
     ]

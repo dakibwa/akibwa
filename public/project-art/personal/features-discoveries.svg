@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" role="img" aria-labelledby="title desc">
+  <title id="title">features</title>
+  <desc id="desc">A quiet Features wordmark alongside four colourful discoveries: a house, cup, heart and leaf.</desc>
+  <!-- Wordmark and unchanged stamp silhouettes from the Features brand assets. -->
+  <rect width="1200" height="480" fill="#F9F8F4"/>
+  <text x="72" y="254" fill="#15191C" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="124" font-weight="750" letter-spacing="-6.6">features</text>
+  <g transform="translate(76 283)">
+    <rect width="113.5" height="10" fill="#2EA3DC"/>
+    <rect x="113.5" width="113.5" height="10" fill="#EFC319"/>
+    <rect x="227" width="113.5" height="10" fill="#1FA45A"/>
+    <rect x="340.5" width="113.5" height="10" fill="#E97E18"/>
+  </g>
+  <svg x="685" y="48" width="184" height="184" viewBox="0 0 96 96">
+    <rect width="96" height="96" fill="#E97E18"/>
+    <path fill="#0E1214" d="M44 18Q48 14 52 18L83 46Q87 50 82 52H76V78Q76 82 72 82H56V60H40V82H24Q20 82 20 78V52H14Q9 50 13 46Z"/>
+  </svg>
+  <svg x="885" y="48" width="184" height="184" viewBox="0 0 96 96">
+    <rect width="96" height="96" fill="#2EA3DC"/>
+    <g fill="#0E1214" transform="translate(-2 -3)">
+      <path d="M58 30H68C79 30 85 38 85 48S77 66 66 66H57V55H65C71 55 75 53 75 48S72 41 67 41H58Z"/>
+      <path d="M16 27H62V51C62 65 52 74 39 74S16 65 16 51Z"/>
+    </g>
+  </svg>
+  <svg x="685" y="248" width="184" height="184" viewBox="0 0 96 96">
+    <rect width="96" height="96" fill="#DE3C75"/>
+    <path fill="#0E1214" d="M48 82C42 76 14 55 14 35C14 16 36 10 48 28C60 10 82 16 82 35C82 55 54 76 48 82Z"/>
+  </svg>
+  <svg x="885" y="248" width="184" height="184" viewBox="0 0 96 96">
+    <rect width="96" height="96" fill="#1FA45A"/>
+    <g fill="#0E1214">
+      <path d="M21 79C24 74 27 70 29 69" fill="none" stroke="#0E1214" stroke-width="6" stroke-linecap="round"/>
+      <path fill-rule="evenodd" d="M28 68C16 45 34 21 77 17C79 48 62 76 35 70ZM32 63C40 53 51 42 65 32C54 45 45 57 36 66Z"/>
+    </g>
+  </svg>
+</svg>

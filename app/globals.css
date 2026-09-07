@@ -6956,7 +6956,7 @@ button {
 
 .concept-project-card img {
   height: auto;
-  aspect-ratio: 1200 / 630;
+  aspect-ratio: 5 / 2;
   object-fit: cover;
 }
 
@@ -7399,16 +7399,6 @@ button {
   }
 }
 
-@media (max-width: 1050px) {
-  .concept-project-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .concept-feature {
-    grid-column: 1 / -1;
-  }
-}
-
 @media (max-width: 800px) {
   .concept-hero {
     display: block;
@@ -7422,18 +7412,6 @@ button {
   .concept-lede {
     max-width: 27ch;
     margin-top: clamp(22px, 3vw, 32px);
-  }
-
-  .concept-project-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .concept-feature,
-  .concept-portuguese,
-  .concept-trek {
-    grid-column: 1;
-    justify-self: stretch;
-    width: 100%;
   }
 
   .concept-capabilities-head {
@@ -7817,14 +7795,14 @@ button {
   gap: 0.4em 1em;
 }
 
-@media (max-width: 760px) {
-  /* Projects become one short, native swipe rail on phones. Keeping the
+@media (max-width: 1050px) {
+  /* Projects become one short, native swipe rail on phones and tablets. Keeping the
      shared detail immediately after this single row means a selected card's
      information never lands beneath two unrelated projects. */
   .concept-project-swipe {
     grid-template-columns: none;
     grid-auto-flow: column;
-    grid-auto-columns: min(88%, 460px);
+    grid-auto-columns: min(88%, 400px);
     gap: 12px;
     width: 100%;
     padding: 5px 5px 9px;
@@ -7942,7 +7920,6 @@ button {
 .concept-project-detail p { margin: 0; max-width: 58ch; color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); font: 400 clamp(.86rem, 1.1vw, 1rem)/1.42 var(--serif); }
 .concept-project-open { display: inline-flex; align-items: center; justify-content: center; gap: .65em; min-height: 40px; padding: 10px 13px; border: 1px solid color-mix(in srgb, var(--project-detail-accent) 72%, var(--ink)); border-radius: 3px; background: var(--project-detail-accent); color: var(--black); font: 700 .74rem/1.2 var(--sans); white-space: nowrap; text-decoration: none; }
 .concept-project-open:hover, .concept-project-open:focus-visible { background: color-mix(in srgb, var(--project-detail-accent) 86%, var(--canvas)); }
-.concept-project-card[aria-expanded="true"] { outline: 2px solid var(--project-card-accent); outline-offset: 3px; }
 .concept-project-card { padding: 0; width: 100%; }
 .concept-project-open:focus-visible { outline: 2px solid var(--project-detail-accent); outline-offset: 4px; }
 @media(max-width:1000px) {
