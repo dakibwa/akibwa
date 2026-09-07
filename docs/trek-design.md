@@ -10,7 +10,7 @@ perspective and much less text and interface on 5 September 2026.
 - Give the 3D landscape the whole viewport across all seven countries. Follow
   the direction of travel from above the route, with a long look ahead and a
   gently turning camera. This is a terrain view, not street-level imagery.
-- Use muted sage terrain, warm paper, a rust path and Fraunces for the opening.
+- Use muted sage terrain, warm paper, a deep red path and Fraunces for the opening.
   Retain real roads, trails, rivers and buildings, while keeping ordinary map labels
   out of the moving view. Let town names appear briefly as the route approaches
   mapped settlements. Avoid a fixed compass direction or an overhead overview
@@ -26,6 +26,11 @@ perspective and much less text and interface on 5 September 2026.
   the quality bar on 6 September 2026. Judge the finished rendering against its
   richness, material detail and depth. Its individual trees, houses and field
   divisions remain illustrative; the reference does not replace mapped geography.
+- Following Dan's 7 September feedback, keep the travelled line prominent in
+  dense towns as well as countryside: a deep red 5.5px stroke with a fully opaque
+  9.5px warm-paper outline separates it from terracotta roofs, blue streams and
+  green canopy. Use the same red for the minimap's completed route and direction
+  marker. Visual connections stay lighter, narrower and dashed.
 - On 7 September 2026 Dan requested more detail using satellite views and
   explicitly retained the paper model style. Use those views as visual reference
   for landscape character; the rendered geometry still comes from reusable map
@@ -134,7 +139,7 @@ itself meet that standard. Preserve these visible qualities as detail improves:
 - One soft light unifies trees, buildings and terrain. Contact shadows ground
   objects; foreground, middle distance and distant hills have clear depth.
   Atmospheric softness belongs in the distance, with the nearby path readable.
-- The landscape fills the frame, with the rust route leading naturally through
+- The landscape fills the frame, with the deep red route leading naturally through
   the terrain. Fine cream roads, quiet typography and open controls preserve
   the composition and leave the landscape primary.
 

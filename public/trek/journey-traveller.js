@@ -263,7 +263,9 @@
           map.setSky({'sky-color':'#e9e6d3','horizon-color':'#eee9d6','fog-color':'#e1dfc5','sky-horizon-blend':.7,'horizon-fog-blend':.6,'fog-ground-blend':.45});
           map.addSource('journey-recorded',{type:'geojson',data:path.recorded,tolerance:0});
           map.addSource('journey-connections',{type:'geojson',data:path.connections,tolerance:0});
-          for(const [id,source,color,width,opacity,dash] of [['route-outline','journey-recorded','#fff3d8',4.5,.7],['route-recorded','journey-recorded','#c2693d',2.5,1],['route-connections','journey-connections','#b99461',2,.7,[2,3]]]){
+          // A broad paper edge separates the deep red thread from roofs,
+          // streams and woodland. Keep inferred connections lighter and dashed.
+          for(const [id,source,color,width,opacity,dash] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-connections','journey-connections','#977c56',3,.9,[2,3]]]){
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
             map.addLayer({id,type:'line',source,layout:{'line-cap':'round','line-join':'round'},paint});
           }

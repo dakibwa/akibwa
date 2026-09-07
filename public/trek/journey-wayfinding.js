@@ -69,10 +69,10 @@
         if(p.start>distance)break;
         const passed=p.mini.filter(v=>v.d<=distance).map(v=>v.p);
         if(distance<p.end)passed.push(at(path.sample(distance).point));
-        line(ctx,passed);ctx.setLineDash(p.kind==='connection'?[1.4,2.2]:[]);ctx.strokeStyle=p.kind==='connection'?'#b78e61':'#bb5935';ctx.lineWidth=1.8;ctx.stroke();
+        line(ctx,passed);ctx.setLineDash(p.kind==='connection'?[1.4,2.2]:[]);ctx.strokeStyle=p.kind==='connection'?'#b78e61':'#a33443';ctx.lineWidth=1.8;ctx.stroke();
       }
       ctx.setLineDash([]);const p=at(path.sample(distance).point);ctx.save();ctx.translate(...p);ctx.rotate(heading*Math.PI/180);
-      ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(4.5,4.5);ctx.lineTo(0,2.5);ctx.lineTo(-4.5,4.5);ctx.closePath();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#ae482a';ctx.fill();ctx.restore();
+      ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(4.5,4.5);ctx.lineTo(0,2.5);ctx.lineTo(-4.5,4.5);ctx.closePath();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#a33443';ctx.fill();ctx.restore();
       const flag=flagImages.get(country);
       if(flag?.complete&&flag.naturalWidth){
         const x=Math.min(width-28,Math.max(5,p[0]+5)),y=Math.max(4,p[1]-26);
