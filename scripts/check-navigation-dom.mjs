@@ -291,7 +291,7 @@ const checkPublicLanding = async () => {
   check(await evaluate('!document.querySelector(".taste-source-note") && !document.querySelector(".concept-taste-head .archive-link")'), "the closing sentence and browse-all album link are removed");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
   check(state.careerCount === 8, `the approved compact career bar has eight roles [${state.careerCount}]`);
-  check(state.tasteCount === 12, `the initial curation is bounded to twelve covers [${state.tasteCount}]`);
+  check(state.tasteCount === 48, `Highlights fills the wall with forty-eight approved covers [${state.tasteCount}]`);
   check(!state.hasPersonalIdentity, "the indexed page does not contain the personal full name");
   check(state.hasCareer && state.hasTasteLibrary, "the approved career and taste chapters are restored");
   check(state.socialLinks.length === 2 && state.socialLinks.every(href=>href.includes('/dakibwa')), "only the two approved social profiles are linked");
@@ -401,7 +401,7 @@ const checkPublicLanding = async () => {
     const panel=document.querySelector(${JSON.stringify(selector)});
     const sample=()=>{
       const box=panel.getBoundingClientRect();
-      return {left:box.left,height:box.height,space:panel.closest('.index-reveal-shell').getBoundingClientRect().height,
+      return {left:box.left,top:box.top,height:box.height,space:panel.closest('.index-reveal-shell').getBoundingClientRect().height,
         opacity:Number(getComputedStyle(panel.querySelector('.index-reveal-content:not(.is-outgoing)')).opacity)};
     };
     const samples=[sample()];
@@ -414,6 +414,12 @@ const checkPublicLanding = async () => {
     const start=samples[0][property], end=samples.at(-1)[property];
     return Math.abs(end-start)>4 && samples.some(sample=>sample[property]>Math.min(start,end)+1 && sample[property]<Math.max(start,end)-1);
   };
+  await evaluate('document.querySelector(".concept-project-card").focus()');
+  await sleep(550);
+  const projectHandover=await panelMotion('.concept-project-detail', 'document.querySelectorAll(".concept-project-card")[1].focus();');
+  check(passesThrough(projectHandover,'left') && projectHandover.every(sample=>sample.space>20), "Projects visibly glides across cards without collapsing its description");
+  check(projectHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "project descriptions crossfade during the sideways glide");
+  check(await evaluate('document.querySelectorAll("#project-description").length===1'), "project handover keeps one accessible description target");
   await evaluate('document.querySelectorAll(".concept-career-stop")[5].focus()');
   await sleep(550);
   const careerHandover=await panelMotion('#career-detail', 'document.querySelectorAll(".concept-career-stop")[4].focus();');
@@ -457,7 +463,15 @@ const checkPublicLanding = async () => {
     const lede=getComputedStyle(document.querySelector('.concept-lede'));
     return {scrolls:rail.scrollWidth>rail.clientWidth,flow:getComputedStyle(rail).gridAutoFlow,serif:lede.fontFamily};
   })()`);
-  check(railState.scrolls && railState.flow === 'column', "Taste uses one native horizontal cover rail");
+  check(railState.scrolls && railState.flow === 'column', "Taste browses the staggered wall through one native horizontal rail");
+  check(await evaluate(`(() => {
+    const columns=[...document.querySelectorAll('.taste-wall-column')];
+    const tops=columns.slice(0,6).map(column=>column.querySelector('article').getBoundingClientRect().top);
+    return columns.length>8 && new Set(tops.map(top=>Math.round(top))).size>3 && columns.every(column=>{
+      const cards=[...column.querySelectorAll('article')];
+      return cards.length>=3 && cards.length<=4 && cards.every((card,index)=>!index || card.getBoundingClientRect().top>cards[index-1].getBoundingClientRect().bottom+5);
+    });
+  })()`), "Highlights forms densely spaced three- or four-piece stacks with varied starting heights and no overlap");
   check(/Iowan|Palatino|Georgia/.test(railState.serif), "the proposition keeps its historical serif");
   const nameBefore=await evaluate(`(() => {
     const name=document.querySelector('.hero-name-value');
@@ -478,10 +492,10 @@ const checkPublicLanding = async () => {
     return img.src.includes('/film-posters/') && Math.abs(box.width/box.height-2/3)<.01;
   })()`), "films show their real posters in an uncropped portrait frame");
   await evaluate('document.querySelectorAll(".taste-filters button")[0].click()');
-  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 12'), "Highlights restores the short mixed edit");
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48'), "Highlights restores the complete mixed wall");
 
   section("browsing controls and taste search");
-  check(await evaluate('document.querySelectorAll(".concept-career-year").length === 8 && document.querySelector(".concept-career-current").textContent.includes("Independent AI Systems Builder")'), "career dates and the current role are readable without opening a card");
+  check(await evaluate('document.querySelectorAll(".concept-career-year").length === 8 && !document.querySelector(".concept-career-current")'), "career dates stay readable while the extra current-role line is removed");
   await evaluate(`document.querySelector('#taste button[aria-label="Next taste"]').click()`);
   await sleep(700);
   check(await evaluate(`document.querySelector('#taste-rail').scrollLeft > 100 && !document.querySelector('#taste button[aria-label="Previous taste"]').disabled`), "Taste arrows move the native rail and update the available direction");
@@ -496,14 +510,14 @@ const checkPublicLanding = async () => {
   await tasteSearch('Paul Thomas Anderson');
   check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].length >= 4 && [...document.querySelectorAll(".personal-taste-card")].every(card => card.textContent.includes("Paul Thomas Anderson"))'), "Highlights search reaches the full film collection by creator");
   await tasteSearch('Graceland');
-  check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].some(card => card.textContent.includes("Paul Simon"))'), "search finds albums beyond the twelve-cover Highlights selection");
+  check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].some(card => card.textContent.includes("Paul Simon"))'), "search finds albums across the collection");
   await tasteSearch('veritasium');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 1 && document.querySelector(".personal-taste-card img").src.includes("veritasium")'), "search finds a podcast by title and shows its verified cover");
   await tasteSearch('zzz-no-such-title-9184');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 0 && document.querySelector(".taste-search-status").textContent.includes("No matches")'), "an empty search gives a clear recoverable state");
   await evaluate(`document.querySelector('button[aria-label="Close taste search"]').click()`);
   await sleep(100);
-  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 12 && document.activeElement.matches(".taste-search-toggle")'), "closing search restores Highlights and keyboard focus");
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48 && document.activeElement.matches(".taste-search-toggle")'), "closing search restores the wall and keyboard focus");
 
   section("ranked listening shelves");
   await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
@@ -528,12 +542,19 @@ const checkPublicLanding = async () => {
       detail.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
       detail.querySelector('.personal-taste-detail-count').textContent.includes(Number(card.dataset.listens).toLocaleString('en-GB')) &&
       getComputedStyle(card.querySelector('.personal-taste-caption')).display==='none' && !card.querySelector('.listening-hover');
-  })()`), "hover reveals album, artist and combined plays beneath the clear cover");
-  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste opens space gradually with the career reveal timing");
+  })()`), "hover reveals album, artist and combined plays beside the selected cover");
+  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste reveals the floating box gradually with the shared timing");
   await capture("music-hover-desktop");
   const tasteHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[4].focus();');
   check(passesThrough(tasteHandover,'left') && tasteHandover.every(sample=>sample.space>20), "Taste glides between covers without collapsing the open dropdown");
   check(tasteHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "Taste crossfades incoming title, creator and count");
+  const verticalHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[5].focus();');
+  check(passesThrough(verticalHandover,'top'), "Taste details glide between rows as well as columns");
+  check(await evaluate(`(() => {
+    const panel=document.querySelector('#taste-detail').getBoundingClientRect();
+    const card=document.activeElement.getBoundingClientRect();
+    return panel.top>=0 && panel.bottom<=innerHeight && (panel.top>=card.bottom || panel.bottom<=card.top);
+  })()`), "the wall detail stays on screen and clear of the selected artwork");
   const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
   check(await evaluate('document.querySelector("#taste").classList.contains("is-open")'), "the revealed text stays open while the pointer moves onto it");
@@ -591,6 +612,10 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelectorAll(".taste-filters button")[5].click();document.querySelector("#taste").scrollIntoView({block:"end",behavior:"instant"});');
   await sleep(180);
   check(await evaluate('matchMedia("(hover:none)").matches && getComputedStyle(document.querySelector(".personal-taste-caption")).display !== "none" && document.querySelector(".personal-taste-mobile-count").textContent.includes("play") && getComputedStyle(document.querySelector(".personal-taste-detail-shell")).display === "none"'), "touch devices show titles and counts beneath covers without needing hover");
+  check(await evaluate(`(() => {
+    const columns=[...document.querySelectorAll('.taste-wall-column')];
+    return document.documentElement.scrollWidth<=innerWidth+1 && columns.every(column=>[...column.querySelectorAll('article')].every((card,index,cards)=>!index || card.getBoundingClientRect().top>cards[index-1].getBoundingClientRect().bottom));
+  })()`), "touch captions remain readable in separate stacks without overlap or page overflow");
   await capture("podcasts-mobile");
 
   section("collection interaction");

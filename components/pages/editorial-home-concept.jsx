@@ -1,12 +1,13 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { HeroBrandName } from "@/components/hero-brand-name";
 import { PageFooter } from "@/components/page-footer";
 import { SiteImage } from "@/components/site-image";
 import { CareerBar } from "@/components/career-bar";
 import { TasteLibrary } from "@/components/taste-library";
 import { RailControls } from "@/components/rail-controls";
+import { IndexReveal } from "@/components/index-reveal";
 
 const projects = [
   {
@@ -55,41 +56,12 @@ const projects = [
 function ProjectShowcase() {
   const [preview, setPreview] = useState(null);
   const [lastProject, setLastProject] = useState(projects[0]);
-  const [detailOffset, setDetailOffset] = useState(0);
-  const [detailWidth, setDetailWidth] = useState(null);
-  const [detailAvailable, setDetailAvailable] = useState(false);
   const rail = useRef(null);
   const cards = useRef({});
-  const active = detailAvailable ? preview : null;
+  const active = preview;
   // Keep the last detail mounted so its height can animate closed as well.
   const detail = preview ?? lastProject;
   const dismiss = () => setPreview(null);
-  useLayoutEffect(() => {
-    const shelf = rail.current;
-    const card = cards.current[detail.id];
-    if (!shelf || !card) return;
-    const positionDetail = () => {
-      const bounds = card.getBoundingClientRect();
-      const shelfBounds = shelf.getBoundingClientRect();
-      const left = Math.max(bounds.left, shelfBounds.left);
-      const width = Math.max(0, Math.min(bounds.right, shelfBounds.right) - left);
-      // A sliver of a card cannot support a readable description box.
-      const available = width >= Math.min(200, bounds.width);
-      setDetailAvailable(available);
-      if (!available) return;
-      setDetailOffset(left - shelfBounds.left);
-      setDetailWidth(width);
-    };
-    positionDetail();
-    const observer = new ResizeObserver(positionDetail);
-    observer.observe(shelf);
-    observer.observe(card);
-    shelf.addEventListener("scroll", positionDetail, { passive: true });
-    return () => {
-      observer.disconnect();
-      shelf.removeEventListener("scroll", positionDetail);
-    };
-  }, [detail.id]);
   return (
     <div
       className="concept-project-showcase"
@@ -155,27 +127,22 @@ function ProjectShowcase() {
         </div>
       ))}
     </div>
-      <div
-        className={`concept-project-detail-shell${active ? " is-open" : ""}`}
-        id="project-detail"
-        role="region"
-        aria-label={`${detail.title} details`}
-        aria-hidden={!active}
-        inert={!active}
-        style={{
-          "--hover-detail-accent": detail.accent,
-          "--project-detail-offset": `${detailOffset}px`,
-        }}
+      <IndexReveal
+        open={Boolean(active)}
+        itemKey={detail.id}
+        rail={rail}
+        getAnchor={() => cards.current[detail.id]}
+        onUnavailable={dismiss}
+        accent={detail.accent}
+        shellId="project-detail"
+        contentId="project-description"
+        label={`${detail.title} details`}
+        fitAnchor
+        className="concept-project-detail-shell"
+        panelClassName="concept-project-detail"
       >
-        <div className="concept-project-detail-clip">
-          <div
-            className={`index-hover-detail concept-project-detail${active ? " is-open" : ""}`}
-            style={{ "--hover-detail-width": detailWidth ? `${detailWidth}px` : undefined }}
-          >
-            <p id="project-description">{detail.description}</p>
-          </div>
-        </div>
-      </div>
+        <p>{detail.description}</p>
+      </IndexReveal>
     </div>
   );
 }

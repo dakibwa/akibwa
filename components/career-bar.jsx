@@ -45,7 +45,6 @@ export function CareerBar() {
         <h2 id="career-title">Career</h2>
         <RailControls rail={rail} label="Career" controls="career-rail" />
       </header>
-      <p className="concept-career-current"><span>Now</span> {career[0].role}</p>
       <ol className="concept-career-timeline" id="career-rail" ref={rail} style={{ "--career-count": career.length }}>
         {career.map((job, index) => (
           <li key={job.name} style={{ "--company-accent": job.accent }}>

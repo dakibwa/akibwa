@@ -4,13 +4,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // One moving box: the rail supplies its position, the text supplies its height.
 // Keeping both mounted lets an interrupted reveal continue from where it is.
-export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, className = "", panelClassName = "", children }) {
+export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, className = "", panelClassName = "", children }) {
   const content = useRef(null);
   const track = useRef(null);
   const previous = useRef(null);
   const glide = useRef(false);
   const [outgoing, setOutgoing] = useState(null);
-  const [layout, setLayout] = useState({ height: 0, offset: 0, travel: false });
+  const [layout, setLayout] = useState({ height: 0, offset: 0, top: 0, width: null, travel: false });
 
   useLayoutEffect(() => {
     const before = previous.current;
@@ -40,12 +40,19 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       const shelfBox = shelf.getBoundingClientRect();
       const cardBox = anchor?.getBoundingClientRect();
       const height = Math.ceil(body.getBoundingClientRect().height) + 2;
-      const available = cardBox && Math.min(cardBox.right, shelfBox.right) - Math.max(cardBox.left, shelfBox.left) >= Math.min(24, cardBox.width);
+      const left = cardBox ? Math.max(cardBox.left, shelfBox.left) : 0;
+      const visibleWidth = cardBox ? Math.max(0, Math.min(cardBox.right, shelfBox.right) - left) : 0;
+      const available = cardBox && visibleWidth >= Math.min(fitAnchor ? 200 : 24, cardBox.width) &&
+        (!floating || Math.min(cardBox.bottom, innerHeight) - Math.max(cardBox.top, 0) >= 24);
       if (open && !available) onUnavailable();
       setLayout((before) => {
-        const offset = available ? Math.max(0, Math.min(cardBox.left - shelfBox.left, shelfBox.width - movingBox.getBoundingClientRect().width)) : before.offset;
-        return before.height === height && before.offset === offset
-          ? before : { height, offset, travel: before.offset === offset ? before.travel : travel };
+        const width = fitAnchor && available ? visibleWidth : before.width;
+        const offset = available ? fitAnchor ? left - shelfBox.left : Math.max(0, Math.min(cardBox.left - shelfBox.left, shelfBox.width - movingBox.getBoundingClientRect().width)) : before.offset;
+        const top = floating && available ? (cardBox.bottom + height + 18 <= innerHeight
+          ? cardBox.bottom : Math.max(9, cardBox.top - height - 18)) - shelfBox.top : before.top;
+        const moved = before.offset !== offset || before.top !== top || before.width !== width;
+        return before.height === height && !moved
+          ? before : { height, offset, top, width, travel: moved ? travel : before.travel };
       });
     };
     // Moving between cards glides; scrolling/resizing stays attached to the rail.
@@ -54,16 +61,25 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
     const observer = new ResizeObserver(followRail);
     observer.observe(shelf);
     observer.observe(body);
+    const anchor = getAnchor();
+    if (anchor) observer.observe(anchor);
     shelf.addEventListener("scroll", followRail, { passive: true });
+    if (floating) window.addEventListener("scroll", followRail, { passive: true });
+    window.addEventListener("resize", followRail, { passive: true });
     return () => {
       observer.disconnect();
       shelf.removeEventListener("scroll", followRail);
+      window.removeEventListener("scroll", followRail);
+      window.removeEventListener("resize", followRail);
     };
-  }, [itemKey, open]);
+  }, [itemKey, open, fitAnchor, floating]);
 
   return (
     <div
-      className={`index-reveal-shell ${className}${open ? " is-open" : ""}`}
+      className={`index-reveal-shell ${className}${floating ? " is-floating" : ""}${open ? " is-open" : ""}`}
+      id={shellId}
+      role={label ? "region" : undefined}
+      aria-label={label}
       aria-hidden={!open}
       inert={!open}
       data-reveal-key={itemKey}
@@ -73,11 +89,11 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
         className="index-reveal-track"
         ref={track}
         data-follow-rail={!layout.travel}
-        style={{ transform: `translateX(${layout.offset}px)` }}
+        style={{ transform: `translate(${layout.offset}px, ${layout.top}px)`, width: fitAnchor && layout.width ? `${layout.width}px` : undefined }}
       >
         <div className={`index-hover-detail index-reveal-panel ${panelClassName}${open ? " is-open" : ""}`} id={id} aria-live="polite">
           {outgoing ? <div className="index-reveal-content is-outgoing" key={`out-${outgoing.itemKey}`} aria-hidden="true" inert>{outgoing.children}</div> : null}
-          <div className="index-reveal-content" key={itemKey} ref={content}>{children}</div>
+          <div className="index-reveal-content" key={itemKey} ref={content} id={contentId}>{children}</div>
         </div>
       </div>
     </div>

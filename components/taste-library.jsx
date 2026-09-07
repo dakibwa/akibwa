@@ -21,6 +21,25 @@ const groups = [
   ["podcasts", "Podcasts", "164, 74, 126"],
 ];
 const searchable = (value) => value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase();
+// Keep the catalogue order down each stack, then across the wall. The natural
+// sleeve/poster proportions give each column three or four pieces of artwork.
+function stackArtwork(items) {
+  const columns = [];
+  let column = [], height = 0;
+  for (const item of items) {
+    const ratio = item.kind === "films" || item.kind === "tv" ? 1.5 : item.kind === "games" ? 4 / 3 : 1;
+    if (column.length && (column.length === 4 || height + ratio + .12 > 4.75)) {
+      columns.push(column);
+      column = [];
+      height = 0;
+    }
+    height += ratio + (column.length ? .12 : 0);
+    column.push(item);
+  }
+  if (column.length) columns.push(column);
+  return columns;
+}
+
 function TasteArtwork({ item }) {
   if (item.kind === "music") {
     return <AlbumCover album={item} />;
@@ -43,13 +62,14 @@ function TasteArtwork({ item }) {
 
 export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const [category, setCategory] = useState("all"),
-    [visibleCount, setVisibleCount] = useState(36);
+    [visibleCount, setVisibleCount] = useState(48);
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const searchButton = useRef(null);
   const rail = useRef(null);
   const more = useRef(null);
   const activeCard = useRef(null);
+  const pointerPosition = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const dismissDetail = () => {
@@ -58,6 +78,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   };
   const revealDetail = (item, card) => {
     if (!matchMedia("(hover: hover)").matches) return;
+    if (activeCard.current === card) return;
     activeCard.current = card;
     setDetail(item);
     setDetailOpen(true);
@@ -89,9 +110,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   // medium its chosen records follow the same descending counts as the shelf.
   const highlights = {
     ...lists,
-    music: music.filter((item) => curation.albumIds.includes(item.id)).slice(0, 4),
+    music: music.filter((item) => curation.albumIds.includes(item.id)).slice(0, 16),
   };
-  const mixed = Array.from({ length: 12 }, (_, index) => {
+  const mixed = Array.from({ length: 48 }, (_, index) => {
     const kind = ["music", "films", "music", "games", "tv", "podcasts"][
       index % 6
     ];
@@ -108,11 +129,12 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     return terms.every((term) => text.includes(term));
   }) : selection;
   const visible = list.slice(0, visibleCount);
+  const columns = stackArtwork(visible);
   const detailCount = detail ? listeningLabel(detail) : null;
   const updateQuery = (value) => {
     dismissDetail();
     setQuery(value);
-    setVisibleCount(36);
+    setVisibleCount(48);
     if (rail.current) rail.current.scrollLeft = 0;
   };
   useEffect(() => {
@@ -168,7 +190,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
             onClick={() => {
               dismissDetail();
               setCategory(id);
-              setVisibleCount(36);
+              setVisibleCount(48);
               if (rail.current) rail.current.scrollLeft = 0;
             }}
           >
@@ -177,8 +199,11 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         ))}
       </nav>
       {terms.length ? <p className="taste-search-status" role="status">{list.length ? `${list.length.toLocaleString()} ${list.length === 1 ? "match" : "matches"}${category === "all" ? " across the library" : ""}` : "No matches. Try another title or creator."}</p> : null}
+      <div className="taste-wall-stage">
       <div className="personal-taste-rail" id="taste-rail" ref={rail}>
-        {visible.map((item) => {
+        {columns.map((column, index) => <div className="taste-wall-column" key={`${column[0].kind}-${tasteItemKey(column[0])}`}
+          style={{ "--stack-offset": [0, .26, .1, .38, .16, .3][index % 6] }}>
+        {column.map((item) => {
           const count = listeningLabel(item);
           return (
             <article
@@ -189,8 +214,14 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
               aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)}`}
               data-listens={item.plays}
               data-album-id={item.kind === "music" ? item.id : undefined}
-              onMouseEnter={(event) => {
-                if (matchMedia("(hover: hover)").matches) revealDetail(item, event.currentTarget);
+              onMouseMove={(event) => {
+                // Scrolling artwork beneath a stationary pointer must not
+                // reopen a dismissed box. Preview follows deliberate movement.
+                const before = pointerPosition.current;
+                const next = { x: event.clientX, y: event.clientY };
+                if (before?.x === next.x && before?.y === next.y) return;
+                pointerPosition.current = next;
+                revealDetail(item, event.currentTarget);
               }}
               onFocus={(event) => revealDetail(item, event.currentTarget)}
               onBlur={(event) => {
@@ -208,6 +239,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
             </article>
           );
         })}
+        </div>)}
         {visible.length < list.length ? (
           <button className="taste-load-more" type="button" ref={more} onClick={() => setVisibleCount((count) => count + 36)}>
             More {terms.length ? "results" : category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
@@ -224,6 +256,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         id="taste-detail"
         className="personal-taste-detail-shell"
         panelClassName="personal-taste-detail"
+        floating
       >
         {detail ? <>
           <strong>{detail.title}</strong>
@@ -231,6 +264,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           {detailCount ? <p className="personal-taste-detail-count"><strong>{detailCount.value}</strong> {detailCount.label}</p> : null}
         </> : null}
       </IndexReveal>
+      </div>
       {(category === "music" || searchOpen) && (loading || loadError) ? <p className="taste-load-status" role="status">
         {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
       </p> : null}
