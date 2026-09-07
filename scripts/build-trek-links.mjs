@@ -29,9 +29,18 @@ for(let gap=0;gap<route.features.length-1;gap++){
   }
   else if(metres(a,b)<35){points=[a,b];method='Short join between recording endpoints';}
   else{
-    const request={locations:[{lon:a[0],lat:a[1]},{lon:b[0],lat:b[1]}],costing:'pedestrian',units:'kilometers',directions_options:{directions_type:'none'}};
+    const request={locations:[{lon:a[0],lat:a[1]},{lon:b[0],lat:b[1]}],costing:'pedestrian',costing_options:{pedestrian:{exclude_ferries:true,use_ferry:0}},units:'kilometers',directions_options:{directions_type:'none'}};
     const key=createHash('sha256').update(JSON.stringify(request)).digest('hex').slice(0,16),file=join(cache,key+'.json');
-    if(!existsSync(file)){
+    // Reuse earlier pedestrian results only when the router explicitly confirms
+    // there was no ferry. A pedestrian route alone does not guarantee walking.
+    const prior={...request};delete prior.costing_options;
+    const priorFile=join(cache,createHash('sha256').update(JSON.stringify(prior)).digest('hex').slice(0,16)+'.json');
+    let cachedFile=file;
+    if(!existsSync(file)&&existsSync(priorFile)){
+      const existing=JSON.parse(readFileSync(priorFile,'utf8'));
+      if(existing.trip?.summary?.has_ferry===false&&existing.trip.legs?.every(leg=>leg.summary?.has_ferry===false))cachedFile=priorFile;
+    }
+    if(!existsSync(cachedFile)){
       // FOSSGIS permits at most one request per second. Cache every response;
       // visitors never contact this router and ordinary builds use committed data.
       await new Promise(resolve=>setTimeout(resolve,1200));
@@ -39,13 +48,14 @@ for(let gap=0;gap<route.features.length-1;gap++){
       if(!response.ok)throw Error('Walking route '+gap+': HTTP '+response.status);
       writeFileSync(file,await response.text());
     }
-    const result=JSON.parse(readFileSync(file,'utf8'));
+    const result=JSON.parse(readFileSync(cachedFile,'utf8'));
+    if(result.trip?.summary?.has_ferry!==false||result.trip.legs?.some(leg=>leg.summary?.has_ferry!==false))throw Error('Walking gap '+gap+' includes a ferry or lacks transport evidence');
     if(result.trip?.status!==0||result.trip.legs.length!==1)throw Error('Walking route failed: '+gap);
     points=decode(result.trip.legs[0].shape);
     const snap=Math.max(metres(a,points[0]),metres(b,points.at(-1)));
     if(snap>200)throw Error('Review endpoint snap for gap '+gap+': '+Math.round(snap)+' m');
     points=[a,...points,b].filter((p,i,all)=>!i||metres(p,all[i-1])>.05);
-    method='Valhalla pedestrian route on current OpenStreetMap';
+    method='Valhalla pedestrian route on current OpenStreetMap; ferry-free route verified';
     console.log(`Gap ${gap}: days ${previous.properties.throughDay}–${next.properties.day}, ${result.trip.summary.length.toFixed(2)} km, endpoint join ${Math.round(snap)} m`);
   }
   if(gap===31)method='Estimated walking connection around Wörthersee using current mapped paths. No recording establishes the exact route or a boat crossing.';
