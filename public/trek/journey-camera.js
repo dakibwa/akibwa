@@ -5,6 +5,8 @@
   const angle=(a,b)=>((b-a+180)%360+360)%360-180;
   const bearing=(a,b)=>Math.atan2((b[0]-a[0])*Math.cos((a[1]+b[1])*Math.PI/360),b[1]-a[1])*180/Math.PI;
   const ahead=(p,heading,distance)=>[p[0]+Math.sin(heading*Math.PI/180)*distance/(111195*Math.cos(p[1]*Math.PI/180)),p[1]+Math.cos(heading*Math.PI/180)*distance/111195];
+  const metres=(a,b)=>111195*Math.hypot((b[0]-a[0])*Math.cos((a[1]+b[1])*Math.PI/360),b[1]-a[1]);
+  const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
   function pointAt(path,distance){
     const weights=[1,4,6,4,1],point=[0,0];
     for(let i=0;i<weights.length;i++){
@@ -16,8 +18,32 @@
   function headingAt(path,distance){
     // Follow the valley's overall direction instead of each short switchback.
     // Keep the eye's tighter rail so the recorded path stays close by.
-    const a=pointAt(path,distance-500),b=pointAt(path,distance+1800);
+    const a=pointAt(path,distance-1125),b=pointAt(path,distance+3375);
     return bearing(a,b);
+  }
+  function terrainFrame(path,distance,heightAt){
+    // The cached, fixed-resolution profile is independent of visible DEM tile
+    // changes. A one-frame tile seam must never become a camera lift or zoom.
+    const ground=(heightAt(distance-100)+2*heightAt(distance)+heightAt(distance+100))/4;
+    const heights=[ground,...[350,800,1400,2200,3200].map(offset=>heightAt(distance+offset))];
+    let winding=0;
+    for(const [offset,weight] of [[-500,.25],[250,.5],[1000,.25]]){
+      const start=clamp(distance+offset-500,0,path.total),end=clamp(distance+offset+1800,0,path.total);
+      const direct=end-start>1?metres(pointAt(path,start),pointAt(path,end))/(end-start):1;
+      winding+=smooth((.94-direct)/.6)*weight;
+    }
+    const lift=480*winding;
+    return {ground,lookHeight:heightAt(distance+1400),height:Math.max(...heights)+850+lift,lift,winding,lookAhead:1400-650*winding};
+  }
+  function rise(current,velocity,wanted,dt){
+    if(current===null)return {height:wanted,velocity:0};
+    const error=wanted-current;
+    if(Math.abs(error)<.05&&Math.abs(velocity)<.05)return {height:wanted,velocity:0};
+    // Ease vertical acceleration too, and release height slowly after a ridge.
+    const frequency=error>0?1.25:.65;
+    const acceleration=clamp(error*frequency*frequency-2*frequency*velocity,-65,65);
+    velocity=clamp(velocity+acceleration*dt,-110,180);
+    return {height:current+velocity*dt,velocity};
   }
   function landmarkFrame(landmarks,point,heading){
     const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
@@ -52,6 +78,6 @@
     const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/60,.16,1);
     return Math.max(35,corner*alignment);
   }
-  const api={pointAt,headingAt,landmarkFrame,turn,speedLimit,ahead};
+  const api={pointAt,headingAt,terrainFrame,rise,landmarkFrame,turn,speedLimit,ahead};
   if(typeof module!=='undefined')module.exports=api;else host.TrekCamera=api;
 })(typeof window==='undefined'?globalThis:window);

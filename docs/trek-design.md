@@ -136,6 +136,11 @@ perspective and much less text and interface on 5 September 2026.
   smoothed rail and anticipates bends; it must not copy each GPS zigzag. Ease
   rotation in and out, slow down before tight turns and ease into movement after
   pauses or photographs. Look ahead for rising ground and descend gently.
+  Frame dense bends from higher up so their shape remains readable. Use the
+  stable mapped elevation profile to plan movement; streamed terrain tile
+  changes must not make the camera jump or change scale. Over the tightest
+  bends, gradually look down to 36° and shorten the viewing distance so the
+  nearby path remains visible on a narrow screen.
   On steep descents, gradually look down to retain the route. Widen the vertical
   field of view from 38° to 55° in portrait layouts so the path remains visible.
   Keep background trail strokes faint and solid so their dashes do not compete
@@ -330,23 +335,37 @@ metadata, original metrics, generated asset hashes and the continuous route.
 largest gap, bounded rounding and source non-mutation.
 `scripts/check-trek-camera.mjs` checks camera continuity across the whole route,
 proximity to the path and difficult turns at every pace. The camera uses a
-weighted 880 m neighbourhood for its position and a broader 2.3 km heading chord
-(500 m behind to 1,800 m ahead), following the valley through short zigzags.
+weighted 880 m neighbourhood for its position and a broader 4.5 km heading chord
+(1,125 m behind to 3,375 m ahead), following the valley through short zigzags
+and loops without circling with the local path.
 A damped turn settles without swinging back, bounded by 12°/s rotation and
-6°/s² acceleration. Pitch changes by at most 3°/s. Playback brakes before
+6°/s² acceleration. Pitch changes by at most 3°/s, with a 36° minimum over dense
+bends (the usual range is 42–60°; landmark glances can reach 32°). Playback brakes before
 upcoming bends using a 9°/s curvature budget, then slows further when the view
-needs to catch up. The normal clearance is 720 m above the highest sampled ground in the next kilometre,
-with a 420 m floor during movement. Solve the complete camera transform from
-the eye and a target at local ground height; changing pitch after solving zoom
-and centre changes the eye position and can cause clipping. Update the reference
-elevation with the ground at every frame. Retaining an old mountain reference
-after descending can force a distant zoom and enlarge the draped roads and route.
+needs to catch up. Height planning uses continuous interpolation of the cached
+200 m elevation profile, with a 200 m neighbourhood for the ground reference
+and a 3.2 km look-ahead for rising terrain. Aim 850 m above that envelope, adding
+up to 480 m where the route folds back on itself. Ease vertical acceleration
+within 65 m/s² and movement within 180 m/s upward and 110 m/s downward; retain a
+420 m defensive floor. Continuous Alpine checks must clear the ground without
+needing that clamp. These are presentation camera speeds, not walking speeds.
+Solve the complete camera transform from the eye and a target at mapped ground
+height; changing pitch after solving zoom and centre moves the eye and can cause
+clipping. Rebase the reference elevation every frame from the stable profile.
+Do not drive it directly from the currently rendered DEM: day 31 exposed brief
+600-to-1,234 m lookup changes across a few metres of travel, causing sharp lifts
+and zoom changes. Keep rendered terrain queries as a separate clearance check.
+Retaining an old mountain reference after descending also forces a distant zoom
+and enlarges the draped roads and route.
 `npm run check:trek:dom` covers actual terrain readiness, quiet controls,
 steep viewpoints and sustained camera movement, photographs, original records,
 continuous playback and heading changes, automatic-photo
 timing, phone fit, resize, replay, reduced motion and graphics loss.
 `CHECK_TREK_ZIGZAGS_ONLY=1` focuses the browser check on repeated Alpine bends,
 the day-17 loop, all seven country highlights and the inset at phone widths.
+`CHECK_TREK_TERRAIN_CAMERA_ONLY=1` covers continuous day-31 playback through the
+reported tile seams, the Alpine descent, extra height around the tight loop,
+bounded height and scale changes, rendered terrain clearance and phone framing.
 
 Run the site's fast gate before release. After Pages succeeds, compare the live
 HTML and versioned runtime assets and inspect the desktop and phone landscape.

@@ -7,12 +7,14 @@
     while(lo<hi){const mid=(lo+hi)>>1;if(profile.pieces[mid].end<distance)lo=mid+1;else hi=mid;}
     return profile.pieces[lo];
   }
-  function sample(profile,distance){
+  function sample(profile,distance,rounded=true){
     const points=pieceAt(profile,distance).samples;
     if(!points.length)return null;
     let lo=1,hi=points.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(points[mid][0]<distance)lo=mid+1;else hi=mid;}
     const a=points[Math.max(0,lo-1)],b=points[lo],t=clamp((distance-a[0])/(b[0]-a[0]||1),0,1);
-    return Math.round(a[1]+(b[1]-a[1])*t);
+    // Labels use whole metres; the camera keeps continuous interpolation.
+    const height=a[1]+(b[1]-a[1])*t;
+    return rounded?Math.round(height):height;
   }
   // One equal-width segment per numbered day. The terrain and scrubber share
   // this axis; physical distance and measured walking totals stay separate.

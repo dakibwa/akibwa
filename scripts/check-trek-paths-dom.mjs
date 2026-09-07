@@ -16,6 +16,41 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const settled=()=>until(async()=>(await state()).ready,30000);
   const openPhotos=async()=>{await click('#menu-open');if(await evaluate("document.querySelector('#menu-photos').hidden")){await choose(30);await settled();}await click('#menu-photos');};
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_TERRAIN_CAMERA_ONLY==='1'){
+    section('Stable terrain framing through day 31 and the Alpine descent');
+    await setDesktop(1440,900);await goto('/trek/?day=31');check(await settled(),'day 31 prepares at its requested position');
+    check((await state()).day===31,'the reported day remains selected after terrain preparation');
+    await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
+    for(const [width,day,from,to,marks] of [[1440,31,.001,.999,[.135,.47,.75,.948]],[1440,30,.55,.995,[.76]],[390,31,.68,.84,[.75]]]){
+      await setDesktop(width,width>650?900:844);await scrub(path.dayDistance(day,from));check(await settled(),`day ${day} prepares at ${width}px`);
+      const initial=await state();check(initial.day===day&&Math.abs(initial.t-from)<.002,'the camera replay starts on the intended route stretch');
+      await evaluate(`window.__trekCameraSamples=[];window.__trekCaptureCamera=true;document.querySelector('#play').click();requestAnimationFrame(function sample(sampleTime){if(!window.__trekCaptureCamera)return;const s=window.trekStatus();window.__trekCameraSamples.push({distance:s.renderedDistance,bearing:s.bearing,height:s.eyeHeight,clearance:s.cameraClearance,terrainClearance:s.cameraTerrainClearance,lift:s.cameraLift,zoom:s.cameraZoom,pitch:s.pitch,sampleTime});requestAnimationFrame(sample);});`);
+      for(const mark of marks){
+        check(await until(async()=>(await state()).renderedDistance>=path.dayDistance(day,mark),60000),`continuous playback reaches day ${day} at ${Math.round(mark*100)}%`);
+        await capture?.(`trek-terrain-${width}-day-${day}-${Math.round(mark*100)}`);
+      }
+      const completed=await until(async()=>(await state()).renderedDistance>=path.dayDistance(day,to),60000);
+      const samples=await evaluate(`(()=>{if(window.trekStatus().playing)document.querySelector('#play').click();window.__trekCaptureCamera=false;const samples=window.__trekCameraSamples;delete window.__trekCameraSamples;return samples;})()`);
+      const delta=(a,b)=>((b-a+540)%360)-180;
+      const changes=samples.slice(1).map((s,i)=>{const p=samples[i],dt=(s.sampleTime-p.sampleTime)/1000;return {turn:Math.abs(delta(p.bearing,s.bearing)),rise:Math.abs(s.height-p.height)/dt,zoom:Math.abs(s.zoom-p.zoom),pitch:Math.abs(s.pitch-p.pitch)/dt};});
+      const variation=changes.reduce((sum,s)=>sum+s.turn,0),maxZoomStep=Math.max(...changes.map(s=>s.zoom));
+      check(completed&&samples.length>100,'the camera completes the continuous replay');
+      check(Math.max(...changes.map(s=>s.rise))<181&&maxZoomStep<.16,'DEM tile changes cannot cause a sudden camera lift or zoom');
+      check(samples.every(s=>s.clearance>750&&s.terrainClearance>200&&s.pitch>=35.95&&s.pitch<=60.05),'the camera clears both the planned profile and the rendered terrain throughout playback');
+      if(day===31&&from===.001)check(variation<330,'the full day-31 camera avoids circling with the tight local route');
+      if(day===31)check(Math.max(...samples.map(s=>s.lift))>350,'the winding section receives extra camera height');
+      const held=await state();check(held.controlsFit&&held.overflow<=1,'continuous camera movement preserves the timeline and controls');
+      console.log('  terrain camera '+JSON.stringify({width,day,from,metres:Math.round(samples.at(-1).distance-samples[0].distance),seconds:((samples.at(-1).sampleTime-samples[0].sampleTime)/1000).toFixed(1),turning:variation.toFixed(1),maxZoomStep:maxZoomStep.toFixed(4),minimumTerrainClearance:Math.round(Math.min(...samples.map(s=>s.terrainClearance)))}));
+    }
+    const held=(await state()).distance;
+    for(const [width,height] of [[320,844],[844,390]]){
+      await setDesktop(width,height);await sleep(700);const s=await state();
+      check(s.distance===held&&s.controlsFit&&s.overflow<=1&&s.cameraTerrainClearance>200,`${width}×${height} retains the exact position and visible camera framing`);
+      await capture?.(`trek-terrain-${width}-${height}`);
+    }
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the continuous terrain camera has no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_ZIGZAGS_ONLY==='1'){
     section('Calmer switchbacks and a readable current country');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the Alpine comparison scene prepares');
@@ -48,7 +83,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       const delta=(a,b)=>((b-a+540)%360)-180;
       const turns=samples.slice(1).map((s,i)=>Math.abs(delta(samples[i].bearing,s.bearing))/((s.sampleTime-samples[i].sampleTime)/1000));
       const variation=samples.slice(1).reduce((sum,s,i)=>sum+Math.abs(delta(samples[i].bearing,s.bearing)),0);
-      check(completed&&Math.max(...turns)<=12.5&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=41.95&&s.pitch<=60.05),`day ${day} traverses its bends with gradual turns and ground clearance`);
+      check(completed&&Math.max(...turns)<=12.5&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=35.95&&s.pitch<=60.05),`day ${day} traverses its bends with gradual turns and ground clearance`);
       if(day===30&&from===.23)check(variation<65,'the town zigzags do not make the rendered camera swing repeatedly');
       console.log('  rendered bends '+JSON.stringify({day,from,metres:Math.round(samples.at(-1).distance-samples[0].distance),seconds:((samples.at(-1).sampleTime-samples[0].sampleTime)/1000).toFixed(1),turning:variation.toFixed(1),peakRate:Math.max(...turns).toFixed(1)}));
       await capture?.(`trek-zigzag-day-${day}-${Math.round(from*100)}`);
@@ -169,7 +204,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await click('#play');
     const moved=samples.at(-1).distance-samples[0].distance;
     const turns=samples.slice(1).map((s,i)=>Math.abs(((s.bearing-samples[i].bearing+540)%360)-180)/((s.sampleTime-samples[i].sampleTime)/1000));
-    check(moved>1500&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=41.95&&s.pitch<=60.05)&&Math.max(...turns)<14.5,'sustained faster playback covers ground while retaining safe, gradual camera motion');
+    check(moved>1500&&samples.every(s=>s.cameraClearance>=419.9&&s.pitch>=35.95&&s.pitch<=60.05)&&Math.max(...turns)<14.5,'sustained faster playback covers ground while retaining safe, gradual camera motion');
     console.log('  flow measurements '+JSON.stringify({metres:Math.round(moved),seconds:(samples.at(-1).sampleTime-samples[0].sampleTime)/1000,maxTurn:Math.max(...turns),minimumClearance:Math.min(...samples.map(s=>s.cameraClearance))}));
     for(const [day,country,flag] of [[3,'France','fr'],[17,'Germany','de'],[30,'Austria','at'],[36,'Slovenia','si'],[42,'Croatia','hr'],[54,'Serbia','rs'],[65,'Bulgaria','bg']]){
       await choose(day);check(await settled(),`${country} terrain prepares`);
@@ -328,7 +363,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   section('Calm camera through steep terrain');
   for(const fraction of [.25,.5,.74,.9]){
     await scrub(path.dayDistance(30,fraction));check(await settled(),`the Alpine camera loads at ${(fraction*100).toFixed(0)}% of the day`);
-    s=await state();check(s.pitch<=60.05&&s.pitch>=41.95&&s.cameraClearance>=419.9,'the view keeps a controlled tilt and clears the actual mountain ground');
+    s=await state();check(s.pitch<=60.05&&s.pitch>=35.95&&s.cameraClearance>=419.9,'the view keeps a controlled tilt and clears the actual mountain ground');
   }
   await scrub(path.dayDistance(30,.74));await settled();
   await click('#menu-open');await click('#photo-interludes');await click('#menu-close');await click('#play');
@@ -336,7 +371,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   for(let i=0;i<20;i++){await sleep(500);mountainSamples.push(await state());}
   await click('#play');
   check(mountainSamples.at(-1).distance>mountainSamples[0].distance,'playback advances from the mountain viewpoint');
-  check(mountainSamples.every(s=>s.cameraClearance>=419.9&&s.pitch>=41.95&&s.pitch<=60.05),'playback keeps the camera out of the terrain without pitching toward the horizon');
+  check(mountainSamples.every(s=>s.cameraClearance>=419.9&&s.pitch>=35.95&&s.pitch<=60.05),'playback keeps the camera out of the terrain without pitching toward the horizon');
   check(mountainSamples.every(s=>Math.abs(s.mapElevation-(s.eyeHeight-s.cameraClearance))<.01),'the zoom reference follows local ground rather than retaining the old mountain altitude');
   const turns=mountainSamples.slice(1).map((s,i)=>Math.abs(((s.bearing-mountainSamples[i].bearing+540)%360)-180)/((s.sampleTime-mountainSamples[i].sampleTime)/1000));
   check(Math.max(...turns)<14.5,'actual rendered turns stay below 14.5 degrees per second');

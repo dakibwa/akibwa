@@ -7,6 +7,9 @@ const {buildJourneyPath,metres,headingDelta}=require('../public/trek/journey-rou
 const camera=require('../public/trek/journey-camera.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
 const original=JSON.stringify(route),path=buildJourneyPath(route);
+const profile=JSON.parse(readFileSync(new URL('../public/trek/elevation-profile.json',import.meta.url),'utf8'));
+const originalProfile=JSON.stringify(profile),{sample}=require('../public/trek/journey-elevation.js');
+const heightAt=distance=>sample(profile,distance,false);
 const paces=[400,1600,3200];
 
 for(let d=0;d<=path.total;d+=250){
@@ -14,6 +17,8 @@ for(let d=0;d<=path.total;d+=250){
   assert(p.every(Number.isFinite)&&Number.isFinite(heading));
   assert(metres(p,path.sample(d).point)<=165.2,'the smoothed camera must stay near the recorded or connecting path');
   assert(metres(p,next)<1.01,'a GPS corner must not teleport the camera');
+  const framing=camera.terrainFrame(path,d,heightAt);
+  assert(Number.isFinite(framing.height)&&framing.height>=framing.ground+849.99&&framing.lift>=0&&framing.lift<=480,'terrain framing keeps a broad view and adds bounded room around bends');
   for(const pace of paces){
     const speed=camera.speedLimit(path,d,pace,heading);
     assert(speed>=35&&speed<=pace,'corners may slow travel but must not reverse, stall or accelerate it');
@@ -24,7 +29,7 @@ for(const boundary of path.boundaries){
 }
 
 let worstLag=0,largestTurn=0;
-const stretches=[[16,.4,.65],[17,.94,.999],[30,.23,.34],[30,.45,.99],[41,.45,.69],[53,0,.1]].map(([day,start,finish])=>[path.dayDistance(day,start),path.dayDistance(day,finish)]);
+const stretches=[[16,.4,.65],[17,.94,.999],[30,.23,.34],[30,.45,.99],[31,0,1],[41,.45,.69],[53,0,.1]].map(([day,start,finish])=>[path.dayDistance(day,start),path.dayDistance(day,finish)]);
 stretches.push([path.total-2000,path.total]);
 for(const [start,end] of stretches){
   assert(end>start,'every difficult stretch must exercise a moving camera');
@@ -50,8 +55,37 @@ for(const [start,end] of stretches){
     assert(distance===end,'even a tight bend must remain traversable at every pace');
     if(pace===1600&&start===path.dayDistance(30,.23))assert(variation<50&&reversals<=1,'the camera looks along the valley instead of following each town zigzag');
     if(pace===1600&&start===path.dayDistance(30,.45))assert(variation<230&&reversals<=8,'the Alpine descent must avoid repeated left-right corrections');
+    if(start===path.dayDistance(31,0))assert(variation<310,'the day-31 loop must not make the camera circle with the local path');
   }
 }
+let largestRise=0,smallestClearance=Infinity;
+for(const pace of paces){
+  // Traverse the mountain descent, the reported faults and the next day without
+  // resetting height. A fresh camera at each waypoint would conceal a lurch.
+  let distance=path.dayDistance(30,0),renderedDistance=distance,heading=camera.headingAt(path,distance),velocity=0,speed=0,height=null,verticalVelocity=0,elapsed=0,step=0;
+  const end=path.dayDistance(32,.1);
+  while(distance<end&&elapsed<1000){
+    const dt=[1/60,1/30,.1][step++%3];
+    speed+=(camera.speedLimit(path,distance,pace,heading)-speed)*(1-Math.exp(-dt/.85));
+    distance=Math.min(end,distance+speed*dt);renderedDistance+=(distance-renderedDistance)*(1-Math.exp(-dt/.6));
+    const turn=camera.turn(heading,velocity,camera.headingAt(path,renderedDistance),dt);heading=turn.heading;velocity=turn.velocity;
+    const framing=camera.terrainFrame(path,renderedDistance,heightAt),vertical=camera.rise(height,verticalVelocity,framing.height,dt);
+    if(height!==null){
+      const rise=(vertical.height-height)/dt;largestRise=Math.max(largestRise,Math.abs(rise));
+      assert(rise>=-110.001&&rise<=180.001,'height changes remain bounded during a continuous mountain crossing');
+      assert(Math.abs(vertical.velocity-verticalVelocity)<=65*dt+.0001,'the climb and descent ease their acceleration');
+    }
+    height=vertical.height;verticalVelocity=vertical.velocity;elapsed+=dt;
+    smallestClearance=Math.min(smallestClearance,height-framing.ground);
+    assert(height-framing.ground>750,'anticipation clears the ridge without needing an emergency height clamp');
+  }
+  assert.equal(distance,end,'every pace can cross both Alpine days continuously');
+}
+for(const d of [1130563,1145308,1166593]){
+  const a=camera.terrainFrame(path,d,heightAt),b=camera.terrainFrame(path,d+6,heightAt);
+  assert(Math.abs(a.ground-b.ground)<6&&Math.abs(a.height-b.height)<12,'the known day-31 DEM seams cannot change the camera reference or planned height abruptly');
+}
+assert(camera.terrainFrame(path,path.dayDistance(31,.75),heightAt).lift>350,'the tight day-31 loop is approached with additional height');
 assert(worstLag<22,'the view must keep up with the path through the tested switchbacks');
 const north=camera.turn(179,0,-179,1/30);
 assert(north.heading>179&&north.heading<180,'crossing north must choose the short turn');
@@ -82,4 +116,5 @@ for(const [id,d] of [['reims',136600],['nancy',365700]]){
   assert(distance>d+2000,'glancing at a landmark must not stall route playback');
 }
 assert.equal(JSON.stringify(route),original,'camera smoothing must never rewrite the approved GPS route');
-console.log(`Camera checks passed: whole-route continuity and proximity, seven difficult stretches at all three paces, reduced Alpine zigzags, no overshoot, bounded cathedral glances, maximum route turn ${largestTurn.toFixed(1)}°/s and heading lag ${worstLag.toFixed(1)}°.`);
+assert.equal(JSON.stringify(profile),originalProfile,'camera framing must never alter the mapped elevation profile');
+console.log(`Camera checks passed: whole-route continuity and proximity, eight difficult stretches at all three paces, day-31 tile seams, continuous Alpine height control (${smallestClearance.toFixed(0)} m minimum clearance, ${largestRise.toFixed(0)} m/s maximum rise), bounded cathedral glances, maximum route turn ${largestTurn.toFixed(1)}°/s and heading lag ${worstLag.toFixed(1)}°.`);
