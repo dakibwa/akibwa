@@ -14,12 +14,11 @@
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,flashIndex=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
+    let scrubbing=false,scrubChanged=false;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
     const number=new Intl.NumberFormat('en-GB',{maximumFractionDigits:1});
-    const dayBlocks=Array.from({length:67},(_,i)=>{const block=document.createElement('span');block.dataset.day=i+1;return block;});
-    $('day-blocks').replaceChildren(...dayBlocks);
     function setPace(value){
       const options=[...$('pace').options],selected=options.findIndex(option=>+option.value===value);
       if(selected<0)return;
@@ -88,25 +87,19 @@
     function updateUI(force=false){
       const now=performance.now();if(!force&&now-uiTime<90)return;uiTime=now;
       if(path&&started){const at=path.dayAt(distance);day=at.day;fraction=at.t;}
-      const d=namedDay(day),percent=path?distance/path.total*100:0;
-      progress.value=percent*10;progress.style.setProperty('--progress',percent+'%');
-      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c);
+      const d=namedDay(day);
+      progress.value=path?TrekElevation.progressAt(path,distance)*1000:0;
       const previous=data.days.find(record=>record.n===day-1);
       const measured=path?path.recordedFraction(day,distance):0;
       const km=mix(previous?.cum||0,d.cum,measured),ascent=mix(previous?.cumElev||0,d.cumElev,measured);
       text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(km));
       text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
       $('menu-open').setAttribute('aria-label','Day '+day+' of 67. Choose a day and journey options');
-      dayBlocks.forEach((block,i)=>{
-        const fill=i<day-1?100:i===day-1?Math.round(fraction*100):0;
-        if(block.dataset.fill!==String(fill)){block.dataset.fill=fill;block.style.setProperty('--fill',fill+'%');}
-        block.classList.toggle('complete',i<day-1||(day===67&&fraction===1));
-        block.classList.toggle('current',i===day-1);
-      });
       text('where',started?d.c:'Paris → Sofia');
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
       wayfindingUI(force);elevation?.update(distance,force);
       const ground=elevation?.status().metres;text('minimap-height',Number.isFinite(ground)?'≈ '+ground.toLocaleString('en-GB')+' m':'');
+      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?', visual connection':''));
       if(!force&&lastUI===day)return;lastUI=day;
       if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
@@ -260,8 +253,8 @@
         tileCache=TrekCache.create();tileCache.install(maplibregl);
         const tiles=await loadJSON(style.sources.openmaptiles.url);
         vectorTemplate=tiles.tiles[0];style.sources.openmaptiles={...style.sources.openmaptiles,...tiles};delete style.sources.openmaptiles.url;
-        elevation=TrekElevation.create({profile,canvas:$('elevation-canvas'),label:$('elevation-current')});
         route=r;path=TrekRoute.buildJourneyPath(route);chapters=m.chapters;moments=m.moments;
+        elevation=TrekElevation.create({profile,path,days:data.days,colors:data.colors,canvas:$('elevation-canvas'),label:$('elevation-current')});
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
         if(positionPending){distance=path.dayDistance(positionPending.day,positionPending.t);renderedDistance=distance;positionPending=null;}
         // Roads and topography remain; label furniture belongs in the drawer.
@@ -315,7 +308,27 @@
     $('day-back').addEventListener('click',()=>visit(day-1));$('day-forward').addEventListener('click',()=>visit(day+1));
     $('restart').addEventListener('click',reset);$('pace').addEventListener('change',e=>setPace(+e.target.value));
     $('speed-cycle').addEventListener('click',()=>{const options=[...$('pace').options],current=options.findIndex(option=>+option.value===pace);setPace(+options[(current+1)%options.length].value);});
-    progress.addEventListener('input',()=>{if(!path)return;setPlaying(false);dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;distance=+progress.value/1000*path.total;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('ending').hidden=distance<path.total;updateUI(true);prepareCamera();invalidate();});
+    function seek(next){
+      if(!path)return;
+      if(scrubbing&&!scrubChanged){++warmGeneration;tileCache?.cancel();ready=false;$('play').disabled=true;}
+      scrubChanged=true;setPlaying(false);if(flashShown||flashPending)dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;
+      distance=next;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('opening').hidden=true;$('ending').hidden=distance<path.total;
+      updateUI(true);if(!scrubbing)prepareCamera();invalidate();
+    }
+    progress.addEventListener('pointerdown',e=>{scrubbing=true;scrubChanged=false;setPlaying(false);progress.setPointerCapture(e.pointerId);});
+    const finishScrub=()=>{if(!scrubbing)return;scrubbing=false;if(scrubChanged)prepareCamera();scrubChanged=false;};
+    for(const event of ['pointerup','pointercancel','lostpointercapture'])progress.addEventListener(event,finishScrub);
+    progress.addEventListener('input',()=>{if(path)seek(TrekElevation.distanceAt(path,+progress.value/1000));});
+    progress.addEventListener('keydown',e=>{
+      if(!path)return;
+      const steps={ArrowLeft:-.1,ArrowDown:-.1,ArrowRight:.1,ArrowUp:.1,PageDown:-1,PageUp:1};
+      if(e.key!=='Home'&&e.key!=='End'&&!steps[e.key])return;e.preventDefault();
+      const step=steps[e.key],target=+progress.value/1000+(step||0)*(e.shiftKey?10:1)/data.days.length;
+      let next=e.key==='Home'?0:e.key==='End'?path.total:TrekElevation.distanceAt(path,target);
+      // The final numbered day is an arrival, with no additional route length.
+      if(step<0&&next===distance&&distance>0)next=Math.max(0,distance-1);
+      seek(next);
+    });
     $('menu-photos').addEventListener('click',()=>showGallery());$('gallery-close').addEventListener('click',()=>gallery.close());
     $('photo-back').addEventListener('click',()=>showGallery(galleryIndex-1));$('photo-forward').addEventListener('click',()=>showGallery(galleryIndex+1));
     flash.addEventListener('click',()=>showGallery(flashIndex));
@@ -326,7 +339,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraPoint,cameraZoom:map?.getZoom(),mapElevation:map?.getCenterElevation(),headingVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

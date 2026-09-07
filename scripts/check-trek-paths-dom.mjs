@@ -3,13 +3,14 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const {buildJourneyPath}=require('../public/trek/journey-route.js');
+const {progressAt}=require('../public/trek/journey-elevation.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
 const path=buildJourneyPath(route);
 
 export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture}){
   const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
   const choose=n=>evaluate(`(() => {const e=document.querySelector('#journey-day');e.value=${n};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-  const scrub=distance=>evaluate(`(() => {const e=document.querySelector('#journey-progress');e.value=${distance/path.total*1000};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+  const scrub=distance=>evaluate(`(() => {const e=document.querySelector('#journey-progress');e.value=${progressAt(path,distance)*1000};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
   const state=()=>evaluate(`({...window.trekStatus?.(),sampleTime:performance.now(),overflow:document.documentElement.scrollWidth-innerWidth,menu:document.querySelector('#journey-menu').open,gallery:document.querySelector('#photo-gallery').open,photo:document.querySelector('#gallery-image').getAttribute('src'),photoLoaded:document.querySelector('#gallery-image').naturalWidth>0,creditsExpanded:document.querySelector('.maplibregl-ctrl-attrib')?.classList.contains('maplibregl-compact-show'),controlsFit:[...document.querySelectorAll('.masthead button,.journey-controls button,.journey-controls input')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1;})})`);
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
@@ -55,11 +56,26 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the changed camera and inset have no JavaScript exceptions');
     return;
   }
-  if(process.env.CHECK_TREK_CONTROLS_ONLY==='1'){
-    section('Clear progress, day blocks and user-controlled speed');
+  if(process.env.CHECK_TREK_CONTROLS_ONLY==='1'||process.env.CHECK_TREK_TIMELINE_ONLY==='1'){
+    section('One draggable timeline for the days, country colours and elevation');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the updated journey prepares');
-    const blocks=()=>evaluate(`({count:document.querySelector('#day-blocks').children.length,complete:document.querySelectorAll('#day-blocks .complete').length,current:document.querySelector('#day-blocks .current')?.dataset.day,fill:+document.querySelector('#day-blocks .current')?.dataset.fill,future:[...document.querySelectorAll('#day-blocks .current~span')].every(e=>+e.dataset.fill===0)})`);
-    let b=await blocks();check(b.count===67&&b.complete===29&&b.current==='30'&&Math.abs(b.fill-50)<=1&&b.future,'the day strip shows completed days, current progress and empty future days');
+    const ribbon=()=>evaluate(`({count:window.trekStatus().elevation.days,day:window.trekStatus().day,fraction:window.trekStatus().t,progress:+document.querySelector('#journey-progress').value/1000})`);
+    let b=await ribbon();check(b.count===67&&b.day===30&&Math.abs(b.fraction-.5)<.01&&Math.abs(b.progress-29.5/67)<.0001,'the elevation and playhead share the same day scale');
+    check(await evaluate(`(()=>{const a=document.querySelector('#journey-progress').getBoundingClientRect(),b=document.querySelector('#elevation-canvas').getBoundingClientRect();return !document.querySelector('#day-blocks')&&document.querySelectorAll('input[type=range]').length===1&&['x','y','width','height'].every(k=>Math.abs(a[k]-b[k])<1);})()`),'one draggable elevation replaces the separate day blocks and progress line');
+    check(await evaluate(`(()=>{const c=document.querySelector('#elevation-canvas'),ctx=c.getContext('2d'),scale=c.width/c.getBoundingClientRect().width,colors=[10,20,30,37,45,55,65].map(day=>[...ctx.getImageData(Math.floor((day-.5)/67*c.width),Math.floor(c.height-9*scale),1,1).data].join(','));return new Set(colors).size===7;})()`),'the visible ribbon has distinct country colours');
+    await evaluate("document.querySelector('#journey-progress').focus()");
+    const key=async key=>{await cdp.send('Input.dispatchKeyEvent',{type:'keyDown',key});await cdp.send('Input.dispatchKeyEvent',{type:'keyUp',key});};
+    await key('End');check((await state()).distance===path.total,'End reaches Sofia');
+    await key('ArrowLeft');check((await state()).distance<path.total&&(await state()).day===66,'the arrow key can leave the zero-distance arrival day');
+    await key('Home');check((await state()).distance===0,'Home returns to the first route point');
+    await choose(30);check(await settled(),'the timeline returns to the mountains');
+    const box=await evaluate(`(()=>{const r=document.querySelector('#journey-progress').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};})()`),startX=box.x+29.5/67*box.width,y=box.y+box.height*.6;
+    await click('#play');await cdp.send('Input.dispatchMouseEvent',{type:'mousePressed',x:startX,y,button:'left',clickCount:1});
+    for(const day of [35,42,53])await cdp.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:box.x+(day-.5)/67*box.width,y,button:'left',buttons:1});
+    const dragged=await state();check(dragged.scrubbing&&!dragged.playing&&dragged.day===53&&!dragged.ready&&Math.abs(dragged.elevation.progress-52.5/67)<.005,'dragging the elevation previews the matching day and pauses playback');
+    await cdp.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:box.x+52.5/67*box.width,y,button:'left',clickCount:1});
+    check(await settled()&&!(await state()).scrubbing&&(await state()).day===53,'releasing the handle prepares the final landscape');
+    await choose(30);check(await settled(),'the chosen day and date reset together');
     check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('1×')"),'the photograph button is replaced by a visible speed control');
     const held=(await state()).distance;
     for(const [pace,label] of [[3200,'2×'],[400,'¼×'],[1600,'1×']]){
@@ -70,21 +86,28 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     check((await state()).pace===400&&await evaluate("document.querySelector('#speed-label').textContent==='¼×'"),'changing speed in the menu updates the visible control');await click('#menu-close');await click('#speed-cycle');
     await click('#play');await sleep(500);await click('#speed-cycle');const moving=await state();await sleep(1800);await click('#play');
     check(moving.playing&&moving.pace===3200&&(await state()).distance>moving.distance,'fast-forward changes pace during playback without interrupting travel');
-    await choose(6);check(await settled(),'a backward day change prepares');b=await blocks();check(b.complete===5&&b.current==='6'&&b.future,'seeking backwards clears the later day blocks');
+    await choose(6);check(await settled(),'a backward day change prepares');b=await ribbon();check(b.day===6&&Math.abs(b.progress-5.5/67)<.0001,'seeking backwards moves the filled profile to the earlier day');
     await scrub(187340);await settled();await capture?.('trek-controls-town');
     await choose(5);await settled();const metrics=()=>evaluate("[document.querySelector('#readout-distance').textContent,document.querySelector('#readout-ascent').textContent]");
     const before=await metrics();await click('#play');await sleep(800);await click('#play');
     check((await state()).kind==='connection'&&JSON.stringify(await metrics())===JSON.stringify(before),'day progress across a missing recording adds no walking distance or climb');
-    await scrub(path.total);b=await blocks();check(b.complete===67&&b.current==='67'&&b.fill===100,'Sofia completes all 67 day blocks');
-    await click('#menu-open');await click('#restart');b=await blocks();check(b.complete===0&&b.current==='1'&&b.fill===0,'restarting clears the day strip');
+    await scrub(path.total);b=await ribbon();check(b.day===67&&b.progress===1,'Sofia completes the full 67-day ribbon');
+    await click('#menu-open');await click('#restart');b=await ribbon();check(b.day===1&&b.progress===0,'restarting clears the filled profile');
     await choose(30);check(await settled(),'the photo day prepares again');
     const showPrint=async()=>{await evaluate("(()=>{const e=document.querySelector('#photo-interludes');e.checked=true;e.dispatchEvent(new Event('change',{bubbles:true}));})()");return until(async()=>(await state()).flash,5000);};
     for(const [width,height] of [[1440,900],[390,844],[320,844],[844,390]]){
       await setDesktop(width,height);check(await showPrint(),'an original photograph appears automatically');await sleep(500);
-      const fit=await evaluate(`(()=>{const box=s=>document.querySelector(s).getBoundingClientRect(),p=box('#memory-flash'),r=box('.journey-controls'),brand=box('.mark'),f=box('#country-flag'),m=box('#minimap-canvas'),year=getComputedStyle(document.querySelector('.mark small')),apart=(a,b)=>a.bottom<=b.top||a.top>=b.bottom||a.right<=b.left||a.left>=b.right;return {photo:p.top>=0&&apart(p,r)&&apart(p,brand),year:year.display!=='none'&&+year.opacity===1&&parseFloat(year.fontSize)>=10,labels:[...document.querySelectorAll('.journey-readout dt')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=9),flag:f.width<=16&&f.top>=m.bottom&&f.right<innerWidth,blocks:[...document.querySelectorAll('#day-blocks>span')].every(e=>e.getBoundingClientRect().width>=2),metricFit:[...document.querySelectorAll('.journey-readout dd')].every(e=>e.scrollWidth<=e.clientWidth+1)};})()`);
-      const s=await state();check(s.controlsFit&&s.overflow<=1&&Object.values(fit).every(Boolean),`${width}×${height} fits the counters, all day blocks, year, quiet flag, photograph and controls`);
+      const fit=await evaluate(`(()=>{const box=s=>document.querySelector(s).getBoundingClientRect(),p=box('#memory-flash'),r=box('.journey-controls'),brand=box('.mark'),f=box('#country-flag'),m=box('#minimap-canvas'),year=getComputedStyle(document.querySelector('.mark small')),apart=(a,b)=>a.bottom<=b.top||a.top>=b.bottom||a.right<=b.left||a.left>=b.right;return {photo:p.top>=0&&apart(p,r)&&apart(p,brand),year:year.display!=='none'&&+year.opacity===1&&parseFloat(year.fontSize)>=10,labels:[...document.querySelectorAll('.journey-readout dt')].every(e=>parseFloat(getComputedStyle(e).fontSize)>=9),flag:f.width<=16&&f.top>=m.bottom&&f.right<innerWidth,ribbon:box('#journey-progress').height>=44&&box('#elevation-canvas').width/67>=2.5,metricFit:[...document.querySelectorAll('.journey-readout dd')].every(e=>e.scrollWidth<=e.clientWidth+1)};})()`);
+      const s=await state();check(s.controlsFit&&s.overflow<=1&&Object.values(fit).every(Boolean),`${width}×${height} fits the segmented elevation, counters, photograph and controls`);
       await capture?.(`trek-controls-${width}-${height}`);
     }
+    await setDesktop(390,844);await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+    const touchBox=await evaluate(`(()=>{const r=document.querySelector('#journey-progress').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};})()`),touchY=touchBox.y+touchBox.height*.35;
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:touchBox.x+29.5/67*touchBox.width,y:touchY}]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:touchBox.x+35.5/67*touchBox.width,y:touchY}]});
+    check((await state()).day===36&&(await state()).scrubbing,'a finger can drag anywhere across the elevation to another day');
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});check(await settled()&&!(await state()).scrubbing,'lifting the finger finishes the seek without resuming playback');
+    await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:false});await choose(30);await settled();
     await setDesktop(390,844);await showPrint();await click('#memory-flash');check(await until(async()=>(await state()).photoLoaded),'tapping an automatic print opens its original photograph');
     check((await state()).galleryCount===37&&!(await state()).playing,'the original day gallery remains reachable from the print');await click('#gallery-close');
     await click('.maplibregl-ctrl-attrib-button');await sleep(100);

@@ -73,11 +73,6 @@
 .journey-readout{margin-bottom:6px}
 .day-progress-label{display:flex;justify-content:space-between;align-items:baseline;font-size:10px;letter-spacing:.06em;line-height:1.4}
 .day-progress-label strong{font-size:13px;font-weight:400;letter-spacing:0}.day-total{color:#52604f}.day-options{font-size:9px;letter-spacing:.02em}
-.day-blocks{display:grid;grid-template-columns:repeat(67,minmax(0,1fr));gap:2px;margin-top:8px}
-.day-blocks>span{height:8px;position:relative;background:#465c3824;box-shadow:inset 0 0 0 1px #45553a15;border-radius:1px;overflow:hidden}
-.day-blocks>span::after{content:'';display:block;width:var(--fill,0%);height:100%;background:#4c6240}
-.day-blocks>span.current{box-shadow:inset 0 0 0 1px #a3344399}.day-blocks>span.current::after{background:#a33443}
-.day-blocks>span.complete::after{background:#4c6240}
 .elevation-profile{height:54px;background:transparent}.elevation-profile p{font-size:9px;color:#334237}
 .progress-label{font-size:10px;letter-spacing:.025em}.progress-label>span:nth-child(2){opacity:1;color:#52604f}
 .speed-button{width:46px;height:46px;flex-shrink:0;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid #52634a45;border-radius:8px;background:#f7f3e7cc;color:#334237}
@@ -93,5 +88,27 @@
 .maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button{background:none;padding:2px 0 6px;min-height:26px}
 .maplibregl-ctrl-attrib-inner{max-width:min(420px,calc(100vw - 50px));line-height:1.6}
 .memory-flash{bottom:285px}.landmark-caption{bottom:296px}
-@media(max-width:650px){.journey-controls{width:calc(100% - 36px);bottom:max(38px,calc(env(safe-area-inset-bottom) + 22px))}.journey-controls::before{inset:-31px -28px -40px}.journey-readout{margin-bottom:4px}.day-progress-label{font-size:9px}.day-progress-label strong{font-size:12px}.day-options{font-size:8px}.day-blocks{gap:1px;margin-top:7px}.day-blocks>span{height:7px}.elevation-profile{height:47px}.elevation-profile p,.progress-label{font-size:8px}.control-row{gap:10px}.speed-button{width:44px;height:44px}.minimap-country{gap:4px}.journey-minimap #where{font-size:7px;letter-spacing:0}#country-flag{width:12px;height:9px}.journey-minimap #minimap-height{font-size:6px}.memory-flash{bottom:286px}.landmark-caption{bottom:288px}}
-@media(max-height:520px){.journey-controls{bottom:30px;max-width:580px}.journey-readout dd{font-size:28px}.journey-readout dt{font-size:9px}.day-open{margin-bottom:2px;padding-top:2px;min-height:34px}.day-blocks{margin-top:5px}.elevation-profile{height:30px}.memory-flash{left:18px;top:82px;bottom:auto;width:95px}.landmark-caption{bottom:222px}}
+@media(max-width:650px){.journey-controls{width:calc(100% - 36px);bottom:max(38px,calc(env(safe-area-inset-bottom) + 22px))}.journey-controls::before{inset:-31px -28px -40px}.journey-readout{margin-bottom:4px}.day-progress-label{font-size:9px}.day-progress-label strong{font-size:12px}.day-options{font-size:8px}.elevation-profile{height:47px}.elevation-profile p,.progress-label{font-size:8px}.control-row{gap:10px}.speed-button{width:44px;height:44px}.minimap-country{gap:4px}.journey-minimap #where{font-size:7px;letter-spacing:0}#country-flag{width:12px;height:9px}.journey-minimap #minimap-height{font-size:6px}.memory-flash{bottom:286px}.landmark-caption{bottom:288px}}
+@media(max-height:520px){.journey-controls{bottom:30px;max-width:580px}.journey-readout dd{font-size:28px}.journey-readout dt{font-size:9px}.day-open{margin-bottom:2px;padding-top:2px;min-height:34px}.elevation-profile{height:30px}.memory-flash{left:18px;top:82px;bottom:auto;width:95px}.landmark-caption{bottom:222px}}
+
+/* One paper ribbon: the days, terrain and draggable playhead share an axis. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.control-row{align-items:center}.progress-wrap{position:relative}
+.timeline-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:34px}
+.timeline-heading .day-open{display:flex;align-items:center;gap:8px;width:auto;min-height:34px;margin:0;padding:4px 0;white-space:nowrap}
+.day-progress-label{display:inline;line-height:1.4}.day-progress-label strong{margin-left:3px}
+.day-options{font-size:13px;opacity:.7}
+.timeline-heading p{margin:0;font-size:9px;letter-spacing:.015em;white-space:nowrap;color:#43543d}
+.elevation-profile{height:70px;margin:0 0 7px;pointer-events:auto;background:transparent}
+.elevation-profile canvas{pointer-events:none}
+#journey-progress{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;cursor:ew-resize;touch-action:none}
+#journey-progress::-webkit-slider-runnable-track{height:100%;background:transparent}
+#journey-progress::-webkit-slider-thumb{width:0;height:100%;margin:0;border:0;border-radius:0;box-shadow:none;background:transparent}
+#journey-progress::-moz-range-track,#journey-progress::-moz-range-progress{height:100%;background:transparent}
+#journey-progress::-moz-range-thumb{width:0;height:100%;border:0;border-radius:0;background:transparent}
+#journey-progress:focus-visible{outline:1px solid #a33443;outline-offset:3px;border-radius:2px}
+.progress-label{margin:0;font-size:9px;letter-spacing:.015em}
+.journey-readout{margin-bottom:10px}.memory-flash{bottom:258px}.landmark-caption{bottom:258px}
+@media(max-width:650px){.timeline-heading{min-height:34px;gap:5px}.timeline-heading .day-open{min-height:34px;gap:4px}.day-progress-label{font-size:8px}.day-progress-label strong{font-size:11px;margin-left:1px}.day-options{font-size:11px}.timeline-heading p{font-size:7px}.elevation-profile{height:62px;margin-bottom:6px}.progress-label{font-size:8px;letter-spacing:0}.journey-readout{margin-bottom:9px}.memory-flash{bottom:258px}.landmark-caption{bottom:258px}}
+@media(max-width:350px){.timeline-heading p{font-size:6px}.day-progress-label{font-size:7px}.day-progress-label strong{font-size:10px}.progress-label{font-size:7px}}
+@media(max-height:520px){.elevation-profile{height:48px}.journey-readout{margin-bottom:3px}.timeline-heading,.timeline-heading .day-open{min-height:28px}.memory-flash{bottom:auto}.landmark-caption{bottom:214px}}

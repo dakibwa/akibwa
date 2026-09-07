@@ -20,6 +20,21 @@ for(let i=0;i<profile.pieces.length;i++){
 }
 assert.equal(count,11677);assert(profile.pieces.every(p=>Number.isFinite(Elevation.sample(profile,(p.start+p.end)/2))),'every recorded section and visual link has mapped terrain');assert(profile.max>2300&&profile.max<2700,'the full profile includes the Alpine pass');
 assert.equal(Elevation.sample(profile,profile.total),profile.pieces.at(-1).samples.at(-1)[1]);
+const originalProfile=JSON.stringify(profile),originalRoute=JSON.stringify(path.boundaries);
+for(let d=0;d<path.total;d+=537)assert(Math.abs(Elevation.distanceAt(path,Elevation.progressAt(path,d))-d)<.00001,'day-scaled scrubbing must round-trip to the same route position');
+for(let day=1;day<67;day++)for(const t of [.1,.5,.9])assert(Math.abs(Elevation.progressAt(path,path.dayDistance(day,t))-(day-1+t)/67)<.000001,'every numbered day shares the same width on the timeline');
+assert.equal(Elevation.progressAt(path,path.total),1);assert.equal(Elevation.distanceAt(path,1),path.total);assert.equal(Elevation.distanceAt(path,.999),path.total,'the final arrival segment adds no invented distance');
+const days=JSON.parse(readFileSync(new URL('../data/trek-days.json',import.meta.url))).days.map(d=>({n:d.n,c:d.country}));
+const segments=Elevation.dayProfiles(profile,path,days);
+assert.equal(segments.length,67);assert.equal(segments.at(-1).parts[0].kind,'finish');
+assert.deepEqual(segments.map(s=>s.country),days.map(d=>d.c));
+assert.equal(Math.max(...segments.flatMap(s=>s.parts.flatMap(p=>p.points.map(([,h])=>h)))),profile.max,'segmenting the days must retain the true Alpine peak');
+for(const segment of segments){
+  assert(segment.parts.length>0);assert(segment.parts.every(p=>p.points.length>=2&&p.points.every(([x,h])=>x>=0&&x<=1&&Number.isFinite(h))));
+  const middle=path.dayDistance(segment.day,.5);
+  if(path.sample(middle).kind==='connection')assert(segment.parts.some(p=>p.kind==='connection'),'missing recordings retain their mapped-connection provenance');
+}
+assert.equal(JSON.stringify(profile),originalProfile);assert.equal(JSON.stringify(path.boundaries),originalRoute);
 const entries=new Map();
 const fakeCache={match:async key=>entries.get(String(key))?.clone(),put:async(key,response)=>entries.set(String(key),response.clone()),keys:async()=>[...entries.keys()],delete:async key=>entries.delete(String(key))};
 const storage={open:async()=>fakeCache};let calls=0,clock=1000;
@@ -42,4 +57,4 @@ assert.equal(cache.transformRequest(tile,'Tile').url,'trek-cache://'+tile);asser
 let active=0,peak=0;
 cache=Cache.create({storage:{open:async()=>{throw Error();}},fetcher:async()=>{peak=Math.max(peak,++active);await new Promise(r=>setTimeout(r,2));active--;return new Response('ok');}});
 await cache.warm(urls.slice(0,16));assert.equal(peak,3,'look-ahead work has bounded network concurrency');assert.equal(cache.status().pending,0);
-console.log('Elevation and cache checks passed: full mapped profile, distinct mapped connections, persistent hits, refresh, cancellation, storage fallback, isolated bytes and bounded prefetch.');
+console.log('Elevation and cache checks passed: reversible day timeline, all 67 segments, retained Alpine peak and connections, persistent hits, refresh, cancellation, storage fallback, isolated bytes and bounded prefetch.');

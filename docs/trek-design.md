@@ -43,14 +43,21 @@ perspective and much less text and interface on 5 September 2026.
   field fill and hillshade before the first waterway layer, so paper treatments
   cannot wash out streams. Leave mapped surface waterways free of tree trunks.
 - Keep the small mark with a readable 2019 stamp, play control, speed button,
-  progress line and date on the landscape. Photographs appear automatically;
+  combined day/elevation timeline and date on the landscape. Photographs appear automatically;
   the separate photograph button is removed. The current country and mapped
-  height sit in the minimap. Above the progress line, two larger, dark Fraunces
+  height sit in the minimap. Above the timeline, two larger, dark Fraunces
   counters show kilometres covered and metres climbed, with readable Plex labels
-  on a soft paper wash. All 67 days appear as small blocks: completed days are
-  green, the current block fills as that day passes, and future days stay empty.
-  Tapping the row opens the day menu; the individual blocks are not tiny touch
-  targets. Seeking backwards clears the later blocks, and Sofia fills all 67.
+  on a soft paper wash. One elevation ribbon combines the former day blocks,
+  terrain graph and scrubber. All 67 days have equal width, coloured by country;
+  the terrain is drawn within each day, with darker completed portions and pale
+  future portions. One red playhead sits on the current height. The horizontal
+  scale represents days, not kilometres. The zero-distance arrival day remains
+  visible without adding distance or ascent. The whole profile is a drag target,
+  at least 44px high; the day-number button opens the menu. Dragging pauses and
+  previews the day, date, height and counters immediately, then prepares the final
+  landscape on release. Arrow keys move within a day, Shift+arrows and Page keys
+  move by a day, and Home/End reach Paris/Sofia. Seeking backwards clears the
+  later fill, and the left arrow can leave the final arrival segment.
   The opening has a primary start action and a quiet link to browse days,
   accessible while terrain loads or fails; Sofia has one replay action. Map
   credits use a quiet text disclosure above the landscape wash, retaining the
@@ -66,7 +73,7 @@ perspective and much less text and interface on 5 September 2026.
   when the country changes, keeping the route above the wash. Do not spread
   flags across the atlas: the single flag stays beside the country name.
   Following Dan’s 7 September feedback, remove the top-right menu button and
-  place the compact atlas there; tapping the day-block row opens journey options.
+  place the compact atlas there; the day number above the ribbon opens journey options.
 - Settlement names come from the existing map tiles. Show one name briefly near
   a city, town, village or hamlet, with a small geographic margin to avoid flicker.
   Never announce passing a town on a visual connection. Names clear after leaving;
@@ -378,7 +385,9 @@ gallery, connection profiles, the relocated day selector and 1440/390/320px fit.
 1440/390/320px, continuous passage and the enlarged Munich model. Inspect the
 rendered towers and silhouette; a model name in the status alone is insufficient.
 
-`CHECK_TREK_CONTROLS_ONLY=1` checks the visible speed cycle and menu sync,
-paused and playing speed changes, day blocks through backward seeks and replay,
+`CHECK_TREK_TIMELINE_ONLY=1` (also selected by `CHECK_TREK_CONTROLS_ONLY=1`)
+checks the combined elevation/day axis, visible country colours, mouse and touch
+dragging, release preparation, keyboard endpoints and the visible speed cycle and menu sync,
+paused and playing speed changes, ribbon fill through backward seeks and replay,
 unchanged distance on connections, automatic photos, native map credits, and
 readable controls at desktop, 390px, 320px and short landscape sizes.
