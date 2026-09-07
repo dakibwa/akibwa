@@ -6869,17 +6869,15 @@ button {
 
 .concept-projects {
   --projects-rest-space: clamp(48px, 6vw, 82px);
-  --projects-open-space: clamp(190px, 14vw, 206px);
+  --projects-open-space: clamp(24px, 3vw, 36px);
   position: relative;
   padding: var(--concept-rule-gap) 0 var(--projects-rest-space);
   transition: padding-bottom 340ms var(--ease-out);
 }
 
-/* Hover or focus opens a project popover beneath its card. As in Career the
-   section grows to make room, so the rose rule steps down rather than being
-   covered. */
-.concept-projects:has(.concept-project-grid:hover),
-.concept-projects:has(.concept-project-card:focus-visible) {
+/* The shared panel makes its own space in the layout. Tighten the section's
+   lower gap as it opens so the Career rule stays close to the box. */
+.concept-projects:has(.concept-project-detail-shell.is-open) {
   padding-bottom: var(--projects-open-space);
   transition-duration: 480ms;
 }
@@ -7829,10 +7827,6 @@ button {
   /* The swipe rail clips overflow, so the popover cannot hang beneath a card
      on phones. Each card carries its description as a plain caption instead;
      hover has nothing to add where there is no pointer to hover with. */
-  .concept-projects {
-    --projects-open-space: var(--projects-rest-space);
-  }
-
   .concept-project-popover {
     position: static;
     width: auto;
@@ -7909,13 +7903,13 @@ button {
 }
 
 /* Public collection controls and the separate album gallery. */
-.concept-page .concept-projects{--projects-rest-space:clamp(48px,6vw,82px);--projects-open-space:var(--projects-rest-space);padding-bottom:var(--projects-rest-space);transition:none}
 .concept-page .concept-project-stop{align-content:start}
 .concept-project-detail-shell { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 340ms var(--ease-out); }
 .concept-project-detail-shell.is-open { grid-template-rows: 1fr; transition-duration: 480ms; }
 .concept-project-detail-clip { min-height: 0; overflow: hidden; }
-.concept-project-detail {
-  margin: 9px 0 20px clamp(0px, var(--project-detail-offset, 0px), max(0px, calc(100% - var(--hover-detail-width))));
+.index-hover-detail.concept-project-detail {
+  margin: 9px 0 0 clamp(0px, var(--project-detail-offset, 0px), max(0px, calc(100% - var(--hover-detail-width))));
+  box-shadow: none;
 }
 .concept-project-detail p {
   margin: 0;
@@ -8246,5 +8240,6 @@ button {
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-name-value { animation: none; }
+  .concept-page .concept-projects, .concept-page .concept-projects:has(.concept-project-detail-shell.is-open) { transition: none; }
   .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .concept-project-detail-shell, .concept-project-detail-shell.is-open, .personal-taste-detail-shell, .personal-taste.is-open .personal-taste-detail-shell { transition: none; }
 }
