@@ -8,7 +8,7 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,wayfinding=null,elevation=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
@@ -53,7 +53,9 @@
     }
     $('journey-day').replaceChildren(...data.days.map(d=>{const o=document.createElement('option');o.value=d.n;o.textContent='Day '+String(d.n).padStart(2,'0')+' · '+d.c;return o;}));
     $('photo-interludes').checked=!reduced;
-    text('walk-totals','1,982 km · 67 numbered days · '+data.photos.length+' photographs · '+Math.round(data.stats.ascent).toLocaleString()+' m of ascent.');
+    text('walk-totals','About '+Math.round(data.total).toLocaleString('en-GB')+' km · '+(Math.round(data.stats.ascent/10)*10).toLocaleString('en-GB')+' m of ascent · 67 numbered days · '+data.photos.length+' photographs.');
+    text('walk-recorded',number.format(data.recorded.km)+' km and '+Math.round(data.recorded.ascent).toLocaleString('en-GB')+' m of ascent from the original recordings.');
+    text('walk-estimated','Plus about '+Math.round(data.estimated.km).toLocaleString('en-GB')+' km and '+(Math.round(data.estimated.ascent/10)*10).toLocaleString('en-GB')+' m of estimated ascent along the reconstructed walks. Both train transfers are excluded.');
     $('landmark-sources').replaceChildren(...data.landmarks.map(item=>{
       const p=document.createElement('p'),link=document.createElement('a'),small=document.createElement('small');
       link.href=item.source;link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.name+' ↗';
@@ -112,11 +114,13 @@
       if(path&&started){const at=path.dayAt(distance);day=at.day;fraction=at.t;}
       const d=namedDay(day);
       progress.value=path?TrekElevation.progressAt(path,distance)*1000:0;
-      const previous=data.days.find(record=>record.n===day-1);
-      const measured=path?path.recordedFraction(day,distance):0;
-      const km=mix(previous?.cum||0,d.cum,measured),ascent=mix(previous?.cumElev||0,d.cumElev,measured);
-      text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(km));
-      text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
+      const totals=metrics?.sample(distance)||{km:0,ascent:0,recorded:{km:0,ascent:0},estimated:{km:0,ascent:0}};
+      text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(totals.km));
+      text('readout-ascent',Math.round(totals.ascent).toLocaleString('en-GB'));
+      text('distance-label','km covered'+(totals.estimated.km>0?' · est.':''));
+      text('ascent-label','m climbed'+(totals.estimated.ascent>0?' · est.':''));
+      $('readout-distance').title=number.format(totals.recorded.km)+' km recorded + '+number.format(totals.estimated.km)+' km estimated';
+      $('readout-ascent').title=Math.round(totals.recorded.ascent).toLocaleString('en-GB')+' m recorded + '+Math.round(totals.estimated.ascent).toLocaleString('en-GB')+' m estimated';
       $('menu-open').setAttribute('aria-label','Day '+day+' of 67. Choose a day and journey options');
       text('where',started?d.c:'Paris → Sofia');
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
@@ -131,9 +135,11 @@
       if(photos.length){$('menu-photo').src='photos/'+photos[Math.floor(photos.length*.45)].src;text('menu-photo-count',photos.length+' photographs ↗');}
       text('day-date',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'No dated recording.');
       const shared=day===16||day===17;
-      text('day-facts',shared?'70.9 km across days 16–17':d.w?d.km.toFixed(1)+' km'+(d.elev?' · ↑ '+d.elev.toLocaleString()+' m':''):'No recorded daily distance.');
+      text('day-facts',shared?'Recorded: 70.9 km across days 16–17':d.w?'Recorded: '+d.km.toFixed(1)+' km'+(d.elev?' · ↑ '+d.elev.toLocaleString('en-GB')+' m':''):'No recorded daily distance.');
+      $('day-estimate').hidden=!d.estimatedKm;
+      text('day-estimate','Estimated walking: '+(d.estimatedKm<.05?'less than 0.1':number.format(d.estimatedKm))+' km · ↑ '+Math.round(d.estimatedAscent).toLocaleString('en-GB')+' m.');
       text('day-note',d.j.map(j=>j.text).join(' '));
-      text('day-recording',shared?'One shared recording; the division between the two days is approximate.':route&&!route.features.some(f=>day>=f.properties.day&&day<=f.properties.throughDay)?'No separate recording. The view follows an estimated walking path; no measured distance or ascent is added.':'');
+      text('day-recording',shared?'One shared recording; the division between the two days is approximate.':d.estimatedKm&&!d.w?'No separate recording. These walking totals are reconstructed; the division between missing days is approximate.':!d.w?'Arrival day; no additional distance or ascent.':'');
       $('day-moments').replaceChildren(...moments.filter(m=>m.day===day).map(m=>{const p=document.createElement('p');p.textContent=m.title+' — '+m.position;return p;}));
       $('day-record').hidden=!d.s;if(d.s){$('record-cover').src='covers/'+d.s.slug+'.webp';$('record-cover').alt=d.s.album;text('record-title',d.t);text('record-artist',d.s.artist+' · '+d.s.album);}
       document.querySelectorAll('#chapters button').forEach(b=>{const c=chapters.find(c=>c.id===b.dataset.chapter);b.setAttribute('aria-current',String(day>=c.from&&day<=c.to));});
@@ -278,6 +284,7 @@
         const tiles=await loadJSON(style.sources.openmaptiles.url);
         vectorTemplate=tiles.tiles[0];style.sources.openmaptiles={...style.sources.openmaptiles,...tiles};delete style.sources.openmaptiles.url;
         route=r;path=TrekRoute.buildJourneyPath(route,67,links);chapters=m.chapters;moments=m.moments;
+        metrics=TrekMetrics.create(path,links,profile,data.days);
         terrainHeight=distance=>TrekElevation.sample(profile,distance,false);
         elevation=TrekElevation.create({profile,path,days:data.days,colors:data.colors,canvas:$('elevation-canvas'),label:$('elevation-current')});
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));

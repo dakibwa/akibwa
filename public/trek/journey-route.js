@@ -81,8 +81,8 @@
     function recordedFraction(n,distance){
       n=clamp(n,1,dayCount);
       const from=recordedBoundaries[n-1],span=recordedBoundaries[n]-from;
-      // Presentation links never accrue walking distance or ascent. Daily
-      // measurements are interpolated only over that day's recorded portions.
+      // Keep the original day totals on their recorded portions. Missing-walk
+      // estimates are accumulated separately by journey-metrics.js.
       return span?clamp((recordedBefore(distance)-from)/span,0,1):1;
     }
     return {total,pieces,boundaries,recorded:collection(records),connections:collection(links),sample,dayAt,

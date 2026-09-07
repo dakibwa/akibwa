@@ -189,7 +189,7 @@ with their approved date/time grouping and 44 factual notes. The journal privacy
 checker owns the field allow-list and exclusions. Trek remains `noindex` and
 `noimageindex`.
 
-Dan explicitly approved publishing the 2019 GPS route on 5 September 2026.
+Dan explicitly approved publishing the 2019 GPS route on 5 September 2026 and reaffirmed that approval on 7 September.
 `public/trek/route-detail.json` is the reviewed coordinate-only projection of
 52 recordings: 14,338 points across 57 separate lines. The source conversion
 split discontinuities over 1 km before simplification to about 8 m and five
@@ -207,8 +207,7 @@ Neither exact 2019 paths nor train endpoints are verified. Short joins under
 35 m connect the endpoints directly. Preserve the router provenance and source
 route hash. The maintenance script caches requests and respects FOSSGIS’s
 one-request-per-second limit; visitors never call the routing service.
-Round displayed corners within 18 m, including walking estimates. These
-presentation connections must never inflate the stated 1,982 km distance.
+Round displayed corners within 18 m, including walking estimates. Measure estimated distance from the unrounded reconstructed geometry so presentation smoothing does not change the walking totals.
 
 Playback traverses one continuous distance including estimated walking paths and train connections.
 Every numbered day's end meets the next day's start. Missing days share the
@@ -223,11 +222,11 @@ The shared days 16–17 recording remains counted only once. The source has a
 20.5 km straight-line gap between the end of day 33 and the start of day 34;
 Dan now reports walking it; the reconstructed path remains an estimate.
 
-The visible counters use the approved daily cumulative totals. Within-day values
-are estimates interpolated over recorded portions only; visual connections never
-advance distance or ascent. The finish must read 1,982 km and the reconciled source total
-ascent. "Metres climbed" is accumulated ascent, not camera altitude or a live
-measurement of the traveller's elevation.
+On 7 September 2026 Dan requested that missing-walk estimates contribute to distance and ascent. `journey-metrics.js` combines the original 1,982 km and 50,339 m ascent with 259.94 km of reconstructed walking and approximately 1,482 m of mapped ascent. The current combined estimate is approximately 2,242 km and 51,820 m climbed. Keep the recorded and estimated portions explicit in the menu, with an `est.` qualification on counters containing estimates. Daily details show both sources, including estimates for days without recordings. The opening, metadata and finish use the combined total.
+
+The source archive audit found that its five internal GPS gaps were omitted from the activity distances: the FIT distance counter stays flat at the large day-8 and day-26 jumps, and the GPX totals align with geometry excluding the day-53 and day-57 jumps. Add the reconstructed walks, retain original source totals, and exclude both train transfers. Estimate ascent by summing positive changes in each walking link's existing 200 m terrain samples; descents and train terrain add no climb. These coarse terrain estimates are not a resurvey of the 2019 walk.
+
+Within-day recorded counters interpolate over recorded portions. Estimated distance advances along its corresponding walking link, and estimated ascent advances only over uphill parts of that link. Both remain continuous across day boundaries and reversible when seeking. The approximate division of missing days must not imply known daily measurements. "Metres climbed" is accumulated ascent, separate from the traveller's current ground height or camera altitude.
 
 `data/trek-moments.json` owns six chapters and nine photo/note-backed moments.
 Photographs belong to a day, not a verified coordinate. Retain the location
@@ -250,8 +249,7 @@ GPS altitude samples. Include every recorded section and presentation connection
 across all seven countries. Connection heights describe the mapped ground beneath
 the estimated path or train connection; use a dashed, quieter profile and
 retain that distinction in the height label.
-These samples do not imply a recorded walking route. The horizontal axis follows the continuous journey;
-it does not redefine the 1,982 km walking total or accumulated ascent. Keep its
+These samples do not imply a recorded walking route. The horizontal axis follows the continuous journey. Only reconstructed walking links contribute their uphill changes to the estimated ascent; the original recorded totals remain identifiable. Keep its
 source route hash, estimated-link hash and generation method with the data. Regeneration uses a temporary
 DEM cache and is an explicit maintenance step, not a network-dependent site build.
 
@@ -417,6 +415,8 @@ settlement selection. The focused browser check uses
 `CHECK_TREK_WAYFINDING_ONLY=1` to exercise the inset, place arrival, landmark
 replacement, playback, photographs and 390/320px layouts.
 
+`check-trek-metrics.mjs` verifies recorded and estimated totals, partial uphill progress, descents, both train exclusions, all day boundaries and backward seeks. `CHECK_TREK_PROGRESS_ONLY=1` checks these counters in the running landscape, the source breakdown and readable totals at 1440, 390, 320 and short landscape sizes.
+
 The focused elevation/cache checks cover complete ground-height coverage, source
 hashes, distinct mapped connections, persistent hits, expiry, cancelled requests, unavailable
 storage and bounded prefetch. `CHECK_TREK_ELEVATION_ONLY=1` selects rendered
@@ -437,11 +437,10 @@ rendered towers and silhouette; a model name in the status alone is insufficient
 checks the combined elevation/day axis, visible country colours, mouse and touch
 dragging, release preparation, keyboard endpoints and the visible speed cycle and menu sync,
 paused and playing speed changes, ribbon fill through backward seeks and replay,
-unchanged distance on connections, automatic photos, native map credits, and
+estimated walking progress on missing days, automatic photos, native map credits, and
 readable controls at desktop, 390px, 320px and short landscape sizes.
 
-`CHECK_TREK_WALKING_ONLY=1` checks reconstructed walking paths, unchanged
-measured totals, the caption-free print and original photo, shared mark type,
+`CHECK_TREK_WALKING_ONLY=1` checks reconstructed walking paths and their estimated progress, the caption-free print and original photo, shared mark type,
 and continuously visible route samples through bends at 8× on desktop, narrow
 phones and short landscape viewports. The mark samples the small rendered patch
 beneath it at most every 280 ms and eases its shared colour between dark green

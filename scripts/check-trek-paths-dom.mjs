@@ -66,9 +66,10 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     }
     const walking=path.pieces.filter(p=>p.mode==='walk'&&p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
     await setDesktop(1440,900);await scrub(walking.start+(walking.end-walking.start)*.45);check(await settled(),'the longest missing walking section follows its reconstructed path');
-    const before=await evaluate(`document.querySelector('#readout-distance').textContent+' / '+document.querySelector('#readout-ascent').textContent`);
+    const before=await evaluate(`[Number(document.querySelector('#readout-distance').textContent.replaceAll(',','')),Number(document.querySelector('#readout-ascent').textContent.replaceAll(',',''))]`);
     await scrub(walking.start+(walking.end-walking.start)*.55);check(await settled(),'the reconstructed walk remains traversable');
-    check((await state()).kind==='connection'&&await evaluate(`document.querySelector('#readout-distance').textContent+' / '+document.querySelector('#readout-ascent').textContent`)===before,'walking estimates add no measured distance or ascent');
+    const after=await evaluate(`[Number(document.querySelector('#readout-distance').textContent.replaceAll(',','')),Number(document.querySelector('#readout-ascent').textContent.replaceAll(',',''))]`);
+    check((await state()).kind==='connection'&&after[0]>before[0]&&after[1]>=before[1],'reconstructed walking advances the estimated distance and uphill climb');
     await capture?.('trek-walking-reconstruction');
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the changed journey has no JavaScript exceptions');
     return;
@@ -180,9 +181,9 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     check(moving.playing&&moving.pace===3200&&(await state()).distance>moving.distance,'fast-forward changes pace during playback without interrupting travel');
     await choose(6);check(await settled(),'a backward day change prepares');b=await ribbon();check(b.day===6&&Math.abs(b.progress-5.5/67)<.0001,'seeking backwards moves the filled profile to the earlier day');
     await scrub(187340);await settled();await capture?.('trek-controls-town');
-    await choose(5);await settled();const metrics=()=>evaluate("[document.querySelector('#readout-distance').textContent,document.querySelector('#readout-ascent').textContent]");
-    const before=await metrics();await click('#play');await sleep(800);await click('#play');
-    check((await state()).kind==='connection'&&JSON.stringify(await metrics())===JSON.stringify(before),'day progress across a missing recording adds no walking distance or climb');
+    await scrub(path.dayDistance(5,.2));await settled();const metrics=()=>evaluate("[Number(document.querySelector('#readout-distance').textContent.replaceAll(',','')),Number(document.querySelector('#readout-ascent').textContent.replaceAll(',',''))]");
+    const before=await metrics();await scrub(path.dayDistance(5,.8));await settled();const after=await metrics();
+    check((await state()).kind==='connection'&&after[0]>before[0]&&after[1]>=before[1],'day progress across a missing recording includes its estimated walk');
     await scrub(path.total);b=await ribbon();check(b.day===67&&b.progress===1,'Sofia completes the full 67-day ribbon');
     await click('#menu-open');await click('#restart');b=await ribbon();check(b.day===1&&b.progress===0,'restarting clears the filled profile');
     await choose(30);check(await settled(),'the photo day prepares again');
@@ -350,27 +351,42 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     return;
   }
   if(process.env.CHECK_TREK_PROGRESS_ONLY==='1'){
-    section('Journey progress overlay');
+    section('Recorded and estimated walking progress');
     const data=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);
-    const readout=()=>evaluate(`({day:document.querySelector('#readout-day').textContent,km:document.querySelector('#readout-distance').textContent,ascent:document.querySelector('#readout-ascent').textContent,fit:[...document.querySelectorAll('.journey-readout dd,.journey-readout dt')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&e.scrollWidth<=e.clientWidth+1}),top:document.querySelector('.journey-readout').getBoundingClientRect().top})`);
+    const links=JSON.parse(readFileSync(new URL('../public/trek/route-links.json',import.meta.url),'utf8')),profile=JSON.parse(readFileSync(new URL('../public/trek/elevation-profile.json',import.meta.url),'utf8'));
+    const metrics=require('../public/trek/journey-metrics.js').create(path,links,profile,data.days);
+    const readout=()=>evaluate(`({day:document.querySelector('#readout-day').textContent,km:document.querySelector('#readout-distance').textContent,ascent:document.querySelector('#readout-ascent').textContent,labels:[...document.querySelectorAll('.journey-readout dt')].map(e=>e.textContent),fit:[...document.querySelectorAll('.journey-readout dd,.journey-readout dt')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&e.scrollWidth<=e.clientWidth+1}),top:document.querySelector('.journey-readout').getBoundingClientRect().top})`);
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the mountain view loads with visible progress');
     let values=await readout(),s=await state();
-    const expected=path.recordedFraction(30,s.distance),before=data.days[28],after=data.days[29];
-    check(values.day==='30'&&Math.abs(Number(values.km.replaceAll(',',''))-(before.cum+(after.cum-before.cum)*expected))<.06,'distance uses the original daily totals and recorded progress');
-    check(Number(values.ascent.replaceAll(',',''))===Math.round(before.cumElev+(after.cumElev-before.cumElev)*expected),'ascent is the original accumulated climb, independent of camera height');
+    const expected=metrics.sample(s.distance);
+    check(values.day==='30'&&Math.abs(Number(values.km.replaceAll(',',''))-expected.km)<.06,'distance combines recorded progress with completed walking estimates');
+    check(Number(values.ascent.replaceAll(',',''))===Math.round(expected.ascent),'ascent combines the original climb with estimated uphill terrain');
+    check(values.labels.every(s=>s.includes('est.')),'the visible labels identify totals containing estimates');
     check(values.fit&&values.top>900*.7,'the readable desktop counters and day strip stay in the lower part of the landscape');
-    const link=path.pieces.filter(p=>p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
-    await scrub((link.start+link.end)/2);await settled();const first=await readout();await click('#play');await sleep(900);await click('#play');values=await readout();
-    check(values.km===first.km&&values.ascent===first.ascent,'the long visual connection adds neither distance nor ascent');
-    await scrub(path.dayDistance(30,.5));await settled();
-    for(const width of [390,320]){
+    for(const train of path.pieces.filter(p=>p.mode==='train')){
+      await scrub(train.start+(train.end-train.start)*.2);check(await settled(),'the train section prepares');const first=await readout();
+      await scrub(train.start+(train.end-train.start)*.8);check(await settled(),'the later train position prepares');values=await readout();
+      check(values.km===first.km&&values.ascent===first.ascent,'the train transfer adds neither walking distance nor ascent');
+    }
+    const walking=path.pieces.filter(p=>p.mode==='walk'&&p.kind==='connection').sort((a,b)=>(b.end-b.start)-(a.end-a.start))[0];
+    await scrub(walking.start+(walking.end-walking.start)*.2);await settled();const first=await readout();
+    await scrub(walking.start+(walking.end-walking.start)*.7);check(await settled(),'a previously unrecorded walking day prepares');values=await readout();
+    check(Number(values.km.replaceAll(',',''))>Number(first.km.replaceAll(',',''))&&Number(values.ascent.replaceAll(',',''))>Number(first.ascent.replaceAll(',','')),'both counters advance along the reconstructed Serbian walk');
+    await click('#menu-open');
+    const details=await evaluate(`(()=>{const day=document.querySelector('#day-estimate');return {estimated:!day.hidden&&day.textContent.includes('Estimated walking:'),original:document.querySelector('#walk-recorded').textContent,extra:document.querySelector('#walk-estimated').textContent};})()`);
+    check(details.estimated&&details.original.includes('1,982 km')&&details.extra.includes('260 km')&&details.extra.includes('train transfers are excluded'),'daily details and the full-journey breakdown retain the sources and train exclusion');
+    await evaluate("[...document.querySelectorAll('#journey-menu summary')].filter(e=>['This day','About this journey'].includes(e.textContent)).forEach(e=>e.click());document.querySelector('#walk-totals').scrollIntoView({block:'start'});");
+    await capture?.('trek-estimates-menu');await click('#menu-close');
+    for(const [width,height] of [[1440,900],[390,844],[320,844],[844,390]]){
       const beforeResize=await state();
-      await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:true});await sleep(180);
+      await setDesktop(width,height);await sleep(250);
       values=await readout();s=await state();
-      check(values.fit&&values.top>844*.7&&s.controlsFit&&s.overflow<=1&&s.distance===beforeResize.distance,`${width}px fits the numbers and day strip without moving the route`);
+      check(values.fit&&s.controlsFit&&s.overflow<=1&&s.distance===beforeResize.distance,`${width}×${height} fits the enlarged totals and estimate labels without moving the route`);
+      await capture?.(`trek-estimates-${width}-${height}`);
     }
     await scrub(path.total);values=await readout();
-    check(values.day==='67'&&values.km==='1,982'&&values.ascent===Math.round(data.stats.ascent).toLocaleString('en-GB'),'Sofia shows the exact journey totals');
+    check(values.day==='67'&&values.km===new Intl.NumberFormat('en-GB',{maximumFractionDigits:1}).format(data.total)&&values.ascent===Math.round(data.stats.ascent).toLocaleString('en-GB'),'Sofia includes all estimated walking distance and ascent');
+    await scrub(0);values=await readout();check(values.km==='0'&&values.ascent==='0'&&values.labels.every(s=>!s.includes('est.')),'seeking back to Paris clears the totals and estimate labels');
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the progress overlay reports no runtime errors');
     return;
   }

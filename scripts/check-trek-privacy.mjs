@@ -113,7 +113,8 @@ if (!generatedDataMatch) fail("generated Trek data could not be inspected");
 const generatedData = JSON.parse(generatedDataMatch[1]);
 if (JSON.stringify(generatedData.photos) !== JSON.stringify(photos)) fail("all original photograph metadata must remain available");
 const lastDay = generatedData.days.at(-1);
-if (!(generatedData.stats.ascent > 0 && generatedData.stats.minutes > 0) || generatedData.stats.ascent !== lastDay.cumElev || generatedData.stats.minutes !== lastDay.cumMin) fail("the journey must retain its ascent and moving-time totals");
+if (!(generatedData.stats.ascent > 0 && generatedData.stats.minutes > 0) || generatedData.recorded.ascent !== lastDay.cumElev || generatedData.recorded.km !== lastDay.cum || generatedData.stats.minutes !== lastDay.cumMin) fail("the journey must retain its original distance, ascent and moving-time totals separately from estimates");
+if (generatedData.total !== generatedData.recorded.km + generatedData.estimated.km || generatedData.stats.ascent !== generatedData.recorded.ascent + generatedData.estimated.ascent) fail("displayed walking totals must include the identified estimates");
 for (const day of generatedData.days) {
   const expected = journal.days[String(day.n)] || [];
   if (JSON.stringify(day.j) !== JSON.stringify(expected)) {

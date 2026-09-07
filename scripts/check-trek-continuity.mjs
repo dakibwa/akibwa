@@ -47,7 +47,7 @@ for(let n=1;n<=67;n++){
   if(recorded>0){assert.equal(path.recordedFraction(n,start),0);assert.equal(path.recordedFraction(n,end),1);}
   for(const p of path.pieces.filter(p=>p.kind==='connection')){
     const a=Math.max(start,p.start),b=Math.min(end,p.end);
-    if(b>a)assert.equal(path.recordedFraction(n,a),path.recordedFraction(n,b),'visual connections must never advance walking metrics');
+    if(b>a)assert.equal(path.recordedFraction(n,a),path.recordedFraction(n,b),'walking estimates must not be counted in original recorded metrics');
   }
 }
 assert.equal(path.dayDistance(1,0),0);assert.equal(path.dayDistance(67,1),path.total);
