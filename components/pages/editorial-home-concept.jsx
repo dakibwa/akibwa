@@ -14,10 +14,9 @@ const projects = [
     href: "/features/?from=akibwa",
     title: "features",
     subtitle: "daily untangling puzzle",
-    kind: "Daily game",
     description:
-      "Untangle ten small networks each day and discover shapes in the threads. The daily game is free.",
-    action: "Open features",
+      "Ten small networks to untangle each day, with shapes to discover along the way. Free to play.",
+    action: "Play features",
     src: "/project-art/personal/features-discoveries.svg",
     alt: "Features wordmark beside colourful house, cup, heart and leaf stamps",
     above: true,
@@ -30,10 +29,9 @@ const projects = [
     href: "https://portuguesewithines.com/?from=akibwa",
     title: "Português com a Inês",
     subtitle: "European Portuguese lessons",
-    kind: "Lessons and booking",
     description:
-      "A website for Inês’s European Portuguese lessons, bringing her teaching, availability and booking into one place.",
-    action: "Open Português com a Inês",
+      "Inês’s European Portuguese lessons, with availability and booking in one place.",
+    action: "Visit the lesson site",
     src: "/project-art/personal/portuguese-with-ines-conversation.png",
     alt: "Two people talking over coffee as colourful speech shapes meet between them",
     above: true,
@@ -46,10 +44,9 @@ const projects = [
     href: "/trek/",
     title: "The Trek",
     subtitle: "Paris → Sofia · 1,982 km",
-    kind: "Interactive journey",
     description:
-      "A walk from Paris to Sofia, told through the route, photographs and notes from along the way.",
-    action: "Open The Trek",
+      "Paris to Sofia on foot, told through the route, photographs and notes.",
+    action: "Explore the trek",
     src: "/project-art/personal/trek-paris-sofia-project.png",
     alt: "An illustrated seven-colour walking route crossing faceted European terrain, with a lone walker at its centre",
     accent: "#d96b32",
@@ -126,16 +123,14 @@ function ProjectShowcase() {
       <div
         className={`concept-project-detail-shell${active ? " is-open" : ""}`}
         id="project-detail"
+        role="region"
+        aria-label={`${detail.title} details`}
         aria-hidden={!active}
         inert={!active}
         style={{ "--project-detail-accent": detail.accent }}
       >
         <div className="concept-project-detail-clip">
           <div className="concept-project-detail">
-            <div>
-              <span className="concept-project-detail-kind">{detail.kind}</span>
-              <h3>{detail.title}</h3>
-            </div>
             <p>{detail.description}</p>
             <a className="concept-project-open" href={detail.href}>
               {detail.action} <span aria-hidden="true">↗</span>

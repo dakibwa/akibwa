@@ -401,8 +401,34 @@ const checkPublicLanding = async () => {
   })()`);
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...pointer});
   await sleep(180);
-  check(await evaluate('getComputedStyle(document.querySelector(".listening-hover")).visibility === "visible" && !document.querySelector("dialog[open]")'), "hover reveals the combined count without opening the album");
+  const tasteOpeningHeight = await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height');
+  await sleep(400);
+  check(await evaluate(`(() => {
+    const card=document.querySelector('.personal-taste-card');
+    const detail=document.querySelector('#taste-detail');
+    return detail && getComputedStyle(detail).visibility==='visible' &&
+      detail.querySelector(':scope > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
+      detail.querySelector('.personal-taste-detail-count').textContent.includes(Number(card.dataset.listens).toLocaleString('en-GB')) &&
+      getComputedStyle(card.querySelector('.personal-taste-caption')).display==='none' && !card.querySelector('.listening-hover');
+  })()`), "hover reveals album, artist and combined plays beneath the clear cover");
+  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste opens space gradually with the career reveal timing");
   await capture("music-hover-desktop");
+  const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
+  check(await evaluate('document.querySelector("#taste").classList.contains("is-open")'), "the revealed text stays open while the pointer moves onto it");
+  await cdp.send('Input.dispatchKeyEvent', {type:'keyDown', key:'Escape', code:'Escape', windowsVirtualKeyCode:27});
+  await sleep(400);
+  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getAttribute("aria-hidden")==="true" && document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height<1'), "Escape dismisses the Taste panel and closes its space");
+  await evaluate('document.querySelectorAll(".personal-taste-card")[7].focus()');
+  await sleep(550);
+  check(await evaluate(`(() => {
+    const detail=document.querySelector('#taste-detail'), box=detail.getBoundingClientRect(), section=document.querySelector('#taste').getBoundingClientRect();
+    return detail.querySelector(':scope > strong').textContent===document.activeElement.querySelector('.personal-taste-title').textContent &&
+      box.left>=section.left-1 && box.right<=section.right+1;
+  })()`), "keyboard focus reveals the selected album and keeps the panel inside the page");
+  await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=1800');
+  await sleep(150);
+  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getAttribute("aria-hidden")==="true"'), "scrolling the active cover out of view dismisses its panel");
   await evaluate('document.querySelector(".taste-load-more").click()');
   await sleep(200);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
@@ -443,7 +469,7 @@ const checkPublicLanding = async () => {
   );
   await evaluate('document.querySelectorAll(".taste-filters button")[5].click();document.querySelector("#taste").scrollIntoView({block:"end",behavior:"instant"});');
   await sleep(180);
-  check(await evaluate('matchMedia("(hover:none)").matches && getComputedStyle(document.querySelector(".listening-hover")).visibility === "visible"'), "touch devices show counts without needing hover or a detail panel");
+  check(await evaluate('matchMedia("(hover:none)").matches && getComputedStyle(document.querySelector(".personal-taste-caption")).display !== "none" && document.querySelector(".personal-taste-mobile-count").textContent.includes("play") && getComputedStyle(document.querySelector(".personal-taste-detail-shell")).display === "none"'), "touch devices show titles and counts beneath covers without needing hover");
   await capture("podcasts-mobile");
 
   section("collection interaction");
@@ -453,9 +479,11 @@ const checkPublicLanding = async () => {
   await sleep(250);
   const expectedFirst = listeningPacket.albums[0];
   check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === expectedFirst.plays, "the shelf uses the combined history count instead of the Last.fm snapshot");
-  check(await evaluate('[...document.querySelectorAll(".listening-hover")].every(el=>!/last[.]?fm|spotify|apple|youtube/i.test(el.textContent))'), "album hover labels contain no provider branding");
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
   await evaluate('document.querySelector(".personal-taste-card").focus(); document.querySelector(".personal-taste-card").click()');
-  await sleep(100);
+  await sleep(200);
+  const focusedCount = await evaluate('document.querySelector("#taste-detail .personal-taste-detail-count")?.textContent');
+  check(focusedCount && !/last[.]?fm|spotify|apple|youtube/i.test(focusedCount), `album hover labels contain no provider branding [${focusedCount}]`);
   check(await evaluate('!document.querySelector("dialog") && !location.hash && document.body.style.overflow !== "hidden" && document.querySelector(".personal-taste-card").tagName === "ARTICLE"'), "album cards have no click-through, modal, URL change or scroll lock");
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
   await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
@@ -535,6 +563,10 @@ const checkPublicLanding = async () => {
   );
   await evaluate('document.querySelector(".concept-career-stop").focus(); document.querySelector(".concept-career-stop").click()');
   check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".concept-career-popover")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion opens the career detail without animation or delay");
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
+  await evaluate('document.querySelector(".personal-taste-card").focus()');
+  await sleep(50);
+  check(await evaluate('[document.querySelector(".personal-taste-detail-shell"),document.querySelector("#taste-detail")].every(item=>item && getComputedStyle(item).transitionProperty==="none")'), "reduced motion reveals album details without animation or delay");
 };
 
 const checkTrek = async () => {

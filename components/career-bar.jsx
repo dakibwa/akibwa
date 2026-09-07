@@ -66,7 +66,7 @@ export function CareerBar() {
       </ol>
       <div className="concept-career-detail-lane">
         <div
-          className={`concept-career-popover${active !== null ? " is-open" : ""}`}
+          className={`index-hover-detail concept-career-popover${active !== null ? " is-open" : ""}`}
           id="career-detail"
           aria-live="polite"
           aria-hidden={active === null}
