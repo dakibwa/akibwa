@@ -16,10 +16,10 @@ for(const rail of rails.features){
     const pose=Train.pose(path,d);assert(pose.active);
     for(const car of pose.cars){
       assert(metres(car.point,path.sample(car.distance).point)<.001,'every coach follows the real rail alignment');
-      assert(!part.structures.some(s=>s.type==='tunnel'&&car.distance>=s.start&&car.distance<=s.end),'coaches are hidden inside mapped tunnels');
+      if(car.structure?.type==='tunnel')tunnels++;
       assert(Math.abs(Math.hypot(...car.forward)-1)<.00001);shown++;
     }
-    if(pose.cars.length<3)tunnels++;
+    assert.equal(pose.cars.length,3,'all three coaches remain visible through the entire rail journey, including tunnels');
     assert.deepEqual(Train.pose(path,d),pose,'a paused or reversed clock gives the same train position');
   }
   assert(shown>300);if(part.structures.some(s=>s.type==='tunnel'))assert(tunnels>0);
@@ -27,4 +27,4 @@ for(const rail of rails.features){
   const mesh=Train.mesh(poses,()=>150,[0,0]);assert(mesh.length>500&&mesh.length<30000&&[...mesh].every(Number.isFinite),'the paper train has finite, bounded geometry');
 }
 for(const p of path.pieces.filter(p=>p.mode!=='train'))assert(!Train.pose(path,(p.start+p.end)/2).active,'walking never shows a train');
-console.log('Train checks passed: sourced railway coordinates, separate station access, curved coach positions, tunnel occlusion, reversible playback and bounded mesh.');
+console.log('Train checks passed: sourced railway coordinates, separate station access, curved coach positions, continuous tunnel passage, reversible playback and bounded mesh.');

@@ -8,7 +8,7 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,train=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,train=null,boat=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
@@ -55,7 +55,7 @@
     $('photo-interludes').checked=!reduced;
     text('walk-totals','About '+Math.round(data.total).toLocaleString('en-GB')+' km · '+(Math.round(data.stats.ascent/10)*10).toLocaleString('en-GB')+' m of ascent · 67 numbered days · '+data.photos.length+' photographs.');
     text('walk-recorded',number.format(data.recorded.km)+' km and '+Math.round(data.recorded.ascent).toLocaleString('en-GB')+' m of ascent from the original recordings.');
-    text('walk-estimated','Plus about '+Math.round(data.estimated.km).toLocaleString('en-GB')+' km and '+(Math.round(data.estimated.ascent/10)*10).toLocaleString('en-GB')+' m of estimated ascent along the reconstructed walks. Both train transfers are excluded.');
+    text('walk-estimated','Plus about '+Math.round(data.estimated.km).toLocaleString('en-GB')+' km and '+(Math.round(data.estimated.ascent/10)*10).toLocaleString('en-GB')+' m of estimated ascent along the reconstructed walks. The trains and boat crossing are excluded.');
     $('landmark-sources').replaceChildren(...data.landmarks.map(item=>{
       const p=document.createElement('p'),link=document.createElement('a'),small=document.createElement('small');
       link.href=item.source;link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.name+' ↗';
@@ -126,7 +126,8 @@
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
       wayfindingUI(force);elevation?.update(distance,force);
       const ground=elevation?.status().metres;
-      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?(path.sample(distance).mode==='train'?', train connection':', estimated walking path'):''));
+      const connectionMode=path?.sample(distance).mode;
+      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?(connectionMode==='train'?', train connection':connectionMode==='boat'?', estimated boat crossing':', estimated walking path'):''));
       if(!force&&lastUI===day)return;lastUI=day;
       if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Journey options');
@@ -156,7 +157,7 @@
       const next=new Image();next.src='photos/'+galleryPhotos[(galleryIndex+1)%galleryPhotos.length].src;
     }
     function showFlash(){
-      const photos=photosFor(day);if(path?.sample(distance).mode==='train'||!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
+      const photos=photosFor(day);if(['train','boat'].includes(path?.sample(distance).mode)||!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
       const featured=chapters.find(c=>c.day===day),p=photos.find(p=>p.src===featured?.photo)||photos[Math.floor(photos.length*.45)];
       const generation=++flashGeneration,photoDay=day,img=new Image();flashPending=true;
       img.onload=()=>{
@@ -252,7 +253,7 @@
       const eye=TrekCamera.ahead(target,lookHeading,-clearance*Math.tan(viewPitch*Math.PI/180));
       const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,fit.base);
       // Do not change pitch after solving zoom/centre: that moves the eye too.
-      map.jumpTo(options);train?.update(distance);cameraHeading=lookHeading;cameraPitch=map.getPitch();
+      map.jumpTo(options);train?.update(distance);boat?.update(distance);cameraHeading=lookHeading;cameraPitch=map.getPitch();
       cameraClearance=eyeHeight-base;cameraPoint=eye;
       const renderedGround=map.queryTerrainElevation(eye);
       cameraTerrainClearance=Number.isFinite(renderedGround)?eyeHeight-renderedGround:null;
@@ -312,14 +313,15 @@
           map.addSource('journey-recorded',{type:'geojson',data:path.recorded,tolerance:0});
           map.addSource('journey-connections',{type:'geojson',data:path.connections,tolerance:0});
           // A broad paper edge separates the deep red thread from roofs,
-          // streams and woodland. Walking estimates have a paler red; trains are dashed.
-          for(const [id,source,color,width,opacity,dash,mode] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-walking-outline','journey-connections','#fff5dc',8,1,null,'walk'],['route-walking','journey-connections','#bd6b71',4.5,1,null,'walk'],['route-transport-outline','journey-connections','#fff5dc',6,1,[2,3],'train'],['route-connections','journey-connections','#977c56',3,1,[2,3],'train']]){
+          // streams and woodland. Walking estimates are paler red; vehicles are dashed.
+          for(const [id,source,color,width,opacity,dash,mode] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-walking-outline','journey-connections','#fff5dc',8,1,null,'walk'],['route-walking','journey-connections','#bd6b71',4.5,1,null,'walk'],['route-transport-outline','journey-connections','#fff5dc',6,1,[2,3],'train'],['route-connections','journey-connections','#977c56',3,1,[2,3],'train'],['route-boat-outline','journey-connections','#fff5dc',6,1,[2,3],'boat'],['route-boat','journey-connections','#467c86',3,1,[2,3],'boat']]){
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
             map.addLayer({id,type:'line',source,...(mode?{filter:['==',['get','mode'],mode]}:{}),layout:{'line-cap':'round','line-join':'round'},paint});
           }
           try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
           train=TrekTrain.create(map,path,terrainHeight);
+          boat=TrekBoat.create(map,path,terrainHeight);
           pacing=TrekPace.create({map,path,heightAt:terrainHeight,landmarks:data.landmarks});
           wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),flag:$('country-flag'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
           map.on('idle',()=>wayfindingUI(true));
@@ -374,7 +376,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),boat:boat?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

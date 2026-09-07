@@ -12,12 +12,13 @@ assert.deepEqual(Object.keys(links).sort(),['features','generated','method','pre
 assert.equal(links.routeHash,createHash('sha256').update(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url))).digest('hex'));
 assert.equal(links.features.length,56);
 assert.deepEqual(links.features.filter(f=>f.properties.mode==='train').map(f=>f.properties.gap),[15,38],'only the reported Stuttgart and Croatian transfers remain trains');
+assert.deepEqual(links.features.filter(f=>f.properties.mode==='boat').map(f=>f.properties.gap),[31],'the probable Wörthersee crossing is the only boat leg');
 for(let i=0;i<links.features.length;i++){
   const f=links.features[i],p=f.properties,coordinates=f.geometry.coordinates;
   assert.deepEqual(Object.keys(f).sort(),['geometry','properties','type']);
   assert.deepEqual(Object.keys(f.geometry).sort(),['coordinates','type']);
-  assert.deepEqual(Object.keys(p).sort(),['day','estimated','fromDay','gap','method','mode',...(p.mode==='train'?['railFrom','railTo','structures']:[])].sort());
-  assert.equal(p.gap,i);assert.equal(p.estimated,true);assert(['walk','train'].includes(p.mode));
+  assert.deepEqual(Object.keys(p).sort(),['day','estimated','fromDay','gap','method','mode',...(p.mode==='train'?['railFrom','railTo','structures']:p.mode==='boat'?['boatFrom','boatTo']:[])].sort());
+  assert.equal(p.gap,i);assert.equal(p.estimated,true);assert(['walk','train','boat'].includes(p.mode));
   assert.equal(p.fromDay,route.features[i].properties.throughDay);assert.equal(p.day,route.features[i+1].properties.day);
   assert.equal(f.geometry.type,'LineString');assert(coordinates.length>=2);
   assert.deepEqual(coordinates[0],route.features[i].geometry.coordinates.at(-1));
@@ -27,11 +28,12 @@ for(let i=0;i<links.features.length;i++){
     assert.equal(p.railFrom,1);assert.equal(p.railTo,coordinates.length-2);
     for(const s of p.structures){assert.deepEqual(Object.keys(s).sort(),['from','to','type']);assert(['tunnel','bridge'].includes(s.type));assert(Number.isInteger(s.from)&&Number.isInteger(s.to)&&s.from>=p.railFrom&&s.to<=p.railTo&&s.to>s.from);}
   }
+  if(p.mode==='boat')assert(Number.isInteger(p.boatFrom)&&Number.isInteger(p.boatTo)&&p.boatFrom>0&&p.boatTo<coordinates.length-1&&p.boatTo>p.boatFrom,'boat travel stays between separate walking approaches');
   if(p.mode==='walk'&&metres(coordinates[0],coordinates.at(-1))>400)assert(coordinates.length>5,'long walking gaps must follow mapped paths rather than a straight connection');
 }
 assert.equal(JSON.stringify(links),originalLinks,'display rounding never edits the sourced estimates');
 assert.equal(JSON.stringify(route),original,'the visual route must never mutate the approved recordings');
-assert.equal(path.connections.features.length,56);
+assert.equal(path.connections.features.length,58,'the boat gap is drawn as walking, sailing and walking');
 assert.equal(path.recorded.features.length,57);
 assert(path.connections.features.every(f=>f.properties.kind==='connection'));
 assert(path.recorded.features.every(f=>f.properties.kind==='recorded'));

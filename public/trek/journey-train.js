@@ -12,10 +12,10 @@
     for(let i=0;i<3;i++){
       const d=distance-i*70;if(d<rail.railStart+29||d>rail.railEnd-29)continue;
       const structure=rail.structures.find(s=>d>=s.start&&d<=s.end);
-      if(structure?.type==='tunnel')continue;
       const p=path.sample(d).point,a=path.sample(d-24).point,b=path.sample(d+24).point;
       const pa=project(a),pb=project(b),length=Math.hypot(pb[0]-pa[0],pb[1]-pa[1]);
-      cars.push({index:i,distance:d,point:p,forward:length?[(pb[0]-pa[0])/length,(pb[1]-pa[1])/length]:[0,-1],structure:structure||null});
+      const tunnelBlend=structure?.type==='tunnel'?clamp(Math.min(d-structure.start,structure.end-d)/55,0,1):0;
+      cars.push({index:i,distance:d,point:p,forward:length?[(pb[0]-pa[0])/length,(pb[1]-pa[1])/length]:[0,-1],structure:structure||null,tunnelBlend});
     }
     return {active:true,cars,opacity:clamp(Math.min((distance-rail.railStart)/160,(rail.railEnd-distance)/160),0,1),from:rail.railStart,to:rail.railEnd};
   }
@@ -25,7 +25,8 @@
       const p=project(car.point),scale=1/Math.cos(car.point[1]*Math.PI/180),[fx,fy]=car.forward,ground=heightAt(car);
       const vertex=([x,y,z])=>[p[0]-origin[0]+(fx*x-fy*y)*scale,p[1]-origin[1]+(fy*x+fx*y)*scale,(ground+z)*scale];
       function face(points,color,light=1){
-        for(let i=1;i<points.length-1;i++)for(const v of [points[0],points[i],points[i+1]])vertices.push(...vertex(v),...color.map(c=>Math.min(1,c*light)));
+        const fade=car.tunnelBlend*.2,ink=color.map((c,i)=>Math.min(1,c*light)*(1-fade)+colors.body[i]*fade);
+        for(let i=1;i<points.length-1;i++)for(const v of [points[0],points[i],points[i+1]])vertices.push(...vertex(v),...ink);
       }
       function box(x1,y1,z1,x2,y2,z2,color){
         face([[x1,y1,z2],[x2,y1,z2],[x2,y2,z2],[x1,y2,z2]],color,1.06);
@@ -58,7 +59,8 @@
     }
     return new Float32Array(vertices);
   }
-  function create(map,path,terrainHeight){
+  // Both paper vehicles share this small, distance-driven WebGL pass.
+  function create(map,path,terrainHeight,{id='journey-train',pose:samplePose=pose,mesh:buildMesh=mesh}={}){
     let shader,buffer,vao,matrixLocation,opacityLocation,origin=[0,0],count=0,lastDistance=null,current={active:false,cars:[],opacity:0},failed=false,updates=0;
     function compile(gl,type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
     function groundAt(d){const h=map.queryTerrainElevation(path.sample(d).point);return Number.isFinite(h)?h:terrainHeight(d);}
@@ -70,7 +72,7 @@
       }
       return groundAt(car.distance)+1;
     }
-    const layer={id:'journey-train',type:'custom',renderingMode:'3d',
+    const layer={id,type:'custom',renderingMode:'3d',
       onAdd(_,gl){
         try{
           const vertex=compile(gl,gl.VERTEX_SHADER,'#version 300 es\nprecision highp float; uniform mat4 u_matrix; in vec3 a_position; in vec3 a_color; out vec3 v_color; void main(){gl_Position=u_matrix*vec4(a_position,1.0);v_color=a_color;}');
@@ -96,17 +98,17 @@
     map.addLayer(layer);
     function update(distance){
       if(failed||lastDistance!==null&&Math.abs(distance-lastDistance)<.05)return;
-      lastDistance=distance;current=pose(path,distance);
+      lastDistance=distance;current=samplePose(path,distance);
       const wasVisible=count>0;count=0;
       if(current.cars.length&&current.opacity){
         origin=project(current.cars[0].point);
-        const data=mesh(current.cars,heightAt,origin),gl=map.getCanvas().getContext('webgl2');
+        const data=buildMesh(current.cars,heightAt,origin),gl=map.getCanvas().getContext('webgl2');
         if(!gl||gl.isContextLost())return;
         gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.DYNAMIC_DRAW);count=data.length/6;updates++;
       }
       if(wasVisible||count)map.triggerRepaint();
     }
-    return {update,status:()=>({active:current.active,failed,cars:current.cars.map(c=>({point:c.point,distance:c.distance,index:c.index})),vertices:count,opacity:current.opacity,updates,screen:current.cars.map(c=>{const p=map.project(c.point);return [p.x,p.y];})})};
+    return {update,status:()=>({active:current.active,failed,cars:current.cars.map(c=>({point:c.point,distance:c.distance,index:c.index,tunnel:c.structure?.type==='tunnel'})),vertices:count,opacity:current.opacity,updates,screen:current.cars.map(c=>{const p=map.project(c.point);return [p.x,p.y];})})};
   }
   const api={pose,mesh,create};if(typeof module!=='undefined')module.exports=api;else host.TrekTrain=api;
 })(typeof window==='undefined'?globalThis:window);

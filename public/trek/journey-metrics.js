@@ -10,18 +10,32 @@
     path.pieces.forEach((piece,index)=>{
       if(piece.kind!=='connection')return;
       const link=links.features[gap++];
-      if(link.properties.mode!=='walk')return;
-      const terrain=profile.pieces[index],samples=[];
-      let climb=0;
-      for(let i=0;i<terrain.samples.length;i++){
-        const [distance,height]=terrain.samples[i];
-        if(i)climb+=Math.max(0,height-terrain.samples[i-1][1]);
-        samples.push([(distance-terrain.start)/(terrain.end-terrain.start||1),climb]);
+      const terrain=profile.pieces[index];
+      function addWalk(start,end,points,heights,from=start,to=end){
+        if(end<=start||points.length<2)return;
+        const samples=[];let climb=0;
+        for(let i=0;i<heights.length;i++){
+          const [distance,height]=heights[i];
+          if(i)climb+=Math.max(0,height-heights[i-1][1]);
+          samples.push([(distance-from)/(to-from||1),climb]);
+        }
+        // Original reconstructed geometry, before display corner rounding.
+        const length=Route.length(points)/1000;
+        walks.push({start,end,km:length,ascent:climb,beforeKm:km,beforeAscent:ascent,samples});
+        km+=length;ascent+=climb;
       }
-      // Use the original reconstructed geometry, before display corner rounding.
-      const length=Route.length(link.geometry.coordinates)/1000;
-      walks.push({start:piece.start,end:piece.end,km:length,ascent:climb,beforeKm:km,beforeAscent:ascent,samples});
-      km+=length;ascent+=climb;
+      if(link.properties.mode==='walk')addWalk(piece.start,piece.end,link.geometry.coordinates,terrain.samples,terrain.start,terrain.end);
+      if(link.properties.mode==='boat'){
+        const height=d=>{
+          const ps=terrain.samples;
+          if(d<=ps[0][0])return ps[0][1];
+          for(let i=1;i<ps.length;i++)if(d<=ps[i][0])return mix(ps[i-1][1],ps[i][1],(d-ps[i-1][0])/(ps[i][0]-ps[i-1][0]||1));
+          return ps.at(-1)[1];
+        };
+        const clipped=(a,b)=>[[a,height(a)],...terrain.samples.filter(p=>p[0]>a&&p[0]<b),[b,height(b)]];
+        addWalk(piece.start,piece.boatStart,link.geometry.coordinates.slice(0,link.properties.boatFrom+1),clipped(piece.start,piece.boatStart));
+        addWalk(piece.boatEnd,piece.end,link.geometry.coordinates.slice(link.properties.boatTo),clipped(piece.boatEnd,piece.end));
+      }
     });
     const estimated={km,ascent};
     const recorded={km:days.at(-1).cum,ascent:days.at(-1).cumElev};

@@ -31,7 +31,7 @@ perspective and much less text and interface on 5 September 2026.
   9.5px warm-paper outline separates it from terracotta roofs, blue streams and
   green canopy. Use the same red for the minimap's completed route and direction
   marker. Estimated walking paths have a paler red 4.5px stroke with an 8px
-  paper edge. The two train connections stay narrower, warm brown and dashed.
+  paper edge. The two train connections stay narrower, warm brown and dashed; the boat crossing uses a blue dashed line.
 - On 7 September 2026 Dan requested more detail using satellite views and
   explicitly retained the paper model style. Use those views as visual reference
   for landscape character; the rendered geometry still comes from reusable map
@@ -123,7 +123,7 @@ perspective and much less text and interface on 5 September 2026.
   easing into its resting angle. Show only the image, with no visible caption.
   Automatic prints are passive figures with no links, hover action or pointer interception. Open the original day gallery from the menu. Select from the actual day; retain its provenance in
   the accessible name and gallery because exact photo positions are unknown. Show at most one print per day in
-  continuous walking playback, and on preparing a directly selected walking day. Leave the landscape clear during train transfers. The option
+  continuous walking playback, and on preparing a directly selected walking day. Leave the landscape clear during train and boat travel. The option
   can be disabled and defaults off for reduced motion.
 - Manual photographs use a full-screen dialog with arrows, arrow keys and swipe.
   Browsing preserves the exact route position. All 394 photographs remain
@@ -198,23 +198,25 @@ exports belong in this public repository. The approval covers this journey only.
 On 7 September 2026 Dan confirmed walking the missing sections apart from
 two train transfers, after the overnight German walk (probably into Stuttgart)
 and in Croatia. Keep the reviewed recordings unchanged. `route-links.json`
-contains 54 estimated walking links and two mapped railway connections;
+contains 53 estimated walking links, two mapped railway connections and one probable Wörthersee boat crossing between days 33–34;
 `scripts/build-trek-links.mjs` regenerates them explicitly from the public
-recording endpoints using Valhalla pedestrian routing on current OpenStreetMap, plus the committed railway alignment.
+recording endpoints using Valhalla pedestrian routing on current OpenStreetMap, plus the committed railway and ferry alignments. Dan recalled the boat later on 7 September and tentatively confirmed Wörthersee: the day-33 recording ends beside Velden landing and the next starts near Klagenfurt. The sailing itself is unrecorded.
 The train boundaries are inferred as the gaps after days 16–17 and before day 42.
 Neither exact 2019 paths nor train endpoints are verified. Short joins under
 35 m connect the endpoints directly. Preserve the router provenance and source
 route hash. The maintenance script caches requests and respects FOSSGIS’s
 one-request-per-second limit; visitors never call the routing service.
-Round displayed walking corners within 18 m, including walking estimates. Keep railway points unrounded so coaches stay on the mapped track. Measure estimated distance from the unrounded reconstructed geometry so presentation smoothing does not change the walking totals.
+Round displayed walking corners within 18 m, including walking estimates. Keep railway and ferry points unrounded so the vehicles stay on their mapped alignments. The boat connection contains separate walking approaches and a water leg; draw only the water leg as a blue dashed line. Measure estimated distance from the unrounded reconstructed geometry so presentation smoothing does not change the walking totals.
 
 `data/trek-rail-routes.json` contains the two connected railway paths: Pforzheim–Mühlacker–Vaihingen (Enz)–Bietigheim-Bissingen–Ludwigsburg–Stuttgart, and Pitomača–Virovitica–Slatina–Čačinci–Đurđenovac–Našice–Koška. Their regional corridors are supported by [Baden-Württemberg’s June 2019 service announcement](https://vm.baden-wuerttemberg.de/de/service/presse/pressemitteilung/pid/ab-juni-2019-deutlich-besseres-regionalzug-angebot-durch-stuttgart) and [HŽ Infrastructure’s 2019 network statement](https://www.hzinfra.hr/wp-content/uploads/2018/12/Izvjesce-o-mrezi-2019-procisceni-tekst-II.izmjene-i-dopune.pdf). Geometry follows the stated current OpenStreetMap snapshots; it does not establish the exact train taken in 2019. The station choices are inferred from adjacent recording endpoints. Keep those qualifications and source attribution in the menu.
 
 `scripts/build-trek-rails.py` is an explicit maintenance step. It caches two bounded public railway queries in `TREK_RAIL_CACHE` (default `/tmp/trek-rail-osm`), then finds connected track paths through the regional stations, penalising sidings and rejecting loops. The committed derivative retains OSM way IDs, snapshot times, bridge/tunnel spans and only the selected railway coordinates. Regenerate links, terrain and HTML after changing it: `python3 scripts/build-trek-rails.py`, `node scripts/build-trek-links.mjs`, `node scripts/build-trek-elevation.mjs`, then `npm run trek:build`. Ordinary builds and visitors never query a router.
 
-`journey-train.js` draws three cream and red paper coaches in the existing 3D scene. Their enlarged scale is illustrative. Each coach follows its own distance along the sourced railway, turns with the track and is hidden inside mapped tunnels. Bridge heights interpolate between their approaches. The train fades at the inferred stations and never drives across the short access joins to walking recordings. It uses the same reversible distance clock as the journey, settles on pause and clears when seeking back to walking. Keep it visible above the controls in phone and desktop views; it must not add distance or ascent to walking totals.
+`journey-train.js` draws three cream and red paper coaches in the existing 3D scene. Their enlarged scale is illustrative. Each coach follows its own distance along the sourced railway, turns with the track and remains visible across mapped tunnel spans. The paper colours soften at tunnel entrances and return on exit; the illustrative model follows the map surface there so the traveller can still follow its position. Bridge heights interpolate between their approaches. The train fades at the inferred stations and never drives across the short access joins to walking recordings. It uses the same reversible distance clock as the journey, settles on pause and clears when seeking back to walking. Keep it visible above the controls in phone and desktop views; it must not add distance or ascent to walking totals.
 
-Playback traverses one continuous distance including estimated walking paths and train connections.
+`data/trek-boat-routes.json` retains the selected OSM ferry ways and snapshot for Velden–Dellach–Pörtschach–Maria Wörth–Reifnitz–Krumpendorf–Klagenfurt/See. These match the operator’s published route, not a verified 2019 sailing. `scripts/build-trek-boat.py` refreshes the seven connected ways explicitly; regenerate links, terrain and HTML afterwards. `journey-boat.js` draws an enlarged cream passenger boat with a blue hull, glazing, deck rails and a small wake. It shares the train’s WebGL pass, uses the same reversible journey distance, and stays between the boat landings. Auto pace caps sailing at 280 m/s for a scenic view; manual pace still applies. Keep its illustrative scale and uncertain sailing explicit in the menu. Shore walks count towards estimated walking totals, while the sailing does not.
+
+Playback traverses one continuous distance including estimated walking paths, train connections and the boat crossing.
 Every numbered day's end meets the next day's start. Missing days share the
 connection to the next recording; days 16–17 divide their shared record
 approximately. The menu preserves that qualification and the combined metrics.
@@ -225,11 +227,11 @@ its distance, moving time and ascent must aggregate both halves (42.9 km,
 372 minutes and 856 m at the public rounding), rather than keep the last row.
 The shared days 16–17 recording remains counted only once. The source has a
 20.5 km straight-line gap between the end of day 33 and the start of day 34;
-Dan now reports walking it; the reconstructed path remains an estimate.
+Dan subsequently recalled the probable Wörthersee boat trip in this gap; its mapped ferry route and shore walks remain estimates.
 
-On 7 September 2026 Dan requested that missing-walk estimates contribute to distance and ascent. `journey-metrics.js` combines the original 1,982 km and 50,339 m ascent with 259.94 km of reconstructed walking and approximately 1,482 m of mapped ascent. The current combined estimate is approximately 2,242 km and 51,820 m climbed. Keep the recorded and estimated portions explicit in the menu, with an `est.` qualification on counters containing estimates. Daily details show both sources, including estimates for days without recordings. The opening, metadata and finish use the combined total.
+On 7 September 2026 Dan requested that missing-walk estimates contribute to distance and ascent. `journey-metrics.js` combines the original 1,982 km and 50,339 m ascent with 242.03 km of reconstructed walking and approximately 1,479 m of mapped ascent. The current combined estimate is approximately 2,224 km and 51,820 m climbed. Keep the recorded and estimated portions explicit in the menu, with an `est.` qualification on counters containing estimates. Daily details show both sources, including estimates for days without recordings. The opening, metadata and finish use the combined total.
 
-The source archive audit found that its five internal GPS gaps were omitted from the activity distances: the FIT distance counter stays flat at the large day-8 and day-26 jumps, and the GPX totals align with geometry excluding the day-53 and day-57 jumps. Add the reconstructed walks, retain original source totals, and exclude both train transfers. Estimate ascent by summing positive changes in each walking link's existing 200 m terrain samples; descents and train terrain add no climb. These coarse terrain estimates are not a resurvey of the 2019 walk.
+The source archive audit found that its five internal GPS gaps were omitted from the activity distances: the FIT distance counter stays flat at the large day-8 and day-26 jumps, and the GPX totals align with geometry excluding the day-53 and day-57 jumps. Add the reconstructed walks, retain original source totals, and exclude both train transfers and the boat crossing. Estimate ascent by summing positive changes in each walking link's existing 200 m terrain samples; descents and terrain beneath trains or boats add no climb. Clip the boat connection’s terrain to its two shore walks, interpolating heights at the landings. These coarse terrain estimates are not a resurvey of the 2019 walk.
 
 Within-day recorded counters interpolate over recorded portions. Estimated distance advances along its corresponding walking link, and estimated ascent advances only over uphill parts of that link. Both remain continuous across day boundaries and reversible when seeking. The approximate division of missing days must not imply known daily measurements. "Metres climbed" is accumulated ascent, separate from the traveller's current ground height or camera altitude.
 
@@ -252,7 +254,7 @@ Terrarium terrain tiles at zoom 11. It contains 11,861 mapped ground heights at
 roughly 200 m intervals. These are approximate terrain elevations, not private
 GPS altitude samples. Include every recorded section and presentation connection
 across all seven countries. Connection heights describe the mapped ground beneath
-the estimated path or train connection; use a dashed, quieter profile and
+the estimated path, train connection or boat crossing; use a dashed, quieter profile and
 retain that distinction in the height label.
 These samples do not imply a recorded walking route. The horizontal axis follows the continuous journey. Only reconstructed walking links contribute their uphill changes to the estimated ascent; the original recorded totals remain identifiable. Keep its
 source route hash, estimated-link hash and generation method with the data. Regeneration uses a temporary
@@ -422,7 +424,7 @@ settlement selection. The focused browser check uses
 `CHECK_TREK_WAYFINDING_ONLY=1` to exercise the inset, place arrival, landmark
 replacement, playback, photographs and 390/320px layouts.
 
-`check-trek-metrics.mjs` verifies recorded and estimated totals, partial uphill progress, descents, both train exclusions, all day boundaries and backward seeks. `CHECK_TREK_PROGRESS_ONLY=1` checks these counters in the running landscape, the source breakdown and readable totals at 1440, 390, 320 and short landscape sizes.
+`check-trek-metrics.mjs` verifies recorded and estimated totals, partial uphill progress, descents, train and boat exclusions, separate shore walks, all day boundaries and backward seeks. `CHECK_TREK_PROGRESS_ONLY=1` checks these counters in the running landscape, the source breakdown and readable totals at 1440, 390, 320 and short landscape sizes.
 
 The focused elevation/cache checks cover complete ground-height coverage, source
 hashes, distinct mapped connections, persistent hits, expiry, cancelled requests, unavailable
@@ -455,3 +457,5 @@ and warm white. A small hysteresis band keeps it readable at middle brightness
 without flickering between the two inks. `CHECK_TREK_FINISHES_ONLY=1` exercises
 all seven static country fills and dark, light and middle-brightness contrast
 samples. No screenshot, second renderer or persistent image is retained.
+
+`CHECK_TREK_VEHICLES_ONLY=1` exercises the two long German tunnels and the Wörthersee boat on desktop and phones: visible rendered vehicle pixels, continuous playback, source alignment, stable walking totals, pause, backward seeks and transitions at the landings.

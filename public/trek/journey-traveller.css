@@ -113,3 +113,5 @@
 @media(max-width:650px){.elevation-profile{height:62px;margin-bottom:6px}.progress-label{font-size:8px;letter-spacing:0}.journey-readout{margin-bottom:9px}.landmark-caption{bottom:258px}}
 @media(max-width:350px){.progress-label{font-size:7px}}
 @media(max-height:520px){.elevation-profile{height:48px}.journey-readout{margin-bottom:3px}.memory-flash{bottom:auto}.landmark-caption{bottom:214px}}
+
+.line-key.boat{border-top-color:#467c86;border-top-style:dashed}
