@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HeroBrandName } from "@/components/hero-brand-name";
 import { PageFooter } from "@/components/page-footer";
 import { SiteImage } from "@/components/site-image";
@@ -57,10 +57,29 @@ function ProjectShowcase() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
   const [lastProject, setLastProject] = useState(projects[0]);
+  const [detailOffset, setDetailOffset] = useState(0);
+  const rail = useRef(null);
+  const cards = useRef({});
   const active = held ?? preview;
   // Keep the last detail mounted so its height can animate closed as well.
   const detail = active ?? lastProject;
   const dismiss = () => { setHeld(null); setPreview(null); };
+  useEffect(() => {
+    const shelf = rail.current;
+    const positionDetail = () => {
+      const card = cards.current[detail.id];
+      if (!card) return;
+      setDetailOffset(Math.max(0, card.getBoundingClientRect().left - shelf.getBoundingClientRect().left));
+    };
+    positionDetail();
+    const observer = new ResizeObserver(positionDetail);
+    observer.observe(shelf);
+    shelf.addEventListener("scroll", positionDetail, { passive: true });
+    return () => {
+      observer.disconnect();
+      shelf.removeEventListener("scroll", positionDetail);
+    };
+  }, [detail.id]);
   return (
     <div
       className="concept-project-showcase"
@@ -72,6 +91,7 @@ function ProjectShowcase() {
     >
     <div
       className="concept-project-grid concept-project-swipe"
+      ref={rail}
       role="list"
       aria-label="Projects"
     >
@@ -84,6 +104,7 @@ function ProjectShowcase() {
         >
           <button
             className="concept-project-card"
+            ref={(element) => { cards.current[project.id] = element; }}
             id={project.id === "features" ? "work" : undefined}
             type="button"
             aria-label={`Find out more about ${project.title}`}
@@ -127,10 +148,14 @@ function ProjectShowcase() {
         aria-label={`${detail.title} details`}
         aria-hidden={!active}
         inert={!active}
-        style={{ "--project-detail-accent": detail.accent }}
+        style={{
+          "--project-detail-accent": detail.accent,
+          "--hover-detail-accent": detail.accent,
+          "--project-detail-offset": `${detailOffset}px`,
+        }}
       >
         <div className="concept-project-detail-clip">
-          <div className="concept-project-detail">
+          <div className={`index-hover-detail concept-project-detail${active ? " is-open" : ""}`}>
             <p>{detail.description}</p>
             <a className="concept-project-open" href={detail.href}>
               {detail.action} <span aria-hidden="true">↗</span>
