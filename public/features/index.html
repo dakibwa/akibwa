@@ -69,7 +69,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-WgutK1kg2gxhWjOZzZlzuWbTFB8/IvASRgZiJjdE4Oo=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-K9vQ3whmO8WpVHZQkYxI8U5YwQ7H3dI4BshCQ0dfOUA=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -1677,9 +1677,9 @@ const STAMPS={
 "crown":{"label":"crown","colour":"#EFC319","art":"<g fill=\"currentColor\"><path d=\"M13 25L34 43L48 15L62 43L83 25L75 65H21Z\"/><path d=\"M22 72H74V83H22Z\"/></g>"}
 };
 
-const CATALOGUE_REVISION=21, CATALOGUE_LAUNCH='2026-09-06';
+const CATALOGUE_REVISION=21, CATALOGUE_LAUNCH='2026-09-06', CATALOGUE_START='2026-09-05';
 const catalogueRevision=value=>Number(value)===21?21:20;
-const catalogueFor=day=>day>=CATALOGUE_LAUNCH?21:20;
+const catalogueFor=day=>day>=CATALOGUE_START?21:20;
 const FIGURES_V20={
   "house":{"n":5,"c":"--orange","p":[[-0.85749,0.68599],[-0.85749,-0.1715],[0,-1.02899],[0.85749,-0.1715],[0.85749,0.68599]],"chord":[0,4]},
   "key":{"n":7,"c":"--gelb","p":[[1.24149,-0.00148],[0.44982,-0.00148],[0.45953,0.78472],[-0.7356,0.78988],[-1.13352,-0.00148],[-0.73547,-0.78402],[0.45376,-0.78615]],"chord":[1,6]},
@@ -2320,6 +2320,7 @@ const PACK_V20={
 "2026-10-19":[{s:"bake:2026-10-19:0:6",d:"2026-10-25",v:20,o:1,c:3},{s:"bake:2026-10-19:1:5",d:"2026-10-27",v:20,o:2,c:4},{s:"bake:2026-10-19:2:0",d:"2026-10-22",v:20,o:3,c:5},{s:"bake:2026-10-19:3:1",d:"2026-10-21",v:20,o:4,c:6},{s:"bake:2026-10-19:4:10",d:"2026-10-22",v:20,o:4,c:6},{s:"bake:2026-10-19:5:28",d:"2026-10-19",v:20,o:5,c:7},{s:"bake:2026-10-19:6:14",d:"2026-10-27",v:20,o:5,c:7},{s:"bake:2026-10-19:7:6",d:"2026-10-19",v:20,o:7,c:9},{s:"bake:2026-10-19:8:0",d:"2026-10-27",v:20,o:9,c:12},{s:"bake:2026-10-19:9:4",d:"2026-11-04",v:20,o:9,c:12}]
 };
 const PACK={
+"2026-09-05":[{s:"bake:2026-09-05:0:9",d:"2026-09-17",v:21,o:1,c:3},{s:"bake:2026-09-05:1:8",d:"2026-09-18",v:21,o:2,c:4},{s:"bake:2026-09-05:2:1",d:"2026-09-22",v:21,o:2,c:4},{s:"bake:2026-09-05:3:11",d:"2026-10-05",v:21,o:4,c:6},{s:"bake:2026-09-05:4:9",d:"2026-09-18",v:21,o:3,c:5},{s:"bake:2026-09-05:5:15",d:"2026-09-22",v:21,o:4,c:6},{s:"bake:2026-09-05:6:8",d:"2026-09-19",v:21,o:6,c:8},{s:"bake:2026-09-05:7:1",d:"2026-09-25",v:21,o:8,c:10},{s:"bake:2026-09-05:8:7",d:"2026-09-05",v:21,o:8,c:10},{s:"bake:2026-09-05:9:2",d:"2026-09-16",v:21,o:5,c:7}],
 "2026-09-06":[{s:"bake:2026-09-06:0:18",d:"2026-09-06",v:21,o:2,c:4},{s:"bake:2026-09-06:1:40",d:"2026-09-14",v:21,o:2,c:4},{s:"bake:2026-09-06:2:28",d:"2026-09-08",v:21,o:3,c:5},{s:"bake:2026-09-06:3:6",d:"2026-09-08",v:21,o:4,c:6},{s:"bake:2026-09-06:4:14",d:"2026-09-11",v:21,o:3,c:5},{s:"bake:2026-09-06:5:8",d:"2026-09-16",v:21,o:3,c:5},{s:"bake:2026-09-06:6:10",d:"2026-09-06",v:21,o:6,c:8},{s:"bake:2026-09-06:7:8",d:"2026-09-08",v:21,o:6,c:8},{s:"bake:2026-09-06:8:2",d:"2026-10-18",v:21,o:7,c:9},{s:"bake:2026-09-06:9:5",d:"2026-09-11",v:21,o:5,c:7}],
 "2026-09-07":[{s:"bake:2026-09-07:0:3",d:"2026-09-13",v:21,o:1,c:3},{s:"bake:2026-09-07:1:14",d:"2026-09-13",v:21,o:2,c:4},{s:"bake:2026-09-07:2:15",d:"2026-09-11",v:21,o:2,c:4},{s:"bake:2026-09-07:3:3",d:"2026-09-15",v:21,o:4,c:6},{s:"bake:2026-09-07:4:20",d:"2026-09-07",v:21,o:3,c:5},{s:"bake:2026-09-07:5:4",d:"2026-09-08",v:21,o:4,c:6},{s:"bake:2026-09-07:6:27",d:"2026-09-07",v:21,o:5,c:7},{s:"bake:2026-09-07:7:6",d:"2026-09-18",v:21,o:6,c:8},{s:"bake:2026-09-07:8:10",d:"2027-04-05",v:21,o:7,c:9},{s:"bake:2026-09-07:9:12",d:"2026-09-13",v:21,o:6,c:8}],
 "2026-09-08":[{s:"bake:2026-09-08:0:14",d:"2026-09-17",v:21,o:1,c:3},{s:"bake:2026-09-08:1:15",d:"2026-09-22",v:21,o:1,c:3},{s:"bake:2026-09-08:2:23",d:"2026-09-09",v:21,o:3,c:5},{s:"bake:2026-09-08:3:7",d:"2026-09-09",v:21,o:3,c:5},{s:"bake:2026-09-08:4:12",d:"2026-09-12",v:21,o:3,c:5},{s:"bake:2026-09-08:5:13",d:"2026-09-24",v:21,o:3,c:5},{s:"bake:2026-09-08:6:1",d:"2026-09-11",v:21,o:5,c:7},{s:"bake:2026-09-08:7:2",d:"2026-09-10",v:21,o:7,c:9},{s:"bake:2026-09-08:8:10",d:"2027-02-23",v:21,o:8,c:10},{s:"bake:2026-09-08:9:0",d:"2026-09-09",v:21,o:6,c:8}],
@@ -2363,7 +2364,8 @@ const PACK={
 "2026-10-16":[{s:"bake:2026-10-16:0:9",d:"2026-10-20",v:21,o:2,c:4},{s:"bake:2026-10-16:1:15",d:"2026-10-25",v:21,o:2,c:4},{s:"bake:2026-10-16:2:13",d:"2026-11-02",v:21,o:3,c:5},{s:"bake:2026-10-16:3:12",d:"2026-10-30",v:21,o:4,c:6},{s:"bake:2026-10-16:4:27",d:"2026-10-16",v:21,o:3,c:5},{s:"bake:2026-10-16:5:12",d:"2026-10-26",v:21,o:3,c:5},{s:"bake:2026-10-16:6:15",d:"2026-10-28",v:21,o:5,c:7},{s:"bake:2026-10-16:7:3",d:"2026-10-16",v:21,o:6,c:8},{s:"bake:2026-10-16:8:5",d:"2026-11-27",v:21,o:7,c:9},{s:"bake:2026-10-16:9:7",d:"2026-10-19",v:21,o:5,c:7}],
 "2026-10-17":[{s:"bake:2026-10-17:0:1",d:"2026-10-18",v:21,o:1,c:3},{s:"bake:2026-10-17:1:2",d:"2026-10-17",v:21,o:2,c:4},{s:"bake:2026-10-17:2:6",d:"2026-10-17",v:21,o:3,c:5},{s:"bake:2026-10-17:3:3",d:"2026-10-19",v:21,o:3,c:5},{s:"bake:2026-10-17:4:1",d:"2026-10-26",v:21,o:3,c:5},{s:"bake:2026-10-17:5:21",d:"2026-10-17",v:21,o:4,c:6},{s:"bake:2026-10-17:6:34",d:"2026-10-18",v:21,o:6,c:8},{s:"bake:2026-10-17:7:0",d:"2026-10-21",v:21,o:6,c:8},{s:"bake:2026-10-17:8:1",d:"2026-11-07",v:21,o:8,c:10},{s:"bake:2026-10-17:9:5",d:"2026-10-23",v:21,o:5,c:7}],
 "2026-10-18":[{s:"bake:2026-10-18:0:3",d:"2026-10-21",v:21,o:1,c:3},{s:"bake:2026-10-18:1:12",d:"2026-11-04",v:21,o:2,c:4},{s:"bake:2026-10-18:2:3",d:"2026-10-21",v:21,o:3,c:5},{s:"bake:2026-10-18:3:8",d:"2026-11-04",v:21,o:4,c:6},{s:"bake:2026-10-18:4:8",d:"2026-10-21",v:21,o:3,c:5},{s:"bake:2026-10-18:5:1",d:"2026-10-23",v:21,o:3,c:5},{s:"bake:2026-10-18:6:0",d:"2026-10-20",v:21,o:6,c:8},{s:"bake:2026-10-18:7:12",d:"2026-10-23",v:21,o:7,c:9},{s:"bake:2026-10-18:8:13",d:"2027-06-06",v:21,o:7,c:9},{s:"bake:2026-10-18:9:5",d:"2026-10-28",v:21,o:5,c:7}],
-"2026-10-19":[{s:"bake:2026-10-19:0:11",d:"2026-10-20",v:21,o:1,c:3},{s:"bake:2026-10-19:1:15",d:"2026-10-25",v:21,o:1,c:3},{s:"bake:2026-10-19:2:14",d:"2026-10-20",v:21,o:2,c:4},{s:"bake:2026-10-19:3:14",d:"2026-10-30",v:21,o:3,c:5},{s:"bake:2026-10-19:4:1",d:"2026-10-20",v:21,o:3,c:5},{s:"bake:2026-10-19:5:7",d:"2026-10-26",v:21,o:3,c:5},{s:"bake:2026-10-19:6:1",d:"2026-10-19",v:21,o:5,c:7},{s:"bake:2026-10-19:7:5",d:"2026-10-20",v:21,o:7,c:9},{s:"bake:2026-10-19:8:20",d:"2026-10-19",v:21,o:8,c:10},{s:"bake:2026-10-19:9:1",d:"2026-10-25",v:21,o:6,c:8}]
+"2026-10-19":[{s:"bake:2026-10-19:0:11",d:"2026-10-20",v:21,o:1,c:3},{s:"bake:2026-10-19:1:15",d:"2026-10-25",v:21,o:1,c:3},{s:"bake:2026-10-19:2:14",d:"2026-10-20",v:21,o:2,c:4},{s:"bake:2026-10-19:3:14",d:"2026-10-30",v:21,o:3,c:5},{s:"bake:2026-10-19:4:1",d:"2026-10-20",v:21,o:3,c:5},{s:"bake:2026-10-19:5:7",d:"2026-10-26",v:21,o:3,c:5},{s:"bake:2026-10-19:6:1",d:"2026-10-19",v:21,o:5,c:7},{s:"bake:2026-10-19:7:5",d:"2026-10-20",v:21,o:7,c:9},{s:"bake:2026-10-19:8:20",d:"2026-10-19",v:21,o:8,c:10},{s:"bake:2026-10-19:9:1",d:"2026-10-25",v:21,o:6,c:8}],
+"2026-10-20":[{s:"bake:2026-10-20:0:13",d:"2026-10-26",v:21,o:1,c:3},{s:"bake:2026-10-20:1:9",d:"2026-11-03",v:21,o:2,c:4},{s:"bake:2026-10-20:2:15",d:"2026-11-02",v:21,o:3,c:5},{s:"bake:2026-10-20:3:9",d:"2026-10-24",v:21,o:3,c:5},{s:"bake:2026-10-20:4:7",d:"2026-10-23",v:21,o:3,c:5},{s:"bake:2026-10-20:5:16",d:"2026-10-21",v:21,o:4,c:6},{s:"bake:2026-10-20:6:24",d:"2026-10-21",v:21,o:6,c:8},{s:"bake:2026-10-20:7:6",d:"2026-10-21",v:21,o:7,c:9},{s:"bake:2026-10-20:8:2",d:"2026-11-10",v:21,o:7,c:9},{s:"bake:2026-10-20:9:1",d:"2026-10-20",v:21,o:5,c:7}]
 };
 const packFor=revision=>catalogueRevision(revision)===21?PACK:PACK_V20;
 const OPTIMA={
@@ -2424,6 +2426,43 @@ function netTargets(){
 
 const BOARD_EDITION = 20;
 const BOARD_LAUNCH = '2026-09-05';
+const ARCHIVE_STANDARD = 1;
+
+function preserveLegacyRuns(...states) {
+  const object = x => !!x && typeof x === 'object' && !Array.isArray(x);
+  const legacy = r => object(r) && (r.catalogueRevision === undefined || r.catalogueRevision === 20);
+  const stable = r => JSON.stringify(r, (k, v) => object(v)
+    ? Object.fromEntries(Object.keys(v).sort().map(key => [key, v[key]])) : v);
+  const receipts = new Set();
+  for (const state of states) {
+    if (!object(state)) continue;
+    for (const run of [...(Array.isArray(state.legacyRuns) ? state.legacyRuns : []), state.run, state.parked])
+      if (legacy(run)) receipts.add(stable(run));
+  }
+  return [...receipts].sort().map(text => JSON.parse(text));
+}
+
+function upgradeOutlineRuns(value, at) {
+  const state = { ...value };
+  if (Number(state.boardEdition) !== BOARD_EDITION) return state;
+  const old = r => r && typeof r === 'object' && !Array.isArray(r)
+    && (r.catalogueRevision === undefined || r.catalogueRevision === 20)
+    && typeof r.day === 'string' && r.day >= BOARD_LAUNCH;
+  if (!old(state.run) && !old(state.parked)) return state;
+  state.legacyRuns = preserveLegacyRuns(state);
+  for (const key of ['run', 'parked']) {
+    const r = state[key];
+    if (!old(r)) continue;
+    state[key] = {
+      day: r.day, mode: r.mode || 'daily', archive: !!r.archive,
+      catalogueRevision: 21, startedAt: at,
+      turns: 0, netIndex: 0, netMoves: 0,
+      positions: {}, freed: [], minted: {}, splitNodes: [], saeUsed: false,
+      over: false, cleared: [], assisted: false, log: [], assists: 0, logGap: false,
+    };
+  }
+  return state;
+}
 
 function migrateBoardState(value) {
   const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
@@ -2460,6 +2499,9 @@ try{
   if(raw && typeof raw==='object' && !Array.isArray(raw)) store=raw;
 }catch(e){store={}}
 store=migrateBoardState(store);
+const previousOutlineRun=store.run, previousOutlineParked=store.parked;
+store=upgradeOutlineRuns(store,new Date().toISOString());
+const outlineRunUpdated=store.run!==previousOutlineRun || store.parked!==previousOutlineParked;
 if(!store.collection || typeof store.collection!=='object')
   store.collection={badges:{},playedDays:[],pairs:{}};
 if(!store.meta) store.meta={streak:0,bestDepth:0,lastPlayDay:null};
@@ -2559,7 +2601,7 @@ let syncSay='';          // what the record's foot says about the last sync
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-function outbound(){ const {signedInOnce,askedDaily,...rest}=store; return JSON.stringify({...rest,clientCatalogue:CATALOGUE_REVISION}) }
+function outbound(){ const {signedInOnce,askedDaily,...rest}=store; return JSON.stringify({...rest,clientCatalogue:CATALOGUE_REVISION,clientArchive:ARCHIVE_STANDARD}) }
 
 async function apiCall(path,opts){
   if(!API) throw new Error('no api');
@@ -2885,9 +2927,11 @@ function sanitizeCollection(c){
 function adoptState(merged){
   if(!merged||typeof merged!=='object') return;
   if(Number(merged.boardEdition)>BOARD_EDITION){ syncSay='refresh to update'; return }
-  merged=migrateBoardState(merged);
+  merged=upgradeOutlineRuns(migrateBoardState(merged),new Date().toISOString());
   const mine=R(), theirs=merged.run;
   store.boardEdition=BOARD_EDITION;
+  const receipts=preserveLegacyRuns(store,merged);
+  if(receipts.length)store.legacyRuns=receipts;
   if(merged.retiredBadges) store.retiredBadges=merged.retiredBadges;
   store.collection=sanitizeCollection(merged.collection)||store.collection;
   store.meta=merged.meta||store.meta;
@@ -4904,7 +4948,7 @@ function buildNet(force){
   const pk=(!inTutorialRun() || idx>=TUTNETS.length) && pack[R().day] ? pack[R().day][idx] : null;
   const genDay = pk ? pk.d : R().day;
   const lesson=inTutorialRun() && idx<TUTNETS.length;
-  const version=pk?.v??(revision===20&&genDay>=CATALOGUE_LAUNCH?20:null);
+  const version=pk?.v??(revision===21?21:Math.min(20,genFor(genDay).v));
   const GEN={...genForVersion(lesson ? TUTDAY : genDay, lesson ? null : version)};
   if(lesson&&revision===21) GEN.chord='none';
   Object.assign(GEN_RULES, genRules(GEN),{outlineDay:genDay});
@@ -8136,6 +8180,10 @@ publishPlateInset();
 addEventListener('load',publishPlateInset);
 if(!store.introSeen || (store.lastIntroDay!==today() && R().netMoves===0 && !R().cleared.length)){
   openMenu('home');
+}
+if(outlineRunUpdated){
+  save();
+  toast('updated boards · your previous scores and discoveries are saved');
 }
 readUnlockReturn().then(wakeAccount);
 </script>
