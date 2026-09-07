@@ -7911,14 +7911,15 @@ button {
 /* Public collection controls and the separate album gallery. */
 .concept-page .concept-projects{--projects-rest-space:clamp(48px,6vw,82px);--projects-open-space:var(--projects-rest-space);padding-bottom:var(--projects-rest-space);transition:none}
 .concept-page .concept-project-stop{align-content:start}
-.concept-project-detail-shell { display: grid; grid-template-rows: 0fr; margin-top: 0; opacity: 0; transition: grid-template-rows 340ms var(--ease-out), margin-top 340ms var(--ease-out), opacity 150ms ease; }
-.concept-project-detail-shell.is-open { grid-template-rows: 1fr; margin-top: clamp(14px, 1.8vw, 24px); opacity: 1; }
+.concept-project-detail-shell { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 340ms var(--ease-out); }
+.concept-project-detail-shell.is-open { grid-template-rows: 1fr; transition-duration: 480ms; }
 .concept-project-detail-clip { min-height: 0; overflow: hidden; }
 .concept-project-detail {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(18px, 3vw, 40px);
   align-items: center;
+  margin-top: clamp(14px, 1.8vw, 24px);
   padding: 2px 0;
 }
 .concept-project-detail p {
@@ -7950,9 +7951,6 @@ button {
 .concept-project-open:focus-visible { outline: 2px solid var(--project-detail-accent); outline-offset: 4px; }
 @media(max-width:560px) {
   .concept-project-detail { grid-template-columns: 1fr; gap: 4px; }
-}
-@media(prefers-reduced-motion:reduce) {
-  .concept-project-detail-shell { transition: none; }
 }
 .personal-intro{white-space:nowrap}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
@@ -8202,8 +8200,9 @@ button {
 .concept-career-stop[aria-expanded="true"] .concept-career-node { box-shadow: 0 0 0 4px var(--canvas), 0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent); }
 .concept-career-stop:focus-visible .concept-career-card { outline: 2px solid var(--company-accent); outline-offset: -4px; }
 .concept-career-detail-lane { position: relative; height: 0; }
-.index-hover-detail { --hover-detail-width: 280px; width: min(var(--hover-detail-width), 100%); display: grid; gap: 4px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent, var(--company-accent)) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: 0 14px 32px #0c111317; opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 150ms ease, transform 220ms var(--ease-out), visibility 0s linear 220ms; overflow-wrap: anywhere; }
-.index-hover-detail.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease 70ms, transform 360ms var(--ease-out) 20ms, visibility 0s; }
+.index-hover-detail { --hover-detail-width: 280px; width: min(var(--hover-detail-width), 100%); display: grid; gap: 4px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent, var(--company-accent)) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: 0 14px 32px #0c111317; overflow-wrap: anywhere; }
+.index-hover-detail, .concept-project-detail { opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 150ms ease, transform 220ms var(--ease-out), visibility 0s linear 220ms; }
+.index-hover-detail.is-open, .concept-project-detail-shell.is-open .concept-project-detail { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease 70ms, transform 360ms var(--ease-out) 20ms, visibility 0s; }
 .index-hover-detail > strong { color: var(--black); font-size: .86rem; font-weight: 690; line-height: 1.15; letter-spacing: -.02em; }
 .index-hover-detail > span { color: color-mix(in srgb, var(--ink) 58%, var(--canvas)); font-size: .66rem; line-height: 1.3; }
 .concept-career-popover { position: absolute; top: 9px; left: clamp(0px, var(--career-detail-offset, 0%), max(0px, calc(100% - var(--hover-detail-width)))); }
@@ -8256,5 +8255,5 @@ button {
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-name-value { animation: none; }
-  .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .personal-taste-detail-shell, .personal-taste.is-open .personal-taste-detail-shell { transition: none; }
+  .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .concept-project-detail-shell, .concept-project-detail-shell.is-open, .concept-project-detail, .concept-project-detail-shell.is-open .concept-project-detail, .personal-taste-detail-shell, .personal-taste.is-open .personal-taste-detail-shell { transition: none; }
 }
