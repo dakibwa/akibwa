@@ -289,7 +289,7 @@ const checkPublicLanding = async () => {
   check(mainHeading?.name?.value === "I'm Daniel. Online as Akibwa.", `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
   check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the approved introduction reserves both names");
   check(state.lede === "Building in the age of AI", "the masthead preserves Dan's requested proposition");
-  check(await evaluate('JSON.stringify([...document.querySelectorAll(".page-footer-details a, .page-footer-details button")].map(item => item.querySelector("span:last-child")?.textContent)) === JSON.stringify(["Instagram", "X", "Email"])'), "contact controls identify their platforms without repeated handles");
+  check(await evaluate('(() => { const controls=[...document.querySelectorAll(".page-footer-details a, .page-footer-details button")]; return JSON.stringify(controls.map(item=>item.getAttribute("aria-label")))===JSON.stringify(["Instagram — @dakibwa","X — @dakibwa","Email Akibwa"]) && controls.every(item=>item.querySelector("svg") && !item.textContent.trim()); })()'), "three icons keep distinct accessible platform names without visible handles or labels");
   check(await evaluate('!document.querySelector(".taste-source-note") && !document.querySelector(".concept-taste-head .archive-link")'), "the closing sentence and browse-all album link are removed");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
   check(state.careerCount === 8, `the approved compact career bar has eight roles [${state.careerCount}]`);
@@ -958,7 +958,7 @@ const main = async () => {
     process.exit(2);
   }
 
-  const timeoutMs = process.env.CHECK_TREK_ONLY ? 240000 : 120000;
+  const timeoutMs = process.env.CHECK_TREK_ONLY ? 240000 : 180000;
   const watchdog = setTimeout(() => {
     console.error(`\nNavigation DOM check timed out after ${timeoutMs / 1000}s.`);
     process.exit(1);

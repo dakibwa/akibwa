@@ -812,77 +812,46 @@ button {
 .page-footer-details {
   display: flex;
   align-items: center;
-  gap: 18px;
-}
-
-.page-footer :is(a, button) {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
 }
 
-.x-logo {
+.page-footer .social-icon {
+  display: grid;
+  place-items: center;
   flex: 0 0 auto;
-}
-
-.page-footer :is(a, button) {
   appearance: none;
+  width: 44px;
+  height: 44px;
   border: 0;
+  border-radius: 50%;
   background: transparent;
   padding: 0;
-  font: inherit;
-  min-height: 32px;
-  color: color-mix(in srgb, var(--handle-accent, #343a42) 22%, #30363e);
+  color: color-mix(in srgb, var(--handle-accent, var(--ink)) 22%, var(--ink));
   cursor: pointer;
-  font-weight: 560;
-  transition:
-    color 300ms var(--ease-out),
-    transform 300ms var(--ease-out);
+  transition: color 220ms ease, background-color 220ms ease;
 }
 
-.page-footer :is(a, button) {
-  position: relative;
-}
-
-.page-footer :is(a, button)::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 2px;
-  left: 20px;
-  height: 1px;
-  border-radius: 999px;
-  background: var(--handle-accent, currentColor);
-  opacity: 0.72;
-  transform: scaleX(0);
-  transform-origin: left center;
+.page-footer .social-icon svg {
+  display: block;
   transition: transform 260ms var(--ease-out);
 }
 
-.page-footer :is(a, button) svg {
-  color: var(--handle-accent, currentColor);
-  transition: transform 260ms var(--ease-out);
+.page-footer .social-icon:focus-visible {
+  color: var(--handle-accent);
+  background: color-mix(in srgb, var(--handle-accent) 8%, transparent);
+  outline: 1.5px solid var(--handle-accent);
+  outline-offset: 2px;
 }
 
-.page-footer :is(a, button).is-hovering,
-.page-footer :is(a, button).is-pressing,
-.page-footer :is(a, button):focus-visible:not(.is-pointer-focus) {
-  color: color-mix(in srgb, var(--handle-accent, var(--black)) 76%, var(--black));
-  outline: 0;
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .page-footer .social-icon:hover {
+    color: var(--handle-accent);
+    background: color-mix(in srgb, var(--handle-accent) 8%, transparent);
+  }
+  .page-footer .social-icon:hover svg { transform: translateY(-1px); }
 }
 
-.page-footer :is(a, button).is-hovering::after,
-.page-footer :is(a, button).is-pressing::after,
-.page-footer :is(a, button):focus-visible:not(.is-pointer-focus)::after {
-  transform: scaleX(1);
-}
-
-.page-footer :is(a, button).is-hovering svg,
-.page-footer :is(a, button).is-pressing svg,
-.page-footer :is(a, button):focus-visible:not(.is-pointer-focus) svg {
-  transform: translateY(-1px) rotate(-7deg) scale(1.12);
-}
+.page-footer .social-icon:active svg { transform: scale(.92); }
 
 .studio-page {
   min-height: 100vh;
@@ -4305,11 +4274,7 @@ button {
 
   .page-footer-details {
     flex-wrap: nowrap;
-    gap: 0 12px;
-  }
-
-  .page-footer :is(a, button) {
-    gap: 5px;
+    gap: 6px;
   }
 
   .studio-page {
@@ -6836,7 +6801,8 @@ button {
 }
 
 .concept-hero-footer .page-footer-details {
-  gap: clamp(18px, 2vw, 28px);
+  gap: 6px;
+  margin-left: -12px;
   color: var(--muted);
 }
 
@@ -7915,8 +7881,6 @@ button {
 .concept-project-card { padding: 0; width: 100%; }
 .personal-intro{white-space:nowrap}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
-.page-footer-details a,.page-footer-details button{min-height:36px}
-.social-x{font-size:17px;line-height:1}
 .archive-link,.archive-back{font-size:.83rem;line-height:1.4;text-decoration:underline;text-underline-offset:4px}
 .archive-link{flex-shrink:0;padding-bottom:4px}
 .listening-summary{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:24px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0 28px}
@@ -8282,6 +8246,8 @@ button {
   .taste-filters .rail-word { font-size: .85rem; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .page-footer .social-icon, .page-footer .social-icon svg { transition: none; }
+  .page-footer .social-icon:is(:hover, :active) svg { transform: none; }
   .personal-taste-detail-shell, .personal-taste-detail-shell.is-open, .personal-taste-detail, .personal-taste-detail-shell.is-open .personal-taste-detail { transition: none; }
   .taste-search, .taste-search *, .taste-search-field::after, .concept-taste-head .concept-archive-head { transition: none !important; }
   .index-reveal-reserve { transition: none; }
