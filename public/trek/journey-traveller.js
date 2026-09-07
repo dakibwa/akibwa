@@ -8,7 +8,7 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,train=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,train=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
@@ -26,8 +26,8 @@
       if(selected<0)return;
       pace=value;$('pace').value=value;
       const label=options[selected].dataset.label,next=options[(selected+1)%options.length].dataset.label;
-      text('speed-label',label);$('speed-cycle').setAttribute('aria-label','Playback speed '+label+'. Change to '+next+'.');
-      $('speed-cycle').title='Speed '+label+' · click for '+next;
+      text('speed-label',label);$('speed-cycle').setAttribute('aria-label',(value===0?'Automatic pace':'Playback speed '+label)+'. Change to '+next+'.');
+      $('speed-cycle').title=(value===0?'Auto · follow the scenery':'Speed '+label)+' · click for '+next;
     }
     setPace(pace);
     function updateMarkContrast(){
@@ -208,7 +208,7 @@
         }
         if(!Number.isFinite(map.queryTerrainElevation(eye)))throw Error('Terrain is not ready');
         if(generation!==warmGeneration||failed)return;
-        ready=true;$('begin').disabled=false;$('play').disabled=false;$('loading-progress').value=100;
+        ready=true;pacing?.update(distance,true);$('begin').disabled=false;$('play').disabled=false;$('loading-progress').value=100;
         $('map-status').hidden=true;document.body.classList.remove('is-loading');
         lastTime=0;updateUI(true);invalidate();
         if(started)showFlash();
@@ -263,8 +263,9 @@
     function tick(time){
       frame=0;const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.1,elapsed);lastTime=time;
       if(playing&&path&&ready){
-        const desired=TrekCamera.speedLimit(path,distance,pace,heading);
-        travelSpeed=mix(travelSpeed,desired,1-Math.exp(-dt/.85));
+        const requested=pace||pacing.update(distance).target;
+        const desired=TrekCamera.speedLimit(path,distance,requested,heading);
+        travelSpeed=pace===0?TrekPace.advance(travelSpeed,desired,dt):mix(travelSpeed,desired,1-Math.exp(-dt/.85));
         distance=Math.min(path.total,distance+travelSpeed*dt);photoCooldown+=elapsed;
         if(!flashShown&&photoCooldown>6&&lastFlashDay!==day&&fraction>.12&&fraction<.9)showFlash();
         if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
@@ -319,6 +320,7 @@
           try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
           train=TrekTrain.create(map,path,terrainHeight);
+          pacing=TrekPace.create({map,path,heightAt:terrainHeight,landmarks:data.landmarks});
           wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),flag:$('country-flag'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
           map.on('idle',()=>wayfindingUI(true));
           // Sources have now populated MapLibre's initially expanded disclosure.
@@ -372,7 +374,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

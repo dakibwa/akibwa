@@ -13,16 +13,55 @@ const atPoint=point=>{let best={metres:Infinity,distance:0};for(const p of path.
 export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,section,capture}){
   const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
   const choose=n=>evaluate(`(() => {const e=document.querySelector('#journey-day');e.value=${n};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+  const setPace=value=>evaluate(`(()=>{const e=document.querySelector('#pace');e.value=${value};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   const scrub=distance=>evaluate(`(() => {const e=document.querySelector('#journey-progress');e.value=${progressAt(path,distance)*1000};e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
   const state=()=>evaluate(`({...window.trekStatus?.(),sampleTime:performance.now(),overflow:document.documentElement.scrollWidth-innerWidth,menu:document.querySelector('#journey-menu').open,gallery:document.querySelector('#photo-gallery').open,photo:document.querySelector('#gallery-image').getAttribute('src'),photoLoaded:document.querySelector('#gallery-image').naturalWidth>0,creditsExpanded:document.querySelector('.maplibregl-ctrl-attrib')?.classList.contains('maplibregl-compact-show'),controlsFit:[...document.querySelectorAll('.masthead button,.journey-controls button,.journey-controls input')].every(e=>{const r=e.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&r.top>=0&&r.bottom<=innerHeight+1;})})`);
   const until=async(predicate,limit=20000)=>{const end=Date.now()+limit;while(Date.now()<end){if(await predicate())return true;await sleep(120);}return false;};
   const settled=()=>until(async()=>(await state()).ready,30000);
   const openPhotos=async()=>{await click('#menu-open');if(await evaluate("document.querySelector('#menu-photos').hidden")){await choose(30);await settled();}await click('#menu-photos');};
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
+  if(process.env.CHECK_TREK_PACE_ONLY==='1'){
+    section('Automatic pace across open country, a city and the Alpine pass');
+    // Preparing distant scenes has several sequential tile-loading phases;
+    // their existing deadlines exceed the generic 30-second interaction wait.
+    const prepared=()=>until(async()=>(await state()).ready,60000);
+    await setDesktop(1440,900);await goto('/trek/?day=61');check(await prepared(),'the automatic journey prepares');
+    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'&&+document.querySelector('#pace').value===0"),'Auto is the default in both pace controls');
+    await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
+    const measurements=[];
+    for(const [label,distance] of [['open-country',path.dayDistance(61,.8)],['city',atPoint([4.02376,49.251785])],['mountains',path.dayDistance(30,.65)]]){
+      await scrub(distance);check(await prepared(),`${label} prepares at its requested route position`);await sleep(1800);
+      const before=await state();console.log('  scene '+JSON.stringify({label,distance:before.distance,pacing:before.pacing}));
+      check(before.pacing?.places+before.pacing?.shapes>0,'automatic pace reads the loaded public map context');
+      if(label==='city')check(before.pacing.scores.settlement>.5&&before.pacing.target<500,'the actual city receives a slower viewing pace');
+      if(label==='mountains')check(before.pacing.scores.mountain>.4&&before.pacing.target<700,'the actual Alpine pass receives a slower viewing pace');
+      await evaluate(`window.__paceFrames=[];window.__paceCapture=true;document.querySelector('#play').click();requestAnimationFrame(function sample(time){if(!window.__paceCapture)return;const s=window.trekStatus();window.__paceFrames.push({time,distance:s.distance,speed:s.travelSpeed,target:s.pacing.target,anticipating:s.pacing.anticipating,reason:s.pacing.reason,clearance:s.cameraTerrainClearance,visible:s.routeVisible});requestAnimationFrame(sample);});`);
+      await sleep(12000);
+      const samples=await evaluate(`(()=>{document.querySelector('#play').click();window.__paceCapture=false;const frames=window.__paceFrames;delete window.__paceFrames;delete window.__paceCapture;return frames;})()`);
+      const intervals=samples.slice(1).map((s,i)=>s.time-samples[i].time).sort((a,b)=>a-b),p95=intervals[Math.floor(intervals.length*.95)];
+      const rates=samples.slice(1).map((s,i)=>(s.speed-samples[i].speed)/Math.min(.1,(s.time-samples[i].time)/1000));
+      const measured={label,frames:samples.length,p95,travelled:Math.round(samples.at(-1).distance-samples[0].distance),peak:Math.round(Math.max(...samples.map(s=>s.speed))),targets:[Math.round(Math.min(...samples.map(s=>s.target))),Math.round(Math.max(...samples.map(s=>s.target)))],anticipating:samples.filter(s=>s.anticipating).length};measurements.push(measured);console.log('  playback '+JSON.stringify(measured));
+      check(samples.length>120&&measured.travelled>400&&p95<85,'ordinary playback advances without recurring long frames');
+      check(Math.max(...rates)<660&&Math.min(...rates)>-1510,'automatic acceleration and braking remain bounded during real playback');
+      check(samples.every(s=>s.visible>0&&s.clearance>200),'the travel line stays in view and the camera remains above the terrain');
+      const paused=await state();await sleep(400);check((await state()).distance===paused.distance,'pausing holds the automatically paced journey');
+      await capture?.(`trek-auto-${label}`);
+    }
+    check(measurements[0].peak>measurements[1].peak*2&&measurements[0].peak>measurements[2].peak*2,'open-country playback runs materially faster than the city and mountains');
+    const held=(await state()).distance;
+    for(const [value,label] of [[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×'],[12800,'8×'],[0,'Auto']]){
+      await click('#speed-cycle');check((await state()).pace===value&&(await state()).distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}`),`${label} remains available without moving a paused journey`);
+    }
+    await setPace(12800);await click('#play');await sleep(1200);await setPace(0);check((await state()).playing&&(await state()).pace===0,'switching from a fixed speed to Auto preserves playback');await sleep(1200);await click('#play');
+    await choose(8);check(await prepared()&&(await state()).day===8&&(await state()).pace===0,'a backward day change retains Auto');
+    for(const [width,height] of [[390,844],[320,844],[844,390]]){await setDesktop(width,height);const s=await state();check(s.controlsFit&&s.overflow<=1,`the Auto control fits at ${width}×${height}`);await capture?.(`trek-auto-${width}`);}
+    const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');if(errors.length)console.error(errors.map(e=>e.params.exceptionDetails.exception?.description));check(!errors.length,'automatic pace, manual overrides and resizes have no JavaScript exceptions');
+    return;
+  }
   if(process.env.CHECK_TREK_REFINEMENT_ONLY==='1'){
     section('Simple controls, passive prints and a train on the mapped railway');
     await setDesktop(1440,900);await goto('/trek/?day=2');check(await settled(),'the revised journey prepares');
-    check((await state()).pace===6400&&await evaluate("document.querySelector('#speed-label').textContent==='4×'"),'4× is the initial speed in both controls');
+    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'"),'Auto is the initial speed in both controls');await setPace(6400);
     check(await evaluate("!document.querySelector('#readout-day,#elevation-current,#minimap-height,.timeline-heading')"),'the extra day count and height labels are removed');
     const showPrint=async()=>{await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=true;p.dispatchEvent(new Event('change',{bubbles:true}));})()");return until(async()=>(await state()).flash,5000);};
     const shape=async()=>evaluate(`(()=>{const p=document.querySelector('#memory-flash'),i=p.querySelector('img'),s=getComputedStyle(i),c=getComputedStyle(p);return {passive:p.tagName==='FIGURE'&&!p.querySelector('a,button')&&c.pointerEvents==='none',aspect:Math.abs(parseFloat(s.width)/parseFloat(s.height)-i.naturalWidth/i.naturalHeight)<.01,natural:[i.naturalWidth,i.naturalHeight]};})()`);
@@ -217,9 +256,9 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await cdp.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:box.x+52.5/67*box.width,y,button:'left',clickCount:1});
     check(await settled()&&!(await state()).scrubbing&&(await state()).day===53,'releasing the handle prepares the final landscape');
     await choose(30);check(await settled(),'the chosen day and date reset together');
-    check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('4×')"),'the photograph button is replaced by a visible speed control');
+    check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('Auto')"),'the photograph button is replaced by a visible speed control');await setPace(6400);
     const held=(await state()).distance;
-    for(const [pace,label] of [[12800,'8×'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
+    for(const [pace,label] of [[12800,'8×'],[0,'Auto'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
       await click('#speed-cycle');const s=await state();
       check(s.pace===pace&&!s.playing&&s.distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}&&+document.querySelector('#pace').value===${pace}`),`${label} updates both speed controls without moving a paused journey`);
     }
@@ -284,7 +323,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     section('Faster flow, paper photographs and the country atlas');
     await setDesktop(1440,900);await goto('/trek/?day=30');check(await settled(),'the Alpine scene prepares');
     check(await evaluate("!document.querySelector('.masthead button')&&document.querySelector('.journey-controls #menu-open')"),'the day selector replaces the top-right menu button');
-    check((await state()).pace===6400,'Flow starts at the new faster pace');
+    check((await state()).pace===0,'Flow starts with automatic pace');await setPace(6400);
     const showPrint=async()=>{
       await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=true;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
       return until(async()=>(await state()).flash,6000);
@@ -339,8 +378,8 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await until(async()=>(await state()).cache.pending===0,30000);const coldCache=(await state()).cache;
     const oldCanvas=await evaluate("document.querySelector('#elevation-canvas').toDataURL()");
     await evaluate(`window.__trekPerf={intervals:[],longTasks:[],last:0,running:true};window.__trekPerf.observe=new PerformanceObserver(l=>window.__trekPerf.longTasks.push(...l.getEntries().map(e=>e.duration)));window.__trekPerf.observe.observe({entryTypes:['longtask']});requestAnimationFrame(function sample(t){const p=window.__trekPerf;if(!p?.running)return;if(p.last)p.intervals.push(t-p.last);p.last=t;requestAnimationFrame(sample);});document.querySelector('#photo-interludes').checked=false;`);
-    check(s.pace===6400,'Flow starts at the quicker default pace');
-    await evaluate("document.querySelector('#pace').selectedIndex=2;document.querySelector('#pace').dispatchEvent(new Event('change',{bubbles:true}));");
+    check(s.pace===0,'Flow starts with automatic pace');
+    await setPace(3200);
     check((await state()).pace===3200,'Fly selects the faster optional pace');
     await click('#play');await sleep(25000);await click('#play');
     const perf=await evaluate(`(()=>{const p=window.__trekPerf;p.running=false;p.observe.disconnect();const a=p.intervals.slice(2).sort((x,y)=>x-y);const value={frames:a.length,p50:a[Math.floor(a.length*.5)],p95:a[Math.floor(a.length*.95)],over100:a.filter(x=>x>100).length,longTasks:p.longTasks};delete window.__trekPerf;return value;})()`);

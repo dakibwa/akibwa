@@ -6,6 +6,7 @@ import './check-trek-wayfinding.mjs';
 import './check-trek-elevation-cache.mjs';
 import './check-trek-metrics.mjs';
 import './check-trek-train.mjs';
+import './check-trek-pace.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -61,7 +62,7 @@ for(const [file,version] of Object.entries(generatedData.assets)){
   assert.equal(version,createHash('sha256').update(readFileSync(new URL('../public/trek/'+file,import.meta.url))).digest('hex').slice(0,12),`The cached ${file} must match this release`);
 }
 const runtimeAssets=[...generated.matchAll(/(?:href|src)="(journey-[\w-]+\.(?:css|js))(?:\?v=([a-f0-9]+))?"/g)];
-assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-cache.js','journey-camera.js','journey-elevation.js','journey-landmarks.js','journey-metrics.js','journey-paper.js','journey-route.js','journey-train.js','journey-traveller.css','journey-traveller.js','journey-wayfinding.js'],'the generated page references the complete traveller runtime');
+assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-cache.js','journey-camera.js','journey-elevation.js','journey-landmarks.js','journey-metrics.js','journey-pace.js','journey-paper.js','journey-route.js','journey-train.js','journey-traveller.css','journey-traveller.js','journey-wayfinding.js'],'the generated page references the complete traveller runtime');
 for(const [,file,version] of runtimeAssets){
   const expected=createHash('sha256').update(readFileSync(new URL('../public/trek/'+file,import.meta.url))).digest('hex').slice(0,12);
   assert.equal(version,expected,`Run npm run trek:build after changing ${file}; cached controls must match the page`);

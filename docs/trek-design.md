@@ -105,11 +105,17 @@ perspective and much less text and interface on 5 September 2026.
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
-- Following Dan’s latest 7 September request, default to 4× Flow at a 6,400 m/s presentation pace, with ¼× at 400 m/s, 1× at 1,600 m/s, 2× at 3,200 m/s and 8× at 12,800 m/s. The visible fast-forward button
-  cycles through all five; it stays in sync with the
-  menu and preserves playback and position when changed. These are playback
-  speeds, not recorded walking speeds. Let gentler bends pass more readily while
-  retaining the smooth turn and acceleration limits below.
+- Following Dan’s latest request, **Auto** is the default pace. Move quickly across
+  long open stretches, then slow for settlements, large mountains, woodland,
+  rivers/lakes and the mapped landmarks. Use the existing terrain profile and
+  map features; these are presentation heuristics, not a claim to know which
+  view the traveller personally found beautiful. Anticipate the approaching
+  scenery and ease speed changes. Retain the camera’s bend and alignment limits.
+  Keep a quiet “Auto” label on the existing speed button, without changing
+  numbers or extra on-screen explanations. The fixed ¼×, 1×, 2×, 4× and 8×
+  settings remain in the same menu and button cycle; manual choices hold their
+  requested pace subject to the existing camera limits. Changing modes preserves
+  playback and position. These are presentation speeds, not walking measurements.
 - Original photographs appear as lightly angled paper prints beside the moving
   landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
   `contain`; do not interrupt playback or hide the route, atlas or elevation.
@@ -282,6 +288,8 @@ animation-frame clock.
 continuous distance sampling and day boundaries. `journey-camera.js` owns the
 camera rail, forward heading, turn acceleration and bend-aware pace.
 `journey-traveller.js` owns the map, preparation, terrain clearance, clock, menu and photographs;
+`journey-pace.js` owns automatic viewing pace. It samples the existing 200 m ground profile for height and local relief, and reads nearby settlement, residential, woodland and water geometry from already loaded map tiles. It looks ahead along the actual route, slows around the ten mapped landmarks, and bounds acceleration and braking. Map queries are throttled, geometry is prepared outside the animation loop, and sampled scene/terrain caches are bounded. Pending scenery tiles limit acceleration. It adds no provider requests or public route data. `scripts/check-trek-pace.mjs` checks geographic triggers, clearings, departure, whole-route bounds and smooth speed changes.
+
 `journey-traveller.css` owns the presentation. `journey-wayfinding.js` owns the
 inset and settlement selection; `data/trek-landmarks.json` owns reviewed landmark
 positions and public source links, and `journey-landmarks.js` makes their meshes.
