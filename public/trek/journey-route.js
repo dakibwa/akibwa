@@ -44,9 +44,14 @@
       const p=f.properties;
       if(i){
         const estimate=estimates?.features.find(f=>f.properties.gap===i-1);
-        const ps=estimate?rounded(estimate.geometry.coordinates):connection(route.features[i-1].geometry.coordinates,f.geometry.coordinates);
+        const ps=estimate?(estimate.properties.mode==='train'?estimate.geometry.coordinates.map(p=>p.slice()):rounded(estimate.geometry.coordinates)):connection(route.features[i-1].geometry.coordinates,f.geometry.coordinates);
         const properties={kind:'connection',day:p.day,fromDay:route.features[i-1].properties.throughDay,mode:estimate?.properties.mode||'unknown',estimated:true};
-        links.push(line(ps,properties));add(ps,properties);
+        links.push(line(ps,properties));const part=add(ps,properties);
+        if(estimate?.properties.mode==='train'){
+          const rail=estimate.properties;
+          part.railStart=part.start+part.distances[rail.railFrom];part.railEnd=part.start+part.distances[rail.railTo];
+          part.structures=rail.structures.map(s=>({type:s.type,start:part.start+part.distances[s.from],end:part.start+part.distances[s.to]}));
+        }
       }
       const ps=rounded(f.geometry.coordinates),properties={...p,kind:'recorded'};
       records.push(line(ps,properties));const part=add(ps,properties);

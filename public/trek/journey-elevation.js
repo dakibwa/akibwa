@@ -45,7 +45,7 @@
     const segments=dayProfiles(profile,path,days);
     let width=0,height=0,dpr=1,last=0,position=0,current=null,kind=null,draws=0;
     const ceiling=Math.ceil(profile.max/500)*500;
-    const y=h=>height-16-clamp((h||0)/ceiling,0,1)*(height-34);
+    const y=h=>height-8-clamp((h||0)/ceiling,0,1)*(height-14);
     function line(c,points,left,step){c.beginPath();points.forEach(([t,h],i)=>{const x=left+t*step;i?c.lineTo(x,y(h)):c.moveTo(x,y(h));});}
     function drawProfile(c,complete){
       c.scale(dpr,dpr);c.lineWidth=1;
@@ -61,8 +61,7 @@
         }
         c.restore();
       }
-      c.globalAlpha=1;c.strokeStyle='#58684925';c.setLineDash([2,4]);c.beginPath();c.moveTo(0,14);c.lineTo(width,14);c.stroke();c.setLineDash([]);
-      c.font='8px Plex,monospace';c.fillStyle='#526044';c.fillText(ceiling.toLocaleString('en-GB')+' m',1,9);
+      c.globalAlpha=1;
     }
     function resize(){
       const r=canvas.getBoundingClientRect();if(!r.width)return false;
@@ -78,11 +77,11 @@
       ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);ctx.drawImage(base,0,0,width,height);
       const x=progressAt(path,distance)*width,handle=clamp(x,5,width-5);
       ctx.save();ctx.beginPath();ctx.rect(0,0,x,height);ctx.clip();ctx.drawImage(passed,0,0,width,height);ctx.restore();
-      current=sample(profile,distance);kind=pieceAt(profile,distance).kind;ctx.strokeStyle='#a33443';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(handle,13);ctx.lineTo(handle,height-3);ctx.stroke();
+      current=sample(profile,distance);kind=pieceAt(profile,distance).kind;ctx.strokeStyle='#a33443';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(handle,3);ctx.lineTo(handle,height-3);ctx.stroke();
       if(current!==null){ctx.beginPath();ctx.arc(handle,y(current),4.5,0,Math.PI*2);ctx.fillStyle='#a33443';ctx.fill();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2;ctx.stroke();}
       const note=kind==='connection'?(path.sample(distance).mode==='train'?' · train connection':' · estimated path'):'';
       const text=current===null?'Terrain unavailable':'≈ '+current.toLocaleString('en-GB')+' m'+note;
-      if(label.textContent!==text)label.textContent=text;
+      if(label&&label.textContent!==text)label.textContent=text;
       canvas.setAttribute('aria-label','Elevation across 67 days from Paris to Sofia, coloured by country, up to '+ceiling+' metres. '+text+'.');
     }
     const observer=new ResizeObserver(()=>update(position,true));observer.observe(canvas);

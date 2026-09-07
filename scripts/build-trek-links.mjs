@@ -4,13 +4,14 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
 import {join} from 'node:path';
-const require=createRequire(import.meta.url),{buildJourneyPath,metres}=require('../public/trek/journey-route.js');
+const require=createRequire(import.meta.url),{metres}=require('../public/trek/journey-route.js');
 const root=new URL('../',import.meta.url),bytes=readFileSync(new URL('public/trek/route-detail.json',root));
-const route=JSON.parse(bytes),original=buildJourneyPath(route),cache='/tmp/trek-walking-routes';
+const route=JSON.parse(bytes),cache='/tmp/trek-walking-routes';
 mkdirSync(cache,{recursive:true});
 // Dan confirmed walking the remaining gaps on 7 September 2026. The two
 // transport boundaries are inferred from the adjacent recordings, not train GPS.
 const trains=new Set([15,38]),features=[];
+const rails=JSON.parse(readFileSync(new URL('data/trek-rail-routes.json',root),'utf8'));
 function decode(shape){
   let cursor=0,lat=0,lon=0;const points=[];
   function coordinate(){let result=0,shift=0,b;do{b=shape.charCodeAt(cursor++)-63;result|=(b&31)<<shift;shift+=5;}while(b>=32);return result&1?~(result>>1):result>>1;}
@@ -19,8 +20,13 @@ function decode(shape){
 }
 for(let gap=0;gap<route.features.length-1;gap++){
   const previous=route.features[gap],next=route.features[gap+1],a=previous.geometry.coordinates.at(-1),b=next.geometry.coordinates[0];
-  const mode=trains.has(gap)?'train':'walk';let points,method;
-  if(mode==='train'){points=original.connections.features[gap].geometry.coordinates;method='Illustrative transport connection';}
+  const mode=trains.has(gap)?'train':'walk';let points,method,railProperties={};
+  if(mode==='train'){
+    const rail=rails.features.find(f=>f.properties.gap===gap);if(!rail)throw Error('Missing railway alignment '+gap);
+    points=[a,...rail.geometry.coordinates,b];
+    railProperties={railFrom:1,railTo:points.length-2,structures:rail.properties.structures.map(s=>({...s,from:s.from+1,to:s.to+1}))};
+    method='Mapped railway: '+rail.properties.from+' → '+rail.properties.to+'. Stations and service are inferred; exact 2019 travel is unverified.';
+  }
   else if(metres(a,b)<35){points=[a,b];method='Short join between recording endpoints';}
   else{
     const request={locations:[{lon:a[0],lat:a[1]},{lon:b[0],lat:b[1]}],costing:'pedestrian',units:'kilometers',directions_options:{directions_type:'none'}};
@@ -42,8 +48,8 @@ for(let gap=0;gap<route.features.length-1;gap++){
     method='Valhalla pedestrian route on current OpenStreetMap';
     console.log(`Gap ${gap}: days ${previous.properties.throughDay}–${next.properties.day}, ${result.trip.summary.length.toFixed(2)} km, endpoint join ${Math.round(snap)} m`);
   }
-  features.push({type:'Feature',properties:{gap,fromDay:previous.properties.throughDay,day:next.properties.day,mode,estimated:true,method},geometry:{type:'LineString',coordinates:points}});
+  features.push({type:'Feature',properties:{gap,fromDay:previous.properties.throughDay,day:next.properties.day,mode,estimated:true,method,...railProperties},geometry:{type:'LineString',coordinates:points}});
 }
-const links={type:'FeatureCollection',version:1,precision:'estimated',routeHash:createHash('sha256').update(bytes).digest('hex'),generated:new Date().toISOString().slice(0,10),source:'OpenStreetMap contributors; Valhalla / FOSSGIS',sourceUrl:'https://valhalla.openstreetmap.de/',method:'Estimated walking paths between recordings, based on current mapped roads and footpaths. The two reported train transfers stay illustrative. Neither the exact 2019 paths nor transport endpoints are verified. These links add no recorded distance or ascent.',features};
+const links={type:'FeatureCollection',version:1,precision:'estimated',routeHash:createHash('sha256').update(bytes).digest('hex'),generated:new Date().toISOString().slice(0,10),source:'OpenStreetMap contributors; Valhalla / FOSSGIS; mapped railway ways',sourceUrl:'https://valhalla.openstreetmap.de/',method:'Estimated walking paths between recordings, based on current mapped roads and footpaths. The two reported train transfers follow connected mapped railway tracks. Their stations and service are inferred from adjacent recordings, with short access joins kept separate from the train animation. Neither the exact 2019 paths nor transport endpoints are verified. These links add no recorded distance or ascent.',features};
 writeFileSync(new URL('public/trek/route-links.json',root),JSON.stringify(links)+'\n');
 console.log(`Saved ${features.filter(f=>f.properties.mode==='walk').length} estimated walking links and ${trains.size} train connections.`);

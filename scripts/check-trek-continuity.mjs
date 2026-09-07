@@ -16,13 +16,17 @@ for(let i=0;i<links.features.length;i++){
   const f=links.features[i],p=f.properties,coordinates=f.geometry.coordinates;
   assert.deepEqual(Object.keys(f).sort(),['geometry','properties','type']);
   assert.deepEqual(Object.keys(f.geometry).sort(),['coordinates','type']);
-  assert.deepEqual(Object.keys(p).sort(),['day','estimated','fromDay','gap','method','mode']);
+  assert.deepEqual(Object.keys(p).sort(),['day','estimated','fromDay','gap','method','mode',...(p.mode==='train'?['railFrom','railTo','structures']:[])].sort());
   assert.equal(p.gap,i);assert.equal(p.estimated,true);assert(['walk','train'].includes(p.mode));
   assert.equal(p.fromDay,route.features[i].properties.throughDay);assert.equal(p.day,route.features[i+1].properties.day);
   assert.equal(f.geometry.type,'LineString');assert(coordinates.length>=2);
   assert.deepEqual(coordinates[0],route.features[i].geometry.coordinates.at(-1));
   assert.deepEqual(coordinates.at(-1),route.features[i+1].geometry.coordinates[0]);
   assert(coordinates.every(p=>p.length===2&&p.every(Number.isFinite)&&p[0]>=2&&p[0]<=24&&p[1]>=42&&p[1]<=50),'estimates contain only public corridor coordinates, without private activity channels');
+  if(p.mode==='train'){
+    assert.equal(p.railFrom,1);assert.equal(p.railTo,coordinates.length-2);
+    for(const s of p.structures){assert.deepEqual(Object.keys(s).sort(),['from','to','type']);assert(['tunnel','bridge'].includes(s.type));assert(Number.isInteger(s.from)&&Number.isInteger(s.to)&&s.from>=p.railFrom&&s.to<=p.railTo&&s.to>s.from);}
+  }
   if(p.mode==='walk'&&metres(coordinates[0],coordinates.at(-1))>400)assert(coordinates.length>5,'long walking gaps must follow mapped paths rather than a straight connection');
 }
 assert.equal(JSON.stringify(links),originalLinks,'display rounding never edits the sourced estimates');
@@ -65,4 +69,4 @@ for(let i=0;i<route.features.length;i++){
   assert.deepEqual(shown[0],originalPoints[0]);assert.deepEqual(shown.at(-1),originalPoints.at(-1));
   for(const p of shown)assert(originalPoints.some(q=>metres(p,q)<=18.01),'rounding must stay within 18 m of an original vertex');
 }
-console.log('Continuous route checks passed: all 56 joins, all 67 day boundaries, the 94 km gap, bounded corner rounding and unchanged source coordinates.');
+console.log('Continuous route checks passed: all 56 joins, all 67 day boundaries, the mapped Croatian railway, bounded corner rounding and unchanged source coordinates.');

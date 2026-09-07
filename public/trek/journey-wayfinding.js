@@ -34,7 +34,7 @@
     function drawAtlas(){
       ink.fillStyle='#edeedd';ink.fillRect(0,0,width,height);ink.setLineDash([]);
       outlines.forEach((country,i)=>{
-        ink.fillStyle=['#d4ddc1','#dce0c8','#cbd7b9','#e0dfc6'][i%4];ink.strokeStyle='#8c9b7877';ink.lineWidth=.6;
+        ink.fillStyle='#dce1cc';ink.strokeStyle='#8c9b7877';ink.lineWidth=.6;
         for(const ring of country.mini){line(ink,ring);ink.closePath();ink.fill();ink.stroke();}
       });
       ink.lineCap=ink.lineJoin='round';
@@ -42,7 +42,6 @@
       ink.setLineDash([]);ink.fillStyle='#536348';ink.font='9px Plex, monospace';
       const first=at(path.sample(0).point),last=at(path.sample(path.total).point);
       ink.fillText('Paris',first[0]-10,first[1]-9);ink.fillText('Sofia',last[0]-19,last[1]+15);
-      ink.font='8px Plex, monospace';ink.fillText('N',width-16,17);ink.beginPath();ink.moveTo(width-13,23);ink.lineTo(width-13,33);ink.moveTo(width-16,26);ink.lineTo(width-13,23);ink.lineTo(width-10,26);ink.strokeStyle='#536348';ink.stroke();
     }
     drawAtlas();
     let place=null,cached=[],lastScan=-Infinity,lastDraw=-Infinity,lastDistance=0,lastHeading=0,lastCountry='',destroyed=false;
@@ -76,7 +75,7 @@
         line(ctx,passed);ctx.setLineDash(p.mode==='train'?[1.4,2.2]:[]);ctx.strokeStyle=p.mode==='train'?'#b78e61':'#a33443';ctx.lineWidth=1.8;ctx.stroke();
       }
       ctx.setLineDash([]);const p=at(path.sample(distance).point);ctx.save();ctx.translate(...p);
-      ctx.beginPath();ctx.arc(0,0,9.5,0,Math.PI*2);ctx.fillStyle='#fff9e9';ctx.fill();ctx.strokeStyle='#a3344359';ctx.lineWidth=1;ctx.stroke();
+      ctx.scale(.72,.72);
       ctx.rotate(heading*Math.PI/180);
       ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(4.5,4.5);ctx.lineTo(0,2.5);ctx.lineTo(-4.5,4.5);ctx.closePath();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#a33443';ctx.fill();ctx.restore();
     }

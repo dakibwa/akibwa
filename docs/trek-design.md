@@ -45,8 +45,7 @@ perspective and much less text and interface on 5 September 2026.
   cannot wash out streams. Leave mapped surface waterways free of tree trunks.
 - Keep the small trek / 2019 mark in the same Fraunces typeface, play control, speed button,
   combined day/elevation timeline and date on the landscape. Photographs appear automatically;
-  the separate photograph button is removed. The current country and mapped
-  height sit in the minimap. Above the timeline, two larger, dark Fraunces
+  the separate photograph button is removed. The country name and flag sit inside the minimap’s upper-right corner; omit its elevation and footer row. Above the timeline, two larger, dark Fraunces
   counters show kilometres covered and metres climbed, with readable Plex labels
   on a soft paper wash. One elevation ribbon combines the former day blocks,
   terrain graph and scrubber. All 67 days have equal width, coloured by country;
@@ -54,8 +53,8 @@ perspective and much less text and interface on 5 September 2026.
   future portions. One red playhead sits on the current height. The horizontal
   scale represents days, not kilometres. The zero-distance arrival day remains
   visible without adding distance or ascent. The whole profile is a drag target,
-  at least 44px high; the day-number button opens the menu. Dragging pauses and
-  previews the day, date, height and counters immediately, then prepares the final
+  at least 44px high. Keep the date beneath it as the menu button, with a 44px hit target. Remove the visible day count, current height and maximum-height legend. Day and elevation context remains in the accessible slider value and menu. Dragging pauses and
+  previews the date and counters immediately, then prepares the final
   landscape on release. Arrow keys move within a day, Shift+arrows and Page keys
   move by a day, and Home/End reach Paris/Sofia. Seeking backwards clears the
   later fill, and the left arrow can leave the final arrival segment.
@@ -65,16 +64,14 @@ perspective and much less text and interface on 5 September 2026.
   native provider links and keyboard operation.
 - The upper-right corner holds a small paper minimap of the full journey, with
   the completed route, remaining route, dashed connections and a moving direction
-  marker. A small flag sits beside the country name beneath the atlas, with no
-  flagpole or flag covering the route. Use the existing country outlines and a
+  marker. A small flag sits beside the country name inside the upper-right corner, with no separate footer, flagpole or elevation readout. Use the existing country outlines and a
   2D canvas, with no second terrain renderer. Flags are local SVGs from
   flag-icons with its MIT licence alongside them, loaded only as needed.
   Following Dan’s later 7 September feedback, keep the country fills static,
-  without a current-country highlight. A cream halo separates the moving red
-  arrow from the route. Paint the base atlas once. Do not spread
+  using one shared country fill and no current-country highlight. Keep only the small red direction arrow, with no moving halo. Paint the base atlas once. Do not spread
   flags across the atlas: the single flag stays beside the country name.
   Following Dan’s 7 September feedback, remove the top-right menu button and
-  place the compact atlas there; the day number above the ribbon opens journey options.
+  place the compact atlas there; the date below the ribbon opens journey options.
 - Settlement names come from the existing map tiles. Show one name briefly near
   a city, town, village or hamlet, with a small geographic margin to avoid flicker.
   Never announce passing a town on a visual connection. Names clear after leaving;
@@ -108,9 +105,7 @@ perspective and much less text and interface on 5 September 2026.
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
-- Following Dan's renewed 7 September request for faster travel, default Flow
-  has a 1,600 m/s presentation pace, with ¼× at 400 m/s, 2× at 3,200 m/s,
-  4× at 6,400 m/s and 8× at 12,800 m/s. The visible fast-forward button
+- Following Dan’s latest 7 September request, default to 4× Flow at a 6,400 m/s presentation pace, with ¼× at 400 m/s, 1× at 1,600 m/s, 2× at 3,200 m/s and 8× at 12,800 m/s. The visible fast-forward button
   cycles through all five; it stays in sync with the
   menu and preserves playback and position when changed. These are playback
   speeds, not recorded walking speeds. Let gentler bends pass more readily while
@@ -118,13 +113,11 @@ perspective and much less text and interface on 5 September 2026.
 - Original photographs appear as lightly angled paper prints beside the moving
   landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
   `contain`; do not interrupt playback or hide the route, atlas or elevation.
-  Use a balanced cream border, a fine inset edge, quiet paper grain and a
-  soft lifted shadow. Fade each print in with a small rising, rotating motion,
+  Let each print size naturally to the original image ratio, bounded by the viewport. Use a balanced cream border, a fine inset edge, quiet paper grain and a soft lifted shadow; avoid blank side bands on portraits. Fade each print in with a small rising, rotating motion,
   easing into its resting angle. Show only the image, with no visible caption.
-  Clicking a print opens that photograph in the full-screen gallery and pauses
-  at the current position. Select from the actual day; retain its provenance in
+  Automatic prints are passive figures with no links, hover action or pointer interception. Open the original day gallery from the menu. Select from the actual day; retain its provenance in
   the accessible name and gallery because exact photo positions are unknown. Show at most one print per day in
-  continuous playback, and on preparing a directly selected day. The option
+  continuous walking playback, and on preparing a directly selected walking day. Leave the landscape clear during train transfers. The option
   can be disabled and defaults off for reduced motion.
 - Manual photographs use a full-screen dialog with arrows, arrow keys and swipe.
   Browsing preserves the exact route position. All 394 photographs remain
@@ -199,15 +192,21 @@ exports belong in this public repository. The approval covers this journey only.
 On 7 September 2026 Dan confirmed walking the missing sections apart from
 two train transfers, after the overnight German walk (probably into Stuttgart)
 and in Croatia. Keep the reviewed recordings unchanged. `route-links.json`
-contains 54 estimated walking links and two illustrative train connections;
+contains 54 estimated walking links and two mapped railway connections;
 `scripts/build-trek-links.mjs` regenerates them explicitly from the public
-recording endpoints using Valhalla pedestrian routing on current OpenStreetMap.
+recording endpoints using Valhalla pedestrian routing on current OpenStreetMap, plus the committed railway alignment.
 The train boundaries are inferred as the gaps after days 16–17 and before day 42.
 Neither exact 2019 paths nor train endpoints are verified. Short joins under
 35 m connect the endpoints directly. Preserve the router provenance and source
 route hash. The maintenance script caches requests and respects FOSSGIS’s
 one-request-per-second limit; visitors never call the routing service.
-Round displayed corners within 18 m, including walking estimates. Measure estimated distance from the unrounded reconstructed geometry so presentation smoothing does not change the walking totals.
+Round displayed walking corners within 18 m, including walking estimates. Keep railway points unrounded so coaches stay on the mapped track. Measure estimated distance from the unrounded reconstructed geometry so presentation smoothing does not change the walking totals.
+
+`data/trek-rail-routes.json` contains the two connected railway paths: Pforzheim–Mühlacker–Vaihingen (Enz)–Bietigheim-Bissingen–Ludwigsburg–Stuttgart, and Pitomača–Virovitica–Slatina–Čačinci–Đurđenovac–Našice–Koška. Their regional corridors are supported by [Baden-Württemberg’s June 2019 service announcement](https://vm.baden-wuerttemberg.de/de/service/presse/pressemitteilung/pid/ab-juni-2019-deutlich-besseres-regionalzug-angebot-durch-stuttgart) and [HŽ Infrastructure’s 2019 network statement](https://www.hzinfra.hr/wp-content/uploads/2018/12/Izvjesce-o-mrezi-2019-procisceni-tekst-II.izmjene-i-dopune.pdf). Geometry follows the stated current OpenStreetMap snapshots; it does not establish the exact train taken in 2019. The station choices are inferred from adjacent recording endpoints. Keep those qualifications and source attribution in the menu.
+
+`scripts/build-trek-rails.py` is an explicit maintenance step. It caches two bounded public railway queries in `TREK_RAIL_CACHE` (default `/tmp/trek-rail-osm`), then finds connected track paths through the regional stations, penalising sidings and rejecting loops. The committed derivative retains OSM way IDs, snapshot times, bridge/tunnel spans and only the selected railway coordinates. Regenerate links, terrain and HTML after changing it: `python3 scripts/build-trek-rails.py`, `node scripts/build-trek-links.mjs`, `node scripts/build-trek-elevation.mjs`, then `npm run trek:build`. Ordinary builds and visitors never query a router.
+
+`journey-train.js` draws three cream and red paper coaches in the existing 3D scene. Their enlarged scale is illustrative. Each coach follows its own distance along the sourced railway, turns with the track and is hidden inside mapped tunnels. Bridge heights interpolate between their approaches. The train fades at the inferred stations and never drives across the short access joins to walking recordings. It uses the same reversible distance clock as the journey, settles on pause and clears when seeking back to walking. Keep it visible above the controls in phone and desktop views; it must not add distance or ascent to walking totals.
 
 Playback traverses one continuous distance including estimated walking paths and train connections.
 Every numbered day's end meets the next day's start. Missing days share the
@@ -237,7 +236,7 @@ identifications from the images.
 
 On 6 September 2026 Dan requested an elevation profile for the whole journey,
 preparation before playback and caching to keep the landscape smooth. Put the
-profile just above the existing scrubber, with a small moving height marker.
+profile as the scrubber, with one moving playhead and no visible numeric height labels.
 Keep the larger day, distance and ascent figures, and keep the scene dominant
 on desktop and narrow phones. Hide the profile during full-screen photographs.
 

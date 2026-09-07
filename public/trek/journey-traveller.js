@@ -8,13 +8,13 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,train=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
     let heightVelocity=0,cameraLift=0,cameraTerrainClearance=null,routeVisible=null;
     let lastContrast=-Infinity,markLuminance=null,markOnDark=false;
-    let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,flashIndex=0,chapters=[],moments=[];
+    let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     let scrubbing=false,scrubChanged=false;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
@@ -115,7 +115,7 @@
       const d=namedDay(day);
       progress.value=path?TrekElevation.progressAt(path,distance)*1000:0;
       const totals=metrics?.sample(distance)||{km:0,ascent:0,recorded:{km:0,ascent:0},estimated:{km:0,ascent:0}};
-      text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(totals.km));
+      text('readout-distance',number.format(totals.km));
       text('readout-ascent',Math.round(totals.ascent).toLocaleString('en-GB'));
       text('distance-label','km covered'+(totals.estimated.km>0?' · est.':''));
       text('ascent-label','m climbed'+(totals.estimated.ascent>0?' · est.':''));
@@ -125,11 +125,11 @@
       text('where',started?d.c:'Paris → Sofia');
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
       wayfindingUI(force);elevation?.update(distance,force);
-      const ground=elevation?.status().metres;text('minimap-height',Number.isFinite(ground)?'≈ '+ground.toLocaleString('en-GB')+' m':'');
+      const ground=elevation?.status().metres;
       progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?(path.sample(distance).mode==='train'?', train connection':', estimated walking path'):''));
       if(!force&&lastUI===day)return;lastUI=day;
       if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
-      text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
+      text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Journey options');
       $('journey-day').value=day;$('day-back').disabled=day===1;$('day-forward').disabled=day===67;
       const photos=photosFor(day);$('menu-photos').hidden=!photos.length;
       if(photos.length){$('menu-photo').src='photos/'+photos[Math.floor(photos.length*.45)].src;text('menu-photo-count',photos.length+' photographs ↗');}
@@ -156,16 +156,15 @@
       const next=new Image();next.src='photos/'+galleryPhotos[(galleryIndex+1)%galleryPhotos.length].src;
     }
     function showFlash(){
-      const photos=photosFor(day);if(!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
+      const photos=photosFor(day);if(path?.sample(distance).mode==='train'||!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
       const featured=chapters.find(c=>c.day===day),p=photos.find(p=>p.src===featured?.photo)||photos[Math.floor(photos.length*.45)];
       const generation=++flashGeneration,photoDay=day,img=new Image();flashPending=true;
       img.onload=()=>{
         if(generation!==flashGeneration)return;flashPending=false;
         if(menu.open||gallery.open||day!==photoDay)return;
         const picture=flash.querySelector('.memory-image');picture.src=img.src;picture.alt=p.alt;
-        flashIndex=photos.indexOf(p);
         flash.style.setProperty('--print-angle',((photoDay%5)-2)*.6-2+'deg');
-        flash.setAttribute('aria-label','Open this photograph from day '+photoDay);
+        flash.setAttribute('aria-label','Photograph from day '+photoDay);
         flash.hidden=false;flashShown=true;lastFlashDay=photoDay;photoCooldown=0;
         requestAnimationFrame(()=>{if(generation===flashGeneration)flash.classList.add('visible');});
         clearTimeout(flashTimer);flashTimer=setTimeout(dismissFlash,9500);
@@ -253,7 +252,7 @@
       const eye=TrekCamera.ahead(target,lookHeading,-clearance*Math.tan(viewPitch*Math.PI/180));
       const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,fit.base);
       // Do not change pitch after solving zoom/centre: that moves the eye too.
-      map.jumpTo(options);cameraHeading=lookHeading;cameraPitch=map.getPitch();
+      map.jumpTo(options);train?.update(distance);cameraHeading=lookHeading;cameraPitch=map.getPitch();
       cameraClearance=eyeHeight-base;cameraPoint=eye;
       const renderedGround=map.queryTerrainElevation(eye);
       cameraTerrainClearance=Number.isFinite(renderedGround)?eyeHeight-renderedGround:null;
@@ -286,7 +285,7 @@
         route=r;path=TrekRoute.buildJourneyPath(route,67,links);chapters=m.chapters;moments=m.moments;
         metrics=TrekMetrics.create(path,links,profile,data.days);
         terrainHeight=distance=>TrekElevation.sample(profile,distance,false);
-        elevation=TrekElevation.create({profile,path,days:data.days,colors:data.colors,canvas:$('elevation-canvas'),label:$('elevation-current')});
+        elevation=TrekElevation.create({profile,path,days:data.days,colors:data.colors,canvas:$('elevation-canvas')});
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
         if(positionPending){distance=path.dayDistance(positionPending.day,positionPending.t);renderedDistance=distance;positionPending=null;}
         // Roads and topography remain; label furniture belongs in the drawer.
@@ -319,6 +318,7 @@
           }
           try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
+          train=TrekTrain.create(map,path,terrainHeight);
           wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),flag:$('country-flag'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
           map.on('idle',()=>wayfindingUI(true));
           // Sources have now populated MapLibre's initially expanded disclosure.
@@ -364,7 +364,7 @@
     });
     $('menu-photos').addEventListener('click',()=>showGallery());$('gallery-close').addEventListener('click',()=>gallery.close());
     $('photo-back').addEventListener('click',()=>showGallery(galleryIndex-1));$('photo-forward').addEventListener('click',()=>showGallery(galleryIndex+1));
-    flash.addEventListener('click',()=>showGallery(flashIndex));
+
     $('photo-interludes').addEventListener('change',()=>{if(!$('photo-interludes').checked)dismissFlash();else showFlash();});
     gallery.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();showGallery(galleryIndex+(e.key==='ArrowRight'?1:-1));}});
     gallery.addEventListener('touchstart',e=>{swipeX=e.changedTouches[0].clientX;},{passive:true});
@@ -372,7 +372,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

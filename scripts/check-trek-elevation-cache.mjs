@@ -20,7 +20,7 @@ for(let i=0;i<profile.pieces.length;i++){
   if(j){assert(distance>=p.samples[j-1][0]);assert(distance-p.samples[j-1][0]<=201);}
  }
 }
-assert.equal(count,11861);assert(profile.pieces.every(p=>Number.isFinite(Elevation.sample(profile,(p.start+p.end)/2))),'every recorded section and visual link has mapped terrain');assert(profile.max>2300&&profile.max<2700,'the full profile includes the Alpine pass');
+assert.equal(count,path.pieces.reduce((n,p)=>n+Math.max(1,Math.ceil((p.end-p.start)/profile.step))+1,0),'each piece has a bounded terrain sampling interval');assert(profile.pieces.every(p=>Number.isFinite(Elevation.sample(profile,(p.start+p.end)/2))),'every recorded section and visual link has mapped terrain');assert(profile.max>2300&&profile.max<2700,'the full profile includes the Alpine pass');
 assert.equal(Elevation.sample(profile,profile.total),profile.pieces.at(-1).samples.at(-1)[1]);
 const originalProfile=JSON.stringify(profile),originalRoute=JSON.stringify(path.boundaries);
 for(let d=0;d<path.total;d+=537)assert(Math.abs(Elevation.distanceAt(path,Elevation.progressAt(path,d))-d)<.00001,'day-scaled scrubbing must round-trip to the same route position');
