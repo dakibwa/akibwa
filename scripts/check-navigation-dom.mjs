@@ -277,6 +277,8 @@ const publicLandingState = () =>
     };
   })()`);
 
+const selectTaste = (label) => evaluate(`[...document.querySelectorAll('.taste-filters button')].find(button => button.textContent === ${JSON.stringify(label)}).click()`);
+
 const checkPublicLanding = async () => {
   section("public identity boundary");
   await setDesktop();
@@ -491,14 +493,14 @@ const checkPublicLanding = async () => {
   })()`);
   check(nameBefore.name === 'Daniel' && nameAfter.name === 'Akibwa' && nameBefore.animation === 'word-flick', "the original flick changes the name after its initial rest");
   check(nameBefore.top === nameAfter.top && nameBefore.height === nameAfter.height, "the name flip does not move the surrounding composition");
-  await evaluate('document.querySelectorAll(".taste-filters button")[2].click()');
+  await selectTaste('Films');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 35'), "the Films filter keeps the whole approved shelf reachable");
   check(await evaluate(`(() => {
     const art=document.querySelector('.personal-taste-art'), img=art.querySelector('img'), box=art.getBoundingClientRect();
     return img.src.includes('/film-posters/') && Math.abs(box.width/box.height-2/3)<.01;
   })()`), "films show their real posters in an uncropped portrait frame");
-  await evaluate('document.querySelectorAll(".taste-filters button")[0].click()');
-  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48'), "Highlights restores the complete mixed wall");
+  await selectTaste('Films');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48 && !document.querySelector(".taste-filters [aria-pressed=true]")'), "deselecting a medium restores the mixed wall with no active filter");
 
   section("browsing controls and taste search");
   check(await evaluate('document.querySelectorAll(".concept-career-year").length === 8 && !document.querySelector(".concept-career-current")'), "career dates stay readable while the extra current-role line is removed");
@@ -514,7 +516,7 @@ const checkPublicLanding = async () => {
     await sleep(200);
   };
   await tasteSearch('Paul Thomas Anderson');
-  check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].length >= 4 && [...document.querySelectorAll(".personal-taste-card")].every(card => card.textContent.includes("Paul Thomas Anderson"))'), "Highlights search reaches the full film collection by creator");
+  check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].length >= 4 && [...document.querySelectorAll(".personal-taste-card")].every(card => card.textContent.includes("Paul Thomas Anderson"))'), "unfiltered search reaches the full film collection by creator");
   await tasteSearch('Graceland');
   check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].some(card => card.textContent.includes("Paul Simon"))'), "search finds albums across the collection");
   await tasteSearch('veritasium');
@@ -536,11 +538,17 @@ const checkPublicLanding = async () => {
     await evaluate('document.querySelector(".taste-search-field input").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
     await sleep(30);
     check(await evaluate('document.activeElement.matches(".taste-search-toggle") && !document.querySelector(".concept-taste-head.is-searching")'), "closing phone search restores the heading and keyboard focus");
+    if (width === 320) {
+      await selectTaste('Games');
+      await selectTaste('Games');
+      await sleep(100);
+      check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48 && document.querySelector("#taste-rail").scrollLeft <= 3'), "clearing Games resets the mixed wall to its first column instead of retaining the game's snap position");
+    }
   }
   await setDesktop(1440);
 
   section("ranked listening shelves");
-  await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
+  await selectTaste('Music');
   await sleep(200);
   const ranked = () => evaluate(`(() => {
     const counts=[...document.querySelectorAll('.personal-taste-card')].map(card=>card.hasAttribute('data-listens') ? Number(card.dataset.listens) : -1);
@@ -595,7 +603,7 @@ const checkPublicLanding = async () => {
   await sleep(200);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
   check(await ranked(), "descending order is preserved across loaded batches");
-  await evaluate('document.querySelectorAll(".taste-filters button")[5].click()');
+  await selectTaste('Podcasts');
   await sleep(200);
   for (let batch=0;batch<4 && await evaluate('!!document.querySelector(".taste-load-more")');batch++) {
     await evaluate('document.querySelector(".taste-load-more").click()');
@@ -629,7 +637,8 @@ const checkPublicLanding = async () => {
     state.directEmailLinks.length === 0 && state.socialLinks.length === 2,
     "mobile HTML preserves private email handling and approved social links"
   );
-  await evaluate('document.querySelectorAll(".taste-filters button")[5].click();document.querySelector("#taste").scrollIntoView({block:"end",behavior:"instant"});');
+  await selectTaste('Podcasts');
+  await evaluate('document.querySelector("#taste").scrollIntoView({block:"end",behavior:"instant"});');
   await sleep(180);
   check(await evaluate('matchMedia("(hover:none)").matches && getComputedStyle(document.querySelector(".personal-taste-caption")).display !== "none" && document.querySelector(".personal-taste-mobile-count").textContent.includes("play") && getComputedStyle(document.querySelector(".personal-taste-detail-shell")).display === "none"'), "touch devices show titles and counts beneath covers without needing hover");
   check(await evaluate(`(() => {
@@ -641,7 +650,7 @@ const checkPublicLanding = async () => {
   section("collection interaction");
   await setDesktop();
   await goto("/");
-  await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
+  await selectTaste('Music');
   await sleep(250);
   const expectedFirst = listeningPacket.albums[0];
   check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === expectedFirst.plays, "the shelf uses the combined history count instead of the Last.fm snapshot");
@@ -654,7 +663,8 @@ const checkPublicLanding = async () => {
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
   await cdp.send("Input.dispatchKeyEvent", {type:"keyUp",key:"Enter",code:"Enter",windowsVirtualKeyCode:13});
   check(await evaluate('!document.querySelector("dialog") && !location.hash'), "Enter reads the focused count without opening details");
-  await evaluate('document.querySelectorAll(".taste-filters button")[5].click(); document.querySelector(".personal-taste-card").click()');
+  await selectTaste('Podcasts');
+  await evaluate('document.querySelector(".personal-taste-card").click()');
   await sleep(100);
   check(await evaluate('!document.querySelector("dialog") && !location.hash'), "podcast cards also have no click-through");
   check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === listeningPacket.podcasts[0].plays, "podcast counts include the available YouTube and Apple evidence");
@@ -687,7 +697,7 @@ const checkPublicLanding = async () => {
   await cdp.send("Network.setBlockedURLs", { urls: [`${origin}/listening-catalogue.json`] });
   await evaluate('sessionStorage.removeItem("akibwa:remote:/listening-catalogue.json")');
   await goto('/');
-  await evaluate('document.querySelectorAll(".taste-filters button")[1].click()');
+  await selectTaste('Music');
   await sleep(300);
   check(await evaluate('document.querySelector(".taste-load-status")?.textContent.includes("couldn’t load") && document.querySelectorAll(".personal-taste-card").length >= 36'), "a failed full-history fetch retains the opening shelf and offers a retry");
   await cdp.send("Network.setBlockedURLs", { urls: [] });

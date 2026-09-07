@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { SiteImage } from "./site-image";
 import { AlbumCover } from "./album-cover";
 import curation from "@/data/taste-curation.json";
@@ -13,7 +13,6 @@ import { RailControls } from "./rail-controls";
 import { Search, X } from "lucide-react";
 
 const groups = [
-  ["all", "Highlights", "32, 32, 30"],
   ["music", "Music", "224, 122, 26"],
   ["films", "Films", "94, 142, 103"],
   ["games", "Games", "115, 112, 255"],
@@ -72,6 +71,11 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const pointerPosition = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  useLayoutEffect(() => {
+    // Reset after the new artwork is mounted so scroll snap cannot retain a
+    // cover that moved to a later column when the medium was cleared.
+    if (rail.current) rail.current.scrollLeft = 0;
+  }, [category, query]);
   const dismissDetail = () => {
     activeCard.current = null;
     setDetailOpen(false);
@@ -135,7 +139,6 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     dismissDetail();
     setQuery(value);
     setVisibleCount(48);
-    if (rail.current) rail.current.scrollLeft = 0;
   };
   useEffect(() => {
     if (!more.current) return;
@@ -189,16 +192,15 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
             aria-pressed={category === id}
             onClick={() => {
               dismissDetail();
-              setCategory(id);
+              setCategory((current) => current === id ? "all" : id);
               setVisibleCount(48);
-              if (rail.current) rail.current.scrollLeft = 0;
             }}
           >
             {label}
           </button>
         ))}
       </nav>
-      {terms.length ? <p className="taste-search-status" role="status">{list.length ? `${list.length.toLocaleString()} ${list.length === 1 ? "match" : "matches"}${category === "all" ? " across the library" : ""}` : "No matches. Try another title or creator."}</p> : null}
+      {terms.length > 0 && list.length === 0 ? <p className="taste-search-status" role="status">No matches.</p> : null}
       <div className="taste-wall-stage">
       <div className="personal-taste-rail" id="taste-rail" ref={rail}>
         {columns.map((column, index) => <div className="taste-wall-column" key={`${column[0].kind}-${tasteItemKey(column[0])}`}
