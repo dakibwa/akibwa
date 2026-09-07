@@ -64,7 +64,31 @@
   const greens = ['#546d48', '#667d52', '#405e43', '#7c8d5f', '#4e6846'].map(rgb);
   const roofs = ['#af7353', '#a78868', '#bf8f6e', '#7e8774', '#b17b5f'].map(rgb);
   const patch = ['%', ['floor', ['/', ['to-number', ['id'], 0], 10]], 5];
-  const crops = ['match', ['get', 'class'], ['farmland', 'farm', 'orchard', 'vineyard'], true, false];
+  const crops = ['any',
+    ['match', ['get', 'class'], ['farmland', 'farm', 'orchard', 'vineyard'], true, false],
+    ['match', ['get', 'subclass'], ['farmland', 'farm', 'orchard', 'vineyard', 'plant_nursery'], true, false]];
+  const pasture = ['all', ['==', ['get', 'class'], 'grass'],
+    ['match', ['get', 'subclass'], ['grass', 'grassland', 'meadow', 'pasture'], true, false]];
+  const fields = ['any', crops, pasture];
+  const orchard = properties => ['orchard', 'plant_nursery'].includes(properties?.subclass || properties?.class);
+
+  // Small crowns illustrate only explicitly mapped orchards and nurseries.
+  // The fixed geographic rows and clipped holes survive tile/view changes.
+  function plantOrchards(features, center, excluded, radius = 4600, limit = 500) {
+    const trees = new Map(), step = 44;
+    for (const feature of features.filter(item => orchard(item.properties))) for (const coordinates of polygons(feature.geometry)) {
+      const rings = coordinates.map(r => r.map(project)), ring = rings[0]; if (!ring?.length) continue;
+      const bounds = ring.reduce((b, p) => [Math.min(b[0], p[0]), Math.min(b[1], p[1]), Math.max(b[2], p[0]), Math.max(b[3], p[1])], [Infinity, Infinity, -Infinity, -Infinity]);
+      for (let x = Math.floor(Math.max(bounds[0], center[0] - radius) / step); x <= Math.ceil(Math.min(bounds[2], center[0] + radius) / step); x++) {
+        for (let y = Math.floor(Math.max(bounds[1], center[1] - radius) / step); y <= Math.ceil(Math.min(bounds[3], center[1] + radius) / step); y++) {
+          const p = [(x + .5) * step, (y + .5) * step], d = Math.hypot(p[0] - center[0], p[1] - center[1]), key = x + ':' + y;
+          if (d > radius || trees.has(key) || !inPolygon(p, rings) || excluded(p)) continue;
+          trees.set(key, {p, d, seed: .7 + random(x, y, 601) * .28, sizeScale: .48 + random(x, y, 619) * .14});
+        }
+      }
+    }
+    return [...trees.values()].sort((a, b) => a.d - b.d).slice(0, limit);
+  }
 
   // Geometry is made in metres before placement. Each tree keeps its seeded
   // silhouette and fold detail, even when the camera crosses a rebuild boundary.
@@ -136,7 +160,7 @@
       if (id === 'background') paint['background-color'] = '#d6d7b6';
       if (id === 'park') Object.assign(paint, {'fill-color': '#a6b68b', 'fill-opacity': .25, 'fill-outline-color': '#a6b68b'});
       if (id === 'landcover_wood') Object.assign(paint, {'fill-color': ['match', patch, 0, '#7e9268', 1, '#89996e', 2, '#768d65', 3, '#91a176', '#80956b'], 'fill-opacity': .94, 'fill-antialias': true});
-      if (id === 'landcover_grass') Object.assign(paint, {'fill-color': ['match', patch, 0, '#bcc79c', 1, '#c7caa0', 2, '#b5c292', 3, '#d1d0a7', '#c1c99b'], 'fill-opacity': .85, 'fill-antialias': true});
+      if (id === 'landcover_grass') Object.assign(paint, {'fill-color': ['match', ['get', 'subclass'], 'meadow', '#b4bd8e', 'grassland', '#c2c698', 'heath', '#aaa97e', 'scrub', '#a5b183', ['match', patch, 0, '#b8c493', 1, '#c8c89b', 2, '#aebb87', 3, '#cdcca3', '#b8c295']], 'fill-opacity': .94, 'fill-antialias': true});
       if (id === 'landcover_ice') Object.assign(paint, {'fill-color': '#f1eddb', 'fill-opacity': .95});
       if (id === 'landcover_sand') paint['fill-color'] = '#dbca9b';
       if (id === 'landcover_wetland') { delete paint['fill-pattern']; paint['fill-color'] = '#afbea2'; }
@@ -190,18 +214,18 @@
     copy.layers.splice(copy.layers.findIndex(l => l.id === 'waterway_tunnel'), 0, {
       id: 'paper-fields', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover',
       filter: crops,
-      paint: {'fill-color': ['match', patch, 0, '#cab886', 1, '#d8c798', 2, '#b5bf8d', 3, '#e0ce9e', '#c5c599'], 'fill-opacity': .85, 'fill-outline-color': '#e9dec0'}
+      paint: {'fill-color': ['match', ['get', 'subclass'], 'orchard', '#a4b082', 'vineyard', '#adb58b', ['match', patch, 0, '#c6ad77', 1, '#d5c28b', 2, '#a9b481', 3, '#decb98', '#bdc090']], 'fill-opacity': .95, 'fill-outline-color': '#e4d6b0'}
     }, {
       id: 'paper-rock', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: ['==', ['get', 'class'], 'rock'],
       paint: {'fill-color': ['match', patch, 0, '#c2be9f', 1, '#d3cdb3', 2, '#bcbda4', 3, '#ddd6bc', '#cec9ad'], 'fill-opacity': .95}
     });
     const fieldEdge = copy.layers.findIndex(l => l.id === 'paper-rock');
     copy.layers.splice(fieldEdge, 0, {
-      id: 'paper-field-edge-shadow', type: 'line', source: 'openmaptiles', 'source-layer': 'landcover', filter: crops,
-      layout: {'line-join': 'round'}, paint: {'line-color': '#78805b', 'line-opacity': .24, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, .4, 15, 1.8, 18, 3], 'line-offset': .6}
+      id: 'paper-field-edge-shadow', type: 'line', source: 'openmaptiles', 'source-layer': 'landcover', filter: fields,
+      layout: {'line-join': 'round'}, paint: {'line-color': '#727c52', 'line-opacity': .34, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, .5, 15, 2.9, 18, 5.2], 'line-offset': .9}
     }, {
-      id: 'paper-field-edge', type: 'line', source: 'openmaptiles', 'source-layer': 'landcover', filter: crops,
-      layout: {'line-join': 'round'}, paint: {'line-color': '#f2e5bc', 'line-opacity': .72, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, .3, 15, .85, 18, 1.6]}
+      id: 'paper-field-edge', type: 'line', source: 'openmaptiles', 'source-layer': 'landcover', filter: fields,
+      layout: {'line-join': 'round'}, paint: {'line-color': '#f1e6c4', 'line-opacity': .82, 'line-width': ['interpolate', ['linear'], ['zoom'], 12, .35, 15, 1.25, 18, 2.2]}
     });
     copy.light = {anchor: 'map', color: '#fff5df', intensity: .35, position: [1.5, 315, 45]};
     return copy;
@@ -218,13 +242,16 @@
     const nearRoute = routeIndex(route), radius = 4600;
     let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, building = false, destroyed = false;
     let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d'), treeModels = new Map();
-    let buffer, shader, vao, matrixLocation, centerLocation, opacityLocation, appeared = 0, count = 0, treeCount = 0, roofCount = 0, updates = 0, buildMs = 0;
+    let buffer, shader, vao, matrixLocation, centerLocation, opacityLocation, timeLocation, appeared = 0, count = 0, treeCount = 0, roofCount = 0, orchardCount = 0, updates = 0, buildMs = 0;
+    let births = new Map(), fadeUntil = 0, coverCounts = {}, coverWithIds = 0;
     const shaderSource = {
       vertex: `#version 300 es
         precision highp float;
         uniform mat4 u_matrix;
         uniform vec2 u_center;
         uniform float u_opacity;
+        uniform float u_time;
+        in float a_birth;
         in vec3 a_position;
         in vec3 a_color;
         out vec3 v_color;
@@ -232,7 +259,8 @@
         void main() {
           gl_Position = u_matrix * vec4(a_position, 1.0);
           v_color = a_color;
-          v_fade = u_opacity * (1.0 - smoothstep(3400.0, 4550.0, distance(a_position.xy, u_center)));
+          float reveal = clamp((u_time - a_birth) / 700.0, 0.0, 1.0);
+          v_fade = u_opacity * reveal * reveal * (3.0 - 2.0 * reveal) * (1.0 - smoothstep(3400.0, 4550.0, distance(a_position.xy, u_center)));
         }`,
       fragment: `#version 300 es
         precision highp float;
@@ -257,10 +285,10 @@
         gl.deleteShader(vertex); gl.deleteShader(fragment);
         if (!gl.getProgramParameter(shader, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(shader));
         buffer = gl.createBuffer(); vao = gl.createVertexArray(); gl.bindVertexArray(vao); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        for (const [name, offset] of [['a_position', 0], ['a_color', 12]]) {
-          const location = gl.getAttribLocation(shader, name); gl.enableVertexAttribArray(location); gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 24, offset);
+        for (const [name, offset] of [['a_position', 0], ['a_color', 12], ['a_birth', 24]]) {
+          const location = gl.getAttribLocation(shader, name); gl.enableVertexAttribArray(location); gl.vertexAttribPointer(location, name === 'a_birth' ? 1 : 3, gl.FLOAT, false, 28, offset);
         }
-        gl.bindVertexArray(null); matrixLocation = gl.getUniformLocation(shader, 'u_matrix'); centerLocation = gl.getUniformLocation(shader, 'u_center'); opacityLocation = gl.getUniformLocation(shader, 'u_opacity');
+        gl.bindVertexArray(null); matrixLocation = gl.getUniformLocation(shader, 'u_matrix'); centerLocation = gl.getUniformLocation(shader, 'u_center'); opacityLocation = gl.getUniformLocation(shader, 'u_opacity'); timeLocation = gl.getUniformLocation(shader, 'u_time');
       },
       render(gl, args) {
         if (!count) return;
@@ -270,28 +298,39 @@
         const center = project(map.getCenter().toArray());
         gl.useProgram(shader); gl.bindVertexArray(vao); gl.uniformMatrix4fv(matrixLocation, false, matrix); gl.uniform2f(centerLocation, center[0] - origin[0], center[1] - origin[1]);
         const opacity = clamp((performance.now() - appeared) / 850, 0, 1);
-        gl.uniform1f(opacityLocation, opacity * opacity * (3 - 2 * opacity));
+        gl.uniform1f(opacityLocation, opacity * opacity * (3 - 2 * opacity)); gl.uniform1f(timeLocation, performance.now());
         gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL); gl.depthMask(true); gl.disable(gl.CULL_FACE);
         gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.drawArrays(gl.TRIANGLES, 0, count); gl.bindVertexArray(null);
-        if (opacity < 1) map.triggerRepaint();
+        if (opacity < 1 || performance.now() < fadeUntil) map.triggerRepaint();
       },
       onRemove(_, gl) { gl.deleteBuffer(buffer); gl.deleteProgram(shader); gl.deleteVertexArray(vao); }
     };
 
     function build() {
       if (destroyed) return;
-      if (!map.getTerrain() || !map.isSourceLoaded('openmaptiles') || !map.isSourceLoaded('dem')) { pending = true; return; }
+      if (building) { pending = true; return; }
+      // A moving map can always have another tile in flight. Build the loaded
+      // foreground once its terrain exists; later content is coalesced below.
+      if (!map.getTerrain() || !Number.isFinite(map.queryTerrainElevation(map.getCenter().toArray()))) { pending = true; return; }
       const started = performance.now(), center = project(map.getCenter().toArray()), nextGeneration = ++generation;
       lastCenter = center; pending = false; building = true;
-      const woodland = map.querySourceFeatures('openmaptiles', {sourceLayer: 'landcover', filter: ['==', ['get', 'class'], 'wood']});
+      const landcover = map.querySourceFeatures('openmaptiles', {sourceLayer: 'landcover'});
+      const woodland = landcover.filter(feature => feature.properties?.class === 'wood' && !orchard(feature.properties));
+      coverCounts = {}; coverWithIds = 0;
+      for (const feature of landcover) {
+        const key = feature.properties?.class + '/' + (feature.properties?.subclass || '');
+        coverCounts[key] = (coverCounts[key] || 0) + 1; if (feature.id !== undefined) coverWithIds++;
+      }
       const buildings = map.querySourceFeatures('openmaptiles', {sourceLayer: 'building'});
       const nearRoad = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'transportation'})));
       const nearWater = routeIndex(collection(map.querySourceFeatures('openmaptiles', {sourceLayer: 'waterway', filter: ['!=', ['get', 'brunnel'], 'tunnel']})));
       const nearbyLandmarks = landmarks.filter(item => Math.hypot(...project(item.point).map((v, i) => v - center[i])) < radius - 250);
       const landmarkGround = nearbyLandmarks.map(item => TrekLandmarks.displayFootprint(item).map(project));
       const withinLandmark = p => landmarkGround.some(ring => inPolygon(p, [ring]));
-      const candidates = plantWoodland(woodland, center, p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p)), houses = new Map();
+      const excluded = p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p);
+      const orchardCandidates = plantOrchards(landcover, center, excluded);
+      const candidates = [...plantWoodland(woodland, center, excluded, radius, 6500 - orchardCandidates.length), ...orchardCandidates].sort((a, b) => a.d - b.d), houses = new Map();
       for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
         const ring = cleanBuildingRing(polygon[0].map(project));
         if (ring.length < 3 || ring.length > 80) continue;
@@ -303,19 +342,23 @@
       // Build in short chunks. No per-frame terrain sampling or feature queries.
       const roofCandidates = [...houses.values()].sort((a, b) => a.d - b.d).slice(0, 1800);
       const vertices = [], shadows = [], nextOrigin = center;
-      let madeTrees = 0, madeRoofs = 0, index = 0, vertexLimit = (MAX_VERTICES - 30000) * 6; const madeLandmarks = [];
+      let madeTrees = 0, madeRoofs = 0, madeOrchards = 0, index = 0, vertexLimit = (MAX_VERTICES - 30000) * 7, activeBirth = started; const madeLandmarks = [], nextBirths = new Map();
+      function reveal(key) {
+        activeBirth = births.get(key) ?? started; nextBirths.set(key, activeBirth);
+      }
       const heightAt = p => map.queryTerrainElevation(unproject(p));
       const vertex = (p, height) => {
         const cos = Math.cos(unproject(p)[1] * Math.PI / 180);
         return [p[0] - nextOrigin[0], p[1] - nextOrigin[1], height / cos];
       };
       function triangle(a, b, c, color, fixedLight) {
-        if (vertices.length + 18 > vertexLimit) return;
+        if (vertices.length + 21 > vertexLimit) return;
         const light = fixedLight || faceLight(a, b, c);
-        for (const p of [a, b, c]) vertices.push(...p, ...color.map(x => Math.min(1, x * light)));
+        for (const p of [a, b, c]) vertices.push(...p, ...color.map(x => Math.min(1, x * light)), activeBirth);
       }
-      function tree({p, seed}) {
+      function tree({p, seed, sizeScale = 1}) {
         const ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        reveal('tree:' + p.join(':'));
         const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), variant = Math.floor(seed * 96), detailed = random(Math.floor(p[0]), Math.floor(p[1]), 119) > .5, key = variant * 2 + Number(detailed);
         if (!treeModels.has(key)) {
           const model = treeMesh((variant + .5) / 96, detailed), color = greens[Math.floor((variant + .5) / 96 * greens.length)], bark = rgb('#827557'), data = [];
@@ -325,15 +368,16 @@
           }
           treeModels.set(key, {width: model.width, height: model.height, data: new Float32Array(data)});
         }
-        const mesh = treeModels.get(key), size = mesh.width, h = mesh.height, data = mesh.data, x = p[0] - nextOrigin[0], y = p[1] - nextOrigin[1];
-        if (vertices.length + data.length > vertexLimit) return;
-        for (let i = 0; i < data.length; i += 6) vertices.push(x + data[i] * scale, y + data[i + 1] * scale, (ground + data[i + 2]) * scale, data[i + 3], data[i + 4], data[i + 5]);
+        const mesh = treeModels.get(key), size = mesh.width * sizeScale, h = mesh.height * sizeScale, data = mesh.data, x = p[0] - nextOrigin[0], y = p[1] - nextOrigin[1];
+        if (vertices.length + data.length / 6 * 7 > vertexLimit) return;
+        for (let i = 0; i < data.length; i += 6) vertices.push(x + data[i] * scale * sizeScale, y + data[i + 1] * scale * sizeScale, (ground + data[i + 2] * sizeScale) * scale, data[i + 3], data[i + 4], data[i + 5], activeBirth);
         const shadow = [[p[0] - size * scale, p[1]], [p[0], p[1] - size * .5 * scale], [p[0] + h * .8 * scale, p[1] + h * .9 * scale], [p[0], p[1] + size * .6 * scale]];
         shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [[...shadow.map(unproject), unproject(shadow[0])]]}});
-        madeTrees++;
+        madeTrees++; if (sizeScale < 1) madeOrchards++;
       }
       function roof({ring, p, height, d: distance, courtyard}) {
         const ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        reveal('roof:' + p.map(n => Math.round(n)).join(':'));
         const sides = ring.map((a, i) => Math.hypot(a[0] - ring[(i + 1) % ring.length][0], a[1] - ring[(i + 1) % ring.length][1]));
         const local = ring.map(v => [v[0] - p[0], v[1] - p[1]]);
         const area = local.reduce((n, v, i) => n + v[0] * local[(i + 1) % local.length][1] - v[1] * local[(i + 1) % local.length][0], 0) / 2;
@@ -370,7 +414,7 @@
       }
       function landmark(item) {
         const p = project(item.point), ground = heightAt(p); if (!Number.isFinite(ground)) return;
-        vertexLimit = MAX_VERTICES * 6;
+        vertexLimit = MAX_VERTICES * 7; reveal('landmark:' + item.id);
         const scale = 1 / Math.cos(item.point[1] * Math.PI / 180);
         const positioned = ([x, y, z]) => vertex([p[0] + x * scale, p[1] + y * scale], ground + z);
         for (const face of TrekLandmarks.mesh(item)) triangle(positioned(face.a), positioned(face.b), positioned(face.c), rgb(face.color));
@@ -385,10 +429,10 @@
           if (index < candidates.length) tree(candidates[index]); else if (index < candidates.length + roofCandidates.length) roof(roofCandidates[index - candidates.length]); else landmark(nearbyLandmarks[index - candidates.length - roofCandidates.length]); index++;
         }
         if (index < totalCandidates) { setTimeout(chunk, 0); return; }
-        const gl = map.getCanvas().getContext('webgl2'); if (!gl || gl.isContextLost()) return;
+        const gl = map.getCanvas().getContext('webgl2'); if (!gl || gl.isContextLost()) { building = false; pending = true; return; }
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         if (!count || Math.hypot(nextOrigin[0] - origin[0], nextOrigin[1] - origin[1]) > radius) appeared = performance.now();
-        origin = nextOrigin; count = vertices.length / 6; treeCount = madeTrees; roofCount = madeRoofs; landmarkNames = madeLandmarks; updates++;
+        origin = nextOrigin; count = vertices.length / 7; treeCount = madeTrees; roofCount = madeRoofs; orchardCount = madeOrchards; births = nextBirths; fadeUntil = Math.max(0, ...births.values()) + 700; landmarkNames = madeLandmarks; updates++;
         const previousHidden = hiddenBuildings.size;
         for (const id of landmarkBuildingIds(buildings, nearbyLandmarks.filter(item => madeLandmarks.includes(item.id)))) hiddenBuildings.add(id);
         if (hiddenBuildings.size !== previousHidden) {
@@ -397,6 +441,7 @@
         }
         map.getSource('paper-shadows').setData(collection(shadows));
         makeFolds(center); building = false; buildMs = performance.now() - started; map.triggerRepaint();
+        if (pending) schedule();
       }
       chunk();
     }
@@ -430,15 +475,23 @@
       }
       map.getSource('paper-folds').setData(collection(folds));
     }
-    function schedule() {
-      if (timer || destroyed) return;
-      timer = setTimeout(() => { timer = 0; build(); }, 550);
+    function schedule(delay = 220) {
+      if (destroyed) return;
+      pending = true;
+      if (timer || building) return;
+      timer = setTimeout(() => { timer = 0; build(); }, delay);
+    }
+    function prepare() {
+      clearTimeout(timer); timer = 0; pending = true;
+      const center = project(map.getCenter().toArray());
+      if (building && lastCenter && Math.hypot(center[0] - lastCenter[0], center[1] - lastCenter[1]) > 500) { generation++; building = false; }
+      build();
     }
     const moved = () => {
       const center = project(map.getCenter().toArray());
       if (!lastCenter || Math.hypot(center[0] - lastCenter[0], center[1] - lastCenter[1]) > 500) schedule();
     };
-    const loaded = event => { if (['dem', 'openmaptiles'].includes(event.sourceId) && event.isSourceLoaded) { pending = true; schedule(); } };
+    const loaded = event => { if (['dem', 'openmaptiles'].includes(event.sourceId) && (event.sourceDataType === 'content' || event.isSourceLoaded)) schedule(); };
     // Source events can precede the destination camera's last tile request.
     // Retry at idle rather than leaving a paused, first visit without scenery.
     const settled = () => { if (pending || !updates) schedule(); };
@@ -458,10 +511,10 @@
     map.addSource('paper-folds', {type: 'geojson', data: collection([]), tolerance: 0, maxzoom: 18});
     map.addLayer({id: 'paper-folds', type: 'fill', source: 'paper-folds', paint: {'fill-color': ['get', 'color'], 'fill-opacity': ['get', 'opacity'], 'fill-antialias': false}}, 'waterway_tunnel');
     map.addImage('paper-fibre', ink.getImageData(0, 0, 128, 128));
-    map.addLayer({id: 'paper-fibre', type: 'background', paint: {'background-pattern': 'paper-fibre', 'background-opacity': .6}}, 'waterway_tunnel');
+    map.addLayer({id: 'paper-fibre', type: 'background', paint: {'background-pattern': 'paper-fibre', 'background-opacity': .38}}, 'waterway_tunnel');
     // Directional paper grain is clipped to actual farm polygons. Woodland
     // receives a fine canopy print so distant forest remains a continuous mass.
-    for (const material of ['crop-0', 'crop-1', 'canopy']) {
+    for (const material of ['crop-0', 'crop-1', 'pasture', 'orchard', 'canopy']) {
       const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128;
       const brush = canvas.getContext('2d');
       if (material === 'canopy') {
@@ -472,19 +525,35 @@
             brush.beginPath(); brush.moveTo(x + sx, y + sy - size); brush.lineTo(x + sx + size, y + sy + size * .65); brush.lineTo(x + sx - size, y + sy + size * .65); brush.fill();
           }
         }
+      } else if (material === 'pasture') {
+        // Tiny separated fibre strokes leave grazing land open and distinguish
+        // it from the ordered rows of cultivated ground.
+        for (let i = 0; i < 660; i++) {
+          const x = random(i, 401) * 128, y = random(i, 409) * 128;
+          brush.strokeStyle = i % 3 ? 'rgba(75,91,46,.18)' : 'rgba(255,247,215,.28)';
+          brush.lineWidth = .65 + random(i, 419) * .4;
+          brush.beginPath(); brush.moveTo(x, y); brush.lineTo(x + 1 + random(i, 421) * 2, y - 1.4); brush.stroke();
+        }
+      } else if (material === 'orchard') {
+        for (let x = 8; x < 128; x += 16) for (let y = 8; y < 128; y += 16) {
+          brush.fillStyle = 'rgba(61,86,46,.22)'; brush.beginPath(); brush.arc(x + 1, y + 1, 2.6, 0, TAU); brush.fill();
+          brush.fillStyle = 'rgba(242,231,190,.24)'; brush.beginPath(); brush.arc(x, y - 1, 1.8, 0, TAU); brush.fill();
+        }
       } else {
         const direction = material === 'crop-0' ? 1 : -1;
         for (let x = -128; x < 256; x += 8) {
-          brush.strokeStyle = 'rgba(92,94,50,.11)'; brush.lineWidth = .8;
+          brush.strokeStyle = 'rgba(84,88,44,.23)'; brush.lineWidth = 1.05;
           brush.beginPath(); brush.moveTo(x, 0); brush.lineTo(x + direction * 128, 128); brush.stroke();
-          brush.strokeStyle = 'rgba(255,247,211,.17)';
+          brush.strokeStyle = 'rgba(255,247,211,.34)';
           brush.beginPath(); brush.moveTo(x + 1, 0); brush.lineTo(x + 1 + direction * 128, 128); brush.stroke();
         }
       }
       map.addImage('paper-' + material, brush.getImageData(0, 0, 128, 128));
     }
     map.addLayer({id: 'paper-crop-grain', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: crops,
-      paint: {'fill-pattern': ['match', patch, 0, 'paper-crop-0', 2, 'paper-crop-0', 'paper-crop-1'], 'fill-opacity': .5}}, 'paper-field-edge-shadow');
+      paint: {'fill-pattern': ['match', ['get', 'subclass'], ['orchard', 'plant_nursery'], 'paper-orchard', ['match', patch, 0, 'paper-crop-0', 2, 'paper-crop-0', 'paper-crop-1']], 'fill-opacity': .8}}, 'paper-field-edge-shadow');
+    map.addLayer({id: 'paper-pasture-grain', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: pasture,
+      paint: {'fill-pattern': 'paper-pasture', 'fill-opacity': .75}}, 'paper-field-edge-shadow');
     map.addLayer({id: 'paper-canopy-grain', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', filter: ['==', ['get', 'class'], 'wood'],
       paint: {'fill-pattern': 'paper-canopy', 'fill-opacity': .55}}, 'waterway_tunnel');
     map.addSource('paper-shadows', {type: 'geojson', data: collection([]), tolerance: 1, maxzoom: 18});
@@ -495,12 +564,12 @@
     function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('idle', settled); map.off('remove', destroy); }
     map.on('moveend', moved); map.on('sourcedata', loaded); map.on('idle', settled); map.on('remove', destroy); schedule();
     return {
-      status: () => ({trees: treeCount, roofs: roofCount, vertices: count, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending, building}),
-      refresh: schedule,
+      status: () => ({trees: treeCount, roofs: roofCount, orchards: orchardCount, vertices: count, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending, building, fading: count > 0 && performance.now() < Math.max(fadeUntil, appeared + 850), landcover: {...coverCounts}, coverWithIds}),
+      refresh: schedule, prepare,
       destroy
     };
   }
-  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland, landmarkBuildingIds, treeMesh, cleanBuildingRing};
+  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland, plantOrchards, landmarkBuildingIds, treeMesh, cleanBuildingRing};
   if (typeof module !== 'undefined') module.exports = api;
   host.TrekPaper = api;
 })(typeof window === 'undefined' ? globalThis : window);

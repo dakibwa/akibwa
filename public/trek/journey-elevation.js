@@ -79,7 +79,7 @@
       ctx.save();ctx.beginPath();ctx.rect(0,0,x,height);ctx.clip();ctx.drawImage(passed,0,0,width,height);ctx.restore();
       current=sample(profile,distance);kind=pieceAt(profile,distance).kind;ctx.strokeStyle='#a33443';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(handle,3);ctx.lineTo(handle,height-3);ctx.stroke();
       if(current!==null){ctx.beginPath();ctx.arc(handle,y(current),4.5,0,Math.PI*2);ctx.fillStyle='#a33443';ctx.fill();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2;ctx.stroke();}
-      const note=kind==='connection'?(path.sample(distance).mode==='train'?' · train connection':path.sample(distance).mode==='boat'?' · estimated boat crossing':' · estimated path'):'';
+      const note=kind==='connection'?(path.sample(distance).mode==='train'?' · train connection':' · estimated path'):'';
       const text=current===null?'Terrain unavailable':'≈ '+current.toLocaleString('en-GB')+' m'+note;
       if(label&&label.textContent!==text)label.textContent=text;
       canvas.setAttribute('aria-label','Elevation across 67 days from Paris to Sofia, coloured by country, up to '+ceiling+' metres. '+text+'.');

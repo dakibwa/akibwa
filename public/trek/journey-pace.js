@@ -96,9 +96,7 @@
       if(samples.has(key))return samples.get(key);
       const d=clamp(cell*180,0,path.total);
       if(!mountains.has(cell))mountains.set(cell,terrain(heightAt,d));
-      const position=path.sample(d),result=scene(position.point,mountains.get(cell),features,landmarks);
-      if(position.mode==='boat'&&result.cap>280){result.cap=280;result.reason='boat crossing';}
-      samples.set(key,result);
+      const result=scene(path.sample(d).point,mountains.get(cell),features,landmarks);samples.set(key,result);
       if(samples.size>128)samples.delete(samples.keys().next().value);
       if(mountains.size>512)mountains.delete(mountains.keys().next().value);
       return result;

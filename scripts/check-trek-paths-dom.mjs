@@ -21,7 +21,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   const openPhotos=async()=>{await click('#menu-open');if(await evaluate("document.querySelector('#menu-photos').hidden")){await choose(30);await settled();}await click('#menu-photos');};
   await cdp.send('Runtime.enable');const startEvents=cdp.events.length;
   if(process.env.CHECK_TREK_VEHICLES_ONLY==='1'){
-    section('Visible tunnel trains and the estimated Wörthersee boat crossing');
+    section('Visible tunnel trains');
     const prepared=()=>until(async()=>(await state()).ready,60000);
     const totals=()=>evaluate("[document.querySelector('#readout-distance').textContent,document.querySelector('#readout-ascent').textContent].join('|')");
     const pixelCount=async(kind,position)=>{
@@ -36,7 +36,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     };
     await setDesktop(1440,900);await goto('/trek/?day=18');check(await prepared(),'the vehicle journey prepares');
     await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
-    const rail=path.pieces.find(p=>p.mode==='train'),tunnels=rail.structures.filter(s=>s.type==='tunnel'&&s.end-s.start>500),water=path.pieces.find(p=>p.mode==='boat');
+    const rail=path.pieces.find(p=>p.mode==='train'),tunnels=rail.structures.filter(s=>s.type==='tunnel'&&s.end-s.start>500);
     for(const [width,height] of [[1440,900],[390,844]]){
       await setDesktop(width,height);await setPace(6400);
       for(const [index,tunnel] of tunnels.entries()){
@@ -53,26 +53,8 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
         check(frames.some(f=>f.train.cars.every(c=>c.tunnel))&&frames.every(f=>f.train.screen.some(([x,y])=>x>0&&x<width&&y>65&&y<height-170)),'the train passes through the tunnel above the controls');
         check(await totals()===before,'the train leaves both walking totals unchanged');
       }
-      await scrub((water.boatStart+water.boatEnd)/2);check(await prepared(),'the mapped lake crossing prepares');await setPace(0);
-      let s=await state();check(s.mode==='boat'&&s.boat.active&&!s.boat.failed&&s.boat.cars.length===1&&s.boat.vertices>400&&!s.train.active,'one paper boat replaces the train on the lake');
-      check(await pixelCount('boat',s.boat)>10,'the boat hull is visible in the actual rendered lake view');
-      await capture?.(`trek-boat-${width}`);const before=await totals();
-      await evaluate(`window.__boatFrames=[];window.__boatCapture=true;document.querySelector('#play').click();requestAnimationFrame(function sample(time){if(!window.__boatCapture)return;const s=window.trekStatus();window.__boatFrames.push({time,distance:s.distance,boat:s.boat,pace:s.pacing,visible:s.routeVisible,clearance:s.cameraTerrainClearance});requestAnimationFrame(sample);});`);
-      await sleep(8000);
-      const frames=await evaluate(`(()=>{document.querySelector('#play').click();window.__boatCapture=false;const f=window.__boatFrames;delete window.__boatFrames;delete window.__boatCapture;return f;})()`);
-      check(frames.length>100&&frames.at(-1).distance>frames[0].distance+300&&frames.every(f=>f.boat.cars.length===1&&f.boat.opacity===1),'ordinary Auto playback keeps the boat moving continuously');
-      check(frames.every(f=>f.boat.screen.some(([x,y])=>x>0&&x<width&&y>65&&y<height-170)&&f.clearance>200&&f.pace.target<=280),'the scenic crossing keeps the boat framed safely at its slow pace');
-      check(await totals()===before,'the entire sailing animation leaves both walking totals unchanged');
-      const paused=await state();await sleep(500);s=await state();check(s.distance===paused.distance&&JSON.stringify(s.boat.cars)===JSON.stringify(paused.boat.cars),'pause holds the boat in place');
-      console.log('  boat '+JSON.stringify({width,frames:frames.length,metres:Math.round(frames.at(-1).distance-frames[0].distance),vertices:s.boat.vertices}));
     }
-    for(const d of [water.boatStart-5,water.boatStart+300,water.boatEnd-300,water.boatEnd+300]){
-      await scrub(d);check(await prepared(),'seeking across a boat landing prepares');const s=await state();
-      check(s.boat.active===(d>water.boatStart&&d<water.boatEnd)&&!s.train.active,'the boat appears only on water, including backward seeks');
-    }
-    await setDesktop(320,740);await scrub((water.boatStart+water.boatEnd)/2);check(await prepared(),'the narrow phone boat view prepares');
-    let s=await state();check(s.controlsFit&&s.overflow<=1&&s.boat.screen.some(([x,y])=>x>0&&x<320&&y>65&&y<570),'the boat and controls fit a narrow phone');await capture?.('trek-boat-320');
-    await choose(31);check(await prepared()&&!(await state()).boat.active&&!(await state()).train.active,'returning to walking clears both vehicles');
+    await choose(31);check(await prepared()&&!(await state()).train.active,'returning to walking clears the train');
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');if(errors.length)console.error(errors.map(e=>e.params.exceptionDetails.exception?.description));check(!errors.length,'vehicle playback has no JavaScript exceptions');
     return;
   }
@@ -562,7 +544,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   await setDesktop(1440,900);await goto('/trek/?day=30');
   check(await settled(),'the mountain camera loads its destination elevation');
   let s=await state();
-  check(s.day===30&&s.routeLines===57&&s.connections===58&&s.pitch>=42&&s.eyeHeight>1000,'the traveller is above the mountain terrain with all recordings and connections');
+  check(s.day===30&&s.routeLines===57&&s.connections===56&&s.pitch>=42&&s.eyeHeight>1000,'the traveller is above the mountain terrain with all recordings and connections');
   check(!s.creditsExpanded&&s.controlsFit&&s.overflow<=1,'credits are collapsed and desktop controls fit');
   check(await evaluate('!document.querySelector("#journey-card,#journey-reset,#path-tools,#journey-footer")'),'the landscape has no permanent photo card or redundant map controls');
   section('Mapped paper landscape');

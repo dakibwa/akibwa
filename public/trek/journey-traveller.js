@@ -8,7 +8,7 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,train=null,boat=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,train=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
@@ -55,7 +55,7 @@
     $('photo-interludes').checked=!reduced;
     text('walk-totals','About '+Math.round(data.total).toLocaleString('en-GB')+' km · '+(Math.round(data.stats.ascent/10)*10).toLocaleString('en-GB')+' m of ascent · 67 numbered days · '+data.photos.length+' photographs.');
     text('walk-recorded',number.format(data.recorded.km)+' km and '+Math.round(data.recorded.ascent).toLocaleString('en-GB')+' m of ascent from the original recordings.');
-    text('walk-estimated','Plus about '+Math.round(data.estimated.km).toLocaleString('en-GB')+' km and '+(Math.round(data.estimated.ascent/10)*10).toLocaleString('en-GB')+' m of estimated ascent along the reconstructed walks. The trains and boat crossing are excluded.');
+    text('walk-estimated','Plus about '+Math.round(data.estimated.km).toLocaleString('en-GB')+' km and '+(Math.round(data.estimated.ascent/10)*10).toLocaleString('en-GB')+' m of estimated ascent along the reconstructed walks. Both train transfers are excluded.');
     $('landmark-sources').replaceChildren(...data.landmarks.map(item=>{
       const p=document.createElement('p'),link=document.createElement('a'),small=document.createElement('small');
       link.href=item.source;link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.name+' ↗';
@@ -127,7 +127,7 @@
       wayfindingUI(force);elevation?.update(distance,force);
       const ground=elevation?.status().metres;
       const connectionMode=path?.sample(distance).mode;
-      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?(connectionMode==='train'?', train connection':connectionMode==='boat'?', estimated boat crossing':', estimated walking path'):''));
+      progress.setAttribute('aria-valuetext','Day '+day+' of 67, '+d.c+(Number.isFinite(ground)?', about '+ground.toLocaleString('en-GB')+' metres elevation':'')+(path?.sample(distance).kind==='connection'?(connectionMode==='train'?', train connection':', estimated walking path'):''));
       if(!force&&lastUI===day)return;lastUI=day;
       if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Journey options');
@@ -157,7 +157,7 @@
       const next=new Image();next.src='photos/'+galleryPhotos[(galleryIndex+1)%galleryPhotos.length].src;
     }
     function showFlash(){
-      const photos=photosFor(day);if(['train','boat'].includes(path?.sample(distance).mode)||!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
+      const photos=photosFor(day);if(path?.sample(distance).mode==='train'||!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
       const featured=chapters.find(c=>c.day===day),p=photos.find(p=>p.src===featured?.photo)||photos[Math.floor(photos.length*.45)];
       const generation=++flashGeneration,photoDay=day,img=new Image();flashPending=true;
       img.onload=()=>{
@@ -181,7 +181,7 @@
     async function prepareCamera(){
       if(!terrainReady||failed)return;
       const generation=++warmGeneration,eye=TrekCamera.pointAt(path,distance);
-      ready=false;travelSpeed=0;$('begin').disabled=true;$('play').disabled=true;
+      ready=false;travelSpeed=0;tileCache.cancel();$('begin').disabled=true;$('play').disabled=true;
       $('map-status').hidden=false;$('retry-load').hidden=true;$('loading-progress').hidden=false;
       $('loading-progress').value=5;text('load-message','Preparing this stretch of landscape…');
       let preparationTimer;
@@ -190,21 +190,26 @@
         // prefetch runs beside the visible map, without another WebGL renderer.
         map.setCenterClampedToGround(true);
         map.jumpTo({center:eye,zoom:11.5,pitch:35,bearing:TrekCamera.headingAt(path,distance)});
-        const warm=tileCache.warm(TrekCache.corridor(path,distance-1000,distance+6500,vectorTemplate,13,1200),p=>{
+        const report=p=>{
           if(generation!==warmGeneration)return;
           $('loading-progress').value=10+65*p.done/p.total;
           text('load-message','Loading the landscape · '+Math.round(10+65*p.done/p.total)+'%');
-        });
+        };
+        // Begin the nearest route tiles while the safe ground view loads.
+        void tileCache.warm(TrekCache.corridor(path,distance,distance+2000,vectorTemplate,13,800),report);
         if(!await mapIdle(generation))return;
         eyeHeight=null;heightVelocity=0;heading=null;headingVelocity=0;lookHeading=null;lookVelocity=0;viewPitch=null;
         map.setCenterClampedToGround(false);ready=true;camera(.016,true);ready=false;
+        // Solve the real camera first, then warm its actual vector/DEM levels.
+        const zoom=map.getZoom(),warm=tileCache.warm([...TrekCache.corridor(path,distance,distance+4000,vectorTemplate,zoom,1200),...TrekCache.corridor(path,distance-2000,distance,vectorTemplate,zoom,1000)],report);
         await Promise.race([warm,new Promise((_,reject)=>{preparationTimer=setTimeout(()=>reject(Error('Preparation timeout')),25000);})]);
         clearTimeout(preparationTimer);if(generation!==warmGeneration||failed)return;
         text('load-message','Settling the paper landscape…');$('loading-progress').value=90;
         if(!await mapIdle(generation))return;
-        // Give the custom scenery's short build chunks a chance to upload.
-        const deadline=performance.now()+4000;
-        while(!paper?.status().failed&&(!paper?.status().updates||paper?.status().pending||paper?.status().building)&&performance.now()<deadline){
+        // Build the settled destination now, including its gentle reveal, before Play.
+        paper?.prepare?.();
+        const deadline=performance.now()+6500;
+        while(!paper?.status().failed&&(!paper?.status().updates||paper?.status().pending||paper?.status().building||paper?.status().fading)&&performance.now()<deadline){
           await new Promise(resolve=>setTimeout(resolve,80));if(generation!==warmGeneration)return;
         }
         if(!Number.isFinite(map.queryTerrainElevation(eye)))throw Error('Terrain is not ready');
@@ -213,7 +218,7 @@
         $('map-status').hidden=true;document.body.classList.remove('is-loading');
         lastTime=0;updateUI(true);invalidate();
         if(started)showFlash();
-        tileCache.ahead(path,distance,vectorTemplate,map.getZoom());
+        tileCache.ahead(path,distance,vectorTemplate,map.getZoom(),pace||pacing?.status().target||0);
         if(autoBegin){autoBegin=false;begin();}
       }catch(error){
         if(generation!==warmGeneration||failed)return;
@@ -253,7 +258,7 @@
       const eye=TrekCamera.ahead(target,lookHeading,-clearance*Math.tan(viewPitch*Math.PI/180));
       const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,fit.base);
       // Do not change pitch after solving zoom/centre: that moves the eye too.
-      map.jumpTo(options);train?.update(distance);boat?.update(distance);cameraHeading=lookHeading;cameraPitch=map.getPitch();
+      map.jumpTo(options);train?.update(distance);cameraHeading=lookHeading;cameraPitch=map.getPitch();
       cameraClearance=eyeHeight-base;cameraPoint=eye;
       const renderedGround=map.queryTerrainElevation(eye);
       cameraTerrainClearance=Number.isFinite(renderedGround)?eyeHeight-renderedGround:null;
@@ -272,7 +277,7 @@
         if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
       }
       updateUI();const unsettled=camera(dt);
-      if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom());
+      if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom(),travelSpeed);
       if(playing||unsettled)invalidate();
     }
     function unavailable(message){failed=true;ready=false;$('begin').disabled=true;$('play').disabled=true;$('loading-progress').hidden=true;$('retry-load').hidden=false;$('map-status').hidden=false;text('load-message',message);setPlaying(false);}
@@ -314,14 +319,13 @@
           map.addSource('journey-connections',{type:'geojson',data:path.connections,tolerance:0});
           // A broad paper edge separates the deep red thread from roofs,
           // streams and woodland. Walking estimates are paler red; vehicles are dashed.
-          for(const [id,source,color,width,opacity,dash,mode] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-walking-outline','journey-connections','#fff5dc',8,1,null,'walk'],['route-walking','journey-connections','#bd6b71',4.5,1,null,'walk'],['route-transport-outline','journey-connections','#fff5dc',6,1,[2,3],'train'],['route-connections','journey-connections','#977c56',3,1,[2,3],'train'],['route-boat-outline','journey-connections','#fff5dc',6,1,[2,3],'boat'],['route-boat','journey-connections','#467c86',3,1,[2,3],'boat']]){
+          for(const [id,source,color,width,opacity,dash,mode] of [['route-outline','journey-recorded','#fff5dc',9.5,1],['route-recorded','journey-recorded','#a33443',5.5,1],['route-walking-outline','journey-connections','#fff5dc',8,1,null,'walk'],['route-walking','journey-connections','#bd6b71',4.5,1,null,'walk'],['route-transport-outline','journey-connections','#fff5dc',6,1,[2,3],'train'],['route-connections','journey-connections','#977c56',3,1,[2,3],'train']]){
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
             map.addLayer({id,type:'line',source,...(mode?{filter:['==',['get','mode'],mode]}:{}),layout:{'line-cap':'round','line-join':'round'},paint});
           }
           try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
           train=TrekTrain.create(map,path,terrainHeight);
-          boat=TrekBoat.create(map,path,terrainHeight);
           pacing=TrekPace.create({map,path,heightAt:terrainHeight,landmarks:data.landmarks});
           wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),flag:$('country-flag'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
           map.on('idle',()=>wayfindingUI(true));
@@ -376,7 +380,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),boat:boat?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

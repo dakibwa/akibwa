@@ -44,19 +44,9 @@
       const p=f.properties;
       if(i){
         const estimate=estimates?.features.find(f=>f.properties.gap===i-1);
-        let ps,boatFrom,boatTo;
-        if(estimate?.properties.mode==='boat'){
-          const {boatFrom:from,boatTo:to}=estimate.properties,source=estimate.geometry.coordinates;
-          const before=rounded(source.slice(0,from+1)),water=source.slice(from,to+1),after=rounded(source.slice(to));
-          boatFrom=before.length-1;boatTo=before.length+water.length-2;
-          ps=[...before,...water.slice(1).map(p=>p.slice()),...after.slice(1)];
-        }else ps=estimate?(estimate.properties.mode==='train'?estimate.geometry.coordinates.map(p=>p.slice()):rounded(estimate.geometry.coordinates)):connection(route.features[i-1].geometry.coordinates,f.geometry.coordinates);
+        const ps=estimate?(estimate.properties.mode==='train'?estimate.geometry.coordinates.map(p=>p.slice()):rounded(estimate.geometry.coordinates)):connection(route.features[i-1].geometry.coordinates,f.geometry.coordinates);
         const properties={kind:'connection',day:p.day,fromDay:route.features[i-1].properties.throughDay,mode:estimate?.properties.mode||'unknown',estimated:true};
-        const part=add(ps,properties);
-        if(properties.mode==='boat'){
-          part.boatStart=part.start+part.distances[boatFrom];part.boatEnd=part.start+part.distances[boatTo];
-          links.push(line(ps.slice(0,boatFrom+1),{...properties,mode:'walk'}),line(ps.slice(boatFrom,boatTo+1),properties),line(ps.slice(boatTo),{...properties,mode:'walk'}));
-        }else links.push(line(ps,properties));
+        links.push(line(ps,properties));const part=add(ps,properties);
         if(estimate?.properties.mode==='train'){
           const rail=estimate.properties;
           part.railStart=part.start+part.distances[rail.railFrom];part.railEnd=part.start+part.distances[rail.railTo];
@@ -84,8 +74,7 @@
       const p=pieces[lo],offset=distance-p.start;let a=1,b=p.distances.length-1;
       while(a<b){const m=(a+b)>>1;if(p.distances[m]<offset)a=m+1;else b=m;}
       const span=p.distances[a]-p.distances[a-1],t=span?clamp((offset-p.distances[a-1])/span,0,1):0;
-      const mode=p.mode==='boat'&&(distance<p.boatStart||distance>p.boatEnd)?'walk':p.mode||'walk';
-      return {point:point(p.points[a-1],p.points[a],t),kind:p.kind,mode,day:p.day,distance};
+      return {point:point(p.points[a-1],p.points[a],t),kind:p.kind,mode:p.mode||'walk',day:p.day,distance};
     }
     function dayAt(distance){
       let n=1;while(n<dayCount&&distance>=boundaries[n])n++;

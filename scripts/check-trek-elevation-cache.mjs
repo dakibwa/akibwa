@@ -59,4 +59,66 @@ assert.equal(cache.transformRequest(tile,'Tile').url,'trek-cache://'+tile);asser
 let active=0,peak=0;
 cache=Cache.create({storage:{open:async()=>{throw Error();}},fetcher:async()=>{peak=Math.max(peak,++active);await new Promise(r=>setTimeout(r,2));active--;return new Response('ok');}});
 await cache.warm(urls.slice(0,16));assert.equal(peak,3,'look-ahead work has bounded network concurrency');assert.equal(cache.status().pending,0);
-console.log('Elevation and cache checks passed: reversible day timeline, all 67 segments, retained Alpine peak and connections, persistent hits, refresh, cancellation, storage fallback, isolated bytes and bounded prefetch.');
+// Fractional camera zoom must prepare the next vector level, nearest tile first.
+const from=path.dayDistance(30,.5),point=path.sample(from).point,[tileX,tileY]=Cache.tileAt(point,14);
+assert.equal(Cache.corridor(path,from,from+6500,vector,13.3)[0],Cache.urlFor(vector,14,tileX,tileY));
+// Raster sources round their 256px tile zoom independently of vector tiles.
+for(const [cameraZoom,demZoom] of [[12.3,13],[12.7,14],[13.3,14]]){
+ const [x,y]=Cache.tileAt(point,demZoom),tiles=Cache.corridor(path,from,from+1000,vector,cameraZoom);
+ assert(tiles.includes(Cache.urlFor(Cache.DEM,demZoom,x,y)),'fractional camera zoom '+cameraZoom+' must warm the rendered DEM level '+demZoom);
+}
+assert(Cache.corridor(path,0,path.total,vector,14).length<=192,'even a whole-route input cannot create an unbounded speculative plan');
+assert(Cache.corridor(path,path.total,path.total,vector,13).length>0,'arrival still prepares its local tiles');
+assert.equal(Cache.lookAhead(0),12000);assert.equal(Cache.lookAhead(800),17600);assert.equal(Cache.lookAhead(12800),40000);
+let planClock=0;const planned=[];
+cache=Cache.create({storage:null,now:()=>planClock,fetcher:async url=>{planned.push(url);return new Response('tile');}});
+cache.ahead(path,from,vector,12.3);
+while(cache.status().pending)await new Promise(resolve=>setTimeout(resolve,0));
+assert(!planned.some(url=>url.includes('/terrarium/14/')));
+planned.length=0;planClock=1000;cache.ahead(path,from,vector,12.7);
+while(cache.status().pending)await new Promise(resolve=>setTimeout(resolve,0));
+assert(planned.some(url=>url.includes('/terrarium/14/')),'a fractional raster-level change refreshes look-ahead without movement or a vector-level change');
+let warmed=0;
+cache=Cache.create({storage:null,fetcher:async()=>{warmed++;return new Response('ok');}});
+await cache.warm(Array.from({length:300},(_,i)=>Cache.urlFor(Cache.DEM,14,8000+i,5000)));
+assert.equal(warmed,192,'the request queue enforces its bound independently of corridor callers');assert(cache.status().memory<=32);
+
+// A seek stops obsolete downloads immediately, retains overlap, and never aborts
+// a tile the visible map still owns. Manually settled fetches make this a race test.
+const waiting=new Map(),started=[],cancelled=[];
+cache=Cache.create({storage:null,fetcher:(url,{signal})=>new Promise((resolve,reject)=>{
+ started.push(url);waiting.set(url,()=>{waiting.delete(url);resolve(new Response('tile'));});
+ signal.addEventListener('abort',()=>{cancelled.push(url);waiting.delete(url);reject(new DOMException('Aborted','AbortError'));},{once:true});
+})});
+const settle=()=>new Promise(resolve=>setTimeout(resolve,0));
+const [keep,oldA,oldB,oldQueued,nextA,nextB,nextC]=urls;
+const prior=cache.warm([keep,oldA,oldB,oldQueued]);await settle();
+assert.equal(started.length,3);
+const foreground=cache.read(keep);
+const replacement=cache.warm([keep,nextA,nextB,nextC]);await settle();
+assert(cancelled.includes(oldA)&&cancelled.includes(oldB),'superseded speculative-only requests abort');
+assert(!cancelled.includes(keep),'overlapping and visible-map consumers keep their fetch');
+assert(!started.includes(oldQueued),'a superseded queued tile never downloads');
+assert.equal(started.filter(url=>url===keep).length,1,'a refreshed plan shares its active tile');
+waiting.get(keep)();await settle();
+for(const finish of [...waiting.values()])finish();
+assert.equal((await prior).cancelled,true);assert.equal((await replacement).failed,0);await foreground;
+assert.equal(cache.status().errors,0,'normal seek cancellations are not reported as network errors');
+assert.equal(cache.status().aborted,2);
+
+let visibleAbort=false,releaseVisible;
+cache=Cache.create({storage:null,fetcher:(_, {signal})=>new Promise((resolve,reject)=>{
+ releaseVisible=()=>resolve(new Response('visible'));
+ signal.addEventListener('abort',()=>{visibleAbort=true;reject(new DOMException('Aborted','AbortError'));},{once:true});
+})});
+const speculative=cache.warm([tile]);await settle();
+const visible=cache.read(tile);cache.cancel();await speculative;
+assert.equal(visibleAbort,false,'cancelling look-ahead preserves a foreground consumer');releaseVisible();await visible;
+let fetchSignal;
+cache=Cache.create({storage:null,fetcher:(_, {signal})=>new Promise((_,reject)=>{
+ fetchSignal=signal;signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});
+})});
+cache.install({addProtocol:(_,fn)=>{protocol=fn;}});
+const controller=new AbortController(),abandoned=protocol({url:'trek-cache://'+tile},controller);await settle();controller.abort();
+await assert.rejects(abandoned,{name:'AbortError'});assert(fetchSignal.aborted,'leaving the last foreground tile aborts its network request');
+console.log('Elevation and cache checks passed: reversible day timeline, all 67 segments, Alpine peak, persistent refresh/fallback, isolated bytes, nearest-first zoom coverage, speed-aware bounded prefetch, overlap reuse and foreground-safe seek cancellation.');
