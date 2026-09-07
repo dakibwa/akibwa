@@ -20,22 +20,15 @@ const groups = [
   ["podcasts", "Podcasts", "164, 74, 126"],
 ];
 const searchable = (value) => value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase();
-// Keep the catalogue order down each stack, then across the wall. The natural
-// sleeve/poster proportions give each column three or four pieces of artwork.
+// Keep the catalogue order down each stack, then across the wall. Alternating
+// three and four pieces gives a level top edge and naturally varied bottoms.
 function stackArtwork(items) {
   const columns = [];
-  let column = [], height = 0;
-  for (const item of items) {
-    const ratio = item.kind === "films" || item.kind === "tv" ? 1.5 : item.kind === "games" ? 4 / 3 : 1;
-    if (column.length && (column.length === 4 || height + ratio + .12 > 4.75)) {
-      columns.push(column);
-      column = [];
-      height = 0;
-    }
-    height += ratio + (column.length ? .12 : 0);
-    column.push(item);
+  for (let offset = 0; offset < items.length;) {
+    const count = [4, 3, 3, 4, 3, 4][columns.length % 6];
+    columns.push(items.slice(offset, offset + count));
+    offset += count;
   }
-  if (column.length) columns.push(column);
   return columns;
 }
 
@@ -65,6 +58,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const searchButton = useRef(null);
+  const searchInput = useRef(null);
   const rail = useRef(null);
   const more = useRef(null);
   const activeCard = useRef(null);
@@ -140,6 +134,11 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     setQuery(value);
     setVisibleCount(48);
   };
+  const closeSearch = () => {
+    updateQuery("");
+    setSearchOpen(false);
+    requestAnimationFrame(() => searchButton.current?.focus({ preventScroll: true }));
+  };
   useEffect(() => {
     if (!more.current) return;
     const observer = new IntersectionObserver(([entry]) => {
@@ -165,20 +164,24 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
           <h2 id="taste-title">Taste Library</h2>
         </div>
         <div className="taste-tools">
-          {searchOpen ? <div className="taste-search-field">
+          <div className={`taste-search${searchOpen ? " is-open" : ""}`}>
+          <button className="taste-search-toggle" type="button" aria-label="Search" aria-expanded={searchOpen} aria-controls="taste-search-field" aria-hidden={searchOpen} inert={searchOpen} ref={searchButton} onClick={() => {
+            setSearchOpen(true);
+            requestAnimationFrame(() => searchInput.current?.focus({ preventScroll: true }));
+          }}><Search size={15} aria-hidden="true" /><span>Search</span></button>
+          <div className="taste-search-field" id="taste-search-field" aria-hidden={!searchOpen} inert={!searchOpen}>
             <Search size={15} aria-hidden="true" />
-            <input autoFocus type="search" aria-label="Search the taste library" placeholder="Search the library" value={query}
+            <input ref={searchInput} type="search" aria-label="Search the taste library" placeholder="Search the library" value={query}
               onChange={(event) => updateQuery(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Escape") {
                   event.stopPropagation();
-                  updateQuery("");
-                  setSearchOpen(false);
-                  requestAnimationFrame(() => searchButton.current?.focus());
+                  closeSearch();
                 }
               }} />
-            <button type="button" aria-label="Close taste search" onClick={() => { updateQuery(""); setSearchOpen(false); requestAnimationFrame(() => searchButton.current?.focus()); }}><X size={15} aria-hidden="true" /></button>
-          </div> : <button className="taste-search-toggle" type="button" aria-label="Search" ref={searchButton} onClick={() => setSearchOpen(true)}><Search size={15} aria-hidden="true" /><span>Search</span></button>}
+            <button type="button" aria-label="Close taste search" onClick={closeSearch}><X size={15} aria-hidden="true" /></button>
+          </div>
+          </div>
           <RailControls rail={rail} label="Taste" controls="taste-rail" />
         </div>
       </header>
@@ -203,8 +206,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       {terms.length > 0 && list.length === 0 ? <p className="taste-search-status" role="status">No matches.</p> : null}
       <div className="taste-wall-stage">
       <div className="personal-taste-rail" id="taste-rail" ref={rail}>
-        {columns.map((column, index) => <div className="taste-wall-column" key={`${column[0].kind}-${tasteItemKey(column[0])}`}
-          style={{ "--stack-offset": [0, .26, .1, .38, .16, .3][index % 6] }}>
+        {columns.map((column) => <div className="taste-wall-column" key={`${column[0].kind}-${tasteItemKey(column[0])}`}>
         {column.map((item) => {
           const count = listeningLabel(item);
           return (
@@ -259,6 +261,8 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         className="personal-taste-detail-shell"
         panelClassName="personal-taste-detail"
         floating
+        avoid=".concept-taste-head, .taste-filters"
+        placementIndex={detail ? visible.findIndex(item => item.kind === detail.kind && tasteItemKey(item) === tasteItemKey(detail)) : 0}
       >
         {detail ? <>
           <strong>{detail.title}</strong>

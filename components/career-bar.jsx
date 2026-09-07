@@ -45,6 +45,7 @@ export function CareerBar() {
         <h2 id="career-title">Career</h2>
         <RailControls rail={rail} label="Career" controls="career-rail" />
       </header>
+      <div className="career-reveal-stage">
       <ol className="concept-career-timeline" id="career-rail" ref={rail} style={{ "--career-count": career.length }}>
         {career.map((job, index) => (
           <li key={job.name} style={{ "--company-accent": job.accent }}>
@@ -85,6 +86,10 @@ export function CareerBar() {
         id="career-detail"
         className="concept-career-detail-lane"
         panelClassName="concept-career-popover"
+        floating
+        reserveBelow
+        avoid=".concept-career-head h2, .concept-career-head button, .concept-career-stop"
+        placementIndex={detailIndex}
       >
         <strong>{detail.name}</strong>
         <span>{detail.role} · {detail.span}</span>
@@ -92,6 +97,7 @@ export function CareerBar() {
           <CareerStatement {...detail} />
         </p>
       </IndexReveal>
+      </div>
     </section>
   );
 }

@@ -312,9 +312,10 @@ const checkPublicLanding = async () => {
   );
   for(const width of [320,390,560,800,820,1024,1440,1920]){
     await setDesktop(width);
+    await sleep(380);
     check(await evaluate(`(() => {
       const heading=document.querySelector('#taste-title').getBoundingClientRect();
-      const controls=document.querySelector('.taste-tools').getBoundingClientRect();
+      const controls=document.querySelector('.taste-search').getBoundingClientRect();
       return Math.abs((heading.top+heading.bottom-controls.top-controls.bottom)/2)<1 &&
         controls.left>=heading.right+7 && controls.right<=innerWidth && document.documentElement.scrollWidth<=innerWidth+1;
     })()`), `Taste heading and controls stay on one clear line at ${width}px`);
@@ -391,7 +392,20 @@ const checkPublicLanding = async () => {
     return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['/features/','https://portuguesewithines.com/','/trek/']) &&
       !document.querySelector('#project-detail a, #project-detail button');
   })()`), "each project card links directly to its destination without a separate action button");
+  const activatePortuguese = () => evaluate(`(() => {
+    let navigates;
+    document.addEventListener('click', event => { navigates=!event.defaultPrevented; event.preventDefault(); }, {once:true});
+    document.querySelector('.concept-portuguese a').click();
+    return navigates;
+  })()`);
+  check(!(await activatePortuguese()), "the first Portuguese click previews without navigating");
+  await sleep(520);
+  check(await evaluate('document.querySelector("#project-detail").getAttribute("aria-hidden")==="false" && document.querySelector("#project-description").textContent.includes("Inês")'), "the first Portuguese click leaves its description open");
+  check(await activatePortuguese(), "the second Portuguese click allows the native destination link");
+  await evaluate('document.querySelector(".concept-portuguese a").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+  await sleep(360);
   const careerControl = 'document.querySelectorAll(".concept-career-timeline button")[1]';
+  await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"})');
   check(opensSmoothly(await dividerMotion('#taste', `${careerControl}.focus(); ${careerControl}.click();`)), "opening a career statement smoothly pushes the Taste divider down");
   check(await evaluate('(document.querySelector("#career-detail").textContent.includes("Senior BI Developer") && getComputedStyle(document.querySelector("#career-detail")).opacity !== "0" && getComputedStyle(document.querySelector("#career-detail")).visibility === "visible")'), "career activation displays the selected public role");
   check(await evaluate('document.querySelector(".concept-career-statement").textContent.includes("UK growth and clean energy")'), "career detail restores the original mission statement");
@@ -444,6 +458,19 @@ const checkPublicLanding = async () => {
     });},700);
   })`);
   check(interrupted.title==='Leeds Building Society' && interrupted.outgoing===0 && interrupted.open, "rapid direction changes settle on the latest role without stale text");
+  const careerPlacements=[];
+  for (const index of [0,4,7]) {
+    await evaluate(`document.querySelectorAll('.concept-career-stop')[${index}].focus()`);
+    await sleep(520);
+    careerPlacements.push(await evaluate('document.querySelector(".concept-career-detail-lane").dataset.placement'));
+    check(await evaluate(`(() => {
+      const panel=document.querySelector('#career-detail').getBoundingClientRect();
+      const heading=document.querySelector('#career-title').getBoundingClientRect();
+      const next=document.querySelector('#taste').getBoundingClientRect();
+      return panel.bottom<next.top && (panel.bottom<=heading.top || panel.top>=heading.bottom || panel.left>=heading.right || panel.right<=heading.left);
+    })()`), "the Career preview leaves both chapter headings clear");
+  }
+  check(careerPlacements.some(placement=>placement.startsWith('top')) && careerPlacements.some(placement=>placement.startsWith('bottom')), "Career varies above and below the roles according to available space");
   for (const width of [320,390,820]) {
     await setDesktop(width);
     await goto('/');
@@ -453,7 +480,8 @@ const checkPublicLanding = async () => {
       const panel=document.querySelector('#career-detail').getBoundingClientRect();
       const section=document.querySelector('#career').getBoundingClientRect();
       const gap=document.querySelector('#taste').getBoundingClientRect().top-panel.bottom;
-      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && gap<=37 && document.documentElement.scrollWidth<=innerWidth+1;
+      const below=document.querySelector('.concept-career-detail-lane').dataset.placement.startsWith('bottom');
+      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && (!below || gap<=37) && document.documentElement.scrollWidth<=innerWidth+1;
     })()`), `the last career role fits the ${width}px page and keeps a close, clear divider`);
     if(width===320){
       await evaluate('document.querySelector(".concept-career-timeline").scrollLeft=0');
@@ -475,11 +503,12 @@ const checkPublicLanding = async () => {
   check(await evaluate(`(() => {
     const columns=[...document.querySelectorAll('.taste-wall-column')];
     const tops=columns.slice(0,6).map(column=>column.querySelector('article').getBoundingClientRect().top);
-    return columns.length>8 && new Set(tops.map(top=>Math.round(top))).size>3 && columns.every(column=>{
+    const bottoms=columns.slice(0,6).map(column=>column.getBoundingClientRect().bottom);
+    return columns.length>8 && Math.max(...tops)-Math.min(...tops)<1 && new Set(bottoms.map(bottom=>Math.round(bottom))).size>2 && columns.every((column,columnIndex)=>{
       const cards=[...column.querySelectorAll('article')];
-      return cards.length>=3 && cards.length<=4 && cards.every((card,index)=>!index || card.getBoundingClientRect().top>cards[index-1].getBoundingClientRect().bottom+5);
+      return cards.length>=(columnIndex===columns.length-1 ? 1 : 3) && cards.length<=4 && cards.every((card,index)=>!index || card.getBoundingClientRect().top>cards[index-1].getBoundingClientRect().bottom+5);
     });
-  })()`), "Highlights forms densely spaced three- or four-piece stacks with varied starting heights and no overlap");
+  })()`), "the mixed wall has aligned artwork tops, naturally varied bottoms and separate three- or four-cover stacks");
   check(/Iowan|Palatino|Georgia/.test(railState.serif), "the proposition keeps its historical serif");
   const nameBefore=await evaluate(`(() => {
     const name=document.querySelector('.hero-name-value');
@@ -510,7 +539,19 @@ const checkPublicLanding = async () => {
   await evaluate(`document.querySelector('#taste button[aria-label="Previous taste"]').click()`);
   await sleep(700);
   check(await evaluate(`document.querySelector('#taste-rail').scrollLeft <= 2 && document.querySelector('#taste button[aria-label="Previous taste"]').disabled`), "the back arrow returns to the start and disables at the edge");
-  await evaluate('document.querySelector(".taste-search-toggle").click()');
+  const searchMotion = () => evaluate(`new Promise(resolve => {
+    const box=document.querySelector('.taste-search');
+    const header=document.querySelector('.concept-taste-head');
+    const sample=()=>({width:box.getBoundingClientRect().width,height:header.getBoundingClientRect().height,opacity:Number(getComputedStyle(document.querySelector('.taste-search-field')).opacity)});
+    const samples=[sample()];
+    document.querySelector('.taste-search-toggle').click();
+    const until=performance.now()+430;
+    const frame=()=>{samples.push(sample());if(performance.now()<until) requestAnimationFrame(frame);else resolve(samples);};
+    requestAnimationFrame(frame);
+  })`);
+  const desktopSearch=await searchMotion();
+  check(passesThrough(desktopSearch,'width') && desktopSearch.some(frame=>frame.opacity>.05 && frame.opacity<.95) && desktopSearch.every(frame=>Math.abs(frame.height-desktopSearch[0].height)<1), "search expands and fades in without moving its header");
+  check(await evaluate('getComputedStyle(document.querySelector(".taste-search-field input")).outlineStyle==="none" && document.activeElement===document.querySelector(".taste-search-field input")'), "search focuses the input with its own quiet underline");
   const tasteSearch = async (value) => {
     await evaluate(`(() => { const input=document.querySelector('.taste-search-field input'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)}); input.dispatchEvent(new Event('input',{bubbles:true})); })()`);
     await sleep(200);
@@ -529,7 +570,8 @@ const checkPublicLanding = async () => {
   for (const width of [320,390,560]) {
     await setDesktop(width);
     const headerHeight=await evaluate('document.querySelector(".concept-taste-head").getBoundingClientRect().height');
-    await evaluate('document.querySelector(".taste-search-toggle").click()');
+    const phoneSearch=await searchMotion();
+    check(passesThrough(phoneSearch,'width'), `phone search opens through intermediate widths at ${width}px`);
     check(await evaluate(`(() => {
       const header=document.querySelector('.concept-taste-head').getBoundingClientRect();
       const field=document.querySelector('.taste-search-field').getBoundingClientRect();
@@ -573,15 +615,19 @@ const checkPublicLanding = async () => {
   })()`), "hover reveals album, artist and combined plays beside the selected cover");
   check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste reveals the floating box gradually with the shared timing");
   await capture("music-hover-desktop");
+  const firstTastePlacement=await evaluate('document.querySelector(".personal-taste-detail-shell").dataset.placement');
   const tasteHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[4].focus();');
   check(passesThrough(tasteHandover,'left') && tasteHandover.every(sample=>sample.space>20), "Taste glides between covers without collapsing the open dropdown");
   check(tasteHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "Taste crossfades incoming title, creator and count");
   const verticalHandover=await panelMotion('#taste-detail','document.querySelectorAll(".personal-taste-card")[5].focus();');
   check(passesThrough(verticalHandover,'top'), "Taste details glide between rows as well as columns");
+  await evaluate('document.querySelectorAll(".personal-taste-card")[1].focus()');
+  await sleep(520);
+  check(await evaluate('document.querySelector(".personal-taste-detail-shell").dataset.placement') !== firstTastePlacement, "Taste varies its placement as the reader moves through the artwork");
   check(await evaluate(`(() => {
     const panel=document.querySelector('#taste-detail').getBoundingClientRect();
     const card=document.activeElement.getBoundingClientRect();
-    return panel.top>=0 && panel.bottom<=innerHeight && (panel.top>=card.bottom || panel.bottom<=card.top);
+    return panel.top>=0 && panel.bottom<=innerHeight && (panel.top>=card.bottom || panel.bottom<=card.top || panel.left>=card.right || panel.right<=card.left);
   })()`), "the wall detail stays on screen and clear of the selected artwork");
   const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
@@ -739,6 +785,9 @@ const checkPublicLanding = async () => {
   );
   await evaluate('document.querySelector(".concept-career-stop").focus(); document.querySelector(".concept-career-stop").click()');
   check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".concept-career-detail-lane"),document.querySelector(".concept-career-detail-lane .index-reveal-track"),document.querySelector(".concept-career-popover")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion opens the career detail without animation or delay");
+  await evaluate('document.querySelector(".taste-search-toggle").click()');
+  check(await evaluate('[document.querySelector(".taste-search"),document.querySelector(".taste-search-field"),document.querySelector(".index-reveal-reserve")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion makes the search and reserved detail space immediate");
+  await evaluate('document.querySelector(".taste-search-field input").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
   await evaluate('document.querySelector(".personal-taste-card").focus()');
   await sleep(50);

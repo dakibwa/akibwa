@@ -2,15 +2,43 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+const placements = ["bottom-start", "top-end", "right", "bottom-end", "top-start", "left"];
+const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+
+function placeBeside(card, bounds, width, height, index, obstacles) {
+  const gap = 12;
+  const preferred = Math.max(0, index) % placements.length;
+  const candidates = placements.map((_, step) => {
+    const placement = placements[(preferred + step) % placements.length];
+    const top = placement.startsWith("top"), bottom = placement.startsWith("bottom");
+    const x = top || bottom
+      ? clamp(placement.endsWith("end") ? card.right - width : card.left, bounds.left, bounds.right - width)
+      : placement === "right" ? card.right + gap : card.left - width - gap;
+    const y = top ? card.top - height - gap : bottom ? card.bottom + gap
+      : clamp(card.top + (card.height - height) / 2, 12, innerHeight - height - 12);
+    return { x, y, placement };
+  });
+  const fits = ({ x, y }) => x >= bounds.left && x + width <= bounds.right + 1 && y >= 12 && y + height <= innerHeight - 12;
+  const clear = ({ x, y }) => obstacles.every(box => x + width <= box.left - 6 || x >= box.right + 6 || y + height <= box.top - 6 || y >= box.bottom + 6);
+  // A heading may occupy only the left of a row. Use the remaining space
+  // above/below the card before falling back to covering that heading.
+  const shifted = candidates.filter(candidate => candidate.placement.startsWith("top") || candidate.placement.startsWith("bottom"))
+    .flatMap(candidate => obstacles.flatMap(box => [box.right + gap, box.left - width - gap].map(x => ({ ...candidate, x: clamp(x, bounds.left, bounds.right - width) }))));
+  return candidates.find(candidate => fits(candidate) && clear(candidate))
+    ?? shifted.find(candidate => fits(candidate) && clear(candidate))
+    ?? candidates.find(fits)
+    ?? { ...candidates[0], x: clamp(candidates[0].x, bounds.left, bounds.right - width), y: clamp(candidates[0].y, 12, innerHeight - height - 12) };
+}
+
 // One moving box: the rail supplies its position, the text supplies its height.
 // Keeping both mounted lets an interrupted reveal continue from where it is.
-export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, className = "", panelClassName = "", children }) {
+export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, placementIndex = 0, avoid, reserveBelow = false, className = "", panelClassName = "", children }) {
   const content = useRef(null);
   const track = useRef(null);
   const previous = useRef(null);
   const glide = useRef(false);
   const [outgoing, setOutgoing] = useState(null);
-  const [layout, setLayout] = useState({ height: 0, offset: 0, top: 0, width: null, travel: false });
+  const [layout, setLayout] = useState({ height: 0, offset: 0, top: 0, width: null, travel: false, placement: "bottom-start", space: 0 });
 
   useLayoutEffect(() => {
     const before = previous.current;
@@ -44,15 +72,18 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       const visibleWidth = cardBox ? Math.max(0, Math.min(cardBox.right, shelfBox.right) - left) : 0;
       const available = cardBox && visibleWidth >= Math.min(fitAnchor ? 200 : 24, cardBox.width) &&
         (!floating || Math.min(cardBox.bottom, innerHeight) - Math.max(cardBox.top, 0) >= 24);
+      const obstacles = avoid ? [...shelf.closest("section").querySelectorAll(avoid)].filter(node => node !== anchor).map(node => node.getBoundingClientRect()) : [];
       if (open && !available) onUnavailable();
       setLayout((before) => {
         const width = fitAnchor && available ? visibleWidth : before.width;
-        const offset = available ? fitAnchor ? left - shelfBox.left : Math.max(0, Math.min(cardBox.left - shelfBox.left, shelfBox.width - movingBox.getBoundingClientRect().width)) : before.offset;
-        const top = floating && available ? (cardBox.bottom + height + 18 <= innerHeight
-          ? cardBox.bottom : Math.max(9, cardBox.top - height - 18)) - shelfBox.top : before.top;
+        const position = floating && available ? placeBeside(cardBox, shelfBox, movingBox.offsetWidth, height, placementIndex, obstacles) : null;
+        const offset = position ? position.x - shelfBox.left : available ? fitAnchor ? left - shelfBox.left : clamp(cardBox.left - shelfBox.left, 0, shelfBox.width - movingBox.offsetWidth) : before.offset;
+        const top = position ? position.y - movingBox.parentElement.getBoundingClientRect().top - 9 : before.top;
+        const placement = position?.placement ?? before.placement;
+        const space = reserveBelow && position ? Math.max(0, position.y + height - shelfBox.bottom) : 0;
         const moved = before.offset !== offset || before.top !== top || before.width !== width;
-        return before.height === height && !moved
-          ? before : { height, offset, top, width, travel: moved ? travel : before.travel };
+        return before.height === height && !moved && before.placement === placement && before.space === space
+          ? before : { height, offset, top, width, placement, space, travel: moved ? travel : before.travel };
       });
     };
     // Moving between cards glides; scrolling/resizing stays attached to the rail.
@@ -72,10 +103,10 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       window.removeEventListener("scroll", followRail);
       window.removeEventListener("resize", followRail);
     };
-  }, [itemKey, open, fitAnchor, floating]);
+  }, [itemKey, open, fitAnchor, floating, placementIndex, avoid, reserveBelow]);
 
   return (
-    <div
+    <><div
       className={`index-reveal-shell ${className}${floating ? " is-floating" : ""}${open ? " is-open" : ""}`}
       id={shellId}
       role={label ? "region" : undefined}
@@ -83,7 +114,10 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       aria-hidden={!open}
       inert={!open}
       data-reveal-key={itemKey}
-      style={{ "--reveal-height": `${layout.height + 9}px`, "--reveal-content-height": `${layout.height}px`, "--hover-detail-accent": accent }}
+      data-placement={layout.placement}
+      style={{ "--reveal-height": `${layout.height + 9}px`, "--reveal-content-height": `${layout.height}px`, "--hover-detail-accent": accent,
+        "--reveal-enter-x": layout.placement === "right" ? "-5px" : layout.placement === "left" ? "5px" : "0px",
+        "--reveal-enter-y": layout.placement.startsWith("top") ? "5px" : layout.placement.startsWith("bottom") ? "-5px" : "0px" }}
     >
       <div
         className="index-reveal-track"
@@ -97,5 +131,7 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
         </div>
       </div>
     </div>
+    {reserveBelow ? <div className={`index-reveal-reserve${open ? " is-open" : ""}`} aria-hidden="true" style={{ "--reveal-space": `${layout.space}px` }} /> : null}
+    </>
   );
 }

@@ -38,6 +38,7 @@ const projects = [
     above: true,
     aboveSync: true,
     accent: "#7faaff",
+    previewFirst: true,
   },
   {
     id: "trek",
@@ -58,16 +59,18 @@ function ProjectShowcase() {
   const [lastProject, setLastProject] = useState(projects[0]);
   const rail = useRef(null);
   const cards = useRef({});
+  const [armed, setArmed] = useState(null);
   const active = preview;
   // Keep the last detail mounted so its height can animate closed as well.
   const detail = preview ?? lastProject;
-  const dismiss = () => setPreview(null);
+  const dismiss = () => { setPreview(null); setArmed(null); };
   return (
     <div
       className="concept-project-showcase"
       onMouseLeave={(event) => {
         const focused = projects.find((project) => cards.current[project.id] === event.currentTarget.ownerDocument.activeElement);
         setPreview(focused ?? null);
+        if (!focused) setArmed(null);
         if (focused) setLastProject(focused);
       }}
       onBlur={(event) => {
@@ -102,11 +105,20 @@ function ProjectShowcase() {
             aria-describedby={active?.id === project.id ? "project-description" : undefined}
             onMouseEnter={() => {
               if (matchMedia("(hover: hover)").matches) {
+                if (armed !== project.id) setArmed(null);
                 setPreview(project);
                 setLastProject(project);
               }
             }}
-            onFocus={() => { setPreview(project); setLastProject(project); }}
+            onFocus={() => { if (armed !== project.id) setArmed(null); setPreview(project); setLastProject(project); }}
+            onClick={(event) => {
+              if (!project.previewFirst || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              if (armed === project.id) return;
+              event.preventDefault();
+              setArmed(project.id);
+              setPreview(project);
+              setLastProject(project);
+            }}
           >
             <SiteImage
               src={project.src}
