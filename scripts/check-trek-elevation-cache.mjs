@@ -12,14 +12,13 @@ let count=0;
 for(let i=0;i<profile.pieces.length;i++){
  const p=profile.pieces[i],original=path.pieces[i];
  assert.equal(p.kind,original.kind);assert(Math.abs(p.start-original.start)<1);assert(Math.abs(p.end-original.end)<1);
- if(p.kind==='connection'){assert.equal(p.samples.length,0);if(p.end-p.start>2)assert.equal(Elevation.sample(profile,(p.start+p.end)/2),null);continue;}
  assert(p.samples.length>=2);assert.equal(p.samples[0][0],p.start);assert.equal(p.samples.at(-1)[0],p.end);
  for(let j=0;j<p.samples.length;j++){
   const [distance,height]=p.samples[j];count++;assert.equal(p.samples[j].length,2);assert(Number.isInteger(height)&&height>=-100&&height<=4000);
-  if(j){assert(distance>p.samples[j-1][0]);assert(distance-p.samples[j-1][0]<=201);}
+  if(j){assert(distance>=p.samples[j-1][0]);assert(distance-p.samples[j-1][0]<=201);}
  }
 }
-assert.equal(count,9820);assert(profile.max>2300&&profile.max<2700,'the full profile includes the Alpine pass');
+assert.equal(count,11677);assert(profile.pieces.every(p=>Number.isFinite(Elevation.sample(profile,(p.start+p.end)/2))),'every recorded section and visual link has mapped terrain');assert(profile.max>2300&&profile.max<2700,'the full profile includes the Alpine pass');
 assert.equal(Elevation.sample(profile,profile.total),profile.pieces.at(-1).samples.at(-1)[1]);
 const entries=new Map();
 const fakeCache={match:async key=>entries.get(String(key))?.clone(),put:async(key,response)=>entries.set(String(key),response.clone()),keys:async()=>[...entries.keys()],delete:async key=>entries.delete(String(key))};
@@ -43,4 +42,4 @@ assert.equal(cache.transformRequest(tile,'Tile').url,'trek-cache://'+tile);asser
 let active=0,peak=0;
 cache=Cache.create({storage:{open:async()=>{throw Error();}},fetcher:async()=>{peak=Math.max(peak,++active);await new Promise(r=>setTimeout(r,2));active--;return new Response('ok');}});
 await cache.warm(urls.slice(0,16));assert.equal(peak,3,'look-ahead work has bounded network concurrency');assert.equal(cache.status().pending,0);
-console.log('Elevation and cache checks passed: full mapped profile, unmeasured gaps, persistent hits, refresh, cancellation, storage fallback, isolated bytes and bounded prefetch.');
+console.log('Elevation and cache checks passed: full mapped profile, distinct mapped connections, persistent hits, refresh, cancellation, storage fallback, isolated bytes and bounded prefetch.');

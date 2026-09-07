@@ -7,7 +7,7 @@ const {buildJourneyPath,metres,headingDelta}=require('../public/trek/journey-rou
 const camera=require('../public/trek/journey-camera.js');
 const route=JSON.parse(readFileSync(new URL('../public/trek/route-detail.json',import.meta.url),'utf8'));
 const original=JSON.stringify(route),path=buildJourneyPath(route);
-const paces=[180,675,1400];
+const paces=[300,1600,3200];
 
 for(let d=0;d<=path.total;d+=250){
   const p=camera.pointAt(path,d),next=camera.pointAt(path,d+1),heading=camera.headingAt(path,d);
@@ -16,7 +16,7 @@ for(let d=0;d<=path.total;d+=250){
   assert(metres(p,next)<1.01,'a GPS corner must not teleport the camera');
   for(const pace of paces){
     const speed=camera.speedLimit(path,d,pace,heading);
-    assert(speed>=20&&speed<=pace,'corners may slow travel but must not reverse, stall or accelerate it');
+    assert(speed>=35&&speed<=pace,'corners may slow travel but must not reverse, stall or accelerate it');
   }
 }
 for(const boundary of path.boundaries){
@@ -31,14 +31,14 @@ for(const [start,end] of stretches){
   for(const pace of paces){
     let distance=start,renderedDistance=start,heading=camera.headingAt(path,start),velocity=0,speed=0,elapsed=0,step=0;
     while(distance<end&&elapsed<1800){
-      const dt=[1/60,1/30,.05][step++%3];
-      speed+=(camera.speedLimit(path,distance,pace,heading)-speed)*(1-Math.exp(-dt/1.2));
+      const dt=[1/60,1/30,.1][step++%3];
+      speed+=(camera.speedLimit(path,distance,pace,heading)-speed)*(1-Math.exp(-dt/.85));
       distance=Math.min(end,distance+speed*dt);
       renderedDistance+=(distance-renderedDistance)*(1-Math.exp(-dt/.6));
       const wanted=camera.headingAt(path,renderedDistance),next=camera.turn(heading,velocity,wanted,dt);
       const turn=Math.abs(headingDelta(heading,next.heading))/dt;
-      assert(turn<=9.001,'the view must not whip around at a tight turn');
-      assert(Math.abs(next.velocity-velocity)<=6*dt+.0001,'turning must ease in and out');
+      assert(turn<=14.001,'the view must not whip around at a tight turn');
+      assert(Math.abs(next.velocity-velocity)<=9*dt+.0001,'turning must ease in and out');
       largestTurn=Math.max(largestTurn,turn);worstLag=Math.max(worstLag,Math.abs(headingDelta(next.heading,wanted)));
       heading=next.heading;velocity=next.velocity;elapsed+=dt;
     }

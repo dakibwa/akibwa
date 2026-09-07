@@ -1,4 +1,4 @@
-/* A continuous, forward-facing journey. Photographs interrupt it like memories. */
+/* A continuous, forward-facing journey with small photographic keepsakes. */
 (function(host){
   'use strict';
   const $=id=>document.getElementById(id),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -12,7 +12,7 @@
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
-    let flashTime=0,flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,chapters=[],moments=[];
+    let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,flashIndex=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
@@ -32,7 +32,7 @@
     }
     function wayfindingUI(force=false){
       if(!wayfinding||!path)return;
-      wayfinding.update(distance,heading??TrekCamera.headingAt(path,distance),force);
+      wayfinding.update(distance,heading??TrekCamera.headingAt(path,distance),force,namedDay(day).c);
       const now=performance.now();if(!force&&now-lastLandmarkScan<220)return;lastLandmarkScan=now;
       const at=path.sample(distance).point,shown=paper?.status().landmarks||[];
       const nearby=started&&following&&ready?data.landmarks.filter(item=>shown.includes(item.id)).map(item=>{
@@ -49,7 +49,8 @@
       lastTime=0;invalidate();
     }
     function dismissFlash(){
-      flashGeneration++;flashTime=0;flashShown=false;flashPending=false;flash.classList.remove('visible');document.body.classList.remove('in-memory');
+      clearTimeout(flashTimer);
+      flashGeneration++;flashShown=false;flashPending=false;flash.classList.remove('visible');
       const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:950);
     }
     function begin(){
@@ -83,10 +84,12 @@
       const km=mix(previous?.cum||0,d.cum,measured),ascent=mix(previous?.cumElev||0,d.cumElev,measured);
       text('readout-day',String(day).padStart(2,'0'));text('readout-distance',number.format(km));
       text('readout-ascent',Math.round(ascent).toLocaleString('en-GB'));
-      text('where',started?d.c:'Paris → Sofia');text('country-flag',started?(TrekWayfinding.flags[d.c]||''):'');
+      text('where',started?d.c:'Paris → Sofia');
       $('minimap-canvas').setAttribute('aria-label','Overview of Paris to Sofia: day '+day+', '+d.c);
       wayfindingUI(force);elevation?.update(distance,force);
+      const ground=elevation?.status().metres;text('minimap-height',Number.isFinite(ground)?'≈ '+ground.toLocaleString('en-GB')+' m':'');
       if(!force&&lastUI===day)return;lastUI=day;
+      if(lastFlashDay!==day&&(flashShown||flashPending))dismissFlash();
       text('progress-day',d.date?new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'Day '+day);
       $('journey-day').value=day;$('day-back').disabled=day===1;$('day-forward').disabled=day===67;
       const photos=photosFor(day);$('photos-open').disabled=false;$('menu-photos').hidden=!photos.length;
@@ -112,15 +115,18 @@
       const next=new Image();next.src='photos/'+galleryPhotos[(galleryIndex+1)%galleryPhotos.length].src;
     }
     function showFlash(){
-      const photos=photosFor(day);if(!photos.length||flashPending)return;
-      const featured=chapters.find(c=>c.day===day),p=featured?{src:featured.photo}:photos[Math.floor(photos.length*.45)];
+      const photos=photosFor(day);if(!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
+      const featured=chapters.find(c=>c.day===day),p=photos.find(p=>p.src===featured?.photo)||photos[Math.floor(photos.length*.45)];
       const generation=++flashGeneration,photoDay=day,img=new Image();flashPending=true;
       img.onload=()=>{
         if(generation!==flashGeneration)return;flashPending=false;
-        if(!playing||menu.open||gallery.open||day!==photoDay)return;
-        flash.querySelectorAll('img').forEach(el=>el.src=img.src);flash.querySelector('.memory-location').textContent=namedDay(photoDay).c+' · day '+photoDay;
-        flash.hidden=false;flashShown=true;flashTime=0;lastFlashDay=photoDay;photoCooldown=0;travelSpeed=0;
-        requestAnimationFrame(()=>{if(generation===flashGeneration){flash.classList.add('visible');document.body.classList.add('in-memory');}});
+        if(menu.open||gallery.open||day!==photoDay)return;
+        const picture=flash.querySelector('.memory-image');picture.src=img.src;picture.alt=p.alt;
+        flashIndex=photos.indexOf(p);flash.querySelector('.memory-location').textContent='From day '+photoDay+' ↗';
+        flash.setAttribute('aria-label','Open this photograph from day '+photoDay);
+        flash.hidden=false;flashShown=true;lastFlashDay=photoDay;photoCooldown=0;
+        requestAnimationFrame(()=>{if(generation===flashGeneration)flash.classList.add('visible');});
+        clearTimeout(flashTimer);flashTimer=setTimeout(dismissFlash,9500);
       };img.onerror=()=>{if(generation===flashGeneration){flashPending=false;lastFlashDay=photoDay;}};img.src='photos/'+p.src;
     }
     function mapIdle(generation,limit=18000){
@@ -164,6 +170,7 @@
         ready=true;$('begin').disabled=false;$('play').disabled=false;$('loading-progress').value=100;
         $('map-status').hidden=true;document.body.classList.remove('is-loading');
         lastTime=0;updateUI(true);invalidate();
+        if(started)showFlash();
         tileCache.ahead(path,distance,vectorTemplate,map.getZoom());
         if(autoBegin){autoBegin=false;begin();}
       }catch(error){
@@ -208,19 +215,16 @@
       return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1||Math.abs(headingVelocity)>.02||Math.abs(eyeHeight-wantedEye)>.5||Math.abs(viewPitch-wantedPitch)>.02;
     }
     function tick(time){
-      frame=0;const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.05,elapsed);lastTime=time;
+      frame=0;const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.1,elapsed);lastTime=time;
       if(playing&&path&&ready){
-        if(flashShown){flashTime+=elapsed;if(flashTime>=5.5)dismissFlash();}
-        else{
-          const desired=TrekCamera.speedLimit(path,distance,pace,heading);
-          travelSpeed=mix(travelSpeed,desired,1-Math.exp(-dt/1.2));
-          distance=Math.min(path.total,distance+travelSpeed*dt);photoCooldown+=elapsed;
-          if($('photo-interludes').checked&&!reduced&&photoCooldown>14&&lastFlashDay!==day&&fraction>.28&&fraction<.9)showFlash();
-          if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
-        }
+        const desired=TrekCamera.speedLimit(path,distance,pace,heading);
+        travelSpeed=mix(travelSpeed,desired,1-Math.exp(-dt/.85));
+        distance=Math.min(path.total,distance+travelSpeed*dt);photoCooldown+=elapsed;
+        if(!flashShown&&photoCooldown>6&&lastFlashDay!==day&&fraction>.12&&fraction<.9)showFlash();
+        if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
       }
       updateUI();const unsettled=camera(dt);
-      if(ready&&playing&&following&&!flashShown)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom());
+      if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom());
       if(playing||unsettled)invalidate();
     }
     function unavailable(message){failed=true;ready=false;$('begin').disabled=true;$('play').disabled=true;$('loading-progress').hidden=true;$('retry-load').hidden=false;$('map-status').hidden=false;text('load-message',message);setPlaying(false);}
@@ -273,8 +277,8 @@
     }
     $('retry-load').addEventListener('click',()=>{if(terrainReady&&!failed)prepareCamera();else location.reload();});
     $('begin').addEventListener('click',begin);$('replay').addEventListener('click',()=>{reset();autoBegin=true;});
-    $('play').addEventListener('click',()=>{if(flashShown){dismissFlash();setPlaying(false);}else if(playing)setPlaying(false);else begin();});
-    $('menu-open').addEventListener('click',()=>{setPlaying(false);dismissFlash();menu.showModal();});$('menu-close').addEventListener('click',()=>menu.close());
+    $('play').addEventListener('click',()=>{if(playing)setPlaying(false);else begin();});
+    for(const id of ['menu-open','opening-days'])$(id).addEventListener('click',()=>{setPlaying(false);dismissFlash();menu.showModal();});$('menu-close').addEventListener('click',()=>menu.close());
     menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left)menu.close();}});
     $('journey-day').addEventListener('change',e=>visit(+e.target.value));
     $('day-back').addEventListener('click',()=>visit(day-1));$('day-forward').addEventListener('click',()=>visit(day+1));
@@ -283,7 +287,8 @@
     $('photos-open').addEventListener('click',()=>showGallery(Math.floor(photosFor(day).length*fraction)));
     $('menu-photos').addEventListener('click',()=>showGallery());$('gallery-close').addEventListener('click',()=>gallery.close());
     $('photo-back').addEventListener('click',()=>showGallery(galleryIndex-1));$('photo-forward').addEventListener('click',()=>showGallery(galleryIndex+1));
-    flash.addEventListener('click',dismissFlash);
+    flash.addEventListener('click',()=>showGallery(flashIndex));
+    $('photo-interludes').addEventListener('change',()=>{if(!$('photo-interludes').checked)dismissFlash();else showFlash();});
     gallery.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();showGallery(galleryIndex+(e.key==='ArrowRight'?1:-1));}});
     gallery.addEventListener('touchstart',e=>{swipeX=e.changedTouches[0].clientX;},{passive:true});
     gallery.addEventListener('touchend',e=>{if(swipeX!==null){const delta=e.changedTouches[0].clientX-swipeX;if(Math.abs(delta)>50)showGallery(galleryIndex+(delta<0?1:-1));}swipeX=null;},{passive:true});

@@ -9,8 +9,7 @@ const root=new URL('../',import.meta.url),routeBytes=readFileSync(new URL('publi
 const path=buildJourneyPath(JSON.parse(routeBytes)),zoom=11,step=200;
 const cache=process.env.TREK_DEM_CACHE||'/tmp/trek-profile-dem';mkdirSync(cache,{recursive:true});
 const samples=path.pieces.map(p=>{
-  if(p.kind!=='recorded')return {kind:p.kind,start:Math.round(p.start),end:Math.round(p.end),samples:[]};
-  const count=Math.ceil((p.end-p.start)/step);
+  const count=Math.max(1,Math.ceil((p.end-p.start)/step));
   return {kind:p.kind,start:Math.round(p.start),end:Math.round(p.end),samples:Array.from({length:count+1},(_,i)=>{
     const d=p.start+(p.end-p.start)*i/count,[lon,lat]=path.sample(d).point,n=2**zoom;
     const x=(lon+180)/360*n,y=(1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n;
@@ -37,6 +36,6 @@ await Promise.all(Array.from({length:4},async()=>{
 const terrain=(s)=>{const data=decoded.get(s.tile),x=Math.min(255,Math.floor(s.x)),y=Math.min(255,Math.floor(s.y)),i=(y*256+x)*3;return Math.round(data[i]*256+data[i+1]+data[i+2]/256-32768);};
 const pieces=samples.map(p=>({...p,samples:p.samples.map(s=>[s.d,terrain(s)])}));
 const heights=pieces.flatMap(p=>p.samples.map(s=>s[1]));
-const profile={version:1,source:'Mapzen terrain tiles',sourceUrl:'https://www.mapzen.com/rights/',method:'Mapped ground elevation, sampled about every 200 m; not recorded GPS altitude. Gaps have no elevation profile.',zoom,step,routeHash:createHash('sha256').update(routeBytes).digest('hex'),total:Math.round(path.total),min:Math.min(...heights),max:Math.max(...heights),pieces};
+const profile={version:2,source:'Mapzen terrain tiles',sourceUrl:'https://www.mapzen.com/rights/',method:'Mapped ground elevation across every recorded path and presentation connection, sampled about every 200 m; not recorded GPS altitude. Connection heights describe the ground beneath an illustrative link and add no walking distance or ascent.',zoom,step,routeHash:createHash('sha256').update(routeBytes).digest('hex'),total:Math.round(path.total),min:Math.min(...heights),max:Math.max(...heights),pieces};
 writeFileSync(new URL('public/trek/elevation-profile.json',root),JSON.stringify(profile)+'\n');
 console.log(`Elevation profile: ${heights.length} ground heights, ${keys.length} tiles, ${profile.min}–${profile.max} m`);

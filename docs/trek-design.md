@@ -1,7 +1,7 @@
 # Trek: Paris to Sofia
 
 A moving view of the walk, looking along the traveller's path. The landscape
-does the storytelling; original photographs briefly take its place. Dan selected
+does the storytelling; original photographs appear as small paper keepsakes. Dan selected
 one Paths view, then requested continuous joins, smoother motion, a traveller's
 perspective and much less text and interface on 5 September 2026.
 
@@ -37,21 +37,25 @@ perspective and much less text and interface on 5 September 2026.
   lakes visibly blue and respect mapped shorelines. Draw every ground material,
   field fill and hillshade before the first waterway layer, so paper treatments
   cannot wash out streams. Leave mapped surface waterways free of tree trunks.
-- Keep the small mark, country, menu, play control, progress line, date and
-  photograph button on the landscape. Put the current country’s flag beside its
-  name. A clearly readable row above the progress line shows
+- Keep the small mark, play control, progress line, date and photograph button
+  on the landscape. The current country and mapped height sit in the minimap.
+  A clearly readable row above the progress line shows
   day out of 67, kilometres covered and total metres climbed, as Dan requested
-  on 5 September 2026. Use large, dark Fraunces numerals and smaller Plex labels on the open landscape. The opening has one start action; Sofia
+  on 5 September 2026. Use large, dark Fraunces numerals and smaller Plex labels on the open landscape. The opening has a primary start action and a quiet link to browse days,
+  accessible while terrain loads or fails; Sofia
   has one replay action. Map credits remain in a visible compact disclosure.
 - The upper-right corner holds a small paper minimap of the full journey, with
   the completed route, remaining route, dashed connections and a moving direction
-  marker. It uses the existing country outlines and a 2D canvas, with no second
-  terrain renderer. Keep it below the menu and compact on phone screens.
+  marker carrying a small muted flag. Use the existing country outlines
+  and a 2D canvas, with no second terrain renderer. Flags are local SVGs from
+  flag-icons with its MIT licence alongside them, loaded only as needed.
+  Following Dan’s 7 September feedback, remove the top-right menu button and
+  place the compact atlas there; tapping the day number opens journey options.
 - Settlement names come from the existing map tiles. Show one name briefly near
   a city, town, village or hamlet, with a small geographic margin to avoid flicker.
   Never announce passing a town on a visual connection. Names clear after leaving;
-  replay and scrubbing can reveal them again. Hide inset and place furniture
-  during photographic interludes.
+  replay and scrubbing can reveal them again. Small photo prints leave the atlas
+  and landscape visible; the full-screen gallery covers the scene when opened.
 - Nine landmarks have small paper models anchored at verified public positions:
   Reims cathedral, Château des Rohan, the Frauenkirche, St. Jakob in Villach,
   Ptuj Castle, Osijek’s co-cathedral, the Name of Mary Church in Novi Sad, the
@@ -59,19 +63,22 @@ perspective and much less text and interface on 5 September 2026.
   cornices and facade details are architectural interpretations. Show a quiet
   name when a model is in view. Keep the source links in the menu. These are
   nearby landmarks, not evidence of entering a building.
-- The menu owns all 67 days, six chapters, pace, the photograph-interlude toggle,
+- The menu owns all 67 days, six chapters, pace, the automatic-photo toggle,
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
-- Following Dan's 6 September request for quicker animation, default Flow has a
-  675 m/s presentation pace, with Wander at 180 m/s and Fly at 1,400 m/s. These
+- Following Dan's renewed 7 September request for faster travel, default Flow
+  has a 1,600 m/s presentation pace, with Wander at 300 m/s and Fly at 3,200 m/s. These
   are playback speeds, not recorded walking speeds. Let gentler bends pass more
   readily while retaining the smooth turn and acceleration limits below.
-- Photographic interludes fade through the whole viewport and hold the journey
-  briefly. Preserve the image composition with `contain` and use a blurred copy
-  to fill the remaining space. Timing uses elapsed time independently of map
-  frame rate. A click skips the image; the play control pauses it. Interludes
-  can be disabled and default off for reduced motion.
+- Original photographs appear as lightly angled paper prints beside the moving
+  landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
+  `contain`; do not interrupt playback or hide the route, atlas or elevation.
+  Clicking a print opens that photograph in the full-screen gallery and pauses
+  at the current position. Select from the actual day; the caption names the day,
+  because exact photo positions are unknown. Show at most one print per day in
+  continuous playback, and on preparing a directly selected day. The option
+  can be disabled and defaults off for reduced motion.
 - Manual photographs use a full-screen dialog with arrows, arrow keys and swipe.
   Browsing preserves the exact route position. All 394 photographs remain
   reachable through their original day. Portrait and landscape photographs must
@@ -177,10 +184,12 @@ on desktop and narrow phones. Hide the profile during full-screen photographs.
 
 `public/trek/elevation-profile.json` is generated by
 `scripts/build-trek-elevation.mjs` from the already-public route and Mapzen's
-Terrarium terrain tiles at zoom 11. It contains 9,820 mapped ground heights at
+Terrarium terrain tiles at zoom 11. It contains 11,677 mapped ground heights at
 roughly 200 m intervals. These are approximate terrain elevations, not private
-GPS altitude samples. Include all recorded sections and leave every presentation
-connection unmeasured. The horizontal axis follows the continuous journey;
+GPS altitude samples. Include every recorded section and presentation connection
+across all seven countries. Connection heights describe the mapped ground beneath
+the illustrative link; use a dashed, quieter profile and label them as connections.
+These samples do not imply a recorded walking route. The horizontal axis follows the continuous journey;
 it does not redefine the 1,982 km walking total or accumulated ascent. Keep its
 route hash and the generation method with the data. Regeneration uses a temporary
 DEM cache and is an explicit maintenance step, not a network-dependent site build.
@@ -276,9 +285,9 @@ metadata, original metrics, generated asset hashes and the continuous route.
 largest gap, bounded rounding and source non-mutation.
 `scripts/check-trek-camera.mjs` checks camera continuity across the whole route,
 proximity to the path and difficult turns at every pace. The camera uses a
-weighted 880 m neighbourhood, a 1.1 km heading chord, a 9°/s turning limit and
-6°/s² acceleration limit. Pitch changes by at most 3°/s. Playback brakes before
-upcoming bends using a 7°/s curvature budget, then slows further when the view
+weighted 880 m neighbourhood, a 1.1 km heading chord, a 14°/s turning limit and
+9°/s² acceleration limit. Pitch changes by at most 3°/s. Playback brakes before
+upcoming bends using an 11°/s curvature budget, then slows further when the view
 needs to catch up. The normal clearance is 720 m above the highest sampled ground in the next kilometre,
 with a 420 m floor during movement. Solve the complete camera transform from
 the eye and a target at local ground height; changing pitch after solving zoom
@@ -287,7 +296,7 @@ elevation with the ground at every frame. Retaining an old mountain reference
 after descending can force a distant zoom and enlarge the draped roads and route.
 `npm run check:trek:dom` covers actual terrain readiness, quiet controls,
 steep viewpoints and sustained camera movement, photographs, original records,
-continuous playback and heading changes, interlude
+continuous playback and heading changes, automatic-photo
 timing, phone fit, resize, replay, reduced motion and graphics loss.
 
 Run the site's fast gate before release. After Pages succeeds, compare the live
@@ -312,9 +321,13 @@ settlement selection. The focused browser check uses
 replacement, playback, photographs and 390/320px layouts.
 
 The focused elevation/cache checks cover complete ground-height coverage, source
-hashes, unmeasured gaps, persistent hits, expiry, cancelled requests, unavailable
+hashes, distinct mapped connections, persistent hits, expiry, cancelled requests, unavailable
 storage and bounded prefetch. `CHECK_TREK_ELEVATION_ONLY=1` selects rendered
 checks for preparation, cached return visits, sustained playback, responsive
 profile fit, rapid seeks and original photographs. Measure frame times and
 tile fetches in a fresh browser profile; browser storage and network conditions
 can change the result.
+
+`CHECK_TREK_FLOW_ONLY=1` exercises the faster default in the running landscape,
+all seven country flags and ground heights, the automatic print and its original
+gallery, connection profiles, the relocated day selector and 1440/390/320px fit.

@@ -19,9 +19,9 @@
   }
   function turn(current,velocity,wanted,dt){
     if(current===null)return {heading:wanted,velocity:0};
-    const error=angle(current,wanted),desired=clamp(error/.9,-9,9);
+    const error=angle(current,wanted),desired=clamp(error/.9,-14,14);
     if(Math.abs(error)<.015&&Math.abs(velocity)<.02)return {heading:wanted,velocity:0};
-    velocity+=clamp(desired-velocity,-6*dt,6*dt);
+    velocity+=clamp(desired-velocity,-9*dt,9*dt);
     return {heading:current+velocity*dt,velocity};
   }
   function speedLimit(path,distance,pace,heading){
@@ -31,9 +31,9 @@
       curvature=Math.max(curvature,Math.abs(angle(previous,next))/180);previous=next;
     }
     // Brake before a bend, leaving room below the camera's maximum turn rate.
-    const corner=curvature>0?Math.min(pace,7/curvature):pace;
-    const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/50,.08,1);
-    return Math.max(20,corner*alignment);
+    const corner=curvature>0?Math.min(pace,11/curvature):pace;
+    const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/60,.16,1);
+    return Math.max(35,corner*alignment);
   }
   const api={pointAt,headingAt,turn,speedLimit,ahead};
   if(typeof module!=='undefined')module.exports=api;else host.TrekCamera=api;
