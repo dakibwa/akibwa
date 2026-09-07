@@ -8,6 +8,7 @@ import { useAlbumCatalogue } from "./use-album-catalogue";
 import { listeningLabel, rankPodcasts } from "./listening-label.mjs";
 import { listeningDescription } from "./listening-hover";
 import { tasteItemKey } from "./taste-identity.mjs";
+import { stackArtwork } from "./taste-layout.mjs";
 import { RailControls } from "./rail-controls";
 import { Search, X } from "lucide-react";
 
@@ -19,17 +20,8 @@ const groups = [
   ["podcasts", "Podcasts", "164, 74, 126"],
 ];
 const searchable = (value) => value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase();
-// Keep the catalogue order down each stack, then across the wall. Alternating
-// three and four pieces gives a level top edge and naturally varied bottoms.
-function stackArtwork(items) {
-  const columns = [];
-  for (let offset = 0; offset < items.length;) {
-    const count = [4, 3, 3, 4, 3, 4][columns.length % 6];
-    columns.push(items.slice(offset, offset + count));
-    offset += count;
-  }
-  return columns;
-}
+const artworkKey = item => `${item.kind}-${tasteItemKey(item)}`;
+const estimatedHeight = item => 132 * (item.kind === "films" || item.kind === "tv" ? 1.5 : item.kind === "games" ? 4 / 3 : 1);
 
 function TasteArtwork({ item }) {
   if (item.kind === "music") {
@@ -65,6 +57,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const pointerPosition = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [wallLayout, setWallLayout] = useState(null);
+  const lastLayout = useRef("");
+  const restorePosition = useRef(null);
   useLayoutEffect(() => {
     // Reset after the new artwork is mounted so scroll snap cannot retain a
     // cover that moved to a later column when the medium was cleared.
@@ -92,7 +87,8 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     if (!detailOpen) return;
     const onEscape = (event) => { if (event.key === "Escape") dismissDetail(); };
     const shelf = rail.current;
-    const keepVisible = () => {
+    const keepVisible = (event) => {
+      if (event.type === "resize" && activeCard.current === document.activeElement) return;
       const visible = cardVisible(activeCard.current);
       // Keyboard focus can start a native smooth scroll. Let the card arrive
       // before treating a later move out of view as dismissal.
@@ -151,7 +147,100 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     return terms.every((term) => text.includes(term));
   }) : selection;
   const visible = list.slice(0, visibleCount);
-  const columns = stackArtwork(visible);
+  const keys = visible.map(artworkKey);
+  const selectionKey = keys.join("|");
+  const measurementKey = visible.map(item => `${artworkKey(item)}:${item.title}:${item.creator}:${item.plays}`).join("|");
+  const mixedArtwork = list.some(item => item.kind !== list[0]?.kind);
+  const initialColumns = useMemo(() => stackArtwork(visible.map(estimatedHeight), { mixed: mixedArtwork }), [selectionKey, mixedArtwork]);
+  const appending = wallLayout && wallLayout.keys.length < keys.length && wallLayout.keys.every((key, index) => key === keys[index]);
+  const columns = wallLayout?.selectionKey === selectionKey ? wallLayout.columns : appending ? [
+    ...wallLayout.columns,
+    ...stackArtwork(visible.slice(wallLayout.keys.length).map(estimatedHeight), { mixed: mixedArtwork })
+      .map(column => ({ ...column, indices: column.indices.map(index => index + wallLayout.keys.length) })),
+  ] : initialColumns;
+  useLayoutEffect(() => {
+    const shelf = rail.current;
+    if (!shelf || !visible.length) return;
+    let frame = 0, disposed = false, responsive = false;
+    let previousWidth = shelf.getBoundingClientRect().width;
+    const measure = () => {
+      frame = 0;
+      if (disposed) return;
+      const keepFocusedView = responsive;
+      responsive = false;
+      const cards = [...shelf.querySelectorAll('.personal-taste-card')];
+      const byKey = new Map(cards.map(card => [card.dataset.tasteKey, card]));
+      const bounds = shelf.getBoundingClientRect();
+      const gap = parseFloat(getComputedStyle(shelf).columnGap);
+      const width = cards[0]?.querySelector('.personal-taste-art').getBoundingClientRect().width;
+      if (!width || keys.some(key => !byKey.has(key))) return;
+      const heights = keys.map(key => {
+        const card = byKey.get(key), art = card.querySelector('.personal-taste-art');
+        return art.getBoundingClientRect().height + parseFloat(getComputedStyle(art).marginBottom) +
+          card.querySelector('.personal-taste-caption').getBoundingClientRect().height;
+      });
+      const nextColumns = stackArtwork(heights, {
+        gap, viewportHeight: innerHeight, visibleColumns: Math.max(1, Math.floor((bounds.width + gap) / (width + gap))), mixed: mixedArtwork,
+      });
+      const nextKey = JSON.stringify([selectionKey, nextColumns]);
+      if (lastLayout.current === nextKey) {
+        if (keepFocusedView && activeCard.current === document.activeElement && !cardVisible(activeCard.current)) {
+          activeCard.current.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+        }
+        return;
+      }
+      const anchor = cards.find(card => card.getBoundingClientRect().right > bounds.left + 24);
+      restorePosition.current = {
+        anchor: anchor?.dataset.tasteKey, offset: anchor ? anchor.getBoundingClientRect().left - bounds.left : 0,
+        focus: shelf.contains(document.activeElement) ? document.activeElement.dataset.tasteKey : null,
+        preview: activeCard.current === document.activeElement,
+        keepFocusedView,
+      };
+      dismissDetail();
+      lastLayout.current = nextKey;
+      setWallLayout({ selectionKey, keys, columns: nextColumns });
+    };
+    const queueMeasure = () => {
+      responsive = true;
+      if (!disposed && !frame) frame = requestAnimationFrame(measure);
+    };
+    measure();
+    const observer = new ResizeObserver(([entry]) => {
+      // Opening a hover detail changes the rail's height, never its packing.
+      if (Math.abs(entry.contentRect.width - previousWidth) < .5) return;
+      previousWidth = entry.contentRect.width;
+      queueMeasure();
+    });
+    observer.observe(shelf);
+    const touch = matchMedia('(hover: none)');
+    touch.addEventListener('change', queueMeasure);
+    window.addEventListener('resize', queueMeasure);
+    document.fonts.ready.then(queueMeasure);
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      touch.removeEventListener('change', queueMeasure);
+      window.removeEventListener('resize', queueMeasure);
+    };
+  }, [measurementKey, mixedArtwork]);
+  useLayoutEffect(() => {
+    const restore = restorePosition.current, shelf = rail.current;
+    if (!restore || !shelf) return;
+    restorePosition.current = null;
+    const cards = [...shelf.querySelectorAll('.personal-taste-card')];
+    const anchor = cards.find(card => card.dataset.tasteKey === restore.anchor);
+    if (anchor) shelf.scrollLeft += anchor.getBoundingClientRect().left - shelf.getBoundingClientRect().left - restore.offset;
+    const focused = cards.find(card => card.dataset.tasteKey === restore.focus);
+    if (focused) {
+      focused.focus({ preventScroll: true });
+      if (restore.preview && restore.keepFocusedView && !cardVisible(focused)) {
+        focused.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+      }
+      if (restore.preview && cardVisible(focused)) revealDetail(visible[keys.indexOf(restore.focus)], focused);
+      else dismissDetail();
+    }
+  }, [wallLayout]);
   const updateQuery = (value) => {
     dismissDetail();
     setQuery(value);
@@ -229,8 +318,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       {terms.length > 0 && list.length === 0 ? <p className="taste-search-status" role="status">No matches.</p> : null}
       <div className="taste-wall-stage">
       <div className="personal-taste-rail" id="taste-rail" ref={rail}>
-        {columns.map((column) => <div className="taste-wall-column" key={`${column[0].kind}-${tasteItemKey(column[0])}`}>
-        {column.map((item) => {
+        {columns.map((column) => <div className="taste-wall-column" key={keys[column.indices[0]]} style={{ gap: `${column.gap}px` }}>
+        {column.indices.map((index) => {
+          const item = visible[index];
           const count = listeningLabel(item);
           const itemKey = `${item.kind}-${tasteItemKey(item)}`;
           const expanded = detailOpen && detail === itemKey;
@@ -238,6 +328,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
             <article
               className="personal-taste-card"
               data-kind={item.kind}
+              data-taste-key={itemKey}
               data-detail-open={expanded}
               tabIndex={0}
               key={itemKey}

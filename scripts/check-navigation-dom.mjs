@@ -542,16 +542,16 @@ const checkPublicLanding = async () => {
     const lede=getComputedStyle(document.querySelector('.concept-lede'));
     return {scrolls:rail.scrollWidth>rail.clientWidth,flow:getComputedStyle(rail).gridAutoFlow,serif:lede.fontFamily};
   })()`);
-  check(railState.scrolls && railState.flow === 'column', "Taste browses the staggered wall through one native horizontal rail");
+  check(railState.scrolls && railState.flow === 'column', "Taste browses the balanced wall through one native horizontal rail");
   check(await evaluate(`(() => {
     const columns=[...document.querySelectorAll('.taste-wall-column')];
-    const tops=columns.slice(0,6).map(column=>column.querySelector('article').getBoundingClientRect().top);
-    const bottoms=columns.slice(0,6).map(column=>column.getBoundingClientRect().bottom);
-    return columns.length>8 && Math.max(...tops)-Math.min(...tops)<1 && new Set(bottoms.map(bottom=>Math.round(bottom))).size>2 && columns.every((column,columnIndex)=>{
+    const tops=columns.map(column=>column.querySelector('article').getBoundingClientRect().top);
+    const bottoms=columns.map(column=>column.getBoundingClientRect().bottom);
+    return columns.length>8 && Math.max(...tops)-Math.min(...tops)<1 && Math.max(...bottoms)-Math.min(...bottoms)<2 && columns.every(column=>{
       const cards=[...column.querySelectorAll('article')];
-      return cards.length>=(columnIndex===columns.length-1 ? 1 : 3) && cards.length<=4 && cards.every((card,index)=>!index || card.getBoundingClientRect().top>cards[index-1].getBoundingClientRect().bottom+5);
+      return cards.every((card,index)=>!index || card.getBoundingClientRect().top>cards[index-1].getBoundingClientRect().bottom+5);
     });
-  })()`), "the mixed wall has aligned artwork tops, naturally varied bottoms and separate three- or four-cover stacks");
+  })()`), "the mixed wall keeps both its top and bottom edges flush without overlapping covers");
   check(/Iowan|Palatino|Georgia/.test(railState.serif), "the proposition keeps its historical serif");
   const nameBefore=await evaluate(`(() => {
     const name=document.querySelector('.hero-name-value');
@@ -565,6 +565,33 @@ const checkPublicLanding = async () => {
   })()`);
   check(nameBefore.name === 'Daniel' && nameAfter.name === 'Akibwa' && nameBefore.animation === 'word-flick', "the original flick changes the name after its initial rest");
   check(nameBefore.top === nameAfter.top && nameBefore.height === nameAfter.height, "the name flip does not move the surrounding composition");
+  const wallKeys=await evaluate('JSON.stringify([...document.querySelectorAll(".personal-taste-card")].map(card=>card.dataset.tasteKey).sort())');
+  const wallCounts=[];
+  for (const [width,height,touch] of [[815,774,false],[390,844,true],[320,740,true],[1440,900,false]]) {
+    await setDesktop(width,height);
+    if(touch) await cdp.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+    await sleep(250);
+    const balanced=await evaluate(`(() => {
+      const columns=[...document.querySelectorAll('.taste-wall-column')];
+      const tops=columns.map(column=>column.getBoundingClientRect().top), bottoms=columns.map(column=>column.getBoundingClientRect().bottom);
+      return {count:columns.length,spread:Math.max(...bottoms)-Math.min(...bottoms),tops:Math.max(...tops)-Math.min(...tops),
+        keys:JSON.stringify([...document.querySelectorAll('.personal-taste-card')].map(card=>card.dataset.tasteKey).sort()),overflow:document.documentElement.scrollWidth-innerWidth};
+    })()`);
+    wallCounts.push(balanced.count);
+    check(balanced.keys===wallKeys && balanced.tops<1 && balanced.spread<(touch?12:2) && balanced.overflow<=1,
+      `the same forty-eight covers rebalance with a close bottom edge at ${width}×${height}${touch?' with touch captions':''}`);
+  }
+  check(new Set(wallCounts).size>=3, "resizing recalculates the stacks instead of only shrinking the artwork");
+  await evaluate('document.querySelectorAll(".taste-wall-column")[0].querySelectorAll("article")[1].focus()');
+  await sleep(550);
+  const resizingFocus=await evaluate('document.activeElement.dataset.tasteKey');
+  await setDesktop(815,774);
+  await sleep(300);
+  check(await evaluate(`document.activeElement.dataset.tasteKey===${JSON.stringify(resizingFocus)} && document.querySelector('#taste-detail .taste-detail-copy > strong')?.textContent===document.activeElement.querySelector('.personal-taste-title')?.textContent`),
+    "responsive rearrangement preserves the focused cover and its preview");
+  await evaluate('document.activeElement.blur(); document.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+  await setDesktop(1440,900);
+  await sleep(380);
   await selectTaste('Films');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 35'), "the Films filter keeps the whole approved shelf reachable");
   check(await evaluate(`(() => {
@@ -717,10 +744,13 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=1800');
   await sleep(150);
   check(await evaluate('!document.querySelector(".personal-taste-detail-shell.is-open")'), "scrolling the active cover out of view dismisses its panel");
+  const existingStacks=await evaluate('JSON.stringify([...document.querySelectorAll(".taste-wall-column")].slice(0,12).map(column=>[...column.querySelectorAll("article")].map(card=>card.dataset.tasteKey)))');
   await evaluate('document.querySelector(".taste-load-more").click()');
   await sleep(200);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
   check(await ranked(), "descending order is preserved across loaded batches");
+  check(await evaluate(`JSON.stringify([...document.querySelectorAll('.taste-wall-column')].slice(0,12).map(column=>[...column.querySelectorAll('article')].map(card=>card.dataset.tasteKey)))===${JSON.stringify(existingStacks)}`),
+    "loading more appends columns without rearranging existing album stacks");
   await selectTaste('Podcasts');
   await sleep(200);
   for (let batch=0;batch<4 && await evaluate('!!document.querySelector(".taste-load-more")');batch++) {
