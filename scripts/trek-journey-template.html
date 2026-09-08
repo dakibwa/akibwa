@@ -23,7 +23,17 @@
   <aside class="journey-minimap" id="journey-minimap" aria-label="Overview of the walk" hidden><canvas id="minimap-canvas" role="img" aria-label="Paris to Sofia route with a moving position marker"></canvas><p class="minimap-country"><img id="country-flag" alt="" hidden><span id="where">Paris → Sofia</span></p></aside>
   <div class="place-arrival" id="place-arrival" role="status"><span>ALONG THE WAY</span><p id="place-name"></p></div>
   <div class="landmark-caption" id="landmark-caption" hidden><span id="landmark-name"></span><small id="landmark-place"></small></div>
-  <section class="opening" id="opening" aria-label="Begin the walk"><p>ON FOOT · AUTUMN 2019</p><h1>Paris <span>to Sofia.</span></h1><button id="begin" class="begin" disabled>Step into the journey <span>↗</span></button><p class="opening-distance">≈ __TOTAL_KM__ km · seven countries</p><button id="opening-days" class="opening-days" aria-haspopup="dialog">Browse the days ↗</button></section>
+  <section class="opening" id="opening" aria-label="Begin the walk">
+    <div class="opening-cover">
+      <p class="opening-dates"><time datetime="2019-09-24">24 September</time><span aria-hidden="true">—</span><time datetime="2019-11-28">28 November 2019</time></p>
+      <h1>Paris <span><em>to</em> Sofia.</span></h1>
+      <p class="opening-distance">≈ __TOTAL_KM__ km on foot <span aria-hidden="true">·</span> seven countries</p>
+      <div class="opening-actions">
+        <button id="begin" class="begin" disabled><span>Start in Paris</span><svg viewBox="0 0 76 24" aria-hidden="true"><circle cx="7" cy="12" r="3"></circle><path d="M15 12H70M64 6l6 6-6 6"></path></svg></button>
+        <button id="opening-days" class="opening-days" aria-haspopup="dialog">Choose a day <span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  </section>
   <div id="map-status" class="map-status" role="status"><span id="load-message">Preparing the landscape…</span><progress id="loading-progress" max="100" value="0" aria-label="Landscape loading progress"></progress><button id="retry-load" hidden>Try loading again ↗</button></div>
   <figure id="memory-flash" class="memory-flash" hidden><div class="memory-sheet"><img class="memory-image" alt=""></div></figure>
   <section class="ending" id="ending" hidden><p>28 NOVEMBER 2019</p><h1>Sofia.</h1><button id="replay" class="begin">Once more <span>↗</span></button></section>

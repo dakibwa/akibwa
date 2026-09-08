@@ -58,8 +58,13 @@ perspective and much less text and interface on 5 September 2026.
   landscape on release. Arrow keys move within a day, Shift+arrows and Page keys
   move by a day, and Home/End reach Paris/Sofia. Seeking backwards clears the
   later fill, and the left arrow can leave the final arrival segment.
-  The opening has a primary start action and a quiet link to browse days,
-  accessible while terrain loads or fails; Sofia has one replay action. Map
+  The opening reads like the first page of a walking journal: the actual
+  September–November 2019 dates, a left-aligned Fraunces title and the approximate
+  walking distance. A ruled paper strip with the route's red marker and arrow
+  says “Start in Paris”; avoid a large filled capsule or generic invitation copy.
+  Keep the mapped landscape visible behind it. “Choose a day” stays a quiet
+  secondary action with a full touch target, available while terrain loads or
+  fails; Sofia has one replay action. Map
   credits use a quiet text disclosure above the landscape wash, retaining the
   native provider links and keyboard operation.
 - The upper-right corner holds a small paper minimap of the full journey, with
