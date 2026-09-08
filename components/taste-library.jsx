@@ -167,7 +167,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     const measure = () => {
       frame = 0;
       if (disposed) return;
-      const keepFocusedView = responsive;
+      const keepFocusedView = responsive || Boolean(appending);
       responsive = false;
       const cards = [...shelf.querySelectorAll('.personal-taste-card')];
       const byKey = new Map(cards.map(card => [card.dataset.tasteKey, card]));

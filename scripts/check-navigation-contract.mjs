@@ -100,9 +100,12 @@ for (const height of [104, 132, 198]) for (const viewportHeight of [650, 900]) {
   const options = { viewportHeight, mixed: false };
   const columns = stackArtwork(Array(50).fill(height), options);
   if (columns.length !== 13 || !columns.every((column, index) => column.indices.length === (index === 12 ? 2 : 4))) fail("equal-sized Taste covers must stack four high, with only the final column shorter");
-  if (columns.flatMap(column => column.indices).some((index, position) => index !== position)) fail("four-high shelves must retain catalogue order");
   if (new Set(columns.slice(0, 12).map(column => column.height)).size !== 1) fail("complete four-high columns must finish flush");
-  if (JSON.stringify(columns.slice(0, 12)) !== JSON.stringify(stackArtwork(Array(48).fill(height), options))) fail("loading more must preserve the existing four-high stacks");
+}
+for (const size of [1, 3, 48, 50, 84]) for (const captions of [false, true]) {
+  const columns = stackArtwork(Array.from({ length: size }, (_, index) => 132 + (captions ? index % 3 * 16 : 0)));
+  const readingOrder = Array.from({ length: Math.max(...columns.map(column => column.indices.length)) }, (_, row) => columns.flatMap(column => column.indices[row] === undefined ? [] : [column.indices[row]])).flat();
+  if (readingOrder.length !== size || readingOrder.some((index, position) => index !== position)) fail("Taste ranking must read left to right across rows, including captions and loaded records");
 }
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {

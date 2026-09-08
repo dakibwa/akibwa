@@ -1,27 +1,11 @@
 const sum = values => values.reduce((total, value) => total + value, 0);
 
 function orderedColumns(heights, count) {
-  const columns = [];
-  let offset = 0, remaining = sum(heights);
-  if (Math.max(...heights) - Math.min(...heights) < .5) {
-    return Array.from({ length: count }, (_, column) => {
-      const size = Math.floor(heights.length / count) + (column < heights.length % count ? 1 : 0);
-      const indices = Array.from({ length: size }, () => offset++);
-      return { indices, height: sum(indices.map(index => heights[index])) };
-    });
-  }
-  for (let column = 0; column < count; column++) {
-    const target = remaining / (count - column), indices = [];
-    let height = 0;
-    while (offset < heights.length - (count - column - 1) &&
-      (!indices.length || Math.abs(height + heights[offset] - target) <= Math.abs(height - target))) {
-      indices.push(offset);
-      height += heights[offset++];
-    }
-    columns.push({ indices, height });
-    remaining -= height;
-  }
-  return columns;
+  return Array.from({ length: count }, (_, column) => {
+    const indices = [];
+    for (let index = column; index < heights.length; index += count) indices.push(index);
+    return { indices, height: sum(indices.map(index => heights[index])) };
+  });
 }
 
 function mixedColumns(heights, count) {
@@ -90,12 +74,13 @@ function balanceBatch(heights, { gap, target, maxHeight, mixed, visibleColumns }
 
 export function stackArtwork(heights, { gap = 12, viewportHeight = 900, visibleColumns = 8, mixed = false } = {}) {
   if (!heights.length) return [];
-  // Equal-sized covers form a simple four-high shelf. Keep the same groups
-  // as the viewport changes or more records arrive; only the last can be short.
+  // Read each row left to right. Equal-sized covers remain four high, with
+  // only the final column shorter when the total is not divisible by four.
   if (!mixed && Math.max(...heights) - Math.min(...heights) < .5) {
+    const fullColumns = Math.floor(heights.length / 4), remainder = heights.length % 4;
     return Array.from({ length: Math.ceil(heights.length / 4) }, (_, column) => {
-      const start = column * 4;
-      const indices = heights.slice(start, start + 4).map((_, index) => start + index);
+      const rows = column < fullColumns ? 4 : remainder;
+      const indices = Array.from({ length: rows }, (_, row) => row * fullColumns + Math.min(row, remainder) + column);
       return { indices, height: sum(indices.map(index => heights[index])) + gap * (indices.length - 1), gap };
     });
   }
@@ -103,10 +88,10 @@ export function stackArtwork(heights, { gap = 12, viewportHeight = 900, visibleC
   const maxHeight = Math.max(target, Math.min(viewportHeight - 110, target * 1.15));
   const columns = [];
   let firstHeight = target;
-  // New catalogue pages append their own columns; loading more never
-  // rearranges artwork the reader is already browsing.
+  // Ranked shelves include newly loaded records in the same left-to-right
+  // order. The mixed edit can append independent balanced groups.
   for (let offset = 0; offset < heights.length;) {
-    const size = offset === 0 ? 48 : 36;
+    const size = mixed ? offset === 0 ? 48 : 36 : heights.length;
     const batch = balanceBatch(heights.slice(offset, offset + size), {
       gap, target: firstHeight, maxHeight, mixed, visibleColumns: offset === 0 ? visibleColumns : 1,
     });

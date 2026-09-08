@@ -669,7 +669,9 @@ const checkPublicLanding = async () => {
   await selectTaste('Music');
   await sleep(200);
   const ranked = () => evaluate(`(() => {
-    const counts=[...document.querySelectorAll('.personal-taste-card')].map(card=>card.hasAttribute('data-listens') ? Number(card.dataset.listens) : -1);
+    const columns=[...document.querySelectorAll('.taste-wall-column')].map(column=>[...column.querySelectorAll('article')]);
+    const cards=Array.from({length:Math.max(...columns.map(column=>column.length))},(_,row)=>columns.flatMap(column=>column[row]?[column[row]]:[])).flat();
+    const counts=cards.map(card=>card.hasAttribute('data-listens') ? Number(card.dataset.listens) : -1);
     return counts.length >= 36 && counts.every((count,index)=>!index || count<=counts[index-1]);
   })()`);
   check(await ranked(), "Music exposes the full catalogue in descending listening order");
@@ -750,13 +752,13 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=1800');
   await sleep(150);
   check(await evaluate('!document.querySelector(".personal-taste-detail-shell.is-open")'), "scrolling the active cover out of view dismisses its panel");
-  const existingStacks=await evaluate('JSON.stringify([...document.querySelectorAll(".taste-wall-column")].slice(0,12).map(column=>[...column.querySelectorAll("article")].map(card=>card.dataset.tasteKey)))');
+  const existingKeys=await evaluate('[...document.querySelectorAll(".personal-taste-card")].map(card=>card.dataset.tasteKey)');
   await evaluate('document.querySelector(".taste-load-more").click()');
   await sleep(200);
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length >= 72'), "more albums are reachable inside the homepage rail");
   check(await ranked(), "descending order is preserved across loaded batches");
-  check(await evaluate(`JSON.stringify([...document.querySelectorAll('.taste-wall-column')].slice(0,12).map(column=>[...column.querySelectorAll('article')].map(card=>card.dataset.tasteKey)))===${JSON.stringify(existingStacks)}`),
-    "loading more appends columns without rearranging existing album stacks");
+  check(await evaluate(`${JSON.stringify(existingKeys)}.every(key=>[...document.querySelectorAll('.personal-taste-card')].some(card=>card.dataset.tasteKey===key))`),
+    "loading more retains existing albums while updating their order across rows");
   await selectTaste('Podcasts');
   await sleep(200);
   for (let batch=0;batch<4 && await evaluate('!!document.querySelector(".taste-load-more")');batch++) {
