@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="features-native-bridge" content="2">
 <meta name="theme-color" content="#EAE7DF" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E1214" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
@@ -69,7 +70,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-zWQY80+IytQDBnL0RI+oQxwP6B8RdF/EJSDoADNbtgI=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-P2LRUmT/qT4xnwoDtrWPdKmbLQVdC6OoMFTQP/u7d14=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -453,9 +454,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .field.overnode{cursor:grab}
   .field.overpin{cursor:not-allowed}
   .slide-track{pointer-events:none}
-  .slide-track path{fill:none;stroke-linecap:round}
-  .slide-rail{stroke:var(--ink);stroke-opacity:.48;stroke-width:13}
-  .slide-slot{stroke:var(--surface);stroke-width:9}
+  .slide-rail{fill:none;stroke:var(--ink-soft);stroke-width:1.7;stroke-linejoin:round}
   .mnode.sliding{transform-box:fill-box;transform-origin:center;
     transform:rotate(var(--slide-angle))}
   .field .mnode.sliding{transform:rotate(var(--slide-angle)) scale(calc(var(--nr) / 10));
@@ -781,6 +780,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
   .boardcard .bnote{font-size:12px;padding-right:0}
   .boardcard .minted{gap:7px;margin:0}
   .boardcard .minted + .bnote{margin-top:13px}
+  .result-scope{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--ink-soft);margin:0 0 9px}
+  .result-overview{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    margin:10px 0 0;padding-top:9px;border-top:1px solid var(--rule);font-size:10px;line-height:1.45;color:var(--ink-soft)}
+  .result-overview button{flex:none;padding:5px 0;border:0;background:none;color:var(--ink);
+    font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
   .boardcard .minted .mb{flex:0 1 58px}
   .boardcard .bactions{padding:0 18px 16px}
   .boardcard .wbtn{padding:7px 12px}
@@ -797,14 +801,11 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
       width:calc(100% - 20px);
       margin:0 auto 10px;max-height:62%;
     }
+    #runveil > .bulletin{max-height:68%}
     .boardcard .minted .mb{flex:0 1 52px}
     .boardcard .minted{flex-wrap:nowrap}
+    #runveil .minted{flex-wrap:wrap}
     .boardcard .minted .mb span{letter-spacing:.03em}
-    #runveil .minted .mb:nth-child(n+6){display:none}
-  }
-
-  @media (max-height:560px){
-    #runveil .minted .mb:nth-child(n+6){display:none}
   }
 
   .askveil{z-index:80}
@@ -2808,6 +2809,10 @@ let account=null;        // null until asked. {signedIn:bool, provider, email}
 let signIns=null;
 let googleId=null;       // public OAuth client id, from /providers; null if google is off
 let googlePrep=null;     // {clientId, nonce, state, at} — one-use, prefetched so the press still has a gesture
+let nativeAuth=false, googleFallback=false;
+const nativePlatform=()=>window.featuresNative?.version>=2
+  && ['ios','android'].includes(window.featuresNative.platform)
+  && typeof window.featuresNative.request==='function' ? window.featuresNative.platform : null;
 let syncSay='';          // what the record's foot says about the last sync
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2819,8 +2824,12 @@ async function apiCall(path,opts){
   const r=await fetch(API+path,{credentials:'same-origin',...opts});
   const body=await r.json().catch(()=>null);
   if(!r.ok){
-    const err=new Error((body&&body.error)||('http '+r.status));
+    const failure=body?.error;
+    const err=new Error(typeof failure==='string'?failure:
+      typeof failure?.message==='string'?failure.message:'http '+r.status);
     err.status=r.status;
+    if(typeof failure?.code==='string')err.code=failure.code;
+    else if(typeof body?.code==='string')err.code=body.code;
     throw err;
   }
   return body;
@@ -2999,8 +3008,9 @@ function paintDoors(){
   });
   fillIntroAuth();
 }
-let signInsAsk=null;     // the flight, not just the answer — see below
-async function askSignIns(){
+let signInsAsk=null;
+async function askSignIns(retry=false){
+  if(retry&&!signInsAsk) signIns=null;
   if(signIns) return signIns;
   if(!API) return (signIns=[]);
   if(signInsAsk) return signInsAsk;
@@ -3009,9 +3019,10 @@ async function askSignIns(){
       const j=await apiCall('/providers');
       signIns=Array.isArray(j.providers)?j.providers:[];
       googleId=(typeof j.googleId==='string' && j.googleId) ? j.googleId : null;
-    }catch(e){ signIns=[]; googleId=null }
+      nativeAuth=j.nativeAuth===true;
+    }catch(e){ signIns=[]; googleId=null; nativeAuth=false }
     return signIns;
-  })();
+  })().finally(()=>{signInsAsk=null});
   return signInsAsk;
 }
 
@@ -3030,6 +3041,7 @@ async function saveProfile(patch){
 }
 
 function goSignIn(p){
+  if(nativePlatform()) return void nativeSignIn(p);
   if(p==='google'){
     tryGoogleHere().then(v=>{ if(v===true || v==='cancel') return; offsiteSignIn() });
     return;
@@ -3043,7 +3055,35 @@ function offsiteSignIn(p){
   location.href=API+'/auth/'+provider+'/start?return='+encodeURIComponent(u.pathname+u.search);
 }
 function googleHereOk(){
-  return !!(API && googleId && 'IdentityCredential' in window);
+  return !!(!nativePlatform() && API && googleId && 'IdentityCredential' in window);
+}
+async function nativeSignIn(provider){
+  if(acctBusy) return;
+  if(!nativeAuth){
+    acctErr='use email to sign in here for now';
+    return renderAcct();
+  }
+  acctBusy=true;acctErr='';renderAcct();
+  try{
+    const encode=bytes=>btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    const verifier=encode(crypto.getRandomValues(new Uint8Array(32)));
+    const challenge=encode(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier))));
+    const prep=await apiCall('/auth/native/prepare',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({provider,platform:nativePlatform(),challenge})});
+    const url=new URL(prep.url);
+    if(url.origin!=='https://akibwa.com'||url.pathname!=='/features/api/auth/native/start'
+      ||url.username||url.password||url.searchParams.get('state')!==prep.state) throw new Error('invalid sign-in');
+    const reply=await window.featuresNative.request('auth.start',{url:url.href});
+    if(!reply?.code||reply.state!==prep.state) throw new Error('invalid sign-in');
+    const me=await apiCall('/auth/native/exchange',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({code:reply.code,state:prep.state,verifier})});
+    acctBusy=false;acctMode='manage';
+    await landedSignedIn(me);
+  }catch(e){
+    acctBusy=false;
+    acctErr=e?.code==='cancelled'?'':'sign-in did not finish · try again or use email';
+    if(menuShown()&&menuView==='profile') renderAcct();
+  }
 }
 function ensureGooglePrep(){
   if(!googleHereOk()) return null;
@@ -3096,7 +3136,11 @@ async function tryGoogleHere(){
   try{
     cred=await navigator.credentials.get(googleFedCMOptions(prep));
   }catch(e){
-    if(e && e.name==='NotAllowedError') return 'cancel';
+    if(e && e.name==='NotAllowedError'){
+      googleFallback=true;
+      if(menuShown()&&menuView==='profile') renderAcct();
+      return 'cancel';
+    }
     return false;
   }
   const token=cred && (cred.token || cred.idToken);
@@ -3111,6 +3155,7 @@ async function tryGoogleHere(){
     await landedSignedIn(me);
     return true;
   }catch(e){
+    googleFallback=true;
     acctErr=e.message||'that sign-in did not go through';
     if(menuShown()&&menuView==='profile') renderAcct();
     else toast('that sign-in did not go through · nothing was lost');
@@ -3161,7 +3206,7 @@ function sanitizeCollection(c){
   if(!c||typeof c!=='object'||!c.badges||typeof c.badges!=='object') return c;
   for(const b of Object.values(c.badges)){
     if(!b||typeof b!=='object') continue;
-    if(!(b.tier in TIERRANK)) b.tier='done';   // a rung it earned, just not a nameable one
+    if(!(b.tier in TIERRANK)) b.tier='done';
     if(b.fit!=null && !(b.fit in FITRANK)) delete b.fit;
   }
   return c;
@@ -3261,10 +3306,49 @@ function paintAcct(){
   const err=acctErr?`<div class="acct-err">${esc(acctErr)}</div>`:'';
   const signedIn=!!(account&&account.signedIn);
 
+  if(signedIn&&(acctMode==='link'||acctMode==='link-code')){
+    const entering=acctMode==='link-code';
+    title.textContent=entering?'check your email':'confirm your email';
+    body.innerHTML=err
+      +(entering?`<div class="acct-ask">${esc(acctEmail)}</div>`:'')
+      +(entering
+        ? `<div class="acct-note">enter the code here, in the game that requested it. it expires after 10 minutes.</div>
+           <label class="acct-lab" for="acctlinkcode">confirmation code</label>
+           <input class="acct-field" id="acctlinkcode" type="text" autocomplete="one-time-code"
+             autocapitalize="characters" spellcheck="false" maxlength="24" placeholder="ABCDE-FGHJK">
+           ${acctBtn('acctlinkfinish',acctBusy?'confirming…':'confirm email',true)}
+           <div class="acct-row"><a href="#" class="acctlink" id="acctlinkagain">request a new code</a></div>`
+        : `<div class="acct-note">choose a password for this account on the web, iphone and android. we will send a code to confirm this address.</div>
+           <label class="acct-lab" for="acctlinkaddress">email</label>
+           <input class="acct-field" id="acctlinkaddress" type="email" inputmode="email" autocomplete="email"
+             spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">
+           <label class="acct-lab" for="acctlinkpassword">password</label>
+           <input class="acct-field" id="acctlinkpassword" type="password" autocomplete="new-password"
+             minlength="15" maxlength="128" placeholder="15 characters or more">
+           ${acctBtn('acctlinkstart',acctBusy?'sending…':'send confirmation code',true)}
+           <div class="acct-row"><a href="#" class="acctlink" id="acctlinkexisting">already have a code?</a></div>`)
+      +`<div class="acct-row"><a href="#" class="acctlink" id="acctlinkback">back to your account</a></div>`;
+    $('acctlinkback').onclick=e=>{e.preventDefault();acctMode='manage';acctErr='';renderAcct()};
+    if(entering){
+      $('acctlinkfinish').onclick=confirmAccountEmail;
+      $('acctlinkcode').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();confirmAccountEmail()}};
+      $('acctlinkagain').onclick=e=>{e.preventDefault();acctMode='link';acctErr='';renderAcct()};
+    }else{
+      $('acctlinkstart').onclick=startAccountEmail;
+      $('acctlinkpassword').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();startAccountEmail()}};
+      $('acctlinkexisting').onclick=e=>{
+        e.preventDefault();acctEmail=$('acctlinkaddress').value.trim().toLowerCase();
+        if(!accountEmailOk(acctEmail)){acctErr='enter the email the code was sent to';return renderAcct()}
+        acctMode='link-code';acctErr='';renderAcct();
+      };
+    }
+    return;
+  }
+
   if(acctMode==='reset'){
     title.textContent='reset your password';
     body.innerHTML=err
-      +`<div class="acct-ask">enter the email on the account.</div>`
+      +`<div class="acct-ask">enter the email on the account, including one you use with google or apple.</div>`
       +`<input class="acct-field" id="acctresetemail" type="email" inputmode="email" autocomplete="email"
               spellcheck="false" placeholder="you@example.com" value="${esc(acctEmail)}">`
       +`<div class="acct-row">${acctBtn('acctreset',acctBusy?'sending…':'send reset link',true)}`
@@ -3283,8 +3367,8 @@ function paintAcct(){
     body.innerHTML=err
       +`<div class="acct-ask">${signup?'finish creating the account':'a reset link is on its way'}${acctEmail?` · <b>${esc(acctEmail)}</b>`:''}.</div>`
       +`<div class="acct-note">${signup
-        ? 'open the link to confirm the address. the account is created and signed in there.'
-        : 'the link lets you choose a new password. if no account uses that address, no mail is sent.'}</div>`
+        ? (nativePlatform()?'open the link to confirm the address, then return here and sign in.':'open the link to confirm the address. the account is created and signed in there.')
+        : 'the link lets you choose a password, including for a google or apple account. if no account uses that address, no mail is sent.'}</div>`
       +`<div class="acct-row"><a href="#" class="acctlink" id="acctback">back to sign in</a></div>`;
     $('acctback').onclick=e=>{e.preventDefault();acctMode='sign';acctErr='';renderAcct()};
     return;
@@ -3304,17 +3388,24 @@ function paintAcct(){
           : 'sign in is unavailable just now.'}</div>`
         +`<div class="acct-note">${DEV
           ? 'google and email are available in the published game.'
-          : 'your record stays in this browser. nothing is lost.'}</div>`;
+          : 'your record stays on this device. nothing is lost.'}</div>`
+        +(API?`<button class="wbtn" id="acctretry">try again</button>`:'');
+      if($('acctretry')) $('acctretry').onclick=()=>{
+        $('acctretry').disabled=true;
+        askSignIns(true).then(()=>{if(menuShown()&&menuView==='profile')renderAcct()});
+      };
       return;
     }
-    const providers=signIns.map((p,i)=>({p,i}));
+    const providers=signIns.filter(p=>!nativePlatform()||p==='email'
+      ||(nativeAuth&&(nativePlatform()!=='ios'||signIns.includes('apple')))).map((p,i)=>({p,i}));
     const google=providers.find(x=>x.p==='google');
     const email=providers.find(x=>x.p==='email');
     const others=providers.filter(x=>x.p!=='google'&&x.p!=='email');
     body.innerHTML=err+`<div class="acct-auth">
         ${google?`<button class="wbtn acct-google" id="acctin-${google.i}"
             aria-label="continue with google">
-            ${GOOGLE_GLYPH}<span>continue with google</span></button>`:''}
+            ${GOOGLE_GLYPH}<span>continue with google</span></button>
+          ${googleFallback&&!nativePlatform()?`<a href="#" class="acctlink" id="acctgoogleweb">sign in on google's website</a>`:''}`:''}
         ${email?`<div class="acct-auth-divider"><span>${google?'or':'email'}</span></div>
           <section class="acct-auth-form" aria-labelledby="accttitle">
             ${creating?`
@@ -3345,6 +3436,7 @@ function paintAcct(){
           ).join('')}</div></div>`:''}
       </div>`;
     if(google){ $('acctin-'+google.i).onclick=()=>goSignIn('google'); ensureGooglePrep() }
+    if($('acctgoogleweb')) $('acctgoogleweb').onclick=e=>{e.preventDefault();offsiteSignIn('google')};
     if(email){
       if(creating){
         $('acctsignup').onclick=passwordSignUp;
@@ -3380,13 +3472,11 @@ function paintAcct(){
   const idLine = mail
     ? `<b>${esc(mail)}</b>${account.emailOk?'':' · not confirmed'}`
     : `signed in with ${esc(account.provider||'a linked account')}`;
-  const identityNote = account.provider==='email'
+  const identityNote = mail&&account.emailOk
     ? (account.hasPassword===false
-      ? `this account predates passwords. <a href="#" class="acctlink" id="acctsetpassword" style="margin-left:0">set a password</a>`
-      : 'use this email and your password to sign in on another device.')
-    : (mail
-      ? `this confirmed address came from ${esc(account.provider||'your sign-in provider')}.`
-      : 'this sign-in provider did not share an email address.');
+      ? `use this account on the web, iphone or android. <a href="#" class="acctlink" id="acctsetpassword" style="margin-left:0">set an email password</a>`
+      : 'use this email and your password on the web, iphone or android.')
+    : `<a href="#" class="acctlink" id="acctconfirmemail" style="margin-left:0">${mail?'confirm this address and set a password':'add an email and password'}</a> to use your account on another device.`;
   body.innerHTML=err
     +`<div class="acct-sec">`
       +`<div class="acct-lab">who you are</div>`
@@ -3411,9 +3501,9 @@ function paintAcct(){
       +`<div class="acct-note">${POLICY.premium
           ? 'replay any day you have played. sign in with this account on another device and it unlocks there too.'
           : ((mail&&account.emailOk)
-              ? 'buy with this email and it unlocks on this account automatically.'
+              ? (nativePlatform()?'app purchases belong to this account and follow you to your other devices.':'buy with this email and it unlocks on this account automatically.')
               : 'a purchase unlocks automatically after its receipt email is confirmed.')
-            +` <a href="#" class="acctlink" id="acctrestore">use a code instead</a>`}</div>`
+            +` <a href="#" class="acctlink" id="acctrestore">${nativePlatform()?'restore purchases':'use a code instead'}</a>`}</div>`
     +`</div>`
     +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
     +`<div class="acct-foot">`
@@ -3429,7 +3519,14 @@ function paintAcct(){
   if($('acctsetpassword')) $('acctsetpassword').onclick=e=>{
     e.preventDefault();acctEmail=mail;acctMode='reset';acctErr='';renderAcct();
   };
-  if($('acctrestore')) $('acctrestore').onclick=e=>{e.preventDefault();restoreUnlock()};
+  if($('acctconfirmemail')) $('acctconfirmemail').onclick=e=>{
+    e.preventDefault();acctEmail=mail;acctMode='link';acctErr='';renderAcct();
+  };
+  if($('acctrestore')) $('acctrestore').onclick=e=>{
+    e.preventDefault();
+    if(nativePlatform()){openMenu('pay');nativeRestorePurchases()}
+    else restoreUnlock();
+  };
 }
 
 const accountEmailOk=(email)=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
@@ -3477,6 +3574,43 @@ async function requestPasswordReset(){
   }catch(e){acctBusy=false;acctErr=e.message;renderAcct()}
 }
 
+async function startAccountEmail(){
+  const el=$('acctlinkpassword');if(!el||acctBusy)return;
+  acctEmail=$('acctlinkaddress').value.trim().toLowerCase();
+  const password=el.value;
+  if(!accountEmailOk(acctEmail)){acctErr='that address does not look like one';return renderAcct()}
+  if(password.length<15||password.length>128){acctErr='use 15 to 128 characters for the password';return renderAcct()}
+  acctBusy=true;acctErr='';renderAcct();
+  try{
+    await apiCall('/auth/email/link/start',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail,password})});
+    acctBusy=false;acctMode='link-code';renderAcct();
+  }catch(e){
+    acctBusy=false;acctErr=e.message;
+    if(e.status===401){account={signedIn:false};acctMode='sign';fillIntroAuth()}
+    renderAcct();
+  }
+}
+async function confirmAccountEmail(){
+  const el=$('acctlinkcode');if(!el||acctBusy)return;
+  const code=el.value.trim();
+  if(!code){acctErr='enter the code from your email';return renderAcct()}
+  acctBusy=true;acctErr='';renderAcct();
+  try{
+    const me=await apiCall('/auth/email/link/finish',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({email:acctEmail,code})});
+    account={...account,...me,signedIn:true};
+    acctBusy=false;acctMode='manage';
+    if(applyEntitlement(me))entitlementChanged();
+    renderAcct();fillIntroAuth();
+    toast('email confirmed · your password works on your other devices');
+  }catch(e){
+    acctBusy=false;acctErr=e.message;
+    if(e.status===401){account={signedIn:false};acctMode='sign';fillIntroAuth()}
+    renderAcct();
+  }
+}
+
 async function saveAccount(){
   if(acctBusy) return;
   const patch={tzOffset:new Date().getTimezoneOffset()};
@@ -3492,8 +3626,12 @@ async function saveAccount(){
 }
 
 async function deleteAccount(){
+  if(acctBusy) return;
   acctBusy=true; renderAcct();
-  try{ await apiCall('/account',{method:'DELETE'}) }catch(e){}
+  try{ await apiCall('/account',{method:'DELETE'}) }catch(e){
+    acctBusy=false;acctArmed=false;acctErr='could not delete the account · try again when connected';
+    renderAcct();return;
+  }
   acctBusy=false; acctArmed=false;
   account={signedIn:false}; syncSay='';
   delete store.signedInOnce; delete store.askedDaily;
@@ -3520,7 +3658,8 @@ let acct={};
 try{acct=JSON.parse(localStorage.getItem(ACCT)||'{}')}catch(e){acct={}}
 function saveAcct(){try{localStorage.setItem(ACCT,JSON.stringify(acct))}catch(e){}}
 
-let priceInfo=null;                 // {amount,currency}, once the server has said
+let priceInfo=null;
+let nativeBilling=null, nativeProduct=null, nativePurchaseBusy=false;
 let till=null;
 
 async function api(path,body){
@@ -3531,7 +3670,7 @@ async function api(path,body){
     o.method='POST'; o.headers['Content-Type']='application/json'; o.body=JSON.stringify(body);
   }
   let res;
-  try{ res=await fetch(API+'/'+path,o) }catch(e){ return null }   // offline, blocked, or not deployed
+  try{ res=await fetch(API+'/'+path,o) }catch(e){ return null }
   let data=null;
   try{ data=await res.json() }catch(e){}
   if(res.status===401 && acct.token){ acct.token=null; saveAcct() }
@@ -3544,6 +3683,7 @@ function applyEntitlement(r){
   if(r.token) acct.token=r.token;
   if('restoreCode' in r) acct.code=r.restoreCode||null;
   if('price' in r) priceInfo=r.price||null;
+  if('nativeBilling' in r) nativeBilling=r.nativeBilling||null;
   if(typeof r.till==='boolean') till=r.till;
   saveAcct();
   if(typeof r.full!=='boolean') return false;
@@ -3551,7 +3691,7 @@ function applyEntitlement(r){
   POLICY.premium=r.full; save();
   return was!==r.full;
 }
-const canBuy=()=>DEV||till===true;
+const canBuy=()=>nativePlatform()?nativeBilling?.[nativePlatform()]?.available===true:DEV||till===true;
 const TILL_GLYPH=(owned)=>`<svg viewBox="0 0 24 24" aria-hidden="true">`
   +`<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
   +(owned?`<path class="tickmark" d="M8 12l3 3 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/>`
@@ -3561,7 +3701,7 @@ function paintTill(el){
   if(!el) return;
   const owned=!!POLICY.premium;
   el.innerHTML=TILL_GLYPH(owned);
-  el.classList.add('till');          // both states, so the hover can find either
+  el.classList.add('till');
   el.classList.toggle('owned',owned);
   el.setAttribute('aria-label',owned?'the full version · yours':'the full version');
   if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
@@ -3577,7 +3717,7 @@ function entitlementChanged(){
 let priceAsked=false;
 let pricePromise=null;
 function ensurePrice(){
-  if(priceInfo || !API) return Promise.resolve();
+  if((priceInfo&&!nativePlatform()) || !API) return Promise.resolve();
   if(pricePromise) return pricePromise;
   priceAsked=true;
   pricePromise=(async()=>{
@@ -3595,6 +3735,7 @@ async function linkUnlock(){
   else saveAcct();
 }
 function priceWords(){
+  if(nativePlatform()) return nativeProduct?.price||'';
   if(!priceInfo || typeof priceInfo.amount!=='number' || !priceInfo.currency) return '';
   try{
     const cur=priceInfo.currency.toUpperCase();
@@ -3645,7 +3786,7 @@ function stripeJS(){
     el.src='https://js.stripe.com/v3/';
     el.async=true;
     el.onload=()=>res(window.Stripe||null);
-    el.onerror=()=>res(null);          // offline, blocked, or refused by the CSP
+    el.onerror=()=>res(null);
     document.head.appendChild(el);
     setTimeout(()=>res(window.Stripe||null),6000);
   });
@@ -3690,7 +3831,8 @@ function checkoutUrl(raw){
 }
 async function beginUnlock(){
   if(POLICY.premium) return;
-  if(API) await ensurePrice();       // the mode decision needs the key, not a guess
+  if(nativePlatform()) return beginNativeUnlock();
+  if(API) await ensurePrice();
   if(POLICY.premium) return tillSaid('you already own the full version',false);
   if(API && !DEV && till===false)
     return tillSaid('purchases are currently unavailable',false);
@@ -3725,6 +3867,108 @@ async function beginUnlock(){
   }
   tillSaid('the till is not answering · try again shortly');
 }
+async function beginNativeUnlock(){
+  if(nativePurchaseBusy) return;
+  nativePurchaseBusy=true;
+  try{
+    const me=await apiCall('/me');
+    account=me;applyEntitlement(me);
+    if(me.full) return tillSaid('you already own the full version',false);
+    if(!me.signedIn||!me.emailOk){
+      tillSaid('sign in with your confirmed email so the purchase follows you to your other devices',false);
+      $('paybody').insertAdjacentHTML('beforeend','<button class="wbtn solid" id="nativebuysignin">sign in</button>');
+      $('nativebuysignin').onclick=()=>openAccount('sign');
+      return;
+    }
+    const config=nativeBilling?.[nativePlatform()];
+    if(!config?.available||!config.productId) return tillSaid('app purchases are currently unavailable',false);
+    const reply=await window.featuresNative.request('billing.products',{productIds:[config.productId]});
+    nativeProduct=reply?.available&&reply.products?.find(p=>p.id===config.productId&&typeof p.price==='string'&&p.price);
+    if(!nativeProduct) return tillSaid('the store is not answering · try again shortly');
+    if(!(menuShown()&&menuView==='pay')) return;
+    $('paybody').innerHTML=`<p class="acct-ask">the full version · ${esc(nativeProduct.price)}</p>`
+      +`<p class="acct-note">one purchase. replay your days, with your record and unlock on every device signed in to this account.</p>`
+      +`<div class="acct-row"><button class="wbtn solid" id="nativebuy">buy · ${esc(nativeProduct.price)}</button>`
+      +`<button class="wbtn" id="nativerestore">restore purchases</button></div>`;
+    $('nativebuy').onclick=nativePurchase;
+    $('nativerestore').onclick=nativeRestorePurchases;
+  }catch(e){tillSaid('the store is not answering · try again shortly')}
+  finally{nativePurchaseBusy=false}
+}
+async function nativePurchase(){
+  if(nativePurchaseBusy) return;
+  nativePurchaseBusy=true;
+  try{
+    const prepared=await apiCall('/unlock/native/prepare',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({platform:nativePlatform()})});
+    if(prepared.productId!==nativeProduct?.id) throw new Error('product changed');
+    const reply=await window.featuresNative.request('billing.purchase',{
+      productId:prepared.productId,accountToken:prepared.accountToken});
+    await acceptNativePurchases(reply);
+  }catch(e){
+    if(e?.code==='cancelled') tillSaid('purchase cancelled');
+    else nativePurchaseError(e,'purchase could not be confirmed · restore purchases to try again');
+  }finally{nativePurchaseBusy=false}
+}
+async function nativeRestorePurchases(){
+  if(nativePurchaseBusy) return;
+  if(!account?.signedIn) return openAccount('sign');
+  nativePurchaseBusy=true;
+  try{await acceptNativePurchases(await window.featuresNative.request('billing.restore',{}))}
+  catch(e){nativePurchaseError(e,e?.code==='cancelled'?'restore cancelled':'could not restore purchases · try again shortly')}
+  finally{nativePurchaseBusy=false}
+}
+function nativePurchaseError(error,fallback){
+  if(!['different_account','account_required','verified_account_required'].includes(error?.code))
+    return tillSaid(fallback);
+  tillSaid(error.message,false);
+  if(!(menuShown()&&menuView==='pay'))return;
+  $('paybody').insertAdjacentHTML('beforeend','<button class="wbtn" id="nativepurchaseaccount">your account</button>');
+  $('nativepurchaseaccount').onclick=()=>openAccount();
+}
+async function acceptNativePurchases(reply){
+  const purchases=Array.isArray(reply?.purchases)?reply.purchases:[];
+  let verified=false;
+  for(const purchase of purchases){
+    if(purchase.platform!==nativePlatform()) continue;
+    const result=await apiCall('/unlock/native/verify',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify(purchase)});
+    if(applyEntitlement(result)) entitlementChanged();
+    if(result.verified!==true) continue;
+    verified=true;
+    await window.featuresNative.request('billing.finish',{transactionId:purchase.transactionId});
+  }
+  if(verified) tillSaid(POLICY.premium?'full version restored':'this purchase is no longer active',false);
+  else if(reply?.pending) tillSaid('purchase awaiting approval · it will unlock when confirmed',false);
+  else tillSaid('no confirmed purchase was found for this account');
+}
+addEventListener('featuresnative:purchases',event=>{
+  if(!nativePlatform()||!account?.signedIn||nativePurchaseBusy) return;
+  nativePurchaseBusy=true;
+  acceptNativePurchases(event.detail).catch(()=>{
+    if(menuShown()&&menuView==='pay') tillSaid('purchase could not be confirmed · restore purchases to try again');
+  }).finally(()=>{nativePurchaseBusy=false});
+});
+addEventListener('featuresnative:lifecycle',event=>{
+  if(!nativePlatform()) return;
+  if(event.detail?.state==='background'){save();if(account?.signedIn)syncNow()}
+  else if(event.detail?.state==='active'&&account?.signedIn){
+    apiCall('/me').then(me=>{account=me;if(applyEntitlement(me))entitlementChanged();fillIntroAuth()}).catch(()=>{});
+    syncNow();
+  }
+});
+addEventListener('featuresnative:back',event=>{
+  if(!nativePlatform()) return;
+  if(askResolve){event.preventDefault();closeAsk(false);return}
+  if(menuShown()){
+    event.preventDefault();
+    if(menuView!=='home')openMenu('home');
+    else dismissVeil($('introveil'));
+    return;
+  }
+  const veil=document.querySelector('.veil.show');
+  if(veil){event.preventDefault();dismissVeil(veil)}
+});
 async function restoreUnlock(){
   if(!API) return toast('restoring needs the game served over the web');
   const code=prompt('unlock code from the device you bought it on');
@@ -5133,6 +5377,7 @@ if(RMQ && RMQ.addEventListener) RMQ.addEventListener('change',e=>{
   reduceMotion=e.matches;
   if(reduceMotion){
     stopMenuMotion();
+    members.forEach(n=>{if(n.slideBounce)n.slideBounce.cancel()});
     document.querySelectorAll('.tutorial-picture').forEach(el=>el.remove());
   }
 });
@@ -5592,6 +5837,12 @@ function slideBody(x,y,col,angle){
     {fill:MARK.body,stroke:col,'stroke-width':MARK.w},
     'body','mnode sliding');
 }
+function slideRailPart(ax,ay,bx,by){
+  const length=Math.hypot(bx-ax,by-ay),angle=Math.atan2(by-ay,bx-ax)*180/Math.PI;
+  return part('rect',{x:-5.5,y:-5.5,width:length+11,height:11,rx:5.5,
+    transform:`translate(${ax} ${ay}) rotate(${angle})`},
+    {fill:'none',stroke:'--ink-soft','stroke-width':1.7},'rail','slide-rail');
+}
 function neuronParts(x,y,cols,o){
   o=o||{};
   const shared=cols.length>1, out=[];
@@ -5682,20 +5933,22 @@ function splitPlace(idx, ox, oy, probe){
   return {a:best.a, b:best.b};
 }
 function paintNode(n){
+  if(n.slideBounce)n.slideBounce.cancel();
   if(n.g) n.g.remove();
   if(n.slideTrack)n.slideTrack.remove();
   if(n.slide&&!n.threads.every(t=>t.freed)){
-    const a=n.slide,d=`M${a.ax} ${a.ay}L${a.bx} ${a.by}`;
+    const a=n.slide;
     n.slideTrack=svgAdd('g',{class:'slide-track'},gTracks);
-    svgAdd('path',{d,class:'slide-rail'},n.slideTrack);
-    svgAdd('path',{d,class:'slide-slot'},n.slideTrack);
+    partEl(slideRailPart(a.ax,a.ay,a.bx,a.by),n.slideTrack);
   }
   n.g=svgAdd('g',{class:'node'},gMembers);
+  n.slideFeel=n.slide&&!n.threads.every(t=>t.freed)
+    ? svgAdd('g',{class:'slide-feel'},n.g):null;
   n.ax=n.x0; n.ay=n.y0;                 // where this mark was authored
   const els=neuronParts(n.x0,n.y0,n.threads.map(t=>t.col),{pinned:pinHolds(n),
     slideAngle:n.slide&&!n.threads.every(t=>t.freed)
       ? Math.atan2(n.slide.by-n.slide.ay,n.slide.bx-n.slide.ax):undefined})
-    .map(p=>[p.role,partEl(p,n.g)]);
+    .map(p=>[p.role,partEl(p,n.slideFeel||n.g)]);
   const by=r=>{const f=els.find(e=>e[0]===r); return f?f[1]:null};
   n.el=by('body'); n.el2=by('inner'); n.halo=by('halo');
   if(n.el2) n.el2.style.strokeWidth=MARK.wIn;
@@ -6250,6 +6503,34 @@ function markFreed(t,silent){
 
 let dragN=null,dragMoved=false,dragStart=null,dragOff={x:0,y:0},dragPair=null;
 let dragLast={x:0,y:0},dragNbrs=[],swallowNextDown=false;
+let slideSample=null;
+function slideAlong(n,x,y){
+  const s=n.slide,dx=s.bx-s.ax,dy=s.by-s.ay,length=Math.hypot(dx,dy);
+  return {along:((x-s.ax)*dx+(y-s.ay)*dy)/length,length,ux:dx/length,uy:dy/length};
+}
+function slideImpact(n,x,y,time){
+  if(!n.slide||!slideSample)return;
+  const at=slideAlong(n,x,y),before=slideSample;
+  const side=at.along<=0?-1:at.along>=at.length?1:0;
+  const dt=time-before.time,velocity=dt>0
+    ? (at.along-before.along)*boardScale()/dt:0;
+  if(!side&&at.along>8/boardScale()&&at.along<at.length-8/boardScale())before.stop=0;
+  if(side&&side!==before.stop){
+    before.stop=side;
+    if(!reduceMotion&&side*velocity>.45&&n.slideFeel?.animate){
+      if(n.slideBounce)n.slideBounce.cancel();
+      const kick=Math.min(3.5,1.4+Math.abs(velocity)*.75)/boardScale();
+      const dx=-side*at.ux*kick,dy=-side*at.uy*kick;
+      n.slideBounce=n.slideFeel.animate([
+        {transform:'translate(0px,0px)'},
+        {transform:`translate(${dx}px,${dy}px)`,offset:.3},
+        {transform:`translate(${dx*.16}px,${dy*.16}px)`,offset:.7},
+        {transform:'translate(0px,0px)'}
+      ],{duration:230,easing:'cubic-bezier(.2,.65,.3,1)'});
+    }
+  }
+  slideSample={along:at.along,time,stop:before.stop};
+}
 let dragId=null;
 function inverse2(m){
   const d=m[0]*m[3]-m[1]*m[2];if(Math.abs(d)<1e-9)throw new Error('coupled transform is singular');
@@ -6372,6 +6653,8 @@ $('netsvg').addEventListener('pointerdown',e=>{
   }
   if(dragN){dragId=e.pointerId; dragMoved=false;dragStart={x:dragN.x0,y:dragN.y0};
     dragLast={x:dragN.x0,y:dragN.y0};
+    if(dragN.slideBounce)dragN.slideBounce.cancel();
+    slideSample=dragN.slide?{...slideAlong(dragN,dragN.x0,dragN.y0),time:e.timeStamp,stop:0}:null;
     beginDragPair(dragN);
     $('field').classList.add('dragging');
     dragN.el.classList.add('grabbed');
@@ -6395,6 +6678,7 @@ $('netsvg').addEventListener('pointermove',e=>{
   if(!dragN || e.pointerId!==dragId)return;   // only the finger that grabbed it moves it
   const p=svgPt(e);
   dragN.tw=null;                      // your hand always wins over a glide
+  slideImpact(dragN,p.x+dragOff.x,p.y+dragOff.y,e.timeStamp);
   moveDragTo(p.x+dragOff.x,p.y+dragOff.y);
   if(!reduceMotion){
     const vx=dragN.x0-dragLast.x, vy=dragN.y0-dragLast.y;
@@ -6430,7 +6714,7 @@ function endDrag(e){
   node.el.classList.remove('grabbed');
   if(pair&&pair.mate.el)pair.mate.el.classList.remove('grabbed');
   if(node.mf) node.mf.g.classList.remove('grabbed');
-  dragN=null; dragId=null;dragPair=null;
+  dragN=null; dragId=null;dragPair=null;slideSample=null;
   dragNbrs=[];
   if(!(node.merged&&!dragMoved)){
     flickNode(node);if(pair)flickNode(pair.mate);
@@ -6714,7 +6998,9 @@ function dayRollover(){
 }
 setInterval(dayRollover,60000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) dayRollover() });
-let buildTag=null, buildStale=false;
+let buildTag=null, buildStale=false, pageLeaving=false;
+addEventListener('pagehide',()=>{pageLeaving=true});
+addEventListener('pageshow',()=>{pageLeaving=false});
 async function buildStamp(){
   try{
     const r=await fetch(location.pathname+'?fresh='+Date.now().toString(36),{method:'HEAD',cache:'no-store'});
@@ -6729,7 +7015,7 @@ function freshReload(){
   location.reload();
 }
 async function checkFresh(swapNow){
-  if(location.protocol==='file:') return;
+  if(pageLeaving||nativePlatform()||location.protocol==='file:') return;
   const tag=await buildStamp();
   if(!tag) return;
   if(!buildTag){ buildTag=tag; return }
@@ -7558,6 +7844,8 @@ function runOverOffer(trial,depth){
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
   const feats=[...new Set(r.cleared.flatMap(c=>c.feats))];
+  const last=r.cleared[depth-1],lastFeats=last?.feats||[];
+  const lastUnique=[...new Set(lastFeats)];
   const turns=r.cleared.reduce((a,c)=>a+c.moves,0);
   const parTot=r.cleared.reduce((a,c)=>a+c.par,0);
   const trial=isTrial();
@@ -7575,10 +7863,13 @@ function showRunOver(){
       ? [['best time trial', (store.meta.bestTrialDepth||depth)>depth
             ? (store.meta.bestTrialDepth)+' nets' : 'this run']]
       : [['rungs',rungWords(rung,' · ')||'none yet']],
-    body:(feats.length?`<div class="minted">${feats.slice(0,10).map((k,i)=>{
-      const b=store.collection.badges[k]||{tier:'over'};
-      return `<div class="mb" style="--i:${i}">${featureStamp(k,b.tier,false,b.fit)}<span>${k}</span></div>`;
-    }).join('')}</div>`:'')
+    body:(lastUnique.length?`<h3 class="result-scope">${depth>=POLICY.dailyNets&&!trial?'last net':'last cleared net'} · ${tierSay(last.tier)}</h3>`
+      +`<div class="minted">${lastUnique.map((k,i)=>{
+        const count=lastFeats.filter(f=>f===k).length;
+        return `<div class="mb" style="--i:${i}">${featureStamp(k,last.tier,false)}<span>${k}${count>1?' ×'+count:''}</span></div>`;
+      }).join('')}</div>`:'')
+    +(feats.length?`<div class="result-overview"><span>${feats.length} different features · ${depth===1?'this net':`all ${depth} nets`}</span>`
+      +`<button id="runcollection">view collection →</button></div>`:'')
     +(trial?'':`<textarea class="shareout" id="shareout" readonly rows="3" aria-label="the day, to copy" hidden></textarea>`)
     +`<p class="bquiet">${trial?`${feats.length} features named.`
         :`today's set ${depth} of ${POLICY.dailyNets}. ${feats.length} features named.`} `
@@ -7595,8 +7886,10 @@ function showRunOver(){
             `<button class="wbtn" id="recordbtn2">menu</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
   });
+  sayHide(true);
   showVeil('runveil');
   $('recordbtn2').onclick=()=>{hideVeils();openMenu('home')};
+  if($('runcollection'))$('runcollection').onclick=()=>{hideVeils();openMenu('coll')};
   if($('sharebtn')) $('sharebtn').onclick=async e=>{
     const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
     if(navigator.share){
@@ -8304,10 +8597,7 @@ const RMARK={
   pinned:(a)=>[threadPart([[2,22],[66,22]],a||THREADPAL[4]),
               ...neuronParts(34,22,[a||THREADPAL[4]],{pinned:true})],
   sliding:(a)=>[
-    part('path',{d:'M12 22H56'},{fill:'none',stroke:'--ink','stroke-opacity':.48,
-      'stroke-width':13,'stroke-linecap':'round'},'rail','slide-rail'),
-    part('path',{d:'M12 22H56'},{fill:'none',stroke:'--surface',
-      'stroke-width':9,'stroke-linecap':'round'},'slot','slide-slot'),
+    slideRailPart(12,22,56,22),
     ...neuronParts(34,22,[a||THREADPAL[5]],{slideAngle:0})],
   split:(a,b)=>[threadPart([[2,12],[66,12]],a||THREADPAL[2]),
              ...neuronParts(24,12,[a||THREADPAL[2]]),
