@@ -30,73 +30,11 @@
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-kQ0YW8r0sDIwYh4UjtmQPgIkewQ3RI+xAzYwe2mtA9I=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
-<!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
-     construction: a rounded white tile, a faint inner keyline at 13% ink, a
-     bold near-black letter, and the colour beneath it. that file is 64 wide and
-     this one is 32, so the shared measures here are exactly half of it — rx 14
-     -> 7, the keyline's 1.5/61/12.5/3 -> .75/30.5/6.25/1.5. side by side in a
-     bookmarks bar the CORNER RADIUS is what makes two marks read as a set, so
-     it is copied to the unit.
-
-     where the two part company is the colour. akibwa carries a thin blue line
-     with an orange terminal dot; this one FILLS the bottom 12 of its 32 with the
-     four-colour flag, on the owner's instruction, and a filled field is a bigger
-     departure than a rule was. the tile, the radius and the keyline are what
-     still carry the family — stated here because the next person to look at the
-     pair will wonder whether the divergence was noticed.
-
-     the letter is also a PATH, not a <text>. akibwa's asks for Avenir Next, then
-     Inter, then Helvetica Neue, so its A is a different glyph on a machine with
-     none of them. this one cannot drift. it is lowercase because everything this
-     game writes is, and it is FITTED to the masthead's f rather than invented:
-     against the real 25px/700 glyph, as ratios of its height, width .455 against
-     .467, stem .18 against .20, hook overhang .18 against .147. the crossbar is
-     the one place the aicher grid costs fidelity — it sits .45 down where the
-     title's sits .34, because a TRUE circular hook wide enough to reach that far
-     right springs lower than a real type hook, which is flattened. raise it and
-     the counter closes and the letter rasterises as a plus sign.
-
-     the band is 4 units, and that number is not taste. the viewBox is 32 and a
-     tab draws it at 16, so a unit is half a device pixel and only EVEN heights
-     land on whole ones — an odd band is a blurred band, which is what capped the
-     original 2-unit rule: at 3 units it was 1.5px and smeared. 4 units is the
-     next clean step up, and it exactly doubles the colour that survives — 28
-     pure flag pixels at 16px against the 2-unit rule's 14.
-
-     it stops at 4 because of where the letter ends. the stem's baseline is y24,
-     so a band from y24 has the f standing exactly ON it and needs nothing doing
-     to either. 6 units would climb two past the baseline and the stem would have
-     to be knocked out of the colour; 12 fills the bottom third and the tile stops
-     being a letter on a ground and becomes a colour chip with a letter on top.
-     both were built and both were rejected — the point of this mark is a letter
-     with a rule under it, and the rule should be legible, not loud.
-
-     the band also still FLOATS: four units of tile below it, the way akibwa's
-     blue line sits clear of its own bottom edge. run flush to the edge instead
-     and the family resemblance goes with it, for one extra pixel of colour.
-
-     the band is CLIPPED to the tile so it takes the bottom corner arcs.
-     unclipped it is a square block in a rounded tile and looks broken at 96px —
-     checked, and checked in webkit too, because a clipPath is exactly the kind
-     of thing that renders in one engine and not the other. it does not: both
-     agree to the pixel, and both put zero flag pixels outside the arc. the
-     keyline is drawn LAST, over the field, because it is the tile's edge and an
-     edge that stops where a colour starts is not an edge.
-
-     the tile is also what lets the colours be fixed at all. a tab bar is light
-     on one machine and dark on the next and an icon cannot ask which. a
-     prefers-color-scheme rule inside the svg looks like the answer and is not:
-     chromium honours it, WEBKIT IGNORES IT, so the f would stay near-black on
-     every safari and ios dark tab bar — the same class of bug as the unitless
-     `r`. so the mark brings its own ground.
-
-     A DATA-URI CANNOT READ A CSS TOKEN. these are therefore resolved values and
-     the only hardcoded colours in the file: --surface and --ink at their LIGHT
-     values, then --flag-1..4 resolved through their var() chains — hellblau,
-     gelb, gruen, orange, in that order and for the reasons given at --flag-*.
-     if any of the six move in :root, MOVE THEM HERE BY HAND. nothing checks
-     this and nothing will tell you. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CclipPath id='t'%3E%3Crect width='32' height='32' rx='7'/%3E%3C/clipPath%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%23FBFAF6'/%3E%3Cg fill='none' stroke='%2315191C' stroke-width='4'%3E%3Cpath d='M14 24V12A6 6 0 0 1 20 6'/%3E%3Cpath d='M10 14H20'/%3E%3C/g%3E%3Cg clip-path='url(%23t)'%3E%3Crect y='24' width='8' height='4' fill='%232EA3DC'/%3E%3Crect x='8' y='24' width='8' height='4' fill='%23EFC319'/%3E%3Crect x='16' y='24' width='8' height='4' fill='%231FA45A'/%3E%3Crect x='24' y='24' width='8' height='4' fill='%23E97E18'/%3E%3C/g%3E%3Crect x='.75' y='.75' width='30.5' height='30.5' rx='6.25' fill='none' stroke='%2315191C' stroke-opacity='.13' stroke-width='1.5'/%3E%3C/svg%3E">
+<!-- The tab mark keeps the Akibwa family's light tile and Features' four-colour
+     flag. A filled lowercase f, a clear gap above the inset flag and a fine
+     keyline stay legible at 16px. Keep the path and resolved palette in this
+     data URI so the self-contained game also carries its favicon offline. -->
+<link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23FBFAF6%22%2F%3E%3Cpath%20d%3D%22M24%2044V26H18V20H24V18A12%2012%200%200%201%2036%206H44V13H37A6%206%200%200%200%2031%2019V20H42V26H31V44Z%22%20fill%3D%22%2315191C%22%2F%3E%3Cpath%20d%3D%22M8%2048H20V56H8Z%22%20fill%3D%22%232EA3DC%22%2F%3E%3Cpath%20d%3D%22M20%2048H32V56H20Z%22%20fill%3D%22%23EFC319%22%2F%3E%3Cpath%20d%3D%22M32%2048H44V56H32Z%22%20fill%3D%22%231FA45A%22%2F%3E%3Cpath%20d%3D%22M44%2048H56V56H44Z%22%20fill%3D%22%23E97E18%22%2F%3E%3Crect%20x%3D%22.75%22%20y%3D%22.75%22%20width%3D%2262.5%22%20height%3D%2262.5%22%20rx%3D%2213.25%22%20fill%3D%22none%22%20stroke%3D%22%2315191C%22%20stroke-opacity%3D%22.13%22%20stroke-width%3D%221.5%22%2F%3E%3C%2Fsvg%3E">
 <!-- the ground is stamped before the first paint, or the page shows one theme
      and then the other. the key is repeated here rather than shared because
      this has to run before the stylesheet is even parsed; it is the one place
