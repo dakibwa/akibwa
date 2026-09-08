@@ -90,6 +90,15 @@ function balanceBatch(heights, { gap, target, maxHeight, mixed, visibleColumns }
 
 export function stackArtwork(heights, { gap = 12, viewportHeight = 900, visibleColumns = 8, mixed = false } = {}) {
   if (!heights.length) return [];
+  // Equal-sized covers form a simple four-high shelf. Keep the same groups
+  // as the viewport changes or more records arrive; only the last can be short.
+  if (!mixed && Math.max(...heights) - Math.min(...heights) < .5) {
+    return Array.from({ length: Math.ceil(heights.length / 4) }, (_, column) => {
+      const start = column * 4;
+      const indices = heights.slice(start, start + 4).map((_, index) => start + index);
+      return { indices, height: sum(indices.map(index => heights[index])) + gap * (indices.length - 1), gap };
+    });
+  }
   const target = Math.max(300, Math.min(640, viewportHeight - 170));
   const maxHeight = Math.max(target, Math.min(viewportHeight - 110, target * 1.15));
   const columns = [];

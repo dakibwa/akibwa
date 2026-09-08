@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { stackArtwork } from "../components/taste-layout.mjs";
 
 /* Build-time contract for the explicitly restored personal index. Named public
    choices do not relax the remaining private-data and search boundaries. */
@@ -95,6 +96,14 @@ requireText(hero, "3200", "the historical name flip keeps its initial timing");
 requireText(hero, "visibilitychange", "the name timer must pause in hidden tabs");
 requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: clamp(24px, 3vw, 36px)"]);
 requireRuleText(".personal-taste-rail {", ["grid-auto-flow: column", "overflow-x: auto"]);
+for (const height of [104, 132, 198]) for (const viewportHeight of [650, 900]) {
+  const options = { viewportHeight, mixed: false };
+  const columns = stackArtwork(Array(50).fill(height), options);
+  if (columns.length !== 13 || !columns.every((column, index) => column.indices.length === (index === 12 ? 2 : 4))) fail("equal-sized Taste covers must stack four high, with only the final column shorter");
+  if (columns.flatMap(column => column.indices).some((index, position) => index !== position)) fail("four-high shelves must retain catalogue order");
+  if (new Set(columns.slice(0, 12).map(column => column.height)).size !== 1) fail("complete four-high columns must finish flush");
+  if (JSON.stringify(columns.slice(0, 12)) !== JSON.stringify(stackArtwork(Array(48).fill(height), options))) fail("loading more must preserve the existing four-high stacks");
+}
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
   fail("the detailed Life in Maps page must not ship");
