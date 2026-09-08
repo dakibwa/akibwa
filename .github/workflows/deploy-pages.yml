@@ -1,11 +1,7 @@
-name: Deploy GitHub Pages
+name: Deploy GitHub Pages fallback
 
+# Manual fallback only. The Cloudflare workflow publishes every site change.
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "**/*.md"
-      - "docs/**"
   workflow_dispatch:
 
 permissions:

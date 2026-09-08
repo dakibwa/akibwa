@@ -1,9 +1,11 @@
-name: Deploy Cloudflare preview
+name: Deploy Cloudflare
 
-# Production remains on GitHub Pages until the preview and domain cutover are
-# reviewed. At cutover, move the existing main-push trigger here and disable
-# deploy-pages.yml in the same change so Features publication keeps deploying.
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
   workflow_dispatch:
 
 permissions:
@@ -43,10 +45,13 @@ jobs:
       - name: Run release check
         run: npm run check:release
 
-      - name: Deploy static preview
+      - name: Deploy static site
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: npm run deploy:cloudflare
 
       - name: Verify served preview
         run: npm run check:hosting -- https://akibwa-site.dakibwa.workers.dev
+
+      - name: Verify public site
+        run: npm run check:hosting -- https://akibwa.com

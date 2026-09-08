@@ -8,11 +8,18 @@ the Free plan's 20,000-file and 25 MiB-per-file limits.
 
 ## Current production and preview
 
-GitHub Pages is still the production origin behind Cloudflare for `akibwa.com`.
-The existing main-push workflow remains enabled. `wrangler.jsonc` deliberately
-has no custom domains or zone routes: deploying it creates only the
-`https://akibwa-site.dakibwa.workers.dev` preview, with preview URLs excluded from
-search through `X-Robots-Tag: noindex`.
+The `akibwa-site` Worker serves `akibwa.com` through a Custom Domain managed in
+the Cloudflare dashboard. The same deployment is available at
+`https://akibwa-site.dakibwa.workers.dev`, with preview URLs excluded from search
+through `X-Robots-Tag: noindex`. The Cloudflare zone owns the permanent redirect
+from `www.akibwa.com` to the apex, preserving the path and query string.
+Its Single Redirect matches only `www.akibwa.com`; the proxied `www` A record
+uses Cloudflare's reserved originless address `192.0.2.0`.
+
+`wrangler.jsonc` deliberately omits both `route` and `routes`. Asset deployments
+leave the dashboard-managed domain and existing zone routes untouched. Do not
+add domain routing to Wrangler or broaden the deployment token to manage DNS.
+GitHub Pages is retained as a manual fallback; it no longer publishes on push.
 
 Two existing routes must remain ahead of the static origin:
 
@@ -22,12 +29,12 @@ Two existing routes must remain ahead of the static origin:
 | `akibwa.com/onebagger*` | `one-bag` |
 
 Cloudflare treats a Worker Custom Domain as the origin, so existing route
-Workers execute before it. Attaching the static Worker to `akibwa.com` must not
-replace these routes or change their Worker bindings, databases, cookies,
+Workers execute before it. Static deployments must not replace these routes
+or change their Worker bindings, databases, cookies,
 `PUBLIC_ORIGIN`, provider callbacks, or secrets. The static preview has no API
-proxy: its `/features/api/*` returns 404, and account/purchase flows continue to
-belong to the production origin. Verify production API health separately until
-the custom-domain cutover permits a complete same-origin smoke test.
+proxy: its `/features/api/*` returns 404, and account/purchase flows belong to
+the production origin. Hosting checks probe production API health separately;
+account, cookie and purchase behavior is verified on `akibwa.com/features/`.
 
 ## Build and deploy
 
@@ -37,17 +44,20 @@ npm run publish:ready
 npm run deploy:cloudflare -- --dry-run
 npm run deploy:cloudflare
 npm run check:hosting -- https://akibwa-site.dakibwa.workers.dev
+npm run check:hosting -- https://akibwa.com
 ```
 
-The deployment command uploads the already-checked export. It does not build a
-second copy or change the production domain. Publish the whole `out/` tree:
+The deployment command uploads the already-checked export once, updating both
+the public site and preview. It does not build a second copy or change domain
+routing. Publish the whole `out/` tree:
 standalone `/features/`, `/probe/`, `/meditator/` and `/trek/`, generated artwork,
 listening data, fonts and service-worker retirement files are part of it.
-`.assetsignore` excludes GitHub's `CNAME` and `.nojekyll` hosting metadata.
+`.assetsignore` excludes `CNAME` and `.nojekyll` from Cloudflare assets; these
+files remain in the export for the GitHub Pages fallback.
 
 `npm run check:hosting -- <origin>` checks exported HTML and representative asset
 bytes, Features' script hashes and native marker, security headers, canonical
-game redirects, real 404s, caching, preview indexing and production API health.
+game and `www` redirects, real 404s, caching, preview indexing and production API health.
 Keep a direct browser run-through of the affected pages alongside this check.
 
 ## Routing and response policy
@@ -69,26 +79,41 @@ Keep a direct browser run-through of the affected pages alongside this check.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
 
-## Continuous deployment and cutover
+## Continuous deployment
 
-The prepared Cloudflare workflow is manual. It expects an approved
-`CLOUDFLARE_API_TOKEN` GitHub secret and `CLOUDFLARE_ACCOUNT_ID` repository
-variable; it fails clearly before building if either is absent. Use a scoped
-deployment credential for the existing account that owns `akibwa.com`, never a
-developer's OAuth token. An existing authorized Workers Builds Git integration
-is another supported automation option and avoids storing the token in GitHub.
+`.github/workflows/deploy-cloudflare.yml` runs on changes pushed to `main`,
+excluding Markdown and `docs/**`, and can also be dispatched manually. It builds
+one export with the release check, deploys it, then verifies the exact served
+bytes on both the preview and public domain. A failed verification fails the
+workflow; check the affected response before treating a release as complete.
 
-Before activating the domain, verify the concrete preview and working automatic
-deployment. The final coordinated change must move the existing main-push
-trigger to the Cloudflare deployment and disable GitHub's production deploy,
-then attach `akibwa.com` as the Worker Custom Domain and verify both existing
-API routes, sign-in/cookies and public pages on the unchanged URLs. A pre-existing
-CNAME can prevent Custom Domain attachment; inspect the DNS record before the
-cutover and keep its previous value available for rollback.
+The workflow uses the `CLOUDFLARE_API_TOKEN` GitHub secret and
+`CLOUDFLARE_ACCOUNT_ID` repository variable. The approved account token has only
+**Workers Scripts: Edit** on the owning account. It has no DNS, zone routing,
+KV, R2 or D1 permission. The token is exposed only to the configuration check
+and Wrangler deploy steps; dependency installation, builds and verification do
+not receive it. Never substitute a developer's OAuth token or widen this scope
+for an asset deployment. The existing limited-token workflow was verified
+before the domain cutover.
 
 Features continues publishing its stripped and hardened client to
-`dakibwa/dakibwa` under `public/features/`. Its push must trigger the new static
-deployment, so do not change that repository or publication path.
+`dakibwa/dakibwa` under `public/features/`. That push triggers the Cloudflare
+workflow, so preserve the repository and publication path.
+
+## Manual fallback
+
+`.github/workflows/deploy-pages.yml` remains available through
+`workflow_dispatch` only. Running it updates the GitHub Pages copy; it does not
+change the public domain or disable Cloudflare publishing.
+
+If the static origin needs to return to GitHub Pages, first obtain a successful
+manual Pages deployment. Then coordinate the dashboard Custom Domain and DNS
+rollback (the previous apex used proxied A records `185.199.108.153`,
+`185.199.109.153`, `185.199.110.153` and `185.199.111.153`), preserve both API
+Worker routes and the `www` redirect, and move the main-push trigger back to
+Pages in the same operation. Verify the public pages and Features API before
+calling the rollback complete. Do not operate two automatic production
+publishers.
 
 ## Primary references
 
@@ -97,4 +122,4 @@ deployment, so do not change that repository or publication path.
 - [Static generation, HTML routing and real 404 pages](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/)
 - [Static response headers](https://developers.cloudflare.com/workers/static-assets/headers/)
 - [Custom Domains and interaction with existing routes](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/#interaction-with-routes)
-- [Workers Builds integration](https://developers.cloudflare.com/workers/ci-cd/builds/)
+- [Workers deployment through GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/)

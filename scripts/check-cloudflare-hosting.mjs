@@ -69,6 +69,13 @@ const gameAlias = await request("/features/index.html", { redirect: "follow" });
 assert.equal(gameAlias.status, 200, "existing index.html links must still reach the game");
 assert.equal(hash(Buffer.from(await gameAlias.arrayBuffer())), hash(features));
 
+const canonical = await fetch("https://www.akibwa.com/features/?hosting-check=canonical", {
+  redirect: "manual", signal: AbortSignal.timeout(15000),
+});
+assert.equal(canonical.status, 301, "www must permanently redirect to the apex");
+assert.equal(canonical.headers.get("location"), "https://akibwa.com/features/?hosting-check=canonical",
+  "www redirect must preserve the path and query string");
+
 for (const path of ["/life-map/", "/hosting-check-missing-page/"]) {
   const response = await request(path);
   assert.equal(response.status, 404, `${path} must not fall back to the homepage`);

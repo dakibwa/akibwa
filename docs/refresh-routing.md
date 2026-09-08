@@ -2,7 +2,7 @@
 
 Akibwa.com is the product surface. Public project views should be reachable and usable on the website itself, while Cloudflare runs the background jobs, private credentials, API calls, dynamic app runtime, KV storage, and scheduled refreshes.
 
-The website remains a static GitHub Pages export. GitHub Actions should build and deploy the site, not wake up hourly to mutate data files. Data refreshes that can run from API credentials or public seeds belong in Cloudflare Workers with KV storage, public JSON endpoints, status endpoints, and checked-in fallback seeds.
+The website remains a static Next.js export, published by GitHub Actions to Cloudflare Workers Static Assets. GitHub Actions should build and deploy the site, not wake up hourly to mutate data files. Data refreshes that can run from API credentials or public seeds belong in Cloudflare Workers with KV storage, public JSON endpoints, status endpoints, and checked-in fallback seeds.
 
 Dynamic project apps should be framed, rendered, or progressively rebuilt inside Akibwa routes. The wall is rendered directly at `https://akibwa.com/albums`. Its combined listening catalogue is a static aggregate built from the owning private history, as defined in [listening-history.md](listening-history.md).
 

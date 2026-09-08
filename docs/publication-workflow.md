@@ -8,8 +8,9 @@ Akibwa.com is the public surface. Private or credentialed work should stay in Cl
 - `components/site-data.js`: imports the registry and exports the values used by pages.
 - `scripts/check-publication.mjs`: validates route files, fallback data, generated public packets, and static export routes.
 - `scripts/check-cloud-refreshes.mjs`: reads refresh status endpoints from the registry.
-- `.github/workflows/deploy-pages.yml`: builds and deploys the static export from `main`.
-- `wrangler.jsonc`, `public/_headers` and `public/_redirects`: the Cloudflare static preview's routing and response policy. `.github/workflows/deploy-cloudflare.yml` is a manual preview workflow until the domain cutover is reviewed; [the hosting contract](cloudflare-config.md) records the production boundary and automation setup.
+- `.github/workflows/deploy-cloudflare.yml`: builds and deploys the static export from `main`, then verifies both the Worker preview and `akibwa.com`.
+- `.github/workflows/deploy-pages.yml`: manual GitHub Pages fallback. Running it alone does not move the public domain away from Cloudflare.
+- `wrangler.jsonc`, `public/_headers` and `public/_redirects`: the Cloudflare asset, HTML routing and response policy. The dashboard owns the Custom Domain; [the hosting contract](cloudflare-config.md) records publishing, credentials and fallback operations.
 
 ## Publish Check
 
