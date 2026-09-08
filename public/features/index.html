@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Z3rd/RkdpIDgWT44XCQ56ZOa1WJPdnuFK2pN5gzz2iY=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-QoUmvtM4TfuYlQ1Xo8Vyj5igEwG39iDjjU3GON35ixM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -2618,17 +2618,20 @@ function newRun(mode,day){
 }
 const isTrial=()=>R().mode==='trial';
 const isArchive=()=>!!R().archive;
-const inArchive=d=>d<dayAdd(today(),-1);
+const inArchive=d=>d<today();
+const canAccessDay=d=>d>=LAUNCH && d<=today() && (!inArchive(d) || DEV || POLICY.premium);
+const canAccessRun=(r=R())=>!!r && ((r===R() && inTutorialRun()) ||
+  (canAccessDay(r.day) && (r.mode!=='trial' || canTimeTrial())));
 const liveRunOn=d=>[store.run,store.parked].some(r=>r&&r.day===d&&r.mode!=='trial'&&!r.over);
 const spentDay=d=>!liveRunOn(d) && dayRows().some(r=>r.d===d);
 function canPlayDay(d){
-  if(d>today() || d<LAUNCH) return false;
-  if(inArchive(d)) return DEV || !!POLICY.premium;    // the archive is the full version's
-  return !!POLICY.premium || !spentDay(d);
+  return canAccessDay(d) && (DEV || POLICY.premium || !spentDay(d));
 }
 function canTimeTrial(){ return DEV || !!POLICY.premium }
 if(store.runsDay!==today()){ store.runsDay=today(); store.runsToday=0 }
-if(!store.run || (!store.run.archive && store.run.day!==today())){
+if(!store.run || (store.tutorialDone && !store.run.archive && store.run.day!==today()
+  && !store.run.turns && !store.run.netIndex && !store.run.netMoves && !store.run.over
+  && !(store.run.cleared||[]).length && !Object.keys(store.run.positions||{}).length)){
   store.runsToday=1;
   newRun();
 }
@@ -2642,7 +2645,8 @@ if(store.run){
   if(!r.positions || typeof r.positions!=='object') r.positions={};
 }
 function canStartAnotherRun(){
-  return POLICY.unlimited || (store.runsToday||0) < POLICY.runsPerDay;
+  return POLICY.unlimited || ((store.runsToday||0) < POLICY.runsPerDay
+    && !dayRows().some(r=>r.d===today()));
 }
 function startAnotherRun(){
   if(!canStartAnotherRun()) return false;
@@ -2654,6 +2658,7 @@ function startAnotherRun(){
   return true;
 }
 function resumeRun(){
+  if(!canAccessRun()) return false;
   const r=R(); r.paused=false; r.over=false;
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
@@ -2661,13 +2666,13 @@ function resumeRun(){
   return true;
 }
 function resumeParked(){
-  if(!store.parked) return false;
+  if(!store.parked || !canAccessRun(store.parked)) return false;
   store.run=store.parked; store.parked=null;
   return resumeRun();
 }
 function canResume(){
-  return !!store.parked ||
-         (R().paused && !isTrial() && R().cleared.length<POLICY.dailyNets);
+  return (!!store.parked && canAccessRun(store.parked)) ||
+         (canAccessRun() && R().paused && !isTrial() && R().cleared.length<POLICY.dailyNets);
 }
 const startDayTrial=d=>startTrialRun(d);
 function startTrialRun(day){
@@ -2772,6 +2777,7 @@ function wireDoors(row){
     else if(e.target.closest('.door-close')){
       store.introSeen=true; store.lastIntroDay=today(); save();
       if(menuView==='pay') closeCheckout();
+      if(!canAccessRun()) return openDay(today());
       hideVeils();
     }
   };
@@ -3120,6 +3126,7 @@ function adoptState(merged){
   if(catchUp){
     store.run=theirs;
     if(merged.parked) store.parked=merged.parked;
+    if('tutorialParked' in merged) store.tutorialParked=merged.tutorialParked;
     try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}
     builtFor=-1; resetDescent(); renderAll();
     toast('your set is where you left it · net '+((theirs.cleared||[]).length+1));
@@ -6496,7 +6503,7 @@ function coupleHolds(n){
   return !!p && p.a.threads.some(t=>!t.freed) && p.b.threads.some(t=>!t.freed);
 }
 function relayLocked(n){return !!(n&&n.relay&&!n.relay.before.freed)}
-const grabbable=n=>!n.pinned && !relayLocked(n) && !n.threads.every(t=>t.freed)
+const grabbable=n=>canAccessRun() && !n.pinned && !relayLocked(n) && !n.threads.every(t=>t.freed)
   && (!inTutorial() || tutorialFreePlay() || n===tutAct);
 function syncTutorialTargets(){
   members.forEach(n=>{
@@ -6531,6 +6538,7 @@ function pinnedAt(x,y){
 }
 function relayAt(x,y){return nearestNode(x,y,n=>relayLocked(n))}
 $('netsvg').addEventListener('pointerdown',e=>{
+  if(!canAccessRun()) return openMenu('home');
   if(R().over)return;
   if(dragN)return;
   if(swallowNextDown){swallowNextDown=false; return}
@@ -6613,6 +6621,7 @@ function endDrag(e){
   if(e && dragId!=null && e.pointerId!==dragId) return;
   $('field').classList.remove('dragging');
   if(!dragN){dragId=null; return}
+  if(!canAccessRun()){ cancelDrag(); openMenu('home'); return }
   const r=R(), node=dragN, pair=dragPair;
   node.el.classList.remove('grabbed');
   if(pair&&pair.mate.el)pair.mate.el.classList.remove('grabbed');
@@ -6692,8 +6701,8 @@ function keyNudge(n,dx,dy){
   refresh();
   n.g.setAttribute('aria-label',nodeSay(n));
 }
-function keyCancel(){
-  if(!dragN || dragId!=='kbd') return;
+function cancelDrag(){
+  if(!dragN) return;
   const n=dragN,pair=dragPair;
   n.x0=n.xv=n.xr=dragStart.x; n.y0=n.yv=n.yr=dragStart.y;
   if(pair){
@@ -6703,11 +6712,17 @@ function keyCancel(){
   }
   n.el.classList.remove('grabbed');
   if(n.mf) n.mf.g.classList.remove('grabbed');
-  dragN=null; dragId=null; dragPair=null; dragNbrs=[];
+  dragN=null; dragId=null; dragPair=null; dragNbrs=[]; slideSample=null;
+  $('field').classList.remove('dragging');
   refresh(); n.g.setAttribute('aria-label',nodeSay(n));
+}
+function keyCancel(){
+  if(!dragN || dragId!=='kbd') return;
+  cancelDrag();
   flashMsg('put back · nothing spent');
 }
 $('netsvg').addEventListener('keydown',e=>{
+  if(!canAccessRun()) return openMenu('home');
   const g=e.target.closest && e.target.closest('g.node');
   if(!g) return;
   const n=members.find(m=>m.g===g);
@@ -6824,7 +6839,7 @@ function assistSpin(r,kind,n){
 }
 function descentTick(){
   const r=R(), btn=$('descentbtn');
-  if(r.over || dragN || document.querySelector('.veil.show') || !threads.length || threads.every(t=>t.freed)){
+  if(!canAccessRun() || r.over || dragN || document.querySelector('.veil.show') || !threads.length || threads.every(t=>t.freed)){
     if(!descentArmed) btn.classList.remove('on');
     return;
   }
@@ -6890,14 +6905,19 @@ function dayRollover(){
   seenDay=now;
   store.runsDay=now; store.runsToday=0;
   const r=R();
-  const untouched = r && !r.archive && r.mode!=='trial' && !dragN
+  const untouched = r && !inTutorialRun() && !r.archive && r.mode!=='trial' && !dragN
                  && !r.turns && !r.netIndex && !(r.cleared||[]).length && !r.netMoves;
   if(untouched && r.day!==now){ newRun('daily',now); builtFor=-1; resetDescent() }
   save();
   renderAll();
   if($('runveil').classList.contains('show')) showRunOver();
   if(menuShown()) renderMenu();
-  if(!untouched && r && r.day!==now && !r.over) flashMsg('a new day · yesterday\'s set is still yours to finish');
+  if(!untouched && r && r.day!==now && !r.over && !inTutorialRun()){
+    if(!canAccessRun()){
+      cancelDrag(); openMenu('home');
+      flashMsg('a new day · today\'s set is free · earlier sets need the full version');
+    }else flashMsg('a new day · yesterday\'s set is still yours to finish');
+  }
 }
 setInterval(dayRollover,60000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) dayRollover() });
@@ -7441,7 +7461,8 @@ function endTutorial(){
   cancelTutorialBridge(); tutorialBridge=null;
   store.tutorialDone=true;
   if(store.parked){
-    store.run=store.parked; store.parked=null;
+    store.run=store.parked; store.parked=store.tutorialParked||null;
+    store.tutorialParked=null;
     builtFor=-1; resetDescent(); save();
   }else{
     const r=R();
@@ -7483,7 +7504,7 @@ function retanglePeriod(){
 function failLine(){ return Math.round(initialCross*2)+5 }
 function retangleTick(){
   const r=R();
-  if(!isTrial()||r.over||dragN||document.querySelector('.veil.show')||!threads.length) return;
+  if(!canAccessRun()||!isTrial()||r.over||dragN||document.querySelector('.veil.show')||!threads.length) return;
   if(threads.every(t=>t.freed)) return;
   if(performance.now()<retangleAt) return;
   retangleAt=performance.now()+retanglePeriod();
@@ -7665,6 +7686,7 @@ function boardCleared(){
 }
 let swapT=null, swapSkip=null;
 function nextNet(){
+  if(!canAccessRun()) return openMenu('home');
   if(tutorialBridge){ cancelTutorialBridge(); tutorialBridge=null }
   hideVeils();
   cancelHold();
@@ -7751,6 +7773,7 @@ function runOverOffer(trial,depth){
 }
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
+  const parked=!!store.parked && canAccessRun(store.parked);
   const feats=[...new Set(r.cleared.flatMap(c=>c.feats))];
   const last=r.cleared[depth-1],lastFeats=last?.feats||[];
   const lastUnique=[...new Set(lastFeats)];
@@ -7789,7 +7812,7 @@ function showRunOver(){
           : 'the rest of today\'s set is still there when you are.'),
     sun:false,
     offer:runOverOffer(trial,depth),
-    actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${store.parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
+    actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
             (trial?'':`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">${SHARE_LABEL}</button>`)+
             `<button class="wbtn" id="recordbtn2">menu</button>`+
             (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
@@ -7814,7 +7837,7 @@ function showRunOver(){
     clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent=SHARE_LABEL },2400);
   };
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openMenu('pay'); beginUnlock()};
-  if($('resumebtn')) $('resumebtn').onclick=()=>{store.parked?resumeParked():resumeRun()};
+  if($('resumebtn')) $('resumebtn').onclick=()=>{parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
 }
 function hideVeils(){
@@ -8063,7 +8086,7 @@ function openArchiveLook(iso){
       +`<button class="wbtn solid" id="archbuy">unlock${priceWords()?' · '+priceWords():''}</button>`
     : `<span class="arch-say">${esc(replayWords())}</span>`;
   $('archbody').innerHTML=
-     `<div class="arch-read"><b>${esc(read.fig!=null?String(read.fig):'')} ${esc(read.word||'')}</b>`
+     `<div class="arch-read"><b>${esc(read?.fig!=null?String(read.fig):'')} ${esc(read?.word||'')}</b>`
     +`<span>${esc(dayLabel(iso))} · played</span></div>`
     +`<div class="arch-grid">${grid}</div>`
     +`<div class="arch-offer">${offer}</div>`;
@@ -8074,7 +8097,7 @@ function openArchiveLook(iso){
 }
 function openDay(iso){
   if(inTutorialRun() && canPlayDay(iso)) endTutorial();
-  if(R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
+  if(canAccessRun() && R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
   if(!canPlayDay(iso)){
     if(openArchiveLook(iso)) return;
     return flashMsg(shutWords(iso));
@@ -8083,9 +8106,13 @@ function openDay(iso){
   const parkedHere = store.parked && store.parked.day===iso
                   && store.parked.mode!=='trial' && !store.parked.over ? store.parked : null;
   if(parkedHere) store.parked=null;
-  if(leaving && leaving.mode!=='trial' && !leaving.archive
+  if(leaving && leaving.mode!=='trial' && !leaving.over
      && leaving.day!==iso && leaving.cleared.length<POLICY.dailyNets) store.parked=leaving;
-  if(parkedHere) store.run=parkedHere; else newRun('daily',iso);
+  if(parkedHere) store.run=parkedHere;
+  else {
+    newRun('daily',iso);
+    if(iso===today()) store.runsToday=(store.runsToday||0)+1;
+  }
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
   flashMsg(iso===today()?'today\'s net':dayLabel(iso)+' · this does not extend a streak');
 }
@@ -8295,6 +8322,7 @@ function showVeil(id){
   sayHide(); $(id).classList.add('show');
 }
 function renderHud(){
+  syncTutorialTargets();
   const r=R();
   paintTill($('buybtn'));
   const trial=isTrial();
@@ -8575,7 +8603,8 @@ function renderIntro(){
     const current=R();
     const started=current.turns>0 || current.netMoves>0 || current.netIndex>0
       || current.cleared.length>0 || Object.keys(current.positions).length>0;
-    const startLabel=fresh ? (started?'resume tutorial':'start untangling')
+    const startLabel=!canAccessRun() ? "open today's set"
+      :fresh ? (started?'resume tutorial':'start untangling')
       :current.paused ? 'resume your game'
       :current.over ? 'view your result'
       :started ? 'resume your game'
@@ -8610,6 +8639,7 @@ function renderIntro(){
   }
   if($('introstart')) $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
+    if(!canAccessRun()) return openDay(today());
     if(R().paused && canResume()){ resumeRun(); return }
     stopMenuMotion();
     $('introveil').classList.remove('show');
@@ -8625,9 +8655,11 @@ function startLessons(){
   clearTimeout(coachEnterT); coachEnterT=null;
   coachSig=''; coachQueuedSig='';
   const cur=R();
-  if(cur && cur.mode!=='trial' && !cur.archive && !store.parked
-     && (cur.netMoves || (cur.cleared||[]).length || cur.over))
+  if(cur && !inTutorialRun() && cur.mode!=='trial'
+     && (cur.netMoves || (cur.cleared||[]).length || cur.over || store.parked)){
+    store.tutorialParked=store.parked||null;
     store.parked=cur;
+  }
   store.introSeen=true; store.lastIntroDay=today();
   store.tutorialDone=false;
   newRun('daily',today());
