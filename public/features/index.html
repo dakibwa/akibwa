@@ -14,21 +14,21 @@
 <!-- This is the one image that leaves the game before a player opens it. Keep
      its words aligned with the welcome card and publish it with the page: a
      correct local tag pointing at a missing file is still a bare share. -->
-<meta name="description" content="Untangle what a neural net knows. A daily puzzle: ten nets, the same ten for everyone.">
+<meta name="description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <link rel="canonical" href="https://akibwa.com/features/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="akibwa">
 <meta property="og:title" content="features">
-<meta property="og:description" content="Untangle what a neural net knows. A daily puzzle: ten nets, the same ten for everyone.">
+<meta property="og:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta property="og:url" content="https://akibwa.com/features/">
-<meta property="og:image" content="https://akibwa.com/features/og.png">
+<meta property="og:image" content="https://akibwa.com/features/og.png?v=discoveries-20260908">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Features — untangle what a neural net knows">
+<meta property="og:image:alt" content="Features wordmark beside colourful house, cup, heart and leaf stamps">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="features">
-<meta name="twitter:description" content="Untangle what a neural net knows. A daily puzzle: ten nets, the same ten for everyone.">
-<meta name="twitter:image" content="https://akibwa.com/features/og.png">
+<meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
+<meta name="twitter:image" content="https://akibwa.com/features/og.png?v=discoveries-20260908">
 <!-- THE POLICY, AND WHAT IT CAN AND CANNOT DO HERE (26 Aug 2026).
 
      `'unsafe-inline'` is in script-src and is not going away: the whole game is
@@ -70,7 +70,7 @@
      `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
      it is header-only. Clickjacking cover has to come from the site serving
      this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-D2+spGD5xY4hRMlFKVcxaRMxUTFBYJzmNiIAPB0nRPs=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-mrsC7jvbtbko7CoZ0J5X5QfXc43Yc/q/yDhGFjpzZtM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -1462,13 +1462,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      the three overlays that genuinely replace the screen — the record, the rules
      and the welcome. -->
 
-<!-- the record, the account card and the checkout were three veils of their
-     own and are PANES OF THE ONE MENU now (28 Aug 2026, the owner's call:
-     "the collection displayed on the left hand side so the menu never
-     changes... the profile takes over where the previous runs are showing...
-     same with the pay feature — the new stuff fades into the same menu and
-     you never feel like you're going to a new page"). see the intro card. -->
-
+<!-- Record, profile and checkout are panes of one persistent menu. -->
 
 <!-- ---- THE ARCHIVE'S LOOK ----
      a day you played, that you can no longer play. it used to answer a press
@@ -1491,13 +1485,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
 </div>
 
 <div class="veil" id="introveil">
-  <!-- ---- THE ONE MENU ---- (28 Aug 2026, the owner's call)
-       every page is a PANE of this card now, so the frame never changes and
-       nothing feels like a new screen. the left half is the plate, or the
-       collection, or the rules; the right half is the menu itself, or the
-       profile, or the checkout taking over "where the previous runs are
-       showing". the strip, the doors and the frame never move; `menuView`
-       decides the panes and renderPanes draws the decision. -->
+  <!-- One menu frame; menuView selects the panes through renderPanes. -->
   <div class="intro-card menusheet" id="introcard">
     <div class="intro-strip" aria-hidden="true"></div>
     <div class="menu-content" id="menucontent">
@@ -1515,6 +1503,7 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
            exactly who is standing here -->
       <div class="rec-arch" id="recarch" hidden></div>
       <div class="pay-body" id="paybody" hidden></div>
+      <p class="acct-note" id="pricefoot" hidden></p>
     </div>
     <div class="intro-body" id="introbody"></div>
     </div>
@@ -2821,7 +2810,8 @@ function outbound(){ const {signedInOnce,askedDaily,...rest}=store; return JSON.
 
 async function apiCall(path,opts){
   if(!API) throw new Error('no api');
-  const r=await fetch(API+path,{credentials:'same-origin',...opts});
+  const r=await fetch(API+path,{credentials:'same-origin',...opts,
+    headers:{'X-Features-Pricing':'2',...opts?.headers}});
   const body=await r.json().catch(()=>null);
   if(!r.ok){
     const failure=body?.error;
@@ -2953,6 +2943,7 @@ function renderPanes(){
   $('acctbody').hidden = menuView!=='profile';
   if(menuView!=='profile') $('recarch').hidden=true;
   $('paybody').hidden = menuView!=='pay';
+  priceFoot();
   markHere();
 }
 function markHere(){
@@ -3664,7 +3655,7 @@ let till=null;
 
 async function api(path,body){
   if(!API) return null;
-  const o={headers:{},credentials:'same-origin'};
+  const o={headers:{'X-Features-Pricing':'2'},credentials:'same-origin'};
   if(acct.token) o.headers['Authorization']='Bearer '+acct.token;
   if(body!==undefined){
     o.method='POST'; o.headers['Content-Type']='application/json'; o.body=JSON.stringify(body);
@@ -3737,16 +3728,19 @@ async function linkUnlock(){
 }
 function priceWords(){
   if(nativePlatform()) return nativeProduct?.price||'';
-  if(!priceInfo || typeof priceInfo.amount!=='number' || !priceInfo.currency) return '';
+  const p=priceInfo, unit=p?.unit??(['gbp','eur'].includes(p?.currency)?100:0);
+  if(!p || ![1,100].includes(unit) || !Number.isSafeInteger(p.amount) || p.amount<=0 || p.amount%unit) return '';
   try{
-    const cur=priceInfo.currency.toUpperCase();
-    const digits=new Intl.NumberFormat(undefined,{style:'currency',currency:cur})
-      .resolvedOptions().minimumFractionDigits;
-    const unit=Math.pow(10,digits), whole=priceInfo.amount%unit===0;
-    return new Intl.NumberFormat(undefined,{style:'currency',currency:cur,
-      minimumFractionDigits:whole?0:digits, maximumFractionDigits:digits})
-      .format(priceInfo.amount/unit);
+    return new Intl.NumberFormat(undefined,{style:'currency',currency:p.currency,
+      minimumFractionDigits:0,maximumFractionDigits:0}).format(p.amount/unit);
   }catch(e){ return '' }
+}
+function priceFoot(){
+  const el=$('pricefoot');
+  el.innerHTML=priceInfo?.fxDate
+    ? '<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">rates by exchange rate api</a>'
+    : priceInfo?.fallback?'local currency unavailable · charged in GBP':'';
+  el.hidden=menuView!=='pay'||!!nativePlatform()||!el.innerHTML;
 }
 
 let spread=null, spreadAsked=false;
@@ -3836,13 +3830,16 @@ async function beginUnlock(){
   const changedPrice=reply=>{
     if(reply?.error?.code!=='price_changed') return false;
     applyEntitlement({price:reply.price,till:reply.till}); entitlementChanged();
-    tillSaid(`the price is now ${priceWords()} · choose unlock again`,true);
+    const words=priceWords();
+    tillSaid(words?`the price is now ${words} · choose unlock again`:'purchases are currently unavailable',!!words);
     return true;
   };
   if(API) await ensurePrice();
   if(POLICY.premium) return tillSaid('you already own the full version',false);
   if(API && !DEV && till===false)
     return tillSaid('purchases are currently unavailable',false);
+  if(API && !DEV && !priceWords()) return tillSaid(till===null
+    ? 'the till is not answering · try again shortly':'purchases are currently unavailable',till===null);
   const Stripe=API ? await stripeJS() : null;
   const wantEmbedded=!!(Stripe && priceInfo && priceInfo.pk);
   const r=API ? await api('unlock/checkout',{return_path:location.pathname,embedded:wantEmbedded,
