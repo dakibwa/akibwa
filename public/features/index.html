@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-exaFxJ1aGKm3yAVUTW4DA8krKLE1NjvaHJgzqhfiw9A=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-kQ0YW8r0sDIwYh4UjtmQPgIkewQ3RI+xAzYwe2mtA9I=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -723,8 +723,11 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .minted{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 18px}
   .minted .mb{flex:0 1 78px;min-width:0;text-align:center;animation:stampin .32s var(--ease-snap) both;
     animation-delay:calc(150ms + var(--i,0) * 60ms)}
-  .minted .mb .feature-stamp{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 0 rgba(36,52,61,.12))}
-  .minted .mb span{display:block;font-size:9px;letter-spacing:.08em;padding:3px 2px 0;text-transform:lowercase;color:var(--ink)}
+  .minted .mb .feature-stamp{display:block;width:100%;height:auto}
+  .minted .mb span{display:block;font-size:12px;font-weight:800;line-height:1.1;
+    letter-spacing:-.015em;padding:6px 0 0;text-transform:lowercase;color:var(--ink);
+    width:calc(100% + 6px);margin-left:-3px;
+    text-wrap:balance;overflow-wrap:anywhere}
   .minted .mb u{display:block;text-decoration:none;font-size:8px;letter-spacing:1px;
     line-height:1;margin-top:2px;color:var(--ink-soft)}
   @keyframes stampin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
@@ -779,7 +782,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .boardcard .minted .mb{flex:0 1 52px}
     .boardcard .minted{flex-wrap:nowrap}
     #runveil .minted{flex-wrap:wrap}
-    .boardcard .minted .mb span{letter-spacing:.03em}
+    .boardcard .minted .mb span{font-size:11px;letter-spacing:-.02em}
+    .boardcard .minted:has(.mb:nth-child(5)) .mb span{font-size:clamp(9px,2.5vw,11px)}
   }
 
   .askveil{z-index:80}
@@ -1027,7 +1031,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     text-align:right;white-space:nowrap;
     font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
   .collcount-sep{padding:0 .06em;color:var(--silver)}
-  .collcount-left{color:var(--ink-soft)}
+  .collcount-total{color:var(--ink-soft)}
   .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px))}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
@@ -1047,7 +1051,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .rladder{margin-top:15px}
   .rladder .track{margin-top:6px}
   .rladder .track > i{transition:none}
-  .rladder .track > i.flaw{clip-path:polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px)}
   .rlnames{display:grid;grid-template-columns:repeat(4,1fr);margin-top:7px}
   .rlnames > i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--ink);text-transform:lowercase}
   .wbstats{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:15px 0 0;border-top:1px solid var(--ink)}
@@ -1501,7 +1504,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
 
 <script>
 
-const MARKGRID=`<g fill="none" stroke="var(--mark,#fff)" stroke-width="1" opacity=".16"><path d="M12 0V96M24 0V96M36 0V96M48 0V96M60 0V96M72 0V96M84 0V96M0 12H96M0 24H96M0 36H96M0 48H96M0 60H96M0 72H96M0 84H96"/></g>`;
 const FEATURES={
   weather:{c:'--hellblau',p:`<path d="M16 56A16 16 0 0 1 34 32A18 18 0 0 1 64 28A16 16 0 0 1 82 48A70 70 0 0 1 16 56Z"/><path d="M26 70H36L18 88H8ZM52 70H62L44 88H34ZM78 70H88L70 88H60Z"/>`},
   birds:{c:'--gruen',p:`<path d="M4 40L14 30A10 10 0 0 1 32 26A26 26 0 0 1 64 42L90 16V34L66 58A40 40 0 0 1 4 40Z"/><path d="M28 40H56L38 58L28 48Z" fill="var(--emblem)"/><circle cx="21" cy="33" r="2.5" fill="var(--emblem)"/>`},
@@ -2127,8 +2129,6 @@ function genForVersion(day,v){
   }
   return genFor(day);
 }
-const PERF_X=Array.from({length:9},(_,i)=>`<circle cx="${8+i*13}" cy="4" r="3.6"/><circle cx="${8+i*13}" cy="130" r="3.6"/>`).join('');
-const PERF_Y=Array.from({length:9},(_,i)=>`<circle cx="4" cy="${12+i*13}" r="3.6"/><circle cx="116" cy="${12+i*13}" r="3.6"/>`).join('');
 const lum=hex=>{
   const m=hex.replace('#','').match(/../g).map(h=>parseInt(h,16)/255)
     .map(c=>c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4));
@@ -2144,25 +2144,13 @@ function featureStamp(k,tier,locked,fit){
   const mark=(locked||unknown)
     ? `<g fill="none" stroke="${mk}" stroke-width="2" opacity=".78"><circle cx="48" cy="48" r="21"/><path d="M48 18V78M18 48H78M27 27L69 69M69 27L27 69"/></g>`
     : STAMPS[k] ? figEmblem(k,{ink:mk,fit}) : `<g fill="${mk}">${d.p}</g>`;
-  const flawless = tier==='flawless';
-  const cells=tier?(TIERCELLS[tier]||1):1;
-  const cw=(96-(cells-1)*5)/cells;
-  const band=flawless
-    ? `<rect x="12" y="109" width="96" height="11" fill="var(--tier)"/>`
-    : Array.from({length:cells},(_,i)=>
-    `<rect x="${(12+i*(cw+5)).toFixed(1)}" y="112" width="${cw.toFixed(1)}" height="8" fill="var(--tier)"/>`).join('');
-  const cut = flawless
-    ? `<path d="M0 0H24L0 24Z" fill="var(--stamp)"/>`
-      +`<path d="M24 0L0 24" fill="none" stroke="var(--sig-rosa)" stroke-width="3.5"/>`
-    : '';
-  const cancel=locked?'':`<g fill="none" stroke="${mk}" stroke-width="2" opacity=".45"><circle cx="88" cy="34" r="17"/><path d="M72 28H108M72 34H108M72 40H108"/></g>`;
-  return `<svg class="feature-stamp" viewBox="0 0 120 134" role="img" aria-label="${locked||unknown?'unidentified feature':k+' feature · '+tierSay(tier)}" style="--emblem:var(${locked||unknown?'--rule':d.c});--tier:var(${tierCol})">
-    <rect x="4" y="4" width="112" height="126" fill="var(--stamp)" stroke="var(--stamp-edge)"/>
-    <g fill="var(--surface)">${PERF_X}${PERF_Y}</g>
-    <rect x="12" y="12" width="96" height="96" fill="var(--emblem)"/>
-    <g transform="translate(12 12)" style="--mark:${mk}">${MARKGRID}${mark}${cut}</g>
-    ${cancel}${band}
-    <rect x="12" y="124" width="42" height="2" fill="var(--stamp-edge)"/><rect x="59" y="124" width="49" height="2" fill="var(--stamp-edge)"/>
+  const cells=tier?(TIERCELLS[tier]||1):1, gap=4;
+  const cw=(96-(cells-1)*gap)/cells;
+  const band=Array.from({length:cells},(_,i)=>
+    `<rect x="${(i*(cw+gap)).toFixed(1)}" y="96" width="${cw.toFixed(1)}" height="5" fill="var(--tier)"/>`).join('');
+  return `<svg class="feature-stamp" viewBox="0 0 96 101" role="img" aria-label="${esc(locked||unknown?'unidentified feature':k+' feature · '+tierSay(tier))}" style="--emblem:var(${locked||unknown?'--rule':d.c});--tier:var(${tierCol})">
+    <rect width="96" height="96" fill="var(--emblem)"/>
+    ${mark}${band}
   </svg>`;
 }
 const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4">`+
@@ -2928,15 +2916,14 @@ function markHere(){
   if(el){ el.classList.add('here'); el.setAttribute('aria-current','page'); el.tabIndex=-1 }
 }
 function renderCollection(){
-  const badges=store.collection.badges||{};
-  const named=FKEYS.filter(k=>figureBadge(k)).length, left=FKEYS.length-named;
-  const count={have:named,left,say:`${named} figures collected, ${left} not collected`};
+  const named=FKEYS.filter(k=>figureBadge(k)).length;
+  const count={have:named,total:FKEYS.length,say:`${named} of ${FKEYS.length} figures collected`};
   $('panecoll').innerHTML=`<div class="panehd collhd">
       <div class="intro-title">the collection</div>
       <div class="collcount" role="status" aria-label="${count.say}">
         <span class="collcount-have" aria-hidden="true">${count.have}</span>
         <span class="collcount-sep" aria-hidden="true">/</span>
-        <span class="collcount-left" aria-hidden="true">${count.left}</span>
+        <span class="collcount-total" aria-hidden="true">${count.total}</span>
       </div></div>`
     +FKEYS.map(k=>{
       const b=figureBadge(k);
@@ -7083,6 +7070,11 @@ function cancelTutorialBridge(){
   }
 }
 function finishTutorialBridge(e){
+  if(menuShown()){
+    clearTimeout(tutorialBridgeT);
+    tutorialBridgeT=setTimeout(finishTutorialBridge,TUT_BRIDGE_HOLD);
+    return;
+  }
   if(e&&e.type==='pointerdown') swallowNextDown=true;
   const bridge=tutorialBridge;
   cancelTutorialBridge(); tutorialBridge=null;
@@ -7940,21 +7932,13 @@ function ask(o){
 function featIcon(k,tier,fit){
   const d=FIGURES[k]||FIGURES_V20[k]||FEATURES[k]; if(!d) return '';
   if(STAMPS[k]){
-    const cut2 = tier==='flawless'
-      ? `<path d="M0 0H23L0 23Z" fill="var(--surface)"/>`
-        +`<path d="M23 0L0 23" fill="none" stroke="var(--sig-rosa)" stroke-width="4"/>`
-      : '';
     return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}" `
       +`style="--emblem:var(${d.c});--fig-hole:var(${d.c})">`
       +`<rect width="96" height="96" fill="var(--emblem)"/>`
-      +figEmblem(k,{ink:EMBLEM_INK,fit})+cut2+`</svg>`;
+      +figEmblem(k,{ink:EMBLEM_INK,fit})+`</svg>`;
   }
-  const cut = tier==='flawless'
-    ? `<path d="M0 0H23L0 23Z" fill="var(--surface)"/>`
-      +`<path d="M23 0L0 23" fill="none" stroke="var(--sig-rosa)" stroke-width="4"/>`
-    : '';
   return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}" style="--emblem:var(${d.c})">
-    <rect width="96" height="96" fill="var(--emblem)"/><g fill="${EMBLEM_INK}">${d.p}</g>${cut}</svg>`;
+    <rect width="96" height="96" fill="var(--emblem)"/><g fill="${EMBLEM_INK}">${d.p}</g></svg>`;
 }
 const MONTHS=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const WDAYS=['sun','mon','tue','wed','thu','fri','sat'];
@@ -8613,7 +8597,7 @@ function rungLadder(){
   const rungs=['done','clean','perfect','flawless'];
   return `<div class="rladder">
     <span class="track" aria-hidden="true">${
-      rungs.map(t=>`<i class="on${t==='flawless'?' flaw':''}" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
+      rungs.map(t=>`<i class="on" style="--fill:var(${TIERCOL[t]})"></i>`).join('')}</span>
     <span class="rlnames">${rungs.map(t=>`<i>${tierSay(t)}</i>`).join('')}</span>
   </div>`;
 }
@@ -8650,6 +8634,15 @@ function renderIntro(){
       : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
     const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
+    const current=R();
+    const started=current.turns>0 || current.netMoves>0 || current.netIndex>0
+      || current.cleared.length>0 || Object.keys(current.positions).length>0;
+    const startLabel=fresh ? (started?'resume tutorial':'start untangling')
+      :current.paused ? 'resume your game'
+      :current.over ? 'view your result'
+      :started ? 'resume your game'
+      :current.archive ? 'start this set'
+      :firstDay ? 'start your first ten' : "start today's run";
     b.innerHTML=head
       +`<div class="wbstats">
         <div>${runSay}</div>
@@ -8657,8 +8650,7 @@ function renderIntro(){
       </div>
       <div class="wbweek">${week}</div>
       <div class="intro-note wbspread" id="wbspread"></div>
-      <button class="intro-start" id="introstart">${fresh?'start untangling'
-        :firstDay?'start your first ten':"start today's run"}</button>`
+      <button class="intro-start" id="introstart">${startLabel}</button>`
 ;
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
@@ -8680,8 +8672,10 @@ function renderIntro(){
   }
   if($('introstart')) $('introstart').onclick=()=>{
     store.introSeen=true; store.lastIntroDay=today(); save();
+    if(R().paused && canResume()){ resumeRun(); return }
     stopMenuMotion();
     $('introveil').classList.remove('show');
+    if(R().over) showRunOver();
   };
 }
 function startLessons(){
@@ -8817,9 +8811,7 @@ if(!DEV){ delete window.__solveNet; delete window.__st }
 renderAll();
 publishPlateInset();
 addEventListener('load',publishPlateInset);
-if(!store.introSeen || (store.lastIntroDay!==today() && R().netMoves===0 && !R().cleared.length)){
-  openMenu('home');
-}
+if(!tutorialCompleting()) openMenu('home');
 if(outlineRunUpdated){
   save();
   toast('updated boards · your previous scores and discoveries are saved');
