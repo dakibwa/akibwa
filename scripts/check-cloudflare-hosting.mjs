@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { waitForHostedExport } from "./hosting-readiness.mjs";
 
 const root = fileURLToPath(new URL("../out/", import.meta.url));
 const origin = new URL(process.argv[2] || process.env.CHECK_HOST_URL || "http://localhost:8787");
@@ -41,6 +42,8 @@ async function inventory(directory) {
 const files = await inventory(root);
 assert.ok(files.length <= 20000, "export exceeds the Workers Free asset count");
 assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contains an asset larger than 25 MiB");
+
+await waitForHostedExport(origin, hash(await readFile(join(root, "index.html"))));
 
 const pages = ["", "albums", "features", "trek", "probe", "meditator", "portugal", "offer", "personal", "projects"];
 for (const page of pages) {
