@@ -73,9 +73,26 @@ for (const feature of route.features) for (const point of feature.geometry.coord
 assert.equal(JSON.stringify(route), routeBefore, 'paper scenery must preserve the approved GPS file');
 // Foreground scenery must prepare even while unrelated look-ahead tiles are
 // still loading. Exercise the actual scheduling and uploaded vertex format.
-let uploaded; const sceneFeatures = [{...woodland, properties: {class: 'wood', subclass: 'forest'}, geometry: {type: 'Polygon', coordinates: [square(200, 200, 80)]}}];
-const gl = new Proxy({getShaderParameter: () => true, getProgramParameter: () => true, isContextLost: () => false,
-  bufferData: (_target, data) => { uploaded = data; }}, {get: (target, key) => key in target ? target[key] : () => 0});
+let boundBuffer, boundVao, sceneryLayer, modelUploads = 0; const buffers = new Map(), draws = [];
+const sceneFeatures = [{...woodland, properties: {class: 'wood', subclass: 'forest'}, geometry: {type: 'Polygon', coordinates: [square(200, 200, 80)]}}];
+const gl = new Proxy({STATIC_DRAW: 35044, DYNAMIC_DRAW: 35048,
+  getShaderParameter: () => true, getProgramParameter: () => true, isContextLost: () => false,
+  createBuffer: () => ({}), bindBuffer: (_target, buffer) => { boundBuffer = buffer; },
+  createVertexArray: () => new Map(), bindVertexArray: vao => { boundVao = vao; }, getAttribLocation: (_program, name) => name,
+  vertexAttribPointer: (name, size, _type, _normal, stride, offset) => boundVao.set(name, {buffer: boundBuffer, size, stride, offset}),
+  vertexAttribDivisor: (name, divisor) => { boundVao.get(name).divisor = divisor; },
+  bufferData: (_target, data, usage) => { buffers.set(boundBuffer, {data, usage}); if (usage === gl.STATIC_DRAW) modelUploads++; },
+  drawArraysInstanced: (_mode, _first, vertices, instances) => {
+    const position = boundVao.get('a_position'), placement = boundVao.get('a_placement'), birth = boundVao.get('a_birth');
+    assert.equal(position.divisor, 0, 'model positions advance once per vertex');
+    assert.deepEqual([placement.size, placement.stride, placement.offset, placement.divisor], [4, 20, 0, 1], 'position and scale advance once per instance');
+    assert.deepEqual([birth.size, birth.stride, birth.offset, birth.divisor], [1, 20, 16, 1], 'each tree retains its own reveal clock');
+    assert.equal(buffers.get(position.buffer).data.length, vertices * 6, 'the draw uses the full cached model');
+    assert.equal(buffers.get(placement.buffer).data.length, instances * 5, 'instance counts cannot read beyond the uploaded buffer');
+    draws.push({vertices, instances});
+  },
+  deleteBuffer: buffer => buffers.delete(buffer)}, {get: (target, key) => key in target ? target[key] : () => 0});
+const placements = () => [...buffers.values()].filter(buffer => buffer.usage === gl.DYNAMIC_DRAW && buffer.data.length).flatMap(buffer => [...buffer.data]);
 const brush = new Proxy({getImageData: () => ({width: 128, height: 128, data: new Uint8ClampedArray(128 * 128 * 4)})}, {get: (target, key) => key in target ? target[key] : () => {}});
 const oldDocument = globalThis.document;
 globalThis.document = {createElement: () => ({getContext: () => brush})};
@@ -84,7 +101,7 @@ const map = {getFilter: () => null, getTerrain: () => ({}), isSourceLoaded: () =
   getCenter: () => ({toArray: () => paper.unproject(center)}), queryTerrainElevation: () => 100,
   querySourceFeatures: (_source, options) => options.sourceLayer === 'landcover' ? sceneFeatures : [],
   getCanvas: () => ({getContext: () => gl}), getSource: () => ({setData: () => {}}),
-  addLayer: layer => layer.onAdd?.(map, gl), addSource: () => {}, addImage: () => {}, triggerRepaint: () => {},
+  addLayer: layer => { if (layer.onAdd) { sceneryLayer = layer; layer.onAdd(map, gl); } }, addSource: () => {}, addImage: () => {}, triggerRepaint: () => {},
   on: (event, handler) => handlers.set(event, handler), off: event => handlers.delete(event)};
 const scenery = paper.create(map, {type: 'FeatureCollection', features: []});
 try {
@@ -92,19 +109,37 @@ try {
   for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
   const first = scenery.status();
   assert(first.updates === 1 && first.trees > 0 && !first.pending && !first.building, 'loaded foreground prepares without waiting for all future source tiles');
-  assert.equal(uploaded.length, first.vertices * 7, 'every uploaded vertex includes its individual reveal clock');
-  assert([...uploaded].every(Number.isFinite), 'position, colour and reveal clocks must all remain finite');
-  const firstBirth = uploaded[6];
+  assert.equal(placements().length, first.trees * 5, 'upload one position, scale and reveal clock per tree, rather than expanded geometry');
+  for (const {data} of buffers.values()) assert([...data].every(Number.isFinite), 'model vertices, colour, positions and reveal clocks must all remain finite');
+  const firstPlacements = placements(), firstBirth = firstPlacements[4], firstModels = modelUploads;
+  for (let i = 0; i < firstPlacements.length; i += 5) {
+    const [x, y, z, scale] = firstPlacements.slice(i, i + 4);
+    const latitude = paper.unproject([center[0] + x, center[1] + y])[1];
+    assert(Math.abs(scale - 1 / Math.cos(latitude * Math.PI / 180)) < 1e-6, 'instances retain the original geographic tree scale');
+    assert(Math.abs(z - 100 * scale) < 1e-4, 'instances remain rooted at the sampled terrain height');
+  }
+  sceneryLayer.render(gl, {defaultProjectionData: {mainMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]}});
+  assert.equal(draws.reduce((sum, draw) => sum + draw.instances, 0), first.trees, 'draw every planted tree exactly once');
+  assert.equal(draws.reduce((sum, draw) => sum + draw.vertices * draw.instances, 0), first.vertices, 'instancing retains the full seeded geometry, without thinning the forest');
   scenery.prepare();
   for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
-  assert.equal(uploaded[6], firstBirth, 'rebuilding a visible tree must preserve its entrance clock');
+  assert.deepEqual(placements(), firstPlacements, 'rebuilding visible trees must preserve their positions, scale and entrance clocks');
+  assert.equal(modelUploads, firstModels, 'moving scenery reuses the uploaded tree models');
+  assert.equal(scenery.status().uploadBytes, first.trees * 20, 'a woodland refresh uploads only twenty bytes per tree');
   assert.equal(scenery.status().trees, first.trees, 'a source refresh must not shuffle foreground woodland');
   assert(scenery.status().fading, 'preparation exposes any remaining entrance fade to the playback gate');
   sceneFeatures.push({...sceneFeatures[0], geometry: {type: 'Polygon', coordinates: [square(500, 500, 80)]}});
   scenery.prepare();
   for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
-  const birthTimes = [...uploaded].filter((_, i) => i % 7 === 6);
+  const birthTimes = placements().filter((_, i) => i % 5 === 4);
   assert.equal(Math.min(...birthTimes), firstBirth, 'new tiles preserve the old scene entrance times');
   assert(Math.max(...birthTimes) > firstBirth && scenery.status().trees > first.trees, 'newly loaded trees receive a later soft entrance rather than appearing fully opaque');
-} finally { scenery.destroy(); globalThis.document = oldDocument; }
-console.log('Paper scenery checks passed: mapped fields, valid styles, anchored woodland, holes, stable placement, tile deduplication, bounded density, mapped orchard rows, clear route corridors and nonblocking foreground preparation.');
+  sceneFeatures.length = 0; scenery.prepare();
+  for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
+  draws.length = 0;
+  sceneryLayer.render(gl, {defaultProjectionData: {mainMatrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]}});
+  assert.equal(scenery.status().trees, 0, 'seeking out of woodland removes the previous trees');
+  assert.equal(draws.length, 0, 'unused cached models must never draw stale instances');
+} finally { scenery.destroy(); sceneryLayer.onRemove(map, gl); globalThis.document = oldDocument; }
+assert.equal(buffers.size, 0, 'removing the scenery releases both model and instance buffers');
+console.log('Paper scenery checks passed: mapped fields, valid styles, anchored woodland, stable instanced geometry, reused GPU models, bounded density, mapped orchard rows, clear route corridors and nonblocking foreground preparation.');

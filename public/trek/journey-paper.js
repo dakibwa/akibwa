@@ -242,10 +242,10 @@
     const nearRoute = routeIndex(route), radius = 4600;
     let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, building = false, destroyed = false;
     let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d'), treeModels = new Map();
-    let buffer, shader, vao, matrixLocation, centerLocation, opacityLocation, timeLocation, appeared = 0, count = 0, treeCount = 0, roofCount = 0, orchardCount = 0, updates = 0, buildMs = 0;
+    let buffer, shader, treeShader, vao, appeared = 0, count = 0, treeVertices = 0, treeCount = 0, roofCount = 0, orchardCount = 0, updates = 0, buildMs = 0, uploadBytes = 0;
     let births = new Map(), fadeUntil = 0, coverCounts = {}, coverWithIds = 0;
     const shaderSource = {
-      vertex: `#version 300 es
+      vertex: (instanced = false) => `#version 300 es
         precision highp float;
         uniform mat4 u_matrix;
         uniform vec2 u_center;
@@ -254,13 +254,15 @@
         in float a_birth;
         in vec3 a_position;
         in vec3 a_color;
+        ${instanced ? 'in vec4 a_placement;' : ''}
         out vec3 v_color;
         out float v_fade;
         void main() {
-          gl_Position = u_matrix * vec4(a_position, 1.0);
+          vec3 position = ${instanced ? 'a_placement.xyz + a_position * a_placement.w' : 'a_position'};
+          gl_Position = u_matrix * vec4(position, 1.0);
           v_color = a_color;
           float reveal = clamp((u_time - a_birth) / 700.0, 0.0, 1.0);
-          v_fade = u_opacity * reveal * reveal * (3.0 - 2.0 * reveal) * (1.0 - smoothstep(3400.0, 4550.0, distance(a_position.xy, u_center)));
+          v_fade = u_opacity * reveal * reveal * (3.0 - 2.0 * reveal) * (1.0 - smoothstep(3400.0, 4550.0, distance(position.xy, u_center)));
         }`,
       fragment: `#version 300 es
         precision highp float;
@@ -277,34 +279,76 @@
       if (!gl.getShaderParameter(result, gl.COMPILE_STATUS)) throw Error(gl.getShaderInfoLog(result));
       return result;
     }
+    function program(gl, instanced = false) {
+      const vertex = compile(gl, gl.VERTEX_SHADER, shaderSource.vertex(instanced)), fragment = compile(gl, gl.FRAGMENT_SHADER, shaderSource.fragment);
+      const handle = gl.createProgram(); gl.attachShader(handle, vertex); gl.attachShader(handle, fragment); gl.linkProgram(handle);
+      gl.deleteShader(vertex); gl.deleteShader(fragment);
+      if (!gl.getProgramParameter(handle, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(handle));
+      return {handle, matrix: gl.getUniformLocation(handle, 'u_matrix'), center: gl.getUniformLocation(handle, 'u_center'), opacity: gl.getUniformLocation(handle, 'u_opacity'), time: gl.getUniformLocation(handle, 'u_time')};
+    }
+    function attribute(gl, program, name, size, stride, offset, divisor = 0) {
+      const location = gl.getAttribLocation(program.handle, name);
+      gl.enableVertexAttribArray(location); gl.vertexAttribPointer(location, size, gl.FLOAT, false, stride, offset); gl.vertexAttribDivisor(location, divisor);
+    }
+    function uploadTrees(gl, instances) {
+      let bytes = 0;
+      for (const [key, mesh] of treeModels) {
+        const placements = instances.get(key);
+        mesh.count = placements ? placements.length / 5 : 0;
+        if (!mesh.count) continue;
+        // Keep every seeded silhouette on the GPU. Moving the camera uploads
+        // only terrain position, scale and entrance time for each tree.
+        if (!mesh.buffer) {
+          mesh.buffer = gl.createBuffer(); mesh.instances = gl.createBuffer(); mesh.vao = gl.createVertexArray();
+          gl.bindVertexArray(mesh.vao); gl.bindBuffer(gl.ARRAY_BUFFER, mesh.buffer); gl.bufferData(gl.ARRAY_BUFFER, mesh.data, gl.STATIC_DRAW);
+          bytes += mesh.data.byteLength;
+          attribute(gl, treeShader, 'a_position', 3, 24, 0); attribute(gl, treeShader, 'a_color', 3, 24, 12);
+          gl.bindBuffer(gl.ARRAY_BUFFER, mesh.instances);
+          attribute(gl, treeShader, 'a_placement', 4, 20, 0, 1); attribute(gl, treeShader, 'a_birth', 1, 20, 16, 1);
+        }
+        const data = new Float32Array(placements);
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.instances); gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW); bytes += data.byteLength;
+      }
+      gl.bindVertexArray(null);
+      return bytes;
+    }
     const layer = {
       id: 'paper-scenery', type: 'custom', renderingMode: '3d',
       onAdd(_, gl) {
-        const vertex = compile(gl, gl.VERTEX_SHADER, shaderSource.vertex), fragment = compile(gl, gl.FRAGMENT_SHADER, shaderSource.fragment);
-        shader = gl.createProgram(); gl.attachShader(shader, vertex); gl.attachShader(shader, fragment); gl.linkProgram(shader);
-        gl.deleteShader(vertex); gl.deleteShader(fragment);
-        if (!gl.getProgramParameter(shader, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(shader));
+        shader = program(gl); treeShader = program(gl, true);
         buffer = gl.createBuffer(); vao = gl.createVertexArray(); gl.bindVertexArray(vao); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         for (const [name, offset] of [['a_position', 0], ['a_color', 12], ['a_birth', 24]]) {
-          const location = gl.getAttribLocation(shader, name); gl.enableVertexAttribArray(location); gl.vertexAttribPointer(location, name === 'a_birth' ? 1 : 3, gl.FLOAT, false, 28, offset);
+          attribute(gl, shader, name, name === 'a_birth' ? 1 : 3, 28, offset);
         }
-        gl.bindVertexArray(null); matrixLocation = gl.getUniformLocation(shader, 'u_matrix'); centerLocation = gl.getUniformLocation(shader, 'u_center'); opacityLocation = gl.getUniformLocation(shader, 'u_opacity'); timeLocation = gl.getUniformLocation(shader, 'u_time');
+        gl.bindVertexArray(null);
       },
       render(gl, args) {
-        if (!count) return;
+        if (!count && !treeCount) return;
         const m = args.defaultProjectionData.mainMatrix, matrix = new Float32Array(16);
         for (let i = 0; i < 12; i++) matrix[i] = m[i] / WORLD;
         for (let i = 0; i < 4; i++) matrix[12 + i] = m[i] * origin[0] / WORLD + m[4 + i] * origin[1] / WORLD + m[12 + i];
         const center = project(map.getCenter().toArray());
-        gl.useProgram(shader); gl.bindVertexArray(vao); gl.uniformMatrix4fv(matrixLocation, false, matrix); gl.uniform2f(centerLocation, center[0] - origin[0], center[1] - origin[1]);
         const opacity = clamp((performance.now() - appeared) / 850, 0, 1);
-        gl.uniform1f(opacityLocation, opacity * opacity * (3 - 2 * opacity)); gl.uniform1f(timeLocation, performance.now());
+        const use = program => {
+          gl.useProgram(program.handle); gl.uniformMatrix4fv(program.matrix, false, matrix); gl.uniform2f(program.center, center[0] - origin[0], center[1] - origin[1]);
+          gl.uniform1f(program.opacity, opacity * opacity * (3 - 2 * opacity)); gl.uniform1f(program.time, performance.now());
+        };
         gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL); gl.depthMask(true); gl.disable(gl.CULL_FACE);
         gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        gl.drawArrays(gl.TRIANGLES, 0, count); gl.bindVertexArray(null);
+        if (treeCount) {
+          use(treeShader);
+          for (const mesh of treeModels.values()) if (mesh.count) {
+            gl.bindVertexArray(mesh.vao); gl.drawArraysInstanced(gl.TRIANGLES, 0, mesh.data.length / 6, mesh.count);
+          }
+        }
+        if (count) { use(shader); gl.bindVertexArray(vao); gl.drawArrays(gl.TRIANGLES, 0, count); }
+        gl.bindVertexArray(null);
         if (opacity < 1 || performance.now() < fadeUntil) map.triggerRepaint();
       },
-      onRemove(_, gl) { gl.deleteBuffer(buffer); gl.deleteProgram(shader); gl.deleteVertexArray(vao); }
+      onRemove(_, gl) {
+        gl.deleteBuffer(buffer); gl.deleteProgram(shader.handle); gl.deleteProgram(treeShader.handle); gl.deleteVertexArray(vao);
+        for (const mesh of treeModels.values()) if (mesh.buffer) { gl.deleteBuffer(mesh.buffer); gl.deleteBuffer(mesh.instances); gl.deleteVertexArray(mesh.vao); }
+      }
     };
 
     function build() {
@@ -341,8 +385,8 @@
       }
       // Build in short chunks. No per-frame terrain sampling or feature queries.
       const roofCandidates = [...houses.values()].sort((a, b) => a.d - b.d).slice(0, 1800);
-      const vertices = [], shadows = [], nextOrigin = center;
-      let madeTrees = 0, madeRoofs = 0, madeOrchards = 0, index = 0, vertexLimit = (MAX_VERTICES - 30000) * 7, activeBirth = started; const madeLandmarks = [], nextBirths = new Map();
+      const vertices = [], shadows = [], instances = new Map(), nextOrigin = center;
+      let madeTrees = 0, madeTreeVertices = 0, madeRoofs = 0, madeOrchards = 0, index = 0, vertexLimit = (MAX_VERTICES - 30000) * 7, activeBirth = started; const madeLandmarks = [], nextBirths = new Map();
       function reveal(key) {
         activeBirth = births.get(key) ?? started; nextBirths.set(key, activeBirth);
       }
@@ -352,7 +396,7 @@
         return [p[0] - nextOrigin[0], p[1] - nextOrigin[1], height / cos];
       };
       function triangle(a, b, c, color, fixedLight) {
-        if (vertices.length + 21 > vertexLimit) return;
+        if (vertices.length + madeTreeVertices * 7 + 21 > vertexLimit) return;
         const light = fixedLight || faceLight(a, b, c);
         for (const p of [a, b, c]) vertices.push(...p, ...color.map(x => Math.min(1, x * light)), activeBirth);
       }
@@ -369,8 +413,10 @@
           treeModels.set(key, {width: model.width, height: model.height, data: new Float32Array(data)});
         }
         const mesh = treeModels.get(key), size = mesh.width * sizeScale, h = mesh.height * sizeScale, data = mesh.data, x = p[0] - nextOrigin[0], y = p[1] - nextOrigin[1];
-        if (vertices.length + data.length / 6 * 7 > vertexLimit) return;
-        for (let i = 0; i < data.length; i += 6) vertices.push(x + data[i] * scale * sizeScale, y + data[i + 1] * scale * sizeScale, (ground + data[i + 2] * sizeScale) * scale, data[i + 3], data[i + 4], data[i + 5], activeBirth);
+        if (vertices.length + (madeTreeVertices + data.length / 6) * 7 > vertexLimit) return;
+        if (!instances.has(key)) instances.set(key, []);
+        instances.get(key).push(x, y, ground * scale, scale * sizeScale, activeBirth);
+        madeTreeVertices += data.length / 6;
         const shadow = [[p[0] - size * scale, p[1]], [p[0], p[1] - size * .5 * scale], [p[0] + h * .8 * scale, p[1] + h * .9 * scale], [p[0], p[1] + size * .6 * scale]];
         shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [[...shadow.map(unproject), unproject(shadow[0])]]}});
         madeTrees++; if (sizeScale < 1) madeOrchards++;
@@ -430,9 +476,10 @@
         }
         if (index < totalCandidates) { setTimeout(chunk, 0); return; }
         const gl = map.getCanvas().getContext('webgl2'); if (!gl || gl.isContextLost()) { building = false; pending = true; return; }
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        if (!count || Math.hypot(nextOrigin[0] - origin[0], nextOrigin[1] - origin[1]) > radius) appeared = performance.now();
-        origin = nextOrigin; count = vertices.length / 7; treeCount = madeTrees; roofCount = madeRoofs; orchardCount = madeOrchards; births = nextBirths; fadeUntil = Math.max(0, ...births.values()) + 700; landmarkNames = madeLandmarks; updates++;
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+        uploadBytes = vertices.length * 4 + uploadTrees(gl, instances);
+        if ((!count && !treeCount) || Math.hypot(nextOrigin[0] - origin[0], nextOrigin[1] - origin[1]) > radius) appeared = performance.now();
+        origin = nextOrigin; count = vertices.length / 7; treeVertices = madeTreeVertices; treeCount = madeTrees; roofCount = madeRoofs; orchardCount = madeOrchards; births = nextBirths; fadeUntil = Math.max(0, ...births.values()) + 700; landmarkNames = madeLandmarks; updates++;
         const previousHidden = hiddenBuildings.size;
         for (const id of landmarkBuildingIds(buildings, nearbyLandmarks.filter(item => madeLandmarks.includes(item.id)))) hiddenBuildings.add(id);
         if (hiddenBuildings.size !== previousHidden) {
@@ -564,7 +611,7 @@
     function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('idle', settled); map.off('remove', destroy); }
     map.on('moveend', moved); map.on('sourcedata', loaded); map.on('idle', settled); map.on('remove', destroy); schedule();
     return {
-      status: () => ({trees: treeCount, roofs: roofCount, orchards: orchardCount, vertices: count, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending, building, fading: count > 0 && performance.now() < Math.max(fadeUntil, appeared + 850), landcover: {...coverCounts}, coverWithIds}),
+      status: () => ({trees: treeCount, roofs: roofCount, orchards: orchardCount, vertices: count + treeVertices, uploadBytes, treeModels: treeModels.size, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), pending, building, fading: (count > 0 || treeCount > 0) && performance.now() < Math.max(fadeUntil, appeared + 850), landcover: {...coverCounts}, coverWithIds}),
       refresh: schedule, prepare,
       destroy
     };

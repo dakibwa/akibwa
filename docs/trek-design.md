@@ -229,7 +229,7 @@ The shared days 16–17 recording remains counted only once. The source has a
 20.5 km straight-line gap between the end of day 33 and the start of day 34;
 Dan now reports walking it; the reconstructed path remains an estimate.
 
-On 7 September 2026 Dan requested that missing-walk estimates contribute to distance and ascent. `journey-metrics.js` combines the original 1,982 km and 50,339 m ascent with 259.94 km of reconstructed walking and approximately 1,482 m of mapped ascent. The current combined estimate is approximately 2,242 km and 51,820 m climbed. Keep the recorded and estimated portions explicit in the menu, with an `est.` qualification on counters containing estimates. Daily details show both sources, including estimates for days without recordings. The opening, metadata and finish use the combined total.
+On 7 September 2026 Dan requested that missing-walk estimates contribute to distance and ascent. `journey-metrics.js` combines the original 1,982 km and 50,339 m ascent with 254.92 km of reconstructed walking and approximately 1,695 m of mapped ascent. The current combined estimate is approximately 2,237 km and 52,030 m climbed. Keep the recorded and estimated portions explicit in the menu, with an `est.` qualification on counters containing estimates. Daily details show both sources, including estimates for days without recordings. The opening, metadata and finish use the combined total.
 
 The source archive audit found that its five internal GPS gaps were omitted from the activity distances: the FIT distance counter stays flat at the large day-8 and day-26 jumps, and the GPX totals align with geometry excluding the day-53 and day-57 jumps. Add the reconstructed walks, retain original source totals, and exclude both train transfers. Estimate ascent by summing positive changes in each walking link's existing 200 m terrain samples; descents and train terrain add no climb. These coarse terrain estimates are not a resurvey of the 2019 walk.
 
@@ -337,8 +337,14 @@ New scenery objects ease in over 700 ms while existing objects retain their reve
 Geometry is rebuilt in short chunks after movement or source changes,
 never by querying every feature on every frame. Reuse the map's WebGL context,
 use a local coordinate origin for precision and discard stale in-flight builds
-after a new destination. Cache the lit canopy vertices in 192 seeded variants
-so rebuilds only place them, without recalculating every fold and surface normal.
+after a new destination. Upload the lit canopy vertices in 192 seeded variants
+once, then retain their WebGL buffers for the visit. WebGL 2 instancing draws the
+same full meshes using twenty bytes of position, terrain height, scale and reveal
+time per tree on each rebuild. Do not expand all the canopy vertices into a new
+JavaScript array or upload them again as the camera moves. Keep roofs and
+landmarks in their existing geometry buffer. Clear unused instance counts after
+a seek and release both kinds of buffers when removing the layer. The debug
+status reports total drawn vertices and actual uploaded bytes separately.
 The material and facets stay attached to the ground.
 Retry pending scenery when the map becomes idle: source events can arrive before
 the destination camera finishes loading, and a paused first visit must populate
