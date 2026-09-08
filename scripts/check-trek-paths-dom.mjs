@@ -401,7 +401,6 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await cdp.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await goto('/trek/?day=30');await settled();
     check((await state()).reduced&&!(await state()).photoInterludes&&!(await state()).flash,'reduced motion keeps automatic prints off');
     await cdp.send('Emulation.setEmulatedMedia',{features:[]});await goto('/trek/');
-    await click('#opening-days');check((await state()).menu,'the quiet opening retains day and photo access while terrain loads');await click('#menu-close');
     const errors=cdp.events.slice(startEvents).filter(e=>e.method==='Runtime.exceptionThrown');check(!errors.length,'the updated journey and responsive states have no JavaScript exceptions');
     return;
   }

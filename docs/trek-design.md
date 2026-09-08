@@ -61,10 +61,10 @@ perspective and much less text and interface on 5 September 2026.
   The opening reads like the first page of a walking journal: the actual
   September–November 2019 dates, a left-aligned Fraunces title and the approximate
   walking distance. A ruled paper strip with the route's red marker and arrow
-  says “Start in Paris”; avoid a large filled capsule or generic invitation copy.
-  Keep the mapped landscape visible behind it. “Choose a day” stays a quiet
-  secondary action with a full touch target, available while terrain loads or
-  fails; Sofia has one replay action. Map
+  says “Begin following Dan’s journey”, with a short preface that Dan trekked
+  from Paris to Sofia in 2019. Keep the mapped landscape visible behind it.
+  The opening has this single action; day selection belongs in the journey menu
+  after beginning. Sofia has one replay action. Map
   credits use a quiet text disclosure above the landscape wash, retaining the
   native provider links and keyboard operation.
 - The upper-right corner holds a small paper minimap of the full journey, with

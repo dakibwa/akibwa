@@ -222,7 +222,7 @@
         if(autoBegin){autoBegin=false;begin();}
       }catch(error){
         if(generation!==warmGeneration||failed)return;
-        tileCache.cancel();ready=false;setPlaying(false);text('load-message','This stretch could not finish loading. Your photographs are still in the menu.');
+        tileCache.cancel();ready=false;setPlaying(false);text('load-message','This stretch could not finish loading. Please try again.');
         $('loading-progress').hidden=true;$('retry-load').hidden=false;
       }finally{clearTimeout(preparationTimer);}
     }
@@ -305,9 +305,9 @@
         const credits=document.querySelector('.maplibregl-ctrl-attrib-button');
         credits.textContent='Map credits';credits.setAttribute('aria-label','Map credits');credits.title='Map credits';
         for(const event of ['dragstart','zoomstart','rotatestart','pitchstart'])map.on(event,e=>{if(e.originalEvent){setPlaying(false);following=false;document.body.classList.add('is-exploring');}});
-        map.on('webglcontextlost',()=>unavailable('The landscape is unavailable. The photographs and days are still here.'));
-        map.on('error',()=>{if(!ready)text('load-message','The landscape is taking a little longer. Photographs are ready in the menu.');});
-        readyTimeout=setTimeout(()=>{if(!ready){text('load-message','The landscape could not finish loading. Photographs are ready in the menu.');$('retry-load').hidden=false;}},18000);
+        map.on('webglcontextlost',()=>unavailable('The landscape is unavailable. Please try loading it again.'));
+        map.on('error',()=>{if(!ready)text('load-message','The landscape is taking a little longer…');});
+        readyTimeout=setTimeout(()=>{if(!ready){text('load-message','The landscape could not finish loading. Please try again.');$('retry-load').hidden=false;}},18000);
         map.on('load',()=>{
           if(failed)return;clearTimeout(readyTimeout);
           map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14,attribution:'Terrain © <a href="https://www.mapzen.com/rights/">Mapzen</a>'});
@@ -338,12 +338,12 @@
           updateUI(true);invalidate();
         });
         updateUI(true);
-      }catch(error){unavailable('The landscape could not load. You can still open the photographs and days.');}
+      }catch(error){unavailable('The landscape could not load. Please try again.');}
     }
     $('retry-load').addEventListener('click',()=>{if(terrainReady&&!failed)prepareCamera();else location.reload();});
     $('begin').addEventListener('click',begin);$('replay').addEventListener('click',()=>{reset();autoBegin=true;});
     $('play').addEventListener('click',()=>{if(playing)setPlaying(false);else begin();});
-    for(const id of ['menu-open','opening-days'])$(id).addEventListener('click',()=>{setPlaying(false);dismissFlash();menu.showModal();});$('menu-close').addEventListener('click',()=>menu.close());
+    $('menu-open').addEventListener('click',()=>{setPlaying(false);dismissFlash();menu.showModal();});$('menu-close').addEventListener('click',()=>menu.close());
     menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left)menu.close();}});
     $('journey-day').addEventListener('change',e=>visit(+e.target.value));
     $('day-back').addEventListener('click',()=>visit(day-1));$('day-forward').addEventListener('click',()=>visit(day+1));
