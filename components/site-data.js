@@ -124,13 +124,11 @@ export const personalProjects = [
     title: "features",
     type: "Daily puzzle",
     dashboardLabel: "features",
-    dashboardStatus: "Live on Akibwa",
+    dashboardStatus: "Independent site",
     summary: "Pull tangled features apart, ten nets a day.",
     tags: ["Daily nets", "Untangling", "Interpretability"],
-    mode: "embed",
-    embedUrl: "/features/index.html",
-    fallbackHref: "/features/",
-    useLocalFrame: false,
-    cta: "Open on Akibwa"
+    mode: "link",
+    externalHref: "https://features.games/",
+    cta: "Play features"
   }
 ];

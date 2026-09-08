@@ -13,7 +13,7 @@ const projects = [
   {
     id: "features",
     className: "concept-feature",
-    href: "/features/",
+    href: "https://features.games/",
     title: "features",
     subtitle: "daily untangling puzzle",
     description:

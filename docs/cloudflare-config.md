@@ -119,6 +119,8 @@ The API route `features.games/features/api/*` points to the existing
 The API, account configuration and safe browser-record transfer belong to the
 Features repository. Do not replace the old game with a blanket server redirect:
 its browser storage remains the source of older players' local records.
+Portfolio links open `features.games` directly; Features is an independent
+project link rather than an embedded Akibwa frame.
 
 `scripts/prepare-features-site.mjs` adds root-specific headers, old-path aliases,
 robots, sitemap and a real 404 after Akibwa's existing export verification. It
