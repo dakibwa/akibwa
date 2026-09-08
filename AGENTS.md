@@ -15,6 +15,7 @@ This repository is the public `akibwa.com` website.
 - Public surface registry: `data/public-surfaces.json`.
 - Pre-publish check: `npm run publish:ready`.
 - Hosting verification: `npm run check:hosting -- <origin>` after building and deploying the exact export.
+- The same checked `out/features/` copy also publishes at `features.games` through `wrangler-features.jsonc`; see the Features section of `docs/cloudflare-config.md`. The Features repository owns its client and API. Preserve the old `/features/` copy for browser-save migration and native compatibility.
 
 ## Artwork and images
 

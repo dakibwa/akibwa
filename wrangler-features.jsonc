@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "features-site",
+  "compatibility_date": "2026-09-08",
+  "workers_dev": true,
+  "preview_urls": true,
+  // The dashboard owns features.games and its API route. Asset publication
+  // uses the same account-limited credential as akibwa-site, without DNS access.
+  "assets": {
+    "directory": "./out/features",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

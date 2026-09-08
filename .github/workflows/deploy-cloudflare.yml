@@ -58,3 +58,17 @@ jobs:
 
       - name: Verify public site
         run: npm run check:hosting -- https://akibwa.com
+
+      - name: Prepare standalone Features assets
+        run: node scripts/prepare-features-site.mjs
+
+      - name: Deploy Features
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler deploy --config wrangler-features.jsonc
+
+      - name: Verify Features preview
+        run: node scripts/check-features-hosting.mjs https://features-site.dakibwa.workers.dev
+
+      - name: Verify Features domain
+        run: node scripts/check-features-hosting.mjs https://features.games

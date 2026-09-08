@@ -109,6 +109,24 @@ Features continues publishing its stripped and hardened client to
 `dakibwa/dakibwa` under `public/features/`. That push triggers the Cloudflare
 workflow, so preserve the repository and publication path.
 
+## Features standalone domain
+
+The same verified `out/features/` export also deploys to the static-only
+`features-site` Worker using `wrangler-features.jsonc`. The dashboard owns
+`features.games` and `www.features.games`; a zone redirect canonicalises `www`.
+The API route `features.games/features/api/*` points to the existing
+`features-api` Worker and database, while its old Akibwa route remains in place.
+The API, account configuration and safe browser-record transfer belong to the
+Features repository. Do not replace the old game with a blanket server redirect:
+its browser storage remains the source of older players' local records.
+
+`scripts/prepare-features-site.mjs` adds root-specific headers, old-path aliases,
+robots, sitemap and a real 404 after Akibwa's existing export verification. It
+never rebuilds or edits the game. `check-features-hosting.mjs` verifies exact
+game/asset bytes, aliases, caching, security and production API health. Its
+workers.dev preview has no account proxy. CI deploys both static Workers using
+the same existing account-scoped Workers Scripts credential, without DNS access.
+
 ## Manual fallback
 
 `.github/workflows/deploy-pages.yml` remains available through
