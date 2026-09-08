@@ -75,6 +75,11 @@ Keep a direct browser run-through of the affected pages alongside this check.
 - `public/_headers` preserves the six production security headers and existing
   public asset CORS behavior. Features' additional hardened meta CSP is left
   byte-for-byte intact.
+- The zone's active `security headers` response transform matches
+  `(http.host eq "akibwa.com" and not (http.request.uri.path eq "/features/api" or starts_with(http.request.uri.path, "/features/api/")))`.
+  Features API responses own their stricter headers and nonce-based policies;
+  the static-site defaults must not overwrite them. This scope was verified
+  live on 8 September 2026, with all six homepage headers unchanged.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
