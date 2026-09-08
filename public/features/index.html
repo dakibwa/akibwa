@@ -15,62 +15,22 @@
      its words aligned with the welcome card and publish it with the page: a
      correct local tag pointing at a missing file is still a bare share. -->
 <meta name="description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
-<link rel="canonical" href="https://akibwa.com/features/">
+<link rel="canonical" href="https://features.games/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="akibwa">
+<meta property="og:site_name" content="features">
 <meta property="og:title" content="features">
 <meta property="og:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
-<meta property="og:url" content="https://akibwa.com/features/">
-<meta property="og:image" content="https://akibwa.com/features/og.png?v=discoveries-20260908">
+<meta property="og:url" content="https://features.games/">
+<meta property="og:image" content="https://features.games/og.png?v=discoveries-20260908">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Features wordmark beside colourful house, cup, heart and leaf stamps">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="features">
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
-<meta name="twitter:image" content="https://akibwa.com/features/og.png?v=discoveries-20260908">
-<!-- THE POLICY, AND WHAT IT CAN AND CANNOT DO HERE (26 Aug 2026).
-
-     `'unsafe-inline'` is in script-src and is not going away: the whole game is
-     two inline script blocks by design — no build, no bundler, nothing to
-     hash against — and hashes with no build step would mean the game stopped
-     booting on every edit until somebody remembered to recompute them. that is
-     a worse failure than the one it prevents, and it would end with the policy
-     being deleted rather than maintained. so this does NOT stop an injected
-     inline handler.
-
-     what it does stop is what an injected handler is FOR. `connect-src 'self'`
-     is the line that matters: the reflected XSS found in the provider names
-     was worth having because it could post the save and the unlock token to an
-     origin the attacker chose, and this refuses every destination but ours.
-     `base-uri 'none'` kills the <base> trick that repoints every relative url
-     at once, `object-src 'none'` closes plugin embedding, `form-action 'self'`
-     stops an injected form posting outward, and img-src is `data:` for the
-     favicon and nothing else — no pixel can carry data off the page.
-
-     the localhost origins are for `?api=`, which points a DEV page at a
-     `wrangler dev` on another port. it is not a hole worth removing: a remote
-     attacker gains a channel to the VICTIM'S OWN MACHINE, which they cannot
-     read back cross-origin, rather than a channel to themselves.
-
-     THE STRIPE ENTRIES ARE THE PRICE OF EMBEDDING CHECKOUT and they are as
-     narrow as that buys: `script-src` for the loader, `frame-src` for the
-     iframe the card is typed into, `connect-src` for the calls that iframe's
-     parent makes. `maps.googleapis.com` was in here for an afternoon for
-     Stripe's address autocomplete and came straight back out — that request is
-     made by Stripe's own iframe, which is a separate origin governed by its own
-     policy, so listing it here bought nothing and widened this one.
-
-     GOOGLE SIGN-IN NEEDS ONE CONNECTION AND NO SCRIPT. the in-page path is
-     FedCM — the browser owns the account picker, but its request is still
-     governed by this document's connect-src policy. accounts.google.com is
-     therefore allowed there and nowhere else. a browser that cannot do FedCM
-     falls back to the redirect, which never needs a policy exception.
-
-     `frame-ancestors` is deliberately absent because a <meta> cannot carry it —
-     it is header-only. Clickjacking cover has to come from the site serving
-     this file; the akibwa deploy is the place for that. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-mrsC7jvbtbko7CoZ0J5X5QfXc43Yc/q/yDhGFjpzZtM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
+<!-- The source-only CSP explanation is above the client script below. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FF+cmT7vi+FbrumseCqCkat7ZxwipyD2WBeAHeqCfvc=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-DYR8kK/2fwgmmuRLbccmaAW54e5Ww/naAW7yp3VCW+o=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- the tab mark is a sibling of akibwa.com's own favicon, which is the house
      construction: a rounded white tile, a faint inner keyline at 13% ink, a
      bold near-black letter, and the colour beneath it. that file is 64 wide and
@@ -151,6 +111,21 @@ document.documentElement.setAttribute('data-theme',t)})();</script>
      appearing over a board that has already been sized. The flag changes no
      game state and does nothing when Features is opened on its own. -->
 <script>(function(){try{if(new URLSearchParams(location.search).get('from')==='akibwa')document.documentElement.setAttribute('data-akibwa-project','true')}catch(e){}})();</script>
+<!-- A top-level visit can read the old browser record without third-party
+     storage access. The API posts it privately and keeps the original intact.
+     Offline copies and native shells keep their existing origin and behaviour. -->
+<script>(async function(){try{
+  var old=location.origin==='https://akibwa.com',fresh=location.origin==='https://features.games';
+  if(fresh)sessionStorage.removeItem('features-domain-empty');
+  if((!old&&!fresh)||window.featuresNative||navigator.onLine===false||new URLSearchParams(location.search).get('stay')==='1')return;
+  if(fresh&&localStorage.getItem('features-domain-v1')==='done')return;
+  if(sessionStorage.getItem('features-domain-opening')==='1')return;
+  if(fresh&&!localStorage.getItem('probe-run-v3'))sessionStorage.setItem('features-domain-empty','1');
+  var ready=await fetch('/features/api/health',{signal:AbortSignal.timeout(3000)});
+  if(!ready.ok||(await ready.json()).domainMove!==1){sessionStorage.removeItem('features-domain-empty');return}
+  sessionStorage.setItem('features-domain-opening','1');
+  location.replace('https://akibwa.com/features/api/domain/start'+location.search);
+}catch(e){try{sessionStorage.removeItem('features-domain-empty')}catch(ignore){}}})();</script>
 <style>
   :root{
     --hellblau:#2EA3DC;
@@ -8073,7 +8048,7 @@ const SHARE_LABEL = (typeof navigator!=='undefined' && navigator.share) ? 'share
 const shareText=(day,tiers)=>
   'features · '+dayLabel(day)+(isFlawless(tiers)?' · flawless':'')
   +'\n'+dayStrip(tiers)
-  +'\nakibwa.com/features';
+  +'\nfeatures.games';
 async function copyText(t){
   try{
     if(navigator.clipboard && window.isSecureContext){
