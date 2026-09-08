@@ -1,0 +1,5 @@
+# GitHub hosting metadata is retained in the export for the current production
+# workflow, but is not an asset on the Cloudflare origin.
+CNAME
+.nojekyll
+**/.DS_Store

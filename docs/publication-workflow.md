@@ -9,6 +9,7 @@ Akibwa.com is the public surface. Private or credentialed work should stay in Cl
 - `scripts/check-publication.mjs`: validates route files, fallback data, generated public packets, and static export routes.
 - `scripts/check-cloud-refreshes.mjs`: reads refresh status endpoints from the registry.
 - `.github/workflows/deploy-pages.yml`: builds and deploys the static export from `main`.
+- `wrangler.jsonc`, `public/_headers` and `public/_redirects`: the Cloudflare static preview's routing and response policy. `.github/workflows/deploy-cloudflare.yml` is a manual preview workflow until the domain cutover is reviewed; [the hosting contract](cloudflare-config.md) records the production boundary and automation setup.
 
 ## Publish Check
 

@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "akibwa-site",
+  "compatibility_date": "2026-09-08",
+  "workers_dev": true,
+  "preview_urls": true,
+  // Domain activation is a separate reviewed step. Existing zone routes for
+  // features-api and one-bag must continue running before this static origin.
+  "routes": [],
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

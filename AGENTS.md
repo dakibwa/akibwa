@@ -9,11 +9,12 @@ This repository is the public `akibwa.com` website.
 - Dan approved album and podcast counts from all available Spotify, YouTube, Last.fm and Apple listening history (5 September 2026). `public/listening-catalogue.json` owns the reconciled public aggregates; [docs/listening-history.md](docs/listening-history.md) defines matching, overlap bounds and regeneration. Raw events, account identifiers and private source paths stay outside this public repository. Counts are recorded plays/views, not completed albums or episodes. Recorded duration remains Spotify-only; never infer YouTube watch time.
 - `data/taste-curation.json` owns the approved job statements, cultural selection and verified public artwork. It must not duplicate old provider-only listening counts. Taste and album cards show counts on hover/focus and do not open details or navigate on click.
 - Keep only `/` in the sitemap unless a route has been explicitly approved for search. Detailed archives must use `noindex`, and `robots.txt` must continue allowing crawlers to read that directive.
-- The site is a static Next.js export (`output: "export"`) deployed to GitHub Pages from `main`.
+- The site is a static Next.js export (`output: "export"`). GitHub Pages remains production; the Cloudflare Workers Static Assets preview and cutover contract are in [docs/cloudflare-config.md](docs/cloudflare-config.md). Preserve the existing Features API and One Bagger Worker routes when changing the static origin.
 - Fast pre-push check: `npm run check:fast`.
 - Release check: `npm run check:release` (the same static build for this small site).
 - Public surface registry: `data/public-surfaces.json`.
 - Pre-publish check: `npm run publish:ready`.
+- Hosting verification: `npm run check:hosting -- <origin>` after building and deploying the exact export.
 
 ## Artwork and images
 
