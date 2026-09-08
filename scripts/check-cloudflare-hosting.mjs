@@ -4,6 +4,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { waitForHostedExport } from "./hosting-readiness.mjs";
+import { assertRobotsBytes } from "./hosting-robots.mjs";
 
 const root = fileURLToPath(new URL("../out/", import.meta.url));
 const origin = new URL(process.argv[2] || process.env.CHECK_HOST_URL || "http://localhost:8787");
@@ -95,7 +96,10 @@ for (const path of samples) {
   assert.ok(path, "representative generated asset exists");
   const response = await request(`/${path}`);
   assert.equal(response.status, 200, `${path} must remain available`);
-  assert.equal(hash(Buffer.from(await response.arrayBuffer())), hash(await readFile(join(root, path))), `${path} bytes`);
+  const actual = Buffer.from(await response.arrayBuffer());
+  const expected = await readFile(join(root, path));
+  if (path === "robots.txt") assertRobotsBytes(actual, expected, { managed: origin.origin === "https://akibwa.com" });
+  else assert.equal(hash(actual), hash(expected), `${path} bytes`);
   if (path.startsWith("_next/static/")) assert.match(response.headers.get("cache-control") || "", /max-age=31536000.*immutable/, "fingerprinted assets are immutable");
   else checkRevalidation(response, path);
 }

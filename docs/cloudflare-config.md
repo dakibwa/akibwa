@@ -78,6 +78,11 @@ Keep a direct browser run-through of the affected pages alongside this check.
 - Fingerprinted `/_next/static/*` files receive one-year immutable caching.
   HTML, artwork with stable filenames, JSON and service workers retain
   Cloudflare's default `public, max-age=0, must-revalidate` behavior.
+- The existing zone-managed robots policy prepends Cloudflare's Content Signals
+  and crawler rules to the generated `robots.txt`. Keep that provider policy.
+  The public-domain check permits only its single marked block and comment
+  preface, followed by the exact authored file with nothing added after it.
+  Preview robots and every other asset remain exact whole-file comparisons.
 
 ## Continuous deployment
 
@@ -125,5 +130,6 @@ publishers.
 - [Static asset billing and limits](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/)
 - [Static generation, HTML routing and real 404 pages](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/)
 - [Static response headers](https://developers.cloudflare.com/workers/static-assets/headers/)
+- [Cloudflare managed robots and existing files](https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/#existing-robotstxt-file)
 - [Custom Domains and interaction with existing routes](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/#interaction-with-routes)
 - [Workers deployment through GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/)
