@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-QoUmvtM4TfuYlQ1Xo8Vyj5igEwG39iDjjU3GON35ixM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-08viXgNW1cGCGo3uuvIXVxr7MP3UKXEZFPSdb43l9Gg=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -7821,21 +7821,7 @@ function showRunOver(){
   showVeil('runveil');
   $('recordbtn2').onclick=()=>{hideVeils();openMenu('home')};
   if($('runcollection'))$('runcollection').onclick=()=>{hideVeils();openMenu('coll')};
-  if($('sharebtn')) $('sharebtn').onclick=async e=>{
-    const b=e.currentTarget, txt=shareText(r.day, r.cleared.map(c=>String(c.tier||'')[0]||'').join(''));
-    if(navigator.share){
-      try{ await navigator.share({text:txt}); b.textContent='shared';
-           clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent=SHARE_LABEL },2400); return }
-      catch(err){ if(err && err.name==='AbortError') return }
-    }
-    const ok=await copyText(txt);
-    b.textContent = ok ? 'copied' : 'select it below';
-    if(!ok){
-      const out=$('shareout');
-      if(out){ out.hidden=false; out.value=txt; out.focus(); out.select() }
-    }
-    clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent=SHARE_LABEL },2400);
-  };
+  if($('sharebtn')) $('sharebtn').onclick=e=>shareDay(e.currentTarget,r);
   if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openMenu('pay'); beginUnlock()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
@@ -7977,18 +7963,88 @@ function rungCount(list,of){
   const good=n.perfect+n.clean;
   return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
 }
-const RUNGMOJI={perfect:'🟨', clean:'🟩', done:'🟪'};
-function dayStrip(tiers){
-  const s=typeof tiers==='string'?tiers:'';
-  let out='';
-  for(let i=0;i<POLICY.dailyNets;i++) out += RUNGMOJI[TIEROF[s[i]]] || '⬛';
-  return out;
+const SHARE_LABEL = window.featuresNative?.capabilities?.shareImage || navigator.share
+  ? 'share the day' : navigator.clipboard?.write && typeof ClipboardItem!=='undefined'
+  ? 'copy the image' : 'save the image';
+const runShareTiers=r=>r.cleared.slice(0,POLICY.dailyNets)
+  .map(c=>(RUNGOF[c.tier]||'?')[0]).join('');
+const shareText=day=>'features · '+dayLabel(day)+'\nhttps://features.games/';
+function dayShareCanvas(day,tiers){
+  const s=String(tiers||'').slice(0,POLICY.dailyNets),flawless=isFlawless(s);
+  const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=280;
+  const c=canvas.getContext('2d');
+  if(!c)throw new Error('image_unavailable');
+  const ink=cssv('--ink'),muted=cssv('--ink-soft'),rule=cssv('--rule');
+  const font=getComputedStyle(document.body).fontFamily;
+  const text=(str,x,y,size,weight=500,colour=ink,align='left')=>{
+    c.fillStyle=colour;c.font=weight+' '+size+'px '+font;c.textAlign=align;c.fillText(str,x,y);
+  };
+  c.fillStyle=cssv('--surface');c.fillRect(0,0,1200,280);
+  text(WORDMARK,60,120,88,900);
+  for(let i=0;i<4;i++){
+    c.fillStyle=cssv('--flag-'+(i+1));c.fillRect(62+i*87,143,87,10);
+  }
+  const date=new Date(day+'T12:00:00');
+  text(dayLabel(day),1140,96,30,500,ink,'right');
+  text(String(date.getFullYear()),1140,137,25,500,muted,'right');
+  const cell=(1080-9*8)/POLICY.dailyNets;
+  for(let i=0;i<POLICY.dailyNets;i++){
+    const t=TIEROF[s[i]];
+    c.fillStyle=t?cssv(flawless?TIERCOL.flawless:TIERCOL[t]):rule;
+    c.fillRect(60+i*(cell+8),204,cell,28);
+  }
+  return canvas;
 }
-const SHARE_LABEL = (typeof navigator!=='undefined' && navigator.share) ? 'share the day' : 'copy the day';
-const shareText=(day,tiers)=>
-  'features · '+dayLabel(day)+(isFlawless(tiers)?' · flawless':'')
-  +'\n'+dayStrip(tiers)
-  +'\nfeatures.games';
+function dayShareImage(day,tiers){
+  const dataURL=dayShareCanvas(day,tiers).toDataURL('image/png');
+  const base64=dataURL.split(',')[1];
+  if(!base64)throw new Error('image_unavailable');
+  const bytes=Uint8Array.from(atob(base64),ch=>ch.charCodeAt(0));
+  return {base64,file:new File([bytes],'features-'+day+'.png',{type:'image/png'})};
+}
+function downloadDayImage(file){
+  const url=URL.createObjectURL(file),a=document.createElement('a');
+  a.href=url;a.download=file.name;a.hidden=true;document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+async function shareDay(button,run){
+  if(button.disabled)return;
+  const tiers=runShareTiers(run),txt=shareText(run.day);
+  let label=SHARE_LABEL;
+  button.disabled=true;clearTimeout(button._t);
+  try{
+    const {file,base64}=dayShareImage(run.day,tiers);
+    if(window.featuresNative?.capabilities?.shareImage){
+      const result=await window.featuresNative.request('share',{
+        title:'features · '+dayLabel(run.day),text:txt,image:{mimeType:'image/png',base64}
+      });
+      label=result.presented?'share opened':result.shared?'shared':SHARE_LABEL;
+    }else if(navigator.share && navigator.canShare?.({files:[file]})){
+      await navigator.share({title:'features · '+dayLabel(run.day),text:txt,files:[file]});
+      label='shared';
+    }else{
+      let copied=false;
+      if(navigator.clipboard?.write && typeof ClipboardItem!=='undefined'){
+        try{await navigator.clipboard.write([new ClipboardItem({
+          'image/png':file,'text/plain':new Blob([txt],{type:'text/plain'})
+        })]);copied=true}catch{}
+      }
+      if(copied)label='image copied';
+      else{downloadDayImage(file);label='download started'}
+    }
+  }catch(error){
+    if(error?.name!=='AbortError' && error?.code!=='cancelled'){
+      try{downloadDayImage(dayShareImage(run.day,tiers).file);label='download started'}
+      catch{
+        const ok=await copyText(txt);label=ok?'link copied':'select the link below';
+        if(!ok){const out=$('shareout');if(out){out.hidden=false;out.value=txt;out.focus();out.select()}}
+      }
+    }
+  }finally{
+    button.disabled=false;button.textContent=label;
+    if(label!==SHARE_LABEL)button._t=setTimeout(()=>{button.textContent=SHARE_LABEL},2400);
+  }
+}
 async function copyText(t){
   try{
     if(navigator.clipboard && window.isSecureContext){
