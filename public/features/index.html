@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-VvsiU8e30sCQktHUwGrZUJRQqINTMwCFqTEOJO2bDuQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-JqrRhLw5K9v7XWeIKo1RJRccpA0bE4RlcEkF8zmsXZE=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -863,19 +863,10 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .acct-auth-other{display:flex;flex-direction:column;gap:9px}
   .acct-auth-other .acct-row .wbtn{flex:1 1 auto}
 
-  .arch-card{
-    max-width:660px;width:100%;display:flex;flex-direction:column;
-    max-height:calc(100dvh - 40px);overflow:hidden;
-    border:1px solid var(--silver);background:var(--surface);box-shadow:var(--shadow-card);
-  }
-  .arch-body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
   .pay-card{max-width:520px;background:var(--paper)}
   .pay-body{padding:0 0 4px;overflow-y:auto;min-height:220px}
-  .arch-read{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
-    font-size:11px;letter-spacing:.06em;color:var(--ink-soft)}
-  .arch-read b{font-size:13px;letter-spacing:.02em;color:var(--ink);font-weight:600}
   .arch-grid{
-    display:grid;grid-template-columns:repeat(5,1fr);gap:9px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:9px;
     overflow-y:auto;padding-right:2px;
   }
   .arch-net{display:flex;flex-direction:column;gap:4px}
@@ -888,12 +879,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .arch-foot{display:flex;align-items:baseline;justify-content:space-between;gap:6px;
     font-size:9.5px;letter-spacing:.08em;color:var(--ink-soft)}
   .arch-rung{height:3px;flex:0 0 26px;background:var(--rung,var(--rule))}
-  .arch-offer{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    border-top:1px solid var(--rule);padding-top:12px;
-  }
-  .arch-say{font-size:11px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
-
   .acct-ask{font-size:13px;color:var(--ink);line-height:1.45}
   .acct-note{font-size:10px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
   .acct-field{
@@ -957,15 +942,44 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .panerules{display:flex;flex-direction:column;padding:20px 22px 24px;border-right:1px solid var(--rule);background:var(--paper)}
   .paneside{grid-column:2;display:flex;flex-direction:column;gap:12px;padding:20px 22px}
   .paneside .pay-body{flex:1 1 auto;min-height:0;overflow-y:auto}
-  .premium-offer{display:flex;flex-direction:column;gap:22px;min-height:100%}
-  .premium-offer h2{margin:8px 0 0}
+  .premium-offer{display:flex;flex-direction:column;gap:20px;min-height:100%}
+  .premium-offer h2{margin:8px 0 0;font-size:36px;font-weight:800;letter-spacing:-.055em;line-height:1.06}
   .premium-offer p{margin:0}
   .premium-offer .acct-note{font-size:12px;letter-spacing:0}
-  .premium-benefits{display:grid;gap:14px;padding:18px 0;border-block:1px solid var(--rule)}
+  .premium-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+  .premium-gallery .rfeat{display:block;width:100%;height:auto;aspect-ratio:1}
+  .intro-art.premium-art{display:flex;align-items:center;justify-content:center;padding:16px;min-height:0}
+  .premium-art .premium-gallery{height:100%;width:auto;max-width:100%;aspect-ratio:2/3;grid-template-rows:repeat(3,minmax(0,1fr))}
+  .premium-art .rfeat{height:100%;min-height:0;aspect-ratio:auto}
+  .premium-offer>.premium-gallery{display:none}
+  .premium-benefits{display:grid;gap:16px;padding:20px 0;border-block:1px solid var(--rule)}
   .premium-benefits div{display:grid;gap:5px}
-  .premium-actions{display:grid;gap:10px}
-  .premium-actions .intro-start{margin:0}
-  .premium-account{margin-top:auto;padding-top:18px;border-top:1px solid var(--rule);display:grid;gap:12px}
+  .premium-benefits b{font-size:15px}
+  .premium-actions{display:grid;gap:10px;margin-top:auto}
+  .premium-actions .intro-start{margin:0;min-height:46px}
+  .premium-actions .acct-note{text-align:center}
+  .premium-account{text-align:center;font-size:11px;color:var(--ink-soft)}
+  .premium-account .acctlink{margin:0;font-size:inherit;letter-spacing:0}
+  .premium-result{padding-bottom:12px;border-bottom:1px solid var(--rule)}
+  .premium-result summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;font-size:11px;color:var(--ink-soft)}
+  .premium-result summary::after{content:'+';color:var(--ink)}
+  .premium-result[open] summary::after{content:'−'}
+  .premium-result>.track{margin-top:10px}
+  .premium-result .arch-grid{margin-top:16px}
+  @media(max-width:700px){
+    .premium-offer{gap:16px}
+    .premium-offer h2{font-size:32px}
+    .premium-offer>.premium-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+    .premium-benefits{grid-template-columns:1fr 1fr;gap:14px;padding:16px 0}
+    .premium-benefits b{font-size:13px}
+  }
+  @media(min-width:701px) and (max-height:500px){
+    .premium-offer{gap:10px}
+    .premium-offer h2{font-size:28px}
+    .premium-benefits{grid-template-columns:1fr 1fr;gap:12px;padding:12px 0}
+    .premium-benefits b{font-size:13px}
+    .premium-offer .acct-note{font-size:11px}
+  }
   .archive-invite{display:flex;justify-content:space-between;gap:10px;width:100%;padding:10px 0 0;border:0;background:none;
     font:inherit;font-size:11px;line-height:1.4;color:var(--ink-soft);text-align:left;cursor:pointer}
   .archive-invite:hover,.archive-invite:focus-visible{color:var(--ink)}
@@ -1125,10 +1139,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .unit-par{--track-stack:15px}
 
     .veil{padding:12px}
-    .arch-card{max-height:calc(100dvh - 24px)}
     .menusheet{height:calc(100dvh - 24px);max-width:none;width:100%}
     .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
-    .arch-body{padding:12px 13px 15px}
     .acct-body{padding:10px 13px 12px}
     .acct-auth{gap:8px}
     .acct-auth-form{gap:7px}
@@ -1181,8 +1193,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     height:min(680px,calc(100dvh - var(--akibwa-project-banner-height) - 40px))
   }
   @media(max-width:700px){
-    html[data-akibwa-project="true"] .veil > *,
-    html[data-akibwa-project="true"] .arch-card{
+    html[data-akibwa-project="true"] .veil > *{
       max-height:calc(100dvh - var(--akibwa-project-banner-height) - 24px)
     }
     html[data-akibwa-project="true"] .menusheet{
@@ -1391,26 +1402,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
      and the welcome. -->
 
 <!-- Record, profile and checkout are panes of one persistent menu. -->
-
-<!-- ---- THE ARCHIVE'S LOOK ----
-     a day you played, that you can no longer play. it used to answer a press
-     with a toast and nothing else, which is the game refusing and then having
-     nothing to show for the refusal. this is the day itself: its ten nets as
-     they were dealt, drawn small and unplayable, with the rung each one minted
-     under it. what is for sale is the right to play them again, so the thing
-     on the page is the thing for sale. -->
-<!-- checkout, mounted inside the game rather than a page away. the card is
-     Stripe's own iframe; this is only the frame around it and the way out. -->
-
-<div class="veil" id="archveil">
-  <section class="arch-card">
-    <div class="rec-head">
-      <strong class="rec-title" id="archtitle">the archive</strong>
-      <span class="rec-right"><a href="#" class="rec-close" id="archclose" aria-label="close"><svg viewBox="0 0 15 15" width="15" height="15" aria-hidden="true"><path d="M1.5 1.5 13.5 13.5M13.5 1.5 1.5 13.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a></span>
-    </div>
-    <div class="arch-body" id="archbody"></div>
-  </section>
-</div>
 
 <div class="veil" id="introveil">
   <!-- One menu frame; menuView selects the panes through renderPanes. -->
@@ -3688,37 +3679,43 @@ function openUpgrade(day=null){
     if(epoch===menuEpoch&&$('premiumoffer'))renderUpgrade();
   });
 }
+function premiumArt(){
+  return `<div class="premium-gallery" aria-hidden="true">${['house','fish','cup','key','tree','heart'].map(k=>featIcon(k)).join('')}</div>`;
+}
 function renderUpgrade(){
   if(POLICY.premium) return upgradeDay?openDay(upgradeDay):openMenu('home');
   const price=priceWords(),available=canBuy()&&(!!nativePlatform()||!!price);
-  const waiting=!available&&!!pricePromise;
+  const waiting=!available&&!!pricePromise,row=dayRows().find(r=>r.d===upgradeDay),read=row&&dayReading(row);
+  const expanded=$('premiumresult')?.open;
   $('paybody').innerHTML=`<section class="premium-offer" id="premiumoffer" aria-labelledby="premiumtitle">
-    <div><p class="acct-lab">premium</p>
-      <h2 class="intro-title" id="premiumtitle">${upgradeDay?'play '+esc(dayLabel(upgradeDay)):'keep playing'}</h2></div>
+    <div class="premium-heading"><p class="acct-lab">premium${upgradeDay?' · '+esc(dayLabel(upgradeDay)):''}</p>
+      <h2 id="premiumtitle">keep discovering.</h2></div>
+    ${premiumArt()}
     <div class="premium-benefits">
-      <div><b>every earlier day</b><span class="acct-note">choose any set from the calendar.</span></div>
-      <div><b>unlimited replays</b><span class="acct-note">return to a favourite and try for a better result.</span></div>
+      <div><b>every earlier day</b><span class="acct-note">a whole calendar to explore.</span></div>
+      <div><b>unlimited replays</b><span class="acct-note">another go at your favourites.</span></div>
     </div>
+    ${row?`<details class="premium-result" id="premiumresult"${expanded?' open':''}><summary><span>your result</span><span>${esc(read?.fig!=null?String(read.fig):'')} ${esc(read?.word||'')}</span></summary>
+      ${rungTrack(row.tiers||'',true)}<div id="archbody"></div></details>`:''}
     <div class="premium-actions">
       ${available?'<button class="intro-start" id="premiumcontinue">unlock premium'+(price?' · '+esc(price):'')+'</button>'
         :'<p class="acct-ask" role="status">'+(waiting?'checking availability…':'purchases are currently unavailable')+'</p>'}
-      ${available?'<p class="acct-note">one payment. no subscription.</p>':''}
+      <p class="acct-note">one payment. no subscription.</p>
       ${!available&&!waiting&&!nativePlatform()?'<button class="wbtn" id="premiumretry">check again</button>':''}
-      <button class="wbtn" id="premiumback">not now</button>
     </div>
-    <p class="acct-note">a fresh set of ten is free every day.</p>
-    ${!account?.signedIn?`<div class="premium-account"><p class="acct-note">keep your progress on every device, or restore a purchase.</p>
-      <div class="acct-row"><button class="wbtn" id="premiumsignin">sign in</button>
-      <button class="wbtn" id="premiumsignup">create an account</button></div></div>`:''}
+    ${!account?.signedIn?`<p class="premium-account"><a href="#" class="acctlink" id="premiumsignin">sign in</a>
+      or <a href="#" class="acctlink" id="premiumsignup">create an account</a></p>`:''}
   </section>`;
+  if($('premiumresult'))$('premiumresult').ontoggle=()=>{
+    if($('premiumresult')?.open&&!$('archbody').firstChild)$('archbody').innerHTML=archiveLookHTML(row);
+  };
   if($('premiumcontinue'))$('premiumcontinue').onclick=()=>{
     $('paybody').innerHTML='<p class="acct-ask">opening secure payment…</p>';
     beginUnlock();
   };
   if($('premiumretry'))$('premiumretry').onclick=()=>openUpgrade(upgradeDay);
-  $('premiumback').onclick=()=>openMenu('home');
-  if($('premiumsignin'))$('premiumsignin').onclick=()=>upgradeAccount('sign');
-  if($('premiumsignup'))$('premiumsignup').onclick=()=>upgradeAccount('signup');
+  if($('premiumsignin'))$('premiumsignin').onclick=e=>{e.preventDefault();upgradeAccount('sign')};
+  if($('premiumsignup'))$('premiumsignup').onclick=e=>{e.preventDefault();upgradeAccount('signup')};
 }
 
 let spread=null, spreadAsked=false;
@@ -7910,7 +7907,7 @@ function showRunOver(){
       shareButton._shareStamps=stamps;shareButton.disabled=false;
     });
   }
-  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openUpgrade()};
+  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openUpgrade(R().day)};
   if($('resumebtn')) $('resumebtn').onclick=()=>{parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
 }
@@ -8229,39 +8226,18 @@ function archiveNetSVG(net){
   return `<svg viewBox="${-M} ${-M} ${BW+M*2} ${BH+M*2}" aria-hidden="true">${lines}${dots}</svg>`;
 }
 
-let archFrom=null;
 function openArchiveLook(iso){
-  const row=dayRows().find(r=>r.d===iso);
-  if(!row) return false;
-  archFrom = menuShown();
-  const read=dayReading(row);
-  $('archtitle').textContent=dayLabel(iso);
-  const nets=archiveNets(iso);
-  const tiers=typeof row.tiers==='string'?row.tiers:'';
-  const flawless=isFlawless(tiers);
-  const grid=nets.map(n=>{
-    const t=TIEROF[tiers[n.idx]];
-    const col=t?`var(${flawless?TIERCOL.flawless:TIERCOL[t]})`:'var(--rule)';
-    return `<div class="arch-net">`
-      +`<span class="arch-plate">${archiveNetSVG(n)}</span>`
+  if(!dayRows().some(r=>r.d===iso)) return false;
+  openUpgrade(iso);return true;
+}
+function archiveLookHTML(row){
+  const tiers=typeof row.tiers==='string'?row.tiers:'',flawless=isFlawless(tiers);
+  return `<div class="arch-grid">${archiveNets(row.d).map(n=>{
+    const t=TIEROF[tiers[n.idx]],col=t?`var(${flawless?TIERCOL.flawless:TIERCOL[t]})`:'var(--rule)';
+    return `<div class="arch-net"><span class="arch-plate">${archiveNetSVG(n)}</span>`
       +`<span class="arch-foot"><span>${String(n.idx+1).padStart(2,'0')}</span>`
-      +`<i class="arch-rung" style="--rung:${col}" role="img"`
-      +` aria-label="net ${n.idx+1}${t?', '+tierSay(t):', not cleared'}"></i></span>`
-      +`</div>`;
-  }).join('');
-  const offer = canBuy()
-    ? `<span class="arch-say">these ten are yours to play again with the full version</span>`
-      +`<button class="wbtn solid" id="archbuy">unlock${priceWords()?' · '+priceWords():''}</button>`
-    : `<span class="arch-say">${esc(replayWords())}</span>`;
-  $('archbody').innerHTML=
-     `<div class="arch-read"><b>${esc(read?.fig!=null?String(read.fig):'')} ${esc(read?.word||'')}</b>`
-    +`<span>${esc(dayLabel(iso))} · played</span></div>`
-    +`<div class="arch-grid">${grid}</div>`
-    +`<div class="arch-offer">${offer}</div>`;
-  if($('archbuy')) $('archbuy').onclick=()=>{ hideVeils(); openUpgrade(iso) };
-  if(archFrom) $('introveil').classList.remove('show');
-  showVeil('archveil');
-  return true;
+      +`<i class="arch-rung" style="--rung:${col}" role="img" aria-label="net ${n.idx+1}${t?', '+tierSay(t):', not cleared'}"></i></span></div>`;
+  }).join('')}</div>`;
 }
 function openDay(iso){
   if(inTutorialRun() && canPlayDay(iso)) endTutorial();
@@ -8637,12 +8613,6 @@ const WORDMARK='features';
   });
 })();
 $('histbtn').onclick=()=>openMenu('home');
-function closeArchiveLook(){
-  $('archveil').classList.remove('show');
-  if(archFrom){ renderMenu(); showVeil('introveil') }
-  archFrom=null;
-}
-$('archclose').onclick=e=>{e.preventDefault();closeArchiveLook()};
 function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
   if(v.id==='runveil') return;
@@ -8738,7 +8708,10 @@ function rungLadder(){
 }
 function renderIntro(){
   const b=$('introbody');
-  if(!$('introart').firstChild) $('introart').innerHTML=introPlate();
+  const art=$('introart'),premium=menuView==='pay';
+  if(!art.firstChild||art.classList.contains('premium-art')!==premium){
+    art.classList.toggle('premium-art',premium);art.innerHTML=premium?premiumArt():introPlate();
+  }
   {
     const fresh=!store.tutorialDone;
     const streak=store.meta.streak||0;
