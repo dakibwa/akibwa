@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-FJLy1iF4alw+0VgDMPFo0Jgt3Dv0HweA/BH41MwL7V0=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-PHRpNWMALG2EyuuCBNJWRg5Y9yY4KAkRtRF/WVBPrF4=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -72,6 +72,12 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     --violett:#7D6BB0;
     --tuerkis:#12A19A;
     --rosa:#DE3C75;
+    --tier-perfect:var(--gruen);
+    --tier-clean:var(--gelb);
+    --tier-done:#C77770;
+    --tier-flawless:var(--rosa);
+    --tier-done-deep:#944F49;
+    --tier-done-soft:#E4A39D;
 
     --flag-1:var(--hellblau);
     --flag-2:var(--gelb);
@@ -271,12 +277,12 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .unit + .unit{border-left:1px solid var(--rule)}
   .unit-cross,.unit-set,.unit-par{flex:1 1 0}
   .unit-par{position:relative;--track-stack:18px;
-            --par-perfect:var(--gelb);
-            --par-par:var(--tuerkis);
-            --par-over:var(--violett)}
+            --par-perfect:var(--tier-perfect);
+            --par-par:var(--tier-clean);
+            --par-over:var(--tier-done)}
   .tutorial-score-label{display:none}
   .unit-par.tut-score{
-    --tut-score:var(--tuerkis);z-index:7;
+    --tut-score:var(--tier-clean);z-index:7;
     outline:2px solid var(--tut-score);outline-offset:4px;
     animation:tutscorein .52s var(--ease-out) both
   }
@@ -797,6 +803,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
   }
   .fcell{display:block;min-width:0;border-bottom:3px solid var(--tc,var(--rule));transition:filter var(--t-ui)}
+  .fcell:not(.none){padding-bottom:2px}
   .fcell svg{display:block;width:100%;height:auto}
   .fcell:hover{filter:var(--hover-lift)}
   .fcell.none{border:1px solid var(--rule);border-bottom-width:3px;color:var(--silver)}
@@ -2122,7 +2129,7 @@ const lum=hex=>{
 };
 const EMBLEM_INK='#0E1214';
 const markOn=v=>lum(cssv(v))>0.192?'#0E1214':'#ffffff';
-const TIERCELLS={clean:3, done:2, perfect:4, par:2, over:1};
+const STAMP_HEIGHT=103;
 function featureStamp(k,tier,locked,fit){
   const d=FIGURES[k]||FIGURES_V20[k]||FEATURES[k], tierCol=tier?TIERCOL[tier]:'--rule';
   const mk=locked?markOn('--rule'):EMBLEM_INK;
@@ -2130,11 +2137,8 @@ function featureStamp(k,tier,locked,fit){
   const mark=(locked||unknown)
     ? `<g fill="none" stroke="${mk}" stroke-width="2" opacity=".78"><circle cx="48" cy="48" r="21"/><path d="M48 18V78M18 48H78M27 27L69 69M69 27L27 69"/></g>`
     : STAMPS[k] ? figEmblem(k,{ink:mk,fit}) : `<g fill="${mk}">${d.p}</g>`;
-  const cells=tier?(TIERCELLS[tier]||1):1, gap=4;
-  const cw=(96-(cells-1)*gap)/cells;
-  const band=Array.from({length:cells},(_,i)=>
-    `<rect x="${(i*(cw+gap)).toFixed(1)}" y="96" width="${cw.toFixed(1)}" height="5" fill="var(--tier)"/>`).join('');
-  return `<svg class="feature-stamp" viewBox="0 0 96 101" role="img" aria-label="${esc(locked||unknown?'unidentified feature':k+' feature · '+tierSay(tier))}" style="--emblem:var(${locked||unknown?'--rule':d.c});--tier:var(${tierCol})">
+  const band='<rect y="98" width="96" height="5" fill="var(--tier)"/>';
+  return `<svg class="feature-stamp" viewBox="0 0 96 ${STAMP_HEIGHT}" role="img" aria-label="${esc(locked||unknown?'unidentified feature':k+' feature · '+tierSay(tier))}" style="--emblem:var(${locked||unknown?'--rule':d.c});--tier:var(${tierCol})">
     <rect width="96" height="96" fill="var(--emblem)"/>
     ${mark}${band}
   </svg>`;
@@ -2145,12 +2149,12 @@ const SUN=(col)=>`<svg viewBox="0 0 44 44"><g stroke="${col}" stroke-width="2.4"
   }).join('')+`</g></svg>`;
 
 
-const TIERCOL={perfect:'--gelb', clean:'--tuerkis', done:'--violett', flawless:'--rosa', par:'--tuerkis', over:'--violett'};
+const TIERCOL={perfect:'--tier-perfect', clean:'--tier-clean', done:'--tier-done', flawless:'--tier-flawless', par:'--tier-clean', over:'--tier-done'};
 const DAYSPINE=['--hellblau','--orange','--gruen','--rosa','--dunkelblau','--gelb','--tuerkis','--violett'];
 const daySpine=d=>`var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})`;
 const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 const SETAHEAD='--rule';
-const LAPCOL=['--par-over','--gruen','--orange'];
+const LAPCOL=['--par-over','--tier-done-deep','--tier-done-soft'];
 
 const BW=1040, BH=580, PADX=24, PADY=22;
 const clampX=x=>Math.max(PADX,Math.min(BW-PADX,x));
@@ -4035,7 +4039,7 @@ function paintRun(id,pct,segs,label){
 
 
 
-const tierCol=t=>TIERCOL[t]||'--violett';
+const tierCol=t=>TIERCOL[t]||'--tier-done';
 function liveTier(){
   const r=R(), {optimum,par}=netTargets();
   if(r.assisted) return 'done';                       // descent caps a net at done
@@ -8004,7 +8008,7 @@ async function prepareShareStamps(run){
   const stamps=await Promise.all(runShareStamps(run).map(stamp=>new Promise(resolve=>{
     const d=FIGURES[stamp.key]||FIGURES_V20[stamp.key];
     const svg=featureStamp(stamp.key,stamp.tier,false)
-      .replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" width="160" height="169"')
+      .replace('<svg',`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="${160*STAMP_HEIGHT/96}"`)
       .replaceAll('var(--emblem)',cssv(d.c))
       .replaceAll('var(--tier)',cssv(TIERCOL[stamp.tier]||'--rule'));
     const image=new Image();
@@ -8041,7 +8045,7 @@ function dayShareCanvas(day,tiers,stamps=[]){
   }
   shown.forEach((stamp,i)=>{
     const x=60+i*184;
-    c.drawImage(stamp.image,x,272,160,160*101/96);
+    c.drawImage(stamp.image,x,272,160,160*STAMP_HEIGHT/96);
   });
   return canvas;
 }
