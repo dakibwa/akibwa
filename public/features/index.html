@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-JqrRhLw5K9v7XWeIKo1RJRccpA0bE4RlcEkF8zmsXZE=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-bc0buTuKQUTb7njupXg0DtAnTHoSYS6/2sCaeM+lPOM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -2705,9 +2705,7 @@ const API = (()=>{
 
 let account=null;        // null until asked. {signedIn:bool, provider, email}
 let signIns=null;
-let googleId=null;       // public OAuth client id, from /providers; null if google is off
-let googlePrep=null;     // {clientId, nonce, state, at} — one-use, prefetched so the press still has a gesture
-let nativeAuth=false, googleFallback=false;
+let nativeAuth=false;
 const nativePlatform=()=>window.featuresNative?.version>=2
   && ['ios','android'].includes(window.featuresNative.platform)
   && typeof window.featuresNative.request==='function' ? window.featuresNative.platform : null;
@@ -2920,9 +2918,8 @@ async function askSignIns(retry=false){
     try{
       const j=await apiCall('/providers');
       signIns=Array.isArray(j.providers)?j.providers:[];
-      googleId=(typeof j.googleId==='string' && j.googleId) ? j.googleId : null;
       nativeAuth=j.nativeAuth===true;
-    }catch(e){ signIns=[]; googleId=null; nativeAuth=false }
+    }catch(e){ signIns=[]; nativeAuth=false }
     return signIns;
   })().finally(()=>{signInsAsk=null});
   return signInsAsk;
@@ -2944,10 +2941,6 @@ async function saveProfile(patch){
 
 function goSignIn(p){
   if(nativePlatform()) return void nativeSignIn(p);
-  if(p==='google'){
-    tryGoogleHere().then(v=>{ if(v===true || v==='cancel') return; offsiteSignIn() });
-    return;
-  }
   offsiteSignIn(p);
 }
 function offsiteSignIn(p){
@@ -2955,9 +2948,6 @@ function offsiteSignIn(p){
   const u=new URL(location.href);
   u.searchParams.delete('signin');
   location.href=API+'/auth/'+provider+'/start?return='+encodeURIComponent(u.pathname+u.search);
-}
-function googleHereOk(){
-  return !!(!nativePlatform() && API && googleId && 'IdentityCredential' in window);
 }
 async function nativeSignIn(provider){
   if(acctBusy) return;
@@ -2987,37 +2977,6 @@ async function nativeSignIn(provider){
     if(menuShown()&&menuView==='profile') renderAcct();
   }
 }
-function ensureGooglePrep(){
-  if(!googleHereOk()) return null;
-  if(googlePrep && Date.now()-googlePrep.at < 8*60e3) return googlePrep;
-  return apiCall('/auth/google/prepare',{method:'POST'}).then(j=>{
-    if(!j || !j.nonce || !j.state || !j.clientId) return null;
-    googlePrep={clientId:j.clientId, nonce:j.nonce, state:j.state, at:Date.now()};
-    return googlePrep;
-  }).catch(()=>null);
-}
-function googleFedCMOptions(prep, origin){
-  return {
-    mediation:'required',
-    identity:{
-      context:'signin',
-      mode:'active',
-      providers:[{
-        configURL:'https://accounts.google.com/gsi/fedcm.json',
-        clientId:prep.clientId,
-        nonce:prep.nonce,
-        fields:['name','email','picture'],
-        params:{
-          response_type:'id_token',
-          scope:'email profile openid',
-          nonce:prep.nonce,
-          state:prep.state,
-          ss_domain:origin||location.origin,
-        },
-      }],
-    },
-  };
-}
 async function landedSignedIn(me){
   account={...me,signedIn:true};
   store.signedInOnce=true; save();
@@ -3030,42 +2989,6 @@ async function landedSignedIn(me){
   afterSignIn();
   if(menuShown()&&menuView==='profile') renderAcct();
 }
-async function tryGoogleHere(){
-  if(!googleHereOk()) return false;
-  const prep=googlePrep && Date.now()-googlePrep.at < 10*60e3 ? googlePrep : null;
-  if(!prep) return false;
-  let cred;
-  try{
-    cred=await navigator.credentials.get(googleFedCMOptions(prep));
-  }catch(e){
-    if(e && e.name==='NotAllowedError'){
-      googleFallback=true;
-      if(menuShown()&&menuView==='profile') renderAcct();
-      return 'cancel';
-    }
-    return false;
-  }
-  const token=cred && (cred.token || cred.idToken);
-  if(!token) return false;
-  const spent=prep; googlePrep=null;
-  try{
-    const me=await apiCall('/auth/google/id',{
-      method:'POST',
-      headers:{'content-type':'application/json'},
-      body:JSON.stringify({credential:token, state:spent.state}),
-    });
-    await landedSignedIn(me);
-    return true;
-  }catch(e){
-    googleFallback=true;
-    acctErr=e.message||'that sign-in did not go through';
-    if(menuShown()&&menuView==='profile') renderAcct();
-    else toast('that sign-in did not go through · nothing was lost');
-    ensureGooglePrep();
-    return 'cancel';
-  }
-}
-
 async function doSignOut(){
   try{ await apiCall('/signout',{method:'POST'}) }catch(e){}
   account={signedIn:false};
@@ -3309,8 +3232,7 @@ function paintAcct(){
     body.innerHTML=err+`<div class="acct-auth">
         ${google?`<button class="wbtn acct-google" id="acctin-${google.i}"
             aria-label="continue with google">
-            ${GOOGLE_GLYPH}<span>continue with google</span></button>
-          ${googleFallback&&!nativePlatform()?`<a href="#" class="acctlink" id="acctgoogleweb">sign in on google's website</a>`:''}`:''}
+            ${GOOGLE_GLYPH}<span>continue with google</span></button>`:''}
         ${email?`<div class="acct-auth-divider"><span>${google?'or':'email'}</span></div>
           <section class="acct-auth-form" aria-labelledby="accttitle">
             ${creating?`
@@ -3340,8 +3262,7 @@ function paintAcct(){
             `<button class="wbtn" id="acctin-${i}" aria-label="continue with ${esc(p)}">continue with ${esc(p)}</button>`
           ).join('')}</div></div>`:''}
       </div>`;
-    if(google){ $('acctin-'+google.i).onclick=()=>goSignIn('google'); ensureGooglePrep() }
-    if($('acctgoogleweb')) $('acctgoogleweb').onclick=e=>{e.preventDefault();offsiteSignIn('google')};
+    if(google) $('acctin-'+google.i).onclick=()=>goSignIn('google');
     if(email){
       if(creating){
         $('acctsignup').onclick=passwordSignUp;
