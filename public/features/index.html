@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-WPN6em3BSIHMjF6oF/2zi7ubahzfkmtX2H/alVEirlQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-VvsiU8e30sCQktHUwGrZUJRQqINTMwCFqTEOJO2bDuQ=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com https://accounts.google.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -943,11 +943,12 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   ::view-transition{pointer-events:none}
   ::view-transition-group(root),::view-transition-new(root){animation:none}
   ::view-transition-old(root){display:none}
-  ::view-transition-group(menu-content){animation-duration:var(--t-card);animation-timing-function:var(--ease-out)}
-  ::view-transition-old(menu-content){animation:menuleave var(--t-exit) var(--ease-in) both}
-  ::view-transition-new(menu-content){animation:menuenter var(--t-card) var(--ease-out) both}
+  ::view-transition-group(menu-content){animation:none}
+  ::view-transition-old(menu-content){animation:menuleave var(--t-exit) ease-in-out both}
+  ::view-transition-new(menu-content){animation:menuenter var(--t-exit) ease-in-out both}
   @keyframes menuleave{to{opacity:0}}
-  @keyframes menuenter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  @keyframes menuenter{from{opacity:0}to{opacity:1}}
+  #introveil > .intro-card{transform:none;transition-property:opacity}
   .intro-art{grid-column:1;grid-row:1}
   #introbody{grid-column:2;grid-row:1}
   .menupane{grid-row:1;grid-column:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
@@ -956,6 +957,18 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .panerules{display:flex;flex-direction:column;padding:20px 22px 24px;border-right:1px solid var(--rule);background:var(--paper)}
   .paneside{grid-column:2;display:flex;flex-direction:column;gap:12px;padding:20px 22px}
   .paneside .pay-body{flex:1 1 auto;min-height:0;overflow-y:auto}
+  .premium-offer{display:flex;flex-direction:column;gap:22px;min-height:100%}
+  .premium-offer h2{margin:8px 0 0}
+  .premium-offer p{margin:0}
+  .premium-offer .acct-note{font-size:12px;letter-spacing:0}
+  .premium-benefits{display:grid;gap:14px;padding:18px 0;border-block:1px solid var(--rule)}
+  .premium-benefits div{display:grid;gap:5px}
+  .premium-actions{display:grid;gap:10px}
+  .premium-actions .intro-start{margin:0}
+  .premium-account{margin-top:auto;padding-top:18px;border-top:1px solid var(--rule);display:grid;gap:12px}
+  .archive-invite{display:flex;justify-content:space-between;gap:10px;width:100%;padding:10px 0 0;border:0;background:none;
+    font:inherit;font-size:11px;line-height:1.4;color:var(--ink-soft);text-align:left;cursor:pointer}
+  .archive-invite:hover,.archive-invite:focus-visible{color:var(--ink)}
   .paneside .acct-body{flex:1 1 auto;min-height:0;overflow-y:auto}
   .pane-head[hidden],.paneside .pay-body[hidden],.paneside .acct-body[hidden],.rec-arch[hidden]{display:none}
   #menudoors{grid-column:1/-1;grid-row:3}
@@ -1019,7 +1032,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .wbday .wbwhen{white-space:nowrap}
   .wbday.now .wbwhen{color:var(--ink)}
   .wbday.shut .wbtier{background:var(--rule)}
-  .wbday.shut .wbwhen{color:var(--rule)}
+  .wbday.shut .wbwhen{color:var(--ink-soft)}
   .wbday.shut .track{opacity:.45}
   .wbday[data-day]{cursor:pointer;background-clip:content-box;
     transition:background var(--t-ui)}
@@ -1057,6 +1070,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .intro-doors .door-close{margin-left:auto}
   .door-auth{display:inline-flex}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
+  .intro-doors .help:active{transform:none}
   .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
   .intro-doors .help.shut:hover{color:var(--ink)}
   .intro-doors .owned{margin-left:0}
@@ -2742,7 +2756,7 @@ const authDoorButton=signedIn=>`<button class="help" aria-label="${signedIn?'you
 function fillIntroAuth(){
   if(!document.querySelector('.door-auth')) return;
   const signedIn=!!(account&&account.signedIn);
-  document.querySelectorAll('.door-auth').forEach(el=>{   // re-queried: a sheet may have re-rendered
+  document.querySelectorAll('.door-auth').forEach(el=>{
     el.innerHTML=authDoorButton(signedIn);
     el.firstChild.onclick=()=>openAccount(signedIn?undefined:'sign');
   });
@@ -2787,8 +2801,8 @@ const menuShown=()=>$('introveil').classList.contains('show');
 function softEnter(el){
   el.getAnimations().forEach(a=>a.cancel());
   if(!reduceMotion&&!document.hidden) el.animate(
-    [{opacity:0,transform:'translateY(5px)'},{opacity:1,transform:'none'}],
-    {duration:parseFloat(cssv('--t-card')),easing:cssv('--ease-out')});
+    [{opacity:0},{opacity:1}],
+    {duration:parseFloat(cssv('--t-exit')),easing:cssv('--ease-out')});
 }
 function stopMenuMotion(){
   menuEpoch++;
@@ -2803,6 +2817,8 @@ function openMenu(v){
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   tutorialFinishT=null;
   const next=v||'home', changing=menuShown()&&menuView!==next;
+  if(changing&&menuView==='profile'&&next!=='pay') takeUpgradeReturn();
+  if(menuView==='pay'&&next!=='pay') closeCheckout();
   stopMenuMotion();
   const epoch=menuEpoch;
   menuView=next;
@@ -2813,7 +2829,7 @@ function openMenu(v){
   if(changing&&!reduceMotion&&!document.hidden&&document.startViewTransition){
     const t=document.startViewTransition(paint);
     menuTransition=t;
-    t.ready.catch(()=>{}); // interruption skips the picture, never the action
+    t.ready.catch(()=>{});
     t.finished.finally(()=>{if(menuTransition===t)menuTransition=null}).catch(()=>{});
     return t.updateCallbackDone;
   }
@@ -2898,7 +2914,7 @@ function paintDoors(){
     paintTill(el);
     el.onclick=()=>{
       if(menuShown() && menuView==='pay') return;
-      if(!POLICY.premium){ openMenu('pay'); beginUnlock() }
+      if(!POLICY.premium) openUpgrade();
     };
   });
   fillIntroAuth();
@@ -3143,7 +3159,7 @@ async function wakeAccount(){
   if(back){
     const u=new URL(location.href); u.searchParams.delete('signin');
     history.replaceState(null,'',u.pathname+u.search+u.hash);
-    if(back==='cancelled'){ /* pressing cancel is not a failure worth a line */ }
+    if(back==='cancelled'){}
     else if(back!=='ok') toast('that sign-in did not go through · nothing was lost');
   }
   if(!store.tutorialDone) askSignIns();
@@ -3183,6 +3199,8 @@ const closeAccount=()=>{ if(menuShown()&&menuView==='profile') openMenu('home') 
 
 function afterSignIn(){
   if(!account||!account.signedIn) return;
+  const upgrade=takeUpgradeReturn();
+  if(upgrade) return openUpgrade(upgrade==='more'?null:upgrade);
   openMenu('home');
 }
 
@@ -3390,16 +3408,13 @@ function paintAcct(){
             : 'email subscriptions are unavailable here.'}</div>`)
     +`</div>`
     +`<div class="acct-sec">`
-      +`<div class="acct-lab">the full version</div>`
-      +`<div class="acct-ask">${POLICY.premium
-          ? 'you own the full version'
-          : 'you do not own the full version'}</div>`
+      +`<div class="acct-lab">premium</div>`
+      +`<div class="acct-ask">${POLICY.premium?'premium is active':'earlier days and unlimited replays'}</div>`
       +`<div class="acct-note">${POLICY.premium
-          ? 'replay any day you have played. sign in with this account on another device and it unlocks there too.'
-          : ((mail&&account.emailOk)
-              ? (nativePlatform()?'app purchases belong to this account and follow you to your other devices.':'buy with this email and it unlocks on this account automatically.')
-              : 'a purchase unlocks automatically after its receipt email is confirmed.')
-            +` <a href="#" class="acctlink" id="acctrestore">${nativePlatform()?'restore purchases':'use a code instead'}</a>`}</div>`
+          ? 'choose any day from the calendar. sign in with this account on another device and it unlocks there too.'
+          : 'one payment. no subscription.'}</div>`
+      +(!POLICY.premium?`<div class="acct-row">${acctBtn('acctpremium','explore premium',true)}</div>`
+        +`<div class="acct-note">already bought it? <a href="#" class="acctlink" id="acctrestore">${nativePlatform()?'restore purchases':'restore your purchase'}</a></div>`:'')
     +`</div>`
     +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
     +`<div class="acct-foot">`
@@ -3409,6 +3424,7 @@ function paintAcct(){
     +(acctArmed?`<div class="acct-note">this erases the record held for you. this browser keeps its own copy, so nothing on this device is lost.`
        +(POLICY.premium?' the full version goes with the account and cannot be restored afterwards.':'')
        +`</div>`:'');
+  if($('acctpremium'))$('acctpremium').onclick=()=>openUpgrade();
   $('acctsave').onclick=saveAccount;
   $('acctout2').onclick=e=>{e.preventDefault();closeAccount();doSignOut()};
   $('acctdel').onclick=e=>{e.preventDefault(); if(!acctArmed){acctArmed=true;renderAcct()} else deleteAccount()};
@@ -3611,12 +3627,10 @@ function entitlementChanged(){
   if(menuShown()){ renderIntro(); paintDoors() }
   renderHud();
 }
-let priceAsked=false;
 let pricePromise=null;
 function ensurePrice(){
   if((priceInfo&&!nativePlatform()) || !API) return Promise.resolve();
   if(pricePromise) return pricePromise;
-  priceAsked=true;
   pricePromise=(async()=>{
     const moved=applyEntitlement(await api('me'));
     if(priceInfo || moved) entitlementChanged();
@@ -3646,6 +3660,65 @@ function priceFoot(){
     ? '<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">rates by exchange rate api</a>'
     : priceInfo?.fallback?'local currency unavailable · charged in GBP':'';
   el.hidden=menuView!=='pay'||!!nativePlatform()||!el.innerHTML;
+}
+
+let upgradeDay=null;
+const UPGRADE_RETURN='features-upgrade-return';
+const releasedDay=day=>typeof day==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(day)&&day>=LAUNCH&&day<=today();
+function takeUpgradeReturn(){
+  try{
+    const day=sessionStorage.getItem(UPGRADE_RETURN);
+    sessionStorage.removeItem(UPGRADE_RETURN);
+    return day==='more'||releasedDay(day)?day:null;
+  }catch{return null}
+}
+function upgradeAccount(mode){
+  try{sessionStorage.setItem(UPGRADE_RETURN,upgradeDay||'more')}catch{}
+  openAccount(mode);
+}
+function openUpgrade(day=null){
+  upgradeDay=releasedDay(day)?day:null;
+  if(POLICY.premium) return renderUpgrade();
+  if(stripeCheckout) closeCheckout();
+  const loading=ensurePrice();
+  renderUpgrade();
+  openMenu('pay');
+  const epoch=menuEpoch;
+  loading.finally(()=>{
+    if(epoch===menuEpoch&&$('premiumoffer'))renderUpgrade();
+  });
+}
+function renderUpgrade(){
+  if(POLICY.premium) return upgradeDay?openDay(upgradeDay):openMenu('home');
+  const price=priceWords(),available=canBuy()&&(!!nativePlatform()||!!price);
+  const waiting=!available&&!!pricePromise;
+  $('paybody').innerHTML=`<section class="premium-offer" id="premiumoffer" aria-labelledby="premiumtitle">
+    <div><p class="acct-lab">premium</p>
+      <h2 class="intro-title" id="premiumtitle">${upgradeDay?'play '+esc(dayLabel(upgradeDay)):'keep playing'}</h2></div>
+    <div class="premium-benefits">
+      <div><b>every earlier day</b><span class="acct-note">choose any set from the calendar.</span></div>
+      <div><b>unlimited replays</b><span class="acct-note">return to a favourite and try for a better result.</span></div>
+    </div>
+    <div class="premium-actions">
+      ${available?'<button class="intro-start" id="premiumcontinue">unlock premium'+(price?' · '+esc(price):'')+'</button>'
+        :'<p class="acct-ask" role="status">'+(waiting?'checking availability…':'purchases are currently unavailable')+'</p>'}
+      ${available?'<p class="acct-note">one payment. no subscription.</p>':''}
+      ${!available&&!waiting&&!nativePlatform()?'<button class="wbtn" id="premiumretry">check again</button>':''}
+      <button class="wbtn" id="premiumback">not now</button>
+    </div>
+    <p class="acct-note">a fresh set of ten is free every day.</p>
+    ${!account?.signedIn?`<div class="premium-account"><p class="acct-note">keep your progress on every device, or restore a purchase.</p>
+      <div class="acct-row"><button class="wbtn" id="premiumsignin">sign in</button>
+      <button class="wbtn" id="premiumsignup">create an account</button></div></div>`:''}
+  </section>`;
+  if($('premiumcontinue'))$('premiumcontinue').onclick=()=>{
+    $('paybody').innerHTML='<p class="acct-ask">opening secure payment…</p>';
+    beginUnlock();
+  };
+  if($('premiumretry'))$('premiumretry').onclick=()=>openUpgrade(upgradeDay);
+  $('premiumback').onclick=()=>openMenu('home');
+  if($('premiumsignin'))$('premiumsignin').onclick=()=>upgradeAccount('sign');
+  if($('premiumsignup'))$('premiumsignup').onclick=()=>upgradeAccount('signup');
 }
 
 let spread=null, spreadAsked=false;
@@ -3693,12 +3766,14 @@ function stripeJS(){
   return stripeLib;
 }
 let stripeCheckout=null;
-async function mountCheckout(clientSecret,pk){
+async function mountCheckout(clientSecret,pk,current=()=>true){
   const Stripe=await stripeJS();
+  if(!current()) return true;
   if(!Stripe||!pk) return false;
   try{
     const s=Stripe(pk);
     const co=await s.initEmbeddedCheckout({clientSecret});
+    if(!current()){try{co.destroy()}catch{} return true}
     $('paybody').innerHTML='';
     co.mount('#paybody');
     stripeCheckout=co;
@@ -3709,7 +3784,6 @@ async function mountCheckout(clientSecret,pk){
 function closeCheckout(){
   if(stripeCheckout){ try{stripeCheckout.destroy()}catch(e){} stripeCheckout=null }
   $('paybody').innerHTML='';
-  if(menuShown()&&menuView==='pay'){ menuView='home'; renderMenu() }
 }
 function tillSaid(words,retry){
   toast(words);
@@ -3732,6 +3806,7 @@ function checkoutUrl(raw){
 async function beginUnlock(){
   if(POLICY.premium) return;
   if(nativePlatform()) return beginNativeUnlock();
+  const epoch=menuEpoch,current=()=>menuShown()&&menuView==='pay'&&menuEpoch===epoch;
   const changedPrice=reply=>{
     if(reply?.error?.code!=='price_changed') return false;
     applyEntitlement({price:reply.price,till:reply.till}); entitlementChanged();
@@ -3740,15 +3815,18 @@ async function beginUnlock(){
     return true;
   };
   if(API) await ensurePrice();
+  if(!current()) return;
   if(POLICY.premium) return tillSaid('you already own the full version',false);
   if(API && !DEV && till===false)
     return tillSaid('purchases are currently unavailable',false);
   if(API && !DEV && !priceWords()) return tillSaid(till===null
     ? 'the till is not answering · try again shortly':'purchases are currently unavailable',till===null);
   const Stripe=API ? await stripeJS() : null;
+  if(!current()) return;
   const wantEmbedded=!!(Stripe && priceInfo && priceInfo.pk);
   const r=API ? await api('unlock/checkout',{return_path:location.pathname,embedded:wantEmbedded,
     price:priceInfo}) : null;
+  if(!current()) return;
   if(changedPrice(r)) return;
   if(!r || r.error){
     if(DEV){
@@ -3768,12 +3846,14 @@ async function beginUnlock(){
     applyEntitlement(Object.assign({full:true},r)); entitlementChanged();
     return tillSaid('you already own the full version',false);
   }
-  if(r.client_secret && await mountCheckout(r.client_secret, priceInfo && priceInfo.pk)) return;
+  if(r.client_secret && await mountCheckout(r.client_secret, priceInfo && priceInfo.pk,current)) return;
+  if(!current()) return;
   const redirect=checkoutUrl(r.url);
   if(redirect) return void(location.href=redirect);
   if(r.client_secret){
     const again=await api('unlock/checkout',{return_path:location.pathname,embedded:false,
       price:priceInfo});
+    if(!current()) return;
     if(changedPrice(again)) return;
     const retryRedirect=checkoutUrl(again && again.url);
     if(retryRedirect) return void(location.href=retryRedirect);
@@ -3782,15 +3862,17 @@ async function beginUnlock(){
 }
 async function beginNativeUnlock(){
   if(nativePurchaseBusy) return;
+  const epoch=menuEpoch,current=()=>menuShown()&&menuView==='pay'&&menuEpoch===epoch;
   nativePurchaseBusy=true;
   try{
     const me=await apiCall('/me');
+    if(!current()) return;
     account=me;applyEntitlement(me);
     if(me.full) return tillSaid('you already own the full version',false);
     if(!me.signedIn||!me.emailOk){
       tillSaid('sign in with your confirmed email so the purchase follows you to your other devices',false);
       $('paybody').insertAdjacentHTML('beforeend','<button class="wbtn solid" id="nativebuysignin">sign in</button>');
-      $('nativebuysignin').onclick=()=>openAccount('sign');
+      $('nativebuysignin').onclick=()=>upgradeAccount('sign');
       return;
     }
     const config=nativeBilling?.[nativePlatform()];
@@ -3798,14 +3880,14 @@ async function beginNativeUnlock(){
     const reply=await window.featuresNative.request('billing.products',{productIds:[config.productId]});
     nativeProduct=reply?.available&&reply.products?.find(p=>p.id===config.productId&&typeof p.price==='string'&&p.price);
     if(!nativeProduct) return tillSaid('the store is not answering · try again shortly');
-    if(!(menuShown()&&menuView==='pay')) return;
+    if(!current()) return;
     $('paybody').innerHTML=`<p class="acct-ask">the full version · ${esc(nativeProduct.price)}</p>`
       +`<p class="acct-note">one purchase. replay your days, with your record and unlock on every device signed in to this account.</p>`
       +`<div class="acct-row"><button class="wbtn solid" id="nativebuy">buy · ${esc(nativeProduct.price)}</button>`
       +`<button class="wbtn" id="nativerestore">restore purchases</button></div>`;
     $('nativebuy').onclick=nativePurchase;
     $('nativerestore').onclick=nativeRestorePurchases;
-  }catch(e){tillSaid('the store is not answering · try again shortly')}
+  }catch(e){if(current())tillSaid('the store is not answering · try again shortly')}
   finally{nativePurchaseBusy=false}
 }
 async function nativePurchase(){
@@ -7764,12 +7846,11 @@ function showNetCleared(feats,tier,read){
 }
 function runOverOffer(trial,depth){
   if(trial || POLICY.premium || depth<POLICY.dailyNets) return '';
-  ensurePrice();                      // redraws this card if the answer is late
-  if(!canBuy()) return '';            // nothing to sell here yet — see `till`
+  ensurePrice();
+  if(!canBuy()) return '';
   const price=priceWords();
-  const n=archiveCount();
-  return `<span class="boffer-what">another run at any day${n?` · ${n} more in the archive`:''}</span>`
-       +`<button class="wbtn solid" id="runoffer">unlock${price?' · '+price:''}</button>`;
+  return `<span class="boffer-what">earlier days and unlimited replays</span>`
+       +`<button class="wbtn solid" id="runoffer">play more${price?' · '+price:''}</button>`;
 }
 function showRunOver(){
   const r=R(), depth=r.cleared.length;
@@ -7829,11 +7910,13 @@ function showRunOver(){
       shareButton._shareStamps=stamps;shareButton.disabled=false;
     });
   }
-  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openMenu('pay'); beginUnlock()};
+  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openUpgrade()};
   if($('resumebtn')) $('resumebtn').onclick=()=>{parked?resumeParked():resumeRun()};
   if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
 }
 function hideVeils(){
+  if(menuShown()&&menuView==='profile') takeUpgradeReturn();
+  if(menuView==='pay') closeCheckout();
   stopMenuMotion();
   closeAsk(false);
   document.querySelectorAll('.veil').forEach(v=>v.classList.remove('show'));
@@ -7907,21 +7990,13 @@ function dayRows(){
     const r = typeof x==='string' ? {d:x,depth:0}
             : (x && typeof x==='object' && typeof x.d==='string') ? x
             : null;
-    if(!r) return;                    // anything else is not a day and is skipped
+    if(!r) return;
     const prev=out.get(r.d);
     if(!prev || Object.keys(r).length>Object.keys(prev).length) out.set(r.d,r);
   });
   return [...out.values()];
 }
 const isShut=({d,row})=>!row && !canPlayDay(d);
-const archiveCount=()=>{
-  const played=new Set(dayRows().map(r=>r.d));
-  let n=0, d=today();
-  for(let i=0;i<730 && d>=LAUNCH;i++,d=dayAdd(d,-1)){
-    if(isShut({d, row:played.has(d)?{d}:null})) n++;
-  }
-  return n;
-};
 const TIEROF={p:'perfect', c:'clean', d:'done'};
 const TIERSAY={done:'resolved'};
 const tierSay=t=>TIERSAY[t]||t;
@@ -8004,7 +8079,7 @@ async function prepareShareStamps(run){
 function dayShareCanvas(day,tiers,stamps=[]){
   const s=String(tiers||'').slice(0,POLICY.dailyNets),flawless=isFlawless(s);
   const shown=stamps.slice(0,6);
-  const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=shown.length?520:280;
+  const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=shown.length?480:280;
   const c=canvas.getContext('2d');
   if(!c)throw new Error('image_unavailable');
   const ink=cssv('--ink'),muted=cssv('--ink-soft'),rule=cssv('--rule');
@@ -8029,7 +8104,6 @@ function dayShareCanvas(day,tiers,stamps=[]){
   shown.forEach((stamp,i)=>{
     const x=60+i*184;
     c.drawImage(stamp.image,x,272,160,160*101/96);
-    text(stamp.key,x,478,25,800);
   });
   return canvas;
 }
@@ -8184,7 +8258,7 @@ function openArchiveLook(iso){
     +`<span>${esc(dayLabel(iso))} · played</span></div>`
     +`<div class="arch-grid">${grid}</div>`
     +`<div class="arch-offer">${offer}</div>`;
-  if($('archbuy')) $('archbuy').onclick=()=>{ hideVeils(); openMenu('pay'); beginUnlock() };
+  if($('archbuy')) $('archbuy').onclick=()=>{ hideVeils(); openUpgrade(iso) };
   if(archFrom) $('introveil').classList.remove('show');
   showVeil('archveil');
   return true;
@@ -8194,6 +8268,7 @@ function openDay(iso){
   if(canAccessRun() && R().day===iso && (isTrial() || !R().over)){ hideVeils(); return }
   if(!canPlayDay(iso)){
     if(openArchiveLook(iso)) return;
+    if(releasedDay(iso)) return openUpgrade(iso);
     return flashMsg(shutWords(iso));
   }
   const leaving=R();
@@ -8676,8 +8751,8 @@ function renderIntro(){
       const isNow=d===today();
       const can=played && canPlayDay(d);
       const shut=isShut({d,row});
-      const press=played||canPlayDay(d);
-      const say=played?(can?'play again':replayWords()):(canPlayDay(d)?'play':'');
+      const press=releasedDay(d);
+      const say=played?(can?'play again':'view your result'):(canPlayDay(d)?'play':'premium · see options');
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
         +(press?` role="button" tabindex="0" data-day="${d}"`:'')
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'not open':'not played')}`
@@ -8710,6 +8785,7 @@ function renderIntro(){
         <div><b>${perfect}</b><span>perfect nets</span></div>
       </div>
       <div class="wbweek">${week}</div>
+      ${!POLICY.premium?'<button class="archive-invite" id="archiveinvite"><span>earlier days and replays</span><span>premium →</span></button>':''}
       <div class="intro-note wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${startLabel}</button>`
 ;
@@ -8717,9 +8793,10 @@ function renderIntro(){
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         stopMenuMotion(); $('introveil').classList.remove('show'); return openDay(d) }
       if(openArchiveLook(d)) return;
-      flashMsg(`${dayLabel(d)} · ${shutWords(d)}`);
+      if(releasedDay(d)) openUpgrade(d);
     };
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
+    if($('archiveinvite'))$('archiveinvite').onclick=()=>openUpgrade();
     $('introbody').querySelector('.wbweek').onclick=e=>{
       const row=e.target.closest('[data-day]');
       if(row) press(row.dataset.day);
@@ -8760,7 +8837,7 @@ function startLessons(){
   builtFor=-1; resetDescent(); save();
   hideVeils(); renderAll();
 }
-$('buybtn').onclick=()=>{ if(!POLICY.premium){ openMenu('pay'); beginUnlock() } };
+$('buybtn').onclick=()=>{ if(!POLICY.premium) openUpgrade() };
 const FLAGSTRIP='<i style="background:var(--flag-1)"></i><i style="background:var(--flag-2)"></i>'
   +'<i style="background:var(--flag-3)"></i><i style="background:var(--flag-4)"></i>';
 document.querySelectorAll('.menusheet .intro-strip').forEach(el=>el.innerHTML=FLAGSTRIP);
