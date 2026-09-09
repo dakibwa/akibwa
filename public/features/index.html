@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-bc0buTuKQUTb7njupXg0DtAnTHoSYS6/2sCaeM+lPOM=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-FJLy1iF4alw+0VgDMPFo0Jgt3Dv0HweA/BH41MwL7V0=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -694,16 +694,11 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .boardcard .bnote{font-size:12px;padding-right:0}
   .boardcard .minted{gap:7px;margin:0}
   .boardcard .minted + .bnote{margin-top:13px}
-  .result-scope{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--ink-soft);margin:0 0 9px}
-  .result-overview{display:flex;align-items:center;justify-content:space-between;gap:8px;
-    margin:10px 0 0;padding-top:9px;border-top:1px solid var(--rule);font-size:10px;line-height:1.45;color:var(--ink-soft)}
-  .result-overview button{flex:none;padding:5px 0;border:0;background:none;color:var(--ink);
-    font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
   .boardcard .minted .mb{flex:0 1 58px}
   .boardcard .bactions{padding:0 18px 16px}
   .boardcard .wbtn{padding:7px 12px}
   #runveil .bactions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-  #runveil .bactions .wbtn:first-child:nth-last-child(odd){grid-column:1 / -1}
+  #runveil .bactions:not(.day-actions) .wbtn:first-child:nth-last-child(odd){grid-column:1 / -1}
   #runveil .wbtn{padding:8px 10px;font-size:11.5px;letter-spacing:.08em}
   #runveil .bnote{text-align:center;font-size:13.5px;padding-right:0}
   .bulletin .bquiet{position:absolute;width:1px;height:1px;overflow:hidden;
@@ -865,20 +860,17 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
 
   .pay-card{max-width:520px;background:var(--paper)}
   .pay-body{padding:0 0 4px;overflow-y:auto;min-height:220px}
-  .arch-grid{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:9px;
-    overflow-y:auto;padding-right:2px;
-  }
-  .arch-net{display:flex;flex-direction:column;gap:4px}
-  .arch-plate{
-    position:relative;background:var(--paper);border:0;aspect-ratio:1040/580;
-    display:block;overflow:hidden;
-  }
+  .arch-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;
+    max-height:min(52dvh,400px);overflow-y:auto;padding:2px 10px 2px 0;
+    scrollbar-width:thin;scrollbar-color:var(--ink-soft) var(--paper)}
+  .arch-grid:focus-visible{outline:1px solid var(--ink-soft);outline-offset:3px}
+  .arch-net{display:flex;flex-direction:column;gap:9px;min-width:0}
+  .arch-plate{background:var(--paper);aspect-ratio:1040/580;display:block;overflow:hidden}
   .arch-plate svg{display:block;width:100%;height:100%}
-  .arch-plate::after{content:'';position:absolute;inset:0;background:var(--paper);opacity:.3}
-  .arch-foot{display:flex;align-items:baseline;justify-content:space-between;gap:6px;
-    font-size:9.5px;letter-spacing:.08em;color:var(--ink-soft)}
-  .arch-rung{height:3px;flex:0 0 26px;background:var(--rung,var(--rule))}
+  .arch-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:12px;color:var(--ink-soft)}
+  .arch-status{white-space:nowrap}
+  .arch-rung{flex:1;height:3px;background:var(--rung,var(--rule))}
   .acct-ask{font-size:13px;color:var(--ink);line-height:1.45}
   .acct-note{font-size:10px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
   .acct-field{
@@ -896,6 +888,62 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .acct-sec{display:flex;flex-direction:column;gap:9px}
   .acct-sec + .acct-sec{padding-top:13px;border-top:1px solid var(--rule)}
   .acct-lab{font-size:9px;letter-spacing:.16em;color:var(--ink-soft);text-transform:lowercase}
+  .acct-premium{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:14px;
+    width:100%;padding:14px 14px 0;border:1px solid var(--rule);background:var(--paper);
+    color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:border-color var(--t-ui)}
+  .acct-premium:hover,.acct-premium:focus-visible{border-color:var(--ink)}
+  .acct-premium-copy{display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .acct-premium-copy strong{font-size:24px;font-weight:800;letter-spacing:-.045em;line-height:1.02}
+  .acct-premium-copy>span{font-size:12px;line-height:1.4;color:var(--ink-soft)}
+  .acct-premium-art{display:grid;grid-template-columns:1fr 1fr;gap:4px;align-self:center}
+  .acct-premium-art .rfeat{display:block;width:100%;height:auto;aspect-ratio:1}
+  .acct-premium-go{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
+    gap:10px;margin:0 -14px;padding:11px 14px;background:var(--gelb);color:#15191C;font-size:12px;font-weight:700}
+  .acct-premium-go>span{font-size:19px;line-height:1}
+  #runveil.daily-result{position:fixed;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));align-items:center;justify-content:center;background:var(--veil)}
+  #runveil.daily-result>.day-result{width:100%;max-width:440px;max-height:100%;margin:0;box-shadow:var(--shadow-card)}
+  .day-content{padding:24px}
+  .day-heading{position:relative;padding-right:38px}
+  .day-heading .day-close{position:absolute;right:-4px;top:-6px;min-width:34px;width:34px;padding:0}
+  .day-heading p{margin:0 0 9px;font-size:11px;color:var(--ink-soft)}
+  .day-result .day-heading h2{font-size:36px;font-weight:800;letter-spacing:-.05em;line-height:1.05}
+  .day-result .track{margin:22px 0 0;height:9px;gap:3px;background:none}
+  .day-result .track>i{background:var(--fill,var(--rule));box-shadow:none;transition:none}
+  .day-stamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:86%;max-width:336px;margin:22px auto 0}
+  .day-stamps .rfeat{display:block;width:100%;height:auto}
+  #runveil .day-actions{padding:0 24px 24px;grid-template-columns:1fr;gap:8px}
+  #runveil .day-actions:has(#runoffer){grid-template-columns:1fr 1.6fr}
+  #runveil .day-actions:has(#againbtn):not(:has(#runoffer)){grid-template-columns:1.6fr 1fr}
+  #runveil .day-actions>.wbtn{grid-column:auto;min-height:44px;font-size:13px;letter-spacing:0}
+  #runveil .day-actions>#resumebtn{grid-column:1/-1}
+  #runveil .day-actions>#sharebtn.solid{min-height:58px;font-size:15px;font-weight:700}
+  .day-more{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    min-height:58px;padding:11px 14px;border:1px solid var(--gelb);background:var(--gelb);
+    color:#15191C;font:inherit;text-align:left;cursor:pointer}
+  .day-more:hover,.day-more:focus-visible{border-color:var(--ink)}
+  .day-more-copy{display:grid;gap:3px}
+  .day-more b{font-size:15px;letter-spacing:-.02em}
+  .day-more small{font-size:10px}
+  .day-more>span:last-child{font-size:20px}
+  .share-options{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:10px 0}
+  .share-options[hidden]{display:none}
+  .share-options>.wbtn:first-child:nth-last-child(odd){grid-column:1/-1}
+  #runveil .share-options .wbtn{font-size:11px;letter-spacing:0;min-height:38px}
+  @media(max-width:380px){
+    #runveil.daily-result{padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))}
+    .day-content{padding:20px}
+    #runveil .day-actions{padding:0 20px 16px}
+    .day-result .day-heading h2{font-size:32px}
+  }
+  @media(min-width:600px) and (max-height:500px){
+    #runveil.daily-result>.day-result{max-width:660px}
+    .day-content{padding:16px}
+    .day-heading p{margin-bottom:6px}
+    .day-result .day-heading h2{font-size:28px}
+    .day-result .track{margin-top:12px;height:7px}
+    .day-stamps{grid-template-columns:repeat(6,minmax(0,1fr));max-width:none;margin-top:12px;gap:6px}
+    #runveil .day-actions{padding:0 16px 16px}
+  }
   .acct-foot{display:flex;align-items:center;gap:12px;padding-top:3px;border-top:1px solid var(--rule);margin-top:2px}
   .acct-foot .acctlink{margin-left:0;padding-top:10px}
   .acct-foot .acctlink.last{margin-left:auto}
@@ -1092,6 +1140,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .help.owned:active{transform:none}
   .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
   .help.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
+  .intro-doors .help.till:not(.owned){background:var(--gelb);border-color:var(--gelb);color:#15191C}
+  .intro-doors .help.till:not(.owned):hover,.intro-doors .help.till.here:not(.owned){border-color:var(--ink)}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
   @media (max-width:360px){
     .intro-doors{gap:5px}
@@ -1140,7 +1190,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
 
     .veil{padding:12px}
     .menusheet{height:calc(100dvh - 24px);max-width:none;width:100%}
-    .arch-grid{grid-template-columns:repeat(3,1fr);gap:7px}
     .acct-body{padding:10px 13px 12px}
     .acct-auth{gap:8px}
     .acct-auth-form{gap:7px}
@@ -1341,16 +1390,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
          announcement. -->
     <div class="say" id="say" aria-hidden="true"></div>
 
-    <!-- both bulletins are IN the board, not over the window. they tuck into the
-         plate's bottom-right off --plate-x / --plate-y, and those are inherited
-         custom properties published on `.field` by publishPlateInset — so this
-         is the only place in the document that can read them. see .boardcard in
-         the stylesheet for the rest of the argument.
-         the day card is here rather than at body level because the day now ends
-         on the board it was won on: the tenth net stays cleared on the plate
-         instead of being swapped out for an eleventh nobody can play. -->
+    <!-- A single-net result belongs to its board. The full-day card below
+         owns the viewport so a short landscape board cannot crop its stamps. -->
     <div class="veil boardcard" id="netveil"><section class="bulletin" id="netbulletin"></section></div>
-    <div class="veil boardcard" id="runveil"><section class="bulletin" id="runbulletin"></section></div>
   </div>
   </div><!-- /play -->
 
@@ -1358,6 +1400,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   </div>
 </div>
 
+
+<div class="veil boardcard" id="runveil"><section class="bulletin" id="runbulletin"></section></div>
 
 <div class="devdrawer" id="devdrawer" hidden>
   <div class="dd-head"><span>controls</span><a href="#" id="ddclose">close &times;</a></div>
@@ -3300,33 +3344,36 @@ function paintAcct(){
     : `signed in with ${esc(account.provider||'a linked account')}`;
   const identityNote = mail&&account.emailOk
     ? (account.hasPassword===false
-      ? `use this account on the web, iphone or android. <a href="#" class="acctlink" id="acctsetpassword" style="margin-left:0">set an email password</a>`
-      : 'use this email and your password on the web, iphone or android.')
-    : `<a href="#" class="acctlink" id="acctconfirmemail" style="margin-left:0">${mail?'confirm this address and set a password':'add an email and password'}</a> to use your account on another device.`;
+      ? `your progress follows this account. <a href="#" class="acctlink" id="acctsetpassword" style="margin-left:0">add a password</a>`
+      : 'your progress follows this account.')
+    : `<a href="#" class="acctlink" id="acctconfirmemail" style="margin-left:0">${mail?'confirm your email':'add an email'}</a> to use your account on another device.`;
   body.innerHTML=err
     +`<div class="acct-sec">`
-      +`<div class="acct-lab">who you are</div>`
+      +`<div class="acct-lab">signed in as</div>`
       +`<div class="acct-ask">${idLine}</div>`
       +`<div class="acct-note">${identityNote}</div>`
     +`</div>`
     +`<div class="acct-sec">`
-      +`<div class="acct-lab">daily email subscription</div>`
+      +`<div class="acct-lab">daily reminder</div>`
       +(canDaily
         ? `<label class="acct-check"><input type="checkbox" id="acctdaily"${account.dailyEmail?' checked':''}>`
-          +`<span>email me when each day's ten puzzles are ready</span></label>`
-          +`<div class="acct-note">sent to ${esc(mail)}. unsubscribe here or from any daily email.</div>`
+          +`<span>email me when a new set is ready</span></label>`
+          +`<div class="acct-note">unsubscribe any time.</div>`
         : `<div class="acct-note">${canMail
             ? 'confirm the account email before subscribing.'
             : 'email subscriptions are unavailable here.'}</div>`)
     +`</div>`
     +`<div class="acct-sec">`
       +`<div class="acct-lab">premium</div>`
-      +`<div class="acct-ask">${POLICY.premium?'premium is active':'earlier days and unlimited replays'}</div>`
-      +`<div class="acct-note">${POLICY.premium
-          ? 'choose any day from the calendar. sign in with this account on another device and it unlocks there too.'
-          : 'one payment. no subscription.'}</div>`
-      +(!POLICY.premium?`<div class="acct-row">${acctBtn('acctpremium','explore premium',true)}</div>`
-        +`<div class="acct-note">already bought it? <a href="#" class="acctlink" id="acctrestore">${nativePlatform()?'restore purchases':'restore your purchase'}</a></div>`:'')
+      +(POLICY.premium?`<div class="acct-ask">premium is active</div>`
+        +`<div class="acct-note">choose any day from the calendar. sign in with this account on another device and it unlocks there too.</div>`
+        :`<button class="acct-premium" id="acctpremium"${acctBusy?' disabled':''}>
+          <span class="acct-premium-copy"><strong>keep discovering.</strong><span>earlier days and unlimited replays</span></span>
+          <span class="acct-premium-art" aria-hidden="true">${['house','fish','cup','key'].map(k=>featIcon(k)).join('')}</span>
+          <span class="acct-premium-go">explore premium<span aria-hidden="true">→</span></span>
+        </button>`
+        +`<div class="acct-note">one payment. no subscription.</div>`
+        +`<div class="acct-note">already bought it? <a href="#" class="acctlink" id="acctrestore">${nativePlatform()?'restore purchases':'restore your purchase'}</a></div>`)
     +`</div>`
     +`<div class="acct-row">${acctBtn('acctsave',acctBusy?'saving…':'save',true)}</div>`
     +`<div class="acct-foot">`
@@ -7767,70 +7814,45 @@ function runOverOffer(trial,depth){
   ensurePrice();
   if(!canBuy()) return '';
   const price=priceWords();
-  return `<span class="boffer-what">earlier days and unlimited replays</span>`
-       +`<button class="wbtn solid" id="runoffer">play more${price?' · '+price:''}</button>`;
+  return `<button class="day-more" id="runoffer"><span class="day-more-copy"><b>keep playing</b><small>${price?esc(price)+' once':'one payment'} · no subscription</small></span><span aria-hidden="true">→</span></button>`;
 }
 function showRunOver(){
-  const r=R(), depth=r.cleared.length;
-  const parked=!!store.parked && canAccessRun(store.parked);
-  const feats=[...new Set(r.cleared.flatMap(c=>c.feats))];
-  const last=r.cleared[depth-1],lastFeats=last?.feats||[];
-  const lastUnique=[...new Set(lastFeats)];
-  const turns=r.cleared.reduce((a,c)=>a+c.moves,0);
-  const parTot=r.cleared.reduce((a,c)=>a+c.par,0);
-  const trial=isTrial();
-  const rung=rungCount(r.cleared.map(c=>c.tier), trial?depth:POLICY.dailyNets);
-  $('runbulletin').innerHTML=bulletinHTML({
-    strip: trial ? '--sig-dunkelblau'
-         : flawlessDay(rung) ? TIERCOL.flawless
-         : rung.good>=rung.of ? TIERCOL.perfect
-         : rung.good ? TIERCOL.clean
-         : TIERCOL.done,
-    title:trial?'out-trained':(depth>=POLICY.dailyNets?'day complete':'day set aside'),
-    sub:trial?'time trial · the net kept learning':rungText(rung),
-    num:String(depth).padStart(2,'0'),
-    rows:trial
-      ? [['best time trial', (store.meta.bestTrialDepth||depth)>depth
-            ? (store.meta.bestTrialDepth)+' nets' : 'this run']]
-      : [['rungs',rungWords(rung,' · ')||'none yet']],
-    body:(lastUnique.length?`<h3 class="result-scope">${depth>=POLICY.dailyNets&&!trial?'last net':'last cleared net'} · ${tierSay(last.tier)}</h3>`
-      +`<div class="minted">${lastUnique.map((k,i)=>{
-        const count=lastFeats.filter(f=>f===k).length;
-        return `<div class="mb" style="--i:${i}">${featureStamp(k,last.tier,false)}<span>${k}${count>1?' ×'+count:''}</span></div>`;
-      }).join('')}</div>`:'')
-    +(feats.length?`<div class="result-overview"><span>${feats.length} different features · ${depth===1?'this net':`all ${depth} nets`}</span>`
-      +`<button id="runcollection">view collection →</button></div>`:'')
-    +(trial?'':`<textarea class="shareout" id="shareout" readonly rows="3" aria-label="the day, to copy" hidden></textarea>`)
-    +`<p class="bquiet">${trial?`${feats.length} features named.`
-        :`today's set ${depth} of ${POLICY.dailyNets}. ${feats.length} features named.`} `
-      +`day streak ${store.meta.streak||1}.</p>`,
-    note:trial
-      ? 'the net re-tangled faster than you could separate it. it gets quicker the deeper you go.'
-      : (depth>=POLICY.dailyNets
-          ? 'today is done. the set resets at midnight.'
-          : 'the rest of today\'s set is still there when you are.'),
-    sun:false,
-    offer:runOverOffer(trial,depth),
-    actions:(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today\'s set':'resume today\'s set'} →</button>`:'')+
-            (trial?'':`<button class="wbtn${canResume()?'':' solid'}" id="sharebtn">${SHARE_LABEL}</button>`)+
-            `<button class="wbtn" id="recordbtn2">menu</button>`+
-            (canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'run again'} →</button>`:'')
-  });
-  sayHide(true);
-  showVeil('runveil');
+  const r=R(),depth=r.cleared.length,trial=isTrial(),parked=!!store.parked&&canAccessRun(store.parked);
+  const host=trial?$('field'):document.body;
+  if($('runveil').parentElement!==host)host.append($('runveil'));
+  const feats=[...new Set(r.cleared.flatMap(c=>c.feats||[]))];
+  const stamps=runShareStamps(r),tiers=runShareTiers(r),offer=trial?'':runOverOffer(false,depth);
+  const actions=(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today':'resume your day'}</button>`:'')
+    +(trial?'':`<button class="wbtn${!canResume()&&!offer?' solid':''}" id="sharebtn">${SHARE_LABEL}</button>`)
+    +(trial?`<button class="wbtn" id="recordbtn2">menu</button>`:'')
+    +(canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'play again'} →</button>`:'');
+  $('runveil').classList.toggle('daily-result',!trial);
+  $('runbulletin').classList.toggle('day-result',!trial);
+  $('runbulletin').innerHTML=trial?bulletinHTML({
+    strip:'--sig-dunkelblau',title:'out-trained',sub:'time trial · the net kept learning',num:String(depth).padStart(2,'0'),
+    rows:[['best time trial',(store.meta.bestTrialDepth||depth)>depth?store.meta.bestTrialDepth+' nets':'this run']],
+    body:`<p class="acct-ask">${feats.length} features named.</p>`,
+    note:'the net re-tangled faster than you could separate it.',sun:false,actions
+  }):`<div class="day-content">
+    <div class="day-heading"><p>${esc(dayLabel(r.day))}</p><h2>${depth>=POLICY.dailyNets?'day complete.':'your day so far.'}</h2>
+      <button class="help day-close" id="recordbtn2" aria-label="back to the menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button></div>
+    ${rungTrack(tiers)}
+    ${stamps.length?`<div class="day-stamps" aria-label="discoveries from this day">${stamps.map(({key,tier})=>`<span role="img" aria-label="${esc(key+' · '+tierSay(tier))}">${featureStamp(key,tier,false)}</span>`).join('')}</div>`:''}
+    <textarea class="shareout" id="shareout" readonly rows="3" aria-label="the day, to copy" hidden></textarea>
+    </div><div class="bactions day-actions">${actions}${offer}
+      <div class="share-options" id="shareoptions" role="group" aria-label="share options" hidden></div>
+    </div>`;
+  sayHide(true);showVeil('runveil');
   $('recordbtn2').onclick=()=>{hideVeils();openMenu('home')};
-  if($('runcollection'))$('runcollection').onclick=()=>{hideVeils();openMenu('coll')};
   const shareButton=$('sharebtn');
   if(shareButton){
     shareButton.disabled=true;
     shareButton.onclick=e=>shareDay(e.currentTarget,r);
-    prepareShareStamps(r).catch(()=>[]).then(stamps=>{
-      shareButton._shareStamps=stamps;shareButton.disabled=false;
-    });
+    prepareShareStamps(r).catch(()=>[]).then(stamps=>{shareButton._shareStamps=stamps;shareButton.disabled=false});
   }
-  if($('runoffer')) $('runoffer').onclick=e=>{e.preventDefault(); hideVeils(); openUpgrade(R().day)};
-  if($('resumebtn')) $('resumebtn').onclick=()=>{parked?resumeParked():resumeRun()};
-  if($('againbtn')) $('againbtn').onclick=()=>startAnotherRun();
+  if($('runoffer'))$('runoffer').onclick=e=>{e.preventDefault();hideVeils();openUpgrade(r.day)};
+  if($('resumebtn'))$('resumebtn').onclick=()=>{parked?resumeParked():resumeRun()};
+  if($('againbtn'))$('againbtn').onclick=()=>startAnotherRun();
 }
 function hideVeils(){
   if(menuShown()&&menuView==='profile') takeUpgradeReturn();
@@ -7963,9 +7985,7 @@ function rungCount(list,of){
   const good=n.perfect+n.clean;
   return {...n, of, good, key:good*(POLICY.dailyNets+1)+n.perfect};
 }
-const SHARE_LABEL = window.featuresNative?.capabilities?.shareImage || navigator.share
-  ? 'share the day' : navigator.clipboard?.write && typeof ClipboardItem!=='undefined'
-  ? 'copy the image' : 'save the image';
+const SHARE_LABEL='share';
 const runShareTiers=r=>r.cleared.slice(0,POLICY.dailyNets)
   .map(c=>(RUNGOF[c.tier]||'?')[0]).join('');
 const shareText=day=>'features · '+dayLabel(day)+'\nhttps://features.games/';
@@ -8037,39 +8057,52 @@ function downloadDayImage(file){
   a.href=url;a.download=file.name;a.hidden=true;document.body.append(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
+function shareOptions(button,txt,file){
+  const box=$('shareoptions');if(!box)return;
+  const close=()=>{box.hidden=true;button.setAttribute('aria-expanded','false');button.focus({preventScroll:true})};
+  if(!box.hidden){close();return}
+  const choices=[...(file?[...(navigator.clipboard?.write&&typeof ClipboardItem!=='undefined'?[['copyimage','copy image']]:[]),['saveimage','save image']]:[]),
+    ['copylink','copy link'],...(navigator.share?[['sharelink','share link…']]:[])];
+  box.innerHTML=choices.map(([id,label])=>`<button class="wbtn" data-share="${id}">${label}</button>`).join('');
+  box.hidden=false;button.setAttribute('aria-controls','shareoptions');button.setAttribute('aria-expanded','true');
+  box.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close()}};
+  box.querySelectorAll('button').forEach(option=>option.onclick=async()=>{
+    try{
+      const action=option.dataset.share;
+      if(action==='saveimage'){downloadDayImage(file);toast('download started')}
+      else if(action==='copyimage'){
+        await navigator.clipboard.write([new ClipboardItem({'image/png':file,'text/plain':new Blob([txt],{type:'text/plain'})})]);
+        toast('image copied');
+      }else if(action==='sharelink')await navigator.share({title:'features',text:txt});
+      else if(!await copyText(txt)){
+        close();const out=$('shareout');if(out){out.hidden=false;out.value=txt;out.focus();out.select()}return;
+      }else toast('link copied');
+      close();
+    }catch(error){
+      if(error?.name==='AbortError'){close();return}
+      toast(option.dataset.share==='copyimage'?'could not copy · try saving the image':'could not share · try copying the link');
+    }
+  });
+  const first=box.querySelector('button');first?.focus({preventScroll:true});box.scrollIntoView({block:'nearest'});
+}
 async function shareDay(button,run){
   if(button.disabled)return;
-  const tiers=runShareTiers(run),txt=shareText(run.day),stamps=button._shareStamps||[];
-  let label=SHARE_LABEL;
+  if($('shareoptions')&&!$('shareoptions').hidden)return shareOptions(button,'',null);
+  const txt=shareText(run.day);let payload=null,label=SHARE_LABEL;
   button.disabled=true;clearTimeout(button._t);
   try{
-    const {file,base64}=dayShareImage(run.day,tiers,stamps);
+    payload=dayShareImage(run.day,runShareTiers(run),button._shareStamps||[]);
+    const {file,base64}=payload;
     if(window.featuresNative?.capabilities?.shareImage){
       const result=await window.featuresNative.request('share',{
         title:'features · '+dayLabel(run.day),text:txt,image:{mimeType:'image/png',base64}
       });
       label=result.presented?'share opened':result.shared?'shared':SHARE_LABEL;
-    }else if(navigator.share && navigator.canShare?.({files:[file]})){
-      await navigator.share({title:'features · '+dayLabel(run.day),text:txt,files:[file]});
-      label='shared';
-    }else{
-      let copied=false;
-      if(navigator.clipboard?.write && typeof ClipboardItem!=='undefined'){
-        try{await navigator.clipboard.write([new ClipboardItem({
-          'image/png':file,'text/plain':new Blob([txt],{type:'text/plain'})
-        })]);copied=true}catch{}
-      }
-      if(copied)label='image copied';
-      else{downloadDayImage(file);label='download started'}
-    }
+    }else if(navigator.share&&navigator.canShare?.({files:[file]})){
+      await navigator.share({title:'features · '+dayLabel(run.day),text:txt,files:[file]});label='shared';
+    }else shareOptions(button,txt,file);
   }catch(error){
-    if(error?.name!=='AbortError' && error?.code!=='cancelled'){
-      try{downloadDayImage(dayShareImage(run.day,tiers,stamps).file);label='download started'}
-      catch{
-        const ok=await copyText(txt);label=ok?'link copied':'select the link below';
-        if(!ok){const out=$('shareout');if(out){out.hidden=false;out.value=txt;out.focus();out.select()}}
-      }
-    }
+    if(error?.name!=='AbortError'&&error?.code!=='cancelled')shareOptions(button,txt,payload?.file);
   }finally{
     button.disabled=false;button.textContent=label;
     if(label!==SHARE_LABEL)button._t=setTimeout(()=>{button.textContent=SHARE_LABEL},2400);
@@ -8153,11 +8186,11 @@ function openArchiveLook(iso){
 }
 function archiveLookHTML(row){
   const tiers=typeof row.tiers==='string'?row.tiers:'',flawless=isFlawless(tiers);
-  return `<div class="arch-grid">${archiveNets(row.d).map(n=>{
+  return `<div class="arch-grid" tabindex="0" role="list" aria-label="nets from your result">${archiveNets(row.d).map(n=>{
     const t=TIEROF[tiers[n.idx]],col=t?`var(${flawless?TIERCOL.flawless:TIERCOL[t]})`:'var(--rule)';
-    return `<div class="arch-net"><span class="arch-plate">${archiveNetSVG(n)}</span>`
-      +`<span class="arch-foot"><span>${String(n.idx+1).padStart(2,'0')}</span>`
-      +`<i class="arch-rung" style="--rung:${col}" role="img" aria-label="net ${n.idx+1}${t?', '+tierSay(t):', not cleared'}"></i></span></div>`;
+    return `<div class="arch-net" role="listitem"><span class="arch-plate">${archiveNetSVG(n)}</span>`
+      +`<span class="arch-foot"><i class="arch-rung" style="--rung:${col}" aria-hidden="true"></i>`
+      +`<span class="arch-status">${esc(t?tierSay(t):'not cleared')}</span></span></div>`;
   }).join('')}</div>`;
 }
 function openDay(iso){
