@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-PHRpNWMALG2EyuuCBNJWRg5Y9yY4KAkRtRF/WVBPrF4=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-MGL/bJIEKVK5tfJNSGuA3q2+ejYz43cPoc1N/LyyStk=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -76,8 +76,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     --tier-clean:var(--gelb);
     --tier-done:#C77770;
     --tier-flawless:var(--rosa);
-    --tier-done-deep:#944F49;
-    --tier-done-soft:#E4A39D;
+    --turns-perfect:#62C8BE;
+    --turns-par:var(--tuerkis);
+    --turns-lap:#09675F;
 
     --flag-1:var(--hellblau);
     --flag-2:var(--gelb);
@@ -277,9 +278,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .unit + .unit{border-left:1px solid var(--rule)}
   .unit-cross,.unit-set,.unit-par{flex:1 1 0}
   .unit-par{position:relative;--track-stack:18px;
-            --par-perfect:var(--tier-perfect);
-            --par-par:var(--tier-clean);
-            --par-over:var(--tier-done)}
+            --par-perfect:var(--turns-perfect);
+            --par-par:var(--turns-par);
+            --par-over:var(--turns-par)}
   .tutorial-score-label{display:none}
   .unit-par.tut-score{
     --tut-score:var(--tier-clean);z-index:7;
@@ -1055,11 +1056,14 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
-  .intro-art > svg{display:block;width:100%;height:100%;min-height:390px}
-  .intro-art span{
-    position:absolute;left:14px;bottom:14px;background:var(--surface);border:1px solid var(--silver);
-    padding:5px 8px;font-size:9.5px;letter-spacing:.16em;color:var(--ink);text-transform:lowercase;
-  }
+  .opening{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px}
+  .opening-composition{width:100%;max-width:320px}
+  .opening-name{display:block;margin:0 0 28px;font-size:64px;font-weight:900;
+    line-height:.95;letter-spacing:-.065em;color:var(--ink)}
+  .opening-stamps{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .opening-stamp:nth-child(2){grid-column:2;grid-row:1/3;align-self:center}
+  .opening-stamp svg{display:block;width:100%;height:auto}
+  .opening-ink{transform-box:fill-box;transform-origin:center}
   .intro-body{padding:20px 22px 24px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
   .intro-title{font-size:19px;font-weight:700;text-transform:lowercase;letter-spacing:-.01em}
   .intro-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.12em;margin-top:3px;text-transform:lowercase}
@@ -1230,7 +1234,11 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     #introcard:not(.view-home) .intro-art{display:none}
     #introcard:not(.view-home) #introbody{display:none}
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
-    .intro-art > svg{min-height:0}
+    .opening{padding:10px 18px}
+    .opening-composition{max-width:252px}
+    .opening-name{font-size:30px;margin-bottom:10px}
+    .opening-stamps{grid-template-columns:repeat(3,1fr);gap:9px}
+    .opening-stamp:nth-child(2){grid-area:auto}
     .intro-body{padding:17px 18px 20px}
   }
 
@@ -2154,7 +2162,7 @@ const DAYSPINE=['--hellblau','--orange','--gruen','--rosa','--dunkelblau','--gel
 const daySpine=d=>`var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})`;
 const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 const SETAHEAD='--rule';
-const LAPCOL=['--par-over','--tier-done-deep','--tier-done-soft'];
+const LAPCOL=['--par-over','--turns-perfect','--turns-lap'];
 
 const BW=1040, BH=580, PADX=24, PADY=22;
 const clampX=x=>Math.max(PADX,Math.min(BW-PADX,x));
@@ -2834,6 +2842,8 @@ function wireDoors(row){
   };
 }
 let menuView='home', menuTransition=null, menuEpoch=0;
+let openingPlayed=false;
+const OPENING_SEEN_KEY='features-opening-v1';
 const menuShown=()=>$('introveil').classList.contains('show');
 function softEnter(el){
   el.getAnimations().forEach(a=>a.cancel());
@@ -2842,6 +2852,7 @@ function softEnter(el){
     {duration:parseFloat(cssv('--t-exit')),easing:cssv('--ease-out')});
 }
 function stopMenuMotion(){
+  stopOpeningMotion();
   menuEpoch++;
   const pending=menuTransition;
   if(pending) pending.skipTransition();
@@ -2861,7 +2872,7 @@ function openMenu(v){
   menuView=next;
   const paint=()=>{
     if(epoch!==menuEpoch) return;
-    renderMenu(); showVeil('introveil');
+    renderMenu(); showVeil('introveil'); startOpeningMotion();
   };
   if(changing&&!reduceMotion&&!document.hidden&&document.startViewTransition){
     const t=document.startViewTransition(paint);
@@ -8636,26 +8647,50 @@ const RMARK={
 const rmark=(k,cols=[])=>markSVG(RMARK[k](...cols),'0 0 68 44','rmark');
 
 function introPlate(){
-  const A=THREADPAL[0], B=THREADPAL[1], C=THREADPAL[2];
-  const parts=[
-    threadPart([[60,-30],[60,45],[135,120],[97.5,195],[60,270],[60,345]],A,3.4),
-    threadPart([[135,-30],[135,45],[60,120],[97.5,195],[210,270],[210,345]],B,5.6),
-    threadPart([[210,-30],[210,45],[210,120],[172.5,195],[135,270],[135,345]],C,4.5),
-    ...neuronParts(60,45,[A]), ...neuronParts(135,45,[B]), ...neuronParts(210,45,[C]),
-    ...neuronParts(135,120,[A]), ...neuronParts(60,120,[B]),
-    ...neuronParts(210,120,[C],{pinned:true}),
-    ...neuronParts(97.5,195,[A,B]), ...neuronParts(172.5,195,[C]),
-    ...neuronParts(60,270,[A]), ...neuronParts(210,270,[B]), ...neuronParts(135,270,[C]),
-    ...crossParts([[97.5,82.5]]), ...crossParts([[153.75,232.5]])
-  ];
-  return `<svg viewBox="0 0 270 315" preserveAspectRatio="xMidYMid slice" role="img"
-    aria-label="three coloured features threaded through a small net, two of them sharing one neuron">
-    <defs><pattern id="introgrid" width="28" height="28" patternUnits="userSpaceOnUse">
-      <path d="M28 0H0V28" fill="none" stroke="var(--rule)" stroke-width="1"/></pattern></defs>
-    <rect x="-200" y="-200" width="700" height="800" fill="var(--paper)"/>
-    <rect x="-200" y="-200" width="700" height="800" fill="url(#introgrid)"/>
-    ${parts.map(partHTML).join('')}</svg>`;
+  const stamps=['house','fish','cup'].map(k=>{
+    const d=FIGURES[k]||FIGURES_V20[k];
+    return `<div class="opening-stamp"><svg viewBox="0 0 96 96">
+      <rect width="96" height="96" fill="var(${d.c})"/>
+      <g class="opening-ink">${figEmblem(k,{ink:EMBLEM_INK})}</g></svg></div>`;
+  }).join('');
+  return `<div class="opening" aria-hidden="true"><div class="opening-composition">
+    <b class="opening-name">${WORDMARK}</b><div class="opening-stamps">${stamps}</div>
+  </div></div>`;
 }
+function stopOpeningMotion(){
+  $('introart').getAnimations({subtree:true}).forEach(a=>a.cancel());
+}
+function startOpeningMotion(){
+  const root=$('introart').querySelector('.opening');
+  if(openingPlayed||!root||menuView!=='home'||!menuShown()||document.hidden)return;
+  openingPlayed=true;
+  let first=true;
+  try{
+    first=!localStorage.getItem(OPENING_SEEN_KEY);
+    localStorage.setItem(OPENING_SEEN_KEY,'1');
+  }catch{} // Blocked storage still gets a playable, finished composition.
+  if(reduceMotion||!root.animate)return;
+  const animate=(el,frames,options)=>el.animate(frames,
+    {fill:'backwards',easing:'ease-out',...options});
+  if(!first){softEnter(root);return}
+  root.querySelectorAll('.opening-stamp').forEach((tile,i)=>{
+    animate(tile,[
+      {opacity:0,transform:'translateY(24px) scale(.94)'},
+      {opacity:1,transform:'none'}
+    ],{duration:500,delay:i*170});
+    animate(tile.querySelector('.opening-ink'),[
+      {opacity:0,transform:'translateY(-9px) scale(1.08)'},
+      {opacity:1,transform:'translateY(1px) scale(1.015,.97)',offset:.55},
+      {opacity:1,transform:'none'}
+    ],{duration:360,delay:330+i*220});
+  });
+  animate(root.querySelector('.opening-name'),
+    [{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'none'}],
+    {duration:400,delay:1050});
+}
+addEventListener('visibilitychange',()=>{
+  if(document.hidden)stopOpeningMotion();else startOpeningMotion();
+});
 function rungLadder(){
   const rungs=['done','clean','perfect','flawless'];
   return `<div class="rladder">
