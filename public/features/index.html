@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Ta6PRenQTIBycgabFkUQiAv2XcN+kqtajbPIPuow+oY=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-px3chMhd4cMaGLGO0qxDPYc8n0qyxft4XzvgjAoE2O0=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -1057,7 +1057,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .opening-composition{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .opening-name{display:block;margin:0;font-size:44px;font-weight:900;
     line-height:.95;letter-spacing:-.065em;color:var(--ink)}
-  .opening-stamps{display:grid;grid-template-columns:repeat(3,36px);gap:6px;flex-shrink:0}
+  .opening-stamps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:42%;max-width:162px;flex-shrink:0}
   .opening-stamp svg{display:block;width:100%;height:auto}
   .opening-ink{transform-box:fill-box;transform-origin:center}
   .intro-body{padding:20px 22px 24px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
@@ -1152,6 +1152,10 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .help.owned:active{transform:none}
   .help.till.here{outline:1px solid var(--ink);outline-offset:2px}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
+  @media(prefers-reduced-motion:no-preference){
+    .help.till:not(.owned) svg{transition:transform var(--t-lift) var(--ease-out)}
+    .help.till:not(.owned):is(:hover,:focus-visible) svg{transform:scale(1.16)}
+  }
   @media (max-width:360px){
     .intro-doors{gap:5px}
     .intro-doors .help{min-width:34px;padding:0 4px}
@@ -1234,7 +1238,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
     .opening{padding:16px 18px}
     .opening-name{font-size:34px}
-    .opening-stamps{grid-template-columns:repeat(3,28px);gap:5px}
+    .opening-stamps{grid-template-columns:repeat(4,26px);gap:5px;width:auto}
     .intro-body{padding:17px 18px 20px}
   }
 
@@ -8651,7 +8655,7 @@ function introPlate(){
     row.forEach((cols,x)=>parts.push(...neuronParts(x,j*75-30,cols,{pinned:j===2&&x===210})));
   }
   [[97.5,82.5],[153.75,232.5]].forEach(p=>parts.push(...crossParts([p])));
-  const stamps=['house','fish','cup'].map(k=>{
+  const stamps=['house','cup','heart','leaf'].map(k=>{
     const d=FIGURES[k]||FIGURES_V20[k];
     return `<div class="opening-stamp"><svg viewBox="0 0 96 96">
       <rect width="96" height="96" fill="var(${d.c})"/>
@@ -8738,8 +8742,7 @@ function renderIntro(){
     }).join('');
     const firstDay = !fresh && !rows.length;
     const head=fresh
-      ? `<div class="intro-title">${WORDMARK}</div>
-         <div class="intro-sub">untangle what a neural net knows</div>`
+      ? `<div class="intro-sub">untangle what a neural net knows</div>`
       : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
     const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
