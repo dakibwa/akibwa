@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-MGL/bJIEKVK5tfJNSGuA3q2+ejYz43cPoc1N/LyyStk=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-6fLcR7TZyi/G7VIPEsOSMZ+Hc55I55VpH6ObOVy8FTw=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -76,9 +76,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     --tier-clean:var(--gelb);
     --tier-done:#C77770;
     --tier-flawless:var(--rosa);
-    --turns-perfect:#62C8BE;
-    --turns-par:var(--tuerkis);
-    --turns-lap:#09675F;
 
     --flag-1:var(--hellblau);
     --flag-2:var(--gelb);
@@ -278,9 +275,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .unit + .unit{border-left:1px solid var(--rule)}
   .unit-cross,.unit-set,.unit-par{flex:1 1 0}
   .unit-par{position:relative;--track-stack:18px;
-            --par-perfect:var(--turns-perfect);
-            --par-par:var(--turns-par);
-            --par-over:var(--turns-par)}
+            --par-perfect:var(--tuerkis);--par-par:var(--violett);
+            --par-lap:var(--dunkelblau)}
   .tutorial-score-label{display:none}
   .unit-par.tut-score{
     --tut-score:var(--tier-clean);z-index:7;
@@ -1137,22 +1133,22 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
   .intro-alt + .intro-start{margin-top:8px}
   .intro-doors{display:flex;flex-wrap:nowrap;gap:6px;margin-top:18px;flex:0 0 auto}
-  .intro-doors .help.here{background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
-  .intro-doors .help.here:active{transform:none}
+  .intro-doors .help.here:not(.till){background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .door-close{margin-left:auto}
   .door-auth{display:inline-flex}
   .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
   .intro-doors .help:active{transform:none}
-  .intro-doors .help.shut{border-style:dashed;color:var(--ink-soft)}
-  .intro-doors .help.shut:hover{color:var(--ink)}
-  .intro-doors .owned{margin-left:0}
-  .help.owned{cursor:default}
+  .help{--door-plate:var(--tier-clean)}
+  #histbtn,.door-home{--door-plate:var(--hellblau)}
+  .door-coll{--door-plate:var(--tuerkis)}
+  .door-rules{--door-plate:var(--violett)}
+  .door-auth .help{--door-plate:var(--orange)}
+  .help:not(.here):is(:hover,:focus-visible,:active),.help.till{
+    background:var(--door-plate);border-color:#0E1214;color:#0E1214}
+  .help.owned{--door-plate:var(--tier-perfect);cursor:default}
   .help.owned:active{transform:none}
-  .help.owned:hover{border-color:var(--sig-gruen);color:var(--sig-gruen)}
-  .help.till:not(.owned):hover{border-color:var(--sig-gelb);color:var(--sig-gelb)}
-  .intro-doors .help.till:not(.owned){background:var(--gelb);border-color:var(--gelb);color:#15191C}
-  .intro-doors .help.till:not(.owned):hover,.intro-doors .help.till.here:not(.owned){border-color:var(--ink)}
+  .help.till.here{outline:1px solid var(--ink);outline-offset:2px}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
   @media (max-width:360px){
     .intro-doors{gap:5px}
@@ -1279,7 +1275,6 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .freerun,.clearsweep{display:none}
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
-    .help.owned:hover .tickmark{animation:none}
     .coach-dots i.now{animation:none;opacity:.85}
     .themeglyph{transition:none}
     .veil,.veil.show,.veil > *,.veil.show > *{transform:none;transition-property:opacity,visibility}
@@ -2162,7 +2157,7 @@ const DAYSPINE=['--hellblau','--orange','--gruen','--rosa','--dunkelblau','--gel
 const daySpine=d=>`var(${DAYSPINE[dayOrd(d)%DAYSPINE.length]})`;
 const dayOrd=iso=>Math.floor(Date.parse(iso+'T00:00:00Z')/864e5);
 const SETAHEAD='--rule';
-const LAPCOL=['--par-over','--turns-perfect','--turns-lap'];
+const LAPCOL=['--par-par','--par-perfect','--par-lap'];
 
 const BW=1040, BH=580, PADX=24, PADY=22;
 const clampX=x=>Math.max(PADX,Math.min(BW-PADX,x));
