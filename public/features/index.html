@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-px3chMhd4cMaGLGO0qxDPYc8n0qyxft4XzvgjAoE2O0=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-O45WyQbrNvDHeDWQMlU+8n1UKEAiZhpcG5LAm3NaG0Q=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -975,7 +975,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     grid-template-rows:auto minmax(0,1fr) auto;
   }
   .menu-content{grid-column:1/-1;grid-row:2;display:grid;min-height:0;min-width:0;
-    grid-template-columns:subgrid;grid-template-rows:minmax(0,1fr);overflow:hidden;
+    grid-template-columns:subgrid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;
     view-transition-name:menu-content}
   ::view-transition{pointer-events:none}
   ::view-transition-group(root),::view-transition-new(root){animation:none}
@@ -986,9 +986,10 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   @keyframes menuleave{to{opacity:0}}
   @keyframes menuenter{from{opacity:0}to{opacity:1}}
   #introveil > .intro-card{transform:none;transition-property:opacity}
-  .intro-art{grid-column:1;grid-row:1}
-  #introbody{grid-column:2;grid-row:1}
-  .menupane{grid-row:1;grid-column:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  .intro-art{grid-column:1;grid-row:1/-1}
+  #introbody{grid-column:2;grid-row:2;padding-top:0}
+  #introbody>.intro-title{margin-top:15px}
+  .menupane{grid-row:1/-1;grid-column:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
   .menupane[hidden]{display:none}
   .collection.menupane{padding:20px 22px 18px;grid-template-columns:repeat(5,1fr);border-right:1px solid var(--rule);background:var(--paper)}
   .panerules{display:flex;flex-direction:column;padding:20px 22px 24px;border-right:1px solid var(--rule);background:var(--paper)}
@@ -1039,7 +1040,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .pane-head[hidden],.paneside .pay-body[hidden],.paneside .acct-body[hidden],.rec-arch[hidden]{display:none}
   #menudoors{grid-column:1/-1;grid-row:3}
   #introcard.view-coll .intro-art,#introcard.view-rules .intro-art{display:none}
-  #introcard.view-profile #introbody,#introcard.view-pay #introbody{display:none}
+  #introcard.view-profile #introbody,#introcard.view-pay #introbody,
+  #introcard.view-profile .opening,#introcard.view-pay .opening{display:none}
   .panehd{grid-column:1/-1;margin:0 0 2px}
   .collhd{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
   .collcount{flex:0 0 auto;display:flex;align-items:baseline;color:var(--ink);
@@ -1053,11 +1055,11 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
   .intro-net{position:absolute;inset:0;width:100%;height:100%;opacity:.45}
-  .opening{position:absolute;inset:0;padding:24px}
+  .opening{grid-column:2;grid-row:1;padding:20px 22px 0;min-width:0}
   .opening-composition{display:flex;align-items:center;justify-content:space-between;gap:16px}
-  .opening-name{display:block;margin:0;font-size:44px;font-weight:900;
-    line-height:.95;letter-spacing:-.065em;color:var(--ink)}
-  .opening-stamps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:42%;max-width:162px;flex-shrink:0}
+  .opening-name{display:block;margin:0;font-size:36px;font-weight:900;
+    line-height:1;letter-spacing:-.065em;color:var(--ink)}
+  .opening-stamps{display:grid;grid-template-columns:repeat(4,28px);gap:5px;flex-shrink:0;margin-top:4px}
   .opening-stamp svg{display:block;width:100%;height:auto}
   .opening-ink{transform-box:fill-box;transform-origin:center}
   .intro-body{padding:20px 22px 24px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
@@ -1148,14 +1150,12 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .help:not(.here):is(:hover,:focus-visible,:active),.help.till{
     background:var(--door-plate);border-color:#0E1214;color:#0E1214}
   .intro-doors .help.here:not(.till):is(:hover,:focus-visible,:active){color:var(--door-plate)}
+  .help.till{transition:background-color var(--t-ui);transform:none}
+  .help.till:not(.owned):is(:hover,:focus-visible,:active){background:color-mix(in srgb,var(--tier-clean) 90%,#fff)}
   .help.owned{--door-plate:var(--tier-perfect);cursor:default}
   .help.owned:active{transform:none}
   .help.till.here{outline:1px solid var(--ink);outline-offset:2px}
   .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
-  @media(prefers-reduced-motion:no-preference){
-    .help.till:not(.owned) svg{transition:transform var(--t-lift) var(--ease-out)}
-    .help.till:not(.owned):is(:hover,:focus-visible) svg{transform:scale(1.16)}
-  }
   @media (max-width:360px){
     .intro-doors{gap:5px}
     .intro-doors .help{min-width:34px;padding:0 4px}
@@ -1229,14 +1229,16 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .coach-key.score .rladder .track{margin-top:0}
     .coach-key.score .rlnames{margin-top:1px}
     .intro-card{grid-template-columns:1fr}
-    .menu-content{grid-template-rows:auto minmax(0,1fr)}
+    .menu-content{grid-template-rows:auto auto minmax(0,1fr)}
     .intro-art{grid-column:1;grid-row:1}
-    #introbody{grid-column:1;grid-row:2}
+    .opening{grid-column:1;grid-row:2}
+    #introbody{grid-column:1;grid-row:3}
     .menupane,.paneside{grid-column:1;grid-row:1/-1;border-right:0}
     #introcard:not(.view-home) .intro-art{display:none}
+    #introcard:not(.view-home) .opening{display:none}
     #introcard:not(.view-home) #introbody{display:none}
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
-    .opening{padding:16px 18px}
+    .opening{padding:17px 18px 0}
     .opening-name{font-size:34px}
     .opening-stamps{grid-template-columns:repeat(4,26px);gap:5px;width:auto}
     .intro-body{padding:17px 18px 20px}
@@ -1468,6 +1470,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     <div class="menu-content" id="menucontent">
     <!-- the plate is a net drawn by the board's own marks, filled by renderIntro -->
     <div class="intro-art" id="introart"></div>
+    <div class="opening" id="introopening"></div>
     <div class="menupane collection" id="panecoll" hidden></div>
     <div class="menupane panerules" id="panerules" hidden></div>
     <div class="menupane paneside" id="paneside" hidden>
@@ -3592,7 +3595,7 @@ function paintTill(el){
   el.setAttribute('aria-label',owned?'the full version · yours':'the full version');
   if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
   else { el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex') }
-  el.hidden=owned&&el.id==='buybtn';
+  el.hidden=owned;
 }
 function entitlementChanged(){
   if(menuShown()) renderMenu();
@@ -8655,25 +8658,26 @@ function introPlate(){
     row.forEach((cols,x)=>parts.push(...neuronParts(x,j*75-30,cols,{pinned:j===2&&x===210})));
   }
   [[97.5,82.5],[153.75,232.5]].forEach(p=>parts.push(...crossParts([p])));
+  return `<svg class="intro-net" viewBox="0 0 270 315" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><pattern id="introgrid" width="28" height="28" patternUnits="userSpaceOnUse">
+    <path d="M28 0H0V28" fill="none" stroke="var(--rule)"/></pattern></defs>
+    <rect width="270" height="315" fill="url(#introgrid)"/>${parts.map(partHTML).join('')}</svg>`;
+}
+function introHeading(){
   const stamps=['house','cup','heart','leaf'].map(k=>{
     const d=FIGURES[k]||FIGURES_V20[k];
     return `<div class="opening-stamp"><svg viewBox="0 0 96 96">
       <rect width="96" height="96" fill="var(${d.c})"/>
       <g class="opening-ink">${figEmblem(k,{ink:EMBLEM_INK})}</g></svg></div>`;
   }).join('');
-  return `<svg class="intro-net" viewBox="0 0 270 315" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs><pattern id="introgrid" width="28" height="28" patternUnits="userSpaceOnUse">
-    <path d="M28 0H0V28" fill="none" stroke="var(--rule)"/></pattern></defs>
-    <rect width="270" height="315" fill="url(#introgrid)"/>${parts.map(partHTML).join('')}</svg>
-    <div class="opening" aria-hidden="true"><div class="opening-composition">
-    <b class="opening-name">${WORDMARK}</b><div class="opening-stamps">${stamps}</div>
-  </div></div>`;
+  return `<div class="opening-composition"><h2 class="opening-name">${WORDMARK}</h2>
+    <div class="opening-stamps" aria-hidden="true">${stamps}</div></div>`;
 }
 function stopOpeningMotion(){
-  $('introart').getAnimations({subtree:true}).forEach(a=>a.cancel());
+  $('introopening').getAnimations({subtree:true}).forEach(a=>a.cancel());
 }
 function startOpeningMotion(){
-  const root=$('introart').querySelector('.opening');
+  const root=$('introopening');
   if(openingPlayed||!root||menuView!=='home'||!menuShown()||document.hidden)return;
   openingPlayed=true;
   let first=true;
@@ -8713,6 +8717,7 @@ function rungLadder(){
 }
 function renderIntro(){
   const b=$('introbody');
+  if(!$('introopening').firstChild)$('introopening').innerHTML=introHeading();
   const art=$('introart'),premium=menuView==='pay';
   if(!art.firstChild||art.classList.contains('premium-art')!==premium){
     art.classList.toggle('premium-art',premium);art.innerHTML=premium?premiumArt():introPlate();
@@ -8742,7 +8747,7 @@ function renderIntro(){
     }).join('');
     const firstDay = !fresh && !rows.length;
     const head=fresh
-      ? `<div class="intro-sub">untangle what a neural net knows</div>`
+      ? ''
       : `<div class="intro-title">${firstDay?'your first day':'welcome back'}</div>
          <div class="intro-sub">${dayLabel(today())} · the same ten for everyone</div>`;
     const keepScroll=(()=>{ const w=b.querySelector('.wbweek'); return w?w.scrollTop:0 })();
