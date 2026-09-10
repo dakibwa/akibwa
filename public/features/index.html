@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-O45WyQbrNvDHeDWQMlU+8n1UKEAiZhpcG5LAm3NaG0Q=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-BAlGr+yApQIBIJEvYb4h9Kx2OtD6Q/6yMm5g9+QOYQc=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -238,8 +238,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   }
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .help:focus-visible,.act:focus-visible,.wbtn:focus-visible,.intro-start:focus-visible,
-  .devtab:focus-visible,.rec-close:focus-visible,
-  .archlink:focus-visible{
+  .devtab:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
   .field g.node{outline:none}
@@ -278,24 +277,11 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
             --par-perfect:var(--tuerkis);--par-par:var(--violett);
             --par-lap:var(--dunkelblau)}
   .tutorial-score-label{display:none}
-  .unit-par.tut-score{
-    --tut-score:var(--tier-clean);z-index:7;
-    outline:2px solid var(--tut-score);outline-offset:4px;
-    animation:tutscorein .52s var(--ease-out) both
-  }
-  @keyframes tutscorein{
-    from{outline-offset:10px;filter:brightness(1.45)}
-    to{outline-offset:4px;filter:none}
-  }
-  .unit-par.tut-score .unit-top{opacity:.12}
+  .unit-par.tut-score .unit-top{visibility:hidden}
   .unit-par.tut-score .tutorial-score-label{
-    position:absolute;inset:0 0 var(--track-stack);display:flex;
-    align-items:center;justify-content:center;
-    color:var(--tut-score);font-size:10px;font-weight:800;line-height:1;
-    letter-spacing:.13em;text-transform:lowercase;white-space:nowrap
-  }
-  .unit-par.tut-score .parmeter{
-    box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--tut-score)
+    position:absolute;inset:0 0 var(--track-stack);display:flex;padding:inherit;
+    align-items:center;color:var(--ink);font-size:clamp(10px,1.2vw,14px);
+    font-weight:600;line-height:1.2;white-space:nowrap
   }
   .track.parmeter{background:var(--lap-under,var(--rule))}
   .unit-top{display:flex;flex-wrap:nowrap;align-items:baseline;gap:0 12px;min-width:0}
@@ -310,10 +296,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     color:var(--ink);
   }
   .unit-of{font-style:normal;font-size:8px;letter-spacing:.1em;color:var(--ink-soft);text-transform:lowercase;white-space:nowrap}
-  .stat-note{
-    display:block;font-size:8.5px;line-height:1.2;letter-spacing:.11em;color:var(--ink-soft);
-    text-transform:lowercase;font-variant-numeric:tabular-nums;white-space:nowrap
-  }
+
   .track{
     display:flex;height:10px;margin-top:8px;overflow:hidden;background:var(--rule)
   }
@@ -407,8 +390,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .field .tutscrim{fill:var(--surface);opacity:.8;
     transition:opacity .28s var(--ease-out)}
   .field.dragging .tutscrim,
-  .field.dragging .tutring,
-  .field.dragging .tutlead{opacity:0}
+  .field.dragging .tutring{opacity:0}
   .field.dragging .tutping{opacity:0;animation:none}
   .field .tutring,.field .tutping{fill:none;stroke:var(--ink);
     transform-box:fill-box;transform-origin:center;
@@ -421,11 +403,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     66%{r:33px;opacity:0}
     100%{r:33px;opacity:0}
   }
-  .field .tutlead{fill:none;stroke:var(--ink);opacity:.55;
-    animation:tutflow 1.4s linear infinite;
-    transition:opacity .28s var(--ease-out)}
-  @keyframes tutflow{to{stroke-dashoffset:var(--flow)}}
-  .field .tutdrop{fill:none;stroke:var(--ink);opacity:.82}
+
+
 
   .field .mnode.grabbed{r:calc(var(--nr) * 1.32px);stroke-width:calc(var(--nw) * 1.3);
     transition:r var(--t-press) var(--ease-out),stroke-width var(--t-press) var(--ease-out)}
@@ -459,8 +438,8 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
 
   @keyframes boardout{to{opacity:0;transform:translateX(-14px)}}
   @keyframes boardin{from{opacity:0;transform:translateX(14px)}}
-  .field.swap-out > svg,.field.swap-out .netnum{animation:boardout .19s var(--ease-in) both}
-  .field.swap-in > svg,.field.swap-in .netnum{animation:boardin .3s var(--ease-out) both}
+  .field.swap-out > svg{animation:boardout .19s var(--ease-in) both}
+  .field.swap-in > svg{animation:boardin .3s var(--ease-out) both}
 
 
   .hud-body{flex:1 1 auto;min-height:0;display:flex}
@@ -578,12 +557,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .saymark{flex:0 0 auto;width:58px;height:38px;display:block}
   .say .rowin{animation:rowin .26s var(--ease-out) both}
 
-  .devchip[hidden]{display:none}
-  .devchip{
-    border:1px dashed var(--sig-violett);color:var(--sig-violett);padding:2px 7px;
-    font-size:9px;letter-spacing:.12em;text-transform:lowercase;
-  }
-  .credit{margin-top:13px;font-size:10px;color:var(--ink-soft);letter-spacing:.1em;text-transform:lowercase}
+
+
+
 
   .veil{
     position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
@@ -766,28 +742,16 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
      (`canBuy`), so the everyday narrow head is three items wanting 257 of 323
      and stays on one line, and at 640px the card has 602 for a row that wants
      363. this is the graceful end of a range, not a layout. */
-  .rec-head{
-    flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;
-    justify-content:space-between;gap:12px;
-    padding:13px 18px;border-bottom:1px solid var(--ink);
-  }
+
   .rec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:lowercase;line-height:1}
-  .rec-close{
-    border:1px solid var(--silver);color:var(--ink-soft);text-decoration:none;
-    transition:border-color var(--t-ui),color var(--t-ui),
-               transform var(--t-lift) var(--ease-out);
-  }
-  .rec-close:hover{border-color:var(--ink);color:var(--ink)}
-  .rec-close:active{transform:scale(.96);
-    transition-duration:var(--t-ui),var(--t-ui),var(--t-press)}
-  .rec-close{
-    display:inline-flex;align-items:center;justify-content:center;gap:7px;
-    height:34px;font-size:11px;letter-spacing:.14em;text-transform:lowercase
-  }
-  .rec-close{width:34px;padding:0;letter-spacing:0}
-  .rec-close svg{display:block}
-  .rec-close{flex:0 0 auto}
-  .rec-right{display:flex;align-items:center;gap:8px;margin-left:auto;min-width:0}
+
+
+
+
+
+
+
+
   .collection{
     flex:1 1 auto;min-height:0;overflow-y:auto;padding:8px 18px 18px;
     display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
@@ -813,34 +777,28 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .dayarch.held{border-style:solid}
   .dayarch .datext{margin-right:auto;font-size:10px;letter-spacing:.09em;
     color:var(--ink-soft);text-transform:lowercase}
-  .archlink,.acctlink{
+  .acctlink{
     flex:0 0 auto;text-decoration:none;
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;
     color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:1px;
     transition:color var(--t-ui),border-color var(--t-ui);
   }
-  .archlink:hover,.acctlink:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  .acctlink:hover{color:var(--ink);border-bottom-color:var(--ink)}
   .dacode{
     flex:0 0 auto;font-size:9.5px;letter-spacing:.16em;
     font-variant-numeric:tabular-nums;color:var(--ink-soft);
     user-select:all;-webkit-user-select:all;cursor:text;
   }
 
-  .rec-foot{
-    flex:0 0 auto;display:flex;align-items:center;gap:10px;
-    padding:9px 18px 11px;border-top:1px solid var(--rule);
-    font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
-  }
-  .rec-foot[hidden]{display:none}
-  .acct-say{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .acct-state{opacity:.62;flex:0 0 auto}
-  .acct-state::before{content:'·';margin-right:6px;opacity:.55}
-  .acct-ins{margin-left:auto;flex:0 0 auto;display:flex;align-items:center;gap:10px}
-  .acct-ins .acctlink{margin-left:0}
-  .acct-who{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;
-    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    border-bottom:1px solid transparent;transition:color var(--t-ui),border-color var(--t-ui)}
-  .acct-who:hover{color:var(--ink);border-bottom-color:var(--rule)}
+
+
+
+
+
+
+
+
+
 
   .acct-body{display:flex;flex-direction:column;gap:13px;overflow-y:auto}
   .acct-auth{display:flex;flex:1 0 auto;min-height:100%;flex-direction:column;gap:12px}
@@ -862,7 +820,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .acct-auth-other{display:flex;flex-direction:column;gap:9px}
   .acct-auth-other .acct-row .wbtn{flex:1 1 auto}
 
-  .pay-card{max-width:520px;background:var(--paper)}
+
   .pay-body{padding:0 0 4px;overflow-y:auto;min-height:220px}
   .arch-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;
     max-height:min(52dvh,400px);overflow-y:auto;padding:2px 10px 2px 0;
@@ -1050,7 +1008,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
   .collcount-sep{padding:0 .06em;color:var(--silver)}
   .collcount-total{color:var(--ink-soft)}
-  .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px))}
+  .menusheet{max-width:790px;width:100%;height:min(680px,calc(100dvh - 40px));container-type:inline-size}
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
@@ -1062,6 +1020,16 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .opening-stamps{display:grid;grid-template-columns:repeat(4,28px);gap:5px;flex-shrink:0;margin-top:4px}
   .opening-stamp svg{display:block;width:100%;height:auto}
   .opening-ink{transform-box:fill-box;transform-origin:center}
+  .opening-kicker{display:none;margin:0 0 10px;font-size:11px;letter-spacing:.14em;color:var(--ink-soft)}
+  .opening:focus{outline:0}
+  #introveil:has(.view-welcome){align-items:center}
+  .view-welcome.menusheet{height:min(540px,calc(100dvh - 40px))}
+  .view-welcome .opening-kicker{display:block}
+  .view-welcome #menudoors{display:none}
+  .welcome-copy{margin:auto 0;padding:32px 0}
+  .welcome-copy h3{margin:0;font-size:28px;letter-spacing:-.035em;line-height:1.2}
+  .view-welcome .intro-start{min-height:48px;font-size:14px;letter-spacing:0;flex-shrink:0}
+  .view-welcome .premium-account{margin-top:14px}
   .intro-body{padding:20px 22px 24px;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
   .intro-title{font-size:19px;font-weight:700;text-transform:lowercase;letter-spacing:-.01em}
   .intro-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.12em;margin-top:3px;text-transform:lowercase}
@@ -1095,10 +1063,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .wbday{display:grid;grid-template-columns:7px 44px minmax(0,1fr);
          gap:8px;align-items:center;padding:0 9px 0 0;min-height:28px;
          overflow:hidden}
-  .wbchips{flex:0 0 auto;display:flex;gap:6px;justify-content:flex-end}
-  .wbday .dtrial{padding:0;background:transparent;font:inherit;
-    -webkit-appearance:none;appearance:none}
-  .wbday .dtrial svg{width:15px;height:15px;display:block}
+
+
+
   .wbday .wbtier{align-self:stretch;background:var(--tc,var(--rule))}
   .wbday .wbwhen{white-space:nowrap}
   .wbday.now .wbwhen{color:var(--ink)}
@@ -1119,27 +1086,30 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .wbweek .track.dtrack{width:auto;min-width:0;margin:0;height:10px}
   .track.dtrack > i{transition:none}
   .track.dtrack > i:not(.on){background:var(--rule)}
-  .wbday .dreplay{margin-left:0;height:21px;width:100%;padding:0}
-  .wbday .dreplay:not(.shut):hover,
-  .wbday .dreplay:not(.shut):focus-visible{border-color:var(--ink);color:var(--ink)}
-  .wbday .dreplay.shut:hover,
-  .wbday .dreplay.shut:focus-visible{color:var(--ink)}
+
+
+
   .wbspread:empty{display:none}
   .wbspread{margin-top:12px;font-variant-numeric:tabular-nums}
   .intro-start{margin-top:17px;width:100%;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:inherit;font-size:12.5px;letter-spacing:.1em;padding:9px;cursor:pointer;text-transform:lowercase;
     transition:background var(--t-ui),border-color var(--t-ui),color var(--t-ui),transform var(--t-lift) var(--ease-out)}
-  .intro-start:hover{background:var(--dunkelblau)}
+  .intro-start:hover{background:color-mix(in srgb,var(--ink) 88%,var(--paper))}
   .intro-start:active{transform:translateY(1px) scale(.995);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
   .intro-alt{background:transparent;color:var(--ink)}
-  .intro-alt:hover{background:var(--paper);border-color:var(--dunkelblau);color:var(--dunkelblau)}
+  .intro-alt:hover{background:var(--paper);border-color:var(--ink);color:var(--ink)}
   .intro-alt + .intro-start{margin-top:8px}
-  .intro-doors{display:flex;flex-wrap:nowrap;gap:6px;margin-top:18px;flex:0 0 auto}
+  .intro-doors{--door-gap:clamp(3px,1cqw,6px);
+    --door-size:clamp(32px,calc((100cqw - 36px - 6 * var(--door-gap)) / 7),44px);
+    display:flex;flex-wrap:nowrap;gap:var(--door-gap);margin-top:18px;flex:0 0 auto}
+  .intro-doors:has(.door-buy[hidden]){--door-size:clamp(32px,calc((100cqw - 36px - 5 * var(--door-gap)) / 6),44px)}
   .intro-doors .help.here:not(.till){background:var(--ink);border-color:var(--ink);color:var(--surface);cursor:default}
   .intro-doors.rec-doors{margin-top:auto;padding:12px 18px 16px;border-top:1px solid var(--rule)}
   .intro-doors .door-close{margin-left:auto}
   .door-auth{display:inline-flex}
-  .intro-doors .help{flex:0 0 auto;min-width:37px;padding:0 4px}
+  .intro-doors .help{flex:0 0 var(--door-size);min-width:0;width:var(--door-size);height:var(--door-size);padding:0}
+  .intro-doors .help svg{width:clamp(18px,calc(var(--door-size) * .55),22px);height:clamp(18px,calc(var(--door-size) * .55),22px)}
+  .intro-doors .door-rules{font-size:clamp(22px,calc(var(--door-size) * .6),26px);font-weight:500;line-height:1}
   .intro-doors .help:active{transform:none}
   .help{--door-plate:var(--tier-clean)}
   #histbtn,.door-home{--door-plate:var(--hellblau)}
@@ -1152,19 +1122,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .intro-doors .help.here:not(.till):is(:hover,:focus-visible,:active){color:var(--door-plate)}
   .help.till{transition:background-color var(--t-ui);transform:none}
   .help.till:not(.owned):is(:hover,:focus-visible,:active){background:color-mix(in srgb,var(--tier-clean) 90%,#fff)}
-  .help.owned{--door-plate:var(--tier-perfect);cursor:default}
-  .help.owned:active{transform:none}
   .help.till.here{outline:1px solid var(--ink);outline-offset:2px}
-  .help.owned .tickmark{stroke-linecap:square;stroke-linejoin:miter}
-  @media (max-width:360px){
-    .intro-doors{gap:5px}
-    .intro-doors .help{min-width:34px;padding:0 4px}
-  }
-  @media (max-width:340px){
-    .intro-doors .help{min-width:30px;padding:0 3px}
-    .intro-doors .help svg{width:18px;height:18px}
-  }
-
   .toast{
     position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);
     background:var(--ink);color:var(--paper);font-size:11.5px;letter-spacing:.1em;
@@ -1208,9 +1166,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .acct-auth-form{gap:7px}
     .acct-auth-form .wbtn{min-height:38px}
     .acct-field{font-size:16px}
-    .rec-foot{padding:9px 13px 11px}
-    .rec-head{padding:11px 13px}
-    .rec-right{gap:7px}
+
+
+
     .collection.menupane{padding:16px 14px 14px;gap:6px;grid-template-columns:repeat(5,1fr)}
     .panerules,.paneside{padding:16px 14px 20px}
     .dayarch{padding:0 9px;gap:8px}
@@ -1234,9 +1192,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .opening{grid-column:1;grid-row:2}
     #introbody{grid-column:1;grid-row:3}
     .menupane,.paneside{grid-column:1;grid-row:1/-1;border-right:0}
-    #introcard:not(.view-home) .intro-art{display:none}
-    #introcard:not(.view-home) .opening{display:none}
-    #introcard:not(.view-home) #introbody{display:none}
+    #introcard:not(.view-home):not(.view-welcome) .intro-art{display:none}
+    #introcard:not(.view-home):not(.view-welcome) .opening{display:none}
+    #introcard:not(.view-home):not(.view-welcome) #introbody{display:none}
     .intro-art{aspect-ratio:16/7;min-height:0;border-right:0;border-bottom:1px solid var(--silver)}
     .opening{padding:17px 18px 0}
     .opening-name{font-size:34px}
@@ -1273,11 +1231,9 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .field,.coach,.play.tutorial .coach,.devdrawer:not([hidden]),
     .minted .mb,.veil.show .bulletin .brow,.field .tlabel2.tin,
     .field .mhalo,
-    .field .tutping,.field .tutlead,
-    .field .mnode.landed,.field .mnode.retraining,.field .mnode.settling,
-    .unit-par.tut-score{animation:none}
-    .field.swap-out > svg,.field.swap-in > svg,
-    .field.swap-out .netnum,.field.swap-in .netnum{animation:none;opacity:1;transform:none}
+    .field .tutping,
+    .field .mnode.landed,.field .mnode.retraining,.field .mnode.settling{animation:none}
+    .field.swap-out > svg,.field.swap-in > svg{animation:none;opacity:1;transform:none}
     .freerun,.clearsweep{display:none}
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
@@ -1287,7 +1243,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     .say,.say.on{transform:none;
       transition-property:opacity,visibility}
     .say .rowin{animation:none}
-    .help:active,.act:active,.rec-close:active,.wbtn:active,.intro-start:active,
+    .help:active,.act:active,.wbtn:active,.intro-start:active,
     .tval:hover,.tval:active{transform:none}
     .toast,.toast.show{transform:translateX(-50%);transition:opacity var(--t-ui)}
   }
@@ -1470,7 +1426,7 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
     <div class="menu-content" id="menucontent">
     <!-- the plate is a net drawn by the board's own marks, filled by renderIntro -->
     <div class="intro-art" id="introart"></div>
-    <div class="opening" id="introopening"></div>
+    <div class="opening" id="introopening" tabindex="-1"></div>
     <div class="menupane collection" id="panecoll" hidden></div>
     <div class="menupane panerules" id="panerules" hidden></div>
     <div class="menupane paneside" id="paneside" hidden>
@@ -2526,12 +2482,7 @@ const OPTIMA={
   '2026-08-15':[2,2,3,4,7,5,7,12,16,12],
   '2026-08-16':[2,2,3,5,6,4,9,10,18,16]
 };
-function dayBest(iso){
-  const day=OPTIMA[iso];
-  if(!day || !day.length) return null;      // outside the table's range
-  const n=day.reduce((a,b)=>a+b,0);
-  return n>0?n:null;
-}
+
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
@@ -2661,6 +2612,17 @@ try{
   const raw=JSON.parse(localStorage.getItem(KEY)||'{}');
   if(raw && typeof raw==='object' && !Array.isArray(raw)) store=raw;
 }catch(e){store={}}
+const FIRST_PLAY_KEY='features-first-play-v1';
+let firstPlay=false;
+try{
+  const seen=localStorage.getItem(FIRST_PLAY_KEY);
+  firstPlay=seen==='1'||(!seen&&!localStorage.getItem(KEY));
+}catch{firstPlay=!store.run}
+function setFirstPlay(active){
+  firstPlay=active;
+  try{localStorage.setItem(FIRST_PLAY_KEY,active?'1':'0')}catch{}
+}
+if(firstPlay) setFirstPlay(true);
 store=migrateBoardState(store);
 const previousOutlineRun=store.run, previousOutlineParked=store.parked;
 store=upgradeOutlineRuns(store,new Date().toISOString());
@@ -2821,10 +2783,10 @@ function doorsInner(){
     +`<rect x="4" y="9.75" width="4.5" height="4.5"/><rect x="9.75" y="9.75" width="4.5" height="4.5"/><rect x="15.5" y="9.75" width="4.5" height="4.5"/>`
     +`<rect x="4" y="15.5" width="4.5" height="4.5"/><rect x="9.75" y="15.5" width="4.5" height="4.5"/><rect x="15.5" y="15.5" width="4.5" height="4.5"/>`
     +`</g></svg></button>`
+    +`<span class="door-auth">${authDoorButton(!!(account&&account.signedIn))}</span>`
     +`<button class="help door-rules" aria-label="how to play">?</button>`
     +`<button class="help groundbtn" aria-label="ground">`
     +`<svg class="themeglyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></svg></button>`
-    +`<span class="door-auth">${authDoorButton(!!(account&&account.signedIn))}</span>`
     +`<button class="help door-buy"></button>`
     +`<button class="help door-close" aria-label="close">`
     +`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5 17.5 17.5M17.5 6.5 6.5 17.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>`;
@@ -2875,6 +2837,7 @@ function openMenu(v){
   const paint=()=>{
     if(epoch!==menuEpoch) return;
     renderMenu(); showVeil('introveil'); startOpeningMotion();
+    if(next==='welcome') $('introopening').focus({preventScroll:true});
   };
   if(changing&&!reduceMotion&&!document.hidden&&document.startViewTransition){
     const t=document.startViewTransition(paint);
@@ -2906,7 +2869,7 @@ function fillRecArch(){
 }
 function renderPanes(){
   const c=$('introcard');
-  ['home','coll','rules','profile','pay'].forEach(v=>c.classList.toggle('view-'+v,menuView===v));
+  ['welcome','home','coll','rules','profile','pay'].forEach(v=>c.classList.toggle('view-'+v,menuView===v));
   $('panecoll').hidden = menuView!=='coll';
   $('panerules').hidden = menuView!=='rules';
   $('paneside').hidden = !(menuView==='profile'||menuView==='pay');
@@ -3174,6 +3137,7 @@ const closeAccount=()=>{ if(menuShown()&&menuView==='profile') openMenu('home') 
 
 function afterSignIn(){
   if(!account||!account.signedIn) return;
+  if(firstPlay) setFirstPlay(false);
   const upgrade=takeUpgradeReturn();
   if(upgrade) return openUpgrade(upgrade==='more'?null:upgrade);
   openMenu('home');
@@ -3581,21 +3545,16 @@ function applyEntitlement(r){
   return was!==r.full;
 }
 const canBuy=()=>nativePlatform()?nativeBilling?.[nativePlatform()]?.available===true:DEV||till===true;
-const TILL_GLYPH=(owned)=>`<svg viewBox="0 0 24 24" aria-hidden="true">`
+const TILL_GLYPH=()=>`<svg viewBox="0 0 24 24" aria-hidden="true">`
   +`<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>`
-  +(owned?`<path class="tickmark" d="M8 12l3 3 5-5" fill="none" stroke="currentColor" stroke-width="1.6"/>`
-         :`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/>`)
-  +`</svg>`;
+  +`<path d="M12 7.5v9M7.5 12h9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`;
 function paintTill(el){
   if(!el) return;
-  const owned=!!POLICY.premium;
-  el.innerHTML=TILL_GLYPH(owned);
+  el.innerHTML=TILL_GLYPH();
   el.classList.add('till');
-  el.classList.toggle('owned',owned);
-  el.setAttribute('aria-label',owned?'the full version · yours':'the full version');
-  if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
-  else { el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex') }
-  el.hidden=owned;
+  el.classList.toggle('owned',!!POLICY.premium);
+  el.setAttribute('aria-label','the full version');
+  el.hidden=!!POLICY.premium;
 }
 function entitlementChanged(){
   if(menuShown()) renderMenu();
@@ -7065,7 +7024,7 @@ function paintCoachStrip(cols){
 }
 function hideTutorialScore(){
   const bay=document.querySelector('.unit-par'), meter=$('parmeter'), label=$('tutorialscore');
-  bay.classList.remove('tut-score'); bay.style.removeProperty('--tut-score');
+  bay.classList.remove('tut-score');
   label.textContent='';
   if(tutorialScoreAria!==null){
     meter.setAttribute('aria-label',tutorialScoreAria);
@@ -7076,7 +7035,6 @@ function showTutorialScore(tier){
   const bay=document.querySelector('.unit-par'), meter=$('parmeter'), label=$('tutorialscore');
   const word=tierSay(tier);
   if(tutorialScoreAria===null) tutorialScoreAria=meter.getAttribute('aria-label')||'turns against par';
-  bay.style.setProperty('--tut-score',`var(${tierCol(tier)})`);
   bay.classList.add('tut-score');
   label.textContent=word+' rung';
   meter.setAttribute('aria-label',`tutorial score · ${word} rung`);
@@ -7549,9 +7507,11 @@ function finishTutorialNotice(){
   if(tutorialFinishT) clearTimeout(tutorialFinishT);
   tutorialFinishT=null;
   if(!tutorialCompleting()) return;
+  const first=firstPlay;
   endTutorial();
   sayHide();
-  openMenu('home');
+  if(first){hideVeils();if(!canAccessRun())openDay(today())}
+  else openMenu('home');
 }
 function showTutorialComplete(){
   if(!tutorialCompleting()) return;
@@ -7835,11 +7795,18 @@ function runOverOffer(trial,depth){
 }
 function showRunOver(){
   const r=R(),depth=r.cleared.length,trial=isTrial(),parked=!!store.parked&&canAccessRun(store.parked);
+  const firstComplete=firstPlay&&!inTutorialRun()&&!trial&&r.over&&depth>=POLICY.dailyNets;
+  const signup=firstComplete&&API&&!store.signedInOnce&&!account?.signedIn;
+  if(firstComplete&&!signup) setFirstPlay(false);
   const host=trial?$('field'):document.body;
   if($('runveil').parentElement!==host)host.append($('runveil'));
   const feats=[...new Set(r.cleared.flatMap(c=>c.feats||[]))];
-  const stamps=runShareStamps(r),tiers=runShareTiers(r),offer=trial?'':runOverOffer(false,depth);
-  const actions=(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today':'resume your day'}</button>`:'')
+  const stamps=runShareStamps(r),tiers=runShareTiers(r),offer=trial||signup?'':runOverOffer(false,depth);
+  const actions=signup?`<p class="acct-ask">create a free account to carry your discoveries between devices.</p>
+      <button class="wbtn solid" id="firstsignup">create an account</button>
+      <button class="wbtn" id="firstlater">continue without an account</button>
+    <button class="wbtn" id="sharebtn">${SHARE_LABEL}</button>`
+    :(canResume()?`<button class="wbtn solid" id="resumebtn">${parked?'back to today':'resume your day'}</button>`:'')
     +(trial?'':`<button class="wbtn${!canResume()&&!offer?' solid':''}" id="sharebtn">${SHARE_LABEL}</button>`)
     +(trial?`<button class="wbtn" id="recordbtn2">menu</button>`:'')
     +(canStartAnotherRun()?`<button class="wbtn" id="againbtn">${trial?'daily run':'play again'} →</button>`:'');
@@ -7860,7 +7827,11 @@ function showRunOver(){
       <div class="share-options" id="shareoptions" role="group" aria-label="share options" hidden></div>
     </div>`;
   sayHide(true);showVeil('runveil');
-  $('recordbtn2').onclick=()=>{hideVeils();openMenu('home')};
+  $('recordbtn2').onclick=()=>{if(signup)setFirstPlay(false);hideVeils();openMenu('home')};
+  if(signup){
+    $('firstsignup').onclick=()=>{setFirstPlay(false);hideVeils();openAccount('signup')};
+    $('firstlater').onclick=()=>{setFirstPlay(false);showRunOver()};
+  }
   const shareButton=$('sharebtn');
   if(shareButton){
     shareButton.disabled=true;
@@ -8232,7 +8203,6 @@ function openDay(iso){
   builtFor=-1; resetDescent(); save(); hideVeils(); renderAll();
   flashMsg(iso===today()?'today\'s net':dayLabel(iso)+' · this does not extend a streak');
 }
-function fmtScore(n){ return n>0 ? n+' over par' : n<0 ? (-n)+' under par' : 'level par' }
 function scoreParts(n){
   return n>0 ? {fig:String(n), word:'over par'}
      : n<0 ? {fig:String(-n), word:'under par'}
@@ -8259,7 +8229,6 @@ function archiveLineEl(){
 }
 
 
-function openRecord(){ openMenu('coll') }
 
 
 function renderThreads(){
@@ -8522,7 +8491,7 @@ function renderHud(){
 }
 function renderAll(){
   buildNet(); renderHud(); refresh(); startPhysics(); renderTutorial();
-  if(R().over) setTimeout(showRunOver,200);
+  if(R().over) setTimeout(()=>{if(R().over&&!menuShown())showRunOver()},200);
 }
 
 
@@ -8588,6 +8557,7 @@ function dismissVeil(v){
   if(v.id==='askveil'){ closeAsk(false); return }
   if(v.id==='runveil') return;
   if(v.id==='introveil'){
+    if(menuView==='welcome') return;
     stopMenuMotion();
     store.introSeen=true; store.lastIntroDay=today(); save();
     if(menuView==='pay') closeCheckout();
@@ -8670,7 +8640,7 @@ function introHeading(){
       <rect width="96" height="96" fill="var(${d.c})"/>
       <g class="opening-ink">${figEmblem(k,{ink:EMBLEM_INK})}</g></svg></div>`;
   }).join('');
-  return `<div class="opening-composition"><h2 class="opening-name">${WORDMARK}</h2>
+  return `<p class="opening-kicker">welcome to</p><div class="opening-composition"><h2 class="opening-name">${WORDMARK}</h2>
     <div class="opening-stamps" aria-hidden="true">${stamps}</div></div>`;
 }
 function stopOpeningMotion(){
@@ -8678,7 +8648,7 @@ function stopOpeningMotion(){
 }
 function startOpeningMotion(){
   const root=$('introopening');
-  if(openingPlayed||!root||menuView!=='home'||!menuShown()||document.hidden)return;
+  if(openingPlayed||!root||!['home','welcome'].includes(menuView)||!menuShown()||document.hidden)return;
   openingPlayed=true;
   let first=true;
   try{
@@ -8721,6 +8691,19 @@ function renderIntro(){
   const art=$('introart'),premium=menuView==='pay';
   if(!art.firstChild||art.classList.contains('premium-art')!==premium){
     art.classList.toggle('premium-art',premium);art.innerHTML=premium?premiumArt():introPlate();
+  }
+  if(menuView==='welcome'){
+    b.innerHTML=`<div class="welcome-copy"><h3>start with four short puzzles.</h3>
+      <p class="acct-ask">learn the moves, then take on today’s ten.</p></div>
+      <button class="intro-start" id="introstart">play the tutorial</button>
+      ${API?'<p class="premium-account">already play? <a class="acctlink" href="#" id="welcomesignin">sign in</a></p>':''}`;
+    $('introstart').onclick=()=>{
+      store.introSeen=true;store.lastIntroDay=today();save();
+      hideVeils();
+      if(!canAccessRun()) openDay(today());
+    };
+    if($('welcomesignin'))$('welcomesignin').onclick=e=>{e.preventDefault();openAccount('sign')};
+    return;
   }
   {
     const fresh=!store.tutorialDone;
@@ -8934,7 +8917,11 @@ if(!DEV){ delete window.__solveNet; delete window.__st }
 renderAll();
 publishPlateInset();
 addEventListener('load',publishPlateInset);
-if(!tutorialCompleting()) openMenu('home');
+if(!tutorialCompleting()){
+  if(!firstPlay||!canAccessRun()) openMenu('home');
+  else if(!store.introSeen) openMenu('welcome');
+  else if(R().over) showRunOver();
+}
 if(outlineRunUpdated){
   save();
   toast('updated boards · your previous scores and discoveries are saved');
