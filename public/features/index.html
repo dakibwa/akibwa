@@ -29,7 +29,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-6fLcR7TZyi/G7VIPEsOSMZ+Hc55I55VpH6ObOVy8FTw=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c6SjxNoRX1RaTOiB0tzogRty5DJkMHuSn/RSo1qOCDU=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Ta6PRenQTIBycgabFkUQiAv2XcN+kqtajbPIPuow+oY=' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- Keep the original tab mark: a geometric lowercase f standing on the
      four-colour flag, inside the light rounded tile. Its fixed ground preserves
      contrast in light and dark tab bars. Embed the SVG for offline copies. -->
@@ -226,14 +226,14 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   ::selection{background:var(--select)}
 
   :root{
-    --ease-out:cubic-bezier(.22,1,.36,1);     /* arrive, then settle gently */
-    --ease-in:cubic-bezier(.4,0,1,1);         /* leave without a late snap */
-    --ease-snap:cubic-bezier(.16,.86,.34,1);   /* land and stop dead */
-    --t-press:70ms;    /* a control going down under the finger */
-    --t-lift:210ms;    /* and coming back up */
-    --t-ui:180ms;      /* hover, colour, border */
-    --t-card:360ms;    /* an overlay arriving */
-    --t-exit:220ms;    /* an overlay leaving */
+    --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-in:cubic-bezier(.4,0,1,1);
+    --ease-snap:cubic-bezier(.16,.86,.34,1);
+    --t-press:70ms;
+    --t-lift:210ms;
+    --t-ui:180ms;
+    --t-card:360ms;
+    --t-exit:220ms;
     --t-fade:420ms;
   }
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -1052,10 +1052,11 @@ document.documentElement.setAttribute('data-theme',t);document.querySelector('me
   .intro-strip{height:7px;display:flex;grid-column:1/-1;flex:0 0 auto}
   .intro-strip i{flex:1}
   .intro-art{position:relative;min-height:100%;overflow:hidden;background:var(--paper);border-right:1px solid var(--rule)}
+  .intro-net{position:absolute;inset:0;width:100%;height:100%;opacity:.45}
   .opening{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px}
   .opening-composition{width:100%;max-width:320px}
   .opening-name{display:block;margin:0 0 28px;font-size:64px;font-weight:900;
-    line-height:.95;letter-spacing:-.065em;color:var(--ink)}
+    line-height:.95;letter-spacing:-.065em;color:var(--ink);background:var(--paper);width:max-content;padding:4px 8px 8px}
   .opening-stamps{display:grid;grid-template-columns:1fr 1fr;gap:22px}
   .opening-stamp:nth-child(2){grid-column:2;grid-row:1/3;align-self:center}
   .opening-stamp svg{display:block;width:100%;height:auto}
@@ -3588,7 +3589,7 @@ function paintTill(el){
   el.setAttribute('aria-label',owned?'the full version · yours':'the full version');
   if(owned){ el.setAttribute('aria-disabled','true'); el.tabIndex=-1 }
   else { el.removeAttribute('aria-disabled'); el.removeAttribute('tabindex') }
-  el.hidden=false;
+  el.hidden=owned&&el.id==='buybtn';
 }
 function entitlementChanged(){
   if(menuShown()) renderMenu();
@@ -6126,8 +6127,8 @@ function startPhysics(){
         return;
       }
       if(n.tw){
-        const k=Math.max(0,Math.min(1,(t-n.tw.t0)/n.tw.dur));   // t0 may be in the future: settles are staggered
-        const e = n.tw.out ? 1-Math.pow(1-k,4)                  // travel fast, stop dead
+        const k=Math.max(0,Math.min(1,(t-n.tw.t0)/n.tw.dur));
+        const e = n.tw.out ? 1-Math.pow(1-k,4)
                            : (k<.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2);
         n.xv=n.tw.ax+(n.tw.bx-n.tw.ax)*e;
         n.yv=n.tw.ay+(n.tw.by-n.tw.ay)*e;
@@ -6164,7 +6165,7 @@ function startPhysics(){
     members.forEach(placeNode);
     if(moving||physDirty){
       physDirty=false;
-      drawMarkers(countCross().marks);   // authoritative positions — see paintNow
+      drawMarkers(countCross().marks);
     }
   };
   physRAF=requestAnimationFrame(tick);
@@ -6246,9 +6247,9 @@ function repositionLabel(t){
   const lbl=[...gLabels.querySelectorAll('.tlabel2')].find(l=>l.dataset.thread===String(threads.indexOf(t)));
   if(lbl) placeLabel(lbl,labelAnchor(t));
 }
-const SIGN_GAP=10;        // clear board kept around every sign's own box
-const SIGN_LEAD=40;       // and the room its name needs off the leading edge
-const SIGN_MAX=300;       // past this an emblem stops gaining legibility
+const SIGN_GAP=10;
+const SIGN_LEAD=40;
+const SIGN_MAX=300;
 const LABEL_CAP=28;
 function signSlots(){
   const n=Math.max(1,threads.length);
@@ -6287,7 +6288,7 @@ function slotGap(s,p){
 function pinHolds(n){ return n.pinned && !n.threads.every(th=>th.freed) }
 function heldNodes(t){ return t.nodes.filter(n=>!n.threads.every(th=>th.freed)) }
 function slotCost(s,occ){
-  const rho=s.r*0.45;                      // beside it, not under it, at this far out
+  const rho=s.r*0.45;
   let c=0;
   for(let k=0;k<occ.length;k++){
     const d=slotGap(s,occ[k]);
@@ -6327,7 +6328,7 @@ function bestTurn(nodes, pts, at){
     let v=0;
     for(let i=0;i<n;i++){
       const p=at(pts[ord[i]]), m=nodes[i];
-      if(!m) continue;                                // a held neuron does not travel
+      if(!m) continue;
       v+=(m.x0-p[0])**2+(m.y0-p[1])**2;
     }
     if(v<bv){ bv=v; best=ord }
@@ -6356,7 +6357,7 @@ function settleIntoShape(t,instant=false){
   if(t.signWhole && !figureBank(t.catalogueRevision)[t.key]) pts=bestTurn(t.nodes.map(n=>movable.includes(n)?n:null), pts, at);
   const rev=!!(!outline&&!drawn && t.figRev && figureBank(t.catalogueRevision)[t.key]);
   const now=performance.now();
-  let k=0;                                            // stagger counter over the MOVABLE nodes
+  let k=0;
   t.nodes.forEach((n,i)=>{
     if(!movable.includes(n)) return;
     const j=Math.min(i,pts.length-1);
@@ -6645,7 +6646,7 @@ $('netsvg').addEventListener('pointerleave',()=>$('field').classList.remove('ove
 $('netsvg').addEventListener('pointermove',e=>{
   if(!dragN || e.pointerId!==dragId)return;   // only the finger that grabbed it moves it
   const p=svgPt(e);
-  dragN.tw=null;                      // your hand always wins over a glide
+  dragN.tw=null;
   slideImpact(dragN,p.x+dragOff.x,p.y+dragOff.y,e.timeStamp);
   moveDragTo(p.x+dragOff.x,p.y+dragOff.y);
   if(!reduceMotion){
@@ -7707,8 +7708,8 @@ function clearNet(){
   if(reduceMotion) setTimeout(card,260);
   else holdCleared(card);
 }
-const NET_QUIET=980;   // the last sign has landed and the board stops arriving
-const NET_BEAT=620;    // 420 for the name card to clear, then 200 of dead still
+const NET_QUIET=980;
+const NET_BEAT=620;
 let holdT=null, holdSkip=null;
 function cancelHold(){
   if(!holdSkip) return;
@@ -7718,7 +7719,7 @@ function cancelHold(){
 }
 function holdCleared(show){
   const land=()=>{ if(!holdSkip) return; cancelHold(); show() };
-  holdSkip=land;                      // so a net advanced mid-beat cancels through this
+  holdSkip=land;
   holdT=setTimeout(()=>{
     sayNudge();
     const skip=e=>{ if(e&&e.type==='pointerdown') swallowNextDown=true; land() };
@@ -7736,8 +7737,8 @@ function boardCleared(){
     const r=svgAdd('rect',{x,y:0,width:w,height:BH},g);
     r.setAttribute('fill',col); r.setAttribute('opacity',op);
   };
-  bar(-104,104,'.07',cssv('--ink'));     // the wash it drags behind it
-  bar(0,3,'.55',cssv('--sig-orange'));   // and the edge itself
+  bar(-104,104,'.07',cssv('--ink'));
+  bar(0,3,'.55',cssv('--sig-orange'));
   setTimeout(()=>f.classList.add('cleared'),170);
   setTimeout(()=>g.remove(),620);
 }
@@ -7748,7 +7749,7 @@ function nextNet(){
   hideVeils();
   cancelHold();
   const f=$('field');
-  if(swapSkip) swapSkip();            // a second press mid-swap simply lands it
+  if(swapSkip) swapSkip();
   const land=()=>{
     if(!swapSkip) return;
     removeEventListener('pointerdown',swapSkip,true);
@@ -8258,7 +8259,7 @@ function openRecord(){ openMenu('coll') }
 function renderThreads(){
   const c=$('threadrow');
   const sig=R().netIndex+':'+threads.map(t=>t.key).join(',');
-  if(c.dataset.done) return;          // a cleared net holds this bay until the next one — see holdGauge
+  if(c.dataset.done) return;
   if(c.dataset.sig!==sig || threads.some(t=>!t.slot||!t.slot.isConnected)){
     c.dataset.sig=sig;
     c.innerHTML='';
@@ -8642,13 +8643,26 @@ const RMARK={
 const rmark=(k,cols=[])=>markSVG(RMARK[k](...cols),'0 0 68 44','rmark');
 
 function introPlate(){
+  const paths=[[60,60,135,97.5,60,60],[135,135,60,97.5,210,210],
+    [210,210,210,172.5,135,135]];
+  const parts=paths.map((xs,i)=>threadPart(xs.map((x,j)=>[x,j*75-30]),THREADPAL[i],[3.4,5.6,4.5][i]));
+  for(let j=1;j<5;j++){
+    const row=new Map();
+    paths.forEach((xs,i)=>row.set(xs[j],[...(row.get(xs[j])||[]),THREADPAL[i]]));
+    row.forEach((cols,x)=>parts.push(...neuronParts(x,j*75-30,cols,{pinned:j===2&&x===210})));
+  }
+  [[97.5,82.5],[153.75,232.5]].forEach(p=>parts.push(...crossParts([p])));
   const stamps=['house','fish','cup'].map(k=>{
     const d=FIGURES[k]||FIGURES_V20[k];
     return `<div class="opening-stamp"><svg viewBox="0 0 96 96">
       <rect width="96" height="96" fill="var(${d.c})"/>
       <g class="opening-ink">${figEmblem(k,{ink:EMBLEM_INK})}</g></svg></div>`;
   }).join('');
-  return `<div class="opening" aria-hidden="true"><div class="opening-composition">
+  return `<svg class="intro-net" viewBox="0 0 270 315" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><pattern id="introgrid" width="28" height="28" patternUnits="userSpaceOnUse">
+    <path d="M28 0H0V28" fill="none" stroke="var(--rule)"/></pattern></defs>
+    <rect width="270" height="315" fill="url(#introgrid)"/>${parts.map(partHTML).join('')}</svg>
+    <div class="opening" aria-hidden="true"><div class="opening-composition">
     <b class="opening-name">${WORDMARK}</b><div class="opening-stamps">${stamps}</div>
   </div></div>`;
 }
@@ -8663,7 +8677,7 @@ function startOpeningMotion(){
   try{
     first=!localStorage.getItem(OPENING_SEEN_KEY);
     localStorage.setItem(OPENING_SEEN_KEY,'1');
-  }catch{} // Blocked storage still gets a playable, finished composition.
+  }catch{}
   if(reduceMotion||!root.animate)return;
   const animate=(el,frames,options)=>el.animate(frames,
     {fill:'backwards',easing:'ease-out',...options});
