@@ -159,6 +159,8 @@ function ProjectShowcase() {
   );
 }
 
+const [beforeAge, afterAge] = "Building in the age of AI".split("age");
+
 export function EditorialHomeConcept({ initialCatalogue, refreshedAt, podcasts }) {
   return (
     <div className="concept-page">
@@ -167,19 +169,22 @@ export function EditorialHomeConcept({ initialCatalogue, refreshedAt, podcasts }
           <HeroBrandName />
         </h1>
         <div className="concept-hero-copy">
-          <div className="concept-brand-line">
-            <SiteImage
-              src="/brand-logos/akibwa-a.png"
-              slot="identityMark"
-              sizes="(max-width: 1052px) 40px, (max-width: 1474px) 3.8vw, 56px"
-              alt="Akibwa"
-              className="concept-brand-mark"
-              above
-            />
-            <p className="concept-lede">
-              Building in the age of AI
-            </p>
-          </div>
+          <p className="concept-lede">
+            {beforeAge}
+            <span className="concept-age-word">
+              <span className="visually-hidden">age</span>
+              <SiteImage
+                src="/brand-logos/akibwa-age.png"
+                slot="identityWord"
+                sizes="(max-width: 907px) 60px, (max-width: 1707px) 6.6vw, 113px"
+                alt=""
+                aria-hidden="true"
+                className="concept-age-art"
+                above
+              />
+            </span>
+            {afterAge}
+          </p>
           <PageFooter embedded />
         </div>
       </header>

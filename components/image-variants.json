@@ -20061,5 +20061,51 @@
         }
       }
     ]
+  },
+  "identityWord:/brand-logos/akibwa-age.png": {
+    "source": "/brand-logos/akibwa-age.png",
+    "slot": "identityWord",
+    "ratio": 2.5006,
+    "sourceWidth": 1983,
+    "sourceHeight": 793,
+    "sourceHash": "3cd34e13a8fbec91",
+    "variants": [
+      {
+        "width": 90,
+        "height": 36,
+        "avif": {
+          "src": "/_img/brand-logos/akibwa-age-identityWord-90.avif",
+          "bytes": 935
+        },
+        "webp": {
+          "src": "/_img/brand-logos/akibwa-age-identityWord-90.webp",
+          "bytes": 1158
+        }
+      },
+      {
+        "width": 128,
+        "height": 51,
+        "avif": {
+          "src": "/_img/brand-logos/akibwa-age-identityWord-128.avif",
+          "bytes": 1152
+        },
+        "webp": {
+          "src": "/_img/brand-logos/akibwa-age-identityWord-128.webp",
+          "bytes": 1644
+        }
+      },
+      {
+        "width": 170,
+        "height": 68,
+        "avif": {
+          "src": "/_img/brand-logos/akibwa-age-identityWord-170.avif",
+          "bytes": 1236
+        },
+        "webp": {
+          "src": "/_img/brand-logos/akibwa-age-identityWord-170.webp",
+          "bytes": 2174
+        }
+      }
+    ]
   }
 }

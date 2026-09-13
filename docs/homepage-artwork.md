@@ -3,10 +3,12 @@
 ## Akibwa identity
 
 The orange lowercase `a` with an apricot terminal is the shared Akibwa social
-and website mark. On the homepage it sits alongside “Building in the age of AI”,
-with the existing introduction, light background and project layout retained.
-`public/brand-logos/akibwa-a.png` is the transparent master; `identityMark` serves
-40–56px displays through the existing image pipeline. `public/favicon.svg`
+and website mark. On the homepage it begins the custom orange word “age” inside
+“Building in the age of AI”, with the existing introduction, light background
+and project layout retained. The word is an inline image with accessible text;
+its size follows the sentence and its descender aligns with the text baseline.
+`public/brand-logos/akibwa-a.png` is the transparent single-letter master.
+`public/favicon.svg`
 embeds a small copy of that mark on charcoal. The square profile export is
 `public/brand-logos/akibwa-avatar.png`; creating it does not update a social account.
 
@@ -19,6 +21,23 @@ the selected `02 Ember` colourway. The two generation prompts were:
 
 The image tool returned 1254×1254 masters. Keep those originals; resize only
 the derived web assets.
+
+### Inline age wordmark
+
+`public/brand-logos/akibwa-age.png` is the 1983×793 wordmark master, generated
+with the built-in image tool on 13 September 2026 using the existing `a` as the
+reference. The `identityWord` slot serves 60–113px displays. Its white background
+uses CSS multiply blending against the warm homepage paper. Keep this treatment
+on a light surface. The favicon and social avatars retain the single `a`.
+
+Generation prompt:
+
+> Use case: logo-brand. Create one production-ready transparent PNG wordmark for the lowercase word "age", for inline use inside a website sentence. Input image 1 is the existing Akibwa lowercase a logo and is the identity to preserve: use this exact recognizable a silhouette as the first letter, including its rounded thick double-storey form, warm orange body, and the small apricot teardrop terminal at the bottom right. Extend it with carefully custom-drawn lowercase g and e in the SAME substantial soft rounded typographic style, same orange body color, matching stroke weight and x-height. The g should have a clear simple rounded bowl and compact curved descender; e a clear open counter. Optical kerning like a coherent word, not separate icons. Exact text, once only: age. Entire word must be clear at small website text size. Flat clean brand artwork, crisp edges, no shadows, no extra accents on g or e, no mockup, no surrounding sentence or extra logo. Preserve the existing a; do not replace it with a generic typeface a. Transparent alpha background, including letter counters; no charcoal tile, white matte, checkerboard or border. Wide horizontal canvas around the word with only a narrow even transparent safety margin; output aspect approximately 2.5:1. Orange #EF702F, apricot #FFC083.
+
+Final background edit prompt (the generated transparency was a painted pattern,
+so the website uses the verified white plate):
+
+> Edit target: supplied age wordmark. Replace ALL grey checkerboard with perfectly plain pure white #FFFFFF, including every counter and space inside the letters. No checkerboard anywhere. Keep the complete word age with the EXACT same letter shapes, kerning, baseline, orange lettering and apricot a terminal; no redraw of letters, no gradients in the background, no shadows or texture. It must be a clean flat logo image on solid uniform white suitable for print. Tight wide crop with only a small white margin, with entire g descender visible. This time the requested background is opaque solid white, not transparent. Do not depict transparency.
 
 ## Taste artwork
 

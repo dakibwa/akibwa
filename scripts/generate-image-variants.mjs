@@ -52,8 +52,9 @@ const PRESSED_SLOTS = new Set(["deckTile", "grandTile"]);
  * DPR cap, deduplicated.
  */
 const SLOTS = {
-  // The Akibwa mark sits beside the homepage's AI introduction.
+  // Original identity mark and the inline "age" word in the AI introduction.
   identityMark: { ratio: 1, css: [40, 56] },
+  identityWord: { ratio: 1983 / 793, css: [60, 85, 113] },
 
   // .area-art — aspect-ratio: 1.74/1. Four-up inside a 1310px frame (286 CSS px
   // each, down to 211 where the frame is still fluid); two-up under 1060px
@@ -170,6 +171,7 @@ function ladderFor(slot, nativeWidth) {
  */
 const sources = [
   { file: "brand-logos/akibwa-a.png", slot: "identityMark" },
+  { file: "brand-logos/akibwa-age.png", slot: "identityWord" },
 
   // Home area tiles — positions from areaTiles in site-data.js.
   { file: "area-art/about-reflection.webp", slot: "areaTile", position: [50, 10] },
