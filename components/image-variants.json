@@ -20027,5 +20027,39 @@
         }
       }
     ]
+  },
+  "identityMark:/brand-logos/akibwa-a.png": {
+    "source": "/brand-logos/akibwa-a.png",
+    "slot": "identityMark",
+    "ratio": 1,
+    "sourceWidth": 1254,
+    "sourceHeight": 1254,
+    "sourceHash": "49e1a398ce030b5b",
+    "variants": [
+      {
+        "width": 60,
+        "height": 60,
+        "avif": {
+          "src": "/_img/brand-logos/akibwa-a-identityMark-60.avif",
+          "bytes": 1827
+        },
+        "webp": {
+          "src": "/_img/brand-logos/akibwa-a-identityMark-60.webp",
+          "bytes": 2246
+        }
+      },
+      {
+        "width": 84,
+        "height": 84,
+        "avif": {
+          "src": "/_img/brand-logos/akibwa-a-identityMark-84.avif",
+          "bytes": 2335
+        },
+        "webp": {
+          "src": "/_img/brand-logos/akibwa-a-identityMark-84.webp",
+          "bytes": 3076
+        }
+      }
+    ]
   }
 }

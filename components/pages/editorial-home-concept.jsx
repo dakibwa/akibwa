@@ -167,9 +167,19 @@ export function EditorialHomeConcept({ initialCatalogue, refreshedAt, podcasts }
           <HeroBrandName />
         </h1>
         <div className="concept-hero-copy">
-          <p className="concept-lede">
-            Building in the age of AI
-          </p>
+          <div className="concept-brand-line">
+            <SiteImage
+              src="/brand-logos/akibwa-a.png"
+              slot="identityMark"
+              sizes="(max-width: 1052px) 40px, (max-width: 1474px) 3.8vw, 56px"
+              alt="Akibwa"
+              className="concept-brand-mark"
+              above
+            />
+            <p className="concept-lede">
+              Building in the age of AI
+            </p>
+          </div>
           <PageFooter embedded />
         </div>
       </header>
