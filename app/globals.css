@@ -6773,9 +6773,28 @@ button {
 }
 
 .concept-hero-copy {
+  --identity-mark-size: clamp(40px, 3.8vw, 56px);
+  --identity-mark-gap: 12px;
   width: fit-content;
   max-width: 100%;
   min-width: 0;
+}
+
+.concept-brand-line {
+  display: flex;
+  align-items: center;
+  gap: var(--identity-mark-gap);
+}
+
+.concept-brand-line picture {
+  flex: 0 0 var(--identity-mark-size);
+}
+
+.concept-brand-mark {
+  display: block;
+  width: var(--identity-mark-size);
+  height: var(--identity-mark-size);
+  object-fit: contain;
 }
 
 .concept-lede {
@@ -6786,13 +6805,15 @@ button {
   font-size: clamp(1.7rem, 3vw, 3.2rem);
   line-height: 1.04;
   letter-spacing: -0.035em;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .concept-hero-footer {
   width: 100%;
   margin-top: clamp(16px, 1.8vw, 24px);
   font-size: clamp(0.72rem, 0.9vw, 0.82rem);
+  padding-left: calc(var(--identity-mark-size) + var(--identity-mark-gap));
 }
 
 .concept-hero-footer .page-footer-panel {
@@ -7376,9 +7397,12 @@ button {
     width: 100%;
   }
 
+  .concept-brand-line {
+    margin-top: clamp(22px, 3vw, 32px);
+  }
+
   .concept-lede {
     max-width: 27ch;
-    margin-top: clamp(22px, 3vw, 32px);
   }
 
   .concept-capabilities-head {
@@ -7421,7 +7445,7 @@ button {
     max-width: none;
     font-size: clamp(1.4rem, min(7.7vw, calc(61.66px - 6.154vw)), 2.2rem);
     line-height: 1.08;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .concept-projects {

@@ -1,5 +1,27 @@
 # Homepage artwork
 
+## Akibwa identity
+
+The orange lowercase `a` with an apricot terminal is the shared Akibwa social
+and website mark. On the homepage it sits alongside “Building in the age of AI”,
+with the existing introduction, light background and project layout retained.
+`public/brand-logos/akibwa-a.png` is the transparent master; `identityMark` serves
+40–56px displays through the existing image pipeline. `public/favicon.svg`
+embeds a small copy of that mark on charcoal. The square profile export is
+`public/brand-logos/akibwa-avatar.png`; creating it does not update a social account.
+
+Both exports were made with the built-in image tool on 13 September 2026 from
+the selected `02 Ember` colourway. The two generation prompts were:
+
+> Use case: logo-brand final export. The attached board contains the user's EXISTING selected Akibwa logo. Export ONLY the TOP MIDDLE '02 Ember' mark as ONE finished social profile picture, a perfectly square 1024x1024 PNG. Preserve the EXACT orange lowercase a silhouette, its irregular rounded bowl, curved top, small counter opening and integral apricot teardrop terminal at bottom-right. This is an exact clean artwork export, not a redesign. The a must be the exact same custom shape as the top-middle reference, never a substituted font glyph. Remove all board margins, all other variants, title, labels and text. Background: one solid fully opaque warm near-black charcoal #181615 edge to edge. Main a: one solid flat burnt orange #EF702F. Integral terminal: one solid flat apricot #FFC083. Center the complete mark horizontally and vertically, spanning 66% of canvas width and about 64% height, with generous charcoal margin so the complete silhouette remains within a circular avatar crop. Crisp smooth high-resolution vector-like edges, completely flat uniform solid colours; remove all texture, gradients and lighting. No extra elements, borders, rounded-square frame, drop shadow, text, letters beside the logo, or presentation mockup. Deliver only the finished square profile picture.
+
+> Use case: background-extraction. Export the EXACT existing orange/apricot lowercase a in the reference on a genuinely transparent alpha background for a website masthead. Change only the charcoal background to transparency, including all charcoal inside the counter and open negative space. Keep the entire logo's exact outer silhouette, proportions, terminal shape, orange body and apricot terminal. Do not replace the letter with a font. Remove the canvas margins by framing closely around the complete mark with approximately 4 percent transparent padding on each edge, square canvas. The complete logo, including the teardrop, must remain fully visible. This is a production PNG cutout, not a checkerboard illustration or a white-background image. Smooth antialiased edges, no halo, no shadow, no glow, no added text or elements.
+
+The image tool returned 1254×1254 masters. Keep those originals; resize only
+the derived web assets.
+
+## Taste artwork
+
 The September 2026 homepage shows original film and television posters, game
 cover art and publisher podcast sleeves. Keep the full lettering visible in
 portrait poster frames; preserve square album and podcast sleeves. Retain their

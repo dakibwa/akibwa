@@ -35,8 +35,8 @@ export const metadata = {
     images: ["/og.jpg"]
   },
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    shortcut: [{ url: "/favicon.svg", type: "image/svg+xml" }]
+    icon: [{ url: "/favicon.svg?v=ember-a", type: "image/svg+xml" }],
+    shortcut: [{ url: "/favicon.svg?v=ember-a", type: "image/svg+xml" }]
   }
 };
 
