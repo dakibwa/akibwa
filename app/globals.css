@@ -6791,8 +6791,6 @@ button {
 }
 
 .concept-hero-footer {
-  --identity-orange: #fb6824;
-  --identity-apricot: #fccc8c;
   width: 100%;
   margin-top: clamp(16px, 1.8vw, 24px);
   font-size: clamp(0.72rem, 0.9vw, 0.82rem);
@@ -6805,30 +6803,41 @@ button {
 
 .concept-hero-footer .page-footer-details {
   gap: 6px;
-  margin-left: -6px;
+  margin-left: -12px;
+  color: var(--muted);
 }
 
-.contact-identity-mark {
-  display: grid;
-  place-items: center;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
+.concept-ai-word {
+  display: inline-block;
+  vertical-align: -0.11em;
+  letter-spacing: normal;
+  line-height: 0;
 }
 
-.contact-identity-mark picture,
-.contact-identity-mark img {
+.concept-ai-art {
+  display: inline-flex;
+  align-items: flex-end;
+  height: 0.85em;
+  color: #fb6824;
+}
+
+.concept-ai-art picture,
+.concept-ai-art img {
   display: block;
-  width: 36px;
-  height: 36px;
+  width: 0.85em;
+  height: 0.85em;
 }
 
-.concept-hero-footer .social-icon {
-  color: var(--identity-orange);
+.concept-ai-art picture {
+  margin-left: -0.045em;
 }
 
-.identity-social-terminal {
-  fill: var(--identity-apricot);
+.concept-ai-i {
+  display: block;
+  width: 0.18em;
+  height: 0.79em;
+  margin-left: -0.045em;
+  margin-bottom: 0.065em;
 }
 
 .concept-text-link,
