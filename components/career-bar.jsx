@@ -7,6 +7,13 @@ import { RailControls } from "./rail-controls";
 import curation from "@/data/taste-curation.json";
 
 const { career } = curation;
+// SVG originals do not get the image manifest's automatic content version.
+const logoRevisions = {
+  "/favicon.svg": "ember",
+  "/brand-logos/electrical.svg": "bolt",
+  "/brand-logos/joinery.svg": "hammer",
+  "/brand-logos/leeds-building-society-icon.svg": "contrast",
+};
 
 function CareerStatement({ statement, emphasis = [] }) {
   const escaped = emphasis.map((text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
@@ -68,7 +75,7 @@ export function CareerBar() {
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
                 <span className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`}>
-                  <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
+                  <SiteImage src={job.logo} revision={logoRevisions[job.logo]} slot="logo" sizes="32px" alt="" />
                 </span>
               </span>
               <span className="concept-career-year" aria-hidden="true">{job.span.replace(/ — /g, "–")}</span>
