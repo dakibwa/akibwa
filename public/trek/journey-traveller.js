@@ -8,13 +8,14 @@
   host.startTrek=function(data){
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
     const menu=$('journey-menu'),gallery=$('photo-gallery'),flash=$('memory-flash'),progress=$('journey-progress');
-    let path=null,route=null,map=null,paper=null,train=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
+    let path=null,route=null,map=null,paper=null,train=null,pacing=null,wayfinding=null,elevation=null,metrics=null,terrainHeight=null,tileCache=null,prepared=null,vectorTemplate=null,ready=false,terrainReady=false,failed=false,playing=false,started=false,following=true,warmGeneration=0;
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=+$('pace').value,galleryIndex=0,galleryPhotos=[];
     let headingVelocity=0,lookHeading=null,lookVelocity=0,cameraLandmark=null,travelSpeed=0,cameraClearance=null,cameraPoint=null,viewPitch=null;
     let heightVelocity=0,cameraLift=0,cameraTerrainClearance=null,routeVisible=null;
     let lastContrast=-Infinity,markLuminance=null,markOnDark=false;
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,chapters=[],moments=[];
+    let startupMs=null;
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,lastLandmarkScan=-Infinity;
     let scrubbing=false,scrubChanged=false,viewScale=TrekCamera.scaleForPace(pace),steadyView=null,paceTransition=null,requiredClearance=null;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
@@ -144,7 +145,7 @@
       setPlaying(false);dismissFlash();menu.close();started=false;$('journey-minimap').hidden=true;clearPlaces();wayfinding?.resetPlace();distance=0;renderedDistance=0;heading=null;eyeHeight=null;
       day=1;fraction=0;lastUI=-1;lastFlashDay=-1;photoCooldown=0;following=true;
       $('opening').hidden=false;$('ending').hidden=true;$('journey-controls').hidden=true;document.body.classList.remove('is-exploring');
-      history.replaceState(null,'',location.pathname);updateUI(true);prepareCamera();invalidate();
+      history.replaceState(null,'',location.pathname+(prepared?'?prepared=1':''));updateUI(true);prepareCamera();invalidate();
     }
     function visit(n,t=.5){
       viewScale=TrekCamera.scaleForPace(pace);
@@ -152,7 +153,7 @@
       if(path)distance=path.dayDistance(n,t);else positionPending={day:n,t};
       renderedDistance=distance;heading=null;eyeHeight=null;lastFlashDay=-1;photoCooldown=0;
       $('opening').hidden=true;$('ending').hidden=true;$('journey-controls').hidden=false;document.body.classList.remove('is-exploring');
-      history.replaceState(null,'',location.pathname+'?day='+n);updateUI(true);prepareCamera();invalidate();
+      history.replaceState(null,'',location.pathname+'?day='+n+(t!==.5?'&at='+t:'')+(prepared||new URLSearchParams(location.search).get('prepared')==='1'?'&prepared=1':''));updateUI(true);prepareCamera();invalidate();
     }
     function updateUI(force=false){
       const now=performance.now();if(!force&&now-uiTime<90)return;uiTime=now;
@@ -262,7 +263,7 @@
         }
         if(!Number.isFinite(map.queryTerrainElevation(eye)))throw Error('Terrain is not ready');
         if(generation!==warmGeneration||failed)return;
-        ready=true;pacing?.update(distance,true);$('begin').disabled=false;$('play').disabled=false;$('loading-progress').value=100;
+        ready=true;if(startupMs===null)startupMs=Math.round(performance.now());pacing?.update(distance,true);$('begin').disabled=false;$('play').disabled=false;$('loading-progress').value=100;
         $('map-status').hidden=true;document.body.classList.remove('is-loading');
         lastTime=0;updateUI(true);invalidate();
         if(started)showFlash();
@@ -344,7 +345,11 @@
       try{
         const json=file=>loadJSON(file,data.assets[file]);
         const [r,m,style,profile,links]=await Promise.all([json('route-detail.json'),json('moments.json'),json('journey-style.json'),json('elevation-profile.json'),json('route-links.json'),loadLibrary(data.assets['vendor/maplibre-gl.js'])]);
-        tileCache=TrekCache.create();tileCache.install(maplibregl);
+        if(new URLSearchParams(location.search).get('prepared')==='1'){
+          try{prepared=await TrekPrepared.create({manifestURL:'prepared/manifest.json?v='+data.assets['prepared/manifest.json']});await prepared.load();void prepared.preload();}
+          catch{prepared=null;}
+        }
+        tileCache=TrekCache.create({resolveTile:prepared?.resolveTile});tileCache.install(maplibregl);
         const tiles=await loadJSON(style.sources.openmaptiles.url);
         vectorTemplate=tiles.tiles[0];style.sources.openmaptiles={...style.sources.openmaptiles,...tiles};delete style.sources.openmaptiles.url;
         route=r;path=TrekRoute.buildJourneyPath(route,67,links);chapters=m.chapters;moments=m.moments;
@@ -368,8 +373,8 @@
         readyTimeout=setTimeout(()=>{if(!ready){text('load-message','The landscape could not finish loading. Please try again.');$('retry-load').hidden=false;}},18000);
         map.on('load',()=>{
           if(failed)return;clearTimeout(readyTimeout);
-          map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14,attribution:'Terrain © <a href="https://www.mapzen.com/rights/">Mapzen</a>'});
-          map.addSource('shade-dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:14});
+          map.addSource('dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:prepared?12:14,attribution:'Terrain © <a href="https://www.mapzen.com/rights/">Mapzen</a>'});
+          map.addSource('shade-dem',{type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],encoding:'terrarium',tileSize:256,maxzoom:prepared?12:14});
           map.addLayer({id:'terrain-shade',type:'hillshade',source:'shade-dem',paint:{'hillshade-exaggeration':.65,'hillshade-illumination-direction':315,'hillshade-illumination-anchor':'map','hillshade-shadow-color':'#536b43','hillshade-highlight-color':'#fff2d2','hillshade-accent-color':'#849365'}},'waterway_tunnel');
           map.setTerrain({source:'dem',exaggeration:1});map.setCenterClampedToGround(false);
           map.setSky({'sky-color':'#e9e6d3','horizon-color':'#eee9d6','fog-color':'#e1dfc5','sky-horizon-blend':.7,'horizon-fog-blend':.6,'fog-ground-blend':.45});
@@ -381,7 +386,7 @@
             const paint={'line-color':color,'line-width':width,'line-opacity':opacity};if(dash)paint['line-dasharray']=dash;
             map.addLayer({id,type:'line',source,...(mode?{filter:['==',['get','mode'],mode]}:{}),layout:{'line-cap':'round','line-join':'round'},paint});
           }
-          try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks);}
+          try{paper=TrekPaper.create(map,{type:'FeatureCollection',features:[...path.recorded.features,...path.connections.features]},data.landmarks,prepared);}
           catch(error){paper={status:()=>({failed:true,trees:0,roofs:0})};}
           train=TrekTrain.create(map,path,terrainHeight);
           pacing=TrekPace.create({map,path,heightAt:terrainHeight,landmarks:data.landmarks});
@@ -439,9 +444,9 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{placeLayout();drawPlaces();if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),placeRoll:{offset:placeRoll.state().offset,velocity:placeRoll.state().velocity,names:placeRoll.state().entries.map(e=>e.name)},landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,startupMs,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),prepared:prepared?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),placeRoll:{offset:placeRoll.state().offset,velocity:placeRoll.state().velocity,names:placeRoll.state().entries.map(e=>e.name)},landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
-    if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
+    if(n>=1&&n<=67)visit(n,q.has('at')?clamp(+q.get('at')||0,0,1):.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();
   };
 })(window);

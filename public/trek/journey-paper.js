@@ -263,9 +263,181 @@
     })).map(feature => feature.id);
   }
 
-  function create(map, route, landmarks = []) {
+  // Shared by the browser fallback and the offline scene build. No DOM or GPU work.
+  function* compileScene({center, radius, features, heightAt, nearRoute, landmarks = [], landmarkAPI = host.TrekLandmarks, treeModels = new Map(), births = new Map(), started = 0, solidBuildings = false, triangulate = null}) {
+      let buildings = [], nearbyLandmarks = [], candidates = [], roofCandidates = [], coverCounts = {}, coverWithIds = 0;
+      function* prepareSteps() {
+        const landcover = features('landcover'); yield;
+        const woodland = landcover.filter(feature => feature.properties?.class === 'wood' && !orchard(feature.properties));
+        coverCounts = {}; coverWithIds = 0;
+        for (const feature of landcover) {
+          const key = feature.properties?.class + '/' + (feature.properties?.subclass || '');
+          coverCounts[key] = (coverCounts[key] || 0) + 1; if (feature.id !== undefined) coverWithIds++;
+        }
+        buildings = features('building'); yield;
+        const roads = features('transportation'); yield;
+        const nearRoad = yield* routeIndexSteps(collection(roads));
+        const waterways = features('waterway').filter(f => f.properties?.brunnel !== 'tunnel'); yield;
+        const nearWater = yield* routeIndexSteps(collection(waterways));
+        nearbyLandmarks = landmarks.filter(item => Math.hypot(...project(item.point).map((v, i) => v - center[i])) < radius - 250);
+        const landmarkGround = nearbyLandmarks.map(item => landmarkAPI.displayFootprint(item).map(project));
+        const withinLandmark = p => landmarkGround.some(ring => inPolygon(p, [ring]));
+        const excluded = p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p);
+        const orchardCandidates = yield* orchardSteps(landcover, center, excluded);
+        const woodlandCandidates = yield* woodlandSteps(woodland, center, excluded, radius, 6500 - orchardCandidates.length);
+        candidates = [...woodlandCandidates, ...orchardCandidates].sort((a, b) => a.d - b.d);
+        const houses = new Map(); let checked = 0;
+        for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
+          if (++checked % 32 === 0) yield;
+          const ring = cleanBuildingRing(polygon[0].map(project));
+          if (ring.length < 3 || ring.length > 80) continue;
+          const p = [ring.reduce((a, v) => a + v[0], 0) / ring.length, ring.reduce((a, v) => a + v[1], 0) / ring.length], d = Math.hypot(p[0] - center[0], p[1] - center[1]);
+          if (d > radius || withinLandmark(p) || ring.some(a => Math.hypot(a[0] - p[0], a[1] - p[1]) > 180)) continue;
+          const key = p.map(n => Math.round(n)).join(':');
+          if (!houses.has(key)) houses.set(key, {ring, rings: polygon.map(r => cleanBuildingRing(r.map(project))), p, d, courtyard: polygon.length > 1, height: Math.max(9, 1.2 * (+feature.properties.render_height || 6))});
+        }
+        roofCandidates = [...houses.values()].sort((a, b) => a.d - b.d).slice(0, 1800);
+      }
+      // Feature preparation, terrain work and geometry all share short chunks.
+      // Native source queries run once per refresh, never during camera frames.
+      yield* prepareSteps();
+      const vertices = [], shadows = [], instances = new Map(), nextOrigin = center;
+      let madeTrees = 0, madeTreeVertices = 0, madeRoofs = 0, madeOrchards = 0, vertexLimit = (MAX_VERTICES - 30000) * 7, activeBirth = started; const madeLandmarks = [], nextBirths = new Map();
+      function reveal(key) {
+        activeBirth = births.get(key) ?? started; nextBirths.set(key, activeBirth);
+      }
+      const vertex = (p, height) => {
+        const cos = Math.cos(unproject(p)[1] * Math.PI / 180);
+        return [p[0] - nextOrigin[0], p[1] - nextOrigin[1], height / cos];
+      };
+      function triangle(a, b, c, color, fixedLight) {
+        if (vertices.length + madeTreeVertices * 7 + 21 > vertexLimit) return;
+        const light = fixedLight || faceLight(a, b, c);
+        for (const p of [a, b, c]) vertices.push(...p, ...color.map(x => Math.min(1, x * light)), activeBirth);
+      }
+      function tree({p, seed, sizeScale = 1}) {
+        const ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        reveal('tree:' + p.join(':'));
+        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), variant = Math.floor(seed * 96), detailed = random(Math.floor(p[0]), Math.floor(p[1]), 119) > .5, key = variant * 2 + Number(detailed);
+        if (!treeModels.has(key)) {
+          const model = treeMesh((variant + .5) / 96, detailed), color = greens[Math.floor((variant + .5) / 96 * greens.length)], bark = rgb('#827557'), data = [];
+          for (const face of model.faces) {
+            const light = faceLight(face.a, face.b, face.c) * face.tone, tint = (face.bark ? bark : color).map(c => Math.min(1, c * light));
+            for (const v of [face.a, face.b, face.c]) data.push(...v, ...tint);
+          }
+          treeModels.set(key, {width: model.width, height: model.height, data: new Float32Array(data)});
+        }
+        const mesh = treeModels.get(key), size = mesh.width * sizeScale, h = mesh.height * sizeScale, data = mesh.data, x = p[0] - nextOrigin[0], y = p[1] - nextOrigin[1];
+        if (vertices.length + (madeTreeVertices + data.length / 6) * 7 > vertexLimit) return;
+        if (!instances.has(key)) instances.set(key, []);
+        instances.get(key).push(x, y, ground * scale, scale * sizeScale, activeBirth);
+        madeTreeVertices += data.length / 6;
+        const shadow = [[p[0] - size * scale, p[1]], [p[0], p[1] - size * .5 * scale], [p[0] + h * .8 * scale, p[1] + h * .9 * scale], [p[0], p[1] + size * .6 * scale]];
+        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [[...shadow.map(unproject), unproject(shadow[0])]]}});
+        madeTrees++; if (sizeScale < 1) madeOrchards++;
+      }
+      function roof({ring, rings, p, height, d: distance, courtyard}) {
+        const ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        reveal('roof:' + p.map(n => Math.round(n)).join(':'));
+        const sides = ring.map((a, i) => Math.hypot(a[0] - ring[(i + 1) % ring.length][0], a[1] - ring[(i + 1) % ring.length][1]));
+        const local = ring.map(v => [v[0] - p[0], v[1] - p[1]]);
+        const area = local.reduce((n, v, i) => n + v[0] * local[(i + 1) % local.length][1] - v[1] * local[(i + 1) % local.length][0], 0) / 2;
+        if (Math.abs(area) < 16) return;
+        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), top = ground + height + .12;
+        const color = roofs[Math.floor(random(Math.floor(p[0]), Math.floor(p[1])) * roofs.length)];
+        if (solidBuildings) {
+          const tint = rgb('#c3b59b');
+          for (const boundary of rings) for (let i = 0; i < boundary.length; i++) {
+            const a = boundary[i], b = boundary[(i + 1) % boundary.length], za = heightAt(a), zb = heightAt(b);
+            if (!Number.isFinite(za) || !Number.isFinite(zb)) continue;
+            const av = vertex(a, Math.min(za, ground) - 2), bv = vertex(b, Math.min(zb, ground) - 2), at = vertex(a, top), bt = vertex(b, top);
+            triangle(av, bv, at, tint); triangle(bv, bt, at, tint);
+          }
+          if (triangulate) {
+            const flat = rings.flat(), holes = []; let offset = rings[0].length;
+            for (const hole of rings.slice(1)) { holes.push(offset); offset += hole.length; }
+            const indices = triangulate(flat.flat(), holes, 2);
+            for (let i = 0; i < indices.length; i += 3) triangle(...indices.slice(i, i + 3).map(n => vertex(flat[n], top)), color);
+          }
+        }
+        // A simplified rectangle can carry a gable. The native roof material
+        // follows every other mapped outline, including courtyard holes.
+        if (!courtyard && ring.length === 4 && height < 25 && Math.min(...sides) >= 4 && Math.max(...sides) / Math.min(...sides) <= 5 && Math.abs(area) / (sides[0] * sides[1]) >= .86) {
+          const start = sides[0] < sides[1] ? 0 : 1, a = ring[start], b = ring[(start + 1) % 4], c = ring[(start + 2) % 4], d = ring[(start + 3) % 4];
+          const peak = top + clamp(Math.min(...sides) / scale * .36, 3, 9);
+          const u = vertex([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], peak), v = vertex([(c[0] + d[0]) / 2, (c[1] + d[1]) / 2], peak);
+          const [av, bv, cv, dv] = [a, b, c, d].map(p => vertex(p, top));
+          triangle(av, dv, u, color); triangle(dv, v, u, color); triangle(bv, u, cv, color); triangle(cv, u, v, color);
+          triangle(av, u, bv, rgb('#eee4c9')); triangle(dv, cv, v, rgb('#eee4c9')); madeRoofs++;
+        }
+        if (distance > 1750) return;
+        const wall = rgb('#c0ae89'), window = rgb('#7e8b80');
+        for (let i = 0; i < ring.length; i++) {
+          const a = ring[i], b = ring[(i + 1) % ring.length], length = sides[i]; if (length < 3) continue;
+          const dx = (b[0] - a[0]) / length, dy = (b[1] - a[1]) / length, sign = area > 0 ? 1 : -1;
+          const at = (along, h) => vertex([a[0] + dx * along + dy * sign * .12 * scale, a[1] + dy * along - dx * sign * .12 * scale], ground + h);
+          const panel = (left, right, low, high, tint) => {
+            const v = [at(left, low), at(right, low), at(right, high), at(left, high)];
+            triangle(v[0], v[1], v[2], tint); triangle(v[0], v[2], v[3], tint);
+          };
+          panel(0, length, height - .4, height + .12, wall);
+          const bays = Math.min(8, Math.floor(length / scale / 5)), floors = Math.min(3, Math.floor(height / 4));
+          for (let row = 0; row < floors; row++) for (let bay = 0; bay < bays; bay++) {
+            const middle = (bay + .5) * length / bays, h = 2 + row * 3.1;
+            panel(middle - .55 * scale, middle + .55 * scale, h, h + 1.45, window);
+          }
+        }
+      }
+      function landmark(item) {
+        const p = project(item.point), ground = heightAt(p); if (!Number.isFinite(ground)) return;
+        vertexLimit = MAX_VERTICES * 7; reveal('landmark:' + item.id);
+        const scale = 1 / Math.cos(item.point[1] * Math.PI / 180);
+        const positioned = ([x, y, z]) => vertex([p[0] + x * scale, p[1] + y * scale], ground + z);
+        for (const face of landmarkAPI.mesh(item)) triangle(positioned(face.a), positioned(face.b), positioned(face.c), rgb(face.color));
+        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [landmarkAPI.displayFootprint(item)]}});
+        madeLandmarks.push(item.id);
+      }
+      for (const candidate of candidates) { tree(candidate); yield; }
+      for (const candidate of roofCandidates) { roof(candidate); yield; }
+      for (const item of nearbyLandmarks) { landmark(item); yield; }
+      const folds = yield* foldSteps(center, radius, heightAt);
+      return {vertices: new Float32Array(vertices), instances, treeModels, shadows: collection(shadows), folds, origin: center, radius, trees: madeTrees, treeVertices: madeTreeVertices, roofs: madeRoofs, orchards: madeOrchards, births: nextBirths, landmarks: madeLandmarks, hiddenBuildings: landmarkBuildingIds(buildings, nearbyLandmarks.filter(item => madeLandmarks.includes(item.id))), coverCounts, coverWithIds};
+  }
+    function* foldSteps(center, reach, heightAt) {
+      const step = reach > 6500 ? 420 : 210, nodes = new Map(), folds = [];
+      function node(x, y) {
+        const key = x + ':' + y;
+        if (!nodes.has(key)) {
+          const p = [(x + (random(x, y, 42) - .5) * .42) * step, (y + (random(x, y, 98) - .5) * .42) * step];
+          const ll = unproject(p), z = heightAt(p);
+          nodes.set(key, Number.isFinite(z) ? {p, ll, z: z / Math.cos(ll[1] * Math.PI / 180)} : null);
+        }
+        return nodes.get(key);
+      }
+      function fold(a, b, c) {
+        if (!a || !b || !c) return;
+        const ux = b.p[0] - a.p[0], uy = b.p[1] - a.p[1], uz = b.z - a.z, vx = c.p[0] - a.p[0], vy = c.p[1] - a.p[1], vz = c.z - a.z;
+        let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+        if (nz < 0) { nx *= -1; ny *= -1; nz *= -1; }
+        const shade = (-nx * .45 - ny * .55 + nz * .7) / Math.hypot(nx, ny, nz) - .7;
+        const d = Math.hypot((a.p[0] + b.p[0] + c.p[0]) / 3 - center[0], (a.p[1] + b.p[1] + c.p[1]) / 3 - center[1]);
+        const opacity = clamp(Math.abs(shade) * .42, 0, .22) * clamp((reach - d) / 900, 0, 1);
+        if (opacity < .008) return;
+        folds.push({type: 'Feature', properties: {color: shade < 0 ? '#526544' : '#fff0cf', opacity}, geometry: {type: 'Polygon', coordinates: [[a.ll, b.ll, c.ll, a.ll]]}});
+      }
+      for (let x = Math.floor((center[0] - reach) / step); x < Math.ceil((center[0] + reach) / step); x++) {
+        for (let y = Math.floor((center[1] - reach) / step); y < Math.ceil((center[1] + reach) / step); y++) {
+          const a = node(x, y), b = node(x + 1, y), c = node(x + 1, y + 1), d = node(x, y + 1);
+          if ((x + y) % 2) { fold(a, b, d); fold(b, c, d); } else { fold(a, b, c); fold(a, c, d); }
+        }
+        yield;
+      }
+      return collection(folds);
+    }
+  function create(map, route, landmarks = [], prepared = null) {
     const nearRoute = routeIndex(route);
     let origin = [0, 0], lastCenter = null, generation = 0, timer = 0, pending = false, building = false, destroyed = false;
+    let preparedActive = false, preparedKey = null, compilations = 0, lastShadows = null, lastFolds = null;
     let sceneRadius = 4600, lastBuildAt = -Infinity, lastZoom = 0, maxChunkMs = 0;
     let landmarkNames = []; const hiddenBuildings = new Set(), originalBuildingFilter = map.getFilter('building-3d'), treeModels = new Map();
     let buffer, shader, treeShader, vao, appeared = 0, count = 0, treeVertices = 0, treeCount = 0, roofCount = 0, orchardCount = 0, updates = 0, buildMs = 0, uploadBytes = 0;
@@ -386,191 +558,49 @@
       // foreground once its terrain exists; later content is coalesced below.
       if (!map.getTerrain() || !Number.isFinite(map.queryTerrainElevation(map.getCenter().toArray()))) { pending = true; return; }
       const started = performance.now(), center = project(map.getCenter().toArray()), nextGeneration = ++generation, zoom = map.getZoom?.() ?? 14;
+      const finished = prepared?.at(map.getCenter().toArray(), sceneryRadius(zoom));
+      if (finished) {
+        pending = false; lastCenter = center; lastZoom = zoom;
+        if (!preparedActive || preparedKey !== finished.key) {
+          for (const [key, model] of finished.treeModels) if (!treeModels.has(key)) treeModels.set(key, model);
+          applyScene(finished, started); preparedActive = true; preparedKey = finished.key;
+          for (const id of ['building-3d', 'paper-building-caps']) map.setLayoutProperty(id, 'visibility', 'none'); buildMs = performance.now() - started; maxChunkMs = buildMs;
+        }
+        return;
+      }
+      if (preparedActive) for (const id of ['building-3d', 'paper-building-caps']) map.setLayoutProperty(id, 'visibility', 'visible');
+      preparedActive = false;
       const radius = sceneryRadius(zoom);
       lastCenter = center; lastBuildAt = started; lastZoom = zoom; maxChunkMs = 0; pending = false; building = true;
-      let buildings = [], nearbyLandmarks = [], candidates = [], roofCandidates = [];
-      function* prepareSteps() {
-        const landcover = map.querySourceFeatures('openmaptiles', {sourceLayer: 'landcover'}); yield;
-        const woodland = landcover.filter(feature => feature.properties?.class === 'wood' && !orchard(feature.properties));
-        coverCounts = {}; coverWithIds = 0;
-        for (const feature of landcover) {
-          const key = feature.properties?.class + '/' + (feature.properties?.subclass || '');
-          coverCounts[key] = (coverCounts[key] || 0) + 1; if (feature.id !== undefined) coverWithIds++;
-        }
-        buildings = map.querySourceFeatures('openmaptiles', {sourceLayer: 'building'}); yield;
-        const roads = map.querySourceFeatures('openmaptiles', {sourceLayer: 'transportation'}); yield;
-        const nearRoad = yield* routeIndexSteps(collection(roads));
-        const waterways = map.querySourceFeatures('openmaptiles', {sourceLayer: 'waterway', filter: ['!=', ['get', 'brunnel'], 'tunnel']}); yield;
-        const nearWater = yield* routeIndexSteps(collection(waterways));
-        nearbyLandmarks = landmarks.filter(item => Math.hypot(...project(item.point).map((v, i) => v - center[i])) < radius - 250);
-        const landmarkGround = nearbyLandmarks.map(item => TrekLandmarks.displayFootprint(item).map(project));
-        const withinLandmark = p => landmarkGround.some(ring => inPolygon(p, [ring]));
-        const excluded = p => nearRoute(p, 46) || nearRoad(p, 32) || nearWater(p, 32) || withinLandmark(p);
-        const orchardCandidates = yield* orchardSteps(landcover, center, excluded);
-        const woodlandCandidates = yield* woodlandSteps(woodland, center, excluded, radius, 6500 - orchardCandidates.length);
-        candidates = [...woodlandCandidates, ...orchardCandidates].sort((a, b) => a.d - b.d);
-        const houses = new Map(); let checked = 0;
-        for (const feature of buildings) for (const polygon of polygons(feature.geometry)) {
-          if (++checked % 32 === 0) yield;
-          const ring = cleanBuildingRing(polygon[0].map(project));
-          if (ring.length < 3 || ring.length > 80) continue;
-          const p = [ring.reduce((a, v) => a + v[0], 0) / ring.length, ring.reduce((a, v) => a + v[1], 0) / ring.length], d = Math.hypot(p[0] - center[0], p[1] - center[1]);
-          if (d > radius || withinLandmark(p) || ring.some(a => Math.hypot(a[0] - p[0], a[1] - p[1]) > 180)) continue;
-          const key = p.map(n => Math.round(n)).join(':');
-          if (!houses.has(key)) houses.set(key, {ring, p, d, courtyard: polygon.length > 1, height: Math.max(9, 1.2 * (+feature.properties.render_height || 6))});
-        }
-        roofCandidates = [...houses.values()].sort((a, b) => a.d - b.d).slice(0, 1800);
-      }
-      // Feature preparation, terrain work and geometry all share short chunks.
-      // Native source queries run once per refresh, never during camera frames.
-      let preparation = prepareSteps();
-      const vertices = [], shadows = [], instances = new Map(), nextOrigin = center;
-      let madeTrees = 0, madeTreeVertices = 0, madeRoofs = 0, madeOrchards = 0, index = 0, vertexLimit = (MAX_VERTICES - 30000) * 7, activeBirth = started; const madeLandmarks = [], nextBirths = new Map();
-      function reveal(key) {
-        activeBirth = births.get(key) ?? started; nextBirths.set(key, activeBirth);
-      }
-      const heightAt = p => map.queryTerrainElevation(unproject(p));
-      const vertex = (p, height) => {
-        const cos = Math.cos(unproject(p)[1] * Math.PI / 180);
-        return [p[0] - nextOrigin[0], p[1] - nextOrigin[1], height / cos];
-      };
-      function triangle(a, b, c, color, fixedLight) {
-        if (vertices.length + madeTreeVertices * 7 + 21 > vertexLimit) return;
-        const light = fixedLight || faceLight(a, b, c);
-        for (const p of [a, b, c]) vertices.push(...p, ...color.map(x => Math.min(1, x * light)), activeBirth);
-      }
-      function tree({p, seed, sizeScale = 1}) {
-        const ground = heightAt(p); if (!Number.isFinite(ground)) return;
-        reveal('tree:' + p.join(':'));
-        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), variant = Math.floor(seed * 96), detailed = random(Math.floor(p[0]), Math.floor(p[1]), 119) > .5, key = variant * 2 + Number(detailed);
-        if (!treeModels.has(key)) {
-          const model = treeMesh((variant + .5) / 96, detailed), color = greens[Math.floor((variant + .5) / 96 * greens.length)], bark = rgb('#827557'), data = [];
-          for (const face of model.faces) {
-            const light = faceLight(face.a, face.b, face.c) * face.tone, tint = (face.bark ? bark : color).map(c => Math.min(1, c * light));
-            for (const v of [face.a, face.b, face.c]) data.push(...v, ...tint);
-          }
-          treeModels.set(key, {width: model.width, height: model.height, data: new Float32Array(data)});
-        }
-        const mesh = treeModels.get(key), size = mesh.width * sizeScale, h = mesh.height * sizeScale, data = mesh.data, x = p[0] - nextOrigin[0], y = p[1] - nextOrigin[1];
-        if (vertices.length + (madeTreeVertices + data.length / 6) * 7 > vertexLimit) return;
-        if (!instances.has(key)) instances.set(key, []);
-        instances.get(key).push(x, y, ground * scale, scale * sizeScale, activeBirth);
-        madeTreeVertices += data.length / 6;
-        const shadow = [[p[0] - size * scale, p[1]], [p[0], p[1] - size * .5 * scale], [p[0] + h * .8 * scale, p[1] + h * .9 * scale], [p[0], p[1] + size * .6 * scale]];
-        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [[...shadow.map(unproject), unproject(shadow[0])]]}});
-        madeTrees++; if (sizeScale < 1) madeOrchards++;
-      }
-      function roof({ring, p, height, d: distance, courtyard}) {
-        const ground = heightAt(p); if (!Number.isFinite(ground)) return;
-        reveal('roof:' + p.map(n => Math.round(n)).join(':'));
-        const sides = ring.map((a, i) => Math.hypot(a[0] - ring[(i + 1) % ring.length][0], a[1] - ring[(i + 1) % ring.length][1]));
-        const local = ring.map(v => [v[0] - p[0], v[1] - p[1]]);
-        const area = local.reduce((n, v, i) => n + v[0] * local[(i + 1) % local.length][1] - v[1] * local[(i + 1) % local.length][0], 0) / 2;
-        if (Math.abs(area) < 16) return;
-        const scale = 1 / Math.cos(unproject(p)[1] * Math.PI / 180), top = ground + height + .12;
-        const color = roofs[Math.floor(random(Math.floor(p[0]), Math.floor(p[1])) * roofs.length)];
-        // A simplified rectangle can carry a gable. The native roof material
-        // follows every other mapped outline, including courtyard holes.
-        if (!courtyard && ring.length === 4 && height < 25 && Math.min(...sides) >= 4 && Math.max(...sides) / Math.min(...sides) <= 5 && Math.abs(area) / (sides[0] * sides[1]) >= .86) {
-          const start = sides[0] < sides[1] ? 0 : 1, a = ring[start], b = ring[(start + 1) % 4], c = ring[(start + 2) % 4], d = ring[(start + 3) % 4];
-          const peak = top + clamp(Math.min(...sides) / scale * .36, 3, 9);
-          const u = vertex([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], peak), v = vertex([(c[0] + d[0]) / 2, (c[1] + d[1]) / 2], peak);
-          const [av, bv, cv, dv] = [a, b, c, d].map(p => vertex(p, top));
-          triangle(av, dv, u, color); triangle(dv, v, u, color); triangle(bv, u, cv, color); triangle(cv, u, v, color);
-          triangle(av, u, bv, rgb('#eee4c9')); triangle(dv, cv, v, rgb('#eee4c9')); madeRoofs++;
-        }
-        if (distance > 1750) return;
-        const wall = rgb('#c0ae89'), window = rgb('#7e8b80');
-        for (let i = 0; i < ring.length; i++) {
-          const a = ring[i], b = ring[(i + 1) % ring.length], length = sides[i]; if (length < 3) continue;
-          const dx = (b[0] - a[0]) / length, dy = (b[1] - a[1]) / length, sign = area > 0 ? 1 : -1;
-          const at = (along, h) => vertex([a[0] + dx * along + dy * sign * .12 * scale, a[1] + dy * along - dx * sign * .12 * scale], ground + h);
-          const panel = (left, right, low, high, tint) => {
-            const v = [at(left, low), at(right, low), at(right, high), at(left, high)];
-            triangle(v[0], v[1], v[2], tint); triangle(v[0], v[2], v[3], tint);
-          };
-          panel(0, length, height - .4, height + .12, wall);
-          const bays = Math.min(8, Math.floor(length / scale / 5)), floors = Math.min(3, Math.floor(height / 4));
-          for (let row = 0; row < floors; row++) for (let bay = 0; bay < bays; bay++) {
-            const middle = (bay + .5) * length / bays, h = 2 + row * 3.1;
-            panel(middle - .55 * scale, middle + .55 * scale, h, h + 1.45, window);
-          }
-        }
-      }
-      function landmark(item) {
-        const p = project(item.point), ground = heightAt(p); if (!Number.isFinite(ground)) return;
-        vertexLimit = MAX_VERTICES * 7; reveal('landmark:' + item.id);
-        const scale = 1 / Math.cos(item.point[1] * Math.PI / 180);
-        const positioned = ([x, y, z]) => vertex([p[0] + x * scale, p[1] + y * scale], ground + z);
-        for (const face of TrekLandmarks.mesh(item)) triangle(positioned(face.a), positioned(face.b), positioned(face.c), rgb(face.color));
-        shadows.push({type: 'Feature', properties: {}, geometry: {type: 'Polygon', coordinates: [TrekLandmarks.displayFootprint(item)]}});
-        madeLandmarks.push(item.id);
-      }
-      let folds = null, geometryDone = false;
+      compilations++;
+      const work = compileScene({center, radius, features: sourceLayer => map.querySourceFeatures('openmaptiles', {sourceLayer}), heightAt: p => map.queryTerrainElevation(unproject(p)), nearRoute, landmarks, treeModels, births, started});
       function chunk() {
         if (destroyed || generation !== nextGeneration) return;
-        const chunkStarted = performance.now(), until = chunkStarted + 5;
-        while (preparation && performance.now() < until) {
-          if (preparation.next().done) preparation = null;
-        }
-        if (preparation) { maxChunkMs = Math.max(maxChunkMs, performance.now() - chunkStarted); setTimeout(chunk, 0); return; }
-        const totalCandidates = candidates.length + roofCandidates.length + nearbyLandmarks.length;
-        while (index < totalCandidates && performance.now() < until) {
-          if (index < candidates.length) tree(candidates[index]); else if (index < candidates.length + roofCandidates.length) roof(roofCandidates[index - candidates.length]); else landmark(nearbyLandmarks[index - candidates.length - roofCandidates.length]); index++;
-        }
-        if (index < totalCandidates) { maxChunkMs = Math.max(maxChunkMs, performance.now() - chunkStarted); setTimeout(chunk, 0); return; }
-        if (!folds) folds = foldSteps(center, radius);
-        while (!geometryDone && performance.now() < until) geometryDone = folds.next().done;
+        const chunkStarted = performance.now(); let next;
+        do { next = work.next(); } while (!next.done && performance.now() - chunkStarted < 5);
         maxChunkMs = Math.max(maxChunkMs, performance.now() - chunkStarted);
-        if (!geometryDone) { setTimeout(chunk, 0); return; }
-        const gl = map.getCanvas().getContext('webgl2'); if (!gl || gl.isContextLost()) { building = false; pending = true; return; }
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        uploadBytes = vertices.length * 4 + uploadTrees(gl, instances);
-        if ((!count && !treeCount) || Math.hypot(nextOrigin[0] - origin[0], nextOrigin[1] - origin[1]) > radius) appeared = performance.now();
-        origin = nextOrigin; sceneRadius = radius; count = vertices.length / 7; treeVertices = madeTreeVertices; treeCount = madeTrees; roofCount = madeRoofs; orchardCount = madeOrchards; births = nextBirths; fadeUntil = Math.max(0, ...births.values()) + 700; landmarkNames = madeLandmarks; updates++;
-        const previousHidden = hiddenBuildings.size;
-        for (const id of landmarkBuildingIds(buildings, nearbyLandmarks.filter(item => madeLandmarks.includes(item.id)))) hiddenBuildings.add(id);
-        if (hiddenBuildings.size !== previousHidden) {
-          const outside = ['!', ['in', ['id'], ['literal', [...hiddenBuildings]]]];
-          for (const id of ['building-3d', 'paper-building-caps']) map.setFilter(id, originalBuildingFilter ? ['all', originalBuildingFilter, outside] : outside);
-        }
-        map.getSource('paper-shadows').setData(collection(shadows));
-        maxChunkMs = Math.max(maxChunkMs, performance.now() - chunkStarted);
-        building = false; buildMs = performance.now() - started; map.triggerRepaint();
+        if (!next.done) { setTimeout(chunk, 0); return; }
+        applyScene(next.value, started);
+        building = false; buildMs = performance.now() - started;
         if (pending) schedule();
       }
       chunk();
     }
-    function* foldSteps(center, reach) {
-      const step = reach > 6500 ? 420 : 210, nodes = new Map(), folds = [];
-      function node(x, y) {
-        const key = x + ':' + y;
-        if (!nodes.has(key)) {
-          const p = [(x + (random(x, y, 42) - .5) * .42) * step, (y + (random(x, y, 98) - .5) * .42) * step];
-          const ll = unproject(p), z = map.queryTerrainElevation(ll);
-          nodes.set(key, Number.isFinite(z) ? {p, ll, z: z / Math.cos(ll[1] * Math.PI / 180)} : null);
-        }
-        return nodes.get(key);
+    function applyScene(scene, started) {
+      const gl = map.getCanvas().getContext('webgl2'); if (!gl || gl.isContextLost()) { building = false; pending = true; return; }
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer); gl.bufferData(gl.ARRAY_BUFFER, scene.vertices, gl.DYNAMIC_DRAW);
+      uploadBytes = scene.vertices.byteLength + uploadTrees(gl, scene.instances);
+      if ((!count && !treeCount) || Math.hypot(scene.origin[0] - origin[0], scene.origin[1] - origin[1]) > scene.radius) appeared = performance.now();
+      origin = scene.origin; sceneRadius = scene.radius; count = scene.vertices.length / 7; treeVertices = scene.treeVertices; treeCount = scene.trees; roofCount = scene.roofs; orchardCount = scene.orchards; births = scene.births; fadeUntil = Math.max(0, ...births.values()) + 700; landmarkNames = scene.landmarks; coverCounts = scene.coverCounts; coverWithIds = scene.coverWithIds; updates++;
+      const previousHidden = hiddenBuildings.size;
+      for (const id of scene.hiddenBuildings) hiddenBuildings.add(id);
+      if (hiddenBuildings.size !== previousHidden) {
+        const outside = ['!', ['in', ['id'], ['literal', [...hiddenBuildings]]]];
+        for (const id of ['building-3d', 'paper-building-caps']) map.setFilter(id, originalBuildingFilter ? ['all', originalBuildingFilter, outside] : outside);
       }
-      function fold(a, b, c) {
-        if (!a || !b || !c) return;
-        const ux = b.p[0] - a.p[0], uy = b.p[1] - a.p[1], uz = b.z - a.z, vx = c.p[0] - a.p[0], vy = c.p[1] - a.p[1], vz = c.z - a.z;
-        let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
-        if (nz < 0) { nx *= -1; ny *= -1; nz *= -1; }
-        const shade = (-nx * .45 - ny * .55 + nz * .7) / Math.hypot(nx, ny, nz) - .7;
-        const d = Math.hypot((a.p[0] + b.p[0] + c.p[0]) / 3 - center[0], (a.p[1] + b.p[1] + c.p[1]) / 3 - center[1]);
-        const opacity = clamp(Math.abs(shade) * .42, 0, .22) * clamp((reach - d) / 900, 0, 1);
-        if (opacity < .008) return;
-        folds.push({type: 'Feature', properties: {color: shade < 0 ? '#526544' : '#fff0cf', opacity}, geometry: {type: 'Polygon', coordinates: [[a.ll, b.ll, c.ll, a.ll]]}});
-      }
-      for (let x = Math.floor((center[0] - reach) / step); x < Math.ceil((center[0] + reach) / step); x++) {
-        for (let y = Math.floor((center[1] - reach) / step); y < Math.ceil((center[1] + reach) / step); y++) {
-          const a = node(x, y), b = node(x + 1, y), c = node(x + 1, y + 1), d = node(x, y + 1);
-          if ((x + y) % 2) { fold(a, b, d); fold(b, c, d); } else { fold(a, b, c); fold(a, c, d); }
-        }
-        yield;
-      }
-      map.getSource('paper-folds').setData(collection(folds));
+      if (lastShadows !== scene.shadows) { map.getSource('paper-shadows').setData(scene.shadows); lastShadows = scene.shadows; }
+      if (lastFolds !== scene.folds) { map.getSource('paper-folds').setData(scene.folds); lastFolds = scene.folds; }
+      map.triggerRepaint();
     }
     function schedule(delay = 320) {
       if (destroyed) return;
@@ -663,12 +693,12 @@
     function destroy() { destroyed = true; generation++; clearTimeout(timer); map.off('moveend', moved); map.off('sourcedata', loaded); map.off('idle', settled); map.off('remove', destroy); }
     map.on('moveend', moved); map.on('sourcedata', loaded); map.on('idle', settled); map.on('remove', destroy); schedule();
     return {
-      status: () => ({trees: treeCount, roofs: roofCount, orchards: orchardCount, radius: Math.round(sceneRadius), vertices: count + treeVertices, uploadBytes, treeModels: treeModels.size, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), maxChunkMs: Math.round(maxChunkMs), pending, building, fading: (count > 0 || treeCount > 0) && performance.now() < Math.max(fadeUntil, appeared + 850), landcover: {...coverCounts}, coverWithIds}),
+      status: () => ({prepared: preparedActive, compilations, trees: treeCount, roofs: roofCount, orchards: orchardCount, radius: Math.round(sceneRadius), vertices: count + treeVertices, uploadBytes, treeModels: treeModels.size, landmarks: landmarkNames, hiddenBuildings: hiddenBuildings.size, updates, buildMs: Math.round(buildMs), maxChunkMs: Math.round(maxChunkMs), pending, building, fading: (count > 0 || treeCount > 0) && performance.now() < Math.max(fadeUntil, appeared + 850), landcover: {...coverCounts}, coverWithIds}),
       refresh: schedule, prepare,
       destroy
     };
   }
-  const api = {style, create, project, unproject, random, inPolygon, routeIndex, plantWoodland, plantOrchards, sceneryRadius, landmarkBuildingIds, treeMesh, cleanBuildingRing};
+  const api = {style, create, compileScene, project, unproject, random, inPolygon, routeIndex, plantWoodland, plantOrchards, sceneryRadius, landmarkBuildingIds, treeMesh, cleanBuildingRing};
   if (typeof module !== 'undefined') module.exports = api;
   host.TrekPaper = api;
 })(typeof window === 'undefined' ? globalThis : window);

@@ -180,3 +180,22 @@ try {
 } finally { scenery.destroy(); sceneryLayer.onRemove(map, gl); globalThis.document = oldDocument; }
 assert.equal(buffers.size, 0, 'removing the scenery releases both model and instance buffers');
 console.log('Paper scenery checks passed: mapped fields, anchored woodland across the view, stable instanced geometry, bounded density and radius, mapped orchard rows, clear route corridors, coalesced tile refreshes and nonblocking foreground preparation.');
+
+// Finished scenery uploads once. Tile arrivals and small camera moves must not
+// rebuild geometry, and leaving the prepared region restores the ordinary map.
+globalThis.document = {createElement: () => ({getContext: () => brush})};
+const compilation = paper.compileScene({center,radius:4600,features:layer=>layer==='landcover'?sceneFeatures:[],heightAt:()=>100,nearRoute:()=>false});
+let result; do { result=compilation.next(); } while(!result.done);
+const baked=result.value;let active=true,queries=0;const visibility=new Map();
+const preparedMap={...map,querySourceFeatures:(...args)=>{queries++;return map.querySourceFeatures(...args);},setLayoutProperty:(id,key,value)=>visibility.set(id,value)};
+const readyScenery=paper.create(preparedMap,{type:'FeatureCollection',features:[]},[],{at:()=>active?baked:null});
+try{
+ readyScenery.prepare();const uploads=readyScenery.status().updates;
+ assert(readyScenery.status().prepared);assert.equal(queries,0);assert.equal(visibility.get('building-3d'),'none');
+ for(let i=0;i<20;i++)readyScenery.prepare();
+ assert.equal(readyScenery.status().updates,uploads,'prepared camera movement retains GPU geometry');assert.equal(queries,0,'prepared scenery never scans live features');
+ active=false;readyScenery.prepare();
+ for(let i=0;readyScenery.status().building&&i<100;i++)await new Promise(r=>setTimeout(r,10));
+ assert(!readyScenery.status().prepared);assert(queries>0);assert.equal(visibility.get('building-3d'),'visible');
+}finally{readyScenery.destroy();sceneryLayer.onRemove(map,gl);if(oldDocument===undefined)delete globalThis.document;else globalThis.document=oldDocument;}
+console.log('Prepared renderer checks passed: one upload, no live feature scans, stable reuse and complete fallback on leaving the region.');

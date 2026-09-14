@@ -12,3 +12,9 @@
 
 https://:version.:subdomain.workers.dev/*
   X-Robots-Tag: noindex
+
+/trek/prepared/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/trek/prepared/manifest.json
+  Cache-Control: public, max-age=0, must-revalidate

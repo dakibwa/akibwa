@@ -9,7 +9,7 @@ const {landmarkBuildingIds}=require('../public/trek/journey-paper.js');
 const read=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url),'utf8'));
 const landmarks=read('data/trek-landmarks.json').landmarks,route=read('public/trek/route-detail.json');
 const before=JSON.stringify(landmarks);
-assert.equal(landmarks.length,10);
+assert.equal(landmarks.length,12);
 assert.deepEqual(new Set(landmarks.map(l=>l.country)),new Set(Object.keys(flags)),'landmarks cover the seven countries on this walk');
 for(const item of landmarks){
   assert(item.source.startsWith('https://')&&/^https:\/\/www.openstreetmap.org\/way\/\d+$/.test(item.mapSource),'retain public name and coordinate provenance');
