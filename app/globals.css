@@ -6802,7 +6802,7 @@ button {
 
 .concept-hero-footer .page-footer-details {
   gap: 6px;
-  margin-left: -12px;
+  margin-left: 0;
   color: var(--muted);
 }
 
@@ -6820,18 +6820,54 @@ button {
 }
 
 .concept-section-links a {
-  display: inline-flex;
+  display: inline-grid;
   align-items: center;
   min-height: 44px;
   color: color-mix(in srgb, var(--section-accent) 80%, var(--ink));
   white-space: nowrap;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: .28em;
+  text-decoration: none;
+  transition: font-weight 180ms ease;
+}
+
+.concept-section-links a > span {
+  grid-area: 1 / 1;
+}
+
+/* Reserve the bold width so hover never shifts the next link. */
+.concept-section-links .section-link-sizer {
+  font-weight: 750;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .concept-section-links a:is(:hover, :focus-visible) {
-  text-decoration-color: currentColor;
+  font-weight: 750;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-section-links a { transition: none; }
+}
+
+@media (max-width: 480px) {
+  .concept-hero-footer {
+    margin-top: 12px;
+  }
+
+  .concept-hero-footer .page-footer-meta {
+    gap: 0;
+  }
+
+  .concept-section-links {
+    flex: 1 0 100%;
+    justify-content: space-between;
+    gap: 0 12px;
+    font-size: .9rem;
+  }
+
+  .concept-hero-footer .page-footer-details {
+    margin-left: -12px;
+    gap: 2px;
+  }
 }
 
 .concept-section-links a:focus-visible {
