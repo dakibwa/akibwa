@@ -634,10 +634,12 @@ const checkPublicLanding = async () => {
   check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].length >= 4 && [...document.querySelectorAll(".personal-taste-card")].every(card => card.textContent.includes("Paul Thomas Anderson"))'), "unfiltered search reaches the full film collection by creator");
   await tasteSearch('Graceland');
   check(await evaluate('[...document.querySelectorAll(".personal-taste-card")].some(card => card.textContent.includes("Paul Simon"))'), "search finds albums across the collection");
-  await tasteSearch('veritasium');
-  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 0'), "search also excludes a podcast with fewer than five plays");
+  await tasteSearch('The OpenAI Podcast');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 0'), "search excludes a previously visible podcast with fewer than 20 plays");
   await tasteSearch('within reason');
-  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 1 && document.querySelector(".personal-taste-card img").src.includes("within-reason")'), "search keeps Within Reason and its verified cover");
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 0'), "an unknown podcast count does not bypass the 20-play threshold");
+  await tasteSearch('Nothing much happens');
+  check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 1 && Number(document.querySelector(".personal-taste-card").dataset.listens) === 20'), "search retains a podcast at exactly 20 plays");
   await tasteSearch('zzz-no-such-title-9184');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 0 && document.querySelector(".taste-search-status").textContent.includes("No matches")'), "an empty search gives a clear recoverable state");
   await evaluate(`document.querySelector('button[aria-label="Close taste search"]').click()`);
@@ -766,14 +768,12 @@ const checkPublicLanding = async () => {
     await sleep(120);
   }
   const listeningPacket = JSON.parse(readFileSync(new URL('../public/listening-catalogue.json', import.meta.url)));
-  const expectedPodcasts = listeningPacket.podcasts.filter(show => show.plays >= 5 || show.title === 'Within Reason').length;
+  const expectedPodcasts = listeningPacket.podcasts.filter(show => show.plays >= 20).length;
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length') === expectedPodcasts, "the podcast shelf includes every eligible show");
   check(await evaluate(`(() => {
     const cards=[...document.querySelectorAll('.personal-taste-card')];
-    const withinReason=cards.find(card=>card.querySelector('.personal-taste-title').textContent==='Within Reason');
-    return withinReason?.textContent.includes("Alex O'Connor") && !withinReason.hasAttribute('data-listens') &&
-      withinReason.textContent.includes('No recorded count') && cards.every(card=>card===withinReason || Number(card.dataset.listens)>=5);
-  })()`), "podcasts below five plays are hidden while Within Reason keeps its honest unknown count");
+    return cards.length > 0 && cards.every(card=>Number(card.dataset.listens)>=20);
+  })()`), "every visible podcast has at least 20 recorded plays");
   check(await ranked(), "podcasts are ranked by their recorded listens");
   await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=0;document.querySelector("#taste").scrollIntoView({block:"center",behavior:"instant"});');
   await capture("podcasts-desktop");

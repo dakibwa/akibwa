@@ -4,6 +4,7 @@ import { buildListeningCounts, mergeAlbumObservations, deduplicateSpotifyPlaybac
 import { albumIdentity, youtubePodcast } from "../lib/listening-identity.mjs";
 import { acceptsListeningCatalogue, listeningSeed } from "../components/listening-catalogue.mjs";
 import { listeningLabel, rankPodcasts } from "../components/listening-label.mjs";
+import { applyListeningArtwork } from "../lib/listening-artwork.mjs";
 
 assert.deepEqual(mergeAlbumObservations({ before: 10, during: 8, after: 3, historical: 5 }), { plays: 21, atLeast: true });
 assert.deepEqual(mergeAlbumObservations({ before: 10, during: 4, after: 3, historical: 8 }), { plays: 21, atLeast: true });
@@ -87,6 +88,14 @@ const partialRefresh = snapshotFixture([before, during, after], { ...currentSnap
 assert.equal(partialRefresh.albums[0].plays, 7, "a smaller partial refresh preserves the stronger historical bound");
 
 const packet = JSON.parse(readFileSync(new URL("../public/listening-catalogue.json", import.meta.url)));
+const artwork = JSON.parse(readFileSync(new URL("../data/listening-artwork.json", import.meta.url)));
+assert.deepEqual(applyListeningArtwork(packet.albums, artwork), packet.albums, "history rebuilds retain the reviewed artwork overlay");
+const missingCover = { id: "history-test", artist: "Artist One", album: "First", artwork: false, plays: 12, atLeast: true, sources: { spotify: 10, youtube: 2, lastfm: 4 } };
+const coverFixture = { schemaVersion: 1, entries: [{ id: missingCover.id, artist: missingCover.artist, album: missingCover.album }] };
+assert.deepEqual(applyListeningArtwork([missingCover], coverFixture), [{ ...missingCover, artwork: true }], "cover repairs preserve identity and every count field");
+assert.equal(missingCover.artwork, false, "the saved input is not mutated");
+assert.throws(() => applyListeningArtwork([{ ...missingCover, artist: "Artist Two" }], coverFixture), /Artwork identity changed/, "the same title by another artist cannot borrow a cover");
+assert.throws(() => applyListeningArtwork([missingCover], { ...coverFixture, entries: [...coverFixture.entries, ...coverFixture.entries] }), /Duplicate artwork/);
 const curation = JSON.parse(readFileSync(new URL("../data/taste-curation.json", import.meta.url)));
 assert(acceptsListeningCatalogue(packet, packet.asOf), "the public packet must satisfy the browser schema");
 assert(!acceptsListeningCatalogue({ refreshedAt: "2026-09-05", plays: { first: 9000 } }, packet.asOf), "legacy Last.fm packets cannot replace reconciled counts");

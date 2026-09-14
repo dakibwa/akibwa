@@ -6778,28 +6778,6 @@ button {
   min-width: 0;
 }
 
-.concept-age-word {
-  display: inline-block;
-  width: 2.2em;
-  height: 0.88em;
-  margin-inline: -0.14em;
-  vertical-align: -0.19em;
-  letter-spacing: normal;
-  /* The white artwork plate disappears into the site's warm paper. */
-  mix-blend-mode: multiply;
-}
-
-.concept-age-word picture {
-  display: block;
-}
-
-.concept-age-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 .concept-lede {
   max-width: none;
   margin: 0;
@@ -6813,6 +6791,8 @@ button {
 }
 
 .concept-hero-footer {
+  --identity-orange: #fb6824;
+  --identity-apricot: #fccc8c;
   width: 100%;
   margin-top: clamp(16px, 1.8vw, 24px);
   font-size: clamp(0.72rem, 0.9vw, 0.82rem);
@@ -6825,8 +6805,30 @@ button {
 
 .concept-hero-footer .page-footer-details {
   gap: 6px;
-  margin-left: -12px;
-  color: var(--muted);
+  margin-left: -6px;
+}
+
+.contact-identity-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.contact-identity-mark picture,
+.contact-identity-mark img {
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+
+.concept-hero-footer .social-icon {
+  color: var(--identity-orange);
+}
+
+.identity-social-terminal {
+  fill: var(--identity-apricot);
 }
 
 .concept-text-link,
