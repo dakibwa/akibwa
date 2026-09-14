@@ -17,15 +17,15 @@
 
 .journey-minimap{position:absolute;z-index:4;right:34px;top:91px;width:228px;overflow:hidden;background:#eef0e1ed;border:1px solid #f9f7e8d9;box-shadow:0 5px 20px #24372718,0 0 0 1px #67795529;border-radius:3px;pointer-events:none;transition:opacity .5s}
 .journey-minimap canvas{display:block;width:100%;height:auto}.journey-minimap p{margin:0;padding:7px 5px 8px;border-top:1px solid #76876125;font-size:7px;letter-spacing:.19em;text-align:center;color:#627357}
-.place-arrival{position:absolute;z-index:4;top:122px;left:40px;max-width:calc(100% - 330px);opacity:0;transform:translateY(6px);transition:opacity .9s,transform .9s;pointer-events:none;text-shadow:0 1px 15px #fff8e2,0 0 35px #fff8e2}
-.place-arrival.visible{opacity:1;transform:translateY(0)}.place-arrival>span{font-size:8px;letter-spacing:.18em;color:#506249}.place-arrival p{font-family:Fraunces,serif;font-size:clamp(33px,3.8vw,54px);font-weight:430;letter-spacing:-.035em;line-height:1.08;margin:8px 0 0;overflow-wrap:anywhere}
+
+
 .landmark-caption{position:absolute;z-index:4;left:50%;bottom:205px;max-width:calc(100% - 50px);transform:translateX(-50%);text-align:center;pointer-events:none;text-shadow:0 1px 8px #fff6df,0 0 20px #fff6df}
 .landmark-caption span{display:block;font-family:Fraunces,serif;font-size:23px;font-weight:470;line-height:1.2}.landmark-caption small{display:block;margin-top:4px;font-size:8px;letter-spacing:.1em;color:#58694e}
 #landmark-sources p{margin-bottom:18px}#landmark-sources a{color:inherit;text-underline-offset:3px}#landmark-sources small{display:block;font-size:9px}
 
-@media(max-width:650px){.journey-minimap{width:143px;right:19px;top:79px}.journey-minimap p{font-size:6px;padding:5px 2px;letter-spacing:.11em}.place-arrival{left:23px;top:201px;max-width:calc(100% - 46px)}.place-arrival p{font-size:35px;max-width:300px}.place-arrival>span{font-size:7px}.landmark-caption{bottom:194px;width:calc(100% - 44px)}.landmark-caption span{font-size:20px}.journey-readout dd small{font-family:Plex,monospace;font-size:11px}}
-@media(max-width:350px){.journey-minimap{width:127px;right:18px}.place-arrival{top:188px}.place-arrival p{font-size:31px}.journey-readout dd{font-size:33px}.journey-readout dt{font-size:9px}}
-@media(max-height:520px){.journey-minimap{width:140px;top:76px}.place-arrival{top:110px;left:27px;max-width:45%}.place-arrival p{font-size:30px}.journey-readout{margin-bottom:10px}.journey-readout dd{font-size:26px}.landmark-caption{bottom:157px}}
+@media(max-width:650px){.journey-minimap{width:143px;right:19px;top:79px}.journey-minimap p{font-size:6px;padding:5px 2px;letter-spacing:.11em}.landmark-caption{bottom:194px;width:calc(100% - 44px)}.landmark-caption span{font-size:20px}.journey-readout dd small{font-family:Plex,monospace;font-size:11px}}
+@media(max-width:350px){.journey-minimap{width:127px;right:18px}.journey-readout dd{font-size:33px}.journey-readout dt{font-size:9px}}
+@media(max-height:520px){.journey-minimap{width:140px;top:76px}.journey-readout{margin-bottom:10px}.journey-readout dd{font-size:26px}.landmark-caption{bottom:157px}}
 
 /* An elevation silhouette sits immediately above the existing journey scrubber. */
 .elevation-profile{position:relative;margin:0 0 7px;height:68px;pointer-events:none}
@@ -59,8 +59,8 @@
 .memory-sheet::before{content:'';position:absolute;z-index:-1;left:7%;right:4%;bottom:1px;height:28%;transform:rotate(3deg);border-radius:50%;box-shadow:0 9px 12px #26311f35;pointer-events:none}
 .memory-sheet::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 1px #bcae7e1c,inset 0 -2px 3px #ab94591c;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 130 130' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath filter='url(%23n)' opacity='.12' d='M0 0h130v130H0z'/%3E%3C/svg%3E");opacity:.35}
 .memory-flash .memory-image{position:relative;inset:auto;display:block;width:auto;height:auto;max-width:min(23vw,244px);max-height:246px;object-fit:contain;box-shadow:0 0 0 1px #443b272b;transform:none;transition:none}
-@media(max-width:650px){.journey-minimap{top:22px;width:143px}.journey-minimap #where{font-size:7px;letter-spacing:0}.place-arrival{top:141px}.memory-flash{left:20px;bottom:245px;max-width:calc(100vw - 40px)}.memory-sheet{padding:7px}.memory-flash .memory-image{max-width:min(34vw,140px);max-height:160px}}
-@media(max-width:350px){.journey-minimap{width:127px}.place-arrival{top:133px}.memory-flash{bottom:240px}.memory-flash .memory-image{max-width:33vw;max-height:142px}}
+@media(max-width:650px){.journey-minimap{top:22px;width:143px}.journey-minimap #where{font-size:7px;letter-spacing:0}.memory-flash{left:20px;bottom:245px;max-width:calc(100vw - 40px)}.memory-sheet{padding:7px}.memory-flash .memory-image{max-width:min(34vw,140px);max-height:160px}}
+@media(max-width:350px){.journey-minimap{width:127px}.memory-flash{bottom:240px}.memory-flash .memory-image{max-width:33vw;max-height:142px}}
 @media(max-height:520px){.journey-minimap{top:20px;width:137px}.memory-flash{left:18px;top:82px;bottom:auto}.memory-sheet{padding:6px}.memory-flash .memory-image{max-width:135px;max-height:105px}}
 
 /* A soft paper wash keeps the opening readable without enclosing its text. */
@@ -92,7 +92,7 @@
 }
 @media(max-height:600px) and (min-width:651px){.opening:not([hidden])~.map-status{top:20px}}
 
-.viewing-landmark .place-arrival{opacity:0}
+
 
 /* A quiet paper wash keeps progress legible over every landscape. */
 .journey-controls{width:min(680px,calc(100% - 80px));isolation:isolate}
@@ -140,3 +140,20 @@
 @media(max-width:650px){.elevation-profile{height:62px;margin-bottom:6px}.progress-label{font-size:8px;letter-spacing:0}.journey-readout{margin-bottom:9px}.landmark-caption{bottom:258px}}
 @media(max-width:350px){.progress-label{font-size:7px}}
 @media(max-height:520px){.elevation-profile{height:48px}.journey-readout{margin-bottom:3px}.memory-flash{bottom:auto}.landmark-caption{bottom:214px}}
+
+
+/* Place names roll quietly through the lower-right corner as the route advances. */
+@keyframes place-appear{from{opacity:0}}
+.journey-places{position:absolute;z-index:4;right:34px;bottom:306px;width:250px;pointer-events:none;isolation:isolate;color:#30432f;text-align:right;text-shadow:0 1px 5px #fff9e7,0 0 12px #fff9e7,0 0 24px #fff9e7}
+.journey-places::before{content:'';position:absolute;z-index:-1;inset:-28px -34px -25px -28px;background:radial-gradient(ellipse at 75% 50%,#f5f1e4c9 12%,#f5f1e480 48%,#f5f1e400 74%)}
+.journey-places h2{margin:0 14px 12px 0;font:8px Plex,monospace;letter-spacing:.16em;text-transform:uppercase;color:#506249}
+.place-list{position:relative;height:calc(var(--place-count,7)*40px);padding:0;margin:0;list-style:none;overflow:hidden;mask-image:linear-gradient(180deg,transparent,#000 5px,#000 calc(100% - 8px),transparent)}
+.journey-place{position:absolute;inset:0 0 auto;height:40px;padding:0 14px 0 0;display:flex;justify-content:flex-end;align-items:center;font:430 16px/1.06 Fraunces,serif;letter-spacing:-.015em;transition:transform 1.4s cubic-bezier(.2,.65,.25,1),opacity 1.2s ease,color 1.2s ease;opacity:.8;animation:place-appear 1.4s ease}
+.journey-place span{max-width:100%;overflow-wrap:anywhere}.journey-place.city{font-size:29px;font-weight:480;letter-spacing:-.035em}.journey-place.town{font-size:21px;font-weight:450}.journey-place.hamlet{font-size:14px}.journey-place.long-name{font-size:15px;line-height:1.05}.journey-place.city.long-name{font-size:22px;line-height:.9}.journey-place[data-state=passed]{opacity:.4}.journey-place[data-state=current]{opacity:1;color:#253a2a}.journey-place[aria-current=location]::after{content:'';position:absolute;right:1px;top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:#a33443}.journey-place.departed{opacity:0}
+@media(min-width:1260px) and (min-height:601px){.journey-places{bottom:74px;width:240px}}
+@media(max-width:650px){.journey-places{right:19px;width:min(46vw,220px);bottom:306px}.journey-places h2{font-size:7px;letter-spacing:.12em;margin-bottom:8px}.journey-place{height:32px;font-size:15px}.place-list{height:calc(var(--place-count,5)*32px)}.journey-place.city{font-size:24px}.journey-place.town{font-size:19px}.journey-place.long-name{font-size:13px}.journey-place.city.long-name{font-size:16px}.journey-place.hamlet{font-size:13px}}
+@media(max-height:600px){.journey-places{bottom:280px;width:210px}.journey-places h2{margin-bottom:6px}.journey-place{height:27px;font-size:14px}.place-list{height:calc(var(--place-count,5)*27px)}.journey-place.city{font-size:23px}.journey-place.town{font-size:18px}.journey-place.long-name{font-size:12px}.journey-place.city.long-name{font-size:14px}}
+@media(max-height:520px){.journey-places{bottom:263px;right:22px}.journey-places::before{inset:-14px -22px -15px}}
+@media(max-height:600px) and (max-width:650px){.journey-places{width:46vw;bottom:306px}.journey-minimap{width:127px}.journey-place{height:25px}.place-list{height:calc(var(--place-count,5)*25px)}}
+@media(max-height:520px) and (max-width:650px){.journey-places{bottom:263px}.journey-place{height:19px;font-size:12px}.place-list{height:calc(var(--place-count,5)*19px)}.journey-place.city{font-size:18px}.journey-place.town{font-size:14px}.journey-place.long-name{font-size:10px;line-height:.9}.journey-place.city.long-name{font-size:12px}}
+@media(max-height:450px){.journey-places{top:116px;bottom:auto;width:180px}.journey-places h2{font-size:6px;margin-bottom:4px}.journey-place{height:19px;font-size:12px}.place-list{height:calc(var(--place-count,5)*19px)}.journey-place.city{font-size:18px}.journey-place.town{font-size:14px}.journey-place.long-name{font-size:10px}.journey-place.city.long-name{font-size:13px}}

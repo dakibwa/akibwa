@@ -128,6 +128,8 @@ try {
   for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
   const first = scenery.status();
   assert(first.updates === 1 && first.trees > 0 && !first.pending && !first.building, 'loaded foreground prepares without waiting for all future source tiles');
+  // Inspect the prepared snapshot before mesh checks consume the fade window.
+  assert(first.fading, 'preparation exposes any remaining entrance fade to the playback gate');
   assert.equal(placements().length, first.trees * 5, 'upload one position, scale and reveal clock per tree, rather than expanded geometry');
   for (const {data} of buffers.values()) assert([...data].every(Number.isFinite), 'model vertices, colour, positions and reveal clocks must all remain finite');
   const firstPlacements = placements(), firstBirth = firstPlacements[4], firstModels = modelUploads;
@@ -146,7 +148,6 @@ try {
   assert.equal(modelUploads, firstModels, 'moving scenery reuses the uploaded tree models');
   assert.equal(scenery.status().uploadBytes, first.trees * 20, 'a woodland refresh uploads only twenty bytes per tree');
   assert.equal(scenery.status().trees, first.trees, 'a source refresh must not shuffle foreground woodland');
-  assert(scenery.status().fading, 'preparation exposes any remaining entrance fade to the playback gate');
   sceneFeatures.push({...sceneFeatures[0], geometry: {type: 'Polygon', coordinates: [square(500, 500, 80)]}});
   scenery.prepare();
   for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));

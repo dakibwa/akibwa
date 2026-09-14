@@ -12,8 +12,8 @@ perspective and much less text and interface on 5 September 2026.
   gently turning camera. This is a terrain view, not street-level imagery.
 - Use muted sage terrain, warm paper, a deep red path and Fraunces for the opening.
   Retain real roads, trails, rivers and buildings, while keeping ordinary map labels
-  out of the moving view. Let town names appear briefly as the route approaches
-  mapped settlements. Avoid a fixed compass direction or an overhead overview
+  out of the moving view. A rolling list in the bottom-right shows mapped
+  settlements along the route. Avoid a fixed compass direction or an overhead overview
   as the main experience.
 - On 6 September 2026 Dan approved a landscape made from layered paper. Use
   cut and folded tree canopies, pale village walls with warm pitched roofs,
@@ -79,11 +79,21 @@ perspective and much less text and interface on 5 September 2026.
   flags across the atlas: the single flag stays beside the country name.
   Following Dan’s 7 September feedback, remove the top-right menu button and
   place the compact atlas there; the date below the ribbon opens journey options.
-- Settlement names come from the existing map tiles. Show one name briefly near
-  a city, town, village or hamlet, with a small geographic margin to avoid flicker.
-  Never announce passing a town on a visual connection. Names clear after leaving;
-  replay and scrubbing can reveal them again. Small photo prints leave the atlas
-  and landscape visible; the full-screen gallery covers the scene when opened.
+- Settlement names come from the existing map tiles. Following Dan's 14 September
+  request, show a quiet rolling list in the bottom-right: up to seven names on
+  large screens and five on phones or shorter screens. Keep nearby and upcoming
+  places in route order, with a little recently passed context fading above them.
+  Cities have larger Fraunces names than towns, villages and hamlets. A small red
+  point identifies the genuinely nearby settlement; do not leave a city marked
+  current out in the countryside. Reuse the name nodes and ease their movement
+  as the list advances, respecting reduced motion. Leave room for photographs,
+  the atlas, landmark captions and controls; the list has no bordered panel.
+  Retain validated names when their map tiles unload, and rebuild the window
+  on a date jump or replay. Names alongside estimated walks and train connections
+  are geographic context, not confirmation of the exact 2019 path or a visit.
+  The map cannot promise a fixed number of names in sparsely mapped areas.
+  Small photo prints leave the atlas and landscape visible; the full-screen
+  gallery covers the scene when opened.
 - Ten landmarks have paper models anchored at verified public positions:
   Reims and Nancy cathedrals, Château des Rohan, the Frauenkirche, St. Jakob in Villach,
   Ptuj Castle, Osijek’s co-cathedral, the Name of Mary Church in Novi Sad, the
@@ -106,8 +116,8 @@ perspective and much less text and interface on 5 September 2026.
   landmark, keeping its base above the controls. Keep the route framed and use
   the same turn limits. The independent route heading controls speed and the minimap,
   so looking at a landmark does not brake playback. Use short cathedral captions;
-  keep full names in the sources and hide the duplicate town arrival while the
-  landmark name is on screen.
+  keep full names in the sources. Leave the rolling place list clear of the
+  landmark caption.
 - The menu owns all 67 days, six chapters, pace, the automatic-photo toggle,
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
@@ -318,7 +328,7 @@ camera rail, forward heading, turn acceleration and bend-aware pace.
 `journey-pace.js` owns automatic viewing pace. It samples the existing 200 m ground profile for height and local relief, and reads nearby settlement, residential, woodland and water geometry from already loaded map tiles. It looks ahead along the actual route, slows around the ten mapped landmarks, and bounds acceleration and braking. Map queries are throttled, geometry is prepared outside the animation loop, and sampled scene/terrain caches are bounded. It adds no provider requests or public route data. `scripts/check-trek-pace.mjs` checks geographic triggers, clearings, departure, whole-route bounds and smooth speed changes.
 
 `journey-traveller.css` owns the presentation. `journey-wayfinding.js` owns the
-inset and settlement selection; `data/trek-landmarks.json` owns reviewed landmark
+inset, route-ordered settlement cache and rolling place window; `data/trek-landmarks.json` owns reviewed landmark
 positions and public source links, and `journey-landmarks.js` makes their meshes.
 Earlier map, journal and clock
 files are inactive.
@@ -456,7 +466,7 @@ software rendering is not evidence of phone performance.
 `scripts/check-trek-wayfinding.mjs` covers source provenance, actual recording
 proximity, all model meshes, complete native building replacement and stable
 settlement selection. The focused browser check uses
-`CHECK_TREK_WAYFINDING_ONLY=1` to exercise the inset, place arrival, landmark
+`CHECK_TREK_WAYFINDING_ONLY=1` to exercise the inset, rolling place list, landmark
 replacement, playback, photographs and 390/320px layouts.
 
 `check-trek-metrics.mjs` verifies recorded and estimated totals, partial uphill progress, descents, both train exclusions, all day boundaries and backward seeks. `CHECK_TREK_PROGRESS_ONLY=1` checks these counters in the running landscape, the source breakdown and readable totals at 1440, 390, 320 and short landscape sizes.

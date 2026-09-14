@@ -449,7 +449,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await setDesktop(1440,900);await goto('/trek/?day=25');check(await settled(),'the updated journey loads');
     await scrub(atPoint([11.569563,48.139847]));check(await settled(),'the recorded Munich approach loads');
     check(await until(async()=>(await state()).wayfinding?.place==='Munich'),'the current map tiles announce Munich beside the route');
-    check(await evaluate("window.trekStatus().wayfinding.flag==='de'&&window.trekStatus().wayfinding.flagReady&&document.querySelector('#place-arrival').classList.contains('visible')"),'the German flag and place arrival appear');
+    check(await evaluate("window.trekStatus().wayfinding.flag==='de'&&window.trekStatus().wayfinding.flagReady&&!document.querySelector('#journey-places').hidden&&document.querySelectorAll('#place-list li:not([aria-hidden])').length>0"),'the German flag and rolling place list appear');
     check(await until(async()=>{const p=(await state()).paper;return p?.landmarks.includes('munich')&&p.hiddenBuildings>=4;},30000),'the Frauenkirche replaces the native body and multi-part towers');
     const markerBefore=(await state()).wayfinding.point,canvasBefore=await evaluate("document.querySelector('#minimap-canvas').toDataURL()");
     await click('#play');await sleep(900);await click('#play');
