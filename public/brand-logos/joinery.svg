@@ -1,4 +1,6 @@
 <svg role="img" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-  <path d="m4 22 28-10v18h-4l-3 4-3-3-3 4-3-3-3 4-3-3H5Z" fill="#C58A57" stroke="#75452B" stroke-width="2" stroke-linejoin="round"/>
-  <path fill="#75452B" fill-rule="evenodd" d="M35 8h6a4 4 0 0 1 4 4v17a5 5 0 0 1-5 5h-5a4 4 0 0 1-4-4V12a4 4 0 0 1 4-4Zm1 6v14h3a1 1 0 0 0 1-1V15a1 1 0 0 0-1-1Z"/>
+  <g fill="#75452B" transform="rotate(40 24 24)">
+    <rect x="10" y="8" width="28" height="11" rx="1.5"/>
+    <path d="M21 19h6v21a3 3 0 0 1-6 0Z"/>
+  </g>
 </svg>
