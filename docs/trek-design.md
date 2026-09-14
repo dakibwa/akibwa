@@ -83,10 +83,13 @@ perspective and much less text and interface on 5 September 2026.
   request, show a quiet rolling list in the bottom-right: up to seven names on
   large screens and five on phones or shorter screens. Keep nearby and upcoming
   places in route order, with a little recently passed context fading above them.
-  Cities have larger Fraunces names than towns, villages and hamlets. A small red
-  point identifies the genuinely nearby settlement; do not leave a city marked
-  current out in the countryside. Reuse the name nodes and ease their movement
-  as the list advances, respecting reduced motion. Leave room for photographs,
+  Cities have larger Fraunces names than towns, villages and hamlets. Dan's
+  follow-up removes the heading and red dot. Move one buffered strip continuously
+  with route progress, using a fixed viewport and soft edges. Do not swap visible
+  groups or fade individual names in and out. Newly decoded names join the
+  offscreen tail; recycling old rows must preserve surviving screen positions.
+  Bound acceleration and scroll speed for readable movement through dense towns.
+  Pause the strip with the journey, and respect reduced motion. Leave room for photographs,
   the atlas, landmark captions and controls; the list has no bordered panel.
   Retain validated names when their map tiles unload, and rebuild the window
   on a date jump or replay. Names alongside estimated walks and train connections

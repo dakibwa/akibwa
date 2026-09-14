@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const {mesh,displayFootprint}=require('../public/trek/journey-landmarks.js');
-const {create,nearestPlace,routePlaceIndex,settlementWindow,settlementCache,metres,flags}=require('../public/trek/journey-wayfinding.js');
+const {create,nearestPlace,routePlaceIndex,settlementWindow,settlementCache,rollingPlaces,metres,flags}=require('../public/trek/journey-wayfinding.js');
 const {buildJourneyPath}=require('../public/trek/journey-route.js');
 const {landmarkBuildingIds}=require('../public/trek/journey-paper.js');
 const read=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url),'utf8'));
@@ -76,6 +76,43 @@ for(let i=0;i<5;i++)bounded.add(many,testPath.total*.5);
 assert(bounded.status().entries<=512&&bounded.status().rejected<=1024,'settlement memory stays bounded through long playback');
 assert.equal(JSON.stringify(testPath.pieces),pathBefore,'settlement projection never rewrites route geometry');
 
+// A continuous strip must retain on-screen names while map tiles and the
+// nearest-town window change, and never jump when old rows are recycled.
+const roll=rollingPlaces(),screenPositions=state=>new Map(state.entries.map((e,i)=>[e.id,i-state.offset]));
+roll.merge(ordered,10000,5);
+let prior=screenPositions(roll.state()),moves=0;
+for(let frame=1;frame<=360;frame++){
+  const progress=10000+frame*110;
+  if(frame%20===0){
+    const before=screenPositions(roll.state());
+    roll.merge(settlementWindow(ordered,progress,null).entries,progress,5);
+    const after=screenPositions(roll.state());
+    for(const [id,y] of before)if(y>-1&&y<6)assert.equal(after.get(id),y,'map refreshes cannot move or replace a visible name');
+  }
+  const state=roll.advance(progress,1/60,5,true),positions=screenPositions(state);
+  for(const [id,y] of positions)if(prior.has(id)){
+    const step=prior.get(id)-y;
+    assert(step>=-1e-9&&step<=1.5/60,'every retained name rolls forward by a bounded amount per frame, including row recycling');
+    if(step>1e-6)moves++;
+  }
+  prior=positions;
+}
+assert(moves>100,'the names move between town-boundary events');
+const frozen=roll.state().offset;
+roll.advance(70000,1,5,false);assert.equal(roll.state().offset,frozen,'pausing the map also pauses the strip');
+const stable=screenPositions(roll.state()),visible=roll.state().entries.find((e,i)=>i>roll.state().offset&&i<roll.state().offset+4);
+roll.merge([{...visible,id:'late-label',distance:visible.distance+1},...ordered],70000,5);
+for(const [id,y] of stable)if(y>-1&&y<5)assert.equal(screenPositions(roll.state()).get(id),y,'a late-decoded name cannot be inserted into the visible strip');
+assert(!roll.state().entries.some(e=>e.id==='late-label'));
+roll.merge([{...visible,distance:200000},...ordered],70000,5);
+assert.equal(roll.state().entries.filter(e=>e.id===visible.id).length,1,'a second route approach cannot duplicate a name still in the strip');
+assert.equal(screenPositions(roll.state()).get(visible.id),stable.get(visible.id));
+roll.reset();assert.equal(roll.state().entries.length,0,'a date seek clears the old strip');
+roll.merge(ordered.slice(10),60000,5);assert(roll.state().entries.every(e=>e.distance>=50000));
+roll.advance(68000,1/60,5,true,true);assert.equal(roll.state().offset%1,0,'reduced motion uses stationary rows');
+roll.reset();roll.merge(Array.from({length:200},(_,i)=>({...ordered[0],id:'buffer-'+i,distance:i*1000})),0,5);
+assert(roll.state().entries.length<=48,'the offscreen strip stays bounded');
+
 // Exercise the actual callback integration without the removed single-label UI.
 const brush=new Proxy({}, {get:()=>()=>{}}),canvas={getContext:()=>brush},handlers=new Map(),updates=[];
 const oldDocument=globalThis.document,oldDpr=globalThis.devicePixelRatio;
@@ -100,4 +137,4 @@ assert.deepEqual(landmarkBuildingIds(buildings,[bounds]),[1,2],'replace the comp
 const generated=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);
 assert.deepEqual(generated.landmarks,landmarks,'the published model positions and sources match the owning data');
 assert.deepEqual(generated.countryRings,read('data/trek-days.json').countryRings.map(({name,rings})=>({name,rings})),'the inset uses existing geographic outlines');
-console.log('Wayfinding checks passed: sourced landmarks, grounded meshes, stable route-ordered settlement windows, current/next anchors, bounded cache, tile dedupe/unloads, date seeks, connection context, callback resets and country outlines.');
+console.log('Wayfinding checks passed: sourced landmarks, grounded meshes, stable route-ordered settlement windows, current/next anchors, bounded cache, tile dedupe/unloads, date seeks, connection context, callback resets, continuous strip motion and country outlines.');

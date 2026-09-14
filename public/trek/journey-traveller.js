@@ -21,8 +21,8 @@
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
     const number=new Intl.NumberFormat('en-GB',{maximumFractionDigits:1});
-    let placeWindow=null;
-    const placeNodes=new Map(),compactPlaces=matchMedia('(max-width:650px), (max-height:740px) and (max-width:1259px)');
+    let placeVersion=-1,placeRow=40;
+    const placeNodes=new Map(),placeRoll=TrekWayfinding.rollingPlaces(),compactPlaces=matchMedia('(max-width:650px), (max-height:740px) and (max-width:1259px)'),placeMotion=matchMedia('(prefers-reduced-motion: reduce)');
     function setPace(value){
       const options=[...$('pace').options],selected=options.findIndex(option=>+option.value===value);
       if(selected<0)return;
@@ -69,47 +69,48 @@
       small.textContent=item.place+' · '+item.country;p.append(link,small);return p;
     }));
     function clearPlaces(){
-      placeWindow=null;
-      for(const {el,timer} of placeNodes.values()){clearTimeout(timer);el.getAnimations().forEach(a=>a.cancel());}
-      placeNodes.clear();$('place-list').replaceChildren();$('journey-places').hidden=true;
+      placeVersion=-1;placeRoll.reset();placeNodes.clear();
+      $('place-list').replaceChildren();$('journey-places').hidden=true;
+    }
+    function placeLayout(){
+      $('journey-places').style.setProperty('--place-count',compactPlaces.matches?5:7);
+      placeRow=parseFloat(getComputedStyle($('journey-places')).getPropertyValue('--place-row'));
+    }
+    function drawPlaces(dt=0){
+      const panel=$('journey-places'),list=$('place-list'),rows=compactPlaces.matches?5:7;
+      const state=placeRoll.advance(distance,dt,rows,playing&&ready,placeMotion.matches);
+      if(state.version!==placeVersion){
+        const ids=new Set(state.entries.map(e=>e.id));
+        for(const [id,el] of placeNodes)if(!ids.has(id)){el.remove();placeNodes.delete(id);}
+        state.entries.forEach((place,i)=>{
+          let el=placeNodes.get(place.id);
+          if(!el){
+            el=document.createElement('li');const name=document.createElement('span');name.textContent=place.name;el.append(name);el.dataset.id=place.id;
+            placeNodes.set(place.id,el);
+          }
+          const style='journey-place '+place.kind+(place.name.length>(place.kind==='city'?14:place.kind==='town'?18:22)?' long-name':'');
+          if(el.className!==style)el.className=style;
+          if(el.firstElementChild.textContent!==place.name)el.firstElementChild.textContent=place.name;
+          if(list.children[i]!==el)list.insertBefore(el,list.children[i]||null);
+        });
+        placeVersion=state.version;
+      }
+      list.style.transform='translate3d(0,'+(-state.offset*placeRow)+'px,0)';
+      state.entries.forEach((place,i)=>{
+        const el=placeNodes.get(place.id),outside=i+1<=state.offset||i>=state.offset+rows;
+        if(outside){if(!el.hasAttribute('aria-hidden'))el.setAttribute('aria-hidden','true');}
+        else if(el.hasAttribute('aria-hidden'))el.removeAttribute('aria-hidden');
+      });
+      panel.hidden=!started||!$('ending').hidden||!state.entries.length;
     }
     function placesChanged(window){
-      placeWindow=window;
-      const panel=$('journey-places'),list=$('place-list');
-      panel.hidden=!started||!$('ending').hidden||!window?.entries.length;
-      if(panel.hidden)return;
-      const count=compactPlaces.matches?5:7;
-      const start=compactPlaces.matches?Math.max(0,Math.min(window.currentIndex-1,window.entries.length-count)):0;
-      const entries=window.entries.slice(start,start+count),ids=new Set(entries.map(p=>p.id));
-      const animate=placeNodes.size>0&&!reduced;
-      panel.style.setProperty('--place-count',entries.length);
-      entries.forEach((place,i)=>{
-        let record=placeNodes.get(place.id),fresh=!record;
-        if(fresh){
-          const el=document.createElement('li'),name=document.createElement('span');
-          name.textContent=place.name;el.append(name);el.dataset.id=place.id;
-          record={el,timer:0};placeNodes.set(place.id,record);
-        }
-        const {el}=record;clearTimeout(record.timer);record.timer=0;
-        el.className='journey-place '+place.kind+(place.name.length>(place.kind==='city'?14:place.kind==='town'?18:22)?' long-name':'');
-        el.dataset.state=place.state;el.removeAttribute('aria-hidden');
-        if(place.id===window.currentId)el.setAttribute('aria-current','location');else el.removeAttribute('aria-current');
-        el.title=place.name;el.style.transform='translate3d(0,'+(i*100)+'%,0)';
-        // Reuse each name's node, so one town rolls away instead of replacing
-        // the whole list. Rows move only when route order changes.
-        if(list.children[i]!==el)list.insertBefore(el,list.children[i]||null);
-      });
-      for(const [id,record] of placeNodes){
-        if(ids.has(id)||record.timer)continue;
-        const {el}=record;el.getAnimations().forEach(a=>a.cancel());el.setAttribute('aria-hidden','true');el.classList.add('departed');el.style.transform='translate3d(0,'+(el.dataset.state==='upcoming'?count*100:-100)+'%,0)';
-        if(animate)record.timer=setTimeout(()=>{el.remove();placeNodes.delete(id);},1500);
-        else{el.remove();placeNodes.delete(id);}
-      }
+      placeLayout();
+      placeRoll.merge(window.entries,distance,compactPlaces.matches?5:7,!ready);
+      drawPlaces();
     }
     function wayfindingUI(force=false){
       if(!wayfinding||!path)return;
       wayfinding.update(distance,heading??TrekCamera.headingAt(path,distance),force,namedDay(day).c);
-      $('journey-places').hidden=!started||!$('ending').hidden||!placeWindow?.entries.length;
       const now=performance.now();if(!force&&now-lastLandmarkScan<220)return;lastLandmarkScan=now;
       const at=path.sample(distance).point,shown=paper?.status().landmarks||[];
       const nearby=started&&following&&ready?data.landmarks.filter(item=>shown.includes(item.id)).map(item=>{
@@ -330,7 +331,7 @@
         if(!flashShown&&photoCooldown>6&&lastFlashDay!==day&&fraction>.12&&fraction<.9)showFlash();
         if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
       }
-      updateUI();const unsettled=camera(dt);
+      updateUI();drawPlaces(dt);const unsettled=camera(dt);
       if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom(),travelSpeed,()=>map.getBounds().toArray());
       if(playing||unsettled)invalidate();
     }
@@ -433,9 +434,9 @@
     gallery.addEventListener('touchstart',e=>{swipeX=e.changedTouches[0].clientX;},{passive:true});
     gallery.addEventListener('touchend',e=>{if(swipeX!==null){const delta=e.changedTouches[0].clientX-swipeX;if(Math.abs(delta)>50)showGallery(galleryIndex+(delta<0?1:-1));}swipeX=null;},{passive:true});
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
-    addEventListener('resize',()=>{if(placeWindow)placesChanged(placeWindow);if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
+    addEventListener('resize',()=>{placeLayout();drawPlaces();if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),placeRoll:{offset:placeRoll.state().offset,velocity:placeRoll.state().velocity,names:placeRoll.state().entries.map(e=>e.name)},landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

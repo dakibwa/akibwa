@@ -124,6 +124,51 @@
     }
     return {add,window,reset:()=>{currentId=null;},status:()=>({entries:records.size,rejected:rejected.size,...index.status()})};
   }
+  // Keep the visible portion of one strip stable while new map tiles fill its
+  // offscreen tail. Only the shared scroll offset moves during playback.
+  function rollingPlaces(){
+    let entries=[],offset=0,velocity=0,version=0;
+    const ordered=items=>[...new Map(items.map(e=>[e.id,e])).values()].sort((a,b)=>a.distance-b.distance||a.id.localeCompare(b.id));
+    function target(distance,rows){
+      if(!entries.length)return 0;
+      const next=entries.findIndex(e=>e.distance>distance),before=rows>5?2:1;
+      let position;
+      if(next<0)position=entries.length-1;
+      else if(!next)position=0;
+      else position=next-1+(distance-entries[next-1].distance)/Math.max(1,entries[next].distance-entries[next-1].distance);
+      return Math.max(0,position-before);
+    }
+    const state=()=>({entries,offset,velocity,version});
+    function merge(incoming,distance,rows,reset=false){
+      let next;
+      if(!entries.length||reset){
+        next=ordered(incoming).slice(0,48);entries=next;offset=target(distance,rows);velocity=0;version++;return state();
+      }
+      // Never insert a newly decoded town among names already on screen.
+      const locked=entries.slice(0,Math.ceil(offset)+rows+1),last=locked.at(-1)?.distance??-Infinity,ids=new Set(locked.map(e=>e.id));
+      next=[...locked,...ordered([...entries.slice(locked.length),...incoming.filter(e=>e.distance>last&&!ids.has(e.id))])].slice(0,48);
+      const signature=items=>JSON.stringify(items.map(e=>[e.id,e.name,e.kind,e.distance]));
+      if(signature(next)!==signature(entries)){entries=next;version++;}
+      return state();
+    }
+    function advance(distance,dt,rows,moving,reduced=false){
+      if(!moving||!entries.length){velocity=0;return state();}
+      const desired=target(distance,rows);
+      if(reduced){offset=Math.max(offset,Math.floor(desired));velocity=0;}
+      else{
+        dt=Math.min(.1,Math.max(0,dt));
+        const wanted=Math.min(1.15,Math.max(0,(desired-offset)/.65));
+        velocity+=Math.max(-1.8*dt,Math.min(1.8*dt,wanted-velocity));
+        offset+=Math.min(Math.max(0,desired-offset),velocity*dt);
+      }
+      // Removing rows above the clip and rebasing the offset happen together,
+      // keeping every surviving name at exactly the same screen position.
+      const remove=Math.max(0,Math.floor(offset)-1);
+      if(remove){entries=entries.slice(remove);offset-=remove;version++;}
+      return state();
+    }
+    return {merge,advance,state,reset:()=>{entries=[];offset=velocity=0;version++;}};
+  }
   function create({canvas,flag,path,countries,map,landmarks,onPlace,onPlaces}){
     const ctx=canvas.getContext('2d'),atlas=document.createElement('canvas'),ink=atlas.getContext('2d');
     const width=240,height=148,points=path.pieces.flatMap(p=>[project(p.points[0]),project(p.points.at(-1))]);
@@ -201,6 +246,6 @@
     map.on('idle',refresh);update(0,0,true);
     return {update,refresh,resetPlace:()=>{place=null;lastScan=-Infinity;placesSignature='';settlements?.reset();},status:()=>({place:place?.name||null,places:lastPlaces,placeCache:settlements?.status(),point:path.sample(lastDistance).point,heading:lastHeading,country:lastCountry,flag:flags[lastCountry]||null,flagReady:!!flag?.complete&&!!flag?.naturalWidth}),destroy:()=>{destroyed=true;clearTimeout(refreshTimer);map.off('idle',refresh);}};
   }
-  const api={create,nearestPlace,routePlaceIndex,settlementWindow,settlementCache,flags,project,metres};
+  const api={create,nearestPlace,routePlaceIndex,settlementWindow,settlementCache,rollingPlaces,flags,project,metres};
   if(typeof module!=='undefined')module.exports=api;host.TrekWayfinding=api;
 })(typeof window==='undefined'?globalThis:window);
