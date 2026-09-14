@@ -64,7 +64,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     // their existing deadlines exceed the generic 30-second interaction wait.
     const prepared=()=>until(async()=>(await state()).ready,60000);
     await setDesktop(1440,900);await goto('/trek/?day=61');check(await prepared(),'the automatic journey prepares');
-    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'&&+document.querySelector('#pace').value===0"),'Auto is the default in both pace controls');
+    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'&&+document.querySelector('#pace').value===0"),'A day link selects continuous Auto in both pace controls');
     await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
     const measurements=[];
     for(const [label,distance] of [['open-country',path.dayDistance(61,.8)],['city',atPoint([4.02376,49.251785])],['mountains',path.dayDistance(30,.65)]]){
@@ -87,7 +87,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     }
     check(measurements[0].peak>measurements[1].peak*2&&measurements[0].peak>measurements[2].peak*2,'open-country playback runs materially faster than the city and mountains');
     const held=(await state()).distance;
-    for(const [value,label] of [[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×'],[12800,'8×'],[0,'Auto']]){
+    for(const [value,label] of [[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×'],[12800,'8×'],[-1,'Tour'],[0,'Auto']]){
       await click('#speed-cycle');check((await state()).pace===value&&(await state()).distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}`),`${label} remains available without moving a paused journey`);
     }
     await setPace(12800);await click('#play');await sleep(1200);await setPace(0);check((await state()).playing&&(await state()).pace===0,'switching from a fixed speed to Auto preserves playback');await sleep(1200);await click('#play');
@@ -296,7 +296,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await choose(30);check(await settled(),'the chosen day and date reset together');
     check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('Auto')"),'the photograph button is replaced by a visible speed control');await setPace(6400);
     const held=(await state()).distance;
-    for(const [pace,label] of [[12800,'8×'],[0,'Auto'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
+    for(const [pace,label] of [[12800,'8×'],[-1,'Tour'],[0,'Auto'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
       await click('#speed-cycle');const s=await state();
       check(s.pace===pace&&!s.playing&&s.distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}&&+document.querySelector('#pace').value===${pace}`),`${label} updates both speed controls without moving a paused journey`);
     }
