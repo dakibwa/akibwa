@@ -437,10 +437,11 @@ const checkPublicLanding = async () => {
   check(await evaluate(`(() => {
     const stops=document.querySelectorAll('.concept-career-stop'), open=stops[2], rest=stops[3];
     const style=(stop,selector)=>getComputedStyle(stop.querySelector(selector));
-    return style(open,'.concept-career-card').translate==='0px -3px' && style(open,'.concept-career-logo').scale==='1.08' &&
+    const top=(stop)=>stop.querySelector('.concept-career-card').getBoundingClientRect().top;
+    return top(open)===top(rest) && style(open,'.concept-career-logo').scale==='1.08' &&
       style(open,'.concept-career-card').backgroundColor!==style(rest,'.concept-career-card').backgroundColor &&
       style(open,'.concept-career-year').color!==style(rest,'.concept-career-year').color;
-  })()`), "the previewed role deepens into its own colour, lifts and colours its date");
+  })()`), "the previewed role deepens into its own colour in place and colours its date");
 
   const panelMotion = (selector, action) => evaluate(`new Promise(resolve => {
     const panel=document.querySelector(${JSON.stringify(selector)});

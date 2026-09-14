@@ -8292,14 +8292,14 @@ button {
 .concept-career-timeline { overflow-x: auto; padding: 3px 0 10px; scrollbar-width: thin; }
 .concept-career-timeline > li { min-width: 0; }
 .concept-career-stop { width: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
-.concept-career-stop[aria-expanded="true"] .concept-career-card { background: color-mix(in srgb, var(--company-accent) 30%, var(--canvas)); border-color: var(--company-accent); translate: 0 -3px; }
+.concept-career-stop[aria-expanded="true"] .concept-career-card { background: color-mix(in srgb, var(--company-accent) 30%, var(--canvas)); border-color: var(--company-accent); }
 .concept-career-stop[aria-expanded="true"] .concept-career-logo { scale: 1.08; }
 .concept-career-stop[aria-expanded="true"] .concept-career-node { box-shadow: 0 0 0 4px var(--canvas), 0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent); scale: 1.3; }
 .concept-career-stop[aria-expanded="true"] .concept-career-year { color: color-mix(in srgb, var(--company-accent) 80%, var(--ink)); }
 .concept-career-stop:focus-visible .concept-career-card { outline: 2px solid var(--company-accent); outline-offset: -4px; }
 .concept-career-stop:focus-visible { outline: none; }
 .concept-career-node { transition: box-shadow 260ms var(--ease-out), scale 320ms var(--ease-out); }
-.concept-career-card { transition: border-color 260ms ease, background 260ms ease, translate 320ms var(--ease-out); }
+.concept-career-card { transition: border-color 260ms ease, background 260ms ease; }
 .concept-career-logo { transition: scale 320ms var(--ease-out); }
 .concept-career-year { transition: color 220ms ease; }
 .index-hover-detail { --hover-detail-width: 280px; width: min(var(--hover-detail-width), 100%); display: grid; gap: 4px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent, var(--company-accent)) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); overflow-wrap: anywhere; }
@@ -8486,7 +8486,7 @@ button {
   .index-reveal-reserve { transition: none; }
   .hero-name-value { animation: none; }
   .concept-career-logo, .concept-career-year, .career-spotlight-role, .career-spotlight-mark, .career-spotlight-title strong { transition: none; }
-  .concept-career-stop[aria-expanded="true"] :is(.concept-career-card, .concept-career-logo, .concept-career-node), .career-spotlight-role:hover, .career-spotlight-role:hover .career-spotlight-mark { translate: none; scale: none; }
+  .concept-career-stop[aria-expanded="true"] :is(.concept-career-logo, .concept-career-node), .career-spotlight-role:hover, .career-spotlight-role:hover .career-spotlight-mark { translate: none; scale: none; }
   .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .personal-taste, .personal-taste.is-open, .index-reveal-shell, .index-reveal-shell.is-open, .index-reveal-track, .index-hover-detail.index-reveal-panel, .index-hover-detail.index-reveal-panel.is-open { transition: none; }
   .index-reveal-shell.is-open .index-reveal-content { animation: none; }
   .index-reveal-content.is-outgoing { display: none; }
