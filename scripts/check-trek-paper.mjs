@@ -31,6 +31,23 @@ const positions = list => list.map(t => t.p.join(':') + ':' + t.seed).sort();
 assert.deepEqual(positions(plant([woodland], [center[0] + 200, center[1] - 150])), positions(trees), 'moving the camera must not shuffle an existing forest');
 assert.equal(plant([woodland], center, 20).length, 20, 'honour the geometry budget even in a dense forest');
 assert.equal(JSON.stringify(woodland), source, 'never rewrite mapped source geometry');
+const wholeForest = {...woodland, geometry: {type: 'Polygon', coordinates: [square(-10000, -10000, 20000), square(-200, -200, 400)]}};
+const wideTrees = paper.plantWoodland([wholeForest], center, p => Math.abs(p[0] - center[0] - 400) < 46, 9000);
+assert.equal(wideTrees.length, 6500, 'a wide woodland view shares the existing tree allowance');
+assert(wideTrees.filter(tree => tree.d > 4500).length > 1500, 'the allowance must reach the wider landscape rather than ending at a dense foreground disk');
+assert(wideTrees.filter(tree => tree.d < 2000).length > 1500, 'nearby woodland keeps denser individual detail');
+for (const [xSign, ySign] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+  assert(wideTrees.filter(({p, d}) => d > 4500 && (p[0] - center[0]) * xSign > 0 && (p[1] - center[1]) * ySign > 0).length > 300, 'distant woodland appears around the whole view');
+}
+for (const tree of wideTrees) {
+  assert(paper.inPolygon(tree.p, wholeForest.geometry.coordinates.map(r => r.map(paper.project))), 'wide scenery still respects mapped boundaries and holes');
+  assert(Math.abs(tree.p[0] - center[0] - 400) >= 46, 'sparser woodland still preserves the open route');
+}
+const nearbyWide = new Set(positions(paper.plantWoodland([wholeForest], [center[0] + 160, center[1] + 40], p => Math.abs(p[0] - center[0] - 400) < 46, 9000)));
+assert(positions(wideTrees).filter(point => nearbyWide.has(point)).length > wideTrees.length * .94, 'a small camera movement retains the wide forest rather than reshuffling its tree budget');
+assert.equal(paper.sceneryRadius(15), 4600, 'close viewing retains the established scenery radius');
+assert(paper.sceneryRadius(12.2) > 7000 && paper.sceneryRadius(12.2) < 9000, 'the automatic wide view receives surrounding scenery');
+assert.equal(paper.sceneryRadius(8), 14000, 'very wide views keep a bounded scenery area');
 for (const seed of [.01, .35, .67, .7, .89, .99]) for (const detailed of [false, true]) {
   const mesh = paper.treeMesh(seed, detailed);
   assert(mesh.faces.length > 25 && mesh.faces.length <= 112, 'layered canopies must keep a bounded per-tree mesh');
@@ -97,7 +114,9 @@ const brush = new Proxy({getImageData: () => ({width: 128, height: 128, data: ne
 const oldDocument = globalThis.document;
 globalThis.document = {createElement: () => ({getContext: () => brush})};
 const handlers = new Map();
+let sceneZoom = 14;
 const map = {getFilter: () => null, getTerrain: () => ({}), isSourceLoaded: () => false,
+  getZoom: () => sceneZoom,
   getCenter: () => ({toArray: () => paper.unproject(center)}), queryTerrainElevation: () => 100,
   querySourceFeatures: (_source, options) => options.sourceLayer === 'landcover' ? sceneFeatures : [],
   getCanvas: () => ({getContext: () => gl}), getSource: () => ({setData: () => {}}),
@@ -134,6 +153,23 @@ try {
   const birthTimes = placements().filter((_, i) => i % 5 === 4);
   assert.equal(Math.min(...birthTimes), firstBirth, 'new tiles preserve the old scene entrance times');
   assert(Math.max(...birthTimes) > firstBirth && scenery.status().trees > first.trees, 'newly loaded trees receive a later soft entrance rather than appearing fully opaque');
+  const beforeSourceBurst = scenery.status().updates;
+  for (let i = 0; i < 80; i++) handlers.get('sourcedata')({sourceId: 'openmaptiles', sourceDataType: 'content'});
+  await new Promise(resolve => setTimeout(resolve, 50));
+  assert.equal(scenery.status().updates, beforeSourceBurst, 'a stream of tile arrivals must not trigger immediate repetitive scenery rebuilds');
+  assert(scenery.status().pending, 'coalescing tile updates preserves the pending refresh');
+  await new Promise(resolve => setTimeout(resolve, 1250));
+  for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
+  assert.equal(scenery.status().updates, beforeSourceBurst + 1, 'coalesced source arrivals receive one eventual refresh');
+  sceneFeatures.splice(0, sceneFeatures.length, {...wholeForest, properties: {class: 'wood'}}); sceneZoom = 12.2;
+  scenery.prepare();
+  assert(scenery.status().building, 'a large woodland build yields before finishing all candidate and terrain work');
+  let sceneYields = 0;
+  for (; scenery.status().building && sceneYields < 200; sceneYields++) await new Promise(resolve => setTimeout(resolve, 1));
+  const wideScene = scenery.status();
+  assert(!wideScene.building && sceneYields > 1, 'a large scene completes across multiple event-loop opportunities');
+  assert(wideScene.trees === 6500 && wideScene.vertices <= 2400000, 'the wider map retains the original tree and geometry limits');
+  assert(wideScene.radius > 7000 && wideScene.radius < 9000, 'wide camera scenery extends beyond the original foreground radius');
   sceneFeatures.length = 0; scenery.prepare();
   for (let i = 0; scenery.status().building && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 10));
   draws.length = 0;
@@ -142,4 +178,4 @@ try {
   assert.equal(draws.length, 0, 'unused cached models must never draw stale instances');
 } finally { scenery.destroy(); sceneryLayer.onRemove(map, gl); globalThis.document = oldDocument; }
 assert.equal(buffers.size, 0, 'removing the scenery releases both model and instance buffers');
-console.log('Paper scenery checks passed: mapped fields, valid styles, anchored woodland, stable instanced geometry, reused GPU models, bounded density, mapped orchard rows, clear route corridors and nonblocking foreground preparation.');
+console.log('Paper scenery checks passed: mapped fields, anchored woodland across the view, stable instanced geometry, bounded density and radius, mapped orchard rows, clear route corridors, coalesced tile refreshes and nonblocking foreground preparation.');

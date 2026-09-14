@@ -53,6 +53,14 @@ const abort=new AbortController();abort.abort();await assert.rejects(protocol({u
 const a=await protocol({url:'trek-cache://'+tile},new AbortController());new Uint8Array(a.data)[0]=99;
 const b=await protocol({url:'trek-cache://'+tile},new AbortController());assert.equal(new Uint8Array(b.data)[0],1,'worker transfer and callers cannot damage the cached bytes');
 const vector='https://tiles.openfreemap.org/planet/20260830_080001_pt/{z}/{x}/{y}.pbf';
+for(const bounds of [[[12.8,46.7],[13.6,47.1]],[[-180,-85],[179.99,85]]]){
+ const background=Cache.landscape(bounds,vector,13);
+ assert(background.length>0&&background.length<=72&&background.every(Cache.allowed),'the whole visible terrain backdrop has a bounded tile plan');
+ for(const point of bounds){
+  const first=background[0].match(/terrarium\/(\d+)\//),z=+first[1],[x,y]=Cache.tileAt(point,z);
+  assert(background.includes(Cache.urlFor(Cache.DEM,z,x,y)),'the broad terrain backdrop includes both far corners of the viewing window');
+ }
+}
 const urls=Cache.corridor(path,path.dayDistance(30,.5),path.dayDistance(30,.5)+6500,vector,13,1200);
 assert(urls.length>20&&urls.length<250);assert(urls.every(Cache.allowed));assert.equal(new Set(urls).size,urls.length);
 assert.equal(cache.transformRequest(tile,'Tile').url,'trek-cache://'+tile);assert.equal(cache.transformRequest(tile,'Image').url,tile,'the custom protocol is confined to map tiles');

@@ -16,7 +16,7 @@
     let lastContrast=-Infinity,markLuminance=null,markOnDark=false;
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
-    let scrubbing=false,scrubChanged=false,viewScale=1;
+    let scrubbing=false,scrubChanged=false,viewScale=TrekCamera.scaleForPace(pace),steadyView=null,paceTransition=null,requiredClearance=null;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
@@ -24,6 +24,11 @@
     function setPace(value){
       const options=[...$('pace').options],selected=options.findIndex(option=>+option.value===value);
       if(selected<0)return;
+      if(value!==pace){
+        const scale=TrekCamera.scaleForPace(value),fromScale=paceTransition?.fromScale??viewScale;
+        const limit=Math.min(paceTransition?.limit??Infinity,pace||travelSpeed||pacing?.status().target||400);
+        paceTransition=steadyView&&scale>fromScale+.01?{scale,fromScale,limit}:null;
+      }
       pace=value;$('pace').value=value;
       const label=options[selected].dataset.label,next=options[(selected+1)%options.length].dataset.label;
       text('speed-label',label);$('speed-cycle').setAttribute('aria-label',(value===0?'Automatic pace':'Playback speed '+label)+'. Change to '+next+'.');
@@ -97,14 +102,14 @@
       document.body.classList.remove('is-exploring');setPlaying(true);updateUI(true);
     }
     function reset(){
-      setPace(0);viewScale=1;
+      setPace(0);viewScale=TrekCamera.scaleForPace(pace);
       setPlaying(false);dismissFlash();menu.close();started=false;$('journey-minimap').hidden=true;placeChanged(null);wayfinding?.resetPlace();distance=0;renderedDistance=0;heading=null;eyeHeight=null;
       day=1;fraction=0;lastUI=-1;lastFlashDay=-1;photoCooldown=0;following=true;
       $('opening').hidden=false;$('ending').hidden=true;$('journey-controls').hidden=true;document.body.classList.remove('is-exploring');
       history.replaceState(null,'',location.pathname);updateUI(true);prepareCamera();invalidate();
     }
     function visit(n,t=.5){
-      viewScale=1;
+      viewScale=TrekCamera.scaleForPace(pace);
       n=clamp(n,1,67);setPlaying(false);dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;day=n;fraction=t;
       if(path)distance=path.dayDistance(n,t);else positionPending={day:n,t};
       renderedDistance=distance;heading=null;eyeHeight=null;lastFlashDay=-1;photoCooldown=0;
@@ -183,7 +188,7 @@
     async function prepareCamera(){
       if(!terrainReady||failed)return;
       const generation=++warmGeneration,eye=TrekCamera.pointAt(path,distance);
-      ready=false;travelSpeed=0;tileCache.cancel();$('begin').disabled=true;$('play').disabled=true;
+      ready=false;travelSpeed=0;paceTransition=null;tileCache.cancel();$('begin').disabled=true;$('play').disabled=true;
       $('map-status').hidden=false;$('retry-load').hidden=true;$('loading-progress').hidden=false;
       $('loading-progress').value=5;text('load-message','Preparing this stretch of landscape…');
       let preparationTimer;
@@ -203,7 +208,7 @@
         eyeHeight=null;heightVelocity=0;heading=null;headingVelocity=0;lookHeading=null;lookVelocity=0;viewPitch=null;
         map.setCenterClampedToGround(false);ready=true;camera(.016,true);ready=false;
         // Solve the real camera first, then warm its actual vector/DEM levels.
-        const zoom=map.getZoom(),warm=tileCache.warm([...TrekCache.corridor(path,distance,distance+4000,vectorTemplate,zoom,1200),...TrekCache.corridor(path,distance-2000,distance,vectorTemplate,zoom,1000)],report);
+        const zoom=map.getZoom(),warm=tileCache.warm([...TrekCache.landscape(map.getBounds().toArray(),vectorTemplate,zoom),...TrekCache.corridor(path,distance,distance+4000,vectorTemplate,zoom,1200),...TrekCache.corridor(path,distance-2000,distance,vectorTemplate,zoom,1000)],report);
         await Promise.race([warm,new Promise((_,reject)=>{preparationTimer=setTimeout(()=>reject(Error('Preparation timeout')),25000);})]);
         clearTimeout(preparationTimer);if(generation!==warmGeneration||failed)return;
         text('load-message','Settling the paper landscape…');$('loading-progress').value=90;
@@ -220,7 +225,7 @@
         $('map-status').hidden=true;document.body.classList.remove('is-loading');
         lastTime=0;updateUI(true);invalidate();
         if(started)showFlash();
-        tileCache.ahead(path,distance,vectorTemplate,map.getZoom(),pace||pacing?.status().target||0);
+        tileCache.ahead(path,distance,vectorTemplate,map.getZoom(),pace||pacing?.status().target||0,()=>map.getBounds().toArray());
         if(autoBegin){autoBegin=false;begin();}
       }catch(error){
         if(generation!==warmGeneration||failed)return;
@@ -239,26 +244,28 @@
       heading=rotation.heading;headingVelocity=rotation.velocity;
       // A gentle glance gives oversized landmarks room on a narrow screen.
       // Keep route heading separate so looking aside does not slow the journey.
-      const framing=TrekCamera.landmarkFrame(data.landmarks,point,wanted),wantedLook=framing?.heading??wanted;
+      const framing=TrekCamera.landmarkFrame(data.landmarks,point,wanted),wantedLook=wanted+angle(wanted,framing?.heading??wanted)*(pace===0?.35:1);
       const glance=TrekCamera.turn(lookHeading,lookVelocity,wantedLook,dt);
       lookHeading=glance.heading;lookVelocity=glance.velocity;cameraLandmark=framing?.id||null;
       const terrain=TrekCamera.terrainFrame(path,renderedDistance,terrainHeight,viewScale),base=terrain.ground;
-      const wantedPitch=clamp(54-18*terrain.winding-12*(framing?.strength||0),34,60);
+      const wantedPitch=pace===0?48:clamp(54-18*terrain.winding-12*(framing?.strength||0),34,60);
       viewPitch=viewPitch===null?wantedPitch:viewPitch+clamp((wantedPitch-viewPitch)*(1-Math.exp(-dt/1.6)),-3*dt,3*dt);
       const bottom=innerHeight-$('journey-controls').getBoundingClientRect().top+25;
       const fit=TrekCamera.routeFrame(path,renderedDistance,terrainHeight,lookHeading,viewPitch,{width:innerWidth,height:innerHeight,top:90,bottom:started?bottom:240},terrain.winding,viewScale);
-      const wantedEye=Math.max(terrain.height+(framing?.lift||0),fit.base+fit.clearance);
-      const vertical=TrekCamera.rise(eyeHeight,heightVelocity,wantedEye,dt,Math.max(viewScale,clamp(((eyeHeight??wantedEye)-base)/850,1,8)));
-      eyeHeight=vertical.height;heightVelocity=vertical.velocity;cameraLift=terrain.lift;
-      eyeHeight=Math.max(eyeHeight,base+420);
+      const wantedClearance=Math.max(terrain.height+(framing?.lift||0)-fit.base,fit.clearance);
+      steadyView=TrekCamera.steadyFrame(snap?null:steadyView,{focus:fit.focus,base:fit.base,clearance:wantedClearance},dt);
+      requiredClearance=wantedClearance;
+      const previousHeight=eyeHeight;
+      eyeHeight=Math.max(steadyView.base+steadyView.clearance,base+420);
+      heightVelocity=previousHeight===null?0:(eyeHeight-previousHeight)/dt;cameraLift=terrain.lift;
       // Look down gradually over a descent or tight loop, keeping the nearby
       // path in frame while the broad heading follows the valley beyond it.
-      // Rebase every frame using the stable mapped profile. A stale mountain
-      // reference or a transient visible DEM seam can make the draped map swell.
-      const clearance=eyeHeight-fit.base;
-      const target=TrekCamera.ahead(fit.focus,lookHeading,-fit.bias*clearance);
+      // Rebase smoothly from the stable mapped profile, independently of live
+      // DEM tile arrivals. Keep the whole transform on the same eased frame.
+      const clearance=eyeHeight-steadyView.base;
+      const target=TrekCamera.ahead(steadyView.focus,lookHeading,-fit.bias*clearance);
       const eye=TrekCamera.ahead(target,lookHeading,-clearance*Math.tan(viewPitch*Math.PI/180));
-      const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,fit.base);
+      const options=map.calculateCameraOptionsFromTo(eye,eyeHeight,target,steadyView.base);
       // Do not change pitch after solving zoom/centre: that moves the eye too.
       map.jumpTo(options);train?.update(distance);cameraHeading=lookHeading;cameraPitch=map.getPitch();
       cameraClearance=eyeHeight-base;cameraPoint=eye;
@@ -266,22 +273,28 @@
       cameraTerrainClearance=Number.isFinite(renderedGround)?eyeHeight-renderedGround:null;
       const visible=fit.samples.map(p=>map.project(p.point)).filter(p=>p.x>12&&p.x<innerWidth-12&&p.y>75&&p.y<innerHeight-bottom);
       routeVisible=visible.length/fit.samples.length;
-      return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1||Math.abs(headingVelocity)>.02||Math.abs(angle(lookHeading,wantedLook))>.1||Math.abs(lookVelocity)>.02||Math.abs(eyeHeight-wantedEye)>.5||Math.abs(heightVelocity)>.05||Math.abs(viewPitch-wantedPitch)>.02;
+      return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1||Math.abs(headingVelocity)>.02||Math.abs(angle(lookHeading,wantedLook))>.1||Math.abs(lookVelocity)>.02||Math.abs(steadyView.clearance-wantedClearance)>.5||Math.abs(steadyView.base-fit.base)>.1||Math.hypot(...steadyView.focus.map((v,i)=>v-fit.focus[i]))>.000001||Math.abs(heightVelocity)>.05||Math.abs(viewPitch-wantedPitch)>.02;
     }
     function tick(time){
-      frame=0;const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.1,elapsed)*(playing&&pace===0?TrekPace.playbackRate:1);lastTime=time;
+      frame=0;
+      // Leave time for tile decoding and scenery on high-refresh displays.
+      // Updating the entire map at 120 Hz competes with the next visible frame.
+      if(lastTime&&time-lastTime<15){invalidate();return;}
+      const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.1,elapsed);lastTime=time;
       if(playing&&path&&ready){
         const requested=pace||pacing.update(distance).target;
-        const wantedScale=TrekCamera.scaleForSpeed(requested);
-        viewScale+=(wantedScale-viewScale)*(1-Math.exp(-dt/2));
-        const desired=TrekCamera.speedLimit(path,distance,requested,heading,viewScale);
-        travelSpeed=pace===0?TrekPace.advance(travelSpeed,desired,dt):mix(travelSpeed,desired,1-Math.exp(-dt/.85));
-        distance=Math.min(path.total,distance+travelSpeed*dt);photoCooldown+=elapsed;
+        const wantedScale=TrekCamera.scaleForPace(pace),travelDt=dt*(pace===0?TrekPace.playbackRate:1);
+        viewScale+=(wantedScale-viewScale)*(1-Math.exp(-dt/6));
+        const guarded=TrekCamera.paceLimit(paceTransition,TrekCamera.speedLimit(path,distance,requested,heading,viewScale),viewScale,steadyView?.clearance,requiredClearance);
+        if(guarded.settled)paceTransition=null;
+        const desired=guarded.speed;
+        travelSpeed=pace===0?TrekPace.advance(travelSpeed,desired,travelDt):mix(travelSpeed,desired,1-Math.exp(-travelDt/.85));
+        distance=Math.min(path.total,distance+travelSpeed*travelDt);photoCooldown+=elapsed;
         if(!flashShown&&photoCooldown>6&&lastFlashDay!==day&&fraction>.12&&fraction<.9)showFlash();
         if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
       }
       updateUI();const unsettled=camera(dt);
-      if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom(),travelSpeed);
+      if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom(),travelSpeed,()=>map.getBounds().toArray());
       if(playing||unsettled)invalidate();
     }
     function unavailable(message){failed=true;ready=false;$('begin').disabled=true;$('play').disabled=true;$('loading-progress').hidden=true;$('retry-load').hidden=false;$('map-status').hidden=false;text('load-message',message);setPlaying(false);}
@@ -332,7 +345,7 @@
           train=TrekTrain.create(map,path,terrainHeight);
           pacing=TrekPace.create({map,path,heightAt:terrainHeight,landmarks:data.landmarks});
           wayfinding=TrekWayfinding.create({canvas:$('minimap-canvas'),flag:$('country-flag'),path,countries:data.countryRings,map,landmarks:data.landmarks,onPlace:placeChanged});
-          map.on('idle',()=>wayfindingUI(true));
+          map.on('idle',()=>wayfindingUI());
           // Sources have now populated MapLibre's initially expanded disclosure.
           const attribution=document.querySelector('.maplibregl-ctrl-attrib');
           attribution.classList.remove('maplibregl-compact-show');attribution.removeAttribute('open');
@@ -355,7 +368,7 @@
     $('speed-cycle').addEventListener('click',()=>{const options=[...$('pace').options],current=options.findIndex(option=>+option.value===pace);setPace(+options[(current+1)%options.length].value);});
     function seek(next){
       if(!path)return;
-      viewScale=1;
+      viewScale=TrekCamera.scaleForPace(pace);
       if(scrubbing&&!scrubChanged){++warmGeneration;tileCache?.cancel();ready=false;$('play').disabled=true;}
       scrubChanged=true;setPlaying(false);if(flashShown||flashPending)dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;
       distance=next;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('opening').hidden=true;$('ending').hidden=distance<path.total;
@@ -385,7 +398,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();
