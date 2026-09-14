@@ -44,7 +44,7 @@ function CareerSpotlight() {
       <ol className="career-spotlight">
         {career.map((job) => (
           <li className="career-spotlight-role" key={job.name} style={{ "--company-accent": job.accent }}>
-            <span className="career-spotlight-mark">
+            <span className={`career-spotlight-mark${job.logo === "/favicon.svg" ? " is-dark" : ""}`}>
               <span className={logoClass(job)}>
                 <SiteImage {...logoImage(job)} sizes="32px" alt="" />
               </span>
