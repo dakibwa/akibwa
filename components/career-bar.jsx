@@ -67,7 +67,7 @@ export function CareerBar() {
             >
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
-                <span className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`}>
+                <span className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`}>
                   <SiteImage src={job.logo} slot="logo" sizes="32px" alt="" />
                 </span>
               </span>
