@@ -58,11 +58,13 @@ perspective and much less text and interface on 5 September 2026.
   landscape on release. Arrow keys move within a day, Shift+arrows and Page keys
   move by a day, and Home/End reach Paris/Sofia. Seeking backwards clears the
   later fill, and the left arrow can leave the final arrival segment.
-  The opening reads like the first page of a walking journal: the actual
-  September–November 2019 dates, a left-aligned Fraunces title and the approximate
-  walking distance. A ruled paper strip with the route's red marker and arrow
-  says “Begin following Dan’s journey”, with a short preface that Dan trekked
-  from Paris to Sofia in 2019. Keep the mapped landscape visible behind it.
+  The opening reads like the first page of a walking journal: a
+  left-aligned Fraunces title and a short preface that Dan trekked from Paris to
+  Sofia in 2019. Group the approximate walking distance and September–November
+  2019 dates beneath that preface, with larger dark text over a soft paper wash.
+  Keep the mapped landscape visible behind it. “Begin Journey” is a simple text
+  button with no box or arrow; retain a clear keyboard focus outline and a 48px
+  tap target.
   The opening has this single action; day selection belongs in the journey menu
   after beginning. Sofia has one replay action. Map
   credits use a quiet text disclosure above the landscape wash, retaining the
