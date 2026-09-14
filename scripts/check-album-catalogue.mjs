@@ -175,18 +175,22 @@ globalThis.window = {
   },
 };
 const accept = (packet) => acceptsAlbumPacket(packet, fixture, baselineAt, now);
-globalThis.fetch = async () => ({ ok: true, json: async () => cached });
+const respond = (packet) => ({ ok: true, text: async () => JSON.stringify(packet) });
+let requestInit;
+globalThis.fetch = async (_url, init) => { requestInit = init; return respond(cached); };
 assert.deepEqual(await fetchSessionJson("test-albums", { accept }), cached);
+// Revalidate rather than re-download: an unchanged catalogue answers 304.
+assert.equal(requestInit.cache, "no-cache");
 assert.deepEqual(readSessionJson("test-albums"), cached);
 for (const bad of [
   { refreshedAt: partial.refreshedAt, plays: {} },
   { plays: { first: 999 } },
 ]) {
-  globalThis.fetch = async () => ({ ok: true, json: async () => bad });
+  globalThis.fetch = async () => respond(bad);
   assert.equal(await fetchSessionJson("test-albums", { accept }), null);
   assert.deepEqual(readSessionJson("test-albums"), cached);
 }
-globalThis.fetch = async () => ({ ok: true, json: async () => older });
+globalThis.fetch = async () => respond(older);
 assert.equal(
   await fetchSessionJson("test-albums", {
     accept: (packet) =>
