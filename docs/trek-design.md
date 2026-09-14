@@ -112,29 +112,30 @@ perspective and much less text and interface on 5 September 2026.
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
-- **Highlights** is the default journey: eight short viewing windows cover all
-  seven countries in chronological order, ending at the real Sofia endpoint.
-  The viewing windows total 150 seconds; landscape preparation and soft paper
-  transitions bring the ordinary complete experience to roughly four minutes.
-  Keep the camera's comfortable continuous motion within each window, and show
-  the next country's name while its landscape prepares. Pausing or hiding the
-  page pauses the viewing clock. A failed preparation stops for the existing
-  retry control. Selecting a day or using the timeline leaves Highlights and
-  switches to continuous Auto, preserving the selected route position. Back to
-  Paris restores Highlights and resets the tour clock. The opening identifies this as a short highlights
-  journey; the existing speed control says “Tour”.
-- **Auto** remains available for the full continuous route. Move quickly across
+- **Auto** is the default: one continuous trip of about ten minutes. Never skip
+  to selected highlights or reset the camera at country/day boundaries. Move quickly across
   long open stretches, then slow for settlements, large mountains, woodland,
   rivers/lakes and the mapped landmarks. Use the existing terrain profile and
   map features; these are presentation heuristics, not a claim to know which
   view the traveller personally found beautiful. Anticipate the approaching
-  scenery and ease speed changes. Retain the camera’s bend and alignment limits.
-  Keep a quiet “Auto” label on the existing speed button. The fixed ¼×, 1×, 2×, 4× and 8×
+  scenery and ease speed changes. At faster paces, gradually widen the camera
+  rail, look farther ahead and rise to keep the route readable. Slow scenery
+  brings the view closer again. Retain bounded turns and acceleration; apply
+  bend/alignment limits to this broader rail so minor road zigzags do not turn
+  the trip into an hour. A peripheral tile request must not continuously throttle
+  travel; keep the last coherent map context and prefetch along the route.
+  Calibrate Auto's motion clock against a complete browser run with live map
+  context; it scales travel and camera easing together. Photos keep their real
+  elapsed viewing time. Manual speeds use their own clock.
+  Keep a quiet “Auto” label on the existing speed button, without changing
+  numbers or extra on-screen explanations. The fixed ¼×, 1×, 2×, 4× and 8×
   settings remain in the same menu and button cycle; manual choices hold their
   requested pace subject to the existing camera limits. Changing modes preserves
   playback and position. These are presentation speeds, not walking measurements.
-  `journey-tour.js` owns the viewing windows and clock; it never modifies the
-  route, photographs, recorded distances or estimates.
+  The opening gives the approximate ten-minute duration. The date picker shows
+  recorded calendar dates with their countries, falling back to the numbered day
+  when its date is unknown. Selecting a date or scrubbing pauses at that point;
+  slower pace choices remain in effect. Back to Paris restores default Auto.
 - Original photographs appear as lightly angled paper prints beside the moving
   landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
   `contain`; do not interrupt playback or hide the route, atlas or elevation.

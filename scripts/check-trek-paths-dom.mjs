@@ -64,15 +64,15 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     // their existing deadlines exceed the generic 30-second interaction wait.
     const prepared=()=>until(async()=>(await state()).ready,60000);
     await setDesktop(1440,900);await goto('/trek/?day=61');check(await prepared(),'the automatic journey prepares');
-    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'&&+document.querySelector('#pace').value===0"),'A day link selects continuous Auto in both pace controls');
+    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'&&+document.querySelector('#pace').value===0"),'Auto is the default in both pace controls');
     await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
     const measurements=[];
     for(const [label,distance] of [['open-country',path.dayDistance(61,.8)],['city',atPoint([4.02376,49.251785])],['mountains',path.dayDistance(30,.65)]]){
       await scrub(distance);check(await prepared(),`${label} prepares at its requested route position`);await sleep(1800);
       const before=await state();console.log('  scene '+JSON.stringify({label,distance:before.distance,pacing:before.pacing}));
       check(before.pacing?.places+before.pacing?.shapes>0,'automatic pace reads the loaded public map context');
-      if(label==='city')check(before.pacing.scores.settlement>.5&&before.pacing.target<500,'the actual city receives a slower viewing pace');
-      if(label==='mountains')check(before.pacing.scores.mountain>.4&&before.pacing.target<700,'the actual Alpine pass receives a slower viewing pace');
+      if(label==='city')check(before.pacing.scores.settlement>.5&&before.pacing.target<4100,'the actual city receives a slower viewing pace');
+      if(label==='mountains')check(before.pacing.scores.mountain>.4&&before.pacing.target<1400,'the actual Alpine pass receives a slower viewing pace');
       await evaluate(`window.__paceFrames=[];window.__paceCapture=true;document.querySelector('#play').click();requestAnimationFrame(function sample(time){if(!window.__paceCapture)return;const s=window.trekStatus();window.__paceFrames.push({time,distance:s.distance,speed:s.travelSpeed,target:s.pacing.target,anticipating:s.pacing.anticipating,reason:s.pacing.reason,clearance:s.cameraTerrainClearance,visible:s.routeVisible});requestAnimationFrame(sample);});`);
       await sleep(12000);
       const samples=await evaluate(`(()=>{document.querySelector('#play').click();window.__paceCapture=false;const frames=window.__paceFrames;delete window.__paceFrames;delete window.__paceCapture;return frames;})()`);
@@ -80,14 +80,14 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
       const rates=samples.slice(1).map((s,i)=>(s.speed-samples[i].speed)/Math.min(.1,(s.time-samples[i].time)/1000));
       const measured={label,frames:samples.length,p95,travelled:Math.round(samples.at(-1).distance-samples[0].distance),peak:Math.round(Math.max(...samples.map(s=>s.speed))),targets:[Math.round(Math.min(...samples.map(s=>s.target))),Math.round(Math.max(...samples.map(s=>s.target)))],anticipating:samples.filter(s=>s.anticipating).length};measurements.push(measured);console.log('  playback '+JSON.stringify(measured));
       check(samples.length>120&&measured.travelled>400&&p95<85,'ordinary playback advances without recurring long frames');
-      check(Math.max(...rates)<660&&Math.min(...rates)>-1510,'automatic acceleration and braking remain bounded during real playback');
+      check(Math.max(...rates)<1760&&Math.min(...rates)>-3010,'automatic acceleration and braking remain bounded during real playback');
       check(samples.every(s=>s.visible>0&&s.clearance>200),'the travel line stays in view and the camera remains above the terrain');
       const paused=await state();await sleep(400);check((await state()).distance===paused.distance,'pausing holds the automatically paced journey');
       await capture?.(`trek-auto-${label}`);
     }
     check(measurements[0].peak>measurements[1].peak*2&&measurements[0].peak>measurements[2].peak*2,'open-country playback runs materially faster than the city and mountains');
     const held=(await state()).distance;
-    for(const [value,label] of [[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×'],[12800,'8×'],[-1,'Tour'],[0,'Auto']]){
+    for(const [value,label] of [[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×'],[12800,'8×'],[0,'Auto']]){
       await click('#speed-cycle');check((await state()).pace===value&&(await state()).distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}`),`${label} remains available without moving a paused journey`);
     }
     await setPace(12800);await click('#play');await sleep(1200);await setPace(0);check((await state()).playing&&(await state()).pace===0,'switching from a fixed speed to Auto preserves playback');await sleep(1200);await click('#play');
@@ -296,7 +296,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await choose(30);check(await settled(),'the chosen day and date reset together');
     check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('Auto')"),'the photograph button is replaced by a visible speed control');await setPace(6400);
     const held=(await state()).distance;
-    for(const [pace,label] of [[12800,'8×'],[-1,'Tour'],[0,'Auto'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
+    for(const [pace,label] of [[12800,'8×'],[0,'Auto'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
       await click('#speed-cycle');const s=await state();
       check(s.pace===pace&&!s.playing&&s.distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}&&+document.querySelector('#pace').value===${pace}`),`${label} updates both speed controls without moving a paused journey`);
     }
