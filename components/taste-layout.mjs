@@ -46,6 +46,18 @@ function mixedColumns(heights, count) {
   return columns;
 }
 
+// Stretch the gaps of shorter stacks, within reason, so the stacks finish flush.
+function settleColumns(columns, gap) {
+  const bottom = Math.max(...columns.map(column => column.height - gap));
+  for (const column of columns) {
+    const spaces = column.indices.length - 1;
+    const extra = spaces ? Math.min(gap * .75, (bottom - column.height + gap) / spaces) : 0;
+    column.gap = gap + extra;
+    column.height += extra * spaces - gap;
+  }
+  return columns;
+}
+
 function balanceBatch(heights, { gap, target, maxHeight, mixed, visibleColumns }) {
   if (heights.length <= visibleColumns) return heights.map((height, index) => ({ indices: [index], height, gap }));
   const weights = heights.map(height => height + gap);
@@ -55,14 +67,8 @@ function balanceBatch(heights, { gap, target, maxHeight, mixed, visibleColumns }
   let best;
   for (const count of counts) {
     if (count < visibleColumns || count > heights.length) continue;
-    const columns = (mixed ? mixedColumns : orderedColumns)(weights, count);
-    const bottom = Math.max(...columns.map(column => column.height - gap));
-    for (const column of columns) {
-      const spaces = column.indices.length - 1;
-      const extra = spaces ? Math.min(gap * .75, (bottom - column.height + gap) / spaces) : 0;
-      column.gap = gap + extra;
-      column.height += extra * spaces - gap;
-    }
+    const columns = settleColumns((mixed ? mixedColumns : orderedColumns)(weights, count), gap);
+    const bottom = Math.max(...columns.map(column => column.height));
     const shortest = Math.min(...columns.map(column => column.height));
     const average = sum(columns.map(column => column.height)) / count;
     const score = (bottom - shortest) * 3 + Math.abs(average - target) * .35 +
@@ -72,8 +78,15 @@ function balanceBatch(heights, { gap, target, maxHeight, mixed, visibleColumns }
   return best.columns;
 }
 
-export function stackArtwork(heights, { gap = 12, viewportHeight = 900, availableHeight, visibleColumns = 8, mixed = false } = {}) {
+export function stackArtwork(heights, { gap = 12, viewportHeight = 900, availableHeight, visibleColumns = 8, mixed = false, expanded = false } = {}) {
   if (!heights.length) return [];
+  if (expanded) {
+    // The spotlit library fills the width and grows downwards. Ranked shelves
+    // keep aligned rows; the mixed edit stretches its gaps to finish flush.
+    const count = Math.min(visibleColumns, heights.length);
+    const columns = (mixed ? mixedColumns : orderedColumns)(heights.map(height => height + gap), count);
+    return mixed ? settleColumns(columns, gap) : columns.map(column => ({ ...column, height: column.height - gap, gap }));
+  }
   const target = Math.max(300, Math.min(640, viewportHeight - 170));
   if (!mixed) {
     // Fill the visible width before stacking. Longer shelves must extend to

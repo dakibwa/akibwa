@@ -270,8 +270,8 @@ const publicLandingState = () =>
         tops: projectStops.map((stop) => stop.getBoundingClientRect().top),
         first: rect(".concept-project-stop"),
         copyFits: projectStops.every((stop) => {
-          const copy = document.querySelector(".concept-project-detail p");
-          return !copy || copy.scrollWidth <= copy.clientWidth + 1;
+          const copy = stop.querySelector(".concept-project-aside");
+          return copy && copy.scrollWidth <= copy.clientWidth + 1 && copy.scrollHeight <= copy.clientHeight + 1;
         })
       }
     };
@@ -324,15 +324,17 @@ const checkPublicLanding = async () => {
       const range=document.createRange();range.selectNodeContents(lede);
       return range.getClientRects().length===1 && lede.scrollWidth<=lede.clientWidth+1;
     })()`), `the proposition fits on one line at ${width}px`);
+    const careerBefore=await evaluate('document.querySelector(".personal-career").getBoundingClientRect().top');
     await evaluate('document.querySelector(".concept-project-card").blur(); document.querySelector(".concept-project-card").focus()');
-    await sleep(500);
+    await sleep(560);
     const bounds=await evaluate(`(() => {
-      const career=document.querySelector('.personal-career').getBoundingClientRect();
-      const detail=document.querySelector('.concept-project-detail');
-      return {open:document.querySelector('#project-detail').getAttribute('aria-hidden')==='false',overlap:!detail || detail.getBoundingClientRect().bottom>career.top,overflow:document.documentElement.scrollWidth-innerWidth,link:document.querySelector('a.concept-project-card')?.getAttribute('href')};
+      const card=document.querySelector('.concept-project-card').getBoundingClientRect();
+      const copy=document.querySelector('#project-description'), box=copy?.getBoundingClientRect();
+      return {open:copy?.getAttribute('aria-hidden')==='false',inside:!!box && box.left>=card.left-1 && box.right<=card.right+1 && box.top>=card.top-1 && box.bottom<=card.bottom+1,
+        fits:!!copy && copy.scrollHeight<=copy.clientHeight+1,career:document.querySelector('.personal-career').getBoundingClientRect().top,overflow:document.documentElement.scrollWidth-innerWidth};
     })()`);
-    const fits = bounds.open && !bounds.overlap && bounds.overflow<=1 && bounds.link === '/features/';
-    check(fits, `the project description and direct card link fit above Career at ${width}px${fits ? '' : ` [${JSON.stringify(bounds)}]`}`);
+    const fits = bounds.open && bounds.inside && bounds.fits && Math.abs(bounds.career-careerBefore)<1 && bounds.overflow<=1;
+    check(fits, `the project description fits inside its card without moving Career at ${width}px${fits ? '' : ` [${JSON.stringify(bounds)}]`}`);
     await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
     await sleep(400);
   }
@@ -351,23 +353,32 @@ const checkPublicLanding = async () => {
         return {left,right,width:Math.max(0,right-left),cardWidth:card.width,x:(left+right)/2,y:(card.top+card.bottom)/2};
       })()`);
       await cdp.send("Input.dispatchMouseEvent", {type:"mouseMoved",x:visible.x,y:visible.y});
-      await sleep(520);
+      await sleep(560);
       const panel = await evaluate(`(() => {
-        const shell=document.querySelector('#project-detail');
-        const box=document.querySelector('.concept-project-detail').getBoundingClientRect();
-        return {open:shell.getAttribute('aria-hidden')==='false',left:box.left,right:box.right,overflow:document.documentElement.scrollWidth-innerWidth};
+        const card=document.querySelector('.concept-portuguese .concept-project-card').getBoundingClientRect();
+        const copy=document.querySelector('.concept-portuguese .concept-project-aside'), box=copy.getBoundingClientRect();
+        return {open:copy.id==='project-description' && copy.getAttribute('aria-hidden')==='false',inside:box.left>=card.left-1 && box.right<=card.right+1,overflow:document.documentElement.scrollWidth-innerWidth};
       })()`);
-      const readable = visible.width >= Math.min(200,visible.cardWidth);
-      const aligned = readable
-        ? panel.open && Math.abs(panel.left-visible.left)<1 && Math.abs(panel.right-visible.right)<1
-        : !panel.open;
-      check(aligned && panel.overflow<=1, `the ${edge} of the project rail keeps its preview aligned and readable at ${width}px${aligned ? '' : ` [${JSON.stringify({visible,panel})}]`}`);
+      const inside = panel.open && panel.inside;
+      check(inside && panel.overflow<=1, `the ${edge} of the project rail previews Portuguese inside its own card at ${width}px${inside ? '' : ` [${JSON.stringify({visible,panel})}]`}`);
     }
+  }
+  for (const [width,height,portrait] of [[1024,640,false],[956,607,false],[844,390,false],[800,1000,true],[700,900,true]]) {
+    await setDesktop(width,height);
+    await sleep(300);
+    const layout=await evaluate(`(() => {
+      const rail=document.querySelector('.concept-project-swipe');
+      const tops=[...document.querySelectorAll('.concept-project-stop')].map(stop=>Math.round(stop.getBoundingClientRect().top));
+      return {scrolls:rail.scrollWidth>rail.clientWidth+2,oneRow:new Set(tops).size===1,hero:getComputedStyle(document.querySelector('.concept-hero')).display,overflow:document.documentElement.scrollWidth-innerWidth};
+    })()`);
+    const shaped = portrait ? layout.scrolls && layout.hero!=='grid' : !layout.scrolls && layout.oneRow && layout.hero==='grid';
+    check(shaped && layout.overflow<=1, `${width}×${height} ${portrait ? 'uses the portrait reading column and project swipe rail' : 'keeps the landscape hero columns and all three projects in one row'}${shaped ? '' : ` [${JSON.stringify(layout)}]`}`);
   }
   await cdp.send("Input.dispatchMouseEvent", {type:"mouseMoved",x:1,y:1});
   await sleep(360);
   section("project and career motion");
   await setDesktop(1440);
+  await sleep(500);
   const dividerMotion = (divider, action) => evaluate(`new Promise(resolve => {
     const target=document.querySelector(${JSON.stringify(divider)});
     const position=()=>target.getBoundingClientRect().top+scrollY;
@@ -383,10 +394,11 @@ const checkPublicLanding = async () => {
   })`);
   const opensSmoothly = (samples) => samples.at(-1)>samples[0]+20 && samples.some(y=>y>samples[0]+2 && y<samples.at(-1)-2);
   const closesSmoothly = (samples) => samples.at(-1)<samples[0]-20 && samples.some(y=>y<samples[0]-2 && y>samples.at(-1)+2);
+  const staysPut = (samples) => samples.every(y=>Math.abs(y-samples[0])<0.5);
   const projectControl = 'document.querySelector(".concept-project-card")';
-  check(opensSmoothly(await dividerMotion('#career', `${projectControl}.blur(); ${projectControl}.focus();`)), "opening a project smoothly pushes the Career divider down");
-  check(closesSmoothly(await dividerMotion('#career', `${projectControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "closing a project smoothly brings the Career divider back");
-  check(await evaluate('document.querySelector("#project-detail").inert && document.querySelector("#project-detail").getAttribute("aria-hidden")==="true"'), "closed project descriptions stay hidden from assistive technology");
+  check(staysPut(await dividerMotion('#career', `${projectControl}.blur(); ${projectControl}.focus();`)), "opening a project preview leaves the Career divider in place");
+  check(staysPut(await dividerMotion('#career', `${projectControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "closing a project preview leaves the Career divider in place");
+  check(await evaluate('!document.querySelector("#project-description") && [...document.querySelectorAll(".concept-project-aside")].every(copy=>copy.getAttribute("aria-hidden")==="true")'), "closed project descriptions stay hidden from assistive technology");
   check(await evaluate(`(() => {
     const links=[...document.querySelectorAll('a.concept-project-card')];
     return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['/features/','https://portuguesewithines.com/','/trek/']) &&
@@ -400,7 +412,7 @@ const checkPublicLanding = async () => {
   })()`);
   check(!(await activatePortuguese()), "the first Portuguese click previews without navigating");
   await sleep(520);
-  check(await evaluate('document.querySelector("#project-detail").getAttribute("aria-hidden")==="false" && document.querySelector("#project-description").textContent.includes("Inês")'), "the first Portuguese click leaves its description open");
+  check(await evaluate('document.querySelector("#project-description")?.closest(".concept-portuguese") && document.querySelector("#project-description").textContent.includes("Inês")'), "the first Portuguese click leaves its description open");
   check(await activatePortuguese(), "the second Portuguese click allows the native destination link");
   await evaluate('document.querySelector(".concept-portuguese a").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
   await sleep(360);
@@ -438,10 +450,17 @@ const checkPublicLanding = async () => {
   };
   await evaluate('document.querySelector(".concept-project-card").focus()');
   await sleep(550);
-  const projectHandover=await panelMotion('.concept-project-detail', 'document.querySelectorAll(".concept-project-card")[1].focus();');
-  check(passesThrough(projectHandover,'left') && projectHandover.every(sample=>sample.space>20), "Projects visibly glides across cards without collapsing its description");
-  check(projectHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "project descriptions crossfade during the sideways glide");
-  check(await evaluate('document.querySelectorAll("#project-description").length===1'), "project handover keeps one accessible description target");
+  const projectHandover=await evaluate(`new Promise(resolve => {
+    const art=document.querySelectorAll('.concept-project-media picture')[1];
+    const shift=()=>new DOMMatrix(getComputedStyle(art).transform).m41 || art.getBoundingClientRect().left-art.parentElement.getBoundingClientRect().left;
+    const samples=[shift()];
+    document.querySelectorAll(".concept-project-card")[1].focus();
+    const until=performance.now()+560;
+    const frame=()=>{samples.push(shift());if(performance.now()<until) requestAnimationFrame(frame);else resolve(samples);};
+    requestAnimationFrame(frame);
+  })`);
+  check(projectHandover.at(-1)<projectHandover[0]-60 && projectHandover.some(x=>x<projectHandover[0]-2 && x>projectHandover.at(-1)+2), "the next project's artwork glides aside for its description instead of jumping");
+  check(await evaluate('document.querySelectorAll("#project-description").length===1 && !!document.querySelector("#project-description").closest(".concept-portuguese")'), "project handover keeps one accessible description target on the focused card");
   await evaluate('document.querySelectorAll(".concept-career-stop")[5].focus()');
   await sleep(550);
   const careerHandover=await panelMotion('#career-detail', 'document.querySelectorAll(".concept-career-stop")[4].focus();');
@@ -481,7 +500,9 @@ const checkPublicLanding = async () => {
     "opening a Career detail leaves the timeline and preceding content in place");
   check(closesSmoothly(await dividerMotion('#taste', 'document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));')),
     "closing Career smoothly returns the space below the timeline");
-  await setDesktop(815,650);
+  // Landscape windows keep the compact desktop composition, so use one short
+  // enough for the timeline to be scrolled below the fold.
+  await setDesktop(815,500);
   await goto('/');
   await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"}); document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true})');
   await sleep(560);
@@ -583,6 +604,31 @@ const checkPublicLanding = async () => {
   })()`), "films show their real posters in an uncropped portrait frame");
   await selectTaste('Films');
   check(await evaluate('document.querySelectorAll(".personal-taste-card").length === 48 && !document.querySelector(".taste-filters [aria-pressed=true]")'), "deselecting a medium restores the mixed wall with no active filter");
+  await evaluate('document.querySelector("#taste").scrollIntoView({block:"start",behavior:"instant"})');
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
+  await sleep(300);
+  const wallPositions = () => evaluate(`[...document.querySelectorAll('.personal-taste-card')].map(card=>{const r=card.getBoundingClientRect();return Math.round(r.left)+','+Math.round(r.top);}).join('|')`);
+  const restingWall = await wallPositions();
+  const floatTarget = await evaluate(`(() => { const r=document.querySelectorAll('.taste-wall-column')[2].querySelectorAll('article')[1].getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; })()`);
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:floatTarget.x-2, y:floatTarget.y-2});
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...floatTarget});
+  await sleep(600);
+  const floating = await evaluate(`(() => {
+    const panel=document.querySelector('#taste-detail').getBoundingClientRect();
+    const receded=[...document.querySelectorAll('.personal-taste-card[data-receded]')];
+    return {mode:document.querySelector('#taste-rail').dataset.detail, receded:receded.length,
+      covered:receded.every(card=>{const r=card.getBoundingClientRect();return r.right>panel.left && r.left<panel.right && r.bottom>panel.top && r.top<panel.bottom;}),
+      through:getComputedStyle(document.querySelector('.personal-taste-detail-shell.is-open')).pointerEvents};
+  })()`);
+  check(await wallPositions() === restingWall && floating.mode==='float' && floating.receded>0 && floating.covered && floating.through==='none',
+    `the staggered mixed wall floats its detail over the neighbouring covers without moving any cover [${JSON.stringify(floating)}]`);
+  const beneath = await evaluate(`(() => { const card=document.querySelector('.personal-taste-card[data-receded]'); const r=card.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,key:card.dataset.tasteKey}; })()`);
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:beneath.x, y:beneath.y});
+  await sleep(500);
+  check(await evaluate(`document.querySelector('#taste-detail')?.closest('article')?.dataset.tasteKey===${JSON.stringify(beneath.key)}`), "the pointer passes through a floating detail to the cover beneath it");
+  await evaluate('window.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+  await sleep(400);
+  check(await evaluate('!document.querySelector(".personal-taste-card[data-receded]") && !document.querySelector("#taste-detail")'), "dismissing a floating detail restores the covers beneath it");
 
   section("browsing controls and taste search");
   check(await evaluate('document.querySelectorAll(".concept-career-year").length === 8 && !document.querySelector(".concept-career-current")'), "career dates stay readable while the extra current-role line is removed");
@@ -663,12 +709,10 @@ const checkPublicLanding = async () => {
   const tasteFrames = (action) => evaluate(`new Promise(resolve => {
     const cards=[...document.querySelectorAll('.personal-taste-card')];
     const sample=()=>({
-      first:cards[0].getBoundingClientRect().top,
-      below:cards[1].getBoundingClientRect().top,
-      neighbour:cards[4].getBoundingClientRect().top,
-      neighbourBelow:cards[5].getBoundingClientRect().top,
-      totalSpace:cards.reduce((height,card)=>height+card.querySelector('.personal-taste-detail-shell').getBoundingClientRect().height,0),
-      opacity:Number(getComputedStyle(document.querySelector('#taste-detail') || cards[0].querySelector('.personal-taste-detail')).opacity)
+      lefts:cards.map(card=>card.getBoundingClientRect().left),
+      tops:cards.map(card=>card.getBoundingClientRect().top),
+      height:document.documentElement.scrollHeight,
+      opacity:Number(getComputedStyle(document.querySelector('.personal-taste-detail-shell.is-open') || cards[0].querySelector('.personal-taste-detail-shell')).opacity)
     });
     const frames=[sample()];
     ${action}
@@ -676,27 +720,43 @@ const checkPublicLanding = async () => {
     const frame=now=>{frames.push(sample());if(now-start<650)requestAnimationFrame(frame);else resolve(frames);};
     requestAnimationFrame(frame);
   })`);
+  const rowShifts = () => evaluate(`[...document.querySelectorAll('.personal-taste-card')].map(card=>({row:Number(card.dataset.row),column:Number(card.closest('.taste-wall-column').dataset.column),shift:parseFloat(getComputedStyle(card).translate)||0}))`);
+  const rows = await evaluate('document.querySelector(".taste-wall-column").querySelectorAll("article").length');
+  // Let the catalogue load and the wall finish repacking after the resize.
+  let shelfHeight = -1;
+  for (let attempt=0; attempt<40; attempt++) {
+    const height = await evaluate('document.querySelector(".taste-load-status") ? -2 : document.documentElement.scrollHeight');
+    if (height === shelfHeight && height > 0) break;
+    shelfHeight = height;
+    await sleep(150);
+  }
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...pointer});
-  await sleep(180);
-  const tasteOpeningHeight = await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height');
-  await sleep(400);
+  await sleep(600);
   check(await evaluate(`(() => {
     const card=document.querySelector('.personal-taste-card');
     const detail=document.querySelector('#taste-detail');
-    return detail && getComputedStyle(detail).visibility==='visible' &&
+    return detail && getComputedStyle(detail.closest('.personal-taste-detail-shell')).visibility==='visible' &&
       detail.querySelector('.taste-detail-copy > strong').textContent===card.querySelector('.personal-taste-title').textContent &&
       detail.querySelector('.personal-taste-detail-count').textContent.includes(Number(card.dataset.listens).toLocaleString('en-GB')) &&
       getComputedStyle(card.querySelector('.personal-taste-caption')).display==='none' && !card.querySelector('.listening-hover');
-  })()`), "hover reveals album, artist and combined plays beneath the selected cover");
-  check(await evaluate('document.querySelector(".personal-taste-detail-shell").getBoundingClientRect().height') > tasteOpeningHeight + 1, "Taste unfolds real space gradually with the shared timing");
+  })()`), "hover reveals album, artist and combined plays beside the selected cover");
+  const openHeight = await evaluate('document.documentElement.scrollHeight');
+  check(openHeight === shelfHeight, `opening a Taste detail never changes the page height${openHeight === shelfHeight ? '' : ` [${shelfHeight} → ${openHeight}]`}`);
+  const opened = await rowShifts();
+  check(opened.filter(card=>card.row===0 && card.column>0).every(card=>card.shift>100) && opened.filter(card=>card.row!==0 || card.column===0).every(card=>Math.abs(card.shift)<1),
+    "only the rest of the hovered row slides over; the cover and every other row stay still");
   await capture("music-hover-desktop");
-  const tasteHandover=await tasteFrames('cards[4].focus({preventScroll:true});');
-  check(passesThrough(tasteHandover,'below') && tasteHandover.at(-1).below<tasteHandover[0].below-30 &&
-    passesThrough(tasteHandover,'neighbourBelow') && tasteHandover.at(-1).neighbourBelow>tasteHandover[0].neighbourBelow+30,
-    "changing columns smoothly closes the old space and pushes down the new stack");
-  check(tasteHandover.every(frame=>Math.abs(frame.first-tasteHandover[0].first)<1 && Math.abs(frame.neighbour-tasteHandover[0].neighbour)<1),
-    "opening details keeps both selected covers and neighbouring column tops anchored");
-  check(tasteHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "the incoming Taste copy fades gently into the expanding space");
+  const alongRow=await tasteFrames(`cards[${rows}].focus({preventScroll:true});`);
+  check(alongRow.every(frame=>frame.lefts.every((left,index)=>Math.abs(left-alongRow[0].lefts[index])<1)) &&
+    await evaluate(`document.querySelector('#taste-detail').closest('article')===document.querySelectorAll('.personal-taste-card')[${rows}]`),
+    "moving along the row hands the gap to the next cover without moving any cover");
+  const toNextRow=await tasteFrames('cards[1].focus({preventScroll:true});');
+  const settled = await rowShifts();
+  check(toNextRow.every(frame=>Math.abs(frame.lefts[1]-toNextRow[0].lefts[1])<1) &&
+    settled.filter(card=>card.row===0).every(card=>Math.abs(card.shift)<1) && settled.filter(card=>card.row===1 && card.column>0).every(card=>card.shift>100),
+    "changing rows eases the old row back and parts the new one around the still cover");
+  check(toNextRow.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "the incoming Taste copy fades gently into place");
+  check(toNextRow.every(frame=>frame.height===toNextRow[0].height && frame.tops.every((top,index)=>Math.abs(top-toNextRow[0].tops[index])<1)), "no cover moves vertically while details change");
   const sameColumn=await evaluate(`new Promise(resolve=>{
     const cards=[...document.querySelectorAll('.taste-wall-column')[1].querySelectorAll('article')];
     cards[1].focus({preventScroll:true});
@@ -715,14 +775,17 @@ const checkPublicLanding = async () => {
   check(await evaluate(`(() => {
     const panel=document.querySelector('#taste-detail').getBoundingClientRect();
     const card=document.activeElement.querySelector('.personal-taste-art').getBoundingClientRect();
-    return panel.top>=card.bottom+7 && Math.abs(panel.left-card.left)<1 && Math.abs(panel.width-card.width)<1;
-  })()`), "the detail sits directly beneath its cover with matching edges");
+    return (panel.left>=card.right+1 || panel.right<=card.left-1) && panel.height>=card.height-1 &&
+      (Math.abs(panel.top-card.top)<1 || Math.abs(panel.bottom-card.bottom)<1);
+  })()`), "the detail sits beside its cover at the cover's full height");
   const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
   check(await evaluate('document.querySelector("#taste").classList.contains("is-open")'), "the revealed text stays open while the pointer moves onto it");
   const tasteClosing=await tasteFrames('window.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));');
-  check(passesThrough(tasteClosing,'totalSpace') && tasteClosing.at(-1).totalSpace<1, "closing a Taste detail eases its reserved space back to zero");
-  check(await evaluate('[...document.querySelectorAll(".personal-taste-detail-shell")].every(panel=>panel.getAttribute("aria-hidden")==="true" && panel.inert && panel.getBoundingClientRect().height<1)'), "Escape dismisses Taste and restores every stack without reopening under a stationary pointer");
+  const moving = tasteClosing[0].lefts.map((left,index)=>index).filter(index=>Math.abs(tasteClosing.at(-1).lefts[index]-tasteClosing[0].lefts[index])>100);
+  check(moving.length>0 && moving.every(index=>tasteClosing.some(frame=>Math.abs(frame.lefts[index]-tasteClosing[0].lefts[index])>2 && Math.abs(frame.lefts[index]-tasteClosing.at(-1).lefts[index])>2)),
+    "closing a Taste detail eases the parted row back together");
+  check(await evaluate('[...document.querySelectorAll(".personal-taste-detail-shell")].every(panel=>panel.getAttribute("aria-hidden")==="true" && panel.inert && getComputedStyle(panel).visibility==="hidden") && [...document.querySelectorAll(".personal-taste-card")].every(card=>Math.abs(parseFloat(getComputedStyle(card).translate)||0)<1)'), "Escape dismisses Taste and restores every row without reopening under a stationary pointer");
   await evaluate('document.querySelectorAll(".personal-taste-card")[7].focus()');
   await sleep(550);
   check(await evaluate(`(() => {
@@ -847,6 +910,62 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelector(".taste-load-status button").click()');
   for (let attempt=0;attempt<30 && await evaluate('!!document.querySelector(".taste-load-status")');attempt++) await sleep(100);
   check(await evaluate('!document.querySelector(".taste-load-status")'), "retry recovers the full album catalogue");
+
+  section("chapter spotlight");
+  await setDesktop(1440, 900);
+  await goto("/");
+  const spotlightState = () => evaluate(`({
+    spot: document.querySelector('.concept-page').dataset.spotlight ?? null,
+    hash: location.hash,
+    shown: ['projects','career','taste'].filter(id => getComputedStyle(document.getElementById(id)).display !== 'none').join(),
+    current: [...document.querySelectorAll('.concept-section-links a')].filter(link => link.getAttribute('aria-current')==='true').map(link => link.textContent).join(),
+    faded: [...document.querySelectorAll('.concept-section-links a')].filter(link => Number(getComputedStyle(link).opacity) < 0.6).length,
+    top: scrollY,
+    overflow: document.documentElement.scrollWidth - innerWidth
+  })`);
+  const chapterLink = (index) => evaluate(`(() => { const r=document.querySelectorAll('.concept-section-links a')[${index}].getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; })()`);
+  const clickAt = async ({x,y}) => { for (const type of ['mousePressed','mouseReleased']) await cdp.send('Input.dispatchMouseEvent',{type,x,y,button:'left',clickCount:1}); };
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...(await chapterLink(1))});
+  await sleep(450);
+  check(await evaluate(`(() => { const link=document.querySelectorAll('.concept-section-links a')[1]; const style=getComputedStyle(link); return style.fontWeight==='600' && style.textDecorationLine==='none' && new DOMMatrix(getComputedStyle(link,'::after').transform).a>0.99; })()`),
+    "hovering a masthead link draws its accent rule without changing the word's weight");
+  check(await evaluate(`JSON.stringify([...document.querySelectorAll('.concept-section-links a')].map(link=>link.getAttribute('href')))==='["#projects","#career","#taste"]'`), "masthead links keep their chapter anchors for new tabs and pages without JavaScript");
+  const spotlit = {
+    projects: `document.querySelectorAll('.concept-project-copy').length===3 && [...document.querySelectorAll('a.concept-project-card')].every(card=>document.getElementById(card.getAttribute('aria-describedby'))?.textContent.length>40)`,
+    career: `document.querySelectorAll('.career-spotlight-role').length===8 && [...document.querySelectorAll('.career-spotlight-role')].every(role=>role.querySelector('.concept-career-statement')?.textContent.length>30)`,
+    taste: `(() => { const rail=document.querySelector('#taste-rail'), bounds=rail.getBoundingClientRect(), columns=[...rail.querySelectorAll('.taste-wall-column')]; return document.querySelector('.personal-taste').classList.contains('is-expanded') && columns.length>4 && columns.at(-1).getBoundingClientRect().right<=bounds.right+1 && document.querySelector('.personal-taste-art').getBoundingClientRect().width>140 && rail.getBoundingClientRect().height>innerHeight; })()`,
+  };
+  for (const [index, id, label] of [[0,'projects','Projects'],[1,'career','Career'],[2,'taste','Taste Library']]) {
+    await clickAt(await chapterLink(index));
+    await sleep(750);
+    const state = await spotlightState();
+    check(state.spot===id && state.hash===`#${id}` && state.shown===id && state.current===label && state.faded===2 && state.top===0 && state.overflow<=1,
+      `${label} comes forward beneath the unchanged masthead while the other links fade${state.spot===id ? '' : ` [${JSON.stringify(state)}]`}`);
+    check(await evaluate(spotlit[id]), `the ${label} spotlight lays out its whole chapter`);
+    await capture(`spotlight-${id}`);
+  }
+  await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
+  await sleep(800);
+  let spotlightAfter = await spotlightState();
+  check(!spotlightAfter.spot && !spotlightAfter.hash && spotlightAfter.shown==='projects,career,taste' && !spotlightAfter.current, "Escape returns to the whole page");
+  await clickAt(await chapterLink(1));
+  await sleep(700);
+  await evaluate('history.back()');
+  await sleep(900);
+  spotlightAfter = await spotlightState();
+  check(!spotlightAfter.spot && !spotlightAfter.hash && spotlightAfter.shown==='projects,career,taste', "Back returns from a spotlight to the whole page");
+  await clickAt(await chapterLink(1));
+  await sleep(700);
+  await clickAt(await chapterLink(1));
+  await sleep(900);
+  spotlightAfter = await spotlightState();
+  check(!spotlightAfter.spot && spotlightAfter.shown==='projects,career,taste', "clicking the selected link again returns to the whole page");
+  await setMobile();
+  await goto("/");
+  await clickAt(await chapterLink(2));
+  await sleep(800);
+  spotlightAfter = await spotlightState();
+  check(spotlightAfter.spot==='taste' && spotlightAfter.overflow<=1 && await evaluate('getComputedStyle(document.querySelector(".personal-taste-caption")).display!=="none"'), "the phone Taste spotlight keeps captions and stays inside the screen");
 
   section("detailed routes");
   await setDesktop();

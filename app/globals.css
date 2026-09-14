@@ -6820,32 +6820,44 @@ button {
 }
 
 .concept-section-links a {
-  display: inline-grid;
+  position: relative;
+  display: inline-flex;
   align-items: center;
   min-height: 44px;
   color: color-mix(in srgb, var(--section-accent) 80%, var(--ink));
   white-space: nowrap;
   text-decoration: none;
-  transition: font-weight 180ms ease;
+  transition: color 180ms ease, opacity 260ms ease;
 }
 
-.concept-section-links a > span {
-  grid-area: 1 / 1;
-}
-
-/* Reserve the bold width so hover never shifts the next link. */
-.concept-section-links .section-link-sizer {
-  font-weight: 750;
-  visibility: hidden;
-  pointer-events: none;
+/* A thin accent rule draws in beneath the word from the left and leaves to
+   the right. The word itself never changes weight or width. */
+.concept-section-links a::after {
+  position: absolute;
+  right: 0;
+  bottom: calc(50% - 0.95em);
+  left: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 320ms var(--ease-out);
 }
 
 .concept-section-links a:is(:hover, :focus-visible) {
-  font-weight: 750;
+  color: var(--section-accent);
+}
+
+.concept-section-links a:is(:hover, :focus-visible, [aria-current])::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .concept-section-links a { transition: none; }
+  .concept-section-links a,
+  .concept-section-links a::after { transition: none; }
 }
 
 @media (max-width: 480px) {
@@ -6905,17 +6917,8 @@ button {
 
 .concept-projects {
   --projects-rest-space: clamp(48px, 6vw, 82px);
-  --projects-open-space: clamp(24px, 3vw, 36px);
   position: relative;
   padding: var(--concept-rule-gap) 0 var(--projects-rest-space);
-  transition: padding-bottom 340ms var(--ease-out);
-}
-
-/* The shared panel makes its own space in the layout. Tighten the section's
-   lower gap as it opens so the Career rule stays close to the box. */
-.concept-projects:has(.concept-project-detail-shell.is-open) {
-  padding-bottom: var(--projects-open-space);
-  transition-duration: 480ms;
 }
 
 .concept-projects-head {
@@ -6995,6 +6998,67 @@ button {
 }
 
 .concept-portuguese .concept-project-card img { object-position: 0% 30%; }
+
+/* A preview never resizes the card: the description slides in from its right
+   edge and moves the artwork aside, so nothing else on the page moves. */
+.concept-project-media {
+  --project-aside-width: clamp(150px, 48%, 232px);
+  position: relative;
+  display: block;
+  overflow: clip;
+}
+
+.concept-project-media picture {
+  transition: translate 460ms var(--ease-out);
+}
+
+.concept-project-aside {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  width: var(--project-aside-width);
+  align-items: center;
+  padding: 12px 15px 12px 17px;
+  background: color-mix(in srgb, var(--project-card-accent) 9%, var(--project-card-panel));
+  box-shadow: inset 3px 0 0 var(--project-card-accent);
+  color: var(--project-card-ink);
+  font: 400 clamp(0.74rem, 0.88vw, 0.86rem)/1.38 var(--serif);
+  translate: 100% 0;
+  transition: translate 460ms var(--ease-out);
+}
+
+.concept-project-aside > span {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.concept-project-stop[data-preview="true"] .concept-project-media picture {
+  translate: calc(-1 * var(--project-aside-width)) 0;
+}
+
+.concept-project-stop[data-preview="true"] .concept-project-aside {
+  translate: 0 0;
+}
+
+.concept-project-stop[data-preview="true"] .concept-project-aside > span {
+  opacity: 1;
+  transition: opacity 280ms ease 150ms;
+}
+
+/* The Projects spotlight prints each description beneath its card. */
+.concept-project-copy {
+  display: block;
+  padding: 12px 12px 15px;
+  border-top: 1px solid color-mix(in srgb, var(--project-card-border) 14%, transparent);
+  background: var(--project-card-panel);
+  color: var(--project-card-ink);
+  font: 400 clamp(0.8rem, 0.95vw, 0.9rem)/1.45 var(--serif);
+}
+
+.is-spotlit .concept-project-card {
+  height: 100%;
+  grid-template-rows: auto auto 1fr;
+}
 
 .concept-project-foot {
   display: flex;
@@ -7435,7 +7499,7 @@ button {
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 800px) and (orientation: portrait), (max-width: 560px) {
   .concept-hero {
     display: block;
     padding: clamp(18px, 4vw, 32px) 0 clamp(28px, 4.4vw, 42px);
@@ -7831,8 +7895,9 @@ button {
   gap: 0.4em 1em;
 }
 
-@media (max-width: 1050px) {
-  /* Projects become one short, native swipe rail on phones and tablets. Keeping the
+@media (max-width: 1050px) and (orientation: portrait), (max-width: 560px) {
+  /* Projects become one short, native swipe rail on portrait phones and tablets;
+     landscape windows keep the desktop row of three. Keeping the
      shared detail immediately after this single row means a selected card's
      information never lands beneath two unrelated projects. */
   .concept-project-swipe {
@@ -7942,11 +8007,6 @@ button {
 
 /* Public collection controls and the separate album gallery. */
 .concept-page .concept-project-stop{align-content:start}
-.concept-project-detail p {
-  margin: 0;
-  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
-  font: 400 .76rem/1.35 var(--serif);
-}
 .concept-project-card { padding: 0; width: 100%; }
 .personal-intro{white-space:nowrap}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
@@ -8273,33 +8333,45 @@ button {
 .taste-filters .rail-word { padding: 10px 0; min-height: 44px; font-size: clamp(.9rem, 1.15vw, 1.08rem); }
 .taste-filters .rail-word[aria-pressed="true"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 7px; }
 .taste-wall-stage { position: relative; overflow-anchor: none; }
-.personal-taste-rail { --taste-card-width: clamp(104px, 9.2vw, 136px); --taste-wall-gap: clamp(9px, .85vw, 13px); display: grid; grid-auto-flow: column; grid-auto-columns: var(--taste-card-width); gap: var(--taste-wall-gap); align-items: start; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-color: #83ad99 transparent; scrollbar-width: thin; padding: 6px 2px 18px; }
+.personal-taste-rail { --taste-card-width: clamp(104px, 9.2vw, 136px); --taste-wall-gap: clamp(9px, .85vw, 13px); --taste-detail-width: clamp(160px, 13vw, 192px); --taste-push: calc(var(--taste-detail-width) + var(--taste-wall-gap)); position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: var(--taste-card-width); gap: var(--taste-wall-gap); align-items: start; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-color: #83ad99 transparent; scrollbar-width: thin; padding: 6px 2px 18px; }
 .taste-wall-column { display: flex; flex-direction: column; gap: var(--taste-wall-gap); scroll-snap-align: start; }
+/* A hover detail opens sideways, so the page never changes height: on aligned
+   shelves the rest of its row slides over by one detail width; on the mixed
+   wall it floats over the neighbouring covers and lets the pointer through. */
+.personal-taste-card, .taste-load-more { translate: calc(var(--taste-shift, 0) * var(--taste-push)) 0; transition: translate 460ms var(--ease-out), opacity 240ms ease; }
+.personal-taste-card[data-receded] { opacity: .22; }
+.taste-wall-column.has-detail { z-index: 2; }
+.personal-taste-rail[data-detail="float"] .personal-taste-detail-shell { pointer-events: none; }
+.personal-taste.is-open .personal-taste-rail { scroll-snap-type: none; }
+.personal-taste-card { position: relative; }
 .personal-taste-art { border-radius: 4px; border: 1px solid #20201e20; margin-bottom: 0; }
 .personal-taste-art img { filter: none; }
 .personal-taste-card:is([data-kind="films"], [data-kind="tv"]) .personal-taste-art { aspect-ratio: 2 / 3; }
 .personal-taste-card[data-kind="games"] .personal-taste-art { aspect-ratio: 3 / 4; }
 .personal-taste-caption { display: none; }
-.personal-taste-detail-shell { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows 340ms var(--ease-out), visibility 0s linear 340ms; }
-.personal-taste-detail-shell.is-open { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows 480ms var(--ease-out), visibility 0s; }
-.taste-detail-clip { min-height: 0; overflow: hidden; }
-.personal-taste-detail { margin-top: 8px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); overflow-wrap: anywhere; opacity: 0; transform: translateY(-4px); transition: opacity 150ms ease, transform 240ms var(--ease-out); }
-.personal-taste-detail-shell.is-open .personal-taste-detail { opacity: 1; transform: translateY(0); transition: opacity 240ms ease 60ms, transform 480ms var(--ease-out); }
-.taste-detail-copy { display: grid; gap: 4px; padding: 10px; }
-.taste-detail-copy > strong { color: var(--black); font-size: .76rem; font-weight: 690; line-height: 1.2; letter-spacing: -.015em; }
-.taste-detail-copy > span { color: var(--muted); font-size: .65rem; line-height: 1.35; }
+.personal-taste-detail-shell { position: absolute; top: 0; left: calc(100% + var(--taste-wall-gap)); display: flex; width: var(--taste-detail-width); min-height: 100%; opacity: 0; visibility: hidden; translate: -8px 0; transition: opacity 110ms ease, translate 220ms var(--ease-out), visibility 0s linear 220ms; }
+.personal-taste-card[data-detail-side="left"] .personal-taste-detail-shell { right: calc(100% + var(--taste-wall-gap)); left: auto; translate: 8px 0; }
+.personal-taste-card[data-detail-side="left"] .personal-taste-detail { box-shadow: inset -3px 0 0 var(--hover-detail-accent); }
+/* The lowest cover's detail grows upwards, keeping clear of the rail's edge. */
+.personal-taste-card[data-stack-end="true"] .personal-taste-detail-shell { top: auto; bottom: 0; }
+.personal-taste-detail-shell.is-open { opacity: 1; visibility: visible; translate: 0 0; transition: opacity 260ms ease 90ms, translate 460ms var(--ease-out), visibility 0s; }
+.personal-taste-detail { display: flex; flex: 1; border: 1px solid color-mix(in srgb, var(--hover-detail-accent) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: inset 3px 0 0 var(--hover-detail-accent); overflow-wrap: anywhere; }
+.taste-detail-copy { display: flex; flex: 1; flex-direction: column; gap: 5px; padding: 12px 13px 12px 15px; }
+.taste-detail-copy > strong { color: var(--black); font-size: .84rem; font-weight: 690; line-height: 1.22; letter-spacing: -.015em; }
+.taste-detail-copy > span { color: var(--muted); font-size: .72rem; line-height: 1.35; }
 .personal-taste-title { font-size: .76rem; line-height: 1.35; }
 .personal-taste-creator { font-size: .68rem; line-height: 1.4; }
 .personal-taste-mobile-count { margin-top: 6px; color: var(--muted); font: 500 .65rem/1.4 var(--sans); }
-.personal-taste-detail-count { margin: 5px 0 0; color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); font: 400 .72rem/1.35 var(--serif); }
-.personal-taste-detail-count strong { color: var(--black); font-weight: 700; }
+.personal-taste-detail-count { margin: auto 0 0; padding-top: 8px; color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); font: 400 .76rem/1.3 var(--serif); }
+.personal-taste-detail-count strong { display: block; color: var(--black); font-size: 1.28rem; font-weight: 700; line-height: 1.05; letter-spacing: -.02em; }
+.personal-taste-detail-kind { margin: auto 0 0; padding-top: 8px; color: color-mix(in srgb, var(--hover-detail-accent) 72%, var(--ink)); font: 650 .62rem/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
 .taste-source-note { margin: 16px 0 0; font-size: .78rem; }
 @media (hover: none) {
   .personal-taste-art { margin-bottom: 9px; }
   .personal-taste-caption { display: flex; flex-direction: column; }
   .personal-taste-detail-shell { display: none; }
 }
-@media (max-width: 800px) {
+@media (max-width: 800px) and (orientation: portrait), (max-width: 560px) {
   .concept-career-section { --career-rest-space: 60px; }
   .concept-career-timeline { grid-template-columns: repeat(var(--career-count), minmax(72px, 1fr)); gap: clamp(7px, 1.5vw, 10px); }
   .concept-career-stop { grid-template-rows: 36px 56px auto; }
@@ -8332,15 +8404,53 @@ button {
   .taste-filters { gap: 0 17px; }
   .taste-filters .rail-word { font-size: .85rem; }
 }
+/* Landscape windows keep the desktop composition at every size: margins and
+   type scale with the width instead of the layout switching to the tablet one. */
+@media (orientation: landscape) and (min-width: 561px) {
+  .concept-page .page-grid { width: min(calc(100% - max(48px, 9vw)), var(--frame)); }
+  .concept-page .concept-identity { font-size: clamp(2.4rem, 7.6vw, 7rem); }
+  .concept-page .concept-lede { font-size: clamp(1.1rem, 3vw, 3.2rem); }
+  .concept-page :is(.concept-projects-head h2, .concept-career-head h2, .concept-taste-head .concept-archive-head h2) { font-size: clamp(2.2rem, 5vw, 5.2rem); }
+}
+
+/* Spotlight: a masthead link brings one chapter forward beneath the unchanged
+   masthead. The other links fade back and their chapters step aside. */
+.concept-page[data-spotlight="projects"] :is(#career, #taste),
+.concept-page[data-spotlight="career"] :is(#projects, #taste),
+.concept-page[data-spotlight="taste"] :is(#projects, #career) { display: none; }
+/* The spotlit chapter's own rule replaces the masthead's Projects rule. */
+.concept-page:is([data-spotlight="career"], [data-spotlight="taste"]) .concept-hero::after { display: none; }
+.concept-section-links.has-spotlight a:not([aria-current]) { opacity: .4; }
+.concept-section-links.has-spotlight a:not([aria-current]):is(:hover, :focus-visible) { opacity: 1; }
+:root[data-spotlight-transition] .concept-hero { view-transition-name: concept-hero; }
+:root[data-spotlight-transition]::view-transition-old(root) { animation: 150ms ease both spotlight-leave; }
+:root[data-spotlight-transition]::view-transition-new(root) { animation: 380ms var(--ease-out) 70ms both spotlight-arrive; }
+@keyframes spotlight-leave { to { opacity: 0; } }
+@keyframes spotlight-arrive { from { opacity: 0; transform: translateY(8px); } }
+@media (max-width: 1050px) and (orientation: portrait), (max-width: 560px) {
+  .is-spotlit .concept-project-swipe { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); grid-auto-columns: auto; overflow: visible; scroll-snap-type: none; }
+}
+.career-spotlight { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr)); gap: clamp(10px, 1.2vw, 16px); margin: 0; padding: 4px 0 0; list-style: none; }
+.career-spotlight-role { display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start; gap: 12px; padding: 15px 15px 17px; border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong)); border-radius: 4px; background: color-mix(in srgb, var(--company-accent) 6%, var(--canvas)); box-shadow: inset 0 3px 0 var(--company-accent); }
+.career-spotlight-mark { display: grid; width: 48px; height: 48px; place-items: center; border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink)); border-radius: 3px; background: color-mix(in srgb, var(--company-accent) 11%, color-mix(in srgb, var(--ink) 5%, var(--canvas))); }
+.career-spotlight-title { display: grid; align-content: center; gap: 3px; min-width: 0; }
+.career-spotlight-title strong { color: var(--black); font-size: .94rem; font-weight: 690; line-height: 1.15; letter-spacing: -.02em; }
+.career-spotlight-title span { color: color-mix(in srgb, var(--ink) 58%, var(--canvas)); font-size: .72rem; line-height: 1.3; }
+.career-spotlight-role .concept-career-statement { grid-column: 1 / -1; margin: 0; font-size: .86rem; line-height: 1.45; }
+/* The spotlit library fills the width with larger covers and grows downwards. */
+.personal-taste.is-expanded .personal-taste-rail { --taste-card-width: clamp(112px, 10.5vw, 168px); justify-content: space-between; overflow-x: clip; overflow-clip-margin: 8px; scroll-snap-type: none; }
+.personal-taste.is-expanded .taste-load-more { display: block; width: 100%; min-height: 0; margin-top: 10px; translate: none; }
+.personal-taste.is-expanded .taste-load-more span { display: inline; margin: 0 0 0 6px; }
+
 @media (prefers-reduced-motion: reduce) {
   .page-footer .social-icon, .page-footer .social-icon svg { transition: none; }
   .page-footer .social-icon:is(:hover, :active) svg { transform: none; }
-  .personal-taste-detail-shell, .personal-taste-detail-shell.is-open, .personal-taste-detail, .personal-taste-detail-shell.is-open .personal-taste-detail { transition: none; }
+  .personal-taste-detail-shell, .personal-taste-detail-shell.is-open, .personal-taste-detail, .personal-taste-card, .taste-load-more { transition: none; }
+  .concept-project-media picture, .concept-project-aside, .concept-project-aside > span, .concept-project-stop[data-preview="true"] .concept-project-aside > span { transition: none; }
   .taste-search, .taste-search *, .taste-search-field::after, .concept-taste-head .concept-archive-head { transition: none !important; }
   .index-reveal-reserve { transition: none; }
   .hero-name-value { animation: none; }
-  .concept-page .concept-projects, .concept-page .concept-projects:has(.concept-project-detail-shell.is-open) { transition: none; }
-  .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .concept-project-detail-shell, .concept-project-detail-shell.is-open, .personal-taste, .personal-taste.is-open, .index-reveal-shell, .index-reveal-shell.is-open, .index-reveal-track, .index-hover-detail.index-reveal-panel, .index-hover-detail.index-reveal-panel.is-open { transition: none; }
+  .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .personal-taste, .personal-taste.is-open, .index-reveal-shell, .index-reveal-shell.is-open, .index-reveal-track, .index-hover-detail.index-reveal-panel, .index-hover-detail.index-reveal-panel.is-open { transition: none; }
   .index-reveal-shell.is-open .index-reveal-content { animation: none; }
   .index-reveal-content.is-outgoing { display: none; }
 }
