@@ -72,24 +72,27 @@ function balanceBatch(heights, { gap, target, maxHeight, mixed, visibleColumns }
   return best.columns;
 }
 
-export function stackArtwork(heights, { gap = 12, viewportHeight = 900, visibleColumns = 8, mixed = false } = {}) {
+export function stackArtwork(heights, { gap = 12, viewportHeight = 900, availableHeight, visibleColumns = 8, mixed = false } = {}) {
   if (!heights.length) return [];
-  // Read each row left to right. Equal-sized covers remain four high, with
-  // only the final column shorter when the total is not divisible by four.
-  if (!mixed && Math.max(...heights) - Math.min(...heights) < .5) {
-    const fullColumns = Math.floor(heights.length / 4), remainder = heights.length % 4;
-    return Array.from({ length: Math.ceil(heights.length / 4) }, (_, column) => {
-      const rows = column < fullColumns ? 4 : remainder;
-      const indices = Array.from({ length: rows }, (_, row) => row * fullColumns + Math.min(row, remainder) + column);
-      return { indices, height: sum(indices.map(index => heights[index])) + gap * (indices.length - 1), gap };
-    });
-  }
   const target = Math.max(300, Math.min(640, viewportHeight - 170));
+  if (!mixed) {
+    // Fill the visible width before stacking. Longer shelves must extend to
+    // the side, and tall artwork/captions must fit the available screen height.
+    const widthRows = heights.length > visibleColumns ? Math.max(1, Math.floor((heights.length - 1) / visibleColumns)) : 1;
+    for (let rows = Math.min(4, widthRows); rows >= 1; rows--) {
+      const fullColumns = Math.floor(heights.length / rows), remainder = heights.length % rows;
+      const columns = Array.from({ length: Math.ceil(heights.length / rows) }, (_, column) => {
+        const count = column < fullColumns ? rows : remainder;
+        const indices = Array.from({ length: count }, (_, row) => row * fullColumns + Math.min(row, remainder) + column);
+        return { indices, height: sum(indices.map(index => heights[index])) + gap * (indices.length - 1), gap };
+      });
+      if (rows === 1 || columns.every(column => column.height <= (availableHeight ?? target))) return columns;
+    }
+  }
   const maxHeight = Math.max(target, Math.min(viewportHeight - 110, target * 1.15));
   const columns = [];
   let firstHeight = target;
-  // Ranked shelves include newly loaded records in the same left-to-right
-  // order. The mixed edit can append independent balanced groups.
+  // The mixed edit can append independent balanced groups.
   for (let offset = 0; offset < heights.length;) {
     const size = mixed ? offset === 0 ? 48 : 36 : heights.length;
     const batch = balanceBatch(heights.slice(offset, offset + size), {

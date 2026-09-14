@@ -182,6 +182,8 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       });
       const nextColumns = stackArtwork(heights, {
         gap, viewportHeight: innerHeight, visibleColumns: Math.max(1, Math.floor((bounds.width + gap) / (width + gap))), mixed: mixedArtwork,
+        availableHeight: innerHeight - (bounds.top - shelf.closest('section').getBoundingClientRect().top) -
+          parseFloat(getComputedStyle(shelf).paddingTop) - parseFloat(getComputedStyle(shelf).paddingBottom) - 40,
       });
       const nextKey = JSON.stringify([selectionKey, nextColumns]);
       if (lastLayout.current === nextKey) {
