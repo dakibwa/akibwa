@@ -10,12 +10,15 @@ import curation from "@/data/taste-curation.json";
 const { career } = curation;
 // SVG originals do not get the image manifest's automatic content version.
 const logoRevisions = {
-  "/favicon.svg": "ember",
   "/brand-logos/electrical.svg": "bolt",
   "/brand-logos/joinery.svg": "hammer",
   "/brand-logos/leeds-building-society-icon.svg": "contrast",
 };
 
+// The Freelance card shows the bare Akibwa a rather than the favicon's tile.
+const logoImage = (job) => job.logo === "/favicon.svg"
+  ? { src: "/brand-logos/akibwa-a.png", slot: "identityMark" }
+  : { src: job.logo, revision: logoRevisions[job.logo], slot: "logo" };
 const logoClass = (job) => `concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`;
 
 function CareerStatement({ statement, emphasis = [] }) {
@@ -43,7 +46,7 @@ function CareerSpotlight() {
           <li className="career-spotlight-role" key={job.name} style={{ "--company-accent": job.accent }}>
             <span className="career-spotlight-mark">
               <span className={logoClass(job)}>
-                <SiteImage src={job.logo} revision={logoRevisions[job.logo]} slot="logo" sizes="32px" alt="" />
+                <SiteImage {...logoImage(job)} sizes="32px" alt="" />
               </span>
             </span>
             <span className="career-spotlight-title">
@@ -112,7 +115,7 @@ function CareerTimeline() {
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
                 <span className={logoClass(job)}>
-                  <SiteImage src={job.logo} revision={logoRevisions[job.logo]} slot="logo" sizes="32px" alt="" />
+                  <SiteImage {...logoImage(job)} sizes="32px" alt="" />
                 </span>
               </span>
               <span className="concept-career-year" aria-hidden="true">{job.span.replace(/ — /g, "–")}</span>

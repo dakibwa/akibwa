@@ -58,10 +58,10 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
   const pointerPosition = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
-  // On a shelf with aligned rows the open detail sits in a gap within its row:
-  // covers before `at` move by `base` detail widths, the rest of the row by one
-  // more, and the selected cover never moves. Staggered mixed stacks cannot
-  // part one row without collisions, so there the detail floats beside it.
+  // The detail is attached to its cover. On a shelf with aligned rows it opens
+  // a gap within its row: covers before `at` move by `base` detail widths and
+  // the rest of the row by one more. Staggered mixed stacks cannot part one
+  // row without collisions, so there the detail floats over its neighbours.
   const [gap, setGap] = useState(null);
   const gapRef = useRef(null);
   const sides = useRef({});
@@ -88,19 +88,30 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
       Math.min(box.bottom, innerHeight) - Math.max(box.top, 0) >= 24;
   };
   const placeDetail = (card, column, row) => {
-    // Moving along an open row keeps the gap beside the new cover, on the side
-    // it is already on, so only the covers the pointer has left move.
-    const current = gapRef.current;
-    if (current && !current.float && current.row === row) {
-      return column < current.at ? { ...current, at: column + 1 } : { ...current, at: column };
-    }
-    const shelf = rail.current, stack = card.closest(".taste-wall-column");
-    const space = card.querySelector(".personal-taste-detail-shell").offsetWidth + parseFloat(getComputedStyle(shelf).columnGap);
+    const current = gapRef.current, shelf = rail.current, stack = card.closest(".taste-wall-column");
+    const width = card.querySelector(".personal-taste-detail-shell").offsetWidth;
     // Offsets ignore the transforms of a push that is still closing.
     const left = stack.offsetLeft - shelf.scrollLeft, right = left + stack.offsetWidth;
-    const rightward = shelf.clientWidth - right >= space || left < space;
-    if (mixedArtwork) return { float: true, side: rightward ? "right" : "left" };
-    return rightward ? { row, at: column + 1, base: 0 } : { row, at: column, base: -1 };
+    if (mixedArtwork) {
+      // A floating detail trails the pointer: moving right it opens over the
+      // covers already passed, so the covers ahead stay clear.
+      const fitsRight = right + width <= shelf.clientWidth + 1, fitsLeft = left >= width;
+      const from = current?.float && activeCard.current?.getBoundingClientRect(), to = card.getBoundingClientRect();
+      let side = current?.float ? current.side : "right";
+      if (from && to.left > from.left + 1) side = "left";
+      else if (from && to.left < from.left - 1) side = "right";
+      if (side === "left" && !fitsLeft) side = "right";
+      else if (side === "right" && !fitsRight && fitsLeft) side = "left";
+      return { float: true, side };
+    }
+    // Within one row the covers move like an accordion: the detail opens on
+    // the right whenever it fits, closing the previous one in step so the
+    // covers beyond stay still. Near the far edge it opens on the left, where
+    // the selected cover can stay put.
+    const shift = current && !current.float && current.row === row ? column < current.at ? current.base : current.base + 1 : 0;
+    const base = shift < 0 ? -1 : 0;
+    if (right + base * width + width <= shelf.clientWidth + 1 || left + shift * width < width) return { row, at: column + 1, base };
+    return { row, at: column, base: shift > 0 ? 0 : -1 };
   };
   const revealDetail = (item, card) => {
     if (!matchMedia("(hover: hover)").matches) return;
@@ -114,8 +125,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
     if (next.float) {
       const box = card.getBoundingClientRect();
       const width = card.querySelector(".personal-taste-detail-shell").offsetWidth;
-      const gutter = parseFloat(getComputedStyle(rail.current).columnGap);
-      const left = next.side === "right" ? box.right + gutter : box.left - gutter - width;
+      const left = next.side === "right" ? box.right : box.left - width;
       setReceded([...rail.current.querySelectorAll(".personal-taste-card")].filter((other) => {
         const r = other.getBoundingClientRect();
         return r.right > left + 2 && r.left < left + width - 2 && r.bottom > box.top + 2 && r.top < box.bottom - 2;

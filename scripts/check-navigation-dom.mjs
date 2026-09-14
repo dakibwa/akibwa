@@ -310,6 +310,9 @@ const checkPublicLanding = async () => {
     state.hero && state.career && state.taste && state.career.top > state.projects.first.bottom && state.taste.top >= state.career.bottom - 1,
     "the editorial chapters remain in reading order"
   );
+  check(await evaluate(`getComputedStyle(document.querySelector('.concept-hero'),'::after').backgroundColor==='rgb(47, 136, 255)' &&
+    getComputedStyle(document.querySelector('.concept-career-section'),'::before').backgroundColor==='rgb(203, 66, 94)' &&
+    getComputedStyle(document.querySelector('.concept-archive'),'::before').backgroundColor==='rgb(27, 148, 125)'`), "each chapter rule matches its masthead link: blue, rose, green");
   for(const width of [320,390,560,800,820,1024,1440,1920]){
     await setDesktop(width);
     await sleep(380);
@@ -430,6 +433,14 @@ const checkPublicLanding = async () => {
   check(await evaluate('!document.querySelector(".concept-career-stop[aria-expanded=true]")'), "Escape dismisses held career detail");
   await evaluate('document.querySelectorAll(".concept-career-stop")[2].focus()');
   check(await evaluate('document.querySelector("#career-detail").textContent.includes("BI Team Lead")'), "keyboard focus previews the next career role");
+  await sleep(420);
+  check(await evaluate(`(() => {
+    const stops=document.querySelectorAll('.concept-career-stop'), open=stops[2], rest=stops[3];
+    const style=(stop,selector)=>getComputedStyle(stop.querySelector(selector));
+    return style(open,'.concept-career-card').translate==='0px -3px' && style(open,'.concept-career-logo').scale==='1.08' &&
+      style(open,'.concept-career-card').backgroundColor!==style(rest,'.concept-career-card').backgroundColor &&
+      style(open,'.concept-career-year').color!==style(rest,'.concept-career-year').color;
+  })()`), "the previewed role deepens into its own colour, lifts and colours its date");
 
   const panelMotion = (selector, action) => evaluate(`new Promise(resolve => {
     const panel=document.querySelector(${JSON.stringify(selector)});
@@ -712,7 +723,7 @@ const checkPublicLanding = async () => {
       lefts:cards.map(card=>card.getBoundingClientRect().left),
       tops:cards.map(card=>card.getBoundingClientRect().top),
       height:document.documentElement.scrollHeight,
-      opacity:Number(getComputedStyle(document.querySelector('.personal-taste-detail-shell.is-open') || cards[0].querySelector('.personal-taste-detail-shell')).opacity)
+      opacity:Number(getComputedStyle((document.querySelector('.personal-taste-detail-shell.is-open') || cards[0].querySelector('.personal-taste-detail-shell')).querySelector('.taste-detail-copy')).opacity)
     });
     const frames=[sample()];
     ${action}
@@ -746,10 +757,11 @@ const checkPublicLanding = async () => {
   check(opened.filter(card=>card.row===0 && card.column>0).every(card=>card.shift>100) && opened.filter(card=>card.row!==0 || card.column===0).every(card=>Math.abs(card.shift)<1),
     "only the rest of the hovered row slides over; the cover and every other row stay still");
   await capture("music-hover-desktop");
+  const beyond = await evaluate(`[...document.querySelectorAll('.personal-taste-card')].flatMap((card,index)=>Number(card.dataset.row)===0 && Number(card.closest('.taste-wall-column').dataset.column)>1 ? [index] : [])`);
   const alongRow=await tasteFrames(`cards[${rows}].focus({preventScroll:true});`);
-  check(alongRow.every(frame=>frame.lefts.every((left,index)=>Math.abs(left-alongRow[0].lefts[index])<1)) &&
-    await evaluate(`document.querySelector('#taste-detail').closest('article')===document.querySelectorAll('.personal-taste-card')[${rows}]`),
-    "moving along the row hands the gap to the next cover without moving any cover");
+  check(beyond.length>0 && alongRow.every(frame=>beyond.every(index=>Math.abs(frame.lefts[index]-alongRow[0].lefts[index])<1)) &&
+    await evaluate(`(() => { const next=document.querySelectorAll('.personal-taste-card')[${rows}]; return document.querySelector('#taste-detail').closest('article')===next && Math.abs(parseFloat(getComputedStyle(next).translate)||0)<1; })()`),
+    "moving along the row folds one detail as the next unfolds, so the covers beyond stay still");
   const toNextRow=await tasteFrames('cards[1].focus({preventScroll:true});');
   const settled = await rowShifts();
   check(toNextRow.every(frame=>Math.abs(frame.lefts[1]-toNextRow[0].lefts[1])<1) &&
@@ -775,9 +787,9 @@ const checkPublicLanding = async () => {
   check(await evaluate(`(() => {
     const panel=document.querySelector('#taste-detail').getBoundingClientRect();
     const card=document.activeElement.querySelector('.personal-taste-art').getBoundingClientRect();
-    return (panel.left>=card.right+1 || panel.right<=card.left-1) && panel.height>=card.height-1 &&
+    return (Math.abs(panel.left-card.right)<1.5 || Math.abs(panel.right-card.left)<1.5) && panel.height>=card.height-1 &&
       (Math.abs(panel.top-card.top)<1 || Math.abs(panel.bottom-card.bottom)<1);
-  })()`), "the detail sits beside its cover at the cover's full height");
+  })()`), "the detail is attached flush beside its cover at the cover's full height");
   const detailPointer = await evaluate('(() => { const r=document.querySelector("#taste-detail").getBoundingClientRect(); return {x:r.left+20,y:r.top+20}; })()');
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', ...detailPointer});
   check(await evaluate('document.querySelector("#taste").classList.contains("is-open")'), "the revealed text stays open while the pointer moves onto it");

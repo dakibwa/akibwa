@@ -6695,6 +6695,7 @@ button {
   --concept-work: rgb(var(--concept-work-rgb));
   --concept-career: rgb(var(--concept-career-rgb));
   --concept-archive: rgb(var(--concept-archive-rgb));
+  --concept-projects: #2f88ff;
   --concept-blue: var(--concept-archive);
   --concept-yellow: #efc319;
   --concept-green: var(--concept-work);
@@ -6733,9 +6734,10 @@ button {
   content: "";
 }
 
+/* Each chapter's rule matches its masthead link: blue, rose, green. */
 .concept-hero::after {
   bottom: 0;
-  background: var(--concept-work);
+  background: var(--concept-projects);
 }
 
 .concept-capabilities::before {
@@ -8231,31 +8233,18 @@ button {
   border-radius: 4px;
 }
 
-.concept-career-logo.is-akibwa {
-  overflow: hidden;
-  border: 0;
-  border-radius: 9px;
-}
-
-.concept-career-logo.is-akibwa img {
-  width: 100%;
-  height: 100%;
-  border-radius: 9px;
-}
 
 .concept-career-logo.is-nwf img {
   transform: translate(-5%, -14%);
 }
 
+/* Leeds Building Society's roof mark sits straight on its card. */
 .concept-career-logo.is-lbs {
   width: 44px;
-  height: 34px;
-  border-radius: 4px;
-  background: #17364b;
 }
 
 .concept-career-logo.is-lbs img {
-  width: 34px;
+  width: 40px;
   height: auto;
 }
 
@@ -8276,12 +8265,16 @@ button {
 .concept-career-timeline { overflow-x: auto; padding: 3px 0 10px; scrollbar-width: thin; }
 .concept-career-timeline > li { min-width: 0; }
 .concept-career-stop { width: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
-.concept-career-stop[aria-expanded="true"] .concept-career-card { background: color-mix(in srgb, var(--company-accent) 17%, var(--canvas)); border-color: var(--company-accent); }
-.concept-career-stop[aria-expanded="true"] .concept-career-node { box-shadow: 0 0 0 4px var(--canvas), 0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent); }
+.concept-career-stop[aria-expanded="true"] .concept-career-card { background: color-mix(in srgb, var(--company-accent) 30%, var(--canvas)); border-color: var(--company-accent); translate: 0 -3px; }
+.concept-career-stop[aria-expanded="true"] .concept-career-logo { scale: 1.08; }
+.concept-career-stop[aria-expanded="true"] .concept-career-node { box-shadow: 0 0 0 4px var(--canvas), 0 0 0 7px color-mix(in srgb, var(--company-accent) 18%, transparent); scale: 1.3; }
+.concept-career-stop[aria-expanded="true"] .concept-career-year { color: color-mix(in srgb, var(--company-accent) 80%, var(--ink)); }
 .concept-career-stop:focus-visible .concept-career-card { outline: 2px solid var(--company-accent); outline-offset: -4px; }
 .concept-career-stop:focus-visible { outline: none; }
-.concept-career-node { transition: box-shadow 260ms var(--ease-out); }
-.concept-career-card { transition: border-color 260ms ease, background 260ms ease; }
+.concept-career-node { transition: box-shadow 260ms var(--ease-out), scale 320ms var(--ease-out); }
+.concept-career-card { transition: border-color 260ms ease, background 260ms ease, translate 320ms var(--ease-out); }
+.concept-career-logo { transition: scale 320ms var(--ease-out); }
+.concept-career-year { transition: color 220ms ease; }
 .index-hover-detail { --hover-detail-width: 280px; width: min(var(--hover-detail-width), 100%); display: grid; gap: 4px; padding: 14px; border: 1px solid color-mix(in srgb, var(--hover-detail-accent, var(--company-accent)) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); overflow-wrap: anywhere; }
 .index-hover-detail { opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity 150ms ease, transform 220ms var(--ease-out), visibility 0s linear 220ms; }
 .index-hover-detail.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease 70ms, transform 360ms var(--ease-out) 20ms, visibility 0s; }
@@ -8333,13 +8326,14 @@ button {
 .taste-filters .rail-word { padding: 10px 0; min-height: 44px; font-size: clamp(.9rem, 1.15vw, 1.08rem); }
 .taste-filters .rail-word[aria-pressed="true"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 7px; }
 .taste-wall-stage { position: relative; overflow-anchor: none; }
-.personal-taste-rail { --taste-card-width: clamp(104px, 9.2vw, 136px); --taste-wall-gap: clamp(9px, .85vw, 13px); --taste-detail-width: clamp(160px, 13vw, 192px); --taste-push: calc(var(--taste-detail-width) + var(--taste-wall-gap)); position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: var(--taste-card-width); gap: var(--taste-wall-gap); align-items: start; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-color: #83ad99 transparent; scrollbar-width: thin; padding: 6px 2px 18px; }
+.personal-taste-rail { --taste-card-width: clamp(104px, 9.2vw, 136px); --taste-wall-gap: clamp(9px, .85vw, 13px); --taste-detail-width: clamp(160px, 13vw, 192px); --taste-push: var(--taste-detail-width); position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: var(--taste-card-width); gap: var(--taste-wall-gap); align-items: start; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-color: #83ad99 transparent; scrollbar-width: thin; padding: 6px 2px 18px; }
 .taste-wall-column { display: flex; flex-direction: column; gap: var(--taste-wall-gap); scroll-snap-align: start; }
-/* A hover detail opens sideways, so the page never changes height: on aligned
-   shelves the rest of its row slides over by one detail width; on the mixed
-   wall it floats over the neighbouring covers and lets the pointer through. */
-.personal-taste-card, .taste-load-more { translate: calc(var(--taste-shift, 0) * var(--taste-push)) 0; transition: translate 460ms var(--ease-out), opacity 240ms ease; }
-.personal-taste-card[data-receded] { opacity: .22; }
+/* A hover detail unfolds sideways from its cover, so the page never changes
+   height: on aligned shelves the rest of its row slides over by exactly the
+   width being revealed, on the same curve, so no gap ever opens; on the mixed
+   wall it unfolds over the neighbouring covers and lets the pointer through. */
+.personal-taste-card, .taste-load-more { translate: calc(var(--taste-shift, 0) * var(--taste-push)) 0; transition: translate 420ms var(--ease-out), opacity 240ms ease; }
+.personal-taste-card[data-receded] { opacity: .24; }
 .taste-wall-column.has-detail { z-index: 2; }
 .personal-taste-rail[data-detail="float"] .personal-taste-detail-shell { pointer-events: none; }
 .personal-taste.is-open .personal-taste-rail { scroll-snap-type: none; }
@@ -8349,14 +8343,20 @@ button {
 .personal-taste-card:is([data-kind="films"], [data-kind="tv"]) .personal-taste-art { aspect-ratio: 2 / 3; }
 .personal-taste-card[data-kind="games"] .personal-taste-art { aspect-ratio: 3 / 4; }
 .personal-taste-caption { display: none; }
-.personal-taste-detail-shell { position: absolute; top: 0; left: calc(100% + var(--taste-wall-gap)); display: flex; width: var(--taste-detail-width); min-height: 100%; opacity: 0; visibility: hidden; translate: -8px 0; transition: opacity 110ms ease, translate 220ms var(--ease-out), visibility 0s linear 220ms; }
-.personal-taste-card[data-detail-side="left"] .personal-taste-detail-shell { right: calc(100% + var(--taste-wall-gap)); left: auto; translate: 8px 0; }
-.personal-taste-card[data-detail-side="left"] .personal-taste-detail { box-shadow: inset -3px 0 0 var(--hover-detail-accent); }
+.personal-taste-detail-shell { position: absolute; top: 0; left: 100%; display: flex; width: var(--taste-detail-width); min-height: 100%; visibility: hidden; clip-path: inset(0 100% 0 0); transition: clip-path 420ms var(--ease-out), visibility 0s linear 420ms; }
+.personal-taste-card[data-detail-side="left"] .personal-taste-detail-shell:not(.is-open) { clip-path: inset(0 0 0 100%); }
+.personal-taste-card[data-detail-side="left"] .personal-taste-detail-shell { right: 100%; left: auto; }
+.personal-taste-card[data-detail-side="left"] .personal-taste-detail { border-width: 1px 0 1px 1px; border-radius: 4px 0 0 4px; box-shadow: inset -3px 0 0 var(--hover-detail-accent); }
+/* The open cover and its detail read as one piece. */
+.personal-taste-art { transition: border-radius 180ms ease; }
+.personal-taste-card[data-detail-open="true"][data-detail-side="right"] .personal-taste-art { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.personal-taste-card[data-detail-open="true"][data-detail-side="left"] .personal-taste-art { border-top-left-radius: 0; border-bottom-left-radius: 0; }
 /* The lowest cover's detail grows upwards, keeping clear of the rail's edge. */
 .personal-taste-card[data-stack-end="true"] .personal-taste-detail-shell { top: auto; bottom: 0; }
-.personal-taste-detail-shell.is-open { opacity: 1; visibility: visible; translate: 0 0; transition: opacity 260ms ease 90ms, translate 460ms var(--ease-out), visibility 0s; }
-.personal-taste-detail { display: flex; flex: 1; border: 1px solid color-mix(in srgb, var(--hover-detail-accent) 44%, var(--line-strong)); border-radius: 3px; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: inset 3px 0 0 var(--hover-detail-accent); overflow-wrap: anywhere; }
-.taste-detail-copy { display: flex; flex: 1; flex-direction: column; gap: 5px; padding: 12px 13px 12px 15px; }
+.personal-taste-card .personal-taste-detail-shell.is-open { visibility: visible; clip-path: inset(0); transition: clip-path 420ms var(--ease-out), visibility 0s; }
+.personal-taste-detail { display: flex; flex: 1; border: solid color-mix(in srgb, var(--hover-detail-accent) 44%, var(--line-strong)); border-width: 1px 1px 1px 0; border-radius: 0 4px 4px 0; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: inset 3px 0 0 var(--hover-detail-accent); overflow-wrap: anywhere; }
+.taste-detail-copy { display: flex; flex: 1; flex-direction: column; gap: 5px; padding: 12px 13px 12px 15px; opacity: 0; transition: opacity 140ms ease; }
+.personal-taste-detail-shell.is-open .taste-detail-copy { opacity: 1; transition: opacity 200ms ease 30ms; }
 .taste-detail-copy > strong { color: var(--black); font-size: .84rem; font-weight: 690; line-height: 1.22; letter-spacing: -.015em; }
 .taste-detail-copy > span { color: var(--muted); font-size: .72rem; line-height: 1.35; }
 .personal-taste-title { font-size: .76rem; line-height: 1.35; }
@@ -8434,7 +8434,14 @@ button {
 .career-spotlight-role { display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start; gap: 12px; padding: 15px 15px 17px; border: 1px solid color-mix(in srgb, var(--company-accent) 44%, var(--line-strong)); border-radius: 4px; background: color-mix(in srgb, var(--company-accent) 6%, var(--canvas)); box-shadow: inset 0 3px 0 var(--company-accent); }
 .career-spotlight-mark { display: grid; width: 48px; height: 48px; place-items: center; border: 1px solid color-mix(in srgb, var(--company-accent) 68%, var(--ink)); border-radius: 3px; background: color-mix(in srgb, var(--company-accent) 11%, color-mix(in srgb, var(--ink) 5%, var(--canvas))); }
 .career-spotlight-title { display: grid; align-content: center; gap: 3px; min-width: 0; }
-.career-spotlight-title strong { color: var(--black); font-size: .94rem; font-weight: 690; line-height: 1.15; letter-spacing: -.02em; }
+.career-spotlight-title strong { color: var(--black); font-size: .94rem; font-weight: 690; line-height: 1.15; letter-spacing: -.02em; transition: color 220ms ease; }
+.career-spotlight-role { transition: background 260ms ease, border-color 260ms ease, translate 320ms var(--ease-out); }
+.career-spotlight-mark { transition: background 260ms ease, scale 320ms var(--ease-out); }
+@media (hover: hover) {
+  .career-spotlight-role:hover { background: color-mix(in srgb, var(--company-accent) 14%, var(--canvas)); border-color: var(--company-accent); translate: 0 -3px; }
+  .career-spotlight-role:hover .career-spotlight-mark { background: color-mix(in srgb, var(--company-accent) 30%, var(--canvas)); scale: 1.06; }
+  .career-spotlight-role:hover .career-spotlight-title strong { color: color-mix(in srgb, var(--company-accent) 72%, var(--black)); }
+}
 .career-spotlight-title span { color: color-mix(in srgb, var(--ink) 58%, var(--canvas)); font-size: .72rem; line-height: 1.3; }
 .career-spotlight-role .concept-career-statement { grid-column: 1 / -1; margin: 0; font-size: .86rem; line-height: 1.45; }
 /* The spotlit library fills the width with larger covers and grows downwards. */
@@ -8445,11 +8452,13 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .page-footer .social-icon, .page-footer .social-icon svg { transition: none; }
   .page-footer .social-icon:is(:hover, :active) svg { transform: none; }
-  .personal-taste-detail-shell, .personal-taste-detail-shell.is-open, .personal-taste-detail, .personal-taste-card, .taste-load-more { transition: none; }
+  .personal-taste-detail-shell, .personal-taste-card .personal-taste-detail-shell.is-open, .personal-taste-detail, .personal-taste-card, .taste-load-more, .personal-taste-art, .taste-detail-copy, .personal-taste-detail-shell.is-open .taste-detail-copy { transition: none; }
   .concept-project-media picture, .concept-project-aside, .concept-project-aside > span, .concept-project-stop[data-preview="true"] .concept-project-aside > span { transition: none; }
   .taste-search, .taste-search *, .taste-search-field::after, .concept-taste-head .concept-archive-head { transition: none !important; }
   .index-reveal-reserve { transition: none; }
   .hero-name-value { animation: none; }
+  .concept-career-logo, .concept-career-year, .career-spotlight-role, .career-spotlight-mark, .career-spotlight-title strong { transition: none; }
+  .concept-career-stop[aria-expanded="true"] :is(.concept-career-card, .concept-career-logo, .concept-career-node), .career-spotlight-role:hover, .career-spotlight-role:hover .career-spotlight-mark { translate: none; scale: none; }
   .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .index-hover-detail, .index-hover-detail.is-open, .personal-taste, .personal-taste.is-open, .index-reveal-shell, .index-reveal-shell.is-open, .index-reveal-track, .index-hover-detail.index-reveal-panel, .index-hover-detail.index-reveal-panel.is-open { transition: none; }
   .index-reveal-shell.is-open .index-reveal-content { animation: none; }
   .index-reveal-content.is-outgoing { display: none; }
