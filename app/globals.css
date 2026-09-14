@@ -6806,6 +6806,39 @@ button {
   color: var(--muted);
 }
 
+.concept-hero-footer .page-footer-meta {
+  flex-wrap: wrap;
+  gap: 2px 20px;
+}
+
+.concept-section-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 16px;
+  font: 600 .82rem/1.3 var(--sans);
+}
+
+.concept-section-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: color-mix(in srgb, var(--section-accent) 80%, var(--ink));
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: .28em;
+}
+
+.concept-section-links a:is(:hover, :focus-visible) {
+  text-decoration-color: currentColor;
+}
+
+.concept-section-links a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
 .concept-text-link,
 .concept-inline-links a {
   text-decoration-line: underline;

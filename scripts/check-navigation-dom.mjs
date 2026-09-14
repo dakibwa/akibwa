@@ -459,49 +459,28 @@ const checkPublicLanding = async () => {
   })`);
   check(interrupted.title==='Leeds Building Society' && interrupted.outgoing===0 && interrupted.open, "rapid direction changes settle on the latest role without stale text");
   const careerPlacements=[];
-  for (const index of [0,4,7]) {
+  for (const index of [0,1,2,3,4,5,6,7]) {
     await evaluate(`document.querySelectorAll('.concept-career-stop')[${index}].focus()`);
     await sleep(520);
     careerPlacements.push(await evaluate('document.querySelector(".concept-career-detail-lane").dataset.placement'));
     check(await evaluate(`(() => {
       const panel=document.querySelector('#career-detail').getBoundingClientRect();
-      const heading=document.querySelector('#career-title').getBoundingClientRect();
+      const active=document.querySelector('.concept-career-stop[aria-expanded=true]').getBoundingClientRect();
       const next=document.querySelector('#taste').getBoundingClientRect();
-      return panel.bottom<next.top && panel.top>=heading.bottom;
-    })()`), "the Career preview leaves both chapter headings clear");
+      return panel.bottom<next.top && panel.top>=active.bottom+10;
+    })()`), "the Career preview opens below its role and leaves Taste clear");
   }
-  check(careerPlacements.some(placement=>placement.startsWith('top')) && careerPlacements.some(placement=>placement.startsWith('bottom')), "Career varies above and below the roles according to available space");
+  check(careerPlacements.every(placement=>placement.startsWith('bottom')), "every Career role consistently opens below its logo");
   await evaluate('document.activeElement.blur(); document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
   await sleep(380);
   await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"})');
-  const upwardMotion = action => evaluate(`new Promise(resolve => {
-    const sample=()=>{
-      const rail=document.querySelector('#career-rail').getBoundingClientRect();
-      const head=document.querySelector('.concept-career-head').getBoundingClientRect();
-      const shell=document.querySelector('.concept-career-detail-lane');
-      const space=document.querySelector('.index-reveal-reserve.is-above').getBoundingClientRect().height;
-      return {rail:rail.top,heading:head.top,divider:document.querySelector('#career').getBoundingClientRect().top,
-        project:document.querySelector('#project-rail').getBoundingClientRect().bottom,space,
-        clipTop:shell.getBoundingClientRect().top-parseFloat(getComputedStyle(shell).getPropertyValue('--reveal-above-space')),
-        headBottom:head.bottom};
-    };
-    const samples=[sample()];
-    ${action}
-    const until=performance.now()+580;
-    const next=()=>requestAnimationFrame(()=>setTimeout(frame,0));
-    const frame=()=>{samples.push(sample());if(performance.now()<until) next();else resolve(samples);};
-    next();
-  })`);
-  const upwardOpen=await upwardMotion('document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true});');
-  check(passesThrough(upwardOpen,'space') && upwardOpen.at(-1).space>80 &&
-    ['heading','divider','project'].every(key=>passesThrough(upwardOpen,key) && upwardOpen.at(-1)[key]<upwardOpen[0][key]-80),
-    "an upward Career preview smoothly pushes its heading, divider and Projects up");
-  check(upwardOpen.every(sample=>Math.abs(sample.rail-upwardOpen[0].rail)<3), "the upward reveal keeps the timeline anchored under the pointer");
-  check(upwardOpen.every(sample=>sample.clipTop>=sample.headBottom-1), "the upward box stays clipped below the heading throughout its opening");
-  const upwardClose=await upwardMotion('document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));');
-  check(passesThrough(upwardClose,'space') && upwardClose.at(-1).space<1 &&
-    Math.abs(upwardClose.at(-1).divider-upwardOpen[0].divider)<3 && upwardClose.every(sample=>Math.abs(sample.rail-upwardClose[0].rail)<3),
-    "closing the upward preview returns the preceding content smoothly without moving the role");
+  const careerBefore=await evaluate('document.querySelector("#career-rail").getBoundingClientRect().top+scrollY');
+  check(opensSmoothly(await dividerMotion('#taste', 'document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true});')),
+    "a Career dropdown opens measured space below the timeline");
+  check(await evaluate(`Math.abs(document.querySelector('#career-rail').getBoundingClientRect().top+scrollY-${careerBefore})<1 && !document.querySelector('#career .index-reveal-reserve.is-above')`),
+    "opening a Career detail leaves the timeline and preceding content in place");
+  check(closesSmoothly(await dividerMotion('#taste', 'document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));')),
+    "closing Career smoothly returns the space below the timeline");
   await setDesktop(815,650);
   await goto('/');
   await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"}); document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true})');
@@ -512,8 +491,8 @@ const checkPublicLanding = async () => {
     return scrollY;
   })()`);
   await sleep(420);
-  check(await evaluate(`Math.abs(scrollY-${awayScroll})<2 && document.querySelector('.concept-career-detail-lane').inert && document.querySelector('.index-reveal-reserve.is-above').getBoundingClientRect().height<1`),
-    "scrolling the role out of view closes its upward space without pulling the page back");
+  check(await evaluate(`Math.abs(scrollY-${awayScroll})<2 && document.querySelector('.concept-career-detail-lane').inert && document.querySelector('#career .index-reveal-reserve').getBoundingClientRect().height<1`),
+    "scrolling the role out of view closes its dropdown without pulling the page back");
   for (const width of [320,390,820]) {
     await setDesktop(width);
     await goto('/');
@@ -524,7 +503,7 @@ const checkPublicLanding = async () => {
       const section=document.querySelector('#career').getBoundingClientRect();
       const gap=document.querySelector('#taste').getBoundingClientRect().top-panel.bottom;
       const below=document.querySelector('.concept-career-detail-lane').dataset.placement.startsWith('bottom');
-      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && (!below || gap<=37) && document.documentElement.scrollWidth<=innerWidth+1;
+      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && below && gap<=37 && document.documentElement.scrollWidth<=innerWidth+1;
     })()`), `the last career role fits the ${width}px page and keeps a close, clear divider`);
     if(width===320){
       await evaluate('document.querySelector(".concept-career-timeline").scrollLeft=0');

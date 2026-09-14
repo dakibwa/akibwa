@@ -50,6 +50,13 @@ export function PageFooter({ embedded = false }) {
               <Mail size={20} strokeWidth={1.65} aria-hidden="true" />
             </button>
           </div>
+          {embedded ? (
+            <nav className="concept-section-links" aria-label="Explore the page">
+              <a href="#projects" style={{ "--section-accent": "#2f88ff" }}>Projects</a>
+              <a href="#career" style={{ "--section-accent": "var(--concept-career)" }}>Career</a>
+              <a href="#taste" style={{ "--section-accent": "var(--concept-archive)" }}>Taste Library</a>
+            </nav>
+          ) : null}
         </div>
       </div>
     </Root>

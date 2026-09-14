@@ -87,9 +87,8 @@ export function CareerBar() {
         className="concept-career-detail-lane"
         panelClassName="concept-career-popover"
         floating
-        reserveAbove
+        side="bottom"
         reserveBelow
-        avoid=".concept-career-head h2, .concept-career-head button, .concept-career-stop"
         placementIndex={detailIndex}
       >
         <strong>{detail.name}</strong>
