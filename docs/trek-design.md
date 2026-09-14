@@ -1,7 +1,7 @@
 # Trek: Paris to Sofia
 
 A moving view of the walk, looking along the traveller's path. The landscape
-does the storytelling; original photographs appear as small paper keepsakes. Dan selected
+does the storytelling; original photographs appear in quiet, level frames. Dan selected
 one Paths view, then requested continuous joins, smoother motion, a traveller's
 perspective and much less text and interface on 5 September 2026.
 
@@ -71,11 +71,11 @@ perspective and much less text and interface on 5 September 2026.
   native provider links and keyboard operation.
 - The upper-right corner holds a small paper minimap of the full journey, with
   the completed route, remaining route, dashed connections and a moving direction
-  marker. A small flag sits beside the country name inside the upper-right corner, with no separate footer, flagpole or elevation readout. Use the existing country outlines and a
+  marker. A small flag sits beside the country name inside the upper-right corner, with no separate footer, flagpole or elevation readout. Use the regional Natural Earth outlines in `data/trek-atlas.json` and a
   2D canvas, with no second terrain renderer. Flags are local SVGs from
   flag-icons with its MIT licence alongside them, loaded only as needed.
   Following Dan’s later 7 September feedback, keep the country fills static,
-  using one shared country fill and no current-country highlight. Keep only the small red direction arrow, with no moving halo. Paint the base atlas once. Do not spread
+  using one shared country fill and no current-country highlight. Keep only the small red direction arrow, with no moving halo. Include surrounding European countries so inland borders never read as coastlines; use pale blue-green for water, warm ivory-green for land, and tight framing that retains both route endpoints. Paint the base atlas once. Do not spread
   flags across the atlas: the single flag stays beside the country name.
   Following Dan’s 7 September feedback, remove the top-right menu button and
   place the compact atlas there; the date below the ribbon opens journey options.
@@ -152,11 +152,10 @@ perspective and much less text and interface on 5 September 2026.
   recorded calendar dates with their countries, falling back to the numbered day
   when its date is unknown. Selecting a date or scrubbing pauses at that point;
   slower pace choices remain in effect. Back to Paris restores default Auto.
-- Original photographs appear as lightly angled paper prints beside the moving
+- Original photographs appear in level, minimal frames beside the moving
   landscape, for 9.5 seconds of elapsed time. Preserve the full composition with
   `contain`; do not interrupt playback or hide the route, atlas or elevation.
-  Let each print size naturally to the original image ratio, bounded by the viewport. Use a balanced cream border, a fine inset edge, quiet paper grain and a soft lifted shadow; avoid blank side bands on portraits. Fade each print in with a small rising, rotating motion,
-  easing into its resting angle. Show only the image, with no visible caption.
+  Let each image size naturally to its original ratio, bounded by the viewport. Use a slim ivory border and one soft shadow, without paper grain, curling edges or rotation. Decode the image before revealing it, and paint its transparent starting state before a 1.2-second opacity dissolve. Fade it out fully before hiding it. Show only the image, with no visible caption.
   Automatic prints are passive figures with no links, hover action or pointer interception. Open the original day gallery from the menu. Select from the actual day; retain its provenance in
   the accessible name and gallery because exact photo positions are unknown. Show at most one print per day in
   continuous walking playback, and on preparing a directly selected walking day. Leave the landscape clear during train transfers. The option

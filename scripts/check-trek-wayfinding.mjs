@@ -136,5 +136,6 @@ const buildings=[building(1,[contained]),building(2,[[contained],[contained]],'M
 assert.deepEqual(landmarkBuildingIds(buildings,[bounds]),[1,2],'replace the complete native body and multi-part towers, preserving adjacent or partly outside buildings');
 const generated=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);
 assert.deepEqual(generated.landmarks,landmarks,'the published model positions and sources match the owning data');
-assert.deepEqual(generated.countryRings,read('data/trek-days.json').countryRings.map(({name,rings})=>({name,rings})),'the inset uses existing geographic outlines');
+assert.deepEqual(generated.countryRings,read('data/trek-atlas.json').countries,'the inset uses the sourced regional atlas');
+for(const name of ['France','Germany','Austria','Slovenia','Croatia','Republic of Serbia','Bulgaria','Romania','Hungary','Czechia','Slovakia','Poland','Ukraine','Italy','Switzerland'])assert(generated.countryRings.some(c=>c.name===name),'regional atlas must include '+name);
 console.log('Wayfinding checks passed: sourced landmarks, grounded meshes, stable route-ordered settlement windows, current/next anchors, bounded cache, tile dedupe/unloads, date seeks, connection context, callback resets, continuous strip motion and country outlines.');

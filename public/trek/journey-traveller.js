@@ -130,7 +130,7 @@
     function dismissFlash(){
       clearTimeout(flashTimer);
       flashGeneration++;flashShown=false;flashPending=false;flash.classList.remove('visible');
-      const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:1150);
+      const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:1300);
     }
     function begin(){
       if(!ready||failed)return;
@@ -205,14 +205,17 @@
       const photos=photosFor(day);if(path?.sample(distance).mode==='train'||!photos.length||flashPending||!started||!ready||reduced||!$('photo-interludes').checked)return;
       const featured=chapters.find(c=>c.day===day),p=photos.find(p=>p.src===featured?.photo)||photos[Math.floor(photos.length*.45)];
       const generation=++flashGeneration,photoDay=day,img=new Image();flashPending=true;
-      img.onload=()=>{
+      img.onload=async()=>{
+        try{await img.decode();}catch{}
         if(generation!==flashGeneration)return;flashPending=false;
-        if(menu.open||gallery.open||day!==photoDay)return;
-        const picture=flash.querySelector('.memory-image');picture.src=img.src;picture.alt=p.alt;
-        flash.style.setProperty('--print-angle',((photoDay%5)-2)*.6-2+'deg');
+        if(menu.open||gallery.open||day!==photoDay||!$('photo-interludes').checked)return;
+        img.className='memory-image';img.alt=p.alt;
+        flash.querySelector('.memory-image').replaceWith(img);
+        flash.classList.remove('visible');
         flash.setAttribute('aria-label','Photograph from day '+photoDay);
         flash.hidden=false;flashShown=true;lastFlashDay=photoDay;photoCooldown=0;
-        requestAnimationFrame(()=>{if(generation===flashGeneration)flash.classList.add('visible');});
+        // Paint the decoded photograph at zero opacity before starting its reveal.
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{if(generation===flashGeneration)flash.classList.add('visible');}));
         clearTimeout(flashTimer);flashTimer=setTimeout(dismissFlash,9500);
       };img.onerror=()=>{if(generation===flashGeneration){flashPending=false;lastFlashDay=photoDay;}};img.src='photos/'+p.src;
     }
