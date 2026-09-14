@@ -3,12 +3,11 @@
 ## Akibwa identity
 
 The orange lowercase `a` with an apricot terminal is the shared Akibwa social
-and website mark. On the homepage it sits to the left of the Instagram, X and
-Email icons below the introduction. The sentence “Building in the age of AI”
-uses the same serif throughout. The contact icons are small inline SVGs with
-soft orange bodies and apricot terminals, sampled from the original logo.
-The original mark remains a non-interactive signature; the three contact
-actions retain their labels and destinations.
+and website mark. On the homepage it forms the `a` in a compact orange `ai`
+at the end of “Building in the age of AI”. The original mark is paired with
+a simple rounded SVG `i`; the full sentence retains accessible text. “Age”
+uses the normal serif. The Instagram, X and Email actions underneath use
+their original simple icons and retain their labels and destinations.
 `public/brand-logos/akibwa-a.png` is the transparent single-letter master.
 `public/favicon.svg`
 embeds a small copy of that mark on charcoal. The square profile export is
