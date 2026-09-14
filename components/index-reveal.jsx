@@ -5,8 +5,15 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 const placements = ["bottom-start", "top-end", "right", "bottom-end", "top-start", "left"];
 const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
 
-function placeBeside(card, bounds, width, height, index, obstacles) {
+function placeBeside(card, bounds, width, height, index, obstacles, side) {
   const gap = 12;
+  // Career always opens underneath its logo. Reserve real page space there,
+  // including when the box initially extends below the viewport.
+  if (side === "bottom") return {
+    x: clamp(index % 2 ? card.right - width : card.left, bounds.left, bounds.right - width),
+    y: card.bottom + gap,
+    placement: index % 2 ? "bottom-end" : "bottom-start",
+  };
   const preferred = Math.max(0, index) % placements.length;
   const candidates = placements.map((_, step) => {
     const placement = placements[(preferred + step) % placements.length];
@@ -32,7 +39,7 @@ function placeBeside(card, bounds, width, height, index, obstacles) {
 
 // One moving box: the rail supplies its position, the text supplies its height.
 // Keeping both mounted lets an interrupted reveal continue from where it is.
-export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, placementIndex = 0, avoid, reserveAbove = false, reserveBelow = false, className = "", panelClassName = "", children }) {
+export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, accent, id, shellId, contentId, label, fitAnchor = false, floating = false, side, placementIndex = 0, avoid, reserveAbove = false, reserveBelow = false, className = "", panelClassName = "", children }) {
   const content = useRef(null);
   const track = useRef(null);
   const above = useRef(null);
@@ -112,7 +119,7 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       if (open && !available) onUnavailable();
       setLayout((before) => {
         const width = fitAnchor && available ? visibleWidth : before.width;
-        const position = floating && available ? placeBeside(cardBox, shelfBox, movingBox.offsetWidth, height, placementIndex, obstacles) : null;
+        const position = floating && available ? placeBeside(cardBox, shelfBox, movingBox.offsetWidth, height, placementIndex, obstacles, side) : null;
         // A closed, off-screen box still contributes to scroll overflow. Keep
         // its retained position inside the rail when the viewport narrows.
         const offset = position ? position.x - shelfBox.left : available ? fitAnchor ? left - shelfBox.left : clamp(cardBox.left - shelfBox.left, 0, shelfBox.width - movingBox.offsetWidth) : clamp(before.offset, 0, Math.max(0, shelfBox.width - movingBox.offsetWidth));
@@ -142,7 +149,7 @@ export function IndexReveal({ open, itemKey, rail, getAnchor, onUnavailable, acc
       window.removeEventListener("scroll", followRail);
       window.removeEventListener("resize", followRail);
     };
-  }, [itemKey, open, fitAnchor, floating, placementIndex, avoid, reserveAbove, reserveBelow]);
+  }, [itemKey, open, fitAnchor, floating, side, placementIndex, avoid, reserveAbove, reserveBelow]);
 
   return (
     <>
