@@ -113,7 +113,7 @@ export const personalProjects = [
     dashboardLabel: "Português com a Inês",
     dashboardStatus: "Independent site",
     summary: "Lessons, prices and booking for a teacher in Porto.",
-    tags: ["European Portuguese", "Lessons", "Booking"],
+    tags: ["Portuguese", "Lessons", "Booking"],
     mode: "link",
     externalHref: "https://portuguesewithines.com/",
     cta: "Visit Inês’s site"

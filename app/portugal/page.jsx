@@ -4,7 +4,7 @@ const destination = "https://portuguesewithines.com/";
 
 export const metadata = {
   title: "Português com a Inês",
-  description: "European Portuguese lessons with Inês Dias Baía.",
+  description: "Portuguese lessons with Inês Dias Baía.",
   robots: { index: false },
   alternates: { canonical: destination }
 };
