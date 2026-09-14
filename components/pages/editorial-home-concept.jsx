@@ -29,9 +29,9 @@ const projects = [
     className: "concept-portuguese",
     href: "https://portuguesewithines.com/",
     title: "Português com a Inês",
-    subtitle: "European Portuguese lessons",
+    subtitle: "Portuguese lessons",
     description:
-      "Inês’s European Portuguese lessons, with availability and booking in one place.",
+      "Inês’s Portuguese lessons, with availability and booking in one place.",
     src: "/project-art/personal/portuguese-with-ines-conversation.png",
     imageRevision: "left-crop",
     alt: "Two people talking over coffee as colourful speech shapes meet between them",
