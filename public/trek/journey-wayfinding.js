@@ -173,7 +173,7 @@
     const ctx=canvas.getContext('2d'),atlas=document.createElement('canvas'),ink=atlas.getContext('2d');
     const width=240,height=148,points=path.pieces.flatMap(p=>[project(p.points[0]),project(p.points.at(-1))]);
     const bounds=points.reduce((b,p)=>[Math.min(b[0],p[0]),Math.min(b[1],p[1]),Math.max(b[2],p[0]),Math.max(b[3],p[1])],[Infinity,Infinity,-Infinity,-Infinity]);
-    const scale=Math.min((width-40)/(bounds[2]-bounds[0]),(height-42)/(bounds[3]-bounds[1]));
+    const scale=Math.min((width-24)/(bounds[2]-bounds[0]),(height-32)/(bounds[3]-bounds[1]));
     const xy=p=>[(p[0]-(bounds[0]+bounds[2])/2)*scale+width/2,(p[1]-(bounds[1]+bounds[3])/2)*scale+height/2];
     const at=ll=>xy(project(ll));
     const outlines=countries.map(country=>({...country,mini:country.rings.map(ring=>ring.map(xy))}));
@@ -184,9 +184,9 @@
     ctx.scale(dpr,dpr);ink.scale(dpr,dpr);
     function line(c,points){c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));}
     function drawAtlas(){
-      ink.fillStyle='#edeedd';ink.fillRect(0,0,width,height);ink.setLineDash([]);
+      ink.fillStyle='#dce8e4';ink.fillRect(0,0,width,height);ink.setLineDash([]);
       outlines.forEach((country,i)=>{
-        ink.fillStyle='#dce1cc';ink.strokeStyle='#8c9b7877';ink.lineWidth=.6;
+        ink.fillStyle='#e4e6d4';ink.strokeStyle='#8c9b7877';ink.lineWidth=.6;
         for(const ring of country.mini){line(ink,ring);ink.closePath();ink.fill();ink.stroke();}
       });
       ink.lineCap=ink.lineJoin='round';

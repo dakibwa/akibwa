@@ -52,16 +52,15 @@
 .journey-minimap #where{font-size:8px;letter-spacing:.1em}
 
 
-/* Loose photographic prints keep their original aspect ratios and never intercept the map. */
-.memory-flash{position:fixed;z-index:7;inset:auto auto 244px 34px;width:max-content;height:max-content;max-width:calc(100vw - 68px);margin:0;overflow:visible;opacity:0;pointer-events:none;transform:perspective(900px) translate3d(-10px,22px,0) rotateX(12deg) rotate(calc(var(--print-angle,-2deg) - 3deg)) scale(.97);transform-origin:30% 90%;transition:opacity .95s ease,transform 1.5s cubic-bezier(.16,.75,.22,1)}
-.memory-flash.visible{opacity:1;transform:perspective(900px) translate3d(0,0,0) rotateX(0) rotate(var(--print-angle,-2deg)) scale(1)}
-.memory-sheet{position:relative;padding:10px;background:linear-gradient(132deg,#fffdf2,#f3eedc 75%,#e9e1c9);border:1px solid #fffef7;border-radius:1px 2px 2px 1px;box-shadow:0 1px 2px #42391e33,0 9px 13px -8px #2b352840,0 22px 35px -18px #25321f70;isolation:isolate}
-.memory-sheet::before{content:'';position:absolute;z-index:-1;left:7%;right:4%;bottom:1px;height:28%;transform:rotate(3deg);border-radius:50%;box-shadow:0 9px 12px #26311f35;pointer-events:none}
-.memory-sheet::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 0 0 1px #bcae7e1c,inset 0 -2px 3px #ab94591c;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 130 130' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath filter='url(%23n)' opacity='.12' d='M0 0h130v130H0z'/%3E%3C/svg%3E");opacity:.35}
-.memory-flash .memory-image{position:relative;inset:auto;display:block;width:auto;height:auto;max-width:min(23vw,244px);max-height:246px;object-fit:contain;box-shadow:0 0 0 1px #443b272b;transform:none;transition:none}
-@media(max-width:650px){.journey-minimap{top:22px;width:143px}.journey-minimap #where{font-size:7px;letter-spacing:0}.memory-flash{left:20px;bottom:245px;max-width:calc(100vw - 40px)}.memory-sheet{padding:7px}.memory-flash .memory-image{max-width:min(34vw,140px);max-height:160px}}
+/* Level, untrimmed photographs dissolve quietly over the landscape. */
+.memory-flash{position:fixed;z-index:7;inset:auto auto 244px 34px;width:max-content;height:max-content;max-width:calc(100vw - 68px);margin:0;overflow:visible;opacity:0;pointer-events:none;transform:none;transition:opacity 1.2s cubic-bezier(.4,0,.2,1)}
+.memory-flash.visible{opacity:1;transform:none}
+.memory-sheet{position:relative;padding:5px;background:#faf9f2;border:1px solid #fffdf3b3;border-radius:3px;box-shadow:0 8px 28px #23312624;isolation:isolate}
+.memory-sheet::before,.memory-sheet::after{content:none}
+.memory-flash .memory-image{position:relative;inset:auto;display:block;width:auto;height:auto;max-width:min(25vw,280px);max-height:min(30vh,270px);object-fit:contain;border-radius:1px;box-shadow:none;transform:none;transition:none}
+@media(max-width:650px){.journey-minimap{top:22px;width:143px}.journey-minimap #where{font-size:7px;letter-spacing:0}.memory-flash{left:20px;bottom:245px;max-width:calc(100vw - 40px)}.memory-sheet{padding:4px}.memory-flash .memory-image{max-width:min(34vw,140px);max-height:160px}}
 @media(max-width:350px){.journey-minimap{width:127px}.memory-flash{bottom:240px}.memory-flash .memory-image{max-width:33vw;max-height:142px}}
-@media(max-height:520px){.journey-minimap{top:20px;width:137px}.memory-flash{left:18px;top:82px;bottom:auto}.memory-sheet{padding:6px}.memory-flash .memory-image{max-width:135px;max-height:105px}}
+@media(max-height:520px){.journey-minimap{top:20px;width:137px}.memory-flash{left:18px;top:82px;bottom:auto}.memory-sheet{padding:4px}.memory-flash .memory-image{max-width:135px;max-height:105px}}
 
 /* A soft paper wash keeps the opening readable without enclosing its text. */
 .opening{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:90px 30px 50px;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,#f4f1e5fa 0%,#f4f1e5ed 30%,#f4f1e5ad 52%,transparent 82%)}
