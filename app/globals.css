@@ -6786,8 +6786,7 @@ button {
   font-size: clamp(1.7rem, 3vw, 3.2rem);
   line-height: 1.04;
   letter-spacing: -0.035em;
-  white-space: normal;
-  text-wrap: balance;
+  white-space: nowrap;
 }
 
 .concept-hero-footer {
@@ -6805,39 +6804,6 @@ button {
   gap: 6px;
   margin-left: -12px;
   color: var(--muted);
-}
-
-.concept-ai-word {
-  display: inline-block;
-  vertical-align: -0.11em;
-  letter-spacing: normal;
-  line-height: 0;
-}
-
-.concept-ai-art {
-  display: inline-flex;
-  align-items: flex-end;
-  height: 0.85em;
-  color: #fb6824;
-}
-
-.concept-ai-art picture,
-.concept-ai-art img {
-  display: block;
-  width: 0.85em;
-  height: 0.85em;
-}
-
-.concept-ai-art picture {
-  margin-left: -0.045em;
-}
-
-.concept-ai-i {
-  display: block;
-  width: 0.18em;
-  height: 0.79em;
-  margin-left: -0.045em;
-  margin-bottom: 0.065em;
 }
 
 .concept-text-link,
@@ -7411,8 +7377,8 @@ button {
   }
 
   .concept-lede {
-    margin-top: clamp(22px, 3vw, 32px);
     max-width: 27ch;
+    margin-top: clamp(22px, 3vw, 32px);
   }
 
   .concept-capabilities-head {
@@ -7455,7 +7421,7 @@ button {
     max-width: none;
     font-size: clamp(1.4rem, min(7.7vw, calc(61.66px - 6.154vw)), 2.2rem);
     line-height: 1.08;
-    white-space: normal;
+    white-space: nowrap;
   }
 
   .concept-projects {
