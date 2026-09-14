@@ -12,6 +12,8 @@ const chapters = [
 export function PageFooter({ embedded = false }) {
   const Root = embedded ? "div" : "footer";
   const { spotlight, setSpotlight } = useSpotlight();
+  // In the masthead the icons repeat the chapter colours in the links' order.
+  const accents = embedded ? chapters.map(([, , accent]) => accent) : ["#c05270", "#1b947d", "#2f88ff"];
   const openEmail = () => {
     const local = ["da", "kibwa"].join("");
     const domain = ["gm", "ail", ".com"].join("");
@@ -53,7 +55,7 @@ export function PageFooter({ embedded = false }) {
               href="https://www.instagram.com/dakibwa/"
               aria-label="Instagram — @dakibwa"
               title="Instagram"
-              style={{ "--handle-accent": "#c05270" }}
+              style={{ "--handle-accent": accents[0] }}
             >
               <Instagram size={20} strokeWidth={1.65} aria-hidden="true" />
             </a>
@@ -62,7 +64,7 @@ export function PageFooter({ embedded = false }) {
               href="https://x.com/dakibwa"
               aria-label="X — @dakibwa"
               title="X"
-              style={{ "--handle-accent": "#1b947d" }}
+              style={{ "--handle-accent": accents[1] }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.173 2.25H8l4.713 6.231zm-1.161 17.52h1.833L7.004 4.126H5.037z" />
@@ -74,7 +76,7 @@ export function PageFooter({ embedded = false }) {
               onClick={openEmail}
               aria-label="Email Akibwa"
               title="Email"
-              style={{ "--handle-accent": "#2f88ff" }}
+              style={{ "--handle-accent": accents[2] }}
             >
               <Mail size={20} strokeWidth={1.65} aria-hidden="true" />
             </button>
