@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { buildListeningCounts, spotifyMusicAudioSummary } from "../lib/listening-counts.mjs";
+import { applyListeningArtwork } from "../lib/listening-artwork.mjs";
 
 const root = process.argv[process.argv.indexOf("--history-root") + 1];
 if (!process.argv.includes("--history-root") || !root || root.startsWith("--"))
@@ -23,6 +24,7 @@ const packet = buildListeningCounts({
   apple: json(resolve(root, "data/apple-podcasts.json")),
   asOf: new Date().toISOString().slice(0, 10),
 });
+packet.albums = applyListeningArtwork(packet.albums, json(new URL("../data/listening-artwork.json", import.meta.url)));
 writeFileSync(new URL("../public/listening-catalogue.json", import.meta.url), JSON.stringify(packet) + "\n");
 const summaryPath = new URL("../data/listening-summary.json", import.meta.url);
 const summary = json(summaryPath);

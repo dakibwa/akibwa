@@ -122,7 +122,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         curation[kind].map((item) => ({ ...item, kind })),
       ]),
     ),
-    podcasts: rankPodcasts(podcasts.filter((item) => item.plays >= 5 || item.title === "Within Reason"))
+    podcasts: rankPodcasts(podcasts.filter((item) => item.plays >= 20))
       .map((item) => ({ ...item, kind: "podcasts" })),
   };
   // Highlights retains the mixed editorial selection. Within each listening

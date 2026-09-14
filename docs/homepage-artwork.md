@@ -3,10 +3,12 @@
 ## Akibwa identity
 
 The orange lowercase `a` with an apricot terminal is the shared Akibwa social
-and website mark. On the homepage it begins the custom orange word “age” inside
-“Building in the age of AI”, with the existing introduction, light background
-and project layout retained. The word is an inline image with accessible text;
-its size follows the sentence and its descender aligns with the text baseline.
+and website mark. On the homepage it sits to the left of the Instagram, X and
+Email icons below the introduction. The sentence “Building in the age of AI”
+uses the same serif throughout. The contact icons are small inline SVGs with
+soft orange bodies and apricot terminals, sampled from the original logo.
+The original mark remains a non-interactive signature; the three contact
+actions retain their labels and destinations.
 `public/brand-logos/akibwa-a.png` is the transparent single-letter master.
 `public/favicon.svg`
 embeds a small copy of that mark on charcoal. The square profile export is
@@ -22,13 +24,14 @@ the selected `02 Ember` colourway. The two generation prompts were:
 The image tool returned 1254×1254 masters. Keep those originals; resize only
 the derived web assets.
 
-### Inline age wordmark
+### Retained age wordmark
 
 `public/brand-logos/akibwa-age.png` is the 1983×793 wordmark master, generated
 with the built-in image tool on 13 September 2026 using the existing `a` as the
-reference. The `identityWord` slot serves 60–113px displays. Its white background
-uses CSS multiply blending against the warm homepage paper. Keep this treatment
-on a light surface. The favicon and social avatars retain the single `a`.
+reference. This earlier treatment is retained as an original asset but is no
+longer rendered in the homepage sentence. Its white background would need
+multiply blending on a light surface if reused. The favicon and social avatars
+retain the single `a`.
 
 Generation prompt:
 

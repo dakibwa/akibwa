@@ -62,6 +62,40 @@ full aggregate catalogue from the site's static JSON. Long shelves still add
 verified cover use their album/artist typography, never a fabricated or broken
 image. The album archive retains searching, sorting, pagination and noindex.
 
+Artwork is resolved independently from counting. The original printed/Last.fm
+ladder covered 1,644 of the combined catalogue's 13,598 albums; the history
+import added identities without running an artwork lookup. This is why familiar
+records such as Kid A and Pet Sounds initially had typographic covers.
+`data/listening-artwork.json` now owns reviewed public-provider artwork for
+additional records, including source URLs, provider artist/title, verification
+notes and derived-file hashes. `listening:build` reapplies this overlay after
+reconciling the history, so the next refresh preserves the covers. It never
+changes approved album metadata, plays, source counts or the snapshot date.
+
+On 14 September 2026 the missing records with at least 100 plays were reviewed.
+74 covers were restored, bringing coverage to 1,718 albums and completing the
+first 216 albums in the ranked catalogue. Two labels in that review remain
+unresolved: `DELETED Run The Jewels` and The Modern Lovers' `Live at the
+longbranch and more`. The latter is an import with different packaging and
+track selection from the US release; its cover is not substituted. Lower-play
+unverified records retain their labelled fallbacks.
+
+The Rodeo row reuses the retained Travi$ Scott sleeve without merging those
+listening identities. Eno/Wyatt/Davies: Music for Airports is the 1998 Bang on a
+Can recording under composer credits, confirmed against its exact Spotify
+release; it reuses printed sleeve 010, not Brian Eno's Ambient 1 artwork.
+Other cover matches use exact public release pages, including documented
+collaborative credits and shortened titles. Public verification URLs are in the
+manifest. No private history is needed for an artwork repair.
+
+After adding a reviewed entry, run `npm run albums:catalogue-art`. It downloads
+the original public cover to the ignored artwork cache and produces the same
+264px wall / up-to-760px card AVIF/WebP ladder and press treatment as the other
+sleeves, without removing existing artwork. Commit the manifest, its
+`public/album-art/history-*` rungs and the public catalogue's artwork flags.
+`npm run albums:art:check` checks both artwork populations, including hashes and
+identity; `npm run albums:catalogue-art:check` checks just the reviewed overlay.
+
 The old Last.fm-only Worker is not a source for these shelves and cannot replace
 reconciled counts through the session cache. Its remote configuration is outside
 this change; the public surface registry points to the combined static packet.
