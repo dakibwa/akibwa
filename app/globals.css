@@ -100,7 +100,6 @@ button {
   color: var(--ink);
 }
 
-.site-frame,
 .page-grid {
   width: min(calc(100% - 48px), var(--frame));
   margin: 0 auto;
@@ -254,30 +253,6 @@ button {
 
 /* Below-the-fold sections rise gently as they enter the viewport.
    Scroll-driven only where supported; static everywhere else. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-.page-strip,
-.page-strip-steps,
-.area-card {
-      animation: scroll-rise both var(--ease-out);
-      animation-timeline: view();
-      animation-range: entry 0% entry 36%;
-    }
-  }
-}
-
-@keyframes scroll-rise {
-  from {
-    opacity: 0.3;
-    transform: translateY(16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 
 @media (prefers-reduced-motion: reduce) {
   /* Appear instantly, and land on the target without the page-length
@@ -285,42 +260,6 @@ button {
   html {
     scroll-behavior: auto;
   }}
-.akibwa-home {
-  min-height: 100vh;
-  padding: 0 0 46px;
-  /* The homepage is one interactive wall, not an article. Prevent accidental
-     blue selections while dragging between cards or aiming for the sentence
-     controls; buttons and links remain keyboard- and pointer-operable. */
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.akibwa-hero {
-  padding-top: 56px;
-}
-
-.akibwa-hero h1 {
-  max-width: 1240px;
-  margin: 0;
-  color: var(--black);
-  /* 4.18rem at 1440px, growing with the viewport above that */
-  font-size: clamp(4.18rem, 2.6rem + 1.76vw, 5.1rem);
-  font-weight: 600;
-  line-height: 1.04;
-  letter-spacing: 0;
-}
-
-.hero-line {
-  display: block;
-}
-
-.hero-line--result {
-  color: #84858d;
-}
-
-.hero-dynamic-phrase {
-  display: inline;
-}
 
 /* The site's two names, folded into the fixed headline. This is deliberately
    display-only: it changes on a quiet cadence but carries no false click cue.
@@ -379,52 +318,6 @@ button {
   transform-origin: center;
 }
 
-.hero-word-cycle {
-  --cycle-accent-rgb: 47, 136, 255;
-  appearance: none;
-  position: relative;
-  isolation: isolate;
-  display: inline-block;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
-  white-space: nowrap;
-  color: #84868d;
-  color: color-mix(in srgb, rgb(var(--cycle-accent-rgb)) 30%, #84868d);
-  cursor: pointer;
-  font: inherit;
-  letter-spacing: 0;
-  text-align: left;
-  vertical-align: baseline;
-  transition:
-    color 160ms ease,
-    text-shadow 160ms ease;
-}
-
-.hero-outcome {
-  display: inline;
-}
-
-.hero-word-cycle:hover,
-.hero-word-cycle:focus-visible {
-  color: var(--black);
-  outline: 0;
-  text-shadow: 0 0 16px rgba(var(--cycle-accent-rgb), 0.14);
-}
-
-.hero-word-cycle:focus-visible {
-  box-shadow: 0 0 0 3px rgba(var(--cycle-accent-rgb), 0.22);
-}
-
-.hero-word-cycle-value {
-  position: relative;
-  z-index: 1;
-  display: inline-block;
-  white-space: nowrap;
-  animation: word-flick 220ms ease both;
-}
-
 @keyframes word-flick {
   from {
     opacity: 0.46;
@@ -437,139 +330,7 @@ button {
   }
 }
 
-/* The first row of tiles used to finish 52px below a 900px fold, so a laptop
-   visitor saw four half-cards and no complete one. Reclaiming this margin and
-   16px of hero padding brings the whole first row above it. */
-.featured-areas-head {
-  margin-top: clamp(40px, 4vw, 48px);
-}
-
-.featured-areas-head p {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
-.featured-areas-head strong {
-  color: var(--black);
-  font-weight: 580;
-}
-
-.featured-areas-head em {
-  font-style: normal;
-}
-
-/* Four across rather than two-up. At two-up each tile ran 581 CSS px wide,
-   which pushed the fourth area below the fold and asked the artwork to hold
-   up at a size the sources cannot serve at 2x DPR. A row of four fits the
-   whole set in one glance and lands the art nearer its native resolution. */
-.area-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 26px;
-  margin-top: 16px;
-}
-
-.area-card {
-  --area-accent: var(--blue);
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  gap: 0;
-  padding: 10px;
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: var(--radius);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 245, 0.86)),
-    #ffffff;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.96) inset,
-    0 18px 50px rgba(16, 18, 23, 0.065);
-  isolation: isolate;
-  /* `translate` rather than `transform`: the scroll-driven scroll-rise
-     animation owns `transform` on this element, and an animation always beats
-     a normal declaration, so a hover transform here would never apply. */
-  transition:
-    translate var(--hover-out) var(--ease-out),
-    border-color var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out);
-}
-
-.area-card::before {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(
-      circle at 88% 10%,
-      color-mix(in srgb, var(--area-accent) 14%, transparent),
-      transparent 30%
-    ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--area-accent) 8%, transparent),
-      transparent 42%
-    );
-  content: "";
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
-/* The accent now follows the pointer across the complete clickable card,
-   rather than reading mainly as motion in the caption strip. */
-.area-card::after {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  background: radial-gradient(
-    280px circle at var(--card-mx, 50%) var(--card-my, 50%),
-    color-mix(in srgb, var(--area-accent) 15%, transparent),
-    transparent 72%
-  );
-  content: "";
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
-.area-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* The shadow used to deepen under a card that never moved, which read as a
-   lighting change rather than the card lifting. A small rise sells it. */
-.area-card.is-hovering,
-.area-card:focus-visible:not(.is-pointer-focus),
-.area-card.is-pressing {
-  translate: 0 -3px;
-  border-color: color-mix(in srgb, var(--area-accent) 46%, rgba(16, 18, 23, 0.22));
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.98) inset,
-    0 6px 16px rgba(16, 18, 23, 0.05),
-    0 30px 80px rgba(16, 18, 23, 0.095);
-  transition-duration: var(--hover-in);
-}
-
 /* Press settles the card back towards the page instead of holding it up. */
-.area-card.is-pressing {
-  translate: 0 -1px;
-}
-
-.area-card.is-hovering::before,
-.area-card:focus-visible:not(.is-pointer-focus)::before,
-.area-card.is-pressing::before,
-.area-card.is-hovering::after,
-.area-card:focus-visible:not(.is-pointer-focus)::after,
-.area-card.is-pressing::after {
-  opacity: 1;
-  transition-duration: var(--hover-in);
-}
 
 .area-art {
   position: relative;
@@ -623,158 +384,7 @@ button {
   transition: opacity var(--hover-out) var(--ease-out);
 }
 
-.area-card.is-hovering .area-art::before,
-.area-card:focus-visible:not(.is-pointer-focus) .area-art::before,
-.area-card.is-pressing .area-art::before {
-  opacity: 1;
-  transition-duration: var(--hover-in);
-}
-
-
-.area-caption {
-  position: relative;
-  display: flex;
-  min-height: 82px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  border-top: 0;
-  background: transparent;
-  padding: 18px 8px 5px;
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-/* The accent underline shares the header ribbon's motion signature: it
-   extends with the same fast decelerating ease and lifts with a soft glow
-   in the area's own colour. */
-.area-caption::before {
-  position: absolute;
-  top: 0;
-  left: 8px;
-  width: 42px;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--area-accent),
-    color-mix(in srgb, var(--area-accent) 56%, #ffffff)
-  );
-  content: "";
-  opacity: 0.78;
-  box-shadow: 0 1px 8px color-mix(in srgb, var(--area-accent) 0%, transparent);
-  transition:
-    width 380ms cubic-bezier(0.16, 1, 0.3, 1),
-    opacity var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out);
-}
-
-.area-caption h2 {
-  margin: 0 0 4px;
-  color: var(--black);
-  font-size: 1.16rem;
-  font-weight: 580;
-  letter-spacing: 0;
-}
-
-.area-caption p {
-  margin: 0;
-  color: #6d7077;
-  font-size: 0.9rem;
-}
-
-/* The arrow stays put and gains a hairline accent ring instead of sliding
-   into the card edge. A filled disc went flat and button-like on the muted
-   accents; the ring stays quiet in any colour. */
-.area-caption__arrow {
-  position: relative;
-  display: grid;
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 999px;
-  color: var(--black);
-  transition: color var(--hover-out) var(--ease-out);
-}
-
-.area-caption__arrow::before {
-  position: absolute;
-  inset: 0;
-  border: 1px solid color-mix(in srgb, var(--area-accent) 34%, transparent);
-  border-radius: inherit;
-  background: color-mix(in srgb, var(--area-accent) 6%, transparent);
-  content: "";
-  opacity: 0;
-  transform: scale(0.72);
-  transition:
-    opacity var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.area-caption__arrow svg {
-  position: relative;
-  display: block;
-  transition: translate var(--hover-out) var(--ease-out);
-}
-
-.area-card.is-hovering .area-art::after,
-.area-card:focus-visible:not(.is-pointer-focus) .area-art::after,
-.area-card.is-pressing .area-art::after {
-  opacity: 0.38;
-  transition-duration: var(--hover-in);
-}
-
-.area-card.is-hovering .area-caption,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption,
-.area-card.is-pressing .area-caption {
-  transform: translateY(-1px);
-  transition-duration: var(--hover-in);
-}
-
-.area-card.is-hovering .area-caption::before,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption::before,
-.area-card.is-pressing .area-caption::before {
-  width: 76px;
-  opacity: 1;
-  box-shadow: 0 1px 10px color-mix(in srgb, var(--area-accent) 42%, transparent);
-  transition-duration: 380ms, var(--hover-in), var(--hover-in);
-}
-
-.area-card.is-hovering .area-caption__arrow,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow,
-.area-card.is-pressing .area-caption__arrow {
-  color: var(--area-accent);
-  transition-duration: var(--hover-in);
-}
-
-.area-card.is-hovering .area-caption__arrow::before,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow::before,
-.area-card.is-pressing .area-caption__arrow::before {
-  opacity: 1;
-  transform: scale(1);
-  transition-duration: 380ms;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 /* The glyph leans the way the card is about to take you. */
-.area-card.is-hovering .area-caption__arrow svg,
-.area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow svg,
-.area-card.is-pressing .area-caption__arrow svg {
-  translate: 2px 0;
-  transition-duration: var(--hover-in);
-}
-
-.area-card.is-pressing,
-.area-card.is-pressing::before,
-.area-card.is-pressing::after,
-.area-card.is-pressing .area-art::before,
-.area-card.is-pressing .area-art::after,
-.area-card.is-pressing .area-caption,
-.area-card.is-pressing .area-caption::before,
-.area-card.is-pressing .area-caption__arrow,
-.area-card.is-pressing .area-caption__arrow::before {
-  transition-duration: 90ms;
-}
 
 .page-footer {
   /* Match the section rhythm used elsewhere on the page rather than sitting
@@ -862,28 +472,12 @@ button {
 /* Each area page carries one accent, taken from its artwork and matching its
    homepage tile. Colour lives in contained artwork and these accents; the
    canvas itself stays quiet. */
-.about-page {
-  --page-accent: #2c8068;
-  --page-accent-strong: #1f5c4a;
-}
-
-.contact-page-new {
-  --page-accent: #2f88ff;
-  --page-accent-strong: #1565c9;
-}
-
-.offer-page {
-  --page-accent: #ff6f1a;
-  --page-accent-strong: #e05c0d;
-}
 
 .studio-hero {
   padding: 58px 0 24px;
 }
 
-.studio-hero h1,
-.offer-studio-hero h1,
-.contact-hero h1 {
+.studio-hero h1 {
   margin: 0;
   max-width: 28ch;
   /* Without this the measure leaves a one-word last line at mid-desktop
@@ -895,24 +489,6 @@ button {
   line-height: var(--page-title-line);
   letter-spacing: 0;
 }
-
-.studio-card {
-  overflow: hidden;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
-  transition:
-    border-color var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out);
-}
-
-.studio-card:hover {
-  border-color: rgba(16, 18, 23, 0.2);
-  box-shadow: 0 18px 52px rgba(16, 18, 23, 0.06);
-  transition-duration: var(--hover-in);
-}
-
 
 /* Same split as the other four: the line and the copy on the left, the
    page's own artwork opposite. */
@@ -1099,71 +675,8 @@ button {
   transition-duration: var(--hover-in);
 }
 
-.personal-story {
-  display: grid;
-  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
-  column-gap: clamp(36px, 5vw, 78px);
-  row-gap: 26px;
-  align-items: center;
-  /* 72px top and bottom put 144px of air around a 462px card, four times
-     down the page. */
-  padding-block: clamp(36px, 4vw, 52px);
-  scroll-margin-top: 76px;
-}
-
-.personal-story + .personal-story {
-  border-top: 1px solid var(--line);
-}
-
-.personal-story.is-flipped {
-  grid-template-columns: minmax(0, 1.14fr) minmax(0, 0.86fr);
-}
-
-.personal-story.is-flipped .personal-story-copy {
-  order: 2;
-}
-
-.personal-story.is-flipped .personal-story-media {
-  order: 1;
-}
-
-.personal-story-copy {
-  min-width: 0;
-}
-
 /* Plate row: the folio number in the project's accent, a hairline that
    brightens with the section, and the live/dev state at the far end. */
-.personal-story-plate {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.personal-story-num {
-  font-size: clamp(2.1rem, 1.7rem + 1.4vw, 2.8rem);
-  font-weight: 330;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  color: var(--area-accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.personal-story-plate-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--area-accent) 52%, transparent),
-    var(--line)
-  );
-  opacity: 0.6;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
-.personal-story:hover .personal-story-plate-line {
-  opacity: 1;
-  transition-duration: var(--hover-in);
-}
 
 .personal-story-status {
   display: inline-flex;
@@ -1192,63 +705,6 @@ button {
 .personal-story-status.is-dev .personal-story-status-dot {
   background: #d08a32;
   box-shadow: 0 0 0 4px rgba(208, 138, 50, 0.16);
-}
-
-.personal-story h2 {
-  margin: 20px 0 0;
-  color: var(--black);
-  font-size: clamp(1.85rem, 1.5rem + 1.4vw, 2.6rem);
-  font-weight: 560;
-  line-height: 1.04;
-  letter-spacing: -0.014em;
-}
-
-.personal-story-type {
-  margin: 10px 0 0;
-  font-size: 0.8rem;
-  font-weight: 640;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--area-accent) 68%, #606976);
-}
-
-.personal-story-summary {
-  margin: 12px 0 0;
-  max-width: 34ch;
-  color: #3f4650;
-  font-size: clamp(1rem, 0.95rem + 0.28vw, 1.16rem);
-  font-weight: 460;
-  line-height: 1.5;
-}
-
-.personal-story .about-cta {
-  --page-accent: var(--area-accent);
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-.personal-story-media {
-  min-width: 0;
-}
-
-/* In the storyboard the copy column already names the project, so the card's
-   banner drops its label and reads as a pure artwork strip. */
-.personal-story .personal-detail-banner-meta {
-  display: none;
-}
-
-.personal-story .personal-detail-banner {
-  height: 64px;
-}
-
-/* The preview card answers the section on hover: a touch more accent in the
-   border and a deeper accent-tinted shadow. */
-.personal-story:hover .personal-detail-card {
-  border-color: color-mix(in srgb, var(--area-accent) 36%, rgba(16, 18, 23, 0.14));
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.98) inset,
-    0 14px 30px rgba(16, 18, 23, 0.06),
-    0 38px 80px color-mix(in srgb, var(--area-accent) 14%, rgba(16, 18, 23, 0.08));
 }
 
 /* Sections fade up as they scroll into view (class applied by JS, so no-JS
@@ -1292,732 +748,15 @@ button {
   }
 }
 
-@media (max-width: 980px) {
-  .personal-story,
-  .personal-story.is-flipped {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 18px;
-    padding-block: clamp(30px, 6vw, 44px);
-  }
-
-  .personal-story.is-flipped .personal-story-copy {
-    order: 1;
-  }
-
-  .personal-story.is-flipped .personal-story-media {
-    order: 2;
-  }
-
-  .personal-story h2 {
-    margin-top: 16px;
-  }
-}
-
-.personal-detail-card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--area-accent) 20%, rgba(16, 18, 23, 0.12));
-  border-radius: 16px;
-  background: #fff;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.98) inset,
-    0 10px 24px rgba(16, 18, 23, 0.05),
-    0 30px 64px color-mix(in srgb, var(--area-accent) 9%, rgba(16, 18, 23, 0.07));
-  transition: border-color 240ms ease, box-shadow 240ms ease;
-}
-
-.personal-detail-art {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--area-accent) 8%, #f4f5f7);
-  box-shadow: inset 0 0 0 1px rgba(16, 18, 23, 0.06);
-}
-
-.personal-detail-art img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.personal-detail-art.is-in-development img {
-  filter: saturate(0.92) brightness(0.82);
-}
-
-.personal-detail-art.is-in-development::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(12, 14, 18, 0) 42%, rgba(12, 14, 18, 0.48) 100%);
-}
-
-.personal-detail-devtag {
-  position: absolute;
-  left: 16px;
-  bottom: 14px;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--type-xs, 0.78rem);
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 1px 10px rgba(8, 10, 14, 0.5);
-}
-
-.personal-detail-devtag::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--area-accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--area-accent) 26%, transparent);
-}
-
-.personal-detail-shot {
-  background: color-mix(in srgb, var(--area-accent) 6%, #eef0f3);
-}
-
-.personal-detail-live-preview {
-  position: relative;
-  isolation: isolate;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--area-accent) 16%, transparent), transparent 52%),
-    #f4f5f2;
-  box-shadow: inset 0 0 0 1px rgba(16, 18, 23, 0.06);
-}
-
-.personal-detail-live-preview iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  background: #fff;
-  pointer-events: none;
-}
-
-.personal-detail-live-badge {
-  position: absolute;
-  right: 14px;
-  bottom: 12px;
-  z-index: 2;
-  display: inline-flex;
-  min-height: 28px;
-  align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.44);
-  border-radius: 999px;
-  background: rgba(8, 11, 14, 0.58);
-  padding: 0 11px;
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 0.72rem;
-  font-weight: 620;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.42);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
-}
-
-.personal-detail-collision {
-  display: grid;
-  aspect-ratio: 16 / 9;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  padding: 16px;
-  background: color-mix(in srgb, var(--area-accent) 6%, #eef0f3);
-}
-
-.personal-detail-collision .cover-collision-post {
-  height: 100%;
-}
-
-.personal-detail-collision .cover-collision-post-image {
-  height: 100%;
-  aspect-ratio: auto;
-  box-shadow: inset 0 0 0 1px rgba(16, 18, 23, 0.06);
-}
-
 @media (max-width: 760px) {
   .projects-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;
   }
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  .personal-detail-collision {
-    gap: 9px;
-    padding: 12px;
-  }
-}
-
-.personal-detail-banner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 56px;
-  overflow: hidden;
-  background: #0b0e15;
-  border-bottom: 1px solid color-mix(in srgb, var(--area-accent) 30%, rgba(16, 18, 23, 0.12));
-}
-
-.personal-detail-banner img {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: var(--project-detail-banner-position, 50% 40%);
-  filter: saturate(1.02) contrast(1.02);
-}
-
-.personal-detail-banner-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(13, 11, 9, 0.64),
-    rgba(13, 11, 9, 0.2) 48%,
-    rgba(13, 11, 9, 0.34) 100%
-  );
-}
-
-.personal-detail-banner-meta {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 0 18px;
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.5);
-}
-
-.personal-detail-banner-meta strong {
-  font-size: 0.92rem;
-  font-weight: 620;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.personal-detail-banner-meta em {
-  font-size: 0.66rem;
-  font-style: normal;
-  font-weight: 540;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.personal-detail-shot {
-  display: flex;
-  flex-direction: column;
-  aspect-ratio: 16 / 9;
-}
-
-.personal-detail-shot-frame {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: inset 0 0 0 1px rgba(16, 18, 23, 0.06);
-}
-
-.personal-detail-shot-frame img {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Crop the screenshot's own header band so the coloured banner above is the
-     card's only header, which the capture would otherwise repeat. */
-  object-position: 50% 100%;
-}
-
-.about-profile {
-  position: relative;
-  display: grid;
-  grid-template-columns: var(--page-hero-columns);
-  column-gap: var(--page-hero-gap);
-  align-items: start;
-  padding-top: 56px;
-  padding-bottom: 42px;
-}
-
-.about-profile-main,
-.about-profile-side {
-  display: grid;
-  align-content: start;
-  min-width: 0;
-}
-
-.about-profile-main {
-  gap: 36px;
-}
-
-.about-profile-side {
-  gap: 24px;
-}
-
-.about-hero-copy {
-  display: grid;
-  align-content: start;
-  min-width: 0;
-}
-
-.about-profile h1 {
-  margin: 0;
-  max-width: 28ch;
-  text-wrap: balance;
-  color: var(--black);
-  font-size: var(--page-title-size);
-  font-weight: 540;
-  line-height: var(--page-title-line);
-  letter-spacing: 0;
-}
-
-.about-hero-intro {
-  display: grid;
-  gap: 16px;
-  max-width: 48rem;
-  min-width: 0;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  /* The meadow artwork's sky, faded almost to white: its grain and a warm
-     whisper of colour show through without costing the text its contrast.
-     Sits behind a 97%-white wash at the card's widest point, so it runs from
-     the generated ladder rather than the 415K original — nothing survives that
-     overlay that a 840px rung cannot carry. Regenerate with
-     scripts/generate-image-variants.mjs if the source changes. */
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.97) 42%, rgba(255, 255, 255, 0.84)),
-    url("/_img/about-mountain-meadow-aboutIntro-840.webp") center 12% / cover no-repeat;
-  background-color: var(--white);
-  padding: 26px 28px;
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
-}
-
-.about-hero-intro .about-section-head {
-  margin-bottom: 0;
-}
-
-.about-hero-intro .about-section-head p {
-  max-width: none;
-  margin-top: 7px;
-}
-
-.about-section-head h2 {
-  margin: 0;
-  color: var(--black);
-  font-size: 1.18rem;
-  font-weight: 560;
-  letter-spacing: 0;
-}
-
-.about-section-head p {
-  margin: 12px 0 0;
-  color: #59616b;
-  line-height: 1.55;
-}
-
-.about-statement {
-  max-width: 50ch;
-  margin: 0;
-  color: var(--black);
-  font-size: 1.32rem;
-  font-weight: 500;
-  line-height: 1.43;
-  letter-spacing: 0;
-}
-
-.about-cta {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 22px;
-  min-height: 54px;
-  padding: 7px 7px 7px 24px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.84);
-  color: var(--ink);
-  font-size: 0.95rem;
-  font-weight: 640;
-  letter-spacing: 0.01em;
-  overflow: hidden;
-  transition:
-    border-color 260ms var(--ease-out),
-    color 260ms var(--ease-out),
-    box-shadow 420ms var(--ease-out);
-}
-
-/* On hover, the accent blooms out of the arrow circle to fill the pill. */
-.about-cta::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 7px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--page-accent, var(--ink));
-  transform: translateY(-50%) scale(0);
-  transition: transform 520ms var(--ease-out);
-}
-
-.about-cta-label,
-.about-cta-icon {
-  position: relative;
-}
-
-.about-cta-icon {
-  display: inline-flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: var(--page-accent, var(--ink));
-  color: var(--white);
-  transition:
-    background 300ms var(--ease-out),
-    color 300ms var(--ease-out),
-    transform 420ms var(--ease-out);
-}
-
-.about-cta:hover,
-.about-cta:focus-visible {
-  border-color: var(--page-accent, var(--ink));
-  color: var(--white);
-  box-shadow: 0 14px 34px color-mix(in srgb, var(--page-accent, #101217) 24%, transparent);
-}
-
-.about-cta:hover::before,
-.about-cta:focus-visible::before {
-  transform: translateY(-50%) scale(16);
-}
-
-.about-cta:hover .about-cta-icon,
-.about-cta:focus-visible .about-cta-icon {
-  background: var(--white);
-  color: var(--page-accent, var(--ink));
-  transform: translateX(3px) rotate(-45deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .about-cta::before {
-    transform: translateY(-50%) scale(16);
-    opacity: 0;
-    transition: opacity 200ms ease;
-  }
-
-  .about-cta:hover::before,
-  .about-cta:focus-visible::before {
-    opacity: 1;
-  }
-}
-
-.about-hero-cta {
-  justify-self: start;
-  margin-top: 8px;
-}
-
-.about-portrait {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  min-height: 420px;
-  margin: 0;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--white);
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.05);
-}
-
-.about-portrait img {
-  width: 100%;
-  height: 100%;
-  min-height: 420px;
-  object-fit: cover;
-  object-position: center 50%;
-}
-
-.about-portrait--hero {
-  min-height: 0;
-  aspect-ratio: 5 / 4;
-  max-height: 390px;
-}
-
-.about-portrait--hero img {
-  min-height: 0;
-  object-position: center 34%;
-}
-
-/* The work history runs across the page rather than down it: one column per
-   employer, joined by a single rule at the nodes. It falls back to the
-   stacked list below 760px, which is the better shape on a phone. */
-.about-cv {
-  display: grid;
-  gap: 18px;
-  min-width: 0;
-  margin-top: clamp(30px, 4vw, 44px);
-}
-
-.about-cv .work-timeline {
-  position: relative;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  gap: clamp(14px, 2vw, 30px);
-}
-
-.about-cv .work-timeline::before {
-  top: 39px;
-  bottom: auto;
-  left: 0;
-  right: 0;
-  width: auto;
-  height: 1px;
-}
-
-.about-cv .work-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto auto;
-  align-items: start;
-  gap: 10px;
-  padding: 0;
-}
-
-.about-cv .work-row + .work-row {
-  border-top: 0;
-}
-
-.about-cv .work-node {
-  position: relative;
-  top: auto;
-  left: auto;
-  justify-self: start;
-  transform: none;
-}
-
-.about-cv .work-detail {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-}
-
-.about-cv .work-company strong {
-  white-space: normal;
-}
-
-.about-cv .work-role {
-  font-size: 0.84rem;
-}
-
-.about-cv-label {
-  margin: 0;
-  color: #6b717b;
-  font-size: 0.7rem;
-  font-weight: 640;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-.about-cv .work-detail {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-}
-
-.about-cv .work-company strong {
-  white-space: normal;
-}
-
-.about-cv .work-role {
-  font-size: 0.84rem;
-}
-
-.about-section {
-  margin-top: 42px;
-}
-.about-section-head {
-  margin-bottom: 0;
-}
-
-.about-section-head p {
-  max-width: 28ch;
-  margin-top: 8px;
-}
-
-/* Career history — year-spine timeline */
-.work-timeline {
-  position: relative;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.work-timeline::before {
-  content: "";
-  position: absolute;
-  top: 16px;
-  bottom: 16px;
-  left: 54px;
-  width: 1px;
-  background: rgba(16, 18, 23, 0.12);
-}
-
-.work-row {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
-  align-items: center;
-  gap: 26px;
-  padding: 16px 6px;
-}
-
-.work-row + .work-row {
-  border-top: 1px solid rgba(16, 18, 23, 0.065);
-}
-
-.work-year {
-  color: #6b7178;
-  font-size: 0.92rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.work-node {
-  position: absolute;
-  left: 54px;
-  top: 50%;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--company-accent, var(--page-accent, var(--ink)));
-  box-shadow: 0 0 0 4px var(--canvas);
-  transform: translate(-50%, -50%);
-  transition: box-shadow var(--hover-out) var(--ease-out);
 }
 
 /* Hover stays deliberately quiet: company colour glows around the fixed
    timeline node and logo without moving or repainting the row. */
-.work-row:hover .work-node {
-  box-shadow:
-    0 0 0 4px var(--canvas),
-    0 0 0 7px color-mix(in srgb, var(--company-accent, var(--ink)) 18%, transparent);
-  transition-duration: var(--hover-in);
-}
-
-.work-detail {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-width: 0;
-}
-
-.work-company {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.work-logo {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  flex: none;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-}
-
-.work-logo::before {
-  position: absolute;
-  inset: -7px;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--company-accent, var(--ink)) 17%, transparent),
-    transparent 70%
-  );
-  content: "";
-  opacity: 0;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
-.work-row:hover .work-logo::before {
-  opacity: 0.68;
-  transition-duration: var(--hover-in);
-}
-
-.work-logo img {
-  display: block;
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  object-position: center;
-}
-
-.work-logo--tile {
-  width: 30px;
-  height: 30px;
-}
-
-.work-logo--tile img {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-}
-
-.work-row:hover .work-logo--tile::before {
-  opacity: 0.56;
-}
-
-.work-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--company-accent, var(--page-accent, var(--ink)));
-}
-
-.work-company strong {
-  color: var(--black);
-  font-size: 0.98rem;
-  font-weight: 560;
-  line-height: 1.25;
-  white-space: nowrap;
-}
-
-.work-role {
-  color: #6b7178;
-  font-size: 0.9rem;
-  line-height: 1.3;
-}
 
 .personal-local-note {
   display: grid;
@@ -2144,11 +883,6 @@ button {
 .project-showcase-actions a:hover {
   border-color: rgba(47, 136, 255, 0.38);
   color: var(--blue);
-}
-
-.personal-full-app-showcase {
-  margin-top: 24px;
-  scroll-margin-top: 86px;
 }
 
 .project-expanded-layer {
@@ -2437,13 +1171,6 @@ button {
   .project-expanded-body > :not(.project-expanded-content-placeholder) {
     animation: none;
   }
-}
-
-.project-expanded-body .personal-full-app-showcase {
-  width: 100%;
-  min-height: 100%;
-  margin-top: 0;
-  scroll-margin-top: 0;
 }
 
 /* The overlay toolbar already names the project, so the embedded app skips
@@ -2795,344 +1522,6 @@ button {
   min-height: 330px;
 }
 
-.knowledge-pipeline {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  min-width: 0;
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 30px 70px rgba(16, 18, 23, 0.09);
-  animation: knowledgeSurfaceIn 560ms cubic-bezier(0.16, 1, 0.3, 1) 140ms both;
-}
-
-.knowledge-pipeline-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.08);
-  padding: 14px 20px;
-}
-
-.knowledge-pipeline-head h3 {
-  margin: 0;
-  color: var(--black);
-  font-size: 0.96rem;
-  font-weight: 590;
-  line-height: 1.15;
-}
-
-.knowledge-pipeline-head span {
-  color: #68727a;
-  font-size: 0.75rem;
-  font-weight: 540;
-  white-space: nowrap;
-}
-
-.knowledge-pipeline-body {
-  position: relative;
-  min-width: 0;
-  padding: 4px 20px 14px;
-}
-
-.knowledge-pipeline-spine {
-  position: absolute;
-  top: 26px;
-  bottom: 30px;
-  left: 34px;
-  width: 2px;
-  background: linear-gradient(
-    180deg,
-    rgba(47, 136, 255, 0) 0%,
-    rgba(47, 136, 255, 0.3) 10%,
-    rgba(47, 136, 255, 0.3) 70%,
-    rgba(255, 111, 26, 0.45) 92%,
-    rgba(255, 111, 26, 0)
-  );
-}
-
-.knowledge-pipeline-spine i {
-  position: absolute;
-  top: 0;
-  left: -2px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--blue);
-  opacity: 0;
-  animation: knowledgePipelineDrop 5.6s linear infinite;
-  animation-delay: var(--drop-delay, 0s);
-}
-
-@keyframes knowledgePipelineDrop {
-  0% {
-    top: 0%;
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7;
-  }
-  80% {
-    opacity: 0.7;
-  }
-  96%,
-  100% {
-    top: 99%;
-    opacity: 0;
-  }
-}
-
-.knowledge-pipeline-flow {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.knowledge-pipeline-layer {
-  position: relative;
-  display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 14px;
-  padding: 11px 0;
-  border-top: 1px solid rgba(16, 18, 23, 0.06);
-  animation: knowledgeRowIn 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: var(--layer-delay, 0ms);
-}
-
-.knowledge-pipeline-flow > li:first-child {
-  border-top: 0;
-}
-
-.knowledge-pipeline-node {
-  position: relative;
-  z-index: 1;
-  justify-self: center;
-  width: 9px;
-  height: 9px;
-  border: 2px solid var(--status-accent, var(--blue));
-  border-radius: 50%;
-  background: #fff;
-  animation: knowledgeNodePulse 5.6s ease-out infinite;
-  animation-delay: var(--pulse-delay, 0s);
-}
-
-@keyframes knowledgeNodePulse {
-  0%,
-  30%,
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-  12% {
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--status-accent, #2f88ff) 16%, transparent);
-  }
-}
-
-.knowledge-pipeline-copy {
-  display: grid;
-  min-width: 0;
-  gap: 3px;
-}
-
-.knowledge-pipeline-copy strong {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 2px 10px;
-  min-width: 0;
-  color: var(--black);
-  font-size: 0.92rem;
-  font-weight: 620;
-  line-height: 1.1;
-}
-
-.knowledge-pipeline-copy strong em {
-  color: #68727a;
-  font-size: 0.72rem;
-  font-style: normal;
-  font-weight: 570;
-  white-space: nowrap;
-}
-
-.knowledge-pipeline-copy strong em::before {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  margin: 0 6px 1px 0;
-  background: var(--status-accent, #68727a);
-  content: "";
-}
-
-.knowledge-pipeline-copy > span {
-  color: #5d6772;
-  font-size: 0.78rem;
-  line-height: 1.32;
-}
-
-.knowledge-pipeline-figure {
-  display: grid;
-  justify-items: end;
-  gap: 2px;
-  text-align: right;
-}
-
-.knowledge-pipeline-figure strong {
-  color: var(--black);
-  font-size: clamp(1.02rem, 1.5vw, 1.3rem);
-  font-weight: 640;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.knowledge-pipeline-figure strong.is-wordmark {
-  font-size: 0.92rem;
-  font-weight: 620;
-  letter-spacing: 0;
-}
-
-.knowledge-pipeline-figure small {
-  color: #68727a;
-  font-size: 0.68rem;
-  font-weight: 560;
-}
-
-.knowledge-pipeline-boundary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  margin-top: 8px;
-  border-top: 1px dashed rgba(255, 111, 26, 0.55);
-  padding: 10px 0 0 44px;
-}
-
-.knowledge-pipeline-boundary strong {
-  color: var(--orange);
-  font-size: 0.73rem;
-  font-weight: 640;
-}
-
-.knowledge-pipeline-boundary span {
-  color: #68727a;
-  font-size: 0.75rem;
-}
-
-.knowledge-card-art {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(120% 90% at 12% 0%, rgba(47, 136, 255, 0.17), transparent 54%),
-    radial-gradient(110% 100% at 88% 96%, rgba(255, 111, 26, 0.19), transparent 50%),
-    radial-gradient(70% 60% at 62% 30%, rgba(168, 216, 255, 0.22), transparent 60%),
-    linear-gradient(0deg, rgba(16, 18, 23, 0.085) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 18, 23, 0.03) 1px, transparent 1px),
-    linear-gradient(180deg, #fcfcfa, #eef2f7);
-  background-size: auto, auto, auto, 100% 20%, 24px 100%, auto;
-  transition: transform 600ms var(--ease-out);
-  will-change: transform;
-}
-
-.area-card.is-hovering .knowledge-card-art,
-.area-card:focus-visible:not(.is-pointer-focus) .knowledge-card-art {
-  transform: scale(1.035);
-  transition-duration: 1100ms;
-}
-
-.knowledge-card-art i {
-  position: absolute;
-  top: -4%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(47, 136, 255, 0.72);
-  opacity: 0;
-  animation: knowledgeCardFall var(--fall-duration, 7s) linear infinite;
-  animation-delay: var(--fall-delay, 0s);
-}
-
-.knowledge-card-art i.is-orange {
-  background: rgba(255, 111, 26, 0.72);
-}
-
-.knowledge-card-art i.is-ink {
-  width: 3px;
-  height: 3px;
-  background: rgba(16, 18, 23, 0.5);
-}
-
-@keyframes knowledgeCardFall {
-  0% {
-    top: -4%;
-    opacity: 0;
-  }
-  12% {
-    opacity: 0.9;
-  }
-  60% {
-    opacity: 0.9;
-  }
-  76%,
-  100% {
-    top: 74%;
-    opacity: 0;
-  }
-}
-
-.knowledge-card-boundary {
-  position: absolute;
-  top: 79%;
-  right: 7%;
-  left: 7%;
-  border-top: 1.5px dashed rgba(255, 111, 26, 0.65);
-}
-
-.knowledge-card-fact {
-  position: absolute;
-  top: 87%;
-  left: 50%;
-  width: 9px;
-  height: 9px;
-  margin-left: -4.5px;
-  border-radius: 50%;
-  background: var(--orange);
-  animation: knowledgeFactPulse 3.2s ease-out infinite;
-}
-
-@keyframes knowledgeFactPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 111, 26, 0.36);
-  }
-  70%,
-  100% {
-    box-shadow: 0 0 0 12px rgba(255, 111, 26, 0);
-  }
-}
-
-@keyframes knowledgeSurfaceIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes knowledgeRowIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .project-expanded-layer,
 
@@ -3140,26 +1529,8 @@ button {
 
   .project-expanded-toolbar,
 
-  .project-expanded-actions,
-
-  .knowledge-pipeline,
-
-  .knowledge-pipeline-layer,
-
-  .knowledge-pipeline-spine i,
-
-  .knowledge-pipeline-node,
-
-  .knowledge-card-fact {
+  .project-expanded-actions {
     animation: none;
-  }
-
-  .knowledge-card-art i {
-    display: none;
-  }
-
-  .knowledge-card-art {
-    transition: none;
   }
 
   .project-expanded-layer,
@@ -3309,199 +1680,8 @@ button {
   background: #050705;
 }
 
-
-.offer-studio-hero {
-  display: grid;
-  grid-template-columns: var(--page-hero-columns);
-  gap: var(--page-hero-gap);
-  align-items: start;
-  padding: 58px 0 20px;
-}
-
-.offer-hero-title {
-  min-width: 0;
-}
-
-.offer-hero-aside {
-  display: grid;
-  max-width: 560px;
-  justify-items: start;
-  padding-top: 2px;
-}
-
-.offer-hero-aside > p {
-  margin: 0 0 16px;
-  color: var(--black);
-  font-size: 1.25rem;
-  line-height: 1.45;
-}
-
-.offer-hero-aside .about-cta {
-  margin: 6px 0 16px;
-}
-
-
-/* The area's sculpture lives inside the panel, bleeding to its edges
-   and melting into the panel white behind the lists. */
-.fit-art {
-  position: relative;
-  align-self: stretch;
-  margin: -30px -30px -30px 0;
-}
-
-
-.contact-hero {
-  display: grid;
-  grid-template-columns: var(--page-hero-columns);
-  gap: var(--page-hero-gap);
-  align-items: start;
-  padding-top: 58px;
-}
-
-.contact-art-side {
-  min-width: 0;
-}
-
-.contact-form {
-  display: grid;
-  gap: 12px;
-  min-width: 0;
-  margin-top: clamp(24px, 3vw, 34px);
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--white);
-  padding: 20px;
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
-}
-
-
-.contact-form label {
-  display: grid;
-  align-content: start;
-  gap: 9px;
-  color: var(--black);
-  font-size: 0.92rem;
-}
-
-.contact-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.contact-label-row em {
-  border-radius: 999px;
-  background: rgba(47, 136, 255, 0.08);
-  padding: 3px 8px;
-  color: var(--page-accent-strong, var(--blue));
-  font-size: 0.72rem;
-  font-style: normal;
-}
-
-.contact-form input,
-.contact-form textarea {
-  min-width: 0;
-  width: 100%;
-  border: 1px solid rgba(16, 18, 23, 0.16);
-  border-radius: var(--radius);
-  background: var(--white);
-  padding: 15px 16px;
-  color: var(--black);
-  font: inherit;
-  resize: vertical;
-}
-
-.contact-form textarea {
-  min-height: 140px;
-  line-height: 1.5;
-}
-
-.contact-form input::placeholder,
-.contact-form textarea::placeholder {
-  color: #a4a8af;
-}
-
-.contact-form input:focus-visible,
-.contact-form textarea:focus-visible {
-  outline: none;
-  border-color: var(--page-accent, var(--blue));
-  box-shadow: 0 0 0 3px rgba(47, 136, 255, 0.16);
-}
-
 /* One action left, so it sizes to itself rather than stretching a row that
    no longer has anything else in it. */
-.contact-actions {
-  display: flex;
-  grid-column: 1 / -1;
-  align-items: center;
-  gap: 18px;
-  margin-top: 0;
-}
-
-.contact-actions button {
-  width: auto;
-  min-width: 190px;
-}
-
-.contact-actions button {
-  display: inline-flex;
-  width: 100%;
-  min-height: 44px;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid rgba(47, 136, 255, 0.28);
-  border-radius: var(--radius);
-  background: rgba(47, 136, 255, 0.055);
-  padding: 0 18px;
-  color: var(--page-accent-strong, var(--blue));
-  cursor: pointer;
-  font-size: 0.98rem;
-  transition: background 320ms var(--ease-out);
-}
-
-.contact-actions button svg {
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-.contact-actions button:hover,
-.contact-actions button:focus-visible {
-  background: rgba(47, 136, 255, 0.11);
-}
-
-.contact-actions button:hover svg,
-.contact-actions button:focus-visible svg {
-  transform: translateX(4px);
-  transition-duration: var(--hover-in);
-}
-
-.contact-actions p {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin: 0;
-  color: #59616b;
-  font-size: 0.84rem;
-  line-height: 1.4;
-}
-
-.contact-direct {
-  justify-self: end;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.22);
-  padding-bottom: 1px;
-  color: var(--black);
-  font-size: 0.84rem;
-  font-weight: 540;
-  transition:
-    color 300ms var(--ease-out),
-    border-color 300ms var(--ease-out);
-}
-
-.contact-direct:hover,
-.contact-direct:focus-visible {
-  border-color: rgba(47, 136, 255, 0.5);
-  color: var(--page-accent-strong, var(--blue));
-}
 
 .page-art-panel {
   overflow: hidden;
@@ -3521,216 +1701,8 @@ button {
   object-position: var(--page-art-position, 50% 50%);
 }
 
-/* The professional hero carries its paragraph and call to action under the
-   headline so the artwork can hold the opposite column. */
-.offer-hero-copy {
-  display: grid;
-  justify-items: start;
-  gap: 14px;
-  max-width: 48ch;
-  margin-top: clamp(24px, 3vw, 34px);
-}
-
-.offer-hero-copy p {
-  margin: 0;
-  color: var(--black);
-  font-size: 1.25rem;
-  line-height: 1.45;
-}
-
-/* The closing strips sit on a generated character-field in the sky
-   palette — the contact page's data-texture, drawn like the About
-   field, veiled so the text stays crisp. */
-.page-strip,
-.page-strip-steps {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.28fr) minmax(0, 1fr);
-  gap: clamp(36px, 5vw, 72px);
-  align-items: start;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
-    url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
-  background-color: var(--white);
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
-}
-
-.page-strip {
-  margin-top: clamp(32px, 3vw, 44px);
-  padding: 28px 30px 24px;
-}
-
-/* Trial: each page's own artwork behind its box instead of the shared
-   character-field. Veiled hard enough that the text keeps its contrast. */
-.offer-page .page-strip {
-  background:
-    linear-gradient(92deg, rgba(255, 255, 255, 0.95) 26%, rgba(255, 255, 255, 0.78)),
-    url("/area-art/professional-structure.webp") center 58% / cover no-repeat;
-  background-color: var(--white);
-}
-
-.page-strip > header {
-  display: grid;
-  gap: 8px;
-  max-width: 330px;
-}
-
-.page-strip > header > span {
-  color: var(--page-accent-strong, var(--blue));
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.page-strip h2 {
-  margin: 0;
-  color: var(--black);
-  font-size: clamp(1.35rem, 1.9vw, 1.85rem);
-  font-weight: 520;
-  line-height: 1.08;
-}
-
-.page-strip ul {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 clamp(28px, 4vw, 56px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.page-strip li {
-  display: grid;
-  grid-template-columns: 12px minmax(0, 1fr);
-  gap: 18px;
-  align-items: start;
-  border-top: 1px solid rgba(16, 18, 23, 0.1);
-  padding: 16px 0;
-}
-
-.page-strip li:nth-child(-n + 2) {
-  border-top: 0;
-  padding-top: 2px;
-}
-
-.page-strip i {
-  width: 9px;
-  height: 9px;
-  margin-top: 0.42em;
-  border-radius: 50%;
-  background: var(--page-accent, var(--blue));
-  transition: box-shadow var(--hover-out) var(--ease-out);
-}
-
-.page-strip li:hover i {
-  box-shadow: 0 0 0 6px color-mix(in srgb, var(--page-accent, var(--blue)) 16%, transparent);
-  transition-duration: var(--hover-in);
-}
-
-.page-strip li p {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-}
-
-.page-strip strong {
-  color: var(--black);
-  font-size: 0.94rem;
-  font-weight: 650;
-}
-
-.page-strip li p span {
-  color: #4d5560;
-  font-size: clamp(0.86rem, 0.82rem + 0.14vw, 0.95rem);
-  line-height: 1.5;
-}
-
 /* Now the first closing strip on Contact, so it carries the same top
    breathing room the notes strip used to. */
-.page-strip-steps {
-  margin-top: clamp(32px, 3vw, 44px);
-  padding: 28px 30px 30px;
-}
-
-.page-strip-steps > header {
-  display: grid;
-  gap: 8px;
-  max-width: 330px;
-}
-
-.page-strip-steps > header > span {
-  color: var(--page-accent-strong, var(--blue));
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.page-strip-steps > header h2 {
-  margin: 0;
-  color: var(--black);
-  font-size: clamp(1.35rem, 1.9vw, 1.85rem);
-  font-weight: 520;
-  line-height: 1.08;
-}
-
-.page-strip-steps ol {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 0;
-}
-
-.page-strip-steps li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
-  padding: 2px 0 0;
-}
-
-.page-strip-steps li:hover .page-strip-steps-step {
-  color: var(--page-accent, var(--blue));
-  transition-duration: var(--hover-in);
-}
-
-.page-strip-steps li + li {
-  border-left: 0;
-  padding-left: 0;
-}
-
-.page-strip-steps-step {
-  color: var(--page-accent-strong, var(--blue));
-  transition: color var(--hover-out) var(--ease-out);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-  padding-top: 2px;
-}
-
-.page-strip-steps p {
-  display: grid;
-  gap: 5px;
-  margin: 0;
-}
-
-.page-strip-steps strong {
-  color: var(--black);
-  font-size: 0.95rem;
-  font-weight: 650;
-}
-
-.page-strip-steps p > span {
-  color: #4d5560;
-  font-size: clamp(0.88rem, 0.82rem + 0.2vw, 1rem);
-  line-height: 1.5;
-}
 
 .not-found h1 {
   margin: 0;
@@ -3770,144 +1742,6 @@ button {
   transition-duration: var(--hover-in);
 }
 
-.mini-preview {
-  display: grid;
-  gap: 14px;
-  border: 1px solid var(--line);
-  background:
-    linear-gradient(90deg, rgba(47, 136, 255, 0.09), transparent),
-    var(--paper);
-  padding: 14px;
-}
-
-.mini-preview-head,
-.mini-preview-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.mini-preview-head span,
-.mini-preview-row strong {
-  color: var(--ink);
-  font-size: 0.8rem;
-  font-weight: 760;
-}
-
-.mini-preview-head i,
-.mini-preview-row em {
-  display: block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--orange);
-}
-
-.mini-preview-grid {
-  display: grid;
-  gap: 8px;
-}
-
-.mini-preview-row {
-  border-top: 1px solid var(--line);
-  padding-top: 8px;
-}
-
-.mini-preview-row span {
-  color: var(--blue);
-  font-size: 0.72rem;
-  font-weight: 780;
-}
-
-.mini-preview-row strong {
-  margin-right: auto;
-}
-
-.mini-preview-row em {
-  background: var(--blue);
-}
-
-.system-mark {
-  position: relative;
-  width: min(100%, 500px);
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-}
-
-.mark-plane,
-.mark-node,
-.mark-axis {
-  position: absolute;
-  display: block;
-}
-
-.mark-plane {
-  border: 1px solid rgba(168, 216, 255, 0.46);
-  background: rgba(168, 216, 255, 0.06);
-  transform: rotateX(58deg) rotateZ(38deg) skewX(-9deg);
-}
-
-.mark-plane-a {
-  inset: 24% 17% 48% 17%;
-}
-
-.mark-plane-b {
-  inset: 38% 9% 33% 25%;
-}
-
-.mark-plane-c {
-  inset: 52% 18% 17% 9%;
-}
-
-.mark-node {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--blue);
-  box-shadow: 0 0 0 6px rgba(47, 136, 255, 0.12);
-}
-
-.mark-node-a {
-  top: 24%;
-  left: 33%;
-}
-
-.mark-node-b {
-  top: 37%;
-  right: 18%;
-  background: var(--orange);
-  box-shadow: 0 0 0 6px rgba(255, 111, 26, 0.12);
-}
-
-.mark-node-c {
-  right: 26%;
-  bottom: 27%;
-}
-
-.mark-node-d {
-  bottom: 35%;
-  left: 22%;
-}
-
-.mark-axis {
-  background: rgba(168, 216, 255, 0.36);
-}
-
-.mark-axis-x {
-  top: 50%;
-  left: 12%;
-  width: 76%;
-  height: 1px;
-}
-
-.mark-axis-y {
-  top: 12%;
-  left: 50%;
-  width: 1px;
-  height: 76%;
-}
-
 .not-found-inner {
   display: grid;
   max-width: 680px;
@@ -3934,10 +1768,6 @@ button {
     align-content: start;
   }
 
-  .knowledge-pipeline-figure small {
-    white-space: nowrap;
-  }
-
   .project-static-copy h2 {
     max-width: 760px;
   }
@@ -3946,34 +1776,10 @@ button {
     height: 360px;
   }
 
-  .akibwa-hero {
-    padding-top: 62px;
-  }
-
-  .akibwa-hero h1 {
-    max-width: 100%;
-    font-size: 3.36rem;
-  }
-
-  .featured-areas-head {
-    margin-top: 78px;
-  }
-
-  .area-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-
-  .cover-collision-showcase,
-
-  .offer-studio-hero,
-
-  .contact-hero {
+  .cover-collision-showcase {
     grid-template-columns: 1fr;
   }
 
-  .offer-studio-hero,
-  .contact-hero,
   .personal-hero {
     grid-template-columns: 1fr;
     gap: 22px;
@@ -3984,122 +1790,11 @@ button {
     max-width: 520px;
   }
 
-  .offer-hero-aside,
-  .contact-art-side {
-    max-width: 720px;
-    padding-top: 0;
-  }
-
-  .offer-hero-aside .page-art-panel,
-  .contact-art-side .page-art-panel {
-    max-width: 520px;
-  }
-
-  .about-profile {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding-top: 44px;
-    padding-bottom: 36px;
-  }
-
-  .about-profile-main,
-  .about-profile-side {
-    display: contents;
-  }
-
-  .about-hero-copy {
-    order: 1;
-  }
-
-  .about-portrait--hero {
-    order: 2;
-  }
-
-  .about-hero-intro {
-    order: 3;
-  }
-
-  .about-cv {
-    order: 4;
-  }
-
-  .about-cv .work-row {
-    padding: 11px 2px;
-  }
-
-  .about-cta {
-    min-height: 50px;
-    margin-top: 12px;
-    padding: 6px 6px 6px 20px;
-  }
-
-  .about-cta-icon {
-    width: 38px;
-    height: 38px;
-  }
-
-  .about-portrait,
-  .about-portrait img {
-    min-height: 0;
-  }
-
-  .about-portrait {
-    aspect-ratio: 16 / 9;
-    max-height: 380px;
-  }
-
-  .about-portrait img {
-    height: 100%;
-    object-position: center 44%;
-  }
-
-
-  .about-section-head p {
-    max-width: 560px;
-  }
-
-
-  .contact-form,
-  .contact-art-side {
-    width: 100%;
-    max-width: 100%;
-  }
-
   .page-art-panel {
     width: min(520px, 100%);
     height: auto;
     min-height: 0;
   }
-
-  .page-strip,
-  .page-strip-steps {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 22px 20px;
-  }
-
-  .page-strip {
-    margin-top: 52px;
-  }
-
-  .page-strip-steps {
-    margin-top: 52px;
-  }
-
-  .page-strip-steps ol {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  .page-strip-steps li {
-    padding: 14px 0;
-  }
-
-  .page-strip-steps li + li {
-    border-left: 0;
-    padding-left: 0;
-  }
-
 
 }
 
@@ -4224,38 +1919,8 @@ button {
 
   
 
-  .site-frame,
   .page-grid {
     width: min(calc(100% - 32px), var(--frame));
-  }  .akibwa-home {
-    min-height: calc(100vh - 60px);
-    padding-bottom: 36px;
-  }
-
-  .akibwa-hero {
-    padding-top: 42px;
-  }
-
-  .akibwa-hero h1 {
-    font-size: 2.24rem;
-    line-height: 1.04;
-  }
-
-  .hero-line {
-    display: inline;
-  }
-
-  .featured-areas-head {
-    margin-top: 64px;
-  }
-
-  .area-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .area-caption {
-    min-height: 62px;
   }
 
   /* Keep the three handles available on phones instead of hiding the footer. */
@@ -4281,86 +1946,12 @@ button {
     padding-bottom: 30px;
   }
 
-  .studio-hero,
-  .offer-studio-hero,
-  .contact-hero {
+  .studio-hero {
     padding-top: 44px;
   }
 
-  .contact-form {
-    grid-template-columns: 1fr;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .about-profile {
-    padding-top: 34px;
-    padding-bottom: 30px;
-  }
-
-  .studio-hero h1,
-  .about-profile h1,
-  .offer-studio-hero h1,
-  .contact-hero h1 {
+  .studio-hero h1 {
     font-size: var(--page-title-mobile-size);
-  }
-
-  .about-hero-sub {
-    font-size: 1.05rem;
-  }
-
-  .about-statement {
-    font-size: 1.16rem;
-  }
-
-  .work-detail {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .about-cta {
-    min-height: 48px;
-    margin-top: 18px;
-    padding: 6px 6px 6px 20px;
-  }
-
-  .about-cta-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .contact-hero {
-    gap: 14px;
-  }
-
-
-  .about-section-head {
-    display: grid;
-    align-items: start;
-  }
-
-  .about-section-head p {
-    text-align: left;
-  }
-
-  .about-portrait,
-  .about-portrait img {
-    min-height: 0;
-  }
-
-  .about-portrait {
-    aspect-ratio: 4 / 3;
-    max-height: 390px;
-  }
-
-  .work-row {
-    gap: 20px;
-    padding: 14px 2px;
-  }
-
-  .work-role {
-    font-size: 0.86rem;
   }
 .cover-collision-showcase {
     padding: 18px;
@@ -4402,55 +1993,20 @@ button {
     -webkit-line-clamp: 2;
   }
 
-
-  .page-strip ul {
-    grid-template-columns: 1fr;
-  }
-
-  .page-strip li:nth-child(2) {
-    border-top: 1px solid rgba(16, 18, 23, 0.1);
-    padding-top: 16px;
-  }
-
-
   .page-art-panel {
     width: 100%;
     height: auto;
     min-height: 0;
   }
 
-  .contact-actions {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .contact-direct {
-    justify-self: start;
-  }
-
-
 }
 
-
 @media (max-width: 480px) {
-  .contact-form,
-  .contact-art-side {
-    width: min(100%, calc(100vw - 32px));
-    max-width: calc(100vw - 32px);
-  }
 
   .page-art-panel {
     width: min(100%, calc(100vw - 32px));
     max-width: calc(100vw - 32px);
     justify-self: start;
-  }
-
-  .akibwa-hero h1 {
-    font-size: 1.92rem;
-  }
-
-  .featured-areas-head {
-    margin-top: 52px;
   }
 }
 
@@ -4462,57 +2018,18 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
 .page-transition,
-.area-card,
-.area-card::before,
-.area-card::after,
 .area-art::after,
-.area-caption,
-.area-caption::before,
-.area-caption__arrow,
-.area-caption__arrow::before,
-.hero-word-cycle,
-.hero-word-cycle-value,
 .hero-name-value,
 .text-action svg {
   animation: none;
   transition: none;
   transform: none;
 }
-
-  .work-node,
-  .work-logo::before,
-  .work-row:hover .work-node,
-  .work-row:hover .work-logo::before {
-    transition: none;
-  }
 }
 
 /* Tile detail: the line sits permanently on a dark wash over the lower edge
    of the artwork, inside the frame so its corners are clipped by the frame's
    own radius. Hover keeps only the gentle image zoom. */
-.area-art__detail {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 2;
-  background: linear-gradient(
-    180deg,
-    rgba(13, 11, 9, 0) 0%,
-    rgba(13, 11, 9, 0.5) 30%,
-    rgba(13, 11, 9, 0.88) 100%
-  );
-  padding: 38px 18px 13px;
-  pointer-events: none;
-}
-
-.area-art__detail > p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.98);
-  font-size: 0.82rem;
-  line-height: 1.42;
-  text-shadow: 0 1px 10px rgba(13, 11, 9, 0.55);
-}
 
 .area-art img {
   will-change: transform;
@@ -4521,39 +2038,10 @@ button {
     filter 600ms var(--ease-out);
 }
 
-.area-card.is-hovering .area-art img,
-.area-card:focus-visible:not(.is-pointer-focus) .area-art img,
-.area-card.is-pressing .area-art img {
-  transform: scale(1.045);
-  filter: saturate(1.05) brightness(1.02);
-  /* Was 1100ms, which left the artwork still drifting long after the card,
-     underline, and arrow had settled. Keep it the slowest of the family
-     without letting it read as a separate, later event. */
-  transition-duration: 720ms;
-}
-
-.area-card.is-pressing .area-art img {
-  transform: scale(1.02);
-  transition-duration: 90ms;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .area-art img,
-  .knowledge-card-art {
+  .area-art img {
     transition: none;
     transform: none;
-  }
-
-  /* Keep the colour and shadow response; drop the movement. */
-  .area-card,
-  .area-card.is-hovering,
-  .area-card:focus-visible:not(.is-pointer-focus),
-  .area-card.is-pressing,
-  .area-caption__arrow svg,
-  .area-card.is-hovering .area-caption__arrow svg,
-  .area-card:focus-visible:not(.is-pointer-focus) .area-caption__arrow svg,
-  .area-card.is-pressing .area-caption__arrow svg {
-    translate: none;
   }
 }
 
@@ -4589,36 +2077,8 @@ button {
   color: rgba(255, 255, 255, 0.76);
 }
 
-.project-expanded-banner-stat {
-  position: absolute;
-  top: 50%;
-  right: 138px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 7px;
-  pointer-events: none;
-  transform: translateY(-50%);
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
-}
-
 /* The toolbar carries the snapshot and range controls in the overlay, so the
    embedded app hides its own copy on larger screens. */
-
-.project-expanded-banner-stat strong {
-  font-size: 0.96rem;
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-}
-
-.project-expanded-banner-stat small {
-  font-size: 0.64rem;
-  font-weight: 560;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.74);
-}
 
 .project-expanded-refresh {
   display: inline-grid;
@@ -4646,8 +2106,7 @@ button {
 }
 
 @media (max-width: 620px) {
-  .project-expanded-banner-meta em,
-  .project-expanded-banner-stat {
+  .project-expanded-banner-meta em {
     display: none;
   }
 }
@@ -4677,50 +2136,30 @@ button {
      760px it left a band where the picture sat between the two.
      `display: contents` drops the hero grid, so its two halves take the
      page gutter themselves. */
-  .offer-page,
-  .contact-page-new,
   .personal-page {
     display: flex;
     flex-direction: column;
   }
 
-  .offer-studio-hero,
-  .contact-hero,
   .personal-hero {
     display: contents;
   }
 
-  .offer-hero-title,
-  .offer-hero-aside,
-  .contact-hero-title,
-  .contact-art-side,
   .personal-hero-copy,
   .personal-hero-art {
     width: min(calc(100% - 48px), var(--frame));
     margin: 0 auto;
   }
 
-  .offer-hero-title,
-  .contact-hero-title,
   .personal-hero-copy {
     order: 1;
     padding-top: 44px;
   }
 
-  .page-strip,
-  .page-strip-steps,
   .projects-grid {
     order: 2;
   }
 
-  .offer-hero-aside,
-  .contact-art-side {
-    order: 3;
-    margin-top: clamp(30px, 5vw, 44px);
-  }
-
-  .offer-page .page-footer,
-  .contact-page-new .page-footer,
   .personal-page .page-footer {
     order: 4;
   }
@@ -4734,228 +2173,6 @@ button {
   }
 }
 
-@media (max-width: 760px) {
-  /* Phones keep the stacked list — it is the better shape at that width, and
-     only desktop needed the horizontal treatment. */
-  .about-cv .work-timeline {
-    grid-auto-flow: row;
-    grid-auto-columns: auto;
-    gap: 0;
-  }
-
-  .about-cv .work-timeline::before {
-    top: 16px;
-    bottom: 16px;
-    left: 54px;
-    right: auto;
-    width: 1px;
-    height: auto;
-  }
-
-  .about-cv .work-row {
-    grid-template-columns: 54px minmax(0, 1fr);
-    grid-template-rows: auto;
-    align-items: center;
-    gap: 18px;
-    padding: 12px 2px;
-  }
-
-  .about-cv .work-row + .work-row {
-    border-top: 1px solid rgba(16, 18, 23, 0.065);
-  }
-
-  .about-cv .work-node {
-    position: absolute;
-    left: 54px;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  /* The cycling phrases run to 24 characters. `white-space: nowrap` on an
-     inline-block meant the longest could not fit a line at this size, so it
-     ran off the right edge — taking the page's width with it — and stranded
-     the full stop on a line of its own. Let it wrap like the text it is. */
-  .hero-word-cycle {
-    display: inline;
-    white-space: normal;
-  }
-
-  /* The value span is the inline-block that actually blocks wrapping; the
-     flick animation still plays on an inline box. */
-  .hero-word-cycle-value {
-    display: inline;
-    white-space: normal;
-  }
-
-  /* The strip's artwork background is desktop-only — at this width the box is
-     most of the screen and the texture just crowds the text. */
-  .offer-page .page-strip {
-    background:
-      linear-gradient(90deg, rgba(255, 255, 255, 0.94) 20%, rgba(255, 255, 255, 0.76)),
-      url("/brand-art/contact-notes-field.webp") center / cover no-repeat;
-    background-color: var(--white);
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   The album wall — /albums
-
-   Every album Dan has played, ranked, with the 249 sleeves he had printed as
-   cards mixed in among them. There is no title and no standfirst: a wall of a
-   thousand record sleeves does not need to announce what it is. The entire
-   design budget goes on one interaction, the tilt.
-   --------------------------------------------------------------------------- */
-
-.album-wall {
-  width: min(calc(100% - 48px), var(--frame));
-  margin: 0 auto;
-  /* The wall starts high — the nav is the only thing above it. */
-  padding: 30px 0 24px;
-  /* The label and the lifted cards escape the grid box; nothing may clip them,
-     but the page must not gain a horizontal scrollbar over it either. */
-  position: relative;
-}
-
-/* The page still needs one h1 for the document outline and for screen readers,
-   which cannot infer the subject from a grid of images the way an eye can. */
-.album-wall-accessible-title {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-/*
- * `perspective` lives on the grid, not on each card, so all ~1,650 tiles share
- * one vanishing point. Per-card perspective gives each its own, and a sweep
- * across the wall then tilts them all identically instead of fanning away from
- * the centre — which is the difference between a lit room and a row of stickers.
- *
- * 620px is a short throw for a box this wide. It exaggerates the perspective
- * deliberately: at a realistic distance a 104px card rotating 30 degrees barely
- * moves on screen.
- */
-.album-wall-grid {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 9px;
-  perspective: 620px;
-}
-
-.album-card {
-  position: relative;
-  aspect-ratio: 1;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  /* Sixteen hundred tiles is enough that laying out the off-screen ones costs
-     real milliseconds on load. contain-intrinsic-size keeps the scrollbar honest
-     while they are skipped. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 104px;
-}
-
-/*
- * The tilt. --tilt-x / --tilt-y are written per frame by the page from the
- * cursor's position inside the card; they default to flat, so a card that has
- * never been touched renders correctly with no JavaScript at all.
- *
- * rotateX(+) pushes the top edge away and rotateY(+) pushes the right edge away,
- * and the page inverts both against the cursor — so the point under the pointer
- * sinks and the far corner rises. translateZ then lifts the whole card out of
- * the lattice towards the viewer.
- */
-.album-card-face {
-  position: relative;
-  display: block;
-  height: 100%;
-  border-radius: 5px;
-  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateZ(var(--tilt-lift, 0px));
-  transform-style: preserve-3d;
-  /* Fast in so the card answers the cursor immediately, slow out so the one you
-     have just left is still settling as you reach the next. That trailing settle
-     is the whole reason a sweep across the wall reads as a wave rather than as a
-     row of unrelated hovers. */
-  transition:
-    transform 620ms var(--ease-out),
-    box-shadow 620ms var(--ease-out);
-}
-
-.album-card:hover .album-card-face,
-.album-card:focus-visible .album-card-face {
-  --tilt-lift: 58px;
-  transition-duration: 90ms, 260ms;
-}
-
-.album-card img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
-  object-fit: cover;
-  background: #e8e4dc;
-  box-shadow: 0 1px 2px rgba(16, 18, 23, 0.14);
-  transition: box-shadow 260ms var(--ease-out);
-}
-
-.album-card picture {
-  display: block;
-  height: 100%;
-}
-
-/* Two shadows: a tight contact shadow that keeps the card attached to the wall,
-   and a long soft one that leans the way the card leans. --shadow-x/y come from
-   the cursor, so the light stays in one place across the whole grid. */
-.album-card:hover img,
-.album-card:focus-visible img {
-  box-shadow:
-    0 2px 4px rgba(16, 18, 23, 0.22),
-    var(--shadow-x, 0px) var(--shadow-y, 20px) 44px -12px rgba(16, 18, 23, 0.55);
-}
-
-/*
- * The sheen. A soft highlight sitting on whichever corner has risen — the page
- * puts it opposite the cursor, because that is the face now angled into the
- * light. It is what separates a card being pressed from an image being skewed,
- * and it is the single most important part of making the tilt look like an
- * object rather than a transform.
- */
-.album-card-glare {
-  position: absolute;
-  inset: 0;
-  border-radius: 5px;
-  background: radial-gradient(
-    circle at var(--glare-x, 50%) var(--glare-y, 50%),
-    rgba(255, 255, 255, 0.72),
-    rgba(255, 255, 255, 0.14) 38%,
-    rgba(255, 255, 255, 0) 62%
-  );
-  opacity: 0;
-  mix-blend-mode: soft-light;
-  pointer-events: none;
-  transition: opacity 260ms var(--ease-out);
-}
-
-.album-card:hover .album-card-glare,
-.album-card:focus-visible .album-card-glare {
-  opacity: 1;
-}
-
-.album-card:focus-visible {
-  outline: none;
-}
-
-.album-card:focus-visible img {
-  outline: 2px solid var(--blue);
-  outline-offset: 3px;
-}
-
 /*
  * The label, anchored under the card it describes rather than parked in a fixed
  * strip. It is positioned from the card's own offset box, so it travels with the
@@ -4965,264 +2182,8 @@ button {
  * grid's own width before setting it, so a card in the first or last column gets
  * a label that slides along rather than one that hangs off the page.
  */
-.album-wall-label {
-  position: absolute;
-  z-index: 40;
-  top: var(--label-y);
-  left: var(--label-x);
-  transform: translate(-50%, 14px);
-  width: max-content;
-  min-width: 150px;
-  max-width: 250px;
-  padding: 11px 14px 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgba(252, 251, 248, 0.94);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 14px 34px -14px rgba(16, 18, 23, 0.4);
-  pointer-events: none;
-  animation: album-label-in 200ms var(--ease-out);
-}
-
-@keyframes album-label-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 6px);
-  }
-}
-
-.album-wall-label-artist,
-.album-wall-label-album,
-.album-wall-label-plays {
-  display: block;
-}
-
-.album-wall-label-artist {
-  color: var(--muted);
-  font-size: 0.74rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.album-wall-label-album {
-  margin-top: 3px;
-  font-family: var(--serif);
-  font-size: 1.02rem;
-  line-height: 1.25;
-}
-
-.album-wall-label-plays {
-  margin-top: 7px;
-  padding-top: 7px;
-  border-top: 1px solid var(--line);
-  font-size: 0.82rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.album-wall-label-plays span {
-  color: var(--muted);
-}
-
-.album-wall-note {
-  max-width: 64ch;
-  margin: 34px 0 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.6;
-}
 
 /* The opened sleeve. */
-.album-sleeve {
-  position: fixed;
-  z-index: 200;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: rgba(10, 11, 13, 0.62);
-  backdrop-filter: blur(10px);
-  animation: album-sleeve-in 180ms var(--ease-out);
-}
-
-@keyframes album-sleeve-in {
-  from {
-    opacity: 0;
-  }
-}
-
-.album-sleeve-inner {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 340px) minmax(0, 300px);
-  gap: 34px;
-  align-items: center;
-  width: min(100%, 720px);
-  padding: 30px;
-  border-radius: var(--radius);
-  background: var(--canvas);
-}
-
-.album-sleeve-art img {
-  display: block;
-  width: 100%;
-  border-radius: 4px;
-  box-shadow: 0 18px 42px -14px rgba(3, 4, 5, 0.5);
-}
-
-.album-sleeve-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: inline-flex;
-  padding: 7px;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  transition:
-    color var(--hover-out) var(--ease-out),
-    background var(--hover-out) var(--ease-out);
-}
-
-.album-sleeve-close:hover {
-  background: rgba(16, 18, 23, 0.07);
-  color: var(--ink);
-}
-
-.album-sleeve-artist {
-  margin: 0 0 6px;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.album-sleeve-title {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.85rem;
-  font-weight: 400;
-  line-height: 1.16;
-  letter-spacing: -0.01em;
-}
-
-.album-sleeve-year {
-  margin: 8px 0 0;
-  color: var(--muted);
-  font-size: 0.84rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.album-sleeve-plays {
-  margin: 20px 0 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.94rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.album-sleeve-plays strong {
-  color: var(--ink);
-  font-size: 1.6rem;
-  font-weight: 500;
-}
-
-.album-sleeve-printed {
-  margin: 10px 0 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-style: italic;
-}
-
-.album-sleeve-link {
-  display: inline-block;
-  margin-top: 14px;
-  color: var(--ink);
-  font-size: 0.86rem;
-  text-decoration-color: var(--line-strong);
-  text-underline-offset: 4px;
-}
-
-.album-sleeve-steps {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 26px;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.album-sleeve-steps button {
-  padding: 4px 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: none;
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
-  transition: border-color var(--hover-out) var(--ease-out);
-}
-
-.album-sleeve-steps button:hover {
-  border-color: var(--line-strong);
-}
-
-
-@media (max-width: 760px) {
-  .album-wall {
-    width: min(calc(100% - 32px), var(--frame));
-    padding-top: 20px;
-  }
-
-  .album-wall-grid {
-    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-    gap: 7px;
-  }
-
-  .album-card {
-    contain-intrinsic-size: auto 84px;
-  }
-
-  /* No cursor to tilt away from, and a lift would put the card under the thumb
-     that summoned it. Tap opens the sleeve instead. */
-  .album-card:hover .album-card-face,
-  .album-card:focus-visible .album-card-face {
-    --tilt-lift: 0px;
-  }
-
-  .album-wall-label {
-    display: none;
-  }
-
-  .album-sleeve-inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-    max-height: calc(100vh - 48px);
-    padding: 22px;
-    overflow-y: auto;
-  }
-
-  .album-sleeve-art {
-    max-width: 240px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .album-card-face,
-  .album-card-glare,
-  .album-wall-label,
-  .album-sleeve {
-    transition: none;
-    animation: none;
-  }
-
-  /* The tilt is the whole interaction, so it goes entirely rather than snapping
-     between angles without the easing that made it legible. */
-  .album-card-face {
-    transform: none;
-  }
-}
 /* ===========================================================================
    The card deck — akibwa.com as one wall.
 
@@ -5260,76 +2221,6 @@ button {
 /* --- note strip ---------------------------------------------------------- */
 
 /* --- deck head ----------------------------------------------------------- */
-
-/* The full set opens over the page rather than replacing it, so following the
-   wall never costs you your place. The band's own grid is moved in here and
-   moved back on close — 246 sleeves are not worth rendering twice. */
-
-.lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  place-items: center;
-  padding: clamp(12px, 3vw, 40px);
-  background: rgba(3, 4, 5, 0.62);
-  backdrop-filter: blur(3px);
-}
-
-.lightbox-panel {
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 1180px);
-  max-height: 100%;
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: var(--canvas);
-  box-shadow: 0 40px 90px rgba(3, 4, 5, 0.4);
-}
-
-.lightbox-head {
-  display: flex;
-  flex: none;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px clamp(16px, 2.4vw, 26px) 14px;
-  border-bottom: 1px solid var(--line);
-}
-
-.lightbox-head h2 {
-  margin: 0;
-  color: var(--black);
-  font-size: 1.02rem;
-  font-weight: 600;
-}
-
-.lightbox-close {
-  appearance: none;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: none;
-  padding: 5px 15px;
-  color: var(--ink);
-  font: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background var(--hover-out) var(--ease-out);
-}
-
-.lightbox-close:hover { background: rgba(16, 18, 23, 0.06); }
-
-.lightbox-close:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-
-.lightbox-body {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: clamp(16px, 2.4vw, 26px);
-}
-
-/* Inside the panel the chip has nothing left to open. */
-
-.lightbox .card--more { display: none; }
 
 /* Plain text, not pills — status chrome above a card grid reads as clutter. */
 
@@ -5388,14 +2279,6 @@ button {
 .card:focus-visible::after,
 .card.is-open::after { opacity: 0; }
 
-/* Work carries a logo and Records carry the sleeve, so those keep the dot.
-   Where the suit is spelled out, the dot would be saying it twice. */
-
-.card--tools::after,
-.card--films::after,
-.card--games::after,
-.card--tv::after { display: none; }
-
 /* Jobs have no artwork of their own — the logos are committed at 56px and
    Lloyds' original is 54px square, so there is nothing to blow up sharply — and
    the company's own colour carries the card instead. A wash rather than a
@@ -5405,146 +2288,6 @@ button {
    The card is its own query container because everything on it is sized
    against the tile rather than the window; see the name below. */
 
-/* A job card is the company's mark on the company's colour: the accent
-   floods the whole tile — no white space to speak of — and the logo sits
-   centred as a white silhouette, the way a printed club card carries its
-   crest. Sky's logo is a filled block with no silhouette to take, so it
-   keeps its own face as a rounded tile. The name waits in the spotlight. */
-
-.card--jobs {
-  --suit: var(--accent, var(--ink));
-  background: var(--accent, var(--white));
-  border-color: color-mix(in srgb, var(--accent, var(--line)) 72%, var(--black));
-}
-
-.card--jobs::after { display: none; }
-
-.card--jobs .card-face-stack--solo .c-mark {
-  width: 52%;
-  height: 52%;
-}
-
-.card--jobs .c-mark img {
-  filter: brightness(0) invert(1) drop-shadow(0 2px 12px rgba(0, 0, 0, 0.18));
-  opacity: 0.96;
-}
-
-/* The filled-tile logos keep their own colours and edges. */
-.card--jobs .c-mark--tile {
-  width: 58%;
-  height: 58%;
-}
-
-.card--jobs .c-mark--tile img {
-  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.22));
-  border-radius: 16%;
-}
-
-.card--tools {
-  --suit: var(--suit-tools);
-  background: var(--ground, var(--white));
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 6px 18px rgba(16, 18, 23, 0.1);
-}
-
-.card--tools::after { display: none; }
-
-.card--tools .c-title { color: var(--white); }
-
-.card--tools .f-suit { color: rgba(255, 255, 255, 0.62); }
-
-.card--tools .c-mark { filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.22)); }
-
-/* Grok Bot's is a raster app tile, so it keeps its own edges rather than
-   being flooded white like the vector marks. */
-
-.card--tools .c-mark--tile { filter: none; }
-
-.card--music { --suit: var(--suit-music); }
-
-.card--creations { --suit: var(--suit-creations); }
-
-.card--films:has(.c-art),
-.card--games:has(.c-art),
-.card--tv:has(.c-art) { background: var(--ink); border-color: var(--ink); }
-
-.card--films .c-art,
-.card--games .c-art,
-.card--tv .c-art { object-fit: cover; }
-
-.card--films { --suit: var(--suit-films); }.card-face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 5px;
-  padding: 13px;
-}
-
-.c-art {
-  position: absolute;
-  inset: -1.5%;
-  width: 103%;
-  height: 103%;
-  object-fit: cover;
-  transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1.001);
-  transition:
-    transform 440ms var(--ease-out),
-    filter 440ms var(--ease-out);
-}
-
-/* Keep the mark and a long multi-line title in normal flow so they cannot
-   overlap inside the square card. */
-
-.card-face-stack {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 0;
-}
-
-/* The foot must not shrink, or long labels are clipped by the card rather than
-   by the intended line clamp. */
-
-.c-foot {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.c-title { flex: none; }
-
-/* The label is the card. Sized to fill the tile rather than sit in it — the
-   grid was a field of near-empty squares when these were set at caption size. */
-
-.c-title {
-  /* Clamped so a long name can never push the card past its square and leave
-     its neighbours short in the same row. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  color: var(--black);
-  font-weight: 560;
-  line-height: 1.14;
-  letter-spacing: -0.012em;
-  text-wrap: balance;
-}
-
-.c-title.s1 { font-size: 1.16rem; }
-
-.c-title.s2 { font-size: 1.02rem; }
-
-.c-title.s3 { font-size: 0.92rem; }
-
-.c-title.s4 { font-size: 0.84rem; letter-spacing: -0.006em; }
-
-.c-title--tool { font-weight: 530; }
-
 /* The portrait is the header. Two by two at the top left, it anchors the wall
    and carries the h1, so the page can open straight onto the deck. */
 
@@ -5552,232 +2295,12 @@ button {
    with a tile carrying its name — no chrome, so it reads as a heading that
    happens to occupy two cells rather than another card. */
 
-/* One tile, like everything else on the page. */
-
-.card--me {
-  cursor: default;
-}
-
-/* No room for a suit dot at this scale, and the whole band is one suit anyway. */
-
-.card--music { border-radius: 5px; }
-
-.card--music::after { display: none; }
-
-.card--music .card-back { padding: 8px; gap: 2px; border-top-width: 1px; }
-
-.card--music .b-eyebrow { font-size: 0.5rem; letter-spacing: 0.06em; }
-
-.card--music .b-body--tight { font-size: 0.58rem; line-height: 1.18; }
-
-.card--music .b-figure { font-size: 0.5rem; }
-
-.card--me::after { display: none; }
-
-.card--me:hover {
-  transform: none;
-  border-color: var(--line);
-  box-shadow: 0 4px 14px rgba(16, 18, 23, 0.03);
-}
-
-.me-name {
-  position: absolute;
-  right: 13px;
-  bottom: 12px;
-  left: 13px;
-  z-index: 2;
-  margin: 0;
-  color: var(--white);
-  font-size: clamp(0.9rem, 1.35vw, 1.16rem);
-  font-weight: 560;
-  line-height: 1.08;
-  letter-spacing: -0.016em;
-  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.45);
-}
-
-.card--me::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  height: 46%;
-  background: linear-gradient(to top, rgba(3, 4, 5, 0.62), rgba(3, 4, 5, 0));
-}
-
-/* Stands in for the rest of the wall in the default view. It is a card rather
-   than a line of copy, so the deck stays the only thing on the page. */
-
-.card--more {
-  background: var(--ink);
-  border-color: var(--ink);
-}
-
-.card--more .c-art { object-fit: cover; }
-
-.card--more .c-head,
-.card--more .more-n,
-.card--more .more-label { position: relative; z-index: 2; }
-
-.card--more .f-suit { color: rgba(255, 255, 255, 0.72); }
-
-.card--more::after { display: none; }
-
-/* One tile rather than four: eleven collages cannot fill the second row a
-   two-row chip would open, and half an empty row is worse than a small chip. */
-
-.card--more .c-head { position: absolute; }
-
-.card--more .card-face { padding: 11px; }
-
-.card--more .f-suit { color: rgba(255, 255, 255, 0.5); }
-
-.more-n {
-  color: var(--white);
-  font-size: 1.18rem;
-  font-weight: 560;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.more-go {
-  color: var(--white);
-  font-size: 1.32rem;
-  line-height: 1;
-}
-
-/* The Records suit on its own is 246 sleeves. At deck size that is a very long
-   page, so the wall tightens to something you can take in at a glance. */
-
-.c-head {
-  position: absolute;
-  top: 12px;
-  right: 13px;
-  left: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.c-head .f-suit { position: static; }
-
-/* The mark was a 26px corner icon and read as a favicon. On a card whose whole
-   job is "this is the tool", it should be the thing you see. */
-
-.c-mark {
-  flex: 1;
-  align-self: center;
-  width: min(58%, 76px);
-  min-height: 0;
-  margin: 2px 0;
-  transform: translate(var(--art-x, 0), var(--art-y, 0)) scale(1);
-  transition: transform 440ms var(--ease-out);
-}
-
-.c-mark svg,
-.c-mark img { width: 100%; height: 100%; object-fit: contain; }
-
-.card--tools .c-head { position: static; justify-content: flex-end; }
-
-.c-mark--tile img { border-radius: 22%; }
-
-.f-suit {
-  position: absolute;
-  top: 14px;
-  left: 15px;
-  color: #9aa2ad;
-  font-family: var(--sans);
-  font-size: 0.6rem;
-  font-weight: 640;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.c-sub {
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.008em;
-}
-
-/* The back. Uniform ink across every suit — it is the reverse of a printed
-   card, so it should not change identity from one to the next. The suit shows
-   only as the hairline along the top edge. */
-
-.card-back {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 15px;
-  background: var(--ink);
-  border-top: 2px solid var(--suit);
-  color: rgba(255, 255, 255, 0.9);
-  transform: translateY(101%);
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-/* The back never shows on the wall — hover teases nothing. The detail is
-   the click's reward, in the spotlight or a panel. */
-
-.b-eyebrow {
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 0.62rem;
-  font-weight: 640;
-  letter-spacing: 0.085em;
-  text-transform: uppercase;
-}
-
-.b-body {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.755rem;
-  line-height: 1.44;
-  overflow: hidden;
-}
-
-.b-body--tight { color: var(--white); font-weight: 540; font-size: 0.86rem; line-height: 1.24; }
-
-.b-x { color: rgba(255, 255, 255, 0.45); font-weight: 400; }
-
-.b-figure {
-  margin-top: auto;
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 0.66rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.b-figure strong { color: var(--white); font-weight: 600; }
-
 /* Two columns on a phone made each card enormous, and the empty half of a
    tile scales with it — the wall stopped reading as a wall. Three narrower
    cards keep it at roughly the density the desktop grid has. */
 
-@media (max-width: 560px) {
-.card-face, .card-back { padding: 11px; }
-.c-head { top: 10px; right: 11px; left: 11px; }
-.more-n { font-size: 1.2rem; }
-.f-suit { top: 10px; left: 11px; font-size: 0.55rem; }
-.c-mark { width: min(54%, 62px); }
-.me-name { right: 11px; bottom: 10px; left: 11px; }
-.c-title.s1 { font-size: 1.12rem; }
-.c-title.s2 { font-size: 1.02rem; }
-.c-title.s3 { font-size: 0.92rem; }
-.c-title.s4 { font-size: 0.84rem; }
-.c-sub { font-size: 0.65rem; }
-.b-body { font-size: 0.66rem; line-height: 1.36; }
-.b-body--tight { font-size: 0.74rem; }
-.b-eyebrow { font-size: 0.55rem; }
-.b-x { color: rgba(255, 255, 255, 0.45); font-weight: 400; }
-.b-figure { font-size: 0.6rem; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-.card, .card-back, .card::after, .suit { transition-duration: 1ms; }
+.card, .card::after { transition-duration: 1ms; }
 }
 
 /* Each set is its own grid on the same track size. One continuous grid looked
@@ -5793,46 +2316,14 @@ button {
   gap: clamp(5px, 0.55vw, 9px);
 }
 
-
-/* A solo mark fills its little card. */
-.card-face-stack--solo {
-  justify-content: center;
-  align-items: center;
-}
-
-.card-face-stack--solo .c-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 62%;
-  height: 62%;
-}
-
-.card-face-stack--solo .c-mark img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 /* When the lens lights the other group on this rail, the word steps back
    with its cards. */
 /* Under the rail width the name cannot hold a column, so it sits above the
    cards instead and the row keeps its full width for them. */
 @media (max-width: 760px) {
-    /* The cards bleed past the gutter again once the name is out of their row. */
   }
 
 /* The ink prototype's canvas: fixed under everything, purely decorative. */
-.ink-paper {
-  position: fixed;
-  inset: 0;
-  /* Above the body's paper paint, below every card — the ink lives ON the
-     page ground, and content sits on top of it. */
-  z-index: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
 
 .card {
   transition:
@@ -5841,89 +2332,10 @@ button {
     border-color 440ms var(--ease-out);
 }
 
-/* The hero is not a card — it is the sentence the wall hangs under. A plain
-   grid item spanning the full row, and during a fold it holds perfectly
-   still: its own view-transition name pins it while the wall morphs.
-
-   Padding is deliberately tight: the sentence sits at the top-left of the
-   frame, on the same left edge as the cards. Pulling it to the viewport
-   corner would hang it off the wall — the 24px page gutter is the frame,
-   not leftover margin to eat. */
-
-.deck-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: clamp(8px, 0.8vw, 12px);
-  padding: 8px 0 10px;
-  view-transition-name: akibwa-hero;
-}
-
-/* A coloured noun in the sentence is a door. The cycling word is the only
-   one now: a shortcut into three buckets. The seven collections sit beneath
-   the sentence as the page menu. */
-.hero-index-word {
-  --index-accent-rgb: 47, 136, 255;
-  appearance: none;
-  position: relative;
-  display: inline-block;
-  border: 0;
-  background: transparent;
-  padding: 0 0 0.1em;
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
-  cursor: pointer;
-  font: inherit;
-  white-space: nowrap;
-  vertical-align: baseline;
-  transition:
-    color 220ms ease,
-    text-shadow 240ms var(--ease-out),
-    transform 240ms var(--ease-out);
-}
-
-.hero-index-word:hover,
-.hero-index-word:focus-visible {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 78%, var(--black));
-  outline: 0;
-}
-
-.hero-index-word.is-held {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 80%, var(--black));
-}
-
 /* Same measured slot as the name flip, so "projects" ↔ "taste" does not
    shove the full stop around. The underline is the name's own mark, in
    this word's ink — a text-decoration sat on the button and missed the
    visible span, so taste had colour and no rule. */
-.hero-index-word .hero-word-cycle-value {
-  position: relative;
-  grid-area: 1 / 1;
-  justify-self: start;
-  width: max-content;
-  scale: 1;
-  transition: filter 260ms var(--ease-out), scale 260ms var(--ease-out);
-}
-
-.hero-index-word .hero-word-cycle-value::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -0.08em;
-  left: 0;
-  height: 0.11em;
-  border-radius: 0.055em;
-  background: rgba(var(--index-accent-rgb), 0.62);
-  pointer-events: none;
-  transform-origin: center;
-  transition:
-    box-shadow 260ms var(--ease-out),
-    opacity 180ms ease,
-    transform 320ms var(--ease-out);
-}
-
-.hero-index-word.is-held .hero-word-cycle-value::after {
-  background: rgba(var(--index-accent-rgb), 0.85);
-}
 
 .rail-word {
   --index-accent-rgb: 61, 90, 128;
@@ -5945,32 +2357,10 @@ button {
   outline: 0;
 }
 
-.deck-hero h1 {
-  display: block;
-  margin: 0;
-  color: var(--black);
-  font-size: clamp(1.6rem, 3.2vw, 3.2rem);
-  font-weight: 540;
-  line-height: 1.2;
-  letter-spacing: -0.012em;
-}
-
-
-@media (max-width: 760px) {
-.deck-hero { grid-column: 1 / -1; }
-}/* The foot is pushed to the bottom of the card in its own right. Relying on
-   space-between only worked while something sat between the head and the foot;
-   on a card with just a name, both collapsed to the top and overlapped. */
-
-.card-face-stack .c-foot {
-  margin-top: auto;
-}
-
 /* The lens animation. Cards keep their place in the DOM and are re-ordered by
    `order`, so nothing is destroyed and re-created; the transform transition
    below is what carries them, and the script measures before and after to make
    the move continuous rather than a jump. */
-
 
 /* One library, set as a collage. The grid runs on small square units and
    packs densely: a leading card is four units, the long tail one each, so
@@ -6002,11 +2392,6 @@ button {
   contain-intrinsic-size: auto 133px;
 }
 
-.deck .card--small {
-  grid-column: span 1;
-  grid-row: span 1;
-}
-
 /* Phones keep the collage dense: six or seven small units across, making a
    normal card about 93–100px rather than 140px. The card's
    aspect ratio grows the implicit rows to the same size as the stretched
@@ -6028,16 +2413,6 @@ button {
     contain-intrinsic-size: auto calc(2 * var(--u) + var(--g));
   }
 
-  .deck .card--small {
-    contain-intrinsic-size: auto var(--u);
-  }
-
-}
-
-.deck .deck-hero {
-  grid-column: 1 / -1;
-  grid-row: auto;
-  margin: 0 0 clamp(6px, 0.7vw, 10px);
 }
 
 /* The key sits directly below the sentence as six plain words. Their ink is
@@ -6060,31 +2435,10 @@ button {
   vertical-align: baseline;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .hero-index-word:hover {
-    text-shadow: 0 8px 20px rgba(var(--name-accent-rgb, var(--index-accent-rgb)), 0.16);
-    transform: translateY(-0.045em);
-  }
-
-  .hero-index-word:hover .hero-word-cycle-value {
-    filter: saturate(1.1);
-    scale: 1.018;
-  }
-
-  .hero-index-word:hover .hero-word-cycle-value::after {
-    box-shadow: 0 4px 12px rgba(var(--name-accent-rgb, var(--index-accent-rgb)), 0.2);
-    opacity: 0.94;
-    transform: scaleX(1.08) translateY(0.03em);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .hero-name,
-  .hero-index-word,
   .hero-name-value,
-  .hero-word-cycle-value,
   .hero-name-value::after,
-  .hero-index-word .hero-word-cycle-value::after,
   .page-footer :is(a, button),
   .page-footer :is(a, button)::after,
   .page-footer :is(a, button) svg {
@@ -6092,7 +2446,6 @@ button {
   }
 
   .hero-name:hover,
-  .hero-index-word:hover,
   .page-footer :is(a, button).is-hovering,
   .page-footer :is(a, button).is-pressing,
   .page-footer :is(a, button):focus-visible:not(.is-pointer-focus),
@@ -6102,8 +2455,7 @@ button {
     transform: none;
   }
 
-  .hero-name:hover .hero-name-value,
-  .hero-index-word:hover .hero-word-cycle-value {
+  .hero-name:hover .hero-name-value {
     scale: 1;
   }
 }
@@ -6128,404 +2480,11 @@ button {
   border-bottom: 3px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 62%, var(--white));
 }
 
-
-
 /* Holding a lens: everything the lens does not name leaves the collage, and
    the view transition morphs the survivors into their closed-up places. The
    hero sentence stays; unlit legend words leave with the unlit cards. */
 .deck.is-lensed .card:not(.is-lit) {
   display: none;
-}
-
-/* The arrow on a website card — the card is a door, and says so. */
-.card--sites .site-go {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -54%);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-.card--sites {
-  background: var(--ground, var(--white));
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.card--sites .c-title,
-.card--sites .f-suit {
-  color: var(--white);
-}
-
-.card--sites .f-suit { color: rgba(255, 255, 255, 0.72); }
-
-/* A handle is an address, not a label — it keeps its own case and shrinks to
-   fit rather than shouting in small caps. */
-.f-suit--handle {
-  text-transform: none;
-  letter-spacing: 0.02em;
-  font-size: 0.62rem;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ── Akibwa index: one wall, one interaction grammar ────────────────────
-   Artwork supplies the personality. The interface itself stays quiet:
-   a sentence, seven words, and a dense square mosaic. */
-.akibwa-home .deck {
-  align-items: start;
-}
-
-.akibwa-home .deck-hero {
-  gap: clamp(9px, 0.9vw, 13px);
-  padding: clamp(18px, 2.6vw, 34px) 0 clamp(8px, 1vw, 14px);
-  view-transition-name: none;
-}
-
-.akibwa-home .hero-sentence {
-  max-width: 29ch;
-  margin: 0;
-  color: var(--black);
-  font-size: clamp(1.85rem, 3.15vw, 3.2rem);
-  font-weight: 530;
-  line-height: 1.08;
-  letter-spacing: -0.027em;
-  text-wrap: balance;
-}
-
-.akibwa-home .hero-name {
-  font-weight: 650;
-}
-
-.akibwa-home .deck-legend {
-  gap: 0.34em 0.82em;
-}
-
-.akibwa-home .deck-legend .rail-word {
-  display: block;
-  padding: 0 0 0.12em;
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 62%, var(--black));
-  font-size: clamp(0.82rem, 1.05vw, 0.98rem);
-  font-weight: 560;
-  line-height: 1.2;
-  letter-spacing: -0.012em;
-  text-decoration-line: none;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.31em;
-  transition: color 120ms ease;
-}
-
-.akibwa-home .deck-legend .rail-word:hover,
-.akibwa-home .deck-legend .rail-word:focus-visible,
-.akibwa-home .deck-legend .rail-word.is-active {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 88%, var(--black));
-}
-
-.akibwa-home .deck-legend .rail-word.is-active {
-  text-decoration-line: underline;
-  text-decoration-color: rgb(var(--index-accent-rgb));
-}
-
-.akibwa-home .deck-legend .rail-word:focus-visible {
-  outline: 2px solid rgb(var(--index-accent-rgb));
-  outline-offset: 3px;
-}
-
-/* Two sizes only. The same square geometry holds from a phone to the widest
-   frame, keeping the archive dense without asking small images to become
-   posters. */
-.akibwa-home .deck .card {
-  width: 100%;
-  height: auto;
-  min-width: 0;
-  min-height: 0;
-  align-self: start;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--black) 11%, var(--white));
-  border-radius: 5px;
-  background: var(--ground, var(--white));
-  box-shadow: none;
-  color: inherit;
-  cursor: default;
-  transform: none;
-  transition: border-color 120ms ease;
-}
-
-.akibwa-home .deck .card::before,
-.akibwa-home .deck .card::after {
-  content: none;
-}
-
-.akibwa-home .deck .card-face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 0;
-}
-
-.akibwa-home .deck .c-art {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  filter: none;
-  transform: none;
-  transition: none;
-}
-
-/* Taste is a wall of small printed images, not muted interface chrome. A
-   restrained screen-side lift restores the colour lost to the shared press
-   curve without changing the source artwork or turning every cover neon. */
-.akibwa-home--taste .deck .c-art {
-  filter: saturate(1.08) contrast(1.02);
-}
-
-/* Taste is a compact native scroll rail. Its small square covers echo the
-   Career index above while horizontal overflow keeps the full archive one
-   gesture away without turning the homepage into a second long page. */
-.akibwa-home--taste .taste-rail-shell {
-  --taste-rail-size: clamp(104px, 9.2vw, 136px);
-  --taste-popover-width: min(280px, calc(100vw - 32px));
-  position: relative;
-  grid-column: 1 / -1;
-  min-width: 0;
-}
-
-.akibwa-home--taste .taste-wall {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: var(--taste-rail-size);
-  gap: clamp(7px, 0.65vw, 10px);
-  align-items: start;
-  width: 100%;
-  padding: 1px 0 11px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-inline: contain;
-  scroll-snap-type: inline proximity;
-  scrollbar-color: color-mix(in srgb, var(--concept-archive) 58%, var(--canvas)) transparent;
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
-}
-
-.akibwa-home--taste .taste-wall::-webkit-scrollbar {
-  height: 5px;
-}
-
-.akibwa-home--taste .taste-wall::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.akibwa-home--taste .taste-wall::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--concept-archive) 58%, var(--canvas));
-}
-
-/* The general card wall reserves a card-sized implicit row for the Taste
-   filter, leaving a conspicuous blank shelf underneath its short words. Let
-   the filter and quilt size their structural rows to their contents instead. */
-.akibwa-home--taste .deck {
-  grid-auto-rows: auto;
-  row-gap: clamp(10px, 1.1vw, 16px);
-}
-
-.akibwa-home--taste .taste-rail-item {
-  min-width: 0;
-  aspect-ratio: 1;
-  scroll-snap-align: start;
-}
-
-.akibwa-home--taste .taste-rail-item .card {
-  width: 100%;
-  height: 100%;
-  align-self: stretch;
-  grid-column: auto;
-  grid-row: auto;
-  aspect-ratio: 1;
-  contain-intrinsic-size: auto var(--taste-rail-size);
-}
-
-.akibwa-home--taste button.card {
-  appearance: none;
-  padding: 0;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-/* Film, game and television features use the title-specific editorial scene
-   as the entire field at every size. Identification belongs to the consistent
-   hover label, leaving the resting wall free of grey poster boxes and display
-   copy baked into commercial covers. */
-.akibwa-home--taste .taste-visual,
-.akibwa-home--taste .taste-visual__scene,
-.akibwa-home--taste .taste-visual picture {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.akibwa-home--taste .taste-visual__scene::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  background:
-    linear-gradient(112deg, rgba(255, 255, 255, 0.09), transparent 36%),
-    linear-gradient(0deg, rgba(12, 14, 15, 0.08), transparent 42%);
-  mix-blend-mode: soft-light;
-  pointer-events: none;
-}
-
-.akibwa-home--taste .taste-visual .c-art {
-  position: absolute;
-  inset: 0;
-  object-fit: cover;
-}
-
-.akibwa-home--taste .card-info {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 2px;
-  min-width: 0;
-  padding: clamp(7px, 0.9vw, 12px);
-  background: linear-gradient(
-    180deg,
-    rgba(10, 13, 15, 0) 18%,
-    rgba(10, 13, 15, 0.08) 42%,
-    rgba(10, 13, 15, 0.9) 100%
-  );
-  color: rgba(255, 255, 255, 0.98);
-  opacity: 0;
-  pointer-events: none;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.34);
-  transition: opacity 130ms ease;
-}
-
-.akibwa-home--taste .card-info strong,
-.akibwa-home--taste .card-info span,
-.akibwa-home--taste .card-info small {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-}
-
-.akibwa-home--taste .card-info strong {
-  -webkit-line-clamp: 2;
-  font-size: clamp(0.66rem, 0.88vw, 0.9rem);
-  font-weight: 650;
-  line-height: 1.08;
-  letter-spacing: -0.015em;
-}
-
-.akibwa-home--taste .card-info span {
-  -webkit-line-clamp: 1;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: clamp(0.56rem, 0.72vw, 0.74rem);
-  line-height: 1.15;
-}
-
-.akibwa-home--taste .card-info small {
-  -webkit-line-clamp: 1;
-  margin-top: 3px;
-  color: color-mix(in srgb, rgb(var(--key-rgb)) 48%, white);
-  font-size: clamp(0.5rem, 0.63vw, 0.65rem);
-  font-weight: 600;
-  line-height: 1.15;
-}
-
-/* Identification moved into the popover beneath the rail, so the cover itself
-   answers hover the way a Career mark does: a ring in its own key colour
-   rather than small type laid over the artwork. */
-.akibwa-home--taste .taste-wall .card:hover,
-.akibwa-home--taste .taste-wall .card:focus {
-  outline: 2px solid color-mix(in srgb, rgb(var(--key-rgb)) 72%, var(--canvas));
-  outline-offset: 2px;
-}
-
-.akibwa-home--taste .taste-wall .card:focus-visible {
-  z-index: 7;
-  outline: 2px solid rgb(var(--key-rgb));
-  outline-offset: 2px;
-}
-
-.akibwa-home--taste .taste-wall .card.is-selected {
-  border-color: rgb(var(--key-rgb));
-  outline: 2px solid rgb(var(--key-rgb));
-  outline-offset: 2px;
-}
-
-/* A cover opens the Career popover: a small card beneath the cover under the
-   pointer, faded in over 120ms, nothing else on the page moving except the
-   section's bottom space. The rail clips its overflow, so the popover sits in
-   the rail shell and is placed from the measured cover; its left edge is kept
-   inside the shell so the last covers on the row do not push it off the page. */
-.taste-popover {
-  position: absolute;
-  top: calc(100% + 2px);
-  left: clamp(0px, var(--taste-anchor-x, 0px), calc(100% - var(--taste-popover-width)));
-  z-index: 20;
-  display: grid;
-  width: var(--taste-popover-width);
-  gap: 4px;
-  padding: 13px 14px 14px;
-  border: 1px solid color-mix(in srgb, var(--concept-archive) 44%, var(--line-strong));
-  border-top: 3px solid var(--concept-archive);
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
-  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease;
-}
-
-.taste-popover.is-open {
-  opacity: 1;
-}
-
-.taste-popover-kind {
-  color: color-mix(in srgb, var(--concept-archive) 70%, var(--ink));
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.taste-popover > strong {
-  min-width: 0;
-  color: var(--black);
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-}
-
-.taste-popover > span:not(.taste-popover-kind) {
-  min-width: 0;
-  color: color-mix(in srgb, var(--ink) 68%, var(--canvas));
-  font-size: 0.72rem;
-  line-height: 1.3;
-}
-
-.taste-popover > small {
-  margin-top: 5px;
-  color: color-mix(in srgb, var(--concept-archive) 72%, var(--ink));
-  font-size: 0.68rem;
-  font-weight: 650;
-  line-height: 1.3;
 }
 
 /* Like Career, the section grows while a popover is open so the page's end
@@ -6541,146 +2500,6 @@ button {
 .concept-archive:has(.taste-popover.is-open) {
   padding-bottom: var(--taste-open-space);
   transition-duration: 480ms;
-}
-
-.akibwa-home .deck .c-mark {
-  transform: none;
-  transition: none;
-}
-
-.akibwa-home .deck .card img,
-.akibwa-home .deck .c-art,
-.akibwa-home .deck .c-mark {
-  -webkit-touch-callout: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
-}
-
-.akibwa-home .deck .card:hover,
-.akibwa-home .deck .card:focus-visible,
-.akibwa-home .deck .card.is-pressed {
-  border-color: color-mix(in srgb, var(--black) 11%, var(--white));
-  box-shadow: none;
-  transform: none;
-}
-
-.akibwa-home .deck .card--link {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.akibwa-home .deck .card--link:hover,
-.akibwa-home .deck .card--link:focus-visible {
-  border-color: color-mix(in srgb, rgb(var(--key-rgb, 47, 136, 255)) 70%, var(--black));
-}
-
-.akibwa-home .deck .card--link:focus-visible {
-  outline: 2px solid rgb(var(--key-rgb, 47, 136, 255));
-  outline-offset: 2px;
-}
-
-.akibwa-home .card-label {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 5px;
-  min-width: 0;
-  padding: 7px 7px 6px;
-  border-top: 1px solid rgba(16, 18, 23, 0.12);
-  background: rgba(250, 248, 243, 0.94);
-  color: var(--ink);
-  font-size: 0.7rem;
-  font-weight: 610;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease;
-}
-
-.akibwa-home .card-label > span:first-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.akibwa-home .card-label-arrow {
-  flex: none;
-  transition: transform 120ms ease;
-}
-
-.akibwa-home .card--link:hover .card-label,
-.akibwa-home .card--link:focus-visible .card-label {
-  opacity: 1;
-}
-
-.akibwa-home .card--link:hover .card-label-arrow,
-.akibwa-home .card--link:focus-visible .card-label-arrow {
-  transform: translate(1px, -1px);
-}
-
-/* Filtering is a cut, not a performance. All seven words remain in place;
-   only the wall changes. */
-.akibwa-home .deck.is-lensed .card:not(.is-lit) {
-  display: none;
-}
-
-.akibwa-home .deck.is-lensed .rail-word {
-  display: block;
-}
-
-@media (hover: none), (pointer: coarse) {
-  .akibwa-home .card--link .card-label {
-    padding: 5px 7px 4px;
-    font-size: 0.58rem;
-    opacity: 1;
-  }
-}
-
-@media (max-width: 760px) {
-  .akibwa-home .card--link .card-label {
-    padding: 5px 7px 4px;
-    font-size: 0.58rem;
-    opacity: 1;
-  }
-}
-
-@media (max-width: 560px) {
-  .akibwa-home .deck-hero {
-    gap: 9px;
-    padding-top: 17px;
-  }
-
-  .akibwa-home .hero-sentence {
-    max-width: 18ch;
-    font-size: clamp(1.72rem, 8vw, 2.05rem);
-    line-height: 1.05;
-  }
-
-  .akibwa-home .deck-legend {
-    gap: 0.4em 0.7em;
-  }
-
-  .akibwa-home .deck-legend .rail-word {
-    font-size: 0.78rem;
-  }
-
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .akibwa-home .deck .card,
-  .akibwa-home .card-label,
-  .akibwa-home .card-label-arrow,
-  .akibwa-home .card-info,
-  .akibwa-home .deck-legend .rail-word {
-    transition: none;
-  }
 }
 
 /* ── Editorial homepage ─────────────────────────────────────────────────
@@ -6723,7 +2542,6 @@ button {
    run viewport-edge to viewport-edge while their headings and content keep
    the shared page-grid measure. */
 .concept-hero::after,
-.concept-capabilities::before,
 .concept-career-section::before,
 .concept-archive::before {
   position: absolute;
@@ -6738,11 +2556,6 @@ button {
 .concept-hero::after {
   bottom: 0;
   background: var(--concept-projects);
-}
-
-.concept-capabilities::before {
-  top: 0;
-  background: var(--concept-career);
 }
 
 .concept-career-section::before {
@@ -6893,25 +2706,6 @@ button {
   outline-offset: 4px;
 }
 
-.concept-text-link,
-.concept-inline-links a {
-  text-decoration-line: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.28em;
-  transition: color 120ms ease, text-decoration-color 120ms ease;
-}
-
-.concept-text-link:hover,
-.concept-text-link:focus-visible,
-.concept-inline-links a:hover,
-.concept-inline-links a:focus-visible {
-  color: var(--black);
-  text-decoration-color: currentColor;
-}
-
-.concept-text-link:focus-visible,
-.concept-inline-links a:focus-visible,
 .concept-project-card:focus-visible {
   outline: 2px solid var(--concept-blue);
   outline-offset: 4px;
@@ -7121,321 +2915,16 @@ button {
    the card's bottom edge at the card's full width, fades in over 120ms, and
    never moves anything else. It is presentational — the card itself is the
    link — so pointer events pass straight through it to whatever sits beneath. */
-.concept-project-popover {
-  position: absolute;
-  top: calc(100% + 9px);
-  right: 0;
-  left: 0;
-  z-index: 20;
-  display: grid;
-  width: 100%;
-  gap: 4px;
-  padding: 14px 15px 15px;
-  border: 1px solid color-mix(in srgb, var(--project-card-accent) 44%, var(--line-strong));
-  border-top: 3px solid var(--project-card-accent);
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--white) 94%, var(--canvas));
-  box-shadow: 0 14px 32px rgba(12, 17, 19, 0.09);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease;
-  visibility: hidden;
-}
 
-.concept-project-stop:hover .concept-project-popover,
-.concept-project-stop:focus-within .concept-project-popover {
-  opacity: 1;
-  visibility: visible;
-}
-
-.concept-project-popover-kind {
-  color: color-mix(in srgb, var(--project-card-accent) 76%, var(--ink));
-  font-size: 0.65rem;
-  font-weight: 710;
-  line-height: 1.2;
-  letter-spacing: 0.085em;
-  text-transform: uppercase;
-}
-
-.concept-project-popover > strong {
-  color: var(--black);
-  font-family: var(--serif);
-  font-size: 1.22rem;
-  font-weight: 560;
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-}
-
-.concept-project-popover p {
-  max-width: 60ch;
-  margin: 7px 0 0;
-  color: color-mix(in srgb, var(--ink) 78%, var(--canvas));
-  font-family: var(--serif);
-  font-size: 0.82rem;
-  line-height: 1.4;
-}
-
-.concept-project-popover-open {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.45em;
-  margin-top: 9px;
-  color: color-mix(in srgb, var(--project-card-accent) 80%, var(--ink));
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
-}
-
-.concept-capabilities {
-  position: relative;
-  padding: var(--concept-rule-gap) 0 clamp(64px, 8vw, 108px);
-}
-
-.concept-capabilities-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
-  gap: clamp(28px, 5vw, 72px);
-  align-items: end;
-  padding-bottom: clamp(26px, 3.2vw, 44px);
-}
-
-.concept-capabilities-head h2 {
-  max-width: 10ch;
-  margin: 0;
-  color: var(--black);
-  font-family: var(--serif);
-  font-size: clamp(3rem, 5vw, 5.2rem);
-  font-weight: 500;
-  line-height: 0.92;
-  letter-spacing: -0.055em;
-}
-
-.concept-capabilities-head p {
-  max-width: 27ch;
-  margin: 0 0 0.12em;
-  justify-self: end;
-  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
-  font-family: var(--serif);
-  font-size: clamp(1.05rem, 1.55vw, 1.45rem);
-  line-height: 1.22;
-  text-wrap: balance;
-}
-
-.concept-capability-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 2vw, 28px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.concept-capability-list li {
-  display: grid;
-  min-height: clamp(220px, 23vw, 286px);
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto;
-  gap: 18px;
-  padding: clamp(18px, 2vw, 26px);
-  border: 1px solid color-mix(in srgb, var(--capability-accent) 28%, var(--line-strong));
-  border-top: 4px solid var(--capability-accent);
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--capability-accent) 5%, var(--canvas));
-  transition: background 160ms ease, transform 160ms var(--ease-out);
-}
-
-.concept-capability-list li:hover {
-  background: color-mix(in srgb, var(--capability-accent) 9%, var(--canvas));
-  transform: translateY(-2px);
-}
-
-.concept-capability-index,
-.concept-capability-label {
-  color: color-mix(in srgb, var(--capability-accent) 78%, var(--ink));
-  font-size: 0.68rem;
-  font-weight: 720;
-  line-height: 1.2;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-.concept-capability-index {
-  font-variant-numeric: tabular-nums;
-}
-
-.concept-capability-label {
-  text-align: right;
-}
-
-.concept-capability-list h3 {
-  grid-column: 1 / -1;
-  align-self: end;
-  max-width: 12ch;
-  margin: 0;
-  color: var(--black);
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 2.8vw, 2.75rem);
-  font-weight: 520;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  text-wrap: balance;
-}
-
-.concept-capability-list p {
-  grid-column: 1 / -1;
-  max-width: 42ch;
-  margin: 0;
-  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
-  font-size: clamp(0.8rem, 1vw, 0.92rem);
-  line-height: 1.48;
-}
-
-.concept-kicker {
-  margin: 0;
-  color: color-mix(in srgb, var(--ink) 58%, var(--canvas));
-  font-size: 0.7rem;
-  font-weight: 650;
-  line-height: 1.2;
-  letter-spacing: 0.095em;
-  text-transform: uppercase;
-}
-
-.concept-career h2,
 .concept-archive-head h2 {
   margin: 0;
   color: var(--black);
   letter-spacing: -0.045em;
 }
 
-.concept-text-link {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.45em;
-  margin-top: auto;
-  padding: 30px 0 18px;
-  color: var(--ink);
-  font-size: 0.86rem;
-  font-weight: 650;
-}
-
-.concept-making {
-  padding-bottom: clamp(58px, 7vw, 96px);
-}
-
-.concept-section-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 13px;
-  border-bottom: 1px solid var(--line-strong);
-}
-
-.concept-section-head h2,
-.concept-section-head p {
-  margin: 0;
-}
-
-.concept-section-head h2 {
-  color: var(--black);
-  font-size: clamp(1.15rem, 1.8vw, 1.55rem);
-  font-weight: 650;
-  letter-spacing: -0.035em;
-}
-
-.concept-section-head p {
-  color: color-mix(in srgb, var(--ink) 52%, var(--canvas));
-  font-family: var(--serif);
-  font-size: 0.95rem;
-  font-style: italic;
-}
-
-.concept-making-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(22px, 3vw, 42px);
-}
-
-.concept-making-item {
-  padding: 16px 0 0;
-}
-
-.concept-making-meta {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  color: color-mix(in srgb, var(--ink) 47%, var(--canvas));
-  font-size: 0.66rem;
-  font-variant-numeric: tabular-nums;
-  font-weight: 620;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.concept-making-item h3 {
-  margin: 1.5em 0 0;
-  color: var(--black);
-  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-  font-weight: 650;
-  letter-spacing: -0.035em;
-}
-
-.concept-making-item > p {
-  max-width: 39ch;
-  margin: 0.65em 0 0;
-  color: color-mix(in srgb, var(--ink) 70%, var(--canvas));
-  font-size: 0.84rem;
-  line-height: 1.48;
-}
-
-.concept-inline-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5em 1em;
-  margin-top: 1.05em;
-  font-size: 0.73rem;
-  font-weight: 630;
-}
-
-.concept-story-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.78fr);
-  gap: clamp(42px, 6vw, 86px);
-  padding: clamp(58px, 7.8vw, 108px) 0;
-  border-top: 1px solid var(--line-strong);
-}
-
-.concept-career > p:not(.concept-kicker),
 .concept-archive-head > p:last-child {
   color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
   line-height: 1.55;
-}
-
-.concept-career {
-  align-self: stretch;
-  padding-left: clamp(26px, 3.5vw, 50px);
-  border-left: 1px solid var(--line-strong);
-}
-
-.concept-career h2 {
-  max-width: 12ch;
-  margin-top: 0.5em;
-  font-size: clamp(2rem, 3.3vw, 3.5rem);
-  font-weight: 610;
-  line-height: 0.98;
-}
-
-.concept-career > p:not(.concept-kicker) {
-  max-width: 41ch;
-  margin: 1.35em 0 0;
-  font-size: clamp(0.9rem, 1.08vw, 1.02rem);
-}
-
-.concept-career .concept-text-link {
-  margin-top: 1.2em;
-  padding-top: 12px;
 }
 
 .concept-archive {
@@ -7448,10 +2937,6 @@ button {
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.45fr);
   gap: 0 44px;
   align-items: end;
-}
-
-.concept-archive-head .concept-kicker {
-  grid-column: 1 / -1;
 }
 
 .concept-archive-head h2 {
@@ -7469,42 +2954,6 @@ button {
   font-size: clamp(0.92rem, 1.16vw, 1.08rem);
 }
 
-.concept-archive-wall {
-  margin-top: clamp(18px, 2.2vw, 30px);
-}
-
-.concept-archive-wall .akibwa-home .hero-sentence {
-  display: none;
-}
-
-.concept-archive-wall .akibwa-home .deck-hero {
-  gap: 0;
-  margin-bottom: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.concept-archive-wall .akibwa-home {
-  min-height: 0;
-}
-
-@media (max-width: 900px) {
-  .concept-making-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .concept-making-item:last-child {
-    grid-column: 1 / -1;
-    max-width: calc(50% - 11px);
-  }
-
-  .concept-career {
-    padding: 38px 0 0;
-    border-top: 1px solid var(--line-strong);
-    border-left: 0;
-  }
-}
-
 @media (max-width: 800px) and (orientation: portrait), (max-width: 560px) {
   .concept-hero {
     display: block;
@@ -7518,23 +2967,6 @@ button {
   .concept-lede {
     max-width: 27ch;
     margin-top: clamp(22px, 3vw, 32px);
-  }
-
-  .concept-capabilities-head {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .concept-capabilities-head p {
-    justify-self: start;
-  }
-
-  .concept-capability-list {
-    grid-template-columns: 1fr;
-  }
-
-  .concept-capability-list li {
-    min-height: 210px;
   }
 
 }
@@ -7577,44 +3009,6 @@ button {
     font-size: 0.69rem;
   }
 
-  .concept-text-link {
-    padding-top: 24px;
-  }
-
-  .concept-making {
-    padding-bottom: 52px;
-  }
-
-  .concept-section-head p {
-    display: none;
-  }
-
-  .concept-making-list {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .concept-making-item,
-  .concept-making-item:last-child {
-    grid-column: auto;
-    max-width: none;
-    padding: 14px 0 18px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .concept-making-item h3 {
-    margin-top: 0.85em;
-  }
-
-  .concept-story-grid {
-    gap: 46px;
-    padding: 52px 0 62px;
-  }
-
-  .concept-career h2 {
-    font-size: 2.45rem;
-  }
-
   .concept-archive {
     padding-top: var(--concept-rule-gap);
   }
@@ -7630,239 +3024,6 @@ button {
   .concept-archive-head > p:last-child {
     margin-top: 1.2em;
   }
-
-  .concept-archive-wall {
-    margin-top: 20px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .concept-text-link,
-  .concept-inline-links a,
-  .concept-capability-list li {
-    transition: none;
-  }
-
-  .concept-capability-list li:hover {
-    transform: none;
-  }
-}
-
-/* ── Editorial concept, compact pass ────────────────────────────────────
-   Client proof sits quietly inside the freelance offer. */
-
-.concept-client-projects {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(14px, 2vw, 22px);
-  width: 100%;
-  margin-top: clamp(22px, 2.5vw, 30px);
-}
-
-.concept-client-project {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: start;
-  gap: 9px;
-  min-width: 0;
-  padding: 0;
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-}
-
-.concept-client-visual {
-  overflow: clip;
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border: 1px solid color-mix(in srgb, var(--client-accent) 28%, var(--canvas));
-  border-radius: 4px;
-  background: var(--client-ground);
-  transition: border-color 140ms ease;
-}
-
-.concept-client-visual picture,
-.concept-client-visual img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 140ms ease;
-}
-
-.concept-client-visual.is-contained img {
-  box-sizing: border-box;
-  padding: clamp(18px, 2.3vw, 34px);
-  object-fit: contain;
-}
-
-.concept-client-body {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  justify-content: space-between;
-  min-width: 0;
-  padding: 0 2px;
-}
-
-.concept-client-body strong {
-  color: var(--black);
-  font-size: clamp(0.82rem, 1vw, 0.96rem);
-  font-weight: 690;
-  line-height: 1.12;
-  letter-spacing: -0.025em;
-}
-
-.concept-client-open {
-  flex: none;
-  color: color-mix(in srgb, var(--client-accent) 76%, var(--black));
-  font-size: 0.67rem;
-  font-weight: 670;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.concept-client-project:hover .concept-client-body strong,
-.concept-client-project:focus-visible .concept-client-body strong {
-  color: color-mix(in srgb, var(--client-accent) 76%, var(--black));
-}
-
-.concept-client-project:hover .concept-client-visual img,
-.concept-client-project:focus-visible .concept-client-visual img {
-  transform: scale(1.018);
-}
-
-.concept-client-project:hover .concept-client-visual,
-.concept-client-project:focus-visible .concept-client-visual {
-  border-color: color-mix(in srgb, var(--client-accent) 82%, var(--black));
-}
-
-.concept-client-project:focus-visible {
-  outline: 2px solid var(--client-accent);
-  outline-offset: 3px;
-}
-
-.concept-client-dialog {
-  width: min(1040px, calc(100vw - 32px));
-  max-width: none;
-  max-height: calc(100dvh - 32px);
-  margin: auto;
-  padding: 0;
-  overflow: auto;
-  border: 1px solid color-mix(in srgb, var(--ink) 68%, var(--canvas));
-  border-radius: 0;
-  background: var(--canvas);
-  color: var(--ink);
-  box-shadow: 0 18px 70px rgba(12, 17, 19, 0.24);
-}
-
-.concept-client-dialog::backdrop {
-  background: rgba(12, 17, 19, 0.64);
-}
-
-.concept-client-dialog:focus {
-  outline: none;
-}
-
-.concept-client-preview {
-  border-top: 4px solid var(--client-accent);
-}
-
-.concept-client-preview-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 12px 20px;
-  align-items: baseline;
-  padding: 12px 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, var(--canvas));
-  font-size: 0.78rem;
-}
-
-.concept-client-preview-head strong {
-  color: var(--black);
-  font-size: 0.86rem;
-  letter-spacing: -0.02em;
-}
-
-.concept-client-preview-head > span {
-  color: color-mix(in srgb, var(--ink) 52%, var(--canvas));
-  font-family: var(--serif);
-}
-
-.concept-client-preview-head button {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-  font: inherit;
-  font-weight: 650;
-}
-
-.concept-client-preview-head button:hover,
-.concept-client-preview-head button:focus-visible {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.concept-client-preview-head button:focus-visible,
-.concept-client-preview-foot a:focus-visible {
-  outline: 2px solid var(--client-accent);
-  outline-offset: 3px;
-}
-
-.concept-client-preview-screen,
-.concept-client-preview-screen picture,
-.concept-client-preview-screen img {
-  display: block;
-  width: 100%;
-}
-
-.concept-client-preview-screen {
-  aspect-ratio: 16 / 9;
-  overflow: clip;
-  background: #f5f2ea;
-}
-
-.concept-client-preview-screen picture,
-.concept-client-preview-screen img {
-  height: 100%;
-}
-
-.concept-client-preview-screen img {
-  object-fit: cover;
-}
-
-.concept-client-preview-foot {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 24px;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 13px 14px 15px;
-  border-top: 1px solid color-mix(in srgb, var(--ink) 20%, var(--canvas));
-}
-
-.concept-client-preview-foot p {
-  max-width: 54ch;
-  margin: 0;
-  color: color-mix(in srgb, var(--ink) 70%, var(--canvas));
-  font-family: var(--serif);
-  font-size: 0.82rem;
-  line-height: 1.4;
-}
-
-.concept-client-preview-foot a {
-  flex: none;
-  color: var(--black);
-  font-size: 0.78rem;
-  font-weight: 680;
 }
 
 /* Career is a compact visual index at rest. Role, dates and the short
@@ -7897,10 +3058,6 @@ button {
   border-top-color: var(--concept-archive);
 }
 
-.akibwa-home--taste .deck-legend {
-  gap: 0.4em 1em;
-}
-
 @media (max-width: 1050px) and (orientation: portrait), (max-width: 560px) {
   /* Projects become one short, native swipe rail on portrait phones and tablets;
      landscape windows keep the desktop row of three. Keeping the
@@ -7932,68 +3089,13 @@ button {
     scroll-snap-align: start;
     scroll-snap-stop: always;
   }
-
-  /* The swipe rail clips overflow, so the popover cannot hang beneath a card
-     on phones. Each card carries its description as a plain caption instead;
-     hover has nothing to add where there is no pointer to hover with. */
-  .concept-project-popover {
-    position: static;
-    width: auto;
-    margin-top: 8px;
-    box-shadow: none;
-    opacity: 1;
-    visibility: visible;
-    transition: none;
-  }
-
-  .concept-project-popover-open {
-    display: none;
-  }
 }
 
 @media (max-width: 560px) {
-  .concept-client-projects {
-    gap: 14px;
-  }
-
-  .concept-client-body strong {
-    font-size: 0.76rem;
-  }
-
-  .concept-client-open {
-    display: none;
-  }
-
-  .concept-client-visual.is-contained img {
-    padding: 18px;
-  }
-
-  .concept-client-dialog {
-    width: calc(100vw - 16px);
-    max-height: calc(100dvh - 16px);
-  }
-
-  .concept-client-preview-head {
-    grid-template-columns: minmax(0, 1fr) auto;
-    padding: 10px;
-  }
-
-  .concept-client-preview-head > span {
-    display: none;
-  }
-
-  .concept-client-preview-foot {
-    display: grid;
-    padding: 11px 10px 13px;
-  }
 
   .concept-projects-head h2,
   .concept-taste-head .concept-archive-head h2 {
     font-size: 2.65rem;
-  }
-
-  .akibwa-home--taste .deck-legend {
-    gap: 0.35em 0.72em;
   }
 
 }
@@ -8002,11 +3104,8 @@ button {
    last-resort fallback for unusually narrow embedded viewports. */
 
 @media (prefers-reduced-motion: reduce) {
-  .concept-client-visual img,
   .concept-projects,
-  .concept-project-popover,
-  .concept-archive,
-  .taste-popover {
+  .concept-archive {
     transition: none;
   }
 }
@@ -8016,8 +3115,7 @@ button {
 .concept-project-card { padding: 0; width: 100%; }
 .personal-intro{white-space:nowrap}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
-.archive-link,.archive-back{font-size:.83rem;line-height:1.4;text-decoration:underline;text-underline-offset:4px}
-.archive-link{flex-shrink:0;padding-bottom:4px}
+.archive-back{font-size:.83rem;line-height:1.4;text-decoration:underline;text-underline-offset:4px}
 .listening-summary{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:24px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0 28px}
 .listening-provenance{grid-column:1/-1;margin:0;font-size:.74rem;line-height:1.4;color:var(--muted)}
 .listening-summary>div{display:grid;gap:5px;align-content:start}
@@ -8026,7 +3124,7 @@ button {
 .listening-summary details{align-self:center}
 .listening-summary details p,.album-source p{font-size:.82rem;line-height:1.6;color:var(--muted);max-width:76ch}
 .listening-summary summary,.album-source summary{cursor:pointer;text-underline-offset:4px;text-decoration:underline;min-height:32px;align-content:center}
-.archive-more,.album-pagination button,.album-empty button,.album-detail-nav button{font:inherit;font-size:.82rem;background:transparent;border:1px solid var(--line-strong);padding:10px 14px;min-height:44px;cursor:pointer;color:var(--ink)}
+.album-pagination button,.album-empty button{font:inherit;font-size:.82rem;background:transparent;border:1px solid var(--line-strong);padding:10px 14px;min-height:44px;cursor:pointer;color:var(--ink)}
 .personal-taste-card,.album-browser-card{border:0;background:none;padding:0;margin:0;text-align:left;min-width:0;color:var(--ink);font:inherit;cursor:default;display:flex;flex-direction:column;align-items:stretch}
 .personal-taste-art,.album-browser-art{display:block;aspect-ratio:1;overflow:hidden;background:#dedcd3;margin-bottom:12px}
 .personal-taste-art,.album-browser-art { position: relative; }
@@ -8046,7 +3144,6 @@ button {
 .podcast-type-cover-3 { background: #d9dce8; color: #30344d; }
 .podcast-type-cover-4 { background: #e4d3cd; color: #51342e; }
 .podcast-type-cover-5 { background: #d3e0e2; color: #234347; }
-.archive-detail-art .podcast-type-cover { font-size: clamp(1.5rem, 3vw, 2.3rem); }
 @media(hover:none) {
   .listening-hover { inset: auto 0 0; opacity: 1; visibility: visible; padding: 18px 7px 7px; }
   .listening-hover > strong { font-size: 1.05rem; }
@@ -8055,27 +3152,13 @@ button {
 @media(prefers-reduced-motion:reduce) {
   .listening-hover { transition: none; }
 }
-.personal-taste-art picture,.album-browser-art picture,.archive-detail-art picture{display:block;width:100%;height:100%}
+.personal-taste-art picture,.album-browser-art picture{display:block;width:100%;height:100%}
 .personal-taste-art img,.album-browser-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 180ms ease}
 .personal-taste-card:focus-visible,.album-browser-card:focus-visible{outline:2px solid var(--ink);outline-offset:5px}
 .taste-load-status{font-size:.75rem;line-height:1.5;color:var(--muted);margin:14px 0 0}
 .taste-load-status button{font:inherit;border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .personal-taste-title,.album-browser-card>strong{font-size:.86rem;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
 .personal-taste-creator,.album-browser-card>span:not(.album-browser-art){font-size:.77rem;line-height:1.4;margin-top:4px;color:var(--muted)}
-.archive-more{margin-top:24px}
-.archive-more span{color:var(--muted);margin-left:5px}
-.taste-source-note{font-size:.84rem;line-height:1.5;margin-top:22px;max-width:72ch;color:var(--muted)}
-.taste-source-note a{text-decoration:underline;text-underline-offset:3px}
-.archive-dialog{border:1px solid var(--line-strong);padding:0;width:min(940px,calc(100% - 40px));max-height:calc(100dvh - 40px);color:var(--ink);background:var(--canvas);overflow:auto;box-shadow:0 24px 100px #0005}
-.archive-dialog::backdrop{background:#171d25aa}
-.archive-dialog-content{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);padding:32px;gap:32px}
-.archive-close{position:absolute;right:8px;top:6px;width:44px;height:44px;font-size:28px;color:var(--ink);border:0;background:var(--canvas);cursor:pointer;z-index:1}
-.archive-detail-art{aspect-ratio:1;align-self:center;min-width:0;background:#dedcd3}
-.archive-detail-art img{width:100%;height:100%;object-fit:contain;display:block}
-.archive-detail-copy{align-self:center;min-width:0;padding:24px 0}
-.archive-detail-copy h2{font:500 clamp(1.7rem,3vw,2.7rem)/1.1 var(--serif);letter-spacing:-.035em;margin:16px 0;overflow-wrap:anywhere}
-.archive-detail-copy>p{line-height:1.5}
-.archive-detail-copy a{display:inline-block;margin-top:12px;text-decoration:underline;text-underline-offset:4px;font-size:.85rem}
 .archive-eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
 .album-library{padding-top:32px;padding-bottom:40px}
 .album-library-head{max-width:760px;padding:44px 0 26px}
@@ -8097,9 +3180,6 @@ button {
 .album-empty{padding:54px 20px;text-align:center;border:1px solid var(--line);background:color-mix(in srgb,var(--canvas) 95%,var(--ink))}
 .album-empty h2{font-family:var(--serif);font-size:2rem;font-weight:500}
 .album-empty p{color:var(--muted);line-height:1.5}
-.album-detail-nav{display:flex;gap:12px;margin-top:28px}
-.archive-count{font-size:1.2rem}
-.archive-count-note{font-size:.75rem;color:var(--muted)}
 :is(.personal-career,.personal-taste,.album-library,.archive-dialog) :is(button,a,input,select,summary):focus-visible{outline:2px solid #2f88ff;outline-offset:4px}
 @media(max-width:1000px){
  .album-browser-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -8110,10 +3190,6 @@ button {
  .album-browser-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}
  .listening-summary{gap:14px;padding:18px 0}
  .listening-summary span{font-size:.73rem}
- .archive-dialog{width:calc(100% - 24px);max-height:calc(100dvh - 24px)}
- .archive-dialog-content{display:block;padding:38px 18px 18px}
- .archive-detail-art{max-width:320px;margin:auto}
- .archive-detail-copy{padding:8px 0 0}
  .album-library-head{padding-top:32px}
  .album-browser-controls{grid-template-columns:1fr 1fr;gap:14px}
  .album-search{grid-column:1/-1}
@@ -8237,7 +3313,6 @@ button {
   border-radius: 4px;
 }
 
-
 .concept-career-logo.is-nwf img {
   transform: translate(-5%, -14%);
 }
@@ -8278,7 +3353,6 @@ button {
 .concept-career-logo.is-lloyds img {
   transform: translate(6%, 2.5%);
 }
-
 
 .concept-page { --concept-archive: #1b947d; }
 .concept-career-section { --career-rest-space: clamp(56px, 4vw, 68px); --career-open-space: clamp(24px, 3vw, 36px); position: relative; padding: var(--concept-rule-gap) 0 var(--career-rest-space); transition: padding-bottom 340ms var(--ease-out); }
@@ -8392,7 +3466,6 @@ button {
 .personal-taste-detail-count { margin: auto 0 0; padding-top: 8px; color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); font: 400 .76rem/1.3 var(--serif); }
 .personal-taste-detail-count strong { display: block; color: var(--black); font-size: 1.28rem; font-weight: 700; line-height: 1.05; letter-spacing: -.02em; }
 .personal-taste-detail-kind { margin: auto 0 0; padding-top: 8px; color: color-mix(in srgb, var(--hover-detail-accent) 72%, var(--ink)); font: 650 .62rem/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
-.taste-source-note { margin: 16px 0 0; font-size: .78rem; }
 @media (hover: none) {
   .personal-taste-art { margin-bottom: 9px; }
   .personal-taste-caption { display: flex; flex-direction: column; }
@@ -8427,7 +3500,6 @@ button {
   .taste-search-field input { font-size: 16px; }
   .rail-controls button { width: 40px; height: 40px; }
   .taste-tools .rail-controls button { width: 32px; height: 32px; }
-  .concept-taste-head .archive-link { display: inline-block; margin-top: 18px; }
   .taste-filters { gap: 0 17px; }
   .taste-filters .rail-word { font-size: .85rem; }
 }
