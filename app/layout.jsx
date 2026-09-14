@@ -34,9 +34,15 @@ export const metadata = {
       "Daniel, online as Akibwa. Projects, a working history, and a collection of music, films, games, television and podcasts.",
     images: ["/og.jpg"]
   },
+  // The sized .ico serves browsers without SVG icons and requests that skip
+  // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
   icons: {
-    icon: [{ url: "/favicon.svg?v=ember-a", type: "image/svg+xml" }],
-    shortcut: [{ url: "/favicon.svg?v=ember-a", type: "image/svg+xml" }]
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.svg?v=ember-a", type: "image/svg+xml" }
+    ],
+    shortcut: [{ url: "/favicon.svg?v=ember-a", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }]
   }
 };
 

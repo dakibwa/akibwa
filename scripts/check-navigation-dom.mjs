@@ -404,7 +404,7 @@ const checkPublicLanding = async () => {
   check(await evaluate('!document.querySelector("#project-description") && [...document.querySelectorAll(".concept-project-aside")].every(copy=>copy.getAttribute("aria-hidden")==="true")'), "closed project descriptions stay hidden from assistive technology");
   check(await evaluate(`(() => {
     const links=[...document.querySelectorAll('a.concept-project-card')];
-    return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['/features/','https://portuguesewithines.com/','/trek/']) &&
+    return JSON.stringify(links.map(link=>link.getAttribute('href')))===JSON.stringify(['https://features.games/','https://portuguesewithines.com/','/trek/']) &&
       !document.querySelector('#project-detail a, #project-detail button');
   })()`), "each project card links directly to its destination without a separate action button");
   const activatePortuguese = () => evaluate(`(() => {
@@ -707,11 +707,12 @@ const checkPublicLanding = async () => {
   section("ranked listening shelves");
   await selectTaste('Music');
   await sleep(200);
-  const ranked = () => evaluate(`(() => {
+  // Shorter shelves pass their own size: only 20+ play podcasts qualify.
+  const ranked = (least = 36) => evaluate(`(() => {
     const columns=[...document.querySelectorAll('.taste-wall-column')].map(column=>[...column.querySelectorAll('article')]);
     const cards=Array.from({length:Math.max(...columns.map(column=>column.length))},(_,row)=>columns.flatMap(column=>column[row]?[column[row]]:[])).flat();
     const counts=cards.map(card=>card.hasAttribute('data-listens') ? Number(card.dataset.listens) : -1);
-    return counts.length >= 36 && counts.every((count,index)=>!index || count<=counts[index-1]);
+    return counts.length >= ${least} && counts.every((count,index)=>!index || count<=counts[index-1]);
   })()`);
   check(await ranked(), "Music exposes the full catalogue in descending listening order");
   const pointer = await evaluate(`(() => {
@@ -829,7 +830,7 @@ const checkPublicLanding = async () => {
     const cards=[...document.querySelectorAll('.personal-taste-card')];
     return cards.length > 0 && cards.every(card=>Number(card.dataset.listens)>=20);
   })()`), "every visible podcast has at least 20 recorded plays");
-  check(await ranked(), "podcasts are ranked by their recorded listens");
+  check(await ranked(expectedPodcasts), "podcasts are ranked by their recorded listens");
   await evaluate('document.querySelector(".personal-taste-rail").scrollLeft=0;document.querySelector("#taste").scrollIntoView({block:"center",behavior:"instant"});');
   await capture("podcasts-desktop");
   await goto('/');
