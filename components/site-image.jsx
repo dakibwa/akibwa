@@ -51,10 +51,16 @@ function versionedSrc(src, version) {
   return `${src}?v=${version}`;
 }
 
-function srcSet(entries, format, version) {
-  return entries
-    .filter((entry) => entry[format])
-    .map((entry) => `${versionedSrc(entry[format].src, version)} ${entry.width}w`)
+// The generator names every file `_img/<source>-<slot>-<width>.<format>`, so
+// the manifest carries only widths and formats rather than each path.
+function variantSrc(src, slot, width, format) {
+  return `/_img${src.slice(0, src.lastIndexOf("."))}-${slot}-${width}.${format}`;
+}
+
+function srcSet(src, slot, entry, format, version) {
+  if (!(entry.formats ?? ["avif", "webp"]).includes(format)) return "";
+  return entry.widths
+    .map((width) => `${versionedSrc(variantSrc(src, slot, width, format), version)} ${width}w`)
     .join(", ");
 }
 
@@ -68,7 +74,7 @@ function srcSet(entries, format, version) {
 export function resolveBackground(src, slot) {
   const entry = variants[`${slot}:${src}`];
   return entry
-    ? versionedSrc(entry.variants[0].webp.src, entry.sourceHash)
+    ? versionedSrc(variantSrc(src, slot, entry.widths[0], "webp"), entry.sourceHash)
     : src;
 }
 
@@ -139,8 +145,8 @@ export function SiteImage({
 
   return (
     <picture>
-      <source type="image/avif" srcSet={srcSet(entry.variants, "avif", version)} sizes={sizes} />
-      <source type="image/webp" srcSet={srcSet(entry.variants, "webp", version)} sizes={sizes} />
+      <source type="image/avif" srcSet={srcSet(src, slot, entry, "avif", version)} sizes={sizes} />
+      <source type="image/webp" srcSet={srcSet(src, slot, entry, "webp", version)} sizes={sizes} />
       {img}
     </picture>
   );
@@ -216,10 +222,10 @@ export function preloadSiteImage({ src, slot, sizes }) {
 
   // AVIF only: every browser that lacks AVIF also ignores the preload's
   // imagesrcset, so it would otherwise pull the original as a second copy.
-  ReactDOM.preload(versionedSrc(entry.variants[0].avif.src, entry.sourceHash), {
+  ReactDOM.preload(versionedSrc(variantSrc(src, slot, entry.widths[0], "avif"), entry.sourceHash), {
     as: "image",
     type: "image/avif",
-    imageSrcSet: srcSet(entry.variants, "avif", entry.sourceHash),
+    imageSrcSet: srcSet(src, slot, entry, "avif", entry.sourceHash),
     imageSizes: sizes,
     fetchPriority: "high"
   });

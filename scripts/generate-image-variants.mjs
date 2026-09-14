@@ -83,9 +83,10 @@ const SLOTS = {
   // and 176 on the widest frames.
   deckTile: { ratio: 1, css: [92, 133, 176] },
 
-  // The horizontal podcast rail and its opened artwork share an identity,
-  // with a larger rung reserved for the dialog.
-  podcastArt: { ratio: 1, css: [104, 136, 442] },
+  // Podcast covers sit on the same Taste wall as posters and game boxes, so
+  // they share that ladder. The old 600px dialog rung outlived the dialog and
+  // was what 2x screens downloaded for a 136px tile.
+  podcastArt: { ratio: 1, css: [104, 136, 176] },
 
   // Real theatrical/TV posters and game boxes on the homepage bookshelf.
   // Leave the square, colour-graded legacy wall bindings separate.
@@ -408,6 +409,28 @@ async function hashFile(absolute) {
   return createHash("sha256").update(await readFile(absolute)).digest("hex").slice(0, 16);
 }
 
+/*
+ * The manifest ships inside every page's JavaScript, so it records only what
+ * <SiteImage> cannot derive. Each file is `_img/<source>-<slot>-<width>.<fmt>`
+ * (variantName above), so a binding needs its widths, formats and hash, not a
+ * copy of every path and byte count. One binding per line keeps diffs legible.
+ */
+function compactManifest(manifest) {
+  const lines = Object.entries(manifest).map(([key, entry]) => {
+    const formats = ["avif", "webp"].filter((format) => entry.variants.every((variant) => variant[format]));
+    const compact = {
+      sourceWidth: entry.sourceWidth,
+      sourceHeight: entry.sourceHeight,
+      sourceHash: entry.sourceHash,
+      ...(entry.press ? { press: entry.press } : {}),
+      widths: entry.variants.map((variant) => variant.width),
+      ...(formats.length === 2 ? {} : { formats })
+    };
+    return `  ${JSON.stringify(key)}: ${JSON.stringify(compact)}`;
+  });
+  return `{\n${lines.join(",\n")}\n}\n`;
+}
+
 async function build() {
   if (!checkOnly) {
     await rm(variantDir, { recursive: true, force: true });
@@ -579,7 +602,7 @@ async function build() {
     return;
   }
 
-  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+  await writeFile(manifestPath, compactManifest(manifest));
 
   // Report the number that matters: what one visitor pays, not the ladder total.
   const k = (bytes) => `${(bytes / 1024).toFixed(0)}K`;
