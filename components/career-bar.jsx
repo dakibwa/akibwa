@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { SiteImage } from "./site-image";
 import { IndexReveal } from "./index-reveal";
 import { RailControls } from "./rail-controls";
+import { useSpotlight } from "./spotlight";
 import curation from "@/data/taste-curation.json";
 
 const { career } = curation;
@@ -15,6 +16,8 @@ const logoRevisions = {
   "/brand-logos/leeds-building-society-icon.svg": "contrast",
 };
 
+const logoClass = (job) => `concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`;
+
 function CareerStatement({ statement, emphasis = [] }) {
   const escaped = emphasis.map((text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   if (!escaped.length) return statement;
@@ -24,6 +27,40 @@ function CareerStatement({ statement, emphasis = [] }) {
 }
 
 export function CareerBar() {
+  const { spotlight } = useSpotlight();
+  return spotlight === "career" ? <CareerSpotlight /> : <CareerTimeline />;
+}
+
+// The spotlight lays every role out at once, statements included.
+function CareerSpotlight() {
+  return (
+    <section className="page-grid concept-career-section personal-career is-spotlit" id="career" aria-labelledby="career-title">
+      <header className="concept-career-head index-section-head">
+        <h2 id="career-title">Career</h2>
+      </header>
+      <ol className="career-spotlight">
+        {career.map((job) => (
+          <li className="career-spotlight-role" key={job.name} style={{ "--company-accent": job.accent }}>
+            <span className="career-spotlight-mark">
+              <span className={logoClass(job)}>
+                <SiteImage src={job.logo} revision={logoRevisions[job.logo]} slot="logo" sizes="32px" alt="" />
+              </span>
+            </span>
+            <span className="career-spotlight-title">
+              <strong>{job.name}</strong>
+              <span>{job.role} · {job.span.replace(/ — /g, "–")}</span>
+            </span>
+            <p className="concept-career-statement">
+              <CareerStatement {...job} />
+            </p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function CareerTimeline() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
   const [lastRole, setLastRole] = useState(0);
@@ -74,7 +111,7 @@ export function CareerBar() {
             >
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
-                <span className={`concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`}>
+                <span className={logoClass(job)}>
                   <SiteImage src={job.logo} revision={logoRevisions[job.logo]} slot="logo" sizes="32px" alt="" />
                 </span>
               </span>

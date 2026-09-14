@@ -1,9 +1,17 @@
 "use client";
 
 import { Mail, Instagram } from "lucide-react";
+import { useSpotlight } from "./spotlight";
+
+const chapters = [
+  ["projects", "Projects", "#2f88ff"],
+  ["career", "Career", "var(--concept-career)"],
+  ["taste", "Taste Library", "var(--concept-archive)"],
+];
 
 export function PageFooter({ embedded = false }) {
   const Root = embedded ? "div" : "footer";
+  const { spotlight, setSpotlight } = useSpotlight();
   const openEmail = () => {
     const local = ["da", "kibwa"].join("");
     const domain = ["gm", "ail", ".com"].join("");
@@ -19,10 +27,24 @@ export function PageFooter({ embedded = false }) {
       <div className="page-footer-panel">
         <div className="page-footer-meta">
           {embedded ? (
-            <nav className="concept-section-links" aria-label="Explore the page">
-              <a href="#projects" style={{ "--section-accent": "#2f88ff" }}><span>Projects</span><span className="section-link-sizer" aria-hidden="true">Projects</span></a>
-              <a href="#career" style={{ "--section-accent": "var(--concept-career)" }}><span>Career</span><span className="section-link-sizer" aria-hidden="true">Career</span></a>
-              <a href="#taste" style={{ "--section-accent": "var(--concept-archive)" }}><span>Taste Library</span><span className="section-link-sizer" aria-hidden="true">Taste Library</span></a>
+            <nav className={`concept-section-links${spotlight ? " has-spotlight" : ""}`} aria-label="Explore the page">
+              {chapters.map(([id, label, accent]) => (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  style={{ "--section-accent": accent }}
+                  aria-current={spotlight === id ? "true" : undefined}
+                  onClick={(event) => {
+                    // Plain clicks bring the chapter forward; the anchor still
+                    // serves new tabs and pages without JavaScript.
+                    if (!setSpotlight || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                    event.preventDefault();
+                    setSpotlight(spotlight === id ? null : id);
+                  }}
+                >
+                  {label}
+                </a>
+              ))}
             </nav>
           ) : null}
           <div className="page-footer-details" aria-label="Contact Akibwa">

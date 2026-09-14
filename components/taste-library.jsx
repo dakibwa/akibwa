@@ -19,11 +19,12 @@ const groups = [
   ["tv", "TV", "0, 154, 205"],
   ["podcasts", "Podcasts", "164, 74, 126"],
 ];
+const kindLabels = { films: "Film", games: "Game", tv: "TV" };
 const searchable = (value) => value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase();
 const artworkKey = item => `${item.kind}-${tasteItemKey(item)}`;
 const estimatedHeight = item => 132 * (item.kind === "films" || item.kind === "tv" ? 1.5 : item.kind === "games" ? 4 / 3 : 1);
 
-function TasteArtwork({ item }) {
+function TasteArtwork({ item, expanded }) {
   if (item.kind === "music") {
     return <AlbumCover album={item} />;
   }
@@ -31,7 +32,7 @@ function TasteArtwork({ item }) {
     return <SiteImage
       src={item.art}
       slot={item.kind === "podcasts" ? "podcastArt" : item.kind === "games" ? "gameArt" : "posterArt"}
-      sizes="(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"
+      sizes={expanded ? "(max-width:1067px) 112px, (max-width:1600px) 10.5vw, 168px" : "(max-width:1130px) 104px, (max-width:1480px) 9.2vw, 136px"}
       alt=""
     />;
   }
@@ -43,7 +44,7 @@ function TasteArtwork({ item }) {
   </span>;
 }
 
-export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
+export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded = false }) {
   const [category, setCategory] = useState("all"),
     [visibleCount, setVisibleCount] = useState(48);
   const [query, setQuery] = useState("");
@@ -57,6 +58,15 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const pointerPosition = useRef(null);
   const [detail, setDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  // On a shelf with aligned rows the open detail sits in a gap within its row:
+  // covers before `at` move by `base` detail widths, the rest of the row by one
+  // more, and the selected cover never moves. Staggered mixed stacks cannot
+  // part one row without collisions, so there the detail floats beside it.
+  const [gap, setGap] = useState(null);
+  const gapRef = useRef(null);
+  const sides = useRef({});
+  // Covers beneath a floating detail step back rather than show in slivers.
+  const [receded, setReceded] = useState([]);
   const [wallLayout, setWallLayout] = useState(null);
   const lastLayout = useRef("");
   const restorePosition = useRef(null);
@@ -67,7 +77,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   }, [category, query]);
   const dismissDetail = () => {
     activeCard.current = null;
+    gapRef.current = null;
     setDetailOpen(false);
+    setReceded([]);
   };
   const cardVisible = (card) => {
     const box = card?.getBoundingClientRect();
@@ -75,17 +87,51 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     return box && bounds && Math.min(box.right, bounds.right) - Math.max(box.left, bounds.left) >= 24 &&
       Math.min(box.bottom, innerHeight) - Math.max(box.top, 0) >= 24;
   };
+  const placeDetail = (card, column, row) => {
+    // Moving along an open row keeps the gap beside the new cover, on the side
+    // it is already on, so only the covers the pointer has left move.
+    const current = gapRef.current;
+    if (current && !current.float && current.row === row) {
+      return column < current.at ? { ...current, at: column + 1 } : { ...current, at: column };
+    }
+    const shelf = rail.current, stack = card.closest(".taste-wall-column");
+    const space = card.querySelector(".personal-taste-detail-shell").offsetWidth + parseFloat(getComputedStyle(shelf).columnGap);
+    // Offsets ignore the transforms of a push that is still closing.
+    const left = stack.offsetLeft - shelf.scrollLeft, right = left + stack.offsetWidth;
+    const rightward = shelf.clientWidth - right >= space || left < space;
+    if (mixedArtwork) return { float: true, side: rightward ? "right" : "left" };
+    return rightward ? { row, at: column + 1, base: 0 } : { row, at: column, base: -1 };
+  };
   const revealDetail = (item, card) => {
     if (!matchMedia("(hover: hover)").matches) return;
     if (activeCard.current === card) return;
+    const column = Number(card.closest(".taste-wall-column").dataset.column);
+    const next = placeDetail(card, column, Number(card.dataset.row));
     activeCard.current = card;
+    gapRef.current = next;
+    sides.current[artworkKey(item)] = next.float ? next.side : next.at === column ? "left" : "right";
     enteredView.current = cardVisible(card);
-    setDetail(`${item.kind}-${tasteItemKey(item)}`);
+    if (next.float) {
+      const box = card.getBoundingClientRect();
+      const width = card.querySelector(".personal-taste-detail-shell").offsetWidth;
+      const gutter = parseFloat(getComputedStyle(rail.current).columnGap);
+      const left = next.side === "right" ? box.right + gutter : box.left - gutter - width;
+      setReceded([...rail.current.querySelectorAll(".personal-taste-card")].filter((other) => {
+        const r = other.getBoundingClientRect();
+        return r.right > left + 2 && r.left < left + width - 2 && r.bottom > box.top + 2 && r.top < box.bottom - 2;
+      }).map((other) => other.dataset.tasteKey));
+    } else setReceded([]);
+    setGap(next);
+    setDetail(artworkKey(item));
     setDetailOpen(true);
   };
   useEffect(() => {
     if (!detailOpen) return;
-    const onEscape = (event) => { if (event.key === "Escape") dismissDetail(); };
+    const onEscape = (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      dismissDetail();
+    };
     const shelf = rail.current;
     const keepVisible = (event) => {
       if (event.type === "resize" && activeCard.current === document.activeElement) return;
@@ -152,8 +198,11 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
   const selectionKey = keys.join("|");
   const measurementKey = visible.map(item => `${artworkKey(item)}:${item.title}:${item.creator}:${item.plays}`).join("|");
   const mixedArtwork = list.some(item => item.kind !== list[0]?.kind);
-  const initialColumns = useMemo(() => stackArtwork(visible.map(estimatedHeight), { mixed: mixedArtwork }), [selectionKey, mixedArtwork]);
-  const appending = wallLayout && wallLayout.keys.length < keys.length && wallLayout.keys.every((key, index) => key === keys[index]);
+  const measuredColumns = useRef(8);
+  const initialColumns = useMemo(() => stackArtwork(visible.map(estimatedHeight), { mixed: mixedArtwork, expanded, visibleColumns: measuredColumns.current }), [selectionKey, mixedArtwork, expanded]);
+  // The homepage rail appends new stacks to its end; the spotlit library
+  // flows newly loaded covers into its existing columns.
+  const appending = !expanded && wallLayout && wallLayout.keys.length < keys.length && wallLayout.keys.every((key, index) => key === keys[index]);
   const columns = wallLayout?.selectionKey === selectionKey ? wallLayout.columns : appending ? [
     ...wallLayout.columns,
     ...stackArtwork(visible.slice(wallLayout.keys.length).map(estimatedHeight), { mixed: mixedArtwork })
@@ -180,12 +229,14 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
         return art.getBoundingClientRect().height + parseFloat(getComputedStyle(art).marginBottom) +
           card.querySelector('.personal-taste-caption').getBoundingClientRect().height;
       });
+      const visibleColumns = Math.max(1, Math.floor((bounds.width + gap) / (width + gap)));
+      measuredColumns.current = visibleColumns;
       const nextColumns = stackArtwork(heights, {
-        gap, viewportHeight: innerHeight, visibleColumns: Math.max(1, Math.floor((bounds.width + gap) / (width + gap))), mixed: mixedArtwork,
+        gap, viewportHeight: innerHeight, visibleColumns, mixed: mixedArtwork, expanded,
         availableHeight: innerHeight - (bounds.top - shelf.closest('section').getBoundingClientRect().top) -
           parseFloat(getComputedStyle(shelf).paddingTop) - parseFloat(getComputedStyle(shelf).paddingBottom) - 40,
       });
-      const nextKey = JSON.stringify([selectionKey, nextColumns]);
+      const nextKey = JSON.stringify([selectionKey, expanded, nextColumns]);
       if (lastLayout.current === nextKey) {
         if (keepFocusedView && activeCard.current === document.activeElement && !cardVisible(activeCard.current)) {
           activeCard.current.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
@@ -209,7 +260,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     };
     measure();
     const observer = new ResizeObserver(([entry]) => {
-      // Opening a hover detail changes the rail's height, never its packing.
+      // Only a change of width can change the packing.
       if (Math.abs(entry.contentRect.width - previousWidth) < .5) return;
       previousWidth = entry.contentRect.width;
       queueMeasure();
@@ -226,7 +277,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       touch.removeEventListener('change', queueMeasure);
       window.removeEventListener('resize', queueMeasure);
     };
-  }, [measurementKey, mixedArtwork]);
+  }, [measurementKey, mixedArtwork, expanded]);
   useLayoutEffect(() => {
     const restore = restorePosition.current, shelf = rail.current;
     if (!restore || !shelf) return;
@@ -258,13 +309,19 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
     if (!more.current) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) setVisibleCount((count) => count + 36);
-    }, { root: rail.current, rootMargin: "0px 240px 0px 0px" });
+    }, expanded ? { rootMargin: "0px 0px 480px 0px" } : { root: rail.current, rootMargin: "0px 240px 0px 0px" });
     observer.observe(more.current);
     return () => observer.disconnect();
-  }, [category, query, visibleCount]);
+  }, [category, query, visibleCount, expanded]);
+  const pushing = detailOpen && gap && !gap.float;
+  const loadMore = visible.length < list.length ? (
+    <button className="taste-load-more" type="button" ref={more} style={{ "--taste-shift": pushing && !expanded ? gap.base + 1 : 0 }} onClick={() => setVisibleCount((count) => count + 36)}>
+      More {terms.length ? "results" : category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
+    </button>
+  ) : null;
   return (
     <section
-      className={`page-grid concept-archive personal-taste${detailOpen ? " is-open" : ""}`}
+      className={`page-grid concept-archive personal-taste${detailOpen ? " is-open" : ""}${expanded ? " is-expanded" : ""}`}
       id="taste"
       aria-labelledby="taste-title"
       onMouseLeave={(event) => {
@@ -297,7 +354,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
             <button type="button" aria-label="Close taste search" onClick={closeSearch}><X size={15} aria-hidden="true" /></button>
           </div>
           </div>
-          <RailControls rail={rail} label="Taste" controls="taste-rail" />
+          {expanded ? null : <RailControls rail={rail} label="Taste" controls="taste-rail" />}
         </div>
       </header>
       <nav className="taste-filters deck-legend" aria-label="Browse the taste library">
@@ -320,19 +377,27 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
       </nav>
       {terms.length > 0 && list.length === 0 ? <p className="taste-search-status" role="status">No matches.</p> : null}
       <div className="taste-wall-stage">
-      <div className="personal-taste-rail" id="taste-rail" ref={rail}>
-        {columns.map((column) => <div className="taste-wall-column" key={keys[column.indices[0]]} style={{ gap: `${column.gap}px` }}>
-        {column.indices.map((index) => {
+      <div className="personal-taste-rail" id="taste-rail" ref={rail} data-detail={detailOpen && gap?.float ? "float" : undefined}>
+        {columns.map((column, columnIndex) => {
+        const shift = pushing ? columnIndex < gap.at ? gap.base : gap.base + 1 : 0;
+        const holdsDetail = detailOpen && column.indices.some((index) => artworkKey(visible[index]) === detail);
+        return <div className={`taste-wall-column${holdsDetail ? " has-detail" : ""}`} data-column={columnIndex} key={keys[column.indices[0]]} style={{ gap: `${column.gap}px` }}>
+        {column.indices.map((index, row) => {
           const item = visible[index];
           const count = listeningLabel(item);
-          const itemKey = `${item.kind}-${tasteItemKey(item)}`;
-          const expanded = detailOpen && detail === itemKey;
+          const itemKey = artworkKey(item);
+          const opened = detailOpen && detail === itemKey;
           return (
             <article
               className="personal-taste-card"
               data-kind={item.kind}
               data-taste-key={itemKey}
-              data-detail-open={expanded}
+              data-detail-open={opened}
+              data-detail-side={sides.current[itemKey] ?? "right"}
+              data-row={row}
+              data-receded={receded.includes(itemKey) || undefined}
+              data-stack-end={row === column.indices.length - 1}
+              style={pushing && row === gap.row ? { "--taste-shift": shift } : undefined}
               tabIndex={0}
               key={itemKey}
               aria-label={`${item.title}${item.creator ? `, ${item.creator}` : ""}. ${listeningDescription(item)}`}
@@ -353,17 +418,16 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
               }}
             >
               <span className="personal-taste-art">
-                <TasteArtwork item={item} />
+                <TasteArtwork item={item} expanded={expanded} />
               </span>
-              <div className={`personal-taste-detail-shell${expanded ? " is-open" : ""}`} aria-hidden={!expanded} inert={!expanded}
+              <div className={`personal-taste-detail-shell${opened ? " is-open" : ""}`} aria-hidden={!opened} inert={!opened}
                 style={{ "--hover-detail-accent": `rgb(${groups.find(([id]) => id === item.kind)[2]})` }}>
-                <div className="taste-detail-clip">
-                  <div className="personal-taste-detail" id={expanded ? "taste-detail" : undefined}>
-                    <div className="taste-detail-copy">
-                      <strong>{item.title}</strong>
-                      {item.creator ? <span>{item.creator}</span> : null}
-                      {count ? <p className="personal-taste-detail-count"><strong>{count.value}</strong> {count.label}</p> : null}
-                    </div>
+                <div className="personal-taste-detail" id={opened ? "taste-detail" : undefined}>
+                  <div className="taste-detail-copy">
+                    <strong>{item.title}</strong>
+                    {item.creator ? <span>{item.creator}</span> : null}
+                    {count ? <p className="personal-taste-detail-count"><strong>{count.value}</strong> {count.label}</p>
+                      : kindLabels[item.kind] ? <p className="personal-taste-detail-kind">{kindLabels[item.kind]}</p> : null}
                   </div>
                 </div>
               </div>
@@ -375,13 +439,11 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts }) {
             </article>
           );
         })}
-        </div>)}
-        {visible.length < list.length ? (
-          <button className="taste-load-more" type="button" ref={more} onClick={() => setVisibleCount((count) => count + 36)}>
-            More {terms.length ? "results" : category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
-          </button>
-        ) : null}
+        </div>;
+        })}
+        {expanded ? null : loadMore}
       </div>
+      {expanded ? loadMore : null}
       </div>
       {(category === "music" || searchOpen) && (loading || loadError) ? <p className="taste-load-status" role="status">
         {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
