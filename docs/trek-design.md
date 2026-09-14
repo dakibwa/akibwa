@@ -112,27 +112,30 @@ perspective and much less text and interface on 5 September 2026.
   original notes and day metrics, actual record artwork and journey context.
   Do not bring back a permanent journal card, top statistics, chapter strip,
   record dock or a collection of reset, resume, zoom and follow buttons.
-- **Auto** is the default: one continuous trip of about ten minutes. Never skip
+- **Auto** is the default: one continuous trip of about fifteen minutes. Never skip
   to selected highlights or reset the camera at country/day boundaries. Move quickly across
   long open stretches, then slow for settlements, large mountains, woodland,
   rivers/lakes and the mapped landmarks. Use the existing terrain profile and
   map features; these are presentation heuristics, not a claim to know which
   view the traveller personally found beautiful. Anticipate the approaching
-  scenery and ease speed changes. At faster paces, gradually widen the camera
-  rail, look farther ahead and rise to keep the route readable. Slow scenery
-  brings the view closer again. Retain bounded turns and acceleration; apply
-  bend/alignment limits to this broader rail so minor road zigzags do not turn
-  the trip into an hour. A peripheral tile request must not continuously throttle
-  travel; keep the last coherent map context and prefetch along the route.
-  Calibrate Auto's motion clock against a complete browser run with live map
-  context; it scales travel and camera easing together. Photos keep their real
-  elapsed viewing time. Manual speeds use their own clock.
+  scenery and ease speed changes. Auto holds a broad camera rail at five times
+  the close-view scale, with a steady 48° pitch and restrained landmark glances.
+  Scene speed changes do not zoom or move this rail. The slower manual paces
+  retain closer views; changing pace eases the scale over six seconds. Keep
+  bend/alignment limits so the view can anticipate turns. A peripheral tile
+  request must not continuously throttle travel; keep the last coherent map
+  context and prefetch along the route and across the landscape in view.
+  Calibrate Auto against a complete browser run with live map context. Its rate
+  affects route travel only; camera damping and photo display use real seconds.
   Keep a quiet “Auto” label on the existing speed button, without changing
   numbers or extra on-screen explanations. The fixed ¼×, 1×, 2×, 4× and 8×
   settings remain in the same menu and button cycle; manual choices hold their
   requested pace subject to the existing camera limits. Changing modes preserves
-  playback and position. These are presentation speeds, not walking measurements.
-  The opening gives the approximate ten-minute duration. The date picker shows
+  playback and position. A faster, wider selection retains the previous travel
+  allowance until the eased camera fits, then accelerates normally; pausing keeps
+  this protection and date preparation clears it after fitting the new view.
+  These are presentation speeds, not walking measurements.
+  The opening gives the approximate fifteen-minute duration. The date picker shows
   recorded calendar dates with their countries, falling back to the numbered day
   when its date is unknown. Selecting a date or scrubbing pauses at that point;
   slower pace choices remain in effect. Back to Paris restores default Auto.
@@ -292,7 +295,7 @@ Cache only public OpenFreeMap vector tiles and Mapzen DEM tiles. Reuse them via
 Cache Storage across visits, expire them after seven days, and fall back to
 ordinary fetching if persistent storage is unavailable. Keep a 32-tile memory
 cache and prune the disk cache to 256 tiles in batches, with no stored tile above
-512 KiB. Prioritise the next 4 km and nearby terrain, then look ahead 12–40 km according to playback speed, with at most 192 planned tiles and three speculative requests at a
+512 KiB. Prepare a coarse terrain and vector backdrop across the whole viewport first (at most 72 tiles, reducing the level for larger views). Prioritise the next 4 km and nearby terrain, then look ahead 12–40 km according to playback speed, with at most 192 planned tiles and three speculative requests at a
 time; do not download every zoom level of Europe or promise the entire journey
 works offline. Use the actual fractional camera zoom to select the vector and 256 px terrain levels. Reuse overlapping requests when the route advances; abort abandoned speculative requests after a seek without cancelling a foreground consumer. Prepare nearby tiles while the initial ground view loads, then prepare and settle the paper scenery at the final camera before enabling Play. These bounds reduce pop-in but do not promise that slow networks can never reveal a new tile.
 
@@ -312,7 +315,7 @@ animation-frame clock.
 continuous distance sampling and day boundaries. `journey-camera.js` owns the
 camera rail, forward heading, turn acceleration and bend-aware pace.
 `journey-traveller.js` owns the map, preparation, terrain clearance, clock, menu and photographs;
-`journey-pace.js` owns automatic viewing pace. It samples the existing 200 m ground profile for height and local relief, and reads nearby settlement, residential, woodland and water geometry from already loaded map tiles. It looks ahead along the actual route, slows around the ten mapped landmarks, and bounds acceleration and braking. Map queries are throttled, geometry is prepared outside the animation loop, and sampled scene/terrain caches are bounded. Pending scenery tiles limit acceleration. It adds no provider requests or public route data. `scripts/check-trek-pace.mjs` checks geographic triggers, clearings, departure, whole-route bounds and smooth speed changes.
+`journey-pace.js` owns automatic viewing pace. It samples the existing 200 m ground profile for height and local relief, and reads nearby settlement, residential, woodland and water geometry from already loaded map tiles. It looks ahead along the actual route, slows around the ten mapped landmarks, and bounds acceleration and braking. Map queries are throttled, geometry is prepared outside the animation loop, and sampled scene/terrain caches are bounded. It adds no provider requests or public route data. `scripts/check-trek-pace.mjs` checks geographic triggers, clearings, departure, whole-route bounds and smooth speed changes.
 
 `journey-traveller.css` owns the presentation. `journey-wayfinding.js` owns the
 inset and settlement selection; `data/trek-landmarks.json` owns reviewed landmark
@@ -350,12 +353,11 @@ Mapped orchard/nursery polygons may contain up to 500 smaller broadleaf trees in
 
 Scenery is limited to 6,500 trees, 1,800 custom roofs and 2.4 million custom
 vertices near the view, reserving 30,000 vertices for landmarks, with a distant
-fade. Woodland uses a 32 m grid in projected map space; the varying crown shapes
+fade. Woodland uses a fixed 32 m grid within 2 km and a nested 128 m grid farther away in projected map space. Share the tree budget across mapped woodland by geographic seed, rather than keeping only the nearest trees in a dense disk. The scenery radius expands smoothly from 4.6 to 14 km with the view; soft edge fading and the full-map canopy print carry distant woodland. The varying crown shapes
 and optional underside folds remain seeded per tree, without camera-dependent
 shape changes. Ground canopy print carries forest texture into the distance.
 New scenery objects ease in over 700 ms while existing objects retain their reveal times across rebuilds. Build loaded foreground geometry even while future tiles are still loading. A distant seek invalidates an unfinished old scene, and explicit preparation includes the reveal before Play.
-Geometry is rebuilt in short chunks after movement or source changes,
-never by querying every feature on every frame. Reuse the map's WebGL context,
+Coalesce movement and source changes into at most one rebuild per 1.2 seconds; explicit date preparation remains immediate. Yield candidate scans, spatial indexing, geometry and ground folds in roughly 5 ms chunks. Never query every feature on every frame. Reuse the map's WebGL context,
 use a local coordinate origin for precision and discard stale in-flight builds
 after a new destination. Upload the lit canopy vertices in 192 seeded variants
 once, then retain their WebGL buffers for the visit. WebGL 2 instancing draws the
@@ -396,34 +398,36 @@ metadata, original metrics, generated asset hashes and the continuous route.
 `scripts/check-trek-continuity.mjs` covers all joins and day boundaries, the
 largest gap, bounded rounding and source non-mutation.
 `scripts/check-trek-camera.mjs` checks camera continuity across the whole route,
-proximity to the path and difficult turns at every pace. The camera uses a
-weighted 880 m neighbourhood for its reference point and a broader 4.5 km heading chord
-(1,125 m behind to 3,375 m ahead), following the valley through short zigzags
-and loops without circling with the local path.
-A damped turn settles without swinging back, bounded by 12°/s rotation and
-6°/s² acceleration. Pitch changes by at most 3°/s, with a 36° target over dense
-bends and a 34° floor for combined landmark framing. Playback brakes before
-upcoming bends using a 9°/s curvature budget, then slows further when the view
-needs to catch up. Height planning uses continuous interpolation of the cached
-200 m elevation profile, with a 200 m neighbourhood for the ground reference
-and an envelope from 2.2 km behind to 3.2 km ahead for rising terrain. Aim
-850 m above that envelope, adding
-up to 1,100 m where the route folds back on itself, with additional height where
-the viewport needs it to fit the nearby path. Fit 13 points along 1.4 km on
-straight sections, widening smoothly to 2.7 km around loops. Offset the eye
-behind that frame, with room above the controls in portrait and short landscape
-layouts. Ease vertical acceleration
-within 65 m/s² and movement within 180 m/s upward and 110 m/s downward; retain a
-420 m defensive floor. Continuous Alpine checks must clear the ground without
-needing that clamp. These are presentation camera speeds, not walking speeds.
-Solve the complete camera transform from the eye and a target at mapped ground
-height; changing pitch after solving zoom and centre moves the eye and can cause
-clipping. Rebase the reference elevation every frame from the stable profile.
-Do not drive it directly from the currently rendered DEM: day 31 exposed brief
-600-to-1,234 m lookup changes across a few metres of travel, causing sharp lifts
-and zoom changes. Keep rendered terrain queries as a separate clearance check.
-Retaining an old mountain reference after descending also forces a distant zoom
-and enlarges the draped roads and route.
+proximity to the path and difficult turns at every pace. The close camera uses
+an 880 m weighted neighbourhood and a 4.5 km heading chord (1,125 m behind to
+3,375 m ahead); multiply both by the selected viewing scale. Auto keeps that
+scale at five, following the broad valley direction rather than each road bend.
+Turns ease within 12°/s and 6°/s², with a 9°/s curvature budget for travel.
+Auto keeps a 48° pitch; close manual views can pitch down over bends, changing
+by at most 3°/s. Landmark glances have reduced strength in Auto.
+
+Fit 13 nearby route points inside the usable viewport, above the controls.
+Anticipate terrain using the fixed 200 m elevation profile, with 850 m times the
+viewing scale above the terrain envelope and extra clearance over winding paths.
+Smooth the fitted horizontal centre, ground reference and viewing distance
+separately. The former raw bounds centre and raw ground reference could jolt the
+view even while heading and eye altitude were eased. Centre and reference use
+critically damped motion; logarithmic viewing distance is limited to 0.06/s and
+0.02/s², keeping zoom proportional and gentle at both close and broad scales.
+Solve the complete eye-to-target transform from that smoothed frame. Do not
+change pitch after solving zoom and centre. Keep the 420 m defensive floor and
+verify continuous Alpine playback clears the terrain without needing it.
+Visible DEM lookups are diagnostics, not the camera reference; tile seams must
+not cause a lift or zoom. The reference follows the cached profile through a
+long descent instead of retaining a stale mountain height.
+
+The animation clock updates the map at at most about 60 Hz, leaving time for
+tile and scenery work on 120 Hz displays. Place names materialise map feature
+geometry once per refresh and refresh at most once per second. The whole-trip
+regression checks the real endpoint, continuous forward motion, zoom speed and
+acceleration, terrain clearance and similar duration at 60/30/10 fps. Browser
+verification additionally inspects sustained travel, wide forest coverage,
+frame stalls and the actual full-route duration with live settlement detail.
 `npm run check:trek:dom` covers actual terrain readiness, quiet controls,
 steep viewpoints and sustained camera movement, photographs, original records,
 continuous playback and heading changes, automatic-photo
@@ -434,7 +438,7 @@ the day-17 loop, static country fills and the inset at phone widths.
 reported tile seams, the Alpine descent, extra height around the tight loop,
 bounded height and scale changes, rendered terrain clearance and phone framing.
 
-Run the site's fast gate before release. After Pages succeeds, compare the live
+Run the site's fast gate before release. After the Cloudflare deploy succeeds, compare the live
 HTML and versioned runtime assets and inspect the desktop and phone landscape.
 Include a sustained descent into a valley without changing days: resetting the
 camera between viewpoints can hide the stale elevation and enlarged texture bug.

@@ -7,6 +7,23 @@
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const tileAt=([lon,lat],z)=>{const n=2**z;return [Math.floor((lon+180)/360*n),Math.floor((1-Math.asinh(Math.tan(lat*Math.PI/180))/Math.PI)/2*n)];};
   const urlFor=(template,z,x,y)=>template.replace('{z}',z).replace('{x}',x).replace('{y}',y);
+  function landscape(bounds,vector,zoom=13){
+    if(!bounds)return [];
+    // Prepare a coarse, complete terrain backdrop across the viewing window,
+    // then let the route corridor supply finer detail. Reduce the level for a
+    // large view instead of turning a broad camera into an unbounded download.
+    let z=clamp(Math.floor(zoom)-1,0,13),a,b;
+    do{
+      a=tileAt([clamp(bounds[0][0],-180,179.999),clamp(bounds[1][1],-85,85)],z);
+      b=tileAt([clamp(bounds[1][0],-180,179.999),clamp(bounds[0][1],-85,85)],z);
+      if((b[0]-a[0]+1)*(b[1]-a[1]+1)<=36||z===0)break;
+      z--;
+    }while(true);
+    const tiles=[];
+    for(let x=a[0];x<=b[0];x++)for(let y=a[1];y<=b[1];y++)tiles.push([x,y]);
+    tiles.sort((p,q)=>Math.hypot(p[0]-(a[0]+b[0])/2,p[1]-(a[1]+b[1])/2)-Math.hypot(q[0]-(a[0]+b[0])/2,q[1]-(a[1]+b[1])/2));
+    return tiles.flatMap(([x,y])=>[urlFor(DEM,z,x,y),...(vector?[urlFor(vector,z,x,y)]:[])]);
+  }
   function corridor(path,from,to,vector,zoom=13,radius=1600){
     const urls=new Set(),start=clamp(from,0,path.total),end=clamp(to,start,path.total),z=clamp(Math.ceil(zoom),11,14),dem=clamp(Math.round(zoom+1),10,14);
     // Start on the route and add the nearest neighbours first. The visible
@@ -108,12 +125,13 @@
       }));
       pump();await Promise.all(jobs);return {done,failed,cancelled:id!==generation};
     }
-    function ahead(path,distance,vector,zoom,speed=0){
+    function ahead(path,distance,vector,zoom,speed=0,bounds=null){
       const horizon=lookAhead(speed),key=[Math.floor(distance/1600),Math.ceil(zoom),Math.round(zoom+1),Math.floor(horizon/4000)].join(':');
       if(key===epoch||now()-lastAhead<600)return;epoch=key;lastAhead=now();
+      if(typeof bounds==='function')bounds=bounds();
       // Current scenery wins over the far end of the look-ahead. Successive
       // plans retain shared work and cancel only tiles outside the new view.
-      void warm([...corridor(path,distance,distance+4000,vector,zoom),...corridor(path,distance-2000,distance,vector,zoom,1000),...corridor(path,distance+4000,distance+horizon,vector,zoom,0)]);
+      void warm([...landscape(bounds,vector,zoom),...corridor(path,distance,distance+4000,vector,zoom),...corridor(path,distance-2000,distance,vector,zoom,1000),...corridor(path,distance+4000,distance+horizon,vector,zoom,0)]);
     }
     const cancel=()=>{
       generation++;epoch='';lastAhead=-Infinity;
@@ -123,5 +141,5 @@
     const flush=()=>pruning;
     return {read,install,transformRequest,warm,ahead,cancel,flush,status:()=>({persistent,hits,network,errors,aborted,pending:queued.size+warming.size,memory:memory.size}),name:NAME};
   }
-  const api={create,corridor,lookAhead,tileAt,urlFor,DEM,allowed};if(typeof module!=='undefined')module.exports=api;else host.TrekCache=api;
+  const api={create,corridor,landscape,lookAhead,tileAt,urlFor,DEM,allowed};if(typeof module!=='undefined')module.exports=api;else host.TrekCache=api;
 })(typeof window==='undefined'?globalThis:window);

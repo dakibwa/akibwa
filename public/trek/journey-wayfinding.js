@@ -44,7 +44,7 @@
       ink.fillText('Paris',first[0]-10,first[1]-9);ink.fillText('Sofia',last[0]-19,last[1]+15);
     }
     drawAtlas();
-    let place=null,cached=[],lastScan=-Infinity,lastDraw=-Infinity,lastDistance=0,lastHeading=0,lastCountry='',destroyed=false;
+    let place=null,cached=[],lastScan=-Infinity,lastDraw=-Infinity,lastDistance=0,lastHeading=0,lastCountry='',destroyed=false,lastRefresh=-Infinity,refreshTimer=0;
     function loadFlag(country){
       if(!flag)return;
       flag.hidden=!flags[country];
@@ -53,7 +53,12 @@
     const fallback=landmarks.map(l=>({properties:{name:l.place,class:'city'},geometry:{type:'Point',coordinates:l.point}}));
     function refresh(){
       if(destroyed||!map.isStyleLoaded())return;
-      cached=map.querySourceFeatures('openmaptiles',{sourceLayer:'place'});lastScan=-Infinity;
+      const wait=1000-(performance.now()-lastRefresh);
+      if(wait>0){if(!refreshTimer)refreshTimer=setTimeout(()=>{refreshTimer=0;refresh();},wait);return;}
+      lastRefresh=performance.now();
+      // Materialise each point once. MapLibre's feature geometry is a lazy
+      // decoder; reading it again for every moving frame creates avoidable work.
+      cached=map.querySourceFeatures('openmaptiles',{sourceLayer:'place'}).map(f=>({properties:f.properties,geometry:f.geometry}));lastScan=-Infinity;
       updatePlaces(lastDistance);
     }
     function updatePlaces(distance){
@@ -80,7 +85,7 @@
       ctx.beginPath();ctx.moveTo(0,-7);ctx.lineTo(4.5,4.5);ctx.lineTo(0,2.5);ctx.lineTo(-4.5,4.5);ctx.closePath();ctx.strokeStyle='#fff9e9';ctx.lineWidth=2.5;ctx.stroke();ctx.fillStyle='#a33443';ctx.fill();ctx.restore();
     }
     map.on('idle',refresh);update(0,0,true);
-    return {update,refresh,resetPlace:()=>{place=null;lastScan=-Infinity;},status:()=>({place:place?.name||null,point:path.sample(lastDistance).point,heading:lastHeading,country:lastCountry,flag:flags[lastCountry]||null,flagReady:!!flag?.complete&&!!flag?.naturalWidth}),destroy:()=>{destroyed=true;map.off('idle',refresh);}};
+    return {update,refresh,resetPlace:()=>{place=null;lastScan=-Infinity;},status:()=>({place:place?.name||null,point:path.sample(lastDistance).point,heading:lastHeading,country:lastCountry,flag:flags[lastCountry]||null,flagReady:!!flag?.complete&&!!flag?.naturalWidth}),destroy:()=>{destroyed=true;clearTimeout(refreshTimer);map.off('idle',refresh);}};
   }
   const api={create,nearestPlace,flags,project,metres};
   if(typeof module!=='undefined')module.exports=api;host.TrekWayfinding=api;

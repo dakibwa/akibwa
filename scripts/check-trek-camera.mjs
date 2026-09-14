@@ -15,6 +15,26 @@ const originalProfile=JSON.stringify(profile),{sample}=require('../public/trek/j
 const heightAt=distance=>sample(profile,distance,false);
 const paces=[400,1600,3200,6400,12800];
 
+// A bend can replace the extrema used by the frame's bounding box, and a
+// terrain slope can change the reference height quickly. Neither may bypass
+// the damping just because the heading and eye altitude themselves are eased.
+for(const dt of [1/60,1/30,.1]){
+  const before={focus:[13,47],base:600,clearance:5000},after={focus:[13.02,47.01],base:1200,clearance:12000};
+  let state=camera.steadyFrame(null,before,dt);
+  for(let seconds=0;seconds<90;seconds+=dt){
+    const next=camera.steadyFrame(state,after,dt);
+    assert(next.focus[0]>=state.focus[0]-1e-9&&next.focus[0]<=after.focus[0]+1e-9,'a new framing centre glides without overshoot');
+    assert(next.base>=state.base-1e-6&&next.base<=after.base+1e-6,'a new ground reference glides without overshoot');
+    assert(Math.abs(next.zoomVelocity)<=.060001&&Math.abs(next.zoomVelocity-state.zoomVelocity)<=.02*dt+1e-9,'viewing distance has bounded speed and acceleration');
+    if(seconds===0){
+      assert(metres(state.focus,next.focus)<metres(before.focus,after.focus)*.04*(dt/.1)**2,'a changed route bound eases into motion instead of jumping sideways');
+      assert(next.base-before.base<3,'a new elevation reference does not instantly rebase the camera');
+    }
+    state=next;
+  }
+  assert(Math.abs(state.clearance-after.clearance)<1&&metres(state.focus,after.focus)<.01,'the smoothed view still settles at the requested frame');
+}
+
 for(let d=0;d<=path.total;d+=250){
   const p=camera.pointAt(path,d),next=camera.pointAt(path,d+1),heading=camera.headingAt(path,d);
   assert(p.every(Number.isFinite)&&Number.isFinite(heading));
@@ -65,20 +85,24 @@ let largestRise=0,smallestClearance=Infinity;
 for(const pace of paces){
   // Traverse the mountain descent, the reported faults and the next day without
   // resetting height. A fresh camera at each waypoint would conceal a lurch.
-  let distance=path.dayDistance(30,0),renderedDistance=distance,heading=camera.headingAt(path,distance),velocity=0,speed=0,height=null,verticalVelocity=0,elapsed=0,step=0;
+  const scale=camera.scaleForPace(pace);
+  let distance=path.dayDistance(30,0),renderedDistance=distance,heading=camera.headingAt(path,distance,scale),velocity=0,speed=0,height=null,view=null,elapsed=0,step=0;
   const end=path.dayDistance(32,.1);
   while(distance<end&&elapsed<1000){
     const dt=[1/60,1/30,.1][step++%3];
-    speed+=(camera.speedLimit(path,distance,pace,heading)-speed)*(1-Math.exp(-dt/.85));
+    speed+=(camera.speedLimit(path,distance,pace,heading,scale)-speed)*(1-Math.exp(-dt/.85));
     distance=Math.min(end,distance+speed*dt);renderedDistance+=(distance-renderedDistance)*(1-Math.exp(-dt/.6));
-    const turn=camera.turn(heading,velocity,camera.headingAt(path,renderedDistance),dt);heading=turn.heading;velocity=turn.velocity;
-    const framing=camera.terrainFrame(path,renderedDistance,heightAt),vertical=camera.rise(height,verticalVelocity,framing.height,dt);
+    const turn=camera.turn(heading,velocity,camera.headingAt(path,renderedDistance,scale),dt);heading=turn.heading;velocity=turn.velocity;
+    const framing=camera.terrainFrame(path,renderedDistance,heightAt,scale);
+    const fit=camera.routeFrame(path,renderedDistance,heightAt,heading,48,{width:390,height:844,top:90,bottom:230},framing.winding,scale);
+    const previous=view;view=camera.steadyFrame(view,{focus:fit.focus,base:fit.base,clearance:Math.max(framing.height-fit.base,fit.clearance)},dt);
+    const nextHeight=view.base+view.clearance;
     if(height!==null){
-      const rise=(vertical.height-height)/dt;largestRise=Math.max(largestRise,Math.abs(rise));
-      assert(rise>=-110.001&&rise<=180.001,'height changes remain bounded during a continuous mountain crossing');
-      assert(Math.abs(vertical.velocity-verticalVelocity)<=65*dt+.0001,'the climb and descent ease their acceleration');
+      largestRise=Math.max(largestRise,Math.abs(nextHeight-height)/dt);
+      assert(Math.abs(Math.log(view.clearance/previous.clearance))/dt<=.060001,'manual paces retain bounded zoom during a continuous mountain crossing');
+      assert(Math.abs(view.zoomVelocity-previous.zoomVelocity)<=.02*dt+.0001,'manual pace changes retain eased zoom acceleration');
     }
-    height=vertical.height;verticalVelocity=vertical.velocity;elapsed+=dt;
+    height=nextHeight;elapsed+=dt;
     smallestClearance=Math.min(smallestClearance,height-framing.ground);
     assert(height-framing.ground>750,'anticipation clears the ridge without needing an emergency height clamp');
   }

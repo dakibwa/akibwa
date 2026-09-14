@@ -2,9 +2,10 @@
 (function(host){
   'use strict';
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n)),smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
-  // Calibrated against the complete route with live map detail. Scale the
-  // motion clock together, preserving the rhythm between cruise and scenery.
-  const playbackRate=1.25;
+  // Calibrated from the full 13m25s browser run at rate 1: leave a little more
+  // room for the landscape, targeting about fifteen minutes with live scenery.
+  // This affects route travel only; camera damping always uses real seconds.
+  const playbackRate=.9;
   const project=([lon,lat])=>[6378137*lon*Math.PI/180,-6378137*Math.asinh(Math.tan(lat*Math.PI/180))];
   const metres=(a,b)=>111195*Math.hypot((a[0]-b[0])*Math.cos((a[1]+b[1])*Math.PI/360),a[1]-b[1]);
   function inRing(p,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])inside=!inside;}return inside;}

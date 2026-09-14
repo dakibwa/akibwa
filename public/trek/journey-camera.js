@@ -8,6 +8,33 @@
   const metres=(a,b)=>111195*Math.hypot((b[0]-a[0])*Math.cos((a[1]+b[1])*Math.PI/360),b[1]-a[1]);
   const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
   const scaleForSpeed=speed=>1+7*smooth((speed-600)/6400);
+  // Auto holds a broad landscape view. Changes in scene pace must not also
+  // move the camera rail, its horizon and its zoom at the same time.
+  const scaleForPace=pace=>pace===0?5:scaleForSpeed(pace);
+  function glide(current,velocity,wanted,dt,time){
+    const frequency=2/time,offset=current-wanted,term=velocity+frequency*offset,decay=Math.exp(-frequency*dt);
+    return {value:wanted+(offset+term*dt)*decay,velocity:(velocity-frequency*term*dt)*decay};
+  }
+  function steadyFrame(current,wanted,dt){
+    if(!current)return {...wanted,focus:[...wanted.focus],focusVelocity:[0,0],baseVelocity:0,zoomVelocity:0};
+    // The route bounds can change which vertex defines their centre. Smooth
+    // that centre, the ground reference and the viewing distance independently.
+    // Smoothing eye altitude alone leaves those other sources of visible jolts.
+    const focus=wanted.focus.map((v,i)=>glide(current.focus[i],current.focusVelocity[i],v,dt,.75));
+    const base=glide(current.base,current.baseVelocity,wanted.base,dt,2);
+    const error=Math.log(wanted.clearance/current.clearance);
+    const acceleration=clamp(error*.64-current.zoomVelocity*1.6,-.02,.02);
+    const zoomVelocity=clamp(current.zoomVelocity+acceleration*dt,-.06,.06);
+    return {focus:focus.map(v=>v.value),focusVelocity:focus.map(v=>v.velocity),base:base.value,baseVelocity:base.velocity,
+      clearance:current.clearance*Math.exp((current.zoomVelocity+zoomVelocity)*dt/2),zoomVelocity};
+  }
+  function paceLimit(transition,requested,scale,clearance,required){
+    if(!transition)return {speed:requested,settled:true};
+    // A selected faster view needs time to widen. Keep the previous travel
+    // allowance until the actual eased frame can support the new rail.
+    const settled=scale>=transition.scale*.98&&Number.isFinite(clearance)&&Number.isFinite(required)&&clearance>=required*.96;
+    return {speed:settled?requested:Math.min(requested,transition.limit),settled};
+  }
   function pointAt(path,distance,scale=1){
     const weights=[1,4,6,4,1],point=[0,0];
     for(let i=0;i<weights.length;i++){
@@ -63,16 +90,6 @@
     }
     return {focus,base,clearance:clearance*1.12,bias,samples};
   }
-  function rise(current,velocity,wanted,dt,scale=1){
-    if(current===null)return {height:wanted,velocity:0};
-    const error=wanted-current;
-    if(Math.abs(error)<.05&&Math.abs(velocity)<.05)return {height:wanted,velocity:0};
-    // Ease vertical acceleration too, and release height slowly after a ridge.
-    const frequency=error>0?1.25:.65;
-    const acceleration=clamp(error*frequency*frequency-2*frequency*velocity,-65*scale,65*scale);
-    velocity=clamp(velocity+acceleration*dt,-110*scale,180*scale);
-    return {height:current+velocity*dt,velocity};
-  }
   function landmarkFrame(landmarks,point,heading){
     const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
     let chosen=null;
@@ -107,6 +124,6 @@
     const alignment=heading===null?1:clamp(1-Math.abs(angle(heading,a))/60,.16,1);
     return Math.max(35,corner*alignment);
   }
-  const api={scaleForSpeed,pointAt,headingAt,terrainFrame,routeFrame,rise,landmarkFrame,turn,speedLimit,ahead};
+  const api={scaleForSpeed,scaleForPace,glide,steadyFrame,paceLimit,pointAt,headingAt,terrainFrame,routeFrame,landmarkFrame,turn,speedLimit,ahead};
   if(typeof module!=='undefined')module.exports=api;else host.TrekCamera=api;
 })(typeof window==='undefined'?globalThis:window);
