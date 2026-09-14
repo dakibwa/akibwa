@@ -13,7 +13,13 @@
 https://:version.:subdomain.workers.dev/*
   X-Robots-Tag: noindex
 
-/trek/prepared/*
+/trek/prepared/*.pbf
+  Cache-Control: public, max-age=31536000, immutable
+
+/trek/prepared/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/trek/prepared/*.scene.gz
   Cache-Control: public, max-age=31536000, immutable
 
 /trek/prepared/manifest.json
