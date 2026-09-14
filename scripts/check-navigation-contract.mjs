@@ -96,12 +96,19 @@ requireText(hero, "3200", "the historical name flip keeps its initial timing");
 requireText(hero, "visibilitychange", "the name timer must pause in hidden tabs");
 requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: clamp(24px, 3vw, 36px)"]);
 requireRuleText(".personal-taste-rail {", ["grid-auto-flow: column", "overflow-x: auto"]);
-for (const height of [104, 132, 198]) for (const viewportHeight of [650, 900]) {
-  const options = { viewportHeight, mixed: false };
-  const columns = stackArtwork(Array(50).fill(height), options);
-  if (columns.length !== 13 || !columns.every((column, index) => column.indices.length === (index === 12 ? 2 : 4))) fail("equal-sized Taste covers must stack four high, with only the final column shorter");
-  if (new Set(columns.slice(0, 12).map(column => column.height)).size !== 1) fail("complete four-high columns must finish flush");
+for (const height of [104, 132, 198]) for (const availableHeight of [330, 480, 640]) {
+  const columns = stackArtwork(Array(50).fill(height), { availableHeight, visibleColumns: 9 });
+  if (columns.some(column => column.height > availableHeight)) fail("ranked Taste covers must fit the available shelf height");
+  if (columns.length <= 9) fail("long Taste shelves must extend sideways beyond the available width");
+  if (new Set(columns.slice(0, -1).map(column => column.height)).size !== 1) fail("complete equal-sized columns must finish flush");
 }
+for (const [size, height] of [[26,198], [28,176], [25,132]]) {
+  const columns = stackArtwork(Array(size).fill(height), { availableHeight: 600, visibleColumns: 9 });
+  if (columns.length <= 9 || columns.some(column => column.indices.length >= 4)) fail("shorter TV, game and podcast shelves must spread across the width instead of making four-high stacks");
+}
+const captionColumns = stackArtwork(Array.from({length: 26}, (_, index) => 198 + (index % 3) * 24), { availableHeight: 460, visibleColumns: 3 });
+if (captionColumns.some(column => column.height > 460)) fail("visible phone captions count towards the shelf height");
+if (stackArtwork([198,198,198], {visibleColumns:9}).length !== 3) fail("short search results must stay in one row");
 for (const size of [1, 3, 48, 50, 84]) for (const captions of [false, true]) {
   const columns = stackArtwork(Array.from({ length: size }, (_, index) => 132 + (captions ? index % 3 * 16 : 0)));
   const readingOrder = Array.from({ length: Math.max(...columns.map(column => column.indices.length)) }, (_, row) => columns.flatMap(column => column.indices[row] === undefined ? [] : [column.indices[row]])).flat();
