@@ -4,7 +4,7 @@ import { Mail, Instagram } from "lucide-react";
 import { useSpotlight } from "./spotlight";
 
 const chapters = [
-  ["projects", "Projects", "#2f88ff"],
+  ["projects", "Projects", "var(--concept-projects)"],
   ["career", "Career", "var(--concept-career)"],
   ["taste", "Taste Library", "var(--concept-archive)"],
 ];
