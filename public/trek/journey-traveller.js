@@ -17,6 +17,7 @@
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,chapters=[],moments=[];
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,placeTimer=0,placeGeneration=0,lastLandmarkScan=-Infinity;
     let scrubbing=false,scrubChanged=false;
+    let tour=null,tourTransition=false,tourGeneration=0;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
@@ -24,11 +25,20 @@
     function setPace(value){
       const options=[...$('pace').options],selected=options.findIndex(option=>+option.value===value);
       if(selected<0)return;
+      const interrupted=cancelTourTransition();
       pace=value;$('pace').value=value;
+      tour?.seek(distance);
       const label=options[selected].dataset.label,next=options[(selected+1)%options.length].dataset.label;
-      text('speed-label',label);$('speed-cycle').setAttribute('aria-label',(value===0?'Automatic pace':'Playback speed '+label)+'. Change to '+next+'.');
-      $('speed-cycle').title=(value===0?'Auto · follow the scenery':'Speed '+label)+' · click for '+next;
+      text('speed-label',label);$('speed-cycle').setAttribute('aria-label',(value===-1?'Highlights tour':value===0?'Automatic pace':'Playback speed '+label)+'. Change to '+next+'.');
+      $('speed-cycle').title=(value===-1?'Highlights tour':value===0?'Auto · follow the full route':'Speed '+label)+' · click for '+next;
+      if(interrupted)prepareCamera();
     }
+    function cancelTourTransition(){
+      const interrupted=tourTransition;++tourGeneration;tourTransition=false;
+      $('tour-transition').hidden=true;$('tour-transition').classList.remove('visible');
+      return interrupted;
+    }
+    function leaveTour(){cancelTourTransition();if(pace===-1)setPace(0);}
     setPace(pace);
     function updateMarkContrast(){
       const now=performance.now();if(now-lastContrast<280)return;lastContrast=now;
@@ -90,19 +100,21 @@
       const generation=flashGeneration;setTimeout(()=>{if(generation===flashGeneration)flash.hidden=true;},reduced?0:1150);
     }
     function begin(){
-      if(!ready||failed)return;
+      if(!ready||failed||tourTransition)return;
       if(!started)wayfinding?.resetPlace();
       if(path&&distance>=path.total-.01){reset();autoBegin=true;return;}
       started=true;following=true;$('journey-minimap').hidden=false;$('opening').hidden=true;$('ending').hidden=true;$('journey-controls').hidden=false;
       document.body.classList.remove('is-exploring');setPlaying(true);updateUI(true);
     }
     function reset(){
+      cancelTourTransition();setPace(-1);tour?.seek(0);
       setPlaying(false);dismissFlash();menu.close();started=false;$('journey-minimap').hidden=true;placeChanged(null);wayfinding?.resetPlace();distance=0;renderedDistance=0;heading=null;eyeHeight=null;
       day=1;fraction=0;lastUI=-1;lastFlashDay=-1;photoCooldown=0;following=true;
       $('opening').hidden=false;$('ending').hidden=true;$('journey-controls').hidden=true;document.body.classList.remove('is-exploring');
       history.replaceState(null,'',location.pathname);updateUI(true);prepareCamera();invalidate();
     }
     function visit(n,t=.5){
+      leaveTour();
       n=clamp(n,1,67);setPlaying(false);dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;day=n;fraction=t;
       if(path)distance=path.dayDistance(n,t);else positionPending={day:n,t};
       renderedDistance=distance;heading=null;eyeHeight=null;lastFlashDay=-1;photoCooldown=0;
@@ -218,13 +230,28 @@
         $('map-status').hidden=true;document.body.classList.remove('is-loading');
         lastTime=0;updateUI(true);invalidate();
         if(started)showFlash();
-        tileCache.ahead(path,distance,vectorTemplate,map.getZoom(),pace||pacing?.status().target||0);
+        tileCache.ahead(path,distance,vectorTemplate,map.getZoom(),pace>0?pace:pacing?.status()?.target||0);
         if(autoBegin){autoBegin=false;begin();}
       }catch(error){
         if(generation!==warmGeneration||failed)return;
         tileCache.cancel();ready=false;setPlaying(false);text('load-message','This stretch could not finish loading. Please try again.');
         $('loading-progress').hidden=true;$('retry-load').hidden=false;
       }finally{clearTimeout(preparationTimer);}
+    }
+    async function nextTourStage(next){
+      const generation=++tourGeneration,veil=$('tour-transition');tourTransition=true;ready=false;
+      dismissFlash();placeChanged(null);wayfinding?.resetPlace();
+      text('tour-place',namedDay(path.dayAt(next.distance).day).c);
+      veil.hidden=false;requestAnimationFrame(()=>{if(generation===tourGeneration)veil.classList.add('visible');});
+      await new Promise(resolve=>setTimeout(resolve,reduced?0:450));
+      if(generation!==tourGeneration)return;
+      distance=next.distance;renderedDistance=distance;heading=null;eyeHeight=null;lastUI=-1;lastFlashDay=-1;photoCooldown=0;
+      updateUI(true);await prepareCamera();
+      if(generation!==tourGeneration)return;
+      tourTransition=false;veil.classList.remove('visible');
+      setTimeout(()=>{if(generation===tourGeneration)veil.hidden=true;},reduced?0:450);
+      if(next.final&&ready){setPlaying(false);day=67;$('ending').hidden=false;}
+      invalidate();
     }
     function camera(dt,snap=false){
       if(!ready||!following||!path||failed)return;
@@ -269,12 +296,13 @@
     function tick(time){
       frame=0;const elapsed=Math.min(1,Math.max(.001,(time-(lastTime||time-16))/1000)),dt=Math.min(.1,elapsed);lastTime=time;
       if(playing&&path&&ready){
-        const requested=pace||pacing.update(distance).target;
+        const requested=pace>0?pace:Math.min(pacing.update(distance).target,pace===-1?1100:Infinity);
         const desired=TrekCamera.speedLimit(path,distance,requested,heading);
-        travelSpeed=pace===0?TrekPace.advance(travelSpeed,desired,dt):mix(travelSpeed,desired,1-Math.exp(-dt/.85));
-        distance=Math.min(path.total,distance+travelSpeed*dt);photoCooldown+=elapsed;
+        travelSpeed=pace<=0?TrekPace.advance(travelSpeed,desired,dt):mix(travelSpeed,desired,1-Math.exp(-dt/.85));
+        distance=Math.min(pace===-1?tour.boundary():path.total,distance+travelSpeed*dt);photoCooldown+=elapsed;
         if(!flashShown&&photoCooldown>6&&lastFlashDay!==day&&fraction>.12&&fraction<.9)showFlash();
         if(distance>=path.total){setPlaying(false);day=67;$('ending').hidden=false;}
+        else if(pace===-1){const next=tour.advance(elapsed);if(next)void nextTourStage(next);}
       }
       updateUI();const unsettled=camera(dt);
       if(ready&&playing&&following)tileCache?.ahead(path,distance,vectorTemplate,map.getZoom(),travelSpeed);
@@ -295,6 +323,7 @@
         elevation=TrekElevation.create({profile,path,days:data.days,colors:data.colors,canvas:$('elevation-canvas')});
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
         if(positionPending){distance=path.dayDistance(positionPending.day,positionPending.t);renderedDistance=distance;positionPending=null;}
+        tour=TrekTour.create(path);tour.seek(distance);
         // Roads and topography remain; label furniture belongs in the drawer.
         map=new maplibregl.Map({container:'path-map',style:TrekPaper.style(style),center:path.sample(distance).point,zoom:11.5,pitch:60,bearing:140,attributionControl:false,maxPitch:60,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0,maxTileCacheSize:128,pixelRatio:Math.min(devicePixelRatio||1,1.5),transformRequest:tileCache.transformRequest});
         map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);
@@ -351,6 +380,7 @@
     $('speed-cycle').addEventListener('click',()=>{const options=[...$('pace').options],current=options.findIndex(option=>+option.value===pace);setPace(+options[(current+1)%options.length].value);});
     function seek(next){
       if(!path)return;
+      leaveTour();
       if(scrubbing&&!scrubChanged){++warmGeneration;tileCache?.cancel();ready=false;$('play').disabled=true;}
       scrubChanged=true;setPlaying(false);if(flashShown||flashPending)dismissFlash();started=true;$('journey-minimap').hidden=false;placeChanged(null);wayfinding?.resetPlace();following=true;
       distance=next;renderedDistance=distance;heading=null;eyeHeight=null;document.body.classList.remove('is-exploring');$('opening').hidden=true;$('ending').hidden=distance<path.total;
