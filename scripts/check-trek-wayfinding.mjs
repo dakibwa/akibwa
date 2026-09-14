@@ -3,7 +3,8 @@ import {readFileSync} from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url);
 const {mesh,displayFootprint}=require('../public/trek/journey-landmarks.js');
-const {nearestPlace,metres,flags}=require('../public/trek/journey-wayfinding.js');
+const {create,nearestPlace,routePlaceIndex,settlementWindow,settlementCache,metres,flags}=require('../public/trek/journey-wayfinding.js');
+const {buildJourneyPath}=require('../public/trek/journey-route.js');
 const {landmarkBuildingIds}=require('../public/trek/journey-paper.js');
 const read=p=>JSON.parse(readFileSync(new URL('../'+p,import.meta.url),'utf8'));
 const landmarks=read('data/trek-landmarks.json').landmarks,route=read('public/trek/route-detail.json');
@@ -33,6 +34,63 @@ assert.equal(nearestPlace([place('Bavaria','state',[11.57,48.14])],[11.57,48.14]
 const village=place('Village','village',[11.57,48.14]),held=nearestPlace([village],village.geometry.coordinates);
 assert.equal(nearestPlace([village],[11.57,48.147],held)?.name,'Village','a small hysteresis margin avoids flicker at a settlement edge');
 assert.equal(nearestPlace([village],[11.57,48.15],held),null,'hysteresis must still release a town after leaving');
+
+const ordered=Array.from({length:15},(_,i)=>({id:'place-'+i,name:'Place '+i,kind:i%5?'village':'city',point:[i*5000/111195,0],distance:i*5000,proximity:0,routeKind:'recorded',mode:'walk'}));
+const orderedBefore=JSON.stringify(ordered);
+const middle=settlementWindow(ordered,25000,[25000/111195,0]);
+assert.equal(middle.entries.length,9);assert.equal(middle.currentId,'place-5');assert.equal(middle.currentIndex,2);
+assert.deepEqual(middle.entries.slice(0,3).map(e=>e.state),['passed','passed','current'],'two recent places precede the current settlement');
+const between=settlementWindow(ordered,27500,[27500/111195,0]);
+assert.equal(between.currentId,null,'an old city cannot remain current deep into countryside');
+assert.equal(between.entries[between.currentIndex].id,'place-6','between towns the window anchors the next place');
+assert.equal(settlementWindow(ordered,0,[0,0]).currentIndex,0,'the beginning never invents already passed towns');
+const finished=settlementWindow(ordered,75000,[75000/111195,0]);
+assert.equal(finished.entries.length,3);assert.equal(finished.currentIndex,2);assert.equal(finished.currentId,null,'the route end retains the last context without claiming to be in a distant town');
+assert.equal(settlementWindow(ordered,400000,[4,0]).entries.length,0,'a distant date seek cannot display an unrelated old window');
+assert.equal(JSON.stringify(ordered),orderedBefore,'window selection never mutates its cached source');
+
+const syntheticRoute={type:'FeatureCollection',features:[[0,.1],[.2,.5]].map(([start,end],i)=>({type:'Feature',properties:{day:i+1,throughDay:i+1,recording:i},geometry:{type:'LineString',coordinates:Array.from({length:21},(_,n)=>[start+(end-start)*n/20,0])}}))};
+const links={type:'FeatureCollection',features:[{type:'Feature',properties:{gap:0,mode:'train',railFrom:0,railTo:1,structures:[]},geometry:{type:'LineString',coordinates:[[.1,0],[.2,0]]}}]};
+const testPath=buildJourneyPath(syntheticRoute,2,links),pathBefore=JSON.stringify(testPath.pieces),routeIndex=routePlaceIndex(testPath);
+const trainPoint=[.15,0],trainMatch=routeIndex.match(trainPoint,'town');
+assert.equal(trainMatch.length,1);assert.equal(trainMatch[0].routeKind,'connection');assert.equal(trainMatch[0].mode,'train');
+assert(Math.abs(trainMatch[0].distance-111195*.15)<1,'settlements project onto the original route distance');
+assert.equal(routeIndex.match([.15,.04],'city').length,0,'a distant city outside the route corridor is excluded');
+const learned=Array.from({length:18},(_,i)=>({...place('Town '+i,i%5?'village':'city',[.01+i*.025,0]),id:i+1}));
+const cache=settlementCache(testPath);cache.add([...learned,...learned],0);
+assert.equal(cache.status().entries,learned.length,'overlapping source tiles produce one cached settlement');
+const firstWindow=cache.window(testPath.total*.5),firstIds=firstWindow.entries.map(e=>e.id);
+cache.add([],testPath.total*.5);
+assert.deepEqual(cache.window(testPath.total*.5).entries.map(e=>e.id),firstIds,'unloading vector tiles retains the rolling route window');
+cache.add(learned.map(f=>({...f,geometry:{type:'Point',coordinates:[f.geometry.coordinates[0]+.00015,0]}})),testPath.total*.5);
+assert.equal(cache.status().entries,learned.length,'small label coordinate changes do not duplicate towns');
+assert.deepEqual(cache.window(testPath.total*.5).entries.map(e=>e.id),firstIds,'tile refreshes preserve stable settlement identifiers');
+const endWindow=cache.window(testPath.total),backWindow=cache.window(0);
+assert(endWindow.entries[0].distance>backWindow.entries.at(-1).distance,'seeking selects the correct part of route order');
+const duplicates=settlementCache(testPath);
+duplicates.add([place('Shared name','village',[.04,0]),place('Shared name','village',[.35,0]),place('Tiny','hamlet',[.25,0]),place('Tiny','city',[.25,0])],0);
+assert.equal(duplicates.status().entries,3,'distinct towns with the same name remain distinct while duplicate classes merge');
+assert.equal(duplicates.window(.25*111195).entries.find(e=>e.name==='Tiny').kind,'city','the strongest mapped settlement class controls type hierarchy');
+const bounded=settlementCache(testPath),many=Array.from({length:900},(_,i)=>place('Mapped '+i,'village',[.001+i*.0005,0]));
+for(let i=0;i<5;i++)bounded.add(many,testPath.total*.5);
+assert(bounded.status().entries<=512&&bounded.status().rejected<=1024,'settlement memory stays bounded through long playback');
+assert.equal(JSON.stringify(testPath.pieces),pathBefore,'settlement projection never rewrites route geometry');
+
+// Exercise the actual callback integration without the removed single-label UI.
+const brush=new Proxy({}, {get:()=>()=>{}}),canvas={getContext:()=>brush},handlers=new Map(),updates=[];
+const oldDocument=globalThis.document,oldDpr=globalThis.devicePixelRatio;
+globalThis.document={createElement:()=>({...canvas})};globalThis.devicePixelRatio=1;
+const map={isStyleLoaded:()=>true,querySourceFeatures:()=>[place('Train context','town',trainPoint),...learned],on:(event,handler)=>handlers.set(event,handler),off:event=>handlers.delete(event)};
+const wayfinder=create({canvas,flag:null,path:testPath,countries:[],map,landmarks:[],onPlaces:value=>updates.push(value)});
+try{
+  wayfinder.refresh();wayfinder.update(trainMatch[0].distance,0,true);
+  assert.equal(wayfinder.status().place,null,'a connection never triggers a recorded-visit announcement');
+  assert.equal(updates.at(-1).context,'train');assert(updates.at(-1).currentId,'nearby names still give geographic context along a train connection');
+  const count=updates.length,window=updates.at(-1).entries.map(e=>e.id);
+  wayfinder.resetPlace();wayfinder.update(trainMatch[0].distance,0,true);
+  assert.equal(updates.length,count+1,'reset forces a fresh callback even when replay starts at the same window');
+  assert.deepEqual(updates.at(-1).entries.map(e=>e.id),window);
+}finally{wayfinder.destroy();globalThis.document=oldDocument;if(oldDpr===undefined)delete globalThis.devicePixelRatio;else globalThis.devicePixelRatio=oldDpr;}
 const rectangle=(w,s,e,n)=>[[w,s],[e,s],[e,n],[w,n],[w,s]];
 const bounds={footprint:rectangle(11.5728,48.1383,11.5744,48.1389)};
 const building=(id,rings,type='Polygon')=>({id,geometry:{type,coordinates:rings}});
@@ -42,4 +100,4 @@ assert.deepEqual(landmarkBuildingIds(buildings,[bounds]),[1,2],'replace the comp
 const generated=JSON.parse(readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8').match(/var DATA = (.*);/)[1]);
 assert.deepEqual(generated.landmarks,landmarks,'the published model positions and sources match the owning data');
 assert.deepEqual(generated.countryRings,read('data/trek-days.json').countryRings.map(({name,rings})=>({name,rings})),'the inset uses existing geographic outlines');
-console.log('Wayfinding checks passed: ten sourced landmarks, enlarged grounded meshes, true route proximity, native building replacement, stable town labels and the existing country outlines.');
+console.log('Wayfinding checks passed: sourced landmarks, grounded meshes, stable route-ordered settlement windows, current/next anchors, bounded cache, tile dedupe/unloads, date seeks, connection context, callback resets and country outlines.');
