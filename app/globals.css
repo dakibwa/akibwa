@@ -8118,6 +8118,18 @@ button {
   transform: translate(-5%, -14%);
 }
 
+.concept-career-logo.is-lbs {
+  width: 44px;
+  height: 34px;
+  border-radius: 4px;
+  background: #17364b;
+}
+
+.concept-career-logo.is-lbs img {
+  width: 34px;
+  height: auto;
+}
+
 .concept-career-logo.is-lloyds img {
   transform: translate(6%, 2.5%);
 }
