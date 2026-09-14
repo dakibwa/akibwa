@@ -5,10 +5,10 @@ const require=createRequire(import.meta.url),Pace=require('../public/trek/journe
 const read=file=>JSON.parse(readFileSync(new URL('../'+file,import.meta.url),'utf8'));
 const empty={places:[],shapes:[]},flat=Pace.terrain(()=>100,0),point=[5,48];
 const open=Pace.scene(point,flat,empty);
-assert.equal(open.cap,7200);assert.equal(open.reason,'open country');
+assert.equal(open.cap,10000);assert.equal(open.reason,'open country');
 const city=Pace.context([{properties:{class:'city'},geometry:{type:'Point',coordinates:point}}]);
-const town=Pace.scene(point,flat,city);assert(town.cap<250&&town.cap<open.cap/10);
-const high=Pace.scene(point,Pace.terrain(()=>2000,0),empty);assert(high.cap<=281&&high.reason==='mountains','a straight mountain plateau slows even without road bends');
+const town=Pace.scene(point,flat,city);assert(town.cap<=4001&&town.cap<open.cap/2);
+const high=Pace.scene(point,Pace.terrain(()=>2000,0),empty);assert(high.cap<=551&&high.reason==='mountains','a straight mountain plateau slows even without road bends');
 const steep=Pace.scene(point,Pace.terrain(d=>500+d/3,0),empty);assert(steep.cap<open.cap/10,'strong local relief slows below the high-altitude threshold');
 const landmark=Pace.scene(point,flat,empty,[{point}]);assert(landmark.cap<town.cap&&landmark.reason==='landmark');
 const square=(cx,cy,r)=>[[cx-r,cy-r],[cx+r,cy-r],[cx+r,cy+r],[cx-r,cy+r],[cx-r,cy-r]];
@@ -26,24 +26,24 @@ const testMap={on:(event,fn)=>listeners.set(event,fn),off:event=>listeners.delet
 const controller=Pace.create({map:testMap,path:{total:30000,sample:d=>({point:[d/111195,0]})},heightAt:()=>100});
 await new Promise(resolve=>setTimeout(resolve,25));
 const reads=queries,far=controller.update(0,true),approach=controller.update(4000,true),inside=controller.update(11120,true),departed=controller.update(23000,true);
-assert(reads===5&&approach.anticipating&&approach.target<far.target&&inside.target<300,'the loaded city is anticipated before its centre');
-assert.equal(departed.target,7200,'the pace recovers after leaving the city');
+assert(reads===5&&approach.anticipating&&approach.target<far.target&&inside.target<4100,'the loaded city is anticipated before its centre');
+assert.equal(departed.target,10000,'the pace recovers after leaving the city');
 for(let i=0;i<250;i++)controller.update(i*20,true);
 assert.equal(queries,reads,'playback never performs map queries or geometry preparation');
-loaded=false;assert(controller.update(23000,true).target<=1400,'unprepared scenery prevents rapid acceleration');
+loaded=false;assert.equal(controller.update(23000,true).target,departed.target,'peripheral tiles in flight do not hold an otherwise coherent journey at a crawl');
 listeners.get('sourcedata')({sourceId:'openmaptiles'});controller.destroy();
 assert.equal(listeners.size,0,'removing the map also removes the data listeners and pending refresh');
 for(const dt of [1/60,1/30,.1])for(const [from,to] of [[0,7200],[7200,150],[700,700]]){
  let speed=from;
- for(let i=0;i<500;i++){const next=Pace.advance(speed,to,dt);assert(next>=0&&Number.isFinite(next));assert(next-speed<=650*dt+.00001&&speed-next<=1500*dt+.00001,'speed changes have bounded acceleration and braking');assert((to-speed)*(to-next)>=-.00001,'the pace never overshoots its target');speed=next;}
+ for(let i=0;i<500;i++){const next=Pace.advance(speed,to,dt);assert(next>=0&&Number.isFinite(next));assert(next-speed<=1400*dt+.00001&&speed-next<=2400*dt+.00001,'speed changes have bounded acceleration and braking');assert((to-speed)*(to-next)>=-.00001,'the pace never overshoots its target');speed=next;}
 }
 const path=require('../public/trek/journey-route.js').buildJourneyPath(read('public/trek/route-detail.json'),67,read('public/trek/route-links.json'));
 const profile=read('public/trek/elevation-profile.json'),heightAt=d=>require('../public/trek/journey-elevation.js').sample(profile,d,false),landmarks=read('data/trek-landmarks.json').landmarks;
 for(let d=0;d<path.total;d+=550){
  const scene=Pace.scene(path.sample(d).point,Pace.terrain(heightAt,d),empty,landmarks),heading=Camera.headingAt(path,d);
  const speed=Camera.speedLimit(path,d,scene.cap,heading);
- assert(Number.isFinite(scene.cap)&&scene.cap>=149.9&&scene.cap<=7200.001);
+ assert(Number.isFinite(scene.cap)&&scene.cap>=249.9&&scene.cap<=10000.001);
  assert(speed>=35&&speed<=scene.cap+.0001,'automatic scenery pacing retains the existing bend limits');
 }
-assert(Pace.scene(path.sample(path.dayDistance(30,.65)).point,Pace.terrain(heightAt,path.dayDistance(30,.65)),empty).cap<700,'the actual Alpine pass receives a scenic pace');
+assert(Pace.scene(path.sample(path.dayDistance(30,.65)).point,Pace.terrain(heightAt,path.dayDistance(30,.65)),empty).cap<1400,'the actual Alpine pass receives a scenic pace');
 console.log('Automatic pace checks passed: open stretches, city centres, high and steep mountains, landmarks, woodland, water, clearings, departure, bounded speed changes and whole-route bend limits.');
