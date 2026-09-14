@@ -506,3 +506,47 @@ all seven static country fills and dark, light and middle-brightness contrast
 samples. No screenshot, second renderer or persistent image is retained.
 
 `CHECK_TREK_VEHICLES_ONLY=1` exercises the two long German tunnels on desktop and phones: visible train pixels, continuous playback, source alignment, stable walking totals and return to walking.
+
+
+## Prepared Gastein pilot
+
+The `?day=30&at=0.22&prepared=1` comparison opens the prepared Gastein valley.
+The normal journey remains the reference while this first stretch is evaluated.
+`at` is a fraction of the selected day, not a private recording timestamp.
+
+`scripts/build-trek-prepared.mjs` is an explicit maintenance build (`npm run trek:prepare`). It takes public OpenFreeMap vector geometry and Mapzen Terrarium
+terrain, then runs the same `TrekPaper.compileScene` generator used by the browser
+fallback. The finished binary scene contains tree placements, roof and building
+geometry, enlarged local churches, terrain facets and shadows. The browser
+retains the fixed tree models and selects nearby prebuilt triangle chunks and tree placements inside the pilot bounds; it does not
+scan live features or reconstruct scenery there. Outside those bounds, the
+existing scenery renderer resumes and restores native building layers.
+
+Terrain in comparison mode holds zoom 12 (about 26 m source pixels here), with
+bilinear sampling during the scene build. Lossless WebP retains the original
+Terrarium RGB heights. This avoids terrain-resolution changes beneath prepared
+buildings. The local tile package retains detailed vector geometry through zoom
+14, with only the coarse backdrop preloaded. Fine tiles follow actual camera
+demand. Versioned assets use immutable caching; the manifest is revalidated.
+The pilot adds no account or infrastructure and does not promise offline viewing
+outside its packaged coverage. Full-route rollout requires measured loading,
+playback and memory checks; do not turn this into a whole-Europe startup download.
+
+`public/trek/prepared/manifest.json` records bounds, source versions, provenance,
+byte counts and compiler/input hashes. Regenerating cleans only assets owned by
+the previous manifest. `scripts/check-trek-prepared.mjs` checks source freshness,
+finite geometry, local tile routing and the compressed budgets. Existing paper
+checks exercise stable selection reuse and restoration of the fallback renderer.
+Bad Gastein parish church and Böckstein's Maria, Mutter vom Guten Rat are sourced
+in the landmark registry; geometry and enlargement remain illustrative.
+
+Local comparison on 14 September 2026 (1280×720, the same day-30 approach,
+12 seconds per playback, warmed development assets) measured a 33.5 ms 95th
+percentile animation-frame interval in the live-built reference and 8.6 ms with
+prepared spatial selection. The prepared run performed no scenery compilations
+and recorded no main-thread tasks over 50 ms. This is a scoped development
+measurement, not a full-route or real-phone performance guarantee. The complete
+prepared scenery decodes to about 13.6 MB; GPU selection avoids drawing its full
+stored extent. A 390×844 layout and a date jump outside the pilot were also
+checked. Missing local tiles fall back to the public provider, including when
+an old open page outlives a package revision.

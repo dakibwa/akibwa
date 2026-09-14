@@ -48,7 +48,7 @@
     return [...urls];
   }
   const lookAhead=speed=>clamp(8000+Math.max(0,speed||0)*12,12000,40000);
-  function create({storage=host.caches,fetcher=host.fetch.bind(host),now=Date.now}={}){
+  function create({storage=host.caches,fetcher=host.fetch.bind(host),now=Date.now,resolveTile=null}={}){
     const inflight=new Map(),memory=new Map(),queued=new Map(),warming=new Map();
     let cache=null,persistent=false,hits=0,network=0,errors=0,aborted=0,writes=0,generation=0,epoch='',lastAhead=-Infinity,pruning=Promise.resolve();
     const opened=Promise.resolve().then(()=>storage?.open(NAME)).then(c=>{cache=c||null;persistent=!!cache;}).catch(()=>{});
@@ -56,6 +56,7 @@
     const abortError=()=>new DOMException('Aborted','AbortError');
     function read(url,{signal}={}){
       if(!allowed(url))return Promise.reject(Error('Not a Trek map tile'));
+      const original=url;url=resolveTile?.(url)||url;
       if(signal?.aborted)return Promise.reject(abortError());
       if(memory.has(url)){const value=memory.get(url);remember(url,value);hits++;return Promise.resolve(value);}
       let job=inflight.get(url);
@@ -72,8 +73,13 @@
           network++;let timeout;
           try{
             timeout=setTimeout(()=>current.controller.abort(),15000);
-            const response=await fetcher(url,{credentials:'omit',signal:current.controller.signal});
-            if(!response.ok)throw Error('Map tile '+response.status);
+            let response;
+            try{response=await fetcher(url,{credentials:'omit',signal:current.controller.signal});}
+            catch(error){if(url===original||current.controller.signal.aborted)throw error;}
+            // An old open page can outlive a prepared package revision.
+            // Missing local tiles fall back to their original public provider.
+            if(!response?.ok&&url!==original&&!current.controller.signal.aborted)response=await fetcher(original,{credentials:'omit',signal:current.controller.signal});
+            if(!response?.ok)throw Error('Map tile '+response?.status);
             const data=await response.arrayBuffer();remember(url,data);
             if(cache&&data.byteLength<=MAX_TILE){
               const headers=new Headers({'content-type':response.headers.get('content-type')||'application/octet-stream','x-trek-cached-at':String(now())});

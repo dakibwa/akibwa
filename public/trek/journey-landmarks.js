@@ -107,6 +107,39 @@
       arch(0,-l*.513,h*.67,w*.15,h*.3);
       gable(0,-l*.41,h*1.11,w*.59,l*.19,w*.13,trim);
       cross(0,-l*.41,h*1.11+w*.13,2.7);
+    }else if(item.kind==='baroque-octagonal'){
+      // Böckstein: an elongated octagonal nave, broad domed roof and one
+      // roof-mounted clock/bell lantern, rather than a cathedral facade.
+      const outline=[[-.28,-.5],[.28,-.5],[.5,-.3],[.5,.3],[.28,.5],[-.28,.5],[-.5,.3],[-.5,-.3]];
+      function octagon(z,width,length,height,color,profile){
+        const p=(band,i)=>[outline[i%8][0]*width*profile[band][1],outline[i%8][1]*length*profile[band][1],z+height*profile[band][0]];
+        for(let band=1;band<profile.length;band++)for(let i=0;i<8;i++)quad(p(band-1,i),p(band-1,i+1),p(band,i+1),p(band,i),color);
+      }
+      octagon(1.5,w,l*.72,h,wall,[[0,1],[1,1]]);
+      octagon(h+.8,w+1,l*.72+1,1.2,trim,[[0,1],[1,1]]);
+      octagon(h+2,w+1.8,l*.72+1.8,h*.62,roof,[[0,1],[.32,.98],[.7,.76],[1,.23]]);
+      // The west entrance and east sacristy stay lower than the central roof.
+      for(const y of [-l*.41,l*.41]){box(0,y,1.5,w*.48,l*.18,h*.73);gable(0,y,h*.73+1.5,w*.54,l*.2,h*.25);}
+      arch(0,-l*.502,1.5,w*.19,h*.43);
+      for(const side of [-1,1])for(const y of [-l*.14,l*.14]){
+        windowAt(side*(w/2+.1),y,h*.34,w*.17,h*.46,true);
+        box(side*(w/2+.13),y-l*.085,1.5,.55,.8,h*.94,trim);
+      }
+      const lanternBase=h*1.62+2,lanternRadius=w*.15,lanternTop=t*.84;
+      round(0,0,lanternBase,lanternRadius,lanternTop-lanternBase,wall,[[0,1],[1,1]],8);
+      round(0,0,lanternTop-.6,lanternRadius*1.16,.8,trim,[[0,1],[1,1]],8);
+      for(const side of [-1,1]){
+        windowAt(side*(lanternRadius+.04),0,lanternBase+.6,lanternRadius*.7,2.2,true);
+        windowAt(0,side*(lanternRadius+.04),lanternBase+.6,lanternRadius*.7,2.2);
+      }
+      const clockY=-lanternRadius-.08,clockZ=lanternTop-1.55,clockR=lanternRadius*.39;
+      for(let i=0;i<12;i++){
+        const a=i/12*TAU,b=(i+1)/12*TAU;
+        tri([0,clockY,clockZ],[Math.cos(a)*clockR,clockY,clockZ+Math.sin(a)*clockR],[Math.cos(b)*clockR,clockY,clockZ+Math.sin(b)*clockR],glass);
+      }
+      box(0,clockY-.06,clockZ,.12,.1,clockR*.7,trim);box(clockR*.22,clockY-.06,clockZ,clockR*.55,.1,.12,trim);
+      round(0,0,lanternTop,lanternRadius*1.22,t-lanternTop,roof,[[0,1],[.22,.86],[.6,.38],[1,0]],8);
+      cross(0,0,t,1.4);
     }else if(item.kind==='orthodox'){
       box(0,0,1.5,w*.62,l,h*.58);box(0,0,1.5,w,l*.54,h*.58);
       round(0,0,h*.58,w*.28,h*.32,wall,[[0,1],[1,1]]);
