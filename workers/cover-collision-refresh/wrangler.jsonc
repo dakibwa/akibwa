@@ -8,7 +8,7 @@
     "crons": ["42 6 * * *"]
   },
   "vars": {
-    "PUBLIC_SEED_URL": "https://raw.githubusercontent.com/dakibwa/dakibwa/main/data/cover-collision-data.json",
+    "PUBLIC_SEED_URL": "https://raw.githubusercontent.com/dakibwa/akibwa/main/data/cover-collision-data.json",
     "INSTAGRAM_PUBLIC_APP_ID": "936619743392459",
     "INSTAGRAM_USERNAME": "dakibwa"
   },
