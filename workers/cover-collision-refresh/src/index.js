@@ -218,7 +218,7 @@ async function readPublicData(env) {
 }
 
 async function fetchSeedData(env) {
-  const seedUrl = env.PUBLIC_SEED_URL || "https://raw.githubusercontent.com/dakibwa/dakibwa/main/data/cover-collision-data.json";
+  const seedUrl = env.PUBLIC_SEED_URL || "https://raw.githubusercontent.com/dakibwa/akibwa/main/data/cover-collision-data.json";
 
   try {
     const response = await fetch(seedUrl, {
