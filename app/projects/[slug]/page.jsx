@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { siteSectionTitles } from "@/app/site-metadata";
+import { pageOpenGraph } from "@/app/site-metadata";
 import { PersonalPage } from "@/components/pages/personal-page";
 import { isPersonalProjectLaunchable, personalProjects } from "@/components/site-data";
 
@@ -21,8 +21,13 @@ export async function generateMetadata({ params }) {
   if (!project) return {};
 
   return {
-    title: siteSectionTitles.projects,
+    title: project.title,
     description: project.summary,
+    openGraph: pageOpenGraph({
+      title: project.title,
+      description: project.summary,
+      path: `/projects/${slug}/`
+    }),
     robots: {
       index: false,
       follow: false,

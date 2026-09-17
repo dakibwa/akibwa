@@ -142,7 +142,7 @@ export default {
 
     if (url.pathname === "/albums") {
       const stored = await env.ALBUMS_KV.get(KV_KEY);
-      if (!stored) return new Response(JSON.stringify({ error: "no data yet" }), { status: 503, headers: JSON_HEADERS });
+      if (!stored) return new Response(JSON.stringify({ error: "no data yet" }), { status: 503, headers: { ...JSON_HEADERS, "cache-control": "no-store" } });
       return new Response(stored, { headers: JSON_HEADERS });
     }
 
@@ -167,8 +167,8 @@ export default {
 
     if (url.pathname === "/refresh" && request.method === "POST") {
       const auth = request.headers.get("authorization") || "";
-      if (!env.ADMIN_TOKEN || auth !== `Bearer ${env.ADMIN_TOKEN}`) {
-        return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: JSON_HEADERS });
+      if (!env.ADMIN_TOKEN || !(await timingSafeEqual(auth, `Bearer ${env.ADMIN_TOKEN}`))) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...JSON_HEADERS, "cache-control": "no-store" } });
       }
       try {
         const payload = await refresh(env);
@@ -186,3 +186,17 @@ export default {
     return new Response("Not found", { status: 404 });
   }
 };
+
+// Compare digests so the check takes the same time wherever the strings differ.
+async function timingSafeEqual(a, b) {
+  const encoder = new TextEncoder();
+  const [left, right] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(a)),
+    crypto.subtle.digest("SHA-256", encoder.encode(b))
+  ]);
+  const x = new Uint8Array(left);
+  const y = new Uint8Array(right);
+  let diff = 0;
+  for (let i = 0; i < x.length; i += 1) diff |= x[i] ^ y[i];
+  return diff === 0;
+}

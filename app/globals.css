@@ -710,15 +710,22 @@ button {
 /* Sections fade up as they scroll into view (class applied by JS, so no-JS
    and reduced-motion visitors see everything from the start). */
 @media (prefers-reduced-motion: no-preference) {
+  /* The reveal moves on `translate`, not `transform`, so it cannot outrank the
+     card's hover lift; the hover transitions stay in the list for the same reason. */
   .projects-grid.has-reveal .project-card {
     opacity: 0;
-    transform: translateY(22px);
-    transition: opacity 640ms var(--ease-out), transform 640ms var(--ease-out);
+    translate: 0 22px;
+    transition:
+      opacity 640ms var(--ease-out),
+      translate 640ms var(--ease-out),
+      border-color var(--hover-out) var(--ease-out),
+      box-shadow var(--hover-out) var(--ease-out),
+      transform var(--hover-out) var(--ease-out);
   }
 
   .projects-grid.has-reveal .project-card.is-inview {
     opacity: 1;
-    transform: none;
+    translate: none;
   }
 
   /* Deep-link arrival: the preview card breathes one soft accent ring. */
@@ -1704,23 +1711,6 @@ button {
 /* Now the first closing strip on Contact, so it carries the same top
    breathing room the notes strip used to. */
 
-.not-found h1 {
-  margin: 0;
-  color: var(--ink);
-  font-size: clamp(4.2rem, 8vw, 8.3rem);
-  font-weight: 520;
-  line-height: 0.92;
-  letter-spacing: 0;
-}
-
-.not-found p {
-  max-width: 480px;
-  margin: 28px 0 0;
-  color: var(--ink);
-  font-size: 1.08rem;
-  line-height: 1.75;
-}
-
 .text-action {
   display: inline-flex;
   align-items: center;
@@ -1750,11 +1740,21 @@ button {
 }
 
 .not-found h1 {
-  font-size: 4rem;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 5.4vw, 5.8rem);
+  font-weight: 500;
+  line-height: 0.91;
+  letter-spacing: -0.035em;
 }
 
 .not-found p {
+  max-width: 480px;
   margin: 0;
+  color: var(--ink);
+  font-size: 1.08rem;
+  line-height: 1.75;
 }
 
 @media (max-width: 1060px) {
@@ -3510,13 +3510,12 @@ button {
   .taste-tools > * { pointer-events: auto; }
   .taste-search { width: 32px; }
   .taste-search.is-open { width: 100%; }
-  .taste-tools:has(.rail-controls:not([hidden])) .taste-search.is-open { width: calc(100% - 73px); }
+  .taste-tools:has(.rail-controls:not([hidden])) .taste-search.is-open { width: calc(100% - 89px); }
   .taste-search-toggle { width: 32px; justify-content: center; }
   .taste-search-toggle > span { display: none; }
   .concept-taste-head.is-searching .concept-archive-head { opacity: 0; transform: translateX(-6px); pointer-events: none; transition-delay: 0s; }
   .taste-search-field input { font-size: 16px; }
   .rail-controls button { width: 40px; height: 40px; }
-  .taste-tools .rail-controls button { width: 32px; height: 32px; }
   .taste-filters { gap: 0 17px; }
   .taste-filters .rail-word { font-size: .85rem; }
 }

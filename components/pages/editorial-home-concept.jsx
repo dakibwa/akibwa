@@ -48,7 +48,7 @@ const projects = [
     className: "concept-trek",
     href: "/trek/",
     title: "The Trek",
-    subtitle: "Paris → Sofia · 1,982 km",
+    subtitle: "Paris → Sofia · 2,237 km",
     description:
       "Paris to Sofia on foot, told through the route, photographs and notes.",
     src: "/project-art/personal/trek-paper-landscape.png",
@@ -118,6 +118,9 @@ function ProjectShowcase() {
             onClick={(event) => {
               if (spotlit || !project.previewFirst || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               if (armed === project.id) return;
+              // A pointer that can hover has already seen the preview, so its
+              // first click navigates; only touch needs the preview-first tap.
+              if (matchMedia("(hover: hover)").matches) return;
               event.preventDefault();
               setArmed(project.id);
               setPreview(project);

@@ -5,6 +5,7 @@ import curation from "@/data/taste-curation.json";
 
 export const metadata = {
   title: { absolute: "Akibwa" },
+  alternates: { canonical: "/" },
   description:
     "Daniel, online as Akibwa. Projects, a working history, and a collection of music, films, games, television and podcasts.",
   robots: {

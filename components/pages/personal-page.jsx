@@ -473,6 +473,12 @@ function ProjectExpandedOverlay({ project, frameUrl, isMaximized, isVisible, onC
   const shellResizeAnimationRef = useRef(null);
   const shellResizeStartRef = useRef(null);
 
+  // Focus moves into the dialog once it is mounted and visible.
+  useEffect(() => {
+    if (!isVisible) return;
+    shellRef.current?.querySelector(".project-expanded-close")?.focus({ preventScroll: true });
+  }, [isVisible, project.slug]);
+
   useEffect(() => {
     if (!isVisible) return undefined;
 
@@ -768,7 +774,15 @@ export function PersonalPage({ initialSlug = null }) {
     document.documentElement.style.scrollbarGutter = "stable";
     window.addEventListener("keydown", closeOnEscape);
 
+    // The overlay is portalled to <body>, so making the page behind it inert
+    // keeps Tab inside the dialog; focus returns to the card that opened it.
+    const opener = document.activeElement;
+    const shell = document.querySelector(".site-shell");
+    shell?.setAttribute("inert", "");
+
     return () => {
+      shell?.removeAttribute("inert");
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
       document.body.style.overflow = previousOverflow;
       document.documentElement.style.scrollbarGutter = previousScrollbarGutter;
       window.removeEventListener("keydown", closeOnEscape);
