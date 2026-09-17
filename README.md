@@ -1,6 +1,6 @@
 # Akibwa Core Site
 
-Public site for [akibwa.com](https://akibwa.com), exported statically with Next.js and deployed from `main` through GitHub Pages.
+Public site for [akibwa.com](https://akibwa.com), exported statically with Next.js and deployed from `main` to Cloudflare Workers Static Assets. GitHub hosts the code and runs the deploy workflow; GitHub Pages is only a manual fallback. See [the hosting contract](docs/cloudflare-config.md).
 
 The homepage introduces Daniel/Akibwa, then presents Projects → an airy Career timeline → a horizontal Taste Library. The approved career roles, cultural curation and Instagram/X links are restored selectively, not by reverting privacy work. Residential and private life history stay out; the email address is assembled only after activation. The full album archive remains `noindex`; only `/` is advertised in the sitemap.
 
