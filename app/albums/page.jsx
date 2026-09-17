@@ -1,11 +1,16 @@
 import { AlbumWallPage } from "@/components/pages/album-wall-page";
-import { siteSectionTitles } from "@/app/site-metadata";
+import { pageOpenGraph, siteSectionTitles } from "@/app/site-metadata";
 import listening from "@/public/listening-catalogue.json";
 import { listeningSeed } from "@/components/listening-catalogue.mjs";
 
 export const metadata = {
   title: siteSectionTitles.albums,
   description: "A personal album archive.",
+  openGraph: pageOpenGraph({
+    title: siteSectionTitles.albums,
+    description: "A personal album archive.",
+    path: "/albums/",
+  }),
   robots: {
     index: false,
     follow: false,

@@ -483,6 +483,21 @@ function parseJson(value) {
   }
 }
 
+async function recordFailure(env, error, trigger) {
+  const status = {
+    ok: false,
+    trigger,
+    refreshedAt: new Date().toISOString(),
+    mode: "cloudflare-worker",
+    error: safeError(error)
+  };
+  // Recording must never throw: a KV outage is a likely reason to be here.
+  try {
+    await env.COVER_COLLISION_KV.put(STATUS_KEY, JSON.stringify(status));
+  } catch {}
+  return status;
+}
+
 function safeError(error) {
   return String(error?.message || error || "Unknown error").replace(/[A-Za-z0-9_-]{32,}/g, "[redacted]");
 }

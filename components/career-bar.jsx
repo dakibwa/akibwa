@@ -46,7 +46,7 @@ function CareerSpotlight() {
           <li className="career-spotlight-role" key={job.name} style={{ "--company-accent": job.accent }}>
             <span className={`career-spotlight-mark${job.logo === "/favicon.svg" ? " is-dark" : ""}`}>
               <span className={logoClass(job)}>
-                <SiteImage {...logoImage(job)} sizes="32px" alt="" />
+                <SiteImage {...logoImage(job)} sizes="32px" alt="" above />
               </span>
             </span>
             <span className="career-spotlight-title">
@@ -115,7 +115,7 @@ function CareerTimeline() {
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
                 <span className={logoClass(job)}>
-                  <SiteImage {...logoImage(job)} sizes="32px" alt="" />
+                  <SiteImage {...logoImage(job)} sizes="32px" alt="" above />
                 </span>
               </span>
               <span className="concept-career-year" aria-hidden="true">{job.span.replace(/ — /g, "–")}</span>
@@ -139,7 +139,7 @@ function CareerTimeline() {
         placementIndex={detailIndex}
       >
         <strong>{detail.name}</strong>
-        <span>{detail.role} · {detail.span}</span>
+        <span>{detail.role} · {detail.span.replace(/ — /g, "–")}</span>
         <p className="concept-career-statement">
           <CareerStatement {...detail} />
         </p>

@@ -10,6 +10,11 @@ The current public surface registry is `data/public-surfaces.json`. Keep routes,
 
 ## Current Cloudflare Refreshes
 
+The Cover Collision Worker was deleted from Cloudflare on 27 August 2026 and the
+site reads the committed snapshot in `data/cover-collision-data.json` (see
+`components/site-data.js`). The row below records how it was configured; the
+source in `workers/cover-collision-refresh/` is kept so it can be redeployed.
+
 | Surface | Worker | Schedule | Public data | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Cover Collision | `akibwa-cover-collision-refresh` | `42 6 * * *` | `https://akibwa-cover-collision-refresh.dakibwa.workers.dev/cover-collision` | `https://akibwa-cover-collision-refresh.dakibwa.workers.dev/status` | Uses Instagram API credentials when present, the public Instagram profile endpoint when absent, and `data/cover-collision-data.json` only as the final public seed fallback. |
