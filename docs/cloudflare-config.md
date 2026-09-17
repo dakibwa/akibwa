@@ -111,8 +111,10 @@ for an asset deployment. The existing limited-token workflow was verified
 before the domain cutover.
 
 Features continues publishing its stripped and hardened client to
-`dakibwa/dakibwa` under `public/features/`. That push triggers the Cloudflare
-workflow, so preserve the repository and publication path.
+`dakibwa/akibwa` under `public/features/` (the repository was renamed from
+`dakibwa/dakibwa` on 17 September 2026; its deploy key, secrets and paths
+carried over). That push triggers the Cloudflare workflow, so preserve the
+publication path.
 
 ## Features standalone domain
 
