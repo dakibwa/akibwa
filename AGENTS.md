@@ -31,10 +31,12 @@ are therefore pre-rendered at build time and committed.
   CSS widths it takes at real breakpoints, and the `object-position` the layout
   applies. Variants are cropped to the slot, so the crop position must match
   what the CSS does or the artwork silently reframes.
-- After adding or replacing artwork: `npm run images:generate`, and commit
-  `public/_img/` and `components/image-variants.json` with it. The generator
-  re-encodes every rung, and AVIF bytes differ between encoder builds; commit
-  only the files for the artwork you changed and restore the rest from git.
+- After adding or replacing artwork, record existing edits in `public/_img/`
+  and `components/image-variants.json`, then run `npm run images:generate`.
+  The generator re-encodes every rung, and AVIF bytes differ between encoder
+  builds. Commit only intended artwork changes. Discard unrelated generation
+  churn only if it was introduced by this run, preserving pre-existing edits
+  even when they share a file with generated changes.
 - `npm run check:images` (part of `publish:ready`) fails if a source has changed
   since its variants were generated.
 - The general slot ladder caps at 1.5x DPR. Taste still reaches a 264px top
