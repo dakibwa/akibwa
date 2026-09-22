@@ -99,3 +99,14 @@ journey continues to use its approved route and geography.
 Generation prompt:
 
 Create a beautifully detailed panoramic website project-cover illustration for Trek, an on-foot journey from Paris to Sofia. Use the supplied image as the material, light, landscape-density and colour reference, and transform its portrait map composition into a newly composed horizontal landscape image, aspect ratio 2.5:1. The current Trek experience uses tactile paper terrain, dense varied folded sage woodland, pale buildings with warm terracotta roofs, softly textured olive and ochre fields, muted blue rivers and a deep dusty red walking route. Show a richly layered European valley from a high oblique camera: closely grouped miniature villages, coherent varied tree canopies and forests, quilt-like fields following softly sculpted hills, a narrow blue river and an elegant continuous deep-red path weaving across the valley. Let the path draw the eye diagonally from the lower left through the central village towards distant hills on the right. Beautiful coherent warm soft light from upper left, soft paper edges, fine paper grain, exquisite miniature craft, real depth, quiet atmospheric distance. Keep most recognizable village and red-path detail within the central 65 percent of image height so it remains expressive when cropped to a very wide 5:2 card. Dense, abundant, natural and picturesque, subtly irregular hand-made forms, sophisticated editorial quality. Full-bleed art only: no text, no title, no logo, no letters, no numbers, no interface, no frame, no floating map pins. Do not copy the reference's UI or exact map geometry. This is an evocative artistic cover, not a navigational map. Avoid plastic, glossy 3D, blank expanses, low-poly videogame look, and repetitive identical trees.
+
+## Link-preview card
+
+`public/share-card.jpg` (1200×630) is the Open Graph and X image. It replaced
+the older mountain-meadow photograph on 22 September 2026 at Dan's request, so
+shared links show the homepage's own first screen: the hero, the blue Projects
+rule, the three project cards and the chapter links. Its source is
+`scripts/share-card.html`, which reuses the committed project-art variants and
+the Ember `a`; render it on a Mac with the command in that file's header. If a
+project card changes, re-render the card and give the image a new filename so
+link previews do not keep a cached copy.

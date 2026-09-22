@@ -18,12 +18,14 @@ export const metadata = {
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
+    // A new filename, not a replaced og.jpg, so link previews stop serving
+    // their cached copy of the old artwork. Source: scripts/share-card.html.
     images: [
       {
-        url: "/og.jpg",
+        url: "/share-card.jpg",
         width: 1200,
         height: 630,
-        alt: "Sunlit mountain meadow with a layered data texture"
+        alt: "I'm Daniel, building in the age of AI, above the features, Português com a Inês and The Trek project cards"
       }
     ]
   },
@@ -32,7 +34,7 @@ export const metadata = {
     title: "Akibwa",
     description:
       "Daniel, online as Akibwa. Projects, a working history, and a collection of music, films, games, television and podcasts.",
-    images: ["/og.jpg"]
+    images: ["/share-card.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
   // the page (feeds, robots.txt); iOS draws its own corners on the touch icon.
