@@ -48,7 +48,10 @@ export const metadata = {
 
 export const viewport = {
   width: "device-width",
-  initialScale: 1
+  initialScale: 1,
+  // Browser chrome that tints to the page uses the same warm paper.
+  themeColor: "#faf8f3",
+  colorScheme: "light"
 };
 
 export default function RootLayout({ children }) {

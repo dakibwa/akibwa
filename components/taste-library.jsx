@@ -199,10 +199,15 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
   }).filter(Boolean);
   const terms = searchable(query.trim()).split(/\s+/).filter(Boolean);
   const selection = category === "all" ? (terms.length ? Object.values(lists).flat() : mixed) : lists[category];
-  const list = terms.length ? selection.filter((item) => {
+  const matches = (item) => {
     const text = searchable(`${item.title} ${item.creator ?? ""}`);
     return terms.every((term) => text.includes(term));
-  }) : selection;
+  };
+  const list = terms.length ? selection.filter(matches) : selection;
+  // A medium limits the search. When it hides every match, say where the
+  // matches are instead of leaving a dead end.
+  const matchesElsewhere = terms.length > 0 && list.length === 0 && category !== "all" &&
+    Object.values(lists).some((items) => items.some(matches));
   const visible = list.slice(0, visibleCount);
   const keys = visible.map(artworkKey);
   const selectionKey = keys.join("|");
@@ -385,7 +390,18 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
           </button>
         ))}
       </nav>
-      {terms.length > 0 && list.length === 0 ? <p className="taste-search-status" role="status">No matches.</p> : null}
+      {terms.length > 0 && list.length === 0 ? <p className="taste-search-status" role="status">
+        {matchesElsewhere ? <>
+          No matches in {groups.find(([id]) => id === category)[1]}.{" "}
+          <button type="button" onClick={() => {
+            dismissDetail();
+            setCategory("all");
+            setVisibleCount(48);
+            // The button disappears with the empty state; keep the keyboard in the field.
+            searchInput.current?.focus({ preventScroll: true });
+          }}>Search everything</button>
+        </> : "No matches."}
+      </p> : null}
       <div className="taste-wall-stage">
       <div className="personal-taste-rail" id="taste-rail" ref={rail} data-detail={detailOpen && gap?.float ? "float" : undefined}>
         {columns.map((column, columnIndex) => {

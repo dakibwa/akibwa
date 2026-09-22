@@ -413,10 +413,15 @@ const checkPublicLanding = async () => {
     document.querySelector('.concept-portuguese a').click();
     return navigates;
   })()`);
-  check(!(await activatePortuguese()), "the first Portuguese click previews without navigating");
+  // A pointer that can hover has already seen the preview, so its first click
+  // navigates; touch keeps the preview-first tap.
+  check(await activatePortuguese(), "a hovering pointer's first Portuguese click follows the link");
+  await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+  check(!(await activatePortuguese()), "the first Portuguese tap previews without navigating");
   await sleep(520);
-  check(await evaluate('document.querySelector("#project-description")?.closest(".concept-portuguese") && document.querySelector("#project-description").textContent.includes("Inês")'), "the first Portuguese click leaves its description open");
-  check(await activatePortuguese(), "the second Portuguese click allows the native destination link");
+  check(await evaluate('document.querySelector("#project-description")?.closest(".concept-portuguese") && document.querySelector("#project-description").textContent.includes("Inês")'), "the first Portuguese tap leaves its description open");
+  check(await activatePortuguese(), "the second Portuguese tap allows the native destination link");
+  await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: false });
   await evaluate('document.querySelector(".concept-portuguese a").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
   await sleep(360);
   const careerControl = 'document.querySelectorAll(".concept-career-timeline button")[1]';
@@ -912,7 +917,14 @@ const checkPublicLanding = async () => {
     hash: location.hash,
     shown: ['projects','career','taste'].filter(id => getComputedStyle(document.getElementById(id)).display !== 'none').join(),
     current: [...document.querySelectorAll('.concept-section-links a')].filter(link => link.getAttribute('aria-current')==='true').map(link => link.textContent).join(),
-    faded: [...document.querySelectorAll('.concept-section-links a')].filter(link => Number(getComputedStyle(link).opacity) < 0.6).length,
+    faded: [...document.querySelectorAll('.concept-section-links a')].filter((link, index) => link.getAttribute('aria-current') !== 'true' && getComputedStyle(link).color !== window.__restLinkColors?.[index]).length,
+    legible: Math.min(...[...document.querySelectorAll('.concept-section-links a:not([aria-current])')].map(link => {
+      const canvas = document.createElement('canvas'), context = canvas.getContext('2d');
+      const rgb = (color) => { context.clearRect(0, 0, 1, 1); context.fillStyle = color; context.fillRect(0, 0, 1, 1); return [...context.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+      const luminance = (channels) => channels.map(v => v / 255).map(v => v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+      const [text, paper] = [luminance(rgb(getComputedStyle(link).color)), luminance(rgb(getComputedStyle(document.body).backgroundColor))];
+      return (Math.max(text, paper) + 0.05) / (Math.min(text, paper) + 0.05);
+    })),
     top: scrollY,
     overflow: document.documentElement.scrollWidth - innerWidth
   })`);
@@ -928,30 +940,34 @@ const checkPublicLanding = async () => {
     career: `document.querySelectorAll('.career-spotlight-role').length===8 && [...document.querySelectorAll('.career-spotlight-role')].every(role=>role.querySelector('.concept-career-statement')?.textContent.length>30)`,
     taste: `(() => { const rail=document.querySelector('#taste-rail'), bounds=rail.getBoundingClientRect(), columns=[...rail.querySelectorAll('.taste-wall-column')]; return document.querySelector('.personal-taste').classList.contains('is-expanded') && columns.length>4 && columns.at(-1).getBoundingClientRect().right<=bounds.right+1 && document.querySelector('.personal-taste-art').getBoundingClientRect().width>140 && rail.getBoundingClientRect().height>innerHeight; })()`,
   };
+  await evaluate("window.__restLinkColors=[...document.querySelectorAll('.concept-section-links a')].map(link=>getComputedStyle(link).color)");
   for (const [index, id, label] of [[0,'projects','Projects'],[1,'career','Career'],[2,'taste','Taste Library']]) {
     await clickAt(await chapterLink(index));
     await sleep(750);
     const state = await spotlightState();
-    check(state.spot===id && state.hash===`#${id}` && state.shown===id && state.current===label && state.faded===2 && state.top===0 && state.overflow<=1,
-      `${label} comes forward beneath the unchanged masthead while the other links fade${state.spot===id ? '' : ` [${JSON.stringify(state)}]`}`);
+    check(state.spot===id && state.hash===`#${id}` && state.shown===id && state.current===label && state.faded===2 && state.legible>=4.5 && state.top===0 && state.overflow<=1,
+      `${label} comes forward beneath the unchanged masthead while the other links step back, still legible${state.spot===id ? '' : ` [${JSON.stringify(state)}]`}`);
     check(await evaluate(spotlit[id]), `the ${label} spotlight lays out its whole chapter`);
     await capture(`spotlight-${id}`);
   }
+  // Closing goes through history and a view transition, so wait for the page
+  // to settle rather than trusting a fixed delay.
+  const wholePage = async () => { let state; for (let attempt = 0; attempt < 30; attempt++) { state = await spotlightState(); if (!state.spot && state.shown === 'projects,career,taste') break; await sleep(100); } return state; };
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await sleep(800);
-  let spotlightAfter = await spotlightState();
+  let spotlightAfter = await wholePage();
   check(!spotlightAfter.spot && !spotlightAfter.hash && spotlightAfter.shown==='projects,career,taste' && !spotlightAfter.current, "Escape returns to the whole page");
   await clickAt(await chapterLink(1));
   await sleep(700);
   await evaluate('history.back()');
   await sleep(900);
-  spotlightAfter = await spotlightState();
+  spotlightAfter = await wholePage();
   check(!spotlightAfter.spot && !spotlightAfter.hash && spotlightAfter.shown==='projects,career,taste', "Back returns from a spotlight to the whole page");
   await clickAt(await chapterLink(1));
   await sleep(700);
   await clickAt(await chapterLink(1));
   await sleep(900);
-  spotlightAfter = await spotlightState();
+  spotlightAfter = await wholePage();
   check(!spotlightAfter.spot && spotlightAfter.shown==='projects,career,taste', "clicking the selected link again returns to the whole page");
   await setMobile();
   await goto("/");

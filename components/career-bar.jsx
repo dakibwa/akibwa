@@ -16,6 +16,9 @@ const logoRevisions = {
 };
 
 // The Freelance card shows the bare Akibwa a rather than the favicon's tile.
+// Logos load eagerly but at low priority: React would otherwise preload the SVG
+// ones in <head>, ahead of the stylesheet, although Career sits below the fold
+// on phones.
 const logoImage = (job) => job.logo === "/favicon.svg"
   ? { src: "/brand-logos/akibwa-a.png", slot: "identityMark" }
   : { src: job.logo, revision: logoRevisions[job.logo], slot: "logo" };
@@ -46,7 +49,7 @@ function CareerSpotlight() {
           <li className="career-spotlight-role" key={job.name} style={{ "--company-accent": job.accent }}>
             <span className={`career-spotlight-mark${job.logo === "/favicon.svg" ? " is-dark" : ""}`}>
               <span className={logoClass(job)}>
-                <SiteImage {...logoImage(job)} sizes="32px" alt="" above />
+                <SiteImage {...logoImage(job)} sizes="32px" alt="" above fetchPriority="low" />
               </span>
             </span>
             <span className="career-spotlight-title">
@@ -115,7 +118,7 @@ function CareerTimeline() {
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
                 <span className={logoClass(job)}>
-                  <SiteImage {...logoImage(job)} sizes="32px" alt="" above />
+                  <SiteImage {...logoImage(job)} sizes="32px" alt="" above fetchPriority="low" />
                 </span>
               </span>
               <span className="concept-career-year" aria-hidden="true">{job.span.replace(/ — /g, "–")}</span>
