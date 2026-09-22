@@ -13,8 +13,8 @@ IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
 - Spotify audio and music-video records contribute one track play after 30
   seconds. Podcast audio/video records use the same threshold. Duplicate source
   IDs and identical account/track/platform/stop-time/duration playbacks count once,
-  even when offline, shuffle or reason flags differ. This also applies to the
-  separate Spotify duration summary. Short events inform identity without adding plays.
+  even when offline, shuffle or reason flags differ. Short events inform
+  identity without adding plays.
 - Spotify supplies the album directly. Preserve existing sleeve IDs and match
   normalized album/artist identity, including edition labels and unambiguous
   collaborative-credit variants. Equal titles by unrelated artists stay separate.
@@ -47,7 +47,7 @@ IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
 
 These are bounds on recorded observations across the delivered archives, not
 complete lifetime listening, completed songs/episodes or commercial streams.
-The separate Spotify duration summary remains provider-specific.
+No listening time is published.
 
 ## Presentation and refresh
 
@@ -60,7 +60,7 @@ The homepage serializes its opening albums and curated IDs only, then loads the
 full aggregate catalogue from the site's static JSON. Long shelves still add
 36 cards at a time. Existing covers remain; newly discovered albums without a
 verified cover use their album/artist typography, never a fabricated or broken
-image. The album archive retains searching, sorting, pagination and noindex.
+image. The separate album archive was deleted on 22 September 2026.
 
 Artwork is resolved independently from counting. The original printed/Last.fm
 ladder covered 1,644 of the combined catalogue's 13,598 albums; the history
@@ -90,7 +90,7 @@ manifest. No private history is needed for an artwork repair.
 
 After adding a reviewed entry, run `npm run albums:catalogue-art`. It downloads
 the original public cover to the ignored artwork cache and produces the same
-264px wall / up-to-760px card AVIF/WebP ladder and press treatment as the other
+264px AVIF/WebP sleeve rung and press treatment as the other
 sleeves, without removing existing artwork. Commit the manifest, its
 `public/album-art/history-*` rungs and the public catalogue's artwork flags.
 `npm run albums:art:check` checks both artwork populations, including hashes and
@@ -106,7 +106,7 @@ To regenerate after the owning history has refreshed, run:
 npm run listening:build -- --history-root /path/to/private/digital-history
 ```
 
-Only the public aggregate packet and Spotify time summary are written. Review their summary and scoped diff,
+Only the public aggregate packet is written. Review its summary and scoped diff,
 run the data/identity checks and normal publication gate, then verify the live
 hover, non-navigation and full-catalogue behavior. Do not publish private source
 material to automate this step.

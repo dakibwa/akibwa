@@ -11,8 +11,7 @@ const css = read("app/globals.css");
 const index = read("app/page.jsx");
 const layout = read("app/layout.jsx");
 const sitemap = read("app/sitemap.js");
-const albums = read("app/albums/page.jsx");
-const projectDetail = read("app/projects/[slug]/page.jsx");
+const redirects = read("public/_redirects");
 const editorial = read("components/pages/editorial-home-concept.jsx");
 const hero = read("components/hero-brand-name.jsx");
 const footer = read("components/page-footer.jsx");
@@ -82,11 +81,13 @@ forbidText(footer, personalEmail, "the contact address must not be present in st
 requireText(footer, "https://www.instagram.com/dakibwa/", "the approved Instagram profile must remain");
 requireText(footer, "https://x.com/dakibwa", "the approved X profile must remain");
 
-for (const source of [albums, projectDetail]) {
-  requireText(source, "index: false", "personal archive routes must be noindex");
-  requireText(source, "follow: false", "personal archive routes must be nofollow");
-  requireText(source, "noimageindex: true", "personal archive routes must opt out of image indexing");
+// Retired pages are deleted, not hidden. The site is one page; old links 301
+// to it from the edge instead of loading a stub page that redirects itself.
+for (const route of ["albums", "projects", "personal", "about", "contact", "offer", "professional", "systems", "work", "concept"]) {
+  if (existsSync(new URL(`../app/${route}`, import.meta.url))) fail(`the retired /${route}/ route must not return`);
+  for (const rule of [`/${route} / 301`, `/${route}/* / 301`]) requireText(redirects, `\n${rule}\n`, `old /${route}/ links must redirect to the homepage`);
 }
+requireText(redirects, "\n/portugal https://portuguesewithines.com/ 301\n", "the Portuguese short link must keep reaching Inês's site");
 requireText(sitemap, 'const routes = [{ path: "/", priority: 1 }]', "only the Akibwa index belongs in the sitemap");
 
 requireRuleText(".concept-hero {", ["display: grid", "grid-template-columns"]);

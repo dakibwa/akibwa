@@ -1,11 +1,11 @@
 {
-  "updated": "2026-09-05",
+  "updated": "2026-09-22",
   "surfaces": [
     {
-      "id": "albums",
-      "title": "The album archive",
-      "route": "/albums",
-      "kind": "public-series",
+      "id": "home",
+      "title": "Akibwa",
+      "route": "/",
+      "kind": "page",
       "visibility": "public",
       "fallbackData": "public/listening-catalogue.json"
     },
@@ -28,20 +28,11 @@
     },
     {
       "id": "portuguese-with-ines",
-      "title": "Portugu\u00eas com a In\u00eas",
+      "title": "Português com a Inês",
       "route": "/portugal",
       "kind": "external-site",
       "visibility": "public",
       "externalUrl": "https://portuguesewithines.com/"
-    },
-    {
-      "id": "cover-collision",
-      "title": "Cover Collision",
-      "route": "/projects#cover-collision",
-      "kind": "public-series",
-      "visibility": "public",
-      "externalUrlEnv": "NEXT_PUBLIC_COVER_COLLISION_URL",
-      "fallbackData": "data/cover-collision-data.json"
     }
   ]
 }

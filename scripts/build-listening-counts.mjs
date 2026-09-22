@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 // Run locally against the owning private history. Never copy source events into
-// this repository. Only allowlisted public counts and the Spotify time summary
-// are written.
+// this repository. Only the allowlisted public counts are written.
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { buildListeningCounts, spotifyMusicAudioSummary } from "../lib/listening-counts.mjs";
+import { buildListeningCounts } from "../lib/listening-counts.mjs";
 import { applyListeningArtwork } from "../lib/listening-artwork.mjs";
 
 const root = process.argv[process.argv.indexOf("--history-root") + 1];
@@ -26,10 +25,4 @@ const packet = buildListeningCounts({
 });
 packet.albums = applyListeningArtwork(packet.albums, json(new URL("../data/listening-artwork.json", import.meta.url)));
 writeFileSync(new URL("../public/listening-catalogue.json", import.meta.url), JSON.stringify(packet) + "\n");
-const summaryPath = new URL("../data/listening-summary.json", import.meta.url);
-const summary = json(summaryPath);
-summary.asOf = packet.asOf;
-summary.musicAudio = spotifyMusicAudioSummary(spotify);
-summary.method = "Recorded playback includes short and skipped events. Listening time is the provider's recorded duration, not proof of attention or completed tracks. Coverage has gaps and is not a complete lifetime total. Same-account playbacks with identical track, platform, stop time and duration are counted once, including records whose offline/shuffle/reason flags differ. YouTube and Last.fm supply no duration and are not added to this time summary.";
-writeFileSync(summaryPath, JSON.stringify(summary, null, 2) + "\n");
 console.log(JSON.stringify({ albums: packet.albums.length, podcasts: packet.podcasts.length, diagnostics: packet.diagnostics }, null, 2));

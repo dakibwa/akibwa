@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { buildListeningCounts, mergeAlbumObservations, deduplicateSpotifyPlaybacks, spotifyMusicAudioSummary } from "../lib/listening-counts.mjs";
+import { buildListeningCounts, mergeAlbumObservations, deduplicateSpotifyPlaybacks } from "../lib/listening-counts.mjs";
 import { albumIdentity, youtubePodcast } from "../lib/listening-identity.mjs";
 import { acceptsListeningCatalogue, listeningSeed } from "../components/listening-catalogue.mjs";
 import { listeningLabel, rankPodcasts } from "../components/listening-label.mjs";
@@ -22,7 +22,6 @@ const during = track("during", "2025-01-05T12:00:00Z");
 const after = track("after", "2025-02-01T12:00:00Z");
 assert.equal(deduplicateSpotifyPlaybacks([after, { ...after, id: "offline-copy", offlineTimestamp: 1234, reasonStart: "remote" }]).length, 1, "playback bookkeeping differences do not create another listen");
 assert.equal(deduplicateSpotifyPlaybacks([after, { ...after, id: "later-play", occurredAt: "2025-02-01T12:05:00Z" }]).length, 2, "a real repeat at another time still counts");
-assert.deepEqual(spotifyMusicAudioSummary([after, { ...after, id: "offline-copy", shuffle: true }]), { playbackEvents: 1, eventsAtLeast30Seconds: 1, millisecondsPlayed: 60000 });
 const unknown = (id) => ({ id, artist: "", album: "", plays: null });
 const fixture = buildListeningCounts({
   wall: { scrobblingSince: "2025-01-01", refreshedAt: "2025-01-10T12:00:00Z", sleeves: [

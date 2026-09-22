@@ -9,8 +9,10 @@ using the same card treatment as the other career marks. The introduction
 Instagram, X and Email actions underneath retain their original simple icons.
 `public/brand-logos/akibwa-a.png` is the transparent single-letter master.
 `public/favicon.svg`
-embeds a small copy of that mark on charcoal. The square profile export is
-`public/brand-logos/akibwa-avatar.png`; creating it does not update a social account.
+embeds a small copy of that mark on charcoal. The square profile export,
+`akibwa-avatar.png`, is not a website asset: its master lives in
+`Documents/Creative Assets/Project Assets/Akibwa/Logo/`. Creating it does not
+update a social account.
 
 Both exports were made with the built-in image tool on 13 September 2026 from
 the selected `02 Ember` colourway. The two generation prompts were:
@@ -24,7 +26,8 @@ the derived web assets.
 
 ### Retained age wordmark
 
-`public/brand-logos/akibwa-age.png` is the 1983×793 wordmark master, generated
+`akibwa-age.png` (in `Documents/Creative Assets/Project Assets/Akibwa/Logo/`,
+no longer published on the site) is the 1983×793 wordmark master, generated
 with the built-in image tool on 13 September 2026 using the existing `a` as the
 reference. This earlier treatment is retained as an original asset but is no
 longer rendered in the homepage sentence. Its white background would need

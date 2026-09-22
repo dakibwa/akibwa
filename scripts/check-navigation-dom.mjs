@@ -890,27 +890,6 @@ const checkPublicLanding = async () => {
   check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === listeningPacket.podcasts[0].plays, "podcast counts include the available YouTube and Apple evidence");
   await goto('/#taste-item=music:043');
   check(await evaluate('!document.querySelector("dialog")'), "old Taste detail links cannot reopen the removed modal");
-  await goto('/albums/');
-  check(await evaluate('document.querySelectorAll(".album-browser-card").length === 36'), "the archive mounts only one page of covers");
-  check(await evaluate('document.querySelector(\'meta[name="robots"]\').content.includes("noindex")'), "the full archive remains noindex");
-  const setSearch=async value=>{
-    await evaluate(`(() => { const input=document.querySelector('input[type="search"]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,${JSON.stringify(value)}); input.dispatchEvent(new Event('input',{bubbles:true})); })()`);
-    await sleep(100);
-  };
-  await setSearch('Paul Simon Graceland');
-  check(await evaluate('[...document.querySelectorAll(".album-browser-card")].every(card=>card.textContent.includes("Paul Simon") && card.querySelector(":scope > strong").textContent.includes("Graceland")) && document.querySelector(".album-browser-card > strong").textContent === "Graceland"'), "artist and album search finds Graceland and keeps its remix release distinct");
-  await setSearch('no such record qzx');
-  check(await evaluate('!document.querySelector(".album-browser-card") && !!document.querySelector(".album-empty")'), "an empty search has a usable recovery state");
-  await evaluate('document.querySelector(".album-empty button").click()');
-  await sleep(100);
-  check(await evaluate('document.querySelectorAll(".album-browser-card").length === 36'), "clearing an empty search restores the catalogue");
-  await evaluate('document.querySelector(".album-browser-card").focus(); document.querySelector(".album-browser-card").click()');
-  check(await evaluate('!document.querySelector("dialog") && !location.hash && document.activeElement.matches(".album-browser-card")'), "archive cards retain readable keyboard focus without opening details");
-  await goto('/albums/#album=043');
-  check(await evaluate('!document.querySelector("dialog")'), "old album hashes cannot reopen details");
-  const unpictured = listeningPacket.albums.find(album=>!album.artwork && album.artist && album.album && !album.album.includes("'"));
-  await setSearch(unpictured.artist + ' ' + unpictured.album);
-  check(await evaluate('!!document.querySelector(".album-browser-card .podcast-type-cover")'), "an older album without a verified cover uses a readable typographic sleeve");
 
   section("catalogue loading failure");
   await cdp.send("Network.enable");

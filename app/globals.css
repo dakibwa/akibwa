@@ -140,11 +140,6 @@ button {
   outline: none;
 }
 
-/* A card that takes focus must not land under the sentence. */
-.deck .card {
-  scroll-margin-block: 96px;
-}
-
 .page-transition {
   min-height: 100vh;
   /* Skip-link target: clear the sticky header when focus lands here. */
@@ -155,10 +150,6 @@ button {
 .page-transition:focus,
 .page-transition:focus-visible {
   outline: 0;
-}
-
-.site-shell.is-immersive .page-transition {
-  min-height: 100vh;
 }
 
 /* Each route change remounts app/template.jsx. Opacity-only on the wrapper so
@@ -332,58 +323,6 @@ button {
 
 /* Press settles the card back towards the page instead of holding it up. */
 
-.area-art {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 1.74 / 1;
-  border: 1px solid rgba(16, 18, 23, 0.08);
-  border-radius: var(--radius);
-  background: #eeeeec;
-}
-
-.area-art::after {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 42%;
-  background: linear-gradient(180deg, transparent, rgba(13, 11, 9, 0.22));
-  content: "";
-  opacity: 0.28;
-  pointer-events: none;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
-/* The artwork used to be a next/image `fill`, which supplied the absolute
-   positioning inline; SiteImage does not, so the fill lives here now. */
-.area-art img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* The artwork answers the cursor with light rather than movement: a soft
-   spot follows the pointer (same signature as the wordmark glow) while the
-   image itself brightens a touch. */
-.area-art::before {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: radial-gradient(
-    300px circle at var(--card-mx, 50%) var(--card-my, 40%),
-    rgba(255, 255, 255, 0.55),
-    transparent 70%
-  );
-  content: "";
-  mix-blend-mode: soft-light;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--hover-out) var(--ease-out);
-}
-
 /* The glyph leans the way the card is about to take you. */
 
 .page-footer {
@@ -463,1250 +402,21 @@ button {
 
 .page-footer .social-icon:active svg { transform: scale(.92); }
 
-.studio-page {
-  min-height: 100vh;
-  background: var(--canvas);
-  padding-bottom: 40px;
-}
-
 /* Each area page carries one accent, taken from its artwork and matching its
    homepage tile. Colour lives in contained artwork and these accents; the
    canvas itself stays quiet. */
 
-.studio-hero {
-  padding: 58px 0 24px;
-}
-
-.studio-hero h1 {
-  margin: 0;
-  max-width: 28ch;
-  /* Without this the measure leaves a one-word last line at mid-desktop
-     widths — "it." on its own under two full ones. */
-  text-wrap: balance;
-  color: var(--black);
-  font-size: var(--page-title-size);
-  font-weight: 540;
-  line-height: var(--page-title-line);
-  letter-spacing: 0;
-}
-
-/* Same split as the other four: the line and the copy on the left, the
-   page's own artwork opposite. */
-.personal-hero {
-  display: grid;
-  grid-template-columns: var(--page-hero-columns);
-  gap: var(--page-hero-gap);
-  align-items: start;
-  padding-bottom: 8px;
-}
-
-.personal-hero-copy,
-.personal-hero-art {
-  min-width: 0;
-}
-
-/* Personal's copy column is a headline and two lines, shorter than the other
-   pages carry, so the panel is a wider crop to land near its foot. */
-.personal-hero-art {
-  --page-art-ratio: 16 / 9;
-}
-
-.studio-hero.personal-hero p {
-  margin: clamp(24px, 3vw, 34px) 0 0;
-  max-width: 48ch;
-  color: var(--black);
-  font-size: 1.25rem;
-  font-weight: 440;
-  line-height: 1.45;
-}
-
-/* Projects — an index, one card each. The full preview opens in the overlay
-   rather than taking a screen apiece on the way down. */
-.projects-grid {
-  display: grid;
-  /* Small enough that the page reads as a body of work rather than a few
-     showpieces — and it fills out rather than stretching as more land. */
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: clamp(14px, 1.5vw, 20px);
-  margin-top: clamp(32px, 4vw, 48px);
-  padding-bottom: 30px;
-}
-
-.project-card {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--white);
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.035);
-  transition:
-    border-color var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.project-card:hover,
-.project-card:focus-within {
-  border-color: color-mix(in srgb, var(--area-accent, var(--blue)) 45%, transparent);
-  box-shadow: 0 20px 54px rgba(16, 18, 23, 0.09);
-  transform: translateY(-3px);
-  transition-duration: var(--hover-in);
-}
-
-.project-card-art {
-  position: relative;
-  overflow: hidden;
-  /* Wider than the hero panels so a card reads as an index entry rather than
-     a poster — the art still carries, at about half the card. */
-  aspect-ratio: 3 / 2;
-  background: color-mix(in srgb, var(--area-accent, var(--blue)) 14%, var(--white));
-}
-
-.project-card-art img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 520ms var(--ease-out);
-}
-
-.project-card:hover .project-card-art img {
-  transform: scale(1.035);
-}
-
-.project-card-body {
-  position: relative;
-  display: grid;
-  align-content: start;
-  gap: 3px;
-  padding: 12px 13px 14px;
-}
-
-/* Status sits on the artwork so the body below is only ever the name and the
-   line that identifies it. */
-.project-card-status {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 1;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 3px 8px;
-  box-shadow: 0 2px 10px rgba(16, 18, 23, 0.14);
-  backdrop-filter: blur(6px);
-}
-
-/* The title is pinned clear of the arrow rather than sharing a row with it,
-   so a name that wraps to two lines doesn't drag the arrow down with it. */
-.project-card-head {
-  padding-right: 34px;
-}
-
-.project-card-title {
-  margin: 0;
-  color: var(--black);
-  font-size: 1rem;
-  font-weight: 580;
-  line-height: 1.16;
-}
-
-/* The heading stays a heading; its button carries a cover so the whole tile
-   is the hit area without nesting anything inside anything interactive. */
-.project-card-open {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  letter-spacing: inherit;
-  text-align: left;
-}
-
-.project-card-open::after {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  content: "";
-}
-
-.project-card-open:focus-visible {
-  outline: 2px solid var(--area-accent, var(--blue));
-  outline-offset: 3px;
-}
-
-.project-card-summary {
-  margin: 4px 0 0;
-  color: color-mix(in srgb, var(--area-accent, var(--blue)) 82%, #10121a);
-  font-size: 0.79rem;
-  line-height: 1.4;
-}
-
-.project-card-cue {
-  position: absolute;
-  top: 12px;
-  right: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--area-accent, var(--blue)) 12%, transparent);
-  color: var(--area-accent, var(--blue));
-  transition: background var(--hover-out) var(--ease-out);
-}
-
-.project-card-cue svg {
-  transition: transform var(--hover-out) var(--ease-out);
-}
-
-.project-card:hover .project-card-cue {
-  background: color-mix(in srgb, var(--area-accent, var(--blue)) 22%, transparent);
-  transition-duration: var(--hover-in);
-}
-
-.project-card:hover .project-card-cue svg {
-  transform: translateX(2px);
-  transition-duration: var(--hover-in);
-}
-
 /* Plate row: the folio number in the project's accent, a hairline that
    brightens with the section, and the live/dev state at the far end. */
-
-.personal-story-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.76rem;
-  font-weight: 560;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: #8a9099;
-  white-space: nowrap;
-}
-
-.personal-story-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #9aa0a8;
-}
-
-.personal-story-status.is-live .personal-story-status-dot {
-  background: #2fa36b;
-  box-shadow: 0 0 0 4px rgba(47, 163, 107, 0.16);
-}
-
-.personal-story-status.is-dev .personal-story-status-dot {
-  background: #d08a32;
-  box-shadow: 0 0 0 4px rgba(208, 138, 50, 0.16);
-}
-
-/* Sections fade up as they scroll into view (class applied by JS, so no-JS
-   and reduced-motion visitors see everything from the start). */
-@media (prefers-reduced-motion: no-preference) {
-  /* The reveal moves on `translate`, not `transform`, so it cannot outrank the
-     card's hover lift; the hover transitions stay in the list for the same reason. */
-  .projects-grid.has-reveal .project-card {
-    opacity: 0;
-    translate: 0 22px;
-    transition:
-      opacity 640ms var(--ease-out),
-      translate 640ms var(--ease-out),
-      border-color var(--hover-out) var(--ease-out),
-      box-shadow var(--hover-out) var(--ease-out),
-      transform var(--hover-out) var(--ease-out);
-  }
-
-  .projects-grid.has-reveal .project-card.is-inview {
-    opacity: 1;
-    translate: none;
-  }
-
-  /* Deep-link arrival: the preview card breathes one soft accent ring. */
-  .project-card.is-arrived {
-    animation: personal-story-arrive 1100ms var(--ease-out) 320ms backwards;
-  }
-}
-
-@keyframes personal-story-arrive {
-  0% {
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.98) inset,
-      0 10px 24px rgba(16, 18, 23, 0.05),
-      0 0 0 0 color-mix(in srgb, var(--area-accent) 32%, transparent);
-  }
-  45% {
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.98) inset,
-      0 10px 24px rgba(16, 18, 23, 0.05),
-      0 0 0 16px color-mix(in srgb, var(--area-accent) 10%, transparent);
-  }
-  100% {
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.98) inset,
-      0 10px 24px rgba(16, 18, 23, 0.05),
-      0 0 0 22px transparent;
-  }
-}
-
-@media (max-width: 760px) {
-  .projects-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 18px;
-  }
-}
 
 /* Hover stays deliberately quiet: company colour glows around the fixed
    timeline node and logo without moving or repainting the row. */
 
-.personal-local-note {
-  display: grid;
-  min-height: 360px;
-  align-content: center;
-  justify-items: start;
-  gap: 18px;
-  background:
-    linear-gradient(90deg, rgba(168, 216, 255, 0.1), transparent 40%),
-    #f7f6f2;
-  padding: 30px;
-}
-
-.personal-local-note h3 {
-  margin: 0;
-  color: var(--black);
-  font-size: 1.5rem;
-  font-weight: 560;
-}
-
-.personal-local-note p {
-  max-width: 620px;
-  margin: 0;
-  color: #59616b;
-  line-height: 1.55;
-}
-
-.personal-local-note a {
-  display: inline-flex;
-  min-height: 42px;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid rgba(16, 18, 23, 0.13);
-  border-radius: var(--radius);
-  padding: 0 13px;
-  color: var(--black);
-  font-size: 0.9rem;
-  font-weight: 520;
-}
-
-.personal-local-note a:hover {
-  border-color: rgba(47, 136, 255, 0.36);
-  color: var(--blue);
-}
-
-.project-showcase-copy {
-  display: grid;
-  align-content: start;
-  gap: 18px;
-}
-
-.project-showcase-copy > span {
-  color: var(--black);
-  font-size: 0.74rem;
-  font-weight: 620;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.project-showcase-copy h2 {
-  margin: 0;
-  color: var(--black);
-  font-size: 2.6rem;
-  font-weight: 540;
-  line-height: 0.98;
-}
-
-.project-showcase-copy p {
-  margin: 0;
-  color: #59616b;
-  font-size: 1rem;
-  line-height: 1.52;
-}
-
-.project-showcase-copy dl {
-  display: grid;
-  gap: 14px;
-  margin: 4px 0 0;
-}
-
-.project-showcase-copy dl div {
-  display: grid;
-  gap: 7px;
-  border-top: 1px solid rgba(16, 18, 23, 0.1);
-  padding-top: 14px;
-}
-
-.project-showcase-copy dt {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--black);
-  font-size: 0.82rem;
-  font-weight: 560;
-}
-
-.project-showcase-copy dd {
-  margin: 0;
-  color: #59616b;
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-.project-showcase-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.project-showcase-actions a,
-.project-showcase-actions span {
-  display: inline-flex;
-  min-height: 42px;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid rgba(16, 18, 23, 0.13);
-  border-radius: var(--radius);
-  padding: 0 13px;
-  color: var(--black);
-  font-size: 0.9rem;
-  font-weight: 540;
-}
-
-.project-showcase-actions a:hover {
-  border-color: rgba(47, 136, 255, 0.38);
-  color: var(--blue);
-}
-
-.project-expanded-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  padding: clamp(14px, 3vw, 46px);
-  background:
-    radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 42%),
-    rgba(3, 4, 5, 0.68);
-  contain: layout paint style;
-  isolation: isolate;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 180ms ease;
-  will-change: opacity;
-}
-
-.project-expanded-layer.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.project-expanded-layer.is-closing {
-  opacity: 0;
-}
-
-.project-expanded-layer.is-maximized {
-  padding: 8px;
-}
-
-@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
-  .project-expanded-layer {
-    background:
-      radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.1), transparent 42%),
-      rgba(3, 4, 5, 0.64);
-  }
-}
-
-.project-expanded-backdrop {
-  position: absolute;
-  inset: 0;
-  cursor: zoom-out;
-}
-
-.project-expanded-shell {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  width: min(1640px, calc(100vw - clamp(28px, 6vw, 92px)));
-  height: min(980px, calc(100dvh - clamp(28px, 6vw, 92px)));
-  grid-template-rows: auto minmax(0, 1fr);
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 12px;
-  background: #fff;
-  box-shadow:
-    0 34px 110px rgba(0, 0, 0, 0.46),
-    0 0 0 1px rgba(16, 18, 23, 0.04);
-  backface-visibility: hidden;
-  contain: layout paint style;
-  opacity: 0;
-  transform: translate3d(0, 14px, 0) scale(0.982);
-  transform-origin: 50% 48%;
-  transition:
-    opacity 190ms ease,
-    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.project-expanded-layer.is-open .project-expanded-shell {
-  opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
-}
-
-.project-expanded-layer.is-closing .project-expanded-shell {
-  opacity: 0;
-  transform: translate3d(0, 8px, 0) scale(0.988);
-}
-
-.project-expanded-layer.is-maximized .project-expanded-shell {
-  width: calc(100vw - 16px);
-  height: calc(100dvh - 16px);
-  border-radius: 10px;
-}
-
-.project-expanded-toolbar {
-  position: relative;
-  display: grid;
-  min-height: 60px;
-  place-items: center;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.11);
-  background: #080b12;
-  padding: 0 62px;
-}
-
-.project-expanded-toolbar::before,
-.project-expanded-toolbar::after {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  content: "";
-  pointer-events: none;
-}
-
-.project-expanded-toolbar::before {
-  background:
-    linear-gradient(90deg, rgba(255, 250, 242, 0.46), transparent 24%, transparent 72%, rgba(255, 250, 242, 0.34)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(5, 7, 11, 0.08));
-}
-
-.project-expanded-toolbar::after {
-  border-top: 1px solid rgba(255, 255, 255, 0.11);
-  box-shadow:
-    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.project-expanded-banner {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: #f4efe8;
-}
-
-.project-expanded-banner img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  filter: saturate(1.02) contrast(1.02);
-  object-fit: cover;
-  object-position: var(--project-expanded-banner-position, 50% 50%);
-}
-
-/* Legibility scrim: the toolbar text sits over arbitrary artwork, so anchor
-   both ends of the banner with a soft dark wash. */
-.project-expanded-banner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(13, 11, 9, 0.52),
-    rgba(13, 11, 9, 0.12) 34%,
-    rgba(13, 11, 9, 0.08) 62%,
-    rgba(13, 11, 9, 0.46)
-  );
-}
-
-.project-expanded-accessible-title {
-  position: absolute;
-  overflow: hidden;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  border: 0;
-  margin: 0;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
-.project-expanded-accessible-title:not(:focus):not(:active) {
-  clip-path: inset(50%);
-}
-
-.project-expanded-actions {
-  position: absolute;
-  top: 14px;
-  right: 12px;
-  z-index: 3;
-  display: inline-flex;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 10px;
-  background: rgba(7, 10, 14, 0.54);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-}
-
-.project-expanded-close,
-.project-expanded-maximize {
-  display: inline-grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-  transition:
-    background 140ms ease,
-    color 140ms ease,
-    transform 140ms ease;
-}
-
-.project-expanded-close + .project-expanded-maximize,
-.project-expanded-maximize + .project-expanded-close {
-  border-left: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-.project-expanded-close:hover,
-.project-expanded-maximize:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
-}
-
-.project-expanded-body {
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-  background: #fff;
-}
-
-.project-expanded-layer.is-static .project-expanded-toolbar {
-  background: #f7f8f6;
-}
-
-.project-expanded-layer.is-static .project-expanded-toolbar::before {
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.58), transparent 28%, transparent 70%, rgba(255, 255, 255, 0.48)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(16, 18, 23, 0.02));
-}
-
-.project-expanded-layer.is-static .project-expanded-banner span {
-  max-width: calc(100% - 110px);
-  font-size: 1.22rem;
-}
-
-.project-expanded-layer.is-static .project-expanded-actions {
-  border-color: rgba(16, 18, 23, 0.12);
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 10px 24px rgba(16, 18, 23, 0.1);
-}
-
-.project-expanded-layer.is-static .project-expanded-close,
-.project-expanded-layer.is-static .project-expanded-maximize {
-  color: var(--black);
-}
-
-.project-expanded-layer.is-static .project-expanded-close:hover,
-.project-expanded-layer.is-static .project-expanded-maximize:hover {
-  background: #fff;
-  color: var(--blue);
-}
-
-.project-expanded-content-placeholder {
-  height: 100%;
-  min-height: 100%;
-  background:
-    linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)),
-    linear-gradient(135deg, #f8f7f3, #fff 54%, #eef4f7);
-  background-size: 180% 100%, auto;
-  animation: project-placeholder-shimmer 1.4s ease-in-out infinite;
-}
-
-@keyframes project-placeholder-shimmer {
-  from {
-    background-position: 120% 0, 0 0;
-  }
-
-  to {
-    background-position: -60% 0, 0 0;
-  }
-}
-
-.project-expanded-body > :not(.project-expanded-content-placeholder) {
-  animation: project-content-enter 300ms ease both;
-}
-
-@keyframes project-content-enter {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-expanded-content-placeholder,
-  .project-expanded-body > :not(.project-expanded-content-placeholder) {
-    animation: none;
-  }
-}
-
 /* The overlay toolbar already names the project, so the embedded app skips
    its own eyebrow and gives the row to the metrics and controls. */
 
-.cover-collision-showcase.is-expanded {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  align-items: stretch;
-  place-items: center;
-  margin-top: 0;
-  overflow: hidden;
-  border: 0;
-  border-radius: 0;
-  background:
-    radial-gradient(circle at 12% 16%, rgba(226, 85, 107, 0.09), transparent 28%),
-    radial-gradient(circle at 88% 86%, rgba(45, 66, 84, 0.08), transparent 32%),
-    #f8f6f1;
-  padding: clamp(14px, 1.8vw, 26px);
-}
-
-.cover-collision-exhibition {
-  display: grid;
-  width: min(100%, 1120px);
-  height: 100%;
-  min-height: 0;
-  grid-template-columns: minmax(210px, 250px) minmax(0, 1fr);
-  gap: clamp(22px, 3vw, 44px);
-  align-items: center;
-}
-
-.cover-collision-exhibition-note {
-  display: grid;
-  gap: 14px;
-  align-content: center;
-  color: var(--black);
-}
-
-.cover-collision-exhibition-note > span {
-  color: #9b4052;
-  font-size: 0.72rem;
-  font-weight: 680;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-.cover-collision-exhibition-note h3 {
-  margin: 0;
-  font-size: clamp(2rem, 3vw, 3.2rem);
-  font-weight: 520;
-  letter-spacing: -0.045em;
-  line-height: 0.98;
-}
-
-.cover-collision-exhibition-note p {
-  margin: 0;
-  color: #59616b;
-  font-size: 0.94rem;
-  line-height: 1.58;
-}
-
-.cover-collision-exhibition-note > div {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding-top: 4px;
-}
-
-.cover-collision-exhibition-note > div strong {
-  font-size: 1.65rem;
-  font-weight: 560;
-}
-
-.cover-collision-exhibition-note > div span {
-  color: #737a82;
-  font-size: 0.76rem;
-}
-
-.cover-collision-exhibition-note > a {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  gap: 8px;
-  margin-top: 2px;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.24);
-  padding-bottom: 4px;
-  color: var(--black);
-  font-size: 0.82rem;
-  font-weight: 620;
-  transition:
-    border-color var(--hover-out) var(--ease-out),
-    color var(--hover-out) var(--ease-out);
-}
-
-.cover-collision-exhibition-note > a:hover,
-.cover-collision-exhibition-note > a:focus-visible {
-  border-color: #9b4052;
-  color: #9b4052;
-  outline: 0;
-  transition-duration: var(--hover-in);
-}
-
-.cover-collision-showcase.is-expanded .cover-collision-panel {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  border-radius: 8px;
-  box-shadow: none;
-}
-
-.cover-collision-panel.is-gallery-only {
-  width: var(--cover-collision-panel-width, min(100%, 860px, calc(100dvh - 156px)));
-  height: 100%;
-  max-height: 100%;
-  aspect-ratio: auto;
-  grid-template-rows: minmax(0, 1fr);
-  border-color: rgba(16, 18, 23, 0.14);
-  background: #ede8de;
-}
-
-.cover-collision-panel.is-gallery-only[data-gallery-scrollable="true"] {
-  width: min(100%, 1180px);
-  height: 100%;
-  aspect-ratio: auto;
-}
-
-.cover-collision-showcase.is-expanded .cover-collision-grid {
-  max-height: 100%;
-  grid-template-columns: repeat(var(--cover-collision-columns, 3), minmax(0, 1fr));
-  grid-auto-rows: auto;
-  align-content: start;
-  gap: clamp(12px, 1.45vw, 22px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: clamp(14px, 1.8vw, 26px);
-}
-
-.cover-collision-panel.is-gallery-only[data-gallery-scrollable="true"] .cover-collision-grid {
-  scrollbar-gutter: stable;
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post {
-  grid-template-rows: auto auto;
-  align-content: start;
-  gap: 9px;
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post-image {
-  position: relative;
-  isolation: isolate;
-  border-color: rgba(16, 18, 23, 0.18);
-  border-radius: 8px;
-  box-shadow: 0 14px 34px rgba(16, 18, 23, 0.08);
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post-caption {
-  display: grid;
-  gap: 4px;
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post-caption > span {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  color: #757b82;
-  font-size: clamp(0.58rem, 0.68vw, 0.68rem);
-  font-weight: 640;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post-caption time {
-  font: inherit;
-  font-weight: 520;
-  letter-spacing: 0;
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post-caption strong {
-  color: var(--black);
-  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
-  font-weight: 620;
-  line-height: 1.26;
-  -webkit-line-clamp: 2;
-}
-
-.cover-collision-panel.is-gallery-only .cover-collision-post:hover .cover-collision-post-image,
-.cover-collision-panel.is-gallery-only .cover-collision-post:focus-visible .cover-collision-post-image {
-  border-color: rgba(255, 111, 26, 0.46);
-}
-
-.project-expanded-frame,
-.project-expanded-frame-shell {
-  height: 100%;
-  min-height: 0;
-}
-
-.project-expanded-frame-shell {
-  position: relative;
-  overflow: hidden;
-  background: #050705;
-}
-
-.project-expanded-frame-shell > .live-frame {
-  height: 100%;
-  min-height: 100%;
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
-
-.project-expanded-frame-shell.is-loaded > .live-frame {
-  opacity: 1;
-}
-
-.project-frame-loading {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  background:
-    linear-gradient(90deg, rgba(16, 18, 23, 0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(16, 18, 23, 0.035) 1px, transparent 1px),
-    #faf6ed;
-  background-size: 22px 22px, 22px 22px, auto;
-  color: var(--black);
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 160ms ease, visibility 0s linear 0s;
-}
-
-.project-frame-loading span {
-  margin-top: 8px;
-  color: #6b7178;
-  font-size: 0.86rem;
-  font-weight: 500;
-}
-
-.project-expanded-frame-shell.is-loaded > .project-frame-loading {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 160ms ease, visibility 0s linear 160ms;
-}
-
-.project-frame-loading strong {
-  font-size: clamp(1.8rem, 4vw, 3.4rem);
-  font-weight: 560;
-  letter-spacing: 0;
-}
-
-.project-static-surface {
-  display: grid;
-  min-height: 100%;
-  grid-template-columns: minmax(280px, 0.34fr) minmax(0, 1fr);
-  gap: clamp(22px, 4vw, 58px);
-  align-items: center;
-  background:
-    linear-gradient(90deg, rgba(47, 136, 255, 0.06), transparent 45%),
-    linear-gradient(90deg, rgba(16, 18, 23, 0.028) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(16, 18, 23, 0.024) 1px, transparent 1px),
-    #fff;
-  background-size: auto, 24px 24px, 24px 24px, auto;
-  padding: clamp(28px, 5vw, 76px);
-}
-
-.project-static-copy {
-  display: grid;
-  justify-items: start;
-  gap: 18px;
-}
-
-.project-static-copy > span {
-  color: #59616b;
-  font-size: 0.82rem;
-  font-weight: 560;
-}
-
-.project-static-copy h2 {
-  max-width: 540px;
-  margin: 0;
-  color: var(--black);
-  font-size: clamp(2.6rem, 5vw, 5rem);
-  font-weight: 540;
-  line-height: 0.96;
-  letter-spacing: 0;
-}
-
-.project-static-copy p {
-  max-width: 520px;
-  margin: 0;
-  color: #59616b;
-  font-size: clamp(1rem, 1.45vw, 1.24rem);
-  line-height: 1.48;
-}
-
-.project-static-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  max-width: 520px;
-}
-
-.project-static-tags span,
-.project-static-private,
-.project-static-copy a {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.74);
-  color: var(--black);
-  padding: 0 12px;
-  font-size: 0.86rem;
-  font-weight: 560;
-}
-
-.project-static-tags span {
-  min-height: 32px;
-  color: #59616b;
-  font-size: 0.78rem;
-}
-
-.project-static-private {
-  color: #59616b;
-}
-
-.project-static-copy a:hover {
-  border-color: rgba(47, 136, 255, 0.38);
-  color: var(--blue);
-}
-
-.project-static-art {
-  overflow: hidden;
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 30px 70px rgba(16, 18, 23, 0.09);
-}
-
-.project-static-artwork {
-  height: min(46vw, 520px);
-  min-height: 330px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-expanded-layer,
-
-  .project-expanded-shell,
-
-  .project-expanded-toolbar,
-
-  .project-expanded-actions {
-    animation: none;
-  }
-
-  .project-expanded-layer,
-  .project-expanded-shell,
-  .project-expanded-toolbar,
-  .project-expanded-actions {
-    transition: none;
-  }
-}
-
-.cover-collision-showcase {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.34fr) minmax(0, 1fr);
-  gap: 28px;
-  align-items: stretch;
-  margin-top: 24px;
-  scroll-margin-top: 86px;
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background:
-    linear-gradient(90deg, rgba(255, 111, 26, 0.06), transparent 38%),
-    #fff;
-  padding: 28px;
-}
-
-.cover-collision-panel {
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  border: 1px solid rgba(16, 18, 23, 0.11);
-  border-radius: var(--radius);
-  background: #fff;
-  box-shadow: 0 22px 52px rgba(16, 18, 23, 0.055);
-}
-
-.cover-collision-panel header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  border-bottom: 1px solid rgba(16, 18, 23, 0.08);
-  padding: 20px;
-}
-
-.cover-collision-panel header div {
-  display: grid;
-  gap: 8px;
-}
-
-.cover-collision-panel header span,
-.cover-collision-post span,
-.cover-collision-post em {
-  color: #59616b;
-  font-size: 0.74rem;
-}
-
-.cover-collision-panel header span {
-  color: var(--black);
-  font-weight: 620;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.cover-collision-panel header strong {
-  color: var(--black);
-  font-size: clamp(1.52rem, 2.8vw, 2.5rem);
-  font-weight: 540;
-  line-height: 1;
-}
-
-.cover-collision-panel header em {
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: 999px;
-  background: rgba(255, 111, 26, 0.07);
-  padding: 7px 10px;
-  color: #4a515b;
-  font-size: 0.76rem;
-  font-style: normal;
-  font-weight: 560;
-  white-space: nowrap;
-}
-
-.cover-collision-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
-  padding: 20px;
-}
-
-.cover-collision-post {
-  display: grid;
-  min-width: 0;
-  align-content: start;
-  gap: 7px;
-  color: var(--black);
-}
-
-.cover-collision-post-image {
-  overflow: hidden;
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  border: 1px solid rgba(16, 18, 23, 0.1);
-  border-radius: 6px;
-  transition:
-    border-color var(--hover-out) var(--ease-out),
-    box-shadow var(--hover-out) var(--ease-out),
-    transform var(--hover-out) var(--ease-out);
-}
-
-.cover-collision-post-image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 0;
-  object-fit: cover;
-}
-
-.cover-collision-post:hover .cover-collision-post-image {
-  border-color: rgba(255, 111, 26, 0.38);
-  box-shadow: 0 14px 30px rgba(16, 18, 23, 0.12);
-  transform: translateY(-2px);
-  transition-duration: var(--hover-in);
-}
-
-.cover-collision-post strong {
-  overflow: hidden;
-  display: -webkit-box;
-  color: var(--black);
-  font-size: 0.78rem;
-  font-weight: 560;
-  line-height: 1.25;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.cover-collision-post em {
-  font-style: normal;
-}
-
-.live-frame {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  background: #050705;
-}
-
 /* One action left, so it sizes to itself rather than stretching a row that
    no longer has anything else in it. */
-
-.page-art-panel {
-  overflow: hidden;
-  width: 100%;
-  aspect-ratio: var(--page-art-ratio, 4 / 3);
-  border: 1px solid rgba(16, 18, 23, 0.12);
-  border-radius: var(--radius);
-  background: var(--page-accent, var(--blue));
-  box-shadow: 0 14px 42px rgba(16, 18, 23, 0.06);
-}
-
-.page-art-panel img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: var(--page-art-position, 50% 50%);
-}
 
 /* Now the first closing strip on Contact, so it carries the same top
    breathing room the notes strip used to. */
@@ -1757,163 +467,50 @@ button {
   line-height: 1.75;
 }
 
-@media (max-width: 1060px) {
-  .project-expanded-shell {
-    width: calc(100vw - 32px);
-    height: calc(100dvh - 32px);
-  }
-
-  .project-static-surface {
-    grid-template-columns: 1fr;
-    align-content: start;
-  }
-
-  .project-static-copy h2 {
-    max-width: 760px;
-  }
-
-  .project-static-artwork {
-    height: 360px;
-  }
-
-  .cover-collision-showcase {
-    grid-template-columns: 1fr;
-  }
-
-  .personal-hero {
-    grid-template-columns: 1fr;
-    gap: 22px;
-    align-items: start;
-  }
-
-  .personal-hero-art .page-art-panel {
-    max-width: 520px;
-  }
-
-  .page-art-panel {
-    width: min(520px, 100%);
-    height: auto;
-    min-height: 0;
-  }
-
-}
-
 @media (max-width: 760px) {
-  .project-expanded-layer {
-    padding: 8px;
-  }
+  
 
-  .project-expanded-shell {
-    width: calc(100vw - 16px);
-    height: calc(100dvh - 16px);
-    border-radius: 10px;
-  }
+  
 
-  .project-expanded-toolbar {
-    min-height: 62px;
-    padding: 0 86px 0 12px;
-  }
+  
 
-  .project-expanded-actions {
-    top: 10px;
-    right: 10px;
-  }
+  
 
-  .project-expanded-close,
-  .project-expanded-maximize {
-    width: 36px;
-    height: 36px;
-  }
+  
 
-  .cover-collision-showcase.is-expanded {
-    padding: 10px;
-  }
+  
 
-  .cover-collision-exhibition {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: 10px;
-    align-items: stretch;
-  }
+  
 
-  .cover-collision-exhibition-note {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 5px 14px;
-    align-items: end;
-    border: 1px solid rgba(16, 18, 23, 0.1);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.56);
-    padding: 10px 12px;
-  }
+  
 
-  .cover-collision-exhibition-note > span,
-  .cover-collision-exhibition-note h3,
-  .cover-collision-exhibition-note p {
-    grid-column: 1;
-  }
+  
 
-  .cover-collision-exhibition-note h3 {
-    font-size: clamp(1.2rem, 5vw, 1.55rem);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-  }
+  
 
-  .cover-collision-exhibition-note p,
-  .cover-collision-exhibition-note > div {
-    display: none;
-  }
+  
 
-  .cover-collision-exhibition-note > a {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
-    white-space: nowrap;
-  }
+  
 
-  .cover-collision-showcase.is-expanded .cover-collision-panel {
-    border-radius: 8px;
-  }
+  
 
-  .cover-collision-showcase.is-expanded .cover-collision-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    padding: 12px;
-  }
+  
 
-  .cover-collision-panel.is-gallery-only[data-gallery-scrollable="true"] {
-    width: 100%;
-  }
+  
 
-  .cover-collision-panel.is-gallery-only .cover-collision-post-image {
-    border-radius: 7px;
-    box-shadow: 0 10px 24px rgba(16, 18, 23, 0.08);
-  }
+  
 
-  .cover-collision-panel.is-gallery-only .cover-collision-post-caption time {
-    display: none;
-  }
+  
 
-  .project-static-surface {
-    gap: 22px;
-    padding: 24px 18px 28px;
-  }
+  
 
-  .project-static-copy {
-    gap: 14px;
-  }
+  
 
-  .project-static-copy h2 {
-    font-size: 2.4rem;
-  }
+  
 
-  .project-expanded-layer.is-static .project-expanded-banner span {
-    font-size: 1rem;
-  }
+  
 
-  .project-static-artwork {
-    height: 240px;
-    min-height: 240px;
-  }
+  
 
   
 
@@ -1942,83 +539,32 @@ button {
     gap: 6px;
   }
 
-  .studio-page {
-    padding-bottom: 30px;
-  }
+  
 
-  .studio-hero {
-    padding-top: 44px;
-  }
+  
 
-  .studio-hero h1 {
-    font-size: var(--page-title-mobile-size);
-  }
-.cover-collision-showcase {
-    padding: 18px;
-  }
+  
 
-  .cover-collision-panel header,
-  .cover-collision-grid {
-    padding: 16px;
-  }
+  
 
-  .cover-collision-panel header {
-    display: grid;
-    align-items: start;
-  }
+  
 
-  .cover-collision-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
+  
 
-  .cover-collision-showcase.is-expanded .cover-collision-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    padding: 12px;
-  }
+  
 
-  .cover-collision-showcase.is-expanded .cover-collision-panel {
-    width: 100%;
-    height: 100%;
-  }
+  
 
-  .cover-collision-showcase.is-expanded .cover-collision-post-caption {
-    opacity: 1;
-    transform: none;
-  }
+  
 
-  .cover-collision-showcase.is-expanded .cover-collision-post-caption strong {
-    font-size: 0.68rem;
-    -webkit-line-clamp: 2;
-  }
+  
 
-  .page-art-panel {
-    width: 100%;
-    height: auto;
-    min-height: 0;
-  }
+  
 
-}
-
-@media (max-width: 480px) {
-
-  .page-art-panel {
-    width: min(100%, calc(100vw - 32px));
-    max-width: calc(100vw - 32px);
-    justify-self: start;
-  }
-}
-
-@media (max-width: 360px) {
-  .cover-collision-showcase.is-expanded .cover-collision-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
 .page-transition,
-.area-art::after,
 .hero-name-value,
 .text-action svg {
   animation: none;
@@ -2031,147 +577,8 @@ button {
    of the artwork, inside the frame so its corners are clipped by the frame's
    own radius. Hover keeps only the gentle image zoom. */
 
-.area-art img {
-  will-change: transform;
-  transition:
-    transform 600ms var(--ease-out),
-    filter 600ms var(--ease-out);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .area-art img {
-    transition: none;
-    transform: none;
-  }
-}
-
-/* Project overlay banner: surface title, scrobble count, and refresh live in
-   the banner strip; the embedded app hides its own masthead to save a row. */
-.project-expanded-banner-meta {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 20px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  pointer-events: none;
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.46);
-}
-
-.project-expanded-banner-meta strong {
-  font-size: 0.96rem;
-  font-weight: 620;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.project-expanded-banner-meta em {
-  font-size: 0.7rem;
-  font-style: normal;
-  font-weight: 540;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.76);
-}
-
 /* The toolbar carries the snapshot and range controls in the overlay, so the
    embedded app hides its own copy on larger screens. */
-
-.project-expanded-refresh {
-  display: inline-grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-  transition:
-    background 140ms ease,
-    color 140ms ease,
-    transform 140ms ease;
-}
-
-.project-expanded-refresh:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
-}
-
-.project-expanded-refresh + .project-expanded-maximize,
-.project-expanded-refresh + .project-expanded-close {
-  border-left: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-@media (max-width: 620px) {
-  .project-expanded-banner-meta em {
-    display: none;
-  }
-}
-
-/* Moved-page notices for legacy routes */
-.route-redirect {
-  padding: 96px 0 64px;
-}
-
-.route-redirect p {
-  margin: 0;
-  color: #59616b;
-  font-size: 1rem;
-}
-
-.route-redirect a {
-  color: var(--black);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-@media (max-width: 1060px) {
-  /* Once the hero stacks the artwork must not interrupt the reading order. The hero
-     splits apart so the picture can come last, after the words have done
-     their job: headline, offer, call to action, the box — then the image.
-     This has to match the width the hero collapses at (1060px); scoped to
-     760px it left a band where the picture sat between the two.
-     `display: contents` drops the hero grid, so its two halves take the
-     page gutter themselves. */
-  .personal-page {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .personal-hero {
-    display: contents;
-  }
-
-  .personal-hero-copy,
-  .personal-hero-art {
-    width: min(calc(100% - 48px), var(--frame));
-    margin: 0 auto;
-  }
-
-  .personal-hero-copy {
-    order: 1;
-    padding-top: 44px;
-  }
-
-  .projects-grid {
-    order: 2;
-  }
-
-  .personal-page .page-footer {
-    order: 4;
-  }
-
-  /* Projects drops its panel rather than reordering it. Stacked, the artwork
-     lands after the whole card grid with nothing left to pair with, so it
-     reads as an offcut above the footer rather than the hero's other half.
-     The img is lazy, so a hidden panel costs no request. */
-  .personal-hero-art {
-    display: none;
-  }
-}
 
 /*
  * The label, anchored under the card it describes rather than parked in a fixed
@@ -2308,20 +715,8 @@ button {
    row, so title cards landed mid-row and every spanning card pushed a hole
    through the wall. Same tile, same gap, no cross-set flow. */
 
-.deck {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(5px, 0.55vw, 9px);
-}
-
 /* When the lens lights the other group on this rail, the word steps back
    with its cards. */
-/* Under the rail width the name cannot hold a column, so it sits above the
-   cards instead and the row keeps its full width for them. */
-@media (max-width: 760px) {
-  }
 
 /* The ink prototype's canvas: fixed under everything, purely decorative. */
 
@@ -2362,59 +757,6 @@ button {
    below is what carries them, and the script measures before and after to make
    the move continuous rather than a jump. */
 
-/* One library, set as a collage. The grid runs on small square units and
-   packs densely: a leading card is four units, the long tail one each, so
-   four small sleeves sit in the footprint of one large — more art per
-   screen, and the wall reads as a collage rather than rows. */
-.deck {
-  --u: clamp(56px, 4.5vw, 78px);
-  --g: clamp(6px, 0.65vw, 10px);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--u), 1fr));
-  grid-auto-rows: minmax(var(--u), auto);
-  grid-auto-flow: dense;
-  gap: var(--g);
-  align-items: stretch;
-}
-
-.deck .card {
-  grid-column: span 2;
-  grid-row: span 2;
-  width: auto;
-  aspect-ratio: auto;
-  /* Offscreen cards skip paint and style entirely — the grid fixes every
-     card's box, so skipped contents cannot shift layout. With 366 cards,
-     this is the difference between painting a wall and painting a window.
-     The estimate keeps the scrollbar honest before first render; `auto`
-     lets the real measurement replace it, where a bare length would pin
-     the guess forever. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 133px;
-}
-
-/* Phones keep the collage dense: six or seven small units across, making a
-   normal card about 93–100px rather than 140px. The card's
-   aspect ratio grows the implicit rows to the same size as the stretched
-   columns, so artwork is square instead of being pulled wider than its file. */
-@media (max-width: 560px) {
-  .deck {
-    --u: 44px;
-    --g: 4px;
-    align-items: start;
-  }
-
-  .deck .card {
-    width: 100%;
-    height: auto;
-    min-width: 0;
-    min-height: 0;
-    aspect-ratio: 1;
-    align-self: start;
-    contain-intrinsic-size: auto calc(2 * var(--u) + var(--g));
-  }
-
-}
-
 /* The key sits directly below the sentence as six plain words. Their ink is
    enough to connect them to the cards; a tray, badges, or decorative rules
    only make this quiet menu heavier than the collage it introduces. */
@@ -2446,11 +788,7 @@ button {
   }
 
   .hero-name:hover,
-  .page-footer :is(a, button).is-hovering,
-  .page-footer :is(a, button).is-pressing,
   .page-footer :is(a, button):focus-visible:not(.is-pointer-focus),
-  .page-footer :is(a, button).is-hovering svg,
-  .page-footer :is(a, button).is-pressing svg,
   .page-footer :is(a, button):focus-visible:not(.is-pointer-focus) svg {
     transform: none;
   }
@@ -2460,33 +798,6 @@ button {
   }
 }
 
-/* ── The key ────────────────────────────────────────────────────────────
-   The wall is blended, so every card wears its collection's ink along its
-   bottom edge — the same ink its legend word is printed in. The edge is the
-   whole key: no badges, no labels, just a coloured baseline. */
-.deck .card[data-key="sites"] { --key-rgb: 27, 148, 125; }
-.deck .card[data-key="jobs"] { --key-rgb: 203, 66, 94; }
-.deck .card[data-key="life"] { --key-rgb: 61, 90, 128; }
-.deck .card[data-key="music"] { --key-rgb: 224, 122, 26; }
-.deck .card[data-key="films"] { --key-rgb: 94, 142, 103; }
-.deck .card[data-key="games"] { --key-rgb: 115, 112, 255; }
-.deck .card[data-key="tv"] { --key-rgb: 0, 154, 205; }
-.deck .card[data-key="podcasts"] { --key-rgb: 164, 74, 126; }
-
-/* The key is a quiet baseline: each card underlined in its collection's
-   ink, the frame staying the neutral line. (A full coloured frame was
-   tried and reverted — it shouted.) */
-.deck .card {
-  border-bottom: 3px solid color-mix(in srgb, rgb(var(--key-rgb, 120, 120, 120)) 62%, var(--white));
-}
-
-/* Holding a lens: everything the lens does not name leaves the collage, and
-   the view transition morphs the survivors into their closed-up places. The
-   hero sentence stays; unlit legend words leave with the unlit cards. */
-.deck.is-lensed .card:not(.is-lit) {
-  display: none;
-}
-
 /* Like Career, the section grows while a popover is open so the page's end
    steps down beneath it instead of the card hanging past the last rule. */
 .concept-archive {
@@ -2494,12 +805,6 @@ button {
   --taste-open-space: 96px;
   padding-bottom: var(--taste-rest-space);
   transition: padding-bottom 340ms var(--ease-out);
-}
-
-.concept-archive:has(.taste-wall:hover),
-.concept-archive:has(.taste-popover.is-open) {
-  padding-bottom: var(--taste-open-space);
-  transition-duration: 480ms;
 }
 
 /* ── Editorial homepage ─────────────────────────────────────────────────
@@ -3132,19 +1437,10 @@ button {
 .concept-project-card { padding: 0; width: 100%; }
 .personal-intro{white-space:nowrap}
 .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
-.archive-back{font-size:.83rem;line-height:1.4;text-decoration:underline;text-underline-offset:4px}
-.listening-summary{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:24px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0 28px}
-.listening-provenance{grid-column:1/-1;margin:0;font-size:.74rem;line-height:1.4;color:var(--muted)}
-.listening-summary>div{display:grid;gap:5px;align-content:start}
-.listening-summary strong{font-size:clamp(1.7rem,3vw,2.8rem);font-weight:520;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
-.listening-summary span,.listening-summary summary{font-size:.79rem;line-height:1.5}
-.listening-summary details{align-self:center}
-.listening-summary details p,.album-source p{font-size:.82rem;line-height:1.6;color:var(--muted);max-width:76ch}
-.listening-summary summary,.album-source summary{cursor:pointer;text-underline-offset:4px;text-decoration:underline;min-height:32px;align-content:center}
-.album-pagination button,.album-empty button{font:inherit;font-size:.82rem;background:transparent;border:1px solid var(--line-strong);padding:10px 14px;min-height:44px;cursor:pointer;color:var(--ink)}
-.personal-taste-card,.album-browser-card{border:0;background:none;padding:0;margin:0;text-align:left;min-width:0;color:var(--ink);font:inherit;cursor:default;display:flex;flex-direction:column;align-items:stretch}
-.personal-taste-art,.album-browser-art{display:block;aspect-ratio:1;overflow:hidden;background:#dedcd3;margin-bottom:12px}
-.personal-taste-art,.album-browser-art { position: relative; }
+
+.personal-taste-card{border:0;background:none;padding:0;margin:0;text-align:left;min-width:0;color:var(--ink);font:inherit;cursor:default;display:flex;flex-direction:column;align-items:stretch}
+.personal-taste-art{display:block;aspect-ratio:1;overflow:hidden;background:#dedcd3;margin-bottom:12px}
+.personal-taste-art { position: relative; }
 .listening-hover { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px 8px; background: linear-gradient(transparent 0%, #101518d9 45%, #101518f5 100%); color: #fff; opacity: 0; visibility: hidden; transition: opacity 140ms ease, visibility 140ms ease; pointer-events: none; text-align: left; }
 .listening-hover > strong { font: 650 clamp(1.25rem, 1.8vw, 1.65rem)/1.05 var(--sans); letter-spacing: -.04em; }
 .listening-hover > span { font: 500 .66rem/1.4 var(--sans); margin-top: 3px; }
@@ -3169,54 +1465,18 @@ button {
 @media(prefers-reduced-motion:reduce) {
   .listening-hover { transition: none; }
 }
-.personal-taste-art picture,.album-browser-art picture{display:block;width:100%;height:100%}
-.personal-taste-art img,.album-browser-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 180ms ease}
-.personal-taste-card:focus-visible,.album-browser-card:focus-visible{outline:2px solid var(--ink);outline-offset:5px}
+.personal-taste-art picture{display:block;width:100%;height:100%}
+.personal-taste-art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 180ms ease}
+.personal-taste-card:focus-visible{outline:2px solid var(--ink);outline-offset:5px}
 .taste-load-status{font-size:.75rem;line-height:1.5;color:var(--muted);margin:14px 0 0}
 .taste-load-status button{font:inherit;border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-.personal-taste-title,.album-browser-card>strong{font-size:.86rem;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
-.personal-taste-creator,.album-browser-card>span:not(.album-browser-art){font-size:.77rem;line-height:1.4;margin-top:4px;color:var(--muted)}
-.archive-eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
-.album-library{padding-top:32px;padding-bottom:40px}
-.album-library-head{max-width:760px;padding:44px 0 26px}
-.album-library-head h1{font:500 clamp(3rem,6vw,5.5rem)/1 var(--serif);letter-spacing:-.06em;margin:12px 0 20px}
-.album-library-head>p:last-child{max-width:52ch;font-size:1.05rem;line-height:1.5;color:var(--muted)}
-.album-catalogue-summary{display:flex;flex-wrap:wrap;gap:12px 32px;font-size:.82rem}
-.album-catalogue-summary strong{font-weight:650;font-size:1.1rem}
-.album-browser-controls{display:grid;grid-template-columns:minmax(220px,2fr) 1fr 1fr;gap:18px;margin-top:36px}
-.album-browser-controls label{display:grid;gap:8px;font-size:.72rem;font-weight:600}
-.album-browser-controls input,.album-browser-controls select{min-width:0;width:100%;height:46px;border:1px solid var(--line-strong);border-radius:0;padding:10px 12px;background:var(--canvas);font:inherit;font-size:.9rem;color:var(--ink)}
-.album-results-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:24px 0 16px;scroll-margin-top:20px}
-.album-results-heading p{margin:0;font-size:.83rem}
-.album-results-heading>span{font-size:.7rem;color:var(--muted)}
-.album-browser-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:30px 20px}
-.album-browser-card>small{font-size:.67rem;line-height:1.5;margin-top:8px;color:var(--muted)}
-.album-pagination{display:flex;align-items:center;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);gap:10px;font-size:.8rem}
-.album-pagination button:disabled{opacity:.35;cursor:default}
-.album-source{border-top:1px solid var(--line);padding:24px 0;margin-top:28px;font-size:.83rem}
-.album-empty{padding:54px 20px;text-align:center;border:1px solid var(--line);background:color-mix(in srgb,var(--canvas) 95%,var(--ink))}
-.album-empty h2{font-family:var(--serif);font-size:2rem;font-weight:500}
-.album-empty p{color:var(--muted);line-height:1.5}
+.personal-taste-title{font-size:.86rem;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
+.personal-taste-creator{font-size:.77rem;line-height:1.4;margin-top:4px;color:var(--muted)}
+
 :is(.personal-career,.personal-taste,.album-library,.archive-dialog) :is(button,a,input,select,summary):focus-visible{outline:2px solid #2f88ff;outline-offset:4px}
-@media(max-width:1000px){
- .album-browser-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
- .listening-summary{grid-template-columns:1fr 1fr}
- .listening-summary details{grid-column:1/-1}
-}
-@media(max-width:600px){
- .album-browser-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}
- .listening-summary{gap:14px;padding:18px 0}
- .listening-summary span{font-size:.73rem}
- .album-library-head{padding-top:32px}
- .album-browser-controls{grid-template-columns:1fr 1fr;gap:14px}
- .album-search{grid-column:1/-1}
- .album-browser-controls select{font-size:.79rem;padding:8px}
- .album-results-heading{display:block}
- .album-results-heading>span{display:block;margin-top:7px}
- .album-catalogue-summary{gap:8px 22px;line-height:1.5}
-}
+
 @media(prefers-reduced-motion:reduce){
- .personal-taste-art img,.album-browser-art img{transition:none!important;transform:none!important}
+ .personal-taste-art img{transition:none!important;transform:none!important}
 }
 
 /* Faithful homepage restoration: historical type, timeline and native rail. */

@@ -50,8 +50,8 @@ npm run check:hosting -- https://akibwa.com
 The deployment command uploads the already-checked export once, updating both
 the public site and preview. It does not build a second copy or change domain
 routing. Publish the whole `out/` tree:
-standalone `/features/`, `/probe/`, `/meditator/` and `/trek/`, generated artwork,
-listening data, fonts and service-worker retirement files are part of it.
+standalone `/features/` and `/trek/`, generated artwork, listening data, fonts
+and the `/meditator/` service-worker retirement files are part of it.
 `.assetsignore` excludes `CNAME` and `.nojekyll` from Cloudflare assets; these
 files remain in the export for the GitHub Pages fallback.
 
@@ -67,11 +67,12 @@ Keep a direct browser run-through of the affected pages alongside this check.
   canonical HTML redirect.
 - Missing paths serve the exported `404.html` with status 404. There is no
   homepage fallback for missing or retired routes such as `/life-map/`.
-- Legacy route pages keep their current JavaScript redirects. The old proposed
-  redirect table was stale: `/offer`, `/systems`, `/work`, `/personal`,
-  `/projects`, `/professional`, `/about` and `/contact` now return to `/`;
-  `/portugal` points to `https://portuguesewithines.com/`. Deep personal links
-  still target their corresponding project route. Do not restore old targets.
+- Retired routes are deleted and redirect at the edge from `public/_redirects`:
+  `/albums`, `/projects`, `/personal`, `/about`, `/contact`, `/offer`,
+  `/professional`, `/systems`, `/work` and `/concept` (and everything beneath
+  them) 301 to `/`; `/probe` 301s to `/features/`; `/portugal` 301s to
+  `https://portuguesewithines.com/`. Static rules sit above splat rules. The
+  GitHub Pages fallback cannot apply `_redirects`, so those links 404 there.
 - `public/_headers` preserves the six production security headers and existing
   public asset CORS behavior. Features' additional hardened meta CSP is left
   byte-for-byte intact.

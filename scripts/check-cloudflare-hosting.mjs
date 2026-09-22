@@ -46,7 +46,7 @@ assert.ok(files.every((file) => file.bytes <= 25 * 1024 * 1024), "export contain
 
 await waitForHostedExport(origin, hash(await readFile(join(root, "index.html"))));
 
-const pages = ["", "albums", "features", "trek", "probe", "meditator", "portugal", "offer", "personal", "projects"];
+const pages = ["", "features", "trek", "meditator"];
 for (const page of pages) {
   const path = page ? `/${page}/` : "/";
   const response = await request(path);
@@ -69,6 +69,15 @@ for (const [, script] of features.matchAll(/<script(?![^>]*\ssrc\s*=)[^>]*>([\s\
 const gameRedirect = await request("/features");
 assert.equal(gameRedirect.status, 301, "keep the established game redirect");
 assert.equal(new URL(gameRedirect.headers.get("location"), origin).pathname, "/features/");
+// Retired pages are deleted; their old links redirect at the edge.
+for (const [path, target] of [
+  ["/albums/", "/"], ["/projects/cover-collision/", "/"], ["/personal/", "/"], ["/about/", "/"],
+  ["/probe/", "/features/"], ["/portugal/", "https://portuguesewithines.com/"],
+]) {
+  const response = await request(path);
+  assert.equal(response.status, 301, `${path} must permanently redirect`);
+  assert.equal(new URL(response.headers.get("location"), origin).href, new URL(target, origin).href, `${path} redirect target`);
+}
 const gameAlias = await request("/features/index.html", { redirect: "follow" });
 assert.equal(gameAlias.status, 200, "existing index.html links must still reach the game");
 assert.equal(hash(Buffer.from(await gameAlias.arrayBuffer())), hash(features));
@@ -115,4 +124,4 @@ assert.equal(health.status, 200, "production Features API remains available");
 assert.match(health.headers.get("cache-control") || "", /no-store/, "API responses must not enter the static cache");
 assert.equal((await health.json()).ok, true, "production Features API health");
 
-console.log(`hosting checks passed: ${pages.length} pages, ${samples.length} assets, real 404s, redirects, CSP and production API; ${files.length} exported files; Features SHA256 ${hash(features)}`);
+console.log(`hosting checks passed: ${pages.length} pages, ${samples.length} assets, real 404s, retired-page redirects, CSP and production API; ${files.length} exported files; Features SHA256 ${hash(features)}`);

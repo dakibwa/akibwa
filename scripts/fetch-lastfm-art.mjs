@@ -99,9 +99,9 @@ const library = await fetchLibrary();
 
 process.stderr.write(`library: ${library.length} albums\n`);
 
-// Anything already on the wall as a printed card keeps its card art. The key
-// here is the same one refresh-album-plays.mjs bakes in, so a card and its
-// Last.fm entry collapse to one tile rather than appearing twice.
+// Anything already printed as a card keeps its printed art. The key here is
+// the one recorded on each printed sleeve in data/album-wall.json, so a card
+// and its Last.fm entry collapse to one tile rather than appearing twice.
 const printedKeys = new Set(wall.sleeves.filter((s) => s.lastfmKey).map((s) => s.lastfmKey));
 
 
@@ -184,19 +184,7 @@ for (const [index, row] of candidates.entries()) {
     const webp = await base.clone().webp(WEBP).toBuffer();
     await writeFile(path.join(outDir, `${id}-wall.avif`), avif);
     await writeFile(path.join(outDir, `${id}-wall.webp`), webp);
-
-    // The card rung is whatever the source actually has, which for Last.fm is
-    // 300px. Encoded once so an opened sleeve is not a scaled-up wall tile.
-    const cardWidth = Math.min(meta.width, meta.height);
-    const card = await press(
-      sharp,
-      sharp(source).resize(cardWidth, cardWidth, { fit: "cover", position: "centre" })
-    );
-    // AVIF only for the card rung — see AlbumArtImage in components/site-image.jsx.
-    const cardAvif = await card.clone().avif(AVIF).toBuffer();
-    await writeFile(path.join(outDir, `${id}-card.avif`), cardAvif);
-
-    bytes += avif.length + webp.length + cardAvif.length;
+    bytes += avif.length + webp.length;
 
     played.push({
       id,
@@ -209,7 +197,7 @@ for (const [index, row] of candidates.entries()) {
       plays: row.plays,
       lastfmUrl: row.url,
       lastfmKey: row.key,
-      artWidth: cardWidth,
+      artWidth: Math.min(meta.width, meta.height),
       source: "lastfm"
     });
   } catch {

@@ -2,9 +2,9 @@
 
 Public site for [akibwa.com](https://akibwa.com), exported statically with Next.js and deployed from `main` to Cloudflare Workers Static Assets. GitHub hosts the code and runs the deploy workflow; GitHub Pages is only a manual fallback. See [the hosting contract](docs/cloudflare-config.md).
 
-The homepage introduces Daniel/Akibwa, then presents Projects → an airy Career timeline → a horizontal Taste Library. The approved career roles, cultural curation and Instagram/X links are restored selectively, not by reverting privacy work. Residential and private life history stay out; the email address is assembled only after activation. The full album archive remains `noindex`; only `/` is advertised in the sitemap.
+The homepage introduces Daniel/Akibwa, then presents Projects → an airy Career timeline → a horizontal Taste Library. The approved career roles, cultural curation and Instagram/X links are restored selectively, not by reverting privacy work. Residential and private life history stay out; the email address is assembled only after activation. Only `/` is advertised in the sitemap.
 
-The archive has searchable, source-specific album counts and paginated artwork. The archive keeps the Spotify summary, leaving the homepage as a light editorial index. That summary is an approved aggregate of recorded music audio, not a lifetime total or an estimate of attention. Last.fm track scrobbles remain separate. See [the interaction and privacy contract](docs/navigation-animation-contract.md).
+The site is one page. Old pages (the album archive, the wall and the earlier project pages) were deleted; their links 301 to the homepage from `public/_redirects`. The Taste Library's Music shelf loads the full reconciled listening catalogue on demand. See [the interaction and privacy contract](docs/navigation-animation-contract.md).
 
 ## Projects
 
@@ -21,4 +21,4 @@ The archive has searchable, source-specific album counts and paginated artwork. 
 - `npm run trek:build`: rebuild the Trek from the exact route data and privacy-edited journal.
 - `npm run check:trek:dom`: exercise relief, playback, phone layouts and graphics failure paths. See [the Trek design and source contract](docs/trek-design.md).
 
-Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Refresh Routing](docs/refresh-routing.md) and [Publication Workflow](docs/publication-workflow.md).
+Public surface metadata lives in `data/public-surfaces.json`. API-backed refreshes belong in Cloudflare Workers rather than local schedulers or data-mutating GitHub Actions. See [Publication Workflow](docs/publication-workflow.md).

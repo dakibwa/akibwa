@@ -1,2 +1,35 @@
+# Static rules come first: Cloudflare matches them faster than splat rules.
+
 # Keep the game's established canonical URL and permanent redirect.
 /features /features/ 301
+
+# The game was called probe until 13 August 2026; links to that name still land on it.
+/probe /features/ 301
+
+# The Portuguese lessons live on their own site.
+/portugal https://portuguesewithines.com/ 301
+
+# Retired pages. The site is one page now, so old links and bookmarks land on it.
+/albums / 301
+/projects / 301
+/personal / 301
+/about / 301
+/contact / 301
+/offer / 301
+/professional / 301
+/systems / 301
+/work / 301
+/concept / 301
+
+/probe/* /features/ 301
+/portugal/* https://portuguesewithines.com/ 301
+/albums/* / 301
+/projects/* / 301
+/personal/* / 301
+/about/* / 301
+/contact/* / 301
+/offer/* / 301
+/professional/* / 301
+/systems/* / 301
+/work/* / 301
+/concept/* / 301

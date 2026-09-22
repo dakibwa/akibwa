@@ -11,9 +11,10 @@ order using current catalogue IDs. The serif proposition follows `f5a1f602`, wit
 current wording. These references own visual character; the approved current
 data projection owns what can appear publicly.
 
-Selectively recover presentation, not the old private data. Keep the improved
-full `/albums` gallery, stable identities, reconciled counts, safe public
-aggregates and dependency-security fixes. “What a Kibler does” and “Make the
+Selectively recover presentation, not the old private data. Keep the stable
+identities, reconciled counts, safe public aggregates and dependency-security
+fixes. The separate `/albums` archive and the old project pages were deleted on
+22 September 2026 at Dan's request; their links 301 to `/`. “What a Kibler does” and “Make the
 mess legible” are rejected. Rewrite supporting copy naturally without replacing
 Projects → Career → Taste or the original character of the page.
 
@@ -22,10 +23,10 @@ Projects → Career → Taste or the original character of the page.
 - `/` introduces Daniel/Akibwa, then presents three current Projects → an airy Career timeline → Taste Library. These named restorations, including the Instagram and X profiles at `@dakibwa`, were explicitly approved. Do not restore the rejected capability slogans or unrelated removed personal history.
 - `data/taste-curation.json` is a narrow projection of previously published career roles/dates and cultural choices. Residential history, detailed life traces, health and identifying third-party material remain excluded.
 - The later 5 September request restores the eight original public career statements and expands Podcasts to the recorded show library. Only per-show counts and public catalogue metadata are included. Spotify audio/video starts lasting at least 30 seconds rank the shelf; Apple episode records remain separate. Public and subscriber Making Sense feeds are grouped. Missing provider coverage is not a zero, and music-only uploads are excluded.
-- `public/listening-catalogue.json` owns the approved Spotify, YouTube, Last.fm and Apple album/show aggregates. [Listening history](listening-history.md) defines exact matching and conservative overlap bounds. Never commit raw events, account IDs or private source paths. `data/listening-summary.json` remains the separate Spotify duration summary; no time is inferred from scrobbles or YouTube views.
+- `public/listening-catalogue.json` owns the approved Spotify, YouTube, Last.fm and Apple album/show aggregates. [Listening history](listening-history.md) defines exact matching and conservative overlap bounds. Never commit raw events, account IDs or private source paths. No listening time is published, and none is inferred from scrobbles or YouTube views.
 - The email control is available to people using the page but the address is assembled only after activation; it must not appear in static HTML.
 - The root may be indexed, but image indexing and long search snippets are restricted. It is the only sitemap entry.
-- Detailed archives and project-detail routes use `noindex`. Crawlers remain allowed in `robots.txt` so they can read those directives.
+- Standalone detail surfaces such as `/trek/` use `noindex`. Crawlers remain allowed in `robots.txt` so they can read those directives. Retired pages are deleted and redirect at the edge through `public/_redirects`; do not recreate stub pages for them.
 
 ## Layout and interaction
 
@@ -48,13 +49,13 @@ Projects → Career → Taste or the original character of the page.
 - The mixed Taste wall is the default when no medium is selected; omit a separate Highlights button. Clicking the selected medium again clears it and restores the mixed wall.
 - Taste's compact Search control opens a field for titles and creators. With no medium selected, search covers the whole library; a selected medium limits the search to that medium. Match words without case or accent sensitivity. Keep the query when changing or clearing the medium. Show matching artwork directly without a match-count line, and a short empty state when there are no matches. Clearing or closing search returns to the current medium or the mixed wall when none is selected. Escape closes search and returns focus to its control.
 - Show real film and TV posters in portrait frames, game cover art in a 3:4 frame, and square music/podcast sleeves. Preserve original colours and lettering. [Homepage artwork](homepage-artwork.md) records the project-cover framing, new Trek illustration and verified podcast sources.
-- Music uses the complete available aggregate catalogue, ranked by reconciled counts. Podcasts show records with at least five plays, plus Within Reason by Alex O'Connor as an explicit exception, across browsing and search. Preserve its unknown count and the source catalogue. Long shelves load another 36 cards near the rail's end, with a keyboard-accessible More control. The closing sentence and Browse all album link are removed. Counts carry no provider labels, and a + marks a conservative lower bound. Taste and album cards remain articles with no click-through, modal or URL change. The full album archive retains visible labels, counts over artwork, search, sorting and 36-card pagination.
-- Spotify music-duration statistics live in the full archive. Unmatched counts and measured zeroes remain distinct; failed refreshes leave the saved catalogue usable. The homepage and archive share one refresh hook and the same per-record provenance rules.
+- Music uses the complete available aggregate catalogue, ranked by reconciled counts. Podcasts show records with at least five plays, plus Within Reason by Alex O'Connor as an explicit exception, across browsing and search. Preserve its unknown count and the source catalogue. Long shelves load another 36 cards near the rail's end, with a keyboard-accessible More control. The closing sentence and Browse all album link are removed. Counts carry no provider labels, and a + marks a conservative lower bound. Taste cards remain articles with no click-through, modal or URL change.
+- Unmatched counts and measured zeroes remain distinct; a failed catalogue fetch leaves the opening shelf usable and offers a retry.
 - Podcast counts combine the approved Spotify, YouTube and Apple records with verified show identities. Keep recorded starts and views, including clips, distinct from completed listens.
 - Known album and podcast counts are labelled simply “plays”. Keep the numbers, lower-bound + markers and source provenance unchanged.
-- Count provenance belongs to each record. Valid network counts can overlay a valid session snapshot and then the saved catalogue; missing/invalid fields retain their prior count, source and date. Mixed coverage is labelled visibly. Cached data is never called fresh; empty, wholly unmatched, undated, future or older-than-baseline packets cannot overwrite the session cache. An older network packet cannot replace a newer cached record.
+- The full catalogue is the committed static packet, cached for the session. Cached data is never called fresh; empty, malformed, undated, future or older-than-baseline packets cannot overwrite the session cache, and a partial packet cannot erase known identities.
 - Music keys use catalogue IDs, not album titles. Equal titles by different artists remain distinct through catalogue refreshes. Old taste-item and album detail hashes do not reopen removed dialogs.
-- Restrained blue/orange name accents retain the historical editorial language, and each chapter rule matches its masthead link: blue Projects, rose Career and green Taste. Keep the homepage rail distinct from the full gallery's readable two-column mobile layout; do not miniaturise desktop tiles.
+- Restrained blue/orange name accents retain the historical editorial language, and each chapter rule matches its masthead link: blue Projects, rose Career and green Taste. Do not miniaturise desktop tiles.
 - Images disable native dragging and touch callouts without stealing the enclosing link or button target.
 
 ## Standalone project surfaces

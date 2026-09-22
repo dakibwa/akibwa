@@ -48,25 +48,13 @@ const manifestPath = path.join(root, "data", "album-art-manifest.json");
 const checkOnly = process.argv.includes("--check");
 
 /*
- * Two rungs, because the wall and the opened card are the only two sizes that
- * ever render and they are far apart.
- *
- * `wall` — the live Taste wall reaches ~130 CSS px, and the dedicated album
- * wall reaches ~132. 264 covers both at 2x DPR, keeping sleeve typography and
- * fine edges crisp instead of asking a 198px file to fill a Retina tile.
- *
- * `card` — the opened detail view is capped at 380 CSS px. 760 = 380 x 2.
- * It is fetched only when a card is opened, so it costs nothing on load.
+ * One rung. The Taste Library's Music tiles reach ~130 CSS px, so 264 covers
+ * them at 2x DPR, keeping sleeve typography and fine edges crisp instead of
+ * asking a 198px file to fill a Retina tile. It goes through the press — see
+ * press-curve.mjs — as AVIF with a WebP twin.
  */
-const RUNGS = [
-  { name: "wall", width: 264 },
-  { name: "card", width: 760 }
-];
+const RUNGS = [{ name: "wall", width: 264 }];
 
-/* Both rungs go through the press — see press-curve.mjs. Both, not just the
-   wall: the spotlight lays the opened card over the tile it grew from and
-   flies one into the other, so a pressed tile arriving at an unpressed card
-   would show the artwork changing colour mid-flight. */
 const AVIF = { quality: 52, effort: 6 };
 const WEBP = { quality: 74 };
 
@@ -129,7 +117,6 @@ async function main() {
       }
       for (const rung of RUNGS) {
         for (const ext of ["avif", "webp"]) {
-          if (ext === "webp" && rung.name !== "wall") continue;
           if (!(await exists(path.join(outDir, `${id}-${rung.name}.${ext}`)))) {
             problems.push(`${id} is missing ${rung.name}.${ext}`);
           }
@@ -142,15 +129,15 @@ async function main() {
       if (problems.length > 40) console.error(`  ...and ${problems.length - 40} more`);
       process.exit(1);
     }
-    console.log(`album-art: ${masters.length} sleeves, ${masters.length * (RUNGS.length + 1)} variants, all current`);
+    console.log(`album-art: ${masters.length} sleeves, ${masters.length * RUNGS.length * 2} variants, all current`);
     return;
   }
 
-  /* Only this script's own output — `NNN-wall.*` and `NNN-card.*`. The `lf-*`
-     sleeves in the same directory belong to fetch-lastfm-art.mjs and are not
-     ours to remove. */
+  /* Only this script's own output — `NNN-wall.*`. The `lf-*` and `history-*`
+     sleeves in the same directory belong to the other artwork scripts and are
+     not ours to remove. */
   await mkdir(outDir, { recursive: true });
-  const OWNED = /^\d{3}-(wall|card)\.(avif|webp)$/;
+  const OWNED = /^\d{3}-wall\.(avif|webp)$/;
   for (const name of await readdir(outDir)) {
     if (OWNED.test(name)) await rm(path.join(outDir, name));
   }
@@ -163,8 +150,7 @@ async function main() {
     const meta = await sharp(source).metadata();
 
     for (const rung of RUNGS) {
-      // Never upscale: a couple of masters are only 1000px, and the card rung
-      // would otherwise interpolate them into mush.
+      // Never upscale a small master.
       const width = Math.min(rung.width, Math.min(meta.width, meta.height));
       const base = await press(
         sharp,
@@ -172,15 +158,9 @@ async function main() {
       );
       const avif = await base.clone().avif(AVIF).toBuffer();
       await writeFile(path.join(outDir, `${id}-${rung.name}.avif`), avif);
-      bytes += avif.length;
-
-      // Only the wall rung gets a WebP twin. The card rung is AVIF-only — see
-      // AlbumArtImage in components/site-image.jsx for why.
-      if (rung.name === "wall") {
-        const webp = await base.clone().webp(WEBP).toBuffer();
-        await writeFile(path.join(outDir, `${id}-${rung.name}.webp`), webp);
-        bytes += webp.length;
-      }
+      const webp = await base.clone().webp(WEBP).toBuffer();
+      await writeFile(path.join(outDir, `${id}-${rung.name}.webp`), webp);
+      bytes += avif.length + webp.length;
     }
 
     entries.push({
@@ -209,7 +189,7 @@ async function main() {
   );
 
   console.log(
-    `album-art: ${entries.length} sleeves -> ${entries.length * (RUNGS.length + 1)} variants, ${(bytes / 1048576).toFixed(1)}MB`
+    `album-art: ${entries.length} sleeves -> ${entries.length * RUNGS.length * 2} variants, ${(bytes / 1048576).toFixed(1)}MB`
   );
 }
 

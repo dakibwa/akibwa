@@ -8,7 +8,8 @@ This repository is the public `akibwa.com` website.
 - Scoped GPS exception (Dan, 2026-09-05; explicitly reaffirmed 2026-09-07): Dan explicitly answered “Yes, publish this 2019 GPS route” to publication of the detailed route from the 52 Paris-to-Sofia recordings on public akibwa.com. `public/trek/route-detail.json` contains only that 2019 route's simplified coordinates and day/segment grouping. This exception excludes sample timestamps, biometrics, private identifiers, raw source files and every other journey.
 - Dan approved album and podcast counts from all available Spotify, YouTube, Last.fm and Apple listening history (5 September 2026). `public/listening-catalogue.json` owns the reconciled public aggregates; [docs/listening-history.md](docs/listening-history.md) defines matching, overlap bounds and regeneration. Raw events, account identifiers and private source paths stay outside this public repository. Counts are recorded plays/views, not completed albums or episodes. Recorded duration remains Spotify-only; never infer YouTube watch time.
 - `data/taste-curation.json` owns the approved job statements, cultural selection and verified public artwork. It must not duplicate old provider-only listening counts. Taste and album cards show counts on hover/focus and do not open details or navigate on click.
-- Keep only `/` in the sitemap unless a route has been explicitly approved for search. Detailed archives must use `noindex`, and `robots.txt` must continue allowing crawlers to read that directive.
+- Keep only `/` in the sitemap unless a route has been explicitly approved for search. Standalone detail surfaces such as `/trek/` must use `noindex`, and `robots.txt` must continue allowing crawlers to read that directive.
+- The site is one page. Dan had the album archive, the wall and the old project pages deleted on 22 September 2026: retire surfaces by deleting their code, styles, data and artwork and adding 301s to `public/_redirects`, never by keeping stub pages. Do not restore them.
 - The site is a static Next.js export (`output: "export"`) deployed from `main` to Cloudflare Workers Static Assets. The Cloudflare dashboard owns the `akibwa.com` Custom Domain; omit `route` and `routes` from Wrangler so asset deploys preserve it and the existing Features API and One Bagger Worker routes. [docs/cloudflare-config.md](docs/cloudflare-config.md) records hosting, credentials and the manual GitHub Pages fallback.
 - Fast pre-push check: `npm run check:fast`.
 - Release check: `npm run check:release` (the same static build for this small site).
@@ -39,9 +40,8 @@ are therefore pre-rendered at build time and committed.
   even when they share a file with generated changes.
 - `npm run check:images` (part of `publish:ready`) fails if a source has changed
   since its variants were generated.
-- The general slot ladder caps at 1.5x DPR. Taste still reaches a 264px top
-  rung for its measured ~130px live tiles, while the separate album ladder
-  emits 264px wall and 760px opened-card files for true 2x sleeve detail.
+- The general slot ladder caps at 1.5x DPR. Album sleeves use one separate
+  264px rung (`public/album-art/<id>-wall.*`) for the ~130px Music tiles.
 - **Export artwork once, at final size.** Re-encoding an already-lossy WebP
   keeps the previous generation's artefacts as detail and inflates the file:
   `contact-blue-clouds.webp` costs 437K for 899x1198 that way, and no amount of

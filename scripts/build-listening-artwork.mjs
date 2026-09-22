@@ -20,7 +20,7 @@ const json = async (url) => JSON.parse(await readFile(url, "utf8"));
 const manifest = await json(manifestPath);
 const packet = await json(packetPath);
 const albums = applyListeningArtwork(packet.albums, manifest);
-const suffixes = ["wall.avif", "wall.webp", "card.avif"];
+const suffixes = ["wall.avif", "wall.webp"];
 const problems = [];
 let generated = 0;
 
@@ -69,12 +69,9 @@ for (const entry of manifest.entries) {
     if (metadata.width < 264 || metadata.height < 264)
       throw Error(`Artwork source is too small: ${entry.id}`);
     files = {};
-    for (const [rung, target] of [["wall", 264], ["card", 760]]) {
-      const size = Math.min(target, metadata.width, metadata.height);
-      const image = await press(sharp, sharp(bytes).resize(size, size, { fit: "cover", position: "centre" }));
-      files[`${rung}.avif`] = await image.clone().avif({ quality: 52, effort: 6 }).toBuffer();
-      if (rung === "wall") files[`${rung}.webp`] = await image.clone().webp({ quality: 74 }).toBuffer();
-    }
+    const image = await press(sharp, sharp(bytes).resize(264, 264, { fit: "cover", position: "centre" }));
+    files["wall.avif"] = await image.clone().avif({ quality: 52, effort: 6 }).toBuffer();
+    files["wall.webp"] = await image.clone().webp({ quality: 74 }).toBuffer();
   }
   for (const [suffix, bytes] of Object.entries(files))
     await writeFile(new URL(`${entry.id}-${suffix}`, out), bytes);
