@@ -3,7 +3,7 @@
   "name": "akibwa-site",
   "compatibility_date": "2026-09-08",
   "workers_dev": true,
-  "preview_urls": true,
+  "preview_urls": false,
   // The Cloudflare dashboard owns the akibwa.com Custom Domain. Omit route and
   // routes so asset deployments never change it or the existing API routes.
   "assets": {

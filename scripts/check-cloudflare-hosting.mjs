@@ -17,6 +17,8 @@ const headers = {
   "x-frame-options": "SAMEORIGIN",
   "permissions-policy": "camera=(), microphone=(), geolocation=()",
   "content-security-policy": "frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
+  "cross-origin-opener-policy": "same-origin-allow-popups",
+  "access-control-allow-origin": null,
 };
 
 async function request(path, options = {}) {
