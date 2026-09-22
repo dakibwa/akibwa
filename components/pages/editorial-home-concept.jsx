@@ -221,6 +221,7 @@ export function EditorialHomeConcept({ initialCatalogue, refreshedAt, podcasts }
 
       <CareerBar />
       <TasteLibrary initialCatalogue={initialCatalogue} refreshedAt={refreshedAt} podcasts={podcasts} expanded={spotlight === "taste"} />
+      <PageFooter />
     </div>
     </SpotlightContext.Provider>
   );

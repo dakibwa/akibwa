@@ -255,7 +255,8 @@ const publicLandingState = () =>
       hasPersonalIdentity: bodyText.includes(forbiddenIdentity),
       hasCareer: [...document.querySelectorAll("h1, h2, h3")].some((heading) => heading.textContent.trim() === "Career"),
       hasTasteLibrary: bodyText.includes("Taste Library"),
-      socialLinks: links.filter((href) => /(?:linkedin|instagram|x)\\.com/.test(href)),
+      // The masthead and the closing sign-off both link the profiles; count each once.
+      socialLinks: [...new Set(links.filter((href) => /(?:linkedin|instagram|x)\\.com/.test(href)))],
       directEmailLinks: links.filter((href) => href.startsWith("mailto:")),
       emailButtonCount: document.querySelectorAll('button[aria-label="Email Akibwa"]').length,
       googlebot: document.querySelector('meta[name="googlebot"]')?.content ?? "",
@@ -289,7 +290,7 @@ const checkPublicLanding = async () => {
   check(mainHeading?.name?.value === "I'm Daniel. Online as Akibwa.", `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
   check(state.identity.includes("Daniel") && state.identity.includes("Akibwa"), "the approved introduction reserves both names");
   check(state.lede === "Building in the age of AI", "the masthead preserves Dan's requested proposition");
-  check(await evaluate('(() => { const controls=[...document.querySelectorAll(".page-footer-details a, .page-footer-details button")]; return JSON.stringify(controls.map(item=>item.getAttribute("aria-label")))===JSON.stringify(["Instagram — @dakibwa","X — @dakibwa","Email Akibwa"]) && controls.every(item=>item.querySelector("svg") && !item.textContent.trim()); })()'), "three icons keep distinct accessible platform names without visible handles or labels");
+  check(await evaluate('(() => { const groups=[...document.querySelectorAll(".page-footer-details")]; return groups.length===2 && groups.every(group=>{ const controls=[...group.querySelectorAll("a, button")]; return JSON.stringify(controls.map(item=>item.getAttribute("aria-label")))===JSON.stringify(["Instagram — @dakibwa","X — @dakibwa","Email Akibwa"]) && controls.every(item=>item.querySelector("svg") && !item.textContent.trim()); }); })()'), "the masthead and sign-off each keep three icons with distinct accessible platform names and no visible handles");
   check(await evaluate('!document.querySelector(".taste-source-note") && !document.querySelector(".concept-taste-head .archive-link")'), "the closing sentence and browse-all album link are removed");
   check(state.projectCount === 3, `the homepage shows three current projects [${state.projectCount}]`);
   check(state.careerCount === 8, `the approved compact career bar has eight roles [${state.careerCount}]`);
@@ -298,7 +299,7 @@ const checkPublicLanding = async () => {
   check(state.hasCareer && state.hasTasteLibrary, "the approved career and taste chapters are restored");
   check(state.socialLinks.length === 2 && state.socialLinks.every(href=>href.includes('/dakibwa')), "only the two approved social profiles are linked");
   check(
-    state.directEmailLinks.length === 0 && state.emailButtonCount === 1,
+    state.directEmailLinks.length === 0 && state.emailButtonCount === 2,
     "contact is available without publishing the address in HTML"
   );
   check(
@@ -425,19 +426,28 @@ const checkPublicLanding = async () => {
   await evaluate('document.querySelector(".concept-portuguese a").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
   await sleep(360);
   const careerControl = 'document.querySelectorAll(".concept-career-timeline button")[1]';
+  // Career: the current role rests beneath the timeline. Another role's
+  // statement takes its place on focus, hover or tap without moving anything.
+  const careerDetail = () => evaluate(`(() => {
+    const active=document.querySelector('.career-detail[data-active="true"]');
+    return {name:active.querySelector('strong').textContent, text:active.textContent, visibility:getComputedStyle(active).visibility,
+      expanded:[...document.querySelectorAll('.concept-career-stop')].findIndex(stop=>stop.getAttribute('aria-expanded')==='true')};
+  })()`);
   await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"})');
-  check(opensSmoothly(await dividerMotion('#taste', `${careerControl}.focus(); ${careerControl}.click();`)), "opening a career statement smoothly pushes the Taste divider down");
-  check(await evaluate('(document.querySelector("#career-detail").textContent.includes("Senior BI Developer") && getComputedStyle(document.querySelector("#career-detail")).opacity !== "0" && getComputedStyle(document.querySelector("#career-detail")).visibility === "visible")'), "career activation displays the selected public role");
-  check(await evaluate('document.querySelector(".concept-career-statement").textContent.includes("UK growth and clean energy")'), "career detail restores the original mission statement");
+  const resting = await careerDetail();
+  check(resting.name==='Freelance' && resting.visibility==='visible' && resting.expanded===0, `the current role's statement rests beneath the timeline without interaction [${resting.name}]`);
+  check(staysPut(await dividerMotion('#taste', `${careerControl}.focus(); ${careerControl}.click();`)), "choosing another role never moves the Taste divider");
+  check((await careerDetail()).text.includes("Senior BI Developer"), "career activation displays the selected public role");
+  check(await evaluate('document.querySelector(".career-detail[data-active=\\"true\\"] .concept-career-statement").textContent.includes("UK growth and clean energy")'), "career detail restores the original mission statement");
   check(await evaluate(`(() => {
-    const statement=document.querySelector('.concept-career-statement');
-    const detail=document.querySelector('#career-detail').getBoundingClientRect();
+    const statement=document.querySelector('.career-detail[data-active="true"] .concept-career-statement');
+    const detail=statement.closest('.career-detail').getBoundingClientRect();
     return getComputedStyle(statement).fontFamily.includes('Iowan') && statement.querySelector('strong') && detail.bottom<document.querySelector('#taste').getBoundingClientRect().top;
-  })()`), "the original serif statement and emphasis fit above the moving divider");
-  check(closesSmoothly(await dividerMotion('#taste', `${careerControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "closing a career statement smoothly restores the compact spacing");
-  check(await evaluate('!document.querySelector(".concept-career-stop[aria-expanded=true]")'), "Escape dismisses held career detail");
+  })()`), "the original serif statement and emphasis fit above the Taste divider");
+  check(staysPut(await dividerMotion('#taste', `${careerControl}.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));`)), "Escape returns to the current role without moving the Taste divider");
+  check((await careerDetail()).expanded===0, "Escape returns a held role to the current one");
   await evaluate('document.querySelectorAll(".concept-career-stop")[2].focus()');
-  check(await evaluate('document.querySelector("#career-detail").textContent.includes("BI Team Lead")'), "keyboard focus previews the next career role");
+  check((await careerDetail()).text.includes("BI Team Lead"), "keyboard focus previews the next career role");
   await sleep(420);
   check(await evaluate(`(() => {
     const stops=document.querySelectorAll('.concept-career-stop'), open=stops[2], rest=stops[3];
@@ -448,19 +458,6 @@ const checkPublicLanding = async () => {
       style(open,'.concept-career-year').color!==style(rest,'.concept-career-year').color;
   })()`), "the previewed role deepens into its own colour in place and colours its date");
 
-  const panelMotion = (selector, action) => evaluate(`new Promise(resolve => {
-    const panel=document.querySelector(${JSON.stringify(selector)});
-    const sample=()=>{
-      const box=panel.getBoundingClientRect();
-      return {left:box.left,top:box.top,height:box.height,space:panel.closest('.index-reveal-shell').getBoundingClientRect().height,
-        opacity:Number(getComputedStyle(panel.querySelector('.index-reveal-content:not(.is-outgoing)')).opacity)};
-    };
-    const samples=[sample()];
-    ${action}
-    const until=performance.now()+560;
-    const frame=()=>{samples.push(sample());if(performance.now()<until) requestAnimationFrame(frame);else resolve(samples);};
-    requestAnimationFrame(frame);
-  })`);
   const passesThrough = (samples, property) => {
     const start=samples[0][property], end=samples.at(-1)[property];
     return Math.abs(end-start)>4 && samples.some(sample=>sample[property]>Math.min(start,end)+1 && sample[property]<Math.max(start,end)-1);
@@ -480,73 +477,53 @@ const checkPublicLanding = async () => {
   check(await evaluate('document.querySelectorAll("#project-description").length===1 && !!document.querySelector("#project-description").closest(".concept-portuguese")'), "project handover keeps one accessible description target on the focused card");
   await evaluate('document.querySelectorAll(".concept-career-stop")[5].focus()');
   await sleep(550);
-  const careerHandover=await panelMotion('#career-detail', 'document.querySelectorAll(".concept-career-stop")[4].focus();');
+  const careerHandover=await evaluate(`new Promise(resolve => {
+    const track=document.querySelector('.career-detail-track'), incoming=document.querySelectorAll('.career-detail')[4];
+    const sample=()=>({left:track.getBoundingClientRect().left, taste:document.querySelector('#taste').getBoundingClientRect().top, opacity:Number(getComputedStyle(incoming).opacity)});
+    const samples=[sample()];
+    document.querySelectorAll(".concept-career-stop")[4].focus();
+    const until=performance.now()+560;
+    const frame=()=>{samples.push(sample());if(performance.now()<until) requestAnimationFrame(frame);else resolve(samples);};
+    requestAnimationFrame(frame);
+  })`);
   check(passesThrough(careerHandover,'left'), "career handover glides through intermediate positions beneath the selected role");
-  check(passesThrough(careerHandover,'height') && passesThrough(careerHandover,'space'), "career handover smoothly fits different text heights and moves the following content");
-  check(careerHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "incoming career text fades into the moving box");
+  check(careerHandover.every(sample=>Math.abs(sample.taste-careerHandover[0].taste)<0.5), "career handover never moves the following content");
+  check(careerHandover.some(sample=>sample.opacity>0.05 && sample.opacity<0.95), "incoming career text fades into place");
   const interrupted=await evaluate(`new Promise(resolve=>{
     const buttons=document.querySelectorAll('.concept-career-stop');
     buttons[0].focus();setTimeout(()=>buttons[7].focus(),70);setTimeout(()=>buttons[2].focus(),130);
-    setTimeout(()=>{const panel=document.querySelector('#career-detail');resolve({
-      title:panel.querySelector('.index-reveal-content:not(.is-outgoing) > strong').textContent,
-      outgoing:panel.querySelectorAll('.is-outgoing').length,
-      open:!panel.closest('.index-reveal-shell').inert
-    });},700);
+    setTimeout(()=>resolve({title:document.querySelector('.career-detail[data-active="true"] strong').textContent, active:document.querySelectorAll('.career-detail[data-active="true"]').length}),700);
   })`);
-  check(interrupted.title==='Leeds Building Society' && interrupted.outgoing===0 && interrupted.open, "rapid direction changes settle on the latest role without stale text");
-  const careerPlacements=[];
+  check(interrupted.title==='Leeds Building Society' && interrupted.active===1, "rapid direction changes settle on the latest role without stale text");
   for (const index of [0,1,2,3,4,5,6,7]) {
     await evaluate(`document.querySelectorAll('.concept-career-stop')[${index}].focus()`);
     await sleep(520);
-    careerPlacements.push(await evaluate('document.querySelector(".concept-career-detail-lane").dataset.placement'));
     check(await evaluate(`(() => {
-      const panel=document.querySelector('#career-detail').getBoundingClientRect();
+      const panel=document.querySelector('.career-detail[data-active="true"]').getBoundingClientRect();
       const active=document.querySelector('.concept-career-stop[aria-expanded=true]').getBoundingClientRect();
       const next=document.querySelector('#taste').getBoundingClientRect();
-      return panel.bottom<next.top && panel.top>=active.bottom+10;
-    })()`), "the Career preview opens below its role and leaves Taste clear");
+      return panel.bottom<next.top && panel.top>=active.bottom+10 && panel.left<=active.right && panel.right>=active.left;
+    })()`), `the Career statement for role ${index + 1} sits below its logo and leaves Taste clear`);
   }
-  check(careerPlacements.every(placement=>placement.startsWith('bottom')), "every Career role consistently opens below its logo");
-  await evaluate('document.activeElement.blur(); document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
+  await evaluate('document.activeElement.blur()');
   await sleep(380);
-  await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"})');
-  const careerBefore=await evaluate('document.querySelector("#career-rail").getBoundingClientRect().top+scrollY');
-  check(opensSmoothly(await dividerMotion('#taste', 'document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true});')),
-    "a Career dropdown opens measured space below the timeline");
-  check(await evaluate(`Math.abs(document.querySelector('#career-rail').getBoundingClientRect().top+scrollY-${careerBefore})<1 && !document.querySelector('#career .index-reveal-reserve.is-above')`),
-    "opening a Career detail leaves the timeline and preceding content in place");
-  check(closesSmoothly(await dividerMotion('#taste', 'document.querySelector("#career").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));')),
-    "closing Career smoothly returns the space below the timeline");
-  // Landscape windows keep the compact desktop composition, so use one short
-  // enough for the timeline to be scrolled below the fold.
-  await setDesktop(815,500);
-  await goto('/');
-  await evaluate('document.querySelector("#career").scrollIntoView({block:"center",behavior:"instant"}); document.querySelectorAll(".concept-career-stop")[4].focus({preventScroll:true})');
-  await sleep(560);
-  const awayScroll=await evaluate(`(() => {
-    const rail=document.querySelector('#career-rail').getBoundingClientRect();
-    window.scrollTo({top:scrollY+rail.top-innerHeight-30,behavior:'instant'});
-    return scrollY;
-  })()`);
-  await sleep(420);
-  check(await evaluate(`Math.abs(scrollY-${awayScroll})<2 && document.querySelector('.concept-career-detail-lane').inert && document.querySelector('#career .index-reveal-reserve').getBoundingClientRect().height<1`),
-    "scrolling the role out of view closes its dropdown without pulling the page back");
+  check((await careerDetail()).name==='Freelance', "leaving the timeline returns to the current role");
   for (const width of [320,390,820]) {
     await setDesktop(width);
     await goto('/');
     await evaluate('document.querySelectorAll(".concept-career-stop")[7].focus()');
     await sleep(550);
     check(await evaluate(`(() => {
-      const panel=document.querySelector('#career-detail').getBoundingClientRect();
+      const panel=document.querySelector('.career-detail[data-active="true"]').getBoundingClientRect();
       const section=document.querySelector('#career').getBoundingClientRect();
       const gap=document.querySelector('#taste').getBoundingClientRect().top-panel.bottom;
-      const below=document.querySelector('.concept-career-detail-lane').dataset.placement.startsWith('bottom');
-      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && below && gap<=37 && document.documentElement.scrollWidth<=innerWidth+1;
+      return panel.left>=section.left-1 && panel.right<=section.right+1 && gap>=23 && gap<=37 && document.documentElement.scrollWidth<=innerWidth+1;
     })()`), `the last career role fits the ${width}px page and keeps a close, clear divider`);
     if(width===320){
+      const before=await evaluate('document.querySelector("#taste").getBoundingClientRect().top+scrollY');
       await evaluate('document.querySelector(".concept-career-timeline").scrollLeft=0');
       await sleep(380);
-      check(await evaluate('document.querySelector(".concept-career-detail-lane").inert && document.querySelector(".concept-career-detail-lane").getBoundingClientRect().height<1'), "scrolling a career role away closes its space and hides its text");
+      check(await evaluate(`document.querySelector(".career-detail-track").dataset.anchored==="false" && Math.abs(document.querySelector("#taste").getBoundingClientRect().top+scrollY-${before})<1`), "scrolling a career role away hides its text without moving the page");
     }
   }
   await setDesktop(1440);
@@ -599,8 +576,8 @@ const checkPublicLanding = async () => {
     wallCounts.push(balanced.count);
     check(balanced.keys===wallKeys && balanced.tops<1 && balanced.spread<(touch?12:2) && balanced.overflow<=1,
       `the same forty-eight covers rebalance with a close bottom edge at ${width}×${height}${touch?' with touch captions':''}`);
-    check(await evaluate('document.querySelector(".concept-career-detail-lane").inert && document.querySelector(".concept-career-detail-lane .index-reveal-track").getBoundingClientRect().right<=innerWidth+1'),
-      `the closed Career preview stays inside the ${width}px page while resizing below it`);
+    check(await evaluate('document.querySelector(".career-detail-track").getBoundingClientRect().right<=innerWidth+1'),
+      `the Career statement stays inside the ${width}px page while resizing below it`);
   }
   check(new Set(wallCounts).size>=3, "resizing recalculates the stacks instead of only shrinking the artwork");
   await evaluate('document.querySelectorAll(".taste-wall-column")[0].querySelectorAll("article")[1].focus()');
@@ -926,7 +903,9 @@ const checkPublicLanding = async () => {
       return (Math.max(text, paper) + 0.05) / (Math.min(text, paper) + 0.05);
     })),
     top: scrollY,
-    overflow: document.documentElement.scrollWidth - innerWidth
+    overflow: document.documentElement.scrollWidth - innerWidth,
+    tasteDetailOpen: !!document.querySelector('.personal-taste-detail-shell.is-open'),
+    focus: (document.activeElement?.className || document.activeElement?.tagName || '').toString().slice(0, 40)
   })`);
   const chapterLink = (index) => evaluate(`(() => { const r=document.querySelectorAll('.concept-section-links a')[${index}].getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; })()`);
   const clickAt = async ({x,y}) => { for (const type of ['mousePressed','mouseReleased']) await cdp.send('Input.dispatchMouseEvent',{type,x,y,button:'left',clickCount:1}); };
@@ -953,10 +932,15 @@ const checkPublicLanding = async () => {
   // Closing goes through history and a view transition, so wait for the page
   // to settle rather than trusting a fixed delay.
   const wholePage = async () => { let state; for (let attempt = 0; attempt < 30; attempt++) { state = await spotlightState(); if (!state.spot && state.shown === 'projects,career,taste') break; await sleep(100); } return state; };
+  // Escape closes an open Taste detail before it leaves the spotlight, and a
+  // cover can open one under a resting pointer. Park the pointer on empty
+  // paper so a single Escape is always a spotlight exit.
+  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:8, y:8});
+  await sleep(400);
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await sleep(800);
   let spotlightAfter = await wholePage();
-  check(!spotlightAfter.spot && !spotlightAfter.hash && spotlightAfter.shown==='projects,career,taste' && !spotlightAfter.current, "Escape returns to the whole page");
+  check(!spotlightAfter.spot && !spotlightAfter.hash && spotlightAfter.shown==='projects,career,taste' && !spotlightAfter.current, `Escape returns to the whole page${spotlightAfter.spot ? ` [${JSON.stringify(spotlightAfter)}]` : ''}`);
   await clickAt(await chapterLink(1));
   await sleep(700);
   await evaluate('history.back()');
@@ -1009,16 +993,16 @@ const checkPublicLanding = async () => {
     `name motion is disabled [${nameTransition}]`
   );
   await evaluate('document.querySelector(".concept-career-stop").focus(); document.querySelector(".concept-career-stop").click()');
-  check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".concept-career-detail-lane"),document.querySelector(".concept-career-detail-lane .index-reveal-track"),document.querySelector(".concept-career-popover")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion opens the career detail without animation or delay");
+  check(await evaluate('[document.querySelector(".concept-career-section"),document.querySelector(".career-detail-track"),document.querySelector(".career-detail[data-active=\\"true\\"]")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion changes the career detail without animation or delay");
   await evaluate('document.querySelector(".taste-search-toggle").click()');
-  check(await evaluate('[document.querySelector(".taste-search"),document.querySelector(".taste-search-field"),document.querySelector(".index-reveal-reserve")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion makes the search and reserved detail space immediate");
+  check(await evaluate('[document.querySelector(".taste-search"),document.querySelector(".taste-search-field")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion makes the search immediate");
   await evaluate('document.querySelector(".taste-search-field input").dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
   await sleep(50);
   await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:1, y:1});
   await evaluate('document.querySelector(".personal-taste-card").focus()');
   await sleep(50);
   check(await evaluate('[document.querySelector(".personal-taste-detail-shell"),document.querySelector("#taste-detail")].every(item=>item && getComputedStyle(item).transitionProperty==="none")'), "reduced motion reveals album details without animation or delay");
-  check(await evaluate('[...document.querySelectorAll(".index-reveal-content:not(.is-outgoing)")].every(item=>getComputedStyle(item).animationName==="none")'), "reduced motion also disables the text handover");
+  check(await evaluate('[...document.querySelectorAll(".career-detail")].every(item=>getComputedStyle(item).transitionProperty==="none")'), "reduced motion also disables the text handover");
 };
 
 const checkTrek = async () => {

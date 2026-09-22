@@ -1,6 +1,7 @@
 "use client";
 
-import { Mail, Instagram } from "lucide-react";
+import { Mail, Instagram, ArrowUp } from "lucide-react";
+import { SiteImage } from "./site-image";
 import { useSpotlight } from "./spotlight";
 
 const chapters = [
@@ -9,6 +10,9 @@ const chapters = [
   ["taste", "Taste Library", "var(--concept-archive)"],
 ];
 
+/* The masthead variant (`embedded`) carries the chapter links and is the skip
+   link's target. The plain variant closes the page: the Akibwa mark, the same
+   contact icons and a way back to the top. */
 export function PageFooter({ embedded = false }) {
   const Root = embedded ? "div" : "footer";
   const { spotlight, setSpotlight } = useSpotlight();
@@ -19,15 +23,28 @@ export function PageFooter({ embedded = false }) {
     const domain = ["gm", "ail", ".com"].join("");
     window.location.assign(`mailto:${local}@${domain}`);
   };
+  // Scroll rather than follow a #hash: a hash change would leave a spotlit
+  // chapter. Focus returns to the page so Tab starts from the masthead again.
+  const backToTop = () => {
+    const instant = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: instant ? "instant" : "smooth" });
+    document.getElementById("main-content")?.focus({ preventScroll: true });
+  };
 
   return (
     <Root
-      className={`${embedded ? "concept-hero-footer" : "page-grid"} page-footer`}
-      id="site-footer"
-      tabIndex={-1}
+      className={`${embedded ? "concept-hero-footer" : "page-grid site-signoff"} page-footer`}
+      id={embedded ? "site-footer" : undefined}
+      tabIndex={embedded ? -1 : undefined}
     >
       <div className="page-footer-panel">
         <div className="page-footer-meta">
+          {embedded ? null : (
+            <p className="site-signoff-mark">
+              <SiteImage src="/brand-logos/akibwa-a.png" slot="identityMark" sizes="22px" alt="" />
+              Akibwa
+            </p>
+          )}
           {embedded ? (
             <nav className={`concept-section-links${spotlight ? " has-spotlight" : ""}`} aria-label="Explore the page">
               {chapters.map(([id, label, accent]) => (
@@ -81,6 +98,12 @@ export function PageFooter({ embedded = false }) {
               <Mail size={20} strokeWidth={1.65} aria-hidden="true" />
             </button>
           </div>
+          {embedded ? null : (
+            <button className="site-signoff-top" type="button" onClick={backToTop}>
+              Back to top
+              <ArrowUp size={15} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          )}
         </div>
       </div>
     </Root>

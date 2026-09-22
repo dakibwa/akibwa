@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { SiteImage } from "./site-image";
-import { IndexReveal } from "./index-reveal";
 import { RailControls } from "./rail-controls";
 import { useSpotlight } from "./spotlight";
 import curation from "@/data/taste-curation.json";
@@ -66,19 +65,54 @@ function CareerSpotlight() {
   );
 }
 
+/*
+ * The current role's statement rests beneath the timeline, so a visitor sees
+ * what Dan does without hovering. Hover, focus or a tap moves it under another
+ * role; leaving, blurring or Escape returns it to the current role. Every
+ * statement shares one grid cell, so the lane is as tall as the longest from
+ * the first paint and choosing a role never moves anything below it.
+ */
 function CareerTimeline() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
-  const [lastRole, setLastRole] = useState(0);
+  const [place, setPlace] = useState({ x: 0, anchored: true });
   const rail = useRef(null);
+  const track = useRef(null);
   const cards = useRef([]);
-  const active = held ?? preview;
-  const detailIndex = active ?? lastRole;
-  const detail = career[detailIndex];
+  const active = held ?? preview ?? 0;
   const dismiss = () => { setHeld(null); setPreview(null); };
+
+  // Sit under the chosen role, alternating edges as the original popover did,
+  // and follow the rail as it scrolls. A role scrolled out of the rail's view
+  // hides the statement rather than leave it under the wrong logo.
+  useLayoutEffect(() => {
+    const shelf = rail.current;
+    const box = track.current;
+    if (!shelf || !box) return undefined;
+    const measure = () => {
+      const card = cards.current[active];
+      if (!card) return;
+      const bounds = shelf.getBoundingClientRect();
+      const anchor = card.getBoundingClientRect();
+      const width = box.offsetWidth;
+      const wanted = (active % 2 ? anchor.right - width : anchor.left) - bounds.left;
+      const x = Math.round(Math.max(0, Math.min(wanted, bounds.width - width)));
+      const anchored = anchor.right > bounds.left + 24 && anchor.left < bounds.right - 24;
+      setPlace((before) => (before.x === x && before.anchored === anchored ? before : { x, anchored }));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(shelf);
+    shelf.addEventListener("scroll", measure, { passive: true });
+    return () => {
+      observer.disconnect();
+      shelf.removeEventListener("scroll", measure);
+    };
+  }, [active]);
+
   return (
     <section
-      className={`page-grid concept-career-section personal-career${active !== null ? " is-open" : ""}`}
+      className="page-grid concept-career-section personal-career is-open"
       id="career"
       aria-labelledby="career-title"
       onKeyDown={(event) => { if (event.key === "Escape") dismiss(); }}
@@ -86,16 +120,15 @@ function CareerTimeline() {
         if (!event.currentTarget.contains(event.relatedTarget)) dismiss();
       }}
       onMouseLeave={(event) => {
+        // Keyboard focus keeps its role when the pointer leaves.
         const focused = cards.current.indexOf(event.currentTarget.ownerDocument.activeElement);
-        setPreview(active === null || focused < 0 ? null : focused);
-        if (active !== null && held === null && focused >= 0) setLastRole(focused);
+        setPreview(focused >= 0 ? focused : null);
       }}
     >
       <header className="concept-career-head index-section-head">
         <h2 id="career-title">Career</h2>
         <RailControls rail={rail} label="Career" controls="career-rail" />
       </header>
-      <div className="career-reveal-stage">
       <ol className="concept-career-timeline" id="career-rail" ref={rail} style={{ "--career-count": career.length }}>
         {career.map((job, index) => (
           <li key={job.name} style={{ "--company-accent": job.accent }}>
@@ -104,16 +137,14 @@ function CareerTimeline() {
               ref={(element) => { cards.current[index] = element; }}
               type="button"
               aria-label={`${job.name}, ${job.role}, ${job.span}`}
+              aria-describedby={`career-detail-${index}`}
               aria-expanded={active === index}
               aria-controls="career-detail"
               onMouseEnter={() => {
-                if (matchMedia("(hover: hover)").matches) {
-                  setPreview(index);
-                  if (held === null) setLastRole(index);
-                }
+                if (matchMedia("(hover: hover)").matches) setPreview(index);
               }}
-              onFocus={() => { setHeld(null); setPreview(index); setLastRole(index); }}
-              onClick={() => { setHeld(held === index ? null : index); setPreview(null); setLastRole(index); }}
+              onFocus={() => { setHeld(null); setPreview(index); }}
+              onClick={() => { setHeld(held === index ? null : index); setPreview(null); }}
             >
               <span className="concept-career-node" aria-hidden="true" />
               <span className="concept-career-card">
@@ -126,27 +157,29 @@ function CareerTimeline() {
           </li>
         ))}
       </ol>
-      <IndexReveal
-        open={active !== null}
-        itemKey={detail.name}
-        rail={rail}
-        getAnchor={() => cards.current[detailIndex]}
-        onUnavailable={dismiss}
-        accent={detail.accent}
-        id="career-detail"
-        className="concept-career-detail-lane"
-        panelClassName="concept-career-popover"
-        floating
-        side="bottom"
-        reserveBelow
-        placementIndex={detailIndex}
-      >
-        <strong>{detail.name}</strong>
-        <span>{detail.role} · {detail.span.replace(/ — /g, "–")}</span>
-        <p className="concept-career-statement">
-          <CareerStatement {...detail} />
-        </p>
-      </IndexReveal>
+      <div className="career-detail-lane" id="career-detail">
+        <div
+          className="career-detail-track"
+          ref={track}
+          data-anchored={place.anchored}
+          style={{ "--career-detail-x": `${place.x}px` }}
+        >
+          {career.map((job, index) => (
+            <div
+              className="career-detail"
+              id={`career-detail-${index}`}
+              key={job.name}
+              data-active={index === active}
+              style={{ "--company-accent": job.accent }}
+            >
+              <strong>{job.name}</strong>
+              <span>{job.role} · {job.span.replace(/ — /g, "–")}</span>
+              <p className="concept-career-statement">
+                <CareerStatement {...job} />
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
