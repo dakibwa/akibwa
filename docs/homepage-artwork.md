@@ -110,3 +110,27 @@ rule, the three project cards and the chapter links. Its source is
 the Ember `a`; render it on a Mac with the command in that file's header. If a
 project card changes, re-render the card and give the image a new filename so
 link previews do not keep a cached copy.
+
+## Fonts on devices without Apple's faces
+
+The design is set in Avenir Next and Iowan Old Style, which only Apple devices
+have. Since 22 September 2026 Windows, Android and Linux visitors get close
+open-source stand-ins instead of Arial and a generic serif: Nunito Sans for
+Avenir Next and Source Serif 4 for Iowan Old Style (Google Fonts, SIL Open Font
+License 1.1). Their Latin and Latin Extended subsets are self-hosted in
+`public/fonts/` and declared in `app/globals.css`.
+
+- Each stack names the Apple font first, so Macs and iPhones never download
+  the stand-ins; nothing preloads them. Windows keeps Palatino Linotype for the
+  serif, so only Android and Linux fetch Source Serif 4.
+- Helvetica Neue stays second in the sans stack: it supplies glyphs Avenir
+  Next lacks, such as the arrow in "Paris → Sofia", so Apple rendering is
+  unchanged. Checked pixel-for-pixel against the live site.
+- Weights follow the Apple families' buckets. Nunito Sans is declared at 400,
+  500, 640 and 875, the weights whose measured ink density matches Avenir
+  Next Regular, Medium, Demi Bold and Bold; any requested weight snaps into
+  the same bucket Avenir would use. Source Serif 4 has Regular and Bold faces
+  only, like Iowan.
+- While Nunito Sans loads, "Akibwa Sans Fallback" shows Arial resized to its
+  measured width and vertical metrics (size-adjust 99%, ascent 102%, descent
+  35.4%). The simulated Android swap measured a layout shift of 0.0012.
