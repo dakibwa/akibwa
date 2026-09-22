@@ -56,10 +56,21 @@ export const viewport = {
   colorScheme: "light"
 };
 
+/* Taste covers fade in over their paper placeholder once decoded. This runs
+   before any cover is parsed, so it sees every load — including covers that
+   arrive before the page's JavaScript on a slow connection — and the fade only
+   applies when it has run. */
+const fadeCovers = `document.documentElement.classList.add("fade-covers");
+["load","error"].forEach(function(type){document.addEventListener(type,function(event){
+var image=event.target;if(image.tagName!=="IMG"||!image.closest(".personal-taste-art"))return;
+var show=function(){image.setAttribute("data-shown","")};
+if(type==="load"&&image.decode)image.decode().then(show,show);else show();},true)});`;
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en-GB">
       <body>
+        <script dangerouslySetInnerHTML={{ __html: fadeCovers }} />
         <SiteShell>{children}</SiteShell>
         <ServiceWorkerRegistration />
       </body>

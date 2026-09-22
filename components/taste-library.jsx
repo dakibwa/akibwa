@@ -163,26 +163,6 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
       window.removeEventListener("resize", keepVisible);
     };
   }, [detailOpen]);
-  // Covers that arrive after the page has settled fade in over their paper
-  // placeholder instead of popping in. A cover that is already decoded is
-  // left alone, so nothing that has painted ever blinks out.
-  useEffect(() => {
-    const shelf = rail.current;
-    if (!shelf) return undefined;
-    const watch = (image) => {
-      if (image.complete || image.hasAttribute("data-fade")) return;
-      image.setAttribute("data-fade", "");
-      image.setAttribute("data-loading", "");
-      const reveal = () => image.decode().catch(() => {}).then(() => image.removeAttribute("data-loading"));
-      image.addEventListener("load", reveal, { once: true });
-      image.addEventListener("error", () => image.removeAttribute("data-loading"), { once: true });
-    };
-    const scan = () => shelf.querySelectorAll(".personal-taste-art img").forEach(watch);
-    scan();
-    const observer = new MutationObserver(scan);
-    observer.observe(shelf, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, []);
   const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt, category === "music" || searchOpen);
   const music = useMemo(() => browseAlbums(catalogue).map((album) => ({
     ...album,

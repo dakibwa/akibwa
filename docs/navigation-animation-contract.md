@@ -57,7 +57,7 @@ Projects → Career → Taste or the original character of the page.
 - Music keys use catalogue IDs, not album titles. Equal titles by different artists remain distinct through catalogue refreshes. Old taste-item and album detail hashes do not reopen removed dialogs.
 - Restrained blue/orange name accents retain the historical editorial language, and each chapter rule matches its masthead link: blue Projects, rose Career and green Taste. Do not miniaturise desktop tiles.
 - Images disable native dragging and touch callouts without stealing the enclosing link or button target.
-- Taste covers that arrive after the page has settled fade in over their paper placeholder once decoded; covers already loaded never blink, and reduced motion makes them appear at once.
+- Taste covers fade in over their paper placeholder once decoded. A small inline script at the start of `<body>` (`app/layout.jsx`) listens for every cover load from the first byte, so covers that arrive before the page's JavaScript fade too; without it nothing is hidden, and reduced motion makes covers appear at once. A future hash-based Content-Security-Policy must include that script's hash.
 - The page closes with a quiet sign-off (22 September 2026): the three chapter colours as one edge-to-edge rule, the Akibwa mark, the same contact icons and Back to top. Back to top scrolls without changing the URL, so a spotlit chapter stays open, and returns focus to the page.
 
 ## Standalone project surfaces
