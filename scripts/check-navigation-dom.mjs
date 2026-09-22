@@ -207,8 +207,19 @@ const evaluate = async (expression) => {
 
 const goto = async (path = "/") => {
   const loaded = cdp.waitFor("Page.loadEventFired");
-  const navigation = await cdp.send("Page.navigate", { url: `${origin}${path}` });
-  if (!navigation.loaderId) await cdp.send("Page.reload");
+  const url = `${origin}${path}`;
+  const navigation = await cdp.send("Page.navigate", { url });
+  if (!navigation.loaderId) {
+    // A hash-only change stays within the document. Let it commit before
+    // reloading, or the reload lands on the previous entry and strands a
+    // forward entry that later breaks history.back().
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const { currentIndex, entries } = await cdp.send("Page.getNavigationHistory");
+      if (entries[currentIndex]?.url === url) break;
+      await sleep(20);
+    }
+    await cdp.send("Page.reload");
+  }
   await loaded;
   await sleep(300);
 };
@@ -871,7 +882,7 @@ const checkPublicLanding = async () => {
   check(await evaluate('!document.querySelector("dialog") && !location.hash'), "podcast cards also have no click-through");
   check(await evaluate('Number(document.querySelector(".personal-taste-card").dataset.listens)') === listeningPacket.podcasts[0].plays, "podcast counts include the available YouTube and Apple evidence");
   await goto('/#taste-item=music:043');
-  check(await evaluate('!document.querySelector("dialog")'), "old Taste detail links cannot reopen the removed modal");
+  check(await evaluate('location.hash === "#taste-item=music:043" && !document.querySelector("dialog")'), "old Taste detail links cannot reopen the removed modal");
 
   section("catalogue loading failure");
   await cdp.send("Network.enable");
@@ -932,11 +943,6 @@ const checkPublicLanding = async () => {
   // Closing goes through history and a view transition, so wait for the page
   // to settle rather than trusting a fixed delay.
   const wholePage = async () => { let state; for (let attempt = 0; attempt < 30; attempt++) { state = await spotlightState(); if (!state.spot && state.shown === 'projects,career,taste') break; await sleep(100); } return state; };
-  // Escape closes an open Taste detail before it leaves the spotlight, and a
-  // cover can open one under a resting pointer. Park the pointer on empty
-  // paper so a single Escape is always a spotlight exit.
-  await cdp.send('Input.dispatchMouseEvent', {type:'mouseMoved', x:8, y:8});
-  await sleep(400);
   await cdp.send("Input.dispatchKeyEvent", {type:"keyDown",key:"Escape",code:"Escape",windowsVirtualKeyCode:27});
   await sleep(800);
   let spotlightAfter = await wholePage();
