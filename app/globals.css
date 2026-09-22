@@ -1874,6 +1874,12 @@ button {
   .taste-filters { gap: 0 17px; }
   .taste-filters .rail-word { font-size: .85rem; }
 }
+/* The narrowest phones need a little more room between "Taste Library" and its tools. */
+@media (max-width: 359px) {
+  .concept-taste-head .concept-archive-head h2 { font-size: 2rem; }
+  .taste-tools { gap: 4px; }
+  .taste-tools:has(.rail-controls:not([hidden])) .taste-search.is-open { width: calc(100% - 87px); }
+}
 /* Landscape windows keep the desktop composition at every size: margins and
    type scale with the width instead of the layout switching to the tablet one. */
 @media (orientation: landscape) and (min-width: 561px) {
