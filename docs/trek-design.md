@@ -79,6 +79,38 @@ continuous distance sampling and day boundaries. `journey-traveller.js` owns
 the map, camera, clock, menu and photographs; `journey-traveller.css` owns the
 presentation. Earlier map, journal and clock files are inactive.
 
+### Google imagery integration
+
+Dan requested Google's real landscape imagery on 5 September 2026. The native
+[Google Maps JavaScript 3D renderer](https://developers.google.com/maps/documentation/javascript/3d/overview)
+is prepared in `journey-google.js`, pending billing activation and live visual
+verification. It uses satellite/photorealistic mode without map labels, the
+same route clock and photo experience, one map instance, and Google's own
+terrain at real scale. The camera's altitude is relative to the ground through
+`CameraOptions.altitudeMode`, never a sea-level guess in the mountains.
+Recorded lines clamp to Google's terrain; presentation connections remain
+separate dashed geometry. Imagery dates vary and do not recreate autumn 2019.
+Google's logo and imagery credits remain visible and unobstructed.
+
+The committed HTML contains an empty `trek-google-maps-key` marker. After the
+static release build, `scripts/configure-trek-google.mjs` injects the restricted
+browser identifier from the `TREK_GOOGLE_MAPS_BROWSER_KEY` Actions secret into
+the deployment artifact only. Do not commit a key or print it in logs. Configure
+website restrictions for the authorised Akibwa origins and only the Maps
+JavaScript API before activation; use a separate development restriction if
+needed. The key is necessarily visible to the browser, so origin and API
+restrictions are required. No raw imagery, Google elevation or tiles are stored.
+
+An absent key selects the existing terrain renderer without contacting Google.
+If initial Google loading fails, that renderer remains a usable fallback; the
+journey's About text identifies the active source. Runtime graphics failures
+still leave the original days and photographs available. Enabling the API,
+linking billing and provisioning the restricted key require Dan's approval.
+`check-trek-google.mjs` checks camera/geometry/lifecycle/configuration contracts
+with a test double; it does not establish real imagery coverage or account access.
+Before activation, inspect actual Google rendering in Paris, the Alps and Sofia,
+continuous playback, and desktop/phone controls and provider credits.
+
 MapLibre 5.6.2 and its licence are vendored. `journey-style.json` derives from
 [OpenFreeMap Liberty](https://openfreemap.org/quick_start/); its vector tiles
 supply roads, trails and building geometry. [Mapzen elevation

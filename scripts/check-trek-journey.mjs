@@ -1,4 +1,5 @@
 import './check-trek-continuity.mjs';
+import './check-trek-google.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -45,7 +46,8 @@ for(let i=0;i<source.tracks.length;i++){
 }
 const generated=readFileSync(new URL('../public/trek/index.html',import.meta.url),'utf8');
 const runtimeAssets=[...generated.matchAll(/(?:href|src)="(journey-[\w-]+\.(?:css|js))(?:\?v=([a-f0-9]+))?"/g)];
-assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-route.js','journey-traveller.css','journey-traveller.js'],'the generated page references the complete traveller runtime');
+assert.deepEqual(runtimeAssets.map(a=>a[1]).sort(),['journey-google.js','journey-route.js','journey-traveller.css','journey-traveller.js'],'the generated page references the complete traveller runtime');
+assert(generated.includes('<meta name="trek-google-maps-key" content="">'),'the public source contains no Google key; deployment injects a restricted browser identifier');
 for(const [,file,version] of runtimeAssets){
   const expected=createHash('sha256').update(readFileSync(new URL('../public/trek/'+file,import.meta.url))).digest('hex').slice(0,12);
   assert.equal(version,expected,`Run npm run trek:build after changing ${file}; cached controls must match the page`);

@@ -14,7 +14,7 @@
     let distance=0,day=1,fraction=0,frame=0,lastTime=0,lastUI=-1,heading=null,eyeHeight=null,targetHeight=null;
     let renderedDistance=0,cameraHeading=0,cameraPitch=0,pace=1600,galleryIndex=0,galleryPhotos=[];
     let flashTime=0,flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,chapters=[],moments=[];
-    let readyTimeout=0,positionPending=null,swipeX=null;
+    let readyTimeout=0,positionPending=null,swipeX=null,googleRenderer=null,renderer='terrain';
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
     const photosFor=n=>data.photos.filter(p=>p.day===n);
     const text=(id,value)=>{if($(id).textContent!==String(value))$(id).textContent=value;};
@@ -94,6 +94,14 @@
     function prepareCamera(){
       if(!terrainReady||failed)return;
       const generation=++warmGeneration,eye=path.sample(distance).point;
+      if(googleRenderer){
+        ready=false;heading=bearing(eye,path.sample(distance+1500).point);
+        googleRenderer.prepare(eye,heading).then(positioned=>{
+          if(!positioned||generation!==warmGeneration||failed)return;
+          ready=true;$('map-status').hidden=true;camera(.016,true);invalidate();
+        }).catch(()=>unavailable('Google imagery could not finish loading. The photographs and days are still here.'));
+        return;
+      }
       ready=false;map.setCenterClampedToGround(true);
       // Load the destination's elevation with a ground-clamped camera before
       // placing the travelling camera there. Sea-level guesses can put it inside a mountain.
@@ -115,6 +123,11 @@
       const wanted=bearing(from,to);
       if(heading===null)heading=wanted;
       else heading+=clamp(angle(heading,wanted)*(1-Math.exp(-dt/1.2)),-32*dt,32*dt);
+      if(googleRenderer){
+        googleRenderer.update(eye,heading);
+        const status=googleRenderer.status();cameraHeading=heading;cameraPitch=status.pitch;eyeHeight=status.eyeHeight;
+        return Math.abs(renderedDistance-distance)>1||Math.abs(angle(heading,wanted))>.1;
+      }
       const target=ahead(eye,heading,1500);
       const ground=map.queryTerrainElevation(eye),lookGround=map.queryTerrainElevation(target);
       const base=Number.isFinite(ground)?ground:eyeHeight===null?0:eyeHeight-420;
@@ -149,10 +162,32 @@
     async function initialize(){
       document.body.classList.add('is-loading');
       try{
-        const [r,m,style]=await Promise.all([loadJSON('route-detail.json'),loadJSON('moments.json'),loadJSON('journey-style.json'),loadLibrary()]);
+        const [r,m]=await Promise.all([loadJSON('route-detail.json'),loadJSON('moments.json')]);
         route=r;path=TrekRoute.buildJourneyPath(route);chapters=m.chapters;moments=m.moments;
         $('chapters').replaceChildren(...chapters.map(c=>{const b=document.createElement('button');b.dataset.chapter=c.id;const title=document.createElement('span'),small=document.createElement('small');title.textContent=c.title;small.textContent=String(c.from).padStart(2,'0')+'—'+String(c.to).padStart(2,'0');b.append(title,small);b.addEventListener('click',()=>{visit(c.day,.5);menu.close();});return b;}));
         if(positionPending){distance=path.dayDistance(positionPending.day,positionPending.t);renderedDistance=distance;positionPending=null;}
+        const googleKey=document.querySelector('meta[name="trek-google-maps-key"]')?.content;
+        if(googleKey&&host.TrekGoogle){
+          try{
+            googleRenderer=await TrekGoogle.create({apiKey:googleKey,container:$('path-map'),path,
+              point:path.sample(distance).point,heading:bearing(path.sample(distance).point,path.sample(distance+1500).point),
+              onExplore:()=>{setPlaying(false);following=false;document.body.classList.add('is-exploring');},
+              onError:()=>unavailable('Google imagery is unavailable. The photographs and days are still here.')});
+            renderer='google';document.body.classList.add('google-landscape');
+            text('landscape-source','Google satellite imagery and photorealistic 3D where available, at real scale. Imagery dates vary; this is not a reconstruction of 2019.');
+            const positioned=await googleRenderer.prepare(path.sample(distance).point,bearing(path.sample(distance).point,path.sample(distance+1500).point));
+            if(!positioned)return;
+            terrainReady=true;ready=true;$('map-status').hidden=true;
+            document.body.classList.remove('is-loading');updateUI(true);camera(.016,true);invalidate();return;
+          }catch(error){
+            googleRenderer?.destroy();googleRenderer=null;renderer='terrain';
+            failed=false;ready=false;terrainReady=false;
+            document.body.classList.remove('google-landscape');
+            text('landscape-source','Google imagery could not load. This view uses illustrated terrain at 1.35× height.');
+            text('map-status','Opening the terrain view…');
+          }
+        }
+        const [style]=await Promise.all([loadJSON('journey-style.json'),loadLibrary()]);
         // Roads and topography remain; label furniture belongs in the drawer.
         for(const layer of style.layers)if(layer.type==='symbol')layer.layout={...layer.layout,visibility:'none'};
         map=new maplibregl.Map({container:'path-map',style,center:path.sample(distance).point,zoom:12,pitch:72,bearing:140,attributionControl:false,maxPitch:85,maxZoom:17,minZoom:3,renderWorldCopies:false,scrollZoom:false,dragRotate:true,touchZoomRotate:true,canvasContextAttributes:{antialias:true},fadeDuration:0});
@@ -202,7 +237,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{if(map)map.resize();invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight]});
+    host.trekStatus=()=>({renderer,ready,failed,playing,started,following,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,pitch:cameraPitch,eyeHeight,reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight]});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();
