@@ -10,11 +10,11 @@ export const metadata = {
     template: "Akibwa | %s"
   },
   description:
-    "Daniel, online as Akibwa. Projects, a working history, and a collection of music, films, games, television and podcasts.",
+    "Daniel, online as Akibwa. The music I listen to, a puzzle I made, websites I’ve built, how I got here, and a walk from Paris to Sofia.",
   openGraph: {
     title: "Akibwa",
     description:
-      "Daniel, online as Akibwa. Projects, a working history, and a collection of music, films, games, television and podcasts.",
+      "Daniel, online as Akibwa. The music I listen to, a puzzle I made, websites I’ve built, how I got here, and a walk from Paris to Sofia.",
     url: "https://akibwa.com",
     siteName: "Akibwa",
     type: "website",
@@ -33,7 +33,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Akibwa",
     description:
-      "Daniel, online as Akibwa. Projects, a working history, and a collection of music, films, games, television and podcasts.",
+      "Daniel, online as Akibwa. The music I listen to, a puzzle I made, websites I’ve built, how I got here, and a walk from Paris to Sofia.",
     images: ["/share-card.jpg"]
   },
   // The sized .ico serves browsers without SVG icons and requests that skip
@@ -52,25 +52,22 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   // Browser chrome that tints to the page uses the same warm paper.
-  themeColor: "#faf8f3",
+  themeColor: "#f3ecdf",
   colorScheme: "light"
 };
 
-/* Taste covers fade in over their paper placeholder once decoded. This runs
-   before any cover is parsed, so it sees every load — including covers that
-   arrive before the page's JavaScript on a slow connection — and the fade only
-   applies when it has run. */
-const fadeCovers = `document.documentElement.classList.add("fade-covers");
-["load","error"].forEach(function(type){document.addEventListener(type,function(event){
-var image=event.target;if(image.tagName!=="IMG"||!image.closest(".personal-taste-art"))return;
-var show=function(){image.setAttribute("data-shown","")};
-if(type==="load"&&image.decode)image.decode().then(show,show);else show();},true)});`;
+/* Runs before the first paint: marks the page as scripted and opens the room
+   named in the hash, so a shared room link never flashes the front page. The
+   same five names live in components/paper/paper-home.jsx. Without
+   JavaScript, rooms open through :target instead. A future hash-based
+   Content-Security-Policy must include this script's hash. */
+const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","play","websites","career","trek"].indexOf(r)>-1?r:"index"})(document.documentElement,location.hash.slice(1))`;
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en-GB">
+    <html lang="en-GB" suppressHydrationWarning>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: fadeCovers }} />
+        <script dangerouslySetInnerHTML={{ __html: openRoom }} />
         <SiteShell>{children}</SiteShell>
         <ServiceWorkerRegistration />
       </body>

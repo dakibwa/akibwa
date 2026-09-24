@@ -1,14 +1,12 @@
-import Link from "next/link";
-
 export default function NotFound() {
   return (
-    <section className="page-grid not-found">
-      <div className="not-found-inner">
+    <section className="not-found">
+      <div>
         <h1>Nothing here</h1>
         <p>There&apos;s no page at this address.</p>
-        <Link className="text-action" href="/">
+        <a className="pencil-link" href="/">
           Back to Akibwa
-        </Link>
+        </a>
       </div>
     </section>
   );
