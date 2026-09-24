@@ -15,7 +15,7 @@
     let heightVelocity=0,cameraLift=0,cameraTerrainClearance=null,routeVisible=null;
     let lastContrast=-Infinity,markLuminance=null,markOnDark=false;
     let flashShown=false,flashPending=false,photoCooldown=0,lastFlashDay=-1,flashGeneration=0,flashTimer=0,chapters=[],moments=[];
-    let startupMs=null;
+    let startupMs=null,waitingForRoad=0,roadAhead=null;
     let readyTimeout=0,autoBegin=false,uiTime=-Infinity,positionPending=null,swipeX=null,lastLandmarkScan=-Infinity;
     let scrubbing=false,scrubChanged=false,viewScale=TrekCamera.scaleForPace(pace),steadyView=null,paceTransition=null,requiredClearance=null;
     const namedDay=n=>data.days.find(d=>d.n===n)||data.days[0];
@@ -35,7 +35,7 @@
       pace=value;$('pace').value=value;
       const label=options[selected].dataset.label,next=options[(selected+1)%options.length].dataset.label;
       text('speed-label',label);$('speed-cycle').setAttribute('aria-label',(value===0?'Automatic pace':'Playback speed '+label)+'. Change to '+next+'.');
-      $('speed-cycle').title=(value===0?'Auto · follow the scenery':'Speed '+label)+' · click for '+next;
+      $('speed-cycle').title=(value===0?'Walk · follows the scenery':'Speed '+label)+' · click for '+next;
     }
     setPace(pace);
     function updateMarkContrast(){
@@ -329,7 +329,15 @@
         viewScale+=(wantedScale-viewScale)*(1-Math.exp(-dt/6));
         const guarded=TrekCamera.paceLimit(paceTransition,TrekCamera.speedLimit(path,distance,requested,heading,viewScale),viewScale,steadyView?.clearance,requiredClearance);
         if(guarded.settled)paceTransition=null;
-        const desired=guarded.speed;
+        // Never walk into landscape that has not arrived: slow in proportion
+        // to the loaded road left ahead, and hold at its edge until it does.
+        const horizon=Math.max(1200,travelSpeed*4),loadedAhead=tileCache.readyAhead(path,distance,vectorTemplate,map.getZoom(),horizon);
+        // After eight seconds' wait the walk creeps on, so a lost connection
+        // cannot stop it for good.
+        const loadingLimit=loadedAhead>=horizon?Infinity:Math.max(waitingForRoad>8?60:0,(loadedAhead-250)/2.2);roadAhead=loadedAhead;
+        const desired=Math.min(guarded.speed,loadingLimit);
+        waitingForRoad=loadingLimit<guarded.speed*.3?waitingForRoad+elapsed:0;
+        if((waitingForRoad>.8)===$('road-note').hidden)$('road-note').hidden=waitingForRoad<=.8;
         travelSpeed=pace===0?TrekPace.advance(travelSpeed,desired,travelDt):mix(travelSpeed,desired,1-Math.exp(-travelDt/.85));
         distance=Math.min(path.total,distance+travelSpeed*travelDt);photoCooldown+=elapsed;
         if(!flashShown&&photoCooldown>6&&lastFlashDay!==day&&fraction>.12&&fraction<.9)showFlash();
@@ -444,7 +452,7 @@
     addEventListener('keydown',e=>{if(e.key==='Escape'){setPlaying(false);dismissFlash();}else if(e.key===' '&&!e.target.closest('button,a,input,select,summary')&&!menu.open&&!gallery.open){e.preventDefault();playing?setPlaying(false):begin();}else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&!e.target.closest('input,select')&&!menu.open&&!gallery.open){e.preventDefault();visit(day+(e.key==='ArrowRight'?1:-1));}});
     addEventListener('resize',()=>{placeLayout();drawPlaces();if(map){map.resize();map.setVerticalFieldOfView(innerWidth<innerHeight?55:38);}invalidate();});
     document.addEventListener('visibilitychange',()=>{if(document.hidden){setPlaying(false);dismissFlash();cancelAnimationFrame(frame);frame=0;}else invalidate();});
-    host.trekStatus=()=>({ready,startupMs,failed,playing,started,following,scrubbing,day,t:fraction,distance,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),prepared:prepared?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),placeRoll:{offset:placeRoll.state().offset,velocity:placeRoll.state().velocity,names:placeRoll.state().entries.map(e=>e.name)},landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
+    host.trekStatus=()=>({ready,startupMs,failed,playing,started,following,scrubbing,day,t:fraction,distance,roadAhead,waitingForRoad,renderedDistance,total:path?.total||0,kind:path?.sample(distance).kind,mode:path?.sample(distance).mode,routeLines:route?.features.length||0,connections:path?.connections.features.length||0,bearing:cameraHeading,cameraLandmark,pitch:cameraPitch,eyeHeight,cameraClearance,cameraTerrainClearance,cameraLift,cameraPoint,cameraTime:lastTime,viewScale,zoomVelocity:steadyView?.zoomVelocity,cameraReference:steadyView?.base,cameraFocus:steadyView?.focus,cameraZoom:map?.getZoom(),routeVisible,markLuminance,mapElevation:map?.getCenterElevation(),headingVelocity,heightVelocity,travelSpeed,pace,paceTransition:paceTransition?{...paceTransition}:null,requiredClearance,pacing:pacing?.status(),reduced,photoInterludes:$('photo-interludes').checked,flash:flashShown,photoCooldown,flashPending,galleryCount:galleryPhotos.length,viewport:[innerWidth,innerHeight],cache:tileCache?.status(),prepared:prepared?.status(),elevation:elevation?.status(),paper:paper?.status(),train:train?.status(),wayfinding:wayfinding?.status(),placeRoll:{offset:placeRoll.state().offset,velocity:placeRoll.state().velocity,names:placeRoll.state().entries.map(e=>e.name)},landmark:$('landmark-caption').hidden?null:$('landmark-name').textContent});
     const q=new URLSearchParams(location.search),n=+q.get('day');
     if(n>=1&&n<=67)visit(n,q.has('at')?clamp(+q.get('at')||0,0,1):.5);else if(location.hash){const d=data.days.find(d=>d.c.toLowerCase()===location.hash.slice(1));if(d)visit(d.n,.2);}
     updateUI(true);initialize();

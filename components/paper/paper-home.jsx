@@ -6,19 +6,20 @@ import { Mark } from "./mark";
 import { NameFlip } from "./name-flip";
 import { THINGS } from "./things";
 import { Contact } from "./contact";
-import { MusicRoom } from "./music-room";
-import { PlayRoom } from "./play-room";
+import { FeaturesRoom } from "./features-room";
 import { WebsitesRoom } from "./websites-room";
-import { CareerRoom } from "./career-room";
-import { TrekRoom } from "./trek-room";
+import { TasteLibrary } from "../taste-library";
+import { CareerTimeline } from "../career-bar";
 
-export const ROOMS = [
-  { id: "music", label: "music", hint: "what I listen to" },
-  { id: "play", label: "play", hint: "a puzzle I made" },
+// The trek is its own page (/trek/); the other four open in place.
+export const THINGS_ON_PAPER = [
+  { id: "taste", label: "taste", hint: "songs, albums, films, games" },
+  { id: "features", label: "features", hint: "a daily puzzle I made" },
   { id: "websites", label: "websites", hint: "sites I’ve built" },
   { id: "career", label: "career", hint: "how I got here" },
-  { id: "trek", label: "trek", hint: "Paris to Sofia, on foot" }
+  { id: "trek", label: "trek", hint: "Paris to Sofia, on foot", href: "/trek/" }
 ];
+export const ROOMS = THINGS_ON_PAPER.filter((thing) => !thing.href);
 const IDS = ROOMS.map((room) => room.id);
 const isRoom = (value) => IDS.includes(value);
 const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -30,7 +31,7 @@ const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
  * JavaScript `:target` opens the room instead. Each room is one history entry
  * carrying its hash, so Back returns to the five things.
  */
-export function PaperHome({ music, career, trek, websites }) {
+export function PaperHome({ taste, websites }) {
   const [room, setRoom] = useState(null);
   const [hovered, setHovered] = useState(null);
   const lastThing = useRef(null);
@@ -43,7 +44,7 @@ export function PaperHome({ music, career, trek, websites }) {
     };
     const settle = () => {
       const target = next
-        ? document.getElementById(`${next}-title`)
+        ? document.getElementById(`room-${next}`)
         : lastThing.current ?? document.getElementById("hello");
       target?.focus({ preventScroll: true });
     };
@@ -129,8 +130,14 @@ export function PaperHome({ music, career, trek, websites }) {
           <span className="bar-name">akibwa</span>
         </a>
         <nav className="bar-rooms" aria-label="Rooms">
-          {ROOMS.map(({ id, label }) => (
-            <a key={id} href={`#${id}`} onClick={follow(id)} aria-current={room === id ? "page" : undefined} style={{ "--room": `var(--${id})` }}>
+          {THINGS_ON_PAPER.map(({ id, label, href }) => (
+            <a
+              key={id}
+              href={href ?? `#${id}`}
+              onClick={href ? undefined : follow(id)}
+              aria-current={room === id ? "page" : undefined}
+              style={{ "--room": `var(--${id})` }}
+            >
               {label}
             </a>
           ))}
@@ -148,14 +155,14 @@ export function PaperHome({ music, career, trek, websites }) {
         <Sky />
         <div className="front-stage">
           <ul className="things" aria-label="Five things">
-            {ROOMS.map(({ id, label, hint }, index) => {
+            {THINGS_ON_PAPER.map(({ id, label, hint, href }, index) => {
               const Art = THINGS[id];
               return (
                 <li key={id} style={{ "--i": index, "--room": `var(--${id})` }}>
                   <a
                     className="thing"
-                    href={`#${id}`}
-                    onClick={follow(id)}
+                    href={href ?? `#${id}`}
+                    onClick={href ? undefined : follow(id)}
                     onPointerEnter={() => setHovered(id)}
                     onPointerLeave={() => setHovered(null)}
                     onFocus={() => setHovered(id)}
@@ -177,20 +184,17 @@ export function PaperHome({ music, career, trek, websites }) {
         </div>
       </section>
 
-      <Room id="music" active={room === "music"}>
-        <MusicRoom preview={music} active={room === "music"} />
+      <Room id="taste" active={room === "taste"}>
+        <TasteLibrary {...taste} expanded />
       </Room>
-      <Room id="play" active={room === "play"}>
-        <PlayRoom active={room === "play"} />
+      <Room id="features" active={room === "features"}>
+        <FeaturesRoom />
       </Room>
       <Room id="websites" active={room === "websites"}>
         <WebsitesRoom sites={websites} />
       </Room>
       <Room id="career" active={room === "career"}>
-        <CareerRoom career={career} active={room === "career"} onTrek={() => open("trek")} />
-      </Room>
-      <Room id="trek" active={room === "trek"}>
-        <TrekRoom trek={trek} active={room === "trek"} />
+        <CareerTimeline />
       </Room>
     </div>
   );
@@ -200,13 +204,13 @@ function Room({ id, active, children }) {
   const { label, hint } = ROOMS.find((room) => room.id === id);
   const Art = THINGS[id];
   return (
-    <section className={`room room-${id}`} id={id} aria-labelledby={`${id}-title`} style={{ "--room": `var(--${id})` }}>
+    <section className={`room room-${id}`} id={id} aria-labelledby={`room-${id}`} style={{ "--room": `var(--${id})` }}>
       <header className="room-head">
         <span className="room-art" style={{ viewTransitionName: active ? `thing-${id}` : undefined }}>
           <Art solved />
         </span>
         <div>
-          <h2 id={`${id}-title`} tabIndex={-1}>
+          <h2 id={`room-${id}`} tabIndex={-1}>
             {label}
           </h2>
           <p className="room-hint">{hint}</p>
@@ -217,30 +221,78 @@ function Room({ id, active, children }) {
   );
 }
 
-// A hatched pencil sun by day and a moon after dark, in the reader's own time.
+/*
+ * The sky is a paper wheel turning behind a round window cut in the page: the
+ * sun while the heading says Daniel, the moon while it says Akibwa. NameFlip
+ * sets `<html data-sky>` as each change begins, and the wheel turns half a
+ * revolution about a pin below the window — through a sunset to the moon, and
+ * on through a dawn back to the sun. Night things are drawn upright where
+ * they will show, then turned half round onto the far side of the wheel.
+ */
+const PIN = [60, 160];
+const BANDS = [
+  [-168, -12, "#cfe2e8"],
+  [-12, 0, "#f6c894"],
+  [0, 12, "#eca09c"],
+  [12, 24, "#8e85bf"],
+  [24, 156, "#2b356f"],
+  [156, 168, "#86609a"],
+  [168, 180, "#e7806a"],
+  [180, 192, "#f4b47c"]
+];
+const STARS = [[24, 40, 3.2], [33, 84, 2.4], [86, 84, 2.8], [86, 32, 3.4], [70, 19, 2.2]];
+
+function wedge(from, to) {
+  const at = (degrees) => {
+    const angle = (degrees * Math.PI) / 180;
+    return `${(PIN[0] + Math.cos(angle) * 180).toFixed(2)} ${(PIN[1] + Math.sin(angle) * 180).toFixed(2)}`;
+  };
+  // A little overlap, so no seam shows between neighbouring bands.
+  return `M${PIN[0]} ${PIN[1]}L${at(from)}A180 180 0 0 1 ${at(to + 0.6)}Z`;
+}
+
+const sparkle = ([x, y, s]) =>
+  `M${x} ${y - s}q${s * 0.18} ${s * 0.82} ${s} ${s}q${-s * 0.82} ${s * 0.18} ${-s} ${s}q${-s * 0.18} ${-s * 0.82} ${-s} ${-s}q${s * 0.82} ${-s * 0.18} ${s} ${-s}z`;
+
 function Sky() {
-  const [night, setNight] = useState(false);
-  useEffect(() => {
-    const hour = new Date().getHours();
-    setNight(hour < 6 || hour >= 20);
-  }, []);
   return (
-    <svg className={`sky${night ? " is-night" : ""}`} viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+    <svg className="sky" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
       <defs>
+        <clipPath id="sky-window">
+          <circle cx="60" cy="60" r="50" />
+        </clipPath>
         <pattern id="sun-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
           <path d="M0 0v4" stroke="#e8893a" strokeWidth="1.6" />
         </pattern>
+        <filter id="sky-soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.6" />
+        </filter>
       </defs>
-      <g className="sky-sun">
-        <path className="sky-rays" d="M60 18v-12M60 102v12M18 60h-12M102 60h12M30 30l-8-8M90 90l8 8M30 90l-8 8M90 30l8-8" />
-        <circle cx="60" cy="60" r="28" fill="#f6c04f" />
-        <circle cx="60" cy="60" r="28" fill="url(#sun-hatch)" opacity=".55" />
-        <circle cx="60" cy="60" r="28" fill="none" stroke="#2a2420" strokeWidth="1.2" />
+      <g clipPath="url(#sky-window)">
+        <g className="sky-wheel">
+          {BANDS.map(([from, to, colour]) => (
+            <path key={from} d={wedge(from, to)} fill={colour} />
+          ))}
+          <path className="sky-cloud" d="M25 88.5c-3.2 0-4.2-3.6-1.6-5 .2-3.4 4-4.6 6.2-2.6 1.4-3.6 7-3.8 8.4.2 3.2-.8 5.6 1.6 4.6 4.2-.2 2-2 3.2-4 3.2z" />
+          <g className="sky-sun">
+            <path className="sky-rays" d="M60 30v-8M60 90v8M30 60h-8M90 60h8M38.8 38.8l-5.6-5.6M81.2 81.2l5.6 5.6M38.8 81.2l-5.6 5.6M81.2 38.8l5.6-5.6" />
+            <circle cx="60" cy="60" r="21" fill="#f6c04f" />
+            <circle cx="60" cy="60" r="21" fill="url(#sun-hatch)" opacity=".55" />
+            <circle cx="60" cy="60" r="21" fill="none" stroke="#2a2420" strokeWidth="1.2" />
+          </g>
+          <g transform={`rotate(180 ${PIN[0]} ${PIN[1]})`}>
+            {STARS.map((star, index) => (
+              <path key={index} className="sky-star" d={sparkle(star)} style={{ "--twinkle": `${index * 0.45}s` }} />
+            ))}
+            <path className="sky-moon" d="M59.63 38.06A22 22 0 1 0 78.13 68.88A18 18 0 1 1 59.63 38.06Z" />
+            <circle cx="47" cy="62" r="2.2" fill="#e6dcc0" />
+            <circle cx="53.5" cy="72.5" r="1.5" fill="#e6dcc0" />
+          </g>
+        </g>
+        {/* The page's cut edge shades the wheel behind it. */}
+        <circle cx="63" cy="64" r="56" fill="none" stroke="#2a2420" strokeOpacity=".32" strokeWidth="12" filter="url(#sky-soft)" />
       </g>
-      <g className="sky-moon">
-        <path d="M74 30a32 32 0 1 0 16 42a25 25 0 1 1-16-42z" fill="#f3ead2" stroke="#2a2420" strokeWidth="1.2" />
-        <path className="sky-stars" d="M22 24l1.4 3.2 3.2 1.4-3.2 1.4-1.4 3.2-1.4-3.2-3.2-1.4 3.2-1.4zM100 94l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z" />
-      </g>
+      <circle className="sky-rim" cx="60" cy="60" r="50" />
     </svg>
   );
 }

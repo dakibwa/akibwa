@@ -1,0 +1,72 @@
+/* The walk's controls, in the homepage's paper sketchbook manner (24 September
+   2026): soft Fraunces, paper buttons with an ink edge and a folded shadow,
+   tally marks for the days, chapter title cards and photographs that drop in
+   like prints. Layout, the landscape and every mechanic stay as they were;
+   this file only restyles and adds the tally and chapter card. */
+
+/* Nothing on the walk is for copying, as on the homepage. */
+body{-webkit-user-select:none;user-select:none}
+
+.mark,.opening h1,.opening .begin,.journey-readout dd,.ending h1,.journey-place,.landmark-caption span,
+.menu-heading h2,#chapters button,#record-title,.chapter-card strong,.chapter-card small,.tally-day,
+.memory-sheet::after,.speed-button span{font-variation-settings:"SOFT" 100,"WONK" 1}
+
+/* Paper buttons: an ink edge, a folded shadow, pressed on click. */
+.play-button,.speed-button,.ending .begin{border:1.5px solid var(--ink);background:#fbf8ee;color:var(--ink);box-shadow:0 2px 0 var(--ink);transition:transform .15s ease,box-shadow .15s ease,background-color .2s ease}
+.play-button:hover,.speed-button:hover,.ending .begin:hover{transform:translateY(-1px);box-shadow:0 3px 0 var(--ink);background:#fffdf5}
+.play-button:active,.speed-button:active,.ending .begin:active{transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
+.speed-button{border-radius:12px}
+.speed-button span{font-family:Fraunces,serif;font-size:13px;font-weight:600;letter-spacing:-.01em}
+.ending .begin{padding:14px 22px;font-size:12px}
+
+/* Begin Journey keeps its plain text, now with a pencil rule beneath it. */
+.opening .begin{position:relative}
+.opening .begin::after{content:'';position:absolute;left:0;right:0;bottom:4px;height:8px;background:#a33443;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.2C22 3 44 6.4 64 4.2S88 3.4 98 4.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.2C22 3 44 6.4 64 4.2S88 3.4 98 4.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+  clip-path:inset(0 100% 0 0);transition:clip-path .32s cubic-bezier(.22,1,.36,1)}
+.opening .begin:hover:enabled::after,.opening .begin:focus-visible::after{clip-path:inset(0 0 0 0)}
+.opening .begin:disabled::after{display:none}
+
+/* Tally marks for the days walked, under the trek mark. */
+.journey-tally{position:absolute;z-index:5;top:calc(max(25px,env(safe-area-inset-top)) + 50px);left:38px;display:grid;gap:5px;max-width:min(340px,42vw);pointer-events:none;text-shadow:0 1px 6px #fff9e7,0 0 14px #fff9e7}
+.tally-marks{display:flex;flex-wrap:wrap;gap:3px 8px;min-height:16px}
+.tally-marks svg{display:block;width:auto;height:16px;overflow:visible;filter:drop-shadow(0 0 3px #fff9e7)}
+.tally-marks path{fill:none;stroke:#5f78b4;stroke-width:2;stroke-linecap:round}
+.tally-day{margin:0;color:#263b2d;font:600 20px/1.2 Fraunces,serif;letter-spacing:-.02em}
+.tally-day em{display:block;margin-top:2px;color:#4b5a46;font-size:15px;font-weight:420;letter-spacing:-.005em}
+.tally-day em:empty{display:none}
+
+/* A chapter opens with a title card, as a film would, while the walk goes on. */
+.chapter-card{position:absolute;z-index:6;left:50%;top:17%;display:grid;gap:6px;width:min(460px,calc(100% - 48px));padding:18px 22px 20px;border:1.5px solid var(--ink);border-radius:12px;background:#fbf8ee;box-shadow:0 3px 0 var(--ink);text-align:center;pointer-events:none;transform:translateX(-50%);animation:chapter-in .6s cubic-bezier(.34,1.4,.64,1) both}
+.chapter-card.is-leaving{animation:chapter-out .6s ease both}
+.chapter-card small{color:#52604f;font:italic 400 15px/1.3 Fraunces,serif}
+.chapter-card strong{font:600 clamp(26px,3vw,38px)/1.05 Fraunces,serif;letter-spacing:-.025em}
+.chapter-card span{font-size:12px;line-height:1.6}
+@keyframes chapter-in{from{opacity:0;transform:translate(-50%,-10px) rotate(-1deg) scale(.97)}}
+@keyframes chapter-out{to{opacity:0;transform:translate(-50%,-6px)}}
+
+/* When the landscape ahead is still arriving, the walk waits and says so. */
+.road-note{position:absolute;z-index:8;left:50%;bottom:calc(max(36px,calc(env(safe-area-inset-bottom) + 18px)) + 170px);margin:0;padding:8px 14px;border:1.5px solid var(--ink);border-radius:999px;background:#fbf8ee;box-shadow:0 2px 0 var(--ink);font-size:11px;transform:translateX(-50%);pointer-events:none;animation:chapter-in .4s ease both}
+
+/* Photographs drop in as prints, with the day written along the bottom. */
+.memory-sheet{padding:8px 8px 30px;border:0;border-radius:2px;background:#fffdf8;box-shadow:0 1px 0 #0000000f,0 16px 30px -16px #233126a6;transform:rotate(-2.2deg)}
+.memory-flash .memory-sheet::after{content:attr(data-caption);position:absolute;left:12px;bottom:6px;color:#5b6557;font:italic 400 14px/1.2 Fraunces,serif}
+.memory-flash.visible .memory-sheet{animation:print-drop .9s cubic-bezier(.34,1.4,.64,1) both}
+@keyframes print-drop{from{transform:rotate(-10deg) translate(-12px,-26px) scale(1.04)}to{transform:rotate(-2.2deg)}}
+
+/* Counters and the ending in the softer cut. */
+.journey-readout dd{font-weight:620}
+.map-status{border:1.5px solid var(--ink);border-radius:12px;background:#fbf8ee;box-shadow:0 2px 0 var(--ink)}
+.journey-menu{background-color:#f4f1e5;background-image:repeating-linear-gradient(128deg,transparent 0 130px,#cdb5880f 130px 260px)}
+
+@media(max-width:650px){
+  .journey-tally{top:calc(max(17px,env(safe-area-inset-top)) + 44px);left:21px;max-width:52vw}
+  .tally-marks svg{height:13px}
+  .tally-day{font-size:17px}
+  .tally-day em{font-size:13px}
+  .chapter-card{top:15%;width:calc(100% - 32px);padding:14px 16px 16px}
+  .chapter-card span{font-size:11px}
+}
+@media(max-height:520px){.journey-tally{display:none}.chapter-card{top:12px}}
+@media(prefers-reduced-motion:reduce){.chapter-card,.chapter-card.is-leaving,.memory-flash.visible .memory-sheet{animation:none}}

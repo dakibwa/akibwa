@@ -72,7 +72,7 @@ function CareerSpotlight() {
  * statement shares one grid cell, so the lane is as tall as the longest from
  * the first paint and choosing a role never moves anything below it.
  */
-function CareerTimeline() {
+export function CareerTimeline() {
   const [preview, setPreview] = useState(null);
   const [held, setHeld] = useState(null);
   const [place, setPlace] = useState({ x: 0, anchored: true });
@@ -113,7 +113,7 @@ function CareerTimeline() {
   return (
     <section
       className="page-grid concept-career-section personal-career is-open"
-      id="career"
+      id="career-timeline"
       aria-labelledby="career-title"
       onKeyDown={(event) => { if (event.key === "Escape") dismiss(); }}
       onBlur={(event) => {

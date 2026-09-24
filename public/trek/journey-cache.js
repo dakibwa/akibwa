@@ -48,8 +48,19 @@
     return [...urls];
   }
   const lookAhead=speed=>clamp(8000+Math.max(0,speed||0)*12,12000,40000);
+  // How far along the route every tile the camera will pass through has
+  // arrived: the rendered vector and DEM levels on the route itself. The
+  // traveller reads this to keep the walk behind the landscape, never ahead.
+  function routeTiles(path,d,vector,zoom){
+    const point=path.sample(d).point,z=clamp(Math.ceil(zoom),11,14),dem=clamp(Math.round(zoom+1),10,14),urls=[];
+    for(const [template,level] of [[vector,z],[DEM,dem]])if(template){const [x,y]=tileAt(point,level);urls.push(urlFor(template,level,x,y));}
+    return urls;
+  }
   function create({storage=host.caches,fetcher=host.fetch.bind(host),now=Date.now,resolveTile=null}={}){
-    const inflight=new Map(),memory=new Map(),queued=new Map(),warming=new Map();
+    const inflight=new Map(),memory=new Map(),queued=new Map(),warming=new Map(),arrived=new Map();
+    // Public tile URLs that have arrived, most recent last. Enough entries for
+    // a long look-ahead; the oldest are forgotten first.
+    const markArrived=url=>{arrived.delete(url);arrived.set(url,true);if(arrived.size>4096)arrived.delete(arrived.keys().next().value);};
     let cache=null,persistent=false,hits=0,network=0,errors=0,aborted=0,writes=0,generation=0,epoch='',lastAhead=-Infinity,pruning=Promise.resolve();
     const opened=Promise.resolve().then(()=>storage?.open(NAME)).then(c=>{cache=c||null;persistent=!!cache;}).catch(()=>{});
     const remember=(url,value)=>{memory.delete(url);memory.set(url,value);while(memory.size>32)memory.delete(memory.keys().next().value);};
@@ -58,7 +69,7 @@
       if(!allowed(url))return Promise.reject(Error('Not a Trek map tile'));
       const original=url;url=resolveTile?.(url)||url;
       if(signal?.aborted)return Promise.reject(abortError());
-      if(memory.has(url)){const value=memory.get(url);remember(url,value);hits++;return Promise.resolve(value);}
+      if(memory.has(url)){const value=memory.get(url);remember(url,value);hits++;markArrived(original);return Promise.resolve(value);}
       let job=inflight.get(url);
       if(!job){
         job={controller:new AbortController(),users:new Set(),settled:false};
@@ -92,7 +103,9 @@
         })();
         inflight.set(url,current);
         const settled=()=>{current.settled=true;if(inflight.get(url)===current)inflight.delete(url);};
-        current.promise.then(settled,settled);
+        // A tile that fails for good counts as settled, so the walk never waits
+        // on it forever; an aborted one may still be wanted and does not.
+        current.promise.then(()=>{markArrived(original);settled();},()=>{if(!current.controller.signal.aborted)markArrived(original);settled();});
       }
       // A foreground map request and a speculative request share one fetch.
       // Abort the network only when every consumer has left this tile behind.
@@ -135,9 +148,10 @@
       const horizon=lookAhead(speed),key=[Math.floor(distance/1600),Math.ceil(zoom),Math.round(zoom+1),Math.floor(horizon/4000)].join(':');
       if(key===epoch||now()-lastAhead<600)return;epoch=key;lastAhead=now();
       if(typeof bounds==='function')bounds=bounds();
-      // Current scenery wins over the far end of the look-ahead. Successive
-      // plans retain shared work and cancel only tiles outside the new view.
-      void warm([...landscape(bounds,vector,zoom),...corridor(path,distance,distance+4000,vector,zoom),...corridor(path,distance-2000,distance,vector,zoom,1000),...corridor(path,distance+4000,distance+horizon,vector,zoom,0)]);
+      // The tiles the camera will pass through come first, as far as the
+      // look-ahead reaches; then the scenery around them and the broad view.
+      // Successive plans retain shared work and cancel only tiles outside it.
+      void warm([...corridor(path,distance,distance+horizon,vector,zoom,0),...corridor(path,distance,distance+4000,vector,zoom),...landscape(bounds,vector,zoom),...corridor(path,distance-2000,distance,vector,zoom,1000)]);
     }
     const cancel=()=>{
       generation++;epoch='';lastAhead=-Infinity;
@@ -145,7 +159,14 @@
       for(const job of warming.values())job.controller.abort();
     };
     const flush=()=>pruning;
-    return {read,install,transformRequest,warm,ahead,cancel,flush,status:()=>({persistent,hits,network,errors,aborted,pending:queued.size+warming.size,memory:memory.size}),name:NAME};
+    function readyAhead(path,from,vector,zoom,horizon){
+      const end=clamp(from+horizon,from,path.total);
+      for(let d=clamp(from,0,path.total);;d=Math.min(end,d+400)){
+        if(routeTiles(path,d,vector,zoom).some(url=>!arrived.has(url)))return Math.max(0,d-from);
+        if(d>=end)return horizon;
+      }
+    }
+    return {read,install,transformRequest,warm,ahead,cancel,flush,readyAhead,status:()=>({persistent,hits,network,errors,aborted,pending:queued.size+warming.size,memory:memory.size}),name:NAME};
   }
-  const api={create,corridor,landscape,lookAhead,tileAt,urlFor,DEM,allowed};if(typeof module!=='undefined')module.exports=api;else host.TrekCache=api;
+  const api={create,corridor,landscape,lookAhead,routeTiles,tileAt,urlFor,DEM,allowed};if(typeof module!=='undefined')module.exports=api;else host.TrekCache=api;
 })(typeof window==='undefined'?globalThis:window);

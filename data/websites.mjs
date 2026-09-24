@@ -1,46 +1,51 @@
 /*
- * The live websites Dan has built, shown in the homepage's Websites room.
- * Only public sites serving Dan's build belong here. Butterfly Rose's domain
- * still serves its previous Wix site, so it waits until Dan's build replaces
- * it. Castle Bank Electrical is live, but its team section shows Dan's full
- * name and photograph, which akibwa.com does not publish; it needs Dan's
- * explicit approval before it joins. `scripts/capture-websites.mjs`
- * screenshots each `href` unless the site uses an approved illustration
- * (`art`); `tall` pages are captured long enough to pan through.
+ * The websites Dan has built, shown in the homepage's Websites room with the
+ * previous homepage's project cards. Dan chose these three on 24 September
+ * 2026; Features and The Trek have their own places on the front page.
+ *
+ * Cards whose artwork is a screenshot carry `capture`, used by
+ * scripts/capture-websites.mjs. Castle Bank's home page greets visitors with
+ * named photographs of its founders; akibwa.com does not publish Dan's full
+ * name or likeness, so the capture hides them (`hide`). Butterfly Rose is in
+ * review with the salon and not yet on its own domain, so it has no link, and
+ * its capture comes from a local review build (`review`).
  */
 export const websites = [
   {
-    id: "portuguese-with-ines",
-    name: "Português com a Inês",
+    id: "portuguese",
+    className: "concept-portuguese",
     href: "https://portuguesewithines.com/",
-    domain: "portuguesewithines.com",
-    note: "Inês’s one-to-one Portuguese lessons, with availability and booking in one place.",
-    kind: "for Inês"
+    title: "Português com a Inês",
+    subtitle: "Portuguese lessons",
+    description: "Inês’s Portuguese lessons, with availability and booking in one place.",
+    src: "/project-art/personal/portuguese-with-ines-conversation.png",
+    imageRevision: "left-crop",
+    alt: "Two people talking over coffee as colourful speech shapes meet between them",
+    accent: "#7faaff",
+    previewFirst: true
   },
   {
-    id: "features",
-    name: "features",
-    href: "https://features.games/",
-    domain: "features.games",
-    note: "Ten small networks to untangle each day, with shapes to discover along the way.",
-    kind: "my game"
+    id: "castle-bank",
+    className: "concept-castle-bank",
+    href: "https://www.castle-bank.com/",
+    title: "Castle Bank",
+    subtitle: "electrical contractors",
+    description: "Commercial electrical installation, testing and maintenance, set out plainly for the businesses that need it.",
+    src: "/project-art/websites/castle-bank.webp",
+    alt: "Castle Bank’s home page: an orange and black headline beside a swirl of orange sparks",
+    accent: "#f26b1d",
+    capture: { url: "https://www.castle-bank.com/", hide: [".hero-team"] }
   },
   {
-    id: "top-250",
-    name: "Dan’s top 250",
-    href: "https://dans-top-250.pages.dev/",
-    domain: "dans-top-250.pages.dev",
-    note: "My 250 most-played songs, in order, with plays and listening hours.",
-    kind: "my list",
-    tall: true
-  },
-  {
-    id: "trek",
-    name: "The Trek",
-    href: "/trek/",
-    domain: "akibwa.com/trek",
-    note: "Paris to Sofia on foot, told as a moving paper landscape.",
-    kind: "my walk",
-    art: "/project-art/personal/trek-paper-landscape.png"
+    id: "butterfly-rose",
+    className: "concept-butterfly-rose",
+    href: null,
+    title: "Butterfly Rose",
+    subtitle: "hair salon · coming soon",
+    description: "A calm, elegant site for a hair salon in Otley: services and prices, the team, bridal and how to book.",
+    src: "/project-art/websites/butterfly-rose.webp",
+    alt: "Butterfly Rose’s home page: a serif headline beside a photograph of the salon’s mirrors and chairs",
+    accent: "#7c4650",
+    capture: { review: true }
   }
 ];

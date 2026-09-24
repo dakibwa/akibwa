@@ -104,7 +104,10 @@ const sources = [
   { file: "brand-logos/akibwa-a.png", slot: "identityMark" },
   { file: "project-art/personal/features-discoveries.svg", slot: "conceptProject" },
   { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject", position: [0, 30], zoom: 1.3 },
-  { file: "project-art/personal/trek-paper-landscape.png", slot: "conceptProject" }
+  { file: "project-art/personal/trek-paper-landscape.png", slot: "conceptProject" },
+  // Screenshots of the sites (scripts/capture-websites.mjs); cards show the top.
+  { file: "project-art/websites/castle-bank.webp", slot: "conceptProject", position: [50, 0] },
+  { file: "project-art/websites/butterfly-rose.webp", slot: "conceptProject", position: [50, 0] }
 ];
 
 for (const file of (await readdir(path.join(publicDir, "podcast-covers"))).filter((file) => file.endsWith(".webp")).sort()) {

@@ -64,7 +64,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     // their existing deadlines exceed the generic 30-second interaction wait.
     const prepared=()=>until(async()=>(await state()).ready,60000);
     await setDesktop(1440,900);await goto('/trek/?day=61');check(await prepared(),'the automatic journey prepares');
-    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'&&+document.querySelector('#pace').value===0"),'Auto is the default in both pace controls');
+    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='walk'&&+document.querySelector('#pace').value===0"),'walk (the automatic pace) is the default in both pace controls');
     await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=false;p.dispatchEvent(new Event('change',{bubbles:true}));})()");
     const measurements=[];
     for(const [label,distance] of [['open-country',path.dayDistance(61,.8)],['city',atPoint([4.02376,49.251785])],['mountains',path.dayDistance(30,.65)]]){
@@ -87,7 +87,7 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     }
     check(measurements[0].peak>measurements[1].peak*2&&measurements[0].peak>measurements[2].peak*2,'open-country playback runs materially faster than the city and mountains');
     const held=(await state()).distance;
-    for(const [value,label] of [[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×'],[12800,'8×'],[0,'Auto']]){
+    for(const [value,label] of [[400,'stroll'],[1600,'stride'],[3200,'hurry'],[6400,'run'],[12800,'fly'],[0,'walk']]){
       await click('#speed-cycle');check((await state()).pace===value&&(await state()).distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}`),`${label} remains available without moving a paused journey`);
     }
     await setPace(12800);await click('#play');await sleep(1200);await setPace(0);check((await state()).playing&&(await state()).pace===0,'switching from a fixed speed to Auto preserves playback');await sleep(1200);await click('#play');
@@ -99,14 +99,14 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
   if(process.env.CHECK_TREK_REFINEMENT_ONLY==='1'){
     section('Simple controls, passive prints and a train on the mapped railway');
     await setDesktop(1440,900);await goto('/trek/?day=2');check(await settled(),'the revised journey prepares');
-    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='Auto'"),'Auto is the initial speed in both controls');await setPace(6400);
+    check((await state()).pace===0&&await evaluate("document.querySelector('#speed-label').textContent==='walk'"),'walk is the initial speed in both controls');await setPace(6400);
     check(await evaluate("!document.querySelector('#readout-day,#elevation-current,#minimap-height,.timeline-heading')"),'the extra day count and height labels are removed');
     const showPrint=async()=>{await evaluate("(()=>{const p=document.querySelector('#photo-interludes');p.checked=true;p.dispatchEvent(new Event('change',{bubbles:true}));})()");return until(async()=>(await state()).flash,5000);};
     const shape=async()=>evaluate(`(()=>{const p=document.querySelector('#memory-flash'),i=p.querySelector('img'),s=getComputedStyle(i),c=getComputedStyle(p);return {passive:p.tagName==='FIGURE'&&!p.querySelector('a,button')&&c.pointerEvents==='none',aspect:Math.abs(parseFloat(s.width)/parseFloat(s.height)-i.naturalWidth/i.naturalHeight)<.01,natural:[i.naturalWidth,i.naturalHeight]};})()`);
     check(await showPrint(),'the landscape print appears');await sleep(1700);
     let print=await shape();check(print.passive&&print.aspect&&print.natural[0]>print.natural[1],'the landscape photograph keeps its full aspect ratio and has no link');
     await click('#memory-flash');check(!(await state()).gallery,'clicking a print cannot open the gallery');
-    const held=(await state()).distance;await click('#speed-cycle');check((await state()).pace===12800&&(await state()).distance===held,'the speed button cycles from 4× to 8× without moving a paused journey');
+    const held=(await state()).distance;await click('#speed-cycle');check((await state()).pace===12800&&(await state()).distance===held,'the speed button cycles from run to fly without moving a paused journey');
     await click('#menu-open');check((await state()).menu,'the date opens journey options');
     await evaluate("(()=>{const p=document.querySelector('#pace');p.value=6400;p.dispatchEvent(new Event('change',{bubbles:true}));})()");await click('#menu-close');
     for(const [width,height] of [[1440,900],[390,844],[320,844],[844,390]]){
@@ -294,14 +294,14 @@ export async function checkTrekPaths({cdp,evaluate,goto,setDesktop,sleep,check,s
     await cdp.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:box.x+52.5/67*box.width,y,button:'left',clickCount:1});
     check(await settled()&&!(await state()).scrubbing&&(await state()).day===53,'releasing the handle prepares the final landscape');
     await choose(30);check(await settled(),'the chosen day and date reset together');
-    check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('Auto')"),'the photograph button is replaced by a visible speed control');await setPace(6400);
+    check(await evaluate("!document.querySelector('#photos-open')&&document.querySelector('#speed-cycle').textContent.includes('walk')"),'the photograph button is replaced by a visible speed control');await setPace(6400);
     const held=(await state()).distance;
-    for(const [pace,label] of [[12800,'8×'],[0,'Auto'],[400,'¼×'],[1600,'1×'],[3200,'2×'],[6400,'4×']]){
+    for(const [pace,label] of [[12800,'fly'],[0,'walk'],[400,'stroll'],[1600,'stride'],[3200,'hurry'],[6400,'run']]){
       await click('#speed-cycle');const s=await state();
       check(s.pace===pace&&!s.playing&&s.distance===held&&await evaluate(`document.querySelector('#speed-label').textContent===${JSON.stringify(label)}&&+document.querySelector('#pace').value===${pace}`),`${label} updates both speed controls without moving a paused journey`);
     }
     await click('#menu-open');await evaluate("(()=>{const e=document.querySelector('#pace');e.value=400;e.dispatchEvent(new Event('change',{bubbles:true}));})()");
-    check((await state()).pace===400&&await evaluate("document.querySelector('#speed-label').textContent==='¼×'"),'changing speed in the menu updates the visible control');await click('#menu-close');await click('#speed-cycle');
+    check((await state()).pace===400&&await evaluate("document.querySelector('#speed-label').textContent==='stroll'"),'changing speed in the menu updates the visible control');await click('#menu-close');await click('#speed-cycle');
     await click('#play');await sleep(500);await click('#speed-cycle');const moving=await state();await sleep(1800);await click('#play');
     check(moving.playing&&moving.pace===3200&&(await state()).distance>moving.distance,'fast-forward changes pace during playback without interrupting travel');
     await choose(6);check(await settled(),'a backward day change prepares');b=await ribbon();check(b.day===6&&Math.abs(b.progress-5.5/67)<.0001,'seeking backwards moves the filled profile to the earlier day');

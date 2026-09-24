@@ -110,3 +110,20 @@ Only the public aggregate packet is written. Review its summary and scoped diff,
 run the data/identity checks and normal publication gate, then verify the live
 hover, non-navigation and full-catalogue behavior. Do not publish private source
 material to automate this step.
+
+## Song and artist ranking
+
+Dan asked on 24 September 2026 for his top 1,000 songs and top 100 artists on
+the homepage. The private history already holds the combined ranking prepared
+for his Top 250 site (`private/spotify/all-time-top-1000.json`): Spotify plays
+of at least 30 seconds plus identified YouTube song watches, possible overlaps
+excluded, and his two ambient sleep albums (Music For Psychedelic Therapy,
+bar Sit Around the Fire, and Discreet Music) left out.
+
+`node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`
+writes `public/music-ranking.json` with rank, title, artist, plays and the
+YouTube share only. Artists total every ranked song identity, not only the top
+1,000. Covers reuse the committed album sleeves where artist and album match.
+First and last listen dates, listening time, track URIs, account splits and
+source paths never leave the private history; `check:navigation` fails if the
+packet gains a field.

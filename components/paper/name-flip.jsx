@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const NAMES = ["Daniel", "Akibwa"];
 
@@ -20,15 +20,25 @@ function Pencil() {
 const ERASE = 460;
 const WRITE = 720;
 
+// Daniel keeps the sun in the sky and Akibwa the moon (see Sky in
+// paper-home). Unset means day, so the first load turns nothing.
+function setSky(night) {
+  const root = document.documentElement;
+  const next = night ? "night" : "day";
+  if ((root.dataset.sky ?? "day") !== next) root.dataset.sky = next;
+}
+
 /*
  * The original Daniel ↔ Akibwa flick, redrawn: a small pencil rubs out one
- * name with its eraser and writes the other. First change at 3.2 seconds,
- * then every 4.2 seconds, as before. Both names reserve their width, hidden
- * tabs pause the cycle, and reduced motion keeps Daniel still.
+ * name with its eraser and writes the other, and the sky turns with it. First
+ * change at 3.2 seconds, then every 4.2 seconds, as before. Both names reserve
+ * their width, hidden tabs pause the cycle, and reduced motion keeps Daniel
+ * and the sun still.
  */
 export function NameFlip() {
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState("rest");
+  const shown = useRef(0);
 
   useEffect(() => {
     const still = matchMedia("(prefers-reduced-motion: reduce)");
@@ -38,9 +48,12 @@ export function NameFlip() {
       timers = [];
     };
     const cycle = () => {
+      const upcoming = (shown.current + 1) % NAMES.length;
       setPhase("erase");
+      setSky(upcoming === 1);
       timers.push(setTimeout(() => {
-        setIndex((value) => (value + 1) % NAMES.length);
+        shown.current = upcoming;
+        setIndex(upcoming);
         setPhase("write");
       }, ERASE));
       timers.push(setTimeout(() => {
@@ -51,8 +64,14 @@ export function NameFlip() {
     const reset = () => {
       clear();
       setPhase("rest");
-      if (still.matches) setIndex(0);
-      else if (!document.hidden) timers.push(setTimeout(cycle, 3200));
+      if (still.matches) {
+        shown.current = 0;
+        setIndex(0);
+        delete document.documentElement.dataset.sky;
+      } else {
+        setSky(shown.current === 1);
+        if (!document.hidden) timers.push(setTimeout(cycle, 3200));
+      }
     };
     reset();
     still.addEventListener("change", reset);
@@ -61,6 +80,7 @@ export function NameFlip() {
       clear();
       still.removeEventListener("change", reset);
       document.removeEventListener("visibilitychange", reset);
+      delete document.documentElement.dataset.sky;
     };
   }, []);
 

@@ -78,6 +78,21 @@ for(const [cameraZoom,demZoom] of [[12.3,13],[12.7,14],[13.3,14]]){
 assert(Cache.corridor(path,0,path.total,vector,14).length<=192,'even a whole-route input cannot create an unbounded speculative plan');
 assert(Cache.corridor(path,path.total,path.total,vector,13).length>0,'arrival still prepares its local tiles');
 assert.equal(Cache.lookAhead(0),12000);assert.equal(Cache.lookAhead(800),17600);assert.equal(Cache.lookAhead(12800),40000);
+// The walk never outruns the landscape: readiness ends at the first tile on the
+// route ahead that has not arrived, and reaches the horizon once all have.
+{
+ const gate=Cache.create({storage:null,fetcher:async()=>new Response('tile')}),start=path.dayDistance(30,.2);
+ assert.equal(gate.readyAhead(path,start,vector,13,6000),0,'no road is ready before its tiles arrive');
+ for(let d=start;d<=start+2000;d+=400)for(const url of Cache.routeTiles(path,d,vector,13))await gate.read(url);
+ const partial=gate.readyAhead(path,start,vector,13,6000);
+ assert(partial>=2000,'readiness covers the arrived stretch ['+partial+']');
+ for(let d=start;d<=start+6000;d+=400)for(const url of Cache.routeTiles(path,d,vector,13))await gate.read(url);
+ assert.equal(gate.readyAhead(path,start,vector,13,6000),6000,'a fully arrived road is ready to its horizon');
+ const planned=[],planner=Cache.create({storage:null,now:()=>0,fetcher:async url=>{planned.push(url);return new Response('tile');}});
+ planner.ahead(path,start,vector,13,2400,[[13.2,47.1],[13.4,47.3]]);
+ while(planner.status().pending)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.deepEqual(planned.slice(0,2),Cache.routeTiles(path,start,vector,13),'the tiles the camera will pass through are requested first');
+}
 let planClock=0;const planned=[];
 cache=Cache.create({storage:null,now:()=>planClock,fetcher:async url=>{planned.push(url);return new Response('tile');}});
 cache.ahead(path,from,vector,12.3);

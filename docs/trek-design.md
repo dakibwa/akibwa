@@ -550,3 +550,28 @@ prepared scenery decodes to about 13.6 MB; GPU selection avoids drawing its full
 stored extent. A 390×844 layout and a date jump outside the pilot were also
 checked. Missing local tiles fall back to the public provider, including when
 an old open page outlives a package revision.
+
+## Paper chrome and loading-aware pacing — 24 September 2026
+
+Dan asked for the Trek to be more beautiful in the homepage's new paper
+manner while keeping its essence, "even to the point of controlling the
+pacing", and named the key problem: the landscape was not loading in time for
+the walk to go across it.
+
+- The walk waits for its landscape. `TrekCache.readyAhead` reports how far
+  along the route every tile the camera will pass through (the rendered vector
+  and DEM levels on the route itself) has arrived. The traveller limits its
+  speed to reach that edge no sooner than 2.2 seconds away, easing down as the
+  loaded road runs out and holding at its edge until tiles arrive; a small
+  "Loading the road ahead…" note appears if the wait lasts. The prefetch plan
+  now requests those route tiles first, as far as the look-ahead reaches,
+  before the scenery around them and the broad view.
+- The pace names are words: walk (the automatic, scenery-led pace), stroll,
+  stride, hurry, run and fly, in the button and the menu.
+- `journey-paper-ui.css` restyles the chrome only: the soft Fraunces cut,
+  paper buttons with an ink edge and folded shadow, a pencil rule under Begin
+  Journey, paper status cards and photographs that drop in as prints with
+  their day written along the bottom.
+- `journey-tally.js` adds tally marks for the days walked under the trek mark,
+  with the day's title (its song) beneath, and a title card as each approved
+  chapter begins. It only reads `trekStatus()`; it never drives the walk.

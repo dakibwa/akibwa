@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { SiteImage } from "./site-image";
+import { SiteImage, AlbumArtImage } from "./site-image";
 import { AlbumCover } from "./album-cover";
 import curation from "@/data/taste-curation.json";
 import { browseAlbums } from "./album-catalogue.mjs";
 import { useAlbumCatalogue } from "./use-album-catalogue";
+import { useMusicRanking } from "./use-music-ranking";
 import { listeningLabel, rankPodcasts } from "./listening-label.mjs";
 import { listeningDescription } from "./listening-hover";
 import { tasteItemKey } from "./taste-identity.mjs";
@@ -13,13 +14,16 @@ import { RailControls } from "./rail-controls";
 import { Search, X } from "lucide-react";
 
 const groups = [
-  ["music", "Music", "224, 122, 26"],
+  ["songs", "Songs", "196, 77, 38"],
+  ["artists", "Artists", "122, 78, 170"],
+  ["music", "Albums", "224, 122, 26"],
   ["films", "Films", "94, 142, 103"],
   ["games", "Games", "115, 112, 255"],
   ["tv", "TV", "0, 154, 205"],
   ["podcasts", "Podcasts", "164, 74, 126"],
 ];
 const kindLabels = { films: "Film", games: "Game", tv: "TV" };
+const moreLabels = { songs: "songs", artists: "artists", music: "albums", podcasts: "podcasts" };
 const searchable = (value) => value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase();
 const artworkKey = item => `${item.kind}-${tasteItemKey(item)}`;
 const estimatedHeight = item => 132 * (item.kind === "films" || item.kind === "tv" ? 1.5 : item.kind === "games" ? 4 / 3 : 1);
@@ -27,6 +31,16 @@ const estimatedHeight = item => 132 * (item.kind === "films" || item.kind === "t
 function TasteArtwork({ item, expanded }) {
   if (item.kind === "music") {
     return <AlbumCover album={item} />;
+  }
+  // Songs and artists borrow the sleeve of the album they are played from.
+  if (item.kind === "songs" || item.kind === "artists") {
+    if (item.art) return <AlbumArtImage id={item.art} alt="" />;
+    const tint = [...item.title].reduce((sum, letter) => sum + letter.charCodeAt(0), 0) % 6;
+    return <span className={`podcast-type-cover podcast-type-cover-${tint}`} aria-hidden="true">
+      <small>{item.kind === "songs" ? item.creator : "Artist"}</small>
+      <strong>{item.title}</strong>
+      <span>◉</span>
+    </span>;
   }
   if (item.art) {
     return <SiteImage
@@ -44,7 +58,7 @@ function TasteArtwork({ item, expanded }) {
   </span>;
 }
 
-export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded = false }) {
+export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, initialRanking, expanded = false }) {
   const [category, setCategory] = useState("all"),
     [visibleCount, setVisibleCount] = useState(48);
   const [query, setQuery] = useState("");
@@ -164,6 +178,7 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
     };
   }, [detailOpen]);
   const { catalogue, loading, loadError, retry } = useAlbumCatalogue(initialCatalogue, refreshedAt, category === "music" || searchOpen);
+  const ranking = useMusicRanking(initialRanking, category === "songs" || category === "artists" || searchOpen);
   const music = useMemo(() => browseAlbums(catalogue).map((album) => ({
     ...album,
     title: album.album,
@@ -171,6 +186,22 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
     kind: "music",
   })), [catalogue]);
   const lists = {
+    songs: ranking.songs.map((song) => ({
+      kind: "songs",
+      id: `song-${song.rank}`,
+      title: song.title,
+      creator: song.artist,
+      plays: song.plays,
+      art: song.art,
+    })),
+    artists: ranking.artists.map((artist) => ({
+      kind: "artists",
+      id: `artist-${artist.rank}`,
+      title: artist.name,
+      creator: artist.top.length ? `${artist.top.length} of my top 1,000 songs` : "",
+      plays: artist.plays,
+      art: artist.art,
+    })),
     music,
     ...Object.fromEntries(
       ["films", "games", "tv"].map((kind) => [
@@ -187,15 +218,12 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
     ...lists,
     music: music.filter((item) => curation.albumIds.includes(item.id)).slice(0, 16),
   };
+  // Each row of the mixed wall opens with one of the most played songs.
   const mixed = Array.from({ length: 48 }, (_, index) => {
-    const kind = ["music", "films", "music", "games", "tv", "podcasts"][
+    const kind = ["songs", "films", "music", "games", "tv", "podcasts"][
       index % 6
     ];
-    return highlights[kind][
-      kind === "music"
-        ? Math.floor(index / 6) * 2 + (index % 6 === 2 ? 1 : 0)
-        : Math.floor(index / 6)
-    ];
+    return highlights[kind][Math.floor(index / 6)];
   }).filter(Boolean);
   const terms = searchable(query.trim()).split(/\s+/).filter(Boolean);
   const selection = category === "all" ? (terms.length ? Object.values(lists).flat() : mixed) : lists[category];
@@ -331,13 +359,13 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
   const pushing = detailOpen && gap && !gap.float;
   const loadMore = visible.length < list.length ? (
     <button className="taste-load-more" type="button" ref={more} style={{ "--taste-shift": pushing && !expanded ? gap.base + 1 : 0 }} onClick={() => setVisibleCount((count) => count + 36)}>
-      More {terms.length ? "results" : category === "music" ? "albums" : "podcasts"} <span aria-hidden="true">→</span>
+      More {terms.length ? "results" : moreLabels[category] ?? "covers"} <span aria-hidden="true">→</span>
     </button>
   ) : null;
   return (
     <section
       className={`page-grid concept-archive personal-taste${detailOpen ? " is-open" : ""}${expanded ? " is-expanded" : ""}`}
-      id="taste"
+      id="taste-library"
       aria-labelledby="taste-title"
       onMouseLeave={(event) => {
         if (activeCard.current !== event.currentTarget.ownerDocument.activeElement) dismissDetail();
@@ -473,6 +501,9 @@ export function TasteLibrary({ initialCatalogue, refreshedAt, podcasts, expanded
       </div>
       {(category === "music" || searchOpen) && (loading || loadError) ? <p className="taste-load-status" role="status">
         {loadError ? <>The full album history couldn’t load. <button type="button" onClick={retry}>Try again</button></> : "Loading the full album history…"}
+      </p> : null}
+      {(category === "songs" || category === "artists" || searchOpen) && (ranking.loading || ranking.loadError) ? <p className="taste-load-status" role="status">
+        {ranking.loadError ? <>The top 1,000 songs couldn’t load. <button type="button" onClick={ranking.retry}>Try again</button></> : "Loading the top 1,000 songs…"}
       </p> : null}
     </section>
   );

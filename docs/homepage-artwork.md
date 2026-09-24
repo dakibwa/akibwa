@@ -1,5 +1,28 @@
 # Homepage artwork
 
+## Paper homepage — 24 September 2026
+
+- The bar's `a` is a vector trace of `public/brand-logos/akibwa-a.png`
+  (`components/paper/mark-paths.js`) drawn as papercraft: the orange body and
+  apricot terminal over a folded edge. It carries no face or eyes.
+- The five things (a hand of sleeves, the Features tile, browser windows, paper
+  plane, folded map) and the sky wheel are inline SVG in
+  `components/paper/things.jsx` and `paper-home.jsx`, so they scale and draw in
+  without image requests.
+- The taste sleeves are cartoons drawn from the real covers in
+  `public/album-art/`: Taking Tiger Mountain's rows of small orange-haired
+  portraits round the large one and its red dragon on grey; Person Pitch's
+  round pool of bathers with the gorilla, seal, bear, panda and tiger; and
+  Graceland's spaced title over the small painting of a rider on a white horse.
+- The websites windows are drawn from the sites' own first screens: Butterfly
+  Rose (blush, plum button, the salon's round mirrors), Castle Bank (orange C,
+  black and orange headline, spark swirl, green WhatsApp pill) and Português
+  com a Inês (cream header, royal-blue panel with white script, lilac rows).
+- Castle Bank's and Butterfly Rose's cards are screenshots captured by
+  `scripts/capture-websites.mjs` and cropped to the 5:2 project slot; the
+  Castle Bank capture hides the founders' named photographs.
+- `public/share-card-paper.jpg` is the front page's first screen at rest.
+
 ## Akibwa identity
 
 The orange lowercase `a` with an apricot terminal is the shared Akibwa social
