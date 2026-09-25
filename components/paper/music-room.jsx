@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { memo, startTransition, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AlbumArtImage } from "../site-image";
 import { useMusicRanking } from "../use-music-ranking";
-import { albumSides, albumWeights, drawnOrder, layoutSquares, rowOfSquares } from "./music-map.mjs";
+import { albumSides, albumWeights, drawnOrder, packSquares, rowOfSquares, targetColumns, tilesFor } from "./music-map.mjs";
 import { LARGE_ART } from "./music-art.mjs";
 import { indexItems, search } from "./music-search.mjs";
 
@@ -72,52 +71,138 @@ const PLANS = {
   songs: (phone) => (phone ? { cell: 22, aspect: 6, range: [0.4, 0.62], tries: 6, spread: 1 } : { cell: 23, aspect: 2.4, range: [0.18, 0.26], tries: 5, spread: 1 })
 };
 
-function squares(kind, values, width, adjust) {
-  if (values.length <= 3) return rowOfSquares(values.length, width);
-  // Fewer sleeves (a search) get bigger cells, so they still fill the width.
-  const base = PLANS[kind](width < 600);
-  const cell = Math.max(base.cell, width / Math.max(8, Math.round(Math.sqrt(values.length) * 6.5)));
-  const plan = { ...base, cell, adjust };
-  const map = layoutSquares(values, width, plan);
-  return map.height ? map : layoutSquares(values, width, { ...plan, range: [0.08, 0.9], tries: 40, spread: 8 });
+/*
+ * Packings are kept per list and column count, so turning the switch back, or
+ * returning to a width seen before, costs nothing.
+ */
+const packings = new WeakMap();
+
+function packFor(kind, values, target, phone, adjust, listKey) {
+  let byTarget = packings.get(listKey);
+  if (!byTarget) packings.set(listKey, (byTarget = new Map()));
+  const key = `${kind}|${target}|${phone}`;
+  if (byTarget.has(key)) return byTarget.get(key);
+  const base = PLANS[kind](phone);
+  let grid = packSquares(values, target, { ...base, adjust });
+  // If nothing packs exactly, a wider search follows.
+  if (!grid) grid = packSquares(values, target, { ...base, adjust, range: [0.08, 0.9], tries: 40, spread: 8 });
+  byTarget.set(key, grid);
+  return grid;
 }
 
-// The map's width, measured before paint so a resize never shows a stale map.
-function useWidth(ref) {
+// Fewer sleeves (a search) get bigger cells, so they still fill the width.
+function columnsFor(kind, count, width) {
+  const base = PLANS[kind](width < 600);
+  const cell = Math.max(base.cell, width / Math.max(8, Math.round(Math.sqrt(count) * 6.5)));
+  return targetColumns(width, cell);
+}
+
+/*
+ * Resizing is smooth because the sleeves are not laid out again at every
+ * pixel. While the window moves, the map drawn at the last settled width is
+ * scaled to fit in one GPU transform (`live`, each frame, before paint); once
+ * it has been still for a moment the settled width changes, the map is laid
+ * out afresh at it, and the sleeves glide there (useGlide).
+ */
+const SETTLE = 160;
+
+function useSettledWidth(ref, live) {
   const [width, setWidth] = useState(1100);
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return undefined;
     const read = () => Math.floor(element.clientWidth);
-    if (read() > 0) setWidth(read());
+    let last = read();
+    if (last > 0) setWidth(last);
+    let timer = 0;
     const observer = new ResizeObserver(() => {
       const next = read();
-      if (next > 0) flushSync(() => setWidth(next));
+      const shown = last > 0;
+      last = next;
+      if (next <= 0) return;
+      clearTimeout(timer);
+      // A room opening is laid out at once; only a resize waits to settle.
+      if (!shown) {
+        setWidth(next);
+        return;
+      }
+      live.current?.(next);
+      timer = setTimeout(() => setWidth(read()), SETTLE);
     });
     observer.observe(element);
-    return () => observer.disconnect();
-  }, [ref]);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
+  }, [ref, live]);
   return width;
 }
 
-// Room to grow into under the pointer, kept inside the map's edges.
-function growth(tile, width, height) {
-  const grow = Math.max(0, POP - tile.w);
-  const left = Math.min(grow / 2, tile.x);
-  const right = Math.min(grow - left, Math.max(0, width - tile.x - tile.w));
-  const top = Math.min(grow / 2, tile.y);
-  const bottom = Math.min(grow - top, Math.max(0, height - tile.y - tile.h));
-  // Whatever one side cannot take, the other does, so it stays square.
-  return {
-    "--pop-l": `${grow - right}px`,
-    "--pop-r": `${right}px`,
-    "--pop-t": `${grow - bottom}px`,
-    "--pop-b": `${bottom}px`
-  };
+/*
+ * FLIP: after a new layout is committed, each sleeve on screen is put back
+ * where it was seen (a transform, so the compositor does the work) and
+ * released to glide to its new place. Sleeves off screen just move.
+ */
+const GLIDE = { duration: 440, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
+
+function useGlide(list, layout, view, count) {
+  const seen = useRef(null);
+  useLayoutEffect(() => {
+    const was = seen.current;
+    seen.current = { view, scale: 1, rects: new Map() };
+    const element = list.current;
+    if (!element) return;
+    const tiles = [...element.children];
+    const top = element.getBoundingClientRect().top;
+    tiles.forEach((tile) => seen.current.rects.set(tile.dataset.key, { x: tile.offsetLeft, y: tile.offsetTop, w: tile.offsetWidth }));
+    if (!was || was.view !== view || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    for (const tile of tiles) {
+      const from = was.rects.get(tile.dataset.key);
+      if (!from) continue;
+      const to = seen.current.rects.get(tile.dataset.key);
+      const k = was.scale;
+      const onScreen = [from.y * k, to.y].some((y) => top + y < innerHeight && top + y + Math.max(from.w * k, to.w) > 0);
+      if (!onScreen) continue;
+      const dx = from.x * k + (from.w * k) / 2 - (to.x + to.w / 2);
+      const dy = from.y * k + (from.w * k) / 2 - (to.y + to.w / 2);
+      const size = (from.w * k) / to.w;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(size - 1) < 0.01) continue;
+      tile.animate([{ transform: `translate(${dx}px, ${dy}px) scale(${size})` }, { transform: "none" }], GLIDE);
+    }
+  }, [layout, view, list, count]);
+  // The last scale the map was shown at while the window moved.
+  return useCallback((scale) => {
+    if (seen.current) seen.current.scale = scale;
+  }, []);
 }
 
-const Tiles = memo(function Tiles({ kind, entries, tiles, width, height, onOpen }) {
-  return entries.map(({ item }, index) => {
+/*
+ * Room to grow into under the pointer, kept inside the map's edges, measured
+ * when the pointer arrives rather than on every resize.
+ */
+function grow(event) {
+  const tile = event.currentTarget;
+  const map = tile.parentElement;
+  if (!map) return;
+  const width = map.clientWidth;
+  const height = map.clientHeight;
+  const x = tile.offsetLeft;
+  const y = tile.offsetTop;
+  const side = tile.offsetWidth;
+  const more = Math.max(0, POP - side);
+  const left = Math.min(more / 2, x);
+  const right = Math.min(more - left, Math.max(0, width - x - side));
+  const top = Math.min(more / 2, y);
+  const bottom = Math.min(more - top, Math.max(0, height - y - side));
+  // Whatever one side cannot take, the other does, so it stays square.
+  tile.style.setProperty("--pop-l", `${more - right}px`);
+  tile.style.setProperty("--pop-r", `${right}px`);
+  tile.style.setProperty("--pop-t", `${more - bottom}px`);
+  tile.style.setProperty("--pop-b", `${bottom}px`);
+}
+
+const Tiles = memo(function Tiles({ kind, entries, tiles, count, onOpen }) {
+  return entries.slice(0, count).map(({ item }, index) => {
     const tile = tiles[index];
     if (!tile) return null;
     const side = tile.w;
@@ -156,8 +241,11 @@ const Tiles = memo(function Tiles({ kind, entries, tiles, width, height, onOpen 
     return (
       <li
         key={`${kind}-${item.rank}`}
+        data-key={`${kind}-${item.rank}`}
         className={`music-tile${roomy ? " is-roomy" : ""}${side >= (kind === "songs" ? 88 : 58) ? " has-hours" : ""}${side < 40 ? " is-tiny" : ""}`}
-        style={{ left: tile.x, top: tile.y, width: side, height: side, "--i": Math.min(index, 160), "--side": side, "--tint": kind === "songs" ? tintFor(item.artist) : undefined, ...growth(tile, width, height) }}
+        style={{ left: tile.x, top: tile.y, width: tile.w, height: tile.w, "--i": Math.min(index, 120), "--side": side, "--tint": kind === "songs" ? tintFor(item.artist) : undefined }}
+        onPointerEnter={grow}
+        onFocus={grow}
       >
         {onOpen ? (
           <button
@@ -178,6 +266,28 @@ const Tiles = memo(function Tiles({ kind, entries, tiles, width, height, onOpen 
     );
   });
 });
+
+/*
+ * The first screenful of a list is drawn at once and the rest a frame later,
+ * so the switch answers before a thousand songs are laid down.
+ */
+const FIRST = 160;
+
+function useProgressive(list) {
+  const [shown, setShown] = useState({ list, count: Math.min(list.length, FIRST) });
+  const current = shown.list === list ? shown : { list, count: Math.min(list.length, FIRST) };
+  if (current !== shown) setShown(current);
+  useEffect(() => {
+    if (current.count >= list.length) return undefined;
+    const frame = requestAnimationFrame(() => startTransition(() => setShown({ list, count: list.length })));
+    return () => cancelAnimationFrame(frame);
+  }, [list, current.count]);
+  return current.count;
+}
+
+// The colours the track bars take under the pointer, one after another: the
+// cast's orange, periwinkle and raspberry among the rooms' inks.
+const BARS = ["#fe7735", "#7d7afb", "#eb5772", "#2b5fb8", "#3f7634", "#e3a21a", "#24709f", "#a72d28"];
 
 function AlbumTracks({ album, loading, onClose }) {
   const panel = useRef(null);
@@ -229,8 +339,8 @@ function AlbumTracks({ album, loading, onClose }) {
         {album.tracks ? (
           <>
             <ol className="music-track-list">
-              {album.tracks.map((track) => (
-                <li key={track.title} style={{ "--share": track.plays / most }}>
+              {album.tracks.map((track, index) => (
+                <li key={track.title} style={{ "--share": track.plays / most, "--bar": BARS[index % BARS.length] }}>
                   <span className="music-track-title">{track.title}</span>
                   <span className="music-track-plays">{plays(track.plays)}</span>
                   <span className="music-track-hours">{listened(track.minutes)}</span>
@@ -251,12 +361,20 @@ function AlbumTracks({ album, loading, onClose }) {
 export function MusicRoom({ initial, active }) {
   const music = useMusicRanking(initial, active);
   const meta = useMusicMeta(active);
+  // The switch answers at once; the map it changes follows as a transition.
+  const [pressed, setPressed] = useState("albums");
   const [view, setView] = useState("albums");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
   const map = useRef(null);
-  const width = useWidth(map);
+  const list = useRef(null);
+  const live = useRef(null);
+  const width = useSettledWidth(map, live);
+  const choose = (name) => {
+    setPressed(name);
+    startTransition(() => setView(name));
+  };
 
   // Albums by the hours they are drawn at; songs by their hours.
   const albums = useMemo(() => drawnOrder(music.albums, albumWeights(music.albums)), [music.albums]);
@@ -282,13 +400,38 @@ export function MusicRoom({ initial, active }) {
     const kept = new Set(found);
     return all.filter((entry) => kept.has(entry.item));
   }, [view, albums, songs, albumIndex, songIndex, query]);
-  const layout = useMemo(
-    () =>
-      view === "albums"
-        ? squares("albums", entries.map((entry) => entry.weight), width, albumSides(entries.map((entry) => entry.item)))
-        : squares("songs", entries.map((entry) => entry.weight), width),
-    [view, entries, width]
-  );
+
+  // A packing for the settled width, packed again only when the column count
+  // changes; a handful found by a search stand in a row instead.
+  const phone = width < 600;
+  const row = entries.length <= 3;
+  const target = columnsFor(view, entries.length, width);
+  const grid = useMemo(() => {
+    if (row) return null;
+    const adjust = view === "albums" ? albumSides(entries.map((entry) => entry.item)) : undefined;
+    return packFor(view, entries.map((entry) => entry.weight), target, phone, adjust, entries);
+  }, [view, entries, target, phone, row]);
+  const layout = useMemo(() => {
+    if (row) return { width, ...rowOfSquares(entries.length, width) };
+    return grid ? { width, ...tilesFor(grid, width) } : { width, height: 0, tiles: [] };
+  }, [row, grid, entries.length, width]);
+  const count = useProgressive(entries);
+  const shownAt = useGlide(list, layout, view, count);
+
+  // Between settled widths, the map as laid out is scaled to the window.
+  useLayoutEffect(() => {
+    const element = list.current;
+    const frame = map.current;
+    if (element) element.style.transform = "";
+    if (frame) frame.style.height = "";
+    live.current = (now) => {
+      const scale = now / layout.width;
+      if (element) element.style.transform = Math.abs(scale - 1) < 0.001 ? "" : `scale(${scale})`;
+      if (frame) frame.style.height = `${Math.round(layout.height * scale)}px`;
+      shownAt(scale);
+    };
+  }, [layout, shownAt]);
+
   const onOpen = useMemo(
     () => (item, button) => {
       opener.current = button;
@@ -306,10 +449,10 @@ export function MusicRoom({ initial, active }) {
   return (
     <div className="room-body music">
       <div className="music-bar">
-        <div className="music-switch" role="group" aria-label="Albums or songs" data-view={view}>
+        <div className="music-switch" role="group" aria-label="Albums or songs" data-view={pressed}>
           <span className="music-switch-thumb" aria-hidden="true" />
           {["albums", "songs"].map((name) => (
-            <button key={name} type="button" aria-pressed={view === name} onClick={() => setView(name)}>
+            <button key={name} type="button" aria-pressed={pressed === name} onClick={() => choose(name)}>
               {name}
             </button>
           ))}
@@ -340,14 +483,15 @@ export function MusicRoom({ initial, active }) {
       </div>
 
       {/* Measured here, outside the list the switch replaces. */}
-      <div ref={map}>
+      <div className="music-map-frame" ref={map}>
         <ol
           key={view}
+          ref={list}
           className={`music-map is-${view}`}
           style={{ height: layout.height }}
           aria-label={view === "albums" ? "My top 150 albums, most listened first" : "My top songs, most listened first"}
         >
-          <Tiles kind={view} entries={entries} tiles={layout.tiles} width={width} height={layout.height} onOpen={view === "albums" ? onOpen : null} />
+          <Tiles kind={view} entries={entries} tiles={layout.tiles} count={count} onOpen={view === "albums" ? onOpen : null} />
         </ol>
       </div>
 

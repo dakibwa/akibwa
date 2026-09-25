@@ -90,7 +90,7 @@ export function PaperHome({ music, websites }) {
     const root = document.documentElement;
     const initial = location.hash.slice(1);
     // After the first drawing, the front page is shown at rest.
-    const drawn = setTimeout(() => { root.dataset.drawn = ""; }, isRoom(initial) ? 0 : 2400);
+    const drawn = setTimeout(() => { root.dataset.drawn = ""; }, isRoom(initial) ? 0 : 3400);
     if (isRoom(initial)) {
       // Arriving on a room's link still leaves the front page behind it.
       history.replaceState(null, "", location.pathname);

@@ -25,6 +25,8 @@ const career = read("components/career-bar.jsx");
 const features = read("public/features/index.html");
 const trekTemplate = read("scripts/trek-journey-template.html");
 const trekPublished = read("public/trek/index.html");
+const things = read("components/paper/things.jsx");
+const framed = read("components/paper/framed-room.jsx");
 const ranking = JSON.parse(read("public/music-ranking.json"));
 const musicMeta = JSON.parse(read("public/music-meta.json"));
 
@@ -95,11 +97,24 @@ requireText(home, 'className="visually-hidden" tabIndex={-1}', "rooms have no ti
 forbidText(home, "room-head", "rooms have no title on the page");
 forbidText(home, "bar-home", "the bar has no wordmark");
 requireText(home, "memo(CareerCards)", "the career room must show every role on its own card (Dan, 25 September 2026)");
-requireText(music, "aria-pressed={view === name}", "albums and songs must be one switch");
-requireText(music, "layoutSquares(", "albums and songs must be square sleeves packed with no holes");
+requireText(music, "aria-pressed={pressed === name}", "albums and songs must be one switch");
+requireText(music, "packSquares(", "albums and songs must be square sleeves packed with no holes");
 requireText(music, "music-hours", "every sleeve must carry its hours listened");
 requireText(music, "<AlbumTracks", "an album must open its track list");
 requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-resolution rung");
+// Dan, 25 September 2026: the switch answers at once and resizing is smooth.
+requireText(music, "startTransition(() => setView(name))", "the albums/songs switch must answer before the map redraws");
+requireText(music, "useSettledWidth(", "the music map must scale while resizing and lay out once settled");
+requireText(music, ".animate(", "the music map's sleeves must glide to a new packing");
+requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track sheet must not select");
+requireText(css, "li:hover::after", "track bars must take their own colour under the pointer");
+// The front page: music as large as the rest, everything drawn in.
+requireText(things, 'const CARD = "M-38-84h76', "the music cards must be as large as the other things");
+requireText(things, "CARD_REST.map(", "the music sketch must trace the fanned cards");
+requireText(things, "<CastleBankMark />", "the back websites window must carry Castle Bank's mark");
+requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
+requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
+requireText(framed, "#introveil{padding:0!important}", "the Features game must bleed into the room's corners");
 {
   // The map itself, on the real albums: no holes or overlaps, the most
   // listened first, and the two ambient records near Graceland (Dan, 25 September 2026).

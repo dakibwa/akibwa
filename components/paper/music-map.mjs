@@ -146,19 +146,19 @@ function toTiles(cells, width, columns, top = 0) {
 }
 
 /*
- * The best square map of `values` (largest first) across `width`. `cell` is
- * the grid size to aim for in pixels, and the smallest a sleeve can be: none
- * is drawn smaller, however few its hours. `aspect` is the height/width to aim
- * for; `reference` is the sleeve whose side sets the scale, searched from the
- * top of `range` (fractions of the width) down in `tries` steps, over the aim
- * and `spread` smaller column counts; `adjust` has a last say over the sides
- * (the two albums near Graceland). The grid is made a little smaller than the
- * sleeves' own area, so a few give way rather than leave a gap.
+ * The best packing of `values` (largest first) into a grid at most `target`
+ * columns wide, in cells: { columns, height, cells }. `cell` is the smallest a
+ * sleeve can be, in pixels (it sets `target` in layoutSquares); `aspect` is the
+ * height/width to aim for; `reference` is the sleeve whose side sets the
+ * scale, searched from the top of `range` (fractions of the width) down in
+ * `tries` steps, over the aim and `spread` smaller column counts; `adjust` has
+ * a last say over the sides (the two albums near Graceland). The grid is made
+ * a little smaller than the sleeves' own area, so a few give way rather than
+ * leave a gap. It depends on the width only through `target`, so a map is
+ * packed again only when its column count changes.
  */
-export function layoutSquares(values, width, { cell, aspect, reference = 0, range = [0.12, 0.22], tries = 10, spread = 3, adjust = (sides) => sides }) {
-  if (!values.length || width <= 0) return { height: 0, tiles: [] };
-  // Never more columns than the aim, so no cell is smaller than `cell`.
-  const target = Math.max(4, Math.floor(width / cell));
+export function packSquares(values, target, { aspect, reference = 0, range = [0.12, 0.22], tries = 10, spread = 3, adjust = (sides) => sides }) {
+  if (!values.length || target <= 0) return null;
   const counts = Array.from({ length: spread + 1 }, (_, away) => target - away);
   const found = [];
   for (let step = 0; step < tries && found.length < 8; step += 1) {
@@ -178,8 +178,23 @@ export function layoutSquares(values, width, { cell, aspect, reference = 0, rang
       }
     }
   }
-  if (!found.length) return { height: 0, tiles: [] };
+  if (!found.length) return null;
   const best = found.reduce((a, b) => (b.score < a.score ? b : a));
-  const unit = width / best.columns;
-  return { height: Math.round(best.packed.height * unit), tiles: toTiles(best.packed.cells, width, best.columns) };
+  return { columns: best.columns, height: best.packed.height, cells: best.packed.cells };
+}
+
+// Never more columns than fit whole cells, so no cell is smaller than `cell`.
+export const targetColumns = (width, cell) => Math.max(4, Math.floor(width / cell));
+
+// The packing in whole pixels at `width`.
+export function layoutSquares(values, width, plan) {
+  if (!values.length || width <= 0) return { height: 0, tiles: [] };
+  const grid = packSquares(values, targetColumns(width, plan.cell), plan);
+  return grid ? tilesFor(grid, width) : { height: 0, tiles: [] };
+}
+
+// A packing in whole pixels at `width`.
+export function tilesFor(grid, width) {
+  const unit = width / grid.columns;
+  return { height: Math.round(grid.height * unit), tiles: toTiles(grid.cells, width, grid.columns) };
 }

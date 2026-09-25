@@ -22,23 +22,36 @@ function Paper({ children }) {
   );
 }
 
-function Sketch({ d }) {
-  return <path className="t-sketch" d={d} pathLength="1" />;
+// One subpath each: a path of several with pathLength="1" dashes them all at
+// once. `delay` staggers a drawing's strokes, in milliseconds.
+function Sketch({ d, transform, delay = 0 }) {
+  return <path className="t-sketch" d={d} transform={transform} pathLength="1" style={delay ? { "--d": `${delay}ms` } : undefined} />;
 }
 
 /*
  * Taste: a small hand of cards, each a cartoon of a favourite sleeve drawn
  * from its real artwork — Taking Tiger Mountain (By Strategy), Person Pitch
- * and Graceland — that fans open on hover. Faces are drawn in a 60-unit square.
+ * and Graceland — that fans open on hover. Faces are drawn in a 60-unit square
+ * and set 1.3 times larger on 84-unit cards, the size of the other things.
  */
+const CARD = "M-38-84h76a4 4 0 0 1 4 4v76a4 4 0 0 1-4 4h-76a4 4 0 0 1-4-4v-76a4 4 0 0 1 4-4z";
+
+// Each card's resting place (.t-card-* in globals.css, turned about 0,72), so
+// its sketch is drawn where the card will land.
+const CARD_REST = [
+  ["back", -6, -3, -11],
+  ["middle", 0, -4, 0],
+  ["front", 6, -3, 11]
+];
+
 function Card({ className, clip, children }) {
   return (
     <g className={`t-card ${className}`}>
-      <rect x="-33" y="-66" width="66" height="66" rx="4" fill="#fffdf8" />
+      <path d={CARD} fill="#fffdf8" />
       <g clipPath={`url(#${clip})`}>
-        <g transform="translate(-30 -63)">{children}</g>
+        <g transform="translate(-39 -81) scale(1.3)">{children}</g>
       </g>
-      <rect className="t-ink" x="-33" y="-66" width="66" height="66" rx="4" />
+      <path className="t-ink" d={CARD} />
     </g>
   );
 }
@@ -169,11 +182,13 @@ export function TasteThing() {
     <svg className="thing-art thing-taste" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       <defs>
         <clipPath id={clip}>
-          <rect x="-30" y="-63" width="60" height="60" rx="2" />
+          <rect x="-39" y="-81" width="78" height="78" rx="2.6" />
         </clipPath>
       </defs>
-      {ground(80, 62)}
-      <Sketch d="M47 62h66v66H47z" />
+      {ground(80, 66)}
+      {CARD_REST.map(([name, x, y, turn], index) => (
+        <Sketch key={name} d={CARD} delay={index * 140} transform={`translate(80 200) translate(${x} ${y}) rotate(${turn}) translate(0 -72)`} />
+      ))}
       <Paper>
         <g transform="translate(80 128)">
           <Card className="t-card-back" clip={clip}>
@@ -249,23 +264,64 @@ export function FeaturesThing({ solved = false }) {
 }
 
 /* Websites: browser windows that fan open, the front one showing the mark of
-   Português com a Inês — its cream, lilac and orange blobs on navy. Dan
-   dropped the splat behind them on 25 September 2026. */
+   Português com a Inês — its cream, lilac and orange blobs on navy — and the
+   one behind it Castle Bank's, the orange circuit C with its two terminals on
+   cream, peeping out above. Dan dropped the splat behind them on 25 September
+   2026. */
 const windowShape = (x, y, w, h) => `M${x + 5} ${y}h${w - 10}a5 5 0 0 1 5 5v${h - 5}H${x}V${y + 5}a5 5 0 0 1 5-5z`;
+const BACK = windowShape(34, 16, 96, 112);
+const FRONT = windowShape(26, 48, 108, 80);
+
+// Castle Bank's mark, traced from its card art (public/project-art/websites/
+// castle-bank.webp) into a 100-unit box: two chamfered Cs as circuit traces,
+// each ending in a ring.
+function CastleBankMark() {
+  return (
+    <>
+      <defs>
+        <linearGradient id="t-castle-orange" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fd8c0a" />
+          <stop offset="1" stopColor="#f0661a" />
+        </linearGradient>
+      </defs>
+      <g fill="none" stroke="url(#t-castle-orange)" strokeWidth="7.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M77 16H30L11 35v21l19 17.5h40" />
+        <path d="M70 29H33l-8 8v13l10 10h42" />
+      </g>
+      <g fill="#f57a12">
+        <circle cx="77" cy="16" r="8.4" />
+        <circle cx="77" cy="60" r="8.4" />
+      </g>
+      <g fill="#fbf6ec">
+        <circle cx="77" cy="16" r="3.4" />
+        <circle cx="77" cy="60" r="3.4" />
+      </g>
+    </>
+  );
+}
 
 export function WebsitesThing() {
   return (
     <svg className="thing-art thing-websites" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       {ground(80, 60)}
-      <Sketch d={`${windowShape(26, 48, 108, 80)}M26 60h108`} />
+      <Sketch d={BACK} transform="rotate(-4 80 128)" />
+      <Sketch d="M34 27h96" transform="rotate(-4 80 128)" delay={200} />
+      <Sketch d={FRONT} transform="rotate(2 80 128)" delay={140} />
+      <Sketch d="M26 60h108" transform="rotate(2 80 128)" delay={340} />
       <Paper>
         <g className="t-window t-window-back">
-          <path d={windowShape(34, 38, 96, 90)} fill="#f3ebd8" />
-          <path d="M34 50h96" stroke="#2a2420" strokeOpacity=".2" />
-          <path className="t-ink" d={windowShape(34, 38, 96, 90)} />
+          <path d={BACK} fill="#fbf6ec" />
+          <path d="M34 27h96" stroke="#2a2420" strokeOpacity=".2" />
+          <circle cx="41" cy="21.5" r="1.8" fill="#f57a12" />
+          <circle cx="47" cy="21.5" r="1.8" fill="#2a2420" fillOpacity=".25" />
+          <circle cx="53" cy="21.5" r="1.8" fill="#2a2420" fillOpacity=".25" />
+          <g transform="translate(92 28.5) scale(.38)">
+            <CastleBankMark />
+          </g>
+          <path className="t-ink" d={BACK} />
         </g>
         <g className="t-window t-window-front">
-          <path d={windowShape(26, 48, 108, 80)} fill="#12387d" />
+          <path d={FRONT} fill="#12387d" />
           <path d="M26 60v-7a5 5 0 0 1 5-5h98a5 5 0 0 1 5 5v7z" fill="#f3ebd8" />
           <circle cx="34" cy="54" r="2.1" fill="#e5654c" />
           <circle cx="41" cy="54" r="2.1" fill="#efc319" />
@@ -275,19 +331,43 @@ export function WebsitesThing() {
             <path d={BLOBS.lilac} fill="#b0aae7" />
             <path d={BLOBS.dot} fill="#f2613d" />
           </g>
-          <path className="t-ink" d={`${windowShape(26, 48, 108, 80)}M26 60h108`} />
+          <path className="t-ink" d={`${FRONT}M26 60h108`} />
         </g>
       </Paper>
     </svg>
   );
 }
 
+/*
+ * A dashed line can't draw itself (its dashes are the dash array), so it is
+ * revealed instead: a solid copy of it in a mask is drawn in, and the dashes
+ * show only where that copy has reached.
+ */
+function useMaskId(name) {
+  return `t-${name}-${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
+}
+
+function Reveal({ id, d, width }) {
+  return (
+    <mask id={id} maskUnits="userSpaceOnUse" x="0" y="0" width="160" height="140">
+      <path className="t-reveal" d={d} pathLength="1" fill="none" stroke="#fff" strokeWidth={width} strokeLinecap="round" />
+    </mask>
+  );
+}
+
+const TRAIL = "M14 122C34 118 44 104 54 94C66 82 78 76 72 64C66 54 52 62 60 72C68 82 90 72 104 58C112 50 118 44 126 40";
+
+// Career: the paper plane flies in along its trail, laying it down behind it.
 export function CareerThing() {
+  const mask = useMaskId("trail");
   return (
     <svg className="thing-art thing-career" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
+      <defs>
+        <Reveal id={mask} d={TRAIL} width="5" />
+      </defs>
       {ground(118, 24)}
-      <Sketch d="M14 122C34 118 44 104 54 94C66 82 78 76 72 64C66 54 52 62 60 72C68 82 90 72 104 58C112 50 118 44 126 40" />
-      <path className="t-trail" d="M14 122C34 118 44 104 54 94C66 82 78 76 72 64C66 54 52 62 60 72C68 82 90 72 104 58C112 50 118 44 126 40" />
+      <Sketch d={TRAIL} />
+      <path className="t-trail" d={TRAIL} mask={`url(#${mask})`} />
       <Paper>
         <g className="t-plane-fly">
           <g className="t-plane">
@@ -303,22 +383,35 @@ export function CareerThing() {
   );
 }
 
+// Trek: a folded map. Its three panels are sketched one after another, the
+// paper lands, the dashed route walks across it and the pin drops last.
+const PANELS = ["M18 40l40-10v96l-40 4z", "M58 30l42 10v88l-42-2z", "M100 40l42-10v96l-42 2z"];
+const ROUTE = "M26 112C36 104 44 108 52 96C58 88 66 90 72 80C80 68 90 72 98 62C106 52 116 58 124 48C128 43 131 40 134 36";
+
 export function TrekThing() {
+  const mask = useMaskId("route");
   return (
     <svg className="thing-art thing-trek" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
+      <defs>
+        <Reveal id={mask} d={ROUTE} width="6" />
+      </defs>
       {ground(80, 64)}
-      <Sketch d="M18 40l40-10v96l-40 4zM58 30l42 10v88l-42-2zM100 40l42-10v96l-42 2z" />
+      {PANELS.map((d, index) => (
+        <Sketch key={d} d={d} delay={index * 160} />
+      ))}
       <Paper>
-        <path d="M18 40l40-10v96l-40 4z" fill="#f1e6cf" />
-        <path d="M58 30l42 10v88l-42-2z" fill="#dccca9" />
-        <path d="M100 40l42-10v96l-42 2z" fill="#f1e6cf" />
+        <path d={PANELS[0]} fill="#f1e6cf" />
+        <path d={PANELS[1]} fill="#dccca9" />
+        <path d={PANELS[2]} fill="#f1e6cf" />
         <path d="M24 70c10-4 18 2 30-4M62 50c12 6 24 0 34 8M104 86c12-6 22 2 32-6M22 102c12 4 22-2 34 2" fill="none" stroke="#7f95c7" strokeOpacity=".55" strokeWidth="1.2" />
-        <path className="t-route" d="M26 112C36 104 44 108 52 96C58 88 66 90 72 80C80 68 90 72 98 62C106 52 116 58 124 48C128 43 131 40 134 36" />
+        <g mask={`url(#${mask})`}>
+          <path className="t-route" d={ROUTE} />
+        </g>
         <g className="t-pin">
           <path d="M134 36c0-6 4-10 8.5-10s8.5 4 8.5 10c0 6-8.5 14-8.5 14s-8.5-8-8.5-14z" transform="translate(-8.5 -14)" fill="#b3322d" />
           <circle cx="134" cy="22" r="2.8" fill="#fbf6ec" />
         </g>
-        <path className="t-ink" d="M18 40l40-10v96l-40 4zM58 30l42 10v88l-42-2zM100 40l42-10v96l-42 2z" />
+        <path className="t-ink" d={PANELS.join("")} />
       </Paper>
     </svg>
   );

@@ -640,8 +640,42 @@ html:not(.js) .paper:has(.room:target) .bar .contact {
 
 .front .t-sketch {
   animation:
-    draw 760ms var(--ease-out) calc(var(--i, 0) * 120ms + 260ms) forwards,
-    settle 300ms ease calc(var(--i, 0) * 120ms + 1200ms) forwards;
+    draw 760ms var(--ease-out) calc(var(--i, 0) * 120ms + 260ms + var(--d, 0ms)) forwards,
+    settle 300ms ease calc(var(--i, 0) * 120ms + 1200ms + var(--d, 0ms)) forwards;
+}
+
+/* A dashed line is revealed by drawing a solid copy of it in its mask. */
+.t-reveal {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Career: the plane flies in as its trail is laid down behind it. */
+.front .thing-career .t-reveal {
+  stroke-dashoffset: 1;
+  animation: draw 1100ms cubic-bezier(0.3, 0.1, 0.3, 1) calc(var(--i, 0) * 120ms + 820ms) forwards;
+}
+
+.front .thing-career .t-plane-fly {
+  animation: fly-in 1100ms cubic-bezier(0.3, 0.1, 0.3, 1) calc(var(--i, 0) * 120ms + 820ms) backwards;
+}
+
+@keyframes fly-in {
+  from { transform: translate(-112px, 86px) rotate(14deg) scale(0.55); }
+}
+
+/* Trek: once the map has landed, the route is walked and the pin drops. */
+.front .thing-trek .t-reveal {
+  stroke-dashoffset: 1;
+  animation: draw 1000ms cubic-bezier(0.45, 0.05, 0.4, 1) calc(var(--i, 0) * 120ms + 1280ms) forwards;
+}
+
+.front .thing-trek .t-pin {
+  animation: pin-drop 460ms var(--ease-pop) calc(var(--i, 0) * 120ms + 2200ms) backwards;
+}
+
+@keyframes pin-drop {
+  from { opacity: 0; transform: translateY(-16px) scale(0.6); }
 }
 
 .front .t-paper {
@@ -666,6 +700,13 @@ html[data-drawn] .front .t-paper,
 html[data-drawn] .front .t-shadow {
   animation: none;
   opacity: 1;
+  stroke-dashoffset: 0;
+}
+
+html[data-drawn] .front .t-reveal,
+html[data-drawn] .front .t-plane-fly,
+html[data-drawn] .front .t-pin {
+  animation: none;
   stroke-dashoffset: 0;
 }
 
@@ -903,8 +944,18 @@ html:not(.js) :is(#features, #trek):target {
   box-shadow: 0 3px 0 var(--ink);
 }
 
-/* The game's own dark paper, so it loads without a flash. */
+/* The game's own dark paper, so it loads without a flash. The game bleeds to
+   the room's edges and corners, unframed, under the bar (Dan, 25 September
+   2026). */
+html.js[data-room="features"] #features,
+html:not(.js) #features:target {
+  padding: 0;
+}
+
 .framed-room.is-features .room-frame {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   background: #0e1214;
 }
 
@@ -1495,22 +1546,22 @@ button.card-face:disabled {
 /* The map: sleeves placed by script, edge to edge, each as large as its
    hours; they deal in when the room opens or the switch turns, and glide to
    their new places when a search changes what is shown. */
+/* While the window is resized the map is scaled from its top left corner
+   (music-room.jsx), then laid out afresh once it settles. */
 .music-map {
   position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
+  transform-origin: 0 0;
 }
 
 .music-tile {
   position: absolute;
-  animation: music-deal 560ms var(--ease-pop) both;
-  animation-delay: calc(var(--i, 0) * 6ms);
+  animation: music-deal 420ms var(--ease-pop) both;
+  animation-delay: calc(var(--i, 0) * 2ms);
 }
 
-.is-albums .music-tile {
-  transition: left 420ms var(--ease-out), top 420ms var(--ease-out), width 420ms var(--ease-out), height 420ms var(--ease-out);
-}
 
 .music-tile:hover,
 .music-tile:focus-within {
@@ -1752,6 +1803,12 @@ button.music-face {
   background: transparent;
 }
 
+/* The sheet is looked at, not copied from (Dan, 25 September 2026). */
+.music-tracks {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .music-tracks::backdrop {
   background: rgb(42 36 32 / 0.38);
 }
@@ -1857,14 +1914,42 @@ button.music-face {
   font-size: 14.5px;
 }
 
-.music-track-list li::before {
+.music-track-list li::before,
+.music-track-list li::after {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
   z-index: -1;
   width: calc(var(--share) * 100%);
+  min-width: 10px;
   border-radius: 6px;
   background: rgb(127 149 199 / 0.22);
+}
+
+/* Under the pointer a bar fills with its own colour, washing in from the left
+   with a little overshoot, while its track leans in. */
+.music-track-list li::after {
+  background: color-mix(in srgb, var(--bar) 58%, #fffdf8);
+  box-shadow: inset 0 0 0 1.2px color-mix(in srgb, var(--bar) 80%, var(--ink));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 560ms var(--ease-pop);
+}
+
+.music-track-list li:hover::after {
+  transform: scaleX(1);
+}
+
+.music-track-list li > * {
+  transition: transform 380ms var(--ease-out);
+}
+
+.music-track-list li:hover .music-track-title {
+  transform: translateX(5px);
+}
+
+.music-track-title {
+  transform: translateX(4px);
 }
 
 .music-track-title {
@@ -1995,17 +2080,19 @@ button.music-face {
 
 /* ----------------------------------------------------- view transitions -- */
 
+/* Quick enough to feel like an answer, not a wait: the new view starts at
+   once and is readable within a fifth of a second. */
 ::view-transition-group(*) {
-  animation-duration: 560ms;
+  animation-duration: 380ms;
   animation-timing-function: var(--ease-out);
 }
 
 ::view-transition-old(root) {
-  animation: 240ms ease both fade-out;
+  animation: 140ms ease both fade-out;
 }
 
 ::view-transition-new(root) {
-  animation: 360ms ease 120ms both fade-in;
+  animation: 200ms ease both fade-in;
 }
 
 @keyframes fade-out {
@@ -2095,7 +2182,7 @@ button.music-face {
   }
 
   .thing-taste {
-    --art-top: 55;
+    --art-top: 34;
   }
 
   .thing-features {
@@ -2103,7 +2190,7 @@ button.music-face {
   }
 
   .thing-websites {
-    --art-top: 35;
+    --art-top: 11;
   }
 
   .thing-career {

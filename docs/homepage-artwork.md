@@ -32,10 +32,15 @@
   portraits round the large one and its red dragon on grey; Person Pitch's
   round pool of bathers with the gorilla, seal, bear, panda and tiger; and
   Graceland's spaced title over the small painting of a rider on a white horse.
-- The websites windows carry Português com a Inês's mark: its cream, lilac
-  and orange blobs traced from that repository's `src/app/icon.png`
-  (`components/paper/websites-art.mjs`). The splat that burst out behind them
-  was removed on 25 September 2026.
+  The cards are 84 units, as large as the Features tile and the windows
+  (Dan, 25 September 2026: the music thing looked smaller than the others).
+- The front websites window carries Português com a Inês's mark: its cream,
+  lilac and orange blobs traced from that repository's `src/app/icon.png`
+  (`components/paper/websites-art.mjs`). The window behind it carries Castle
+  Bank's, the orange chamfered circuit C with its two ring terminals, traced
+  from its card art (`public/project-art/websites/castle-bank.webp`) and
+  peeping out above the front window; the fan on hover shows more of it. The
+  splat that burst out behind them was removed on 25 September 2026.
 - The Features tile is the first front page's: an orange square with ink
   threads that fall from a star into the house's corners.
 - The mascot is the mark's own paths at their own weight, drawn a size up
