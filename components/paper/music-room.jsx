@@ -4,19 +4,41 @@ import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "rea
 import { flushSync } from "react-dom";
 import { AlbumArtImage } from "../site-image";
 import { useMusicRanking } from "../use-music-ranking";
-import { albumSides, albumWeights, drawnOrder, layoutSquares } from "./music-map.mjs";
+import { albumSides, albumWeights, drawnOrder, layoutSquares, rowOfSquares } from "./music-map.mjs";
 import { LARGE_ART } from "./music-art.mjs";
+import { indexItems, search } from "./music-search.mjs";
 
 /*
- * Music: Dan's top 100 albums or all his top 1,000 songs, one or the other,
+ * Music: Dan's top 150 albums or all his top 1,000 songs, one or the other,
  * as squares laid edge to edge with no holes (music-map.mjs), each as large as
- * the hours he listened to it, the most listened first, with those hours pinned
- * in its corner. Albums are their sleeves; songs are typeset, since a sleeve is
- * the album's and not the song's (Dan, 25 September 2026). No sleeve is smaller than a grid cell, and a
- * small one grows to a readable size under the pointer or a tap. Choosing an
- * album opens its track list: the songs he played from it, most played first,
- * with plays and hours.
+ * the hours he listened to it, the most listened first, with those hours
+ * pinned in its corner. Albums are their sleeves; songs are typeset, since a
+ * sleeve is the album's and not the song's (Dan, 25 September 2026). No square
+ * is smaller than a grid cell, and a small one grows to a readable size under
+ * the pointer or a tap. A search box finds artists and the artists around
+ * them, genres and eras (music-search.mjs) and packs just what it finds.
+ * Choosing an album opens its track list: the songs he played from it, most
+ * played first, with plays and hours.
  */
+
+// Genres, relationships and years for the search, fetched with the room.
+function useMusicMeta(active) {
+  const [meta, setMeta] = useState(null);
+  useEffect(() => {
+    if (!active || meta) return undefined;
+    let cancelled = false;
+    fetch("/music-meta.json")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((packet) => {
+        if (!cancelled && packet) setMeta(packet);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [active, meta]);
+  return meta;
+}
 
 // How far a sleeve grows under the pointer, at least.
 const POP = 136;
@@ -51,9 +73,13 @@ const PLANS = {
 };
 
 function squares(kind, values, width, adjust) {
-  const plan = { ...PLANS[kind](width < 600), adjust };
+  if (values.length <= 3) return rowOfSquares(values.length, width);
+  // Fewer sleeves (a search) get bigger cells, so they still fill the width.
+  const base = PLANS[kind](width < 600);
+  const cell = Math.max(base.cell, width / Math.max(8, Math.round(Math.sqrt(values.length) * 6.5)));
+  const plan = { ...base, cell, adjust };
   const map = layoutSquares(values, width, plan);
-  return map.height ? map : layoutSquares(values, width, { ...plan, range: [0.08, 0.9], tries: 40, spread: 6 });
+  return map.height ? map : layoutSquares(values, width, { ...plan, range: [0.08, 0.9], tries: 40, spread: 8 });
 }
 
 // The map's width, measured before paint so a resize never shows a stale map.
@@ -224,7 +250,9 @@ function AlbumTracks({ album, loading, onClose }) {
 
 export function MusicRoom({ initial, active }) {
   const music = useMusicRanking(initial, active);
+  const meta = useMusicMeta(active);
   const [view, setView] = useState("albums");
+  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
   const map = useRef(null);
@@ -236,13 +264,30 @@ export function MusicRoom({ initial, active }) {
     () => [...music.songs].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item, weight: Math.max(1, item.minutes) })),
     [music.songs]
   );
-  const entries = view === "albums" ? albums : songs;
+  const albumIndex = useMemo(
+    () =>
+      indexItems(albums.map((entry) => entry.item), {
+        meta,
+        yearOf: (album) => Number(album.year) || meta?.years?.[album.id] || null,
+        extraText: (album) => (album.tracks ?? []).map((track) => track.title).join(" ")
+      }),
+    [albums, meta]
+  );
+  const songIndex = useMemo(() => indexItems(songs.map((entry) => entry.item), { meta, yearOf: (song) => meta?.years?.[song.art] ?? null }), [songs, meta]);
+  // What the search finds, in the same order, or everything.
+  const entries = useMemo(() => {
+    const all = view === "albums" ? albums : songs;
+    const found = search(view === "albums" ? albumIndex : songIndex, query);
+    if (!found) return all;
+    const kept = new Set(found);
+    return all.filter((entry) => kept.has(entry.item));
+  }, [view, albums, songs, albumIndex, songIndex, query]);
   const layout = useMemo(
     () =>
       view === "albums"
-        ? squares("albums", albums.map((entry) => entry.weight), width, albumSides(albums.map((entry) => entry.item)))
-        : squares("songs", songs.map((entry) => entry.weight), width),
-    [view, albums, songs, width]
+        ? squares("albums", entries.map((entry) => entry.weight), width, albumSides(entries.map((entry) => entry.item)))
+        : squares("songs", entries.map((entry) => entry.weight), width),
+    [view, entries, width]
   );
   const onOpen = useMemo(
     () => (item, button) => {
@@ -269,6 +314,29 @@ export function MusicRoom({ initial, active }) {
             </button>
           ))}
         </div>
+        <label className="music-search">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+            <circle cx="10.5" cy="10.5" r="6.2" />
+            <path d="M15.2 15.4l5 5" />
+          </svg>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              // Escape clears the search, not the room.
+              if (event.key === "Escape" && query) {
+                event.preventDefault();
+                event.stopPropagation();
+                setQuery("");
+              }
+            }}
+            placeholder="artist, genre or era"
+            aria-label="Search the albums and songs by artist, genre or era"
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </label>
       </div>
 
       {/* Measured here, outside the list the switch replaces. */}
@@ -277,11 +345,13 @@ export function MusicRoom({ initial, active }) {
           key={view}
           className={`music-map is-${view}`}
           style={{ height: layout.height }}
-          aria-label={view === "albums" ? "My top 100 albums, most listened first" : "My top songs, most listened first"}
+          aria-label={view === "albums" ? "My top 150 albums, most listened first" : "My top songs, most listened first"}
         >
           <Tiles kind={view} entries={entries} tiles={layout.tiles} width={width} height={layout.height} onOpen={view === "albums" ? onOpen : null} />
         </ol>
       </div>
+
+      {query && !entries.length ? <p className="music-none">Nothing matches.</p> : null}
 
       {music.loadError ? (
         <div className="music-more">

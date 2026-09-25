@@ -3,7 +3,7 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Arrow } from "./arrow";
-import { Mascot } from "./mascot";
+import { Cast } from "./cast";
 import { NameFlip } from "./name-flip";
 import { THINGS } from "./things";
 import { Contact } from "./contact";
@@ -153,8 +153,8 @@ export function PaperHome({ music, websites }) {
           <p className="front-lede">Building in the age of AI.</p>
           <Contact />
         </div>
-        <Sky />
-        <Mascot onVisit={setVisited} />
+        <Hole />
+        <Cast onVisit={setVisited} />
         <div className="front-stage">
           <ul className="things" aria-label="Five things">
             {THINGS_ON_PAPER.map(({ id, label, hint, href }, index) => {
@@ -248,91 +248,24 @@ function Room({ id, children }) {
   );
 }
 
-/*
- * The sky is a paper wheel turning behind a round window cut in the page: the
- * sun while the heading says Daniel, the moon while it says Akibwa. NameFlip
- * sets `<html data-sky>` as each change begins, and the wheel turns half a
- * revolution about a pin below the window — through a sunset to the moon, and
- * on through a dawn back to the sun. Night things are drawn upright where
- * they will show, then turned half round onto the far side of the wheel.
- */
-const PIN = [60, 160];
-const BANDS = [
-  // A warm parchment wash behind the red sun rather than pale blue.
-  [-168, -12, "#ecd6a8"],
-  [-12, 0, "#f6c894"],
-  [0, 12, "#eca09c"],
-  [12, 24, "#8e85bf"],
-  // Dusk rather than midnight, so the deep blue moon reads against it.
-  [24, 156, "#7c8bbd"],
-  [156, 168, "#86609a"],
-  [168, 180, "#e7806a"],
-  [180, 192, "#f4b47c"]
-];
-// Sixteen rays round the sun, long and short in turn.
-const RAYS = Array.from({ length: 16 }, (_, index) => {
-  const angle = (index * Math.PI) / 8;
-  const [from, to] = index % 2 ? [25, 33] : [25, 41];
-  const at = (radius) => `${(60 + Math.cos(angle) * radius).toFixed(2)} ${(60 + Math.sin(angle) * radius).toFixed(2)}`;
-  return `M${at(from)}L${at(to)}`;
-}).join("");
-const STARS = [[24, 40, 3.2], [33, 84, 2.4], [86, 84, 2.8], [86, 32, 3.4], [70, 19, 2.2]];
-
-function wedge(from, to) {
-  const at = (degrees) => {
-    const angle = (degrees * Math.PI) / 180;
-    return `${(PIN[0] + Math.cos(angle) * 180).toFixed(2)} ${(PIN[1] + Math.sin(angle) * 180).toFixed(2)}`;
-  };
-  // A little overlap, so no seam shows between neighbouring bands.
-  return `M${PIN[0]} ${PIN[1]}L${at(from)}A180 180 0 0 1 ${at(to + 0.6)}Z`;
-}
-
-const sparkle = ([x, y, s]) =>
-  `M${x} ${y - s}q${s * 0.18} ${s * 0.82} ${s} ${s}q${-s * 0.82} ${s * 0.18} ${-s} ${s}q${-s * 0.18} ${-s * 0.82} ${-s} ${-s}q${s * 0.82} ${-s * 0.18} ${s} ${-s}z`;
-
-function Sky() {
+// A round opening in the sheet, where the sun and moon used to be: a hollow
+// ring in ink with a little shade inside its top edge. The cast comes out of
+// it (Dan, 25 September 2026).
+function Hole() {
   return (
-    <svg className="sky" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+    <svg className="hole" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
       <defs>
-        <clipPath id="sky-window">
+        <clipPath id="hole-cut">
           <circle cx="60" cy="60" r="50" />
         </clipPath>
-        <pattern id="sun-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-          <path d="M0 0v4" stroke="#4d0e09" strokeWidth="1.6" />
-        </pattern>
-        <filter id="sky-soft" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.6" />
+        <filter id="hole-soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.4" />
         </filter>
       </defs>
-      <g clipPath="url(#sky-window)">
-        <g className="sky-wheel">
-          {BANDS.map(([from, to, colour]) => (
-            <path key={from} d={wedge(from, to)} fill={colour} />
-          ))}
-          <g className="sky-sun sky-body">
-            {/* A deep Urizen red, after Blake, radiant (Dan, 25 September 2026). */}
-            <circle className="sky-glow" cx="60" cy="60" r="34" />
-            <circle className="sky-glow" cx="60" cy="60" r="28" />
-            <path className="sky-rays" d={RAYS} />
-            <circle cx="60" cy="60" r="21" fill="#8c1d13" />
-            <circle cx="60" cy="60" r="21" fill="url(#sun-hatch)" opacity=".5" />
-            <circle cx="60" cy="60" r="21" fill="none" stroke="#2a2420" strokeWidth="1.2" />
-          </g>
-          <g transform={`rotate(180 ${PIN[0]} ${PIN[1]})`}>
-            {STARS.map((star, index) => (
-              <path key={index} className="sky-star" d={sparkle(star)} style={{ "--twinkle": `${index * 0.45}s` }} />
-            ))}
-            <g className="sky-body">
-              <path className="sky-moon" d="M59.63 38.06A22 22 0 1 0 78.13 68.88A18 18 0 1 1 59.63 38.06Z" />
-              <circle cx="47" cy="62" r="2.2" fill="#131b4d" />
-              <circle cx="53.5" cy="72.5" r="1.5" fill="#131b4d" />
-            </g>
-          </g>
-        </g>
-        {/* The page's cut edge shades the wheel behind it. */}
-        <circle cx="63" cy="64" r="56" fill="none" stroke="#2a2420" strokeOpacity=".32" strokeWidth="12" filter="url(#sky-soft)" />
+      <g clipPath="url(#hole-cut)">
+        <circle cx="60" cy="66" r="55" fill="none" stroke="#2a2420" strokeOpacity=".22" strokeWidth="10" filter="url(#hole-soft)" />
       </g>
-      <circle className="sky-rim" cx="60" cy="60" r="50" />
+      <circle className="hole-rim" cx="60" cy="60" r="50" />
     </svg>
   );
 }

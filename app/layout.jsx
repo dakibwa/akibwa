@@ -63,7 +63,7 @@ export const viewport = {
    same five names live in components/paper/paper-home.jsx. Without
    JavaScript, rooms open through :target instead. A future hash-based
    Content-Security-Policy must include this script's hash. */
-const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","features","websites","career","trek"].indexOf(r)>-1?r:"index";if(d.dataset.room==="index"&&!matchMedia("(prefers-reduced-motion: reduce)").matches)d.dataset.skyHost="mascot"})(document.documentElement,location.hash.slice(1))`;
+const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","features","websites","career","trek"].indexOf(r)>-1?r:"index"})(document.documentElement,location.hash.slice(1))`;
 
 export default function RootLayout({ children }) {
   return (

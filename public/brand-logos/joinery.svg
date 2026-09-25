@@ -1,6 +1,11 @@
-<svg role="img" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-  <g fill="#33434F" transform="rotate(40 24 24)">
-    <rect x="10" y="8" width="28" height="11" rx="1.5"/>
-    <path d="M21 19h6v21a3 3 0 0 1-6 0Z"/>
+<svg role="img" viewBox="2.5 4.5 42 42" xmlns="http://www.w3.org/2000/svg">
+  <title>Joinery</title>
+  <!-- A joiner's backsaw: steel blade, brass back, wooden handle, in ink. -->
+  <g stroke="#2a2420" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" transform="rotate(-24 24 24)">
+    <path d="M5 21h26v11H9.5L5 27.5Z" fill="#c9d1d6"/>
+    <path d="M5 27.5l2 1.8 2-1.8 2 1.8 2-1.8 2 1.8 2-1.8 2 1.8 2-1.8 2 1.8 2-1.8 2 1.8 2-1.8" fill="none" stroke-width="1.1"/>
+    <path d="M4 17.5h28v4H4Z" fill="#c9923d"/>
+    <path d="M30 14.5c4.5-1 9.5.5 11.5 4.5 1.8 3.8 1.2 9.6-2 13.2l-2.8 3.3H31.5Z" fill="#b8753c"/>
+    <path d="M34.2 20.5c2.8-.4 4.8.9 5.3 3.2.5 2.2-.4 4.4-2.4 5.5l-2.9.4Z" fill="#f3ebd8"/>
   </g>
 </svg>

@@ -297,11 +297,10 @@ const checkPublicLanding = async () => {
   check(JSON.stringify(state.contactLabels) === JSON.stringify(["Instagram — @dakibwa", "X — @dakibwa", "Email Akibwa"]), "the bar keeps three distinct contact controls");
   check(state.googlebot.includes("noimageindex") && state.googlebot.includes("max-snippet:120"), `Google receives the restricted preview policy [${state.googlebot}]`);
   check(await evaluate(`getComputedStyle(document.body).userSelect === "none"`), "the page's text is not selectable");
-  check(await evaluate(`!document.documentElement.dataset.sky && getComputedStyle(document.querySelector(".sky-wheel")).transform === "none"`), "the sky opens on the sun beside Daniel");
+  check(await evaluate(`Boolean(document.querySelector(".front .hole")) && !document.querySelector(".sky-wheel")`), "a hole is cut where the sun and moon were");
   check(await waitFor(`document.querySelector(".name")?.dataset.name === "akibwa"`, 6500), "the name changes from Daniel to Akibwa on the original timing");
-  check(await evaluate(`document.documentElement.dataset.sky === "night"`), "Akibwa brings the moon");
+  check(await evaluate(`document.documentElement.dataset.sky === "night"`), "Akibwa is marked for the cast");
   await sleep(1700);
-  check(await evaluate(`getComputedStyle(document.querySelector(".sky-wheel")).transform.startsWith("matrix(-1")`), "the sky wheel has turned half round to the moon");
 
   for (const width of [320, 390, 560, 800, 1024, 1440, 1920]) {
     await setDesktop(width, width < 700 ? 844 : 900);
@@ -359,13 +358,21 @@ const checkPublicLanding = async () => {
       head: Boolean(document.querySelector("#music .room-head"))
     };
   })()`);
-  check(albums.count === 100, `the albums map holds the top 100 [${albums.count}]`);
+  check(albums.count === 150, `the albums map holds the top 150 [${albums.count}]`);
   check(albums.first > albums.last * 8, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
   check(albums.covered > 0.97 && albums.square, `the sleeves are square and leave no holes [${albums.covered.toFixed(3)} covered]`);
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
   check(albums.hours, "every sleeve with room for it carries its hours listened");
   check(albums.large, "sleeves drawn large offer the high-resolution rung");
   check(albums.words === "" && !albums.head, `the room explains nothing it need not [${albums.words}]`);
+  // The search knows who plays with whom, and eras.
+  await evaluate(`document.querySelector("#music .music-search input").focus()`);
+  await cdp.send("Input.insertText", { text: "panda bear" });
+  check(await waitFor(`(() => { const faces = [...document.querySelectorAll("#music .is-albums .music-face")].map((face) => face.getAttribute("aria-label")); return faces.length > 1 && faces.length < 20 && faces.some((label) => label.includes("Animal Collective")); })()`, 8000), "searching Panda Bear also finds Animal Collective");
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+  await sleep(600);
+  check(await evaluate(`document.querySelectorAll("#music .is-albums .music-tile").length === 150 && document.documentElement.dataset.room === "music"`), "Escape clears the search and leaves the room open");
   await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "songs").click()`);
   await sleep(700);
   check(await waitFor(`document.querySelectorAll("#music .is-songs .music-tile").length === 1000`, 8000), "the switch shows all thousand songs at once");
@@ -392,9 +399,9 @@ const checkPublicLanding = async () => {
 
   section("mascot");
   await goto("/");
-  check(await evaluate(`document.documentElement.dataset.skyHost === "mascot" && document.querySelector(".mascot").classList.contains("is-in-sky")`), "the mascot starts in the sky's window");
-  await sleep(4600);
-  check(await evaluate(`!document.documentElement.dataset.skyHost && getComputedStyle(document.querySelector(".sky-sun")).opacity === "1"`), "it leaps out and the window shows its sky");
+  check(await waitFor(`document.querySelector(".mascot.is-a")?.classList.contains("is-in-hole")`, 3000), "the a starts in the hole");
+  check(await waitFor(`(() => { const cast = [...document.querySelectorAll(".mascot")]; return cast.length === 3 && cast.every((el) => el.classList.contains("is-placed") && !el.classList.contains("is-in-hole")); })()`, 16000), "k and i peek up into the hole and climb out after the a");
+  await sleep(1200);
   const mascot = await evaluate(`(() => { const el = document.querySelector(".mascot"); const box = el.getBoundingClientRect(); return { placed: el.classList.contains("is-placed"), x: box.left + box.width / 2, y: box.top + box.height / 2, w: box.width }; })()`);
   check(mascot.placed && mascot.w > 40, "the mascot is on the front page");
   await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", x: mascot.x, y: mascot.y, button: "left", clickCount: 1 });
@@ -447,7 +454,7 @@ const checkPublicLanding = async () => {
   await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   await goto("/");
   await sleep(4200);
-  check(await evaluate(`document.querySelector(".name")?.dataset.name === "daniel" && !document.documentElement.dataset.sky`), "reduced motion keeps Daniel and the sun without the change");
+  check(await evaluate(`document.querySelector(".name")?.dataset.name === "daniel" && !document.documentElement.dataset.sky`), "reduced motion keeps Daniel still without the change");
   check(await evaluate(`getComputedStyle(document.querySelector(".thing .t-paper")).opacity === "1"`), "reduced motion shows the five things at once");
   await cdp.send("Emulation.setEmulatedMedia", { features: [] });
 

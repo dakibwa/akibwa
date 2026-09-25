@@ -5,19 +5,26 @@
 - The `a` is a vector trace of `public/brand-logos/akibwa-a.png`
   (`components/paper/mark-paths.js`) drawn as papercraft: the orange body and
   apricot terminal over a folded edge. The bar no longer carries it (Dan, 25
-  September 2026); it lives on as the mascot.
+  September 2026).
 - Music sleeves the room draws large have a 640–800px `-large` rung from
   `scripts/build-music-art.mjs`: print masters for the printed sleeves, the
   reviewed Apple Music artwork for catalogue sleeves, and for Last.fm sleeves
   the same release's cover from the Cover Art Archive or Apple Music, kept
   only when it matches the committed sleeve (one paler scan was accepted by
   eye). `data/music-art.json` records each source.
-- The sky wheel's sun is Urizen's deep red after Blake (`#8c1d13`, crimson
-  hatching, sixteen rays and a soft glow) on a warm parchment day (`#ecd6a8`),
-  and its moon a deep blue (`#23306f`) on a dusk-blue night (`#7c8bbd`), since
-  25 September 2026.
+- The hole top right is inline SVG: a hollow ring in ink with a faint shade
+  inside its top edge (Dan, 25 September 2026). It replaced the sky wheel's sun
+  and moon the same day.
+- The cast's `a`, `k` and `i` are Codex drawings Dan chose on 25 September
+  2026 (an orange `a` with small eyes, a periwinkle `k`, a raspberry `i`, each
+  with a paler tail), traced into cubic outlines in
+  `components/paper/cast-paths.js` on one scale: every main stroke 30 units
+  thick, feet on one baseline. The trace unmixed each pixel between its two
+  nearest colours for sub-pixel edges and fitted curves that keep the real
+  corners (the `k`'s crotches, the `a`'s crease). The cast draws each over a
+  darker edge, with its own eyes; colours are in `app/globals.css`.
 - The five things (a hand of sleeves, the Features tile, browser windows, paper
-  plane, folded map) and the sky wheel are inline SVG in
+  plane, folded map) and the hole are inline SVG in
   `components/paper/things.jsx` and `paper-home.jsx`, so they scale and draw in
   without image requests.
 - The taste sleeves are cartoons drawn from the real covers in

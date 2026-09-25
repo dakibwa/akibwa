@@ -133,7 +133,10 @@ most of its plays came from that album or at least 40% of them did, so a few
 stray plays filed under another release (For the First Time's songs under Ants
 From Up There) do not join its track list. The Music room sizes sleeves by
 these minutes; how it draws them is in the
-[navigation contract](navigation-animation-contract.md). Covers reuse the committed album sleeves
+[navigation contract](navigation-animation-contract.md). The builder takes
+the top 150 albums. The search's genres, related artists and sleeve years
+are public MusicBrainz data (`scripts/build-music-meta.mjs`), never
+listening history. Covers reuse the committed album sleeves
 where artist and album match. First and last listen dates, track URIs, raw
 events, account splits and source paths never leave the private history;
 `check:navigation` fails if the packet gains a field.

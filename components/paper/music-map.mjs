@@ -122,6 +122,12 @@ export function fillGrid(sides, columns, height) {
   return queue.length ? null : { cells, height };
 }
 
+// A few side by side, the same size, when there are too few to pack.
+export function rowOfSquares(count, width, most = 360) {
+  const side = Math.floor(Math.min(most, (width - GAP * (count - 1)) / count));
+  return { height: side, tiles: Array.from({ length: count }, (_, index) => ({ x: index * (side + GAP), y: 0, w: side, h: side })) };
+}
+
 // Whole-pixel tiles with the gutter between neighbours and none at the edges.
 function toTiles(cells, width, columns, top = 0) {
   const unit = width / columns;
@@ -162,7 +168,7 @@ export function layoutSquares(values, width, { cell, aspect, reference = 0, rang
       const scale = (columns * fraction) / Math.sqrt(values[reference]);
       const wanted = adjust(values.map((value) => Math.max(1, Math.min(columns, Math.round(scale * Math.sqrt(value))))));
       const area = wanted.reduce((sum, side) => sum + side * side, 0);
-      for (const give of [0.98, 0.96, 0.94, 0.92, 0.9]) {
+      for (const give of [0.98, 0.96, 0.94, 0.92, 0.9, 0.86, 0.82]) {
         const packed = fillGrid(wanted, columns, Math.max(1, Math.round((area * give) / columns)));
         if (!packed) continue;
         const error = packed.cells.reduce((sum, { s }, index) => sum + Math.abs(Math.log(s / wanted[index])), 0) / values.length;

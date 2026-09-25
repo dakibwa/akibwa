@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { websites } from "../data/websites.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
 import { albumSides, albumWeights, drawnOrder, layoutSquares, GAP } from "../components/paper/music-map.mjs";
+import { indexItems, search } from "../components/paper/music-search.mjs";
 
 /* Build-time contract for the paper homepage: one sheet with five things —
    music, features, websites, career and the trek — that open in place (the
@@ -25,6 +26,7 @@ const features = read("public/features/index.html");
 const trekTemplate = read("scripts/trek-journey-template.html");
 const trekPublished = read("public/trek/index.html");
 const ranking = JSON.parse(read("public/music-ranking.json"));
+const musicMeta = JSON.parse(read("public/music-meta.json"));
 
 const fail = (message) => {
   throw new Error(`Navigation contract failed: ${message}`);
@@ -70,9 +72,13 @@ requireText(names, "prefers-reduced-motion", "the name change must respect reduc
 requireText(names, "visibilitychange", "the name change must pause in hidden tabs");
 requireText(names, "I’m Daniel. Online as Akibwa.", "the heading must carry both names for assistive technology");
 requireText(home, "Building in the age of AI.", "the front page must preserve Dan's proposition");
-requireText(names, "dataset.sky", "the name change must turn the sky: the sun for Daniel, the moon for Akibwa");
-requireRuleText('html[data-sky="night"] .sky-wheel {', ["animation: sky-dusk"]);
-requireRuleText('html[data-sky="day"] .sky-wheel {', ["animation: sky-dawn"]);
+requireText(names, "dataset.sky", "the name change must mark Daniel and Akibwa for the cast to follow");
+// A hole where the sun and moon were, and a, k and i coming out of it (Dan, 25 September 2026).
+requireText(home, "<Hole />", "the front page must cut the hole the cast comes out of");
+requireText(home, "<Cast onVisit={setVisited} />", "the front page must carry the cast");
+const cast = read("components/paper/cast.jsx");
+for (const letter of ['id: "a"', 'id: "k"', 'id: "i"']) requireText(cast, letter, `the cast must include ${letter}`);
+requireText(cast, "prefers-reduced-motion", "the cast must keep still under reduced motion");
 requireRuleText("\nbody {", ["user-select: none"]);
 
 // Five things, five rooms; the trek's frames its journey (Dan, 25 September 2026).
@@ -146,7 +152,7 @@ if (/atkinson/i.test(JSON.stringify(websites))) fail("the websites data must not
 // The public music file carries aggregates only (Dan asked for hours listened
 // on 24 September 2026): no dates, URIs, accounts or raw events.
 if (ranking.schemaVersion !== 2 || !/^\d{4}-\d{2}-\d{2}$/.test(ranking.asOf)) fail("the music file must be versioned and dated");
-if (ranking.songs.length !== 1000 || ranking.albums.length !== 100) fail("the music file must hold 1,000 songs and 100 albums");
+if (ranking.songs.length !== 1000 || ranking.albums.length !== 150) fail("the music file must hold 1,000 songs and 150 albums");
 const whole = (value) => Number.isSafeInteger(value) && value >= 0;
 for (const [title, artist, plays, youtube, art, minutes] of ranking.songs) {
   if (typeof title !== "string" || !Number.isInteger(artist) || !ranking.names[artist]) fail("every song needs a title and a named artist");
@@ -165,6 +171,23 @@ if (ranking.songs.some((row) => row.length !== 6) || ranking.albums.some((row) =
 const rankingText = JSON.stringify(ranking);
 for (const [pattern, what] of [[/spotify:/i, "track URIs"], [/\d{4}-\d{2}-\d{2}T\d/, "timestamps"]]) {
   if (pattern.test(rankingText)) fail(`the public music file must not include ${what}`);
+}
+
+// The search's knowledge is public MusicBrainz data only: genres and related
+// artists by name, and each sleeve's release year (Dan, 25 September 2026).
+if (JSON.stringify(Object.keys(musicMeta).sort()) !== JSON.stringify(["artists", "note", "schemaVersion", "years"])) fail("the music search file has unexpected fields");
+for (const [name, facts] of Object.entries(musicMeta.artists)) {
+  if (JSON.stringify(Object.keys(facts).sort()) !== JSON.stringify(["genres", "related"]) || ![...facts.genres, ...facts.related].every((value) => typeof value === "string")) fail(`${name}'s search facts must be genres and related artists only`);
+}
+if (!Object.values(musicMeta.years).every((year) => Number.isInteger(year) && year > 1900 && year < 2100)) fail("sleeve years must be plain years");
+{
+  const albums = unpackRanking(ranking).albums;
+  const index = indexItems(albums, { meta: musicMeta, yearOf: (album) => Number(album.year) || musicMeta.years[album.id] || null });
+  const artistsFor = (query) => new Set((search(index, query) ?? []).map((album) => album.artist));
+  if (!artistsFor("paul simon").has("Simon & Garfunkel")) fail("searching Paul Simon must find Simon & Garfunkel");
+  if (!artistsFor("panda bear").has("Animal Collective")) fail("searching Panda Bear must find Animal Collective");
+  const seventies = search(index, "70s") ?? [];
+  if (!seventies.length || seventies.some((album) => { const year = Number(album.year) || musicMeta.years[album.id]; return year < 1970 || year > 1979; })) fail("searching an era must keep to its years");
 }
 
 // Retired pages are deleted, not hidden. The site is one page; old links 301

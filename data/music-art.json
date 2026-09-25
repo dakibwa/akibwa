@@ -1094,6 +1094,535 @@
       }
     },
     {
+      "id": "history-4c7544d01aaf7b41",
+      "source": "apple music",
+      "ref": "https://music.apple.com/us/album/call-me-if-you-get-lost/1573484415",
+      "sourceHash": "7d75716232c5cbdc",
+      "width": 800,
+      "files": {
+        "avif": "bd74b1ce9ef7fe57",
+        "webp": "746112d2458af6ca"
+      }
+    },
+    {
+      "id": "history-6f411293b09f6271",
+      "source": "apple music",
+      "ref": "https://music.apple.com/us/album/3001-a-laced-odyssey/1078051629",
+      "sourceHash": "b89a29e342591ad8",
+      "width": 800,
+      "files": {
+        "avif": "37c836b5dd240785",
+        "webp": "cde571eca5159dbe"
+      }
+    },
+    {
+      "id": "037",
+      "source": "print master",
+      "ref": "HAIM - Women in Music Pt III.png",
+      "sourceHash": "e4e6b7bdc5e1aa57",
+      "width": 800,
+      "files": {
+        "avif": "437dc79597547687",
+        "webp": "b181a174fc472cfa"
+      }
+    },
+    {
+      "id": "126",
+      "source": "print master",
+      "ref": "animalcollective_herecomestheindian_by1g.jpg",
+      "sourceHash": "5f990cfd1f932d80",
+      "width": 800,
+      "files": {
+        "avif": "b633b7d36bbdd3be",
+        "webp": "9a6f37fc4f745f1a"
+      }
+    },
+    {
+      "id": "lf-5289afe4e743a2aa",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/d8dde278-482c-3cc8-a530-fea70476f3a5",
+      "match": 12.2,
+      "sourceHash": "f1d96993b10c9e46",
+      "width": 800,
+      "files": {
+        "avif": "d69102777120e9df",
+        "webp": "3892703ad76eb89a"
+      }
+    },
+    {
+      "id": "history-b7f654f81e43dc49",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/pet-sounds/1440841241",
+      "sourceHash": "9bc5623e1ed2b28b",
+      "width": 800,
+      "files": {
+        "avif": "565f3ef4787eef07",
+        "webp": "5489e453fa3c0607"
+      }
+    },
+    {
+      "id": "105",
+      "source": "print master",
+      "ref": "Unidentified - Portrait with Braids.png",
+      "sourceHash": "b8a8688611c321ca",
+      "width": 800,
+      "files": {
+        "avif": "211e7467cb6bc20b",
+        "webp": "89bd06a4471ca63e"
+      }
+    },
+    {
+      "id": "111",
+      "source": "print master",
+      "ref": "Unidentified - Snakes on a Plate.png",
+      "sourceHash": "7a0ea378b1591482",
+      "width": 800,
+      "files": {
+        "avif": "75c83aa5b8c8ffab",
+        "webp": "cb752d98e172a0c0"
+      }
+    },
+    {
+      "id": "202",
+      "source": "print master",
+      "ref": "pandabear_youngprayer_byz4(1).jpg",
+      "sourceHash": "631bd538d42fc52e",
+      "width": 800,
+      "files": {
+        "avif": "41ba8a3c3333027d",
+        "webp": "ce3b2c1c889d04e8"
+      }
+    },
+    {
+      "id": "206",
+      "source": "print master",
+      "ref": "purple mountains.jpg",
+      "sourceHash": "f9260788ebf19909",
+      "width": 800,
+      "files": {
+        "avif": "00432e6c9456eb25",
+        "webp": "0a509b95ee1c46c8"
+      }
+    },
+    {
+      "id": "241",
+      "source": "print master",
+      "ref": "vampireweekend_vampireweekend_7pj3.jpg",
+      "sourceHash": "a6db08ffcede8818",
+      "width": 800,
+      "files": {
+        "avif": "0707df11eba10410",
+        "webp": "78f0a5866928264e"
+      }
+    },
+    {
+      "id": "067",
+      "source": "print master",
+      "ref": "Rudgie - Holy Ghost Zone.png",
+      "sourceHash": "73e2b7beb43e08b3",
+      "width": 800,
+      "files": {
+        "avif": "0686f9da2a00126e",
+        "webp": "ad0cbe7fc51c796c"
+      }
+    },
+    {
+      "id": "244",
+      "source": "print master",
+      "ref": "weezer_pinkerton_6nkh.jpg",
+      "sourceHash": "9b5815536949e8fd",
+      "width": 800,
+      "files": {
+        "avif": "edca4ea51a322c9d",
+        "webp": "6996d50ff59546e3"
+      }
+    },
+    {
+      "id": "lf-be730e7d269ab161",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/7ea67831-77a3-4822-af7d-e795bd83cd42",
+      "match": 1.8,
+      "sourceHash": "d336f1ee69fc5e63",
+      "width": 800,
+      "files": {
+        "avif": "0f91c3a77490fe59",
+        "webp": "79fb3c3a1da6aac1"
+      }
+    },
+    {
+      "id": "089",
+      "source": "print master",
+      "ref": "Unidentified - Charmed Illustration.png",
+      "sourceHash": "0bc3f7f2e94b94e5",
+      "width": 800,
+      "files": {
+        "avif": "de6c8010691aa53f",
+        "webp": "dbe8c7a50c7e0ccf"
+      }
+    },
+    {
+      "id": "134",
+      "source": "print master",
+      "ref": "billcallahan_sometimesiwishwewere_9djz(1).jpg",
+      "sourceHash": "d25018fe657bf542",
+      "width": 800,
+      "files": {
+        "avif": "3b3e7e0c4af848e1",
+        "webp": "1567bbaccc3aa04a"
+      }
+    },
+    {
+      "id": "history-916344727461f76e",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/the-wall/1065975633",
+      "sourceHash": "37c032f71460fdda",
+      "width": 800,
+      "files": {
+        "avif": "f3745bcbed40eb67",
+        "webp": "ca22ff7fcf453107"
+      }
+    },
+    {
+      "id": "lf-99b41433663d89c4",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/7f4792fe-b563-4554-849a-95a89be71f84",
+      "match": 2,
+      "sourceHash": "b1d6807d94c2388d",
+      "width": 800,
+      "files": {
+        "avif": "2c3665d6b075258e",
+        "webp": "6d8088db9969b624"
+      }
+    },
+    {
+      "id": "242",
+      "source": "print master",
+      "ref": "vashtibunyan_heartleap_7k06.jpg",
+      "sourceHash": "f69c75092977de13",
+      "width": 800,
+      "files": {
+        "avif": "f1f28cf04ab2a85a",
+        "webp": "46b3e2c284855741"
+      }
+    },
+    {
+      "id": "110",
+      "source": "print master",
+      "ref": "Unidentified - Seated Figure in Gold.png",
+      "sourceHash": "0c51eb1a898ba47f",
+      "width": 800,
+      "files": {
+        "avif": "f63f051935130982",
+        "webp": "191c2a295b79f597"
+      }
+    },
+    {
+      "id": "170",
+      "source": "print master",
+      "ref": "in the afternoon.jpg",
+      "sourceHash": "04d12ed0b22b7b4b",
+      "width": 800,
+      "files": {
+        "avif": "fe950145dd40a595",
+        "webp": "d63db7cbfbc68808"
+      }
+    },
+    {
+      "id": "141",
+      "source": "print master",
+      "ref": "brianeno_herecomethewarmjets1_6w96.jpg",
+      "sourceHash": "d583f6486ce3423b",
+      "width": 800,
+      "files": {
+        "avif": "ac3a7b57c03d173c",
+        "webp": "229d6943811046ed"
+      }
+    },
+    {
+      "id": "lf-35a31c629274ad5b",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/4692f067-8974-4c83-ba7d-458c3c19b53c",
+      "match": 4.7,
+      "sourceHash": "3e6be38dc9c86732",
+      "width": 800,
+      "files": {
+        "avif": "03a9fc90f9c16da6",
+        "webp": "b3a8953f8756be64"
+      }
+    },
+    {
+      "id": "lf-6d05ba9341de270a",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/08f25199-41f1-4615-a75e-6f8a9de33dec",
+      "match": 3.3,
+      "sourceHash": "6ea7b847c47d8bc5",
+      "width": 800,
+      "files": {
+        "avif": "fd8b8bf97c0f535e",
+        "webp": "51a8eb53ebc83b3b"
+      }
+    },
+    {
+      "id": "176",
+      "source": "print master",
+      "ref": "kendricklamar_goodkidmaadcity_4zxm.jpg",
+      "sourceHash": "c7e78da236277fe1",
+      "width": 800,
+      "files": {
+        "avif": "aae200f3a63462ee",
+        "webp": "0a109f9a60d7343c"
+      }
+    },
+    {
+      "id": "086",
+      "source": "print master",
+      "ref": "Unidentified - Black and White Tree.png",
+      "sourceHash": "420ea3f1c952302a",
+      "width": 800,
+      "files": {
+        "avif": "7944a9c6bd2c3add",
+        "webp": "75c47f02e4ff5d6b"
+      }
+    },
+    {
+      "id": "lf-695cb2bafdec5cfc",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/6bb871f4-08ec-4a70-9fb3-c1c2b481e090",
+      "match": 4.3,
+      "sourceHash": "4382e8eed4c185f4",
+      "width": 800,
+      "files": {
+        "avif": "94c8d893419eced0",
+        "webp": "957601cf5b7dbd18"
+      }
+    },
+    {
+      "id": "096",
+      "source": "print master",
+      "ref": "Unidentified - Geometric Form in Mist.jpg",
+      "sourceHash": "33676ec9aef36079",
+      "width": 800,
+      "files": {
+        "avif": "34ac700062e357ce",
+        "webp": "4c35a8419ac18288"
+      }
+    },
+    {
+      "id": "247",
+      "source": "print master",
+      "ref": "wish you were here.jpg",
+      "sourceHash": "1caa62209e33c723",
+      "width": 800,
+      "files": {
+        "avif": "8d156a893aef888e",
+        "webp": "a522bcdade4ff6e6"
+      }
+    },
+    {
+      "id": "039",
+      "source": "print master",
+      "ref": "Homeshake - Midnight Snack.png",
+      "sourceHash": "1bc1ca03fb6c811d",
+      "width": 800,
+      "files": {
+        "avif": "9437189bbf0a475f",
+        "webp": "263e5c0ae57816f2"
+      }
+    },
+    {
+      "id": "lf-87b8402385cdeaaf",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/fd29e2cd-9bd7-32c6-adf9-ce80ab1cadfc",
+      "match": 7.4,
+      "sourceHash": "77386b996f039e4e",
+      "width": 800,
+      "files": {
+        "avif": "92c17098f48a9988",
+        "webp": "e80895d307d97b13"
+      }
+    },
+    {
+      "id": "history-6e4a43a57a3b58fa",
+      "source": "apple music",
+      "ref": "https://music.apple.com/us/album/too-bright/1589217820",
+      "sourceHash": "7934d28adf0c6a51",
+      "width": 800,
+      "files": {
+        "avif": "21db88c10bd42c2b",
+        "webp": "00e1f1cae53bb953"
+      }
+    },
+    {
+      "id": "054",
+      "source": "print master",
+      "ref": "Modest Mouse - We Were Dead Before the Ship Even Sank.png",
+      "sourceHash": "be9cdf6b7ee47789",
+      "width": 800,
+      "files": {
+        "avif": "31d87cb1b74627e0",
+        "webp": "cc7eb03a112d7a0b"
+      }
+    },
+    {
+      "id": "119",
+      "source": "print master",
+      "ref": "Your-Funeral...My-Trial-1024x1024.jpg",
+      "sourceHash": "40ba6b76468a9f6e",
+      "width": 800,
+      "files": {
+        "avif": "978d9cc303f9e861",
+        "webp": "8939a2bcaae8b1d2"
+      }
+    },
+    {
+      "id": "lf-b09b5c59ebb7839d",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/d1be3d86-3756-46f1-ba44-7d5a49290efc",
+      "match": 4.6,
+      "sourceHash": "4fd3494fbe66490a",
+      "width": 800,
+      "files": {
+        "avif": "1ac0b41c8f098be4",
+        "webp": "109cf9bc537d176b"
+      }
+    },
+    {
+      "id": "046",
+      "source": "print master",
+      "ref": "Julianna Barwick - Nepenthe.png",
+      "sourceHash": "da03ff9060edfa82",
+      "width": 800,
+      "files": {
+        "avif": "c3dafcac8b2e5353",
+        "webp": "a4f51081b3d959f4"
+      }
+    },
+    {
+      "id": "243",
+      "source": "print master",
+      "ref": "vashtibunyan_lookaftering_7wtc.jpg",
+      "sourceHash": "59d27d2f586cc5be",
+      "width": 800,
+      "files": {
+        "avif": "ff3d6813db1b5728",
+        "webp": "44033b606cd239a5"
+      }
+    },
+    {
+      "id": "lf-a266ab588ac41116",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/e45192fe-a86a-426d-88c5-55fe49b6b1a2",
+      "match": 5.4,
+      "sourceHash": "87e4bfe805727656",
+      "width": 800,
+      "files": {
+        "avif": "259ac69af5b8d1c8",
+        "webp": "7c48e2838b02d905"
+      }
+    },
+    {
+      "id": "156",
+      "source": "print master",
+      "ref": "elbow_thetakeoffandlanding_6rrw.jpg",
+      "sourceHash": "4057ef286cf9957a",
+      "width": 800,
+      "files": {
+        "avif": "7d225e626f7f902f",
+        "webp": "9dd760233a97ee83"
+      }
+    },
+    {
+      "id": "history-9c5176cc560c069b",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/station-to-station-2016-remaster/1195104858",
+      "sourceHash": "406789561b47f124",
+      "width": 800,
+      "files": {
+        "avif": "5b4cfd05f6b80e2f",
+        "webp": "bf281e1ec64ff514"
+      }
+    },
+    {
+      "id": "lf-db82cef580d911bc",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/74b8b2ca-8431-4ff2-af68-0a45370c144e",
+      "match": 2.5,
+      "sourceHash": "4760368b77ddec7b",
+      "width": 800,
+      "files": {
+        "avif": "478fbc26bba49b7b",
+        "webp": "06fa596963627374"
+      }
+    },
+    {
+      "id": "149",
+      "source": "print master",
+      "ref": "deakinfront.jpg",
+      "sourceHash": "010bcef98cc2ab71",
+      "width": 800,
+      "files": {
+        "avif": "8e89601dd0cea16a",
+        "webp": "3fdbdee70e7cc3f3"
+      }
+    },
+    {
+      "id": "160",
+      "source": "print master",
+      "ref": "four tetrounds.jpg",
+      "sourceHash": "1852938e7358e160",
+      "width": 800,
+      "files": {
+        "avif": "5eaf493de6dd9742",
+        "webp": "a3839f8c14291298"
+      }
+    },
+    {
+      "id": "lf-3afe209ece99ef32",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/52b56db6-5b5f-467c-89c5-cbe76c3678d5",
+      "match": 2.5,
+      "sourceHash": "e58ba7104fa0ff0d",
+      "width": 500,
+      "files": {
+        "avif": "21c35f323160fc0d",
+        "webp": "a2c3133719b31e73"
+      }
+    },
+    {
+      "id": "lf-10c225c7b2a4412e",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/modern-vampires-of-the-city/613184430",
+      "match": 4.3,
+      "sourceHash": "5c9af7e166659113",
+      "width": 800,
+      "files": {
+        "avif": "8c96a2cf8eee987b",
+        "webp": "f5df030250990089"
+      }
+    },
+    {
+      "id": "history-e1cbfbc8406426ee",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/her-original-score/1553022037",
+      "sourceHash": "9a2abbf9a0763fa8",
+      "width": 800,
+      "files": {
+        "avif": "947ff75d350cb1f1",
+        "webp": "55aadb1084193427"
+      }
+    },
+    {
+      "id": "099",
+      "source": "print master",
+      "ref": "Unidentified - Illustrated Night Landscape.png",
+      "sourceHash": "ae2525fb3d764420",
+      "width": 800,
+      "files": {
+        "avif": "a2bd2e13677cd8ec",
+        "webp": "4e08c893bb2f4318"
+      }
+    },
+    {
       "id": "lf-4cb306fbca55133f",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/f833a9fc-3c55-309f-a7f5-30fb9124040d",
@@ -1141,17 +1670,6 @@
       }
     },
     {
-      "id": "247",
-      "source": "print master",
-      "ref": "wish you were here.jpg",
-      "sourceHash": "1caa62209e33c723",
-      "width": 800,
-      "files": {
-        "avif": "8d156a893aef888e",
-        "webp": "a522bcdade4ff6e6"
-      }
-    },
-    {
       "id": "019",
       "source": "print master",
       "ref": "Can - Monster Movie.png",
@@ -1174,28 +1692,6 @@
       }
     },
     {
-      "id": "149",
-      "source": "print master",
-      "ref": "deakinfront.jpg",
-      "sourceHash": "010bcef98cc2ab71",
-      "width": 800,
-      "files": {
-        "avif": "8e89601dd0cea16a",
-        "webp": "3fdbdee70e7cc3f3"
-      }
-    },
-    {
-      "id": "170",
-      "source": "print master",
-      "ref": "in the afternoon.jpg",
-      "sourceHash": "04d12ed0b22b7b4b",
-      "width": 800,
-      "files": {
-        "avif": "fe950145dd40a595",
-        "webp": "d63db7cbfbc68808"
-      }
-    },
-    {
       "id": "lf-46db8d2e8b7c75b0",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/d2f6dc8a-007f-4d3c-82d9-d8e0e80921a8",
@@ -1208,17 +1704,6 @@
       }
     },
     {
-      "id": "119",
-      "source": "print master",
-      "ref": "Your-Funeral...My-Trial-1024x1024.jpg",
-      "sourceHash": "40ba6b76468a9f6e",
-      "width": 800,
-      "files": {
-        "avif": "978d9cc303f9e861",
-        "webp": "8939a2bcaae8b1d2"
-      }
-    },
-    {
       "id": "history-817daac9660d3560",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/asleep-versions-ep/915038998",
@@ -1227,17 +1712,6 @@
       "files": {
         "avif": "9f923d215e13299b",
         "webp": "7fad2369cc2ce547"
-      }
-    },
-    {
-      "id": "history-9c5176cc560c069b",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/station-to-station-2016-remaster/1195104858",
-      "sourceHash": "406789561b47f124",
-      "width": 800,
-      "files": {
-        "avif": "5b4cfd05f6b80e2f",
-        "webp": "bf281e1ec64ff514"
       }
     },
     {
@@ -1286,18 +1760,6 @@
       }
     },
     {
-      "id": "lf-be730e7d269ab161",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/7ea67831-77a3-4822-af7d-e795bd83cd42",
-      "match": 1.8,
-      "sourceHash": "d336f1ee69fc5e63",
-      "width": 800,
-      "files": {
-        "avif": "0f91c3a77490fe59",
-        "webp": "79fb3c3a1da6aac1"
-      }
-    },
-    {
       "id": "169",
       "source": "print master",
       "ref": "i trawl the.jpg",
@@ -1329,17 +1791,6 @@
       "files": {
         "avif": "0a3c0d55fff65568",
         "webp": "24f3755b30ae87f7"
-      }
-    },
-    {
-      "id": "176",
-      "source": "print master",
-      "ref": "kendricklamar_goodkidmaadcity_4zxm.jpg",
-      "sourceHash": "c7e78da236277fe1",
-      "width": 800,
-      "files": {
-        "avif": "aae200f3a63462ee",
-        "webp": "0a109f9a60d7343c"
       }
     },
     {
@@ -1439,11 +1890,19 @@
       "reason": "closest larger cover differs (28.8)"
     },
     {
-      "id": "lf-734713a64f1317e0",
-      "reason": "no larger source found"
+      "id": "lf-9ceeda8633d2b5a3",
+      "reason": "closest larger cover differs (50.9)"
+    },
+    {
+      "id": "lf-6ad83c9cca124c69",
+      "reason": "closest larger cover differs (24.5)"
     },
     {
       "id": "lf-181646055465b378",
+      "reason": "no larger source found"
+    },
+    {
+      "id": "lf-734713a64f1317e0",
       "reason": "no larger source found"
     },
     {

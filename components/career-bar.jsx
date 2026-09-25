@@ -9,8 +9,8 @@ import curation from "@/data/taste-curation.json";
 export const { career } = curation;
 // SVG originals do not get the image manifest's automatic content version.
 const logoRevisions = {
-  "/brand-logos/electrical.svg": "bolt",
-  "/brand-logos/joinery.svg": "slate",
+  "/brand-logos/electrical.svg": "plug-2",
+  "/brand-logos/joinery.svg": "backsaw-2",
   "/brand-logos/leeds-building-society-icon.svg": "contrast",
 };
 

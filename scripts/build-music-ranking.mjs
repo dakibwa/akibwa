@@ -1,5 +1,5 @@
 /*
- * The homepage's Music room: Dan's top 1,000 songs and top 100 albums.
+ * The homepage's Music room: Dan's top 1,000 songs and top 150 albums.
  *
  * Reads the combined Spotify + YouTube song ranking that the private digital
  * history already prepared (private/spotify/all-time-top-1000.json) and the
@@ -70,7 +70,8 @@ const songs = ranking.playlistSelection.tracks.map((track) => ({
   minutes: minutes(track.spotifyTotalPlayedMs)
 }));
 
-// The top 100 albums by the catalogue's reconciled plays, each with the
+// The top 150 albums by the catalogue's reconciled plays (Dan asked for half
+// as many again as 100 on 25 September 2026), each with the
 // tracks Dan played from it: their Spotify plays on that album and a share of
 // their playback time in proportion to those plays. The excluded ambient
 // albums still belong here; only the song ranking leaves them out.
@@ -82,7 +83,7 @@ const sameArtist = (track, album) => {
   const ours = credits(album);
   return [...credits(track)].some((part) => ours.has(part));
 };
-const albums = browseAlbums(catalogue.albums).slice(0, 100).map((album) => {
+const albums = browseAlbums(catalogue.albums).slice(0, 150).map((album) => {
   const various = fold(album.artist) === "various artists";
   const tracks = [];
   for (const track of everyTrack) {
