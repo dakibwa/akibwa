@@ -1,22 +1,25 @@
 /*
- * Public song and artist rankings for the homepage's Music room.
+ * The homepage's Music room: Dan's top 1,000 songs and top 100 albums.
  *
  * Reads the combined Spotify + YouTube song ranking that the private digital
- * history already prepared (private/spotify/all-time-top-1000.json) and writes
- * public/music-ranking.json with aggregates only: rank, song, artist, plays and
- * the per-source split. Dates, listening time, track URIs, account splits and
- * source paths never leave the private history.
+ * history already prepared (private/spotify/all-time-top-1000.json) and the
+ * public album catalogue, and writes public/music-ranking.json with aggregates
+ * only: song, artist, plays, the YouTube share and minutes played; each album's
+ * plays and minutes, with the tracks Dan played from it. Dan asked for hours
+ * listened on 24 September 2026. Dates, track URIs, account splits and source
+ * paths never leave the private history.
  *
  *   node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY
  *
  * The ranking's own method applies: Spotify plays of at least 30 seconds plus
  * identified YouTube song watches, with Dan's two excluded ambient albums
  * (Music For Psychedelic Therapy, bar Sit Around the Fire, and Discreet Music)
- * left out. Artists total every ranked song identity, not only the top 1,000.
- * Covers come from the committed album sleeves where artist and album match.
+ * left out of the songs. Covers come from the committed album sleeves where
+ * artist and album match.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { browseAlbums } from "../components/album-catalogue.mjs";
 
 const at = process.argv.indexOf("--history-root");
 const root = at > -1 ? process.argv[at + 1] : null;
@@ -54,21 +57,8 @@ const sleeveFor = (artist, albums) => {
   return null;
 };
 
-// Artist names differ only by case across sources ("Tyler, The Creator").
-const artistKey = (name) => fold(name);
-const excluded = new Set(ranking.excludedTracks.map((track) => JSON.stringify(track.songKey)));
-const artistTotals = new Map();
-for (const track of ranking.allSourceTracks) {
-  if (excluded.has(JSON.stringify(track.songKey))) continue;
-  const key = artistKey(track.artist);
-  const entry = artistTotals.get(key) ?? { names: new Map(), plays: 0, spotify: 0, youtube: 0, songs: 0 };
-  entry.names.set(track.artist, (entry.names.get(track.artist) ?? 0) + track.listens);
-  entry.plays += track.listens;
-  entry.spotify += track.spotifyListens;
-  entry.youtube += track.youtubeWatches;
-  entry.songs += 1;
-  artistTotals.set(key, entry);
-}
+// Spotify playback time, in whole minutes. YouTube records no durations.
+const minutes = (ms) => Math.round((ms ?? 0) / 60000);
 
 const songs = ranking.playlistSelection.tracks.map((track) => ({
   rank: track.playlistRank,
@@ -76,50 +66,80 @@ const songs = ranking.playlistSelection.tracks.map((track) => ({
   artist: track.artist,
   plays: track.listens,
   youtube: track.youtubeWatches,
-  art: sleeveFor(track.artist, track.albums)
+  art: sleeveFor(track.artist, track.albums),
+  minutes: minutes(track.spotifyTotalPlayedMs)
 }));
 
-const topSongsBy = new Map();
-for (const song of songs) {
-  const key = artistKey(song.artist);
-  if (!topSongsBy.has(key)) topSongsBy.set(key, []);
-  topSongsBy.get(key).push(song.rank);
-}
+// The top 100 albums by the catalogue's reconciled plays, each with the
+// tracks Dan played from it: their Spotify plays on that album and a share of
+// their playback time in proportion to those plays. The excluded ambient
+// albums still belong here; only the song ranking leaves them out.
+const everyTrack = [...ranking.allSourceTracks, ...ranking.excludedTracks];
+// Joint albums ("Panda Bear & Sonic Boom") match tracks credited to either.
+const credits = (name) => new Set(fold(name).split(/\s+(?:and|with|x)\s+|\s*,\s*/).filter(Boolean));
+const sameArtist = (track, album) => {
+  if (fold(track) === fold(album)) return true;
+  const ours = credits(album);
+  return [...credits(track)].some((part) => ours.has(part));
+};
+const albums = browseAlbums(catalogue.albums).slice(0, 100).map((album) => {
+  const various = fold(album.artist) === "various artists";
+  const tracks = [];
+  for (const track of everyTrack) {
+    if (!various && !sameArtist(track.artist, album.artist)) continue;
+    // A track belongs to the album most of its plays came from; a handful of
+    // plays tagged to another album (For the First Time's songs under Ants
+    // From Up There) are stray metadata, not that album's tracks.
+    const byAlbum = new Map();
+    for (const [name, plays] of Object.entries(track.albums ?? {})) byAlbum.set(fold(name), (byAlbum.get(fold(name)) ?? 0) + plays);
+    const home = [...byAlbum.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+    const share = (byAlbum.get(fold(album.album)) ?? 0) / Math.max(1, track.spotifyListens);
+    if (home !== fold(album.album) && share < 0.4) continue;
+    for (const [name, plays] of Object.entries(track.albums ?? {})) {
+      if (fold(name) !== fold(album.album) || !plays) continue;
+      const share = track.spotifyListens ? plays / track.spotifyListens : 0;
+      tracks.push({ title: track.track, plays, minutes: minutes(track.spotifyTotalPlayedMs * share) });
+    }
+  }
+  // One row per title: live and remastered variants were joined upstream.
+  const merged = new Map();
+  for (const track of tracks) {
+    const key = fold(track.title);
+    const entry = merged.get(key) ?? { title: track.title, plays: 0, minutes: 0 };
+    entry.plays += track.plays;
+    entry.minutes += track.minutes;
+    merged.set(key, entry);
+  }
+  const listed = [...merged.values()].sort((a, b) => b.plays - a.plays || b.minutes - a.minutes);
+  return {
+    id: album.id,
+    title: album.album,
+    artist: album.artist,
+    year: album.year ?? null,
+    plays: album.plays,
+    minutes: listed.reduce((sum, track) => sum + track.minutes, 0),
+    tracks: listed
+  };
+});
 
-const artists = [...artistTotals.entries()]
-  .map(([key, entry]) => ({
-    key,
-    name: [...entry.names.entries()].sort((a, b) => b[1] - a[1])[0][0],
-    plays: entry.plays,
-    youtube: entry.youtube,
-    songs: entry.songs
-  }))
-  .sort((a, b) => b.plays - a.plays || a.name.localeCompare(b.name))
-  .slice(0, 100)
-  .map((artist, index) => ({
-    rank: index + 1,
-    name: artist.name,
-    plays: artist.plays,
-    youtube: artist.youtube,
-    // Ranks of this artist's songs within the top 1,000.
-    top: topSongsBy.get(artist.key) ?? [],
-    art: songs.find((song) => artistKey(song.artist) === artist.key && song.art)?.art ?? null
-  }));
-
-// Compact rows keep the lazily loaded file small: songs are
-// [title, artist index, plays, youtube, art]; artists are named once.
-const names = [...new Set([...artists.map((artist) => artist.name), ...songs.map((song) => song.artist)])];
+// Compact rows keep the lazily loaded file small. Songs are
+// [title, artist, plays, youtube, art, minutes]; albums are
+// [id, title, artist, year, plays, minutes, [[track, plays, minutes], …]].
+const names = [...new Set([...albums.map((album) => album.artist), ...songs.map((song) => song.artist)])];
 const index = new Map(names.map((name, position) => [name, position]));
 const packet = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   asOf: ranking.generatedAt.slice(0, 10),
-  counts: "Spotify plays of at least 30 seconds plus identified YouTube song watches. Two ambient albums are excluded.",
+  counts: "Spotify plays of at least 30 seconds plus identified YouTube song watches. Two ambient albums are left out of the songs.",
+  hours: "Spotify playback time; YouTube records no durations.",
   names,
-  songs: songs.map((song) => [song.title, index.get(song.artist), song.plays, song.youtube, song.art]),
-  artists: artists.map((artist) => [index.get(artist.name), artist.plays, artist.youtube, artist.top, artist.art])
+  songs: songs.map((song) => [song.title, index.get(song.artist), song.plays, song.youtube, song.art, song.minutes]),
+  albums: albums.map((album) => [album.id, album.title, index.get(album.artist), album.year, album.plays, album.minutes, album.tracks.map((track) => [track.title, track.plays, track.minutes])])
 };
 
 writeFileSync(new URL("../public/music-ranking.json", import.meta.url), JSON.stringify(packet) + "\n");
 const covered = songs.filter((song) => song.art).length;
-console.log(`music-ranking: ${songs.length} songs (${covered} with sleeves), ${artists.length} artists, as of ${packet.asOf}`);
-console.log(`top artists: ${artists.slice(0, 8).map((artist) => `${artist.name} ${artist.plays}`).join(", ")}`);
+const empty = albums.filter((album) => !album.tracks.length);
+console.log(`music-ranking: ${songs.length} songs (${covered} with sleeves), ${albums.length} albums, as of ${packet.asOf}`);
+console.log(`albums without matched tracks: ${empty.length ? empty.map((album) => `${album.artist} — ${album.title}`).join("; ") : "none"}`);
+console.log(`top albums: ${albums.slice(0, 6).map((album) => `${album.title} ${album.plays} plays, ${Math.round(album.minutes / 60)} h, ${album.tracks.length} tracks`).join("; ")}`);

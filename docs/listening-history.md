@@ -47,7 +47,8 @@ IDs, timestamps, account identifiers, watch titles, source paths or raw exports.
 
 These are bounds on recorded observations across the delivered archives, not
 complete lifetime listening, completed songs/episodes or commercial streams.
-No listening time is published.
+Listening time is published only in the Music room's file (see below), as
+minutes of Spotify playback per song, album and album track.
 
 ## Presentation and refresh
 
@@ -121,9 +122,18 @@ excluded, and his two ambient sleep albums (Music For Psychedelic Therapy,
 bar Sit Around the Fire, and Discreet Music) left out.
 
 `node scripts/build-music-ranking.mjs --history-root PRIVATE_HISTORY_DIRECTORY`
-writes `public/music-ranking.json` with rank, title, artist, plays and the
-YouTube share only. Artists total every ranked song identity, not only the top
-1,000. Covers reuse the committed album sleeves where artist and album match.
-First and last listen dates, listening time, track URIs, account splits and
-source paths never leave the private history; `check:navigation` fails if the
-packet gains a field.
+writes `public/music-ranking.json` (schema 2): each of the 1,000 songs' title,
+artist, plays, YouTube share and minutes played, and the top 100 albums by the
+catalogue's plays, each with its minutes and the tracks Dan played from it
+(plays on that album and a share of the track's playback time in proportion).
+Dan asked for hours listened on 24 September 2026. Minutes are Spotify
+playback time, rounded; YouTube records no durations. Joint albums match
+tracks credited to either artist. A track is listed under an album only if
+most of its plays came from that album or at least 40% of them did, so a few
+stray plays filed under another release (For the First Time's songs under Ants
+From Up There) do not join its track list. The Music room sizes sleeves by
+these minutes; how it draws them is in the
+[navigation contract](navigation-animation-contract.md). Covers reuse the committed album sleeves
+where artist and album match. First and last listen dates, track URIs, raw
+events, account splits and source paths never leave the private history;
+`check:navigation` fails if the packet gains a field.

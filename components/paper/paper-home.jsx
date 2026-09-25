@@ -1,23 +1,33 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { Mark } from "./mark";
+import { Arrow } from "./arrow";
+import { Mascot } from "./mascot";
 import { NameFlip } from "./name-flip";
 import { THINGS } from "./things";
 import { Contact } from "./contact";
 import { FeaturesRoom } from "./features-room";
 import { WebsitesRoom } from "./websites-room";
-import { TasteLibrary } from "../taste-library";
-import { CareerTimeline } from "../career-bar";
+import { MusicRoom } from "./music-room";
+import { TrekRoom } from "./trek-room";
+import { CareerRail } from "./career-rail";
 
-// The trek is its own page (/trek/); the other four open in place.
+// The rooms stay mounted behind the front page; hovering and the mascot's
+// visits re-render the sheet, so the rooms only redraw when their props do.
+const Music = memo(MusicRoom);
+const Features = memo(FeaturesRoom);
+const Websites = memo(WebsitesRoom);
+const Career = memo(CareerRail);
+const Trek = memo(TrekRoom);
+
+// All five open in place; the trek's room frames its journey at /trek/.
 export const THINGS_ON_PAPER = [
-  { id: "taste", label: "taste", hint: "songs, albums, films, games" },
-  { id: "features", label: "features", hint: "a daily puzzle I made" },
+  { id: "music", label: "music", hint: "my taste archive" },
+  { id: "features", label: "features", hint: "untangle a neural net" },
   { id: "websites", label: "websites", hint: "sites I’ve built" },
   { id: "career", label: "career", hint: "how I got here" },
-  { id: "trek", label: "trek", hint: "Paris to Sofia, on foot", href: "/trek/" }
+  { id: "trek", label: "trek", hint: "my journey across Europe" }
 ];
 export const ROOMS = THINGS_ON_PAPER.filter((thing) => !thing.href);
 const IDS = ROOMS.map((room) => room.id);
@@ -31,9 +41,10 @@ const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
  * JavaScript `:target` opens the room instead. Each room is one history entry
  * carrying its hash, so Back returns to the five things.
  */
-export function PaperHome({ taste, websites }) {
+export function PaperHome({ music, websites }) {
   const [room, setRoom] = useState(null);
   const [hovered, setHovered] = useState(null);
+  const [visited, setVisited] = useState(null);
   const lastThing = useRef(null);
 
   const show = useCallback((next) => {
@@ -125,9 +136,9 @@ export function PaperHome({ taste, websites }) {
   return (
     <div className="paper">
       <header className="bar">
-        <a className="bar-home" href="#hello" onClick={home} aria-label="Akibwa — the five things">
-          <Mark size={34} />
-          <span className="bar-name">akibwa</span>
+        {/* In a room, a pencil arrow back to the five things. */}
+        <a className="bar-back" href="#hello" onClick={home} aria-label="Back to the five things">
+          <Arrow back size={26} />
         </a>
         <nav className="bar-rooms" aria-label="Rooms">
           {THINGS_ON_PAPER.map(({ id, label, href }) => (
@@ -142,6 +153,7 @@ export function PaperHome({ taste, websites }) {
             </a>
           ))}
         </nav>
+        {/* On the front page the contact links sit under the lede. */}
         <Contact />
       </header>
 
@@ -151,8 +163,10 @@ export function PaperHome({ taste, websites }) {
             <NameFlip />
           </h1>
           <p className="front-lede">Building in the age of AI.</p>
+          <Contact />
         </div>
         <Sky />
+        <Mascot onVisit={setVisited} />
         <div className="front-stage">
           <ul className="things" aria-label="Five things">
             {THINGS_ON_PAPER.map(({ id, label, hint, href }, index) => {
@@ -160,7 +174,7 @@ export function PaperHome({ taste, websites }) {
               return (
                 <li key={id} style={{ "--i": index, "--room": `var(--${id})` }}>
                   <a
-                    className="thing"
+                    className={`thing${visited === id ? " is-visited" : ""}`}
                     href={href ?? `#${id}`}
                     onClick={href ? undefined : follow(id)}
                     onPointerEnter={() => setHovered(id)}
@@ -169,7 +183,7 @@ export function PaperHome({ taste, websites }) {
                     onBlur={() => setHovered(null)}
                     style={{ viewTransitionName: room ? undefined : `thing-${id}` }}
                   >
-                    <Art solved={hovered === id} />
+                    <Art solved={hovered === id || visited === id} />
                     <span className="thing-label">{label}</span>
                     <span className="thing-hint">{hint}</span>
                   </a>
@@ -177,45 +191,37 @@ export function PaperHome({ taste, websites }) {
               );
             })}
           </ul>
-          <svg className="ground" viewBox="0 0 1000 24" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-            <path className="ground-line" d="M0 12C120 10 240 13 360 11.5S620 10 760 12.5 920 11 1000 12" pathLength="1" />
-            <path className="ground-grass" d="M40 12l3-6M44 12l-1-5M190 12l2-5M194 12l3-7M420 12l-2-6M424 12l2-5M612 12l3-6M616 12l-1-5M820 12l2-6M825 12l-2-5M960 12l3-5" />
-          </svg>
         </div>
       </section>
 
-      <Room id="taste" active={room === "taste"}>
-        <TasteLibrary {...taste} expanded />
+      <Room id="music">
+        <Music initial={music.initial} active={room === "music"} />
       </Room>
-      <Room id="features" active={room === "features"}>
-        <FeaturesRoom />
+      <Room id="features">
+        <Features />
       </Room>
-      <Room id="websites" active={room === "websites"}>
-        <WebsitesRoom sites={websites} />
+      <Room id="websites">
+        <Websites sites={websites} />
       </Room>
-      <Room id="career" active={room === "career"}>
-        <CareerTimeline />
+      <Room id="career">
+        <Career />
+      </Room>
+      <Room id="trek">
+        <Trek active={room === "trek"} />
       </Room>
     </div>
   );
 }
 
-function Room({ id, active, children }) {
-  const { label, hint } = ROOMS.find((room) => room.id === id);
-  const Art = THINGS[id];
+// A room has no title on the page: the bar already names it. Its heading
+// stays for readers and takes the focus when the room opens.
+function Room({ id, children }) {
+  const { label } = ROOMS.find((room) => room.id === id);
   return (
     <section className={`room room-${id}`} id={id} aria-labelledby={`room-${id}`} style={{ "--room": `var(--${id})` }}>
-      <header className="room-head">
-        <span className="room-art" style={{ viewTransitionName: active ? `thing-${id}` : undefined }}>
-          <Art solved />
-        </span>
-        <div>
-          <h2 id={`room-${id}`} tabIndex={-1}>
-            {label}
-          </h2>
-          <p className="room-hint">{hint}</p>
-        </div>
-      </header>
+      <h2 id={`room-${id}`} className="visually-hidden" tabIndex={-1}>
+        {label}
+      </h2>
       {children}
     </section>
   );

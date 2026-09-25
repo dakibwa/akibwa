@@ -1,11 +1,12 @@
 import { existsSync, readFileSync } from "node:fs";
-import { stackArtwork } from "../components/taste-layout.mjs";
 import { websites } from "../data/websites.mjs";
+import { unpackRanking } from "../components/paper/music-ranking.mjs";
+import { albumWeights, drawnOrder, layoutMap } from "../components/paper/music-map.mjs";
 
 /* Build-time contract for the paper homepage: one sheet with five things —
-   taste, features, websites, career and the trek — that open in place (the trek on
-   its own page). Named public choices do not relax the private-data and search
-   boundaries below. */
+   music, features, websites, career and the trek — that open in place (the
+   trek's room frames /trek/). Named public choices do not relax the
+   private-data and search boundaries below. */
 
 const read = (relativePath) =>
   readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
@@ -18,7 +19,7 @@ const redirects = read("public/_redirects");
 const home = read("components/paper/paper-home.jsx");
 const names = read("components/paper/name-flip.jsx");
 const contact = read("components/paper/contact.jsx");
-const taste = read("components/taste-library.jsx");
+const music = read("components/paper/music-room.jsx");
 const career = read("components/career-bar.jsx");
 const features = read("public/features/index.html");
 const trekTemplate = read("scripts/trek-journey-template.html");
@@ -59,7 +60,7 @@ requireText(index, "noimageindex: true", "the public index must opt out of image
 requireText(index, '"max-snippet": 120', "the public index must limit search snippets");
 requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-led");
 requireText(layout, 'classList.add("js")', "the layout must mark scripted pages before the first paint");
-requireText(layout, '["taste","features","websites","career"]', "the layout's room list must match the rooms that open in place");
+requireText(layout, '["music","features","websites","career","trek"]', "the layout's room list must match the rooms that open in place");
 
 // The approved introduction: Daniel ↔ Akibwa on the original timing.
 requireText(names, '"Daniel", "Akibwa"', "the name change must alternate Daniel and Akibwa");
@@ -74,16 +75,47 @@ requireRuleText('html[data-sky="night"] .sky-wheel {', ["animation: sky-dusk"]);
 requireRuleText('html[data-sky="day"] .sky-wheel {', ["animation: sky-dawn"]);
 requireRuleText("\nbody {", ["user-select: none"]);
 
-// Five things: four rooms and the trek's own page.
-for (const id of ["taste", "features", "websites", "career"]) {
+// Five things, five rooms; the trek's frames its journey (Dan, 25 September 2026).
+for (const id of ["music", "features", "websites", "career", "trek"]) {
   requireText(home, `id: "${id}"`, `the ${id} room must remain on the front page`);
   requireText(home, `<Room id="${id}"`, `the ${id} room must render`);
 }
-requireText(home, 'href: "/trek/"', "the trek must open its standalone journey");
-requireText(home, "<TasteLibrary", "the taste room must be the restored Taste Library");
-requireText(home, "<CareerTimeline", "the career room must be the restored career timeline");
-requireText(taste, '["songs", "Songs"', "the Taste Library must offer the top 1,000 songs");
-requireText(taste, '["artists", "Artists"', "the Taste Library must offer the top 100 artists");
+requireText(read("components/paper/trek-room.jsx"), ': "/trek/";', "the trek room must frame the journey");
+requireText(trekTemplate, 'classList.add("is-embedded")', "the framed trek must hide its own way home");
+requireText(home, "memo(MusicRoom)", "the music room must show the albums and songs mosaics");
+requireText(home, 'className="visually-hidden" tabIndex={-1}', "rooms have no title on the page, only a heading for readers");
+forbidText(home, "room-head", "rooms have no title on the page");
+forbidText(home, "bar-home", "the bar has no wordmark");
+requireText(home, "memo(CareerRail)", "the career room must be the railway of roles (Dan, 25 September 2026)");
+requireText(music, "aria-pressed={view === name}", "albums and songs must be one switch");
+requireText(music, "layoutMap(", "albums must be one gap-free map sized by hours");
+requireText(music, "layoutBands(", "songs must be gap-free bands sized by hours");
+requireText(music, "music-hours", "every sleeve must carry its hours listened");
+requireText(music, "<AlbumTracks", "an album must open its track list");
+requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-resolution rung");
+{
+  // The map itself, on the real albums: no holes or overlaps, the most
+  // listened first, and the two ambient records near Graceland (Dan, 25 September 2026).
+  const albums = unpackRanking(ranking).albums;
+  const weights = albumWeights(albums);
+  const order = drawnOrder(albums, weights);
+  const find = (title) => weights[albums.findIndex((album) => album.title === title)];
+  const graceland = find("Graceland");
+  if (find("Music for Psychedelic Therapy") !== Math.round(graceland * 1.1) || find("Discreet Music") !== Math.round(graceland * 0.9)) {
+    fail("Music for Psychedelic Therapy and Discreet Music must be drawn near Graceland's size");
+  }
+  if (order.slice(0, 3).map((entry) => entry.item.title).join("|") !== "Music for Psychedelic Therapy|Graceland|Discreet Music") {
+    fail("the map must start with the most listened");
+  }
+  for (const width of [343, 720, 1180]) {
+    const { height, tiles } = layoutMap(order.map((entry) => entry.weight), width, 36);
+    const covered = tiles.reduce((sum, tile) => sum + tile.w * tile.h, 0) / (width * height);
+    const overlap = tiles.some((a, i) => tiles.some((b, j) => j > i && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h));
+    if (overlap || covered < 0.85 || tiles.some((tile) => tile.x < 0 || tile.x + tile.w > width || tile.y + tile.h > height)) {
+      fail(`the albums map must fill ${width}px with no holes or overlaps`);
+    }
+  }
+}
 requireText(career, "export function CareerTimeline", "the career timeline must stay available to the room");
 for (const text of ['id="capabilities"', "What Akibwa does", "Make the mess legible"]) forbidText(home, text, "rejected capability content must not return");
 
@@ -102,27 +134,33 @@ if (JSON.stringify(websites.map((site) => site.id)) !== JSON.stringify(["portugu
 for (const site of websites) {
   if (!existsSync(new URL(`../public${site.src}`, import.meta.url))) fail(`${site.title} artwork is missing`);
   if (!site.alt || !site.description) fail(`${site.title} needs alt text and a description`);
-  if (site.capture?.review && site.href) fail(`${site.title} is in review and must not link yet`);
+  if (site.inReview && site.href) fail(`${site.title} is in review and must not link yet`);
+  if (site.capture) fail(`${site.title} must be an illustration, not a screenshot of the site`);
 }
 if (/atkinson/i.test(JSON.stringify(websites))) fail("the websites data must not name Dan in full");
-if (!websites.find((site) => site.id === "castle-bank").capture?.hide?.includes(".hero-team")) {
-  fail("Castle Bank's screenshot must hide its named founders");
-}
 
-// The public song ranking carries aggregates only.
-if (ranking.schemaVersion !== 1 || !/^\d{4}-\d{2}-\d{2}$/.test(ranking.asOf)) fail("the song ranking must be versioned and dated");
-if (ranking.songs.length !== 1000 || ranking.artists.length !== 100) fail("the ranking must hold 1,000 songs and 100 artists");
-for (const [title, artist, plays, youtube, art] of ranking.songs) {
+// The public music file carries aggregates only (Dan asked for hours listened
+// on 24 September 2026): no dates, URIs, accounts or raw events.
+if (ranking.schemaVersion !== 2 || !/^\d{4}-\d{2}-\d{2}$/.test(ranking.asOf)) fail("the music file must be versioned and dated");
+if (ranking.songs.length !== 1000 || ranking.albums.length !== 100) fail("the music file must hold 1,000 songs and 100 albums");
+const whole = (value) => Number.isSafeInteger(value) && value >= 0;
+for (const [title, artist, plays, youtube, art, minutes] of ranking.songs) {
   if (typeof title !== "string" || !Number.isInteger(artist) || !ranking.names[artist]) fail("every song needs a title and a named artist");
-  if (!Number.isSafeInteger(plays) || !Number.isSafeInteger(youtube) || youtube > plays) fail("song counts must be whole plays");
+  if (!whole(plays) || !whole(youtube) || youtube > plays || !whole(minutes)) fail("song counts must be whole plays and minutes");
   if (art !== null && !existsSync(new URL(`../public/album-art/${art}-wall.webp`, import.meta.url))) fail(`missing sleeve ${art}`);
 }
-// Only these fields, in fixed-length rows: no listening time, dates, URIs or accounts.
-if (JSON.stringify(Object.keys(ranking).sort()) !== JSON.stringify(["artists", "asOf", "counts", "names", "schemaVersion", "songs"])) fail("the public song ranking has unexpected fields");
-if (ranking.songs.some((row) => row.length !== 5) || ranking.artists.some((row) => row.length !== 5)) fail("ranking rows must keep their five public fields");
+for (const [id, title, artist, year, plays, minutes, tracks] of ranking.albums) {
+  if (!existsSync(new URL(`../public/album-art/${id}-wall.webp`, import.meta.url))) fail(`missing sleeve ${id}`);
+  if (typeof title !== "string" || !ranking.names[artist] || !(year === null || /^\d{4}$/.test(year))) fail("every album needs a title, artist and year or none");
+  if (!whole(plays) || !whole(minutes) || !Array.isArray(tracks) || !tracks.length) fail(`${title} needs plays, minutes and its tracks`);
+  if (tracks.some((track) => track.length !== 3 || typeof track[0] !== "string" || !whole(track[1]) || !whole(track[2]))) fail(`${title}'s tracks must be [title, plays, minutes]`);
+}
+// Only these fields, in fixed-length rows.
+if (JSON.stringify(Object.keys(ranking).sort()) !== JSON.stringify(["albums", "asOf", "counts", "hours", "names", "schemaVersion", "songs"])) fail("the public music file has unexpected fields");
+if (ranking.songs.some((row) => row.length !== 6) || ranking.albums.some((row) => row.length !== 7)) fail("music rows must keep their public fields");
 const rankingText = JSON.stringify(ranking);
 for (const [pattern, what] of [[/spotify:/i, "track URIs"], [/\d{4}-\d{2}-\d{2}T\d/, "timestamps"]]) {
-  if (pattern.test(rankingText)) fail(`the public song ranking must not include ${what}`);
+  if (pattern.test(rankingText)) fail(`the public music file must not include ${what}`);
 }
 
 // Retired pages are deleted, not hidden. The site is one page; old links 301
@@ -134,27 +172,8 @@ for (const route of ["albums", "projects", "personal", "about", "contact", "offe
 requireText(redirects, "\n/portugal https://portuguesewithines.com/ 301\n", "the Portuguese short link must keep reaching Inês's site");
 requireText(sitemap, 'const routes = [{ path: "/", priority: 1 }]', "only the Akibwa index belongs in the sitemap");
 
-// The restored Taste wall and career lane keep their original mechanics.
-requireRuleText(".personal-taste-rail {", ["grid-auto-flow: column", "overflow-x: auto"]);
+// The restored career lane keeps its original mechanics.
 requireRuleText(".concept-career-section {", ["transition: padding-bottom 340ms", "--career-open-space: clamp(24px, 3vw, 36px)"]);
-for (const height of [104, 132, 198]) for (const availableHeight of [330, 480, 640]) {
-  const columns = stackArtwork(Array(50).fill(height), { availableHeight, visibleColumns: 9 });
-  if (columns.some(column => column.height > availableHeight)) fail("ranked Taste covers must fit the available shelf height");
-  if (columns.length <= 9) fail("long Taste shelves must extend sideways beyond the available width");
-  if (new Set(columns.slice(0, -1).map(column => column.height)).size !== 1) fail("complete equal-sized columns must finish flush");
-}
-for (const [size, height] of [[26,198], [28,176], [25,132]]) {
-  const columns = stackArtwork(Array(size).fill(height), { availableHeight: 600, visibleColumns: 9 });
-  if (columns.length <= 9 || columns.some(column => column.indices.length >= 4)) fail("shorter TV, game and podcast shelves must spread across the width instead of making four-high stacks");
-}
-const captionColumns = stackArtwork(Array.from({length: 26}, (_, index) => 198 + (index % 3) * 24), { availableHeight: 460, visibleColumns: 3 });
-if (captionColumns.some(column => column.height > 460)) fail("visible phone captions count towards the shelf height");
-if (stackArtwork([198,198,198], {visibleColumns:9}).length !== 3) fail("short search results must stay in one row");
-for (const size of [1, 3, 48, 50, 84]) for (const captions of [false, true]) {
-  const columns = stackArtwork(Array.from({ length: size }, (_, index) => 132 + (captions ? index % 3 * 16 : 0)));
-  const readingOrder = Array.from({ length: Math.max(...columns.map(column => column.indices.length)) }, (_, row) => columns.flatMap(column => column.indices[row] === undefined ? [] : [column.indices[row]])).flat();
-  if (readingOrder.length !== size || readingOrder.some((index, position) => index !== position)) fail("Taste ranking must read left to right across rows, including captions and loaded records");
-}
 
 if (existsSync(new URL("../public/life-map/index.html", import.meta.url))) {
   fail("the detailed Life in Maps page must not ship");

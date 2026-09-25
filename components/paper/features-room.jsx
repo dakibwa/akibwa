@@ -2,26 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Arrow } from "./arrow";
-import { FEATURE_SHAPES, crossingPoints, ringEdges, threadPath } from "./feature-shapes.mjs";
+import { FEATURE_SHAPES, crossingPoints, edgesOf, threadPath } from "./feature-shapes.mjs";
 
 /*
  * A small taste of Features: a ring of neurons to untangle on the page. Drag
  * the dots (or focus one and use the arrow keys) until no threads cross; the
  * dots then settle onto the shape they were all along, the threads bend into
- * its outline and it colours in — a heart first, then a house and a leaf.
- * Each is dealt as a star, as the heart on the front page is.
+ * its outline and its silhouette inks in — the front page's house first, dealt
+ * as the same star, then a star, a heart and a leaf.
  */
-const STARS = {
-  heart: [[67.4, 76.7], [16.6, 39.8], [79.4, 39.8], [28.6, 76.7], [48, 17]],
-  house: [[48, 17], [28.6, 76.7], [79.4, 39.8], [16.6, 39.8], [67.4, 76.7]],
-  leaf: [[18, 48], [48, 78], [48, 18], [78, 48]]
-};
-
 const BOARD = 100;
 const INSET = 2;
 const toBoard = ([x, y]) => [INSET + x * ((BOARD - 2 * INSET) / 96), INSET + y * ((BOARD - 2 * INSET) / 96)];
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
-const dealt = (shape) => STARS[shape.id].map(toBoard);
+const dealt = (shape) => shape.tangle.map(toBoard);
 
 function crosses([a, b], [c, d]) {
   const turn = (p, q, r) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
@@ -45,7 +39,7 @@ function crossings(nodes, edges) {
 export function FeaturesRoom() {
   const [which, setWhich] = useState(0);
   const shape = FEATURE_SHAPES[which];
-  const edges = ringEdges(shape.nodes.length);
+  const edges = edgesOf(shape);
   const [nodes, setNodes] = useState(() => dealt(FEATURE_SHAPES[0]));
   const [bend, setBend] = useState(0);
   const [solved, setSolved] = useState(false);

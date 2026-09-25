@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { unpackRanking } from "./paper/music-ranking.mjs";
 
 /*
- * The top 1,000 songs and top 100 artists (public/music-ranking.json). The page
- * prints a seed — the first songs and every artist — so the wall and the first
- * screen of each shelf need no request; the full list loads once, on demand.
+ * The top 1,000 songs and top 100 albums (public/music-ranking.json). The page
+ * prints a seed — every album without its tracks and the first songs — so the
+ * room draws at once; the full file loads once, when the room opens.
  */
 export function useMusicRanking(seed, enabled) {
   const [ranking, setRanking] = useState(seed);
@@ -26,7 +26,7 @@ export function useMusicRanking(seed, enabled) {
         if (cancelled) return;
         const full = unpackRanking(packet);
         loaded.current = true;
-        setRanking({ songs: full.songs, artists: full.artists });
+        setRanking({ asOf: full.asOf, songs: full.songs, albums: full.albums });
         setLoading(false);
       })
       .catch(() => {

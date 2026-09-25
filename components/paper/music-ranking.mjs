@@ -1,22 +1,27 @@
-// The compact public ranking (public/music-ranking.json) as plain records.
+// The compact public music file (public/music-ranking.json) as plain records:
+// the top 1,000 songs and the top 100 albums, each album with the tracks Dan
+// played from it, most played first. Minutes are Spotify playback time.
 export function unpackRanking(packet) {
-  const songs = packet.songs.map(([title, artist, plays, youtube, art], index) => ({
+  const songs = packet.songs.map(([title, artist, plays, youtube, art, minutes], index) => ({
     rank: index + 1,
     title,
     artist: packet.names[artist],
     plays,
     youtube,
-    art
+    art,
+    minutes
   }));
-  const artists = packet.artists.map(([name, plays, youtube, top, art], index) => ({
+  const albums = (packet.albums ?? []).map(([id, title, artist, year, plays, minutes, tracks], index) => ({
     rank: index + 1,
-    name: packet.names[name],
+    id,
+    title,
+    artist: packet.names[artist],
+    year,
     plays,
-    youtube,
-    top,
-    art
+    minutes,
+    tracks: tracks?.map(([name, trackPlays, trackMinutes]) => ({ title: name, plays: trackPlays, minutes: trackMinutes })) ?? null
   }));
-  return { asOf: packet.asOf, counts: packet.counts, songs, artists };
+  return { asOf: packet.asOf, counts: packet.counts, hours: packet.hours, songs, albums };
 }
 
 // Case- and accent-insensitive words, for search.

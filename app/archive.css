@@ -1,9 +1,8 @@
 /* =========================================================================
-   The Taste Library and Career timeline, restored from the previous homepage
-   (app/globals.css at f0f12628) with their mechanics intact: the stacked
-   cover wall, the flush detail that unfolds beside a cover, the search, the
-   career node line and its statement lane. Only the paper theme below this
-   block is new. Variables are scoped to the rooms that hold them.
+   The Career timeline and project cards, restored from the previous homepage
+   (app/globals.css at f0f12628) with their mechanics intact: the career node
+   line and its statement lane, and the project cards. Only the paper theme
+   below this block is new. Variables are scoped to the rooms that hold them.
    ========================================================================= */
 
 .room {
@@ -21,106 +20,7 @@
   --concept-rule-gap: 0px;
 }
 
-.rail-word {
-  --index-accent-rgb: 61, 90, 128;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 58%, var(--black));
-  cursor: pointer;
-  font-family: var(--sans);
-  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
-  font-weight: 540;
-  letter-spacing: -0.012em;
-  transition: color 160ms ease, opacity 460ms var(--ease-out);
-}
-
-.rail-word:hover,
-.rail-word:focus-visible {
-  color: color-mix(in srgb, rgb(var(--index-accent-rgb)) 84%, var(--black));
-  outline: 0;
-}
-
-.deck-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.28em 0.78em;
-  margin: 0;
-}
-
-.deck-legend .rail-word {
-  display: block;
-  margin: 0;
-  padding: 0;
-  font-size: clamp(0.86rem, 1.15vw, 1.08rem);
-  line-height: 1.2;
-  vertical-align: baseline;
-}
-
-.concept-archive {
-  --taste-rest-space: 0px;
-  --taste-open-space: 96px;
-  padding-bottom: var(--taste-rest-space);
-  transition: padding-bottom 340ms var(--ease-out);
-}
-
-.concept-archive-head h2 {
-  margin: 0;
-  color: var(--black);
-  letter-spacing: -0.045em;
-}
-
-.concept-archive-head > p:last-child {
-  color: color-mix(in srgb, var(--ink) 72%, var(--canvas));
-  line-height: 1.55;
-}
-
-.concept-archive {
-  position: relative;
-  padding-top: var(--concept-rule-gap);
-}
-
-.concept-archive-head {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.45fr);
-  gap: 0 44px;
-  align-items: end;
-}
-
-.concept-archive-head h2 {
-  max-width: 10ch;
-  margin-top: 0.42em;
-  font-family: var(--serif);
-  font-size: clamp(2.6rem, 5.4vw, 5.8rem);
-  font-weight: 500;
-  line-height: 0.91;
-}
-
-.concept-archive-head > p:last-child {
-  max-width: 49ch;
-  margin: 0 0 0.2em;
-  font-size: clamp(0.92rem, 1.16vw, 1.08rem);
-}
-
-@media (max-width: 560px) {
-  .concept-archive {
-    padding-top: var(--concept-rule-gap);
-  }
-  .concept-archive-head {
-    grid-template-columns: 1fr;
-  }
-  .concept-archive-head h2 {
-    font-size: 3.15rem;
-  }
-  .concept-archive-head > p:last-child {
-    margin-top: 1.2em;
-  }
-}
-
-.concept-projects-head h2,
-.concept-taste-head .concept-archive-head h2 {
+.concept-projects-head h2 {
   margin: 0;
   max-width: none;
   color: var(--black);
@@ -131,100 +31,16 @@
   letter-spacing: -0.055em;
 }
 
-.concept-taste-head {
-  display: block;
-}
-
-.concept-taste-head .concept-archive-head {
-  display: block;
-}
-
-.concept-archive {
-  border-top-color: var(--concept-archive);
-}
-
 @media (max-width: 560px) {
-  .concept-projects-head h2,
-  .concept-taste-head .concept-archive-head h2 {
+  .concept-projects-head h2 {
     font-size: 2.65rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .concept-projects,
-  .concept-archive {
+  .concept-projects {
     transition: none;
   }
-}
-
-.personal-taste-card {border:0;background:none;padding:0;margin:0;text-align:left;min-width:0;color:var(--ink);font:inherit;cursor:default;display:flex;flex-direction:column;align-items:stretch}
-
-.personal-taste-art {display:block;aspect-ratio:1;overflow:hidden;background:#dedcd3;margin-bottom:12px}
-
-.personal-taste-art { position: relative; }
-
-.listening-hover { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px 8px; background: linear-gradient(transparent 0%, #101518d9 45%, #101518f5 100%); color: #fff; opacity: 0; visibility: hidden; transition: opacity 140ms ease, visibility 140ms ease; pointer-events: none; text-align: left; }
-
-.listening-hover > strong { font: 650 clamp(1.25rem, 1.8vw, 1.65rem)/1.05 var(--sans); letter-spacing: -.04em; }
-
-.listening-hover > span { font: 500 .66rem/1.4 var(--sans); margin-top: 3px; }
-
-.listening-hover > small { font: 400 .56rem/1.3 var(--sans); color: #ffffffc9; margin-top: 5px; }
-
-:is(.personal-taste-card, .album-browser-card):is(:hover, :focus-visible):not([data-count-dismissed="true"]) .listening-hover { opacity: 1; visibility: visible; }
-
-.taste-load-more { min-height: 104px; border: 1px solid var(--line); background: none; color: var(--ink); font: 500 .75rem/1.5 var(--sans); cursor: pointer; padding: 12px; }
-
-.taste-load-more span { display: block; margin-top: 8px; }
-
-.podcast-type-cover { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 10%; color: #432938; background: #e5d3dc; text-align: left; overflow: hidden; }
-
-.podcast-type-cover > small { font: 600 .48em/1 var(--sans); text-transform: uppercase; letter-spacing: .12em; }
-
-.podcast-type-cover > strong { font: 550 .95em/1.08 var(--serif); letter-spacing: -.03em; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow-wrap: anywhere; }
-
-.podcast-type-cover > span { font-size: .8em; line-height: 1; }
-
-.podcast-type-cover-1 { background: #d5dfd3; color: #294234; }
-
-.podcast-type-cover-2 { background: #efdfc9; color: #543b22; }
-
-.podcast-type-cover-3 { background: #d9dce8; color: #30344d; }
-
-.podcast-type-cover-4 { background: #e4d3cd; color: #51342e; }
-
-.podcast-type-cover-5 { background: #d3e0e2; color: #234347; }
-
-@media(hover:none) {
-  .listening-hover { inset: auto 0 0; opacity: 1; visibility: visible; padding: 18px 7px 7px; }
-  .listening-hover > strong { font-size: 1.05rem; }
-  .listening-hover > small { display: none; }
-}
-
-@media(prefers-reduced-motion:reduce) {
-  .listening-hover { transition: none; }
-}
-
-.personal-taste-art picture {display:block;width:100%;height:100%}
-
-.personal-taste-art img {width:100%;height:100%;object-fit:cover;display:block;transition:transform 180ms ease,opacity 420ms var(--ease-out)}
-
-.fade-covers .personal-taste-art img:not([data-shown]) {opacity:0}
-
-.personal-taste-card:focus-visible {outline:2px solid var(--ink);outline-offset:5px}
-
-.taste-load-status {font-size:.75rem;line-height:1.5;color:var(--muted);margin:14px 0 0}
-
-.taste-load-status button {font:inherit;border:0;background:none;color:var(--ink);padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-
-.personal-taste-title {font-size:.86rem;font-weight:650;line-height:1.3;overflow-wrap:anywhere}
-
-.personal-taste-creator {font-size:.77rem;line-height:1.4;margin-top:4px;color:var(--muted)}
-
-:is(.personal-career,.personal-taste) :is(button,a,input,select,summary):focus-visible {outline:2px solid #2f88ff;outline-offset:4px}
-
-@media(prefers-reduced-motion:reduce) {
-  .personal-taste-art img {transition:none!important;transform:none!important}
 }
 
 .concept-career-head {
@@ -248,8 +64,7 @@
 .concept-career-year { padding-top: 9px; color: var(--muted); font: 450 clamp(.55rem, .8vw, .69rem)/1.3 var(--sans); letter-spacing: -.015em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 .concept-projects-head h2,
-.concept-career-head h2,
-.concept-taste-head .concept-archive-head h2 {
+.concept-career-head h2 {
   margin: 0;
   max-width: none;
   color: var(--black);
@@ -431,132 +246,6 @@
 
 .concept-career-statement strong { color: var(--black); font: inherit; font-weight: 700; letter-spacing: inherit; }
 
-.personal-taste { padding-bottom: clamp(40px, 5vw, 70px); }
-
-.concept-taste-head { position: relative; display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 14px; }
-
-.concept-taste-head .concept-archive-head { display: block; }
-
-.concept-taste-head .concept-archive-head h2 { white-space: nowrap; }
-
-.taste-tools { display: flex; align-items: center; gap: 18px; margin-left: auto; max-width: 100%; }
-
-.taste-search { position: relative; flex-shrink: 0; width: 70px; height: 38px; overflow: clip; transition: width 360ms var(--ease-out); }
-
-.taste-search.is-open { width: clamp(180px, 19vw, 240px); }
-
-.taste-search-toggle { position: absolute; inset: 0; display: flex; align-items: center; gap: 7px; min-height: 36px; border: 0; padding: 0; background: none; color: var(--muted); font: 500 .73rem/1.4 var(--sans); cursor: pointer; opacity: 1; visibility: visible; transition: opacity 160ms ease 140ms, visibility 0s; }
-
-.taste-search.is-open .taste-search-toggle { opacity: 0; visibility: hidden; transition: opacity 120ms ease, visibility 0s linear 120ms; }
-
-.taste-search-toggle:hover { color: var(--ink); }
-
-.taste-search-field { position: absolute; inset: 0 0 1px; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; border-bottom: 1px solid var(--line-strong); color: var(--muted); opacity: 0; visibility: hidden; transform: translateX(6px); transition: opacity 150ms ease, transform 240ms var(--ease-out), visibility 0s linear 240ms; }
-
-.taste-search.is-open .taste-search-field { opacity: 1; visibility: visible; transform: translateX(0); transition: opacity 220ms ease 80ms, transform 320ms var(--ease-out), visibility 0s; }
-
-.taste-search-field::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: var(--concept-archive); content: ""; transform: scaleX(0); transform-origin: left; transition: transform 300ms var(--ease-out); }
-
-.taste-search-field:focus-within::after { transform: scaleX(1); }
-
-.taste-search-field > svg { flex-shrink: 0; }
-
-.taste-search-field input { width: 100%; min-width: 0; border: 0; padding: 7px 0; background: transparent; color: var(--ink); font: 400 .8rem/1.4 var(--sans); border-radius: 0; }
-
-.taste-search-field input::-webkit-search-cancel-button { display: none; }
-
-.taste-search-field button { display: grid; place-items: center; min-width: 30px; height: 36px; padding: 0; border: 0; background: none; color: var(--muted); cursor: pointer; }
-
-.personal-taste .taste-search :is(input, button):focus-visible { outline: none; }
-
-.taste-search-toggle:focus-visible { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; }
-
-.taste-search-field button:focus-visible { color: var(--ink); background: color-mix(in srgb, var(--ink) 7%, transparent); border-radius: 3px; }
-
-.taste-search-status { margin: 0 0 12px; color: var(--muted); font: 400 .72rem/1.4 var(--sans); }
-
-.taste-search-status button { border: 0; padding: 0; background: none; color: var(--ink); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-
-.taste-filters { gap: 4px clamp(16px, 2vw, 28px); margin: 0 0 14px; }
-
-.taste-filters .rail-word { padding: 10px 0; min-height: 44px; font-size: clamp(.9rem, 1.15vw, 1.08rem); }
-
-.taste-filters .rail-word[aria-pressed="true"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 7px; }
-
-.taste-wall-stage { position: relative; overflow-anchor: none; }
-
-.personal-taste-rail { --taste-card-width: clamp(104px, 9.2vw, 136px); --taste-wall-gap: clamp(9px, .85vw, 13px); --taste-detail-width: clamp(160px, 13vw, 192px); --taste-push: var(--taste-detail-width); position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: var(--taste-card-width); gap: var(--taste-wall-gap); align-items: start; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-color: #83ad99 transparent; scrollbar-width: thin; padding: 6px 2px 18px; }
-
-.taste-wall-column { display: flex; flex-direction: column; gap: var(--taste-wall-gap); scroll-snap-align: start; }
-
-.personal-taste-card, .taste-load-more { translate: calc(var(--taste-shift, 0) * var(--taste-push)) 0; transition: translate 420ms var(--ease-out), opacity 240ms ease; }
-
-.personal-taste-card[data-receded] { opacity: .24; }
-
-.taste-wall-column.has-detail { z-index: 2; }
-
-.personal-taste-rail[data-detail="float"] .personal-taste-detail-shell { pointer-events: none; }
-
-.personal-taste.is-open .personal-taste-rail { scroll-snap-type: none; }
-
-.personal-taste-card { position: relative; }
-
-.personal-taste-art { border-radius: 4px; border: 1px solid #20201e20; margin-bottom: 0; }
-
-.personal-taste-art img { filter: none; }
-
-.personal-taste-card:is([data-kind="films"], [data-kind="tv"]) .personal-taste-art { aspect-ratio: 2 / 3; }
-
-.personal-taste-card[data-kind="games"] .personal-taste-art { aspect-ratio: 3 / 4; }
-
-.personal-taste-caption { display: none; }
-
-.personal-taste-detail-shell { position: absolute; top: 0; left: 100%; display: flex; width: var(--taste-detail-width); min-height: 100%; visibility: hidden; clip-path: inset(0 100% 0 0); transition: clip-path 420ms var(--ease-out), visibility 0s linear 420ms; }
-
-.personal-taste-card[data-detail-side="left"] .personal-taste-detail-shell:not(.is-open) { clip-path: inset(0 0 0 100%); }
-
-.personal-taste-card[data-detail-side="left"] .personal-taste-detail-shell { right: 100%; left: auto; }
-
-.personal-taste-card[data-detail-side="left"] .personal-taste-detail { border-width: 1px 0 1px 1px; border-radius: 4px 0 0 4px; box-shadow: inset -3px 0 0 var(--hover-detail-accent); }
-
-.personal-taste-art { transition: border-radius 180ms ease; }
-
-.personal-taste-card[data-detail-open="true"][data-detail-side="right"] .personal-taste-art { border-top-right-radius: 0; border-bottom-right-radius: 0; }
-
-.personal-taste-card[data-detail-open="true"][data-detail-side="left"] .personal-taste-art { border-top-left-radius: 0; border-bottom-left-radius: 0; }
-
-.personal-taste-card[data-stack-end="true"] .personal-taste-detail-shell { top: auto; bottom: 0; }
-
-.personal-taste-card .personal-taste-detail-shell.is-open { visibility: visible; clip-path: inset(0); transition: clip-path 420ms var(--ease-out), visibility 0s; }
-
-.personal-taste-detail { display: flex; flex: 1; border: solid color-mix(in srgb, var(--hover-detail-accent) 44%, var(--line-strong)); border-width: 1px 1px 1px 0; border-radius: 0 4px 4px 0; background: color-mix(in srgb, var(--white) 94%, var(--canvas)); box-shadow: inset 3px 0 0 var(--hover-detail-accent); overflow-wrap: anywhere; }
-
-.taste-detail-copy { display: flex; flex: 1; flex-direction: column; gap: 5px; padding: 12px 13px 12px 15px; opacity: 0; transition: opacity 140ms ease; }
-
-.personal-taste-detail-shell.is-open .taste-detail-copy { opacity: 1; transition: opacity 200ms ease 30ms; }
-
-.taste-detail-copy > strong { color: var(--black); font-size: .84rem; font-weight: 690; line-height: 1.22; letter-spacing: -.015em; }
-
-.taste-detail-copy > span { color: var(--muted); font-size: .72rem; line-height: 1.35; }
-
-.personal-taste-title { font-size: .76rem; line-height: 1.35; }
-
-.personal-taste-creator { font-size: .68rem; line-height: 1.4; }
-
-.personal-taste-mobile-count { margin-top: 6px; color: var(--muted); font: 500 .65rem/1.4 var(--sans); }
-
-.personal-taste-detail-count { margin: auto 0 0; padding-top: 8px; color: color-mix(in srgb, var(--ink) 78%, var(--canvas)); font: 400 .76rem/1.3 var(--serif); }
-
-.personal-taste-detail-count strong { display: block; color: var(--black); font-size: 1.28rem; font-weight: 700; line-height: 1.05; letter-spacing: -.02em; }
-
-.personal-taste-detail-kind { margin: auto 0 0; padding-top: 8px; color: color-mix(in srgb, var(--hover-detail-accent) 72%, var(--ink)); font: 650 .62rem/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
-
-@media (hover: none) {
-  .personal-taste-art { margin-bottom: 9px; }
-  .personal-taste-caption { display: flex; flex-direction: column; }
-  .personal-taste-detail-shell { display: none; }
-}
-
 @media (max-width: 800px) and (orientation: portrait), (max-width: 560px) {
   .concept-career-section { --career-rest-space: 60px; }
   .career-detail-track { width: min(260px, 100%); }
@@ -570,28 +259,22 @@
   .career-detail { padding: 11px 12px; }
   .concept-career-statement { margin-top: 6px; font-size: .72rem; line-height: 1.34; }
   .concept-career-head h2 { font-size: 2.65rem; }
-  .concept-taste-head .concept-archive-head h2 { font-size: clamp(2rem, 10.6vw, 2.65rem); }
+  
   .concept-career-head { padding-bottom: 14px; }
-  .concept-taste-head { min-height: 48px; gap: 8px; padding-bottom: 8px; }
-  .concept-taste-head .concept-archive-head { transition: opacity 180ms ease 100ms, transform 300ms var(--ease-out); }
-  .taste-tools { position: absolute; inset: 0 0 auto; height: 40px; justify-content: flex-end; gap: 6px; pointer-events: none; }
-  .taste-tools > * { pointer-events: auto; }
-  .taste-search { width: 32px; }
-  .taste-search.is-open { width: 100%; }
-  .taste-tools:has(.rail-controls:not([hidden])) .taste-search.is-open { width: calc(100% - 89px); }
-  .taste-search-toggle { width: 32px; justify-content: center; }
-  .taste-search-toggle > span { display: none; }
-  .concept-taste-head.is-searching .concept-archive-head { opacity: 0; transform: translateX(-6px); pointer-events: none; transition-delay: 0s; }
-  .taste-search-field input { font-size: 16px; }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   .rail-controls button { width: 40px; height: 40px; }
-  .taste-filters { gap: 0 17px; }
-  .taste-filters .rail-word { font-size: .85rem; }
-}
-
-@media (max-width: 359px) {
-  .concept-taste-head .concept-archive-head h2 { font-size: 2rem; }
-  .taste-tools { gap: 4px; }
-  .taste-tools:has(.rail-controls:not([hidden])) .taste-search.is-open { width: calc(100% - 87px); }
+  
+  
 }
 
 .career-spotlight { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr)); gap: clamp(10px, 1.2vw, 16px); margin: 0; padding: 4px 0 0; list-style: none; }
@@ -620,25 +303,17 @@
 
 .career-spotlight-role .concept-career-statement { grid-column: 1 / -1; margin: 0; font-size: .86rem; line-height: 1.45; }
 
-.personal-taste.is-expanded .personal-taste-rail { --taste-card-width: clamp(112px, 10.5vw, 168px); justify-content: space-between; overflow-x: clip; overflow-clip-margin: 8px; scroll-snap-type: none; }
-
-.personal-taste.is-expanded .taste-load-more { display: block; width: 100%; min-height: 0; margin-top: 10px; translate: none; }
-
-.personal-taste.is-expanded .taste-load-more span { display: inline; margin: 0 0 0 6px; }
-
 @media (prefers-reduced-motion: reduce) {
-  .personal-taste-detail-shell, .personal-taste-card .personal-taste-detail-shell.is-open, .personal-taste-detail, .personal-taste-card, .taste-load-more, .personal-taste-art, .taste-detail-copy, .personal-taste-detail-shell.is-open .taste-detail-copy { transition: none; }
-  .taste-search, .taste-search *, .taste-search-field::after, .concept-taste-head .concept-archive-head { transition: none !important; }
+  
+  
   .concept-career-logo, .concept-career-year, .career-spotlight-role, .career-spotlight-mark, .career-spotlight-title strong { transition: none; }
   .concept-career-stop[aria-expanded="true"] :is(.concept-career-logo, .concept-career-node), .career-spotlight-role:hover, .career-spotlight-role:hover .career-spotlight-mark { translate: none; scale: none; }
-  .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .career-detail-track, .career-detail, .career-detail[data-active="true"], .personal-taste, .personal-taste.is-open { transition: none; }
+  .concept-career-section, .concept-career-section.is-open, .concept-career-node, .concept-career-card, .career-detail-track, .career-detail, .career-detail[data-active="true"] { transition: none; }
 }
 
 .concept-career-statement,
 .concept-project-aside > span,
-.concept-project-copy,
-.personal-taste-title,
-.personal-taste-creator {
+.concept-project-copy {
   text-wrap: pretty;
 }
 
@@ -858,8 +533,7 @@
   }
 }
 
-.concept-projects-head h2,
-.concept-taste-head .concept-archive-head h2 {
+.concept-projects-head h2 {
   margin: 0;
   max-width: none;
   color: var(--black);
@@ -898,15 +572,13 @@
 }
 
 @media (max-width: 560px) {
-  .concept-projects-head h2,
-  .concept-taste-head .concept-archive-head h2 {
+  .concept-projects-head h2 {
     font-size: 2.65rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .concept-projects,
-  .concept-archive {
+  .concept-projects {
     transition: none;
   }
 }
@@ -916,8 +588,7 @@
 .concept-project-card { padding: 0; width: 100%; }
 
 .concept-projects-head h2,
-.concept-career-head h2,
-.concept-taste-head .concept-archive-head h2 {
+.concept-career-head h2 {
   margin: 0;
   max-width: none;
   color: var(--black);
@@ -926,10 +597,6 @@
   font-weight: 500;
   line-height: 0.92;
   letter-spacing: -0.055em;
-}
-
-@media (orientation: landscape) and (min-width: 561px) {
-  .concept-page :is(.concept-projects-head h2, .concept-career-head h2, .concept-taste-head .concept-archive-head h2) { font-size: clamp(2.2rem, 5vw, 5.2rem); }
 }
 
 @media (max-width: 1050px) and (orientation: portrait), (max-width: 560px) {
@@ -943,16 +610,13 @@
 
 .concept-career-statement,
 .concept-project-aside > span,
-.concept-project-copy,
-.personal-taste-title,
-.personal-taste-creator {
+.concept-project-copy {
   text-wrap: pretty;
 }
 
 /* ------------------------------------------------------------ paper theme -- */
 
 /* The room already carries the heading; the originals stay for their labels. */
-.room .concept-taste-head .concept-archive-head,
 .room .concept-career-head h2 {
   position: absolute;
   width: 1px;
@@ -967,106 +631,15 @@
   padding-bottom: 8px;
 }
 
-.room .concept-career-section,
-.room .personal-taste {
+.room .concept-career-section {
   padding-top: 0;
 }
 
-.room .concept-taste-head {
-  min-height: 48px;
-}
-
 /* Filters: the coloured words keep their colours and gain the pencil rule. */
-.room .taste-filters .rail-word {
-  position: relative;
-  font-family: var(--serif);
-  font-size: clamp(1.02rem, 1.4vw, 1.3rem);
-  font-weight: 560;
-}
-
-.room .taste-filters .rail-word[aria-pressed="true"] {
-  text-decoration: none;
-}
-
-.room .taste-filters .rail-word::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
-  height: 7px;
-  background: rgb(var(--index-accent-rgb));
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.2C22 3 44 6.4 64 4.2S88 3.4 98 4.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.2C22 3 44 6.4 64 4.2S88 3.4 98 4.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 320ms var(--ease-out);
-}
-
-.room .taste-filters .rail-word:hover::after,
-.room .taste-filters .rail-word:focus-visible::after,
-.room .taste-filters .rail-word[aria-pressed="true"]::after {
-  clip-path: inset(0 0 0 0);
-}
 
 /* Covers sit on the paper like cut-out cards. */
-.room .personal-taste-art {
-  border: 0;
-  border-radius: 3px;
-  box-shadow: 0 1px 0 rgb(42 36 32 / 0.08), 0 10px 18px -12px rgb(42 36 32 / 0.55);
-  background: var(--paper-deep);
-}
-
-.room .personal-taste-card:focus-visible {
-  outline: 2px dashed var(--ink);
-  outline-offset: 5px;
-}
 
 /* The unfolded detail is a slip of paper with an ink edge. */
-.room .personal-taste-detail {
-  border: 1.5px solid var(--ink);
-  border-left-width: 0;
-  background: var(--paper-light);
-  box-shadow: inset 4px 0 0 var(--hover-detail-accent), 0 2px 0 var(--ink);
-}
-
-.room .personal-taste-card[data-detail-side="left"] .personal-taste-detail {
-  border-width: 1.5px 0 1.5px 1.5px;
-  box-shadow: inset -4px 0 0 var(--hover-detail-accent), 0 2px 0 var(--ink);
-}
-
-.room .taste-detail-copy > strong {
-  font-family: var(--serif);
-  font-size: 0.98rem;
-  font-weight: 620;
-  line-height: 1.18;
-}
-
-.room .personal-taste-detail-count {
-  font-family: var(--serif);
-  font-style: italic;
-}
-
-.room .personal-taste-detail-count strong {
-  font-family: var(--sans);
-  font-style: normal;
-}
-
-.room .taste-search-field::after {
-  background: var(--ink);
-}
-
-.room .taste-load-more {
-  border: 1.5px solid var(--ink);
-  border-radius: 10px;
-  background: var(--paper-light);
-  box-shadow: 0 2px 0 var(--ink);
-  font-family: var(--sans);
-  font-weight: 650;
-}
-
-.room .podcast-type-cover > strong {
-  font-family: var(--serif);
-}
 
 /* Websites: the project cards as paper, two to a row. */
 .room .concept-projects-head h2 {
@@ -1110,13 +683,17 @@
   box-shadow: 0 3px 0 var(--ink);
 }
 
-/* A site not yet public sits still: nothing to follow. */
+/* Every card sits still on hover, as the unlinked one always did (Dan,
+   25 September 2026); only its caption tints. A site not yet public has
+   nothing to follow. */
 .room .concept-project-card.is-unlinked {
   cursor: default;
 }
 
-.room .concept-project-stop:hover .concept-project-card.is-unlinked,
-.room .concept-project-stop:hover .concept-project-card.is-unlinked img {
+.room .concept-project-stop:hover .concept-project-card,
+.room .concept-project-stop:hover .concept-project-card img,
+.room .concept-project-card:focus-visible,
+.room .concept-project-card:focus-visible img {
   translate: none;
   scale: none;
 }
@@ -1210,7 +787,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .room .taste-filters .rail-word::after,
   .room .concept-career-card {
     transition: none;
   }

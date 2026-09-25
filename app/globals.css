@@ -51,7 +51,7 @@
   --ember: #f76a2b;
 
   /* One colour per room, each at least 4.5:1 on the paper. */
-  --taste: #2e3a7a;
+  --music: #2e3a7a;
   --features: #24709F;
   --websites: #2b5fb8;
   --career: #3f7634;
@@ -191,26 +191,24 @@ main {
   z-index: 2;
 }
 
-.bar-home {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  color: var(--ink);
-  text-decoration: none;
-  font-family: var(--serif);
-  font-weight: 620;
-  font-size: 24px;
-  letter-spacing: -0.02em;
-  font-variation-settings: "opsz" 48;
-}
-
-.bar-home .mark {
-  margin-top: -4px;
-}
-
-.bar-home {
+/* In a room, a pencil arrow back to the five things. */
+.bar-back {
+  display: none;
+  grid-column: 1;
   justify-self: start;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -9px;
+  border-radius: 50%;
+  color: var(--ink);
+  transition: transform 200ms var(--ease-out), background-color 200ms ease;
+}
+
+.bar-back:hover,
+.bar-back:focus-visible {
+  background: rgb(42 36 32 / 0.06);
+  transform: translateX(-3px);
 }
 
 .bar-rooms {
@@ -265,6 +263,25 @@ main {
   gap: 2px;
 }
 
+/* On the front page the contact links sit under the lede, their icons in line
+   with its first letter; in a room they move up into the bar. */
+.bar .contact {
+  display: none;
+}
+
+html.js[data-room]:not([data-room="index"]) .bar .contact,
+html:not(.js) .paper:has(.room:target) .bar .contact {
+  display: flex;
+}
+
+.front-intro .contact {
+  grid-column: auto;
+  justify-self: start;
+  justify-content: flex-start;
+  width: fit-content;
+  margin: clamp(8px, 1.8vh, 18px) 0 0 -12px;
+}
+
 .contact-link {
   display: grid;
   place-items: center;
@@ -288,6 +305,7 @@ main {
 
 .front {
   position: relative;
+  overflow-x: clip;
   flex: 1;
   display: grid;
   grid-template-rows: auto 1fr;
@@ -334,59 +352,13 @@ main {
   color: #c9501a;
 }
 
+/* One name wipes away to the right, and the other wipes in after it. */
 .name[data-phase="erase"] .name-word {
   animation: name-erase 460ms cubic-bezier(0.5, 0, 0.6, 1) forwards;
 }
 
 .name[data-phase="write"] .name-word {
   animation: name-write 720ms cubic-bezier(0.45, 0.05, 0.4, 1) forwards;
-}
-
-.name-pen {
-  position: absolute;
-  left: 0;
-  top: 0.12em;
-  width: 0;
-  height: 0.62em;
-  pointer-events: none;
-  opacity: 0;
-}
-
-.name-pencil {
-  position: absolute;
-  left: -0.1em;
-  bottom: 0;
-  height: 0.62em;
-  width: auto;
-  transform-origin: 50% 97%;
-  overflow: visible;
-}
-
-.name-pencil.is-erasing {
-  display: none;
-}
-
-.name[data-phase="write"] .name-pen {
-  opacity: 1;
-  animation: name-pen-write 720ms cubic-bezier(0.45, 0.05, 0.4, 1) forwards;
-}
-
-.name[data-phase="write"] .name-pencil.is-writing {
-  animation: name-scribble 150ms linear infinite;
-}
-
-.name[data-phase="erase"] .name-pen {
-  opacity: 1;
-  animation: name-pen-erase 460ms cubic-bezier(0.5, 0, 0.6, 1) forwards;
-}
-
-.name[data-phase="erase"] .name-pencil.is-writing {
-  display: none;
-}
-
-.name[data-phase="erase"] .name-pencil.is-erasing {
-  display: block;
-  animation: name-rub 90ms linear infinite alternate;
 }
 
 @keyframes name-erase {
@@ -397,28 +369,6 @@ main {
 @keyframes name-write {
   from { clip-path: inset(-0.3em 102% -0.3em -0.2em); }
   to { clip-path: inset(-0.3em -0.2em -0.3em -0.2em); }
-}
-
-/* Two names for one movement, so each phase restarts it. */
-@keyframes name-pen-erase {
-  from { left: 0; }
-  to { left: 100%; }
-}
-
-@keyframes name-pen-write {
-  from { left: 0; }
-  to { left: 100%; }
-}
-
-@keyframes name-scribble {
-  0% { transform: rotate(24deg) translateY(0); }
-  50% { transform: rotate(27deg) translateY(-0.03em); }
-  100% { transform: rotate(24deg) translateY(0); }
-}
-
-@keyframes name-rub {
-  from { transform: rotate(-18deg) translateX(-0.03em); }
-  to { transform: rotate(-12deg) translateX(0.03em); }
 }
 
 .front-lede {
@@ -432,9 +382,10 @@ main {
   font-variation-settings: "opsz" 36;
 }
 
+/* Top right, level with the top of the name. */
 .sky {
   position: absolute;
-  top: clamp(0px, 2vh, 24px);
+  top: clamp(28px, 9vh, 104px);
   right: calc(var(--gutter) + 1vw);
   width: clamp(76px, 9vw, 136px);
   height: auto;
@@ -511,6 +462,93 @@ html[data-sky="day"] .sky-wheel {
   to { transform: rotate(360deg); }
 }
 
+/* The mascot lives on the front sheet: placed by script at its feet, dancing
+   and hopping over to the five things. The mark's own proportions, a size up
+   so its eyes have room. */
+.mascot {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: clamp(90px, 8.25vw, 148px);
+  aspect-ratio: 116 / 118;
+  cursor: grab;
+  touch-action: none;
+  visibility: hidden;
+  perspective: 600px;
+}
+
+.mascot.is-placed {
+  visibility: visible;
+}
+
+.mascot.is-held {
+  cursor: grabbing;
+}
+
+.mascot-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.mascot.is-twirling .mascot-art {
+  animation: mascot-twirl 760ms cubic-bezier(0.45, 0, 0.3, 1);
+}
+
+.mascot-shadow {
+  fill: var(--ink);
+  opacity: 0.14;
+}
+
+.mascot.is-held .mascot-shadow {
+  opacity: 0.06;
+}
+
+.mascot-edge {
+  fill: #c24e1c;
+}
+
+.mascot-edge-tail {
+  fill: #d69c5c;
+}
+
+.mascot-tail {
+  transform-box: view-box;
+  transform-origin: 84px 70px;
+}
+
+.mascot.is-wagging .mascot-tail {
+  animation: mascot-wag 170ms ease-in-out 8 alternate;
+}
+
+.mascot-blink {
+  fill: var(--ink);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mascot-blink 5.2s linear infinite;
+}
+
+.mascot.is-held .mascot-blink {
+  animation: none;
+  transform: scaleY(1.15);
+}
+
+@keyframes mascot-twirl {
+  to { transform: rotateY(360deg); }
+}
+
+@keyframes mascot-wag {
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(12deg); }
+}
+
+@keyframes mascot-blink {
+  0%, 88%, 92.5%, 100% { transform: scaleY(1); }
+  90% { transform: scaleY(0.12); }
+}
+
 .front-stage {
   --art-h: clamp(92px, min(13.6vw, 24vh), 212px);
   position: relative;
@@ -563,28 +601,9 @@ html[data-sky="day"] .sky-wheel {
   font-variation-settings: "opsz" 72;
 }
 
-.thing-label::after {
-  content: "";
-  position: absolute;
-  left: -2px;
-  right: -2px;
-  bottom: -9px;
-  height: 7px;
-  background: var(--room);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 4.6C24 6.2 40 2.8 62 4.4S86 5.6 98 3.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 4.6C24 6.2 40 2.8 62 4.4S86 5.6 98 3.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 340ms var(--ease-out);
-}
-
-.thing:hover .thing-label::after,
-.thing:focus-visible .thing-label::after {
-  clip-path: inset(0 0 0 0);
-}
-
 .thing-hint {
   margin-top: 16px;
-  max-width: 16ch;
+  max-width: 26ch;
   text-align: center;
   font-size: clamp(14px, 1.1vw, 16px);
   line-height: 1.3;
@@ -593,38 +612,6 @@ html[data-sky="day"] .sky-wheel {
 
 .thing:focus-visible {
   outline-offset: 8px;
-}
-
-.ground {
-  position: absolute;
-  z-index: 0;
-  left: calc(var(--gutter) * -0.5);
-  right: calc(var(--gutter) * -0.5);
-  top: calc(clamp(24px, 5vh, 56px) + var(--art-h) * 0.9143 - 12px);
-  width: calc(100% + var(--gutter));
-  height: 24px;
-  overflow: visible;
-}
-
-.ground-line {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.4;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: draw 1100ms var(--ease-out) 80ms forwards;
-}
-
-.ground-grass {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.1;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-  opacity: 0;
-  animation: appear 500ms ease 900ms forwards;
 }
 
 /* The five things: a pencil sketch first, then the paper lands on it. */
@@ -687,21 +674,21 @@ html[data-drawn] .front .t-sketch {
 }
 
 html[data-drawn] .front .t-paper,
-html[data-drawn] .front .t-shadow,
-html[data-drawn] .ground-line,
-html[data-drawn] .ground-grass {
+html[data-drawn] .front .t-shadow {
   animation: none;
   opacity: 1;
   stroke-dashoffset: 0;
 }
 
 .thing:hover .t-lift,
-.thing:focus-visible .t-lift {
+.thing:focus-visible .t-lift ,
+.thing.is-visited .t-lift {
   transform: translateY(-7px);
 }
 
 .thing:hover .t-shadow,
-.thing:focus-visible .t-shadow {
+.thing:focus-visible .t-shadow ,
+.thing.is-visited .t-shadow {
   transform: scale(0.84);
   opacity: 0.7;
 }
@@ -736,32 +723,28 @@ html[data-drawn] .ground-grass {
 }
 
 .thing:hover .t-record-slide,
-.thing:focus-visible .t-record-slide {
+.thing:focus-visible .t-record-slide ,
+.thing.is-visited .t-record-slide {
   transform: translateX(9px);
 }
 
 .thing:hover .t-record,
-.thing:focus-visible .t-record {
+.thing:focus-visible .t-record ,
+.thing.is-visited .t-record {
   animation-duration: 1.8s;
 }
 
-/* Features: blue threads on the game's paper, dealt as a star, until the
-   network untangles into a heart and colours it in. */
-.t-graph path {
-  fill: none;
-  stroke: #2294CC;
-  stroke-width: 3;
+/* Features: ink threads and cream neurons on the orange square, as first drawn. */
+.t-graph line {
+  stroke: #1c1f22;
+  stroke-width: 2.2;
   stroke-linecap: round;
 }
 
-.t-heart {
-  fill: #DE3C75;
-}
-
-.t-neuron {
-  fill: #faf9f5;
-  stroke: #15191C;
-  stroke-width: 2;
+.t-graph circle {
+  fill: #fbf6ec;
+  stroke: #1c1f22;
+  stroke-width: 2.2;
 }
 
 /* Taste: a hand of sleeves that fans open. */
@@ -786,13 +769,16 @@ html[data-drawn] .ground-grass {
 .t-card-front { transform: translate(6px, -3px) rotate(11deg); }
 
 .thing:hover .t-card-back,
-.thing:focus-visible .t-card-back { transform: translate(-8px, -4px) rotate(-18deg); }
+.thing:focus-visible .t-card-back ,
+.thing.is-visited .t-card-back { transform: translate(-8px, -4px) rotate(-18deg); }
 .thing:hover .t-card-middle,
-.thing:focus-visible .t-card-middle { transform: translate(0, -9px) rotate(0deg); }
+.thing:focus-visible .t-card-middle ,
+.thing.is-visited .t-card-middle { transform: translate(0, -9px) rotate(0deg); }
 .thing:hover .t-card-front,
-.thing:focus-visible .t-card-front { transform: translate(8px, -4px) rotate(18deg); }
+.thing:focus-visible .t-card-front ,
+.thing.is-visited .t-card-front { transform: translate(8px, -4px) rotate(18deg); }
 
-/* Websites: the stack fans open. */
+/* Websites: the windows fan open and the splat bursts out further. */
 .t-window {
   transform-box: view-box;
   transform-origin: 80px 128px;
@@ -800,15 +786,14 @@ html[data-drawn] .ground-grass {
 }
 
 .t-window-back { transform: rotate(-4deg); }
-.t-window-middle { transform: rotate(-1deg); }
 .t-window-front { transform: rotate(2deg); }
 
 .thing:hover .t-window-back,
-.thing:focus-visible .t-window-back { transform: rotate(-11deg) translateX(-6px); }
-.thing:hover .t-window-middle,
-.thing:focus-visible .t-window-middle { transform: rotate(-4deg) translateX(-2px); }
+.thing:focus-visible .t-window-back,
+.thing.is-visited .t-window-back { transform: rotate(-11deg) translateX(-6px); }
 .thing:hover .t-window-front,
-.thing:focus-visible .t-window-front { transform: rotate(5deg) translate(5px, -3px); }
+.thing:focus-visible .t-window-front,
+.thing.is-visited .t-window-front { transform: rotate(5deg) translate(5px, -3px); }
 
 /* Career: the plane rides its trail. */
 .t-trail {
@@ -821,7 +806,8 @@ html[data-drawn] .ground-grass {
 }
 
 .thing:hover .t-trail,
-.thing:focus-visible .t-trail {
+.thing:focus-visible .t-trail ,
+.thing.is-visited .t-trail {
   animation: march 700ms linear infinite;
 }
 
@@ -840,7 +826,8 @@ html[data-drawn] .ground-grass {
 }
 
 .thing:hover .t-plane-fly,
-.thing:focus-visible .t-plane-fly {
+.thing:focus-visible .t-plane-fly ,
+.thing.is-visited .t-plane-fly {
   transform: translate(6px, -6px);
 }
 
@@ -858,6 +845,17 @@ html[data-drawn] .ground-grass {
   stroke-dasharray: 3.5 4.5;
 }
 
+/* Hovered, the route's dots walk on towards the pin. */
+.thing:hover .t-route,
+.thing:focus-visible .t-route,
+.thing.is-visited .t-route {
+  animation: walk 900ms linear infinite;
+}
+
+@keyframes walk {
+  to { stroke-dashoffset: -16; }
+}
+
 .t-pin {
   transform-box: view-box;
   transform-origin: 134px 36px;
@@ -865,7 +863,8 @@ html[data-drawn] .ground-grass {
 }
 
 .thing:hover .t-pin,
-.thing:focus-visible .t-pin {
+.thing:focus-visible .t-pin ,
+.thing.is-visited .t-pin {
   transform: translateY(-4px);
 }
 
@@ -879,11 +878,44 @@ html[data-drawn] .ground-grass {
   padding: clamp(8px, 3vh, 32px) var(--gutter) clamp(32px, 6vh, 64px);
 }
 
-html.js[data-room="taste"] #taste,
+html.js[data-room="music"] #music,
 html.js[data-room="features"] #features,
 html.js[data-room="websites"] #websites,
-html.js[data-room="career"] #career {
+html.js[data-room="career"] #career,
+html.js[data-room="trek"] #trek {
   display: block;
+}
+
+/* The trek fills what is left of the screen under the bar. */
+html.js[data-room="trek"] #trek,
+html:not(.js) #trek:target {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 16px;
+}
+
+.trek-room {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.trek-frame {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-height: 420px;
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  background: #e6e8d6;
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+.trek-standalone {
+  margin: 0;
+  text-align: right;
 }
 
 html.js[data-room]:not([data-room="index"]) .front {
@@ -892,6 +924,11 @@ html.js[data-room]:not([data-room="index"]) .front {
 
 html.js[data-room]:not([data-room="index"]) .bar-rooms {
   display: flex;
+}
+
+html.js[data-room]:not([data-room="index"]) .bar-back,
+html:not(.js) .paper:has(.room:target) .bar-back {
+  display: inline-grid;
 }
 
 /* Without JavaScript the room links still work through :target. */
@@ -905,46 +942,6 @@ html:not(.js) .paper:has(.room:target) .front {
 
 html:not(.js) .paper:has(.room:target) .bar-rooms {
   display: flex;
-}
-
-.room-head {
-  display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.6vw, 20px);
-  margin-bottom: clamp(18px, 3.4vh, 36px);
-}
-
-.room-art {
-  flex: none;
-  width: clamp(72px, 7vw, 100px);
-}
-
-.room-art .thing-art {
-  width: 100%;
-  height: auto;
-}
-
-.room-art .t-sketch {
-  display: none;
-}
-
-.room-head h2 {
-  margin: 0;
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: clamp(40px, 5.2vw, 76px);
-  line-height: 0.95;
-  letter-spacing: -0.035em;
-  font-variation-settings: "opsz" 144;
-}
-
-.room-hint {
-  margin: 6px 0 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(18px, 1.6vw, 22px);
-  line-height: 1.25;
-  color: var(--ink-soft);
 }
 
 .room-body {
@@ -986,25 +983,6 @@ html:not(.js) .paper:has(.room:target) .bar-rooms {
   transform: translateX(4px);
 }
 
-/* Tally marks: four strokes and a gate. */
-.tally {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-}
-
-.tally svg {
-  height: 22px;
-  width: auto;
-  overflow: visible;
-}
-
-.tally path {
-  fill: none;
-  stroke: var(--guide);
-  stroke-width: 2;
-  stroke-linecap: round;
-}
 
 /* --------------------------------------------------------------- music -- */
 
@@ -1395,497 +1373,602 @@ button.card-face:disabled {
   }
 }
 
-/* ---------------------------------------------------------------- trek -- */
+/* --------------------------------------------------------------- music -- */
 
-.trek {
-  display: grid;
-  gap: clamp(18px, 3vh, 30px);
-}
-
-.trek-film {
+.music {
   display: grid;
   gap: 18px;
 }
 
-.trek-frame {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 7;
-  max-height: 64vh;
-  width: 100%;
-  border-radius: 6px;
-  background: #f3ecdf;
-  box-shadow: 0 0 0 1.5px var(--ink), 6px 7px 0 rgb(42 36 32 / 0.12);
-}
-
-.trek-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.trek-day {
-  position: absolute;
-  left: clamp(12px, 2vw, 24px);
-  top: clamp(10px, 1.8vw, 20px);
-  display: grid;
-  gap: 4px;
-  max-width: min(46%, 380px);
-  padding: 10px 14px 12px;
-  border-radius: 10px;
-  background: rgb(250 246 238 / 0.9);
-  box-shadow: 0 1px 0 rgb(42 36 32 / 0.08), 0 12px 24px -18px rgb(42 36 32 / 0.6);
-}
-
-.trek-tally svg {
-  height: 18px;
-}
-
-.trek-day-no {
-  margin: 2px 0 0;
-  font-family: var(--serif);
-  font-size: clamp(22px, 2.2vw, 30px);
-  font-weight: 620;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.trek-day-no span {
-  font-size: 0.6em;
-  font-weight: 450;
-  color: var(--ink-soft);
-}
-
-.trek-day-date {
-  margin: 0;
-  font-size: 14px;
-  color: var(--ink-soft);
-}
-
-.trek-day-song {
+.music-bar {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin: 2px 0 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  min-height: 48px;
+}
+
+/* Albums or songs: one pill, its ink thumb sliding under the chosen word. */
+.music-switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-light);
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+.music-switch button {
+  position: relative;
+  z-index: 1;
+  min-width: 88px;
+  min-height: 38px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
   font-family: var(--serif);
-  font-size: 16px;
-  line-height: 1.3;
+  font-size: 18px;
+  font-weight: 560;
+  cursor: pointer;
+  transition: color 260ms ease;
 }
 
-.trek-day-song svg {
-  flex: none;
-  transform: translateY(2px);
-  color: var(--music);
+.music-switch button[aria-pressed="true"] {
+  color: var(--paper-light);
 }
 
-.trek-day-song small {
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--ink-soft);
+.music-switch button:focus-visible {
+  outline: 2px solid var(--music);
+  outline-offset: 2px;
 }
 
-.trek-day-song.is-rest {
-  font-style: italic;
-  color: var(--ink-soft);
-}
-
-.trek-pile {
+.music-switch-thumb {
   position: absolute;
-  right: clamp(12px, 2vw, 24px);
-  top: clamp(10px, 1.8vw, 20px);
-  width: clamp(120px, 16vw, 210px);
-  aspect-ratio: 5 / 5.4;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background: var(--ink);
+  transition: transform 380ms var(--ease-pop);
 }
 
-.polaroid {
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: 100%;
+.music-switch[data-view="songs"] .music-switch-thumb {
+  transform: translateX(100%);
+}
+
+/* What the pointer is on, or what the map shows. */
+.music-caption {
+  flex: 1 1 260px;
+  min-width: 0;
   margin: 0;
-  padding: 7px 7px 26px;
-  background: #fffdf8;
-  box-shadow: 0 1px 0 rgb(42 36 32 / 0.1), 0 14px 22px -14px rgb(42 36 32 / 0.7);
-  transform: rotate(var(--tilt)) translate(calc(var(--stack) * -6px), calc(var(--stack) * 4px));
-  animation: drop 520ms var(--ease-pop) both;
-}
-
-.polaroid img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  background: var(--paper-deep);
-}
-
-.polaroid figcaption {
-  position: absolute;
-  left: 9px;
-  bottom: 5px;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 13px;
+  overflow: hidden;
   color: var(--ink-soft);
+  font-family: var(--serif);
+  font-size: 17px;
+  font-style: italic;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-@keyframes drop {
+.music-caption strong {
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 620;
+}
+
+/* The map: sleeves placed by script, edge to edge, each as large as its
+   hours; they deal in when the room opens or the switch turns. */
+.music-map {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.music-tile {
+  position: absolute;
+  animation: music-deal 560ms var(--ease-pop) both;
+  animation-delay: calc(var(--i, 0) * 6ms);
+}
+
+.music-tile:hover,
+.music-tile:focus-within {
+  z-index: 2;
+}
+
+@keyframes music-deal {
   from {
     opacity: 0;
-    transform: rotate(calc(var(--tilt) - 12deg)) translate(24px, -30px) scale(1.06);
+    transform: translateY(10px) scale(0.92);
   }
 }
 
-.trek-card {
+.music-face {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  display: grid;
-  gap: 6px;
-  width: min(460px, 76%);
-  padding: 18px 22px 20px;
-  border: 1.5px solid var(--ink);
-  border-radius: 10px;
-  background: #fbf7ee;
-  box-shadow: 0 3px 0 var(--ink);
-  text-align: center;
-  transform: translate(-50%, -58%);
-  animation: card-in 420ms var(--ease-pop) both;
-}
-
-.trek-card.is-moment {
-  left: clamp(12px, 2vw, 24px);
-  top: auto;
-  bottom: clamp(12px, 2vw, 24px);
-  width: min(380px, 60%);
+  inset: 0;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  border: 1.2px solid var(--ink);
+  border-radius: 5px;
+  background: var(--paper-light);
+  box-shadow: 0 1.5px 0 var(--ink);
+  color: inherit;
+  font: inherit;
   text-align: left;
-  transform: none;
-  animation-name: card-rise;
 }
 
-.trek-card-kind {
-  margin: 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 15px;
-  color: var(--ink-soft);
+button.music-face {
+  cursor: pointer;
+  transition: transform 200ms var(--ease-out), box-shadow 200ms ease;
 }
 
-.trek-card-title {
-  margin: 0;
+button.music-face:hover,
+button.music-face:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.music-face picture,
+.music-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Hours listened, pinned in the corner and growing with the sleeve. */
+.music-hours {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 0.1em 0.5em 0.14em;
+  border: 1.2px solid var(--ink);
+  border-radius: 999px;
+  background: #fffdf5;
+  box-shadow: 0 1px 0 var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(10px, calc(var(--side, 60) * 0.052px + 6px), 17px);
+  font-weight: 700;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.music-label {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  gap: 1px;
+  padding: 22px 8px 7px;
+  background: linear-gradient(to bottom, transparent, rgb(20 16 12 / 0.8));
+  color: #fffdf5;
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.music-label strong {
+  overflow: hidden;
   font-family: var(--serif);
-  font-size: clamp(24px, 2.6vw, 36px);
+  font-size: clamp(12px, calc(var(--side, 60) * 0.045px + 6px), 18px);
   font-weight: 620;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.music-label span {
+  overflow: hidden;
+  opacity: 0.85;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Songs share their album's sleeve, so their names stay on show. */
+.music-tile:hover .music-label,
+.music-face:focus-visible .music-label,
+.is-songs .music-label {
+  opacity: 1;
+}
+
+/* A song without a sleeve gets a plain paper one with its name pencilled on. */
+.music-blank {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  background: repeating-linear-gradient(-35deg, #f6efdd 0 6px, #efe6cf 6px 7px);
+  font-family: var(--serif);
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.music-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-tile {
+    animation: none;
+  }
+}
+
+/* An album's track list, on a sheet over the room. */
+.music-tracks {
+  width: min(640px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(86vh, 900px);
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.music-tracks::backdrop {
+  background: rgb(42 36 32 / 0.38);
+}
+
+.music-tracks-sheet {
+  position: relative;
+  max-height: min(86vh, 900px);
+  overflow: auto;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fbf8ee;
+  box-shadow: 0 4px 0 var(--ink), 0 30px 60px -30px rgb(42 36 32 / 0.6);
+  animation: tracks-in 360ms var(--ease-pop) both;
+}
+
+@keyframes tracks-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+}
+
+.music-tracks-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.music-tracks-head {
+  display: grid;
+  grid-template-columns: clamp(96px, 24vw, 150px) 1fr;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 18px;
+  padding-right: 36px;
+}
+
+.music-tracks-cover {
+  display: block;
+  overflow: hidden;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+.music-tracks-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.music-tracks-head h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(24px, 3.4vw, 36px);
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
 
-.trek-card.is-moment .trek-card-title {
-  font-size: 20px;
-}
-
-.trek-card-text {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.45;
+.music-tracks-artist {
+  margin: 6px 0 0;
   color: var(--ink-soft);
-}
-
-.trek-card .chip {
-  justify-self: center;
-  margin-top: 6px;
-}
-
-@keyframes card-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.96) rotate(-1deg);
-  }
-}
-
-@keyframes card-rise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-}
-
-.trek-frame .trek-inset {
-  position: absolute;
-  overflow: hidden;
-  right: clamp(12px, 2vw, 24px);
-  bottom: clamp(12px, 2vw, 24px);
-  width: clamp(150px, 20vw, 260px);
-  padding: 6px;
-  border-radius: 8px;
-  background: rgb(250 246 238 / 0.9);
-  box-shadow: 0 1px 0 rgb(42 36 32 / 0.08), 0 12px 24px -18px rgb(42 36 32 / 0.6);
-}
-
-.trek-map {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.trek-map-land path {
-  fill: none;
-  stroke: #9a8f80;
-  stroke-width: 1.2;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.trek-map-plan {
-  fill: none;
-  stroke: rgb(167 45 40 / 0.28);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.trek-map-plan.is-join {
-  stroke-dasharray: 3 4;
-}
-
-.trek-map-walked {
-  fill: none;
-  stroke: var(--trek);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1 1;
-  stroke-dashoffset: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.trek-still .trek-map-walked {
-  stroke-dashoffset: 0;
-}
-
-.trek-map-end {
-  fill: var(--paper-light);
-  stroke: var(--ink);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-.trek-map-dot {
-  fill: var(--trek);
-  stroke: var(--paper-light);
-  stroke-width: 3;
-  vector-effect: non-scaling-stroke;
-}
-
-.trek-map-name {
   font-family: var(--serif);
-  font-size: 30px;
-  font-weight: 600;
-  fill: var(--ink);
+  font-size: 18px;
+  font-style: italic;
 }
 
-.trek-inset .trek-map-name {
-  display: none;
+.music-tracks-totals {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.trek-controls {
+.music-tracks-note {
+  margin: 0 0 8px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.music-track-list {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 14px 18px;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.trek-paces {
-  display: flex;
-  gap: 8px;
-}
-
-.trek-ribbon {
+/* Each track sits on a pencil-blue bar as long as its share of the plays. */
+.music-track-list li {
   position: relative;
-  height: 64px;
-  cursor: pointer;
-  touch-action: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 8px 10px;
+  isolation: isolate;
+  font-size: 14.5px;
+}
+
+.music-track-list li::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: -1;
+  width: calc(var(--share) * 100%);
   border-radius: 6px;
+  background: rgb(127 149 199 / 0.22);
 }
 
-.trek-ribbon svg {
-  position: absolute;
-  inset: 0 0 16px;
-  width: 100%;
-  height: calc(100% - 16px);
+.music-track-title {
+  overflow: hidden;
+  font-family: var(--serif);
+  font-weight: 560;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.trek-band {
-  fill: rgb(42 36 32 / 0.03);
+.music-track-plays,
+.music-track-hours {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.trek-band.is-alt {
-  fill: rgb(42 36 32 / 0.075);
+.music-track-hours {
+  min-width: 4.2em;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: right;
 }
 
-.trek-ribbon-area {
-  fill: rgb(167 45 40 / 0.16);
+@media (prefers-reduced-motion: reduce) {
+  .music-tracks-sheet {
+    animation: none;
+  }
 }
 
-.trek-ribbon-area.is-done {
-  fill: rgb(167 45 40 / 0.55);
+/* ---------------------------------------------------------- career rail -- */
+
+/* Every role a station on a pencil railway that snakes across the sheet. */
+.career-rail {
+  --lane: 44px;
+  position: relative;
+  padding-top: 8px;
 }
 
-.trek-ribbon-line {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.2;
-  vector-effect: non-scaling-stroke;
-}
-
-.trek-head {
-  position: absolute;
-  top: -4px;
-  bottom: 12px;
-  width: 3px;
-  margin-left: -1.5px;
-  border-radius: 2px;
-  background: var(--trek);
-  box-shadow: 0 0 0 2px var(--paper);
-}
-
-.trek-ribbon-countries {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 14px;
-}
-
-.trek-ribbon-countries span {
+.rail-line {
   position: absolute;
   top: 0;
-  overflow: hidden;
-  padding-left: 3px;
-  font-size: 11px;
-  line-height: 14px;
-  white-space: nowrap;
-  text-overflow: clip;
-  color: var(--ink-soft);
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.trek-counters {
-  display: flex;
-  gap: 18px;
-  margin: 0;
+.rail-reveal {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 40;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2200ms cubic-bezier(0.45, 0, 0.35, 1) 120ms forwards;
 }
 
-.trek-counters div {
+/* Sleepers under a single pencil rail, as a railway map draws one. */
+.rail-sleepers {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 11;
+  stroke-dasharray: 1.6 7.4;
+  opacity: 0.45;
+}
+
+.rail-track,
+.rail-buffer {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rail-buffer {
+  stroke-width: 3;
+}
+
+.rail-stops {
+  position: relative;
   display: grid;
+  grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
+  gap: clamp(30px, 5vh, 56px) clamp(22px, 3vw, 48px);
+  margin: 0;
+  padding: 0 var(--lane) 24px;
+  list-style: none;
 }
 
-.trek-counters dt {
-  order: 2;
+/* A station: its node on the line, its years above, its card hung below. */
+.rail-stop {
+  position: relative;
+  padding-top: 50px;
+  animation: rail-stop 560ms var(--ease-pop) both;
+  animation-delay: calc(var(--n, 0) * 230ms + 260ms);
+}
+
+@keyframes rail-stop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+}
+
+.rail-node {
+  position: absolute;
+  top: 17px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--company-accent);
+  box-shadow: 0 0 0 4px var(--paper, #f3ecdf);
+}
+
+.rail-when {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 6px;
+  font-family: var(--sans);
   font-size: 13px;
+  font-weight: 650;
   color: var(--ink-soft);
+  white-space: nowrap;
 }
 
-.trek-counters dd {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 750;
-  line-height: 1.1;
-}
-
-.trek-still {
+.rail-card {
+  position: relative;
   display: grid;
-  gap: 12px;
-}
-
-.trek-still .trek-map {
-  width: min(100%, 900px);
-}
-
-.trek-still-facts {
-  margin: 0;
-  color: var(--ink-soft);
-}
-
-.trek-more {
-  display: flex;
-  flex-wrap: wrap;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 4px 24px;
+  gap: 2px 14px;
+  height: 100%;
+  padding: 16px 18px 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  background: var(--paper-light);
+  box-shadow: 0 3px 0 var(--ink);
+  transition: transform 220ms var(--ease-out), box-shadow 220ms ease;
+}
+
+/* The string it hangs from. */
+.rail-card::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  height: 14px;
+  border-left: 1.5px solid var(--ink);
+}
+
+.rail-stop:hover .rail-card {
+  transform: translateY(-2px) rotate(-0.4deg);
+  box-shadow: 0 5px 0 var(--ink);
+}
+
+.rail-logo {
+  display: grid;
+  grid-row: 1 / span 2;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1.5px solid color-mix(in srgb, var(--company-accent) 60%, var(--ink));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--company-accent) 14%, var(--paper-light));
+}
+
+.rail-name {
   margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(19px, 1.5vw, 22px);
+  font-weight: 640;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
-.trek-more span {
-  max-width: 76ch;
-  font-size: 14px;
+.rail-role {
+  margin: 0;
   color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.3;
 }
 
-@media (max-width: 899px) {
-  .trek-controls {
-    grid-template-columns: auto 1fr;
-  }
-
-  .trek-ribbon {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  .trek-counters {
-    grid-column: 1 / -1;
-  }
+.rail-statement {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+  font-family: var(--serif);
+  font-size: 16.5px;
+  line-height: 1.45;
 }
 
-@media (max-width: 719px) {
-  .trek-frame {
-    aspect-ratio: 5 / 4;
-    max-height: none;
+.rail-statement strong {
+  font-weight: 650;
+}
+
+/* Phones: the line runs straight down the left, the stations beside it. */
+.career-rail[data-columns="1"] .rail-stops {
+  padding: 0 0 24px 40px;
+  gap: 26px;
+}
+
+.career-rail[data-columns="1"] .rail-stop {
+  padding-top: 0;
+}
+
+.career-rail[data-columns="1"] .rail-node {
+  top: 18px;
+  left: -26px;
+  margin-left: 0;
+}
+
+.career-rail[data-columns="1"] .rail-when {
+  position: static;
+  display: block;
+  transform: none;
+  padding: 0 0 6px;
+}
+
+.career-rail[data-columns="1"] .rail-card::before {
+  top: 27px;
+  left: -16px;
+  width: 16px;
+  height: 0;
+  border-left: 0;
+  border-top: 1.5px solid var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail-reveal {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 
-  .trek-day {
-    max-width: 62%;
-    padding: 8px 10px 10px;
-  }
-
-  .trek-day-song {
-    font-size: 14px;
-  }
-
-  .trek-day-song small {
-    display: none;
-  }
-
-  .trek-pile {
-    width: 30%;
-  }
-
-  .polaroid {
-    padding: 4px 4px 16px;
-  }
-
-  .polaroid figcaption {
-    font-size: 10px;
-    bottom: 2px;
-  }
-
-  .trek-frame .trek-inset {
-    width: 34%;
-    padding: 4px;
-  }
-
-  .trek-card {
-    width: 88%;
-    padding: 12px 14px 14px;
-  }
-
-  .trek-card.is-moment {
-    width: calc(100% - 24px);
-    bottom: auto;
-    top: 42%;
-  }
-
-  .trek-card-text {
-    font-size: 13px;
+  .rail-stop {
+    animation: none;
   }
 }
 
@@ -1909,14 +1992,14 @@ button.card-face:disabled {
   box-shadow: 0 0 0 1.5px #15191C, 0 4px 0 #15191C;
 }
 
-/* Solved, the shape is coloured in under its threads. */
+/* Solved, the shape's silhouette inks in under its threads. */
 .play-shape path {
-  fill: var(--shape);
+  fill: #161a1d;
 }
 
 .play-shape .play-stem {
   fill: none;
-  stroke: var(--shape);
+  stroke: #161a1d;
   stroke-width: 6;
   stroke-linecap: round;
 }
@@ -2039,13 +2122,13 @@ button.card-face:disabled {
 }
 
 .play-found li.is-found path {
-  fill: var(--shape);
+  fill: #161a1d;
   stroke: none;
 }
 
 .play-found li.is-found .play-stem {
   fill: none;
-  stroke: var(--shape);
+  stroke: #161a1d;
   stroke-width: 6;
   stroke-dasharray: none;
 }
@@ -2118,11 +2201,13 @@ button.card-face:disabled {
   }
 
   .sky {
-    top: 4px;
+    top: clamp(20px, 5vh, 48px);
     width: 64px;
   }
 
+  /* The list follows the intro rather than waiting at the foot of the screen. */
   .front-stage {
+    align-self: start;
     --art-h: 76px;
     padding-top: 20px;
   }
@@ -2142,14 +2227,38 @@ button.card-face:disabled {
     column-gap: 14px;
     align-items: end;
     justify-items: start;
-    padding: 6px 0 8px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 8' preserveAspectRatio='none'%3E%3Cpath d='M1 4.4C80 3.4 160 5.2 240 4S360 3.6 399 4.6' fill='none' stroke='%232a2420' stroke-width='1.3' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") left calc(6px + var(--art-h) * 0.9143 - 4px) / 100% 8px no-repeat;
+    padding: 11px 0;
   }
 
+  /* With no ground line, each drawing's box is cropped to what is drawn in it
+     (shadow included), so its label centres on the drawing rather than on the
+     empty sky above it, and the rows are evenly spaced. --art-top is where
+     the drawing starts in its 160 × 140 box; 96px wide is 0.6px a unit. */
   .thing-art {
     grid-row: 1 / span 2;
     width: 96px;
     height: auto;
+    margin: calc(var(--art-top, 0) * -0.6px) 0 -3.6px;
+  }
+
+  .thing-taste {
+    --art-top: 55;
+  }
+
+  .thing-features {
+    --art-top: 36;
+  }
+
+  .thing-websites {
+    --art-top: 35;
+  }
+
+  .thing-career {
+    --art-top: 20;
+  }
+
+  .thing-trek {
+    --art-top: 12;
   }
 
   .thing-label {
@@ -2165,13 +2274,13 @@ button.card-face:disabled {
     max-width: none;
     font-size: 15px;
   }
+}
 
-  .ground {
-    display: none;
-  }
-
-  .room-art {
-    width: 64px;
+/* The five room names fit the narrowest phones on one line. */
+@media (max-width: 400px) {
+  .bar-rooms a {
+    padding: 0 3px;
+    font-size: 16px;
   }
 }
 

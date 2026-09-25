@@ -6,7 +6,7 @@ import { RailControls } from "./rail-controls";
 import { useSpotlight } from "./spotlight";
 import curation from "@/data/taste-curation.json";
 
-const { career } = curation;
+export const { career } = curation;
 // SVG originals do not get the image manifest's automatic content version.
 const logoRevisions = {
   "/brand-logos/electrical.svg": "bolt",
@@ -18,12 +18,12 @@ const logoRevisions = {
 // Logos load eagerly but at low priority: React would otherwise preload the SVG
 // ones in <head>, ahead of the stylesheet, although Career sits below the fold
 // on phones.
-const logoImage = (job) => job.logo === "/favicon.svg"
+export const logoImage = (job) => job.logo === "/favicon.svg"
   ? { src: "/brand-logos/akibwa-a.png", slot: "identityMark" }
   : { src: job.logo, revision: logoRevisions[job.logo], slot: "logo" };
-const logoClass = (job) => `concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`;
+export const logoClass = (job) => `concept-career-logo${job.tile ? " is-tile" : ""}${job.logo === "/favicon.svg" ? " is-akibwa" : ""}${job.logo.includes("national-wealth-fund") ? " is-nwf" : ""}${job.logo.includes("leeds-building-society") ? " is-lbs" : ""}${job.logo.includes("lloyds-horse") ? " is-lloyds" : ""}`;
 
-function CareerStatement({ statement, emphasis = [] }) {
+export function CareerStatement({ statement, emphasis = [] }) {
   const escaped = emphasis.map((text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   if (!escaped.length) return statement;
   return statement.split(new RegExp(`(${escaped.join("|")})`, "g")).map((part, index) =>

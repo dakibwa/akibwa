@@ -70,7 +70,7 @@ else globalThis.window = savedWindow;
 assert.equal(new Set(curation.albumIds).size, curation.albumIds.length);
 assert.deepEqual(
   Object.keys(curation).sort(),
-  ["source", "career", "albumIds", "films", "games", "tv", "podcasts", "podcastListening"].sort(),
+  ["source", "career", "albumIds", "podcasts", "podcastListening"].sort(),
 );
 const safeFields = [
   "name",
@@ -90,7 +90,7 @@ const safeFields = [
   "listens",
   "appleEpisodes",
 ];
-for (const category of ["career", "films", "games", "tv", "podcasts"])
+for (const category of ["career", "podcasts"])
   for (const row of curation[category]) {
     assert(Object.keys(row).every((key) => safeFields.includes(key)));
     const path = row.logo || row.art;

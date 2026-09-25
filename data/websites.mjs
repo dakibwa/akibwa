@@ -3,12 +3,10 @@
  * previous homepage's project cards. Dan chose these three on 24 September
  * 2026; Features and The Trek have their own places on the front page.
  *
- * Cards whose artwork is a screenshot carry `capture`, used by
- * scripts/capture-websites.mjs. Castle Bank's home page greets visitors with
- * named photographs of its founders; akibwa.com does not publish Dan's full
- * name or likeness, so the capture hides them (`hide`). Butterfly Rose is in
- * review with the salon and not yet on its own domain, so it has no link, and
- * its capture comes from a local review build (`review`).
+ * Each card is an illustration in the manner of Português com a Inês's rather
+ * than a screenshot of the site: Dan made Castle Bank's and Butterfly Rose's
+ * on 25 September 2026. Butterfly Rose is in review with the salon and not
+ * yet on its own domain, so it has no link (`inReview`).
  */
 export const websites = [
   {
@@ -17,7 +15,7 @@ export const websites = [
     href: "https://portuguesewithines.com/",
     title: "Português com a Inês",
     subtitle: "Portuguese lessons",
-    description: "Inês’s Portuguese lessons, with availability and booking in one place.",
+    description: "Portuguese lessons with Inês, booked in one place.",
     src: "/project-art/personal/portuguese-with-ines-conversation.png",
     imageRevision: "left-crop",
     alt: "Two people talking over coffee as colourful speech shapes meet between them",
@@ -30,11 +28,10 @@ export const websites = [
     href: "https://www.castle-bank.com/",
     title: "Castle Bank",
     subtitle: "electrical contractors",
-    description: "Commercial electrical installation, testing and maintenance, set out plainly for the businesses that need it.",
+    description: "Commercial electrical work, set out plainly.",
     src: "/project-art/websites/castle-bank.webp",
-    alt: "Castle Bank’s home page: an orange and black headline beside a swirl of orange sparks",
-    accent: "#f26b1d",
-    capture: { url: "https://www.castle-bank.com/", hide: [".hero-team"] }
+    alt: "The Castle Bank Electrical mark beside a pencil drawing of an office building, orange conduit running into an open distribution board",
+    accent: "#f26b1d"
   },
   {
     id: "butterfly-rose",
@@ -42,10 +39,10 @@ export const websites = [
     href: null,
     title: "Butterfly Rose",
     subtitle: "hair salon · coming soon",
-    description: "A calm, elegant site for a hair salon in Otley: services and prices, the team, bridal and how to book.",
+    description: "A calm, elegant site for an Otley salon.",
     src: "/project-art/websites/butterfly-rose.webp",
-    alt: "Butterfly Rose’s home page: a serif headline beside a photograph of the salon’s mirrors and chairs",
+    alt: "A woman leans back in a salon chair as her long hair streams into ribbons, rose petals and butterflies under a stylist’s hand",
     accent: "#7c4650",
-    capture: { review: true }
+    inReview: true
   }
 ];

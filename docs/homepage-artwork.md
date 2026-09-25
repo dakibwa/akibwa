@@ -2,9 +2,16 @@
 
 ## Paper homepage — 24 September 2026
 
-- The bar's `a` is a vector trace of `public/brand-logos/akibwa-a.png`
+- The `a` is a vector trace of `public/brand-logos/akibwa-a.png`
   (`components/paper/mark-paths.js`) drawn as papercraft: the orange body and
-  apricot terminal over a folded edge. It carries no face or eyes.
+  apricot terminal over a folded edge. The bar no longer carries it (Dan, 25
+  September 2026); it lives on as the mascot.
+- Music sleeves the room draws large have a 640–800px `-large` rung from
+  `scripts/build-music-art.mjs`: print masters for the printed sleeves, the
+  reviewed Apple Music artwork for catalogue sleeves, and for Last.fm sleeves
+  the same release's cover from the Cover Art Archive or Apple Music, kept
+  only when it matches the committed sleeve (one paler scan was accepted by
+  eye). `data/music-art.json` records each source.
 - The five things (a hand of sleeves, the Features tile, browser windows, paper
   plane, folded map) and the sky wheel are inline SVG in
   `components/paper/things.jsx` and `paper-home.jsx`, so they scale and draw in
@@ -14,13 +21,20 @@
   portraits round the large one and its red dragon on grey; Person Pitch's
   round pool of bathers with the gorilla, seal, bear, panda and tiger; and
   Graceland's spaced title over the small painting of a rider on a white horse.
-- The websites windows are drawn from the sites' own first screens: Butterfly
-  Rose (blush, plum button, the salon's round mirrors), Castle Bank (orange C,
-  black and orange headline, spark swirl, green WhatsApp pill) and Português
-  com a Inês (cream header, royal-blue panel with white script, lilac rows).
-- Castle Bank's and Butterfly Rose's cards are screenshots captured by
-  `scripts/capture-websites.mjs` and cropped to the 5:2 project slot; the
-  Castle Bank capture hides the founders' named photographs.
+- The websites windows carry Português com a Inês's mark: its cream, lilac
+  and orange blobs traced from that repository's `src/app/icon.png`
+  (`components/paper/websites-art.mjs`). The splat that burst out behind them
+  was removed on 25 September 2026.
+- The Features tile is the first front page's: an orange square with ink
+  threads that fall from a star into the house's corners.
+- The mascot is the mark's own paths at their own weight, drawn a size up
+  (Dan asked for bigger, not chunkier, on 25 September 2026), with two square
+  eyes centred on the arch of the `a`, clear of its edges.
+- Castle Bank's and Butterfly Rose's cards are illustrations Dan made on
+  25 September 2026 at the 5:2 project slot, in the manner of Português com a
+  Inês's: Castle Bank's mark beside a pencil drawing of an office building
+  with orange conduit running into an open distribution board, and a salon
+  client whose hair streams into ribbons, roses and butterflies.
 - `public/share-card-paper.jpg` is the front page's first screen at rest.
 
 ## Akibwa identity

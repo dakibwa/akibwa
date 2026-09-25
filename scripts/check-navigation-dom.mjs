@@ -289,7 +289,7 @@ const checkPublicLanding = async () => {
   const mainHeading = ax.nodes.find((node) => node.role?.value === "heading" && node.properties?.some((property) => property.name === "level" && property.value.value === 1));
   check(mainHeading?.name?.value?.startsWith("I’m Daniel. Online as Akibwa."), `the h1 has a meaningful computed accessible name [${mainHeading?.name?.value}]`);
   check(state.room === "index" && state.frontVisible, "the front page opens on the five things");
-  check(JSON.stringify(state.things) === JSON.stringify([["taste", "#taste"], ["features", "#features"], ["websites", "#websites"], ["career", "#career"], ["trek", "/trek/"]]), `five things, the trek opening its own page [${JSON.stringify(state.things)}]`);
+  check(JSON.stringify(state.things) === JSON.stringify([["music", "#music"], ["features", "#features"], ["websites", "#websites"], ["career", "#career"], ["trek", "#trek"]]), `five things, all opening in place [${JSON.stringify(state.things)}]`);
   check(state.lede === "Building in the age of AI.", "the front page keeps Dan's proposition");
   check(!state.hasPersonalIdentity, "the page does not contain the personal full name");
   check(state.socialLinks.length === 2 && state.socialLinks.every((href) => href.includes("/dakibwa")), "only the two approved social profiles are linked");
@@ -327,48 +327,110 @@ const checkPublicLanding = async () => {
   await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(900);
   check(await evaluate("document.documentElement.dataset.room === 'index'"), "Escape closes a room");
-  await goto("/#taste");
+  await goto("/#music");
   await sleep(600);
-  check(await roomVisible("taste"), "a room's link opens straight into it");
+  check(await roomVisible("music"), "a room's link opens straight into it");
   check(await evaluate("scrollY === 0"), "a room's link loads with the bar in view");
   await evaluate("history.back()");
   await sleep(900);
   check(await evaluate("document.documentElement.dataset.room === 'index' && location.pathname === '/'"), "Back from a shared room link lands on the front page");
 
-  section("taste library");
-  await goto("/#taste");
-  await sleep(1200);
-  const mixed = await evaluate(`(() => { const cards = [...document.querySelectorAll("#taste .personal-taste-card")]; return { count: cards.length, kinds: [...new Set(cards.map((card) => card.dataset.kind))].sort(), first: cards[0]?.dataset.kind }; })()`);
-  check(mixed.count === 48 && mixed.first === "songs", `the mixed wall holds 48 covers and opens with a song [${mixed.count}, ${mixed.first}]`);
-  check(JSON.stringify(mixed.kinds) === JSON.stringify(["films", "games", "music", "podcasts", "songs", "tv"]), `the wall mixes songs, albums, films, games, TV and podcasts [${mixed.kinds}]`);
-  check(await evaluate(`JSON.stringify([...document.querySelectorAll("#taste .taste-filters button")].map((button) => button.textContent)) === JSON.stringify(["Songs","Artists","Albums","Films","Games","TV","Podcasts"])`), "the filters lead with Songs and Artists");
-  await evaluate(`[...document.querySelectorAll("#taste .taste-filters button")].find((button) => button.textContent === "Songs").click()`);
-  check(await waitFor(`[...document.querySelectorAll("#taste .personal-taste-card")].every((card) => card.dataset.kind === "songs") && !document.querySelector(".taste-load-status")`, 8000), "Songs shows the song shelf once the ranking loads");
-  check(await evaluate(`document.querySelector("#taste .personal-taste-card")?.getAttribute("aria-label")?.startsWith("Summer Friends")`), "the song shelf starts at number one");
-  await evaluate(`[...document.querySelectorAll("#taste .taste-filters button")].find((button) => button.textContent === "Artists").click()`);
+  section("music");
+  await goto("/#music");
+  await sleep(1400);
+  const albums = await evaluate(`(() => {
+    const map = document.querySelector("#music .music-map.is-albums");
+    const tiles = [...map.querySelectorAll(".music-tile")];
+    const box = (tile) => tile.getBoundingClientRect();
+    const area = (tile) => box(tile).width * box(tile).height;
+    const frame = map.getBoundingClientRect();
+    const roomy = tiles.filter((tile) => Math.min(box(tile).width, box(tile).height) >= 58);
+    return {
+      count: tiles.length,
+      first: area(tiles[0]),
+      last: area(tiles.at(-1)),
+      covered: tiles.reduce((sum, tile) => sum + area(tile), 0) / (frame.width * frame.height),
+      hours: roomy.length > 40 && roomy.every((tile) => /\\d+ (h|min)$/.test(tile.querySelector(".music-hours")?.textContent ?? "")),
+      lead: tiles[0].querySelector(".music-face").getAttribute("aria-label"),
+      large: tiles[0].querySelector("img").srcset.includes("-large.webp"),
+      words: document.querySelector("#music .music-caption").textContent + [...document.querySelectorAll("#music p")].filter((p) => !p.closest("dialog, .music-bar")).map((p) => p.textContent).join(""),
+      head: Boolean(document.querySelector("#music .room-head"))
+    };
+  })()`);
+  check(albums.count === 100, `the albums map holds the top 100 [${albums.count}]`);
+  check(albums.first > albums.last * 8, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
+  check(albums.covered > 0.9, `the map leaves no holes [${albums.covered.toFixed(3)} covered]`);
+  check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
+  check(albums.hours, "every sleeve with room for it carries its hours listened");
+  check(albums.large, "sleeves drawn large offer the high-resolution rung");
+  check(albums.words === "" && !albums.head, `the room explains nothing it need not [${albums.words}]`);
+  await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "songs").click()`);
+  await sleep(700);
+  check(await evaluate(`document.querySelectorAll("#music .is-songs .music-tile").length === 100`), "the switch shows the songs, a hundred at first");
+  check(await evaluate(`document.querySelector("#music .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon")`), "songs start with the most listened");
+  await evaluate(`[...document.querySelectorAll("#music .music-more button")].find((button) => /more songs/.test(button.textContent)).click()`);
+  check(await waitFor(`document.querySelectorAll("#music .is-songs .music-tile").length === 200`), "a hundred more songs load on request");
+  await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "albums").click()`);
+  await sleep(700);
+  await evaluate(`document.querySelectorAll("#music .is-albums .music-face")[1].click()`);
+  check(await waitFor(`Boolean(document.querySelector("#music dialog.music-tracks[open] .music-track-list li"))`, 8000), "an album opens its track list once the file loads");
+  check(await evaluate(`document.querySelector("#music-tracks-title")?.textContent === "Graceland" && [...document.querySelectorAll(".music-track-list li")].length > 5`), "the track list shows the album's songs with plays and hours");
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
   await sleep(500);
-  check(await evaluate(`(() => { const cards = [...document.querySelectorAll("#taste .personal-taste-card")]; return cards.length >= 48 && cards.every((card) => card.dataset.kind === "artists") && cards[0].getAttribute("aria-label").startsWith("Animal Collective"); })()`), "Artists shows the top artists, most played first");
+  check(await evaluate(`!document.querySelector("dialog.music-tracks[open]") && document.documentElement.dataset.room === "music"`), "Escape closes the track list and leaves the room open");
   check(await evaluate(`!document.body.innerHTML.includes("spotify:")`), "no track identifiers reach the page");
+  for (const width of [360, 820]) {
+    await setDesktop(width, 844);
+    await sleep(500);
+    const fit = await evaluate(`(() => { const map = document.querySelector("#music .music-map").getBoundingClientRect(); const wide = [...document.querySelectorAll("body *")].filter((element) => element.getBoundingClientRect().right > innerWidth + 1).map((element) => element.tagName + "." + String(element.className).split(" ")[0]).slice(0, 3); return { ok: document.documentElement.scrollWidth <= innerWidth + 1 && map.right <= innerWidth, wide, right: Math.round(map.right) }; })()`);
+    check(fit.ok, `the music map fits ${width}px [${fit.right}px ${fit.wide.join(", ")}]`);
+  }
+  await setDesktop();
+
+  section("mascot");
+  await goto("/");
+  await sleep(4600);
+  const mascot = await evaluate(`(() => { const el = document.querySelector(".mascot"); const box = el.getBoundingClientRect(); return { placed: el.classList.contains("is-placed"), x: box.left + box.width / 2, y: box.top + box.height / 2, w: box.width }; })()`);
+  check(mascot.placed && mascot.w > 40, "the mascot is on the front page");
+  await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", x: mascot.x, y: mascot.y, button: "left", clickCount: 1 });
+  await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: mascot.x - 120, y: mascot.y - 40, button: "left" });
+  await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: mascot.x - 240, y: mascot.y - 60, button: "left" });
+  await cdp.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: mascot.x - 240, y: mascot.y - 60, button: "left", clickCount: 1 });
+  await sleep(400);
+  check(await evaluate(`(() => { const box = document.querySelector(".mascot").getBoundingClientRect(); return Math.abs(box.left + box.width / 2 - ${mascot.x - 240}) < 12; })()`), "the mascot can be picked up and set down elsewhere");
 
   section("career, websites and features");
   await goto("/#career");
-  await sleep(700);
-  check(await evaluate(`document.querySelectorAll("#career .concept-career-stop").length === 8`), "the career timeline keeps its eight roles");
-  check(await evaluate(`document.querySelector("#career .career-detail[data-active='true'] strong")?.textContent === "Freelance"`), "the current role's statement rests beneath the timeline");
-  await evaluate(`document.querySelectorAll("#career .concept-career-stop")[4].click()`);
-  await sleep(500);
-  check(await evaluate(`document.querySelector("#career .career-detail[data-active='true'] strong")?.textContent === "Sky Betting & Gaming"`), "choosing a role moves its statement beneath it");
+  await sleep(2600);
+  const rail = await evaluate(`(() => {
+    const stops = [...document.querySelectorAll("#career .rail-stop")];
+    const columns = new Set(stops.map((stop) => Math.round(stop.querySelector(".rail-node").getBoundingClientRect().left)));
+    const statements = stops.map((stop) => stop.querySelector(".rail-statement")?.textContent ?? "");
+    return { count: stops.length, first: stops[0]?.querySelector(".rail-name")?.textContent, columns: columns.size, track: document.querySelector("#career .rail-track")?.getAttribute("d")?.length ?? 0, statements: statements.every(Boolean) };
+  })()`);
+  check(rail.count === 8 && rail.first === "Freelance", `the career rail keeps its eight roles, the current first [${rail.count}, ${rail.first}]`);
+  check(rail.columns === 3 && rail.track > 100, `the line zig-zags across the sheet through three columns of stations [${rail.columns}]`);
+  check(rail.statements, "every role's statement shows without choosing it");
+  await setDesktop(390, 844);
+  await sleep(600);
+  check(await evaluate(`new Set([...document.querySelectorAll("#career .rail-node")].map((node) => Math.round(node.getBoundingClientRect().left))).size === 1 && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the line runs straight down the left");
+  await setDesktop();
   await goto("/#websites");
   await sleep(600);
   check(await evaluate(`JSON.stringify([...document.querySelectorAll("#websites .concept-project-card")].map((card) => card.getAttribute("href"))) === JSON.stringify(["https://portuguesewithines.com/","https://www.castle-bank.com/",null])`), "the websites room shows Dan's three sites, Butterfly Rose unlinked until it is live");
-  check(await evaluate(`[...document.querySelectorAll("#websites .concept-project-copy")].length === 3`), "every site prints its description");
+  check(await evaluate(`[...document.querySelectorAll("#websites .concept-project-copy")].every((copy) => copy.textContent.trim().split(/\\s+/).length <= 8)`), "every site says what it is in eight words or fewer");
+  await goto("/#trek");
+  await sleep(1200);
+  check(await evaluate(`(() => { const frame = document.querySelector("#trek iframe.trek-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/trek/" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "the trek opens in place, its journey filling the room");
+  check(await waitFor(`document.querySelector("#trek iframe")?.contentDocument?.documentElement.classList.contains("is-embedded")`, 8000), "the framed trek hides its own way home");
   await goto("/#features");
   await sleep(600);
   check(await evaluate(`document.querySelectorAll("#features .play-crossing").length >= 3`), "the puzzle starts tangled");
   const solvedByKeys = await evaluate(`(async () => {
     const dots = [...document.querySelectorAll("#features .play-dot")];
     const board = document.querySelector("#features .play-board");
-    const targets = [[48, 82], [14, 35], [30.2, 17.2], [65.8, 17.2], [82, 35]].map(([x, y]) => [2 + x * 96 / 96, 2 + y * 96 / 96]);
+    const targets = [[48, 15], [85, 49], [76, 82], [20, 82], [11, 49]].map(([x, y]) => [2 + x * 96 / 96, 2 + y * 96 / 96]);
     for (let i = 0; i < dots.length; i++) {
       const node = dots[i].closest(".play-node");
       for (let step = 0; step < 60; step++) {
@@ -381,9 +443,9 @@ const checkPublicLanding = async () => {
       }
     }
     await new Promise((resolve) => setTimeout(resolve, 1400));
-    return board.classList.contains("is-solved") && board.getAttribute("aria-label") === "Untangled: a heart" && Number(board.querySelector(".play-shape").getAttribute("opacity")) === 1;
+    return board.classList.contains("is-solved") && board.getAttribute("aria-label") === "Untangled: a house" && Number(board.querySelector(".play-shape").getAttribute("opacity")) === 1;
   })()`);
-  check(solvedByKeys, "the puzzle can be untangled from the keyboard and settles into a coloured heart");
+  check(solvedByKeys, "the puzzle can be untangled from the keyboard and settles into the house");
   check(await evaluate(`!document.querySelector("#features .play-plate, #features .play-stamp")`), "a solved shape stays itself rather than becoming a stamp");
 
   section("without JavaScript");

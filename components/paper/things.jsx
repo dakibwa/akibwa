@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { FEATURE_SHAPES, ringEdges, threadPath } from "./feature-shapes.mjs";
+import { FEATURE_SHAPES, edgesOf } from "./feature-shapes.mjs";
+import { BLOBS } from "./websites-art.mjs";
 
 /*
  * The five things on the front page, drawn as small papercraft objects
@@ -190,15 +191,12 @@ export function TasteThing() {
   );
 }
 
-/* Features: five neurons on the game's paper, dealt as a star. On hover they
-   untangle into a heart: the threads settle into its outline and it colours
-   in, as the game resolves a shape, and it stays a heart rather than becoming
-   a stamp. */
-const HEART = FEATURE_SHAPES[0];
-const HEART_EDGES = ringEdges(HEART.nodes.length);
-const STAR = [[67.4, 76.7], [16.6, 39.8], [79.4, 39.8], [28.6, 76.7], [48, 17]];
+/* Features' house, as the first front page drew it: five neurons dealt as a
+   star with a chord across it on an orange square, which fall into the
+   house's corners on hover while its ink silhouette appears beneath them. */
+const HOUSE = FEATURE_SHAPES[0];
+const HOUSE_EDGES = edgesOf(HOUSE);
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
-const after = (k, start) => Math.min(1, Math.max(0, (k - start) / (1 - start)));
 
 export function FeaturesThing({ solved = false }) {
   const [t, setT] = useState(0);
@@ -213,7 +211,7 @@ export function FeaturesThing({ solved = false }) {
     }
     const from = current.current;
     const start = performance.now();
-    const duration = 820 * Math.abs(target - from) || 1;
+    const duration = 620 * Math.abs(target - from) || 1;
     const step = (now) => {
       const progress = Math.min(1, (now - start) / duration);
       current.current = from + (target - from) * progress;
@@ -225,112 +223,59 @@ export function FeaturesThing({ solved = false }) {
     return () => cancelAnimationFrame(frame.current);
   }, [solved]);
   const k = ease(t);
-  const nodes = STAR.map(([x, y], index) => [x + (HEART.nodes[index][0] - x) * k, y + (HEART.nodes[index][1] - y) * k]);
-  const bend = ease(after(k, 0.5));
+  const nodes = HOUSE.tangle.map(([x, y], index) => [x + (HOUSE.nodes[index][0] - x) * k, y + (HOUSE.nodes[index][1] - y) * k]);
   return (
     <svg className="thing-art thing-features" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       {ground(82, 52)}
-      <Sketch d="M34 32h92v92H34z" />
+      <Sketch d="M34 36h92v92H34z" />
       <Paper>
-        <path d="M126 32l5 3.4v92l-5-3.4z" fill="#c9c4b8" />
-        <path d="M34 32h92v92H34z" fill="#EAE7DF" />
-        <g transform="translate(34 32) scale(.958)">
-          <path className="t-heart" d={HEART.fill} opacity={after(k, 0.72)} />
+        <path d="M126 36l5 3.4v92l-5-3.4z" fill="#a9560d" />
+        <path d="M34 36h92v92H34z" fill="#e97e18" />
+        <g transform="translate(34 36) scale(.958)">
+          <path d={HOUSE.fill} fill="#161a1d" opacity={k > 0.92 ? (k - 0.92) / 0.08 : 0} />
           <g className="t-graph">
-            {HEART_EDGES.map(([a, b], index) => (
-              <path key={`${a}-${b}`} d={threadPath(nodes[a], nodes[b], HEART.curves[index], bend)} />
+            {HOUSE_EDGES.map(([a, b]) => (
+              <line key={`${a}-${b}`} x1={nodes[a][0]} y1={nodes[a][1]} x2={nodes[b][0]} y2={nodes[b][1]} />
             ))}
             {nodes.map(([x, y], index) => (
-              <circle key={index} className="t-neuron" cx={x} cy={y} r="4.4" />
+              <circle key={index} cx={x} cy={y} r="4.6" />
             ))}
           </g>
         </g>
-        <path d="M34 124h23v4H34z" fill="#2EA3DC" />
-        <path d="M57 124h23v4H57z" fill="#EFC319" />
-        <path d="M80 124h23v4H80z" fill="#1FA45A" />
-        <path d="M103 124h23v4h-23z" fill="#E97E18" />
-        <path className="t-ink" d="M34 32h92v96H34z" />
+        <path className="t-ink" d="M34 36h92v92H34z" />
       </Paper>
     </svg>
   );
 }
 
-/* Websites: three windows drawn from the sites themselves — Butterfly Rose at
-   the back, Castle Bank, and Português com a Inês in front — that fan open. */
+/* Websites: browser windows that fan open, the front one showing the mark of
+   Português com a Inês — its cream, lilac and orange blobs on navy. Dan
+   dropped the splat behind them on 25 September 2026. */
 const windowShape = (x, y, w, h) => `M${x + 5} ${y}h${w - 10}a5 5 0 0 1 5 5v${h - 5}H${x}V${y + 5}a5 5 0 0 1 5-5z`;
-
-// Castle Bank's orange particle swirl, as dots round an open ring.
-const SWIRL = Array.from({ length: 30 }, (_, index) => {
-  const angle = (-40 + index * 9.4) * (Math.PI / 180);
-  const radius = 15 + ((index * 7) % 5) * 0.9;
-  const size = 0.55 + ((index * 3) % 4) * 0.18;
-  const x = round(104 + Math.cos(angle) * radius);
-  const y = round(71 + Math.sin(angle) * radius);
-  return `M${round(x - size)} ${y}a${round(size)} ${round(size)} 0 1 0 ${round(2 * size)} 0a${round(size)} ${round(size)} 0 1 0 ${round(-2 * size)} 0Z`;
-}).join("");
 
 export function WebsitesThing() {
   return (
     <svg className="thing-art thing-websites" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       {ground(80, 60)}
-      <Sketch d={`${windowShape(28, 44, 104, 84)}M28 56h104`} />
+      <Sketch d={`${windowShape(26, 48, 108, 80)}M26 60h108`} />
       <Paper>
         <g className="t-window t-window-back">
-          <path d={windowShape(34, 30, 96, 98)} fill="#f3eeeb" />
-          <path d="M34 40.5h96" stroke="#2a2420" strokeOpacity=".14" />
-          <path d="M40 35.4h13" stroke="#6b4a55" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M66 35.4h8M77 35.4h9M89 35.4h6M98 35.4h9" stroke="#2a2420" strokeOpacity=".35" strokeWidth="1.2" strokeLinecap="round" />
-          <rect x="113" y="32.6" width="11" height="5.6" rx="2.8" fill="#7c4650" />
-          <path d="M40 50h14" stroke="#2a2420" strokeOpacity=".3" strokeLinecap="round" />
-          <path d="M40 56h24M40 62h24M40 68h30" stroke="#3a2e31" strokeWidth="3" strokeLinecap="round" />
-          <path d="M67 62h9" stroke="#8a5d69" strokeWidth="3" strokeLinecap="round" />
-          <path d="M40 76h34M40 80h30M40 84h24" stroke="#2a2420" strokeOpacity=".3" strokeWidth="1.2" strokeLinecap="round" />
-          <rect x="40" y="89" width="22" height="6" rx="3" fill="#7c4650" />
-          <path d="M88 44h36v64H88z" fill="#dcd8cd" />
-          <circle cx="97" cy="59" r="5.6" fill="#eef0ee" stroke="#6d6a64" strokeWidth=".8" />
-          <circle cx="112" cy="56" r="6.2" fill="#eef0ee" stroke="#6d6a64" strokeWidth=".8" />
-          <path d="M88 94h36v14H88z" fill="#cfc9bf" />
-          <path d="M91 96v-9a3 3 0 0 1 3-3h5a3 3 0 0 1 3 3v9zM106 96v-8a3 3 0 0 1 3-3h5a3 3 0 0 1 3 3v8z" fill="#7d7a71" />
-          <path className="t-ink" d={`${windowShape(34, 30, 96, 98)}M34 40.5h96`} />
-        </g>
-        <g className="t-window t-window-middle">
-          <path d={windowShape(30, 37, 100, 91)} fill="#ffffff" />
-          <path d="M39.4 39.6a3 3 0 1 0 0 4.8" fill="none" stroke="#f26b1d" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M42.4 42h11" stroke="#1f1f1f" strokeWidth="1.8" strokeLinecap="round" />
-          <path d="M70 42h7M81 42h7M92 42h9" stroke="#1f1f1f" strokeOpacity=".45" strokeWidth="1.1" strokeLinecap="round" />
-          <rect x="106.6" y="39.4" width="9" height="5.2" rx="2.6" fill="none" stroke="#1f1f1f" strokeWidth=".7" />
-          <rect x="117.4" y="39.4" width="9.6" height="5.2" rx="2.6" fill="#25d366" />
-          <path d="M30 48h100" stroke="#1f1f1f" strokeOpacity=".08" />
-          <path d="M36 58h17" stroke="#f26b1d" strokeWidth="4.2" strokeLinecap="round" />
-          <path d="M57 58h30M42 65.5h38" stroke="#1f1f1f" strokeWidth="4.2" strokeLinecap="round" />
-          <path d="M36 75h40M36 79h38M36 83h30" stroke="#1f1f1f" strokeOpacity=".35" strokeWidth="1.2" strokeLinecap="round" />
-          <rect x="36" y="89" width="20" height="6" rx="3" fill="#ff6c00" />
-          <rect x="58.6" y="89" width="17" height="6" rx="3" fill="none" stroke="#1f1f1f" strokeWidth=".7" />
-          <path d={SWIRL} fill="#f26b1d" opacity=".85" />
-          <path className="t-ink" d={`${windowShape(30, 37, 100, 91)}M30 48h100`} />
+          <path d={windowShape(34, 38, 96, 90)} fill="#f3ebd8" />
+          <path d="M34 50h96" stroke="#2a2420" strokeOpacity=".2" />
+          <path className="t-ink" d={windowShape(34, 38, 96, 90)} />
         </g>
         <g className="t-window t-window-front">
-          <path d={windowShape(28, 44, 104, 84)} fill="#dbd7f3" />
-          <path d="M28 56v-7a5 5 0 0 1 5-5h94a5 5 0 0 1 5 5v7z" fill="#f3ebd8" />
-          <path d="M34 50.5c1.5-2.4 3-2.4 2.6 0s1.2-2.2 2.6-.6 1.4-1.8 2.8-.3M35 53.8c1.4-1.2 3-1.2 4.4 0s3-1.2 4.4 0" fill="none" stroke="#2f56aa" strokeWidth=".9" strokeLinecap="round" />
-          <path d="M88 50h8M100 50h7M111 50h5M120 50h7" stroke="#2f56aa" strokeOpacity=".85" strokeWidth="1.1" strokeLinecap="round" />
-          <path d="M28 56h58v72H28z" fill="#2f56aa" />
-          <path d="M34 73c2-4 5-4 4.4 0s2.6-3.6 4.4-1 2.6-3 4.6-.6 2.8-2.2 4.4-.4M34 81c2-3 4.6-3 5.6 0s3.2-2.6 4.8-.4 3-2.4 4.6-.4 2.6-2 4-.2" fill="none" stroke="#fffdf8" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M34 87h26" stroke="#fffdf8" strokeOpacity=".6" strokeWidth=".6" />
-          <path d="M34 93h30M34 97.5h24" stroke="#fffdf8" strokeOpacity=".85" strokeWidth="1.4" strokeLinecap="round" />
-          <rect x="34" y="104" width="18" height="7" rx="3.5" fill="#c46351" />
-          <rect x="55" y="104" width="13" height="7" rx="3.5" fill="none" stroke="#fffdf8" strokeOpacity=".8" strokeWidth=".6" />
-          <path d="M86 82.5h46M86 104.5h46" stroke="#2f56aa" strokeOpacity=".2" strokeWidth=".6" />
-          {[60, 83, 105].map((y) => (
-            <g key={y}>
-              <circle cx="91.4" cy={y + 6.6} r="1.9" fill="#ef6142" />
-              <circle cx="93.6" cy={y + 9.4} r="1.9" fill="#2f56aa" />
-              <circle cx="90.2" cy={y + 10} r="1.7" fill="#8b6fd6" />
-              <path d={`M99 ${y + 6.4}c1-1.6 2.4-1.6 2.4 0s1.4-1.4 2.4 0 1.4-1.2 2.4 0`} fill="none" stroke="#2f56aa" strokeWidth=".9" strokeLinecap="round" />
-              <path d={`M99 ${y + 11}h24M99 ${y + 14.5}h19`} stroke="#2a2420" strokeOpacity=".35" strokeWidth="1" strokeLinecap="round" />
-            </g>
-          ))}
-          <path className="t-ink" d={`${windowShape(28, 44, 104, 84)}M28 56h104M86 56v72`} />
+          <path d={windowShape(26, 48, 108, 80)} fill="#12387d" />
+          <path d="M26 60v-7a5 5 0 0 1 5-5h98a5 5 0 0 1 5 5v7z" fill="#f3ebd8" />
+          <circle cx="34" cy="54" r="2.1" fill="#e5654c" />
+          <circle cx="41" cy="54" r="2.1" fill="#efc319" />
+          <circle cx="48" cy="54" r="2.1" fill="#5e9c4e" />
+          <g transform="translate(44.3 59.7) scale(.7)">
+            <path d={BLOBS.cream} fill="#f3e7d1" />
+            <path d={BLOBS.lilac} fill="#b0aae7" />
+            <path d={BLOBS.dot} fill="#f2613d" />
+          </g>
+          <path className="t-ink" d={`${windowShape(26, 48, 108, 80)}M26 60h108`} />
         </g>
       </Paper>
     </svg>
@@ -380,7 +325,7 @@ export function TrekThing() {
 }
 
 export const THINGS = {
-  taste: TasteThing,
+  music: TasteThing,
   features: FeaturesThing,
   websites: WebsitesThing,
   career: CareerThing,

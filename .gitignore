@@ -19,3 +19,4 @@ pnpm-debug.log*
 
 # Wrangler keeps local Worker state here; none of it belongs in a public repo.
 .wrangler/
+/.next-dev/

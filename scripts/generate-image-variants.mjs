@@ -47,13 +47,9 @@ const SLOTS = {
   // then a native swipe rail capped at 400 CSS px on phones and tablets.
   conceptProject: { ratio: 5 / 2, css: [240, 320, 418] },
 
-  // Podcast covers sit in the Taste Library beside posters and game boxes, so
-  // they share that ladder.
-  podcastArt: { ratio: 1, css: [104, 136, 176] },
-
-  // Real theatrical/TV posters and game boxes in the Taste Library.
-  posterArt: { ratio: 2 / 3, css: [104, 136, 176] },
-  gameArt: { ratio: 3 / 4, css: [104, 136, 176] }
+  // Podcast covers belong to the listening data (public/listening-catalogue.json)
+  // and keep the ladder they had in the Taste Library.
+  podcastArt: { ratio: 1, css: [104, 136, 176] }
 };
 
 /*
@@ -105,22 +101,13 @@ const sources = [
   { file: "project-art/personal/features-discoveries.svg", slot: "conceptProject" },
   { file: "project-art/personal/portuguese-with-ines-conversation.png", slot: "conceptProject", position: [0, 30], zoom: 1.3 },
   { file: "project-art/personal/trek-paper-landscape.png", slot: "conceptProject" },
-  // Screenshots of the sites (scripts/capture-websites.mjs); cards show the top.
-  { file: "project-art/websites/castle-bank.webp", slot: "conceptProject", position: [50, 0] },
-  { file: "project-art/websites/butterfly-rose.webp", slot: "conceptProject", position: [50, 0] }
+  // Illustrations of the sites, drawn at the card's own 5:2.
+  { file: "project-art/websites/castle-bank.webp", slot: "conceptProject" },
+  { file: "project-art/websites/butterfly-rose.webp", slot: "conceptProject" }
 ];
 
 for (const file of (await readdir(path.join(publicDir, "podcast-covers"))).filter((file) => file.endsWith(".webp")).sort()) {
   sources.push({ file: `podcast-covers/${file}`, slot: "podcastArt" });
-}
-
-const curation = JSON.parse(await readFile(path.join(root, "data/taste-curation.json"), "utf8"));
-for (const kind of ["films", "tv", "games"]) {
-  for (const item of curation[kind]) {
-    // The original square poster plates contain the full poster on a small
-    // blurred surround. This crop removes that surround without losing type.
-    sources.push({ file: item.art.slice(1), slot: kind === "games" ? "gameArt" : "posterArt", zoom: kind === "games" ? 1 : 1.09, ...(item.art.includes("hearthstone-key-art") ? { position: [85, 50] } : {}) });
-  }
 }
 
 /*

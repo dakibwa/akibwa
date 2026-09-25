@@ -27,7 +27,7 @@ export const metadata = {
         url: "/share-card-paper.jpg",
         width: 1200,
         height: 630,
-        alt: "I'm Daniel, building in the age of AI, above five paper things: taste, features, websites, career and trek"
+        alt: "I'm Daniel, building in the age of AI, above five paper things: music, features, websites, career and trek"
       }
     ]
   },
@@ -63,7 +63,7 @@ export const viewport = {
    same five names live in components/paper/paper-home.jsx. Without
    JavaScript, rooms open through :target instead. A future hash-based
    Content-Security-Policy must include this script's hash. */
-const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["taste","features","websites","career"].indexOf(r)>-1?r:"index"})(document.documentElement,location.hash.slice(1))`;
+const openRoom = `(function(d,r){d.classList.add("js");d.dataset.room=["music","features","websites","career","trek"].indexOf(r)>-1?r:"index"})(document.documentElement,location.hash.slice(1))`;
 
 export default function RootLayout({ children }) {
   return (
