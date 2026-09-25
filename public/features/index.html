@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-EtqDIrF0jnoN/k3CbXsb3UYGP9h1c4X8ATh03qEk4nE=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-pOsfrkVAAfcCxT5zHQmlU+kf/nRqy8hw3omeiq0XMlE=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: leaf, heart, cup and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -276,7 +276,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   }
   @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .help:focus-visible,.act:focus-visible,.wbtn:focus-visible,.intro-start:focus-visible,
-  .devtab:focus-visible,.archive-invite:focus-visible,.tval:focus-visible{
+  .devtab:focus-visible,.tval:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
   .field g.node{outline:none}
@@ -293,10 +293,10 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     align-items:stretch;gap:26px;padding:11px 18px 12px;border-bottom:1px solid var(--silver)
   }
   .hud-head.has-showcase{grid-template-columns:auto minmax(330px,1fr) auto auto;column-gap:clamp(12px,1.8vw,26px)}
-  .board-showcase{display:flex;align-items:center;align-self:center;gap:4px}
+  .board-showcase{display:flex;align-items:center;align-self:center;gap:6px}
   .board-showcase[hidden]{display:none}
-  .board-showcase>span{display:block;width:clamp(28px,2.8vw,40px);aspect-ratio:1}
-  .board-showcase svg{display:block;width:100%;height:auto}
+  .board-showcase>.help{cursor:default}
+  .board-showcase>.help:active{transform:none}
   .mark{display:flex;align-items:center}
   h1{font-size:25px;font-weight:700;letter-spacing:-.02em;text-transform:lowercase;
      line-height:1.2;width:max-content}
@@ -499,7 +499,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .field.swap-in > svg{animation:boardin .3s var(--ease-out) both}
 
 
-  .hud-body{flex:1 1 auto;min-height:0;display:flex}
+  .hud-body{flex:1 1 auto;min-height:0;display:flex;overflow:clip}
 
   .recglyph{width:16px;height:16px;color:currentColor}
   .actionrow{display:flex;align-items:center;gap:6px}
@@ -835,7 +835,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     gap:7px;align-content:start;overscroll-behavior:contain;
     transition:filter var(--t-card) var(--ease-out),opacity var(--t-card) var(--ease-out)}
   .collection[hidden]{display:none}
-  .collection,.acct-body,.pay-body,.arch-grid,.boardcard > .bulletin,.veil{overscroll-behavior:contain}
+  .collection,.acct-body,.pay-body,.boardcard > .bulletin,.veil{overscroll-behavior:contain}
   .colcap{
     grid-column:1/-1;margin:0 0 3px;
     font-size:9px;letter-spacing:.12em;text-transform:lowercase;color:var(--ink-soft);
@@ -1012,17 +1012,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
 
 
   .pay-body{padding:0 0 4px;overflow-y:auto;min-height:220px}
-  .arch-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;
-    max-height:min(52dvh,400px);overflow-y:auto;padding:2px 10px 2px 0;
-    scrollbar-width:thin;scrollbar-color:var(--ink-soft) var(--paper)}
-  .arch-grid:focus-visible{outline:1px solid var(--ink-soft);outline-offset:3px}
-  .arch-net{display:flex;flex-direction:column;gap:9px;min-width:0}
-  .arch-plate{background:var(--paper);aspect-ratio:1040/580;display:block;overflow:hidden}
-  .arch-plate svg{display:block;width:100%;height:100%}
-  .arch-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    font-size:12px;color:var(--ink-soft)}
-  .arch-status{white-space:nowrap}
-  .arch-rung{flex:1;height:3px;background:var(--rung,var(--rule))}
   .acct-ask{font-size:13px;color:var(--ink);line-height:1.45}
   .acct-note{font-size:10px;letter-spacing:.05em;color:var(--ink-soft);line-height:1.5}
   .legal-foot{padding:4px 0 12px}
@@ -1165,11 +1154,10 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .home-menu-intro.short .home-intro-detail{display:none}
   .discover-menu-intro.short .discover-intro-detail{display:none}
   .premium-offer .acct-note{font-size:12px;letter-spacing:0}
-  .premium-benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-    grid-template-rows:repeat(2,minmax(min-content,1fr));flex:1;
-    gap:clamp(20px,4dvh,48px) clamp(16px,4cqw,48px);padding:0;
-    align-items:stretch}
-  .premium-benefit{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(10px,1.8dvh,18px);align-items:start;align-content:center}
+  .premium-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    align-content:center;flex:1;
+    gap:clamp(20px,4dvh,48px) clamp(16px,4cqw,48px);padding:0}
+  .premium-benefit{display:grid;grid-template-columns:minmax(0,1fr);gap:clamp(10px,1.8dvh,18px);align-items:start;align-content:start}
   .premium-stamp{width:clamp(48px,min(22cqw,17dvh),148px)}
   .premium-stamp .rfeat{display:block;width:100%;height:auto;aspect-ratio:1}
   .premium-copy{display:grid;gap:var(--text-gap)}
@@ -1180,14 +1168,9 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .premium-terms{text-align:center;font-size:11px;letter-spacing:.04em;color:var(--ink-soft)}
   .premium-account{text-align:center;font-size:11px;color:var(--ink-soft)}
   .premium-account .acctlink{margin:0;font-size:inherit;letter-spacing:0}
-  .premium-result{padding-bottom:12px;border-bottom:1px solid var(--rule)}
-  .premium-result summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;font-size:11px;color:var(--ink-soft)}
-  .premium-result summary::after{content:'+';color:var(--ink)}
-  .premium-result[open] summary::after{content:'−'}
-  .premium-result>.track{margin-top:10px}
-  .premium-result .arch-grid{margin-top:16px}
   @media(max-width:700px){
-    .premium-benefits{gap:clamp(14px,2.4dvh,22px) 16px}
+    .premium-benefits{grid-template-columns:minmax(0,1fr);align-content:space-evenly;gap:clamp(14px,2.4dvh,22px) 16px}
+    .premium-benefit{grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:16px}
     .premium-stamp{width:clamp(40px,min(24cqw,14dvh),120px)}
     .premium-benefits b{font-size:17px}
     .premium-benefits .acct-note{font-size:12.5px}
@@ -1213,9 +1196,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .premium-stamp{width:32px}
     .premium-benefit{gap:4px}
   }
-  .archive-invite{display:flex;justify-content:space-between;gap:10px;width:100%;padding:10px 0 0;border:0;background:none;
-    font:inherit;font-size:var(--menu-small);line-height:1.4;color:var(--ink-soft);text-align:left;cursor:pointer}
-  .archive-invite:hover,.archive-invite:focus-visible{color:var(--ink)}
   .paneside .acct-body{flex:1 1 auto;min-height:0;overflow-y:auto}
   .view-profile .paneside{overflow-y:auto;overscroll-behavior:contain}
   .view-profile .pane-head{flex:none;padding-bottom:var(--section-gap);border-bottom:1px solid var(--rule)}
@@ -1369,8 +1349,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
 
 
 
-  .wbspread:empty{display:none}
-  .wbspread{margin-top:12px;font-variant-numeric:tabular-nums;padding-top:13px;border-top:1px dashed var(--silver);font-size:12px;color:var(--ink-soft);line-height:1.55}
   .intro-start{margin-top:17px;width:100%;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font:inherit;font-size:12.5px;letter-spacing:.1em;padding:9px;cursor:pointer;text-transform:lowercase;
     transition:background var(--t-ui),border-color var(--t-ui),color var(--t-ui),transform var(--t-lift) var(--ease-out)}
   .intro-start:hover{background:color-mix(in srgb,var(--ink) 88%,var(--paper))}
@@ -1456,7 +1434,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .hud-head.has-showcase{grid-template-columns:minmax(0,1fr) auto}
     .has-showcase .mark{display:none}
     .has-showcase .board-showcase{grid-column:1;justify-self:start;gap:4px}
-    .has-showcase .board-showcase>span{width:32px}
     .has-showcase .btns{grid-column:2}
   }
 
@@ -1476,7 +1453,8 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .unit-top{flex-wrap:wrap}
     .unit-name{margin-left:0;flex-basis:100%;margin-top:2px}
     .btns{gap:4px;flex-wrap:wrap;justify-content:flex-end}
-    .btns .help{min-width:34px;padding:0 6px}
+    .board-showcase{gap:4px}
+    :is(.btns,.board-showcase) .help{min-width:34px;padding:0 6px}
 
     .field{--nr:15;--nw:4.95}
     .field .tlabel2{font-size:28px;stroke-width:9}
@@ -2154,9 +2132,9 @@ const STAMPS={
 "hanger":{"label":"hanger","colour":"#1FA45A","art":"<!--@stamp-frame v1--><g data-stamp-frame=\"v1\" data-ink-bounds=\"6,9,90,87\" data-view-box=\"0,0,96,96\" transform=\"translate(6.857143 6.857143) scale(0.857143)\"><g fill=\"currentColor\" transform=\"translate(0 6)\"><path fill-rule=\"evenodd\" d=\"M48 37L86 65Q94 73 86 81H10Q2 73 10 65L38 44V37C38 31 45 27 51 23C56 20 54 13 48 13C43 13 40 17 40 21H30C30 10 38 3 48 3C60 3 67 12 65 22C64 31 51 34 48 37ZM47 49L18 71H77Z\"/></g></g><!--@end-stamp-frame-->"}
 };
 
-const CATALOGUE_REVISION=37, CATALOGUE_LAUNCH='2026-09-11', CATALOGUE_V22_LAUNCH='2026-09-07', CATALOGUE_START='2026-08-01';
-const catalogueRevision=value=>[21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37].includes(Number(value))?Number(value):20;
-const catalogueFor=day=>day>=CATALOGUE_START?37:20;
+const CATALOGUE_REVISION=38, CATALOGUE_LAUNCH='2026-09-11', CATALOGUE_V22_LAUNCH='2026-09-07', CATALOGUE_START='2026-08-01', BEND_LAUNCH='2026-09-25';
+const catalogueRevision=value=>[21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38].includes(Number(value))?Number(value):20;
+const catalogueFor=day=>day>=BEND_LAUNCH?38:day>=CATALOGUE_START?37:20;
 const FIGURES_V20={
   "house":{"n":5,"c":"--orange","p":[[-0.85749,0.68599],[-0.85749,-0.1715],[0,-1.02899],[0.85749,-0.1715],[0.85749,0.68599]],"chord":[0,4]},
   "key":{"n":7,"c":"--gelb","p":[[1.24149,-0.00148],[0.44982,-0.00148],[0.45953,0.78472],[-0.7356,0.78988],[-1.13352,-0.00148],[-0.73547,-0.78402],[0.45376,-0.78615]],"chord":[1,6]},
@@ -2371,7 +2349,7 @@ const FIGURES={
   "hanger":{"n":10,"c":"--gruen","p":[[-0.2,-1],[0.25,-1.2],[0.5,-0.9],[0.35,-0.55],[0.1,-0.25],[1.2,0.75],[1,1],[-1,1],[-1.2,0.75],[-0.15,-0.2]],"chord":[0,9]},
 };
 const classifiedFigureKey=(key,revision=CATALOGUE_REVISION)=>catalogueRevision(revision)===36&&key==='chair'?'crank':key;
-const generationCatalogue=revision=>catalogueRevision(revision)>=37?37:catalogueRevision(revision)>=36?35:catalogueRevision(revision);
+const generationCatalogue=revision=>catalogueRevision(revision)>=38?38:catalogueRevision(revision)>=37?37:catalogueRevision(revision)>=36?35:catalogueRevision(revision);
 const figureBank=revision=>catalogueRevision(revision)>=37?FIGURES:catalogueRevision(revision)>=36?FIGURES_V36:catalogueRevision(revision)>=23?FIGURES_V35:catalogueRevision(revision)>=21?FIGURES_V22:FIGURES_V20;
 function bandFigures(bank){
   const bands={};
@@ -3223,12 +3201,17 @@ const GEN_VERSIONS=[
     splitPart:'clear',optimum:'free',rung:'earned',chord:'clues',selfX:'count',
     ramp:'mosaic',dense:'cap',weave:'pattern',mix:'contig',open:'stamps',
     ink:'poster16',mechanic:'classic',reveal:'plot',catalogueRevision:37,feats:Object.keys(FIGURES)}
+  ,{v:38,from:BEND_LAUNCH,par:'family',layout:'families',
+    split:'vertical',merge:'widen',pinFill:true,parMode:'greedy',parSlack:3,
+    splitPart:'clear',optimum:'free',rung:'earned',chord:'clues',selfX:'count',
+    ramp:'mosaic',dense:'cap',weave:'pattern',mix:'contig',open:'stamps',
+    ink:'poster16',mechanic:'classic',reveal:'plot',bend:'daily',catalogueRevision:38,feats:Object.keys(FIGURES)}
 ];
 const GEN_RULES={split:'angled', merge:'tight', pinFill:false, parMode:'walk', parSlack:0,
                  splitPart:'fixed', optimum:'table', rung:'flat',
                  chord:'none', selfX:'off', ramp:'front', dense:'open',
                  weave:'none', mix:'even', open:'set', ink:'open',
-                 mechanic:'classic', reveal:'none'};
+                 mechanic:'classic', reveal:'none', bend:'none'};
 function genRules(g){
   return {split:g.split||'angled', merge:g.merge||'tight',
           pinFill:!!g.pinFill, parMode:g.parMode||'walk', parSlack:g.parSlack||0,
@@ -3238,7 +3221,7 @@ function genRules(g){
           ramp:g.ramp||'front', dense:g.dense||'open',
           weave:g.weave||'none', mix:g.mix||'even', open:g.open||'set',
           ink:g.ink||'open', mechanic:g.mechanic||'classic',
-          reveal:g.reveal||'none',catalogueRevision:catalogueRevision(g.catalogueRevision)};
+          reveal:g.reveal||'none',bend:g.bend||'none',catalogueRevision:catalogueRevision(g.catalogueRevision)};
 }
 function genFor(day){
   let g=GEN_VERSIONS[0];
@@ -3752,7 +3735,11 @@ const PACK_V37={};
 for(const [day,slots] of Object.entries({"2026-08-07":{"2":1},"2026-08-10":{"5":7},"2026-08-11":{"2":3},"2026-08-18":{"5":2},"2026-08-19":{"0":1},"2026-08-28":{"0":3},"2026-08-29":{"1":1},"2026-08-30":{"3":2},"2026-08-31":{"0":3,"5":3},"2026-09-01":{"0":1,"2":3,"5":1},"2026-09-08":{"0":2,"5":5},"2026-09-09":{"2":1},"2026-09-11":{"0":4},"2026-09-12":{"1":1,"2":3},"2026-09-15":{"0":1},"2026-09-16":{"0":2,"2":1},"2026-09-18":{"2":15},"2026-09-20":{"0":4,"3":1},"2026-09-22":{"0":17,"2":2},"2026-09-23":{"0":2},"2026-09-24":{"0":2,"3":1,"5":1},"2026-09-25":{"0":1},"2026-09-27":{"2":1},"2026-09-28":{"3":1},"2026-09-29":{"2":23},"2026-09-30":{"0":1,"2":1},"2026-10-02":{"0":8},"2026-10-03":{"0":1},"2026-10-04":{"2":10},"2026-10-05":{"0":2},"2026-10-06":{"1":2,"2":1},"2026-10-07":{"0":1,"2":3},"2026-10-08":{"3":1},"2026-10-09":{"5":1},"2026-10-10":{"0":2,"2":1},"2026-10-11":{"3":2},"2026-10-13":{"0":2,"4":1},"2026-10-14":{"0":4,"2":1},"2026-10-15":{"1":1,"2":1,"9":1},"2026-10-16":{"5":1},"2026-10-17":{"3":1},"2026-10-18":{"0":2,"1":1,"2":3},"2026-10-21":{"0":1},"2026-10-22":{"3":1},"2026-10-23":{"0":1},"2026-10-24":{"1":1,"2":2},"2026-10-25":{"0":2,"1":2,"2":1},"2026-10-27":{"0":4,"5":6},"2026-10-28":{"0":1,"2":2,"5":1},"2026-10-29":{"0":2,"2":1},"2026-10-30":{"0":3},"2026-10-31":{"0":2},"2026-11-01":{"5":3},"2026-11-03":{"0":4,"3":1},"2026-11-04":{"0":18,"1":1},"2026-11-05":{"1":1},"2026-11-07":{"0":11},"2026-11-08":{"2":1},"2026-11-09":{"0":2,"2":2},"2026-11-10":{"3":1},"2026-11-11":{"0":2},"2026-11-12":{"5":1},"2026-11-13":{"0":8,"2":1,"5":8},"2026-11-14":{"3":1},"2026-11-15":{"0":1,"5":6},"2026-11-16":{"0":2,"2":1,"5":5},"2026-11-17":{"0":17},"2026-11-18":{"0":37,"3":1},"2026-11-19":{"0":15,"2":2,"5":13},"2026-11-20":{"5":4},"2026-11-21":{"3":1},"2026-11-23":{"0":2,"1":1,"2":1},"2026-11-24":{"0":2,"5":13},"2026-11-25":{"3":8},"2026-11-26":{"0":8},"2026-11-27":{"2":1},"2026-11-28":{"0":2},"2026-11-29":{"0":2},"2026-11-30":{"5":5},"2026-12-02":{"3":1,"9":1},"2026-12-03":{"0":6,"2":2,"3":1},"2026-12-04":{"5":6},"2026-12-05":{"1":1,"2":2},"2026-12-07":{"0":5},"2026-12-08":{"0":2,"2":3},"2026-12-09":{"0":1,"1":1,"5":3},"2026-12-10":{"0":12,"5":1},"2026-12-11":{"0":129},"2026-12-12":{"1":1,"2":1,"4":1,"5":3,"9":1},"2026-12-13":{"0":4,"2":3,"5":3},"2026-12-14":{"0":27,"1":3},"2026-12-15":{"0":2,"1":1,"3":1,"5":3},"2026-12-16":{"5":3},"2026-12-17":{"2":1},"2026-12-18":{"0":2}})){
 const rows=[...(PACK_V37[day]||[])];for(const [i,seed] of Object.entries(slots))rows[i]={s:typeof seed==='number'?'variety:'+day+':'+i+':'+seed:seed,d:day,v:37};PACK_V37[day]=rows;}
 const SALT_V37=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-08-01",",,c,3j,e,2j,,f,5a;11,,,t,,5l,d,5w,2w,14;f,,46,,,2a,,19,r;1r,,,,,2g,,c8,36,19;,,,,,,,16,1f;,,,,,4j,2h,,71;,,,,,,e,,,h;10,,q,,,2s,p,12,,d;,,6y,d,,g,b,cq,g;,13,s,,,13,,b,1f,1l;,,x,n,l,y,2d,,2r;,,2b,,,,z,,4g;t,,,1h,,b,b,bn,4l;,,,,,o,c,,16;2h,,2r,1d,,x,1y,5r,7w;,,3u,10,,d,1c,c4,16;2c,,1e,x,,28,h,bx,e;j,,,k,,o,1k,,2m;,,1s,i,,1k,28,18,5v;c,,h,,,r,2b,5r,3n;16,,,1e,,k,p,,16;,,p,3b,,11,14,5v,q;,,34,1h,,,,k,f,16;1c,i,r,,e,2x,,1b,2w;c,,1v,,,,,17;28,,27,j,,g,,1d,w;s,,1x,27,,2k,,5k,1w,1v;q,f,,,,13,37,ca,5v;,,2g,m,,3o,,,14;d,,t,,,1n,f,j,27;,,1j,1m,,t,l,b6,1o;e,,f,,,b,,5l,d0;d,,,1l,,2j,,5q,l;2f,,4a,2k,,,,i,17,14;,,2i,3f,,28,w,y,14;1i,,12,10,,,1j,ct,o;,,u,3s,,,,11,1o,17;23,,29,2f,,,,5q,d;d,,33,,,c,,5m,1f;1o,,m,,,,27,5o,6g;5m,,18,,,,1i,,1m;x,,,,,12,,12,,d;12,,u,b,,e,,bz,8i;,,2g,13,e,p,,r,1y;1n,,q,h,,2z,,c8,1v;,,4g,,,,1c,n,l,16;q,,o,e,,l,2q,1k,35;,,,2b,c,p,1t,5k,39;15,,,,,q,1c,,l;,,3e,1v,,1l,,bl,25;,,s,,,,,bq,24;,,f,,,17,17,5r,2d;d,,s,,,e,,1x;,h,,,,x,19,5o,4w,h;r,,c,,,1y,,d3;o,,e,l,,,,,z;h,,2g,g,,1y,l,bu,y,15;,,,,,,p,c6,2u;,,z,,,h,,f,s;,,p,,,11,j,cg,13;,d,,i,,2z,,bm,3h;,,,3b,,1s,d,,i;c,c,2n,11,,,h,c4,14;,,39,d,,14,,k,43,16;,,o,69,,2a,e,cs,1x;b,,h,2y,,28,,,1g;,,12,,,d,b,1b;d,b,,,,,l,j,3g,15;,,d,c,,h,,2k,31,s;59,,,21,,,1g,60,2r,14;,m,k,j,,,w,1n,5y;b,,l,i,,52,,,b;,,3a,2s,,1j,18,r,1z;y,,i,,,x,x,35,3h,1n;,,,,,,x,,5p;d,,,p,,3w,,5m,r;,h,e,1j,,i,,b8,v;,,,,b,,,b,,d;,,b,n,,2l,y,k,3o;k,h,1z,b,,1g,1f,5k,5i,2g;,,3l,2v,,1s,,5p,2q;10,,5l,,,18,,,6i,14;i,,1s,,,11;,,,39,,1z,13,12,,17;,,,l,,b,d,,13,1d;,,,c,,28,c,t,5q;,,p,c,,u,,k,g,1c;,,,h,,,h,,k,l;,p,c,,,1r,d;,,,f,g,29,,1f,8q;,,,,,s,,5n,3c;,,5s,y,,r,,,26,1e;,,2e,b,,n,,,57,14;13,f,2e,h,,,g,bc,2l;h,,,,,e,1d;,,2x,,,,,cb,5p;,,w,,,s,,be,2g;,,1y,12,,12,b;u,,w,k,,30;c,,,v,,,14,c2,2x;d,,d,,,35,h,c,1m;,,4l,r,,c,1a,cv,1x,1m;,,17,f,,23,,5r,5t,b;,,16,,,p,28;r,,,s,,n,t,5w,40;,,17,x,,14,19,,1t;,,x,13,,b,1d,c6,r;r,d,,,,,10,b4,4t;,,2k,,,58,c,bz,2u;11,,3l,r,5l,8f,,,1h,1c;f,,e,2f,,,2h,6j,7k;1r,,d,20,,h,,,29;,,c,,,t,r,70,2v;,,4k,x,,g,1s,b4,40;,,v,1i,,z,,6e,z,j;,,,13,,,1b,bb,17,d;,,3j,,,16,e,,16;,,,n,,26,l,bl,7b;b,b,b,,,z,p,r,2w;j,,z,1f,,10,,bn,36;,,31,31,,t,14,bd,1v;1o,,l,1g,,c,,1s,1e;24,x,,,,39,,f,3q;10,,w,,,w,,j,,14;,,11,f,,,,bb,e;,,,,,,1v,ba,2e;1z,,,k,,3w,c,5v,i;11,,3h,j,,4p,c;n,,,,,,,15,8g;d,,j,,,3y,,bi,y;p,,50,z,,24,,5x,6u;m,,m,2d,,,,o,b;16,,,15,,1i,,63,g,m;,,u,1e,,y,2a,c5,2b;h,,k,r,,17,,1n;r,p,h,p,,k,,b7,,1b;,,1t,,,,1c,5r,21;,,14,,,10,2a,i,3s;13,,,15,,e,,b,u,16;,,,20,,,,63,40;,d,,10,,,,bm,,1b");
-const packFor=revision=>catalogueRevision(revision)>=37?PACK_V37:catalogueRevision(revision)>=35?PACK_V35:catalogueRevision(revision)>=27?PACK:catalogueRevision(revision)===26?PACK_V26:catalogueRevision(revision)===25?PACK_V25:catalogueRevision(revision)===24?PACK_V24:catalogueRevision(revision)===23?PACK_V23:catalogueRevision(revision)===22?PACK_V22:catalogueRevision(revision)===21?PACK_V21:PACK_V20;
+const PACK_V38={};
+for(const [day,slots] of Object.entries({})){
+const rows=[...(PACK_V38[day]||[])];for(const [i,seed] of Object.entries(slots))rows[i]={s:typeof seed==='number'?'variety:'+day+':'+i+':'+seed:seed,d:day,v:38};PACK_V38[day]=rows;}
+const SALT_V38=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-25",",,e,l,,gx,ok,2w,6g;h,,2g,g,,1z,7f,1cg,35w,15;,,x,,,25,p,da,je;,,z,,,2cs,26,5x,35h;,,2c,,,1k6,df,1br,-14;,d,k,i,,66,xw,22p,4me;,,,3b,,354,n,ou,5sl;,c,2n,11,,2bb,4y,3pf,dj;3f,,39,d,,14,,492,10e,16;,,e,69,,24w,ak,1dr,108;2g,,h,2y,,3u9,3q,156,22h;,,,,,2io,1i6,3y1,4zr;28,b,27,,,2nu,cd,z6,4v8,15;,,d,h,,cp,2o,2tk,207,s;59,,,21,,gx,s1,1c6,1bj,14");
+const packFor=revision=>catalogueRevision(revision)>=38?PACK_V38:catalogueRevision(revision)>=37?PACK_V37:catalogueRevision(revision)>=35?PACK_V35:catalogueRevision(revision)>=27?PACK:catalogueRevision(revision)===26?PACK_V26:catalogueRevision(revision)===25?PACK_V25:catalogueRevision(revision)===24?PACK_V24:catalogueRevision(revision)===23?PACK_V23:catalogueRevision(revision)===22?PACK_V22:catalogueRevision(revision)===21?PACK_V21:PACK_V20;
 const OPTIMA={
   '2026-08-01':[6,5,8,11,16,17,20,20,27,34],
   '2026-08-02':[5,4,5,12,17,18,17,23,24,32],
@@ -3950,9 +3937,10 @@ function newRun(mode,day){
 const isTrial=()=>R().mode==='trial';
 const isArchive=()=>!!R().archive;
 const inArchive=d=>d<today();
-const canAccessDay=d=>d>=LAUNCH && d<=today() && (!inArchive(d) || DEV || POLICY.premium);
+const canAccessDay=d=>d>=LAUNCH && d<=today() && (!inArchive(d) || DEV);
+const canContinueDay=d=>canAccessDay(d) || (d>=LAUNCH && inArchive(d) && POLICY.premium);
 const canAccessRun=(r=R())=>!!r && ((r===R() && inTutorialRun()) ||
-  (canAccessDay(r.day) && (r.mode!=='trial' || canTimeTrial())));
+  (canContinueDay(r.day) && (r.mode!=='trial' || canTimeTrial())));
 const liveRunOn=d=>[store.run,store.parked].some(r=>r&&r.day===d&&r.mode!=='trial'&&!r.over);
 const spentDay=d=>!liveRunOn(d) && dayRows().some(r=>r.d===d);
 function canPlayDay(d){
@@ -4233,8 +4221,6 @@ function renderMenu(){
   }
   if(menuView==='pay' && !$('paybody').firstChild)
     $('paybody').innerHTML='<p class="colcap">opening the till&hellip;</p>';
-  if(menuView==='pay' && $('premiumarchive'))
-    $('premiumarchive').textContent=archivePuzzleCount()+' archive puzzles';
   renderPanes();
   paintDoors();
   fitMenuIntros();
@@ -4284,7 +4270,12 @@ let showcaseKeys=readShowcase(),showcaseTarget=null;
 function canShowcaseStamps(){return !!POLICY.premium}
 function showcaseSlots(){return showcaseKeys.map(k=>k&&(figureBadge(k)||store.collection.badges['large:'+k])?k:null)}
 function earnedShowcaseKeys(){return showcaseSlots().filter(Boolean)}
-function showcasePlate(key){return `<span data-stamp="${key}">${featIcon(key)}</span>`}
+function showcasePlate(key){
+  const d=FIGURES[key]||FIGURES_V20[key]||FEATURES[key];if(!d)return '';
+  const glyph=STAMPS[key]?STAMPS[key].art:`<g fill="currentColor">${d.p}</g>`;
+  return `<span class="help" data-stamp="${key}" style="--door-plate:var(${d.c})">`
+    +`<svg viewBox="0 0 96 96" role="img" aria-label="${key}">${glyph}</svg></span>`;
+}
 function paintShowcase(){
   const el=$('boardshowcase'),keys=canShowcaseStamps()?earnedShowcaseKeys():[];
   const signature=keys.join('|');
@@ -5243,9 +5234,9 @@ function paintAcct(){
     +`<div id="acctsettingslot"></div>`
     +`<div class="acct-sec">`
       +(POLICY.premium?`<div class="acct-ask">premium is active</div>`
-        +`<div class="acct-note">choose any day from the calendar or play iterate. sign in with this account on another device and it unlocks there too.</div>`
+        +`<div class="acct-note">play today's set again or climb iterate. sign in with this account on another device and it unlocks there too.</div>`
         :`<button class="acct-premium" id="acctpremium"${acctBusy?' disabled':''}>
-          <span class="acct-premium-copy"><strong>keep discovering.</strong><span>earlier days, replays, iterate and your own concept showcase</span><span>one payment · no subscription</span></span>
+          <span class="acct-premium-copy"><strong>keep discovering.</strong><span>replays, iterate and your own concept showcase</span><span>one payment · no subscription</span></span>
           <span class="acct-premium-art" aria-hidden="true">${['house','fish','cup','key'].map(k=>featIcon(k)).join('')}</span>
           <span class="acct-premium-go">unlock premium<span aria-hidden="true">→</span></span>
         </button>`
@@ -5505,7 +5496,7 @@ function priceFoot(){
 
 let upgradeDay=null;
 const UPGRADE_RETURN='features-upgrade-return';
-const releasedDay=day=>typeof day==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(day)&&day>=LAUNCH&&day<=today();
+const releasedDay=day=>day===today();
 function takeUpgradeReturn(){
   try{
     const day=sessionStorage.getItem(UPGRADE_RETURN);
@@ -5529,15 +5520,12 @@ function openUpgrade(day=null){
     if(epoch===menuEpoch&&$('premiumoffer'))renderUpgrade();
   });
 }
-function archivePuzzleCount(){return Math.max(0,Math.round((Date.parse(today())-Date.parse(LAUNCH))/864e5))*POLICY.dailyNets}
 function renderUpgrade(){
   restoreMenuPlay();
   if(POLICY.premium) return upgradeDay==='endless'?openMenu('endless'):upgradeDay?openDay(upgradeDay):openMenu('home');
   const price=priceWords(),available=canBuy()&&(!!nativePlatform()||!!price);
-  const waiting=!available&&!!pricePromise,row=dayRows().find(r=>r.d===upgradeDay),read=row&&dayReading(row);
-  const expanded=$('premiumresult')?.open;
-  const benefits=[['house',archivePuzzleCount()+' archive puzzles','ten more every day'],
-    ['heart','unlimited replays','play any day again'],
+  const waiting=!available&&!!pricePromise;
+  const benefits=[['heart','unlimited replays',"play today's set again"],
     ['stairs','iterate','climb through tougher nets'],
     ['fish','your showcase','pin four concepts']];
   $('paybody').innerHTML=`<section class="premium-offer" id="premiumoffer" aria-labelledby="premiumtitle">
@@ -5547,10 +5535,8 @@ function renderUpgrade(){
       ${upgradeDay?`<p class="intro-sub">${upgradeDay==='endless'?'iterate · premium':esc(dayLabel(upgradeDay))}</p>`:''}</div>
     <div class="premium-benefits">
       ${benefits.map(([stamp,title,note])=>`<div class="premium-benefit"><span class="premium-stamp" aria-hidden="true">${featIcon(stamp)}</span>
-        <div class="premium-copy"><b${stamp==='house'?' id="premiumarchive"':''}>${title}</b><span class="acct-note">${note}</span></div></div>`).join('')}
+        <div class="premium-copy"><b>${title}</b><span class="acct-note">${note}</span></div></div>`).join('')}
     </div>
-    ${row?`<details class="premium-result" id="premiumresult"${expanded?' open':''}><summary><span>your result</span><span>${esc(read?.fig!=null?String(read.fig):'')} ${esc(read?.word||'')}</span></summary>
-      ${rungTrack(row.tiers||'',true)}<div id="archbody"></div></details>`:''}
     ${available?'<p class="premium-terms">one payment · no subscription</p>':''}
     <div class="premium-actions" id="premiumactions">
       ${available?'<button class="intro-start" id="premiumcontinue">keep discovering'+(price?' · '+esc(price):'')+'</button>'
@@ -5558,9 +5544,6 @@ function renderUpgrade(){
       ${!available&&!waiting&&!nativePlatform()?'<button class="wbtn" id="premiumretry">check again</button>':''}
     </div>
   </section>`;
-  if($('premiumresult'))$('premiumresult').ontoggle=()=>{
-    if($('premiumresult')?.open&&!$('archbody').firstChild)$('archbody').innerHTML=archiveLookHTML(row);
-  };
   if($('premiumcontinue'))$('premiumcontinue').onclick=()=>{
     $('paybody').innerHTML='<p class="acct-ask">opening secure payment…</p>';
     beginUnlock();
@@ -5570,30 +5553,6 @@ function renderUpgrade(){
   fitMenuIntros();
 }
 
-let spread=null, spreadAsked=false;
-async function ensureSpread(){
-  if(spreadAsked || !API) return;
-  spreadAsked=true;
-  const day=dayAdd(today(),-1), row=dayRows().find(r=>r.d===day);
-  const revision=row?catalogueRevision(row.catalogueRevision):catalogueFor(day);
-  const r=await api('day/'+day+'/spread?catalogueRevision='+revision);
-  if(!r || r.error || !r.enough || !Array.isArray(r.dist)) return;
-  spread=r;
-  paintSpread();
-}
-function paintSpread(){
-  const el=$('wbspread');
-  if(!el || !spread) return;
-  const nets=spread.nets||POLICY.dailyNets;
-  let say=`${spread.players} played yesterday · median ${spread.median} of ${nets}`;
-  const mine=rungsOf((dayRows().find(r=>r.d===dayAdd(today(),-1))||{}).tiers);
-  if(mine){
-    const under=spread.dist.reduce((a,b)=>a+(b.good<mine.good?b.n:0),0);
-    const pct=Math.round(under/spread.players*100);
-    if(pct>0) say+=` · you beat ${pct}%`;
-  }
-  el.textContent=say;
-}
 
 function offerFull(what){
   toast(what+' · part of the full version');
@@ -5732,7 +5691,7 @@ async function beginNativeUnlock(){
     if(!nativeProduct) return tillSaid('the store is not answering · try again shortly');
     if(!current()) return;
     $('paybody').innerHTML=`<p class="acct-ask">the full version · ${esc(nativeProduct.price)}</p>`
-      +`<p class="acct-note">one purchase. replay your days, with your record and unlock on every device signed in to this account.</p>`
+      +`<p class="acct-note">one purchase. replays, iterate and your showcase, unlocked on every device signed in to this account.</p>`
       +`<div class="acct-row"><button class="wbtn solid" id="nativebuy">buy · ${esc(nativeProduct.price)}</button>`
       +`<button class="wbtn" id="nativerestore">restore purchases</button></div>`;
     $('nativebuy').onclick=nativePurchase;
@@ -6398,6 +6357,21 @@ function segList(len, chord){
   if(chord) s.push(chord);
   return s;
 }
+const BEND_STEPS=16;
+function curveSamples(p){
+  const out=[];
+  for(let i=0;i<p.length-1;i++){
+    const p0=p[Math.max(0,i-1)],p1=p[i],p2=p[i+1],p3=p[Math.min(p.length-1,i+2)];
+    for(let j=i?1:0;j<=BEND_STEPS;j++){
+      const u=j/BEND_STEPS,u2=u*u,u3=u2*u;
+      out.push({
+        x:.5*((2*p1.x)+(-p0.x+p2.x)*u+(2*p0.x-5*p1.x+4*p2.x-p3.x)*u2+(-p0.x+3*p1.x-3*p2.x+p3.x)*u3),
+        y:.5*((2*p1.y)+(-p0.y+p2.y)*u+(2*p0.y-5*p1.y+4*p2.y-p3.y)*u2+(-p0.y+3*p1.y-3*p2.y+p3.y)*u3)
+      });
+    }
+  }
+  return out;
+}
 const COUPLE_EPS=1e-9;
 function clipCoupledPlane(poly,a,b,limit){
   const inside=p=>a*p.x+b*p.y<=limit+COUPLE_EPS;
@@ -6547,7 +6521,8 @@ function ingredientSpec(i,rules){
   if(rules.catalogueRevision>=27&&i===7)choices.push({threads:5,nodes:5,
     lens:[5,4,4,4,3],shared:1,pinned:0,sliding:2,maxX:20});
   const recipe=(fnv((rules.outlineDay||CATALOGUE_LAUNCH)+':ingredients:'+i)+(rules.ingredientTurn||0))%choices.length;
-  return {...choices[recipe],...(rules.catalogueRevision>=37?{sliding:0}:{}),recipe};
+  return {...choices[recipe],...(rules.catalogueRevision>=37?{sliding:0}:{}),
+    ...(rules.bend==='daily'?{bend:1}:{}),recipe};
 }
 function mosaicCells(style,T,rnd,rules=GEN_RULES){
   let cells;
@@ -7010,6 +6985,30 @@ function famReadability(plan){
   return {score,crossings:x,threadPairs:pairs.size,crossingRegions:cells.size,shallowRate,crowdedRate,dominantPair,
     clear:shallowRate<=.2&&crowdedRate<=.35&&(plan.order.length<3||x<6||dominantPair<=.8)};
 }
+function authorBends(plan,count,rnd){
+  const cands=[],bendable=k=>{
+    const o=plan.order[k],chord=plan.chords&&plan.chords[k];
+    return o.slice(1,-1).filter((n,j)=>!chord||!chord.includes(j+1));
+  };
+  plan.order.forEach((o,k)=>{
+    if(o.length<3||o.some(n=>n.merged||n.pinned||n.slide||n.coupled||n.relay||n.t.length>1))return;
+    if(bendable(k).length)cands.push(k);
+  });
+  if(cands.length<count)return false;
+  plan.curved=[];
+  for(let c=0;c<count;c++){
+    const k=cands.splice(Math.floor(rnd()*cands.length),1)[0],o=plan.order[k];
+    const inner=bendable(k),away=inner.filter(n=>n.hx==null||Math.hypot(n.x-n.hx,n.y-n.hy)>18);
+    const bend=(away.length?away:inner)[Math.floor(rnd()*(away.length||inner.length))];
+    for(const n of o){if(n===bend)continue;if(n.hx!=null){n.x=n.hx;n.y=n.hy}n.pinned=true}
+    if(!away.length&&bend.hx!=null){
+      const j=o.indexOf(bend),a=o[j-1],b=o[j+1],dx=b.hx-a.hx,dy=b.hy-a.hy,l=Math.hypot(dx,dy)||1,push=rnd()<.5?-90:90;
+      bend.x=clampX(bend.hx-dy/l*push);bend.y=clampY(bend.hy+dx/l*push);
+    }
+    bend.bend=true;plan.curved.push(k);
+  }
+  return true;
+}
 function famSlidesUseful(plan){
   const before=famX(plan);
   return plan.nodes.filter(n=>n.slide).every(n=>{
@@ -7224,6 +7223,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
       if(tut||GEN_RULES.catalogueRevision<27||!authorRimSlides(plan,count,idx))return null;
     }
   }
+  if(mechanic?.bend&&GEN_RULES.bend==='daily'&&!tut&&!authorBends(plan,mechanic.bend,rnd))return null;
   if(GEN_RULES.catalogueRevision>=27&&!tut){
     famSpread(plan,idx);
     if(!famSlidesUseful(plan))return null;
@@ -7695,12 +7695,30 @@ function famFree(plan,trace=null){
 const PRACTICAL_RANGE=[[2,3],[2,3],[3,4],[4,5],[2,4],[4,5],[5,6],[6,8],[7,9],[3,6]];
 function famFloor(plan){
   const mandatory=new Set(plan.nodes.filter(n=>n.merged)),crosses=[];
-  const edges=plan.order.flatMap((o,k)=>segList(o.length,plan.chords&&plan.chords[k]).map(([a,b])=>[o[a],o[b]]));
+  const curved=new Set(plan.curved||[]);
+  const edges=plan.order.flatMap((o,k)=>curved.has(k)?(plan.chords&&plan.chords[k]?[[o[plan.chords[k][0]],o[plan.chords[k][1]]]]:[]):segList(o.length,plan.chords&&plan.chords[k]).map(([a,b])=>[o[a],o[b]]));
   for(let i=0;i<edges.length;i++)for(let j=i+1;j<edges.length;j++){
     const ends=[...edges[i],...edges[j]];
     if(new Set(ends).size<4||!segX(...ends)||ends.some(n=>mandatory.has(n)))continue;
     const can=ends.filter(n=>!n.pinned);if(!can.length)return Infinity;
     crosses.push(can);
+  }
+  for(const k of curved){
+    const o=plan.order[k],bend=o.find(n=>n.bend),p=curveSamples(o);
+    const mover=bend&&!bend.pinned?[bend]:[];
+    for(let i=1;i<p.length;i++){
+      for(let j=i+2;j<p.length;j++)if(segX(p[i-1],p[i],p[j-1],p[j])){if(!mover.length)return Infinity;crosses.push(mover)}
+      for(const other of curved)if(other>k){
+        const q=curveSamples(plan.order[other]),b2=plan.order[other].find(n=>n.bend);
+        for(let j=1;j<q.length;j++)if(segX(p[i-1],p[i],q[j-1],q[j])){
+          const can=[...mover,...(b2&&!b2.pinned?[b2]:[])];if(!can.length)return Infinity;crosses.push(can);
+        }
+      }
+      for(const [e1,e2] of edges){
+        if(!segX(p[i-1],p[i],e1,e2)||mandatory.has(e1)||mandatory.has(e2))continue;
+        const can=[...mover,...[e1,e2].filter(n=>!n.pinned)];if(!can.length)return Infinity;crosses.push(can);
+      }
+    }
   }
   if(!crosses.length)return mandatory.size;
   const byNode=new Map();crosses.forEach((nodes,k)=>nodes.forEach(n=>byNode.set(n,(byNode.get(n)||0n)|(1n<<BigInt(k)))));
@@ -7726,9 +7744,10 @@ function famPracticalTargets(plan,idx){
   const perfect=lower+budget,[min,cap]=PRACTICAL_RANGE[idx];
   if(perfect<min||perfect>cap)return null;
   const sliders=GEN_RULES.catalogueRevision>=27?plan.nodes.flatMap((n,i)=>n.slide?[i]:[]):[];
-  for(let variant=0;variant<(sliders.length?4:2);variant++){
+  const bends=plan.nodes.flatMap((n,i)=>n.bend?[i]:[]),used=[...sliders,...bends];
+  for(let variant=0;variant<(used.length?4:2);variant++){
     const log=[],moves=famPractical(plan,log,perfect,variant);
-    if(moves>=min&&moves<=perfect&&sliders.every(i=>log.some(a=>a[0]===0&&a[1]===i)))return {moves,log,lower,budget,perfect,
+    if(moves>=min&&moves<=perfect&&used.every(i=>log.some(a=>a[0]===0&&a[1]===i)))return {moves,log,lower,budget,perfect,
       clean:perfect+Math.max(2,Math.min(4,Math.ceil(perfect/4))),margin:PLACEMENT_ROOM};
   }
   return null;
@@ -7762,13 +7781,91 @@ function famPractical(plan,trace=null,limit=36,variant=0){
   const T=plan.order.length;
   const P=plan.nodes.map((n,i)=>({x:clampX(n.x), y:clampY(n.y), hx:n.hx, hy:n.hy,
                                   merged:n.merged, alt:n.alt, t:n.t.slice(),
-                                  pinned:n.pinned, slide:n.slide, ex:0, ey:0, i}));
+                                  pinned:n.pinned, slide:n.slide, ex:0, ey:0, i,
+                                  ...(n.bend?{bend:true}:{})}));
   const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
   const S=planSegs(plan), self=GEN_RULES.selfX==='count';
   const all=P.slice();
   const freed=new Array(T).fill(false),usedSlides=new Set(),preferSlides=variant>=2;
   variant%=2;
+  const curved=new Set(plan.curved||[]);
+  const chordOf=a=>plan.chords&&plan.chords[a];
+  const edgesNow=()=>seq.map((U,a)=>{
+    if(freed[a])return null;
+    if(!curved.has(a))return S[a].map(e=>[U[e[0]],U[e[1]],-1]);
+    const bend=U.find(q=>q.bend),p=curveSamples(U);
+    const chord=chordOf(a)?[[U[chordOf(a)[0]],U[chordOf(a)[1]],-1]]:[];
+    const out=p.slice(1).map((b,i)=>[p[i],b,i]).concat(chord);
+    if(bend&&(bend.ex||bend.ey)){
+      const ox=bend.x;bend.x=ox+1;const q=curveSamples(U);bend.x=ox;
+      p.forEach((pt,i)=>{const w=Math.abs(q[i].x-pt.x);if(w>1e-9){pt.ex=(bend.ex||0)*w;pt.ey=(bend.ey||0)*w}});
+      let shifted=null;
+      out.shifted=()=>{
+        if(shifted)return shifted;
+        const px=bend.x,py=bend.y;shifted=[];
+        for(const dx of [-1,0,1])for(const dy of [-1,0,1])if(dx||dy){
+          bend.x=clampX(px+dx*(bend.ex||0));bend.y=clampY(py+dy*(bend.ey||0));
+          const s=curveSamples(U);shifted.push(s.slice(1).map((b,i)=>[s[i],b,i]).concat(chord));
+        }
+        bend.x=px;bend.y=py;return shifted;
+      };
+    }
+    return out;
+  });
+  const foldX=(E,x,y,exact)=>{
+    const e=E[x],f=E[y];
+    if(exact||!E.shifted)return !!segX(e[0],e[1],f[0],f[1]);
+    const lo=(p,k)=>p[k]-(p['e'+k]||0),hi=(p,k)=>p[k]+(p['e'+k]||0);
+    for(const k of ['x','y'])
+      if(Math.max(hi(e[0],k),hi(e[1],k))<Math.min(lo(f[0],k),lo(f[1],k))
+        ||Math.max(hi(f[0],k),hi(f[1],k))<Math.min(lo(e[0],k),lo(e[1],k)))return false;
+    return !!segX(e[0],e[1],f[0],f[1])||E.shifted().some(F=>!!segX(F[x][0],F[x][1],F[y][0],F[y][1]));
+  };
+  const near=(p,q)=>Math.abs(p.x-q.x)<1e-9&&Math.abs(p.y-q.y)<1e-9;
+  const meets=(e,f,same)=>same&&e[2]>=0&&f[2]>=0?Math.abs(e[2]-f[2])<2
+    :same&&(e[2]>=0||f[2]>=0)?near(e[0],f[0])||near(e[0],f[1])||near(e[1],f[0])||near(e[1],f[1])
+    :(e[0]===f[0]||e[0]===f[1]||e[1]===f[0]||e[1]===f[1]);
+  const crossCurved=exact=>{
+    const c=new Array(T).fill(0),E=edgesNow(),X=exact?segX:roomX;
+    for(let a=0;a<T;a++){
+      if(!E[a]) continue;
+      if(self||curved.has(a)) for(let x=0;x<E[a].length;x++)for(let y=x+1;y<E[a].length;y++)
+        if(!meets(E[a][x],E[a][y],true)&&(curved.has(a)?foldX(E[a],x,y,exact)
+          :X(E[a][x][0],E[a][x][1],E[a][y][0],E[a][y][1]))) c[a]+=2;
+      for(let b=a+1;b<T;b++){
+        if(!E[b]) continue;
+        for(const e of E[a])for(const f of E[b])
+          if(!meets(e,f,false)&&X(e[0],e[1],f[0],f[1])){c[a]++;c[b]++}
+      }
+    }
+    return c;
+  };
+  const touchCurved=(p,px,py,ex,ey)=>{
+    const ox=p.x,oy=p.y,oe=p.ex,of=p.ey;p.x=px;p.y=py;p.ex=ex;p.ey=ey;
+    const E=edgesNow(),per=new Array(T).fill(0),actual=new Array(T).fill(0);let total=0;
+    const mine=(a,e)=>curved.has(a)?(e[2]>=0?!!p.bend&&seq[a].includes(p):e[0]===p||e[1]===p):(e[0]===p||e[1]===p);
+    for(let a=0;a<T;a++){
+      if(!E[a]) continue;
+      for(let x=0;x<E[a].length;x++){
+        const e=E[a][x];if(!mine(a,e))continue;
+        for(let b=0;b<T;b++){
+          if(!E[b]||(b===a&&!(self||curved.has(a)))) continue;
+          for(let y=0;y<E[b].length;y++){
+            const f=E[b][y];
+            if(mine(b,f)&&(b<a||(b===a&&y<=x))) continue;
+            if(meets(e,f,b===a)) continue;
+            if(segX(e[0],e[1],f[0],f[1])){if(b===a)actual[a]+=2;else{actual[a]++;actual[b]++}}
+            if(!(b===a&&curved.has(a)?foldX(E[a],x,y,false):roomX(e[0],e[1],f[0],f[1]))) continue;
+            total++;if(b===a)per[a]+=2;else{per[a]++;per[b]++}
+          }
+        }
+      }
+    }
+    p.x=ox;p.y=oy;p.ex=oe;p.ey=of;
+    return {total,per,actual};
+  };
   const cross=(exact=false)=>{
+    if(curved.size) return crossCurved(exact);
     const c=new Array(T).fill(0);
     for(let a=0;a<T;a++){
       if(freed[a]) continue;
@@ -7791,6 +7888,7 @@ function famPractical(plan,trace=null,limit=36,variant=0){
     return c;
   };
   const touch=(p,px,py,ex=p.ex||0,ey=p.ey||0)=>{
+    if(curved.size) return touchCurved(p,px,py,ex,ey);
     const ox=p.x,oy=p.y,oe=p.ex,of=p.ey;p.x=px;p.y=py;p.ex=ex;p.ey=ey;
     const per=new Array(T).fill(0),actual=new Array(T).fill(0);let total=0;
     for(let a=0;a<T;a++){
@@ -7867,7 +7965,7 @@ function famPractical(plan,trace=null,limit=36,variant=0){
           if(freed[j]) continue;
           if(s.c[j]-cur.per[j]+nx.per[j]===0 && !seq[j].some(q=>q.merged)) free++;
         }
-        const usefulSlide=!!p.slide&&nx.total<cur.total;
+        const usefulSlide=(!!p.slide||!!p.bend)&&nx.total<cur.total;
         const score=now-cur.total+nx.total+3*merged-(variant?2.25:1.5)*free
           -(preferSlides&&usefulSlide&&!usedSlides.has(p.i)?100:0);
         if(!best || score<best.score) best={score,kind:'drag',p,x:t.x,y:t.y,usefulSlide,...e};
@@ -8300,14 +8398,18 @@ function buildNet(force){
     return under(T1)||under(T2);
   };
 
-  const saltRevision=generationCatalogue(revision),saltTable=saltRevision>=37?SALT_V37:SALT_V35;
+  const saltRevision=generationCatalogue(revision),saltTable=saltRevision>=38?SALT_V38:saltRevision>=37?SALT_V37:SALT_V35;
   const saltHint=saltRevision>=35&&!isTrial()&&!inTutorialRun()?saltTable[R().day]?.[idx]||0:0;
   const slideFamilies=!lesson&&(GEN_RULES.catalogueRevision>=24||GEN_RULES.catalogueRevision>=22&&spec.sliding)
     ? ['mosaicPanels','mosaicTiers','mosaicSteps','mosaicWings','mosaicCorners'] : [];
   const saltLimit=slideFamilies.length?(GEN_RULES.catalogueRevision>=26?12000:GEN_RULES.catalogueRevision>=24?800:slideFamilies.length*40):40;
-  const hinted=saltHint>0&&saltHint<saltLimit&&GEN_RULES.catalogueRevision>=26&&GEN.layout==='families'?saltHint:0,
+  const unbentHint=saltHint<0&&spec.bend?-saltHint-1:null,specStart={...spec};
+  let unbent=unbentHint!=null,accepted=false;
+  for(;;){
+  const hint=unbent?unbentHint||0:saltHint;
+  const hinted=hint>0&&hint<saltLimit&&GEN_RULES.catalogueRevision>=26&&GEN.layout==='families'?hint:0,
     spec0=hinted?{...spec}:null;
-  let bestSalt=39, bestMiss=Infinity, accepted=false;
+  let bestSalt=39, bestMiss=Infinity;
   for(let pass=hinted?-1:0;pass<2;pass++){
   const forced=pass===1?bestSalt:pass<0?hinted:-1;
   for(let salt=0;salt<saltLimit;salt++){
@@ -8390,7 +8492,7 @@ function buildNet(force){
                : famFor(genDay,idx,GEN_RULES);
       if(salt>=40&&slideFamilies.length)
         fam=[fam,...slideFamilies.filter(name=>name!==fam)][Math.floor(salt/40)%slideFamilies.length];
-      const mech={coupled:spec.coupled||0,relay:spec.relay||0,sliding:spec.sliding||0,
+      const mech={coupled:spec.coupled||0,relay:spec.relay||0,sliding:spec.sliding||0,...(spec.bend&&!unbent?{bend:spec.bend}:{}),
         deep:GEN.ink==='poster16'&&spec.shared>=4};
       const fixedVisual=!tut&&(!!spec.coupled||!!spec.relay||
         (GEN.ink==='poster16'&&spec.shared>=4));
@@ -8407,11 +8509,13 @@ function buildNet(force){
           m.xv=m.xr=m.x0; m.yv=m.yr=m.y0;
           if(n.pinned) m.pinned=true;
           if(n.slide)m.slide={...n.slide};
+          if(n.bend)m.bend=true;
           if(n.merged) m.merged=true;
           n.m=m; members.push(m);
         });
         threads.forEach((th,k)=>{ th.nodes=plan.order[k].map(n=>n.m);
                                   th.chord=plan.chords?plan.chords[k]:null;
+                                  if(plan.curved&&plan.curved.includes(k))th.curved=true;
                                   if(plan.clues)th.target=plan.clues[k] });
         plan.nodes.forEach(n=>n.t.forEach(k=>{
           if(!n.m.threads.includes(threads[k])) n.m.threads.push(threads[k]);
@@ -8530,6 +8634,10 @@ function buildNet(force){
   if(accepted) break;
   if(pass<0){ for(const k of Object.keys(spec)) delete spec[k]; Object.assign(spec,spec0) }
   }
+  if(accepted||unbent||!spec.bend) break;
+  unbent=true; for(const k of Object.keys(spec)) delete spec[k]; Object.assign(spec,specStart);
+  }
+  if(unbent&&accepted) spec.bend=0;
   }
   if(lesson&&idx===3) configureTutorialBendLesson();
   const restored=repairOutlineBoard(store,[...members.map(n=>n.idx),
@@ -8580,6 +8688,7 @@ function buildNet(force){
   queueMicrotask(()=>{
     startBoardReveal();
     resetSlideHelp();
+    noteFirstBend();
     if(tutorialCompleting()) showTutorialComplete();
   });
   const resumedRun=R(), resumedNet=resumedRun.netIndex;
@@ -8592,6 +8701,19 @@ function buildNet(force){
     });
 }
 
+const BEND_NOTE_KEY='features-bend-note-v1';
+function noteFirstBend(){
+  if(inTutorialRun())return;
+  const bend=members.find(n=>n.bend&&!n.threads.every(t=>t.freed));if(!bend)return;
+  try{if(localStorage.getItem(BEND_NOTE_KEY))return;localStorage.setItem(BEND_NOTE_KEY,'1')}catch{return}
+  const board=builtFor,run=R();
+  setTimeout(()=>{
+    if(builtFor!==board||R()!==run||run.over||menuShown()||bend.threads.every(t=>t.freed))return;
+    flashMsg('bend · drag its circle to bow the line clear',{tight:true,hold:true,anchor:{x:bend.x0,y:bend.y0},
+      cols:[...new Set(bend.threads.map(t=>t.col))],kick:'',
+      line:'<b>this line bends.</b><br>drag its circle to bow it clear; the squares stay fixed.'});
+  },900);
+}
 let revealToken=0;
 function startBoardReveal(){
   const token=++revealToken;
@@ -8895,20 +9017,9 @@ function segX(p1,p2,p3,p4){
   if(t>.001&&t<.999&&u>.001&&u<.999)return{x:p1.x+t*(p2.x-p1.x),y:p1.y+t*(p2.y-p1.y)};
   return null;
 }
+const bentThread=t=>!!(t.tutorialBend||t.curved);
 function tutorialBendCurvePoints(t,get){
-  const p=t.nodes.map(n=>renderedPair(get(n))).map(([x,y])=>({x,y})), out=[];
-  const steps=16;
-  for(let i=0;i<p.length-1;i++){
-    const p0=p[Math.max(0,i-1)],p1=p[i],p2=p[i+1],p3=p[Math.min(p.length-1,i+2)];
-    for(let j=i?1:0;j<=steps;j++){
-      const u=j/steps,u2=u*u,u3=u2*u;
-      out.push({
-        x:.5*((2*p1.x)+(-p0.x+p2.x)*u+(2*p0.x-5*p1.x+4*p2.x-p3.x)*u2+(-p0.x+3*p1.x-3*p2.x+p3.x)*u3),
-        y:.5*((2*p1.y)+(-p0.y+p2.y)*u+(2*p0.y-5*p1.y+4*p2.y-p3.y)*u2+(-p0.y+3*p1.y-3*p2.y+p3.y)*u3)
-      });
-    }
-  }
-  return out;
+  return curveSamples(t.nodes.map(n=>renderedPair(get(n))).map(([x,y])=>({x,y})));
 }
 function tutorialBendCross(pt,want,write){
   const act=threads.filter(t=>!t.freed), per=act.map(()=>0), mine=[], marks=[];
@@ -8917,24 +9028,38 @@ function tutorialBendCross(pt,want,write){
     return points.get(n);
   };
   const edges=act.map(t=>{
-    if(t.tutorialBend){
+    if(bentThread(t)){
       const p=tutorialBendCurvePoints(t,at);
-      return p.slice(1).map((b,i)=>({a:p[i],b,nodes:t.nodes}));
+      const out=p.slice(1).map((b,i)=>({a:p[i],b,nodes:t.nodes,s:i}));
+      if(t.chord)out.push({a:at(t.nodes[t.chord[0]]),b:at(t.nodes[t.chord[1]]),nodes:[t.nodes[t.chord[0]],t.nodes[t.chord[1]]]});
+      return out;
     }
     return segList(t.nodes.length,t.chord).map(([a,b])=>({
       a:at(t.nodes[a]),b:at(t.nodes[b]),nodes:[t.nodes[a],t.nodes[b]]
     }));
   });
-  for(let i=0;i<act.length;i++)if(act[i].tutorialBend){
-    for(let a=0;a<edges[i].length;a++)for(let b=a+2;b<edges[i].length;b++){
-      const x=segX(edges[i][a].a,edges[i][a].b,edges[i][b].a,edges[i][b].b);
+  for(let i=0;i<act.length;i++)if(bentThread(act[i])){
+    for(let a=0;a<edges[i].length;a++)for(let b=a+1;b<edges[i].length;b++){
+      const e=edges[i][a],f=edges[i][b];
+      if(e.s!=null&&f.s!=null?f.s-e.s<2:[e.a,e.b].some(p=>[f.a,f.b].some(q=>p.x===q.x&&p.y===q.y)))continue;
+      const x=segX(e.a,e.b,f.a,f.b);
       if(!x)continue;
       marks.push(x);per[i]+=2;
-      if(want&&edges[i][a].nodes.includes(want))mine.push(x);
+      if(want&&e.nodes.includes(want))mine.push(x);
+    }
+  }else if(GEN_RULES.selfX==='count'){
+    for(let a=0;a<edges[i].length;a++)for(let b=a+1;b<edges[i].length;b++){
+      const e=edges[i][a],f=edges[i][b];
+      if(e.nodes.some(n=>f.nodes.includes(n)))continue;
+      const x=segX(e.a,e.b,f.a,f.b);
+      if(!x)continue;
+      marks.push(x);per[i]+=2;
+      if(want&&(e.nodes.includes(want)||f.nodes.includes(want)))mine.push(x);
     }
   }
   for(let i=0;i<act.length;i++)for(let j=i+1;j<act.length;j++)
     for(const a of edges[i])for(const b of edges[j]){
+      if(a.nodes.length===2&&b.nodes.length===2&&a.nodes.some(n=>b.nodes.includes(n)))continue;
       const x=segX(a.a,a.b,b.a,b.b);
       if(!x)continue;
       marks.push(x);per[i]++;per[j]++;
@@ -8947,7 +9072,7 @@ function tutorialBendCross(pt,want,write){
 }
 function countCross(vis){
   const pt=vis?(n=>({x:n.xr,y:n.yr})):(n=>({x:n.x0,y:n.y0}));
-  if(threads.some(t=>t.tutorialBend)){
+  if(threads.some(bentThread)){
     threads.forEach(t=>t.crossings=0);
     return tutorialBendCross(pt,null,true);
   }
@@ -8997,8 +9122,13 @@ function resolvedBendGain(t){
 }
 function threadPoints(t,get){
   const n=t.nodes.length;
-  if(t.tutorialBend&&!t.freed)
-    return tutorialBendCurvePoints(t,get).map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  if(bentThread(t)&&!t.freed){
+    const p=tutorialBendCurvePoints(t,get),at=n=>renderedPair(get(n));
+    if(t.chord){const [a,b]=t.chord,last=t.nodes.length-1;
+      if(a===last||b===last){const [x,y]=at(t.nodes[a===last?b:a]);p.push({x,y})}
+      else if(a===0||b===0){const [x,y]=at(t.nodes[a===0?b:a]);p.unshift({x,y})}}
+    return p.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ');
+  }
   const gain=typeof resolvedBendGain==='function'?resolvedBendGain(t):0;
   if(gain>0&&Array.isArray(t.figOutline)){
     const points=t.nodes.map(node=>renderedPair(get(node))),figure=figureBank(t.catalogueRevision??CATALOGUE_REVISION)[t.key];
@@ -10368,7 +10498,7 @@ function tutorialResumeStep(){
 let gTut=null, tutLit=null;
 function tutCross(sub,want){
   const pt=n=>(sub&&n===sub.n)?{x:sub.x,y:sub.y}:{x:n.x0,y:n.y0};
-  if(threads.some(t=>t.tutorialBend)) return tutorialBendCross(pt,want,false);
+  if(threads.some(bentThread)) return tutorialBendCross(pt,want,false);
   const act=threads.filter(t=>!t.freed);
   const S=act.map(t=>segList(t.nodes.length,t.chord)), self=GEN_RULES.selfX==='count';
   const per=act.map(()=>0);
@@ -11291,7 +11421,7 @@ function rungTrack(tiers,row){
   const said=tierWords(s,' · ');
   return `<span class="track${flaw}" role="img" aria-label="${said||'no nets cleared'}">${out}</span>`;
 }
-const MENU_CAP=730;
+const MENU_CAP=7;
 function menuDays(){
   const by=new Map(dayRows().map(r=>[r.d,r]));
   const out=[];
@@ -11481,72 +11611,17 @@ const rungParts=g=>({fig:String(flawlessDay(g)?g.perfect:g.good),
 function replayWords(){
   if(!canBuy()) return 'a new set of ten arrives every day';
   const price=priceWords();
-  return `another run at a day is the full version${price?' · '+price:''}`;
+  return `another run at today's set is the full version${price?' · '+price:''}`;
 }
 function shutWords(iso){
-  const price=priceWords();
-  return spentDay(iso) ? replayWords()
-       : canBuy() ? `the archive is the full version${price?' · '+price:''}`
-       : 'an older day, from the archive';
+  return spentDay(iso) ? replayWords() : "only today's set is open";
 }
 
-
-const ARCHIVE_NETS=new Map();
-function archiveNets(iso,revision){
-  const lookKey=iso+'|'+catalogueRevision(revision)+'|'+(store.tutorialDone?1:0);
-  if(ARCHIVE_NETS.has(lookKey)) return ARCHIVE_NETS.get(lookKey);
-  const keep=JSON.stringify(store.run), out=[];
-  try{
-    for(let i=0;i<POLICY.dailyNets;i++){
-      store.run={...store.run, day:iso, netIndex:i, mode:'daily',catalogueRevision:catalogueRevision(revision),
-                 positions:{}, freed:[], minted:{}, splitNodes:[]};
-      builtFor=-1; buildNet(true);
-      out.push({
-        idx:i,
-        nodes: members.map(n=>({x:n.x0, y:n.y0, merged:!!n.merged, pinned:!!n.pinned,
-                                col:n.threads[0].col})),
-        edges: threads.flatMap(t=>segList(t.nodes.length,t.chord).map(([a,b])=>({
-          col:t.col, x1:t.nodes[a].x0, y1:t.nodes[a].y0, x2:t.nodes[b].x0, y2:t.nodes[b].y0 }))),
-      });
-    }
-    ARCHIVE_NETS.set(lookKey,out);
-    if(ARCHIVE_NETS.size>6) ARCHIVE_NETS.delete(ARCHIVE_NETS.keys().next().value);
-  }finally{
-    store.run=JSON.parse(keep); builtFor=-1; buildNet(true);
-  }
-  return out;
-}
-
-function archiveNetSVG(net){
-  const lines=net.edges.map(e=>
-    `<line x1="${e.x1.toFixed(0)}" y1="${e.y1.toFixed(0)}" x2="${e.x2.toFixed(0)}" y2="${e.y2.toFixed(0)}"`
-    +` stroke="var(${e.col})" stroke-width="7" stroke-linecap="round"/>`).join('');
-  const dots=net.nodes.map(n=>
-    `<circle cx="${n.x.toFixed(0)}" cy="${n.y.toFixed(0)}" r="${n.merged?15:11}"`
-    +` fill="var(--paper)" stroke="var(${n.col})" stroke-width="${n.merged?7:5}"/>`).join('');
-  const M=26;
-  return `<svg viewBox="${-M} ${-M} ${BW+M*2} ${BH+M*2}" aria-hidden="true">${lines}${dots}</svg>`;
-}
-
-function openArchiveLook(iso){
-  if(!dayRows().some(r=>r.d===iso)) return false;
-  openUpgrade(iso);return true;
-}
-function archiveLookHTML(row){
-  const tiers=typeof row.tiers==='string'?row.tiers:'',flawless=isFlawless(tiers);
-  return `<div class="arch-grid" tabindex="0" role="list" aria-label="nets from your result">${archiveNets(row.d,row.catalogueRevision).map(n=>{
-    const t=TIEROF[tiers[n.idx]],col=t?`var(${flawless?TIERCOL.flawless:TIERCOL[t]})`:'var(--rule)';
-    return `<div class="arch-net" role="listitem"><span class="arch-plate">${archiveNetSVG(n)}</span>`
-      +`<span class="arch-foot"><i class="arch-rung" style="--rung:${col}" aria-hidden="true"></i>`
-      +`<span class="arch-status">${esc(t?tierSay(t):'not cleared')}</span></span></div>`;
-  }).join('')}</div>`;
-}
 function openDay(iso){
   if(endlessActive && canPlayDay(iso))leaveEndless();
   if(inTutorialRun() && canPlayDay(iso)) endTutorial();
   if(canAccessRun() && R().day===iso && (isTrial() || !R().over)){ closeMenu(); return }
   if(!canPlayDay(iso)){
-    if(openArchiveLook(iso)) return;
     if(releasedDay(iso)) return openUpgrade(iso);
     return flashMsg(shutWords(iso));
   }
@@ -12206,7 +12281,7 @@ function renderIntro(){
       const can=played && canPlayDay(d);
       const shut=isShut({d,row});
       const press=releasedDay(d);
-      const say=played?(can?'play again':'view your result'):(canPlayDay(d)?'play':'premium · see options');
+      const say=!press?'':played?(can?'play again':'premium · play again'):'play';
       return `<div class="wbday${isNow?' now':''}${played?'':' none'}${shut?' shut':''}"`
         +(press?` role="button" tabindex="0" data-day="${d}"`:'')
         +` aria-label="${dayLabel(d)}${isNow?' · today':''} · ${played?tierWords(row.tiers):(shut?'not open':'not played')}`
@@ -12236,18 +12311,14 @@ function renderIntro(){
         <div><b>${collected}</b><span>concepts<span class="stat-qualifier"> collected</span></span></div>
       </div>
       <div class="wbweek">${week}</div>
-      ${!POLICY.premium?'<button class="archive-invite" id="archiveinvite"><span>'+archivePuzzleCount()+' archive puzzles</span><span>premium</span></button>':''}
-      <div class="wbspread" id="wbspread"></div>
       <button class="intro-start" id="introstart">${startLabel}</button>`
 ;
     const press=d=>{
       if(canPlayDay(d)){ store.introSeen=true; store.lastIntroDay=today(); save();
         stopMenuMotion(); $('introveil').classList.remove('show'); syncMenuCover(); return openDay(d) }
-      if(openArchiveLook(d)) return;
       if(releasedDay(d)) openUpgrade(d);
     };
     $('introbody').querySelector('.wbweek').scrollTop=keepScroll;
-    if($('archiveinvite'))$('archiveinvite').onclick=()=>openUpgrade();
     $('introbody').querySelector('.wbweek').onclick=e=>{
       const row=e.target.closest('[data-day]');
       if(row) press(row.dataset.day);
@@ -12257,7 +12328,7 @@ function renderIntro(){
       const row=e.target.closest('[data-day]');
       if(row){ e.preventDefault(); press(row.dataset.day) }
     };
-    paintSpread(); ensureSpread(); ensurePrice();
+    ensurePrice();
   }
   if($('introstart')) $('introstart').onclick=()=>{
     leaveEndless();
