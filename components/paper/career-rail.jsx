@@ -9,9 +9,10 @@ import { career, CareerStatement, logoClass, logoImage } from "../career-bar";
  * pencil line with sleepers snakes across the page through them — along a row
  * of stations, round a bend in the margin and back along the next — so the
  * whole career reads at once and fills the sheet (Dan, 25 September 2026). On
- * phones it runs straight down the left edge. The line draws itself in when
- * the room opens and the stations arrive as it reaches them. The roles, logos
- * and statements are the career timeline's own (components/career-bar.jsx).
+ * phones there is no line: the cards stack, each with its years in its
+ * header. The line draws itself in when the room opens and the stations
+ * arrive as it reaches them. The roles, logos and statements are the career
+ * timeline's own (components/career-bar.jsx).
  */
 
 const columnsFor = (width) => (width >= 1040 ? 3 : width >= 660 ? 2 : 1);
@@ -64,26 +65,24 @@ export function CareerRail() {
       return [r.left + r.width / 2 - frame.left, r.top + r.height / 2 - frame.top];
     });
     const count = columnsFor(frame.width);
-    let points;
     if (count === 1) {
-      const x = centres[0][0];
-      points = [[x, centres[0][1] - 30], ...centres, [x, centres.at(-1)[1] + 40]];
-    } else {
-      points = [[0, centres[0][1]]];
-      const rows = Math.ceil(centres.length / count);
-      for (let row = 0; row < rows; row += 1) {
-        const stops = centres.slice(row * count, row * count + count);
-        points.push(...stops);
-        const next = centres[(row + 1) * count];
-        if (!next) {
-          // The line runs on a little past the last station to its buffers.
-          const [x, y] = stops.at(-1);
-          points.push([row % 2 ? Math.max(LANE, x - 64) : Math.min(frame.width - LANE, x + 64), y]);
-          break;
-        }
-        const lane = row % 2 ? LANE : frame.width - LANE;
-        points.push([lane, stops[0][1]], [lane, next[1]]);
+      setRail(null);
+      return;
+    }
+    const points = [[0, centres[0][1]]];
+    const rows = Math.ceil(centres.length / count);
+    for (let row = 0; row < rows; row += 1) {
+      const stops = centres.slice(row * count, row * count + count);
+      points.push(...stops);
+      const next = centres[(row + 1) * count];
+      if (!next) {
+        // The line runs on a little past the last station to its buffers.
+        const [x, y] = stops.at(-1);
+        points.push([row % 2 ? Math.max(LANE, x - 64) : Math.min(frame.width - LANE, x + 64), y]);
+        break;
       }
+      const lane = row % 2 ? LANE : frame.width - LANE;
+      points.push([lane, stops[0][1]], [lane, next[1]]);
     }
     const end = points.at(-1);
     const before = points.at(-2);
@@ -141,7 +140,10 @@ export function CareerRail() {
                   </span>
                 </span>
                 <h3 className="rail-name">{job.name}</h3>
-                <p className="rail-role">{job.role}</p>
+                <p className="rail-role">
+                  {job.role}
+                  <span className="rail-years"> · {job.span.replace(/ — /g, "–")}</span>
+                </p>
                 <p className="rail-statement">
                   <CareerStatement {...job} />
                 </p>

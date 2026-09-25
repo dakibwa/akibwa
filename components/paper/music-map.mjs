@@ -1,10 +1,13 @@
 /*
- * The Music room's map: sleeves laid edge to edge with no holes, each given
- * the area its hours earn, the most listened first from the top left. It is a
- * squarified treemap (Bruls, Huizing and van Wijk, 2000): sleeves fill a strip
- * along the shorter side of the space that is left for as long as adding one
- * keeps the strip's worst aspect ratio from getting worse, so each is as near
- * square as the areas allow and its cover loses little to the crop.
+ * The Music room's map: square sleeves laid edge to edge with no holes, each
+ * as large as its hours earn, the most listened first from the top left (Dan,
+ * 25 September 2026: the covers keep their shape).
+ *
+ * Squares of any sizes cannot tile a rectangle exactly, so the sleeves are
+ * whole cells of a grid as wide as the map, a side following the square root
+ * of the hours, and the grid is filled cell by cell with a tally that makes it
+ * come out exact (fillGrid). The grid's column count and scale are searched
+ * for the fill closest to the hours.
  */
 
 // The gutter between sleeves, in CSS pixels. The map's outer edges are flush.
@@ -18,8 +21,8 @@ export const GAP = 4;
  * Their corners still show their real hours.
  */
 const NEAR_GRACELAND = [
-  { title: "music for psychedelic therapy", artist: "jon hopkins", scale: 1.1 },
-  { title: "discreet music", artist: "brian eno", scale: 0.9 }
+  { title: "music for psychedelic therapy", artist: "jon hopkins", scale: 1.1, step: 1 },
+  { title: "discreet music", artist: "brian eno", scale: 0.9, step: -1 }
 ];
 
 const plain = (text) =>
@@ -29,13 +32,26 @@ const plain = (text) =>
     .toLowerCase()
     .trim();
 
+const isGraceland = (album) => plain(album.title) === "graceland" && plain(album.artist) === "paul simon";
+const ruleFor = (album) => NEAR_GRACELAND.find((entry) => entry.title === plain(album.title) && entry.artist === plain(album.artist));
+
 // The minutes each album is drawn at: its own, except the two above.
 export function albumWeights(albums) {
-  const graceland = albums.find((album) => plain(album.title) === "graceland" && plain(album.artist) === "paul simon");
+  const graceland = albums.find(isGraceland);
   return albums.map((album) => {
-    const rule = NEAR_GRACELAND.find((entry) => entry.title === plain(album.title) && entry.artist === plain(album.artist));
+    const rule = ruleFor(album);
     return rule && graceland ? Math.round(graceland.minutes * rule.scale) : Math.max(1, album.minutes);
   });
+}
+
+// Whole-cell sides that keep the two near Graceland a cell either side of it.
+export function albumSides(albums) {
+  const reference = albums.findIndex(isGraceland);
+  const steps = albums.map((album) => ruleFor(album)?.step ?? 0);
+  return (sides) => {
+    if (reference < 0) return sides;
+    return sides.map((side, index) => (steps[index] ? Math.max(1, sides[reference] + steps[index]) : side));
+  };
 }
 
 // Largest first; ties keep their rank order.
@@ -46,127 +62,118 @@ export function drawnOrder(items, weights) {
 }
 
 /*
- * Rectangles for `values` (largest first) filling a width × height box, as
- * {x0, y0, x1, y1} in the box's units, in the order given. The last sleeve of
- * each strip ends exactly on the strip's edge and the last strip on the box's,
- * so neighbours share their edges exactly.
+ * Squares for `sides` (cells) filling a grid `columns` × `height` exactly, or
+ * null. Every empty cell, in reading order, takes the first sleeve (largest
+ * first) that fits there at its own size, or else the smallest left, shrunk to
+ * fit. A tally keeps it exact: a sleeve never takes so much that the rest would
+ * lack a cell each, nor so little that the rest could not cover what is left.
  */
-export function squarify(values, width, height) {
-  const total = values.reduce((sum, value) => sum + value, 0);
-  const areas = values.map((value) => (value * width * height) / total);
-  const rects = new Array(values.length);
-  let x = 0;
-  let y = 0;
-  let w = width;
-  let h = height;
-  let i = 0;
-  while (i < areas.length) {
-    const side = Math.min(w, h);
-    let j = i;
-    let sum = 0;
-    let smallest = Infinity;
-    let largest = 0;
-    let worst = Infinity;
-    while (j < areas.length) {
-      const next = sum + areas[j];
-      const low = Math.min(smallest, areas[j]);
-      const high = Math.max(largest, areas[j]);
-      const ratio = Math.max((side * side * high) / (next * next), (next * next) / (side * side * low));
-      if (j > i && ratio > worst) break;
-      sum = next;
-      smallest = low;
-      largest = high;
-      worst = ratio;
-      j += 1;
+export function fillGrid(sides, columns, height) {
+  const rows = Array.from({ length: height }, () => new Uint8Array(columns));
+  // The largest square that fits with its corner here, up to `cap`.
+  const room = (r, c, cap) => {
+    let run = 0;
+    while (c + run < columns && run < cap && !rows[r][c + run]) run += 1;
+    let best = run ? 1 : 0;
+    for (let t = 2; t <= run && r + t <= height; t += 1) {
+      let ok = true;
+      for (let x = c; x < c + t && ok; x += 1) if (rows[r + t - 1][x]) ok = false;
+      for (let y = r; y < r + t - 1 && ok; y += 1) if (rows[y][c + t - 1]) ok = false;
+      if (!ok) break;
+      best = t;
     }
-    const last = j === areas.length;
-    const across = w >= h; // a column down the left, or a row along the top
-    const thick = last ? (across ? w : h) : sum / side;
-    let along = 0;
-    for (let k = i; k < j; k += 1) {
-      const start = along;
-      along = k === j - 1 ? side : along + areas[k] / thick;
-      rects[k] = across
-        ? { x0: x, y0: y + start, x1: x + thick, y1: y + along }
-        : { x0: x + start, y0: y, x1: x + along, y1: y + thick };
+    return best;
+  };
+  const queue = sides.map((side, index) => ({ side, index })).sort((a, b) => b.side - a.side || a.index - b.index);
+  // The queue runs largest first, so the first that fits is found by halving.
+  const firstFitting = (m) => {
+    let low = 0;
+    let high = queue.length;
+    while (low < high) {
+      const mid = (low + high) >> 1;
+      if (queue[mid].side <= m) high = mid;
+      else low = mid + 1;
     }
-    if (across) {
-      x += thick;
-      w -= thick;
-    } else {
-      y += thick;
-      h -= thick;
+    return low < queue.length ? low : -1;
+  };
+  let open = columns * height;
+  let reach = queue.reduce((sum, entry) => sum + entry.side * entry.side, 0);
+  const cells = new Array(sides.length);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < columns; x += 1) {
+      if (rows[y][x]) continue;
+      if (!queue.length) return null;
+      const m = room(y, x, queue[0].side + 2);
+      let at = firstFitting(m);
+      if (at === -1) at = queue.length - 1;
+      const entry = queue[at];
+      const after = queue.length - 1;
+      const reachAfter = reach - entry.side * entry.side;
+      let size = Math.min(entry.side, m);
+      while (size > 1 && open - size * size < after) size -= 1;
+      while (size < m && open - size * size > reachAfter && open - (size + 1) * (size + 1) >= after) size += 1;
+      for (let r = y; r < y + size; r += 1) rows[r].fill(1, x, x + size);
+      open -= size * size;
+      reach = reachAfter;
+      queue.splice(at, 1);
+      cells[entry.index] = { x, y, s: size };
     }
-    i = j;
   }
-  return rects;
+  return queue.length ? null : { cells, height };
 }
 
 // Whole-pixel tiles with the gutter between neighbours and none at the edges.
-function tiles(rects, width, height, top = 0) {
+function toTiles(cells, width, columns, top = 0) {
+  const unit = width / columns;
   const half = GAP / 2;
-  return rects.map(({ x0, y0, x1, y1 }) => {
-    const left = Math.round(x0);
-    const right = Math.round(x1);
-    const upper = Math.round(y0);
-    const lower = Math.round(y1);
-    const l = left + (left > 0 ? half : 0);
-    const r = right - (right < Math.round(width) ? half : 0);
-    const t = upper + (upper > 0 ? half : 0);
-    const b = lower - (lower < Math.round(height) ? half : 0);
-    return { x: l, y: top + t, w: Math.max(1, r - l), h: Math.max(1, b - t) };
+  const edge = (value) => Math.round(value * unit);
+  const height = Math.max(...cells.map((cell) => cell.y + cell.s));
+  return cells.map(({ x, y, s }) => {
+    const left = edge(x) + (x > 0 ? half : 0);
+    const right = edge(x + s) - (x + s < columns ? half : 0);
+    const upper = edge(y) + (y > 0 ? half : 0);
+    const lower = edge(y + s) - (y + s < height ? half : 0);
+    // Squares stay square: the side is the width, rounded the same way down.
+    const side = Math.max(1, Math.min(right - left, lower - upper));
+    return { x: left, y: top + upper, w: side, h: side };
   });
 }
 
-// How far a rectangle is from square: 0 for a square, ln 2 for 2 : 1.
-const skew = ({ x0, y0, x1, y1 }) => Math.abs(Math.log((x1 - x0) / (y1 - y0)));
-const sum = (values) => values.reduce((total, value) => total + value, 0);
-
 /*
- * One map for `values` (largest first) across `width`. Its height is chosen
- * from a range around the one that gives the smallest sleeve `least` pixels of
- * side: the squarest layout wins, by area and by count, as long as no sleeve's
- * short side falls much under `least`.
+ * The best square map of `values` (largest first) across `width`. `cell` is
+ * the grid size to aim for in pixels, and the smallest a sleeve can be: none
+ * is drawn smaller, however few its hours. `aspect` is the height/width to aim
+ * for; `reference` is the sleeve whose side sets the scale, searched from the
+ * top of `range` (fractions of the width) down in `tries` steps, over the aim
+ * and `spread` smaller column counts; `adjust` has a last say over the sides
+ * (the two albums near Graceland). The grid is made a little smaller than the
+ * sleeves' own area, so a few give way rather than leave a gap.
  */
-export function layoutMap(values, width, least) {
+export function layoutSquares(values, width, { cell, aspect, reference = 0, range = [0.12, 0.22], tries = 10, spread = 3, adjust = (sides) => sides }) {
   if (!values.length || width <= 0) return { height: 0, tiles: [] };
-  const total = sum(values);
-  const floor = Math.max(width * 0.4, (least * least * total) / (Math.min(...values) * width));
-  let best = null;
-  for (let step = 0; step <= 30; step += 1) {
-    const height = Math.round(floor * (0.85 + step * 0.025));
-    const rects = squarify(values, width, height);
-    const short = Math.min(...rects.map(({ x0, y0, x1, y1 }) => Math.min(x1 - x0, y1 - y0)));
-    const weighted = rects.reduce((score, rect, index) => score + skew(rect) * values[index], 0) / total;
-    const plain = rects.reduce((score, rect) => score + skew(rect), 0) / rects.length;
-    const score = 0.6 * weighted + 0.4 * plain + (short < least * 0.8 ? 10 : 0);
-    if (!best || score < best.score - 1e-6) best = { height, rects, score };
+  // Never more columns than the aim, so no cell is smaller than `cell`.
+  const target = Math.max(4, Math.floor(width / cell));
+  const counts = Array.from({ length: spread + 1 }, (_, away) => target - away);
+  const found = [];
+  for (let step = 0; step < tries && found.length < 8; step += 1) {
+    const fraction = range[1] - ((range[1] - range[0]) * step) / Math.max(1, tries - 1);
+    for (const columns of counts) {
+      if (columns < 4) continue;
+      const scale = (columns * fraction) / Math.sqrt(values[reference]);
+      const wanted = adjust(values.map((value) => Math.max(1, Math.min(columns, Math.round(scale * Math.sqrt(value))))));
+      const area = wanted.reduce((sum, side) => sum + side * side, 0);
+      for (const give of [0.98, 0.96, 0.94, 0.92, 0.9]) {
+        const packed = fillGrid(wanted, columns, Math.max(1, Math.round((area * give) / columns)));
+        if (!packed) continue;
+        const error = packed.cells.reduce((sum, { s }, index) => sum + Math.abs(Math.log(s / wanted[index])), 0) / values.length;
+        const shape = Math.abs(Math.log(packed.height / columns / aspect));
+        found.push({ score: error * 4 + shape - fraction, columns, packed });
+        break;
+      }
+    }
   }
-  return { height: best.height, tiles: tiles(best.rects, width, best.height) };
-}
-
-/*
- * Songs come a hundred at a time, and a new hundred must not move the ones
- * already drawn: each is its own band under the last, the full width. The
- * first band sets the scale. A later band keeps it unless its smallest sleeve
- * would fall under `least`, and then grows just enough — so the thousandth
- * song is still a sleeve, not a speck, and sizes run on smoothly from one
- * band into the next.
- */
-export function layoutBands(values, width, least, per) {
-  if (!values.length || width <= 0) return { height: 0, tiles: [] };
-  const first = values.slice(0, per);
-  const opening = layoutMap(first, width, least);
-  const perMinute = (width * opening.height) / sum(first);
-  const placed = [...opening.tiles];
-  let top = opening.height;
-  for (let start = per; start < values.length; start += per) {
-    const band = values.slice(start, start + per);
-    const scale = Math.max(perMinute, (least * least) / Math.min(...band));
-    const height = Math.max(least, Math.round((scale * sum(band)) / width));
-    // Each band starts a gutter below the last one's bottom row.
-    placed.push(...tiles(squarify(band, width, height), width, height, top + GAP));
-    top += GAP + height;
-  }
-  return { height: top, tiles: placed };
+  if (!found.length) return { height: 0, tiles: [] };
+  const best = found.reduce((a, b) => (b.score < a.score ? b : a));
+  const unit = width / best.columns;
+  return { height: Math.round(best.packed.height * unit), tiles: toTiles(best.packed.cells, width, best.columns) };
 }

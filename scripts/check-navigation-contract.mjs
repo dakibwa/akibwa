@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { websites } from "../data/websites.mjs";
 import { unpackRanking } from "../components/paper/music-ranking.mjs";
-import { albumWeights, drawnOrder, layoutMap } from "../components/paper/music-map.mjs";
+import { albumSides, albumWeights, drawnOrder, layoutSquares, GAP } from "../components/paper/music-map.mjs";
 
 /* Build-time contract for the paper homepage: one sheet with five things —
    music, features, websites, career and the trek — that open in place (the
@@ -88,8 +88,7 @@ forbidText(home, "room-head", "rooms have no title on the page");
 forbidText(home, "bar-home", "the bar has no wordmark");
 requireText(home, "memo(CareerRail)", "the career room must be the railway of roles (Dan, 25 September 2026)");
 requireText(music, "aria-pressed={view === name}", "albums and songs must be one switch");
-requireText(music, "layoutMap(", "albums must be one gap-free map sized by hours");
-requireText(music, "layoutBands(", "songs must be gap-free bands sized by hours");
+requireText(music, "layoutSquares(", "albums and songs must be square sleeves packed with no holes");
 requireText(music, "music-hours", "every sleeve must carry its hours listened");
 requireText(music, "<AlbumTracks", "an album must open its track list");
 requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-resolution rung");
@@ -107,12 +106,15 @@ requireText(music, "LARGE_ART[art]", "sleeves drawn large must offer their high-
   if (order.slice(0, 3).map((entry) => entry.item.title).join("|") !== "Music for Psychedelic Therapy|Graceland|Discreet Music") {
     fail("the map must start with the most listened");
   }
-  for (const width of [343, 720, 1180]) {
-    const { height, tiles } = layoutMap(order.map((entry) => entry.weight), width, 36);
-    const covered = tiles.reduce((sum, tile) => sum + tile.w * tile.h, 0) / (width * height);
+  // Square sleeves, no holes or overlaps, at phone and desktop widths
+  // (Dan, 25 September 2026: the covers keep their shape).
+  const adjust = albumSides(order.map((entry) => entry.item));
+  for (const [width, plan] of [[343, { cell: 24, aspect: 3, range: [0.35, 0.8], tries: 12, spread: 3 }], [1180, { cell: 32, aspect: 0.9, range: [0.14, 0.26] }]]) {
+    const { height, tiles } = layoutSquares(order.map((entry) => entry.weight), width, { ...plan, adjust });
+    const covered = tiles.reduce((sum, tile) => sum + (tile.w + GAP) * (tile.h + GAP), 0) / ((width + GAP) * (height + GAP));
     const overlap = tiles.some((a, i) => tiles.some((b, j) => j > i && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h));
-    if (overlap || covered < 0.85 || tiles.some((tile) => tile.x < 0 || tile.x + tile.w > width || tile.y + tile.h > height)) {
-      fail(`the albums map must fill ${width}px with no holes or overlaps`);
+    if (!height || overlap || covered < 0.97 || tiles.some((tile) => tile.w !== tile.h || tile.w < plan.cell - GAP - 1 || tile.x < 0 || tile.x + tile.w > width || tile.y + tile.h > height)) {
+      fail(`the albums at ${width}px must be square sleeves, none under a cell, with no holes or overlaps`);
     }
   }
 }

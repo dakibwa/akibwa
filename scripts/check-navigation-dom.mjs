@@ -318,6 +318,7 @@ const checkPublicLanding = async () => {
   check(await roomVisible("career"), "choosing career opens its room in place");
   check(await evaluate("location.hash === '#career'"), "an open room carries its hash");
   check(await evaluate("document.activeElement?.id === 'room-career'"), "focus moves to the room heading");
+  check(await evaluate(`(() => { const tab = document.querySelector(".bar-tab")?.getBoundingClientRect(); const link = document.querySelector('.bar-rooms [aria-current="page"]')?.getBoundingClientRect(); return Boolean(tab && link) && Math.abs(tab.left - link.left) < 2 && Math.abs(tab.width - link.width) < 2 && link.width > 0; })()`), "the room on show sits on the bar's ink tab");
   await evaluate("history.back()");
   await sleep(900);
   check(await evaluate("document.documentElement.dataset.room === 'index' && getComputedStyle(document.querySelector('.front')).display !== 'none'"), "Back returns to the five things");
@@ -349,27 +350,28 @@ const checkPublicLanding = async () => {
       count: tiles.length,
       first: area(tiles[0]),
       last: area(tiles.at(-1)),
-      covered: tiles.reduce((sum, tile) => sum + area(tile), 0) / (frame.width * frame.height),
+      covered: tiles.reduce((sum, tile) => sum + (box(tile).width + 4) * (box(tile).height + 4), 0) / ((frame.width + 4) * (frame.height + 4)),
+      square: tiles.every((tile) => Math.abs(box(tile).width - box(tile).height) < 0.5),
       hours: roomy.length > 40 && roomy.every((tile) => /\\d+ (h|min)$/.test(tile.querySelector(".music-hours")?.textContent ?? "")),
       lead: tiles[0].querySelector(".music-face").getAttribute("aria-label"),
       large: tiles[0].querySelector("img").srcset.includes("-large.webp"),
-      words: document.querySelector("#music .music-caption").textContent + [...document.querySelectorAll("#music p")].filter((p) => !p.closest("dialog, .music-bar")).map((p) => p.textContent).join(""),
+      words: [...document.querySelectorAll("#music p")].filter((p) => !p.closest("dialog")).map((p) => p.textContent).join(""),
       head: Boolean(document.querySelector("#music .room-head"))
     };
   })()`);
   check(albums.count === 100, `the albums map holds the top 100 [${albums.count}]`);
   check(albums.first > albums.last * 8, `sleeves are sized by hours listened [${Math.round(albums.first)}px² to ${Math.round(albums.last)}px²]`);
-  check(albums.covered > 0.9, `the map leaves no holes [${albums.covered.toFixed(3)} covered]`);
+  check(albums.covered > 0.97 && albums.square, `the sleeves are square and leave no holes [${albums.covered.toFixed(3)} covered]`);
   check(albums.lead?.startsWith("Music for Psychedelic Therapy"), `the map starts with the most listened [${albums.lead}]`);
   check(albums.hours, "every sleeve with room for it carries its hours listened");
   check(albums.large, "sleeves drawn large offer the high-resolution rung");
   check(albums.words === "" && !albums.head, `the room explains nothing it need not [${albums.words}]`);
   await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "songs").click()`);
   await sleep(700);
-  check(await evaluate(`document.querySelectorAll("#music .is-songs .music-tile").length === 100`), "the switch shows the songs, a hundred at first");
-  check(await evaluate(`document.querySelector("#music .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon")`), "songs start with the most listened");
-  await evaluate(`[...document.querySelectorAll("#music .music-more button")].find((button) => /more songs/.test(button.textContent)).click()`);
-  check(await waitFor(`document.querySelectorAll("#music .is-songs .music-tile").length === 200`), "a hundred more songs load on request");
+  check(await waitFor(`document.querySelectorAll("#music .is-songs .music-tile").length === 1000`, 8000), "the switch shows all thousand songs at once");
+  check(await evaluate(`document.querySelector("#music .is-songs .music-face")?.getAttribute("aria-label")?.startsWith("Thursday Afternoon") && !document.querySelector("#music .music-more button")`), "songs start with the most listened, with no button for more");
+  const small = await evaluate(`(() => { const tile = [...document.querySelectorAll("#music .is-songs .music-tile")].at(-1); const face = tile.querySelector(".music-face"); face.focus(); return new Promise((done) => setTimeout(() => done({ before: tile.offsetWidth, after: face.getBoundingClientRect().width }), 400)); })()`);
+  check(small.before >= 14 && small.after >= 120, `the smallest sleeve is still visible and grows when chosen [${Math.round(small.before)}px to ${Math.round(small.after)}px]`);
   await evaluate(`[...document.querySelectorAll("#music .music-switch button")].find((button) => button.textContent === "albums").click()`);
   await sleep(700);
   await evaluate(`document.querySelectorAll("#music .is-albums .music-face")[1].click()`);
@@ -390,7 +392,9 @@ const checkPublicLanding = async () => {
 
   section("mascot");
   await goto("/");
+  check(await evaluate(`document.documentElement.dataset.skyHost === "mascot" && document.querySelector(".mascot").classList.contains("is-in-sky")`), "the mascot starts in the sky's window");
   await sleep(4600);
+  check(await evaluate(`!document.documentElement.dataset.skyHost && getComputedStyle(document.querySelector(".sky-sun")).opacity === "1"`), "it leaps out and the window shows its sky");
   const mascot = await evaluate(`(() => { const el = document.querySelector(".mascot"); const box = el.getBoundingClientRect(); return { placed: el.classList.contains("is-placed"), x: box.left + box.width / 2, y: box.top + box.height / 2, w: box.width }; })()`);
   check(mascot.placed && mascot.w > 40, "the mascot is on the front page");
   await cdp.send("Input.dispatchMouseEvent", { type: "mousePressed", x: mascot.x, y: mascot.y, button: "left", clickCount: 1 });
@@ -414,7 +418,7 @@ const checkPublicLanding = async () => {
   check(rail.statements, "every role's statement shows without choosing it");
   await setDesktop(390, 844);
   await sleep(600);
-  check(await evaluate(`new Set([...document.querySelectorAll("#career .rail-node")].map((node) => Math.round(node.getBoundingClientRect().left))).size === 1 && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the line runs straight down the left");
+  check(await evaluate(`!document.querySelector("#career .rail-line") && [...document.querySelectorAll("#career .rail-years")].every((years) => years.offsetWidth > 0) && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the cards stack with their years and no line");
   await setDesktop();
   await goto("/#websites");
   await sleep(600);

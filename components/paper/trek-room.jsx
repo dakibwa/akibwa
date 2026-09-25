@@ -24,11 +24,6 @@ export function TrekRoom({ active }) {
       ) : (
         <div className="trek-frame" aria-hidden="true" />
       )}
-      <p className="trek-standalone">
-        <a className="pencil-link" href="/trek/">
-          the trek on its own page
-        </a>
-      </p>
     </div>
   );
 }

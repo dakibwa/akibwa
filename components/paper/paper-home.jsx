@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Arrow } from "./arrow";
 import { Mascot } from "./mascot";
@@ -49,8 +49,10 @@ export function PaperHome({ music, websites }) {
 
   const show = useCallback((next) => {
     const apply = () => {
-      flushSync(() => setRoom(next));
+      // The room is shown before React renders it, so the bar's tab can
+      // measure the room's name where it now sits.
       document.documentElement.dataset.room = next ?? "index";
+      flushSync(() => setRoom(next));
       window.scrollTo({ top: 0, behavior: "instant" });
     };
     const settle = () => {
@@ -140,19 +142,7 @@ export function PaperHome({ music, websites }) {
         <a className="bar-back" href="#hello" onClick={home} aria-label="Back to the five things">
           <Arrow back size={26} />
         </a>
-        <nav className="bar-rooms" aria-label="Rooms">
-          {THINGS_ON_PAPER.map(({ id, label, href }) => (
-            <a
-              key={id}
-              href={href ?? `#${id}`}
-              onClick={href ? undefined : follow(id)}
-              aria-current={room === id ? "page" : undefined}
-              style={{ "--room": `var(--${id})` }}
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
+        <BarRooms room={room} follow={follow} />
         {/* On the front page the contact links sit under the lede. */}
         <Contact />
       </header>
@@ -210,6 +200,39 @@ export function PaperHome({ music, websites }) {
         <Trek active={room === "trek"} />
       </Room>
     </div>
+  );
+}
+
+/*
+ * The rooms by name. The one on show sits on an ink tab, the albums/songs
+ * switch's pill, which slides to the next room as the view changes (it has
+ * its own view-transition name), rather than a pencil underline.
+ */
+function BarRooms({ room, follow }) {
+  const nav = useRef(null);
+  const [tab, setTab] = useState(null);
+  useLayoutEffect(() => {
+    const element = nav.current;
+    if (!element) return undefined;
+    const measure = () => {
+      const link = element.querySelector('[aria-current="page"]');
+      setTab(link?.offsetWidth ? { x: link.offsetLeft, w: link.offsetWidth } : null);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    document.fonts?.ready.then(measure);
+    return () => observer.disconnect();
+  }, [room]);
+  return (
+    <nav className="bar-rooms" aria-label="Rooms" ref={nav}>
+      {tab ? <span className="bar-tab" aria-hidden="true" style={{ width: tab.w, transform: `translateX(${tab.x}px)` }} /> : null}
+      {THINGS_ON_PAPER.map(({ id, label }) => (
+        <a key={id} href={`#${id}`} onClick={follow(id)} aria-current={room === id ? "page" : undefined}>
+          {label}
+        </a>
+      ))}
+    </nav>
   );
 }
 
@@ -280,7 +303,7 @@ function Sky() {
             <path key={from} d={wedge(from, to)} fill={colour} />
           ))}
           <path className="sky-cloud" d="M25 88.5c-3.2 0-4.2-3.6-1.6-5 .2-3.4 4-4.6 6.2-2.6 1.4-3.6 7-3.8 8.4.2 3.2-.8 5.6 1.6 4.6 4.2-.2 2-2 3.2-4 3.2z" />
-          <g className="sky-sun">
+          <g className="sky-sun sky-body">
             <path className="sky-rays" d="M60 30v-8M60 90v8M30 60h-8M90 60h8M38.8 38.8l-5.6-5.6M81.2 81.2l5.6 5.6M38.8 81.2l-5.6 5.6M81.2 38.8l5.6-5.6" />
             <circle cx="60" cy="60" r="21" fill="#f6c04f" />
             <circle cx="60" cy="60" r="21" fill="url(#sun-hatch)" opacity=".55" />
@@ -290,9 +313,11 @@ function Sky() {
             {STARS.map((star, index) => (
               <path key={index} className="sky-star" d={sparkle(star)} style={{ "--twinkle": `${index * 0.45}s` }} />
             ))}
-            <path className="sky-moon" d="M59.63 38.06A22 22 0 1 0 78.13 68.88A18 18 0 1 1 59.63 38.06Z" />
-            <circle cx="47" cy="62" r="2.2" fill="#e6dcc0" />
-            <circle cx="53.5" cy="72.5" r="1.5" fill="#e6dcc0" />
+            <g className="sky-body">
+              <path className="sky-moon" d="M59.63 38.06A22 22 0 1 0 78.13 68.88A18 18 0 1 1 59.63 38.06Z" />
+              <circle cx="47" cy="62" r="2.2" fill="#e6dcc0" />
+              <circle cx="53.5" cy="72.5" r="1.5" fill="#e6dcc0" />
+            </g>
           </g>
         </g>
         {/* The page's cut edge shades the wheel behind it. */}

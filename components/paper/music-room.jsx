@@ -4,20 +4,21 @@ import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "rea
 import { flushSync } from "react-dom";
 import { AlbumArtImage } from "../site-image";
 import { useMusicRanking } from "../use-music-ranking";
-import { albumWeights, drawnOrder, layoutBands, layoutMap } from "./music-map.mjs";
+import { albumSides, albumWeights, drawnOrder, layoutSquares } from "./music-map.mjs";
 import { LARGE_ART } from "./music-art.mjs";
 
 /*
- * Music: Dan's top 100 albums or his top 1,000 songs, one or the other, as a
- * map of sleeves laid edge to edge. A sleeve's area is the hours he listened
- * to it, the most listened first, with those hours pinned in its corner; the
- * line beside the switch names whatever the pointer is on. Choosing an album
- * opens its track list: the songs he played from it, most played first, with
- * plays and hours. Songs come a hundred at a time.
+ * Music: Dan's top 100 albums or all his top 1,000 songs, one or the other,
+ * as square sleeves laid edge to edge with no holes (music-map.mjs), each as
+ * large as the hours he listened to it, the most listened first, with those
+ * hours pinned in its corner. No sleeve is smaller than a grid cell, and a
+ * small one grows to a readable size under the pointer or a tap. Choosing an
+ * album opens its track list: the songs he played from it, most played first,
+ * with plays and hours.
  */
 
-const SONGS_STEP = 100;
-const SONGS_MAX = 1000;
+// How far a sleeve grows under the pointer, at least.
+const POP = 136;
 
 export const listened = (minutes) => {
   if (minutes >= 600) return `${Math.round(minutes / 60)} h`;
@@ -26,10 +27,22 @@ export const listened = (minutes) => {
 };
 
 const plays = (count) => `${count.toLocaleString("en-GB")} ${count === 1 ? "play" : "plays"}`;
-const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
 
-// The smallest sleeve's side, in pixels, for a map this wide.
-const least = (width, view) => (view === "albums" ? clamp(width / 26, 28, 42) : clamp(width / 22, 30, 50));
+/*
+ * Grid cells (the smallest a sleeve can be), the shape to aim for and the
+ * range the largest sleeve's side is searched in, as fractions of the width.
+ * If nothing packs exactly, a wider search follows.
+ */
+const PLANS = {
+  albums: (phone) => (phone ? { cell: 24, aspect: 3, range: [0.35, 0.8], tries: 12, spread: 3 } : { cell: 32, aspect: 0.9, range: [0.14, 0.26], tries: 10, spread: 3 }),
+  songs: (phone) => (phone ? { cell: 22, aspect: 6, range: [0.4, 0.62], tries: 6, spread: 1 } : { cell: 23, aspect: 2.4, range: [0.18, 0.26], tries: 5, spread: 1 })
+};
+
+function squares(kind, values, width, adjust) {
+  const plan = { ...PLANS[kind](width < 600), adjust };
+  const map = layoutSquares(values, width, plan);
+  return map.height ? map : layoutSquares(values, width, { ...plan, range: [0.08, 0.9], tries: 40, spread: 6 });
+}
 
 // The map's width, measured before paint so a resize never shows a stale map.
 function useWidth(ref) {
@@ -49,77 +62,66 @@ function useWidth(ref) {
   return width;
 }
 
-// The line beside the switch: the name of whatever the pointer is on.
-function Caption({ bind, view }) {
-  const [item, setItem] = useState(null);
-  useEffect(() => {
-    bind.current = setItem;
-    return () => {
-      bind.current = () => {};
-    };
-  }, [bind]);
-  useEffect(() => setItem(null), [view]);
-  return (
-    <p className="music-caption" aria-hidden="true">
-      {item ? (
-        <>
-          <strong>{item.title}</strong> {item.artist} · {listened(item.minutes)} · {plays(item.plays)}
-        </>
-      ) : null}
-    </p>
-  );
+// Room to grow into under the pointer, kept inside the map's edges.
+function growth(tile, width, height) {
+  const grow = Math.max(0, POP - tile.w);
+  const left = Math.min(grow / 2, tile.x);
+  const right = Math.min(grow - left, Math.max(0, width - tile.x - tile.w));
+  const top = Math.min(grow / 2, tile.y);
+  const bottom = Math.min(grow - top, Math.max(0, height - tile.y - tile.h));
+  // Whatever one side cannot take, the other does, so it stays square.
+  return {
+    "--pop-l": `${grow - right}px`,
+    "--pop-r": `${right}px`,
+    "--pop-t": `${grow - bottom}px`,
+    "--pop-b": `${bottom}px`
+  };
 }
 
-const Tiles = memo(function Tiles({ kind, entries, tiles, point, onOpen }) {
+const Tiles = memo(function Tiles({ kind, entries, tiles, width, height, onOpen }) {
   return entries.map(({ item }, index) => {
     const tile = tiles[index];
     if (!tile) return null;
-    const side = Math.min(tile.w, tile.h);
+    const side = tile.w;
     const art = item.art ?? (kind === "albums" ? item.id : null);
     const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
-    const labelled = tile.w >= 116 && tile.h >= 92;
+    const roomy = side >= 116;
     const face = (
       <>
         {art ? (
-          <AlbumArtImage id={art} alt="" large={LARGE_ART[art]} sizes={`${Math.max(tile.w, tile.h)}px`} />
+          <AlbumArtImage id={art} alt="" large={LARGE_ART[art]} sizes={`${Math.max(side, POP)}px`} />
         ) : (
           <span className="music-blank" aria-hidden="true">
             {side >= 56 ? item.title : null}
           </span>
         )}
-        {side >= 58 ? (
-          <span className="music-hours" aria-hidden="true">
-            {listened(item.minutes)}
-          </span>
-        ) : null}
-        {labelled ? (
-          <span className="music-label" aria-hidden="true">
-            <strong>{item.title}</strong>
-            <span>{item.artist}</span>
-          </span>
-        ) : null}
+        <span className="music-hours" aria-hidden="true">
+          {listened(item.minutes)}
+        </span>
+        <span className="music-label" aria-hidden="true">
+          <strong>{item.title}</strong>
+          <span>{item.artist}</span>
+        </span>
       </>
     );
     return (
       <li
         key={`${kind}-${item.rank}`}
-        className="music-tile"
-        style={{ left: tile.x, top: tile.y, width: tile.w, height: tile.h, "--i": index % SONGS_STEP, "--side": side }}
-        onPointerEnter={() => point.current(item)}
-        onPointerDown={() => point.current(item)}
+        className={`music-tile${roomy ? " is-roomy" : ""}${side >= 58 ? " has-hours" : ""}`}
+        style={{ left: tile.x, top: tile.y, width: side, height: side, "--i": Math.min(index, 160), "--side": side, ...growth(tile, width, height) }}
       >
         {onOpen ? (
           <button
             type="button"
             className="music-face"
             onClick={(event) => onOpen(item, event.currentTarget)}
-            onFocus={() => point.current(item)}
             aria-label={`${described} Show its tracks.`}
           >
             {face}
           </button>
         ) : (
-          <span className="music-face" role="img" aria-label={described}>
+          // Focusable, so a tap on a phone grows it as the pointer would.
+          <span className="music-face" role="img" tabIndex={0} aria-label={described}>
             {face}
           </span>
         )}
@@ -200,29 +202,23 @@ function AlbumTracks({ album, loading, onClose }) {
 export function MusicRoom({ initial, active }) {
   const music = useMusicRanking(initial, active);
   const [view, setView] = useState("albums");
-  const [shown, setShown] = useState(SONGS_STEP);
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
-  const point = useRef(() => {});
   const map = useRef(null);
   const width = useWidth(map);
 
   // Albums by the hours they are drawn at; songs by their hours.
   const albums = useMemo(() => drawnOrder(music.albums, albumWeights(music.albums)), [music.albums]);
   const songs = useMemo(
-    () =>
-      [...music.songs]
-        .sort((a, b) => b.minutes - a.minutes || a.rank - b.rank)
-        .slice(0, shown)
-        .map((item) => ({ item, weight: Math.max(1, item.minutes) })),
-    [music.songs, shown]
+    () => [...music.songs].sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item, weight: Math.max(1, item.minutes) })),
+    [music.songs]
   );
   const entries = view === "albums" ? albums : songs;
   const layout = useMemo(
     () =>
       view === "albums"
-        ? layoutMap(albums.map((entry) => entry.weight), width, least(width, "albums"))
-        : layoutBands(songs.map((entry) => entry.weight), width, least(width, "songs"), SONGS_STEP),
+        ? squares("albums", albums.map((entry) => entry.weight), width, albumSides(albums.map((entry) => entry.item)))
+        : squares("songs", songs.map((entry) => entry.weight), width),
     [view, albums, songs, width]
   );
   const onOpen = useMemo(
@@ -233,7 +229,6 @@ export function MusicRoom({ initial, active }) {
     []
   );
   const album = open === null ? null : music.albums.find((entry) => entry.id === open) ?? null;
-  const waiting = music.loading && music.songs.length <= shown;
 
   const close = () => {
     setOpen(null);
@@ -251,7 +246,6 @@ export function MusicRoom({ initial, active }) {
             </button>
           ))}
         </div>
-        <Caption bind={point} view={view} />
       </div>
 
       {/* Measured here, outside the list the switch replaces. */}
@@ -261,24 +255,16 @@ export function MusicRoom({ initial, active }) {
           className={`music-map is-${view}`}
           style={{ height: layout.height }}
           aria-label={view === "albums" ? "My top 100 albums, most listened first" : "My top songs, most listened first"}
-          onPointerLeave={() => point.current(null)}
         >
-          <Tiles kind={view} entries={entries} tiles={layout.tiles} point={point} onOpen={view === "albums" ? onOpen : null} />
+          <Tiles kind={view} entries={entries} tiles={layout.tiles} width={width} height={layout.height} onOpen={view === "albums" ? onOpen : null} />
         </ol>
       </div>
 
-      {view === "songs" ? (
+      {music.loadError ? (
         <div className="music-more">
-          {shown < SONGS_MAX ? (
-            <button type="button" className="chip" disabled={waiting} onClick={() => setShown((count) => Math.min(SONGS_MAX, count + SONGS_STEP))}>
-              {waiting ? "loading…" : `${SONGS_STEP} more songs`}
-            </button>
-          ) : null}
-          {music.loadError ? (
-            <button type="button" className="chip" onClick={music.retry}>
-              try loading again
-            </button>
-          ) : null}
+          <button type="button" className="chip" onClick={music.retry}>
+            try loading again
+          </button>
         </div>
       ) : null}
 

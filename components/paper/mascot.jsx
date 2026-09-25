@@ -11,7 +11,10 @@ import { MARK_BODY, MARK_TAIL } from "./mark-paths";
  * answer as if hovered (`onVisit`). It can be picked up and set down anywhere,
  * which becomes its home; a click makes it twirl, and it hops when the heading
  * writes its name. On a phone it keeps to the right-hand edge and peeks in
- * beside the things instead. Reduced motion keeps it still where it stands.
+ * beside the things instead. On a first visit it starts in the sky's round
+ * window, where the sun will be, and leaps out once the things are drawn; the
+ * window then shows its sky (Dan, 25 September 2026). Reduced motion keeps it
+ * still where it stands.
  */
 
 // Its box is the mark's own (-6 -4 116 118); its feet sit at (50, 104).
@@ -51,6 +54,7 @@ export function Mascot({ onVisit }) {
     let gazeFrame = 0;
     let userOnThings = false;
     let peeking = false; // on a phone, allowed part-way off the right edge
+    let inSky = false; // sitting in the sky's window, where the sun will be
 
     const measure = () => {
       size = { w: el.offsetWidth, h: el.offsetHeight };
@@ -255,6 +259,44 @@ export function Mascot({ onVisit }) {
       }
     };
 
+    // In the window it is shrunk about its feet to fit, its middle (50, 55 in
+    // its drawing) on the window's middle.
+    const skyScale = () => {
+      const sky = front.querySelector(".sky")?.getBoundingClientRect();
+      return sky ? Math.min(1, (sky.width * 0.72) / size.w) : 1;
+    };
+    const skySpot = () => {
+      const sheet = front.getBoundingClientRect();
+      const sky = front.querySelector(".sky").getBoundingClientRect();
+      const unit = size.h / VIEW.h;
+      return { x: sky.left - sheet.left + sky.width / 2, y: sky.top - sheet.top + sky.height / 2 + (FEET.y - 55) * skyScale() * unit };
+    };
+    const leaveSky = () => {
+      inSky = false;
+      el.classList.remove("is-in-sky");
+      delete doc.dataset.skyHost;
+    };
+    // Out of the window in one leap, growing to full size on the way down.
+    const leap = async (target, signal) => {
+      const from = { ...pos };
+      const k = skyScale();
+      const lift = 50 + Math.max(0, from.y - target.y) * 0.25;
+      try {
+        await frames(160, (t) => pose({ sx: k * (1 + 0.1 * t), sy: k * (1 - 0.14 * t) }), signal);
+        await frames(680, (t) => {
+          pos = { x: from.x + (target.x - from.x) * t, y: from.y + (target.y - from.y) * t - lift * 4 * t * (1 - t) };
+          place();
+          const grow = k + (1 - k) * Math.min(1, t * 1.5);
+          pose({ rot: -16 * Math.sin(t * Math.PI), sx: grow, sy: grow * (1.06 - 0.06 * t) });
+          if (inSky && t > 0.12) leaveSky();
+        }, signal);
+        await frames(170, (t) => pose({ sx: 1.1 - 0.1 * t, sy: 0.86 + 0.14 * t }), signal);
+      } finally {
+        leaveSky();
+        pose();
+      }
+    };
+
     const roomOpen = () => doc.dataset.room && doc.dataset.room !== "index";
     const canWander = () => !userOnThings && !document.hidden && !roomOpen();
     const inView = (thing) => {
@@ -264,12 +306,32 @@ export function Mascot({ onVisit }) {
 
     const live = async (signal, { first }) => {
       measure();
-      pos = homeSpot();
-      place();
-      el.classList.add("is-placed");
-      if (still.matches) return;
-      // On a first visit it stands and watches the five things drawn in.
-      await wait(first ? 3300 : 1400, signal);
+      if (first && !still.matches && front.querySelector(".sky")) {
+        // It watches the five things drawn in from the window, then leaps out.
+        inSky = true;
+        busy = true;
+        doc.dataset.skyHost = "mascot";
+        el.classList.add("is-in-sky");
+        pos = skySpot();
+        place();
+        pose({ sx: skyScale(), sy: skyScale() });
+        el.classList.add("is-placed");
+        try {
+          await wait(2500, signal);
+          await leap(homeSpot(), signal);
+        } finally {
+          leaveSky();
+          busy = false;
+        }
+        await wait(900, signal);
+      } else {
+        leaveSky();
+        pos = homeSpot();
+        place();
+        el.classList.add("is-placed");
+        if (still.matches) return;
+        await wait(1400, signal);
+      }
       for (;;) {
         for (let i = 0; i < 2; i += 1) {
           busy = true;

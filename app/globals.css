@@ -212,48 +212,61 @@ main {
 }
 
 .bar-rooms {
+  position: relative;
   display: none;
   grid-column: 2;
-  gap: clamp(4px, 1.6vw, 22px);
+  gap: clamp(4px, 1.2vw, 16px);
 }
 
 .bar-rooms a {
   position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 6px;
+  padding: 0 14px;
   color: var(--ink-soft);
   text-decoration: none;
   font-family: var(--serif);
   font-size: 19px;
   font-weight: 480;
-}
-
-.bar-rooms a::after {
-  content: "";
-  position: absolute;
-  left: 4px;
-  right: 4px;
-  bottom: 7px;
-  height: 7px;
-  background: var(--room);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.2C22 3 44 6.4 64 4.2S88 3.4 98 4.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5.2C22 3 44 6.4 64 4.2S88 3.4 98 4.6' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 320ms var(--ease-out);
+  transition: color 260ms ease;
 }
 
 .bar-rooms a:hover,
-.bar-rooms a:focus-visible,
-.bar-rooms a[aria-current="page"] {
+.bar-rooms a:focus-visible {
   color: var(--ink);
 }
 
-.bar-rooms a:hover::after,
-.bar-rooms a:focus-visible::after,
-.bar-rooms a[aria-current="page"]::after {
-  clip-path: inset(0 0 0 0);
+.bar-rooms a[aria-current="page"] {
+  color: var(--paper-light);
+}
+
+/* The room on show sits on an ink tab, as the albums/songs switch does. */
+.bar-tab {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: 0 2px 0 rgb(42 36 32 / 0.25);
+  transition: transform 420ms var(--ease-pop), width 420ms var(--ease-pop);
+}
+
+/* The bar stays put while a room changes, so the tab is seen to slide. */
+.bar {
+  view-transition-name: bar;
+}
+
+::view-transition-group(bar),
+::view-transition-new(bar) {
+  animation: none;
+}
+
+::view-transition-old(bar) {
+  animation: none;
+  opacity: 0;
 }
 
 .contact {
@@ -502,8 +515,23 @@ html[data-sky="day"] .sky-wheel {
   opacity: 0.14;
 }
 
-.mascot.is-held .mascot-shadow {
-  opacity: 0.06;
+.mascot.is-held .mascot-shadow,
+.mascot.is-in-sky .mascot-shadow {
+  opacity: 0;
+}
+
+/* Until the mascot leaps out of it, the window holds him, not the sun or
+   moon; then they rise into it. */
+.sky-body {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 700ms ease 120ms, transform 900ms var(--ease-pop) 120ms;
+}
+
+html[data-sky-host="mascot"] .sky-body {
+  opacity: 0;
+  transform: scale(0.4);
+  transition: none;
 }
 
 .mascot-edge {
@@ -911,11 +939,6 @@ html:not(.js) #trek:target {
   border-radius: 14px;
   background: #e6e8d6;
   box-shadow: 0 3px 0 var(--ink);
-}
-
-.trek-standalone {
-  margin: 0;
-  text-align: right;
 }
 
 html.js[data-room]:not([data-room="index"]) .front {
@@ -1441,26 +1464,6 @@ button.card-face:disabled {
   transform: translateX(100%);
 }
 
-/* What the pointer is on, or what the map shows. */
-.music-caption {
-  flex: 1 1 260px;
-  min-width: 0;
-  margin: 0;
-  overflow: hidden;
-  color: var(--ink-soft);
-  font-family: var(--serif);
-  font-size: 17px;
-  font-style: italic;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.music-caption strong {
-  color: var(--ink);
-  font-style: normal;
-  font-weight: 620;
-}
-
 /* The map: sleeves placed by script, edge to edge, each as large as its
    hours; they deal in when the room opens or the switch turns. */
 .music-map {
@@ -1478,7 +1481,7 @@ button.card-face:disabled {
 
 .music-tile:hover,
 .music-tile:focus-within {
-  z-index: 2;
+  z-index: 5;
 }
 
 @keyframes music-deal {
@@ -1501,17 +1504,24 @@ button.card-face:disabled {
   color: inherit;
   font: inherit;
   text-align: left;
+  outline: none;
+  transition: inset 240ms var(--ease-out), box-shadow 240ms ease;
 }
 
 button.music-face {
   cursor: pointer;
-  transition: transform 200ms var(--ease-out), box-shadow 200ms ease;
 }
 
-button.music-face:hover,
-button.music-face:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 0 var(--ink);
+/* Under the pointer, or tapped, a sleeve grows to a readable size, staying
+   square and inside the map (the room to grow is set per sleeve). */
+.music-tile:hover .music-face,
+.music-face:focus {
+  inset: calc(var(--pop-t, 0px) * -1) calc(var(--pop-r, 0px) * -1) calc(var(--pop-b, 0px) * -1) calc(var(--pop-l, 0px) * -1);
+  box-shadow: 0 3px 0 var(--ink), 0 18px 34px -14px rgb(42 36 32 / 0.55);
+}
+
+.music-face:focus-visible {
+  border-color: var(--music);
 }
 
 .music-face picture,
@@ -1522,9 +1532,11 @@ button.music-face:focus-visible {
   object-fit: cover;
 }
 
-/* Hours listened, pinned in the corner and growing with the sleeve. */
+/* Hours listened, pinned in the corner and growing with the sleeve; a small
+   sleeve shows them once it has grown. */
 .music-hours {
   position: absolute;
+  z-index: 1;
   top: 5px;
   right: 5px;
   padding: 0.1em 0.5em 0.14em;
@@ -1538,6 +1550,19 @@ button.music-face:focus-visible {
   line-height: 1.3;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.music-tile.has-hours .music-hours,
+.music-tile:hover .music-hours,
+.music-face:focus .music-hours {
+  opacity: 1;
+}
+
+.music-tile:not(.has-hours):hover .music-hours,
+.music-tile:not(.has-hours) .music-face:focus .music-hours {
+  font-size: 12px;
 }
 
 .music-label {
@@ -1570,10 +1595,11 @@ button.music-face:focus-visible {
   white-space: nowrap;
 }
 
-/* Songs share their album's sleeve, so their names stay on show. */
+/* Songs share their album's sleeve, so a roomy one keeps its name on show;
+   any sleeve shows it under the pointer. */
 .music-tile:hover .music-label,
-.music-face:focus-visible .music-label,
-.is-songs .music-label {
+.music-face:focus .music-label,
+.is-songs .is-roomy .music-label {
   opacity: 1;
 }
 
@@ -1929,36 +1955,28 @@ button.music-face:focus-visible {
   font-weight: 650;
 }
 
-/* Phones: the line runs straight down the left, the stations beside it. */
+/* The years sit on the station; in a card only on phones. */
+.rail-years {
+  display: none;
+}
+
+/* Phones: no line, just the cards, each with its years in its header. */
 .career-rail[data-columns="1"] .rail-stops {
-  padding: 0 0 24px 40px;
-  gap: 26px;
+  padding: 0 0 24px;
+  gap: 16px;
 }
 
 .career-rail[data-columns="1"] .rail-stop {
   padding-top: 0;
 }
 
-.career-rail[data-columns="1"] .rail-node {
-  top: 18px;
-  left: -26px;
-  margin-left: 0;
-}
-
-.career-rail[data-columns="1"] .rail-when {
-  position: static;
-  display: block;
-  transform: none;
-  padding: 0 0 6px;
-}
-
+.career-rail[data-columns="1"] :is(.rail-node, .rail-when),
 .career-rail[data-columns="1"] .rail-card::before {
-  top: 27px;
-  left: -16px;
-  width: 16px;
-  height: 0;
-  border-left: 0;
-  border-top: 1.5px solid var(--ink);
+  display: none;
+}
+
+.career-rail[data-columns="1"] .rail-years {
+  display: inline;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2189,6 +2207,7 @@ button.music-face:focus-visible {
   }
 
   .bar-rooms a {
+    padding: 0 9px;
     font-size: 18px;
   }
 
@@ -2279,7 +2298,7 @@ button.music-face:focus-visible {
 /* The five room names fit the narrowest phones on one line. */
 @media (max-width: 400px) {
   .bar-rooms a {
-    padding: 0 3px;
+    padding: 0 6px;
     font-size: 16px;
   }
 }
