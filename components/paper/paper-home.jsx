@@ -258,7 +258,8 @@ function Room({ id, children }) {
  */
 const PIN = [60, 160];
 const BANDS = [
-  [-168, -12, "#cfe2e8"],
+  // A warm parchment wash behind the red sun rather than pale blue.
+  [-168, -12, "#ecd6a8"],
   [-12, 0, "#f6c894"],
   [0, 12, "#eca09c"],
   [12, 24, "#8e85bf"],

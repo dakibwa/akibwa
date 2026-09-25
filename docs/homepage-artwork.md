@@ -13,8 +13,9 @@
   only when it matches the committed sleeve (one paler scan was accepted by
   eye). `data/music-art.json` records each source.
 - The sky wheel's sun is Urizen's deep red after Blake (`#8c1d13`, crimson
-  hatching, sixteen rays and a soft glow) and its moon a deep blue (`#23306f`)
-  on a dusk-blue night (`#7c8bbd`), since 25 September 2026.
+  hatching, sixteen rays and a soft glow) on a warm parchment day (`#ecd6a8`),
+  and its moon a deep blue (`#23306f`) on a dusk-blue night (`#7c8bbd`), since
+  25 September 2026.
 - The five things (a hand of sleeves, the Features tile, browser windows, paper
   plane, folded map) and the sky wheel are inline SVG in
   `components/paper/things.jsx` and `paper-home.jsx`, so they scale and draw in
