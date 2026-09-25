@@ -7,21 +7,19 @@ import { Mascot } from "./mascot";
 import { NameFlip } from "./name-flip";
 import { THINGS } from "./things";
 import { Contact } from "./contact";
-import { FeaturesRoom } from "./features-room";
 import { WebsitesRoom } from "./websites-room";
 import { MusicRoom } from "./music-room";
-import { TrekRoom } from "./trek-room";
-import { CareerRail } from "./career-rail";
+import { FramedRoom } from "./framed-room";
+import { CareerCards } from "./career-cards";
 
 // The rooms stay mounted behind the front page; hovering and the mascot's
 // visits re-render the sheet, so the rooms only redraw when their props do.
 const Music = memo(MusicRoom);
-const Features = memo(FeaturesRoom);
 const Websites = memo(WebsitesRoom);
-const Career = memo(CareerRail);
-const Trek = memo(TrekRoom);
+const Career = memo(CareerCards);
+const Framed = memo(FramedRoom);
 
-// All five open in place; the trek's room frames its journey at /trek/.
+// All five open in place; features and the trek frame their own pages.
 export const THINGS_ON_PAPER = [
   { id: "music", label: "music", hint: "my taste archive" },
   { id: "features", label: "features", hint: "untangle a neural net" },
@@ -188,7 +186,7 @@ export function PaperHome({ music, websites }) {
         <Music initial={music.initial} active={room === "music"} />
       </Room>
       <Room id="features">
-        <Features />
+        <Framed active={room === "features"} name="features" path="/features/" title="Features, the daily puzzle" />
       </Room>
       <Room id="websites">
         <Websites sites={websites} />
@@ -197,7 +195,7 @@ export function PaperHome({ music, websites }) {
         <Career />
       </Room>
       <Room id="trek">
-        <Trek active={room === "trek"} />
+        <Framed active={room === "trek"} name="trek" path="/trek/" title="The trek: Paris to Sofia on foot, autumn 2019" />
       </Room>
     </div>
   );
@@ -264,11 +262,19 @@ const BANDS = [
   [-12, 0, "#f6c894"],
   [0, 12, "#eca09c"],
   [12, 24, "#8e85bf"],
-  [24, 156, "#2b356f"],
+  // Dusk rather than midnight, so the deep blue moon reads against it.
+  [24, 156, "#7c8bbd"],
   [156, 168, "#86609a"],
   [168, 180, "#e7806a"],
   [180, 192, "#f4b47c"]
 ];
+// Sixteen rays round the sun, long and short in turn.
+const RAYS = Array.from({ length: 16 }, (_, index) => {
+  const angle = (index * Math.PI) / 8;
+  const [from, to] = index % 2 ? [25, 33] : [25, 41];
+  const at = (radius) => `${(60 + Math.cos(angle) * radius).toFixed(2)} ${(60 + Math.sin(angle) * radius).toFixed(2)}`;
+  return `M${at(from)}L${at(to)}`;
+}).join("");
 const STARS = [[24, 40, 3.2], [33, 84, 2.4], [86, 84, 2.8], [86, 32, 3.4], [70, 19, 2.2]];
 
 function wedge(from, to) {
@@ -291,7 +297,7 @@ function Sky() {
           <circle cx="60" cy="60" r="50" />
         </clipPath>
         <pattern id="sun-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-          <path d="M0 0v4" stroke="#e8893a" strokeWidth="1.6" />
+          <path d="M0 0v4" stroke="#4d0e09" strokeWidth="1.6" />
         </pattern>
         <filter id="sky-soft" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="2.6" />
@@ -302,11 +308,13 @@ function Sky() {
           {BANDS.map(([from, to, colour]) => (
             <path key={from} d={wedge(from, to)} fill={colour} />
           ))}
-          <path className="sky-cloud" d="M25 88.5c-3.2 0-4.2-3.6-1.6-5 .2-3.4 4-4.6 6.2-2.6 1.4-3.6 7-3.8 8.4.2 3.2-.8 5.6 1.6 4.6 4.2-.2 2-2 3.2-4 3.2z" />
           <g className="sky-sun sky-body">
-            <path className="sky-rays" d="M60 30v-8M60 90v8M30 60h-8M90 60h8M38.8 38.8l-5.6-5.6M81.2 81.2l5.6 5.6M38.8 81.2l-5.6 5.6M81.2 38.8l5.6-5.6" />
-            <circle cx="60" cy="60" r="21" fill="#f6c04f" />
-            <circle cx="60" cy="60" r="21" fill="url(#sun-hatch)" opacity=".55" />
+            {/* A deep Urizen red, after Blake, radiant (Dan, 25 September 2026). */}
+            <circle className="sky-glow" cx="60" cy="60" r="34" />
+            <circle className="sky-glow" cx="60" cy="60" r="28" />
+            <path className="sky-rays" d={RAYS} />
+            <circle cx="60" cy="60" r="21" fill="#8c1d13" />
+            <circle cx="60" cy="60" r="21" fill="url(#sun-hatch)" opacity=".5" />
             <circle cx="60" cy="60" r="21" fill="none" stroke="#2a2420" strokeWidth="1.2" />
           </g>
           <g transform={`rotate(180 ${PIN[0]} ${PIN[1]})`}>
@@ -315,8 +323,8 @@ function Sky() {
             ))}
             <g className="sky-body">
               <path className="sky-moon" d="M59.63 38.06A22 22 0 1 0 78.13 68.88A18 18 0 1 1 59.63 38.06Z" />
-              <circle cx="47" cy="62" r="2.2" fill="#e6dcc0" />
-              <circle cx="53.5" cy="72.5" r="1.5" fill="#e6dcc0" />
+              <circle cx="47" cy="62" r="2.2" fill="#131b4d" />
+              <circle cx="53.5" cy="72.5" r="1.5" fill="#131b4d" />
             </g>
           </g>
         </g>

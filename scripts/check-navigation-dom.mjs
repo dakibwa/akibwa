@@ -407,18 +407,16 @@ const checkPublicLanding = async () => {
   section("career, websites and features");
   await goto("/#career");
   await sleep(2600);
-  const rail = await evaluate(`(() => {
-    const stops = [...document.querySelectorAll("#career .rail-stop")];
-    const columns = new Set(stops.map((stop) => Math.round(stop.querySelector(".rail-node").getBoundingClientRect().left)));
-    const statements = stops.map((stop) => stop.querySelector(".rail-statement")?.textContent ?? "");
-    return { count: stops.length, first: stops[0]?.querySelector(".rail-name")?.textContent, columns: columns.size, track: document.querySelector("#career .rail-track")?.getAttribute("d")?.length ?? 0, statements: statements.every(Boolean) };
+  const cards = await evaluate(`(() => {
+    const cards = [...document.querySelectorAll("#career .career-card")];
+    const columns = new Set(cards.map((card) => Math.round(card.getBoundingClientRect().left)));
+    return { count: cards.length, first: cards[0]?.querySelector(".career-name")?.textContent, columns: columns.size, statements: cards.every((card) => card.querySelector(".career-statement")?.textContent), years: cards.every((card) => /\\d{4}|Now/.test(card.querySelector(".career-role")?.textContent ?? "")) };
   })()`);
-  check(rail.count === 8 && rail.first === "Freelance", `the career rail keeps its eight roles, the current first [${rail.count}, ${rail.first}]`);
-  check(rail.columns === 3 && rail.track > 100, `the line zig-zags across the sheet through three columns of stations [${rail.columns}]`);
-  check(rail.statements, "every role's statement shows without choosing it");
+  check(cards.count === 8 && cards.first === "Freelance", `career keeps its eight roles, the current first [${cards.count}, ${cards.first}]`);
+  check(cards.columns === 3 && cards.statements && cards.years, `every role is a card with its years and statement, three to a row [${cards.columns}]`);
   await setDesktop(390, 844);
   await sleep(600);
-  check(await evaluate(`!document.querySelector("#career .rail-line") && [...document.querySelectorAll("#career .rail-years")].every((years) => years.offsetWidth > 0) && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the cards stack with their years and no line");
+  check(await evaluate(`new Set([...document.querySelectorAll("#career .career-card")].map((card) => Math.round(card.getBoundingClientRect().left))).size === 1 && document.documentElement.scrollWidth <= innerWidth + 1`), "on a phone the cards stack");
   await setDesktop();
   await goto("/#websites");
   await sleep(600);
@@ -426,31 +424,11 @@ const checkPublicLanding = async () => {
   check(await evaluate(`[...document.querySelectorAll("#websites .concept-project-copy")].every((copy) => copy.textContent.trim().split(/\\s+/).length <= 8)`), "every site says what it is in eight words or fewer");
   await goto("/#trek");
   await sleep(1200);
-  check(await evaluate(`(() => { const frame = document.querySelector("#trek iframe.trek-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/trek/" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "the trek opens in place, its journey filling the room");
+  check(await evaluate(`(() => { const frame = document.querySelector("#trek iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/trek/" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "the trek opens in place, its journey filling the room");
   check(await waitFor(`document.querySelector("#trek iframe")?.contentDocument?.documentElement.classList.contains("is-embedded")`, 8000), "the framed trek hides its own way home");
   await goto("/#features");
-  await sleep(600);
-  check(await evaluate(`document.querySelectorAll("#features .play-crossing").length >= 3`), "the puzzle starts tangled");
-  const solvedByKeys = await evaluate(`(async () => {
-    const dots = [...document.querySelectorAll("#features .play-dot")];
-    const board = document.querySelector("#features .play-board");
-    const targets = [[48, 15], [85, 49], [76, 82], [20, 82], [11, 49]].map(([x, y]) => [2 + x * 96 / 96, 2 + y * 96 / 96]);
-    for (let i = 0; i < dots.length; i++) {
-      const node = dots[i].closest(".play-node");
-      for (let step = 0; step < 60; step++) {
-        const [x, y] = node.getAttribute("transform").match(/-?[\\d.]+/g).map(Number);
-        const [tx, ty] = targets[i];
-        if (Math.abs(tx - x) < 3 && Math.abs(ty - y) < 3) break;
-        const key = Math.abs(tx - x) >= Math.abs(ty - y) ? (tx > x ? "ArrowRight" : "ArrowLeft") : (ty > y ? "ArrowDown" : "ArrowUp");
-        dots[i].dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
-        await new Promise((resolve) => setTimeout(resolve, 0));
-      }
-    }
-    await new Promise((resolve) => setTimeout(resolve, 1400));
-    return board.classList.contains("is-solved") && board.getAttribute("aria-label") === "Untangled: a house" && Number(board.querySelector(".play-shape").getAttribute("opacity")) === 1;
-  })()`);
-  check(solvedByKeys, "the puzzle can be untangled from the keyboard and settles into the house");
-  check(await evaluate(`!document.querySelector("#features .play-plate, #features .play-stamp")`), "a solved shape stays itself rather than becoming a stamp");
+  await sleep(1200);
+  check(await evaluate(`(() => { const frame = document.querySelector("#features iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/features/" && !new URL(frame.src).search && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "features opens the game in place, filling the room");
 
   section("without JavaScript");
   await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });

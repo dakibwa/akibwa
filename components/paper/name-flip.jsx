@@ -77,13 +77,14 @@ export function NameFlip() {
       <span aria-hidden="true">
         I’m{" "}
         <span className="name" data-phase={phase} data-name={NAMES[index].toLowerCase()}>
+          {/* No full stop after the name (Dan, 25 September 2026). */}
           {NAMES.map((name) => (
             <span key={name} className="name-sizer">
-              {name}.
+              {name}
             </span>
           ))}
           <span key={NAMES[index]} className="name-word">
-            {NAMES[index]}.
+            {NAMES[index]}
           </span>
         </span>
       </span>

@@ -431,25 +431,24 @@ html[data-sky="day"] .sky-wheel {
   to { transform: rotate(360deg); }
 }
 
+.sky-glow {
+  fill: #b8341f;
+  opacity: 0.16;
+}
+
 .sky-rays {
   fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.3;
+  stroke: #7a170f;
+  stroke-width: 2.2;
   stroke-linecap: round;
   transform-box: view-box;
   transform-origin: 60px 60px;
   animation: turn 90s linear infinite;
 }
 
-.sky-cloud {
-  fill: #fffdf8;
-  stroke: var(--ink);
-  stroke-width: 1;
-  stroke-linejoin: round;
-}
-
+/* A deep blue moon on a dusk sky. */
 .sky-moon {
-  fill: #f3ead2;
+  fill: #23306f;
   stroke: var(--ink);
   stroke-width: 1.2;
   stroke-linejoin: round;
@@ -914,31 +913,37 @@ html.js[data-room="trek"] #trek {
   display: block;
 }
 
-/* The trek fills what is left of the screen under the bar. */
+/* Features and the trek fill what is left of the screen under the bar. */
+html.js[data-room="features"] #features,
 html.js[data-room="trek"] #trek,
-html:not(.js) #trek:target {
+html:not(.js) :is(#features, #trek):target {
   display: flex;
   flex-direction: column;
   padding-bottom: 16px;
 }
 
-.trek-room {
+.framed-room {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 6px;
   min-height: 0;
 }
 
-.trek-frame {
+.room-frame {
   display: block;
   flex: 1;
   width: 100%;
   min-height: 420px;
   border: 1.5px solid var(--ink);
   border-radius: 14px;
+  overflow: hidden;
   background: #e6e8d6;
   box-shadow: 0 3px 0 var(--ink);
+}
+
+/* The game's own dark paper, so it loads without a flash. */
+.framed-room.is-features .room-frame {
+  background: #0e1214;
 }
 
 html.js[data-room]:not([data-room="index"]) .front {
@@ -1603,6 +1608,84 @@ button.music-face {
   opacity: 1;
 }
 
+/* Songs are typeset on paper tints rather than shown by their album's sleeve:
+   the title large, the artist beneath. The tiniest show the title's first
+   letter until they grow. */
+.music-type {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.25em;
+  padding: clamp(4px, calc(var(--side, 60) * 0.07px), 14px);
+  overflow: hidden;
+  background: var(--tint, #f6efdd);
+}
+
+.music-type strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: var(--serif);
+  font-size: clamp(9px, calc(var(--side, 60) * 0.115px), 30px);
+  font-weight: 620;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.music-type span {
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: clamp(8px, calc(var(--side, 60) * 0.065px), 15px);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.music-initial {
+  display: none;
+}
+
+.music-tile.is-tiny .music-type > :not(.music-initial) {
+  display: none;
+}
+
+.music-tile.is-tiny .music-initial {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+  font-family: var(--serif);
+  font-size: calc(var(--side, 30) * 0.55px);
+  font-weight: 650;
+}
+
+/* Grown under the pointer or a tap, a small one reads at a readable size. */
+.music-tile.is-tiny:hover .music-initial,
+.music-tile.is-tiny .music-face:focus .music-initial {
+  display: none;
+}
+
+.music-tile.is-tiny:hover .music-type > :not(.music-initial),
+.music-tile.is-tiny .music-face:focus .music-type > :not(.music-initial) {
+  display: block;
+}
+
+.music-tile:not(.is-roomy):hover .music-type strong,
+.music-tile:not(.is-roomy) .music-face:focus .music-type strong {
+  display: -webkit-box;
+  font-size: 15px;
+}
+
+.music-tile:not(.is-roomy):hover .music-type span,
+.music-tile:not(.is-roomy) .music-face:focus .music-type span {
+  font-size: 12px;
+}
+
 /* A song without a sleeve gets a plain paper one with its name pencilled on. */
 .music-blank {
   display: grid;
@@ -1785,138 +1868,47 @@ button.music-face {
   }
 }
 
-/* ---------------------------------------------------------- career rail -- */
+/* -------------------------------------------------------------- career -- */
 
-/* Every role a station on a pencil railway that snakes across the sheet. */
-.career-rail {
-  --lane: 44px;
-  position: relative;
-  padding-top: 8px;
-}
-
-.rail-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.rail-reveal {
-  fill: none;
-  stroke: #fff;
-  stroke-width: 40;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: draw 2200ms cubic-bezier(0.45, 0, 0.35, 1) 120ms forwards;
-}
-
-/* Sleepers under a single pencil rail, as a railway map draws one. */
-.rail-sleepers {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 11;
-  stroke-dasharray: 1.6 7.4;
-  opacity: 0.45;
-}
-
-.rail-track,
-.rail-buffer {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.rail-buffer {
-  stroke-width: 3;
-}
-
-.rail-stops {
-  position: relative;
+/* Every role on a card, the most recent first, three to a row. */
+.career-cards {
   display: grid;
-  grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
-  gap: clamp(30px, 5vh, 56px) clamp(22px, 3vw, 48px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.4vw, 28px);
   margin: 0;
-  padding: 0 var(--lane) 24px;
+  padding: 8px 0 24px;
   list-style: none;
 }
 
-/* A station: its node on the line, its years above, its card hung below. */
-.rail-stop {
-  position: relative;
-  padding-top: 50px;
-  animation: rail-stop 560ms var(--ease-pop) both;
-  animation-delay: calc(var(--n, 0) * 230ms + 260ms);
-}
-
-@keyframes rail-stop {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.96);
-  }
-}
-
-.rail-node {
-  position: absolute;
-  top: 17px;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin-left: -10px;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--company-accent);
-  box-shadow: 0 0 0 4px var(--paper, #f3ecdf);
-}
-
-.rail-when {
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0 6px;
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 650;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-
-.rail-card {
-  position: relative;
+.career-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
   align-items: center;
   gap: 2px 14px;
-  height: 100%;
   padding: 16px 18px 18px;
   border: 1.5px solid var(--ink);
   border-radius: 12px;
   background: var(--paper-light);
   box-shadow: 0 3px 0 var(--ink);
+  animation: career-card 560ms var(--ease-pop) both;
+  animation-delay: calc(var(--n, 0) * 90ms + 120ms);
   transition: transform 220ms var(--ease-out), box-shadow 220ms ease;
 }
 
-/* The string it hangs from. */
-.rail-card::before {
-  content: "";
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  height: 14px;
-  border-left: 1.5px solid var(--ink);
+@keyframes career-card {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
 }
 
-.rail-stop:hover .rail-card {
-  transform: translateY(-2px) rotate(-0.4deg);
+.career-card:hover {
+  transform: translateY(-2px);
   box-shadow: 0 5px 0 var(--ink);
 }
 
-.rail-logo {
+.career-logo {
   display: grid;
   grid-row: 1 / span 2;
   place-items: center;
@@ -1927,7 +1919,7 @@ button.music-face {
   background: color-mix(in srgb, var(--company-accent) 14%, var(--paper-light));
 }
 
-.rail-name {
+.career-name {
   margin: 0;
   font-family: var(--serif);
   font-size: clamp(19px, 1.5vw, 22px);
@@ -1936,14 +1928,14 @@ button.music-face {
   letter-spacing: -0.01em;
 }
 
-.rail-role {
+.career-role {
   margin: 0;
   color: var(--ink-soft);
   font-size: 14px;
   line-height: 1.3;
 }
 
-.rail-statement {
+.career-statement {
   grid-column: 1 / -1;
   margin: 12px 0 0;
   font-family: var(--serif);
@@ -1951,216 +1943,25 @@ button.music-face {
   line-height: 1.45;
 }
 
-.rail-statement strong {
+.career-statement strong {
   font-weight: 650;
 }
 
-/* The years sit on the station; in a card only on phones. */
-.rail-years {
-  display: none;
+@media (max-width: 1039px) {
+  .career-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-/* Phones: no line, just the cards, each with its years in its header. */
-.career-rail[data-columns="1"] .rail-stops {
-  padding: 0 0 24px;
-  gap: 16px;
-}
-
-.career-rail[data-columns="1"] .rail-stop {
-  padding-top: 0;
-}
-
-.career-rail[data-columns="1"] :is(.rail-node, .rail-when),
-.career-rail[data-columns="1"] .rail-card::before {
-  display: none;
-}
-
-.career-rail[data-columns="1"] .rail-years {
-  display: inline;
+@media (max-width: 659px) {
+  .career-cards {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rail-reveal {
+  .career-card {
     animation: none;
-    stroke-dashoffset: 0;
-  }
-
-  .rail-stop {
-    animation: none;
-  }
-}
-
-/* ---------------------------------------------------------------- play -- */
-
-.play {
-  display: grid;
-  grid-template-columns: minmax(280px, 540px) minmax(260px, 1fr);
-  gap: clamp(24px, 5vw, 88px);
-  align-items: center;
-}
-
-.play-board {
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  overflow: visible;
-  touch-action: none;
-  border-radius: 6px;
-  background: #EAE7DF;
-  box-shadow: 0 0 0 1.5px #15191C, 0 4px 0 #15191C;
-}
-
-/* Solved, the shape's silhouette inks in under its threads. */
-.play-shape path {
-  fill: #161a1d;
-}
-
-.play-shape .play-stem {
-  fill: none;
-  stroke: #161a1d;
-  stroke-width: 6;
-  stroke-linecap: round;
-}
-
-.play-edge {
-  fill: none;
-  stroke: #2294CC;
-  stroke-width: 1.4;
-  stroke-linecap: round;
-  transition: stroke 200ms ease;
-}
-
-/* As in the game, a crossing is the only ink on the board. */
-.play-crossing {
-  fill: #EAE7DF;
-  stroke: #15191C;
-  stroke-width: 0.9;
-  pointer-events: none;
-}
-
-.play-hit {
-  fill: transparent;
-  cursor: grab;
-}
-
-.play-dot {
-  fill: #faf9f5;
-  stroke: #15191C;
-  stroke-width: 1.1;
-  cursor: grab;
-  transition: r 160ms ease;
-}
-
-.play-node:hover .play-dot {
-  r: 4;
-}
-
-.play-dot:focus-visible {
-  outline: none;
-  stroke: #2f88ff;
-  stroke-width: 1.8;
-}
-
-.play-board.is-solved .play-dot,
-.play-board.is-solved .play-hit {
-  cursor: default;
-}
-
-.play-status {
-  margin: 14px 0 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 18px;
-  color: var(--ink-soft);
-}
-
-.play-status strong {
-  font-style: normal;
-  color: var(--ink);
-}
-
-.play-side {
-  display: grid;
-  gap: 18px;
-  align-content: center;
-}
-
-.play-name {
-  display: grid;
-  justify-items: start;
-  gap: 8px;
-  margin: 0;
-  color: #15191C;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(44px, 5.4vw, 72px);
-  font-weight: 750;
-  line-height: 1;
-  letter-spacing: -0.055em;
-}
-
-/* The wordmark's four-colour rule. */
-.play-rule {
-  width: 3.4em;
-  height: 0.09em;
-}
-
-.play-lede {
-  margin: 0;
-  max-width: 34ch;
-  font-family: var(--serif);
-  font-size: clamp(19px, 1.6vw, 23px);
-  line-height: 1.4;
-}
-
-.play-found {
-  display: flex;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.play-found svg {
-  display: block;
-  width: 52px;
-  height: 52px;
-  border-radius: 6px;
-  background: #EAE7DF;
-  box-shadow: 0 0 0 1.5px var(--ink), 0 2px 0 var(--ink);
-}
-
-/* A shape still to find is a pencilled outline; a found one is coloured in. */
-.play-found path {
-  fill: none;
-  stroke: #15191C;
-  stroke-opacity: 0.3;
-  stroke-width: 2.4;
-  stroke-dasharray: 4 4;
-  stroke-linecap: round;
-}
-
-.play-found li.is-found path {
-  fill: #161a1d;
-  stroke: none;
-}
-
-.play-found li.is-found .play-stem {
-  fill: none;
-  stroke: #161a1d;
-  stroke-width: 6;
-  stroke-dasharray: none;
-}
-
-.play-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px 24px;
-}
-
-@media (max-width: 719px) {
-  .play {
-    grid-template-columns: 1fr;
   }
 }
 

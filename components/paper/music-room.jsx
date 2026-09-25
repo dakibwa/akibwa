@@ -9,9 +9,10 @@ import { LARGE_ART } from "./music-art.mjs";
 
 /*
  * Music: Dan's top 100 albums or all his top 1,000 songs, one or the other,
- * as square sleeves laid edge to edge with no holes (music-map.mjs), each as
- * large as the hours he listened to it, the most listened first, with those
- * hours pinned in its corner. No sleeve is smaller than a grid cell, and a
+ * as squares laid edge to edge with no holes (music-map.mjs), each as large as
+ * the hours he listened to it, the most listened first, with those hours pinned
+ * in its corner. Albums are their sleeves; songs are typeset, since a sleeve is
+ * the album's and not the song's (Dan, 25 September 2026). No sleeve is smaller than a grid cell, and a
  * small one grows to a readable size under the pointer or a tap. Choosing an
  * album opens its track list: the songs he played from it, most played first,
  * with plays and hours.
@@ -19,6 +20,17 @@ import { LARGE_ART } from "./music-art.mjs";
 
 // How far a sleeve grows under the pointer, at least.
 const POP = 136;
+
+// Paper tints for the songs, one to an artist.
+const TINTS = ["#f6efdd", "#f1dcd4", "#dfe8ef", "#e3ead6", "#f4e3b8", "#e8dff0", "#f0d9c2", "#d9e6e0"];
+const tintFor = (artist) => TINTS[[...artist].reduce((hash, letter) => (hash * 31 + letter.charCodeAt(0)) >>> 0, 7) % TINTS.length];
+
+// A song's name as set on its square: without a reissue note or its guests.
+const songTitle = (title) =>
+  title
+    .replace(/\s+-\s+(\d{4}\s+)?(digital\s+)?remaster(ed)?.*$/i, "")
+    .replace(/\s*[([]feat\.[^)\]]*[)\]]/i, "")
+    .trim();
 
 export const listened = (minutes) => {
   if (minutes >= 600) return `${Math.round(minutes / 60)} h`;
@@ -86,7 +98,18 @@ const Tiles = memo(function Tiles({ kind, entries, tiles, width, height, onOpen 
     const art = item.art ?? (kind === "albums" ? item.id : null);
     const described = `${item.title}, ${item.artist}. ${listened(item.minutes)} listened, ${plays(item.plays)}.`;
     const roomy = side >= 116;
-    const face = (
+    const face = kind === "songs" ? (
+      <>
+        <span className="music-type" aria-hidden="true">
+          <b className="music-initial">{songTitle(item.title).charAt(0)}</b>
+          <strong>{songTitle(item.title)}</strong>
+          <span>{item.artist}</span>
+        </span>
+        <span className="music-hours" aria-hidden="true">
+          {listened(item.minutes)}
+        </span>
+      </>
+    ) : (
       <>
         {art ? (
           <AlbumArtImage id={art} alt="" large={LARGE_ART[art]} sizes={`${Math.max(side, POP)}px`} />
@@ -107,8 +130,8 @@ const Tiles = memo(function Tiles({ kind, entries, tiles, width, height, onOpen 
     return (
       <li
         key={`${kind}-${item.rank}`}
-        className={`music-tile${roomy ? " is-roomy" : ""}${side >= 58 ? " has-hours" : ""}`}
-        style={{ left: tile.x, top: tile.y, width: side, height: side, "--i": Math.min(index, 160), "--side": side, ...growth(tile, width, height) }}
+        className={`music-tile${roomy ? " is-roomy" : ""}${side >= (kind === "songs" ? 88 : 58) ? " has-hours" : ""}${side < 40 ? " is-tiny" : ""}`}
+        style={{ left: tile.x, top: tile.y, width: side, height: side, "--i": Math.min(index, 160), "--side": side, "--tint": kind === "songs" ? tintFor(item.artist) : undefined, ...growth(tile, width, height) }}
       >
         {onOpen ? (
           <button

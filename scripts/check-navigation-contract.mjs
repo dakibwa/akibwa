@@ -5,8 +5,8 @@ import { albumSides, albumWeights, drawnOrder, layoutSquares, GAP } from "../com
 
 /* Build-time contract for the paper homepage: one sheet with five things —
    music, features, websites, career and the trek — that open in place (the
-   trek's room frames /trek/). Named public choices do not relax the
-   private-data and search boundaries below. */
+   features and trek rooms frame /features/ and /trek/). Named public choices
+   do not relax the private-data and search boundaries below. */
 
 const read = (relativePath) =>
   readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
@@ -80,13 +80,15 @@ for (const id of ["music", "features", "websites", "career", "trek"]) {
   requireText(home, `id: "${id}"`, `the ${id} room must remain on the front page`);
   requireText(home, `<Room id="${id}"`, `the ${id} room must render`);
 }
-requireText(read("components/paper/trek-room.jsx"), ': "/trek/";', "the trek room must frame the journey");
+requireText(home, 'path="/trek/"', "the trek room must frame the journey");
+requireText(home, 'path="/features/"', "the features room must frame the game (Dan, 25 September 2026)");
+forbidText(home, "from=akibwa", "the framed game must not wear the portfolio banner");
 requireText(trekTemplate, 'classList.add("is-embedded")', "the framed trek must hide its own way home");
 requireText(home, "memo(MusicRoom)", "the music room must show the albums and songs mosaics");
 requireText(home, 'className="visually-hidden" tabIndex={-1}', "rooms have no title on the page, only a heading for readers");
 forbidText(home, "room-head", "rooms have no title on the page");
 forbidText(home, "bar-home", "the bar has no wordmark");
-requireText(home, "memo(CareerRail)", "the career room must be the railway of roles (Dan, 25 September 2026)");
+requireText(home, "memo(CareerCards)", "the career room must show every role on its own card (Dan, 25 September 2026)");
 requireText(music, "aria-pressed={view === name}", "albums and songs must be one switch");
 requireText(music, "layoutSquares(", "albums and songs must be square sleeves packed with no holes");
 requireText(music, "music-hours", "every sleeve must carry its hours listened");
