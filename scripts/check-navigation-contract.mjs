@@ -114,7 +114,7 @@ requireText(things, "CARD_REST.map(", "the music sketch must trace the fanned ca
 requireText(things, "<CastleBankMark />", "the back websites window must carry Castle Bank's mark");
 requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
 requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
-requireText(framed, "#introveil{padding:0!important}", "the Features game must bleed into the room's corners");
+requireText(framed, "#introveil{padding:0!important}", "the Features game must reach the edges of its frame");
 {
   // The map itself, on the real albums: no holes or overlaps, the most
   // listened first, and the two ambient records near Graceland (Dan, 25 September 2026).

@@ -14,8 +14,8 @@ const page = (path) => (process.env.NODE_ENV === "development" ? `${path}index.h
  *
  * The Features game is the Features repository's client, copied as it is, so
  * the room trims its welcome card's inset and border from outside when it
- * loads (same origin): the game bleeds into the room's corners (Dan, 25
- * September 2026).
+ * loads (same origin): in the paper frame, like the trek's, the game reaches
+ * the frame's edges and corners (Dan, 25 September 2026).
  */
 const BLEED = {
   features: "#introveil{padding:0!important}#introcard{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;border:0!important;box-shadow:none!important;border-radius:0!important}"

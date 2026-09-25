@@ -944,18 +944,10 @@ html:not(.js) :is(#features, #trek):target {
   box-shadow: 0 3px 0 var(--ink);
 }
 
-/* The game's own dark paper, so it loads without a flash. The game bleeds to
-   the room's edges and corners, unframed, under the bar (Dan, 25 September
-   2026). */
-html.js[data-room="features"] #features,
-html:not(.js) #features:target {
-  padding: 0;
-}
-
+/* The game's own dark paper, so it loads without a flash. It sits in the same
+   paper frame as the trek, and fills it to the frame's edges (Dan, 25
+   September 2026; framed-room.jsx trims the game's own inset). */
 .framed-room.is-features .room-frame {
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
   background: #0e1214;
 }
 
