@@ -427,7 +427,7 @@ const checkPublicLanding = async () => {
   await setDesktop();
   await goto("/#websites");
   await sleep(600);
-  check(await evaluate(`JSON.stringify([...document.querySelectorAll("#websites .concept-project-card")].map((card) => card.getAttribute("href"))) === JSON.stringify(["https://portuguesewithines.com/","https://www.castle-bank.com/",null])`), "the websites room shows Dan's three sites, Butterfly Rose unlinked until it is live");
+  check(await evaluate(`JSON.stringify([...document.querySelectorAll("#websites .concept-project-card")].map((card) => card.getAttribute("href"))) === JSON.stringify(["https://portuguesewithines.com/",null,null])`), "the websites room shows Dan's three sites, Castle Bank unlinked until Dan approves it and Butterfly Rose until it is live");
   check(await evaluate(`[...document.querySelectorAll("#websites .concept-project-copy")].every((copy) => copy.textContent.trim().split(/\\s+/).length <= 8)`), "every site says what it is in eight words or fewer");
   await goto("/#trek");
   await sleep(1200);

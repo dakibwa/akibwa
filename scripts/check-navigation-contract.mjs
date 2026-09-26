@@ -172,6 +172,8 @@ for (const site of websites) {
   if (site.capture) fail(`${site.title} must be an illustration, not a screenshot of the site`);
 }
 if (/atkinson/i.test(JSON.stringify(websites))) fail("the websites data must not name Dan in full");
+// Castle Bank's site names and pictures Dan in full: its card links there only once he says so.
+if (websites.find((site) => site.id === "castle-bank")?.href) fail("Castle Bank's card must not link to a page that names Dan in full until he approves it");
 
 // The public music file carries aggregates only (Dan asked for hours listened
 // on 24 September 2026): no dates, URIs, accounts or raw events.
