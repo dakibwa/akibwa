@@ -18,7 +18,9 @@ export const GAP = 4;
  * Psychedelic Therapy and Discreet Music would take a third of the map. Dan
  * asked on 25 September 2026 to draw them near Graceland's size instead, Music
  * for Psychedelic Therapy a touch larger and Discreet Music a little smaller.
- * Their corners still show their real hours.
+ * Graceland is the most listened album besides them, so in a single year or a
+ * search they are drawn near whichever album that is, and never above their
+ * own hours. Their corners still show their real hours.
  */
 const NEAR_GRACELAND = [
   { title: "music for psychedelic therapy", artist: "jon hopkins", scale: 1.1, step: 1 },
@@ -32,22 +34,31 @@ const plain = (text) =>
     .toLowerCase()
     .trim();
 
-const isGraceland = (album) => plain(album.title) === "graceland" && plain(album.artist) === "paul simon";
 const ruleFor = (album) => NEAR_GRACELAND.find((entry) => entry.title === plain(album.title) && entry.artist === plain(album.artist));
+
+// The most listened album besides the two: Graceland, all time.
+const referenceOf = (albums) =>
+  albums.reduce((best, album, index) => (!ruleFor(album) && (best < 0 || album.minutes > albums[best].minutes) ? index : best), -1);
+
+// Drawn near the reference rather than at their own hours.
+const held = (album, reference) => {
+  const rule = ruleFor(album);
+  return rule && reference && album.minutes > reference.minutes * rule.scale ? rule : null;
+};
 
 // The minutes each album is drawn at: its own, except the two above.
 export function albumWeights(albums) {
-  const graceland = albums.find(isGraceland);
+  const reference = albums[referenceOf(albums)];
   return albums.map((album) => {
-    const rule = ruleFor(album);
-    return rule && graceland ? Math.round(graceland.minutes * rule.scale) : Math.max(1, album.minutes);
+    const rule = held(album, reference);
+    return rule ? Math.round(reference.minutes * rule.scale) : Math.max(1, album.minutes);
   });
 }
 
-// Whole-cell sides that keep the two near Graceland a cell either side of it.
+// Whole-cell sides that keep the two a cell either side of the reference.
 export function albumSides(albums) {
-  const reference = albums.findIndex(isGraceland);
-  const steps = albums.map((album) => ruleFor(album)?.step ?? 0);
+  const reference = referenceOf(albums);
+  const steps = albums.map((album) => held(album, albums[reference])?.step ?? 0);
   return (sides) => {
     if (reference < 0) return sides;
     return sides.map((side, index) => (steps[index] ? Math.max(1, sides[reference] + steps[index]) : side));

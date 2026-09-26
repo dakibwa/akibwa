@@ -107,6 +107,10 @@ requireText(music, "startTransition(() => setView(name))", "the albums/songs swi
 requireText(music, "useSettledWidth(", "the music map must scale while resizing and lay out once settled");
 requireText(music, ".animate(", "the music map's sleeves must glide to a new packing");
 requireText(css, ".music-tracks {\n  -webkit-user-select: none;", "the track sheet must not select");
+// Dan, 26 September 2026: a line of years, songs that open their album, and where to hear it.
+requireText(music, "<YearLine years={years.years}", "the music room must offer its line of years");
+requireText(music, "picked={song ? song.title : null}", "a song must open its album's track list with the song lit");
+requireText(music, "links={listenLinks(", "every music sheet must link to Spotify and Apple Music");
 requireText(css, "li:hover::after", "track bars must take their own colour under the pointer");
 // The front page: music as large as the rest, everything drawn in.
 requireText(things, 'const CARD = "M-38-84h76', "the music cards must be as large as the other things");

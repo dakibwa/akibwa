@@ -5,6 +5,7 @@ import { AlbumArtImage } from "../site-image";
 import { useMusicRanking } from "../use-music-ranking";
 import { albumSides, albumWeights, drawnOrder, packSquares, rowOfSquares, targetColumns, tilesFor } from "./music-map.mjs";
 import { LARGE_ART } from "./music-art.mjs";
+import { fold } from "./music-ranking.mjs";
 import { indexItems, search } from "./music-search.mjs";
 
 /*
@@ -15,28 +16,103 @@ import { indexItems, search } from "./music-search.mjs";
  * sleeve is the album's and not the song's (Dan, 25 September 2026). No square
  * is smaller than a grid cell, and a small one grows to a readable size under
  * the pointer or a tap. A search box finds artists and the artists around
- * them, genres and eras (music-search.mjs) and packs just what it finds.
+ * them, genres and eras (music-search.mjs) and packs just what it finds, and
+ * a line of years redraws the map as one year's listening (music-years.json).
  * Choosing an album opens its track list: the songs he played from it, most
- * played first, with plays and hours.
+ * played first, with plays and hours. Choosing a song opens its album's list
+ * with the song lit, or the song alone when its album is not among these.
+ * Each sheet links to the release on Spotify and Apple Music (Dan, 26
+ * September 2026).
  */
 
-// Genres, relationships and years for the search, fetched with the room.
-function useMusicMeta(active) {
-  const [meta, setMeta] = useState(null);
+// A public file the room fetches once it opens: the search's genres and
+// years, the hours by year, or where each album can be heard.
+function useRoomFile(active, path) {
+  const [packet, setPacket] = useState(null);
   useEffect(() => {
-    if (!active || meta) return undefined;
+    if (!active || packet) return undefined;
     let cancelled = false;
-    fetch("/music-meta.json")
+    fetch(path)
       .then((response) => (response.ok ? response.json() : null))
-      .then((packet) => {
-        if (!cancelled && packet) setMeta(packet);
+      .then((body) => {
+        if (!cancelled && body) setPacket(body);
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, [active, meta]);
-  return meta;
+  }, [active, packet, path]);
+  return packet;
+}
+
+/*
+ * One year's albums or songs: those played in it, each at its hours that
+ * year, the most listened first. A year's list is kept, so scrubbing back to
+ * it finds the same list and, with it, the same packing.
+ */
+function useYearLists(albums, songs, years) {
+  return useMemo(() => {
+    const kept = new Map();
+    const inYear = (pairs, year) => pairs?.find(([at]) => at === year)?.[1] ?? 0;
+    return (view, year) => {
+      if (!years || year === null) return null;
+      const key = `${view}|${year}`;
+      if (!kept.has(key)) {
+        if (view === "albums") {
+          const played = albums.map((album) => ({ ...album, minutes: inYear(years.albums[album.id], year) })).filter((album) => album.minutes > 0);
+          kept.set(key, drawnOrder(played, albumWeights(played)));
+        } else {
+          const played = songs.map((song) => ({ ...song, minutes: inYear(years.songs[song.rank - 1], year) })).filter((song) => song.minutes > 0);
+          kept.set(key, played.sort((a, b) => b.minutes - a.minutes || a.rank - b.rank).map((item) => ({ item, weight: item.minutes })));
+        }
+      }
+      return kept.get(key);
+    };
+  }, [albums, songs, years]);
+}
+
+/*
+ * The years: an ink pill carrying the year, sliding along a pencil line with a
+ * tick for each year, over a native range so it takes the keys and reads as
+ * one control. All time is the right-hand end, where it starts.
+ */
+function YearLine({ years, value, onChange }) {
+  const stops = years.length;
+  const index = value === null ? stops : years.indexOf(value);
+  return (
+    <label className="music-years" style={{ "--at": index / stops }}>
+      <input
+        type="range"
+        min={0}
+        max={stops}
+        step={1}
+        value={index}
+        onChange={(event) => {
+          const next = Number(event.target.value);
+          onChange(next >= stops ? null : years[next]);
+        }}
+        aria-label="Year"
+        aria-valuetext={value === null ? "all time" : String(value)}
+      />
+      <span className="music-years-line" aria-hidden="true">
+        {[...years, null].map((year, at) => (
+          <i key={year ?? "all"} style={{ "--x": at / stops }} />
+        ))}
+      </span>
+      <span className="music-years-pill" aria-hidden="true">
+        {value ?? "all time"}
+      </span>
+    </label>
+  );
+}
+
+// Where to hear it: the release found on each service, or a search there.
+function listenLinks(found, artist, title) {
+  const term = encodeURIComponent(`${artist} ${title}`);
+  return [
+    ["Spotify", found?.spotify ?? `https://open.spotify.com/search/${term}`],
+    ["Apple Music", found?.apple ?? `https://music.apple.com/gb/search?term=${term}`]
+  ];
 }
 
 // How far a sleeve grows under the pointer, at least.
@@ -247,21 +323,14 @@ const Tiles = memo(function Tiles({ kind, entries, tiles, count, onOpen }) {
         onPointerEnter={grow}
         onFocus={grow}
       >
-        {onOpen ? (
-          <button
-            type="button"
-            className="music-face"
-            onClick={(event) => onOpen(item, event.currentTarget)}
-            aria-label={`${described} Show its tracks.`}
-          >
-            {face}
-          </button>
-        ) : (
-          // Focusable, so a tap on a phone grows it as the pointer would.
-          <span className="music-face" role="img" tabIndex={0} aria-label={described}>
-            {face}
-          </span>
-        )}
+        <button
+          type="button"
+          className="music-face"
+          onClick={(event) => onOpen(kind, item, event.currentTarget)}
+          aria-label={`${described} ${kind === "songs" ? "Show it" : "Show its tracks"}.`}
+        >
+          {face}
+        </button>
       </li>
     );
   });
@@ -289,14 +358,14 @@ function useProgressive(list) {
 // cast's orange, periwinkle and raspberry among the rooms' inks.
 const BARS = ["#fe7735", "#7d7afb", "#eb5772", "#2b5fb8", "#3f7634", "#e3a21a", "#24709f", "#a72d28"];
 
-function AlbumTracks({ album, loading, onClose }) {
+// A sheet over the room: a sleeve, a heading, the numbers and where to hear it.
+function Sheet({ cover, title, byline, totals, links, label, onClose, children }) {
   const panel = useRef(null);
   useEffect(() => {
     const dialog = panel.current;
     if (!dialog.open) dialog.showModal();
     return () => dialog.open && dialog.close();
   }, []);
-  const most = Math.max(1, ...(album.tracks ?? []).map((track) => track.plays));
   return (
     <dialog
       className="music-tracks"
@@ -307,7 +376,7 @@ function AlbumTracks({ album, loading, onClose }) {
         onClose();
       }}
       onKeyDown={(event) => {
-        // Escape closes the track list, not the room behind it.
+        // Escape closes the sheet, not the room behind it.
         if (event.key === "Escape") {
           event.preventDefault();
           onClose();
@@ -318,53 +387,108 @@ function AlbumTracks({ album, loading, onClose }) {
       }}
     >
       <div className="music-tracks-sheet">
-        <button type="button" className="music-tracks-close" onClick={onClose} aria-label="Close the track list">
+        <button type="button" className="music-tracks-close" onClick={onClose} aria-label={label}>
           ×
         </button>
         <header className="music-tracks-head">
           <span className="music-tracks-cover">
-            <AlbumArtImage id={album.id} alt="" large={LARGE_ART[album.id]} sizes="150px" />
+            {cover ? <AlbumArtImage id={cover} alt="" large={LARGE_ART[cover]} sizes="150px" /> : <span className="music-blank" aria-hidden="true" />}
           </span>
           <div>
-            <h3 id="music-tracks-title">{album.title}</h3>
-            <p className="music-tracks-artist">
-              {album.artist}
-              {album.year ? ` · ${album.year}` : ""}
-            </p>
-            <p className="music-tracks-totals">
-              {plays(album.plays)} · {listened(album.minutes)} listened
+            <h3 id="music-tracks-title">{title}</h3>
+            <p className="music-tracks-artist">{byline}</p>
+            <p className="music-tracks-totals">{totals}</p>
+            <p className="music-listen">
+              {links.map(([service, href]) => (
+                <a key={service} href={href} target="_blank" rel="noopener noreferrer">
+                  {service} <span aria-hidden="true">↗</span>
+                </a>
+              ))}
             </p>
           </div>
         </header>
-        {album.tracks ? (
-          <>
-            <ol className="music-track-list">
-              {album.tracks.map((track, index) => (
-                <li key={track.title} style={{ "--share": track.plays / most, "--bar": BARS[index % BARS.length] }}>
-                  <span className="music-track-title">{track.title}</span>
-                  <span className="music-track-plays">{plays(track.plays)}</span>
-                  <span className="music-track-hours">{listened(track.minutes)}</span>
-                </li>
-              ))}
-            </ol>
-          </>
-        ) : (
-          <p className="music-tracks-note" role="status">
-            {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
-          </p>
-        )}
+        {children}
       </div>
     </dialog>
   );
 }
 
+// The same song on a sheet as on the map, whatever its reissue note.
+const sameSong = (a, b) => fold(songTitle(a)).trim() === fold(songTitle(b)).trim();
+
+function AlbumTracks({ album, year, picked, found, loading, onClose }) {
+  const lit = useRef(null);
+  const most = Math.max(1, ...(album.tracks ?? []).map((track) => track.plays));
+  // A song chosen on the map is brought into view on its album's list.
+  useEffect(() => {
+    lit.current?.scrollIntoView({ block: "center" });
+  }, [album.tracks]);
+  return (
+    <Sheet
+      cover={album.id}
+      title={album.title}
+      byline={`${album.artist}${year ? ` · ${year}` : ""}`}
+      totals={`${plays(album.plays)} · ${listened(album.minutes)} listened`}
+      links={listenLinks(found, album.artist, album.title)}
+      label="Close the track list"
+      onClose={onClose}
+    >
+      {album.tracks ? (
+        <ol className="music-track-list">
+          {album.tracks.map((track, index) => {
+            const chosen = picked !== null && sameSong(track.title, picked);
+            return (
+              <li
+                key={track.title}
+                ref={chosen ? lit : undefined}
+                className={chosen ? "is-picked" : undefined}
+                aria-current={chosen ? "true" : undefined}
+                style={{ "--share": track.plays / most, "--bar": BARS[index % BARS.length] }}
+              >
+                <span className="music-track-title">{track.title}</span>
+                <span className="music-track-plays">{plays(track.plays)}</span>
+                <span className="music-track-hours">{listened(track.minutes)}</span>
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
+        <p className="music-tracks-note" role="status">
+          {loading ? "Fetching the tracks…" : "The tracks could not be loaded."}
+        </p>
+      )}
+    </Sheet>
+  );
+}
+
+// A song whose album is not among the albums: the song alone.
+function SongSheet({ song, onClose }) {
+  const title = songTitle(song.title);
+  return (
+    <Sheet
+      cover={song.art}
+      title={title}
+      byline={song.artist}
+      totals={`${plays(song.plays)} · ${listened(song.minutes)} listened`}
+      links={listenLinks(null, song.artist, title)}
+      label="Close the song"
+      onClose={onClose}
+    />
+  );
+}
+
 export function MusicRoom({ initial, active }) {
   const music = useMusicRanking(initial, active);
-  const meta = useMusicMeta(active);
-  // The switch answers at once; the map it changes follows as a transition.
+  const meta = useRoomFile(active, "/music-meta.json");
+  const years = useRoomFile(active, "/music-years.json");
+  const links = useRoomFile(active, "/music-links.json");
+  // The switch and the years answer at once; the map follows as a transition.
   const [pressed, setPressed] = useState("albums");
   const [view, setView] = useState("albums");
+  const [pressedYear, setPressedYear] = useState(null);
+  const [year, setYear] = useState(null);
   const [query, setQuery] = useState("");
+  // What a sheet shows: an album (with a song lit) or a song alone.
   const [open, setOpen] = useState(null);
   const opener = useRef(null);
   const map = useRef(null);
@@ -374,6 +498,10 @@ export function MusicRoom({ initial, active }) {
   const choose = (name) => {
     setPressed(name);
     startTransition(() => setView(name));
+  };
+  const chooseYear = (next) => {
+    setPressedYear(next);
+    startTransition(() => setYear(next));
   };
 
   // Albums by the hours they are drawn at; songs by their hours.
@@ -392,14 +520,16 @@ export function MusicRoom({ initial, active }) {
     [albums, meta]
   );
   const songIndex = useMemo(() => indexItems(songs.map((entry) => entry.item), { meta, yearOf: (song) => meta?.years?.[song.art] ?? null }), [songs, meta]);
-  // What the search finds, in the same order, or everything.
+  const yearList = useYearLists(music.albums, music.songs, years);
+  // One year's listening or all of it, then what the search finds in it.
   const entries = useMemo(() => {
-    const all = view === "albums" ? albums : songs;
+    const all = yearList(view, year) ?? (view === "albums" ? albums : songs);
     const found = search(view === "albums" ? albumIndex : songIndex, query);
     if (!found) return all;
-    const kept = new Set(found);
-    return all.filter((entry) => kept.has(entry.item));
-  }, [view, albums, songs, albumIndex, songIndex, query]);
+    const key = (item) => (view === "albums" ? item.id : item.rank);
+    const kept = new Set(found.map(key));
+    return all.filter((entry) => kept.has(key(entry.item)));
+  }, [view, year, yearList, albums, songs, albumIndex, songIndex, query]);
 
   // A packing for the settled width, packed again only when the column count
   // changes; a handful found by a search stand in a row instead.
@@ -433,13 +563,16 @@ export function MusicRoom({ initial, active }) {
   }, [layout, shownAt]);
 
   const onOpen = useMemo(
-    () => (item, button) => {
+    () => (kind, item, button) => {
       opener.current = button;
-      setOpen(item.id);
+      setOpen(kind === "albums" ? { album: item.id } : { song: item.rank });
     },
     []
   );
-  const album = open === null ? null : music.albums.find((entry) => entry.id === open) ?? null;
+  const song = open?.song ? music.songs.find((entry) => entry.rank === open.song) ?? null : null;
+  // A song opens its album's list when the album is among these.
+  const albumId = open?.album ?? (song?.art && music.albums.some((entry) => entry.id === song.art) ? song.art : null);
+  const album = albumId ? music.albums.find((entry) => entry.id === albumId) ?? null : null;
 
   const close = () => {
     setOpen(null);
@@ -457,6 +590,7 @@ export function MusicRoom({ initial, active }) {
             </button>
           ))}
         </div>
+        {years?.years?.length ? <YearLine years={years.years} value={pressedYear} onChange={chooseYear} /> : null}
         <label className="music-search">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
             <circle cx="10.5" cy="10.5" r="6.2" />
@@ -489,9 +623,9 @@ export function MusicRoom({ initial, active }) {
           ref={list}
           className={`music-map is-${view}`}
           style={{ height: layout.height }}
-          aria-label={view === "albums" ? "My top 150 albums, most listened first" : "My top songs, most listened first"}
+          aria-label={`My top ${view === "albums" ? "albums" : "songs"}${year === null ? "" : ` in ${year}`}, most listened first`}
         >
-          <Tiles kind={view} entries={entries} tiles={layout.tiles} count={count} onOpen={view === "albums" ? onOpen : null} />
+          <Tiles kind={view} entries={entries} tiles={layout.tiles} count={count} onOpen={onOpen} />
         </ol>
       </div>
 
@@ -505,7 +639,18 @@ export function MusicRoom({ initial, active }) {
         </div>
       ) : null}
 
-      {album ? <AlbumTracks album={album} loading={music.loading} onClose={close} /> : null}
+      {album ? (
+        <AlbumTracks
+          album={album}
+          year={album.year || meta?.years?.[album.id] || null}
+          picked={song ? song.title : null}
+          found={links?.albums?.[album.id]}
+          loading={music.loading}
+          onClose={close}
+        />
+      ) : song ? (
+        <SongSheet song={song} onClose={close} />
+      ) : null}
     </div>
   );
 }

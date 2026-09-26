@@ -1528,6 +1528,90 @@ button.card-face:disabled {
   font-style: italic;
 }
 
+/* The years (Dan, 26 September 2026): an ink pill carrying the year slides
+   along a pencil line with a tick for each year, all time at the right. The
+   native range underneath, invisible, takes the pointer and the keys; its
+   thumb is the pill's width so both travel the same line. */
+.music-years {
+  --pill: 88px;
+  position: relative;
+  flex: 1 1 220px;
+  max-width: 460px;
+  height: 44px;
+}
+
+.music-years input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.music-years input::-webkit-slider-thumb {
+  width: var(--pill);
+  height: 44px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.music-years input::-moz-range-thumb {
+  width: var(--pill);
+  height: 44px;
+  border: 0;
+}
+
+.music-years-line {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--pill) / 2);
+  left: calc(var(--pill) / 2);
+  height: 1.5px;
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+
+.music-years-line i {
+  position: absolute;
+  top: -4px;
+  left: calc(var(--x) * 100%);
+  width: 1.5px;
+  height: 9.5px;
+  margin-left: -0.75px;
+  background: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+
+.music-years-pill {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--at) * (100% - var(--pill)));
+  width: var(--pill);
+  padding: 8px 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: 0 2px 0 var(--ink);
+  color: var(--paper-light);
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 560;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: left 260ms var(--ease-pop);
+}
+
+.music-years input:focus-visible ~ .music-years-pill {
+  outline: 2px solid var(--music);
+  outline-offset: 3px;
+}
+
 .music-none {
   margin: 4px 0 0;
   color: var(--ink-soft);
@@ -1894,6 +1978,46 @@ button.music-face {
   font-size: 13px;
 }
 
+.music-tracks-cover .music-blank {
+  aspect-ratio: 1;
+}
+
+/* Where to hear it: the release on each service, or a search there. */
+.music-listen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.music-listen a {
+  padding: 6px 13px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-light);
+  box-shadow: 0 2px 0 var(--ink);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+
+.music-listen a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+.music-listen a:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.music-listen a:focus-visible {
+  outline: 2px solid var(--music);
+  outline-offset: 2px;
+}
+
 .music-track-list {
   display: grid;
   gap: 3px;
@@ -1940,6 +2064,20 @@ button.music-face {
   transform: scaleX(1);
 }
 
+/* The song chosen on the map is lit in its colour once the sheet is up. */
+.music-track-list li.is-picked::after {
+  transform: scaleX(1);
+  animation: picked 700ms var(--ease-pop) 260ms both;
+}
+
+.music-track-list li.is-picked .music-track-title {
+  transform: translateX(5px);
+}
+
+@keyframes picked {
+  from { transform: scaleX(0); }
+}
+
 .music-track-list li > * {
   transition: transform 380ms var(--ease-out);
 }
@@ -1976,8 +2114,13 @@ button.music-face {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .music-tracks-sheet {
+  .music-tracks-sheet,
+  .music-track-list li.is-picked::after {
     animation: none;
+  }
+
+  .music-years-pill {
+    transition: none;
   }
 }
 

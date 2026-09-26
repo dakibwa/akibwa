@@ -134,9 +134,54 @@ stray plays filed under another release (For the First Time's songs under Ants
 From Up There) do not join its track list. The Music room sizes sleeves by
 these minutes; how it draws them is in the
 [navigation contract](navigation-animation-contract.md). The builder takes
-the top 150 albums. The search's genres, related artists and sleeve years
+the top 150 albums; `scripts/build-music-meta.mjs` records by hand the
+release years MusicBrainz cannot match. The search's genres, related artists and sleeve years
 are public MusicBrainz data (`scripts/build-music-meta.mjs`), never
 listening history. Covers reuse the committed album sleeves
 where artist and album match. First and last listen dates, track URIs, raw
 events, account splits and source paths never leave the private history;
 `check:navigation` fails if the packet gains a field.
+
+### Hours by year
+
+Dan approved publishing yearly totals on 26 September 2026, for the Music
+room's line of years. The same build writes `public/music-years.json`: for
+each of the 150 albums and 1,000 songs, its Spotify playback minutes in each
+calendar year of the delivered streaming history, scaled so a song's or
+album's years add up to the minutes in `music-ranking.json`. A song is counted
+by the catalogue URIs it was played under; an album by its tracks' plays under
+its own name (all their plays when none carry it). Only whole years and
+minutes are published; no day, time or event leaves the history. A year is
+offered once at least a dozen of the albums were played for an hour in it:
+2016–2026 on the current history (Spotify delivered no records for 2013 or
+2015, and few for 2012 and 2014).
+
+### Links and the cover check
+
+`node scripts/build-music-sources.mjs` looks each album up on MusicBrainz and
+the Spotify and Apple Music albums its releases and Wikidata item link to,
+each confirmed by title (Spotify's public oEmbed, Apple's lookup), with
+Apple's search as a second way in. It writes `public/music-links.json`, which
+the track sheet links to (a search on each service where no album is
+confirmed), and `data/music-sources.json`: each sleeve compared with the same
+album's cover on Deezer, Apple Music, the Cover Art Archive and Spotify. None
+of these needs a key. `check:navigation` fails while an album's sleeve neither
+matches an independent cover nor has been checked by eye (`REVIEWED` in the
+script), so a sleeve catalogued as the wrong album (card 135 until 26
+September 2026) cannot reach the room.
+
+### Refreshing the room
+
+One command rebuilds all of it from the owning history — the catalogue, the
+ranking and its years, the search's genres and years, the large sleeves, the
+links and the cover check — and stops on anything that needs a look:
+
+```sh
+npm run music:refresh -- --history-root /path/to/private/digital-history
+```
+
+`AKIBWA_HISTORY_ROOT` can stand in for the flag; the path is never committed.
+New listening reaches the room only once the history has it: Spotify and
+YouTube deliver their histories as exports on request, and the current
+history covers Spotify to 31 August 2026 and YouTube to 5 September 2026.
+Then run `npm run publish:ready` before committing.

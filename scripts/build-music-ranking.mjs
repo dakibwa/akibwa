@@ -17,8 +17,9 @@
  * left out of the songs. Covers come from the committed album sleeves where
  * artist and album match.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { createReadStream, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { createInterface } from "node:readline";
 import { browseAlbums } from "../components/album-catalogue.mjs";
 
 const at = process.argv.indexOf("--history-root");
@@ -60,6 +61,9 @@ const sleeveFor = (artist, albums) => {
 // Spotify playback time, in whole minutes. YouTube records no durations.
 const minutes = (ms) => Math.round((ms ?? 0) / 60000);
 
+// The Spotify catalogue URIs a song was played under, for its years below.
+const urisOf = (track) => (track.catalogueUris?.length ? track.catalogueUris : [track.uri]).filter(Boolean);
+
 const songs = ranking.playlistSelection.tracks.map((track) => ({
   rank: track.playlistRank,
   title: track.track,
@@ -67,7 +71,8 @@ const songs = ranking.playlistSelection.tracks.map((track) => ({
   plays: track.listens,
   youtube: track.youtubeWatches,
   art: sleeveFor(track.artist, track.albums),
-  minutes: minutes(track.spotifyTotalPlayedMs)
+  minutes: minutes(track.spotifyTotalPlayedMs),
+  uris: urisOf(track)
 }));
 
 // The top 150 albums by the catalogue's reconciled plays (Dan asked for half
@@ -86,6 +91,7 @@ const sameArtist = (track, album) => {
 const albums = browseAlbums(catalogue.albums).slice(0, 150).map((album) => {
   const various = fold(album.artist) === "various artists";
   const tracks = [];
+  const uris = new Set();
   for (const track of everyTrack) {
     if (!various && !sameArtist(track.artist, album.artist)) continue;
     // A track belongs to the album most of its plays came from; a handful of
@@ -100,6 +106,7 @@ const albums = browseAlbums(catalogue.albums).slice(0, 150).map((album) => {
       if (fold(name) !== fold(album.album) || !plays) continue;
       const share = track.spotifyListens ? plays / track.spotifyListens : 0;
       tracks.push({ title: track.track, plays, minutes: minutes(track.spotifyTotalPlayedMs * share) });
+      for (const uri of urisOf(track)) uris.add(uri);
     }
   }
   // One row per title: live and remastered variants were joined upstream.
@@ -119,7 +126,8 @@ const albums = browseAlbums(catalogue.albums).slice(0, 150).map((album) => {
     year: album.year ?? null,
     plays: album.plays,
     minutes: listed.reduce((sum, track) => sum + track.minutes, 0),
-    tracks: listed
+    tracks: listed,
+    uris
   };
 });
 
@@ -144,3 +152,72 @@ const empty = albums.filter((album) => !album.tracks.length);
 console.log(`music-ranking: ${songs.length} songs (${covered} with sleeves), ${albums.length} albums, as of ${packet.asOf}`);
 console.log(`albums without matched tracks: ${empty.length ? empty.map((album) => `${album.artist} — ${album.title}`).join("; ") : "none"}`);
 console.log(`top albums: ${albums.slice(0, 6).map((album) => `${album.title} ${album.plays} plays, ${Math.round(album.minutes / 60)} h, ${album.tracks.length} tracks`).join("; ")}`);
+
+/*
+ * Each album's and song's hours by calendar year, for the Music room's year
+ * slider (Dan approved publishing yearly totals on 26 September 2026): their
+ * Spotify playback in each year of the delivered streaming history, scaled so
+ * the years add up to the minutes published above. An album counts the plays
+ * of its tracks under its own name. Only whole years and minutes leave the
+ * history; a year is offered once enough of the albums were played in it.
+ */
+const MUSIC = new Set(["track", "video_track"]);
+const songsByUri = new Map();
+songs.forEach((song, position) => song.uris.forEach((uri) => songsByUri.set(uri, position)));
+const albumsByUri = new Map();
+albums.forEach((album, position) => album.uris.forEach((uri) => albumsByUri.set(uri, [...(albumsByUri.get(uri) ?? []), position])));
+const tally = () => new Map();
+const songYears = songs.map(tally);
+const albumYears = albums.map(() => ({ named: tally(), any: tally() }));
+const add = (map, year, ms) => map.set(year, (map.get(year) ?? 0) + ms);
+const lines = createInterface({ input: createReadStream(resolve(root, "private/spotify/extended-streaming-history.jsonl")), crlfDelay: Infinity });
+for await (const line of lines) {
+  if (!line) continue;
+  const event = JSON.parse(line);
+  if (!MUSIC.has(event.mediaType) || !event.msPlayed) continue;
+  const year = Number(String(event.localDate).slice(0, 4));
+  const song = songsByUri.get(event.uri);
+  if (song !== undefined) add(songYears[song], year, event.msPlayed);
+  for (const position of albumsByUri.get(event.uri) ?? []) {
+    const tallies = albumYears[position];
+    add(tallies.any, year, event.msPlayed);
+    if (fold(event.collection ?? "") === fold(albums[position].title)) add(tallies.named, year, event.msPlayed);
+  }
+}
+
+// Whole minutes per year that add up to `total` (largest remainders).
+function split(byYear, total) {
+  const all = [...byYear.values()].reduce((sum, ms) => sum + ms, 0);
+  if (!all || !total) return [];
+  const shares = [...byYear.entries()].sort((a, b) => a[0] - b[0]).map(([year, ms]) => ({ year, exact: (total * ms) / all }));
+  shares.forEach((share) => (share.minutes = Math.floor(share.exact)));
+  let left = total - shares.reduce((sum, share) => sum + share.minutes, 0);
+  [...shares].sort((a, b) => (b.exact - b.minutes) - (a.exact - a.minutes)).forEach((share) => {
+    if (left > 0) {
+      share.minutes += 1;
+      left -= 1;
+    }
+  });
+  return shares.filter((share) => share.minutes > 0).map((share) => [share.year, share.minutes]);
+}
+
+const yearsOfSongs = songs.map((song, position) => split(songYears[position], song.minutes));
+const yearsOfAlbums = albums.map((album, position) => {
+  const { named, any } = albumYears[position];
+  return split(named.size ? named : any, album.minutes);
+});
+// The years with at least a dozen of the albums played for an hour or more.
+const played = new Map();
+for (const years of yearsOfAlbums) for (const [year, spent] of years) if (spent >= 60) played.set(year, (played.get(year) ?? 0) + 1);
+const offered = [...played.entries()].filter(([, count]) => count >= 12).map(([year]) => year).sort((a, b) => a - b);
+const yearsPacket = {
+  schemaVersion: 1,
+  asOf: packet.asOf,
+  hours: "Spotify playback time in each calendar year, scaled to the all-time minutes in music-ranking.json.",
+  years: offered,
+  albums: Object.fromEntries(albums.map((album, position) => [album.id, yearsOfAlbums[position]])),
+  songs: yearsOfSongs
+};
+writeFileSync(new URL("../public/music-years.json", import.meta.url), JSON.stringify(yearsPacket) + "\n");
+const unplaced = albums.filter((album, position) => album.minutes && !yearsOfAlbums[position].length);
+console.log(`music-years: ${offered.join(", ")}; albums per year ${offered.map((year) => `${year} ${played.get(year)}`).join(", ")}${unplaced.length ? `; no years for ${unplaced.map((album) => album.title).join("; ")}` : ""}`);
