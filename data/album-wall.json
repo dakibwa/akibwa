@@ -164,7 +164,7 @@
       "id": "012",
       "file": "Black Country New Road - For the First Time.png",
       "artist": "Black Country, New Road",
-      "album": "For the first time",
+      "album": "For the First Time",
       "year": "2021",
       "confidence": "certain",
       "plays": 15,
@@ -172,8 +172,7 @@
       "lastfmKey": "black country new road::for the first time",
       "lastfmArtist": "Black Country, New Road",
       "lastfmAlbum": "For the First Time",
-      "lastfmUrl": "https://www.last.fm/music/Black+Country,+New+Road/For+the+First+Time",
-      "duplicateOf": "135"
+      "lastfmUrl": "https://www.last.fm/music/Black+Country,+New+Road/For+the+First+Time"
     },
     {
       "id": "013",
@@ -1853,15 +1852,15 @@
       "id": "135",
       "file": "black country.jpg",
       "artist": "Black Country, New Road",
-      "album": "For the First Time",
-      "year": "2021",
+      "album": "Ants From Up There",
+      "year": "2022",
       "confidence": "certain",
-      "plays": 15,
+      "plays": 104,
       "matchMethod": "library",
-      "lastfmKey": "black country new road::for the first time",
+      "lastfmKey": "black country new road::ants from up there",
       "lastfmArtist": "Black Country, New Road",
-      "lastfmAlbum": "For the First Time",
-      "lastfmUrl": "https://www.last.fm/music/Black+Country,+New+Road/For+the+First+Time"
+      "lastfmAlbum": "Ants From Up There",
+      "lastfmUrl": "https://www.last.fm/music/Black+Country,+New+Road/Ants+From+Up+There"
     },
     {
       "id": "136",

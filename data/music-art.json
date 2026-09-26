@@ -62,15 +62,14 @@
       }
     },
     {
-      "id": "lf-2c50aaf2969875f8",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/d622ed70-ccc3-4658-8a0a-b7a2d577c28d",
-      "match": 2.7,
-      "sourceHash": "cdf8144151509bde",
+      "id": "135",
+      "source": "print master",
+      "ref": "black country.jpg",
+      "sourceHash": "32389c5c26fbd294",
       "width": 800,
       "files": {
-        "avif": "4f2c4a513755ae36",
-        "webp": "4869d8ad78801eb0"
+        "avif": "09fac95fb2beb8ab",
+        "webp": "17f1dabeb2bdb4aa"
       }
     },
     {
@@ -530,14 +529,14 @@
       }
     },
     {
-      "id": "135",
+      "id": "012",
       "source": "print master",
-      "ref": "black country.jpg",
-      "sourceHash": "32389c5c26fbd294",
+      "ref": "Black Country New Road - For the First Time.png",
+      "sourceHash": "9400b0d93f4e8f80",
       "width": 800,
       "files": {
-        "avif": "09fac95fb2beb8ab",
-        "webp": "17f1dabeb2bdb4aa"
+        "avif": "84603c0809a5dda3",
+        "webp": "f8c88268960d6672"
       }
     },
     {
