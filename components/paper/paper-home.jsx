@@ -186,7 +186,7 @@ export function PaperHome({ music, websites }) {
         <Music initial={music.initial} active={room === "music"} />
       </Room>
       <Room id="features">
-        <Framed active={room === "features"} name="features" path="/features/" title="Features, the daily puzzle" />
+        <Framed active={room === "features"} name="features" path="/features/" search="?stay=1" title="Features, the daily puzzle" />
       </Room>
       <Room id="websites">
         <Websites sites={websites} />

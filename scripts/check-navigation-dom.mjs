@@ -435,7 +435,7 @@ const checkPublicLanding = async () => {
   check(await waitFor(`document.querySelector("#trek iframe")?.contentDocument?.documentElement.classList.contains("is-embedded")`, 8000), "the framed trek hides its own way home");
   await goto("/#features");
   await sleep(1200);
-  check(await evaluate(`(() => { const frame = document.querySelector("#features iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/features/" && !new URL(frame.src).search && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "features opens the game in place, filling the room");
+  check(await evaluate(`(() => { const frame = document.querySelector("#features iframe.room-frame"); return Boolean(frame) && new URL(frame.src).pathname === "/features/" && new URL(frame.src).search === "?stay=1" && frame.getBoundingClientRect().height > innerHeight * 0.6; })()`), "features opens the game in place, filling the room");
 
   section("without JavaScript");
   await cdp.send("Emulation.setScriptExecutionDisabled", { value: true });

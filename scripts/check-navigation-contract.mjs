@@ -90,6 +90,8 @@ for (const id of ["music", "features", "websites", "career", "trek"]) {
 }
 requireText(home, 'path="/trek/"', "the trek room must frame the journey");
 requireText(home, 'path="/features/"', "the features room must frame the game (Dan, 25 September 2026)");
+// The game moves itself to features.games, which cannot be framed here; framed, it stays.
+requireText(home, 'path="/features/" search="?stay=1"', "the framed Features game must be asked to stay on akibwa.com");
 forbidText(home, "from=akibwa", "the framed game must not wear the portfolio banner");
 requireText(trekTemplate, 'classList.add("is-embedded")', "the framed trek must hide its own way home");
 requireText(home, "memo(MusicRoom)", "the music room must show the albums and songs mosaics");
