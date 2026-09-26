@@ -7,8 +7,8 @@
  * than a screenshot of the site: Dan made Castle Bank's and Butterfly Rose's
  * on 25 September 2026. Butterfly Rose is in review with the salon and not
  * yet on its own domain, so it has no link (`inReview`). Castle Bank's site
- * names and pictures its founders, Dan included, so its card does not link
- * there until Dan says so (26 September 2026).
+ * names and pictures its founders, Dan included; Dan approved linking to it
+ * on 26 September 2026.
  */
 export const websites = [
   {
@@ -27,7 +27,7 @@ export const websites = [
   {
     id: "castle-bank",
     className: "concept-castle-bank",
-    href: null,
+    href: "https://www.castle-bank.com/",
     title: "Castle Bank",
     subtitle: "electrical contractors",
     description: "Commercial electrical work, set out plainly.",
