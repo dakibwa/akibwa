@@ -212,8 +212,15 @@ export function TasteThing() {
    across it, each thread in one of those colours (Dan, 26 September 2026).
    They fall into the house's corners on hover while its ink silhouette
    appears beneath them, as the first front page drew it. */
-// The wordmark's colours, left to right, one to each of the house's threads.
+// The wordmark's colours, left to right, along the top of the box.
 const BAND = ["#2EA3DC", "#EFC319", "#1FA45A", "#E97E18"];
+// Each thread its own colour from the game's palette, no two alike (Dan, 26
+// September 2026): round the house blue, yellow, pink, green and violet, then
+// the chord in orange.
+const THREAD_COLOURS = ["#2EA3DC", "#EFC319", "#DE3C75", "#1FA45A", "#7D6BB0", "#E97E18"];
+// The outline's threads, and the chord that crosses the house.
+const OUTLINE = HOUSE.threads.slice(0, -1);
+const CHORD = HOUSE.threads.at(-1);
 // Eight squares a side on the 92-unit plate.
 const LINES = Array.from({ length: 7 }, (_, i) => 11.5 * (i + 1));
 const SQUARED = LINES.map((at) => `M${34 + at} 36v92M34 ${36 + at}h92`).join("");
@@ -259,10 +266,14 @@ export function FeaturesThing({ solved = false }) {
           <path key={colour} d={`M${34 + index * 23} 36h23v4.4h-23z`} fill={colour} />
         ))}
         <g transform="translate(34 36) scale(.958)">
+          {/* The chord, the last thread, lies under the house's ink. */}
+          <g className="t-graph">
+            <path d={`M${CHORD.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[OUTLINE.length]} />
+          </g>
           <path d={HOUSE.fill} fill="#161a1d" opacity={k > 0.92 ? (k - 0.92) / 0.08 : 0} />
           <g className="t-graph">
-            {HOUSE.threads.map((thread, index) => (
-              <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={BAND[index]} />
+            {OUTLINE.map((thread, index) => (
+              <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={THREAD_COLOURS[index]} />
             ))}
             {nodes.map(([x, y], index) => (
               <circle key={index} cx={x} cy={y} r="4.6" />

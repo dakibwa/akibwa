@@ -45,9 +45,10 @@
   25 September 2026.
 - The Features tile is Features' own box (its `assets/marketing` artwork):
   the game's squared paper under the wordmark's band of blue, yellow, green
-  and orange, with the house's threads in those four colours falling from a
-  star into its corners (Dan, 26 September 2026; it was an orange square with
-  ink threads).
+  and orange, with the house's six threads each in its own colour from the
+  game's palette, falling from a star into its corners; the chord that ends up
+  across the house runs under its ink (Dan, 26 September 2026; it was an
+  orange square with ink threads).
 - The mascot is the mark's own paths at their own weight, drawn a size up
   (Dan asked for bigger, not chunkier, on 25 September 2026), with two square
   eyes centred on the arch of the `a`, clear of its edges.
