@@ -24,6 +24,17 @@ const cacheDir = path.join(root, ".album-art-cache");
 const AGENT = "akibwa-music-search/1.0 (https://akibwa.com)";
 const SPACING = 1250;
 
+// Release years checked by hand where MusicBrainz finds no match for the
+// catalogue's title (26 September 2026). Her's score came out in 2021.
+const REVIEWED_YEARS = {
+  "lf-8e9c2fc439ba2bd6": 2015, // Surf
+  "lf-f145710c4a0a4cee": 2011, // Submarine
+  "lf-b1e6e583a5575429": 1993, // Red House Painters I
+  "history-7abaf827ee921950": 1978, // Music for Airports
+  "history-cbcfb31c92d03017": 1983, // Apollo
+  "history-e1cbfbc8406426ee": 2021 // Her (Original Score)
+};
+
 const sha = (text) => createHash("sha256").update(text).digest("hex").slice(0, 16);
 const exists = (file) => access(file).then(() => true, () => false);
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -110,6 +121,7 @@ async function main() {
     const sleeve = sleeves.get(id);
     const known = Number.parseInt(sleeve?.year ?? "", 10);
     if (known > 1900) years[id] = known;
+    else if (REVIEWED_YEARS[id]) years[id] = REVIEWED_YEARS[id];
     else if (previous.years[id]) years[id] = previous.years[id];
     else if (sleeve) {
       const year = await releaseYear(sleeve.artist, sleeve.album);

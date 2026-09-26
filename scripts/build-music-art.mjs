@@ -55,8 +55,14 @@ const AGENT = "akibwa-music-art/1.0 (https://akibwa.com)";
 
 // Larger covers checked by eye against the wall sleeve where the fingerprint
 // is thrown by a paler scan of the same artwork (25 September 2026).
+// On 26 September 2026: Surf's, which Deezer credits to Donnie Trumpet & The
+// Social Experiment rather than Nico Segal, and The Overload's without the
+// title printed down it, like the wall sleeve. Hunky Dory's larger covers are
+// the 2015 remaster's black-framed sleeve, so it keeps its wall rung.
 const REVIEWED = {
-  "lf-4cb306fbca55133f": "https://coverartarchive.org/release-group/f833a9fc-3c55-309f-a7f5-30fb9124040d/front-1200"
+  "lf-4cb306fbca55133f": "https://coverartarchive.org/release-group/f833a9fc-3c55-309f-a7f5-30fb9124040d/front-1200",
+  "lf-8e9c2fc439ba2bd6": "https://cdn-images.dzcdn.net/images/cover/7f505edd14523e70d44b6f70890114f2/1000x1000-000000-80-0-0.jpg",
+  "lf-6ad83c9cca124c69": "https://cdn-images.dzcdn.net/images/cover/0dc1694459e8523efdaf81f31616da9f/1000x1000-000000-80-0-0.jpg"
 };
 
 const MASTERS = [
@@ -130,6 +136,13 @@ async function square(bytes) {
 
 async function candidatesFor(artist, album) {
   const found = [];
+  // Deezer's covers run to 1000px and its search is dependable (26 September 2026).
+  const deezer = await fetchJson(`https://api.deezer.com/search/album?q=${encodeURIComponent(`artist:"${artist.replace(/"/g, "")}" album:"${album.replace(/"/g, "")}"`)}&limit=10`);
+  await pause(200);
+  for (const result of deezer?.data ?? []) {
+    if (fold(result.title) !== fold(album) || fold(result.artist?.name ?? "") !== fold(artist) || !result.cover_xl) continue;
+    found.push({ source: "deezer", ref: result.link, url: result.cover_xl });
+  }
   // MusicBrainz asks for a request a second at most.
   const query = `releasegroup:"${album.replace(/"/g, "")}" AND artist:"${artist.replace(/"/g, "")}"`;
   const groups = await fetchJson(`https://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(query)}&fmt=json&limit=5`);
@@ -163,17 +176,21 @@ async function sourceFor(id, sleeves) {
   if (id.startsWith("history-")) {
     const entry = sleeves.catalogue.get(id);
     if (!entry) return { skip: "no catalogue artwork entry" };
+    // Its own reviewed Apple Music artwork first, even where it reuses another
+    // sleeve on the wall: that release was verified as the same one.
+    const url = entry.source?.artworkUrl?.replace(/\/[^/]+$/, `/${WIDTH}x${WIDTH}bb.jpg`);
+    const bytes = url ? await fetchBytes(url) : null;
+    if (bytes) return { source: "apple music", ref: entry.source.url, bytes };
     if (entry.reuseId) return sourceFor(entry.reuseId, sleeves);
-    const url = entry.source.artworkUrl.replace(/\/[^/]+$/, `/${WIDTH}x${WIDTH}bb.jpg`);
-    const bytes = await fetchBytes(url);
-    return bytes ? { source: "apple music", ref: entry.source.url, bytes } : { skip: "catalogue artwork unavailable" };
+    return { skip: "catalogue artwork unavailable" };
   }
   if (id.startsWith("lf-")) {
     const entry = sleeves.lastfm.get(id);
     if (!entry) return { skip: "no Last.fm sleeve entry" };
     if (REVIEWED[id]) {
       const bytes = await fetchBytes(REVIEWED[id]);
-      if (bytes) return { source: "cover art archive", ref: REVIEWED[id].replace(/coverartarchive\.org\/release-group\/([^/]+).*/, "musicbrainz.org/release-group/$1"), bytes, match: "by eye" };
+      const deezer = REVIEWED[id].includes("dzcdn.net");
+      if (bytes) return { source: deezer ? "deezer" : "cover art archive", ref: deezer ? REVIEWED[id] : REVIEWED[id].replace(/coverartarchive\.org\/release-group\/([^/]+).*/, "musicbrainz.org/release-group/$1"), bytes, match: "by eye" };
     }
     const wall = await readFile(path.join(outDir, `${id}-wall.webp`));
     let best = null;

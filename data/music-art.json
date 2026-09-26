@@ -163,6 +163,18 @@
       }
     },
     {
+      "id": "lf-8e9c2fc439ba2bd6",
+      "source": "deezer",
+      "ref": "https://cdn-images.dzcdn.net/images/cover/7f505edd14523e70d44b6f70890114f2/1000x1000-000000-80-0-0.jpg",
+      "match": "by eye",
+      "sourceHash": "8c45b2542f118196",
+      "width": 800,
+      "files": {
+        "avif": "541832dfe9f13626",
+        "webp": "11b9a957de129f00"
+      }
+    },
+    {
       "id": "199",
       "source": "print master",
       "ref": "panda bearreset.jpg",
@@ -197,18 +209,6 @@
       }
     },
     {
-      "id": "lf-b1b131517ca6b745",
-      "source": "cover art archive",
-      "ref": "https://musicbrainz.org/release-group/b059890c-d415-3e65-aaed-52c810565922",
-      "match": 8.5,
-      "sourceHash": "a2caed07841819cd",
-      "width": 800,
-      "files": {
-        "avif": "5109c2f368ef4023",
-        "webp": "6713104ae3306aaa"
-      }
-    },
-    {
       "id": "lf-48abf5a53479159d",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/5b32cb6b-464e-4b4a-abad-3f3fda885e80",
@@ -218,6 +218,18 @@
       "files": {
         "avif": "9039e6d5a64924ff",
         "webp": "825e850b1cc56d4c"
+      }
+    },
+    {
+      "id": "lf-b1b131517ca6b745",
+      "source": "cover art archive",
+      "ref": "https://musicbrainz.org/release-group/b059890c-d415-3e65-aaed-52c810565922",
+      "match": 8.5,
+      "sourceHash": "a2caed07841819cd",
+      "width": 800,
+      "files": {
+        "avif": "5109c2f368ef4023",
+        "webp": "6713104ae3306aaa"
       }
     },
     {
@@ -300,17 +312,6 @@
       }
     },
     {
-      "id": "032",
-      "source": "print master",
-      "ref": "Frankie Cosmos - Zentropy.png",
-      "sourceHash": "c117229900731eb7",
-      "width": 800,
-      "files": {
-        "avif": "aab2a08bcd38b55a",
-        "webp": "597d121bfa4896f0"
-      }
-    },
-    {
       "id": "lf-c3effd4493487e5b",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/voodoo/1443829916",
@@ -320,6 +321,17 @@
       "files": {
         "avif": "bd9918fe0ea8d869",
         "webp": "3c084b1bb9a9d43d"
+      }
+    },
+    {
+      "id": "032",
+      "source": "print master",
+      "ref": "Frankie Cosmos - Zentropy.png",
+      "sourceHash": "c117229900731eb7",
+      "width": 800,
+      "files": {
+        "avif": "aab2a08bcd38b55a",
+        "webp": "597d121bfa4896f0"
       }
     },
     {
@@ -346,17 +358,6 @@
       }
     },
     {
-      "id": "140",
-      "source": "print master",
-      "ref": "brianeno_beforeandafterscienc_6w8u.jpg",
-      "sourceHash": "4f12b01754d9a5af",
-      "width": 800,
-      "files": {
-        "avif": "b153b67940c034b3",
-        "webp": "02366897fc61cacb"
-      }
-    },
-    {
       "id": "193",
       "source": "print master",
       "ref": "nickcavethebadseeds_skeletontree_9fpo.jpg",
@@ -365,6 +366,17 @@
       "files": {
         "avif": "0ef00b6b1b0d6586",
         "webp": "906e0934370f18b7"
+      }
+    },
+    {
+      "id": "140",
+      "source": "print master",
+      "ref": "brianeno_beforeandafterscienc_6w8u.jpg",
+      "sourceHash": "4f12b01754d9a5af",
+      "width": 800,
+      "files": {
+        "avif": "b153b67940c034b3",
+        "webp": "02366897fc61cacb"
       }
     },
     {
@@ -439,6 +451,17 @@
       }
     },
     {
+      "id": "128",
+      "source": "print master",
+      "ref": "animalcollective_sungtongs_bxxv.jpg",
+      "sourceHash": "c49256339111661e",
+      "width": 800,
+      "files": {
+        "avif": "52d23bea10d3adbf",
+        "webp": "278fe8c9492cb9de"
+      }
+    },
+    {
       "id": "200",
       "source": "print master",
       "ref": "pandabear_pandabearmeetsthegri_bynn(1).jpg",
@@ -450,14 +473,15 @@
       }
     },
     {
-      "id": "128",
-      "source": "print master",
-      "ref": "animalcollective_sungtongs_bxxv.jpg",
-      "sourceHash": "c49256339111661e",
+      "id": "lf-f145710c4a0a4cee",
+      "source": "deezer",
+      "ref": "https://www.deezer.com/album/921000",
+      "match": 3.2,
+      "sourceHash": "4bd225284a3cddf1",
       "width": 800,
       "files": {
-        "avif": "52d23bea10d3adbf",
-        "webp": "278fe8c9492cb9de"
+        "avif": "1a2c65cdbd812a48",
+        "webp": "d56fb342efa60512"
       }
     },
     {
@@ -834,6 +858,17 @@
       }
     },
     {
+      "id": "history-fa79ea5f390654dd",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/rodeo/1456179762",
+      "sourceHash": "90ccaadfa5e7cbb5",
+      "width": 800,
+      "files": {
+        "avif": "07a1fcb1f1303704",
+        "webp": "477b8512a276169b"
+      }
+    },
+    {
       "id": "history-7abaf827ee921950",
       "source": "print master",
       "ref": "Bang on a Can - Music for Airports (Brian Eno).png",
@@ -880,17 +915,6 @@
       }
     },
     {
-      "id": "175",
-      "source": "print master",
-      "ref": "kanyewest_thelifeofpablocover2_8cpj(1).jpg",
-      "sourceHash": "108edfa46cc6de8e",
-      "width": 800,
-      "files": {
-        "avif": "8f0c50fefdbda7df",
-        "webp": "66fac4a61acf3716"
-      }
-    },
-    {
       "id": "history-7bc48260f470bc47",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/nightmare-ending/623855423",
@@ -899,6 +923,17 @@
       "files": {
         "avif": "bc3a25374db6338b",
         "webp": "8f91244455ac3500"
+      }
+    },
+    {
+      "id": "175",
+      "source": "print master",
+      "ref": "kanyewest_thelifeofpablocover2_8cpj(1).jpg",
+      "sourceHash": "108edfa46cc6de8e",
+      "width": 800,
+      "files": {
+        "avif": "8f0c50fefdbda7df",
+        "webp": "66fac4a61acf3716"
       }
     },
     {
@@ -971,17 +1006,6 @@
       }
     },
     {
-      "id": "008",
-      "source": "print master",
-      "ref": "Arushi Jain - Under the Lilac Sky.png",
-      "sourceHash": "df59003b1aac478d",
-      "width": 800,
-      "files": {
-        "avif": "d3821059c1f43448",
-        "webp": "a4d52f6521369962"
-      }
-    },
-    {
       "id": "history-cbcfb31c92d03017",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/apollo-atmospheres-and-soundtracks/714861155",
@@ -990,6 +1014,17 @@
       "files": {
         "avif": "92d9679ec542ab44",
         "webp": "324589bfdd15be06"
+      }
+    },
+    {
+      "id": "008",
+      "source": "print master",
+      "ref": "Arushi Jain - Under the Lilac Sky.png",
+      "sourceHash": "df59003b1aac478d",
+      "width": 800,
+      "files": {
+        "avif": "d3821059c1f43448",
+        "webp": "a4d52f6521369962"
       }
     },
     {
@@ -1004,17 +1039,6 @@
       }
     },
     {
-      "id": "history-5cf80ba86474f276",
-      "source": "apple music",
-      "ref": "https://music.apple.com/gb/album/smiley-smile/1442882207",
-      "sourceHash": "df41dd8b30fd6591",
-      "width": 800,
-      "files": {
-        "avif": "5ceee8f2723b3cc3",
-        "webp": "1eed2e427c52af9d"
-      }
-    },
-    {
       "id": "152",
       "source": "print master",
       "ref": "delasoul_andtheanonymousnobod_8vwo.jpg",
@@ -1023,6 +1047,17 @@
       "files": {
         "avif": "7055841e0a825bea",
         "webp": "0a4aa33411ee7291"
+      }
+    },
+    {
+      "id": "history-5cf80ba86474f276",
+      "source": "apple music",
+      "ref": "https://music.apple.com/gb/album/smiley-smile/1442882207",
+      "sourceHash": "df41dd8b30fd6591",
+      "width": 800,
+      "files": {
+        "avif": "5ceee8f2723b3cc3",
+        "webp": "1eed2e427c52af9d"
       }
     },
     {
@@ -1093,6 +1128,18 @@
       }
     },
     {
+      "id": "lf-9ceeda8633d2b5a3",
+      "source": "deezer",
+      "ref": "https://www.deezer.com/album/14887713",
+      "match": 2.1,
+      "sourceHash": "4c39d958f12da481",
+      "width": 800,
+      "files": {
+        "avif": "5b77ead4914e59a3",
+        "webp": "07bab847a2cf9707"
+      }
+    },
+    {
       "id": "history-4c7544d01aaf7b41",
       "source": "apple music",
       "ref": "https://music.apple.com/us/album/call-me-if-you-get-lost/1573484415",
@@ -1134,6 +1181,17 @@
       "files": {
         "avif": "b633b7d36bbdd3be",
         "webp": "9a6f37fc4f745f1a"
+      }
+    },
+    {
+      "id": "206",
+      "source": "print master",
+      "ref": "purple mountains.jpg",
+      "sourceHash": "f9260788ebf19909",
+      "width": 800,
+      "files": {
+        "avif": "00432e6c9456eb25",
+        "webp": "0a509b95ee1c46c8"
       }
     },
     {
@@ -1193,17 +1251,6 @@
       }
     },
     {
-      "id": "206",
-      "source": "print master",
-      "ref": "purple mountains.jpg",
-      "sourceHash": "f9260788ebf19909",
-      "width": 800,
-      "files": {
-        "avif": "00432e6c9456eb25",
-        "webp": "0a509b95ee1c46c8"
-      }
-    },
-    {
       "id": "241",
       "source": "print master",
       "ref": "vampireweekend_vampireweekend_7pj3.jpg",
@@ -1237,6 +1284,17 @@
       }
     },
     {
+      "id": "089",
+      "source": "print master",
+      "ref": "Unidentified - Charmed Illustration.png",
+      "sourceHash": "0bc3f7f2e94b94e5",
+      "width": 800,
+      "files": {
+        "avif": "de6c8010691aa53f",
+        "webp": "dbe8c7a50c7e0ccf"
+      }
+    },
+    {
       "id": "lf-be730e7d269ab161",
       "source": "cover art archive",
       "ref": "https://musicbrainz.org/release-group/7ea67831-77a3-4822-af7d-e795bd83cd42",
@@ -1246,17 +1304,6 @@
       "files": {
         "avif": "0f91c3a77490fe59",
         "webp": "79fb3c3a1da6aac1"
-      }
-    },
-    {
-      "id": "089",
-      "source": "print master",
-      "ref": "Unidentified - Charmed Illustration.png",
-      "sourceHash": "0bc3f7f2e94b94e5",
-      "width": 800,
-      "files": {
-        "avif": "de6c8010691aa53f",
-        "webp": "dbe8c7a50c7e0ccf"
       }
     },
     {
@@ -1335,6 +1382,18 @@
       "files": {
         "avif": "ac3a7b57c03d173c",
         "webp": "229d6943811046ed"
+      }
+    },
+    {
+      "id": "lf-6ad83c9cca124c69",
+      "source": "deezer",
+      "ref": "https://cdn-images.dzcdn.net/images/cover/0dc1694459e8523efdaf81f31616da9f/1000x1000-000000-80-0-0.jpg",
+      "match": "by eye",
+      "sourceHash": "3898829e0c03f4fc",
+      "width": 800,
+      "files": {
+        "avif": "772cf6fc070f29ce",
+        "webp": "44f1fc181bef1f72"
       }
     },
     {
@@ -1471,6 +1530,18 @@
       "files": {
         "avif": "978d9cc303f9e861",
         "webp": "8939a2bcaae8b1d2"
+      }
+    },
+    {
+      "id": "lf-181646055465b378",
+      "source": "deezer",
+      "ref": "https://www.deezer.com/album/570808731",
+      "match": 4.9,
+      "sourceHash": "126d239e79a333e4",
+      "width": 800,
+      "files": {
+        "avif": "add63950eb9ef69a",
+        "webp": "8da72b9db80de525"
       }
     },
     {
@@ -1827,6 +1898,18 @@
       }
     },
     {
+      "id": "lf-734713a64f1317e0",
+      "source": "deezer",
+      "ref": "https://www.deezer.com/album/415407217",
+      "match": 4.3,
+      "sourceHash": "b5070fbcd6dc6743",
+      "width": 800,
+      "files": {
+        "avif": "4a9a0f1b0b4eca97",
+        "webp": "4f550e71fd0eb6c1"
+      }
+    },
+    {
       "id": "history-93b92aeddb9e1c77",
       "source": "apple music",
       "ref": "https://music.apple.com/gb/album/grace/1046187510",
@@ -1846,6 +1929,18 @@
       "files": {
         "avif": "6d7ebd3a735f32ca",
         "webp": "a58b0ddae593e60c"
+      }
+    },
+    {
+      "id": "lf-01dea53d90313ce0",
+      "source": "deezer",
+      "ref": "https://www.deezer.com/album/135913752",
+      "match": 1,
+      "sourceHash": "daad2ed7c880b8c6",
+      "width": 800,
+      "files": {
+        "avif": "bf22ae9db1037fdb",
+        "webp": "986e336056ad6c99"
       }
     },
     {
@@ -1873,40 +1968,8 @@
   ],
   "skipped": [
     {
-      "id": "lf-8e9c2fc439ba2bd6",
-      "reason": "no larger source found"
-    },
-    {
-      "id": "lf-f145710c4a0a4cee",
-      "reason": "no larger source found"
-    },
-    {
-      "id": "history-fa79ea5f390654dd",
-      "reason": "no larger source found"
-    },
-    {
       "id": "lf-516104b1b71f11e2",
-      "reason": "closest larger cover differs (28.8)"
-    },
-    {
-      "id": "lf-9ceeda8633d2b5a3",
-      "reason": "closest larger cover differs (50.9)"
-    },
-    {
-      "id": "lf-6ad83c9cca124c69",
-      "reason": "closest larger cover differs (24.5)"
-    },
-    {
-      "id": "lf-181646055465b378",
-      "reason": "no larger source found"
-    },
-    {
-      "id": "lf-734713a64f1317e0",
-      "reason": "no larger source found"
-    },
-    {
-      "id": "lf-01dea53d90313ce0",
-      "reason": "closest larger cover differs (55.0)"
+      "reason": "closest larger cover differs (28.7)"
     }
   ]
 }
