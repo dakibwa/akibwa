@@ -112,6 +112,11 @@ requireText(css, "li:hover::after", "track bars must take their own colour under
 requireText(things, 'const CARD = "M-38-84h76', "the music cards must be as large as the other things");
 requireText(things, "CARD_REST.map(", "the music sketch must trace the fanned cards");
 requireText(things, "<CastleBankMark />", "the back websites window must carry Castle Bank's mark");
+// Dan, 26 September 2026: the back window stays its first size, so the mark only peeps out.
+requireText(things, "const BACK = windowShape(34, 38, 96, 90);", "the back websites window must not grow to show Castle Bank's mark");
+// Dan, 26 September 2026: the Features tile is Features' own box.
+requireText(things, 'const BAND = ["#2EA3DC", "#EFC319", "#1FA45A", "#E97E18"];', "the Features box must carry the wordmark's four colours");
+requireText(things, 'className="t-squared"', "the Features box must be the game's squared paper");
 requireText(things, "<Reveal id={mask} d={TRAIL}", "the career trail must be laid down, not shown from the start");
 requireText(things, "<Reveal id={mask} d={ROUTE}", "the trek route must be walked in on arrival");
 requireText(framed, "#introveil{padding:0!important}", "the Features game must reach the edges of its frame");

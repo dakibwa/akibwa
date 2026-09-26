@@ -764,15 +764,23 @@ html[data-drawn] .front .t-pin {
   animation-duration: 1.8s;
 }
 
-/* Features: ink threads and cream neurons on the orange square, as first drawn. */
-.t-graph line {
-  stroke: #1c1f22;
-  stroke-width: 2.2;
+/* Features: threads in the wordmark's colours and ink-ringed neurons on the
+   game's squared paper (its --grid on its --surface). */
+.t-squared {
+  fill: none;
+  stroke: #e4dfd2;
+  stroke-width: 0.8;
+}
+
+.t-graph path {
+  fill: none;
+  stroke-width: 2.6;
   stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .t-graph circle {
-  fill: #fbf6ec;
+  fill: #fbfaf6;
   stroke: #1c1f22;
   stroke-width: 2.2;
 }

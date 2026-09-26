@@ -38,11 +38,16 @@
   lilac and orange blobs traced from that repository's `src/app/icon.png`
   (`components/paper/websites-art.mjs`). The window behind it carries Castle
   Bank's, the orange chamfered circuit C with its two ring terminals, traced
-  from its card art (`public/project-art/websites/castle-bank.webp`) and
-  peeping out above the front window; the fan on hover shows more of it. The
-  splat that burst out behind them was removed on 25 September 2026.
-- The Features tile is the first front page's: an orange square with ink
-  threads that fall from a star into the house's corners.
+  from its card art (`public/project-art/websites/castle-bank.webp`). The back
+  window keeps its first size, so only the C's top stroke and terminal peep
+  out above the front window (Dan, 26 September 2026: a taller back window
+  made it too obvious). The splat that burst out behind them was removed on
+  25 September 2026.
+- The Features tile is Features' own box (its `assets/marketing` artwork):
+  the game's squared paper under the wordmark's band of blue, yellow, green
+  and orange, with the house's threads in those four colours falling from a
+  star into its corners (Dan, 26 September 2026; it was an orange square with
+  ink threads).
 - The mascot is the mark's own paths at their own weight, drawn a size up
   (Dan asked for bigger, not chunkier, on 25 September 2026), with two square
   eyes centred on the arch of the `a`, clear of its edges.

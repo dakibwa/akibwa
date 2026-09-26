@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { FEATURE_SHAPES, edgesOf } from "./feature-shapes.mjs";
+import { HOUSE } from "./feature-shapes.mjs";
 import { BLOBS } from "./websites-art.mjs";
 
 /*
@@ -206,11 +206,18 @@ export function TasteThing() {
   );
 }
 
-/* Features' house, as the first front page drew it: five neurons dealt as a
-   star with a chord across it on an orange square, which fall into the
-   house's corners on hover while its ink silhouette appears beneath them. */
-const HOUSE = FEATURE_SHAPES[0];
-const HOUSE_EDGES = edgesOf(HOUSE);
+/* Features' box, as its own plate and marketing draw it (features.games:
+   assets/marketing): the game's squared paper under the wordmark's band of
+   four colours, and the house's five neurons dealt as a star with a chord
+   across it, each thread in one of those colours (Dan, 26 September 2026).
+   They fall into the house's corners on hover while its ink silhouette
+   appears beneath them, as the first front page drew it. */
+// The wordmark's colours, left to right, one to each of the house's threads.
+const BAND = ["#2EA3DC", "#EFC319", "#1FA45A", "#E97E18"];
+// Eight squares a side on the 92-unit plate.
+const LINES = Array.from({ length: 7 }, (_, i) => 11.5 * (i + 1));
+const SQUARED = LINES.map((at) => `M${34 + at} 36v92M34 ${36 + at}h92`).join("");
+const at = ([x, y]) => `${+x.toFixed(2)} ${+y.toFixed(2)}`;
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 export function FeaturesThing({ solved = false }) {
@@ -244,13 +251,18 @@ export function FeaturesThing({ solved = false }) {
       {ground(82, 52)}
       <Sketch d="M34 36h92v92H34z" />
       <Paper>
-        <path d="M126 36l5 3.4v92l-5-3.4z" fill="#a9560d" />
-        <path d="M34 36h92v92H34z" fill="#e97e18" />
+        <path d="M126 36l5 3.4v92l-5-3.4z" fill="#cbc6b9" />
+        <path d="M126 36l5 3.4v4.4l-5-3.4z" fill="#b8620f" />
+        <path d="M34 36h92v92H34z" fill="#fbfaf6" />
+        <path className="t-squared" d={SQUARED} />
+        {BAND.map((colour, index) => (
+          <path key={colour} d={`M${34 + index * 23} 36h23v4.4h-23z`} fill={colour} />
+        ))}
         <g transform="translate(34 36) scale(.958)">
           <path d={HOUSE.fill} fill="#161a1d" opacity={k > 0.92 ? (k - 0.92) / 0.08 : 0} />
           <g className="t-graph">
-            {HOUSE_EDGES.map(([a, b]) => (
-              <line key={`${a}-${b}`} x1={nodes[a][0]} y1={nodes[a][1]} x2={nodes[b][0]} y2={nodes[b][1]} />
+            {HOUSE.threads.map((thread, index) => (
+              <path key={thread.join("-")} d={`M${thread.map((n) => at(nodes[n])).join("L")}`} stroke={BAND[index]} />
             ))}
             {nodes.map(([x, y], index) => (
               <circle key={index} cx={x} cy={y} r="4.6" />
@@ -266,10 +278,11 @@ export function FeaturesThing({ solved = false }) {
 /* Websites: browser windows that fan open, the front one showing the mark of
    Português com a Inês — its cream, lilac and orange blobs on navy — and the
    one behind it Castle Bank's, the orange circuit C with its two terminals on
-   cream, peeping out above. Dan dropped the splat behind them on 25 September
-   2026. */
+   cream. The back window keeps its first size, so only the C's top stroke and
+   terminal peep out above the front one (Dan, 26 September 2026: it needn't
+   be obvious). Dan dropped the splat behind them on 25 September 2026. */
 const windowShape = (x, y, w, h) => `M${x + 5} ${y}h${w - 10}a5 5 0 0 1 5 5v${h - 5}H${x}V${y + 5}a5 5 0 0 1 5-5z`;
-const BACK = windowShape(34, 16, 96, 112);
+const BACK = windowShape(34, 38, 96, 90);
 const FRONT = windowShape(26, 48, 108, 80);
 
 // Castle Bank's mark, traced from its card art (public/project-art/websites/
@@ -305,17 +318,17 @@ export function WebsitesThing() {
     <svg className="thing-art thing-websites" viewBox="0 0 160 140" aria-hidden="true" focusable="false">
       {ground(80, 60)}
       <Sketch d={BACK} transform="rotate(-4 80 128)" />
-      <Sketch d="M34 27h96" transform="rotate(-4 80 128)" delay={200} />
+      <Sketch d="M34 46h96" transform="rotate(-4 80 128)" delay={200} />
       <Sketch d={FRONT} transform="rotate(2 80 128)" delay={140} />
       <Sketch d="M26 60h108" transform="rotate(2 80 128)" delay={340} />
       <Paper>
         <g className="t-window t-window-back">
           <path d={BACK} fill="#fbf6ec" />
-          <path d="M34 27h96" stroke="#2a2420" strokeOpacity=".2" />
-          <circle cx="41" cy="21.5" r="1.8" fill="#f57a12" />
-          <circle cx="47" cy="21.5" r="1.8" fill="#2a2420" fillOpacity=".25" />
-          <circle cx="53" cy="21.5" r="1.8" fill="#2a2420" fillOpacity=".25" />
-          <g transform="translate(92 28.5) scale(.38)">
+          <path d="M34 46h96" stroke="#2a2420" strokeOpacity=".2" />
+          <circle cx="40" cy="42" r="1.5" fill="#f57a12" />
+          <circle cx="45" cy="42" r="1.5" fill="#2a2420" fillOpacity=".25" />
+          <circle cx="50" cy="42" r="1.5" fill="#2a2420" fillOpacity=".25" />
+          <g transform="translate(95 43.5) scale(.33)">
             <CastleBankMark />
           </g>
           <path className="t-ink" d={BACK} />
