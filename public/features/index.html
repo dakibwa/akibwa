@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-qzhcTvGcGJZfkG9preEl8rpahPI19Rwf4WpTwgsdWkU=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-klPMTd66wp2OgAZBurejLKSMsTlSuEe4/ItoeTZkGv4=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -1002,6 +1002,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .acct-identity-actions .acctlink{margin:0;font-size:10px;letter-spacing:0;white-space:nowrap}
   .acct-prefs{flex:none;padding-top:var(--section-gap);border-top:1px solid var(--rule)}
   .acct-prefs[hidden]{display:none}
+  .acct-prefs+.acct-sec{padding-top:var(--section-gap);border-top:1px solid var(--rule)}
   .acct-prefs summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;cursor:pointer;list-style:none;font-size:14px;font-weight:700}
   .acct-prefs summary::-webkit-details-marker{display:none}
   .acct-prefs summary::after{content:'';flex:none;width:14px;height:14px;background:linear-gradient(currentColor,currentColor) center/100% 1.5px no-repeat,linear-gradient(currentColor,currentColor) center/1.5px 100% no-repeat}
@@ -1076,6 +1077,9 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .acct-premium-copy strong{font-size:24px;font-weight:800;letter-spacing:-.045em;line-height:1.02}
   .acct-premium-copy>span{font-size:12px;line-height:1.4;color:var(--ink-soft)}
   .acct-premium-art{display:grid;grid-template-columns:1fr 1fr;gap:4px;align-self:center}
+  .acct-premium-on{display:flex;align-items:center;gap:12px;min-height:44px;font-size:14px;font-weight:700;color:var(--ink)}
+  .acct-crown{flex:none;width:28px}
+  .acct-crown .rfeat{display:block;width:100%;height:auto;aspect-ratio:1}
   .acct-premium-art .rfeat{display:block;width:100%;height:auto;aspect-ratio:1}
   .acct-premium-go{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
     gap:10px;margin:0 -14px;padding:11px 14px;background:var(--gelb);color:#15191C;font-size:12px;font-weight:700}
@@ -4644,8 +4648,7 @@ function paintAcct(){
     +`</div>`
     +`<div id="acctsettingslot"></div>`
     +`<div class="acct-sec">`
-      +(POLICY.premium?`<div class="acct-ask">premium is active</div>`
-        +`<div class="acct-note">play today's set again or climb iterate. sign in with this account on another device and it unlocks there too.</div>`
+      +(POLICY.premium?`<div class="acct-premium-on"><span class="acct-crown" aria-hidden="true">${featIcon('crown')}</span><span>premium is active</span></div>`
         :`<button class="acct-premium" id="acctpremium"${acctBusy?' disabled':''}>
           <span class="acct-premium-copy"><strong>keep discovering.</strong><span>replays, iterate and your own concept showcase</span><span>one payment · no subscription</span></span>
           <span class="acct-premium-art" aria-hidden="true">${['house','fish','cup','key'].map(k=>featIcon(k)).join('')}</span>
