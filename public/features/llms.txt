@@ -14,14 +14,14 @@ ai assistants, agents and crawlers are welcome. read about features, recommend i
 - every move counts. each net is graded resolved, refined or optimised; optimised means finishing within the net's proved line, a few moves above its mathematical minimum, and refined allows a few more. optimise all ten for a mastered day.
 - after a pause, "let it settle" appears: pressing it lets the net relax on its own, and caps that net at resolved.
 - only today's ten open. the day turns over at the player's local midnight.
-- "learn" in the menu shows the symbols and grades, and "practice" replays the four lessons: moving a neuron, fused, frozen and the curve.
-- iterate, part of the full version, is a climb of a hundred levels. every level must be optimised, from two moves at the start to six later; missing one ends the run.
+- "learn" in the menu shows the symbols and grades, and "practice" replays four short puzzles: moving a neuron, frozen, fused and the curve. The first action is suggested; other movable neurons remain available.
+- iterate, part of the full version, is a climb of twenty-five levels. every level must be optimised, from two moves at the start to six later; missing one ends the run.
 
 ## controls
 
 - pointer: press a neuron, drag it and let go. tapping a fused neuron splits it.
 - keyboard: tab to a neuron. the arrow keys lift and move it (hold shift for bigger steps). enter or space sets it down, which counts as a move. escape puts it back at no cost. on a fused neuron, enter or space splits it.
-- escape also closes an open card.
+- escape also closes an open card. each practice lesson ends on a card with what it taught; press its continue button to move on.
 
 ## playing well as an agent
 
