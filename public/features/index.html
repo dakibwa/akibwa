@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-a/Nt6wrjmvAeWqp+j+1OTBNhuMsXM7KfH90cqapDV1g=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Bhnh1Bf13ghxVDzoiJGnaPs5C+aaf5LYUZlTER6U0nA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -511,37 +511,28 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   #netsvg{transition:filter .45s}
 
   .play{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column}
-  .coach{
-    display:none;position:absolute;top:16px;left:16px;
-    width:max-content;
-    min-width:0;
-    max-width:min(440px,calc(100% - 40px));background:var(--surface);
-    border:1px solid var(--silver);box-shadow:var(--shadow-float);z-index:6;
-    -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
-  }
+  .coach{display:none;flex:none;position:relative;z-index:6;
+    background:var(--surface);border-top:1px solid var(--silver)}
   .play.tutorial-open .tutscrim{display:none}
-  .play.tutorial-open .coach-dots{display:none}
   .play.tutorial .coach{display:block;pointer-events:none;opacity:1}
-  .field:has(> #netveil.show) > .coach{display:none}
-  .play.tutorial .coach.entering{animation:coachin .42s var(--ease-out) both}
-  @keyframes coachin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-  .play.tutorial .coach.leaving{animation:coachout .24s var(--ease-in) forwards}
+  .field:has(> #netveil.show) > .coach{visibility:hidden}
+  .play.lessonend .coach{display:block;visibility:hidden}
+  .play.tutorial .coach.entering .coach-body{animation:coachin .42s var(--ease-out) both}
+  @keyframes coachin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .play.tutorial .coach.leaving .coach-body{animation:coachout .24s var(--ease-in) forwards}
   @keyframes coachout{from{opacity:1}to{opacity:0}}
   .coach-strip{height:5px;display:flex}
   .coach-strip i{flex:1}
-  .coach-body{padding:10px 13px 11px}
+  .coach-body{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+    column-gap:32px;row-gap:8px;min-height:68px;padding:12px 20px}
   .coach-label{position:absolute;width:1px;height:1px;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
-  .coach-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
-  .coach-dots{display:flex;gap:5px;flex:none;margin-top:.45em}
-  .coach-dots i{width:7px;height:7px;border:1.5px solid var(--silver);display:block;transition:background .3s,border-color .3s}
-  .coach-dots i.done{background:var(--sig-gruen);border-color:var(--sig-gruen)}
-  .coach-dots i.now{border-color:var(--ink);animation:pulse 2s ease-in-out infinite}
-  .coach-text{font-size:14px;line-height:1.4;min-width:0}
+  .coach-head{display:flex;align-items:center;gap:14px}
+  .coach-text{font-size:15px;line-height:1.45;min-width:0;text-align:center}
   .coach-text b{font-weight:700}
-  .coach-key{display:flex;justify-content:space-between;gap:12px;
-    margin-top:8px;padding-top:8px;border-top:1px dashed var(--silver)}
-  .coach-key span{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--ink-soft);letter-spacing:.04em}
+  .coach-key{display:flex;gap:22px}
+  .coach-key:empty{display:none}
+  .coach-key span{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-soft);letter-spacing:.04em}
   .coach-key .rmark{width:38px;height:24px}
   .coach-key .rmark.tight{width:26px}
   .rladder.pick .track > i{opacity:1}
@@ -624,7 +615,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     opacity:1;transform:none;
     transition:opacity var(--t-card) var(--ease-out),transform var(--t-card) var(--ease-out);
   }
-  html:has(#introveil.show) :is(.field .mhalo,.field .tutping,.field .tutxping,.field .mnode.settling,.descentbtn.running svg,.coach-dots i.now){animation-play-state:paused}
+  html:has(#introveil.show) :is(.field .mhalo,.field .tutping,.field .tutxping,.field .mnode.settling,.descentbtn.running svg){animation-play-state:paused}
   @media (max-height:760px){ .veil{align-items:flex-start} }
   html[data-boot] .sheet{visibility:hidden}
   html[data-boot] :is(.veil,.veil > *){transition:none!important}
@@ -777,6 +768,19 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .levelstrip > .bactions{grid-area:2/2;padding:12px 14px 0}
     .levelstrip .wbtn{padding:10px 14px}
     .levelstrip .blearn{font-size:14px}
+    .boardcard > .levelstrip.lesson{grid-template-columns:minmax(0,1fr) auto}
+    .levelstrip.lesson > .bhead{display:none}
+    .levelstrip.lesson > .bbody,.levelstrip.lesson .blearn{display:contents}
+    .levelstrip.lesson .blearn > .bkey,.levelstrip.lesson .blearn > .rladder{grid-area:2/1;justify-self:start;align-self:center;margin:0;padding:10px 0 0 14px}
+    .levelstrip.lesson .bkey{gap:4px 10px;flex-wrap:wrap}
+    .levelstrip.lesson .bkey span{gap:4px;font-size:10px}
+    .levelstrip.lesson .bkey .rmark{width:30px;height:20px}
+    .levelstrip.lesson .bkey .rmark.tight{width:20px}
+    .levelstrip.lesson .blearn > .rladder{flex:none;width:calc(100% - 14px)}
+    .levelstrip.lesson .rlnames > i{font-size:10px}
+    .levelstrip.lesson > .bactions{grid-area:2/2;padding:10px 14px 0}
+    .levelstrip.lesson .blearn > p{grid-area:3/1/4/-1;padding:8px 14px 12px;text-align:left}
+    .levelstrip.lesson .ldetail{display:none}
   }
   @media(max-width:600px) and (min-height:451px){
     .boardcard > .levelstrip:not(.lesson,:has(.mb:nth-child(4))){grid-template-columns:132px minmax(0,1fr)}
@@ -1511,13 +1515,13 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .dayarch{padding:0 9px;gap:8px}
     .dayarch .datext{font-size:9.5px}
     .field{padding-bottom:env(safe-area-inset-bottom,0px);--plate-y:env(safe-area-inset-bottom,0px)}
-    .coach{top:10px;min-width:0;max-width:calc(100% - 20px)}
     .sayrow{gap:11px;padding:10px 12px}
     .sayline{font-size:13px}
     .sayline.big{font-size:21px}
     .saymark{width:46px;height:30px}
-    .coach-body{padding:11px 13px 12px}
-    .coach-text{font-size:13px}
+    .coach-body{justify-content:flex-start;min-height:61px;padding:10px 14px}
+    .coach-key{display:none}
+    .coach-text{font-size:14px;text-align:left}
     .intro-card{grid-template-columns:minmax(0,1fr)}
     .menu-content{grid-template-rows:auto auto minmax(0,1fr)}
     .intro-art{grid-column:1;grid-row:1}
@@ -1579,7 +1583,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   @media (prefers-reduced-motion:reduce){
     ::view-transition-group(menu-content),::view-transition-old(menu-content),
     ::view-transition-new(menu-content){animation:none}
-    .field,.coach,.play.tutorial .coach,.devdrawer:not([hidden]),
+    .field,.coach,.play.tutorial .coach,.coach .coach-body,.devdrawer:not([hidden]),
     .minted .mb,.veil.show .bulletin .brow,.field .tlabel2.tin,
     .field .mhalo,
     .field .tutping,.field .tutxping,
@@ -1589,7 +1593,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .freerun,.clearsweep{display:none}
     .field .mnode.grabbed{transition:none}
     .descentbtn.running svg{animation:none;background:rgba(18,161,154,.2)}
-    .coach-dots i.now{animation:none;opacity:.85}
     .themeglyph{transition:none}
     .veil,.veil.show,.veil > *,.veil.show > *{transform:none;transition-property:opacity,visibility}
     .say,.say.on{transform:none;
@@ -1837,7 +1840,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
         <span class="coach-label" id="coachlabel">lesson · step 1 of 3</span>
         <div class="coach-head">
           <div class="coach-text" id="coachtext"></div>
-          <span class="coach-dots" id="coachdots" aria-hidden="true"><i></i><i></i><i></i></span>
         </div>
         <!-- filled by renderTutorial from the board's own marks -->
         <div class="coach-key" id="coachkey"></div>
@@ -6877,6 +6879,7 @@ function buildNet(force){
 
   gThreads=mk('g',{},gPlay);gMembers=mk('g',{},gPlay);gMarkers=mk('g',{},gPlay);
   gLabels=mk('g',{},gPlay);gFx=mk('g',{},gPlay);
+  if(!endlessActive)syncLessonBar();
   applyOrientation(true);
   threads.forEach(t=>{
     t.el=document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -8357,7 +8360,7 @@ function relayoutBoard(){
     physDirty=true; paintNow();
   },100);
 }
-if(window.ResizeObserver) new ResizeObserver(relayoutBoard).observe($('field'));
+if(window.ResizeObserver){const o=new ResizeObserver(relayoutBoard);o.observe($('field'));o.observe($('netsvg'))}
 else addEventListener('resize',relayoutBoard);
 
 
@@ -8649,7 +8652,8 @@ function showLessonRead(n,tier){
     title='features';say='<b>the lines became features.</b> each is one thing the net learned.';
   }
   $('netbulletin').innerHTML=bulletinHTML({strip:tutorialColors(n),title,sub:'',num:'',
-    body:`<div class="blearn">${score?rungLadder(tier):`<div class="bkey">${coachKey(n)}</div>`}<p>${score?`<b>that earned ${tierSay(tier)}.</b> `:''}${say}</p></div>`,
+    body:`<div class="blearn">${score?rungLadder(tier):`<div class="bkey">${coachKey(n)}</div>`}<p>${score?`<b>that earned ${tierSay(tier)}.</b> <span class="ldetail">${say}</span>`
+      :say.replace(/^(<b>.*?<\/b>)\s*(.+)$/,'$1 <span class="ldetail">$2</span>')}</p></div>`,
     sun:false,actions:'<button class="wbtn solid" id="contbtn">continue</button>'});
   $('netbulletin').classList.add('lesson');
   showVeil('netveil');
@@ -8787,73 +8791,6 @@ function tutSpotClear(){
   tutLit=null; tutAct=null; tutLights=[];
   syncTutorialTargets();
 }
-function positionCoach(){
-  if(!inTutorial()) return;
-  const field=$('field'), svg=$('netsvg'), coach=$('coach');
-  if(!field||!svg||!coach||!coach.offsetWidth||!coach.offsetHeight) return;
-  const fr=field.getBoundingClientRect(), sr=svg.getBoundingClientRect();
-  if(!fr.width||!fr.height||!sr.width||!sr.height) return;
-  const plate={left:sr.left,top:sr.top,width:sr.width,height:sr.height};
-  const pad=matchMedia('(max-width:700px)').matches?10:16;
-  const w=coach.offsetWidth, h=coach.offsetHeight;
-  const slots=(a,b,n)=>b<=a ? [(a+b)/2]
-    : Array.from({length:n},(_,i)=>a+(b-a)*i/(n-1));
-  const xs=slots(plate.left+pad,plate.left+plate.width-pad-w,5);
-  const ys=slots(plate.top+pad,plate.top+plate.height-pad-h,9);
-  const m=boardCTM(), scale=boardScale();
-  if(!m) return;
-  const anchors=tutLights.length ? tutLights
-    : members.filter(grabbable).map(n=>({n,marks:[]}));
-  if(!anchors.length) return;
-  const points=[];
-  anchors.forEach(l=>{
-    const add=(x,y,r)=>{
-      const p=new DOMPoint(x,y).matrixTransform(m);
-      points.push({x:p.x,y:p.y,r});
-    };
-    add(l.n.x0,l.n.y0,Math.max(34,46*(NR/10)*scale));
-    l.marks.forEach(x=>add(x.x,x.y,Math.max(24,24*(NR/10)*scale)));
-  });
-  const lit=new Set(anchors.map(l=>l.n));
-  const others=members.filter(n=>!lit.has(n)&&!n.threads.every(t=>t.freed)).map(n=>{
-    const p=new DOMPoint(n.x0,n.y0).matrixTransform(m);
-    return {x:p.x,y:p.y,r:markR()*scale+4};
-  });
-  const segs=[];
-  threads.filter(t=>!t.freed).forEach(t=>segList(t.nodes.length,t.chord).forEach(([a,b])=>{
-    const p=new DOMPoint(t.nodes[a].x0,t.nodes[a].y0).matrixTransform(m),q=new DOMPoint(t.nodes[b].x0,t.nodes[b].y0).matrixTransform(m);
-    segs.push([p.x,p.y,q.x,q.y]);
-  }));
-  const gap=(r,p)=>Math.hypot(Math.max(r.left-p.x,0,p.x-r.right),Math.max(r.top-p.y,0,p.y-r.bottom))-p.r;
-  const cuts=(r,[x1,y1,x2,y2])=>{
-    let t0=0,t1=1;const dx=x2-x1,dy=y2-y1;
-    for(const [p,q] of [[-dx,x1-r.left],[dx,r.right-x1],[-dy,y1-r.top],[dy,r.bottom-y1]]){
-      if(!p){if(q<0)return false;continue}
-      const t=q/p;if(p<0){if(t>t1)return false;if(t>t0)t0=t}else{if(t<t0)return false;if(t<t1)t1=t}
-    }
-    return true;
-  };
-  const scoreAt=(x,y)=>{
-    const r={left:x,top:y,right:x+w,bottom:y+h};
-    const clear=Math.min(...points.map(p=>gap(r,p)));
-    const near=others.length?Math.min(...others.map(p=>gap(r,p))):Infinity;
-    return (clear<0?clear*100:Math.min(clear,160))+(near<0?near*10-40:0)
-      -segs.reduce((n,s)=>n+(cuts(r,s)?6:0),0);
-  };
-  const candidates=[];
-  xs.forEach(x=>ys.forEach(y=>candidates.push({x,y,score:scoreAt(x,y)})));
-  if(coach.style.left&&coach.style.top){
-    const x=Math.max(plate.left+pad,Math.min(plate.left+plate.width-pad-w,fr.left+parseFloat(coach.style.left)));
-    const y=Math.max(plate.top+pad,Math.min(plate.top+plate.height-pad-h,fr.top+parseFloat(coach.style.top)));
-    const score=scoreAt(x,y);
-    if(score>=0) candidates.push({x,y,score:score+24});
-  }
-  candidates.sort((a,b)=>b.score-a.score || a.y-b.y || a.x-b.x);
-  const best=candidates[0];
-  coach.style.left=(best.x-fr.left)+'px';
-  coach.style.top=(best.y-fr.top)+'px';
-  if(sayAnchor) positionSayAnchor();
-}
 function tutSpotlight(){
   if(!inTutorial()||!gRoot||!members.length){ tutSpotClear(); return }
   if(coachQueuedSig){ tutSpotClear(); return }
@@ -8912,7 +8849,6 @@ function tutSpotlight(){
     const wrap=svgAdd('g',{transform:`translate(${x} ${y}) scale(${kx} ${ky}) translate(${-x} ${-y})`},circle.parentNode);
     wrap.appendChild(circle);
   });
-  positionCoach();
 }
 let tutRelayoutT=null;
 function tutRelayout(){
@@ -8922,7 +8858,7 @@ function tutRelayout(){
   clearTimeout(tutRelayoutT);
   tutRelayoutT=setTimeout(tutSpotlight,180);
 }
-if(window.ResizeObserver) new ResizeObserver(tutRelayout).observe($('field'));
+if(window.ResizeObserver){const o=new ResizeObserver(tutRelayout);o.observe($('field'));o.observe($('netsvg'))}
 else addEventListener('resize',tutRelayout);
 const LEGACY_TUTORIAL_COPY=[
   [
@@ -9008,7 +8944,7 @@ function resetTutorialHint(){
   if(!inTutorial()||legacyTutorial()||tutorialBridge)return;
   tutorialHintTimer=setTimeout(()=>{
     if(!inTutorial()||menuShown()||dragN||tutorialBridge)return;
-    tutorialHinted=true;tutSpotlight();positionCoach();
+    tutorialHinted=true;tutSpotlight();
   },12000);
 }
 function coachKey(n){
@@ -9043,25 +8979,25 @@ function paintTutorial(d){
     $('coachtext').innerHTML = threads.every(t=>t.freed) ? '<b>features found.</b>'
       : ((R().tutorialEdition>=3&&!legacyTutorial()) || !tutLit || d.net>0) ? d.steps[d.step-1]
       : (TUTLIT[d.step-1] || d.steps[d.step-1]);
-    [...$('coachdots').children].forEach((dot,i)=>{
-      dot.classList.toggle('done',i+1<d.step);
-      dot.classList.toggle('now',i+1===d.step);
-    });
     if(key.dataset.lesson!==String(d.net)){
       key.dataset.lesson=String(d.net);
       key.innerHTML=coachKey(d.net);
     }
     key.style.display = d.step===1 && tutorialKeys(d.net).length ? '' : 'none';
   }
-  positionCoach();
   resetTutorialHint();
   coachEnter(c);
 }
+function syncLessonBar(){
+  const active=inTutorial(),play=$('play');
+  play.classList.toggle('tutorial',active);
+  play.classList.toggle('tutorial-open',active&&!legacyTutorial());
+  play.classList.toggle('lessonend',!active&&tutorialCompleting());
+  return active;
+}
 function renderTutorial(){
   if(endlessActive)return;
-  const active=inTutorial();
-  $('play').classList.toggle('tutorial',active);
-  $('play').classList.toggle('tutorial-open',active&&!legacyTutorial());
+  const active=syncLessonBar();
   if(!active){
     clearTimeout(coachSwapT); coachSwapT=null; coachQueuedSig='';
     hideTutorialScore();
@@ -9081,7 +9017,6 @@ function renderTutorial(){
   }
   if(d.sig===coachSig){
     if(d.bridge) tutSpotClear(); else tutSpotlight();
-    positionCoach();
     return;
   }
   if(d.sig===coachQueuedSig) return;
@@ -9145,7 +9080,7 @@ function endTutorial(){
   renderAll();
   renderHud();
   tutSpotClear();
-  $('play').classList.remove('tutorial'); $('coach').style.display='';
+  $('play').classList.remove('tutorial','lessonend'); $('coach').style.display='';
   coachSig=''; coachQueuedSig='';
 }
 
