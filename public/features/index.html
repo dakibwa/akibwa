@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-uOB2mCKf1OIF3PuC+JUUBi7WHGssB8dRpxs6heuAjeY=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-ic76TG8mw5d+r4FtpnAs3PDaKhYVu5yFwTpTkdNqLGA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -3161,7 +3161,7 @@ function netSpec(i, rules){
 }
 
 const SALT_V38=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","6,,12,b,47,1a,6k,g8,8x,7o");
-const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq");
+const SALT_V39=((from,rows)=>Object.fromEntries(rows.split(';').map((row,n)=>[new Date(Date.parse(from+'T00:00:00Z')+n*864e5).toISOString().slice(0,10),row.split(',').map(salt=>parseInt(salt,36)||0)])))("2026-09-26","1e,1,1,,4b,q,3ig,7xj,4hm,aq;t,j,3v,4,g,o7,35,1d,8sq,12;8f,11,13,bx,59r,n,4w9,1sg,1sq,6n8;5s,7,1p,1dc,h,230,1oc,2m,3fq,1qz");
 function graceFor(s){
   if(!s) return 0;
   const load=(s.shared||0)+(s.pinned||0)+Math.max(0,(s.threads||0)-3);
@@ -6043,6 +6043,31 @@ function famParticipation(plan){
   }
   return {pass:partners.every(n=>n>=Math.min(2,edges.length-1)),partners};
 }
+function famStraightDecision(plan){
+  const fixed=plan.order.map((_,k)=>famThreadEdges(plan,k)),probes=[];
+  const hit=(a,b)=>!(a.nodes.length===2&&b.nodes.length===2&&a.nodes.some(n=>b.nodes.includes(n)))&&segX(a.a,a.b,b.a,b.b);
+  for(let k=0;k<fixed.length;k++){
+    if(plan.curved?.includes(k))continue;
+    const others=fixed.flatMap((edges,j)=>j===k?[]:edges);
+    for(const node of plan.order[k]){
+      if(node.pinned||node.merged||plan.order.some((o,j)=>j!==k&&o.includes(node)))continue;
+      const still=fixed[k].filter(e=>!e.nodes.includes(node));
+      if(still.some((a,i)=>others.some(b=>hit(a,b))||still.some((b,j)=>j>i&&hit(a,b))))continue;
+      let legal=0,clear=0;
+      for(let row=0;row<7;row++)for(let col=0;col<11;col++){
+        const at={x:PADX+18+(BW-2*PADX-36)*col/10,y:PADY+18+(BH-2*PADY-36)*row/6};
+        if(plan.nodes.some(n=>n!==node&&Math.hypot(at.x-n.x,at.y-n.y)<MIN_SEP))continue;
+        legal++;
+        const moved=famThreadEdges(plan,k,node,at).filter(e=>e.nodes.includes(node));
+        if(moved.some((a,i)=>others.some(b=>hit(a,b))||still.some(b=>hit(a,b))||moved.some((b,j)=>j>i&&hit(a,b))))continue;
+        clear++;
+      }
+      const probe={thread:k,node:plan.nodes.indexOf(node),legal,clear};probes.push(probe);
+      if(!legal||clear*6>legal)return {pass:false,probes,reason:'straight thread has a broad empty escape'};
+    }
+  }
+  return {pass:true,probes};
+}
 function famBendDecision(plan,route=[]){
   const curved=new Set(plan.curved||[]),bends=[];
   const fixed=plan.order.map((_,k)=>famThreadEdges(plan,k));
@@ -6084,7 +6109,7 @@ function famBendDecision(plan,route=[]){
   }
   return {pass:true,bends};
 }
-function authorBends(plan,count,rnd){
+function authorBends(plan,count,rnd,compact=false){
   const cands=[],bendable=k=>{
     const o=plan.order[k],chord=plan.chords&&plan.chords[k];
     return o.slice(1,-1).filter((n,j)=>!chord||!chord.includes(j+1));
@@ -6096,7 +6121,9 @@ function authorBends(plan,count,rnd){
   if(cands.length<count)return false;
   plan.curved=[];
   for(let c=0;c<count;c++){
-    const k=cands.splice(Math.floor(rnd()*cands.length),1)[0],o=plan.order[k];
+    const size=Math.min(...cands.map(k=>plan.order[k].length));
+    const pool=compact?cands.filter(k=>plan.order[k].length===size):cands;
+    const k=pool[Math.floor(rnd()*pool.length)],o=plan.order[k];cands.splice(cands.indexOf(k),1);
     const inner=bendable(k),away=inner.filter(n=>n.hx==null||Math.hypot(n.x-n.hx,n.y-n.hy)>18);
     const bend=(away.length?away:inner)[Math.floor(rnd()*(away.length||inner.length))];
     for(const n of o){if(n===bend)continue;if(n.hx!=null){n.x=n.hx;n.y=n.hy}n.pinned=true}
@@ -6207,6 +6234,11 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
               mechanic:mechanic||null};
 
 
+  const earlyBend=mechanic?.bend&&needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision);
+  const coverage=earlyBend&&idx>=5&&idx<9;
+  if(earlyBend&&!authorBends(plan,mechanic.bend,rnd,coverage))return null;
+  const price=()=>famCost(plan)+(coverage?8*famFloor(plan):0);
+  if(coverage)want+=8*(PRACTICAL_RANGE[idx][0]-2);
   if(GEN_RULES.weave==='pattern' && T>=3){
     const home=live.map(n=>({n, x:n.x, y:n.y}));
     const restore=()=>home.forEach(h=>{h.n.x=h.x; h.n.y=h.y});
@@ -6217,7 +6249,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
       for(let amp=1;amp<=3;amp++){
         restore();
         famWeave(order, name, amp);
-        const priced=famCost(plan), x=famX(plan);
+        const priced=price(), x=famX(plan);
         if(x>xCap) continue;
         const quality=famReadability(plan).score;
         if(!best || priced>best.par || (priced===best.par && quality>best.quality))
@@ -6226,7 +6258,7 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
     }
     restore();
     if(best){
-      const bare=famCost(plan);
+      const bare=price();
       if(best.par>bare || (best.par===bare && best.quality>famReadability(plan).score)){
         famWeave(order, best.name, best.amp);
         plan.weave=best.name; plan.amp=best.amp;
@@ -6235,12 +6267,12 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
     }
   }
 
-  plan.par=famCost(plan);plan.x=famX(plan);
+  plan.par=price();plan.x=famX(plan);
   let quality=famReadability(plan).score;
   for(let miss=0; plan.par<want && miss<26; ){
     const st=famStep(live, F.cyc||3, !!F.local, rnd);
     if(!st) break;
-    const priced=famCost(plan), x=famX(plan);
+    const priced=price(), x=famX(plan);
     const nextQuality=famReadability(plan).score;
     if((priced>plan.par || (priced===plan.par && nextQuality>quality)) && x<=xCap){
       if(priced>plan.par) miss=0;
@@ -6250,7 +6282,8 @@ function famPlan(fam,T,L,shared,pinned,want,tut,rnd,idx,lens,mechanic){
       miss++;
     }
   }
-  if(mechanic?.bend&&!authorBends(plan,mechanic.bend,rnd))return null;
+  if(mechanic?.bend&&!earlyBend&&!authorBends(plan,mechanic.bend,rnd))return null;
+  if(earlyBend)plan.par=famCost(plan);
   famSpread(plan,idx);
   plan.route=plan.par;
   plan.par=Math.max(3, plan.par + (GEN_RULES.parSlack||0));
@@ -6822,7 +6855,8 @@ function buildNet(force){
     const pool=[...GEN.feats], chosen=[];
     while(chosen.length<5 && pool.length) chosen.push(pool.splice(Math.floor(fr()*pool.length),1)[0]);
     const saltHint=(GEN.catalogueRevision<39?SALT_V38:SALT_V39)[genDay]?.[idx]||0, saltLimit=12000;
-    const unbentHint=saltHint<0&&spec.bend?-saltHint-1:null,specStart={...spec};
+    const keepMechanics=needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision);
+    const unbentHint=!keepMechanics&&saltHint<0&&spec.bend?-saltHint-1:null,specStart={...spec};
     let unbent=unbentHint!=null,accepted=false,lenient=false;
     for(;;){
       const hint=unbent?unbentHint||0:saltHint;
@@ -6883,6 +6917,10 @@ function buildNet(force){
           const composition=famReadability(spec.plan);if(!composition.clear)continue;
           spec.plan.composition=composition;
           if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&spec.plan.curved?.length&&!famBendDecision(spec.plan).pass)continue;
+          if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)){
+            const decision=famStraightDecision(spec.plan);if(!decision.pass)continue;
+            spec.plan.straightDecision=decision;
+          }
           const practical=famPracticalTargets(spec.plan,idx);if(!practical)continue;
           if(needsDecisions(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)&&spec.plan.curved?.length){
             const decision=famBendDecision(spec.plan,practical.log);if(!decision.pass)continue;
@@ -6893,6 +6931,7 @@ function buildNet(force){
           if(!lenient&&(pass>=0||GEN_RULES.catalogueRevision<39)&&famWeb(spec.plan,idx)<WEB_FLOOR[idx])continue;
           if(exactOptimised(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)){
             const score=famOptimisedScore(spec.plan,practical);
+          if(score.moves<Math.max(2,PRACTICAL_RANGE[idx][0]-2))continue;
             spec.plan.practical=score;
             spec.plan.route=score.moves;spec.plan.free=score.moves;spec.plan.par=score.clean;
           }
@@ -6906,7 +6945,7 @@ function buildNet(force){
         if(!accepted&&pass<0){ for(const k of Object.keys(spec)) delete spec[k]; Object.assign(spec,spec0) }
       }
       if(!accepted&&!lenient){lenient=true; for(const k of Object.keys(spec)) delete spec[k]; Object.assign(spec,specStart); continue}
-      if(accepted||unbent||!spec.bend) break;
+      if(accepted||keepMechanics||unbent||!spec.bend) break;
       unbent=true; lenient=false; for(const k of Object.keys(spec)) delete spec[k]; Object.assign(spec,specStart);
     }
     if(unbent&&accepted) spec.bend=0;
