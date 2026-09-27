@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Bhnh1Bf13ghxVDzoiJGnaPs5C+aaf5LYUZlTER6U0nA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-qzhcTvGcGJZfkG9preEl8rpahPI19Rwf4WpTwgsdWkU=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -179,7 +179,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   [data-grade="flawless"]{--grade-pattern:var(--grade-flawless)}
   [data-result-patterns="true"] :is(.track [data-grade],.stampview-band,.grade-sample){
     background-image:var(--grade-pattern);background-size:8px 8px}
-  [data-result-patterns="true"] :is(.fcell,.showcase-slot,.showcase-drag)[data-grade]::after{content:'';position:absolute;
+  [data-result-patterns="true"] :is(.fcell,.showcase-drag)[data-grade]::after{content:'';position:absolute;
     left:0;right:0;bottom:-3px;height:5px;background:var(--grade-pattern) 0 0/8px 8px var(--tc);pointer-events:none}
   *{box-sizing:border-box;margin:0;padding:0}
   body{-webkit-user-select:none;-moz-user-select:none;user-select:none;
@@ -296,6 +296,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   }
   .hud-head.has-showcase{grid-template-columns:auto minmax(330px,1fr) auto auto;column-gap:clamp(12px,1.8vw,26px)}
   .board-showcase{display:flex;align-items:center;align-self:center;gap:6px}
+  .hud-head.has-showcase .board-showcase{padding-right:clamp(12px,1.8vw,26px);border-right:1px solid var(--rule)}
   .board-showcase[hidden]{display:none}
   .board-showcase>.help{cursor:default}
   .board-showcase>.help:active{transform:none}
@@ -896,11 +897,14 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .showcase-upgrade:focus-visible{outline:2px solid var(--sig-hellblau);outline-offset:3px}
   .showcase-slot{position:relative;display:grid;place-items:center;flex:none;
     width:calc(var(--showcase-size) - 3px);height:var(--showcase-size);
-    padding:0;border:0;border-bottom:3px solid var(--tc,transparent);background:var(--surface);color:var(--ink-soft);font:inherit;appearance:none;-webkit-appearance:none}
+    padding:0;border:0;background:var(--surface);color:var(--ink-soft);font:inherit;appearance:none;-webkit-appearance:none}
   .showcase-slot::before{content:'';position:absolute;inset:0;border:1px solid var(--rule);pointer-events:none;transition:border-color .18s,box-shadow .18s,inset .18s}
   button.empty::before{border-style:dashed;border-color:color-mix(in srgb,var(--ink-soft) 55%,transparent)}
   .dragging .empty::before{border-color:var(--ink-soft)}
-  .showcase-slot[data-remove-stamp]::before{border-color:transparent}
+  .showcase-slot[data-remove-stamp]::before{border-color:var(--silver)}
+  .showcase-slot svg.smark{width:62%}
+  .showcase-slot[data-remove-stamp]:is(:hover,:focus-visible){background:var(--door-plate);color:#0E1214}
+  .showcase-slot[data-remove-stamp]:is(:hover,:focus-visible):not(.drop-target,[aria-pressed="true"])::before{border-color:#0E1214}
   .showcase-slot:is(.drop-target,[aria-pressed="true"])::before{inset:-4px;border:1px solid var(--ink);box-shadow:0 0 0 1px var(--paper)}
   .showcase-slot.locked{background:color-mix(in srgb,var(--surface) 96%,var(--ink))}
   .showcase-slot.locked svg{width:17px;height:17px;opacity:.65}
@@ -912,6 +916,8 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     box-shadow:0 16px 30px -12px #0007;animation:lift .22s var(--ease-out);will-change:transform}
   @keyframes lift{from{box-shadow:0 0 0 -8px #0000}}
   .showcase-drag svg{display:block;width:100%;height:auto}
+  .showcase-drag.mark{display:grid;place-items:center;aspect-ratio:1;border:1px solid var(--silver);background:var(--surface);color:var(--ink-soft)}
+  .showcase-drag.mark svg{width:62%}
   .collection-sheet :is(.fcell:not(.none),button.showcase-slot){touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
   .collection-sheet :is(.fcell:not(.none),button.showcase-slot[data-remove-stamp]){cursor:grab}
   .collection-sheet.dragging :is(.fcell,button.showcase-slot){cursor:grabbing}
@@ -1456,7 +1462,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .hud-head,.hud-head.has-showcase{grid-template-columns:auto minmax(330px,1fr) auto;gap:26px}
     .mark,.btns,.instruments,.has-showcase .board-showcase,.has-showcase .btns{grid-column:auto;grid-row:auto}
     .has-showcase .mark{display:none}
-    .has-showcase .board-showcase{order:-1}
+    .has-showcase .board-showcase{order:-1;padding-right:0;border-right:0}
     .instruments{border:0;border-left:1px solid var(--rule);border-right:1px solid var(--rule);padding:2px 16px 0}
   }
   @media (max-height:500px) and (orientation:landscape){
@@ -1466,7 +1472,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   @media (max-width:480px){
     .hud-head.has-showcase{grid-template-columns:minmax(0,1fr) auto}
     .has-showcase .mark{display:none}
-    .has-showcase .board-showcase{grid-column:1;justify-self:start;gap:4px}
+    .has-showcase .board-showcase{grid-column:1;justify-self:start;gap:4px;padding-right:0;border-right:0}
     .has-showcase .btns{grid-column:2}
   }
 
@@ -3671,11 +3677,15 @@ let showcaseKeys=readShowcase(),showcaseTarget=null;
 function canShowcaseStamps(){return !!POLICY.premium}
 function showcaseSlots(){return showcaseKeys.map(k=>k&&figureBadge(k)?k:null)}
 function earnedShowcaseKeys(){return showcaseSlots().filter(Boolean)}
-function showcasePlate(key){
-  const d=FIGURES[key]||FIGURES_RETIRED[key]||FEATURES[key];if(!d)return '';
+const stampPlate=key=>FIGURES[key]||FIGURES_RETIRED[key]||FEATURES[key];
+function showcaseMark(key){
+  const d=stampPlate(key);if(!d)return '';
   const glyph=STAMPS[key]?STAMPS[key].art:`<g fill="currentColor">${d.p}</g>`;
-  return `<span class="help" data-stamp="${key}" style="--door-plate:var(${d.c})">`
-    +`<svg viewBox="0 0 96 96" role="img" aria-label="${key}">${glyph}</svg></span>`;
+  return `<svg class="smark" viewBox="0 0 96 96" role="img" aria-label="${key}">${glyph}</svg>`;
+}
+function showcasePlate(key){
+  const d=stampPlate(key);if(!d)return '';
+  return `<span class="help" data-stamp="${key}" style="--door-plate:var(${d.c})">${showcaseMark(key)}</span>`;
 }
 function paintShowcase(){
   const el=$('boardshowcase'),keys=canShowcaseStamps()?earnedShowcaseKeys():[];
@@ -3688,10 +3698,6 @@ function collectionStamp(k){
   const f=FIGURES[k]||FIGURES_RETIRED[k];
   return `<svg class="rfeat" viewBox="0 0 96 96" role="img" aria-label="${k}"><rect class="fcell-plate" width="96" height="96" fill="var(${f.c})"/>${figEmblem(k,{ink:EMBLEM_INK,fit:figureBadge(k)?.fit})}</svg>`;
 }
-function stampGrade(k){
-  const b=figureBadge(k);
-  return b?` data-grade="${gradeKey(b.tier)}" style="--tc:var(${tierCol(b.tier)})"`:'';
-}
 function showcasePanel(){
   const enabled=canShowcaseStamps(),keys=enabled?showcaseSlots():[null,null,null,null];
   if(!enabled)showcaseTarget=null;
@@ -3702,7 +3708,7 @@ function showcasePanel(){
       return `<button type="button" class="showcase-slot${key?'':' empty'}" data-showcase-slot="${i}"${key?` data-remove-stamp="${key}"`:''}
         aria-label="${key||'empty'}, showcase slot ${i+1} of 4" aria-pressed="false"
         aria-description="${key?'drag or use left and right arrows to move. double-click, double-tap or press Delete to remove. ':''}select this slot, then an earned concept to pin it."
-        aria-keyshortcuts="${key?'ArrowLeft ArrowRight Delete Backspace ':''}Enter Space"${key?stampGrade(key):''}>${key?collectionStamp(key):''}</button>`;
+        aria-keyshortcuts="${key?'ArrowLeft ArrowRight Delete Backspace ':''}Enter Space"${key?` style="--door-plate:var(${stampPlate(key).c})"`:''}>${key?showcaseMark(key):''}</button>`;
     }).join('')}
     ${enabled?'<p class="showcase-note" id="showcasenote">pin four concepts</p>':'<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four concepts · discover premium">pin four concepts</button>'}
     <span class="showcase-status" id="showcasestatus" role="status"></span>
@@ -3730,14 +3736,14 @@ function finishShowcaseFlights(){for(const flight of [...showcaseFlights])flight
 function showcasePositions(){
   return new Map([...$('panecoll').querySelectorAll('button[data-remove-stamp]')].map(el=>[el.dataset.removeStamp,{el,rect:el.getBoundingClientRect()}]));
 }
-function showcaseGhost(key,size){
-  const ghost=document.createElement('div');ghost.className='showcase-drag';ghost.setAttribute('aria-hidden','true');
-  const b=figureBadge(key);if(b)ghost.style.setProperty('--tc',`var(${tierCol(b.tier)})`);
-  ghost.style.width=size+'px';ghost.innerHTML=collectionStamp(key);document.body.appendChild(ghost);return ghost;
+function showcaseGhost(key,size,mark=false){
+  const ghost=document.createElement('div');ghost.className='showcase-drag'+(mark?' mark':'');ghost.setAttribute('aria-hidden','true');
+  const b=figureBadge(key);if(b&&!mark)ghost.style.setProperty('--tc',`var(${tierCol(b.tier)})`);
+  ghost.style.width=size+'px';ghost.innerHTML=mark?showcaseMark(key):collectionStamp(key);document.body.appendChild(ghost);return ghost;
 }
-function flyShowcaseStamp(key,from,to,{ghost,transform,source,ping}={}){
+function flyShowcaseStamp(key,from,to,{ghost,transform,source,ping,mark}={}){
   if(reduceMotion||!from.width){ghost?.remove();source?.classList.remove('showcase-source');return}
-  ghost=ghost||showcaseGhost(key,from.width);
+  ghost=ghost||showcaseGhost(key,from.width,mark);
   const end=to?.getBoundingClientRect(),g=transform?ghost.getBoundingClientRect():from,ease=cssv('--ease-out');
   const at=(r,k,i=0)=>({transform:`translate3d(${r.left+r.width*i}px,${r.top+r.height*i}px,0) rotate(0deg) scale(${k})`,boxShadow:'0 0 0 -8px #0000'});
   const frames=[{transform:transform||at(from,1).transform,boxShadow:getComputedStyle(ghost).boxShadow,easing:ease},
@@ -3774,13 +3780,13 @@ function saveShowcaseSlots(keys,{key,slot,drag}={}){
       const tile=drag.source.matches('.fcell');if(tile)drag.source.classList.remove('showcase-source');
       flyShowcaseStamp(stamp,drag.rect,el,{ghost:drag.ghost,transform:drag.ghost.style.transform,source:tile?null:drag.source,ping:1});
     }else if(old&&(Math.abs(old.rect.left-rect.left)>.5||Math.abs(old.rect.top-rect.top)>.5)){
-      flyShowcaseStamp(stamp,old.rect,el,{ping:stamp===key});
+      flyShowcaseStamp(stamp,old.rect,el,{ping:stamp===key,mark:true});
     }else if(!old&&stamp===key){
       const source=pane.querySelector(`.fcell[data-stamp="${CSS.escape(stamp)}"]`);
       if(source)flyShowcaseStamp(stamp,source.querySelector('svg').getBoundingClientRect(),el,{ping:1});
     }
   }
-  for(const [stamp,{rect}] of before)if(!after.has(stamp))flyShowcaseStamp(stamp,rect,null);
+  for(const [stamp,{rect}] of before)if(!after.has(stamp))flyShowcaseStamp(stamp,rect,null,{mark:true});
   pane.querySelector(`button[data-showcase-slot="${slot}"]`)?.focus({preventScroll:true});
 }
 function putShowcaseStamp(key,slot,drag){
@@ -3847,13 +3853,14 @@ function drawShowcaseDrag(now){
 function startShowcaseDrag(){
   const drag=showcaseDrag;if(!drag||drag.ghost||drag.scrolling)return;
   finishShowcaseFlights();showcaseLastTap=null;
-  drag.rect=drag.source.querySelector('svg').getBoundingClientRect();
+  const slot=drag.source.matches('.showcase-slot');
+  drag.rect=(slot?drag.source:drag.source.querySelector('svg')).getBoundingClientRect();
   drag.anchorX=(drag.x-drag.rect.left)/drag.rect.width;drag.anchorY=(drag.y-drag.rect.top)/drag.rect.height;
   drag.left=drag.rect.left;drag.top=drag.rect.top;drag.scale=1;drag.angle=0;
   drag.lift=reduceMotion?1:Math.min(1.07,96/drag.rect.width);
   drag.previewScale=drag.lift;
   drag.pointerX=drag.x;drag.pointerY=drag.y;
-  drag.ghost=showcaseGhost(drag.key,drag.rect.width);drag.source.classList.add('showcase-source');
+  drag.ghost=showcaseGhost(drag.key,drag.rect.width,slot);drag.source.classList.add('showcase-source');
   $('panecoll').setPointerCapture(drag.id);drag.sheet.classList.add('dragging');
   drawShowcaseDrag(performance.now());moveShowcaseDrag(drag.x,drag.y);
 }
@@ -4019,7 +4026,7 @@ function renderCollection(){
   const pane=$('panecoll');
   const keepScroll=pane.querySelector('.collection-sheet')?.scrollTop||0;
   pane.innerHTML=`<div class="collection-sheet"><div class="panehd collhd menu-heading">
-      ${paneHeading('concepts',canShowcaseStamps()?[]:['fish','butterfly','mushroom','pear'],'','coll')}
+      ${paneHeading('concepts',['fish','butterfly','mushroom','pear'],'','coll')}
       <div class="collection-summary intro-sub"><span>concepts collected ·</span>
       <div class="collcount" role="status" aria-label="${have} of ${stamps.length} concepts collected">
         <span class="collcount-have" aria-hidden="true">${have}</span>
@@ -6938,7 +6945,8 @@ function startBoardReveal(){
   const r=R(),fresh=!Object.keys(r.positions||{}).length&&!(r.freed||[]).length;
   if(GEN_RULES.reveal!=='plot'||reduceMotion||!fresh){finish();return}
   if(document.hidden||boardCovered()){pendingBoardReveal=true;finish();return}
-  const lengths=threads.map(t=>{let L=0;try{L=t.el.getTotalLength()}catch{}return L||800});
+  const {sx,sy}=boardMapping(),onScreen=Math.max(sx,sy,1)*1.05;
+  const lengths=threads.map(t=>{let L=0;try{L=t.el.getTotalLength()}catch{}return (L||800)*onScreen});
   threads.forEach((t,i)=>{
     t.el.style.transition='none';t.el.style.strokeDasharray=`${lengths[i]} ${lengths[i]}`;
     t.el.style.strokeDashoffset=String(lengths[i]);
