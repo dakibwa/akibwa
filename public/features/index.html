@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Y9yHX3lnXInXyxVcxGbpaWCfZUWYI0xrmnPqiwFotxE=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-uOB2mCKf1OIF3PuC+JUUBi7WHGssB8dRpxs6heuAjeY=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -179,7 +179,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   [data-grade="flawless"]{--grade-pattern:var(--grade-flawless)}
   [data-result-patterns="true"] :is(.track [data-grade],.stampview-band,.grade-sample){
     background-image:var(--grade-pattern);background-size:8px 8px}
-  [data-result-patterns="true"] :is(.fcell,.showcase-drag)[data-grade]::after{content:'';position:absolute;
+  [data-result-patterns="true"] .fcell[data-grade]::after{content:'';position:absolute;
     left:0;right:0;bottom:-3px;height:5px;background:var(--grade-pattern) 0 0/8px 8px var(--tc);pointer-events:none}
   *{box-sizing:border-box;margin:0;padding:0}
   body{-webkit-user-select:none;-moz-user-select:none;user-select:none;
@@ -912,7 +912,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .showcase-slot.locked.denied{background:color-mix(in srgb,var(--surface) 90%,var(--sig-orange))}
   .showcase-slot:is(.landing,.showcase-source)>svg{visibility:hidden}
   .fcell.showcase-source>svg{opacity:.3}
-  .showcase-drag{position:fixed;left:0;top:0;width:80px;border-bottom:3px solid var(--tc,transparent);z-index:80;pointer-events:none;transform-origin:0 0;
+  .showcase-drag{position:fixed;left:0;top:0;width:80px;z-index:80;pointer-events:none;transform-origin:0 0;
     box-shadow:0 16px 30px -12px #0007;animation:lift .22s var(--ease-out);will-change:transform}
   @keyframes lift{from{box-shadow:0 0 0 -8px #0000}}
   .showcase-drag svg{display:block;width:100%;height:auto}
@@ -3743,7 +3743,6 @@ function showcasePositions(){
 }
 function showcaseGhost(key,size,mark=false){
   const ghost=document.createElement('div');ghost.className='showcase-drag'+(mark?' mark':'');ghost.setAttribute('aria-hidden','true');
-  const b=figureBadge(key);if(b&&!mark)ghost.style.setProperty('--tc',`var(${tierCol(b.tier)})`);
   ghost.style.width=size+'px';ghost.innerHTML=mark?showcaseMark(key):collectionStamp(key);document.body.appendChild(ghost);return ghost;
 }
 function flyShowcaseStamp(key,from,to,{ghost,transform,source,ping,mark}={}){
