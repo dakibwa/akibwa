@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-klPMTd66wp2OgAZBurejLKSMsTlSuEe4/ItoeTZkGv4=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-Y9yHX3lnXInXyxVcxGbpaWCfZUWYI0xrmnPqiwFotxE=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -2930,6 +2930,7 @@ function figureBadge(key){
 
 const DECISIONS_FROM='2026-09-28';
 const needsDecisions=(day,revision)=>day>=DECISIONS_FROM&&Number(revision)>=39;
+const exactOptimised=(day,revision)=>needsDecisions(day,revision);
 const DAILY_GEN={v:39,from:BEND_LAUNCH,par:'family',layout:'families',
     split:'vertical',merge:'widen',pinFill:true,parMode:'greedy',parSlack:3,
     splitPart:'clear',optimum:'free',rung:'earned',chord:'clues',selfX:'count',
@@ -6399,15 +6400,41 @@ function famPracticalTargets(plan,idx){
   const limit=Math.min(cap,lower+3);
   if(!Number.isFinite(lower)||limit<min)return null;
   const used=plan.nodes.flatMap((n,i)=>n.bend?[i]:[]);
-  let best=null;
+  let best=null,scoring=null;
   for(let variant=0;variant<(used.length?4:2);variant++){
     const log=[],moves=famPractical(plan,log,best?best.moves-1:limit,variant);
+    if(moves>0&&(!scoring||moves<scoring.moves))scoring={moves,log};
     if(moves>=min&&moves<=(best?best.moves-1:limit)&&used.every(i=>log.some(a=>a[0]===0&&a[1]===i)))best={moves,log};
   }
   if(!best)return null;
-  const budget=best.moves-lower+OPTIMISED_GRACE[idx],perfect=lower+budget;
-  return {moves:best.moves,log:best.log,lower,budget,perfect,
+  if(!exactOptimised(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)){
+    const budget=best.moves-lower+OPTIMISED_GRACE[idx],perfect=lower+budget;
+    return {moves:best.moves,log:best.log,lower,budget,perfect,
+      clean:perfect+Math.max(2,Math.min(4,Math.ceil(perfect/4))),margin:PLACEMENT_ROOM};
+  }
+  const perfect=best.moves,budget=perfect-lower;
+  return {moves:best.moves,log:best.log,lower,budget,perfect,scoring,
     clean:perfect+Math.max(2,Math.min(4,Math.ceil(perfect/4))),margin:PLACEMENT_ROOM};
+}
+function famOptimisedScore(plan,practical){
+  const {scoring,...construction}=practical;
+  let best=scoring?{...construction,...scoring}:construction;
+  for(const variant of [4,5]){
+    if(best.moves===practical.lower)break;
+    const log=[],moves=famPractical(plan,log,best.moves-1,variant);
+    if(moves>0&&moves<best.moves)best={...construction,moves,log};
+  }
+  for(let first=0;best.moves<=3&&first<plan.nodes.length&&best.moves>practical.lower;first++){
+    if(plan.nodes[first].pinned)continue;
+    for(const variant of [0,1]){
+      const log=[],moves=famPractical(plan,log,best.moves-1,variant,first);
+      if(moves>0&&moves<best.moves)best={...construction,moves,log};
+    }
+  }
+  const perfect=best.moves;
+  return {...best,perfect,budget:perfect-practical.lower,
+    clean:perfect+Math.max(2,Math.min(4,Math.ceil(perfect/4))),
+    construction:{moves:construction.moves,log:construction.log}};
 }
 const PLACEMENT_ROOM=6;
 function roomSide(a,b,c){
@@ -6428,7 +6455,7 @@ function roomX(a,b,c,d){
   const ac=roomSide(a,b,c),ad=roomSide(a,b,d),ca=roomSide(c,d,a),cb=roomSide(c,d,b);
   return !(ac&&ac===ad||ca&&ca===cb);
 }
-function famPractical(plan,trace=null,limit=36,variant=0){
+function famPractical(plan,trace=null,limit=36,variant=0,firstNode=null){
   const at=new Map(); plan.nodes.forEach((n,i)=>at.set(n,i));
   const T=plan.order.length;
   const P=plan.nodes.map((n,i)=>({x:clampX(n.x), y:clampY(n.y), hx:n.hx, hy:n.hy,
@@ -6438,7 +6465,7 @@ function famPractical(plan,trace=null,limit=36,variant=0){
   const seq=plan.order.map(o=>o.map(n=>P[at.get(n)]));
   const S=planSegs(plan), self=GEN_RULES.selfX==='count';
   const all=P.slice();
-  const freed=new Array(T).fill(false),usedBends=new Set(),preferBends=variant>=2;
+  const freed=new Array(T).fill(false),usedBends=new Set(),preferBends=!!(variant&2),reverse=!!(variant&4);
   variant%=2;
   const curved=new Set(plan.curved||[]);
   const chordOf=a=>plan.chords&&plan.chords[a];
@@ -6583,7 +6610,7 @@ function famPractical(plan,trace=null,limit=36,variant=0){
   stood();
   let s=sweep();
   if(s.done) return 0;
-  let moves=0;
+  let moves=0,moved=false;
   for(let step=0; step<limit; step++){
     let merged=0; for(const q of all) if(q.merged) merged++;
     const now=s.c.reduce((a,b)=>a+b,0)/2;
@@ -6594,13 +6621,16 @@ function famPractical(plan,trace=null,limit=36,variant=0){
       if(all.every(q=>Math.hypot(q.x-x,q.y-y)>FREE_CLEAR)) spots.push({x,y});
     }
     let best=null;
-    for(let k=0;k<all.length;k++){
+    for(let at=0;at<all.length;at++){
+      const k=reverse?all.length-1-at:at;
       const p=all[k];
       if(merged || p.pinned || p.t.every(j=>freed[j])) continue;
+      if(!moved&&firstNode!=null&&p.i!==firstNode)continue;
       const cur=touch(p,p.x,p.y);
       if(!cur.total) continue;
       const tries=spots.slice();
       if(p.hx!=null) tries.push({x:clampX(p.hx), y:clampY(p.hy)});
+      if(reverse)tries.reverse();
       for(const landing of tries){
         const t={x:clampX(landing.x),y:clampY(landing.y)};
         if(Math.hypot(t.x-p.x,t.y-p.y)<.5)continue;
@@ -6638,6 +6668,7 @@ function famPractical(plan,trace=null,limit=36,variant=0){
       all.push(half);
       if(trace)trace.push([1,p.i,p.x,p.y,half.x,half.y]);
     } else {
+      moved=true;
       if(best.usefulBend)usedBends.add(best.p.i);
       best.p.x=best.x;best.p.y=best.y;best.p.ex=best.ex;best.p.ey=best.ey;
       if(trace)trace.push([0,best.p.i,best.x,best.y]);
@@ -6861,6 +6892,11 @@ function buildNet(force){
           spec.plan.practical=practical;
           spec.plan.route=practical.moves;spec.plan.free=practical.moves;spec.plan.par=practical.clean;
           if(!lenient&&(pass>=0||GEN_RULES.catalogueRevision<39)&&famWeb(spec.plan,idx)<WEB_FLOOR[idx])continue;
+          if(exactOptimised(GEN_RULES.outlineDay,GEN_RULES.catalogueRevision)){
+            const score=famOptimisedScore(spec.plan,practical);
+            spec.plan.practical=score;
+            spec.plan.route=score.moves;spec.plan.free=score.moves;spec.plan.par=score.clean;
+          }
           initialCross=Math.max(c0.total,1);
           spec.par=spec.plan.par;
           const pos=R().positions||{};
