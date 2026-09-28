@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-E5orlcA5WYHJbcivDMH51opNas7W0WxiCQFmOBi0iVA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-X22AJU9I2GhZHtfG02oJ0z7IGvqdUPamDtgvVoBZtlg=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -8342,6 +8342,22 @@ function clearWay(a,b,others,gap,k=1){
     return Math.hypot(a.x+t*dx-n.x,a.y+t*dy-n.y)>=Math.min(n.gap??gap,Math.hypot(a.x-n.x,a.y-n.y))*k-1e-6;
   });
 }
+function openSide(p,goal,n,others,box,gap){
+  const r=n.gap??gap,TAU=Math.PI*2,norm=a=>(a%TAU+TAU)%TAU;
+  const tp=Math.atan2(p.y-n.y,p.x-n.x),dg=Math.max(r,Math.hypot(goal.x-n.x,goal.y-n.y));
+  const tg=Math.atan2(goal.y-n.y,goal.x-n.x),ag=Math.acos(Math.min(1,r/dg));
+  const cost=s=>{
+    const sweep=norm(s*(tg-s*ag-tp));let c=r*sweep+Math.sqrt(dg*dg-r*r);
+    for(let k=1;k<=12;k++){
+      const a=tp+s*sweep*k/12,x=n.x+Math.cos(a)*r,y=n.y+Math.sin(a)*r;
+      if(x<box[0]||y<box[1]||x>box[2]||y>box[3])return Infinity;
+      if(others.some(o=>o!==n&&Math.hypot(x-o.x,y-o.y)<(o.gap??gap)))c+=r*sweep/12;
+    }
+    return c;
+  };
+  const a=cost(1),b=cost(-1);
+  return isFinite(a)||isFinite(b)?(a<=b?1:-1):0;
+}
 function walkHeld(from,goal,others,box,gap,budget,side){
   let p={x:from.x,y:from.y},spent=0;
   for(let i=0;i<400&&spent<budget-1e-3;i++){
@@ -8352,6 +8368,7 @@ function walkHeld(from,goal,others,box,gap,budget,side){
     const touching=others.filter(n=>Math.hypot(p.x-n.x,p.y-n.y)<=(n.gap??gap)+.5);
     const clear=clearWay(p,goal,touching,gap);
     if(side&&!clear||Math.hypot(q.x-p.x,q.y-p.y)<h*.3){
+      if(!side){const n=touching.find(n=>!clearWay(p,goal,[n],gap));if(n)side=openSide(p,goal,n,others,box,gap)}
       let best=null,score=Infinity;
       for(const s of side?[side,-side]:[1,-1]){
         for(const n of touching){
@@ -8376,8 +8393,9 @@ function stepHold(h,to,others,box,gap,now,instant){
   const resting=!h.goal||Math.hypot(h.x-h.goal.x,h.y-h.goal.y)<.01,
     steady=shift<=1.5*lead+1&&(!h.goal||clear||clearWay(h.goal,goal,others,gap,.75));
   h.t=Math.max(h.t??now,now);h.to={x:to.x,y:to.y};h.goal={x:goal.x,y:goal.y};
-  if(instant||reduceMotion||resting&&steady&&clear){h.x=goal.x;h.y=goal.y;h.glide=false;h.side=0;h.v=0;return}
-  const follow=steady&&(resting||clear)?shift*(clear?1:1.15):0,rest=Math.max(0,Math.hypot(goal.x-h.x,goal.y-h.y)-follow);
+  if(instant||reduceMotion||resting&&steady&&clear){h.x=goal.x;h.y=goal.y;h.glide=false;h.side=0;h.v=0;h.pace=1;return}
+  const keep=steady&&(resting||clear);h.pace=keep?Math.min(1,(h.pace??0)+dt/120):0;
+  const follow=keep?shift*(clear?1:1.15)*h.pace:0,rest=Math.max(0,Math.hypot(goal.x-h.x,goal.y-h.y)-follow);
   const a=gap/1600,v0=h.v||0,want=Math.min(gap/(clear?12:32),Math.sqrt(2*a*rest),rest/40);
   h.v=Math.max(0,v0+Math.max(-3*a*dt,Math.min(a*dt,want-v0)));
   const w=walkHeld(h,goal,others,box,gap,follow+Math.max(gap*dt/2000,(v0+h.v)/2*dt),h.side);
