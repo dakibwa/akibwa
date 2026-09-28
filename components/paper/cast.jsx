@@ -5,7 +5,7 @@ import { LETTERS } from "./cast-paths";
 
 /*
  * The Akibwa a lives directly on the paper. It rests beside the introduction,
- * follows the pointer, occasionally explores a thing and can be picked up.
+ * follows the pointer, explores the five things and can be picked up.
  * A click makes it twirl; a drop becomes its new home. Rooms pause it and
  * reduced motion leaves it still. The original drawing keeps its proportions.
  */
@@ -303,16 +303,16 @@ export function Cast({ onVisit }) {
     const idle = (actor) => !actor.busy && !actor.held;
     const canWander = () => !userOnThings && !document.hidden && !roomOpen() && !actors.some((actor) => actor.held);
 
-    // Leave time to read between little moments of movement.
+    // Keep the original lively rhythm, now with just the a on the paper.
     const live = async (actor, signal) => {
       for (;;) {
-        await wait(6000 + Math.random() * 6000, signal);
+        await wait(1600 + Math.random() * 2600, signal);
         while (actor.held) await wait(400, signal);
         if (!canWander()) continue;
         actor.busy = true;
         try {
           const roll = Math.random();
-          if (roll < 0.24) {
+          if (roll < 0.42) {
             try {
               if (wide.matches) {
                 await inspect(actor, pick(things()), signal);
@@ -327,7 +327,7 @@ export function Cast({ onVisit }) {
             } finally {
               actor.peeking = false;
             }
-          } else if (roll < 0.4 && wide.matches) {
+          } else if (roll < 0.55 && wide.matches) {
             // A little wander about home and back, inside the sheet.
             const home = actor.homeSpot();
             const spot = Array.from({ length: 6 }, () => ({ x: home.x + (Math.random() - 0.5) * 160, y: home.y + (Math.random() - 0.5) * 30 })).find((at) => fits(actor, at));
