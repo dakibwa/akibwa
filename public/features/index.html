@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-j9yNpEXAP8ptKsSyxXcUKqruwHanL7fE0dBzMWfAkBM=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-E5orlcA5WYHJbcivDMH51opNas7W0WxiCQFmOBi0iVA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -281,6 +281,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .devtab:focus-visible,.tval:focus-visible{
     outline:2px solid var(--sig-hellblau);outline-offset:2px;
   }
+  .pointing .veil .wbtn:focus-visible{outline:none}
   .field g.node{outline:none}
   .field g.node:focus{outline:none}
   .field .nfocus{opacity:0;pointer-events:none;transition:opacity .12s linear}
@@ -665,11 +666,11 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     transition:background var(--t-ui),color var(--t-ui),border-color var(--t-ui),
                transform var(--t-lift) var(--ease-out);
   }
-  .wbtn:hover{background:var(--surface-2);border-color:var(--ink)}
+  @media (hover:hover){.wbtn:hover{background:var(--surface-2);border-color:var(--ink)}}
   .wbtn:active{transform:translateY(1px) scale(.99);
     transition-duration:var(--t-ui),var(--t-ui),var(--t-ui),var(--t-press)}
   .wbtn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-  .wbtn.solid:hover{background:var(--dunkelblau);border-color:var(--dunkelblau);color:var(--paper)}
+  @media (hover:hover){.wbtn.solid:hover{background:var(--dunkelblau);border-color:var(--dunkelblau);color:var(--paper)}}
   .wbtn.shut{border-style:dashed;color:var(--ink-soft)}
   .wbtn.shut:hover{background:transparent;border-color:var(--silver);color:var(--ink)}
 
@@ -772,15 +773,15 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     .boardcard > .levelstrip.lesson{grid-template-columns:minmax(0,1fr) auto}
     .levelstrip.lesson > .bhead{display:none}
     .levelstrip.lesson > .bbody,.levelstrip.lesson .blearn{display:contents}
-    .levelstrip.lesson .blearn > .bkey,.levelstrip.lesson .blearn > .rladder{grid-area:2/1;justify-self:start;align-self:center;margin:0;padding:10px 0 0 14px}
-    .levelstrip.lesson .bkey{gap:4px 10px;flex-wrap:wrap}
+    .levelstrip.lesson .blearn > p{grid-area:2/1;align-self:center;padding:12px 0 12px 14px;text-align:left}
+    .levelstrip.lesson > .bactions{grid-area:2/2;align-self:center;padding:12px 14px}
+    .levelstrip.lesson .blearn > .bkey,.levelstrip.lesson .blearn > .rladder{grid-area:3/1/4/-1;justify-self:start;margin:0;padding:0 14px 12px}
+    .levelstrip.lesson .bkey{gap:4px 14px;flex-wrap:wrap}
     .levelstrip.lesson .bkey span{gap:4px;font-size:10px}
     .levelstrip.lesson .bkey .rmark{width:30px;height:20px}
     .levelstrip.lesson .bkey .rmark.tight{width:20px}
-    .levelstrip.lesson .blearn > .rladder{flex:none;width:calc(100% - 14px)}
+    .levelstrip.lesson .blearn > .rladder{flex:none;width:calc(100% - 28px)}
     .levelstrip.lesson .rlnames > i{font-size:10px}
-    .levelstrip.lesson > .bactions{grid-area:2/2;padding:10px 14px 0}
-    .levelstrip.lesson .blearn > p{grid-area:3/1/4/-1;padding:8px 14px 12px;text-align:left}
     .levelstrip.lesson .ldetail{display:none}
   }
   @media(max-width:600px) and (min-height:451px){
@@ -9000,6 +9001,8 @@ function showLessonRead(n,tier){
     if(document.activeElement!==btn&&n)requestAnimationFrame(()=>hold(n-1));
   })(15);
 }
+addEventListener('pointerdown',()=>document.documentElement.classList.add('pointing'),true);
+addEventListener('keydown',()=>document.documentElement.classList.remove('pointing'),true);
 const LESSON_READS={
   drag:['concepts','<b>untangled lines reveal concepts.</b> leave a little space between circles.'],
   frozen:['frozen','<b>the squares stayed fixed.</b> the circles moved around them.'],
