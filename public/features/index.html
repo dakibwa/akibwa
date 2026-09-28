@@ -34,7 +34,7 @@
 <meta name="twitter:description" content="Ten small networks to untangle each day, with shapes to discover along the way. Free to play.">
 <meta name="twitter:image" content="https://features.games/og.png?v=discoveries-20260908">
 <!-- The source-only CSP explanation is above the client script below. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-yiEkUwdaK3hjDEq0EpwSreuUz0ELy/elJwWZnSJyWMA=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-LQ4IUMHyvS7ic0PiiW9+dMzbXWyhzQGJiA2Ax96f1Fc=' 'sha256-DMp1CZnk5R1REb+WABbv7ZOoq4j58n4Xx1KD2bunjuE=' 'sha256-w4PlmvR+BqGy5N03MbnaPyztqJXW+TfIbHmSaqvADGo=' 'sha256-eUQrl7pUc8XKybV8VtkpIn5DEcewVPMeS+xmzLkBetI=' 'sha256-bHeqqQCacCWsh9pKpzyZCsptN/d/whXZsmp6VRTaz6Y=' https://js.stripe.com; worker-src blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; base-uri 'none'; object-src 'none'; form-action 'self'">
 <!-- The approved concept quartet: aeroplane, smaller heart, leaf and lightning.
      Render web icons from assets/marketing/features-app-mark.svg with
      tools/render-web-icons.mjs; keep the tab SVG embedded for offline copies. -->
@@ -894,7 +894,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .showcase-note{margin:0 0 0 clamp(4px,1vw,12px);font-size:12px;line-height:1.5;color:var(--ink-soft)}
   .showcase-upgrade{display:grid;gap:2px;padding:2px 0;border:0;background:none;font:inherit;text-align:left;color:var(--ink);cursor:pointer}
   .showcase-upgrade b{font-size:13px}
-  .showcase-upsell{display:flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.04em;color:var(--ink-soft)}
+  .showcase-upsell{display:flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.04em;color:var(--ink-soft);white-space:nowrap}
   .showcase-upsell svg{width:11px}
   .showcase-upgrade:is(:hover,:focus-visible) .showcase-upsell{color:var(--ink)}
   .showcase-upgrade:focus-visible{outline:2px solid var(--sig-hellblau);outline-offset:3px}
@@ -1349,6 +1349,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
     font-variant-numeric:tabular-nums;color:var(--ink);
   }
   .wbstats span,.wbwhen{font-size:var(--menu-small);letter-spacing:.14em;color:var(--ink-soft);text-transform:lowercase}
+  .wbstats>div>span{display:block;line-height:1.45}
   @container (max-width:380px){
     .wbstats .stat-qualifier{display:none}
   }
@@ -1558,6 +1559,7 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
 
 
   @media (max-width:345px){
+    .showcase-upsell svg{display:none}
     .intro-doors.rec-doors{padding-inline:8px}
     #runveil .wbtn{letter-spacing:.04em;padding:8px 6px;white-space:nowrap}
   }
@@ -1660,13 +1662,11 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
   .endless-overview{margin:var(--section-gap) 0 var(--content-gap)}
   .endless-menu-run{margin:0;grid-template-columns:repeat(3,minmax(0,1fr))}
   .endless-menu-run>div{min-width:0}
-  .endless-menu-run>div>span{display:block;line-height:1.45}
   .endless-menu-run .endless-moves{container:iterate-moves / inline-size}
   .endless-menu-run .endless-moves>span{white-space:nowrap}
   .endless-menu-run .endless-move-scope{display:inline-block;white-space:nowrap}
   @container iterate-moves (max-width:220px){
     .endless-menu-run .endless-move-scope{display:none}
-    .endless-menu-run .endless-moves>span{letter-spacing:.04em}
   }
   .endless-climb{flex:1;min-height:0;min-width:0;margin:0 0 var(--text-gap);display:grid;grid-template-rows:minmax(0,1fr);container-type:size}
   .endless-grid-space{min-height:0;container-type:size;display:grid;place-items:start center}
@@ -1723,9 +1723,6 @@ d.setAttribute('data-boot','');addEventListener('DOMContentLoaded',function(){se
       min-height:var(--menu-head-height);padding:var(--menu-head-pad);background:color-mix(in srgb,var(--surface) 35%,transparent);
       border-bottom:1px solid var(--silver)}
     .endless-menu-body{grid-column:1}
-  }
-  @media(max-width:380px){
-    .endless-menu-run div{padding-top:10px;padding-bottom:10px}
   }
   @media(max-width:380px) and (max-height:640px){
     #introcard.view-endless .paneendless>.opening{min-height:76px;padding-block:12px}
@@ -3722,7 +3719,7 @@ function showcasePanel(){
         aria-keyshortcuts="${key?'ArrowLeft ArrowRight Delete Backspace ':''}Enter Space"${key?` style="--door-plate:var(${stampPlate(key).c})"`:''}>${key?showcaseMark(key):''}</button>`;
     }).join('')}
     ${enabled?'<p class="showcase-note" id="showcasenote">pin four concepts</p>'
-      :`<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four to your game · discover premium"><b>pin four to your game</b><span class="showcase-upsell">${lock}premium<span class="showcase-more"> · discover</span> ›</span></button>`}
+      :`<button type="button" class="showcase-note showcase-upgrade" id="showcaseupgrade" aria-label="pin four to your game · discover premium"><b>pin four<span class="showcase-more"> to your game</span></b><span class="showcase-upsell">${lock}premium<span class="showcase-more"> · discover</span> ›</span></button>`}
     <span class="showcase-status" id="showcasestatus" role="status"></span>
   </section>`;
 }
