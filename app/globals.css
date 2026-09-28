@@ -371,11 +371,11 @@ html:not(.js) .paper:has(.room:target) .bar .contact {
 
 /* One name wipes away to the right, and the other wipes in after it. */
 .name[data-phase="erase"] .name-word {
-  animation: name-erase 460ms cubic-bezier(0.5, 0, 0.6, 1) forwards;
+  animation: name-erase 600ms cubic-bezier(0.5, 0, 0.6, 1) forwards;
 }
 
 .name[data-phase="write"] .name-word {
-  animation: name-write 720ms cubic-bezier(0.45, 0.05, 0.4, 1) forwards;
+  animation: name-write 950ms cubic-bezier(0.45, 0.05, 0.4, 1) forwards;
 }
 
 @keyframes name-erase {

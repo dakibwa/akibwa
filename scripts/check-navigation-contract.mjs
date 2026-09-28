@@ -66,10 +66,10 @@ requireText(layout, 'applicationName: "Akibwa"', "site metadata must be brand-le
 requireText(layout, 'classList.add("js")', "the layout must mark scripted pages before the first paint");
 requireText(layout, '["music","features","websites","career","trek"]', "the layout's room list must match the rooms that open in place");
 
-// The approved introduction: Daniel ↔ Akibwa on the original timing.
+// The approved introduction: a slightly slower Daniel ↔ Akibwa wipe.
 requireText(names, '"Daniel", "Akibwa"', "the name change must alternate Daniel and Akibwa");
-requireText(names, "3200", "the name change keeps its first change at 3.2 seconds");
-requireText(names, "4200", "the name change keeps its 4.2 second rhythm");
+requireText(names, "4000", "the first name change leaves four seconds to read Daniel");
+requireText(names, "5400", "each name rests for 5.4 seconds between changes");
 requireText(names, "prefers-reduced-motion", "the name change must respect reduced motion");
 requireText(names, "visibilitychange", "the name change must pause in hidden tabs");
 requireText(names, "I’m Daniel. Online as Akibwa.", "the heading must carry both names for assistive technology");

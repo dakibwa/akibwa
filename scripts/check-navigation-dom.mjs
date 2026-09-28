@@ -298,7 +298,7 @@ const checkPublicLanding = async () => {
   check(state.googlebot.includes("noimageindex") && state.googlebot.includes("max-snippet:120"), `Google receives the restricted preview policy [${state.googlebot}]`);
   check(await evaluate(`getComputedStyle(document.body).userSelect === "none"`), "the page's text is not selectable");
   check(await evaluate(`!document.querySelector(".front .hole, .sky-wheel")`), "the front page has no portal or sky wheel");
-  check(await waitFor(`document.querySelector(".name")?.dataset.name === "akibwa"`, 6500), "the name changes from Daniel to Akibwa on the original timing");
+  check(await waitFor(`document.querySelector(".name")?.dataset.name === "akibwa"`, 7000), "the name changes from Daniel to Akibwa at the slower pace");
   await sleep(1700);
 
   for (const width of [320, 390, 560, 800, 1024, 1440, 1920]) {

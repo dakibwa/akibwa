@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 
 const NAMES = ["Daniel", "Akibwa"];
 
-const ERASE = 460;
-const WRITE = 720;
+const ERASE = 600;
+const WRITE = 950;
 
 // Daniel keeps the sun in the sky and Akibwa the moon (see Sky in
 // paper-home). Unset means day, so the first load turns nothing.
@@ -16,11 +16,9 @@ function setSky(night) {
 }
 
 /*
- * The original Daniel ↔ Akibwa flick: one name wipes away and the other wipes
- * in, and the sky turns with it. First
- * change at 3.2 seconds, then every 4.2 seconds, as before. Both names reserve
- * their width, hidden tabs pause the cycle, and reduced motion keeps Daniel
- * and the sun still.
+ * Daniel ↔ Akibwa: a gentle wipe out and in, first after 4 seconds, with
+ * 5.4 seconds at rest between changes. Both names reserve their width,
+ * hidden tabs pause the cycle, and reduced motion keeps Daniel still.
  */
 export function NameFlip() {
   const [index, setIndex] = useState(0);
@@ -45,7 +43,7 @@ export function NameFlip() {
       }, ERASE));
       timers.push(setTimeout(() => {
         setPhase("rest");
-        timers.push(setTimeout(cycle, 4200));
+        timers.push(setTimeout(cycle, 5400));
       }, ERASE + WRITE));
     };
     const reset = () => {
@@ -57,7 +55,7 @@ export function NameFlip() {
         delete document.documentElement.dataset.sky;
       } else {
         setSky(shown.current === 1);
-        if (!document.hidden) timers.push(setTimeout(cycle, 3200));
+        if (!document.hidden) timers.push(setTimeout(cycle, 4000));
       }
     };
     reset();
